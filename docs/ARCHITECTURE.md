@@ -77,4 +77,6 @@ shell does terminal I/O and file I/O.
 - **One id space.** Items, categories and views share `next_id`, like the
   patent's single object file.
 
-See `docs/adr/` for the reasoning behind the larger choices.
+See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and
+[`DATA_ACCESS.md`](DATA_ACCESS.md) for the query/update API and its
+algorithms. See `docs/adr/` for the reasoning behind the larger choices.

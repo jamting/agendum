@@ -50,7 +50,9 @@ mix escript.build && ./agenda ~/work.agenda   # standalone binary
 
 The code is a pure functional core with an imperative shell. See
 [`CLAUDE.md`](CLAUDE.md) for conventions, [`docs/SPEC.md`](docs/SPEC.md) for
-behaviour, [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for structure, and
+behaviour, [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for structure,
+[`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) and
+[`docs/DATA_ACCESS.md`](docs/DATA_ACCESS.md) for the data layer, and
 [`docs/ROADMAP.md`](docs/ROADMAP.md) for what's next.
 
 ```sh

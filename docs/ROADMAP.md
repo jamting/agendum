@@ -42,5 +42,9 @@ Rule numbers refer to `SPEC.md`.
 - [ ] Import of structured text files (one item per line, with categories)
 - [ ] Optional: read original `.AG` files (format undocumented; research)
 
+## Housekeeping
+- [ ] Move the TUI's direct `Database` writes into `Agenda.Core` operations (see `DATA_ACCESS.md`, known exceptions)
+- [ ] Decide what `toggle_exclusive/2` does to items already in several children (`DATA_MODEL.md`, invariant 5)
+
 ## Ideas
 - Multiple files open; a launcher listing recent files
