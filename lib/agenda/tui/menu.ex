@@ -18,11 +18,13 @@ defmodule Agenda.TUI.Menu do
          {"Retrieve", "Open an existing Agenda file (CTRL-O)", :retrieve},
          {"Save", "Save the current file (CTRL-S)", :save},
          {"SaveAs", "Save the current file under a new name", :save_as},
-         {"New", "Create a new, empty file", :new_file}
+         {"New", "Create a new, empty file", :new_file},
+         {"Dating", "Turn When dates read from item text on or off", :toggle_auto_date}
        ]},
       {"Item", "Work with the highlighted item",
        [
          {"Note", "Edit the item's note (F5)", :note},
+         {"When", "Set the item's When date; overrides dates in the text (ALT-F2)", :when},
          {"Assign", "Show the item's assignment profile (F6)", :assign},
          {"Done", "Mark the item done / not done (F4)", :done},
          {"Mark", "Mark or unmark the item (F7)", :mark},

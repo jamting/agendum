@@ -167,6 +167,7 @@ defmodule Agenda.TUI.Update do
       {:f, 9} -> perform(state, :category_manager)
       {:f, 10} -> perform(state, :menu)
       {:alt_f, 4} -> perform(state, :discard)
+      {:alt_f, 2} -> perform(state, :when)
       {:ctrl, "d"} -> perform(state, :discard)
       {:alt_f, 10} -> perform(state, :move_item)
       {:alt, "d"} -> perform(state, :section_below)
@@ -390,10 +391,11 @@ defmodule Agenda.TUI.Update do
       State.error(state, "Item text cannot be empty (use ALT-F4 to discard)")
     else
       before = Database.explicit_categories(state.db, id)
+      old_when = state.db.items[id].when
 
       state
-      |> State.change_db(Core.edit_item(state.db, id, text))
-      |> report_auto_assignments(id, MapSet.to_list(before))
+      |> State.change_db(Core.edit_item(state.db, id, text, state.today))
+      |> report_auto_assignments(id, MapSet.to_list(before), old_when)
     end
   end
 
@@ -433,15 +435,25 @@ defmodule Agenda.TUI.Update do
     end
   end
 
-  defp report_auto_assignments(state, item_id, already) do
+  # Tells the user what Agenda did on its own: categories found in the text,
+  # and a When date read from it (R14).
+  defp report_auto_assignments(state, item_id, already, old_when \\ nil) do
     added =
       Database.explicit_categories(state.db, item_id)
       |> Enum.reject(&(&1 in already))
       |> Enum.map(&state.db.categories[&1].name)
 
-    if added == [],
-      do: state,
-      else: State.info(state, "Also assigned to: " <> Enum.join(added, ", "))
+    new_when = state.db.items[item_id].when
+
+    parts =
+      [
+        added != [] && "Also assigned to: " <> Enum.join(added, ", "),
+        new_when != old_when && new_when && "When: " <> Agenda.Core.DateParser.format(new_when),
+        new_when != old_when && is_nil(new_when) && "When date removed"
+      ]
+      |> Enum.filter(& &1)
+
+    if parts == [], do: state, else: State.info(state, Enum.join(parts, " · "))
   end
 
   # --- help -------------------------------------------------------------------
@@ -564,6 +576,18 @@ defmodule Agenda.TUI.Update do
 
   defp prompt_action(state, :add_view, text) do
     CategoryScreens.open_picker(state, {:new_view, text}, nil)
+  end
+
+  defp prompt_action(state, {:when, item_id}, text) do
+    case Core.assign_by_name(state.db, item_id, state.db.special.when, text, state.today) do
+      {:ok, db, :date} ->
+        state
+        |> State.change_db(db)
+        |> State.info("When: " <> Agenda.Core.DateParser.format(db.items[item_id].when))
+
+      {:error, :invalid_date} ->
+        State.error(state, "Not a date: #{text} (try friday, next week, 12/24, December 24)")
+    end
   end
 
   defp prompt_action(state, :rename_view, text) do
@@ -721,6 +745,22 @@ defmodule Agenda.TUI.Update do
 
   defp do_perform(state, :mark, row), do: on_item(state, row, &Core.toggle_mark/2)
 
+  defp do_perform(state, :when, %{kind: :item, item: item}) do
+    current = if item.when, do: Agenda.Core.DateParser.format(item.when), else: ""
+    prompt(state, "When date (overrides dates in the text):", {:when, item.id}, current)
+  end
+
+  defp do_perform(state, :toggle_auto_date, _) do
+    db = Core.toggle_auto_date(state.db)
+
+    message =
+      if db.auto_date,
+        do: "Dates in item text set When dates",
+        else: "Dates in item text are ignored"
+
+    state |> State.change_db(db) |> State.info(message)
+  end
+
   defp do_perform(state, :assign, %{kind: :item, item: item}),
     do: CategoryScreens.open_profile(state, item.id)
 
@@ -735,7 +775,7 @@ defmodule Agenda.TUI.Update do
 
   defp do_perform(state, :recalc, _) do
     state
-    |> State.change_db(Core.reassign_all(state.db))
+    |> State.change_db(Core.reassign_all(state.db, state.today))
     |> State.info("Automatic assignments recalculated")
   end
 

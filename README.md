@@ -36,6 +36,8 @@ mix escript.build && ./agenda ~/work.agenda   # standalone binary
 
 - **Type** under a section to add an item. It is assigned to that section's
   category, and automatically to any category it mentions.
+- Dates in the text count: "Call Bob next Friday" gets a When date. **ALT-F2**
+  (or Item ▸ When) sets one explicitly.
 - **→ / TAB** moves into columns. Type a name to assign (new names create
   subcategories) or a date (`tomorrow`, `friday`, `2026-12-24`) in the When column.
 - **F9** opens the category manager: type to add, F7/F8 promote/demote, F6

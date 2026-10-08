@@ -58,8 +58,10 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 
 | Function | Kind | Description |
 |---|---|---|
-| `Core.add_item(db, text, today, section:, after:, adjacent:)` | write | Insert, assign to the section's category, then auto-assign. Returns `{db, id}`. |
-| `Core.edit_item(db, id, text, adjacent)` | write | Change text, then auto-assign again (only adds assignments). |
+| `Core.add_item(db, text, today, section:, after:, adjacent:)` | write | Insert, assign to the section's category, auto-assign, and read a When date from the text (R14). Returns `{db, id}`. |
+| `Core.edit_item(db, id, text, today, adjacent)` | write | Change text, auto-assign again (only adds assignments), and update a When date read from the text when the date words changed (R14). |
+| `Core.toggle_auto_date(db)` | write | Turn reading When dates from item text on or off for the file. |
+| `DateParser.extract(text, today)` / `parse(text, today)` | read | The first date in free text, with its words / a date typed on its own (columns, ALT-F2). |
 | `Core.set_note/3`, `toggle_done/3`, `toggle_mark/2` | write | Field updates. |
 | `Core.move_item(db, id, from, to, after:)` | write | ALT-F10: leave `from`, join `to` (never MAIN), optionally reorder after an item. |
 | `Core.discard_item(db, id)` | write | Delete the item and all its links. |
@@ -95,8 +97,8 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.toggle_assignment(db, item, cat)` | write | Assignment profile: remove just that explicit link, or `assign`. |
 | `Core.assign_by_name(db, item, head, text, today)` | write | Typing in a column: date, exact name, unique prefix, or a new child. `{:ok, db, cat_id \| :date}`. |
 | `Core.remove_from_category(db, item, cat)` | write | Unlink the category's subtree (or clear the date). |
-| `Core.set_date(db, item, date_cat, date)` | write | Set or clear Entry/When/Done. |
-| `Core.reassign_all(db)` | write | Run auto-assignment again for every item. |
+| `Core.set_date(db, item, date_cat, date)` | write | Set or clear Entry/When/Done. Setting When makes it explicit (it overrides the text); clearing hands it back to the text. |
+| `Core.reassign_all(db, today)` | write | Run auto-assignment again for every item, and date items whose text has a date but that have no When date. |
 | `Database.member?(db, item, cat)` | read | **Membership including subsumption.** |
 | `Database.items_in(db, cat)` | read | All member items, in item order. |
 | `Database.explicit_categories(db, item)`, `explicit?/3` | read | Stored links only. |

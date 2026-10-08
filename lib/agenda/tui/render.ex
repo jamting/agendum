@@ -47,7 +47,8 @@ defmodule Agenda.TUI.Render do
       [
         {view.hide_done, "[Hide Done]"},
         {view.hide_empty, "[Hide Empty]"},
-        {view.hide_inherited, "[Hide Inherited]"}
+        {view.hide_inherited, "[Hide Inherited]"},
+        {not state.db.auto_date, "[No Auto Dates]"}
       ]
       |> Enum.filter(&elem(&1, 0))
       |> Enum.map_join(" ", &elem(&1, 1))
@@ -496,6 +497,7 @@ defmodule Agenda.TUI.Render do
      F10 or /      Menu
      DEL           Remove from section or column   fn-⌫
      ALT-F4        Discard item                    CTRL-D
+     ALT-F2        Set the When date (or menu Item When)
      ALT-F10       Move item to another section
      ALT-D / ALT-U Add section below / above
      ALT-R / ALT-L Add column right / left
@@ -528,7 +530,8 @@ defmodule Agenda.TUI.Render do
    CTRL keys above; see docs/KEYBOARD.md.
 
    Items are assigned to the section they are typed in, and automatically to
-   any category whose name (or short name) appears in their text. Typing a
+   any category whose name (or short name) appears in their text. The first
+   date in the text ("call Bob next Friday") becomes the When date. Typing a
    name in a column assigns the item to that subcategory, creating it if new.
   """
 

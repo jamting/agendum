@@ -34,7 +34,8 @@ Rule numbers refer to `SPEC.md`.
 
 ## Milestone 3 — Smarter assignment
 
-- [ ] Date parsing from item text into When (R14)
+- [x] Date parsing from item text into When (R14)
+- [ ] More date phrases: times of day, recurring dates, working days, date settings (R14a)
 - [ ] Assignment conditions and actions (R15)
 - [ ] General negative links (R9)
 - [ ] Assignment questions ("Agenda suggests…", Utilities Questions)

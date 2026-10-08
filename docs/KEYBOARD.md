@@ -13,6 +13,7 @@ settings, as described in the second half of this guide.
 | Edit (item, section head, column entry, category) | F2 | **CTRL-E** |
 | Mark done | F4 | **CTRL-K** |
 | Discard | ALT-F4 | **CTRL-D** |
+| Set the When date | ALT-F2 | ESC then `@`, or menu Item ▸ When |
 | Remove from section / column | DEL | fn-⌫ (forward delete) |
 | Undo / redo | — | **CTRL-Z** / **CTRL-Y** (also in the menu) |
 | Save / open / print to file / quit | menu | **CTRL-S** / **CTRL-O** / **CTRL-P** / **CTRL-Q** (CTRL-C also quits) |

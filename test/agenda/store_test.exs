@@ -26,4 +26,26 @@ defmodule Agenda.StoreTest do
     assert Store.normalize_path("/tmp/work") == "/tmp/work.agenda"
     assert Store.normalize_path("/tmp/work.agd") == "/tmp/work.agd"
   end
+
+  test "files in format version 1 are upgraded on load", %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+
+    # what a version 1 file held: no Database.auto_date, no Item.when_explicit
+    v1_items = Map.new(db.items, fn {id, item} -> {id, Map.delete(item, :when_explicit)} end)
+    v1 = db |> Map.delete(:auto_date) |> Map.put(:items, v1_items)
+
+    path = Path.join(dir, "old.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 1, v1}))
+
+    assert {:ok, loaded} = Store.load(path)
+    assert loaded.auto_date == true
+    assert Enum.all?(Map.values(loaded.items), &(&1.when_explicit == false))
+    assert loaded == db
+  end
+
+  test "newer, unknown format versions are refused", %{tmp_dir: dir} do
+    path = Path.join(dir, "future.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 99, Agenda.Core.new_file()}))
+    assert {:error, {:unsupported_version, 99}} = Store.load(path)
+  end
 end

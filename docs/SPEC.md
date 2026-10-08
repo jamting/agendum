@@ -32,7 +32,8 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   disappears from view sections and columns.
 - **R5 ✅ Every item is in MAIN.**
 - **R6 ✅ Date categories.** Entry is set when an item is created, When is
-  set by typing a date in a When column, and Done is set by F4.
+  read from the item text (R14) or set explicitly in a When column or with
+  ALT-F2, and Done is set by F4.
 - **R7 ✅ Mutual exclusion.** A category can declare its children mutually
   exclusive (e.g. Priority: High/Medium/Low). Assigning an item to one child
   removes it from the others and their subtrees. This applies at every
@@ -104,7 +105,33 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   to (previous, then next). Otherwise prefer the category created first.
 - **R13 ✅ Recalc.** The user can re-run automatic assignment for all items
   (Category ▸ Recalc).
-- **R14 ⏳ Date parsing from item text** ("call Bob next Friday" → When).
+- **R14 ✅ When dates from item text.** The first date in an item's text
+  becomes its When date ("Call Toni on August 7", "Cheryl arrives
+  tomorrow"); items with no date get none (User's Guide 6-6 to 6-7).
+  Editing the date words changes the When date; relative dates are read
+  once, so editing other words keeps it, and removing the date words
+  clears it. A When date set explicitly (When column, ALT-F2, Item ▸ When)
+  overrides the text, and later edits leave it alone; clearing it (DEL in
+  the When column) hands it back to the text. File ▸ Dating turns
+  automatic dating off for a file. Recalc dates items that have a date in
+  their text but no When date.
+  Dates follow the manual's rules (chapter 7): weeks run Monday to Friday; a
+  bare weekday is its next occurrence (today if today); this/next/last put a
+  weekday in the current, following or previous week; this/next/last
+  week/month/year is the start of that period; a date without a year is in
+  the future. Supported phrases: today, tomorrow, yesterday (and Agenda's
+  "tmorrow", "ystday"), the day after tomorrow / before yesterday,
+  weekdays, beginning/end of a week or month, in N days/weeks/months (digits
+  or words), N … from today, N … ago, a fortnight, month-day dates ("August
+  7", "November 23rd, 1991", "the first of November", "7 Aug"), and numeric
+  dates (11/20/90, 11/20, 2026-11-20). Times ("at 3:00") are accepted and
+  ignored. Our safeguard: bare abbreviations that are common words ("sat",
+  "sun", "wed", "may" alone) count as dates in item text only after "on",
+  "by", "until" or "till", or with a day number ("May 5").
+- **R14a ⏳ More date phrases.** Times of day (items carry dates only),
+  recurring dates ("every Monday", "every other Monday"), working days,
+  quarters, "first Wednesday in November", "next April", dates from notes,
+  and settings for date order (day/month) and the start of the week.
 - **R15 ⏳ Conditions and actions** (Agenda 2.0 assignment conditions,
   e.g. "items in Calls with When < today → Overdue").
 

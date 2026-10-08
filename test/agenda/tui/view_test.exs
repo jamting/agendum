@@ -134,4 +134,46 @@ defmodule Agenda.TUI.ViewTest do
     assert Database.member?(state.db, item.id, meetings)
     refute Database.member?(state.db, item.id, hd(Database.find_categories(db, "Calls")))
   end
+
+  describe "When dates from item text (R14)" do
+    test "typing an item with a date fills the When column and says so", %{state: state} do
+      state = press(state, ["Call Bob next Tuesday", :enter])
+      screen = screen(state)
+      assert screen =~ "When: 2026-10-13"
+      assert screen =~ ~r/Call Bob next Tuesday\s+2026-10-13/
+    end
+
+    test "editing the date words updates the When date", %{state: state} do
+      state = press(state, ["Call Bob next Tuesday", :enter])
+      state = press(state, [{:f, 2}, {:ctrl, "u"}, "Call Bob next Wednesday", :enter])
+      assert Agenda.TUI.Layout.current_row(state).item.when == ~D[2026-10-14]
+    end
+
+    test "ALT-F2 sets an explicit When date that later edits keep", %{state: state} do
+      state = press(state, ["Call Bob next Tuesday", :enter, {:alt_f, 2}])
+      assert screen(state) =~ "When date (overrides dates in the text):"
+
+      state = press(state, [{:ctrl, "u"}, "December 24", :enter])
+      item = Agenda.TUI.Layout.current_row(state).item
+      assert item.when == ~D[2026-12-24]
+      assert item.when_explicit
+
+      state = press(state, [{:f, 2}, {:ctrl, "u"}, "Call Bob next Friday", :enter])
+      assert Agenda.TUI.Layout.current_row(state).item.when == ~D[2026-12-24]
+    end
+
+    test "an invalid When date is reported", %{state: state} do
+      state = press(state, [:down, {:alt_f, 2}, {:ctrl, "u"}, "someday", :enter])
+      assert screen(state) =~ "Not a date: someday"
+    end
+
+    test "File Dating turns automatic dating off, shown in the title bar", %{state: state} do
+      state = press(state, [{:f, 10}, "f", "d"])
+      refute state.db.auto_date
+      assert screen(state) =~ "[No Auto Dates]"
+
+      state = press(state, ["Call Bob next Tuesday", :enter])
+      assert Agenda.TUI.Layout.current_row(state).item.when == nil
+    end
+  end
 end

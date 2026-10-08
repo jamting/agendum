@@ -52,9 +52,11 @@ defmodule Agenda.CoreTest do
       assert section.category.name == "Calls"
 
       assert Enum.map(section.rows, & &1.cells) == [
-               ["", "Medium", ""],
+               # "...before the end of the month."
+               ["2026-10-31", "Medium", ""],
                ["", "High", "Anna Lasky"],
-               ["", "Low", "Abigail Scheer"],
+               # "...this Tuesday." (this week's Tuesday, R14)
+               ["2026-10-06", "Low", "Abigail Scheer"],
                ["", "Medium", "Abigail Scheer"],
                ["", "Medium", "Daniel Fiske"]
              ]

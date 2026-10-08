@@ -8,12 +8,12 @@ Lotus Agenda (1988, MS-DOS) let people type thoughts in first and organize them 
 
 Agenda was Lotus founder Mitch Kapor's last project at the company, designed with Jerry Kaplan and Ed Belove. Kapor later called it his favorite product: "the first personal information manager" ([Kapor oral history, 2006](http://archive.computerhistory.org/resources/text/Oral_History/Kapor_Mitch/Kapor_Mitch.oral_history.2006.102657943.pdf)). It ran on IBM PCs under MS-DOS with 640 KB of memory, in a full-screen text interface.
 
-| When | What happened |
-| --- | --- |
-| 1992 | Release 2.0b, the final version ([Wikipedia](https://en.wikipedia.org/wiki/Lotus_Agenda)) |
-| 1992 | US patent 5,115,504 granted, covering the item/category data structures ([patent](https://patents.google.com/patent/US5115504A/en)) |
-| 1990 | Designers publish "Agenda: A Personal Information Manager" in *Communications of the ACM* 33(7) ([ACM](https://cacm.acm.org/author/todd-r-drake/)) |
-| 1988 | Release 1.0 ships; patent application filed in November ([patent](https://patents.google.com/patent/US5115504A/en)) |
+| When | What happened                                                                                                                                      |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1992 | Release 2.0b, the final version ([Wikipedia](https://en.wikipedia.org/wiki/Lotus_Agenda))                                                          |
+| 1992 | US patent 5,115,504 granted, covering the item/category data structures ([patent](https://patents.google.com/patent/US5115504A/en))                |
+| 1990 | Designers publish "Agenda: A Personal Information Manager" in _Communications of the ACM_ 33(7) ([ACM](https://cacm.acm.org/author/todd-r-drake/)) |
+| 1988 | Release 1.0 ships; patent application filed in November ([patent](https://patents.google.com/patent/US5115504A/en))                                |
 
 Rather than port Agenda to Windows, Lotus replaced it with Lotus Organizer ([Wikipedia](https://en.wikipedia.org/wiki/Lotus_Agenda)).
 
@@ -28,12 +28,12 @@ People used Agenda to keep track of "a hundred things going on at once" without 
 
 It was never for everyone. Users in the US Environmental Protection Agency's 1989 trial disagreed sharply:
 
-| Who | What they said |
-| --- | --- |
-| A fan, six months in | Saw at once that it matched "the way he naturally organizes things" |
-| A manager | "A nice package to handle to-do lists" |
-| A sceptic | "An incredibly powerful, full featured, unstructured data base" but the "hardest program to learn and use that I've ever seen" |
-| A dropout | Chose not to continue "after using it daily for nearly a month" |
+| Who                  | What they said                                                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| A fan, six months in | Saw at once that it matched "the way he naturally organizes things"                                                            |
+| A manager            | "A nice package to handle to-do lists"                                                                                         |
+| A sceptic            | "An incredibly powerful, full featured, unstructured data base" but the "hardest program to learn and use that I've ever seen" |
+| A dropout            | Chose not to continue "after using it daily for nearly a month"                                                                |
 
 The report's verdict: you had to use it daily "for a month or more" to appreciate it, and many casual users would not ([EPA report](https://mirrorservice.org/sites/www.bitsavers.org/pdf/us_epa/pc_tap/PC_TAP_Consumer_Report_%2301_Personal_Information_Managment_Systems_198908.pdf)). Those who did stayed loyal: years after Lotus dropped it, "thousands of people" still used Agenda because they could not find anything comparable ([The Palmtop Paper](https://www.palmtoppaper.com/ptphtml/43/43c00005.htm)).
 
@@ -63,20 +63,20 @@ flowchart LR
 
 One typed sentence is linked to three categories without the user filing it, and appears, editable, in every view that shows any of them.
 
-| Feature | What it did | Source |
-| --- | --- | --- |
-| Items in many categories | A single note could belong to a project, a person and a priority at once; categories formed a hierarchy, and membership flowed up to parent categories | [Patent](https://patents.google.com/patent/US5115504A/en) |
-| Automatic filing by text | New or edited items were scanned for category names, so "Meet with John Smith on Tuesday" also landed in the John Smith category | [Patent](https://patents.google.com/patent/US5115504A/en) |
-| Plain-language dates | "next Wednesday", "tomorrow", "next month" and "every Friday" became real dates in the When category | [EPA report](https://mirrorservice.org/sites/www.bitsavers.org/pdf/us_epa/pc_tap/PC_TAP_Consumer_Report_%2301_Personal_Information_Managment_Systems_198908.pdf) |
-| Views you edit directly | Views arranged items into sections and columns, and every change was made in the view itself; there was no separate data-entry mode | [Patent](https://patents.google.com/patent/US5115504A/en) |
-| Typing a category into a column | Typing "High" next to an item under a Priority column assigned it, creating the category if it was new | [Patent](https://patents.google.com/patent/US5115504A/en) |
-| Guessing intent | When a new item matched two categories that could not both apply, Agenda copied the choice of the neighbouring item in the view | [Patent](https://patents.google.com/patent/US5115504A/en), claim 7 |
-| Mutually exclusive categories | A family like High / Medium / Low allowed one choice per item, with dialogs to resolve existing conflicts | [User's Guide](https://archive.org/details/lotus-agenda-users-guide) |
-| Conditions and actions | Rules that assigned items or set dates automatically, such as linking one category to another; Agenda could also ask before assigning | [User's Guide](https://archive.org/details/lotus-agenda-users-guide), [patent](https://patents.google.com/patent/US5115504A/en) |
-| Task dependencies and done marks | Items could depend on other items, and could be marked done | [EPA report](https://mirrorservice.org/sites/www.bitsavers.org/pdf/us_epa/pc_tap/PC_TAP_Consumer_Report_%2301_Personal_Information_Managment_Systems_198908.pdf) |
-| Importing and searching text | External documents such as captured email could be imported and parsed, and searched with Boolean logic | [EPA report](https://mirrorservice.org/sites/www.bitsavers.org/pdf/us_epa/pc_tap/PC_TAP_Consumer_Report_%2301_Personal_Information_Managment_Systems_198908.pdf) |
+| Feature                          | What it did                                                                                                                                            | Source                                                                                                                                                           |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Items in many categories         | A single note could belong to a project, a person and a priority at once; categories formed a hierarchy, and membership flowed up to parent categories | [Patent](https://patents.google.com/patent/US5115504A/en)                                                                                                        |
+| Automatic filing by text         | New or edited items were scanned for category names, so "Meet with John Smith on Tuesday" also landed in the John Smith category                       | [Patent](https://patents.google.com/patent/US5115504A/en)                                                                                                        |
+| Plain-language dates             | "next Wednesday", "tomorrow", "next month" and "every Friday" became real dates in the When category                                                   | [EPA report](https://mirrorservice.org/sites/www.bitsavers.org/pdf/us_epa/pc_tap/PC_TAP_Consumer_Report_%2301_Personal_Information_Managment_Systems_198908.pdf) |
+| Views you edit directly          | Views arranged items into sections and columns, and every change was made in the view itself; there was no separate data-entry mode                    | [Patent](https://patents.google.com/patent/US5115504A/en)                                                                                                        |
+| Typing a category into a column  | Typing "High" next to an item under a Priority column assigned it, creating the category if it was new                                                 | [Patent](https://patents.google.com/patent/US5115504A/en)                                                                                                        |
+| Guessing intent                  | When a new item matched two categories that could not both apply, Agenda copied the choice of the neighbouring item in the view                        | [Patent](https://patents.google.com/patent/US5115504A/en), claim 7                                                                                               |
+| Mutually exclusive categories    | A family like High / Medium / Low allowed one choice per item, with dialogs to resolve existing conflicts                                              | [User's Guide](https://archive.org/details/lotus-agenda-users-guide)                                                                                             |
+| Conditions and actions           | Rules that assigned items or set dates automatically, such as linking one category to another; Agenda could also ask before assigning                  | [User's Guide](https://archive.org/details/lotus-agenda-users-guide), [patent](https://patents.google.com/patent/US5115504A/en)                                  |
+| Task dependencies and done marks | Items could depend on other items, and could be marked done                                                                                            | [EPA report](https://mirrorservice.org/sites/www.bitsavers.org/pdf/us_epa/pc_tap/PC_TAP_Consumer_Report_%2301_Personal_Information_Managment_Systems_198908.pdf) |
+| Importing and searching text     | External documents such as captured email could be imported and parsed, and searched with Boolean logic                                                | [EPA report](https://mirrorservice.org/sites/www.bitsavers.org/pdf/us_epa/pc_tap/PC_TAP_Consumer_Report_%2301_Personal_Information_Managment_Systems_198908.pdf) |
 
-In short, Agenda let users impose structure *after* capturing information, and change that structure at any time without losing data.
+In short, Agenda let users impose structure _after_ capturing information, and change that structure at any time without losing data.
 
 ## Reception, decline and legacy
 
@@ -84,12 +84,12 @@ Agenda was praised and talked about far more than it was bought. PC Magazine cal
 
 Its ideas outlived it, carried forward by the people who loved it:
 
-| Year | Descendant or echo |
-| --- | --- |
+| Year | Descendant or echo                                                                                                                                                                                                |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2020 | VC Brad Feld on Roam Research: "Agenda is the only product that augmented my brain and how I think until I started using Roam" ([Feld](https://feld.com/archives/2020/11/roam-my-new-favorite-software-product/)) |
-| 2008 | Kapor's open-source [Chandler](https://en.wikipedia.org/wiki/Chandler_(software)) 1.0, "inspired by" Agenda's free-form approach; its troubled development is the subject of the book *Dreaming in Code* |
-| 2003 | Microsoft Outlook adds search folders, similar to Agenda's rule-based categories ([Wikipedia](https://en.wikipedia.org/wiki/Lotus_Agenda)) |
-| 1997 | James Fallows writes that he still uses Agenda despite the difficulty of running it under Windows ([Wikipedia](https://en.wikipedia.org/wiki/Lotus_Agenda)) |
+| 2008 | Kapor's open-source [Chandler](<https://en.wikipedia.org/wiki/Chandler_(software)>) 1.0, "inspired by" Agenda's free-form approach; its troubled development is the subject of the book _Dreaming in Code_        |
+| 2003 | Microsoft Outlook adds search folders, similar to Agenda's rule-based categories ([Wikipedia](https://en.wikipedia.org/wiki/Lotus_Agenda))                                                                        |
+| 1997 | James Fallows writes that he still uses Agenda despite the difficulty of running it under Windows ([Wikipedia](https://en.wikipedia.org/wiki/Lotus_Agenda))                                                       |
 
 Kapor summed up why the idea persisted: Agenda "did things you still can't do on a PC" in letting people define their own categories ([oral history, 2006](http://archive.computerhistory.org/resources/text/Oral_History/Kapor_Mitch/Kapor_Mitch.oral_history.2006.102657943.pdf)).
 
@@ -97,17 +97,17 @@ Kapor summed up why the idea persisted: Agenda "did things you still can't do on
 
 Our Elixir clone already has the core that made Agenda distinctive; the biggest gap is the "magic" users praised most: dates and rules taken from plain text. Rule numbers refer to [`SPEC.md`](SPEC.md). This section reflects the project as of the date above; [`ROADMAP.md`](ROADMAP.md) has the current status.
 
-| Agenda feature | In our clone today | Suggested next step |
-| --- | --- | --- |
-| Items in many categories, hierarchy, inheritance | Done (R1–R5) | — |
-| Automatic filing by text | Done, by category name and short name (R10–R13) | — |
-| Editable views, typing into columns | Done (R20–R27) | Sorting and filters (R28) |
-| Guessing intent from the neighbouring item | Done (R12) | — |
-| Mutually exclusive categories | Done, including conflict dialogs (R7, R7a, R7b) | Done: no direct assignment to a category and its parent (R7c) |
-| Plain-language dates | Only when typed into a When column | Read dates from the item text, e.g. "call Bob next Friday" (R14) |
-| Conditions and actions | Only simple category-to-category links (R8) | Full conditions and actions (R15) |
-| Task dependencies | Not started | Add after R15 |
-| Importing and searching text | Not started | Search first (on the roadmap); import later |
+| Agenda feature                                   | In our clone today                              | Suggested next step                                              |
+| ------------------------------------------------ | ----------------------------------------------- | ---------------------------------------------------------------- |
+| Items in many categories, hierarchy, inheritance | Done (R1–R5)                                    | —                                                                |
+| Automatic filing by text                         | Done, by category name and short name (R10–R13) | —                                                                |
+| Editable views, typing into columns              | Done (R20–R27)                                  | Sorting and filters (R28)                                        |
+| Guessing intent from the neighbouring item       | Done (R12)                                      | —                                                                |
+| Mutually exclusive categories                    | Done, including conflict dialogs (R7, R7a, R7b) | No direct assignment to a category and its parent (R7c)          |
+| Plain-language dates                             | Done: read from item text and typed into When columns (R14) | Times of day and recurring dates (R14a) |
+| Conditions and actions                           | Only simple category-to-category links (R8)     | Full conditions and actions (R15)                                |
+| Task dependencies                                | Not started                                     | Add after R15                                                    |
+| Importing and searching text                     | Not started                                     | Search first (on the roadmap); import later                      |
 
 The history also gives a design lesson. Agenda's power came with a learning curve that drove casual users away within a month. Keep the clone's first minutes simple: the demo file, the F1 help and sensible defaults matter as much as features.
 
@@ -117,10 +117,10 @@ The history also gives a design lesson. Agenda's power came with a learning curv
 - [PC TAP Consumer Report #1: Personal Information Management Systems](https://mirrorservice.org/sites/www.bitsavers.org/pdf/us_epa/pc_tap/PC_TAP_Consumer_Report_%2301_Personal_Information_Managment_Systems_198908.pdf), US EPA, August 1989
 - [US patent 5,115,504, Information Management System](https://patents.google.com/patent/US5115504A/en), Belove et al., Lotus Development Corporation, 1992 (also in [`reference/`](reference/))
 - [Lotus Agenda 2.0 manuals](https://archive.org/details/lotus-agenda-users-guide) (User's Guide, Quick Start), Internet Archive
-- [Agenda: a personal information manager](https://cacm.acm.org/author/todd-r-drake/), Kaplan, Kapor, Belove, Landsman, Drake, *Communications of the ACM* 33(7), 1990 (bibliographic entry only)
-- [Lotus Agenda](https://en.wikipedia.org/wiki/Lotus_Agenda) and [Chandler (software)](https://en.wikipedia.org/wiki/Chandler_(software)), Wikipedia
+- [Agenda: a personal information manager](https://cacm.acm.org/author/todd-r-drake/), Kaplan, Kapor, Belove, Landsman, Drake, _Communications of the ACM_ 33(7), 1990 (bibliographic entry only)
+- [Lotus Agenda](https://en.wikipedia.org/wiki/Lotus_Agenda) and [Chandler (software)](<https://en.wikipedia.org/wiki/Chandler_(software)>), Wikipedia
 - [A Brief History of Lotus Agenda](https://www.palmtoppaper.com/ptphtml/43/43c00005.htm), The Palmtop Paper
 - ["Interesting Software" Update](https://fallows.substack.com/p/interesting-software-update), James Fallows
 - [Roam: My New Favorite Software Product](https://feld.com/archives/2020/11/roam-my-new-favorite-software-product/), Brad Feld, November 2020
 
-Not verified: James Fallows's 1992 review of Agenda in *The Atlantic*, which secondary sources describe; the original article could not be retrieved.
+Not verified: James Fallows's 1992 review of Agenda in _The Atlantic_, which secondary sources describe; the original article could not be retrieved.

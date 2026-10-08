@@ -4,11 +4,15 @@ defmodule Agenda.Store do
 
   A file is the database serialized with `:erlang.term_to_binary/1`,
   wrapped in a versioned envelope so the format can evolve.
+
+  Versions: 1 (initial); 2 adds `Item.when_explicit` and
+  `Database.auto_date` (R14). Older versions are upgraded on load by
+  filling new struct fields with their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 1
+  @format_version 2
   @extension ".agenda"
 
   def extension, do: @extension
@@ -33,14 +37,38 @@ defmodule Agenda.Store do
 
       try do
         case :erlang.binary_to_term(binary, [:safe]) do
-          {:agenda, @format_version, %Database{} = db} -> {:ok, db}
-          {:agenda, version, _} -> {:error, {:unsupported_version, version}}
-          _ -> {:error, :not_an_agenda_file}
+          {:agenda, version, %Database{} = db} when version in 1..@format_version ->
+            {:ok, upgrade(db)}
+
+          {:agenda, version, _} ->
+            {:error, {:unsupported_version, version}}
+
+          _ ->
+            {:error, :not_an_agenda_file}
         end
       rescue
         ArgumentError -> {:error, :not_an_agenda_file}
       end
     end
+  end
+
+  @doc """
+  Brings a database from any older format version up to date: every struct
+  is rebuilt so fields added since it was saved get their defaults.
+  """
+  @spec upgrade(Database.t()) :: Database.t()
+  def upgrade(%Database{} = db) do
+    alias Agenda.Core.{Category, Item, View}
+
+    db = struct(Database, Map.from_struct(db))
+
+    %{
+      db
+      | items: Map.new(db.items, fn {id, i} -> {id, struct(Item, Map.from_struct(i))} end),
+        categories:
+          Map.new(db.categories, fn {id, c} -> {id, struct(Category, Map.from_struct(c))} end),
+        views: Map.new(db.views, fn {id, v} -> {id, struct(View, Map.from_struct(v))} end)
+    }
   end
 
   defp ensure_modules_loaded do

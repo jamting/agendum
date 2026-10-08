@@ -62,7 +62,7 @@ defmodule Agenda.Core.AncestorTest do
     test "does not move an item up to an ancestor it already belongs to", %{db: db} do
       db = Database.update_category(db, cat(db, "Sales"), &%{&1 | match_name: true})
       {db, item} = Core.add_item(db, "quarterly numbers", today(), section: cat(db, "Joan"))
-      db = Core.edit_item(db, item, "quarterly Sales numbers")
+      db = Core.edit_item(db, item, "quarterly Sales numbers", today())
       assert names(db, item) == ["Joan"]
     end
   end

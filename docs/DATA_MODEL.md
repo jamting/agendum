@@ -33,6 +33,7 @@ erDiagram
         int next_id "shared id counter"
         int main_id "the MAIN category"
         map special "entry/when/done => category id"
+        bool auto_date "read When dates from item text"
     }
     ITEM {
         int id PK
@@ -41,6 +42,7 @@ erDiagram
         date entry "set on creation"
         date when "nil or a date"
         date done "nil or completion date"
+        bool when_explicit "When set by the user, not the text"
         bool marked
     }
     CATEGORY {
@@ -91,6 +93,7 @@ classDiagram
         +next_id : pos_integer
         +main_id : id
         +special : Map~entry/when/done, id~
+        +auto_date : boolean
     }
     class Item {
         +id : id
@@ -99,6 +102,7 @@ classDiagram
         +entry : Date
         +when : Date | nil
         +done : Date | nil
+        +when_explicit : boolean
         +marked : boolean
     }
     class Category {
@@ -209,7 +213,7 @@ or deleted (`Database.protected?/2`):
 |---|---|---|
 | MAIN (`db.main_id`) | standard | Root of the tree. **Every item** is a member; never linked. |
 | Entry (`db.special.entry`) | date | Item's `entry` date (set when created). |
-| When (`db.special.when`) | date | Item's `when` date (typed in a When column). |
+| When (`db.special.when`) | date | Item's `when` date: read from its text, or set explicitly (`when_explicit`), SPEC R14. |
 | Done (`db.special.done`) | date | Item's `done` date (F4). |
 
 Date categories are never linked. Their membership *is* the item's date
@@ -349,7 +353,7 @@ tests in `database_test.exs` and `links_test.exs`):
 
 ```mermaid
 flowchart LR
-    DB["%Database{}"] --> T["{:agenda, 1, db}<br/>versioned envelope"]
+    DB["%Database{}"] --> T["{:agenda, 2, db}<br/>versioned envelope"]
     T --> B[":erlang.term_to_binary(…, [:compressed])"]
     B --> TMP["file.agenda.tmp"]
     TMP -- "File.rename (atomic)" --> F["file.agenda"]
@@ -358,9 +362,14 @@ flowchart LR
 - **Loading** uses `binary_to_term(…, [:safe])`, which refuses unknown
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
-- **Versioning.** The `1` in the envelope is the format version. Adding a
-  field to a struct requires bumping it and migrating older versions in
-  `Store.load/1`. Old terms decode to structs *without* the new key.
+- **Versioning.** The number in the envelope is the format version:
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`
+  (R14). Old terms decode to structs *without* the new keys, so
+  `Store.load/1` accepts every version up to the current one and runs
+  `Store.upgrade/1`, which rebuilds each struct so new fields get their
+  defaults. Adding a field means bumping the version; a change that defaults
+  cannot express (a renamed or reshaped field) also needs a migration step
+  in `upgrade/1`. Files from a newer version are refused.
 - The format is not human-readable; a text export is on the roadmap.
   See [ADR 0003](adr/0003-file-format.md).
 

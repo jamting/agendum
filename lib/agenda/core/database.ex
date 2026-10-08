@@ -27,7 +27,8 @@ defmodule Agenda.Core.Database do
           links: Links.t(),
           next_id: id,
           main_id: id,
-          special: %{entry: id, when: id, done: id}
+          special: %{entry: id, when: id, done: id},
+          auto_date: boolean
         }
 
   defstruct items: %{},
@@ -38,7 +39,8 @@ defmodule Agenda.Core.Database do
             links: Links.new(),
             next_id: 1,
             main_id: nil,
-            special: %{}
+            special: %{},
+            auto_date: true
 
   @date_fields %{entry: :entry, when: :when, done: :done}
 

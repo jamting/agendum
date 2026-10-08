@@ -44,16 +44,53 @@ defmodule Agenda.Core do
         section -> Assign.assign(db, id, section)
       end
 
-    {Assign.auto_assign(db, id, Keyword.get(opts, :adjacent, [])), id}
+    db =
+      db
+      |> Assign.auto_assign(id, Keyword.get(opts, :adjacent, []))
+      |> date_from_text(id, nil, today)
+
+    {db, id}
   end
 
-  @doc "Changes an item's text and re-runs automatic assignment (it only adds assignments)."
-  @spec edit_item(db, id, String.t(), [id]) :: db
-  def edit_item(db, id, text, adjacent \\ []) do
+  @doc """
+  Changes an item's text, re-runs automatic assignment (it only adds
+  assignments) and updates a When date read from the text (R14).
+  """
+  @spec edit_item(db, id, String.t(), Date.t(), [id]) :: db
+  def edit_item(db, id, text, today, adjacent \\ []) do
+    old_text = db.items[id].text
+
     db
     |> Database.update_item(id, &%{&1 | text: String.trim(text)})
     |> Assign.auto_assign(id, adjacent)
+    |> date_from_text(id, old_text, today)
   end
+
+  # SPEC R14: the first date in an item's text is its When date, unless the
+  # user set one explicitly or turned automatic dating off. Relative dates
+  # are read once: after an edit the date is only re-read when the date
+  # words themselves changed (so "tomorrow" keeps meaning the day it was
+  # typed). Removing the date words clears a When date they gave.
+  defp date_from_text(db, id, old_text, today) do
+    item = db.items[id]
+
+    if not db.auto_date or item.when_explicit do
+      db
+    else
+      old = if old_text, do: DateParser.extract(old_text, today), else: :none
+
+      case {old, DateParser.extract(item.text, today)} do
+        {{:ok, _, phrase}, {:ok, _, phrase}} -> db
+        {_, {:ok, date, _}} -> Database.update_item(db, id, &%{&1 | when: date})
+        {{:ok, _, _}, :none} -> Database.update_item(db, id, &%{&1 | when: nil})
+        {:none, :none} -> db
+      end
+    end
+  end
+
+  @doc "Turns reading When dates from item text on or off for the file (R14)."
+  @spec toggle_auto_date(db) :: db
+  def toggle_auto_date(db), do: %{db | auto_date: not db.auto_date}
 
   @spec set_note(db, id, String.t()) :: db
   def set_note(db, id, note), do: Database.update_item(db, id, &%{&1 | note: note})
@@ -104,7 +141,7 @@ defmodule Agenda.Core do
   def remove_from_category(db, item_id, cat_id) do
     case Database.date_field(db, cat_id) do
       nil -> Assign.unassign(db, item_id, cat_id)
-      field -> Database.update_item(db, item_id, &Map.put(&1, field, nil))
+      field -> put_date(db, item_id, field, nil)
     end
   end
 
@@ -143,7 +180,7 @@ defmodule Agenda.Core do
       field = Database.date_field(db, head_id) ->
         case DateParser.parse(text, today) do
           {:ok, date} ->
-            {:ok, Database.update_item(db, item_id, &Map.put(&1, field, date)), :date}
+            {:ok, put_date(db, item_id, field, date), :date}
 
           :error ->
             {:error, :invalid_date}
@@ -168,8 +205,17 @@ defmodule Agenda.Core do
   @spec set_date(db, id, id, Date.t() | nil) :: db
   def set_date(db, item_id, cat_id, date) do
     field = Database.date_field(db, cat_id) || raise ArgumentError, "not a date category"
-    Database.update_item(db, item_id, &Map.put(&1, field, date))
+    put_date(db, item_id, field, date)
   end
+
+  # A When date set or cleared by the user: set is explicit and overrides
+  # the text; cleared hands the When date back to the text (R14).
+  defp put_date(db, item_id, :when, date) do
+    Database.update_item(db, item_id, &%{&1 | when: date, when_explicit: date != nil})
+  end
+
+  defp put_date(db, item_id, field, date),
+    do: Database.update_item(db, item_id, &Map.put(&1, field, date))
 
   # Exact (case-insensitive) match among descendants of `root`, else a
   # unique prefix match.
@@ -395,11 +441,15 @@ defmodule Agenda.Core do
 
   @doc """
   Re-runs automatic assignment for every item, e.g. after adding a category
-  (Agenda's F9 RECALC behaviour).
+  (Agenda's F9 RECALC behaviour), and gives a When date to items whose text
+  has a date but that have none yet.
   """
-  @spec reassign_all(db) :: db
-  def reassign_all(db) do
-    Enum.reduce(db.item_order, db, &Assign.auto_assign(&2, &1, []))
+  @spec reassign_all(db, Date.t()) :: db
+  def reassign_all(db, today) do
+    Enum.reduce(db.item_order, db, fn id, db ->
+      db = Assign.auto_assign(db, id, [])
+      if db.items[id].when, do: db, else: date_from_text(db, id, nil, today)
+    end)
   end
 
   # ---------------------------------------------------------------------------
