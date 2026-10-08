@@ -39,6 +39,7 @@ mix escript.build && ./agenda ~/work.agenda   # standalone binary
   properties (mutually exclusive children, short names, category links).
 - **ALT-D / ALT-R** add sections and columns. **F8** manages views.
   **F10** or **/** opens the menu.
+- **CTRL-Z / CTRL-Y** undo and redo. **CTRL-S** saves, **CTRL-Q** quits.
 - If your terminal swallows function keys, press **ESC then a digit**
   (ESC 9 = F9, ESC 0 = F10).
 - **F1** lists every key.

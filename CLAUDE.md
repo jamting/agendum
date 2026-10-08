@@ -57,6 +57,9 @@ Keep changes small and focused; one feature per commit.
 - Keys are decoded in `Agenda.TUI.Keys`. Function keys may be awkward in
   some terminals, so every F-key also works as ESC + digit, and ALT-Fn as
   ESC + shifted digit. Keep an alternative whenever you add a key.
+- Undo is automatic: any key that changes `state.db` records one step in
+  `TUI.History`. Do not record history by hand. Keep one user action = one
+  database change, so one undo reverses it.
 
 ## Testing the real terminal
 

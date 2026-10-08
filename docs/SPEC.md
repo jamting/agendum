@@ -123,6 +123,12 @@ sibling, CTRL-HOME/END = first/last.
 Terminal compatibility extras (not in the original): ESC+digit = F-key,
 ESC+shifted digit = ALT-F-key, CTRL-S save, CTRL-Q/CTRL-C quit, CTRL-D discard.
 
+- **R30 ✅ Undo/redo** (CTRL-Z / CTRL-Y, menu Undo/Redo). Every action that
+  changes the database is one undo step. Undo returns to the view and item
+  where the change happened. It is available in views and in the category and
+  view managers, but not while typing. Undoing back to the last save clears
+  the "modified" marker. History holds 100 steps.
+
 ## 6. Out of scope for now
 
 Macros, printing to a printer, import/export of structured files,

@@ -64,6 +64,8 @@ defmodule Agenda.TUI.Menu do
              {:toggle_view, :hide_inherited}}
           ]}
        ]},
+      {"Undo", "Undo the last change (CTRL-Z)", :undo},
+      {"Redo", "Redo the last undone change (CTRL-Y)", :redo},
       {"Print", "Print the current view to a text file", :export},
       {"Quit", "Leave Agenda", :quit}
     ]

@@ -33,6 +33,8 @@ defmodule Agenda.TUI.ViewManager do
   def handle(state, mode, key) do
     order = state.db.view_order
     count = length(order)
+    # undo can remove views while the manager is open
+    mode = %{mode | cursor: min(mode.cursor, count - 1)}
     view_id = Enum.at(order, mode.cursor)
 
     case key do

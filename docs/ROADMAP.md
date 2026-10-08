@@ -19,7 +19,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Property-based fuzzing of the UI (random key sequences never crash; frames always fill the screen)
 
 ## Milestone 2 — Fidelity
-- [ ] Undo (cheap: keep previous `Database` values in `State`)
+- [x] Undo / redo (R30)
 - [ ] Autocompletion while typing column entries (Agenda's AUTOC indicator)
 - [ ] Collapse/expand families in the category manager (ALT− / ALT+)
 - [ ] Item properties box (F6 on an item), as well as the profile

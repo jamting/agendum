@@ -6,6 +6,9 @@ defmodule Agenda.TUI.State do
   `modes` is a stack of overlays (menu, category manager, prompts...). An
   empty stack means the user is in the view itself. `edit` holds an inline
   edit in progress on whichever screen is active.
+
+  `undo` and `redo` hold snapshots for `Agenda.TUI.History`. `saved_db` is the
+  database as last saved or loaded; the file is dirty whenever `db` differs.
   """
 
   alias Agenda.Core.Database
@@ -27,7 +30,9 @@ defmodule Agenda.TUI.State do
           modes: [map],
           edit: map | nil,
           message: {atom, String.t()} | nil,
-          clipboard: Database.id() | nil,
+          undo: [map],
+          redo: [map],
+          saved_db: Database.t() | nil,
           effects: [term]
         }
 
@@ -45,7 +50,9 @@ defmodule Agenda.TUI.State do
             modes: [],
             edit: nil,
             message: nil,
-            clipboard: nil,
+            undo: [],
+            redo: [],
+            saved_db: nil,
             effects: []
 
   @spec new(Database.t(), keyword) :: t
@@ -56,7 +63,8 @@ defmodule Agenda.TUI.State do
       today: Keyword.fetch!(opts, :today),
       width: Keyword.get(opts, :width, 80),
       height: Keyword.get(opts, :height, 25),
-      view_id: hd(db.view_order)
+      view_id: hd(db.view_order),
+      saved_db: db
     }
   end
 

@@ -12,12 +12,30 @@ defmodule Agenda.TUI.Update do
 
   alias Agenda.Core
   alias Agenda.Core.{Database, ViewModel}
-  alias Agenda.TUI.{CategoryScreens, Layout, LineEdit, Menu, State, TextEdit, ViewManager}
+
+  alias Agenda.TUI.{
+    CategoryScreens,
+    History,
+    Layout,
+    LineEdit,
+    Menu,
+    State,
+    TextEdit,
+    ViewManager
+  }
 
   @spec handle(State.t(), term) :: {State.t(), [term]}
   def handle(%State{} = state, key) do
     state = %{state | message: nil, effects: []}
-    state = dispatch(state, State.mode(state), key)
+
+    next =
+      case global_key(state, key) do
+        :pass -> dispatch(state, State.mode(state), key)
+        handled -> handled
+      end
+
+    state = History.record(state, next)
+    state = %{state | dirty: state.db != state.saved_db}
 
     state =
       if state.modes == [] or match?(%{type: :move_item}, State.mode(state)),
@@ -27,10 +45,34 @@ defmodule Agenda.TUI.Update do
     {%{state | effects: []}, state.effects}
   end
 
+  # True while the user is typing text.
+  defp typing?(state) do
+    state.edit != nil or match?(%{type: t} when t in [:note, :prompt], State.mode(state))
+  end
+
+  # Undo and redo work the same on every screen that supports them. Returns
+  # :pass for other keys, or when the user is typing or answering a question.
+  defp global_key(state, key) do
+    top = State.mode(state)
+
+    cond do
+      typing?(state) or match?(%{type: t} when t in [:confirm, :menu, :help], top) -> :pass
+      key == {:ctrl, "z"} -> if undoable?(top), do: History.undo(state), else: :pass
+      key == {:ctrl, "y"} -> if undoable?(top), do: History.redo(state), else: :pass
+      true -> :pass
+    end
+  end
+
+  # Undo is offered where the screen does not depend on one particular item.
+  defp undoable?(nil), do: true
+  defp undoable?(%{type: t}), do: t in [:catmgr, :viewmgr]
+
   # --- results of effects -----------------------------------------------------
 
-  def saved(state, path, :ok),
-    do: State.info(%{state | path: path, dirty: false}, "Saved #{Path.basename(path)}")
+  def saved(state, path, :ok) do
+    %{state | path: path, dirty: false, saved_db: state.db}
+    |> State.info("Saved #{Path.basename(path)}")
+  end
 
   def saved(state, _path, {:error, reason}),
     do: State.error(state, "Could not save: #{inspect(reason)}")
@@ -483,7 +525,8 @@ defmodule Agenda.TUI.Update do
         width: state.width,
         height: state.height
       )
-      | dirty: true
+      | dirty: true,
+        saved_db: nil
     }
     |> State.info("New file #{Path.basename(path)} (not saved yet)")
   end
@@ -578,6 +621,8 @@ defmodule Agenda.TUI.Update do
   defp do_perform(state, :view_manager, _), do: ViewManager.open(state)
   defp do_perform(state, :category_manager, _), do: CategoryScreens.open_catmgr(state)
   defp do_perform(state, :help, _), do: State.push(state, %{type: :help})
+  defp do_perform(state, :undo, _), do: History.undo(state)
+  defp do_perform(state, :redo, _), do: History.redo(state)
 
   defp do_perform(state, :save, _) do
     if state.path,
