@@ -43,7 +43,7 @@ Rule numbers refer to `SPEC.md`.
 - [ ] Optional: read original `.AG` files (format undocumented; research)
 
 ## Housekeeping
-- [ ] Move the TUI's direct `Database` writes into `Agenda.Core` operations (see `DATA_ACCESS.md`, known exceptions)
+- [x] Move the TUI's direct `Database` writes into `Agenda.Core` operations (enforced by `architecture_test.exs`)
 - [ ] Decide what `toggle_exclusive/2` does to items already in several children (`DATA_MODEL.md`, invariant 5)
 
 ## Ideas

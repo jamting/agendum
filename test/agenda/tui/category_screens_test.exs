@@ -68,4 +68,17 @@ defmodule Agenda.TUI.CategoryScreensTest do
     state = press(state, [:ctrl_pgdn, :down, :home, :end])
     assert %{type: :picker} = Agenda.TUI.State.mode(state)
   end
+
+  test "category properties set a short name", %{state: state} do
+    # Meetings is last; the second property is the short name
+    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}, :down, :enter, "mtg", :enter])
+    assert state.db.categories[cat(state, "Meetings")].short_name == "mtg"
+  end
+
+  test "ALT-↓ in the view manager reorders views", %{state: state} do
+    state = press(state, [{:f, 8}, :insert, "People", :enter, "Contact", :enter])
+    people = state.view_id
+    state = press(state, [{:f, 8}, :up, {:alt, :down}])
+    assert List.first(state.db.view_order) == people
+  end
 end

@@ -28,7 +28,9 @@ A change is done when `mix check` passes. Do not leave warnings.
    returns styled lines. Only `Terminal`, `App`, `Store` and `CLI` touch the
    outside world. New side effects become new effect tuples handled in `App`.
 3. The TUI calls the core through `Agenda.Core` (the facade) and reads the
-   database through `Agenda.Core.Database` queries. Assignment rules live
+   database through `Agenda.Core.Database` queries. It never calls
+   `Database` write functions; `test/agenda/architecture_test.exs` fails if
+   it does. Add a facade function instead. Assignment rules live
    only in `Agenda.Core.Assign`; never re-implement them in the UI.
 4. Subsumption (membership in ancestors) is **computed, never stored**. Only
    explicit links are stored (`Agenda.Core.Links`).

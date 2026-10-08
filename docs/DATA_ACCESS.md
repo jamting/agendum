@@ -46,20 +46,11 @@ flowchart TB
 | `Core.Links` | The raw relation. Only `Database` touches it. | Read `db.links` directly elsewhere. |
 
 The UI reads freely through `Database` queries (e.g. `member?/3`,
-`hierarchy/1`). Writes should go through `Agenda.Core`.
-
-**Known exceptions (tech debt).** A few simple updates, with no rule to
-apply, currently call `Database` primitives from the TUI. They should move
-into `Agenda.Core` as named operations:
-
-| Where | Direct write |
-|---|---|
-| `CategoryScreens`: assignment profile | `Database.unlink/3` (toggle off a single link) |
-| `CategoryScreens`: change section head | `Database.update_view/3` |
-| `CategoryScreens`: category properties | `Database.update_category/3` for `also_assign` and `short_name` |
-| `Update`: notes | `Database.update_category/3` for a category note |
-| `Update`: move item (ALT-F10) | `Database.reorder_item/3` |
-| `ViewManager`: reorder views | edits `db.view_order` directly |
+`hierarchy/1`), but **every change goes through `Agenda.Core`**, even
+simple field updates with no rules. `test/agenda/architecture_test.exs`
+enforces this. It fails if any file under `lib/agenda/tui/` calls a
+`Database` write function (`insert_*`, `update_*`, `delete_*`, `link`,
+`unlink`, `reorder_item`, …) or updates the `db` struct directly.
 
 ## API by concern
 
@@ -70,6 +61,7 @@ into `Agenda.Core` as named operations:
 | `Core.add_item(db, text, today, section:, after:, adjacent:)` | write | Insert, assign to the section's category, then auto-assign. Returns `{db, id}`. |
 | `Core.edit_item(db, id, text, adjacent)` | write | Change text, then auto-assign again (only adds assignments). |
 | `Core.set_note/3`, `toggle_done/3`, `toggle_mark/2` | write | Field updates. |
+| `Core.move_item(db, id, from, to, after:)` | write | ALT-F10: leave `from`, join `to` (never MAIN), optionally reorder after an item. |
 | `Core.discard_item(db, id)` | write | Delete the item and all its links. |
 | `Database.item(db, id)` / `items(db)` | read | One item / all items in `item_order`. |
 | `Database.reorder_item(db, id, after_id)` | write | Move within `item_order`. |
@@ -84,6 +76,8 @@ into `Agenda.Core` as named operations:
 | `Core.discard_category(db, id)` | write | Delete the subtree, its links, and view references. |
 | `Core.move_category(db, id, parent, after)`, `promote/2`, `demote/2` | write | Restructure; `{:error, :cycle \| :protected \| :top_level \| :no_previous_sibling}`. |
 | `Core.toggle_exclusive/2`, `toggle_match_name/2` | write | Rule flags. |
+| `Core.set_short_name/3`, `set_category_note/3` | write | Properties; a blank short name clears it. |
+| `Core.toggle_also_assign(db, cat, target)` | write | Add/remove a category link. |
 | `Database.ancestors/2`, `descendants/2`, `subtree/2`, `depth/2` | read | Tree navigation (ancestors nearest first; descendants in pre-order). |
 | `Database.hierarchy(db)` | read | Whole tree as `[{id, depth}]` in pre-order (category manager). |
 | `Database.find_categories(db, name, root)` | read | Case-insensitive match on name or short name within a subtree. |
@@ -94,6 +88,7 @@ into `Agenda.Core` as named operations:
 | Function | Kind | Description |
 |---|---|---|
 | `Core.assign(db, item, cat)` | write | Explicit assignment with exclusivity and `also_assign` (see below). |
+| `Core.toggle_assignment(db, item, cat)` | write | Assignment profile: remove just that explicit link, or `assign`. |
 | `Core.assign_by_name(db, item, head, text, today)` | write | Typing in a column: date, exact name, unique prefix, or a new child. `{:ok, db, cat_id \| :date}`. |
 | `Core.remove_from_category(db, item, cat)` | write | Unlink the category's subtree (or clear the date). |
 | `Core.set_date(db, item, date_cat, date)` | write | Set or clear Entry/When/Done. |
@@ -110,7 +105,8 @@ into `Agenda.Core` as named operations:
 | Function | Kind | Description |
 |---|---|---|
 | `Core.add_view(db, name, section_ids)`, `rename_view/3`, `discard_view/2` | write | `discard_view` refuses the last view. |
-| `Core.add_section/4`, `remove_section/3`, `toggle_section_collapsed/3` | write | By index within the view. |
+| `Core.move_view(db, view, index)` | write | Reorder in the view manager (index clamped). |
+| `Core.add_section/4`, `remove_section/3`, `toggle_section_collapsed/3`, `set_section_category/4` | write | By index within the view. |
 | `Core.add_column/5`, `remove_column/3`, `resize_column/4` | write | By index within the view. |
 | `Core.toggle_view_option(db, view, :hide_done \| :hide_empty \| :hide_inherited)` | write | View filters. |
 | `Database.view/2`, `views/1` | read | One view / all in `view_order`. |

@@ -13,7 +13,7 @@ defmodule Agenda.TUI.CategoryScreens do
   """
 
   alias Agenda.Core
-  alias Agenda.Core.{Database, View}
+  alias Agenda.Core.Database
   alias Agenda.TUI.{LineEdit, State, TextEdit, Update}
 
   # --- opening -------------------------------------------------------------------
@@ -227,11 +227,8 @@ defmodule Agenda.TUI.CategoryScreens do
           Database.date_field(db, id) ->
             State.error(state, "Set dates by typing in a date column")
 
-          Database.explicit?(db, item_id, id) ->
-            State.change_db(state, Database.unlink(db, item_id, id))
-
           true ->
-            State.change_db(state, Core.assign(db, item_id, id))
+            State.change_db(state, Core.toggle_assignment(db, item_id, id))
         end
 
       _ ->
@@ -361,11 +358,7 @@ defmodule Agenda.TUI.CategoryScreens do
   end
 
   defp pick(state, {:change_section, sidx}, id) do
-    db =
-      Database.update_view(state.db, state.view_id, fn %View{} = v ->
-        %{v | sections: List.update_at(v.sections, sidx, &%{&1 | category_id: id})}
-      end)
-
+    db = Core.set_section_category(state.db, state.view_id, sidx, id)
     %{State.change_db(state, db) | cursor_key: {:section, sidx}}
   end
 
@@ -403,14 +396,7 @@ defmodule Agenda.TUI.CategoryScreens do
   end
 
   defp pick(state, {:also_assign, cat_id}, target) do
-    db =
-      Database.update_category(state.db, cat_id, fn c ->
-        if target in c.also_assign,
-          do: %{c | also_assign: List.delete(c.also_assign, target)},
-          else: %{c | also_assign: c.also_assign ++ [target]}
-      end)
-
-    State.change_db(state, db)
+    State.change_db(state, Core.toggle_also_assign(state.db, cat_id, target))
   end
 
   # --- category properties -----------------------------------------------------------------------
@@ -429,12 +415,7 @@ defmodule Agenda.TUI.CategoryScreens do
             commit(state, mode, {:rename, mode.cat_id}, text)
 
           :short_name ->
-            short = if String.trim(text) == "", do: nil, else: String.trim(text)
-
-            State.change_db(
-              state,
-              Database.update_category(state.db, mode.cat_id, &%{&1 | short_name: short})
-            )
+            State.change_db(state, Core.set_short_name(state.db, mode.cat_id, text))
         end
 
       _ ->

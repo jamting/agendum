@@ -87,8 +87,7 @@ defmodule Agenda.TUI.ViewManager do
     if target < 0 or target >= length(order) do
       state
     else
-      {id, rest} = List.pop_at(order, mode.cursor)
-      db = %{state.db | view_order: List.insert_at(rest, target, id)}
+      db = Core.move_view(state.db, Enum.at(order, mode.cursor), target)
       state |> State.change_db(db) |> State.put_mode(%{mode | cursor: target})
     end
   end

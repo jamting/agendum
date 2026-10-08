@@ -109,4 +109,77 @@ defmodule Agenda.CoreTest do
     db = Core.new_file()
     assert {:error, :duplicate} = Core.add_category(db, db.main_id, "when")
   end
+
+  describe "operations used by the TUI" do
+    setup do
+      db = with_categories(Core.new_file(), [{"Work", [], ["Calls"]}, "Home"])
+      %{db: db, work: cat(db, "Work"), calls: cat(db, "Calls"), home: cat(db, "Home")}
+    end
+
+    test "toggle_assignment removes only the explicit link, or assigns", %{
+      db: db,
+      work: work,
+      calls: calls
+    } do
+      {db, item} = Core.add_item(db, "x", today(), section: calls)
+      db = Core.assign(db, item, work)
+
+      db = Core.toggle_assignment(db, item, work)
+      refute Database.explicit?(db, item, work)
+      assert Database.explicit?(db, item, calls)
+
+      db = Core.toggle_assignment(db, item, work)
+      assert Database.explicit?(db, item, work)
+    end
+
+    test "move_item reassigns between sections and reorders", %{db: db, calls: calls, home: home} do
+      {db, a} = Core.add_item(db, "a", today(), section: home)
+      {db, b} = Core.add_item(db, "b", today(), section: calls)
+
+      db = Core.move_item(db, b, calls, home, after: nil)
+      assert Database.member?(db, b, home)
+      refute Database.member?(db, b, calls)
+      assert db.item_order == [a, b]
+
+      db = Core.move_item(db, a, home, home, after: b)
+      assert db.item_order == [b, a]
+    end
+
+    test "move_item never links MAIN", %{db: db, calls: calls} do
+      {db, item} = Core.add_item(db, "x", today(), section: calls)
+      db = Core.move_item(db, item, calls, db.main_id)
+      assert Database.explicit_categories(db, item) == MapSet.new()
+    end
+
+    test "set_short_name trims, and blank clears", %{db: db, home: home} do
+      db = Core.set_short_name(db, home, "  hm ")
+      assert db.categories[home].short_name == "hm"
+      assert Core.set_short_name(db, home, "  ").categories[home].short_name == nil
+    end
+
+    test "set_category_note", %{db: db, home: home} do
+      assert Core.set_category_note(db, home, "keys").categories[home].note == "keys"
+    end
+
+    test "toggle_also_assign adds and removes a link", %{db: db, home: home, work: work} do
+      db = Core.toggle_also_assign(db, home, work)
+      assert db.categories[home].also_assign == [work]
+      assert Core.toggle_also_assign(db, home, work).categories[home].also_assign == []
+    end
+
+    test "move_view reorders views, clamping the index", %{db: db, home: home} do
+      [first] = db.view_order
+      {db, second} = Core.add_view(db, "Second", [home])
+
+      assert Core.move_view(db, second, 0).view_order == [second, first]
+      assert Core.move_view(db, first, 99).view_order == [second, first]
+      assert Core.move_view(db, second, -5).view_order == [second, first]
+    end
+
+    test "set_section_category changes a section head", %{db: db, home: home} do
+      [view] = Database.views(db)
+      db = Core.set_section_category(db, view.id, 0, home)
+      assert [%{category_id: ^home}] = Database.view(db, view.id).sections
+    end
+  end
 end

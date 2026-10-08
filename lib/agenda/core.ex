@@ -58,6 +58,28 @@ defmodule Agenda.Core do
   @spec set_note(db, id, String.t()) :: db
   def set_note(db, id, note), do: Database.update_item(db, id, &%{&1 | note: note})
 
+  @doc """
+  Moves an item from one section's category to another (ALT-F10). The item
+  leaves `from` and joins `to` (MAIN is never left or joined explicitly).
+  With `after: item_id`, it is also placed after that item in item order.
+  """
+  @spec move_item(db, id, id, id, keyword) :: db
+  def move_item(db, item_id, from, to, opts \\ []) do
+    db =
+      if to == from do
+        db
+      else
+        db = if from == db.main_id, do: db, else: remove_from_category(db, item_id, from)
+        if to == db.main_id, do: db, else: Assign.assign(db, item_id, to)
+      end
+
+    case opts[:after] do
+      nil -> db
+      ^item_id -> db
+      after_id -> Database.reorder_item(db, item_id, after_id)
+    end
+  end
+
   @doc "Marks an item done today, or clears its done date (F4 DONE)."
   @spec toggle_done(db, id, Date.t()) :: db
   def toggle_done(db, id, today) do
@@ -89,6 +111,18 @@ defmodule Agenda.Core do
   @doc "Assigns an item to a category (with mutual exclusion and category links)."
   @spec assign(db, id, id) :: db
   defdelegate assign(db, item_id, cat_id), to: Assign
+
+  @doc """
+  Toggles one explicit assignment, as in the assignment profile: an
+  explicit link is removed (only that link, not the subtree); otherwise the
+  item is assigned with the usual rules.
+  """
+  @spec toggle_assignment(db, id, id) :: db
+  def toggle_assignment(db, item_id, cat_id) do
+    if Database.explicit?(db, item_id, cat_id),
+      do: Database.unlink(db, item_id, cat_id),
+      else: Assign.assign(db, item_id, cat_id)
+  end
 
   @doc """
   Handles text typed into a column cell for an item (claims 3 and 6 of the
@@ -224,6 +258,26 @@ defmodule Agenda.Core do
   def toggle_match_name(db, id),
     do: Database.update_category(db, id, &%{&1 | match_name: not &1.match_name})
 
+  @doc "Sets a category's short name (an alias for matching); blank clears it."
+  @spec set_short_name(db, id, String.t()) :: db
+  def set_short_name(db, id, text) do
+    short = if String.trim(text) == "", do: nil, else: String.trim(text)
+    Database.update_category(db, id, &%{&1 | short_name: short})
+  end
+
+  @spec set_category_note(db, id, String.t()) :: db
+  def set_category_note(db, id, note), do: Database.update_category(db, id, &%{&1 | note: note})
+
+  @doc "Adds `target` to a category's `also_assign` links, or removes it if present."
+  @spec toggle_also_assign(db, id, id) :: db
+  def toggle_also_assign(db, cat_id, target) do
+    Database.update_category(db, cat_id, fn c ->
+      if target in c.also_assign,
+        do: %{c | also_assign: List.delete(c.also_assign, target)},
+        else: %{c | also_assign: c.also_assign ++ [target]}
+    end)
+  end
+
   @doc """
   Re-runs automatic assignment for every item, e.g. after adding a category
   (Agenda's F9 RECALC behaviour).
@@ -246,6 +300,22 @@ defmodule Agenda.Core do
     do: Database.update_view(db, view_id, &%{&1 | name: String.trim(name)})
 
   defdelegate discard_view(db, view_id), to: Database, as: :delete_view
+
+  @doc "Moves a view to position `index` in the view manager (clamped)."
+  @spec move_view(db, id, integer) :: db
+  def move_view(db, view_id, index) do
+    rest = List.delete(db.view_order, view_id)
+    index = index |> max(0) |> min(length(rest))
+    %{db | view_order: List.insert_at(rest, index, view_id)}
+  end
+
+  @doc "Changes the category heading the section at `index`."
+  @spec set_section_category(db, id, non_neg_integer, id) :: db
+  def set_section_category(db, view_id, index, cat_id) do
+    Database.update_view(db, view_id, fn v ->
+      %{v | sections: List.update_at(v.sections, index, &%{&1 | category_id: cat_id})}
+    end)
+  end
 
   @doc "Inserts a section headed by `cat_id` at `index` in the view."
   @spec add_section(db, id, id, non_neg_integer) :: db

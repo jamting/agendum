@@ -484,23 +484,8 @@ defmodule Agenda.TUI.Update do
 
   defp drop_item(state, %{item_id: id, from: from}, row) do
     to = Enum.at(State.view(state).sections, row.sidx).category_id
-    db = state.db
-
-    db =
-      if to != from do
-        db = if from == db.main_id, do: db, else: Core.remove_from_category(db, id, from)
-        if to == db.main_id, do: db, else: Core.assign(db, id, to)
-      else
-        db
-      end
-
-    db =
-      case row do
-        %{kind: :item, item: %{id: ^id}} -> db
-        %{kind: :item, item: target} -> Database.reorder_item(db, id, target.id)
-        %{kind: :section} -> db
-      end
-
+    after_id = if row.kind == :item, do: row.item.id
+    db = Core.move_item(state.db, id, from, to, after: after_id)
     %{State.change_db(state, db) | cursor_key: {:item, row.sidx, id}}
   end
 
@@ -635,7 +620,7 @@ defmodule Agenda.TUI.Update do
         db =
           case mode.target do
             {:item, id} -> Core.set_note(state.db, id, text)
-            {:category, id} -> Database.update_category(state.db, id, &%{&1 | note: text})
+            {:category, id} -> Core.set_category_note(state.db, id, text)
           end
 
         if db == state.db, do: State.pop(state), else: state |> State.pop() |> State.change_db(db)
