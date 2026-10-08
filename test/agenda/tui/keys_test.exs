@@ -38,4 +38,8 @@ defmodule Agenda.TUI.KeysTest do
     assert Keys.decode("\e") == {[], "\e"}
     assert Keys.flush("\e") == [:esc]
   end
+
+  test "⌘↑ / ⌘↓ mappings (CTRL-HOME / CTRL-END) decode" do
+    assert Keys.decode("\e[1;5H\e[1;5F") == {[:ctrl_home, :ctrl_end], ""}
+  end
 end

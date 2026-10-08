@@ -18,6 +18,9 @@ defmodule Agenda.TUI.TextEdit do
   def handle(%__MODULE__{} = e, key) do
     line = current(e)
 
+    key =
+      Map.get(%{{:ctrl, "a"} => :home, {:ctrl, "e"} => :end, {:ctrl, "d"} => :delete}, key, key)
+
     case key do
       {:char, c} ->
         {before, rest} = String.split_at(line, e.col)

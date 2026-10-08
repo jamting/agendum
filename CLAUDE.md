@@ -56,7 +56,10 @@ Keep changes small and focused; one feature per commit.
 - Dates display as ISO 8601 (`DateParser.format/1` is the single place).
 - Keys are decoded in `Agenda.TUI.Keys`. Function keys may be awkward in
   some terminals, so every F-key also works as ESC + digit, and ALT-Fn as
-  ESC + shifted digit. Keep an alternative whenever you add a key.
+  ESC + shifted digit. Keep an alternative whenever you add a key: Mac
+  keyboards lack INS/HOME/END and terminals never pass ⌘, so every command
+  needs a CTRL (or ESC-prefixed) key. Document it in `docs/KEYBOARD.md` and
+  the F1 help. CTRL-I/M/H/[ are unusable (they are TAB/ENTER/BACKSPACE/ESC).
 - Undo is automatic: any key that changes `state.db` records one step in
   `TUI.History`. Do not record history by hand. Keep one user action = one
   database change, so one undo reverses it.
@@ -66,7 +69,7 @@ Keep changes small and focused; one feature per commit.
 Unit tests cover everything except the raw terminal. To smoke-test it without
 a human, drive the app through a pseudo-terminal (Python `pty`), send keys,
 and look at the output. In raw mode the tty must not intercept control keys;
-`Terminal` turns off `ixon`/`isig` for that reason.
+`Terminal` turns off `ixon`, `isig` and `iexten` for that reason.
 
 ## Reference material
 

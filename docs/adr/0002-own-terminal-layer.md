@@ -18,6 +18,7 @@ so only changed lines are rewritten.
 - Requires OTP ≥ 28. The project uses Elixir 1.20 / OTP 29.
 - We decode keys ourselves (`TUI.Keys`) and must handle terminal
   differences. ESC+digit aliases for function keys cover the hard cases.
-- Raw mode leaves `ixon`/`isig` on, so `Terminal` disables them with `stty`
-  on the tty device, so that CTRL-S/Q/C arrive as keys.
+- Raw mode leaves `ixon`, `isig` and `iexten` on, so `Terminal` disables
+  them with `stty` on the tty device. That way CTRL-S/Q/C/Z/O/V arrive as
+  keys, which the CTRL alternatives for Mac keyboards depend on.
 - Wide (CJK/emoji) characters are counted as width 1; acceptable for now.

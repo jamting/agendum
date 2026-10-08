@@ -27,6 +27,7 @@ defmodule Agenda.TUI.Update do
   @spec handle(State.t(), term) :: {State.t(), [term]}
   def handle(%State{} = state, key) do
     state = %{state | message: nil, effects: []}
+    key = normalize(state, key)
 
     next =
       case global_key(state, key) do
@@ -45,13 +46,30 @@ defmodule Agenda.TUI.Update do
     {%{state | effects: []}, state.effects}
   end
 
-  # True while the user is typing text.
+  # --- keyboard aliases -------------------------------------------------------
+  #
+  # Mac keyboards have no INS key, and terminals do not pass the Command key
+  # to programs, so every command also has a CTRL key (which a terminal can
+  # map ⌘ shortcuts to; see docs/KEYBOARD.md).
+
+  # True while the user is typing text, when CTRL keys act as editing keys.
   defp typing?(state) do
     state.edit != nil or match?(%{type: t} when t in [:note, :prompt], State.mode(state))
   end
 
-  # Undo and redo work the same on every screen that supports them. Returns
-  # :pass for other keys, or when the user is typing or answering a question.
+  defp normalize(state, key) do
+    case key do
+      {:ctrl, "n"} -> :insert
+      {:ctrl, "e"} -> if typing?(state), do: key, else: {:f, 2}
+      {:ctrl, "k"} -> if typing?(state), do: key, else: {:f, 4}
+      {:alt, :up} -> if State.mode(state) == nil, do: :ctrl_pgup, else: key
+      {:alt, :down} -> if State.mode(state) == nil, do: :ctrl_pgdn, else: key
+      _ -> key
+    end
+  end
+
+  # Commands that work the same on every screen. Returns :pass when the key
+  # is not one of them, or when the user is typing or answering a question.
   defp global_key(state, key) do
     top = State.mode(state)
 
@@ -59,6 +77,10 @@ defmodule Agenda.TUI.Update do
       typing?(state) or match?(%{type: t} when t in [:confirm, :menu, :help], top) -> :pass
       key == {:ctrl, "z"} -> if undoable?(top), do: History.undo(state), else: :pass
       key == {:ctrl, "y"} -> if undoable?(top), do: History.redo(state), else: :pass
+      key == {:ctrl, "s"} -> perform(state, :save)
+      key == {:ctrl, "o"} -> perform(state, :retrieve)
+      key == {:ctrl, "p"} and top == nil -> perform(state, :export)
+      key in [{:ctrl, "q"}, {:ctrl, "c"}] -> perform(state, :quit)
       true -> :pass
     end
   end
@@ -103,7 +125,7 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :prompt} = m, key), do: prompt_key(state, m, key)
   defp dispatch(state, %{type: :confirm} = m, key), do: confirm_key(state, m, key)
   defp dispatch(state, %{type: :note} = m, key), do: note_key(state, m, key)
-  defp dispatch(state, %{type: :help}, _key), do: State.pop(state)
+  defp dispatch(state, %{type: :help} = m, key), do: help_key(state, m, key)
   defp dispatch(state, %{type: :move_item} = m, key), do: move_key(state, m, key)
   defp dispatch(state, mode, key), do: CategoryScreens.handle(state, mode, key)
 
@@ -134,7 +156,7 @@ defmodule Agenda.TUI.Update do
       {:char, c} -> start_typing(state, row, c)
       :insert -> insert(state, row)
       :delete -> delete(state, row)
-      {:f, 1} -> State.push(state, %{type: :help})
+      {:f, 1} -> perform(state, :help)
       {:f, 2} -> edit(state, row)
       {:f, 3} -> choices(state, row)
       {:f, 4} -> on_item(state, row, &Core.toggle_done(&1, &2, state.today))
@@ -151,9 +173,6 @@ defmodule Agenda.TUI.Update do
       {:alt, "u"} -> perform(state, :section_above)
       {:alt, "r"} -> perform(state, :column_right)
       {:alt, "l"} -> perform(state, :column_left)
-      {:ctrl, "s"} -> perform(state, :save)
-      {:ctrl, "q"} -> perform(state, :quit)
-      {:ctrl, "c"} -> perform(state, :quit)
       _ -> state
     end
   end
@@ -425,6 +444,26 @@ defmodule Agenda.TUI.Update do
       else: State.info(state, "Also assigned to: " <> Enum.join(added, ", "))
   end
 
+  # --- help -------------------------------------------------------------------
+
+  defp help_key(state, mode, key) do
+    page = State.body_height(state)
+    last = max(Agenda.TUI.Render.help_line_count() - page, 0)
+
+    top =
+      case key do
+        :up -> mode.top - 1
+        :down -> mode.top + 1
+        :pgup -> mode.top - page
+        k when k in [:pgdn, {:char, " "}] -> mode.top + page
+        _ -> :close
+      end
+
+    if top == :close,
+      do: State.pop(state),
+      else: State.put_mode(state, %{mode | top: top |> min(last) |> max(0)})
+  end
+
   # --- moving an item between sections (ALT-F10) --------------------------------
 
   defp move_key(state, mode, key) do
@@ -620,7 +659,7 @@ defmodule Agenda.TUI.Update do
   defp do_perform(state, :menu, _row), do: Menu.open(state)
   defp do_perform(state, :view_manager, _), do: ViewManager.open(state)
   defp do_perform(state, :category_manager, _), do: CategoryScreens.open_catmgr(state)
-  defp do_perform(state, :help, _), do: State.push(state, %{type: :help})
+  defp do_perform(state, :help, _), do: State.push(state, %{type: :help, top: 0})
   defp do_perform(state, :undo, _), do: History.undo(state)
   defp do_perform(state, :redo, _), do: History.redo(state)
 

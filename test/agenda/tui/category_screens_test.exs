@@ -60,4 +60,12 @@ defmodule Agenda.TUI.CategoryScreensTest do
     assert screen(state) =~ ~r/Contact/
     assert state.modes == []
   end
+
+  test "navigating an empty category box does not crash", %{state: state} do
+    # Meetings has no subcategories: its column choices box is empty
+    state = press(state, [:down, {:alt, "r"}, "Meet", :enter, {:f, 3}])
+    assert screen(state) =~ "no categories yet"
+    state = press(state, [:ctrl_pgdn, :down, :home, :end])
+    assert %{type: :picker} = Agenda.TUI.State.mode(state)
+  end
 end

@@ -10,9 +10,9 @@ defmodule Agenda.TUI.Terminal do
   def start do
     case :shell.start_interactive({:noshell, :raw}) do
       :ok ->
-        # let CTRL-S / CTRL-Q / CTRL-C reach us as keys instead of acting
-        # as XOFF / XON / SIGINT
-        stty("-ixon -isig")
+        # let CTRL-S / CTRL-Q / CTRL-C / CTRL-O / CTRL-V reach us as keys
+        # instead of acting as XOFF / XON / SIGINT / discard / literal-next
+        stty("-ixon -isig -iexten")
         # alternate screen, hide cursor, clear
         IO.write("\e[?1049h\e[?25l\e[2J")
         :ok
@@ -25,7 +25,7 @@ defmodule Agenda.TUI.Terminal do
   @spec stop() :: :ok
   def stop do
     IO.write("\e[0m\e[2J\e[?25h\e[?1049l")
-    stty("ixon isig")
+    stty("ixon isig iexten")
     :ok
   end
 

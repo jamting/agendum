@@ -20,6 +20,7 @@ Rule numbers refer to `SPEC.md`.
 
 ## Milestone 2 — Fidelity
 - [x] Undo / redo (R30)
+- [x] Mac-friendly keys: CTRL alternatives for INS and F-keys, Mac editing keys, ⌘ mapping guide (R31)
 - [ ] Autocompletion while typing column entries (Agenda's AUTOC indicator)
 - [ ] Collapse/expand families in the category manager (ALT− / ALT+)
 - [ ] Item properties box (F6 on an item), as well as the profile

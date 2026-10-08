@@ -7,10 +7,33 @@ defmodule Agenda.TUI.LineEdit do
   @spec new(String.t()) :: t
   def new(text \\ ""), do: %__MODULE__{text: text, pos: String.length(text)}
 
+  # Mac and emacs conventions: ⌘←/⌘→ arrive as CTRL-A/CTRL-E in many
+  # terminals, ⌥←/⌥→ as ALT-B/ALT-F or ALT-arrows, ⌘⌫ as CTRL-U.
+  @aliases %{
+    {:ctrl, "a"} => :home,
+    {:ctrl, "e"} => :end,
+    {:ctrl, "b"} => :left,
+    {:ctrl, "f"} => :right,
+    {:ctrl, "d"} => :delete,
+    {:alt, "b"} => :ctrl_left,
+    {:alt, "f"} => :ctrl_right,
+    {:alt, :left} => :ctrl_left,
+    {:alt, :right} => :ctrl_right
+  }
+
   @doc "Applies a key; returns `{:ok, edit}` or `:unhandled`."
   @spec handle(t, term) :: {:ok, t} | :unhandled
   def handle(%__MODULE__{} = e, key) do
-    case key do
+    case Map.get(@aliases, key, key) do
+      {:ctrl, "k"} ->
+        {:ok, %{e | text: String.slice(e.text, 0, e.pos)}}
+
+      k when k in [{:ctrl, "w"}, {:alt, :backspace}] ->
+        start = word_left(e)
+        {before, _} = String.split_at(e.text, start)
+        {_, rest} = String.split_at(e.text, e.pos)
+        {:ok, %{e | text: before <> rest, pos: start}}
+
       {:char, c} ->
         {:ok, insert(e, c)}
 

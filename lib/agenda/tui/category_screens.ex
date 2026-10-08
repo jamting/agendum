@@ -78,6 +78,12 @@ defmodule Agenda.TUI.CategoryScreens do
     end
   end
 
+  @nav_keys [:up, :down, :pgup, :pgdn, :home, :end, :ctrl_home, :ctrl_end, :ctrl_pgup, :ctrl_pgdn]
+
+  # An empty list (e.g. choices for a column head with no subcategories yet)
+  # has nothing to move to.
+  defp navigate(_state, mode, [], key) when key in @nav_keys, do: {:moved, mode}
+
   defp navigate(state, mode, rows, key) do
     count = length(rows)
     id = current_id(rows, mode)
@@ -132,7 +138,7 @@ defmodule Agenda.TUI.CategoryScreens do
         State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(rows) - 1)})
 
       {:f, 1} ->
-        State.push(state, %{type: :help})
+        State.push(state, %{type: :help, top: 0})
 
       :insert ->
         new_category(state, id, "")

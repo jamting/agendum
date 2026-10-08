@@ -120,14 +120,18 @@ Category manager navigation (from the manual): ↑/BACKSPACE, ↓/ENTER,
 HOME = parent, END = last of family, CTRL-PGUP/PGDN = previous/next
 sibling, CTRL-HOME/END = first/last.
 
-Terminal compatibility extras (not in the original): ESC+digit = F-key,
-ESC+shifted digit = ALT-F-key, CTRL-S save, CTRL-Q/CTRL-C quit, CTRL-D discard.
+Extras that are not in the original (details in `KEYBOARD.md`):
 
 - **R30 ✅ Undo/redo** (CTRL-Z / CTRL-Y, menu Undo/Redo). Every action that
   changes the database is one undo step. Undo returns to the view and item
   where the change happened. It is available in views and in the category and
   view managers, but not while typing. Undoing back to the last save clears
   the "modified" marker. History holds 100 steps.
+- **R31 ✅ Keyboard alternatives.** ESC+digit = F-key, ESC+shifted digit =
+  ALT-F-key. CTRL-N = INS, CTRL-E = F2, CTRL-K = F4, CTRL-D = discard,
+  CTRL-S/O/P/Q = save/open/print/quit. ⌥↑/⌥↓ jump between sections. Text
+  fields use Mac/emacs editing keys. ⌘ shortcuts are mapped onto these CTRL
+  keys by the terminal.
 
 ## 6. Out of scope for now
 

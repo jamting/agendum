@@ -166,7 +166,13 @@ defmodule Agenda.TUI.Render do
     keys =
       cond do
         state.edit != nil ->
-          [{"ENTER", "Done"}, {"ESC", "Cancel"}, {"←→", "Move"}, {"^U", "Clear"}]
+          [
+            {"ENTER", "Done"},
+            {"ESC", "Cancel"},
+            {"←→", "Move"},
+            {"^A/^E", "Start/End"},
+            {"^U", "Clear"}
+          ]
 
         true ->
           mode_keys(State.mode(state))
@@ -199,7 +205,7 @@ defmodule Agenda.TUI.Render do
       {"F6", "Props"},
       {"F7", "Promote"},
       {"F8", "Demote"},
-      {"INS", "Add"},
+      {"INS/^N", "Add"},
       {"DEL", "Discard"},
       {"A-F10", "Move"},
       {"ESC", "Return"}
@@ -225,7 +231,7 @@ defmodule Agenda.TUI.Render do
   defp mode_keys(%{type: :menu}),
     do: [{"←→", "Highlight"}, {"ENTER", "Select"}, {"letter", "Select"}, {"ESC", "Back"}]
 
-  defp mode_keys(%{type: :help}), do: [{"any key", "Return"}]
+  defp mode_keys(%{type: :help}), do: [{"↑↓", "Scroll"}, {"any other key", "Return"}]
 
   defp mode_keys(%{type: :move_item}),
     do: [{"↑↓", "Choose position"}, {"ENTER", "Move here"}, {"ESC", "Cancel"}]
@@ -238,7 +244,7 @@ defmodule Agenda.TUI.Render do
   defp body(state, nil), do: fit(view_lines(state), state)
   defp body(state, %{type: :catmgr} = mode), do: fit(catmgr_lines(state, mode), state)
   defp body(state, %{type: :viewmgr} = mode), do: fit(viewmgr_lines(state, mode), state)
-  defp body(state, %{type: :help}), do: fit(help_lines(), state)
+  defp body(state, %{type: :help} = mode), do: fit(Enum.drop(help_lines(), mode.top), state)
   defp body(state, %{type: :note} = mode), do: fit(note_lines(state, mode), state)
 
   defp fit(lines, state) do
@@ -471,31 +477,59 @@ defmodule Agenda.TUI.Render do
   # --- help ------------------------------------------------------------------------------------------
 
   @help """
-   AGENDA KEYS
-   In a view                                    In the category manager (F9)
-     Type          Add an item (or column entry)  Type / INS  Add a category below
-     INS           Add an item / column entry     F2          Rename
-     F2            Edit item, section, entry      F7 / F8     Promote / demote
-     F3            Choices for a column / item    ALT-↑ ALT-↓ Reorder among siblings
-     F4            Mark item done                 ALT-F10     Move under another parent
-     F5            Note                           DEL         Discard category
-     F6            Properties / assignments       F6          Properties (exclusive, ...)
-     F7            Mark item                      ESC / F9    Return to the view
-     F8            View manager
-     F9            Category manager             Function keys can also be typed as
-     F10 or /      Menu                           ESC then digit (ESC 1 = F1 ... ESC 0 = F10)
-     DEL           Remove from section/column     and ESC !..) for ALT-F1..ALT-F10.
-     ALT-F4 / ^D   Discard item
+   AGENDA KEYS                     (↑↓ PGUP PGDN scroll · any other key returns)
+
+   In a view                         Mac / no-INS alternative
+     Type          Add an item, or an entry in the highlighted column
+     INS           New item / extra column entry   CTRL-N
+     F2            Edit item, section head, entry  CTRL-E
+     F3            Choices for a column / item
+     F4            Mark item done                  CTRL-K
+     F5            Note
+     F6            Properties / assignments        ESC 6
+     F7            Mark item
+     F8 / F9       View manager / category manager
+     F10 or /      Menu
+     DEL           Remove from section or column   fn-⌫
+     ALT-F4        Discard item                    CTRL-D
      ALT-F10       Move item to another section
      ALT-D / ALT-U Add section below / above
      ALT-R / ALT-L Add column right / left
      ←→ TAB        Move between item and columns
-     ^S Save   ^Q Quit
+     CTRL-PGUP/DN  Previous / next section         ⌥↑ / ⌥↓
+
+   Everywhere
+     CTRL-Z / CTRL-Y   Undo / redo
+     CTRL-S            Save              CTRL-O   Open (retrieve) a file
+     CTRL-P            Print to file     CTRL-Q   Quit
+
+   In the category manager (F9)
+     Type / INS    Add a category below            CTRL-N
+     F2            Rename                          CTRL-E
+     F7 / F8       Promote / demote
+     ALT-↑ ALT-↓   Reorder among siblings          ⌥↑ / ⌥↓
+     ALT-F10       Move under another parent
+     DEL           Discard category                CTRL-D
+     F6            Properties (exclusive, short name, links)
+     ESC / F9      Return to the view
+
+   While typing
+     ←→ HOME END   Move          CTRL-A / CTRL-E   Start / end of line
+     ⌥← ⌥→         Word left / right
+     CTRL-K        Delete to end  CTRL-W / ⌥⌫      Delete word   CTRL-U  Clear
+
+   Function keys can also be typed as ESC then a digit (ESC 1 = F1 ...
+   ESC 0 = F10), and ALT-F1..ALT-F10 as ESC then a shifted digit (! .. )).
+   ⌘ shortcuts (⌘N, ⌘Z, ⌘S ...) work once your terminal maps them to the
+   CTRL keys above; see docs/KEYBOARD.md.
 
    Items are assigned to the section they are typed in, and automatically to
    any category whose name (or short name) appears in their text. Typing a
    name in a column assigns the item to that subcategory, creating it if new.
   """
+
+  @doc false
+  def help_line_count, do: @help |> String.split("\n") |> length()
 
   defp help_lines, do: @help |> String.split("\n") |> Enum.map(&[{:normal, &1}])
 

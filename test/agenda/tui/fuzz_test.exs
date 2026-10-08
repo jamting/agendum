@@ -35,7 +35,17 @@ defmodule Agenda.TUI.FuzzTest do
     {:alt_f, 4},
     {:alt_f, 10},
     {:ctrl, "u"},
-    {:ctrl, "d"}
+    {:ctrl, "d"},
+    {:ctrl, "z"},
+    {:ctrl, "z"},
+    {:ctrl, "y"},
+    {:ctrl, "n"},
+    {:ctrl, "e"},
+    {:ctrl, "k"},
+    {:ctrl, "a"},
+    {:ctrl, "w"},
+    {:alt, "b"},
+    {:alt, :backspace}
   ]
 
   defp key do

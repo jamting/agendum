@@ -40,8 +40,10 @@ mix escript.build && ./agenda ~/work.agenda   # standalone binary
 - **ALT-D / ALT-R** add sections and columns. **F8** manages views.
   **F10** or **/** opens the menu.
 - **CTRL-Z / CTRL-Y** undo and redo. **CTRL-S** saves, **CTRL-Q** quits.
-- If your terminal swallows function keys, press **ESC then a digit**
-  (ESC 9 = F9, ESC 0 = F10).
+- On a Mac: **CTRL-N** replaces INS (new item/category), **CTRL-E** = F2 edit,
+  and **ESC then a digit** replaces a function key (ESC 9 = F9, ESC 0 = F10).
+  To use ⌘N, ⌘Z, ⌘S and so on, map them in your terminal; see
+  [`docs/KEYBOARD.md`](docs/KEYBOARD.md).
 - **F1** lists every key.
 
 ## Development
