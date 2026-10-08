@@ -1,0 +1,664 @@
+defmodule Agenda.TUI.Render do
+  @moduledoc """
+  Turns a `State` into a screen (a list of styled lines). Pure.
+
+  Screen layout, after Agenda 2.0:
+
+      line 0      title bar: file, view, indicators, date
+      lines 1–2   control panel: menu, prompts, messages, context
+      lines 3..   body: the view, or a full-screen manager
+      last line   function key bar
+  """
+
+  alias Agenda.Core.{Database, DateParser}
+  alias Agenda.TUI.{CategoryScreens, Draw, Layout, Menu, State}
+
+  @full_screen [:catmgr, :viewmgr, :help, :note]
+  @boxes [:picker, :profile, :props]
+
+  @spec render(State.t()) :: [Draw.line()]
+  def render(%State{width: w} = state) do
+    {base, overlays} = split_modes(state.modes)
+    body = body(state, base)
+    body = Enum.reduce(overlays, body, &overlay_box(state, &1, &2))
+
+    [title_bar(state, base)] ++
+      control_panel(state) ++
+      Enum.map(body, &Draw.line(&1, w)) ++
+      [keybar(state)]
+  end
+
+  # The base is the topmost full-screen mode (or the view); boxes above it
+  # are drawn on top, bottom-up.
+  defp split_modes(modes) do
+    {above, rest} = Enum.split_while(modes, &(&1.type not in @full_screen))
+    base = List.first(rest)
+    {base, above |> Enum.filter(&(&1.type in @boxes)) |> Enum.reverse()}
+  end
+
+  # --- title bar -------------------------------------------------------------------
+
+  defp title_bar(state, base) do
+    file = if state.path, do: Path.basename(state.path), else: "(untitled)"
+    file = if state.dirty, do: file <> " *", else: file
+    view = State.view(state)
+
+    hides =
+      [
+        {view.hide_done, "[Hide Done]"},
+        {view.hide_empty, "[Hide Empty]"},
+        {view.hide_inherited, "[Hide Inherited]"}
+      ]
+      |> Enum.filter(&elem(&1, 0))
+      |> Enum.map_join(" ", &elem(&1, 1))
+
+    marked = if Enum.any?(Database.items(state.db), & &1.marked), do: "♦ ", else: ""
+
+    right =
+      String.trim("#{hides} #{marked}#{indicator(state, base)}  #{Date.to_iso8601(state.today)} ")
+
+    left = " File: #{file}"
+    middle = "View: #{view.name}"
+    gap = max(state.width - String.length(left) - String.length(right), 0)
+    mid = Draw.center(middle, gap)
+
+    Draw.line([{:title, left}, {:title, mid}, {:indicator, right}], state.width, :title)
+  end
+
+  defp indicator(state, base) do
+    top = State.mode(state)
+
+    cond do
+      state.edit != nil -> "EDIT"
+      top && top.type == :menu -> "MENU"
+      top && top.type == :move_item -> "MOVE"
+      top && top.type == :picker -> "CHOICES"
+      top && top.type == :profile -> "ASSIGN"
+      top && top.type == :props -> "PROPS"
+      base && base.type == :catmgr -> "CAT MGR"
+      base && base.type == :viewmgr -> "VW MGR"
+      base && base.type == :note -> "NOTE"
+      base && base.type == :help -> "HELP"
+      true -> "READY"
+    end
+  end
+
+  # --- control panel --------------------------------------------------------------------
+
+  defp control_panel(%State{width: w} = state) do
+    {l1, l2} =
+      case State.mode(state) do
+        %{type: :menu} = m ->
+          menu_lines(m)
+
+        %{type: :prompt, label: label} ->
+          {[{:prompt, " #{label} "}] ++
+             field(state.edit.line, w - String.length(label) - 3, :edit),
+           [{:dim, " ENTER accepts, ESC cancels"}]}
+
+        %{type: :confirm, question: q} ->
+          {[{:prompt, " " <> q}], []}
+
+        _ ->
+          {message_line(state), context_line(state)}
+      end
+
+    [Draw.line(l1, w), Draw.line(l2, w)]
+  end
+
+  defp message_line(%State{message: {:error, text}}), do: [{:error, " #{text} "}]
+  defp message_line(%State{message: {:message, text}}), do: [{:message, " " <> text}]
+
+  defp message_line(%State{edit: %{target: target}, modes: []}) do
+    hint =
+      case target do
+        {:new_item, _, _} -> "Type the new item; ENTER to finish, ESC to cancel"
+        {:edit_item, _} -> "Edit the item; ENTER to finish, ESC to cancel"
+        {:rename_category, _} -> "Edit the category name; ENTER to finish"
+        {:column_entry, _, _, :add} -> "Enter an additional category for this column"
+        {:column_entry, _, _, _} -> "Enter category name (or date); ENTER to assign"
+      end
+
+    [{:dim, " " <> hint}]
+  end
+
+  defp message_line(_), do: []
+
+  defp context_line(%State{modes: []} = state) do
+    case Layout.current_row(state) do
+      %{kind: :item, item: item} ->
+        names =
+          state.db
+          |> Database.explicit_categories(item.id)
+          |> Enum.sort()
+          |> Enum.map_join(", ", &state.db.categories[&1].name)
+
+        [{:dim, " Assigned to: " <> if(names == "", do: "(MAIN only)", else: names)}]
+
+      %{kind: :section, category: cat, count: count} ->
+        [{:dim, " Section: #{cat.name} (#{count} item#{if count == 1, do: "", else: "s"})"}]
+
+      nil ->
+        [{:dim, " This view has no sections. Press ALT-D to add one."}]
+    end
+  end
+
+  defp context_line(_), do: []
+
+  defp menu_lines(mode) do
+    entries = Menu.entries(mode)
+
+    l1 =
+      entries
+      |> Enum.with_index()
+      |> Enum.flat_map(fn {{label, _, _}, i} ->
+        [{if(i == mode.selected, do: :menu_selected, else: :menu), " #{label} "}, {:menu, " "}]
+      end)
+
+    {_, desc, children} = Enum.at(entries, mode.selected)
+    l2 = if is_list(children), do: Enum.map_join(children, "  ", &elem(&1, 0)), else: desc
+    {[{:menu, " "} | l1], [{:menu_help, " " <> l2}]}
+  end
+
+  # --- key bar -----------------------------------------------------------------------------
+
+  defp keybar(state) do
+    keys =
+      cond do
+        state.edit != nil ->
+          [{"ENTER", "Done"}, {"ESC", "Cancel"}, {"←→", "Move"}, {"^U", "Clear"}]
+
+        true ->
+          mode_keys(State.mode(state))
+      end
+
+    segments =
+      Enum.flat_map(keys, fn {k, label} -> [{:keybar_key, " " <> k}, {:keybar, " " <> label}] end)
+
+    Draw.line(segments, state.width, :keybar)
+  end
+
+  defp mode_keys(nil),
+    do: [
+      {"F1", "Help"},
+      {"F2", "Edit"},
+      {"F3", "Choices"},
+      {"F4", "Done"},
+      {"F5", "Note"},
+      {"F6", "Props"},
+      {"F7", "Mark"},
+      {"F8", "VwMgr"},
+      {"F9", "CatMgr"},
+      {"F10", "Menu"}
+    ]
+
+  defp mode_keys(%{type: :catmgr}),
+    do: [
+      {"F2", "Edit"},
+      {"F5", "Note"},
+      {"F6", "Props"},
+      {"F7", "Promote"},
+      {"F8", "Demote"},
+      {"INS", "Add"},
+      {"DEL", "Discard"},
+      {"A-F10", "Move"},
+      {"ESC", "Return"}
+    ]
+
+  defp mode_keys(%{type: :viewmgr}),
+    do: [
+      {"ENTER", "Select"},
+      {"INS", "Add"},
+      {"F2", "Rename"},
+      {"DEL", "Discard"},
+      {"A-↑↓", "Reorder"},
+      {"ESC", "Return"}
+    ]
+
+  defp mode_keys(%{type: :picker}),
+    do: [{"ENTER", "Select"}, {"INS", "New category"}, {"type", "Search"}, {"ESC", "Cancel"}]
+
+  defp mode_keys(%{type: :profile}), do: [{"SPACE", "Assign/Unassign"}, {"ESC", "Return"}]
+  defp mode_keys(%{type: :props}), do: [{"ENTER", "Change"}, {"ESC", "Return"}]
+  defp mode_keys(%{type: :note}), do: [{"ESC", "Return"}, {"F5", "Return"}]
+
+  defp mode_keys(%{type: :menu}),
+    do: [{"←→", "Highlight"}, {"ENTER", "Select"}, {"letter", "Select"}, {"ESC", "Back"}]
+
+  defp mode_keys(%{type: :help}), do: [{"any key", "Return"}]
+
+  defp mode_keys(%{type: :move_item}),
+    do: [{"↑↓", "Choose position"}, {"ENTER", "Move here"}, {"ESC", "Cancel"}]
+
+  defp mode_keys(%{type: :prompt}), do: [{"ENTER", "Accept"}, {"ESC", "Cancel"}]
+  defp mode_keys(%{type: :confirm}), do: [{"Y", "Yes"}, {"N", "No"}, {"ESC", "Cancel"}]
+
+  # --- body ------------------------------------------------------------------------------------
+
+  defp body(state, nil), do: fit(view_lines(state), state)
+  defp body(state, %{type: :catmgr} = mode), do: fit(catmgr_lines(state, mode), state)
+  defp body(state, %{type: :viewmgr} = mode), do: fit(viewmgr_lines(state, mode), state)
+  defp body(state, %{type: :help}), do: fit(help_lines(), state)
+  defp body(state, %{type: :note} = mode), do: fit(note_lines(state, mode), state)
+
+  defp fit(lines, state) do
+    h = State.body_height(state)
+    lines = Enum.take(lines, h)
+    lines ++ List.duplicate([], h - length(lines))
+  end
+
+  # --- the view ----------------------------------------------------------------------------------
+
+  defp view_lines(state) do
+    rows = Layout.rows(state)
+    tw = Layout.text_width(state)
+    columns = State.view(state).columns
+    editing = state.modes == [] && state.edit
+
+    rows
+    |> Enum.with_index()
+    |> Enum.flat_map(fn {row, index} ->
+      selected = index == state.cursor
+      lines = row_lines(state, row, index, selected, editing, tw, columns)
+
+      case editing do
+        %{target: {:new_item, _, key}} when selected and key == row.key ->
+          lines ++ [[{:symbol, " • "}] ++ field(editing.line, tw, :edit) ++ blank_cells(columns)]
+
+        _ ->
+          lines
+      end
+    end)
+    |> Enum.drop(state.scroll)
+  end
+
+  defp row_lines(state, %{kind: :section} = row, index, selected, editing, tw, columns) do
+    cat = row.category
+    style = if selected and state.col == 0, do: :cursor, else: :section
+
+    name_part =
+      case editing do
+        %{target: {:rename_category, id}} when selected and id == cat.id ->
+          [{:normal, " "}] ++ field(editing.line, tw + 1, :edit)
+
+        _ ->
+          suffix = if row.collapsed, do: " §#{row.count}", else: ""
+          [{:normal, " "}, {style, Draw.pad(cat.name <> suffix, tw + 1)}]
+      end
+
+    heads =
+      Enum.flat_map(columns, fn c ->
+        [
+          {:normal, " "},
+          {:column_head, Draw.pad(state.db.categories[c.category_id].name, c.width)}
+        ]
+      end)
+
+    head = name_part ++ heads
+    if index == 0, do: [head], else: [[], head]
+  end
+
+  defp row_lines(state, %{kind: :item, item: item} = row, _index, selected, editing, tw, columns) do
+    symbol =
+      cond do
+        item.done -> "√"
+        item.marked -> "♦"
+        true -> "•"
+      end
+
+    note = if item.note != "", do: "♪", else: " "
+    text_style = if item.done, do: :item_done, else: :item
+
+    text_lines =
+      case editing do
+        %{target: {:edit_item, id}} when id == item.id ->
+          [field(editing.line, tw, :edit)]
+
+        _ ->
+          item.text
+          |> Draw.wrap(tw)
+          |> Enum.map(
+            &[{if(selected and state.col == 0, do: :cursor, else: text_style), Draw.pad(&1, tw)}]
+          )
+      end
+
+    cells =
+      columns
+      |> Enum.zip(row.cells)
+      |> Enum.with_index(1)
+      |> Enum.flat_map(fn {{column, cell}, i} ->
+        cell_part =
+          case editing do
+            %{target: {:column_entry, id, head, _}}
+            when selected and id == item.id and head == column.category_id and state.col == i ->
+              field(editing.line, column.width, :edit)
+
+            _ ->
+              [
+                {if(selected and state.col == i, do: :cursor_cell, else: :cell),
+                 Draw.pad(cell, column.width)}
+              ]
+          end
+
+        [{:normal, " "} | cell_part]
+      end)
+
+    [first | rest] = text_lines
+    first_line = [{:symbol, " " <> symbol}, {:symbol, note}] ++ first ++ cells
+    [first_line | Enum.map(rest, &([{:normal, "   "}] ++ &1))]
+  end
+
+  defp blank_cells(columns),
+    do: Enum.flat_map(columns, &[{:normal, " "}, {:normal, Draw.spaces(&1.width)}])
+
+  # A one-line edit field that scrolls horizontally to keep the cursor visible.
+  defp field(line, width, style) do
+    width = max(width, 1)
+    offset = max(line.pos - width + 1, 0)
+    visible = String.slice(line.text, offset, width)
+    segments = Draw.field(visible, line.pos - offset, style)
+    Draw.line(segments, width, style)
+  end
+
+  # --- category manager --------------------------------------------------------------------------
+
+  defp catmgr_lines(state, mode) do
+    rows = CategoryScreens.rows(state, mode)
+    visible = State.body_height(state) - 1
+    top = max(mode.cursor - visible + 1, 0)
+    db = state.db
+
+    lines =
+      rows
+      |> Enum.with_index()
+      |> Enum.flat_map(fn {{id, depth}, i} ->
+        cat = db.categories[id]
+        selected = i == mode.cursor
+        indent = String.duplicate("   ", depth)
+
+        name =
+          case state.edit do
+            %{target: {:rename, ^id}} ->
+              [{:normal, " " <> indent}] ++ field(state.edit.line, 30, :edit)
+
+            _ ->
+              [{:normal, " " <> indent}, {if(selected, do: :cursor, else: :item), cat.name}]
+          end
+
+        line = name ++ [{:dim, category_tags(db, cat)}]
+
+        case state.edit do
+          %{target: {:new, parent, _}} when selected ->
+            new_indent = String.duplicate("   ", Database.depth(db, parent) + 1)
+            [line, [{:normal, " " <> new_indent}] ++ field(state.edit.line, 30, :edit)]
+
+          _ ->
+            [line]
+        end
+      end)
+      |> Enum.drop(top)
+
+    [
+      [{:section, " Category Manager"}, {:dim, "  (#{map_size(db.categories)} categories)"}]
+      | lines
+    ]
+  end
+
+  defp category_tags(db, cat) do
+    count =
+      if Database.date_field(db, cat.id), do: nil, else: length(Database.items_in(db, cat.id))
+
+    [
+      cat.kind == :date && "date",
+      cat.exclusive && "exclusive",
+      cat.short_name && "aka #{cat.short_name}",
+      cat.also_assign != [] &&
+        "→ " <> Enum.map_join(cat.also_assign, ", ", &db.categories[&1].name),
+      cat.note != "" && "♪",
+      count && "#{count}"
+    ]
+    |> Enum.filter(& &1)
+    |> case do
+      [] -> ""
+      tags -> "   " <> Enum.join(tags, " · ")
+    end
+  end
+
+  # --- view manager ------------------------------------------------------------------------------
+
+  defp viewmgr_lines(state, mode) do
+    views =
+      state.db
+      |> Database.views()
+      |> Enum.with_index()
+      |> Enum.map(fn {v, i} ->
+        selected = i == mode.cursor
+        current = if v.id == state.view_id, do: "►", else: " "
+
+        name =
+          case state.edit do
+            %{target: id} when id == v.id -> field(state.edit.line, 30, :edit)
+            _ -> [{if(selected, do: :cursor, else: :item), Draw.pad(v.name, 30)}]
+          end
+
+        sections = Enum.map_join(v.sections, ", ", &state.db.categories[&1.category_id].name)
+        [{:symbol, " #{current} "}] ++ name ++ [{:dim, "  Sections: " <> sections}]
+      end)
+
+    [[{:section, " View Manager"}], []] ++ views
+  end
+
+  # --- notes ---------------------------------------------------------------------------------------
+
+  defp note_lines(state, mode) do
+    edit = mode.edit
+    visible = State.body_height(state) - 2
+    top = max(edit.row - visible + 1, 0)
+
+    lines =
+      edit.lines
+      |> Enum.with_index()
+      |> Enum.map(fn {text, row} ->
+        if row == edit.row,
+          do: [{:normal, " "}] ++ Draw.field(text, edit.col, :normal),
+          else: [{:normal, " " <> text}]
+      end)
+      |> Enum.drop(top)
+
+    [[{:section, " Note: " <> mode.title}], []] ++ lines
+  end
+
+  # --- help ------------------------------------------------------------------------------------------
+
+  @help """
+   AGENDA KEYS
+   In a view                                    In the category manager (F9)
+     Type          Add an item (or column entry)  Type / INS  Add a category below
+     INS           Add an item / column entry     F2          Rename
+     F2            Edit item, section, entry      F7 / F8     Promote / demote
+     F3            Choices for a column / item    ALT-↑ ALT-↓ Reorder among siblings
+     F4            Mark item done                 ALT-F10     Move under another parent
+     F5            Note                           DEL         Discard category
+     F6            Properties / assignments       F6          Properties (exclusive, ...)
+     F7            Mark item                      ESC / F9    Return to the view
+     F8            View manager
+     F9            Category manager             Function keys can also be typed as
+     F10 or /      Menu                           ESC then digit (ESC 1 = F1 ... ESC 0 = F10)
+     DEL           Remove from section/column     and ESC !..) for ALT-F1..ALT-F10.
+     ALT-F4 / ^D   Discard item
+     ALT-F10       Move item to another section
+     ALT-D / ALT-U Add section below / above
+     ALT-R / ALT-L Add column right / left
+     ←→ TAB        Move between item and columns
+     ^S Save   ^Q Quit
+
+   Items are assigned to the section they are typed in, and automatically to
+   any category whose name (or short name) appears in their text. Typing a
+   name in a column assigns the item to that subcategory, creating it if new.
+  """
+
+  defp help_lines, do: @help |> String.split("\n") |> Enum.map(&[{:normal, &1}])
+
+  # --- boxes -------------------------------------------------------------------------------------------
+
+  defp overlay_box(state, mode, body) do
+    inner = min(state.width - 8, 60)
+    max_rows = max(State.body_height(state) - 4, 3)
+    content = box_content(state, mode, inner, max_rows)
+    box = Draw.box(box_title(state, mode), content, inner)
+    left = div(state.width - inner - 2, 2)
+    Draw.overlay(Enum.map(body, &Draw.line(&1, state.width)), box, 1, left)
+  end
+
+  defp box_title(state, %{type: :picker, purpose: purpose}) do
+    case purpose do
+      {:add_section, _} -> "Section head"
+      {:change_section, _} -> "Change section head"
+      {:add_column, _} -> "Column head"
+      {:assign_column, _, head} -> "Choose " <> state.db.categories[head].name
+      {:new_view, name} -> "First section for view #{name}"
+      {:move_category, id} -> "New parent for " <> state.db.categories[id].name
+      {:also_assign, id} -> "Also assign items of #{state.db.categories[id].name} to"
+    end
+  end
+
+  defp box_title(state, %{type: :profile, item_id: id}),
+    do: "Assignments: " <> String.slice(state.db.items[id].text, 0, 40)
+
+  defp box_title(state, %{type: :props, cat_id: id}),
+    do: "Category properties: " <> state.db.categories[id].name
+
+  defp box_content(state, %{type: type} = mode, inner, max_rows)
+       when type in [:picker, :profile] do
+    rows = CategoryScreens.rows(state, mode)
+    cursor = min(mode.cursor, max(length(rows) - 1, 0))
+    top = max(cursor - max_rows + 1, 0)
+
+    list =
+      rows
+      |> Enum.with_index()
+      |> Enum.drop(top)
+      |> Enum.take(max_rows)
+      |> Enum.map(fn {{id, depth}, i} ->
+        style = if i == cursor, do: :box_selected, else: :box
+        name = String.duplicate("  ", depth) <> state.db.categories[id].name
+
+        [
+          {:box, " " <> profile_marker(state, mode, id) <> " "},
+          {style, Draw.pad(name, inner - 6)}
+        ]
+      end)
+
+    list =
+      if list == [], do: [[{:box, "  (no categories yet — press INS to create one)"}]], else: list
+
+    list ++ [[], box_footer(state, mode, inner)]
+  end
+
+  defp box_content(state, %{type: :props} = mode, inner, _max_rows) do
+    cat = state.db.categories[mode.cat_id]
+    yes_no = fn b -> if b, do: "Yes", else: "No" end
+
+    values = %{
+      name: cat.name,
+      short_name: cat.short_name || "",
+      exclusive: yes_no.(cat.exclusive),
+      match_name: yes_no.(cat.match_name),
+      also_assign: Enum.map_join(cat.also_assign, ", ", &state.db.categories[&1].name),
+      note: if(cat.note == "", do: "(none)", else: "#{String.length(cat.note)} characters")
+    }
+
+    labels = %{
+      name: "Category name",
+      short_name: "Short name",
+      exclusive: "Children mutually exclusive",
+      match_name: "Assign items mentioning it",
+      also_assign: "Also assign items to",
+      note: "Note"
+    }
+
+    CategoryScreens.props_fields()
+    |> Enum.with_index()
+    |> Enum.map(fn {prop, i} ->
+      label = [{:box, " " <> Draw.pad(labels[prop], 28) <> ": "}]
+
+      value =
+        case state.edit do
+          %{target: ^prop} -> field(state.edit.line, inner - 32, :edit)
+          _ -> [{if(i == mode.cursor, do: :box_selected, else: :box), values[prop]}]
+        end
+
+      label ++ value
+    end)
+  end
+
+  defp box_footer(state, %{type: :picker} = mode, inner) do
+    case state.edit do
+      %{target: :new_pick} ->
+        [{:box, " New category: "}] ++ field(state.edit.line, inner - 16, :edit)
+
+      _ when mode.search != "" ->
+        [{:box, " Search: " <> mode.search}]
+
+      _ ->
+        [{:box, " ENTER selects · INS creates · type to search"}]
+    end
+  end
+
+  defp box_footer(_state, %{type: :profile}, _inner),
+    do: [{:box, " * assigned   + via subcategory   SPACE toggles"}]
+
+  defp profile_marker(state, %{type: :profile, item_id: item_id}, id) do
+    db = state.db
+
+    cond do
+      field = Database.date_field(db, id) ->
+        if Map.get(db.items[item_id], field), do: "◊", else: " "
+
+      Database.explicit?(db, item_id, id) ->
+        "*"
+
+      Database.member?(db, item_id, id) ->
+        "+"
+
+      true ->
+        " "
+    end
+  end
+
+  defp profile_marker(state, %{type: :picker, purpose: {:also_assign, cat_id}}, id) do
+    if id in state.db.categories[cat_id].also_assign, do: "*", else: " "
+  end
+
+  defp profile_marker(_state, _mode, _id), do: " "
+
+  # --- export ----------------------------------------------------------------------------------------------
+
+  @doc "Plain-text rendering of the whole current view (for File Print)."
+  @spec export_text(State.t()) :: String.t()
+  def export_text(state) do
+    view = State.view(state)
+    heads = Enum.map(view.columns, &state.db.categories[&1.category_id].name)
+
+    state.db
+    |> Agenda.Core.ViewModel.build(view)
+    |> Enum.map_join("\n\n", fn section ->
+      header = Enum.join([section.category.name | heads], " | ")
+
+      items =
+        Enum.map(section.rows, fn row ->
+          extra =
+            row.cells
+            |> Enum.zip(heads)
+            |> Enum.reject(&(elem(&1, 0) == ""))
+            |> Enum.map_join("; ", fn {c, h} -> "#{h}: #{c}" end)
+
+          done = if row.item.done, do: " (done #{DateParser.format(row.item.done)})", else: ""
+          "  • " <> row.item.text <> done <> if(extra == "", do: "", else: "  [#{extra}]")
+        end)
+
+      Enum.join([header | items], "\n")
+    end)
+    |> Kernel.<>("\n")
+  end
+end

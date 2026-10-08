@@ -1,0 +1,15 @@
+# ADR 0003 — File format
+
+**Status:** accepted · 2026-10-08
+
+## Decision
+A file is `:erlang.term_to_binary({:agenda, version, %Database{}}, [:compressed])`,
+written atomically (temp file + rename) and read with `[:safe]`. The
+loader makes sure the app's modules are loaded first, because `:safe` refuses
+atoms (struct field names) that don't exist yet.
+
+## Consequences
+- Zero code needed to serialize new fields, but struct changes need a
+  migration when `version` is bumped (`Store.load/1` is the place).
+- Not human-readable. A JSON/text export is on the roadmap for
+  interchange and backups.

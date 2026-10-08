@@ -1,0 +1,137 @@
+defmodule Agenda.TUI.ViewTest do
+  use ExUnit.Case, async: true
+
+  import Agenda.TUIHelpers
+  alias Agenda.Core
+  alias Agenda.Core.Database
+
+  setup do
+    Process.delete(:effects_seen)
+    %{state: start(Agenda.Sample.build(~D[2026-10-08]))}
+  end
+
+  test "the screen resembles Agenda", %{state: state} do
+    screen = screen(state)
+    assert screen =~ "View: Activities"
+    assert screen =~ ~r/Calls\s+When\s+Priority\s+Contact/
+    assert screen =~ ~r/Don't forget to call Anna Lasky.*High\s+Anna Lasky/
+    assert screen =~ "F9 CatMgr F10 Menu"
+  end
+
+  test "typing under a section adds an item and assigns it", %{state: state} do
+    state = press(state, ["Ring Anna about the budget", :enter])
+    id = Enum.find(Database.items(state.db), &(&1.text == "Ring Anna about the budget")).id
+
+    names =
+      state.db
+      |> Database.explicit_categories(id)
+      |> Enum.map(&state.db.categories[&1].name)
+      |> Enum.sort()
+
+    assert names == ["Anna Lasky", "Calls"]
+    assert screen(state) =~ "Also assigned to: Anna Lasky"
+    assert state.cursor_key == {:item, 0, id}
+  end
+
+  test "ESC cancels a new item", %{state: state} do
+    count = length(Database.items(state.db))
+    state = press(state, ["Never mind", :esc])
+    assert length(Database.items(state.db)) == count
+  end
+
+  test "typing in a column assigns a category, creating it when new", %{state: state} do
+    # the second item is assigned to Anna Lasky; typing over the entry replaces it
+    state = press(state, [:down, :down, :right, :right, :right, "Zoe", :enter])
+    item = Agenda.TUI.Layout.current_row(state).item
+    [zoe] = Database.find_categories(state.db, "Zoe")
+
+    assert state.db.categories[zoe].parent_id == hd(Database.find_categories(state.db, "Contact"))
+    assert Database.member?(state.db, item.id, zoe)
+
+    refute Database.member?(
+             state.db,
+             item.id,
+             hd(Database.find_categories(state.db, "Anna Lasky"))
+           )
+  end
+
+  test "INS in a column adds another entry", %{state: state} do
+    state = press(state, [:down, :down, :right, :right, :right, :insert, "Daniel", :enter])
+    assert screen(state) =~ "Anna Lasky, Daniel"
+  end
+
+  test "typing in the When column parses dates", %{state: state} do
+    state = press(state, [:down, :right, "tomorrow", :enter])
+    assert Agenda.TUI.Layout.current_row(state).item.when == ~D[2026-10-09]
+    assert screen(state) =~ "2026-10-09"
+  end
+
+  test "F2 edits an item's text", %{state: state} do
+    state = press(state, [:down, {:f, 2}, {:ctrl, "u"}, "Rewritten", :enter])
+    assert Agenda.TUI.Layout.current_row(state).item.text == "Rewritten"
+  end
+
+  test "F2 on a section head renames the category", %{state: state} do
+    state = press(state, [{:f, 2}, {:ctrl, "u"}, "Phone calls", :enter])
+    assert screen(state) =~ "Phone calls"
+  end
+
+  test "F4 marks done, DEL removes from the section, ALT-F4 discards", %{state: state} do
+    state = press(state, [:down, {:f, 4}])
+    assert Agenda.TUI.Layout.current_row(state).item.done == ~D[2026-10-08]
+
+    count = length(Database.items(state.db))
+    state = press(state, [:delete])
+    assert length(Database.items(state.db)) == count
+    assert length(Agenda.TUI.Layout.rows(state)) == count
+
+    state = press(state, [:down, {:alt_f, 4}, "y"])
+    assert length(Database.items(state.db)) == count - 1
+  end
+
+  test "ALT-D adds a section via the category picker", %{state: state} do
+    state = press(state, [{:alt, "d"}, "Meet", :enter])
+    assert [_, %{category_id: meetings}] = Agenda.TUI.State.view(state).sections
+    assert state.db.categories[meetings].name == "Meetings"
+  end
+
+  test "the picker can create a new category with INS", %{state: state} do
+    state = press(state, [{:alt, "d"}, :insert, "Errands", :enter])
+    assert screen(state) =~ "Errands"
+  end
+
+  test "F10 opens the menu; letters select commands", %{state: state} do
+    state = press(state, [{:f, 10}])
+    assert screen(state) =~ ~r/File\s+Item\s+Category\s+View\s+Print\s+Quit/
+    state = press(state, ["v", "h", "d"])
+    assert Agenda.TUI.State.view(state).hide_done
+    assert state.modes == []
+  end
+
+  test "saving without a path prompts for one", %{state: state} do
+    state = press(state, [{:ctrl, "s"}])
+    assert screen(state) =~ "Save file as:"
+    _state = press(state, ["/tmp/x", :enter])
+    assert [{:save, "/tmp/x.agenda"}] = effects()
+  end
+
+  test "quitting with unsaved changes asks first", %{state: state} do
+    state = press(state, ["dirty", :enter, {:ctrl, "q"}])
+    assert screen(state) =~ "Save changes before quitting?"
+    press(state, ["n"])
+    assert :quit in effects()
+  end
+
+  test "ALT-F10 moves an item to another section" do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    [view] = Database.views(db)
+    meetings = hd(Database.find_categories(db, "Meetings"))
+    db = Core.add_section(db, view.id, meetings, 1)
+    state = start(db)
+
+    state = press(state, [:down, {:alt_f, 10}, :end, :enter])
+    item = Agenda.TUI.Layout.current_row(state).item
+    assert Database.member?(state.db, item.id, meetings)
+    refute Database.member?(state.db, item.id, hd(Database.find_categories(db, "Calls")))
+  end
+end
