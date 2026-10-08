@@ -71,6 +71,71 @@ defmodule Agenda.Core.Assign do
     |> Enum.reduce(db, &Database.unlink(&2, item_id, &1))
   end
 
+  @doc """
+  Applies the file's assignment conditions to one item (R15), until nothing
+  changes: a category whose conditions the item meets assigns it (marked
+  conditional), and a conditional assignment whose conditions no longer
+  hold is broken. Assignments the user made are left alone. Contradictory
+  conditions (A if not B, B if not A) stop after a bounded number of rounds.
+  """
+  @spec apply_conditions(db, id) :: db
+  def apply_conditions(db, item_id) do
+    with_conditions = for {id, %{conditions: [_ | _]}} <- db.categories, do: id
+    settle_conditions(db, item_id, Enum.sort(with_conditions), length(with_conditions) + 2)
+  end
+
+  defp settle_conditions(db, _item_id, [], _rounds), do: db
+  defp settle_conditions(db, _item_id, _cats, 0), do: db
+
+  defp settle_conditions(db, item_id, cats, rounds) do
+    next =
+      Enum.reduce(cats, db, fn cat_id, acc ->
+        met = conditions_met?(acc, item_id, cat_id)
+
+        cond do
+          met and not Database.member?(acc, item_id, cat_id) ->
+            acc |> assign(item_id, cat_id) |> Database.mark_conditional(item_id, cat_id)
+
+          not met and Database.conditional?(acc, item_id, cat_id) ->
+            Database.unlink(acc, item_id, cat_id)
+
+          true ->
+            acc
+        end
+      end)
+
+    if next == db, do: db, else: settle_conditions(next, item_id, cats, rounds - 1)
+  end
+
+  @doc """
+  Whether an item meets a category's assignment conditions: every
+  condition must hold, except that "assigned" conditions naming mutually
+  exclusive categories are alternatives (High or Low), as in Agenda.
+  """
+  @spec conditions_met?(db, id, id) :: boolean
+  def conditions_met?(db, item_id, cat_id) do
+    conditions = Enum.reject(db.categories[cat_id].conditions, &(elem(&1, 0) == cat_id))
+    {positive, negative} = Enum.split_with(conditions, &(elem(&1, 1) == :assigned))
+
+    conditions != [] and
+      Enum.all?(negative, fn {target, _} -> not Database.member?(db, item_id, target) end) and
+      positive
+      |> Enum.map(&elem(&1, 0))
+      |> exclusive_groups(db)
+      |> Enum.all?(fn group -> Enum.any?(group, &Database.member?(db, item_id, &1)) end)
+  end
+
+  # Groups categories that cannot hold together (mutually exclusive), so that
+  # each group is satisfied by any one of its members.
+  defp exclusive_groups(targets, db) do
+    Enum.reduce(targets, [], fn target, groups ->
+      case Enum.split_with(groups, fn group -> Enum.any?(group, &conflict?(db, target, &1)) end) do
+        {[], rest} -> [[target] | rest]
+        {joined, rest} -> [Enum.concat([[target] | joined]) | rest]
+      end
+    end)
+  end
+
   @doc "Removes an item from a category and everything below it."
   @spec unassign(db, id, id) :: db
   def unassign(db, item_id, cat_id) do

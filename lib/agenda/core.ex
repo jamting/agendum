@@ -41,13 +41,14 @@ defmodule Agenda.Core do
     db =
       case opts[:section] do
         nil -> db
-        section -> Assign.assign(db, id, section)
+        section -> user_assign(db, id, section)
       end
 
     db =
       db
       |> Assign.auto_assign(id, Keyword.get(opts, :adjacent, []))
       |> date_from_text(id, nil, today)
+      |> Assign.apply_conditions(id)
 
     {db, id}
   end
@@ -64,6 +65,12 @@ defmodule Agenda.Core do
     |> Database.update_item(id, &%{&1 | text: String.trim(text)})
     |> Assign.auto_assign(id, adjacent)
     |> date_from_text(id, old_text, today)
+    |> Assign.apply_conditions(id)
+  end
+
+  # An assignment the user asked for: never treated as conditional (R15).
+  defp user_assign(db, item_id, cat_id) do
+    db |> Assign.assign(item_id, cat_id) |> Database.unmark_conditional(item_id, cat_id)
   end
 
   # SPEC R14: the first date in an item's text is its When date, unless the
@@ -106,15 +113,18 @@ defmodule Agenda.Core do
       if to == from do
         db
       else
-        db = if from == db.main_id, do: db, else: remove_from_category(db, item_id, from)
-        if to == db.main_id, do: db, else: Assign.assign(db, item_id, to)
+        db = if from == db.main_id, do: db, else: Assign.unassign(db, item_id, from)
+        if to == db.main_id, do: db, else: user_assign(db, item_id, to)
       end
 
-    case opts[:after] do
-      nil -> db
-      ^item_id -> db
-      after_id -> Database.reorder_item(db, item_id, after_id)
-    end
+    db =
+      case opts[:after] do
+        nil -> db
+        ^item_id -> db
+        after_id -> Database.reorder_item(db, item_id, after_id)
+      end
+
+    Assign.apply_conditions(db, item_id)
   end
 
   @doc "Marks an item done today, or clears its done date (F4 DONE)."
@@ -143,11 +153,17 @@ defmodule Agenda.Core do
       nil -> Assign.unassign(db, item_id, cat_id)
       field -> put_date(db, item_id, field, nil)
     end
+    |> Assign.apply_conditions(item_id)
   end
 
-  @doc "Assigns an item to a category (with mutual exclusion and category links)."
+  @doc """
+  Assigns an item to a category (with mutual exclusion, the
+  ancestor/descendant rule and category links), then re-checks the file's
+  assignment conditions for the item (R15).
+  """
   @spec assign(db, id, id) :: db
-  defdelegate assign(db, item_id, cat_id), to: Assign
+  def assign(db, item_id, cat_id),
+    do: db |> user_assign(item_id, cat_id) |> Assign.apply_conditions(item_id)
 
   @doc """
   Toggles one explicit assignment, as in the assignment profile: an
@@ -158,7 +174,9 @@ defmodule Agenda.Core do
   def toggle_assignment(db, item_id, cat_id) do
     if Database.explicit?(db, item_id, cat_id),
       do: Database.unlink(db, item_id, cat_id),
-      else: Assign.assign(db, item_id, cat_id)
+      else:
+        user_assign(db, item_id, cat_id)
+        |> Assign.apply_conditions(item_id)
   end
 
   @doc """
@@ -189,11 +207,11 @@ defmodule Agenda.Core do
       true ->
         case resolve_name(db, head_id, text) do
           {:ok, cat_id} ->
-            {:ok, Assign.assign(db, item_id, cat_id), cat_id}
+            {:ok, assign(db, item_id, cat_id), cat_id}
 
           :none ->
             {db, cat_id} = Database.insert_category(db, head_id, text)
-            {:ok, Assign.assign(db, item_id, cat_id), cat_id}
+            {:ok, assign(db, item_id, cat_id), cat_id}
 
           :ambiguous ->
             {:error, :ambiguous}
@@ -448,8 +466,69 @@ defmodule Agenda.Core do
   def reassign_all(db, today) do
     Enum.reduce(db.item_order, db, fn id, db ->
       db = Assign.auto_assign(db, id, [])
-      if db.items[id].when, do: db, else: date_from_text(db, id, nil, today)
+      db = if db.items[id].when, do: db, else: date_from_text(db, id, nil, today)
+      Assign.apply_conditions(db, id)
     end)
+  end
+
+  # --- assignment conditions (R15) ---
+
+  @doc """
+  Adds an assignment condition to a category: items `:assigned` (or
+  `:not_assigned`) to `target` are assigned to it. Like Agenda, a new
+  condition applies to items as they are added or changed; Recalc
+  (`reassign_all/2`) applies it to all existing items.
+  """
+  @spec add_condition(db, id, id, :assigned | :not_assigned) ::
+          {:ok, db} | {:error, :self | :duplicate}
+  def add_condition(db, cat_id, target, kind) when kind in [:assigned, :not_assigned] do
+    cond do
+      cat_id == target ->
+        {:error, :self}
+
+      List.keymember?(db.categories[cat_id].conditions, target, 0) ->
+        {:error, :duplicate}
+
+      true ->
+        {:ok,
+         Database.update_category(
+           db,
+           cat_id,
+           &%{&1 | conditions: &1.conditions ++ [{target, kind}]}
+         )}
+    end
+  end
+
+  @spec remove_condition(db, id, id) :: db
+  def remove_condition(db, cat_id, target) do
+    Database.update_category(
+      db,
+      cat_id,
+      &%{&1 | conditions: List.keydelete(&1.conditions, target, 0)}
+    )
+  end
+
+  @doc """
+  Cycles the condition on `target` the way the category properties box
+  does: none → assigned → not assigned → none.
+  """
+  @spec cycle_condition(db, id, id) :: {:ok, db} | {:error, :self}
+  def cycle_condition(db, cat_id, target) do
+    case List.keyfind(db.categories[cat_id].conditions, target, 0) do
+      nil ->
+        add_condition(db, cat_id, target, :assigned)
+
+      {_, :assigned} ->
+        {:ok,
+         Database.update_category(
+           db,
+           cat_id,
+           &%{&1 | conditions: List.keyreplace(&1.conditions, target, 0, {target, :not_assigned})}
+         )}
+
+      {_, :not_assigned} ->
+        {:ok, remove_condition(db, cat_id, target)}
+    end
   end
 
   # ---------------------------------------------------------------------------

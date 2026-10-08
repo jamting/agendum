@@ -423,6 +423,7 @@ defmodule Agenda.TUI.Render do
       cat.kind == :date && "date",
       cat.exclusive && "exclusive",
       cat.short_name && "aka #{cat.short_name}",
+      cat.conditions != [] && "if " <> conditions_text(db, cat),
       cat.also_assign != [] &&
         "→ " <> Enum.map_join(cat.also_assign, ", ", &db.categories[&1].name),
       cat.note != "" && "♪",
@@ -560,6 +561,7 @@ defmodule Agenda.TUI.Render do
       {:new_view, name} -> "First section for view #{name}"
       {:move_category, id} -> "New parent for " <> state.db.categories[id].name
       {:also_assign, id} -> "Also assign items of #{state.db.categories[id].name} to"
+      {:condition, id} -> "Conditions for #{state.db.categories[id].name}"
     end
   end
 
@@ -628,6 +630,7 @@ defmodule Agenda.TUI.Render do
       exclusive: yes_no.(cat.exclusive),
       match_name: yes_no.(cat.match_name),
       also_assign: Enum.map_join(cat.also_assign, ", ", &state.db.categories[&1].name),
+      conditions: if(cat.conditions == [], do: "(none)", else: conditions_text(state.db, cat)),
       note: if(cat.note == "", do: "(none)", else: "#{String.length(cat.note)} characters")
     }
 
@@ -637,6 +640,7 @@ defmodule Agenda.TUI.Render do
       exclusive: "Children mutually exclusive",
       match_name: "Assign items mentioning it",
       also_assign: "Also assign items to",
+      conditions: "Assignment conditions",
       note: "Note"
     }
 
@@ -663,13 +667,16 @@ defmodule Agenda.TUI.Render do
       _ when mode.search != "" ->
         [{:box, " Search: " <> mode.search}]
 
+      _ when elem(mode.purpose, 0) == :condition ->
+        [{:box, " ENTER cycles: + assigned · - not assigned · none"}]
+
       _ ->
         [{:box, " ENTER selects · INS creates · type to search"}]
     end
   end
 
   defp box_footer(_state, %{type: :profile}, _inner),
-    do: [{:box, " * assigned   + via subcategory   SPACE toggles"}]
+    do: [{:box, " * assigned  c by a condition  + via subcategory  SPACE"}]
 
   defp profile_marker(state, %{type: :profile, item_id: item_id}, id) do
     db = state.db
@@ -677,6 +684,9 @@ defmodule Agenda.TUI.Render do
     cond do
       field = Database.date_field(db, id) ->
         if Map.get(db.items[item_id], field), do: "◊", else: " "
+
+      Database.conditional?(db, item_id, id) ->
+        "c"
 
       Database.explicit?(db, item_id, id) ->
         "*"
@@ -689,11 +699,27 @@ defmodule Agenda.TUI.Render do
     end
   end
 
+  defp profile_marker(state, %{type: :picker, purpose: {:condition, cat_id}}, id) do
+    case List.keyfind(state.db.categories[cat_id].conditions, id, 0) do
+      {_, :assigned} -> "+"
+      {_, :not_assigned} -> "-"
+      nil -> " "
+    end
+  end
+
   defp profile_marker(state, %{type: :picker, purpose: {:also_assign, cat_id}}, id) do
     if id in state.db.categories[cat_id].also_assign, do: "*", else: " "
   end
 
   defp profile_marker(_state, _mode, _id), do: " "
+
+  # "Taxes, not People": a category's assignment conditions in words.
+  defp conditions_text(db, cat) do
+    Enum.map_join(cat.conditions, ", ", fn
+      {id, :assigned} -> db.categories[id].name
+      {id, :not_assigned} -> "not " <> db.categories[id].name
+    end)
+  end
 
   # --- export ----------------------------------------------------------------------------------------------
 

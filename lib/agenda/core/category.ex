@@ -9,6 +9,9 @@ defmodule Agenda.Core.Category do
     item can be assigned to at most one of them.
   * `match_name` – the category takes part in automatic assignment: an item
     whose text contains the category name (or `short_name`) is assigned to it.
+  * `conditions` – assignment conditions (R15): `{category_id, :assigned}`
+    or `{category_id, :not_assigned}`. Items that meet all of them (either
+    of those naming mutually exclusive categories) are assigned here.
   * `also_assign` – category-to-category links (patent FIG. 6): items
     assigned here are also assigned to these categories.
   """
@@ -25,6 +28,7 @@ defmodule Agenda.Core.Category do
           exclusive: boolean,
           match_name: boolean,
           also_assign: [id],
+          conditions: [{id, :assigned | :not_assigned}],
           note: String.t()
         }
 
@@ -38,6 +42,7 @@ defmodule Agenda.Core.Category do
     exclusive: false,
     match_name: true,
     also_assign: [],
+    conditions: [],
     note: ""
   ]
 end

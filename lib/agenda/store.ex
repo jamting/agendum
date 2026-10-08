@@ -6,13 +6,14 @@ defmodule Agenda.Store do
   wrapped in a versioned envelope so the format can evolve.
 
   Versions: 1 (initial); 2 adds `Item.when_explicit` and
-  `Database.auto_date` (R14). Older versions are upgraded on load by
+  `Database.auto_date` (R14); 3 adds `Category.conditions` and
+  `Database.conditional` (R15). Older versions are upgraded on load by
   filling new struct fields with their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 2
+  @format_version 3
   @extension ".agenda"
 
   def extension, do: @extension

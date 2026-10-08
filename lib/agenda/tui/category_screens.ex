@@ -45,7 +45,7 @@ defmodule Agenda.TUI.CategoryScreens do
     state.db |> Database.descendants(root) |> Enum.map(&{&1, Database.depth(state.db, &1) - base})
   end
 
-  @props [:name, :short_name, :exclusive, :match_name, :also_assign, :note]
+  @props [:name, :short_name, :exclusive, :match_name, :conditions, :also_assign, :note]
   def props_fields, do: @props
 
   # --- dispatch ----------------------------------------------------------------------
@@ -398,6 +398,17 @@ defmodule Agenda.TUI.CategoryScreens do
   defp pick(state, {:move_category, cat_id}, parent),
     do: move(state, cat_id, {:move, parent, nil})
 
+  # ENTER on a category cycles its condition: none → assigned → not assigned
+  defp pick(state, {:condition, cat_id}, target) do
+    case Core.cycle_condition(state.db, cat_id, target) do
+      {:ok, db} ->
+        state |> State.change_db(db) |> State.info(condition_message(db, cat_id, target))
+
+      {:error, :self} ->
+        State.error(state, "A category cannot depend on itself")
+    end
+  end
+
   defp pick(state, {:also_assign, cat_id}, target) do
     State.change_db(state, Core.toggle_also_assign(state.db, cat_id, target))
   end
@@ -644,6 +655,9 @@ defmodule Agenda.TUI.CategoryScreens do
           :also_assign ->
             open_picker(state, {:also_assign, cat.id}, nil)
 
+          :conditions ->
+            open_picker(state, {:condition, cat.id}, nil)
+
           :note ->
             State.push(state, %{
               type: :note,
@@ -655,6 +669,22 @@ defmodule Agenda.TUI.CategoryScreens do
 
       _ ->
         state
+    end
+  end
+
+  defp condition_message(db, cat_id, target) do
+    name = db.categories[cat_id].name
+    other = db.categories[target].name
+
+    case List.keyfind(db.categories[cat_id].conditions, target, 0) do
+      {_, :assigned} ->
+        "#{name} now assigns items in #{other} (Recalc applies it to existing items)"
+
+      {_, :not_assigned} ->
+        "#{name} now assigns items not in #{other} (Recalc applies it to existing items)"
+
+      nil ->
+        "Condition on #{other} removed"
     end
   end
 end

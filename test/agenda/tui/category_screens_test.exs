@@ -267,4 +267,20 @@ defmodule Agenda.TUI.CategoryScreensTest do
              &state.db.categories[&1].name
            ) == ["High"]
   end
+
+  test "assignment conditions are set in category properties (R15)", %{state: state} do
+    # Meetings is last in the category manager; Calls is a top-level category
+    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}])
+    assert screen(state) =~ ~r/Assignment conditions\s+:\s+\(none\)/
+
+    # the conditions line is the fifth property
+    state = press(state, [:down, :down, :down, :down, :enter, "Calls", :enter])
+    meetings = state.db.categories[cat(state, "Meetings")]
+    assert meetings.conditions == [{cat(state, "Calls"), :assigned}]
+    assert screen(state) =~ "Meetings now assigns items in Calls"
+
+    # existing items join after Recalc; the profile marks them as conditional
+    state = press(state, [:esc, :esc, {:f, 10}, "c", "r", :down, {:f, 6}])
+    assert screen(state) =~ ~r/c\s+Meetings/
+  end
 end

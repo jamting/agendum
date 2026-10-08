@@ -28,7 +28,8 @@ defmodule Agenda.Core.Database do
           next_id: id,
           main_id: id,
           special: %{entry: id, when: id, done: id},
-          auto_date: boolean
+          auto_date: boolean,
+          conditional: MapSet.t({id, id})
         }
 
   defstruct items: %{},
@@ -40,7 +41,8 @@ defmodule Agenda.Core.Database do
             next_id: 1,
             main_id: nil,
             special: %{},
-            auto_date: true
+            auto_date: true,
+            conditional: MapSet.new()
 
   @date_fields %{entry: :entry, when: :when, done: :done}
 
@@ -115,7 +117,8 @@ defmodule Agenda.Core.Database do
       db
       | items: Map.delete(db.items, id),
         item_order: List.delete(db.item_order, id),
-        links: Links.drop_left(db.links, id)
+        links: Links.drop_left(db.links, id),
+        conditional: MapSet.reject(db.conditional, &(elem(&1, 0) == id))
     }
   end
 
@@ -181,12 +184,18 @@ defmodule Agenda.Core.Database do
 
       db = detach_child(db, parent, id)
       links = Enum.reduce(doomed, db.links, &Links.drop_right(&2, &1))
+      conditional = MapSet.reject(db.conditional, &(elem(&1, 1) in doomed_set))
 
       categories =
         db.categories
         |> Map.drop(doomed)
         |> Map.new(fn {cid, c} ->
-          {cid, %{c | also_assign: Enum.reject(c.also_assign, &(&1 in doomed_set))}}
+          {cid,
+           %{
+             c
+             | also_assign: Enum.reject(c.also_assign, &(&1 in doomed_set)),
+               conditions: Enum.reject(c.conditions, &(elem(&1, 0) in doomed_set))
+           }}
         end)
 
       views =
@@ -199,7 +208,7 @@ defmodule Agenda.Core.Database do
            }}
         end)
 
-      {:ok, %{db | links: links, categories: categories, views: views}}
+      {:ok, %{db | links: links, conditional: conditional, categories: categories, views: views}}
     end
   end
 
@@ -330,7 +339,29 @@ defmodule Agenda.Core.Database do
   def link(db, item_id, cat_id), do: %{db | links: Links.link(db.links, item_id, cat_id)}
 
   @spec unlink(t, id, id) :: t
-  def unlink(db, item_id, cat_id), do: %{db | links: Links.unlink(db.links, item_id, cat_id)}
+  def unlink(db, item_id, cat_id) do
+    %{
+      db
+      | links: Links.unlink(db.links, item_id, cat_id),
+        conditional: MapSet.delete(db.conditional, {item_id, cat_id})
+    }
+  end
+
+  @doc """
+  Whether a link was made by a category's assignment conditions (R15), so
+  it is broken again when the conditions stop holding. Links the user makes
+  are never conditional.
+  """
+  @spec conditional?(t, id, id) :: boolean
+  def conditional?(db, item_id, cat_id), do: MapSet.member?(db.conditional, {item_id, cat_id})
+
+  @spec mark_conditional(t, id, id) :: t
+  def mark_conditional(db, item_id, cat_id),
+    do: %{db | conditional: MapSet.put(db.conditional, {item_id, cat_id})}
+
+  @spec unmark_conditional(t, id, id) :: t
+  def unmark_conditional(db, item_id, cat_id),
+    do: %{db | conditional: MapSet.delete(db.conditional, {item_id, cat_id})}
 
   @doc "Categories an item is explicitly linked to."
   @spec explicit_categories(t, id) :: MapSet.t(id)

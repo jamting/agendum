@@ -95,6 +95,9 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | ------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------- |
 | `Core.assign(db, item, cat)`                            | write | Explicit assignment with exclusivity and `also_assign` (see below).                                                       |
 | `Core.toggle_assignment(db, item, cat)`                 | write | Assignment profile: remove just that explicit link, or `assign`.                                                          |
+| `Core.add_condition(db, cat, target, :assigned \| :not_assigned)`, `remove_condition/3`, `cycle_condition/3` | write | Assignment conditions (R15). `{:error, :self \| :duplicate}`. New conditions reach existing items through `reassign_all/2`. |
+| `Assign.apply_conditions(db, item)`, `conditions_met?(db, item, cat)` | write / read | Check one item against all conditions until stable; every `Core` operation that changes an item's assignments ends with it. |
+| `Database.conditional?(db, item, cat)` | read | Was this link made by a condition (and so retractable)? |
 | `Core.assign_by_name(db, item, head, text, today)`      | write | Typing in a column: date, exact name, unique prefix, or a new child. `{:ok, db, cat_id \| :date}`.                        |
 | `Core.remove_from_category(db, item, cat)`              | write | Unlink the category's subtree (or clear the date).                                                                        |
 | `Core.set_date(db, item, date_cat, date)`               | write | Set or clear Entry/When/Done. Setting When makes it explicit (it overrides the text); clearing hands it back to the text. |

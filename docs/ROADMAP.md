@@ -36,7 +36,10 @@ Rule numbers refer to `SPEC.md`.
 
 - [x] Date parsing from item text into When (R14)
 - [ ] More date phrases: times of day, recurring dates, working days, date settings (R14a)
-- [ ] Assignment conditions and actions (R15)
+- [x] Assignment conditions, conditional assignments (R15)
+- [ ] Date conditions and "Also match" text conditions (R15a)
+- [ ] Actions: remove, date, special (done, discard, export) (R15b)
+- [ ] Break text-match assignments when the text changes (R15c)
 - [ ] General negative links (R9)
 - [ ] Assignment questions ("Agenda suggests…", Utilities Questions)
 - [ ] Numeric categories and columns with totals (R29)

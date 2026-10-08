@@ -34,6 +34,7 @@ erDiagram
         int main_id "the MAIN category"
         map special "entry/when/done => category id"
         bool auto_date "read When dates from item text"
+        set conditional "item-category links made by conditions"
     }
     ITEM {
         int id PK
@@ -55,6 +56,7 @@ erDiagram
         bool exclusive "children mutually exclusive"
         bool match_name "auto-assign by name"
         list also_assign "category ids"
+        list conditions "assigned / not assigned category ids"
         string note
     }
     VIEW {
@@ -94,6 +96,7 @@ classDiagram
         +main_id : id
         +special : Map~entry/when/done, id~
         +auto_date : boolean
+        +conditional : MapSet
     }
     class Item {
         +id : id
@@ -115,6 +118,7 @@ classDiagram
         +exclusive : boolean
         +match_name : boolean
         +also_assign : [id]
+        +conditions : [id and kind]
         +note : String
     }
     class View {
@@ -331,6 +335,10 @@ tests in `database_test.exs` and `links_test.exs`):
    descendants before linking, and category moves resolve the conflicts
    they would create. Files saved before R7c may still contain such pairs;
    assigning those items again tidies them up.
+10. **Conditional marks are links.** Every `{item, category}` in
+    `db.conditional` is also a link; `Database.unlink/3` and the delete
+    operations remove marks with their links. A user assignment clears the
+    mark, so only condition-made links are ever retracted (SPEC R15).
 
 ## Mapping to the patent
 
@@ -363,7 +371,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

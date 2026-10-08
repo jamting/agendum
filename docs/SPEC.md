@@ -132,8 +132,30 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   recurring dates ("every Monday", "every other Monday"), working days,
   quarters, "first Wednesday in November", "next April", dates from notes,
   and settings for date order (day/month) and the start of the week.
-- **R15 ⏳ Conditions and actions** (Agenda 2.0 assignment conditions,
-  e.g. "items in Calls with When < today → Overdue").
+- **R15 ✅ Assignment conditions** (User's Guide, chapters 18 and 20). A
+  category can have conditions on other categories: items *assigned* to
+  them (Urgent if Taxes and Accountant) or *not assigned* to them (Me if
+  not People). All conditions must hold, except "assigned" conditions on
+  mutually exclusive categories, which are alternatives (High or Low).
+  Agenda checks an item against all conditions when it is added, edited,
+  assigned or unassigned: a category whose conditions it meets assigns it,
+  and an assignment a condition made is broken once the condition no longer
+  holds. Assignments the user makes are never broken by conditions. Like
+  Agenda, a new condition applies to existing items only after Recalc
+  (Agenda's Utilities Execute). Conditions are set in category properties
+  (ENTER on a category cycles none → assigned → not assigned); the
+  category manager shows them ("if Taxes, not People") and the assignment
+  profile marks conditional assignments with "c". Contradictory conditions
+  settle after a bounded number of rounds.
+- **R15a ⏳ Date conditions** (a Today or Overdue category by When or Done
+  date, rechecked when the date changes), and text conditions beyond the
+  category name and short name ("Also match").
+- **R15b ⏳ Actions:** remove-from actions, date actions (set a When date),
+  special actions (mark done, discard, export), and Utilities Execute for
+  re-running actions. Category links (R8) already cover "also assign".
+- **R15c ⏳ Text matches as conditional assignments:** in Agenda, an
+  assignment made because a name appeared in the text is broken when the
+  text no longer contains it; ours only adds.
 
 ## 4. Working through views
 
