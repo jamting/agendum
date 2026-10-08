@@ -48,6 +48,19 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   manual doesn't say where the new category is created; we make it a child
   so the family stays consistent. Making children non-exclusive keeps all
   assignments. MAIN and the date categories cannot be made exclusive.
+- **R7b ✅ Resolving conflicts when moving categories.** Promoting (F7),
+  demoting (F8) or moving (ALT-F10) a category can put an item in two
+  branches of a mutually exclusive family. The user then chooses, as in
+  Agenda 2.0's *Process conflicting item(s) by* box (User's Guide,
+  "Resolving Conflicts When Promoting/Demoting Categories"):
+  **Removing from current category** (default; the moved category),
+  **Removing from conflicting category** (the branch it clashes with), or
+  **Moving to new category** (named by the user). We create the new category
+  as a child of the exclusive family where the clash happens, and the
+  items leave both clashing branches. Reordering siblings cannot clash.
+- **R7c ⏳ No direct assignment to both a category and its ancestor.** The
+  manual's second rule for promote/demote ("an item cannot be directly
+  assigned to both a child category and its parent") is not enforced yet.
 - **R8 ✅ Category links.** A category can pass its items on to other
   categories (`also_assign`, patent FIG. 6). This applies transitively and is
   safe with cycles.

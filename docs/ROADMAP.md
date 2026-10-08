@@ -45,7 +45,8 @@ Rule numbers refer to `SPEC.md`.
 ## Housekeeping
 - [x] Move the TUI's direct `Database` writes into `Agenda.Core` operations (enforced by `architecture_test.exs`)
 - [x] Resolve existing conflicts when making children exclusive, as Agenda 2.0 does (R7a)
-- [ ] Moving a category under an exclusive parent can put items in two branches (`DATA_MODEL.md`, invariant 5)
+- [x] Resolve conflicts when moving categories into exclusive families, as Agenda 2.0 does (R7b)
+- [ ] Enforce "no direct assignment to both a category and its ancestor", including its promote/demote conflict box (R7c)
 
 ## Ideas
 - Multiple files open; a launcher listing recent files

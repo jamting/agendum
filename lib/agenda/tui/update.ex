@@ -570,6 +570,10 @@ defmodule Agenda.TUI.Update do
     State.change_db(state, Core.rename_view(state.db, state.view_id, text))
   end
 
+  defp prompt_action(state, {:move_new_category, id, parent, after_id}, text) do
+    CategoryScreens.apply_move(state, id, parent, after_id, {:new_category, text})
+  end
+
   defp prompt_action(state, {:exclusive_new_child, cat_id}, text) do
     CategoryScreens.apply_exclusive(state, cat_id, {:new_child, text})
   end

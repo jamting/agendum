@@ -310,8 +310,9 @@ tests in `database_test.exs` and `links_test.exs`):
 5. **Exclusive families hold at most one branch.** `Assign` clears the
    siblings before linking, and `Core.make_exclusive/3` resolves items
    already in several children before setting the flag (SPEC R7a).
-   *Gap:* moving a category under an exclusive parent (`move_category/4`,
-   `demote/2`) can still put an item in two branches.
+   `Core.move_category/5`, `promote/3` and `demote/3` resolve items a move
+   would put in two branches (SPEC R7b). Only the `Database` primitives
+   skip these checks; the TUI never calls them directly.
 6. **Views reference live categories.** `delete_category/2` removes
    sections and columns headed by deleted categories, and also removes the
    deleted ids from every `also_assign` list.

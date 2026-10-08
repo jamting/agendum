@@ -225,9 +225,16 @@ defmodule Agenda.Core.Database do
   @doc "Moves a category up one level, placing it right after its old parent."
   @spec promote(t, id) :: {:ok, t} | {:error, atom}
   def promote(%__MODULE__{} = db, id) do
+    with {:ok, parent, after_id} <- promote_target(db, id),
+         do: move_category(db, id, parent, after_id)
+  end
+
+  @doc "Where `promote/2` would move a category: `{:ok, new_parent, after_id}`."
+  @spec promote_target(t, id) :: {:ok, id, id} | {:error, :top_level}
+  def promote_target(%__MODULE__{} = db, id) do
     with parent when parent != nil <- db.categories[id].parent_id,
          grandparent when grandparent != nil <- db.categories[parent].parent_id do
-      move_category(db, id, grandparent, parent)
+      {:ok, grandparent, parent}
     else
       nil -> {:error, :top_level}
     end
@@ -236,9 +243,16 @@ defmodule Agenda.Core.Database do
   @doc "Moves a category down one level, making it the last child of its previous sibling."
   @spec demote(t, id) :: {:ok, t} | {:error, atom}
   def demote(%__MODULE__{} = db, id) do
+    with {:ok, parent, after_id} <- demote_target(db, id),
+         do: move_category(db, id, parent, after_id)
+  end
+
+  @doc "Where `demote/2` would move a category: `{:ok, new_parent, nil}` (appended)."
+  @spec demote_target(t, id) :: {:ok, id, nil} | {:error, :no_previous_sibling}
+  def demote_target(%__MODULE__{} = db, id) do
     case previous_sibling(db, id) do
       nil -> {:error, :no_previous_sibling}
-      sibling -> move_category(db, id, sibling, nil)
+      sibling -> {:ok, sibling, nil}
     end
   end
 

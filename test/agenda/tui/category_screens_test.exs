@@ -143,4 +143,91 @@ defmodule Agenda.TUI.CategoryScreensTest do
       assert contacts(state, item) == ["Anna Lasky", "Daniel Fiske"]
     end
   end
+
+  describe "moving a category into an exclusive family" do
+    setup do
+      db = Agenda.Sample.build(~D[2026-10-08])
+      priority = hd(Database.find_categories(db, "Priority"))
+      {:ok, db, urgent} = Agenda.Core.add_category(db, db.main_id, "Urgent", after: priority)
+      # the item about Anna is High; it is now also Urgent
+      item = Enum.find(Database.items(db), &(&1.text =~ "Anna Lasky")).id
+      db = Agenda.Core.assign(db, item, urgent)
+
+      # category manager rows: MAIN Entry When Done Calls Priority High Medium Low Urgent
+      state = start(db) |> press([{:f, 9}] ++ List.duplicate(:down, 9))
+      %{state: state, item: item, urgent: urgent, priority: priority}
+    end
+
+    defp priorities(state, item) do
+      state.db
+      |> Database.explicit_categories(item)
+      |> Enum.map(&state.db.categories[&1].name)
+      |> Enum.filter(&(&1 in ~w(High Medium Low Urgent Mixed)))
+      |> Enum.sort()
+    end
+
+    test "F8 (demote) shows Agenda's conflict box", %{state: state} do
+      screen = state |> press({:f, 8}) |> screen()
+      assert screen =~ "Moving Urgent creates a conflict"
+      assert screen =~ "1 item(s) would be in two mutually exclusive categories."
+      assert screen =~ "Removing from current category"
+      assert screen =~ "Removing from conflicting category"
+      assert screen =~ "Moving to new category"
+    end
+
+    test "ENTER (default) moves it and removes the item from Urgent", %{
+      state: state,
+      item: item,
+      urgent: urgent,
+      priority: priority
+    } do
+      state = press(state, [{:f, 8}, :enter])
+      assert state.db.categories[urgent].parent_id == priority
+      assert priorities(state, item) == ["High"]
+      assert screen(state) =~ "1 conflicting item(s) reassigned"
+    end
+
+    test "Removing from conflicting category keeps Urgent", %{state: state, item: item} do
+      state = press(state, [{:f, 8}, :down, :enter])
+      assert priorities(state, item) == ["Urgent"]
+    end
+
+    test "Moving to new category asks for a name", %{state: state, item: item, priority: priority} do
+      state = press(state, [{:f, 8}, "m", "Mixed", :enter])
+      assert priorities(state, item) == ["Mixed"]
+
+      assert state.db.categories[hd(Database.find_categories(state.db, "Mixed"))].parent_id ==
+               priority
+    end
+
+    test "ESC leaves the hierarchy alone", %{state: state, urgent: urgent} do
+      state = press(state, [{:f, 8}, :esc])
+      assert state.db.categories[urgent].parent_id == state.db.main_id
+    end
+
+    test "ALT-F10 (move under a new parent) uses the same box", %{
+      state: state,
+      item: item,
+      urgent: urgent
+    } do
+      state = press(state, [{:alt_f, 10}, "Prio", :enter])
+      assert screen(state) =~ "Moving Urgent creates a conflict"
+      state = press(state, :enter)
+
+      assert state.db.categories[urgent].parent_id ==
+               hd(Database.find_categories(state.db, "Priority"))
+
+      assert priorities(state, item) == ["High"]
+    end
+
+    test "the move and its resolution are one undo step", %{
+      state: state,
+      item: item,
+      urgent: urgent
+    } do
+      state = press(state, [{:f, 8}, :enter, {:ctrl, "z"}])
+      assert state.db.categories[urgent].parent_id == state.db.main_id
+      assert priorities(state, item) == ["High", "Urgent"]
+    end
+  end
 end

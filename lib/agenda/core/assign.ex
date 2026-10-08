@@ -112,6 +112,54 @@ defmodule Agenda.Core.Assign do
   end
 
   @doc """
+  After a category has been moved, the items in its subtree that are now
+  in more than one branch of an exclusive family above it.
+  """
+  @spec placement_conflicts(db, id) :: [id]
+  def placement_conflicts(db, cat_id) do
+    exclusive = Enum.filter(Database.ancestors(db, cat_id), &db.categories[&1].exclusive)
+
+    db
+    |> Database.items_in(cat_id)
+    |> Enum.map(& &1.id)
+    |> Enum.filter(fn item -> Enum.any?(exclusive, &(length(branches(db, item, &1)) > 1)) end)
+  end
+
+  @doc """
+  The nearest exclusive ancestor of a moved category where any of the
+  given items is in more than one branch.
+  """
+  @spec conflicting_family(db, id, [id]) :: id | nil
+  def conflicting_family(db, cat_id, items) do
+    db
+    |> Database.ancestors(cat_id)
+    |> Enum.find(fn a ->
+      db.categories[a].exclusive and Enum.any?(items, &(length(branches(db, &1, a)) > 1))
+    end)
+  end
+
+  @doc """
+  Resolves one item that a category move put in two exclusive branches, as
+  Agenda 2.0's "Process conflicting item(s) by" box does:
+
+    * `:remove_moved` – remove the item from the moved category (subtree)
+    * `:remove_other` – remove it from the branches it now clashes with
+    * `{:category, family, target}` – leave every branch of the exclusive
+      `family` and assign the item to `target`
+  """
+  @spec resolve_placement(db, id, id, :remove_moved | :remove_other | {:category, id, id}) :: db
+  def resolve_placement(db, cat_id, item_id, :remove_moved), do: unassign(db, item_id, cat_id)
+
+  def resolve_placement(db, cat_id, item_id, :remove_other),
+    do: clear_exclusive_siblings(db, item_id, cat_id)
+
+  def resolve_placement(db, _cat_id, item_id, {:category, family, target}) do
+    db.categories[family].children
+    |> Enum.reduce(db, &unassign(&2, item_id, &1))
+    |> assign(item_id, target)
+  end
+
+  @doc """
   True if an item cannot be in both categories because they sit under
   different children of a mutually exclusive ancestor.
   """

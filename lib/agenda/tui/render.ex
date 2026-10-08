@@ -563,6 +563,9 @@ defmodule Agenda.TUI.Render do
   defp box_title(state, %{type: :profile, item_id: id}),
     do: "Assignments: " <> String.slice(state.db.items[id].text, 0, 40)
 
+  defp box_title(state, %{type: :choice, kind: :move, cat_id: id}),
+    do: "Moving #{state.db.categories[id].name} creates a conflict"
+
   defp box_title(state, %{type: :choice, cat_id: id}),
     do: "Make children of #{state.db.categories[id].name} mutually exclusive"
 
@@ -597,7 +600,8 @@ defmodule Agenda.TUI.Render do
   end
 
   defp box_content(_state, %{type: :choice} = mode, _inner, _max_rows) do
-    options = CategoryScreens.exclusive_resolutions()
+    options = CategoryScreens.choice_options(mode)
+    [problem, question] = CategoryScreens.choice_lines(mode)
     {_, description, _} = Enum.at(options, mode.cursor)
 
     choices =
@@ -607,11 +611,8 @@ defmodule Agenda.TUI.Render do
         [{:box, "   "}, {if(i == mode.cursor, do: :box_selected, else: :box), " #{label} "}]
       end)
 
-    [
-      [{:box, " #{mode.conflicts} item(s) are assigned to more than one child."}],
-      [],
-      [{:box, " Assign conflicting item(s) to:"}]
-    ] ++ choices ++ [[], [{:box, " " <> description}]]
+    [[{:box, " " <> problem}], [], [{:box, " " <> question}]] ++
+      choices ++ [[], [{:box, " " <> description}]]
   end
 
   defp box_content(state, %{type: :props} = mode, inner, _max_rows) do

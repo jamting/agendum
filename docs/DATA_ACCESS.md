@@ -74,7 +74,9 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.find_or_create_category(db, name)` | write | Look up by name anywhere, else create under MAIN. |
 | `Core.rename_category/3` | write | `{:error, :protected}` for MAIN/Entry/When/Done. |
 | `Core.discard_category(db, id)` | write | Delete the subtree, its links, and view references. |
-| `Core.move_category(db, id, parent, after)`, `promote/2`, `demote/2` | write | Restructure; `{:error, :cycle \| :protected \| :top_level \| :no_previous_sibling}`. |
+| `Core.move_category(db, id, parent, after, resolution)`, `promote(db, id, resolution)`, `demote(db, id, resolution)` | write | Restructure. Items put in two exclusive branches are resolved by `:remove_moved` (default), `:remove_other` or `{:new_category, name}` (R7b). Errors: `:cycle \| :protected \| :top_level \| :no_previous_sibling \| :empty \| :duplicate`. |
+| `Core.move_conflicts(db, id, parent, after)`, `promote_conflicts/2`, `demote_conflicts/2` | read | `{:ok, item_ids}` that the move would put in conflict, or the move's error. |
+| `Database.promote_target/2`, `demote_target/2` | read | Where a promote/demote would move a category: `{:ok, parent, after_id}`. |
 | `Core.make_exclusive(db, cat, :parent \| :first_child \| {:new_child, name})` | write | Make children mutually exclusive, resolving items already in several children (R7a). `{:error, :protected \| :empty \| :duplicate}`. |
 | `Core.make_unexclusive/2`, `toggle_match_name/2` | write | Rule flags; assignments are kept. |
 | `Core.exclusive_conflicts(db, cat)` | read | Items in more than one child branch (offered for resolution by the UI). |

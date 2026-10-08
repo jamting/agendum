@@ -153,10 +153,10 @@ defmodule Agenda.TUI.CategoryScreens do
           else: %{state | edit: %{target: {:rename, id}, line: LineEdit.new(cat.name)}}
 
       {:f, 7} ->
-        hierarchy_change(state, Core.promote(db, id))
+        move(state, id, Database.promote_target(db, id))
 
       {:f, 8} ->
-        hierarchy_change(state, Core.demote(db, id))
+        move(state, id, Database.demote_target(db, id))
 
       {:alt, :up} ->
         reorder(state, id, -1)
@@ -272,6 +272,12 @@ defmodule Agenda.TUI.CategoryScreens do
 
   defp hierarchy_change(state, {:error, :cycle}),
     do: State.error(state, "A category cannot be moved under itself")
+
+  defp hierarchy_change(state, {:error, :empty}),
+    do: State.error(state, "A category needs a name")
+
+  defp hierarchy_change(state, {:error, :duplicate}),
+    do: State.error(state, "That category already exists there")
 
   defp reorder(state, id, direction) do
     db = state.db
@@ -389,12 +395,7 @@ defmodule Agenda.TUI.CategoryScreens do
     }
   end
 
-  defp pick(state, {:move_category, cat_id}, parent) do
-    case Core.move_category(state.db, cat_id, parent, nil) do
-      {:ok, db} -> state |> State.change_db(db) |> move_cursor_to(cat_id)
-      error -> hierarchy_change(state, error)
-    end
-  end
+  defp pick(state, {:move_category, cat_id}, parent), do: move(state, cat_id, {:ok, parent, nil})
 
   defp pick(state, {:also_assign, cat_id}, target) do
     State.change_db(state, Core.toggle_also_assign(state.db, cat_id, target))
@@ -426,12 +427,86 @@ defmodule Agenda.TUI.CategoryScreens do
 
       true ->
         conflicts = length(Core.exclusive_conflicts(state.db, cat.id))
-        State.push(state, %{type: :choice, cat_id: cat.id, conflicts: conflicts, cursor: 0})
+
+        State.push(state, %{
+          type: :choice,
+          kind: :exclusive,
+          cat_id: cat.id,
+          conflicts: conflicts,
+          cursor: 0
+        })
+    end
+  end
+
+  # --- moving categories (promote, demote, move) ---------------------------------------------
+
+  @doc "The choices offered when a move puts items in two exclusive branches (Figure 16-16)."
+  def move_resolutions do
+    [
+      {"Removing from current category", "Remove them from the category being moved",
+       :remove_moved},
+      {"Removing from conflicting category", "Remove them from the category they clash with",
+       :remove_other},
+      {"Moving to new category", "Type a name; a new category in the exclusive family gets them",
+       :new_category}
+    ]
+  end
+
+  @doc "Options and explanatory lines for a choice box."
+  def choice_options(%{kind: :exclusive}), do: exclusive_resolutions()
+  def choice_options(%{kind: :move}), do: move_resolutions()
+
+  def choice_lines(%{kind: :exclusive, conflicts: n}),
+    do: ["#{n} item(s) are assigned to more than one child.", "Assign conflicting item(s) to:"]
+
+  def choice_lines(%{kind: :move, conflicts: n}),
+    do: [
+      "#{n} item(s) would be in two mutually exclusive categories.",
+      "Process conflicting item(s) by:"
+    ]
+
+  # `target` is where the category goes: {:ok, parent, after_id} or a move error.
+  defp move(state, id, target) do
+    with {:ok, parent, after_id} <- target,
+         {:ok, conflicts} <- Core.move_conflicts(state.db, id, parent, after_id) do
+      if conflicts == [] do
+        apply_move(state, id, parent, after_id, :remove_moved)
+      else
+        State.push(state, %{
+          type: :choice,
+          kind: :move,
+          cat_id: id,
+          parent: parent,
+          after: after_id,
+          conflicts: length(conflicts),
+          cursor: 0
+        })
+      end
+    else
+      error -> hierarchy_change(state, error)
+    end
+  end
+
+  @doc "Moves a category with the given conflict resolution and reports the result."
+  def apply_move(state, id, parent, after_id, rule) do
+    conflicts =
+      with {:ok, items} <- Core.move_conflicts(state.db, id, parent, after_id), do: length(items)
+
+    case Core.move_category(state.db, id, parent, after_id, rule) do
+      {:ok, db} ->
+        state = state |> State.change_db(db) |> move_cursor_to(id)
+
+        if conflicts > 0,
+          do: State.info(state, "#{conflicts} conflicting item(s) reassigned"),
+          else: state
+
+      error ->
+        hierarchy_change(state, error)
     end
   end
 
   defp choice_key(state, mode, key) do
-    options = exclusive_resolutions()
+    options = choice_options(mode)
 
     pick = fn index ->
       resolve_choice(State.pop(state), mode, elem(Enum.at(options, index), 2))
@@ -462,6 +537,17 @@ defmodule Agenda.TUI.CategoryScreens do
         state
     end
   end
+
+  defp resolve_choice(state, %{kind: :move} = mode, :new_category) do
+    Update.prompt(
+      state,
+      "New category for the conflicting items:",
+      {:move_new_category, mode.cat_id, mode.parent, mode.after}
+    )
+  end
+
+  defp resolve_choice(state, %{kind: :move} = mode, rule),
+    do: apply_move(state, mode.cat_id, mode.parent, mode.after, rule)
 
   defp resolve_choice(state, mode, :new_child),
     do:
