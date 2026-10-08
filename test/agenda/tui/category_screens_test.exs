@@ -251,4 +251,20 @@ defmodule Agenda.TUI.CategoryScreensTest do
     assert "Anna Lasky" in contact_links
     refute "Abigail Scheer" in contact_links
   end
+
+  test "F7 promotes outline-style: following siblings become children (R7d)", %{state: state} do
+    # rows: MAIN Entry When Done Calls Priority High Medium Low
+    state = press(state, [{:f, 9}] ++ List.duplicate(:down, 7) ++ [{:f, 7}])
+    medium = cat(state, "Medium")
+    assert state.db.categories[medium].parent_id == state.db.main_id
+
+    assert Enum.map(state.db.categories[medium].children, &state.db.categories[&1].name) == [
+             "Low"
+           ]
+
+    assert Enum.map(
+             state.db.categories[cat(state, "Priority")].children,
+             &state.db.categories[&1].name
+           ) == ["High"]
+  end
 end

@@ -153,10 +153,10 @@ defmodule Agenda.TUI.CategoryScreens do
           else: %{state | edit: %{target: {:rename, id}, line: LineEdit.new(cat.name)}}
 
       {:f, 7} ->
-        move(state, id, Database.promote_target(db, id))
+        move(state, id, :promote)
 
       {:f, 8} ->
-        move(state, id, Database.demote_target(db, id))
+        move(state, id, :demote)
 
       {:alt, :up} ->
         reorder(state, id, -1)
@@ -395,7 +395,8 @@ defmodule Agenda.TUI.CategoryScreens do
     }
   end
 
-  defp pick(state, {:move_category, cat_id}, parent), do: move(state, cat_id, {:ok, parent, nil})
+  defp pick(state, {:move_category, cat_id}, parent),
+    do: move(state, cat_id, {:move, parent, nil})
 
   defp pick(state, {:also_assign, cat_id}, target) do
     State.change_db(state, Core.toggle_also_assign(state.db, cat_id, target))
@@ -465,34 +466,33 @@ defmodule Agenda.TUI.CategoryScreens do
       "Process conflicting item(s) by:"
     ]
 
-  # `target` is where the category goes: {:ok, parent, after_id} or a move error.
-  defp move(state, id, target) do
-    with {:ok, parent, after_id} <- target,
-         {:ok, conflicts} <- Core.move_conflicts(state.db, id, parent, after_id) do
-      if conflicts == [] do
-        apply_move(state, id, parent, after_id, :remove_moved)
-      else
+  # `relocation` is :promote, :demote or {:move, parent, after_id} (see Core.relocate/4).
+  defp move(state, id, relocation) do
+    case Core.relocation_conflicts(state.db, id, relocation) do
+      {:ok, []} ->
+        apply_move(state, id, relocation, :remove_moved)
+
+      {:ok, conflicts} ->
         State.push(state, %{
           type: :choice,
           kind: :move,
           cat_id: id,
-          parent: parent,
-          after: after_id,
+          relocation: relocation,
           conflicts: length(conflicts),
           cursor: 0
         })
-      end
-    else
-      error -> hierarchy_change(state, error)
+
+      error ->
+        hierarchy_change(state, error)
     end
   end
 
-  @doc "Moves a category with the given conflict resolution and reports the result."
-  def apply_move(state, id, parent, after_id, rule) do
+  @doc "Relocates a category with the given conflict resolution and reports the result."
+  def apply_move(state, id, relocation, rule) do
     conflicts =
-      with {:ok, items} <- Core.move_conflicts(state.db, id, parent, after_id), do: length(items)
+      with {:ok, items} <- Core.relocation_conflicts(state.db, id, relocation), do: length(items)
 
-    case Core.move_category(state.db, id, parent, after_id, rule) do
+    case Core.relocate(state.db, id, relocation, rule) do
       {:ok, db} ->
         state = state |> State.change_db(db) |> move_cursor_to(id)
 
@@ -542,12 +542,12 @@ defmodule Agenda.TUI.CategoryScreens do
     Update.prompt(
       state,
       "New category for the conflicting items:",
-      {:move_new_category, mode.cat_id, mode.parent, mode.after}
+      {:move_new_category, mode.cat_id, mode.relocation}
     )
   end
 
   defp resolve_choice(state, %{kind: :move} = mode, rule),
-    do: apply_move(state, mode.cat_id, mode.parent, mode.after, rule)
+    do: apply_move(state, mode.cat_id, mode.relocation, rule)
 
   defp resolve_choice(state, mode, :new_child),
     do:

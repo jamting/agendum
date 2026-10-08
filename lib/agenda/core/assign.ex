@@ -132,67 +132,123 @@ defmodule Agenda.Core.Assign do
   end
 
   @doc """
-  After a category has been moved, the items in its subtree that now break
-  one of Agenda's assignment rules because of the move:
+  Every way an item breaks Agenda's assignment rules: an exclusive family
+  it is in more than once (`{:exclusive, family}`, R7), or a direct link to
+  both a category and its ancestor (`{:lineage, category, ancestor}`, R7c).
+  """
+  @spec violations(db, id) :: [{:exclusive, id} | {:lineage, id, id}]
+  def violations(db, item_id) do
+    explicit = Database.explicit_categories(db, item_id)
 
-    * they are in more than one branch of an exclusive family above it (R7b)
-    * they are also directly assigned to one of its new ancestors (R7c)
+    exclusive =
+      for {id, %{exclusive: true}} <- db.categories,
+          length(branches(db, item_id, id)) > 1,
+          do: {:exclusive, id}
+
+    lineage =
+      for c <- explicit,
+          a <- Database.ancestors(db, c),
+          MapSet.member?(explicit, a),
+          do: {:lineage, c, a}
+
+    Enum.sort(exclusive) ++ Enum.sort(lineage)
+  end
+
+  @doc """
+  After a category has been moved, promoted or demoted, the items in its
+  (new) subtree that now break an assignment rule (see `violations/2`).
   """
   @spec placement_conflicts(db, id) :: [id]
   def placement_conflicts(db, cat_id) do
-    ancestors = Database.ancestors(db, cat_id)
-
     db
     |> Database.items_in(cat_id)
     |> Enum.map(& &1.id)
-    |> Enum.filter(fn item -> Enum.any?(ancestors, &placement_conflict?(db, item, &1)) end)
+    |> Enum.filter(&(violations(db, &1) != []))
   end
 
   @doc """
-  The nearest ancestor of a moved category where any of the given items is
-  in conflict: an exclusive family it is in twice, or an ancestor it is
-  also directly assigned to.
+  Where a new category for conflicting items belongs: the category the
+  conflicts hinge on (an exclusive family, or the ancestor in a
+  category/ancestor pair), preferring the moved category itself and then
+  its nearest ancestor.
   """
   @spec conflicting_family(db, id, [id]) :: id | nil
   def conflicting_family(db, cat_id, items) do
-    db
-    |> Database.ancestors(cat_id)
-    |> Enum.find(fn a -> Enum.any?(items, &placement_conflict?(db, &1, a)) end)
-  end
+    anchors =
+      for item <- items, v <- violations(db, item), uniq: true do
+        case v do
+          {:exclusive, family} -> family
+          {:lineage, _child, ancestor} -> ancestor
+        end
+      end
 
-  defp placement_conflict?(db, item, ancestor) do
-    Database.explicit?(db, item, ancestor) or
-      (db.categories[ancestor].exclusive and length(branches(db, item, ancestor)) > 1)
+    Enum.find([cat_id | Database.ancestors(db, cat_id)], &(&1 in anchors)) || List.first(anchors)
   end
 
   @doc """
-  Resolves one item that a category move put in conflict (see
-  `placement_conflicts/2`), as Agenda 2.0's "Process conflicting item(s)
-  by" box does:
+  Resolves one item that a move put in conflict, as Agenda 2.0's "Process
+  conflicting item(s) by" box does. `moved` is the moved category's subtree
+  as it was before the move (so siblings adopted by a promote are "other").
 
-    * `:remove_moved` – remove the item from the moved category (subtree)
-    * `:remove_other` – remove it from the categories it now clashes with:
-      other branches of exclusive families, and direct links to ancestors
-    * `{:category, family, target}` – leave `family` and all of its branches
-      and assign the item to `target` (a child of `family`)
+    * `:remove_moved` – keep the item's other assignments; links in the
+      moved category give way
+    * `:remove_other` – keep the item's links in the moved category; the
+      other assignments give way
+    * `{:category, target}` – drop every link involved in a conflict and
+      assign the item to `target`
+
+  When several links on the same side clash, the one closest to the top of
+  the outline wins.
   """
-  @spec resolve_placement(db, id, id, :remove_moved | :remove_other | {:category, id, id}) :: db
-  def resolve_placement(db, cat_id, item_id, :remove_moved), do: unassign(db, item_id, cat_id)
-
-  def resolve_placement(db, cat_id, item_id, :remove_other) do
+  @spec resolve_placement(db, MapSet.t(id), id, :remove_moved | :remove_other | {:category, id}) ::
+          db
+  def resolve_placement(db, _moved, item_id, {:category, target}) do
     db
-    |> clear_exclusive_siblings(item_id, cat_id)
-    |> then(
-      &Enum.reduce(Database.ancestors(&1, cat_id), &1, fn a, acc ->
-        Database.unlink(acc, item_id, a)
-      end)
-    )
+    |> involved(item_id)
+    |> Enum.reduce(db, &Database.unlink(&2, item_id, &1))
+    |> assign(item_id, target)
   end
 
-  def resolve_placement(db, _cat_id, item_id, {:category, family, target}) do
-    db.categories[family].children
-    |> Enum.reduce(db, &unassign(&2, item_id, &1))
-    |> assign(item_id, target)
+  def resolve_placement(db, moved, item_id, rule) do
+    {inside, outside} =
+      db
+      |> Database.explicit_categories(item_id)
+      |> Enum.sort_by(&outline_position(db, &1), :desc)
+      |> Enum.split_with(&MapSet.member?(moved, &1))
+
+    # reassert the losing side first and the winning side last; within a
+    # side the bottom of the outline goes first, so the top wins
+    order = if rule == :remove_moved, do: inside ++ outside, else: outside ++ inside
+    Enum.reduce(order, db, &reassert(&2, item_id, &1))
+  end
+
+  # Links that take part in one of the item's conflicts.
+  defp involved(db, item_id) do
+    explicit = Database.explicit_categories(db, item_id)
+
+    db
+    |> violations(item_id)
+    |> Enum.flat_map(fn
+      {:exclusive, family} ->
+        Enum.filter(Database.descendants(db, family), &MapSet.member?(explicit, &1))
+
+      {:lineage, child, ancestor} ->
+        [child, ancestor]
+    end)
+    |> Enum.uniq()
+  end
+
+  # Re-links a category, removing whatever conflicts with it (without
+  # following category links, which already ran when it was assigned).
+  defp reassert(db, item_id, cat_id) do
+    db
+    |> clear_exclusive_siblings(item_id, cat_id)
+    |> clear_lineage(item_id, cat_id)
+    |> Database.link(item_id, cat_id)
+  end
+
+  defp outline_position(db, cat_id) do
+    Enum.find_index(Database.subtree(db, db.main_id), &(&1 == cat_id))
   end
 
   @doc """

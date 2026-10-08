@@ -244,80 +244,90 @@ defmodule Agenda.Core do
   end
 
   defdelegate discard_category(db, id), to: Database, as: :delete_category
-  # --- moving categories (SPEC R7b) ---
+  # --- moving categories (SPEC R7b, R7c, R7d) ---
 
-  @typedoc "How items put in two exclusive branches by a move are resolved."
+  @typedoc "A change to a category's place in the hierarchy."
+  @type relocation :: :promote | :demote | {:move, id, id | :first | nil}
+
+  @typedoc "How items that a move puts in conflict are resolved."
   @type move_resolution :: :remove_moved | :remove_other | {:new_category, String.t()}
 
   @doc """
-  Items that moving `id` under `parent` (after sibling `after_id`) would put
-  in two branches of a mutually exclusive family. Returns the move's error
-  if the move itself is invalid.
+  Items that a relocation would put in conflict with the assignment rules
+  (an exclusive family twice, R7b; a category and its ancestor, R7c).
+  Returns the relocation's error if it is invalid.
   """
-  @spec move_conflicts(db, id, id, id | :first | nil) :: {:ok, [id]} | {:error, atom}
-  def move_conflicts(db, id, parent, after_id) do
-    with {:ok, moved} <- Database.move_category(db, id, parent, after_id) do
+  @spec relocation_conflicts(db, id, relocation) :: {:ok, [id]} | {:error, atom}
+  def relocation_conflicts(db, id, relocation) do
+    with {:ok, moved} <- do_relocate(db, id, relocation) do
       {:ok, Assign.placement_conflicts(moved, id)}
     end
   end
 
   @doc """
-  Moves a category, resolving items that would end up in two branches of a
-  mutually exclusive family, as Agenda 2.0 does:
+  Promotes, demotes or moves a category, resolving the items this puts in
+  conflict, as Agenda 2.0 does:
 
-    * `:remove_moved` (default) – remove them from the moved category
-    * `:remove_other` – remove them from the category they clash with
-    * `{:new_category, name}` – create `name` as a new child of the
-      exclusive family and move them there (only when there are conflicts)
+    * `:remove_moved` (default) – the items keep their other assignments and
+      lose the conflicting ones in the moved category
+    * `:remove_other` – they keep the moved category's assignments and lose
+      the other, conflicting ones
+    * `{:new_category, name}` – create `name` under the category the
+      conflict hinges on and move the items there (only when there are
+      conflicts)
   """
-  @spec move_category(db, id, id, id | :first | nil, move_resolution) ::
-          {:ok, db} | {:error, atom}
-  def move_category(db, id, parent, after_id, resolution \\ :remove_moved) do
-    with {:ok, moved} <- Database.move_category(db, id, parent, after_id) do
-      resolve_move(moved, id, Assign.placement_conflicts(moved, id), resolution)
+  @spec relocate(db, id, relocation, move_resolution) :: {:ok, db} | {:error, atom}
+  def relocate(db, id, relocation, resolution \\ :remove_moved) do
+    with {:ok, moved_db} <- do_relocate(db, id, relocation) do
+      original = MapSet.new(Database.subtree(db, id))
+      resolve_move(moved_db, id, original, Assign.placement_conflicts(moved_db, id), resolution)
     end
   end
 
-  defp resolve_move(db, _id, [], _resolution), do: {:ok, db}
+  defp do_relocate(db, id, :promote), do: Database.promote(db, id)
+  defp do_relocate(db, id, :demote), do: Database.demote(db, id)
 
-  defp resolve_move(db, id, items, {:new_category, name}) do
+  defp do_relocate(db, id, {:move, parent, after_id}),
+    do: Database.move_category(db, id, parent, after_id)
+
+  defp resolve_move(db, _id, _original, [], _resolution), do: {:ok, db}
+
+  defp resolve_move(db, id, original, items, {:new_category, name}) do
     family = Assign.conflicting_family(db, id, items)
 
     with {:ok, db, target} <- add_category(db, family, name) do
       {:ok,
-       Enum.reduce(items, db, &Assign.resolve_placement(&2, id, &1, {:category, family, target}))}
+       Enum.reduce(items, db, &Assign.resolve_placement(&2, original, &1, {:category, target}))}
     end
   end
 
-  defp resolve_move(db, id, items, rule) when rule in [:remove_moved, :remove_other] do
-    {:ok, Enum.reduce(items, db, &Assign.resolve_placement(&2, id, &1, rule))}
+  defp resolve_move(db, _id, original, items, rule) when rule in [:remove_moved, :remove_other] do
+    {:ok, Enum.reduce(items, db, &Assign.resolve_placement(&2, original, &1, rule))}
   end
 
-  @doc "Moves a category up one level (F7), with the same conflict rules as `move_category/5`."
+  @doc "Moves a category under `parent` (ALT-F10); see `relocate/4`."
+  @spec move_category(db, id, id, id | :first | nil, move_resolution) ::
+          {:ok, db} | {:error, atom}
+  def move_category(db, id, parent, after_id, resolution \\ :remove_moved),
+    do: relocate(db, id, {:move, parent, after_id}, resolution)
+
+  @doc "Moves a category up one level, adopting its following siblings (F7, R7d); see `relocate/4`."
   @spec promote(db, id, move_resolution) :: {:ok, db} | {:error, atom}
-  def promote(db, id, resolution \\ :remove_moved) do
-    with {:ok, parent, after_id} <- Database.promote_target(db, id),
-         do: move_category(db, id, parent, after_id, resolution)
-  end
+  def promote(db, id, resolution \\ :remove_moved), do: relocate(db, id, :promote, resolution)
 
-  @doc "Moves a category down one level (F8), with the same conflict rules as `move_category/5`."
+  @doc "Moves a category down one level, under its previous sibling (F8); see `relocate/4`."
   @spec demote(db, id, move_resolution) :: {:ok, db} | {:error, atom}
-  def demote(db, id, resolution \\ :remove_moved) do
-    with {:ok, parent, after_id} <- Database.demote_target(db, id),
-         do: move_category(db, id, parent, after_id, resolution)
-  end
+  def demote(db, id, resolution \\ :remove_moved), do: relocate(db, id, :demote, resolution)
+
+  @spec move_conflicts(db, id, id, id | :first | nil) :: {:ok, [id]} | {:error, atom}
+  def move_conflicts(db, id, parent, after_id),
+    do: relocation_conflicts(db, id, {:move, parent, after_id})
 
   @spec promote_conflicts(db, id) :: {:ok, [id]} | {:error, atom}
-  def promote_conflicts(db, id) do
-    with {:ok, parent, after_id} <- Database.promote_target(db, id),
-         do: move_conflicts(db, id, parent, after_id)
-  end
+  def promote_conflicts(db, id), do: relocation_conflicts(db, id, :promote)
 
   @spec demote_conflicts(db, id) :: {:ok, [id]} | {:error, atom}
-  def demote_conflicts(db, id) do
-    with {:ok, parent, after_id} <- Database.demote_target(db, id),
-         do: move_conflicts(db, id, parent, after_id)
-  end
+  def demote_conflicts(db, id), do: relocation_conflicts(db, id, :demote)
 
   @doc "Items assigned to more than one child of `id` (see `make_exclusive/3`)."
   @spec exclusive_conflicts(db, id) :: [id]

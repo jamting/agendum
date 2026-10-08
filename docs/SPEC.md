@@ -72,11 +72,18 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   as R7b; when it breaks both rules, we show one box for both instead of
   Agenda's two boxes in sequence. With "Moving to new category", the new
   category is created under the conflicting ancestor or exclusive family.
-- **R7d ⏳ Outline-style promote and demote.** In Agenda, promote and demote
-  shift a category's level like an outline: a promoted category can adopt
-  its former following siblings as children, and categories left without a
-  parent are promoted too (User's Guide 16-19 to 16-21). Ours move the
-  category with its own subtree only.
+- **R7d ✅ Outline-style promote.** The hierarchy behaves like an outline
+  whose order never changes; promote and demote only shift a category's
+  level (User's Guide, "Promoting and Demoting Categories"). Promote moves a
+  category up one level, right after its old parent, and its following
+  siblings become its children, after its own children (Figure 16-13:
+  promoting Sam adopts John and Anna, and Sam's child Ted comes along).
+  Demote makes a category the last child of its previous sibling and is
+  refused for a first child, which would skip a level. Conflicts caused by
+  adopted siblings (Figure 16-15: promoting Anna makes Tim its child) are
+  resolved with the R7b/R7c choices; when several links clash, the one
+  closest to the top of the outline wins. Our reading: the promoted
+  category keeps its own subtree, which matches the manual's example.
 - **R8 ✅ Category links.** A category can pass its items on to other
   categories (`also_assign`, patent FIG. 6). This applies transitively and is
   safe with cycles.

@@ -222,11 +222,27 @@ defmodule Agenda.Core.Database do
     end
   end
 
-  @doc "Moves a category up one level, placing it right after its old parent."
+  @doc """
+  Moves a category up one level, right after its old parent. Its following
+  siblings become its children (after its own), as in an outline (R7d).
+  """
   @spec promote(t, id) :: {:ok, t} | {:error, atom}
   def promote(%__MODULE__{} = db, id) do
-    with {:ok, parent, after_id} <- promote_target(db, id),
-         do: move_category(db, id, parent, after_id)
+    with {:ok, parent, after_id} <- promote_target(db, id) do
+      # Outline-style (SPEC R7d): the following siblings become children of
+      # the promoted category, after its own, so the outline order holds.
+      followers = db.categories[after_id].children |> Enum.drop_while(&(&1 != id)) |> tl()
+
+      with {:ok, db} <- move_category(db, id, parent, after_id) do
+        {:ok, Enum.reduce(followers, db, &adopt(&2, &1, id))}
+      end
+    end
+  end
+
+  defp adopt(db, child, new_parent) do
+    db
+    |> detach_child(db.categories[child].parent_id, child)
+    |> attach_child(new_parent, child, nil)
   end
 
   @doc "Where `promote/2` would move a category: `{:ok, new_parent, after_id}`."

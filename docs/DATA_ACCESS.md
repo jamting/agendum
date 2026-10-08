@@ -74,9 +74,9 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.find_or_create_category(db, name)` | write | Look up by name anywhere, else create under MAIN. |
 | `Core.rename_category/3` | write | `{:error, :protected}` for MAIN/Entry/When/Done. |
 | `Core.discard_category(db, id)` | write | Delete the subtree, its links, and view references. |
-| `Core.move_category(db, id, parent, after, resolution)`, `promote(db, id, resolution)`, `demote(db, id, resolution)` | write | Restructure. Items put in two exclusive branches are resolved by `:remove_moved` (default), `:remove_other` or `{:new_category, name}` (R7b). Errors: `:cycle \| :protected \| :top_level \| :no_previous_sibling \| :empty \| :duplicate`. |
-| `Core.move_conflicts(db, id, parent, after)`, `promote_conflicts/2`, `demote_conflicts/2` | read | `{:ok, item_ids}` that the move would put in conflict, or the move's error. |
-| `Database.promote_target/2`, `demote_target/2` | read | Where a promote/demote would move a category: `{:ok, parent, after_id}`. |
+| `Core.relocate(db, id, :promote \| :demote \| {:move, parent, after}, resolution)` | write | Restructure the hierarchy. Promote is outline-style and adopts the following siblings (R7d). Items put in conflict (an exclusive family twice, R7b; a category and its ancestor, R7c) are resolved by `:remove_moved` (default; they keep their other assignments), `:remove_other` (they keep the moved category's) or `{:new_category, name}`. Errors: `:cycle \| :protected \| :top_level \| :no_previous_sibling \| :empty \| :duplicate`. Wrappers: `move_category/5`, `promote/3`, `demote/3`. |
+| `Core.relocation_conflicts(db, id, relocation)` | read | `{:ok, item_ids}` the relocation would put in conflict, or its error. Wrappers: `move_conflicts/4`, `promote_conflicts/2`, `demote_conflicts/2`. |
+| `Assign.violations(db, item)` | read | How an item breaks the assignment rules: `{:exclusive, family}` and `{:lineage, category, ancestor}`. |
 | `Core.make_exclusive(db, cat, :parent \| :first_child \| {:new_child, name})` | write | Make children mutually exclusive, resolving items already in several children (R7a). `{:error, :protected \| :empty \| :duplicate}`. |
 | `Core.make_unexclusive/2`, `toggle_match_name/2` | write | Rule flags; assignments are kept. |
 | `Core.exclusive_conflicts(db, cat)` | read | Items in more than one child branch (offered for resolution by the UI). |

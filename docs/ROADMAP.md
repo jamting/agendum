@@ -52,7 +52,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Resolve existing conflicts when making children exclusive, as Agenda 2.0 does (R7a)
 - [x] Resolve conflicts when moving categories into exclusive families, as Agenda 2.0 does (R7b)
 - [x] Enforce "no direct assignment to both a category and its ancestor", including in moves (R7c)
-- [ ] Outline-style promote/demote: a promoted category adopts its following siblings (R7d)
+- [x] Outline-style promote/demote: a promoted category adopts its following siblings (R7d)
 
 ## Ideas
 
