@@ -36,6 +36,9 @@ A change is done when `mix check` passes. Do not leave warnings.
    explicit links are stored (`Agenda.Core.Links`).
 5. No runtime dependencies. The terminal layer uses OTP 28+ raw mode, not a
    TUI library (see `docs/adr/0002-own-terminal-layer.md`).
+6. Keep everything a second front end (e.g. web) would need in `Agenda.Core`;
+   the TUI only handles keys and drawing. A web app on the same core is a
+   planned idea (`docs/ROADMAP.md`).
 
 ## Workflow for a feature
 
