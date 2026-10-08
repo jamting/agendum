@@ -97,17 +97,17 @@ Kapor summed up why the idea persisted: Agenda "did things you still can't do on
 
 Our Elixir clone already has the core that made Agenda distinctive; the biggest gap is the "magic" users praised most: dates and rules taken from plain text. Rule numbers refer to [`SPEC.md`](SPEC.md). This section reflects the project as of the date above; [`ROADMAP.md`](ROADMAP.md) has the current status.
 
-| Agenda feature                                   | In our clone today                              | Suggested next step                                              |
-| ------------------------------------------------ | ----------------------------------------------- | ---------------------------------------------------------------- |
-| Items in many categories, hierarchy, inheritance | Done (R1–R5)                                    | —                                                                |
-| Automatic filing by text                         | Done, by category name and short name (R10–R13) | —                                                                |
-| Editable views, typing into columns              | Done (R20–R27)                                  | Sorting and filters (R28)                                        |
-| Guessing intent from the neighbouring item       | Done (R12)                                      | —                                                                |
-| Mutually exclusive categories                    | Done, including conflict dialogs (R7, R7a, R7b) | No direct assignment to a category and its parent (R7c)          |
-| Plain-language dates                             | Done: read from item text and typed into When columns (R14) | Times of day and recurring dates (R14a) |
-| Conditions and actions                           | Only simple category-to-category links (R8)     | Full conditions and actions (R15)                                |
-| Task dependencies                                | Not started                                     | Add after R15                                                    |
-| Importing and searching text                     | Not started                                     | Search first (on the roadmap); import later                      |
+| Agenda feature                                   | In our clone today                                          | Suggested next step                                     |
+| ------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------------------- |
+| Items in many categories, hierarchy, inheritance | Done (R1–R5)                                                | —                                                       |
+| Automatic filing by text                         | Done, by category name and short name (R10–R13)             | —                                                       |
+| Editable views, typing into columns              | Done (R20–R27)                                              | Sorting and filters (R28)                               |
+| Guessing intent from the neighbouring item       | Done (R12)                                                  | —                                                       |
+| Mutually exclusive categories                    | Done, including conflict dialogs (R7, R7a, R7b)             | No direct assignment to a category and its parent (R7c) |
+| Plain-language dates                             | Done: read from item text and typed into When columns (R14) | Times of day and recurring dates (R14a)                 |
+| Conditions and actions                           | Only simple category-to-category links (R8)                 | Full conditions and actions (R15)                       |
+| Task dependencies                                | Not started                                                 | Add after R15                                           |
+| Importing and searching text                     | Not started                                                 | Search first (on the roadmap); import later             |
 
 The history also gives a design lesson. Agenda's power came with a learning curve that drove casual users away within a month. Keep the clone's first minutes simple: the demo file, the F1 help and sensible defaults matter as much as features.
 

@@ -3,11 +3,13 @@
 **Status:** accepted · 2026-10-08
 
 ## Context
+
 Agenda's value is in its rules: subsumption, exclusion, automatic
 assignment and editing through views. These rules must be easy to test
 and easy for AI assistants to change safely.
 
 ## Decision
+
 All domain logic lives in pure modules under `lib/agenda/core`, operating on
 one immutable `Database` value. The UI is Elm-style: a pure
 `Update.handle(state, key) → {state, effects}` and a pure
@@ -15,6 +17,7 @@ one immutable `Database` value. The UI is Elm-style: a pure
 perform I/O. The clock is read in the shell and passed in.
 
 ## Consequences
+
 - Almost everything is testable with plain function calls, including
   whole UI interactions as key sequences asserted against screen text.
 - Undo is trivial to add later (keep old values).

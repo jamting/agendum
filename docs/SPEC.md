@@ -7,13 +7,13 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
 
 ## 1. Concepts
 
-| Concept | Meaning | Code |
-|---|---|---|
-| **Item** | A free-form piece of text (up to a few lines), with an optional note. Exists independently of categories. | `Core.Item` |
-| **Category** | A named node in one hierarchy rooted at **MAIN**. | `Core.Category` |
-| **Link / assignment** | An independent many-to-many link between an item and a category (the patent's "link structures"). | `Core.Links` |
-| **View** | A saved arrangement: **sections** (each headed by a category) and **columns** (each headed by a category). | `Core.View` |
-| **Date category** | Entry, When, Done: categories whose membership is an item's date. | `Database.date_field/2` |
+| Concept               | Meaning                                                                                                    | Code                    |
+| --------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------- |
+| **Item**              | A free-form piece of text (up to a few lines), with an optional note. Exists independently of categories.  | `Core.Item`             |
+| **Category**          | A named node in one hierarchy rooted at **MAIN**.                                                          | `Core.Category`         |
+| **Link / assignment** | An independent many-to-many link between an item and a category (the patent's "link structures").          | `Core.Links`            |
+| **View**              | A saved arrangement: **sections** (each headed by a category) and **columns** (each headed by a category). | `Core.View`             |
+| **Date category**     | Entry, When, Done: categories whose membership is an item's date.                                          | `Database.date_field/2` |
 
 ## 2. Data model rules
 
@@ -41,7 +41,7 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   Agenda's "mutually exclusive" category property.)
 - **R7a ✅ Resolving conflicts when making children exclusive.** If items
   are already in more than one child, the user chooses where they go, as in
-  Agenda 2.0's *Assign conflicting item(s) to* box (User's Guide,
+  Agenda 2.0's _Assign conflicting item(s) to_ box (User's Guide,
   "Resolving conflicts for mutually exclusive categories"):
   **Parent category** (default; leave all children, assign to the parent),
   **Existing category** (keep the child closest to the top of the family),
@@ -52,7 +52,7 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
 - **R7b ✅ Resolving conflicts when moving categories.** Promoting (F7),
   demoting (F8) or moving (ALT-F10) a category can put an item in two
   branches of a mutually exclusive family. The user then chooses, as in
-  Agenda 2.0's *Process conflicting item(s) by* box (User's Guide,
+  Agenda 2.0's _Process conflicting item(s) by_ box (User's Guide,
   "Resolving Conflicts When Promoting/Demoting Categories"):
   **Removing from current category** (default; the moved category),
   **Removing from conflicting category** (the branch it clashes with), or
@@ -61,7 +61,7 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   items leave both clashing branches. Reordering siblings cannot clash.
 - **R7c ✅ No direct assignment to both a category and its ancestor.** An
   item is a member of every ancestor through inheritance, so it is never
-  *directly* assigned to a category and one of its ancestors. Assigning to
+  _directly_ assigned to a category and one of its ancestors. Assigning to
   an ancestor breaks the item's assignments to its descendants (as the
   manual states, User's Guide 16-5). Assigning to a descendant replaces a
   direct assignment to an ancestor (our reading of "does not let you
@@ -147,8 +147,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   assigned to the section's category (unless it is MAIN), placed after the
   highlighted item. Automatic assignment (R10–R12) then runs, using the
   neighbouring items in the section for R12.
-- **R22 ✅ Columns (claim 2).** A column headed by category *C* shows, for
-  each item, the descendants of *C* the item is assigned to. A childless
+- **R22 ✅ Columns (claim 2).** A column headed by category _C_ shows, for
+  each item, the descendants of _C_ the item is assigned to. A childless
   head shows `*` when the item is a member. A date column shows the date.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants: exact name, then unique
@@ -172,22 +172,22 @@ Screen: a title bar (file, view, mode indicator such as READY / EDIT /
 MENU / CAT MGR), a two-line control panel (menus, prompts, messages), the
 body, and a function-key bar.
 
-| Key | View | Category manager |
-|---|---|---|
-| F1 | Help | |
-| F2 | Edit item / section head / column entry | Rename |
-| F3 | Choices (category box for a column; assignment profile) | |
-| F4 | Done | |
-| F5 | Note | Note |
-| F6 | Properties (item: assignment profile; section: category properties) | Properties |
-| F7 | Mark | Promote |
-| F8 | View manager | Demote |
-| F9 | Category manager | Return |
-| F10 or `/` | Menu (File Item Category View Print Quit) | Return |
-| ALT-F4 | Discard | Discard |
-| ALT-F10 | Move item | Move under a new parent |
-| ALT-D/U/R/L | Add section below/above, column right/left | |
-| INS | New item / additional column entry | New category below |
+| Key         | View                                                                | Category manager        |
+| ----------- | ------------------------------------------------------------------- | ----------------------- |
+| F1          | Help                                                                |                         |
+| F2          | Edit item / section head / column entry                             | Rename                  |
+| F3          | Choices (category box for a column; assignment profile)             |                         |
+| F4          | Done                                                                |                         |
+| F5          | Note                                                                | Note                    |
+| F6          | Properties (item: assignment profile; section: category properties) | Properties              |
+| F7          | Mark                                                                | Promote                 |
+| F8          | View manager                                                        | Demote                  |
+| F9          | Category manager                                                    | Return                  |
+| F10 or `/`  | Menu (File Item Category View Print Quit)                           | Return                  |
+| ALT-F4      | Discard                                                             | Discard                 |
+| ALT-F10     | Move item                                                           | Move under a new parent |
+| ALT-D/U/R/L | Add section below/above, column right/left                          |                         |
+| INS         | New item / additional column entry                                  | New category below      |
 
 Category manager navigation (from the manual): ↑/BACKSPACE, ↓/ENTER,
 HOME = parent, END = last of family, CTRL-PGUP/PGDN = previous/next

@@ -146,13 +146,13 @@ classDiagram
     View *-- Column
 ```
 
-| Struct | Module | Notes |
-|---|---|---|
-| `Database` | `lib/agenda/core/database.ex` | The whole file. Maps are keyed by id; order lives in separate lists. |
-| `Item` | `lib/agenda/core/item.ex` | Free text and dates. **Does not know its categories.** |
-| `Category` | `lib/agenda/core/category.ex` | Tree node with flags for the assignment rules. **Does not know its items.** |
-| `View`, `View.Section`, `View.Column` | `lib/agenda/core/view.ex` | Pure presentation config; references categories by id. |
-| `Links` | `lib/agenda/core/links.ex` | Generic bidirectional many-to-many relation. |
+| Struct                                | Module                        | Notes                                                                       |
+| ------------------------------------- | ----------------------------- | --------------------------------------------------------------------------- |
+| `Database`                            | `lib/agenda/core/database.ex` | The whole file. Maps are keyed by id; order lives in separate lists.        |
+| `Item`                                | `lib/agenda/core/item.ex`     | Free text and dates. **Does not know its categories.**                      |
+| `Category`                            | `lib/agenda/core/category.ex` | Tree node with flags for the assignment rules. **Does not know its items.** |
+| `View`, `View.Section`, `View.Column` | `lib/agenda/core/view.ex`     | Pure presentation config; references categories by id.                      |
+| `Links`                               | `lib/agenda/core/links.ex`    | Generic bidirectional many-to-many relation.                                |
 
 ### Ids
 
@@ -166,12 +166,12 @@ tie-break relies on that ("prefer the category created first").
 
 Maps are unordered, so order is stored separately:
 
-| Order | Stored in | Meaning |
-|---|---|---|
-| Items | `db.item_order` | Global order of items. Sections show their items in this order, and a new item is inserted after the highlighted one. |
-| Sibling categories | `category.children` | Order in the hierarchy (category manager, column choices). |
-| Views | `db.view_order` | Order in the view manager. The first view opens on start. |
-| Sections, columns | `view.sections`, `view.columns` | Top-to-bottom, left-to-right. |
+| Order              | Stored in                       | Meaning                                                                                                               |
+| ------------------ | ------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Items              | `db.item_order`                 | Global order of items. Sections show their items in this order, and a new item is inserted after the highlighted one. |
+| Sibling categories | `category.children`             | Order in the hierarchy (category manager, column choices).                                                            |
+| Views              | `db.view_order`                 | Order in the view manager. The first view opens on start.                                                             |
+| Sections, columns  | `view.sections`, `view.columns` | Top-to-bottom, left-to-right.                                                                                         |
 
 ## Items, categories and links
 
@@ -209,14 +209,14 @@ Only **explicit** assignments are stored. Membership through the hierarchy
 `Database.new/1` creates four categories that cannot be renamed, moved
 or deleted (`Database.protected?/2`):
 
-| Category | Kind | Membership |
-|---|---|---|
-| MAIN (`db.main_id`) | standard | Root of the tree. **Every item** is a member; never linked. |
-| Entry (`db.special.entry`) | date | Item's `entry` date (set when created). |
-| When (`db.special.when`) | date | Item's `when` date: read from its text, or set explicitly (`when_explicit`), SPEC R14. |
-| Done (`db.special.done`) | date | Item's `done` date (F4). |
+| Category                   | Kind     | Membership                                                                             |
+| -------------------------- | -------- | -------------------------------------------------------------------------------------- |
+| MAIN (`db.main_id`)        | standard | Root of the tree. **Every item** is a member; never linked.                            |
+| Entry (`db.special.entry`) | date     | Item's `entry` date (set when created).                                                |
+| When (`db.special.when`)   | date     | Item's `when` date: read from its text, or set explicitly (`when_explicit`), SPEC R14. |
+| Done (`db.special.done`)   | date     | Item's `done` date (F4).                                                               |
 
-Date categories are never linked. Their membership *is* the item's date
+Date categories are never linked. Their membership _is_ the item's date
 field (`Database.date_field/2` maps a category id to `:entry`, `:when` or
 `:done`).
 
@@ -246,8 +246,8 @@ There is one view, `6 "Activities"`, with a section on Calls (5) and
 columns When (3), Priority (7) and Contact (11). Note the shared id space:
 the view was created between categories `5` and `7`.
 
-Item 17, *"Don't forget to call Anna Lasky with the information she
-requested."*, shows the difference between stored links and computed
+Item 17, _"Don't forget to call Anna Lasky with the information she
+requested."_, shows the difference between stored links and computed
 membership:
 
 ```mermaid
@@ -334,18 +334,18 @@ tests in `database_test.exs` and `links_test.exs`):
 
 ## Mapping to the patent
 
-| Patent (US 5,115,504) | This implementation |
-|---|---|
-| Object file `.AGA` (category, item, view, genealogy objects) | `db.categories`, `db.items`, `db.views` with one `next_id` |
-| Link-structure file `.AGB` | `db.links` (`Links`) |
-| Link structure joining item and category (FIG. 2) | an entry in both `by_left` and `by_right` |
-| Category chains: first/last child, sibling pointers (FIG. 1) | `parent_id` + ordered `children` list |
-| Genealogy object (cached ancestors) | `Database.ancestors/2`, computed on demand |
-| Subsumption / inheritance (FIG. 4) | `Database.member?/3`, computed on demand |
-| View linked to categories (FIG. 5) | `View.sections` / `View.columns` holding category ids |
-| Category-to-category links (FIG. 6) | `Category.also_assign` |
-| Negative links (FIG. 6, crossed squares) | `Category.exclusive` (for siblings); general negative links are on the roadmap |
-| Free object / free link lists | not needed: immutable maps, ids never reused |
+| Patent (US 5,115,504)                                        | This implementation                                                            |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| Object file `.AGA` (category, item, view, genealogy objects) | `db.categories`, `db.items`, `db.views` with one `next_id`                     |
+| Link-structure file `.AGB`                                   | `db.links` (`Links`)                                                           |
+| Link structure joining item and category (FIG. 2)            | an entry in both `by_left` and `by_right`                                      |
+| Category chains: first/last child, sibling pointers (FIG. 1) | `parent_id` + ordered `children` list                                          |
+| Genealogy object (cached ancestors)                          | `Database.ancestors/2`, computed on demand                                     |
+| Subsumption / inheritance (FIG. 4)                           | `Database.member?/3`, computed on demand                                       |
+| View linked to categories (FIG. 5)                           | `View.sections` / `View.columns` holding category ids                          |
+| Category-to-category links (FIG. 6)                          | `Category.also_assign`                                                         |
+| Negative links (FIG. 6, crossed squares)                     | `Category.exclusive` (for siblings); general negative links are on the roadmap |
+| Free object / free link lists                                | not needed: immutable maps, ids never reused                                   |
 
 ## On disk
 
@@ -364,7 +364,7 @@ flowchart LR
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
   1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`
-  (R14). Old terms decode to structs *without* the new keys, so
+  (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their
   defaults. Adding a field means bumping the version; a change that defaults
@@ -378,10 +378,10 @@ flowchart LR
 The TUI keeps a few database-related values in `Agenda.TUI.State`. They
 are not part of the file:
 
-| Field | Purpose |
-|---|---|
-| `db` | The current `Database`. |
-| `saved_db` | The database as last saved or loaded; `dirty` is `db != saved_db`. |
-| `undo`, `redo` | Snapshots `%{db, view_id, cursor_key}` (max 100), see `TUI.History`. |
-| `view_id` | The view on screen. |
-| `cursor_key` | `{:section, index}` or `{:item, section_index, item_id}`; re-found after every change. |
+| Field          | Purpose                                                                                |
+| -------------- | -------------------------------------------------------------------------------------- |
+| `db`           | The current `Database`.                                                                |
+| `saved_db`     | The database as last saved or loaded; `dirty` is `db != saved_db`.                     |
+| `undo`, `redo` | Snapshots `%{db, view_id, cursor_key}` (max 100), see `TUI.History`.                   |
+| `view_id`      | The view on screen.                                                                    |
+| `cursor_key`   | `{:section, index}` or `{:item, section_index, item_id}`; re-found after every change. |

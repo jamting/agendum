@@ -1,6 +1,6 @@
 # Reference material
 
-- `US5115504.pdf`: US patent 5,115,504, *Information Management System*
+- `US5115504.pdf`: US patent 5,115,504, _Information Management System_
   (Belove, Drake, Kaplan, Kapor, Landsman, Zagieboylo; Lotus, 1992). Describes
   Agenda's data model: items, categories, independent link structures,
   subsumption, views with sections and columns, automatic assignment, and
@@ -9,4 +9,4 @@
   Definition Files, Macros): https://archive.org/details/lotus-agenda-users-guide.
   Plain-text OCR: `https://archive.org/download/lotus-agenda-users-guide/Users%20Guide_djvu.txt`.
 - Kaplan, Kapor, Belove, Landsman, Drake: "Agenda: A Personal Information
-  Manager", *Communications of the ACM* 33(7), 1990.
+  Manager", _Communications of the ACM_ 33(7), 1990.
