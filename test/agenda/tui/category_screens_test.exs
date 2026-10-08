@@ -283,4 +283,21 @@ defmodule Agenda.TUI.CategoryScreensTest do
     state = press(state, [:esc, :esc, {:f, 10}, "c", "r", :down, {:f, 6}])
     assert screen(state) =~ ~r/c\s+Meetings/
   end
+
+  test "every property row shows a visible highlight, even with an empty value", %{state: state} do
+    # Meetings has no short name and no category links
+    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}])
+
+    Enum.reduce(Agenda.TUI.CategoryScreens.props_fields(), state, fn field, state ->
+      highlighted =
+        state
+        |> Agenda.TUI.Render.render()
+        |> List.flatten()
+        |> Enum.filter(&match?({:box_selected, _}, &1))
+        |> Enum.map_join(fn {_, text} -> text end)
+
+      assert String.trim(highlighted) != "", "no visible highlight on #{field}"
+      press(state, :down)
+    end)
+  end
 end

@@ -626,10 +626,15 @@ defmodule Agenda.TUI.Render do
 
     values = %{
       name: cat.name,
-      short_name: cat.short_name || "",
+      # an empty value would leave the highlighted row invisible
+      short_name: cat.short_name || "(none)",
       exclusive: yes_no.(cat.exclusive),
       match_name: yes_no.(cat.match_name),
-      also_assign: Enum.map_join(cat.also_assign, ", ", &state.db.categories[&1].name),
+      also_assign:
+        if(cat.also_assign == [],
+          do: "(none)",
+          else: Enum.map_join(cat.also_assign, ", ", &state.db.categories[&1].name)
+        ),
       conditions: if(cat.conditions == [], do: "(none)", else: conditions_text(state.db, cat)),
       note: if(cat.note == "", do: "(none)", else: "#{String.length(cat.note)} characters")
     }
