@@ -321,6 +321,12 @@ tests in `database_test.exs` and `links_test.exs`):
    always exists (`delete_view/2` refuses to delete the last one).
 8. **Protected categories** (MAIN, Entry, When, Done) always exist, keep
    their names, and stay where they are.
+9. **No direct link to both a category and its ancestor** (SPEC R7c). An
+   item linked to a category is never also linked to one of its ancestors.
+   `Assign.assign/3` clears the item's links to the category's ancestors and
+   descendants before linking, and category moves resolve the conflicts
+   they would create. Files saved before R7c may still contain such pairs;
+   assigning those items again tidies them up.
 
 ## Mapping to the patent
 

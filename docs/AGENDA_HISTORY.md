@@ -103,7 +103,7 @@ Our Elixir clone already has the core that made Agenda distinctive; the biggest 
 | Automatic filing by text | Done, by category name and short name (R10–R13) | — |
 | Editable views, typing into columns | Done (R20–R27) | Sorting and filters (R28) |
 | Guessing intent from the neighbouring item | Done (R12) | — |
-| Mutually exclusive categories | Done, including conflict dialogs (R7, R7a, R7b) | No direct assignment to a category and its parent (R7c) |
+| Mutually exclusive categories | Done, including conflict dialogs (R7, R7a, R7b) | Done: no direct assignment to a category and its parent (R7c) |
 | Plain-language dates | Only when typed into a When column | Read dates from the item text, e.g. "call Bob next Friday" (R14) |
 | Conditions and actions | Only simple category-to-category links (R8) | Full conditions and actions (R15) |
 | Task dependencies | Not started | Add after R15 |

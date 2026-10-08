@@ -46,7 +46,8 @@ Rule numbers refer to `SPEC.md`.
 - [x] Move the TUI's direct `Database` writes into `Agenda.Core` operations (enforced by `architecture_test.exs`)
 - [x] Resolve existing conflicts when making children exclusive, as Agenda 2.0 does (R7a)
 - [x] Resolve conflicts when moving categories into exclusive families, as Agenda 2.0 does (R7b)
-- [ ] Enforce "no direct assignment to both a category and its ancestor", including its promote/demote conflict box (R7c)
+- [x] Enforce "no direct assignment to both a category and its ancestor", including in moves (R7c)
+- [ ] Outline-style promote/demote: a promoted category adopts its following siblings (R7d)
 
 ## Ideas
 - Multiple files open; a launcher listing recent files

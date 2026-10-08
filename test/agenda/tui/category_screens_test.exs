@@ -169,7 +169,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
     test "F8 (demote) shows Agenda's conflict box", %{state: state} do
       screen = state |> press({:f, 8}) |> screen()
       assert screen =~ "Moving Urgent creates a conflict"
-      assert screen =~ "1 item(s) would be in two mutually exclusive categories."
+      assert screen =~ "1 item(s) would be in two conflicting categories."
       assert screen =~ "Removing from current category"
       assert screen =~ "Removing from conflicting category"
       assert screen =~ "Moving to new category"
@@ -229,5 +229,26 @@ defmodule Agenda.TUI.CategoryScreensTest do
       assert state.db.categories[urgent].parent_id == state.db.main_id
       assert priorities(state, item) == ["High", "Urgent"]
     end
+  end
+
+  test "demoting a category under one the item is also in asks how to resolve it (R7c)", %{
+    state: state
+  } do
+    # "Check with Abigail Scheer..." is in Abigail; also assign it to Anna
+    item = Enum.find(Database.items(state.db), &(&1.text =~ "Check with Abigail")).id
+    state = %{state | db: Agenda.Core.assign(state.db, item, cat(state, "Anna Lasky"))}
+
+    # rows: MAIN Entry When Done Calls Priority High Medium Low Contact Anna Abigail
+    state = press(state, [{:f, 9}] ++ List.duplicate(:down, 11) ++ [{:f, 8}])
+    assert screen(state) =~ "Moving Abigail Scheer creates a conflict"
+
+    state = press(state, :enter)
+    assert state.db.categories[cat(state, "Abigail Scheer")].parent_id == cat(state, "Anna Lasky")
+
+    contact_links =
+      state.db |> Database.explicit_categories(item) |> Enum.map(&state.db.categories[&1].name)
+
+    assert "Anna Lasky" in contact_links
+    refute "Abigail Scheer" in contact_links
   end
 end

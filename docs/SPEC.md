@@ -58,9 +58,25 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   **Moving to new category** (named by the user). We create the new category
   as a child of the exclusive family where the clash happens, and the
   items leave both clashing branches. Reordering siblings cannot clash.
-- **R7c ⏳ No direct assignment to both a category and its ancestor.** The
-  manual's second rule for promote/demote ("an item cannot be directly
-  assigned to both a child category and its parent") is not enforced yet.
+- **R7c ✅ No direct assignment to both a category and its ancestor.** An
+  item is a member of every ancestor through inheritance, so it is never
+  *directly* assigned to a category and one of its ancestors. Assigning to
+  an ancestor breaks the item's assignments to its descendants (as the
+  manual states, User's Guide 16-5). Assigning to a descendant replaces a
+  direct assignment to an ancestor (our reading of "does not let you
+  assign... to both"). Automatic assignment never assigns a category the
+  item already belongs to, and when a category and its ancestor both match
+  the text it keeps the more specific one. A category link (`also_assign`)
+  to a category the item already belongs to is skipped. A move (promote,
+  demote, ALT-F10) that would break the rule offers the same three choices
+  as R7b; when it breaks both rules, we show one box for both instead of
+  Agenda's two boxes in sequence. With "Moving to new category", the new
+  category is created under the conflicting ancestor or exclusive family.
+- **R7d ⏳ Outline-style promote and demote.** In Agenda, promote and demote
+  shift a category's level like an outline: a promoted category can adopt
+  its former following siblings as children, and categories left without a
+  parent are promoted too (User's Guide 16-19 to 16-21). Ours move the
+  category with its own subtree only.
 - **R8 ✅ Category links.** A category can pass its items on to other
   categories (`also_assign`, patent FIG. 6). This applies transitively and is
   safe with cycles.

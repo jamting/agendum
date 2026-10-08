@@ -118,18 +118,22 @@ defmodule Agenda.CoreTest do
 
     test "toggle_assignment removes only the explicit link, or assigns", %{
       db: db,
-      work: work,
+      home: home,
       calls: calls
     } do
       {db, item} = Core.add_item(db, "x", today(), section: calls)
-      db = Core.assign(db, item, work)
+      db = Core.toggle_assignment(db, item, home)
+      assert Database.explicit?(db, item, home)
 
-      db = Core.toggle_assignment(db, item, work)
-      refute Database.explicit?(db, item, work)
+      db = Core.toggle_assignment(db, item, home)
+      refute Database.explicit?(db, item, home)
       assert Database.explicit?(db, item, calls)
+    end
 
+    test "toggle_assignment on an ancestor follows R7c", %{db: db, work: work, calls: calls} do
+      {db, item} = Core.add_item(db, "x", today(), section: calls)
       db = Core.toggle_assignment(db, item, work)
-      assert Database.explicit?(db, item, work)
+      assert Database.explicit_categories(db, item) == MapSet.new([work])
     end
 
     test "move_item reassigns between sections and reorders", %{db: db, calls: calls, home: home} do

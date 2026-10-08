@@ -447,8 +447,8 @@ defmodule Agenda.TUI.CategoryScreens do
        :remove_moved},
       {"Removing from conflicting category", "Remove them from the category they clash with",
        :remove_other},
-      {"Moving to new category", "Type a name; a new category in the exclusive family gets them",
-       :new_category}
+      {"Moving to new category",
+       "Type a name; a new category under the conflicting one gets them", :new_category}
     ]
   end
 
@@ -461,7 +461,7 @@ defmodule Agenda.TUI.CategoryScreens do
 
   def choice_lines(%{kind: :move, conflicts: n}),
     do: [
-      "#{n} item(s) would be in two mutually exclusive categories.",
+      "#{n} item(s) would be in two conflicting categories.",
       "Process conflicting item(s) by:"
     ]
 

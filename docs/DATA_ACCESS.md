@@ -159,8 +159,9 @@ flowchart TD
     V -- no --> M{"MAIN or date category?"}
     M -- yes --> R
     M -- no --> X["for each step child→parent on the path<br/>from cat up to MAIN where parent.exclusive:<br/>unassign item from the child's siblings' subtrees"]
-    X --> L["Database.link(item, cat)"]
-    L --> Y["for each target in cat.also_assign:<br/>assign(db, item, target) recursively"]
+    X --> AN["unlink item from cat's ancestors and descendants<br/>(never directly in both, R7c)"]
+    AN --> L["Database.link(item, cat)"]
+    L --> Y["for each target in cat.also_assign<br/>the item is not yet a member of:<br/>assign(db, item, target) recursively"]
     Y --> R
 ```
 
@@ -169,11 +170,12 @@ flowchart TD
 ```mermaid
 flowchart TD
     A["auto_assign(db, item, adjacent)"] --> M["matching_categories(text)<br/>whole words, case-insensitive,<br/>name or short_name, match_name = true"]
-    M --> F1["drop categories already linked"]
+    M --> F1["drop categories the item already belongs to<br/>(directly or through a subcategory)"]
     F1 --> F2["drop categories that conflict<br/>with an existing explicit link (explicit wins)"]
     F2 --> S["sort by preference:<br/>1. member of nearest adjacent item (previous, then next)<br/>2. lowest id (created first)"]
     S --> G["greedily accept each candidate<br/>that does not conflict with an accepted one"]
-    G --> AS["assign each accepted category"]
+    G --> SP["drop accepted categories that are ancestors<br/>of other accepted ones (keep the specific one)"]
+    SP --> AS["assign each remaining category"]
 ```
 
 Two categories **conflict** when they lie under different children of a

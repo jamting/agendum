@@ -24,9 +24,15 @@ defmodule Agenda.Core.Assign do
   @type id :: Database.id()
 
   @doc """
-  Assigns an item to a category, applying mutual exclusion and category
-  links. Assigning to MAIN or to a date category is a no-op here (dates are
-  set with `Agenda.Core.set_date/4`).
+  Assigns an item to a category, applying mutual exclusion, the
+  ancestor/descendant rule and category links. Assigning to MAIN or to a
+  date category is a no-op here (dates are set with `Agenda.Core.set_date/4`).
+
+  An item is never directly assigned to both a category and one of its
+  ancestors (R7c): assigning to an ancestor breaks the item's assignments to
+  its descendants, as Agenda does, and assigning to a descendant replaces a
+  direct assignment to an ancestor (the item still belongs to the ancestor
+  through inheritance).
   """
   @spec assign(db, id, id) :: db
   def assign(db, item_id, cat_id), do: do_assign(db, item_id, cat_id, MapSet.new())
@@ -40,15 +46,29 @@ defmodule Agenda.Core.Assign do
         db
 
       true ->
-        db = db |> clear_exclusive_siblings(item_id, cat_id) |> Database.link(item_id, cat_id)
+        db =
+          db
+          |> clear_exclusive_siblings(item_id, cat_id)
+          |> clear_lineage(item_id, cat_id)
+          |> Database.link(item_id, cat_id)
+
         visited = MapSet.put(visited, cat_id)
 
+        # A link to a category the item already belongs to (e.g. an ancestor)
+        # adds nothing, and assigning it would break the more specific link.
         Enum.reduce(db.categories[cat_id].also_assign, db, fn target, acc ->
-          if Map.has_key?(acc.categories, target),
+          if Map.has_key?(acc.categories, target) and not Database.member?(acc, item_id, target),
             do: do_assign(acc, item_id, target, visited),
             else: acc
         end)
     end
+  end
+
+  # Removes the item's direct links to the category's ancestors and
+  # descendants, so that linking the category keeps R7c.
+  defp clear_lineage(db, item_id, cat_id) do
+    (Database.ancestors(db, cat_id) ++ Database.descendants(db, cat_id))
+    |> Enum.reduce(db, &Database.unlink(&2, item_id, &1))
   end
 
   @doc "Removes an item from a category and everything below it."
@@ -112,46 +132,62 @@ defmodule Agenda.Core.Assign do
   end
 
   @doc """
-  After a category has been moved, the items in its subtree that are now
-  in more than one branch of an exclusive family above it.
+  After a category has been moved, the items in its subtree that now break
+  one of Agenda's assignment rules because of the move:
+
+    * they are in more than one branch of an exclusive family above it (R7b)
+    * they are also directly assigned to one of its new ancestors (R7c)
   """
   @spec placement_conflicts(db, id) :: [id]
   def placement_conflicts(db, cat_id) do
-    exclusive = Enum.filter(Database.ancestors(db, cat_id), &db.categories[&1].exclusive)
+    ancestors = Database.ancestors(db, cat_id)
 
     db
     |> Database.items_in(cat_id)
     |> Enum.map(& &1.id)
-    |> Enum.filter(fn item -> Enum.any?(exclusive, &(length(branches(db, item, &1)) > 1)) end)
+    |> Enum.filter(fn item -> Enum.any?(ancestors, &placement_conflict?(db, item, &1)) end)
   end
 
   @doc """
-  The nearest exclusive ancestor of a moved category where any of the
-  given items is in more than one branch.
+  The nearest ancestor of a moved category where any of the given items is
+  in conflict: an exclusive family it is in twice, or an ancestor it is
+  also directly assigned to.
   """
   @spec conflicting_family(db, id, [id]) :: id | nil
   def conflicting_family(db, cat_id, items) do
     db
     |> Database.ancestors(cat_id)
-    |> Enum.find(fn a ->
-      db.categories[a].exclusive and Enum.any?(items, &(length(branches(db, &1, a)) > 1))
-    end)
+    |> Enum.find(fn a -> Enum.any?(items, &placement_conflict?(db, &1, a)) end)
+  end
+
+  defp placement_conflict?(db, item, ancestor) do
+    Database.explicit?(db, item, ancestor) or
+      (db.categories[ancestor].exclusive and length(branches(db, item, ancestor)) > 1)
   end
 
   @doc """
-  Resolves one item that a category move put in two exclusive branches, as
-  Agenda 2.0's "Process conflicting item(s) by" box does:
+  Resolves one item that a category move put in conflict (see
+  `placement_conflicts/2`), as Agenda 2.0's "Process conflicting item(s)
+  by" box does:
 
     * `:remove_moved` – remove the item from the moved category (subtree)
-    * `:remove_other` – remove it from the branches it now clashes with
-    * `{:category, family, target}` – leave every branch of the exclusive
-      `family` and assign the item to `target`
+    * `:remove_other` – remove it from the categories it now clashes with:
+      other branches of exclusive families, and direct links to ancestors
+    * `{:category, family, target}` – leave `family` and all of its branches
+      and assign the item to `target` (a child of `family`)
   """
   @spec resolve_placement(db, id, id, :remove_moved | :remove_other | {:category, id, id}) :: db
   def resolve_placement(db, cat_id, item_id, :remove_moved), do: unassign(db, item_id, cat_id)
 
-  def resolve_placement(db, cat_id, item_id, :remove_other),
-    do: clear_exclusive_siblings(db, item_id, cat_id)
+  def resolve_placement(db, cat_id, item_id, :remove_other) do
+    db
+    |> clear_exclusive_siblings(item_id, cat_id)
+    |> then(
+      &Enum.reduce(Database.ancestors(&1, cat_id), &1, fn a, acc ->
+        Database.unlink(acc, item_id, a)
+      end)
+    )
+  end
 
   def resolve_placement(db, _cat_id, item_id, {:category, family, target}) do
     db.categories[family].children
@@ -195,15 +231,21 @@ defmodule Agenda.Core.Assign do
     text = db.items[item_id].text
     explicit = Database.explicit_categories(db, item_id)
 
-    db
-    |> matching_categories(text)
-    |> Enum.reject(&MapSet.member?(explicit, &1))
-    |> Enum.reject(fn cand -> Enum.any?(explicit, &conflict?(db, cand, &1)) end)
-    |> Enum.sort_by(&preference(db, &1, adjacent))
-    |> Enum.reduce([], fn cand, accepted ->
-      if Enum.any?(accepted, &conflict?(db, cand, &1)), do: accepted, else: [cand | accepted]
-    end)
-    |> Enum.reverse()
+    accepted =
+      db
+      |> matching_categories(text)
+      # already a member (directly, or through a more specific category)
+      |> Enum.reject(&Database.member?(db, item_id, &1))
+      |> Enum.reject(fn cand -> Enum.any?(explicit, &conflict?(db, cand, &1)) end)
+      |> Enum.sort_by(&preference(db, &1, adjacent))
+      |> Enum.reduce([], fn cand, accepted ->
+        if Enum.any?(accepted, &conflict?(db, cand, &1)), do: accepted, else: [cand | accepted]
+      end)
+      |> Enum.reverse()
+
+    # when a category and its ancestor both match, keep the specific one (R7c)
+    accepted
+    |> Enum.reject(fn cand -> Enum.any?(accepted, &(cand in Database.ancestors(db, &1))) end)
     |> Enum.reduce(db, &assign(&2, item_id, &1))
   end
 
