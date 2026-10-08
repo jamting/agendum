@@ -60,6 +60,58 @@ defmodule Agenda.Core.Assign do
   end
 
   @doc """
+  The children of `cat_id` whose subtree holds one of the item's explicit
+  links, in hierarchy order. An item belongs to several *branches* of a
+  family when this has more than one element.
+  """
+  @spec branches(db, id, id) :: [id]
+  def branches(db, item_id, cat_id) do
+    explicit = Database.explicit_categories(db, item_id)
+
+    Enum.filter(db.categories[cat_id].children, fn child ->
+      db |> Database.subtree(child) |> Enum.any?(&MapSet.member?(explicit, &1))
+    end)
+  end
+
+  @doc """
+  Items that would break mutual exclusion if `cat_id`'s children were made
+  exclusive, i.e. items in more than one branch of the family.
+  """
+  @spec exclusive_conflicts(db, id) :: [id]
+  def exclusive_conflicts(db, cat_id) do
+    db
+    |> Database.items_in(cat_id)
+    |> Enum.map(& &1.id)
+    |> Enum.filter(&(length(branches(db, &1, cat_id)) > 1))
+  end
+
+  @doc """
+  Resolves one conflicting item before `cat_id` becomes exclusive, the way
+  Agenda 2.0 offers it:
+
+    * `:parent` – leave every child branch and assign the item to `cat_id`
+    * `:first_child` – keep only the branch closest to the top of the family
+    * `{:category, id}` – leave every child branch and assign to `id`
+  """
+  @spec resolve_exclusive(db, id, id, :parent | :first_child | {:category, id}) :: db
+  def resolve_exclusive(db, cat_id, item_id, :first_child) do
+    [_keep | drop] = branches(db, item_id, cat_id)
+    Enum.reduce(drop, db, &unassign(&2, item_id, &1))
+  end
+
+  def resolve_exclusive(db, cat_id, item_id, target) do
+    target = if target == :parent, do: cat_id, else: elem(target, 1)
+
+    db
+    |> then(
+      &Enum.reduce(db.categories[cat_id].children, &1, fn child, acc ->
+        unassign(acc, item_id, child)
+      end)
+    )
+    |> assign(item_id, target)
+  end
+
+  @doc """
   True if an item cannot be in both categories because they sit under
   different children of a mutually exclusive ancestor.
   """

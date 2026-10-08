@@ -248,10 +248,44 @@ defmodule Agenda.Core do
   defdelegate promote(db, id), to: Database
   defdelegate demote(db, id), to: Database
 
-  @doc "Toggles mutual exclusion of a category's children."
-  @spec toggle_exclusive(db, id) :: db
-  def toggle_exclusive(db, id),
-    do: Database.update_category(db, id, &%{&1 | exclusive: not &1.exclusive})
+  @doc "Items assigned to more than one child of `id` (see `make_exclusive/3`)."
+  @spec exclusive_conflicts(db, id) :: [id]
+  defdelegate exclusive_conflicts(db, id), to: Assign
+
+  @doc """
+  Makes the children of a category mutually exclusive (SPEC R7a). Items
+  already assigned to several children are resolved first, as in Agenda
+  2.0's "Assign conflicting item(s) to" box:
+
+    * `:parent` (default) – assign them to the category itself instead
+    * `:first_child` – keep the child closest to the top of the family
+    * `{:new_child, name}` – create a new child and assign them to it
+      (only created when there are conflicts)
+  """
+  @spec make_exclusive(db, id, :parent | :first_child | {:new_child, String.t()}) ::
+          {:ok, db} | {:error, :protected | :empty | :duplicate}
+  def make_exclusive(db, id, resolution \\ :parent) do
+    conflicts = Assign.exclusive_conflicts(db, id)
+
+    with :ok <- if(Database.protected?(db, id), do: {:error, :protected}, else: :ok),
+         {:ok, db, rule} <- exclusive_rule(db, id, resolution, conflicts) do
+      db = Enum.reduce(conflicts, db, &Assign.resolve_exclusive(&2, id, &1, rule))
+      {:ok, Database.update_category(db, id, &%{&1 | exclusive: true})}
+    end
+  end
+
+  defp exclusive_rule(db, _id, _resolution, []), do: {:ok, db, :parent}
+
+  defp exclusive_rule(db, id, {:new_child, name}, _conflicts) do
+    with {:ok, db, child} <- add_category(db, id, name), do: {:ok, db, {:category, child}}
+  end
+
+  defp exclusive_rule(db, _id, rule, _conflicts) when rule in [:parent, :first_child],
+    do: {:ok, db, rule}
+
+  @doc "Lets the children of a category be combined again. Assignments are kept."
+  @spec make_unexclusive(db, id) :: db
+  def make_unexclusive(db, id), do: Database.update_category(db, id, &%{&1 | exclusive: false})
 
   @doc "Toggles whether a category takes part in automatic assignment."
   @spec toggle_match_name(db, id) :: db

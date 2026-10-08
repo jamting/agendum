@@ -307,10 +307,11 @@ tests in `database_test.exs` and `links_test.exs`):
    (`delete_item/2`). Deleting a category drops the links of its whole
    subtree (`delete_category/2`).
 4. **No links to MAIN or date categories.** `Assign.assign/3` ignores them.
-5. **Exclusive families hold at most one branch**, for assignments made
-   while the category is exclusive: `Assign` clears the siblings first.
-   *Gap:* turning `exclusive` on with `toggle_exclusive/2` does not tidy up
-   items that are already in several children.
+5. **Exclusive families hold at most one branch.** `Assign` clears the
+   siblings before linking, and `Core.make_exclusive/3` resolves items
+   already in several children before setting the flag (SPEC R7a).
+   *Gap:* moving a category under an exclusive parent (`move_category/4`,
+   `demote/2`) can still put an item in two branches.
 6. **Views reference live categories.** `delete_category/2` removes
    sections and columns headed by deleted categories, and also removes the
    deleted ids from every `also_assign` list.

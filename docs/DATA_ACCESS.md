@@ -75,7 +75,9 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.rename_category/3` | write | `{:error, :protected}` for MAIN/Entry/When/Done. |
 | `Core.discard_category(db, id)` | write | Delete the subtree, its links, and view references. |
 | `Core.move_category(db, id, parent, after)`, `promote/2`, `demote/2` | write | Restructure; `{:error, :cycle \| :protected \| :top_level \| :no_previous_sibling}`. |
-| `Core.toggle_exclusive/2`, `toggle_match_name/2` | write | Rule flags. |
+| `Core.make_exclusive(db, cat, :parent \| :first_child \| {:new_child, name})` | write | Make children mutually exclusive, resolving items already in several children (R7a). `{:error, :protected \| :empty \| :duplicate}`. |
+| `Core.make_unexclusive/2`, `toggle_match_name/2` | write | Rule flags; assignments are kept. |
+| `Core.exclusive_conflicts(db, cat)` | read | Items in more than one child branch (offered for resolution by the UI). |
 | `Core.set_short_name/3`, `set_category_note/3` | write | Properties; a blank short name clears it. |
 | `Core.toggle_also_assign(db, cat, target)` | write | Add/remove a category link. |
 | `Database.ancestors/2`, `descendants/2`, `subtree/2`, `depth/2` | read | Tree navigation (ancestors nearest first; descendants in pre-order). |

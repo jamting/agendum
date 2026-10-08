@@ -51,6 +51,7 @@ defmodule Agenda.TUI.CategoryScreens do
   # --- dispatch ----------------------------------------------------------------------
 
   def handle(state, %{type: :props} = mode, key), do: props_key(state, mode, key)
+  def handle(state, %{type: :choice} = mode, key), do: choice_key(state, mode, key)
 
   def handle(%State{edit: edit} = state, mode, key) when edit != nil do
     case key do
@@ -399,6 +400,104 @@ defmodule Agenda.TUI.CategoryScreens do
     State.change_db(state, Core.toggle_also_assign(state.db, cat_id, target))
   end
 
+  # --- making children mutually exclusive -----------------------------------------------------
+
+  @doc "The choices offered when items are in several children (Agenda 2.0, Figure 16-10)."
+  def exclusive_resolutions do
+    [
+      {"Parent category", "Remove them from the children and assign them to the parent", :parent},
+      {"Existing category", "Keep only the child closest to the top of the family", :first_child},
+      {"New category", "Type a name; a new child category gets them", :new_child}
+    ]
+  end
+
+  defp toggle_exclusive(state, cat) do
+    cond do
+      cat.exclusive ->
+        state
+        |> State.change_db(Core.make_unexclusive(state.db, cat.id))
+        |> State.info("Children of #{cat.name} are no longer mutually exclusive")
+
+      Database.protected?(state.db, cat.id) ->
+        State.error(state, "#{cat.name} cannot have mutually exclusive children")
+
+      Core.exclusive_conflicts(state.db, cat.id) == [] ->
+        apply_exclusive(state, cat.id, :parent)
+
+      true ->
+        conflicts = length(Core.exclusive_conflicts(state.db, cat.id))
+        State.push(state, %{type: :choice, cat_id: cat.id, conflicts: conflicts, cursor: 0})
+    end
+  end
+
+  defp choice_key(state, mode, key) do
+    options = exclusive_resolutions()
+
+    pick = fn index ->
+      resolve_choice(State.pop(state), mode, elem(Enum.at(options, index), 2))
+    end
+
+    case key do
+      :up ->
+        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
+
+      :down ->
+        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(options) - 1)})
+
+      :enter ->
+        pick.(mode.cursor)
+
+      :esc ->
+        State.pop(state)
+
+      {:char, c} ->
+        case Enum.find_index(options, fn {label, _, _} ->
+               String.downcase(String.first(label)) == String.downcase(c)
+             end) do
+          nil -> state
+          index -> pick.(index)
+        end
+
+      _ ->
+        state
+    end
+  end
+
+  defp resolve_choice(state, mode, :new_child),
+    do:
+      Update.prompt(
+        state,
+        "New category for the conflicting items:",
+        {:exclusive_new_child, mode.cat_id}
+      )
+
+  defp resolve_choice(state, mode, rule), do: apply_exclusive(state, mode.cat_id, rule)
+
+  @doc "Makes a category's children exclusive with the given resolution and reports the result."
+  def apply_exclusive(state, cat_id, rule) do
+    name = state.db.categories[cat_id].name
+    conflicts = length(Core.exclusive_conflicts(state.db, cat_id))
+
+    case Core.make_exclusive(state.db, cat_id, rule) do
+      {:ok, db} ->
+        resolved =
+          if conflicts == 0, do: "", else: "; #{conflicts} conflicting item(s) reassigned"
+
+        state
+        |> State.change_db(db)
+        |> State.info("Children of #{name} are now mutually exclusive" <> resolved)
+
+      {:error, :empty} ->
+        State.error(state, "A category needs a name")
+
+      {:error, :duplicate} ->
+        State.error(state, "That category already exists under #{name}")
+
+      {:error, :protected} ->
+        State.error(state, "#{name} cannot have mutually exclusive children")
+    end
+  end
+
   # --- category properties -----------------------------------------------------------------------
 
   defp props_key(%State{edit: edit} = state, mode, key) when edit != nil do
@@ -451,7 +550,7 @@ defmodule Agenda.TUI.CategoryScreens do
             %{state | edit: %{target: :short_name, line: LineEdit.new(cat.short_name || "")}}
 
           :exclusive ->
-            State.change_db(state, Core.toggle_exclusive(state.db, cat.id))
+            toggle_exclusive(state, cat)
 
           :match_name ->
             State.change_db(state, Core.toggle_match_name(state.db, cat.id))

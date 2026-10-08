@@ -38,6 +38,16 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   removes it from the others and their subtrees. This applies at every
   exclusive level above the target. (Patent "negative links", FIG. 6;
   Agenda's "mutually exclusive" category property.)
+- **R7a ✅ Resolving conflicts when making children exclusive.** If items
+  are already in more than one child, the user chooses where they go, as in
+  Agenda 2.0's *Assign conflicting item(s) to* box (User's Guide,
+  "Resolving conflicts for mutually exclusive categories"):
+  **Parent category** (default; leave all children, assign to the parent),
+  **Existing category** (keep the child closest to the top of the family),
+  or **New category** (a new child, named by the user, gets them). The
+  manual doesn't say where the new category is created; we make it a child
+  so the family stays consistent. Making children non-exclusive keeps all
+  assignments. MAIN and the date categories cannot be made exclusive.
 - **R8 ✅ Category links.** A category can pass its items on to other
   categories (`also_assign`, patent FIG. 6). This applies transitively and is
   safe with cycles.

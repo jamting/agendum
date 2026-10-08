@@ -570,6 +570,10 @@ defmodule Agenda.TUI.Update do
     State.change_db(state, Core.rename_view(state.db, state.view_id, text))
   end
 
+  defp prompt_action(state, {:exclusive_new_child, cat_id}, text) do
+    CategoryScreens.apply_exclusive(state, cat_id, {:new_child, text})
+  end
+
   defp prompt_action(state, :export, text) do
     path = Path.expand(text)
     State.effect(state, {:write_text, path, Agenda.TUI.Render.export_text(state)})

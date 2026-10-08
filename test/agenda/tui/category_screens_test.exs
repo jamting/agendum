@@ -81,4 +81,66 @@ defmodule Agenda.TUI.CategoryScreensTest do
     state = press(state, [{:f, 8}, :up, {:alt, :down}])
     assert List.first(state.db.view_order) == people
   end
+
+  describe "making children mutually exclusive with conflicts" do
+    setup %{state: state} do
+      # the Anna Lasky item also gets Daniel Fiske -> two Contact children
+      state = press(state, [:down, :down, :right, :right, :right, {:ctrl, "n"}, "Daniel", :enter])
+      item = Agenda.TUI.Layout.current_row(state).item.id
+      # category manager: MAIN Entry When Done Calls Priority High Medium Low Contact
+      opened =
+        press(state, [{:f, 9}] ++ List.duplicate(:down, 9) ++ [{:f, 6}, :down, :down, :enter])
+
+      %{opened: opened, item: item}
+    end
+
+    defp contacts(state, item) do
+      contact = cat(state, "Contact")
+
+      state.db
+      |> Database.explicit_categories(item)
+      |> Enum.filter(&(state.db.categories[&1].parent_id == contact or &1 == contact))
+      |> Enum.map(&state.db.categories[&1].name)
+      |> Enum.sort()
+    end
+
+    test "the conflict box appears with Agenda's three choices", %{opened: state} do
+      screen = screen(state)
+      assert screen =~ "Make children of Contact mutually exclusive"
+      assert screen =~ "1 item(s) are assigned to more than one child."
+      assert screen =~ "Parent category"
+      assert screen =~ "Existing category"
+      assert screen =~ "New category"
+    end
+
+    test "ENTER takes the default, Parent category", %{opened: state, item: item} do
+      state = press(state, :enter)
+      assert state.db.categories[cat(state, "Contact")].exclusive
+      assert contacts(state, item) == ["Contact"]
+      assert screen(state) =~ "1 conflicting item(s) reassigned"
+    end
+
+    test "Existing category keeps the child closest to the top", %{opened: state, item: item} do
+      state = press(state, "e")
+      assert contacts(state, item) == ["Anna Lasky"]
+    end
+
+    test "New category prompts for a name", %{opened: state, item: item} do
+      state = press(state, ["n", "Several", :enter])
+      assert contacts(state, item) == ["Several"]
+      assert state.db.categories[cat(state, "Several")].parent_id == cat(state, "Contact")
+    end
+
+    test "ESC cancels without changing anything", %{opened: state, item: item} do
+      state = press(state, :esc)
+      refute state.db.categories[cat(state, "Contact")].exclusive
+      assert contacts(state, item) == ["Anna Lasky", "Daniel Fiske"]
+    end
+
+    test "the whole change is one undo step", %{opened: state, item: item} do
+      state = press(state, [:enter, :esc, :esc, {:ctrl, "z"}])
+      refute state.db.categories[cat(state, "Contact")].exclusive
+      assert contacts(state, item) == ["Anna Lasky", "Daniel Fiske"]
+    end
+  end
 end

@@ -14,7 +14,7 @@ defmodule Agenda.TUI.Render do
   alias Agenda.TUI.{CategoryScreens, Draw, Layout, Menu, State}
 
   @full_screen [:catmgr, :viewmgr, :help, :note]
-  @boxes [:picker, :profile, :props]
+  @boxes [:picker, :profile, :props, :choice]
 
   @spec render(State.t()) :: [Draw.line()]
   def render(%State{width: w} = state) do
@@ -74,7 +74,7 @@ defmodule Agenda.TUI.Render do
       top && top.type == :move_item -> "MOVE"
       top && top.type == :picker -> "CHOICES"
       top && top.type == :profile -> "ASSIGN"
-      top && top.type == :props -> "PROPS"
+      top && top.type in [:props, :choice] -> "PROPS"
       base && base.type == :catmgr -> "CAT MGR"
       base && base.type == :viewmgr -> "VW MGR"
       base && base.type == :note -> "NOTE"
@@ -226,6 +226,10 @@ defmodule Agenda.TUI.Render do
 
   defp mode_keys(%{type: :profile}), do: [{"SPACE", "Assign/Unassign"}, {"ESC", "Return"}]
   defp mode_keys(%{type: :props}), do: [{"ENTER", "Change"}, {"ESC", "Return"}]
+
+  defp mode_keys(%{type: :choice}),
+    do: [{"↑↓", "Highlight"}, {"ENTER", "Select"}, {"ESC", "Cancel"}]
+
   defp mode_keys(%{type: :note}), do: [{"ESC", "Return"}, {"F5", "Return"}]
 
   defp mode_keys(%{type: :menu}),
@@ -559,6 +563,9 @@ defmodule Agenda.TUI.Render do
   defp box_title(state, %{type: :profile, item_id: id}),
     do: "Assignments: " <> String.slice(state.db.items[id].text, 0, 40)
 
+  defp box_title(state, %{type: :choice, cat_id: id}),
+    do: "Make children of #{state.db.categories[id].name} mutually exclusive"
+
   defp box_title(state, %{type: :props, cat_id: id}),
     do: "Category properties: " <> state.db.categories[id].name
 
@@ -587,6 +594,24 @@ defmodule Agenda.TUI.Render do
       if list == [], do: [[{:box, "  (no categories yet — press INS to create one)"}]], else: list
 
     list ++ [[], box_footer(state, mode, inner)]
+  end
+
+  defp box_content(_state, %{type: :choice} = mode, _inner, _max_rows) do
+    options = CategoryScreens.exclusive_resolutions()
+    {_, description, _} = Enum.at(options, mode.cursor)
+
+    choices =
+      options
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, _, _}, i} ->
+        [{:box, "   "}, {if(i == mode.cursor, do: :box_selected, else: :box), " #{label} "}]
+      end)
+
+    [
+      [{:box, " #{mode.conflicts} item(s) are assigned to more than one child."}],
+      [],
+      [{:box, " Assign conflicting item(s) to:"}]
+    ] ++ choices ++ [[], [{:box, " " <> description}]]
   end
 
   defp box_content(state, %{type: :props} = mode, inner, _max_rows) do
