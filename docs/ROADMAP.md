@@ -31,6 +31,7 @@ Rule numbers refer to `SPEC.md`.
 - [ ] Search (ALT-F6 SEARCH)
 - [ ] Show the time in the title bar; alarms (When date reached)
 - [ ] Configurable colours / monochrome theme; date format setting
+- [ ] Show a category's short name in columns too narrow for its full name (e.g. "Anna" instead of "Anna Las")
 
 ## Milestone 3 — Smarter assignment
 
