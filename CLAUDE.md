@@ -77,6 +77,8 @@ and look at the output. In raw mode the tty must not intercept control keys;
 
 ## Reference material
 
+- `docs/AGENDA_HISTORY.md`: why people used Agenda and what made it unique;
+  read it to judge which behaviours matter most to users.
 - `docs/reference/US5115504.pdf`: the Agenda patent (data model).
 - Lotus Agenda 2.0 manuals (User's Guide, Quick Start) on archive.org:
   https://archive.org/details/lotus-agenda-users-guide. The `_djvu.txt`

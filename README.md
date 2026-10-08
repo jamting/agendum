@@ -3,6 +3,9 @@
 A clone of **Lotus Agenda**, the 1988 DOS personal information manager, written
 in Elixir with a terminal UI that looks and feels like the original.
 
+New to Agenda? [`docs/AGENDA_HISTORY.md`](docs/AGENDA_HISTORY.md) explains why
+people loved the original and what made it unique.
+
 You type free-form items. Agenda files them into categories: the one you
 typed them under, and any whose names appear in the text. Views show the
 same items arranged in different ways, and you change the data directly
