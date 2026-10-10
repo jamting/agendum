@@ -138,6 +138,7 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.set_sort(db, view, :view \| {:section, i}, keys)` | write | Sort keys (`View.SortKey`, at most two); a section's `nil` uses the view's (R36). |
 | `Core.make_dependent(db, item, prerequisites)` / `Core.clear_dependencies/2` | write | Item dependencies (R43); `{:error, :cycle}` if an item would depend on itself. |
 | `Core.prerequisites/2`, `Core.dependents/2`, `Core.waiting?/2` | read | Dependencies in item order; whether an item still waits for an unfinished prerequisite. |
+| `Core.related_items(db, item, :dependents \| :prerequisites, :one \| :all \| :every)` / `Core.show_items/2` | read / write | Show Depends / Show Prereqs (R43): related items in item order, listed in the Show View. |
 | `Core.set_section_sort(db, view, sort, order)` | write | Show the section heads in category order, alphabetically or numerically (R36). |
 | `Core.entry_categories(db, view, i)` | read | Categories a new item in section `i` needs to pass the filters. |
 | `Core.set_range_filter(db, view, scope, cat, {show, from, to, where}, today)` / `Core.remove_filter/4` | write | A date or numeric filter (R28a): items with a date or number in or outside a range, or without one. |

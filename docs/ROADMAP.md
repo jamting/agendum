@@ -50,7 +50,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Recurring dates; marking a recurring item done creates the next one (R14a)
 - [ ] More date phrases: working days, quarters, "first Wednesday in November", date settings (R14d)
 - [x] Item dependencies: ALT-O makes an item depend on the marked items, views can hide dependent items (R43)
-- [ ] Show Prereqs / Show Depends in the Show View (R43)
+- [x] Show Prereqs / Show Depends in the Show View (R43)
 - [ ] More date display options: per-column formats, Day #, Week #, Relative, input format (R41)
 - [x] Assignment conditions, conditional assignments (R15)
 - [ ] Date conditions and "Also match" text conditions (R15a)

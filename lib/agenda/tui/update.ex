@@ -1368,6 +1368,39 @@ defmodule Agenda.TUI.Update do
   defp do_perform(state, :search_view, _), do: SearchBox.open(state, :view)
   defp do_perform(state, :search_file, _), do: SearchBox.open(state, :file)
 
+  # Utilities Show Depends / Show Prereqs (User's Guide 13-15, R43)
+  defp do_perform(state, {:show_related, direction, level}, row) do
+    item_id =
+      case row do
+        %{kind: :item, item: item} -> item.id
+        _ -> nil
+      end
+
+    if item_id == nil and level != :every do
+      State.error(state, "Highlight an item first")
+    else
+      case Core.related_items(state.db, item_id, direction, level) do
+        [] ->
+          State.info(
+            state,
+            if(direction == :dependents,
+              do: "No items depend on this one",
+              else: "This item depends on no other items"
+            )
+          )
+
+        ids ->
+          {db, view_id} = Core.show_items(state.db, ids)
+          noun = if direction == :dependents, do: "dependent", else: "prerequisite"
+
+          state
+          |> State.change_db(db)
+          |> State.switch_view(view_id)
+          |> State.info("#{length(ids)} #{noun} items · ALT-F8 returns to the last view")
+      end
+    end
+  end
+
   # ALT-F8 (LAST VW): back to the view shown before this one.
   defp do_perform(state, :last_view, _) do
     if state.last_view_id && Map.has_key?(state.db.views, state.last_view_id),

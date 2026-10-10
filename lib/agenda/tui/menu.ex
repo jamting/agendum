@@ -85,7 +85,25 @@ defmodule Agenda.TUI.Menu do
        [
          {"View", "Search this view: ALT-N next, ALT-P previous, F7 mark (ALT-F6)", :search_view},
          {"File", "Show every matching item in the file in the Show View", :search_file},
-         {"Alarms", "Current alarms and today's past alarms", :alarm_list}
+         {"Alarms", "Current alarms and today's past alarms", :alarm_list},
+         {"Depends", "Show the items that depend on this one (Utilities Show Depends)",
+          [
+            {"One level", "Items directly depending on this one",
+             {:show_related, :dependents, :one}},
+            {"All levels", "The whole chain of items depending on this one",
+             {:show_related, :dependents, :all}},
+            {"Every item", "Every item in the file that others depend on",
+             {:show_related, :dependents, :every}}
+          ]},
+         {"Prereqs", "Show the items this one depends on (Utilities Show Prereqs)",
+          [
+            {"One level", "Items directly this one depends on",
+             {:show_related, :prerequisites, :one}},
+            {"All levels", "The whole chain of items this one depends on",
+             {:show_related, :prerequisites, :all}},
+            {"Every item", "Every item in the file that depends on others",
+             {:show_related, :prerequisites, :every}}
+          ]}
        ]},
       {"Undo", "Undo the last change (CTRL-Z)", :undo},
       {"Redo", "Redo the last undone change (CTRL-Y)", :redo},

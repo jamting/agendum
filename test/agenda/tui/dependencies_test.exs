@@ -68,4 +68,41 @@ defmodule Agenda.TUI.DependenciesTest do
     assert screen(state) =~ "Contact Daniel"
     assert Layout.rows(state) |> Enum.any?(&(&1[:item] && &1.item.text =~ "Daniel"))
   end
+
+  describe "Search ▸ Depends and Prereqs (Utilities Show Depends / Show Prereqs)" do
+    setup %{state: state} do
+      # Daniel depends on the first two items; the cursor stays on Daniel
+      %{state: state |> make_dependent() |> press(["y", {:alt_f, 7}])}
+    end
+
+    defp shown_texts(state),
+      do: for(%{kind: :item, item: item} <- Layout.rows(state), do: item.text)
+
+    test "Prereqs ▸ One level lists the item's prerequisites in the Show View", %{state: state} do
+      state = press(state, [{:f, 10}, "s", "p", "o"])
+      assert State.view(state).name == "Show View"
+      assert [first, second] = shown_texts(state)
+      assert first =~ "Set up meeting"
+      assert second =~ "Don't forget"
+      assert screen(state) =~ "2 prerequisite items · ALT-F8 returns to the last view"
+    end
+
+    test "Depends ▸ One level from a prerequisite", %{state: state} do
+      state = press(state, [:ctrl_home, :down, {:f, 10}, "s", "d", "o"])
+      assert [only] = shown_texts(state)
+      assert only =~ "Contact Daniel"
+    end
+
+    test "Every item lists all items that have prerequisites", %{state: state} do
+      state = press(state, [:ctrl_home, {:f, 10}, "s", "p", "e"])
+      assert [only] = shown_texts(state)
+      assert only =~ "Contact Daniel"
+    end
+
+    test "nothing to show is reported", %{state: state} do
+      state = press(state, [{:f, 10}, "s", "d", "a"])
+      assert screen(state) =~ "No items depend on this one"
+      assert State.view(state).name == "Activities"
+    end
+  end
 end

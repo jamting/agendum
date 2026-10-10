@@ -74,7 +74,7 @@ erDiagram
         bool hide_inherited
         list filter "category ids: assigned, not, or a date/number range"
         list sort "SortKey list, at most two"
-        map match "Search of the Show View, or nil"
+        map match "Show View: a Search, a list of items, or nil"
         bool hide_dependent "hide items waiting for prerequisites"
         atom section_sort "none, category, alpha or numeric"
         atom section_order "asc or desc"
@@ -166,7 +166,7 @@ classDiagram
         +hide_inherited : boolean
         +filter : [id and kind]
         +sort : [SortKey]
-        +match : Search or nil
+        +match : Search, item list or nil
         +hide_dependent : boolean
         +section_sort : none, category, alpha, numeric
         +section_order : asc or desc

@@ -101,8 +101,11 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   until every prerequisite is done or discarded, also when done items are
   hidden too (the Q&A's bug). Item Properties shows "Dependencies: depends
   on 2 · 1 depends on it". As in Agenda, a dependent item can still be
-  marked done or discarded first. Next: Utilities Show Depends / Show
-  Prereqs.
+  marked done or discarded first. Search ▸ Depends and Search ▸ Prereqs
+  (Agenda's Utilities Show Depends / Show Prereqs) list, in the Show View,
+  the items depending on the highlighted one or the items it depends on:
+  One level, All levels (the whole chain), or Every item in the file that
+  has dependents (or prerequisites); ALT-F8 returns.
 
 ## 3. Automatic assignment
 
