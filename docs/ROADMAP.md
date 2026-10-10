@@ -29,7 +29,8 @@ Rule numbers refer to `SPEC.md`.
 - [x] Marked items: bulk done / discard / remove / When / move / assign, group profile (R35)
 - [x] Sorting items (ALT-F5 SORT) and view/section filters by category (R28, R36)
 - [ ] Date and numeric filters; sorting by category note; sorting section heads
-- [ ] Search (ALT-F6 SEARCH)
+- [x] Search the view (ALT-F6) and the file (Show View), ALT-F8 last view (R37)
+- [ ] Search and replace in notes
 - [ ] Show the time in the title bar; alarms (When date reached)
 - [ ] Configurable colours / monochrome theme; date format setting
 - [ ] Show a category's short name in columns too narrow for its full name (e.g. "Anna" instead of "Anna Las")

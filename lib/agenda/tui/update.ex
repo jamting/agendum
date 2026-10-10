@@ -18,6 +18,7 @@ defmodule Agenda.TUI.Update do
     Completion,
     History,
     ItemProperties,
+    SearchBox,
     SortBox,
     Layout,
     LineEdit,
@@ -42,9 +43,10 @@ defmodule Agenda.TUI.Update do
     state = %{state | dirty: state.db != state.saved_db}
 
     state =
-      if state.modes == [] or match?(%{type: :move_item}, State.mode(state)),
-        do: Layout.settle(state),
-        else: state
+      if state.modes == [] or
+           match?(%{type: t} when t in [:move_item, :searching], State.mode(state)),
+         do: Layout.settle(state),
+         else: state
 
     {%{state | effects: [], last_key: key}, state.effects}
   end
@@ -133,6 +135,11 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :item_props} = m, key), do: ItemProperties.handle(state, m, key)
   defp dispatch(state, %{type: :scope} = m, key), do: scope_key(state, m, key)
   defp dispatch(state, %{type: :sort} = m, key), do: SortBox.handle(state, m, key)
+  defp dispatch(state, %{type: :search_box} = m, key), do: SearchBox.handle(state, m, key)
+
+  defp dispatch(state, %{type: :searching} = m, key),
+    do: SearchBox.searching_key(state, m, key, &view_key/2)
+
   defp dispatch(state, mode, key), do: CategoryScreens.handle(state, mode, key)
 
   # --- the view ----------------------------------------------------------------
@@ -181,6 +188,8 @@ defmodule Agenda.TUI.Update do
       {:alt_f, 10} -> scoped(state, :move_item, row)
       {:alt, "d"} -> perform(state, :section_below)
       {:alt_f, 5} -> SortBox.open(state, if(row, do: {:section, row.sidx}, else: :view))
+      {:alt_f, 6} -> SearchBox.open(state, :view)
+      {:alt_f, 8} -> perform(state, :last_view)
       {:alt, "-"} -> collapse_sections(state, row, true)
       {:alt, "="} -> collapse_sections(state, row, false)
       {:alt, "u"} -> perform(state, :section_above)
@@ -1040,6 +1049,16 @@ defmodule Agenda.TUI.Update do
 
   defp do_perform(state, :move_item, %{kind: :item, item: item, category: cat}) do
     start_move(state, [{item.id, cat.id}])
+  end
+
+  defp do_perform(state, :search_view, _), do: SearchBox.open(state, :view)
+  defp do_perform(state, :search_file, _), do: SearchBox.open(state, :file)
+
+  # ALT-F8 (LAST VW): back to the view shown before this one.
+  defp do_perform(state, :last_view, _) do
+    if state.last_view_id && Map.has_key?(state.db.views, state.last_view_id),
+      do: State.switch_view(state, state.last_view_id),
+      else: State.error(state, "No previous view")
   end
 
   defp do_perform(state, :filter_view, _),

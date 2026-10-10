@@ -35,6 +35,7 @@ defmodule Agenda.Core.ViewModel do
         |> Database.items_in(category.id)
         |> Enum.reject(&(view.hide_done and &1.done != nil))
         |> Enum.filter(&Assign.criteria_met?(db, &1.id, view.filter ++ section.filter))
+        |> Enum.filter(&(view.match == nil or Agenda.Core.Search.matches?(&1, view.match)))
         |> sort(db, section.sort || view.sort)
         |> Enum.map(fn item ->
           inherited = inherited?(db, item.id, category.id)

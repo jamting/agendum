@@ -9,7 +9,8 @@ defmodule Agenda.Core.View do
 
   A view's `filter` shows only items that are (or are not) assigned to
   some categories (R28); its `sort` keys order the items in every section
-  (R36).
+  (R36). `match` limits it to items whose text matches a search, as in
+  the Show View (R37).
   """
 
   defmodule SortKey do
@@ -59,7 +60,8 @@ defmodule Agenda.Core.View do
           hide_empty: boolean,
           hide_inherited: boolean,
           filter: [{Agenda.Core.Category.id(), :assigned | :not_assigned}],
-          sort: [SortKey.t()]
+          sort: [SortKey.t()],
+          match: Agenda.Core.Search.t() | nil
         }
 
   defstruct [
@@ -71,6 +73,7 @@ defmodule Agenda.Core.View do
     hide_empty: false,
     hide_inherited: false,
     filter: [],
-    sort: []
+    sort: [],
+    match: nil
   ]
 end

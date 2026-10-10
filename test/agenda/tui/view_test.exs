@@ -102,7 +102,10 @@ defmodule Agenda.TUI.ViewTest do
 
   test "F10 opens the menu; letters select commands", %{state: state} do
     state = press(state, [{:f, 10}])
-    assert screen(state) =~ ~r/File\s+Item\s+Category\s+View\s+Undo\s+Redo\s+Print\s+Quit/
+
+    assert screen(state) =~
+             ~r/File\s+Item\s+Category\s+View\s+Search\s+Undo\s+Redo\s+Print\s+Quit/
+
     state = press(state, ["v", "h", "d"])
     assert Agenda.TUI.State.view(state).hide_done
     assert state.modes == []

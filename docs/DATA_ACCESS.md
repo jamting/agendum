@@ -122,6 +122,8 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.add_column/5`, `remove_column/3`, `resize_column/4`                                        | write | By index within the view.                    |
 | `Core.toggle_view_option(db, view, :hide_done \| :hide_empty \| :hide_inherited)`                | write | View filters.                                |
 | `Core.cycle_filter(db, view, :view \| {:section, i}, cat)` | write | Filter by category (R28): none → assigned → not assigned → none. |
+| `Search.matches?(item, search)` | read | Text search over item text and/or note (R37). |
+| `Core.show_match(db, search)` | write | Fill the "Show View" with every matching item (created once, then updated). |
 | `Core.set_sort(db, view, :view \| {:section, i}, keys)` | write | Sort keys (`View.SortKey`, at most two); a section's `nil` uses the view's (R36). |
 | `Core.entry_categories(db, view, i)` | read | Categories a new item in section `i` needs to pass the filters. |
 | `Core.sort_children(db, parent)`, `sort_views(db)` | write | Alphabetical order (ALT-F5 in the managers). |

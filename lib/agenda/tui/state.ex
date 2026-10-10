@@ -35,6 +35,8 @@ defmodule Agenda.TUI.State do
           edit: map | nil,
           message: {atom, String.t()} | nil,
           collapsed: MapSet.t(Database.id()),
+          last_view_id: Database.id() | nil,
+          last_search: Agenda.Core.Search.t() | nil,
           last_key: term,
           undo: [map],
           redo: [map],
@@ -57,6 +59,8 @@ defmodule Agenda.TUI.State do
             edit: nil,
             message: nil,
             collapsed: MapSet.new(),
+            last_view_id: nil,
+            last_search: nil,
             last_key: nil,
             undo: [],
             redo: [],
@@ -93,6 +97,25 @@ defmodule Agenda.TUI.State do
   @doc "Replaces the top mode."
   @spec put_mode(t, map) :: t
   def put_mode(%__MODULE__{modes: [_ | rest]} = state, mode), do: %{state | modes: [mode | rest]}
+
+  @doc """
+  Shows another view, remembering the current one for ALT-F8 (LAST VW),
+  with the cursor at the top.
+  """
+  @spec switch_view(t, Database.id()) :: t
+  def switch_view(%__MODULE__{view_id: id} = state, id), do: state
+
+  def switch_view(state, view_id) do
+    %{
+      state
+      | last_view_id: state.view_id,
+        view_id: view_id,
+        cursor: 0,
+        cursor_key: nil,
+        col: 0,
+        scroll: 0
+    }
+  end
 
   @spec change_db(t, Database.t()) :: t
   def change_db(state, db), do: %{state | db: db, dirty: true}

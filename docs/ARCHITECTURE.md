@@ -36,6 +36,7 @@ shell does terminal I/O and file I/O.
 | `Core.Assign`                             | Assignment rules: exclusion, category links, text matching, ambiguity resolution.                                                                       |
 | `Core.ViewModel`                          | Read model: projects a view to sections, rows and column cells.                                                                                         |
 | `Core.DateParser`                         | Date expressions relative to a given `today`.                                                                                                           |
+| `Core.Search` | Text search: whether an item's text or note matches (R37). |
 | `Core.Item`, `Core.Category`, `Core.View` | Plain structs.                                                                                                                                          |
 
 ### TUI (`lib/agenda/tui/*`)
@@ -51,6 +52,7 @@ shell does terminal I/O and file I/O.
 | `TUI.Completion` | ✔ | Automatic completion while typing a column entry: the matches (from `Core.completions/3`) and the one shown. |
 | `TUI.ItemProperties` | ✔ | The Item Properties box: text, note, statistics and the item's assignments (R34). |
 | `TUI.SortBox` | ✔ | The Sort box: a view's or a section's sort keys (R36). |
+| `TUI.SearchBox` | ✔ | The Search box and search mode (ALT-N / ALT-P / F7), and the Show View (R37). |
 | `TUI.Render`                   | ✔     | State → list of styled lines (title bar, control panel, body, key bar, boxes).                                                   |
 | `TUI.Draw`, `TUI.Theme`        | ✔     | Line/box primitives; symbolic style → ANSI colours.                                                                              |
 | `TUI.Keys`                     | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |

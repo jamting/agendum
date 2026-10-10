@@ -540,16 +540,7 @@ defmodule Agenda.TUI.CategoryScreens do
 
   defp pick(state, {:new_view, name}, id) do
     {db, view_id} = Core.add_view(state.db, name, [id])
-
-    %{
-      State.change_db(state, db)
-      | view_id: view_id,
-        modes: [],
-        cursor: 0,
-        cursor_key: nil,
-        col: 0,
-        scroll: 0
-    }
+    %{State.switch_view(State.change_db(state, db), view_id) | modes: []}
   end
 
   defp pick(state, {:move_category, cat_id}, parent),

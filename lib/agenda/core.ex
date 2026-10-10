@@ -18,6 +18,8 @@ defmodule Agenda.Core do
   @type db :: Database.t()
   @type id :: Database.id()
 
+  @show_view "Show View"
+
   defdelegate new_file(opts \\ []), to: Database, as: :new
 
   # ---------------------------------------------------------------------------
@@ -776,6 +778,23 @@ defmodule Agenda.Core do
     |> Enum.reduce([], fn cat, chosen ->
       if Enum.any?(chosen, &Assign.conflict?(db, cat, &1)), do: chosen, else: chosen ++ [cat]
     end)
+  end
+
+  @doc """
+  Searches the whole file (Agenda's Utilities Show Match, R37): the "Show
+  View" lists every matching item under MAIN. It is created the first
+  time and updated afterwards. Returns the view.
+  """
+  @spec show_match(db, Agenda.Core.Search.t()) :: {db, id}
+  def show_match(db, %Agenda.Core.Search{} = search) do
+    case Enum.find(Database.views(db), &(&1.name == @show_view)) do
+      nil ->
+        {db, view_id} = Database.insert_view(db, @show_view, sections: [db.main_id])
+        {Database.update_view(db, view_id, &%{&1 | match: search}), view_id}
+
+      view ->
+        {Database.update_view(db, view.id, &%{&1 | match: search}), view.id}
+    end
   end
 
   @doc "Sorts a category's children alphabetically (ALT-F5 in the category manager)."

@@ -67,6 +67,7 @@ erDiagram
         bool hide_inherited
         list filter "category ids, assigned or not"
         list sort "SortKey list, at most two"
+        map match "Search of the Show View, or nil"
     }
     SECTION {
         int category_id FK
@@ -135,6 +136,7 @@ classDiagram
         +hide_inherited : boolean
         +filter : [id and kind]
         +sort : [SortKey]
+        +match : Search or nil
     }
     class Section {
         +category_id : id
@@ -380,7 +382,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

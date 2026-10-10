@@ -210,6 +210,18 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   needed. ALT-F5 in the category manager sorts the highlighted category's
   children alphabetically (after Y/N); in the view manager it sorts the
   views. Not done: sorting by category note, sorting section heads.
+- **R37 ✅ Search** (User's Guide 15-1 to 15-5). ALT-F6 (or Search ▸ View)
+  opens the Search box: the text, Match on (item text, note text, both),
+  Direction (forward, backward, from the beginning) and Ignore case (yes by
+  default). ENTER highlights the first match and starts search mode: ALT-N
+  / ALT-P go to the next / previous match (a message says when there are
+  no more), F7 marks the highlighted item, ENTER or ESC ends. Search ▸ File
+  (Agenda's Utilities Show Match) lists every matching item in the file in
+  a "Show View", created the first time; ALT-F8 (LAST VW, or View ▸ Last)
+  returns to the previous view. Text rules: every word must appear as a
+  whole word, "Pat*" matches any ending, "(a phrase)" must appear as
+  written. Not done: Agenda's other text-condition symbols (? ; , ~ !),
+  search and replace in notes, and items in collapsed sections are skipped.
 
 ## 5. User interface (Agenda 2.0 conventions)
 

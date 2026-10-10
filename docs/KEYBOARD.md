@@ -21,6 +21,8 @@ settings, as described in the second half of this guide.
 | Jump to the next marked item | ALT-J | ESC then `j` (Option-j) |
 | Assign the item or marked items to a category (MakeAssign) | ALT-M | ESC then `m` (Option-m), or menu Item ▸ Categorize |
 | Sort settings for the section (in a view); sort a family (category manager); sort views (view manager) | ALT-F5 | ESC then `%` |
+| Search this view; then next / previous match | ALT-F6; ALT-N / ALT-P | ESC then `^`; ESC then `n` / `p` |
+| Back to the previous view (LAST VW) | ALT-F8 | ESC then `*`, or menu View ▸ Last |
 | Remove from section / column                      | DEL                   | fn-⌫ (forward delete)                                                 |
 | Undo / redo                                       | —                     | **CTRL-Z** / **CTRL-Y** (also in the menu)                            |
 | Save / open / print to file / quit                | menu                  | **CTRL-S** / **CTRL-O** / **CTRL-P** / **CTRL-Q** (CTRL-C also quits) |

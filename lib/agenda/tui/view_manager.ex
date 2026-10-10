@@ -54,7 +54,7 @@ defmodule Agenda.TUI.ViewManager do
         State.put_mode(state, %{mode | cursor: count - 1})
 
       :enter ->
-        %{State.pop(state) | view_id: view_id, cursor: 0, cursor_key: nil, col: 0, scroll: 0}
+        state |> State.pop() |> State.switch_view(view_id)
 
       :insert ->
         Update.prompt(state, "Name of new view:", :add_view)

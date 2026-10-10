@@ -67,6 +67,7 @@ defmodule Agenda.TUI.Menu do
           ]},
          {"Filter", "Show only items in (or not in) chosen categories", :filter_view},
          {"Order", "Sort the items in every section (the view's sort settings)", :sort_view},
+         {"Last", "Return to the view shown before this one (ALT-F8)", :last_view},
          {"Hide", "Choose which items the view hides",
           [
             {"Done", "Hide or show done items", {:toggle_view, :hide_done}},
@@ -74,6 +75,11 @@ defmodule Agenda.TUI.Menu do
             {"Inherited", "Hide or show items only in subcategories",
              {:toggle_view, :hide_inherited}}
           ]}
+       ]},
+      {"Search", "Find items by their text",
+       [
+         {"View", "Search this view: ALT-N next, ALT-P previous, F7 mark (ALT-F6)", :search_view},
+         {"File", "Show every matching item in the file in the Show View", :search_file}
        ]},
       {"Undo", "Undo the last change (CTRL-Z)", :undo},
       {"Redo", "Redo the last undone change (CTRL-Y)", :redo},

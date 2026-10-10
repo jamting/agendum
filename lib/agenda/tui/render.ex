@@ -14,7 +14,17 @@ defmodule Agenda.TUI.Render do
   alias Agenda.TUI.{CategoryScreens, Completion, Draw, Layout, Menu, State}
 
   @full_screen [:catmgr, :viewmgr, :help, :note]
-  @boxes [:picker, :profile, :props, :choice, :item_props, :group_profile, :scope, :sort]
+  @boxes [
+    :picker,
+    :profile,
+    :props,
+    :choice,
+    :item_props,
+    :group_profile,
+    :scope,
+    :sort,
+    :search_box
+  ]
 
   @spec render(State.t()) :: [Draw.line()]
   def render(%State{width: w} = state) do
@@ -78,6 +88,7 @@ defmodule Agenda.TUI.Render do
       top && top.type in [:profile, :group_profile] -> "ASSIGN"
       top && top.type in [:props, :choice, :item_props] -> "PROPS"
       top && top.type == :sort -> "SORT"
+      top && top.type in [:search_box, :searching] -> "SEARCH"
       base && base.type == :catmgr -> "CAT MGR"
       base && base.type == :viewmgr -> "VW MGR"
       base && base.type == :note -> "NOTE"
@@ -242,6 +253,12 @@ defmodule Agenda.TUI.Render do
 
   defp mode_keys(%{type: type}) when type in [:profile, :group_profile],
     do: [{"SPACE", "Assign/Unassign"}, {"ESC", "Return"}]
+
+  defp mode_keys(%{type: :search_box}),
+    do: [{"ENTER", "Search"}, {"TAB/↓", "Next setting"}, {"SPACE", "Change"}, {"ESC", "Cancel"}]
+
+  defp mode_keys(%{type: :searching}),
+    do: [{"ALT-N", "Next"}, {"ALT-P", "Previous"}, {"F7", "Mark"}, {"ENTER/ESC", "End search"}]
 
   defp mode_keys(%{type: :sort}), do: [{"ENTER", "Change"}, {"↑↓", "Setting"}, {"ESC", "Close"}]
 
@@ -584,6 +601,8 @@ defmodule Agenda.TUI.Render do
      ALT-F10       Move item to another section
      ALT-− / ALT-= Collapse / expand section (twice: all)
      ALT-F5        Sort settings for the section    ESC %
+     ALT-F6        Search (then ALT-N / ALT-P, F7 mark)  ESC ^
+     ALT-F8        Back to the previous view        ESC *
      ALT-D / ALT-U Add section below / above
      ALT-R / ALT-L Add column right / left
      ←→ TAB        Move between item and columns
@@ -663,6 +682,11 @@ defmodule Agenda.TUI.Render do
     do: "Assignments: #{length(ids)} marked items"
 
   defp box_title(_state, %{type: :scope}), do: "Marked items"
+  defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
+
+  defp box_title(_state, %{type: :search_box, scope: :file}),
+    do: "Search the whole file (Show View)"
+
   defp box_title(_state, %{type: :sort, scope: :view}), do: "Sort items in all sections"
 
   defp box_title(state, %{type: :sort, scope: {:section, i}}),
@@ -709,6 +733,41 @@ defmodule Agenda.TUI.Render do
   end
 
   # "Marked items or current item?" (User's Guide 13-2)
+  defp box_content(_state, %{type: :search_box} = mode, inner, _max_rows) do
+    values = %{
+      on: %{item: "Item text", note: "Note text", both: "Both item & note"}[mode.search.on],
+      direction:
+        %{forward: "Forward", backward: "Backward", beginning: "Search from beginning"}[
+          mode.direction
+        ],
+      ignore_case: if(mode.search.ignore_case, do: "Yes", else: "No")
+    }
+
+    labels = %{
+      text: "Search for",
+      on: "Match on",
+      direction: "Direction",
+      ignore_case: "Ignore case"
+    }
+
+    rows =
+      mode
+      |> Agenda.TUI.SearchBox.rows()
+      |> Enum.with_index()
+      |> Enum.map(fn {row, i} ->
+        label = [{:box, " " <> Draw.pad(labels[row], 12) <> ": "}]
+
+        value =
+          if row == :text,
+            do: field(mode.line, inner - 16, :edit),
+            else: [{if(i == mode.cursor, do: :box_selected, else: :box), values[row]}]
+
+        label ++ value
+      end)
+
+    rows ++ [[], [{:box, " Pat* finds Pat, Patty… · (a phrase) · ENTER searches"}]]
+  end
+
   defp box_content(state, %{type: :sort} = mode, inner, _max_rows) do
     rows =
       state
