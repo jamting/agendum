@@ -7,43 +7,43 @@ settings, as described in the second half of this guide.
 
 ## Keys that work everywhere
 
-| Command                                           | Agenda key            | Mac-friendly alternative                                              |
-| ------------------------------------------------- | --------------------- | --------------------------------------------------------------------- |
-| New item / column entry / category / view         | INS                   | **CTRL-N**                                                            |
-| Edit (item, section head, column entry, category) | F2                    | **CTRL-E**                                                            |
-| Mark done                                         | F4                    | **CTRL-K**                                                            |
-| Discard                                           | ALT-F4                | **CTRL-D**                                                            |
-| Set the When date                                 | ALT-F2                | ESC then `@`, or menu Item ▸ When                                     |
-| Next / previous completion while typing a column entry | F8 / F7 | ALT-N / ALT-P (ESC then `n` / `p`) |
-| New category instead of the completion | F5 or INS | **CTRL-N** |
-| Collapse / expand a family or section (twice: all) | ALT-− / ALT-= | ESC then `-` / `=` (Option-− / Option-= also work) |
-| Unmark all items | ALT-F7 | ESC then `&`, or menu Item ▸ Unmark |
-| Jump to the next marked item | ALT-J | ESC then `j` (Option-j) |
-| Assign the item or marked items to a category (MakeAssign) | ALT-M | ESC then `m` (Option-m), or menu Item ▸ Categorize |
-| Go to a section (GO TO, in a view); sort a family (category manager); sort views (view manager) | ALT-F5 | ESC then `%` |
-| Next / previous view (in a view) | ALT-N / ALT-P | ESC then `n` / `p` |
-| Show / hide empty sections (in a view) | ALT-V | ESC then `v` |
-| Insert an item (in a view) | ALT-I | ESC then `i`, or INS / **CTRL-N** |
-| Save / retrieve a file (in a view) | ALT-W / ALT-G | ESC then `w` / `g`, or **CTRL-S** / **CTRL-O** |
-| Quit | ALT-Q | ESC then `q`, or **CTRL-Q** |
-| Show / hide the function key map | ALT-K | ESC then `k` |
-| Search this view; then next / previous match | ALT-F6; ALT-N / ALT-P | ESC then `^`; ESC then `n` / `p` |
-| In a note: search / replace; find the next occurrence (after a single replacement: replace it) | ALT-F6; ALT-S | ESC then `^`; ESC then `s` |
-| In a note: insert today's date / the time | ALT-D / ALT-T | ESC then `d` / `t` |
-| In a note: the next / previous item's (or category's) note | ALT-N / ALT-P | ESC then `n` / `p` |
-| Back to the previous view (LAST VW) | ALT-F8 | ESC then `*`, or menu View ▸ Last |
-| Set or cancel an alarm (Item Alarm) | ALT-A | ESC then `a`, or menu Item ▸ Alarm |
-| Make the item depend on the marked items, or clear its dependencies | ALT-O | ESC then `o` |
-| Execute all conditions and actions on all items / those of the highlighted category | ALT-X / ALT-E | ESC then `x` / `e`, or menu Category ▸ Execute |
-| Category manager: add a sibling below / above | ALT-D (or ALT-I, INS) / ALT-U | ESC then `d` / `u`, or **CTRL-N** |
-| Category manager: add a child / a new family after the parent | ALT-R / ALT-L | ESC then `r` / `l` |
-| Remove from section / column                      | DEL                   | fn-⌫ (forward delete)                                                 |
-| Undo / redo                                       | —                     | **CTRL-Z** / **CTRL-Y** (also in the menu)                            |
-| Save / open / print to file / quit                | menu                  | **CTRL-S** / **CTRL-O** / **CTRL-P** / **CTRL-Q** (CTRL-C also quits) |
-| Previous / next section                           | CTRL-PGUP / CTRL-PGDN | ⌥↑ / ⌥↓ (in a view)                                                   |
-| Any function key Fn                               | F1…F10                | ESC then the digit (ESC 0 = F10)                                      |
-| ALT-F1…ALT-F10                                    |                       | ESC then the shifted digit (`!` … `)`)                                |
-| Menu                                              | F10                   | `/`                                                                   |
+| Command                                                                                         | Agenda key                    | Mac-friendly alternative                                              |
+| ----------------------------------------------------------------------------------------------- | ----------------------------- | --------------------------------------------------------------------- |
+| New item / column entry / category / view                                                       | INS                           | **CTRL-N**                                                            |
+| Edit (item, section head, column entry, category)                                               | F2                            | **CTRL-E**                                                            |
+| Mark done                                                                                       | F4                            | **CTRL-K**                                                            |
+| Discard                                                                                         | ALT-F4                        | **CTRL-D**                                                            |
+| Set the When date                                                                               | ALT-F2                        | ESC then `@`, or menu Item ▸ When                                     |
+| Next / previous completion while typing a column entry                                          | F8 / F7                       | ALT-N / ALT-P (ESC then `n` / `p`)                                    |
+| New category instead of the completion                                                          | F5 or INS                     | **CTRL-N**                                                            |
+| Collapse / expand a family or section (twice: all)                                              | ALT-− / ALT-=                 | ESC then `-` / `=` (Option-− / Option-= also work)                    |
+| Unmark all items                                                                                | ALT-F7                        | ESC then `&`, or menu Item ▸ Unmark                                   |
+| Jump to the next marked item                                                                    | ALT-J                         | ESC then `j` (Option-j)                                               |
+| Assign the item or marked items to a category (MakeAssign)                                      | ALT-M                         | ESC then `m` (Option-m), or menu Item ▸ Categorize                    |
+| Go to a section (GO TO, in a view); sort a family (category manager); sort views (view manager) | ALT-F5                        | ESC then `%`                                                          |
+| Next / previous view (in a view)                                                                | ALT-N / ALT-P                 | ESC then `n` / `p`                                                    |
+| Show / hide empty sections (in a view)                                                          | ALT-V                         | ESC then `v`                                                          |
+| Insert an item (in a view)                                                                      | ALT-I                         | ESC then `i`, or INS / **CTRL-N**                                     |
+| Save / retrieve a file (in a view)                                                              | ALT-W / ALT-G                 | ESC then `w` / `g`, or **CTRL-S** / **CTRL-O**                        |
+| Quit                                                                                            | ALT-Q                         | ESC then `q`, or **CTRL-Q**                                           |
+| Show / hide the function key map                                                                | ALT-K                         | ESC then `k`                                                          |
+| Search this view; then next / previous match                                                    | ALT-F6; ALT-N / ALT-P         | ESC then `^`; ESC then `n` / `p`                                      |
+| In a note: search / replace; find the next occurrence (after a single replacement: replace it)  | ALT-F6; ALT-S                 | ESC then `^`; ESC then `s`                                            |
+| In a note: insert today's date / the time                                                       | ALT-D / ALT-T                 | ESC then `d` / `t`                                                    |
+| In a note: the next / previous item's (or category's) note                                      | ALT-N / ALT-P                 | ESC then `n` / `p`                                                    |
+| Back to the previous view (LAST VW)                                                             | ALT-F8                        | ESC then `*`, or menu View ▸ Last                                     |
+| Set or cancel an alarm (Item Alarm)                                                             | ALT-A                         | ESC then `a`, or menu Item ▸ Alarm                                    |
+| Make the item depend on the marked items, or clear its dependencies                             | ALT-O                         | ESC then `o`                                                          |
+| Execute all conditions and actions on all items / those of the highlighted category             | ALT-X / ALT-E                 | ESC then `x` / `e`, or menu Category ▸ Execute                        |
+| Category manager: add a sibling below / above                                                   | ALT-D (or ALT-I, INS) / ALT-U | ESC then `d` / `u`, or **CTRL-N**                                     |
+| Category manager: add a child / a new family after the parent                                   | ALT-R / ALT-L                 | ESC then `r` / `l`                                                    |
+| Remove from section / column                                                                    | DEL                           | fn-⌫ (forward delete)                                                 |
+| Undo / redo                                                                                     | —                             | **CTRL-Z** / **CTRL-Y** (also in the menu)                            |
+| Save / open / print to file / quit                                                              | menu                          | **CTRL-S** / **CTRL-O** / **CTRL-P** / **CTRL-Q** (CTRL-C also quits) |
+| Previous / next section                                                                         | CTRL-PGUP / CTRL-PGDN         | ⌥↑ / ⌥↓ (in a view)                                                   |
+| Any function key Fn                                                                             | F1…F10                        | ESC then the digit (ESC 0 = F10)                                      |
+| ALT-F1…ALT-F10                                                                                  |                               | ESC then the shifted digit (`!` … `)`)                                |
+| Menu                                                                                            | F10                           | `/`                                                                   |
 
 While typing text:
 

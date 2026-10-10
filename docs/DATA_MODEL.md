@@ -226,16 +226,16 @@ classDiagram
     Column *-- NumberFormat
 ```
 
-| Struct                                | Module                        | Notes                                                                       |
-| ------------------------------------- | ----------------------------- | --------------------------------------------------------------------------- |
-| `Database`                            | `lib/agenda/core/database.ex` | The whole file. Maps are keyed by id; order lives in separate lists.        |
-| `Item`                                | `lib/agenda/core/item.ex`     | Free text and dates. **Does not know its categories.**                      |
-| `Category`                            | `lib/agenda/core/category.ex` | Tree node with flags for the assignment rules. **Does not know its items.** |
-| `View`, `View.Section`, `View.Column` | `lib/agenda/core/view.ex`     | Pure presentation config; references categories by id.                      |
-| `Links`                               | `lib/agenda/core/links.ex`    | Generic bidirectional many-to-many relation.                                |
-| `DateFormat` | `lib/agenda/core/date_format.ex` | How the file displays dates and times; display only (R41). |
-| `DateSettings` | `lib/agenda/core/date_settings.ex` | How the file reads typed dates: week, quarter and year boundaries, month alone, times of day (R14e). |
-| `NumberFormat` | `lib/agenda/core/number_format.ex` | How a numeric column shows numbers and which calculations it shows; also reads typed numbers (R29). |
+| Struct                                | Module                             | Notes                                                                                                |
+| ------------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `Database`                            | `lib/agenda/core/database.ex`      | The whole file. Maps are keyed by id; order lives in separate lists.                                 |
+| `Item`                                | `lib/agenda/core/item.ex`          | Free text and dates. **Does not know its categories.**                                               |
+| `Category`                            | `lib/agenda/core/category.ex`      | Tree node with flags for the assignment rules. **Does not know its items.**                          |
+| `View`, `View.Section`, `View.Column` | `lib/agenda/core/view.ex`          | Pure presentation config; references categories by id.                                               |
+| `Links`                               | `lib/agenda/core/links.ex`         | Generic bidirectional many-to-many relation.                                                         |
+| `DateFormat`                          | `lib/agenda/core/date_format.ex`   | How the file displays dates and times; display only (R41).                                           |
+| `DateSettings`                        | `lib/agenda/core/date_settings.ex` | How the file reads typed dates: week, quarter and year boundaries, month alone, times of day (R14e). |
+| `NumberFormat`                        | `lib/agenda/core/number_format.ex` | How a numeric column shows numbers and which calculations it shows; also reads typed numbers (R29).  |
 
 ### Ids
 
@@ -422,18 +422,18 @@ tests in `database_test.exs` and `links_test.exs`):
 
 ## Mapping to the patent
 
-| Patent (US 5,115,504)                                        | This implementation                                                            |
-| ------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| Object file `.AGA` (category, item, view, genealogy objects) | `db.categories`, `db.items`, `db.views` with one `next_id`                     |
-| Link-structure file `.AGB`                                   | `db.links` (`Links`)                                                           |
-| Link structure joining item and category (FIG. 2)            | an entry in both `by_left` and `by_right`                                      |
-| Category chains: first/last child, sibling pointers (FIG. 1) | `parent_id` + ordered `children` list                                          |
-| Genealogy object (cached ancestors)                          | `Database.ancestors/2`, computed on demand                                     |
-| Subsumption / inheritance (FIG. 4)                           | `Database.member?/3`, computed on demand                                       |
-| View linked to categories (FIG. 5)                           | `View.sections` / `View.columns` holding category ids                          |
-| Category-to-category links (FIG. 6)                          | `Category.also_assign`                                                         |
-| Negative links (FIG. 6, crossed squares)                     | `Category.exclusive` (for siblings) and `Category.excludes` (any two, R9)      |
-| Free object / free link lists                                | not needed: immutable maps, ids never reused                                   |
+| Patent (US 5,115,504)                                        | This implementation                                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| Object file `.AGA` (category, item, view, genealogy objects) | `db.categories`, `db.items`, `db.views` with one `next_id`                |
+| Link-structure file `.AGB`                                   | `db.links` (`Links`)                                                      |
+| Link structure joining item and category (FIG. 2)            | an entry in both `by_left` and `by_right`                                 |
+| Category chains: first/last child, sibling pointers (FIG. 1) | `parent_id` + ordered `children` list                                     |
+| Genealogy object (cached ancestors)                          | `Database.ancestors/2`, computed on demand                                |
+| Subsumption / inheritance (FIG. 4)                           | `Database.member?/3`, computed on demand                                  |
+| View linked to categories (FIG. 5)                           | `View.sections` / `View.columns` holding category ids                     |
+| Category-to-category links (FIG. 6)                          | `Category.also_assign`                                                    |
+| Negative links (FIG. 6, crossed squares)                     | `Category.exclusive` (for siblings) and `Category.excludes` (any two, R9) |
+| Free object / free link lists                                | not needed: immutable maps, ids never reused                              |
 
 ## On disk
 

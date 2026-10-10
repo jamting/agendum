@@ -105,7 +105,7 @@ Our Elixir clone already has the core that made Agenda distinctive; the biggest 
 | Guessing intent from the neighbouring item       | Done (R12)                                                  | —                                                       |
 | Mutually exclusive categories                    | Done, including conflict dialogs (R7, R7a, R7b)             | No direct assignment to a category and its parent (R7c) |
 | Plain-language dates                             | Done: read from item text and typed into When columns (R14) | Times of day and recurring dates (R14a)                 |
-| Conditions and actions | Done: assignment conditions (R15); category links (R8) | Date conditions and actions (R15a, R15b) |
+| Conditions and actions                           | Done: assignment conditions (R15); category links (R8)      | Date conditions and actions (R15a, R15b)                |
 | Task dependencies                                | Not started                                                 | Add after R15                                           |
 | Importing and searching text                     | Not started                                                 | Search first (on the roadmap); import later             |
 
