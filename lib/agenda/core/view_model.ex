@@ -43,7 +43,7 @@ defmodule Agenda.Core.ViewModel do
           %Row{
             item: item,
             inherited: inherited,
-            cells: Enum.map(view.columns, &cell(db, item, &1.category_id))
+            cells: Enum.map(view.columns, &cell(db, item, &1.category_id, &1.width))
           }
         end)
         |> Enum.reject(&(view.hide_inherited and &1.inherited))
@@ -134,10 +134,12 @@ defmodule Agenda.Core.ViewModel do
   @doc """
   The text a column shows for an item: the item's date for a date column;
   `*` for a childless ("yes/no") column head the item belongs to; otherwise
-  the names of the head's descendants the item is assigned to.
+  the names of the head's descendants the item is assigned to. When those
+  names do not fit in `width`, categories with a short name show it
+  instead (User's Guide 19-2).
   """
-  @spec cell(Database.t(), Agenda.Core.Item.t(), Database.id()) :: String.t()
-  def cell(db, item, head_id) do
+  @spec cell(Database.t(), Agenda.Core.Item.t(), Database.id(), pos_integer | nil) :: String.t()
+  def cell(db, item, head_id, width \\ nil) do
     head = db.categories[head_id]
 
     cond do
@@ -150,10 +152,26 @@ defmodule Agenda.Core.ViewModel do
         if Database.member?(db, item.id, head_id), do: "*", else: ""
 
       true ->
-        db
-        |> column_entries(item.id, head_id)
-        |> Enum.map_join(", ", &db.categories[&1].name)
+        categories = db |> column_entries(item.id, head_id) |> Enum.map(&db.categories[&1])
+        full = Enum.map_join(categories, ", ", & &1.name)
+
+        if width == nil or String.length(full) <= width,
+          do: full,
+          else: Enum.map_join(categories, ", ", &(&1.short_name || &1.name))
     end
+  end
+
+  @doc """
+  A column head as shown above a column `width` characters wide: the
+  category's name, or its short name when the name does not fit.
+  """
+  @spec column_label(Database.t(), Database.id(), pos_integer) :: String.t()
+  def column_label(db, cat_id, width) do
+    category = db.categories[cat_id]
+
+    if String.length(category.name) <= width,
+      do: category.name,
+      else: category.short_name || category.name
   end
 
   @doc "Descendants of `head_id` the item is explicitly assigned to, in hierarchy order."

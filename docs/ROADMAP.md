@@ -33,7 +33,7 @@ Rule numbers refer to `SPEC.md`.
 - [ ] Search and replace in notes
 - [x] Time in the title bar; alarms before the When date and time (R38)
 - [ ] Configurable colours / monochrome theme; date format setting
-- [ ] Show a category's short name in columns too narrow for its full name (e.g. "Anna" instead of "Anna Las")
+- [x] Show a category's short name in columns too narrow for its full name (e.g. "Anna" instead of "Anna Las") (R22)
 
 ## Milestone 3 — Smarter assignment
 

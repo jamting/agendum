@@ -10,7 +10,7 @@ defmodule Agenda.TUI.Render do
       last line   function key bar
   """
 
-  alias Agenda.Core.{Database, DateParser}
+  alias Agenda.Core.{Database, DateParser, ViewModel}
   alias Agenda.TUI.{CategoryScreens, Completion, Draw, Layout, Menu, State}
 
   @full_screen [:catmgr, :viewmgr, :help, :note]
@@ -362,7 +362,8 @@ defmodule Agenda.TUI.Render do
       Enum.flat_map(columns, fn c ->
         [
           {:normal, " "},
-          {:column_head, Draw.pad(state.db.categories[c.category_id].name, c.width)}
+          {:column_head,
+           Draw.pad(ViewModel.column_label(state.db, c.category_id, c.width), c.width)}
         ]
       end)
 

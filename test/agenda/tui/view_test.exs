@@ -248,4 +248,17 @@ defmodule Agenda.TUI.ViewTest do
       assert screen(state) =~ "Enter a date"
     end
   end
+
+  test "a narrow column shows short names (User's Guide 19-2)", %{state: state} do
+    # the Contact column is 16 wide: "Abigail Scheer" fits
+    assert screen(state) =~ "Abigail Scheer"
+
+    # highlight the Contact column and narrow it to 10 (three steps of 2)
+    narrower = [{:f, 10}, "v", "c", "n"]
+    state = press(state, [:down, :right, :right, :right] ++ narrower ++ narrower ++ narrower)
+    screen = screen(state)
+    # the column ends right after the short names
+    assert screen =~ ~r/Low\s+Abigail\n/
+    assert screen =~ ~r/Medium\s+Daniel\n/
+  end
 end

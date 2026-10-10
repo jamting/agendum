@@ -179,6 +179,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 - **R22 ✅ Columns (claim 2).** A column headed by category _C_ shows, for
   each item, the descendants of _C_ the item is assigned to. A childless
   head shows `*` when the item is a member. A date column shows the date.
+  When a column is too narrow for a category's full name, the category's
+  short name is shown instead, for column entries and column heads alike
+  (User's Guide 19-2).
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

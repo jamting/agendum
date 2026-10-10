@@ -135,7 +135,7 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Assign.criteria_met?(db, item, criteria)` | read | The AND / exclusive-OR rule shared by conditions and filters. |
 | `Database.view/2`, `views/1`                                                                     | read  | One view / all in `view_order`.              |
 | `ViewModel.build(db, view)`                                                                      | read  | The full read model of a view (below).       |
-| `ViewModel.cell/3`, `column_entries/3`                                                           | read  | What one column shows for one item.          |
+| `ViewModel.cell(db, item, head, width)`, `column_entries/3`, `column_label(db, head, width)` | read | What one column shows for one item, and a column head; categories that do not fit in `width` use their short names. |
 
 ### Persistence
 
