@@ -34,6 +34,10 @@ Rule numbers refer to `SPEC.md`.
 - [x] Colour and monochrome themes: `--theme classic|mono`, `--mono`, NO_COLOR (R40)
 - [x] Date display format: File ▸ Properties sets date order, separator, 12/24-hour clock, day of week (R41)
 - [x] Show a category's short name in columns too narrow for its full name (e.g. "Anna" instead of "Anna Las") (R22)
+- [ ] Original keys in views: ALT-F5 GO TO a section, ALT-N/ALT-P next/previous view, ALT-W/G/Q save/retrieve/quit, ALT-V empty sections, ALT-K key map, ALT-I insert (R42)
+- [ ] Original keys in the category manager: ALT-R child, ALT-L uncle, ALT-D/ALT-U/ALT-I sibling below/above (R42)
+- [ ] Original keys in notes: ALT-D/ALT-T insert date/time, ALT-N/ALT-P next/previous note, ALT-S repeats a replacement (R39, R42)
+- [ ] Original keys that need new features: ALT-F9 copy item, ALT-Y yank back removed item, ALT-H hop to next occurrence, ALT-F7 make item from note text, ALT-F2 make category from note text (R42)
 
 ## Milestone 3 — Smarter assignment
 
@@ -41,7 +45,8 @@ Rule numbers refer to `SPEC.md`.
 - [ ] Date and numeric filters; sorting by category note; sorting section heads (after R29)
 - [x] Date parsing from item text into When (R14)
 - [x] Times of day on When dates (R14b)
-- [ ] More date phrases: recurring dates, working days, date settings (R14a)
+- [ ] More date phrases: recurring dates, working days, date settings (R14a); marking a recurring item done creates the next one (test with the cases in Lotus's support Q&A)
+- [ ] Item dependencies: ALT-O makes an item depend on the marked items, views can hide dependent items, Show Prereqs / Show Depends (R43)
 - [ ] More date display options: per-column formats, Day #, Week #, Relative, input format (R41)
 - [x] Assignment conditions, conditional assignments (R15)
 - [ ] Date conditions and "Also match" text conditions (R15a)
@@ -53,14 +58,14 @@ Rule numbers refer to `SPEC.md`.
 ## Milestone 4 — Data interchange
 
 - [ ] JSON export/import: the modern, human-readable format; round-trips everything in a file
-- [ ] Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export
+- [ ] Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
 - [ ] Import of structured text files (one item per line, with categories)
 - [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files)
 - [ ] Optional: read original `.AG` files directly (format undocumented; research; STF covers most needs)
 
 ## Milestone 5 — Time management and automation
 
-- [ ] Datebook views: items by day, week, month or quarter, browsing forward and back (User's Guide chapter 10)
+- [ ] Datebook views: items by day, week, month or quarter, browsing forward and back (ALT-B); settings Period, Interval, Base date on, Section separators; beginning/end of week in the global date settings (User's Guide chapter 10)
 - [ ] Pop-up calendar: F3 in a date column picks a date (User's Guide chapter 6)
 - [ ] Learn-mode macros: record keystrokes, store them in the file, replay them, attach them to keys (Working with Macros, chapter 1)
 - [ ] A starter file like Agenda's Activities Planner: categories and views, no items (Starter Applications)

@@ -90,6 +90,11 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   safe with cycles.
 - **R9 ⏳ General negative links.** Two arbitrary categories that may not
   share an item.
+- **R43 ⏳ Item dependencies** (Help: "Views: Accelerator Keys"; Lotus Q&A
+  "Hiding Done and Dependent Items"). ALT-O makes the current item
+  dependent on the marked items (its prerequisites). A view can hide
+  dependent items; an item stops being dependent once all its
+  prerequisites are done. Utilities Show Prereqs / Show Depends list them.
 
 ## 3. Automatic assignment
 
@@ -139,6 +144,11 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
 - **R14a ⏳ More date phrases.** Recurring dates ("every Monday", "every other Monday"), working days,
   quarters, "first Wednesday in November", "next April", dates from notes,
   and settings for date order (day/month) and the start of the week.
+  Marking a recurring item done creates the next occurrence. Lotus's
+  support Q&A (`docs/reference/ag2qanda.txt.html`) lists cases Agenda 2.0
+  got wrong, to use as tests: "the 30th of every month" (must stay on the
+  30th), "every quarter" (every three months, not six), "every three
+  months", and editing a monthly recurring When date.
 - **R15 ✅ Assignment conditions** (User's Guide, chapters 18 and 20). A
   category can have conditions on other categories: items *assigned* to
   them (Urgent if Taxes and Accountant) or *not assigned* to them (Me if
@@ -206,7 +216,12 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   so it stays in sight. Set with View ▸ Filter and View ▸ Section ▸ Filter
   (ENTER cycles + assigned · - not assigned · none; the box stays open).
   Not done: date and numeric filters.
-- **R29 ⏳ Numeric columns.**
+- **R29 ⏳ Numeric columns.** (User's Guide chapter 8.) Numeric categories
+  hold a number per item, shown in a column with a calculation below it:
+  total (default), average, count, minimum, maximum, percent of total.
+  Numeric ranges can be used in conditions and filters. The decimal and
+  thousands separators are personal settings (Utilities Customize), not
+  part of the file.
 - **R36 ✅ Sorting items** (User's Guide chapter 15). A view has sort
   settings for all its sections; a section can override them or use the
   view's. Up to two keys (primary, then a secondary for ties): item text,
@@ -258,7 +273,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   opens with the cursor at its end; a global replacement covers the whole
   note; the box remembers its last settings; no length limit (Agenda
   allowed 25 characters); text never matches across lines. The note is
-  saved when it is closed, so all replacements are one undo step.
+  saved when it is closed, so all replacements are one undo step. Not
+  done: after a single (not global) replacement, ALT-S should replace the
+  next occurrence too (Help: "Search & Replace in Note/Macro Box").
 - **R40 ✅ Colour themes** (Setting Up Agenda 1-25 to 1-31). The screen is
   drawn with a theme chosen at start: `classic` (blue and white, like DOS
   Agenda; the default) or `mono` (bold, dim, underline and reverse only).
@@ -308,6 +325,22 @@ body, and a function-key bar.
 Category manager navigation (from the manual): ↑/BACKSPACE, ↓/ENTER,
 HOME = parent, END = last of family, CTRL-PGUP/PGDN = previous/next
 sibling, CTRL-HOME/END = first/last.
+
+- **R42 ⏳ The original keys** (Help: "Agenda Key and Menu Charts", in
+  `docs/reference/Agenda 2.0 Help File.html`). Keys follow Agenda's charts;
+  where we added a key of our own it must not take one Agenda used for
+  something else. In views: ALT-F5 GO TO (a list of the view's section
+  heads; ENTER highlights the chosen one), ALT-N / ALT-P next / previous
+  view, ALT-W save, ALT-G retrieve, ALT-Q quit, ALT-V show/hide empty
+  sections, ALT-K show/hide the key map, ALT-I insert an item. In the
+  category manager: ALT-R insert a child, ALT-L insert an "uncle" (a
+  sibling of the parent, after it), ALT-D / ALT-I insert a sibling below,
+  ALT-U above. In notes: ALT-D / ALT-T insert today's date / the time,
+  ALT-N / ALT-P go to the note of the next / previous item (or category).
+  Our deviation until then: ALT-F5 in a view opened the Sort box (R36).
+  Later, with their features: ALT-F9 copy, ALT-Y yank back, ALT-H hop,
+  ALT-B browse, ALT-C calendar, ALT-O dependency, ALT-E / ALT-X execute
+  conditions and actions, ALT-Z run macro, ALT-S sort now.
 
 Extras that are not in the original (details in `KEYBOARD.md`):
 
