@@ -218,6 +218,8 @@ defmodule Agenda.TUI.Update do
 
   defp view_key(%State{edit: edit} = state, key) when edit != nil, do: view_edit_key(state, key)
 
+  # One branch per key, like Agenda's key chart.
+  # credo:disable-for-next-line Credo.Check.Refactor.CyclomaticComplexity
   defp view_key(state, key) do
     row = Layout.current_row(state)
     rows = Layout.rows(state)
@@ -970,10 +972,7 @@ defmodule Agenda.TUI.Update do
   defp prompt_submitted(state, action, text) do
     text = String.trim(text)
 
-    cond do
-      text == "" -> state
-      true -> prompt_action(state, action, text)
-    end
+    if text == "", do: state, else: prompt_action(state, action, text)
   end
 
   defp prompt_action(state, :save_as, text) do
@@ -1282,7 +1281,7 @@ defmodule Agenda.TUI.Update do
   # --- actions (shared by keys and menus) --------------------------------------
 
   @doc "Performs a named action. Used by key handlers and the menu."
-  @spec perform(State.t(), atom) :: State.t()
+  @spec perform(State.t(), atom | tuple) :: State.t()
   def perform(state, action) do
     do_perform(state, action, Layout.current_row(state))
   end

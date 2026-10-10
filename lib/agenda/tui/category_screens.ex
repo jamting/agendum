@@ -168,6 +168,8 @@ defmodule Agenda.TUI.CategoryScreens do
 
   # --- category manager ------------------------------------------------------------
 
+  # One branch per key, like Agenda's key chart.
+  # credo:disable-for-next-line Credo.Check.Refactor.CyclomaticComplexity
   defp screen_key(state, %{type: :catmgr} = mode, rows, key) do
     id = current_id(rows, mode)
     db = state.db

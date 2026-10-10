@@ -144,6 +144,7 @@ defmodule Agenda.CLI do
     end
   end
 
+  @spec exit_with(String.t()) :: no_return()
   defp exit_with(message) do
     IO.puts(:stderr, message)
     System.halt(1)

@@ -35,11 +35,13 @@ defmodule Agenda.Core.Assign do
   through inheritance).
   """
   @spec assign(db, id, id) :: db
-  def assign(db, item_id, cat_id), do: do_assign(db, item_id, cat_id, MapSet.new())
+  def assign(db, item_id, cat_id), do: do_assign(db, item_id, cat_id, [])
 
+  # `visited`: the categories already assigned through category links, so
+  # that cycles stop.
   defp do_assign(db, item_id, cat_id, visited) do
     cond do
-      MapSet.member?(visited, cat_id) ->
+      cat_id in visited ->
         db
 
       cat_id == db.main_id or Database.date_field(db, cat_id) ->
@@ -52,7 +54,7 @@ defmodule Agenda.Core.Assign do
           |> clear_lineage(item_id, cat_id)
           |> Database.link(item_id, cat_id)
 
-        visited = MapSet.put(visited, cat_id)
+        visited = [cat_id | visited]
 
         # A link to a category the item already belongs to (e.g. an ancestor)
         # adds nothing, and assigning it would break the more specific link.
@@ -392,9 +394,11 @@ defmodule Agenda.Core.Assign do
       db
       |> matching_categories(text)
       |> Enum.filter(&(only == nil or MapSet.member?(only, &1)))
-      # already a member (directly, or through a more specific category)
-      |> Enum.reject(&Database.member?(db, item_id, &1))
-      |> Enum.reject(fn cand -> Enum.any?(explicit, &conflict?(db, cand, &1)) end)
+      # not already a member (directly, or through a more specific category),
+      # and not in conflict with an assignment the item has
+      |> Enum.reject(fn cand ->
+        Database.member?(db, item_id, cand) or Enum.any?(explicit, &conflict?(db, cand, &1))
+      end)
       |> Enum.sort_by(&preference(db, &1, adjacent))
       |> Enum.reduce([], fn cand, accepted ->
         if Enum.any?(accepted, &conflict?(db, cand, &1)), do: accepted, else: [cand | accepted]
@@ -432,8 +436,10 @@ defmodule Agenda.Core.Assign do
   def matching_categories(db, text) do
     db.categories
     |> Map.values()
-    |> Enum.filter(&(&1.kind == :standard and not Database.protected?(db, &1.id)))
-    |> Enum.filter(&category_matches?(&1, text))
+    |> Enum.filter(
+      &(&1.kind == :standard and not Database.protected?(db, &1.id) and
+          category_matches?(&1, text))
+    )
     |> Enum.map(& &1.id)
     |> Enum.sort()
   end

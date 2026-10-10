@@ -45,8 +45,10 @@ defmodule Agenda.Core.ViewModel do
         db
         |> Database.items_in(category.id)
         |> Enum.reject(&(view.hide_done and &1.done != nil))
-        |> Enum.filter(&Assign.criteria_met?(db, &1.id, view.filter ++ section.filter, today))
-        |> Enum.filter(&shown?(&1, view.match))
+        |> Enum.filter(
+          &(Assign.criteria_met?(db, &1.id, view.filter ++ section.filter, today) and
+              shown?(&1, view.match))
+        )
         |> Enum.reject(&(view.hide_dependent and Database.waiting?(db, &1.id)))
         |> sort(db, section.sort || view.sort)
         |> Enum.map(fn item ->

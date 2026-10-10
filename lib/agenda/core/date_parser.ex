@@ -261,13 +261,7 @@ defmodule Agenda.Core.DateParser do
         # unmatched optional groups at the end are left out by Regex.scan
         groups = groups ++ List.duplicate({-1, 0}, group_count - length(groups))
 
-        captures =
-          Enum.map(groups, fn {s, l} ->
-            if s < 0,
-              do: nil,
-              else:
-                text |> binary_part(s, l) |> String.downcase() |> String.replace(~r/\s+/u, " ")
-          end)
+        captures = Enum.map(groups, &capture(text, &1))
 
         case interpreter.(meaning, captures, pack) do
           {:ok, value} -> [{start, -len, position, value}]
@@ -276,6 +270,12 @@ defmodule Agenda.Core.DateParser do
       end)
     end)
   end
+
+  # A captured group, lowercase with single spaces, or nil when it did not match.
+  defp capture(_text, {start, _length}) when start < 0, do: nil
+
+  defp capture(text, {start, length}),
+    do: text |> binary_part(start, length) |> String.downcase() |> String.replace(~r/\s+/u, " ")
 
   # --- times --------------------------------------------------------------------
 

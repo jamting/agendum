@@ -103,6 +103,8 @@ defmodule Agenda.TUI.Render do
 
   defp numeric_marker(_state), do: ""
 
+  # One branch per mode indicator (READY, EDIT, MENU …).
+  # credo:disable-for-next-line Credo.Check.Refactor.CyclomaticComplexity
   defp indicator(state, base) do
     top = State.mode(state)
 

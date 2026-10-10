@@ -18,13 +18,11 @@ defmodule Agenda.TUI.Draw do
       Enum.reduce(segments, {[], 0}, fn {style, text}, {acc, used} ->
         room = width - used
 
-        cond do
-          room <= 0 ->
-            {acc, used}
-
-          true ->
-            text = String.slice(text, 0, room)
-            {[{style, text} | acc], used + String.length(text)}
+        if room <= 0 do
+          {acc, used}
+        else
+          text = String.slice(text, 0, room)
+          {[{style, text} | acc], used + String.length(text)}
         end
       end)
 

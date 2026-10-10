@@ -170,7 +170,7 @@ defmodule Agenda.Core do
   Marks an item done today, or clears its done date (F4 DONE). A recurring
   item marked done is followed by a copy with the next When date (R14a).
   """
-  @spec toggle_done(db, id, Date.t()) :: db
+  @spec toggle_done(db, id, clock) :: db
   def toggle_done(db, id, today) do
     if db.items[id].done,
       do: Database.update_item(db, id, &%{&1 | done: nil}),
@@ -489,9 +489,8 @@ defmodule Agenda.Core do
 
     db.categories
     |> Map.values()
-    |> Enum.filter(&(&1.actions != [] or &1.special != nil))
     |> Enum.filter(fn cat ->
-      Database.member?(db, item_id, cat.id) and
+      (cat.actions != [] or cat.special != nil) and Database.member?(db, item_id, cat.id) and
         not (was_there and Map.has_key?(before.categories, cat.id) and
                Database.member?(before, item_id, cat.id))
     end)
@@ -736,18 +735,19 @@ defmodule Agenda.Core do
   end
 
   def related_items(db, item_id, direction, level) do
-    found = reach(db, step_fun(direction), [item_id], MapSet.new(), level)
+    found = reach(db, step_fun(direction), [item_id], [], level)
     Enum.filter(db.item_order, &(&1 in found and &1 != item_id))
   end
 
   defp step_fun(:dependents), do: &Database.dependents/2
   defp step_fun(:prerequisites), do: &Database.prerequisites/2
 
+  # The items reached from `frontier`, one step (or all steps) at a time.
   defp reach(_db, _step, [], seen, _level), do: seen
 
   defp reach(db, step, frontier, seen, level) do
-    next = frontier |> Enum.flat_map(&step.(db, &1)) |> Enum.reject(&(&1 in seen))
-    seen = MapSet.union(seen, MapSet.new(next))
+    next = frontier |> Enum.flat_map(&step.(db, &1)) |> Enum.uniq() |> Enum.reject(&(&1 in seen))
+    seen = seen ++ next
     if level == :one, do: seen, else: reach(db, step, next, seen, level)
   end
 

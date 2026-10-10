@@ -31,9 +31,13 @@ defmodule Agenda.TUI.Terminal do
 
   # Best effort; harmless where stty is unavailable. Commands run by
   # :os.cmd have no controlling terminal, so address our tty device by name.
+  # The redirection needs a shell, hence :os.cmd; the settings are our own
+  # constants and the device a plain /dev path, so nothing can be injected.
   defp stty(setting) do
     with {:unix, _} <- :os.type(),
-         "/dev/" <> _ = device <- tty_device() do
+         device when is_binary(device) <- tty_device(),
+         true <- Regex.match?(~r{\A/dev/[\w/.-]+\z}, device) do
+      # credo:disable-for-next-line Credo.Check.Warning.UnsafeExec
       :os.cmd(~c"stty #{setting} < #{device} 2>/dev/null")
     end
 

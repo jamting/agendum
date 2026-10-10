@@ -56,7 +56,7 @@ defmodule Agenda.TUI.MarkedItemsTest do
 
   test "ESC cancels the question", %{state: state} do
     state = state |> mark_two() |> press([{:f, 4}, :esc])
-    assert Enum.count(items(state), & &1.done) == 0
+    refute Enum.any?(items(state), & &1.done)
     assert state.modes == []
   end
 
