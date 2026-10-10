@@ -5,7 +5,7 @@ defmodule Agenda.Core.ViewModel do
   TUI renders it, and tests can assert on it without a terminal.
   """
 
-  alias Agenda.Core.{Assign, Database, DateFormat, View}
+  alias Agenda.Core.{Assign, Database, DateFormat, NumberFormat, View}
   alias Agenda.Core.View.SortKey
 
   defmodule Row do
@@ -15,13 +15,18 @@ defmodule Agenda.Core.ViewModel do
   end
 
   defmodule SectionModel do
-    @moduledoc "A section of a built view."
+    @moduledoc """
+    A section of a built view. `calcs` are the calculation lines shown at
+    its bottom (R29): `{calculation, [cell per column]}`, with "" for
+    columns that do not show that calculation.
+    """
     @type t :: %__MODULE__{
             category: Agenda.Core.Category.t(),
             rows: [Row.t()],
-            collapsed: boolean
+            collapsed: boolean,
+            calcs: [{NumberFormat.calc(), [String.t()]}]
           }
-    defstruct [:category, rows: [], collapsed: false]
+    defstruct [:category, rows: [], collapsed: false, calcs: []]
   end
 
   @spec build(Database.t(), View.t()) :: [SectionModel.t()]
@@ -43,14 +48,53 @@ defmodule Agenda.Core.ViewModel do
           %Row{
             item: item,
             inherited: inherited,
-            cells: Enum.map(view.columns, &cell(db, item, &1.category_id, &1.width))
+            cells: Enum.map(view.columns, &cell(db, item, &1.category_id, &1.width, &1.number))
           }
         end)
         |> Enum.reject(&(view.hide_inherited and &1.inherited))
 
-      %SectionModel{category: category, rows: rows, collapsed: section.collapsed}
+      %SectionModel{
+        category: category,
+        rows: rows,
+        collapsed: section.collapsed,
+        calcs: calcs(db, view.columns, rows)
+      }
     end)
     |> Enum.reject(&(view.hide_empty and &1.rows == []))
+  end
+
+  # The calculation lines of a section: every calculation some numeric
+  # column asks for, in Agenda's order.
+  defp calcs(db, columns, rows) do
+    numeric = Enum.filter(columns, &(db.categories[&1.category_id].kind == :numeric))
+
+    wanted =
+      NumberFormat.calcs() |> Enum.filter(fn c -> Enum.any?(numeric, &(c in &1.number.calcs)) end)
+
+    for calc <- wanted do
+      cells =
+        Enum.map(columns, fn column ->
+          if column in numeric and calc in column.number.calcs,
+            do: calc_cell(db, calc, column, rows),
+            else: ""
+        end)
+
+      {calc, cells}
+    end
+  end
+
+  defp calc_cell(db, calc, column, rows) do
+    values =
+      for row <- rows,
+          value = Database.number(db, row.item.id, column.category_id),
+          value != nil,
+          do: value
+
+    case NumberFormat.calculate(calc, values) do
+      nil -> ""
+      count when calc == :count -> count |> round() |> Integer.to_string()
+      value -> NumberFormat.format(value, column.number, width: column.width)
+    end
   end
 
   @doc """
@@ -108,7 +152,12 @@ defmodule Agenda.Core.ViewModel do
   end
 
   defp sort_value(db, %SortKey{on: {:category, head}} = key, item) do
+    numeric = db.categories[head].kind == :numeric
+
     case Database.date_field(db, head) do
+      nil when numeric ->
+        Database.number(db, item.id, head)
+
       nil ->
         children = db.categories[head].children
 
@@ -133,16 +182,29 @@ defmodule Agenda.Core.ViewModel do
 
   @doc """
   The text a column shows for an item: the item's date for a date column;
-  `*` for a childless ("yes/no") column head the item belongs to; otherwise
-  the names of the head's descendants the item is assigned to. When those
-  names do not fit in `width`, categories with a short name show it
-  instead (User's Guide 19-2).
+  its number in `number`'s format for a numeric column (R29); `*` for a
+  childless ("yes/no") column head the item belongs to; otherwise the names
+  of the head's descendants the item is assigned to. When those names do
+  not fit in `width`, categories with a short name show it instead (User's
+  Guide 19-2).
   """
-  @spec cell(Database.t(), Agenda.Core.Item.t(), Database.id(), pos_integer | nil) :: String.t()
-  def cell(db, item, head_id, width \\ nil) do
+  @spec cell(
+          Database.t(),
+          Agenda.Core.Item.t(),
+          Database.id(),
+          pos_integer | nil,
+          NumberFormat.t()
+        ) :: String.t()
+  def cell(db, item, head_id, width \\ nil, number \\ %NumberFormat{}) do
     head = db.categories[head_id]
 
     cond do
+      head.kind == :numeric ->
+        case Database.number(db, item.id, head_id) do
+          nil -> ""
+          value -> NumberFormat.format(value, number, width: width)
+        end
+
       field = Database.date_field(db, head_id) ->
         if field == :when,
           do: DateFormat.date_time(item.when, item.when_time, db.date_format),

@@ -45,9 +45,16 @@ defmodule Agenda.Core.View do
   end
 
   defmodule Column do
-    @moduledoc "A view column headed by a category."
-    @type t :: %__MODULE__{category_id: Agenda.Core.Category.id(), width: pos_integer}
-    defstruct [:category_id, width: 12]
+    @moduledoc """
+    A view column headed by a category. `number` is how a numeric column
+    shows its numbers and calculations (R29); other columns ignore it.
+    """
+    @type t :: %__MODULE__{
+            category_id: Agenda.Core.Category.id(),
+            width: pos_integer,
+            number: Agenda.Core.NumberFormat.t()
+          }
+    defstruct [:category_id, width: 12, number: %Agenda.Core.NumberFormat{}]
   end
 
   @type id :: pos_integer

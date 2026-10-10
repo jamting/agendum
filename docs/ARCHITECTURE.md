@@ -37,6 +37,7 @@ shell does terminal I/O and file I/O.
 | `Core.ViewModel`                          | Read model: projects a view to sections, rows and column cells.                                                                                         |
 | `Core.DateParser`                         | Date expressions relative to a given `today`.                                                                                                           |
 | `Core.Search` | Text search: whether an item's text or note matches (R37). |
+| `Core.NumberFormat` | Reading and showing numbers, and the calculations of numeric columns (R29). |
 | `Core.DateFormat` | How a file displays dates and times: date order, separator, clock, day of week (R41). |
 | `Core.TextSearch` | Finding and replacing literal text in a note's lines (R39). |
 | `Core.Item`, `Core.Category`, `Core.View` | Plain structs.                                                                                                                                          |

@@ -36,6 +36,7 @@ erDiagram
         bool auto_date "read When dates from item text"
         set conditional "item-category links made by conditions"
         DateFormat date_format "how dates and times display (R41)"
+        map numbers "item and numeric category => number (R29)"
     }
     ITEM {
         int id PK
@@ -56,7 +57,7 @@ erDiagram
         string short_name "optional alias for matching"
         int parent_id FK "nil only for MAIN"
         list children "ordered child ids"
-        atom kind "standard or date"
+        atom kind "standard, date or numeric"
         bool exclusive "children mutually exclusive"
         bool match_name "auto-assign by name"
         list also_assign "category ids"
@@ -82,6 +83,7 @@ erDiagram
     COLUMN {
         int category_id FK
         int width
+        NumberFormat number "numeric columns (R29)"
     }
     LINKS {
         map by_left "item id => set of category ids"
@@ -107,6 +109,7 @@ classDiagram
         +auto_date : boolean
         +conditional : MapSet
         +date_format : DateFormat
+        +numbers : Map~item_id and cat_id, float~
     }
     class DateFormat {
         +order : yyyymmdd, mmddyy, ddmmmyy…
@@ -133,7 +136,7 @@ classDiagram
         +short_name : String | nil
         +parent_id : id | nil
         +children : [id]
-        +kind : :standard | :date
+        +kind : :standard | :date | :numeric
         +exclusive : boolean
         +match_name : boolean
         +also_assign : [id]
@@ -161,6 +164,14 @@ classDiagram
     class Column {
         +category_id : id
         +width : pos_integer
+        +number : NumberFormat
+    }
+    class NumberFormat {
+        +symbol : nil, $, %, ¢, £, ¥
+        +decimals : integer
+        +thousands : boolean
+        +negative : minus or parens
+        +calcs : [count, total, average, minimum, maximum]
     }
     class Links {
         +by_left : Map~item_id, MapSet~
@@ -173,6 +184,7 @@ classDiagram
     Database *-- DateFormat
     View *-- Section
     View *-- Column
+    Column *-- NumberFormat
 ```
 
 | Struct                                | Module                        | Notes                                                                       |
@@ -183,6 +195,7 @@ classDiagram
 | `View`, `View.Section`, `View.Column` | `lib/agenda/core/view.ex`     | Pure presentation config; references categories by id.                      |
 | `Links`                               | `lib/agenda/core/links.ex`    | Generic bidirectional many-to-many relation.                                |
 | `DateFormat` | `lib/agenda/core/date_format.ex` | How the file displays dates and times; display only (R41). |
+| `NumberFormat` | `lib/agenda/core/number_format.ex` | How a numeric column shows numbers and which calculations it shows; also reads typed numbers (R29). |
 
 ### Ids
 
@@ -398,7 +411,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

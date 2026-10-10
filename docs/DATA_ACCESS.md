@@ -99,12 +99,16 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.add_condition(db, cat, target, :assigned \| :not_assigned)`, `remove_condition/3`, `cycle_condition/3` | write | Assignment conditions (R15). `{:error, :self \| :duplicate}`. New conditions reach existing items through `reassign_all/2`. |
 | `Assign.apply_conditions(db, item)`, `conditions_met?(db, item, cat)` | write / read | Check one item against all conditions until stable; every `Core` operation that changes an item's assignments ends with it. |
 | `Database.conditional?(db, item, cat)` | read | Was this link made by a condition (and so retractable)? |
-| `Core.assign_by_name(db, item, head, text, today)`      | write | Typing in a column: date, exact name, unique prefix, or a new child. `{:ok, db, cat_id \| :date}`.                        |
+| `Core.assign_by_name(db, item, head, text, today)`      | write | Typing in a column: date, number (numeric head), exact name, unique prefix, or a new child. `{:ok, db, cat_id \| :date \| :number}`.                        |
 | `Core.completions(db, head, text)` | read | Automatic completion (R32): subcategories of `head` whose names begin with `text` (case- and accent-insensitive), exact name first, then hierarchy order. |
-| `Core.item_assignments(db, item)` | read | Everything an item is assigned to, in hierarchy order: dates (`:date`), user links (`:explicit`) and condition-made links (`:conditional`). |
+| `Core.item_assignments(db, item)` | read | Everything an item is assigned to, in hierarchy order: dates (`:date`), numbers (`:numeric`), user links (`:explicit`) and condition-made links (`:conditional`). |
 | `Core.assign_new_by_name(db, item, head, text)` | write | NEWCAT: assign to a new child named exactly `text` (or the existing child of that name). |
 | `Core.remove_from_category(db, item, cat)`              | write | Unlink the category's subtree (or clear the date).                                                                        |
 | `Core.set_date(db, item, date_cat, date)`               | write | Set or clear Entry/When/Done. Setting When makes it explicit (it overrides the text); clearing hands it back to the text. |
+| `Core.set_number(db, item, numeric_cat, n)` / `Core.clear_number/3` | write | Give an item a number in a numeric category (assigning it there), or remove it (R29). |
+| `Core.make_numeric(db, cat)` / `Core.numeric_conversion/2` | write / read | Convert a standard category to numeric; its children become their items' numbers (R29). |
+| `Core.set_column_format(db, view, index, format)` | write | A numeric column's `NumberFormat`: symbol, decimals, separators, calculations (R29). |
+| `Database.number(db, item, cat)` | read | An item's number in a numeric category, or nil. |
 | `Core.reassign_all(db, today)`                          | write | Run auto-assignment again for every item, and date items whose text has a date but that have no When date.                |
 | `Database.member?(db, item, cat)`                       | read  | **Membership including subsumption.**                                                                                     |
 | `Database.items_in(db, cat)`                            | read  | All member items, in item order.                                                                                          |

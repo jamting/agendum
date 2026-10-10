@@ -12,7 +12,7 @@ defmodule Agenda.Core do
   and so on.
   """
 
-  alias Agenda.Core.{Assign, Database, DateParser, View}
+  alias Agenda.Core.{Assign, Database, DateParser, NumberFormat, View}
   alias Agenda.Core.View.{Column, Section}
 
   @type db :: Database.t()
@@ -311,19 +311,29 @@ defmodule Agenda.Core do
 
   @doc """
   Handles text typed into a column cell for an item (claims 3 and 6 of the
-  patent). For a date column the text is parsed as a date. Otherwise the
+  patent). For a date column the text is parsed as a date, for a numeric
+  column as a number (R29). Otherwise the
   text names a descendant of the column head: an exact name match is used
   first, then a unique prefix match; if nothing matches, a new child of the
   column head is created. Returns the category assigned.
   """
   @spec assign_by_name(db, id, id, String.t(), clock) ::
-          {:ok, db, id | :date} | {:error, :invalid_date | :ambiguous | :empty}
+          {:ok, db, id | :date | :number}
+          | {:error, :invalid_date | :not_a_number | :ambiguous | :empty}
   def assign_by_name(db, item_id, head_id, text, today) do
     text = String.trim(text)
 
     cond do
       text == "" ->
         {:error, :empty}
+
+      db.categories[head_id].kind == :numeric ->
+        with {:ok, value} <- NumberFormat.parse(text),
+             {:ok, db} <- set_number(db, item_id, head_id, value) do
+          {:ok, db, :number}
+        else
+          _ -> {:error, :not_a_number}
+        end
 
       field = Database.date_field(db, head_id) ->
         case DateParser.parse_when(text, now_of(today)) do
@@ -365,6 +375,108 @@ defmodule Agenda.Core do
 
   # A When date set or cleared by the user: set is explicit and overrides
   # the text; cleared hands the When date back to the text (R14).
+  # --- numbers (R29) ----------------------------------------------------------
+
+  @doc """
+  Gives an item a number in a numeric category, assigning it there (with
+  the usual assignment rules).
+  """
+  @spec set_number(db, id, id, number) :: {:ok, db} | {:error, :not_numeric}
+  def set_number(db, item_id, cat_id, value) do
+    if db.categories[cat_id].kind == :numeric do
+      db =
+        db
+        |> user_assign(item_id, cat_id)
+        |> Database.put_number(item_id, cat_id, value)
+        |> Assign.apply_conditions(item_id)
+
+      {:ok, db}
+    else
+      {:error, :not_numeric}
+    end
+  end
+
+  @doc "Removes an item's number, and so its assignment to the numeric category."
+  @spec clear_number(db, id, id) :: db
+  def clear_number(db, item_id, cat_id), do: remove_from_category(db, item_id, cat_id)
+
+  @doc """
+  What converting a standard category to numeric would do to its children
+  (User's Guide 8-11): they are removed, and their items get the child's
+  name as their number, or 0 for the names listed in `non_numeric`; the
+  `assigned` items assigned to the category itself get 0.
+  """
+  @spec numeric_conversion(db, id) :: %{
+          children: non_neg_integer,
+          non_numeric: [String.t()],
+          assigned: non_neg_integer
+        }
+  def numeric_conversion(db, cat_id) do
+    children = Enum.map(db.categories[cat_id].children, &db.categories[&1])
+
+    %{
+      children: length(children),
+      non_numeric: for(c <- children, NumberFormat.parse(c.name) == :error, do: c.name),
+      assigned: db |> direct_items(cat_id) |> length()
+    }
+  end
+
+  defp direct_items(db, cat_id),
+    do: for(item <- Database.items(db), Database.explicit?(db, item.id, cat_id), do: item.id)
+
+  @doc """
+  Converts a standard category to a numeric one (User's Guide 8-11 to
+  8-12). Its children, if any, become numbers (see `numeric_conversion/2`);
+  a category with grandchildren cannot be converted. Numeric categories do
+  not match item text.
+  """
+  @spec make_numeric(db, id) :: {:ok, db} | {:error, :not_standard | :protected | :too_deep}
+  def make_numeric(db, cat_id) do
+    cat = db.categories[cat_id]
+
+    cond do
+      cat.kind != :standard ->
+        {:error, :not_standard}
+
+      Database.protected?(db, cat_id) ->
+        {:error, :protected}
+
+      Enum.any?(cat.children, &(db.categories[&1].children != [])) ->
+        {:error, :too_deep}
+
+      true ->
+        values =
+          for(item <- direct_items(db, cat_id), do: {item, 0.0}) ++
+            for child <- cat.children,
+                value = child_value(db.categories[child].name),
+                item <- Database.items_in(db, child),
+                do: {item.id, value}
+
+        db =
+          Enum.reduce(cat.children, db, fn child, db ->
+            {:ok, db} = Database.delete_category(db, child)
+            db
+          end)
+
+        db =
+          Database.update_category(
+            db,
+            cat_id,
+            &%{&1 | kind: :numeric, match_name: false, exclusive: false}
+          )
+
+        {:ok,
+         Enum.reduce(values, db, fn {item, v}, db -> Database.put_number(db, item, cat_id, v) end)}
+    end
+  end
+
+  defp child_value(name) do
+    case NumberFormat.parse(name) do
+      {:ok, value} -> value
+      :error -> 0.0
+    end
+  end
+
   defp put_date(db, item_id, :when, date) do
     Database.update_item(
       db,
@@ -379,11 +491,17 @@ defmodule Agenda.Core do
   @doc """
   Everything an item is assigned to, in hierarchy order, as the Item
   Properties box lists it: date categories with the item's date (`:date`),
-  and links the user made (`:explicit`) or a condition made
+  numeric categories with its number (`:numeric`, R29), and links the
+  user made (`:explicit`) or a condition made
   (`:conditional`). Membership through subcategories is not listed.
   """
   @spec item_assignments(db, id) :: [
-          %{category: id, kind: :date | :explicit | :conditional, date: Date.t() | nil}
+          %{
+            required(:category) => id,
+            required(:kind) => :date | :numeric | :explicit | :conditional,
+            required(:date) => Date.t() | nil,
+            optional(:number) => float
+          }
         ]
   def item_assignments(db, item_id) do
     item = db.items[item_id]
@@ -397,6 +515,9 @@ defmodule Agenda.Core do
             nil -> []
             date -> [%{category: id, kind: :date, date: date}]
           end
+
+        number = Database.number(db, item_id, id) ->
+          [%{category: id, kind: :numeric, date: nil, number: number}]
 
         Database.explicit?(db, item_id, id) ->
           kind = if Database.conditional?(db, item_id, id), do: :conditional, else: :explicit
@@ -841,6 +962,14 @@ defmodule Agenda.Core do
   @spec remove_column(db, id, non_neg_integer) :: db
   def remove_column(db, view_id, index) do
     Database.update_view(db, view_id, &%{&1 | columns: List.delete_at(&1.columns, index)})
+  end
+
+  @doc "Sets how a numeric column shows its numbers and calculations (R29)."
+  @spec set_column_format(db, id, non_neg_integer, NumberFormat.t()) :: db
+  def set_column_format(db, view_id, index, %NumberFormat{} = format) do
+    Database.update_view(db, view_id, fn v ->
+      %{v | columns: List.update_at(v.columns, index, &%{&1 | number: format})}
+    end)
   end
 
   @spec resize_column(db, id, non_neg_integer, integer) :: db

@@ -2,8 +2,10 @@ defmodule Agenda.Core.Category do
   @moduledoc """
   A node in the category hierarchy.
 
-  `kind` is `:standard` for ordinary categories or `:date` for date categories
-  (Entry, When, Done), whose membership derives from an item's date fields.
+  `kind` is `:standard` for ordinary categories, `:date` for date categories
+  (Entry, When, Done), whose membership derives from an item's date fields,
+  or `:numeric` for categories that hold a number for each item assigned
+  to them (R29; the numbers are in `Database.numbers`).
 
   * `exclusive` – the children of this category are mutually exclusive: an
     item can be assigned to at most one of them.
@@ -17,7 +19,7 @@ defmodule Agenda.Core.Category do
   """
 
   @type id :: pos_integer
-  @type kind :: :standard | :date
+  @type kind :: :standard | :date | :numeric
   @type t :: %__MODULE__{
           id: id,
           name: String.t(),

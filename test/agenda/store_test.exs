@@ -53,6 +53,24 @@ defmodule Agenda.StoreTest do
     assert loaded == db
   end
 
+  test "files in format version 7 get no numbers and default column formats",
+       %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+
+    v7_views =
+      Map.new(db.views, fn {id, v} ->
+        {id, %{v | columns: Enum.map(v.columns, &Map.delete(&1, :number))}}
+      end)
+
+    v7 = db |> Map.delete(:numbers) |> Map.put(:views, v7_views)
+    path = Path.join(dir, "v7.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 7, v7}))
+
+    assert {:ok, loaded} = Store.load(path)
+    assert loaded.numbers == %{}
+    assert loaded == db
+  end
+
   test "the date format is saved", %{tmp_dir: dir} do
     format = %Agenda.Core.DateFormat{order: :ddmmyy, separator: ".", clock: 12}
     db = Agenda.Core.set_date_format(Agenda.Core.new_file(), format)

@@ -30,7 +30,8 @@ defmodule Agenda.Core.Database do
           special: %{entry: id, when: id, done: id},
           auto_date: boolean,
           conditional: MapSet.t({id, id}),
-          date_format: DateFormat.t()
+          date_format: DateFormat.t(),
+          numbers: %{optional({id, id}) => float}
         }
 
   defstruct items: %{},
@@ -44,7 +45,8 @@ defmodule Agenda.Core.Database do
             special: %{},
             auto_date: true,
             conditional: MapSet.new(),
-            date_format: %DateFormat{}
+            date_format: %DateFormat{},
+            numbers: %{}
 
   @date_fields %{entry: :entry, when: :when, done: :done}
 
@@ -120,7 +122,8 @@ defmodule Agenda.Core.Database do
       | items: Map.delete(db.items, id),
         item_order: List.delete(db.item_order, id),
         links: Links.drop_left(db.links, id),
-        conditional: MapSet.reject(db.conditional, &(elem(&1, 0) == id))
+        conditional: MapSet.reject(db.conditional, &(elem(&1, 0) == id)),
+        numbers: Map.reject(db.numbers, fn {{item, _}, _} -> item == id end)
     }
   end
 
@@ -221,7 +224,17 @@ defmodule Agenda.Core.Database do
            }}
         end)
 
-      {:ok, %{db | links: links, conditional: conditional, categories: categories, views: views}}
+      numbers = Map.reject(db.numbers, fn {{_, cat}, _} -> cat in doomed_set end)
+
+      {:ok,
+       %{
+         db
+         | links: links,
+           conditional: conditional,
+           categories: categories,
+           views: views,
+           numbers: numbers
+       }}
     end
   end
 
@@ -356,8 +369,21 @@ defmodule Agenda.Core.Database do
     %{
       db
       | links: Links.unlink(db.links, item_id, cat_id),
-        conditional: MapSet.delete(db.conditional, {item_id, cat_id})
+        conditional: MapSet.delete(db.conditional, {item_id, cat_id}),
+        numbers: Map.delete(db.numbers, {item_id, cat_id})
     }
+  end
+
+  @doc "An item's number in a numeric category (R29), or nil."
+  @spec number(t, id, id) :: float | nil
+  def number(%__MODULE__{numbers: numbers}, item_id, cat_id),
+    do: Map.get(numbers, {item_id, cat_id})
+
+  @doc "Assigns an item to a numeric category with a number."
+  @spec put_number(t, id, id, number) :: t
+  def put_number(db, item_id, cat_id, value) do
+    db = link(db, item_id, cat_id)
+    %{db | numbers: Map.put(db.numbers, {item_id, cat_id}, value * 1.0)}
   end
 
   @doc """

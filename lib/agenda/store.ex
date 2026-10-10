@@ -10,14 +10,15 @@ defmodule Agenda.Store do
   `Database.conditional` (R15); 4 adds view and section `filter` and
   `sort` (R28, R36); 5 adds the view `match` of the Show View (R37); 6
   adds `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38);
-  7 adds `Database.date_format` (R41).
+  7 adds `Database.date_format` (R41); 8 adds `Database.numbers` and
+  `View.Column.number` (R29).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 7
+  @format_version 8
   @extension ".agenda"
 
   def extension, do: @extension
@@ -84,8 +85,13 @@ defmodule Agenda.Store do
     %{
       view
       | sections: Enum.map(view.sections, &struct(View.Section, Map.from_struct(&1))),
-        columns: Enum.map(view.columns, &struct(View.Column, Map.from_struct(&1)))
+        columns: Enum.map(view.columns, &upgrade_column/1)
     }
+  end
+
+  defp upgrade_column(column) do
+    column = struct(Agenda.Core.View.Column, Map.from_struct(column))
+    %{column | number: struct(Agenda.Core.NumberFormat, Map.from_struct(column.number))}
   end
 
   defp ensure_modules_loaded do
