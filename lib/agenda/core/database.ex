@@ -502,7 +502,7 @@ defmodule Agenda.Core.Database do
 
   defp drop_keys(keys, doomed) do
     Enum.reject(keys, fn
-      %{on: {:category, id}} -> MapSet.member?(doomed, id)
+      %{on: {kind, id}} when kind in [:category, :note] -> MapSet.member?(doomed, id)
       _ -> false
     end)
   end

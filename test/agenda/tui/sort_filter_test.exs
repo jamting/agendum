@@ -3,6 +3,7 @@ defmodule Agenda.TUI.SortFilterTest do
   use ExUnit.Case, async: true
 
   import Agenda.TUIHelpers
+  alias Agenda.Core
   alias Agenda.Core.Database
   alias Agenda.Core.View.SortKey
   alias Agenda.TUI.State
@@ -63,6 +64,32 @@ defmodule Agenda.TUI.SortFilterTest do
 
     assert hd(texts(state)) ==
              "Set up meeting at Terracotta Corp to discuss CopyCat before the end of the month."
+  end
+
+  test "Sort on cycles on to Category note, which sorts by a line of the notes",
+       %{state: state} do
+    db = state.db
+    db = Core.set_category_note(db, cat(state, "Anna Lasky"), "Anna Lasky\nZurich")
+    db = Core.set_category_note(db, cat(state, "Abigail Scheer"), "Abigail\nAmsterdam")
+    db = Core.set_category_note(db, cat(state, "Daniel Fiske"), "Daniel\nMadrid")
+    state = %{state | db: db}
+
+    # None -> Item text -> Category (Contact) -> Category note (Contact)
+    state = press(state, [{:f, 10}, "v", "o", :enter, :enter, "Contact", :enter, :enter])
+    assert screen(state) =~ "Choose the category whose notes to sort by"
+    state = press(state, ["Contact", :enter])
+    assert State.view(state).sort == [%SortKey{on: {:note, cat(state, "Contact")}}]
+    assert screen(state) =~ "Category note: Contact"
+    assert screen(state) =~ ~r/Line number\s+: 1/
+
+    # Line number 2: the towns; Amsterdam (Abigail) first
+    state = press(state, [:down, :down, :down, :down, :right])
+    assert hd(State.view(state).sort).line == 2
+    assert hd(texts(state)) =~ "Abigail"
+
+    # Category note -> None
+    state = press(state, [:up, :up, :up, :up, :enter])
+    assert State.view(state).sort == []
   end
 
   test "sorting on a category uses the category box", %{state: state} do

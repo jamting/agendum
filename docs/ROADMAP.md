@@ -43,7 +43,8 @@ Rule numbers refer to `SPEC.md`.
 
 - [x] Numeric categories and columns with totals (R29)
 - [x] Date and numeric filters (R28a)
-- [ ] Sorting by category note; sorting section heads (R36)
+- [x] Sorting by a line of a category note (R36)
+- [ ] Sorting section heads (R36)
 - [x] Date parsing from item text into When (R14)
 - [x] Times of day on When dates (R14b)
 - [ ] More date phrases: recurring dates, working days, date settings (R14a); marking a recurring item done creates the next one (test with the cases in Lotus's support Q&A)

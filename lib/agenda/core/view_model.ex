@@ -155,6 +155,19 @@ defmodule Agenda.Core.ViewModel do
     end
   end
 
+  # Line `line` of the note on the first child of `head` the item is in.
+  defp sort_value(db, %SortKey{on: {:note, head}, line: line}, item) do
+    with child when child != nil <-
+           Enum.find(db.categories[head].children, &Database.member?(db, item.id, &1)),
+         text when is_binary(text) <-
+           db.categories[child].note |> String.split("\n") |> Enum.at(line - 1),
+         text when text != "" <- String.trim(text) do
+      String.downcase(text)
+    else
+      _ -> nil
+    end
+  end
+
   defp sort_value(db, %SortKey{on: {:category, head}} = key, item) do
     numeric = db.categories[head].kind == :numeric
 

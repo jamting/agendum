@@ -107,6 +107,39 @@ defmodule Agenda.Core.SortFilterTest do
       assert texts(db, v) == ["Ask Bea", "draft memo", "call bob", "buy milk"]
     end
 
+    test "by a line of the category note (User's Guide 15-18)", %{db: db, view: v} do
+      db =
+        db
+        |> Core.set_category_note(cat(db, "Zoe"), "Zoe Hall\nOslo")
+        |> Core.set_category_note(cat(db, "Anna"), "Anna Berg\nbergen")
+
+      key = %SortKey{on: {:note, cat(db, "People")}, line: 2}
+      db = Core.set_sort(db, v, :view, [key])
+      # Anna's town (bergen) before Zoe's (Oslo), ignoring case; no person last
+      assert texts(db, v) == ["draft memo", "call bob", "Ask Bea", "buy milk"]
+
+      db = Core.set_sort(db, v, :view, [%{key | order: :desc}])
+      assert texts(db, v) == ["call bob", "draft memo", "Ask Bea", "buy milk"]
+    end
+
+    test "discarding the category drops the key", %{db: db, view: v} do
+      db = Core.set_sort(db, v, :view, [%SortKey{on: {:note, cat(db, "People")}}])
+      {:ok, db} = Core.discard_category(db, cat(db, "People"))
+      assert Database.view(db, v).sort == []
+    end
+
+    test "a missing note line counts as no value", %{db: db, view: v} do
+      db =
+        db
+        |> Core.set_category_note(cat(db, "Zoe"), "one line")
+        |> Core.set_category_note(cat(db, "Anna"), "Anna Berg\nBergen")
+
+      key = %SortKey{on: {:note, cat(db, "People")}, line: 2, na: :top}
+      db = Core.set_sort(db, v, :view, [key])
+      # no value (Zoe's note has one line; two items have no person) first, in entry order
+      assert texts(db, v) == ["call bob", "Ask Bea", "buy milk", "draft memo"]
+    end
+
     test "n/a's at the top, and alphabetical sequence", %{db: db, view: v} do
       key = %SortKey{on: {:category, cat(db, "People")}, na: :top, sequence: :alpha}
       db = Core.set_sort(db, v, :view, [key])

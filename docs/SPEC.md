@@ -259,9 +259,12 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   (with the date filters, next on the roadmap).
 - **R36 ✅ Sorting items** (User's Guide chapter 15). A view has sort
   settings for all its sections; a section can override them or use the
-  view's. Up to two keys (primary, then a secondary for ties): item text,
-  or a category — its children in hierarchy order or alphabetically, or
-  the date for a date category. Each key has an order (ascending,
+  view's. Up to two keys (primary, then a secondary for ties): item text;
+  a category — its children in hierarchy order or alphabetically, the
+  date for a date category, the number for a numeric one; or a category
+  note — a chosen line (Line number, default 1) of the note on the child
+  the item is in, compared as text ignoring case (User's Guide 15-18: a
+  town on line 2 of each person's note). Each key has an order (ascending,
   descending) and puts items without a value at the bottom or top. Ties
   keep entry order. Set in the Sort box (View ▸ Order, View ▸ Section ▸
   Sort). Our choice: sorting
@@ -269,7 +272,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   entered" setting, so "On leaving a section" and ALT-S re-sorting are not
   needed. ALT-F5 in the category manager sorts the highlighted category's
   children alphabetically (after Y/N); in the view manager it sorts the
-  views. Not done: sorting by category note, sorting section heads.
+  views. Not done: sorting section heads; Agenda's Numeric and Date
+  sequences for a category's children.
 - **R37 ✅ Search** (User's Guide 15-1 to 15-5). ALT-F6 (or Search ▸ View)
   opens the Search box: the text, Match on (item text, note text, both),
   Direction (forward, backward, from the beginning) and Ignore case (yes by

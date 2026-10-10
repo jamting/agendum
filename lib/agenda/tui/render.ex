@@ -811,6 +811,7 @@ defmodule Agenda.TUI.Render do
       {:filter, :view} -> "Filter the view"
       {:filter, {:section, i}} -> "Filter the #{section_name(state, i)} section"
       {:sort_category, _, _} -> "Sort by the children of"
+      {:sort_note, _, _} -> "Choose the category whose notes to sort by"
     end
   end
 

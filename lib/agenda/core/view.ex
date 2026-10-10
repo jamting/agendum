@@ -16,19 +16,23 @@ defmodule Agenda.Core.View do
 
   defmodule SortKey do
     @moduledoc """
-    One way to order items (User's Guide chapter 15): by item text, or by
+    One way to order items (User's Guide chapter 15): by item text, by
     the children of a category (`{:category, id}`; by date for a date
-    category). `order` is `:asc` or `:desc`; `na` puts items without a
-    value at the `:bottom` or `:top`; `sequence` orders a category's
-    children as in the `:hierarchy` or alphabetically (`:alpha`).
+    category, by number for a numeric one), or by line `line` of the note
+    of the child an item is in (`{:note, id}`, e.g. a town on line 2 of
+    each person's note). `order` is `:asc` or `:desc`; `na` puts items
+    without a value at the `:bottom` or `:top`; `sequence` orders a
+    category's children as in the `:hierarchy` or alphabetically (`:alpha`).
     """
     @type t :: %__MODULE__{
-            on: :text | {:category, Agenda.Core.Category.id()},
+            on:
+              :text | {:category, Agenda.Core.Category.id()} | {:note, Agenda.Core.Category.id()},
             order: :asc | :desc,
             na: :bottom | :top,
-            sequence: :hierarchy | :alpha
+            sequence: :hierarchy | :alpha,
+            line: pos_integer
           }
-    defstruct on: :text, order: :asc, na: :bottom, sequence: :hierarchy
+    defstruct on: :text, order: :asc, na: :bottom, sequence: :hierarchy, line: 1
   end
 
   defmodule Section do

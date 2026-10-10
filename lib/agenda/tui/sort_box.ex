@@ -4,10 +4,12 @@ defmodule Agenda.TUI.SortBox do
   view (`:view`) or of one section (`{:section, index}`) are ordered.
 
   Rows: the primary key (Sort on), its Order, where items without a value
-  go (Sort n/a's), the Sequence of a category's children, then a secondary
-  key (Then by) and its order. ENTER or SPACE changes the highlighted row;
-  choosing "Category" opens the category box. A section can also use the
-  view's settings ("As the view"). ESC closes the box. Pure.
+  go (Sort n/a's), the Sequence of a category's children, the Line number
+  of a category note, then a secondary key (Then by) and its order. ENTER
+  or SPACE changes the highlighted row (→ and ← change the line number);
+  Sort on cycles None, Item text, Category… and Category note…, the last
+  two through the category box. A section can also use the view's
+  settings ("As the view"). ESC closes the box. Pure.
   """
 
   alias Agenda.Core
@@ -15,7 +17,7 @@ defmodule Agenda.TUI.SortBox do
   alias Agenda.Core.View.SortKey
   alias Agenda.TUI.{CategoryScreens, State}
 
-  @rows [:on, :order, :na, :sequence, :then_on, :then_order]
+  @rows [:on, :order, :na, :sequence, :line, :then_on, :then_order]
   def rows, do: @rows
 
   def open(state, scope), do: State.push(state, %{type: :sort, scope: scope, cursor: 0})
@@ -30,15 +32,28 @@ defmodule Agenda.TUI.SortBox do
 
   def handle(state, mode, key) do
     case key do
-      k when k in [:esc, {:alt_f, 5}] -> State.pop(state)
-      :up -> State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-      :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
-      k when k in [:enter, {:char, " "}] -> change(state, mode, Enum.at(@rows, mode.cursor))
-      _ -> state
+      k when k in [:esc, {:alt_f, 5}] ->
+        State.pop(state)
+
+      :up ->
+        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
+
+      :down ->
+        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
+
+      k when k in [:enter, {:char, " "}, :right] ->
+        change(state, mode, Enum.at(@rows, mode.cursor))
+
+      :left ->
+        line(state, mode, Enum.at(@rows, mode.cursor), -1)
+
+      _ ->
+        state
     end
   end
 
-  # Sort on / Then by cycle: (As the view →) None → Item text → Category… → …
+  # Sort on / Then by cycle: (As the view →) None → Item text → Category… →
+  # Category note… → …
   defp change(state, mode, row) when row in [:on, :then_on] do
     index = if row == :on, do: 0, else: 1
     keys = keys(state, mode)
@@ -59,13 +74,18 @@ defmodule Agenda.TUI.SortBox do
       {_, %SortKey{on: :text}} ->
         CategoryScreens.open_picker(state, {:sort_category, mode.scope, index}, nil)
 
-      {_, %SortKey{on: {:category, _}}} when index == 0 and mode.scope != :view ->
+      {_, %SortKey{on: {:category, _}}} ->
+        CategoryScreens.open_picker(state, {:sort_note, mode.scope, index}, nil)
+
+      {_, %SortKey{on: {:note, _}}} when index == 0 and mode.scope != :view ->
         put(state, mode, nil)
 
-      {_, %SortKey{on: {:category, _}}} ->
+      {_, %SortKey{on: {:note, _}}} ->
         put(state, mode, Enum.take(effective(state, mode), index))
     end
   end
+
+  defp change(state, mode, :line), do: line(state, mode, :line, 1)
 
   defp change(state, mode, row) do
     {index, field} =
@@ -91,12 +111,35 @@ defmodule Agenda.TUI.SortBox do
     end
   end
 
+  # The line of the category note to sort on (1 or more).
+  defp line(state, mode, :line, step) do
+    keys = effective(state, mode)
+
+    case List.first(keys) do
+      %SortKey{on: {:note, _}} = key ->
+        put(state, mode, List.replace_at(keys, 0, %{key | line: max(key.line + step, 1)}))
+
+      _ ->
+        State.error(state, "The line number is for sorting on a category note")
+    end
+  end
+
+  defp line(state, _mode, _row, _step), do: state
+
   defp toggle(:order, :asc), do: :desc
   defp toggle(:order, :desc), do: :asc
   defp toggle(:na, :bottom), do: :top
   defp toggle(:na, :top), do: :bottom
   defp toggle(:sequence, :hierarchy), do: :alpha
   defp toggle(:sequence, :alpha), do: :hierarchy
+
+  @doc "Sets key `index` to sort on a category's notes (from the category box)."
+  def set_note(state, scope, index, cat_id) do
+    mode = %{scope: scope}
+    keys = effective(state, mode)
+    old = Enum.at(keys, index) || %SortKey{}
+    put(state, mode, set_key(keys, index, %{old | on: {:note, cat_id}}))
+  end
 
   @doc "Sets key `index` to sort on a category (from the category box)."
   def set_category(state, scope, index, cat_id) do
@@ -133,6 +176,7 @@ defmodule Agenda.TUI.SortBox do
       {"Sequence",
        first && category_key?(first) &&
          if(first.sequence == :hierarchy, do: "Category hierarchy", else: "Alphabetic")},
+      {"Line number", first && note_key?(first) && Integer.to_string(first.line)},
       {"Then by", describe(state.db, second)},
       {"Then order", second && order_text(second.order)}
     ]
@@ -144,6 +188,12 @@ defmodule Agenda.TUI.SortBox do
 
   defp describe(db, %SortKey{on: {:category, id}}),
     do: "Category: " <> Database.category(db, id).name
+
+  defp describe(db, %SortKey{on: {:note, id}}),
+    do: "Category note: " <> Database.category(db, id).name
+
+  defp note_key?(%SortKey{on: {:note, _}}), do: true
+  defp note_key?(_), do: false
 
   defp category_key?(%SortKey{on: {:category, _}}), do: true
   defp category_key?(_), do: false

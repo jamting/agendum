@@ -84,10 +84,22 @@ defmodule Agenda.Store do
 
     %{
       view
-      | sections: Enum.map(view.sections, &struct(View.Section, Map.from_struct(&1))),
-        columns: Enum.map(view.columns, &upgrade_column/1)
+      | sections: Enum.map(view.sections, &upgrade_section/1),
+        columns: Enum.map(view.columns, &upgrade_column/1),
+        sort: upgrade_keys(view.sort)
     }
   end
+
+  defp upgrade_section(section) do
+    section = struct(Agenda.Core.View.Section, Map.from_struct(section))
+    %{section | sort: upgrade_keys(section.sort)}
+  end
+
+  # Sort keys gain fields too (`line`, R36).
+  defp upgrade_keys(nil), do: nil
+
+  defp upgrade_keys(keys),
+    do: Enum.map(keys, &struct(Agenda.Core.View.SortKey, Map.from_struct(&1)))
 
   defp upgrade_column(column) do
     column = struct(Agenda.Core.View.Column, Map.from_struct(column))

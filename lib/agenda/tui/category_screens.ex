@@ -581,6 +581,9 @@ defmodule Agenda.TUI.CategoryScreens do
     end
   end
 
+  defp pick(state, {:sort_note, scope, index}, id),
+    do: Agenda.TUI.SortBox.set_note(state, scope, index, id)
+
   defp pick(state, {:sort_category, scope, index}, id),
     do: Agenda.TUI.SortBox.set_category(state, scope, index, id)
 
