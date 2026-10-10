@@ -31,6 +31,8 @@ settings, as described in the second half of this guide.
 | In a note: search / replace; find the next occurrence | ALT-F6; ALT-S | ESC then `^`; ESC then `s` |
 | Back to the previous view (LAST VW) | ALT-F8 | ESC then `*`, or menu View ▸ Last |
 | Set or cancel an alarm (Item Alarm) | ALT-A | ESC then `a`, or menu Item ▸ Alarm |
+| Category manager: add a sibling below / above | ALT-D (or ALT-I, INS) / ALT-U | ESC then `d` / `u`, or **CTRL-N** |
+| Category manager: add a child / a new family after the parent | ALT-R / ALT-L | ESC then `r` / `l` |
 | Remove from section / column                      | DEL                   | fn-⌫ (forward delete)                                                 |
 | Undo / redo                                       | —                     | **CTRL-Z** / **CTRL-Y** (also in the menu)                            |
 | Save / open / print to file / quit                | menu                  | **CTRL-S** / **CTRL-O** / **CTRL-P** / **CTRL-Q** (CTRL-C also quits) |

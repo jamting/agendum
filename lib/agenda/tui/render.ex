@@ -661,7 +661,9 @@ defmodule Agenda.TUI.Render do
      ALT-K             Show / hide the function key map
 
    In the category manager (F9)
-     Type / INS    Add a category below            CTRL-N
+     Type / INS    Add a category below            CTRL-N, ALT-D, ALT-I
+     ALT-U         Add a category above            ESC u
+     ALT-R / ALT-L Add a child / a new family after the parent
      F2            Rename                          CTRL-E
      F7 / F8       Promote / demote
      ALT-↑ ALT-↓   Reorder among siblings          ⌥↑ / ⌥↓

@@ -175,8 +175,17 @@ defmodule Agenda.TUI.CategoryScreens do
       {:f, 1} ->
         State.push(state, %{type: :help, top: 0})
 
-      :insert ->
+      k when k in [:insert, {:alt, "d"}, {:alt, "i"}] ->
         new_category(state, id, "")
+
+      {:alt, "u"} ->
+        insert_category(state, id, :above)
+
+      {:alt, "l"} ->
+        insert_category(state, id, :uncle)
+
+      {:alt, "r"} ->
+        insert_category(state, id, :child)
 
       {:char, c} ->
         new_category(state, id, c)
@@ -343,6 +352,40 @@ defmodule Agenda.TUI.CategoryScreens do
         else: {:new, db.categories[id].parent_id, id}
 
     %{state | edit: %{target: target, line: LineEdit.new(text)}}
+  end
+
+  # ALT-U, ALT-L and ALT-R (User's Guide 16-11): a sibling above, a new
+  # family after the parent, or the first child.
+  defp insert_category(state, id, where) do
+    db = state.db
+    cat = db.categories[id]
+    parent = cat.parent_id && db.categories[cat.parent_id]
+
+    target =
+      case where do
+        _ when id == db.main_id and where != :child ->
+          {:error, "Nothing can be added beside MAIN"}
+
+        :above ->
+          {:new, cat.parent_id, Database.previous_sibling(db, id) || :first}
+
+        :uncle when parent.id == db.main_id ->
+          {:error, "Nothing can be added at the same level as MAIN"}
+
+        :uncle ->
+          {:new, parent.parent_id, parent.id}
+
+        :child when cat.kind != :standard ->
+          {:error, "Children can be added only to standard categories"}
+
+        :child ->
+          {:new, id, :first}
+      end
+
+    case target do
+      {:error, message} -> State.error(state, message)
+      target -> %{state | edit: %{target: target, line: LineEdit.new("")}}
+    end
   end
 
   defp hierarchy_change(state, {:ok, db}), do: State.change_db(state, db)

@@ -339,8 +339,10 @@ sibling, CTRL-HOME/END = first/last.
   ALT-U above. In notes: ALT-D / ALT-T insert today's date / the time,
   ALT-N / ALT-P go to the note of the next / previous item (or category).
   Done so far: the view keys (ALT-F5 used to open the Sort box, R36; the
-  Sort box is now reached through the menu). ALT-K and ALT-Q also work in
-  the managers.
+  Sort box is now reached through the menu) and the category manager keys.
+  ALT-K and ALT-Q also work in the managers. Not done: a category added to
+  a family whose other members are all sections of a view does not become
+  a section of that view (User's Guide 16-11).
   Later, with their features: ALT-F9 copy, ALT-Y yank back, ALT-H hop,
   ALT-B browse, ALT-C calendar, ALT-O dependency, ALT-E / ALT-X execute
   conditions and actions, ALT-Z run macro, ALT-S sort now.
