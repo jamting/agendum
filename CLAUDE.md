@@ -52,6 +52,8 @@ A change is done when `mix check` passes. Do not leave warnings.
 3. Implement it in the core first, then wire it into the TUI.
 4. Run `mix check`. Update `docs/ROADMAP.md` (tick the box) and the help text
    in `Agenda.TUI.Render` if keys changed.
+5. Do not update the user guide (`docs/guide/index.html`) per feature; the
+   owner asks for it from time to time (the `update-guide` skill).
 
 Keep changes small and focused; one feature per commit.
 
