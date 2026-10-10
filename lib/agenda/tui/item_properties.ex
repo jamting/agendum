@@ -24,7 +24,14 @@ defmodule Agenda.TUI.ItemProperties do
   @doc "The rows of the box, top to bottom."
   @spec rows(State.t(), map) :: [term]
   def rows(state, mode) do
+    dependencies =
+      if Core.prerequisites(state.db, mode.item_id) == [] and
+           Core.dependents(state.db, mode.item_id) == [],
+         do: [],
+         else: [:dependencies]
+
     [:text, :note, :stats] ++
+      dependencies ++
       Enum.map(Core.item_assignments(state.db, mode.item_id), &{:assigned, &1}) ++ [:add]
   end
 
@@ -76,7 +83,7 @@ defmodule Agenda.TUI.ItemProperties do
       {k, row} when k in [:insert, :enter] and row != :text and row != :note ->
         start_assign(state, "")
 
-      {{:char, c}, row} when row not in [:text, :note] ->
+      {{:char, c}, row} when row not in [:text, :note, :dependencies] ->
         start_assign(state, c)
 
       _ ->

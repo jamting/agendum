@@ -46,7 +46,8 @@ defmodule Agenda.Core.ViewModel do
         |> Database.items_in(category.id)
         |> Enum.reject(&(view.hide_done and &1.done != nil))
         |> Enum.filter(&Assign.criteria_met?(db, &1.id, view.filter ++ section.filter, today))
-        |> Enum.filter(&(view.match == nil or Agenda.Core.Search.matches?(&1, view.match)))
+        |> Enum.filter(&shown?(&1, view.match))
+        |> Enum.reject(&(view.hide_dependent and Database.waiting?(db, &1.id)))
         |> sort(db, section.sort || view.sort)
         |> Enum.map(fn item ->
           inherited = inherited?(db, item.id, category.id)
@@ -102,6 +103,10 @@ defmodule Agenda.Core.ViewModel do
       value -> NumberFormat.format(value, column.number, width: column.width)
     end
   end
+
+  defp shown?(_item, nil), do: true
+  defp shown?(item, {:items, ids}), do: item.id in ids
+  defp shown?(item, search), do: Agenda.Core.Search.matches?(item, search)
 
   # Section heads in category order, by name, or by name as a number with
   # the other names last (User's Guide 15-20). The sort is stable.

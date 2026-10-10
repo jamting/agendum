@@ -82,6 +82,18 @@ defmodule Agenda.StoreTest do
     assert loaded == db
   end
 
+  test "files in format version 9 get no dependencies", %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    v9_views = Map.new(db.views, fn {id, v} -> {id, Map.delete(v, :hide_dependent)} end)
+    v9 = db |> Map.delete(:dependencies) |> Map.put(:views, v9_views)
+    path = Path.join(dir, "v9.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 9, v9}))
+
+    assert {:ok, loaded} = Store.load(path)
+    assert loaded.dependencies == Agenda.Core.Links.new()
+    assert loaded == db
+  end
+
   test "recurrence rules are saved", %{tmp_dir: dir} do
     {db, id} = Agenda.Core.add_item(Agenda.Core.new_file(), "Gym every Monday", ~D[2026-10-08])
     path = Path.join(dir, "recur.agenda")

@@ -90,11 +90,19 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   safe with cycles.
 - **R9 ⏳ General negative links.** Two arbitrary categories that may not
   share an item.
-- **R43 ⏳ Item dependencies** (Help: "Views: Accelerator Keys"; Lotus Q&A
-  "Hiding Done and Dependent Items"). ALT-O makes the current item
-  dependent on the marked items (its prerequisites). A view can hide
-  dependent items; an item stops being dependent once all its
-  prerequisites are done. Utilities Show Prereqs / Show Depends list them.
+- **R43 ✅ Item dependencies** (User's Guide 13-12 to 13-16; Lotus Q&A
+  "Hiding Done and Dependent Items"). ALT-O makes the current item depend
+  on the marked items (its prerequisites), after a Y/N question, adding to
+  any it has; with nothing marked, ALT-O on a dependent item offers to
+  clear its dependencies. An item cannot depend on itself, even through
+  others. While a prerequisite is not done the item waits, shown with "&";
+  discarding a prerequisite drops it. View ▸ Hide ▸ Pending (Agenda's "Hide
+  dependent items", "[Hide Dependent]" in the title) hides waiting items
+  until every prerequisite is done or discarded, also when done items are
+  hidden too (the Q&A's bug). Item Properties shows "Dependencies: depends
+  on 2 · 1 depends on it". As in Agenda, a dependent item can still be
+  marked done or discarded first. Next: Utilities Show Depends / Show
+  Prereqs.
 
 ## 3. Automatic assignment
 

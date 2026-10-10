@@ -17,6 +17,7 @@ defmodule Agenda.Core do
     Context,
     Database,
     DateParser,
+    Links,
     NumberFormat,
     RangeFilter,
     Recurrence,
@@ -436,6 +437,70 @@ defmodule Agenda.Core do
 
   # A When date set or cleared by the user: set is explicit and overrides
   # the text; cleared hands the When date back to the text (R14).
+  # --- dependencies (R43) ------------------------------------------------------
+
+  @doc """
+  Makes an item depend on prerequisite items (ALT-O with marked items;
+  User's Guide 13-12), adding to any it already has. An item cannot depend
+  on itself, or on an item that depends on it.
+  """
+  @spec make_dependent(db, id, [id]) :: {:ok, db} | {:error, :cycle}
+  def make_dependent(db, item_id, prerequisite_ids) do
+    below = related_items(db, item_id, :dependents, :all)
+
+    if Enum.any?(prerequisite_ids, &(&1 == item_id or &1 in below)) do
+      {:error, :cycle}
+    else
+      links = Enum.reduce(prerequisite_ids, db.dependencies, &Links.link(&2, item_id, &1))
+      {:ok, %{db | dependencies: links}}
+    end
+  end
+
+  @doc "Clears all of an item's prerequisites (ALT-O on a dependent item)."
+  @spec clear_dependencies(db, id) :: db
+  def clear_dependencies(db, item_id),
+    do: %{db | dependencies: Links.drop_left(db.dependencies, item_id)}
+
+  @doc "The items an item depends on, in item order."
+  @spec prerequisites(db, id) :: [id]
+  defdelegate prerequisites(db, item_id), to: Database
+
+  @doc "The items that depend on an item, in item order."
+  @spec dependents(db, id) :: [id]
+  defdelegate dependents(db, item_id), to: Database
+
+  @doc "Whether an item still waits for a prerequisite that is not done (shown with &)."
+  @spec waiting?(db, id) :: boolean
+  defdelegate waiting?(db, item_id), to: Database
+
+  @doc """
+  Items related to an item by dependencies, in item order (Utilities Show
+  Depends / Show Prereqs): `:one` level, `:all` levels, or `:every` item in
+  the file that has dependents (or prerequisites); `item_id` is ignored
+  for `:every`.
+  """
+  @spec related_items(db, id | nil, :dependents | :prerequisites, :one | :all | :every) :: [id]
+  def related_items(db, _item_id, direction, :every) do
+    step = step_fun(direction)
+    for id <- db.item_order, step.(db, id) != [], do: id
+  end
+
+  def related_items(db, item_id, direction, level) do
+    found = reach(db, step_fun(direction), [item_id], MapSet.new(), level)
+    Enum.filter(db.item_order, &(&1 in found and &1 != item_id))
+  end
+
+  defp step_fun(:dependents), do: &Database.dependents/2
+  defp step_fun(:prerequisites), do: &Database.prerequisites/2
+
+  defp reach(_db, _step, [], seen, _level), do: seen
+
+  defp reach(db, step, frontier, seen, level) do
+    next = frontier |> Enum.flat_map(&step.(db, &1)) |> Enum.reject(&(&1 in seen))
+    seen = MapSet.union(seen, MapSet.new(next))
+    if level == :one, do: seen, else: reach(db, step, next, seen, level)
+  end
+
   # --- numbers (R29) ----------------------------------------------------------
 
   @doc """
@@ -1173,16 +1238,25 @@ defmodule Agenda.Core do
   time and updated afterwards. Returns the view.
   """
   @spec show_match(db, Agenda.Core.Search.t()) :: {db, id}
-  def show_match(db, %Agenda.Core.Search{} = search) do
+  def show_match(db, %Agenda.Core.Search{} = search), do: show(db, search)
+
+  defp show(db, match) do
     case Enum.find(Database.views(db), &(&1.name == @show_view)) do
       nil ->
         {db, view_id} = Database.insert_view(db, @show_view, sections: [db.main_id])
-        {Database.update_view(db, view_id, &%{&1 | match: search}), view_id}
+        {Database.update_view(db, view_id, &%{&1 | match: match}), view_id}
 
       view ->
-        {Database.update_view(db, view.id, &%{&1 | match: search}), view.id}
+        {Database.update_view(db, view.id, &%{&1 | match: match}), view.id}
     end
   end
+
+  @doc """
+  Lists items in the Show View (User's Guide 13-15, R43), as `show_match/2`
+  does for a search. Returns the view.
+  """
+  @spec show_items(db, [id]) :: {db, id}
+  def show_items(db, ids), do: show(db, {:items, ids})
 
   @doc "Sorts a category's children alphabetically (ALT-F5 in the category manager)."
   @spec sort_children(db, id) :: db
@@ -1221,7 +1295,8 @@ defmodule Agenda.Core do
   end
 
   @doc "Toggles a boolean view option such as `:hide_done`."
-  @spec toggle_view_option(db, id, :hide_done | :hide_empty | :hide_inherited) :: db
+  @spec toggle_view_option(db, id, :hide_done | :hide_empty | :hide_inherited | :hide_dependent) ::
+          db
   def toggle_view_option(db, view_id, option) do
     Database.update_view(db, view_id, &Map.update!(&1, option, fn value -> not value end))
   end

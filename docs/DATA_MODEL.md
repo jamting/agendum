@@ -37,6 +37,7 @@ erDiagram
         set conditional "item-category links made by conditions"
         DateFormat date_format "how dates and times display (R41)"
         map numbers "item and numeric category => number (R29)"
+        Links dependencies "dependent item <-> prerequisite item (R43)"
     }
     ITEM {
         int id PK
@@ -74,6 +75,7 @@ erDiagram
         list filter "category ids: assigned, not, or a date/number range"
         list sort "SortKey list, at most two"
         map match "Search of the Show View, or nil"
+        bool hide_dependent "hide items waiting for prerequisites"
         atom section_sort "none, category, alpha or numeric"
         atom section_order "asc or desc"
     }
@@ -113,6 +115,7 @@ classDiagram
         +conditional : MapSet
         +date_format : DateFormat
         +numbers : Map~item_id and cat_id, float~
+        +dependencies : Links
     }
     class DateFormat {
         +order : yyyymmdd, mmddyy, ddmmmyy…
@@ -164,6 +167,7 @@ classDiagram
         +filter : [id and kind]
         +sort : [SortKey]
         +match : Search or nil
+        +hide_dependent : boolean
         +section_sort : none, category, alpha, numeric
         +section_order : asc or desc
     }
@@ -424,7 +428,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

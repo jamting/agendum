@@ -76,7 +76,9 @@ defmodule Agenda.TUI.Menu do
             {"Done", "Hide or show done items", {:toggle_view, :hide_done}},
             {"Empty", "Hide or show empty sections", {:toggle_view, :hide_empty}},
             {"Inherited", "Hide or show items only in subcategories",
-             {:toggle_view, :hide_inherited}}
+             {:toggle_view, :hide_inherited}},
+            {"Pending", "Hide or show items waiting for others to be done (ALT-O)",
+             {:toggle_view, :hide_dependent}}
           ]}
        ]},
       {"Search", "Find items by their text",

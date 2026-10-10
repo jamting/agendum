@@ -247,6 +247,7 @@ defmodule Agenda.TUI.Update do
       {:alt, "g"} -> perform(state, :retrieve)
       {:alt, "v"} -> perform(state, {:toggle_view, :hide_empty})
       {:alt, "i"} -> insert(state, row)
+      {:alt, "o"} -> dependency(state, row)
       {:alt_f, 6} -> SearchBox.open(state, :view)
       {:alt, "a"} -> perform(state, :alarm)
       {:alt_f, 8} -> perform(state, :last_view)
@@ -446,6 +447,29 @@ defmodule Agenda.TUI.Update do
     do: CategoryScreens.open_props(state, cat.id)
 
   defp props(state, nil), do: state
+
+  # ALT-O (User's Guide 13-12): make the item depend on the marked items,
+  # or, with nothing marked, clear its dependencies.
+  defp dependency(state, %{kind: :item, item: item}) do
+    marked = Core.marked_items(state.db) -- [item.id]
+
+    cond do
+      marked != [] ->
+        confirm(
+          state,
+          "Make this item depend on the #{length(marked)} marked items? (Y/N)",
+          {:make_dependent, item.id, marked}
+        )
+
+      Core.prerequisites(state.db, item.id) != [] ->
+        confirm(state, "Clear this item's dependencies? (Y/N)", {:clear_dependencies, item.id})
+
+      true ->
+        State.error(state, "Mark the items it depends on with F7, then ALT-O")
+    end
+  end
+
+  defp dependency(state, _row), do: State.error(state, "Highlight an item first")
 
   # F4 DONE; for a recurring item, says when its next occurrence is (R14a).
   defp toggle_done(state, row) do
@@ -1035,6 +1059,23 @@ defmodule Agenda.TUI.Update do
   end
 
   defp confirmed(state, {:make_numeric, id}, true), do: make_numeric(state, id)
+
+  defp confirmed(state, {:make_dependent, id, prerequisites}, true) do
+    case Core.make_dependent(state.db, id, prerequisites) do
+      {:ok, db} ->
+        count = length(Core.prerequisites(db, id))
+        state |> State.change_db(db) |> State.info("Depends on #{count} items")
+
+      {:error, :cycle} ->
+        State.error(state, "Not done: the item would depend on itself (through the marked items)")
+    end
+  end
+
+  defp confirmed(state, {:clear_dependencies, id}, true) do
+    state
+    |> State.change_db(Core.clear_dependencies(state.db, id))
+    |> State.info("Dependencies cleared")
+  end
 
   defp confirmed(state, {:sort_children, id}, true) do
     State.change_db(state, Core.sort_children(state.db, id))

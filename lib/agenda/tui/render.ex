@@ -64,6 +64,7 @@ defmodule Agenda.TUI.Render do
         {view.hide_done, "[Hide Done]"},
         {view.hide_empty, "[Hide Empty]"},
         {view.hide_inherited, "[Hide Inherited]"},
+        {view.hide_dependent, "[Hide Dependent]"},
         {not state.db.auto_date, "[No Auto Dates]"}
       ]
       |> Enum.filter(&elem(&1, 0))
@@ -476,6 +477,7 @@ defmodule Agenda.TUI.Render do
       cond do
         item.done -> "√"
         item.marked -> "♦"
+        Agenda.Core.waiting?(state.db, item.id) -> "&"
         item.alarm_minutes != nil -> "@"
         true -> "•"
       end
@@ -728,6 +730,8 @@ defmodule Agenda.TUI.Render do
      ALT-F6        Search (then ALT-N / ALT-P, F7 mark)  ESC ^
      ALT-F8        Back to the previous view        ESC *
      ALT-A         Set or cancel an alarm            ESC a
+     ALT-O         Depend on the marked items (&); with none marked,
+                   clear the item's dependencies     ESC o
      ALT-D / ALT-U Add section below / above
      ALT-R / ALT-L Add column right / left
      ←→ TAB        Move between item and columns
@@ -1110,6 +1114,9 @@ defmodule Agenda.TUI.Render do
             :stats ->
               {"Statistics", "#{length(assignments)} categories · entered #{entered}"}
 
+            :dependencies ->
+              {"Dependencies", dependency_note(state.db, item.id)}
+
             {:assigned, a} ->
               {if(a == hd(assignments), do: "Assigned to", else: ""),
                assignment_text(state.db, a, item)}
@@ -1296,6 +1303,16 @@ defmodule Agenda.TUI.Render do
   end
 
   defp assignment_text(db, a, _item), do: assignment_text(db, a)
+
+  # R43: "depends on 2 · 1 depends on it"
+  defp dependency_note(db, id) do
+    [
+      {length(Agenda.Core.prerequisites(db, id)), &"depends on #{&1}"},
+      {length(Agenda.Core.dependents(db, id)), &"#{&1} depend on it"}
+    ]
+    |> Enum.reject(&(elem(&1, 0) == 0))
+    |> Enum.map_join(" · ", fn {n, text} -> text.(n) end)
+  end
 
   defp recurrence_note(%{recurrence: nil}), do: ""
   defp recurrence_note(%{recurrence: rule}), do: " · " <> Agenda.Core.Recurrence.describe(rule)

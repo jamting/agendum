@@ -31,7 +31,8 @@ defmodule Agenda.Core.Database do
           auto_date: boolean,
           conditional: MapSet.t({id, id}),
           date_format: DateFormat.t(),
-          numbers: %{optional({id, id}) => float}
+          numbers: %{optional({id, id}) => float},
+          dependencies: Links.t()
         }
 
   defstruct items: %{},
@@ -46,7 +47,8 @@ defmodule Agenda.Core.Database do
             auto_date: true,
             conditional: MapSet.new(),
             date_format: %DateFormat{},
-            numbers: %{}
+            numbers: %{},
+            dependencies: Links.new()
 
   @date_fields %{entry: :entry, when: :when, done: :done}
 
@@ -123,7 +125,8 @@ defmodule Agenda.Core.Database do
         item_order: List.delete(db.item_order, id),
         links: Links.drop_left(db.links, id),
         conditional: MapSet.reject(db.conditional, &(elem(&1, 0) == id)),
-        numbers: Map.reject(db.numbers, fn {{item, _}, _} -> item == id end)
+        numbers: Map.reject(db.numbers, fn {{item, _}, _} -> item == id end),
+        dependencies: db.dependencies |> Links.drop_left(id) |> Links.drop_right(id)
     }
   end
 
@@ -373,6 +376,25 @@ defmodule Agenda.Core.Database do
         numbers: Map.delete(db.numbers, {item_id, cat_id})
     }
   end
+
+  @doc """
+  The items an item depends on (its prerequisites, R43), in item order.
+  `dependencies` links a dependent item (left) to each prerequisite (right).
+  """
+  @spec prerequisites(t, id) :: [id]
+  def prerequisites(db, item_id),
+    do: in_item_order(db, Links.rights(db.dependencies, item_id))
+
+  @doc "The items that depend on an item, in item order."
+  @spec dependents(t, id) :: [id]
+  def dependents(db, item_id), do: in_item_order(db, Links.lefts(db.dependencies, item_id))
+
+  @doc "Whether an item still waits for a prerequisite that is not done."
+  @spec waiting?(t, id) :: boolean
+  def waiting?(db, item_id),
+    do: db |> prerequisites(item_id) |> Enum.any?(&(db.items[&1].done == nil))
+
+  defp in_item_order(db, ids), do: Enum.filter(db.item_order, &MapSet.member?(ids, &1))
 
   @doc "An item's number in a numeric category (R29), or nil."
   @spec number(t, id, id) :: float | nil

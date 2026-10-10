@@ -136,6 +136,8 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `DateParser.parse_recurring/3`, `extract_recurring/3` | read | Like `parse_when` / `extract_when`, also giving the `Recurrence` of a recurring date, or nil (R14a). |
 | `DateParser.parse_when(text, now, opts)`, `extract_when(text, now, opts)` | read | Dates with times of day (R14b), in the languages of `opts[:languages]` (R14c). Core functions take a `clock`: a date, a date and time, or a `Core.Context` (time plus date languages). |
 | `Core.set_sort(db, view, :view \| {:section, i}, keys)` | write | Sort keys (`View.SortKey`, at most two); a section's `nil` uses the view's (R36). |
+| `Core.make_dependent(db, item, prerequisites)` / `Core.clear_dependencies/2` | write | Item dependencies (R43); `{:error, :cycle}` if an item would depend on itself. |
+| `Core.prerequisites/2`, `Core.dependents/2`, `Core.waiting?/2` | read | Dependencies in item order; whether an item still waits for an unfinished prerequisite. |
 | `Core.set_section_sort(db, view, sort, order)` | write | Show the section heads in category order, alphabetically or numerically (R36). |
 | `Core.entry_categories(db, view, i)` | read | Categories a new item in section `i` needs to pass the filters. |
 | `Core.set_range_filter(db, view, scope, cat, {show, from, to, where}, today)` / `Core.remove_filter/4` | write | A date or numeric filter (R28a): items with a date or number in or outside a range, or without one. |
