@@ -22,8 +22,8 @@ defmodule Agenda.Core.DateLanguageTest do
       assert pack.numeric_order() in [:month_day, :day_month]
       assert pack.clock() in [:agenda, :twenty_four]
 
-      for kind <- ~w(weekdays months numbers ordinals relative periods units edges offsets
-                     time_words time_units)a,
+      for kind <- ~w(weekdays months numbers ordinals relative periods units intervals edges
+                     offsets time_words time_units)a,
           do: assert(is_map(pack.words()[kind]), "#{pack.name()} lacks #{kind}")
 
       for {_meaning, pattern} <- pack.rules() ++ pack.time_rules(),

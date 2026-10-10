@@ -16,7 +16,8 @@ defmodule Agenda.Core.DateLanguage do
     * `words/0`: what captured words mean, by kind: `:weekdays` (1–7),
       `:months` (1–12), `:numbers`, `:ordinals`, `:relative` (-1, 0, 1),
       `:periods` (`:week`, `:month`, `:year`), `:units` (`:day`, `:week`,
-      `:month`), `:edges` (`:start`, `:end`), `:offsets` (days from today),
+      `:month`, `:quarter`, `:year`), `:intervals` (every n: "every" 1,
+      "every other" 2), `:edges` (`:start`, `:end`), `:offsets` (days from today),
       `:time_words` (a `Time`) and `:time_units` (`:minute`, `:hour`).
     * `numeric_order/0`: `:month_day` ("11/5" is 5 November) or
       `:day_month` ("5/11" is 5 November).

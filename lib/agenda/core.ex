@@ -12,7 +12,17 @@ defmodule Agenda.Core do
   and so on.
   """
 
-  alias Agenda.Core.{Assign, Context, Database, DateParser, NumberFormat, RangeFilter, View}
+  alias Agenda.Core.{
+    Assign,
+    Context,
+    Database,
+    DateParser,
+    NumberFormat,
+    RangeFilter,
+    Recurrence,
+    View
+  }
+
   alias Agenda.Core.View.{Column, Section}
 
   @type db :: Database.t()
@@ -97,18 +107,18 @@ defmodule Agenda.Core do
 
       old =
         if old_text,
-          do: DateParser.extract_when(old_text, now, Context.parser_opts(today)),
+          do: DateParser.extract_recurring(old_text, now, Context.parser_opts(today)),
           else: :none
 
-      case {old, DateParser.extract_when(item.text, now, Context.parser_opts(today))} do
-        {{:ok, _, _, phrase}, {:ok, _, _, phrase}} ->
+      case {old, DateParser.extract_recurring(item.text, now, Context.parser_opts(today))} do
+        {{:ok, _, _, _, phrase}, {:ok, _, _, _, phrase}} ->
           db
 
-        {_, {:ok, date, time, _}} ->
-          Database.update_item(db, id, &%{&1 | when: date, when_time: time})
+        {_, {:ok, date, time, rule, _}} ->
+          Database.update_item(db, id, &%{&1 | when: date, when_time: time, recurrence: rule})
 
-        {{:ok, _, _, _}, :none} ->
-          Database.update_item(db, id, &%{&1 | when: nil, when_time: nil})
+        {{:ok, _, _, _, _}, :none} ->
+          Database.update_item(db, id, &%{&1 | when: nil, when_time: nil, recurrence: nil})
 
         {:none, :none} ->
           db
@@ -152,23 +162,73 @@ defmodule Agenda.Core do
     Assign.apply_conditions(db, item_id)
   end
 
-  @doc "Marks an item done today, or clears its done date (F4 DONE)."
+  @doc """
+  Marks an item done today, or clears its done date (F4 DONE). A recurring
+  item marked done is followed by a copy with the next When date (R14a).
+  """
   @spec toggle_done(db, id, Date.t()) :: db
   def toggle_done(db, id, today) do
-    Database.update_item(db, id, fn item ->
-      %{item | done: if(item.done, do: nil, else: date_of(today))}
-    end)
+    if db.items[id].done,
+      do: Database.update_item(db, id, &%{&1 | done: nil}),
+      else: mark_done(db, id, today)
   end
 
   @doc "Toggles the mark used to select several items (F7 MARK)."
   @spec toggle_mark(db, id) :: db
   def toggle_mark(db, id), do: Database.update_item(db, id, &%{&1 | marked: not &1.marked})
 
-  @doc "Marks an item done today unless it already has a done date (bulk F4 DONE)."
-  @spec mark_done(db, id, Date.t()) :: db
+  @doc """
+  Marks an item done today unless it already has a done date (bulk F4
+  DONE); a recurring one is followed by its next occurrence (R14a).
+  """
+  @spec mark_done(db, id, clock) :: db
   def mark_done(db, id, today) do
-    Database.update_item(db, id, fn item ->
-      if item.done, do: item, else: %{item | done: date_of(today)}
+    case db.items[id] do
+      %{done: nil} = item ->
+        db
+        |> Database.update_item(id, &%{&1 | done: date_of(today)})
+        |> next_occurrence(item, today)
+
+      _ ->
+        db
+    end
+  end
+
+  # A recurring item marked done is followed by a copy with the next When
+  # date (User's Guide 7-12): same text, note, time, alarm and assignments.
+  defp next_occurrence(db, %{recurrence: nil}, _today), do: db
+  defp next_occurrence(db, %{when: nil}, _today), do: db
+
+  defp next_occurrence(db, item, today) do
+    {db, copy} = Database.insert_item(db, item.text, date_of(today), after: item.id)
+
+    db =
+      Database.update_item(db, copy, fn new ->
+        %{
+          new
+          | note: item.note,
+            when: Recurrence.next(item.recurrence, item.when),
+            when_time: item.when_time,
+            when_explicit: item.when_explicit,
+            recurrence: item.recurrence,
+            alarm_minutes: item.alarm_minutes
+        }
+      end)
+
+    db
+    |> Database.explicit_categories(item.id)
+    |> Enum.reduce(db, fn cat, db ->
+      db = Database.link(db, copy, cat)
+
+      db =
+        if Database.conditional?(db, item.id, cat),
+          do: Database.mark_conditional(db, copy, cat),
+          else: db
+
+      case Database.number(db, item.id, cat) do
+        nil -> db
+        number -> Database.put_number(db, copy, cat, number)
+      end
     end)
   end
 
@@ -337,13 +397,13 @@ defmodule Agenda.Core do
         end
 
       field = Database.date_field(db, head_id) ->
-        case DateParser.parse_when(text, now_of(today), Context.parser_opts(today)) do
-          {:ok, date, time} ->
+        case DateParser.parse_recurring(text, now_of(today), Context.parser_opts(today)) do
+          {:ok, date, time, rule} ->
             db = put_date(db, item_id, field, date)
 
             db =
               if field == :when,
-                do: Database.update_item(db, item_id, &%{&1 | when_time: time}),
+                do: Database.update_item(db, item_id, &%{&1 | when_time: time, recurrence: rule}),
                 else: db
 
             {:ok, db, :date}
@@ -482,7 +542,7 @@ defmodule Agenda.Core do
     Database.update_item(
       db,
       item_id,
-      &%{&1 | when: date, when_time: nil, when_explicit: date != nil}
+      &%{&1 | when: date, when_time: nil, when_explicit: date != nil, recurrence: nil}
     )
   end
 

@@ -3,7 +3,8 @@ defmodule Agenda.Core.DateLanguage.Swedish do
   Swedish dates and times (SPEC R14c): "fredag", "på fre", "nästa vecka",
   "i fredags", "den 5 november", "5:e nov", "5/11" (day/month), "om två
   dagar", "för 3 veckor sedan", "i morgon kl 8", "kl. 15.30", "i kväll",
-  "i slutet av månaden".
+  "i slutet av månaden", and recurring dates: "varje måndag", "varannan
+  fredag", "var tredje månad", "varje kvartal", "den 15:e varje månad".
 
   Times use a 24-hour clock ("kl 3" is 03:00). Bare abbreviations ("fre",
   "sön") count in item text only after "på", "till" or "senast"; "tor" is
@@ -112,7 +113,20 @@ defmodule Agenda.Core.DateLanguage.Swedish do
       "vecka" => :week,
       "veckor" => :week,
       "månad" => :month,
-      "månader" => :month
+      "månader" => :month,
+      "kvartal" => :quarter,
+      "år" => :year
+    },
+    intervals: %{
+      "varje" => 1,
+      "varannan" => 2,
+      "var annan" => 2,
+      "vartannat" => 2,
+      "vart annat" => 2,
+      "var tredje" => 3,
+      "vart tredje" => 3,
+      "var fjärde" => 4,
+      "vart fjärde" => 4
     },
     edges: %{"början" => :start, "slutet" => :end, "slut" => :end},
     offsets: %{
@@ -174,7 +188,14 @@ defmodule Agenda.Core.DateLanguage.Swedish do
     w_all = alt(__MODULE__, :weekdays)
     abbr = alt(Map.keys(@abbreviated_weekdays))
 
+    every = alt(__MODULE__, :intervals)
+    ordinals = alt(__MODULE__, :ordinals)
+
     [
+      {:recurring_weekday, "(#{every})\\s+(#{w_all})"},
+      {:recurring_unit, "(#{every})\\s+(#{unit})"},
+      {:recurring_day_of_month, "(?:den\\s+)?(\\d{1,2})(?::[ae])?\\s+varje\\s+månad"},
+      {:recurring_day_of_month, "(?:den\\s+)?(#{ordinals})\\s+varje\\s+månad"},
       {:iso, "(\\d{4})-(\\d{1,2})-(\\d{1,2})"},
       {:numeric, "(\\d{1,2})/(\\d{1,2})(?:[/-](\\d{4}|\\d{2}))?"},
       {:day_month, "(?:den\\s+)?(\\d{1,2})(?::[ae])?\\s+(#{m})\\.?(?:,?\\s+(\\d{4}))?"},

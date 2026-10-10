@@ -50,6 +50,7 @@ erDiagram
         int alarm_minutes "0-60 before When, or nil"
         datetime alarm_rung_at "when the alarm went off"
         bool marked
+        map recurrence "rule of a recurring When date, or nil (R14a)"
     }
     CATEGORY {
         int id PK
@@ -131,6 +132,13 @@ classDiagram
         +alarm_minutes : 0..60 or nil
         +alarm_rung_at : NaiveDateTime or nil
         +marked : boolean
+        +recurrence : Recurrence or nil
+    }
+    class Recurrence {
+        +every : pos_integer
+        +unit : day, week, month or year
+        +weekday : 1..7 or nil
+        +day : 1..31 or nil
     }
     class Category {
         +id : id
@@ -182,6 +190,7 @@ classDiagram
         +by_right : Map~category_id, MapSet~
     }
     Database *-- Item
+    Item *-- Recurrence
     Database *-- Category
     Database *-- View
     Database *-- Links
@@ -415,7 +424,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

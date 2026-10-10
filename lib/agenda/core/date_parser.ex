@@ -36,12 +36,17 @@ defmodule Agenda.Core.DateParser do
       (relative word, weekday), `:weekday` and `:weekday_abbr` (weekday:
       its next occurrence), `:past_weekday` (weekday: its last occurrence
       before today)
+    * recurring (R14a): `:recurring_weekday` (interval word, weekday),
+      `:recurring_unit` (interval word, unit), `:recurring_count` (count,
+      unit), `:recurring_day_of_month` (day as a number or an ordinal);
+      interval words ("every", "every other", "varannan") are the
+      pack's `:intervals`
     * time: `:clock` (hour, minutes, am/pm or none), `:hour_ampm` (hour,
       am/pm), `:at_hour` (hour), `:time_word` (word), `:in_time` (count,
       unit), `:now`
   """
 
-  alias Agenda.Core.DateLanguage
+  alias Agenda.Core.{DateLanguage, Recurrence}
 
   @default [DateLanguage.English]
 
@@ -84,13 +89,26 @@ defmodule Agenda.Core.DateParser do
   @spec parse_when(String.t(), NaiveDateTime.t(), opts) ::
           {:ok, Date.t(), Time.t() | nil} | :error
   def parse_when(text, %NaiveDateTime{} = now, opts \\ []) do
+    case parse_recurring(text, now, opts) do
+      {:ok, date, time, _rule} -> {:ok, date, time}
+      :error -> :error
+    end
+  end
+
+  @doc """
+  Like `parse_when/3`, also giving the rule of a recurring date ("every
+  Monday at 9am"), or nil (R14a).
+  """
+  @spec parse_recurring(String.t(), NaiveDateTime.t(), opts) ::
+          {:ok, Date.t(), Time.t() | nil, Recurrence.t() | nil} | :error
+  def parse_recurring(text, %NaiveDateTime{} = now, opts \\ []) do
     text = String.trim(text)
     languages = languages(opts)
 
-    with {:ok, date, time, spans} <- find_when(text, now, languages, false),
+    with {:ok, date, time, rule, spans} <- find_when(text, now, languages, false),
          rest = remove_spans(text, spans),
          true <- Regex.match?(~r/^[\s,.@]*(at)?[\s,.@]*$/iu, rest) do
-      {:ok, date, time}
+      {:ok, date, time, rule}
     else
       _ -> :error
     end
@@ -118,8 +136,21 @@ defmodule Agenda.Core.DateParser do
   @spec extract_when(String.t(), NaiveDateTime.t(), opts) ::
           {:ok, Date.t(), Time.t() | nil, String.t()} | :none
   def extract_when(text, %NaiveDateTime{} = now, opts \\ []) do
+    case extract_recurring(text, now, opts) do
+      {:ok, date, time, _rule, phrase} -> {:ok, date, time, phrase}
+      :none -> :none
+    end
+  end
+
+  @doc """
+  Like `extract_when/3`, also giving the rule of a recurring date ("Staff
+  meeting every Friday"), or nil (R14a).
+  """
+  @spec extract_recurring(String.t(), NaiveDateTime.t(), opts) ::
+          {:ok, Date.t(), Time.t() | nil, Recurrence.t() | nil, String.t()} | :none
+  def extract_recurring(text, %NaiveDateTime{} = now, opts \\ []) do
     case find_when(text, now, languages(opts), true) do
-      {:ok, date, time, spans} ->
+      {:ok, date, time, rule, spans} ->
         phrase =
           spans
           |> Enum.sort()
@@ -127,7 +158,7 @@ defmodule Agenda.Core.DateParser do
           |> String.downcase()
           |> String.replace(~r/\s+/u, " ")
 
-        {:ok, date, time, phrase}
+        {:ok, date, time, rule, phrase}
 
       :none ->
         :none
@@ -154,24 +185,30 @@ defmodule Agenda.Core.DateParser do
       |> Enum.reject(fn {start, neg_len, _, _} -> overlaps?(date, {start, -neg_len}) end)
       |> first()
 
+    {date, rule} =
+      case date do
+        {{:recurring, d, rule}, span} -> {{d, span}, rule}
+        other -> {other, nil}
+      end
+
     case {date, time} do
       {nil, nil} ->
         :none
 
       {{d, ds}, nil} ->
-        {:ok, d, nil, [ds]}
+        {:ok, d, nil, rule, [ds]}
 
       {{d, ds}, {{:time, t}, ts}} ->
-        {:ok, d, t, [ds, ts]}
+        {:ok, d, t, rule, [ds, ts]}
 
       {{d, ds}, {{:datetime, _}, _}} ->
-        {:ok, d, nil, [ds]}
+        {:ok, d, nil, rule, [ds]}
 
       {nil, {{:time, t}, ts}} ->
-        {:ok, today, t, [ts]}
+        {:ok, today, t, nil, [ts]}
 
       {nil, {{:datetime, dt}, ts}} ->
-        {:ok, NaiveDateTime.to_date(dt), NaiveDateTime.to_time(dt), [ts]}
+        {:ok, NaiveDateTime.to_date(dt), NaiveDateTime.to_time(dt), nil, [ts]}
     end
   end
 
@@ -323,6 +360,36 @@ defmodule Agenda.Core.DateParser do
     {:ok, Date.add(today, days)}
   end
 
+  # --- recurring dates (R14a): a first date and a rule ---
+
+  defp interpret(:recurring_weekday, [every, day], pack, today) do
+    weekday = word(pack, :weekdays, day)
+    date = Date.add(today, Integer.mod(weekday - Date.day_of_week(today), 7))
+    rule = %Recurrence{every: word(pack, :intervals, every), unit: :week, weekday: weekday}
+    {:ok, {:recurring, date, rule}}
+  end
+
+  defp interpret(:recurring_unit, [every, unit], pack, today),
+    do: recurring(word(pack, :intervals, every), word(pack, :units, unit), today)
+
+  defp interpret(:recurring_count, [n, unit], pack, today),
+    do: recurring(count(pack, n), word(pack, :units, unit), today)
+
+  defp interpret(:recurring_day_of_month, [day], pack, today) do
+    day =
+      case Integer.parse(day) do
+        {n, ""} -> n
+        _ -> word(pack, :ordinals, day)
+      end
+
+    if day in 1..31,
+      do:
+        {:ok,
+         {:recurring, Recurrence.first_of_month_day(day, today),
+          %Recurrence{unit: :month, day: day}}},
+      else: :error
+  end
+
   # The most recent such weekday before today ("i fredags").
   defp interpret(:past_weekday, [day], pack, today) do
     days = Integer.mod(Date.day_of_week(today) - word(pack, :weekdays, day) - 1, 7) + 1
@@ -330,6 +397,19 @@ defmodule Agenda.Core.DateParser do
   end
 
   # --- helpers ----------------------------------------------------------------
+
+  # Every `n` units, starting today.
+  defp recurring(n, :quarter, today), do: recurring(3 * n, :month, today)
+
+  defp recurring(n, unit, today) do
+    rule =
+      case unit do
+        :month -> %Recurrence{every: n, unit: :month, day: today.day}
+        unit -> %Recurrence{every: n, unit: unit}
+      end
+
+    {:ok, {:recurring, today, rule}}
+  end
 
   defp word(pack, kind, word), do: pack.words() |> Map.fetch!(kind) |> Map.fetch!(word)
 
@@ -347,6 +427,8 @@ defmodule Agenda.Core.DateParser do
   defp shift(today, n, :day), do: {:ok, Date.add(today, n)}
   defp shift(today, n, :week), do: {:ok, Date.add(today, 7 * n)}
   defp shift(today, n, :month), do: {:ok, Date.shift(today, month: n)}
+  defp shift(today, n, :quarter), do: {:ok, Date.shift(today, month: 3 * n)}
+  defp shift(today, n, :year), do: {:ok, Date.shift(today, year: n)}
 
   defp month_date(m, d, nil, today), do: future(m, d, today)
   defp month_date(m, d, y, _today), do: build(int(y), m, d)

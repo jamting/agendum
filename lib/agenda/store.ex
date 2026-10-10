@@ -11,14 +11,14 @@ defmodule Agenda.Store do
   `sort` (R28, R36); 5 adds the view `match` of the Show View (R37); 6
   adds `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38);
   7 adds `Database.date_format` (R41); 8 adds `Database.numbers` and
-  `View.Column.number` (R29).
+  `View.Column.number` (R29); 9 adds `Item.recurrence` (R14a).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 8
+  @format_version 9
   @extension ".agenda"
 
   def extension, do: @extension
@@ -64,18 +64,27 @@ defmodule Agenda.Store do
   """
   @spec upgrade(Database.t()) :: Database.t()
   def upgrade(%Database{} = db) do
-    alias Agenda.Core.{Category, Item, View}
+    alias Agenda.Core.{Category, View}
 
     db = struct(Database, Map.from_struct(db))
     db = %{db | date_format: struct(Agenda.Core.DateFormat, Map.from_struct(db.date_format))}
 
     %{
       db
-      | items: Map.new(db.items, fn {id, i} -> {id, struct(Item, Map.from_struct(i))} end),
+      | items: Map.new(db.items, fn {id, i} -> {id, upgrade_item(i)} end),
         categories:
           Map.new(db.categories, fn {id, c} -> {id, struct(Category, Map.from_struct(c))} end),
         views: Map.new(db.views, fn {id, v} -> {id, upgrade_view(v)} end)
     }
+  end
+
+  defp upgrade_item(item) do
+    item = struct(Agenda.Core.Item, Map.from_struct(item))
+
+    case item.recurrence do
+      nil -> item
+      rule -> %{item | recurrence: struct(Agenda.Core.Recurrence, Map.from_struct(rule))}
+    end
   end
 
   defp upgrade_view(view) do

@@ -71,6 +71,25 @@ defmodule Agenda.StoreTest do
     assert loaded == db
   end
 
+  test "files in format version 8 get items without a recurrence", %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    v8_items = Map.new(db.items, fn {id, item} -> {id, Map.delete(item, :recurrence)} end)
+    path = Path.join(dir, "v8.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 8, %{db | items: v8_items}}))
+
+    assert {:ok, loaded} = Store.load(path)
+    assert Enum.all?(Map.values(loaded.items), &(&1.recurrence == nil))
+    assert loaded == db
+  end
+
+  test "recurrence rules are saved", %{tmp_dir: dir} do
+    {db, id} = Agenda.Core.add_item(Agenda.Core.new_file(), "Gym every Monday", ~D[2026-10-08])
+    path = Path.join(dir, "recur.agenda")
+    :ok = Store.save(db, path)
+    assert {:ok, loaded} = Store.load(path)
+    assert loaded.items[id].recurrence == db.items[id].recurrence
+  end
+
   test "the date format is saved", %{tmp_dir: dir} do
     format = %Agenda.Core.DateFormat{order: :ddmmyy, separator: ".", clock: 12}
     db = Agenda.Core.set_date_format(Agenda.Core.new_file(), format)

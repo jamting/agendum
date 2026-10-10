@@ -1291,10 +1291,14 @@ defmodule Agenda.TUI.Render do
   # "Anna Lasky (c)" for a conditional one.
   defp assignment_text(db, %{category: id}, item) when id == db.special.when do
     db.categories[id].name <>
-      " (#{DateFormat.date_time(item.when, item.when_time, db.date_format)})" <> alarm_note(item)
+      " (#{DateFormat.date_time(item.when, item.when_time, db.date_format)})" <>
+      recurrence_note(item) <> alarm_note(item)
   end
 
   defp assignment_text(db, a, _item), do: assignment_text(db, a)
+
+  defp recurrence_note(%{recurrence: nil}), do: ""
+  defp recurrence_note(%{recurrence: rule}), do: " · " <> Agenda.Core.Recurrence.describe(rule)
 
   defp alarm_note(%{alarm_minutes: nil}), do: ""
   defp alarm_note(%{alarm_minutes: m}), do: " · alarm #{m} min before"

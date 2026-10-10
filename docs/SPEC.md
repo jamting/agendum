@@ -157,17 +157,35 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   november", "5:e nov", "den femte november", "5/11" as day/month, "om två
   dagar", "för 3 veckor sedan", "nästa vecka", "i slutet av månaden",
   times on a 24-hour clock ("kl 15", "kl. 9.30", "15:30"), "förmiddag",
-  "eftermiddag", "i kväll", "om 2 timmar". Bare abbreviations ("fre",
+  "eftermiddag", "i kväll", "om 2 timmar", and recurring dates ("varje
+  måndag", R14a). Bare abbreviations ("fre",
   "sön") count in item text only after "på", "till" or "senast" ("tor" not
   at all, being a name); "nu" and a lone "morgon" are not read.
-- **R14a ⏳ More date phrases.** Recurring dates ("every Monday", "every other Monday"), working days,
-  quarters, "first Wednesday in November", "next April", dates from notes,
-  and settings for date order (day/month) and the start of the week.
-  Marking a recurring item done creates the next occurrence. Lotus's
-  support Q&A (`docs/reference/ag2qanda.txt.html`) lists cases Agenda 2.0
-  got wrong, to use as tests: "the 30th of every month" (must stay on the
-  30th), "every quarter" (every three months, not six), "every three
-  months", and editing a monthly recurring When date.
+- **R14a ✅ Recurring dates** (User's Guide 6-10, 7-11 to 7-12). A date
+  with "each", "every" or "evry" recurs: "every Monday", "every other
+  Monday", "every day", "every 2 weeks", "every month", "every quarter",
+  "every three months", "every year", "the 30th of every month", "the
+  fifteenth of each month" (Swedish: "varje måndag", "varannan fredag",
+  "var tredje månad", "varje kvartal", "den 15:e varje månad"). The first
+  date is the base date: the next such weekday (today if it is today), the
+  day of the month this month or next, or today for the others. The item
+  keeps the rule (`Item.recurrence`, language-neutral), read from its text
+  or typed into the When column / ALT-F2; an explicit plain When date, or
+  an edit that removes the phrase, ends it. Marking a recurring item done
+  (F4, the profile's Done, or bulk done) dates it done and adds a copy
+  right after it: same text, note, time, alarm and assignments, with the
+  next date counted from the base date; months keep their day (the 30th
+  falls on the 28th in February and on the 30th again in March), so the
+  cases Agenda 2.0 got wrong in Lotus's support Q&A (the 30th drifting,
+  "every quarter" as every six months, "every three months" as two) come
+  out right. Item Properties shows the rule ("When (2026-10-12) · every
+  Monday"), and F4 says when the next one is. Not done: the "Can use
+  recurring dates" property of date categories (only When recurs),
+  recurring items in datebook views, and "every day starting …".
+- **R14d ⏳ More date phrases.** Working days ("in five working days"),
+  "this quarter", "first Wednesday in November", "next April", dates from
+  notes, "$Monday" (a relative date kept as first read), and settings for
+  date order (day/month) and the start of the week.
 - **R15 ✅ Assignment conditions** (User's Guide, chapters 18 and 20). A
   category can have conditions on other categories: items *assigned* to
   them (Urgent if Taxes and Accountant) or *not assigned* to them (Me if

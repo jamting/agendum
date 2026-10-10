@@ -63,7 +63,7 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.toggle_auto_date(db)`                                   | write | Turn reading When dates from item text on or off for the file.                                                                       |
 | `Core.set_date_format(db, format)` | write | How the file displays dates and times (R41); `DateFormat.date/2`, `time/2`, `date_time/3` format with it. |
 | `DateParser.extract(text, today)` / `parse(text, today)`      | read  | The first date in free text, with its words / a date typed on its own (columns, ALT-F2).                                             |
-| `Core.set_note/3`, `toggle_done/3`, `toggle_mark/2`           | write | Field updates.                                                                                                                       |
+| `Core.set_note/3`, `toggle_done/3`, `mark_done/3`, `toggle_mark/2` | write | Field updates. Marking a recurring item done also adds its next occurrence (R14a). |
 | `Core.move_item(db, id, from, to, after:)`                    | write | ALT-F10: leave `from`, join `to` (never MAIN), optionally reorder after an item.                                                     |
 | `Core.discard_item(db, id)`                                   | write | Delete the item and all its links.                                                                                                   |
 | `Database.item(db, id)` / `items(db)`                         | read  | One item / all items in `item_order`.                                                                                                |
@@ -133,6 +133,7 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.set_alarm(db, item, minutes)`, `cancel_alarm/2` | write | Alarm 0-60 minutes before When (R38). `{:error, :no_when \| :minutes}`. |
 | `Core.ring_alarms(db, now)` | write | Rings due alarms, moving them to today's past alarms; returns the items that rang. |
 | `Core.alarm_list(db, today)`, `remove_past_alarm/2`, `clear_old_alarms/2` | read / write | Current and past alarms; past ones are forgotten the next day. |
+| `DateParser.parse_recurring/3`, `extract_recurring/3` | read | Like `parse_when` / `extract_when`, also giving the `Recurrence` of a recurring date, or nil (R14a). |
 | `DateParser.parse_when(text, now, opts)`, `extract_when(text, now, opts)` | read | Dates with times of day (R14b), in the languages of `opts[:languages]` (R14c). Core functions take a `clock`: a date, a date and time, or a `Core.Context` (time plus date languages). |
 | `Core.set_sort(db, view, :view \| {:section, i}, keys)` | write | Sort keys (`View.SortKey`, at most two); a section's `nil` uses the view's (R36). |
 | `Core.set_section_sort(db, view, sort, order)` | write | Show the section heads in category order, alphabetically or numerically (R36). |

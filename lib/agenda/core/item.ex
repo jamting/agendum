@@ -11,6 +11,9 @@ defmodule Agenda.Core.Item do
   in the text, and edits to the text no longer change it (SPEC R14).
   `when_time` is the time of day on the When date, if one was given (R14b).
 
+  `recurrence` is the rule of a recurring When date ("every Monday",
+  `Agenda.Core.Recurrence`, R14a); the When date is then its base date.
+
   An alarm rings `alarm_minutes` before the When date and time (R38);
   once it has rung, `alarm_rung_at` records when, for the day's list of
   past alarms.
@@ -26,6 +29,7 @@ defmodule Agenda.Core.Item do
           done: Date.t() | nil,
           when_time: Time.t() | nil,
           when_explicit: boolean,
+          recurrence: Agenda.Core.Recurrence.t() | nil,
           alarm_minutes: 0..60 | nil,
           alarm_rung_at: NaiveDateTime.t() | nil,
           marked: boolean
@@ -39,6 +43,7 @@ defmodule Agenda.Core.Item do
     when: nil,
     when_time: nil,
     when_explicit: false,
+    recurrence: nil,
     alarm_minutes: nil,
     alarm_rung_at: nil,
     done: nil,

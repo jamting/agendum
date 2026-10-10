@@ -447,6 +447,20 @@ defmodule Agenda.TUI.Update do
 
   defp props(state, nil), do: state
 
+  # F4 DONE; for a recurring item, says when its next occurrence is (R14a).
+  defp toggle_done(state, row) do
+    next = on_item(state, row, &Core.toggle_done(&1, &2, State.context(state)))
+
+    case next.db.item_order -- state.db.item_order do
+      [copy] ->
+        date = DateFormat.date(next.db.items[copy].when, next.db.date_format)
+        State.info(next, "Done · the next one is on #{date}")
+
+      _ ->
+        next
+    end
+  end
+
   defp on_item(state, %{kind: :item, item: item}, fun),
     do: State.change_db(state, fun.(state.db, item.id))
 
@@ -739,7 +753,7 @@ defmodule Agenda.TUI.Update do
   end
 
   # The command for the highlighted item (what it did before marks existed).
-  defp single(state, :done, row), do: on_item(state, row, &Core.toggle_done(&1, &2, state.today))
+  defp single(state, :done, row), do: toggle_done(state, row)
   defp single(state, :remove, row), do: delete(state, row)
   defp single(state, :profile, row), do: choices(state, row)
 
@@ -1248,7 +1262,7 @@ defmodule Agenda.TUI.Update do
   end
 
   defp do_perform(state, :done, row),
-    do: on_item(state, row, &Core.toggle_done(&1, &2, state.today))
+    do: toggle_done(state, row)
 
   defp do_perform(state, :mark, row), do: mark(state, row)
   defp do_perform(state, :make_assign, row), do: scoped(state, :make_assign, row)

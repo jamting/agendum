@@ -1,8 +1,10 @@
 defmodule Agenda.Core.DateLanguage.English do
   @moduledoc """
-  English dates and times, as Agenda 2.0 reads them (SPEC R14, R14b; User's
-  Guide chapters 6 and 7): "friday", "next week", "11/20/90", "the 5th of
-  November", "in 2 days", "Thursday at 3:30 pm", "tonight".
+  English dates and times, as Agenda 2.0 reads them (SPEC R14, R14a, R14b;
+  User's Guide chapters 6 and 7): "friday", "next week", "11/20/90", "the
+  5th of November", "in 2 days", "Thursday at 3:30 pm", "tonight", and
+  recurring dates: "every Monday", "every other week", "the 15th of every
+  month", "every quarter".
   """
 
   @behaviour Agenda.Core.DateLanguage
@@ -91,8 +93,13 @@ defmodule Agenda.Core.DateLanguage.English do
       "week" => :week,
       "weeks" => :week,
       "month" => :month,
-      "months" => :month
+      "months" => :month,
+      "quarter" => :quarter,
+      "quarters" => :quarter,
+      "year" => :year,
+      "years" => :year
     },
+    intervals: %{"each" => 1, "every" => 1, "evry" => 1, "every other" => 2, "each other" => 2},
     edges: %{"beginning" => :start, "beg" => :start, "end" => :end},
     offsets: %{"today" => 0, "tomorrow" => 1, "tmorrow" => 1, "yesterday" => -1, "ystday" => -1},
     time_words: %{
@@ -140,7 +147,17 @@ defmodule Agenda.Core.DateLanguage.English do
     w_full = alt(@full_weekdays)
     w_abbr = alt(Map.keys(@weekdays) -- @full_weekdays)
 
+    every = alt(__MODULE__, :intervals)
+    ordinals = alt(__MODULE__, :ordinals)
+
     [
+      {:recurring_weekday, "(#{every})\\s+(#{w_all})"},
+      {:recurring_count, "(?:each|every|evry)\\s+(#{n})\\s+(#{unit})"},
+      {:recurring_unit, "(#{every})\\s+(#{unit})"},
+      {:recurring_day_of_month,
+       "(?:the\\s+)?(\\d{1,2})(?:st|nd|rd|th)?\\s+of\\s+(?:each|every|evry)\\s+month"},
+      {:recurring_day_of_month,
+       "(?:the\\s+)?(#{ordinals})\\s+of\\s+(?:each|every|evry)\\s+month"},
       {:iso, "(\\d{4})-(\\d{1,2})-(\\d{1,2})"},
       {:numeric, "(\\d{1,2})/(\\d{1,2})(?:/(\\d{4}|\\d{2}))?"},
       {:month_day, "(#{m})\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s+(\\d{4}))?"},
