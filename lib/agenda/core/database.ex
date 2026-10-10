@@ -209,6 +209,7 @@ defmodule Agenda.Core.Database do
            %{
              c
              | also_assign: Enum.reject(c.also_assign, &(&1 in doomed_set)),
+               excludes: Enum.reject(c.excludes, &(&1 in doomed_set)),
                conditions: Enum.reject(c.conditions, &(elem(&1, 0) in doomed_set))
            }}
         end)

@@ -18,6 +18,7 @@ erDiagram
     CATEGORY ||--o{ CATEGORY : "children (ordered)"
     ITEM }o--o{ CATEGORY : "explicit assignment (LINKS)"
     CATEGORY }o--o{ CATEGORY : "also_assign"
+    CATEGORY }o--o{ CATEGORY : "excludes (both ways)"
     VIEW ||--o{ SECTION : "sections (ordered)"
     VIEW ||--o{ COLUMN : "columns (ordered)"
     SECTION }o--|| CATEGORY : "headed by"
@@ -66,6 +67,7 @@ erDiagram
         bool exclusive "children mutually exclusive"
         bool match_name "auto-assign by name"
         list also_assign "category ids"
+        list excludes "category ids, negative links (R9)"
         string also_match "text conditions (R15d)"
         list actions "remove, date and number actions (R15b)"
         atom special "done, discard or nil (R15b)"
@@ -168,6 +170,7 @@ classDiagram
         +exclusive : boolean
         +match_name : boolean
         +also_assign : [id]
+        +excludes : [id]
         +also_match : String
         +actions : [id and action]
         +special : done, discard or nil
@@ -399,7 +402,7 @@ tests in `database_test.exs` and `links_test.exs`):
    skip these checks; the TUI never calls them directly.
 6. **Views reference live categories.** `delete_category/2` removes
    sections and columns headed by deleted categories, and also removes the
-   deleted ids from every `also_assign` list.
+   deleted ids from every `also_assign` and `excludes` list.
    Filters and sort keys that name a deleted category are dropped with it.
 7. **Order lists match the maps.** `item_order` holds exactly the keys of
    `items`, and `view_order` exactly the keys of `views`. At least one view
@@ -429,7 +432,7 @@ tests in `database_test.exs` and `links_test.exs`):
 | Subsumption / inheritance (FIG. 4)                           | `Database.member?/3`, computed on demand                                       |
 | View linked to categories (FIG. 5)                           | `View.sections` / `View.columns` holding category ids                          |
 | Category-to-category links (FIG. 6)                          | `Category.also_assign`                                                         |
-| Negative links (FIG. 6, crossed squares)                     | `Category.exclusive` (for siblings); general negative links are on the roadmap |
+| Negative links (FIG. 6, crossed squares)                     | `Category.exclusive` (for siblings) and `Category.excludes` (any two, R9)      |
 | Free object / free link lists                                | not needed: immutable maps, ids never reused                                   |
 
 ## On disk
@@ -448,7 +451,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16); 14 added `Database.date_settings` (R14e); 15 replaced `Database.auto_date` with `Database.when_from` (R14f)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16); 14 added `Database.date_settings` (R14e); 15 replaced `Database.auto_date` with `Database.when_from` (R14f); 16 added `Category.excludes` (R9)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

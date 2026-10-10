@@ -88,8 +88,20 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
 - **R8 ✅ Category links.** A category can pass its items on to other
   categories (`also_assign`, patent FIG. 6). This applies transitively and is
   safe with cycles.
-- **R9 ⏳ General negative links.** Two arbitrary categories that may not
-  share an item.
+- **R9 ✅ General negative links** (not in Agenda 2.0; the patent's
+  negative links, FIG. 6, which Agenda only offered between siblings as
+  R7). Category Properties ▸ Excludes opens a category list in which
+  ENTER toggles a negative link (marked "x") between the two categories:
+  no item may then be in both, or in their subcategories. Assigning an
+  item to one (or below it), directly, by a category link or by an
+  action, takes it out of the other and its subcategories; text matching
+  never puts an item in both, and an assignment the item has wins over a
+  new text match. The link is kept on both categories, shown in the
+  manager ("not with Vacation") and dropped when either is discarded. It
+  is refused between a category and itself, its parents or children,
+  MAIN and date or numeric categories, and while items are in both ("2
+  items are in both Work and Vacation; move them first"); a category
+  cannot be moved under one it excludes.
 - **R43 ✅ Item dependencies** (User's Guide 13-12 to 13-16; Lotus Q&A
   "Hiding Done and Dependent Items"). ALT-O makes the current item depend
   on the marked items (its prerequisites), after a Y/N question, adding to

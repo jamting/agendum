@@ -1120,10 +1120,17 @@ defmodule Agenda.Core do
     end
   end
 
-  defp do_relocate(db, id, :promote), do: Database.promote(db, id)
-  defp do_relocate(db, id, :demote), do: Database.demote(db, id)
+  # A move may not put a category under one it excludes (R9).
+  defp do_relocate(db, id, relocation) do
+    with {:ok, moved} <- move(db, id, relocation) do
+      if Assign.excluded_lineage?(moved), do: {:error, :excluded_lineage}, else: {:ok, moved}
+    end
+  end
 
-  defp do_relocate(db, id, {:move, parent, after_id}),
+  defp move(db, id, :promote), do: Database.promote(db, id)
+  defp move(db, id, :demote), do: Database.demote(db, id)
+
+  defp move(db, id, {:move, parent, after_id}),
     do: Database.move_category(db, id, parent, after_id)
 
   defp resolve_move(db, _id, _original, [], _resolution), do: {:ok, db}
@@ -1218,6 +1225,48 @@ defmodule Agenda.Core do
 
   @spec set_category_note(db, id, String.t()) :: db
   def set_category_note(db, id, note), do: Database.update_category(db, id, &%{&1 | note: note})
+
+  @doc """
+  Adds a negative link between two categories, or removes it if there is
+  one (R9; not in Agenda 2.0): no item may then be in both, or in their
+  subcategories. Refused for a category and itself (`:self`), its
+  ancestors or descendants (`:lineage`), MAIN and date categories
+  (`:not_allowed`), and while items are in both (`{:shared, items}`).
+  """
+  @spec toggle_exclude(db, id, id) ::
+          {:ok, db} | {:error, :self | :lineage | :not_allowed | {:shared, [id]}}
+  def toggle_exclude(db, a, b) do
+    linked? = b in db.categories[a].excludes
+
+    shared =
+      Enum.filter(db.item_order, &(Database.member?(db, &1, a) and Database.member?(db, &1, b)))
+
+    cond do
+      a == b ->
+        {:error, :self}
+
+      linked? ->
+        {:ok, set_exclude(db, a, b, &List.delete/2)}
+
+      Enum.any?([a, b], &(&1 == db.main_id or db.categories[&1].kind != :standard)) ->
+        {:error, :not_allowed}
+
+      a in Database.ancestors(db, b) or b in Database.ancestors(db, a) ->
+        {:error, :lineage}
+
+      shared != [] ->
+        {:error, {:shared, shared}}
+
+      true ->
+        {:ok, set_exclude(db, a, b, &(&1 ++ [&2]))}
+    end
+  end
+
+  defp set_exclude(db, a, b, change) do
+    db
+    |> Database.update_category(a, &%{&1 | excludes: change.(&1.excludes, b)})
+    |> Database.update_category(b, &%{&1 | excludes: change.(&1.excludes, a)})
+  end
 
   @doc "Adds `target` to a category's `also_assign` links, or removes it if present."
   @spec toggle_also_assign(db, id, id) :: db

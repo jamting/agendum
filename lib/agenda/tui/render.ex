@@ -668,6 +668,7 @@ defmodule Agenda.TUI.Render do
       cat.short_name && "aka #{cat.short_name}",
       cat.conditions != [] && "if " <> conditions_text(state, cat),
       (cat.also_assign != [] or cat.actions != []) && "→ " <> actions_text(db, cat),
+      cat.excludes != [] && "not with " <> names_text(db, cat.excludes),
       cat.note != "" && "♪",
       count && "#{count}"
     ]
@@ -837,21 +838,53 @@ defmodule Agenda.TUI.Render do
 
   defp box_title(state, %{type: :picker, purpose: purpose}) do
     case purpose do
-      {:add_section, _} -> "Section head"
-      {:change_section, _} -> "Change section head"
-      {:add_column, _} -> "Column head"
-      {:assign_column, _, head} -> "Choose " <> state.db.categories[head].name
-      {:new_view, name} -> "First section for view #{name}"
-      {:move_category, id} -> "New parent for " <> state.db.categories[id].name
-      {:also_assign, id} -> "Actions for items joining #{state.db.categories[id].name}"
-      {:assign_items, [_]} -> "Assign the item to"
-      {:assign_items, ids} -> "Assign #{length(ids)} marked items to"
-      {:condition, id} -> "Conditions for #{state.db.categories[id].name}"
-      {:filter, :view} -> "Filter the view"
-      {:filter, {:section, i}} -> "Filter the #{section_name(state, i)} section"
-      {:sort_category, _, _} -> "Sort by the children of"
-      {:sort_note, _, _} -> "Choose the category whose notes to sort by"
-      :execute_root -> "Apply the conditions of this category and its children"
+      {:add_section, _} ->
+        "Section head"
+
+      {:change_section, _} ->
+        "Change section head"
+
+      {:add_column, _} ->
+        "Column head"
+
+      {:assign_column, _, head} ->
+        "Choose " <> state.db.categories[head].name
+
+      {:new_view, name} ->
+        "First section for view #{name}"
+
+      {:move_category, id} ->
+        "New parent for " <> state.db.categories[id].name
+
+      {:also_assign, id} ->
+        "Actions for items joining #{state.db.categories[id].name}"
+
+      {:excludes, id} ->
+        "Categories that may not share items with #{state.db.categories[id].name}"
+
+      {:assign_items, [_]} ->
+        "Assign the item to"
+
+      {:assign_items, ids} ->
+        "Assign #{length(ids)} marked items to"
+
+      {:condition, id} ->
+        "Conditions for #{state.db.categories[id].name}"
+
+      {:filter, :view} ->
+        "Filter the view"
+
+      {:filter, {:section, i}} ->
+        "Filter the #{section_name(state, i)} section"
+
+      {:sort_category, _, _} ->
+        "Sort by the children of"
+
+      {:sort_note, _, _} ->
+        "Choose the category whose notes to sort by"
+
+      :execute_root ->
+        "Apply the conditions of this category and its children"
     end
   end
 
@@ -1279,6 +1312,7 @@ defmodule Agenda.TUI.Render do
           else: actions_text(state.db, cat)
         ),
       conditions: if(cat.conditions == [], do: "(none)", else: conditions_text(state, cat)),
+      excludes: if(cat.excludes == [], do: "(none)", else: names_text(state.db, cat.excludes)),
       note: if(cat.note == "", do: "(none)", else: "#{String.length(cat.note)} characters")
     }
 
@@ -1290,6 +1324,7 @@ defmodule Agenda.TUI.Render do
       match_name: "Assign items mentioning it",
       also_match: "Also match",
       also_assign: "Assignment actions",
+      excludes: "Excludes",
       special: "Special action",
       conditions: "Assignment conditions",
       note: "Note"
@@ -1320,6 +1355,9 @@ defmodule Agenda.TUI.Render do
 
       _ when elem(mode.purpose, 0) == :also_assign ->
         [{:box, " ENTER cycles: + assign · - remove · none (dates, numbers: a box)"}]
+
+      _ when elem(mode.purpose, 0) == :excludes ->
+        [{:box, " ENTER toggles: x may not share items"}]
 
       _ when elem(mode.purpose, 0) in [:condition, :filter] ->
         [{:box, " ENTER cycles: + assigned · - not assigned · none"}]
@@ -1396,7 +1434,12 @@ defmodule Agenda.TUI.Render do
     end
   end
 
+  defp profile_marker(state, %{type: :picker, purpose: {:excludes, cat_id}}, id),
+    do: if(id in state.db.categories[cat_id].excludes, do: "x", else: " ")
+
   defp profile_marker(_state, _mode, _id), do: " "
+
+  defp names_text(db, ids), do: Enum.map_join(ids, ", ", &db.categories[&1].name)
 
   # "Taxes, not People": a category's assignment conditions in words.
   # "Sales, -Receivables, When=tomorrow, Amount=150" (R15b)

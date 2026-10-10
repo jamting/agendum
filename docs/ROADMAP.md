@@ -62,7 +62,6 @@ Rule numbers refer to `SPEC.md`.
 - [x] Actions: assign, remove, date, numeric, special (done, discard) (R15b)
 - [x] Utilities Execute: apply conditions and actions to existing items (ALT-E, ALT-X) (R15e)
 - [x] Break text-match assignments when the text changes (R15c)
-- [ ] General negative links (R9)
 - [x] Assignment questions: Confirm assignments, Utilities Questions (R16)
 - [ ] Text matching settings: match strength (partial matches, "Sometimes" confirm), ignore suffixes and accents, ignore quoted text (R16a)
 
@@ -94,6 +93,7 @@ Rule numbers refer to `SPEC.md`.
 ## Beyond Agenda
 
 - [x] Dates in other languages: `--lang=swedish`, `--fallback=english`; Swedish (R14c)
+- [x] General negative links between any two categories, from the patent: Category Properties ▸ Excludes (R9)
 - [ ] More date languages (one `Agenda.Core.DateLanguage` pack each)
 
 ## Ideas

@@ -79,6 +79,7 @@ defmodule Agenda.TUI.CategoryScreens do
     :also_match,
     :conditions,
     :also_assign,
+    :excludes,
     :special,
     :note
   ]
@@ -267,7 +268,7 @@ defmodule Agenda.TUI.CategoryScreens do
         State.pop(state)
 
       # filters, conditions and actions are set several at a time: the box stays open
-      :enter when elem(mode.purpose, 0) in [:filter, :condition, :also_assign] ->
+      :enter when elem(mode.purpose, 0) in [:filter, :condition, :also_assign, :excludes] ->
         pick(state, mode.purpose, current_id(rows, mode))
 
       :enter ->
@@ -437,6 +438,9 @@ defmodule Agenda.TUI.CategoryScreens do
 
   defp hierarchy_change(state, {:error, :cycle}),
     do: State.error(state, "A category cannot be moved under itself")
+
+  defp hierarchy_change(state, {:error, :excluded_lineage}),
+    do: State.error(state, "Not moved: a category would be under one it excludes")
 
   defp hierarchy_change(state, {:error, :empty}),
     do: State.error(state, "A category needs a name")
@@ -666,6 +670,31 @@ defmodule Agenda.TUI.CategoryScreens do
 
       true ->
         action_result(state, Core.set_action(state.db, cat_id, target, :assign))
+    end
+  end
+
+  # Negative links (R9): ENTER toggles one between the two categories.
+  defp pick(state, {:excludes, cat_id}, target) do
+    names = fn -> {state.db.categories[cat_id].name, state.db.categories[target].name} end
+
+    case Core.toggle_exclude(state.db, cat_id, target) do
+      {:ok, db} ->
+        State.change_db(state, db)
+
+      {:error, :self} ->
+        State.error(state, "A category cannot exclude itself")
+
+      {:error, :lineage} ->
+        State.error(state, "A category cannot exclude its parents or children")
+
+      {:error, :not_allowed} ->
+        State.error(state, "Only standard categories can exclude each other")
+
+      {:error, {:shared, items}} ->
+        {a, b} = names.()
+        what = if length(items) == 1, do: "1 item is", else: "#{length(items)} items are"
+        it = if length(items) == 1, do: "it", else: "them"
+        State.error(state, "#{what} in both #{a} and #{b}; move #{it} first")
     end
   end
 
@@ -920,6 +949,9 @@ defmodule Agenda.TUI.CategoryScreens do
 
           :also_assign ->
             open_picker(state, {:also_assign, cat.id}, nil)
+
+          :excludes ->
+            open_picker(state, {:excludes, cat.id}, nil)
 
           :special ->
             next = %{nil => :done, done: :discard, discard: nil}[cat.special]

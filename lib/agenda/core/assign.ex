@@ -8,6 +8,9 @@ defmodule Agenda.Core.Assign do
   * **Mutual exclusion.** If a category's parent has `exclusive: true`,
     assigning an item to one child removes it from that child's siblings and
     their subtrees. The same applies at every exclusive level above it.
+  * **Negative links** (R9). A category's `excludes` list names categories
+    that may not share an item with it: assigning an item to the category
+    (or below it) removes it from those and their subtrees.
   * **Category links.** A category's `also_assign` list sends its items on to
     other categories (patent FIG. 6).
   * **Automatic assignment.** An item whose text contains a category's name
@@ -51,6 +54,7 @@ defmodule Agenda.Core.Assign do
         db =
           db
           |> clear_exclusive_siblings(item_id, cat_id)
+          |> clear_excluded(item_id, cat_id)
           |> clear_lineage(item_id, cat_id)
           |> Database.link(item_id, cat_id)
 
@@ -356,13 +360,20 @@ defmodule Agenda.Core.Assign do
 
   @doc """
   True if an item cannot be in both categories because they sit under
-  different children of a mutually exclusive ancestor.
+  different children of a mutually exclusive ancestor, or because a
+  negative link joins them or their ancestors (R9).
   """
   @spec conflict?(db, id, id) :: boolean
   def conflict?(db, a, b) do
     path_a = [a | Database.ancestors(db, a)]
     path_b = [b | Database.ancestors(db, b)]
+    excluded?(db, path_a, path_b) or exclusive_conflict?(db, path_a, path_b)
+  end
 
+  defp excluded?(db, path_a, path_b),
+    do: Enum.any?(path_a, fn x -> Enum.any?(db.categories[x].excludes, &(&1 in path_b)) end)
+
+  defp exclusive_conflict?(db, path_a, path_b) do
     Enum.any?(Enum.zip(path_a, tl(path_a)), fn {child_a, parent} ->
       db.categories[parent].exclusive and
         case child_toward(path_b, parent) do
@@ -474,6 +485,24 @@ defmodule Agenda.Core.Assign do
   defp preference(db, cand, adjacent) do
     rank = Enum.find_index(adjacent, &Database.member?(db, &1, cand)) || length(adjacent)
     {rank, cand}
+  end
+
+  # R9: out of every category this one, or an ancestor, excludes.
+  defp clear_excluded(db, item_id, cat_id) do
+    [cat_id | Database.ancestors(db, cat_id)]
+    |> Enum.flat_map(&db.categories[&1].excludes)
+    |> Enum.reduce(db, &unassign(&2, item_id, &1))
+  end
+
+  @doc """
+  Whether some negative link joins a category to one of its ancestors
+  (which would leave the descendant no items), e.g. after a move (R9).
+  """
+  @spec excluded_lineage?(db) :: boolean
+  def excluded_lineage?(db) do
+    Enum.any?(db.categories, fn {id, cat} ->
+      Enum.any?(cat.excludes, &(&1 in Database.ancestors(db, id)))
+    end)
   end
 
   defp clear_exclusive_siblings(db, item_id, cat_id) do

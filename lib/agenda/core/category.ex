@@ -25,6 +25,9 @@ defmodule Agenda.Core.Category do
   * `special` – `:done` or `:discard`: the special action (R15b).
   * `also_assign` – category-to-category links (patent FIG. 6): items
     assigned here are also assigned to these categories.
+  * `excludes` – negative links (R9, patent FIG. 6; not in Agenda 2.0):
+    categories that may not share an item with this one. Kept on both
+    categories of a pair.
   """
 
   @type id :: pos_integer
@@ -39,6 +42,7 @@ defmodule Agenda.Core.Category do
           exclusive: boolean,
           match_name: boolean,
           also_assign: [id],
+          excludes: [id],
           conditions: [{id, :assigned | :not_assigned | Agenda.Core.RangeFilter.term_()}],
           also_match: String.t(),
           actions: [{id, :remove | :clear | {:set, String.t() | float}}],
@@ -56,6 +60,7 @@ defmodule Agenda.Core.Category do
     exclusive: false,
     match_name: true,
     also_assign: [],
+    excludes: [],
     conditions: [],
     also_match: "",
     actions: [],
