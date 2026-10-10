@@ -123,10 +123,11 @@ defmodule Agenda.Core.Assign do
   criteria, as used by conditions (R15) and filters (R28): every criterion
   must hold, except that `:assigned` criteria naming mutually exclusive
   categories are alternatives. Filters can also hold date and numeric
-  ranges (`Agenda.Core.RangeFilter`, R28a), read against `today`. An empty
+  ranges (`Agenda.Core.RangeFilter`, R28a), read against the clock `today`
+  (a date or an `Agenda.Core.Context`). An empty
   list is always met.
   """
-  @spec criteria_met?(db, id, [{id, term}], Date.t() | nil) :: boolean
+  @spec criteria_met?(db, id, [{id, term}], Agenda.Core.Context.clock() | nil) :: boolean
   def criteria_met?(db, item_id, criteria, today \\ nil) do
     {ranges, criteria} = Enum.split_with(criteria, &match?({_, {:range, _, _, _}}, &1))
 

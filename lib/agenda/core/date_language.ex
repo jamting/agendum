@@ -36,7 +36,7 @@ defmodule Agenda.Core.DateLanguage do
 
   @doc "Every language pack, the default (English) first."
   @spec packs() :: [pack]
-  def packs, do: [Agenda.Core.DateLanguage.English]
+  def packs, do: [Agenda.Core.DateLanguage.English, Agenda.Core.DateLanguage.Swedish]
 
   @doc "A pack by its name (\"english\"), ignoring case."
   @spec find(String.t()) :: {:ok, pack} | :error

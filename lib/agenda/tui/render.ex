@@ -1344,7 +1344,7 @@ defmodule Agenda.TUI.Render do
 
         {id, range} ->
           db.categories[id].name <>
-            " " <> Agenda.Core.RangeFilter.describe(db, range, state.today)
+            " " <> Agenda.Core.RangeFilter.describe(db, range, State.context(state))
       end)
 
     " [#{names}]"
@@ -1381,7 +1381,7 @@ defmodule Agenda.TUI.Render do
     heads = Enum.map(view.columns, &state.db.categories[&1.category_id].name)
 
     state.db
-    |> Agenda.Core.ViewModel.build(view, state.today)
+    |> Agenda.Core.ViewModel.build(view, State.context(state))
     |> Enum.map_join("\n\n", fn section ->
       header = Enum.join([section.category.name | heads], " | ")
 

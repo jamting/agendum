@@ -141,6 +141,25 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   8:00 am and 7:59 pm ("3:30" is 15:30); hours over 12 and a leading zero
   read as a 24-hour clock. When columns show "2026-10-13 15:00" and sort
   by date and time. A time never reuses a date's words ("at 12/24").
+- **R14c ✅ Date languages** (not in Agenda). Dates and times can be typed
+  in another language than English, chosen when the program starts:
+  `--lang=swedish`, with an optional second language, `--fallback=english`,
+  whose phrases are read as well (where both match the same words, the
+  main language wins; without a fallback only the main language and ISO
+  dates are read). It applies to every date typed: item text, date
+  columns, the When prompt and date filters. Nothing else changes: menus,
+  messages and how dates are shown stay as they are, and the file does
+  not record the language. Each language is a pack
+  (`Agenda.Core.DateLanguage`): its words, phrase patterns, day/month
+  order and clock. Swedish reads weekdays ("fredag", "på fre", "nästa
+  fredag", "förra måndagen", "i fredags" = the latest past Friday), days
+  ("idag", "i morgon", "i övermorgon", "i går", "i förrgår"), "den 5
+  november", "5:e nov", "den femte november", "5/11" as day/month, "om två
+  dagar", "för 3 veckor sedan", "nästa vecka", "i slutet av månaden",
+  times on a 24-hour clock ("kl 15", "kl. 9.30", "15:30"), "förmiddag",
+  "eftermiddag", "i kväll", "om 2 timmar". Bare abbreviations ("fre",
+  "sön") count in item text only after "på", "till" or "senast" ("tor" not
+  at all, being a name); "nu" and a lone "morgon" are not read.
 - **R14a ⏳ More date phrases.** Recurring dates ("every Monday", "every other Monday"), working days,
   quarters, "first Wednesday in November", "next April", dates from notes,
   and settings for date order (day/month) and the start of the week.

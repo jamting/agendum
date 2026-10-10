@@ -36,7 +36,8 @@ shell does terminal I/O and file I/O.
 | `Core.Assign`                             | Assignment rules: exclusion, category links, text matching, ambiguity resolution.                                                                       |
 | `Core.ViewModel`                          | Read model: projects a view to sections, rows and column cells.                                                                                         |
 | `Core.DateParser`                         | Date expressions relative to a given `today`.                                                                                                           |
-| `Core.DateLanguage` (+ `English`) | Language packs for reading dates: words, phrase patterns, day/month order, clock (R14c). `DateParser` does the arithmetic. |
+| `Core.Context` | The current time and the date languages, passed to the core wherever it reads typed dates (R14c). |
+| `Core.DateLanguage` (+ `English`, `Swedish`) | Language packs for reading dates: words, phrase patterns, day/month order, clock (R14c). `DateParser` does the arithmetic. |
 | `Core.Search` | Text search: whether an item's text or note matches (R37). |
 | `Core.RangeFilter` | Date and numeric filter ranges: checking, matching, the value a new item gets (R28a). |
 | `Core.NumberFormat` | Reading and showing numbers, and the calculations of numeric columns (R29). |

@@ -133,7 +133,7 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.set_alarm(db, item, minutes)`, `cancel_alarm/2` | write | Alarm 0-60 minutes before When (R38). `{:error, :no_when \| :minutes}`. |
 | `Core.ring_alarms(db, now)` | write | Rings due alarms, moving them to today's past alarms; returns the items that rang. |
 | `Core.alarm_list(db, today)`, `remove_past_alarm/2`, `clear_old_alarms/2` | read / write | Current and past alarms; past ones are forgotten the next day. |
-| `DateParser.parse_when(text, now)`, `extract_when(text, now)` | read | Dates with times of day (R14b). Core functions take a `clock`: a date, or a date and time. |
+| `DateParser.parse_when(text, now, opts)`, `extract_when(text, now, opts)` | read | Dates with times of day (R14b), in the languages of `opts[:languages]` (R14c). Core functions take a `clock`: a date, a date and time, or a `Core.Context` (time plus date languages). |
 | `Core.set_sort(db, view, :view \| {:section, i}, keys)` | write | Sort keys (`View.SortKey`, at most two); a section's `nil` uses the view's (R36). |
 | `Core.set_section_sort(db, view, sort, order)` | write | Show the section heads in category order, alphabetically or numerically (R36). |
 | `Core.entry_categories(db, view, i)` | read | Categories a new item in section `i` needs to pass the filters. |

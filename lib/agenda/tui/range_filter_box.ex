@@ -97,13 +97,16 @@ defmodule Agenda.TUI.RangeFilterBox do
            mode.scope,
            mode.cat_id,
            settings,
-           state.today
+           State.context(state)
          ) do
       {:ok, db} ->
         state |> State.pop() |> State.change_db(db)
 
       {:error, :invalid_date} ->
-        State.error(state, "Not a date: #{bad(mode, &Core.DateParser.parse(&1, state.today))}")
+        State.error(
+          state,
+          "Not a date: #{bad(mode, &Core.DateParser.parse(&1, state.today, Core.Context.parser_opts(State.context(state))))}"
+        )
 
       {:error, :not_a_number} ->
         State.error(state, "Not a number: #{bad(mode, &Core.NumberFormat.parse/1)}")

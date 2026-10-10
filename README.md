@@ -31,6 +31,7 @@ mix deps.get
 mix run -e 'Agenda.CLI.main(["--demo"])'     # sample data from the Agenda patent
 mix escript.build && ./agenda ~/work.agenda   # standalone binary
 ./agenda --mono ~/work.agenda                 # monochrome (also: --theme mono, or NO_COLOR=1)
+./agenda --lang=swedish --fallback=english f  # read dates typed in Swedish (and English)
 ```
 
 ## Quick tour

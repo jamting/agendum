@@ -146,7 +146,8 @@ defmodule Agenda.TUI.Update do
         today: state.today,
         now: state.now,
         width: state.width,
-        height: state.height
+        height: state.height,
+        languages: state.languages
       )
       | message: {:message, "Retrieved #{Path.basename(path)}"}
     }
@@ -547,7 +548,7 @@ defmodule Agenda.TUI.Update do
       section = if section_cat == state.db.main_id, do: nil, else: section_cat
 
       {db, id} =
-        Core.add_item(state.db, text, state.now,
+        Core.add_item(state.db, text, State.context(state),
           section: section,
           after: after_id,
           adjacent: adjacent
@@ -556,7 +557,7 @@ defmodule Agenda.TUI.Update do
       # a filtered view or section gives new items what the filter needs (R28)
       required = Core.entry_categories(db, state.view_id, sidx)
       db = Enum.reduce(required, db, &Core.assign(&2, id, &1))
-      values = Core.entry_values(db, state.view_id, sidx, state.today)
+      values = Core.entry_values(db, state.view_id, sidx, State.context(state))
       db = Core.apply_entry_values(db, id, values)
 
       state
@@ -574,7 +575,7 @@ defmodule Agenda.TUI.Update do
       old_when = Core.when_at(state.db.items[id])
 
       state
-      |> State.change_db(Core.edit_item(state.db, id, text, state.now))
+      |> State.change_db(Core.edit_item(state.db, id, text, State.context(state)))
       |> report_auto_assignments(id, MapSet.to_list(before), old_when)
     end
   end
@@ -593,7 +594,7 @@ defmodule Agenda.TUI.Update do
         do: clear_column(state.db, item_id, head),
         else: state.db
 
-    case Core.assign_by_name(db, item_id, head, text, state.now) do
+    case Core.assign_by_name(db, item_id, head, text, State.context(state)) do
       {:ok, db, _} ->
         State.change_db(state, db)
 
@@ -912,7 +913,8 @@ defmodule Agenda.TUI.Update do
         today: state.today,
         now: state.now,
         width: state.width,
-        height: state.height
+        height: state.height,
+        languages: state.languages
       )
       | dirty: true,
         saved_db: nil
@@ -935,7 +937,7 @@ defmodule Agenda.TUI.Update do
     when_id = state.db.special.when
 
     Enum.reduce_while(ids, {:ok, state.db}, fn id, {:ok, db} ->
-      case Core.assign_by_name(db, id, when_id, text, state.now) do
+      case Core.assign_by_name(db, id, when_id, text, State.context(state)) do
         {:ok, db, :date} -> {:cont, {:ok, db}}
         {:error, _} -> {:halt, :error}
       end
@@ -950,7 +952,7 @@ defmodule Agenda.TUI.Update do
   end
 
   defp prompt_action(state, {:when, item_id}, text) do
-    case Core.assign_by_name(state.db, item_id, state.db.special.when, text, state.now) do
+    case Core.assign_by_name(state.db, item_id, state.db.special.when, text, State.context(state)) do
       {:ok, db, :date} ->
         state
         |> State.change_db(db)
@@ -983,7 +985,7 @@ defmodule Agenda.TUI.Update do
   end
 
   defp prompt_action(state, {:item_date, item_id, cat_id}, text) do
-    case Core.assign_by_name(state.db, item_id, cat_id, text, state.now) do
+    case Core.assign_by_name(state.db, item_id, cat_id, text, State.context(state)) do
       {:ok, db, :date} ->
         State.change_db(state, db)
 
@@ -993,7 +995,7 @@ defmodule Agenda.TUI.Update do
   end
 
   defp prompt_action(state, {:item_number, item_id, cat_id}, text) do
-    case Core.assign_by_name(state.db, item_id, cat_id, text, state.now) do
+    case Core.assign_by_name(state.db, item_id, cat_id, text, State.context(state)) do
       {:ok, db, :number} -> State.change_db(state, db)
       {:error, :empty} -> State.change_db(state, Core.clear_number(state.db, item_id, cat_id))
       {:error, :not_a_number} -> State.error(state, "Not a number: #{String.trim(text)}")
@@ -1337,7 +1339,7 @@ defmodule Agenda.TUI.Update do
 
   defp do_perform(state, :recalc, _) do
     state
-    |> State.change_db(Core.reassign_all(state.db, state.now))
+    |> State.change_db(Core.reassign_all(state.db, State.context(state)))
     |> State.info("Automatic assignments recalculated")
   end
 

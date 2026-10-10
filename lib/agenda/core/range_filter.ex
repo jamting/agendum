@@ -6,12 +6,13 @@ defmodule Agenda.Core.RangeFilter do
 
   For a date category `from` and `to` are date expressions as typed
   ("2026-11-05", "monday", "today"), read again against today's date each
-  time, so "monday" to "friday" always means this week. For a numeric
+  time, so "monday" to "friday" always means this week, in the date
+  languages of the given clock (`Agenda.Core.Context`). For a numeric
   category they are numbers. Either end may be nil (open). An item without
   a date or number is never in a range. Pure.
   """
 
-  alias Agenda.Core.{Database, DateParser, NumberFormat}
+  alias Agenda.Core.{Context, Database, DateParser, NumberFormat}
 
   @type bound :: String.t() | float | nil
   @type term_ :: {:range, bound, bound, :inside | :outside}
@@ -25,7 +26,14 @@ defmodule Agenda.Core.RangeFilter do
   Checks and normalizes the settings typed in the filter box: dates must be
   readable (relative ones are kept as typed), numbers become floats.
   """
-  @spec build(Database.t(), Database.id(), String.t() | nil, String.t() | nil, atom, Date.t()) ::
+  @spec build(
+          Database.t(),
+          Database.id(),
+          String.t() | nil,
+          String.t() | nil,
+          atom,
+          Context.clock()
+        ) ::
           {:ok, term_} | {:error, :invalid_date | :not_a_number}
   def build(db, cat_id, from, to, where, today) do
     with {:ok, from} <- bound(db, cat_id, from, today),
@@ -47,7 +55,7 @@ defmodule Agenda.Core.RangeFilter do
         with :error <- NumberFormat.parse(text), do: {:error, :not_a_number}
 
       true ->
-        case DateParser.parse(text, today) do
+        case DateParser.parse(text, Context.today(today), Context.parser_opts(today)) do
           {:ok, _} -> {:ok, text}
           :error -> {:error, :invalid_date}
         end
@@ -55,7 +63,7 @@ defmodule Agenda.Core.RangeFilter do
   end
 
   @doc "Whether an item's date or number falls in (or outside) the range."
-  @spec met?(Database.t(), Database.id(), Database.id(), term_, Date.t() | nil) :: boolean
+  @spec met?(Database.t(), Database.id(), Database.id(), term_, Context.clock() | nil) :: boolean
   def met?(db, item_id, cat_id, {:range, from, to, where}, today) do
     case value(db, item_id, cat_id) do
       nil ->
@@ -100,8 +108,8 @@ defmodule Agenda.Core.RangeFilter do
     end
   end
 
-  defp resolve(text, today) do
-    case DateParser.parse(text, today) do
+  defp resolve(text, clock) do
+    case DateParser.parse(text, Context.today(clock), Context.parser_opts(clock)) do
       {:ok, date} -> date
       :error -> nil
     end
@@ -113,7 +121,7 @@ defmodule Agenda.Core.RangeFilter do
   for an outside range the day or number just before the start (or just
   after the end). Nil when the range is open at both ends.
   """
-  @spec entry_value(Database.t(), Database.id(), term_, Date.t() | nil) ::
+  @spec entry_value(Database.t(), Database.id(), term_, Context.clock() | nil) ::
           {:date, Date.t()} | {:number, float} | nil
   def entry_value(db, cat_id, {:range, from, to, where}, today) do
     from = resolve(from, today)
@@ -139,7 +147,7 @@ defmodule Agenda.Core.RangeFilter do
   defp step(number, n), do: number + n
 
   @doc "The range as the title bar shows it, in the file's formats."
-  @spec describe(Database.t(), term_, Date.t() | nil) :: String.t()
+  @spec describe(Database.t(), term_, Context.clock() | nil) :: String.t()
   def describe(db, {:range, from, to, where}, today) do
     show = fn
       nil ->

@@ -41,6 +41,7 @@ defmodule Agenda.TUI.State do
           last_search: Agenda.Core.Search.t() | nil,
           last_note_search: Agenda.TUI.NoteSearch.settings() | nil,
           key_map: boolean,
+          languages: [Agenda.Core.DateLanguage.pack()],
           last_key: term,
           undo: [map],
           redo: [map],
@@ -69,6 +70,7 @@ defmodule Agenda.TUI.State do
             last_search: nil,
             last_note_search: nil,
             key_map: true,
+            languages: [Agenda.Core.DateLanguage.English],
             last_key: nil,
             undo: [],
             redo: [],
@@ -87,10 +89,19 @@ defmodule Agenda.TUI.State do
         end),
       width: Keyword.get(opts, :width, 80),
       height: Keyword.get(opts, :height, 25),
+      languages: Keyword.get(opts, :languages, [Agenda.Core.DateLanguage.English]),
       view_id: hd(db.view_order),
       saved_db: db
     }
   end
+
+  @doc """
+  What the core needs to read typed dates: the current time and the date
+  languages chosen on the command line (R14c).
+  """
+  @spec context(t) :: Agenda.Core.Context.t()
+  def context(%__MODULE__{now: now, languages: languages}),
+    do: %Agenda.Core.Context{now: now, languages: languages}
 
   @spec view(t) :: Agenda.Core.View.t()
   def view(%__MODULE__{db: db, view_id: id}), do: Database.view(db, id)

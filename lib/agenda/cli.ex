@@ -7,15 +7,24 @@ defmodule Agenda.CLI do
       agenda --demo           open the sample file from the patent
       agenda --theme NAME     draw with a theme: classic (default) or mono
       agenda --mono           the same as --theme mono
+      agenda --lang NAME      read dates in item text in a language:
+                              english (default) or swedish
+      agenda --fallback NAME  also read dates in a second language
 
   Setting the NO_COLOR environment variable selects mono unless --theme
   names a theme.
   """
 
   alias Agenda.{Core, Sample, Store}
+  alias Agenda.Core.DateLanguage
   alias Agenda.TUI.{App, Layout, State, Theme}
 
-  @type options :: %{file: String.t() | nil, demo: boolean, theme: Theme.name()}
+  @type options :: %{
+          file: String.t() | nil,
+          demo: boolean,
+          theme: Theme.name(),
+          languages: [DateLanguage.pack()]
+        }
 
   def main(args) do
     case parse_args(args, System.get_env()) do
@@ -31,14 +40,28 @@ defmodule Agenda.CLI do
   def parse_args(args, env) do
     {opts, files, invalid} =
       OptionParser.parse(args,
-        strict: [demo: :boolean, help: :boolean, mono: :boolean, theme: :string],
+        strict: [
+          demo: :boolean,
+          help: :boolean,
+          mono: :boolean,
+          theme: :string,
+          lang: :string,
+          fallback: :string
+        ],
         aliases: [h: :help]
       )
 
     cond do
-      opts[:help] -> :help
-      invalid != [] -> {:error, "Unknown option: #{invalid |> hd() |> elem(0)} (try --help)"}
-      true -> with {:ok, theme} <- theme(opts, env), do: {:ok, options(opts, files, theme)}
+      opts[:help] ->
+        :help
+
+      invalid != [] ->
+        {:error, "Unknown option: #{invalid |> hd() |> elem(0)} (try --help)"}
+
+      true ->
+        with {:ok, theme} <- theme(opts, env),
+             {:ok, languages} <- languages(opts),
+             do: {:ok, options(opts, files, theme, languages)}
     end
   end
 
@@ -60,8 +83,23 @@ defmodule Agenda.CLI do
     end
   end
 
-  defp options(opts, files, theme),
-    do: %{file: List.first(files), demo: opts[:demo] == true, theme: theme}
+  # --lang (default english), then --fallback if given (R14c).
+  defp languages(opts) do
+    with {:ok, main} <- language(opts[:lang] || "english"),
+         {:ok, fallback} <- if(opts[:fallback], do: language(opts[:fallback]), else: {:ok, nil}) do
+      {:ok, Enum.uniq([main | List.wrap(fallback)])}
+    end
+  end
+
+  defp language(name) do
+    with :error <- DateLanguage.find(name) do
+      names = Enum.map_join(DateLanguage.packs(), ", ", & &1.name())
+      {:error, "Unknown language #{name}; choose #{names}"}
+    end
+  end
+
+  defp options(opts, files, theme, languages),
+    do: %{file: List.first(files), demo: opts[:demo] == true, theme: theme, languages: languages}
 
   defp start(options) do
     today = App.local_today()
@@ -75,7 +113,15 @@ defmodule Agenda.CLI do
 
     case result do
       {:ok, db, path} ->
-        state = db |> State.new(path: path, today: today, now: App.local_now()) |> Layout.settle()
+        state =
+          db
+          |> State.new(
+            path: path,
+            today: today,
+            now: App.local_now(),
+            languages: options.languages
+          )
+          |> Layout.settle()
 
         case App.run(state, options.theme) do
           :ok -> :ok

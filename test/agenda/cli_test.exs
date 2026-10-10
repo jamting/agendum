@@ -28,6 +28,23 @@ defmodule Agenda.CLITest do
              CLI.parse_args(["--theme", "classic"], %{"NO_COLOR" => "1"})
   end
 
+  test "the date language and a fallback language (R14c)" do
+    alias Agenda.Core.DateLanguage.{English, Swedish}
+
+    assert {:ok, %{languages: [English]}} = CLI.parse_args([], %{})
+    assert {:ok, %{languages: [Swedish]}} = CLI.parse_args(["--lang=swedish"], %{})
+
+    assert {:ok, %{languages: [Swedish, English], file: "f"}} =
+             CLI.parse_args(["--lang", "Swedish", "--fallback=english", "f"], %{})
+
+    # the same language twice counts once
+    assert {:ok, %{languages: [English]}} = CLI.parse_args(["--fallback=english"], %{})
+
+    assert {:error, message} = CLI.parse_args(["--lang=klingon"], %{})
+    assert message =~ "english, swedish"
+    assert {:error, _} = CLI.parse_args(["--fallback=klingon"], %{})
+  end
+
   test "unknown options are refused" do
     assert {:error, message} = CLI.parse_args(["--colour"], %{})
     assert message =~ "--colour"

@@ -60,6 +60,11 @@ Keep changes small and focused; one feature per commit.
 - Core functions that can fail return `{:ok, ...} | {:error, atom}`; the UI
   turns error atoms into messages.
 - Ids are positive integers from one shared counter (`db.next_id`).
+- Date words and phrases live in language packs (`Core.DateLanguage.*`),
+  never in `DateParser`, which only does date arithmetic. Core functions
+  that read typed dates take a clock: a `Date`, `NaiveDateTime` or
+  `Core.Context` (which also carries the date languages); the TUI passes
+  `State.context(state)`.
 - Dates display in the file's `Core.DateFormat` (default ISO 8601): use
   `DateFormat.date/2`, `time/2` or `date_time/3` with `db.date_format`. Dates
   offered for editing stay ISO 8601 (`DateParser.format/1`), which the parser reads back.

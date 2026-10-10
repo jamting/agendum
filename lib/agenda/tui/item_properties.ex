@@ -185,7 +185,8 @@ defmodule Agenda.TUI.ItemProperties do
   defp commit(state, _mode, %{target: {:item_text, item_id}, line: line}, _shown) do
     if String.trim(line.text) == "",
       do: State.error(state, "Item text cannot be empty"),
-      else: State.change_db(state, Core.edit_item(state.db, item_id, line.text, state.now))
+      else:
+        State.change_db(state, Core.edit_item(state.db, item_id, line.text, State.context(state)))
   end
 
   defp commit(state, mode, %{target: {:assign_category, item_id}, line: line}, shown) do

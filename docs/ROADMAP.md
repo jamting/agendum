@@ -82,6 +82,11 @@ Rule numbers refer to `SPEC.md`.
 - [x] Enforce "no direct assignment to both a category and its ancestor", including in moves (R7c)
 - [x] Outline-style promote/demote: a promoted category adopts its following siblings (R7d)
 
+## Beyond Agenda
+
+- [x] Dates in other languages: `--lang=swedish`, `--fallback=english`; Swedish (R14c)
+- [ ] More date languages (one `Agenda.Core.DateLanguage` pack each)
+
 ## Ideas
 
 - Multiple files open; a launcher listing recent files

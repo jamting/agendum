@@ -30,10 +30,11 @@ defmodule Agenda.Core.ViewModel do
   end
 
   @doc """
-  Builds a view. `today` is needed by date filters with relative dates
+  Builds a view. `today` (a date or an `Agenda.Core.Context`, which also
+  gives the date languages) is needed by date filters with relative dates
   (R28a); without it only ISO dates in filters can be read.
   """
-  @spec build(Database.t(), View.t(), Date.t() | nil) :: [SectionModel.t()]
+  @spec build(Database.t(), View.t(), Agenda.Core.Context.clock() | nil) :: [SectionModel.t()]
   def build(%Database{} = db, %View{} = view, today \\ nil) do
     view.sections
     |> sort_sections(db, view)

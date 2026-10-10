@@ -12,7 +12,7 @@ defmodule Agenda.Core do
   and so on.
   """
 
-  alias Agenda.Core.{Assign, Database, DateParser, NumberFormat, RangeFilter, View}
+  alias Agenda.Core.{Assign, Context, Database, DateParser, NumberFormat, RangeFilter, View}
   alias Agenda.Core.View.{Column, Section}
 
   @type db :: Database.t()
@@ -23,7 +23,7 @@ defmodule Agenda.Core do
   (needed for times like "in 2 hours" and for alarms). The core never reads
   the clock itself.
   """
-  @type clock :: Date.t() | NaiveDateTime.t()
+  @type clock :: Agenda.Core.Context.clock()
 
   @show_view "Show View"
 
@@ -94,9 +94,13 @@ defmodule Agenda.Core do
       db
     else
       now = now_of(today)
-      old = if old_text, do: DateParser.extract_when(old_text, now), else: :none
 
-      case {old, DateParser.extract_when(item.text, now)} do
+      old =
+        if old_text,
+          do: DateParser.extract_when(old_text, now, Context.parser_opts(today)),
+          else: :none
+
+      case {old, DateParser.extract_when(item.text, now, Context.parser_opts(today))} do
         {{:ok, _, _, phrase}, {:ok, _, _, phrase}} ->
           db
 
@@ -170,11 +174,8 @@ defmodule Agenda.Core do
 
   # --- times and alarms (R14b, R38) ---
 
-  defp date_of(%NaiveDateTime{} = now), do: NaiveDateTime.to_date(now)
-  defp date_of(%Date{} = today), do: today
-
-  defp now_of(%NaiveDateTime{} = now), do: now
-  defp now_of(%Date{} = today), do: NaiveDateTime.new!(today, ~T[00:00:00])
+  defp date_of(clock), do: Context.today(clock)
+  defp now_of(clock), do: Context.now(clock)
 
   @doc "An item's When date and time (midnight when it has no time), or nil."
   @spec when_at(Agenda.Core.Item.t()) :: NaiveDateTime.t() | nil
@@ -336,7 +337,7 @@ defmodule Agenda.Core do
         end
 
       field = Database.date_field(db, head_id) ->
-        case DateParser.parse_when(text, now_of(today)) do
+        case DateParser.parse_when(text, now_of(today), Context.parser_opts(today)) do
           {:ok, date, time} ->
             db = put_date(db, item_id, field, date)
 
@@ -1015,7 +1016,7 @@ defmodule Agenda.Core do
           :view | {:section, non_neg_integer},
           id,
           {:assigned | :not_assigned, String.t() | nil, String.t() | nil, :inside | :outside},
-          Date.t()
+          clock
         ) :: {:ok, db} | {:error, :not_a_range_category | :invalid_date | :not_a_number}
   def set_range_filter(db, view_id, scope, cat_id, {show, from, to, where}, today) do
     cond do
@@ -1055,7 +1056,7 @@ defmodule Agenda.Core do
   The dates and numbers a new item typed into section `index` gets from
   the date and numeric filters (R28a; see `RangeFilter.entry_value/4`).
   """
-  @spec entry_values(db, id, non_neg_integer, Date.t()) ::
+  @spec entry_values(db, id, non_neg_integer, clock) ::
           [{id, {:date, Date.t()} | {:number, float}}]
   def entry_values(db, view_id, index, today) do
     view = Database.view(db, view_id)
