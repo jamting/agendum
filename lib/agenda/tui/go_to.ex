@@ -11,23 +11,26 @@ defmodule Agenda.TUI.GoTo do
   def open(state) do
     current =
       case Layout.current_row(state) do
-        %{sidx: sidx} -> sidx
+        %{sidx: sidx} -> Enum.find_index(sections(state), &(elem(&1, 0) == sidx)) || 0
         _ -> 0
       end
 
     State.push(state, %{type: :goto, cursor: current})
   end
 
-  @doc "The names of the view's section heads, top to bottom."
-  def names(state),
-    do: Enum.map(State.view(state).sections, &state.db.categories[&1.category_id].name)
+  @doc "The names of the view's section heads, in the order shown."
+  def names(state), do: Enum.map(sections(state), &elem(&1, 1))
+
+  # {section index, name} of the sections shown, top to bottom.
+  defp sections(state),
+    do: for(%{kind: :section} = row <- Layout.rows(state), do: {row.sidx, row.category.name})
 
   def handle(state, mode, key) do
     count = length(names(state))
 
     case key do
       :esc -> State.pop(state)
-      :enter -> state |> State.pop() |> go(mode.cursor)
+      :enter when count > 0 -> state |> State.pop() |> go(mode.cursor)
       :up -> State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
       :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, count - 1)})
       :home -> State.put_mode(state, %{mode | cursor: 0})
@@ -55,7 +58,9 @@ defmodule Agenda.TUI.GoTo do
     end
   end
 
-  defp go(state, sidx) do
+  defp go(state, position) do
+    {sidx, _name} = Enum.at(sections(state), position)
+
     index =
       state
       |> Layout.rows()

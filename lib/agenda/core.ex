@@ -1131,6 +1131,14 @@ defmodule Agenda.Core do
     end)
   end
 
+  @doc """
+  How a view orders its section heads (User's Guide 15-20): `:none` (as
+  added), `:category` (hierarchy order), `:alpha` or `:numeric` (by name).
+  """
+  @spec set_section_sort(db, id, :none | :category | :alpha | :numeric, :asc | :desc) :: db
+  def set_section_sort(db, view_id, sort, order),
+    do: Database.update_view(db, view_id, &%{&1 | section_sort: sort, section_order: order})
+
   @doc "Sorts the views alphabetically (ALT-F5 in the view manager)."
   @spec sort_views(db) :: db
   def sort_views(db),

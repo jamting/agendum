@@ -36,6 +36,7 @@ defmodule Agenda.Core.ViewModel do
   @spec build(Database.t(), View.t(), Date.t() | nil) :: [SectionModel.t()]
   def build(%Database{} = db, %View{} = view, today \\ nil) do
     view.sections
+    |> sort_sections(db, view)
     |> Enum.map(fn section ->
       category = db.categories[section.category_id]
 
@@ -100,6 +101,32 @@ defmodule Agenda.Core.ViewModel do
       value -> NumberFormat.format(value, column.number, width: column.width)
     end
   end
+
+  # Section heads in category order, by name, or by name as a number with
+  # the other names last (User's Guide 15-20). The sort is stable.
+  defp sort_sections(sections, _db, %View{section_sort: :none}), do: sections
+
+  defp sort_sections(sections, db, %View{section_sort: :numeric, section_order: order}) do
+    {numbers, others} =
+      sections
+      |> Enum.map(&{&1, NumberFormat.parse(db.categories[&1.category_id].name)})
+      |> Enum.split_with(&match?({_, {:ok, _}}, &1))
+
+    numbers
+    |> Enum.sort_by(fn {_, {:ok, n}} -> n end, order)
+    |> Enum.concat(others)
+    |> Enum.map(&elem(&1, 0))
+  end
+
+  defp sort_sections(sections, db, %View{section_sort: :category, section_order: order}) do
+    position =
+      db |> Database.hierarchy() |> Enum.with_index() |> Map.new(fn {{id, _}, i} -> {id, i} end)
+
+    Enum.sort_by(sections, &position[&1.category_id], order)
+  end
+
+  defp sort_sections(sections, db, %View{section_sort: :alpha, section_order: order}),
+    do: Enum.sort_by(sections, &String.downcase(db.categories[&1.category_id].name), order)
 
   @doc """
   Orders items by sort keys (R36). The first key decides; the next breaks

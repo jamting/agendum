@@ -1060,9 +1060,9 @@ defmodule Agenda.TUI.Render do
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
-          {:box, " " <> Draw.pad(label, 12) <> ": "},
+          {:box, " " <> Draw.pad(label, 16) <> ": "},
           {if(i == mode.cursor, do: :box_selected, else: :box),
-           String.slice(value, 0, inner - 16)}
+           String.slice(value, 0, inner - 20)}
         ]
       end)
 

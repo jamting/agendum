@@ -11,7 +11,9 @@ defmodule Agenda.Core.View do
   some categories (R28), or whose date or number is in a range (R28a,
   `Agenda.Core.RangeFilter`); its `sort` keys order the items in every section
   (R36). `match` limits it to items whose text matches a search, as in
-  the Show View (R37).
+  the Show View (R37). `section_sort` shows the sections in category
+  order, alphabetically or numerically by name (`section_order`), instead
+  of the order they were added in (User's Guide 15-20).
   """
 
   defmodule SortKey do
@@ -76,7 +78,9 @@ defmodule Agenda.Core.View do
           hide_inherited: boolean,
           filter: [{Agenda.Core.Category.id(), Agenda.Core.View.filter_term()}],
           sort: [SortKey.t()],
-          match: Agenda.Core.Search.t() | nil
+          match: Agenda.Core.Search.t() | nil,
+          section_sort: :none | :category | :alpha | :numeric,
+          section_order: :asc | :desc
         }
 
   defstruct [
@@ -89,6 +93,8 @@ defmodule Agenda.Core.View do
     hide_inherited: false,
     filter: [],
     sort: [],
-    match: nil
+    match: nil,
+    section_sort: :none,
+    section_order: :asc
   ]
 end

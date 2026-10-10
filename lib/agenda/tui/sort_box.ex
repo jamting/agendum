@@ -9,7 +9,9 @@ defmodule Agenda.TUI.SortBox do
   or SPACE changes the highlighted row (→ and ← change the line number);
   Sort on cycles None, Item text, Category… and Category note…, the last
   two through the category box. A section can also use the view's
-  settings ("As the view"). ESC closes the box. Pure.
+  settings ("As the view"). The view's box also sorts the section heads
+  (Section sorting: None, Category order, Alphabetic, Numeric; Section
+  order). ESC closes the box. Pure.
   """
 
   alias Agenda.Core
@@ -18,7 +20,11 @@ defmodule Agenda.TUI.SortBox do
   alias Agenda.TUI.{CategoryScreens, State}
 
   @rows [:on, :order, :na, :sequence, :line, :then_on, :then_order]
-  def rows, do: @rows
+  @section_rows [:sections, :section_order]
+
+  @doc "The rows of the box: the view's box also sorts its section heads."
+  def rows(%{scope: :view}), do: @rows ++ @section_rows
+  def rows(_mode), do: @rows
 
   def open(state, scope), do: State.push(state, %{type: :sort, scope: scope, cursor: 0})
 
@@ -39,13 +45,13 @@ defmodule Agenda.TUI.SortBox do
         State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
 
       :down ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
+        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(rows(mode)) - 1)})
 
       k when k in [:enter, {:char, " "}, :right] ->
-        change(state, mode, Enum.at(@rows, mode.cursor))
+        change(state, mode, Enum.at(rows(mode), mode.cursor))
 
       :left ->
-        line(state, mode, Enum.at(@rows, mode.cursor), -1)
+        line(state, mode, Enum.at(rows(mode), mode.cursor), -1)
 
       _ ->
         state
@@ -87,6 +93,20 @@ defmodule Agenda.TUI.SortBox do
 
   defp change(state, mode, :line), do: line(state, mode, :line, 1)
 
+  # Section sorting (User's Guide 15-20): None → Category order →
+  # Alphabetic → Numeric → None; the order flips Ascending / Descending.
+  defp change(state, _mode, row) when row in @section_rows do
+    view = State.view(state)
+
+    {sort, order} =
+      case row do
+        :sections -> {next_section_sort(view.section_sort), view.section_order}
+        :section_order -> {view.section_sort, toggle(:order, view.section_order)}
+      end
+
+    State.change_db(state, Core.set_section_sort(state.db, state.view_id, sort, order))
+  end
+
   defp change(state, mode, row) do
     {index, field} =
       case row do
@@ -125,6 +145,11 @@ defmodule Agenda.TUI.SortBox do
   end
 
   defp line(state, _mode, _row, _step), do: state
+
+  defp next_section_sort(:none), do: :category
+  defp next_section_sort(:category), do: :alpha
+  defp next_section_sort(:alpha), do: :numeric
+  defp next_section_sort(:numeric), do: :none
 
   defp toggle(:order, :asc), do: :desc
   defp toggle(:order, :desc), do: :asc
@@ -180,8 +205,25 @@ defmodule Agenda.TUI.SortBox do
       {"Then by", describe(state.db, second)},
       {"Then order", second && order_text(second.order)}
     ]
+    |> Enum.concat(section_lines(state, mode))
     |> Enum.map(fn {label, value} -> {label, value || "-"} end)
   end
+
+  defp section_lines(state, %{scope: :view}) do
+    view = State.view(state)
+
+    sort =
+      %{none: "None", category: "Category order", alpha: "Alphabetic", numeric: "Numeric"}[
+        view.section_sort
+      ]
+
+    [
+      {"Section sorting", sort},
+      {"Section order", view.section_sort != :none && order_text(view.section_order)}
+    ]
+  end
+
+  defp section_lines(_state, _mode), do: []
 
   defp describe(_db, nil), do: "None"
   defp describe(_db, %SortKey{on: :text}), do: "Item text"

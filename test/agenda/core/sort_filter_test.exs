@@ -45,6 +45,47 @@ defmodule Agenda.Core.SortFilterTest do
       |> Map.get(:rows)
       |> Enum.map(& &1.item.text)
 
+  describe "sorting section heads (User's Guide 15-20)" do
+    setup %{db: db, view: v} do
+      db =
+        Enum.reduce(["People", "Priority", "Zoe", "Anna"], db, fn name, db ->
+          index = length(Database.view(db, v).sections)
+          Core.add_section(db, v, cat(db, name), index)
+        end)
+
+      {:ok, db, ten} = Core.add_category(db, db.main_id, "10")
+      {:ok, db, nine} = Core.add_category(db, db.main_id, "9")
+      db = db |> Core.add_section(v, ten, 5) |> Core.add_section(v, nine, 6)
+      %{db: db}
+    end
+
+    defp heads(db, v),
+      do: db |> ViewModel.build(Database.view(db, v)) |> Enum.map(& &1.category.name)
+
+    test "none keeps the order the sections were added in", %{db: db, view: v} do
+      assert heads(db, v) == ["Tasks", "People", "Priority", "Zoe", "Anna", "10", "9"]
+    end
+
+    test "alphabetic, ascending or descending", %{db: db, view: v} do
+      db = Core.set_section_sort(db, v, :alpha, :asc)
+      assert heads(db, v) == ["10", "9", "Anna", "People", "Priority", "Tasks", "Zoe"]
+      db = Core.set_section_sort(db, v, :alpha, :desc)
+      assert heads(db, v) == ["Zoe", "Tasks", "Priority", "People", "Anna", "9", "10"]
+    end
+
+    test "category order follows the hierarchy", %{db: db, view: v} do
+      db = Core.set_section_sort(db, v, :category, :asc)
+      assert heads(db, v) == ["Tasks", "Priority", "People", "Zoe", "Anna", "10", "9"]
+    end
+
+    test "numeric order puts names that are not numbers last", %{db: db, view: v} do
+      db = Core.set_section_sort(db, v, :numeric, :asc)
+      assert Enum.take(heads(db, v), 2) == ["9", "10"]
+      db = Core.set_section_sort(db, v, :numeric, :desc)
+      assert Enum.take(heads(db, v), 2) == ["10", "9"]
+    end
+  end
+
   describe "filters" do
     test "a view filter shows only items assigned to the category", %{db: db, view: v} do
       {:ok, db} = Core.cycle_filter(db, v, :view, cat(db, "High"))

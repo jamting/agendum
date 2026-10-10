@@ -92,6 +92,47 @@ defmodule Agenda.TUI.SortFilterTest do
     assert State.view(state).sort == []
   end
 
+  describe "sorting section heads" do
+    setup %{state: state} do
+      view = state.view_id
+      db = Core.add_section(state.db, view, cat(state, "Priority"), 1)
+      db = Core.add_section(db, view, cat(state, "Contact"), 1)
+      %{state: Agenda.TUI.Layout.settle(%{state | db: db})}
+    end
+
+    defp heads(state),
+      do: for(%{kind: :section, category: c} <- Agenda.TUI.Layout.rows(state), do: c.name)
+
+    test "the view's Sort box sorts the section heads", %{state: state} do
+      assert heads(state) == ["Calls", "Contact", "Priority"]
+      state = press(state, [{:f, 10}, "v", "o"] ++ List.duplicate(:down, 7))
+      assert screen(state) =~ ~r/Section sorting\s+: None/
+
+      # None -> Category order -> Alphabetic
+      state = press(state, [:enter, :enter])
+      assert screen(state) =~ ~r/Section sorting\s+: Alphabetic/
+      state = press(state, [:down, :enter])
+      assert screen(state) =~ ~r/Section order\s+: Descending/
+      assert heads(state) == ["Priority", "Contact", "Calls"]
+
+      # Alphabetic -> Numeric -> None
+      state = press(state, [:up, :enter, :enter])
+      assert State.view(state).section_sort == :none
+    end
+
+    test "a section's Sort box has no section rows", %{state: state} do
+      refute screen(press(state, [{:f, 10}, "v", "s", "s"])) =~ "Section sorting"
+    end
+
+    test "GO TO lists the sections in the order shown", %{state: state} do
+      state = %{state | db: Core.set_section_sort(state.db, state.view_id, :alpha, :desc)}
+      state = press(state, [{:alt_f, 5}, :enter])
+
+      assert %{kind: :section, category: %{name: "Priority"}} =
+               Agenda.TUI.Layout.current_row(state)
+    end
+  end
+
   test "sorting on a category uses the category box", %{state: state} do
     state = press(state, [{:f, 10}, "v", "o", :enter, :enter, "Prio", :enter])
     assert State.view(state).sort == [%SortKey{on: {:category, cat(state, "Priority")}}]

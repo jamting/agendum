@@ -135,6 +135,7 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.alarm_list(db, today)`, `remove_past_alarm/2`, `clear_old_alarms/2` | read / write | Current and past alarms; past ones are forgotten the next day. |
 | `DateParser.parse_when(text, now)`, `extract_when(text, now)` | read | Dates with times of day (R14b). Core functions take a `clock`: a date, or a date and time. |
 | `Core.set_sort(db, view, :view \| {:section, i}, keys)` | write | Sort keys (`View.SortKey`, at most two); a section's `nil` uses the view's (R36). |
+| `Core.set_section_sort(db, view, sort, order)` | write | Show the section heads in category order, alphabetically or numerically (R36). |
 | `Core.entry_categories(db, view, i)` | read | Categories a new item in section `i` needs to pass the filters. |
 | `Core.set_range_filter(db, view, scope, cat, {show, from, to, where}, today)` / `Core.remove_filter/4` | write | A date or numeric filter (R28a): items with a date or number in or outside a range, or without one. |
 | `Core.entry_values(db, view, i, today)` / `Core.apply_entry_values/3` | read / write | The dates and numbers a new item in section `i` gets from range filters, and giving them to it. |

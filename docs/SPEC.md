@@ -272,8 +272,12 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   entered" setting, so "On leaving a section" and ALT-S re-sorting are not
   needed. ALT-F5 in the category manager sorts the highlighted category's
   children alphabetically (after Y/N); in the view manager it sorts the
-  views. Not done: sorting section heads; Agenda's Numeric and Date
-  sequences for a category's children.
+  views. The view's Sort box also sorts the section heads (User's Guide
+  15-20): Section sorting None (the order they were added in), Category
+  order (as in the hierarchy), Alphabetic or Numeric (names that are not
+  numbers last), and Section order ascending or descending; the sections
+  are shown sorted, and GO TO lists them as shown. Not done: Agenda's
+  Numeric and Date sequences for a category's children.
 - **R37 ✅ Search** (User's Guide 15-1 to 15-5). ALT-F6 (or Search ▸ View)
   opens the Search box: the text, Match on (item text, note text, both),
   Direction (forward, backward, from the beginning) and Ignore case (yes by

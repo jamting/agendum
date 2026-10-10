@@ -73,6 +73,8 @@ erDiagram
         list filter "category ids: assigned, not, or a date/number range"
         list sort "SortKey list, at most two"
         map match "Search of the Show View, or nil"
+        atom section_sort "none, category, alpha or numeric"
+        atom section_order "asc or desc"
     }
     SECTION {
         int category_id FK
@@ -154,6 +156,8 @@ classDiagram
         +filter : [id and kind]
         +sort : [SortKey]
         +match : Search or nil
+        +section_sort : none, category, alpha, numeric
+        +section_order : asc or desc
     }
     class Section {
         +category_id : id
