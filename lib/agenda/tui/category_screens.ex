@@ -27,6 +27,10 @@ defmodule Agenda.TUI.CategoryScreens do
   def open_profile(state, item_id),
     do: State.push(state, %{type: :profile, item_id: item_id, cursor: 0})
 
+  @doc "The assignment profile for a group of marked items (User's Guide 4-17)."
+  def open_group_profile(state, item_ids),
+    do: State.push(state, %{type: :group_profile, item_ids: item_ids, cursor: 0})
+
   def open_props(state, cat_id), do: State.push(state, %{type: :props, cat_id: cat_id, cursor: 0})
 
   @doc "The `{category_id, depth}` rows a hierarchy screen lists."
@@ -50,7 +54,9 @@ defmodule Agenda.TUI.CategoryScreens do
   end
 
   defp all_rows(state, %{type: :catmgr}), do: Database.hierarchy(state.db)
-  defp all_rows(state, %{type: :profile}), do: state.db |> Database.hierarchy() |> tl()
+
+  defp all_rows(state, %{type: type}) when type in [:profile, :group_profile],
+    do: state.db |> Database.hierarchy() |> tl()
 
   # MAIN is a valid choice for sections, views and new parents only
   defp all_rows(state, %{type: :picker, root: nil, purpose: {tag, _}})
@@ -238,6 +244,34 @@ defmodule Agenda.TUI.CategoryScreens do
   end
 
   # --- assignment profile -----------------------------------------------------------------
+
+  # SPACE on a category no marked item is assigned to assigns them all;
+  # on one that some are assigned to (a number shows), it unassigns them all.
+  defp screen_key(state, %{type: :group_profile} = mode, rows, key) do
+    id = current_id(rows, mode)
+    db = state.db
+
+    case key do
+      k when k in [:esc, {:f, 3}, {:f, 6}] ->
+        State.pop(state)
+
+      k when k in [{:char, " "}, :enter, {:f, 7}] ->
+        cond do
+          Database.date_field(db, id) ->
+            State.error(state, "Set dates for marked items with ALT-F2 (When) or F4 (Done)")
+
+          group_count(db, mode.item_ids, id) > 0 ->
+            explicit = Enum.filter(mode.item_ids, &Database.explicit?(db, &1, id))
+            State.change_db(state, Enum.reduce(explicit, db, &Core.toggle_assignment(&2, &1, id)))
+
+          true ->
+            State.change_db(state, Enum.reduce(mode.item_ids, db, &Core.assign(&2, &1, id)))
+        end
+
+      _ ->
+        state
+    end
+  end
 
   defp screen_key(state, %{type: :profile} = mode, rows, key) do
     id = current_id(rows, mode)
@@ -456,6 +490,17 @@ defmodule Agenda.TUI.CategoryScreens do
       State.change_db(state, Core.add_column(state.db, state.view_id, id, index, width))
       | col: index + 1
     }
+  end
+
+  # ALT-M (MakeAssign): one item or all marked items
+  defp pick(state, {:assign_items, ids}, id) do
+    if Database.date_field(state.db, id) do
+      State.error(state, "Set dates with ALT-F2 (When) or F4 (Done)")
+    else
+      db = Enum.reduce(ids, state.db, &Core.assign(&2, &1, id))
+      noun = if length(ids) == 1, do: "Item", else: "#{length(ids)} items"
+      state |> State.change_db(db) |> State.info("#{noun} assigned to #{db.categories[id].name}")
+    end
   end
 
   defp pick(state, {:assign_column, item_id, _head}, id),
@@ -767,4 +812,8 @@ defmodule Agenda.TUI.CategoryScreens do
         "Condition on #{other} removed"
     end
   end
+
+  @doc "How many of the given items are explicitly assigned to a category."
+  def group_count(db, item_ids, cat_id),
+    do: Enum.count(item_ids, &Database.explicit?(db, &1, cat_id))
 end

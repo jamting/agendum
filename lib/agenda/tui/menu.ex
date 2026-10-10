@@ -28,7 +28,10 @@ defmodule Agenda.TUI.Menu do
          {"When", "Set the item's When date; overrides dates in the text (ALT-F2)", :when},
          {"Assign", "Show the item's assignment profile (F3)", :assign},
          {"Done", "Mark the item done / not done (F4)", :done},
-         {"Mark", "Mark or unmark the item (F7)", :mark},
+         {"Mark", "Mark or unmark the item; on a section head, all its items (F7)", :mark},
+         {"Unmark", "Unmark all marked items in the file (ALT-F7)", :unmark_all},
+         {"Categorize", "Assign the item, or all marked items, to a category (ALT-M)",
+          :make_assign},
          {"Move", "Move the item to another section (ALT-F10)", :move_item},
          {"Discard", "Delete the item from the file (ALT-F4)", :discard}
        ]},

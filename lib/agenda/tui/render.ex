@@ -14,7 +14,7 @@ defmodule Agenda.TUI.Render do
   alias Agenda.TUI.{CategoryScreens, Completion, Draw, Layout, Menu, State}
 
   @full_screen [:catmgr, :viewmgr, :help, :note]
-  @boxes [:picker, :profile, :props, :choice, :item_props]
+  @boxes [:picker, :profile, :props, :choice, :item_props, :group_profile, :scope]
 
   @spec render(State.t()) :: [Draw.line()]
   def render(%State{width: w} = state) do
@@ -74,8 +74,8 @@ defmodule Agenda.TUI.Render do
       state.edit != nil -> "EDIT"
       top && top.type == :menu -> "MENU"
       top && top.type == :move_item -> "MOVE"
-      top && top.type == :picker -> "CHOICES"
-      top && top.type == :profile -> "ASSIGN"
+      top && top.type in [:picker, :scope] -> "CHOICES"
+      top && top.type in [:profile, :group_profile] -> "ASSIGN"
       top && top.type in [:props, :choice, :item_props] -> "PROPS"
       base && base.type == :catmgr -> "CAT MGR"
       base && base.type == :viewmgr -> "VW MGR"
@@ -239,7 +239,12 @@ defmodule Agenda.TUI.Render do
   defp mode_keys(%{type: :picker}),
     do: [{"ENTER", "Select"}, {"INS", "New category"}, {"type", "Search"}, {"ESC", "Cancel"}]
 
-  defp mode_keys(%{type: :profile}), do: [{"SPACE", "Assign/Unassign"}, {"ESC", "Return"}]
+  defp mode_keys(%{type: type}) when type in [:profile, :group_profile],
+    do: [{"SPACE", "Assign/Unassign"}, {"ESC", "Return"}]
+
+  defp mode_keys(%{type: :scope}),
+    do: [{"M", "Marked items"}, {"C", "Current item"}, {"ENTER", "Select"}, {"ESC", "Cancel"}]
+
   defp mode_keys(%{type: :props}), do: [{"ENTER", "Change"}, {"ESC", "Return"}]
 
   defp mode_keys(%{type: :item_props}),
@@ -559,11 +564,14 @@ defmodule Agenda.TUI.Render do
      F4            Mark item done                  CTRL-K
      F5            Note
      F6            Item / category properties      ESC 6
-     F7            Mark item
+     F7            Mark item (on a section: all)  ALT-F7 unmark all, ALT-J next
      F8 / F9       View manager / category manager
      F10 or /      Menu
      DEL           Remove from section or column   fn-⌫
      ALT-F4        Discard item                    CTRL-D
+     ALT-M         Assign to a category (MakeAssign)   ESC m
+     With marked items, F4 DEL ALT-F2 ALT-F4 ALT-F10 ALT-M F3 ask:
+                   marked items (M) or the current item (C)
      ALT-F2        Set the When date (or menu Item When)
      ALT-F10       Move item to another section
      ALT-− / ALT-= Collapse / expand section (twice: all)
@@ -631,11 +639,18 @@ defmodule Agenda.TUI.Render do
       {:new_view, name} -> "First section for view #{name}"
       {:move_category, id} -> "New parent for " <> state.db.categories[id].name
       {:also_assign, id} -> "Also assign items of #{state.db.categories[id].name} to"
+      {:assign_items, [_]} -> "Assign the item to"
+      {:assign_items, ids} -> "Assign #{length(ids)} marked items to"
       {:condition, id} -> "Conditions for #{state.db.categories[id].name}"
     end
   end
 
   defp box_title(_state, %{type: :item_props}), do: "Item properties"
+
+  defp box_title(_state, %{type: :group_profile, item_ids: ids}),
+    do: "Assignments: #{length(ids)} marked items"
+
+  defp box_title(_state, %{type: :scope}), do: "Marked items"
 
   defp box_title(state, %{type: :profile, item_id: id}),
     do: "Assignments: " <> String.slice(state.db.items[id].text, 0, 40)
@@ -650,7 +665,7 @@ defmodule Agenda.TUI.Render do
     do: "Category properties: " <> state.db.categories[id].name
 
   defp box_content(state, %{type: type} = mode, inner, max_rows)
-       when type in [:picker, :profile] do
+       when type in [:picker, :profile, :group_profile] do
     rows = CategoryScreens.rows(state, mode)
     cursor = min(mode.cursor, max(length(rows) - 1, 0))
     top = max(cursor - max_rows + 1, 0)
@@ -675,6 +690,20 @@ defmodule Agenda.TUI.Render do
       if list == [], do: [[{:box, "  (no categories yet — press INS to create one)"}]], else: list
 
     list ++ [[], box_footer(state, mode, inner)]
+  end
+
+  # "Marked items or current item?" (User's Guide 13-2)
+  defp box_content(_state, %{type: :scope} = mode, _inner, _max_rows) do
+    options = ["Marked items (#{length(mode.marked)})", "Current item"]
+
+    choices =
+      options
+      |> Enum.with_index()
+      |> Enum.map(fn {label, i} ->
+        [{:box, "   "}, {if(i == mode.cursor, do: :box_selected, else: :box), " #{label} "}]
+      end)
+
+    [[{:box, " " <> scope_question(mode.action)}], []] ++ choices
   end
 
   defp box_content(state, %{type: :item_props} = mode, inner, max_rows) do
@@ -810,8 +839,19 @@ defmodule Agenda.TUI.Render do
     end
   end
 
+  defp box_footer(_state, %{type: :group_profile}, _inner),
+    do: [{:box, " N = marked items assigned · SPACE assigns or unassigns all"}]
+
   defp box_footer(_state, %{type: :profile}, _inner),
     do: [{:box, " * assigned  c by a condition  + via subcategory  SPACE"}]
+
+  defp profile_marker(state, %{type: :group_profile, item_ids: ids}, id) do
+    case CategoryScreens.group_count(state.db, ids, id) do
+      0 -> " "
+      n when n < 10 -> Integer.to_string(n)
+      _ -> "+"
+    end
+  end
 
   defp profile_marker(state, %{type: :profile, item_id: item_id}, id) do
     db = state.db
@@ -882,6 +922,18 @@ defmodule Agenda.TUI.Render do
 
       _ ->
         "ENTER edit · DEL remove · type to assign · F3 profile"
+    end
+  end
+
+  defp scope_question(action) do
+    case action do
+      :done -> "Mark as done:"
+      :discard -> "Discard:"
+      :remove -> "Remove from this section:"
+      :when -> "Set the When date of:"
+      :move_item -> "Move:"
+      :make_assign -> "Assign to a category:"
+      :profile -> "Show the assignments of:"
     end
   end
 

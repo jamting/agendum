@@ -139,6 +139,27 @@ defmodule Agenda.Core do
   @spec toggle_mark(db, id) :: db
   def toggle_mark(db, id), do: Database.update_item(db, id, &%{&1 | marked: not &1.marked})
 
+  @doc "Marks an item done today unless it already has a done date (bulk F4 DONE)."
+  @spec mark_done(db, id, Date.t()) :: db
+  def mark_done(db, id, today) do
+    Database.update_item(db, id, fn item ->
+      if item.done, do: item, else: %{item | done: today}
+    end)
+  end
+
+  @doc "Marked items, in item order (the group bulk commands act on)."
+  @spec marked_items(db) :: [id]
+  def marked_items(db), do: for(item <- Database.items(db), item.marked, do: item.id)
+
+  @doc "Marks (true) or unmarks (false) a group of items (F7 on a section head)."
+  @spec set_marked(db, [id], boolean) :: db
+  def set_marked(db, ids, marked),
+    do: Enum.reduce(ids, db, &Database.update_item(&2, &1, fn i -> %{i | marked: marked} end))
+
+  @doc "Unmarks every item in the file (ALT-F7 UNMKALL)."
+  @spec unmark_all(db) :: db
+  def unmark_all(db), do: set_marked(db, marked_items(db), false)
+
   @doc "Deletes an item from the whole file (ALT-F4 DISCARD)."
   @spec discard_item(db, id) :: db
   defdelegate discard_item(db, id), to: Database, as: :delete_item

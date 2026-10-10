@@ -260,6 +260,20 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   automatic completion over all categories (R32), asking for the date when
   a date category is chosen; INS creates exactly the typed name under MAIN;
   F3 opens the assignment profile. Not done: note files.
+- **R35 ✅ Marked items** (User's Guide 13-1 to 13-4, 4-5, 4-17). F7 marks
+  an item (♦); on a section head it marks every item in the section, or
+  unmarks them when all are marked. ALT-F7 unmarks everything; ALT-J jumps
+  to the next marked item in the view. With items marked, these commands
+  first ask "Marked items (N) / Current item": F4 done (marked items are
+  all set done), ALT-F4 discard (then Y/N), DEL remove from the current
+  section, ALT-F2 When date, ALT-F10 move (the items keep their order),
+  ALT-M MakeAssign (category box; also for a single item), and F3, which
+  shows a group assignment profile: a number beside each category says how
+  many marked items are in it, and SPACE assigns or unassigns them all. Our
+  deviation: marks belong to the item, not to one section, so a marked item
+  shows marked everywhere; a moved item leaves the first section of the
+  current view that holds it. Not done: copying marked items (no item copy
+  yet).
 
 ## 6. Out of scope for now
 

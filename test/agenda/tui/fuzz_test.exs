@@ -49,7 +49,10 @@ defmodule Agenda.TUI.FuzzTest do
     {:alt, "n"},
     {:alt, "p"},
     {:alt, "-"},
-    {:alt, "="}
+    {:alt, "="},
+    {:alt_f, 7},
+    {:alt, "j"},
+    {:alt, "m"}
   ]
 
   defp key do
