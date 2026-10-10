@@ -2,7 +2,8 @@
 
 A clone of Lotus Agenda (1988, DOS) in Elixir: a **pure functional core** plus a
 **terminal UI** that resembles the original. Read `docs/SPEC.md` (what Agenda
-does) and `docs/ARCHITECTURE.md` (how the code is laid out) before larger changes.
+does) and `docs/ARCHITECTURE.md` (how the code is laid out) before larger changes,
+and the ADRs in `docs/adr/` (why); record new lasting decisions as ADRs.
 For anything touching stored data or queries, also read `docs/DATA_MODEL.md`
 and `docs/DATA_ACCESS.md`, and keep them up to date (Mermaid diagrams included).
 

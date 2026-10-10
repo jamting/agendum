@@ -99,3 +99,18 @@ shell does terminal I/O and file I/O.
 See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and
 [`DATA_ACCESS.md`](DATA_ACCESS.md) for the query/update API and its
 algorithms. See `docs/adr/` for the reasoning behind the larger choices.
+
+## Architecture decision records
+
+| ADR                                                              | Decision                                                      |
+| ---------------------------------------------------------------- | ------------------------------------------------------------- |
+| [0001](adr/0001-functional-core-imperative-shell.md)             | Functional core, imperative shell; Elm-style TUI               |
+| [0002](adr/0002-own-terminal-layer.md)                           | Our own terminal layer on OTP raw mode, no TUI library         |
+| [0003](adr/0003-file-format.md)                                  | File format: versioned Erlang terms, upgraded on load          |
+| [0004](adr/0004-links-stored-membership-computed.md)             | Store explicit links, compute membership                       |
+| [0005](adr/0005-undo-by-snapshots.md)                            | Undo by database snapshots, recorded automatically             |
+| [0006](adr/0006-fidelity-and-extensions.md)                      | Faithful to Agenda 2.0, with marked extensions                 |
+| [0007](adr/0007-keyboard-strategy.md)                            | Agenda's keys first, with alternatives that always work        |
+| [0008](adr/0008-file-settings-and-personal-settings.md)          | What belongs in the file, and what belongs to the person       |
+| [0009](adr/0009-date-language-packs-and-context.md)              | Date language packs, and a context passed to the core          |
+| [0010](adr/0010-data-interchange.md)                             | Data interchange: JSON, and Agenda's structured files (proposed) |

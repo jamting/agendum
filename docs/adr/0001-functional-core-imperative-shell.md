@@ -20,6 +20,6 @@ perform I/O. The clock is read in the shell and passed in.
 
 - Almost everything is testable with plain function calls, including
   whole UI interactions as key sequences asserted against screen text.
-- Undo is trivial to add later (keep old values).
+- Undo is trivial to add later (keep old values). Done this way: ADR 0005.
 - The whole database is rebuilt on each change. That is fine for personal
   data sizes (thousands of items). Revisit with indexes if needed.
