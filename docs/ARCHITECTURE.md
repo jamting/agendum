@@ -122,3 +122,5 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0010](adr/0010-data-interchange.md)                             | Data interchange: JSON, and Agenda's structured files (proposed) |
 | [0011](adr/0011-conditions-and-actions-settle.md)                | Conditions and actions run in one step after every change      |
 | [0012](adr/0012-quality-gate.md)                                 | The quality gate: formatter, compiler, Credo, Dialyzer, tests  |
+| [0013](adr/0013-reading-dates-file-and-reader.md)                | Reading dates: the file's settings and the reader's language   |
+| [0014](adr/0014-negative-links.md)                               | Negative links between any two categories (an extension)       |
