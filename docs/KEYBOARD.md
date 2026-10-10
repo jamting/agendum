@@ -34,6 +34,7 @@ settings, as described in the second half of this guide.
 | Back to the previous view (LAST VW) | ALT-F8 | ESC then `*`, or menu View ▸ Last |
 | Set or cancel an alarm (Item Alarm) | ALT-A | ESC then `a`, or menu Item ▸ Alarm |
 | Make the item depend on the marked items, or clear its dependencies | ALT-O | ESC then `o` |
+| Execute all conditions and actions on all items / those of the highlighted category | ALT-X / ALT-E | ESC then `x` / `e`, or menu Category ▸ Execute |
 | Category manager: add a sibling below / above | ALT-D (or ALT-I, INS) / ALT-U | ESC then `d` / `u`, or **CTRL-N** |
 | Category manager: add a child / a new family after the parent | ALT-R / ALT-L | ESC then `r` / `l` |
 | Remove from section / column                      | DEL                   | fn-⌫ (forward delete)                                                 |

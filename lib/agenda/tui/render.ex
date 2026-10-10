@@ -29,6 +29,7 @@ defmodule Agenda.TUI.Render do
     :goto,
     :range_filter,
     :action_box,
+    :execute,
     :column_props,
     :alarm_list
   ]
@@ -127,7 +128,8 @@ defmodule Agenda.TUI.Render do
             :file_props,
             :column_props,
             :range_filter,
-            :action_box
+            :action_box,
+            :execute
           ] ->
         "PROPS"
 
@@ -355,6 +357,9 @@ defmodule Agenda.TUI.Render do
 
   defp mode_keys(%{type: :column_props}),
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
+
+  defp mode_keys(%{type: :execute}),
+    do: [{"↑↓", "Setting"}, {"SPACE", "Change"}, {"ENTER", "Run"}, {"ESC", "Cancel"}]
 
   defp mode_keys(%{type: :action_box}),
     do: [
@@ -750,6 +755,8 @@ defmodule Agenda.TUI.Render do
      ALT-A         Set or cancel an alarm            ESC a
      ALT-O         Depend on the marked items (&); with none marked,
                    clear the item's dependencies     ESC o
+     ALT-X / ALT-E Execute all conditions and actions / the section's
+                   category's, on all items (Category ▸ Execute)
      ALT-D / ALT-U Add section below / above
      ALT-R / ALT-L Add column right / left
      ←→ TAB        Move between item and columns
@@ -834,6 +841,7 @@ defmodule Agenda.TUI.Render do
       {:filter, {:section, i}} -> "Filter the #{section_name(state, i)} section"
       {:sort_category, _, _} -> "Sort by the children of"
       {:sort_note, _, _} -> "Choose the category whose notes to sort by"
+      :execute_root -> "Apply the conditions of this category and its children"
     end
   end
 
@@ -848,6 +856,8 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
   defp box_title(_state, %{type: :file_props}), do: "File properties: date display"
   defp box_title(_state, %{type: :goto}), do: "Go to section"
+
+  defp box_title(_state, %{type: :execute}), do: "Execute conditions and actions"
 
   defp box_title(state, %{type: :action_box} = mode) do
     kind = if Agenda.TUI.ActionBox.numeric?(state, mode), do: "Numeric", else: "Date"
@@ -1009,6 +1019,21 @@ defmodule Agenda.TUI.Render do
         [{:box, " Sample: " <> Agenda.TUI.ColumnProperties.sample(state, mode)}],
         [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]
       ]
+  end
+
+  defp box_content(state, %{type: :execute} = mode, _inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.ExecuteBox.lines(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        [
+          {:box, " " <> Draw.pad(label, 20) <> ": "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), value}
+        ]
+      end)
+
+    rows ++ [[], [{:box, " ENTER runs · on the first row: choose · SPACE changes"}]]
   end
 
   defp box_content(state, %{type: :action_box} = mode, inner, _max_rows) do

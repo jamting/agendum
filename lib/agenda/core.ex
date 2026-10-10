@@ -453,13 +453,16 @@ defmodule Agenda.Core do
   defp settle(db, before, item_id, clock) do
     db
     |> Assign.apply_conditions(item_id, clock)
-    |> run_actions(before, item_id, clock, map_size(db.categories) + 2)
+    |> run_actions(before, item_id, clock, map_size(db.categories) + 2, nil)
   end
 
-  defp run_actions(db, _before, _item_id, _clock, 0), do: db
+  defp run_actions(db, _before, _item_id, _clock, 0, _only), do: db
 
-  defp run_actions(db, before, item_id, clock, rounds) do
-    joined = joined_with_actions(db, before, item_id)
+  defp run_actions(db, before, item_id, clock, rounds, only) do
+    joined =
+      db
+      |> joined_with_actions(before, item_id)
+      |> Enum.filter(&(only == nil or MapSet.member?(only, &1)))
 
     if joined == [] or not Map.has_key?(db.items, item_id) do
       db
@@ -470,7 +473,7 @@ defmodule Agenda.Core do
         |> Enum.reduce(db, &apply_action(&2, item_id, &1, clock))
         |> Assign.apply_conditions(item_id, clock)
 
-      after_actions = run_actions(after_actions, db, item_id, clock, rounds - 1)
+      after_actions = run_actions(after_actions, db, item_id, clock, rounds - 1, only)
 
       joined
       |> Enum.map(&db.categories[&1].special)
@@ -541,6 +544,36 @@ defmodule Agenda.Core do
 
   defp apply_special(db, item_id, :done, clock), do: mark_done(db, item_id, clock)
   defp apply_special(db, item_id, :discard, _clock), do: Database.delete_item(db, item_id)
+
+  @doc """
+  Utilities Execute (R15e; User's Guide 20-19, 21-17): applies the text
+  matching, conditions and actions of the categories in `:root`'s family
+  (default MAIN: all) to the given items, which may have been in the file
+  before those were set. Actions run for the assignments this makes; with
+  `old_assignments: true`, also for the ones the items already had.
+  `:clock` reads date conditions and actions.
+  """
+  @spec execute(db, [id], keyword) :: db
+  def execute(db, item_ids, opts \\ []) do
+    root = opts[:root] || db.main_id
+    only = if root == db.main_id, do: nil, else: MapSet.new(Database.subtree(db, root))
+    clock = opts[:clock]
+    rounds = map_size(db.categories) + 2
+
+    Enum.reduce(item_ids, db, fn id, db ->
+      if Map.has_key?(db.items, id) do
+        # as if the item had just arrived, every membership counts as new
+        before = if opts[:old_assignments], do: %{db | items: Map.delete(db.items, id)}, else: db
+
+        db
+        |> Assign.auto_assign(id, [], only)
+        |> Assign.apply_conditions(id, clock, only)
+        |> run_actions(before, id, clock, rounds, only)
+      else
+        db
+      end
+    end)
+  end
 
   @doc """
   Sets one of a category's actions on `target` (R15b; User's Guide 21-3 to

@@ -192,6 +192,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
   defp dispatch(state, %{type: :goto} = m, key), do: GoTo.handle(state, m, key)
 
+  defp dispatch(state, %{type: :execute} = m, key),
+    do: Agenda.TUI.ExecuteBox.handle(state, m, key)
+
   defp dispatch(state, %{type: :action_box} = m, key),
     do: Agenda.TUI.ActionBox.handle(state, m, key)
 
@@ -261,6 +264,8 @@ defmodule Agenda.TUI.Update do
       {:alt, "v"} -> perform(state, {:toggle_view, :hide_empty})
       {:alt, "i"} -> insert(state, row)
       {:alt, "o"} -> dependency(state, row)
+      {:alt, "x"} -> Agenda.TUI.ExecuteBox.run(state, state.db.main_id, :all)
+      {:alt, "e"} -> execute_category(state, row)
       {:alt_f, 6} -> SearchBox.open(state, :view)
       {:alt, "a"} -> perform(state, :alarm)
       {:alt_f, 8} -> perform(state, :last_view)
@@ -462,6 +467,13 @@ defmodule Agenda.TUI.Update do
     do: CategoryScreens.open_props(state, cat.id)
 
   defp props(state, nil), do: state
+
+  # ALT-E: the conditions and actions of the highlighted section's category
+  # (or the item's section) and its children, on all items (R15e).
+  defp execute_category(state, nil), do: state
+
+  defp execute_category(state, row),
+    do: Agenda.TUI.ExecuteBox.run(state, row.category.id, :all)
 
   # ALT-O (User's Guide 13-12): make the item depend on the marked items,
   # or, with nothing marked, clear its dependencies.
@@ -1351,6 +1363,7 @@ defmodule Agenda.TUI.Update do
   end
 
   defp do_perform(state, :file_props, _), do: FileProperties.open(state)
+  defp do_perform(state, :execute, _), do: Agenda.TUI.ExecuteBox.open(state)
 
   defp do_perform(state, :column_props, %{kind: :item}) when state.col > 0 do
     column = Enum.at(State.view(state).columns, state.col - 1)

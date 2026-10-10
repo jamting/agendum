@@ -66,6 +66,8 @@ defmodule Agenda.TUI.FuzzTest do
     {:alt, "t"},
     {:alt, "q"},
     {:alt, "o"},
+    {:alt, "x"},
+    {:alt, "e"},
     :tick
   ]
 

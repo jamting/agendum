@@ -249,8 +249,17 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   Actions make explicit assignments, which stay when the triggering one
   is broken, and do not run again when an item changes while it stays in
   the category. Not done: the Export special action (with structured
-  files, Milestone 4), turning actions off per category or file, and
-  Utilities Execute to run actions on items already in a category (next).
+  files, Milestone 4) and turning actions off per category or file.
+- **R15e ✅ Utilities Execute** (User's Guide 20-19 to 20-21, 21-17). New
+  conditions, text conditions and actions do not reach items already in
+  the file until executed. Category ▸ Execute opens the Execute box: Apply
+  conditions of (a category and its children; MAIN for all), Against (all
+  items, the current item, the marked items, the items in the section or
+  the view) and Apply actions to (new assignments only, or old & new:
+  the actions also run for assignments the items already had). ALT-X
+  executes everything on all items; ALT-E the highlighted category's
+  family (in a view: the section's category). Category ▸ Recalc still
+  re-runs automatic assignment and dating for every item.
 - **R15c ✅ Text matches as conditional assignments** (User's Guide 18-3).
   An assignment made because the item's text matched a category (its name,
   short name or text conditions) is conditional, marked "(c)" in Item

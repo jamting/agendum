@@ -80,9 +80,13 @@ defmodule Agenda.Core.Assign do
   Date conditions with relative dates (R15a) are read against `clock` (a
   date or an `Agenda.Core.Context`); without one, only ISO dates are read.
   """
-  @spec apply_conditions(db, id, Agenda.Core.Context.clock() | nil) :: db
-  def apply_conditions(db, item_id, clock \\ nil) do
-    with_conditions = for {id, %{conditions: [_ | _]}} <- db.categories, do: id
+  @spec apply_conditions(db, id, Agenda.Core.Context.clock() | nil, MapSet.t(id) | nil) :: db
+  def apply_conditions(db, item_id, clock \\ nil, only \\ nil) do
+    with_conditions =
+      for {id, %{conditions: [_ | _]}} <- db.categories,
+          only == nil or MapSet.member?(only, id),
+          do: id
+
     rounds = length(with_conditions) + 2
     settle_conditions(db, item_id, Enum.sort(with_conditions), rounds, clock)
   end
@@ -379,14 +383,15 @@ defmodule Agenda.Core.Assign do
   `adjacent` lists ids of neighbouring items in the view, nearest first
   (previous item, then next item), and is used to resolve ambiguity.
   """
-  @spec auto_assign(db, id, [id]) :: db
-  def auto_assign(db, item_id, adjacent \\ []) do
+  @spec auto_assign(db, id, [id], MapSet.t(id) | nil) :: db
+  def auto_assign(db, item_id, adjacent \\ [], only \\ nil) do
     text = db.items[item_id].text
     explicit = Database.explicit_categories(db, item_id)
 
     accepted =
       db
       |> matching_categories(text)
+      |> Enum.filter(&(only == nil or MapSet.member?(only, &1)))
       # already a member (directly, or through a more specific category)
       |> Enum.reject(&Database.member?(db, item_id, &1))
       |> Enum.reject(fn cand -> Enum.any?(explicit, &conflict?(db, cand, &1)) end)

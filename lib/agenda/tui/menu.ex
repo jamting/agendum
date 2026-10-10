@@ -41,7 +41,9 @@ defmodule Agenda.TUI.Menu do
        [
          {"Manager", "Open the category manager (F9)", :category_manager},
          {"Add", "Add a category under MAIN", :add_category},
-         {"Recalc", "Re-run automatic assignment for every item", :recalc}
+         {"Recalc", "Re-run automatic assignment for every item", :recalc},
+         {"Execute", "Apply conditions and actions to existing items (ALT-X all, ALT-E one)",
+          :execute}
        ]},
       {"View", "Change the current view or create new ones",
        [

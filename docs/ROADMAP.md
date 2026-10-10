@@ -56,7 +56,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Date and numeric conditions, re-checked when the date changes (R15a)
 - [x] "Also match" text conditions (R15d)
 - [x] Actions: assign, remove, date, numeric, special (done, discard) (R15b)
-- [ ] Utilities Execute: apply conditions and actions to existing items (ALT-E, ALT-X)
+- [x] Utilities Execute: apply conditions and actions to existing items (ALT-E, ALT-X) (R15e)
 - [x] Break text-match assignments when the text changes (R15c)
 - [ ] General negative links (R9)
 - [ ] Assignment questions ("Agenda suggests…", Utilities Questions)

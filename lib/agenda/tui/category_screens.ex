@@ -192,6 +192,9 @@ defmodule Agenda.TUI.CategoryScreens do
       {:alt, "u"} ->
         insert_category(state, id, :above)
 
+      {:alt, "e"} ->
+        Agenda.TUI.ExecuteBox.run(state, id, :all)
+
       {:alt, "l"} ->
         insert_category(state, id, :uncle)
 
@@ -598,6 +601,8 @@ defmodule Agenda.TUI.CategoryScreens do
       State.change_db(state, db)
     end
   end
+
+  defp pick(state, :execute_root, id), do: Agenda.TUI.ExecuteBox.set_root(state, id)
 
   defp pick(state, {:sort_note, scope, index}, id),
     do: Agenda.TUI.SortBox.set_note(state, scope, index, id)
