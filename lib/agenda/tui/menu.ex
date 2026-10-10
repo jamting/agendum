@@ -17,7 +17,7 @@ defmodule Agenda.TUI.Menu do
        [
          {"Retrieve", "Open an existing Agenda file (CTRL-O)", :retrieve},
          {"Save", "Save the current file (CTRL-S)", :save},
-         {"SaveAs", "Save the current file under a new name", :save_as},
+         {"Write", "Write the file under a new name (Save As)", :save_as},
          {"New", "Create a new, empty file", :new_file},
          {"Dating", "Turn When dates read from item text on or off", :toggle_auto_date}
        ]},
@@ -27,12 +27,12 @@ defmodule Agenda.TUI.Menu do
          {"Note", "Edit the item's note (F5)", :note},
          {"When", "Set the item's When date; overrides dates in the text (ALT-F2)", :when},
          {"Assign", "Show the item's assignment profile (F3)", :assign},
-         {"Done", "Mark the item done / not done (F4)", :done},
+         {"Finished", "Mark the item done / not done (F4)", :done},
          {"Mark", "Mark or unmark the item; on a section head, all its items (F7)", :mark},
          {"Unmark", "Unmark all marked items in the file (ALT-F7)", :unmark_all},
          {"Categorize", "Assign the item, or all marked items, to a category (ALT-M)",
           :make_assign},
-         {"Move", "Move the item to another section (ALT-F10)", :move_item},
+         {"Reposition", "Move the item to another section or position (ALT-F10)", :move_item},
          {"Discard", "Delete the item from the file (ALT-F4)", :discard}
        ]},
       {"Category", "Work with categories",
@@ -59,8 +59,8 @@ defmodule Agenda.TUI.Menu do
           ]},
          {"Column", "Add, remove or resize columns",
           [
-            {"Right", "Add a column right of the current one (ALT-R)", :column_right},
-            {"Left", "Add a column left of the current one (ALT-L)", :column_left},
+            {"After", "Add a column after (right of) the current one (ALT-R)", :column_right},
+            {"Before", "Add a column before (left of) the current one (ALT-L)", :column_left},
             {"Remove", "Remove the highlighted column", :remove_column},
             {"Wider", "Make the highlighted column wider", :wider},
             {"Narrower", "Make the highlighted column narrower", :narrower}

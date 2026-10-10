@@ -67,6 +67,9 @@ Keep changes small and focused; one feature per commit.
   keyboards lack INS/HOME/END and terminals never pass ⌘, so every command
   needs a CTRL (or ESC-prefixed) key. Document it in `docs/KEYBOARD.md` and
   the F1 help. CTRL-I/M/H/[ are unusable (they are TAB/ENTER/BACKSPACE/ESC).
+- Menu entries are chosen by first letter, so every level of `TUI.Menu.tree/0`
+  needs unique first letters (`test/agenda/tui/menu_test.exs` checks this).
+  Prefer Agenda's own command names (User's Guide, Appendix A).
 - Undo is automatic: any key that changes `state.db` records one step in
   `TUI.History`. Do not record history by hand. Keep one user action = one
   database change, so one undo reverses it.
