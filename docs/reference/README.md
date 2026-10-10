@@ -6,7 +6,9 @@
   subsumption, views with sections and columns, automatic assignment, and
   ambiguity resolution.
 - Lotus Agenda 2.0 manuals (User's Guide, Quick Start, Setting Up Agenda,
-  Definition Files, Macros): https://archive.org/details/lotus-agenda-users-guide.
-  Plain-text OCR: `https://archive.org/download/lotus-agenda-users-guide/Users%20Guide_djvu.txt`.
+  Starter Applications, Working with Definition Files, Working with Macros):
+  https://archive.org/details/lotus-agenda-users-guide. Their plain-text OCR
+  is in this folder (`*_djvu.txt`). The PDFs (`*_text.pdf`) are git-ignored;
+  download them from archive.org and put them here if you want them.
 - Kaplan, Kapor, Belove, Landsman, Drake: "Agenda: A Personal Information
   Manager", _Communications of the ACM_ 33(7), 1990.
