@@ -24,6 +24,7 @@ defmodule Agenda.TUI.Render do
     :scope,
     :sort,
     :search_box,
+    :note_search,
     :alarm_list
   ]
 
@@ -92,7 +93,7 @@ defmodule Agenda.TUI.Render do
       top && top.type in [:profile, :group_profile] -> "ASSIGN"
       top && top.type in [:props, :choice, :item_props] -> "PROPS"
       top && top.type == :sort -> "SORT"
-      top && top.type in [:search_box, :searching] -> "SEARCH"
+      top && top.type in [:search_box, :searching, :note_search] -> "SEARCH"
       base && base.type == :catmgr -> "CAT MGR"
       base && base.type == :viewmgr -> "VW MGR"
       base && base.type == :note -> "NOTE"
@@ -287,7 +288,14 @@ defmodule Agenda.TUI.Render do
   defp mode_keys(%{type: :choice}),
     do: [{"↑↓", "Highlight"}, {"ENTER", "Select"}, {"ESC", "Cancel"}]
 
-  defp mode_keys(%{type: :note}), do: [{"ESC", "Return"}, {"F5", "Return"}]
+  defp mode_keys(%{type: :note, replacing: r}) when r != nil,
+    do: [{"Y", "Replace"}, {"N", "Skip"}, {"ESC", "Stop"}]
+
+  defp mode_keys(%{type: :note}),
+    do: [{"ESC", "Return"}, {"F5", "Return"}, {"ALT-F6", "Search"}, {"ALT-S", "Next"}]
+
+  defp mode_keys(%{type: :note_search}),
+    do: [{"↑↓", "Setting"}, {"SPACE", "Change"}, {"ENTER", "Search"}, {"ESC", "Cancel"}]
 
   defp mode_keys(%{type: :menu}),
     do: [{"←→", "Highlight"}, {"ENTER", "Select"}, {"letter", "Select"}, {"ESC", "Back"}]
@@ -576,9 +584,18 @@ defmodule Agenda.TUI.Render do
       edit.lines
       |> Enum.with_index()
       |> Enum.map(fn {text, row} ->
-        if row == edit.row,
-          do: [{:normal, " "}] ++ Draw.field(text, edit.col, :normal),
-          else: [{:normal, " " <> text}]
+        case Map.get(mode, :match) do
+          {^row, col, len} ->
+            {before, rest} = String.split_at(text, col)
+            {found, after_} = String.split_at(rest, len)
+            [{:normal, " " <> before}, {:edit_cursor, found}, {:normal, after_}]
+
+          _ when row == edit.row ->
+            [{:normal, " "}] ++ Draw.field(text, edit.col, :normal)
+
+          _ ->
+            [{:normal, " " <> text}]
+        end
       end)
       |> Enum.drop(top)
 
@@ -635,6 +652,11 @@ defmodule Agenda.TUI.Render do
      DEL           Discard category                CTRL-D
      F6            Properties (exclusive, short name, links)
      ESC / F9      Return to the view
+
+   In a note (F5)
+     ALT-F6        Search / replace text            ESC ^
+     ALT-S         Find the next occurrence         ESC s
+     ESC / F5      Save the note and return
 
    While typing
      ←→ HOME END   Move          CTRL-A / CTRL-E   Start / end of line
@@ -694,6 +716,7 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :scope}), do: "Marked items"
   defp box_title(_state, %{type: :alarm_list}), do: "Alarm list"
   defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
+  defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
 
   defp box_title(_state, %{type: :search_box, scope: :file}),
     do: "Search the whole file (Show View)"
@@ -818,6 +841,24 @@ defmodule Agenda.TUI.Render do
       end)
 
     rows ++ [[], [{:box, " Pat* finds Pat, Patty… · (a phrase) · ENTER searches"}]]
+  end
+
+  defp box_content(_state, %{type: :note_search} = mode, inner, _max_rows) do
+    rows =
+      mode
+      |> Agenda.TUI.NoteSearch.lines()
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        label = [{:box, " " <> Draw.pad(label, 19) <> ": "}]
+
+        case value do
+          {:line, line} when i == mode.cursor -> label ++ field(line, inner - 23, :edit)
+          {:line, line} -> label ++ [{:box, line.text}]
+          text -> label ++ [{if(i == mode.cursor, do: :box_selected, else: :box), text}]
+        end
+      end)
+
+    rows ++ [[], [{:box, " Finds the text anywhere · ALT-S in the note: next one"}]]
   end
 
   defp box_content(state, %{type: :sort} = mode, inner, _max_rows) do

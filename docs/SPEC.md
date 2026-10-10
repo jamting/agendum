@@ -231,7 +231,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   returns to the previous view. Text rules: every word must appear as a
   whole word, "Pat*" matches any ending, "(a phrase)" must appear as
   written. Not done: Agenda's other text-condition symbols (? ; , ~ !),
-  search and replace in notes, and items in collapsed sections are skipped.
+  and items in collapsed sections are skipped. Searching inside a note is
+  R39.
 - **R38 ✅ Clock and alarms** (User's Guide 10-16 to 10-20). The title bar
   shows the date and time. ALT-A (Item ▸ Alarm) sets an alarm to ring 0
   to 60 minutes (default 5) before an item's When date and time; the item
@@ -243,6 +244,21 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   When date (Agenda let you choose the date category); the alarm list is a
   box rather than a Show View with !Current Alarms! / !Past Alarms!
   sections; ringing is not an undo step.
+- **R39 ✅ Search and replace in a note** (User's Guide 15-6 to 15-8).
+  ALT-F6 in a note opens the Search/Replace box: Search for, Replace text
+  (No by default; Yes adds Replace with, Global replacement (No) and
+  Confirm replacement (Yes)), Direction (Forward or Backward) and Ignore
+  case (Yes). The text is matched as written, anywhere in a line. A search
+  moves the cursor to the next occurrence and highlights it; ALT-S finds
+  the next one and beeps when there are no more. A replacement replaces
+  the next occurrence, or every occurrence when global; when confirming,
+  each occurrence is highlighted and Y replaces it, N skips it, ESC stops.
+  Our choices: the search starts at the cursor and, when nothing is found
+  after it, continues from the top (backward: the bottom), since a note
+  opens with the cursor at its end; a global replacement covers the whole
+  note; the box remembers its last settings; no length limit (Agenda
+  allowed 25 characters); text never matches across lines. The note is
+  saved when it is closed, so all replacements are one undo step.
 
 ## 5. User interface (Agenda 2.0 conventions)
 

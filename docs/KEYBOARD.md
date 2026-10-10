@@ -22,6 +22,7 @@ settings, as described in the second half of this guide.
 | Assign the item or marked items to a category (MakeAssign) | ALT-M | ESC then `m` (Option-m), or menu Item ▸ Categorize |
 | Sort settings for the section (in a view); sort a family (category manager); sort views (view manager) | ALT-F5 | ESC then `%` |
 | Search this view; then next / previous match | ALT-F6; ALT-N / ALT-P | ESC then `^`; ESC then `n` / `p` |
+| In a note: search / replace; find the next occurrence | ALT-F6; ALT-S | ESC then `^`; ESC then `s` |
 | Back to the previous view (LAST VW) | ALT-F8 | ESC then `*`, or menu View ▸ Last |
 | Set or cancel an alarm (Item Alarm) | ALT-A | ESC then `a`, or menu Item ▸ Alarm |
 | Remove from section / column                      | DEL                   | fn-⌫ (forward delete)                                                 |

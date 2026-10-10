@@ -24,6 +24,7 @@ defmodule Agenda.TUI.Update do
     Layout,
     LineEdit,
     Menu,
+    NoteSearch,
     State,
     TextEdit,
     ViewManager
@@ -60,7 +61,8 @@ defmodule Agenda.TUI.Update do
 
   # True while the user is typing text, when CTRL keys act as editing keys.
   defp typing?(state) do
-    state.edit != nil or match?(%{type: t} when t in [:note, :prompt], State.mode(state))
+    state.edit != nil or
+      match?(%{type: t} when t in [:note, :note_search, :prompt], State.mode(state))
   end
 
   defp normalize(state, key) do
@@ -170,6 +172,7 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :scope} = m, key), do: scope_key(state, m, key)
   defp dispatch(state, %{type: :sort} = m, key), do: SortBox.handle(state, m, key)
   defp dispatch(state, %{type: :search_box} = m, key), do: SearchBox.handle(state, m, key)
+  defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
   defp dispatch(state, %{type: :alarm_list} = m, key), do: AlarmList.handle(state, m, key)
 
   defp dispatch(state, %{type: :searching} = m, key),
@@ -975,8 +978,17 @@ defmodule Agenda.TUI.Update do
 
   # --- notes --------------------------------------------------------------------
 
+  defp note_key(state, %{replacing: replacing} = mode, key) when replacing != nil,
+    do: NoteSearch.confirm_key(state, mode, key)
+
   defp note_key(state, mode, key) do
     case key do
+      {:alt_f, 6} ->
+        NoteSearch.open(state)
+
+      {:alt, "s"} ->
+        NoteSearch.next(state, mode)
+
       k when k in [:esc, {:f, 5}, {:f, 4}] ->
         text = TextEdit.text(mode.edit)
 
@@ -990,7 +1002,7 @@ defmodule Agenda.TUI.Update do
 
       _ ->
         case TextEdit.handle(mode.edit, key) do
-          {:ok, edit} -> State.put_mode(state, %{mode | edit: edit})
+          {:ok, edit} -> State.put_mode(state, Map.merge(mode, %{edit: edit, match: nil}))
           :unhandled -> state
         end
     end

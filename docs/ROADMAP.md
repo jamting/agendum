@@ -28,15 +28,16 @@ Rule numbers refer to `SPEC.md`.
 - [x] Item properties box (F6 on an item), as well as the profile (R34)
 - [x] Marked items: bulk done / discard / remove / When / move / assign, group profile (R35)
 - [x] Sorting items (ALT-F5 SORT) and view/section filters by category (R28, R36)
-- [ ] Date and numeric filters; sorting by category note; sorting section heads
 - [x] Search the view (ALT-F6) and the file (Show View), ALT-F8 last view (R37)
-- [ ] Search and replace in notes
+- [x] Search and replace in notes (ALT-F6 and ALT-S in a note) (R39)
 - [x] Time in the title bar; alarms before the When date and time (R38)
 - [ ] Configurable colours / monochrome theme; date format setting
 - [x] Show a category's short name in columns too narrow for its full name (e.g. "Anna" instead of "Anna Las") (R22)
 
 ## Milestone 3 — Smarter assignment
 
+- [ ] Numeric categories and columns with totals (R29)
+- [ ] Date and numeric filters; sorting by category note; sorting section heads (after R29)
 - [x] Date parsing from item text into When (R14)
 - [x] Times of day on When dates (R14b)
 - [ ] More date phrases: recurring dates, working days, date settings (R14a)
@@ -46,7 +47,6 @@ Rule numbers refer to `SPEC.md`.
 - [ ] Break text-match assignments when the text changes (R15c)
 - [ ] General negative links (R9)
 - [ ] Assignment questions ("Agenda suggests…", Utilities Questions)
-- [ ] Numeric categories and columns with totals (R29)
 
 ## Milestone 4 — Data interchange
 
