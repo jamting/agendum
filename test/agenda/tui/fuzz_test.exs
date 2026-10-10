@@ -55,7 +55,9 @@ defmodule Agenda.TUI.FuzzTest do
     {:alt, "m"},
     {:alt_f, 5},
     {:alt_f, 6},
-    {:alt_f, 8}
+    {:alt_f, 8},
+    {:alt, "a"},
+    :tick
   ]
 
   defp key do
@@ -76,7 +78,12 @@ defmodule Agenda.TUI.FuzzTest do
       state = start(Agenda.Sample.build(~D[2026-10-08]), width: width, height: height)
 
       Enum.reduce(keys, state, fn key, state ->
-        {state, _effects} = Update.handle(state, key)
+        # :tick advances the clock ten minutes, as the shell's loop would
+        {state, _effects} =
+          if key == :tick,
+            do: Update.tick(state, NaiveDateTime.add(state.now, 600)),
+            else: Update.handle(state, key)
+
         screen = Render.render(state)
 
         assert length(screen) == height, "screen has #{length(screen)} lines, expected #{height}"

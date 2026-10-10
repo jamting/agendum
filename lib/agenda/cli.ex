@@ -27,7 +27,7 @@ defmodule Agenda.CLI do
         IO.puts(@moduledoc)
 
       {:ok, db, path} ->
-        state = db |> State.new(path: path, today: today) |> Layout.settle()
+        state = db |> State.new(path: path, today: today, now: App.local_now()) |> Layout.settle()
 
         case App.run(state) do
           :ok -> :ok

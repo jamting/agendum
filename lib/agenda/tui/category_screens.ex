@@ -508,7 +508,7 @@ defmodule Agenda.TUI.CategoryScreens do
   end
 
   defp pick(state, {:add_column, index}, id) do
-    width = if Database.date_field(state.db, id), do: 10, else: 12
+    width = if Database.date_field(state.db, id), do: 16, else: 12
 
     %{
       State.change_db(state, Core.add_column(state.db, state.view_id, id, index, width))

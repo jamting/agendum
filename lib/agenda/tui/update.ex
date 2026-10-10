@@ -19,6 +19,7 @@ defmodule Agenda.TUI.Update do
     History,
     ItemProperties,
     SearchBox,
+    AlarmList,
     SortBox,
     Layout,
     LineEdit,
@@ -94,6 +95,33 @@ defmodule Agenda.TUI.Update do
   defp undoable?(nil), do: true
   defp undoable?(%{type: t}), do: t in [:catmgr, :viewmgr]
 
+  # --- the clock (R38) -----------------------------------------------------------
+
+  @doc """
+  Called by the shell with the current time on every pass of its loop:
+  updates the clock, forgets the previous day's past alarms when the date
+  changes, and rings alarms whose time has come (a message, a bell, and
+  the alarm symbol in the title until the alarm list is shown). Ringing
+  is not an undo step.
+  """
+  @spec tick(State.t(), NaiveDateTime.t()) :: {State.t(), [term]}
+  def tick(%State{} = state, %NaiveDateTime{} = now) do
+    today = NaiveDateTime.to_date(now)
+    db = if today != state.today, do: Core.clear_old_alarms(state.db, today), else: state.db
+    {db, rung} = Core.ring_alarms(db, now)
+    state = %{state | now: now, today: today, db: db}
+    state = %{state | dirty: state.db != state.saved_db}
+
+    case rung do
+      [] ->
+        {state, []}
+
+      ids ->
+        texts = Enum.map_join(ids, " · ", &state.db.items[&1].text)
+        {%{state | alarm_rang: true} |> State.info("Alarm: " <> texts), [:bell]}
+    end
+  end
+
   # --- results of effects -----------------------------------------------------
 
   def saved(state, path, :ok) do
@@ -106,7 +134,13 @@ defmodule Agenda.TUI.Update do
 
   def loaded(state, path, {:ok, db}) do
     %State{
-      State.new(db, path: path, today: state.today, width: state.width, height: state.height)
+      State.new(db,
+        path: path,
+        today: state.today,
+        now: state.now,
+        width: state.width,
+        height: state.height
+      )
       | message: {:message, "Retrieved #{Path.basename(path)}"}
     }
     |> Layout.settle()
@@ -136,6 +170,7 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :scope} = m, key), do: scope_key(state, m, key)
   defp dispatch(state, %{type: :sort} = m, key), do: SortBox.handle(state, m, key)
   defp dispatch(state, %{type: :search_box} = m, key), do: SearchBox.handle(state, m, key)
+  defp dispatch(state, %{type: :alarm_list} = m, key), do: AlarmList.handle(state, m, key)
 
   defp dispatch(state, %{type: :searching} = m, key),
     do: SearchBox.searching_key(state, m, key, &view_key/2)
@@ -189,6 +224,7 @@ defmodule Agenda.TUI.Update do
       {:alt, "d"} -> perform(state, :section_below)
       {:alt_f, 5} -> SortBox.open(state, if(row, do: {:section, row.sidx}, else: :view))
       {:alt_f, 6} -> SearchBox.open(state, :view)
+      {:alt, "a"} -> perform(state, :alarm)
       {:alt_f, 8} -> perform(state, :last_view)
       {:alt, "-"} -> collapse_sections(state, row, true)
       {:alt, "="} -> collapse_sections(state, row, false)
@@ -456,7 +492,7 @@ defmodule Agenda.TUI.Update do
       section = if section_cat == state.db.main_id, do: nil, else: section_cat
 
       {db, id} =
-        Core.add_item(state.db, text, state.today,
+        Core.add_item(state.db, text, state.now,
           section: section,
           after: after_id,
           adjacent: adjacent
@@ -478,10 +514,10 @@ defmodule Agenda.TUI.Update do
       State.error(state, "Item text cannot be empty (use ALT-F4 to discard)")
     else
       before = Database.explicit_categories(state.db, id)
-      old_when = state.db.items[id].when
+      old_when = Core.when_at(state.db.items[id])
 
       state
-      |> State.change_db(Core.edit_item(state.db, id, text, state.today))
+      |> State.change_db(Core.edit_item(state.db, id, text, state.now))
       |> report_auto_assignments(id, MapSet.to_list(before), old_when)
     end
   end
@@ -500,7 +536,7 @@ defmodule Agenda.TUI.Update do
         do: clear_column(state.db, item_id, head),
         else: state.db
 
-    case Core.assign_by_name(db, item_id, head, text, state.today) do
+    case Core.assign_by_name(db, item_id, head, text, state.now) do
       {:ok, db, _} ->
         State.change_db(state, db)
 
@@ -530,12 +566,14 @@ defmodule Agenda.TUI.Update do
       |> Enum.reject(&(&1 in already))
       |> Enum.map(&state.db.categories[&1].name)
 
-    new_when = state.db.items[item_id].when
+    item = state.db.items[item_id]
+    new_when = Core.when_at(item)
 
     parts =
       [
         added != [] && "Also assigned to: " <> Enum.join(added, ", "),
-        new_when != old_when && new_when && "When: " <> Agenda.Core.DateParser.format(new_when),
+        new_when != old_when && new_when &&
+          "When: " <> Agenda.Core.DateParser.format_when(item.when, item.when_time),
         new_when != old_when && is_nil(new_when) && "When date removed"
       ]
       |> Enum.filter(& &1)
@@ -800,6 +838,7 @@ defmodule Agenda.TUI.Update do
       State.new(Core.new_file(),
         path: path,
         today: state.today,
+        now: state.now,
         width: state.width,
         height: state.height
       )
@@ -824,7 +863,7 @@ defmodule Agenda.TUI.Update do
     when_id = state.db.special.when
 
     Enum.reduce_while(ids, {:ok, state.db}, fn id, {:ok, db} ->
-      case Core.assign_by_name(db, id, when_id, text, state.today) do
+      case Core.assign_by_name(db, id, when_id, text, state.now) do
         {:ok, db, :date} -> {:cont, {:ok, db}}
         {:error, _} -> {:halt, :error}
       end
@@ -839,7 +878,7 @@ defmodule Agenda.TUI.Update do
   end
 
   defp prompt_action(state, {:when, item_id}, text) do
-    case Core.assign_by_name(state.db, item_id, state.db.special.when, text, state.today) do
+    case Core.assign_by_name(state.db, item_id, state.db.special.when, text, state.now) do
       {:ok, db, :date} ->
         state
         |> State.change_db(db)
@@ -858,8 +897,21 @@ defmodule Agenda.TUI.Update do
     CategoryScreens.apply_move(state, id, relocation, {:new_category, text})
   end
 
+  defp prompt_action(state, {:alarm, item_id}, text) do
+    with {minutes, ""} <- Integer.parse(String.trim(text)),
+         {:ok, db} <- Core.set_alarm(state.db, item_id, minutes) do
+      at = Core.when_at(db.items[item_id]) |> NaiveDateTime.add(-minutes * 60)
+
+      state
+      |> State.change_db(db)
+      |> State.info("Alarm set for #{Calendar.strftime(at, "%Y-%m-%d %H:%M")}")
+    else
+      _ -> State.error(state, "Type a number of minutes from 0 to 60")
+    end
+  end
+
   defp prompt_action(state, {:item_date, item_id, cat_id}, text) do
-    case Core.assign_by_name(state.db, item_id, cat_id, text, state.today) do
+    case Core.assign_by_name(state.db, item_id, cat_id, text, state.now) do
       {:ok, db, :date} ->
         State.change_db(state, db)
 
@@ -1051,6 +1103,24 @@ defmodule Agenda.TUI.Update do
     start_move(state, [{item.id, cat.id}])
   end
 
+  # ALT-A (Item Alarm): set an alarm, or cancel the one already set
+  defp do_perform(state, :alarm, %{kind: :item, item: item}) do
+    cond do
+      item.alarm_minutes != nil ->
+        state
+        |> State.change_db(Core.cancel_alarm(state.db, item.id))
+        |> State.info("Alarm cancelled")
+
+      item.when == nil ->
+        State.error(state, "Give the item a When date and time first (ALT-F2)")
+
+      true ->
+        prompt(state, "Alarm: minutes before the When time (0-60):", {:alarm, item.id}, "5")
+    end
+  end
+
+  defp do_perform(state, :alarm_list, _), do: AlarmList.open(state)
+
   defp do_perform(state, :search_view, _), do: SearchBox.open(state, :view)
   defp do_perform(state, :search_file, _), do: SearchBox.open(state, :file)
 
@@ -1080,7 +1150,7 @@ defmodule Agenda.TUI.Update do
 
   defp do_perform(state, :recalc, _) do
     state
-    |> State.change_db(Core.reassign_all(state.db, state.today))
+    |> State.change_db(Core.reassign_all(state.db, state.now))
     |> State.info("Automatic assignments recalculated")
   end
 

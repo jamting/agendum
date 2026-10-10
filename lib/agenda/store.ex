@@ -8,13 +8,15 @@ defmodule Agenda.Store do
   Versions: 1 (initial); 2 adds `Item.when_explicit` and
   `Database.auto_date` (R14); 3 adds `Category.conditions` and
   `Database.conditional` (R15); 4 adds view and section `filter` and
-  `sort` (R28, R36); 5 adds the view `match` of the Show View (R37). Older versions are upgraded on load by filling new
-  struct fields with their defaults.
+  `sort` (R28, R36); 5 adds the view `match` of the Show View (R37); 6
+  adds `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38).
+  Older versions are upgraded on load by filling new struct fields with
+  their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 5
+  @format_version 6
   @extension ".agenda"
 
   def extension, do: @extension

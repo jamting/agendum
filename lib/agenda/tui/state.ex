@@ -24,6 +24,8 @@ defmodule Agenda.TUI.State do
           path: String.t() | nil,
           dirty: boolean,
           today: Date.t(),
+          now: NaiveDateTime.t(),
+          alarm_rang: boolean,
           width: pos_integer,
           height: pos_integer,
           view_id: Database.id(),
@@ -48,6 +50,8 @@ defmodule Agenda.TUI.State do
             path: nil,
             dirty: false,
             today: nil,
+            now: nil,
+            alarm_rang: false,
             width: 80,
             height: 25,
             view_id: nil,
@@ -73,6 +77,10 @@ defmodule Agenda.TUI.State do
       db: db,
       path: opts[:path],
       today: Keyword.fetch!(opts, :today),
+      now:
+        Keyword.get_lazy(opts, :now, fn ->
+          NaiveDateTime.new!(Keyword.fetch!(opts, :today), ~T[09:00:00])
+        end),
       width: Keyword.get(opts, :width, 80),
       height: Keyword.get(opts, :height, 25),
       view_id: hd(db.view_order),

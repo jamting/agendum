@@ -80,9 +80,10 @@ defmodule Agenda.TUI.App do
 
   defp draw(state, previous) do
     {width, height} = Terminal.size()
-    today = local_today()
+    {state, effects} = Update.tick(state, local_now())
+    if :bell in effects, do: Terminal.write("\a")
     resized = {width, height} != {state.width, state.height}
-    state = %{state | width: width, height: height, today: today}
+    state = %{state | width: width, height: height}
     state = if resized, do: Layout.settle(state), else: state
     previous = if resized, do: nil, else: previous
 
@@ -90,6 +91,12 @@ defmodule Agenda.TUI.App do
     if previous == nil, do: Terminal.write("\e[2J")
     Terminal.write(Screen.frame(previous, screen))
     {state, screen}
+  end
+
+  @doc false
+  def local_now do
+    {date, {h, m, s}} = :calendar.local_time()
+    NaiveDateTime.new!(Date.from_erl!(date), Time.new!(h, m, s))
   end
 
   @doc false

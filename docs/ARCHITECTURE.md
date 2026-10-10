@@ -53,6 +53,7 @@ shell does terminal I/O and file I/O.
 | `TUI.ItemProperties` | ✔ | The Item Properties box: text, note, statistics and the item's assignments (R34). |
 | `TUI.SortBox` | ✔ | The Sort box: a view's or a section's sort keys (R36). |
 | `TUI.SearchBox` | ✔ | The Search box and search mode (ALT-N / ALT-P / F7), and the Show View (R37). |
+| `TUI.AlarmList` | ✔ | The alarm list box: current and past alarms (R38). |
 | `TUI.Render`                   | ✔     | State → list of styled lines (title bar, control panel, body, key bar, boxes).                                                   |
 | `TUI.Draw`, `TUI.Theme`        | ✔     | Line/box primitives; symbolic style → ANSI colours.                                                                              |
 | `TUI.Keys`                     | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |
@@ -73,6 +74,9 @@ shell does terminal I/O and file I/O.
   (`{:save, path}`, `{:load, path}`, `{:write_text, path, text}`, `:quit`)
   that `App` executes, feeding results back through `Update.saved/3` and
   similar. This keeps every UI behaviour testable with plain key sequences.
+- **The clock comes in from outside.** On every pass of its loop `App`
+  calls the pure `Update.tick(state, now)`, which updates the clock, rings
+  due alarms and asks for a `:bell` effect. Tests drive time the same way.
 - **Cursor anchoring.** The cursor is stored as a stable key
   (`{:item, section_index, item_id}` or `{:section, index}`) and re-found
   after every change (`Layout.settle/1`), so it follows an item when

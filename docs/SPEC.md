@@ -128,8 +128,15 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   ignored. Our safeguard: bare abbreviations that are common words ("sat",
   "sun", "wed", "may" alone) count as dates in item text only after "on",
   "by", "until" or "till", or with a day number ("May 5").
-- **R14a ⏳ More date phrases.** Times of day (items carry dates only),
-  recurring dates ("every Monday", "every other Monday"), working days,
+- **R14b ✅ Times of day** (User's Guide 6-12 to 6-13). When dates can
+  carry a time, read from item text or typed into a When column / ALT-F2:
+  "3:30 pm", "@ 3pm", "15:30", "noon", "morning" (8:00), "afternoon"
+  (14:00), "evening" and "tonight" (17:00), "now", "in 2 hours", "45 mins
+  from now". A time alone means today; a time without am/pm falls between
+  8:00 am and 7:59 pm ("3:30" is 15:30); hours over 12 and a leading zero
+  read as a 24-hour clock. When columns show "2026-10-13 15:00" and sort
+  by date and time. A time never reuses a date's words ("at 12/24").
+- **R14a ⏳ More date phrases.** Recurring dates ("every Monday", "every other Monday"), working days,
   quarters, "first Wednesday in November", "next April", dates from notes,
   and settings for date order (day/month) and the start of the week.
 - **R15 ✅ Assignment conditions** (User's Guide, chapters 18 and 20). A
@@ -222,6 +229,17 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   whole word, "Pat*" matches any ending, "(a phrase)" must appear as
   written. Not done: Agenda's other text-condition symbols (? ; , ~ !),
   search and replace in notes, and items in collapsed sections are skipped.
+- **R38 ✅ Clock and alarms** (User's Guide 10-16 to 10-20). The title bar
+  shows the date and time. ALT-A (Item ▸ Alarm) sets an alarm to ring 0
+  to 60 minutes (default 5) before an item's When date and time; the item
+  shows "@"; ALT-A again cancels it. When the time comes the alarm rings:
+  a bell, a message naming the item, and "@" in the title until the alarm
+  list is opened. Search ▸ Alarms lists current alarms and today's past
+  alarms; DEL removes a past one, ALT-A cancels a current one. Past alarms
+  are forgotten when the date changes. Our choices: alarms always use the
+  When date (Agenda let you choose the date category); the alarm list is a
+  box rather than a Show View with !Current Alarms! / !Past Alarms!
+  sections; ringing is not an undo step.
 
 ## 5. User interface (Agenda 2.0 conventions)
 

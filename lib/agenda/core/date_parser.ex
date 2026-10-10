@@ -15,10 +15,12 @@ defmodule Agenda.Core.DateParser do
   "this/next/last week|month|year" is the start of that period. A date
   without a year is put in the future.
 
-  Times of day are recognised so they do not get in the way ("Tuesday at
-  3:00"), but ignored: items carry dates only. Recurring dates ("every
-  Monday"), working days, quarters and "first Wednesday in November" are
-  not supported yet.
+  Times of day are read too (`parse_when/2`, `extract_when/2`): clock times
+  ("3:30 pm", "@ 3pm", "15:30"; without am/pm between 8:00 am and 7:59
+  pm), "noon", "morning" (8:00), "afternoon" (14:00), "evening" and
+  "tonight" (17:00), "now", "in 2 hours", "45 mins from now". Recurring
+  dates ("every Monday"), working days, quarters and "first Wednesday in
+  November" are not supported yet.
   """
 
   @weekdays [
@@ -104,7 +106,6 @@ defmodule Agenda.Core.DateParser do
   @n "\\d+|" <> alt.(Map.keys(@numbers))
   @ord alt.(@ordinals)
   @unit "days?|weeks?|months?"
-  @time "\\d{1,2}(?::\\d{2})?\\s*(?:a\\.?m\\.?|p\\.?m\\.?)?|noon|midnight|morning|afternoon|evening|tonight|tonite"
 
   # {name, pattern}; each pattern is matched as whole words, ignoring case.
   @rules [
@@ -140,52 +141,191 @@ defmodule Agenda.Core.DateParser do
   # read as dates in free text; they count only when typed on their own.
   @text_rules Enum.reject(@compiled, fn {name, _, _} -> name == :weekday_abbr end)
 
-  @time_rest "^\\s*(?:at\\s+|@\\s*)?(?:#{@time})?\\s*\\.?\\s*$"
+  @time_rules (for {name, pattern} <- [
+                     {:clock,
+                      "(?:(?:at|@)\\s*)?(?<![:\\d])(\\d{1,2}):(\\d{2})(?!:\\d)\\s*(a\\.?m\\.?|p\\.?m\\.?)?"},
+                     {:hour_ampm, "(?:(?:at|@)\\s*)?(\\d{1,2})\\s*(a\\.?m\\.?|p\\.?m\\.?)"},
+                     {:at_hour, "(?:at|@)\\s*(\\d{1,2})"},
+                     {:time_word, "(noon|midnight|morning|afternoon|evening|tonight|tonite)"},
+                     {:in_time, "in\\s+(#{@n})\\s+(minutes?|mins?|hours?|hrs?)"},
+                     {:time_from_now, "(#{@n})\\s+(minutes?|mins?|hours?|hrs?)\\s+from\\s+now"},
+                     {:now, "(now)"}
+                   ] do
+                 groups = length(Regex.scan(~r/(?<!\\)\((?!\?)/, pattern))
+                 {name, "(?<![\\p{L}\\p{N}])(?:#{pattern})(?![\\p{L}\\p{N}])", groups}
+               end)
 
   @doc """
   Parses a date typed on its own, such as an entry in a date column.
-  A trailing time ("at 3:30 pm") is accepted and ignored.
+  A time, if any, is accepted and dropped (see `parse_when/2`).
   """
   @spec parse(String.t(), Date.t()) :: {:ok, Date.t()} | :error
   def parse(text, %Date{} = today) do
+    case parse_when(text, NaiveDateTime.new!(today, ~T[00:00:00])) do
+      {:ok, date, _time} -> {:ok, date}
+      :error -> :error
+    end
+  end
+
+  @doc """
+  Parses a date and/or time typed on its own ("friday", "Thursday at 3:30
+  pm", "3pm", "in 2 hours"), relative to `now`. A time alone means today;
+  a time without am/pm falls between 8:00 am and 7:59 pm (User's Guide
+  6-12). Returns the date and the time of day, or `nil` when none was given.
+  """
+  @spec parse_when(String.t(), NaiveDateTime.t()) :: {:ok, Date.t(), Time.t() | nil} | :error
+  def parse_when(text, %NaiveDateTime{} = now) do
     text = String.trim(text)
 
-    case first_match(text, today, @compiled) do
-      {:ok, date, 0, length} ->
-        rest = binary_part(text, length, byte_size(text) - length)
-        if Regex.match?(Regex.compile!(@time_rest, "iu"), rest), do: {:ok, date}, else: :error
-
-      _ ->
-        :error
+    with {:ok, date, time, spans} <- find_when(text, now, @compiled),
+         rest = remove_spans(text, spans),
+         true <- Regex.match?(~r/^[\s,.@]*(at)?[\s,.@]*$/iu, rest) do
+      {:ok, date, time}
+    else
+      _ -> :error
     end
   end
 
   @doc """
   Finds the first date in free text. Returns the date and the words it was
-  read from (used to notice when an edit changes the date phrase).
+  read from (used to notice when an edit changes the date phrase). See
+  `extract_when/2` for the time of day as well.
   """
   @spec extract(String.t(), Date.t()) :: {:ok, Date.t(), String.t()} | :none
   def extract(text, %Date{} = today) do
-    case first_match(text, today, @text_rules) do
-      {:ok, date, start, length} ->
-        phrase =
-          text |> binary_part(start, length) |> String.downcase() |> String.replace(~r/\s+/u, " ")
+    case extract_when(text, NaiveDateTime.new!(today, ~T[00:00:00])) do
+      {:ok, date, _time, phrase} -> {:ok, date, phrase}
+      :none -> :none
+    end
+  end
 
-        {:ok, date, phrase}
+  @doc """
+  Finds the first date and the first time of day in free text ("Call
+  Marketing this Tuesday at 3:00"), relative to `now`. A time with no date
+  means today; a relative time ("in 2 hours") gives both. Returns the
+  date, the time (or `nil`) and the words they were read from.
+  """
+  @spec extract_when(String.t(), NaiveDateTime.t()) ::
+          {:ok, Date.t(), Time.t() | nil, String.t()} | :none
+  def extract_when(text, %NaiveDateTime{} = now) do
+    case find_when(text, now, @text_rules) do
+      {:ok, date, time, spans} ->
+        phrase =
+          spans
+          |> Enum.sort()
+          |> Enum.map_join(" ", fn {start, len} -> binary_part(text, start, len) end)
+          |> String.downcase()
+          |> String.replace(~r/\s+/u, " ")
+
+        {:ok, date, time, phrase}
 
       :none ->
         :none
     end
   end
 
-  # The earliest valid match of any rule (the longest one when two start
-  # at the same place), as {:ok, date, byte_start, byte_length}.
-  defp first_match(text, today, rules) do
-    rules
-    |> Enum.flat_map(fn {name, pattern, group_count} ->
-      regex = Regex.compile!(pattern, "iu")
+  # The first date and the first time in `text`, combined.
+  defp find_when(text, now, date_rules) do
+    today = NaiveDateTime.to_date(now)
+    date = first(matches(text, date_rules, &interpret(&1, &2, today)))
 
-      regex
+    # a time may not reuse the date's words ("at 12/24" is a date)
+    time =
+      text
+      |> matches(@time_rules, &interpret_time(&1, &2, now))
+      |> Enum.reject(fn {start, neg_len, _} -> overlaps?(date, {start, -neg_len}) end)
+      |> first()
+
+    case {date, time} do
+      {nil, nil} ->
+        :none
+
+      {{d, ds}, nil} ->
+        {:ok, d, nil, [ds]}
+
+      {{d, ds}, {{:time, t}, ts}} ->
+        {:ok, d, t, [ds, ts]}
+
+      {{d, ds}, {{:datetime, _}, _}} ->
+        {:ok, d, nil, [ds]}
+
+      {nil, {{:time, t}, ts}} ->
+        {:ok, today, t, [ts]}
+
+      {nil, {{:datetime, dt}, ts}} ->
+        {:ok, NaiveDateTime.to_date(dt), NaiveDateTime.to_time(dt), [ts]}
+    end
+  end
+
+  defp overlaps?(nil, _span), do: false
+  defp overlaps?({_, {ds, dl}}, {ts, tl}), do: ts < ds + dl and ds < ts + tl
+
+  defp first([]), do: nil
+
+  defp first(list),
+    do: list |> Enum.min() |> then(fn {start, neg_len, value} -> {value, {start, -neg_len}} end)
+
+  defp remove_spans(text, spans) do
+    spans
+    |> Enum.sort(:desc)
+    |> Enum.reduce(text, fn {start, len}, acc ->
+      binary_part(acc, 0, start) <> binary_part(acc, start + len, byte_size(acc) - start - len)
+    end)
+  end
+
+  # --- times --------------------------------------------------------------------
+
+  defp interpret_time(:clock, [h, m, ampm], _now), do: clock(h, int(m), ampm)
+  defp interpret_time(:hour_ampm, [h, ampm], _now), do: clock(h, 0, ampm)
+  defp interpret_time(:at_hour, [h], _now), do: clock(h, 0, nil)
+
+  defp interpret_time(:time_word, [word], _now) do
+    time =
+      %{
+        "noon" => ~T[12:00:00],
+        "midnight" => ~T[00:00:00],
+        "morning" => ~T[08:00:00],
+        "afternoon" => ~T[14:00:00]
+      }
+      |> Map.get(word, ~T[17:00:00])
+
+    {:ok, {:time, time}}
+  end
+
+  defp interpret_time(name, [n, unit], now) when name in [:in_time, :time_from_now] do
+    minutes = count(n) * if(String.starts_with?(unit, "h"), do: 60, else: 1)
+    {:ok, {:datetime, NaiveDateTime.add(now, minutes * 60)}}
+  end
+
+  defp interpret_time(:now, _, now), do: {:ok, {:datetime, now}}
+
+  # 12-hour times without am/pm fall between 8:00 am and 7:59 pm; hours
+  # over 12, 0 and a leading zero ("08:30") are read as a 24-hour clock.
+  defp clock(h, m, ampm) do
+    hour = int(h)
+
+    hour =
+      cond do
+        ampm && hour > 12 -> nil
+        ampm && String.starts_with?(ampm, "p") -> rem(hour, 12) + 12
+        ampm -> rem(hour, 12)
+        hour == 0 or hour > 12 or String.starts_with?(h, "0") -> hour
+        hour < 8 -> hour + 12
+        true -> hour
+      end
+
+    case hour && Time.new(hour, m, 0) do
+      {:ok, time} -> {:ok, {:time, time}}
+      _ -> :error
+    end
+  end
+
+  # Every valid match of the rules, as {byte_start, -byte_length, value}
+  # (so the minimum is the earliest, then longest, match).
+  defp matches(text, rules, interpreter) do
+    Enum.flat_map(rules, fn {name, pattern, group_count} ->
+      pattern
+      |> Regex.compile!("iu")
       |> Regex.scan(text, return: :index)
       |> Enum.flat_map(fn [{start, len} | groups] ->
         # unmatched optional groups at the end are left out by Regex.scan
@@ -196,17 +336,12 @@ defmodule Agenda.Core.DateParser do
             if s < 0, do: nil, else: String.downcase(binary_part(text, s, l))
           end)
 
-        case interpret(name, captures, today) do
-          {:ok, date} -> [{start, -len, date}]
+        case interpreter.(name, captures) do
+          {:ok, value} -> [{start, -len, value}]
           :error -> []
         end
       end)
     end)
-    |> Enum.min(fn -> nil end)
-    |> case do
-      nil -> :none
-      {start, neg_len, date} -> {:ok, date, start, -neg_len}
-    end
   end
 
   # --- interpreting matches ---------------------------------------------------
@@ -308,6 +443,14 @@ defmodule Agenda.Core.DateParser do
   defp int(s), do: String.to_integer(s)
   defp month(m), do: Enum.find_value(@months, fn {name, n} -> if name == m, do: n end)
   defp weekday(d), do: Enum.find_value(@weekdays, fn {name, n} -> if name == d, do: n end)
+
+  @doc "Formats a When date with its time of day, if any: \"2026-10-13 15:00\"."
+  @spec format_when(Date.t() | nil, Time.t() | nil) :: String.t()
+  def format_when(nil, _time), do: ""
+  def format_when(date, nil), do: format(date)
+
+  def format_when(date, time),
+    do: format(date) <> " " <> (time |> Time.to_string() |> String.slice(0, 5))
 
   @doc "Formats a date the way columns display it."
   @spec format(Date.t() | nil) :: String.t()

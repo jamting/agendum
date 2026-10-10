@@ -31,14 +31,15 @@ Rule numbers refer to `SPEC.md`.
 - [ ] Date and numeric filters; sorting by category note; sorting section heads
 - [x] Search the view (ALT-F6) and the file (Show View), ALT-F8 last view (R37)
 - [ ] Search and replace in notes
-- [ ] Show the time in the title bar; alarms (When date reached)
+- [x] Time in the title bar; alarms before the When date and time (R38)
 - [ ] Configurable colours / monochrome theme; date format setting
 - [ ] Show a category's short name in columns too narrow for its full name (e.g. "Anna" instead of "Anna Las")
 
 ## Milestone 3 — Smarter assignment
 
 - [x] Date parsing from item text into When (R14)
-- [ ] More date phrases: times of day, recurring dates, working days, date settings (R14a)
+- [x] Times of day on When dates (R14b)
+- [ ] More date phrases: recurring dates, working days, date settings (R14a)
 - [x] Assignment conditions, conditional assignments (R15)
 - [ ] Date conditions and "Also match" text conditions (R15a)
 - [ ] Actions: remove, date, special (done, discard, export) (R15b)

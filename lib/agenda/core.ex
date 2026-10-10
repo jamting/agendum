@@ -18,6 +18,13 @@ defmodule Agenda.Core do
   @type db :: Database.t()
   @type id :: Database.id()
 
+  @typedoc """
+  The current moment, passed in by the shell: a date, or a date and time
+  (needed for times like "in 2 hours" and for alarms). The core never reads
+  the clock itself.
+  """
+  @type clock :: Date.t() | NaiveDateTime.t()
+
   @show_view "Show View"
 
   defdelegate new_file(opts \\ []), to: Database, as: :new
@@ -36,9 +43,9 @@ defmodule Agenda.Core do
     * `:adjacent` – neighbouring item ids, nearest first, for resolving
       ambiguous automatic assignments
   """
-  @spec add_item(db, String.t(), Date.t(), keyword) :: {db, id}
+  @spec add_item(db, String.t(), clock, keyword) :: {db, id}
   def add_item(db, text, today, opts \\ []) do
-    {db, id} = Database.insert_item(db, String.trim(text), today, after: opts[:after])
+    {db, id} = Database.insert_item(db, String.trim(text), date_of(today), after: opts[:after])
 
     db =
       case opts[:section] do
@@ -59,7 +66,7 @@ defmodule Agenda.Core do
   Changes an item's text, re-runs automatic assignment (it only adds
   assignments) and updates a When date read from the text (R14).
   """
-  @spec edit_item(db, id, String.t(), Date.t(), [id]) :: db
+  @spec edit_item(db, id, String.t(), clock, [id]) :: db
   def edit_item(db, id, text, today, adjacent \\ []) do
     old_text = db.items[id].text
 
@@ -86,13 +93,21 @@ defmodule Agenda.Core do
     if not db.auto_date or item.when_explicit do
       db
     else
-      old = if old_text, do: DateParser.extract(old_text, today), else: :none
+      now = now_of(today)
+      old = if old_text, do: DateParser.extract_when(old_text, now), else: :none
 
-      case {old, DateParser.extract(item.text, today)} do
-        {{:ok, _, phrase}, {:ok, _, phrase}} -> db
-        {_, {:ok, date, _}} -> Database.update_item(db, id, &%{&1 | when: date})
-        {{:ok, _, _}, :none} -> Database.update_item(db, id, &%{&1 | when: nil})
-        {:none, :none} -> db
+      case {old, DateParser.extract_when(item.text, now)} do
+        {{:ok, _, _, phrase}, {:ok, _, _, phrase}} ->
+          db
+
+        {_, {:ok, date, time, _}} ->
+          Database.update_item(db, id, &%{&1 | when: date, when_time: time})
+
+        {{:ok, _, _, _}, :none} ->
+          Database.update_item(db, id, &%{&1 | when: nil, when_time: nil})
+
+        {:none, :none} ->
+          db
       end
     end
   end
@@ -133,7 +148,7 @@ defmodule Agenda.Core do
   @spec toggle_done(db, id, Date.t()) :: db
   def toggle_done(db, id, today) do
     Database.update_item(db, id, fn item ->
-      %{item | done: if(item.done, do: nil, else: today)}
+      %{item | done: if(item.done, do: nil, else: date_of(today))}
     end)
   end
 
@@ -145,8 +160,96 @@ defmodule Agenda.Core do
   @spec mark_done(db, id, Date.t()) :: db
   def mark_done(db, id, today) do
     Database.update_item(db, id, fn item ->
-      if item.done, do: item, else: %{item | done: today}
+      if item.done, do: item, else: %{item | done: date_of(today)}
     end)
+  end
+
+  # --- times and alarms (R14b, R38) ---
+
+  defp date_of(%NaiveDateTime{} = now), do: NaiveDateTime.to_date(now)
+  defp date_of(%Date{} = today), do: today
+
+  defp now_of(%NaiveDateTime{} = now), do: now
+  defp now_of(%Date{} = today), do: NaiveDateTime.new!(today, ~T[00:00:00])
+
+  @doc "An item's When date and time (midnight when it has no time), or nil."
+  @spec when_at(Agenda.Core.Item.t()) :: NaiveDateTime.t() | nil
+  def when_at(%{when: nil}), do: nil
+  def when_at(%{when: date, when_time: time}), do: NaiveDateTime.new!(date, time || ~T[00:00:00])
+
+  @doc """
+  Sets an alarm to ring `minutes` (0 to 60) before the item's When date and
+  time (Item Alarm, ALT-A; User's Guide 10-17).
+  """
+  @spec set_alarm(db, id, integer) :: {:ok, db} | {:error, :no_when | :minutes}
+  def set_alarm(db, id, minutes) do
+    cond do
+      minutes not in 0..60 -> {:error, :minutes}
+      db.items[id].when == nil -> {:error, :no_when}
+      true -> {:ok, Database.update_item(db, id, &%{&1 | alarm_minutes: minutes})}
+    end
+  end
+
+  @spec cancel_alarm(db, id) :: db
+  def cancel_alarm(db, id), do: Database.update_item(db, id, &%{&1 | alarm_minutes: nil})
+
+  @doc """
+  Rings the alarms whose time has come: they leave the current alarms and
+  join today's past alarms. Returns the items that rang.
+  """
+  @spec ring_alarms(db, NaiveDateTime.t()) :: {db, [id]}
+  def ring_alarms(db, %NaiveDateTime{} = now) do
+    due =
+      for item <- Database.items(db),
+          item.alarm_minutes != nil,
+          at = when_at(item),
+          at != nil,
+          NaiveDateTime.compare(NaiveDateTime.add(at, -item.alarm_minutes * 60), now) != :gt,
+          do: item.id
+
+    db =
+      Enum.reduce(
+        due,
+        db,
+        &Database.update_item(&2, &1, fn i -> %{i | alarm_minutes: nil, alarm_rung_at: now} end)
+      )
+
+    {db, due}
+  end
+
+  @doc "Current alarms (in When order) and today's past alarms (latest first)."
+  @spec alarm_list(db, Date.t()) :: %{current: [id], past: [id]}
+  def alarm_list(db, %Date{} = today) do
+    items = Database.items(db)
+
+    current =
+      items
+      |> Enum.filter(&(&1.alarm_minutes != nil))
+      |> Enum.sort_by(&when_at/1, NaiveDateTime)
+      |> Enum.map(& &1.id)
+
+    past =
+      items
+      |> Enum.filter(&(&1.alarm_rung_at && NaiveDateTime.to_date(&1.alarm_rung_at) == today))
+      |> Enum.sort_by(& &1.alarm_rung_at, {:desc, NaiveDateTime})
+      |> Enum.map(& &1.id)
+
+    %{current: current, past: past}
+  end
+
+  @doc "Removes an item from the past alarms (DEL in the alarm list)."
+  @spec remove_past_alarm(db, id) :: db
+  def remove_past_alarm(db, id), do: Database.update_item(db, id, &%{&1 | alarm_rung_at: nil})
+
+  @doc "Forgets past alarms from earlier days (Agenda clears them at the end of the day)."
+  @spec clear_old_alarms(db, Date.t()) :: db
+  def clear_old_alarms(db, %Date{} = today) do
+    old =
+      for i <- Database.items(db),
+          i.alarm_rung_at && Date.compare(NaiveDateTime.to_date(i.alarm_rung_at), today) == :lt,
+          do: i.id
+
+    Enum.reduce(old, db, &remove_past_alarm(&2, &1))
   end
 
   @doc "Marked items, in item order (the group bulk commands act on)."
@@ -209,7 +312,7 @@ defmodule Agenda.Core do
   first, then a unique prefix match; if nothing matches, a new child of the
   column head is created. Returns the category assigned.
   """
-  @spec assign_by_name(db, id, id, String.t(), Date.t()) ::
+  @spec assign_by_name(db, id, id, String.t(), clock) ::
           {:ok, db, id | :date} | {:error, :invalid_date | :ambiguous | :empty}
   def assign_by_name(db, item_id, head_id, text, today) do
     text = String.trim(text)
@@ -219,9 +322,16 @@ defmodule Agenda.Core do
         {:error, :empty}
 
       field = Database.date_field(db, head_id) ->
-        case DateParser.parse(text, today) do
-          {:ok, date} ->
-            {:ok, put_date(db, item_id, field, date), :date}
+        case DateParser.parse_when(text, now_of(today)) do
+          {:ok, date, time} ->
+            db = put_date(db, item_id, field, date)
+
+            db =
+              if field == :when,
+                do: Database.update_item(db, item_id, &%{&1 | when_time: time}),
+                else: db
+
+            {:ok, db, :date}
 
           :error ->
             {:error, :invalid_date}
@@ -252,7 +362,11 @@ defmodule Agenda.Core do
   # A When date set or cleared by the user: set is explicit and overrides
   # the text; cleared hands the When date back to the text (R14).
   defp put_date(db, item_id, :when, date) do
-    Database.update_item(db, item_id, &%{&1 | when: date, when_explicit: date != nil})
+    Database.update_item(
+      db,
+      item_id,
+      &%{&1 | when: date, when_time: nil, when_explicit: date != nil}
+    )
   end
 
   defp put_date(db, item_id, field, date),
@@ -577,7 +691,7 @@ defmodule Agenda.Core do
   (Agenda's F9 RECALC behaviour), and gives a When date to items whose text
   has a date but that have none yet.
   """
-  @spec reassign_all(db, Date.t()) :: db
+  @spec reassign_all(db, clock) :: db
   def reassign_all(db, today) do
     Enum.reduce(db.item_order, db, fn id, db ->
       db = Assign.auto_assign(db, id, [])

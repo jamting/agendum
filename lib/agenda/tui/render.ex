@@ -23,7 +23,8 @@ defmodule Agenda.TUI.Render do
     :group_profile,
     :scope,
     :sort,
-    :search_box
+    :search_box,
+    :alarm_list
   ]
 
   @spec render(State.t()) :: [Draw.line()]
@@ -66,7 +67,10 @@ defmodule Agenda.TUI.Render do
     marked = if Enum.any?(Database.items(state.db), & &1.marked), do: "♦ ", else: ""
 
     right =
-      String.trim("#{hides} #{marked}#{indicator(state, base)}  #{Date.to_iso8601(state.today)} ")
+      String.trim(
+        "#{hides} #{marked}#{if state.alarm_rang, do: "@ ", else: ""}#{indicator(state, base)}  " <>
+          Calendar.strftime(state.now, "%Y-%m-%d %H:%M") <> " "
+      )
 
     left = " File: #{file}"
     middle = "View: #{view.name}" <> filter_text(state.db, view.filter)
@@ -254,6 +258,9 @@ defmodule Agenda.TUI.Render do
   defp mode_keys(%{type: type}) when type in [:profile, :group_profile],
     do: [{"SPACE", "Assign/Unassign"}, {"ESC", "Return"}]
 
+  defp mode_keys(%{type: :alarm_list}),
+    do: [{"DEL", "Remove past alarm"}, {"ALT-A", "Cancel alarm"}, {"ESC", "Close"}]
+
   defp mode_keys(%{type: :search_box}),
     do: [{"ENTER", "Search"}, {"TAB/↓", "Next setting"}, {"SPACE", "Change"}, {"ESC", "Cancel"}]
 
@@ -368,6 +375,7 @@ defmodule Agenda.TUI.Render do
       cond do
         item.done -> "√"
         item.marked -> "♦"
+        item.alarm_minutes != nil -> "@"
         true -> "•"
       end
 
@@ -603,6 +611,7 @@ defmodule Agenda.TUI.Render do
      ALT-F5        Sort settings for the section    ESC %
      ALT-F6        Search (then ALT-N / ALT-P, F7 mark)  ESC ^
      ALT-F8        Back to the previous view        ESC *
+     ALT-A         Set or cancel an alarm            ESC a
      ALT-D / ALT-U Add section below / above
      ALT-R / ALT-L Add column right / left
      ←→ TAB        Move between item and columns
@@ -682,6 +691,7 @@ defmodule Agenda.TUI.Render do
     do: "Assignments: #{length(ids)} marked items"
 
   defp box_title(_state, %{type: :scope}), do: "Marked items"
+  defp box_title(_state, %{type: :alarm_list}), do: "Alarm list"
   defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
 
   defp box_title(_state, %{type: :search_box, scope: :file}),
@@ -733,6 +743,47 @@ defmodule Agenda.TUI.Render do
   end
 
   # "Marked items or current item?" (User's Guide 13-2)
+  defp box_content(state, %{type: :alarm_list} = mode, inner, _max_rows) do
+    rows = Agenda.TUI.AlarmList.rows(state)
+    cursor = min(mode.cursor, max(length(rows) - 1, 0))
+
+    lines =
+      rows
+      |> Enum.with_index()
+      |> Enum.map(fn {{kind, id}, i} ->
+        item = state.db.items[id]
+
+        when_text =
+          case kind do
+            :current ->
+              at = NaiveDateTime.add(Agenda.Core.when_at(item), -item.alarm_minutes * 60)
+              "rings " <> Calendar.strftime(at, "%Y-%m-%d %H:%M")
+
+            :past ->
+              "rang " <> Calendar.strftime(item.alarm_rung_at, "%H:%M")
+          end
+
+        text = Draw.pad(item.text, max(inner - 28, 10))
+
+        {kind,
+         [
+           {:box, " "},
+           {if(i == cursor, do: :box_selected, else: :box), text},
+           {:box, " " <> when_text}
+         ]}
+      end)
+
+    current = for {:current, line} <- lines, do: line
+    past = for {:past, line} <- lines, do: line
+    none = [[{:box, "   (none)"}]]
+
+    [[{:box, " Current alarms"}]] ++
+      if(current == [], do: none, else: current) ++
+      [[], [{:box, " Past alarms today"}]] ++
+      if(past == [], do: none, else: past) ++
+      [[], [{:box, " DEL removes a past alarm · ALT-A cancels a current one"}]]
+  end
+
   defp box_content(_state, %{type: :search_box} = mode, inner, _max_rows) do
     values = %{
       on: %{item: "Item text", note: "Note text", both: "Both item & note"}[mode.search.on],
@@ -827,7 +878,7 @@ defmodule Agenda.TUI.Render do
 
             {:assigned, a} ->
               {if(a == hd(assignments), do: "Assigned to", else: ""),
-               assignment_text(state.db, a)}
+               assignment_text(state.db, a, item)}
 
             :add ->
               {if(assignments == [], do: "Assigned to", else: ""),
@@ -1002,6 +1053,16 @@ defmodule Agenda.TUI.Render do
 
   # One assignment in the Item Properties box: "When (2026-10-13)",
   # "Anna Lasky (c)" for a conditional one.
+  defp assignment_text(db, %{category: id}, item) when id == db.special.when do
+    db.categories[id].name <>
+      " (#{DateParser.format_when(item.when, item.when_time)})" <> alarm_note(item)
+  end
+
+  defp assignment_text(db, a, _item), do: assignment_text(db, a)
+
+  defp alarm_note(%{alarm_minutes: nil}), do: ""
+  defp alarm_note(%{alarm_minutes: m}), do: " · alarm #{m} min before"
+
   defp assignment_text(db, %{category: id, kind: kind, date: date}) do
     name = db.categories[id].name
 

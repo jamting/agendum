@@ -26,7 +26,8 @@ defmodule Agenda.TUI.Menu do
          {"Properties", "Text, note and every assignment of the item (F6)", :item_props},
          {"Note", "Edit the item's note (F5)", :note},
          {"When", "Set the item's When date; overrides dates in the text (ALT-F2)", :when},
-         {"Assign", "Show the item's assignment profile (F3)", :assign},
+         {"Show", "Show the item's assignment profile (F3)", :assign},
+         {"Alarm", "Set or cancel an alarm before the When time (ALT-A)", :alarm},
          {"Finished", "Mark the item done / not done (F4)", :done},
          {"Mark", "Mark or unmark the item; on a section head, all its items (F7)", :mark},
          {"Unmark", "Unmark all marked items in the file (ALT-F7)", :unmark_all},
@@ -79,7 +80,8 @@ defmodule Agenda.TUI.Menu do
       {"Search", "Find items by their text",
        [
          {"View", "Search this view: ALT-N next, ALT-P previous, F7 mark (ALT-F6)", :search_view},
-         {"File", "Show every matching item in the file in the Show View", :search_file}
+         {"File", "Show every matching item in the file in the Show View", :search_file},
+         {"Alarms", "Current alarms and today's past alarms", :alarm_list}
        ]},
       {"Undo", "Undo the last change (CTRL-Z)", :undo},
       {"Redo", "Redo the last undone change (CTRL-Y)", :redo},

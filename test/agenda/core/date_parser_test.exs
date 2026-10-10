@@ -68,6 +68,10 @@ defmodule Agenda.Core.DateParserTest do
       end
     end
 
+    test "a time does not reuse a date's words (found by the property test)" do
+      assert DateParser.parse("at 12/24", @today) == {:ok, ~D[2026-12-24]}
+    end
+
     test "rejects nonsense, invalid dates and extra words" do
       assert DateParser.parse("someday", @today) == :error
       assert DateParser.parse("2026-02-30", @today) == :error
@@ -125,6 +129,52 @@ defmodule Agenda.Core.DateParserTest do
 
       assert DateParser.parse(text, today) == :error or
                match?({:ok, %Date{}}, DateParser.parse(text, today))
+    end
+  end
+
+  describe "times of day (R14b)" do
+    @now ~N[2026-10-08 10:15:00]
+
+    for {input, date, time} <- [
+          {"3pm", ~D[2026-10-08], ~T[15:00:00]},
+          {"3:30", ~D[2026-10-08], ~T[15:30:00]},
+          {"9:30", ~D[2026-10-08], ~T[09:30:00]},
+          {"08:30", ~D[2026-10-08], ~T[08:30:00]},
+          {"15:30", ~D[2026-10-08], ~T[15:30:00]},
+          {"12:15 am", ~D[2026-10-08], ~T[00:15:00]},
+          {"friday 8am", ~D[2026-10-09], ~T[08:00:00]},
+          {"Thursday at 3:30 pm", ~D[2026-10-08], ~T[15:30:00]},
+          {"tomorrow noon", ~D[2026-10-09], ~T[12:00:00]},
+          {"monday morning", ~D[2026-10-12], ~T[08:00:00]},
+          {"tonight", ~D[2026-10-08], ~T[17:00:00]},
+          {"@ 4pm", ~D[2026-10-08], ~T[16:00:00]},
+          {"now", ~D[2026-10-08], ~T[10:15:00]},
+          {"in 45 mins", ~D[2026-10-08], ~T[11:00:00]},
+          {"in 2 hours", ~D[2026-10-08], ~T[12:15:00]},
+          {"one hour from now", ~D[2026-10-08], ~T[11:15:00]},
+          {"friday", ~D[2026-10-09], nil}
+        ] do
+      test "parse_when #{inspect(input)}" do
+        assert DateParser.parse_when(unquote(input), @now) ==
+                 {:ok, unquote(Macro.escape(date)), unquote(Macro.escape(time))}
+      end
+    end
+
+    test "invalid times are refused" do
+      assert DateParser.parse_when("13:00 pm", @now) == :error
+      assert DateParser.parse_when("25:00", @now) == :error
+    end
+
+    test "extract_when combines a date and a time anywhere in the text" do
+      assert DateParser.extract_when("Call Marketing this Tuesday at 3:00", @now) ==
+               {:ok, ~D[2026-10-06], ~T[15:00:00], "this tuesday at 3:00"}
+
+      assert DateParser.extract_when("dinner 7pm friday", @now) ==
+               {:ok, ~D[2026-10-09], ~T[19:00:00], "7pm friday"}
+    end
+
+    test "numbers that are not times stay plain" do
+      assert DateParser.extract_when("costs 12:00:00 dollars", @now) == :none
     end
   end
 end

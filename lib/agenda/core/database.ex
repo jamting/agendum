@@ -74,7 +74,7 @@ defmodule Agenda.Core.Database do
     {db, _view} =
       insert_view(db, view_name,
         sections: [section],
-        columns: [%Column{category_id: when_id, width: 10}]
+        columns: [%Column{category_id: when_id, width: 16}]
       )
 
     db

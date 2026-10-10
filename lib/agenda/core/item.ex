@@ -9,6 +9,11 @@ defmodule Agenda.Core.Item do
   `when_explicit` is true when the user set the When date directly (in a
   When column or with the When command). Such a date overrides any date
   in the text, and edits to the text no longer change it (SPEC R14).
+  `when_time` is the time of day on the When date, if one was given (R14b).
+
+  An alarm rings `alarm_minutes` before the When date and time (R38);
+  once it has rung, `alarm_rung_at` records when, for the day's list of
+  past alarms.
   """
 
   @type id :: pos_integer
@@ -19,7 +24,10 @@ defmodule Agenda.Core.Item do
           entry: Date.t() | nil,
           when: Date.t() | nil,
           done: Date.t() | nil,
+          when_time: Time.t() | nil,
           when_explicit: boolean,
+          alarm_minutes: 0..60 | nil,
+          alarm_rung_at: NaiveDateTime.t() | nil,
           marked: boolean
         }
 
@@ -29,7 +37,10 @@ defmodule Agenda.Core.Item do
     note: "",
     entry: nil,
     when: nil,
+    when_time: nil,
     when_explicit: false,
+    alarm_minutes: nil,
+    alarm_rung_at: nil,
     done: nil,
     marked: false
   ]

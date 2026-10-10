@@ -92,6 +92,7 @@ defmodule Agenda.Core.ViewModel do
   end
 
   defp less?(%Date{} = x, %Date{} = y), do: Date.compare(x, y) == :lt
+  defp less?(%NaiveDateTime{} = x, %NaiveDateTime{} = y), do: NaiveDateTime.compare(x, y) == :lt
   defp less?(x, y), do: x < y
 
   defp flip(:lt), do: :gt
@@ -122,6 +123,9 @@ defmodule Agenda.Core.ViewModel do
             index
         end
 
+      :when ->
+        if item.when, do: NaiveDateTime.new!(item.when, item.when_time || ~T[00:00:00])
+
       field ->
         Map.get(item, field)
     end
@@ -138,7 +142,9 @@ defmodule Agenda.Core.ViewModel do
 
     cond do
       field = Database.date_field(db, head_id) ->
-        DateParser.format(Map.get(item, field))
+        if field == :when,
+          do: DateParser.format_when(item.when, item.when_time),
+          else: DateParser.format(Map.get(item, field))
 
       head.children == [] ->
         if Database.member?(db, item.id, head_id), do: "*", else: ""

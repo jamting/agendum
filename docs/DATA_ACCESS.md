@@ -124,6 +124,11 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.cycle_filter(db, view, :view \| {:section, i}, cat)` | write | Filter by category (R28): none → assigned → not assigned → none. |
 | `Search.matches?(item, search)` | read | Text search over item text and/or note (R37). |
 | `Core.show_match(db, search)` | write | Fill the "Show View" with every matching item (created once, then updated). |
+| `Core.when_at(item)` | read | The When date and time as one value (midnight when no time). |
+| `Core.set_alarm(db, item, minutes)`, `cancel_alarm/2` | write | Alarm 0-60 minutes before When (R38). `{:error, :no_when \| :minutes}`. |
+| `Core.ring_alarms(db, now)` | write | Rings due alarms, moving them to today's past alarms; returns the items that rang. |
+| `Core.alarm_list(db, today)`, `remove_past_alarm/2`, `clear_old_alarms/2` | read / write | Current and past alarms; past ones are forgotten the next day. |
+| `DateParser.parse_when(text, now)`, `extract_when(text, now)` | read | Dates with times of day (R14b). Core functions take a `clock`: a date, or a date and time. |
 | `Core.set_sort(db, view, :view \| {:section, i}, keys)` | write | Sort keys (`View.SortKey`, at most two); a section's `nil` uses the view's (R36). |
 | `Core.entry_categories(db, view, i)` | read | Categories a new item in section `i` needs to pass the filters. |
 | `Core.sort_children(db, parent)`, `sort_views(db)` | write | Alphabetical order (ALT-F5 in the managers). |

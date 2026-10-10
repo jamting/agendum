@@ -44,6 +44,9 @@ erDiagram
         date when "nil or a date"
         date done "nil or completion date"
         bool when_explicit "When set by the user, not the text"
+        time when_time "time of day on the When date, or nil"
+        int alarm_minutes "0-60 before When, or nil"
+        datetime alarm_rung_at "when the alarm went off"
         bool marked
     }
     CATEGORY {
@@ -111,6 +114,9 @@ classDiagram
         +when : Date | nil
         +done : Date | nil
         +when_explicit : boolean
+        +when_time : Time or nil
+        +alarm_minutes : 0..60 or nil
+        +alarm_rung_at : NaiveDateTime or nil
         +marked : boolean
     }
     class Category {
@@ -382,7 +388,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their
