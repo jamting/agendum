@@ -127,10 +127,16 @@ defmodule Agenda.TUI.ItemProperties do
         State.error(state, "The Entry date cannot be removed")
 
       kind == :date ->
-        State.change_db(state, Core.remove_from_category(state.db, mode.item_id, cat_id))
+        State.change_db(
+          state,
+          Core.remove_from_category(state.db, mode.item_id, cat_id, State.context(state))
+        )
 
       true ->
-        State.change_db(state, Core.toggle_assignment(state.db, mode.item_id, cat_id))
+        State.change_db(
+          state,
+          Core.toggle_assignment(state.db, mode.item_id, cat_id, State.context(state))
+        )
     end
   end
 
@@ -205,7 +211,7 @@ defmodule Agenda.TUI.ItemProperties do
         ask_number(state, mode, %{category: shown, number: nil})
 
       shown ->
-        state |> State.change_db(Core.assign(state.db, item_id, shown))
+        state |> State.change_db(Core.assign(state.db, item_id, shown, State.context(state)))
 
       String.trim(line.text) == "" ->
         state

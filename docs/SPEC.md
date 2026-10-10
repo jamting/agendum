@@ -212,9 +212,20 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   category manager shows them ("if Taxes, not People") and the assignment
   profile marks conditional assignments with "c". Contradictory conditions
   settle after a bounded number of rounds.
-- **R15a ⏳ Date conditions** (a Today or Overdue category by When or Done
-  date, rechecked when the date changes), and text conditions beyond the
-  category name and short name ("Also match").
+- **R15a ✅ Date and numeric conditions** (User's Guide 20-5 to 20-7). A
+  category's conditions can name a date or numeric category: choosing one
+  in the conditions box opens the Date Condition or Numeric Condition box
+  (the filter box of R28a): Show items (Assigned, Not assigned = without a
+  date or number), Start and End date (or Minimum and Maximum; blank ends
+  are open, both blank means any), Inside or Outside range. Items in the
+  range are assigned conditionally and let go when they leave it, when
+  their date or number changes, and, for relative dates ("beginning of
+  this week" to "end of this week"), when the date changes: the clock
+  tick re-checks every item on a new day. Dates are read in the reader's
+  date languages (R14c). A category cannot have a condition on itself.
+  The condition shows like a filter ("if When 2026-10-05..2026-10-09").
+- **R15d ⏳ Text conditions** beyond the category name and short name
+  ("Also match"; User's Guide chapter 19).
 - **R15b ⏳ Actions:** remove-from actions, date actions (set a When date),
   special actions (mark done, discard, export), and Utilities Execute for
   re-running actions. Category links (R8) already cover "also assign".

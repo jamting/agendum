@@ -77,20 +77,23 @@ defmodule Agenda.Core.Assign do
   conditional), and a conditional assignment whose conditions no longer
   hold is broken. Assignments the user made are left alone. Contradictory
   conditions (A if not B, B if not A) stop after a bounded number of rounds.
+  Date conditions with relative dates (R15a) are read against `clock` (a
+  date or an `Agenda.Core.Context`); without one, only ISO dates are read.
   """
-  @spec apply_conditions(db, id) :: db
-  def apply_conditions(db, item_id) do
+  @spec apply_conditions(db, id, Agenda.Core.Context.clock() | nil) :: db
+  def apply_conditions(db, item_id, clock \\ nil) do
     with_conditions = for {id, %{conditions: [_ | _]}} <- db.categories, do: id
-    settle_conditions(db, item_id, Enum.sort(with_conditions), length(with_conditions) + 2)
+    rounds = length(with_conditions) + 2
+    settle_conditions(db, item_id, Enum.sort(with_conditions), rounds, clock)
   end
 
-  defp settle_conditions(db, _item_id, [], _rounds), do: db
-  defp settle_conditions(db, _item_id, _cats, 0), do: db
+  defp settle_conditions(db, _item_id, [], _rounds, _clock), do: db
+  defp settle_conditions(db, _item_id, _cats, 0, _clock), do: db
 
-  defp settle_conditions(db, item_id, cats, rounds) do
+  defp settle_conditions(db, item_id, cats, rounds, clock) do
     next =
       Enum.reduce(cats, db, fn cat_id, acc ->
-        met = conditions_met?(acc, item_id, cat_id)
+        met = conditions_met?(acc, item_id, cat_id, clock)
 
         cond do
           met and not Database.member?(acc, item_id, cat_id) ->
@@ -104,7 +107,7 @@ defmodule Agenda.Core.Assign do
         end
       end)
 
-    if next == db, do: db, else: settle_conditions(next, item_id, cats, rounds - 1)
+    if next == db, do: db, else: settle_conditions(next, item_id, cats, rounds - 1, clock)
   end
 
   @doc """
@@ -112,10 +115,10 @@ defmodule Agenda.Core.Assign do
   condition must hold, except that "assigned" conditions naming mutually
   exclusive categories are alternatives (High or Low), as in Agenda.
   """
-  @spec conditions_met?(db, id, id) :: boolean
-  def conditions_met?(db, item_id, cat_id) do
+  @spec conditions_met?(db, id, id, Agenda.Core.Context.clock() | nil) :: boolean
+  def conditions_met?(db, item_id, cat_id, clock \\ nil) do
     conditions = Enum.reject(db.categories[cat_id].conditions, &(elem(&1, 0) == cat_id))
-    conditions != [] and criteria_met?(db, item_id, conditions)
+    conditions != [] and criteria_met?(db, item_id, conditions, clock)
   end
 
   @doc """

@@ -114,7 +114,17 @@ defmodule Agenda.TUI.Update do
   @spec tick(State.t(), NaiveDateTime.t()) :: {State.t(), [term]}
   def tick(%State{} = state, %NaiveDateTime{} = now) do
     today = NaiveDateTime.to_date(now)
-    db = if today != state.today, do: Core.clear_old_alarms(state.db, today), else: state.db
+
+    # a new day: forget yesterday's past alarms and re-check conditions,
+    # whose relative dates ("this week") may now mean other days (R15a)
+    db =
+      if today != state.today,
+        do:
+          state.db
+          |> Core.clear_old_alarms(today)
+          |> Core.recheck_conditions(State.context(%{state | now: now})),
+        else: state.db
+
     {db, rung} = Core.ring_alarms(db, now)
     state = %{state | now: now, today: today, db: db}
     state = %{state | dirty: state.db != state.saved_db}
@@ -391,30 +401,32 @@ defmodule Agenda.TUI.Update do
       State.error(state, "Items cannot be removed from MAIN; use ALT-F4 to discard")
     else
       state
-      |> State.change_db(Core.remove_from_category(state.db, item.id, cat.id))
+      |> State.change_db(
+        Core.remove_from_category(state.db, item.id, cat.id, State.context(state))
+      )
       |> State.info("Removed from #{cat.name}")
     end
   end
 
   defp delete(state, %{kind: :item} = row) do
     {:column_entry, item_id, head, _} = column_target(state, row, :replace)
-    State.change_db(state, clear_column(state.db, item_id, head))
+    State.change_db(state, clear_column(state.db, item_id, head, State.context(state)))
   end
 
   defp delete(state, nil), do: state
 
-  defp clear_column(db, item_id, head) do
+  defp clear_column(db, item_id, head, context) do
     case Database.date_field(db, head) do
       nil ->
         if db.categories[head].children == [],
-          do: Core.remove_from_category(db, item_id, head),
+          do: Core.remove_from_category(db, item_id, head, context),
           else:
             db
             |> ViewModel.column_entries(item_id, head)
-            |> Enum.reduce(db, &Core.remove_from_category(&2, item_id, &1))
+            |> Enum.reduce(db, &Core.remove_from_category(&2, item_id, &1, context))
 
       _ ->
-        Core.remove_from_category(db, item_id, head)
+        Core.remove_from_category(db, item_id, head, context)
     end
   end
 
@@ -531,8 +543,12 @@ defmodule Agenda.TUI.Update do
     state = %{state | edit: nil}
 
     if shown do
-      db = if how == :replace, do: clear_column(state.db, item_id, head), else: state.db
-      State.change_db(state, Core.assign(db, item_id, shown))
+      db =
+        if how == :replace,
+          do: clear_column(state.db, item_id, head, State.context(state)),
+          else: state.db
+
+      State.change_db(state, Core.assign(db, item_id, shown, State.context(state)))
     else
       commit(state, {:column_entry, item_id, head, how}, line.text)
     end
@@ -550,7 +566,7 @@ defmodule Agenda.TUI.Update do
 
     db =
       if how == :replace and String.trim(line.text) != "",
-        do: clear_column(state.db, item_id, head),
+        do: clear_column(state.db, item_id, head, State.context(state)),
         else: state.db
 
     case Core.assign_new_by_name(db, item_id, head, line.text) do
@@ -594,9 +610,9 @@ defmodule Agenda.TUI.Update do
 
       # a filtered view or section gives new items what the filter needs (R28)
       required = Core.entry_categories(db, state.view_id, sidx)
-      db = Enum.reduce(required, db, &Core.assign(&2, id, &1))
+      db = Enum.reduce(required, db, &Core.assign(&2, id, &1, State.context(state)))
       values = Core.entry_values(db, state.view_id, sidx, State.context(state))
-      db = Core.apply_entry_values(db, id, values)
+      db = Core.apply_entry_values(db, id, values, State.context(state))
 
       state
       |> State.change_db(db)
@@ -629,7 +645,7 @@ defmodule Agenda.TUI.Update do
   defp commit(state, {:column_entry, item_id, head, how}, text) do
     db =
       if how == :replace and String.trim(text) != "",
-        do: clear_column(state.db, item_id, head),
+        do: clear_column(state.db, item_id, head, State.context(state)),
         else: state.db
 
     case Core.assign_by_name(db, item_id, head, text, State.context(state)) do
@@ -805,7 +821,12 @@ defmodule Agenda.TUI.Update do
     if cat.id == state.db.main_id do
       State.error(state, "Items cannot be removed from MAIN; use ALT-F4 to discard")
     else
-      db = Enum.reduce(ids, state.db, &Core.remove_from_category(&2, &1, cat.id))
+      db =
+        Enum.reduce(
+          ids,
+          state.db,
+          &Core.remove_from_category(&2, &1, cat.id, State.context(state))
+        )
 
       state
       |> State.change_db(db)
@@ -874,7 +895,7 @@ defmodule Agenda.TUI.Update do
     {db, _} =
       Enum.reduce(moves, {state.db, first_after}, fn {id, from}, {db, after_id} ->
         from = from || db.main_id
-        {Core.move_item(db, id, from, to, after: after_id), id}
+        {Core.move_item(db, id, from, to, after: after_id, clock: State.context(state)), id}
       end)
 
     {last_id, _} = List.last(moves)
@@ -1034,9 +1055,14 @@ defmodule Agenda.TUI.Update do
 
   defp prompt_action(state, {:item_number, item_id, cat_id}, text) do
     case Core.assign_by_name(state.db, item_id, cat_id, text, State.context(state)) do
-      {:ok, db, :number} -> State.change_db(state, db)
-      {:error, :empty} -> State.change_db(state, Core.clear_number(state.db, item_id, cat_id))
-      {:error, :not_a_number} -> State.error(state, "Not a number: #{String.trim(text)}")
+      {:ok, db, :number} ->
+        State.change_db(state, db)
+
+      {:error, :empty} ->
+        State.change_db(state, Core.clear_number(state.db, item_id, cat_id, State.context(state)))
+
+      {:error, :not_a_number} ->
+        State.error(state, "Not a number: #{String.trim(text)}")
     end
   end
 

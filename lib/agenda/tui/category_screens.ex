@@ -293,10 +293,17 @@ defmodule Agenda.TUI.CategoryScreens do
 
           group_count(db, mode.item_ids, id) > 0 ->
             explicit = Enum.filter(mode.item_ids, &Database.explicit?(db, &1, id))
-            State.change_db(state, Enum.reduce(explicit, db, &Core.toggle_assignment(&2, &1, id)))
+
+            State.change_db(
+              state,
+              Enum.reduce(explicit, db, &Core.toggle_assignment(&2, &1, id, State.context(state)))
+            )
 
           true ->
-            State.change_db(state, Enum.reduce(mode.item_ids, db, &Core.assign(&2, &1, id)))
+            State.change_db(
+              state,
+              Enum.reduce(mode.item_ids, db, &Core.assign(&2, &1, id, State.context(state)))
+            )
         end
 
       _ ->
@@ -325,7 +332,7 @@ defmodule Agenda.TUI.CategoryScreens do
             Update.prompt(state, "#{db.categories[id].name}:", {:item_number, item_id, id})
 
           true ->
-            State.change_db(state, Core.toggle_assignment(db, item_id, id))
+            State.change_db(state, Core.toggle_assignment(db, item_id, id, State.context(state)))
         end
 
       _ ->
@@ -597,7 +604,7 @@ defmodule Agenda.TUI.CategoryScreens do
         numbers_hint(state, id)
 
       true ->
-        db = Enum.reduce(ids, state.db, &Core.assign(&2, &1, id))
+        db = Enum.reduce(ids, state.db, &Core.assign(&2, &1, id, State.context(state)))
         noun = if length(ids) == 1, do: "Item", else: "#{length(ids)} items"
 
         state
@@ -607,7 +614,7 @@ defmodule Agenda.TUI.CategoryScreens do
   end
 
   defp pick(state, {:assign_column, item_id, _head}, id),
-    do: State.change_db(state, Core.assign(state.db, item_id, id))
+    do: State.change_db(state, Core.assign(state.db, item_id, id, State.context(state)))
 
   defp pick(state, {:new_view, name}, id) do
     {db, view_id} = Core.add_view(state.db, name, [id])
@@ -619,13 +626,9 @@ defmodule Agenda.TUI.CategoryScreens do
 
   # ENTER on a category cycles its condition: none → assigned → not assigned
   defp pick(state, {:condition, cat_id}, target) do
-    case Core.cycle_condition(state.db, cat_id, target) do
-      {:ok, db} ->
-        state |> State.change_db(db) |> State.info(condition_message(db, cat_id, target))
-
-      {:error, :self} ->
-        State.error(state, "A category cannot depend on itself")
-    end
+    if Agenda.Core.RangeFilter.range_category?(state.db, target),
+      do: Agenda.TUI.RangeFilterBox.open_condition(state, cat_id, target),
+      else: cycle_condition(state, cat_id, target)
   end
 
   defp pick(state, {:also_assign, cat_id}, target) do
@@ -936,6 +939,16 @@ defmodule Agenda.TUI.CategoryScreens do
       |> Enum.filter(& &1)
 
     "Convert #{cat.name} to numeric? " <> Enum.join(parts, "; ") <> ". (Y/N)"
+  end
+
+  defp cycle_condition(state, cat_id, target) do
+    case Core.cycle_condition(state.db, cat_id, target) do
+      {:ok, db} ->
+        state |> State.change_db(db) |> State.info(condition_message(db, cat_id, target))
+
+      {:error, :self} ->
+        State.error(state, "A category cannot depend on itself")
+    end
   end
 
   defp condition_message(db, cat_id, target) do

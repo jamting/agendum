@@ -605,7 +605,7 @@ defmodule Agenda.TUI.Render do
               ]
           end
 
-        line = name ++ [{:dim, category_tags(db, cat)}]
+        line = name ++ [{:dim, category_tags(state, cat)}]
 
         case state.edit do
           %{target: {:new, parent, _}} when selected ->
@@ -624,7 +624,7 @@ defmodule Agenda.TUI.Render do
     ]
   end
 
-  defp category_tags(db, cat) do
+  defp category_tags(%State{db: db} = state, cat) do
     count =
       if Database.date_field(db, cat.id), do: nil, else: length(Database.items_in(db, cat.id))
 
@@ -632,7 +632,7 @@ defmodule Agenda.TUI.Render do
       cat.kind == :date && "date",
       cat.exclusive && "exclusive",
       cat.short_name && "aka #{cat.short_name}",
-      cat.conditions != [] && "if " <> conditions_text(db, cat),
+      cat.conditions != [] && "if " <> conditions_text(state, cat),
       cat.also_assign != [] &&
         "→ " <> Enum.map_join(cat.also_assign, ", ", &db.categories[&1].name),
       cat.note != "" && "♪",
@@ -833,7 +833,8 @@ defmodule Agenda.TUI.Render do
 
   defp box_title(state, %{type: :range_filter} = mode) do
     kind = if Agenda.TUI.RangeFilterBox.numeric?(state, mode), do: "Numeric", else: "Date"
-    "#{kind} filter: #{state.db.categories[mode.cat_id].name}"
+    what = if match?({:condition, _}, mode.purpose), do: "condition", else: "filter"
+    "#{kind} #{what}: #{state.db.categories[mode.cat_id].name}"
   end
 
   defp box_title(state, %{type: :column_props} = mode),
@@ -1178,7 +1179,7 @@ defmodule Agenda.TUI.Render do
           do: "(none)",
           else: Enum.map_join(cat.also_assign, ", ", &state.db.categories[&1].name)
         ),
-      conditions: if(cat.conditions == [], do: "(none)", else: conditions_text(state.db, cat)),
+      conditions: if(cat.conditions == [], do: "(none)", else: conditions_text(state, cat)),
       note: if(cat.note == "", do: "(none)", else: "#{String.length(cat.note)} characters")
     }
 
@@ -1274,8 +1275,8 @@ defmodule Agenda.TUI.Render do
 
   defp profile_marker(state, %{type: :picker, purpose: {:condition, cat_id}}, id) do
     case List.keyfind(state.db.categories[cat_id].conditions, id, 0) do
-      {_, :assigned} -> "+"
       {_, :not_assigned} -> "-"
+      {_, _assigned_or_range} -> "+"
       nil -> " "
     end
   end
@@ -1287,10 +1288,17 @@ defmodule Agenda.TUI.Render do
   defp profile_marker(_state, _mode, _id), do: " "
 
   # "Taxes, not People": a category's assignment conditions in words.
-  defp conditions_text(db, cat) do
+  defp conditions_text(%State{db: db} = state, cat) do
     Enum.map_join(cat.conditions, ", ", fn
-      {id, :assigned} -> db.categories[id].name
-      {id, :not_assigned} -> "not " <> db.categories[id].name
+      {id, :assigned} ->
+        db.categories[id].name
+
+      {id, :not_assigned} ->
+        "not " <> db.categories[id].name
+
+      {id, range} ->
+        db.categories[id].name <>
+          " " <> Agenda.Core.RangeFilter.describe(db, range, State.context(state))
     end)
   end
 

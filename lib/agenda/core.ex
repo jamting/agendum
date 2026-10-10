@@ -68,7 +68,7 @@ defmodule Agenda.Core do
       db
       |> Assign.auto_assign(id, Keyword.get(opts, :adjacent, []))
       |> date_from_text(id, nil, today)
-      |> Assign.apply_conditions(id)
+      |> Assign.apply_conditions(id, today)
 
     {db, id}
   end
@@ -85,7 +85,7 @@ defmodule Agenda.Core do
     |> Database.update_item(id, &%{&1 | text: String.trim(text)})
     |> Assign.auto_assign(id, adjacent)
     |> date_from_text(id, old_text, today)
-    |> Assign.apply_conditions(id)
+    |> Assign.apply_conditions(id, today)
   end
 
   # An assignment the user asked for: never treated as conditional (R15).
@@ -160,7 +160,7 @@ defmodule Agenda.Core do
         after_id -> Database.reorder_item(db, item_id, after_id)
       end
 
-    Assign.apply_conditions(db, item_id)
+    Assign.apply_conditions(db, item_id, opts[:clock])
   end
 
   @doc """
@@ -339,36 +339,37 @@ defmodule Agenda.Core do
   Removes an item from a category and its descendants (DEL on an item in a
   section, or on a column entry). For a date category, clears the date.
   """
-  @spec remove_from_category(db, id, id) :: db
-  def remove_from_category(db, item_id, cat_id) do
+  @spec remove_from_category(db, id, id, clock | nil) :: db
+  def remove_from_category(db, item_id, cat_id, clock \\ nil) do
     case Database.date_field(db, cat_id) do
       nil -> Assign.unassign(db, item_id, cat_id)
       field -> put_date(db, item_id, field, nil)
     end
-    |> Assign.apply_conditions(item_id)
+    |> Assign.apply_conditions(item_id, clock)
   end
 
   @doc """
   Assigns an item to a category (with mutual exclusion, the
   ancestor/descendant rule and category links), then re-checks the file's
-  assignment conditions for the item (R15).
+  assignment conditions for the item (R15), read against `clock` for date
+  conditions (R15a).
   """
-  @spec assign(db, id, id) :: db
-  def assign(db, item_id, cat_id),
-    do: db |> user_assign(item_id, cat_id) |> Assign.apply_conditions(item_id)
+  @spec assign(db, id, id, clock | nil) :: db
+  def assign(db, item_id, cat_id, clock \\ nil),
+    do: db |> user_assign(item_id, cat_id) |> Assign.apply_conditions(item_id, clock)
 
   @doc """
   Toggles one explicit assignment, as in the assignment profile: an
   explicit link is removed (only that link, not the subtree); otherwise the
   item is assigned with the usual rules.
   """
-  @spec toggle_assignment(db, id, id) :: db
-  def toggle_assignment(db, item_id, cat_id) do
+  @spec toggle_assignment(db, id, id, clock | nil) :: db
+  def toggle_assignment(db, item_id, cat_id, clock \\ nil) do
     if Database.explicit?(db, item_id, cat_id),
-      do: Database.unlink(db, item_id, cat_id),
+      do: db |> Database.unlink(item_id, cat_id) |> Assign.apply_conditions(item_id, clock),
       else:
         user_assign(db, item_id, cat_id)
-        |> Assign.apply_conditions(item_id)
+        |> Assign.apply_conditions(item_id, clock)
   end
 
   @doc """
@@ -391,7 +392,7 @@ defmodule Agenda.Core do
 
       db.categories[head_id].kind == :numeric ->
         with {:ok, value} <- NumberFormat.parse(text),
-             {:ok, db} <- set_number(db, item_id, head_id, value) do
+             {:ok, db} <- set_number(db, item_id, head_id, value, today) do
           {:ok, db, :number}
         else
           _ -> {:error, :not_a_number}
@@ -407,7 +408,7 @@ defmodule Agenda.Core do
                 do: Database.update_item(db, item_id, &%{&1 | when_time: time, recurrence: rule}),
                 else: db
 
-            {:ok, db, :date}
+            {:ok, Assign.apply_conditions(db, item_id, today), :date}
 
           :error ->
             {:error, :invalid_date}
@@ -428,11 +429,14 @@ defmodule Agenda.Core do
     end
   end
 
-  @doc "Sets or clears the date for a date category."
-  @spec set_date(db, id, id, Date.t() | nil) :: db
-  def set_date(db, item_id, cat_id, date) do
+  @doc """
+  Sets or clears the date for a date category, then re-checks conditions
+  (date conditions, R15a, read against `clock`).
+  """
+  @spec set_date(db, id, id, Date.t() | nil, clock | nil) :: db
+  def set_date(db, item_id, cat_id, date, clock \\ nil) do
     field = Database.date_field(db, cat_id) || raise ArgumentError, "not a date category"
-    put_date(db, item_id, field, date)
+    db |> put_date(item_id, field, date) |> Assign.apply_conditions(item_id, clock)
   end
 
   # A When date set or cleared by the user: set is explicit and overrides
@@ -507,14 +511,14 @@ defmodule Agenda.Core do
   Gives an item a number in a numeric category, assigning it there (with
   the usual assignment rules).
   """
-  @spec set_number(db, id, id, number) :: {:ok, db} | {:error, :not_numeric}
-  def set_number(db, item_id, cat_id, value) do
+  @spec set_number(db, id, id, number, clock | nil) :: {:ok, db} | {:error, :not_numeric}
+  def set_number(db, item_id, cat_id, value, clock \\ nil) do
     if db.categories[cat_id].kind == :numeric do
       db =
         db
         |> user_assign(item_id, cat_id)
         |> Database.put_number(item_id, cat_id, value)
-        |> Assign.apply_conditions(item_id)
+        |> Assign.apply_conditions(item_id, clock)
 
       {:ok, db}
     else
@@ -523,8 +527,9 @@ defmodule Agenda.Core do
   end
 
   @doc "Removes an item's number, and so its assignment to the numeric category."
-  @spec clear_number(db, id, id) :: db
-  def clear_number(db, item_id, cat_id), do: remove_from_category(db, item_id, cat_id)
+  @spec clear_number(db, id, id, clock | nil) :: db
+  def clear_number(db, item_id, cat_id, clock \\ nil),
+    do: remove_from_category(db, item_id, cat_id, clock)
 
   @doc """
   What converting a standard category to numeric would do to its children
@@ -947,7 +952,7 @@ defmodule Agenda.Core do
     Enum.reduce(db.item_order, db, fn id, db ->
       db = Assign.auto_assign(db, id, [])
       db = if db.items[id].when, do: db, else: date_from_text(db, id, nil, today)
-      Assign.apply_conditions(db, id)
+      Assign.apply_conditions(db, id, today)
     end)
   end
 
@@ -987,6 +992,48 @@ defmodule Agenda.Core do
       &%{&1 | conditions: List.keydelete(&1.conditions, target, 0)}
     )
   end
+
+  @doc """
+  Sets a date or numeric condition on a category (R15a; User's Guide 20-5 to
+  20-7): items whose date (or number) in `target` is in, or outside, the
+  range are assigned to it; blank ends are open, both blank means any date
+  (or number). Dates are checked against `clock` and may be relative ("this
+  week"); they are read again whenever conditions are checked.
+  """
+  @spec set_range_condition(
+          db,
+          id,
+          id,
+          {String.t() | nil, String.t() | nil, :inside | :outside},
+          clock
+        ) :: {:ok, db} | {:error, :self | :not_a_range_category | :invalid_date | :not_a_number}
+  def set_range_condition(_db, cat_id, cat_id, _range, _clock), do: {:error, :self}
+
+  def set_range_condition(db, cat_id, target, {from, to, where}, clock) do
+    if RangeFilter.range_category?(db, target) do
+      with {:ok, range} <- RangeFilter.build(db, target, from, to, where, clock) do
+        term = if match?({:range, nil, nil, _}, range), do: :assigned, else: range
+        conditions = db.categories[cat_id].conditions
+
+        conditions =
+          if List.keymember?(conditions, target, 0),
+            do: List.keyreplace(conditions, target, 0, {target, term}),
+            else: conditions ++ [{target, term}]
+
+        {:ok, Database.update_category(db, cat_id, &%{&1 | conditions: conditions})}
+      end
+    else
+      {:error, :not_a_range_category}
+    end
+  end
+
+  @doc """
+  Checks every item against the file's conditions again, as Agenda does
+  when the date changes (date conditions with relative dates, R15a).
+  """
+  @spec recheck_conditions(db, clock) :: db
+  def recheck_conditions(db, clock),
+    do: Enum.reduce(db.item_order, db, &Assign.apply_conditions(&2, &1, clock))
 
   @doc """
   Cycles the condition on `target` the way the category properties box
@@ -1193,14 +1240,15 @@ defmodule Agenda.Core do
   end
 
   @doc "Gives an item the dates and numbers from `entry_values/4`."
-  @spec apply_entry_values(db, id, [{id, {:date, Date.t()} | {:number, float}}]) :: db
-  def apply_entry_values(db, item_id, values) do
+  @spec apply_entry_values(db, id, [{id, {:date, Date.t()} | {:number, float}}], clock | nil) ::
+          db
+  def apply_entry_values(db, item_id, values, clock \\ nil) do
     Enum.reduce(values, db, fn
       {cat, {:date, date}}, db ->
-        set_date(db, item_id, cat, date)
+        set_date(db, item_id, cat, date, clock)
 
       {cat, {:number, number}}, db ->
-        {:ok, db} = set_number(db, item_id, cat, number)
+        {:ok, db} = set_number(db, item_id, cat, number, clock)
         db
     end)
   end

@@ -63,7 +63,7 @@ erDiagram
         bool exclusive "children mutually exclusive"
         bool match_name "auto-assign by name"
         list also_assign "category ids"
-        list conditions "assigned / not assigned category ids"
+        list conditions "category ids: assigned, not, or a date/number range"
         string note
     }
     VIEW {

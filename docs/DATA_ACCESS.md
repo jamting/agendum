@@ -97,6 +97,8 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.assign(db, item, cat)`                            | write | Explicit assignment with exclusivity and `also_assign` (see below).                                                       |
 | `Core.toggle_assignment(db, item, cat)`                 | write | Assignment profile: remove just that explicit link, or `assign`.                                                          |
 | `Core.add_condition(db, cat, target, :assigned \| :not_assigned)`, `remove_condition/3`, `cycle_condition/3` | write | Assignment conditions (R15). `{:error, :self \| :duplicate}`. New conditions reach existing items through `reassign_all/2`. |
+| `Core.set_range_condition(db, cat, target, {from, to, where}, clock)` | write | Date or numeric condition (R15a), checked against `clock`. |
+| `Core.recheck_conditions(db, clock)` | write | Re-check every item's conditions (on a new day). Functions that apply conditions (`assign/4`, `set_date/5`, `set_number/5`, …) take an optional clock for date conditions. |
 | `Assign.apply_conditions(db, item)`, `conditions_met?(db, item, cat)` | write / read | Check one item against all conditions until stable; every `Core` operation that changes an item's assignments ends with it. |
 | `Database.conditional?(db, item, cat)` | read | Was this link made by a condition (and so retractable)? |
 | `Core.assign_by_name(db, item, head, text, today)`      | write | Typing in a column: date, number (numeric head), exact name, unique prefix, or a new child. `{:ok, db, cat_id \| :date \| :number}`.                        |
