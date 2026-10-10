@@ -1,0 +1,184 @@
+defmodule Agenda.Core.DateLanguage.English do
+  @moduledoc """
+  English dates and times, as Agenda 2.0 reads them (SPEC R14, R14b; User's
+  Guide chapters 6 and 7): "friday", "next week", "11/20/90", "the 5th of
+  November", "in 2 days", "Thursday at 3:30 pm", "tonight".
+  """
+
+  @behaviour Agenda.Core.DateLanguage
+  import Agenda.Core.DateLanguage, only: [alt: 1, alt: 2]
+
+  @weekdays %{
+    "monday" => 1,
+    "mon" => 1,
+    "tuesday" => 2,
+    "tues" => 2,
+    "tue" => 2,
+    "wednesday" => 3,
+    "wed" => 3,
+    "thursday" => 4,
+    "thurs" => 4,
+    "thur" => 4,
+    "thu" => 4,
+    "friday" => 5,
+    "fri" => 5,
+    "saturday" => 6,
+    "sat" => 6,
+    "sunday" => 7,
+    "sun" => 7
+  }
+  @full_weekdays ~w(monday tuesday wednesday thursday friday saturday sunday)
+
+  @months %{
+    "january" => 1,
+    "jan" => 1,
+    "february" => 2,
+    "feb" => 2,
+    "march" => 3,
+    "mar" => 3,
+    "april" => 4,
+    "apr" => 4,
+    "may" => 5,
+    "june" => 6,
+    "jun" => 6,
+    "july" => 7,
+    "jul" => 7,
+    "august" => 8,
+    "aug" => 8,
+    "september" => 9,
+    "sept" => 9,
+    "sep" => 9,
+    "october" => 10,
+    "oct" => 10,
+    "november" => 11,
+    "nov" => 11,
+    "december" => 12,
+    "dec" => 12
+  }
+
+  @numbers %{
+    "a" => 1,
+    "an" => 1,
+    "one" => 1,
+    "two" => 2,
+    "three" => 3,
+    "four" => 4,
+    "five" => 5,
+    "six" => 6,
+    "seven" => 7,
+    "eight" => 8,
+    "nine" => 9,
+    "ten" => 10,
+    "eleven" => 11,
+    "twelve" => 12
+  }
+
+  @ordinals ~w(first second third fourth fifth sixth seventh eighth ninth tenth eleventh twelfth
+               thirteenth fourteenth fifteenth sixteenth seventeenth eighteenth nineteenth
+               twentieth twenty-first twenty-second twenty-third twenty-fourth twenty-fifth
+               twenty-sixth twenty-seventh twenty-eighth twenty-ninth thirtieth thirty-first)
+
+  @words %{
+    weekdays: @weekdays,
+    months: @months,
+    numbers: @numbers,
+    ordinals: @ordinals |> Enum.with_index(1) |> Map.new(),
+    relative: %{"this" => 0, "next" => 1, "nxt" => 1, "last" => -1},
+    periods: %{"week" => :week, "month" => :month, "year" => :year},
+    units: %{
+      "day" => :day,
+      "days" => :day,
+      "week" => :week,
+      "weeks" => :week,
+      "month" => :month,
+      "months" => :month
+    },
+    edges: %{"beginning" => :start, "beg" => :start, "end" => :end},
+    offsets: %{"today" => 0, "tomorrow" => 1, "tmorrow" => 1, "yesterday" => -1, "ystday" => -1},
+    time_words: %{
+      "noon" => ~T[12:00:00],
+      "midnight" => ~T[00:00:00],
+      "morning" => ~T[08:00:00],
+      "afternoon" => ~T[14:00:00],
+      "evening" => ~T[17:00:00],
+      "tonight" => ~T[17:00:00],
+      "tonite" => ~T[17:00:00]
+    },
+    time_units: %{
+      "minute" => :minute,
+      "minutes" => :minute,
+      "min" => :minute,
+      "mins" => :minute,
+      "hour" => :hour,
+      "hours" => :hour,
+      "hr" => :hour,
+      "hrs" => :hour
+    }
+  }
+
+  @impl true
+  def name, do: "english"
+
+  @impl true
+  def words, do: @words
+
+  @impl true
+  def numeric_order, do: :month_day
+
+  @impl true
+  def clock, do: :agenda
+
+  @impl true
+  def text_excluded, do: [:weekday_abbr]
+
+  @impl true
+  def rules do
+    m = alt(__MODULE__, :months)
+    n = "\\d+|" <> alt(__MODULE__, :numbers)
+    unit = alt(__MODULE__, :units)
+    w_all = alt(__MODULE__, :weekdays)
+    w_full = alt(@full_weekdays)
+    w_abbr = alt(Map.keys(@weekdays) -- @full_weekdays)
+
+    [
+      {:iso, "(\\d{4})-(\\d{1,2})-(\\d{1,2})"},
+      {:numeric, "(\\d{1,2})/(\\d{1,2})(?:/(\\d{4}|\\d{2}))?"},
+      {:month_day, "(#{m})\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s+(\\d{4}))?"},
+      {:day_month,
+       "(?:the\\s+)?(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?(#{m})\\.?(?:,?\\s+(\\d{4}))?"},
+      {:ordinal_of_month,
+       "(?:the\\s+)?(#{alt(__MODULE__, :ordinals)})\\s+of\\s+(#{m})\\.?(?:,?\\s+(\\d{4}))?"},
+      {{:offset, 2}, "(?:the\\s+)?day\\s+after\\s+tomorrow"},
+      {{:offset, -2}, "(?:the\\s+)?day\\s+before\\s+yesterday"},
+      {{:offset, 14}, "in\\s+a\\s+fortnight"},
+      {:in_units, "in\\s+(#{n})\\s+(#{unit})"},
+      {:units_from_now, "(#{n})\\s+(#{unit})\\s+from\\s+(?:today|now)"},
+      {:units_ago, "(#{n})\\s+(#{unit})\\s+ago"},
+      {:edge_of_period,
+       "(#{alt(__MODULE__, :edges)})\\s+of\\s+(?:the\\s+)?(?:(this|next|nxt|last)\\s+)?(week|month)"},
+      {:relative_period, "(this|next|nxt|last)\\s+(week|month|year)"},
+      {:relative_weekday, "(this|next|nxt|last)\\s+(#{w_all})"},
+      {:offset_word, "(#{alt(__MODULE__, :offsets)})"},
+      {:weekday, "(#{w_full})"},
+      {:weekday, "(?:on|by|until|till)\\s+(#{w_abbr})\\.?"},
+      {:weekday_abbr, "(#{w_abbr})"}
+    ]
+  end
+
+  @impl true
+  def time_rules do
+    n = "\\d+|" <> alt(__MODULE__, :numbers)
+    time_unit = alt(__MODULE__, :time_units)
+
+    [
+      {:clock,
+       "(?:(?:at|@)\\s*)?(?<![:\\d])(\\d{1,2}):(\\d{2})(?!:\\d)\\s*(a\\.?m\\.?|p\\.?m\\.?)?"},
+      {:hour_ampm, "(?:(?:at|@)\\s*)?(\\d{1,2})\\s*(a\\.?m\\.?|p\\.?m\\.?)"},
+      {:at_hour, "(?:at|@)\\s*(\\d{1,2})"},
+      {:time_word, "(#{alt(__MODULE__, :time_words)})"},
+      {:in_time, "in\\s+(#{n})\\s+(#{time_unit})"},
+      {:in_time, "(#{n})\\s+(#{time_unit})\\s+from\\s+now"},
+      {:now, "(now)"}
+    ]
+  end
+end
