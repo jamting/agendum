@@ -14,13 +14,16 @@ defmodule Agenda.TUI.QuestionsTest do
   defp item(state, text), do: Enum.find(Database.items(state.db), &(&1.text == text))
 
   # File ▸ Properties; Confirm assignments is the last row
+  # Confirm assignments is the last row of File Properties
+  @to_confirm List.duplicate(:down, 20)
+
   defp confirm_always(state),
-    do: press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, " ", :esc])
+    do: press(state, [{:f, 10}, "f", "p"] ++ @to_confirm ++ [" ", :esc])
 
   test "File Properties sets Confirm assignments", %{state: state} do
     state = press(state, [{:f, 10}, "f", "p"])
     assert screen(state) =~ ~r/Confirm assignments\s+: Never/
-    state = press(state, [:down, :down, :down, :down, " "])
+    state = press(state, @to_confirm ++ [" "])
     assert state.db.confirm_assignments == :always
     assert screen(state) =~ ~r/Confirm assignments\s+: Always/
   end

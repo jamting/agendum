@@ -55,7 +55,11 @@ defmodule Agenda.Core.RangeFilter do
         with :error <- NumberFormat.parse(text), do: {:error, :not_a_number}
 
       true ->
-        case DateParser.parse(text, Context.today(today), Context.parser_opts(today)) do
+        case DateParser.parse(
+               text,
+               Context.today(today),
+               Context.parser_opts(today, db.date_settings)
+             ) do
           {:ok, _} -> {:ok, text}
           :error -> {:error, :invalid_date}
         end
@@ -71,7 +75,8 @@ defmodule Agenda.Core.RangeFilter do
 
       value ->
         inside =
-          after_start?(value, resolve(from, today)) and before_end?(value, resolve(to, today))
+          after_start?(value, resolve(db, from, today)) and
+            before_end?(value, resolve(db, to, today))
 
         if where == :inside, do: inside, else: not inside
     end
@@ -98,18 +103,22 @@ defmodule Agenda.Core.RangeFilter do
 
   # Date expressions are read against today; without a today only ISO
   # dates can be read.
-  defp resolve(nil, _today), do: nil
-  defp resolve(number, _today) when is_number(number), do: number
+  defp resolve(_db, nil, _today), do: nil
+  defp resolve(_db, number, _today) when is_number(number), do: number
 
-  defp resolve(text, nil) do
+  defp resolve(_db, text, nil) do
     case Date.from_iso8601(text) do
       {:ok, date} -> date
       _ -> nil
     end
   end
 
-  defp resolve(text, clock) do
-    case DateParser.parse(text, Context.today(clock), Context.parser_opts(clock)) do
+  defp resolve(db, text, clock) do
+    case DateParser.parse(
+           text,
+           Context.today(clock),
+           Context.parser_opts(clock, db.date_settings)
+         ) do
       {:ok, date} -> date
       :error -> nil
     end
@@ -124,8 +133,8 @@ defmodule Agenda.Core.RangeFilter do
   @spec entry_value(Database.t(), Database.id(), term_, Context.clock() | nil) ::
           {:date, Date.t()} | {:number, float} | nil
   def entry_value(db, cat_id, {:range, from, to, where}, today) do
-    from = resolve(from, today)
-    to = resolve(to, today)
+    from = resolve(db, from, today)
+    to = resolve(db, to, today)
 
     value =
       case {where, from, to} do
@@ -158,7 +167,7 @@ defmodule Agenda.Core.RangeFilter do
         NumberFormat.format(number, %NumberFormat{decimals: decimals, thousands: true})
 
       text ->
-        Agenda.Core.DateFormat.date(resolve(text, today), db.date_format)
+        Agenda.Core.DateFormat.date(resolve(db, text, today), db.date_format)
     end
 
     range = show.(from) <> ".." <> show.(to)

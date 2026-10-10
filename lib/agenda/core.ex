@@ -109,10 +109,20 @@ defmodule Agenda.Core do
 
       old =
         if old_text,
-          do: DateParser.extract_recurring(old_text, now, Context.parser_opts(today)),
+          do:
+            DateParser.extract_recurring(
+              old_text,
+              now,
+              Context.parser_opts(today, db.date_settings)
+            ),
           else: :none
 
-      case {old, DateParser.extract_recurring(item.text, now, Context.parser_opts(today))} do
+      case {old,
+            DateParser.extract_recurring(
+              item.text,
+              now,
+              Context.parser_opts(today, db.date_settings)
+            )} do
         {{:ok, _, _, _, phrase}, {:ok, _, _, _, phrase}} ->
           db
 
@@ -135,6 +145,14 @@ defmodule Agenda.Core do
   @doc "Sets how the file displays dates and times (R41)."
   @spec set_date_format(db, Agenda.Core.DateFormat.t()) :: db
   def set_date_format(db, %Agenda.Core.DateFormat{} = format), do: %{db | date_format: format}
+
+  @doc """
+  Sets how the file reads dates (R14e). Dates already read keep their
+  values; relative dates in filters and conditions are read anew.
+  """
+  @spec set_date_settings(db, Agenda.Core.DateSettings.t()) :: db
+  def set_date_settings(db, %Agenda.Core.DateSettings{} = settings),
+    do: %{db | date_settings: settings}
 
   @spec set_note(db, id, String.t()) :: db
   def set_note(db, id, note), do: Database.update_item(db, id, &%{&1 | note: note})
@@ -403,7 +421,11 @@ defmodule Agenda.Core do
         end
 
       field = Database.date_field(db, head_id) ->
-        case DateParser.parse_recurring(text, now_of(today), Context.parser_opts(today)) do
+        case DateParser.parse_recurring(
+               text,
+               now_of(today),
+               Context.parser_opts(today, db.date_settings)
+             ) do
           {:ok, date, time, rule} ->
             db = put_date(db, item_id, field, date)
 
@@ -515,7 +537,7 @@ defmodule Agenda.Core do
       field = Database.date_field(db, target) ->
         {:set, text} = action
 
-        case action_date(text, clock) do
+        case action_date(db, text, clock) do
           {:ok, date} -> put_date(db, item_id, field, date)
           :error -> db
         end
@@ -528,15 +550,15 @@ defmodule Agenda.Core do
 
   # The date of a date action, read when it runs; without a clock (the core
   # never reads one) only an ISO date can be read.
-  defp action_date(text, nil) do
+  defp action_date(_db, text, nil) do
     case Date.from_iso8601(text) do
       {:ok, date} -> {:ok, date}
       _ -> :error
     end
   end
 
-  defp action_date(text, clock),
-    do: DateParser.parse(text, date_of(clock), Context.parser_opts(clock))
+  defp action_date(db, text, clock),
+    do: DateParser.parse(text, date_of(clock), Context.parser_opts(clock, db.date_settings))
 
   defp apply_special(db, item_id, _special, _clock) when not is_map_key(db.items, item_id),
     do: db
@@ -595,7 +617,7 @@ defmodule Agenda.Core do
         true -> :standard
       end
 
-    with {:ok, action} <- check_action(kind, action, clock) do
+    with {:ok, action} <- check_action(kind, action, db.date_settings, clock) do
       db = remove_action(db, cat_id, target)
 
       db =
@@ -613,28 +635,29 @@ defmodule Agenda.Core do
     end
   end
 
-  defp check_action(:standard, action, _clock) when action in [:assign, :remove],
+  defp check_action(:standard, action, _settings, _clock) when action in [:assign, :remove],
     do: {:ok, action}
 
-  defp check_action(kind, :clear, _clock) when kind in [:date, :numeric], do: {:ok, :clear}
+  defp check_action(kind, :clear, _settings, _clock) when kind in [:date, :numeric],
+    do: {:ok, :clear}
 
-  defp check_action(:date, {:set, text}, clock) do
+  defp check_action(:date, {:set, text}, settings, clock) do
     today = if clock, do: date_of(clock), else: ~D[2000-01-01]
 
-    case DateParser.parse(text, today, Context.parser_opts(clock)) do
+    case DateParser.parse(text, today, Context.parser_opts(clock, settings)) do
       {:ok, _} -> {:ok, {:set, String.trim(text)}}
       :error -> {:error, :invalid_date}
     end
   end
 
-  defp check_action(:numeric, {:set, text}, _clock) do
+  defp check_action(:numeric, {:set, text}, _settings, _clock) do
     case NumberFormat.parse(to_string(text)) do
       {:ok, number} -> {:ok, {:set, number}}
       :error -> {:error, :not_a_number}
     end
   end
 
-  defp check_action(_kind, _action, _clock), do: {:error, :not_allowed}
+  defp check_action(_kind, _action, _settings, _clock), do: {:error, :not_allowed}
 
   @doc "Removes a category's action on `target` (including a category link)."
   @spec remove_action(db, id, id) :: db

@@ -117,11 +117,11 @@ defmodule Agenda.Core.DateLanguage.English do
     time_words: %{
       "noon" => ~T[12:00:00],
       "midnight" => ~T[00:00:00],
-      "morning" => ~T[08:00:00],
-      "afternoon" => ~T[14:00:00],
-      "evening" => ~T[17:00:00],
-      "tonight" => ~T[17:00:00],
-      "tonite" => ~T[17:00:00]
+      "morning" => :morning,
+      "afternoon" => :afternoon,
+      "evening" => :evening,
+      "tonight" => :evening,
+      "tonite" => :evening
     },
     time_units: %{
       "minute" => :minute,

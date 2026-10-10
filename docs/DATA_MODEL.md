@@ -36,6 +36,7 @@ erDiagram
         bool auto_date "read When dates from item text"
         set conditional "item-category links made by conditions"
         DateFormat date_format "how dates and times display (R41)"
+        DateSettings date_settings "how typed dates are read (R14e)"
         map numbers "item and numeric category => number (R29)"
         Links dependencies "dependent item <-> prerequisite item (R43)"
         atom confirm_assignments "never or always (R16)"
@@ -119,6 +120,7 @@ classDiagram
         +auto_date : boolean
         +conditional : MapSet
         +date_format : DateFormat
+        +date_settings : DateSettings
         +numbers : Map~item_id and cat_id, float~
         +dependencies : Links
         +confirm_assignments : never or always
@@ -129,6 +131,12 @@ classDiagram
         +separator : String
         +clock : 12 or 24
         +day_of_week : boolean
+    }
+    class DateSettings {
+        +week_start, week_end : 1..7
+        +quarter_start, year_start : 1..12
+        +month_alone : first, last or 2..31
+        +morning, afternoon, evening : Time
     }
     class Item {
         +id : id
@@ -209,6 +217,7 @@ classDiagram
     Database *-- View
     Database *-- Links
     Database *-- DateFormat
+    Database *-- DateSettings
     View *-- Section
     View *-- Column
     Column *-- NumberFormat
@@ -222,6 +231,7 @@ classDiagram
 | `View`, `View.Section`, `View.Column` | `lib/agenda/core/view.ex`     | Pure presentation config; references categories by id.                      |
 | `Links`                               | `lib/agenda/core/links.ex`    | Generic bidirectional many-to-many relation.                                |
 | `DateFormat` | `lib/agenda/core/date_format.ex` | How the file displays dates and times; display only (R41). |
+| `DateSettings` | `lib/agenda/core/date_settings.ex` | How the file reads typed dates: week, quarter and year boundaries, month alone, times of day (R14e). |
 | `NumberFormat` | `lib/agenda/core/number_format.ex` | How a numeric column shows numbers and which calculations it shows; also reads typed numbers (R29). |
 
 ### Ids
@@ -438,7 +448,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16); 14 added `Database.date_settings` (R14e)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

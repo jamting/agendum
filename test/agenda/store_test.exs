@@ -53,6 +53,16 @@ defmodule Agenda.StoreTest do
     assert loaded == db
   end
 
+  test "files in format version 13 get the default date settings", %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    path = Path.join(dir, "v13.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 13, Map.delete(db, :date_settings)}))
+
+    assert {:ok, loaded} = Store.load(path)
+    assert loaded.date_settings == %Agenda.Core.DateSettings{}
+    assert loaded == db
+  end
+
   test "files in format version 7 get no numbers and default column formats",
        %{tmp_dir: dir} do
     db = Agenda.Sample.build(~D[2026-10-08])

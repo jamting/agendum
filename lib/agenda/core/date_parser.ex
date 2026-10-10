@@ -9,7 +9,8 @@ defmodule Agenda.Core.DateParser do
     ("Call Toni on August 7", "Cheryl arrives tomorrow"), SPEC R14.
 
   Relative dates follow the Agenda 2.0 User's Guide (chapter 7, "How Agenda
-  Interprets Relative Dates in Items"): weeks run Monday to Friday; a bare
+  Interprets Relative Dates in Items"): weeks run Monday to Friday (the
+  file's `Agenda.Core.DateSettings` can change that, R14e); a bare
   weekday is its next occurrence (today if it is today); "this", "next"
   and "last" put a weekday in the current, following or previous week; and
   "this/next/last week|month|year" is the start of that period. A date
@@ -57,7 +58,7 @@ defmodule Agenda.Core.DateParser do
       unit), `:now`
   """
 
-  alias Agenda.Core.{DateLanguage, Recurrence}
+  alias Agenda.Core.{DateLanguage, DateSettings, Recurrence}
 
   @default [DateLanguage.English]
 
@@ -93,9 +94,10 @@ defmodule Agenda.Core.DateParser do
   @typedoc """
   Options: `languages:` the language packs to read (`Agenda.Core.DateLanguage`),
   the main one first (default English). Every pack's phrases count; where
-  two match the same words, the earlier pack wins.
+  two match the same words, the earlier pack wins. `settings:` the file's
+  `Agenda.Core.DateSettings` (default Agenda's).
   """
-  @type opts :: [languages: [DateLanguage.pack()]]
+  @type opts :: [languages: [DateLanguage.pack()], settings: DateSettings.t() | nil]
 
   @doc """
   Parses a date typed on its own, such as an entry in a date column.
@@ -132,9 +134,8 @@ defmodule Agenda.Core.DateParser do
           {:ok, Date.t(), Time.t() | nil, Recurrence.t() | nil} | :error
   def parse_recurring(text, %NaiveDateTime{} = now, opts \\ []) do
     text = String.trim(text)
-    languages = languages(opts)
 
-    with {:ok, date, time, rule, spans} <- find_when(text, now, languages, false),
+    with {:ok, date, time, rule, spans} <- find_when(text, now, opts, false),
          rest = remove_spans(text, spans),
          true <- Regex.match?(~r/^[\s,.@]*(at)?[\s,.@]*$/iu, rest) do
       {:ok, date, time, rule}
@@ -178,7 +179,7 @@ defmodule Agenda.Core.DateParser do
   @spec extract_recurring(String.t(), NaiveDateTime.t(), opts) ::
           {:ok, Date.t(), Time.t() | nil, Recurrence.t() | nil, String.t()} | :none
   def extract_recurring(text, %NaiveDateTime{} = now, opts \\ []) do
-    case find_when(text, now, languages(opts), true) do
+    case find_when(text, now, opts, true) do
       {:ok, date, time, rule, spans} ->
         phrase =
           spans
@@ -203,14 +204,17 @@ defmodule Agenda.Core.DateParser do
   end
 
   # The first date and the first time in `text`, combined.
-  defp find_when(text, now, languages, in_text) do
+  defp find_when(text, now, opts, in_text) do
+    {languages, s} = {languages(opts), Keyword.get(opts, :settings) || %DateSettings{}}
     today = NaiveDateTime.to_date(now)
-    date = first(matches(text, compile(languages, :date, in_text), &interpret(&1, &2, &3, today)))
+
+    date =
+      first(matches(text, compile(languages, :date, in_text), &interpret(&1, &2, &3, today, s)))
 
     # a time may not reuse the date's words ("at 12/24" is a date)
     time =
       text
-      |> matches(compile(languages, :time, in_text), &interpret_time(&1, &2, &3, now))
+      |> matches(compile(languages, :time, in_text), &interpret_time(&1, &2, &3, now, s))
       |> Enum.reject(fn {start, neg_len, _, _} -> overlaps?(date, {start, -neg_len}) end)
       |> first()
 
@@ -290,26 +294,32 @@ defmodule Agenda.Core.DateParser do
 
   # --- times --------------------------------------------------------------------
 
-  defp interpret_time(:clock, [h, m | ampm], pack, _now),
-    do: clock(h, int(m), List.first(ampm), pack)
+  defp interpret_time(:clock, [h, m | ampm], pack, _now, s),
+    do: clock(h, int(m), List.first(ampm), pack, s)
 
-  defp interpret_time(:hour_ampm, [h, ampm], pack, _now), do: clock(h, 0, ampm, pack)
-  defp interpret_time(:at_hour, [h], pack, _now), do: clock(h, 0, nil, pack)
+  defp interpret_time(:hour_ampm, [h, ampm], pack, _now, s), do: clock(h, 0, ampm, pack, s)
+  defp interpret_time(:at_hour, [h], pack, _now, s), do: clock(h, 0, nil, pack, s)
 
-  defp interpret_time(:time_word, [word], pack, _now),
-    do: {:ok, {:time, word(pack, :time_words, word)}}
+  # a time, or :morning, :afternoon or :evening as the file sets them (R14e)
+  defp interpret_time(:time_word, [word], pack, _now, s) do
+    case word(pack, :time_words, word) do
+      %Time{} = time -> {:ok, {:time, time}}
+      setting -> {:ok, {:time, Map.fetch!(s, setting)}}
+    end
+  end
 
-  defp interpret_time(:in_time, [n, unit], pack, now) do
+  defp interpret_time(:in_time, [n, unit], pack, now, _s) do
     minutes = count(pack, n) * if(word(pack, :time_units, unit) == :hour, do: 60, else: 1)
     {:ok, {:datetime, NaiveDateTime.add(now, minutes * 60)}}
   end
 
-  defp interpret_time(:now, _, _pack, now), do: {:ok, {:datetime, now}}
+  defp interpret_time(:now, _, _pack, now, _s), do: {:ok, {:datetime, now}}
 
-  # With Agenda's clock, 12-hour times without am/pm fall between 8:00 am
-  # and 7:59 pm; hours over 12, 0 and a leading zero ("08:30") are read as
-  # a 24-hour clock. A 24-hour clock reads every hour as written.
-  defp clock(h, m, ampm, pack) do
+  # With Agenda's clock, 12-hour times without am/pm fall in the twelve
+  # hours from Morning (8:00 am to 7:59 pm by default, R14e); hours over
+  # 12, 0 and a leading zero ("08:30") are read as a 24-hour clock. A
+  # 24-hour clock reads every hour as written.
+  defp clock(h, m, ampm, pack, s) do
     hour = int(h)
 
     hour =
@@ -319,7 +329,7 @@ defmodule Agenda.Core.DateParser do
         ampm -> rem(hour, 12)
         pack.clock() == :twenty_four -> hour
         hour == 0 or hour > 12 or String.starts_with?(h, "0") -> hour
-        hour < 8 -> hour + 12
+        hour < 12 and Time.compare(Time.new!(hour, m, 0), s.morning) == :lt -> hour + 12
         true -> hour
       end
 
@@ -331,9 +341,9 @@ defmodule Agenda.Core.DateParser do
 
   # --- interpreting matches ---------------------------------------------------
 
-  defp interpret(:iso, [y, m, d], _pack, _today), do: build(int(y), int(m), int(d))
+  defp interpret(:iso, [y, m, d], _pack, _today, _s), do: build(int(y), int(m), int(d))
 
-  defp interpret(:numeric, [a, b | y], pack, today) do
+  defp interpret(:numeric, [a, b | y], pack, today, _s) do
     {m, d} = if pack.numeric_order() == :day_month, do: {b, a}, else: {a, b}
 
     case List.first(y) do
@@ -342,55 +352,55 @@ defmodule Agenda.Core.DateParser do
     end
   end
 
-  defp interpret(:month_day, [m, d, y], pack, today),
+  defp interpret(:month_day, [m, d, y], pack, today, _s),
     do: month_date(word(pack, :months, m), int(d), y, today)
 
-  defp interpret(:day_month, [d, m, y], pack, today),
+  defp interpret(:day_month, [d, m, y], pack, today, _s),
     do: month_date(word(pack, :months, m), int(d), y, today)
 
-  defp interpret(:ordinal_of_month, [o, m, y], pack, today),
+  defp interpret(:ordinal_of_month, [o, m, y], pack, today, _s),
     do: month_date(word(pack, :months, m), word(pack, :ordinals, o), y, today)
 
-  defp interpret({:offset, days}, _, _pack, today), do: {:ok, Date.add(today, days)}
+  defp interpret({:offset, days}, _, _pack, today, _s), do: {:ok, Date.add(today, days)}
 
-  defp interpret(:offset_word, [word], pack, today),
+  defp interpret(:offset_word, [word], pack, today, _s),
     do: {:ok, Date.add(today, word(pack, :offsets, word))}
 
-  defp interpret(:in_units, [n, unit], pack, today),
-    do: shift(today, count(pack, n), word(pack, :units, unit))
+  defp interpret(:in_units, [n, unit], pack, today, s),
+    do: shift(today, count(pack, n), word(pack, :units, unit), s)
 
-  defp interpret(:units_from_now, [n, unit], pack, today),
-    do: shift(today, count(pack, n), word(pack, :units, unit))
+  defp interpret(:units_from_now, [n, unit], pack, today, s),
+    do: shift(today, count(pack, n), word(pack, :units, unit), s)
 
-  defp interpret(:units_ago, [n, unit], pack, today),
-    do: shift(today, -count(pack, n), word(pack, :units, unit))
+  defp interpret(:units_ago, [n, unit], pack, today, s),
+    do: shift(today, -count(pack, n), word(pack, :units, unit), s)
 
-  defp interpret(:edge_of_period, [edge, which, period], pack, today) do
+  defp interpret(:edge_of_period, [edge, which, period], pack, today, s) do
     period = word(pack, :periods, period)
-    start = period_start(period, relative(pack, which), today)
-    {:ok, if(word(pack, :edges, edge) == :end, do: period_end(period, start), else: start)}
+    start = period_start(period, relative(pack, which), today, s)
+    {:ok, if(word(pack, :edges, edge) == :end, do: period_end(period, start, s), else: start)}
   end
 
-  defp interpret(:relative_period, [which, period], pack, today),
-    do: {:ok, period_start(word(pack, :periods, period), relative(pack, which), today)}
+  defp interpret(:relative_period, [which, period], pack, today, s),
+    do: {:ok, period_start(word(pack, :periods, period), relative(pack, which), today, s)}
 
-  defp interpret(:relative_weekday, [which, day], pack, today) do
-    monday = Date.beginning_of_week(today)
-    {:ok, Date.add(monday, 7 * relative(pack, which) + word(pack, :weekdays, day) - 1)}
+  defp interpret(:relative_weekday, [which, day], pack, today, s) do
+    start = period_start(:week, relative(pack, which), today, s)
+    {:ok, Date.add(start, Integer.mod(word(pack, :weekdays, day) - s.week_start, 7))}
   end
 
-  defp interpret(meaning, [day], pack, today) when meaning in [:weekday, :weekday_abbr] do
+  defp interpret(meaning, [day], pack, today, _s) when meaning in [:weekday, :weekday_abbr] do
     days = Integer.mod(word(pack, :weekdays, day) - Date.day_of_week(today), 7)
     {:ok, Date.add(today, days)}
   end
 
   # --- more phrases (R14d) ---
 
-  defp interpret(:nth_quarter, [o], pack, today) do
+  defp interpret(:nth_quarter, [o], pack, today, s) do
     case word(pack, :ordinals, o) do
       n when n in 1..4 ->
-        start = Date.new!(today.year, 3 * n - 2, 1)
-        ended? = Date.compare(period_end(:quarter, start), today) == :lt
+        start = today.year |> Date.new!(s.quarter_start, 1) |> Date.shift(month: 3 * (n - 1))
+        ended? = Date.compare(period_end(:quarter, start, s), today) == :lt
         {:ok, if(ended?, do: Date.shift(start, year: 1), else: start)}
 
       _ ->
@@ -399,7 +409,7 @@ defmodule Agenda.Core.DateParser do
   end
 
   # "first Wednesday in November": this year's, unless it has passed
-  defp interpret(:nth_weekday, [nth, day, m, nil], pack, today) do
+  defp interpret(:nth_weekday, [nth, day, m, nil], pack, today, _s) do
     {nth, weekday, month} = {nth(pack, nth), word(pack, :weekdays, day), word(pack, :months, m)}
 
     with {:ok, date} <- nth_weekday(today.year, month, nth, weekday) do
@@ -409,25 +419,27 @@ defmodule Agenda.Core.DateParser do
     end
   end
 
-  defp interpret(:nth_weekday, [nth, day, m, y], pack, _today),
+  defp interpret(:nth_weekday, [nth, day, m, y], pack, _today, _s),
     do: nth_weekday(year(y), word(pack, :months, m), nth(pack, nth), word(pack, :weekdays, day))
 
-  defp interpret(:nth_weekday_relative, [nth, day, which], pack, today) do
-    start = period_start(:month, relative(pack, which), today)
+  defp interpret(:nth_weekday_relative, [nth, day, which], pack, today, s) do
+    start = period_start(:month, relative(pack, which), today, s)
     nth_weekday(start.year, start.month, nth(pack, nth), word(pack, :weekdays, day))
   end
 
-  defp interpret(:day_of_relative_month, [d, which], pack, today) do
-    start = period_start(:month, relative(pack, which), today)
+  defp interpret(:day_of_relative_month, [d, which], pack, today, s) do
+    start = period_start(:month, relative(pack, which), today, s)
     build(start.year, start.month, day_number(pack, d))
   end
 
-  defp interpret(meaning, [which, m], pack, today) when meaning in [:month_alone, :bare_month] do
+  defp interpret(meaning, [which, m], pack, today, s)
+       when meaning in [:month_alone, :bare_month] do
     month = word(pack, :months, m)
-    {:ok, Date.new!(month_year(month, which && relative(pack, which), today), month, 1)}
+    year = month_year(month, which && relative(pack, which), today)
+    {:ok, DateSettings.month_alone_day(s, year, month)}
   end
 
-  defp interpret(:edge_of_month, [edge, which, m], pack, today) do
+  defp interpret(:edge_of_month, [edge, which, m], pack, today, _s) do
     month = word(pack, :months, m)
     start = Date.new!(month_year(month, which && relative(pack, which), today), month, 1)
     {:ok, if(word(pack, :edges, edge) == :end, do: Date.end_of_month(start), else: start)}
@@ -435,20 +447,20 @@ defmodule Agenda.Core.DateParser do
 
   # --- recurring dates (R14a): a first date and a rule ---
 
-  defp interpret(:recurring_weekday, [every, day], pack, today) do
+  defp interpret(:recurring_weekday, [every, day], pack, today, _s) do
     weekday = word(pack, :weekdays, day)
     date = Date.add(today, Integer.mod(weekday - Date.day_of_week(today), 7))
     rule = %Recurrence{every: word(pack, :intervals, every), unit: :week, weekday: weekday}
     {:ok, {:recurring, date, rule}}
   end
 
-  defp interpret(:recurring_unit, [every, unit], pack, today),
+  defp interpret(:recurring_unit, [every, unit], pack, today, _s),
     do: recurring(word(pack, :intervals, every), word(pack, :units, unit), today)
 
-  defp interpret(:recurring_count, [n, unit], pack, today),
+  defp interpret(:recurring_count, [n, unit], pack, today, _s),
     do: recurring(count(pack, n), word(pack, :units, unit), today)
 
-  defp interpret(:recurring_day_of_month, [day], pack, today) do
+  defp interpret(:recurring_day_of_month, [day], pack, today, _s) do
     day =
       case Integer.parse(day) do
         {n, ""} -> n
@@ -464,7 +476,7 @@ defmodule Agenda.Core.DateParser do
   end
 
   # The most recent such weekday before today ("i fredags").
-  defp interpret(:past_weekday, [day], pack, today) do
+  defp interpret(:past_weekday, [day], pack, today, _s) do
     days = Integer.mod(Date.day_of_week(today) - word(pack, :weekdays, day) - 1, 7) + 1
     {:ok, Date.add(today, -days)}
   end
@@ -490,22 +502,34 @@ defmodule Agenda.Core.DateParser do
   defp relative(_pack, nil), do: 0
   defp relative(pack, which), do: word(pack, :relative, which)
 
-  defp period_start(:week, offset, today),
-    do: today |> Date.beginning_of_week() |> Date.add(7 * offset)
+  # The first day of this period (offset 0), the next (1) or the last (-1),
+  # with weeks, quarters and years starting as the file sets them (R14e).
+  defp period_start(:week, offset, today, s) do
+    back = Integer.mod(Date.day_of_week(today) - s.week_start, 7)
+    Date.add(today, 7 * offset - back)
+  end
 
-  defp period_start(:month, offset, today),
+  defp period_start(:month, offset, today, _s),
     do: today |> Date.beginning_of_month() |> Date.shift(month: offset)
 
-  defp period_start(:quarter, offset, today),
-    do: Date.new!(today.year, div(today.month - 1, 3) * 3 + 1, 1) |> Date.shift(month: 3 * offset)
+  defp period_start(:quarter, offset, today, s),
+    do:
+      today
+      |> Date.beginning_of_month()
+      |> Date.shift(month: 3 * offset - Integer.mod(today.month - s.quarter_start, 3))
 
-  defp period_start(:year, offset, today), do: Date.new!(today.year + offset, 1, 1)
+  defp period_start(:year, offset, today, s),
+    do:
+      today
+      |> Date.beginning_of_month()
+      |> Date.shift(month: 12 * offset - Integer.mod(today.month - s.year_start, 12))
 
-  # The last day of the period starting at `start` (weeks end on Friday).
-  defp period_end(:week, start), do: Date.add(start, 4)
-  defp period_end(:month, start), do: Date.end_of_month(start)
-  defp period_end(:quarter, start), do: start |> Date.shift(month: 3) |> Date.add(-1)
-  defp period_end(:year, start), do: Date.new!(start.year, 12, 31)
+  # The last day of the period starting at `start` (a week ends on its
+  # last day, Friday by default).
+  defp period_end(:week, start, s), do: Date.add(start, Integer.mod(s.week_end - s.week_start, 7))
+  defp period_end(:month, start, _s), do: Date.end_of_month(start)
+  defp period_end(:quarter, start, _s), do: start |> Date.shift(month: 3) |> Date.add(-1)
+  defp period_end(:year, start, _s), do: start |> Date.shift(year: 1) |> Date.add(-1)
 
   # The year of a month named without one: "this April" is this year's,
   # "next April" the first after this month, "last April" the last before
@@ -547,23 +571,23 @@ defmodule Agenda.Core.DateParser do
     end
   end
 
-  defp shift(today, n, :day), do: {:ok, Date.add(today, n)}
-  defp shift(today, n, :week), do: {:ok, Date.add(today, 7 * n)}
-  defp shift(today, n, :month), do: {:ok, Date.shift(today, month: n)}
-  defp shift(today, n, :quarter), do: {:ok, Date.shift(today, month: 3 * n)}
-  defp shift(today, n, :year), do: {:ok, Date.shift(today, year: n)}
-  defp shift(today, n, :working_day), do: {:ok, working_days(today, n)}
+  defp shift(today, n, :day, _s), do: {:ok, Date.add(today, n)}
+  defp shift(today, n, :week, _s), do: {:ok, Date.add(today, 7 * n)}
+  defp shift(today, n, :month, _s), do: {:ok, Date.shift(today, month: n)}
+  defp shift(today, n, :quarter, _s), do: {:ok, Date.shift(today, month: 3 * n)}
+  defp shift(today, n, :year, _s), do: {:ok, Date.shift(today, year: n)}
+  defp shift(today, n, :working_day, s), do: {:ok, working_days(today, n, s)}
 
-  # `n` working days on (or back, when negative), skipping Saturday and Sunday.
-  defp working_days(date, 0), do: date
+  # `n` working days on (or back, when negative): days inside the week.
+  defp working_days(date, 0, _s), do: date
 
-  defp working_days(date, n) do
+  defp working_days(date, n, s) do
     step = if n > 0, do: 1, else: -1
     date = Date.add(date, step)
 
-    if Date.day_of_week(date) in 6..7,
-      do: working_days(date, n),
-      else: working_days(date, n - step)
+    if DateSettings.working_day?(s, Date.day_of_week(date)),
+      do: working_days(date, n - step, s),
+      else: working_days(date, n, s)
   end
 
   defp month_date(m, d, nil, today), do: future(m, d, today)

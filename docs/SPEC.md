@@ -210,11 +210,23 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   stays Christmas). Calendar notation can use a month abbreviation
   ("Nov/12/90"). Swedish has the same phrases ("om fem arbetsdagar",
   "första onsdagen i november", "i slutet av nästa mars").
-- **R14e ⏳ Global date settings** (User's Guide 7-14 to 7-17). File
-  Properties settings for the beginning and end of the week (today
-  Monday and Friday), the first quarter, the beginning and end of the
-  year, what a month alone means (first, last or nth day), the times of
-  morning, afternoon and evening, and number order (MDY, DMY, …).
+- **R14e ✅ Global date settings** (User's Guide 7-15 to 7-17). File
+  Properties has Agenda's Global Date Settings, saved in the file:
+  Beginning and End of week (Mon and Fri: "this week" and "next week"
+  start on the first day, "end of week" is the last, "this Monday" is in
+  that week, and working days are the days from the first to the last);
+  First quarter (the month quarters start in, Jan); Beginning of year
+  (the month "this year" starts in, Jan; the year ends the day before the
+  next one starts); Month alone means (First day, Last day or Day 2–31, a
+  short month's last day if it has fewer); and the times of Morning
+  (8:00), Afternoon (14:00) and Evening (17:00, also "tonight"). Morning
+  also starts the twelve hours that times without am/pm fall in (with
+  9:00, "at 8:00" is 8 pm). Settled differently from Agenda: number
+  order stays with the reader's date language (R14c, ADR 0009), not the
+  file; quarters and years start on the 1st of a month; Agenda's separate
+  End of year is the day before the next Beginning of year. The
+  settings apply to dates read from then on, and to relative dates in
+  filters and conditions, which are read anew.
 - **R14f ⏳ Fixed relative dates and dates from notes** (User's Guide
   6-7, 7-10). "$Monday" in a date range keeps the date it was first read
   as; When dates can be read from notes instead of item text.

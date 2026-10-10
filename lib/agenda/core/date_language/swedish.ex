@@ -156,15 +156,15 @@ defmodule Agenda.Core.DateLanguage.Swedish do
       "i förrgår" => -2
     },
     time_words: %{
-      "förmiddag" => ~T[08:00:00],
-      "förmiddagen" => ~T[08:00:00],
+      "förmiddag" => :morning,
+      "förmiddagen" => :morning,
       "lunch" => ~T[12:00:00],
-      "eftermiddag" => ~T[14:00:00],
-      "eftermiddagen" => ~T[14:00:00],
-      "kväll" => ~T[17:00:00],
-      "kvällen" => ~T[17:00:00],
-      "ikväll" => ~T[17:00:00],
-      "i kväll" => ~T[17:00:00],
+      "eftermiddag" => :afternoon,
+      "eftermiddagen" => :afternoon,
+      "kväll" => :evening,
+      "kvällen" => :evening,
+      "ikväll" => :evening,
+      "i kväll" => :evening,
       "midnatt" => ~T[00:00:00]
     },
     time_units: %{

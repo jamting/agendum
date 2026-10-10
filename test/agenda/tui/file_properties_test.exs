@@ -1,5 +1,5 @@
 defmodule Agenda.TUI.FilePropertiesTest do
-  @moduledoc "File ▸ Properties: the date display format (R41)."
+  @moduledoc "File ▸ Properties: the date display format (R41) and date settings (R14e)."
   use ExUnit.Case, async: true
 
   import Agenda.TUIHelpers
@@ -49,5 +49,31 @@ defmodule Agenda.TUI.FilePropertiesTest do
     assert state.db.date_format.order == :yyyyddmm
     state = History.undo(state)
     assert state.db.date_format.order == :yymmdd
+  end
+
+  test "the date settings are rows of the box too", %{state: state} do
+    state = press(state, [{:f, 10}, "f", "p"])
+    text = screen(state)
+    assert text =~ ~r/Beginning of week +: Mon/
+    assert text =~ ~r/End of week +: Fri/
+    assert text =~ ~r/First quarter +: Jan 1/
+    assert text =~ ~r/Beginning of year +: Jan 1/
+    assert text =~ ~r/Month alone means +: First day/
+    assert text =~ ~r/Morning +: 08:00/
+    assert text =~ ~r/Afternoon +: 14:00/
+    assert text =~ ~r/Evening +: 17:00/
+  end
+
+  test "changing a date setting changes how dates are read", %{state: state} do
+    # down to Month alone means, then First day -> Last day
+    state = press(state, [{:f, 10}, "f", "p"] ++ List.duplicate(:down, 8) ++ [" "])
+    assert state.db.date_settings.month_alone == :last
+    assert screen(state) =~ ~r/Month alone means +: Last day/
+
+    state = press(state, [:down, :left])
+    assert state.db.date_settings.morning == ~T[07:30:00]
+
+    state = History.undo(state)
+    assert state.db.date_settings.morning == ~T[08:00:00]
   end
 end

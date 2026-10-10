@@ -15,14 +15,14 @@ defmodule Agenda.Store do
   `Database.dependencies` and `View.hide_dependent` (R43); 11 adds
   `Category.also_match` (R15d); 12 adds `Category.actions` and
   `Category.special` (R15b); 13 adds `Database.confirm_assignments` and
-  `Database.suggestions` (R16).
+  `Database.suggestions` (R16); 14 adds `Database.date_settings` (R14e).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 13
+  @format_version 14
   @extension ".agenda"
 
   def extension, do: @extension
@@ -72,6 +72,11 @@ defmodule Agenda.Store do
 
     db = struct(Database, Map.from_struct(db))
     db = %{db | date_format: struct(Agenda.Core.DateFormat, Map.from_struct(db.date_format))}
+
+    db = %{
+      db
+      | date_settings: struct(Agenda.Core.DateSettings, Map.from_struct(db.date_settings))
+    }
 
     %{
       db

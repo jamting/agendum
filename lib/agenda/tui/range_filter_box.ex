@@ -123,7 +123,12 @@ defmodule Agenda.TUI.RangeFilterBox do
   end
 
   defp parse_date(text, state),
-    do: Core.DateParser.parse(text, state.today, Core.Context.parser_opts(State.context(state)))
+    do:
+      Core.DateParser.parse(
+        text,
+        state.today,
+        Core.Context.parser_opts(State.context(state), state.db.date_settings)
+      )
 
   defp set(state, %{purpose: {:filter, scope}} = mode) do
     settings = {mode.show, mode.from.text, mode.to.text, mode.where}

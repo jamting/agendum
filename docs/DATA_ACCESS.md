@@ -62,6 +62,7 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.edit_item(db, id, text, today, adjacent)`               | write | Change text, auto-assign again (only adds assignments), and update a When date read from the text when the date words changed (R14). |
 | `Core.toggle_auto_date(db)`                                   | write | Turn reading When dates from item text on or off for the file.                                                                       |
 | `Core.set_date_format(db, format)` | write | How the file displays dates and times (R41); `DateFormat.date/2`, `time/2`, `date_time/3` format with it. |
+| `Core.set_date_settings(db, settings)` | write | How the file reads typed dates (R14e); every parser call passes `Context.parser_opts(clock, db.date_settings)`. |
 | `DateParser.extract(text, today)` / `parse(text, today)`      | read  | The first date in free text, with its words / a date typed on its own (columns, ALT-F2).                                             |
 | `Core.set_note/3`, `toggle_done/3`, `mark_done/3`, `toggle_mark/2` | write | Field updates. Marking a recurring item done also adds its next occurrence (R14a). |
 | `Core.move_item(db, id, from, to, after:)`                    | write | ALT-F10: leave `from`, join `to` (never MAIN), optionally reorder after an item.                                                     |

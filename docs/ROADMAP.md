@@ -49,7 +49,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Times of day on When dates (R14b)
 - [x] Recurring dates; marking a recurring item done creates the next one (R14a)
 - [x] More date phrases: working days, quarters, "first Wednesday in November", months alone (R14d)
-- [ ] Global date settings: week, quarter and year boundaries, month alone, times of day, number order (R14e)
+- [x] Global date settings: week, quarter and year boundaries, month alone, times of day (R14e)
 - [ ] "$Monday" fixed relative dates in ranges; When dates from notes (R14f)
 - [x] Item dependencies: ALT-O makes an item depend on the marked items, views can hide dependent items (R43)
 - [x] Show Prereqs / Show Depends in the Show View (R43)

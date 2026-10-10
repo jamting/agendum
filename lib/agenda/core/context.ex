@@ -30,7 +30,10 @@ defmodule Agenda.Core.Context do
   def languages(%__MODULE__{languages: languages}), do: languages
   def languages(_clock), do: [DateLanguage.English]
 
-  @doc "Options for `Agenda.Core.DateParser`."
-  @spec parser_opts(clock | nil) :: keyword
-  def parser_opts(clock), do: [languages: languages(clock)]
+  @doc """
+  Options for `Agenda.Core.DateParser`: the reader's languages and the
+  file's date settings (R14e).
+  """
+  @spec parser_opts(clock | nil, Agenda.Core.DateSettings.t()) :: keyword
+  def parser_opts(clock, settings), do: [languages: languages(clock), settings: settings]
 end
