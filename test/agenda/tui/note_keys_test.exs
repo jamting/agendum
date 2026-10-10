@@ -61,7 +61,7 @@ defmodule Agenda.TUI.NoteKeysTest do
 
   test "ALT-S repeats a single replacement", %{state: state} do
     id = item_id(state)
-    state = %{state | db: Core.set_note(state.db, id, "a b a b a")}
+    state = %{state | db: Core.set_note(state.db, id, "a b a b a", state.today)}
 
     # Search for a, Replace text Yes, Replace with x, Direction, Ignore case,
     # Global No, Confirm No

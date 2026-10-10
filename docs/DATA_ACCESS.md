@@ -60,11 +60,11 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | ------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `Core.add_item(db, text, today, section:, after:, adjacent:)` | write | Insert, assign to the section's category, auto-assign, and read a When date from the text (R14). Returns `{db, id}`.                 |
 | `Core.edit_item(db, id, text, today, adjacent)`               | write | Change text, auto-assign again (only adds assignments), and update a When date read from the text when the date words changed (R14). |
-| `Core.toggle_auto_date(db)`                                   | write | Turn reading When dates from item text on or off for the file.                                                                       |
+| `Core.toggle_auto_date(db)`, `Core.set_when_from(db, from)`   | write | Where When dates are read from: item text, note, item or note text, or never (R14, R14f). |
 | `Core.set_date_format(db, format)` | write | How the file displays dates and times (R41); `DateFormat.date/2`, `time/2`, `date_time/3` format with it. |
 | `Core.set_date_settings(db, settings)` | write | How the file reads typed dates (R14e); every parser call passes `Context.parser_opts(clock, db.date_settings)`. |
 | `DateParser.extract(text, today)` / `parse(text, today)`      | read  | The first date in free text, with its words / a date typed on its own (columns, ALT-F2).                                             |
-| `Core.set_note/3`, `toggle_done/3`, `mark_done/3`, `toggle_mark/2` | write | Field updates. Marking a recurring item done also adds its next occurrence (R14a). |
+| `Core.set_note/4` (reads a When date from the note, R14f), `toggle_done/3`, `mark_done/3`, `toggle_mark/2` | write | Field updates. Marking a recurring item done also adds its next occurrence (R14a). |
 | `Core.move_item(db, id, from, to, after:)`                    | write | ALT-F10: leave `from`, join `to` (never MAIN), optionally reorder after an item.                                                     |
 | `Core.discard_item(db, id)`                                   | write | Delete the item and all its links.                                                                                                   |
 | `Database.item(db, id)` / `items(db)`                         | read  | One item / all items in `item_order`.                                                                                                |

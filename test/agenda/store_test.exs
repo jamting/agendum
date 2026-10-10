@@ -30,15 +30,15 @@ defmodule Agenda.StoreTest do
   test "files in format version 1 are upgraded on load", %{tmp_dir: dir} do
     db = Agenda.Sample.build(~D[2026-10-08])
 
-    # what a version 1 file held: no Database.auto_date, no Item.when_explicit
+    # what a version 1 file held: no Database.auto_date (now when_from), no Item.when_explicit
     v1_items = Map.new(db.items, fn {id, item} -> {id, Map.delete(item, :when_explicit)} end)
-    v1 = db |> Map.delete(:auto_date) |> Map.put(:items, v1_items)
+    v1 = db |> Map.delete(:when_from) |> Map.put(:items, v1_items)
 
     path = Path.join(dir, "old.agenda")
     File.write!(path, :erlang.term_to_binary({:agenda, 1, v1}))
 
     assert {:ok, loaded} = Store.load(path)
-    assert loaded.auto_date == true
+    assert loaded.when_from == :item
     assert Enum.all?(Map.values(loaded.items), &(&1.when_explicit == false))
     assert loaded == db
   end
@@ -51,6 +51,18 @@ defmodule Agenda.StoreTest do
     assert {:ok, loaded} = Store.load(path)
     assert loaded.date_format == %Agenda.Core.DateFormat{}
     assert loaded == db
+  end
+
+  test "files before format version 15 that did not read dates read them never",
+       %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    v14 = db |> Map.delete(:when_from) |> Map.put(:auto_date, false)
+    path = Path.join(dir, "v14.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 14, v14}))
+
+    assert {:ok, loaded} = Store.load(path)
+    assert loaded.when_from == :never
+    assert loaded == %{db | when_from: :never}
   end
 
   test "files in format version 13 get the default date settings", %{tmp_dir: dir} do

@@ -46,7 +46,7 @@ defmodule Agenda.TUI.SearchTest do
 
   test "searching notes and matching case are settings", %{state: state} do
     [first | _] = state.db.item_order
-    state = %{state | db: Core.set_note(state.db, first, "bring the Budget")}
+    state = %{state | db: Core.set_note(state.db, first, "bring the Budget", state.today)}
 
     # Match on: Item text -> Note text
     state = press(state, [{:alt_f, 6}, "budget", :down, " ", :enter])

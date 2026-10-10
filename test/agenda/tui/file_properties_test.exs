@@ -76,4 +76,16 @@ defmodule Agenda.TUI.FilePropertiesTest do
     state = History.undo(state)
     assert state.db.date_settings.morning == ~T[08:00:00]
   end
+
+  test "When dates from: the note text sets When dates (R14f)", %{state: state} do
+    # When dates from is the row before Confirm assignments, the last
+    state = press(state, [{:f, 10}, "f", "p"] ++ List.duplicate(:down, 20) ++ [:up, " "])
+    assert state.db.when_from == :note
+    assert screen(state) =~ ~r/When dates from +: Note text/
+
+    # the first item, below the Calls section head
+    state = press(state, [:esc, :down, {:f, 5}, "Booked for next Tuesday", :esc])
+    item = Agenda.TUI.Layout.current_row(state).item
+    assert {item.note, item.when} == {"Booked for next Tuesday", ~D[2026-10-13]}
+  end
 end

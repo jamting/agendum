@@ -19,7 +19,7 @@ defmodule Agenda.TUI.Menu do
          {"Save", "Save the current file (CTRL-S)", :save},
          {"Write", "Write the file under a new name (Save As)", :save_as},
          {"New", "Create a new, empty file", :new_file},
-         {"Dating", "Turn When dates read from item text on or off", :toggle_auto_date},
+         {"Dating", "Turn When dates read from text on or off", :toggle_auto_date},
          {"Properties", "How the file displays dates and times", :file_props}
        ]},
       {"Item", "Work with the highlighted item",

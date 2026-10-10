@@ -15,14 +15,15 @@ defmodule Agenda.Store do
   `Database.dependencies` and `View.hide_dependent` (R43); 11 adds
   `Category.also_match` (R15d); 12 adds `Category.actions` and
   `Category.special` (R15b); 13 adds `Database.confirm_assignments` and
-  `Database.suggestions` (R16); 14 adds `Database.date_settings` (R14e).
+  `Database.suggestions` (R16); 14 adds `Database.date_settings` (R14e);
+  15 replaces `Database.auto_date` with `Database.when_from` (R14f).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 14
+  @format_version 15
   @extension ".agenda"
 
   def extension, do: @extension
@@ -47,7 +48,7 @@ defmodule Agenda.Store do
 
       try do
         case :erlang.binary_to_term(binary, [:safe]) do
-          {:agenda, version, %Database{} = db} when version in 1..@format_version ->
+          {:agenda, version, %{__struct__: Database} = db} when version in 1..@format_version ->
             {:ok, upgrade(db)}
 
           {:agenda, version, _} ->
@@ -64,13 +65,25 @@ defmodule Agenda.Store do
 
   @doc """
   Brings a database from any older format version up to date: every struct
-  is rebuilt so fields added since it was saved get their defaults.
+  is rebuilt so fields added since it was saved get their defaults, and
+  fields since removed are dropped. An old file's struct may have fields
+  `Database` no longer has, so it is matched as a plain map.
   """
-  @spec upgrade(Database.t()) :: Database.t()
-  def upgrade(%Database{} = db) do
+  @spec upgrade(map) :: Database.t()
+  def upgrade(%{__struct__: Database} = db) do
     alias Agenda.Core.{Category, View}
 
-    db = struct(Database, Map.from_struct(db))
+    fields = Map.from_struct(db)
+
+    # before 15, a file that did not read dates had auto_date: false
+    when_from =
+      case fields do
+        %{auto_date: false} -> :never
+        %{when_from: from} -> from
+        _ -> :item
+      end
+
+    db = %{struct(Database, fields) | when_from: when_from}
     db = %{db | date_format: struct(Agenda.Core.DateFormat, Map.from_struct(db.date_format))}
 
     db = %{

@@ -80,12 +80,10 @@ defmodule Agenda.Core do
   """
   @spec edit_item(db, id, String.t(), clock, [id]) :: db
   def edit_item(db, id, text, today, adjacent \\ []) do
-    old_text = db.items[id].text
-
     db
     |> Database.update_item(id, &%{&1 | text: String.trim(text)})
     |> Assign.auto_assign(id, adjacent)
-    |> date_from_text(id, old_text, today)
+    |> date_from_text(id, db.items[id], today)
     |> settle(db, id, today)
   end
 
@@ -94,35 +92,25 @@ defmodule Agenda.Core do
     db |> Assign.assign(item_id, cat_id) |> Database.unmark_conditional(item_id, cat_id)
   end
 
-  # SPEC R14: the first date in an item's text is its When date, unless the
-  # user set one explicitly or turned automatic dating off. Relative dates
-  # are read once: after an edit the date is only re-read when the date
-  # words themselves changed (so "tomorrow" keeps meaning the day it was
-  # typed). Removing the date words clears a When date they gave.
-  defp date_from_text(db, id, old_text, today) do
+  # SPEC R14, R14f: the first date in an item's text (or note, as the file
+  # says) is its When date, unless the user set one explicitly or turned
+  # automatic dating off. Relative dates are read once: after an edit the
+  # date is only re-read when the date words themselves changed (so
+  # "tomorrow" keeps meaning the day it was typed). Removing the date
+  # words clears a When date they gave. `old_item` is the item before the
+  # change, nil for a new one.
+  defp date_from_text(db, id, old_item, today) do
     item = db.items[id]
 
-    if not db.auto_date or item.when_explicit do
+    if db.when_from == :never or item.when_explicit do
       db
     else
-      now = now_of(today)
+      read =
+        &read_when(db.when_from, &1, now_of(today), Context.parser_opts(today, db.date_settings))
 
-      old =
-        if old_text,
-          do:
-            DateParser.extract_recurring(
-              old_text,
-              now,
-              Context.parser_opts(today, db.date_settings)
-            ),
-          else: :none
+      old = if old_item, do: read.(old_item), else: :none
 
-      case {old,
-            DateParser.extract_recurring(
-              item.text,
-              now,
-              Context.parser_opts(today, db.date_settings)
-            )} do
+      case {old, read.(item)} do
         {{:ok, _, _, _, phrase}, {:ok, _, _, _, phrase}} ->
           db
 
@@ -138,9 +126,30 @@ defmodule Agenda.Core do
     end
   end
 
-  @doc "Turns reading When dates from item text on or off for the file (R14)."
+  # The When date in the text the file reads it from (R14f).
+  defp read_when(:item_or_note, item, now, opts) do
+    with :none <- read_when(:item, item, now, opts), do: read_when(:note, item, now, opts)
+  end
+
+  defp read_when(:item, item, now, opts), do: DateParser.extract_recurring(item.text, now, opts)
+  defp read_when(:note, item, now, opts), do: DateParser.extract_recurring(item.note, now, opts)
+
+  @doc """
+  Turns reading When dates from text off, or back on from the item text
+  (R14; Utilities Dating).
+  """
   @spec toggle_auto_date(db) :: db
-  def toggle_auto_date(db), do: %{db | auto_date: not db.auto_date}
+  def toggle_auto_date(db),
+    do: %{db | when_from: if(db.when_from == :never, do: :item, else: :never)}
+
+  @doc """
+  Where When dates are read from (R14f; the When category's Assign item
+  date): the item text, the note, the item text and else the note, or
+  never. Items keep the dates they have.
+  """
+  @spec set_when_from(db, :item | :note | :item_or_note | :never) :: db
+  def set_when_from(db, from) when from in [:item, :note, :item_or_note, :never],
+    do: %{db | when_from: from}
 
   @doc "Sets how the file displays dates and times (R41)."
   @spec set_date_format(db, Agenda.Core.DateFormat.t()) :: db
@@ -154,8 +163,17 @@ defmodule Agenda.Core do
   def set_date_settings(db, %Agenda.Core.DateSettings{} = settings),
     do: %{db | date_settings: settings}
 
-  @spec set_note(db, id, String.t()) :: db
-  def set_note(db, id, note), do: Database.update_item(db, id, &%{&1 | note: note})
+  @doc """
+  Replaces an item's note; when the file reads When dates from notes, a
+  changed date in it sets the When date (R14f).
+  """
+  @spec set_note(db, id, String.t(), clock) :: db
+  def set_note(db, id, note, clock) do
+    db
+    |> Database.update_item(id, &%{&1 | note: note})
+    |> date_from_text(id, db.items[id], clock)
+    |> settle(db, id, clock)
+  end
 
   @doc """
   Moves an item from one section's category to another (ALT-F10). The item

@@ -68,7 +68,7 @@ defmodule Agenda.TUI.Render do
         {view.hide_empty, "[Hide Empty]"},
         {view.hide_inherited, "[Hide Inherited]"},
         {view.hide_dependent, "[Hide Dependent]"},
-        {not state.db.auto_date, "[No Auto Dates]"}
+        {state.db.when_from == :never, "[No Auto Dates]"}
       ]
       |> Enum.filter(&elem(&1, 0))
       |> Enum.map_join(" ", &elem(&1, 1))

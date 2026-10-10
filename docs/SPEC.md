@@ -227,9 +227,19 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   End of year is the day before the next Beginning of year. The
   settings apply to dates read from then on, and to relative dates in
   filters and conditions, which are read anew.
-- **R14f ⏳ Fixed relative dates and dates from notes** (User's Guide
-  6-7, 7-10). "$Monday" in a date range keeps the date it was first read
-  as; When dates can be read from notes instead of item text.
+- **R14f ✅ Fixed relative dates and dates from notes** (User's Guide
+  6-7, 7-6 to 7-7, 7-11). A "$" before a relative date in a date range
+  of a filter or condition ("$Monday", "$ end of next week") reads it
+  once, when the range is set, and keeps that date (shown as a date
+  from then on); without "$" the words are read again each day.
+  File Properties "When dates from" says where When dates are read
+  from: Item text (default), Note text, Item or note text (the item's
+  first, else the note's) or Never (what File ▸ Dating toggles). A note's
+  date is read when the note is saved, by the same rules as item text
+  (read once; removing it clears the date; a date set by hand stays).
+  Agenda keeps this in the When category's properties, with a "Which
+  one" setting (the nth date) meant for user-made date categories; both
+  wait for those.
 - **R15 ✅ Assignment conditions** (User's Guide, chapters 18 and 20). A
   category can have conditions on other categories: items *assigned* to
   them (Urgent if Taxes and Accountant) or *not assigned* to them (Me if

@@ -7,7 +7,9 @@ defmodule Agenda.Core.RangeFilter do
   For a date category `from` and `to` are date expressions as typed
   ("2026-11-05", "monday", "today"), read again against today's date each
   time, so "monday" to "friday" always means this week, in the date
-  languages of the given clock (`Agenda.Core.Context`). For a numeric
+  languages of the given clock (`Agenda.Core.Context`); a "$" before one
+  ("$monday") reads it once, when the range is set, and keeps that date
+  (R14f). For a numeric
   category they are numbers. Either end may be nil (open). An item without
   a date or number is never in a range. Pure.
   """
@@ -55,14 +57,26 @@ defmodule Agenda.Core.RangeFilter do
         with :error <- NumberFormat.parse(text), do: {:error, :not_a_number}
 
       true ->
-        case DateParser.parse(
-               text,
-               Context.today(today),
-               Context.parser_opts(today, db.date_settings)
-             ) do
-          {:ok, _} -> {:ok, text}
-          :error -> {:error, :invalid_date}
-        end
+        date_bound(db, text, today)
+    end
+  end
+
+  # "$monday" is read now and kept as that date (R14f); other words are
+  # kept to be read again each day.
+  defp date_bound(db, text, today) do
+    {fixed?, words} =
+      case text do
+        "$" <> rest -> {true, String.trim(rest)}
+        _ -> {false, text}
+      end
+
+    case DateParser.parse(
+           words,
+           Context.today(today),
+           Context.parser_opts(today, db.date_settings)
+         ) do
+      {:ok, date} -> {:ok, if(fixed?, do: Date.to_iso8601(date), else: text)}
+      :error -> {:error, :invalid_date}
     end
   end
 

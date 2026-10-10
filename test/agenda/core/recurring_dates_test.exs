@@ -139,7 +139,7 @@ defmodule Agenda.Core.RecurringDatesTest do
       db = Core.new_file()
       {:ok, db, staff} = Core.add_category(db, db.main_id, "Staff")
       {db, id} = Core.add_item(db, "Status meeting every Monday", @today)
-      db = db |> Core.assign(id, staff) |> Core.set_note(id, "agenda in the wiki")
+      db = db |> Core.assign(id, staff) |> Core.set_note(id, "agenda in the wiki", @today)
 
       db = Core.toggle_done(db, id, ~D[2026-10-12])
       assert db.items[id].done == ~D[2026-10-12]

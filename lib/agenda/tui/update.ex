@@ -1215,7 +1215,7 @@ defmodule Agenda.TUI.Update do
 
     db =
       case mode.target do
-        {:item, id} -> Core.set_note(state.db, id, text)
+        {:item, id} -> Core.set_note(state.db, id, text, State.context(state))
         {:category, id} -> Core.set_category_note(state.db, id, text)
       end
 
@@ -1383,9 +1383,9 @@ defmodule Agenda.TUI.Update do
     db = Core.toggle_auto_date(state.db)
 
     message =
-      if db.auto_date,
-        do: "Dates in item text set When dates",
-        else: "Dates in item text are ignored"
+      if db.when_from == :never,
+        do: "Dates in item text are ignored",
+        else: "Dates in item text set When dates"
 
     state |> State.change_db(db) |> State.info(message)
   end

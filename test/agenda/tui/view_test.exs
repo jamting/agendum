@@ -172,7 +172,7 @@ defmodule Agenda.TUI.ViewTest do
 
     test "File Dating turns automatic dating off, shown in the title bar", %{state: state} do
       state = press(state, [{:f, 10}, "f", "d"])
-      refute state.db.auto_date
+      assert state.db.when_from == :never
       assert screen(state) =~ "[No Auto Dates]"
 
       state = press(state, ["Call Bob next Tuesday", :enter])

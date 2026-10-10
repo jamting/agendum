@@ -77,7 +77,7 @@ defmodule Agenda.Core.TextDatesTest do
 
   test "automatic dating can be turned off for a file", %{db: db} do
     db = Core.toggle_auto_date(db)
-    refute db.auto_date
+    assert db.when_from == :never
     {db, id} = Core.add_item(db, "The News Review, Vol. 2, November 7, 1990", today())
     assert item(db, id).when == nil
   end
