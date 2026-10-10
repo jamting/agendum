@@ -910,7 +910,7 @@ defmodule Agenda.TUI.Update do
 
       state
       |> State.change_db(db)
-      |> State.info("Alarm set for #{Calendar.strftime(at, "%Y-%m-%d %H:%M")}")
+      |> State.info("Alarm set for " <> DateFormat.datetime(at, db.date_format))
     else
       _ -> State.error(state, "Type a number of minutes from 0 to 60")
     end

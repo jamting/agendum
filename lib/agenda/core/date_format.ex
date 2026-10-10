@@ -95,6 +95,11 @@ defmodule Agenda.Core.DateFormat do
   def date_time(date, nil, format), do: date(date, format)
   def date_time(date, time, format), do: date(date, format) <> " " <> time(time, format)
 
+  @doc "A moment (date and time of day), as the title bar clock and alarms show it."
+  @spec datetime(NaiveDateTime.t(), t) :: String.t()
+  def datetime(%NaiveDateTime{} = at, format),
+    do: date_time(NaiveDateTime.to_date(at), NaiveDateTime.to_time(at), format)
+
   @doc "Agenda's formatted sample: how 13 November 1990 at 3:25 pm looks."
   @spec sample(t) :: String.t()
   def sample(format), do: date_time(~D[1990-11-13], ~T[15:25:00], format)

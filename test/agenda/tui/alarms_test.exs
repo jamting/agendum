@@ -32,6 +32,13 @@ defmodule Agenda.TUI.AlarmsTest do
     assert screen(state) =~ "@ Personnel meeting"
   end
 
+  test "the alarm message uses the file's date format (R41)", %{state: state} do
+    format = %Agenda.Core.DateFormat{order: :ddmmyy, separator: ".", clock: 12}
+    state = %{state | db: Agenda.Core.set_date_format(state.db, format)}
+    state = press(state, ["Personnel meeting at 2:00", :enter, {:alt, "a"}, :enter])
+    assert screen(state) =~ "Alarm set for 08.10.26 1:55pm"
+  end
+
   test "ALT-A again cancels; an item without a When date cannot have an alarm", %{state: state} do
     state = press(state, ["Personnel meeting at 2:00", :enter, {:alt, "a"}, :enter, {:alt, "a"}])
     assert current(state).alarm_minutes == nil

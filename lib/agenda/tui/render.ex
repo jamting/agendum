@@ -71,7 +71,7 @@ defmodule Agenda.TUI.Render do
     right =
       String.trim(
         "#{hides} #{marked}#{if state.alarm_rang, do: "@ ", else: ""}#{indicator(state, base)}  " <>
-          datetime(state, state.now) <> " "
+          DateFormat.datetime(state.now, state.db.date_format) <> " "
       )
 
     left = " File: #{file}"
@@ -80,15 +80,6 @@ defmodule Agenda.TUI.Render do
     mid = Draw.center(middle, gap)
 
     Draw.line([{:title, left}, {:title, mid}, {:indicator, right}], state.width, :title)
-  end
-
-  # A moment in the file's date format (R41).
-  defp datetime(state, %NaiveDateTime{} = at) do
-    DateFormat.date_time(
-      NaiveDateTime.to_date(at),
-      NaiveDateTime.to_time(at),
-      state.db.date_format
-    )
   end
 
   defp indicator(state, base) do
@@ -795,7 +786,7 @@ defmodule Agenda.TUI.Render do
           case kind do
             :current ->
               at = NaiveDateTime.add(Agenda.Core.when_at(item), -item.alarm_minutes * 60)
-              "rings " <> datetime(state, at)
+              "rings " <> DateFormat.datetime(at, state.db.date_format)
 
             :past ->
               "rang " <>
