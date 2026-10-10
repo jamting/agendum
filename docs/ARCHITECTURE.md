@@ -48,6 +48,7 @@ shell does terminal I/O and file I/O.
 | `TUI.CategoryScreens`          | ✔     | Category manager, category picker box, assignment profile, category properties.                                                  |
 | `TUI.ViewManager`              | ✔     | View manager.                                                                                                                    |
 | `TUI.Layout`                   | ✔     | Flattens a view to cursor rows and wrapped lines; keeps the cursor anchored and visible.                                         |
+| `TUI.Completion` | ✔ | Automatic completion while typing a column entry: the matches (from `Core.completions/3`) and the one shown. |
 | `TUI.Render`                   | ✔     | State → list of styled lines (title bar, control panel, body, key bar, boxes).                                                   |
 | `TUI.Draw`, `TUI.Theme`        | ✔     | Line/box primitives; symbolic style → ANSI colours.                                                                              |
 | `TUI.Keys`                     | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |

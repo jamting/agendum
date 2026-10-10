@@ -15,6 +15,7 @@ defmodule Agenda.TUI.Update do
 
   alias Agenda.TUI.{
     CategoryScreens,
+    Completion,
     History,
     Layout,
     LineEdit,
@@ -327,6 +328,8 @@ defmodule Agenda.TUI.Update do
   # --- inline editing in the view ---------------------------------------------
 
   defp view_edit_key(%State{edit: edit} = state, key) do
+    completing = Completion.column_entry?(state)
+
     case key do
       :esc ->
         %{state | edit: nil}
@@ -334,19 +337,64 @@ defmodule Agenda.TUI.Update do
       :enter ->
         commit(state)
 
+      # automatic completion (R32): NEXTSEL / PREVSEL and NEWCAT
+      k when completing and k in [{:f, 8}, {:alt, "n"}] ->
+        Completion.cycle(state, 1)
+
+      k when completing and k in [{:f, 7}, {:alt, "p"}] ->
+        Completion.cycle(state, -1)
+
+      k when completing and k in [:insert, {:f, 5}] ->
+        commit_new_category(state)
+
       k when k in [:up, :down, :tab, :shift_tab] ->
         state |> commit() |> view_key(k)
 
       _ ->
         case LineEdit.handle(edit.line, key) do
-          {:ok, line} -> %{state | edit: %{edit | line: line}}
+          # typing starts the completion over at the first match
+          {:ok, line} -> %{state | edit: edit |> Map.put(:line, line) |> Map.put(:choice, 0)}
           :unhandled -> state
         end
     end
   end
 
+  # ENTER on a column entry takes the completion shown (R32); with no match
+  # the typed name becomes a new category.
+  defp commit(%State{edit: %{target: {:column_entry, item_id, head, how}, line: line}} = state) do
+    shown = Completion.shown(state)
+    state = %{state | edit: nil}
+
+    if shown do
+      db = if how == :replace, do: clear_column(state.db, item_id, head), else: state.db
+      State.change_db(state, Core.assign(db, item_id, shown))
+    else
+      commit(state, {:column_entry, item_id, head, how}, line.text)
+    end
+  end
+
   defp commit(%State{edit: %{target: target, line: line}} = state) do
     commit(%{state | edit: nil}, target, line.text)
+  end
+
+  # INS / F5 (NEWCAT): exactly the typed name, even if it begins an existing one.
+  defp commit_new_category(
+         %State{edit: %{target: {:column_entry, item_id, head, how}, line: line}} = state
+       ) do
+    state = %{state | edit: nil}
+
+    db =
+      if how == :replace and String.trim(line.text) != "",
+        do: clear_column(state.db, item_id, head),
+        else: state.db
+
+    case Core.assign_new_by_name(db, item_id, head, line.text) do
+      {:ok, db, cat_id} ->
+        state |> State.change_db(db) |> State.info("Assigned to #{db.categories[cat_id].name}")
+
+      {:error, :empty} ->
+        state
+    end
   end
 
   defp commit(state, {:new_item, sidx, key}, text) do

@@ -176,4 +176,73 @@ defmodule Agenda.TUI.ViewTest do
       assert Agenda.TUI.Layout.current_row(state).item.when == nil
     end
   end
+
+  describe "automatic completion in columns (R32)" do
+    setup %{state: state} do
+      priority = hd(Database.find_categories(state.db, "Priority"))
+      {:ok, db, _} = Core.add_category(state.db, priority, "Lowest")
+      # the second item ("Don't forget to call Anna Lasky...") is High
+      state = %{state | db: db} |> press([:down, :down, :right, :right])
+      %{state: state}
+    end
+
+    defp priority_of(state) do
+      item = Agenda.TUI.Layout.current_row(state).item
+
+      [cell] =
+        Agenda.Core.ViewModel.build(state.db, Agenda.TUI.State.view(state))
+        |> hd()
+        |> Map.get(:rows)
+        |> Enum.filter(&(&1.item.id == item.id))
+        |> Enum.map(&Enum.at(&1.cells, 1))
+
+      cell
+    end
+
+    test "shows the first match, how many match, and AUTOC", %{state: state} do
+      state = press(state, "L")
+      screen = screen(state)
+      assert screen =~ "AUTOC"
+      assert screen =~ ~s(2 categories begin with "L")
+      assert screen =~ "Low"
+    end
+
+    test "ENTER accepts the shown match", %{state: state} do
+      state = press(state, ["me", :enter])
+      assert priority_of(state) == "Medium"
+    end
+
+    test "F8 / ALT-N and F7 / ALT-P cycle through the matches", %{state: state} do
+      assert priority_of(press(state, ["L", {:f, 8}, :enter])) == "Lowest"
+      assert priority_of(press(state, ["L", {:alt, "n"}, {:alt, "p"}, :enter])) == "Low"
+      # cycling wraps around
+      assert priority_of(press(state, ["L", {:f, 7}, :enter])) == "Lowest"
+    end
+
+    test "typing more starts again at the first match", %{state: state} do
+      assert priority_of(press(state, ["L", {:f, 8}, "o", :enter])) == "Low"
+    end
+
+    test "INS creates exactly what was typed (the manual's Low/Lowest override)", %{state: state} do
+      db = state.db
+      {:ok, db} = Core.discard_category(db, hd(Database.find_categories(db, "Low")))
+      state = %{state | db: db}
+
+      state = press(state, ["Low", :insert])
+      assert priority_of(state) == "Low"
+      assert length(Database.find_categories(state.db, "Lowest")) == 1
+    end
+
+    test "with no match, ENTER creates the new category", %{state: state} do
+      state = press(state, "Urgent")
+      assert screen(state) =~ "New category: Urgent"
+      assert priority_of(press(state, :enter)) == "Urgent"
+    end
+
+    test "date columns do not autocomplete", %{state: state} do
+      state = press(state, [:left, "fri"])
+      refute screen(state) =~ "AUTOC"
+      assert screen(state) =~ "Enter a date"
+    end
+  end
 end

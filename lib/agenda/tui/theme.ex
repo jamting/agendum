@@ -18,6 +18,7 @@ defmodule Agenda.TUI.Theme do
     cursor_cell: "0;30;106",
     edit: "0;30;107",
     edit_cursor: "0;97;40",
+    edit_hint: "0;90;107",
     symbol: "0;1;92;44",
     menu: "0;30;46",
     menu_selected: "0;97;40",

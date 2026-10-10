@@ -173,8 +173,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   each item, the descendants of _C_ the item is assigned to. A childless
   head shows `*` when the item is a member. A date column shows the date.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
-  matched against the column head's descendants: exact name, then unique
-  prefix. If nothing matches, a new child is created. Typing replaces the
+  matched against the column head's descendants with automatic completion
+  (R32); if nothing matches, a new child is created. Typing replaces the
   current entry; INS adds another one. Date columns parse dates.
 - **R24 ✅ DEL** on an item removes it from the section's category (and its
   subtree). The item stays in the file. On a column entry DEL unassigns it,
@@ -227,6 +227,18 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   CTRL-S/O/P/Q = save/open/print/quit. ⌥↑/⌥↓ jump between sections. Text
   fields use Mac/emacs editing keys. ⌘ shortcuts are mapped onto these CTRL
   keys by the terminal.
+- **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
+  category name is typed into a column cell, Agenda shows the first
+  matching category (the rest of its name in grey), the top line says how
+  many match, and AUTOC shows in the title bar. Matching is on the start of
+  names, ignoring case and accents ("éc" matches écrit and economy), among
+  the column head's subcategories only, with an exact name first and then
+  hierarchy order. ENTER accepts the shown match; F8 / ALT-N and F7 / ALT-P
+  cycle through the matches (wrapping); typing more starts again at the
+  first. INS, CTRL-N or F5 (NEWCAT) create exactly what was typed, even when
+  it begins an existing name (Low when Lowest exists). With no match, ENTER
+  creates the new category. Not done: the beeps, and F3 opening the category
+  box at the matches.
 
 ## 6. Out of scope for now
 

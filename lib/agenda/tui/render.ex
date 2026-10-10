@@ -11,7 +11,7 @@ defmodule Agenda.TUI.Render do
   """
 
   alias Agenda.Core.{Database, DateParser}
-  alias Agenda.TUI.{CategoryScreens, Draw, Layout, Menu, State}
+  alias Agenda.TUI.{CategoryScreens, Completion, Draw, Layout, Menu, State}
 
   @full_screen [:catmgr, :viewmgr, :help, :note]
   @boxes [:picker, :profile, :props, :choice]
@@ -70,6 +70,7 @@ defmodule Agenda.TUI.Render do
     top = State.mode(state)
 
     cond do
+      Completion.matches(state) != [] -> "AUTOC"
       state.edit != nil -> "EDIT"
       top && top.type == :menu -> "MENU"
       top && top.type == :move_item -> "MOVE"
@@ -110,14 +111,18 @@ defmodule Agenda.TUI.Render do
   defp message_line(%State{message: {:error, text}}), do: [{:error, " #{text} "}]
   defp message_line(%State{message: {:message, text}}), do: [{:message, " " <> text}]
 
+  defp message_line(%State{edit: %{target: {:column_entry, _, _, _}}, modes: []} = state) do
+    if Completion.column_entry?(state),
+      do: completion_line(state),
+      else: [{:dim, " Enter a date (e.g. friday, next week, 12/24); ENTER to set"}]
+  end
+
   defp message_line(%State{edit: %{target: target}, modes: []}) do
     hint =
       case target do
         {:new_item, _, _} -> "Type the new item; ENTER to finish, ESC to cancel"
         {:edit_item, _} -> "Edit the item; ENTER to finish, ESC to cancel"
         {:rename_category, _} -> "Edit the category name; ENTER to finish"
-        {:column_entry, _, _, :add} -> "Enter an additional category for this column"
-        {:column_entry, _, _, _} -> "Enter category name (or date); ENTER to assign"
       end
 
     [{:dim, " " <> hint}]
@@ -166,6 +171,15 @@ defmodule Agenda.TUI.Render do
   defp keybar(state) do
     keys =
       cond do
+        Completion.column_entry?(state) ->
+          [
+            {"ENTER", "Accept"},
+            {"F8/A-N", "Next"},
+            {"F7/A-P", "Previous"},
+            {"INS/^N", "New category"},
+            {"ESC", "Cancel"}
+          ]
+
         state.edit != nil ->
           [
             {"ENTER", "Done"},
@@ -342,7 +356,7 @@ defmodule Agenda.TUI.Render do
           case editing do
             %{target: {:column_entry, id, head, _}}
             when selected and id == item.id and head == column.category_id and state.col == i ->
-              field(editing.line, column.width, :edit)
+              completion_field(state, editing.line, column.width)
 
             _ ->
               [
@@ -361,6 +375,45 @@ defmodule Agenda.TUI.Render do
 
   defp blank_cells(columns),
     do: Enum.flat_map(columns, &[{:normal, " "}, {:normal, Draw.spaces(&1.width)}])
+
+  # Automatic completion (R32): the top line says how many categories match
+  # and how to choose.
+  defp completion_line(state) do
+    text = String.trim(state.edit.line.text)
+
+    case length(Completion.matches(state)) do
+      0 when text == "" ->
+        [{:dim, " Type a category name; ENTER to assign"}]
+
+      0 ->
+        [{:dim, " New category: #{text} · ENTER creates it"}]
+
+      1 ->
+        [{:dim, " 1 category begins with \"#{text}\" · ENTER accepts · INS new category"}]
+
+      n ->
+        [
+          {:dim,
+           " #{n} categories begin with \"#{text}\" · ENTER accepts · F8/ALT-N next · F7/ALT-P previous · INS new"}
+        ]
+    end
+  end
+
+  # A column cell being typed into, with the rest of the shown completion
+  # in grey after the cursor ("Me" + "dium").
+  defp completion_field(state, line, width) do
+    shown = Completion.shown(state)
+    typed = line.text
+    name = if shown, do: state.db.categories[shown].name, else: ""
+    rest = String.slice(name, String.length(typed)..-1//1)
+
+    if shown && line.pos == String.length(typed) && String.length(typed) < width && rest != "" do
+      {first, after_} = String.split_at(rest, 1)
+      Draw.line([{:edit, typed}, {:edit_cursor, first}, {:edit_hint, after_}], width, :edit)
+    else
+      field(line, width, :edit)
+    end
+  end
 
   # A one-line edit field that scrolls horizontally to keep the cursor visible.
   defp field(line, width, style) do
@@ -503,6 +556,8 @@ defmodule Agenda.TUI.Render do
      ALT-D / ALT-U Add section below / above
      ALT-R / ALT-L Add column right / left
      ←→ TAB        Move between item and columns
+     In a column   Type a name: the first match shows; ENTER accepts,
+                   F8/ALT-N and F7/ALT-P cycle, INS/^N makes it a new one
      CTRL-PGUP/DN  Previous / next section         ⌥↑ / ⌥↓
 
    Everywhere

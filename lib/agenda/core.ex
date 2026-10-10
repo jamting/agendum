@@ -235,6 +235,66 @@ defmodule Agenda.Core do
   defp put_date(db, item_id, field, date),
     do: Database.update_item(db, item_id, &Map.put(&1, field, date))
 
+  @doc """
+  Automatic completion (R32): the subcategories of `head_id` whose names
+  begin with `text`, ignoring case and accents, in hierarchy order with an
+  exact name first. The first one is what Agenda shows as you type; the
+  others are reached with NEXTSEL / PREVSEL.
+  """
+  @spec completions(db, id, String.t()) :: [id]
+  def completions(db, head_id, text) do
+    case fold(text) do
+      "" ->
+        []
+
+      wanted ->
+        matches =
+          db
+          |> Database.descendants(head_id)
+          |> Enum.filter(&String.starts_with?(fold(db.categories[&1].name), wanted))
+
+        {exact, prefix} = Enum.split_with(matches, &(fold(db.categories[&1].name) == wanted))
+        exact ++ prefix
+    end
+  end
+
+  @doc """
+  Assigns an item to a new child of `head_id` named exactly `text`,
+  overriding automatic completion (Agenda's NEWCAT / INS): typing "Low"
+  creates Low even when Lowest exists. If a child with that name already
+  exists, that one is used.
+  """
+  @spec assign_new_by_name(db, id, id, String.t()) :: {:ok, db, id} | {:error, :empty}
+  def assign_new_by_name(db, item_id, head_id, text) do
+    case add_category(db, head_id, text) do
+      {:ok, db, cat_id} ->
+        {:ok, assign(db, item_id, cat_id), cat_id}
+
+      {:error, :duplicate} ->
+        wanted = Database.normalize(text)
+
+        cat_id =
+          Enum.find(
+            db.categories[head_id].children,
+            &(Database.normalize(db.categories[&1].name) == wanted)
+          )
+
+        {:ok, assign(db, item_id, cat_id), cat_id}
+
+      {:error, :empty} ->
+        {:error, :empty}
+    end
+  end
+
+  # Case- and accent-insensitive form used for completion ("éc" ~ "ec").
+  defp fold(text) do
+    text
+    |> String.trim()
+    |> :unicode.characters_to_nfd_binary()
+    |> String.replace(~r/\p{Mn}/u, "")
+    |> String.downcase()
+  end
+
   # Exact (case-insensitive) match among descendants of `root`, else a
   # unique prefix match.
   defp resolve_name(db, root, text) do
