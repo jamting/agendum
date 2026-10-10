@@ -97,6 +97,7 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.assign(db, item, cat)`                            | write | Explicit assignment with exclusivity and `also_assign` (see below).                                                       |
 | `Core.toggle_assignment(db, item, cat)`                 | write | Assignment profile: remove just that explicit link, or `assign`.                                                          |
 | `Core.add_condition(db, cat, target, :assigned \| :not_assigned)`, `remove_condition/3`, `cycle_condition/3` | write | Assignment conditions (R15). `{:error, :self \| :duplicate}`. New conditions reach existing items through `reassign_all/2`. |
+| `Core.set_action(db, cat, target, action, clock)` / `Core.remove_action/3` / `Core.set_special_action/3` | write | Actions (R15b), run once by every facade change when an item joins the category (`settle/4` in `Agenda.Core`). |
 | `Core.set_also_match(db, cat, text)` | write | Text conditions (R15d). Text matches are conditional links, broken when the text stops matching (R15c). |
 | `Core.set_range_condition(db, cat, target, {from, to, where}, clock)` | write | Date or numeric condition (R15a), checked against `clock`. |
 | `Core.recheck_conditions(db, clock)` | write | Re-check every item's conditions (on a new day). Functions that apply conditions (`assign/4`, `set_date/5`, `set_number/5`, …) take an optional clock for date conditions. |

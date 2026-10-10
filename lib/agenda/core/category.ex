@@ -18,6 +18,11 @@ defmodule Agenda.Core.Category do
     are assigned here.
   * `also_match` – text conditions (R15d, `Agenda.Core.TextCondition`):
     items whose text meets them are assigned here, like the name does.
+  * `actions` – actions run when an item joins the category (R15b):
+    `{category, :remove}` breaks an assignment; on a date or numeric
+    category `{category, {:set, value}}` sets the date (an expression read
+    when it runs) or number and `:clear` removes it.
+  * `special` – `:done` or `:discard`: the special action (R15b).
   * `also_assign` – category-to-category links (patent FIG. 6): items
     assigned here are also assigned to these categories.
   """
@@ -36,6 +41,8 @@ defmodule Agenda.Core.Category do
           also_assign: [id],
           conditions: [{id, :assigned | :not_assigned | Agenda.Core.RangeFilter.term_()}],
           also_match: String.t(),
+          actions: [{id, :remove | :clear | {:set, String.t() | float}}],
+          special: :done | :discard | nil,
           note: String.t()
         }
 
@@ -51,6 +58,8 @@ defmodule Agenda.Core.Category do
     also_assign: [],
     conditions: [],
     also_match: "",
+    actions: [],
+    special: nil,
     note: ""
   ]
 end

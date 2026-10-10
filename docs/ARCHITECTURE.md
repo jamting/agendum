@@ -61,6 +61,7 @@ shell does terminal I/O and file I/O.
 | `TUI.ItemProperties` | ✔ | The Item Properties box: text, note, statistics and the item's assignments (R34). |
 | `TUI.SortBox` | ✔ | The Sort box: a view's or a section's sort keys (R36). |
 | `TUI.SearchBox` | ✔ | The Search box and search mode (ALT-N / ALT-P / F7), and the Show View (R37). |
+| `TUI.ActionBox` | ✔ | The Date Action / Numeric Action box (R15b). |
 | `TUI.RangeFilterBox` | ✔ | The Date Filter / Numeric Filter box (R28a). |
 | `TUI.ColumnProperties` | ✔ | The Numeric Column Properties box: number format and calculations (R29). |
 | `TUI.FileProperties` | ✔ | The File Properties box: the date display format, with a sample (R41). |

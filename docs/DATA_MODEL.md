@@ -64,6 +64,8 @@ erDiagram
         bool match_name "auto-assign by name"
         list also_assign "category ids"
         string also_match "text conditions (R15d)"
+        list actions "remove, date and number actions (R15b)"
+        atom special "done, discard or nil (R15b)"
         list conditions "category ids: assigned, not, or a date/number range"
         string note
     }
@@ -155,6 +157,8 @@ classDiagram
         +match_name : boolean
         +also_assign : [id]
         +also_match : String
+        +actions : [id and action]
+        +special : done, discard or nil
         +conditions : [id and kind]
         +note : String
     }
@@ -430,7 +434,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

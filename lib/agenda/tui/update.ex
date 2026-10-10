@@ -192,6 +192,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
   defp dispatch(state, %{type: :goto} = m, key), do: GoTo.handle(state, m, key)
 
+  defp dispatch(state, %{type: :action_box} = m, key),
+    do: Agenda.TUI.ActionBox.handle(state, m, key)
+
   defp dispatch(state, %{type: :range_filter} = m, key),
     do: RangeFilterBox.handle(state, m, key)
 
@@ -675,7 +678,15 @@ defmodule Agenda.TUI.Update do
 
   # Tells the user what Agenda did on its own: categories found in the text,
   # and a When date read from it (R14).
-  defp report_auto_assignments(state, item_id, already, old_when \\ nil) do
+  defp report_auto_assignments(state, item_id, already),
+    do: report_auto_assignments(state, item_id, already, nil)
+
+  # A special action (R15b) may have discarded the item at once.
+  defp report_auto_assignments(state, item_id, _already, _old_when)
+       when not is_map_key(state.db.items, item_id),
+       do: State.info(state, "The item was discarded by a special action")
+
+  defp report_auto_assignments(state, item_id, already, old_when) do
     added =
       Database.explicit_categories(state.db, item_id)
       |> Enum.reject(&(&1 in already))

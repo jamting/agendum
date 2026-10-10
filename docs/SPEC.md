@@ -235,9 +235,22 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   character plain text. Text conditions work even when the category does
   not match its own name. New ones reach existing items with Recalc. Not
   done: Agenda's `"` (exclude words) and suffix marks.
-- **R15b ⏳ Actions:** remove-from actions, date actions (set a When date),
-  special actions (mark done, discard, export), and Utilities Execute for
-  re-running actions. Category links (R8) already cover "also assign".
+- **R15b ✅ Actions** (User's Guide chapter 21). When an item joins a
+  category, by the user, a condition or another action, the category's
+  actions run once: Category Properties ▸ Assignment actions lists them
+  ("Sales, -Receivables, When=tomorrow, Amount=150"); in its box ENTER on
+  a category cycles assign (a category link, R8) → remove (break the
+  item's assignment there) → none, and a date or numeric category opens
+  the Date / Numeric Action box: give items a date (an expression read
+  when the action runs, in the reader's languages) or a number, or remove
+  it. Special action: None, Mark items done (today, recurring items get
+  their next one) or Discard items. A parent's actions also run for items
+  that join its children, children's first; special actions run last.
+  Actions make explicit assignments, which stay when the triggering one
+  is broken, and do not run again when an item changes while it stays in
+  the category. Not done: the Export special action (with structured
+  files, Milestone 4), turning actions off per category or file, and
+  Utilities Execute to run actions on items already in a category (next).
 - **R15c ✅ Text matches as conditional assignments** (User's Guide 18-3).
   An assignment made because the item's text matched a category (its name,
   short name or text conditions) is conditional, marked "(c)" in Item

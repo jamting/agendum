@@ -56,6 +56,7 @@ defmodule Agenda.Core do
   """
   @spec add_item(db, String.t(), clock, keyword) :: {db, id}
   def add_item(db, text, today, opts \\ []) do
+    before = db
     {db, id} = Database.insert_item(db, String.trim(text), date_of(today), after: opts[:after])
 
     db =
@@ -68,7 +69,7 @@ defmodule Agenda.Core do
       db
       |> Assign.auto_assign(id, Keyword.get(opts, :adjacent, []))
       |> date_from_text(id, nil, today)
-      |> Assign.apply_conditions(id, today)
+      |> settle(before, id, today)
 
     {db, id}
   end
@@ -85,7 +86,7 @@ defmodule Agenda.Core do
     |> Database.update_item(id, &%{&1 | text: String.trim(text)})
     |> Assign.auto_assign(id, adjacent)
     |> date_from_text(id, old_text, today)
-    |> Assign.apply_conditions(id, today)
+    |> settle(db, id, today)
   end
 
   # An assignment the user asked for: never treated as conditional (R15).
@@ -145,6 +146,8 @@ defmodule Agenda.Core do
   """
   @spec move_item(db, id, id, id, keyword) :: db
   def move_item(db, item_id, from, to, opts \\ []) do
+    before = db
+
     db =
       if to == from do
         db
@@ -160,7 +163,7 @@ defmodule Agenda.Core do
         after_id -> Database.reorder_item(db, item_id, after_id)
       end
 
-    Assign.apply_conditions(db, item_id, opts[:clock])
+    settle(db, before, item_id, opts[:clock])
   end
 
   @doc """
@@ -345,7 +348,7 @@ defmodule Agenda.Core do
       nil -> Assign.unassign(db, item_id, cat_id)
       field -> put_date(db, item_id, field, nil)
     end
-    |> Assign.apply_conditions(item_id, clock)
+    |> settle(db, item_id, clock)
   end
 
   @doc """
@@ -356,7 +359,7 @@ defmodule Agenda.Core do
   """
   @spec assign(db, id, id, clock | nil) :: db
   def assign(db, item_id, cat_id, clock \\ nil),
-    do: db |> user_assign(item_id, cat_id) |> Assign.apply_conditions(item_id, clock)
+    do: db |> user_assign(item_id, cat_id) |> settle(db, item_id, clock)
 
   @doc """
   Toggles one explicit assignment, as in the assignment profile: an
@@ -366,10 +369,10 @@ defmodule Agenda.Core do
   @spec toggle_assignment(db, id, id, clock | nil) :: db
   def toggle_assignment(db, item_id, cat_id, clock \\ nil) do
     if Database.explicit?(db, item_id, cat_id),
-      do: db |> Database.unlink(item_id, cat_id) |> Assign.apply_conditions(item_id, clock),
+      do: db |> Database.unlink(item_id, cat_id) |> settle(db, item_id, clock),
       else:
         user_assign(db, item_id, cat_id)
-        |> Assign.apply_conditions(item_id, clock)
+        |> settle(db, item_id, clock)
   end
 
   @doc """
@@ -385,6 +388,7 @@ defmodule Agenda.Core do
           | {:error, :invalid_date | :not_a_number | :ambiguous | :empty}
   def assign_by_name(db, item_id, head_id, text, today) do
     text = String.trim(text)
+    before = db
 
     cond do
       text == "" ->
@@ -408,7 +412,7 @@ defmodule Agenda.Core do
                 do: Database.update_item(db, item_id, &%{&1 | when_time: time, recurrence: rule}),
                 else: db
 
-            {:ok, Assign.apply_conditions(db, item_id, today), :date}
+            {:ok, settle(db, before, item_id, today), :date}
 
           :error ->
             {:error, :invalid_date}
@@ -436,11 +440,190 @@ defmodule Agenda.Core do
   @spec set_date(db, id, id, Date.t() | nil, clock | nil) :: db
   def set_date(db, item_id, cat_id, date, clock \\ nil) do
     field = Database.date_field(db, cat_id) || raise ArgumentError, "not a date category"
-    db |> put_date(item_id, field, date) |> Assign.apply_conditions(item_id, clock)
+    db |> put_date(item_id, field, date) |> settle(db, item_id, clock)
   end
 
   # A When date set or cleared by the user: set is explicit and overrides
   # the text; cleared hands the When date back to the text (R14).
+  # --- conditions and actions after a change (R15, R15b) ------------------------
+
+  # After a change to an item: its conditions are checked again, then the
+  # actions of every category it has newly joined (compared with `before`)
+  # run, once (User's Guide 18-7, 21-15).
+  defp settle(db, before, item_id, clock) do
+    db
+    |> Assign.apply_conditions(item_id, clock)
+    |> run_actions(before, item_id, clock, map_size(db.categories) + 2)
+  end
+
+  defp run_actions(db, _before, _item_id, _clock, 0), do: db
+
+  defp run_actions(db, before, item_id, clock, rounds) do
+    joined = joined_with_actions(db, before, item_id)
+
+    if joined == [] or not Map.has_key?(db.items, item_id) do
+      db
+    else
+      after_actions =
+        joined
+        |> Enum.flat_map(&db.categories[&1].actions)
+        |> Enum.reduce(db, &apply_action(&2, item_id, &1, clock))
+        |> Assign.apply_conditions(item_id, clock)
+
+      after_actions = run_actions(after_actions, db, item_id, clock, rounds - 1)
+
+      joined
+      |> Enum.map(&db.categories[&1].special)
+      |> Enum.reject(&is_nil/1)
+      |> Enum.reduce(after_actions, &apply_special(&2, item_id, &1, clock))
+    end
+  end
+
+  # Categories with actions the item belongs to now but not before,
+  # children before their parents.
+  defp joined_with_actions(db, before, item_id) do
+    was_there = Map.has_key?(before.items, item_id)
+
+    db.categories
+    |> Map.values()
+    |> Enum.filter(&(&1.actions != [] or &1.special != nil))
+    |> Enum.filter(fn cat ->
+      Database.member?(db, item_id, cat.id) and
+        not (was_there and Map.has_key?(before.categories, cat.id) and
+               Database.member?(before, item_id, cat.id))
+    end)
+    |> Enum.sort_by(&{-Database.depth(db, &1.id), &1.id})
+    |> Enum.map(& &1.id)
+  end
+
+  defp apply_action(db, item_id, _action, _clock) when not is_map_key(db.items, item_id),
+    do: db
+
+  defp apply_action(db, item_id, {target, action}, clock) do
+    cond do
+      not Map.has_key?(db.categories, target) ->
+        db
+
+      action == :remove or action == :clear ->
+        case Database.date_field(db, target) do
+          nil -> Assign.unassign(db, item_id, target)
+          field -> put_date(db, item_id, field, nil)
+        end
+
+      field = Database.date_field(db, target) ->
+        {:set, text} = action
+
+        case action_date(text, clock) do
+          {:ok, date} -> put_date(db, item_id, field, date)
+          :error -> db
+        end
+
+      true ->
+        {:set, number} = action
+        db |> user_assign(item_id, target) |> Database.put_number(item_id, target, number)
+    end
+  end
+
+  # The date of a date action, read when it runs; without a clock (the core
+  # never reads one) only an ISO date can be read.
+  defp action_date(text, nil) do
+    case Date.from_iso8601(text) do
+      {:ok, date} -> {:ok, date}
+      _ -> :error
+    end
+  end
+
+  defp action_date(text, clock),
+    do: DateParser.parse(text, date_of(clock), Context.parser_opts(clock))
+
+  defp apply_special(db, item_id, _special, _clock) when not is_map_key(db.items, item_id),
+    do: db
+
+  defp apply_special(db, item_id, :done, clock), do: mark_done(db, item_id, clock)
+  defp apply_special(db, item_id, :discard, _clock), do: Database.delete_item(db, item_id)
+
+  @doc """
+  Sets one of a category's actions on `target` (R15b; User's Guide 21-3 to
+  21-7), run when an item joins the category: on a standard category
+  `:assign` (a category link, R8) or `:remove`; on a date category
+  `{:set, "date"}` (read when the action runs) or `:clear`; on a numeric
+  category `{:set, "number"}` or `:clear`.
+  """
+  @spec set_action(db, id, id, :assign | :remove | :clear | {:set, String.t()}, clock | nil) ::
+          {:ok, db} | {:error, :self | :invalid_date | :not_a_number | :not_allowed}
+  def set_action(db, cat_id, target, action, clock \\ nil)
+
+  def set_action(_db, cat_id, cat_id, _action, _clock), do: {:error, :self}
+
+  def set_action(db, cat_id, target, action, clock) do
+    kind =
+      cond do
+        Database.date_field(db, target) -> :date
+        db.categories[target].kind == :numeric -> :numeric
+        true -> :standard
+      end
+
+    with {:ok, action} <- check_action(kind, action, clock) do
+      db = remove_action(db, cat_id, target)
+
+      db =
+        if action == :assign,
+          do:
+            Database.update_category(db, cat_id, &%{&1 | also_assign: &1.also_assign ++ [target]}),
+          else:
+            Database.update_category(
+              db,
+              cat_id,
+              &%{&1 | actions: &1.actions ++ [{target, action}]}
+            )
+
+      {:ok, db}
+    end
+  end
+
+  defp check_action(:standard, action, _clock) when action in [:assign, :remove],
+    do: {:ok, action}
+
+  defp check_action(kind, :clear, _clock) when kind in [:date, :numeric], do: {:ok, :clear}
+
+  defp check_action(:date, {:set, text}, clock) do
+    today = if clock, do: date_of(clock), else: ~D[2000-01-01]
+
+    case DateParser.parse(text, today, Context.parser_opts(clock)) do
+      {:ok, _} -> {:ok, {:set, String.trim(text)}}
+      :error -> {:error, :invalid_date}
+    end
+  end
+
+  defp check_action(:numeric, {:set, text}, _clock) do
+    case NumberFormat.parse(to_string(text)) do
+      {:ok, number} -> {:ok, {:set, number}}
+      :error -> {:error, :not_a_number}
+    end
+  end
+
+  defp check_action(_kind, _action, _clock), do: {:error, :not_allowed}
+
+  @doc "Removes a category's action on `target` (including a category link)."
+  @spec remove_action(db, id, id) :: db
+  def remove_action(db, cat_id, target) do
+    Database.update_category(db, cat_id, fn cat ->
+      %{
+        cat
+        | actions: List.keydelete(cat.actions, target, 0),
+          also_assign: List.delete(cat.also_assign, target)
+      }
+    end)
+  end
+
+  @doc """
+  Sets a category's special action (R15b; User's Guide 21-8): `:done` marks
+  items done when they join it, `:discard` discards them; `nil` for none.
+  """
+  @spec set_special_action(db, id, :done | :discard | nil) :: {:ok, db}
+  def set_special_action(db, cat_id, special) when special in [nil, :done, :discard],
+    do: {:ok, Database.update_category(db, cat_id, &%{&1 | special: special})}
+
   # --- dependencies (R43) ------------------------------------------------------
 
   @doc """
@@ -518,7 +701,7 @@ defmodule Agenda.Core do
         db
         |> user_assign(item_id, cat_id)
         |> Database.put_number(item_id, cat_id, value)
-        |> Assign.apply_conditions(item_id, clock)
+        |> settle(db, item_id, clock)
 
       {:ok, db}
     else
@@ -949,10 +1132,10 @@ defmodule Agenda.Core do
   """
   @spec reassign_all(db, clock) :: db
   def reassign_all(db, today) do
-    Enum.reduce(db.item_order, db, fn id, db ->
-      db = Assign.auto_assign(db, id, [])
+    Enum.reduce(db.item_order, db, fn id, before ->
+      db = Assign.auto_assign(before, id, [])
       db = if db.items[id].when, do: db, else: date_from_text(db, id, nil, today)
-      Assign.apply_conditions(db, id, today)
+      settle(db, before, id, today)
     end)
   end
 
@@ -1042,7 +1225,7 @@ defmodule Agenda.Core do
   """
   @spec recheck_conditions(db, clock) :: db
   def recheck_conditions(db, clock),
-    do: Enum.reduce(db.item_order, db, &Assign.apply_conditions(&2, &1, clock))
+    do: Enum.reduce(db.item_order, db, fn id, db -> settle(db, db, id, clock) end)
 
   @doc """
   Cycles the condition on `target` the way the category properties box

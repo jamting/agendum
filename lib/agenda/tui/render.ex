@@ -28,6 +28,7 @@ defmodule Agenda.TUI.Render do
     :file_props,
     :goto,
     :range_filter,
+    :action_box,
     :column_props,
     :alarm_list
   ]
@@ -118,7 +119,16 @@ defmodule Agenda.TUI.Render do
       top && top.type in [:profile, :group_profile] ->
         "ASSIGN"
 
-      top && top.type in [:props, :choice, :item_props, :file_props, :column_props, :range_filter] ->
+      top &&
+          top.type in [
+            :props,
+            :choice,
+            :item_props,
+            :file_props,
+            :column_props,
+            :range_filter,
+            :action_box
+          ] ->
         "PROPS"
 
       top && top.type == :sort ->
@@ -345,6 +355,15 @@ defmodule Agenda.TUI.Render do
 
   defp mode_keys(%{type: :column_props}),
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
+
+  defp mode_keys(%{type: :action_box}),
+    do: [
+      {"↑↓", "Setting"},
+      {"SPACE", "Change"},
+      {"ENTER", "Apply"},
+      {"DEL", "Remove"},
+      {"ESC", "Cancel"}
+    ]
 
   defp mode_keys(%{type: :range_filter}),
     do: [
@@ -633,8 +652,7 @@ defmodule Agenda.TUI.Render do
       cat.exclusive && "exclusive",
       cat.short_name && "aka #{cat.short_name}",
       cat.conditions != [] && "if " <> conditions_text(state, cat),
-      cat.also_assign != [] &&
-        "→ " <> Enum.map_join(cat.also_assign, ", ", &db.categories[&1].name),
+      (cat.also_assign != [] or cat.actions != []) && "→ " <> actions_text(db, cat),
       cat.note != "" && "♪",
       count && "#{count}"
     ]
@@ -808,7 +826,7 @@ defmodule Agenda.TUI.Render do
       {:assign_column, _, head} -> "Choose " <> state.db.categories[head].name
       {:new_view, name} -> "First section for view #{name}"
       {:move_category, id} -> "New parent for " <> state.db.categories[id].name
-      {:also_assign, id} -> "Also assign items of #{state.db.categories[id].name} to"
+      {:also_assign, id} -> "Actions for items joining #{state.db.categories[id].name}"
       {:assign_items, [_]} -> "Assign the item to"
       {:assign_items, ids} -> "Assign #{length(ids)} marked items to"
       {:condition, id} -> "Conditions for #{state.db.categories[id].name}"
@@ -830,6 +848,11 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
   defp box_title(_state, %{type: :file_props}), do: "File properties: date display"
   defp box_title(_state, %{type: :goto}), do: "Go to section"
+
+  defp box_title(state, %{type: :action_box} = mode) do
+    kind = if Agenda.TUI.ActionBox.numeric?(state, mode), do: "Numeric", else: "Date"
+    "#{kind} action: #{state.db.categories[mode.target].name}"
+  end
 
   defp box_title(state, %{type: :range_filter} = mode) do
     kind = if Agenda.TUI.RangeFilterBox.numeric?(state, mode), do: "Numeric", else: "Date"
@@ -986,6 +1009,24 @@ defmodule Agenda.TUI.Render do
         [{:box, " Sample: " <> Agenda.TUI.ColumnProperties.sample(state, mode)}],
         [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]
       ]
+  end
+
+  defp box_content(state, %{type: :action_box} = mode, inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.ActionBox.lines(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        label = [{:box, " " <> Draw.pad(label, 12) <> ": "}]
+
+        case value do
+          {:line, line} when i == mode.cursor -> label ++ field(line, inner - 16, :edit)
+          {:line, line} -> label ++ [{:box, line.text}]
+          text -> label ++ [{if(i == mode.cursor, do: :box_selected, else: :box), text}]
+        end
+      end)
+
+    rows ++ [[], [{:box, " SPACE changes · ENTER applies · DEL removes · ESC cancels"}]]
   end
 
   defp box_content(state, %{type: :range_filter} = mode, inner, _max_rows) do
@@ -1175,10 +1216,11 @@ defmodule Agenda.TUI.Render do
       exclusive: yes_no.(cat.exclusive),
       match_name: yes_no.(cat.match_name),
       also_match: if(cat.also_match == "", do: "(none)", else: cat.also_match),
+      special: %{nil => "None", done: "Mark items done", discard: "Discard items"}[cat.special],
       also_assign:
-        if(cat.also_assign == [],
+        if(cat.also_assign == [] and cat.actions == [],
           do: "(none)",
-          else: Enum.map_join(cat.also_assign, ", ", &state.db.categories[&1].name)
+          else: actions_text(state.db, cat)
         ),
       conditions: if(cat.conditions == [], do: "(none)", else: conditions_text(state, cat)),
       note: if(cat.note == "", do: "(none)", else: "#{String.length(cat.note)} characters")
@@ -1191,7 +1233,8 @@ defmodule Agenda.TUI.Render do
       exclusive: "Children mutually exclusive",
       match_name: "Assign items mentioning it",
       also_match: "Also match",
-      also_assign: "Also assign items to",
+      also_assign: "Assignment actions",
+      special: "Special action",
       conditions: "Assignment conditions",
       note: "Note"
     }
@@ -1218,6 +1261,9 @@ defmodule Agenda.TUI.Render do
 
       _ when mode.search != "" ->
         [{:box, " Search: " <> mode.search}]
+
+      _ when elem(mode.purpose, 0) == :also_assign ->
+        [{:box, " ENTER cycles: + assign · - remove · none (dates, numbers: a box)"}]
 
       _ when elem(mode.purpose, 0) in [:condition, :filter] ->
         [{:box, " ENTER cycles: + assigned · - not assigned · none"}]
@@ -1284,12 +1330,39 @@ defmodule Agenda.TUI.Render do
   end
 
   defp profile_marker(state, %{type: :picker, purpose: {:also_assign, cat_id}}, id) do
-    if id in state.db.categories[cat_id].also_assign, do: "*", else: " "
+    cat = state.db.categories[cat_id]
+
+    cond do
+      id in cat.also_assign -> "+"
+      List.keyfind(cat.actions, id, 0) in [{id, :remove}, {id, :clear}] -> "-"
+      List.keymember?(cat.actions, id, 0) -> "="
+      true -> " "
+    end
   end
 
   defp profile_marker(_state, _mode, _id), do: " "
 
   # "Taxes, not People": a category's assignment conditions in words.
+  # "Sales, -Receivables, When=tomorrow, Amount=150" (R15b)
+  defp actions_text(db, cat) do
+    name = &db.categories[&1].name
+
+    Enum.map(cat.also_assign, name)
+    |> Enum.concat(
+      Enum.map(cat.actions, fn
+        {id, action} when action in [:remove, :clear] ->
+          "-" <> name.(id)
+
+        {id, {:set, value}} when is_number(value) ->
+          name.(id) <> "=" <> Agenda.TUI.Update.number_text(value)
+
+        {id, {:set, value}} ->
+          name.(id) <> "=" <> value
+      end)
+    )
+    |> Enum.join(", ")
+  end
+
   defp conditions_text(%State{db: db} = state, cat) do
     Enum.map_join(cat.conditions, ", ", fn
       {id, :assigned} ->

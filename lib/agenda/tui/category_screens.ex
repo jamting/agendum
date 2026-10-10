@@ -79,6 +79,7 @@ defmodule Agenda.TUI.CategoryScreens do
     :also_match,
     :conditions,
     :also_assign,
+    :special,
     :note
   ]
   def props_fields, do: @props
@@ -260,8 +261,8 @@ defmodule Agenda.TUI.CategoryScreens do
       :esc ->
         State.pop(state)
 
-      # filters and conditions are set several at a time: the box stays open
-      :enter when elem(mode.purpose, 0) in [:filter, :condition] ->
+      # filters, conditions and actions are set several at a time: the box stays open
+      :enter when elem(mode.purpose, 0) in [:filter, :condition, :also_assign] ->
         pick(state, mode.purpose, current_id(rows, mode))
 
       :enter ->
@@ -641,8 +642,24 @@ defmodule Agenda.TUI.CategoryScreens do
       else: cycle_condition(state, cat_id, target)
   end
 
+  # Assignment actions (R15b): a date or numeric category opens the action
+  # box; another category cycles assign → remove → none.
   defp pick(state, {:also_assign, cat_id}, target) do
-    State.change_db(state, Core.toggle_also_assign(state.db, cat_id, target))
+    cat = state.db.categories[cat_id]
+
+    cond do
+      Agenda.Core.RangeFilter.range_category?(state.db, target) ->
+        Agenda.TUI.ActionBox.open(state, cat_id, target)
+
+      target in cat.also_assign ->
+        action_result(state, Core.set_action(state.db, cat_id, target, :remove))
+
+      List.keymember?(cat.actions, target, 0) ->
+        State.change_db(state, Core.remove_action(state.db, cat_id, target))
+
+      true ->
+        action_result(state, Core.set_action(state.db, cat_id, target, :assign))
+    end
   end
 
   # --- making children mutually exclusive -----------------------------------------------------
@@ -897,6 +914,11 @@ defmodule Agenda.TUI.CategoryScreens do
           :also_assign ->
             open_picker(state, {:also_assign, cat.id}, nil)
 
+          :special ->
+            next = %{nil => :done, done: :discard, discard: nil}[cat.special]
+            {:ok, db} = Core.set_special_action(state.db, cat.id, next)
+            State.change_db(state, db)
+
           :conditions ->
             open_picker(state, {:condition, cat.id}, nil)
 
@@ -957,6 +979,11 @@ defmodule Agenda.TUI.CategoryScreens do
 
     "Convert #{cat.name} to numeric? " <> Enum.join(parts, "; ") <> ". (Y/N)"
   end
+
+  defp action_result(state, {:ok, db}), do: State.change_db(state, db)
+
+  defp action_result(state, {:error, :self}),
+    do: State.error(state, "A category cannot act on itself")
 
   defp cycle_condition(state, cat_id, target) do
     case Core.cycle_condition(state.db, cat_id, target) do
