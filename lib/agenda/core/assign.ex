@@ -18,7 +18,7 @@ defmodule Agenda.Core.Assign do
     explicit assignments always win over new automatic ones.
   """
 
-  alias Agenda.Core.{Database, RangeFilter}
+  alias Agenda.Core.{Database, RangeFilter, TextCondition}
 
   @type db :: Database.t()
   @type id :: Database.id()
@@ -87,19 +87,26 @@ defmodule Agenda.Core.Assign do
     settle_conditions(db, item_id, Enum.sort(with_conditions), rounds, clock)
   end
 
-  defp settle_conditions(db, _item_id, [], _rounds, _clock), do: db
   defp settle_conditions(db, _item_id, _cats, 0, _clock), do: db
 
-  defp settle_conditions(db, item_id, cats, rounds, clock) do
+  # Categories with conditions may pull the item in; any conditional link
+  # (from conditions or from text, R15c) breaks when neither holds.
+  defp settle_conditions(db, item_id, with_conditions, rounds, clock) do
+    conditional =
+      for cat <- Database.explicit_categories(db, item_id),
+          Database.conditional?(db, item_id, cat),
+          do: cat
+
     next =
-      Enum.reduce(cats, db, fn cat_id, acc ->
+      Enum.reduce(Enum.uniq(with_conditions ++ Enum.sort(conditional)), db, fn cat_id, acc ->
         met = conditions_met?(acc, item_id, cat_id, clock)
 
         cond do
           met and not Database.member?(acc, item_id, cat_id) ->
             acc |> assign(item_id, cat_id) |> Database.mark_conditional(item_id, cat_id)
 
-          not met and Database.conditional?(acc, item_id, cat_id) ->
+          not met and Database.conditional?(acc, item_id, cat_id) and
+              not text_matches?(acc, item_id, cat_id) ->
             Database.unlink(acc, item_id, cat_id)
 
           true ->
@@ -107,7 +114,9 @@ defmodule Agenda.Core.Assign do
         end
       end)
 
-    if next == db, do: db, else: settle_conditions(next, item_id, cats, rounds - 1, clock)
+    if next == db,
+      do: db,
+      else: settle_conditions(next, item_id, with_conditions, rounds - 1, clock)
   end
 
   @doc """
@@ -387,23 +396,38 @@ defmodule Agenda.Core.Assign do
       end)
       |> Enum.reverse()
 
-    # when a category and its ancestor both match, keep the specific one (R7c)
+    # when a category and its ancestor both match, keep the specific one (R7c);
+    # text matches are conditional: they break when the text changes (R15c)
     accepted
     |> Enum.reject(fn cand -> Enum.any?(accepted, &(cand in Database.ancestors(db, &1))) end)
-    |> Enum.reduce(db, &assign(&2, item_id, &1))
+    |> Enum.reduce(db, fn cand, db ->
+      db |> assign(item_id, cand) |> Database.mark_conditional(item_id, cand)
+    end)
   end
 
-  @doc "Categories whose name or short name occurs in `text` as whole words."
+  @doc """
+  Categories whose text matches `text`: their name or short name as whole
+  words (when they match names), or their text conditions ("Also match",
+  R15d).
+  """
   @spec matching_categories(db, String.t()) :: [id]
   def matching_categories(db, text) do
     db.categories
     |> Map.values()
-    |> Enum.filter(
-      &(&1.match_name and &1.kind == :standard and not Database.protected?(db, &1.id))
-    )
-    |> Enum.filter(fn c -> Enum.any?([c.name, c.short_name], &name_in_text?(&1, text)) end)
+    |> Enum.filter(&(&1.kind == :standard and not Database.protected?(db, &1.id)))
+    |> Enum.filter(&category_matches?(&1, text))
     |> Enum.map(& &1.id)
     |> Enum.sort()
+  end
+
+  @doc "Whether an item's text matches a category (see `matching_categories/2`)."
+  @spec text_matches?(db, id, id) :: boolean
+  def text_matches?(db, item_id, cat_id),
+    do: category_matches?(db.categories[cat_id], db.items[item_id].text)
+
+  defp category_matches?(cat, text) do
+    (cat.match_name and Enum.any?([cat.name, cat.short_name], &name_in_text?(&1, text))) or
+      TextCondition.matches?(cat.also_match, text)
   end
 
   @doc "Whole-word, case-insensitive match of a category name in text."

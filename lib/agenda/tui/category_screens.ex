@@ -70,7 +70,17 @@ defmodule Agenda.TUI.CategoryScreens do
     state.db |> Database.descendants(root) |> Enum.map(&{&1, Database.depth(state.db, &1) - base})
   end
 
-  @props [:name, :short_name, :type, :exclusive, :match_name, :conditions, :also_assign, :note]
+  @props [
+    :name,
+    :short_name,
+    :type,
+    :exclusive,
+    :match_name,
+    :also_match,
+    :conditions,
+    :also_assign,
+    :note
+  ]
   def props_fields, do: @props
 
   # --- dispatch ----------------------------------------------------------------------
@@ -834,6 +844,10 @@ defmodule Agenda.TUI.CategoryScreens do
 
           :short_name ->
             State.change_db(state, Core.set_short_name(state.db, mode.cat_id, text))
+
+          :also_match ->
+            {:ok, db} = Core.set_also_match(state.db, mode.cat_id, text)
+            State.change_db(state, db)
         end
 
       _ ->
@@ -867,6 +881,9 @@ defmodule Agenda.TUI.CategoryScreens do
 
           :short_name ->
             %{state | edit: %{target: :short_name, line: LineEdit.new(cat.short_name || "")}}
+
+          :also_match ->
+            %{state | edit: %{target: :also_match, line: LineEdit.new(cat.also_match)}}
 
           :type ->
             change_type(state, cat)

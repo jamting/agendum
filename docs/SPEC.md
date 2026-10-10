@@ -224,14 +224,26 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   tick re-checks every item on a new day. Dates are read in the reader's
   date languages (R14c). A category cannot have a condition on itself.
   The condition shows like a filter ("if When 2026-10-05..2026-10-09").
-- **R15d ⏳ Text conditions** beyond the category name and short name
-  ("Also match"; User's Guide chapter 19).
+- **R15d ✅ Text conditions** (User's Guide 19-2 to 19-5). Category
+  Properties ▸ Also match holds words and phrases that pull items into the
+  category as its name does: `;` separates alternatives (any), `,`
+  conditions that must all hold; a word or phrase matches as whole words in
+  order, ignoring case, optionally in parentheses (`(meet with)`); `!`
+  before one means the item must not contain it (`Cost,!Deduction`), `~`
+  that case must match (`~LOTS`); `?` is one character and `*` any
+  characters within a word (`Budget??`, `sl*`); `\` makes the next
+  character plain text. Text conditions work even when the category does
+  not match its own name. New ones reach existing items with Recalc. Not
+  done: Agenda's `"` (exclude words) and suffix marks.
 - **R15b ⏳ Actions:** remove-from actions, date actions (set a When date),
   special actions (mark done, discard, export), and Utilities Execute for
   re-running actions. Category links (R8) already cover "also assign".
-- **R15c ⏳ Text matches as conditional assignments:** in Agenda, an
-  assignment made because a name appeared in the text is broken when the
-  text no longer contains it; ours only adds.
+- **R15c ✅ Text matches as conditional assignments** (User's Guide 18-3).
+  An assignment made because the item's text matched a category (its name,
+  short name or text conditions) is conditional, marked "(c)" in Item
+  Properties, and is broken when the text no longer matches and no other
+  condition holds ("Meet with John" in Meetings; edited to "Telephone
+  John", it leaves). An assignment the user makes is explicit and stays.
 
 ## 4. Working through views
 

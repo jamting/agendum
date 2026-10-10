@@ -36,6 +36,7 @@ shell does terminal I/O and file I/O.
 | `Core.Assign`                             | Assignment rules: exclusion, category links, text matching, ambiguity resolution.                                                                       |
 | `Core.ViewModel`                          | Read model: projects a view to sections, rows and column cells.                                                                                         |
 | `Core.DateParser`                         | Date expressions relative to a given `today`.                                                                                                           |
+| `Core.TextCondition` | Agenda's "Also match" text conditions: `;` any, `,` all, `!`, `~`, wildcards (R15d). |
 | `Core.Recurrence` | The rule of a recurring When date and the next date from a base date (R14a). |
 | `Core.Context` | The current time and the date languages, passed to the core wherever it reads typed dates (R14c). |
 | `Core.DateLanguage` (+ `English`, `Swedish`) | Language packs for reading dates: words, phrase patterns, day/month order, clock (R14c). `DateParser` does the arithmetic. |

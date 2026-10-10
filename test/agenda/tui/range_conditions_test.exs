@@ -7,15 +7,19 @@ defmodule Agenda.TUI.RangeConditionsTest do
   alias Agenda.Core.Database
   alias Agenda.TUI.{State, Update}
 
-  # Meetings is the last category in the manager; its conditions are the
-  # sixth row of its properties box.
+  # Meetings is the last category in the manager.
   setup do
     state = start(Agenda.Sample.build(~D[2026-10-08]), now: ~N[2026-10-08 10:00:00])
     %{state: state, meetings: hd(Database.find_categories(state.db, "Meetings"))}
   end
 
-  defp open_conditions(state),
-    do: press(state, [{:f, 9}, :ctrl_end, {:f, 6}, :down, :down, :down, :down, :down, :enter])
+  defp open_conditions(state, keys \\ [{:f, 9}, :ctrl_end]),
+    do: press(state, keys ++ [{:f, 6}] ++ downs_to(:conditions) ++ [:enter])
+
+  defp downs_to(field) do
+    index = Enum.find_index(Agenda.TUI.CategoryScreens.props_fields(), &(&1 == field))
+    List.duplicate(:down, index)
+  end
 
   test "choosing a date category in the conditions box asks for a date range",
        %{state: state, meetings: meetings} do
@@ -59,8 +63,7 @@ defmodule Agenda.TUI.RangeConditionsTest do
     state = %{state | db: db}
 
     # Cost is now the last category; Meetings is the one above it
-    state =
-      press(state, [{:f, 9}, :ctrl_end, :up, {:f, 6}, :down, :down, :down, :down, :down, :enter])
+    state = open_conditions(state, [{:f, 9}, :ctrl_end, :up])
 
     state = press(state, ["Cost", :enter])
     assert screen(state) =~ "Numeric condition: Cost"

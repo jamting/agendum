@@ -12,14 +12,15 @@ defmodule Agenda.Store do
   adds `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38);
   7 adds `Database.date_format` (R41); 8 adds `Database.numbers` and
   `View.Column.number` (R29); 9 adds `Item.recurrence` (R14a); 10 adds
-  `Database.dependencies` and `View.hide_dependent` (R43).
+  `Database.dependencies` and `View.hide_dependent` (R43); 11 adds
+  `Category.also_match` (R15d).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 10
+  @format_version 11
   @extension ".agenda"
 
   def extension, do: @extension

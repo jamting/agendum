@@ -16,6 +16,8 @@ defmodule Agenda.Core.Category do
     or numeric category (R15a, as in `Agenda.Core.RangeFilter`). Items that
     meet all of them (either of those naming mutually exclusive categories)
     are assigned here.
+  * `also_match` – text conditions (R15d, `Agenda.Core.TextCondition`):
+    items whose text meets them are assigned here, like the name does.
   * `also_assign` – category-to-category links (patent FIG. 6): items
     assigned here are also assigned to these categories.
   """
@@ -33,6 +35,7 @@ defmodule Agenda.Core.Category do
           match_name: boolean,
           also_assign: [id],
           conditions: [{id, :assigned | :not_assigned | Agenda.Core.RangeFilter.term_()}],
+          also_match: String.t(),
           note: String.t()
         }
 
@@ -47,6 +50,7 @@ defmodule Agenda.Core.Category do
     match_name: true,
     also_assign: [],
     conditions: [],
+    also_match: "",
     note: ""
   ]
 end

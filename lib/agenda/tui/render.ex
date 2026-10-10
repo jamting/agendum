@@ -1174,6 +1174,7 @@ defmodule Agenda.TUI.Render do
       type: cat.kind |> Atom.to_string() |> String.capitalize(),
       exclusive: yes_no.(cat.exclusive),
       match_name: yes_no.(cat.match_name),
+      also_match: if(cat.also_match == "", do: "(none)", else: cat.also_match),
       also_assign:
         if(cat.also_assign == [],
           do: "(none)",
@@ -1189,6 +1190,7 @@ defmodule Agenda.TUI.Render do
       type: "Type",
       exclusive: "Children mutually exclusive",
       match_name: "Assign items mentioning it",
+      also_match: "Also match",
       also_assign: "Also assign items to",
       conditions: "Assignment conditions",
       note: "Note"

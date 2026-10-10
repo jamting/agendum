@@ -94,6 +94,17 @@ defmodule Agenda.StoreTest do
     assert loaded == db
   end
 
+  test "files in format version 10 get categories without text conditions", %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    v10_cats = Map.new(db.categories, fn {id, c} -> {id, Map.delete(c, :also_match)} end)
+    path = Path.join(dir, "v10.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 10, %{db | categories: v10_cats}}))
+
+    assert {:ok, loaded} = Store.load(path)
+    assert Enum.all?(Map.values(loaded.categories), &(&1.also_match == ""))
+    assert loaded == db
+  end
+
   test "recurrence rules are saved", %{tmp_dir: dir} do
     {db, id} = Agenda.Core.add_item(Agenda.Core.new_file(), "Gym every Monday", ~D[2026-10-08])
     path = Path.join(dir, "recur.agenda")

@@ -54,9 +54,9 @@ Rule numbers refer to `SPEC.md`.
 - [ ] More date display options: per-column formats, Day #, Week #, Relative, input format (R41)
 - [x] Assignment conditions, conditional assignments (R15)
 - [x] Date and numeric conditions, re-checked when the date changes (R15a)
-- [ ] "Also match" text conditions (R15d)
+- [x] "Also match" text conditions (R15d)
 - [ ] Actions: remove, date, special (done, discard, export) (R15b)
-- [ ] Break text-match assignments when the text changes (R15c)
+- [x] Break text-match assignments when the text changes (R15c)
 - [ ] General negative links (R9)
 - [ ] Assignment questions ("Agenda suggests…", Utilities Questions)
 

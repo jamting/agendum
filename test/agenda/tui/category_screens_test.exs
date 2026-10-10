@@ -276,8 +276,8 @@ defmodule Agenda.TUI.CategoryScreensTest do
     state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}])
     assert screen(state) =~ ~r/Assignment conditions\s+:\s+\(none\)/
 
-    # the conditions line is the sixth property
-    state = press(state, [:down, :down, :down, :down, :down, :enter, "Calls", :enter])
+    # the conditions line is the seventh property
+    state = press(state, List.duplicate(:down, 6) ++ [:enter, "Calls", :enter])
     meetings = state.db.categories[cat(state, "Meetings")]
     assert meetings.conditions == [{cat(state, "Calls"), :assigned}]
     assert screen(state) =~ "Meetings now assigns items in Calls"

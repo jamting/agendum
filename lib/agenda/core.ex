@@ -994,6 +994,15 @@ defmodule Agenda.Core do
   end
 
   @doc """
+  Sets a category's text conditions, its "Also match" setting (R15d,
+  `Agenda.Core.TextCondition`). New conditions reach existing items when
+  they are checked again (Recalc).
+  """
+  @spec set_also_match(db, id, String.t()) :: {:ok, db}
+  def set_also_match(db, cat_id, text),
+    do: {:ok, Database.update_category(db, cat_id, &%{&1 | also_match: String.trim(text)})}
+
+  @doc """
   Sets a date or numeric condition on a category (R15a; User's Guide 20-5 to
   20-7): items whose date (or number) in `target` is in, or outside, the
   range are assigned to it; blank ends are open, both blank means any date
