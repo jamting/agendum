@@ -1009,15 +1009,29 @@ defmodule Agenda.TUI.Update do
         NoteSearch.next(state, mode)
 
       k when k in [:esc, {:f, 5}, {:f, 4}] ->
-        text = TextEdit.text(mode.edit)
+        close_note(state, mode)
 
-        db =
-          case mode.target do
-            {:item, id} -> Core.set_note(state.db, id, text)
-            {:category, id} -> Core.set_category_note(state.db, id, text)
-          end
+      {:alt, "d"} ->
+        type_in_note(state, mode, DateFormat.date(state.today, state.db.date_format))
 
-        if db == state.db, do: State.pop(state), else: state |> State.pop() |> State.change_db(db)
+      {:alt, "t"} ->
+        type_in_note(
+          state,
+          mode,
+          DateFormat.time(NaiveDateTime.to_time(state.now), state.db.date_format)
+        )
+
+      {:alt, "n"} ->
+        step_note(state, mode, 1)
+
+      {:alt, "p"} ->
+        step_note(state, mode, -1)
+
+      {:alt, "q"} ->
+        state |> close_note(mode) |> perform(:quit)
+
+      {:alt, "k"} ->
+        %{state | key_map: not state.key_map}
 
       _ ->
         case TextEdit.handle(mode.edit, key) do
@@ -1026,6 +1040,75 @@ defmodule Agenda.TUI.Update do
         end
     end
   end
+
+  # Saves the note and closes it.
+  defp close_note(state, mode) do
+    text = TextEdit.text(mode.edit)
+
+    db =
+      case mode.target do
+        {:item, id} -> Core.set_note(state.db, id, text)
+        {:category, id} -> Core.set_category_note(state.db, id, text)
+      end
+
+    if db == state.db, do: State.pop(state), else: state |> State.pop() |> State.change_db(db)
+  end
+
+  defp type_in_note(state, mode, text) do
+    {:ok, edit} = TextEdit.handle(mode.edit, {:char, text})
+    State.put_mode(state, %{mode | edit: edit})
+  end
+
+  # ALT-N / ALT-P: save this note and show the note of the next / previous
+  # item (or section) in the view, or category in the category manager.
+  defp step_note(state, mode, step) do
+    below = state.modes |> Enum.drop(1) |> List.first()
+
+    case {below, next_note_target(state, below, mode.target, step)} do
+      {_, :unsupported} ->
+        State.error(
+          state,
+          "ALT-N / ALT-P work in notes opened from a view or the category manager"
+        )
+
+      {_, nil} ->
+        state |> State.effect(:bell) |> State.error("No more notes in this direction")
+
+      {nil, index} ->
+        state |> close_note(mode) |> Layout.move_to(index) |> perform(:note)
+
+      {%{type: :catmgr}, {index, id}} ->
+        state = close_note(state, mode)
+
+        state
+        |> State.put_mode(%{State.mode(state) | cursor: index})
+        |> CategoryScreens.open_note(id)
+    end
+  end
+
+  defp next_note_target(state, nil, target, step) do
+    kind = if match?({:item, _}, target), do: :item, else: :section
+    rows = Layout.rows(state)
+
+    candidates =
+      if step > 0,
+        do: (state.cursor + 1)..(length(rows) - 1)//1,
+        else: (state.cursor - 1)..0//-1
+
+    Enum.find(candidates, &(Enum.at(rows, &1).kind == kind))
+  end
+
+  defp next_note_target(state, %{type: :catmgr} = catmgr, {:category, _}, step) do
+    rows = CategoryScreens.rows(state, catmgr)
+    index = catmgr.cursor + step
+
+    case Enum.at(rows, index) do
+      {id, _} when index >= 0 -> {index, id}
+      _ -> nil
+    end
+  end
+
+  defp next_note_target(_state, _below, _target, _step), do: :unsupported
 
   # --- actions (shared by keys and menus) --------------------------------------
 

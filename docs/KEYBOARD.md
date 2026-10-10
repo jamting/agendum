@@ -28,7 +28,9 @@ settings, as described in the second half of this guide.
 | Quit | ALT-Q | ESC then `q`, or **CTRL-Q** |
 | Show / hide the function key map | ALT-K | ESC then `k` |
 | Search this view; then next / previous match | ALT-F6; ALT-N / ALT-P | ESC then `^`; ESC then `n` / `p` |
-| In a note: search / replace; find the next occurrence | ALT-F6; ALT-S | ESC then `^`; ESC then `s` |
+| In a note: search / replace; find the next occurrence (after a single replacement: replace it) | ALT-F6; ALT-S | ESC then `^`; ESC then `s` |
+| In a note: insert today's date / the time | ALT-D / ALT-T | ESC then `d` / `t` |
+| In a note: the next / previous item's (or category's) note | ALT-N / ALT-P | ESC then `n` / `p` |
 | Back to the previous view (LAST VW) | ALT-F8 | ESC then `*`, or menu View ▸ Last |
 | Set or cancel an alarm (Item Alarm) | ALT-A | ESC then `a`, or menu Item ▸ Alarm |
 | Category manager: add a sibling below / above | ALT-D (or ALT-I, INS) / ALT-U | ESC then `d` / `u`, or **CTRL-N** |

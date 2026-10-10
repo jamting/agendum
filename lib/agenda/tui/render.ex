@@ -676,6 +676,9 @@ defmodule Agenda.TUI.Render do
    In a note (F5)
      ALT-F6        Search / replace text            ESC ^
      ALT-S         Find the next occurrence         ESC s
+                   (after a single replacement: replace it)
+     ALT-D / ALT-T Insert today's date / the time   ESC d / ESC t
+     ALT-N / ALT-P Save; next / previous item's note
      ESC / F5      Save the note and return
 
    While typing

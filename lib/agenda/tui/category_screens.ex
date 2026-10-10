@@ -208,12 +208,7 @@ defmodule Agenda.TUI.CategoryScreens do
         reorder(state, id, 1)
 
       {:f, 5} ->
-        State.push(state, %{
-          type: :note,
-          target: {:category, id},
-          title: cat.name,
-          edit: TextEdit.new(cat.note)
-        })
+        open_note(state, id)
 
       {:f, 6} ->
         open_props(state, id)
@@ -352,6 +347,18 @@ defmodule Agenda.TUI.CategoryScreens do
         else: {:new, db.categories[id].parent_id, id}
 
     %{state | edit: %{target: target, line: LineEdit.new(text)}}
+  end
+
+  @doc "Opens a category's note (F5)."
+  def open_note(state, id) do
+    cat = state.db.categories[id]
+
+    State.push(state, %{
+      type: :note,
+      target: {:category, id},
+      title: cat.name,
+      edit: TextEdit.new(cat.note)
+    })
   end
 
   # ALT-U, ALT-L and ALT-R (User's Guide 16-11): a sibling above, a new

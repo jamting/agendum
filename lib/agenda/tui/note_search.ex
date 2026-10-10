@@ -10,7 +10,8 @@ defmodule Agenda.TUI.NoteSearch do
   starts.
 
   A search moves the cursor to the next occurrence and highlights it;
-  ALT-S finds the next one and beeps when there is none. A replacement
+  ALT-S finds the next one (after a single replacement: replaces it) and
+  beeps when there is none. A replacement
   replaces the next occurrence, or every occurrence in the note when
   global. When confirming, each occurrence is highlighted in turn: Y
   replaces it, N skips it, ESC stops.
@@ -195,14 +196,22 @@ defmodule Agenda.TUI.NoteSearch do
         State.error(state, "Nothing to search for yet; press ALT-F6")
 
       s ->
+        # after a single replacement the cursor is already past it
+        replacing = s.replace and not s.global
         {row, col} = {note.edit.row, note.edit.col}
-        from = if s.direction == :forward, do: {row, col + 1}, else: {row, col}
+        from = if s.direction == :forward and not replacing, do: {row, col + 1}, else: {row, col}
 
         case find(note, s, from) do
           nil ->
             state
             |> State.effect(:bell)
             |> State.error(~s(No more occurrences of "#{s.text}"))
+
+          pos when replacing and s.confirm ->
+            ask(state, pos, s, 0)
+
+          pos when replacing ->
+            state |> replace(pos, s) |> replaced(1)
 
           pos ->
             highlight(state, pos, s)
@@ -266,9 +275,12 @@ defmodule Agenda.TUI.NoteSearch do
     end)
   end
 
+  # The cursor goes after the replacement, or before it when searching
+  # backward, so that ALT-S continues from there.
   defp replace(state, {row, col} = pos, s) do
     lines = TextSearch.replace_at(State.mode(state).edit.lines, pos, s.text, s.replacement)
-    put_lines(state, lines, {row, col + String.length(s.replacement)})
+    col = if s.direction == :forward, do: col + String.length(s.replacement), else: col
+    put_lines(state, lines, {row, col})
   end
 
   defp put_lines(state, lines, {row, col}) do

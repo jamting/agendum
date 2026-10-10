@@ -273,9 +273,10 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   opens with the cursor at its end; a global replacement covers the whole
   note; the box remembers its last settings; no length limit (Agenda
   allowed 25 characters); text never matches across lines. The note is
-  saved when it is closed, so all replacements are one undo step. Not
-  done: after a single (not global) replacement, ALT-S should replace the
-  next occurrence too (Help: "Search & Replace in Note/Macro Box").
+  saved when it is closed, so all replacements are one undo step. After a
+  single (not global) replacement, ALT-S replaces the next occurrence
+  (confirming first if asked to), as the Help's "Search & Replace in
+  Note/Macro Box" describes.
 - **R40 ✅ Colour themes** (Setting Up Agenda 1-25 to 1-31). The screen is
   drawn with a theme chosen at start: `classic` (blue and white, like DOS
   Agenda; the default) or `mono` (bold, dim, underline and reverse only).
@@ -327,7 +328,7 @@ Category manager navigation (from the manual): ↑/BACKSPACE, ↓/ENTER,
 HOME = parent, END = last of family, CTRL-PGUP/PGDN = previous/next
 sibling, CTRL-HOME/END = first/last.
 
-- **R42 ⏳ The original keys** (Help: "Agenda Key and Menu Charts", in
+- **R42 ✅ The original keys** (Help: "Agenda Key and Menu Charts", in
   `docs/reference/Agenda 2.0 Help File.html`). Keys follow Agenda's charts;
   where we added a key of our own it must not take one Agenda used for
   something else. In views: ALT-F5 GO TO (a list of the view's section
@@ -338,11 +339,14 @@ sibling, CTRL-HOME/END = first/last.
   sibling of the parent, after it), ALT-D / ALT-I insert a sibling below,
   ALT-U above. In notes: ALT-D / ALT-T insert today's date / the time,
   ALT-N / ALT-P go to the note of the next / previous item (or category).
-  Done so far: the view keys (ALT-F5 used to open the Sort box, R36; the
-  Sort box is now reached through the menu) and the category manager keys.
-  ALT-K and ALT-Q also work in the managers. Not done: a category added to
-  a family whose other members are all sections of a view does not become
-  a section of that view (User's Guide 16-11).
+  ALT-F5 used to open the Sort box (R36); the Sort box is now reached
+  through the menu. ALT-K and ALT-Q also work in the managers and in notes
+  (ALT-Q saves the note first). In a note, ALT-N / ALT-P save it and move
+  the highlight with them: in a view to the next / previous item (or, for
+  a section's note, section), in the category manager to the next /
+  previous category; elsewhere they do nothing. Not done: a category added
+  to a family whose other members are all sections of a view does not
+  become a section of that view (User's Guide 16-11).
   Later, with their features: ALT-F9 copy, ALT-Y yank back, ALT-H hop,
   ALT-B browse, ALT-C calendar, ALT-O dependency, ALT-E / ALT-X execute
   conditions and actions, ALT-Z run macro, ALT-S sort now.
