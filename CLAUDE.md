@@ -23,7 +23,8 @@ A change is done when `mix check` passes. Do not leave warnings.
 
 1. **`lib/agenda/core/**` and `lib/agenda/core.ex` are pure.** No I/O, no
    processes, no clock (`Date.utc_today/0` etc.), no randomness. Anything
-   external, like today's date, is passed in as an argument.
+   external, like today's date, is passed in as an argument
+   (`test/agenda/architecture_test.exs` checks for clock and I/O calls).
 2. **The TUI is Elm-style.** `Agenda.TUI.Update.handle(state, key)` is pure and
    returns `{state, effects}`; `Agenda.TUI.Render.render(state)` is pure and
    returns styled lines. Only `Terminal`, `App`, `Store` and `CLI` touch the

@@ -23,4 +23,18 @@ defmodule Agenda.ArchitectureTest do
       #{Enum.join(violations, "\n  ")}
     """
   end
+
+  test "the core never reads the clock, the environment or the outside world" do
+    impure =
+      ~r/Date\.utc_today|NaiveDateTime\.(utc_now|local_now)|DateTime\.(utc_now|now)|:calendar\.|:os\.|System\.|File\.|IO\.(puts|write|read|gets|inspect|binread|binwrite)|:rand\.|Process\.|send\(|spawn/
+
+    offenders =
+      for path <- ["lib/agenda/core.ex" | Path.wildcard("lib/agenda/core/**/*.ex")],
+          {line, number} <- path |> File.read!() |> String.split("\n") |> Enum.with_index(1),
+          not String.starts_with?(String.trim_leading(line), "#"),
+          Regex.match?(impure, line),
+          do: "#{path}:#{number}: #{String.trim(line)}"
+
+    assert offenders == [], "impure calls in the core:\n" <> Enum.join(offenders, "\n")
+  end
 end
