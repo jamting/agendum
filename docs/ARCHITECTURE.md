@@ -119,3 +119,5 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0008](adr/0008-file-settings-and-personal-settings.md)          | What belongs in the file, and what belongs to the person       |
 | [0009](adr/0009-date-language-packs-and-context.md)              | Date language packs, and a context passed to the core          |
 | [0010](adr/0010-data-interchange.md)                             | Data interchange: JSON, and Agenda's structured files (proposed) |
+| [0011](adr/0011-conditions-and-actions-settle.md)                | Conditions and actions run in one step after every change      |
+| [0012](adr/0012-quality-gate.md)                                 | The quality gate: formatter, compiler, Credo, Dialyzer, tests  |
