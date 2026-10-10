@@ -27,7 +27,10 @@ defmodule Agenda.MixProject do
 
   defp deps do
     [
-      {:stream_data, "~> 1.1", only: [:dev, :test]}
+      {:stream_data, "~> 1.1", only: [:dev, :test]},
+      # code checks (dev/test only; never part of the program)
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -37,6 +40,8 @@ defmodule Agenda.MixProject do
       check: [
         "format --check-formatted",
         "compile --warnings-as-errors --force",
+        "credo",
+        "dialyzer",
         "test --warnings-as-errors"
       ]
     ]

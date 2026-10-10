@@ -10,14 +10,17 @@ and `docs/DATA_ACCESS.md`, and keep them up to date (Mermaid diagrams included).
 ## Commands
 
 ```sh
-mix check                 # THE quality gate: format check + warnings-as-errors + tests
+mix check                 # THE quality gate: format, warnings-as-errors, Credo, Dialyzer, tests
 mix test                  # tests only
 mix test test/agenda/core # one directory
 mix run -e 'Agenda.CLI.main(["--demo"])'   # run the TUI with sample data (needs a real terminal)
 mix escript.build && ./agenda my.agenda    # build and run the standalone binary
 ```
 
-A change is done when `mix check` passes. Do not leave warnings.
+A change is done when `mix check` passes. Do not leave warnings. Credo
+(`.credo.exs`) and Dialyzer are dev/test-only tools; fix what they report
+rather than silencing it, and keep `@spec`s true. An exception needs an
+inline `# credo:disable-for-next-line` with the reason.
 
 ## Architecture rules (do not break these)
 
