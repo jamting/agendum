@@ -52,9 +52,20 @@ Rule numbers refer to `SPEC.md`.
 
 ## Milestone 4 — Data interchange
 
-- [ ] Human-readable export/import (JSON or a structured text format)
+- [ ] JSON export/import: the modern, human-readable format; round-trips everything in a file
+- [ ] Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export
 - [ ] Import of structured text files (one item per line, with categories)
-- [ ] Optional: read original `.AG` files (format undocumented; research)
+- [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files)
+- [ ] Optional: read original `.AG` files directly (format undocumented; research; STF covers most needs)
+
+## Milestone 5 — Time management and automation
+
+- [ ] Datebook views: items by day, week, month or quarter, browsing forward and back (User's Guide chapter 10)
+- [ ] Pop-up calendar: F3 in a date column picks a date (User's Guide chapter 6)
+- [ ] Learn-mode macros: record keystrokes, store them in the file, replay them, attach them to keys (Working with Macros, chapter 1)
+- [ ] A starter file like Agenda's Activities Planner: categories and views, no items (Starter Applications)
+- [ ] Preferences (Utilities Customize), stored outside the file: theme and custom colours, key map on/off (ALT-K), confirm mode, auto-save interval, decimal and thousands separators (Setting Up Agenda 1-25 to 1-31)
+- [ ] Smaller fidelity items: Trash and Undiscard, File Abandon, unindexed categories, typing in the view manager jumps to a view
 
 ## Housekeeping
 

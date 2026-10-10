@@ -259,13 +259,15 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   note; the box remembers its last settings; no length limit (Agenda
   allowed 25 characters); text never matches across lines. The note is
   saved when it is closed, so all replacements are one undo step.
-- **R40 ✅ Colour themes** (Agenda's install program chose a colour or
-  monochrome display). The screen is drawn with a theme chosen at start:
-  `classic` (blue and white, like DOS Agenda; the default) or `mono`
-  (bold, dim, underline and reverse only). `--theme NAME` or `--mono`
-  choose it; the NO_COLOR environment variable selects mono unless
-  `--theme` is given. The theme is a preference of the terminal, not part
-  of the file.
+- **R40 ✅ Colour themes** (Setting Up Agenda 1-25 to 1-31). The screen is
+  drawn with a theme chosen at start: `classic` (blue and white, like DOS
+  Agenda; the default) or `mono` (bold, dim, underline and reverse only).
+  `--theme NAME` or `--mono` choose it; the NO_COLOR environment variable
+  selects mono unless `--theme` is given. The theme is a personal
+  preference, not part of the file, as in Agenda, where Utilities
+  Customize set Color (Mono, Color, Plasma or Custom, with a colour for
+  each screen element) for all files. Not done: choosing the theme or
+  custom colours inside the program (Utilities Customize, on the roadmap).
 - **R41 ✅ Date display format** (User's Guide 6-20 to 6-22, 7-13 to 7-15).
   File ▸ Properties sets how the file displays dates and times, as
   Agenda's global Display format: Date format (Agenda's 14 orders, from
@@ -369,5 +371,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 
 ## 6. Out of scope for now
 
-Macros, printing to a printer, import/export of structured files,
-networking/file reservations, the Metro accessories.
+The macro command language (Working with Macros, chapters 2–3; Learn-mode
+keystroke macros are on the roadmap), printing to a printer and print
+preview, TXT2STF definition files, networking/file reservations, application
+protection, the Metro accessories.
