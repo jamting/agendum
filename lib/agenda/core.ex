@@ -236,6 +236,38 @@ defmodule Agenda.Core do
     do: Database.update_item(db, item_id, &Map.put(&1, field, date))
 
   @doc """
+  Everything an item is assigned to, in hierarchy order, as the Item
+  Properties box lists it: date categories with the item's date (`:date`),
+  and links the user made (`:explicit`) or a condition made
+  (`:conditional`). Membership through subcategories is not listed.
+  """
+  @spec item_assignments(db, id) :: [
+          %{category: id, kind: :date | :explicit | :conditional, date: Date.t() | nil}
+        ]
+  def item_assignments(db, item_id) do
+    item = db.items[item_id]
+
+    db
+    |> Database.hierarchy()
+    |> Enum.flat_map(fn {id, _depth} ->
+      cond do
+        field = Database.date_field(db, id) ->
+          case Map.get(item, field) do
+            nil -> []
+            date -> [%{category: id, kind: :date, date: date}]
+          end
+
+        Database.explicit?(db, item_id, id) ->
+          kind = if Database.conditional?(db, item_id, id), do: :conditional, else: :explicit
+          [%{category: id, kind: kind, date: nil}]
+
+        true ->
+          []
+      end
+    end)
+  end
+
+  @doc """
   Automatic completion (R32): the subcategories of `head_id` whose names
   begin with `text`, ignoring case and accents, in hierarchy order with an
   exact name first. The first one is what Agenda shows as you type; the

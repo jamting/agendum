@@ -17,6 +17,7 @@ defmodule Agenda.TUI.Update do
     CategoryScreens,
     Completion,
     History,
+    ItemProperties,
     Layout,
     LineEdit,
     Menu,
@@ -128,6 +129,7 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :note} = m, key), do: note_key(state, m, key)
   defp dispatch(state, %{type: :help} = m, key), do: help_key(state, m, key)
   defp dispatch(state, %{type: :move_item} = m, key), do: move_key(state, m, key)
+  defp dispatch(state, %{type: :item_props} = m, key), do: ItemProperties.handle(state, m, key)
   defp dispatch(state, mode, key), do: CategoryScreens.handle(state, mode, key)
 
   # --- the view ----------------------------------------------------------------
@@ -330,7 +332,7 @@ defmodule Agenda.TUI.Update do
 
   defp choices(state, nil), do: state
 
-  defp props(state, %{kind: :item, item: item}), do: CategoryScreens.open_profile(state, item.id)
+  defp props(state, %{kind: :item, item: item}), do: ItemProperties.open(state, item.id)
 
   defp props(state, %{kind: :section, category: cat}),
     do: CategoryScreens.open_props(state, cat.id)
@@ -663,6 +665,16 @@ defmodule Agenda.TUI.Update do
     CategoryScreens.apply_move(state, id, relocation, {:new_category, text})
   end
 
+  defp prompt_action(state, {:item_date, item_id, cat_id}, text) do
+    case Core.assign_by_name(state.db, item_id, cat_id, text, state.today) do
+      {:ok, db, :date} ->
+        State.change_db(state, db)
+
+      {:error, :invalid_date} ->
+        State.error(state, "Not a date: #{text} (try friday, next week, 12/24)")
+    end
+  end
+
   defp prompt_action(state, {:exclusive_new_child, cat_id}, text) do
     CategoryScreens.apply_exclusive(state, cat_id, {:new_child, text})
   end
@@ -825,6 +837,9 @@ defmodule Agenda.TUI.Update do
 
     state |> State.change_db(db) |> State.info(message)
   end
+
+  defp do_perform(state, :item_props, %{kind: :item, item: item}),
+    do: ItemProperties.open(state, item.id)
 
   defp do_perform(state, :assign, %{kind: :item, item: item}),
     do: CategoryScreens.open_profile(state, item.id)

@@ -40,8 +40,8 @@ defmodule Agenda.TUI.CategoryScreensTest do
     assert screen(state) =~ "MAIN cannot be discarded"
   end
 
-  test "F6 in the view opens the assignment profile; SPACE toggles", %{state: state} do
-    state = press(state, [:down, {:f, 6}])
+  test "F3 on an item opens the assignment profile; SPACE toggles", %{state: state} do
+    state = press(state, [:down, {:f, 3}])
     assert screen(state) =~ "Assignments:"
     # rows: Entry When Done Calls Priority High Medium ... → Meetings is last
     state = press(state, [:ctrl_end, " "])
@@ -280,7 +280,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
     assert screen(state) =~ "Meetings now assigns items in Calls"
 
     # existing items join after Recalc; the profile marks them as conditional
-    state = press(state, [:esc, :esc, {:f, 10}, "c", "r", :down, {:f, 6}])
+    state = press(state, [:esc, :esc, {:f, 10}, "c", "r", :down, {:f, 3}])
     assert screen(state) =~ ~r/c\s+Meetings/
   end
 

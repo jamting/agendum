@@ -23,9 +23,10 @@ defmodule Agenda.TUI.Menu do
        ]},
       {"Item", "Work with the highlighted item",
        [
+         {"Properties", "Text, note and every assignment of the item (F6)", :item_props},
          {"Note", "Edit the item's note (F5)", :note},
          {"When", "Set the item's When date; overrides dates in the text (ALT-F2)", :when},
-         {"Assign", "Show the item's assignment profile (F6)", :assign},
+         {"Assign", "Show the item's assignment profile (F3)", :assign},
          {"Done", "Mark the item done / not done (F4)", :done},
          {"Mark", "Mark or unmark the item (F7)", :mark},
          {"Move", "Move the item to another section (ALT-F10)", :move_item},

@@ -66,7 +66,7 @@ defmodule Agenda.TUI.CollapseTest do
     state: state
   } do
     # the first item is assigned to Medium; collapse Priority, then open its profile
-    state = state |> on_high() |> press([{:alt, "-"}, :esc, :down, {:f, 6}])
+    state = state |> on_high() |> press([{:alt, "-"}, :esc, :down, {:f, 3}])
     assert "Medium" in visible(state)
     refute "High" in visible(state)
   end

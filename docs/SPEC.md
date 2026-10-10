@@ -198,10 +198,10 @@ body, and a function-key bar.
 | ----------- | ------------------------------------------------------------------- | ----------------------- |
 | F1          | Help                                                                |                         |
 | F2          | Edit item / section head / column entry                             | Rename                  |
-| F3          | Choices (category box for a column; assignment profile)             |                         |
+| F3 | Choices (category box for a column; assignment profile for an item) | |
 | F4          | Done                                                                |                         |
 | F5          | Note                                                                | Note                    |
-| F6          | Properties (item: assignment profile; section: category properties) | Properties              |
+| F6 | Properties (item: Item Properties box; section head: category properties) | Properties |
 | F7          | Mark                                                                | Promote                 |
 | F8          | View manager                                                        | Demote                  |
 | F9          | Category manager                                                    | Return                  |
@@ -251,6 +251,15 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   moving a category into a collapsed family expands it so it stays in
   sight. In a view, the same keys collapse and expand the current section
   (twice: all sections), shown with "§".
+- **R34 ✅ Item Properties box** (User's Guide 4-13 to 4-15). F6 on an
+  item (or Item ▸ Properties) shows its text (ENTER/F2 edits), note
+  (ENTER/SPACE opens it), statistics (number of categories, entry date) and
+  every assignment in hierarchy order: dates in parentheses, conditional
+  assignments marked "(c)". DEL breaks an assignment (the Entry date cannot
+  be removed); F4 or ENTER changes a date; typing assigns a category, with
+  automatic completion over all categories (R32), asking for the date when
+  a date category is chosen; INS creates exactly the typed name under MAIN;
+  F3 opens the assignment profile. Not done: note files.
 
 ## 6. Out of scope for now
 

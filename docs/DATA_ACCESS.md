@@ -100,6 +100,7 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Database.conditional?(db, item, cat)` | read | Was this link made by a condition (and so retractable)? |
 | `Core.assign_by_name(db, item, head, text, today)`      | write | Typing in a column: date, exact name, unique prefix, or a new child. `{:ok, db, cat_id \| :date}`.                        |
 | `Core.completions(db, head, text)` | read | Automatic completion (R32): subcategories of `head` whose names begin with `text` (case- and accent-insensitive), exact name first, then hierarchy order. |
+| `Core.item_assignments(db, item)` | read | Everything an item is assigned to, in hierarchy order: dates (`:date`), user links (`:explicit`) and condition-made links (`:conditional`). |
 | `Core.assign_new_by_name(db, item, head, text)` | write | NEWCAT: assign to a new child named exactly `text` (or the existing child of that name). |
 | `Core.remove_from_category(db, item, cat)`              | write | Unlink the category's subtree (or clear the date).                                                                        |
 | `Core.set_date(db, item, date_cat, date)`               | write | Set or clear Entry/When/Done. Setting When makes it explicit (it overrides the text); clearing hands it back to the text. |
