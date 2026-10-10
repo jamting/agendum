@@ -41,7 +41,8 @@ defmodule Agenda.TUI.Theme do
       keybar_key: "0;1;97;46",
       box: "0;30;47",
       box_selected: "0;97;40",
-      dim: "0;37;44"
+      dim: "0;37;44",
+      calc: "0;1;96;44"
     },
     mono: %{
       normal: "0",
@@ -68,7 +69,8 @@ defmodule Agenda.TUI.Theme do
       keybar_key: "0;1;7",
       box: "0;7",
       box_selected: "0;1",
-      dim: "0;2"
+      dim: "0;2",
+      calc: "0;1"
     }
   }
 

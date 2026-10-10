@@ -76,14 +76,28 @@ defmodule Agenda.TUI.FuzzTest do
     ])
   end
 
+  # The patent's sample, optionally with a numeric Amount column (R29) whose
+  # first item has a number.
+  defp sample(false), do: Agenda.Sample.build(~D[2026-10-08])
+
+  defp sample(true) do
+    db = sample(false)
+    {:ok, db, amount} = Agenda.Core.add_category(db, db.main_id, "Amount")
+    {:ok, db} = Agenda.Core.make_numeric(db, amount)
+    db = Agenda.Core.add_column(db, hd(db.view_order), amount, 0)
+    {:ok, db} = Agenda.Core.set_number(db, hd(db.item_order), amount, 12.5)
+    db
+  end
+
   property "the UI survives any key sequence" do
     check all(
             keys <- list_of(key(), max_length: 60),
             width <- integer(40..120),
             height <- integer(10..40),
+            numeric <- boolean(),
             max_runs: 300
           ) do
-      state = start(Agenda.Sample.build(~D[2026-10-08]), width: width, height: height)
+      state = start(sample(numeric), width: width, height: height)
 
       Enum.reduce(keys, state, fn key, state ->
         # :tick advances the clock ten minutes, as the shell's loop would

@@ -4,7 +4,9 @@ defmodule Agenda.TUI.Layout do
 
   A *row* is something the cursor can rest on: a section head or an item.
   Each row occupies one or more screen *lines* (item text wraps, and
-  sections after the first are preceded by a blank line).
+  sections after the first are preceded by a blank line). The last row of
+  a section also carries the section's calculation lines (`calcs`, R29),
+  drawn below it.
   """
 
   alias Agenda.Core.ViewModel
@@ -54,9 +56,17 @@ defmodule Agenda.TUI.Layout do
               }
             end)
 
-      [head | items]
+      section.calcs
+      |> attach_calcs([head | items], section.collapsed)
     end)
   end
+
+  # The calculation lines go below the last row of an expanded section.
+  defp attach_calcs([], rows, _collapsed), do: rows
+  defp attach_calcs(_calcs, rows, true), do: rows
+
+  defp attach_calcs(calcs, rows, false),
+    do: List.update_at(rows, -1, &Map.put(&1, :calcs, calcs))
 
   @doc "Width available for item text, given the view's columns."
   @spec text_width(State.t()) :: pos_integer
@@ -70,10 +80,15 @@ defmodule Agenda.TUI.Layout do
   def heights(rows, text_width) do
     rows
     |> Enum.with_index()
-    |> Enum.map(fn
-      {%{kind: :section}, 0} -> 1
-      {%{kind: :section}, _} -> 2
-      {%{kind: :item, item: item}, _} -> length(Draw.wrap(item.text, text_width))
+    |> Enum.map(fn {row, index} ->
+      own =
+        case row do
+          %{kind: :section} when index == 0 -> 1
+          %{kind: :section} -> 2
+          %{kind: :item, item: item} -> length(Draw.wrap(item.text, text_width))
+        end
+
+      own + length(Map.get(row, :calcs, []))
     end)
   end
 

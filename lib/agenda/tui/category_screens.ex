@@ -70,7 +70,7 @@ defmodule Agenda.TUI.CategoryScreens do
     state.db |> Database.descendants(root) |> Enum.map(&{&1, Database.depth(state.db, &1) - base})
   end
 
-  @props [:name, :short_name, :exclusive, :match_name, :conditions, :also_assign, :note]
+  @props [:name, :short_name, :type, :exclusive, :match_name, :conditions, :also_assign, :note]
   def props_fields, do: @props
 
   # --- dispatch ----------------------------------------------------------------------
@@ -288,6 +288,9 @@ defmodule Agenda.TUI.CategoryScreens do
           Database.date_field(db, id) ->
             State.error(state, "Set dates for marked items with ALT-F2 (When) or F4 (Done)")
 
+          numeric?(db, id) ->
+            numbers_hint(state, id)
+
           group_count(db, mode.item_ids, id) > 0 ->
             explicit = Enum.filter(mode.item_ids, &Database.explicit?(db, &1, id))
             State.change_db(state, Enum.reduce(explicit, db, &Core.toggle_assignment(&2, &1, id)))
@@ -317,6 +320,9 @@ defmodule Agenda.TUI.CategoryScreens do
 
           Database.date_field(db, id) ->
             State.error(state, "Set dates by typing in a date column")
+
+          numeric?(db, id) and not Database.explicit?(db, item_id, id) ->
+            Update.prompt(state, "#{db.categories[id].name}:", {:item_number, item_id, id})
 
           true ->
             State.change_db(state, Core.toggle_assignment(db, item_id, id))
@@ -576,12 +582,20 @@ defmodule Agenda.TUI.CategoryScreens do
 
   # ALT-M (MakeAssign): one item or all marked items
   defp pick(state, {:assign_items, ids}, id) do
-    if Database.date_field(state.db, id) do
-      State.error(state, "Set dates with ALT-F2 (When) or F4 (Done)")
-    else
-      db = Enum.reduce(ids, state.db, &Core.assign(&2, &1, id))
-      noun = if length(ids) == 1, do: "Item", else: "#{length(ids)} items"
-      state |> State.change_db(db) |> State.info("#{noun} assigned to #{db.categories[id].name}")
+    cond do
+      Database.date_field(state.db, id) ->
+        State.error(state, "Set dates with ALT-F2 (When) or F4 (Done)")
+
+      numeric?(state.db, id) ->
+        numbers_hint(state, id)
+
+      true ->
+        db = Enum.reduce(ids, state.db, &Core.assign(&2, &1, id))
+        noun = if length(ids) == 1, do: "Item", else: "#{length(ids)} items"
+
+        state
+        |> State.change_db(db)
+        |> State.info("#{noun} assigned to #{db.categories[id].name}")
     end
   end
 
@@ -844,6 +858,9 @@ defmodule Agenda.TUI.CategoryScreens do
           :short_name ->
             %{state | edit: %{target: :short_name, line: LineEdit.new(cat.short_name || "")}}
 
+          :type ->
+            change_type(state, cat)
+
           :exclusive ->
             toggle_exclusive(state, cat)
 
@@ -870,6 +887,50 @@ defmodule Agenda.TUI.CategoryScreens do
     end
   end
 
+  # Category type (User's Guide 8-11 to 8-12): a standard category can
+  # become numeric, after a question when items or children are affected.
+  defp change_type(state, cat) do
+    db = state.db
+
+    cond do
+      cat.kind != :standard ->
+        State.error(state, "Only standard categories can become numeric")
+
+      Database.protected?(db, cat.id) ->
+        State.error(state, "#{cat.name} cannot change type")
+
+      Enum.any?(cat.children, &(db.categories[&1].children != [])) ->
+        State.error(state, "A category with grandchildren cannot become numeric")
+
+      true ->
+        case numeric_question(cat, Core.numeric_conversion(db, cat.id)) do
+          nil -> Update.make_numeric(state, cat.id)
+          question -> Update.confirm(state, question, {:make_numeric, cat.id})
+        end
+    end
+  end
+
+  defp numeric_question(_cat, %{children: 0, assigned: 0}), do: nil
+
+  defp numeric_question(cat, conversion) do
+    zeros =
+      case conversion.non_numeric do
+        [] -> nil
+        [one] -> "#{one} becomes 0"
+        names -> Enum.join(names, ", ") <> " become 0"
+      end
+
+    parts =
+      [
+        conversion.children > 0 && "Its #{conversion.children} children become numbers",
+        zeros,
+        conversion.assigned > 0 && "#{conversion.assigned} items assigned to it get 0"
+      ]
+      |> Enum.filter(& &1)
+
+    "Convert #{cat.name} to numeric? " <> Enum.join(parts, "; ") <> ". (Y/N)"
+  end
+
   defp condition_message(db, cat_id, target) do
     name = db.categories[cat_id].name
     other = db.categories[target].name
@@ -885,6 +946,11 @@ defmodule Agenda.TUI.CategoryScreens do
         "Condition on #{other} removed"
     end
   end
+
+  defp numeric?(db, id), do: db.categories[id].kind == :numeric
+
+  defp numbers_hint(state, id),
+    do: State.error(state, "Type numbers in the #{state.db.categories[id].name} column")
 
   @doc "How many of the given items are explicitly assigned to a category."
   def group_count(db, item_ids, cat_id),

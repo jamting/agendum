@@ -4,7 +4,8 @@ defmodule Agenda.TUI.ItemProperties do
   item's text, note, statistics and every category it is assigned to.
 
     * ENTER / F2 on the text edits it; ENTER / SPACE on the note opens it
-    * on an assignment: DEL breaks it; F4 (or ENTER) changes a date
+    * on an assignment: DEL breaks it; F4 (or ENTER) changes a date or a
+      number
     * typing anywhere in the assignments assigns a category, with automatic
       completion over all categories (ENTER accepts, F8/F7 cycle, INS
       creates exactly what was typed under MAIN); a date category asks for
@@ -65,6 +66,9 @@ defmodule Agenda.TUI.ItemProperties do
 
       {k, {:assigned, %{kind: :date} = a}} when k in [:enter, {:f, 4}] ->
         ask_date(state, mode, a.category)
+
+      {k, {:assigned, %{kind: :numeric} = a}} when k in [:enter, {:f, 4}] ->
+        ask_number(state, mode, a)
 
       {:delete, {:assigned, a}} ->
         remove(state, mode, a)
@@ -138,6 +142,17 @@ defmodule Agenda.TUI.ItemProperties do
     )
   end
 
+  # Prompts for the number in a numeric category (R29); see
+  # `Update.prompt_action/3` for {:item_number, item, category}.
+  defp ask_number(state, mode, %{category: cat_id, number: number}) do
+    Update.prompt(
+      state,
+      "#{state.db.categories[cat_id].name}:",
+      {:item_number, mode.item_id, cat_id},
+      Update.number_text(number)
+    )
+  end
+
   # --- editing inside the box ----------------------------------------------------
 
   defp edit_key(%State{edit: edit} = state, mode, key) do
@@ -175,10 +190,20 @@ defmodule Agenda.TUI.ItemProperties do
 
   defp commit(state, mode, %{target: {:assign_category, item_id}, line: line}, shown) do
     cond do
-      shown && Agenda.Core.Database.date_field(state.db, shown) -> ask_date(state, mode, shown)
-      shown -> state |> State.change_db(Core.assign(state.db, item_id, shown))
-      String.trim(line.text) == "" -> state
-      true -> new_category(state, mode, line.text)
+      shown && Agenda.Core.Database.date_field(state.db, shown) ->
+        ask_date(state, mode, shown)
+
+      shown && state.db.categories[shown].kind == :numeric ->
+        ask_number(state, mode, %{category: shown, number: nil})
+
+      shown ->
+        state |> State.change_db(Core.assign(state.db, item_id, shown))
+
+      String.trim(line.text) == "" ->
+        state
+
+      true ->
+        new_category(state, mode, line.text)
     end
   end
 

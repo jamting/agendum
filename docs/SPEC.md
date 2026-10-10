@@ -216,12 +216,34 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   so it stays in sight. Set with View ▸ Filter and View ▸ Section ▸ Filter
   (ENTER cycles + assigned · - not assigned · none; the box stays open).
   Not done: date and numeric filters.
-- **R29 ⏳ Numeric columns.** (User's Guide chapter 8.) Numeric categories
-  hold a number per item, shown in a column with a calculation below it:
-  total (default), average, count, minimum, maximum, percent of total.
-  Numeric ranges can be used in conditions and filters. The decimal and
-  thousands separators are personal settings (Utilities Customize), not
-  part of the file.
+- **R29 ✅ Numeric columns** (User's Guide chapter 8). A numeric category
+  holds a number for each item assigned to it; the number is a value of
+  the assignment, not a category. A standard category becomes numeric
+  with Category Properties ▸ Type (only that way; a numeric category cannot
+  change back); its children, if any, are removed and their items get the
+  child's name as their number ("112" → 112, other names → 0), items
+  assigned to the category itself get 0, and Agenda asks first when items
+  or children are affected. A category with grandchildren cannot be
+  converted. Typing in a numeric column enters a number (signs,
+  parentheses for negatives, a currency or % symbol, thousands separators
+  and "3.22e+12" are accepted; anything else is refused); F2 edits it in
+  full, DEL removes it, and the title bar shows "#" while the highlight is
+  in a numeric column. Numbers are right-aligned and shown in the column's
+  format (View ▸ Column ▸ Properties): label or currency symbol (None, $,
+  %, ¢, £, ¥), decimal places (2; numbers are rounded for display only),
+  thousands separator, negative style (-1 or (1)), and the calculations
+  shown at the bottom of every section: count, total (the default),
+  average, minimum, maximum. A number too wide for its column is shown in
+  scientific notation. Items sort by their number (R36), Item Properties
+  shows and edits it, the assignment profile asks for it, and printing to
+  a file includes the calculations. Our choices: numbers are binary
+  floating point, as in Agenda; the decimal and thousands characters
+  default to "." and "," until personal preferences exist (Utilities
+  Customize); calculation lines are not shown under collapsed sections.
+  Not done: the "% of total" column, section-wide calculation settings
+  (Section Properties ▸ Select numeric functions), choosing the category
+  type when adding a column, and numeric ranges in conditions and filters
+  (with the date filters, next on the roadmap).
 - **R36 ✅ Sorting items** (User's Guide chapter 15). A view has sort
   settings for all its sections; a section can override them or use the
   view's. Up to two keys (primary, then a secondary for ties): item text,

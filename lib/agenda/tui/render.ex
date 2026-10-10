@@ -27,6 +27,7 @@ defmodule Agenda.TUI.Render do
     :note_search,
     :file_props,
     :goto,
+    :column_props,
     :alarm_list
   ]
 
@@ -71,7 +72,7 @@ defmodule Agenda.TUI.Render do
 
     right =
       String.trim(
-        "#{hides} #{marked}#{if state.alarm_rang, do: "@ ", else: ""}#{indicator(state, base)}  " <>
+        "#{hides} #{marked}#{if state.alarm_rang, do: "@ ", else: ""}#{numeric_marker(state)}#{indicator(state, base)}  " <>
           DateFormat.datetime(state.now, state.db.date_format) <> " "
       )
 
@@ -83,6 +84,16 @@ defmodule Agenda.TUI.Render do
     Draw.line([{:title, left}, {:title, mid}, {:indicator, right}], state.width, :title)
   end
 
+  # "#" while the highlight is in a numeric column (User's Guide 8-3).
+  defp numeric_marker(%State{modes: [], col: col} = state) when col > 0 do
+    case Enum.at(State.view(state).columns, col - 1) do
+      nil -> ""
+      column -> if numeric?(state, column), do: "# ", else: ""
+    end
+  end
+
+  defp numeric_marker(_state), do: ""
+
   defp indicator(state, base) do
     top = State.mode(state)
 
@@ -93,7 +104,7 @@ defmodule Agenda.TUI.Render do
       top && top.type == :move_item -> "MOVE"
       top && top.type in [:picker, :scope] -> "CHOICES"
       top && top.type in [:profile, :group_profile] -> "ASSIGN"
-      top && top.type in [:props, :choice, :item_props, :file_props] -> "PROPS"
+      top && top.type in [:props, :choice, :item_props, :file_props, :column_props] -> "PROPS"
       top && top.type == :sort -> "SORT"
       top && top.type in [:search_box, :searching, :note_search] -> "SEARCH"
       base && base.type == :catmgr -> "CAT MGR"
@@ -130,10 +141,17 @@ defmodule Agenda.TUI.Render do
   defp message_line(%State{message: {:error, text}}), do: [{:error, " #{text} "}]
   defp message_line(%State{message: {:message, text}}), do: [{:message, " " <> text}]
 
-  defp message_line(%State{edit: %{target: {:column_entry, _, _, _}}, modes: []} = state) do
-    if Completion.column_entry?(state),
-      do: completion_line(state),
-      else: [{:dim, " Enter a date (e.g. friday, next week, 12/24); ENTER to set"}]
+  defp message_line(%State{edit: %{target: {:column_entry, _, head, _}}, modes: []} = state) do
+    cond do
+      Completion.column_entry?(state) ->
+        completion_line(state)
+
+      state.db.categories[head].kind == :numeric ->
+        [{:dim, " Enter a number (e.g. 120, 1,234.50, -3); ENTER to set"}]
+
+      true ->
+        [{:dim, " Enter a date (e.g. friday, next week, 12/24); ENTER to set"}]
+    end
   end
 
   defp message_line(%State{edit: %{target: target}, modes: []}) do
@@ -296,6 +314,9 @@ defmodule Agenda.TUI.Render do
   defp mode_keys(%{type: :note}),
     do: [{"ESC", "Return"}, {"F5", "Return"}, {"ALT-F6", "Search"}, {"ALT-S", "Next"}]
 
+  defp mode_keys(%{type: :column_props}),
+    do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
+
   defp mode_keys(%{type: :goto}),
     do: [
       {"↑↓", "Highlight"},
@@ -349,16 +370,37 @@ defmodule Agenda.TUI.Render do
       selected = index == state.cursor
       lines = row_lines(state, row, index, selected, editing, tw, columns)
 
-      case editing do
-        %{target: {:new_item, _, key}} when selected and key == row.key ->
-          lines ++ [[{:symbol, " • "}] ++ field(editing.line, tw, :edit) ++ blank_cells(columns)]
+      lines =
+        case editing do
+          %{target: {:new_item, _, key}} when selected and key == row.key ->
+            lines ++
+              [[{:symbol, " • "}] ++ field(editing.line, tw, :edit) ++ blank_cells(columns)]
 
-        _ ->
-          lines
-      end
+          _ ->
+            lines
+        end
+
+      lines ++ calc_lines(Map.get(row, :calcs, []), tw, columns)
     end)
     |> Enum.drop(state.scroll)
   end
+
+  # A section's calculations (R29): the label under the item text, each
+  # result under its column.
+  defp calc_lines(calcs, tw, columns) do
+    Enum.map(calcs, fn {calc, cells} ->
+      label = Agenda.Core.NumberFormat.label(calc)
+
+      [{:normal, "   "}, {:calc, String.pad_leading(label <> " ", tw)}] ++
+        Enum.flat_map(Enum.zip(columns, cells), fn {column, cell} ->
+          [{:normal, " "}, {:calc, right(cell, column.width)}]
+        end)
+    end)
+  end
+
+  defp right(text, width), do: text |> String.pad_leading(width) |> Draw.pad(width)
+
+  defp numeric?(state, column), do: state.db.categories[column.category_id].kind == :numeric
 
   defp row_lines(state, %{kind: :section} = row, index, selected, editing, tw, columns) do
     cat = row.category
@@ -429,10 +471,12 @@ defmodule Agenda.TUI.Render do
               completion_field(state, editing.line, column.width)
 
             _ ->
-              [
-                {if(selected and state.col == i, do: :cursor_cell, else: :cell),
-                 Draw.pad(cell, column.width)}
-              ]
+              text =
+                if numeric?(state, column),
+                  do: right(cell, column.width),
+                  else: Draw.pad(cell, column.width)
+
+              [{if(selected and state.col == i, do: :cursor_cell, else: :cell), text}]
           end
 
         [{:normal, " "} | cell_part]
@@ -652,6 +696,8 @@ defmodule Agenda.TUI.Render do
      ←→ TAB        Move between item and columns
      In a column   Type a name: the first match shows; ENTER accepts,
                    F8/ALT-N and F7/ALT-P cycle, INS/^N makes it a new one
+     Numeric column Type a number; F2 edits, DEL removes it; the format and
+                   totals are in View ▸ Column ▸ Properties
      CTRL-PGUP/DN  Previous / next section         ⌥↑ / ⌥↓
 
    Everywhere
@@ -742,6 +788,11 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
   defp box_title(_state, %{type: :file_props}), do: "File properties: date display"
   defp box_title(_state, %{type: :goto}), do: "Go to section"
+
+  defp box_title(state, %{type: :column_props} = mode),
+    do:
+      "Numeric column: " <>
+        state.db.categories[Agenda.TUI.ColumnProperties.column(state, mode).category_id].name
 
   defp box_title(_state, %{type: :search_box, scope: :file}),
     do: "Search the whole file (Show View)"
@@ -867,6 +918,26 @@ defmodule Agenda.TUI.Render do
       end)
 
     rows ++ [[], [{:box, " Pat* finds Pat, Patty… · (a phrase) · ENTER searches"}]]
+  end
+
+  defp box_content(state, %{type: :column_props} = mode, _inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.ColumnProperties.lines(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        [
+          {:box, " " <> Draw.pad(label, 19) <> ": "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), value}
+        ]
+      end)
+
+    rows ++
+      [
+        [],
+        [{:box, " Sample: " <> Agenda.TUI.ColumnProperties.sample(state, mode)}],
+        [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]
+      ]
   end
 
   defp box_content(state, %{type: :goto} = mode, _inner, max_rows) do
@@ -1031,6 +1102,7 @@ defmodule Agenda.TUI.Render do
       name: cat.name,
       # an empty value would leave the highlighted row invisible
       short_name: cat.short_name || "(none)",
+      type: cat.kind |> Atom.to_string() |> String.capitalize(),
       exclusive: yes_no.(cat.exclusive),
       match_name: yes_no.(cat.match_name),
       also_assign:
@@ -1045,6 +1117,7 @@ defmodule Agenda.TUI.Render do
     labels = %{
       name: "Category name",
       short_name: "Short name",
+      type: "Type",
       exclusive: "Children mutually exclusive",
       match_name: "Assign items mentioning it",
       also_assign: "Also assign items to",
@@ -1165,6 +1238,10 @@ defmodule Agenda.TUI.Render do
   defp alarm_note(%{alarm_minutes: nil}), do: ""
   defp alarm_note(%{alarm_minutes: m}), do: " · alarm #{m} min before"
 
+  defp assignment_text(db, %{category: id, kind: :numeric, number: number}),
+    do:
+      "#{db.categories[id].name} (#{Agenda.Core.NumberFormat.format(number, %Agenda.Core.NumberFormat{})})"
+
   defp assignment_text(db, %{category: id, kind: kind, date: date}) do
     name = db.categories[id].name
 
@@ -1256,7 +1333,18 @@ defmodule Agenda.TUI.Render do
           "  • " <> row.item.text <> done <> if(extra == "", do: "", else: "  [#{extra}]")
         end)
 
-      Enum.join([header | items], "\n")
+      calcs =
+        Enum.map(section.calcs, fn {calc, cells} ->
+          results =
+            cells
+            |> Enum.zip(heads)
+            |> Enum.reject(&(elem(&1, 0) == ""))
+            |> Enum.map_join("; ", fn {c, h} -> "#{h}: #{c}" end)
+
+          "  #{Agenda.Core.NumberFormat.label(calc)}  [#{results}]"
+        end)
+
+      Enum.join([header | items] ++ calcs, "\n")
     end)
     |> Kernel.<>("\n")
   end

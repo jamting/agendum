@@ -13,7 +13,7 @@ defmodule Agenda.TUI.Completion do
   alias Agenda.Core.Database
   alias Agenda.TUI.State
 
-  @doc "True while typing a category (not a date) into a column cell."
+  @doc "True while typing a category (not a date or number) into a column cell."
   @spec column_entry?(State.t()) :: boolean
   def column_entry?(%State{edit: %{target: {:column_entry, _, _, _}}} = state), do: active?(state)
   def column_entry?(_state), do: false
@@ -35,8 +35,11 @@ defmodule Agenda.TUI.Completion do
   end
 
   # The category whose subcategories are searched.
-  defp head(%State{edit: %{target: {:column_entry, _item, head, _}}, db: db}),
-    do: if(Database.date_field(db, head), do: nil, else: head)
+  defp head(%State{edit: %{target: {:column_entry, _item, head, _}}, db: db}) do
+    if Database.date_field(db, head) || db.categories[head].kind == :numeric,
+      do: nil,
+      else: head
+  end
 
   defp head(%State{edit: %{target: {:assign_category, _item}}, db: db}), do: db.main_id
   defp head(_state), do: nil

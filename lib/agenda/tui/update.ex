@@ -15,6 +15,7 @@ defmodule Agenda.TUI.Update do
 
   alias Agenda.TUI.{
     CategoryScreens,
+    ColumnProperties,
     Completion,
     FileProperties,
     GoTo,
@@ -178,6 +179,10 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
   defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
   defp dispatch(state, %{type: :goto} = m, key), do: GoTo.handle(state, m, key)
+
+  defp dispatch(state, %{type: :column_props} = m, key),
+    do: ColumnProperties.handle(state, m, key)
+
   defp dispatch(state, %{type: :alarm_list} = m, key), do: AlarmList.handle(state, m, key)
 
   defp dispatch(state, %{type: :searching} = m, key),
@@ -319,8 +324,17 @@ defmodule Agenda.TUI.Update do
 
   defp edit(state, %{kind: :item} = row) do
     {:column_entry, item_id, head, _} = column_target(state, row, :replace)
+    numeric = state.db.categories[head].kind == :numeric
 
     case Database.date_field(state.db, head) do
+      nil when numeric ->
+        text = number_text(Database.number(state.db, item_id, head))
+
+        %{
+          state
+          | edit: %{target: {:column_entry, item_id, head, :replace}, line: LineEdit.new(text)}
+        }
+
       nil ->
         case ViewModel.column_entries(state.db, item_id, head) do
           [] ->
@@ -350,6 +364,15 @@ defmodule Agenda.TUI.Update do
   end
 
   defp edit(state, nil), do: state
+
+  @doc "A number as offered for editing: in full, without formatting."
+  def number_text(nil), do: ""
+
+  def number_text(value) do
+    if value == Float.round(value),
+      do: value |> round() |> Integer.to_string(),
+      else: :erlang.float_to_binary(value, [:short])
+  end
 
   defp delete(state, %{kind: :section, sidx: sidx}) do
     state
@@ -392,9 +415,16 @@ defmodule Agenda.TUI.Update do
   defp choices(state, %{kind: :item} = row) when state.col > 0 do
     {:column_entry, item_id, head, _} = column_target(state, row, :replace)
 
-    if Database.date_field(state.db, head),
-      do: State.error(state, "Type a date, e.g. tomorrow, friday, 2026-12-24"),
-      else: CategoryScreens.open_picker(state, {:assign_column, item_id, head}, head)
+    cond do
+      Database.date_field(state.db, head) ->
+        State.error(state, "Type a date, e.g. tomorrow, friday, 2026-12-24")
+
+      state.db.categories[head].kind == :numeric ->
+        State.error(state, "Type a number, e.g. 120 or 1,234.50")
+
+      true ->
+        CategoryScreens.open_picker(state, {:assign_column, item_id, head}, head)
+    end
   end
 
   defp choices(state, %{kind: :item, item: item}),
@@ -566,6 +596,9 @@ defmodule Agenda.TUI.Update do
 
       {:error, :invalid_date} ->
         State.error(state, "Not a date: #{text}")
+
+      {:error, :not_a_number} ->
+        State.error(state, "Not a number: #{String.trim(text)}")
 
       {:error, :ambiguous} ->
         State.error(state, "\"#{text}\" matches several categories; type more or press F3")
@@ -812,6 +845,17 @@ defmodule Agenda.TUI.Update do
     |> Map.put(:edit, %{line: LineEdit.new(initial)})
   end
 
+  @doc "Converts a category to numeric (R29), reporting the result."
+  def make_numeric(state, cat_id) do
+    case Core.make_numeric(state.db, cat_id) do
+      {:ok, db} ->
+        state |> State.change_db(db) |> State.info("#{db.categories[cat_id].name} is now numeric")
+
+      {:error, _} ->
+        State.error(state, "#{state.db.categories[cat_id].name} cannot become numeric")
+    end
+  end
+
   def confirm(state, question, action),
     do: State.push(state, %{type: :confirm, question: question, action: action})
 
@@ -942,6 +986,14 @@ defmodule Agenda.TUI.Update do
     end
   end
 
+  defp prompt_action(state, {:item_number, item_id, cat_id}, text) do
+    case Core.assign_by_name(state.db, item_id, cat_id, text, state.now) do
+      {:ok, db, :number} -> State.change_db(state, db)
+      {:error, :empty} -> State.change_db(state, Core.clear_number(state.db, item_id, cat_id))
+      {:error, :not_a_number} -> State.error(state, "Not a number: #{String.trim(text)}")
+    end
+  end
+
   defp prompt_action(state, {:exclusive_new_child, cat_id}, text) do
     CategoryScreens.apply_exclusive(state, cat_id, {:new_child, text})
   end
@@ -959,6 +1011,8 @@ defmodule Agenda.TUI.Update do
       _ -> state
     end
   end
+
+  defp confirmed(state, {:make_numeric, id}, true), do: make_numeric(state, id)
 
   defp confirmed(state, {:sort_children, id}, true) do
     State.change_db(state, Core.sort_children(state.db, id))
@@ -1197,6 +1251,17 @@ defmodule Agenda.TUI.Update do
   end
 
   defp do_perform(state, :file_props, _), do: FileProperties.open(state)
+
+  defp do_perform(state, :column_props, %{kind: :item}) when state.col > 0 do
+    column = Enum.at(State.view(state).columns, state.col - 1)
+
+    if state.db.categories[column.category_id].kind == :numeric,
+      do: ColumnProperties.open(state, state.col - 1),
+      else: State.error(state, "Column properties are for numeric columns only, so far")
+  end
+
+  defp do_perform(state, :column_props, _),
+    do: State.error(state, "Highlight a column entry of an item first")
 
   defp do_perform(state, :toggle_auto_date, _) do
     db = Core.toggle_auto_date(state.db)

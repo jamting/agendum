@@ -50,7 +50,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
   end
 
   test "category properties toggle exclusivity", %{state: state} do
-    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}, :down, :down, :enter])
+    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}, :down, :down, :down, :enter])
     assert state.db.categories[cat(state, "Meetings")].exclusive
   end
 
@@ -89,7 +89,10 @@ defmodule Agenda.TUI.CategoryScreensTest do
       item = Agenda.TUI.Layout.current_row(state).item.id
       # category manager: MAIN Entry When Done Calls Priority High Medium Low Contact
       opened =
-        press(state, [{:f, 9}] ++ List.duplicate(:down, 9) ++ [{:f, 6}, :down, :down, :enter])
+        press(
+          state,
+          [{:f, 9}] ++ List.duplicate(:down, 9) ++ [{:f, 6}, :down, :down, :down, :enter]
+        )
 
       %{opened: opened, item: item}
     end
@@ -273,8 +276,8 @@ defmodule Agenda.TUI.CategoryScreensTest do
     state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}])
     assert screen(state) =~ ~r/Assignment conditions\s+:\s+\(none\)/
 
-    # the conditions line is the fifth property
-    state = press(state, [:down, :down, :down, :down, :enter, "Calls", :enter])
+    # the conditions line is the sixth property
+    state = press(state, [:down, :down, :down, :down, :down, :enter, "Calls", :enter])
     meetings = state.db.categories[cat(state, "Meetings")]
     assert meetings.conditions == [{cat(state, "Calls"), :assigned}]
     assert screen(state) =~ "Meetings now assigns items in Calls"

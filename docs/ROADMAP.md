@@ -41,7 +41,7 @@ Rule numbers refer to `SPEC.md`.
 
 ## Milestone 3 — Smarter assignment
 
-- [ ] Numeric categories and columns with totals (R29)
+- [x] Numeric categories and columns with totals (R29)
 - [ ] Date and numeric filters; sorting by category note; sorting section heads (after R29)
 - [x] Date parsing from item text into When (R14)
 - [x] Times of day on When dates (R14b)

@@ -65,7 +65,8 @@ defmodule Agenda.TUI.Menu do
             {"Before", "Add a column before (left of) the current one (ALT-L)", :column_left},
             {"Remove", "Remove the highlighted column", :remove_column},
             {"Wider", "Make the highlighted column wider", :wider},
-            {"Narrower", "Make the highlighted column narrower", :narrower}
+            {"Narrower", "Make the highlighted column narrower", :narrower},
+            {"Properties", "Number format and calculations of a numeric column", :column_props}
           ]},
          {"Filter", "Show only items in (or not in) chosen categories", :filter_view},
          {"Order", "Sort the items in every section (the view's sort settings)", :sort_view},
