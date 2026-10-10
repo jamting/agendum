@@ -26,6 +26,7 @@ defmodule Agenda.TUI.Render do
     :search_box,
     :note_search,
     :file_props,
+    :goto,
     :alarm_list
   ]
 
@@ -38,7 +39,7 @@ defmodule Agenda.TUI.Render do
     [title_bar(state, base)] ++
       control_panel(state) ++
       Enum.map(body, &Draw.line(&1, w)) ++
-      [keybar(state)]
+      if(state.key_map, do: [keybar(state)], else: [])
   end
 
   # The base is the topmost full-screen mode (or the view); boxes above it
@@ -294,6 +295,14 @@ defmodule Agenda.TUI.Render do
 
   defp mode_keys(%{type: :note}),
     do: [{"ESC", "Return"}, {"F5", "Return"}, {"ALT-F6", "Search"}, {"ALT-S", "Next"}]
+
+  defp mode_keys(%{type: :goto}),
+    do: [
+      {"↑↓", "Highlight"},
+      {"letter", "Next starting with it"},
+      {"ENTER", "Go"},
+      {"ESC", "Cancel"}
+    ]
 
   defp mode_keys(%{type: :file_props}),
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
@@ -630,7 +639,11 @@ defmodule Agenda.TUI.Render do
      ALT-F2        Set the When date (or menu Item When)
      ALT-F10       Move item to another section
      ALT-− / ALT-= Collapse / expand section (twice: all)
-     ALT-F5        Sort settings for the section    ESC %
+     ALT-F5        Go to a section (GO TO)           ESC %
+     ALT-N / ALT-P Next / previous view              ESC n / ESC p
+     ALT-V         Show / hide empty sections        ESC v
+     ALT-I         Insert an item (like INS)         ESC i
+     ALT-W / ALT-G Save / retrieve a file            ESC w / ESC g
      ALT-F6        Search (then ALT-N / ALT-P, F7 mark)  ESC ^
      ALT-F8        Back to the previous view        ESC *
      ALT-A         Set or cancel an alarm            ESC a
@@ -644,7 +657,8 @@ defmodule Agenda.TUI.Render do
    Everywhere
      CTRL-Z / CTRL-Y   Undo / redo
      CTRL-S            Save              CTRL-O   Open (retrieve) a file
-     CTRL-P            Print to file     CTRL-Q   Quit
+     CTRL-P            Print to file     CTRL-Q   Quit (also ALT-Q)
+     ALT-K             Show / hide the function key map
 
    In the category manager (F9)
      Type / INS    Add a category below            CTRL-N
@@ -722,6 +736,7 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
   defp box_title(_state, %{type: :file_props}), do: "File properties: date display"
+  defp box_title(_state, %{type: :goto}), do: "Go to section"
 
   defp box_title(_state, %{type: :search_box, scope: :file}),
     do: "Search the whole file (Show View)"
@@ -847,6 +862,19 @@ defmodule Agenda.TUI.Render do
       end)
 
     rows ++ [[], [{:box, " Pat* finds Pat, Patty… · (a phrase) · ENTER searches"}]]
+  end
+
+  defp box_content(state, %{type: :goto} = mode, _inner, max_rows) do
+    names = Agenda.TUI.GoTo.names(state)
+    top = max(mode.cursor - max_rows + 1, 0)
+
+    names
+    |> Enum.with_index()
+    |> Enum.drop(top)
+    |> Enum.take(max_rows)
+    |> Enum.map(fn {name, i} ->
+      [{:box, " "}, {if(i == mode.cursor, do: :box_selected, else: :box), name}]
+    end)
   end
 
   defp box_content(state, %{type: :file_props} = mode, _inner, _max_rows) do

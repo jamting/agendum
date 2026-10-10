@@ -20,7 +20,13 @@ settings, as described in the second half of this guide.
 | Unmark all items | ALT-F7 | ESC then `&`, or menu Item ▸ Unmark |
 | Jump to the next marked item | ALT-J | ESC then `j` (Option-j) |
 | Assign the item or marked items to a category (MakeAssign) | ALT-M | ESC then `m` (Option-m), or menu Item ▸ Categorize |
-| Sort settings for the section (in a view); sort a family (category manager); sort views (view manager) | ALT-F5 | ESC then `%` |
+| Go to a section (GO TO, in a view); sort a family (category manager); sort views (view manager) | ALT-F5 | ESC then `%` |
+| Next / previous view (in a view) | ALT-N / ALT-P | ESC then `n` / `p` |
+| Show / hide empty sections (in a view) | ALT-V | ESC then `v` |
+| Insert an item (in a view) | ALT-I | ESC then `i`, or INS / **CTRL-N** |
+| Save / retrieve a file (in a view) | ALT-W / ALT-G | ESC then `w` / `g`, or **CTRL-S** / **CTRL-O** |
+| Quit | ALT-Q | ESC then `q`, or **CTRL-Q** |
+| Show / hide the function key map | ALT-K | ESC then `k` |
 | Search this view; then next / previous match | ALT-F6; ALT-N / ALT-P | ESC then `^`; ESC then `n` / `p` |
 | In a note: search / replace; find the next occurrence | ALT-F6; ALT-S | ESC then `^`; ESC then `s` |
 | Back to the previous view (LAST VW) | ALT-F8 | ESC then `*`, or menu View ▸ Last |

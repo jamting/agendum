@@ -229,7 +229,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   the date for a date category. Each key has an order (ascending,
   descending) and puts items without a value at the bottom or top. Ties
   keep entry order. Set in the Sort box (View ▸ Order, View ▸ Section ▸
-  Sort, or ALT-F5 in a view for the current section). Our choice: sorting
+  Sort). Our choice: sorting
   is applied whenever the view is shown, like Agenda's "When item is
   entered" setting, so "On leaving a section" and ALT-S re-sorting are not
   needed. ALT-F5 in the category manager sorts the highlighted category's
@@ -318,6 +318,7 @@ body, and a function-key bar.
 | F9          | Category manager                                                    | Return                  |
 | F10 or `/`  | Menu (File Item Category View Print Quit)                           | Return                  |
 | ALT-F4      | Discard                                                             | Discard                 |
+| ALT-F5 | GO TO a section (R42) | Sort a family |
 | ALT-F10     | Move item                                                           | Move under a new parent |
 | ALT-D/U/R/L | Add section below/above, column right/left                          |                         |
 | INS         | New item / additional column entry                                  | New category below      |
@@ -337,7 +338,9 @@ sibling, CTRL-HOME/END = first/last.
   sibling of the parent, after it), ALT-D / ALT-I insert a sibling below,
   ALT-U above. In notes: ALT-D / ALT-T insert today's date / the time,
   ALT-N / ALT-P go to the note of the next / previous item (or category).
-  Our deviation until then: ALT-F5 in a view opened the Sort box (R36).
+  Done so far: the view keys (ALT-F5 used to open the Sort box, R36; the
+  Sort box is now reached through the menu). ALT-K and ALT-Q also work in
+  the managers.
   Later, with their features: ALT-F9 copy, ALT-Y yank back, ALT-H hop,
   ALT-B browse, ALT-C calendar, ALT-O dependency, ALT-E / ALT-X execute
   conditions and actions, ALT-Z run macro, ALT-S sort now.

@@ -40,6 +40,7 @@ defmodule Agenda.TUI.State do
           last_view_id: Database.id() | nil,
           last_search: Agenda.Core.Search.t() | nil,
           last_note_search: Agenda.TUI.NoteSearch.settings() | nil,
+          key_map: boolean,
           last_key: term,
           undo: [map],
           redo: [map],
@@ -67,6 +68,7 @@ defmodule Agenda.TUI.State do
             last_view_id: nil,
             last_search: nil,
             last_note_search: nil,
+            key_map: true,
             last_key: nil,
             undo: [],
             redo: [],
@@ -138,5 +140,6 @@ defmodule Agenda.TUI.State do
   def error(state, text), do: %{state | message: {:error, text}}
 
   @doc "Number of screen lines available for the view body."
-  def body_height(%__MODULE__{height: h}), do: max(h - 4, 1)
+  def body_height(%__MODULE__{height: h, key_map: true}), do: max(h - 4, 1)
+  def body_height(%__MODULE__{height: h, key_map: false}), do: max(h - 3, 1)
 end

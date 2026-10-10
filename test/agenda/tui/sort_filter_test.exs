@@ -73,10 +73,9 @@ defmodule Agenda.TUI.SortFilterTest do
     assert hd(texts(state)) =~ "Anna Lasky"
   end
 
-  test "ALT-F5 in a view opens the section's Sort box, which can use the view's settings", %{
-    state: state
-  } do
-    state = press(state, {:alt_f, 5})
+  test "View ▸ Section ▸ Sort opens the section's Sort box, which can use the view's settings",
+       %{state: state} do
+    state = press(state, [{:f, 10}, "v", "s", "s"])
     assert screen(state) =~ "Sort items in Calls"
     assert screen(state) =~ "As the view (None)"
 

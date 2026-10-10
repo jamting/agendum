@@ -17,6 +17,7 @@ defmodule Agenda.TUI.Update do
     CategoryScreens,
     Completion,
     FileProperties,
+    GoTo,
     History,
     ItemProperties,
     SearchBox,
@@ -86,10 +87,11 @@ defmodule Agenda.TUI.Update do
       typing?(state) or match?(%{type: t} when t in [:confirm, :menu, :help], top) -> :pass
       key == {:ctrl, "z"} -> if undoable?(top), do: History.undo(state), else: :pass
       key == {:ctrl, "y"} -> if undoable?(top), do: History.redo(state), else: :pass
+      key == {:alt, "k"} -> %{state | key_map: not state.key_map}
       key == {:ctrl, "s"} -> perform(state, :save)
       key == {:ctrl, "o"} -> perform(state, :retrieve)
       key == {:ctrl, "p"} and top == nil -> perform(state, :export)
-      key in [{:ctrl, "q"}, {:ctrl, "c"}] -> perform(state, :quit)
+      key in [{:ctrl, "q"}, {:ctrl, "c"}, {:alt, "q"}] -> perform(state, :quit)
       true -> :pass
     end
   end
@@ -175,6 +177,7 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :search_box} = m, key), do: SearchBox.handle(state, m, key)
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
   defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
+  defp dispatch(state, %{type: :goto} = m, key), do: GoTo.handle(state, m, key)
   defp dispatch(state, %{type: :alarm_list} = m, key), do: AlarmList.handle(state, m, key)
 
   defp dispatch(state, %{type: :searching} = m, key),
@@ -227,7 +230,13 @@ defmodule Agenda.TUI.Update do
       {:ctrl, "d"} -> scoped(state, :discard, row)
       {:alt_f, 10} -> scoped(state, :move_item, row)
       {:alt, "d"} -> perform(state, :section_below)
-      {:alt_f, 5} -> SortBox.open(state, if(row, do: {:section, row.sidx}, else: :view))
+      {:alt_f, 5} -> GoTo.open(state)
+      {:alt, "n"} -> step_view(state, 1)
+      {:alt, "p"} -> step_view(state, -1)
+      {:alt, "w"} -> perform(state, :save)
+      {:alt, "g"} -> perform(state, :retrieve)
+      {:alt, "v"} -> perform(state, {:toggle_view, :hide_empty})
+      {:alt, "i"} -> insert(state, row)
       {:alt_f, 6} -> SearchBox.open(state, :view)
       {:alt, "a"} -> perform(state, :alarm)
       {:alt_f, 8} -> perform(state, :last_view)
@@ -238,6 +247,13 @@ defmodule Agenda.TUI.Update do
       {:alt, "l"} -> perform(state, :column_left)
       _ -> state
     end
+  end
+
+  # ALT-N / ALT-P: the next / previous view in the view manager's order.
+  defp step_view(state, step) do
+    order = state.db.view_order
+    index = Enum.find_index(order, &(&1 == state.view_id)) || 0
+    State.switch_view(state, Enum.at(order, Integer.mod(index + step, length(order))))
   end
 
   # ALT-- / ALT-= collapse or expand the current section; pressed twice,
