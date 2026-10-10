@@ -193,10 +193,31 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   Monday"), and F4 says when the next one is. Not done: the "Can use
   recurring dates" property of date categories (only When recurs),
   recurring items in datebook views, and "every day starting …".
-- **R14d ⏳ More date phrases.** Working days ("in five working days"),
-  "this quarter", "first Wednesday in November", "next April", dates from
-  notes, "$Monday" (a relative date kept as first read), and settings for
-  date order (day/month) and the start of the week.
+- **R14d ✅ More date phrases** (User's Guide 6-7, 6-10 to 6-11, 7-16).
+  Working days ("in five working days", "3 working days ago") skip
+  Saturday and Sunday. Quarters ("this/next/last quarter", "end of the
+  quarter", "first quarter"; the first to fourth quarter is this year's
+  unless it has ended) and years ("end of the year"). The nth or last
+  weekday of a month ("first Wednesday in November", put in the future
+  like other dates without a year; "the last Friday of the month",
+  "second Monday of next month") and a day of a month ("the 15th of next
+  month"). A month alone means its first day: on its own ("April") it is
+  this year's unless the month is over, "this April" this year's, "next
+  April" the first after this month, "last April" the last before it;
+  "end of next March" is its last day. In item text a month alone counts
+  only after "next", "last", "this", "in", "by", "until" or "during" ("May"
+  only after "next" or "last"; in Swedish only full names, so "i jul"
+  stays Christmas). Calendar notation can use a month abbreviation
+  ("Nov/12/90"). Swedish has the same phrases ("om fem arbetsdagar",
+  "första onsdagen i november", "i slutet av nästa mars").
+- **R14e ⏳ Global date settings** (User's Guide 7-14 to 7-17). File
+  Properties settings for the beginning and end of the week (today
+  Monday and Friday), the first quarter, the beginning and end of the
+  year, what a month alone means (first, last or nth day), the times of
+  morning, afternoon and evening, and number order (MDY, DMY, …).
+- **R14f ⏳ Fixed relative dates and dates from notes** (User's Guide
+  6-7, 7-10). "$Monday" in a date range keeps the date it was first read
+  as; When dates can be read from notes instead of item text.
 - **R15 ✅ Assignment conditions** (User's Guide, chapters 18 and 20). A
   category can have conditions on other categories: items *assigned* to
   them (Urgent if Taxes and Accountant) or *not assigned* to them (Me if

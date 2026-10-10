@@ -98,9 +98,12 @@ defmodule Agenda.Core.DateParserTest do
     end
 
     test "common words are not mistaken for abbreviated dates" do
-      for text <- ["sat down with Ed", "I may call", "the sun is out", "wed in June"] do
+      for text <- ["sat down with Ed", "I may call", "the sun is out"] do
         assert DateParser.extract(text, @today) == :none, text
       end
+
+      # "in June" is a month (R14d), "wed" is not Wednesday
+      assert {:ok, ~D[2027-06-01], "in june"} = DateParser.extract("wed in June", @today)
     end
 
     test "returns the date words, normalised" do

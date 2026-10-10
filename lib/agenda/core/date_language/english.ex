@@ -4,7 +4,13 @@ defmodule Agenda.Core.DateLanguage.English do
   User's Guide chapters 6 and 7): "friday", "next week", "11/20/90", "the
   5th of November", "in 2 days", "Thursday at 3:30 pm", "tonight", and
   recurring dates: "every Monday", "every other week", "the 15th of every
-  month", "every quarter".
+  month", "every quarter"; and (R14d) "in five working days", "this
+  quarter", "first Wednesday in November", "the 15th of next month",
+  "next April", "end of March", "Nov/12/90".
+
+  A month named alone counts in item text only after "next", "last",
+  "this", "in", "by", "until" or "during", and "May" only after "next" or
+  "last", so that "you may" stays text.
   """
 
   @behaviour Agenda.Core.DateLanguage
@@ -58,6 +64,9 @@ defmodule Agenda.Core.DateLanguage.English do
     "dec" => 12
   }
 
+  @full_months ~w(january february march april may june july august september october
+                  november december)
+
   @numbers %{
     "a" => 1,
     "an" => 1,
@@ -86,10 +95,13 @@ defmodule Agenda.Core.DateLanguage.English do
     numbers: @numbers,
     ordinals: @ordinals |> Enum.with_index(1) |> Map.new(),
     relative: %{"this" => 0, "next" => 1, "nxt" => 1, "last" => -1},
-    periods: %{"week" => :week, "month" => :month, "year" => :year},
+    last: %{"last" => :last},
+    periods: %{"week" => :week, "month" => :month, "quarter" => :quarter, "year" => :year},
     units: %{
       "day" => :day,
       "days" => :day,
+      "working day" => :working_day,
+      "working days" => :working_day,
       "week" => :week,
       "weeks" => :week,
       "month" => :month,
@@ -136,7 +148,7 @@ defmodule Agenda.Core.DateLanguage.English do
   def clock, do: :agenda
 
   @impl true
-  def text_excluded, do: [:weekday_abbr]
+  def text_excluded, do: [:weekday_abbr, :bare_month]
 
   @impl true
   def rules do
@@ -149,6 +161,12 @@ defmodule Agenda.Core.DateLanguage.English do
 
     every = alt(__MODULE__, :intervals)
     ordinals = alt(__MODULE__, :ordinals)
+    nth = ordinals <> "|last"
+    which = "this|next|nxt|last"
+    period = alt(__MODULE__, :periods)
+    edge = alt(__MODULE__, :edges)
+    full = alt(@full_months)
+    not_may = alt(@full_months -- ["may"])
 
     [
       {:recurring_weekday, "(#{every})\\s+(#{w_all})"},
@@ -160,20 +178,32 @@ defmodule Agenda.Core.DateLanguage.English do
        "(?:the\\s+)?(#{ordinals})\\s+of\\s+(?:each|every|evry)\\s+month"},
       {:iso, "(\\d{4})-(\\d{1,2})-(\\d{1,2})"},
       {:numeric, "(\\d{1,2})/(\\d{1,2})(?:/(\\d{4}|\\d{2}))?"},
+      {:month_day, "(#{m})/(\\d{1,2})(?:/(\\d{4}|\\d{2}))?"},
       {:month_day, "(#{m})\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s+(\\d{4}))?"},
       {:day_month,
        "(?:the\\s+)?(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?(#{m})\\.?(?:,?\\s+(\\d{4}))?"},
       {:ordinal_of_month,
        "(?:the\\s+)?(#{alt(__MODULE__, :ordinals)})\\s+of\\s+(#{m})\\.?(?:,?\\s+(\\d{4}))?"},
+      {:nth_weekday_relative,
+       "(?:the\\s+)?(#{nth})\\s+(#{w_all})\\s+(?:in|of)\\s+(?:the\\s+)?(?:(#{which})\\s+)?month"},
+      {:nth_weekday,
+       "(?:the\\s+)?(#{nth})\\s+(#{w_all})\\s+(?:in|of)\\s+(#{m})\\.?(?:,?\\s+(\\d{4}))?"},
+      {:day_of_relative_month,
+       "(?:the\\s+)?(\\d{1,2}(?:st|nd|rd|th)?|#{ordinals})\\s+of\\s+(?:the\\s+)?(?:(#{which})\\s+)?month"},
+      {:nth_quarter, "(?:the\\s+)?(#{ordinals})\\s+quarter"},
+      {:edge_of_month, "(#{edge})\\s+of\\s+(?:(#{which})\\s+)?(#{full})"},
+      {:month_alone, "(next|nxt|last)\\s+(#{full})"},
+      {:month_alone, "(?:(?:in|by|until|till|during)\\s+)?(this)\\s+(#{not_may})"},
+      {:month_alone, "(?:in|by|until|till|during)\\s+(?:(#{which})\\s+)?(#{not_may})"},
+      {:bare_month, "(?:(#{which})\\s+)?(#{full})"},
       {{:offset, 2}, "(?:the\\s+)?day\\s+after\\s+tomorrow"},
       {{:offset, -2}, "(?:the\\s+)?day\\s+before\\s+yesterday"},
       {{:offset, 14}, "in\\s+a\\s+fortnight"},
       {:in_units, "in\\s+(#{n})\\s+(#{unit})"},
       {:units_from_now, "(#{n})\\s+(#{unit})\\s+from\\s+(?:today|now)"},
       {:units_ago, "(#{n})\\s+(#{unit})\\s+ago"},
-      {:edge_of_period,
-       "(#{alt(__MODULE__, :edges)})\\s+of\\s+(?:the\\s+)?(?:(this|next|nxt|last)\\s+)?(week|month)"},
-      {:relative_period, "(this|next|nxt|last)\\s+(week|month|year)"},
+      {:edge_of_period, "(#{edge})\\s+of\\s+(?:the\\s+)?(?:(#{which})\\s+)?(#{period})"},
+      {:relative_period, "(#{which})\\s+(#{period})"},
       {:relative_weekday, "(this|next|nxt|last)\\s+(#{w_all})"},
       {:offset_word, "(#{alt(__MODULE__, :offsets)})"},
       {:weekday, "(#{w_full})"},

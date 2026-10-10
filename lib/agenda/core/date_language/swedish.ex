@@ -4,12 +4,16 @@ defmodule Agenda.Core.DateLanguage.Swedish do
   "i fredags", "den 5 november", "5:e nov", "5/11" (day/month), "om två
   dagar", "för 3 veckor sedan", "i morgon kl 8", "kl. 15.30", "i kväll",
   "i slutet av månaden", and recurring dates: "varje måndag", "varannan
-  fredag", "var tredje månad", "varje kvartal", "den 15:e varje månad".
+  fredag", "var tredje månad", "varje kvartal", "den 15:e varje månad";
+  and (R14d) "om fem arbetsdagar", "nästa kvartal", "första kvartalet",
+  "första onsdagen i november", "den 15:e nästa månad", "i april", "i
+  slutet av mars".
 
   Times use a 24-hour clock ("kl 3" is 03:00). Bare abbreviations ("fre",
   "sön") count in item text only after "på", "till" or "senast"; "tor" is
   left out of that, as it is also a name. "Nu" and "morgon" on its own are
   not read, being too common in ordinary text ("i morgon" is tomorrow).
+  A month alone is read only by its full name, so "i jul" stays Christmas.
   """
 
   @behaviour Agenda.Core.DateLanguage
@@ -66,6 +70,9 @@ defmodule Agenda.Core.DateLanguage.Swedish do
     "dec" => 12
   }
 
+  @full_months ~w(januari februari mars april maj juni juli augusti september oktober
+                  november december)
+
   @ordinals ~w(första andra tredje fjärde femte sjätte sjunde åttonde nionde tionde elfte tolfte
                trettonde fjortonde femtonde sextonde sjuttonde artonde nittonde tjugonde
                tjugoförsta tjugoandra tjugotredje tjugofjärde tjugofemte tjugosjätte tjugosjunde
@@ -99,17 +106,24 @@ defmodule Agenda.Core.DateLanguage.Swedish do
       "nästkommande" => 1,
       "förra" => -1
     },
+    last: %{"sista" => :last},
     periods: %{
       "vecka" => :week,
       "veckan" => :week,
       "månad" => :month,
       "månaden" => :month,
+      "kvartal" => :quarter,
+      "kvartalet" => :quarter,
       "år" => :year,
       "året" => :year
     },
     units: %{
       "dag" => :day,
       "dagar" => :day,
+      "arbetsdag" => :working_day,
+      "arbetsdagar" => :working_day,
+      "vardag" => :working_day,
+      "vardagar" => :working_day,
       "vecka" => :week,
       "veckor" => :week,
       "månad" => :month,
@@ -176,7 +190,7 @@ defmodule Agenda.Core.DateLanguage.Swedish do
   def clock, do: :twenty_four
 
   @impl true
-  def text_excluded, do: [:weekday_abbr]
+  def text_excluded, do: [:weekday_abbr, :bare_month]
 
   @impl true
   def rules do
@@ -190,6 +204,9 @@ defmodule Agenda.Core.DateLanguage.Swedish do
 
     every = alt(__MODULE__, :intervals)
     ordinals = alt(__MODULE__, :ordinals)
+    nth = ordinals <> "|sista"
+    edge = alt(__MODULE__, :edges)
+    full_month = alt(@full_months)
 
     [
       {:recurring_weekday, "(#{every})\\s+(#{w_all})"},
@@ -201,6 +218,18 @@ defmodule Agenda.Core.DateLanguage.Swedish do
       {:day_month, "(?:den\\s+)?(\\d{1,2})(?::[ae])?\\s+(#{m})\\.?(?:,?\\s+(\\d{4}))?"},
       {:ordinal_of_month,
        "(?:den\\s+)?(#{alt(__MODULE__, :ordinals)})\\s+(#{m})\\.?(?:,?\\s+(\\d{4}))?"},
+      {:nth_weekday_relative,
+       "(?:den\\s+)?(#{nth})\\s+(#{w_all})\\s+i\\s+(?:(#{relative})\\s+)?månad(?:en)?"},
+      {:nth_weekday,
+       "(?:den\\s+)?(#{nth})\\s+(#{w_all})\\s+i\\s+(#{full_month})(?:\\s+(\\d{4}))?"},
+      {:day_of_relative_month,
+       "(?:den\\s+)?(\\d{1,2}(?::[ae])?|#{ordinals})\\s+(?:i\\s+månaden|(#{relative})\\s+månad(?:en)?)"},
+      {:nth_quarter, "(#{ordinals})\\s+kvartalet"},
+      {:edge_of_month,
+       "(?:i\\s+)?(#{edge})\\s+(?:av|på)\\s+(?:(#{relative})\\s+)?(#{full_month})"},
+      {:month_alone, "(#{relative})\\s+(#{full_month})"},
+      {:month_alone, "i\\s+(?:(#{relative})\\s+)?(#{full_month})"},
+      {:bare_month, "(?:(#{relative})\\s+)?(#{full_month})"},
       {:in_units, "om\\s+(#{n})\\s+(#{unit})"},
       {:units_ago, "(?:för\\s+)?(#{n})\\s+(#{unit})\\s+sedan"},
       {:edge_of_period,
