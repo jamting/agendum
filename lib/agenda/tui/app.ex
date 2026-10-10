@@ -12,14 +12,15 @@ defmodule Agenda.TUI.App do
   # How often to check for terminal resizes and date changes when idle.
   @idle_timeout 500
 
-  @spec run(State.t()) :: :ok | {:error, term}
-  def run(%State{} = state) do
+  @doc "Runs the program until it quits; `theme` is the `Agenda.TUI.Theme` to draw with."
+  @spec run(State.t(), Agenda.TUI.Theme.name()) :: :ok | {:error, term}
+  def run(%State{} = state, theme \\ :classic) do
     case Terminal.start() do
       :ok ->
         Terminal.start_reader(self())
 
         try do
-          loop(state, nil, "")
+          loop(state, nil, "", theme)
         after
           Terminal.stop()
         end
@@ -29,27 +30,27 @@ defmodule Agenda.TUI.App do
     end
   end
 
-  defp loop(state, previous, buffer) do
-    {state, previous} = draw(state, previous)
+  defp loop(state, previous, buffer, theme) do
+    {state, previous} = draw(state, previous, theme)
     timeout = if buffer == "", do: @idle_timeout, else: @escape_timeout
 
     receive do
       {:input, data} ->
         {keys, rest} = Keys.decode(buffer <> data)
-        continue(state, previous, keys, rest)
+        continue(state, previous, keys, rest, theme)
 
       :input_closed ->
         :ok
     after
       timeout ->
-        continue(state, previous, Keys.flush(buffer), "")
+        continue(state, previous, Keys.flush(buffer), "", theme)
     end
   end
 
-  defp continue(state, previous, keys, rest) do
+  defp continue(state, previous, keys, rest, theme) do
     case apply_keys(state, keys) do
       {:quit, _state} -> :ok
-      {:ok, state} -> loop(state, previous, rest)
+      {:ok, state} -> loop(state, previous, rest, theme)
     end
   end
 
@@ -78,7 +79,7 @@ defmodule Agenda.TUI.App do
     run_effects(state, rest)
   end
 
-  defp draw(state, previous) do
+  defp draw(state, previous, theme) do
     {width, height} = Terminal.size()
     {state, effects} = Update.tick(state, local_now())
     if :bell in effects, do: Terminal.write("\a")
@@ -89,7 +90,7 @@ defmodule Agenda.TUI.App do
 
     screen = Render.render(state)
     if previous == nil, do: Terminal.write("\e[2J")
-    Terminal.write(Screen.frame(previous, screen))
+    Terminal.write(Screen.frame(previous, screen, theme))
     {state, screen}
   end
 

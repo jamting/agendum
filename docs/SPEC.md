@@ -259,6 +259,13 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   note; the box remembers its last settings; no length limit (Agenda
   allowed 25 characters); text never matches across lines. The note is
   saved when it is closed, so all replacements are one undo step.
+- **R40 ✅ Colour themes** (Agenda's install program chose a colour or
+  monochrome display). The screen is drawn with a theme chosen at start:
+  `classic` (blue and white, like DOS Agenda; the default) or `mono`
+  (bold, dim, underline and reverse only). `--theme NAME` or `--mono`
+  choose it; the NO_COLOR environment variable selects mono unless
+  `--theme` is given. The theme is a preference of the terminal, not part
+  of the file.
 
 ## 5. User interface (Agenda 2.0 conventions)
 

@@ -31,7 +31,8 @@ Rule numbers refer to `SPEC.md`.
 - [x] Search the view (ALT-F6) and the file (Show View), ALT-F8 last view (R37)
 - [x] Search and replace in notes (ALT-F6 and ALT-S in a note) (R39)
 - [x] Time in the title bar; alarms before the When date and time (R38)
-- [ ] Configurable colours / monochrome theme; date format setting
+- [x] Colour and monochrome themes: `--theme classic|mono`, `--mono`, NO_COLOR (R40)
+- [ ] Date display format setting (File Properties: date order, separator, 12/24-hour clock, day of week)
 - [x] Show a category's short name in columns too narrow for its full name (e.g. "Anna" instead of "Anna Las") (R22)
 
 ## Milestone 3 — Smarter assignment
