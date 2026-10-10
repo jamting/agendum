@@ -16,6 +16,7 @@ settings, as described in the second half of this guide.
 | Set the When date                                 | ALT-F2                | ESC then `@`, or menu Item ▸ When                                     |
 | Next / previous completion while typing a column entry | F8 / F7 | ALT-N / ALT-P (ESC then `n` / `p`) |
 | New category instead of the completion | F5 or INS | **CTRL-N** |
+| Collapse / expand a family or section (twice: all) | ALT-− / ALT-= | ESC then `-` / `=` (Option-− / Option-= also work) |
 | Remove from section / column                      | DEL                   | fn-⌫ (forward delete)                                                 |
 | Undo / redo                                       | —                     | **CTRL-Z** / **CTRL-Y** (also in the menu)                            |
 | Save / open / print to file / quit                | menu                  | **CTRL-S** / **CTRL-O** / **CTRL-P** / **CTRL-Q** (CTRL-C also quits) |

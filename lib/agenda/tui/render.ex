@@ -446,7 +446,10 @@ defmodule Agenda.TUI.Render do
               [{:normal, " " <> indent}] ++ field(state.edit.line, 30, :edit)
 
             _ ->
-              [{:normal, " " <> indent}, {if(selected, do: :cursor, else: :item), cat.name}]
+              [
+                {:normal, " " <> indent},
+                {if(selected, do: :cursor, else: :item), cat.name <> ellipsis(state, cat)}
+              ]
           end
 
         line = name ++ [{:dim, category_tags(db, cat)}]
@@ -553,6 +556,7 @@ defmodule Agenda.TUI.Render do
      ALT-F4        Discard item                    CTRL-D
      ALT-F2        Set the When date (or menu Item When)
      ALT-F10       Move item to another section
+     ALT-− / ALT-= Collapse / expand section (twice: all)
      ALT-D / ALT-U Add section below / above
      ALT-R / ALT-L Add column right / left
      ←→ TAB        Move between item and columns
@@ -570,6 +574,7 @@ defmodule Agenda.TUI.Render do
      F2            Rename                          CTRL-E
      F7 / F8       Promote / demote
      ALT-↑ ALT-↓   Reorder among siblings          ⌥↑ / ⌥↓
+     ALT-− / ALT-= Collapse / expand family (twice: all)   ESC - / ESC =
      ALT-F10       Move under another parent
      DEL           Discard category                CTRL-D
      F6            Properties (exclusive, short name, links)
@@ -645,7 +650,8 @@ defmodule Agenda.TUI.Render do
       |> Enum.take(max_rows)
       |> Enum.map(fn {{id, depth}, i} ->
         style = if i == cursor, do: :box_selected, else: :box
-        name = String.duplicate("  ", depth) <> state.db.categories[id].name
+        cat = state.db.categories[id]
+        name = String.duplicate("  ", depth) <> cat.name <> ellipsis(state, cat)
 
         [
           {:box, " " <> profile_marker(state, mode, id) <> " "},
@@ -779,6 +785,11 @@ defmodule Agenda.TUI.Render do
       {id, :assigned} -> db.categories[id].name
       {id, :not_assigned} -> "not " <> db.categories[id].name
     end)
+  end
+
+  # "..." after a collapsed family's parent (User's Guide 16-8).
+  defp ellipsis(state, cat) do
+    if cat.children != [] and MapSet.member?(state.collapsed, cat.id), do: "...", else: ""
   end
 
   # --- export ----------------------------------------------------------------------------------------------

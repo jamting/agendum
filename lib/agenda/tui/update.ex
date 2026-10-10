@@ -44,7 +44,7 @@ defmodule Agenda.TUI.Update do
         do: Layout.settle(state),
         else: state
 
-    {%{state | effects: []}, state.effects}
+    {%{state | effects: [], last_key: key}, state.effects}
   end
 
   # --- keyboard aliases -------------------------------------------------------
@@ -172,11 +172,28 @@ defmodule Agenda.TUI.Update do
       {:ctrl, "d"} -> perform(state, :discard)
       {:alt_f, 10} -> perform(state, :move_item)
       {:alt, "d"} -> perform(state, :section_below)
+      {:alt, "-"} -> collapse_sections(state, row, true)
+      {:alt, "="} -> collapse_sections(state, row, false)
       {:alt, "u"} -> perform(state, :section_above)
       {:alt, "r"} -> perform(state, :column_right)
       {:alt, "l"} -> perform(state, :column_left)
       _ -> state
     end
+  end
+
+  # ALT-- / ALT-= collapse or expand the current section; pressed twice,
+  # every section in the view (User's Guide 5-5).
+  defp collapse_sections(state, nil, _collapsed), do: state
+
+  defp collapse_sections(state, row, collapsed) do
+    twice = state.last_key == {:alt, if(collapsed, do: "-", else: "=")}
+
+    db =
+      if twice,
+        do: Core.set_all_sections_collapsed(state.db, state.view_id, collapsed),
+        else: Core.set_section_collapsed(state.db, state.view_id, row.sidx, collapsed)
+
+    %{State.change_db(state, db) | cursor_key: {:section, row.sidx}}
   end
 
   defp section_head_index(rows, from, direction) do

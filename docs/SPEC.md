@@ -239,6 +239,18 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   it begins an existing name (Low when Lowest exists). With no match, ENTER
   creates the new category. Not done: the beeps, and F3 opening the category
   box at the matches.
+- **R33 ✅ Collapsing and expanding** (User's Guide 16-8 to 16-9, 5-5).
+  Wherever the category hierarchy is shown (category manager, category
+  box, assignment profile), ALT-− collapses the family the highlight is in
+  (its own children if it has any, otherwise its parent's) and pressed
+  twice collapses every family; ALT-= expands the highlighted family and
+  pressed twice expands everything. A collapsed parent shows "...". The
+  assignment profile still shows categories the item is assigned to. Our
+  choices: collapsed families are a display setting kept for the session
+  (shared by all those screens, not saved in the file and not undone), and
+  moving a category into a collapsed family expands it so it stays in
+  sight. In a view, the same keys collapse and expand the current section
+  (twice: all sections), shown with "§".
 
 ## 6. Out of scope for now
 

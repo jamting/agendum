@@ -30,17 +30,36 @@ defmodule Agenda.TUI.CategoryScreens do
   def open_props(state, cat_id), do: State.push(state, %{type: :props, cat_id: cat_id, cursor: 0})
 
   @doc "The `{category_id, depth}` rows a hierarchy screen lists."
-  def rows(state, %{type: :catmgr}), do: Database.hierarchy(state.db)
-  def rows(state, %{type: :profile}), do: state.db |> Database.hierarchy() |> tl()
+  def rows(state, mode),
+    do: state |> all_rows(mode) |> Enum.filter(&shown?(state, mode, elem(&1, 0)))
+
+  # Categories inside a collapsed family are hidden; the assignment profile
+  # still shows those the item is assigned to (User's Guide 16-9).
+  defp shown?(state, mode, id) do
+    visible =
+      not Enum.any?(Database.ancestors(state.db, id), &MapSet.member?(state.collapsed, &1))
+
+    visible or (mode.type == :profile and assigned_here?(state.db, mode.item_id, id))
+  end
+
+  defp assigned_here?(db, item_id, id) do
+    case Database.date_field(db, id) do
+      nil -> Database.explicit?(db, item_id, id)
+      field -> Map.get(db.items[item_id], field) != nil
+    end
+  end
+
+  defp all_rows(state, %{type: :catmgr}), do: Database.hierarchy(state.db)
+  defp all_rows(state, %{type: :profile}), do: state.db |> Database.hierarchy() |> tl()
 
   # MAIN is a valid choice for sections, views and new parents only
-  def rows(state, %{type: :picker, root: nil, purpose: {tag, _}})
-      when tag in [:add_section, :change_section, :new_view, :move_category],
-      do: Database.hierarchy(state.db)
+  defp all_rows(state, %{type: :picker, root: nil, purpose: {tag, _}})
+       when tag in [:add_section, :change_section, :new_view, :move_category],
+       do: Database.hierarchy(state.db)
 
-  def rows(state, %{type: :picker, root: nil}), do: state.db |> Database.hierarchy() |> tl()
+  defp all_rows(state, %{type: :picker, root: nil}), do: state.db |> Database.hierarchy() |> tl()
 
-  def rows(state, %{type: :picker, root: root}) do
+  defp all_rows(state, %{type: :picker, root: root}) do
     base = Database.depth(state.db, root) + 1
     state.db |> Database.descendants(root) |> Enum.map(&{&1, Database.depth(state.db, &1) - base})
   end
@@ -66,6 +85,15 @@ defmodule Agenda.TUI.CategoryScreens do
           {:ok, line} -> %{state | edit: %{edit | line: line}}
           :unhandled -> state
         end
+    end
+  end
+
+  def handle(state, mode, key) when key in [{:alt, "-"}, {:alt, "="}] do
+    rows = rows(state, mode)
+
+    case Enum.at(rows, mode.cursor) do
+      nil -> state
+      {id, _} -> collapse_key(state, id, key)
     end
   end
 
@@ -309,10 +337,62 @@ defmodule Agenda.TUI.CategoryScreens do
   end
 
   defp move_cursor_to(state, id) do
+    state = reveal(state, id)
     mode = State.mode(state)
     index = state |> rows(mode) |> Enum.find_index(fn {i, _} -> i == id end)
     if index, do: State.put_mode(state, %{mode | cursor: index}), else: state
   end
+
+  # Expands the families above a category, e.g. after moving it into a
+  # collapsed family, so it stays visible.
+  defp reveal(state, id) do
+    case Map.has_key?(state.db.categories, id) do
+      true ->
+        %{
+          state
+          | collapsed:
+              MapSet.difference(state.collapsed, MapSet.new(Database.ancestors(state.db, id)))
+        }
+
+      false ->
+        state
+    end
+  end
+
+  # --- collapsing and expanding families (User's Guide 16-8) -----------------------------------
+
+  # ALT-- collapses the family the highlight is in (its own children when it
+  # has any, otherwise its parent's); pressed twice, every family. ALT-=
+  # expands the highlighted category's family; pressed twice, everything.
+  defp collapse_key(state, id, key) do
+    db = state.db
+    twice = state.last_key == key
+
+    {collapsed, target} =
+      case key do
+        {:alt, "-"} when twice ->
+          {all_parents(db), db.main_id}
+
+        {:alt, "-"} ->
+          target =
+            if db.categories[id].children != [] and not MapSet.member?(state.collapsed, id),
+              do: id,
+              else: db.categories[id].parent_id || id
+
+          {MapSet.put(state.collapsed, target), target}
+
+        {:alt, "="} when twice ->
+          {MapSet.new(), id}
+
+        {:alt, "="} ->
+          {MapSet.delete(state.collapsed, id), id}
+      end
+
+    move_cursor_to(%{state | collapsed: collapsed}, target)
+  end
+
+  defp all_parents(db),
+    do: for({id, %{children: [_ | _]}} <- db.categories, into: MapSet.new(), do: id)
 
   # --- committing inline edits ---------------------------------------------------------------
 

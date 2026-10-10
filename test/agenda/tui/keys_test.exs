@@ -42,4 +42,8 @@ defmodule Agenda.TUI.KeysTest do
   test "⌘↑ / ⌘↓ mappings (CTRL-HOME / CTRL-END) decode" do
     assert Keys.decode("\e[1;5H\e[1;5F") == {[:ctrl_home, :ctrl_end], ""}
   end
+
+  test "ALT-minus and ALT-equals, also as macOS Option characters" do
+    assert Keys.decode("\e-\e=–≠") == {[{:alt, "-"}, {:alt, "="}, {:alt, "-"}, {:alt, "="}], ""}
+  end
 end

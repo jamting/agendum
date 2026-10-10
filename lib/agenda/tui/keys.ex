@@ -67,7 +67,15 @@ defmodule Agenda.TUI.Keys do
   }
 
   # macOS Option+letter without "Option as Meta"
-  @mac_option %{"∂" => "d", "®" => "r", "¬" => "l", "†" => "t", "∑" => "w"}
+  @mac_option %{
+    "∂" => "d",
+    "®" => "r",
+    "¬" => "l",
+    "†" => "t",
+    "∑" => "w",
+    "–" => "-",
+    "≠" => "="
+  }
 
   @doc """
   Decodes as many complete keys as possible.

@@ -47,7 +47,9 @@ defmodule Agenda.TUI.FuzzTest do
     {:alt, "b"},
     {:alt, :backspace},
     {:alt, "n"},
-    {:alt, "p"}
+    {:alt, "p"},
+    {:alt, "-"},
+    {:alt, "="}
   ]
 
   defp key do

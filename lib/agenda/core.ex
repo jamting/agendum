@@ -634,6 +634,22 @@ defmodule Agenda.Core do
     Database.update_view(db, view_id, &%{&1 | sections: List.delete_at(&1.sections, index)})
   end
 
+  @doc "Collapses (true) or expands (false) the section at `index`."
+  @spec set_section_collapsed(db, id, non_neg_integer, boolean) :: db
+  def set_section_collapsed(db, view_id, index, collapsed) do
+    Database.update_view(db, view_id, fn v ->
+      %{v | sections: List.update_at(v.sections, index, &%{&1 | collapsed: collapsed})}
+    end)
+  end
+
+  @doc "Collapses or expands every section of a view."
+  @spec set_all_sections_collapsed(db, id, boolean) :: db
+  def set_all_sections_collapsed(db, view_id, collapsed) do
+    Database.update_view(db, view_id, fn v ->
+      %{v | sections: Enum.map(v.sections, &%{&1 | collapsed: collapsed})}
+    end)
+  end
+
   @spec toggle_section_collapsed(db, id, non_neg_integer) :: db
   def toggle_section_collapsed(db, view_id, index) do
     Database.update_view(db, view_id, fn v ->

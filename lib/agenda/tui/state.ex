@@ -7,6 +7,10 @@ defmodule Agenda.TUI.State do
   empty stack means the user is in the view itself. `edit` holds an inline
   edit in progress on whichever screen is active.
 
+  `collapsed` holds the categories whose families are collapsed wherever
+  the hierarchy is shown (a display preference, not part of the file), and
+  `last_key` the previous key, so that pressing a key twice can mean more.
+
   `undo` and `redo` hold snapshots for `Agenda.TUI.History`. `saved_db` is the
   database as last saved or loaded; the file is dirty whenever `db` differs.
   """
@@ -30,6 +34,8 @@ defmodule Agenda.TUI.State do
           modes: [map],
           edit: map | nil,
           message: {atom, String.t()} | nil,
+          collapsed: MapSet.t(Database.id()),
+          last_key: term,
           undo: [map],
           redo: [map],
           saved_db: Database.t() | nil,
@@ -50,6 +56,8 @@ defmodule Agenda.TUI.State do
             modes: [],
             edit: nil,
             message: nil,
+            collapsed: MapSet.new(),
+            last_key: nil,
             undo: [],
             redo: [],
             saved_db: nil,
