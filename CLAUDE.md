@@ -93,3 +93,7 @@ and look at the output. In raw mode the tty must not intercept control keys;
   from https://archive.org/details/lotus-agenda-users-guide. Their searchable
   plain text is in `docs/reference/*_djvu.txt`; grep it to check original
   behaviour. The PDFs are not in git (download them from archive.org).
+- `docs/reference/Agenda 2.0 Help File.html`: Agenda's own F1 help, with
+  the original key charts ("Views: Accelerator Keys" etc.) and every settings
+  box; check it before choosing a key. `docs/reference/ag2qanda.txt.html`:
+  Lotus support Q&A (1990–91) on bugs and edge cases, useful as test cases.

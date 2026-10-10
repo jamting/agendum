@@ -10,5 +10,12 @@
   https://archive.org/details/lotus-agenda-users-guide. Their plain-text OCR
   is in this folder (`*_djvu.txt`). The PDFs (`*_text.pdf`) are git-ignored;
   download them from archive.org and put them here if you want them.
+- `Agenda 2.0 Help File.html`: the complete Agenda 2.0 Help (F1) as HTML,
+  including the key charts for views, notes, the category manager and the
+  macro editor ("Agenda Key and Menu Charts"), every settings box, and short
+  how-to topics. The best quick check of a key or a box's settings.
+- `ag2qanda.txt.html`: Lotus technical support questions and answers about
+  Agenda 2.0 (1990–91): known bugs fixed by the Update Kits (recurring dates,
+  datebook views, structured files) and how features behave in practice.
 - Kaplan, Kapor, Belove, Landsman, Drake: "Agenda: A Personal Information
   Manager", _Communications of the ACM_ 33(7), 1990.
