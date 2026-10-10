@@ -1,0 +1,167 @@
+/* The Agenda user guide: plain HTML, one stylesheet, works offline. */
+
+:root {
+  --paper: #fbf7ee;
+  --ink: #2b2a27;
+  --muted: #6b665c;
+  --accent: #b5652b;        /* honey */
+  --accent-soft: #f3e2c7;
+  --rule: #e4dccb;
+  --screen-bg: #0b2a8a;     /* DOS blue */
+  --screen-ink: #f2f2f2;
+  --screen-title: #34b3c6;
+  --screen-hi: #ffe36b;
+  --kbd-bg: #fffdf8;
+  --tip-bg: #eef5ea;
+  --tip-rule: #9cbf8e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #1d1b18;
+    --ink: #ece6d8;
+    --muted: #b1a993;
+    --accent: #e3a35f;
+    --accent-soft: #3a2e20;
+    --rule: #3a352d;
+    --kbd-bg: #2a2722;
+    --tip-bg: #22301f;
+    --tip-rule: #5d7d50;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 17px/1.6 Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+}
+
+.page {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 46rem);
+  gap: 3rem;
+  max-width: 66rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+}
+
+nav.toc {
+  position: sticky;
+  top: 1.5rem;
+  align-self: start;
+  max-height: calc(100vh - 3rem);
+  overflow: auto;
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+nav.toc h2 {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+}
+
+nav.toc ol { padding-left: 1.2rem; margin: 0; }
+nav.toc li { margin: 0.15rem 0; }
+nav.toc a { color: var(--ink); text-decoration: none; }
+nav.toc a:hover { color: var(--accent); text-decoration: underline; }
+
+header.title { margin-bottom: 2rem; border-bottom: 1px solid var(--rule); }
+header.title h1 { font-size: 2.4rem; margin: 0 0 0.25rem; line-height: 1.15; }
+header.title p { color: var(--muted); margin: 0 0 1.5rem; }
+header.title svg { float: right; margin: -0.5rem 0 0 1rem; }
+
+h2 {
+  font-size: 1.55rem;
+  margin: 3rem 0 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--rule);
+}
+h3 { font-size: 1.15rem; margin: 1.8rem 0 0.4rem; }
+
+a { color: var(--accent); }
+p, ul, ol { margin: 0.6rem 0; }
+
+kbd {
+  display: inline-block;
+  padding: 0 0.35em;
+  font: 0.82em/1.6 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  background: var(--kbd-bg);
+  border: 1px solid var(--rule);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+code { font: 0.9em ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+pre.shell {
+  background: var(--accent-soft);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+}
+
+/* A screen in the style of DOS Agenda. */
+pre.screen {
+  background: var(--screen-bg);
+  color: var(--screen-ink);
+  font: 13px/1.35 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+}
+pre.screen .t { background: var(--screen-title); color: #0b0b0b; }
+pre.screen .h { color: var(--screen-hi); font-weight: bold; }
+pre.screen .c { background: #e6e6e6; color: #111; }
+
+.story {
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  padding: 0.7rem 1rem;
+  margin: 1rem 0;
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+}
+.story strong { font-style: normal; }
+
+.tip {
+  border-left: 4px solid var(--tip-rule);
+  background: var(--tip-bg);
+  padding: 0.6rem 1rem;
+  margin: 1rem 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.95rem;
+}
+.tip::before { content: "Tip — "; font-weight: bold; }
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.8rem 0;
+  font-size: 0.93rem;
+}
+th, td { text-align: left; padding: 0.35rem 0.6rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { color: var(--muted); font-weight: normal; font-family: system-ui, sans-serif; font-size: 0.85rem; }
+
+.soon { color: var(--muted); font-style: italic; }
+
+footer {
+  margin-top: 4rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 52rem) {
+  .page { grid-template-columns: 1fr; gap: 1rem; padding: 1.5rem 1rem 4rem; }
+  nav.toc { position: static; max-height: none; }
+  header.title svg { display: none; }
+}

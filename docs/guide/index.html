@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agenda User Guide</title>
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<div class="page">
+
+<nav class="toc" aria-label="Contents">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#welcome">Welcome</a></li>
+    <li><a href="#start">Getting started</a></li>
+    <li><a href="#items">Items</a></li>
+    <li><a href="#categories">Categories</a></li>
+    <li><a href="#views">Views, sections and columns</a></li>
+    <li><a href="#dates">Dates, times and alarms</a></li>
+    <li><a href="#numbers">Numbers and totals</a></li>
+    <li><a href="#finding">Finding, filtering and sorting</a></li>
+    <li><a href="#dependencies">Things that wait for other things</a></li>
+    <li><a href="#automatic">Letting Agenda do the filing</a></li>
+    <li><a href="#files">Files, printing and looks</a></li>
+    <li><a href="#keys">Keyboard reference</a></li>
+    <li><a href="#later">Still to come</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<header class="title">
+  <svg width="90" height="130" viewBox="0 0 90 130" aria-hidden="true">
+    <ellipse cx="45" cy="45" rx="32" ry="40" fill="#d24a3a"/>
+    <ellipse cx="34" cy="30" rx="8" ry="12" fill="#ffffff" opacity="0.35"/>
+    <path d="M41 84 L45 92 L49 84 Z" fill="#a8382c"/>
+    <path d="M45 92 C 38 104, 52 112, 44 128" stroke="#6b665c" stroke-width="1.5" fill="none"/>
+  </svg>
+  <h1>The Agenda User Guide</h1>
+  <p>A personal information manager in the spirit of Lotus Agenda (1988), for people
+     with a great many small things to remember. Follow a Very Small Animal as he
+     plans a birthday party.</p>
+</header>
+
+<!-- ===================================================================== -->
+<section id="welcome">
+<h2>1. Welcome</h2>
+
+<p>Most organisers want you to decide where something belongs before you write it
+down. Agenda works the other way round: you type things as they come to you, in
+your own words, and Agenda files them. Later you look at the same information in
+different <em>views</em>: everything for Thursday, everything about one person,
+everything that still costs money.</p>
+
+<p>Three ideas are enough to begin with:</p>
+<ul>
+  <li><strong>Items</strong> are the things you write down: a task, a phone call, an idea.</li>
+  <li><strong>Categories</strong> are the labels items belong to: people, projects,
+      priorities, dates. An item can belong to many categories at once.</li>
+  <li><strong>Views</strong> arrange items by category, in <em>sections</em> (one per
+      category) with <em>columns</em> showing more about each item.</li>
+</ul>
+
+<div class="story">One blustery morning <strong>Piglet</strong> remembers that it is
+Eeyore's birthday on Thursday, and that nobody seems to have noticed. There is a
+present to find, a cake to arrange and friends to tell, and Piglet, being a Very
+Small Animal, cannot possibly keep it all in his head. So he opens Agenda.
+We will follow him through this guide.</div>
+</section>
+
+<!-- ===================================================================== -->
+<section id="start">
+<h2>2. Getting started</h2>
+
+<pre class="shell">./agenda party.agenda        # open (or start) a file
+./agenda --demo              # try it with sample data
+./agenda --help              # every option</pre>
+
+<p>The screen has four parts:</p>
+
+<pre class="screen"><span class="t"> File: party.agenda          View: Party                       READY  2026-10-08 09:00 </span>
+ Assigned to: Presents, Eeyore
+ <span class="h">Presents</span>                                               When             People
+ • Buy a balloon for Eeyore                              2026-10-09       Eeyore
+ • Find something useful to put things in                                 Eeyore
+<span class="t"> F1 Help F2 Edit F3 Choices F4 Done F5 Note F6 Props F7 Mark F8 VwMgr F9 CatMgr F10 Menu </span></pre>
+
+<ul>
+  <li>The <strong>title bar</strong> shows the file, the view, what Agenda is doing
+      (<code>READY</code>, <code>EDIT</code>, <code>MENU</code> …) and the time.</li>
+  <li>The <strong>control panel</strong> (the next two lines) shows menus, questions and messages.</li>
+  <li>The <strong>view</strong> is the rest of the screen.</li>
+  <li>The <strong>key bar</strong> at the bottom reminds you what the function keys do
+      right now. <kbd>ALT-K</kbd> hides it.</li>
+</ul>
+
+<p>Press <kbd>F10</kbd> (or <kbd>/</kbd>) for the menu and choose a command by its first
+letter. <kbd>F1</kbd> shows help, <kbd>ESC</kbd> goes back, and <kbd>CTRL-Z</kbd> undoes
+almost anything.</p>
+
+<div class="tip">On a Mac, or wherever function keys are awkward: press <kbd>ESC</kbd>
+then a digit for a function key (<kbd>ESC</kbd> <kbd>5</kbd> is <kbd>F5</kbd>), and
+<kbd>ESC</kbd> then a letter for an <kbd>ALT</kbd> key. <kbd>CTRL-N</kbd> stands in for
+<kbd>INS</kbd>. The full list is in the <a href="#keys">keyboard reference</a>.</div>
+</section>
+
+<!-- ===================================================================== -->
+<section id="items">
+<h2>3. Items</h2>
+
+<p>To add an item, just start typing under a section and press <kbd>ENTER</kbd>.
+<kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) starts a new item below the highlighted one.</p>
+
+<div class="story">Piglet types, one after another:
+“Buy a balloon for Eeyore”, “Ask Owl to write on the cake”,
+“Tell Pooh about the party tomorrow”.</div>
+
+<table>
+  <tr><th>To</th><th>Press</th></tr>
+  <tr><td>Change an item's text</td><td><kbd>F2</kbd> (or <kbd>CTRL-E</kbd>)</td></tr>
+  <tr><td>Write a longer note behind an item (shown with ♪)</td><td><kbd>F5</kbd>; <kbd>F5</kbd> or <kbd>ESC</kbd> to return</td></tr>
+  <tr><td>Mark it done (√)</td><td><kbd>F4</kbd> (or <kbd>CTRL-K</kbd>)</td></tr>
+  <tr><td>See and change all about it</td><td><kbd>F6</kbd> Item Properties</td></tr>
+  <tr><td>Mark several items to act on together (♦)</td><td><kbd>F7</kbd>; <kbd>ALT-F7</kbd> unmarks all</td></tr>
+  <tr><td>Move it to another section</td><td><kbd>ALT-F10</kbd></td></tr>
+  <tr><td>Take it out of this section only</td><td><kbd>DEL</kbd></td></tr>
+  <tr><td>Throw it away altogether</td><td><kbd>ALT-F4</kbd> (or <kbd>CTRL-D</kbd>)</td></tr>
+</table>
+
+<p>With items marked, <kbd>F4</kbd>, <kbd>DEL</kbd>, <kbd>ALT-F4</kbd> and friends first ask
+whether you mean the marked items or just the current one.</p>
+
+<p>In a note, <kbd>ALT-D</kbd> and <kbd>ALT-T</kbd> type today's date and the time,
+<kbd>ALT-F6</kbd> searches (and replaces), and <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> move on to
+the next or previous item's note.</p>
+</section>
+
+<!-- ===================================================================== -->
+<section id="categories">
+<h2>4. Categories</h2>
+
+<p>Categories live in a tree, which you see in the <strong>category manager</strong>
+(<kbd>F9</kbd>). Every category sits under <code>MAIN</code>; a category can have
+children (<code>People</code> → <code>Pooh</code>, <code>Owl</code>, <code>Rabbit</code>).
+An item in a child category belongs to its parents too.</p>
+
+<div class="story">Piglet opens the category manager and adds <em>People</em>, with
+Pooh, Owl, Rabbit, Kanga, Roo and Eeyore beneath it, then <em>Presents</em>,
+<em>Food</em> and <em>To do</em>.</div>
+
+<h3>Adding and arranging</h3>
+<table>
+  <tr><th>In the category manager</th><th>Press</th></tr>
+  <tr><td>Add a category below the highlighted one</td><td>just type, or <kbd>INS</kbd> / <kbd>ALT-D</kbd></td></tr>
+  <tr><td>… above it</td><td><kbd>ALT-U</kbd></td></tr>
+  <tr><td>… as its child / as a new family after its parent</td><td><kbd>ALT-R</kbd> / <kbd>ALT-L</kbd></td></tr>
+  <tr><td>Promote / demote one level</td><td><kbd>F7</kbd> / <kbd>F8</kbd></td></tr>
+  <tr><td>Move up or down among its siblings; move anywhere</td><td><kbd>ALT-↑</kbd> <kbd>ALT-↓</kbd>; <kbd>ALT-F10</kbd></td></tr>
+  <tr><td>Rename; discard</td><td><kbd>F2</kbd>; <kbd>DEL</kbd></td></tr>
+  <tr><td>Fold a family away</td><td><kbd>ALT-−</kbd> / <kbd>ALT-=</kbd></td></tr>
+  <tr><td>Properties (see below)</td><td><kbd>F6</kbd></td></tr>
+</table>
+
+<h3>Agenda files things for you</h3>
+<p>When an item's text mentions a category by name, Agenda assigns it there. “Ask
+<em>Owl</em> to write on the cake” lands in <em>Owl</em> (and so in <em>People</em>)
+without Piglet doing anything. Item Properties marks such assignments with
+<code>(c)</code>: they follow the text, so if Piglet later changes it to “Ask Rabbit…”,
+the item leaves Owl again. Assignments you make yourself always stay.</p>
+
+<p>To assign by hand, press <kbd>F3</kbd> on an item for its <em>assignment profile</em>
+(<kbd>SPACE</kbd> ticks a category), or <kbd>ALT-M</kbd> to pick one category for the item
+or all marked items.</p>
+
+<h3>Category properties</h3>
+<p><kbd>F6</kbd> on a category (or on a section head in a view) opens its properties:</p>
+<ul>
+  <li><strong>Short name</strong>: a nickname that also counts when matching text and
+      shows in narrow columns (<em>Christopher Robin</em> → <em>CR</em>).</li>
+  <li><strong>Children mutually exclusive</strong>: an item may only be in one child at a
+      time, as with <em>High</em>, <em>Medium</em> and <em>Low</em> priority.</li>
+  <li><strong>Assign items mentioning it</strong>: turn automatic filing by name off.</li>
+  <li><strong>Type</strong>: make it a <a href="#numbers">numeric</a> category.</li>
+  <li><strong>Also match</strong>, <strong>Assignment conditions</strong>,
+      <strong>Assignment actions</strong> and <strong>Special action</strong>: see
+      <a href="#automatic">letting Agenda do the filing</a>.</li>
+</ul>
+</section>
+
+<!-- ===================================================================== -->
+<section id="views">
+<h2>5. Views, sections and columns</h2>
+
+<p>A view is a saved way of looking at your items. Each <strong>section</strong> shows
+the items of one category; each <strong>column</strong> shows something about every
+item, such as its date or who it involves.</p>
+
+<pre class="screen"><span class="t"> File: party.agenda          View: Party                       READY  2026-10-08 09:00 </span>
+
+ <span class="h">To do</span>                                                  When             People
+ • Ask Owl to write on the cake                          2026-10-08       Owl
+ • Tell Pooh about the party tomorrow                    2026-10-09       Pooh
+ <span class="h">Food</span>                                                   When             People
+ • A pot of honey, nearly full                                            Pooh
+<span class="t"> F1 Help F2 Edit F3 Choices F4 Done F5 Note F6 Props F7 Mark F8 VwMgr F9 CatMgr F10 Menu </span></pre>
+
+<table>
+  <tr><th>To</th><th>Press</th></tr>
+  <tr><td>Add a section below / above</td><td><kbd>ALT-D</kbd> / <kbd>ALT-U</kbd></td></tr>
+  <tr><td>Add a column right / left</td><td><kbd>ALT-R</kbd> / <kbd>ALT-L</kbd></td></tr>
+  <tr><td>Move between the item and its columns</td><td><kbd>←</kbd> <kbd>→</kbd> or <kbd>TAB</kbd></td></tr>
+  <tr><td>Jump to another section (GO TO)</td><td><kbd>ALT-F5</kbd></td></tr>
+  <tr><td>Fold a section away / open it again</td><td><kbd>ALT-−</kbd> / <kbd>ALT-=</kbd> (twice: all)</td></tr>
+  <tr><td>Next / previous view; back to the last one</td><td><kbd>ALT-N</kbd> / <kbd>ALT-P</kbd>; <kbd>ALT-F8</kbd></td></tr>
+  <tr><td>Switch, add, rename or discard views</td><td><kbd>F8</kbd> view manager</td></tr>
+  <tr><td>Hide empty sections</td><td><kbd>ALT-V</kbd></td></tr>
+</table>
+
+<p>Typing in a column assigns the item: in the <em>People</em> column, Piglet types
+<kbd>R</kbd> and Agenda offers <em>Rabbit</em> (<kbd>ENTER</kbd> takes it,
+<kbd>F8</kbd>/<kbd>F7</kbd> show the other matches, <kbd>INS</kbd> makes a new category).
+Typing a name that doesn't exist yet simply creates it.</p>
+
+<p><strong>View ▸ Hide</strong> hides done items, empty sections, items that are only
+in a subcategory, or <a href="#dependencies">items still waiting</a> for others.</p>
+
+<div class="story">Piglet makes a second view, <em>By friend</em>, with a section for
+each of his friends, so he can see at a glance what to tell whom when they come by.</div>
+</section>
+
+<!-- ===================================================================== -->
+<section id="dates">
+<h2>6. Dates, times and alarms</h2>
+
+<p>Write dates as you would say them, and Agenda fills in the <em>When</em> column:
+“tomorrow”, “Thursday”, “next week”, “the 5th of November”, “in 3 days”,
+“friday at 3pm”, “tonight”. Dates without a year are always in the future.</p>
+
+<table>
+  <tr><th>To</th><th>Do</th></tr>
+  <tr><td>Set or change the When date yourself</td><td><kbd>ALT-F2</kbd>, or type in the When column</td></tr>
+  <tr><td>Be reminded before the time</td><td><kbd>ALT-A</kbd> (5 minutes before, unless you say otherwise); the item shows @</td></tr>
+  <tr><td>See today's alarms</td><td><strong>Search ▸ Alarms</strong></td></tr>
+  <tr><td>Change how dates look</td><td><strong>File ▸ Properties</strong> (order, separator, 12/24-hour clock, weekday)</td></tr>
+  <tr><td>Stop reading dates from item text</td><td><strong>File ▸ Dating</strong></td></tr>
+</table>
+
+<h3>Things that happen again and again</h3>
+<p>Say <em>every</em>: “every Monday”, “every other week”, “the 1st of every month”,
+“every quarter”. When you mark such an item done with <kbd>F4</kbd>, Agenda puts the
+next one right after it with the next date.</p>
+
+<div class="story">“Water the haycorns every day,” types Piglet, who has been
+growing some near his front door. And, so as not to be late:
+“Meet Pooh at the Six Pine Trees tomorrow at 11” — with <kbd>ALT-A</kbd> for an alarm.</div>
+
+<h3>In another language</h3>
+<p>Dates can be typed in Swedish too, with English as a fallback:</p>
+<pre class="shell">./agenda --lang=swedish --fallback=english party.agenda</pre>
+<p>Then “på fredag kl 15”, “i morgon”, “varje måndag” and “den 5 november” work as
+well. Only the reading of dates changes; menus and messages stay in English.</p>
+</section>
+
+<!-- ===================================================================== -->
+<section id="numbers">
+<h2>7. Numbers and totals</h2>
+
+<p>A <strong>numeric</strong> category holds a number for each item, shown in a
+column with a total at the bottom of every section. Make one with <kbd>F6</kbd> ▸
+<strong>Type</strong> ▸ Numeric in the category's properties, add it as a column
+(<kbd>ALT-R</kbd>), and type the numbers in. The title bar shows <code>#</code> in a
+numeric column.</p>
+
+<pre class="screen"><span class="t"> File: party.agenda          View: Party                     # READY  2026-10-08 09:00 </span>
+
+ <span class="h">Presents</span>                                                           Cost
+ • Buy a balloon for Eeyore                                          2.50
+ • A pot to put things in                                            4.00
+                                                         TOTAL       6.50
+<span class="t"> F1 Help F2 Edit F3 Choices F4 Done F5 Note F6 Props F7 Mark F8 VwMgr F9 CatMgr F10 Menu </span></pre>
+
+<p><strong>View ▸ Column ▸ Properties</strong> chooses the currency or label, decimals,
+thousands separator, how negatives look, and which results to show: count, total,
+average, minimum, maximum.</p>
+</section>
+
+<!-- ===================================================================== -->
+<section id="finding">
+<h2>8. Finding, filtering and sorting</h2>
+
+<h3>Searching</h3>
+<p><kbd>ALT-F6</kbd> searches the view; <kbd>ALT-N</kbd> and <kbd>ALT-P</kbd> go to the
+next and previous match, <kbd>F7</kbd> marks it. <strong>Search ▸ File</strong> gathers
+every match in the whole file into a <em>Show View</em>. Words match whole;
+<code>bal*</code> matches any ending; <code>(a pot of honey)</code> matches the phrase.</p>
+
+<h3>Filtering</h3>
+<p><strong>View ▸ Filter</strong> (or <strong>View ▸ Section ▸ Filter</strong> for one
+section) shows only items in, or not in, chosen categories; <kbd>ENTER</kbd> cycles
+<code>+</code> / <code>−</code> / none. Choose a date or numeric category and you can give
+a range instead: “today” to “friday”, or a cost from 5 upwards. Relative dates are
+read again each day, so a view of “this week” stays this week.</p>
+
+<h3>Sorting</h3>
+<p><strong>View ▸ Order</strong> sorts every section by item text, by a category (its
+children in order, its date, or its number) or by a line of a category's note; a
+second key breaks ties. It can also sort the section heads themselves.
+<strong>View ▸ Section ▸ Sort</strong> does the same for one section.</p>
+</section>
+
+<!-- ===================================================================== -->
+<section id="dependencies">
+<h2>9. Things that wait for other things</h2>
+
+<p>Some tasks can't start before others are done. Mark the earlier ones with
+<kbd>F7</kbd>, highlight the later one and press <kbd>ALT-O</kbd>: it now
+<em>depends</em> on them and shows <code>&amp;</code> until they are all done.</p>
+
+<div class="story">Owl is a great help with writing, though his spelling of
+<em>birthday</em> has been known to wander. So “Ask Owl to write on the cake” depends
+on “Look up how to spell Birthday”, and Piglet sets <strong>View ▸ Hide ▸ Pending</strong>
+so the cake doesn't trouble him until then.</div>
+
+<ul>
+  <li><strong>View ▸ Hide ▸ Pending</strong> hides waiting items until they're ready.</li>
+  <li><strong>Search ▸ Prereqs</strong> lists what an item waits for;
+      <strong>Search ▸ Depends</strong> what waits for it (one level, all levels, or every
+      such item).</li>
+  <li><kbd>ALT-O</kbd> with nothing marked clears an item's dependencies.</li>
+</ul>
+</section>
+
+<!-- ===================================================================== -->
+<section id="automatic">
+<h2>10. Letting Agenda do the filing</h2>
+
+<p>Agenda can do more than spot names. All of this is set in a category's properties
+(<kbd>F6</kbd>).</p>
+
+<h3>Also match</h3>
+<p>More words that count as the category: for <em>Food</em>,
+<code>honey;hunny;haycorn*;(birthday cake)</code>. A <code>;</code> means <em>or</em>,
+<code>,</code> means <em>and</em>, <code>!</code> means <em>not</em>, <code>*</code> and
+<code>?</code> are wildcards.</p>
+
+<h3>Conditions: pulling items in</h3>
+<p><strong>Assignment conditions</strong> put an item in a category because of where else
+it is: <em>Urgent</em> if it's in <em>To do</em> and in <em>Eeyore</em>; <em>Nobody yet</em>
+if it is <em>not</em> in <em>People</em>. A condition on a date or numeric category takes
+a range: <em>This week</em> if <em>When</em> is between “beginning of this week” and “end
+of this week”. Items leave again when the condition stops holding.</p>
+
+<h3>Actions: pushing items on</h3>
+<p><strong>Assignment actions</strong> run once, when an item joins the category: also
+put it in another category, take it out of one, give it a date (“tomorrow”) or a number.
+A <strong>Special action</strong> marks items done, or throws them away, as they arrive.</p>
+
+<div class="story">Rabbit, who has a great many friends and relations, offers to help.
+Piglet makes a <em>Rabbit's helpers</em> category whose action also files each item
+under <em>To do</em> with a When date of tomorrow, because Rabbit likes things Organised.</div>
+
+<h3>Applying new rules to old items</h3>
+<p>New conditions and actions only affect items as they change. <strong>Category ▸
+Execute</strong> applies them to items you already have (all of them, the current one,
+the marked ones, a section or the view); <kbd>ALT-X</kbd> does everything at once and
+<kbd>ALT-E</kbd> just the highlighted category.</p>
+
+<h3>Asking first</h3>
+<p>If you'd rather approve each automatic filing, set <strong>File ▸ Properties ▸ Confirm
+assignments</strong> to <em>Always</em>. A <code>?</code> then appears in the title bar,
+and <strong>Category ▸ Questions</strong> goes through the suggestions one item at a time
+(<kbd>SPACE</kbd> picks, <kbd>TAB</kbd> picks all, <kbd>ENTER</kbd> confirms).</p>
+</section>
+
+<!-- ===================================================================== -->
+<section id="files">
+<h2>11. Files, printing and looks</h2>
+
+<table>
+  <tr><th>To</th><th>Press or choose</th></tr>
+  <tr><td>Save</td><td><kbd>CTRL-S</kbd> (or <kbd>ALT-W</kbd>); <strong>File ▸ Write</strong> to save under a new name</td></tr>
+  <tr><td>Open another file</td><td><kbd>CTRL-O</kbd> (or <kbd>ALT-G</kbd>)</td></tr>
+  <tr><td>Start a new file</td><td><strong>File ▸ New</strong></td></tr>
+  <tr><td>Print the view to a text file</td><td><kbd>CTRL-P</kbd></td></tr>
+  <tr><td>Undo / redo</td><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td></tr>
+  <tr><td>Quit</td><td><kbd>CTRL-Q</kbd> (or <kbd>ALT-Q</kbd>); Agenda asks before losing changes</td></tr>
+</table>
+
+<p>Agenda is blue and white like its DOS ancestor. For a plain terminal:</p>
+<pre class="shell">./agenda --mono party.agenda      # bold, dim and reverse only
+NO_COLOR=1 ./agenda party.agenda  # the same</pre>
+</section>
+
+<!-- ===================================================================== -->
+<section id="keys">
+<h2>12. Keyboard reference</h2>
+
+<p>Every function key also works as <kbd>ESC</kbd> then its digit (<kbd>ESC</kbd>
+<kbd>0</kbd> is <kbd>F10</kbd>), every <kbd>ALT-F</kbd> key as <kbd>ESC</kbd> then the
+shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter.</p>
+
+<table>
+  <tr><th>Key</th><th>In a view</th><th>Mac-friendly</th></tr>
+  <tr><td><kbd>F1</kbd></td><td>Help</td><td></td></tr>
+  <tr><td><kbd>F2</kbd></td><td>Edit item, section head or column entry</td><td><kbd>CTRL-E</kbd></td></tr>
+  <tr><td><kbd>F3</kbd></td><td>Choices: assignment profile, or the categories for a column</td><td></td></tr>
+  <tr><td><kbd>F4</kbd></td><td>Done / not done</td><td><kbd>CTRL-K</kbd></td></tr>
+  <tr><td><kbd>F5</kbd></td><td>Note</td><td></td></tr>
+  <tr><td><kbd>F6</kbd></td><td>Properties of the item or category</td><td></td></tr>
+  <tr><td><kbd>F7</kbd></td><td>Mark (on a section head: all its items)</td><td></td></tr>
+  <tr><td><kbd>F8</kbd> / <kbd>F9</kbd></td><td>View manager / category manager</td><td></td></tr>
+  <tr><td><kbd>F10</kbd></td><td>Menu</td><td><kbd>/</kbd></td></tr>
+  <tr><td><kbd>INS</kbd></td><td>New item (or column entry)</td><td><kbd>CTRL-N</kbd>, <kbd>ALT-I</kbd></td></tr>
+  <tr><td><kbd>DEL</kbd></td><td>Remove from section or column</td><td><kbd>fn-⌫</kbd></td></tr>
+  <tr><td><kbd>ALT-F2</kbd></td><td>When date</td><td></td></tr>
+  <tr><td><kbd>ALT-F4</kbd></td><td>Discard</td><td><kbd>CTRL-D</kbd></td></tr>
+  <tr><td><kbd>ALT-F5</kbd></td><td>Go to a section</td><td></td></tr>
+  <tr><td><kbd>ALT-F6</kbd></td><td>Search (then <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd>)</td><td></td></tr>
+  <tr><td><kbd>ALT-F7</kbd></td><td>Unmark all</td><td></td></tr>
+  <tr><td><kbd>ALT-F8</kbd></td><td>Last view</td><td></td></tr>
+  <tr><td><kbd>ALT-F10</kbd></td><td>Move item</td><td></td></tr>
+  <tr><td><kbd>ALT-A</kbd></td><td>Alarm</td><td></td></tr>
+  <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-U</kbd></td><td>Add section below / above</td><td></td></tr>
+  <tr><td><kbd>ALT-R</kbd> / <kbd>ALT-L</kbd></td><td>Add column right / left</td><td></td></tr>
+  <tr><td><kbd>ALT-J</kbd></td><td>Next marked item</td><td></td></tr>
+  <tr><td><kbd>ALT-K</kbd></td><td>Show / hide the key bar</td><td></td></tr>
+  <tr><td><kbd>ALT-M</kbd></td><td>Assign to a category</td><td></td></tr>
+  <tr><td><kbd>ALT-N</kbd> / <kbd>ALT-P</kbd></td><td>Next / previous view</td><td></td></tr>
+  <tr><td><kbd>ALT-O</kbd></td><td>Depend on the marked items</td><td></td></tr>
+  <tr><td><kbd>ALT-V</kbd></td><td>Show / hide empty sections</td><td></td></tr>
+  <tr><td><kbd>ALT-X</kbd> / <kbd>ALT-E</kbd></td><td>Execute everything / one category</td><td></td></tr>
+  <tr><td><kbd>ALT-−</kbd> / <kbd>ALT-=</kbd></td><td>Collapse / expand section</td><td></td></tr>
+  <tr><td><kbd>CTRL-PGUP</kbd> / <kbd>CTRL-PGDN</kbd></td><td>Previous / next section</td><td><kbd>⌥↑</kbd> / <kbd>⌥↓</kbd></td></tr>
+  <tr><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td><td>Undo / redo</td><td></td></tr>
+  <tr><td><kbd>CTRL-S</kbd> / <kbd>CTRL-O</kbd></td><td>Save / open</td><td><kbd>ALT-W</kbd> / <kbd>ALT-G</kbd></td></tr>
+  <tr><td><kbd>CTRL-P</kbd> / <kbd>CTRL-Q</kbd></td><td>Print to file / quit</td><td><kbd>ALT-Q</kbd></td></tr>
+</table>
+
+<p>While typing, <kbd>CTRL-A</kbd> / <kbd>CTRL-E</kbd> go to the start or end of the line,
+<kbd>⌥←</kbd> / <kbd>⌥→</kbd> move by word, <kbd>CTRL-K</kbd> deletes to the end,
+<kbd>CTRL-W</kbd> deletes a word and <kbd>CTRL-U</kbd> clears the line.</p>
+</section>
+
+<!-- ===================================================================== -->
+<section id="later">
+<h2>13. Still to come</h2>
+<p class="soon">This guide will grow with the program. Planned next: more date phrases
+(working days, “first Wednesday in November”), finer text matching, export and import
+(JSON, and Agenda's own structured files for anyone with old DOS files), datebook views
+by day, week and month, a pop-up calendar, recorded keystroke macros and a preferences
+box.</p>
+
+<div class="story">And the party? Eeyore got a balloon, though it didn't stay round for
+long, and a pot to put it in, which turned out to be exactly what he needed. Piglet
+pressed <kbd>F4</kbd> on the last item, and went home for a small something.</div>
+</section>
+
+<footer>
+  <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="float:right">
+    <path d="M10 14 h20 l-2 20 a3 3 0 0 1 -3 3 h-10 a3 3 0 0 1 -3 -3 z" fill="#b5652b"/>
+    <rect x="8" y="10" width="24" height="5" rx="2" fill="#8a4a1d"/>
+  </svg>
+  Pooh, Piglet, Eeyore and their friends come from A. A. Milne's books about the Hundred
+  Acre Wood; their names are borrowed here with affection. This is a guide to an
+  open-source program in the spirit of Lotus Agenda, which was a product of Lotus
+  Development Corporation.
+</footer>
+
+</main>
+</div>
+</body>
+</html>

@@ -36,6 +36,10 @@ mix escript.build && ./agenda ~/work.agenda   # standalone binary
 
 ## Quick tour
 
+The full user guide, with a worked example, is [`docs/guide/index.html`](docs/guide/index.html)
+(open it in a browser).
+
+
 - **Type** under a section to add an item. It is assigned to that section's
   category, and automatically to any category it mentions.
 - Dates in the text count: "Call Bob next Friday" gets a When date. **ALT-F2**
