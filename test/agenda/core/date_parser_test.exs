@@ -108,6 +108,11 @@ defmodule Agenda.Core.DateParserTest do
     end
   end
 
+  test "digits from other scripts are not read as numbers" do
+    assert DateParser.extract("𑙒pm", ~D[2024-02-29]) == :none
+    assert DateParser.parse("٥/١١", ~D[2026-10-08]) == :error
+  end
+
   property "extract/2 and parse/2 never crash on arbitrary text" do
     words =
       ~w(next last this monday fri sat may 12/24 31/31 2/30 in two a weeks ago tomorrow of the

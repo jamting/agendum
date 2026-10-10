@@ -57,9 +57,27 @@ defmodule Agenda.Core.DateParser do
         {meaning, pattern} <- if(kind == :date, do: pack.rules(), else: pack.time_rules()),
         not (in_text and kind == :date and meaning in pack.text_excluded()) do
       groups = length(Regex.scan(~r/(?<!\\)\((?!\?)/, pattern))
+      pattern = ascii_digits(pattern)
       {meaning, "(?<![\\p{L}\\p{N}])(?:#{pattern})(?![\\p{L}\\p{N}])", groups, pack, position}
     end
   end
+
+  # With Unicode on, \\d would also match other scripts' digits ("٥"), which
+  # are not numbers to us: \\d becomes 0-9, inside a [class] or as one.
+  defp ascii_digits(pattern), do: ascii_digits(pattern, false, "")
+
+  defp ascii_digits("", _in_class, acc), do: acc
+  defp ascii_digits("\\d" <> rest, true, acc), do: ascii_digits(rest, true, acc <> "0-9")
+  defp ascii_digits("\\d" <> rest, false, acc), do: ascii_digits(rest, false, acc <> "[0-9]")
+
+  defp ascii_digits("\\" <> <<c::utf8, rest::binary>>, in_class, acc),
+    do: ascii_digits(rest, in_class, acc <> "\\" <> <<c::utf8>>)
+
+  defp ascii_digits("[" <> rest, false, acc), do: ascii_digits(rest, true, acc <> "[")
+  defp ascii_digits("]" <> rest, true, acc), do: ascii_digits(rest, false, acc <> "]")
+
+  defp ascii_digits(<<c::utf8, rest::binary>>, in_class, acc),
+    do: ascii_digits(rest, in_class, acc <> <<c::utf8>>)
 
   @typedoc """
   Options: `languages:` the language packs to read (`Agenda.Core.DateLanguage`),
