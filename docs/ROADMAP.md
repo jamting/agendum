@@ -32,7 +32,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Search and replace in notes (ALT-F6 and ALT-S in a note) (R39)
 - [x] Time in the title bar; alarms before the When date and time (R38)
 - [x] Colour and monochrome themes: `--theme classic|mono`, `--mono`, NO_COLOR (R40)
-- [ ] Date display format setting (File Properties: date order, separator, 12/24-hour clock, day of week)
+- [x] Date display format: File ▸ Properties sets date order, separator, 12/24-hour clock, day of week (R41)
 - [x] Show a category's short name in columns too narrow for its full name (e.g. "Anna" instead of "Anna Las") (R22)
 
 ## Milestone 3 — Smarter assignment
@@ -42,6 +42,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Date parsing from item text into When (R14)
 - [x] Times of day on When dates (R14b)
 - [ ] More date phrases: recurring dates, working days, date settings (R14a)
+- [ ] More date display options: per-column formats, Day #, Week #, Relative, input format (R41)
 - [x] Assignment conditions, conditional assignments (R15)
 - [ ] Date conditions and "Also match" text conditions (R15a)
 - [ ] Actions: remove, date, special (done, discard, export) (R15b)

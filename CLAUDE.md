@@ -60,7 +60,9 @@ Keep changes small and focused; one feature per commit.
 - Core functions that can fail return `{:ok, ...} | {:error, atom}`; the UI
   turns error atoms into messages.
 - Ids are positive integers from one shared counter (`db.next_id`).
-- Dates display as ISO 8601 (`DateParser.format/1` is the single place).
+- Dates display in the file's `Core.DateFormat` (default ISO 8601): use
+  `DateFormat.date/2`, `time/2` or `date_time/3` with `db.date_format`. Dates
+  offered for editing stay ISO 8601 (`DateParser.format/1`), which the parser reads back.
 - Keys are decoded in `Agenda.TUI.Keys`. Function keys may be awkward in
   some terminals, so every F-key also works as ESC + digit, and ALT-Fn as
   ESC + shifted digit. Keep an alternative whenever you add a key: Mac

@@ -5,7 +5,7 @@ defmodule Agenda.Core.ViewModel do
   TUI renders it, and tests can assert on it without a terminal.
   """
 
-  alias Agenda.Core.{Assign, Database, DateParser, View}
+  alias Agenda.Core.{Assign, Database, DateFormat, View}
   alias Agenda.Core.View.SortKey
 
   defmodule Row do
@@ -145,8 +145,8 @@ defmodule Agenda.Core.ViewModel do
     cond do
       field = Database.date_field(db, head_id) ->
         if field == :when,
-          do: DateParser.format_when(item.when, item.when_time),
-          else: DateParser.format(Map.get(item, field))
+          do: DateFormat.date_time(item.when, item.when_time, db.date_format),
+          else: DateFormat.date(Map.get(item, field), db.date_format)
 
       head.children == [] ->
         if Database.member?(db, item.id, head_id), do: "*", else: ""

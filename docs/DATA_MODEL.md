@@ -35,6 +35,7 @@ erDiagram
         map special "entry/when/done => category id"
         bool auto_date "read When dates from item text"
         set conditional "item-category links made by conditions"
+        DateFormat date_format "how dates and times display (R41)"
     }
     ITEM {
         int id PK
@@ -105,6 +106,13 @@ classDiagram
         +special : Map~entry/when/done, id~
         +auto_date : boolean
         +conditional : MapSet
+        +date_format : DateFormat
+    }
+    class DateFormat {
+        +order : yyyymmdd, mmddyy, ddmmmyy…
+        +separator : String
+        +clock : 12 or 24
+        +day_of_week : boolean
     }
     class Item {
         +id : id
@@ -162,6 +170,7 @@ classDiagram
     Database *-- Category
     Database *-- View
     Database *-- Links
+    Database *-- DateFormat
     View *-- Section
     View *-- Column
 ```
@@ -173,6 +182,7 @@ classDiagram
 | `Category`                            | `lib/agenda/core/category.ex` | Tree node with flags for the assignment rules. **Does not know its items.** |
 | `View`, `View.Section`, `View.Column` | `lib/agenda/core/view.ex`     | Pure presentation config; references categories by id.                      |
 | `Links`                               | `lib/agenda/core/links.ex`    | Generic bidirectional many-to-many relation.                                |
+| `DateFormat` | `lib/agenda/core/date_format.ex` | How the file displays dates and times; display only (R41). |
 
 ### Ids
 
@@ -388,7 +398,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

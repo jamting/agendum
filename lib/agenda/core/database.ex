@@ -14,7 +14,7 @@ defmodule Agenda.Core.Database do
   Every function is pure: it takes a database and returns a new one.
   """
 
-  alias Agenda.Core.{Category, Item, Links, View}
+  alias Agenda.Core.{Category, DateFormat, Item, Links, View}
   alias Agenda.Core.View.{Column, Section}
 
   @type id :: pos_integer
@@ -29,7 +29,8 @@ defmodule Agenda.Core.Database do
           main_id: id,
           special: %{entry: id, when: id, done: id},
           auto_date: boolean,
-          conditional: MapSet.t({id, id})
+          conditional: MapSet.t({id, id}),
+          date_format: DateFormat.t()
         }
 
   defstruct items: %{},
@@ -42,7 +43,8 @@ defmodule Agenda.Core.Database do
             main_id: nil,
             special: %{},
             auto_date: true,
-            conditional: MapSet.new()
+            conditional: MapSet.new(),
+            date_format: %DateFormat{}
 
   @date_fields %{entry: :entry, when: :when, done: :done}
 

@@ -266,6 +266,19 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   choose it; the NO_COLOR environment variable selects mono unless
   `--theme` is given. The theme is a preference of the terminal, not part
   of the file.
+- **R41 ✅ Date display format** (User's Guide 6-20 to 6-22, 7-13 to 7-15).
+  File ▸ Properties sets how the file displays dates and times, as
+  Agenda's global Display format: Date format (Agenda's 14 orders, from
+  MMDDYY to DDMMMYYYY), Date separator (- . , space : /), Clock (24 or 12
+  hr; 12 shows am/pm) and Show day of week, with a formatted sample. It is
+  stored in the file and used everywhere a date is shown: date columns,
+  the title bar clock, Item Properties, the alarm list, messages and
+  printing. Our choices: the default is YYYYMMDD with "-" and a 24-hour
+  clock (ISO 8601) rather than Agenda's MMDDYY with "/" and 12 hours;
+  dates with a month name always use spaces; dates offered for editing
+  stay ISO 8601. Not done: per-column overrides (Column Properties),
+  Display date and/or time, Day #, Week # and Relative formats, the am/pm
+  and hm time options, and the Input format settings.
 
 ## 5. User interface (Agenda 2.0 conventions)
 

@@ -43,6 +43,24 @@ defmodule Agenda.StoreTest do
     assert loaded == db
   end
 
+  test "files in format version 6 get the default date format", %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    path = Path.join(dir, "v6.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 6, Map.delete(db, :date_format)}))
+
+    assert {:ok, loaded} = Store.load(path)
+    assert loaded.date_format == %Agenda.Core.DateFormat{}
+    assert loaded == db
+  end
+
+  test "the date format is saved", %{tmp_dir: dir} do
+    format = %Agenda.Core.DateFormat{order: :ddmmyy, separator: ".", clock: 12}
+    db = Agenda.Core.set_date_format(Agenda.Core.new_file(), format)
+    path = Path.join(dir, "fmt.agenda")
+    :ok = Store.save(db, path)
+    assert {:ok, %{date_format: ^format}} = Store.load(path)
+  end
+
   test "newer, unknown format versions are refused", %{tmp_dir: dir} do
     path = Path.join(dir, "future.agenda")
     File.write!(path, :erlang.term_to_binary({:agenda, 99, Agenda.Core.new_file()}))

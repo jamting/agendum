@@ -10,7 +10,7 @@ defmodule Agenda.TUI.Render do
       last line   function key bar
   """
 
-  alias Agenda.Core.{Database, DateParser, ViewModel}
+  alias Agenda.Core.{Database, DateFormat, ViewModel}
   alias Agenda.TUI.{CategoryScreens, Completion, Draw, Layout, Menu, State}
 
   @full_screen [:catmgr, :viewmgr, :help, :note]
@@ -25,6 +25,7 @@ defmodule Agenda.TUI.Render do
     :sort,
     :search_box,
     :note_search,
+    :file_props,
     :alarm_list
   ]
 
@@ -70,7 +71,7 @@ defmodule Agenda.TUI.Render do
     right =
       String.trim(
         "#{hides} #{marked}#{if state.alarm_rang, do: "@ ", else: ""}#{indicator(state, base)}  " <>
-          Calendar.strftime(state.now, "%Y-%m-%d %H:%M") <> " "
+          datetime(state, state.now) <> " "
       )
 
     left = " File: #{file}"
@@ -79,6 +80,15 @@ defmodule Agenda.TUI.Render do
     mid = Draw.center(middle, gap)
 
     Draw.line([{:title, left}, {:title, mid}, {:indicator, right}], state.width, :title)
+  end
+
+  # A moment in the file's date format (R41).
+  defp datetime(state, %NaiveDateTime{} = at) do
+    DateFormat.date_time(
+      NaiveDateTime.to_date(at),
+      NaiveDateTime.to_time(at),
+      state.db.date_format
+    )
   end
 
   defp indicator(state, base) do
@@ -91,7 +101,7 @@ defmodule Agenda.TUI.Render do
       top && top.type == :move_item -> "MOVE"
       top && top.type in [:picker, :scope] -> "CHOICES"
       top && top.type in [:profile, :group_profile] -> "ASSIGN"
-      top && top.type in [:props, :choice, :item_props] -> "PROPS"
+      top && top.type in [:props, :choice, :item_props, :file_props] -> "PROPS"
       top && top.type == :sort -> "SORT"
       top && top.type in [:search_box, :searching, :note_search] -> "SEARCH"
       base && base.type == :catmgr -> "CAT MGR"
@@ -293,6 +303,9 @@ defmodule Agenda.TUI.Render do
 
   defp mode_keys(%{type: :note}),
     do: [{"ESC", "Return"}, {"F5", "Return"}, {"ALT-F6", "Search"}, {"ALT-S", "Next"}]
+
+  defp mode_keys(%{type: :file_props}),
+    do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
 
   defp mode_keys(%{type: :note_search}),
     do: [{"↑↓", "Setting"}, {"SPACE", "Change"}, {"ENTER", "Search"}, {"ESC", "Cancel"}]
@@ -717,6 +730,7 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :alarm_list}), do: "Alarm list"
   defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
+  defp box_title(_state, %{type: :file_props}), do: "File properties: date display"
 
   defp box_title(_state, %{type: :search_box, scope: :file}),
     do: "Search the whole file (Show View)"
@@ -781,10 +795,11 @@ defmodule Agenda.TUI.Render do
           case kind do
             :current ->
               at = NaiveDateTime.add(Agenda.Core.when_at(item), -item.alarm_minutes * 60)
-              "rings " <> Calendar.strftime(at, "%Y-%m-%d %H:%M")
+              "rings " <> datetime(state, at)
 
             :past ->
-              "rang " <> Calendar.strftime(item.alarm_rung_at, "%H:%M")
+              "rang " <>
+                DateFormat.time(NaiveDateTime.to_time(item.alarm_rung_at), state.db.date_format)
           end
 
         text = Draw.pad(item.text, max(inner - 28, 10))
@@ -843,6 +858,27 @@ defmodule Agenda.TUI.Render do
     rows ++ [[], [{:box, " Pat* finds Pat, Patty… · (a phrase) · ENTER searches"}]]
   end
 
+  defp box_content(state, %{type: :file_props} = mode, _inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.FileProperties.lines()
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        [
+          {:box, " " <> Draw.pad(label, 17) <> ": "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), value}
+        ]
+      end)
+
+    rows ++
+      [
+        [],
+        [{:box, " Sample: " <> DateFormat.sample(state.db.date_format)}],
+        [],
+        [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]
+      ]
+  end
+
   defp box_content(_state, %{type: :note_search} = mode, inner, _max_rows) do
     rows =
       mode
@@ -896,7 +932,7 @@ defmodule Agenda.TUI.Render do
     cursor = min(mode.cursor, length(rows) - 1)
     value_width = inner - 16
     assignments = Agenda.Core.item_assignments(state.db, item.id)
-    entered = Agenda.Core.DateParser.format(item.entry)
+    entered = DateFormat.date(item.entry, state.db.date_format)
 
     lines =
       rows
@@ -1097,7 +1133,7 @@ defmodule Agenda.TUI.Render do
   # "Anna Lasky (c)" for a conditional one.
   defp assignment_text(db, %{category: id}, item) when id == db.special.when do
     db.categories[id].name <>
-      " (#{DateParser.format_when(item.when, item.when_time)})" <> alarm_note(item)
+      " (#{DateFormat.date_time(item.when, item.when_time, db.date_format)})" <> alarm_note(item)
   end
 
   defp assignment_text(db, a, _item), do: assignment_text(db, a)
@@ -1109,7 +1145,7 @@ defmodule Agenda.TUI.Render do
     name = db.categories[id].name
 
     case kind do
-      :date -> "#{name} (#{Agenda.Core.DateParser.format(date)})"
+      :date -> "#{name} (#{DateFormat.date(date, db.date_format)})"
       :conditional -> name <> " (c)"
       :explicit -> name
     end
@@ -1188,7 +1224,11 @@ defmodule Agenda.TUI.Render do
             |> Enum.reject(&(elem(&1, 0) == ""))
             |> Enum.map_join("; ", fn {c, h} -> "#{h}: #{c}" end)
 
-          done = if row.item.done, do: " (done #{DateParser.format(row.item.done)})", else: ""
+          done =
+            if row.item.done,
+              do: " (done #{DateFormat.date(row.item.done, state.db.date_format)})",
+              else: ""
+
           "  • " <> row.item.text <> done <> if(extra == "", do: "", else: "  [#{extra}]")
         end)
 

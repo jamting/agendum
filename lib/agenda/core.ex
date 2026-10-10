@@ -116,6 +116,10 @@ defmodule Agenda.Core do
   @spec toggle_auto_date(db) :: db
   def toggle_auto_date(db), do: %{db | auto_date: not db.auto_date}
 
+  @doc "Sets how the file displays dates and times (R41)."
+  @spec set_date_format(db, Agenda.Core.DateFormat.t()) :: db
+  def set_date_format(db, %Agenda.Core.DateFormat{} = format), do: %{db | date_format: format}
+
   @spec set_note(db, id, String.t()) :: db
   def set_note(db, id, note), do: Database.update_item(db, id, &%{&1 | note: note})
 

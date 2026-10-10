@@ -444,15 +444,10 @@ defmodule Agenda.Core.DateParser do
   defp month(m), do: Enum.find_value(@months, fn {name, n} -> if name == m, do: n end)
   defp weekday(d), do: Enum.find_value(@weekdays, fn {name, n} -> if name == d, do: n end)
 
-  @doc "Formats a When date with its time of day, if any: \"2026-10-13 15:00\"."
-  @spec format_when(Date.t() | nil, Time.t() | nil) :: String.t()
-  def format_when(nil, _time), do: ""
-  def format_when(date, nil), do: format(date)
-
-  def format_when(date, time),
-    do: format(date) <> " " <> (time |> Time.to_string() |> String.slice(0, 5))
-
-  @doc "Formats a date the way columns display it."
+  @doc """
+  Formats a date as ISO 8601, the form offered for editing (always readable
+  by `parse/2`). Displayed dates follow the file's `Agenda.Core.DateFormat`.
+  """
   @spec format(Date.t() | nil) :: String.t()
   def format(nil), do: ""
   def format(%Date{} = date), do: Date.to_iso8601(date)

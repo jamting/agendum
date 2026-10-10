@@ -11,11 +11,12 @@ defmodule Agenda.TUI.Update do
   """
 
   alias Agenda.Core
-  alias Agenda.Core.{Database, ViewModel}
+  alias Agenda.Core.{Database, DateFormat, ViewModel}
 
   alias Agenda.TUI.{
     CategoryScreens,
     Completion,
+    FileProperties,
     History,
     ItemProperties,
     SearchBox,
@@ -173,6 +174,7 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :sort} = m, key), do: SortBox.handle(state, m, key)
   defp dispatch(state, %{type: :search_box} = m, key), do: SearchBox.handle(state, m, key)
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
+  defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
   defp dispatch(state, %{type: :alarm_list} = m, key), do: AlarmList.handle(state, m, key)
 
   defp dispatch(state, %{type: :searching} = m, key),
@@ -576,7 +578,8 @@ defmodule Agenda.TUI.Update do
       [
         added != [] && "Also assigned to: " <> Enum.join(added, ", "),
         new_when != old_when && new_when &&
-          "When: " <> Agenda.Core.DateParser.format_when(item.when, item.when_time),
+          "When: " <>
+            DateFormat.date_time(item.when, item.when_time, state.db.date_format),
         new_when != old_when && is_nil(new_when) && "When date removed"
       ]
       |> Enum.filter(& &1)
@@ -885,7 +888,7 @@ defmodule Agenda.TUI.Update do
       {:ok, db, :date} ->
         state
         |> State.change_db(db)
-        |> State.info("When: " <> Agenda.Core.DateParser.format(db.items[item_id].when))
+        |> State.info("When: " <> DateFormat.date(db.items[item_id].when, db.date_format))
 
       {:error, :invalid_date} ->
         State.error(state, "Not a date: #{text} (try friday, next week, 12/24, December 24)")
@@ -1093,6 +1096,8 @@ defmodule Agenda.TUI.Update do
     current = if item.when, do: Agenda.Core.DateParser.format(item.when), else: ""
     prompt(state, "When date (overrides dates in the text):", {:when, item.id}, current)
   end
+
+  defp do_perform(state, :file_props, _), do: FileProperties.open(state)
 
   defp do_perform(state, :toggle_auto_date, _) do
     db = Core.toggle_auto_date(state.db)
