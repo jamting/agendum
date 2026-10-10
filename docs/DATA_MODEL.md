@@ -65,10 +65,14 @@ erDiagram
         bool hide_done
         bool hide_empty
         bool hide_inherited
+        list filter "category ids, assigned or not"
+        list sort "SortKey list, at most two"
     }
     SECTION {
         int category_id FK
         bool collapsed
+        list filter "on top of the view filter"
+        list sort "nil = as the view"
     }
     COLUMN {
         int category_id FK
@@ -129,10 +133,14 @@ classDiagram
         +hide_done : boolean
         +hide_empty : boolean
         +hide_inherited : boolean
+        +filter : [id and kind]
+        +sort : [SortKey]
     }
     class Section {
         +category_id : id
         +collapsed : boolean
+        +filter : [id and kind]
+        +sort : [SortKey] or nil
     }
     class Column {
         +category_id : id
@@ -324,6 +332,7 @@ tests in `database_test.exs` and `links_test.exs`):
 6. **Views reference live categories.** `delete_category/2` removes
    sections and columns headed by deleted categories, and also removes the
    deleted ids from every `also_assign` list.
+   Filters and sort keys that name a deleted category are dropped with it.
 7. **Order lists match the maps.** `item_order` holds exactly the keys of
    `items`, and `view_order` exactly the keys of `views`. At least one view
    always exists (`delete_view/2` refuses to delete the last one).
@@ -371,7 +380,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

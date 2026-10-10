@@ -121,6 +121,11 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.add_section/4`, `remove_section/3`, `toggle_section_collapsed/3`, `set_section_category/4` | write | By index within the view.                    |
 | `Core.add_column/5`, `remove_column/3`, `resize_column/4`                                        | write | By index within the view.                    |
 | `Core.toggle_view_option(db, view, :hide_done \| :hide_empty \| :hide_inherited)`                | write | View filters.                                |
+| `Core.cycle_filter(db, view, :view \| {:section, i}, cat)` | write | Filter by category (R28): none → assigned → not assigned → none. |
+| `Core.set_sort(db, view, :view \| {:section, i}, keys)` | write | Sort keys (`View.SortKey`, at most two); a section's `nil` uses the view's (R36). |
+| `Core.entry_categories(db, view, i)` | read | Categories a new item in section `i` needs to pass the filters. |
+| `Core.sort_children(db, parent)`, `sort_views(db)` | write | Alphabetical order (ALT-F5 in the managers). |
+| `Assign.criteria_met?(db, item, criteria)` | read | The AND / exclusive-OR rule shared by conditions and filters. |
 | `Database.view/2`, `views/1`                                                                     | read  | One view / all in `view_order`.              |
 | `ViewModel.build(db, view)`                                                                      | read  | The full read model of a view (below).       |
 | `ViewModel.cell/3`, `column_entries/3`                                                           | read  | What one column shows for one item.          |

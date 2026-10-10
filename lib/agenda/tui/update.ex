@@ -18,6 +18,7 @@ defmodule Agenda.TUI.Update do
     Completion,
     History,
     ItemProperties,
+    SortBox,
     Layout,
     LineEdit,
     Menu,
@@ -131,6 +132,7 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :move_item} = m, key), do: move_key(state, m, key)
   defp dispatch(state, %{type: :item_props} = m, key), do: ItemProperties.handle(state, m, key)
   defp dispatch(state, %{type: :scope} = m, key), do: scope_key(state, m, key)
+  defp dispatch(state, %{type: :sort} = m, key), do: SortBox.handle(state, m, key)
   defp dispatch(state, mode, key), do: CategoryScreens.handle(state, mode, key)
 
   # --- the view ----------------------------------------------------------------
@@ -178,6 +180,7 @@ defmodule Agenda.TUI.Update do
       {:ctrl, "d"} -> scoped(state, :discard, row)
       {:alt_f, 10} -> scoped(state, :move_item, row)
       {:alt, "d"} -> perform(state, :section_below)
+      {:alt_f, 5} -> SortBox.open(state, if(row, do: {:section, row.sidx}, else: :view))
       {:alt, "-"} -> collapse_sections(state, row, true)
       {:alt, "="} -> collapse_sections(state, row, false)
       {:alt, "u"} -> perform(state, :section_above)
@@ -450,10 +453,14 @@ defmodule Agenda.TUI.Update do
           adjacent: adjacent
         )
 
+      # a filtered view or section gives new items what the filter needs (R28)
+      required = Core.entry_categories(db, state.view_id, sidx)
+      db = Enum.reduce(required, db, &Core.assign(&2, id, &1))
+
       state
       |> State.change_db(db)
       |> Map.put(:cursor_key, {:item, sidx, id})
-      |> report_auto_assignments(id, List.wrap(section))
+      |> report_auto_assignments(id, List.wrap(section) ++ required)
     end
   end
 
@@ -870,6 +877,10 @@ defmodule Agenda.TUI.Update do
     end
   end
 
+  defp confirmed(state, {:sort_children, id}, true) do
+    State.change_db(state, Core.sort_children(state.db, id))
+  end
+
   defp confirmed(state, {:discard_items, ids}, true) do
     db = Enum.reduce(ids, state.db, &Core.discard_item(&2, &1))
     state |> State.change_db(db) |> State.info("#{length(ids)} items discarded")
@@ -1030,6 +1041,16 @@ defmodule Agenda.TUI.Update do
   defp do_perform(state, :move_item, %{kind: :item, item: item, category: cat}) do
     start_move(state, [{item.id, cat.id}])
   end
+
+  defp do_perform(state, :filter_view, _),
+    do: CategoryScreens.open_picker(state, {:filter, :view}, nil)
+
+  defp do_perform(state, :sort_view, _), do: SortBox.open(state, :view)
+
+  defp do_perform(state, :filter_section, %{sidx: sidx}),
+    do: CategoryScreens.open_picker(state, {:filter, {:section, sidx}}, nil)
+
+  defp do_perform(state, :sort_section, %{sidx: sidx}), do: SortBox.open(state, {:section, sidx})
 
   defp do_perform(state, :unmark_all, _) do
     state |> State.change_db(Core.unmark_all(state.db)) |> State.info("All items unmarked")

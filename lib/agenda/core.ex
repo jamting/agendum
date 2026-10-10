@@ -730,6 +730,82 @@ defmodule Agenda.Core do
     end)
   end
 
+  # --- filters (R28) and sorting (R36) ---
+
+  @doc """
+  Cycles the filter on `cat_id` for a view (`:view`) or one of its sections
+  (`{:section, index}`): none → assigned → not assigned → none. A filtered
+  view shows only items meeting all its criteria (mutually exclusive
+  categories count as alternatives).
+  """
+  @spec cycle_filter(db, id, :view | {:section, non_neg_integer}, id) :: {:ok, db}
+  def cycle_filter(db, view_id, scope, cat_id) do
+    filter = get_scoped(db, view_id, scope, :filter)
+
+    filter =
+      case List.keyfind(filter, cat_id, 0) do
+        nil -> filter ++ [{cat_id, :assigned}]
+        {_, :assigned} -> List.keyreplace(filter, cat_id, 0, {cat_id, :not_assigned})
+        {_, :not_assigned} -> List.keydelete(filter, cat_id, 0)
+      end
+
+    {:ok, put_scoped(db, view_id, scope, :filter, filter)}
+  end
+
+  @doc """
+  Sets the sort keys (`[View.SortKey.t()]`, at most two are used) for a view
+  or a section; a section's `nil` means "as the view".
+  """
+  @spec set_sort(db, id, :view | {:section, non_neg_integer}, [View.SortKey.t()] | nil) :: db
+  def set_sort(db, view_id, scope, keys),
+    do: put_scoped(db, view_id, scope, :sort, keys && Enum.take(keys, 2))
+
+  @doc """
+  The categories a new item typed into section `index` must have to pass
+  the view's and the section's filters (User's Guide 11-4). Of mutually
+  exclusive alternatives, the first is used.
+  """
+  @spec entry_categories(db, id, non_neg_integer) :: [id]
+  def entry_categories(db, view_id, index) do
+    view = Database.view(db, view_id)
+    section = Enum.at(view.sections, index)
+
+    (view.filter ++ section.filter)
+    |> Enum.filter(&(elem(&1, 1) == :assigned))
+    |> Enum.map(&elem(&1, 0))
+    |> Enum.reduce([], fn cat, chosen ->
+      if Enum.any?(chosen, &Assign.conflict?(db, cat, &1)), do: chosen, else: chosen ++ [cat]
+    end)
+  end
+
+  @doc "Sorts a category's children alphabetically (ALT-F5 in the category manager)."
+  @spec sort_children(db, id) :: db
+  def sort_children(db, parent_id) do
+    Database.update_category(db, parent_id, fn c ->
+      %{c | children: Enum.sort_by(c.children, &String.downcase(db.categories[&1].name))}
+    end)
+  end
+
+  @doc "Sorts the views alphabetically (ALT-F5 in the view manager)."
+  @spec sort_views(db) :: db
+  def sort_views(db),
+    do: %{db | view_order: Enum.sort_by(db.view_order, &String.downcase(db.views[&1].name))}
+
+  defp get_scoped(db, view_id, :view, field), do: Map.fetch!(Database.view(db, view_id), field)
+
+  defp get_scoped(db, view_id, {:section, index}, field),
+    do:
+      db |> Database.view(view_id) |> Map.fetch!(:sections) |> Enum.at(index) |> Map.fetch!(field)
+
+  defp put_scoped(db, view_id, :view, field, value),
+    do: Database.update_view(db, view_id, &Map.put(&1, field, value))
+
+  defp put_scoped(db, view_id, {:section, index}, field, value) do
+    Database.update_view(db, view_id, fn v ->
+      %{v | sections: List.update_at(v.sections, index, &Map.put(&1, field, value))}
+    end)
+  end
+
   @doc "Toggles a boolean view option such as `:hide_done`."
   @spec toggle_view_option(db, id, :hide_done | :hide_empty | :hide_inherited) :: db
   def toggle_view_option(db, view_id, option) do

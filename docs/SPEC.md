@@ -186,7 +186,30 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 - **R26 ✅ Move (ALT-F10).** Moving an item to another section reassigns it
   from the old section's category to the new one and reorders it.
 - **R27 ✅ View options.** Hide done items, empty sections, inherited items.
-- **R28 ⏳ Filters and sorting** per section; **R29 ⏳ numeric columns**.
+- **R28 ✅ Filters** (User's Guide chapter 11). A view, and each of its
+  sections, can be filtered by categories: items assigned (or not
+  assigned) to them. All criteria must hold, except that categories that
+  are mutually exclusive are alternatives (same rule as R15). The view's
+  filter shows in brackets beside its name, a section's after its head.
+  Typing an item into a filtered view or section assigns it to the
+  categories the filter requires (of exclusive alternatives, the first),
+  so it stays in sight. Set with View ▸ Filter and View ▸ Section ▸ Filter
+  (ENTER cycles + assigned · - not assigned · none; the box stays open).
+  Not done: date and numeric filters.
+- **R29 ⏳ Numeric columns.**
+- **R36 ✅ Sorting items** (User's Guide chapter 15). A view has sort
+  settings for all its sections; a section can override them or use the
+  view's. Up to two keys (primary, then a secondary for ties): item text,
+  or a category — its children in hierarchy order or alphabetically, or
+  the date for a date category. Each key has an order (ascending,
+  descending) and puts items without a value at the bottom or top. Ties
+  keep entry order. Set in the Sort box (View ▸ Order, View ▸ Section ▸
+  Sort, or ALT-F5 in a view for the current section). Our choice: sorting
+  is applied whenever the view is shown, like Agenda's "When item is
+  entered" setting, so "On leaving a section" and ALT-S re-sorting are not
+  needed. ALT-F5 in the category manager sorts the highlighted category's
+  children alphabetically (after Y/N); in the view manager it sorts the
+  views. Not done: sorting by category note, sorting section heads.
 
 ## 5. User interface (Agenda 2.0 conventions)
 

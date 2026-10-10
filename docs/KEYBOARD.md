@@ -20,6 +20,7 @@ settings, as described in the second half of this guide.
 | Unmark all items | ALT-F7 | ESC then `&`, or menu Item ▸ Unmark |
 | Jump to the next marked item | ALT-J | ESC then `j` (Option-j) |
 | Assign the item or marked items to a category (MakeAssign) | ALT-M | ESC then `m` (Option-m), or menu Item ▸ Categorize |
+| Sort settings for the section (in a view); sort a family (category manager); sort views (view manager) | ALT-F5 | ESC then `%` |
 | Remove from section / column                      | DEL                   | fn-⌫ (forward delete)                                                 |
 | Undo / redo                                       | —                     | **CTRL-Z** / **CTRL-Y** (also in the menu)                            |
 | Save / open / print to file / quit                | menu                  | **CTRL-S** / **CTRL-O** / **CTRL-P** / **CTRL-Q** (CTRL-C also quits) |

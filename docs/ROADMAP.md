@@ -27,7 +27,8 @@ Rule numbers refer to `SPEC.md`.
 - [x] Collapse/expand families in the category manager, boxes and profile, and sections in views (ALT− / ALT=) (R33)
 - [x] Item properties box (F6 on an item), as well as the profile (R34)
 - [x] Marked items: bulk done / discard / remove / When / move / assign, group profile (R35)
-- [ ] Section sorting (ALT-F5 SORT) and per-section filters (R28)
+- [x] Sorting items (ALT-F5 SORT) and view/section filters by category (R28, R36)
+- [ ] Date and numeric filters; sorting by category note; sorting section heads
 - [ ] Search (ALT-F6 SEARCH)
 - [ ] Show the time in the title bar; alarms (When date reached)
 - [ ] Configurable colours / monochrome theme; date format setting

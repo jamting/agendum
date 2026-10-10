@@ -52,7 +52,10 @@ defmodule Agenda.TUI.Menu do
             {"Below", "Add a section below the current one (ALT-D)", :section_below},
             {"Above", "Add a section above the current one (ALT-U)", :section_above},
             {"Remove", "Remove the current section from the view (DEL on head)", :remove_section},
-            {"Collapse", "Collapse or expand the current section", :collapse_section}
+            {"Collapse", "Collapse or expand the current section", :collapse_section},
+            {"Filter", "Show only items in (or not in) chosen categories, in this section",
+             :filter_section},
+            {"Sort", "How this section's items are ordered (ALT-F5)", :sort_section}
           ]},
          {"Column", "Add, remove or resize columns",
           [
@@ -62,6 +65,8 @@ defmodule Agenda.TUI.Menu do
             {"Wider", "Make the highlighted column wider", :wider},
             {"Narrower", "Make the highlighted column narrower", :narrower}
           ]},
+         {"Filter", "Show only items in (or not in) chosen categories", :filter_view},
+         {"Order", "Sort the items in every section (the view's sort settings)", :sort_view},
          {"Hide", "Choose which items the view hides",
           [
             {"Done", "Hide or show done items", {:toggle_view, :hide_done}},

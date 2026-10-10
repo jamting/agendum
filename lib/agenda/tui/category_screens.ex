@@ -209,6 +209,13 @@ defmodule Agenda.TUI.CategoryScreens do
       {:f, 6} ->
         open_props(state, id)
 
+      {:alt_f, 5} ->
+        Update.confirm(
+          state,
+          "Sort the children of #{cat.name} alphabetically? (Y/N)",
+          {:sort_children, id}
+        )
+
       {:alt_f, 10} ->
         if Database.protected?(db, id),
           do: State.error(state, "#{cat.name} cannot be moved"),
@@ -233,13 +240,30 @@ defmodule Agenda.TUI.CategoryScreens do
 
   defp screen_key(state, %{type: :picker} = mode, rows, key) do
     case key do
-      :esc when mode.search != "" -> State.put_mode(state, %{mode | search: ""})
-      :esc -> State.pop(state)
-      :enter -> pick(State.pop(state), mode.purpose, current_id(rows, mode))
-      :insert -> %{state | edit: %{target: :new_pick, line: LineEdit.new()}}
-      :backspace -> search(state, mode, rows, String.slice(mode.search, 0..-2//1))
-      {:char, c} -> search(state, mode, rows, mode.search <> c)
-      _ -> state
+      :esc when mode.search != "" ->
+        State.put_mode(state, %{mode | search: ""})
+
+      :esc ->
+        State.pop(state)
+
+      # filters and conditions are set several at a time: the box stays open
+      :enter when elem(mode.purpose, 0) in [:filter, :condition] ->
+        pick(state, mode.purpose, current_id(rows, mode))
+
+      :enter ->
+        pick(State.pop(state), mode.purpose, current_id(rows, mode))
+
+      :insert ->
+        %{state | edit: %{target: :new_pick, line: LineEdit.new()}}
+
+      :backspace ->
+        search(state, mode, rows, String.slice(mode.search, 0..-2//1))
+
+      {:char, c} ->
+        search(state, mode, rows, mode.search <> c)
+
+      _ ->
+        state
     end
   end
 
@@ -491,6 +515,14 @@ defmodule Agenda.TUI.CategoryScreens do
       | col: index + 1
     }
   end
+
+  defp pick(state, {:filter, scope}, id) do
+    {:ok, db} = Core.cycle_filter(state.db, state.view_id, scope, id)
+    State.change_db(state, db)
+  end
+
+  defp pick(state, {:sort_category, scope, index}, id),
+    do: Agenda.TUI.SortBox.set_category(state, scope, index, id)
 
   # ALT-M (MakeAssign): one item or all marked items
   defp pick(state, {:assign_items, ids}, id) do

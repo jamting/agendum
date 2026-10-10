@@ -50,6 +50,7 @@ shell does terminal I/O and file I/O.
 | `TUI.Layout`                   | ✔     | Flattens a view to cursor rows and wrapped lines; keeps the cursor anchored and visible.                                         |
 | `TUI.Completion` | ✔ | Automatic completion while typing a column entry: the matches (from `Core.completions/3`) and the one shown. |
 | `TUI.ItemProperties` | ✔ | The Item Properties box: text, note, statistics and the item's assignments (R34). |
+| `TUI.SortBox` | ✔ | The Sort box: a view's or a section's sort keys (R36). |
 | `TUI.Render`                   | ✔     | State → list of styled lines (title bar, control panel, body, key bar, boxes).                                                   |
 | `TUI.Draw`, `TUI.Theme`        | ✔     | Line/box primitives; symbolic style → ANSI colours.                                                                              |
 | `TUI.Keys`                     | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |

@@ -62,6 +62,9 @@ defmodule Agenda.TUI.ViewManager do
       {:f, 2} ->
         %{state | edit: %{target: view_id, line: LineEdit.new(state.db.views[view_id].name)}}
 
+      {:alt_f, 5} ->
+        state |> State.change_db(Core.sort_views(state.db)) |> State.put_mode(%{mode | cursor: 0})
+
       {:alt, :up} ->
         reorder(state, mode, -1)
 

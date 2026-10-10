@@ -203,8 +203,19 @@ defmodule Agenda.Core.Database do
           {vid,
            %{
              v
-             | sections: Enum.reject(v.sections, &(&1.category_id in doomed_set)),
-               columns: Enum.reject(v.columns, &(&1.category_id in doomed_set))
+             | sections:
+                 v.sections
+                 |> Enum.reject(&(&1.category_id in doomed_set))
+                 |> Enum.map(
+                   &%{
+                     &1
+                     | filter: drop_filters(&1.filter, doomed_set),
+                       sort: drop_keys(&1.sort, doomed_set)
+                   }
+                 ),
+               columns: Enum.reject(v.columns, &(&1.category_id in doomed_set)),
+               filter: drop_filters(v.filter, doomed_set),
+               sort: drop_keys(v.sort, doomed_set)
            }}
         end)
 
@@ -456,6 +467,17 @@ defmodule Agenda.Core.Database do
     do: name |> String.trim() |> String.downcase() |> String.replace(~r/\s+/u, " ")
 
   defp take_id(%__MODULE__{next_id: id} = db), do: {%{db | next_id: id + 1}, id}
+
+  # Filters and sort keys that name deleted categories go with them.
+  defp drop_filters(filter, doomed), do: Enum.reject(filter, &(elem(&1, 0) in doomed))
+  defp drop_keys(nil, _doomed), do: nil
+
+  defp drop_keys(keys, doomed) do
+    Enum.reject(keys, fn
+      %{on: {:category, id}} -> MapSet.member?(doomed, id)
+      _ -> false
+    end)
+  end
 
   defp put_new_category(db, category) do
     {db, id} = take_id(db)

@@ -7,13 +7,14 @@ defmodule Agenda.Store do
 
   Versions: 1 (initial); 2 adds `Item.when_explicit` and
   `Database.auto_date` (R14); 3 adds `Category.conditions` and
-  `Database.conditional` (R15). Older versions are upgraded on load by
-  filling new struct fields with their defaults.
+  `Database.conditional` (R15); 4 adds view and section `filter` and
+  `sort` (R28, R36). Older versions are upgraded on load by filling new
+  struct fields with their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 3
+  @format_version 4
   @extension ".agenda"
 
   def extension, do: @extension
@@ -68,7 +69,18 @@ defmodule Agenda.Store do
       | items: Map.new(db.items, fn {id, i} -> {id, struct(Item, Map.from_struct(i))} end),
         categories:
           Map.new(db.categories, fn {id, c} -> {id, struct(Category, Map.from_struct(c))} end),
-        views: Map.new(db.views, fn {id, v} -> {id, struct(View, Map.from_struct(v))} end)
+        views: Map.new(db.views, fn {id, v} -> {id, upgrade_view(v)} end)
+    }
+  end
+
+  defp upgrade_view(view) do
+    alias Agenda.Core.View
+    view = struct(View, Map.from_struct(view))
+
+    %{
+      view
+      | sections: Enum.map(view.sections, &struct(View.Section, Map.from_struct(&1))),
+        columns: Enum.map(view.columns, &struct(View.Column, Map.from_struct(&1)))
     }
   end
 

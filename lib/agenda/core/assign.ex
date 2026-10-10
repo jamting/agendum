@@ -115,10 +115,20 @@ defmodule Agenda.Core.Assign do
   @spec conditions_met?(db, id, id) :: boolean
   def conditions_met?(db, item_id, cat_id) do
     conditions = Enum.reject(db.categories[cat_id].conditions, &(elem(&1, 0) == cat_id))
-    {positive, negative} = Enum.split_with(conditions, &(elem(&1, 1) == :assigned))
+    conditions != [] and criteria_met?(db, item_id, conditions)
+  end
 
-    conditions != [] and
-      Enum.all?(negative, fn {target, _} -> not Database.member?(db, item_id, target) end) and
+  @doc """
+  Whether an item meets a list of `{category, :assigned | :not_assigned}`
+  criteria, as used by conditions (R15) and filters (R28): every criterion
+  must hold, except that `:assigned` criteria naming mutually exclusive
+  categories are alternatives. An empty list is always met.
+  """
+  @spec criteria_met?(db, id, [{id, :assigned | :not_assigned}]) :: boolean
+  def criteria_met?(db, item_id, criteria) do
+    {positive, negative} = Enum.split_with(criteria, &(elem(&1, 1) == :assigned))
+
+    Enum.all?(negative, fn {target, _} -> not Database.member?(db, item_id, target) end) and
       positive
       |> Enum.map(&elem(&1, 0))
       |> exclusive_groups(db)

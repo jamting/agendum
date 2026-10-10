@@ -14,7 +14,7 @@ defmodule Agenda.TUI.Render do
   alias Agenda.TUI.{CategoryScreens, Completion, Draw, Layout, Menu, State}
 
   @full_screen [:catmgr, :viewmgr, :help, :note]
-  @boxes [:picker, :profile, :props, :choice, :item_props, :group_profile, :scope]
+  @boxes [:picker, :profile, :props, :choice, :item_props, :group_profile, :scope, :sort]
 
   @spec render(State.t()) :: [Draw.line()]
   def render(%State{width: w} = state) do
@@ -59,7 +59,7 @@ defmodule Agenda.TUI.Render do
       String.trim("#{hides} #{marked}#{indicator(state, base)}  #{Date.to_iso8601(state.today)} ")
 
     left = " File: #{file}"
-    middle = "View: #{view.name}"
+    middle = "View: #{view.name}" <> filter_text(state.db, view.filter)
     gap = max(state.width - String.length(left) - String.length(right), 0)
     mid = Draw.center(middle, gap)
 
@@ -77,6 +77,7 @@ defmodule Agenda.TUI.Render do
       top && top.type in [:picker, :scope] -> "CHOICES"
       top && top.type in [:profile, :group_profile] -> "ASSIGN"
       top && top.type in [:props, :choice, :item_props] -> "PROPS"
+      top && top.type == :sort -> "SORT"
       base && base.type == :catmgr -> "CAT MGR"
       base && base.type == :viewmgr -> "VW MGR"
       base && base.type == :note -> "NOTE"
@@ -242,6 +243,8 @@ defmodule Agenda.TUI.Render do
   defp mode_keys(%{type: type}) when type in [:profile, :group_profile],
     do: [{"SPACE", "Assign/Unassign"}, {"ESC", "Return"}]
 
+  defp mode_keys(%{type: :sort}), do: [{"ENTER", "Change"}, {"↑↓", "Setting"}, {"ESC", "Close"}]
+
   defp mode_keys(%{type: :scope}),
     do: [{"M", "Marked items"}, {"C", "Current item"}, {"ENTER", "Select"}, {"ESC", "Cancel"}]
 
@@ -322,7 +325,12 @@ defmodule Agenda.TUI.Render do
           [{:normal, " "}] ++ field(editing.line, tw + 1, :edit)
 
         _ ->
-          suffix = if row.collapsed, do: " §#{row.count}", else: ""
+          section = Enum.at(State.view(state).sections, row.sidx)
+
+          suffix =
+            if(row.collapsed, do: " §#{row.count}", else: "") <>
+              filter_text(state.db, section.filter)
+
           [{:normal, " "}, {style, Draw.pad(cat.name <> suffix, tw + 1)}]
       end
 
@@ -575,6 +583,7 @@ defmodule Agenda.TUI.Render do
      ALT-F2        Set the When date (or menu Item When)
      ALT-F10       Move item to another section
      ALT-− / ALT-= Collapse / expand section (twice: all)
+     ALT-F5        Sort settings for the section    ESC %
      ALT-D / ALT-U Add section below / above
      ALT-R / ALT-L Add column right / left
      ←→ TAB        Move between item and columns
@@ -642,6 +651,9 @@ defmodule Agenda.TUI.Render do
       {:assign_items, [_]} -> "Assign the item to"
       {:assign_items, ids} -> "Assign #{length(ids)} marked items to"
       {:condition, id} -> "Conditions for #{state.db.categories[id].name}"
+      {:filter, :view} -> "Filter the view"
+      {:filter, {:section, i}} -> "Filter the #{section_name(state, i)} section"
+      {:sort_category, _, _} -> "Sort by the children of"
     end
   end
 
@@ -651,6 +663,10 @@ defmodule Agenda.TUI.Render do
     do: "Assignments: #{length(ids)} marked items"
 
   defp box_title(_state, %{type: :scope}), do: "Marked items"
+  defp box_title(_state, %{type: :sort, scope: :view}), do: "Sort items in all sections"
+
+  defp box_title(state, %{type: :sort, scope: {:section, i}}),
+    do: "Sort items in #{section_name(state, i)}"
 
   defp box_title(state, %{type: :profile, item_id: id}),
     do: "Assignments: " <> String.slice(state.db.items[id].text, 0, 40)
@@ -693,6 +709,22 @@ defmodule Agenda.TUI.Render do
   end
 
   # "Marked items or current item?" (User's Guide 13-2)
+  defp box_content(state, %{type: :sort} = mode, inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.SortBox.lines(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        [
+          {:box, " " <> Draw.pad(label, 12) <> ": "},
+          {if(i == mode.cursor, do: :box_selected, else: :box),
+           String.slice(value, 0, inner - 16)}
+        ]
+      end)
+
+    rows ++ [[], [{:box, " ENTER changes the highlighted setting · ESC closes"}]]
+  end
+
   defp box_content(_state, %{type: :scope} = mode, _inner, _max_rows) do
     options = ["Marked items (#{length(mode.marked)})", "Current item"]
 
@@ -831,7 +863,7 @@ defmodule Agenda.TUI.Render do
       _ when mode.search != "" ->
         [{:box, " Search: " <> mode.search}]
 
-      _ when elem(mode.purpose, 0) == :condition ->
+      _ when elem(mode.purpose, 0) in [:condition, :filter] ->
         [{:box, " ENTER cycles: + assigned · - not assigned · none"}]
 
       _ ->
@@ -871,6 +903,19 @@ defmodule Agenda.TUI.Render do
 
       true ->
         " "
+    end
+  end
+
+  defp profile_marker(state, %{type: :picker, purpose: {:filter, scope}}, id) do
+    view = State.view(state)
+
+    filter =
+      if scope == :view, do: view.filter, else: Enum.at(view.sections, elem(scope, 1)).filter
+
+    case List.keyfind(filter, id, 0) do
+      {_, :assigned} -> "+"
+      {_, :not_assigned} -> "-"
+      nil -> " "
     end
   end
 
@@ -923,6 +968,24 @@ defmodule Agenda.TUI.Render do
       _ ->
         "ENTER edit · DEL remove · type to assign · F3 profile"
     end
+  end
+
+  # " [High, -People]": a filter as Agenda shows it beside the view name
+  defp filter_text(_db, []), do: ""
+
+  defp filter_text(db, filter) do
+    names =
+      Enum.map_join(filter, ", ", fn
+        {id, :assigned} -> db.categories[id].name
+        {id, :not_assigned} -> "-" <> db.categories[id].name
+      end)
+
+    " [#{names}]"
+  end
+
+  defp section_name(state, index) do
+    section = Enum.at(State.view(state).sections, index)
+    state.db.categories[section.category_id].name
   end
 
   defp scope_question(action) do
