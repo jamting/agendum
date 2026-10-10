@@ -260,6 +260,20 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   executes everything on all items; ALT-E the highlighted category's
   family (in a view: the section's category). Category ▸ Recalc still
   re-runs automatic assignment and dating for every item.
+- **R16 ✅ Suggested assignments** (User's Guide 19-9, 19-12). File
+  Properties ▸ Confirm assignments: Never (the default; text matches are
+  assigned at once) or Always: an item's text matches become suggestions
+  instead, "?" shows in the title while any wait, and Category ▸ Questions
+  (Agenda's Utilities Questions) shows each such item in turn with its
+  suggested categories: SPACE picks one, TAB all, ENTER assigns the picked
+  ones (explicitly, so an edit does not take them away) and goes to the
+  next item, ESC stops. Editing an item asks again about what its new text
+  matches; discarding the item or the category drops the question. Not
+  done: "Sometimes" (it depends on partial matches, R16a).
+- **R16a ⏳ Text matching settings** (User's Guide 19-7 to 19-11): text
+  matching on or off, match on item text, note or both, required match
+  strength (exact, partial 50%, minimal), ignore suffixes, ignore accents,
+  and text enclosed in quotes (or other marks) ignored.
 - **R15c ✅ Text matches as conditional assignments** (User's Guide 18-3).
   An assignment made because the item's text matched a category (its name,
   short name or text conditions) is conditional, marked "(c)" in Item

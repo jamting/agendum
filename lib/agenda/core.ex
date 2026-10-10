@@ -657,6 +657,36 @@ defmodule Agenda.Core do
   def set_special_action(db, cat_id, special) when special in [nil, :done, :discard],
     do: {:ok, Database.update_category(db, cat_id, &%{&1 | special: special})}
 
+  # --- suggested assignments (R16) --------------------------------------------
+
+  @doc """
+  Whether text matches are made at once (`:never` asked, the default) or
+  suggested and confirmed with Utilities Questions (`:always`; File
+  Properties ▸ Confirm assignments, User's Guide 19-9).
+  """
+  @spec set_confirm_assignments(db, :never | :always) :: db
+  def set_confirm_assignments(db, mode) when mode in [:never, :always],
+    do: %{db | confirm_assignments: mode}
+
+  @doc "The items with suggested assignments, in item order, each with its categories."
+  @spec questions(db) :: [{id, [id]}]
+  def questions(db),
+    do: for(id <- db.item_order, cats = db.suggestions[id], cats not in [nil, []], do: {id, cats})
+
+  @doc """
+  Answers an item's question (Utilities Questions, User's Guide 19-12): the
+  chosen categories are assigned explicitly, the rest dropped.
+  """
+  @spec answer_question(db, id, [id], clock | nil) :: db
+  def answer_question(db, item_id, cat_ids, clock \\ nil) do
+    answered = %{db | suggestions: Map.delete(db.suggestions, item_id)}
+
+    cat_ids
+    |> Enum.filter(&Map.has_key?(db.categories, &1))
+    |> Enum.reduce(answered, &user_assign(&2, item_id, &1))
+    |> settle(answered, item_id, clock)
+  end
+
   # --- dependencies (R43) ------------------------------------------------------
 
   @doc """

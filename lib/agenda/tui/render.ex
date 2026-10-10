@@ -30,6 +30,7 @@ defmodule Agenda.TUI.Render do
     :range_filter,
     :action_box,
     :execute,
+    :questions,
     :column_props,
     :alarm_list
   ]
@@ -76,7 +77,7 @@ defmodule Agenda.TUI.Render do
 
     right =
       String.trim(
-        "#{hides} #{marked}#{if state.alarm_rang, do: "@ ", else: ""}#{numeric_marker(state)}#{indicator(state, base)}  " <>
+        "#{hides} #{marked}#{if state.alarm_rang, do: "@ ", else: ""}#{questions_marker(state)}#{numeric_marker(state)}#{indicator(state, base)}  " <>
           DateFormat.datetime(state.now, state.db.date_format) <> " "
       )
 
@@ -87,6 +88,10 @@ defmodule Agenda.TUI.Render do
 
     Draw.line([{:title, left}, {:title, mid}, {:indicator, right}], state.width, :title)
   end
+
+  # "?" while there are suggested assignments to confirm (User's Guide 19-9).
+  defp questions_marker(state),
+    do: if(Agenda.Core.questions(state.db) == [], do: "", else: "? ")
 
   # "#" while the highlight is in a numeric column (User's Guide 8-3).
   defp numeric_marker(%State{modes: [], col: col} = state) when col > 0 do
@@ -357,6 +362,9 @@ defmodule Agenda.TUI.Render do
 
   defp mode_keys(%{type: :column_props}),
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
+
+  defp mode_keys(%{type: :questions}),
+    do: [{"SPACE", "Pick"}, {"TAB", "All"}, {"ENTER", "Assign"}, {"ESC", "Stop"}]
 
   defp mode_keys(%{type: :execute}),
     do: [{"↑↓", "Setting"}, {"SPACE", "Change"}, {"ENTER", "Run"}, {"ESC", "Cancel"}]
@@ -854,7 +862,8 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :alarm_list}), do: "Alarm list"
   defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
-  defp box_title(_state, %{type: :file_props}), do: "File properties: date display"
+  defp box_title(_state, %{type: :file_props}), do: "File properties"
+  defp box_title(_state, %{type: :questions}), do: "Suggested assignments"
   defp box_title(_state, %{type: :goto}), do: "Go to section"
 
   defp box_title(_state, %{type: :execute}), do: "Execute conditions and actions"
@@ -1021,6 +1030,26 @@ defmodule Agenda.TUI.Render do
       ]
   end
 
+  defp box_content(state, %{type: :questions} = mode, inner, _max_rows) do
+    item = state.db.items[mode.item]
+
+    cats =
+      state
+      |> Agenda.TUI.QuestionsBox.suggestions(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {cat, i} ->
+        mark = if cat in mode.picked, do: "*", else: " "
+
+        [
+          {:box, " #{mark} "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), state.db.categories[cat].name}
+        ]
+      end)
+
+    [[{:box, " " <> String.slice(item.text, 0, inner - 2)}], [], [{:box, " Assign to:"}]] ++
+      cats ++ [[], [{:box, " SPACE picks · TAB picks all · ENTER assigns · ESC stops"}]]
+  end
+
   defp box_content(state, %{type: :execute} = mode, _inner, _max_rows) do
     rows =
       state
@@ -1092,7 +1121,7 @@ defmodule Agenda.TUI.Render do
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
-          {:box, " " <> Draw.pad(label, 17) <> ": "},
+          {:box, " " <> Draw.pad(label, 20) <> ": "},
           {if(i == mode.cursor, do: :box_selected, else: :box), value}
         ]
       end)

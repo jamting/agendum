@@ -32,7 +32,9 @@ defmodule Agenda.Core.Database do
           conditional: MapSet.t({id, id}),
           date_format: DateFormat.t(),
           numbers: %{optional({id, id}) => float},
-          dependencies: Links.t()
+          dependencies: Links.t(),
+          confirm_assignments: :never | :always,
+          suggestions: %{optional(id) => [id]}
         }
 
   defstruct items: %{},
@@ -48,7 +50,9 @@ defmodule Agenda.Core.Database do
             conditional: MapSet.new(),
             date_format: %DateFormat{},
             numbers: %{},
-            dependencies: Links.new()
+            dependencies: Links.new(),
+            confirm_assignments: :never,
+            suggestions: %{}
 
   @date_fields %{entry: :entry, when: :when, done: :done}
 
@@ -126,7 +130,8 @@ defmodule Agenda.Core.Database do
         links: Links.drop_left(db.links, id),
         conditional: MapSet.reject(db.conditional, &(elem(&1, 0) == id)),
         numbers: Map.reject(db.numbers, fn {{item, _}, _} -> item == id end),
-        dependencies: db.dependencies |> Links.drop_left(id) |> Links.drop_right(id)
+        dependencies: db.dependencies |> Links.drop_left(id) |> Links.drop_right(id),
+        suggestions: Map.delete(db.suggestions, id)
     }
   end
 
@@ -229,6 +234,11 @@ defmodule Agenda.Core.Database do
 
       numbers = Map.reject(db.numbers, fn {{_, cat}, _} -> cat in doomed_set end)
 
+      suggestions =
+        db.suggestions
+        |> Map.new(fn {item, cats} -> {item, Enum.reject(cats, &(&1 in doomed_set))} end)
+        |> Map.reject(fn {_, cats} -> cats == [] end)
+
       {:ok,
        %{
          db
@@ -236,7 +246,8 @@ defmodule Agenda.Core.Database do
            conditional: conditional,
            categories: categories,
            views: views,
-           numbers: numbers
+           numbers: numbers,
+           suggestions: suggestions
        }}
     end
   end

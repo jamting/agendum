@@ -43,7 +43,8 @@ defmodule Agenda.TUI.Menu do
          {"Add", "Add a category under MAIN", :add_category},
          {"Recalc", "Re-run automatic assignment for every item", :recalc},
          {"Execute", "Apply conditions and actions to existing items (ALT-X all, ALT-E one)",
-          :execute}
+          :execute},
+         {"Questions", "Confirm suggested assignments (Utilities Questions)", :questions}
        ]},
       {"View", "Change the current view or create new ones",
        [

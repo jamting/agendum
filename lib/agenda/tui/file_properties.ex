@@ -1,7 +1,8 @@
 defmodule Agenda.TUI.FileProperties do
   @moduledoc """
   The File Properties box (File ▸ Properties; User's Guide 7-13 to 7-15):
-  how the file displays dates and times (SPEC R41).
+  how the file displays dates and times (SPEC R41), and whether text
+  matches are confirmed first (Confirm assignments, R16).
 
   Rows: Date format, Date separator, Clock and Show day of week, with a
   formatted sample below, as in Agenda's Display Format box. SPACE or →
@@ -13,7 +14,7 @@ defmodule Agenda.TUI.FileProperties do
   alias Agenda.Core.DateFormat
   alias Agenda.TUI.State
 
-  @rows [:order, :separator, :clock, :day_of_week]
+  @rows [:order, :separator, :clock, :day_of_week, :confirm]
 
   def open(state), do: State.push(state, %{type: :file_props, cursor: 0})
 
@@ -30,6 +31,11 @@ defmodule Agenda.TUI.FileProperties do
     end
   end
 
+  defp change(state, :confirm, _step) do
+    mode = if state.db.confirm_assignments == :never, do: :always, else: :never
+    State.change_db(state, Core.set_confirm_assignments(state.db, mode))
+  end
+
   defp change(state, row, step) do
     format = DateFormat.cycle(state.db.date_format, row, step)
     State.change_db(state, Core.set_date_format(state.db, format))
@@ -43,7 +49,9 @@ defmodule Agenda.TUI.FileProperties do
       {"Date format", DateFormat.label(f.order)},
       {"Date separator", separator(f.separator)},
       {"Clock", "#{f.clock} hr"},
-      {"Show day of week", if(f.day_of_week, do: "Yes", else: "No")}
+      {"Show day of week", if(f.day_of_week, do: "Yes", else: "No")},
+      {"Confirm assignments",
+       if(state.db.confirm_assignments == :always, do: "Always", else: "Never")}
     ]
   end
 

@@ -61,6 +61,7 @@ shell does terminal I/O and file I/O.
 | `TUI.ItemProperties` | ✔ | The Item Properties box: text, note, statistics and the item's assignments (R34). |
 | `TUI.SortBox` | ✔ | The Sort box: a view's or a section's sort keys (R36). |
 | `TUI.SearchBox` | ✔ | The Search box and search mode (ALT-N / ALT-P / F7), and the Show View (R37). |
+| `TUI.QuestionsBox` | ✔ | Utilities Questions: confirming suggested assignments (R16). |
 | `TUI.ExecuteBox` | ✔ | Utilities Execute: the Execute box, ALT-X and ALT-E (R15e). |
 | `TUI.ActionBox` | ✔ | The Date Action / Numeric Action box (R15b). |
 | `TUI.RangeFilterBox` | ✔ | The Date Filter / Numeric Filter box (R28a). |

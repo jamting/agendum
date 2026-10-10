@@ -401,13 +401,26 @@ defmodule Agenda.Core.Assign do
       end)
       |> Enum.reverse()
 
-    # when a category and its ancestor both match, keep the specific one (R7c);
-    # text matches are conditional: they break when the text changes (R15c)
-    accepted
-    |> Enum.reject(fn cand -> Enum.any?(accepted, &(cand in Database.ancestors(db, &1))) end)
-    |> Enum.reduce(db, fn cand, db ->
-      db |> assign(item_id, cand) |> Database.mark_conditional(item_id, cand)
-    end)
+    # when a category and its ancestor both match, keep the specific one (R7c)
+    accepted =
+      Enum.reject(accepted, fn cand ->
+        Enum.any?(accepted, &(cand in Database.ancestors(db, &1)))
+      end)
+
+    if db.confirm_assignments == :always do
+      # suggested, to be confirmed with Utilities Questions (R16)
+      suggestions =
+        if accepted == [],
+          do: Map.delete(db.suggestions, item_id),
+          else: Map.put(db.suggestions, item_id, accepted)
+
+      %{db | suggestions: suggestions}
+    else
+      # text matches are conditional: they break when the text changes (R15c)
+      Enum.reduce(accepted, db, fn cand, db ->
+        db |> assign(item_id, cand) |> Database.mark_conditional(item_id, cand)
+      end)
+    end
   end
 
   @doc """

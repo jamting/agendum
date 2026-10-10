@@ -14,14 +14,15 @@ defmodule Agenda.Store do
   `View.Column.number` (R29); 9 adds `Item.recurrence` (R14a); 10 adds
   `Database.dependencies` and `View.hide_dependent` (R43); 11 adds
   `Category.also_match` (R15d); 12 adds `Category.actions` and
-  `Category.special` (R15b).
+  `Category.special` (R15b); 13 adds `Database.confirm_assignments` and
+  `Database.suggestions` (R16).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 12
+  @format_version 13
   @extension ".agenda"
 
   def extension, do: @extension

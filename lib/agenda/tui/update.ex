@@ -192,6 +192,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
   defp dispatch(state, %{type: :goto} = m, key), do: GoTo.handle(state, m, key)
 
+  defp dispatch(state, %{type: :questions} = m, key),
+    do: Agenda.TUI.QuestionsBox.handle(state, m, key)
+
   defp dispatch(state, %{type: :execute} = m, key),
     do: Agenda.TUI.ExecuteBox.handle(state, m, key)
 
@@ -1364,6 +1367,7 @@ defmodule Agenda.TUI.Update do
 
   defp do_perform(state, :file_props, _), do: FileProperties.open(state)
   defp do_perform(state, :execute, _), do: Agenda.TUI.ExecuteBox.open(state)
+  defp do_perform(state, :questions, _), do: Agenda.TUI.QuestionsBox.open(state)
 
   defp do_perform(state, :column_props, %{kind: :item}) when state.col > 0 do
     column = Enum.at(State.view(state).columns, state.col - 1)

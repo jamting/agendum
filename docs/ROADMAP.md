@@ -59,7 +59,8 @@ Rule numbers refer to `SPEC.md`.
 - [x] Utilities Execute: apply conditions and actions to existing items (ALT-E, ALT-X) (R15e)
 - [x] Break text-match assignments when the text changes (R15c)
 - [ ] General negative links (R9)
-- [ ] Assignment questions ("Agenda suggests…", Utilities Questions)
+- [x] Assignment questions: Confirm assignments, Utilities Questions (R16)
+- [ ] Text matching settings: match strength (partial matches, "Sometimes" confirm), ignore suffixes and accents, ignore quoted text (R16a)
 
 ## Milestone 4 — Data interchange
 
