@@ -12,7 +12,7 @@ defmodule Agenda.Core do
   and so on.
   """
 
-  alias Agenda.Core.{Assign, Database, DateParser, NumberFormat, View}
+  alias Agenda.Core.{Assign, Database, DateParser, NumberFormat, RangeFilter, View}
   alias Agenda.Core.View.{Column, Section}
 
   @type db :: Database.t()
@@ -1002,6 +1002,84 @@ defmodule Agenda.Core do
   end
 
   @doc """
+  Sets the filter on a date or numeric category (R28a): `{:assigned, from,
+  to, :inside | :outside}` shows items with a date or number in (or outside)
+  the range, or any date or number when `from` and `to` are blank;
+  `{:not_assigned, _, _, _}` shows items without one. Dates may be relative
+  ("monday"); they are checked against `today` here and read again whenever
+  the view is shown.
+  """
+  @spec set_range_filter(
+          db,
+          id,
+          :view | {:section, non_neg_integer},
+          id,
+          {:assigned | :not_assigned, String.t() | nil, String.t() | nil, :inside | :outside},
+          Date.t()
+        ) :: {:ok, db} | {:error, :not_a_range_category | :invalid_date | :not_a_number}
+  def set_range_filter(db, view_id, scope, cat_id, {show, from, to, where}, today) do
+    cond do
+      not RangeFilter.range_category?(db, cat_id) ->
+        {:error, :not_a_range_category}
+
+      show == :not_assigned ->
+        {:ok, put_filter(db, view_id, scope, cat_id, :not_assigned)}
+
+      true ->
+        with {:ok, range} <- RangeFilter.build(db, cat_id, from, to, where, today) do
+          term = if match?({:range, nil, nil, _}, range), do: :assigned, else: range
+          {:ok, put_filter(db, view_id, scope, cat_id, term)}
+        end
+    end
+  end
+
+  @doc "Removes a category from a view's or section's filter."
+  @spec remove_filter(db, id, :view | {:section, non_neg_integer}, id) :: db
+  def remove_filter(db, view_id, scope, cat_id) do
+    filter = db |> get_scoped(view_id, scope, :filter) |> List.keydelete(cat_id, 0)
+    put_scoped(db, view_id, scope, :filter, filter)
+  end
+
+  defp put_filter(db, view_id, scope, cat_id, term) do
+    filter = get_scoped(db, view_id, scope, :filter)
+
+    filter =
+      if List.keymember?(filter, cat_id, 0),
+        do: List.keyreplace(filter, cat_id, 0, {cat_id, term}),
+        else: filter ++ [{cat_id, term}]
+
+    put_scoped(db, view_id, scope, :filter, filter)
+  end
+
+  @doc """
+  The dates and numbers a new item typed into section `index` gets from
+  the date and numeric filters (R28a; see `RangeFilter.entry_value/4`).
+  """
+  @spec entry_values(db, id, non_neg_integer, Date.t()) ::
+          [{id, {:date, Date.t()} | {:number, float}}]
+  def entry_values(db, view_id, index, today) do
+    view = Database.view(db, view_id)
+    section = Enum.at(view.sections, index)
+
+    for {cat, {:range, _, _, _} = range} <- view.filter ++ section.filter,
+        value = RangeFilter.entry_value(db, cat, range, today),
+        do: {cat, value}
+  end
+
+  @doc "Gives an item the dates and numbers from `entry_values/4`."
+  @spec apply_entry_values(db, id, [{id, {:date, Date.t()} | {:number, float}}]) :: db
+  def apply_entry_values(db, item_id, values) do
+    Enum.reduce(values, db, fn
+      {cat, {:date, date}}, db ->
+        set_date(db, item_id, cat, date)
+
+      {cat, {:number, number}}, db ->
+        {:ok, db} = set_number(db, item_id, cat, number)
+        db
+    end)
+  end
+
+  @doc """
   Sets the sort keys (`[View.SortKey.t()]`, at most two are used) for a view
   or a section; a section's `nil` means "as the view".
   """
@@ -1022,6 +1100,7 @@ defmodule Agenda.Core do
     (view.filter ++ section.filter)
     |> Enum.filter(&(elem(&1, 1) == :assigned))
     |> Enum.map(&elem(&1, 0))
+    |> Enum.reject(&RangeFilter.range_category?(db, &1))
     |> Enum.reduce([], fn cat, chosen ->
       if Enum.any?(chosen, &Assign.conflict?(db, cat, &1)), do: chosen, else: chosen ++ [cat]
     end)

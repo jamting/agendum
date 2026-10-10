@@ -28,6 +28,7 @@ defmodule Agenda.TUI.Update do
     LineEdit,
     Menu,
     NoteSearch,
+    RangeFilterBox,
     State,
     TextEdit,
     ViewManager
@@ -179,6 +180,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
   defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
   defp dispatch(state, %{type: :goto} = m, key), do: GoTo.handle(state, m, key)
+
+  defp dispatch(state, %{type: :range_filter} = m, key),
+    do: RangeFilterBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :column_props} = m, key),
     do: ColumnProperties.handle(state, m, key)
@@ -552,6 +556,8 @@ defmodule Agenda.TUI.Update do
       # a filtered view or section gives new items what the filter needs (R28)
       required = Core.entry_categories(db, state.view_id, sidx)
       db = Enum.reduce(required, db, &Core.assign(&2, id, &1))
+      values = Core.entry_values(db, state.view_id, sidx, state.today)
+      db = Core.apply_entry_values(db, id, values)
 
       state
       |> State.change_db(db)

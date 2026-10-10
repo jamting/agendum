@@ -29,8 +29,12 @@ defmodule Agenda.Core.ViewModel do
     defstruct [:category, rows: [], collapsed: false, calcs: []]
   end
 
-  @spec build(Database.t(), View.t()) :: [SectionModel.t()]
-  def build(%Database{} = db, %View{} = view) do
+  @doc """
+  Builds a view. `today` is needed by date filters with relative dates
+  (R28a); without it only ISO dates in filters can be read.
+  """
+  @spec build(Database.t(), View.t(), Date.t() | nil) :: [SectionModel.t()]
+  def build(%Database{} = db, %View{} = view, today \\ nil) do
     view.sections
     |> Enum.map(fn section ->
       category = db.categories[section.category_id]
@@ -39,7 +43,7 @@ defmodule Agenda.Core.ViewModel do
         db
         |> Database.items_in(category.id)
         |> Enum.reject(&(view.hide_done and &1.done != nil))
-        |> Enum.filter(&Assign.criteria_met?(db, &1.id, view.filter ++ section.filter))
+        |> Enum.filter(&Assign.criteria_met?(db, &1.id, view.filter ++ section.filter, today))
         |> Enum.filter(&(view.match == nil or Agenda.Core.Search.matches?(&1, view.match)))
         |> sort(db, section.sort || view.sort)
         |> Enum.map(fn item ->

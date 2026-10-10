@@ -18,7 +18,7 @@ defmodule Agenda.Core.Assign do
     explicit assignments always win over new automatic ones.
   """
 
-  alias Agenda.Core.Database
+  alias Agenda.Core.{Database, RangeFilter}
 
   @type db :: Database.t()
   @type id :: Database.id()
@@ -122,10 +122,19 @@ defmodule Agenda.Core.Assign do
   Whether an item meets a list of `{category, :assigned | :not_assigned}`
   criteria, as used by conditions (R15) and filters (R28): every criterion
   must hold, except that `:assigned` criteria naming mutually exclusive
-  categories are alternatives. An empty list is always met.
+  categories are alternatives. Filters can also hold date and numeric
+  ranges (`Agenda.Core.RangeFilter`, R28a), read against `today`. An empty
+  list is always met.
   """
-  @spec criteria_met?(db, id, [{id, :assigned | :not_assigned}]) :: boolean
-  def criteria_met?(db, item_id, criteria) do
+  @spec criteria_met?(db, id, [{id, term}], Date.t() | nil) :: boolean
+  def criteria_met?(db, item_id, criteria, today \\ nil) do
+    {ranges, criteria} = Enum.split_with(criteria, &match?({_, {:range, _, _, _}}, &1))
+
+    Enum.all?(ranges, fn {cat, range} -> RangeFilter.met?(db, item_id, cat, range, today) end) and
+      plain_criteria_met?(db, item_id, criteria)
+  end
+
+  defp plain_criteria_met?(db, item_id, criteria) do
     {positive, negative} = Enum.split_with(criteria, &(elem(&1, 1) == :assigned))
 
     Enum.all?(negative, fn {target, _} -> not Database.member?(db, item_id, target) end) and

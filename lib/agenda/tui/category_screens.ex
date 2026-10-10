@@ -573,8 +573,12 @@ defmodule Agenda.TUI.CategoryScreens do
   end
 
   defp pick(state, {:filter, scope}, id) do
-    {:ok, db} = Core.cycle_filter(state.db, state.view_id, scope, id)
-    State.change_db(state, db)
+    if Agenda.Core.RangeFilter.range_category?(state.db, id) do
+      Agenda.TUI.RangeFilterBox.open(state, scope, id)
+    else
+      {:ok, db} = Core.cycle_filter(state.db, state.view_id, scope, id)
+      State.change_db(state, db)
+    end
   end
 
   defp pick(state, {:sort_category, scope, index}, id),

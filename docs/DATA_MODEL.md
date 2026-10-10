@@ -70,7 +70,7 @@ erDiagram
         bool hide_done
         bool hide_empty
         bool hide_inherited
-        list filter "category ids, assigned or not"
+        list filter "category ids: assigned, not, or a date/number range"
         list sort "SortKey list, at most two"
         map match "Search of the Show View, or nil"
     }

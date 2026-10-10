@@ -8,7 +8,8 @@ defmodule Agenda.Core.View do
   column head category to which the item is assigned.
 
   A view's `filter` shows only items that are (or are not) assigned to
-  some categories (R28); its `sort` keys order the items in every section
+  some categories (R28), or whose date or number is in a range (R28a,
+  `Agenda.Core.RangeFilter`); its `sort` keys order the items in every section
   (R36). `match` limits it to items whose text matches a search, as in
   the Show View (R37).
   """
@@ -38,7 +39,7 @@ defmodule Agenda.Core.View do
     @type t :: %__MODULE__{
             category_id: Agenda.Core.Category.id(),
             collapsed: boolean,
-            filter: [{Agenda.Core.Category.id(), :assigned | :not_assigned}],
+            filter: [{Agenda.Core.Category.id(), Agenda.Core.View.filter_term()}],
             sort: [SortKey.t()] | nil
           }
     defstruct [:category_id, collapsed: false, filter: [], sort: nil]
@@ -57,6 +58,9 @@ defmodule Agenda.Core.View do
     defstruct [:category_id, width: 12, number: %Agenda.Core.NumberFormat{}]
   end
 
+  @typedoc "One filter criterion on a category (R28, R28a)."
+  @type filter_term :: :assigned | :not_assigned | Agenda.Core.RangeFilter.term_()
+
   @type id :: pos_integer
   @type t :: %__MODULE__{
           id: id,
@@ -66,7 +70,7 @@ defmodule Agenda.Core.View do
           hide_done: boolean,
           hide_empty: boolean,
           hide_inherited: boolean,
-          filter: [{Agenda.Core.Category.id(), :assigned | :not_assigned}],
+          filter: [{Agenda.Core.Category.id(), Agenda.Core.View.filter_term()}],
           sort: [SortKey.t()],
           match: Agenda.Core.Search.t() | nil
         }

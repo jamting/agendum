@@ -37,6 +37,7 @@ shell does terminal I/O and file I/O.
 | `Core.ViewModel`                          | Read model: projects a view to sections, rows and column cells.                                                                                         |
 | `Core.DateParser`                         | Date expressions relative to a given `today`.                                                                                                           |
 | `Core.Search` | Text search: whether an item's text or note matches (R37). |
+| `Core.RangeFilter` | Date and numeric filter ranges: checking, matching, the value a new item gets (R28a). |
 | `Core.NumberFormat` | Reading and showing numbers, and the calculations of numeric columns (R29). |
 | `Core.DateFormat` | How a file displays dates and times: date order, separator, clock, day of week (R41). |
 | `Core.TextSearch` | Finding and replacing literal text in a note's lines (R39). |
@@ -56,6 +57,7 @@ shell does terminal I/O and file I/O.
 | `TUI.ItemProperties` | ✔ | The Item Properties box: text, note, statistics and the item's assignments (R34). |
 | `TUI.SortBox` | ✔ | The Sort box: a view's or a section's sort keys (R36). |
 | `TUI.SearchBox` | ✔ | The Search box and search mode (ALT-N / ALT-P / F7), and the Show View (R37). |
+| `TUI.RangeFilterBox` | ✔ | The Date Filter / Numeric Filter box (R28a). |
 | `TUI.ColumnProperties` | ✔ | The Numeric Column Properties box: number format and calculations (R29). |
 | `TUI.FileProperties` | ✔ | The File Properties box: the date display format, with a sample (R41). |
 | `TUI.NoteSearch` | ✔ | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39). |

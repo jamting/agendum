@@ -25,7 +25,7 @@ defmodule Agenda.TUI.Layout do
     view = State.view(state)
 
     state.db
-    |> ViewModel.build(view)
+    |> ViewModel.build(view, state.today)
     |> Enum.with_index()
     |> Enum.flat_map(fn {section, sidx} ->
       # with hide_empty some sections are skipped; recover the real index

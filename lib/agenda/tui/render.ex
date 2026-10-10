@@ -27,6 +27,7 @@ defmodule Agenda.TUI.Render do
     :note_search,
     :file_props,
     :goto,
+    :range_filter,
     :column_props,
     :alarm_list
   ]
@@ -77,7 +78,7 @@ defmodule Agenda.TUI.Render do
       )
 
     left = " File: #{file}"
-    middle = "View: #{view.name}" <> filter_text(state.db, view.filter)
+    middle = "View: #{view.name}" <> filter_text(state, view.filter)
     gap = max(state.width - String.length(left) - String.length(right), 0)
     mid = Draw.center(middle, gap)
 
@@ -98,20 +99,47 @@ defmodule Agenda.TUI.Render do
     top = State.mode(state)
 
     cond do
-      Completion.matches(state) != [] -> "AUTOC"
-      state.edit != nil -> "EDIT"
-      top && top.type == :menu -> "MENU"
-      top && top.type == :move_item -> "MOVE"
-      top && top.type in [:picker, :scope] -> "CHOICES"
-      top && top.type in [:profile, :group_profile] -> "ASSIGN"
-      top && top.type in [:props, :choice, :item_props, :file_props, :column_props] -> "PROPS"
-      top && top.type == :sort -> "SORT"
-      top && top.type in [:search_box, :searching, :note_search] -> "SEARCH"
-      base && base.type == :catmgr -> "CAT MGR"
-      base && base.type == :viewmgr -> "VW MGR"
-      base && base.type == :note -> "NOTE"
-      base && base.type == :help -> "HELP"
-      true -> "READY"
+      Completion.matches(state) != [] ->
+        "AUTOC"
+
+      state.edit != nil ->
+        "EDIT"
+
+      top && top.type == :menu ->
+        "MENU"
+
+      top && top.type == :move_item ->
+        "MOVE"
+
+      top && top.type in [:picker, :scope] ->
+        "CHOICES"
+
+      top && top.type in [:profile, :group_profile] ->
+        "ASSIGN"
+
+      top && top.type in [:props, :choice, :item_props, :file_props, :column_props, :range_filter] ->
+        "PROPS"
+
+      top && top.type == :sort ->
+        "SORT"
+
+      top && top.type in [:search_box, :searching, :note_search] ->
+        "SEARCH"
+
+      base && base.type == :catmgr ->
+        "CAT MGR"
+
+      base && base.type == :viewmgr ->
+        "VW MGR"
+
+      base && base.type == :note ->
+        "NOTE"
+
+      base && base.type == :help ->
+        "HELP"
+
+      true ->
+        "READY"
     end
   end
 
@@ -317,6 +345,15 @@ defmodule Agenda.TUI.Render do
   defp mode_keys(%{type: :column_props}),
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
 
+  defp mode_keys(%{type: :range_filter}),
+    do: [
+      {"↑↓", "Setting"},
+      {"SPACE", "Change"},
+      {"ENTER", "Apply"},
+      {"DEL", "Remove"},
+      {"ESC", "Cancel"}
+    ]
+
   defp mode_keys(%{type: :goto}),
     do: [
       {"↑↓", "Highlight"},
@@ -416,7 +453,7 @@ defmodule Agenda.TUI.Render do
 
           suffix =
             if(row.collapsed, do: " §#{row.count}", else: "") <>
-              filter_text(state.db, section.filter)
+              filter_text(state, section.filter)
 
           [{:normal, " "}, {style, Draw.pad(cat.name <> suffix, tw + 1)}]
       end
@@ -789,6 +826,11 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :file_props}), do: "File properties: date display"
   defp box_title(_state, %{type: :goto}), do: "Go to section"
 
+  defp box_title(state, %{type: :range_filter} = mode) do
+    kind = if Agenda.TUI.RangeFilterBox.numeric?(state, mode), do: "Numeric", else: "Date"
+    "#{kind} filter: #{state.db.categories[mode.cat_id].name}"
+  end
+
   defp box_title(state, %{type: :column_props} = mode),
     do:
       "Numeric column: " <>
@@ -938,6 +980,24 @@ defmodule Agenda.TUI.Render do
         [{:box, " Sample: " <> Agenda.TUI.ColumnProperties.sample(state, mode)}],
         [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]
       ]
+  end
+
+  defp box_content(state, %{type: :range_filter} = mode, inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.RangeFilterBox.lines(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        label = [{:box, " " <> Draw.pad(label, 16) <> ": "}]
+
+        case value do
+          {:line, line} when i == mode.cursor -> label ++ field(line, inner - 20, :edit)
+          {:line, line} -> label ++ [{:box, line.text}]
+          text -> label ++ [{if(i == mode.cursor, do: :box_selected, else: :box), text}]
+        end
+      end)
+
+    rows ++ [[], [{:box, " Blank = open · ENTER applies · DEL removes · ESC cancels"}]]
   end
 
   defp box_content(state, %{type: :goto} = mode, _inner, max_rows) do
@@ -1198,8 +1258,8 @@ defmodule Agenda.TUI.Render do
       if scope == :view, do: view.filter, else: Enum.at(view.sections, elem(scope, 1)).filter
 
     case List.keyfind(filter, id, 0) do
-      {_, :assigned} -> "+"
       {_, :not_assigned} -> "-"
+      {_, _assigned_or_range} -> "+"
       nil -> " "
     end
   end
@@ -1270,13 +1330,20 @@ defmodule Agenda.TUI.Render do
   end
 
   # " [High, -People]": a filter as Agenda shows it beside the view name
-  defp filter_text(_db, []), do: ""
+  defp filter_text(_state, []), do: ""
 
-  defp filter_text(db, filter) do
+  defp filter_text(%State{db: db} = state, filter) do
     names =
       Enum.map_join(filter, ", ", fn
-        {id, :assigned} -> db.categories[id].name
-        {id, :not_assigned} -> "-" <> db.categories[id].name
+        {id, :assigned} ->
+          db.categories[id].name
+
+        {id, :not_assigned} ->
+          "-" <> db.categories[id].name
+
+        {id, range} ->
+          db.categories[id].name <>
+            " " <> Agenda.Core.RangeFilter.describe(db, range, state.today)
       end)
 
     " [#{names}]"
@@ -1313,7 +1380,7 @@ defmodule Agenda.TUI.Render do
     heads = Enum.map(view.columns, &state.db.categories[&1.category_id].name)
 
     state.db
-    |> Agenda.Core.ViewModel.build(view)
+    |> Agenda.Core.ViewModel.build(view, state.today)
     |> Enum.map_join("\n\n", fn section ->
       header = Enum.join([section.category.name | heads], " | ")
 

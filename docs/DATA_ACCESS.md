@@ -136,10 +136,12 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `DateParser.parse_when(text, now)`, `extract_when(text, now)` | read | Dates with times of day (R14b). Core functions take a `clock`: a date, or a date and time. |
 | `Core.set_sort(db, view, :view \| {:section, i}, keys)` | write | Sort keys (`View.SortKey`, at most two); a section's `nil` uses the view's (R36). |
 | `Core.entry_categories(db, view, i)` | read | Categories a new item in section `i` needs to pass the filters. |
+| `Core.set_range_filter(db, view, scope, cat, {show, from, to, where}, today)` / `Core.remove_filter/4` | write | A date or numeric filter (R28a): items with a date or number in or outside a range, or without one. |
+| `Core.entry_values(db, view, i, today)` / `Core.apply_entry_values/3` | read / write | The dates and numbers a new item in section `i` gets from range filters, and giving them to it. |
 | `Core.sort_children(db, parent)`, `sort_views(db)` | write | Alphabetical order (ALT-F5 in the managers). |
 | `Assign.criteria_met?(db, item, criteria)` | read | The AND / exclusive-OR rule shared by conditions and filters. |
 | `Database.view/2`, `views/1`                                                                     | read  | One view / all in `view_order`.              |
-| `ViewModel.build(db, view)`                                                                      | read  | The full read model of a view (below).       |
+| `ViewModel.build(db, view, today)` | read | The full read model of a view (below); `today` reads relative dates in date filters (R28a). |
 | `ViewModel.cell(db, item, head, width)`, `column_entries/3`, `column_label(db, head, width)` | read | What one column shows for one item, and a column head; categories that do not fit in `width` use their short names. |
 
 ### Persistence
@@ -301,11 +303,11 @@ items), so clarity comes before indexes:
 | `subtree/2`, `descendants/2`                    | O(size of subtree)                                            |
 | `member?/3`                                     | O(size of subtree)                                            |
 | `items_in/2`                                    | O(subtree links + total items)                                |
-| `ViewModel.build/2`                             | O(sections × items × columns × subtree); runs on every render |
+| `ViewModel.build/3`                             | O(sections × items × columns × subtree); runs on every render |
 | Any write                                       | O(log n) for the change itself; old versions share structure  |
 
 If large files ever become slow, the first candidates are caching
-`ViewModel.build/2` per database value and keeping a descendants index.
+`ViewModel.build/3` per database value and keeping a descendants index.
 
 ## Adding to the data layer
 

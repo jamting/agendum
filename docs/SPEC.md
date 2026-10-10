@@ -215,7 +215,20 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   categories the filter requires (of exclusive alternatives, the first),
   so it stays in sight. Set with View ▸ Filter and View ▸ Section ▸ Filter
   (ENTER cycles + assigned · - not assigned · none; the box stays open).
-  Not done: date and numeric filters.
+- **R28a ✅ Date and numeric filters** (User's Guide 11-5 to 11-12).
+  Choosing a date or numeric category in the filter box opens the Date
+  Filter or Numeric Filter box: Show items (Assigned, the default, or Not
+  assigned: items without a date or number), Start and End date (or
+  Minimum and Maximum value; blank leaves that end open, both blank means
+  any date or number) and Items should be (Inside or Outside range).
+  Relative dates ("monday", "today") are kept as typed and read again
+  every day, so "monday" to "friday" is always this week. The filter
+  shows in brackets ("[When 2026-11-05..2026-11-09]", "not" for outside).
+  An item typed into the view or section gets the start date or minimum
+  (with only an end: the end; outside the range: the day or number just
+  before the start, or just after the end). ENTER applies, DEL removes
+  the filter, ESC cancels. Not done: browsing the date filter (View
+  Browse, ALT-B; with datebook views).
 - **R29 ✅ Numeric columns** (User's Guide chapter 8). A numeric category
   holds a number for each item assigned to it; the number is a value of
   the assignment, not a category. A standard category becomes numeric
