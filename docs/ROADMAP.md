@@ -51,6 +51,7 @@ Rule numbers refer to `SPEC.md`.
 - [ ] More date phrases: working days, quarters, "first Wednesday in November", date settings (R14d)
 - [x] Item dependencies: ALT-O makes an item depend on the marked items, views can hide dependent items (R43)
 - [x] Show Prereqs / Show Depends in the Show View (R43)
+- [ ] Item Properties lists the items an item depends on, and those depending on it, by name (R43)
 - [ ] More date display options: per-column formats, Day #, Week #, Relative, input format (R41)
 - [x] Assignment conditions, conditional assignments (R15)
 - [x] Date and numeric conditions, re-checked when the date changes (R15a)
