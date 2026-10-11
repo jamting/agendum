@@ -1442,7 +1442,12 @@ defmodule Agenda.TUI.Render do
         [{if(style == :selected, do: :box_selected, else: :box), " " <> text}]
       end)
 
-    rows ++ [[], [{:box, " INS subscribe · ENTER read now · F how often · A ahead · DEL"}]]
+    rows ++
+      [
+        [],
+        [{:box, " INS subscribe · ENTER read now · DEL unsubscribe"}],
+        [{:box, " F how often · A how far ahead"}]
+      ]
   end
 
   defp box_content(state, %{type: type} = mode, _inner, _max_rows)
