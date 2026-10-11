@@ -25,7 +25,7 @@ defmodule Agenda.TUI.DevTools do
 
   def handle(state, mode, key) do
     # the body starts with a heading and a blank line
-    page = max(State.body_height(state) - 2, 1)
+    page = max(State.body_height(state), 1)
     last = max(length(lines(state, mode)) - page, 0)
 
     top =

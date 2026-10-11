@@ -124,7 +124,7 @@ defmodule Agenda.TUI.LookTest do
 
   test "a box has its title centred in its frame", %{state: state} do
     state = press(state, [:down, {:f, 6}])
-    top = Enum.at(Render.render(state), 1 + 3)
+    top = Enum.at(Render.render(state), 2 + 1)
     assert {:box_title, " Item properties "} in top
 
     [{:box_frame, left}, _, {:box_frame, right}] =

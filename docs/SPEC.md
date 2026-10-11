@@ -644,9 +644,18 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 
 ## 5. User interface (Agenda 2.0 conventions)
 
-Screen: a title bar (file, view, mode indicator such as READY / EDIT /
-MENU / CAT MGR), a two-line control panel (menus, prompts, messages), the
-body, and a function-key bar.
+Screen: Agenda's two-line control panel, the body, and a function-key bar.
+The control panel shows the file with the indicators (marks, mode such as
+READY / EDIT / MENU / CAT MGR) and the time on its first line, and what is
+shown on its second: the view with its filter and hide settings, or
+"Category Manager", "View Manager", "Note for: …", "Help". The menu (its
+entries, then the highlighted entry's commands or description), a prompt
+(its label, then the field), a Y/N question, a message or a hint take it
+over while they last; questions, messages and hints keep the indicators
+beside them and go on into the second line when long, as Agenda's help
+lines did. Our choices: the function-key bar stays one line with the keys'
+names and labels side by side (Agenda had two lines of ten fixed slots), so
+wide terminals show more of what each key does.
 
 | Key         | View                                                                | Category manager        |
 | ----------- | ------------------------------------------------------------------- | ----------------------- |

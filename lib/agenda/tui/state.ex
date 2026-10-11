@@ -201,6 +201,6 @@ defmodule Agenda.TUI.State do
   def error(state, text), do: %{state | message: {:error, text}}
 
   @doc "Number of screen lines available for the view body."
-  def body_height(%__MODULE__{height: h, key_map: true}), do: max(h - 4, 1)
-  def body_height(%__MODULE__{height: h, key_map: false}), do: max(h - 3, 1)
+  def body_height(%__MODULE__{height: h, key_map: true}), do: max(h - 3, 1)
+  def body_height(%__MODULE__{height: h, key_map: false}), do: max(h - 2, 1)
 end

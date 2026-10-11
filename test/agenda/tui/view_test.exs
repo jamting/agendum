@@ -57,7 +57,8 @@ defmodule Agenda.TUI.ViewTest do
 
   test "INS in a column adds another entry", %{state: state} do
     state = press(state, [:down, :down, :right, :right, :right, :insert, "Daniel", :enter])
-    assert screen(state) =~ "Anna Lasky, Daniel"
+    # both, by their short names in the narrow column
+    assert screen(state) =~ "Anna, Daniel"
   end
 
   test "typing in the When column parses dates", %{state: state} do

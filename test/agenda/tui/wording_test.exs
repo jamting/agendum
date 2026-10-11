@@ -30,7 +30,7 @@ defmodule Agenda.TUI.WordingTest do
     assert screen(state) =~ "1 marked item done"
   end
 
-  test "a long filter never runs the title bar's parts together", %{state: state} do
+  test "a long filter never runs the control panel's parts together", %{state: state} do
     view = hd(state.db.view_order)
     when_id = state.db.special.when
 
@@ -42,11 +42,16 @@ defmodule Agenda.TUI.WordingTest do
       )
 
     state = %{state | db: db, path: "/home/rabbit/rabbit.agenda", dirty: true, width: 80}
-    [title | _] = String.split(screen(state), "\n")
-    assert title =~ ~r/File: rabbit\.agenda \*\s{2,}View: /
-    assert title =~ "…"
-    assert title =~ ~r/…\s{2,}READY/
-    assert String.length(title) == state.width
+    [file, view | _] = String.split(screen(state), "\n")
+    assert file =~ ~r/File: \/home\/rabbit\/rabbit\.agenda \*\s{2,}READY/
+    assert view =~ "View: Activities [When 2026-10-08..2026-11-30]"
+    assert state |> Agenda.TUI.Render.render() |> hd() |> Agenda.TUI.Draw.width() == state.width
+
+    # narrower, the path loses its beginning and the filter its end
+    [file, view | _] = String.split(screen(%{state | width: 40}), "\n")
+    assert file =~ ~r/File: …\S+ \*\s{2,}READY/
+    assert view =~ ~r/View: Activities \[When 2026-10-08\.\.2…$/
+    assert file =~ ~r/2026-10-08 09:00$/
     assert %{} = State.view(state)
   end
 end

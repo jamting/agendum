@@ -85,8 +85,8 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.NoteSearch`               | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
 | `TUI.DevTools`                 | ✔     | The hidden developer screen (ESC ?): state for debugging, and a key tester.                                                      |
-| `TUI.Render`                   | ✔     | State → list of styled lines (title bar, control panel, body, key bar, boxes).                                                   |
-| `TUI.Draw`, `TUI.Theme`        | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic, blue or mono, R40).                                     |
+| `TUI.Render`                   | ✔     | State → list of styled lines (control panel, body, key bar, boxes).                                                              |
+| `TUI.Draw`, `TUI.Theme`        | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic, blue or mono, R40).                               |
 | `TUI.Keys`                     | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |
 | `TUI.LineEdit`, `TUI.TextEdit` | ✔     | Single-line and multi-line edit buffers.                                                                                         |
 | `TUI.Screen`                   | ✔     | Diffs two frames into minimal ANSI output.                                                                                       |

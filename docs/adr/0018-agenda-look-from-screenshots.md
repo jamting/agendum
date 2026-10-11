@@ -31,7 +31,9 @@ screens. What we learn from them is written into the SPEC (R40) and the code.
 - Screens are compared side by side: `tools/screenshots/` draws our TUI's
   screens as PNGs on the same 9×16 cell grid as a VGA text screen
   (720×400 for 80×25).
-- The rest of the look (two-line control panel and key bar, symbols, box
+- The key bar stays one line, with fuller labels than Agenda's 8-character
+  slots, since today's terminals are wider than 80 columns (owner's choice).
+- The rest of the look (two-line control panel, symbols, box
   layouts, editing lines, the ALT key bar, startup) follows in small steps
   listed in the roadmap ("Look and feel").
 

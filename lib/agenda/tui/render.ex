@@ -4,9 +4,10 @@ defmodule Agenda.TUI.Render do
 
   Screen layout, after Agenda 2.0:
 
-      line 0      title bar: file, view, indicators, date
-      lines 1–2   control panel: menu, prompts, messages, context
-      lines 3..   body: the view, or a full-screen manager
+      lines 0–1   control panel: the file, indicators and time, and the
+                  view (or the manager, note, help) shown; the menu,
+                  prompts, questions and messages take it over
+      lines 2..   body: the view, or a full-screen manager
       last line   function key bar
   """
 
@@ -51,8 +52,7 @@ defmodule Agenda.TUI.Render do
     body = if overlays == [], do: body, else: Enum.map(body, &Draw.paint(&1, :backdrop))
     body = Enum.reduce(overlays, body, &overlay_box(state, &1, &2))
 
-    [title_bar(state, base)] ++
-      control_panel(state) ++
+    control_panel(state, base) ++
       Enum.map(body, &Draw.line(&1, w)) ++
       if(state.key_map, do: [keybar(state)], else: [])
   end
@@ -75,11 +75,80 @@ defmodule Agenda.TUI.Render do
     {base, above |> Enum.filter(&(&1.type in @boxes)) |> Enum.reverse()}
   end
 
-  # --- title bar -------------------------------------------------------------------
+  # --- control panel ---------------------------------------------------------------------
 
-  defp title_bar(state, base) do
-    file = if state.path, do: Path.basename(state.path), else: "(untitled)"
-    file = if state.dirty, do: file <> " *", else: file
+  # white and yellow on blue
+  @panel %{normal: :panel, dim: :panel_hint, box: :panel}
+
+  # Agenda's two top lines. Normally the file, with the indicators and the
+  # time on the right, then what is shown: the view (with its filter and
+  # hide settings), or the manager, note or help. The menu, a prompt and its
+  # field, a question, a message or a hint take them over while they last.
+  defp control_panel(%State{width: w} = state, base) do
+    {l1, l2} =
+      case State.mode(state) do
+        %{type: :menu} = m ->
+          menu_lines(m)
+
+        %{type: :prompt, label: label} ->
+          {beside_indicators(state, base, [{:prompt, " " <> label}]),
+           [{:panel, " "}] ++ field(state.edit.line, w - 2, :edit)}
+
+        %{type: :confirm, question: q} ->
+          text_lines(state, base, :prompt, q)
+
+        _ ->
+          case message_line(state) do
+            [] -> {file_line(state, base), where_line(state, base)}
+            [{style, text} | _] -> text_lines(state, base, style, String.trim(text))
+          end
+      end
+
+    Enum.map([l1, l2], &(&1 |> Draw.paint(@panel) |> Draw.line(w, :panel)))
+  end
+
+  # A question, message or hint, left of the indicators; a long one goes
+  # on into the second line, like Agenda's two-line help.
+  defp text_lines(state, base, style, text) do
+    room = state.width - String.length(indicators(state, base)) - 2
+
+    case Draw.wrap(text, max(room, 10)) do
+      [line] ->
+        {beside_indicators(state, base, [{style, " " <> line}]), where_line(state, base)}
+
+      [first | rest] ->
+        {beside_indicators(state, base, [{style, " " <> first}]),
+         [{style, " " <> Enum.join(rest, " ")}]}
+    end
+  end
+
+  defp beside_indicators(state, base, left) do
+    right = indicators(state, base)
+    Draw.line(left, state.width - String.length(right), :panel) ++ [{:indicator, right}]
+  end
+
+  # the marks, the mode (READY, EDIT …) and the time, at the top right
+  defp indicators(state, base) do
+    marked = if Enum.any?(Database.items(state.db), & &1.marked), do: "♦ ", else: ""
+
+    "  #{marked}#{if state.alarm_rang, do: "@ ", else: ""}#{questions_marker(state)}" <>
+      "#{numeric_marker(state)}#{indicator(state, base)}  " <>
+      DateFormat.datetime(state.now, state.db.date_format) <> " "
+  end
+
+  defp file_line(state, base) do
+    file = (state.path || "(untitled)") <> if(state.dirty, do: " *", else: "")
+    room = max(state.width - String.length(indicators(state, base)) - 7, 1)
+    # a long path loses its beginning, which matters least
+    file =
+      if String.length(file) > room,
+        do: "…" <> String.slice(file, -(room - 1)..-1//1),
+        else: file
+
+    beside_indicators(state, base, [{:title, " File: " <> file}])
+  end
+
+  defp where_line(state, nil) do
     view = State.view(state)
 
     hides =
@@ -93,22 +162,23 @@ defmodule Agenda.TUI.Render do
       |> Enum.filter(&elem(&1, 0))
       |> Enum.map_join(" ", &elem(&1, 1))
 
-    marked = if Enum.any?(Database.items(state.db), & &1.marked), do: "♦ ", else: ""
-
-    right =
-      String.trim(
-        "#{hides} #{marked}#{if state.alarm_rang, do: "@ ", else: ""}#{questions_marker(state)}#{numeric_marker(state)}#{indicator(state, base)}  " <>
-          DateFormat.datetime(state.now, state.db.date_format) <> " "
-      )
-
-    left = " File: #{file}"
-    middle = "View: #{view.name}" <> filter_text(state, view.filter)
-    gap = max(state.width - String.length(left) - String.length(right), 0)
-    # at least two spaces on either side of the view's name and filter
-    mid = Draw.center(Draw.truncate(middle, max(gap - 4, 0)), gap)
-
-    Draw.line([{:title, left}, {:title, mid}, {:indicator, right}], state.width, :title)
+    right = if hides == "", do: "", else: hides <> " "
+    # at least two spaces between the view's name and filter and the rest
+    room = max(state.width - String.length(right) - 2, 0)
+    left = Draw.truncate(" View: " <> view.name <> filter_text(state, view.filter), room)
+    Draw.line([{:title, left}], state.width - String.length(right), :title) ++ [{:title, right}]
   end
+
+  defp where_line(state, %{type: :catmgr}) do
+    count = " #{map_size(state.db.categories)} categories "
+    width = state.width - String.length(count)
+    Draw.line([{:title, " Category Manager"}], width, :title) ++ [{:title, count}]
+  end
+
+  defp where_line(_state, %{type: :viewmgr}), do: [{:title, " View Manager"}]
+  defp where_line(_state, %{type: :note, title: title}), do: [{:title, " Note for: " <> title}]
+  defp where_line(_state, %{type: :help}), do: [{:title, " Help"}]
+  defp where_line(_state, %{type: :devtools}), do: [{:title, " Developer tools"}]
 
   # "?" while there are suggested assignments to confirm (User's Guide 19-9).
   defp questions_marker(state),
@@ -194,32 +264,6 @@ defmodule Agenda.TUI.Render do
     end
   end
 
-  # --- control panel --------------------------------------------------------------------
-
-  # the control panel is white and yellow on blue, like the title bar
-  @panel %{normal: :panel, dim: :panel_hint, box: :panel}
-
-  defp control_panel(%State{width: w} = state) do
-    {l1, l2} =
-      case State.mode(state) do
-        %{type: :menu} = m ->
-          menu_lines(m)
-
-        %{type: :prompt, label: label} ->
-          {[{:prompt, " #{label} "}] ++
-             field(state.edit.line, w - String.length(label) - 3, :edit),
-           [{:dim, " ENTER accepts, ESC cancels"}]}
-
-        %{type: :confirm, question: q} ->
-          {[{:prompt, " " <> q}], []}
-
-        _ ->
-          {message_line(state), context_line(state)}
-      end
-
-    Enum.map([l1, l2], &(&1 |> Draw.paint(@panel) |> Draw.line(w, :panel)))
-  end
-
   defp message_line(%State{message: {:error, text}}), do: [{:error, " #{text} "}]
   defp message_line(%State{message: {:message, text}}), do: [{:message, " " <> text}]
 
@@ -248,27 +292,6 @@ defmodule Agenda.TUI.Render do
   end
 
   defp message_line(_), do: []
-
-  defp context_line(%State{modes: []} = state) do
-    case Layout.current_row(state) do
-      %{kind: :item, item: item} ->
-        names =
-          state.db
-          |> Database.explicit_categories(item.id)
-          |> Enum.sort()
-          |> Enum.map_join(", ", &state.db.categories[&1].name)
-
-        [{:dim, " Assigned to: " <> if(names == "", do: "(MAIN only)", else: names)}]
-
-      %{kind: :section, category: cat, count: count} ->
-        [{:dim, " Section: #{cat.name} (#{count} item#{if count == 1, do: "", else: "s"})"}]
-
-      nil ->
-        [{:dim, " This view has no sections. Press ALT-D to add one."}]
-    end
-  end
-
-  defp context_line(_), do: []
 
   defp menu_lines(mode) do
     entries = Menu.entries(mode)
@@ -490,7 +513,7 @@ defmodule Agenda.TUI.Render do
         heading -> [{:section, " " <> heading}]
       end)
 
-    fit([[{:section, " Developer tools"}], [] | Enum.drop(lines, mode.top)], state)
+    fit(Enum.drop(lines, mode.top), state)
   end
 
   defp body(state, %{type: :note} = mode), do: fit(note_lines(state, mode), state)
@@ -704,7 +727,7 @@ defmodule Agenda.TUI.Render do
 
   defp catmgr_lines(state, mode) do
     rows = CategoryScreens.rows(state, mode)
-    visible = State.body_height(state) - 1
+    visible = State.body_height(state)
     top = max(mode.cursor - visible + 1, 0)
     db = state.db
 
@@ -741,10 +764,7 @@ defmodule Agenda.TUI.Render do
       end)
       |> Enum.drop(top)
 
-    [
-      [{:section, " Category Manager"}, {:dim, "  (#{map_size(db.categories)} categories)"}]
-      | lines
-    ]
+    lines
   end
 
   defp category_tags(%State{db: db} = state, cat) do
@@ -790,14 +810,14 @@ defmodule Agenda.TUI.Render do
         [{:symbol, " #{current} "}] ++ name ++ [{:dim, "  Sections: " <> sections}]
       end)
 
-    [[{:section, " View Manager"}], []] ++ views
+    [[] | views]
   end
 
   # --- notes ---------------------------------------------------------------------------------------
 
   defp note_lines(state, mode) do
     edit = mode.edit
-    visible = State.body_height(state) - 2
+    visible = State.body_height(state)
     top = max(edit.row - visible + 1, 0)
 
     lines =
@@ -819,7 +839,7 @@ defmodule Agenda.TUI.Render do
       end)
       |> Enum.drop(top)
 
-    [[{:section, " Note: " <> mode.title}], []] ++ lines
+    lines
   end
 
   # --- help ------------------------------------------------------------------------------------------

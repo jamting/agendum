@@ -120,7 +120,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
       state = press(state, :enter)
       assert state.db.categories[cat(state, "Contact")].exclusive
       assert contacts(state, item) == ["Contact"]
-      assert screen(state) =~ "1 conflicting item(s) reassigned"
+      assert panel(state) =~ "1 conflicting item(s) reassigned"
     end
 
     test "Existing category keeps the child closest to the top", %{opened: state, item: item} do

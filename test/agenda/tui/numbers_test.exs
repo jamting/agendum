@@ -170,7 +170,7 @@ defmodule Agenda.TUI.NumbersTest do
         |> CategoryHelpers.choose(:type)
         |> press("n")
 
-      assert screen(state) =~
+      assert panel(state) =~
                "Convert Forecast to numeric? Its 1 children become numbers; Good becomes 0"
 
       state = press(state, "y")

@@ -29,6 +29,22 @@ defmodule Agenda.TUIHelpers do
   def screen(state), do: state |> Render.render() |> Draw.to_text()
 
   @doc """
+  The text of the control panel (the two top lines) without the indicators
+  and the time, its words joined by single spaces: a long question or message
+  wraps there.
+  """
+  def panel(state) do
+    state
+    |> Render.render()
+    |> Enum.take(2)
+    |> Enum.map_join(" ", fn line ->
+      line |> Enum.reject(&(elem(&1, 0) == :indicator)) |> Enum.map_join(&elem(&1, 1))
+    end)
+    |> String.split()
+    |> Enum.join(" ")
+  end
+
+  @doc """
   The sample file with an empty Meetings that matches no text: with
   Agenda's Ignore suffixes (R16a) its name pulls in the items about a
   "meeting", which tests that use Meetings as an empty category do not want.

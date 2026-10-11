@@ -18,7 +18,8 @@ defmodule Agenda.TUI.KeyboardTest do
 
   test "CTRL-N in a column adds another entry", %{state: state} do
     state = press(state, [:down, :down, :right, :right, :right, {:ctrl, "n"}, "Daniel", :enter])
-    assert screen(state) =~ "Anna Lasky, Daniel"
+    # both, by their short names in the narrow column
+    assert screen(state) =~ "Anna, Daniel"
   end
 
   test "CTRL-N in the category manager adds a category", %{state: state} do
