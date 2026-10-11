@@ -80,6 +80,7 @@ defmodule Agenda.TUI.CategoryScreens do
     :also_assign,
     :excludes,
     :special,
+    :date_rule,
     :note
   ]
   def props_fields, do: @props
@@ -941,53 +942,71 @@ defmodule Agenda.TUI.CategoryScreens do
         State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, count - 1)})
 
       k when k in [:enter, {:char, " "}, {:f, 2}, {:f, 3}] ->
-        case Enum.at(@props, mode.cursor) do
-          :name ->
-            if Database.protected?(state.db, cat.id),
-              do: State.error(state, "#{cat.name} cannot be renamed"),
-              else: %{state | edit: %{target: :name, line: LineEdit.new(cat.name)}}
-
-          :short_name ->
-            %{state | edit: %{target: :short_name, line: LineEdit.new(cat.short_name || "")}}
-
-          :also_match ->
-            %{state | edit: %{target: :also_match, line: LineEdit.new(cat.also_match)}}
-
-          :type ->
-            change_type(state, cat)
-
-          :exclusive ->
-            toggle_exclusive(state, cat)
-
-          :match_name ->
-            State.change_db(state, Core.toggle_match_name(state.db, cat.id))
-
-          :also_assign ->
-            open_picker(state, {:also_assign, cat.id}, nil)
-
-          :excludes ->
-            open_picker(state, {:excludes, cat.id}, nil)
-
-          :special ->
-            next = %{nil => :done, done: :discard, discard: nil}[cat.special]
-            {:ok, db} = Core.set_special_action(state.db, cat.id, next)
-            State.change_db(state, db)
-
-          :conditions ->
-            open_picker(state, {:condition, cat.id}, nil)
-
-          :note ->
-            State.push(state, %{
-              type: :note,
-              target: {:category, cat.id},
-              title: cat.name,
-              edit: TextEdit.new(cat.note)
-            })
-        end
+        open_prop(state, cat, Enum.at(@props, mode.cursor))
 
       _ ->
         state
     end
+  end
+
+  # ENTER (or SPACE, F2, F3) on a row of Category Properties
+  defp open_prop(state, cat, :name) do
+    if Database.protected?(state.db, cat.id),
+      do: State.error(state, "#{cat.name} cannot be renamed"),
+      else: %{state | edit: %{target: :name, line: LineEdit.new(cat.name)}}
+  end
+
+  defp open_prop(state, cat, :short_name) do
+    %{state | edit: %{target: :short_name, line: LineEdit.new(cat.short_name || "")}}
+  end
+
+  defp open_prop(state, cat, :also_match) do
+    %{state | edit: %{target: :also_match, line: LineEdit.new(cat.also_match)}}
+  end
+
+  defp open_prop(state, cat, :type) do
+    change_type(state, cat)
+  end
+
+  defp open_prop(state, cat, :exclusive) do
+    toggle_exclusive(state, cat)
+  end
+
+  defp open_prop(state, cat, :match_name) do
+    State.change_db(state, Core.toggle_match_name(state.db, cat.id))
+  end
+
+  defp open_prop(state, cat, :also_assign) do
+    open_picker(state, {:also_assign, cat.id}, nil)
+  end
+
+  defp open_prop(state, cat, :excludes) do
+    open_picker(state, {:excludes, cat.id}, nil)
+  end
+
+  defp open_prop(state, cat, :date_rule) do
+    if cat.kind == :date,
+      do: Agenda.TUI.DateRuleBox.open(state, cat.id),
+      else: State.error(state, "Only date categories have date settings")
+  end
+
+  defp open_prop(state, cat, :special) do
+    next = %{nil => :done, done: :discard, discard: nil}[cat.special]
+    {:ok, db} = Core.set_special_action(state.db, cat.id, next)
+    State.change_db(state, db)
+  end
+
+  defp open_prop(state, cat, :conditions) do
+    open_picker(state, {:condition, cat.id}, nil)
+  end
+
+  defp open_prop(state, cat, :note) do
+    State.push(state, %{
+      type: :note,
+      target: {:category, cat.id},
+      title: cat.name,
+      edit: TextEdit.new(cat.note)
+    })
   end
 
   # Category type (User's Guide 7-3, 8-11 to 8-12): a standard category

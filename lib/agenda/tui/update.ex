@@ -190,6 +190,10 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :search_box} = m, key), do: SearchBox.handle(state, m, key)
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
   defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
+
+  defp dispatch(state, %{type: :date_rule} = m, key),
+    do: Agenda.TUI.DateRuleBox.handle(state, m, key)
+
   defp dispatch(state, %{type: :goto} = m, key), do: GoTo.handle(state, m, key)
 
   defp dispatch(state, %{type: :questions} = m, key),
@@ -1031,11 +1035,9 @@ defmodule Agenda.TUI.Update do
   end
 
   defp prompt_action(state, {:when_items, ids}, text) do
-    when_id = state.db.special.when
-
     Enum.reduce_while(ids, {:ok, state.db}, fn id, {:ok, db} ->
-      case Core.assign_by_name(db, id, when_id, text, State.context(state)) do
-        {:ok, db, :date} -> {:cont, {:ok, db}}
+      case Core.when_key(db, id, text, State.context(state)) do
+        {:ok, db} -> {:cont, {:ok, db}}
         {:error, _} -> {:halt, :error}
       end
     end)
@@ -1049,8 +1051,8 @@ defmodule Agenda.TUI.Update do
   end
 
   defp prompt_action(state, {:when, item_id}, text) do
-    case Core.assign_by_name(state.db, item_id, state.db.special.when, text, State.context(state)) do
-      {:ok, db, :date} ->
+    case Core.when_key(state.db, item_id, text, State.context(state)) do
+      {:ok, db} ->
         state
         |> State.change_db(db)
         |> State.info("When: " <> DateFormat.date(db.items[item_id].when, db.date_format))
@@ -1397,9 +1399,9 @@ defmodule Agenda.TUI.Update do
     db = Core.toggle_auto_date(state.db)
 
     message =
-      if db.when_from == :never,
-        do: "Dates in item text are ignored",
-        else: "Dates in item text set When dates"
+      if Core.auto_dating?(db),
+        do: "Dates in item text set When dates",
+        else: "Dates in item text are ignored"
 
     state |> State.change_db(db) |> State.info(message)
   end

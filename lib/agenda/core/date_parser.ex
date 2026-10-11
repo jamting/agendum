@@ -195,6 +195,89 @@ defmodule Agenda.Core.DateParser do
     end
   end
 
+  @doc """
+  Every date and time in free text, in order, for a date category that
+  takes the nth one (Which one, R6b): a date and the time right after (or
+  before) it count as one ("Friday at 6pm"); a time alone is today's ("from
+  10:00 to 2:30" gives two). Each is the date, the time or nil, and its
+  words. Recurrence is not read here.
+  """
+  @spec extract_all(String.t(), NaiveDateTime.t(), opts) :: [
+          {Date.t(), Time.t() | nil, String.t()}
+        ]
+  def extract_all(text, %NaiveDateTime{} = now, opts \\ []) do
+    {languages, s} = {languages(opts), Keyword.get(opts, :settings) || %DateSettings{}}
+    today = NaiveDateTime.to_date(now)
+
+    dates =
+      text
+      |> matches(compile(languages, :date, true), &interpret(&1, &2, &3, today, s))
+      |> disjoint()
+
+    times =
+      text
+      |> matches(compile(languages, :time, true), &interpret_time(&1, &2, &3, now, s))
+      |> Enum.reject(fn {start, neg_len, _, _} ->
+        Enum.any?(dates, &overlaps?({nil, &1.span}, {start, -neg_len}))
+      end)
+      |> disjoint()
+
+    (Enum.map(dates, &Map.put(&1, :kind, :date)) ++ Enum.map(times, &Map.put(&1, :kind, :time)))
+    |> Enum.sort_by(& &1.span)
+    |> pair_up(text)
+    |> Enum.map(&occurrence(&1, text, today))
+  end
+
+  # Matches that do not overlap, earliest (and longest) first, as
+  # %{span: {start, length}, value: value}.
+  defp disjoint(matches) do
+    matches
+    |> Enum.sort_by(fn {start, neg_len, position, _} -> {start, neg_len, position} end)
+    |> Enum.reduce({[], 0}, fn {start, neg_len, _, value}, {acc, free_from} ->
+      if start >= free_from,
+        do: {[%{span: {start, -neg_len}, value: value} | acc], start - neg_len},
+        else: {acc, free_from}
+    end)
+    |> elem(0)
+    |> Enum.reverse()
+  end
+
+  # A date and a time with only "at", "on", "@", commas or spaces between
+  # them belong together.
+  defp pair_up([%{kind: a} = x, %{kind: b} = y | rest], text) when a != b do
+    {xs, xl} = x.span
+    {ys, _} = y.span
+    gap = binary_part(text, xs + xl, ys - xs - xl)
+
+    if Regex.match?(~r/^[\s,@]*(?:at|on|kl\.?)?[\s,@]*$/iu, gap),
+      do: [[x, y] | pair_up(rest, text)],
+      else: [[x] | pair_up([y | rest], text)]
+  end
+
+  defp pair_up([x | rest], text), do: [[x] | pair_up(rest, text)]
+  defp pair_up([], _text), do: []
+
+  defp occurrence(parts, text, today) do
+    date = Enum.find_value(parts, &(&1.kind == :date && date_value(&1.value)))
+    time = Enum.find_value(parts, &(&1.kind == :time && &1.value))
+
+    phrase =
+      parts
+      |> Enum.map_join(" ", fn %{span: {start, len}} -> binary_part(text, start, len) end)
+      |> String.downcase()
+      |> String.replace(~r/\s+/u, " ")
+
+    case {date, time} do
+      {nil, {:time, t}} -> {today, t, phrase}
+      {nil, {:datetime, dt}} -> {NaiveDateTime.to_date(dt), NaiveDateTime.to_time(dt), phrase}
+      {d, {:time, t}} -> {d, t, phrase}
+      {d, _} -> {d, nil, phrase}
+    end
+  end
+
+  defp date_value({:recurring, date, _rule}), do: date
+  defp date_value(%Date{} = date), do: date
+
   defp languages(opts) do
     case Keyword.get(opts, :languages) do
       nil -> @default

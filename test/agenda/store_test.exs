@@ -30,15 +30,16 @@ defmodule Agenda.StoreTest do
   test "files in format version 1 are upgraded on load", %{tmp_dir: dir} do
     db = Agenda.Sample.build(~D[2026-10-08])
 
-    # what a version 1 file held: no Database.auto_date (now when_from), no Item.when_explicit
+    # what a version 1 file held: no Database.auto_date (now When's date
+    # rule), no Item.when_explicit
     v1_items = Map.new(db.items, fn {id, item} -> {id, Map.delete(item, :when_explicit)} end)
-    v1 = db |> Map.delete(:when_from) |> Map.put(:items, v1_items)
+    v1 = db |> without_date_rules() |> Map.put(:items, v1_items)
 
     path = Path.join(dir, "old.agenda")
     File.write!(path, :erlang.term_to_binary({:agenda, 1, v1}))
 
     assert {:ok, loaded} = Store.load(path)
-    assert loaded.when_from == :item
+    assert loaded.categories[db.special.when].date_rule.assign == :item_text
     assert Enum.all?(Map.values(loaded.items), &(&1.when_explicit == false))
     assert loaded == db
   end
@@ -56,13 +57,37 @@ defmodule Agenda.StoreTest do
   test "files before format version 15 that did not read dates read them never",
        %{tmp_dir: dir} do
     db = Agenda.Sample.build(~D[2026-10-08])
-    v14 = db |> Map.delete(:when_from) |> Map.put(:auto_date, false)
+    v14 = db |> without_date_rules() |> Map.put(:auto_date, false)
     path = Path.join(dir, "v14.agenda")
     File.write!(path, :erlang.term_to_binary({:agenda, 14, v14}))
 
     assert {:ok, loaded} = Store.load(path)
-    assert loaded.when_from == :never
-    assert loaded == %{db | when_from: :never}
+    never = %{Agenda.Core.DateRule.builtin(:when) | assign: :never}
+    {:ok, expected} = Agenda.Core.set_date_rule(db, db.special.when, never)
+    assert loaded == expected
+  end
+
+  test "files in format version 17 get date rules: When's from when_from; their dates were set by hand",
+       %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    {:ok, db, due} = Agenda.Core.add_category(db, db.main_id, "Due")
+    {:ok, db} = Agenda.Core.make_date(db, due, ~D[2026-10-08])
+    item = hd(db.item_order)
+    db = Agenda.Core.set_date(db, item, due, ~D[2026-11-01])
+
+    v17 =
+      db
+      |> without_date_rules()
+      |> Map.put(:when_from, :note)
+      |> Map.put(:dates, %{{item, due} => {~D[2026-11-01], nil}})
+
+    path = Path.join(dir, "v17.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 17, v17}))
+
+    assert {:ok, loaded} = Store.load(path)
+    assert loaded.categories[db.special.when].date_rule.assign == :note_text
+    assert loaded.categories[due].date_rule == %Agenda.Core.DateRule{}
+    assert Agenda.Core.Database.date_explicit?(loaded, item, due)
   end
 
   test "files before format version 17 get no dates of user date categories",
@@ -186,4 +211,11 @@ defmodule Agenda.StoreTest do
     File.write!(path, :erlang.term_to_binary({:agenda, 99, Agenda.Core.new_file()}))
     assert {:error, {:unsupported_version, 99}} = Store.load(path)
   end
+
+  # categories as files before format 18 held them: no date rules
+  defp without_date_rules(db),
+    do: %{
+      db
+      | categories: Map.new(db.categories, fn {id, c} -> {id, Map.delete(c, :date_rule)} end)
+    }
 end

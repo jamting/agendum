@@ -17,6 +17,7 @@ defmodule Agenda.Core do
     Context,
     Database,
     DateParser,
+    DateRule,
     Links,
     NumberFormat,
     RangeFilter,
@@ -68,7 +69,7 @@ defmodule Agenda.Core do
     db =
       db
       |> Assign.auto_assign(id, Keyword.get(opts, :adjacent, []))
-      |> date_from_text(id, nil, today)
+      |> item_dates(id, nil, [:entered], today)
       |> settle(before, id, today)
 
     {db, id}
@@ -76,14 +77,18 @@ defmodule Agenda.Core do
 
   @doc """
   Changes an item's text, re-runs automatic assignment (it only adds
-  assignments) and updates a When date read from the text (R14).
+  assignments) and updates dates read from the text or set on edits (R14,
+  R6b).
   """
   @spec edit_item(db, id, String.t(), clock, [id]) :: db
   def edit_item(db, id, text, today, adjacent \\ []) do
+    text = String.trim(text)
+    events = if text == db.items[id].text, do: [], else: [:item_edited]
+
     db
-    |> Database.update_item(id, &%{&1 | text: String.trim(text)})
+    |> Database.update_item(id, &%{&1 | text: text})
     |> Assign.auto_assign(id, adjacent)
-    |> date_from_text(id, db.items[id], today)
+    |> item_dates(id, db.items[id], events, today)
     |> settle(db, id, today)
   end
 
@@ -92,64 +97,147 @@ defmodule Agenda.Core do
     db |> Assign.assign(item_id, cat_id) |> Database.unmark_conditional(item_id, cat_id)
   end
 
-  # SPEC R14, R14f: the first date in an item's text (or note, as the file
-  # says) is its When date, unless the user set one explicitly or turned
-  # automatic dating off. Relative dates are read once: after an edit the
-  # date is only re-read when the date words themselves changed (so
-  # "tomorrow" keeps meaning the day it was typed). Removing the date
-  # words clears a When date they gave. `old_item` is the item before the
-  # change, nil for a new one.
-  defp date_from_text(db, id, old_item, today) do
-    item = db.items[id]
+  # --- how date categories get dates (R14, R14f, R6b) -----------------------------
 
-    if db.when_from == :never or item.when_explicit do
+  # After an item is entered or changed: every date category whose rule
+  # stamps on one of `events` gets the current date (and time), and every
+  # one whose rule reads text gets the date found there. `old_item` is the
+  # item before the change, nil for a new one.
+  defp item_dates(db, id, old_item, events, clock) do
+    db
+    |> date_categories()
+    |> Enum.reduce(db, fn cat_id, db ->
+      rule = db.categories[cat_id].date_rule
+
+      cond do
+        DateRule.stamps?(rule, events) -> stamp_date(db, id, cat_id, clock)
+        DateRule.sources(rule) != [] -> date_from_text(db, id, old_item, cat_id, clock)
+        true -> db
+      end
+    end)
+  end
+
+  defp date_categories(db),
+    do: for({id, %{kind: :date}} <- db.categories, do: id) |> Enum.sort()
+
+  # The current date (and time, where the category keeps one).
+  defp stamp_date(db, _id, _cat_id, nil), do: db
+
+  defp stamp_date(db, id, cat_id, clock) do
+    now = now_of(clock)
+    time = if match?(%Date{}, clock), do: nil, else: NaiveDateTime.to_time(now)
+    auto_date(db, id, cat_id, NaiveDateTime.to_date(now), time, nil)
+  end
+
+  # A date read from text (R14, R6b), unless the user set one by hand.
+  # Relative dates are read once: after an edit the date is only re-read
+  # when the date words themselves changed (so "tomorrow" keeps meaning
+  # the day it was typed). Removing the date words clears a date they gave.
+  defp date_from_text(db, id, old_item, cat_id, clock) do
+    if Database.date_explicit?(db, id, cat_id) do
       db
     else
-      read =
-        &read_when(db.when_from, &1, now_of(today), Context.parser_opts(today, db.date_settings))
-
+      rule = db.categories[cat_id].date_rule
+      opts = Context.parser_opts(clock, db.date_settings)
+      read = &read_date(rule, &1, now_of(clock), opts)
       old = if old_item, do: read.(old_item), else: :none
 
-      case {old, read.(item)} do
-        {{:ok, _, _, _, phrase}, {:ok, _, _, _, phrase}} ->
-          db
-
-        {_, {:ok, date, time, rule, _}} ->
-          Database.update_item(db, id, &%{&1 | when: date, when_time: time, recurrence: rule})
-
-        {{:ok, _, _, _, _}, :none} ->
-          Database.update_item(db, id, &%{&1 | when: nil, when_time: nil, recurrence: nil})
-
-        {:none, :none} ->
-          db
+      case {old, read.(db.items[id])} do
+        {{:ok, _, _, _, phrase}, {:ok, _, _, _, phrase}} -> db
+        {_, {:ok, date, time, recurrence, _}} -> auto_date(db, id, cat_id, date, time, recurrence)
+        {{:ok, _, _, _, _}, :none} -> auto_date(db, id, cat_id, nil, nil, nil)
+        {:none, :none} -> db
       end
     end
   end
 
-  # The When date in the text the file reads it from (R14f).
-  defp read_when(:item_or_note, item, now, opts) do
-    with :none <- read_when(:item, item, now, opts), do: read_when(:note, item, now, opts)
+  # The date in the texts the rule reads, the first that has one; the
+  # first date, or with Which one the nth (no recurrence then).
+  defp read_date(rule, item, now, opts) do
+    Enum.find_value(DateRule.sources(rule), :none, fn source ->
+      text = if source == :item, do: item.text, else: item.note
+
+      case nth_date(text, rule.which, now, opts) do
+        :none -> nil
+        found -> found
+      end
+    end)
   end
 
-  defp read_when(:item, item, now, opts), do: DateParser.extract_recurring(item.text, now, opts)
-  defp read_when(:note, item, now, opts), do: DateParser.extract_recurring(item.note, now, opts)
+  defp nth_date(text, 1, now, opts), do: DateParser.extract_recurring(text, now, opts)
+
+  defp nth_date(text, n, now, opts) do
+    case Enum.at(DateParser.extract_all(text, now, opts), n - 1) do
+      {date, time, phrase} -> {:ok, date, time, nil, phrase}
+      nil -> :none
+    end
+  end
+
+  # A date the program gives (not the user): When keeps a time and a
+  # recurrence, Entry and Done the day, other date categories day and time.
+  defp auto_date(db, id, cat_id, date, time, recurrence) do
+    case Database.date_field(db, cat_id) do
+      :when ->
+        Database.update_item(
+          db,
+          id,
+          &%{&1 | when: date, when_time: date && time, recurrence: date && recurrence}
+        )
+
+      nil ->
+        Database.put_item_date(db, id, cat_id, date, time, false)
+
+      field ->
+        Database.update_item(db, id, &Map.put(&1, field, date))
+    end
+  end
+
+  # Items that joined a category: dates set "when item is assigned".
+  defp assigned_dates(db, before, id, clock) do
+    joined? =
+      Map.has_key?(before.items, id) == false or
+        not MapSet.subset?(
+          Database.explicit_categories(db, id),
+          Database.explicit_categories(before, id)
+        )
+
+    if joined? do
+      db
+      |> date_categories()
+      |> Enum.filter(&DateRule.stamps?(db.categories[&1].date_rule, [:assigned]))
+      |> Enum.reduce(db, &stamp_date(&2, id, &1, clock))
+    else
+      db
+    end
+  end
 
   @doc """
   Turns reading When dates from text off, or back on from the item text
-  (R14; Utilities Dating).
+  (R14; Utilities Dating): When's Assign item date becomes Never or From
+  the item text.
   """
   @spec toggle_auto_date(db) :: db
-  def toggle_auto_date(db),
-    do: %{db | when_from: if(db.when_from == :never, do: :item, else: :never)}
+  def toggle_auto_date(db) do
+    rule = db.categories[db.special.when].date_rule
+    assign = if rule.assign == :never, do: :item_text, else: :never
+    {:ok, db} = set_date_rule(db, db.special.when, %{rule | assign: assign})
+    db
+  end
+
+  @doc "Whether When dates are read from text at all (Utilities Dating)."
+  @spec auto_dating?(db) :: boolean
+  def auto_dating?(db), do: db.categories[db.special.when].date_rule.assign != :never
 
   @doc """
-  Where When dates are read from (R14f; the When category's Assign item
-  date): the item text, the note, the item text and else the note, or
-  never. Items keep the dates they have.
+  Sets how a date category gets dates (R6b; Advanced settings). Items keep
+  the dates they have.
   """
-  @spec set_when_from(db, :item | :note | :item_or_note | :never) :: db
-  def set_when_from(db, from) when from in [:item, :note, :item_or_note, :never],
-    do: %{db | when_from: from}
+  @spec set_date_rule(db, id, DateRule.t()) :: {:ok, db} | {:error, :not_a_date_category}
+  def set_date_rule(db, cat_id, %DateRule{} = rule) do
+    if Database.date_category?(db, cat_id),
+      do: {:ok, Database.update_category(db, cat_id, &%{&1 | date_rule: rule})},
+      else: {:error, :not_a_date_category}
+  end
 
   @doc "Sets how the file displays dates and times (R41)."
   @spec set_date_format(db, Agenda.Core.DateFormat.t()) :: db
@@ -164,14 +252,16 @@ defmodule Agenda.Core do
     do: %{db | date_settings: settings}
 
   @doc """
-  Replaces an item's note; when the file reads When dates from notes, a
-  changed date in it sets the When date (R14f).
+  Replaces an item's note; date categories that read dates from notes, or
+  are set when the note is edited, get their dates (R14f, R6b).
   """
   @spec set_note(db, id, String.t(), clock) :: db
   def set_note(db, id, note, clock) do
+    events = if note == db.items[id].note, do: [], else: [:note_edited]
+
     db
     |> Database.update_item(id, &%{&1 | note: note})
-    |> date_from_text(id, db.items[id], clock)
+    |> item_dates(id, db.items[id], events, clock)
     |> settle(db, id, clock)
   end
 
@@ -227,10 +317,41 @@ defmodule Agenda.Core do
       %{done: nil} = item ->
         db
         |> Database.update_item(id, &%{&1 | done: date_of(today)})
+        |> key_dates(id, :done_key, today)
         |> next_occurrence(item, today)
 
       _ ->
         db
+    end
+  end
+
+  # F4 (DONE) and ALT-F2 (WHEN) also set the date of every other date
+  # category whose rule says so (R6b): the current date and time for the
+  # Done key, the When date for the When key. Set by the user, by hand.
+  defp key_dates(db, id, key, clock) do
+    own = if key == :done_key, do: db.special.done, else: db.special.when
+
+    {date, time} =
+      if key == :done_key,
+        do:
+          {date_of(clock),
+           if(match?(%Date{}, clock), do: nil, else: NaiveDateTime.to_time(now_of(clock)))},
+        else: {db.items[id].when, db.items[id].when_time}
+
+    db
+    |> date_categories()
+    |> Enum.filter(&(&1 != own and Map.fetch!(db.categories[&1].date_rule, key)))
+    |> Enum.reduce(db, &put_date(&2, id, &1, date, time))
+  end
+
+  @doc """
+  ALT-F2 (WHEN): sets the When date from typed text, and the same date in
+  every date category set from the When key (R6b).
+  """
+  @spec when_key(db, id, String.t(), clock) :: {:ok, db} | {:error, :invalid_date}
+  def when_key(db, item_id, text, clock) do
+    with {:ok, db, :date} <- assign_by_name(db, item_id, db.special.when, text, clock) do
+      {:ok, key_dates(db, item_id, :when_key, clock)}
     end
   end
 
@@ -492,6 +613,7 @@ defmodule Agenda.Core do
   # run, once (User's Guide 18-7, 21-15).
   defp settle(db, before, item_id, clock) do
     db
+    |> assigned_dates(before, item_id, clock)
     |> Assign.apply_conditions(item_id, clock)
     |> run_actions(before, item_id, clock, map_size(db.categories) + 2, nil)
   end
@@ -907,7 +1029,7 @@ defmodule Agenda.Core do
         )
 
       nil ->
-        Database.put_item_date(db, item_id, cat_id, date, time)
+        Database.put_item_date(db, item_id, cat_id, date, time, true)
 
       field ->
         Database.update_item(db, item_id, &Map.put(&1, field, date))
@@ -975,12 +1097,12 @@ defmodule Agenda.Core do
           |> drop_excludes(cat_id)
           |> Database.update_category(
             cat_id,
-            &%{&1 | kind: :date, match_name: false, exclusive: false}
+            &%{&1 | kind: :date, match_name: false, exclusive: false, date_rule: %DateRule{}}
           )
 
         {:ok,
          Enum.reduce(dates, db, fn {item, date, time}, db ->
-           Database.put_item_date(db, item, cat_id, date, time)
+           Database.put_item_date(db, item, cat_id, date, time, true)
          end)}
     end
   end
@@ -1382,7 +1504,7 @@ defmodule Agenda.Core do
   def reassign_all(db, today) do
     Enum.reduce(db.item_order, db, fn id, before ->
       db = Assign.auto_assign(before, id, [])
-      db = if db.items[id].when, do: db, else: date_from_text(db, id, nil, today)
+      db = if db.items[id].when, do: db, else: item_dates(db, id, nil, [], today)
       settle(db, before, id, today)
     end)
   end

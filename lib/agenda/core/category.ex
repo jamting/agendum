@@ -25,6 +25,8 @@ defmodule Agenda.Core.Category do
   * `special` – `:done` or `:discard`: the special action (R15b).
   * `also_assign` – category-to-category links (patent FIG. 6): items
     assigned here are also assigned to these categories.
+  * `date_rule` – for a date category, how it gets dates
+    (`Agenda.Core.DateRule`, R6b); nil for other categories.
   * `excludes` – negative links (R9, patent FIG. 6; not in Agenda 2.0):
     categories that may not share an item with this one. Kept on both
     categories of a pair.
@@ -43,6 +45,7 @@ defmodule Agenda.Core.Category do
           match_name: boolean,
           also_assign: [id],
           excludes: [id],
+          date_rule: Agenda.Core.DateRule.t() | nil,
           conditions: [{id, :assigned | :not_assigned | Agenda.Core.RangeFilter.term_()}],
           also_match: String.t(),
           actions: [{id, :remove | :clear | {:set, String.t() | float}}],
@@ -61,6 +64,7 @@ defmodule Agenda.Core.Category do
     match_name: true,
     also_assign: [],
     excludes: [],
+    date_rule: nil,
     conditions: [],
     also_match: "",
     actions: [],

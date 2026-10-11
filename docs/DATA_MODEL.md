@@ -34,12 +34,11 @@ erDiagram
         int next_id "shared id counter"
         int main_id "the MAIN category"
         map special "entry/when/done => category id"
-        atom when_from "item, note, item_or_note or never (R14f)"
         set conditional "item-category links made by conditions"
         DateFormat date_format "how dates and times display (R41)"
         DateSettings date_settings "how typed dates are read (R14e)"
         map numbers "item and numeric category => number (R29)"
-        map dates "item and user date category => date and time (R6a)"
+        map dates "item and user date category => date, time, set by hand (R6a)"
         Links dependencies "dependent item <-> prerequisite item (R43)"
         atom confirm_assignments "never or always (R16)"
         map suggestions "item => suggested categories (R16)"
@@ -69,6 +68,7 @@ erDiagram
         bool match_name "auto-assign by name"
         list also_assign "category ids"
         list excludes "category ids, negative links (R9)"
+        DateRule date_rule "how a date category gets dates (R6b)"
         string also_match "text conditions (R15d)"
         list actions "remove, date and number actions (R15b)"
         atom special "done, discard or nil (R15b)"
@@ -120,12 +120,11 @@ classDiagram
         +next_id : pos_integer
         +main_id : id
         +special : Map~entry/when/done, id~
-        +when_from : item, note, item_or_note, never
         +conditional : MapSet
         +date_format : DateFormat
         +date_settings : DateSettings
         +numbers : Map~item_id and cat_id, float~
-        +dates : Map~item_id and cat_id, date and time~
+        +dates : Map~item_id and cat_id, date time explicit~
         +dependencies : Links
         +confirm_assignments : never or always
         +suggestions : Map~item_id, [cat_id]~
@@ -173,6 +172,7 @@ classDiagram
         +match_name : boolean
         +also_assign : [id]
         +excludes : [id]
+        +date_rule : DateRule or nil
         +also_match : String
         +actions : [id and action]
         +special : done, discard or nil
@@ -453,7 +453,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16); 14 added `Database.date_settings` (R14e); 15 replaced `Database.auto_date` with `Database.when_from` (R14f); 16 added `Category.excludes` (R9); 17 added `Database.dates` (R6a)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16); 14 added `Database.date_settings` (R14e); 15 replaced `Database.auto_date` with `Database.when_from` (R14f); 16 added `Category.excludes` (R9); 17 added `Database.dates` (R6a); 18 added `Category.date_rule` (R6b), replacing `Database.when_from` with When's rule
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

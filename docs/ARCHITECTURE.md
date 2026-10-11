@@ -44,6 +44,7 @@ shell does terminal I/O and file I/O.
 | `Core.RangeFilter`                           | Date and numeric filter ranges: checking, matching, the value a new item gets (R28a).                                                                   |
 | `Core.NumberFormat`                          | Reading and showing numbers, and the calculations of numeric columns (R29).                                                                             |
 | `Core.DateFormat`                            | How a file displays dates and times: date order, separator, clock, day of week (R41).                                                                   |
+| `Core.DateRule`                              | How a date category gets dates: Assign item date, Which one, Done and When keys (R6b).                                                                   |
 | `Core.DateSettings`                          | How a file reads dates: week, quarter and year boundaries, month alone, morning/afternoon/evening (R14e).                                               |
 | `Core.TextSearch`                            | Finding and replacing literal text in a note's lines (R39).                                                                                             |
 | `Core.Item`, `Core.Category`, `Core.View`    | Plain structs.                                                                                                                                          |

@@ -33,9 +33,10 @@ file can change.
   translations) by the setting (`:morning` …), not by a time, so one file
   setting serves every language.
 - Where the When date is read from (item text, note, item or note text,
-  never; `db.when_from`) is a file setting in File Properties. Agenda keeps
-  it in the When category's properties, with "Which one"; that waits for
-  date categories the user can create.
+  never) was first a file setting in File Properties (`db.when_from`).
+  With date categories the user can create (R6a, R6b) it moved, as in
+  Agenda, to When's own date rule (`Category.date_rule`), next to "Which
+  one"; it is still saved in the file.
 - A "$" before a relative date in a range ("$Monday") is read once and
   stored as an ISO date, so a fixed date never depends on who reads it.
 - Simplifications against Agenda, recorded in SPEC R14e: quarters and

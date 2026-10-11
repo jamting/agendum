@@ -14,7 +14,7 @@ defmodule Agenda.Core.Database do
   Every function is pure: it takes a database and returns a new one.
   """
 
-  alias Agenda.Core.{Category, DateFormat, DateSettings, Item, Links, View}
+  alias Agenda.Core.{Category, DateFormat, DateRule, DateSettings, Item, Links, View}
   alias Agenda.Core.View.{Column, Section}
 
   @type id :: pos_integer
@@ -28,12 +28,11 @@ defmodule Agenda.Core.Database do
           next_id: id,
           main_id: id,
           special: %{entry: id, when: id, done: id},
-          when_from: :item | :note | :item_or_note | :never,
           conditional: MapSet.t({id, id}),
           date_format: DateFormat.t(),
           date_settings: DateSettings.t(),
           numbers: %{optional({id, id}) => float},
-          dates: %{optional({id, id}) => {Date.t(), Time.t() | nil}},
+          dates: %{optional({id, id}) => {Date.t(), Time.t() | nil, boolean}},
           dependencies: Links.t(),
           confirm_assignments: :never | :always,
           suggestions: %{optional(id) => [id]}
@@ -48,7 +47,6 @@ defmodule Agenda.Core.Database do
             next_id: 1,
             main_id: nil,
             special: %{},
-            when_from: :item,
             conditional: MapSet.new(),
             date_format: %DateFormat{},
             date_settings: %DateSettings{},
@@ -78,9 +76,10 @@ defmodule Agenda.Core.Database do
     {db, main} = put_new_category(db, %Category{name: "MAIN", match_name: false})
     db = %{db | main_id: main}
 
-    {db, entry} = insert_category(db, main, "Entry", kind: :date, match_name: false)
-    {db, when_id} = insert_category(db, main, "When", kind: :date, match_name: false)
-    {db, done} = insert_category(db, main, "Done", kind: :date, match_name: false)
+    date = &[kind: :date, match_name: false, date_rule: DateRule.builtin(&1)]
+    {db, entry} = insert_category(db, main, "Entry", date.(:entry))
+    {db, when_id} = insert_category(db, main, "When", date.(:when))
+    {db, done} = insert_category(db, main, "Done", date.(:done))
     db = %{db | special: %{entry: entry, when: when_id, done: done}}
 
     {db, section} = insert_category(db, main, section_name, match_name: false)
@@ -165,7 +164,7 @@ defmodule Agenda.Core.Database do
   """
   @spec insert_category(t, id, String.t(), keyword) :: {t, id}
   def insert_category(%__MODULE__{} = db, parent_id, name, opts \\ []) do
-    fields = Keyword.take(opts, [:kind, :exclusive, :match_name, :short_name])
+    fields = Keyword.take(opts, [:kind, :exclusive, :match_name, :short_name, :date_rule])
     category = struct!(Category, [name: name, parent_id: parent_id] ++ fields)
     {db, id} = put_new_category(db, category)
     {attach_child(db, parent_id, id, Keyword.get(opts, :after)), id}
@@ -471,7 +470,7 @@ defmodule Agenda.Core.Database do
     case date_field(db, cat_id) do
       nil ->
         case Map.get(db.dates, {item_id, cat_id}) do
-          {date, _time} -> date
+          {date, _time, _explicit} -> date
           nil -> nil
         end
 
@@ -485,18 +484,36 @@ defmodule Agenda.Core.Database do
   def item_time(db, item_id, cat_id) do
     case date_field(db, cat_id) do
       :when -> db.items[item_id].when_time
-      nil -> with {_date, time} <- Map.get(db.dates, {item_id, cat_id}), do: time
+      nil -> with {_date, time, _explicit} <- Map.get(db.dates, {item_id, cat_id}), do: time
       _entry_or_done -> nil
     end
   end
 
-  @doc "Sets (or, with a nil date, clears) an item's date in a date category the user made."
-  @spec put_item_date(t, id, id, Date.t() | nil, Time.t() | nil) :: t
-  def put_item_date(db, item_id, cat_id, nil, _time),
+  @doc """
+  Whether the user set an item's date in a date category by hand, so that
+  dates in the text leave it alone (When's `when_explicit`, R14, R6b).
+  """
+  @spec date_explicit?(t, id, id) :: boolean
+  def date_explicit?(db, item_id, cat_id) do
+    case date_field(db, cat_id) do
+      :when -> db.items[item_id].when_explicit
+      nil -> match?({_, _, true}, Map.get(db.dates, {item_id, cat_id}))
+      _entry_or_done -> false
+    end
+  end
+
+  @doc """
+  Sets (or, with a nil date, clears) an item's date in a date category the
+  user made; `explicit` when the user set it by hand.
+  """
+  @spec put_item_date(t, id, id, Date.t() | nil, Time.t() | nil, boolean) :: t
+  def put_item_date(db, item_id, cat_id, date, time, explicit \\ false)
+
+  def put_item_date(db, item_id, cat_id, nil, _time, _explicit),
     do: %{db | dates: Map.delete(db.dates, {item_id, cat_id})}
 
-  def put_item_date(db, item_id, cat_id, %Date{} = date, time),
-    do: %{db | dates: Map.put(db.dates, {item_id, cat_id}, {date, time})}
+  def put_item_date(db, item_id, cat_id, %Date{} = date, time, explicit),
+    do: %{db | dates: Map.put(db.dates, {item_id, cat_id}, {date, time, explicit})}
 
   @doc """
   Whether an item belongs to a category, directly or by subsumption: an item

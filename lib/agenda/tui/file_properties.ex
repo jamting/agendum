@@ -9,8 +9,7 @@ defmodule Agenda.TUI.FileProperties do
   formatted sample below, as in Agenda's Display Format box; then
   Agenda's Global Date Settings (beginning and end of week, first
   quarter, beginning of year, month alone means, morning, afternoon,
-  evening); then When dates from (item text, note, item or note, never;
-  R14f) and Confirm assignments. SPACE or →
+  evening); then Confirm assignments. SPACE or →
   shows the next choice, ← the previous one; every change applies at once
   and is one undo step. ESC or ENTER closes the box. Pure.
   """
@@ -30,8 +29,7 @@ defmodule Agenda.TUI.FileProperties do
     :afternoon,
     :evening
   ]
-  @rows @format_rows ++ @settings_rows ++ [:when_from, :confirm]
-  @when_from [:item, :note, :item_or_note, :never]
+  @rows @format_rows ++ @settings_rows ++ [:confirm]
   @days ~w(Mon Tue Wed Thu Fri Sat Sun)
   @months ~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
 
@@ -53,12 +51,6 @@ defmodule Agenda.TUI.FileProperties do
   defp change(state, :confirm, _step) do
     mode = if state.db.confirm_assignments == :never, do: :always, else: :never
     State.change_db(state, Core.set_confirm_assignments(state.db, mode))
-  end
-
-  defp change(state, :when_from, step) do
-    index = Enum.find_index(@when_from, &(&1 == state.db.when_from)) || 0
-    from = Enum.at(@when_from, Integer.mod(index + step, length(@when_from)))
-    State.change_db(state, Core.set_when_from(state.db, from))
   end
 
   defp change(state, row, step) when row in @settings_rows do
@@ -89,16 +81,10 @@ defmodule Agenda.TUI.FileProperties do
       {"Morning", DateFormat.time(s.morning, f)},
       {"Afternoon", DateFormat.time(s.afternoon, f)},
       {"Evening", DateFormat.time(s.evening, f)},
-      {"When dates from", when_from(state.db.when_from)},
       {"Confirm assignments",
        if(state.db.confirm_assignments == :always, do: "Always", else: "Never")}
     ]
   end
-
-  defp when_from(:item), do: "Item text"
-  defp when_from(:note), do: "Note text"
-  defp when_from(:item_or_note), do: "Item or note text"
-  defp when_from(:never), do: "Never"
 
   defp month_alone(:first), do: "First day"
   defp month_alone(:last), do: "Last day"

@@ -1,7 +1,7 @@
 defmodule Agenda.Core.DatesFromNotesTest do
   @moduledoc """
   Fixed relative dates and When dates from notes (R14f; User's Guide 6-7,
-  7-6 to 7-7, 7-11).
+  7-6 to 7-7, 7-11); where When reads dates is its date rule (R6b).
   """
   use ExUnit.Case, async: true
 
@@ -13,9 +13,18 @@ defmodule Agenda.Core.DatesFromNotesTest do
 
   defp item(db, id), do: db.items[id]
 
+  # When's Assign item date (R6b), where R14f's setting now lives
+  defp when_from(db, assign) do
+    rule = db.categories[db.special.when].date_rule
+    {:ok, db} = Core.set_date_rule(db, db.special.when, %{rule | assign: assign})
+    db
+  end
+
+  defp when_assign(db), do: db.categories[db.special.when].date_rule.assign
+
   describe "When dates from the note" do
     setup do
-      %{db: Core.set_when_from(Core.new_file(), :note)}
+      %{db: when_from(Core.new_file(), :note_text)}
     end
 
     test "the note's date is the When date; the item text's is not", %{db: db} do
@@ -52,7 +61,7 @@ defmodule Agenda.Core.DatesFromNotesTest do
   end
 
   test "from the item or the note: the item text first, then the note" do
-    db = Core.set_when_from(Core.new_file(), :item_or_note)
+    db = when_from(Core.new_file(), :item_or_note_text)
     {db, a} = Core.add_item(db, "Dentist on Friday", @today)
     db = Core.set_note(db, a, "or next Tuesday", @today)
     assert item(db, a).when == ~D[2026-10-09]
@@ -67,20 +76,17 @@ defmodule Agenda.Core.DatesFromNotesTest do
 
   test "from the item text (the default), a note's date is ignored" do
     db = Core.new_file()
-    assert db.when_from == :item
+    assert db.categories[db.special.when].date_rule.assign == :item_text
     {db, id} = Core.add_item(db, "Dentist", @today)
     db = Core.set_note(db, id, "next Tuesday", @today)
     assert item(db, id).when == nil
   end
 
   test "Dating toggles between never and the item text" do
-    db = Core.new_file()
-    db = Core.toggle_auto_date(db)
-    assert db.when_from == :never
-    assert Core.toggle_auto_date(db).when_from == :item
-
-    assert db |> Core.set_when_from(:note) |> Core.toggle_auto_date() |> Map.get(:when_from) ==
-             :never
+    db = Core.toggle_auto_date(Core.new_file())
+    refute Core.auto_dating?(db)
+    assert Core.toggle_auto_date(db) |> when_assign() == :item_text
+    assert db |> when_from(:note_text) |> Core.toggle_auto_date() |> when_assign() == :never
   end
 
   describe "a $ before a relative date in a range keeps the date it was first read as" do

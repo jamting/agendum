@@ -49,6 +49,26 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   makes the item a member, works in sorting, filters and conditions, and
   is cleared with DEL. Assigning dates automatically (Assign item date,
   Which one, the Done and When keys) is R6b.
+- **R6b ✅ How date categories get dates** (User's Guide 7-5 to 7-8).
+  Category Properties ▸ Date settings opens a date category's Advanced
+  settings box (SPACE/→ next choice, ← previous; each change one undo
+  step). Assign item date: Never; from the clock When item is entered,
+  When item text is edited (also on entry), When note text is edited,
+  When item or note text is edited, When item is assigned (on entry and
+  on joining another category) or When item is assigned or edited; or
+  From the item text, From the note text or From the item or note text.
+  Which one (1–10, for the text choices) takes the nth date: a date and
+  the time next to it count as one, a time alone is today's ("Status
+  meeting from 10:00 to 2:30": When takes 10:00, an End category with
+  Which one 2 takes 2:30). Set date from Done key / When key: F4 or ALT-F2
+  also sets this date (F4 the current date and time, ALT-F2 the When
+  date). Defaults as Agenda's: Entry when entered, When from the item
+  text with the When key, Done never with the Done key, a new date
+  category never; Done always takes the Done key and When the When key.
+  Dates from the clock keep the time, except Entry and Done, which keep
+  the day; Entry always gets the day an item is entered. A date set by
+  hand (typed, Item Properties, ALT-F2, F4) stays when the text changes;
+  dates from text are read once, as for When (R14).
 - **R7 ✅ Mutual exclusion.** A category can declare its children mutually
   exclusive (e.g. Priority: High/Medium/Low). Assigning an item to one child
   removes it from the others and their subtrees. This applies at every
@@ -259,14 +279,12 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   of a filter or condition ("$Monday", "$ end of next week") reads it
   once, when the range is set, and keeps that date (shown as a date
   from then on); without "$" the words are read again each day.
-  File Properties "When dates from" says where When dates are read
-  from: Item text (default), Note text, Item or note text (the item's
-  first, else the note's) or Never (what File ▸ Dating toggles). A note's
-  date is read when the note is saved, by the same rules as item text
-  (read once; removing it clears the date; a date set by hand stays).
-  Agenda keeps this in the When category's properties, with a "Which
-  one" setting (the nth date) meant for user-made date categories; both
-  wait for those.
+  When's Assign item date (R6b) says where When dates are read from:
+  From the item text (default), the note text, the item or note text
+  (the item's first, else the note's) or Never (what Utilities ▸ Dating
+  toggles). A note's date is read when the note is saved, by the same
+  rules as item text (read once; removing it clears the date; a date set
+  by hand stays).
 - **R15 ✅ Assignment conditions** (User's Guide, chapters 18 and 20). A
   category can have conditions on other categories: items *assigned* to
   them (Urgent if Taxes and Accountant) or *not assigned* to them (Me if

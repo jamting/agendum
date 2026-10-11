@@ -18,14 +18,16 @@ defmodule Agenda.Store do
   `Database.suggestions` (R16); 14 adds `Database.date_settings` (R14e);
   15 replaces `Database.auto_date` with `Database.when_from` (R14f); 16
   adds `Category.excludes` (R9); 17 adds `Database.dates`, the dates of
-  date categories the user made (R6a).
+  date categories the user made (R6a); 18 adds `Category.date_rule` (R6b),
+  replacing `Database.when_from` with When's rule, and marks dates set by
+  hand in `Database.dates`.
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 17
+  @format_version 18
   @extension ".agenda"
 
   def extension, do: @extension
@@ -77,15 +79,19 @@ defmodule Agenda.Store do
 
     fields = Map.from_struct(db)
 
-    # before 15, a file that did not read dates had auto_date: false
-    when_from =
+    # before 15 a file that did not read dates had auto_date: false; from
+    # 15 to 17, when_from said where When dates came from
+    when_assign =
       case fields do
         %{auto_date: false} -> :never
-        %{when_from: from} -> from
-        _ -> :item
+        %{when_from: :never} -> :never
+        %{when_from: :note} -> :note_text
+        %{when_from: :item_or_note} -> :item_or_note_text
+        _ -> :item_text
       end
 
-    db = %{struct(Database, fields) | when_from: when_from}
+    db = struct(Database, fields)
+    db = %{db | dates: Map.new(db.dates, &upgrade_date/1)}
     db = %{db | date_format: struct(Agenda.Core.DateFormat, Map.from_struct(db.date_format))}
 
     db = %{
@@ -97,10 +103,34 @@ defmodule Agenda.Store do
       db
       | items: Map.new(db.items, fn {id, i} -> {id, upgrade_item(i)} end),
         categories:
-          Map.new(db.categories, fn {id, c} -> {id, struct(Category, Map.from_struct(c))} end),
+          Map.new(db.categories, fn {id, c} ->
+            {id, upgrade_category(db, struct(Category, Map.from_struct(c)), when_assign)}
+          end),
         views: Map.new(db.views, fn {id, v} -> {id, upgrade_view(v)} end)
     }
   end
+
+  # Date categories get a date rule: Agenda's for Entry, When (with the
+  # file's old setting) and Done, Never for the user's (R6b).
+  defp upgrade_category(db, %{kind: :date, date_rule: nil} = cat, when_assign) do
+    rule =
+      case Enum.find(db.special, fn {_key, id} -> id == cat.id end) do
+        {:when, _} -> %{Agenda.Core.DateRule.builtin(:when) | assign: when_assign}
+        {key, _} -> Agenda.Core.DateRule.builtin(key)
+        nil -> %Agenda.Core.DateRule{}
+      end
+
+    %{cat | date_rule: rule}
+  end
+
+  defp upgrade_category(_db, %{date_rule: %_{} = rule} = cat, _when_assign),
+    do: %{cat | date_rule: struct(Agenda.Core.DateRule, Map.from_struct(rule))}
+
+  defp upgrade_category(_db, cat, _when_assign), do: cat
+
+  # dates of user date categories: {date, time} before 18
+  defp upgrade_date({key, {date, time}}), do: {key, {date, time, true}}
+  defp upgrade_date(entry), do: entry
 
   defp upgrade_item(item) do
     item = struct(Agenda.Core.Item, Map.from_struct(item))

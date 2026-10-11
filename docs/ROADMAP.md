@@ -52,7 +52,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Global date settings: week, quarter and year boundaries, month alone, times of day (R14e)
 - [x] "$Monday" fixed relative dates in ranges; When dates from notes (R14f)
 - [x] Date categories the user makes: Type ▸ Date in Category Properties, converting children to dates (R6a)
-- [ ] Date category settings: Assign item date, Which one (the nth date in the text), Done and When keys (R6b; User's Guide 7-5 to 7-8)
+- [x] Date category settings: Assign item date, Which one (the nth date in the text), Done and When keys (R6b)
 - [x] Item dependencies: ALT-O makes an item depend on the marked items, views can hide dependent items (R43)
 - [x] Show Prereqs / Show Depends in the Show View (R43)
 - [ ] Item Properties lists the items an item depends on, and those depending on it, by name (R43)

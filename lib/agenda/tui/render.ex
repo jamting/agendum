@@ -26,6 +26,7 @@ defmodule Agenda.TUI.Render do
     :search_box,
     :note_search,
     :file_props,
+    :date_rule,
     :goto,
     :range_filter,
     :action_box,
@@ -68,7 +69,7 @@ defmodule Agenda.TUI.Render do
         {view.hide_empty, "[Hide Empty]"},
         {view.hide_inherited, "[Hide Inherited]"},
         {view.hide_dependent, "[Hide Dependent]"},
-        {state.db.when_from == :never, "[No Auto Dates]"}
+        {not Agenda.Core.auto_dating?(state.db), "[No Auto Dates]"}
       ]
       |> Enum.filter(&elem(&1, 0))
       |> Enum.map_join(" ", &elem(&1, 1))
@@ -133,6 +134,7 @@ defmodule Agenda.TUI.Render do
             :choice,
             :item_props,
             :file_props,
+            :date_rule,
             :column_props,
             :range_filter,
             :action_box,
@@ -396,6 +398,9 @@ defmodule Agenda.TUI.Render do
       {"ENTER", "Go"},
       {"ESC", "Cancel"}
     ]
+
+  defp mode_keys(%{type: :date_rule}),
+    do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
 
   defp mode_keys(%{type: :file_props}),
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
@@ -898,6 +903,10 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
   defp box_title(_state, %{type: :file_props}), do: "File properties"
+
+  defp box_title(state, %{type: :date_rule, cat_id: id}),
+    do: "Advanced settings: " <> state.db.categories[id].name
+
   defp box_title(_state, %{type: :questions}), do: "Suggested assignments"
   defp box_title(_state, %{type: :goto}), do: "Go to section"
 
@@ -1152,6 +1161,21 @@ defmodule Agenda.TUI.Render do
     end)
   end
 
+  defp box_content(state, %{type: :date_rule} = mode, _inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.DateRuleBox.lines(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        [
+          {:box, " " <> Draw.pad(label, 23) <> ": "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), value}
+        ]
+      end)
+
+    rows ++ [[], [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]]
+  end
+
   defp box_content(state, %{type: :file_props} = mode, _inner, _max_rows) do
     rows =
       state
@@ -1316,6 +1340,7 @@ defmodule Agenda.TUI.Render do
         ),
       conditions: if(cat.conditions == [], do: "(none)", else: conditions_text(state, cat)),
       excludes: if(cat.excludes == [], do: "(none)", else: names_text(state.db, cat.excludes)),
+      date_rule: Agenda.TUI.DateRuleBox.summary(cat.date_rule),
       note: if(cat.note == "", do: "(none)", else: "#{String.length(cat.note)} characters")
     }
 
@@ -1328,6 +1353,7 @@ defmodule Agenda.TUI.Render do
       also_match: "Also match",
       also_assign: "Assignment actions",
       excludes: "Excludes",
+      date_rule: "Date settings",
       special: "Special action",
       conditions: "Assignment conditions",
       note: "Note"
