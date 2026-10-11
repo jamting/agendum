@@ -9,7 +9,8 @@ defmodule Agenda.TUI.FileProperties do
   formatted sample below, as in Agenda's Display Format box; then
   Agenda's Global Date Settings (beginning and end of week, first
   quarter, beginning of year, month alone means, morning, afternoon,
-  evening); then Confirm assignments. SPACE or →
+  evening); then Auto-assign settings, which opens its own box
+  (`Agenda.TUI.AutoAssignBox`, R16a). SPACE or →
   shows the next choice, ← the previous one; every change applies at once
   and is one undo step. ESC or ENTER closes the box. Pure.
   """
@@ -29,7 +30,7 @@ defmodule Agenda.TUI.FileProperties do
     :afternoon,
     :evening
   ]
-  @rows @format_rows ++ @settings_rows ++ [:confirm]
+  @rows @format_rows ++ @settings_rows ++ [:auto_assign]
   @days ~w(Mon Tue Wed Thu Fri Sat Sun)
   @months ~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
 
@@ -48,10 +49,7 @@ defmodule Agenda.TUI.FileProperties do
     end
   end
 
-  defp change(state, :confirm, _step) do
-    mode = if state.db.confirm_assignments == :never, do: :always, else: :never
-    State.change_db(state, Core.set_confirm_assignments(state.db, mode))
-  end
+  defp change(state, :auto_assign, _step), do: Agenda.TUI.AutoAssignBox.open(state)
 
   defp change(state, row, step) when row in @settings_rows do
     settings = DateSettings.cycle(state.db.date_settings, row, step)
@@ -81,8 +79,7 @@ defmodule Agenda.TUI.FileProperties do
       {"Morning", DateFormat.time(s.morning, f)},
       {"Afternoon", DateFormat.time(s.afternoon, f)},
       {"Evening", DateFormat.time(s.evening, f)},
-      {"Confirm assignments",
-       if(state.db.confirm_assignments == :always, do: "Always", else: "Never")}
+      {"Auto-assign settings", "(SPACE to open)"}
     ]
   end
 

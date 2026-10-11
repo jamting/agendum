@@ -191,6 +191,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
   defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
 
+  defp dispatch(state, %{type: :auto_assign} = m, key),
+    do: Agenda.TUI.AutoAssignBox.handle(state, m, key)
+
   defp dispatch(state, %{type: :date_rule} = m, key),
     do: Agenda.TUI.DateRuleBox.handle(state, m, key)
 

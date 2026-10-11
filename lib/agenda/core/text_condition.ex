@@ -14,44 +14,94 @@ defmodule Agenda.Core.TextCondition do
       (`Budget??`, `sl*`)
     * `\\` makes the next character plain text (`Surprise\\!`)
 
-  Not done: Agenda's `"` (exclude words from matching) and suffix marks.
   Pure.
   """
 
-  @doc "Whether `text` meets the conditions."
+  alias Agenda.Core.TextMatch
+
+  @doc "Whether `text` meets the conditions, with Agenda's default matching settings."
   @spec matches?(String.t(), String.t()) :: boolean
   def matches?(condition, text) do
+    settings = %TextMatch{}
+    level(condition, TextMatch.prepare(text, settings), settings) != :none
+  end
+
+  @doc """
+  How well prepared text (`TextMatch.prepare/2`) meets the conditions:
+  `:full`, `:partial` (enough words for the required match strength, R16a)
+  or `:none`. The best alternative counts; in an alternative every
+  condition must hold.
+  """
+  @spec level(String.t(), TextMatch.prepared(), TextMatch.t()) :: :full | :partial | :none
+  def level(condition, prepared, settings) do
     condition
     |> split(";")
     |> Enum.map(fn alternative ->
       alternative |> split(",") |> Enum.map(&String.trim/1) |> Enum.reject(&(&1 == ""))
     end)
     |> Enum.reject(&(&1 == []))
-    |> Enum.any?(fn terms -> Enum.all?(terms, &term_matches?(&1, text)) end)
+    |> Enum.map(fn terms ->
+      terms |> Enum.map(&term_level(&1, prepared, settings)) |> weakest()
+    end)
+    |> best()
   end
 
-  defp term_matches?(term, text) do
+  defp weakest(levels) do
+    cond do
+      :none in levels -> :none
+      :partial in levels -> :partial
+      true -> :full
+    end
+  end
+
+  defp best(levels) do
+    cond do
+      :full in levels -> :full
+      :partial in levels -> :partial
+      true -> :none
+    end
+  end
+
+  defp term_level(term, prepared, settings) do
     {negated, term} = flag(term, "!")
     {exact_case, term} = flag(term, "~")
+    {exact_words, term} = flag(term, "^")
     {negated, term} = if negated, do: {true, term}, else: flag(term, "!")
 
-    term =
+    {in_order, term} =
       case Regex.run(~r/^\((.*)\)$/su, term) do
-        [_, inner] -> String.trim(inner)
-        nil -> term
+        [_, inner] -> {true, String.trim(inner)}
+        nil -> {false, term}
       end
 
-    found =
-      case pattern(term) do
-        "" ->
-          false
+    level =
+      if in_order or exact_case or Regex.match?(~r/(?<!\\)[?*]/u, term),
+        do: pattern_level(term, prepared.text, exact_case),
+        else:
+          TextMatch.level(String.replace(term, "\\", ""), prepared, settings,
+            exact_words: exact_words
+          )
 
-        pattern ->
-          regex = "(?<![\\p{L}\\p{N}])" <> pattern <> "(?![\\p{L}\\p{N}])"
-          Regex.match?(Regex.compile!(regex, if(exact_case, do: "u", else: "iu")), text)
-      end
+    cond do
+      not negated -> level
+      level == :none -> :full
+      true -> :none
+    end
+  end
 
-    found != negated
+  # Wildcards and matching case: the words as a pattern, in order.
+  defp pattern_level(term, text, exact_case) do
+    case pattern(term) do
+      "" ->
+        :none
+
+      pattern ->
+        regex = "(?<![\\p{L}\\p{N}])" <> pattern <> "(?![\\p{L}\\p{N}])"
+
+        if Regex.match?(Regex.compile!(regex, if(exact_case, do: "u", else: "iu")), text),
+          do: :full,
+          else: :none
+    end
   end
 
   defp flag(term, mark) do

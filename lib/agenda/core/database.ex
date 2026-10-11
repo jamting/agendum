@@ -14,7 +14,7 @@ defmodule Agenda.Core.Database do
   Every function is pure: it takes a database and returns a new one.
   """
 
-  alias Agenda.Core.{Category, DateFormat, DateRule, DateSettings, Item, Links, View}
+  alias Agenda.Core.{Category, DateFormat, DateRule, DateSettings, Item, Links, TextMatch, View}
   alias Agenda.Core.View.{Column, Section}
 
   @type id :: pos_integer
@@ -34,7 +34,8 @@ defmodule Agenda.Core.Database do
           numbers: %{optional({id, id}) => float},
           dates: %{optional({id, id}) => {Date.t(), Time.t() | nil, boolean}},
           dependencies: Links.t(),
-          confirm_assignments: :never | :always,
+          confirm_assignments: :never | :always | :sometimes,
+          match_settings: TextMatch.t(),
           suggestions: %{optional(id) => [id]}
         }
 
@@ -54,6 +55,7 @@ defmodule Agenda.Core.Database do
             dates: %{},
             dependencies: Links.new(),
             confirm_assignments: :never,
+            match_settings: %TextMatch{},
             suggestions: %{}
 
   @date_fields %{entry: :entry, when: :when, done: :done}

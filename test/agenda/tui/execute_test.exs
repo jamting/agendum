@@ -10,7 +10,7 @@ defmodule Agenda.TUI.ExecuteTest do
   # Calls holds five items; Meetings gets a text condition and Calls a
   # special action after the items were entered.
   setup do
-    state = start(Agenda.Sample.build(~D[2026-10-08]))
+    state = start(quiet_meetings(Agenda.Sample.build(~D[2026-10-08])))
     meetings = hd(Database.find_categories(state.db, "Meetings"))
     calls = hd(Database.find_categories(state.db, "Calls"))
     {:ok, db} = Core.set_also_match(state.db, meetings, "meeting")

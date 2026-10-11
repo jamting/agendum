@@ -8,7 +8,7 @@ defmodule Agenda.TUI.NegativeLinksTest do
 
   # Meetings is the last category in the manager.
   setup do
-    %{state: start(Agenda.Sample.build(~D[2026-10-08]))}
+    %{state: start(quiet_meetings(Agenda.Sample.build(~D[2026-10-08])))}
   end
 
   defp cat(state, name), do: hd(Database.find_categories(state.db, name))

@@ -13,36 +13,41 @@ defmodule Agenda.TUI.QuestionsTest do
   defp cat(state, name), do: hd(Database.find_categories(state.db, name))
   defp item(state, text), do: Enum.find(Database.items(state.db), &(&1.text == text))
 
-  # File ▸ Properties; Confirm assignments is the last row
-  # Confirm assignments is the last row of File Properties
-  @to_confirm List.duplicate(:down, 20)
+  # File ▸ Properties ▸ Auto-assign settings (the last row), then down to
+  # Confirm assignments, the fourth row of that box
+  @to_confirm List.duplicate(:down, 20) ++ [" ", :down, :down, :down]
 
   defp confirm_always(state),
-    do: press(state, [{:f, 10}, "f", "p"] ++ @to_confirm ++ [" ", :esc])
+    do: press(state, [{:f, 10}, "f", "p"] ++ @to_confirm ++ [" ", :esc, :esc])
 
-  test "File Properties sets Confirm assignments", %{state: state} do
-    state = press(state, [{:f, 10}, "f", "p"])
+  test "File Properties ▸ Auto-assign settings sets Confirm assignments", %{state: state} do
+    state = press(state, [{:f, 10}, "f", "p"] ++ @to_confirm)
+    assert screen(state) =~ "Auto-assign settings"
     assert screen(state) =~ ~r/Confirm assignments\s+: Never/
-    state = press(state, @to_confirm ++ [" "])
+    state = press(state, " ")
     assert state.db.confirm_assignments == :always
     assert screen(state) =~ ~r/Confirm assignments\s+: Always/
+    state = press(state, " ")
+    assert state.db.confirm_assignments == :sometimes
   end
 
   test "with Always, a match shows ? and Questions confirms it", %{state: state} do
-    state = state |> confirm_always() |> press(["Call Anna about Meetings", :enter])
-    new = item(state, "Call Anna about Meetings")
+    state = state |> confirm_always() |> press(["Ring Anna about Meetings", :enter])
+    new = item(state, "Ring Anna about Meetings")
     refute Database.member?(state.db, new.id, cat(state, "Meetings"))
     assert screen(state) =~ "? READY"
 
     state = press(state, [{:f, 10}, "c", "q"])
     assert %{type: :questions} = State.mode(state)
     text = screen(state)
-    assert text =~ "Call Anna about Meetings"
+    assert text =~ "Ring Anna about Meetings"
     assert text =~ "Anna Lasky"
     assert text =~ "Meetings"
 
-    # pick the second suggestion only, then ENTER
-    state = press(state, [:down, " ", :enter])
+    # pick Meetings only, then ENTER (suggestions come in preference order)
+    [{_, suggested}] = Agenda.Core.questions(state.db)
+    downs = Enum.find_index(suggested, &(&1 == cat(state, "Meetings")))
+    state = press(state, List.duplicate(:down, downs) ++ [" ", :enter])
     assert state.modes == []
     assert Database.member?(state.db, new.id, cat(state, "Meetings"))
     refute Database.member?(state.db, new.id, cat(state, "Anna Lasky"))

@@ -27,6 +27,7 @@ defmodule Agenda.TUI.Render do
     :note_search,
     :file_props,
     :date_rule,
+    :auto_assign,
     :goto,
     :range_filter,
     :action_box,
@@ -135,6 +136,7 @@ defmodule Agenda.TUI.Render do
             :item_props,
             :file_props,
             :date_rule,
+            :auto_assign,
             :column_props,
             :range_filter,
             :action_box,
@@ -398,6 +400,9 @@ defmodule Agenda.TUI.Render do
       {"ENTER", "Go"},
       {"ESC", "Cancel"}
     ]
+
+  defp mode_keys(%{type: :auto_assign}),
+    do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
 
   defp mode_keys(%{type: :date_rule}),
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
@@ -904,6 +909,8 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
   defp box_title(_state, %{type: :file_props}), do: "File properties"
 
+  defp box_title(_state, %{type: :auto_assign}), do: "Auto-assign settings"
+
   defp box_title(state, %{type: :date_rule, cat_id: id}),
     do: "Advanced settings: " <> state.db.categories[id].name
 
@@ -1159,6 +1166,21 @@ defmodule Agenda.TUI.Render do
     |> Enum.map(fn {name, i} ->
       [{:box, " "}, {if(i == mode.cursor, do: :box_selected, else: :box), name}]
     end)
+  end
+
+  defp box_content(state, %{type: :auto_assign} = mode, _inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.AutoAssignBox.lines()
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        [
+          {:box, " " <> Draw.pad(label, 24) <> ": "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), value}
+        ]
+      end)
+
+    rows ++ [[], [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]]
   end
 
   defp box_content(state, %{type: :date_rule} = mode, _inner, _max_rows) do

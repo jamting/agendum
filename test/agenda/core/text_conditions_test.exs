@@ -15,7 +15,7 @@ defmodule Agenda.Core.TextConditionsTest do
 
     test "words and phrases, as whole words, ignoring case" do
       assert m?("meet", "Meet with John")
-      refute m?("meet", "Meeting with John")
+      refute m?("meet", "Meetup with John")
       assert m?("(meet with)", "We meet  with John")
       refute m?("(meet with)", "We meet John with")
       assert m?("talk to", "Talk to Sue")

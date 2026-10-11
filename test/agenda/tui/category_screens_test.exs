@@ -41,7 +41,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
   end
 
   test "F3 on an item opens the assignment profile; SPACE toggles", %{state: state} do
-    state = press(state, [:down, {:f, 3}])
+    state = %{state | db: quiet_meetings(state.db)} |> press([:down, {:f, 3}])
     assert screen(state) =~ "Assignments:"
     # rows: Entry When Done Calls Priority High Medium ... → Meetings is last
     state = press(state, [:ctrl_end, " "])

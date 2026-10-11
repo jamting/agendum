@@ -20,14 +20,14 @@ defmodule Agenda.Store do
   adds `Category.excludes` (R9); 17 adds `Database.dates`, the dates of
   date categories the user made (R6a); 18 adds `Category.date_rule` (R6b),
   replacing `Database.when_from` with When's rule, and marks dates set by
-  hand in `Database.dates`.
+  hand in `Database.dates`; 19 adds `Database.match_settings` (R16a).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 18
+  @format_version 19
   @extension ".agenda"
 
   def extension, do: @extension
@@ -92,6 +92,12 @@ defmodule Agenda.Store do
 
     db = struct(Database, fields)
     db = %{db | dates: Map.new(db.dates, &upgrade_date/1)}
+
+    db = %{
+      db
+      | match_settings: struct(Agenda.Core.TextMatch, Map.from_struct(db.match_settings))
+    }
+
     db = %{db | date_format: struct(Agenda.Core.DateFormat, Map.from_struct(db.date_format))}
 
     db = %{

@@ -261,6 +261,7 @@ defmodule Agenda.Core do
 
     db
     |> Database.update_item(id, &%{&1 | note: note})
+    |> Assign.auto_assign(id)
     |> item_dates(id, db.items[id], events, clock)
     |> settle(db, id, clock)
   end
@@ -825,9 +826,18 @@ defmodule Agenda.Core do
   suggested and confirmed with Utilities Questions (`:always`; File
   Properties ▸ Confirm assignments, User's Guide 19-9).
   """
-  @spec set_confirm_assignments(db, :never | :always) :: db
-  def set_confirm_assignments(db, mode) when mode in [:never, :always],
+  @spec set_confirm_assignments(db, :never | :always | :sometimes) :: db
+  def set_confirm_assignments(db, mode) when mode in [:never, :always, :sometimes],
     do: %{db | confirm_assignments: mode}
+
+  @doc """
+  Sets how the file matches item text to categories (R16a; Auto-assign
+  settings). Like Agenda, existing assignments stay until items change or
+  are re-checked (Utilities Execute).
+  """
+  @spec set_match_settings(db, Agenda.Core.TextMatch.t()) :: db
+  def set_match_settings(db, %Agenda.Core.TextMatch{} = settings),
+    do: %{db | match_settings: settings}
 
   @doc "The items with suggested assignments, in item order, each with its categories."
   @spec questions(db) :: [{id, [id]}]

@@ -8,7 +8,7 @@ defmodule Agenda.TUI.MarkedItemsTest do
   alias Agenda.TUI.{Layout, State}
 
   setup do
-    db = Agenda.Sample.build(~D[2026-10-08])
+    db = quiet_meetings(Agenda.Sample.build(~D[2026-10-08]))
     [view] = Database.views(db)
     db = Core.add_section(db, view.id, hd(Database.find_categories(db, "Meetings")), 1)
     %{state: start(db)}

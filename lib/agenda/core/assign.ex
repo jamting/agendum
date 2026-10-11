@@ -14,14 +14,15 @@ defmodule Agenda.Core.Assign do
   * **Category links.** A category's `also_assign` list sends its items on to
     other categories (patent FIG. 6).
   * **Automatic assignment.** An item whose text contains a category's name
-    (whole words, ignoring case) is assigned to it. If two matches cannot
+    (its words, ignoring case, by the file's matching settings,
+    `Agenda.Core.TextMatch`) is assigned to it. If two matches cannot
     both hold because they are mutually exclusive, the tie is broken the way
     the patent (claim 7) describes: prefer the category that the adjacent
     item in the view belongs to, then the one created first. Existing
     explicit assignments always win over new automatic ones.
   """
 
-  alias Agenda.Core.{Database, RangeFilter, TextCondition}
+  alias Agenda.Core.{Database, RangeFilter, TextCondition, TextMatch}
 
   @type db :: Database.t()
   @type id :: Database.id()
@@ -398,12 +399,13 @@ defmodule Agenda.Core.Assign do
   """
   @spec auto_assign(db, id, [id], MapSet.t(id) | nil) :: db
   def auto_assign(db, item_id, adjacent \\ [], only \\ nil) do
-    text = db.items[item_id].text
+    levels = db |> match_levels(match_text(db, db.items[item_id])) |> Map.new()
     explicit = Database.explicit_categories(db, item_id)
 
     accepted =
-      db
-      |> matching_categories(text)
+      levels
+      |> Map.keys()
+      |> Enum.sort()
       |> Enum.filter(&(only == nil or MapSet.member?(only, &1)))
       # not already a member (directly, or through a more specific category),
       # and not in conflict with an assignment the item has
@@ -422,50 +424,107 @@ defmodule Agenda.Core.Assign do
         Enum.any?(accepted, &(cand in Database.ancestors(db, &1)))
       end)
 
-    if db.confirm_assignments == :always do
-      # suggested, to be confirmed with Utilities Questions (R16)
-      suggestions =
-        if accepted == [],
-          do: Map.delete(db.suggestions, item_id),
-          else: Map.put(db.suggestions, item_id, accepted)
+    # suggested, to be confirmed with Utilities Questions (R16): every
+    # match with Always, partial ones with Sometimes (R16a)
+    {suggested, made} =
+      case db.confirm_assignments do
+        :always -> {accepted, []}
+        :sometimes -> Enum.split_with(accepted, &(levels[&1] == :partial))
+        :never -> {[], accepted}
+      end
 
-      %{db | suggestions: suggestions}
-    else
-      # text matches are conditional: they break when the text changes (R15c)
-      Enum.reduce(accepted, db, fn cand, db ->
-        db |> assign(item_id, cand) |> Database.mark_conditional(item_id, cand)
-      end)
+    suggestions =
+      if suggested == [],
+        do: Map.delete(db.suggestions, item_id),
+        else: Map.put(db.suggestions, item_id, suggested)
+
+    # text matches are conditional: they break when the text changes (R15c)
+    Enum.reduce(made, %{db | suggestions: suggestions}, fn cand, db ->
+      db |> assign(item_id, cand) |> Database.mark_conditional(item_id, cand)
+    end)
+  end
+
+  @doc """
+  The text an item is matched on (Match on, R16a): its text, its note, or
+  both.
+  """
+  @spec match_text(db, Agenda.Core.Item.t()) :: String.t()
+  def match_text(db, item) do
+    case db.match_settings.match_on do
+      :item -> item.text
+      :note -> item.note
+      :both -> item.text <> "\n" <> item.note
     end
   end
 
   @doc """
-  Categories whose text matches `text`: their name or short name as whole
-  words (when they match names), or their text conditions ("Also match",
-  R15d).
+  Categories whose name or short name (when they match names) or text
+  conditions ("Also match", R15d) match `text`, by the file's matching
+  settings (R16a).
   """
   @spec matching_categories(db, String.t()) :: [id]
-  def matching_categories(db, text) do
-    db.categories
-    |> Map.values()
-    |> Enum.filter(
-      &(&1.kind == :standard and not Database.protected?(db, &1.id) and
-          category_matches?(&1, text))
-    )
-    |> Enum.map(& &1.id)
-    |> Enum.sort()
+  def matching_categories(db, text), do: db |> match_levels(text) |> Enum.map(&elem(&1, 0))
+
+  @doc """
+  The categories `text` matches, each with how well: `:full`, or
+  `:partial` when only enough words for the required strength are there.
+  """
+  @spec match_levels(db, String.t()) :: [{id, :full | :partial}]
+  def match_levels(db, text) do
+    settings = db.match_settings
+
+    if settings.enabled do
+      prepared = TextMatch.prepare(text, settings)
+
+      db.categories
+      |> Map.values()
+      |> Enum.filter(&(&1.kind == :standard and not Database.protected?(db, &1.id)))
+      |> Enum.map(&{&1.id, category_level(&1, prepared, settings)})
+      |> Enum.reject(&(elem(&1, 1) == :none))
+      |> Enum.sort()
+    else
+      []
+    end
   end
 
   @doc "Whether an item's text matches a category (see `matching_categories/2`)."
   @spec text_matches?(db, id, id) :: boolean
-  def text_matches?(db, item_id, cat_id),
-    do: category_matches?(db.categories[cat_id], db.items[item_id].text)
-
-  defp category_matches?(cat, text) do
-    (cat.match_name and Enum.any?([cat.name, cat.short_name], &name_in_text?(&1, text))) or
-      TextCondition.matches?(cat.also_match, text)
+  def text_matches?(db, item_id, cat_id) do
+    settings = db.match_settings
+    prepared = TextMatch.prepare(match_text(db, db.items[item_id]), settings)
+    settings.enabled and category_level(db.categories[cat_id], prepared, settings) != :none
   end
 
-  @doc "Whole-word, case-insensitive match of a category name in text."
+  defp category_level(cat, prepared, settings) do
+    names = if cat.match_name, do: Enum.reject([cat.name, cat.short_name], &is_nil/1), else: []
+
+    levels =
+      Enum.map(names, &name_level(&1, prepared, settings)) ++
+        [TextCondition.level(cat.also_match, prepared, settings)]
+
+    cond do
+      :full in levels -> :full
+      :partial in levels -> :partial
+      true -> :none
+    end
+  end
+
+  # A name of words matches by the settings; one with other characters
+  # ("C++") as written.
+  defp name_level(name, prepared, settings) do
+    cond do
+      Regex.match?(~r/^[\p{L}\p{N}'’_\-.\s]+$/u, name) ->
+        TextMatch.level(name, prepared, settings)
+
+      name_in_text?(name, prepared.text) ->
+        :full
+
+      true ->
+        :none
+    end
+  end
+
+  @doc "Whole-word, case-insensitive match of a name in text, its words in order."
   @spec name_in_text?(String.t() | nil, String.t()) :: boolean
   def name_in_text?(nil, _text), do: false
 

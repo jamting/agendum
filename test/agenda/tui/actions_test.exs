@@ -53,8 +53,9 @@ defmodule Agenda.TUI.ActionsTest do
            ]
 
     # the action runs when an item joins Meetings
-    item = hd(state.db.item_order)
-    db = Core.assign(state.db, item, cat(state, "Meetings"), ~D[2026-10-08])
+    db = quiet_meetings(state.db)
+    item = hd(db.item_order)
+    db = Core.assign(db, item, cat(state, "Meetings"), ~D[2026-10-08])
     assert db.items[item].when == ~D[2026-10-09]
   end
 

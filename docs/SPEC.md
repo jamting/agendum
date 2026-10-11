@@ -315,14 +315,16 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
 - **R15d ✅ Text conditions** (User's Guide 19-2 to 19-5). Category
   Properties ▸ Also match holds words and phrases that pull items into the
   category as its name does: `;` separates alternatives (any), `,`
-  conditions that must all hold; a word or phrase matches as whole words in
-  order, ignoring case, optionally in parentheses (`(meet with)`); `!`
+  conditions that must all hold; a word or phrase matches when its words
+  are there, in any order, by the file's matching settings (R16a), and
+  in parentheses only in that order (`(meet with)`); `^` matches its
+  words as they are, ignoring no suffixes (`^eats`); `!`
   before one means the item must not contain it (`Cost,!Deduction`), `~`
   that case must match (`~LOTS`); `?` is one character and `*` any
   characters within a word (`Budget??`, `sl*`); `\` makes the next
   character plain text. Text conditions work even when the category does
   not match its own name. New ones reach existing items with Recalc. Not
-  done: Agenda's `"` (exclude words) and suffix marks.
+  done: Agenda's `"` (exclude words).
 - **R15b ✅ Actions** (User's Guide chapter 21). When an item joins a
   category, by the user, a condition or another action, the category's
   actions run once: Category Properties ▸ Assignment actions lists them
@@ -349,19 +351,42 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   family (in a view: the section's category). Category ▸ Recalc still
   re-runs automatic assignment and dating for every item.
 - **R16 ✅ Suggested assignments** (User's Guide 19-9, 19-12). File
-  Properties ▸ Confirm assignments: Never (the default; text matches are
-  assigned at once) or Always: an item's text matches become suggestions
+  Properties ▸ Auto-assign settings ▸ Confirm assignments: Never (the
+  default; text matches are assigned at once), Always, or Sometimes (only
+  partial matches, R16a, are suggested; full ones are made). Suggested:
+  an item's text matches become suggestions
   instead, "?" shows in the title while any wait, and Category ▸ Questions
   (Agenda's Utilities Questions) shows each such item in turn with its
   suggested categories: SPACE picks one, TAB all, ENTER assigns the picked
   ones (explicitly, so an edit does not take them away) and goes to the
   next item, ESC stops. Editing an item asks again about what its new text
-  matches; discarding the item or the category drops the question. Not
-  done: "Sometimes" (it depends on partial matches, R16a).
-- **R16a ⏳ Text matching settings** (User's Guide 19-7 to 19-11): text
-  matching on or off, match on item text, note or both, required match
-  strength (exact, partial 50%, minimal), ignore suffixes, ignore accents,
-  and text enclosed in quotes (or other marks) ignored.
+  matches; discarding the item or the category drops the question.
+- **R16a ✅ Text matching settings** (User's Guide 19-7 to 19-12, 19-15
+  to 19-16). File Properties ▸ Auto-assign settings opens Agenda's
+  Auto-assign Global Settings box (SPACE/→ next choice, ← previous; each
+  change one undo step): Text matching On/Off (Off: no names or text
+  conditions match); Match on Item text (default), Note text or Both
+  item & note (a note is matched when saved, and a match from it breaks
+  when it stops matching, R15c); Required match strength: Exact match -
+  100% (default; every word of a name, short name or text condition, in
+  any order), Partial match - 50% (at least half) or Minimal match (one
+  word), as in the manual's "Suggestions for design"; Confirm assignments
+  (R16); Ignore text enclosed by: " " (default, also “ ”), < >, ' ', { },
+  [ ], # #, ( ), / /: that text is left out ('set a "margin" command'
+  does not go to Margin); Ignore suffixes Yes (default): -able, -al, -ly,
+  -ally, -d, -ed, -er, -est, -ible, -ing, -ment, -s, -es, -wise, and for
+  words ending in y -ied, -ier, -ies, -iful, -ily, so Show matches shows,
+  showing and showed; words of three letters or fewer match exactly ("buy"
+  is not "buying"); Ignore accents No (default; Yes: résumé matches
+  resume). Words are read as Agenda does: a word starts with a letter or
+  digit and may hold ' - _ ("can't", "high-capacity"); a possessive 's
+  is dropped. A text condition in parentheses must have its words in
+  that order ("(meet with)"), and "^" before one matches its words as they
+  are, ignoring no suffixes ("^eats"). A name with other characters
+  ("C++") matches as written. Not done yet: per-category overrides of
+  these settings (Advanced settings, "T= Note" in the category manager)
+  and Agenda's proper names and titles ("Mrs. Wohl" matching Nancy
+  Wohl).
 - **R15c ✅ Text matches as conditional assignments** (User's Guide 18-3).
   An assignment made because the item's text matched a category (its name,
   short name or text conditions) is conditional, marked "(c)" in Item
