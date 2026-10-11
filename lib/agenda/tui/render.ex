@@ -50,7 +50,11 @@ defmodule Agenda.TUI.Render do
     body = Enum.map(body(state, base), &(&1 |> Draw.paint(styles) |> Draw.line(w, fill)))
     # behind a box, the screen fades (Agenda greys it out)
     body = if overlays == [], do: body, else: Enum.map(body, &Draw.paint(&1, :backdrop))
-    body = Enum.reduce(overlays, body, &overlay_box(state, &1, &2))
+
+    body =
+      overlays
+      |> Enum.with_index()
+      |> Enum.reduce(body, fn {mode, depth}, body -> overlay_box(state, mode, depth, body) end)
 
     control_panel(state, base) ++
       Enum.map(body, &Draw.line(&1, w)) ++
@@ -1013,16 +1017,19 @@ defmodule Agenda.TUI.Render do
 
   # --- boxes -------------------------------------------------------------------------------------------
 
-  defp overlay_box(state, mode, body) do
+  # A box opened from another box (`depth` 1, 2 …) sits a line lower and
+  # two columns further right, so the one beneath still shows.
+  defp overlay_box(state, mode, depth, body) do
     inner = min(state.width - 8, 60)
-    max_rows = max(State.body_height(state) - 4, 3)
+    top = 1 + depth
+    max_rows = max(State.body_height(state) - 4 - depth, 3)
     content = box_content(state, mode, inner, max_rows)
     box = Draw.box(box_title(state, mode), content, inner)
-    left = div(state.width - inner - 2, 2)
+    left = min(div(state.width - inner - 2, 2) + 2 * depth, max(state.width - inner - 2, 0))
 
     body
-    |> Draw.overlay(box, 1, left)
-    |> Draw.shadow(1, left, length(box), inner + 2)
+    |> Draw.overlay(box, top, left)
+    |> Draw.shadow(top, left, length(box), inner + 2)
   end
 
   defp box_title(state, %{type: :picker, purpose: purpose}) do

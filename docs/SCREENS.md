@@ -14,7 +14,7 @@ the mode on top; `Agenda.TUI.Render` draws the stack. Modes come in three kinds:
 - **Full screens** replace the view: the category manager, the view manager,
   help and the note editor.
 - **Boxes** are drawn over the view (or over a full screen) in a frame with a
-  title.
+  title. A box opened from a box sits one line lower and two columns right.
 - **Control-panel modes** use only the two lines at the top: the menu, prompts,
   Y/N questions, searching and moving items.
 

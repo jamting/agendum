@@ -54,7 +54,8 @@ defmodule Screenshots do
       {"12-view-manager", press(s, {:f, 8})},
       {"13-category-manager", press(s, [{:f, 9}, :down, :down])},
       {"14-category-props", press(s, [{:f, 9}, :down, :down, :down, :down, {:f, 6}])},
-      {"15-question", press(s, [:down, {:alt_f, 4}])}
+      {"15-question", press(s, [:down, {:alt_f, 4}])},
+      {"16-nested-box", press(s, [{:f, 9}, :down, :down, :down, :down, {:f, 6}, :down, :down, :enter])}
     ]
   end
 

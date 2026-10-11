@@ -197,6 +197,19 @@ defmodule Agenda.TUI.Draw do
   def paint(line, style) when is_atom(style),
     do: Enum.map(line, fn {_, text} -> {style, text} end)
 
+  defp shade(line, from, len) do
+    middle =
+      line
+      |> take(from + len)
+      |> drop(from)
+      |> Enum.map(fn
+        {:box_frame, text} -> {:shadow, spaces(String.length(text))}
+        {_, text} -> {:shadow, text}
+      end)
+
+    take(line, from) ++ middle ++ drop(line, from + len)
+  end
+
   @doc "Restyles `len` columns of a line, from column `from`."
   @spec restyle(line, non_neg_integer, non_neg_integer, atom) :: line
   def restyle(line, from, len, style) do
@@ -207,7 +220,8 @@ defmodule Agenda.TUI.Draw do
   @doc """
   Casts the shadow of a box drawn at `top`, `left` (`height` lines of
   `width` columns): two columns to its right, and the line under it,
-  moved two columns right. What is under the shadow stays, in `:shadow`.
+  moved two columns right. What is under the shadow stays, in `:shadow`,
+  except the frame of a box beneath, whose lines would show through.
   """
   @spec shadow([line], non_neg_integer, non_neg_integer, pos_integer, pos_integer) :: [line]
   def shadow(screen, top, left, height, width) do
@@ -215,8 +229,8 @@ defmodule Agenda.TUI.Draw do
     |> Enum.with_index()
     |> Enum.map(fn {line, row} ->
       cond do
-        row > top and row < top + height -> restyle(line, left + width, 2, :shadow)
-        row == top + height -> restyle(line, left + 2, width, :shadow)
+        row > top and row < top + height -> shade(line, left + width, 2)
+        row == top + height -> shade(line, left + 2, width)
         true -> line
       end
     end)

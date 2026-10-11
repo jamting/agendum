@@ -171,4 +171,34 @@ defmodule Agenda.TUI.LookTest do
     # 80 columns: Agenda's short labels
     assert keybar.(state) =~ "F6 Props F7 Mark F8 VwMgr F9 CatMgr"
   end
+
+  test "a box opened from a box sits a line lower and two columns right", %{state: state} do
+    corners = fn state ->
+      state
+      |> screen()
+      |> String.split("\n")
+      |> Enum.with_index()
+      |> Enum.flat_map(fn {line, row} ->
+        case :binary.match(line, "┌") do
+          {byte, _} -> [{row, String.length(binary_part(line, 0, byte))}]
+          :nomatch -> []
+        end
+      end)
+    end
+
+    props = press(state, [{:f, 9}, :down, :down, :down, :down, {:f, 6}])
+    assert [{row, col}] = corners.(props)
+
+    type_box = press(props, [:down, :down, :enter])
+    assert %{type: :choice} = Agenda.TUI.State.mode(type_box)
+    assert [{^row, ^col}, {lower, right}] = corners.(type_box)
+    assert {lower, right} == {row + 1, col + 2}
+  end
+
+  test "a shadow on a box beneath hides its frame's lines" do
+    line = [{:box_frame, "│"}, {:box, " text "}, {:box_frame, "│"}]
+    [_, shaded] = Agenda.TUI.Draw.shadow([[], line], 0, 0, 2, 6)
+    # the two columns right of a 6-wide box: the last space, and the frame
+    assert shaded == [{:box_frame, "│"}, {:box, " text"}, {:shadow, " "}, {:shadow, " "}]
+  end
 end

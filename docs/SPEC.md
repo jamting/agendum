@@ -588,6 +588,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     manager on cyan; help yellow on blue. The VGA colours are exact on
     terminals that take 24-bit colour (`COLORTERM=truecolor`), the nearest
     ANSI colours elsewhere.
+  - A box opened from another box sits one line lower and two columns
+    further right, so the one beneath still shows (our choice).
   - Our choices: the highlighted line is drawn in a lighter shade across
     the whole screen, so it shows when the highlight is in a column; Agenda
     put a » in front of it instead.
