@@ -72,8 +72,9 @@ Rule numbers refer to `SPEC.md`.
 ## Milestone 4 — Data interchange
 
 - [ ] JSON export/import: the modern, human-readable format; round-trips everything in a file
-- [ ] Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
-- [ ] Import of structured text files (one item per line, with categories)
+- [ ] ICAL import: Read an ical file from an url and create matching items. File should be able to read on regular intervals and/or manually by a user command
+- [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
+- [ ] Optional: Import of structured text files (one item per line, with categories)
 - [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files)
 - [ ] Optional: read original `.AG` files directly (format undocumented; research; STF covers most needs)
 
@@ -93,7 +94,8 @@ Rule numbers refer to `SPEC.md`.
 - [x] Resolve conflicts when moving categories into exclusive families, as Agenda 2.0 does (R7b)
 - [x] Enforce "no direct assignment to both a category and its ancestor", including in moves (R7c)
 - [x] Outline-style promote/demote: a promoted category adopts its following siblings (R7d)
-- [ ] Documentation: Make a hiearchical overview of the different TUI screens and boxes
+- [ ] Documentation: Make a hierarchical overview of the different TUI screens and boxes
+- [ ] Developer tools: Make a new screen with useful debugging info accessable with a "hidden" keyboard shortcut
 
 ## Beyond Agenda
 
