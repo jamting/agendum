@@ -1,0 +1,25 @@
+ File: rabbit.agenda        View: Rabbit's Week        CAT MGR  2026-10-12 10:15
+
+
+ Category Manager  (20 categories)
+ MAIN   6
+    Entry   date
+    When   date
+    Done   date
+    Garden   2
+    Notices   1
+    Friends and Relations   aka Friends · 4
+       Pooh   0
+       Piglet   0
+       Owl   1
+       Eeyore   0
+       Kanga   1
+       Roo   1
+       Tigger   1
+       Christopher Robin   aka CR · 0
+       Small   1
+    Priority   exclusive · 6
+       High   3
+       Medium   2
+       Low   1
+ F2 Edit F5 Note F6 Props F7 Promote F8 Demote INS/^N Add DEL Discard A-F10 Move

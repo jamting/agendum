@@ -1,0 +1,25 @@
+ File: rabbit.agenda *        View: Rabbit's Week        PROPS  2026-10-12 10:15
+
+
+ Category Manager  (21 categories)
+    Entry┌ Advanced settings: Harvest ────────────────────────────────┐
+    When │ Assign item date       : Never                             │
+    Done │ Which one              : (dates from text only)            │
+    Garde│ Set date from Done key : No                                │
+    Notic│ Set date from When key : No                                │
+    Frien│                                                            │
+       Po│ SPACE/→ next choice · ← previous · ESC closes              │
+       Pi└────────────────────────────────────────────────────────────┘
+       Ow│ Assignment actions          : (none)                       │
+       Ee│ Excludes                    : (none)                       │
+       Ka│ Special action              : None                         │
+       Ro│ Advanced settings           : Never                        │
+       Ti│ Note                        : (none)                       │
+       Ch└────────────────────────────────────────────────────────────┘
+       Small   1
+    Priority   exclusive · 6
+       High   3
+       Medium   2
+       Low   1
+    Harvest   date · 0
+ ↑↓ Setting SPACE Next ← Previous ESC Close

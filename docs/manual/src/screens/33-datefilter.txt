@@ -1,0 +1,25 @@
+ File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15
+
+
+ Garden                                  When             Priority Friends
+ • Weed t┌ Date filter: When ─────────────────────────────────────────┐
+ • Count │ Show items      : Assigned                                 │ger
+   bounce│ Start date      : today                                    │
+         │ End date        : end of this week                         │
+ Notices │ Items should be : Inside range                             │nds
+ • Put up│                                                            │
+   Meetin│ Blank = open · ENTER applies · DEL removes · ESC cancels   │
+         └────────────────────────────────────────────────────────────┘
+ Friends │       Piglet                                               │nds
+ • Count │       Owl                                                  │ger
+   bounce│       Eeyore                                               │
+ • Ask Ow│       Kanga                                                │
+ • Find S│       Roo                                                  │ll
+ • Visit │       Tigger                                               │ga, Roo
+         │       Christopher Robin                                    │
+         │       Small                                                │
+         │     Priority                                               │
+         │       High                                                 │
+         │                                                            │
+         │ ENTER cycles: + assigned · - not assigned · none           │
+ ↑↓ Setting SPACE Change ENTER Apply DEL Remove ESC Cancel

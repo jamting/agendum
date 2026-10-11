@@ -1,0 +1,25 @@
+ File: rabbit.agenda *        View: Rabbit's Week        PROPS  2026-10-12 10:15
+
+
+ Category Manager  (21 categories)
+    Entry┌ Category type: Harvest ────────────────────────────────────┐
+    When │ Standard categories can become numeric or date categories. │
+    Done │                                                            │
+    Garde│ Change the type to:                                        │
+    Notic│    Numeric                                                 │
+    Frien│    Date                                                    │
+       Po│                                                            │
+       Pi│ A number for each item: totals and averages; children becom│
+       Ow└────────────────────────────────────────────────────────────┘
+       Ee│ Excludes                    : (none)                       │
+       Ka│ Special action              : None                         │
+       Ro│ Advanced settings           : Global                       │
+       Ti│ Note                        : (none)                       │
+       Ch└────────────────────────────────────────────────────────────┘
+       Small   1
+    Priority   exclusive · 6
+       High   3
+       Medium   2
+       Low   1
+    Harvest   0
+ ↑↓ Highlight ENTER Select ESC Cancel

@@ -58,8 +58,10 @@ inline `# credo:disable-for-next-line` with the reason.
 4. Run `mix check`. Update `docs/ROADMAP.md` (tick the box), `docs/SCREENS.md`
    if a box or screen was added (a test checks), and the help text
    in `Agenda.TUI.Render` if keys changed.
-5. Do not update the user guide (`docs/guide/index.html`) per feature; the
-   owner asks for it from time to time (the `update-guide` skill).
+5. Do not update the user guide (`docs/guide/index.html`) or the manual
+   (`docs/manual/`, generated from `docs/manual/src/`) per feature; the owner
+   asks for them from time to time (the `update-guide` and `update-manual`
+   skills).
 
 Keep changes small and focused; one feature per commit.
 

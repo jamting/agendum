@@ -1,0 +1,25 @@
+ File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15
+
+
+ Garden                                  When             Priority Friends
+ • Weed t┌ Customize (yours, for every file) ─────────────────────────┐
+ • Count │ Theme               : Classic                              │ger
+   bounce│ Date language       : English                              │
+         │ Fallback language   : None                                 │
+ Notices │ Input format        : (SPACE)                              │nds
+ • Put up│                                                            │
+   Meetin│ Saved in your preferences, not in this file.               │
+         │ SPACE/→ next choice · ← previous · ESC closes              │
+ Friends └────────────────────────────────────────────────────────────┘nds
+ • Count the lettuces before Tigger                        Medium   Tigger
+   bounces on them
+ • Ask Owl how to spell Organising                         Low      Owl
+ • Find Small, who is lost again                           High     Small
+ • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+
+
+
+
+
+
+ ↑↓ Setting SPACE Next ← Previous ESC Close

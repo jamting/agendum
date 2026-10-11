@@ -1,0 +1,25 @@
+ File: rabbit.agenda         View: Rabbit's Week          SORT  2026-10-12 10:15
+
+
+ Garden                                  When             Priority Friends
+ • Weed t┌ Sort items in all sections ────────────────────────────────┐
+ • Count │ Sort on         : None                                     │ger
+   bounce│ Order           : -                                        │
+         │ Sort n/a's      : -                                        │
+ Notices │ Sequence        : -                                        │nds
+ • Put up│ Line number     : -                                        │
+   Meetin│ Then by         : None                                     │
+         │ Then order      : -                                        │
+ Friends │ Section sorting : None                                     │nds
+ • Count │ Section order   : -                                        │ger
+   bounce│                                                            │
+ • Ask Ow│ ENTER changes the highlighted setting · ESC closes         │
+ • Find S└────────────────────────────────────────────────────────────┘ll
+ • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+
+
+
+
+
+
+ ENTER Change ↑↓ Setting ESC Close

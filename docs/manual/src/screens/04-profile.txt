@@ -1,0 +1,25 @@
+ File: rabbit.agenda        View: Rabbit's Week         ASSIGN  2026-10-12 10:15
+
+
+ Garden                                  When             Priority Friends
+ • Weed t┌ Assignments: Weed the carrot bed tomorrow morning ─────────┐
+ • Count │ ◊   Entry                                                  │ger
+   bounce│ ◊   When                                                   │
+         │     Done                                                   │
+ Notices │ *   Garden                                                 │nds
+ • Put up│     Notices                                                │
+   Meetin│     Friends and Relations                                  │
+         │       Pooh                                                 │
+ Friends │       Piglet                                               │nds
+ • Count │       Owl                                                  │ger
+   bounce│       Eeyore                                               │
+ • Ask Ow│       Kanga                                                │
+ • Find S│       Roo                                                  │ll
+ • Visit │       Tigger                                               │ga, Roo
+         │       Christopher Robin                                    │
+         │       Small                                                │
+         │ +   Priority                                               │
+         │ *     High                                                 │
+         │                                                            │
+         │ * assigned  c by a condition  + via subcategory  SPACE     │
+ SPACE Assign/Unassign ESC Return

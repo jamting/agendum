@@ -1,6 +1,6 @@
 ---
 name: update-guide
-description: Bring the end-user guide (docs/guide/index.html) up to date with features added since it was last updated. Use only when the user asks to update the guide or manual.
+description: Bring the end-user guide (docs/guide/index.html, the short guide with Piglet) up to date with features added since it was last updated. Use only when the user asks to update the guide; the long manual has its own skill, update-manual.
 ---
 
 # Update the user guide

@@ -1,0 +1,25 @@
+ File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15
+
+
+ Garden                                  When             Priority Friends
+ • Weed t┌ Auto-assign settings ──────────────────────────────────────┐
+ • Count │ Text matching           : On                               │ger
+   bounce│ Match on                : Item text                        │
+         │ Required match strength : Exact match - 100%               │
+ Notices │ Confirm assignments     : Never                            │nds
+ • Put up│ Ignore text enclosed by : " "                              │
+   Meetin│ Ignore suffixes         : Yes                              │
+         │ Ignore accents          : No                               │
+ Friends │                                                            │nds
+ • Count │ SPACE/→ next choice · ← previous · ESC closes              │ger
+   bounce└────────────────────────────────────────────────────────────┘
+ • Ask Ow│ End of week         : Fri                                  │
+ • Find S│ First quarter       : Jan 1                                │ll
+ • Visit │ Beginning of year   : Jan 1                                │ga, Roo
+         │ Month alone means   : First day                            │
+         │ Morning             : 08:00                                │
+         │ Afternoon           : 14:00                                │
+         │ Evening             : 17:00                                │
+         │ Auto-assign settings: (SPACE to open)                      │
+         │                                                            │
+ ↑↓ Setting SPACE Next ← Previous ESC Close

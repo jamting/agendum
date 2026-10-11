@@ -1,0 +1,25 @@
+ File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15
+
+
+ Garden                                  When             Priority Friends
+ • Weed t┌ Item properties ───────────────────────────────────────────┐
+ • Count │ Item text   : Weed the carrot bed tomorrow morning         │ger
+   bounce│ Note        : (none)                                       │
+         │ Statistics  : 4 categories · entered 2026-10-12            │
+ Notices │ Assigned to : Entry (2026-10-12)                           │nds
+ • Put up│               When (2026-10-13 08:00)                      │
+   Meetin│               Garden                                       │
+         │               High                                         │
+ Friends │               (type a category name to add)                │nds
+ • Count │                                                            │ger
+   bounce│ ENTER edit · DEL remove · type to assign · F3 profile      │
+ • Ask Ow└────────────────────────────────────────────────────────────┘
+ • Find Small, who is lost again                           High     Small
+ • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+
+
+
+
+
+
+ ENTER Edit DEL Remove type Assign F4 Date F3 Profile ESC Close
