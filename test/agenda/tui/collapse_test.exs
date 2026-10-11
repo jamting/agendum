@@ -106,4 +106,27 @@ defmodule Agenda.TUI.CollapseTest do
       assert collapsed(state) == [false, false]
     end
   end
+
+  describe "a collapsed category a screen does not list" do
+    # collapse MAIN in the picker (ALT-U lists MAIN), choose a section
+    defp collapse_main(state), do: press(state, [{:alt, "u"}, {:alt, "-"}, :enter])
+
+    test "does not hide the categories under it (MAIN in the profile)", %{state: state} do
+      state = collapse_main(state)
+      assert MapSet.member?(state.collapsed, state.db.main_id)
+      state = press(state, [:down, :down, {:f, 3}])
+      assert %{type: :profile} = State.mode(state)
+      assert length(visible(state)) == length(Database.hierarchy(state.db)) - 1
+    end
+
+    test "and ENTER in a group profile no longer crashes", %{state: state} do
+      # mark a section's items, collapse MAIN, then F3 for all marked items
+      state = press(state, {:f, 7}) |> collapse_main()
+      state = press(state, [:enter, {:char, "/"}, {:f, 10}, {:f, 3}, :enter])
+      assert %{type: :group_profile} = State.mode(state)
+      assert visible(state) != []
+      state = press(state, :enter)
+      assert %{type: :group_profile} = State.mode(state)
+    end
+  end
 end

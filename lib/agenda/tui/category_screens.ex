@@ -34,14 +34,21 @@ defmodule Agenda.TUI.CategoryScreens do
   def open_props(state, cat_id), do: State.push(state, %{type: :props, cat_id: cat_id, cursor: 0})
 
   @doc "The `{category_id, depth}` rows a hierarchy screen lists."
-  def rows(state, mode),
-    do: state |> all_rows(mode) |> Enum.filter(&shown?(state, mode, elem(&1, 0)))
+  def rows(state, mode) do
+    all = all_rows(state, mode)
+    listed = MapSet.new(all, &elem(&1, 0))
+    Enum.filter(all, &shown?(state, mode, listed, elem(&1, 0)))
+  end
 
-  # Categories inside a collapsed family are hidden; the assignment profile
+  # Categories inside a collapsed family are hidden, when the screen lists
+  # the family's head (so it can be expanded again); the assignment profile
   # still shows those the item is assigned to (User's Guide 16-9).
-  defp shown?(state, mode, id) do
+  defp shown?(state, mode, listed, id) do
     visible =
-      not Enum.any?(Database.ancestors(state.db, id), &MapSet.member?(state.collapsed, &1))
+      not Enum.any?(
+        Database.ancestors(state.db, id),
+        &(MapSet.member?(state.collapsed, &1) and MapSet.member?(listed, &1))
+      )
 
     visible or (mode.type == :profile and assigned_here?(state.db, mode.item_id, id))
   end
@@ -121,9 +128,19 @@ defmodule Agenda.TUI.CategoryScreens do
 
     case navigate(state, mode, rows, key) do
       {:moved, mode} -> State.put_mode(state, mode)
+      :unhandled when rows == [] -> empty_key(State.put_mode(state, mode), mode, key)
       :unhandled -> screen_key(State.put_mode(state, mode), mode, rows, key)
     end
   end
+
+  # With nothing listed, only leaving the screen means anything (a picker
+  # may still create a category).
+  defp empty_key(state, %{type: :picker} = mode, key), do: screen_key(state, mode, [], key)
+
+  defp empty_key(state, _mode, key) when key in [:esc, {:f, 3}, {:f, 6}, {:f, 9}, {:f, 10}],
+    do: State.pop(state)
+
+  defp empty_key(state, _mode, _key), do: state
 
   @nav_keys [:up, :down, :pgup, :pgdn, :home, :end, :ctrl_home, :ctrl_end, :ctrl_pgup, :ctrl_pgdn]
 
