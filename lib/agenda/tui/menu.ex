@@ -21,7 +21,12 @@ defmodule Agenda.TUI.Menu do
          {"New", "Create a new, empty file", :new_file},
          {"Dating", "Turn When dates read from text on or off", :toggle_auto_date},
          {"Properties", "How the file displays dates and times", :file_props},
-         {"Customize", "Your theme, date languages and input format, for every file", :customize}
+         {"Customize", "Your theme, date languages and input format, for every file", :customize},
+         {"Transfer", "Export the whole file as JSON, or import one",
+          [
+            {"Export", "Write the whole file as a JSON file", :export_json},
+            {"Import", "Open a JSON file as a new, untitled file", :import_json}
+          ]}
        ]},
       {"Item", "Work with the highlighted item",
        [

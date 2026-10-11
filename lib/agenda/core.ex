@@ -901,6 +901,16 @@ defmodule Agenda.Core do
     |> settle(answered, item_id, clock)
   end
 
+  # --- JSON (R44) -----------------------------------------------------------------
+
+  @doc "The whole file as readable JSON (`Agenda.Core.JSONFile`)."
+  @spec export_json(db) :: String.t()
+  defdelegate export_json(db), to: Agenda.Core.JSONFile, as: :encode
+
+  @doc "A file read from JSON, checked; errors say what is wrong and where."
+  @spec import_json(String.t()) :: {:ok, db} | {:error, String.t()}
+  defdelegate import_json(text), to: Agenda.Core.JSONFile, as: :decode
+
   # --- dependencies (R43) ------------------------------------------------------
 
   @doc """

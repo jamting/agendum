@@ -741,6 +741,21 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   current view that holds it. Not done: copying marked items (no item copy
   yet).
 
+## 5a. Data interchange
+
+- **R44 ✅ JSON export and import** (not in Agenda; ADR 0010). File ▸
+  Transfer ▸ Export writes the whole file as readable JSON (the name
+  offered is the file's, with `.json`); File ▸ Transfer ▸ Import reads one
+  and opens it as a new, untitled file, to be saved under a name (the open
+  file is replaced, as with Retrieve; nothing is merged). Everything in the
+  file survives a round trip: categories and their properties, items with
+  their assignments, dates, numbers, dependencies and suggestions, views,
+  and the file's settings; the person's own settings (theme, languages,
+  input format) are not in it. Import checks types and references and
+  says what is wrong and where; a file that fails opens nothing. The
+  schema is `docs/JSON_FORMAT.md`. Agenda's own transfer format (STF) and
+  iCal import are on the roadmap.
+
 ## 6. Out of scope for now
 
 The macro command language (Working with Macros, chapters 2–3; Learn-mode

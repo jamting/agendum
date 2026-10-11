@@ -41,6 +41,7 @@ shell does terminal I/O and file I/O.
 | `Core.Recurrence`                            | The rule of a recurring When date and the next date from a base date (R14a).                                                                            |
 | `Core.Context`                               | The time, date languages and input format (R14c, R41b), passed wherever typed dates are read; `parser_opts/2` adds the file's `DateSettings`.           |
 | `Core.InputFormat`                           | How one person types dates: number order, date separator, 12/24-hour clock; nil is the language's (R41b).                                               |
+| `Core.JSONFile`                              | A whole file as JSON and back, checked on import (R44; schema in `JSON_FORMAT.md`).                                                                     |
 | `Core.DateLanguage` (+ `English`, `Swedish`) | Language packs for reading dates: words, phrase patterns, day/month order, clock (R14c). `DateParser` does the arithmetic.                              |
 | `Core.Search`                                | Text search: whether an item's text or note matches (R37).                                                                                              |
 | `Core.RangeFilter`                           | Date and numeric filter ranges: checking, matching, the value a new item gets (R28a).                                                                   |
@@ -131,7 +132,7 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0007](adr/0007-keyboard-strategy.md)                   | Agenda's keys first, with alternatives that always work          |
 | [0008](adr/0008-file-settings-and-personal-settings.md) | What belongs in the file, and what belongs to the person         |
 | [0009](adr/0009-date-language-packs-and-context.md)     | Date language packs, and a context passed to the core            |
-| [0010](adr/0010-data-interchange.md)                    | Data interchange: JSON, and Agenda's structured files (proposed) |
+| [0010](adr/0010-data-interchange.md)                    | Data interchange: JSON (built), and Agenda's structured files    |
 | [0011](adr/0011-conditions-and-actions-settle.md)       | Conditions and actions run in one step after every change        |
 | [0012](adr/0012-quality-gate.md)                        | The quality gate: formatter, compiler, Credo, Dialyzer, tests    |
 | [0013](adr/0013-reading-dates-file-and-reader.md)       | Reading dates: the file's settings and the reader's language     |

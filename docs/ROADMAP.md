@@ -71,7 +71,7 @@ Rule numbers refer to `SPEC.md`.
 
 ## Milestone 4 — Data interchange
 
-- [ ] JSON export/import: the modern, human-readable format; round-trips everything in a file
+- [x] JSON export/import: the modern, human-readable format; round-trips everything in a file (R44, `docs/JSON_FORMAT.md`)
 - [ ] ICAL import: Read an ical file from an url and create matching items. File should be able to read on regular intervals and/or manually by a user command
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
 - [ ] Optional: Import of structured text files (one item per line, with categories)

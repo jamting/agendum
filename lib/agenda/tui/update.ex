@@ -180,14 +180,7 @@ defmodule Agenda.TUI.Update do
 
   def loaded(state, path, {:ok, db}) do
     %State{
-      State.new(db,
-        path: path,
-        today: state.today,
-        now: state.now,
-        width: state.width,
-        height: state.height,
-        languages: state.languages
-      )
+      State.reopen(state, db, path)
       | message: {:message, "Retrieved #{Path.basename(path)}"}
     }
     |> Layout.settle()
@@ -197,6 +190,32 @@ defmodule Agenda.TUI.Update do
 
   def loaded(state, _path, {:error, reason}),
     do: State.error(state, "Could not open: #{inspect(reason)}")
+
+  @doc """
+  After the shell read a JSON file to import (R44): the file opens as a
+  new, untitled file, to be saved under a name; on an error the open file
+  stays.
+  """
+  def imported(state, path, {:ok, text}) do
+    case Core.import_json(text) do
+      {:ok, db} ->
+        %State{
+          State.reopen(state, db, nil)
+          | dirty: true,
+            saved_db: nil,
+            message: {:message, "Imported #{Path.basename(path)} (save it to keep it)"}
+        }
+        |> Layout.settle()
+
+      {:error, reason} ->
+        State.error(state, "Could not import #{Path.basename(path)}: #{reason}")
+    end
+  end
+
+  def imported(state, _path, {:error, :enoent}), do: State.error(state, "File not found")
+
+  def imported(state, _path, {:error, reason}),
+    do: State.error(state, "Could not read: #{inspect(reason)}")
 
   def written(state, path, :ok), do: State.info(state, "Wrote #{path}")
 
@@ -1054,14 +1073,7 @@ defmodule Agenda.TUI.Update do
     path = Agenda.Store.normalize_path(text)
 
     %{
-      State.new(Core.new_file(),
-        path: path,
-        today: state.today,
-        now: state.now,
-        width: state.width,
-        height: state.height,
-        languages: state.languages
-      )
+      State.reopen(state, Core.new_file(), path)
       | dirty: true,
         saved_db: nil
     }
@@ -1154,6 +1166,12 @@ defmodule Agenda.TUI.Update do
   defp prompt_action(state, {:exclusive_new_child, cat_id}, text) do
     CategoryScreens.apply_exclusive(state, cat_id, {:new_child, text})
   end
+
+  defp prompt_action(state, :export_json, text),
+    do: State.effect(state, {:write_text, Path.expand(text), Core.export_json(state.db)})
+
+  defp prompt_action(state, :import_json, text),
+    do: State.effect(state, {:import_json, Path.expand(text)})
 
   defp prompt_action(state, :export, text) do
     path = Path.expand(text)
@@ -1365,6 +1383,14 @@ defmodule Agenda.TUI.Update do
 
   defp do_perform(state, :retrieve, _), do: prompt(state, "File to retrieve:", :retrieve)
   defp do_perform(state, :new_file, _), do: prompt(state, "Name of new file:", :new_file)
+
+  defp do_perform(state, :export_json, _) do
+    name = if state.path, do: Path.rootname(state.path) <> ".json", else: "agenda.json"
+    prompt(state, "Export to JSON file:", :export_json, name)
+  end
+
+  defp do_perform(state, :import_json, _),
+    do: prompt(state, "JSON file to import (opens as a new file):", :import_json)
 
   defp do_perform(state, :export, _),
     do: prompt(state, "Print view to text file:", :export, "agenda-view.txt")

@@ -131,6 +131,30 @@ defmodule Agenda.TUI.State do
       else: state
   end
 
+  @doc """
+  The state for another file (Retrieve, New, Import): a fresh start for
+  the file, keeping the session (time, screen size, languages, input
+  format, theme, preferences, key map).
+  """
+  @spec reopen(t, Database.t(), String.t() | nil) :: t
+  def reopen(state, db, path) do
+    %{
+      new(db,
+        path: path,
+        today: state.today,
+        now: state.now,
+        width: state.width,
+        height: state.height,
+        languages: state.languages,
+        input: state.input,
+        theme: state.theme,
+        prefs: state.prefs,
+        preferences: state.preferences
+      )
+      | key_map: state.key_map
+    }
+  end
+
   @spec view(t) :: Agenda.Core.View.t()
   def view(%__MODULE__{db: db, view_id: id}), do: Database.view(db, id)
 

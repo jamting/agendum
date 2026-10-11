@@ -5,7 +5,9 @@ A clone of Lotus Agenda (1988, DOS) in Elixir: a **pure functional core** plus a
 does) and `docs/ARCHITECTURE.md` (how the code is laid out) before larger changes,
 and the ADRs in `docs/adr/` (why); record new lasting decisions as ADRs.
 For anything touching stored data or queries, also read `docs/DATA_MODEL.md`
-and `docs/DATA_ACCESS.md`, and keep them up to date (Mermaid diagrams included).
+and `docs/DATA_ACCESS.md`, and keep them up to date (Mermaid diagrams included);
+a new stored field also needs a place in the JSON schema (`Core.JSONFile`,
+`docs/JSON_FORMAT.md`), or the round-trip tests fail.
 
 ## Commands
 

@@ -83,6 +83,9 @@ defmodule Agenda.TUI.App do
         {:write_text, path, text} ->
           Update.written(state, path, File.write(path, text))
 
+        {:import_json, path} ->
+          Update.imported(state, path, File.read(path))
+
         {:save_preferences, path, prefs} ->
           Update.preferences_saved(state, Preferences.save(prefs, path))
       end
