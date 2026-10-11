@@ -52,6 +52,21 @@ defmodule Agenda.TUI.Draw do
     pad(spaces(left) <> text, width)
   end
 
+  @doc ~S|A count with its noun, singular for one: "1 item", "2 items".|
+  @spec count(integer, String.t(), String.t() | nil) :: String.t()
+  def count(n, singular, plural \\ nil),
+    do: "#{n} " <> if(n == 1, do: singular, else: plural || singular <> "s")
+
+  @doc "Text cut to `width` characters, ending in … when it was longer."
+  @spec truncate(String.t(), non_neg_integer) :: String.t()
+  def truncate(text, width) do
+    cond do
+      String.length(text) <= width -> text
+      width <= 1 -> String.slice(text, 0, width)
+      true -> String.slice(text, 0, width - 1) <> "…"
+    end
+  end
+
   @spec spaces(integer) :: String.t()
   def spaces(n) when n > 0, do: String.duplicate(" ", n)
   def spaces(_), do: ""

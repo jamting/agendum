@@ -90,7 +90,8 @@ defmodule Agenda.TUI.Render do
     left = " File: #{file}"
     middle = "View: #{view.name}" <> filter_text(state, view.filter)
     gap = max(state.width - String.length(left) - String.length(right), 0)
-    mid = Draw.center(middle, gap)
+    # at least two spaces on either side of the view's name and filter
+    mid = Draw.center(Draw.truncate(middle, max(gap - 4, 0)), gap)
 
     Draw.line([{:title, left}, {:title, mid}, {:indicator, right}], state.width, :title)
   end
@@ -914,7 +915,7 @@ defmodule Agenda.TUI.Render do
         "Assign the item to"
 
       {:assign_items, ids} ->
-        "Assign #{length(ids)} marked items to"
+        "Assign #{Draw.count(length(ids), "marked item")} to"
 
       {:condition, id} ->
         "Conditions for #{state.db.categories[id].name}"
@@ -939,7 +940,7 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :item_props}), do: "Item properties"
 
   defp box_title(_state, %{type: :group_profile, item_ids: ids}),
-    do: "Assignments: #{length(ids)} marked items"
+    do: "Assignments: #{Draw.count(length(ids), "marked item")}"
 
   defp box_title(_state, %{type: :scope}), do: "Marked items"
   defp box_title(_state, %{type: :alarm_list}), do: "Alarm list"
@@ -1402,7 +1403,8 @@ defmodule Agenda.TUI.Render do
                if(item.note == "", do: "(none)", else: item.note |> String.split("\n") |> hd())}
 
             :stats ->
-              {"Statistics", "#{length(assignments)} categories · entered #{entered}"}
+              {"Statistics",
+               "#{Draw.count(length(assignments), "category", "categories")} · entered #{entered}"}
 
             {kind, id} when kind in [:prerequisite, :dependent] ->
               {dependency_label(rows, row), dependency_text(state.db, id)}

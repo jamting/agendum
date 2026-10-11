@@ -17,6 +17,7 @@ defmodule Agenda.TUI.Update do
     CategoryScreens,
     ColumnProperties,
     Completion,
+    Draw,
     FileProperties,
     GoTo,
     History,
@@ -557,7 +558,7 @@ defmodule Agenda.TUI.Update do
       marked != [] ->
         confirm(
           state,
-          "Make this item depend on the #{length(marked)} marked items? (Y/N)",
+          "Make this item depend on the #{Draw.count(length(marked), "marked item")}? (Y/N)",
           {:make_dependent, item.id, marked}
         )
 
@@ -902,14 +903,14 @@ defmodule Agenda.TUI.Update do
   # The command for every marked item.
   defp bulk(state, :done, ids, _row) do
     db = Enum.reduce(ids, state.db, &Core.mark_done(&2, &1, state.today))
-    state |> State.change_db(db) |> State.info("#{length(ids)} marked items done")
+    state |> State.change_db(db) |> State.info("#{Draw.count(length(ids), "marked item")} done")
   end
 
   defp bulk(state, :discard, ids, _row),
     do:
       confirm(
         state,
-        "Discard #{length(ids)} marked items from the whole file? (Y/N)",
+        "Discard #{Draw.count(length(ids), "marked item")} from the whole file? (Y/N)",
         {:discard_items, ids}
       )
 
@@ -926,12 +927,17 @@ defmodule Agenda.TUI.Update do
 
       state
       |> State.change_db(db)
-      |> State.info("Removed #{length(ids)} marked items from #{cat.name}")
+      |> State.info("Removed #{Draw.count(length(ids), "marked item")} from #{cat.name}")
     end
   end
 
   defp bulk(state, :when, ids, _row),
-    do: prompt(state, "When date for #{length(ids)} marked items:", {:when_items, ids})
+    do:
+      prompt(
+        state,
+        "When date for #{Draw.count(length(ids), "marked item")}:",
+        {:when_items, ids}
+      )
 
   defp bulk(state, :move_item, ids, _row) do
     # each item leaves the first section of this view that holds it
@@ -957,7 +963,7 @@ defmodule Agenda.TUI.Update do
     what =
       if length(moves) == 1,
         do: "Move to where?",
-        else: "Move #{length(moves)} marked items to where?"
+        else: "Move #{Draw.count(length(moves), "marked item")} to where?"
 
     state
     |> State.push(%{type: :move_item, moves: moves})
@@ -1100,7 +1106,9 @@ defmodule Agenda.TUI.Update do
     end)
     |> case do
       {:ok, db} ->
-        state |> State.change_db(db) |> State.info("When date set for #{length(ids)} items")
+        state
+        |> State.change_db(db)
+        |> State.info("When date set for #{Draw.count(length(ids), "item")}")
 
       :error ->
         State.error(state, "Not a date: #{text} (try friday, next week, 12/24, December 24)")
@@ -1194,7 +1202,7 @@ defmodule Agenda.TUI.Update do
     case Core.make_dependent(state.db, id, prerequisites) do
       {:ok, db} ->
         count = length(Core.prerequisites(db, id))
-        state |> State.change_db(db) |> State.info("Depends on #{count} items")
+        state |> State.change_db(db) |> State.info("Depends on #{Draw.count(count, "item")}")
 
       {:error, :cycle} ->
         State.error(state, "Not done: the item would depend on itself (through the marked items)")
@@ -1213,7 +1221,7 @@ defmodule Agenda.TUI.Update do
 
   defp confirmed(state, {:discard_items, ids}, true) do
     db = Enum.reduce(ids, state.db, &Core.discard_item(&2, &1))
-    state |> State.change_db(db) |> State.info("#{length(ids)} items discarded")
+    state |> State.change_db(db) |> State.info("#{Draw.count(length(ids), "item")} discarded")
   end
 
   defp confirmed(state, {:discard_item, id}, true) do
@@ -1544,7 +1552,9 @@ defmodule Agenda.TUI.Update do
           state
           |> State.change_db(db)
           |> State.switch_view(view_id)
-          |> State.info("#{length(ids)} #{noun} items · ALT-F8 returns to the last view")
+          |> State.info(
+            "#{Draw.count(length(ids), noun <> " item")} · ALT-F8 returns to the last view"
+          )
       end
     end
   end

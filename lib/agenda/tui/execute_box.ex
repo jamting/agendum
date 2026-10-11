@@ -82,7 +82,9 @@ defmodule Agenda.TUI.ExecuteBox do
         do: "",
         else: state.db.categories[root].name <> " "
 
-    state |> State.change_db(db) |> State.info("Executed #{what}for #{length(ids)} items")
+    state
+    |> State.change_db(db)
+    |> State.info("Executed #{what}for #{Agenda.TUI.Draw.count(length(ids), "item")}")
   end
 
   defp items(state, :all), do: state.db.item_order

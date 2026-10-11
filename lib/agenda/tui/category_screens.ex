@@ -14,7 +14,7 @@ defmodule Agenda.TUI.CategoryScreens do
 
   alias Agenda.Core
   alias Agenda.Core.Database
-  alias Agenda.TUI.{LineEdit, State, TextEdit, Update}
+  alias Agenda.TUI.{Draw, LineEdit, State, TextEdit, Update}
 
   # --- opening -------------------------------------------------------------------
 
@@ -1072,7 +1072,7 @@ defmodule Agenda.TUI.CategoryScreens do
       [
         conversion.children > 0 && "children become dates",
         conversion.non_dates != [] && "dropped: " <> Enum.join(conversion.non_dates, ", "),
-        conversion.assigned > 0 && "#{conversion.assigned} items in it get no date"
+        conversion.assigned > 0 && "#{Draw.count(conversion.assigned, "item")} in it get no date"
       ]
       |> Enum.filter(& &1)
 
@@ -1093,7 +1093,8 @@ defmodule Agenda.TUI.CategoryScreens do
       [
         conversion.children > 0 && "Its #{conversion.children} children become numbers",
         zeros,
-        conversion.assigned > 0 && "#{conversion.assigned} items assigned to it get 0"
+        conversion.assigned > 0 &&
+          "#{Draw.count(conversion.assigned, "item")} assigned to it get 0"
       ]
       |> Enum.filter(& &1)
 
