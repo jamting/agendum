@@ -46,7 +46,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 - [x] Agenda's colours as the default theme: grey screen, blue heads and entries, white-on-red highlight, cyan boxes in a solid blue frame with a centred title and a shadow, the screen behind a box greyed out, cyan category manager, yellow-on-blue help; exact VGA colours on 24-bit terminals; the old look as `blue`; the highlighted line tinted (R40)
 - [x] Two-line control panel (File with indicators and time, then View or the manager shown) that the menu, prompts, questions and messages take over; the key bar stays one line (our choice)
-- [ ] More descriptive key bar labels, using the width of today's terminals
+- [x] More descriptive key bar labels when the terminal is wide enough ("F8 View manager"); Agenda's short ones otherwise
 - [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
 - [ ] Boxes: help for the highlighted field in the control panel, "Press ENTER when done, ESC to cancel" in the frame; ESC steps back through the menu levels
 - [ ] Questions as Yes/No boxes; Category Properties in two columns with "..." sub-boxes opened by SPACE; View Manager as a box

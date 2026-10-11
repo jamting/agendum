@@ -654,8 +654,10 @@ entries, then the highlighted entry's commands or description), a prompt
 over while they last; questions, messages and hints keep the indicators
 beside them and go on into the second line when long, as Agenda's help
 lines did. Our choices: the function-key bar stays one line with the keys'
-names and labels side by side (Agenda had two lines of ten fixed slots), so
-wide terminals show more of what each key does.
+names and labels side by side (Agenda had two lines of ten fixed slots).
+When the screen is wide enough for all of them, it shows fuller labels
+("F8 View manager", "INS/CTRL-N Add a category"); otherwise Agenda's short
+ones ("F8 VwMgr").
 
 | Key         | View                                                                | Category manager        |
 | ----------- | ------------------------------------------------------------------- | ----------------------- |

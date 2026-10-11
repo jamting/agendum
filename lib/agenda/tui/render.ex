@@ -310,35 +310,54 @@ defmodule Agenda.TUI.Render do
 
   # --- key bar -----------------------------------------------------------------------------
 
+  # Each key has a short label, as in Agenda's 8-character slots, and may
+  # have a fuller one (and a fuller name, "CTRL-N" for "^N"). The bar shows
+  # the fuller ones when they all fit the screen's width, the short ones
+  # otherwise: {key, label} | {key, label, full label} |
+  # {key, label, full key, full label}.
   defp keybar(state) do
     keys =
       cond do
         Completion.active?(state) ->
           [
-            {"ENTER", "Accept"},
-            {"F8/A-N", "Next"},
-            {"F7/A-P", "Previous"},
-            {"INS/^N", "New category"},
+            {"ENTER", "Accept", "Accept the name"},
+            {"F8/A-N", "Next", "F8/ALT-N", "Next match"},
+            {"F7/A-P", "Previous", "F7/ALT-P", "Previous match"},
+            {"INS/^N", "New category", "INS/CTRL-N", "New category"},
             {"ESC", "Cancel"}
           ]
 
         state.edit != nil ->
           [
-            {"ENTER", "Done"},
+            {"ENTER", "Done", "Finish"},
             {"ESC", "Cancel"},
-            {"←→", "Move"},
-            {"^A/^E", "Start/End"},
-            {"^U", "Clear"}
+            {"←→", "Move", "Move the cursor"},
+            {"^A/^E", "Start/End", "CTRL-A/CTRL-E", "Start/end of the line"},
+            {"^U", "Clear", "CTRL-U", "Clear the line"}
           ]
 
         true ->
           mode_keys(State.mode(state))
       end
+      |> Enum.map(&full_entry/1)
 
-    segments =
-      Enum.flat_map(keys, fn {k, label} -> [{:keybar_key, " " <> k}, {:keybar, " " <> label}] end)
-
+    full = keybar_segments(keys, fn {_, _, key, label} -> {key, label} end, " ")
+    short = keybar_segments(keys, fn {key, label, _, _} -> {key, label} end, "")
+    segments = if Draw.width(full) <= state.width, do: full, else: short
     Draw.line(segments, state.width, :keybar)
+  end
+
+  defp full_entry({key, label}), do: {key, label, key, label}
+  defp full_entry({key, label, full}), do: {key, label, key, full}
+  defp full_entry({_, _, _, _} = entry), do: entry
+
+  defp keybar_segments(keys, pick, gap) do
+    keys
+    |> Enum.map(pick)
+    |> Enum.map_intersperse([{:keybar, gap}], fn {k, label} ->
+      [{:keybar_key, " " <> k}, {:keybar, " " <> label}]
+    end)
+    |> List.flatten()
   end
 
   defp mode_keys(nil),
@@ -348,99 +367,131 @@ defmodule Agenda.TUI.Render do
       {"F3", "Choices"},
       {"F4", "Done"},
       {"F5", "Note"},
-      {"F6", "Props"},
+      {"F6", "Props", "Properties"},
       {"F7", "Mark"},
-      {"F8", "VwMgr"},
-      {"F9", "CatMgr"},
+      {"F8", "VwMgr", "View manager"},
+      {"F9", "CatMgr", "Category manager"},
       {"F10", "Menu"}
     ]
 
   defp mode_keys(%{type: :catmgr}),
     do: [
-      {"F2", "Edit"},
+      {"F2", "Edit", "Rename"},
       {"F5", "Note"},
-      {"F6", "Props"},
+      {"F6", "Props", "Properties"},
       {"F7", "Promote"},
       {"F8", "Demote"},
-      {"INS/^N", "Add"},
+      {"INS/^N", "Add", "INS/CTRL-N", "Add a category"},
       {"DEL", "Discard"},
-      {"A-F10", "Move"},
+      {"A-F10", "Move", "ALT-F10", "Move"},
       {"ESC", "Return"}
     ]
 
   defp mode_keys(%{type: :viewmgr}),
     do: [
-      {"ENTER", "Select"},
-      {"INS", "Add"},
+      {"ENTER", "Select", "Show the view"},
+      {"INS", "Add", "Add a view"},
       {"F2", "Rename"},
       {"DEL", "Discard"},
-      {"A-↑↓", "Reorder"},
-      {"ESC", "Return"}
+      {"A-↑↓", "Reorder", "ALT-↑↓", "Reorder"},
+      {"ESC", "Return", "Back to the view"}
     ]
 
   defp mode_keys(%{type: :picker}),
-    do: [{"ENTER", "Select"}, {"INS", "New category"}, {"type", "Search"}, {"ESC", "Cancel"}]
+    do: [
+      {"ENTER", "Select"},
+      {"INS", "New category"},
+      {"type", "Search", "Search by name"},
+      {"ESC", "Cancel"}
+    ]
 
   defp mode_keys(%{type: type}) when type in [:profile, :group_profile],
-    do: [{"SPACE", "Assign/Unassign"}, {"ESC", "Return"}]
+    do: [
+      {"SPACE", "Assign/Unassign", "Assign or unassign"},
+      {"ESC", "Return", "Done"}
+    ]
 
   defp mode_keys(%{type: :alarm_list}),
     do: [{"DEL", "Remove past alarm"}, {"ALT-A", "Cancel alarm"}, {"ESC", "Close"}]
 
   defp mode_keys(%{type: :search_box}),
-    do: [{"ENTER", "Search"}, {"TAB/↓", "Next setting"}, {"SPACE", "Change"}, {"ESC", "Cancel"}]
+    do: [
+      {"ENTER", "Search"},
+      {"TAB/↓", "Next setting"},
+      {"SPACE", "Change", "Change the setting"},
+      {"ESC", "Cancel"}
+    ]
 
   defp mode_keys(%{type: :searching}),
-    do: [{"ALT-N", "Next"}, {"ALT-P", "Previous"}, {"F7", "Mark"}, {"ENTER/ESC", "End search"}]
+    do: [
+      {"ALT-N", "Next", "Next match"},
+      {"ALT-P", "Previous", "Previous match"},
+      {"F7", "Mark", "Mark the item"},
+      {"ENTER/ESC", "End search"}
+    ]
 
-  defp mode_keys(%{type: :sort}), do: [{"ENTER", "Change"}, {"↑↓", "Setting"}, {"ESC", "Close"}]
+  defp mode_keys(%{type: :sort}),
+    do: [
+      {"ENTER", "Change", "Change the setting"},
+      {"↑↓", "Setting", "Move between settings"},
+      {"ESC", "Close"}
+    ]
 
   defp mode_keys(%{type: :scope}),
-    do: [{"M", "Marked items"}, {"C", "Current item"}, {"ENTER", "Select"}, {"ESC", "Cancel"}]
+    do: [
+      {"M", "Marked items"},
+      {"C", "Current item", "The highlighted item"},
+      {"ENTER", "Select"},
+      {"ESC", "Cancel"}
+    ]
 
-  defp mode_keys(%{type: :props}), do: [{"ENTER", "Change"}, {"ESC", "Return"}]
+  defp mode_keys(%{type: :props}),
+    do: [{"ENTER", "Change", "Change the setting"}, {"ESC", "Return", "Close"}]
 
   defp mode_keys(%{type: :item_props}),
     do: [
       {"ENTER", "Edit"},
-      {"DEL", "Remove"},
-      {"type", "Assign"},
-      {"F4", "Date"},
-      {"F3", "Profile"},
+      {"DEL", "Remove", "Remove the assignment"},
+      {"type", "Assign", "Assign to a category"},
+      {"F4", "Date", "Set the date"},
+      {"F3", "Profile", "Assignment profile"},
       {"ESC", "Close"}
     ]
 
   defp mode_keys(%{type: :choice}),
-    do: [{"↑↓", "Highlight"}, {"ENTER", "Select"}, {"ESC", "Cancel"}]
+    do: [{"↑↓", "Highlight", "Highlight a choice"}, {"ENTER", "Select"}, {"ESC", "Cancel"}]
 
   defp mode_keys(%{type: :note, replacing: r}) when r != nil,
-    do: [{"Y", "Replace"}, {"N", "Skip"}, {"ESC", "Stop"}]
+    do: [{"Y", "Replace"}, {"N", "Skip", "Skip this one"}, {"ESC", "Stop"}]
 
   defp mode_keys(%{type: :note}),
-    do: [{"ESC", "Return"}, {"F5", "Return"}, {"ALT-F6", "Search"}, {"ALT-S", "Next"}]
-
-  defp mode_keys(%{type: type}) when type in [:column_props, :date_column_props],
-    do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
+    do: [
+      {"ESC", "Return", "Save and return"},
+      {"F5", "Return", "Save and return"},
+      {"ALT-F6", "Search", "Search and replace"},
+      {"ALT-S", "Next", "Next occurrence"}
+    ]
 
   defp mode_keys(%{type: :questions}),
-    do: [{"SPACE", "Pick"}, {"TAB", "All"}, {"ENTER", "Assign"}, {"ESC", "Stop"}]
+    do: [
+      {"SPACE", "Pick", "Pick a suggestion"},
+      {"TAB", "All", "Pick all"},
+      {"ENTER", "Assign", "Assign the picked"},
+      {"ESC", "Stop"}
+    ]
 
   defp mode_keys(%{type: :execute}),
-    do: [{"↑↓", "Setting"}, {"SPACE", "Change"}, {"ENTER", "Run"}, {"ESC", "Cancel"}]
-
-  defp mode_keys(%{type: :action_box}),
     do: [
-      {"↑↓", "Setting"},
-      {"SPACE", "Change"},
-      {"ENTER", "Apply"},
-      {"DEL", "Remove"},
+      {"↑↓", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Change the setting"},
+      {"ENTER", "Run"},
       {"ESC", "Cancel"}
     ]
 
-  defp mode_keys(%{type: :range_filter}),
+  defp mode_keys(%{type: type}) when type in [:action_box, :range_filter],
     do: [
-      {"↑↓", "Setting"},
-      {"SPACE", "Change"},
+      {"↑↓", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Change the setting"},
       {"ENTER", "Apply"},
       {"DEL", "Remove"},
       {"ESC", "Cancel"}
@@ -448,50 +499,72 @@ defmodule Agenda.TUI.Render do
 
   defp mode_keys(%{type: :goto}),
     do: [
-      {"↑↓", "Highlight"},
+      {"↑↓", "Highlight", "Highlight a section"},
       {"letter", "Next starting with it"},
       {"ENTER", "Go"},
       {"ESC", "Cancel"}
     ]
 
-  defp mode_keys(%{type: :category_match}),
-    do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
-
-  defp mode_keys(%{type: :auto_assign}),
-    do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
-
-  defp mode_keys(%{type: :date_rule}),
-    do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
-
   defp mode_keys(%{type: :calendars}),
     do: [
-      {"INS", "Subscribe"},
+      {"INS", "Subscribe", "Subscribe to a calendar"},
       {"ENTER", "Read now"},
-      {"F", "How often"},
-      {"A", "Ahead"},
+      {"F", "How often", "How often to read it"},
+      {"A", "Ahead", "How far ahead"},
       {"DEL", "Unsubscribe"},
       {"ESC", "Close"}
     ]
 
-  defp mode_keys(%{type: type}) when type in [:input_format, :customize],
-    do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
-
-  defp mode_keys(%{type: :file_props}),
-    do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
-
   defp mode_keys(%{type: :note_search}),
-    do: [{"↑↓", "Setting"}, {"SPACE", "Change"}, {"ENTER", "Search"}, {"ESC", "Cancel"}]
+    do: [
+      {"↑↓", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Change the setting"},
+      {"ENTER", "Search"},
+      {"ESC", "Cancel"}
+    ]
+
+  # the settings boxes: one setting per line, SPACE cycles its choices
+  defp mode_keys(%{type: type})
+       when type in [
+              :column_props,
+              :date_column_props,
+              :category_match,
+              :auto_assign,
+              :date_rule,
+              :input_format,
+              :customize,
+              :file_props
+            ],
+       do: [
+         {"↑↓", "Setting", "Move between settings"},
+         {"SPACE", "Next", "SPACE/→", "Next choice"},
+         {"←", "Previous", "Previous choice"},
+         {"ESC", "Close"}
+       ]
 
   defp mode_keys(%{type: :menu}),
-    do: [{"←→", "Highlight"}, {"ENTER", "Select"}, {"letter", "Select"}, {"ESC", "Back"}]
+    do: [
+      {"←→", "Highlight", "Highlight a command"},
+      {"ENTER", "Select"},
+      {"letter", "Select", "first letter", "Select"},
+      {"ESC", "Back", "Back a level"}
+    ]
 
   defp mode_keys(%{type: :devtools}),
-    do: [{"↑↓ PGUP PGDN", "Scroll"}, {"any key", "Show it"}, {"ESC", "Return"}]
+    do: [
+      {"↑↓ PGUP PGDN", "Scroll"},
+      {"any key", "Show it", "Show what it sends"},
+      {"ESC", "Return"}
+    ]
 
   defp mode_keys(%{type: :help}), do: [{"↑↓", "Scroll"}, {"any other key", "Return"}]
 
   defp mode_keys(%{type: :move_item}),
-    do: [{"↑↓", "Choose position"}, {"ENTER", "Move here"}, {"ESC", "Cancel"}]
+    do: [
+      {"↑↓", "Choose position", "Choose where it goes"},
+      {"ENTER", "Move here"},
+      {"ESC", "Cancel"}
+    ]
 
   defp mode_keys(%{type: :prompt}), do: [{"ENTER", "Accept"}, {"ESC", "Cancel"}]
   defp mode_keys(%{type: :confirm}), do: [{"Y", "Yes"}, {"N", "No"}, {"ESC", "Cancel"}]
