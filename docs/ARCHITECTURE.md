@@ -42,6 +42,7 @@ shell does terminal I/O and file I/O.
 | `Core.Context`                               | The time, date languages and input format (R14c, R41b), passed wherever typed dates are read; `parser_opts/2` adds the file's `DateSettings`.           |
 | `Core.InputFormat`                           | How one person types dates: number order, date separator, 12/24-hour clock; nil is the language's (R41b).                                               |
 | `Core.JSONFile`                              | A whole file as JSON and back, checked on import (R44; schema in `JSON_FORMAT.md`).                                                                     |
+| `Core.ICal`                                  | Reads the events of an iCalendar (`.ics`) file: title, description, start, repeat rule, status (R45).                                                   |
 | `Core.DateLanguage` (+ `English`, `Swedish`) | Language packs for reading dates: words, phrase patterns, day/month order, clock (R14c). `DateParser` does the arithmetic.                              |
 | `Core.Search`                                | Text search: whether an item's text or note matches (R37).                                                                                              |
 | `Core.RangeFilter`                           | Date and numeric filter ranges: checking, matching, the value a new item gets (R28a).                                                                   |
