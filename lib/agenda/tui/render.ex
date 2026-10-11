@@ -1345,8 +1345,8 @@ defmodule Agenda.TUI.Render do
             :stats ->
               {"Statistics", "#{length(assignments)} categories · entered #{entered}"}
 
-            :dependencies ->
-              {"Dependencies", dependency_note(state.db, item.id)}
+            {kind, id} when kind in [:prerequisite, :dependent] ->
+              {dependency_label(rows, row), dependency_text(state.db, id)}
 
             {:assigned, a} ->
               {if(a == hd(assignments), do: "Assigned to", else: ""),
@@ -1592,14 +1592,18 @@ defmodule Agenda.TUI.Render do
 
   defp assignment_text(db, a, _item), do: assignment_text(db, a)
 
-  # R43: "depends on 2 · 1 depends on it"
-  defp dependency_note(db, id) do
-    [
-      {length(Agenda.Core.prerequisites(db, id)), &"depends on #{&1}"},
-      {length(Agenda.Core.dependents(db, id)), &"#{&1} depend on it"}
-    ]
-    |> Enum.reject(&(elem(&1, 0) == 0))
-    |> Enum.map_join(" · ", fn {n, text} -> text.(n) end)
+  # R43: the first row of each kind is labelled
+  defp dependency_label(rows, {kind, _} = row) do
+    cond do
+      Enum.find(rows, &match?({^kind, _}, &1)) != row -> ""
+      kind == :prerequisite -> "Depends on"
+      true -> "Needed by"
+    end
+  end
+
+  defp dependency_text(db, id) do
+    item = db.items[id]
+    if item.done, do: "√ " <> item.text, else: item.text
   end
 
   defp recurrence_note(%{recurrence: nil}), do: ""

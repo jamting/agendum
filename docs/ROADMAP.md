@@ -55,7 +55,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Date category settings: Assign item date, Which one (the nth date in the text), Done and When keys (R6b)
 - [x] Item dependencies: ALT-O makes an item depend on the marked items, views can hide dependent items (R43)
 - [x] Show Prereqs / Show Depends in the Show View (R43)
-- [ ] Item Properties lists the items an item depends on, and those depending on it, by name (R43)
+- [x] Item Properties lists the items an item depends on, and those depending on it, by name (R43)
 - [x] More date display options: per-column formats, display date/time, Day #, Week #, Relative, am/pm, hm (R41a)
 - [ ] Date input format settings (R41)
 - [x] Assignment conditions, conditional assignments (R15)

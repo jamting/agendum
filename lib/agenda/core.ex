@@ -925,6 +925,11 @@ defmodule Agenda.Core do
   def clear_dependencies(db, item_id),
     do: %{db | dependencies: Links.drop_left(db.dependencies, item_id)}
 
+  @doc "Stops an item depending on one prerequisite (DEL in Item Properties)."
+  @spec remove_dependency(db, id, id) :: db
+  def remove_dependency(db, item_id, prerequisite_id),
+    do: %{db | dependencies: Links.unlink(db.dependencies, item_id, prerequisite_id)}
+
   @doc "The items an item depends on, in item order."
   @spec prerequisites(db, id) :: [id]
   defdelegate prerequisites(db, item_id), to: Database

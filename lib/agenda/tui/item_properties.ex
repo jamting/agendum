@@ -1,9 +1,13 @@
 defmodule Agenda.TUI.ItemProperties do
   @moduledoc """
   The Item Properties box (F6 on an item; User's Guide 4-13 to 4-15): the
-  item's text, note, statistics and every category it is assigned to.
+  item's text, note, statistics, the items it depends on ("Depends on")
+  and those depending on it ("Needed by", R43), and every category it is
+  assigned to.
 
     * ENTER / F2 on the text edits it; ENTER / SPACE on the note opens it
+    * on a dependency: ENTER opens that item's properties (ESC comes
+      back); DEL removes that one dependency
     * on an assignment: DEL breaks it; F4 (or ENTER) changes a date or a
       number
     * typing anywhere in the assignments assigns a category, with automatic
@@ -24,14 +28,9 @@ defmodule Agenda.TUI.ItemProperties do
   @doc "The rows of the box, top to bottom."
   @spec rows(State.t(), map) :: [term]
   def rows(state, mode) do
-    dependencies =
-      if Core.prerequisites(state.db, mode.item_id) == [] and
-           Core.dependents(state.db, mode.item_id) == [],
-         do: [],
-         else: [:dependencies]
-
     [:text, :note, :stats] ++
-      dependencies ++
+      Enum.map(Core.prerequisites(state.db, mode.item_id), &{:prerequisite, &1}) ++
+      Enum.map(Core.dependents(state.db, mode.item_id), &{:dependent, &1}) ++
       Enum.map(Core.item_assignments(state.db, mode.item_id), &{:assigned, &1}) ++ [:add]
   end
 
@@ -71,6 +70,9 @@ defmodule Agenda.TUI.ItemProperties do
       {k, :note} when k in [:enter, {:char, " "}] ->
         open_note(state, mode)
 
+      {k, {kind, id}} when kind in [:prerequisite, :dependent] ->
+        dependency_key(state, mode, k, kind, id)
+
       {k, {:assigned, %{kind: :date} = a}} when k in [:enter, {:f, 4}] ->
         ask_date(state, mode, a.category)
 
@@ -83,13 +85,23 @@ defmodule Agenda.TUI.ItemProperties do
       {k, row} when k in [:insert, :enter] and row != :text and row != :note ->
         start_assign(state, "")
 
-      {{:char, c}, row} when row not in [:text, :note, :dependencies] ->
+      {{:char, c}, row} when row == :stats or row == :add or elem(row, 0) == :assigned ->
         start_assign(state, c)
 
       _ ->
         state
     end
   end
+
+  defp dependency_key(state, _mode, :enter, _kind, id), do: open(state, id)
+
+  defp dependency_key(state, mode, :delete, :prerequisite, id),
+    do: State.change_db(state, Core.remove_dependency(state.db, mode.item_id, id))
+
+  defp dependency_key(state, mode, :delete, :dependent, id),
+    do: State.change_db(state, Core.remove_dependency(state.db, id, mode.item_id))
+
+  defp dependency_key(state, _mode, _key, _kind, _id), do: state
 
   defp edit_text(state, mode) do
     %{

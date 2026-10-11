@@ -65,6 +65,13 @@ defmodule Agenda.Core.DependenciesTest do
     assert Core.dependents(db, find) == []
   end
 
+  test "one dependency can be removed", %{db: db, find: find, look: look, write: write} do
+    db = Core.remove_dependency(db, write, find)
+    assert Core.prerequisites(db, write) == [look]
+    assert Core.dependents(db, find) == []
+    assert Core.remove_dependency(db, write, find) == db
+  end
+
   test "a view can hide waiting items", %{db: db, view: view, find: find, look: look} do
     assert length(shown(db, view)) == 3
     db = Core.toggle_view_option(db, view, :hide_dependent)

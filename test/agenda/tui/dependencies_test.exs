@@ -32,7 +32,7 @@ defmodule Agenda.TUI.DependenciesTest do
 
     assert screen(state) =~ "& Contact Daniel Fiske"
     assert screen(state) =~ "Depends on 2 items"
-    assert screen(press(state, {:f, 6})) =~ ~r/Dependencies\s*: depends on 2/
+    assert screen(press(state, {:f, 6})) =~ ~r/Depends on\s*: Set up meeting/
   end
 
   test "ALT-O on a dependent item, with nothing marked, offers to clear", %{state: state} do
@@ -103,6 +103,70 @@ defmodule Agenda.TUI.DependenciesTest do
       state = press(state, [{:f, 10}, "s", "d", "a"])
       assert screen(state) =~ "No items depend on this one"
       assert State.view(state).name == "Activities"
+    end
+  end
+
+  describe "Item Properties lists dependencies by name" do
+    setup %{state: state} do
+      # Daniel depends on the first two items; the cursor stays on Daniel
+      %{state: state |> make_dependent() |> press(["y", {:alt_f, 7}])}
+    end
+
+    defp row_of(state, text) do
+      mode = State.mode(state)
+      rows = Agenda.TUI.ItemProperties.rows(state, mode)
+
+      Enum.find_index(rows, fn
+        {kind, id} when kind in [:prerequisite, :dependent] -> state.db.items[id].text =~ text
+        _ -> false
+      end)
+    end
+
+    defp to_row(state, text),
+      do: State.put_mode(state, %{State.mode(state) | cursor: row_of(state, text)})
+
+    test "the items it depends on, under Depends on", %{state: state} do
+      text = screen(press(state, {:f, 6}))
+      assert text =~ ~r/Depends on\s*: Set up meeting/
+      assert text =~ ~r/│ {15}Don't forget/
+      refute text =~ "Needed by"
+    end
+
+    test "the items depending on it, under Needed by; done ones are ticked", %{state: state} do
+      state = press(state, [:ctrl_home, :down, {:f, 4}, {:f, 6}])
+      text = screen(state)
+      assert text =~ ~r/Needed by\s*: Contact Daniel Fiske/
+      refute text =~ "Depends on"
+
+      state = press(state, :esc)
+      state = Agenda.TUI.ItemProperties.open(state, id_of(state, "Contact Daniel"))
+      assert screen(state) =~ ~r/Depends on\s*: √ Set up meeting/
+    end
+
+    test "ENTER opens that item's properties; ESC comes back", %{state: state} do
+      state = state |> press({:f, 6}) |> to_row("Don't forget") |> press(:enter)
+      assert State.mode(state).item_id == id_of(state, "Don't forget")
+      assert screen(state) =~ ~r/Needed by\s*: Contact Daniel/
+
+      state = press(state, :esc)
+      assert State.mode(state).item_id == id_of(state, "Contact Daniel")
+    end
+
+    test "DEL removes that one dependency, as one undo step", %{state: state} do
+      state = state |> press({:f, 6}) |> to_row("Set up meeting") |> press(:delete)
+      daniel = id_of(state, "Contact Daniel")
+      assert Core.prerequisites(state.db, daniel) == [id_of(state, "Don't forget")]
+      assert screen(state) =~ ~r/Depends on\s*: Don't forget/
+
+      state = Agenda.TUI.History.undo(state)
+      assert length(Core.prerequisites(state.db, daniel)) == 2
+    end
+
+    test "DEL on a Needed by row frees the other item", %{state: state} do
+      state = press(state, [:ctrl_home, :down, {:f, 6}])
+      state = state |> to_row("Contact Daniel") |> press(:delete)
+      assert Core.dependents(state.db, id_of(state, "Set up meeting")) == []
+      refute screen(state) =~ "Needed by"
     end
   end
 end

@@ -146,8 +146,10 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   discarding a prerequisite drops it. View ▸ Hide ▸ Pending (Agenda's "Hide
   dependent items", "[Hide Dependent]" in the title) hides waiting items
   until every prerequisite is done or discarded, also when done items are
-  hidden too (the Q&A's bug). Item Properties shows "Dependencies: depends
-  on 2 · 1 depends on it". As in Agenda, a dependent item can still be
+  hidden too (the Q&A's bug). Item Properties lists by name the items it
+  depends on ("Depends on") and those depending on it ("Needed by"), done
+  ones ticked √; ENTER on one opens its Item Properties (ESC comes back),
+  DEL removes that one dependency. As in Agenda, a dependent item can still be
   marked done or discarded first. Search ▸ Depends and Search ▸ Prereqs
   (Agenda's Utilities Show Depends / Show Prereqs) list, in the Show View,
   the items depending on the highlighted one or the items it depends on:
