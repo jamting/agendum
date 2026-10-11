@@ -69,6 +69,9 @@ defmodule Agenda.TUI.Update do
       match?(%{type: t} when t in [:note, :note_search, :prompt], State.mode(state))
   end
 
+  # the developer screen shows keys as decoded
+  defp normalize(%State{modes: [%{type: :devtools} | _]}, key), do: key
+
   defp normalize(state, key) do
     case key do
       {:ctrl, "n"} -> :insert
@@ -86,15 +89,35 @@ defmodule Agenda.TUI.Update do
     top = State.mode(state)
 
     cond do
-      typing?(state) or match?(%{type: t} when t in [:confirm, :menu, :help], top) -> :pass
-      key == {:ctrl, "z"} -> if undoable?(top), do: History.undo(state), else: :pass
-      key == {:ctrl, "y"} -> if undoable?(top), do: History.redo(state), else: :pass
-      key == {:alt, "k"} -> %{state | key_map: not state.key_map}
-      key == {:ctrl, "s"} -> perform(state, :save)
-      key == {:ctrl, "o"} -> perform(state, :retrieve)
-      key == {:ctrl, "p"} and top == nil -> perform(state, :export)
-      key in [{:ctrl, "q"}, {:ctrl, "c"}, {:alt, "q"}] -> perform(state, :quit)
-      true -> :pass
+      key == {:alt, "?"} and not typing?(state) and not match?(%{type: :devtools}, top) ->
+        Agenda.TUI.DevTools.open(state)
+
+      typing?(state) or match?(%{type: t} when t in [:confirm, :menu, :help, :devtools], top) ->
+        :pass
+
+      key == {:ctrl, "z"} ->
+        if undoable?(top), do: History.undo(state), else: :pass
+
+      key == {:ctrl, "y"} ->
+        if undoable?(top), do: History.redo(state), else: :pass
+
+      key == {:alt, "k"} ->
+        %{state | key_map: not state.key_map}
+
+      key == {:ctrl, "s"} ->
+        perform(state, :save)
+
+      key == {:ctrl, "o"} ->
+        perform(state, :retrieve)
+
+      key == {:ctrl, "p"} and top == nil ->
+        perform(state, :export)
+
+      key in [{:ctrl, "q"}, {:ctrl, "c"}, {:alt, "q"}] ->
+        perform(state, :quit)
+
+      true ->
+        :pass
     end
   end
 
@@ -189,6 +212,7 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :confirm} = m, key), do: confirm_key(state, m, key)
   defp dispatch(state, %{type: :note} = m, key), do: note_key(state, m, key)
   defp dispatch(state, %{type: :help} = m, key), do: help_key(state, m, key)
+  defp dispatch(state, %{type: :devtools} = m, key), do: Agenda.TUI.DevTools.handle(state, m, key)
   defp dispatch(state, %{type: :move_item} = m, key), do: move_key(state, m, key)
   defp dispatch(state, %{type: :item_props} = m, key), do: ItemProperties.handle(state, m, key)
   defp dispatch(state, %{type: :scope} = m, key), do: scope_key(state, m, key)

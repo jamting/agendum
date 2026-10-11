@@ -185,3 +185,14 @@ keys: CTRL-S/Q (flow control), CTRL-C/Z (signals), CTRL-O/V (discard,
 literal-next). `Agenda.TUI.Terminal` turns those features off with `stty`
 while Agenda runs and restores them on exit, so every CTRL key reaches
 Agenda.
+
+## Developer tools (hidden)
+
+ESC then `?` (ALT-? where Option sends Meta) opens the developer screen from
+anywhere except while typing: the last key as Agenda decoded it, the mode
+stack, cursor, undo depth, session (time, languages, input format, theme,
+preferences, terminal size), file counts and versions. Every key but ESC is
+only shown, not acted on, so it doubles as a key tester: press a key and see
+whether your terminal sends what you expect (CTRL-E shows `{:ctrl, "e"}`,
+not the F2 it stands for elsewhere). ↑↓ PGUP PGDN scroll; ESC returns. It is
+not in the menus or the F1 help (`Agenda.TUI.DevTools`).

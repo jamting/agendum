@@ -96,7 +96,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Enforce "no direct assignment to both a category and its ancestor", including in moves (R7c)
 - [x] Outline-style promote/demote: a promoted category adopts its following siblings (R7d)
 - [x] Documentation: a hierarchical overview of the different TUI screens and boxes (`docs/SCREENS.md`)
-- [ ] Developer tools: Make a new screen with useful debugging info accessable with a "hidden" keyboard shortcut
+- [x] Developer tools: a screen with debugging info and a key tester, on a hidden key (ESC ?)
 
 ## Beyond Agenda
 

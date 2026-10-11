@@ -46,7 +46,7 @@ shell does terminal I/O and file I/O.
 | `Core.RangeFilter`                           | Date and numeric filter ranges: checking, matching, the value a new item gets (R28a).                                                                   |
 | `Core.NumberFormat`                          | Reading and showing numbers, and the calculations of numeric columns (R29).                                                                             |
 | `Core.DateFormat`                            | How a file or date column displays dates and times: order, separator, clock, Relative, Week # (R41, R41a).                                              |
-| `Core.DateRule`                              | How a date category gets dates: Assign item date, Which one, Done and When keys (R6b).                                                                   |
+| `Core.DateRule`                              | How a date category gets dates: Assign item date, Which one, Done and When keys (R6b).                                                                  |
 | `Core.DateSettings`                          | How a file reads dates: week, quarter and year boundaries, month alone, morning/afternoon/evening (R14e).                                               |
 | `Core.TextSearch`                            | Finding and replacing literal text in a note's lines (R39).                                                                                             |
 | `Core.Item`, `Core.Category`, `Core.View`    | Plain structs.                                                                                                                                          |
@@ -80,6 +80,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.CustomizeBox`             | ✔     | File ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
 | `TUI.NoteSearch`               | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
+| `TUI.DevTools`                 | ✔     | The hidden developer screen (ESC ?): state for debugging, and a key tester.                                                      |
 | `TUI.Render`                   | ✔     | State → list of styled lines (title bar, control panel, body, key bar, boxes).                                                   |
 | `TUI.Draw`, `TUI.Theme`        | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic or mono, R40).                                     |
 | `TUI.Keys`                     | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |

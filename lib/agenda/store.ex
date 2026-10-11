@@ -34,6 +34,9 @@ defmodule Agenda.Store do
 
   def extension, do: @extension
 
+  @doc "The file format version this program writes."
+  def format_version, do: @format_version
+
   @spec save(Database.t(), Path.t()) :: :ok | {:error, term}
   def save(%Database{} = db, path) do
     binary = :erlang.term_to_binary({:agenda, @format_version, db}, [:compressed])

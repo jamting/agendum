@@ -187,6 +187,10 @@ or handles it.
   - **Alarm list** `:alarm_list` (Search ▸ Alarms):
     current and past alarms (R38). `TUI.AlarmList`.
 
+- **Developer tools** `:devtools` (ESC ?, hidden, from anywhere but while
+  typing): a full screen of debugging facts and a key tester; see
+  `docs/KEYBOARD.md`. `TUI.DevTools`.
+
 Commands that act at once and open nothing (F4 done, F7 mark, ALT-O
 dependencies after its question, Undo, Save) are not listed.
 
@@ -227,6 +231,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:execute`           | box           | `TUI.ExecuteBox`       | Category ▸ Execute                               | R15e          |
 | `:questions`         | box           | `TUI.QuestionsBox`     | Category ▸ Questions                             | R16           |
 | `:alarm_list`        | box           | `TUI.AlarmList`        | Search ▸ Alarms                                  | R38           |
+| `:devtools`          | full screen   | `TUI.DevTools`         | ESC ? (hidden)                                   | —             |
 
 `test/agenda/tui/screens_doc_test.exs` fails when a mode type is added without
 being listed here.

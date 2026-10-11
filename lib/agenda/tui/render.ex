@@ -13,7 +13,7 @@ defmodule Agenda.TUI.Render do
   alias Agenda.Core.{Database, DateFormat, ViewModel}
   alias Agenda.TUI.{CategoryScreens, Completion, Draw, Layout, Menu, State}
 
-  @full_screen [:catmgr, :viewmgr, :help, :note]
+  @full_screen [:catmgr, :viewmgr, :help, :note, :devtools]
   @boxes [
     :picker,
     :profile,
@@ -169,6 +169,9 @@ defmodule Agenda.TUI.Render do
 
       base && base.type == :help ->
         "HELP"
+
+      base && base.type == :devtools ->
+        "DEV"
 
       true ->
         "READY"
@@ -430,6 +433,9 @@ defmodule Agenda.TUI.Render do
   defp mode_keys(%{type: :menu}),
     do: [{"←→", "Highlight"}, {"ENTER", "Select"}, {"letter", "Select"}, {"ESC", "Back"}]
 
+  defp mode_keys(%{type: :devtools}),
+    do: [{"↑↓ PGUP PGDN", "Scroll"}, {"any key", "Show it"}, {"ESC", "Return"}]
+
   defp mode_keys(%{type: :help}), do: [{"↑↓", "Scroll"}, {"any other key", "Return"}]
 
   defp mode_keys(%{type: :move_item}),
@@ -444,6 +450,20 @@ defmodule Agenda.TUI.Render do
   defp body(state, %{type: :catmgr} = mode), do: fit(catmgr_lines(state, mode), state)
   defp body(state, %{type: :viewmgr} = mode), do: fit(viewmgr_lines(state, mode), state)
   defp body(state, %{type: :help} = mode), do: fit(Enum.drop(help_lines(), mode.top), state)
+
+  defp body(state, %{type: :devtools} = mode) do
+    lines =
+      state
+      |> Agenda.TUI.DevTools.lines(mode)
+      |> Enum.map(fn
+        "" -> []
+        {label, value} -> [{:normal, " " <> Draw.pad(label, 16) <> ": " <> value}]
+        heading -> [{:section, " " <> heading}]
+      end)
+
+    fit([[{:section, " Developer tools"}], [] | Enum.drop(lines, mode.top)], state)
+  end
+
   defp body(state, %{type: :note} = mode), do: fit(note_lines(state, mode), state)
 
   defp fit(lines, state) do
@@ -847,6 +867,9 @@ defmodule Agenda.TUI.Render do
 
   @doc false
   def help_line_count, do: @help |> String.split("\n") |> length()
+
+  @doc "The F1 help text."
+  def help_text, do: @help
 
   defp help_lines, do: @help |> String.split("\n") |> Enum.map(&[{:normal, &1}])
 
