@@ -22,7 +22,7 @@ defmodule Agenda.Core.RangeFilter do
   @doc "Whether a category takes ranges (date and numeric categories)."
   @spec range_category?(Database.t(), Database.id()) :: boolean
   def range_category?(db, cat_id),
-    do: Database.date_field(db, cat_id) != nil or db.categories[cat_id].kind == :numeric
+    do: db.categories[cat_id].kind in [:date, :numeric]
 
   @doc """
   Checks and normalizes the settings typed in the filter box: dates must be
@@ -109,10 +109,9 @@ defmodule Agenda.Core.RangeFilter do
 
   # An item's date (the day only, for When) or number in the category.
   defp value(db, item_id, cat_id) do
-    case Database.date_field(db, cat_id) do
-      nil -> Database.number(db, item_id, cat_id)
-      field -> Map.get(db.items[item_id], field)
-    end
+    if Database.date_category?(db, cat_id),
+      do: Database.item_date(db, item_id, cat_id),
+      else: Database.number(db, item_id, cat_id)
   end
 
   # Date expressions are read against today; without a today only ISO

@@ -47,10 +47,9 @@ defmodule Agenda.TUI.CategoryScreens do
   end
 
   defp assigned_here?(db, item_id, id) do
-    case Database.date_field(db, id) do
-      nil -> Database.explicit?(db, item_id, id)
-      field -> Map.get(db.items[item_id], field) != nil
-    end
+    if Database.date_category?(db, id),
+      do: Database.item_date(db, item_id, id) != nil,
+      else: Database.explicit?(db, item_id, id)
   end
 
   defp all_rows(state, %{type: :catmgr}), do: Database.hierarchy(state.db)
@@ -302,7 +301,7 @@ defmodule Agenda.TUI.CategoryScreens do
 
       k when k in [{:char, " "}, :enter, {:f, 7}] ->
         cond do
-          Database.date_field(db, id) ->
+          Database.date_category?(db, id) ->
             State.error(state, "Set dates for marked items with ALT-F2 (When) or F4 (Done)")
 
           numeric?(db, id) ->
@@ -342,7 +341,7 @@ defmodule Agenda.TUI.CategoryScreens do
           id == db.special.done ->
             State.change_db(state, Core.toggle_done(db, item_id, state.today))
 
-          Database.date_field(db, id) ->
+          Database.date_category?(db, id) ->
             State.error(state, "Set dates by typing in a date column")
 
           numeric?(db, id) and not Database.explicit?(db, item_id, id) ->
@@ -591,7 +590,7 @@ defmodule Agenda.TUI.CategoryScreens do
   end
 
   defp pick(state, {:add_column, index}, id) do
-    width = if Database.date_field(state.db, id), do: 16, else: 12
+    width = if Database.date_category?(state.db, id), do: 16, else: 12
 
     %{
       State.change_db(state, Core.add_column(state.db, state.view_id, id, index, width))
@@ -619,7 +618,7 @@ defmodule Agenda.TUI.CategoryScreens do
   # ALT-M (MakeAssign): one item or all marked items
   defp pick(state, {:assign_items, ids}, id) do
     cond do
-      Database.date_field(state.db, id) ->
+      Database.date_category?(state.db, id) ->
         State.error(state, "Set dates with ALT-F2 (When) or F4 (Done)")
 
       numeric?(state.db, id) ->
@@ -753,6 +752,16 @@ defmodule Agenda.TUI.CategoryScreens do
   def choice_options(%{kind: :exclusive}), do: exclusive_resolutions()
   def choice_options(%{kind: :move}), do: move_resolutions()
 
+  def choice_options(%{kind: :type}),
+    do: [
+      {"Numeric", "A number for each item: totals and averages; children become numbers",
+       :numeric},
+      {"Date", "A date and time for each item; children become dates; cannot change back", :date}
+    ]
+
+  def choice_lines(%{kind: :type}),
+    do: ["Standard categories can become numeric or date categories.", "Change the type to:"]
+
   def choice_lines(%{kind: :exclusive, conflicts: n}),
     do: ["#{n} item(s) are assigned to more than one child.", "Assign conflicting item(s) to:"]
 
@@ -844,6 +853,12 @@ defmodule Agenda.TUI.CategoryScreens do
 
   defp resolve_choice(state, %{kind: :move} = mode, rule),
     do: apply_move(state, mode.cat_id, mode.relocation, rule)
+
+  defp resolve_choice(state, %{kind: :type} = mode, :numeric),
+    do: to_numeric(state, state.db.categories[mode.cat_id])
+
+  defp resolve_choice(state, %{kind: :type} = mode, :date),
+    do: to_date(state, state.db.categories[mode.cat_id])
 
   defp resolve_choice(state, mode, :new_child),
     do:
@@ -975,27 +990,53 @@ defmodule Agenda.TUI.CategoryScreens do
     end
   end
 
-  # Category type (User's Guide 8-11 to 8-12): a standard category can
-  # become numeric, after a question when items or children are affected.
+  # Category type (User's Guide 7-3, 8-11 to 8-12): a standard category
+  # can become numeric or date, chosen in a box, after a question when
+  # items or children are affected. Neither changes back.
   defp change_type(state, cat) do
     db = state.db
 
     cond do
       cat.kind != :standard ->
-        State.error(state, "Only standard categories can become numeric")
+        State.error(state, "Only standard categories can change type")
 
       Database.protected?(db, cat.id) ->
         State.error(state, "#{cat.name} cannot change type")
 
       Enum.any?(cat.children, &(db.categories[&1].children != [])) ->
-        State.error(state, "A category with grandchildren cannot become numeric")
+        State.error(state, "A category with grandchildren cannot change type")
 
       true ->
-        case numeric_question(cat, Core.numeric_conversion(db, cat.id)) do
-          nil -> Update.make_numeric(state, cat.id)
-          question -> Update.confirm(state, question, {:make_numeric, cat.id})
-        end
+        State.push(state, %{type: :choice, kind: :type, cat_id: cat.id, cursor: 0})
     end
+  end
+
+  defp to_numeric(state, cat) do
+    case numeric_question(cat, Core.numeric_conversion(state.db, cat.id)) do
+      nil -> Update.make_numeric(state, cat.id)
+      question -> Update.confirm(state, question, {:make_numeric, cat.id})
+    end
+  end
+
+  defp to_date(state, cat) do
+    case date_question(cat, Core.date_conversion(state.db, cat.id, State.context(state))) do
+      nil -> Update.make_date(state, cat.id)
+      question -> Update.confirm(state, question, {:make_date, cat.id})
+    end
+  end
+
+  defp date_question(_cat, %{children: 0, assigned: 0}), do: nil
+
+  defp date_question(cat, conversion) do
+    parts =
+      [
+        conversion.children > 0 && "children become dates",
+        conversion.non_dates != [] && "dropped: " <> Enum.join(conversion.non_dates, ", "),
+        conversion.assigned > 0 && "#{conversion.assigned} items in it get no date"
+      ]
+      |> Enum.filter(& &1)
+
+    "Make #{cat.name} a date category? " <> Enum.join(parts, "; ") <> " (Y/N)"
   end
 
   defp numeric_question(_cat, %{children: 0, assigned: 0}), do: nil

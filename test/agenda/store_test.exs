@@ -65,6 +65,17 @@ defmodule Agenda.StoreTest do
     assert loaded == %{db | when_from: :never}
   end
 
+  test "files before format version 17 get no dates of user date categories",
+       %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    path = Path.join(dir, "v16.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 16, Map.delete(db, :dates)}))
+
+    assert {:ok, loaded} = Store.load(path)
+    assert loaded.dates == %{}
+    assert loaded == db
+  end
+
   test "files in format version 13 get the default date settings", %{tmp_dir: dir} do
     db = Agenda.Sample.build(~D[2026-10-08])
     path = Path.join(dir, "v13.agenda")

@@ -6,7 +6,7 @@ defmodule Agenda.ArchitectureTest do
   """
   use ExUnit.Case, async: true
 
-  @write_call ~r/\bDatabase\.(insert_\w+|update_\w+|delete_\w+|link|unlink|reorder_item|move_category|rename_category|promote|demote)\(/
+  @write_call ~r/\bDatabase\.(insert_\w+|update_\w+|delete_\w+|put_\w+|link|unlink|reorder_item|move_category|rename_category|promote|demote)\(/
   @struct_update ~r/%\{\s*(state\.)?db\s*\|/
 
   test "the TUI changes the database only through Agenda.Core" do

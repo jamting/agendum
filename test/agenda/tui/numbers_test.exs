@@ -154,7 +154,7 @@ defmodule Agenda.TUI.NumbersTest do
       state = %{state | db: db} |> CategoryHelpers.props(cost)
       assert screen(state) =~ ~r/Type\s+: Standard/
 
-      state = CategoryHelpers.choose(state, :type)
+      state = state |> CategoryHelpers.choose(:type) |> press("n")
       assert state.db.categories[cost].kind == :numeric
       assert screen(state) =~ ~r/Type\s+: Numeric/
     end
@@ -165,7 +165,10 @@ defmodule Agenda.TUI.NumbersTest do
       {:ok, db, _} = Core.add_category(db, forecast, "Good")
 
       state =
-        %{state | db: db} |> CategoryHelpers.props(forecast) |> CategoryHelpers.choose(:type)
+        %{state | db: db}
+        |> CategoryHelpers.props(forecast)
+        |> CategoryHelpers.choose(:type)
+        |> press("n")
 
       assert screen(state) =~
                "Convert Forecast to numeric? Its 1 children become numbers; Good becomes 0"
@@ -178,7 +181,7 @@ defmodule Agenda.TUI.NumbersTest do
       state =
         state |> CategoryHelpers.props(state.db.special.when) |> CategoryHelpers.choose(:type)
 
-      assert screen(state) =~ "Only standard categories can become numeric"
+      assert screen(state) =~ "Only standard categories can change type"
     end
   end
 end

@@ -36,7 +36,7 @@ defmodule Agenda.TUI.Completion do
 
   # The category whose subcategories are searched.
   defp head(%State{edit: %{target: {:column_entry, _item, head, _}}, db: db}) do
-    if Database.date_field(db, head) || db.categories[head].kind == :numeric,
+    if db.categories[head].kind in [:date, :numeric],
       do: nil,
       else: head
   end

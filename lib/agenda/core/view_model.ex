@@ -174,7 +174,6 @@ defmodule Agenda.Core.ViewModel do
     if order == :desc, do: flip(result), else: result
   end
 
-  defp less?(%Date{} = x, %Date{} = y), do: Date.compare(x, y) == :lt
   defp less?(%NaiveDateTime{} = x, %NaiveDateTime{} = y), do: NaiveDateTime.compare(x, y) == :lt
   defp less?(x, y), do: x < y
 
@@ -206,11 +205,22 @@ defmodule Agenda.Core.ViewModel do
   defp sort_value(db, %SortKey{on: {:category, head}} = key, item) do
     numeric = db.categories[head].kind == :numeric
 
-    case Database.date_field(db, head) do
-      nil when numeric ->
+    date = Database.date_category?(db, head)
+
+    cond do
+      numeric ->
         Database.number(db, item.id, head)
 
-      nil ->
+      date ->
+        case Database.item_date(db, item.id, head) do
+          nil ->
+            nil
+
+          day ->
+            NaiveDateTime.new!(day, Database.item_time(db, item.id, head) || ~T[00:00:00])
+        end
+
+      true ->
         children = db.categories[head].children
 
         case Enum.find_index(children, &Database.member?(db, item.id, &1)) do
@@ -223,12 +233,6 @@ defmodule Agenda.Core.ViewModel do
           index ->
             index
         end
-
-      :when ->
-        if item.when, do: NaiveDateTime.new!(item.when, item.when_time || ~T[00:00:00])
-
-      field ->
-        Map.get(item, field)
     end
   end
 
@@ -257,10 +261,12 @@ defmodule Agenda.Core.ViewModel do
           value -> NumberFormat.format(value, number, width: width)
         end
 
-      field = Database.date_field(db, head_id) ->
-        if field == :when,
-          do: DateFormat.date_time(item.when, item.when_time, db.date_format),
-          else: DateFormat.date(Map.get(item, field), db.date_format)
+      Database.date_category?(db, head_id) ->
+        DateFormat.date_time(
+          Database.item_date(db, item.id, head_id),
+          Database.item_time(db, item.id, head_id),
+          db.date_format
+        )
 
       head.children == [] ->
         if Database.member?(db, item.id, head_id), do: "*", else: ""
@@ -298,7 +304,7 @@ defmodule Agenda.Core.ViewModel do
   # An item is "inherited" in a section when it is there only through
   # a descendant of the section head, not by a direct link.
   defp inherited?(db, item_id, cat_id) do
-    cat_id != db.main_id and Database.date_field(db, cat_id) == nil and
+    cat_id != db.main_id and not Database.date_category?(db, cat_id) and
       not Database.explicit?(db, item_id, cat_id)
   end
 end

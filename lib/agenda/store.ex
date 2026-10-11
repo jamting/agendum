@@ -17,14 +17,15 @@ defmodule Agenda.Store do
   `Category.special` (R15b); 13 adds `Database.confirm_assignments` and
   `Database.suggestions` (R16); 14 adds `Database.date_settings` (R14e);
   15 replaces `Database.auto_date` with `Database.when_from` (R14f); 16
-  adds `Category.excludes` (R9).
+  adds `Category.excludes` (R9); 17 adds `Database.dates`, the dates of
+  date categories the user made (R6a).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 16
+  @format_version 17
   @extension ".agenda"
 
   def extension, do: @extension

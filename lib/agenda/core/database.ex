@@ -33,6 +33,7 @@ defmodule Agenda.Core.Database do
           date_format: DateFormat.t(),
           date_settings: DateSettings.t(),
           numbers: %{optional({id, id}) => float},
+          dates: %{optional({id, id}) => {Date.t(), Time.t() | nil}},
           dependencies: Links.t(),
           confirm_assignments: :never | :always,
           suggestions: %{optional(id) => [id]}
@@ -52,6 +53,7 @@ defmodule Agenda.Core.Database do
             date_format: %DateFormat{},
             date_settings: %DateSettings{},
             numbers: %{},
+            dates: %{},
             dependencies: Links.new(),
             confirm_assignments: :never,
             suggestions: %{}
@@ -132,6 +134,7 @@ defmodule Agenda.Core.Database do
         links: Links.drop_left(db.links, id),
         conditional: MapSet.reject(db.conditional, &(elem(&1, 0) == id)),
         numbers: Map.reject(db.numbers, fn {{item, _}, _} -> item == id end),
+        dates: Map.reject(db.dates, fn {{item, _}, _} -> item == id end),
         dependencies: db.dependencies |> Links.drop_left(id) |> Links.drop_right(id),
         suggestions: Map.delete(db.suggestions, id)
     }
@@ -236,6 +239,7 @@ defmodule Agenda.Core.Database do
         end)
 
       numbers = Map.reject(db.numbers, fn {{_, cat}, _} -> cat in doomed_set end)
+      dates = Map.reject(db.dates, fn {{_, cat}, _} -> cat in doomed_set end)
 
       suggestions =
         db.suggestions
@@ -250,6 +254,7 @@ defmodule Agenda.Core.Database do
            categories: categories,
            views: views,
            numbers: numbers,
+           dates: dates,
            suggestions: suggestions
        }}
     end
@@ -445,11 +450,53 @@ defmodule Agenda.Core.Database do
   @spec explicit?(t, id, id) :: boolean
   def explicit?(db, item_id, cat_id), do: Links.linked?(db.links, item_id, cat_id)
 
-  @doc "The date field backing a date category, or nil for standard categories."
+  @doc """
+  The item field backing a built-in date category (Entry, When, Done), or
+  nil for every other category, including date categories the user made
+  (R6a), whose dates are in `dates`. Use `date_category?/2` and
+  `item_date/3` to treat all date categories alike.
+  """
   @spec date_field(t, id) :: :entry | :when | :done | nil
   def date_field(%__MODULE__{special: special}, cat_id) do
     Enum.find_value(special, fn {key, id} -> if id == cat_id, do: @date_fields[key] end)
   end
+
+  @doc "Whether a category is a date category: Entry, When, Done or one the user made (R6a)."
+  @spec date_category?(t, id) :: boolean
+  def date_category?(db, cat_id), do: match?(%{kind: :date}, db.categories[cat_id])
+
+  @doc "An item's date in a date category, or nil."
+  @spec item_date(t, id, id) :: Date.t() | nil
+  def item_date(db, item_id, cat_id) do
+    case date_field(db, cat_id) do
+      nil ->
+        case Map.get(db.dates, {item_id, cat_id}) do
+          {date, _time} -> date
+          nil -> nil
+        end
+
+      field ->
+        Map.get(db.items[item_id], field)
+    end
+  end
+
+  @doc "The time of day of an item's date in a date category (When or one the user made), or nil."
+  @spec item_time(t, id, id) :: Time.t() | nil
+  def item_time(db, item_id, cat_id) do
+    case date_field(db, cat_id) do
+      :when -> db.items[item_id].when_time
+      nil -> with {_date, time} <- Map.get(db.dates, {item_id, cat_id}), do: time
+      _entry_or_done -> nil
+    end
+  end
+
+  @doc "Sets (or, with a nil date, clears) an item's date in a date category the user made."
+  @spec put_item_date(t, id, id, Date.t() | nil, Time.t() | nil) :: t
+  def put_item_date(db, item_id, cat_id, nil, _time),
+    do: %{db | dates: Map.delete(db.dates, {item_id, cat_id})}
+
+  def put_item_date(db, item_id, cat_id, %Date{} = date, time),
+    do: %{db | dates: Map.put(db.dates, {item_id, cat_id}, {date, time})}
 
   @doc """
   Whether an item belongs to a category, directly or by subsumption: an item
@@ -463,8 +510,8 @@ defmodule Agenda.Core.Database do
       cat_id == db.main_id ->
         true
 
-      field = date_field(db, cat_id) ->
-        Map.get(db.items[item_id], field) != nil
+      date_category?(db, cat_id) ->
+        item_date(db, item_id, cat_id) != nil
 
       true ->
         explicit = explicit_categories(db, item_id)
@@ -479,8 +526,8 @@ defmodule Agenda.Core.Database do
       cat_id == db.main_id ->
         items(db)
 
-      field = date_field(db, cat_id) ->
-        db |> items() |> Enum.filter(&(Map.get(&1, field) != nil))
+      date_category?(db, cat_id) ->
+        db |> items() |> Enum.filter(&(item_date(db, &1.id, cat_id) != nil))
 
       true ->
         ids =

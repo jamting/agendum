@@ -933,6 +933,9 @@ defmodule Agenda.TUI.Render do
   defp box_title(state, %{type: :choice, kind: :move, cat_id: id}),
     do: "Moving #{state.db.categories[id].name} creates a conflict"
 
+  defp box_title(state, %{type: :choice, kind: :type, cat_id: id}),
+    do: "Category type: #{state.db.categories[id].name}"
+
   defp box_title(state, %{type: :choice, cat_id: id}),
     do: "Make children of #{state.db.categories[id].name} mutually exclusive"
 
@@ -1385,8 +1388,8 @@ defmodule Agenda.TUI.Render do
     db = state.db
 
     cond do
-      field = Database.date_field(db, id) ->
-        if Map.get(db.items[item_id], field), do: "◊", else: " "
+      Database.date_category?(db, id) ->
+        if Database.item_date(db, item_id, id), do: "◊", else: " "
 
       Database.conditional?(db, item_id, id) ->
         "c"

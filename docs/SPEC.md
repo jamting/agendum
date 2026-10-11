@@ -13,7 +13,7 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
 | **Category**          | A named node in one hierarchy rooted at **MAIN**.                                                          | `Core.Category`         |
 | **Link / assignment** | An independent many-to-many link between an item and a category (the patent's "link structures").          | `Core.Links`            |
 | **View**              | A saved arrangement: **sections** (each headed by a category) and **columns** (each headed by a category). | `Core.View`             |
-| **Date category**     | Entry, When, Done: categories whose membership is an item's date.                                          | `Database.date_field/2` |
+| **Date category**     | Entry, When, Done and ones the user makes: categories whose membership is an item's date.                  | `Database.item_date/3`  |
 
 ## 2. Data model rules
 
@@ -34,6 +34,21 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
 - **R6 ✅ Date categories.** Entry is set when an item is created, When is
   read from the item text (R14) or set explicitly in a When column or with
   ALT-F2, and Done is set by F4.
+- **R6a ✅ Date categories the user makes** (User's Guide 6-3, 7-2 to
+  7-4). Besides Entry, When and Done, any standard category without
+  grandchildren can become a date category (Due, Review, End): Category
+  Properties ▸ Type offers Numeric or Date. Its children whose names are
+  dates ("November 20, 1990", "today") become their items' dates, the
+  others are dropped, and items assigned to the category itself get no
+  date; when items or children are affected, Agenda's question comes
+  first ("Make Review a date category? children become dates; dropped:
+  after the meeting (Y/N)"). Like Agenda, a date category cannot change
+  back, matches no text, and has no children, exclusivity or negative
+  links. Each item has at most one date and time in it, typed in its
+  column ("next friday 3pm"), set in Item Properties or by an action; it
+  makes the item a member, works in sorting, filters and conditions, and
+  is cleared with DEL. Assigning dates automatically (Assign item date,
+  Which one, the Done and When keys) is R6b.
 - **R7 ✅ Mutual exclusion.** A category can declare its children mutually
   exclusive (e.g. Priority: High/Medium/Low). Assigning an item to one child
   removes it from the others and their subtrees. This applies at every

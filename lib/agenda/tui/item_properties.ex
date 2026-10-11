@@ -144,8 +144,9 @@ defmodule Agenda.TUI.ItemProperties do
   # `Update.prompt_action/3` for {:item_date, item, category}.
   defp ask_date(state, mode, cat_id) do
     db = state.db
-    field = Agenda.Core.Database.date_field(db, cat_id)
-    current = Agenda.Core.DateParser.format(Map.get(db.items[mode.item_id], field))
+
+    current =
+      Agenda.Core.DateParser.format(Agenda.Core.Database.item_date(db, mode.item_id, cat_id))
 
     Update.prompt(
       state,
@@ -204,7 +205,7 @@ defmodule Agenda.TUI.ItemProperties do
 
   defp commit(state, mode, %{target: {:assign_category, item_id}, line: line}, shown) do
     cond do
-      shown && Agenda.Core.Database.date_field(state.db, shown) ->
+      shown && Agenda.Core.Database.date_category?(state.db, shown) ->
         ask_date(state, mode, shown)
 
       shown && state.db.categories[shown].kind == :numeric ->

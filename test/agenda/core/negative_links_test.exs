@@ -88,4 +88,14 @@ defmodule Agenda.Core.NegativeLinksTest do
     assert Core.move_category(db, v, w, nil) == {:error, :excluded_lineage}
     assert Core.move_conflicts(db, v, w, nil) == {:error, :excluded_lineage}
   end
+
+  test "a category made numeric or date loses its negative links",
+       %{db: db, work: w, vacation: v} do
+    {:ok, numeric} = Core.make_numeric(db, v)
+    assert numeric.categories[w].excludes == []
+    assert numeric.categories[v].excludes == []
+
+    {:ok, dated} = Core.make_date(db, v, @today)
+    assert dated.categories[w].excludes == []
+  end
 end

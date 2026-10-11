@@ -47,7 +47,7 @@ defmodule Agenda.Core.Assign do
       cat_id in visited ->
         db
 
-      cat_id == db.main_id or Database.date_field(db, cat_id) ->
+      cat_id == db.main_id or Database.date_category?(db, cat_id) ->
         db
 
       true ->

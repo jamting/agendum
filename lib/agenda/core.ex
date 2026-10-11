@@ -380,11 +380,11 @@ defmodule Agenda.Core do
   """
   @spec remove_from_category(db, id, id, clock | nil) :: db
   def remove_from_category(db, item_id, cat_id, clock \\ nil) do
-    case Database.date_field(db, cat_id) do
-      nil -> Assign.unassign(db, item_id, cat_id)
-      field -> put_date(db, item_id, field, nil)
-    end
-    |> settle(db, item_id, clock)
+    if Database.date_category?(db, cat_id),
+      do: put_date(db, item_id, cat_id, nil),
+      else:
+        Assign.unassign(db, item_id, cat_id)
+        |> settle(db, item_id, clock)
   end
 
   @doc """
@@ -438,17 +438,17 @@ defmodule Agenda.Core do
           _ -> {:error, :not_a_number}
         end
 
-      field = Database.date_field(db, head_id) ->
+      Database.date_category?(db, head_id) ->
         case DateParser.parse_recurring(
                text,
                now_of(today),
                Context.parser_opts(today, db.date_settings)
              ) do
           {:ok, date, time, rule} ->
-            db = put_date(db, item_id, field, date)
+            db = put_date(db, item_id, head_id, date, time)
 
             db =
-              if field == :when,
+              if Database.date_field(db, head_id) == :when,
                 do: Database.update_item(db, item_id, &%{&1 | when_time: time, recurrence: rule}),
                 else: db
 
@@ -479,8 +479,8 @@ defmodule Agenda.Core do
   """
   @spec set_date(db, id, id, Date.t() | nil, clock | nil) :: db
   def set_date(db, item_id, cat_id, date, clock \\ nil) do
-    field = Database.date_field(db, cat_id) || raise ArgumentError, "not a date category"
-    db |> put_date(item_id, field, date) |> settle(db, item_id, clock)
+    unless Database.date_category?(db, cat_id), do: raise(ArgumentError, "not a date category")
+    db |> put_date(item_id, cat_id, date) |> settle(db, item_id, clock)
   end
 
   # A When date set or cleared by the user: set is explicit and overrides
@@ -547,16 +547,15 @@ defmodule Agenda.Core do
         db
 
       action == :remove or action == :clear ->
-        case Database.date_field(db, target) do
-          nil -> Assign.unassign(db, item_id, target)
-          field -> put_date(db, item_id, field, nil)
-        end
+        if Database.date_category?(db, target),
+          do: put_date(db, item_id, target, nil),
+          else: Assign.unassign(db, item_id, target)
 
-      field = Database.date_field(db, target) ->
+      Database.date_category?(db, target) ->
         {:set, text} = action
 
         case action_date(db, text, clock) do
-          {:ok, date} -> put_date(db, item_id, field, date)
+          {:ok, date} -> put_date(db, item_id, target, date)
           :error -> db
         end
 
@@ -630,7 +629,7 @@ defmodule Agenda.Core do
   def set_action(db, cat_id, target, action, clock) do
     kind =
       cond do
-        Database.date_field(db, target) -> :date
+        Database.date_category?(db, target) -> :date
         db.categories[target].kind == :numeric -> :numeric
         true -> :standard
       end
@@ -877,8 +876,9 @@ defmodule Agenda.Core do
           end)
 
         db =
-          Database.update_category(
-            db,
+          db
+          |> drop_excludes(cat_id)
+          |> Database.update_category(
             cat_id,
             &%{&1 | kind: :numeric, match_name: false, exclusive: false}
           )
@@ -895,16 +895,111 @@ defmodule Agenda.Core do
     end
   end
 
-  defp put_date(db, item_id, :when, date) do
-    Database.update_item(
-      db,
-      item_id,
-      &%{&1 | when: date, when_time: nil, when_explicit: date != nil, recurrence: nil}
-    )
+  # Sets or clears an item's date in a date category; a time is kept only
+  # by date categories the user made (When's is set by the caller).
+  defp put_date(db, item_id, cat_id, date, time \\ nil) do
+    case Database.date_field(db, cat_id) do
+      :when ->
+        Database.update_item(
+          db,
+          item_id,
+          &%{&1 | when: date, when_time: nil, when_explicit: date != nil, recurrence: nil}
+        )
+
+      nil ->
+        Database.put_item_date(db, item_id, cat_id, date, time)
+
+      field ->
+        Database.update_item(db, item_id, &Map.put(&1, field, date))
+    end
   end
 
-  defp put_date(db, item_id, field, date),
-    do: Database.update_item(db, item_id, &Map.put(&1, field, date))
+  @doc """
+  What converting a standard category to a date category would do to its
+  children (User's Guide 7-3 to 7-4): they are removed, and their items get
+  the child's name as their date, read against `clock`; the children in
+  `non_dates` are not dates, so their items get none, nor do the
+  `assigned` items assigned to the category itself.
+  """
+  @spec date_conversion(db, id, clock) :: %{
+          children: non_neg_integer,
+          non_dates: [String.t()],
+          assigned: non_neg_integer
+        }
+  def date_conversion(db, cat_id, clock) do
+    children = Enum.map(db.categories[cat_id].children, &db.categories[&1])
+
+    %{
+      children: length(children),
+      non_dates: for(c <- children, child_date(db, c.name, clock) == :error, do: c.name),
+      assigned: db |> direct_items(cat_id) |> length()
+    }
+  end
+
+  @doc """
+  Converts a standard category to a date category (R6a; User's Guide 7-3
+  to 7-4). Its children become dates (see `date_conversion/3`); a category
+  with grandchildren cannot be converted. Like Agenda, a date category
+  cannot be changed back.
+  """
+  @spec make_date(db, id, clock) :: {:ok, db} | {:error, :not_standard | :protected | :too_deep}
+  def make_date(db, cat_id, clock) do
+    cat = db.categories[cat_id]
+
+    cond do
+      cat.kind != :standard ->
+        {:error, :not_standard}
+
+      Database.protected?(db, cat_id) ->
+        {:error, :protected}
+
+      Enum.any?(cat.children, &(db.categories[&1].children != [])) ->
+        {:error, :too_deep}
+
+      true ->
+        dates =
+          for child <- cat.children,
+              {:ok, date, time} <- [child_date(db, db.categories[child].name, clock)],
+              item <- Database.items_in(db, child),
+              do: {item.id, date, time}
+
+        db =
+          Enum.reduce(cat.children, db, fn child, db ->
+            {:ok, db} = Database.delete_category(db, child)
+            db
+          end)
+
+        db =
+          db
+          |> unlink_all(cat_id)
+          |> drop_excludes(cat_id)
+          |> Database.update_category(
+            cat_id,
+            &%{&1 | kind: :date, match_name: false, exclusive: false}
+          )
+
+        {:ok,
+         Enum.reduce(dates, db, fn {item, date, time}, db ->
+           Database.put_item_date(db, item, cat_id, date, time)
+         end)}
+    end
+  end
+
+  defp child_date(db, name, clock) do
+    DateParser.parse_when(name, now_of(clock), Context.parser_opts(clock, db.date_settings))
+  end
+
+  # Only standard categories have negative links (R9).
+  defp drop_excludes(db, cat_id) do
+    Enum.reduce(db.categories[cat_id].excludes, db, fn other, db ->
+      db
+      |> Database.update_category(other, &%{&1 | excludes: List.delete(&1.excludes, cat_id)})
+      |> Database.update_category(cat_id, &%{&1 | excludes: List.delete(&1.excludes, other)})
+    end)
+  end
+
+  defp unlink_all(db, cat_id),
+    do: Enum.reduce(direct_items(db, cat_id), db, &Database.unlink(&2, &1, cat_id))
 
   @doc """
   Everything an item is assigned to, in hierarchy order, as the Item
@@ -928,8 +1023,8 @@ defmodule Agenda.Core do
     |> Database.hierarchy()
     |> Enum.flat_map(fn {id, _depth} ->
       cond do
-        field = Database.date_field(db, id) ->
-          case Map.get(item, field) do
+        Database.date_category?(db, id) ->
+          case Database.item_date(db, item.id, id) do
             nil -> []
             date -> [%{category: id, kind: :date, date: date}]
           end

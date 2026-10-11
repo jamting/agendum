@@ -355,8 +355,8 @@ defmodule Agenda.TUI.Update do
     {:column_entry, item_id, head, _} = column_target(state, row, :replace)
     numeric = state.db.categories[head].kind == :numeric
 
-    case Database.date_field(state.db, head) do
-      nil when numeric ->
+    case Database.date_category?(state.db, head) do
+      false when numeric ->
         text = number_text(Database.number(state.db, item_id, head))
 
         %{
@@ -364,7 +364,7 @@ defmodule Agenda.TUI.Update do
           | edit: %{target: {:column_entry, item_id, head, :replace}, line: LineEdit.new(text)}
         }
 
-      nil ->
+      false ->
         case ViewModel.column_entries(state.db, item_id, head) do
           [] ->
             %{
@@ -382,8 +382,8 @@ defmodule Agenda.TUI.Update do
             }
         end
 
-      field ->
-        text = Agenda.Core.DateParser.format(Map.get(state.db.items[item_id], field))
+      true ->
+        text = Agenda.Core.DateParser.format(Database.item_date(state.db, item_id, head))
 
         %{
           state
@@ -429,8 +429,8 @@ defmodule Agenda.TUI.Update do
   defp delete(state, nil), do: state
 
   defp clear_column(db, item_id, head, context) do
-    case Database.date_field(db, head) do
-      nil ->
+    case Database.date_category?(db, head) do
+      false ->
         if db.categories[head].children == [],
           do: Core.remove_from_category(db, item_id, head, context),
           else:
@@ -438,7 +438,7 @@ defmodule Agenda.TUI.Update do
             |> ViewModel.column_entries(item_id, head)
             |> Enum.reduce(db, &Core.remove_from_category(&2, item_id, &1, context))
 
-      _ ->
+      true ->
         Core.remove_from_category(db, item_id, head, context)
     end
   end
@@ -447,7 +447,7 @@ defmodule Agenda.TUI.Update do
     {:column_entry, item_id, head, _} = column_target(state, row, :replace)
 
     cond do
-      Database.date_field(state.db, head) ->
+      Database.date_category?(state.db, head) ->
         State.error(state, "Type a date, e.g. tomorrow, friday, 2026-12-24")
 
       state.db.categories[head].kind == :numeric ->
@@ -950,6 +950,19 @@ defmodule Agenda.TUI.Update do
     end
   end
 
+  @doc "Converts a category to a date category (R6a), reporting the result."
+  def make_date(state, cat_id) do
+    case Core.make_date(state.db, cat_id, State.context(state)) do
+      {:ok, db} ->
+        state
+        |> State.change_db(db)
+        |> State.info("#{db.categories[cat_id].name} is now a date category")
+
+      {:error, _} ->
+        State.error(state, "#{state.db.categories[cat_id].name} cannot become a date category")
+    end
+  end
+
   def confirm(state, question, action),
     do: State.push(state, %{type: :confirm, question: question, action: action})
 
@@ -1110,6 +1123,7 @@ defmodule Agenda.TUI.Update do
   end
 
   defp confirmed(state, {:make_numeric, id}, true), do: make_numeric(state, id)
+  defp confirmed(state, {:make_date, id}, true), do: make_date(state, id)
 
   defp confirmed(state, {:make_dependent, id, prerequisites}, true) do
     case Core.make_dependent(state.db, id, prerequisites) do
