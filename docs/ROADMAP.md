@@ -86,6 +86,7 @@ Rule numbers refer to `SPEC.md`.
 - [ ] A starter file like Agenda's Activities Planner: categories and views, no items (Starter Applications)
 - [x] Preferences file and File ▸ Customize (Utilities Customize): theme, date languages, input format (R40, R14c, R41b)
 - [ ] More preferences: custom colours, key map on/off (ALT-K), confirm mode, auto-save interval, decimal and thousands separators (Setting Up Agenda 1-25 to 1-31)
+- [ ] Select File box: pick a file from a list instead of typing its name, for File ▸ Retrieve (ALT-G, CTRL-O) and Write, and Transfer ▸ Import/Export: the folders and files of the current folder, ENTER opens a folder or chooses a file, `..` goes up, typing narrows the list; F7 shows dates, as Agenda's Select File box did (User's Guide 22-4 to 22-5)
 - [ ] Smaller fidelity items: Trash and Undiscard, File Abandon, unindexed categories, typing in the view manager jumps to a view
 
 ## Housekeeping
@@ -103,6 +104,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Dates in other languages: `--lang=swedish`, `--fallback=english`; Swedish (R14c)
 - [x] General negative links between any two categories, from the patent: Category Properties ▸ Excludes (R9)
 - [ ] More date languages (one `Agenda.Core.DateLanguage` pack each)
+- [ ] Fit column to contents: a command (View ▸ Column) that sets the highlighted column's width to fit its head and the entries of the items shown at that moment; a one-time adjustment, not kept in step as items change
 
 ## Ideas
 
