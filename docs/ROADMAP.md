@@ -93,6 +93,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Resolve conflicts when moving categories into exclusive families, as Agenda 2.0 does (R7b)
 - [x] Enforce "no direct assignment to both a category and its ancestor", including in moves (R7c)
 - [x] Outline-style promote/demote: a promoted category adopts its following siblings (R7d)
+- [ ] Documentation: Make a hiearchical overview of the different TUI screens and boxes
 
 ## Beyond Agenda
 
