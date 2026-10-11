@@ -1,8 +1,7 @@
- File: rabbit.agenda *       View: Rabbit's Week       ? READY  2026-10-12 10:15
-
-
+ File: /home/rabbit/rabbit.agenda *                   ? READY  2026-10-12 10:15
+ View: Rabbit's Week
  Garden                                  When             Priority Friends
- • Weed t┌ Suggested assignments ─────────────────────────────────────┐
+ • Weed t┌────────────────── Suggested assignments ───────────────────┐
  • Count │ Ask Piglet and Pooh to help dig                            │ger
    bounce│                                                            │
  • Ask Pi│ Assign to:                                                 │
@@ -22,4 +21,5 @@
 
 
 
- SPACE Pick TAB All ENTER Assign ESC Stop
+
+ SPACE Pick a suggestion  TAB Pick all  ENTER Assign the picked  ESC Stop

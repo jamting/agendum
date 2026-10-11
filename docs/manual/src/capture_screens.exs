@@ -23,7 +23,13 @@ defmodule ManualScreens do
   def run do
     File.mkdir_p!(@out)
     state = start(rabbits_file(), width: 80, height: 25)
-    state = %{state | now: ~N[2026-10-12 10:15:00], today: @today, path: "/home/rabbit/rabbit.agenda"}
+
+    state = %{
+      state
+      | now: ~N[2026-10-12 10:15:00],
+        today: @today,
+        path: "/home/rabbit/rabbit.agenda"
+    }
 
     view(state)
     boxes(state)
@@ -31,6 +37,7 @@ defmodule ManualScreens do
     date_category(state)
     filters_and_questions(state)
     waiting_and_numbers(state)
+    calendars(state)
   end
 
   # Rabbit's file: a Monday, three sections, Priority and Friends columns.
@@ -42,7 +49,10 @@ defmodule ManualScreens do
     {:ok, db, notices} = Core.add_category(db, main, "Notices", match_name: true)
 
     {:ok, db, people} =
-      Core.add_category(db, main, "Friends and Relations", short_name: "Friends", match_name: false)
+      Core.add_category(db, main, "Friends and Relations",
+        short_name: "Friends",
+        match_name: false
+      )
 
     db =
       Enum.reduce(~w(Pooh Piglet Owl Eeyore Kanga Roo Tigger), db, fn name, db ->
@@ -52,7 +62,9 @@ defmodule ManualScreens do
 
     {:ok, db, _} = Core.add_category(db, people, "Christopher Robin", short_name: "CR")
     {:ok, db, _} = Core.add_category(db, people, "Small")
-    {:ok, db, priority} = Core.add_category(db, main, "Priority", exclusive: true, match_name: false)
+
+    {:ok, db, priority} =
+      Core.add_category(db, main, "Priority", exclusive: true, match_name: false)
 
     db =
       Enum.reduce(~w(High Medium Low), db, fn name, db ->
@@ -120,9 +132,17 @@ defmodule ManualScreens do
 
   defp filters_and_questions(state) do
     range = [:down | String.graphemes("today")] ++ [:down | String.graphemes("end of this week")]
-    shot("33-datefilter", press(state, [{:f, 10}, "v", "f", :down, :enter] ++ range), :range_filter)
 
-    confirm = [{:f, 10}, "f", "p"] ++ List.duplicate(:down, 16) ++ [" ", :down, :down, :down, " ", :esc, :esc]
+    shot(
+      "33-datefilter",
+      press(state, [{:f, 10}, "v", "f", :down, :enter] ++ range),
+      :range_filter
+    )
+
+    confirm =
+      [{:f, 10}, "f", "p"] ++
+        List.duplicate(:down, 16) ++ [" ", :down, :down, :down, " ", :esc, :esc]
+
     item = [:down, :down] ++ String.graphemes("Ask Piglet and Pooh to help dig") ++ [:enter]
     shot("36-questions", press(state, confirm ++ item ++ [{:f, 10}, "c", "q"]), :questions)
     shot("38-alarm", press(state, [:ctrl_end, {:alt, "a"}, :enter]), nil)
@@ -145,10 +165,50 @@ defmodule ManualScreens do
     shot("42-numeric", Layout.settle(%{state | db: db}), nil)
   end
 
+  # A calendar on the web: the shell would download it; here its events are
+  # given to the TUI as if read.
+  defp calendars(state) do
+    address = String.graphemes("webcal://example.org/expotitions.ics")
+    s = press(state, [{:f, 10}, "f", "t", "c", :insert] ++ address ++ [:enter])
+    s = press(s, String.graphemes("Expotitions") ++ [:enter])
+    [id] = Map.keys(s.db.calendars)
+
+    weekly = %{
+      freq: :weekly,
+      interval: 1,
+      byday: ["WE"],
+      bymonthday: [],
+      count: nil,
+      until: nil,
+      other: []
+    }
+
+    events = [
+      %Agenda.Core.ICal.Event{
+        uid: "north-pole",
+        summary: "Expotition to the North Pole",
+        start: {:local, ~N[2026-10-16 10:00:00]}
+      },
+      %Agenda.Core.ICal.Event{
+        uid: "poohsticks",
+        summary: "Poohsticks at the bridge",
+        start: {:local, ~N[2026-10-14 16:00:00]},
+        rrule: weekly
+      }
+    ]
+
+    s = Agenda.TUI.Update.calendar_read(s, id, {:ok, events})
+    shot("45-calendars", s, :calendars)
+  end
+
   defp name(state, {id, _depth}), do: state.db.categories[id].name
 
   defp row(state, start),
-    do: Enum.find_index(Layout.rows(state), &(&1[:item] && String.starts_with?(&1.item.text, start)))
+    do:
+      Enum.find_index(
+        Layout.rows(state),
+        &(&1[:item] && String.starts_with?(&1.item.text, start))
+      )
 
   # Writes the screen, after checking the expected box is on top (nil: none).
   defp shot(name, state, type) do

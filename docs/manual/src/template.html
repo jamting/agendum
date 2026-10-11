@@ -138,27 +138,43 @@ under <em>Friends and Relations</em>, because its text mentions Tigger. The
 <section id="screen">
 <h2>2. The screen and the keys</h2>
 
-<p>Every screen has the same four parts:</p>
+<p>Every screen has the same three parts, in the colours Agenda 2.0 had on a colour
+screen:</p>
 <ul>
-  <li>The <strong>title bar</strong> at the top: the file (with <code>*</code> when it
-      has unsaved changes), the view, what Agenda is doing (<code>READY</code>,
-      <code>EDIT</code>, <code>MENU</code>, <code>CAT MGR</code> …), and the date and time.
-      Small signs appear there too: <code>♦</code> when items are marked, <code>?</code>
-      when assignments wait for your answer, <code>@</code> when an alarm has rung,
-      <code>#</code> in a numeric column.</li>
-  <li>The <strong>control panel</strong>, the next two lines: menus, questions,
-      messages, and the categories the highlighted item is assigned to.</li>
-  <li>The <strong>body</strong>: the view, or a manager, or a box over the view.</li>
+  <li>The <strong>control panel</strong>, the two lines at the top, white on blue. The
+      first names the file (with <code>*</code> when it has unsaved changes) and, on the
+      right, what Agenda is doing (<code>READY</code>, <code>EDIT</code>,
+      <code>MENU</code>, <code>CAT MGR</code> …) and the date and time. Small signs
+      appear beside these: <code>♦</code> when items are marked, <code>?</code> when
+      assignments wait for your answer, <code>@</code> when an alarm has rung,
+      <code>#</code> in a numeric column. The second line names the view, with its
+      filter, or the manager you are in. The menu, questions, prompts and messages take
+      the two lines over while they last.</li>
+  <li>The <strong>body</strong>: the view, or a manager, or a box over the view. The
+      highlight is white on red, and the line it is on is a shade lighter right across
+      the screen.</li>
   <li>The <strong>key bar</strong> at the bottom: what the important keys do just now.
-      <kbd>ALT-K</kbd> hides and shows it.</li>
+      In a wide window it says it in more words (“F8 View manager”). <kbd>ALT-K</kbd>
+      hides and shows it.</li>
 </ul>
+
+<p>Settings open in cyan <strong>boxes</strong> over the view, which fades to grey
+behind them. A box opened from a box sits a step lower and to the right, and the title
+of the one beneath dims; <kbd>ESC</kbd> closes them one at a time.</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> Grey and blue and red. It looks rather old.</p>
+<p class="owl"><b>Owl.</b> It looks as Agenda looked when it was new, which is not the
+same thing. If it troubles you, <strong>File ▸ Customize</strong> has other themes. I
+find it restful.</p>
+</div>
 
 <h3>The menu</h3>
 <p><kbd>F10</kbd> or <kbd>/</kbd> opens the menu. Choose with the arrow keys and
 <kbd>ENTER</kbd>, or simply type the first letter of a command; <kbd>ESC</kbd> goes
 back a level. This manual writes menu paths like <strong>File ▸ Properties</strong>.</p>
 
-{{06-menu|rows:2-3}}
+{{06-menu|rows:3-4}}
 
 <h3>Keys you will use all the time</h3>
 <table>
@@ -199,10 +215,11 @@ highlight. <kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) starts an empty new item the sa
 
 {{20-typing}}
 
-<p>While Rabbit types, the control panel says what the item will be assigned to. When he
-presses <kbd>ENTER</kbd>, Agenda reads the text, finds a date and files the item:</p>
+<p>While Rabbit types, the control panel says how to finish (<kbd>ENTER</kbd>) or give up
+(<kbd>ESC</kbd>). When he presses <kbd>ENTER</kbd>, Agenda reads the text, finds a date
+and files the item, and the control panel says which date it found:</p>
 
-{{21-typed|rows:2-8}}
+{{21-typed|rows:3-7}}
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> Next Tuesday is tomorrow. Today is Monday! But it says
@@ -467,7 +484,7 @@ then shows <code>T= Note</code> beside it.</p>
 
 <h3>Asking first</h3>
 <p>With <strong>Confirm assignments</strong> set to <em>Always</em>, Agenda suggests
-instead of filing. A <code>?</code> appears in the title bar, and
+instead of filing. A <code>?</code> appears at the top right, and
 <strong>Category ▸ Questions</strong> goes through the items one at a time:
 <kbd>SPACE</kbd> picks a category, <kbd>TAB</kbd> picks them all, <kbd>ENTER</kbd>
 assigns the picked ones and moves on, <kbd>ESC</kbd> stops.</p>
@@ -516,7 +533,7 @@ them.</p>
 <p>Typing in a column assigns the item. Agenda completes the name as you type, among
 that column's categories only:</p>
 
-{{22-complete|rows:2-6}}
+{{22-complete|rows:3-5}}
 
 <ul>
   <li><kbd>ENTER</kbd> accepts what is shown; <kbd>F8</kbd> / <kbd>F7</kbd> (or
@@ -619,11 +636,11 @@ weeding is already waiting.</p>
 <h3>Alarms</h3>
 <p><kbd>ALT-A</kbd> on an item with a When time sets an alarm, 5 minutes before unless you
 type another number (0 to 60); the item shows <code>@</code>. When the time comes Agenda
-beeps, names the item, and shows <code>@</code> in the title bar until you look at
+beeps, names the item, and shows <code>@</code> at the top right until you look at
 <strong>Search ▸ Alarms</strong>, which lists the day's alarms. <kbd>ALT-A</kbd> again
 cancels an alarm.</p>
 
-{{38-alarm|rows:2-2,17-19}}
+{{38-alarm|rows:16-17}}
 
 <h3 id="datecats">Date categories of your own</h3>
 <p>Besides Entry, When and Done, you can have date categories of your own: <em>Due</em>,
@@ -750,7 +767,7 @@ Filter</strong> one section. <kbd>ENTER</kbd> on a category cycles <code>+</code
 (items must be in it), <code>-</code> (must not), none. A date or numeric category asks
 for a range instead:</p>
 
-{{33-datefilter|rows:2-11}}
+{{33-datefilter|rows:3-12}}
 
 <p>Relative dates in a range are read again each day: “today” to “end of this week”
 always shows the rest of this week. Put <code>$</code> before one to fix it the day you
@@ -776,12 +793,12 @@ many lettuces. Make one with Category Properties ▸ <strong>Type</strong> ▸
 <em>Numeric</em>, add it as a column, and type numbers in it. Totals appear at the
 bottom of every section.</p>
 
-{{42-numeric|rows:2-9}}
+{{42-numeric|rows:3-8}}
 
 <ul>
   <li>Numbers may have a sign, a currency symbol, thousands separators or parentheses
       for negatives; <kbd>F2</kbd> edits a number, <kbd>DEL</kbd> removes it, and the
-      title bar shows <code>#</code> in a numeric column.</li>
+      control panel shows <code>#</code> in a numeric column.</li>
   <li><strong>View ▸ Column ▸ Properties</strong> on a numeric column sets the symbol,
       decimals, thousands separator and negative style, and which results to show:
       count, total, average, minimum, maximum.</li>
@@ -797,7 +814,7 @@ bottom of every section.</p>
 highlight the later one and press <kbd>ALT-O</kbd>: it now <em>depends</em> on them and
 shows <code>&amp;</code> until they are all done.</p>
 
-{{41-depend|rows:2-2,9-16}}
+{{41-depend|rows:8-15}}
 
 <div class="talk">
 <p class="owl"><b>Owl.</b> Your Notice depends on asking me how to spell
@@ -828,13 +845,55 @@ shows <code>&amp;</code> until they are all done.</p>
   <tr><td>Start a new, empty file</td><td><strong>File ▸ New</strong></td></tr>
   <tr><td>Print the view to a text file</td><td><kbd>CTRL-P</kbd></td></tr>
   <tr><td>Export the whole file as JSON / open a JSON file</td><td><strong>File ▸ Transfer ▸ Export</strong> / <strong>Import</strong></td></tr>
+  <tr><td>Subscribe to a calendar on the web</td><td><strong>File ▸ Transfer ▸ Calendars</strong></td></tr>
   <tr><td>Quit</td><td><kbd>CTRL-Q</kbd> (or <kbd>ALT-Q</kbd>)</td></tr>
 </table>
+
+<p>Quitting, opening another file, starting a new one and importing all replace what is
+on the screen, so when the file has unsaved changes Agenda first asks “Save changes
+first?”: <kbd>Y</kbd> saves (asking for a name if the file has none) and goes on,
+<kbd>N</kbd> goes on without saving, <kbd>ESC</kbd> changes its mind.</p>
 
 <p>A file keeps everything about the information in it: items, categories, views and the
 file's date and matching settings. <strong>File ▸ Transfer ▸ Export</strong> writes all
 of it as readable JSON, good for backups and for other programs; <strong>Import</strong>
 opens such a file as a new, untitled file to save under a name.</p>
+
+<h3 id="calendars">Calendars from the web</h3>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> Christopher Robin keeps his Expotitions on a calendar.
+On the web, he says. I never know when the next one is, and then everyone has gone.</p>
+<p class="owl"><b>Owl.</b> Then let Agenda read it for you.</p>
+</div>
+
+<p>A calendar published on the web, with an address ending in <code>.ics</code> or
+starting with <code>webcal://</code>, can be brought in as items.
+<strong>File ▸ Transfer ▸ Calendars</strong> lists the file's subscriptions.
+<kbd>INS</kbd> asks for the address, then for a name, which becomes the category the
+events go in, and reads the calendar at once:</p>
+
+{{45-calendars|box}}
+
+<ul>
+  <li>Every event from today up to 90 days ahead becomes an item: its title the item
+      text (filed by text matching like anything Rabbit types), its description the note,
+      its start the When date and time.</li>
+  <li>A repeating event becomes one repeating item, on its next date: “Poohsticks at
+      the bridge” every Wednesday moves on to the next Wednesday when Rabbit marks it
+      done.</li>
+  <li>Agenda reads the calendar again every hour while it runs. A new reading changes
+      only what the calendar changed; Rabbit's own notes, categories and done marks
+      stay, an event that is cancelled or removed takes its item with it, and an item
+      Rabbit threw away does not come back.</li>
+  <li>In the box, <kbd>ENTER</kbd> reads the highlighted calendar now, <kbd>F</kbd>
+      changes how often it is read (every hour, every 6 hours, every day, only on
+      request), <kbd>A</kbd> how far ahead (30 to 365 days), and <kbd>DEL</kbd>
+      unsubscribes, asking whether to throw its items away too.</li>
+</ul>
+
+<p>Each reading is one step for <kbd>CTRL-Z</kbd>, and a scheduled one that changes
+nothing passes without a word.</p>
 
 <h3>Your settings, in every file</h3>
 <p>Some settings belong to you, not to a file: they follow you from file to file and
@@ -845,8 +904,10 @@ them, and saves them in your preferences file
 {{15-customize|box}}
 
 <ul>
-  <li><strong>Theme</strong>: <em>Classic</em>, blue and white like the original Lotus
-      Agenda, or <em>Mono</em>, for plain terminals.</li>
+  <li><strong>Theme</strong>: <em>Classic</em>, the grey, blue and cyan of Agenda 2.0
+      (with exactly its colours in a terminal that shows 24-bit colour); <em>Blue</em>,
+      white on blue; or <em>Mono</em>, for plain terminals, with only bold, dim,
+      underline and reverse.</li>
   <li><strong>Date language</strong> and <strong>Fallback language</strong>: which
       languages you type dates in (English, Swedish).</li>
   <li><strong>Input format</strong>: how you type numeric dates and times (chapter 7).</li>
@@ -949,7 +1010,7 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
 <h3>The menu</h3>
 <table>
   <tr><th>Menu</th><th>Commands</th></tr>
-  <tr><td>File</td><td>Retrieve, Save, Write, New, Dating, Properties, Customize, Transfer (Export, Import)</td></tr>
+  <tr><td>File</td><td>Retrieve, Save, Write, New, Dating, Properties, Customize, Transfer (Export, Import, Calendars)</td></tr>
   <tr><td>Item</td><td>Properties, Note, When, Show, Alarm, Finished, Mark, Unmark, Categorize, Reposition, Discard</td></tr>
   <tr><td>Category</td><td>Manager, Add, Recalc, Execute, Questions</td></tr>
   <tr><td>View</td><td>Manager, Add, Rename, Discard, Section (Below, Above, Remove, Collapse, Filter, Sort), Column (After, Before, Remove, Wider, Narrower, Properties), Filter, Order, Last, Hide (Done, Empty, Inherited, Pending)</td></tr>

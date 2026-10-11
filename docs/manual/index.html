@@ -127,9 +127,8 @@ You wrote “Tigger”, and there is a category called Tigger. That was enough.<
 columns:</p>
 
 <!-- screen: 01-view -->
-<pre class="screen"><span class="t"> File: rabbit.agenda         View: Rabbit's Week         READY  2026-10-12 10:15</span>
-
- Section: Garden (2 items)
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda                       READY  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                  When             Priority Friends</span>
  • Weed the carrot bed tomorrow morning   2026-10-13 08:00 High
  • Count the lettuces before Tigger                        Medium   Tigger
@@ -157,20 +156,36 @@ under <em>Friends and Relations</em>, because its text mentions Tigger. The
 <section id="screen">
 <h2>2. The screen and the keys</h2>
 
-<p>Every screen has the same four parts:</p>
+<p>Every screen has the same three parts, in the colours Agenda 2.0 had on a colour
+screen:</p>
 <ul>
-  <li>The <strong>title bar</strong> at the top: the file (with <code>*</code> when it
-      has unsaved changes), the view, what Agenda is doing (<code>READY</code>,
-      <code>EDIT</code>, <code>MENU</code>, <code>CAT MGR</code> …), and the date and time.
-      Small signs appear there too: <code>♦</code> when items are marked, <code>?</code>
-      when assignments wait for your answer, <code>@</code> when an alarm has rung,
-      <code>#</code> in a numeric column.</li>
-  <li>The <strong>control panel</strong>, the next two lines: menus, questions,
-      messages, and the categories the highlighted item is assigned to.</li>
-  <li>The <strong>body</strong>: the view, or a manager, or a box over the view.</li>
+  <li>The <strong>control panel</strong>, the two lines at the top, white on blue. The
+      first names the file (with <code>*</code> when it has unsaved changes) and, on the
+      right, what Agenda is doing (<code>READY</code>, <code>EDIT</code>,
+      <code>MENU</code>, <code>CAT MGR</code> …) and the date and time. Small signs
+      appear beside these: <code>♦</code> when items are marked, <code>?</code> when
+      assignments wait for your answer, <code>@</code> when an alarm has rung,
+      <code>#</code> in a numeric column. The second line names the view, with its
+      filter, or the manager you are in. The menu, questions, prompts and messages take
+      the two lines over while they last.</li>
+  <li>The <strong>body</strong>: the view, or a manager, or a box over the view. The
+      highlight is white on red, and the line it is on is a shade lighter right across
+      the screen.</li>
   <li>The <strong>key bar</strong> at the bottom: what the important keys do just now.
-      <kbd>ALT-K</kbd> hides and shows it.</li>
+      In a wide window it says it in more words (“F8 View manager”). <kbd>ALT-K</kbd>
+      hides and shows it.</li>
 </ul>
+
+<p>Settings open in cyan <strong>boxes</strong> over the view, which fades to grey
+behind them. A box opened from a box sits a step lower and to the right, and the title
+of the one beneath dims; <kbd>ESC</kbd> closes them one at a time.</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> Grey and blue and red. It looks rather old.</p>
+<p class="owl"><b>Owl.</b> It looks as Agenda looked when it was new, which is not the
+same thing. If it troubles you, <strong>File ▸ Customize</strong> has other themes. I
+find it restful.</p>
+</div>
 
 <h3>The menu</h3>
 <p><kbd>F10</kbd> or <kbd>/</kbd> opens the menu. Choose with the arrow keys and
@@ -178,10 +193,11 @@ under <em>Friends and Relations</em>, because its text mentions Tigger. The
 back a level. This manual writes menu paths like <strong>File ▸ Properties</strong>.</p>
 
 <!-- screen: 06-menu -->
-<pre class="screen"><span class="t"> File: rabbit.agenda         View: Rabbit's Week          MENU  2026-10-12 10:15</span>
-  File   Item   Category   View   Search   Undo   Redo   Print   Quit
- Retrieve  Save  Write  New  Dating  Properties  Customize  Transfer
-<span class="t"> ←→ Highlight ENTER Select letter Select ESC Back                               </span></pre>
+<pre class="screen"><span class="t">  File   Item   Category   View   Search   Undo   Redo   Print   Quit           </span>
+<span class="t"> Retrieve  Save  Write  New  Dating  Properties  Customize  Transfer            </span>
+<span class="h"> Garden                                  When             Priority Friends</span>
+ • Weed the carrot bed tomorrow morning   2026-10-13 08:00 High
+<span class="t"> ←→ Highlight a command  ENTER Select  first letter Select  ESC Back a level    </span></pre>
 
 <h3>Keys you will use all the time</h3>
 <table>
@@ -221,9 +237,8 @@ start typing; <kbd>ENTER</kbd> finishes it. The new item goes in that section, b
 highlight. <kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) starts an empty new item the same way.</p>
 
 <!-- screen: 20-typing -->
-<pre class="screen"><span class="t"> File: rabbit.agenda         View: Rabbit's Week          EDIT  2026-10-12 10:15</span>
- Type the new item; ENTER to finish, ESC to cancel
- Assigned to: Garden, Tigger, Medium
+<pre class="screen"><span class="t"> Type the new item; ENTER to finish, ESC to cancel       EDIT  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                  When             Priority Friends</span>
  • Weed the carrot bed tomorrow morning   2026-10-13 08:00 High
  • Count the lettuces before Tigger                        Medium   Tigger
@@ -242,13 +257,13 @@ highlight. <kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) starts an empty new item the sa
  • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
 <span class="t"> ENTER Done ESC Cancel ←→ Move ^A/^E Start/End ^U Clear                         </span></pre>
 
-<p>While Rabbit types, the control panel says what the item will be assigned to. When he
-presses <kbd>ENTER</kbd>, Agenda reads the text, finds a date and files the item:</p>
+<p>While Rabbit types, the control panel says how to finish (<kbd>ENTER</kbd>) or give up
+(<kbd>ESC</kbd>). When he presses <kbd>ENTER</kbd>, Agenda reads the text, finds a date
+and files the item, and the control panel says which date it found:</p>
 
 <!-- screen: 21-typed -->
-<pre class="screen"><span class="t"> File: rabbit.agenda *        View: Rabbit's Week        READY  2026-10-12 10:15</span>
- When: 2026-10-20
- Assigned to: Garden
+<pre class="screen"><span class="t"> When: 2026-10-20                                       READY  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                  When             Priority Friends</span>
  • Weed the carrot bed tomorrow morning   2026-10-13 08:00 High
  • Count the lettuces before Tigger                        Medium   Tigger
@@ -299,10 +314,10 @@ entered, the items it waits for, and every category it is assigned to, with date
 parentheses.</p>
 
 <!-- screen: 03-itemprops -->
-<pre class="screen"><span class="t"> File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15</span>
-
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda                       PROPS  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                  When             Priority Friends</span>
- • Weed t┌ Item properties ───────────────────────────────────────────┐
+ • Weed t┌───────────────────── Item properties ──────────────────────┐
  • Count │ Item text   : Weed the carrot bed tomorrow morning         │ger
    bounce│ Note        : (none)                                       │
          │ Statistics  : 4 categories · entered 2026-10-12            │
@@ -346,9 +361,8 @@ the category; <code>aka</code> gives the short name, and <code>exclusive</code> 
 a family whose children exclude each other.</p>
 
 <!-- screen: 02-catmgr -->
-<pre class="screen"><span class="t"> File: rabbit.agenda        View: Rabbit's Week        CAT MGR  2026-10-12 10:15</span>
-
- Category Manager  (20 categories)
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda                     CAT MGR  2026-10-12 10:15 </span>
+<span class="t"> Category Manager                                                 20 categories </span>
  MAIN   6
     Entry   date
     When   date
@@ -423,24 +437,24 @@ lettuces and see what happens.</p>
 properties. <kbd>ENTER</kbd> changes the highlighted one.</p>
 
 <!-- screen: 05-catprops -->
-<pre class="screen"><span class="t"> File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15</span>
-
- Category Manager  (20 categories)
- MAIN   6┌ Category properties: Friends and Relations ────────────────┐
-    Entry│ Category name               : Friends and Relations        │
-    When │ Short name                  : Friends                      │
-    Done │ Type                        : Standard                     │
-    Garde│ Children mutually exclusive : No                           │
-    Notic│ Assign items mentioning it  : No                           │
-    Frien│ Also match                  : (none)                       │
-       Po│ Assignment conditions       : (none)                       │
-       Pi│ Assignment actions          : (none)                       │
-       Ow│ Excludes                    : (none)                       │
-       Ee│ Special action              : None                         │
-       Ka│ Advanced settings           : Global                       │
-       Ro│ Note                        : (none)                       │
-       Ti└────────────────────────────────────────────────────────────┘
-<span class="t"> ENTER Change ESC Return                                                        </span></pre>
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda                       PROPS  2026-10-12 10:15 </span>
+<span class="t"> Category Manager                                                 20 categories </span>
+ MAIN   6
+    Entry┌──────── Category properties: Friends and Relations ────────┐
+    When │ Category name               : Friends and Relations        │
+    Done │ Short name                  : Friends                      │
+    Garde│ Type                        : Standard                     │
+    Notic│ Children mutually exclusive : No                           │
+    Frien│ Assign items mentioning it  : No                           │
+       Po│ Also match                  : (none)                       │
+       Pi│ Assignment conditions       : (none)                       │
+       Ow│ Assignment actions          : (none)                       │
+       Ee│ Excludes                    : (none)                       │
+       Ka│ Special action              : None                         │
+       Ro│ Advanced settings           : Global                       │
+       Ti│ Note                        : (none)                       │
+       Ch└────────────────────────────────────────────────────────────┘
+<span class="t"> ENTER Change the setting  ESC Close                                            </span></pre>
 
 <table>
   <tr><th>Property</th><th>What it does</th></tr>
@@ -525,10 +539,10 @@ spelt enough for one week.</p>
 </ul>
 
 <!-- screen: 04-profile -->
-<pre class="screen"><span class="t"> File: rabbit.agenda        View: Rabbit's Week         ASSIGN  2026-10-12 10:15</span>
-
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda                      ASSIGN  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                  When             Priority Friends</span>
- • Weed t┌ Assignments: Weed the carrot bed tomorrow morning ─────────┐
+ • Weed t┌──── Assignments: Weed the carrot bed tomorrow morning ─────┐
  • Count │ ◊   Entry                                                  │ger
    bounce│ ◊   When                                                   │
          │     Done                                                   │
@@ -546,33 +560,34 @@ spelt enough for one week.</p>
          │       Small                                                │
          │ +   Priority                                               │
          │ *     High                                                 │
+         │       Medium                                               │
          │                                                            │
          │ * assigned  c by a condition  + via subcategory  SPACE     │
-<span class="t"> SPACE Assign/Unassign ESC Return                                               </span></pre>
+<span class="t"> SPACE Assign or unassign  ESC Done                                             </span></pre>
 
 <h3 id="alsomatch">Also match: more words for a category</h3>
 <p>A category can be filed into by other words than its name. In its properties,
 <strong>Also match</strong> takes a list:</p>
 
 <!-- screen: 24-alsomatch -->
-<pre class="screen"><span class="t"> File: rabbit.agenda *        View: Rabbit's Week        PROPS  2026-10-12 10:15</span>
-
- Category Manager  (20 categories)
- MAIN   6┌ Category properties: Garden ───────────────────────────────┐
-    Entry│ Category name               : Garden                       │
-    When │ Short name                  : (none)                       │
-    Done │ Type                        : Standard                     │
-    Garde│ Children mutually exclusive : No                           │
-    Notic│ Assign items mentioning it  : Yes                          │
-    Frien│ Also match                  : carrot*;lettuce*;(vegetable p│
-       Po│ Assignment conditions       : (none)                       │
-       Pi│ Assignment actions          : (none)                       │
-       Ow│ Excludes                    : (none)                       │
-       Ee│ Special action              : None                         │
-       Ka│ Advanced settings           : Global                       │
-       Ro│ Note                        : (none)                       │
-       Ti└────────────────────────────────────────────────────────────┘
-<span class="t"> ENTER Change ESC Return                                                        </span></pre>
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda *                     PROPS  2026-10-12 10:15 </span>
+<span class="t"> Category Manager                                                 20 categories </span>
+ MAIN   6
+    Entry┌─────────────── Category properties: Garden ────────────────┐
+    When │ Category name               : Garden                       │
+    Done │ Short name                  : (none)                       │
+    Garde│ Type                        : Standard                     │
+    Notic│ Children mutually exclusive : No                           │
+    Frien│ Assign items mentioning it  : Yes                          │
+       Po│ Also match                  : carrot*;lettuce*;(vegetable p│
+       Pi│ Assignment conditions       : (none)                       │
+       Ow│ Assignment actions          : (none)                       │
+       Ee│ Excludes                    : (none)                       │
+       Ka│ Special action              : None                         │
+       Ro│ Advanced settings           : Global                       │
+       Ti│ Note                        : (none)                       │
+       Ch└────────────────────────────────────────────────────────────┘
+<span class="t"> ENTER Change the setting  ESC Close                                            </span></pre>
 
 <table>
   <tr><th>Write</th><th>Means</th><th>Example</th></tr>
@@ -596,21 +611,22 @@ matches. <kbd>SPACE</kbd> or <kbd>→</kbd> shows the next choice, <kbd>←</kbd
 previous one.</p>
 
 <!-- screen: 08-autoassign -->
-<pre class="screen"><span class="t"> File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15</span>
-
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda                       PROPS  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                  When             Priority Friends</span>
- • Weed t┌ Auto-assign settings ──────────────────────────────────────┐
- • Count │ Text matching           : On                               │ger
-   bounce│ Match on                : Item text                        │
-         │ Required match strength : Exact match - 100%               │
- Notices │ Confirm assignments     : Never                            │nds
- • Put up│ Ignore text enclosed by : " "                              │
-   Meetin│ Ignore suffixes         : Yes                              │
-         │ Ignore accents          : No                               │
- Friends │                                                            │nds
- • Count │ SPACE/→ next choice · ← previous · ESC closes              │ger
-   bounce└────────────────────────────────────────────────────────────┘
-<span class="t"> ↑↓ Setting SPACE Next ← Previous ESC Close                                     </span></pre>
+ • Weed t┌───────────────────── File properties ──────────────────────┐
+ • Count │ ┌─────────────────── Auto-assign settings ───────────────────┐r
+   bounce│ │ Text matching           : On                               │
+         │ │ Match on                : Item text                        │
+ Notices │ │ Required match strength : Exact match - 100%               │s
+ • Put up│ │ Confirm assignments     : Never                            │
+   Meetin│ │ Ignore text enclosed by : " "                              │
+         │ │ Ignore suffixes         : Yes                              │
+ Friends │ │ Ignore accents          : No                               │s
+ • Count │ │                                                            │r
+   bounce│ │ SPACE/→ next choice · ← previous · ESC closes              │
+ • Ask Ow│ └────────────────────────────────────────────────────────────┘
+<span class="t"> ↑↓ Move between settings  SPACE/→ Next choice  ← Previous choice  ESC Close    </span></pre>
 
 <table>
   <tr><th>Setting</th><th>Choices</th></tr>
@@ -634,16 +650,16 @@ then shows <code>T= Note</code> beside it.</p>
 
 <h3>Asking first</h3>
 <p>With <strong>Confirm assignments</strong> set to <em>Always</em>, Agenda suggests
-instead of filing. A <code>?</code> appears in the title bar, and
+instead of filing. A <code>?</code> appears at the top right, and
 <strong>Category ▸ Questions</strong> goes through the items one at a time:
 <kbd>SPACE</kbd> picks a category, <kbd>TAB</kbd> picks them all, <kbd>ENTER</kbd>
 assigns the picked ones and moves on, <kbd>ESC</kbd> stops.</p>
 
 <!-- screen: 36-questions -->
-<pre class="screen"><span class="t"> File: rabbit.agenda *       View: Rabbit's Week       ? READY  2026-10-12 10:15</span>
-
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda *                   ? READY  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                  When             Priority Friends</span>
- • Weed t┌ Suggested assignments ─────────────────────────────────────┐
+ • Weed t┌────────────────── Suggested assignments ───────────────────┐
  • Count │ Ask Piglet and Pooh to help dig                            │ger
    bounce│                                                            │
  • Ask Pi│ Assign to:                                                 │
@@ -652,7 +668,7 @@ assigns the picked ones and moves on, <kbd>ESC</kbd> stops.</p>
  • Put up│                                                            │
    Meetin│ SPACE picks · TAB picks all · ENTER assigns · ESC stops    │
          └────────────────────────────────────────────────────────────┘
-<span class="t"> SPACE Pick TAB All ENTER Assign ESC Stop                                       </span></pre>
+<span class="t"> SPACE Pick a suggestion  TAB Pick all  ENTER Assign the picked  ESC Stop       </span></pre>
 
 <div class="talk">
 <p class="owl"><b>Owl.</b> Some animals like to be asked. I find it tiring, but then I
@@ -697,9 +713,8 @@ them.</p>
 that column's categories only:</p>
 
 <!-- screen: 22-complete -->
-<pre class="screen"><span class="t"> File: rabbit.agenda         View: Rabbit's Week         AUTOC  2026-10-12 10:15</span>
- 1 category begins with "Lo" · ENTER accepts · INS new category
- Assigned to: Garden, High
+<pre class="screen"><span class="t"> 1 category begins with "Lo" · ENTER accepts · INS      AUTOC  2026-10-12 10:15 </span>
+<span class="t"> new category                                                                   </span>
 <span class="h"> Garden                                  When             Priority Friends</span>
  • Weed the carrot bed tomorrow morning   2026-10-13 08:00 Low
  • Count the lettuces before Tigger                        Medium   Tigger
@@ -806,13 +821,13 @@ weeding is already waiting.</p>
 <h3>Alarms</h3>
 <p><kbd>ALT-A</kbd> on an item with a When time sets an alarm, 5 minutes before unless you
 type another number (0 to 60); the item shows <code>@</code>. When the time comes Agenda
-beeps, names the item, and shows <code>@</code> in the title bar until you look at
+beeps, names the item, and shows <code>@</code> at the top right until you look at
 <strong>Search ▸ Alarms</strong>, which lists the day's alarms. <kbd>ALT-A</kbd> again
 cancels an alarm.</p>
 
 <!-- screen: 38-alarm -->
-<pre class="screen"><span class="t"> File: rabbit.agenda *        View: Rabbit's Week        READY  2026-10-12 10:15</span>
- Alarm set for 2026-10-15 14:55
+<pre class="screen"><span class="t"> Alarm set for 2026-10-15 14:55                         READY  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
  • Find Small, who is lost again                           High     Small
  @ Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
 <span class="t"> F1 Help F2 Edit F3 Choices F4 Done F5 Note F6 Props F7 Mark F8 VwMgr F9 CatMgr </span></pre>
@@ -824,35 +839,37 @@ cancels an alarm.</p>
 its column (“next friday 3pm”) or in Item Properties.</p>
 
 <!-- screen: 30-type-choice -->
-<pre class="screen"><span class="t"> File: rabbit.agenda *        View: Rabbit's Week        PROPS  2026-10-12 10:15</span>
-
- Category Manager  (21 categories)
-    Entry┌ Category type: Harvest ────────────────────────────────────┐
-    When │ Standard categories can become numeric or date categories. │
-    Done │                                                            │
-    Garde│ Change the type to:                                        │
-    Notic│    Numeric                                                 │
-    Frien│    Date                                                    │
-       Po│                                                            │
-       Pi│ A number for each item: totals and averages; children becom│
-       Ow└────────────────────────────────────────────────────────────┘
-<span class="t"> ↑↓ Highlight ENTER Select ESC Cancel                                           </span></pre>
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda *                     PROPS  2026-10-12 10:15 </span>
+<span class="t"> Category Manager                                                 21 categories </span>
+ MAIN   6
+    Entry┌─────────────── Category properties: Harvest ───────────────┐
+    When │ ┌────────────────── Category type: Harvest ──────────────────┐
+    Done │ │ Standard categories can become numeric or date categories. │
+    Garde│ │                                                            │
+    Notic│ │ Change the type to:                                        │
+    Frien│ │    Numeric                                                 │
+       Po│ │    Date                                                    │
+       Pi│ │                                                            │
+       Ow│ │ A number for each item: totals and averages; children becom│
+       Ee│ └────────────────────────────────────────────────────────────┘
+<span class="t"> ↑↓ Highlight a choice  ENTER Select  ESC Cancel                                </span></pre>
 
 <p>Its <strong>Advanced settings</strong> say where its dates come from:</p>
 
 <!-- screen: 32-daterule -->
-<pre class="screen"><span class="t"> File: rabbit.agenda *        View: Rabbit's Week        PROPS  2026-10-12 10:15</span>
-
- Category Manager  (21 categories)
-    Entry┌ Advanced settings: Harvest ────────────────────────────────┐
-    When │ Assign item date       : Never                             │
-    Done │ Which one              : (dates from text only)            │
-    Garde│ Set date from Done key : No                                │
-    Notic│ Set date from When key : No                                │
-    Frien│                                                            │
-       Po│ SPACE/→ next choice · ← previous · ESC closes              │
-       Pi└────────────────────────────────────────────────────────────┘
-<span class="t"> ↑↓ Setting SPACE Next ← Previous ESC Close                                     </span></pre>
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda *                     PROPS  2026-10-12 10:15 </span>
+<span class="t"> Category Manager                                                 21 categories </span>
+ MAIN   6
+    Entry┌─────────────── Category properties: Harvest ───────────────┐
+    When │ ┌──────────────── Advanced settings: Harvest ────────────────┐
+    Done │ │ Assign item date       : Never                             │
+    Garde│ │ Which one              : (dates from text only)            │
+    Notic│ │ Set date from Done key : No                                │
+    Frien│ │ Set date from When key : No                                │
+       Po│ │                                                            │
+       Pi│ │ SPACE/→ next choice · ← previous · ESC closes              │
+       Ow│ └────────────────────────────────────────────────────────────┘
+<span class="t"> ↑↓ Move between settings  SPACE/→ Next choice  ← Previous choice  ESC Close    </span></pre>
 
 <table>
   <tr><th>Setting</th><th>Choices</th></tr>
@@ -946,17 +963,17 @@ and actions to new assignments only or to old ones as well. <kbd>ALT-X</kbd> exe
 everything on all items, <kbd>ALT-E</kbd> just the highlighted section's category.</p>
 
 <!-- screen: 14-execute -->
-<pre class="screen"><span class="t"> File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15</span>
-
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda                       PROPS  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                  When             Priority Friends</span>
- • Weed t┌ Execute conditions and actions ────────────────────────────┐
+ • Weed t┌────────────── Execute conditions and actions ──────────────┐
  • Count │ Apply conditions of : MAIN (all categories)                │ger
    bounce│ Against             : All items                            │
          │ Apply actions to    : New assignments only                 │
  Notices │                                                            │nds
  • Put up│ ENTER runs · on the first row: choose · SPACE changes      │
    Meetin└────────────────────────────────────────────────────────────┘
-<span class="t"> ↑↓ Setting SPACE Change ENTER Run ESC Cancel                                   </span></pre>
+<span class="t"> ↑↓ Move between settings  SPACE Change the setting  ENTER Run  ESC Cancel      </span></pre>
 </section>
 
 <!-- ===================================================================== -->
@@ -979,16 +996,18 @@ Filter</strong> one section. <kbd>ENTER</kbd> on a category cycles <code>+</code
 for a range instead:</p>
 
 <!-- screen: 33-datefilter -->
-<pre class="screen"><span class="t"> File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15</span>
-
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda                       PROPS  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                  When             Priority Friends</span>
- • Weed t┌ Date filter: When ─────────────────────────────────────────┐
- • Count │ Show items      : Assigned                                 │ger
-   bounce│ Start date      : today                                    │
-         │ End date        : end of this week                         │
- Notices │ Items should be : Inside range                             │nds
- • Put up│                                                            │
-   Meetin│ Blank = open · ENTER applies · DEL removes · ESC cancels   │
+ • Weed t┌───────────────────── Filter the view ──────────────────────┐
+ • Count │ ┌──────────────────── Date filter: When ─────────────────────┐r
+   bounce│ │ Show items      : Assigned                                 │
+         │ │ Start date      : today                                    │
+ Notices │ │ End date        : end of this week                         │s
+ • Put up│ │ Items should be : Inside range                             │
+   Meetin│ │                                                            │
+         │ │ Blank = open · ENTER applies · DEL removes · ESC cancels   │
+ Friends │ └────────────────────────────────────────────────────────────┘s
 <span class="t"> ↑↓ Setting SPACE Change ENTER Apply DEL Remove ESC Cancel                      </span></pre>
 
 <p>Relative dates in a range are read again each day: “today” to “end of this week”
@@ -1004,10 +1023,10 @@ note; then by a second key for ties. Each key can go up or down and put items wi
 value first or last. The same box can sort the sections themselves.</p>
 
 <!-- screen: 10-sort -->
-<pre class="screen"><span class="t"> File: rabbit.agenda         View: Rabbit's Week          SORT  2026-10-12 10:15</span>
-
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda                        SORT  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                  When             Priority Friends</span>
- • Weed t┌ Sort items in all sections ────────────────────────────────┐
+ • Weed t┌──────────────── Sort items in all sections ────────────────┐
  • Count │ Sort on         : None                                     │ger
    bounce│ Order           : -                                        │
          │ Sort n/a's      : -                                        │
@@ -1020,7 +1039,7 @@ value first or last. The same box can sort the sections themselves.</p>
    bounce│                                                            │
  • Ask Ow│ ENTER changes the highlighted setting · ESC closes         │
  • Find S└────────────────────────────────────────────────────────────┘ll
-<span class="t"> ENTER Change ↑↓ Setting ESC Close                                              </span></pre>
+<span class="t"> ENTER Change the setting  ↑↓ Move between settings  ESC Close                  </span></pre>
 </section>
 
 <!-- ===================================================================== -->
@@ -1033,9 +1052,8 @@ many lettuces. Make one with Category Properties ▸ <strong>Type</strong> ▸
 bottom of every section.</p>
 
 <!-- screen: 42-numeric -->
-<pre class="screen"><span class="t"> File: rabbit.agenda         View: Rabbit's Week         READY  2026-10-12 10:15</span>
-
- Section: Garden (3 items)
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda                       READY  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                     When             Priority Cost</span>
  • Weed the carrot bed tomorrow morning      2026-10-13 08:00 High          0.50
  • Count the lettuces before Tigger bounces                   Medium
@@ -1047,7 +1065,7 @@ bottom of every section.</p>
 <ul>
   <li>Numbers may have a sign, a currency symbol, thousands separators or parentheses
       for negatives; <kbd>F2</kbd> edits a number, <kbd>DEL</kbd> removes it, and the
-      title bar shows <code>#</code> in a numeric column.</li>
+      control panel shows <code>#</code> in a numeric column.</li>
   <li><strong>View ▸ Column ▸ Properties</strong> on a numeric column sets the symbol,
       decimals, thousands separator and negative style, and which results to show:
       count, total, average, minimum, maximum.</li>
@@ -1064,8 +1082,8 @@ highlight the later one and press <kbd>ALT-O</kbd>: it now <em>depends</em> on t
 shows <code>&amp;</code> until they are all done.</p>
 
 <!-- screen: 41-depend -->
-<pre class="screen"><span class="t"> File: rabbit.agenda *       View: Rabbit's Week       ♦ READY  2026-10-12 10:15</span>
- Depends on 1 items
+<pre class="screen"><span class="t"> Depends on 1 item                                    ♦ READY  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Notices                                 When             Priority Friends</span>
  &amp; Put up a Notice about the Organising   2026-10-16       High
    Meeting on Friday
@@ -1105,13 +1123,67 @@ shows <code>&amp;</code> until they are all done.</p>
   <tr><td>Start a new, empty file</td><td><strong>File ▸ New</strong></td></tr>
   <tr><td>Print the view to a text file</td><td><kbd>CTRL-P</kbd></td></tr>
   <tr><td>Export the whole file as JSON / open a JSON file</td><td><strong>File ▸ Transfer ▸ Export</strong> / <strong>Import</strong></td></tr>
+  <tr><td>Subscribe to a calendar on the web</td><td><strong>File ▸ Transfer ▸ Calendars</strong></td></tr>
   <tr><td>Quit</td><td><kbd>CTRL-Q</kbd> (or <kbd>ALT-Q</kbd>)</td></tr>
 </table>
+
+<p>Quitting, opening another file, starting a new one and importing all replace what is
+on the screen, so when the file has unsaved changes Agenda first asks “Save changes
+first?”: <kbd>Y</kbd> saves (asking for a name if the file has none) and goes on,
+<kbd>N</kbd> goes on without saving, <kbd>ESC</kbd> changes its mind.</p>
 
 <p>A file keeps everything about the information in it: items, categories, views and the
 file's date and matching settings. <strong>File ▸ Transfer ▸ Export</strong> writes all
 of it as readable JSON, good for backups and for other programs; <strong>Import</strong>
 opens such a file as a new, untitled file to save under a name.</p>
+
+<h3 id="calendars">Calendars from the web</h3>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> Christopher Robin keeps his Expotitions on a calendar.
+On the web, he says. I never know when the next one is, and then everyone has gone.</p>
+<p class="owl"><b>Owl.</b> Then let Agenda read it for you.</p>
+</div>
+
+<p>A calendar published on the web, with an address ending in <code>.ics</code> or
+starting with <code>webcal://</code>, can be brought in as items.
+<strong>File ▸ Transfer ▸ Calendars</strong> lists the file's subscriptions.
+<kbd>INS</kbd> asks for the address, then for a name, which becomes the category the
+events go in, and reads the calendar at once:</p>
+
+<!-- screen: 45-calendars -->
+<pre class="screen"><span class="t"> Expotitions: 2 new                                     PROPS  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
+<span class="h"> Garden                                  When             Priority Friends</span>
+ • Weed t┌──────────────────────── Calendars ─────────────────────────┐
+ • Count │ Expotitions              read 2026-10-12 10:15             │ger
+   bounce│    https://example.org/expotitions.ics                     │
+         │    every hour · 90 days ahead                              │
+ Notices │                                                            │nds
+ • Put up│ INS subscribe · ENTER read now · DEL unsubscribe           │
+   Meetin│ F how often · A how far ahead                              │
+         └────────────────────────────────────────────────────────────┘
+<span class="t"> INS Subscribe ENTER Read now F How often A Ahead DEL Unsubscribe ESC Close     </span></pre>
+
+<ul>
+  <li>Every event from today up to 90 days ahead becomes an item: its title the item
+      text (filed by text matching like anything Rabbit types), its description the note,
+      its start the When date and time.</li>
+  <li>A repeating event becomes one repeating item, on its next date: “Poohsticks at
+      the bridge” every Wednesday moves on to the next Wednesday when Rabbit marks it
+      done.</li>
+  <li>Agenda reads the calendar again every hour while it runs. A new reading changes
+      only what the calendar changed; Rabbit's own notes, categories and done marks
+      stay, an event that is cancelled or removed takes its item with it, and an item
+      Rabbit threw away does not come back.</li>
+  <li>In the box, <kbd>ENTER</kbd> reads the highlighted calendar now, <kbd>F</kbd>
+      changes how often it is read (every hour, every 6 hours, every day, only on
+      request), <kbd>A</kbd> how far ahead (30 to 365 days), and <kbd>DEL</kbd>
+      unsubscribes, asking whether to throw its items away too.</li>
+</ul>
+
+<p>Each reading is one step for <kbd>CTRL-Z</kbd>, and a scheduled one that changes
+nothing passes without a word.</p>
 
 <h3>Your settings, in every file</h3>
 <p>Some settings belong to you, not to a file: they follow you from file to file and
@@ -1120,10 +1192,10 @@ them, and saves them in your preferences file
 (<code>~/.config/agenda/preferences</code>):</p>
 
 <!-- screen: 15-customize -->
-<pre class="screen"><span class="t"> File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15</span>
-
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agenda                       PROPS  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                  When             Priority Friends</span>
- • Weed t┌ Customize (yours, for every file) ─────────────────────────┐
+ • Weed t┌──────────── Customize (yours, for every file) ─────────────┐
  • Count │ Theme               : Classic                              │ger
    bounce│ Date language       : English                              │
          │ Fallback language   : None                                 │
@@ -1132,11 +1204,13 @@ them, and saves them in your preferences file
    Meetin│ Saved in your preferences, not in this file.               │
          │ SPACE/→ next choice · ← previous · ESC closes              │
  Friends └────────────────────────────────────────────────────────────┘nds
-<span class="t"> ↑↓ Setting SPACE Next ← Previous ESC Close                                     </span></pre>
+<span class="t"> ↑↓ Move between settings  SPACE/→ Next choice  ← Previous choice  ESC Close    </span></pre>
 
 <ul>
-  <li><strong>Theme</strong>: <em>Classic</em>, blue and white like the original Lotus
-      Agenda, or <em>Mono</em>, for plain terminals.</li>
+  <li><strong>Theme</strong>: <em>Classic</em>, the grey, blue and cyan of Agenda 2.0
+      (with exactly its colours in a terminal that shows 24-bit colour); <em>Blue</em>,
+      white on blue; or <em>Mono</em>, for plain terminals, with only bold, dim,
+      underline and reverse.</li>
   <li><strong>Date language</strong> and <strong>Fallback language</strong>: which
       languages you type dates in (English, Swedish).</li>
   <li><strong>Input format</strong>: how you type numeric dates and times (chapter 7).</li>
@@ -1239,7 +1313,7 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
 <h3>The menu</h3>
 <table>
   <tr><th>Menu</th><th>Commands</th></tr>
-  <tr><td>File</td><td>Retrieve, Save, Write, New, Dating, Properties, Customize, Transfer (Export, Import)</td></tr>
+  <tr><td>File</td><td>Retrieve, Save, Write, New, Dating, Properties, Customize, Transfer (Export, Import, Calendars)</td></tr>
   <tr><td>Item</td><td>Properties, Note, When, Show, Alarm, Finished, Mark, Unmark, Categorize, Reposition, Discard</td></tr>
   <tr><td>Category</td><td>Manager, Add, Recalc, Execute, Questions</td></tr>
   <tr><td>View</td><td>Manager, Add, Rename, Discard, Section (Below, Above, Remove, Collapse, Filter, Sort), Column (After, Before, Remove, Wider, Narrower, Properties), Filter, Order, Last, Hide (Done, Empty, Inherited, Pending)</td></tr>

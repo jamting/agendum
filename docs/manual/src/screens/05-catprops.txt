@@ -1,25 +1,25 @@
- File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15
-
-
- Category Manager  (20 categories)
- MAIN   6┌ Category properties: Friends and Relations ────────────────┐
-    Entry│ Category name               : Friends and Relations        │
-    When │ Short name                  : Friends                      │
-    Done │ Type                        : Standard                     │
-    Garde│ Children mutually exclusive : No                           │
-    Notic│ Assign items mentioning it  : No                           │
-    Frien│ Also match                  : (none)                       │
-       Po│ Assignment conditions       : (none)                       │
-       Pi│ Assignment actions          : (none)                       │
-       Ow│ Excludes                    : (none)                       │
-       Ee│ Special action              : None                         │
-       Ka│ Advanced settings           : Global                       │
-       Ro│ Note                        : (none)                       │
-       Ti└────────────────────────────────────────────────────────────┘
-       Christopher Robin   aka CR · 0
+ File: /home/rabbit/rabbit.agenda                       PROPS  2026-10-12 10:15
+ Category Manager                                                 20 categories
+ MAIN   6
+    Entry┌──────── Category properties: Friends and Relations ────────┐
+    When │ Category name               : Friends and Relations        │
+    Done │ Short name                  : Friends                      │
+    Garde│ Type                        : Standard                     │
+    Notic│ Children mutually exclusive : No                           │
+    Frien│ Assign items mentioning it  : No                           │
+       Po│ Also match                  : (none)                       │
+       Pi│ Assignment conditions       : (none)                       │
+       Ow│ Assignment actions          : (none)                       │
+       Ee│ Excludes                    : (none)                       │
+       Ka│ Special action              : None                         │
+       Ro│ Advanced settings           : Global                       │
+       Ti│ Note                        : (none)                       │
+       Ch└────────────────────────────────────────────────────────────┘
        Small   1
     Priority   exclusive · 6
        High   3
        Medium   2
        Low   1
- ENTER Change ESC Return
+
+
+ ENTER Change the setting  ESC Close

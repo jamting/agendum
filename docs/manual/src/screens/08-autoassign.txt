@@ -1,20 +1,19 @@
- File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15
-
-
+ File: /home/rabbit/rabbit.agenda                       PROPS  2026-10-12 10:15
+ View: Rabbit's Week
  Garden                                  When             Priority Friends
- • Weed t┌ Auto-assign settings ──────────────────────────────────────┐
- • Count │ Text matching           : On                               │ger
-   bounce│ Match on                : Item text                        │
-         │ Required match strength : Exact match - 100%               │
- Notices │ Confirm assignments     : Never                            │nds
- • Put up│ Ignore text enclosed by : " "                              │
-   Meetin│ Ignore suffixes         : Yes                              │
-         │ Ignore accents          : No                               │
- Friends │                                                            │nds
- • Count │ SPACE/→ next choice · ← previous · ESC closes              │ger
-   bounce└────────────────────────────────────────────────────────────┘
- • Ask Ow│ End of week         : Fri                                  │
- • Find S│ First quarter       : Jan 1                                │ll
+ • Weed t┌───────────────────── File properties ──────────────────────┐
+ • Count │ ┌─────────────────── Auto-assign settings ───────────────────┐r
+   bounce│ │ Text matching           : On                               │
+         │ │ Match on                : Item text                        │
+ Notices │ │ Required match strength : Exact match - 100%               │s
+ • Put up│ │ Confirm assignments     : Never                            │
+   Meetin│ │ Ignore text enclosed by : " "                              │
+         │ │ Ignore suffixes         : Yes                              │
+ Friends │ │ Ignore accents          : No                               │s
+ • Count │ │                                                            │r
+   bounce│ │ SPACE/→ next choice · ← previous · ESC closes              │
+ • Ask Ow│ └────────────────────────────────────────────────────────────┘
+ • Find S│ First quarter       : Jan 1                                 ll
  • Visit │ Beginning of year   : Jan 1                                │ga, Roo
          │ Month alone means   : First day                            │
          │ Morning             : 08:00                                │
@@ -22,4 +21,5 @@
          │ Evening             : 17:00                                │
          │ Auto-assign settings: (SPACE to open)                      │
          │                                                            │
- ↑↓ Setting SPACE Next ← Previous ESC Close
+         │ SPACE/→ next choice · ← previous · ESC closes              │
+ ↑↓ Move between settings  SPACE/→ Next choice  ← Previous choice  ESC Close

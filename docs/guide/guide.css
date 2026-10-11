@@ -7,10 +7,12 @@
   --accent: #b5652b; /* honey */
   --accent-soft: #f3e2c7;
   --rule: #e4dccb;
-  --screen-bg: #0b2a8a; /* DOS blue */
-  --screen-ink: #f2f2f2;
-  --screen-title: #34b3c6;
-  --screen-hi: #ffe36b;
+  /* Agenda 2.0 on a colour VGA screen: the program's classic theme */
+  --screen-bg: #aaaaaa;
+  --screen-ink: #000000;
+  --screen-title: #0000aa;
+  --screen-hi: #0000aa;
+  --screen-cursor: #aa0000;
   --kbd-bg: #fffdf8;
   --tip-bg: #eef5ea;
   --tip-rule: #9cbf8e;
@@ -162,7 +164,8 @@ pre.shell {
   font-size: 0.85rem;
 }
 
-/* A screen in the style of DOS Agenda. */
+/* A screen as Agenda draws it: grey, with the control panel and key bar in
+   white on blue, section heads blue, the highlight white on red. */
 pre.screen {
   background: var(--screen-bg);
   color: var(--screen-ink);
@@ -179,15 +182,14 @@ pre.screen {
 }
 pre.screen .t {
   background: var(--screen-title);
-  color: #0b0b0b;
+  color: #ffffff;
 }
 pre.screen .h {
   color: var(--screen-hi);
-  font-weight: bold;
 }
 pre.screen .c {
-  background: #e6e6e6;
-  color: #111;
+  background: var(--screen-cursor);
+  color: #ffffff;
 }
 
 .story {

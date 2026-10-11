@@ -4,10 +4,11 @@
     python3 docs/manual/src/build.py                           # ../index.html
 
 In the template, {{name}} is replaced by screens/name*.txt as a
-<pre class="screen">: the title bar and key bar styled, section heads
-highlighted, runs of blank lines shortened. {{name|box}} keeps the screen down
-to the bottom of its box; {{name|rows:2-6,17-19}} keeps those lines (counted
-from the title bar as line 1).
+<pre class="screen">: the control panel (the two top lines) and the key bar
+styled, section heads highlighted, runs of blank lines shortened. {{name|box}}
+keeps the screen down to the bottom of its box; {{name|rows:3-6,17-19}} keeps
+those lines of the body (counted from the control panel's first line as line 1,
+so the body starts at line 3); the control panel and key bar always show.
 """
 
 import html
@@ -29,9 +30,9 @@ def lines_of(name):
 
 def screen(name, rows=None):
     lines = lines_of(name)
-    title, body, keys = lines[0], lines[1:-1], lines[-1]
+    panel, body, keys = lines[0:2], lines[2:-1], lines[-1]
     if rows:
-        body = [body[i - 2] for a, b in rows for i in range(a, b + 1) if 0 <= i - 2 < len(body)]
+        body = [body[i - 3] for a, b in rows for i in range(a, b + 1) if 0 <= i - 3 < len(body)]
     out = []
     for line in body:
         if line.strip() == "" and out and out[-1].strip() == "":
@@ -47,14 +48,14 @@ def screen(name, rows=None):
         return text
 
     bar = lambda s: '<span class="t">' + html.escape(s.ljust(80)[:80], quote=False) + "</span>"
-    body = "\n".join([bar(title)] + [fmt(l) for l in out] + [bar(keys)])
+    body = "\n".join([bar(l) for l in panel] + [fmt(l) for l in out] + [bar(keys)])
     return f'<!-- screen: {name} -->\n<pre class="screen">{body}</pre>'
 
 
 def box_rows(name):
     lines = lines_of(name)
     end = next((i for i, l in enumerate(lines) if "└" in l), len(lines) - 2)
-    return [(2, end + 1)]
+    return [(3, end + 1)]
 
 
 def expand(match):

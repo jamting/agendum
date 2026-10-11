@@ -1,18 +1,17 @@
- File: rabbit.agenda *        View: Rabbit's Week        PROPS  2026-10-12 10:15
-
-
- Category Manager  (21 categories)
-    Entry┌ Category type: Harvest ────────────────────────────────────┐
-    When │ Standard categories can become numeric or date categories. │
-    Done │                                                            │
-    Garde│ Change the type to:                                        │
-    Notic│    Numeric                                                 │
-    Frien│    Date                                                    │
-       Po│                                                            │
-       Pi│ A number for each item: totals and averages; children becom│
-       Ow└────────────────────────────────────────────────────────────┘
-       Ee│ Excludes                    : (none)                       │
-       Ka│ Special action              : None                         │
+ File: /home/rabbit/rabbit.agenda *                     PROPS  2026-10-12 10:15
+ Category Manager                                                 21 categories
+ MAIN   6
+    Entry┌─────────────── Category properties: Harvest ───────────────┐
+    When │ ┌────────────────── Category type: Harvest ──────────────────┐
+    Done │ │ Standard categories can become numeric or date categories. │
+    Garde│ │                                                            │
+    Notic│ │ Change the type to:                                        │
+    Frien│ │    Numeric                                                 │
+       Po│ │    Date                                                    │
+       Pi│ │                                                            │
+       Ow│ │ A number for each item: totals and averages; children becom│
+       Ee│ └────────────────────────────────────────────────────────────┘
+       Ka│ Special action              : None
        Ro│ Advanced settings           : Global                       │
        Ti│ Note                        : (none)                       │
        Ch└────────────────────────────────────────────────────────────┘
@@ -22,4 +21,5 @@
        Medium   2
        Low   1
     Harvest   0
- ↑↓ Highlight ENTER Select ESC Cancel
+
+ ↑↓ Highlight a choice  ENTER Select  ESC Cancel

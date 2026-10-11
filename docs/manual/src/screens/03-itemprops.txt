@@ -1,8 +1,7 @@
- File: rabbit.agenda         View: Rabbit's Week         PROPS  2026-10-12 10:15
-
-
+ File: /home/rabbit/rabbit.agenda                       PROPS  2026-10-12 10:15
+ View: Rabbit's Week
  Garden                                  When             Priority Friends
- • Weed t┌ Item properties ───────────────────────────────────────────┐
+ • Weed t┌───────────────────── Item properties ──────────────────────┐
  • Count │ Item text   : Weed the carrot bed tomorrow morning         │ger
    bounce│ Note        : (none)                                       │
          │ Statistics  : 4 categories · entered 2026-10-12            │
@@ -16,6 +15,7 @@
  • Ask Ow└────────────────────────────────────────────────────────────┘
  • Find Small, who is lost again                           High     Small
  • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+
 
 
 
