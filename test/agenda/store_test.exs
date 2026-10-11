@@ -225,6 +225,25 @@ defmodule Agenda.StoreTest do
     assert loaded == db
   end
 
+  test "files in format version 21 get no calendars", %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    path = Path.join(dir, "v21.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 21, Map.delete(db, :calendars)}))
+    assert {:ok, loaded} = Store.load(path)
+    assert loaded.calendars == %{}
+    assert loaded == db
+  end
+
+  test "calendar subscriptions are saved", %{tmp_dir: dir} do
+    db = Agenda.Core.new_file()
+    {:ok, db, cal} = Agenda.Core.subscribe_calendar(db, "Work", "https://example.com/w.ics")
+    event = %Agenda.Core.ICal.Event{uid: "a", summary: "Tea", start: {:date, ~D[2026-10-13]}}
+    {:ok, db, _} = Agenda.Core.sync_calendar(db, cal, [event], ~N[2026-10-12 10:00:00])
+    path = Path.join(dir, "cal.agenda")
+    :ok = Store.save(db, path)
+    assert {:ok, ^db} = Store.load(path)
+  end
+
   test "a date column's own format is saved", %{tmp_dir: dir} do
     db = Agenda.Sample.build(~D[2026-10-08])
     view = hd(db.view_order)

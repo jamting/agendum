@@ -37,7 +37,7 @@ defmodule Agenda.TUI.DevToolsTest do
     text = all_text(press(state, {:alt, "?"}))
     assert text =~ ~r/Agenda +: 0\.\d+\.\d+/
     assert text =~ ~r/Elixir \/ OTP +: \d+\.\d+/
-    assert text =~ ~r/File format +: version 21/
+    assert text =~ ~r/File format +: version #{Agenda.Store.format_version()}/
     assert text =~ ~r/Items +: \d+/
     assert text =~ ~r/Categories +: \d+ \(\d+ standard, \d+ date, \d+ numeric\)/
     assert text =~ ~r/Views +: \d+/

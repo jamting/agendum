@@ -108,6 +108,31 @@ defmodule Agenda.Core.JSONFileTest do
         }
       end)
 
+    {:ok, db, cal} = Core.subscribe_calendar(db, "Work Calendar", "webcal://example.com/w.ics")
+
+    events = [
+      %Agenda.Core.ICal.Event{
+        uid: "m@x",
+        summary: "Standup",
+        start: {:local, ~N[2026-10-14 09:15:00]},
+        description: "Daily",
+        rrule: %{
+          freq: :weekly,
+          interval: 1,
+          byday: ["WE"],
+          bymonthday: [],
+          count: nil,
+          until: nil,
+          other: []
+        }
+      },
+      %Agenda.Core.ICal.Event{uid: "t@x", summary: "Tea", start: {:date, ~D[2026-10-13]}}
+    ]
+
+    {:ok, db, _} = Core.sync_calendar(db, cal, events, ~N[2026-10-12 10:00:00])
+    db = Core.cycle_calendar_setting(db, cal, :refresh_minutes, -1)
+    db = Core.calendar_failed(db, cal, "timeout", ~N[2026-10-12 11:00:00])
+
     db
     |> Core.set_date_format(%DateFormat{
       order: :ddmmmyy,
@@ -156,6 +181,7 @@ defmodule Agenda.Core.JSONFileTest do
       assert text =~ ~s("date": "2026-12-24")
       assert text =~ ~s("morning": "07:30:00")
       assert text =~ ~s("note": "Ränta: \\"5%\\" ✓")
+      assert text =~ ~s("url": "https://example.com/w.ics")
       # an item's fields start with its id and text
       assert text =~ ~r/\{\n\s+"id": \d+,\n\s+"text": "Pay the bill"/
       assert text == JSONFile.encode(rich())

@@ -39,7 +39,8 @@ and `json_round_trip_test.exs` check that a round trip changes nothing.
   "settings": { … },
   "categories": [ … ],
   "items": [ … ],
-  "views": [ … ]
+  "views": [ … ],
+  "calendars": [ … ]
 }
 ```
 
@@ -54,6 +55,7 @@ and `json_round_trip_test.exs` check that a round trip changes nothing.
 | `categories` | Every category, in hierarchy order (MAIN first, then depth-first).       |
 | `items`      | Every item, in file order.                                               |
 | `views`      | Every view, in the view manager's order.                                 |
+| `calendars`  | Calendar subscriptions (R45).                                            |
 
 ## Settings
 
@@ -122,6 +124,18 @@ open.
 | `sort`                                                        | Sort keys: `{"on": "text" or {"category": id} or {"note": id}, "order": "asc", "na": "bottom", "sequence": "hierarchy", "line": 1}` (R36).                                                                   |
 | `match`                                                       | For the Show View: `{"search": {"text": …, "on": "item", "ignore_case": true}}`, `{"items": [ids]}`, or `null` (R37).                                                                                        |
 | `section_sort`, `section_order`                               | How sections are ordered: `"none"`, `"category"`, `"alpha"`, `"numeric"`; `"asc"` or `"desc"`.                                                                                                               |
+
+## Calendars
+
+| Key                     | Meaning                                                                                                                                                                |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`, `name`            | Required.                                                                                                                                                              |
+| `url`                   | Where the calendar is read from (`https://…`).                                                                                                                         |
+| `category`              | The category its events' items are assigned to.                                                                                                                        |
+| `ahead_days`            | How far ahead events are imported: 30, 90, 180 or 365.                                                                                                                 |
+| `refresh_minutes`       | How often it is read again while Agenda runs (60, 360, 1440), or `null` for only on request.                                                                           |
+| `refreshed_at`, `error` | When it was last read, and why that failed; or `null`.                                                                                                                 |
+| `events`                | For each event read: `uid`, its `item`, and the `summary`, `description`, `date`, `time` and `recurrence` it had, so a refresh only changes what the calendar changed. |
 
 ## What is checked on import
 

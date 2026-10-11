@@ -36,7 +36,8 @@ defmodule Agenda.Core.Database do
           dependencies: Links.t(),
           confirm_assignments: :never | :always | :sometimes,
           match_settings: TextMatch.t(),
-          suggestions: %{optional(id) => [id]}
+          suggestions: %{optional(id) => [id]},
+          calendars: %{optional(id) => Agenda.Core.Calendar.t()}
         }
 
   defstruct items: %{},
@@ -56,7 +57,8 @@ defmodule Agenda.Core.Database do
             dependencies: Links.new(),
             confirm_assignments: :never,
             match_settings: %TextMatch{},
-            suggestions: %{}
+            suggestions: %{},
+            calendars: %{}
 
   @date_fields %{entry: :entry, when: :when, done: :done}
 
@@ -256,7 +258,9 @@ defmodule Agenda.Core.Database do
            views: views,
            numbers: numbers,
            dates: dates,
-           suggestions: suggestions
+           suggestions: suggestions,
+           # a calendar whose category is gone is no longer read (R45)
+           calendars: Map.reject(db.calendars, fn {_, c} -> c.category_id in doomed_set end)
        }}
     end
   end
@@ -587,6 +591,30 @@ defmodule Agenda.Core.Database do
   def delete_view(%__MODULE__{} = db, id) do
     {:ok, %{db | views: Map.delete(db.views, id), view_order: List.delete(db.view_order, id)}}
   end
+
+  # ---------------------------------------------------------------------------
+  # Calendar subscriptions (R45)
+  # ---------------------------------------------------------------------------
+
+  @doc "Adds a calendar subscription, giving it a new id."
+  @spec add_calendar(t, Agenda.Core.Calendar.t()) :: {t, id}
+  def add_calendar(%__MODULE__{} = db, calendar) do
+    {db, id} = take_id(db)
+    {%{db | calendars: Map.put(db.calendars, id, %{calendar | id: id})}, id}
+  end
+
+  @doc "Changes a calendar subscription."
+  @spec update_calendar(t, id, (Agenda.Core.Calendar.t() -> Agenda.Core.Calendar.t())) :: t
+  def update_calendar(%__MODULE__{} = db, id, fun),
+    do: %{db | calendars: Map.update!(db.calendars, id, fun)}
+
+  @doc "Removes a calendar subscription (its items stay)."
+  @spec delete_calendar(t, id) :: t
+  def delete_calendar(%__MODULE__{} = db, id), do: %{db | calendars: Map.delete(db.calendars, id)}
+
+  @doc "The calendar subscriptions, in the order they were made."
+  @spec calendars(t) :: [Agenda.Core.Calendar.t()]
+  def calendars(%__MODULE__{} = db), do: db.calendars |> Map.values() |> Enum.sort_by(& &1.id)
 
   # ---------------------------------------------------------------------------
   # Helpers

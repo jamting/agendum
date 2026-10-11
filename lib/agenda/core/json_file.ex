@@ -17,6 +17,7 @@ defmodule Agenda.Core.JSONFile do
   """
 
   alias Agenda.Core.{
+    Calendar,
     Category,
     Database,
     DateFormat,
@@ -139,7 +140,36 @@ defmodule Agenda.Core.JSONFile do
         ),
       categories: Enum.map(category_order(db), &category(db.categories[&1])),
       items: Enum.map(db.item_order, &item(db, rel, db.items[&1])),
-      views: Enum.map(db.view_order, &view(db.views[&1]))
+      views: Enum.map(db.view_order, &view(db.views[&1])),
+      calendars: db |> Database.calendars() |> Enum.map(&calendar/1)
+    )
+  end
+
+  # a calendar subscription and what each event looked like when last read
+  defp calendar(%Calendar{} = c) do
+    obj(
+      id: c.id,
+      name: c.name,
+      url: c.url,
+      category: c.category_id,
+      ahead_days: c.ahead_days,
+      refresh_minutes: c.refresh_minutes,
+      refreshed_at: c.refreshed_at && NaiveDateTime.to_iso8601(c.refreshed_at),
+      error: c.error,
+      events:
+        c.events
+        |> Enum.sort()
+        |> Enum.map(fn {uid, s} ->
+          obj(
+            uid: uid,
+            item: s.item,
+            summary: s.summary,
+            description: s.description,
+            date: date(s.date),
+            time: time(s.time),
+            recurrence: s.recurrence && struct_obj(s.recurrence)
+          )
+        end)
     )
   end
 
@@ -379,6 +409,7 @@ defmodule Agenda.Core.JSONFile do
     categories = list(doc, "categories", "categories", &read_category/2)
     items = list(doc, "items", "items", &read_item/2)
     views = list(doc, "views", "views", &read_view/2)
+    calendars = list(doc, "calendars", "calendars", &read_calendar/2)
     settings = field(doc, "settings", %{}, "settings")
     special = field(doc, "special", %{}, "special")
 
@@ -401,7 +432,8 @@ defmodule Agenda.Core.JSONFile do
       items: Map.new(items, fn {item, _} -> {item.id, item} end),
       item_order: Enum.map(items, fn {item, _} -> item.id end),
       views: Map.new(views, &{&1.id, &1}),
-      view_order: Enum.map(views, & &1.id)
+      view_order: Enum.map(views, & &1.id),
+      calendars: Map.new(calendars, &{&1.id, &1})
     }
     |> put_item_relations(items)
   end
@@ -526,6 +558,37 @@ defmodule Agenda.Core.JSONFile do
     }
 
     {item, relations}
+  end
+
+  defp read_calendar(c, path) do
+    events =
+      list(c, "events", path <> ".events", fn e, p ->
+        {req(e, "uid", :string, p),
+         %{
+           item: req(e, "item", :int, p),
+           summary: opt(e, "summary", :string, "", p),
+           description: opt(e, "description", :string, "", p),
+           date: opt(e, "date", {:nullable, :date}, nil, p),
+           time: opt(e, "time", {:nullable, :time}, nil, p),
+           recurrence:
+             case e["recurrence"] do
+               nil -> nil
+               _ -> read_struct(e, "recurrence", Recurrence, p <> ".recurrence")
+             end
+         }}
+      end)
+
+    %Calendar{
+      id: req(c, "id", :int, path),
+      name: req(c, "name", :string, path),
+      url: req(c, "url", :string, path),
+      category_id: req(c, "category", :int, path),
+      ahead_days: opt(c, "ahead_days", :int, 90, path),
+      refresh_minutes: opt(c, "refresh_minutes", {:nullable, :int}, 60, path),
+      refreshed_at: opt(c, "refreshed_at", {:nullable, :datetime}, nil, path),
+      error: opt(c, "error", {:nullable, :string}, nil, path),
+      events: Map.new(events)
+    }
   end
 
   defp read_view(v, path) do
@@ -721,10 +784,10 @@ defmodule Agenda.Core.JSONFile do
         {Enum.all?(Map.values(db.special), &(cats[&1] && cats[&1].kind == :date)),
          "special categories must be date categories"},
         {db.views != %{}, "a file needs at least one view"},
-        {Enum.all?(Map.keys(cats) ++ Map.keys(items) ++ Map.keys(db.views), &(&1 < db.next_id)),
-         "next_id must be above every id"},
-        {length(Enum.uniq(Map.keys(cats) ++ Map.keys(items) ++ Map.keys(db.views))) ==
-           map_size(cats) + map_size(items) + map_size(db.views), "ids must be unique"}
+        {Enum.all?(all_ids(db), &(&1 < db.next_id)), "next_id must be above every id"},
+        {length(Enum.uniq(all_ids(db))) == length(all_ids(db)), "ids must be unique"},
+        {Enum.all?(Map.values(db.calendars), &Map.has_key?(cats, &1.category_id)),
+         "a calendar's category does not exist"}
       ] ++
         Enum.flat_map(Map.values(cats), &category_refs(&1, cats, items)) ++
         Enum.flat_map(Map.keys(items), &item_refs(db, &1)) ++
@@ -736,6 +799,11 @@ defmodule Agenda.Core.JSONFile do
       {_, message} -> {:error, message}
     end
   end
+
+  defp all_ids(db),
+    do:
+      Map.keys(db.categories) ++
+        Map.keys(db.items) ++ Map.keys(db.views) ++ Map.keys(db.calendars)
 
   defp category_refs(c, cats, _items) do
     ref = &Map.has_key?(cats, &1)

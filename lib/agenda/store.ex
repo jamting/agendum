@@ -22,14 +22,15 @@ defmodule Agenda.Store do
   replacing `Database.when_from` with When's rule, and marks dates set by
   hand in `Database.dates`; 19 adds `Database.match_settings` (R16a); 20 adds
   `Category.match_overrides` (R16b); 21 adds `View.Column.date` and the
-  `DateFormat` fields `show`, `am_pm` and `time_separator` (R41a).
+  `DateFormat` fields `show`, `am_pm` and `time_separator` (R41a); 22 adds
+  `Database.calendars`, calendar subscriptions (R45).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 21
+  @format_version 22
   @extension ".agenda"
 
   def extension, do: @extension
@@ -117,7 +118,11 @@ defmodule Agenda.Store do
           Map.new(db.categories, fn {id, c} ->
             {id, upgrade_category(db, struct(Category, Map.from_struct(c)), when_assign)}
           end),
-        views: Map.new(db.views, fn {id, v} -> {id, upgrade_view(v)} end)
+        views: Map.new(db.views, fn {id, v} -> {id, upgrade_view(v)} end),
+        calendars:
+          Map.new(db.calendars, fn {id, c} ->
+            {id, struct(Agenda.Core.Calendar, Map.from_struct(c))}
+          end)
     }
   end
 
