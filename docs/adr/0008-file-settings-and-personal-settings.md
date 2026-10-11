@@ -1,6 +1,6 @@
 # ADR 0008 — What belongs in the file, and what belongs to the person
 
-**Status:** accepted · 2026-10-10
+**Status:** accepted · 2026-10-10 · the path is now `…/agendum/preferences` (ADR 0019)
 
 ## Context
 

@@ -1,19 +1,22 @@
-# Agenda
+# Wol's Agendum
 
-A clone of **Lotus Agenda**, the 1988 DOS personal information manager, written
-in Elixir with a terminal UI that looks and feels like the original.
+**Wol's Agendum** (Agendum for short) is a clone of **Lotus Agenda**, the 1988
+DOS personal information manager, written in Elixir with a terminal UI that
+looks and feels like the original. Wol is how Owl spells his name in A. A.
+Milne's books about the Hundred Acre Wood, and the program's manual is Owl
+teaching Rabbit to use it; an *agendum* is one thing to be done.
 
-New to Agenda? [`docs/AGENDA_HISTORY.md`](docs/AGENDA_HISTORY.md) explains why
-people loved the original and what made it unique.
+New to Lotus Agenda? [`docs/AGENDA_HISTORY.md`](docs/AGENDA_HISTORY.md) explains
+why people loved the original and what made it unique.
 
-You type free-form items. Agenda files them into categories: the one you
+You type free-form items. Agendum files them into categories: the one you
 typed them under, and any whose names appear in the text. Views show the
 same items arranged in different ways, and you change the data directly
 in the views.
 
 ```
- File: work.agenda              View: Activities                READY  2026-10-08
- Assigned to: Calls, High, Anna Lasky
+ File: ~/work.agendum                                   READY  2026-10-08 09:00
+ View: Activities
  Calls                                               When       Priority Contact
  • Set up meeting at Terracotta Corp to discuss                 Medium
    CopyCat before the end of the month.
@@ -28,12 +31,12 @@ Requires Elixir ≥ 1.20 on OTP ≥ 28 (for the built-in raw terminal mode).
 
 ```sh
 mix deps.get
-mix run -e 'Agenda.CLI.main(["--demo"])'     # sample data from the Agenda patent
-mix escript.build && ./agenda ~/work.agenda   # standalone binary
-./agenda --mono ~/work.agenda                 # monochrome (also: --theme mono, or NO_COLOR=1); --theme blue: white on blue
-./agenda --lang=swedish --fallback=english f  # read dates typed in Swedish (and English)
-./agenda --number-order=dmy --date-separator=. f  # type dates as 12.11.26 for this session
-# File ▸ Customize saves your theme, date languages and input format in ~/.config/agenda/preferences
+mix run -e 'Agenda.CLI.main(["--demo"])'       # sample data from the Agenda patent
+mix escript.build && ./agendum ~/work.agendum   # standalone binary
+./agendum --mono ~/work.agendum                 # monochrome (also: --theme mono, or NO_COLOR=1); --theme blue: white on blue
+./agendum --lang=swedish --fallback=english f   # read dates typed in Swedish (and English)
+./agendum --number-order=dmy --date-separator=. f  # type dates as 12.11.26 for this session
+# File ▸ Customize saves your theme, date languages and input format in ~/.config/agendum/preferences
 ```
 
 ## Quick tour

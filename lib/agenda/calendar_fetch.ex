@@ -25,7 +25,8 @@ defmodule Agenda.CalendarFetch do
   defp download(url) do
     {:ok, _} = Application.ensure_all_started([:inets, :ssl])
 
-    request = {String.to_charlist(url), [{~c"user-agent", ~c"Agenda (calendar subscription)"}]}
+    request =
+      {String.to_charlist(url), [{~c"user-agent", ~c"Wol's Agendum (calendar subscription)"}]}
 
     http = [
       timeout: @timeout,

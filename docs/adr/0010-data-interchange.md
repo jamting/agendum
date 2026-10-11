@@ -1,6 +1,6 @@
 # ADR 0010 — Data interchange: JSON, and Agenda's structured files
 
-**Status:** JSON accepted and built 2026-10-11 (R44); STF proposed (Milestone 4)
+**Status:** JSON accepted and built 2026-10-11 (R44); STF proposed (Milestone 4) · the format is now named `agendum-json` (ADR 0019)
 
 ## Context
 

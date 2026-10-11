@@ -26,7 +26,7 @@ defmodule Screenshots do
     build_renderer()
 
     state = start(Agenda.Sample.build(@today), width: 80, height: 25)
-    state = %{state | now: ~N[2026-10-12 20:52:00], today: @today, path: "/home/me/planner.agenda"}
+    state = %{state | now: ~N[2026-10-12 20:52:00], today: @today, path: "/home/me/planner.agendum"}
 
     for {name, screen} <- shots(state) do
       cells = Path.join(out, name <> ".cells")

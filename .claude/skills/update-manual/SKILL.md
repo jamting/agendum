@@ -1,14 +1,14 @@
 ---
 name: update-manual
-description: Bring the Agenda manual (docs/manual/, Owl teaching Rabbit) up to date with features added since it was last updated, re-capturing its screens from the program. Use only when the user asks to update the manual.
+description: Bring the Agendum manual (docs/manual/, Owl teaching Rabbit) up to date with features added since it was last updated, re-capturing its screens from the program. Use only when the user asks to update the manual.
 ---
 
 # Update the manual
 
 The manual (`docs/manual/index.html`) is the long companion of the user guide
 (`docs/guide/`, see the `update-guide` skill): the important features in
-depth, the rest in brief, told as an afternoon in which Owl, who knows Agenda
-well, teaches Rabbit, who is stressed by his lists. It is updated on request
+depth, the rest in brief, told as an afternoon in which Owl, who knows Wol's
+Agendum well, teaches Rabbit, who is stressed by his lists. It is updated on request
 only, never as part of a feature.
 
 `index.html` is **generated**; never edit it by hand. The sources are in

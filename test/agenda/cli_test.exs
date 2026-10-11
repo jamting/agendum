@@ -63,7 +63,7 @@ defmodule Agenda.CLITest do
   end
 
   test "the preferences file comes from the environment" do
-    assert {:ok, %{preferences: "/h/.config/agenda/preferences"}} =
+    assert {:ok, %{preferences: "/h/.config/agendum/preferences"}} =
              CLI.parse_args([], %{"HOME" => "/h"})
   end
 

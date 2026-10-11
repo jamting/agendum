@@ -4,8 +4,8 @@ defmodule Agenda.Preferences do
   colour theme (`theme`, R40), the date languages (`lang` and `fallback`,
   R14c) and the Input format (`Agenda.Core.InputFormat`, R41b). Kept in a plain
   text file, one `key = value` per line, in the config directory
-  (`$XDG_CONFIG_HOME/agenda/preferences` or
-  `~/.config/agenda/preferences`). A setting left out is the date
+  (`$XDG_CONFIG_HOME/agendum/preferences` or
+  `~/.config/agendum/preferences`; ADR 0019). A setting left out is the date
   language's; unknown lines are ignored.
 
   `parse/1` and `format/1` are pure; `load/1` and `save/2` touch the disk
@@ -31,18 +31,31 @@ defmodule Agenda.Preferences do
   @spec path(%{String.t() => String.t()}) :: String.t() | nil
   def path(env) do
     case env do
-      %{"XDG_CONFIG_HOME" => dir} when dir != "" -> Path.join([dir, "agenda", "preferences"])
-      %{"HOME" => home} when home != "" -> Path.join([home, ".config", "agenda", "preferences"])
+      %{"XDG_CONFIG_HOME" => dir} when dir != "" -> Path.join([dir, "agendum", "preferences"])
+      %{"HOME" => home} when home != "" -> Path.join([home, ".config", "agendum", "preferences"])
       _ -> nil
     end
   end
 
-  @doc "Reads preferences, remembering where; a missing or unreadable file gives the defaults."
+  @doc """
+  Reads preferences, remembering where; a missing or unreadable file gives
+  the defaults. Without one, the file from before the rename
+  (`…/agenda/preferences`) is read, and the next save writes the new one.
+  """
   @spec load(String.t()) :: t
   def load(path) do
     case File.read(path) do
       {:ok, text} -> %{parse(text) | path: path}
-      {:error, _} -> %__MODULE__{path: path}
+      {:error, _} -> load_old(path)
+    end
+  end
+
+  defp load_old(path) do
+    old = Path.join([path |> Path.dirname() |> Path.dirname(), "agenda", Path.basename(path)])
+
+    case Path.basename(Path.dirname(path)) == "agendum" && File.read(old) do
+      {:ok, text} -> %{parse(text) | path: path}
+      _ -> %__MODULE__{path: path}
     end
   end
 
@@ -127,7 +140,7 @@ defmodule Agenda.Preferences do
       |> Enum.reject(&(elem(&1, 1) == nil))
       |> Enum.map(fn {key, value} -> "#{key} = #{value}\n" end)
 
-    "# Agenda preferences: yours, for every file. A setting left out is the\n" <>
+    "# Wol's Agendum preferences: yours, for every file. A setting left out is the\n" <>
       "# default: theme classic, lang english, and for dates your language's.\n" <>
       "# theme: #{Enum.join(Theme.names(), " ")}; lang, fallback: " <>
       Enum.map_join(DateLanguage.packs(), " ", & &1.name()) <>

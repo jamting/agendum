@@ -10,9 +10,9 @@ defmodule Agenda.PreferencesTest do
 
   test "the file lives in the config directory" do
     assert Preferences.path(%{"XDG_CONFIG_HOME" => "/x/config", "HOME" => "/home/me"}) ==
-             "/x/config/agenda/preferences"
+             "/x/config/agendum/preferences"
 
-    assert Preferences.path(%{"HOME" => "/home/me"}) == "/home/me/.config/agenda/preferences"
+    assert Preferences.path(%{"HOME" => "/home/me"}) == "/home/me/.config/agendum/preferences"
     assert Preferences.path(%{}) == nil
   end
 
@@ -46,11 +46,20 @@ defmodule Agenda.PreferencesTest do
   end
 
   test "saves and loads; a missing file is the defaults", %{tmp_dir: dir} do
-    path = Path.join([dir, "agenda", "preferences"])
+    path = Path.join([dir, "agendum", "preferences"])
     assert Preferences.load(path) == %Preferences{path: path}
 
     prefs = %Preferences{input: %InputFormat{separator: "-"}}
     assert :ok = Preferences.save(prefs, path)
     assert Preferences.load(path) == %{prefs | path: path}
+  end
+
+  test "preferences from before the rename are read, and saved in the new place",
+       %{tmp_dir: dir} do
+    old = Path.join([dir, "agenda", "preferences"])
+    :ok = Preferences.save(%Preferences{theme: :mono}, old)
+
+    path = Path.join([dir, "agendum", "preferences"])
+    assert Preferences.load(path) == %Preferences{theme: :mono, path: path}
   end
 end

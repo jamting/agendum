@@ -23,8 +23,17 @@ defmodule Agenda.StoreTest do
   end
 
   test "normalize_path adds the extension" do
-    assert Store.normalize_path("/tmp/work") == "/tmp/work.agenda"
+    assert Store.normalize_path("/tmp/work") == "/tmp/work.agendum"
     assert Store.normalize_path("/tmp/work.agd") == "/tmp/work.agd"
+  end
+
+  test "a name without extension finds a file from before the rename", %{tmp_dir: dir} do
+    File.write!(Path.join(dir, "old.agenda"), "")
+    assert Store.normalize_path(Path.join(dir, "old")) == Path.join(dir, "old.agenda")
+
+    # the new extension wins when both are there
+    File.write!(Path.join(dir, "old.agendum"), "")
+    assert Store.normalize_path(Path.join(dir, "old")) == Path.join(dir, "old.agendum")
   end
 
   test "files in format version 1 are upgraded on load", %{tmp_dir: dir} do

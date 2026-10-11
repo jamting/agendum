@@ -1,7 +1,8 @@
-# CLAUDE.md — working on the Lotus Agenda clone
+# CLAUDE.md — working on Wol's Agendum
 
-A clone of Lotus Agenda (1988, DOS) in Elixir: a **pure functional core** plus a
-**terminal UI** that resembles the original. Read `docs/SPEC.md` (what Agenda
+**Wol's Agendum** (short: **Agendum**) is a clone of Lotus Agenda (1988, DOS) in
+Elixir: a **pure functional core** plus a **terminal UI** that resembles the
+original. Read `docs/SPEC.md` (what Agenda
 does) and `docs/ARCHITECTURE.md` (how the code is laid out) before larger changes,
 and the ADRs in `docs/adr/` (why); record new lasting decisions as ADRs.
 For anything touching stored data or queries, also read `docs/DATA_MODEL.md`
@@ -16,7 +17,7 @@ mix check                 # THE quality gate: format, warnings-as-errors, Credo,
 mix test                  # tests only
 mix test test/agenda/core # one directory
 mix run -e 'Agenda.CLI.main(["--demo"])'   # run the TUI with sample data (needs a real terminal)
-mix escript.build && ./agenda my.agenda    # build and run the standalone binary
+mix escript.build && ./agendum my.agendum  # build and run the standalone binary
 ```
 
 A change is done when `mix check` passes. Do not leave warnings. Credo
@@ -67,6 +68,12 @@ Keep changes small and focused; one feature per commit.
 
 ## Conventions
 
+- Names: in text the user sees, our program is **Wol's Agendum** (titles,
+  headings, the splash screen) or **Agendum** (menus, help, running text);
+  **Agenda** means the original Lotus Agenda ("as Agenda does"). Code keeps
+  the `Agenda` namespace for now (ADR 0019). Files are `.agendum`, the
+  preferences `~/.config/agendum/`, the JSON format `agendum-json`; the old
+  names are still read.
 - Match the surrounding style: small pure functions, pattern matching,
   `@spec` on public core functions, `@moduledoc` on every module.
 - Core functions that can fail return `{:ok, ...} | {:error, atom}`; the UI

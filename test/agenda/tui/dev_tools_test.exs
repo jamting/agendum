@@ -35,7 +35,7 @@ defmodule Agenda.TUI.DevToolsTest do
 
   test "it shows the program, the file and the session", %{state: state} do
     text = all_text(press(state, {:alt, "?"}))
-    assert text =~ ~r/Agenda +: 0\.\d+\.\d+/
+    assert text =~ ~r/Wol's Agendum +: 0\.\d+\.\d+/
     assert text =~ ~r/Elixir \/ OTP +: \d+\.\d+/
     assert text =~ ~r/File format +: version #{Agenda.Store.format_version()}/
     assert text =~ ~r/Items +: \d+/

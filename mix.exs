@@ -8,7 +8,7 @@ defmodule Agenda.MixProject do
       elixir: "~> 1.20",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
-      escript: [main_module: Agenda.CLI, name: "agenda"],
+      escript: [main_module: Agenda.CLI, name: "agendum"],
       aliases: aliases(),
       deps: deps()
     ]

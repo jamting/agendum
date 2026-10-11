@@ -23,10 +23,13 @@ erl_crash.dump
 agenda-*.tar
 
 
-# The escript binary built by `mix escript.build`
+# The escript binary built by `mix escript.build` (and its name before the rename)
+/agendum
 /agenda
 
-# Local Agenda data files
+# Local data files (and their extension before the rename)
+*.agendum
+*.agendum.tmp
 *.agenda
 *.agenda.tmp
 

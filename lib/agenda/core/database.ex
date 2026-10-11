@@ -1,6 +1,6 @@
 defmodule Agenda.Core.Database do
   @moduledoc """
-  The complete state of one Agenda file, as an immutable value.
+  The complete state of one Agendum file, as an immutable value.
 
   Objects (items, categories, views) share a single id space, mirroring the
   single object file (`.AGA`) described in the patent. Item/category

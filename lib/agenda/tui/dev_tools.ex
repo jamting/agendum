@@ -83,7 +83,7 @@ defmodule Agenda.TUI.DevTools do
       {"Next id", Integer.to_string(db.next_id)},
       "",
       "Program",
-      {"Agenda", @version},
+      {"Wol's Agendum", @version},
       {"Elixir / OTP", @built_with <> " (built with)"}
     ]
   end

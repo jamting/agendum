@@ -1,9 +1,10 @@
 defmodule Agenda.Core.JSONFile do
   @moduledoc """
-  A whole Agenda file as JSON (SPEC R44, ADR 0010): readable, diff-friendly
+  A whole Agendum file as JSON (SPEC R44, ADR 0010): readable, diff-friendly
   and complete, so that `decode(encode(db)) == {:ok, db}`.
 
-  The document is an envelope, `{"format": "agenda-json", "version": 1, …}`,
+  The document is an envelope, `{"format": "agendum-json", "version": 1, …}`
+  (`"agenda-json"`, from before the rename, is read too),
   with the file's settings, its categories in hierarchy order, its items in
   file order (each with its assignments, dates, numbers, dependencies and
   suggestions) and its views in view-manager order. Enumerations are
@@ -34,7 +35,9 @@ defmodule Agenda.Core.JSONFile do
 
   alias Agenda.Core.View.{Column, Section, SortKey}
 
-  @format "agenda-json"
+  @format "agendum-json"
+  # the name before the program was called Wol's Agendum (ADR 0019)
+  @formats [@format, "agenda-json"]
   @version 1
 
   # --- field specs of the flat settings structs -----------------------------------
@@ -380,14 +383,14 @@ defmodule Agenda.Core.JSONFile do
   @spec decode(String.t()) :: {:ok, Database.t()} | {:error, String.t()}
   def decode(text) do
     case JSON.decode(text) do
-      {:ok, %{"format" => @format, "version" => @version} = doc} ->
+      {:ok, %{"format" => format, "version" => @version} = doc} when format in @formats ->
         build(doc)
 
-      {:ok, %{"format" => @format, "version" => v}} ->
+      {:ok, %{"format" => format, "version" => v}} when format in @formats ->
         {:error, "unsupported version #{inspect(v)}"}
 
       {:ok, _} ->
-        {:error, "not an Agenda JSON file"}
+        {:error, "not an Agendum JSON file"}
 
       {:error, _} ->
         {:error, "not valid JSON"}

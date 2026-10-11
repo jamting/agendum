@@ -15,7 +15,7 @@ defmodule Agenda.TUI.Menu do
     [
       {"File", "Retrieve, save or create files",
        [
-         {"Retrieve", "Open an existing Agenda file (CTRL-O)", :retrieve},
+         {"Retrieve", "Open an existing Agendum file (CTRL-O)", :retrieve},
          {"Save", "Save the current file (CTRL-S)", :save},
          {"Write", "Write the file under a new name (Save As)", :save_as},
          {"New", "Create a new, empty file", :new_file},
@@ -118,7 +118,7 @@ defmodule Agenda.TUI.Menu do
       {"Undo", "Undo the last change (CTRL-Z)", :undo},
       {"Redo", "Redo the last undone change (CTRL-Y)", :redo},
       {"Print", "Print the current view to a text file (CTRL-P)", :export},
-      {"Quit", "Leave Agenda (CTRL-Q)", :quit}
+      {"Quit", "Leave Agendum (CTRL-Q)", :quit}
     ]
   end
 

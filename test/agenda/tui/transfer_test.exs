@@ -21,7 +21,7 @@ defmodule Agenda.TUI.TransferTest do
   test "Export asks for a name and writes the whole file as JSON", %{state: state} do
     state = press(state, [{:f, 10}, "f", "t", "e"])
     assert screen(state) =~ "Export to JSON file:"
-    assert screen(state) =~ "agenda.json"
+    assert screen(state) =~ "agendum.json"
 
     {_state, effects} = submit(state, [{:ctrl, "u"} | String.graphemes("~/backup.json")])
     assert [{:write_text, path, text}] = effects

@@ -173,7 +173,7 @@ defmodule Agenda.TUI.LookTest do
     catmgr = press(state, {:f, 9})
     assert styles_at(catmgr, row_of(catmgr, "Meetings"), "Meetings") == [:catmgr]
     help = press(state, {:f, 1})
-    assert styles_at(help, row_of(help, "AGENDA KEYS"), "AGENDA KEYS") == [:help]
+    assert styles_at(help, row_of(help, "AGENDUM KEYS"), "AGENDUM KEYS") == [:help]
   end
 
   test "the key bar says more when the screen is wide enough", %{state: state} do

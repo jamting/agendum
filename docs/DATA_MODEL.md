@@ -483,8 +483,8 @@ tests in `database_test.exs` and `links_test.exs`):
 flowchart LR
     DB["%Database{}"] --> T["{:agenda, 2, db}<br/>versioned envelope"]
     T --> B[":erlang.term_to_binary(…, [:compressed])"]
-    B --> TMP["file.agenda.tmp"]
-    TMP -- "File.rename (atomic)" --> F["file.agenda"]
+    B --> TMP["file.agendum.tmp"]
+    TMP -- "File.rename (atomic)" --> F["file.agendum"]
 ```
 
 - **Loading** uses `binary_to_term(…, [:safe])`, which refuses unknown

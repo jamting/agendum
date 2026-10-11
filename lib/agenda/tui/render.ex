@@ -930,7 +930,7 @@ defmodule Agenda.TUI.Render do
   # --- help ------------------------------------------------------------------------------------------
 
   @help """
-   AGENDA KEYS                     (↑↓ PGUP PGDN scroll · any other key returns)
+   AGENDUM KEYS                    (↑↓ PGUP PGDN scroll · any other key returns)
 
    In a view                         Mac / no-INS alternative
      Type          Add an item, or an entry in the highlighted column

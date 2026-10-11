@@ -1,22 +1,22 @@
 defmodule Agenda.CLI do
   @moduledoc """
-  Command-line entry point.
+  Command-line entry point of Wol's Agendum.
 
-      agenda                  start with a new, untitled file
-      agenda FILE             open FILE (created on first save if missing)
-      agenda --demo           open the sample file from the patent
-      agenda --theme NAME     draw with a theme: classic (default), blue or mono
-      agenda --mono           the same as --theme mono
-      agenda --lang NAME      read dates in item text in a language:
-                              english (default) or swedish
-      agenda --fallback NAME  also read dates in a second language
-      agenda --number-order O how you type dates: mdy, myd, dmy, dym,
-                              ydm or ymd (default: the language's)
-      agenda --date-separator S  / - . , or : between a date's numbers
-      agenda --clock 12|24    how you type times (default: the language's)
+      agendum                   start with a new, untitled file
+      agendum FILE              open FILE (created on first save if missing)
+      agendum --demo            open the sample file from the patent
+      agendum --theme NAME      draw with a theme: classic (default), blue or mono
+      agendum --mono            the same as --theme mono
+      agendum --lang NAME       read dates in item text in a language:
+                                english (default) or swedish
+      agendum --fallback NAME   also read dates in a second language
+      agendum --number-order O  how you type dates: mdy, myd, dmy, dym,
+                                ydm or ymd (default: the language's)
+      agendum --date-separator S  / - . , or : between a date's numbers
+      agendum --clock 12|24     how you type times (default: the language's)
 
   Your preferences (File ▸ Customize, saved in
-  ~/.config/agenda/preferences) give the theme, languages and input
+  ~/.config/agendum/preferences) give the theme, languages and input
   format; these flags override them for this session. Setting the
   NO_COLOR environment variable selects mono unless --theme or your
   preferences name a theme.

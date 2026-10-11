@@ -1,6 +1,6 @@
-# Agenda — behaviour specification
+# Wol's Agendum — behaviour specification
 
-What we are cloning, distilled from US patent 5,115,504 ("Information
+What Wol's Agendum does, and what it clones from Lotus Agenda ("Agenda" below): distilled from US patent 5,115,504 ("Information
 Management System", Belove, Kapor, Kaplan et al., Lotus 1992) and the Lotus
 Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
 ✅ = implemented and tested, ⏳ = planned (see `ROADMAP.md`).
@@ -624,7 +624,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   not the file, unlike Agenda; Global date settings ▸ Input format opens the
   box ("yours, for every file"), and a change applies at once, is not
   undone with the file, and is saved in the person's preferences file
-  (`~/.config/agenda/preferences`, or under `$XDG_CONFIG_HOME`), plain
+  (`~/.config/agendum/preferences`, or under `$XDG_CONFIG_HOME`), plain
   `key = value` lines, which File ▸ Customize also writes (theme, date
   languages; it opens this box too). Only the setting changed is saved,
   never one a flag gave for the session. `--number-order`, `--date-separator` and `--clock`

@@ -1,6 +1,6 @@
 defmodule Agenda.Core do
   @moduledoc """
-  The functional core: user-level operations on an Agenda database.
+  The functional core: user-level operations on an Agendum database.
 
   This is the API the TUI (and any other shell) uses. Every function is
   pure; anything that depends on the outside world, such as today's date,

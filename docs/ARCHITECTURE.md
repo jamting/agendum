@@ -1,6 +1,6 @@
 # Architecture
 
-**Functional core, imperative shell.** All of Agenda's logic and the
+**Functional core, imperative shell.** All of Agendum's logic and the
 whole UI state machine are pure functions over immutable values. A thin
 shell does terminal I/O and file I/O.
 
@@ -154,3 +154,4 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0016](adr/0016-global-defaults-local-overrides.md)     | File-wide defaults, with local overrides stored as differences   |
 | [0017](adr/0017-text-matching-agenda-rules.md)          | Text matching follows Agenda's word rules                        |
 | [0018](adr/0018-agenda-look-from-screenshots.md)        | The look follows screenshots of the real Agenda                  |
+| [0019](adr/0019-the-name-wols-agendum.md)               | The name: Wol's Agendum                                          |

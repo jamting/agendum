@@ -55,7 +55,7 @@ defmodule Agenda.TUI.UnsavedChangesTest do
     {state, _} = keys(%{changed | path: nil}, [{:f, 10}, "f", "r", "y"])
     assert screen(state) =~ "Save file as:"
     {state, effects} = keys(state, String.graphemes("/tmp/mine") ++ [:enter])
-    assert effects == [{:save, "/tmp/mine.agenda"}]
+    assert effects == [{:save, "/tmp/mine.agendum"}]
     assert screen(state) =~ "File to retrieve:"
   end
 

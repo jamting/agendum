@@ -1,6 +1,9 @@
 defmodule Agenda.Store do
   @moduledoc """
-  Saving and loading Agenda files (imperative shell).
+  Saving and loading Agendum files (imperative shell). A file is
+  `.agendum`; a name typed without an extension also finds a `.agenda`
+  file from before the rename. Inside, the tag stays `:agenda`, so every
+  file ever saved still loads.
 
   A file is the database serialized with `:erlang.term_to_binary/1`,
   wrapped in a versioned envelope so the format can evolve.
@@ -31,7 +34,9 @@ defmodule Agenda.Store do
   alias Agenda.Core.Database
 
   @format_version 22
-  @extension ".agenda"
+  @extension ".agendum"
+  # files from before the program was called Wol's Agendum (ADR 0019)
+  @old_extension ".agenda"
 
   def extension, do: @extension
 
@@ -199,6 +204,16 @@ defmodule Agenda.Store do
   @spec normalize_path(String.t()) :: String.t()
   def normalize_path(path) do
     path = Path.expand(String.trim(path))
-    if Path.extname(path) == "", do: path <> @extension, else: path
+
+    cond do
+      Path.extname(path) != "" ->
+        path
+
+      not File.exists?(path <> @extension) and File.exists?(path <> @old_extension) ->
+        path <> @old_extension
+
+      true ->
+        path <> @extension
+    end
   end
 end

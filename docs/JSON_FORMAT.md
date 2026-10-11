@@ -1,10 +1,10 @@
 # The JSON file format
 
-File ▸ Transfer ▸ Export writes a whole Agenda file as JSON, and File ▸
+File ▸ Transfer ▸ Export writes a whole Agendum file as JSON, and File ▸
 Transfer ▸ Import reads one back (SPEC R44, ADR 0010). The JSON holds
 everything in the file, so an export imported again gives the same file. It
 is meant for backups you can read, diffs, scripts and moving data to other
-tools. The working format stays the Erlang-term `.agenda` file (ADR 0003).
+tools. The working format stays the Erlang-term `.agendum` file (ADR 0003).
 
 The code is `Agenda.Core.JSONFile`; `test/agenda/core/json_file_test.exs`
 and `json_round_trip_test.exs` check that a round trip changes nothing.
@@ -31,7 +31,7 @@ and `json_round_trip_test.exs` check that a round trip changes nothing.
 
 ```json
 {
-  "format": "agenda-json",
+  "format": "agendum-json",
   "version": 1,
   "next_id": 21,
   "main": 1,
@@ -46,7 +46,7 @@ and `json_round_trip_test.exs` check that a round trip changes nothing.
 
 | Key          | Meaning                                                                  |
 | ------------ | ------------------------------------------------------------------------ |
-| `format`     | Always `"agenda-json"`.                                                  |
+| `format`     | Always `"agendum-json"`; `"agenda-json"` (before the rename) is read too. |
 | `version`    | The schema version, 1. Later versions of the program will still read it. |
 | `next_id`    | The next id to hand out; above every id in the file.                     |
 | `main`       | The id of MAIN, the root category.                                       |
@@ -133,7 +133,7 @@ open.
 | `url`                   | Where the calendar is read from (`https://…`).                                                                                                                         |
 | `category`              | The category its events' items are assigned to.                                                                                                                        |
 | `ahead_days`            | How far ahead events are imported: 30, 90, 180 or 365.                                                                                                                 |
-| `refresh_minutes`       | How often it is read again while Agenda runs (60, 360, 1440), or `null` for only on request.                                                                           |
+| `refresh_minutes`       | How often it is read again while Agendum runs (60, 360, 1440), or `null` for only on request.                                                                          |
 | `refreshed_at`, `error` | When it was last read, and why that failed; or `null`.                                                                                                                 |
 | `events`                | For each event read: `uid`, its `item`, and the `summary`, `description`, `date`, `time` and `recurrence` it had, so a refresh only changes what the calendar changed. |
 

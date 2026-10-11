@@ -1,7 +1,7 @@
 defmodule Agenda.Core.ICal do
   @moduledoc """
   Reads the events of an iCalendar file (RFC 5545, `.ics`), for calendar
-  subscriptions (SPEC R45). Only what Agenda uses: each VEVENT's UID,
+  subscriptions (SPEC R45). Only what Agendum uses: each VEVENT's UID,
   SUMMARY, DESCRIPTION, DTSTART, RRULE and STATUS; other components
   (VTODO, VTIMEZONE) and alarms inside events are skipped.
 

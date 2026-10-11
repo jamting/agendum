@@ -6,7 +6,7 @@ defmodule Agenda.Core.Calendar do
     * `url`: where it is read from (`webcal://` is read as `https://`)
     * `category_id`: the category its items are assigned to
     * `ahead_days`: how far ahead events are imported, from today (90)
-    * `refresh_minutes`: how often it is read again while Agenda runs (60),
+    * `refresh_minutes`: how often it is read again while Agendum runs (60),
       or `nil` for only on request
     * `events`: what each event (by its UID) looked like when last read,
       and its item: `%{item: id, summary, description, date, time,

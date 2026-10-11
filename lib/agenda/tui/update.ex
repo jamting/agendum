@@ -1515,12 +1515,12 @@ defmodule Agenda.TUI.Update do
     do: replace_file(state, command)
 
   defp do_perform(state, :export_json, _) do
-    name = if state.path, do: Path.rootname(state.path) <> ".json", else: "agenda.json"
+    name = if state.path, do: Path.rootname(state.path) <> ".json", else: "agendum.json"
     prompt(state, "Export to JSON file:", :export_json, name)
   end
 
   defp do_perform(state, :export, _),
-    do: prompt(state, "Print view to text file:", :export, "agenda-view.txt")
+    do: prompt(state, "Print view to text file:", :export, "agendum-view.txt")
 
   defp do_perform(state, :quit, _) do
     if state.dirty,

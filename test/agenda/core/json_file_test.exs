@@ -175,7 +175,7 @@ defmodule Agenda.Core.JSONFileTest do
   describe "the text is readable" do
     test "enumerations are words, dates ISO 8601, keys in a fixed order" do
       text = JSONFile.encode(rich())
-      assert text =~ ~s("format": "agenda-json")
+      assert text =~ ~s("format": "agendum-json")
       assert text =~ ~s("kind": "numeric")
       assert text =~ ~s("assign": "item_text")
       assert text =~ ~s("date": "2026-12-24")
@@ -194,6 +194,7 @@ defmodule Agenda.Core.JSONFileTest do
 
   describe "reading" do
     test "fields left out take their defaults" do
+      # the format's name from before the rename is still read
       text = ~s({"format": "agenda-json", "version": 1, "next_id": 9, "main": 1,
         "special": {"entry": 2, "when": 3, "done": 4},
         "categories": [
@@ -216,7 +217,7 @@ defmodule Agenda.Core.JSONFileTest do
     test "errors say what is wrong and where" do
       good = JSONFile.encode(Core.new_file())
       assert JSONFile.decode("{oops") == {:error, "not valid JSON"}
-      assert JSONFile.decode(~s({"a": 1})) == {:error, "not an Agenda JSON file"}
+      assert JSONFile.decode(~s({"a": 1})) == {:error, "not an Agendum JSON file"}
 
       assert JSONFile.decode(String.replace(good, ~s("version": 1), ~s("version": 9))) ==
                {:error, "unsupported version 9"}
