@@ -182,15 +182,22 @@ defmodule Agenda.Core.Calendar do
     end
   end
 
-  defp occurrences(first, %{freq: :weekly, byday: [_, _ | _] = days, interval: n}) do
-    wanted = days |> Enum.map(&@weekdays[&1]) |> Enum.reject(&is_nil/1)
+  defp occurrences(first, %{freq: :weekly, byday: [_, _ | _] = days, interval: n} = rule) do
     monday = Date.add(first, 1 - Date.day_of_week(first))
 
-    first
-    |> Stream.iterate(&Date.add(&1, 1))
-    |> Stream.filter(fn date ->
-      Date.day_of_week(date) in wanted and rem(div(Date.diff(date, monday), 7), n) == 0
-    end)
+    # days it does not know ("1MO" is for monthly rules) are left out; with
+    # none left, it repeats weekly from the start, as with no days
+    case days |> Enum.map(&@weekdays[&1]) |> Enum.reject(&is_nil/1) do
+      [] ->
+        occurrences(first, %{rule | byday: []})
+
+      wanted ->
+        first
+        |> Stream.iterate(&Date.add(&1, 1))
+        |> Stream.filter(fn date ->
+          Date.day_of_week(date) in wanted and rem(div(Date.diff(date, monday), 7), n) == 0
+        end)
+    end
   end
 
   defp occurrences(first, rule) do

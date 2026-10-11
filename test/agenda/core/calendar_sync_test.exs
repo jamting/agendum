@@ -188,6 +188,23 @@ defmodule Agenda.Core.CalendarSyncTest do
       assert exercise.recurrence == nil
     end
 
+    test "a weekly rule on days Agenda does not know is read as weekly" do
+      {db, cal} = subscribed()
+
+      odd = %{
+        freq: :weekly,
+        interval: 1,
+        byday: ["XX", "1MO"],
+        bymonthday: [],
+        count: nil,
+        until: nil,
+        other: []
+      }
+
+      {db, _} = sync(db, cal, [event("o", "Odd", {:date, ~D[2026-10-01]}, rrule: odd)])
+      assert item(db, cal, "o").when == ~D[2026-10-15]
+    end
+
     test "a series that has ended, or used up its count, is not imported" do
       {db, cal} = subscribed()
 
