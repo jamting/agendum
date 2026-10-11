@@ -10,20 +10,28 @@ defmodule Agenda.CLI do
       agenda --lang NAME      read dates in item text in a language:
                               english (default) or swedish
       agenda --fallback NAME  also read dates in a second language
+      agenda --number-order O how you type dates: mdy, myd, dmy, dym,
+                              ydm or ymd (default: the language's)
+      agenda --date-separator S  / - . , or : between a date's numbers
+      agenda --clock 12|24    how you type times (default: the language's)
 
+  The last three override your preferences (File Properties ▸ Input
+  format, saved in ~/.config/agenda/preferences) for this session.
   Setting the NO_COLOR environment variable selects mono unless --theme
   names a theme.
   """
 
-  alias Agenda.{Core, Sample, Store}
-  alias Agenda.Core.DateLanguage
+  alias Agenda.{Core, Preferences, Sample, Store}
+  alias Agenda.Core.{DateLanguage, InputFormat}
   alias Agenda.TUI.{App, Layout, State, Theme}
 
   @type options :: %{
           file: String.t() | nil,
           demo: boolean,
           theme: Theme.name(),
-          languages: [DateLanguage.pack()]
+          languages: [DateLanguage.pack()],
+          input: %{optional(atom) => term},
+          preferences: String.t() | nil
         }
 
   def main(args) do
@@ -46,7 +54,10 @@ defmodule Agenda.CLI do
           mono: :boolean,
           theme: :string,
           lang: :string,
-          fallback: :string
+          fallback: :string,
+          number_order: :string,
+          date_separator: :string,
+          clock: :string
         ],
         aliases: [h: :help]
       )
@@ -61,7 +72,12 @@ defmodule Agenda.CLI do
       true ->
         with {:ok, theme} <- theme(opts, env),
              {:ok, languages} <- languages(opts),
-             do: {:ok, options(opts, files, theme, languages)}
+             {:ok, input} <- input(opts) do
+          {:ok,
+           opts
+           |> options(files, theme, languages)
+           |> Map.merge(%{input: input, preferences: Preferences.path(env)})}
+        end
     end
   end
 
@@ -98,6 +114,28 @@ defmodule Agenda.CLI do
     end
   end
 
+  # --number-order, --date-separator and --clock (R41b)
+  defp input(opts) do
+    [number_order: "number_order", date_separator: "date_separator", clock: "clock"]
+    |> Enum.filter(fn {flag, _key} -> opts[flag] end)
+    |> Enum.reduce_while({:ok, %{}}, fn {flag, key}, {:ok, acc} ->
+      case Preferences.setting(key, opts[flag]) do
+        {:ok, field, value} -> {:cont, {:ok, Map.put(acc, field, value)}}
+        :error -> {:halt, {:error, bad_input(flag, opts[flag])}}
+      end
+    end)
+  end
+
+  defp bad_input(:number_order, value),
+    do:
+      "Unknown number order #{value}; choose " <>
+        Enum.map_join(InputFormat.orders(), ", ", &Atom.to_string/1)
+
+  defp bad_input(:date_separator, value),
+    do: "Unknown date separator #{value}; choose #{Enum.join(InputFormat.separators(), " ")}"
+
+  defp bad_input(:clock, value), do: "Unknown clock #{value}; choose 12 or 24"
+
   defp options(opts, files, theme, languages),
     do: %{file: List.first(files), demo: opts[:demo] == true, theme: theme, languages: languages}
 
@@ -113,13 +151,18 @@ defmodule Agenda.CLI do
 
     case result do
       {:ok, db, path} ->
+        prefs =
+          if options.preferences, do: Preferences.load(options.preferences), else: %Preferences{}
+
         state =
           db
           |> State.new(
             path: path,
             today: today,
             now: App.local_now(),
-            languages: options.languages
+            languages: options.languages,
+            input: struct(prefs.input, options.input),
+            preferences: options.preferences
           )
           |> Layout.settle()
 

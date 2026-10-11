@@ -585,8 +585,23 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   printing. Our choices: the default is YYYYMMDD with "-" and a 24-hour
   clock (ISO 8601) rather than Agenda's MMDDYY with "/" and 12 hours;
   dates with a month name always use spaces; dates offered for editing
-  stay ISO 8601. More options and date columns of their own: R41a. Not
-  done: the Input format settings.
+  stay ISO 8601. More options and date columns of their own: R41a. The
+  Input format settings: R41b.
+- **R41b ✅ Input format** (User's Guide 7-14, 7-17). How a person types
+  dates and times: Number order (MDY, MYD, DMY, DYM, YDM, YMD; "12/11/90"
+  in DMY is 12 November 1990, and a month and day alone keep the order's
+  sequence, "12/11" in DMY), Input date separator (/ - . , :; it replaces
+  the slash, also after a month name: "nov.12") and Input clock (12 hr:
+  "3:00" is 3 pm, between Morning and 12 hours later; 24 hr: as written).
+  Each is "Language (…)" until set: the date language's numeric order,
+  "/" and clock. Our choice (ADR 0008, 0013): these belong to the person,
+  not the file, unlike Agenda; File Properties ▸ Input format opens the
+  box ("yours, for every file"), and a change applies at once, is not
+  undone with the file, and is saved in the person's preferences file
+  (`~/.config/agenda/preferences`, or under `$XDG_CONFIG_HOME`), plain
+  `key = value` lines. `--number-order`, `--date-separator` and `--clock`
+  set them for one session. ISO dates (2026-10-20) are always read; with
+  ":" as separator, "3:30" is a date, as in Agenda.
 - **R41a ✅ More date display options** (User's Guide 6-19 to 6-22,
   7-14 to 7-15). File Properties shows Agenda's whole Display Format box,
   in its order: Display date and/or time (Date time, Date only, Time date,

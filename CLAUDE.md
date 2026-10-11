@@ -30,7 +30,7 @@ inline `# credo:disable-for-next-line` with the reason.
    (`test/agenda/architecture_test.exs` checks for clock and I/O calls).
 2. **The TUI is Elm-style.** `Agenda.TUI.Update.handle(state, key)` is pure and
    returns `{state, effects}`; `Agenda.TUI.Render.render(state)` is pure and
-   returns styled lines. Only `Terminal`, `App`, `Store` and `CLI` touch the
+   returns styled lines. Only `Terminal`, `App`, `Store`, `Preferences` and `CLI` touch the
    outside world. New side effects become new effect tuples handled in `App`.
 3. The TUI calls the core through `Agenda.Core` (the facade) and reads the
    database through `Agenda.Core.Database` queries. It never calls

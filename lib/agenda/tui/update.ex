@@ -141,6 +141,12 @@ defmodule Agenda.TUI.Update do
 
   # --- results of effects -----------------------------------------------------
 
+  @doc "After saving the person's preferences (R41b): only a failure is reported."
+  def preferences_saved(state, :ok), do: state
+
+  def preferences_saved(state, {:error, reason}),
+    do: State.error(state, "Could not save your preferences: #{inspect(reason)}")
+
   def saved(state, path, :ok) do
     %{state | path: path, dirty: false, saved_db: state.db}
     |> State.info("Saved #{Path.basename(path)}")
@@ -190,6 +196,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :search_box} = m, key), do: SearchBox.handle(state, m, key)
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
   defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
+
+  defp dispatch(state, %{type: :input_format} = m, key),
+    do: Agenda.TUI.InputFormatBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :category_match} = m, key),
     do: Agenda.TUI.CategoryMatchBox.handle(state, m, key)

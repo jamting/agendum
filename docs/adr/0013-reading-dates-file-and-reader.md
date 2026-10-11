@@ -26,6 +26,10 @@ file can change.
 - Number order stays with the reader, set by the date language pack
   (`numeric_order/0`), not by the file. Whether 5/11 is May or November is
   a habit of the person typing, like the words they type.
+- (Amended 2026-10-11, R41b.) The person may override their language's
+  number order, the date separator and the 12/24-hour clock with their
+  own Input format (`Core.InputFormat`, in `Core.Context`), kept in their
+  preferences (ADR 0008), never in the file.
 - Every parser call gets both through `Context.parser_opts(clock,
   db.date_settings)`: the languages from the clock (`Core.Context`), the
   settings from the file. There is no other way into `DateParser`.

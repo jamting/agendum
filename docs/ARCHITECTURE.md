@@ -39,7 +39,8 @@ shell does terminal I/O and file I/O.
 | `Core.TextCondition`                         | Agenda's "Also match" text conditions: `;` any, `,` all, `!`, `~`, `^`, wildcards (R15d).                                                               |
 | `Core.TextMatch`                             | How a file matches text to categories: on/off, match on, strength, enclosed text, suffixes, accents (R16a), proper names (R16c).                        |
 | `Core.Recurrence`                            | The rule of a recurring When date and the next date from a base date (R14a).                                                                            |
-| `Core.Context`                               | The current time and the date languages, passed to the core wherever it reads typed dates (R14c); `parser_opts/2` adds the file's `DateSettings`.       |
+| `Core.Context`                               | The time, date languages and input format (R14c, R41b), passed wherever typed dates are read; `parser_opts/2` adds the file's `DateSettings`.           |
+| `Core.InputFormat`                           | How one person types dates: number order, date separator, 12/24-hour clock; nil is the language's (R41b).                                               |
 | `Core.DateLanguage` (+ `English`, `Swedish`) | Language packs for reading dates: words, phrase patterns, day/month order, clock (R14c). `DateParser` does the arithmetic.                              |
 | `Core.Search`                                | Text search: whether an item's text or note matches (R37).                                                                                              |
 | `Core.RangeFilter`                           | Date and numeric filter ranges: checking, matching, the value a new item gets (R28a).                                                                   |
@@ -72,6 +73,7 @@ shell does terminal I/O and file I/O.
 | `TUI.FileProperties`           | ✔     | The File Properties box: the date display format, with a sample (R41).                                                           |
 | `TUI.DateFormatRows`           | ✔     | The date display settings as box rows, shared by File and Date Column Properties (R41a).                                         |
 | `TUI.DateColumnBox`            | ✔     | The Date Column Properties box: a date column's own format or the global defaults (R41a).                                        |
+| `TUI.InputFormatBox`           | ✔     | The Input Format box: the person's number order, separator and clock, saved as preferences (R41b).                               |
 | `TUI.NoteSearch`               | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
 | `TUI.Render`                   | ✔     | State → list of styled lines (title bar, control panel, body, key bar, boxes).                                                   |
@@ -82,6 +84,7 @@ shell does terminal I/O and file I/O.
 | `TUI.Terminal`                 | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
 | `TUI.App`                      | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |
 | `Agenda.Store`                 | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write).                                                              |
+| `Agenda.Preferences`           | ✘     | The person's preferences file (`key = value`, in the config directory, ADR 0008).                                                |
 | `Agenda.CLI`                   | ✘     | `main/1` for the escript.                                                                                                        |
 
 ## Key design decisions

@@ -21,7 +21,7 @@ defmodule Agenda.TUI.FilePropertiesTest do
     assert text =~ ~r/Display date\/time +: Date time/
     assert text =~ ~r/Show am\/pm +: Yes/
     assert text =~ ~r/Time separator +: :/
-    assert text =~ "Sample: 1990-11-13 15:25"
+    assert text =~ ~r/Sample +: 1990-11-13 15:25/
   end
 
   test "changing a setting changes every date on the screen at once", %{state: state} do
@@ -29,7 +29,7 @@ defmodule Agenda.TUI.FilePropertiesTest do
     state = press(state, [{:f, 10}, "f", "p", :down, :down, " ", :down, " "])
     assert state.db.date_format.order == :yymmdd
     assert state.db.date_format.separator == "."
-    assert screen(state) =~ "Sample: 90.11.13 15:25"
+    assert screen(state) =~ ~r/Sample +: 90\.11\.13 15:25/
 
     state = press(state, :esc)
     assert state.modes == []
@@ -60,7 +60,7 @@ defmodule Agenda.TUI.FilePropertiesTest do
     assert f.order == :ddmmmyyyy
     assert f.clock == 12
     assert f.day_of_week
-    assert screen(state) =~ "Sample: Tue 13 Nov 1990 3:25pm"
+    assert screen(state) =~ ~r/Sample +: Tue 13 Nov 1990 3:25pm/
   end
 
   test "Agenda's other display settings and formats", %{state: state} do
@@ -69,7 +69,7 @@ defmodule Agenda.TUI.FilePropertiesTest do
     assert state.db.date_format.show == :date
     assert state.db.date_format.order == :relative
     assert screen(state) =~ ~r/Date format +: Relative/
-    assert screen(state) =~ "Sample: Tomorrow"
+    assert screen(state) =~ ~r/Sample +: Tomorrow/
 
     state = press(state, [:down, :down, :right, :down, " ", :down, " "])
     f = state.db.date_format
@@ -98,7 +98,7 @@ defmodule Agenda.TUI.FilePropertiesTest do
 
   test "changing a date setting changes how dates are read", %{state: state} do
     # down to Month alone means, then First day -> Last day
-    state = press(state, [{:f, 10}, "f", "p"] ++ List.duplicate(:down, 11) ++ [" "])
+    state = press(state, [{:f, 10}, "f", "p"] ++ List.duplicate(:down, 12) ++ [" "])
     assert state.db.date_settings.month_alone == :last
     assert screen(state) =~ ~r/Month alone means +: Last day/
 

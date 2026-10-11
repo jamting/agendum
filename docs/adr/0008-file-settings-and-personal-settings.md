@@ -29,6 +29,15 @@ shared between people with different habits.
 - The core receives personal settings as arguments: `Core.Context` for the
   time and date languages (ADR 0009), and options such as the separators.
 
+**Amended 2026-10-11 (R41b):** the preferences file now exists,
+`Agenda.Preferences`: plain `key = value` lines in
+`$XDG_CONFIG_HOME/agenda/preferences` (or `~/.config/agenda/preferences`),
+read by the CLI at start and written through an App effect when the
+person changes a setting. It holds the Input format (number order, input
+date separator, input clock), which Agenda kept in the file; command-line
+flags override it for one session. Other personal settings (theme,
+languages) will move there.
+
 ## Consequences
 
 - Opening someone else's file never changes how your screen looks or how

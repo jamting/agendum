@@ -6,7 +6,8 @@ defmodule Agenda.TUI.FileProperties do
   assignments, R16).
 
   Rows: Agenda's Display Format box (`Agenda.TUI.DateFormatRows`), with
-  a formatted sample below; then
+  a formatted sample below; Input format, which opens the person's own
+  box (`Agenda.TUI.InputFormatBox`, R41b); then
   Agenda's Global Date Settings (beginning and end of week, first
   quarter, beginning of year, month alone means, morning, afternoon,
   evening); then Auto-assign settings, which opens its own box
@@ -30,7 +31,7 @@ defmodule Agenda.TUI.FileProperties do
     :afternoon,
     :evening
   ]
-  @rows @format_rows ++ @settings_rows ++ [:auto_assign]
+  @rows @format_rows ++ [:input_format] ++ @settings_rows ++ [:auto_assign]
   @days ~w(Mon Tue Wed Thu Fri Sat Sun)
   @months ~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
 
@@ -50,6 +51,7 @@ defmodule Agenda.TUI.FileProperties do
   end
 
   defp change(state, :auto_assign, _step), do: Agenda.TUI.AutoAssignBox.open(state)
+  defp change(state, :input_format, _step), do: Agenda.TUI.InputFormatBox.open(state)
 
   defp change(state, row, step) when row in @settings_rows do
     settings = DateSettings.cycle(state.db.date_settings, row, step)
@@ -68,6 +70,7 @@ defmodule Agenda.TUI.FileProperties do
 
     DateFormatRows.lines(f) ++
       [
+        {"Input format", "(yours; SPACE)"},
         {"Beginning of week", Enum.at(@days, s.week_start - 1)},
         {"End of week", Enum.at(@days, s.week_end - 1)},
         {"First quarter", Enum.at(@months, s.quarter_start - 1) <> " 1"},

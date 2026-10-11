@@ -57,7 +57,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Show Prereqs / Show Depends in the Show View (R43)
 - [x] Item Properties lists the items an item depends on, and those depending on it, by name (R43)
 - [x] More date display options: per-column formats, display date/time, Day #, Week #, Relative, am/pm, hm (R41a)
-- [ ] Date input format settings (R41)
+- [x] Date input format: number order, input date separator, input clock, as personal preferences (R41b)
 - [x] Assignment conditions, conditional assignments (R15)
 - [x] Date and numeric conditions, re-checked when the date changes (R15a)
 - [x] "Also match" text conditions (R15d)

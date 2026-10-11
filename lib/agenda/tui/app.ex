@@ -4,7 +4,7 @@ defmodule Agenda.TUI.App do
   `Update`, performs the resulting effects, and draws `Render` output.
   """
 
-  alias Agenda.Store
+  alias Agenda.{Preferences, Store}
   alias Agenda.TUI.{Keys, Layout, Render, Screen, State, Terminal, Update}
 
   # How long to wait for the rest of an escape sequence before treating ESC as a key.
@@ -71,9 +71,17 @@ defmodule Agenda.TUI.App do
   defp run_effects(state, [effect | rest]) do
     state =
       case effect do
-        {:save, path} -> Update.saved(state, path, Store.save(state.db, path))
-        {:load, path} -> Update.loaded(state, path, Store.load(path))
-        {:write_text, path, text} -> Update.written(state, path, File.write(path, text))
+        {:save, path} ->
+          Update.saved(state, path, Store.save(state.db, path))
+
+        {:load, path} ->
+          Update.loaded(state, path, Store.load(path))
+
+        {:write_text, path, text} ->
+          Update.written(state, path, File.write(path, text))
+
+        {:save_preferences, path, prefs} ->
+          Update.preferences_saved(state, Preferences.save(prefs, path))
       end
 
     run_effects(state, rest)

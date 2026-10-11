@@ -58,21 +58,52 @@ defmodule Agenda.Core.DateParser do
       unit), `:now`
   """
 
-  alias Agenda.Core.{DateLanguage, DateSettings, Recurrence}
+  alias Agenda.Core.{DateLanguage, DateSettings, InputFormat, Recurrence}
 
   @default [DateLanguage.English]
 
   # The rules of the given packs as {meaning, whole-word pattern, number of
-  # capture groups, pack, pack's position}; `kind` is :date or :time.
-  defp compile(languages, kind, in_text) do
+  # capture groups, pack, pack's position}; `kind` is :date or :time. The
+  # person's input format (R41b) rewrites calendar notation and clocks.
+  defp compile(languages, kind, in_text, input) do
     for {pack, position} <- Enum.with_index(languages),
-        {meaning, pattern} <- if(kind == :date, do: pack.rules(), else: pack.time_rules()),
+        rule <- if(kind == :date, do: pack.rules(), else: pack.time_rules()),
+        {meaning, pattern} = input_rule(rule, pack, input),
         not (in_text and kind == :date and meaning in pack.text_excluded()) do
       groups = length(Regex.scan(~r/(?<!\\)\((?!\?)/, pattern))
       pattern = ascii_digits(pattern)
       {meaning, "(?<![\\p{L}\\p{N}])(?:#{pattern})(?![\\p{L}\\p{N}])", groups, pack, position}
     end
   end
+
+  # Calendar notation in the person's order and separator: up to three
+  # numbers, read by `{:numeric_in, order}`; a month name before the day
+  # takes the separator too.
+  defp input_rule({:numeric, pattern}, pack, input) do
+    if InputFormat.own_dates?(input) do
+      order = input.number_order || InputFormat.language_value(:number_order, pack)
+      sep = Regex.escape(input.separator || "/")
+      {{:numeric_in, order}, "(\\d{1,4})#{sep}(\\d{1,4})(?:#{sep}(\\d{1,4}))?"}
+    else
+      {:numeric, pattern}
+    end
+  end
+
+  defp input_rule({:month_day, pattern}, _pack, %{separator: sep}) when sep != nil,
+    do: {:month_day, String.replace(pattern, "/", Regex.escape(sep))}
+
+  defp input_rule({meaning, pattern}, pack, input)
+       when meaning in [:clock, :hour_ampm, :at_hour] do
+    clock =
+      case input.clock || InputFormat.language_value(:clock, pack) do
+        24 -> :twenty_four
+        12 -> :agenda
+      end
+
+    {{meaning, clock}, pattern}
+  end
+
+  defp input_rule(rule, _pack, _input), do: rule
 
   # With Unicode on, \\d would also match other scripts' digits ("٥"), which
   # are not numbers to us: \\d becomes 0-9, inside a [class] or as one.
@@ -207,16 +238,17 @@ defmodule Agenda.Core.DateParser do
         ]
   def extract_all(text, %NaiveDateTime{} = now, opts \\ []) do
     {languages, s} = {languages(opts), Keyword.get(opts, :settings) || %DateSettings{}}
+    input = Keyword.get(opts, :input) || %InputFormat{}
     today = NaiveDateTime.to_date(now)
 
     dates =
       text
-      |> matches(compile(languages, :date, true), &interpret(&1, &2, &3, today, s))
+      |> matches(compile(languages, :date, true, input), &interpret(&1, &2, &3, today, s))
       |> disjoint()
 
     times =
       text
-      |> matches(compile(languages, :time, true), &interpret_time(&1, &2, &3, now, s))
+      |> matches(compile(languages, :time, true, input), &interpret_time(&1, &2, &3, now, s))
       |> Enum.reject(fn {start, neg_len, _, _} ->
         Enum.any?(dates, &overlaps?({nil, &1.span}, {start, -neg_len}))
       end)
@@ -289,15 +321,16 @@ defmodule Agenda.Core.DateParser do
   # The first date and the first time in `text`, combined.
   defp find_when(text, now, opts, in_text) do
     {languages, s} = {languages(opts), Keyword.get(opts, :settings) || %DateSettings{}}
+    input = Keyword.get(opts, :input) || %InputFormat{}
     today = NaiveDateTime.to_date(now)
+    date_rules = compile(languages, :date, in_text, input)
 
-    date =
-      first(matches(text, compile(languages, :date, in_text), &interpret(&1, &2, &3, today, s)))
+    date = first(matches(text, date_rules, &interpret(&1, &2, &3, today, s)))
 
     # a time may not reuse the date's words ("at 12/24" is a date)
     time =
       text
-      |> matches(compile(languages, :time, in_text), &interpret_time(&1, &2, &3, now, s))
+      |> matches(compile(languages, :time, in_text, input), &interpret_time(&1, &2, &3, now, s))
       |> Enum.reject(fn {start, neg_len, _, _} -> overlaps?(date, {start, -neg_len}) end)
       |> first()
 
@@ -377,11 +410,14 @@ defmodule Agenda.Core.DateParser do
 
   # --- times --------------------------------------------------------------------
 
-  defp interpret_time(:clock, [h, m | ampm], pack, _now, s),
-    do: clock(h, int(m), List.first(ampm), pack, s)
+  # the clock (12 or 24 hr) is the person's or the language's (R41b)
+  defp interpret_time({:clock, clock}, [h, m | ampm], _pack, _now, s),
+    do: clock(h, int(m), List.first(ampm), clock, s)
 
-  defp interpret_time(:hour_ampm, [h, ampm], pack, _now, s), do: clock(h, 0, ampm, pack, s)
-  defp interpret_time(:at_hour, [h], pack, _now, s), do: clock(h, 0, nil, pack, s)
+  defp interpret_time({:hour_ampm, clock}, [h, ampm], _pack, _now, s),
+    do: clock(h, 0, ampm, clock, s)
+
+  defp interpret_time({:at_hour, clock}, [h], _pack, _now, s), do: clock(h, 0, nil, clock, s)
 
   # a time, or :morning, :afternoon or :evening as the file sets them (R14e)
   defp interpret_time(:time_word, [word], pack, _now, s) do
@@ -402,7 +438,7 @@ defmodule Agenda.Core.DateParser do
   # hours from Morning (8:00 am to 7:59 pm by default, R14e); hours over
   # 12, 0 and a leading zero ("08:30") are read as a 24-hour clock. A
   # 24-hour clock reads every hour as written.
-  defp clock(h, m, ampm, pack, s) do
+  defp clock(h, m, ampm, clock, s) do
     hour = int(h)
 
     hour =
@@ -410,8 +446,9 @@ defmodule Agenda.Core.DateParser do
         ampm && hour > 12 -> nil
         ampm && String.starts_with?(ampm, "p") -> rem(hour, 12) + 12
         ampm -> rem(hour, 12)
-        pack.clock() == :twenty_four -> hour
+        clock == :twenty_four -> hour
         hour == 0 or hour > 12 or String.starts_with?(h, "0") -> hour
+        m > 59 -> nil
         hour < 12 and Time.compare(Time.new!(hour, m, 0), s.morning) == :lt -> hour + 12
         true -> hour
       end
@@ -432,6 +469,22 @@ defmodule Agenda.Core.DateParser do
     case List.first(y) do
       nil -> future(int(m), int(d), today)
       y -> build(year(y), int(m), int(d))
+    end
+  end
+
+  # the person's number order (R41b): three numbers, or month and day in
+  # the order's sequence
+  defp interpret({:numeric_in, order}, groups, _pack, today, _s) do
+    letters = order |> Atom.to_string() |> String.graphemes()
+    numbers = Enum.reject(groups, &is_nil/1)
+    letters = if length(numbers) == 2, do: List.delete(letters, "y"), else: letters
+    parts = Map.new(Enum.zip(letters, numbers))
+
+    cond do
+      byte_size(parts["m"]) > 2 or byte_size(parts["d"]) > 2 -> :error
+      parts["y"] == nil -> future(int(parts["m"]), int(parts["d"]), today)
+      byte_size(parts["y"]) in [2, 4] -> build(year(parts["y"]), int(parts["m"]), int(parts["d"]))
+      true -> :error
     end
   end
 

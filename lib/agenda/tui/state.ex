@@ -42,6 +42,8 @@ defmodule Agenda.TUI.State do
           last_note_search: Agenda.TUI.NoteSearch.settings() | nil,
           key_map: boolean,
           languages: [Agenda.Core.DateLanguage.pack()],
+          input: Agenda.Core.InputFormat.t(),
+          preferences: String.t() | nil,
           last_key: term,
           undo: [map],
           redo: [map],
@@ -71,6 +73,8 @@ defmodule Agenda.TUI.State do
             last_note_search: nil,
             key_map: true,
             languages: [Agenda.Core.DateLanguage.English],
+            input: %Agenda.Core.InputFormat{},
+            preferences: nil,
             last_key: nil,
             undo: [],
             redo: [],
@@ -90,18 +94,21 @@ defmodule Agenda.TUI.State do
       width: Keyword.get(opts, :width, 80),
       height: Keyword.get(opts, :height, 25),
       languages: Keyword.get(opts, :languages, [Agenda.Core.DateLanguage.English]),
+      input: Keyword.get(opts, :input, %Agenda.Core.InputFormat{}),
+      preferences: opts[:preferences],
       view_id: hd(db.view_order),
       saved_db: db
     }
   end
 
   @doc """
-  What the core needs to read typed dates: the current time and the date
-  languages chosen on the command line (R14c).
+  What the core needs to read typed dates: the current time, the date
+  languages chosen on the command line (R14c) and the person's input
+  format (R41b).
   """
   @spec context(t) :: Agenda.Core.Context.t()
-  def context(%__MODULE__{now: now, languages: languages}),
-    do: %Agenda.Core.Context{now: now, languages: languages}
+  def context(%__MODULE__{now: now, languages: languages, input: input}),
+    do: %Agenda.Core.Context{now: now, languages: languages, input: input}
 
   @spec view(t) :: Agenda.Core.View.t()
   def view(%__MODULE__{db: db, view_id: id}), do: Database.view(db, id)

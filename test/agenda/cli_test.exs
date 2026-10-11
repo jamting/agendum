@@ -49,4 +49,21 @@ defmodule Agenda.CLITest do
     assert {:error, message} = CLI.parse_args(["--colour"], %{})
     assert message =~ "--colour"
   end
+
+  test "the input format for this session (R41b)" do
+    assert {:ok, %{input: input}} =
+             CLI.parse_args(["--number-order=dmy", "--date-separator", ".", "--clock=24"], %{})
+
+    assert input == %{number_order: :dmy, separator: ".", clock: 24}
+    assert {:ok, %{input: %{}}} = CLI.parse_args([], %{})
+    assert {:error, message} = CLI.parse_args(["--number-order=xyz"], %{})
+    assert message =~ "mdy, myd, dmy, dym, ydm, ymd"
+    assert {:error, _} = CLI.parse_args(["--clock=13"], %{})
+    assert {:error, _} = CLI.parse_args(["--date-separator=x"], %{})
+  end
+
+  test "the preferences file comes from the environment" do
+    assert {:ok, %{preferences: "/h/.config/agenda/preferences"}} =
+             CLI.parse_args([], %{"HOME" => "/h"})
+  end
 end

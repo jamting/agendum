@@ -13,8 +13,8 @@ and easy for AI assistants to change safely.
 All domain logic lives in pure modules under `lib/agenda/core`, operating on
 one immutable `Database` value. The UI is Elm-style: a pure
 `Update.handle(state, key) → {state, effects}` and a pure
-`Render.render(state) → lines`. Only `Terminal`, `App`, `Store` and `CLI`
-perform I/O. The clock is read in the shell and passed in.
+`Render.render(state) → lines`. Only `Terminal`, `App`, `Store`,
+`Preferences` (added 2026-10-11, ADR 0008) and `CLI` perform I/O. The clock is read in the shell and passed in.
 
 ## Consequences
 
