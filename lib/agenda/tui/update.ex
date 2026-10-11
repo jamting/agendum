@@ -197,6 +197,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
   defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
 
+  defp dispatch(state, %{type: :customize} = m, key),
+    do: Agenda.TUI.CustomizeBox.handle(state, m, key)
+
   defp dispatch(state, %{type: :input_format} = m, key),
     do: Agenda.TUI.InputFormatBox.handle(state, m, key)
 
@@ -1399,6 +1402,7 @@ defmodule Agenda.TUI.Update do
   end
 
   defp do_perform(state, :file_props, _), do: FileProperties.open(state)
+  defp do_perform(state, :customize, _), do: Agenda.TUI.CustomizeBox.open(state)
   defp do_perform(state, :execute, _), do: Agenda.TUI.ExecuteBox.open(state)
   defp do_perform(state, :questions, _), do: Agenda.TUI.QuestionsBox.open(state)
 

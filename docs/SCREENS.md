@@ -42,6 +42,7 @@ flowchart LR
     View -- "ALT-F10" --> MoveItem["Moving items"]
     View -- "a key with items marked" --> Scope["Scope box"]
     Menu -- "File ▸ Properties" --> FileProps["File Properties"]
+    Menu -- "File ▸ Customize" --> Customize["Customize (yours)"]
     Menu -- "Category ▸ Execute" --> Execute["Execute box"]
     Menu -- "Category ▸ Questions" --> Questions["Questions box"]
     Menu -- "View ▸ Column ▸ Properties" --> ColProps["Column Properties"]
@@ -71,6 +72,7 @@ flowchart LR
     FileProps["File Properties"]
     FileProps -- "Input format" --> InputFormat["Input format (yours)"]
     FileProps -- "Auto-assign settings" --> AutoAssign["Auto-assign settings"]
+    Customize["Customize (yours)"] -- "Input format" --> InputFormat
     ColProps["Column Properties"]
     ColProps -- "numeric column" --> NumCol["Numeric column"]
     ColProps -- "date column" --> DateCol["Date column"]
@@ -168,6 +170,10 @@ or handles it.
     - **Auto-assign settings** `:auto_assign` (Auto-assign settings): text
       matching for the file and Confirm assignments (R16, R16a).
       `TUI.AutoAssignBox`.
+  - **Customize** `:customize` (File ▸ Customize): the person's theme, date
+    language and fallback language, saved as preferences (R40, R14c).
+    `TUI.CustomizeBox`.
+    - **Input format** `:input_format` (Input format).
   - **Column Properties** (View ▸ Column ▸ Properties, on a column entry):
     - **Numeric column** `:column_props`: number format and calculations
       (R29). `TUI.ColumnProperties`.
@@ -213,7 +219,8 @@ dependencies after its question, Undo, Save) are not listed.
 | `:date_rule`         | box           | `TUI.DateRuleBox`      | Advanced settings of a date category             | R6b           |
 | `:category_match`    | box           | `TUI.CategoryMatchBox` | Advanced settings of a standard category         | R16b          |
 | `:file_props`        | box           | `TUI.FileProperties`   | File ▸ Properties                                | R41, R14e     |
-| `:input_format`      | box           | `TUI.InputFormatBox`   | File Properties ▸ Input format                   | R41b          |
+| `:input_format`      | box           | `TUI.InputFormatBox`   | File Properties or Customize ▸ Input format      | R41b          |
+| `:customize`         | box           | `TUI.CustomizeBox`     | File ▸ Customize                                 | R40, R14c     |
 | `:auto_assign`       | box           | `TUI.AutoAssignBox`    | File Properties ▸ Auto-assign settings           | R16a          |
 | `:column_props`      | box           | `TUI.ColumnProperties` | View ▸ Column ▸ Properties, numeric column       | R29           |
 | `:date_column_props` | box           | `TUI.DateColumnBox`    | View ▸ Column ▸ Properties, date column          | R41a          |

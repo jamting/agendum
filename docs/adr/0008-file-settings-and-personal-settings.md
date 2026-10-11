@@ -33,10 +33,12 @@ shared between people with different habits.
 `Agenda.Preferences`: plain `key = value` lines in
 `$XDG_CONFIG_HOME/agenda/preferences` (or `~/.config/agenda/preferences`),
 read by the CLI at start and written through an App effect when the
-person changes a setting. It holds the Input format (number order, input
-date separator, input clock), which Agenda kept in the file; command-line
-flags override it for one session. Other personal settings (theme,
-languages) will move there.
+person changes a setting. It holds the theme, the date languages and the
+Input format (number order, input date separator, input clock, which
+Agenda kept in the file); File ▸ Customize sets them, and command-line
+flags override them for one session. Only a setting the person changes
+is saved, so a flag never ends up in the file. A preferred theme
+overrides NO_COLOR, as no-color.org asks of user configuration.
 
 ## Consequences
 

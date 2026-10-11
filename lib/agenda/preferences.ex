@@ -1,7 +1,8 @@
 defmodule Agenda.Preferences do
   @moduledoc """
-  The person's preferences, for every file they open (ADR 0008): for now
-  the Input format (`Agenda.Core.InputFormat`, R41b). Kept in a plain
+  The person's preferences, for every file they open (ADR 0008): the
+  colour theme (`theme`, R40), the date languages (`lang` and `fallback`,
+  R14c) and the Input format (`Agenda.Core.InputFormat`, R41b). Kept in a plain
   text file, one `key = value` per line, in the config directory
   (`$XDG_CONFIG_HOME/agenda/preferences` or
   `~/.config/agenda/preferences`). A setting left out is the date
@@ -11,10 +12,16 @@ defmodule Agenda.Preferences do
   (imperative shell, like `Agenda.Store`).
   """
 
-  alias Agenda.Core.InputFormat
+  alias Agenda.Core.{DateLanguage, InputFormat}
+  alias Agenda.TUI.Theme
 
-  @type t :: %__MODULE__{input: InputFormat.t()}
-  defstruct input: %InputFormat{}
+  @typedoc "`theme` nil and `languages` [] mean the defaults (classic, English)."
+  @type t :: %__MODULE__{
+          theme: Theme.name() | nil,
+          languages: [DateLanguage.pack()],
+          input: InputFormat.t()
+        }
+  defstruct theme: nil, languages: [], input: %InputFormat{}
 
   @doc "Where the preferences file is, from the environment; nil without a home."
   @spec path(%{String.t() => String.t()}) :: String.t() | nil
@@ -44,24 +51,36 @@ defmodule Agenda.Preferences do
   @doc "Preferences from the file's text."
   @spec parse(String.t()) :: t
   def parse(text) do
+    pairs =
+      for line <- String.split(text, "\n"),
+          not String.starts_with?(String.trim_leading(line), "#"),
+          [key, value] <- [String.split(line, "=", parts: 2)],
+          do: {String.trim(key), String.trim(value)}
+
     input =
-      text
-      |> String.split("\n")
-      |> Enum.map(&String.split(&1, "=", parts: 2))
-      |> Enum.reduce(%InputFormat{}, fn
-        [key, value], input -> put(input, String.trim(key), String.trim(value))
-        _, input -> input
+      Enum.reduce(pairs, %InputFormat{}, fn {key, value}, input ->
+        case setting(key, value) do
+          {:ok, field, value} -> Map.put(input, field, value)
+          :error -> input
+        end
       end)
 
-    %__MODULE__{input: input}
+    pick = fn key, read ->
+      Enum.find_value(pairs, &(elem(&1, 0) == key && ok(read.(elem(&1, 1)))))
+    end
+
+    main = pick.("lang", &DateLanguage.find/1)
+    fallback = pick.("fallback", &DateLanguage.find/1)
+
+    %__MODULE__{
+      theme: pick.("theme", &Theme.parse/1),
+      languages: if(main, do: Enum.uniq([main | List.wrap(fallback)]), else: []),
+      input: input
+    }
   end
 
-  defp put(input, key, value) do
-    case setting(key, value) do
-      {:ok, field, value} -> Map.put(input, field, value)
-      :error -> input
-    end
-  end
+  defp ok({:ok, value}), do: value
+  defp ok(:error), do: nil
 
   @doc """
   One Input format setting from its key and text ("number_order", "dmy"),
@@ -84,9 +103,19 @@ defmodule Agenda.Preferences do
 
   @doc "The file's text."
   @spec format(t) :: String.t()
-  def format(%__MODULE__{input: input}) do
+  def format(%__MODULE__{input: input} = prefs) do
+    {main, fallback} =
+      case prefs.languages do
+        [main, fallback | _] -> {main.name(), fallback.name()}
+        [main] -> {main.name(), nil}
+        [] -> {nil, nil}
+      end
+
     lines =
       [
+        {"theme", prefs.theme && Atom.to_string(prefs.theme)},
+        {"lang", main},
+        {"fallback", fallback},
         {"number_order", input.number_order && Atom.to_string(input.number_order)},
         {"date_separator", input.separator},
         {"clock", input.clock && Integer.to_string(input.clock)}
@@ -94,8 +123,11 @@ defmodule Agenda.Preferences do
       |> Enum.reject(&(elem(&1, 1) == nil))
       |> Enum.map(fn {key, value} -> "#{key} = #{value}\n" end)
 
-    "# Agenda preferences: yours, for every file. A setting left out is your\n" <>
-      "# date language's. Number order: mdy myd dmy dym ydm ymd; date separator:\n" <>
-      "# / - . , :; clock: 12 or 24.\n" <> Enum.join(lines)
+    "# Agenda preferences: yours, for every file. A setting left out is the\n" <>
+      "# default: theme classic, lang english, and for dates your language's.\n" <>
+      "# theme: #{Enum.join(Theme.names(), " ")}; lang, fallback: " <>
+      Enum.map_join(DateLanguage.packs(), " ", & &1.name()) <>
+      "\n# number_order: mdy myd dmy dym ydm ymd; date_separator: / - . , :;\n" <>
+      "# clock: 12 or 24.\n" <> Enum.join(lines)
   end
 end

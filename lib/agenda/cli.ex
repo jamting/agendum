@@ -15,10 +15,11 @@ defmodule Agenda.CLI do
       agenda --date-separator S  / - . , or : between a date's numbers
       agenda --clock 12|24    how you type times (default: the language's)
 
-  The last three override your preferences (File Properties ▸ Input
-  format, saved in ~/.config/agenda/preferences) for this session.
-  Setting the NO_COLOR environment variable selects mono unless --theme
-  names a theme.
+  Your preferences (File ▸ Customize, saved in
+  ~/.config/agenda/preferences) give the theme, languages and input
+  format; these flags override them for this session. Setting the
+  NO_COLOR environment variable selects mono unless --theme or your
+  preferences name a theme.
   """
 
   alias Agenda.{Core, Preferences, Sample, Store}
@@ -30,22 +31,30 @@ defmodule Agenda.CLI do
           demo: boolean,
           theme: Theme.name(),
           languages: [DateLanguage.pack()],
-          input: %{optional(atom) => term},
+          input: InputFormat.t(),
           preferences: String.t() | nil
         }
 
   def main(args) do
-    case parse_args(args, System.get_env()) do
+    env = System.get_env()
+    path = Preferences.path(env)
+    prefs = if path, do: Preferences.load(path), else: %Preferences{}
+
+    case parse_args(args, env, prefs) do
       :help -> IO.puts(@moduledoc)
-      {:ok, options} -> start(options)
+      {:ok, options} -> start(options, prefs)
       {:error, message} -> exit_with(message)
     end
   end
 
-  @doc "The options in `args`, given the environment variables `env`. Pure."
-  @spec parse_args([String.t()], %{String.t() => String.t()}) ::
+  @doc """
+  The options in `args`, given the environment variables `env` and the
+  person's preferences: a flag wins, then a preference, then NO_COLOR,
+  then the default. Pure.
+  """
+  @spec parse_args([String.t()], %{String.t() => String.t()}, Preferences.t()) ::
           {:ok, options} | :help | {:error, String.t()}
-  def parse_args(args, env) do
+  def parse_args(args, env, prefs \\ %Preferences{}) do
     {opts, files, invalid} =
       OptionParser.parse(args,
         strict: [
@@ -70,18 +79,19 @@ defmodule Agenda.CLI do
         {:error, "Unknown option: #{invalid |> hd() |> elem(0)} (try --help)"}
 
       true ->
-        with {:ok, theme} <- theme(opts, env),
-             {:ok, languages} <- languages(opts),
+        with {:ok, theme} <- theme(opts, env, prefs),
+             {:ok, languages} <- languages(opts, prefs),
              {:ok, input} <- input(opts) do
           {:ok,
            opts
            |> options(files, theme, languages)
-           |> Map.merge(%{input: input, preferences: Preferences.path(env)})}
+           |> Map.merge(%{input: struct(prefs.input, input), preferences: Preferences.path(env)})}
         end
     end
   end
 
-  defp theme(opts, env) do
+  # NO_COLOR gives way to a theme the person chose (no-color.org)
+  defp theme(opts, env, prefs) do
     cond do
       opts[:theme] ->
         with :error <- Theme.parse(opts[:theme]),
@@ -91,6 +101,9 @@ defmodule Agenda.CLI do
       opts[:mono] ->
         {:ok, :mono}
 
+      prefs.theme ->
+        {:ok, prefs.theme}
+
       Map.get(env, "NO_COLOR", "") != "" ->
         {:ok, :mono}
 
@@ -99,10 +112,18 @@ defmodule Agenda.CLI do
     end
   end
 
-  # --lang (default english), then --fallback if given (R14c).
-  defp languages(opts) do
-    with {:ok, main} <- language(opts[:lang] || "english"),
-         {:ok, fallback} <- if(opts[:fallback], do: language(opts[:fallback]), else: {:ok, nil}) do
+  # --lang (else the preferred one, else english), then --fallback (else
+  # the preferred fallback) (R14c).
+  defp languages(opts, prefs) do
+    {preferred, preferred_fallback} =
+      case prefs.languages do
+        [main | rest] -> {main, List.first(rest)}
+        [] -> {DateLanguage.English, nil}
+      end
+
+    with {:ok, main} <- if(opts[:lang], do: language(opts[:lang]), else: {:ok, preferred}),
+         {:ok, fallback} <-
+           if(opts[:fallback], do: language(opts[:fallback]), else: {:ok, preferred_fallback}) do
       {:ok, Enum.uniq([main | List.wrap(fallback)])}
     end
   end
@@ -139,7 +160,7 @@ defmodule Agenda.CLI do
   defp options(opts, files, theme, languages),
     do: %{file: List.first(files), demo: opts[:demo] == true, theme: theme, languages: languages}
 
-  defp start(options) do
+  defp start(options, prefs) do
     today = App.local_today()
 
     result =
@@ -151,9 +172,6 @@ defmodule Agenda.CLI do
 
     case result do
       {:ok, db, path} ->
-        prefs =
-          if options.preferences, do: Preferences.load(options.preferences), else: %Preferences{}
-
         state =
           db
           |> State.new(
@@ -161,12 +179,14 @@ defmodule Agenda.CLI do
             today: today,
             now: App.local_now(),
             languages: options.languages,
-            input: struct(prefs.input, options.input),
+            input: options.input,
+            theme: options.theme,
+            prefs: prefs,
             preferences: options.preferences
           )
           |> Layout.settle()
 
-        case App.run(state, options.theme) do
+        case App.run(state) do
           :ok -> :ok
           {:error, reason} -> exit_with("Could not start the terminal UI: #{inspect(reason)}")
         end

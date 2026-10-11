@@ -54,8 +54,8 @@ defmodule Agenda.CLITest do
     assert {:ok, %{input: input}} =
              CLI.parse_args(["--number-order=dmy", "--date-separator", ".", "--clock=24"], %{})
 
-    assert input == %{number_order: :dmy, separator: ".", clock: 24}
-    assert {:ok, %{input: %{}}} = CLI.parse_args([], %{})
+    assert input == %Agenda.Core.InputFormat{number_order: :dmy, separator: ".", clock: 24}
+    assert {:ok, %{input: %Agenda.Core.InputFormat{}}} = CLI.parse_args([], %{})
     assert {:error, message} = CLI.parse_args(["--number-order=xyz"], %{})
     assert message =~ "mdy, myd, dmy, dym, ydm, ymd"
     assert {:error, _} = CLI.parse_args(["--clock=13"], %{})
@@ -65,5 +65,47 @@ defmodule Agenda.CLITest do
   test "the preferences file comes from the environment" do
     assert {:ok, %{preferences: "/h/.config/agenda/preferences"}} =
              CLI.parse_args([], %{"HOME" => "/h"})
+  end
+
+  describe "with preferences (ADR 0008)" do
+    alias Agenda.Core.DateLanguage.{English, Swedish}
+    alias Agenda.Core.InputFormat
+    alias Agenda.Preferences
+
+    @prefs %Preferences{
+      theme: :mono,
+      languages: [Swedish, English],
+      input: %InputFormat{number_order: :dmy, clock: 24}
+    }
+
+    test "they are used when no flag says otherwise" do
+      assert {:ok, options} = CLI.parse_args([], %{}, @prefs)
+      assert options.theme == :mono
+      assert options.languages == [Swedish, English]
+      assert options.input == @prefs.input
+    end
+
+    test "flags win for this session" do
+      assert {:ok, options} =
+               CLI.parse_args(["--theme=classic", "--lang=english", "--clock=12"], %{}, @prefs)
+
+      assert options.theme == :classic
+      assert options.languages == [English]
+      assert options.input == %InputFormat{number_order: :dmy, clock: 12}
+    end
+
+    test "--fallback alone keeps the preferred main language" do
+      prefs = %Preferences{languages: [Swedish]}
+
+      assert {:ok, %{languages: [Swedish, English]}} =
+               CLI.parse_args(["--fallback=english"], %{}, prefs)
+    end
+
+    test "a preferred theme overrides NO_COLOR; without one NO_COLOR still applies" do
+      assert {:ok, %{theme: :classic}} =
+               CLI.parse_args([], %{"NO_COLOR" => "1"}, %Preferences{theme: :classic})
+
+      assert {:ok, %{theme: :mono}} = CLI.parse_args([], %{"NO_COLOR" => "1"}, %Preferences{})
+    end
   end
 end

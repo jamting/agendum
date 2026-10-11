@@ -44,6 +44,8 @@ defmodule Agenda.TUI.State do
           languages: [Agenda.Core.DateLanguage.pack()],
           input: Agenda.Core.InputFormat.t(),
           preferences: String.t() | nil,
+          prefs: Agenda.Preferences.t(),
+          theme: Agenda.TUI.Theme.name(),
           last_key: term,
           undo: [map],
           redo: [map],
@@ -75,6 +77,8 @@ defmodule Agenda.TUI.State do
             languages: [Agenda.Core.DateLanguage.English],
             input: %Agenda.Core.InputFormat{},
             preferences: nil,
+            prefs: %Agenda.Preferences{},
+            theme: :classic,
             last_key: nil,
             undo: [],
             redo: [],
@@ -96,6 +100,8 @@ defmodule Agenda.TUI.State do
       languages: Keyword.get(opts, :languages, [Agenda.Core.DateLanguage.English]),
       input: Keyword.get(opts, :input, %Agenda.Core.InputFormat{}),
       preferences: opts[:preferences],
+      prefs: Keyword.get(opts, :prefs, %Agenda.Preferences{}),
+      theme: Keyword.get(opts, :theme, :classic),
       view_id: hd(db.view_order),
       saved_db: db
     }
@@ -109,6 +115,21 @@ defmodule Agenda.TUI.State do
   @spec context(t) :: Agenda.Core.Context.t()
   def context(%__MODULE__{now: now, languages: languages, input: input}),
     do: %Agenda.Core.Context{now: now, languages: languages, input: input}
+
+  @doc """
+  Changes one of the person's preferences (R40, R14c, R41b): `change`
+  updates what the session uses, and the same field of the stored
+  preferences, which are saved when there is a preferences file. Only the
+  changed setting is saved, never one a flag gave for this session.
+  """
+  @spec change_preference(t, (t -> t), (Agenda.Preferences.t() -> Agenda.Preferences.t())) :: t
+  def change_preference(state, change, change_prefs) do
+    state = %{change.(state) | prefs: change_prefs.(state.prefs)}
+
+    if state.preferences,
+      do: effect(state, {:save_preferences, state.preferences, state.prefs}),
+      else: state
+  end
 
   @spec view(t) :: Agenda.Core.View.t()
   def view(%__MODULE__{db: db, view_id: id}), do: Database.view(db, id)

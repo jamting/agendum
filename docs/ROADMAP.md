@@ -84,7 +84,8 @@ Rule numbers refer to `SPEC.md`.
 - [ ] Pop-up calendar: F3 in a date column picks a date (User's Guide chapter 6)
 - [ ] Learn-mode macros: record keystrokes, store them in the file, replay them, attach them to keys (Working with Macros, chapter 1)
 - [ ] A starter file like Agenda's Activities Planner: categories and views, no items (Starter Applications)
-- [ ] Preferences (Utilities Customize), stored outside the file: theme and custom colours, key map on/off (ALT-K), confirm mode, auto-save interval, decimal and thousands separators (Setting Up Agenda 1-25 to 1-31)
+- [x] Preferences file and File ▸ Customize (Utilities Customize): theme, date languages, input format (R40, R14c, R41b)
+- [ ] More preferences: custom colours, key map on/off (ALT-K), confirm mode, auto-save interval, decimal and thousands separators (Setting Up Agenda 1-25 to 1-31)
 - [ ] Smaller fidelity items: Trash and Undiscard, File Abandon, unindexed categories, typing in the view manager jumps to a view
 
 ## Housekeeping

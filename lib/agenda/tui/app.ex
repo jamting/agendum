@@ -12,15 +12,15 @@ defmodule Agenda.TUI.App do
   # How often to check for terminal resizes and date changes when idle.
   @idle_timeout 500
 
-  @doc "Runs the program until it quits; `theme` is the `Agenda.TUI.Theme` to draw with."
-  @spec run(State.t(), Agenda.TUI.Theme.name()) :: :ok | {:error, term}
-  def run(%State{} = state, theme \\ :classic) do
+  @doc "Runs the program until it quits, drawing with the state's `Agenda.TUI.Theme`."
+  @spec run(State.t()) :: :ok | {:error, term}
+  def run(%State{} = state) do
     case Terminal.start() do
       :ok ->
         Terminal.start_reader(self())
 
         try do
-          loop(state, nil, "", theme)
+          loop(state, nil, "", state.theme)
         after
           Terminal.stop()
         end
@@ -30,7 +30,10 @@ defmodule Agenda.TUI.App do
     end
   end
 
+  # `theme` is the theme `previous` was drawn with; a new one redraws all.
   defp loop(state, previous, buffer, theme) do
+    previous = if state.theme == theme, do: previous, else: nil
+    theme = state.theme
     {state, previous} = draw(state, previous, theme)
     timeout = if buffer == "", do: @idle_timeout, else: @escape_timeout
 

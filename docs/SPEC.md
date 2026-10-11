@@ -202,8 +202,10 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   read as a 24-hour clock. When columns show "2026-10-13 15:00" and sort
   by date and time. A time never reuses a date's words ("at 12/24").
 - **R14c ✅ Date languages** (not in Agenda). Dates and times can be typed
-  in another language than English, chosen when the program starts:
-  `--lang=swedish`, with an optional second language, `--fallback=english`,
+  in another language than English, chosen in File ▸ Customize (Date
+  language, Fallback language; saved in the person's preferences, R41b)
+  or for one session with `--lang=swedish`, with an optional second
+  language, `--fallback=english`,
   whose phrases are read as well (where both match the same words, the
   main language wins; without a fallback only the main language and ISO
   dates are read). It applies to every date typed: item text, date
@@ -569,12 +571,14 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 - **R40 ✅ Colour themes** (Setting Up Agenda 1-25 to 1-31). The screen is
   drawn with a theme chosen at start: `classic` (blue and white, like DOS
   Agenda; the default) or `mono` (bold, dim, underline and reverse only).
-  `--theme NAME` or `--mono` choose it; the NO_COLOR environment variable
-  selects mono unless `--theme` is given. The theme is a personal
-  preference, not part of the file, as in Agenda, where Utilities
-  Customize set Color (Mono, Color, Plasma or Custom, with a colour for
-  each screen element) for all files. Not done: choosing the theme or
-  custom colours inside the program (Utilities Customize, on the roadmap).
+  File ▸ Customize (Agenda's Utilities Customize) changes it at once and
+  saves it in the person's preferences file (R41b); `--theme NAME` or
+  `--mono` choose it for one session; the NO_COLOR environment variable
+  selects mono unless `--theme` or the preferences name a theme. The
+  theme is a personal preference, not part of the file, as in Agenda,
+  where Utilities Customize set Color (Mono, Color, Plasma or Custom,
+  with a colour for each screen element) for all files. Not done: custom
+  colours.
 - **R41 ✅ Date display format** (User's Guide 6-20 to 6-22, 7-13 to 7-15).
   File ▸ Properties sets how the file displays dates and times, as
   Agenda's global Display format: Date format (Agenda's 14 orders, from
@@ -599,7 +603,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   box ("yours, for every file"), and a change applies at once, is not
   undone with the file, and is saved in the person's preferences file
   (`~/.config/agenda/preferences`, or under `$XDG_CONFIG_HOME`), plain
-  `key = value` lines. `--number-order`, `--date-separator` and `--clock`
+  `key = value` lines, which File ▸ Customize also writes (theme, date
+  languages; it opens this box too). Only the setting changed is saved,
+  never one a flag gave for the session. `--number-order`, `--date-separator` and `--clock`
   set them for one session. ISO dates (2026-10-20) are always read; with
   ":" as separator, "3:30" is a date, as in Agenda.
 - **R41a ✅ More date display options** (User's Guide 6-19 to 6-22,

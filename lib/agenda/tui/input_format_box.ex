@@ -12,7 +12,6 @@ defmodule Agenda.TUI.InputFormatBox do
   """
 
   alias Agenda.Core.InputFormat
-  alias Agenda.Preferences
   alias Agenda.TUI.State
 
   @rows [:number_order, :separator, :clock]
@@ -33,15 +32,14 @@ defmodule Agenda.TUI.InputFormatBox do
   end
 
   defp change(state, row, step) do
-    state = %{state | input: InputFormat.cycle(state.input, row, step)}
+    input = InputFormat.cycle(state.input, row, step)
+    value = Map.fetch!(input, row)
 
-    if state.preferences,
-      do:
-        State.effect(
-          state,
-          {:save_preferences, state.preferences, %Preferences{input: state.input}}
-        ),
-      else: state
+    State.change_preference(
+      state,
+      &%{&1 | input: input},
+      &%{&1 | input: Map.put(&1.input, row, value)}
+    )
   end
 
   @doc "`{label, value}` for each row."

@@ -77,6 +77,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.DateFormatRows`           | ✔     | The date display settings as box rows, shared by File and Date Column Properties (R41a).                                         |
 | `TUI.DateColumnBox`            | ✔     | The Date Column Properties box: a date column's own format or the global defaults (R41a).                                        |
 | `TUI.InputFormatBox`           | ✔     | The Input Format box: the person's number order, separator and clock, saved as preferences (R41b).                               |
+| `TUI.CustomizeBox`             | ✔     | File ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
 | `TUI.NoteSearch`               | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
 | `TUI.Render`                   | ✔     | State → list of styled lines (title bar, control panel, body, key bar, boxes).                                                   |
@@ -87,7 +88,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.Terminal`                 | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
 | `TUI.App`                      | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |
 | `Agenda.Store`                 | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write).                                                              |
-| `Agenda.Preferences`           | ✘     | The person's preferences file (`key = value`, in the config directory, ADR 0008).                                                |
+| `Agenda.Preferences`           | ✘     | The person's preferences file: theme, languages, input format (`key = value`, ADR 0008).                                         |
 | `Agenda.CLI`                   | ✘     | `main/1` for the escript.                                                                                                        |
 
 ## Key design decisions

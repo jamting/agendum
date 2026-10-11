@@ -8,8 +8,10 @@ defmodule Agenda.TUI.Theme do
     * `:mono` uses only bold, dim, underline and reverse video, for
       monochrome terminals, screen readers and NO_COLOR
 
-  Like Agenda, which chose colour or monochrome when it was installed, the
-  theme is picked when the program starts (`Agenda.CLI`), not in the file.
+  Like Agenda, where Utilities Customize chose colour or monochrome for all
+  files, the theme is the person's: File ▸ Customize, saved in their
+  preferences (`Agenda.Preferences`), or `--theme` for a session; never
+  in the file.
   """
 
   @type name :: :classic | :mono

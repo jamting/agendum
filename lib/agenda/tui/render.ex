@@ -27,6 +27,7 @@ defmodule Agenda.TUI.Render do
     :note_search,
     :file_props,
     :input_format,
+    :customize,
     :date_rule,
     :category_match,
     :auto_assign,
@@ -139,6 +140,7 @@ defmodule Agenda.TUI.Render do
             :item_props,
             :file_props,
             :input_format,
+            :customize,
             :date_rule,
             :category_match,
             :auto_assign,
@@ -416,7 +418,7 @@ defmodule Agenda.TUI.Render do
   defp mode_keys(%{type: :date_rule}),
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
 
-  defp mode_keys(%{type: :input_format}),
+  defp mode_keys(%{type: type}) when type in [:input_format, :customize],
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
 
   defp mode_keys(%{type: :file_props}),
@@ -922,6 +924,7 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
   defp box_title(_state, %{type: :file_props}), do: "File properties"
   defp box_title(_state, %{type: :input_format}), do: "Input format (yours, for every file)"
+  defp box_title(_state, %{type: :customize}), do: "Customize (yours, for every file)"
 
   defp box_title(_state, %{type: :auto_assign}), do: "Auto-assign settings"
 
@@ -1255,10 +1258,15 @@ defmodule Agenda.TUI.Render do
     rows ++ [[], [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]]
   end
 
-  defp box_content(state, %{type: :input_format} = mode, _inner, _max_rows) do
+  defp box_content(state, %{type: type} = mode, _inner, _max_rows)
+       when type in [:input_format, :customize] do
+    lines =
+      if type == :customize,
+        do: Agenda.TUI.CustomizeBox.lines(state),
+        else: Agenda.TUI.InputFormatBox.lines(state)
+
     rows =
-      state
-      |> Agenda.TUI.InputFormatBox.lines()
+      lines
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
