@@ -53,6 +53,9 @@ shell does terminal I/O and file I/O.
 
 ### TUI (`lib/agenda/tui/*`)
 
+Every screen, box and control-panel mode, and how each is reached, is mapped
+in [`SCREENS.md`](SCREENS.md).
+
 | Module                         | Pure? | Responsibility                                                                                                                   |
 | ------------------------------ | ----- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `TUI.State`                    | ✔     | UI state: db, path, cursor, scroll, **mode stack**, inline edit, message, queued effects.                                        |
