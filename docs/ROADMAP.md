@@ -54,6 +54,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix
 - [ ] Startup: a splash screen, and a File Retrieve box when no file is named
 - [ ] Hypertext help: topics with links (TAB, ENTER), Index, Find, Review (Agenda's F1)
+- [ ] Splash screen as original Agenda. Title: "WOL'S AGENDUM" Tagline: "Hoo's in control? You are." Copyright: "Copyright JWD + WOL. All rites reserved. "
 
 ## Milestone 3 — Smarter assignment
 
