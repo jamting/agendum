@@ -747,7 +747,10 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   Transfer ▸ Export writes the whole file as readable JSON (the name
   offered is the file's, with `.json`); File ▸ Transfer ▸ Import reads one
   and opens it as a new, untitled file, to be saved under a name (the open
-  file is replaced, as with Retrieve; nothing is merged). Everything in the
+  file is replaced, as with Retrieve; nothing is merged). Like Retrieve
+  and New, and as Quit already did, it first asks "Save changes first?
+  (Y/N, ESC to cancel)" when the open file has unsaved changes: Y saves
+  (asking for a name if it has none) and goes on, N goes on, ESC cancels. Everything in the
   file survives a round trip: categories and their properties, items with
   their assignments, dates, numbers, dependencies and suggestions, views,
   and the file's settings; the person's own settings (theme, languages,

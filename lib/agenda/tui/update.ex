@@ -1072,6 +1072,11 @@ defmodule Agenda.TUI.Update do
     state |> Map.put(:path, path) |> State.effect({:save, path}) |> State.effect(:quit)
   end
 
+  defp prompt_action(state, {:save_as_then, command}, text) do
+    path = Agenda.Store.normalize_path(text)
+    state |> Map.put(:path, path) |> State.effect({:save, path}) |> replace_file(command)
+  end
+
   defp prompt_action(state, :retrieve, text),
     do: State.effect(state, {:load, Agenda.Store.normalize_path(text)})
 
@@ -1246,9 +1251,24 @@ defmodule Agenda.TUI.Update do
     end
   end
 
+  defp confirmed(state, {:leave_for, command}, true) do
+    if state.path,
+      do: state |> State.effect({:save, state.path}) |> replace_file(command),
+      else: prompt(state, "Save file as:", {:save_as_then, command})
+  end
+
+  defp confirmed(state, {:leave_for, command}, false), do: replace_file(state, command)
+
   defp confirmed(state, :quit, true), do: perform(state, :save_and_quit)
   defp confirmed(state, :quit, false), do: State.effect(state, :quit)
   defp confirmed(state, _action, false), do: state
+
+  # Asks which file replaces the open one (after any question about saving).
+  defp replace_file(state, :retrieve), do: prompt(state, "File to retrieve:", :retrieve)
+  defp replace_file(state, :new_file), do: prompt(state, "Name of new file:", :new_file)
+
+  defp replace_file(state, :import_json),
+    do: prompt(state, "JSON file to import (opens as a new file):", :import_json)
 
   # --- notes --------------------------------------------------------------------
 
@@ -1389,16 +1409,18 @@ defmodule Agenda.TUI.Update do
   defp do_perform(state, :save_as, _),
     do: prompt(state, "Save file as:", :save_as, state.path || "")
 
-  defp do_perform(state, :retrieve, _), do: prompt(state, "File to retrieve:", :retrieve)
-  defp do_perform(state, :new_file, _), do: prompt(state, "Name of new file:", :new_file)
+  # Commands that replace the open file ask first when it has unsaved changes.
+  defp do_perform(%State{dirty: true} = state, command, _)
+       when command in [:retrieve, :new_file, :import_json],
+       do: confirm(state, "Save changes first? (Y/N, ESC to cancel)", {:leave_for, command})
+
+  defp do_perform(state, command, _) when command in [:retrieve, :new_file, :import_json],
+    do: replace_file(state, command)
 
   defp do_perform(state, :export_json, _) do
     name = if state.path, do: Path.rootname(state.path) <> ".json", else: "agenda.json"
     prompt(state, "Export to JSON file:", :export_json, name)
   end
-
-  defp do_perform(state, :import_json, _),
-    do: prompt(state, "JSON file to import (opens as a new file):", :import_json)
 
   defp do_perform(state, :export, _),
     do: prompt(state, "Print view to text file:", :export, "agenda-view.txt")
