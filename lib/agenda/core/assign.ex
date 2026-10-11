@@ -536,7 +536,7 @@ defmodule Agenda.Core.Assign do
   defp name_level(name, prepared, settings) do
     cond do
       Regex.match?(~r/^[\p{L}\p{N}'’_\-.\s]+$/u, name) ->
-        TextMatch.level(name, prepared, settings)
+        TextMatch.level(name, prepared, settings, name: true)
 
       name_in_text?(name, prepared.text) ->
         :full

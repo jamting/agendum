@@ -383,8 +383,7 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   is dropped. A text condition in parentheses must have its words in
   that order ("(meet with)"), and "^" before one matches its words as they
   are, ignoring no suffixes ("^eats"). A name with other characters
-  ("C++") matches as written. Not done yet: Agenda's proper names and
-  titles ("Mrs. Wohl" matching Nancy Wohl).
+  ("C++") matches as written. Proper names and titles: R16c.
 - **R16b ✅ Text matching for one category** (User's Guide 19-8,
   19-14 to 19-15). Category Properties ▸ Advanced settings of a standard
   category (for a date category it holds R6b's date settings) sets Text
@@ -397,6 +396,21 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   assignments, and the category manager marks its own Match on with
   "T= Note" as Agenda does. The row sums up what the category sets
   ("Match on: Note text") or says Global.
+- **R16c ✅ Proper names and titles** (User's Guide 19-17). A category
+  name or short name with two or more consecutive capitalized words holds
+  a proper name ("Nancy Wohl"; hence the manual's advice to write
+  "Status report", not "Status Report"). The name matches when the text
+  has its last name, exactly (no suffixes ignored), alone ("Send it to
+  Wohl"), after a title ("Mrs. Wohl") or after one of its own first names,
+  but not after another capitalized word ("John Wohl" is someone else)
+  and not on the first name alone; a capitalized word starting the text
+  or a sentence does not count ("Call Wohl"). Required match strength does
+  not apply to the name; other words of the category name match as usual
+  ("visit Nancy Wohl" matches "Visiting Mrs. Wohl"). Titles, with or
+  without a period: Mr, Ms, Miss, Mrs, Messrs, Dr, M, MM, Monsieur,
+  Madame, Mme, Mmes, Mademoiselle, Mlle, Mlles, Herr, Hr, Frau, Fr,
+  Fräulein, Fri, Fru, Fröken, Frk. "Michael Schaeffer" in an item matches
+  Michael, Schaeffer and Michael Schaeffer, not Michael Rowles.
 - **R15c ✅ Text matches as conditional assignments** (User's Guide 18-3).
   An assignment made because the item's text matched a category (its name,
   short name or text conditions) is conditional, marked "(c)" in Item
