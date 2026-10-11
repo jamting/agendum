@@ -28,6 +28,7 @@ defmodule Agenda.TUI.Render do
     :file_props,
     :input_format,
     :customize,
+    :calendars,
     :date_rule,
     :category_match,
     :auto_assign,
@@ -142,6 +143,7 @@ defmodule Agenda.TUI.Render do
             :file_props,
             :input_format,
             :customize,
+            :calendars,
             :date_rule,
             :category_match,
             :auto_assign,
@@ -421,6 +423,16 @@ defmodule Agenda.TUI.Render do
 
   defp mode_keys(%{type: :date_rule}),
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
+
+  defp mode_keys(%{type: :calendars}),
+    do: [
+      {"INS", "Subscribe"},
+      {"ENTER", "Read now"},
+      {"F", "How often"},
+      {"A", "Ahead"},
+      {"DEL", "Unsubscribe"},
+      {"ESC", "Close"}
+    ]
 
   defp mode_keys(%{type: type}) when type in [:input_format, :customize],
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
@@ -949,6 +961,7 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :file_props}), do: "File properties"
   defp box_title(_state, %{type: :input_format}), do: "Input format (yours, for every file)"
   defp box_title(_state, %{type: :customize}), do: "Customize (yours, for every file)"
+  defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
   defp box_title(_state, %{type: :auto_assign}), do: "Auto-assign settings"
 
@@ -1280,6 +1293,17 @@ defmodule Agenda.TUI.Render do
       end)
 
     rows ++ [[], [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]]
+  end
+
+  defp box_content(state, %{type: :calendars} = mode, _inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.CalendarsBox.lines(mode)
+      |> Enum.map(fn {style, text} ->
+        [{if(style == :selected, do: :box_selected, else: :box), " " <> text}]
+      end)
+
+    rows ++ [[], [{:box, " INS subscribe · ENTER read now · F how often · A ahead · DEL"}]]
   end
 
   defp box_content(state, %{type: type} = mode, _inner, _max_rows)

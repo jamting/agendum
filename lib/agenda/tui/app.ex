@@ -4,7 +4,7 @@ defmodule Agenda.TUI.App do
   `Update`, performs the resulting effects, and draws `Render` output.
   """
 
-  alias Agenda.{Preferences, Store}
+  alias Agenda.{CalendarFetch, Preferences, Store}
   alias Agenda.TUI.{Keys, Layout, Render, Screen, State, Terminal, Update}
 
   # How long to wait for the rest of an escape sequence before treating ESC as a key.
@@ -44,6 +44,10 @@ defmodule Agenda.TUI.App do
 
       :input_closed ->
         :ok
+
+      # a calendar read in the background (R45)
+      {:calendar_read, id, result} ->
+        loop(Update.calendar_read(state, id, result), previous, buffer, theme)
     after
       timeout ->
         continue(state, previous, Keys.flush(buffer), "", theme)
@@ -88,6 +92,11 @@ defmodule Agenda.TUI.App do
 
         {:save_preferences, path, prefs} ->
           Update.preferences_saved(state, Preferences.save(prefs, path))
+
+        {:fetch_calendar, id, url} ->
+          loop = self()
+          Task.start(fn -> send(loop, {:calendar_read, id, CalendarFetch.read(url)}) end)
+          state
       end
 
     run_effects(state, rest)
@@ -97,6 +106,7 @@ defmodule Agenda.TUI.App do
     {width, height} = Terminal.size()
     {state, effects} = Update.tick(state, local_now())
     if :bell in effects, do: Terminal.write("\a")
+    {:ok, state} = run_effects(state, List.delete(effects, :bell))
     resized = {width, height} != {state.width, state.height}
     state = %{state | width: width, height: height}
     state = if resized, do: Layout.settle(state), else: state

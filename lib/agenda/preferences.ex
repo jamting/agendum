@@ -15,13 +15,17 @@ defmodule Agenda.Preferences do
   alias Agenda.Core.{DateLanguage, InputFormat}
   alias Agenda.TUI.Theme
 
-  @typedoc "`theme` nil and `languages` [] mean the defaults (classic, English)."
+  @typedoc """
+  `theme` nil and `languages` [] mean the defaults (classic, English);
+  `path` is where they are kept (nil: not saved), never written in them.
+  """
   @type t :: %__MODULE__{
           theme: Theme.name() | nil,
           languages: [DateLanguage.pack()],
-          input: InputFormat.t()
+          input: InputFormat.t(),
+          path: String.t() | nil
         }
-  defstruct theme: nil, languages: [], input: %InputFormat{}
+  defstruct theme: nil, languages: [], input: %InputFormat{}, path: nil
 
   @doc "Where the preferences file is, from the environment; nil without a home."
   @spec path(%{String.t() => String.t()}) :: String.t() | nil
@@ -33,12 +37,12 @@ defmodule Agenda.Preferences do
     end
   end
 
-  @doc "Reads preferences; a missing or unreadable file gives the defaults."
+  @doc "Reads preferences, remembering where; a missing or unreadable file gives the defaults."
   @spec load(String.t()) :: t
   def load(path) do
     case File.read(path) do
-      {:ok, text} -> parse(text)
-      {:error, _} -> %__MODULE__{}
+      {:ok, text} -> %{parse(text) | path: path}
+      {:error, _} -> %__MODULE__{path: path}
     end
   end
 

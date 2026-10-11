@@ -12,7 +12,7 @@ defmodule Agenda.TUI.InputFormatBoxTest do
 
   setup do
     state = start(Agenda.Sample.build(~D[2026-10-08]))
-    %{state: %{state | preferences: "/prefs"}}
+    %{state: %{state | prefs: %Agenda.Preferences{path: "/prefs"}}}
   end
 
   # File Properties, then down to Input format (after the 7 display rows)
@@ -60,7 +60,7 @@ defmodule Agenda.TUI.InputFormatBoxTest do
   end
 
   test "without a preferences file the change lasts the session", %{state: state} do
-    state = open_box(%{state | preferences: nil})
+    state = open_box(%{state | prefs: %Agenda.Preferences{}})
     {state, effects} = Update.handle(state, :down) |> elem(0) |> Update.handle(:right)
     assert state.input.separator == "/"
     assert effects == []

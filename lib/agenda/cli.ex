@@ -181,8 +181,7 @@ defmodule Agenda.CLI do
             languages: options.languages,
             input: options.input,
             theme: options.theme,
-            prefs: prefs,
-            preferences: options.preferences
+            prefs: prefs
           )
           |> Layout.settle()
 

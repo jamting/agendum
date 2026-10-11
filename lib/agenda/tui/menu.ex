@@ -25,7 +25,8 @@ defmodule Agenda.TUI.Menu do
          {"Transfer", "Export the whole file as JSON, or import one",
           [
             {"Export", "Write the whole file as a JSON file", :export_json},
-            {"Import", "Open a JSON file as a new, untitled file", :import_json}
+            {"Import", "Open a JSON file as a new, untitled file", :import_json},
+            {"Calendars", "Subscribe to calendars on the web (iCal); read them now", :calendars}
           ]}
        ]},
       {"Item", "Work with the highlighted item",

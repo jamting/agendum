@@ -13,7 +13,7 @@ defmodule Agenda.TUI.CustomizeBoxTest do
 
   setup do
     state = start(Agenda.Sample.build(~D[2026-10-08]))
-    %{state: %{state | preferences: "/prefs"}}
+    %{state: %{state | prefs: %Agenda.Preferences{path: "/prefs"}}}
   end
 
   defp open_box(state), do: press(state, [{:f, 10}, "f", "c"])
@@ -75,13 +75,13 @@ defmodule Agenda.TUI.CustomizeBoxTest do
       state
       | input: %InputFormat{clock: 24},
         theme: :mono,
-        prefs: %Preferences{theme: :mono}
+        prefs: %Preferences{theme: :mono, path: "/prefs"}
     }
 
     {state, [{:save_preferences, _, saved}]} =
       state |> open_box() |> press(:down) |> key({:char, " "})
 
-    assert saved == %Preferences{theme: :mono, languages: [Swedish]}
+    assert saved == %Preferences{theme: :mono, languages: [Swedish], path: "/prefs"}
     assert state.input.clock == 24
   end
 end

@@ -47,10 +47,10 @@ defmodule Agenda.PreferencesTest do
 
   test "saves and loads; a missing file is the defaults", %{tmp_dir: dir} do
     path = Path.join([dir, "agenda", "preferences"])
-    assert Preferences.load(path) == %Preferences{}
+    assert Preferences.load(path) == %Preferences{path: path}
 
     prefs = %Preferences{input: %InputFormat{separator: "-"}}
     assert :ok = Preferences.save(prefs, path)
-    assert Preferences.load(path) == prefs
+    assert Preferences.load(path) == %{prefs | path: path}
   end
 end

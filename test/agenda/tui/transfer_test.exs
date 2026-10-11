@@ -66,16 +66,14 @@ defmodule Agenda.TUI.TransferTest do
       state
       | theme: :mono,
         input: %InputFormat{clock: 24},
-        preferences: "/prefs",
-        prefs: %Agenda.Preferences{theme: :mono}
+        prefs: %Agenda.Preferences{theme: :mono, path: "/prefs"}
     }
 
     for next <- [
           Update.imported(state, "/x.json", {:ok, JSONFile.encode(state.db)}),
           Update.loaded(state, "/x.agenda", {:ok, state.db})
         ] do
-      assert {next.theme, next.input, next.preferences, next.prefs} ==
-               {state.theme, state.input, state.preferences, state.prefs}
+      assert {next.theme, next.input, next.prefs} == {state.theme, state.input, state.prefs}
     end
   end
 end

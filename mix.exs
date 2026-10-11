@@ -19,7 +19,7 @@ defmodule Agenda.MixProject do
   end
 
   def application do
-    [extra_applications: [:logger]]
+    [extra_applications: [:logger, :inets, :ssl, :public_key]]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]

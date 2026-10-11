@@ -81,6 +81,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.DateColumnBox`            | ✔     | The Date Column Properties box: a date column's own format or the global defaults (R41a).                                        |
 | `TUI.InputFormatBox`           | ✔     | The Input Format box: the person's number order, separator and clock, saved as preferences (R41b).                               |
 | `TUI.CustomizeBox`             | ✔     | File ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
+| `TUI.CalendarsBox`             | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
 | `TUI.NoteSearch`               | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
 | `TUI.DevTools`                 | ✔     | The hidden developer screen (ESC ?): state for debugging, and a key tester.                                                      |
@@ -93,6 +94,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.App`                      | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |
 | `Agenda.Store`                 | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write).                                                              |
 | `Agenda.Preferences`           | ✘     | The person's preferences file: theme, languages, input format (`key = value`, ADR 0008).                                         |
+| `Agenda.CalendarFetch`         | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
 | `Agenda.CLI`                   | ✘     | `main/1` for the escript.                                                                                                        |
 
 ## Key design decisions

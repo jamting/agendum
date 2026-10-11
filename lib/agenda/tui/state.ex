@@ -43,8 +43,8 @@ defmodule Agenda.TUI.State do
           key_map: boolean,
           languages: [Agenda.Core.DateLanguage.pack()],
           input: Agenda.Core.InputFormat.t(),
-          preferences: String.t() | nil,
           prefs: Agenda.Preferences.t(),
+          fetching: %{optional(pos_integer) => :manual | :auto},
           theme: Agenda.TUI.Theme.name(),
           last_key: term,
           undo: [map],
@@ -76,8 +76,8 @@ defmodule Agenda.TUI.State do
             key_map: true,
             languages: [Agenda.Core.DateLanguage.English],
             input: %Agenda.Core.InputFormat{},
-            preferences: nil,
             prefs: %Agenda.Preferences{},
+            fetching: %{},
             theme: :classic,
             last_key: nil,
             undo: [],
@@ -99,7 +99,6 @@ defmodule Agenda.TUI.State do
       height: Keyword.get(opts, :height, 25),
       languages: Keyword.get(opts, :languages, [Agenda.Core.DateLanguage.English]),
       input: Keyword.get(opts, :input, %Agenda.Core.InputFormat{}),
-      preferences: opts[:preferences],
       prefs: Keyword.get(opts, :prefs, %Agenda.Preferences{}),
       theme: Keyword.get(opts, :theme, :classic),
       view_id: hd(db.view_order),
@@ -126,8 +125,8 @@ defmodule Agenda.TUI.State do
   def change_preference(state, change, change_prefs) do
     state = %{change.(state) | prefs: change_prefs.(state.prefs)}
 
-    if state.preferences,
-      do: effect(state, {:save_preferences, state.preferences, state.prefs}),
+    if state.prefs.path,
+      do: effect(state, {:save_preferences, state.prefs.path, state.prefs}),
       else: state
   end
 
@@ -148,8 +147,7 @@ defmodule Agenda.TUI.State do
         languages: state.languages,
         input: state.input,
         theme: state.theme,
-        prefs: state.prefs,
-        preferences: state.preferences
+        prefs: state.prefs
       )
       | key_map: state.key_map
     }

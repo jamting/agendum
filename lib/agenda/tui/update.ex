@@ -153,14 +153,77 @@ defmodule Agenda.TUI.Update do
     state = %{state | now: now, today: today, db: db}
     state = %{state | dirty: state.db != state.saved_db}
 
+    # calendars due to be read again (R45), one read at a time each
+    state =
+      db
+      |> Core.calendars_due(now)
+      |> Enum.reduce(%{state | effects: []}, &fetch_calendar(&2, &1.id, :auto))
+
+    {state, fetches} = {%{state | effects: []}, state.effects}
+
     case rung do
       [] ->
-        {state, []}
+        {state, fetches}
 
       ids ->
         texts = Enum.map_join(ids, " · ", &state.db.items[&1].text)
-        {%{state | alarm_rang: true} |> State.info("Alarm: " <> texts), [:bell]}
+        {%{state | alarm_rang: true} |> State.info("Alarm: " <> texts), [:bell | fetches]}
     end
+  end
+
+  @doc """
+  Asks the shell to read a calendar (`{:fetch_calendar, id, url}`), unless
+  it is being read already; `kind` is `:manual` (from the Calendars box,
+  which reports the result) or `:auto` (on schedule, quiet unless something
+  changed).
+  """
+  def fetch_calendar(state, cal_id, kind) do
+    cal = state.db.calendars[cal_id]
+
+    if cal == nil or Map.has_key?(state.fetching, cal_id),
+      do: state,
+      else:
+        %{state | fetching: Map.put(state.fetching, cal_id, kind)}
+        |> State.effect({:fetch_calendar, cal_id, cal.url})
+  end
+
+  @doc """
+  After the shell read a calendar: its events are mirrored into the file
+  (one undo step), or the failure is remembered (R45).
+  """
+  def calendar_read(state, cal_id, result) do
+    {kind, fetching} = Map.pop(state.fetching, cal_id)
+    state = %{state | fetching: fetching}
+    cal = state.db.calendars[cal_id]
+
+    if cal == nil do
+      state
+    else
+      next = read_into(state, cal, kind, result)
+      next = %{History.record(state, next) | dirty: next.db != next.saved_db}
+      if next.modes == [], do: Layout.settle(next), else: next
+    end
+  end
+
+  defp read_into(state, cal, kind, {:ok, events}) do
+    {:ok, db, counts} = Core.sync_calendar(state.db, cal.id, events, State.context(state))
+    state = %{state | db: db}
+
+    parts =
+      [added: "new", updated: "changed", removed: "removed"]
+      |> Enum.filter(fn {key, _} -> counts[key] > 0 end)
+      |> Enum.map_join(", ", fn {key, word} -> "#{counts[key]} #{word}" end)
+
+    cond do
+      parts != "" -> State.info(state, "#{cal.name}: #{parts}")
+      kind == :manual -> State.info(state, "#{cal.name}: no changes")
+      true -> state
+    end
+  end
+
+  defp read_into(state, cal, kind, {:error, message}) do
+    state = %{state | db: Core.calendar_failed(state.db, cal.id, message, State.context(state))}
+    if kind == :manual, do: State.error(state, "#{cal.name}: #{message}"), else: state
   end
 
   # --- results of effects -----------------------------------------------------
@@ -240,6 +303,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :search_box} = m, key), do: SearchBox.handle(state, m, key)
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
   defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
+
+  defp dispatch(state, %{type: :calendars} = m, key),
+    do: Agenda.TUI.CalendarsBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :customize} = m, key),
     do: Agenda.TUI.CustomizeBox.handle(state, m, key)
@@ -1077,6 +1143,26 @@ defmodule Agenda.TUI.Update do
     state |> Map.put(:path, path) |> State.effect({:save, path}) |> replace_file(command)
   end
 
+  # Calendars (R45): the address, then a name for its category
+  defp prompt_action(state, :calendar_url, text),
+    do: prompt(state, "Name of its category (its events go there):", {:calendar_name, text})
+
+  defp prompt_action(state, {:calendar_name, url}, name) do
+    case Core.subscribe_calendar(state.db, name, url) do
+      {:ok, db, id} ->
+        state
+        |> State.change_db(db)
+        |> State.info("Subscribed to #{name}")
+        |> fetch_calendar(id, :manual)
+
+      {:error, :bad_url} ->
+        State.error(state, "A calendar needs an https:// or webcal:// address")
+
+      {:error, :no_name} ->
+        State.error(state, "A calendar needs a name")
+    end
+  end
+
   defp prompt_action(state, :retrieve, text),
     do: State.effect(state, {:load, Agenda.Store.normalize_path(text)})
 
@@ -1249,6 +1335,14 @@ defmodule Agenda.TUI.Update do
       {:error, :last_view} ->
         State.error(state, "A file must have at least one view")
     end
+  end
+
+  defp confirmed(state, {:unsubscribe_calendar, id}, discard) do
+    name = state.db.calendars[id].name
+
+    state
+    |> State.change_db(Core.unsubscribe_calendar(state.db, id, discard))
+    |> State.info("Unsubscribed from #{name}")
   end
 
   defp confirmed(state, {:leave_for, command}, true) do
@@ -1483,6 +1577,7 @@ defmodule Agenda.TUI.Update do
 
   defp do_perform(state, :file_props, _), do: FileProperties.open(state)
   defp do_perform(state, :customize, _), do: Agenda.TUI.CustomizeBox.open(state)
+  defp do_perform(state, :calendars, _), do: Agenda.TUI.CalendarsBox.open(state)
   defp do_perform(state, :execute, _), do: Agenda.TUI.ExecuteBox.open(state)
   defp do_perform(state, :questions, _), do: Agenda.TUI.QuestionsBox.open(state)
 

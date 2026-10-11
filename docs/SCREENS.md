@@ -170,6 +170,10 @@ or handles it.
     - **Auto-assign settings** `:auto_assign` (Auto-assign settings): text
       matching for the file and Confirm assignments (R16, R16a).
       `TUI.AutoAssignBox`.
+  - **Calendars** `:calendars` (File ▸ Transfer ▸ Calendars): calendar
+    subscriptions; INS subscribes (two prompts), ENTER reads now, F and A
+    change how often and how far ahead, DEL unsubscribes (R45).
+    `TUI.CalendarsBox`.
   - **Customize** `:customize` (File ▸ Customize): the person's theme, date
     language and fallback language, saved as preferences (R40, R14c).
     `TUI.CustomizeBox`.
@@ -225,6 +229,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:file_props`        | box           | `TUI.FileProperties`   | File ▸ Properties                                | R41, R14e     |
 | `:input_format`      | box           | `TUI.InputFormatBox`   | File Properties or Customize ▸ Input format      | R41b          |
 | `:customize`         | box           | `TUI.CustomizeBox`     | File ▸ Customize                                 | R40, R14c     |
+| `:calendars`         | box           | `TUI.CalendarsBox`     | File ▸ Transfer ▸ Calendars                      | R45           |
 | `:auto_assign`       | box           | `TUI.AutoAssignBox`    | File Properties ▸ Auto-assign settings           | R16a          |
 | `:column_props`      | box           | `TUI.ColumnProperties` | View ▸ Column ▸ Properties, numeric column       | R29           |
 | `:date_column_props` | box           | `TUI.DateColumnBox`    | View ▸ Column ▸ Properties, date column          | R41a          |

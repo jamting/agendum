@@ -756,8 +756,37 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   and the file's settings; the person's own settings (theme, languages,
   input format) are not in it. Import checks types and references and
   says what is wrong and where; a file that fails opens nothing. The
-  schema is `docs/JSON_FORMAT.md`. Agenda's own transfer format (STF) and
-  iCal import are on the roadmap.
+  schema is `docs/JSON_FORMAT.md`. Agenda's own transfer format (STF) is
+  on the roadmap.
+- **R45 ✅ Calendar subscriptions** (not in Agenda). File ▸ Transfer ▸
+  Calendars lists the file's subscriptions to calendars on the web
+  (iCalendar `.ics`, `https://` or `webcal://`). INS asks for the address
+  and a name; the name is the category the events go in (made under MAIN,
+  without name matching, unless one of that name exists), and the
+  calendar is read at once. ENTER reads it now; F sets how often it is
+  read while Agenda runs (every hour, the default; every 6 hours; every
+  day; only on request), A how far ahead it imports (30, 90 by default,
+  180 or 365 days); DEL unsubscribes, Y also discarding its items, N
+  keeping them. Each calendar shows when it was last read, or why that
+  failed. A read mirrors the calendar: an event from today up to the
+  window ahead becomes an item in the category, its title the item text
+  (read like typed text, so text matching files it too), its description
+  the note, and its start the When date and time, set as by hand; a
+  repeating event becomes one item on its next date, with Agenda's
+  recurrence (R14a) when it repeats the same way (daily, weekly on one
+  day, monthly on one day, yearly, every n of them), else only that next
+  date; a series that has ended is not imported. A later read changes
+  only what the calendar changed (the person's edits to text and note,
+  their categories and done marks stay), and an event gone from the
+  calendar or cancelled removes its item; an item the person discarded is
+  not brought back, and past events keep their items. A read is one undo
+  step; a scheduled read is quiet unless something changed. Reading
+  happens in the background (the screen does not wait), with the
+  system's certificates checked. Our choices: there is no time-zone
+  database, so times in a named zone are taken as local time and UTC
+  times are converted by the system's rules; alarms, attendees and
+  exceptions to repeating events are not read. Subscriptions are saved
+  in the file and in its JSON.
 
 ## 6. Out of scope for now
 

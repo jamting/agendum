@@ -64,7 +64,7 @@ defmodule Agenda.TUI.DevTools do
       {"Languages", Enum.map_join(state.languages, ", ", & &1.name())},
       {"Input format", input(state.input)},
       {"Theme", Atom.to_string(state.theme)},
-      {"Preferences", state.preferences || "(none)"},
+      {"Preferences", state.prefs.path || "(none)"},
       {"Terminal", "#{state.width}×#{state.height}"},
       {"Key map", if(state.key_map, do: "shown", else: "hidden")},
       "",
