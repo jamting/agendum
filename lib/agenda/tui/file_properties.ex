@@ -5,8 +5,8 @@ defmodule Agenda.TUI.FileProperties do
   (R14e), and whether text matches are confirmed first (Confirm
   assignments, R16).
 
-  Rows: Date format, Date separator, Clock and Show day of week, with a
-  formatted sample below, as in Agenda's Display Format box; then
+  Rows: Agenda's Display Format box (`Agenda.TUI.DateFormatRows`), with
+  a formatted sample below; then
   Agenda's Global Date Settings (beginning and end of week, first
   quarter, beginning of year, month alone means, morning, afternoon,
   evening); then Auto-assign settings, which opens its own box
@@ -17,9 +17,9 @@ defmodule Agenda.TUI.FileProperties do
 
   alias Agenda.Core
   alias Agenda.Core.{DateFormat, DateSettings}
-  alias Agenda.TUI.State
+  alias Agenda.TUI.{DateFormatRows, State}
 
-  @format_rows [:order, :separator, :clock, :day_of_week]
+  @format_rows DateFormatRows.rows()
   @settings_rows [
     :week_start,
     :week_end,
@@ -66,27 +66,21 @@ defmodule Agenda.TUI.FileProperties do
     f = state.db.date_format
     s = state.db.date_settings
 
-    [
-      {"Date format", DateFormat.label(f.order)},
-      {"Date separator", separator(f.separator)},
-      {"Clock", "#{f.clock} hr"},
-      {"Show day of week", if(f.day_of_week, do: "Yes", else: "No")},
-      {"Beginning of week", Enum.at(@days, s.week_start - 1)},
-      {"End of week", Enum.at(@days, s.week_end - 1)},
-      {"First quarter", Enum.at(@months, s.quarter_start - 1) <> " 1"},
-      {"Beginning of year", Enum.at(@months, s.year_start - 1) <> " 1"},
-      {"Month alone means", month_alone(s.month_alone)},
-      {"Morning", DateFormat.time(s.morning, f)},
-      {"Afternoon", DateFormat.time(s.afternoon, f)},
-      {"Evening", DateFormat.time(s.evening, f)},
-      {"Auto-assign settings", "(SPACE to open)"}
-    ]
+    DateFormatRows.lines(f) ++
+      [
+        {"Beginning of week", Enum.at(@days, s.week_start - 1)},
+        {"End of week", Enum.at(@days, s.week_end - 1)},
+        {"First quarter", Enum.at(@months, s.quarter_start - 1) <> " 1"},
+        {"Beginning of year", Enum.at(@months, s.year_start - 1) <> " 1"},
+        {"Month alone means", month_alone(s.month_alone)},
+        {"Morning", DateFormat.time(s.morning, f)},
+        {"Afternoon", DateFormat.time(s.afternoon, f)},
+        {"Evening", DateFormat.time(s.evening, f)},
+        {"Auto-assign settings", "(SPACE to open)"}
+      ]
   end
 
   defp month_alone(:first), do: "First day"
   defp month_alone(:last), do: "Last day"
   defp month_alone(day), do: "Day #{day}"
-
-  defp separator(" "), do: "(space)"
-  defp separator(s), do: s
 end

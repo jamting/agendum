@@ -35,6 +35,7 @@ defmodule Agenda.TUI.Render do
     :execute,
     :questions,
     :column_props,
+    :date_column_props,
     :alarm_list
   ]
 
@@ -140,6 +141,7 @@ defmodule Agenda.TUI.Render do
             :category_match,
             :auto_assign,
             :column_props,
+            :date_column_props,
             :range_filter,
             :action_box,
             :execute
@@ -368,7 +370,7 @@ defmodule Agenda.TUI.Render do
   defp mode_keys(%{type: :note}),
     do: [{"ESC", "Return"}, {"F5", "Return"}, {"ALT-F6", "Search"}, {"ALT-S", "Next"}]
 
-  defp mode_keys(%{type: :column_props}),
+  defp mode_keys(%{type: type}) when type in [:column_props, :date_column_props],
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
 
   defp mode_keys(%{type: :questions}),
@@ -944,6 +946,11 @@ defmodule Agenda.TUI.Render do
       "Numeric column: " <>
         state.db.categories[Agenda.TUI.ColumnProperties.column(state, mode).category_id].name
 
+  defp box_title(state, %{type: :date_column_props} = mode),
+    do:
+      "Date column: " <>
+        state.db.categories[Agenda.TUI.DateColumnBox.column(state, mode).category_id].name
+
   defp box_title(_state, %{type: :search_box, scope: :file}),
     do: "Search the whole file (Show View)"
 
@@ -1089,6 +1096,26 @@ defmodule Agenda.TUI.Render do
       [
         [],
         [{:box, " Sample: " <> Agenda.TUI.ColumnProperties.sample(state, mode)}],
+        [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]
+      ]
+  end
+
+  defp box_content(state, %{type: :date_column_props} = mode, _inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.DateColumnBox.lines(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        [
+          {:box, " " <> Draw.pad(label, 20) <> ": "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), value}
+        ]
+      end)
+
+    rows ++
+      [
+        [],
+        [{:box, " Sample: " <> Agenda.TUI.DateColumnBox.sample(state, mode)}],
         [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]
       ]
   end

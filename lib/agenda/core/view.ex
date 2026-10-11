@@ -55,14 +55,17 @@ defmodule Agenda.Core.View do
   defmodule Column do
     @moduledoc """
     A view column headed by a category. `number` is how a numeric column
-    shows its numbers and calculations (R29); other columns ignore it.
+    shows its numbers and calculations (R29); `date` how a date column
+    shows its dates, `nil` for the file's (global defaults, R41a). Other
+    columns ignore them.
     """
     @type t :: %__MODULE__{
             category_id: Agenda.Core.Category.id(),
             width: pos_integer,
-            number: Agenda.Core.NumberFormat.t()
+            number: Agenda.Core.NumberFormat.t(),
+            date: Agenda.Core.DateFormat.t() | nil
           }
-    defstruct [:category_id, width: 12, number: %Agenda.Core.NumberFormat{}]
+    defstruct [:category_id, width: 12, number: %Agenda.Core.NumberFormat{}, date: nil]
   end
 
   @typedoc "One filter criterion on a category (R28, R28a)."

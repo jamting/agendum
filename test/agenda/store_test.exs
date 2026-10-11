@@ -206,6 +206,35 @@ defmodule Agenda.StoreTest do
     assert {:ok, %{date_format: ^format}} = Store.load(path)
   end
 
+  test "files in format version 20 get global date columns and Agenda's new display settings",
+       %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    old_format = Map.drop(db.date_format, [:show, :am_pm, :time_separator])
+
+    v20_views =
+      Map.new(db.views, fn {id, v} ->
+        {id, %{v | columns: Enum.map(v.columns, &Map.delete(&1, :date))}}
+      end)
+
+    v20 = %{db | date_format: old_format, views: v20_views}
+    path = Path.join(dir, "v20.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 20, v20}))
+
+    assert {:ok, loaded} = Store.load(path)
+    assert loaded.date_format == %Agenda.Core.DateFormat{}
+    assert loaded == db
+  end
+
+  test "a date column's own format is saved", %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    view = hd(db.view_order)
+    format = %Agenda.Core.DateFormat{order: :relative, show: :date}
+    db = Agenda.Core.set_column_date_format(db, view, 0, format)
+    path = Path.join(dir, "col.agenda")
+    :ok = Store.save(db, path)
+    assert {:ok, ^db} = Store.load(path)
+  end
+
   test "newer, unknown format versions are refused", %{tmp_dir: dir} do
     path = Path.join(dir, "future.agenda")
     File.write!(path, :erlang.term_to_binary({:agenda, 99, Agenda.Core.new_file()}))

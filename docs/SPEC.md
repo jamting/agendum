@@ -583,9 +583,29 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   printing. Our choices: the default is YYYYMMDD with "-" and a 24-hour
   clock (ISO 8601) rather than Agenda's MMDDYY with "/" and 12 hours;
   dates with a month name always use spaces; dates offered for editing
-  stay ISO 8601. Not done: per-column overrides (Column Properties),
-  Display date and/or time, Day #, Week # and Relative formats, the am/pm
-  and hm time options, and the Input format settings.
+  stay ISO 8601. More options and date columns of their own: R41a. Not
+  done: the Input format settings.
+- **R41a ✅ More date display options** (User's Guide 6-19 to 6-22,
+  7-14 to 7-15). File Properties shows Agenda's whole Display Format box,
+  in its order: Display date and/or time (Date time, Date only, Time date,
+  Time only; a date column with only a date shows the date, and with Time
+  only nothing), Show day of week, Date format, Date separator, Clock,
+  Show am/pm (Yes: "3:25pm", No: "3:25") and Time separator (":" or hm:
+  "3h30m"). Date format adds Agenda's counts: <Day> # ("317"), Day #
+  ("Day 317"), <Week> # ("46"), Week # ("Week 46"), Relative and Relative
+  # ("1 day", "-2 days"). Relative shows Today, Tomorrow, Yesterday, and
+  "nxt Sun" or "lst Fri" within six days, as Agenda 2.0 does (Lotus Q&A
+  "Relative Date Format is Displayed for only Seven Days"); other dates
+  are shown in the global format. Our choices: weeks are ISO 8601 weeks
+  (the manual's sample says Week 45 for 13 Nov 1990, a US count; ISO says
+  46); the title bar clock and alarms always show date and time, and
+  relative formats are used only in date columns (elsewhere, ISO 8601 or
+  the global format). View ▸ Column ▸ Properties on a date column opens
+  the Date Column Properties box: Settings says Global defaults until a
+  setting is changed, then Local settings, and the column keeps its own
+  format while the file's changes; SPACE on Settings goes back to the
+  global defaults. Relative dates are counted from today when the view
+  is drawn.
 
 ## 5. User interface (Agenda 2.0 conventions)
 

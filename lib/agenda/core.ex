@@ -1760,6 +1760,17 @@ defmodule Agenda.Core do
     end)
   end
 
+  @doc """
+  Gives a date column its own display format, or `nil` to use the file's
+  again (Global defaults, R41a).
+  """
+  @spec set_column_date_format(db, id, non_neg_integer, Agenda.Core.DateFormat.t() | nil) :: db
+  def set_column_date_format(db, view_id, index, format) do
+    Database.update_view(db, view_id, fn v ->
+      %{v | columns: List.update_at(v.columns, index, &%{&1 | date: format})}
+    end)
+  end
+
   @spec resize_column(db, id, non_neg_integer, integer) :: db
   def resize_column(db, view_id, index, delta) do
     Database.update_view(db, view_id, fn v ->

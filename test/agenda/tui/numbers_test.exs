@@ -104,9 +104,9 @@ defmodule Agenda.TUI.NumbersTest do
     assert hd(tl(state.db.views[view].columns)).number.decimals == 3
   end
 
-  test "Column Properties on a column that is not numeric says so", %{state: state} do
+  test "Column Properties on the When column opens the date settings", %{state: state} do
     state = press(state, [:left, {:f, 10}, "v", "c", "p"])
-    assert screen(state) =~ "for numeric columns only"
+    assert screen(state) =~ "Date column: When"
   end
 
   test "Item Properties lists the number; ENTER changes it", %{state: state, amount: amount} do

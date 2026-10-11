@@ -21,14 +21,15 @@ defmodule Agenda.Store do
   date categories the user made (R6a); 18 adds `Category.date_rule` (R6b),
   replacing `Database.when_from` with When's rule, and marks dates set by
   hand in `Database.dates`; 19 adds `Database.match_settings` (R16a); 20 adds
-  `Category.match_overrides` (R16b).
+  `Category.match_overrides` (R16b); 21 adds `View.Column.date` and the
+  `DateFormat` fields `show`, `am_pm` and `time_separator` (R41a).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 20
+  @format_version 21
   @extension ".agenda"
 
   def extension, do: @extension
@@ -173,7 +174,12 @@ defmodule Agenda.Store do
 
   defp upgrade_column(column) do
     column = struct(Agenda.Core.View.Column, Map.from_struct(column))
-    %{column | number: struct(Agenda.Core.NumberFormat, Map.from_struct(column.number))}
+
+    %{
+      column
+      | number: struct(Agenda.Core.NumberFormat, Map.from_struct(column.number)),
+        date: column.date && struct(Agenda.Core.DateFormat, Map.from_struct(column.date))
+    }
   end
 
   defp ensure_modules_loaded do

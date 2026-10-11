@@ -57,7 +57,11 @@ defmodule Agenda.Core.ViewModel do
           %Row{
             item: item,
             inherited: inherited,
-            cells: Enum.map(view.columns, &cell(db, item, &1.category_id, &1.width, &1.number))
+            cells:
+              Enum.map(
+                view.columns,
+                &cell(db, item, &1.category_id, &1.width, &1.number, today: today, date: &1.date)
+              )
           }
         end)
         |> Enum.reject(&(view.hide_inherited and &1.inherited))
@@ -237,7 +241,9 @@ defmodule Agenda.Core.ViewModel do
   end
 
   @doc """
-  The text a column shows for an item: the item's date for a date column;
+  The text a column shows for an item: the item's date for a date column,
+  in the column's own format (`date:`) or the file's, relative dates
+  counted from `today:` (R41a);
   its number in `number`'s format for a numeric column (R29); `*` for a
   childless ("yes/no") column head the item belongs to; otherwise the names
   of the head's descendants the item is assigned to. When those names do
@@ -249,9 +255,10 @@ defmodule Agenda.Core.ViewModel do
           Agenda.Core.Item.t(),
           Database.id(),
           pos_integer | nil,
-          NumberFormat.t()
+          NumberFormat.t(),
+          keyword
         ) :: String.t()
-  def cell(db, item, head_id, width \\ nil, number \\ %NumberFormat{}) do
+  def cell(db, item, head_id, width \\ nil, number \\ %NumberFormat{}, opts \\ []) do
     head = db.categories[head_id]
 
     cond do
@@ -265,7 +272,9 @@ defmodule Agenda.Core.ViewModel do
         DateFormat.date_time(
           Database.item_date(db, item.id, head_id),
           Database.item_time(db, item.id, head_id),
-          db.date_format
+          opts[:date] || db.date_format,
+          today: opts[:today] && Agenda.Core.Context.today(opts[:today]),
+          global: db.date_format
         )
 
       head.children == [] ->

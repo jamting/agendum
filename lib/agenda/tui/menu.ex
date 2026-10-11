@@ -69,7 +69,7 @@ defmodule Agenda.TUI.Menu do
             {"Remove", "Remove the highlighted column", :remove_column},
             {"Wider", "Make the highlighted column wider", :wider},
             {"Narrower", "Make the highlighted column narrower", :narrower},
-            {"Properties", "Number format and calculations of a numeric column", :column_props}
+            {"Properties", "How a numeric or date column shows its values", :column_props}
           ]},
          {"Filter", "Show only items in (or not in) chosen categories", :filter_view},
          {"Order", "Sort the items in every section (the view's sort settings)", :sort_view},

@@ -18,12 +18,15 @@ defmodule Agenda.TUI.FilePropertiesTest do
     assert text =~ ~r/Date separator +: -/
     assert text =~ ~r/Clock +: 24 hr/
     assert text =~ ~r/Show day of week +: No/
+    assert text =~ ~r/Display date\/time +: Date time/
+    assert text =~ ~r/Show am\/pm +: Yes/
+    assert text =~ ~r/Time separator +: :/
     assert text =~ "Sample: 1990-11-13 15:25"
   end
 
   test "changing a setting changes every date on the screen at once", %{state: state} do
     # Date format: YYYYMMDD -> YYMMDD; then the separator - -> .
-    state = press(state, [{:f, 10}, "f", "p", " ", :down, " "])
+    state = press(state, [{:f, 10}, "f", "p", :down, :down, " ", :down, " "])
     assert state.db.date_format.order == :yymmdd
     assert state.db.date_format.separator == "."
     assert screen(state) =~ "Sample: 90.11.13 15:25"
@@ -36,7 +39,23 @@ defmodule Agenda.TUI.FilePropertiesTest do
   end
 
   test "← goes back through the choices; the clock and day of week toggle", %{state: state} do
-    state = press(state, [{:f, 10}, "f", "p", :left, :down, :down, " ", :down, :right])
+    keys = [
+      :down,
+      " ",
+      :down,
+      :left,
+      :left,
+      :left,
+      :left,
+      :left,
+      :left,
+      :left,
+      :down,
+      :down,
+      :right
+    ]
+
+    state = press(state, [{:f, 10}, "f", "p"] ++ keys)
     f = state.db.date_format
     assert f.order == :ddmmmyyyy
     assert f.clock == 12
@@ -44,8 +63,21 @@ defmodule Agenda.TUI.FilePropertiesTest do
     assert screen(state) =~ "Sample: Tue 13 Nov 1990 3:25pm"
   end
 
+  test "Agenda's other display settings and formats", %{state: state} do
+    # Display date/time -> Date only; Date format back to Relative; am/pm off
+    state = press(state, [{:f, 10}, "f", "p", " ", :down, :down, :left, :left])
+    assert state.db.date_format.show == :date
+    assert state.db.date_format.order == :relative
+    assert screen(state) =~ ~r/Date format +: Relative/
+    assert screen(state) =~ "Sample: Tomorrow"
+
+    state = press(state, [:down, :down, :right, :down, " ", :down, " "])
+    f = state.db.date_format
+    assert {f.clock, f.am_pm, f.time_separator} == {12, false, "hm"}
+  end
+
   test "each change is one undo step", %{state: state} do
-    state = press(state, [{:f, 10}, "f", "p", " ", " ", :esc])
+    state = press(state, [{:f, 10}, "f", "p", :down, :down, " ", " ", :esc])
     assert state.db.date_format.order == :yyyyddmm
     state = History.undo(state)
     assert state.db.date_format.order == :yymmdd
@@ -66,7 +98,7 @@ defmodule Agenda.TUI.FilePropertiesTest do
 
   test "changing a date setting changes how dates are read", %{state: state} do
     # down to Month alone means, then First day -> Last day
-    state = press(state, [{:f, 10}, "f", "p"] ++ List.duplicate(:down, 8) ++ [" "])
+    state = press(state, [{:f, 10}, "f", "p"] ++ List.duplicate(:down, 11) ++ [" "])
     assert state.db.date_settings.month_alone == :last
     assert screen(state) =~ ~r/Month alone means +: Last day/
 

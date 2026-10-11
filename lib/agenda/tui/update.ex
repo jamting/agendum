@@ -217,6 +217,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :column_props} = m, key),
     do: ColumnProperties.handle(state, m, key)
 
+  defp dispatch(state, %{type: :date_column_props} = m, key),
+    do: Agenda.TUI.DateColumnBox.handle(state, m, key)
+
   defp dispatch(state, %{type: :alarm_list} = m, key), do: AlarmList.handle(state, m, key)
 
   defp dispatch(state, %{type: :searching} = m, key),
@@ -1393,9 +1396,16 @@ defmodule Agenda.TUI.Update do
   defp do_perform(state, :column_props, %{kind: :item}) when state.col > 0 do
     column = Enum.at(State.view(state).columns, state.col - 1)
 
-    if state.db.categories[column.category_id].kind == :numeric,
-      do: ColumnProperties.open(state, state.col - 1),
-      else: State.error(state, "Column properties are for numeric columns only, so far")
+    cond do
+      state.db.categories[column.category_id].kind == :numeric ->
+        ColumnProperties.open(state, state.col - 1)
+
+      Database.date_category?(state.db, column.category_id) ->
+        Agenda.TUI.DateColumnBox.open(state, state.col - 1)
+
+      true ->
+        State.error(state, "Column properties are for numeric and date columns only, so far")
+    end
   end
 
   defp do_perform(state, :column_props, _),

@@ -44,7 +44,7 @@ shell does terminal I/O and file I/O.
 | `Core.Search`                                | Text search: whether an item's text or note matches (R37).                                                                                              |
 | `Core.RangeFilter`                           | Date and numeric filter ranges: checking, matching, the value a new item gets (R28a).                                                                   |
 | `Core.NumberFormat`                          | Reading and showing numbers, and the calculations of numeric columns (R29).                                                                             |
-| `Core.DateFormat`                            | How a file displays dates and times: date order, separator, clock, day of week (R41).                                                                   |
+| `Core.DateFormat`                            | How a file or date column displays dates and times: order, separator, clock, Relative, Week # (R41, R41a).                                              |
 | `Core.DateRule`                              | How a date category gets dates: Assign item date, Which one, Done and When keys (R6b).                                                                   |
 | `Core.DateSettings`                          | How a file reads dates: week, quarter and year boundaries, month alone, morning/afternoon/evening (R14e).                                               |
 | `Core.TextSearch`                            | Finding and replacing literal text in a note's lines (R39).                                                                                             |
@@ -70,6 +70,8 @@ shell does terminal I/O and file I/O.
 | `TUI.RangeFilterBox`           | ✔     | The Date Filter / Numeric Filter box (R28a).                                                                                     |
 | `TUI.ColumnProperties`         | ✔     | The Numeric Column Properties box: number format and calculations (R29).                                                         |
 | `TUI.FileProperties`           | ✔     | The File Properties box: the date display format, with a sample (R41).                                                           |
+| `TUI.DateFormatRows`           | ✔     | The date display settings as box rows, shared by File and Date Column Properties (R41a).                                         |
+| `TUI.DateColumnBox`            | ✔     | The Date Column Properties box: a date column's own format or the global defaults (R41a).                                        |
 | `TUI.NoteSearch`               | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
 | `TUI.Render`                   | ✔     | State → list of styled lines (title bar, control panel, body, key bar, boxes).                                                   |
