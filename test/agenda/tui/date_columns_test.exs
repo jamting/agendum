@@ -66,7 +66,7 @@ defmodule Agenda.TUI.DateColumnsTest do
   end
 
   test "the file's format still changes columns using the global defaults", %{state: state} do
-    state = press(state, [{:f, 10}, "f", "p", :down, :down, " ", :esc])
+    state = press(state, [{:f, 10}, "f", "p", " ", " ", :down, :down, " ", :esc, :esc, :esc])
     assert screen(state) =~ "26-10-09 14:00"
   end
 

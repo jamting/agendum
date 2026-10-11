@@ -6,20 +6,20 @@
    bounce│ │ Text matching           : On                               │
          │ │ Match on                : Item text                        │
  Notices │ │ Required match strength : Exact match - 100%               │s
- • Put up│ │ Confirm assignments     : Never                            │
-   Meetin│ │ Ignore text enclosed by : " "                              │
-         │ │ Ignore suffixes         : Yes                              │
- Friends │ │ Ignore accents          : No                               │s
- • Count │ │                                                            │r
-   bounce│ │ SPACE/→ next choice · ← previous · ESC closes              │
- • Ask Ow│ └────────────────────────────────────────────────────────────┘
- • Find S│ First quarter       : Jan 1                                 ll
- • Visit │ Beginning of year   : Jan 1                                │ga, Roo
-         │ Month alone means   : First day                            │
-         │ Morning             : 08:00                                │
-         │ Afternoon           : 14:00                                │
-         │ Evening             : 17:00                                │
-         │ Auto-assign settings: (SPACE to open)                      │
-         │                                                            │
-         │ SPACE/→ next choice · ← previous · ESC closes              │
+ • Put up└─│ Confirm assignments     : Never                            │
+   Meeting │ Ignore text enclosed by : " "                              │
+           │ Ignore suffixes         : Yes                              │
+ Friends an│ Ignore accents          : No                               │s
+ • Count th│                                                            │r
+   bounces │ SPACE/→ next choice · ← previous · ESC closes              │
+ • Ask Owl └────────────────────────────────────────────────────────────┘
+ • Find Small, who is lost again                           High     Small
+ • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+
+
+
+
+
+
+
  ↑↓ Move between settings  SPACE/→ Next choice  ← Previous choice  ESC Close

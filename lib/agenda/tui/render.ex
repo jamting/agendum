@@ -27,6 +27,8 @@ defmodule Agenda.TUI.Render do
     :search_box,
     :note_search,
     :file_props,
+    :date_settings,
+    :display_format,
     :input_format,
     :customize,
     :calendars,
@@ -230,6 +232,8 @@ defmodule Agenda.TUI.Render do
             :choice,
             :item_props,
             :file_props,
+            :date_settings,
+            :display_format,
             :input_format,
             :customize,
             :calendars,
@@ -539,7 +543,9 @@ defmodule Agenda.TUI.Render do
               :date_rule,
               :input_format,
               :customize,
-              :file_props
+              :file_props,
+              :date_settings,
+              :display_format
             ],
        do: [
          {"↑↓", "Setting", "Move between settings"},
@@ -1098,6 +1104,8 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
   defp box_title(_state, %{type: :file_props}), do: "File properties"
+  defp box_title(_state, %{type: :date_settings}), do: "Global date settings"
+  defp box_title(_state, %{type: :display_format}), do: "Display format"
   defp box_title(_state, %{type: :input_format}), do: "Input format (yours, for every file)"
   defp box_title(_state, %{type: :customize}), do: "Customize (yours, for every file)"
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
@@ -1475,27 +1483,37 @@ defmodule Agenda.TUI.Render do
       ]
   end
 
-  defp box_content(state, %{type: :file_props} = mode, _inner, _max_rows) do
+  defp box_content(state, %{type: type} = mode, _inner, _max_rows)
+       when type in [:file_props, :date_settings, :display_format] do
     rows =
       state
-      |> Agenda.TUI.FileProperties.lines()
+      |> Agenda.TUI.FileProperties.lines(type)
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
-          {:box, " " <> Draw.pad(label, 20) <> ": "},
+          {:box, " " <> Draw.pad(label, 21) <> ": "},
           {if(i == mode.cursor, do: :box_selected, else: :box), value}
         ]
       end)
 
-    # the sample sits under the display settings it shows
-    sample = [
-      {:box, " " <> Draw.pad("  Sample", 20) <> ": " <> DateFormat.sample(state.db.date_format)}
-    ]
+    # the sample under the display settings it shows
+    sample =
+      if type == :display_format,
+        do: [
+          [],
+          [
+            {:box,
+             " " <> Draw.pad("Sample", 21) <> ": " <> DateFormat.sample(state.db.date_format)}
+          ]
+        ],
+        else: []
 
-    {display, rest} = Enum.split(rows, length(Agenda.TUI.DateFormatRows.rows()))
+    hint =
+      if type == :display_format,
+        do: " SPACE/→ next choice · ← previous · ESC closes",
+        else: " SPACE/→ next choice or open ... · ← previous · ESC closes"
 
-    display ++
-      [sample] ++ rest ++ [[], [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]]
+    rows ++ sample ++ [[], [{:box, hint}]]
   end
 
   defp box_content(_state, %{type: :note_search} = mode, inner, _max_rows) do

@@ -15,12 +15,13 @@ defmodule Agenda.TUI.InputFormatBoxTest do
     %{state: %{state | prefs: %Agenda.Preferences{path: "/prefs"}}}
   end
 
-  # File Properties, then down to Input format (after the 7 display rows)
-  defp open_box(state),
-    do: press(state, [{:f, 10}, "f", "p"] ++ List.duplicate(:down, 7) ++ [" "])
+  # File Properties ▸ Global date settings ▸ Input format
+  defp open_box(state), do: press(state, [{:f, 10}, "f", "p", " ", :down, " "])
 
-  test "File Properties has an Input format row that opens the box", %{state: state} do
-    assert screen(press(state, [{:f, 10}, "f", "p"])) =~ ~r/Input format +: \(yours; SPACE\)/
+  test "Global date settings has an Input format row that opens the box", %{state: state} do
+    assert screen(press(state, [{:f, 10}, "f", "p", " "])) =~
+             ~r/Input format +: \.\.\. \(yours\)/
+
     state = open_box(state)
     assert %{type: :input_format} = State.mode(state)
     text = screen(state)

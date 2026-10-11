@@ -302,7 +302,10 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :sort} = m, key), do: SortBox.handle(state, m, key)
   defp dispatch(state, %{type: :search_box} = m, key), do: SearchBox.handle(state, m, key)
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
-  defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
+
+  defp dispatch(state, %{type: type} = m, key)
+       when type in [:file_props, :date_settings, :display_format],
+       do: FileProperties.handle(state, m, key)
 
   defp dispatch(state, %{type: :calendars} = m, key),
     do: Agenda.TUI.CalendarsBox.handle(state, m, key)

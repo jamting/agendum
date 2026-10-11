@@ -161,12 +161,16 @@ or handles it.
   - **Sort box** `:sort` (View ▸ Order, View ▸ Section ▸ Sort): the sort keys
     of a view or a section (R36). `TUI.SortBox`.
     - **Picker** `:picker` for a key's category or note category.
-  - **File Properties** `:file_props` (File ▸ Properties): the display format
-    with a sample (R41, R41a) and the global date settings (R14e).
-    `TUI.FileProperties`, rows from `TUI.DateFormatRows`.
-    - **Input format** `:input_format` (Input format): the person's number
-      order, date separator and clock, saved as preferences (R41b).
-      `TUI.InputFormatBox`.
+  - **File Properties** `:file_props` (File ▸ Properties): two "..." rows
+    opening Agenda's boxes, nested as in Agenda 2.0. `TUI.FileProperties`.
+    - **Global date settings** `:date_settings` (Global date settings): the
+      week, quarter, year and times of day (R14e). `TUI.FileProperties`.
+      - **Display format** `:display_format` (Display format): how the file
+        shows dates, with a sample (R41, R41a). `TUI.FileProperties`, rows
+        from `TUI.DateFormatRows`.
+      - **Input format** `:input_format` (Input format): the person's number
+        order, date separator and clock, saved as preferences (R41b).
+        `TUI.InputFormatBox`.
     - **Auto-assign settings** `:auto_assign` (Auto-assign settings): text
       matching for the file and Confirm assignments (R16, R16a).
       `TUI.AutoAssignBox`.
@@ -227,7 +231,9 @@ dependencies after its question, Undo, Save) are not listed.
 | `:date_rule`         | box           | `TUI.DateRuleBox`      | Advanced settings of a date category             | R6b           |
 | `:category_match`    | box           | `TUI.CategoryMatchBox` | Advanced settings of a standard category         | R16b          |
 | `:file_props`        | box           | `TUI.FileProperties`   | File ▸ Properties                                | R41, R14e     |
-| `:input_format`      | box           | `TUI.InputFormatBox`   | File Properties or Customize ▸ Input format      | R41b          |
+| `:date_settings`     | box           | `TUI.FileProperties`   | File Properties ▸ Global date settings           | R14e          |
+| `:display_format`    | box           | `TUI.FileProperties`   | Global date settings ▸ Display format            | R41, R41a     |
+| `:input_format`      | box           | `TUI.InputFormatBox`   | Global date settings or Customize ▸ Input format | R41b          |
 | `:customize`         | box           | `TUI.CustomizeBox`     | File ▸ Customize                                 | R40, R14c     |
 | `:calendars`         | box           | `TUI.CalendarsBox`     | File ▸ Transfer ▸ Calendars                      | R45           |
 | `:auto_assign`       | box           | `TUI.AutoAssignBox`    | File Properties ▸ Auto-assign settings           | R16a          |

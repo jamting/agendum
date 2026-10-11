@@ -261,8 +261,12 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   stays Christmas). Calendar notation can use a month abbreviation
   ("Nov/12/90"). Swedish has the same phrases ("om fem arbetsdagar",
   "första onsdagen i november", "i slutet av nästa mars").
-- **R14e ✅ Global date settings** (User's Guide 7-15 to 7-17). File
-  Properties has Agenda's Global Date Settings, saved in the file:
+- **R14e ✅ Global date settings** (User's Guide 7-13 to 7-17). File
+  Properties ▸ Global date settings opens Agenda's Global Date Settings
+  box (boxes nest as in Agenda: File Properties holds Global date
+  settings ... and Auto-assign settings ...; Global Date Settings holds
+  Display format ..., Input format ... and the settings below; SPACE or →
+  opens a "..." row, ESC goes back one box), saved in the file:
   Beginning and End of week (Mon and Fri: "this week" and "next week"
   start on the first day, "end of week" is the last, "this Monday" is in
   that week, and working days are the days from the first to the last);
@@ -598,8 +602,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     the whole screen, so it shows when the highlight is in a column; Agenda
     put a » in front of it instead.
 - **R41 ✅ Date display format** (User's Guide 6-20 to 6-22, 7-13 to 7-15).
-  File ▸ Properties sets how the file displays dates and times, as
-  Agenda's global Display format: Date format (Agenda's 14 orders, from
+  File ▸ Properties ▸ Global date settings ▸ Display format sets how the
+  file displays dates and times, as Agenda's global Display format: Date format (Agenda's 14 orders, from
   MMDDYY to DDMMMYYYY), Date separator (- . , space : /), Clock (24 or 12
   hr; 12 shows am/pm) and Show day of week, with a formatted sample. It is
   stored in the file and used everywhere a date is shown: date columns,
@@ -617,7 +621,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   "3:00" is 3 pm, between Morning and 12 hours later; 24 hr: as written).
   Each is "Language (…)" until set: the date language's numeric order,
   "/" and clock. Our choice (ADR 0008, 0013): these belong to the person,
-  not the file, unlike Agenda; File Properties ▸ Input format opens the
+  not the file, unlike Agenda; Global date settings ▸ Input format opens the
   box ("yours, for every file"), and a change applies at once, is not
   undone with the file, and is saved in the person's preferences file
   (`~/.config/agenda/preferences`, or under `$XDG_CONFIG_HOME`), plain
@@ -627,7 +631,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   set them for one session. ISO dates (2026-10-20) are always read; with
   ":" as separator, "3:30" is a date, as in Agenda.
 - **R41a ✅ More date display options** (User's Guide 6-19 to 6-22,
-  7-14 to 7-15). File Properties shows Agenda's whole Display Format box,
+  7-14 to 7-15). The Display format box has all of Agenda's Display Format box,
   in its order: Display date and/or time (Date time, Date only, Time date,
   Time only; a date column with only a date shows the date, and with Time
   only nothing), Show day of week, Date format, Date separator, Clock,

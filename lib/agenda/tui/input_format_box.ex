@@ -1,6 +1,6 @@
 defmodule Agenda.TUI.InputFormatBox do
   @moduledoc """
-  The Input Format box (File Properties ▸ Input format; User's Guide 7-17,
+  The Input Format box (Global date settings ▸ Input format; User's Guide 7-17,
   SPEC R41b): how this person types dates and times: Number order, Input
   date separator and Input clock, each "Language (…)" until set. These
   are the person's, not the file's (ADR 0008): a change applies at once,
