@@ -86,7 +86,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
 | `TUI.DevTools`                 | ✔     | The hidden developer screen (ESC ?): state for debugging, and a key tester.                                                      |
 | `TUI.Render`                   | ✔     | State → list of styled lines (title bar, control panel, body, key bar, boxes).                                                   |
-| `TUI.Draw`, `TUI.Theme`        | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic or mono, R40).                                     |
+| `TUI.Draw`, `TUI.Theme`        | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic, blue or mono, R40).                                     |
 | `TUI.Keys`                     | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |
 | `TUI.LineEdit`, `TUI.TextEdit` | ✔     | Single-line and multi-line edit buffers.                                                                                         |
 | `TUI.Screen`                   | ✔     | Diffs two frames into minimal ANSI output.                                                                                       |
@@ -123,6 +123,15 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and
 [`DATA_ACCESS.md`](DATA_ACCESS.md) for the query/update API and its
 algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 
+## Developer tools
+
+- `ESC ?` in the program: debugging info and a key tester (`TUI.DevTools`).
+- `tools/screenshots/`: draws screens of the TUI as PNGs (macOS), to
+  compare its look with Agenda 2.0 (ADR 0018):
+  `MIX_ENV=test mix run tools/screenshots/screenshots.exs [--theme NAME]`
+  writes them to `tmp/screenshots/`. `screenshots.exs` drives the TUI with
+  keys like the tests; `render.swift` draws each screen.
+
 ## Architecture decision records
 
 | ADR                                                     | Decision                                                         |
@@ -144,3 +153,4 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0015](adr/0015-date-categories-dates-and-rules.md)     | Dates of date categories, and the rules that set them            |
 | [0016](adr/0016-global-defaults-local-overrides.md)     | File-wide defaults, with local overrides stored as differences   |
 | [0017](adr/0017-text-matching-agenda-rules.md)          | Text matching follows Agenda's word rules                        |
+| [0018](adr/0018-agenda-look-from-screenshots.md)        | The look follows screenshots of the real Agenda                  |

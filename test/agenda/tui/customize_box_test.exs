@@ -36,9 +36,9 @@ defmodule Agenda.TUI.CustomizeBoxTest do
 
   test "the theme changes at once and is saved", %{state: state} do
     {state, effects} = state |> open_box() |> key({:char, " "})
-    assert state.theme == :mono
-    assert [{:save_preferences, "/prefs", %Preferences{theme: :mono}}] = effects
-    assert screen(state) =~ ~r/Theme +: Mono/
+    assert state.theme == :blue
+    assert [{:save_preferences, "/prefs", %Preferences{theme: :blue}}] = effects
+    assert screen(state) =~ ~r/Theme +: Blue/
   end
 
   test "the date languages change how dates are read", %{state: state} do

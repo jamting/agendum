@@ -569,8 +569,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   (confirming first if asked to), as the Help's "Search & Replace in
   Note/Macro Box" describes.
 - **R40 ✅ Colour themes** (Setting Up Agenda 1-25 to 1-31). The screen is
-  drawn with a theme chosen at start: `classic` (blue and white, like DOS
-  Agenda; the default) or `mono` (bold, dim, underline and reverse only).
+  drawn with a theme chosen at start: `classic` (the default: Agenda 2.0's
+  colours, from screenshots of the real program, ADR 0018), `blue` (white
+  on blue) or `mono` (bold, dim, underline and reverse only).
   File ▸ Customize (Agenda's Utilities Customize) changes it at once and
   saves it in the person's preferences file (R41b); `--theme NAME` or
   `--mono` choose it for one session; the NO_COLOR environment variable
@@ -579,6 +580,17 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   where Utilities Customize set Color (Mono, Color, Plasma or Custom,
   with a colour for each screen element) for all files. Not done: custom
   colours.
+  - `classic`: black text on a grey screen; section heads, column heads and
+    column entries in blue; the highlight white on red; title bar and
+    control panel white (hints yellow) on blue; boxes cyan in a solid blue
+    frame, the title centred in the frame, with a black shadow below and
+    to the right, and the screen behind them greyed out; the category
+    manager on cyan; help yellow on blue. The VGA colours are exact on
+    terminals that take 24-bit colour (`COLORTERM=truecolor`), the nearest
+    ANSI colours elsewhere.
+  - Our choices: the highlighted line is drawn in a lighter shade across
+    the whole screen, so it shows when the highlight is in a column; Agenda
+    put a » in front of it instead.
 - **R41 ✅ Date display format** (User's Guide 6-20 to 6-22, 7-13 to 7-15).
   File ▸ Properties sets how the file displays dates and times, as
   Agenda's global Display format: Date format (Agenda's 14 orders, from

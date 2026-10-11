@@ -45,7 +45,10 @@ defmodule Agenda.TUI.Render do
   @spec render(State.t()) :: [Draw.line()]
   def render(%State{width: w} = state) do
     {base, overlays} = split_modes(state.modes)
-    body = body(state, base)
+    {styles, fill} = surface(base)
+    body = Enum.map(body(state, base), &(&1 |> Draw.paint(styles) |> Draw.line(w, fill)))
+    # behind a box, the screen fades (Agenda greys it out)
+    body = if overlays == [], do: body, else: Enum.map(body, &Draw.paint(&1, :backdrop))
     body = Enum.reduce(overlays, body, &overlay_box(state, &1, &2))
 
     [title_bar(state, base)] ++
@@ -53,6 +56,16 @@ defmodule Agenda.TUI.Render do
       Enum.map(body, &Draw.line(&1, w)) ++
       if(state.key_map, do: [keybar(state)], else: [])
   end
+
+  # The colours of a full screen: the category manager is cyan, help
+  # yellow on blue (Agenda 2.0); the rest is the view's grey.
+  defp surface(%{type: :catmgr}),
+    do:
+      {%{normal: :catmgr, item: :catmgr, dim: :catmgr_note, section: :catmgr_head, edit: :row},
+       :catmgr}
+
+  defp surface(%{type: :help}), do: {%{normal: :help}, :help}
+  defp surface(_base), do: {%{}, :normal}
 
   # The base is the topmost full-screen mode (or the view); boxes above it
   # are drawn on top, bottom-up.
@@ -183,6 +196,9 @@ defmodule Agenda.TUI.Render do
 
   # --- control panel --------------------------------------------------------------------
 
+  # the control panel is white and yellow on blue, like the title bar
+  @panel %{normal: :panel, dim: :panel_hint, box: :panel}
+
   defp control_panel(%State{width: w} = state) do
     {l1, l2} =
       case State.mode(state) do
@@ -201,7 +217,7 @@ defmodule Agenda.TUI.Render do
           {message_line(state), context_line(state)}
       end
 
-    [Draw.line(l1, w), Draw.line(l2, w)]
+    Enum.map([l1, l2], &(&1 |> Draw.paint(@panel) |> Draw.line(w, :panel)))
   end
 
   defp message_line(%State{message: {:error, text}}), do: [{:error, " #{text} "}]
@@ -498,6 +514,7 @@ defmodule Agenda.TUI.Render do
     |> Enum.flat_map(fn {row, index} ->
       selected = index == state.cursor
       lines = row_lines(state, row, index, selected, editing, tw, columns)
+      lines = if selected, do: Enum.map(lines, &tint(&1, state.width)), else: lines
 
       lines =
         case editing do
@@ -513,6 +530,21 @@ defmodule Agenda.TUI.Render do
     end)
     |> Enum.drop(state.scroll)
   end
+
+  # The highlighted line is a lighter shade across the screen, so the eye
+  # finds it when the highlight is in a column (Agenda drew a » instead).
+  @tint %{
+    normal: :row,
+    symbol: :row,
+    item: :row,
+    item_done: :row_done,
+    cell: :row_cell,
+    section: :row_cell,
+    column_head: :row_cell
+  }
+
+  defp tint([], _width), do: []
+  defp tint(line, width), do: line |> Draw.paint(@tint) |> Draw.line(width, :row)
 
   # A section's calculations (R29): the label under the item text, each
   # result under its column.
@@ -894,7 +926,10 @@ defmodule Agenda.TUI.Render do
     content = box_content(state, mode, inner, max_rows)
     box = Draw.box(box_title(state, mode), content, inner)
     left = div(state.width - inner - 2, 2)
-    Draw.overlay(Enum.map(body, &Draw.line(&1, state.width)), box, 1, left)
+
+    body
+    |> Draw.overlay(box, 1, left)
+    |> Draw.shadow(1, left, length(box), inner + 2)
   end
 
   defp box_title(state, %{type: :picker, purpose: purpose}) do

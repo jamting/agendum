@@ -35,3 +35,4 @@ agenda-*.tar
 
 # Agenda manuals as PDF (large; see docs/reference/README.md for the source)
 docs/reference/*_text.pdf
+docs/reference/screens/

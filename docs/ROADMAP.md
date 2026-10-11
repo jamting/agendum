@@ -39,6 +39,21 @@ Rule numbers refer to `SPEC.md`.
 - [x] Original keys in notes: ALT-D/ALT-T insert date/time, ALT-N/ALT-P next/previous note, ALT-S repeats a replacement (R39, R42)
 - [ ] Original keys that need new features: ALT-F9 copy item, ALT-Y yank back removed item, ALT-H hop to next occurrence, ALT-F7 make item from note text, ALT-F2 make category from note text (R42)
 
+## Look and feel — after screenshots of Agenda 2.0 (ADR 0018)
+
+The general look and feel of the real program, step by step; not pixel fidelity.
+`tools/screenshots/` draws our screens for comparison.
+
+- [x] Agenda's colours as the default theme: grey screen, blue heads and entries, white-on-red highlight, cyan boxes in a solid blue frame with a centred title and a shadow, the screen behind a box greyed out, cyan category manager, yellow-on-blue help; exact VGA colours on 24-bit terminals; the old look as `blue`; the highlighted line tinted (R40)
+- [ ] Two-line control panel (File and date/time, View) that the menu, prompts and field help take over; two-line key bar with ten fixed slots (F1 above Help)
+- [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
+- [ ] Boxes: help for the highlighted field in the control panel, "Press ENTER when done, ESC to cancel" in the frame; ESC steps back through the menu levels
+- [ ] Questions as Yes/No boxes; Category Properties in two columns with "..." sub-boxes opened by SPACE; View Manager as a box
+- [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark); the note editor's "Note for: … Line 1 INS EDIT" header
+- [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix
+- [ ] Startup: a splash screen, and a File Retrieve box when no file is named
+- [ ] Hypertext help: topics with links (TAB, ENTER), Index, Find, Review (Agenda's F1)
+
 ## Milestone 3 — Smarter assignment
 
 - [x] Numeric categories and columns with totals (R29)

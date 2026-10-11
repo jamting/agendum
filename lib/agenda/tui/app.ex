@@ -5,7 +5,7 @@ defmodule Agenda.TUI.App do
   """
 
   alias Agenda.{CalendarFetch, Preferences, Store}
-  alias Agenda.TUI.{Keys, Layout, Render, Screen, State, Terminal, Update}
+  alias Agenda.TUI.{Keys, Layout, Render, Screen, State, Terminal, Theme, Update}
 
   # How long to wait for the rest of an escape sequence before treating ESC as a key.
   @escape_timeout 40
@@ -102,6 +102,9 @@ defmodule Agenda.TUI.App do
     run_effects(state, rest)
   end
 
+  # 24-bit colour when the terminal says it takes it (Theme.depth/1)
+  defp colour_depth, do: Theme.depth(System.get_env("COLORTERM"))
+
   defp draw(state, previous, theme) do
     {width, height} = Terminal.size()
     {state, effects} = Update.tick(state, local_now())
@@ -114,7 +117,7 @@ defmodule Agenda.TUI.App do
 
     screen = Render.render(state)
     if previous == nil, do: Terminal.write("\e[2J")
-    Terminal.write(Screen.frame(previous, screen, theme))
+    Terminal.write(Screen.frame(previous, screen, theme, colour_depth()))
     {state, screen}
   end
 

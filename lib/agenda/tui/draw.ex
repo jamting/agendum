@@ -158,18 +158,68 @@ defmodule Agenda.TUI.Draw do
     Enum.reverse(acc)
   end
 
-  @doc "Builds a framed box (list of lines) around content lines."
+  @doc """
+  Builds a framed box (list of lines) around content lines, with the title
+  centred in the top edge. The frame is drawn in `:box_frame` and the title
+  in `:box_title`: a theme can show the frame as lines or, giving it the
+  same colour in front and behind, as a solid band like Agenda's.
+  """
   @spec box(String.t(), [line], pos_integer) :: [line]
   def box(title, content, inner_width) do
-    title = " #{title} "
-    bar = String.duplicate("─", max(inner_width - String.length(title), 0))
-    top = [{:box, "┌" <> String.slice(title <> bar, 0, inner_width) <> "┐"}]
-    bottom = [{:box, "└" <> String.duplicate("─", inner_width) <> "┘"}]
+    title = String.slice(" #{title} ", 0, inner_width)
+    left = div(inner_width - String.length(title), 2)
+    right = inner_width - left - String.length(title)
+
+    top = [
+      {:box_frame, "┌" <> String.duplicate("─", left)},
+      {:box_title, title},
+      {:box_frame, String.duplicate("─", right) <> "┐"}
+    ]
+
+    bottom = [{:box_frame, "└" <> String.duplicate("─", inner_width) <> "┘"}]
 
     body =
-      Enum.map(content, fn l -> [{:box, "│"}] ++ line(l, inner_width, :box) ++ [{:box, "│"}] end)
+      Enum.map(content, fn l ->
+        [{:box_frame, "│"}] ++ line(l, inner_width, :box) ++ [{:box_frame, "│"}]
+      end)
 
     [top | body] ++ [bottom]
+  end
+
+  @doc """
+  Restyles a line: with a map, each segment whose style is a key takes the
+  value (others keep theirs); with a style, every segment takes it.
+  """
+  @spec paint(line, %{atom => atom} | atom) :: line
+  def paint(line, styles) when is_map(styles),
+    do: Enum.map(line, fn {style, text} -> {Map.get(styles, style, style), text} end)
+
+  def paint(line, style) when is_atom(style),
+    do: Enum.map(line, fn {_, text} -> {style, text} end)
+
+  @doc "Restyles `len` columns of a line, from column `from`."
+  @spec restyle(line, non_neg_integer, non_neg_integer, atom) :: line
+  def restyle(line, from, len, style) do
+    middle = line |> take(from + len) |> drop(from) |> paint(style)
+    take(line, from) ++ middle ++ drop(line, from + len)
+  end
+
+  @doc """
+  Casts the shadow of a box drawn at `top`, `left` (`height` lines of
+  `width` columns): two columns to its right, and the line under it,
+  moved two columns right. What is under the shadow stays, in `:shadow`.
+  """
+  @spec shadow([line], non_neg_integer, non_neg_integer, pos_integer, pos_integer) :: [line]
+  def shadow(screen, top, left, height, width) do
+    screen
+    |> Enum.with_index()
+    |> Enum.map(fn {line, row} ->
+      cond do
+        row > top and row < top + height -> restyle(line, left + width, 2, :shadow)
+        row == top + height -> restyle(line, left + 2, width, :shadow)
+        true -> line
+      end
+    end)
   end
 
   @doc "Plain text of a screen; used by tests and snapshots."

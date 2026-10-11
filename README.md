@@ -30,7 +30,7 @@ Requires Elixir ≥ 1.20 on OTP ≥ 28 (for the built-in raw terminal mode).
 mix deps.get
 mix run -e 'Agenda.CLI.main(["--demo"])'     # sample data from the Agenda patent
 mix escript.build && ./agenda ~/work.agenda   # standalone binary
-./agenda --mono ~/work.agenda                 # monochrome (also: --theme mono, or NO_COLOR=1)
+./agenda --mono ~/work.agenda                 # monochrome (also: --theme mono, or NO_COLOR=1); --theme blue: white on blue
 ./agenda --lang=swedish --fallback=english f  # read dates typed in Swedish (and English)
 ./agenda --number-order=dmy --date-separator=. f  # type dates as 12.11.26 for this session
 # File ▸ Customize saves your theme, date languages and input format in ~/.config/agenda/preferences

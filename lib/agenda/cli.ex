@@ -5,7 +5,7 @@ defmodule Agenda.CLI do
       agenda                  start with a new, untitled file
       agenda FILE             open FILE (created on first save if missing)
       agenda --demo           open the sample file from the patent
-      agenda --theme NAME     draw with a theme: classic (default) or mono
+      agenda --theme NAME     draw with a theme: classic (default), blue or mono
       agenda --mono           the same as --theme mono
       agenda --lang NAME      read dates in item text in a language:
                               english (default) or swedish
