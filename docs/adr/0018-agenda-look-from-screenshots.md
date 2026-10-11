@@ -33,9 +33,22 @@ screens. What we learn from them is written into the SPEC (R40) and the code.
   (720×400 for 80×25).
 - The key bar stays one line, with fuller labels than Agenda's 8-character
   slots, since today's terminals are wider than 80 columns (owner's choice).
-- The rest of the look (two-line control panel, symbols, box
-  layouts, editing lines, the ALT key bar, startup) follows in small steps
-  listed in the roadmap ("Look and feel").
+- The two top lines are Agenda's control panel: the file, indicators and
+  time, then the view (or the manager shown); the menu, prompts, questions
+  and messages take them over.
+- Boxes opened from boxes are offset (one line down, two columns right) and
+  the titles of the boxes beneath are dimmed, so the active one is clear
+  (our choice; Agenda drew them over each other).
+- When a box does not fit the screen, follow Agenda's own nesting before
+  inventing scrolling: File Properties holds "Global date settings ..."
+  and "Auto-assign settings ...", and Global Date Settings holds
+  "Display format ..." and "Input format ...", as in Agenda 2.0.
+- Every theme has the same parts (control panel, highlighted line, box
+  titles and dimmed titles, faded background) in its own colours; a test
+  checks that none of them is lost in a theme.
+- The rest of the look (symbols, box layouts, editing lines, the ALT key
+  bar, startup, hypertext help) follows in small steps listed in the
+  roadmap ("Look and feel").
 
 ## Consequences
 
