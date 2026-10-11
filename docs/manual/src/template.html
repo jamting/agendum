@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>The Agenda Manual</title>
+  <title>The Wol's Agendum Manual</title>
   <link rel="stylesheet" href="manual.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
     <li><a href="#screen">The screen and the keys</a></li>
     <li><a href="#items">Items</a></li>
     <li><a href="#categories">Categories</a></li>
-    <li><a href="#filing">Agenda files for you</a></li>
+    <li><a href="#filing">Agendum files for you</a></li>
     <li><a href="#views">Views</a></li>
     <li><a href="#dates">Dates and times</a></li>
     <li><a href="#rules">Conditions and actions</a></li>
@@ -54,8 +54,8 @@
     <circle cx="119" cy="82" r="3" fill="#2b2a27"/>
     <circle cx="112" cy="90" r="2.5" fill="#c56b6b"/>
   </svg>
-  <h1>The Agenda Manual</h1>
-  <p>Everything worth knowing about Agenda, the important things in depth and the
+  <h1>Wol's Agendum: the Manual</h1>
+  <p>Everything worth knowing about Wol's Agendum, the important things in depth and the
      rest in brief, as Owl explained it to Rabbit one afternoon. For the short
      version, see the <a href="../guide/index.html">User Guide</a>.</p>
 </header>
@@ -82,23 +82,28 @@ Forest.</p>
 <p class="rabbit"><b>Rabbit.</b> I already am.</p>
 <p class="owl"><b>Owl.</b> Then you will be the most Organised animal with time to
 spare, which is rarer.</p>
+<p class="rabbit"><b>Rabbit.</b> Has it a name, this Method?</p>
+<p class="owl"><b>Owl.</b> It is called <em>Wol's Agendum</em>. W-O-L, which is how I
+spell it. An agendum is one thing to be done, and you have a great many. Call it
+Agendum, if you are in a hurry, which you always are. It is modelled on a famous old
+program called Agenda, and when I say “as Agenda did”, that is the one I mean.</p>
 </div>
 
 <p>This manual follows their afternoon. Each chapter begins with what you need to know,
-then goes into the details; the most important parts of Agenda (items, categories,
+then goes into the details; the most important parts of Agendum (items, categories,
 automatic filing, views and dates) get the most room. Features most people need less
 often are gathered in <a href="#more">A few more things</a>.</p>
 
-<pre class="shell">./agenda rabbit.agenda       # open a file, or start one with that name
-./agenda --demo              # try Agenda on the sample file
-./agenda --help              # every command-line option</pre>
+<pre class="shell">./agendum rabbit.agendum     # open a file, or start one with that name
+./agendum --demo             # try Agendum on the sample file
+./agendum --help             # every command-line option</pre>
 </section>
 
 <!-- ===================================================================== -->
 <section id="idea">
 <h2>1. The idea</h2>
 
-<p>Agenda keeps three kinds of things:</p>
+<p>Agendum keeps three kinds of things:</p>
 <ul>
   <li><strong>Items</strong>: whatever you write down, in your own words: a task, a
       call to make, an idea. An item can have a longer <em>note</em> behind it.</li>
@@ -119,7 +124,7 @@ are only labels tied to it. “Count the lettuces before Tigger bounces on them�
 labels, <em>Garden</em> and <em>Tigger</em>, so it appears in both sections at once.
 Change it in one place and it changes in the other, because it is the same item.</p>
 <p class="rabbit"><b>Rabbit.</b> And who ties on the labels? Me?</p>
-<p class="owl"><b>Owl.</b> Sometimes. Mostly Agenda does, by reading what you write.
+<p class="owl"><b>Owl.</b> Sometimes. Mostly Agendum does, by reading what you write.
 You wrote “Tigger”, and there is a category called Tigger. That was enough.</p>
 </div>
 
@@ -130,7 +135,7 @@ columns:</p>
 
 <p>“Count the lettuces…” appears twice: under <em>Garden</em>, where Rabbit typed it, and
 under <em>Friends and Relations</em>, because its text mentions Tigger. The
-<em>When</em> column shows dates Agenda read from the text: “tomorrow morning” became
+<em>When</em> column shows dates Agendum read from the text: “tomorrow morning” became
 13 October at 8:00, and “Thursday at 3pm” the 15th at 15:00.</p>
 </section>
 
@@ -143,7 +148,7 @@ screen:</p>
 <ul>
   <li>The <strong>control panel</strong>, the two lines at the top, white on blue. The
       first names the file (with <code>*</code> when it has unsaved changes) and, on the
-      right, what Agenda is doing (<code>READY</code>, <code>EDIT</code>,
+      right, what Agendum is doing (<code>READY</code>, <code>EDIT</code>,
       <code>MENU</code>, <code>CAT MGR</code> …) and the date and time. Small signs
       appear beside these: <code>♦</code> when items are marked, <code>?</code> when
       assignments wait for your answer, <code>@</code> when an alarm has rung,
@@ -183,7 +188,7 @@ back a level. This manual writes menu paths like <strong>File ▸ Properties</st
   <tr><td><kbd>ESC</kbd></td><td>Back out of whatever you are in</td><td></td></tr>
   <tr><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td><td>Undo / redo (up to 100 steps)</td><td></td></tr>
   <tr><td><kbd>CTRL-S</kbd></td><td>Save</td><td><kbd>ALT-W</kbd></td></tr>
-  <tr><td><kbd>CTRL-Q</kbd></td><td>Quit (Agenda asks about unsaved changes)</td><td><kbd>ALT-Q</kbd></td></tr>
+  <tr><td><kbd>CTRL-Q</kbd></td><td>Quit (Agendum asks about unsaved changes)</td><td><kbd>ALT-Q</kbd></td></tr>
 </table>
 
 <div class="talk">
@@ -216,7 +221,7 @@ highlight. <kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) starts an empty new item the sa
 {{20-typing}}
 
 <p>While Rabbit types, the control panel says how to finish (<kbd>ENTER</kbd>) or give up
-(<kbd>ESC</kbd>). When he presses <kbd>ENTER</kbd>, Agenda reads the text, finds a date
+(<kbd>ESC</kbd>). When he presses <kbd>ENTER</kbd>, Agendum reads the text, finds a date
 and files the item, and the control panel says which date it found:</p>
 
 {{21-typed|rows:3-7}}
@@ -224,7 +229,7 @@ and files the item, and the control panel says which date it found:</p>
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> Next Tuesday is tomorrow. Today is Monday! But it says
 the twentieth.</p>
-<p class="owl"><b>Owl.</b> Ah. Agenda is very particular, as I am. <em>Tuesday</em> on
+<p class="owl"><b>Owl.</b> Ah. Agendum is very particular, as I am. <em>Tuesday</em> on
 its own is the next Tuesday: tomorrow. <em>This Tuesday</em> is the Tuesday of this
 week, also tomorrow. <em>Next Tuesday</em> is the Tuesday of <em>next</em> week. If you
 meant tomorrow, say “Tuesday”.</p>
@@ -268,7 +273,7 @@ parentheses.</p>
 <p>In this box <kbd>ENTER</kbd> on the text edits it, <kbd>DEL</kbd> on an assignment
 breaks it, and typing a category name assigns the item there (with
 <a href="#completion">completion</a>). <kbd>ENTER</kbd> or <kbd>F4</kbd> on a date
-changes it. An assignment marked <code>(c)</code> was made by Agenda, not by you; more
+changes it. An assignment marked <code>(c)</code> was made by Agendum, not by you; more
 about that in <a href="#filing">chapter 5</a>.</p>
 
 <h3>Marking several items</h3>
@@ -296,7 +301,7 @@ a family whose children exclude each other.</p>
 
 {{02-catmgr}}
 
-<p><code>Entry</code>, <code>When</code> and <code>Done</code> are Agenda's own
+<p><code>Entry</code>, <code>When</code> and <code>Done</code> are Agendum's own
 <em>date categories</em>: the day an item was entered, its date, and the day it was
 done. They, and <code>MAIN</code>, cannot be renamed or discarded.</p>
 
@@ -333,7 +338,7 @@ it to the parent takes it out of the child, and the other way round.</p>
 <p>Some families allow only one answer: an item is <em>High</em>, <em>Medium</em> or
 <em>Low</em> priority, never two of them. Set <strong>Children mutually exclusive</strong>
 in the parent's properties, and assigning an item to one child takes it out of the
-others. If items already sit in two children, Agenda asks where they should go: to the
+others. If items already sit in two children, Agendum asks where they should go: to the
 parent, to the first of the children, or to a new child.</p>
 
 <div class="talk">
@@ -374,15 +379,15 @@ properties. <kbd>ENTER</kbd> changes the highlighted one.</p>
 
 <!-- ===================================================================== -->
 <section id="filing">
-<h2>5. Agenda files for you</h2>
+<h2>5. Agendum files for you</h2>
 
-<p>This is the heart of Agenda, and the reason it exists. When you write or change an
-item, Agenda reads it and assigns it to every category whose name appears in it.</p>
+<p>This is the heart of Agendum, as it was of Agenda, and the reason it exists. When
+you write or change an item, Agendum reads it and assigns it to every category whose name appears in it.</p>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> Every category? What if I write “Find Small”? Small is
 a friend-and-relation, but it is also, well, small.</p>
-<p class="owl"><b>Owl.</b> Then it goes to <em>Small</em>, which is what happened. Agenda
+<p class="owl"><b>Owl.</b> Then it goes to <em>Small</em>, which is what happened. Agendum
 matches whole words, ignoring capitals. If a category's name is a word you use for
 other things, turn off <strong>Assign items mentioning it</strong> for that category,
 or give it a longer name.</p>
@@ -406,7 +411,7 @@ or give it a longer name.</p>
 </ul>
 
 <h3>Assignments that follow the text</h3>
-<p>An assignment Agenda makes because of the text is <em>conditional</em>: Item
+<p>An assignment Agendum makes because of the text is <em>conditional</em>: Item
 Properties marks it <code>(c)</code>, and if you change the text so that it no longer
 mentions the category, the item leaves it again. An assignment <em>you</em> make, by
 typing in a column, with <kbd>F3</kbd> or <kbd>ALT-M</kbd>, is <em>explicit</em> and
@@ -483,7 +488,7 @@ of these for it alone (each says <em>Global</em> until you change it). Rabbit's
 then shows <code>T= Note</code> beside it.</p>
 
 <h3>Asking first</h3>
-<p>With <strong>Confirm assignments</strong> set to <em>Always</em>, Agenda suggests
+<p>With <strong>Confirm assignments</strong> set to <em>Always</em>, Agendum suggests
 instead of filing. A <code>?</code> appears at the top right, and
 <strong>Category ▸ Questions</strong> goes through the items one at a time:
 <kbd>SPACE</kbd> picks a category, <kbd>TAB</kbd> picks them all, <kbd>ENTER</kbd>
@@ -530,7 +535,7 @@ the item and its columns; <strong>View ▸ Column</strong> removes, widens and n
 them.</p>
 
 <h3 id="completion">Typing in a column</h3>
-<p>Typing in a column assigns the item. Agenda completes the name as you type, among
+<p>Typing in a column assigns the item. Agendum completes the name as you type, among
 that column's categories only:</p>
 
 {{22-complete|rows:3-5}}
@@ -576,12 +581,12 @@ section's category) and <em>Pending</em> items (waiting for others,
 <p class="rabbit"><b>Rabbit.</b> This is the part I need. Everything I have to do has a
 <em>when</em>.</p>
 <p class="owl"><b>Owl.</b> Then write the when in the item, the way you would say it, and
-Agenda will put it in the When column. You needn't learn a format. Agenda learned
+Agendum will put it in the When column. You needn't learn a format. Agendum learned
 yours.</p>
 </div>
 
 <h3>Dates in what you write</h3>
-<p>The first date in an item becomes its <em>When</em> date. Agenda reads a great many
+<p>The first date in an item becomes its <em>When</em> date. Agendum reads a great many
 ways of saying it:</p>
 <table>
   <tr><th>Kind</th><th>Examples</th></tr>
@@ -617,12 +622,12 @@ ways of saying it:</p>
 <p><kbd>ALT-F2</kbd> (or <strong>Item ▸ When</strong>) asks for a When date, or type it in
 the When column. A date you set yourself wins over the text from then on; <kbd>DEL</kbd>
 in the When column gives the date back to the text. <strong>File ▸ Dating</strong>
-stops Agenda reading When dates from text in this file.</p>
+stops Agendum reading When dates from text in this file.</p>
 
 <h3>Again and again</h3>
 <p>With <em>every</em>, <em>each</em> or <em>evry</em>, a date recurs: “every Monday”,
 “every other Monday”, “every 2 weeks”, “the 15th of every month”, “every quarter”, “every
-year”. Mark such an item done with <kbd>F4</kbd>, and Agenda adds the next one right
+year”. Mark such an item done with <kbd>F4</kbd>, and Agendum adds the next one right
 after it, with the same text, note and categories and the next date. Months keep their
 day: an item on the 30th of every month falls on the 28th in February and on the 30th
 again in March.</p>
@@ -635,7 +640,7 @@ weeding is already waiting.</p>
 
 <h3>Alarms</h3>
 <p><kbd>ALT-A</kbd> on an item with a When time sets an alarm, 5 minutes before unless you
-type another number (0 to 60); the item shows <code>@</code>. When the time comes Agenda
+type another number (0 to 60); the item shows <code>@</code>. When the time comes Agendum
 beeps, names the item, and shows <code>@</code> at the top right until you look at
 <strong>Search ▸ Alarms</strong>, which lists the day's alarms. <kbd>ALT-A</kbd> again
 cancels an alarm.</p>
@@ -852,7 +857,7 @@ shows <code>&amp;</code> until they are all done.</p>
 </table>
 
 <p>Quitting, opening another file, starting a new one and importing all replace what is
-on the screen, so when the file has unsaved changes Agenda first asks “Save changes
+on the screen, so when the file has unsaved changes Agendum first asks “Save changes
 first?”: <kbd>Y</kbd> saves (asking for a name if the file has none) and goes on,
 <kbd>N</kbd> goes on without saving, <kbd>ESC</kbd> changes its mind.</p>
 
@@ -866,7 +871,7 @@ opens such a file as a new, untitled file to save under a name.</p>
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> Christopher Robin keeps his Expotitions on a calendar.
 On the web, he says. I never know when the next one is, and then everyone has gone.</p>
-<p class="owl"><b>Owl.</b> Then let Agenda read it for you.</p>
+<p class="owl"><b>Owl.</b> Then let Agendum read it for you.</p>
 </div>
 
 <p>A calendar published on the web, with an address ending in <code>.ics</code> or
@@ -884,7 +889,7 @@ events go in, and reads the calendar at once:</p>
   <li>A repeating event becomes one repeating item, on its next date: “Poohsticks at
       the bridge” every Wednesday moves on to the next Wednesday when Rabbit marks it
       done.</li>
-  <li>Agenda reads the calendar again every hour while it runs. A new reading changes
+  <li>Agendum reads the calendar again every hour while it runs. A new reading changes
       only what the calendar changed; Rabbit's own notes, categories and done marks
       stay, an event that is cancelled or removed takes its item with it, and an item
       Rabbit threw away does not come back.</li>
@@ -901,7 +906,7 @@ nothing passes without a word.</p>
 <p>Some settings belong to you, not to a file: they follow you from file to file and
 someone else opening your file keeps their own. <strong>File ▸ Customize</strong> sets
 them, and saves them in your preferences file
-(<code>~/.config/agenda/preferences</code>):</p>
+(<code>~/.config/agendum/preferences</code>):</p>
 
 {{15-customize|box}}
 
@@ -916,9 +921,9 @@ them, and saves them in your preferences file
 </ul>
 
 <p>The same can be given for one session on the command line:</p>
-<pre class="shell">./agenda --theme mono rabbit.agenda
-./agenda --lang=swedish --fallback=english rabbit.agenda
-./agenda --number-order=dmy --date-separator=. --clock=24 rabbit.agenda</pre>
+<pre class="shell">./agendum --theme mono rabbit.agendum
+./agendum --lang=swedish --fallback=english rabbit.agendum
+./agendum --number-order=dmy --date-separator=. --clock=24 rabbit.agendum</pre>
 </section>
 
 <!-- ===================================================================== -->

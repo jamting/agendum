@@ -1,4 +1,4 @@
- File: /home/rabbit/rabbit.agenda                     CAT MGR  2026-10-12 10:15
+ File: /home/rabbit/rabbit.agendum                    CAT MGR  2026-10-12 10:15
  Category Manager                                                 20 categories
  MAIN   6
     Entry   date

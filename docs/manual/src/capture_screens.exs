@@ -28,7 +28,7 @@ defmodule ManualScreens do
       state
       | now: ~N[2026-10-12 10:15:00],
         today: @today,
-        path: "/home/rabbit/rabbit.agenda"
+        path: "/home/rabbit/rabbit.agendum"
     }
 
     view(state)

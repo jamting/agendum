@@ -1,4 +1,4 @@
- File: /home/rabbit/rabbit.agenda                       PROPS  2026-10-12 10:15
+ File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
  Category Manager                                                 20 categories
  MAIN   6
     Entry┌──────── Category properties: Friends and Relations ────────┐

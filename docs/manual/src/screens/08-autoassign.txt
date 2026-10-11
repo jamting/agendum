@@ -1,4 +1,4 @@
- File: /home/rabbit/rabbit.agenda                       PROPS  2026-10-12 10:15
+ File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
  View: Rabbit's Week
  Garden                                  When             Priority Friends
  • Weed t┌───────────────────── File properties ──────────────────────┐

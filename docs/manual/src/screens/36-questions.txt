@@ -1,4 +1,4 @@
- File: /home/rabbit/rabbit.agenda *                   ? READY  2026-10-12 10:15
+ File: /home/rabbit/rabbit.agendum *                  ? READY  2026-10-12 10:15
  View: Rabbit's Week
  Garden                                  When             Priority Friends
  • Weed t┌────────────────── Suggested assignments ───────────────────┐

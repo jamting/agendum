@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Agenda User Guide</title>
+  <title>Wol's Agendum User Guide</title>
   <link rel="stylesheet" href="guide.css">
 </head>
 <body>
@@ -21,7 +21,7 @@
     <li><a href="#numbers">Numbers and totals</a></li>
     <li><a href="#finding">Finding, filtering and sorting</a></li>
     <li><a href="#dependencies">Things that wait for other things</a></li>
-    <li><a href="#automatic">Letting Agenda do the filing</a></li>
+    <li><a href="#automatic">Letting Agendum do the filing</a></li>
     <li><a href="#files">Files, printing and looks</a></li>
     <li><a href="#keys">Keyboard reference</a></li>
     <li><a href="#later">Still to come</a></li>
@@ -37,10 +37,10 @@
     <path d="M41 84 L45 92 L49 84 Z" fill="#a8382c"/>
     <path d="M45 92 C 38 104, 52 112, 44 128" stroke="#6b665c" stroke-width="1.5" fill="none"/>
   </svg>
-  <h1>The Agenda User Guide</h1>
-  <p>A personal information manager in the spirit of Lotus Agenda (1988), for people
-     with a great many small things to remember. Follow a Very Small Animal as he
-     plans a birthday party.</p>
+  <h1>Wol's Agendum</h1>
+  <p>The user guide. Wol's Agendum (Agendum for short) is a personal information
+     manager in the spirit of Lotus Agenda (1988), for people with a great many small
+     things to remember. Follow a Very Small Animal as he plans a birthday party.</p>
 </header>
 
 <!-- ===================================================================== -->
@@ -48,8 +48,8 @@
 <h2>1. Welcome</h2>
 
 <p>Most organisers want you to decide where something belongs before you write it
-down. Agenda works the other way round: you type things as they come to you, in
-your own words, and Agenda files them. Later you look at the same information in
+down. Agendum works the other way round: you type things as they come to you, in
+your own words, and Agendum files them. Later you look at the same information in
 different <em>views</em>: everything for Thursday, everything about one person,
 everything that still costs money.</p>
 
@@ -65,7 +65,8 @@ everything that still costs money.</p>
 <div class="story">One blustery morning <strong>Piglet</strong> remembers that it is
 Eeyore's birthday on Thursday, and that nobody seems to have noticed. There is a
 present to find, a cake to arrange and friends to tell, and Piglet, being a Very
-Small Animal, cannot possibly keep it all in his head. So he opens Agenda.
+Small Animal, cannot possibly keep it all in his head. So he opens Wol's Agendum,
+which Owl (who spells his name Wol) has been recommending to everyone.
 We will follow him through this guide.</div>
 </section>
 
@@ -73,13 +74,13 @@ We will follow him through this guide.</div>
 <section id="start">
 <h2>2. Getting started</h2>
 
-<pre class="shell">./agenda party.agenda        # open (or start) a file
-./agenda --demo              # try it with sample data
-./agenda --help              # every option</pre>
+<pre class="shell">./agendum party.agendum      # open (or start) a file
+./agendum --demo             # try it with sample data
+./agendum --help             # every option</pre>
 
 <p>The screen has three parts, coloured as Agenda 2.0 was on a colour screen:</p>
 
-<pre class="screen"><span class="t"> File: party.agenda                                     READY  2026-10-08 09:00 </span>
+<pre class="screen"><span class="t"> File: party.agendum                                    READY  2026-10-08 09:00 </span>
 <span class="t"> View: Party                                                                    </span>
  <span class="h">Presents</span>                                               When             People
  • <span class="c">Buy a balloon for Eeyore</span>                              2026-10-09       Eeyore
@@ -88,7 +89,7 @@ We will follow him through this guide.</div>
 
 <ul>
   <li>The <strong>control panel</strong>, the two lines at the top, shows the file,
-      what Agenda is doing (<code>READY</code>, <code>EDIT</code>, <code>MENU</code> …)
+      what Agendum is doing (<code>READY</code>, <code>EDIT</code>, <code>MENU</code> …)
       and the time, and below that the view you are in. The menu, questions, prompts
       and messages take these two lines over while they last.</li>
   <li>The <strong>view</strong> is the rest of the screen. The highlight is white on red,
@@ -170,8 +171,8 @@ Pooh, Owl, Rabbit, Kanga, Roo and Eeyore beneath it, then <em>Presents</em>,
   <tr><td>Properties (see below)</td><td><kbd>F6</kbd></td></tr>
 </table>
 
-<h3>Agenda files things for you</h3>
-<p>When an item's text mentions a category by name, Agenda assigns it there. “Ask
+<h3>Agendum files things for you</h3>
+<p>When an item's text mentions a category by name, Agendum assigns it there. “Ask
 <em>Owl</em> to write on the cake” lands in <em>Owl</em> (and so in <em>People</em>)
 without Piglet doing anything. Item Properties marks such assignments with
 <code>(c)</code>: they follow the text, so if Piglet later changes it to “Ask Rabbit…”,
@@ -194,7 +195,7 @@ or all marked items.</p>
   <li><strong>Also match</strong>, <strong>Assignment conditions</strong>,
       <strong>Assignment actions</strong>, <strong>Special action</strong> and
       <strong>Advanced settings</strong>: see
-      <a href="#automatic">letting Agenda do the filing</a>.</li>
+      <a href="#automatic">letting Agendum do the filing</a>.</li>
 </ul>
 </section>
 
@@ -206,7 +207,7 @@ or all marked items.</p>
 the items of one category; each <strong>column</strong> shows something about every
 item, such as its date or who it involves.</p>
 
-<pre class="screen"><span class="t"> File: party.agenda                                     READY  2026-10-08 09:00 </span>
+<pre class="screen"><span class="t"> File: party.agendum                                    READY  2026-10-08 09:00 </span>
 <span class="t"> View: Party                                                                    </span>
  <span class="h">To do</span>                                                  When             People
  • Ask Owl to write on the cake                          2026-10-08       Owl
@@ -228,7 +229,7 @@ item, such as its date or who it involves.</p>
 </table>
 
 <p>Typing in a column assigns the item: in the <em>People</em> column, Piglet types
-<kbd>R</kbd> and Agenda offers <em>Rabbit</em> (<kbd>ENTER</kbd> takes it,
+<kbd>R</kbd> and Agendum offers <em>Rabbit</em> (<kbd>ENTER</kbd> takes it,
 <kbd>F8</kbd>/<kbd>F7</kbd> show the other matches, <kbd>INS</kbd> makes a new category).
 Typing a name that doesn't exist yet simply creates it.</p>
 
@@ -243,7 +244,7 @@ each of his friends, so he can see at a glance what to tell whom when they come 
 <section id="dates">
 <h2>6. Dates, times and alarms</h2>
 
-<p>Write dates as you would say them, and Agenda fills in the <em>When</em> column:
+<p>Write dates as you would say them, and Agendum fills in the <em>When</em> column:
 “tomorrow”, “Thursday”, “next week”, “the 5th of November”, “in 3 days”,
 “friday at 3pm”, “tonight”, “in five working days”, “the first Wednesday in
 November”, “the last Friday of the month”, “end of the quarter”, “next April”. Dates
@@ -259,7 +260,7 @@ without a year are always in the future.</p>
   <tr><td>Stop reading dates from item text</td><td><strong>File ▸ Dating</strong></td></tr>
 </table>
 
-<p><strong>File ▸ Properties</strong> opens Agenda's boxes one inside another: SPACE on
+<p><strong>File ▸ Properties</strong> opens boxes one inside another, as Agenda did: SPACE on
 <em>Global date settings …</em> and then on <em>Display format …</em> sets how the whole
 file shows dates and times: date
 and time or just one of them, the weekday, the order (2026-10-08, 08/10/26, 8 Oct 26 …),
@@ -285,7 +286,7 @@ Piglet. When takes Wednesday; an <em>Ice by</em> date category set to take the
 
 <h3>Things that happen again and again</h3>
 <p>Say <em>every</em>: “every Monday”, “every other week”, “the 1st of every month”,
-“every quarter”. When you mark such an item done with <kbd>F4</kbd>, Agenda puts the
+“every quarter”. When you mark such an item done with <kbd>F4</kbd>, Agendum puts the
 next one right after it with the next date.</p>
 
 <div class="story">“Water the haycorns every day,” types Piglet, who has been
@@ -295,7 +296,7 @@ growing some near his front door. And, so as not to be late:
 <h3>In another language, or your own way</h3>
 <p>Dates can be typed in Swedish too, with English as a fallback. Choose the languages
 in <strong>File ▸ Customize</strong>, or for one session:</p>
-<pre class="shell">./agenda --lang=swedish --fallback=english party.agenda</pre>
+<pre class="shell">./agendum --lang=swedish --fallback=english party.agendum</pre>
 <p>Then “på fredag kl 15”, “i morgon”, “varje måndag” and “den 5 november” work as
 well. Only the reading of dates changes; menus and messages stay in English.</p>
 
@@ -316,7 +317,7 @@ column with a total at the bottom of every section. Make one with <kbd>F6</kbd> 
 (<kbd>ALT-R</kbd>), and type the numbers in. The control panel shows <code>#</code>
 in a numeric column.</p>
 
-<pre class="screen"><span class="t"> File: party.agenda                                   # READY  2026-10-08 09:00 </span>
+<pre class="screen"><span class="t"> File: party.agendum                                  # READY  2026-10-08 09:00 </span>
 <span class="t"> View: Party                                                                    </span>
  <span class="h">Presents</span>                                                           Cost
  • Buy a balloon for Eeyore                                          2.50
@@ -379,13 +380,13 @@ so the cake doesn't trouble him until then.</div>
 
 <!-- ===================================================================== -->
 <section id="automatic">
-<h2>10. Letting Agenda do the filing</h2>
+<h2>10. Letting Agendum do the filing</h2>
 
-<p>Agenda can do more than spot names. All of this is set in a category's properties
+<p>Agendum can do more than spot names. All of this is set in a category's properties
 (<kbd>F6</kbd>).</p>
 
 <h3>How names are matched</h3>
-<p>Agenda reads words as people do. Endings are ignored, so <em>Party</em> also catches
+<p>Agendum reads words as Agenda did, and as people do. Endings are ignored, so <em>Party</em> also catches
 “parties”; short words of three letters or fewer must match exactly. Text in quotes is
 left out. A name of two capitalised words is a person's name: the category
 <em>Edward Bear</em> catches “ask Mr. Bear about the honey”, but not “Teddy Bear”, who is
@@ -445,7 +446,7 @@ and <strong>Category ▸ Questions</strong> goes through the suggestions one ite
   <tr><td>Your theme, date languages and input format</td><td><strong>File ▸ Customize</strong></td></tr>
 </table>
 
-<p>Before quitting, opening another file, starting a new one or importing, Agenda asks
+<p>Before quitting, opening another file, starting a new one or importing, Agendum asks
 “Save changes first?” if there are any: <kbd>Y</kbd> saves, <kbd>N</kbd> doesn't,
 <kbd>ESC</kbd> stays where you are.</p>
 
@@ -457,10 +458,10 @@ way: categories, items, notes, dates, views and settings all come back.</p>
 
 <h3>Calendars from the web</h3>
 <p>If a calendar you use is published on the web (an address ending in
-<code>.ics</code>, or starting with <code>webcal://</code>), Agenda can bring its events
+<code>.ics</code>, or starting with <code>webcal://</code>), Agendum can bring its events
 in as items. <strong>File ▸ Transfer ▸ Calendars</strong> lists your subscriptions;
 <kbd>INS</kbd> adds one, asking for the address and a name, which becomes the category
-its events go in. Agenda reads it at once and then every hour while it runs
+its events go in. Agendum reads it at once and then every hour while it runs
 (<kbd>F</kbd> changes how often, <kbd>A</kbd> how far ahead, <kbd>ENTER</kbd> reads it now,
 <kbd>DEL</kbd> unsubscribes). Each event becomes an item with its date and time; a
 repeating one becomes a repeating item. When the calendar changes, so do the items,
@@ -471,13 +472,13 @@ Piglet subscribes to it as <em>Roo's swimming</em>, so the party won't clash wit
 Thursday's lesson.</div>
 
 <h3>Looks</h3>
-<p>Agenda looks as Agenda 2.0 did on a colour screen: grey, with blue and cyan. Two
+<p>Agendum looks as Agenda 2.0 did on a colour screen: grey, with blue and cyan. Two
 other themes are in <strong>File ▸ Customize</strong>: <em>Blue</em>, white on blue,
 and <em>Mono</em>, for plain terminals, which uses only bold, dim, underline and
 reverse. For one session:</p>
-<pre class="shell">./agenda --theme blue party.agenda
-./agenda --mono party.agenda      # the same as --theme mono
-NO_COLOR=1 ./agenda party.agenda  # mono, unless you chose a theme</pre>
+<pre class="shell">./agendum --theme blue party.agendum
+./agendum --mono party.agendum      # the same as --theme mono
+NO_COLOR=1 ./agendum party.agendum  # mono, unless you chose a theme</pre>
 <p>In a terminal that shows 24-bit colour, the colours are exactly Agenda's.</p>
 </section>
 
