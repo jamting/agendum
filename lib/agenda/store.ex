@@ -20,14 +20,15 @@ defmodule Agenda.Store do
   adds `Category.excludes` (R9); 17 adds `Database.dates`, the dates of
   date categories the user made (R6a); 18 adds `Category.date_rule` (R6b),
   replacing `Database.when_from` with When's rule, and marks dates set by
-  hand in `Database.dates`; 19 adds `Database.match_settings` (R16a).
+  hand in `Database.dates`; 19 adds `Database.match_settings` (R16a); 20 adds
+  `Category.match_overrides` (R16b).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 19
+  @format_version 20
   @extension ".agenda"
 
   def extension, do: @extension

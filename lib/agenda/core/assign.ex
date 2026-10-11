@@ -399,7 +399,7 @@ defmodule Agenda.Core.Assign do
   """
   @spec auto_assign(db, id, [id], MapSet.t(id) | nil) :: db
   def auto_assign(db, item_id, adjacent \\ [], only \\ nil) do
-    levels = db |> match_levels(match_text(db, db.items[item_id])) |> Map.new()
+    levels = db |> item_match_levels(db.items[item_id]) |> Map.new()
     explicit = Database.explicit_categories(db, item_id)
 
     accepted =
@@ -427,11 +427,13 @@ defmodule Agenda.Core.Assign do
     # suggested, to be confirmed with Utilities Questions (R16): every
     # match with Always, partial ones with Sometimes (R16a)
     {suggested, made} =
-      case db.confirm_assignments do
-        :always -> {accepted, []}
-        :sometimes -> Enum.split_with(accepted, &(levels[&1] == :partial))
-        :never -> {[], accepted}
-      end
+      Enum.split_with(accepted, fn cand ->
+        case confirm_mode(db, cand) do
+          :always -> true
+          :sometimes -> levels[cand] == :partial
+          :never -> false
+        end
+      end)
 
     suggestions =
       if suggested == [],
@@ -448,14 +450,25 @@ defmodule Agenda.Core.Assign do
   The text an item is matched on (Match on, R16a): its text, its note, or
   both.
   """
-  @spec match_text(db, Agenda.Core.Item.t()) :: String.t()
-  def match_text(db, item) do
-    case db.match_settings.match_on do
-      :item -> item.text
-      :note -> item.note
-      :both -> item.text <> "\n" <> item.note
-    end
+  @spec match_text(Agenda.Core.Item.t(), :item | :note | :both) :: String.t()
+  def match_text(item, :item), do: item.text
+  def match_text(item, :note), do: item.note
+  def match_text(item, :both), do: item.text <> "\n" <> item.note
+
+  @doc """
+  A category's text matching settings: the file's, with those it sets for
+  itself (R16b).
+  """
+  @spec match_settings(db, id) :: TextMatch.t()
+  def match_settings(db, cat_id) do
+    overrides = Map.delete(db.categories[cat_id].match_overrides, :confirm)
+    struct(db.match_settings, overrides)
   end
+
+  @doc "A category's Confirm assignments: its own or the file's (R16, R16b)."
+  @spec confirm_mode(db, id) :: :never | :always | :sometimes
+  def confirm_mode(db, cat_id),
+    do: Map.get(db.categories[cat_id].match_overrides, :confirm, db.confirm_assignments)
 
   @doc """
   Categories whose name or short name (when they match names) or text
@@ -470,28 +483,37 @@ defmodule Agenda.Core.Assign do
   `:partial` when only enough words for the required strength are there.
   """
   @spec match_levels(db, String.t()) :: [{id, :full | :partial}]
-  def match_levels(db, text) do
-    settings = db.match_settings
+  def match_levels(db, text), do: levels(db, fn _match_on -> text end)
 
-    if settings.enabled do
-      prepared = TextMatch.prepare(text, settings)
+  # The same for an item, each category matching the text it says (R16b).
+  defp item_match_levels(db, item), do: levels(db, &match_text(item, &1))
 
-      db.categories
-      |> Map.values()
-      |> Enum.filter(&(&1.kind == :standard and not Database.protected?(db, &1.id)))
-      |> Enum.map(&{&1.id, category_level(&1, prepared, settings)})
-      |> Enum.reject(&(elem(&1, 1) == :none))
-      |> Enum.sort()
-    else
-      []
-    end
+  defp levels(db, text_for) do
+    db.categories
+    |> Map.values()
+    |> Enum.filter(&(&1.kind == :standard and not Database.protected?(db, &1.id)))
+    |> Enum.map_reduce(%{}, fn cat, prepared ->
+      settings = match_settings(db, cat.id)
+      key = {settings.match_on, settings.ignore_accents}
+
+      prepared =
+        Map.put_new_lazy(prepared, key, fn ->
+          TextMatch.prepare(text_for.(settings.match_on), settings)
+        end)
+
+      level = if settings.enabled, do: category_level(cat, prepared[key], settings), else: :none
+      {{cat.id, level}, prepared}
+    end)
+    |> elem(0)
+    |> Enum.reject(&(elem(&1, 1) == :none))
+    |> Enum.sort()
   end
 
   @doc "Whether an item's text matches a category (see `matching_categories/2`)."
   @spec text_matches?(db, id, id) :: boolean
   def text_matches?(db, item_id, cat_id) do
-    settings = db.match_settings
-    prepared = TextMatch.prepare(match_text(db, db.items[item_id]), settings)
+    settings = match_settings(db, cat_id)
+    prepared = TextMatch.prepare(match_text(db.items[item_id], settings.match_on), settings)
     settings.enabled and category_level(db.categories[cat_id], prepared, settings) != :none
   end
 

@@ -839,6 +839,49 @@ defmodule Agenda.Core do
   def set_match_settings(db, %Agenda.Core.TextMatch{} = settings),
     do: %{db | match_settings: settings}
 
+  @match_overrides [:enabled, :match_on, :strength, :confirm, :ignore_suffixes, :ignore_accents]
+
+  @doc """
+  Sets one text matching setting for a category instead of the file's, or
+  with `:global` takes the file's again (R16b; the category's Advanced
+  settings). Ignore text enclosed by is the file's only.
+  """
+  @spec set_match_override(db, id, atom, term) ::
+          {:ok, db} | {:error, :not_standard | :not_allowed}
+  def set_match_override(db, cat_id, field, value) do
+    cond do
+      db.categories[cat_id].kind != :standard ->
+        {:error, :not_standard}
+
+      field not in @match_overrides ->
+        {:error, :not_allowed}
+
+      value == :global ->
+        {:ok,
+         Database.update_category(
+           db,
+           cat_id,
+           &%{&1 | match_overrides: Map.delete(&1.match_overrides, field)}
+         )}
+
+      true ->
+        {:ok,
+         Database.update_category(
+           db,
+           cat_id,
+           &%{&1 | match_overrides: Map.put(&1.match_overrides, field, value)}
+         )}
+    end
+  end
+
+  @doc "A category's text matching settings: the file's with its own (R16b)."
+  @spec match_settings(db, id) :: Agenda.Core.TextMatch.t()
+  defdelegate match_settings(db, cat_id), to: Assign
+
+  @doc "A category's Confirm assignments: its own or the file's (R16b)."
+  @spec confirm_mode(db, id) :: :never | :always | :sometimes
+  defdelegate confirm_mode(db, cat_id), to: Assign
+
   @doc "The items with suggested assignments, in item order, each with its categories."
   @spec questions(db) :: [{id, [id]}]
   def questions(db),

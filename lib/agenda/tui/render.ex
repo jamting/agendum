@@ -27,6 +27,7 @@ defmodule Agenda.TUI.Render do
     :note_search,
     :file_props,
     :date_rule,
+    :category_match,
     :auto_assign,
     :goto,
     :range_filter,
@@ -136,6 +137,7 @@ defmodule Agenda.TUI.Render do
             :item_props,
             :file_props,
             :date_rule,
+            :category_match,
             :auto_assign,
             :column_props,
             :range_filter,
@@ -400,6 +402,9 @@ defmodule Agenda.TUI.Render do
       {"ENTER", "Go"},
       {"ESC", "Cancel"}
     ]
+
+  defp mode_keys(%{type: :category_match}),
+    do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
 
   defp mode_keys(%{type: :auto_assign}),
     do: [{"↑↓", "Setting"}, {"SPACE", "Next"}, {"←", "Previous"}, {"ESC", "Close"}]
@@ -679,6 +684,7 @@ defmodule Agenda.TUI.Render do
       cat.conditions != [] && "if " <> conditions_text(state, cat),
       (cat.also_assign != [] or cat.actions != []) && "→ " <> actions_text(db, cat),
       cat.excludes != [] && "not with " <> names_text(db, cat.excludes),
+      Agenda.TUI.CategoryMatchBox.manager_tag(cat.match_overrides),
       cat.note != "" && "♪",
       count && "#{count}"
     ]
@@ -910,6 +916,9 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :file_props}), do: "File properties"
 
   defp box_title(_state, %{type: :auto_assign}), do: "Auto-assign settings"
+
+  defp box_title(state, %{type: :category_match, cat_id: id}),
+    do: "Advanced settings: " <> state.db.categories[id].name
 
   defp box_title(state, %{type: :date_rule, cat_id: id}),
     do: "Advanced settings: " <> state.db.categories[id].name
@@ -1168,6 +1177,21 @@ defmodule Agenda.TUI.Render do
     end)
   end
 
+  defp box_content(state, %{type: :category_match} = mode, _inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.CategoryMatchBox.lines(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        [
+          {:box, " " <> Draw.pad(label, 24) <> ": "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), value}
+        ]
+      end)
+
+    rows ++ [[], [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]]
+  end
+
   defp box_content(state, %{type: :auto_assign} = mode, _inner, _max_rows) do
     rows =
       state
@@ -1362,7 +1386,11 @@ defmodule Agenda.TUI.Render do
         ),
       conditions: if(cat.conditions == [], do: "(none)", else: conditions_text(state, cat)),
       excludes: if(cat.excludes == [], do: "(none)", else: names_text(state.db, cat.excludes)),
-      date_rule: Agenda.TUI.DateRuleBox.summary(cat.date_rule),
+      advanced:
+        if(cat.kind == :date,
+          do: Agenda.TUI.DateRuleBox.summary(cat.date_rule),
+          else: Agenda.TUI.CategoryMatchBox.summary(cat.match_overrides)
+        ),
       note: if(cat.note == "", do: "(none)", else: "#{String.length(cat.note)} characters")
     }
 
@@ -1375,7 +1403,7 @@ defmodule Agenda.TUI.Render do
       also_match: "Also match",
       also_assign: "Assignment actions",
       excludes: "Excludes",
-      date_rule: "Date settings",
+      advanced: "Advanced settings",
       special: "Special action",
       conditions: "Assignment conditions",
       note: "Note"

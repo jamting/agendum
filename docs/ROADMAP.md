@@ -65,7 +65,8 @@ Rule numbers refer to `SPEC.md`.
 - [x] Break text-match assignments when the text changes (R15c)
 - [x] Assignment questions: Confirm assignments, Utilities Questions (R16)
 - [x] Text matching settings: on/off, match on, match strength, "Sometimes" confirm, ignore enclosed text, suffixes and accents (R16a)
-- [ ] Text matching per category (Advanced settings, "T= Note") and proper names and titles ("Mrs. Wohl" matches Nancy Wohl) (User's Guide 19-14 to 19-17)
+- [x] Text matching per category: Advanced settings, "T= Note" (R16b)
+- [ ] Proper names and titles in text matching ("Mrs. Wohl" matches Nancy Wohl) (User's Guide 19-17)
 
 ## Milestone 4 — Data interchange
 

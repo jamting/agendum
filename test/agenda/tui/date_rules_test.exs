@@ -10,7 +10,7 @@ defmodule Agenda.TUI.DateRulesTest do
   end
 
   defp date_settings(state, cat_id) do
-    index = Enum.find_index(CategoryScreens.props_fields(), &(&1 == :date_rule))
+    index = Enum.find_index(CategoryScreens.props_fields(), &(&1 == :advanced))
     state = CategoryScreens.open_props(state, cat_id)
     state = State.put_mode(state, %{State.mode(state) | cursor: index})
     press(state, :enter)
@@ -45,15 +45,14 @@ defmodule Agenda.TUI.DateRulesTest do
     assert state.db.categories[state.db.special.when].date_rule.which == 2
 
     state = press(state, :esc)
-    assert screen(state) =~ ~r/Date settings\s+: From the item text, date 2/
+    assert screen(state) =~ ~r/Advanced settings\s+: From the item text, date 2/
 
     state = History.undo(state)
     assert state.db.categories[state.db.special.when].date_rule.which == 1
   end
 
-  test "standard categories have no date settings", %{state: state} do
+  test "a standard category's Advanced settings are its text matching (R16b)", %{state: state} do
     calls = hd(Agenda.Core.Database.find_categories(state.db, "Calls"))
-    state = date_settings(state, calls)
-    assert screen(state) =~ "Only date categories have date settings"
+    assert screen(date_settings(state, calls)) =~ "Advanced settings: Calls"
   end
 end

@@ -70,6 +70,7 @@ erDiagram
         list also_assign "category ids"
         list excludes "category ids, negative links (R9)"
         DateRule date_rule "how a date category gets dates (R6b)"
+        map match_overrides "text matching settings of its own (R16b)"
         string also_match "text conditions (R15d)"
         list actions "remove, date and number actions (R15b)"
         atom special "done, discard or nil (R15b)"
@@ -175,6 +176,7 @@ classDiagram
         +also_assign : [id]
         +excludes : [id]
         +date_rule : DateRule or nil
+        +match_overrides : Map~setting, value~
         +also_match : String
         +actions : [id and action]
         +special : done, discard or nil
@@ -455,7 +457,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16); 14 added `Database.date_settings` (R14e); 15 replaced `Database.auto_date` with `Database.when_from` (R14f); 16 added `Category.excludes` (R9); 17 added `Database.dates` (R6a); 18 added `Category.date_rule` (R6b), replacing `Database.when_from` with When's rule; 19 added `Database.match_settings` (R16a)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16); 14 added `Database.date_settings` (R14e); 15 replaced `Database.auto_date` with `Database.when_from` (R14f); 16 added `Category.excludes` (R9); 17 added `Database.dates` (R6a); 18 added `Category.date_rule` (R6b), replacing `Database.when_from` with When's rule; 19 added `Database.match_settings` (R16a); 20 added `Category.match_overrides` (R16b)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

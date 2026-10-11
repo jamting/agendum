@@ -80,7 +80,7 @@ defmodule Agenda.TUI.CategoryScreens do
     :also_assign,
     :excludes,
     :special,
-    :date_rule,
+    :advanced,
     :note
   ]
   def props_fields, do: @props
@@ -984,10 +984,14 @@ defmodule Agenda.TUI.CategoryScreens do
     open_picker(state, {:excludes, cat.id}, nil)
   end
 
-  defp open_prop(state, cat, :date_rule) do
-    if cat.kind == :date,
-      do: Agenda.TUI.DateRuleBox.open(state, cat.id),
-      else: State.error(state, "Only date categories have date settings")
+  # Agenda's Advanced settings: how a date category gets dates (R6b), how
+  # a standard one matches text (R16b)
+  defp open_prop(state, cat, :advanced) do
+    case cat.kind do
+      :date -> Agenda.TUI.DateRuleBox.open(state, cat.id)
+      :standard -> Agenda.TUI.CategoryMatchBox.open(state, cat.id)
+      :numeric -> State.error(state, "Numeric categories have no advanced settings")
+    end
   end
 
   defp open_prop(state, cat, :special) do

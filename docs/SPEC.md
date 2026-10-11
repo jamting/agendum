@@ -383,10 +383,20 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   is dropped. A text condition in parentheses must have its words in
   that order ("(meet with)"), and "^" before one matches its words as they
   are, ignoring no suffixes ("^eats"). A name with other characters
-  ("C++") matches as written. Not done yet: per-category overrides of
-  these settings (Advanced settings, "T= Note" in the category manager)
-  and Agenda's proper names and titles ("Mrs. Wohl" matching Nancy
-  Wohl).
+  ("C++") matches as written. Not done yet: Agenda's proper names and
+  titles ("Mrs. Wohl" matching Nancy Wohl).
+- **R16b ✅ Text matching for one category** (User's Guide 19-8,
+  19-14 to 19-15). Category Properties ▸ Advanced settings of a standard
+  category (for a date category it holds R6b's date settings) sets Text
+  matching, Match on, Required match strength, Confirm assignments,
+  Ignore suffixes and Ignore accents for that category only; each is
+  Global (the file's, shown in brackets: "Global (Item text)") until set,
+  and cycles back to Global. Ignore text enclosed by is the file's only.
+  A category matches with its own settings (Budget on the note while
+  others match the item text), suggests or assigns by its own Confirm
+  assignments, and the category manager marks its own Match on with
+  "T= Note" as Agenda does. The row sums up what the category sets
+  ("Match on: Note text") or says Global.
 - **R15c ✅ Text matches as conditional assignments** (User's Guide 18-3).
   An assignment made because the item's text matched a category (its name,
   short name or text conditions) is conditional, marked "(c)" in Item
