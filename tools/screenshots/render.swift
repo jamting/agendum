@@ -6,7 +6,7 @@
 //
 // A .cells file has one line per screen row; a row is segments separated by
 // U+001F, each segment "FOREGROUND<TAB>BACKGROUND<TAB>TEXT" with the colours
-// as six hex digits.
+// as six hex digits; a "_" after the foreground underlines the text.
 import AppKit
 
 let args = CommandLine.arguments
@@ -49,13 +49,18 @@ for (r, row) in rows.enumerated() {
   var x = 0
   let y = CGFloat(height) - CGFloat(r + 1) * cellHeight
   for (fgHex, bgHex, text) in segments(row) {
-    let fg = colour(fgHex), bg = colour(bgHex)
+    let underline = fgHex.hasSuffix("_")
+    let fg = colour(underline ? fgHex.dropLast() : fgHex), bg = colour(bgHex)
     for character in text {
       let cell = NSRect(x: CGFloat(x) * cellWidth, y: y, width: cellWidth, height: cellHeight)
       bg.setFill()
       cell.fill()
       NSAttributedString(string: String(character), attributes: [.font: font, .foregroundColor: fg])
         .draw(at: cell.origin)
+      if underline {
+        fg.setFill()
+        NSRect(x: cell.minX, y: cell.minY + 1, width: cellWidth, height: 1).fill()
+      }
       x += 1
     }
   }

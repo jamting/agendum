@@ -54,7 +54,9 @@ defmodule Agenda.TUI.Render do
     body =
       overlays
       |> Enum.with_index()
-      |> Enum.reduce(body, fn {mode, depth}, body -> overlay_box(state, mode, depth, body) end)
+      |> Enum.reduce(body, fn {mode, depth}, body ->
+        overlay_box(state, mode, depth, depth == length(overlays) - 1, body)
+      end)
 
     control_panel(state, base) ++
       Enum.map(body, &Draw.line(&1, w)) ++
@@ -1018,13 +1020,15 @@ defmodule Agenda.TUI.Render do
   # --- boxes -------------------------------------------------------------------------------------------
 
   # A box opened from another box (`depth` 1, 2 …) sits a line lower and
-  # two columns further right, so the one beneath still shows.
-  defp overlay_box(state, mode, depth, body) do
+  # two columns further right, so the one beneath still shows; the titles
+  # of the boxes beneath are dimmed, the active box's is not.
+  defp overlay_box(state, mode, depth, active?, body) do
     inner = min(state.width - 8, 60)
     top = 1 + depth
     max_rows = max(State.body_height(state) - 4 - depth, 3)
     content = box_content(state, mode, inner, max_rows)
     box = Draw.box(box_title(state, mode), content, inner)
+    box = if active?, do: box, else: Enum.map(box, &Draw.paint(&1, %{box_title: :box_title_dim}))
     left = min(div(state.width - inner - 2, 2) + 2 * depth, max(state.width - inner - 2, 0))
 
     body

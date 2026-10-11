@@ -589,7 +589,11 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     terminals that take 24-bit colour (`COLORTERM=truecolor`), the nearest
     ANSI colours elsewhere.
   - A box opened from another box sits one line lower and two columns
-    further right, so the one beneath still shows (our choice).
+    further right, so the one beneath still shows, and the titles of the
+    boxes beneath are dimmed (our choice).
+  - `blue` and `mono` have the same parts in their own colours: the control
+    panel (black on cyan; reverse video), the highlighted line (bright blue;
+    bold), box titles and dimmed titles, the faded screen behind a box.
   - Our choices: the highlighted line is drawn in a lighter shade across
     the whole screen, so it shows when the highlight is in a column; Agenda
     put a » in front of it instead.

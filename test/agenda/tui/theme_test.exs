@@ -63,6 +63,21 @@ defmodule Agenda.TUI.ThemeTest do
     end
   end
 
+  test "every theme shows the highlighted line, active box titles and the panel" do
+    for theme <- Theme.names() do
+      t = Theme.styles(theme)
+      refute t.row == t.item, "#{theme}: the highlighted line looks like the others"
+      refute t.row_cell == t.cell, "#{theme}: the highlighted line's entries"
+      refute t.box_title == t.box_title_dim, "#{theme}: dimmed box titles"
+      refute t.box_title == t.box, "#{theme}: box titles look like the box"
+      refute t.backdrop == t.item, "#{theme}: the screen behind a box does not fade"
+      # the two top lines are one panel, whatever they show
+      assert t.panel == t.title, "#{theme}: the control panel changes colour"
+      assert t.menu_help == t.menu, "#{theme}: the menu's second line"
+      refute t.error == t.message, "#{theme}: errors look like messages"
+    end
+  end
+
   test "the monochrome theme keeps the highlighted things apart from the rest" do
     mono = Theme.styles(:mono)
     refute mono.cursor == mono.item
@@ -200,5 +215,24 @@ defmodule Agenda.TUI.LookTest do
     [_, shaded] = Agenda.TUI.Draw.shadow([[], line], 0, 0, 2, 6)
     # the two columns right of a 6-wide box: the last space, and the frame
     assert shaded == [{:box_frame, "│"}, {:box, " text"}, {:shadow, " "}, {:shadow, " "}]
+  end
+
+  test "the titles of boxes beneath the active one are dimmed", %{state: state} do
+    titles = fn state ->
+      for line <- Render.render(state),
+          {style, text} <- line,
+          style in [:box_title, :box_title_dim],
+          do: {style, String.trim(text)}
+    end
+
+    props = press(state, [{:f, 9}, :down, :down, :down, :down, {:f, 6}])
+    assert titles.(props) == [{:box_title, "Category properties: Calls"}]
+
+    nested = press(props, [:down, :down, :enter])
+
+    assert titles.(nested) == [
+             {:box_title_dim, "Category properties: Calls"},
+             {:box_title, "Category type: Calls"}
+           ]
   end
 end
