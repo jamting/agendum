@@ -24,8 +24,8 @@ defmodule Agenda.TUI.StartupTest do
 
     assert text =~ "W O L ' S   A G E N D U M"
     assert text =~ "Hoo's in control? You are."
-    assert text =~ "Copyright JW&D + WOL."
-    assert text =~ "All rites reserved."
+    assert text =~ "Copyright 2026 WOL and JW&D"
+    assert text =~ "All rights reversed"
     assert text =~ ~r/Name: +rabbit/
     assert text =~ ~r/Company: +Hundred Acre Wood/
     # a name in the preferences wins over the login name
@@ -39,11 +39,11 @@ defmodule Agenda.TUI.StartupTest do
     assert state.db.items == Core.new_file().items
   end
 
-  test "three seconds end it" do
+  test "five seconds end it" do
     state = started(false)
     tick = fn seconds -> elem(Update.tick(state, NaiveDateTime.add(@now, seconds)), 0) end
-    assert [%{type: :splash}] = tick.(2).modes
-    assert tick.(3).modes == []
+    assert [%{type: :splash}] = tick.(4).modes
+    assert tick.(5).modes == []
   end
 
   test "without a file, the prompt waits under it, with the last file" do

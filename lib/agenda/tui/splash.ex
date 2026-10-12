@@ -10,7 +10,7 @@ defmodule Agenda.TUI.Splash do
   alias Agenda.TUI.{Draw, State}
 
   @version Mix.Project.config()[:version]
-  @seconds 3
+  @seconds 5
 
   @doc "Puts the splash screen over the program, until a key or three seconds."
   def open(state) do
@@ -29,7 +29,7 @@ defmodule Agenda.TUI.Splash do
     inner = min(w - 8, 60)
     content = content(state, inner)
     box = Draw.box("", content, inner) |> Enum.map(&Draw.paint(&1, %{box_title: :box_frame}))
-    top = max(div(h - length(box), 2), 0)
+    top = max(div(h - length(box) - 5, 2), 0)
     left = div(w - inner - 2, 2)
 
     List.duplicate([], h)
@@ -40,7 +40,7 @@ defmodule Agenda.TUI.Splash do
 
   defp content(state, inner) do
     prefs = state.prefs
-    logo = &{:splash_logo, Draw.pad(&1, 7)}
+    logo = &{:splash_logo, Draw.pad(&1, 13)}
     text = fn indent, segments -> [{:box, Draw.spaces(indent)} | segments] end
 
     name = prefs.name || prefs.user
@@ -49,26 +49,33 @@ defmodule Agenda.TUI.Splash do
       [{"Name", name}, {"Company", prefs.company}]
       |> Enum.reject(&(elem(&1, 1) in [nil, ""]))
       |> Enum.map(fn {label, value} ->
-        [{:box, Draw.rpad(label <> ": ", 15)}, {:splash_value, value}]
+        [{:box, Draw.rpad(label <> ": ", 19)}, {:splash_value, value}]
       end)
 
     sharing =
-      "Use, duplication and sharing of this program are welcome. Violators may be offered a small something."
-      |> Draw.wrap(inner - 16)
-      |> Enum.map(&text.(15, [{:box, &1}]))
+      "Use, duplication & sharing of this program are welcome. Violators may be offered a small something."
+      |> Draw.wrap(inner - 8)
+      |> Enum.map(&text.(4, [{:box, &1}]))
 
     [
       [],
-      text.(2, [logo.(" WOL"), {:box, "    "}, {:splash_title, "W O L ' S   A G E N D U M"}]),
-      text.(2, [logo.(""), {:box, "    "}]),
-      text.(2, [logo.(""), {:box, "    "}, {:splash_title, "Hoo's in control? You are."}]),
+      text.(2, [logo.("    .___,"), {:box, "    "}, {:splash_title, "W O L ' S   A G E N D U M"}]),
+      text.(2, [logo.(" ___('v')___"), {:box, "    "}]),
+      text.(2, [
+        logo.(" `\"-\\._./-\"'"),
+        {:box, "    "},
+        {:splash_title, "Hoo's in control? You are."}
+      ]),
+      text.(2, [logo.("     ^ ^"), {:box, "    "}]),
+      text.(2, [logo.("    W O L"), {:box, "    "}, {:splash_value, "Release #{@version}"}]),
       [],
-      [],
-      text.(15, [{:splash_value, "Release #{@version}"}]),
-      [],
-      text.(15, [{:box, "Copyright JW&D + WOL."}]),
-      text.(15, [{:box, "All rites reserved."}]),
+      text.(4, [{:box, "Copyright 2026 WOL and JW&D - All rights reversed"}]),
       []
     ] ++ people ++ [[]] ++ sharing ++ [[]]
+
+    #    .___,
+    # ___('v')___
+    # `"-\._./-"'
+    #     ^ ^
   end
 end
