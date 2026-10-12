@@ -166,3 +166,4 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0017](adr/0017-text-matching-agenda-rules.md)          | Text matching follows Agenda's word rules                        |
 | [0018](adr/0018-agenda-look-from-screenshots.md)        | The look follows screenshots of the real Agenda                  |
 | [0019](adr/0019-the-name-wols-agendum.md)               | The name: Wol's Agendum                                          |
+| [0020](adr/0020-towards-many-users.md)                  | Towards many users: a web application on the same core           |

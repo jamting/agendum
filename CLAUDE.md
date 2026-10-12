@@ -45,8 +45,9 @@ inline `# credo:disable-for-next-line` with the reason.
 5. No runtime dependencies. The terminal layer uses OTP 28+ raw mode, not a
    TUI library (see `docs/adr/0002-own-terminal-layer.md`).
 6. Keep everything a second front end (e.g. web) would need in `Agenda.Core`;
-   the TUI only handles keys and drawing. A web app on the same core is a
-   planned idea (`docs/ROADMAP.md`).
+   the TUI only handles keys and drawing. A multi-user web app on the same
+   core is planned (`docs/MULTIUSER.md`, ADR 0020): keep the logic of a
+   user action in the core, not in `TUI.Update`.
 
 ## Workflow for a feature
 

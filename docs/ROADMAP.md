@@ -132,7 +132,23 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] More date languages (one `Agenda.Core.DateLanguage` pack each)
 - [ ] Fit column to contents: a command (View ▸ Column) that sets the highlighted column's width to fit its head and the entries of the items shown at that moment; a one-time adjustment, not kept in step as items change
 
+## Towards many users
+
+A web application with accounts and shared files, on the same core (plan:
+[MULTIUSER.md](MULTIUSER.md), ADR 0020). First, in the core:
+
+- [ ] A command layer: one named command per user action, applied by the core; `TUI.Update` sends commands instead of composing facade calls
+- [ ] Undo built on commands, so it can later be per person
+- [ ] Raw values (dates, numbers) beside the formatted cells in `Core.ViewModel`
+- [ ] Browsing's date arithmetic into the core
+- [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
+
+Then the web shell:
+
+- [ ] Accounts and storage; a file process per open file with snapshots and a command log
+- [ ] LiveView sessions; working in one file together, changes broadcast to everyone in it
+- [ ] Sharing files between accounts
+
 ## Ideas
 
 - Multiple files open; a launcher listing recent files
-- Create a web application using the functional core as backend, and not using the TUI
