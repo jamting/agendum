@@ -280,6 +280,23 @@ defmodule Agenda.StoreTest do
     assert {:ok, ^db} = Store.load(path)
   end
 
+  test "files in format version 23 get no macros", %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    old = db |> Map.delete(:macros) |> Map.delete(:macro_order)
+    path = Path.join(dir, "v23.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 23, old}))
+    assert {:ok, ^db} = Store.load(path)
+  end
+
+  test "macros are saved", %{tmp_dir: dir} do
+    db = Agenda.Core.new_file()
+    {:ok, db, m} = Agenda.Core.add_macro(db, "Weed")
+    db = Agenda.Core.set_macro_keys(db, m, "{F10}vc{ENTER}")
+    path = Path.join(dir, "macros.agenda")
+    :ok = Store.save(db, path)
+    assert {:ok, ^db} = Store.load(path)
+  end
+
   test "newer, unknown format versions are refused", %{tmp_dir: dir} do
     path = Path.join(dir, "future.agenda")
     File.write!(path, :erlang.term_to_binary({:agenda, 99, Agenda.Core.new_file()}))

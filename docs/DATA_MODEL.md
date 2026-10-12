@@ -16,6 +16,7 @@ erDiagram
     DATABASE ||--|{ VIEW : "views (by id)"
     DATABASE ||--|| LINKS : "links"
     DATABASE ||--o{ CALENDAR : "calendars (by id)"
+    DATABASE ||--o{ MACRO : "macros (by id, in macro_order)"
     CALENDAR }o--|| CATEGORY : "files items in"
     CATEGORY ||--o{ CATEGORY : "children (ordered)"
     ITEM }o--o{ CATEGORY : "explicit assignment (LINKS)"
@@ -46,6 +47,8 @@ erDiagram
         TextMatch match_settings "how item text matches categories (R16a)"
         map suggestions "item => suggested categories (R16)"
         map calendars "id => Calendar subscription (R45)"
+        map macros "id => Macro (R50)"
+        list macro_order "macro ids in the macro manager's order"
     }
     ITEM {
         int id PK
@@ -121,6 +124,13 @@ erDiagram
         datetime refreshed_at
         string error
     }
+    MACRO {
+        int id PK
+        string name "up to 35 characters, unique"
+        string keys "keystrokes in Agenda's notation"
+        string key "attached key, or nil"
+        map run_from "view, note, catmgr, elsewhere => boolean"
+    }
 ```
 
 ## The structs
@@ -148,6 +158,8 @@ classDiagram
         +match_settings : TextMatch
         +suggestions : Map~item_id, [cat_id]~
         +calendars : Map~id, Calendar~
+        +macros : Map~id, Macro~
+        +macro_order : [id]
     }
     class DateFormat {
         +order : yyyymmdd, mmddyy, ddmmmyy, week, relative…
@@ -259,6 +271,13 @@ classDiagram
         +refreshed_at : NaiveDateTime or nil
         +error : String or nil
     }
+    class Macro {
+        +id : id
+        +name : String
+        +keys : String
+        +key : String or nil
+        +run_from : Map~place, boolean~
+    }
     class Links {
         +by_left : Map~item_id, MapSet~
         +by_right : Map~category_id, MapSet~
@@ -271,6 +290,7 @@ classDiagram
     Database *-- DateFormat
     Database *-- DateSettings
     Database *-- Calendar
+    Database *-- Macro
     View *-- Section
     View *-- Column
     View *-- Datebook
@@ -516,7 +536,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16); 14 added `Database.date_settings` (R14e); 15 replaced `Database.auto_date` with `Database.when_from` (R14f); 16 added `Category.excludes` (R9); 17 added `Database.dates` (R6a); 18 added `Category.date_rule` (R6b), replacing `Database.when_from` with When's rule; 19 added `Database.match_settings` (R16a); 20 added `Category.match_overrides` (R16b); 21 added `View.Column.date` and the `DateFormat` fields `show`, `am_pm` and `time_separator` (R41a); 22 added `Database.calendars` (R45)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16); 14 added `Database.date_settings` (R14e); 15 replaced `Database.auto_date` with `Database.when_from` (R14f); 16 added `Category.excludes` (R9); 17 added `Database.dates` (R6a); 18 added `Category.date_rule` (R6b), replacing `Database.when_from` with When's rule; 19 added `Database.match_settings` (R16a); 20 added `Category.match_overrides` (R16b); 21 added `View.Column.date` and the `DateFormat` fields `show`, `am_pm` and `time_separator` (R41a); 22 added `Database.calendars` (R45); 23 added `View.datebook` (R47); 24 added `Database.macros` and `macro_order` (R50)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

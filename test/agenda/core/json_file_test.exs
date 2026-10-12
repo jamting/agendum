@@ -124,6 +124,15 @@ defmodule Agenda.Core.JSONFileTest do
         interval: :month
       })
 
+    {:ok, db, weed} = Core.add_macro(db, "Weed {the} garden")
+    db = Core.set_macro_keys(db, weed, "{F10}vc{ENTER}Ränta \"5%\"{AltF2}")
+
+    db =
+      db |> Core.attach_macro(weed, "{ShfF4}") |> Core.set_macro_run_from(weed, :elsewhere, true)
+
+    {:ok, db, _} = Core.add_macro(db, "Another")
+    db = Core.move_macro(db, weed, 1)
+
     {:ok, db, cal} = Core.subscribe_calendar(db, "Work Calendar", "webcal://example.com/w.ics")
 
     events = [

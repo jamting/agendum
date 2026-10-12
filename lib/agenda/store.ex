@@ -33,7 +33,7 @@ defmodule Agenda.Store do
 
   alias Agenda.Core.Database
 
-  @format_version 23
+  @format_version 24
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
@@ -124,6 +124,8 @@ defmodule Agenda.Store do
             {id, upgrade_category(db, struct(Category, Map.from_struct(c)), when_assign)}
           end),
         views: Map.new(db.views, fn {id, v} -> {id, upgrade_view(v)} end),
+        macros:
+          Map.new(db.macros, fn {id, m} -> {id, struct(Agenda.Core.Macro, Map.from_struct(m))} end),
         calendars:
           Map.new(db.calendars, fn {id, c} ->
             c = struct(Agenda.Core.Calendar, Map.from_struct(c))

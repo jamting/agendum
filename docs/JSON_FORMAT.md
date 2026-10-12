@@ -56,6 +56,7 @@ and `json_round_trip_test.exs` check that a round trip changes nothing.
 | `items`      | Every item, in file order.                                               |
 | `views`      | Every view, in the view manager's order.                                 |
 | `calendars`  | Calendar subscriptions (R45).                                            |
+| `macros`     | Macros, in the macro manager's order (R50).                              |
 
 ## Settings
 
@@ -137,6 +138,15 @@ open.
 | `refresh_minutes`       | How often it is read again while Agendum runs (60, 360, 1440), or `null` for only on request.                                                                          |
 | `refreshed_at`, `error` | When it was last read, and why that failed; or `null`.                                                                                                                 |
 | `events`                | For each event read: `uid`, its `item`, and the `summary`, `description`, `date`, `time`, `recurrence`, `end_date` and `end_time` it had, so a refresh only changes what the calendar changed. |
+
+## Macros
+
+| Key        | Meaning                                                                                                   |
+| ---------- | --------------------------------------------------------------------------------------------------------- |
+| `id`, `name` | Required; names are unique, case aside.                                                                  |
+| `keys`     | The keystrokes in Agenda's notation: text as typed, other keys by name in braces (`{F10}vc{ENTER}`).     |
+| `key`      | The key it is attached to, in the same notation (`{ShfF4}`), or `null`.                                  |
+| `run_from` | `{"view": true, "note": true, "catmgr": true, "elsewhere": false}`: where it can be run.                 |
 
 ## What is checked on import
 

@@ -914,6 +914,26 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   browses it to other days (R48). The Show View starts afresh each time it
   is used, by a schedule, a search (R37) or a dependency list (R43): its
   section and filter are those of the last use.
+- **R50 ⏳ Learn-mode macros** (Working with Macros, chapter 1). A file
+  keeps macros (Agenda allowed 100): each has a name of up to 35
+  characters, unique case aside, its keystrokes, the key it is attached to
+  (a key belongs to one macro at a time) and where it can be run from:
+  views, notes and the category manager (Yes by default) and, for an
+  attached key, everywhere else (No). They are listed in the macro
+  manager's order, which can be changed or sorted by name. Keystrokes are
+  kept as text in Agenda's notation (1-12 to 1-14): text as typed, other
+  keys as names in braces, read in any case: `{ENTER}`, `{TAB}`,
+  `{ShfTAB}`, `{BS}`, `{DEL}`, `{INS}`, `{ESC}`, `{UP}` `{DOWN}` `{LEFT}`
+  `{RIGHT}`, `{HOME}` `{END}`, `{PGUP}` `{PGDN}`, `{CtlLeft}` and the
+  other CTRL arrows, `{F1}`..`{F12}`, `{AltF1}`.., `{ShfF1}`.., `{AltD}`
+  (ALT and a letter), `{CtlN}` (CTRL and a letter). As in Agenda, a
+  misspelt name is typed as written, line breaks are not keys and the
+  spaces that start a continuation line are left out (a line's end keeps
+  them). Ours: `{LBRACE}` and `{RBRACE}` type braces; keys Agenda had no
+  name for get one in its style (`{AltBS}`, `{AltShfD}`). Saved in the
+  file (format 24) and its JSON. To come: the macro manager (ALT-F3), Learn
+  mode and running macros (ALT-Z), editing, Properties and attached keys
+  (roadmap).
 
 ## 6. Out of scope for now
 

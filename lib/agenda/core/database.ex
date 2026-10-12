@@ -37,7 +37,9 @@ defmodule Agenda.Core.Database do
           confirm_assignments: :never | :always | :sometimes,
           match_settings: TextMatch.t(),
           suggestions: %{optional(id) => [id]},
-          calendars: %{optional(id) => Agenda.Core.Calendar.t()}
+          calendars: %{optional(id) => Agenda.Core.Calendar.t()},
+          macros: %{optional(id) => Agenda.Core.Macro.t()},
+          macro_order: [id]
         }
 
   defstruct items: %{},
@@ -58,7 +60,9 @@ defmodule Agenda.Core.Database do
             confirm_assignments: :never,
             match_settings: %TextMatch{},
             suggestions: %{},
-            calendars: %{}
+            calendars: %{},
+            macros: %{},
+            macro_order: []
 
   @date_fields %{entry: :entry, when: :when, done: :done}
 
@@ -630,6 +634,39 @@ defmodule Agenda.Core.Database do
   @doc "The calendar subscriptions, in the order they were made."
   @spec calendars(t) :: [Agenda.Core.Calendar.t()]
   def calendars(%__MODULE__{} = db), do: db.calendars |> Map.values() |> Enum.sort_by(& &1.id)
+
+  @doc "Adds a macro (R50) at the end of the list, giving it an id."
+  @spec add_macro(t, Agenda.Core.Macro.t()) :: {t, id}
+  def add_macro(%__MODULE__{} = db, macro) do
+    {db, id} = take_id(db)
+
+    {%{
+       db
+       | macros: Map.put(db.macros, id, %{macro | id: id}),
+         macro_order: db.macro_order ++ [id]
+     }, id}
+  end
+
+  @doc "Changes a macro."
+  @spec update_macro(t, id, (Agenda.Core.Macro.t() -> Agenda.Core.Macro.t())) :: t
+  def update_macro(%__MODULE__{} = db, id, fun),
+    do: %{db | macros: Map.update!(db.macros, id, fun)}
+
+  @doc "Removes a macro."
+  @spec delete_macro(t, id) :: t
+  def delete_macro(%__MODULE__{} = db, id),
+    do: %{db | macros: Map.delete(db.macros, id), macro_order: List.delete(db.macro_order, id)}
+
+  @doc "The macros, in the macro manager's order."
+  @spec macros(t) :: [Agenda.Core.Macro.t()]
+  def macros(%__MODULE__{} = db), do: Enum.map(db.macro_order, &db.macros[&1])
+
+  @doc "The macro of a name, case aside, or nil."
+  @spec find_macro(t, String.t()) :: Agenda.Core.Macro.t() | nil
+  def find_macro(%__MODULE__{} = db, name) do
+    wanted = name |> String.trim() |> String.downcase()
+    Enum.find(macros(db), &(String.downcase(&1.name) == wanted))
+  end
 
   # ---------------------------------------------------------------------------
   # Helpers

@@ -37,6 +37,7 @@ shell does terminal I/O and file I/O.
 | `Core.ViewModel`                             | Read model: projects a view to sections, rows and column cells.                                                                                         |
 | `Core.Datebook`                              | Datebook views: their settings, the time slots of a period, which items a slot shows (R47).                                                             |
 | `Core.MonthCalendar`                         | The pop-up calendar's month as weeks, and the moves of its highlight (R46).                                                                             |
+| `Core.Macro`                                 | A macro kept in the file: name, keystrokes in Agenda's notation, attached key, where it runs (R50).                                                     |
 | `Core.DateParser`                            | Date expressions relative to a given `today`.                                                                                                           |
 | `Core.TextCondition`                         | Agenda's "Also match" text conditions: `;` any, `,` all, `!`, `~`, `^`, wildcards (R15d).                                                               |
 | `Core.TextMatch`                             | How a file matches text to categories: on/off, match on, strength, enclosed text, suffixes, accents (R16a), proper names (R16c).                        |
@@ -86,6 +87,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.CalendarBox`              | ✔     | The pop-up calendar: F3 in a date column, ALT-C anywhere (R46).                                                                  |
 | `TUI.DatebookBox`, `TUI.Browse` | ✔     | A datebook view's settings box; browsing it to other periods (R47).                                                              |
 | `TUI.ScheduleBox`               | ✔     | Search ▸ Schedule: one date's items in the Show View (R49).                                                                      |
+| `TUI.MacroKeys`                 | ✔     | Key events as macro text in Agenda's notation (`{F10}vc{ENTER}`), and back (R50).                                                |
 | `TUI.CalendarsBox`             | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
 | `TUI.NoteSearch`               | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |

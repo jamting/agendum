@@ -24,6 +24,7 @@ defmodule Agenda.Core.JSONFile do
     Datebook,
     DateFormat,
     DateRule,
+    Macro,
     DateSettings,
     Item,
     Links,
@@ -160,11 +161,22 @@ defmodule Agenda.Core.JSONFile do
       categories: Enum.map(category_order(db), &category(db.categories[&1])),
       items: Enum.map(db.item_order, &item(db, rel, db.items[&1])),
       views: Enum.map(db.view_order, &view(db.views[&1])),
-      calendars: db |> Database.calendars() |> Enum.map(&calendar/1)
+      calendars: db |> Database.calendars() |> Enum.map(&calendar/1),
+      macros: db |> Database.macros() |> Enum.map(&macro/1)
     )
   end
 
   # a calendar subscription and what each event looked like when last read
+  defp macro(%Macro{} = m),
+    do:
+      obj(
+        id: m.id,
+        name: m.name,
+        keys: m.keys,
+        key: m.key,
+        run_from: obj(Enum.map(Macro.places(), &{&1, m.run_from[&1]}))
+      )
+
   defp calendar(%Calendar{} = c) do
     obj(
       id: c.id,
@@ -432,6 +444,7 @@ defmodule Agenda.Core.JSONFile do
     items = list(doc, "items", "items", &read_item/2)
     views = list(doc, "views", "views", &read_view/2)
     calendars = list(doc, "calendars", "calendars", &read_calendar/2)
+    macros = list(doc, "macros", "macros", &read_macro/2)
     settings = field(doc, "settings", %{}, "settings")
     special = field(doc, "special", %{}, "special")
 
@@ -455,7 +468,9 @@ defmodule Agenda.Core.JSONFile do
       item_order: Enum.map(items, fn {item, _} -> item.id end),
       views: Map.new(views, &{&1.id, &1}),
       view_order: Enum.map(views, & &1.id),
-      calendars: Map.new(calendars, &{&1.id, &1})
+      calendars: Map.new(calendars, &{&1.id, &1}),
+      macros: Map.new(macros, &{&1.id, &1}),
+      macro_order: Enum.map(macros, & &1.id)
     }
     |> put_item_relations(items)
   end
@@ -580,6 +595,23 @@ defmodule Agenda.Core.JSONFile do
     }
 
     {item, relations}
+  end
+
+  defp read_macro(m, path) do
+    defaults = %Macro{}.run_from
+    run_from = field(m, "run_from", %{}, path)
+
+    %Macro{
+      id: req(m, "id", :int, path),
+      name: req(m, "name", :string, path),
+      keys: opt(m, "keys", :string, "", path),
+      key: opt(m, "key", {:nullable, :string}, nil, path),
+      run_from:
+        Map.new(Macro.places(), fn place ->
+          {place,
+           opt(run_from, Atom.to_string(place), :bool, defaults[place], path <> ".run_from")}
+        end)
+    }
   end
 
   defp read_calendar(c, path) do
@@ -835,7 +867,7 @@ defmodule Agenda.Core.JSONFile do
   defp all_ids(db),
     do:
       Map.keys(db.categories) ++
-        Map.keys(db.items) ++ Map.keys(db.views) ++ Map.keys(db.calendars)
+        Map.keys(db.items) ++ Map.keys(db.views) ++ Map.keys(db.calendars) ++ Map.keys(db.macros)
 
   defp category_refs(c, cats, _items) do
     ref = &Map.has_key?(cats, &1)
