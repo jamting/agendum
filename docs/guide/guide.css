@@ -117,6 +117,13 @@ h2 {
   padding-top: 0.5rem;
   border-top: 1px solid var(--rule);
 }
+/* Under each chapter heading, a subtitle in the books' style ("In Which …"). */
+h2 + p.in-which {
+  margin: -0.35rem 0 1.4rem;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--muted);
+}
 h3 {
   font-size: 1.15rem;
   margin: 1.8rem 0 0.4rem;

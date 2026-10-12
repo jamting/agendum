@@ -11,7 +11,7 @@ page for end users. It is updated on request only, never as part of a feature.
 ## 1. Find what changed since the last update
 
 ```sh
-last=$(git log -1 --format=%H -- docs/guide)
+last=$(git log -1 --format=%H -- docs/guide/index.html)   # the page itself: commits touching only the sources or the CSS are not updates
 git log --oneline "$last"..HEAD
 git diff "$last"..HEAD -- docs/SPEC.md docs/KEYBOARD.md docs/ROADMAP.md
 ```
@@ -30,6 +30,7 @@ against `Agenda.TUI.Menu.tree/0` and keys against the F1 help in
 - Update the keyboard reference table (chapter "Keyboard reference") for new
   keys, with the Mac-friendly alternative.
 - Remove the feature from "Still to come" when it has arrived.
+- **Every chapter has a subtitle** under its `<h2>`, in the books' style: `<p class="in-which">In Which Piglet Flips Forward to Make Sure Nothing Clashes with Christmas</p>`, title case, naming something that happens in the chapter, preferably from its Piglet story. A new chapter gets one; a chapter whose story changes may need a new one. Subtitles are not in the contents list.
 - Keep the running story: Piglet planning Eeyore's birthday party, in
   `<div class="story">` boxes. Pooh lore stays light and tasteful (names,
   small allusions from A. A. Milne's books); no quotations, no Disney or

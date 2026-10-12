@@ -25,7 +25,7 @@ only, never as part of a feature.
 ## 1. Find what changed since the last update
 
 ```sh
-last=$(git log -1 --format=%H -- docs/manual)
+last=$(git log -1 --format=%H -- docs/manual/index.html)   # the page itself: commits touching only the sources or the CSS are not updates
 git log --oneline "$last"..HEAD
 git diff "$last"..HEAD -- docs/SPEC.md docs/KEYBOARD.md docs/ROADMAP.md docs/SCREENS.md
 ```
@@ -68,6 +68,7 @@ Monday 2026-10-12 at 10:15 in Rabbit's file, so dates in the text stay true.
   stumbles, Owl explains why, and the example uses Rabbit's file (garden,
   Notices, friends-and-relations, Small, Tigger). Use dialogue where it
   clarifies, not on every point. Narration goes in `<div class="story">`.
+- **Every chapter has a subtitle** under its `<h2>`, in the books' style: `<p class="in-which">In Which Rabbit Teaches Agendum to Water the Carrots</p>`, title case, naming something that happens in the chapter, preferably from its Owl and Rabbit dialogue. A new chapter gets one; a chapter whose story changes may need a new one. Subtitles are not in the contents list.
 - **Pooh lore stays light and tasteful**: names and small allusions from
   A. A. Milne's books, no quotations, no Disney or E. H. Shepard images, only
   our own simple SVG drawings.
