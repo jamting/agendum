@@ -52,9 +52,8 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] Questions as Yes/No boxes; Category Properties in two columns with "..." sub-boxes opened by SPACE; View Manager as a box
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark); the note editor's "Note for: … Line 1 INS EDIT" header
 - [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix
-- [ ] Startup: a splash screen, and a File Retrieve box when no file is named. Splash screen content: Title: "WOL'S AGENDUM"; Tagline: "Hoo's in control? You are."; Copyright: "Copyright JW&D + WOL. All rites reserved. "
+- [ ] Startup: a splash screen laid out as Agenda's (a cyan box in a solid blue frame with a shadow, the title spaced out, the release, Name and Company lines) with Title "WOL'S AGENDUM", Tagline "Hoo's in control? You are." and Copyright "Copyright JW&D + WOL. All rites reserved."; then a File Retrieve box when no file is named
 - [ ] Hypertext help: topics with links (TAB, ENTER), Index, Find, Review (Agenda's F1)
-- [ ] Splash screen as original Agenda.
 
 ## Milestone 3 — Smarter assignment
 
@@ -90,7 +89,6 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 - [x] JSON export/import: the modern, human-readable format; round-trips everything in a file (R44, `docs/JSON_FORMAT.md`)
 - [x] iCal import: subscribe to calendars on the web, read on a schedule or on request, mirrored into items (R45)
-- [ ] Send alerts via Signal app
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
 - [ ] Optional: Import of structured text files (one item per line, with categories)
 - [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files)
@@ -106,6 +104,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] More preferences: custom colours, key map on/off (ALT-K), confirm mode, auto-save interval, decimal and thousands separators (Setting Up Agenda 1-25 to 1-31)
 - [ ] Select File box: pick a file from a list instead of typing its name, for File ▸ Retrieve (ALT-G, CTRL-O) and Write, and Transfer ▸ Import/Export: the folders and files of the current folder, ENTER opens a folder or chooses a file, `..` goes up, typing narrows the list; F7 shows dates, as Agenda's Select File box did (User's Guide 22-4 to 22-5)
 - [ ] Smaller fidelity items: Trash and Undiscard, File Abandon, unindexed categories, typing in the view manager jumps to a view
+- [ ] Alarms sent to your phone with Signal, as well as on the screen: through the separate `signal-cli` program, linked to your Signal account; optional (nothing changes without it), set up in File ▸ Customize
 
 ## Housekeeping
 
@@ -118,7 +117,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Developer tools: a screen with debugging info and a key tester, on a hidden key (ESC ?)
 - [x] The name Wol's Agendum: command, files (`.agendum`), preferences, JSON format, texts; the old names still read (ADR 0019)
 - [ ] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agenda` and `test/agenda`, the repository folder; one mechanical commit (ADR 0019)
-- [ ] --demo flag should use database from manual and userguide
+- [ ] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; now built in `docs/manual/src/capture_screens.exs`, to move into `lib` and be shared by both); `--demo` stays the patent's sample, which the tests use
 
 ## Beyond Agenda
 
