@@ -100,7 +100,11 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Browse standard views and sections with date filters: ALT-B shifts the filters by a day (← →), week (CTRL-← → or ↑↓), month (PGUP/PGDN) or year (CTRL-PGUP/PGDN); ENTER keeps, ESC restores (R48)
 - [x] Show Schedule (Search ▸ Schedule; Agenda's Utilities Show Sched): one date's items, optionally filtered, in the Show View (R49)
 - [x] Pop-up calendar: F3 in a date column picks a date, ALT-C shows one for reference; F6 a time, typing jumps to a date (R46)
-- [ ] Learn-mode macros: record keystrokes, store them in the file, replay them, attach them to keys (Working with Macros, chapter 1)
+- [ ] Learn-mode macros (Working with Macros, chapter 1), in three steps:
+  - [ ] Macros in the file (name, keys, attached key, where they can run), stored in Agenda's key notation (`{F10}vc{ENTER}Hello{AltF2}`); file format and JSON
+  - [ ] ALT-F3 macro manager: name a macro, F7 learns (LEARN), ALT-F3 stops; ENTER runs, ALT-Z runs the last; a run plays the keys through the shell one by one (effects in between) and is one undo step; runaway guard (call depth, keys per run)
+  - [ ] F2 edits the macro's text (note editor), F6 Properties (attach to key, run from views / notes / category manager / everywhere else), attached keys and their key-bar names, learn again to replace or append, DEL, ALT-F5 sort, ALT-F10 move
+  - Not planned now: the macro command language (chapters 2–3), external `.MAC` files, protection
 - [ ] A starter file like Agenda's Activities Planner: categories and views, no items (Starter Applications)
 - [x] Preferences file and File ▸ Customize (Utilities Customize): theme, date languages, input format (R40, R14c, R41b)
 - [ ] More preferences: custom colours, key map on/off (ALT-K), confirm mode, auto-save interval, decimal and thousands separators (Setting Up Agenda 1-25 to 1-31)
