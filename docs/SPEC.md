@@ -444,6 +444,12 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   When a column is too narrow for a category's full name, the category's
   short name is shown instead, for column entries and column heads alike
   (User's Guide 19-2).
+- **R22a ✅ Fit column to contents** (ours; Agenda only had View ▸ Column
+  ▸ Width). View ▸ Column ▸ Fit sets the highlighted column's width to the
+  widest of its head and the entries of the items the view shows at that
+  moment (collapsed sections left out), with full names rather than short
+  ones and its calculation lines; at least 3, at most 80. It is done once:
+  the width does not follow later changes. One undo step.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

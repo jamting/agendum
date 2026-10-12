@@ -25,7 +25,8 @@ defmodule Agenda.Core do
     NumberFormat,
     RangeFilter,
     Recurrence,
-    View
+    View,
+    ViewModel
   }
 
   alias Agenda.Core.View.{Column, Section}
@@ -41,6 +42,8 @@ defmodule Agenda.Core do
   @type clock :: Agenda.Core.Context.clock()
 
   @show_view "Show View"
+  # the widest a fitted column gets (R22a)
+  @fit_room 80
 
   defdelegate new_file(opts \\ []), to: Database, as: :new
 
@@ -1938,6 +1941,38 @@ defmodule Agenda.Core do
   def resize_column(db, view_id, index, delta) do
     Database.update_view(db, view_id, fn v ->
       %{v | columns: List.update_at(v.columns, index, &%{&1 | width: max(3, &1.width + delta)})}
+    end)
+  end
+
+  @doc """
+  Fits a column to its contents (R22a): its width becomes that of the
+  widest of its head and the entries of the items the view shows now
+  (collapsed sections left out), full names rather than short ones, and
+  its calculation lines; at least 3, at most #{@fit_room}. Done once: the width
+  does not follow later changes.
+  """
+  @spec fit_column(db, id, non_neg_integer, clock) :: db
+  def fit_column(db, view_id, index, clock) do
+    view = db.views[view_id]
+    column = Enum.at(view.columns, index)
+    # as wide as anything could be, so every entry shows its full names
+    roomy = %{view | columns: List.update_at(view.columns, index, &%{&1 | width: @fit_room})}
+
+    entries =
+      for section <- ViewModel.build(db, roomy, clock),
+          not section.collapsed,
+          cells <- Enum.map(section.rows, & &1.cells) ++ Enum.map(section.calcs, &elem(&1, 1)),
+          do: cells |> Enum.at(index) |> String.trim()
+
+    width =
+      [db.categories[column.category_id].name | entries]
+      |> Enum.map(&String.length/1)
+      |> Enum.max()
+      |> max(3)
+      |> min(@fit_room)
+
+    Database.update_view(db, view_id, fn v ->
+      %{v | columns: List.update_at(v.columns, index, &%{&1 | width: width})}
     end)
   end
 

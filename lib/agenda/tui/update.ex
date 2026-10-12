@@ -1951,6 +1951,16 @@ defmodule Agenda.TUI.Update do
         )
   end
 
+  defp do_perform(state, :fit_column, _) do
+    if state.col == 0,
+      do: State.error(state, "Highlight a column first (use → or TAB)"),
+      else:
+        State.change_db(
+          state,
+          Core.fit_column(state.db, state.view_id, state.col - 1, State.context(state))
+        )
+  end
+
   defp do_perform(state, {:toggle_view, option}, _),
     do: State.change_db(state, Core.toggle_view_option(state.db, state.view_id, option))
 
