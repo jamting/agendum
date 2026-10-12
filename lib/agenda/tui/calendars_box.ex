@@ -69,7 +69,7 @@ defmodule Agenda.TUI.CalendarsBox do
   defp unsubscribe(state, cal) do
     items = Enum.count(cal.events, fn {_, %{item: id}} -> Map.has_key?(state.db.items, id) end)
 
-    Update.confirm(
+    Update.ask(
       state,
       "Unsubscribe from #{cal.name}. Discard its #{Draw.count(items, "item")} too? (Y/N, ESC to cancel)",
       {:unsubscribe_calendar, cal.id}

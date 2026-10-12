@@ -1226,7 +1226,18 @@ defmodule Agenda.TUI.Update do
     end
   end
 
-  def confirm(state, question, action),
+  @doc """
+  Asks "are you sure?" (Y/N) before `action`; with Confirm mode off (R54)
+  the action is done at once, as if Y. Questions whose answers lead to
+  different things are `ask/3`.
+  """
+  def confirm(%State{prefs: %{confirm: false}} = state, _question, action),
+    do: confirmed(state, action, true)
+
+  def confirm(state, question, action), do: ask(state, question, action)
+
+  @doc "Asks a Y/N question, whatever Confirm mode says: Y and N do different things."
+  def ask(state, question, action),
     do: State.push(state, %{type: :confirm, question: question, action: action})
 
   defp prompt_key(state, mode, key) do
@@ -1682,7 +1693,7 @@ defmodule Agenda.TUI.Update do
   # Commands that replace the open file ask first when it has unsaved changes.
   defp do_perform(%State{dirty: true} = state, command, _)
        when command in [:retrieve, :new_file, :import_json],
-       do: confirm(state, "Save changes first? (Y/N, ESC to cancel)", {:leave_for, command})
+       do: ask(state, "Save changes first? (Y/N, ESC to cancel)", {:leave_for, command})
 
   defp do_perform(state, command, _) when command in [:retrieve, :new_file, :import_json],
     do: replace_file(state, command)
@@ -1697,7 +1708,7 @@ defmodule Agenda.TUI.Update do
 
   defp do_perform(state, :quit, _) do
     if state.dirty,
-      do: confirm(state, "Save changes before quitting? (Y/N, ESC to cancel)", :quit),
+      do: ask(state, "Save changes before quitting? (Y/N, ESC to cancel)", :quit),
       else: State.effect(state, :quit)
   end
 

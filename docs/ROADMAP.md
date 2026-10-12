@@ -108,7 +108,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - Not planned now: the macro command language (chapters 2–3), external `.MAC` files, protection
 - [ ] A starter file like Agenda's Activities Planner: categories and views, no items (Starter Applications)
 - [x] Preferences file and File ▸ Customize (Utilities Customize): theme, date languages, input format (R40, R14c, R41b)
-- [ ] More preferences (R54): key map on/off, kept (ALT-K) ✅; confirm mode; auto-save interval; decimal and thousands separators (Setting Up Agenda 1-25 to 1-31). Custom colours are not planned: we keep to themes (ADR 0022)
+- [ ] More preferences (R54): key map on/off, kept (ALT-K) ✅; confirm mode ✅; auto-save interval; decimal and thousands separators (Setting Up Agenda 1-25 to 1-31). Custom colours are not planned: we keep to themes (ADR 0022)
 - [x] Select File box (R51): pick a file from a list instead of typing its name, for File ▸ Retrieve (ALT-G, CTRL-O) and Write, and Transfer ▸ Import/Export: the folders and files of the current folder, ENTER opens a folder or chooses a file, `..` goes up, typing narrows the list; F7 shows dates, as Agenda's Select File box did (User's Guide 22-4 to 22-5)
 - [ ] Smaller fidelity items: Trash and Undiscard, File Abandon, unindexed categories
 - [x] Typing in the view manager highlights a view (R53)

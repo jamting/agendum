@@ -3,7 +3,8 @@ defmodule Agenda.TUI.CustomizeBox do
   The Customize box (File ▸ Customize; Agenda's Utilities Customize,
   ADR 0008): the person's own settings, for every file: Theme (R40), Date
   language and Fallback language (R14c), Input format, which opens
-  `Agenda.TUI.InputFormatBox` (R41b), and Display key map (R54). A change applies at once, is not
+  `Agenda.TUI.InputFormatBox` (R41b), Display key map and Confirm mode
+  (R54). A change applies at once, is not
   part of undo, and is saved to the preferences file
   (`State.change_preference/3`).
 
@@ -14,7 +15,7 @@ defmodule Agenda.TUI.CustomizeBox do
   alias Agenda.Core.DateLanguage
   alias Agenda.TUI.{InputFormatBox, State, Theme}
 
-  @rows [:theme, :lang, :fallback, :input_format, :key_map]
+  @rows [:theme, :lang, :fallback, :input_format, :key_map, :confirm]
 
   def open(state), do: State.push(state, %{type: :customize, cursor: 0})
 
@@ -33,6 +34,11 @@ defmodule Agenda.TUI.CustomizeBox do
 
   defp change(state, :input_format, _step), do: InputFormatBox.open(state)
   defp change(state, :key_map, _step), do: State.toggle_key_map(state)
+
+  defp change(state, :confirm, _step) do
+    on = not state.prefs.confirm
+    State.change_preference(state, & &1, &%{&1 | confirm: on})
+  end
 
   defp change(state, :theme, step) do
     theme = next(Theme.names(), state.theme, step)
@@ -75,7 +81,11 @@ defmodule Agenda.TUI.CustomizeBox do
          [] -> "None"
        end},
       {"Input format", "(SPACE)"},
-      {"Display key map", if(state.key_map, do: "Yes", else: "No")}
+      {"Display key map", yes_no(state.key_map)},
+      {"Confirm mode", yes_no(state.prefs.confirm)}
     ]
   end
+
+  defp yes_no(true), do: "Yes"
+  defp yes_no(false), do: "No"
 end

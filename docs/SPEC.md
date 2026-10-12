@@ -1012,6 +1012,13 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - ✅ **Display key map** (Yes, the default, or No): whether the key bar
     shows at the bottom of the screen. ALT-K shows or hides it and, as
     the setting, is kept for next time (`key_map = no` in the file).
+  - ✅ **Confirm mode** (Yes, the default, or No): with No, Agendum does
+    what was asked without "are you sure?" questions: discarding items,
+    categories and views, deleting macros, clearing dependencies, sorting
+    a family, changing a category's type, making an item depend on
+    others. Questions whose Y and N do different things are still asked:
+    "Save changes first?" and, when unsubscribing, whether to discard the
+    calendar's items too. Undo (R30) still reverses what was done.
 
 ## 6. Out of scope for now
 

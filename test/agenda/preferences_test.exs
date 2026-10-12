@@ -86,4 +86,11 @@ defmodule Agenda.PreferencesTest do
     refute Preferences.parse(text).key_map
     assert Preferences.parse("key_map = yes").key_map
   end
+
+  test "Confirm mode is on unless the person says no" do
+    assert Preferences.parse("").confirm
+    text = Preferences.format(%Preferences{confirm: false})
+    assert text =~ "confirm = no\n"
+    refute Preferences.parse(text).confirm
+  end
 end

@@ -19,7 +19,8 @@ defmodule Agenda.Preferences do
   `theme` nil and `languages` [] mean the defaults (classic, English);
   `name` and `company` are shown on the splash screen, `last_file` is
   offered when Agendum starts without one (R52). `key_map`: whether the
-  key bar shows (R54). `path` is where they are
+  key bar shows; `confirm`: whether "are you sure?" questions are asked
+  (Confirm mode; both R54). `path` is where they are
   kept (nil: not saved) and `user` the login name (the splash's name when
   none is set); neither is written in them.
   """
@@ -31,6 +32,7 @@ defmodule Agenda.Preferences do
           company: String.t() | nil,
           last_file: String.t() | nil,
           key_map: boolean,
+          confirm: boolean,
           path: String.t() | nil,
           user: String.t() | nil
         }
@@ -41,6 +43,7 @@ defmodule Agenda.Preferences do
             company: nil,
             last_file: nil,
             key_map: true,
+            confirm: true,
             path: nil,
             user: nil
 
@@ -115,7 +118,8 @@ defmodule Agenda.Preferences do
       name: text.("name"),
       company: text.("company"),
       last_file: text.("last_file"),
-      key_map: pick.("key_map", &yes_no/1) != :no
+      key_map: pick.("key_map", &yes_no/1) != :no,
+      confirm: pick.("confirm", &yes_no/1) != :no
     }
   end
 
@@ -172,7 +176,8 @@ defmodule Agenda.Preferences do
         {"company", prefs.company},
         {"last_file", prefs.last_file},
         # only what differs from the default
-        {"key_map", if(prefs.key_map, do: nil, else: "no")}
+        {"key_map", if(prefs.key_map, do: nil, else: "no")},
+        {"confirm", if(prefs.confirm, do: nil, else: "no")}
       ]
       |> Enum.reject(&(elem(&1, 1) == nil))
       |> Enum.map(fn {key, value} -> "#{key} = #{value}\n" end)
@@ -183,7 +188,7 @@ defmodule Agenda.Preferences do
       Enum.map_join(DateLanguage.packs(), " ", & &1.name()) <>
       "\n# number_order: mdy myd dmy dym ydm ymd; date_separator: / - . , :;\n" <>
       "# clock: 12 or 24. name, company: shown when Agendum starts;\n" <>
-      "# last_file: the file offered then (kept by Agendum); key_map: yes or no.\n" <>
+      "# last_file: the file offered then (kept by Agendum); key_map, confirm: yes or no.\n" <>
       Enum.join(lines)
   end
 end
