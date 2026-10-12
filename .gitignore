@@ -39,3 +39,7 @@ agenda-*.tar
 # Agenda manuals as PDF (large; see docs/reference/README.md for the source)
 docs/reference/*_text.pdf
 docs/reference/screens/
+
+# Editor swap files (e.g. vimdiff from a diff viewer)
+*.swp
+*.swo
