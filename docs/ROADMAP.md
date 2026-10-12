@@ -131,6 +131,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] General negative links between any two categories, from the patent: Category Properties ▸ Excludes (R9)
 - [ ] More date languages (one `Agenda.Core.DateLanguage` pack each)
 - [ ] Fit column to contents: a command (View ▸ Column) that sets the highlighted column's width to fit its head and the entries of the items shown at that moment; a one-time adjustment, not kept in step as items change
+- [ ] Modern by default: today's names and standard keys out of the box (Open not Retrieve, Delete not Discard, CTRL-O/S/Z/F/N…), with Agenda's names and keys one setting away ("Agenda mode"). Agenda's steep learning curve limited its audience (AGENDA_HISTORY.md); the power should stay, the strangeness should not be the first thing people meet. Builds on the keymaps, self-describing commands and own key bindings (Towards many users); departs from ADR 0006 and 0007, so it needs an ADR of its own
 
 ## Towards many users
 
