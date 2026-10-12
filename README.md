@@ -34,6 +34,7 @@ mix deps.get
 mix run -e 'Agenda.CLI.main(["--demo"])'       # sample data from the Agenda patent
 mix run -e 'Agenda.CLI.main(["--rabbit"])'     # Rabbit's file from the manual
 mix escript.build && ./agendum ~/work.agendum   # standalone binary
+mix docs                                        # API and design docs in doc/index.html
 ./agendum --mono ~/work.agendum                 # monochrome (also: --theme mono, or NO_COLOR=1); --theme blue: white on blue
 ./agendum --lang=swedish --fallback=english f   # read dates typed in Swedish (and English)
 ./agendum --number-order=dmy --date-separator=. f  # type dates as 12.11.26 for this session
@@ -42,8 +43,10 @@ mix escript.build && ./agendum ~/work.agendum   # standalone binary
 
 ## Quick tour
 
-The full user guide, with a worked example, is [`docs/guide/index.html`](docs/guide/index.html)
-(open it in a browser).
+The [user guide](docs/guide/index.html) is the short version, with a worked
+example; the [manual](docs/manual/index.html) is the long one, as Owl explains
+it to Rabbit. Open them in a browser; `mix docs` also puts them beside the API
+documentation.
 
 
 - **Type** under a section to add an item. It is assigned to that section's

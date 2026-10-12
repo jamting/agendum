@@ -10,12 +10,15 @@ defmodule Agenda.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       escript: [main_module: Agenda.CLI, name: "agendum"],
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      name: "Wol's Agendum",
+      docs: docs()
     ]
   end
 
   def cli do
-    [preferred_envs: [check: :test]]
+    # the escript is built for prod, so no dev or test tool ends up in it
+    [preferred_envs: [check: :test, "escript.build": :prod]]
   end
 
   def application do
@@ -30,13 +33,73 @@ defmodule Agenda.MixProject do
       {:stream_data, "~> 1.1", only: [:dev, :test]},
       # code checks (dev/test only; never part of the program)
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      # API documentation, `mix docs` (dev only; ADR 0021)
+      {:ex_doc, "~> 0.38", only: :dev, runtime: false}
     ]
   end
+
+  # `mix docs` writes doc/index.html: the core facade first, for whoever
+  # builds on it (a web front end, ADR 0020), then the rest, and the design
+  # documents and decisions as pages.
+  defp docs do
+    [
+      main: "readme",
+      formatters: ["html", "markdown"],
+      extras:
+        ["README.md", "CLAUDE.md"] ++ Path.wildcard("docs/*.md") ++ Path.wildcard("docs/adr/*.md"),
+      groups_for_extras: [
+        Design: ~r{docs/[A-Z_]+\.md},
+        Decisions: ~r{docs/adr/}
+      ],
+      groups_for_modules: [
+        Overview: [Agenda],
+        "Core facade": [Agenda.Core],
+        Core: ~r/^Agenda\.Core\./,
+        "Terminal UI": ~r/^Agenda\.TUI\./,
+        Shell: [Agenda.CLI, Agenda.Store, Agenda.Preferences, Agenda.CalendarFetch, Agenda.Sample]
+      ],
+      before_closing_body_tag: &mermaid/1
+    ]
+  end
+
+  defp copy_user_docs(_args) do
+    for file <- ~w(guide/index.html guide/guide.css manual/index.html manual/manual.css) do
+      target = Path.join("doc/docs", file)
+      File.mkdir_p!(Path.dirname(target))
+      File.cp!(Path.join("docs", file), target)
+    end
+  end
+
+  # renders the documents' Mermaid diagrams
+  defp mermaid(:html) do
+    """
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        mermaid.initialize({startOnLoad: false, theme: document.body.className.includes("dark") ? "dark" : "default"});
+        let id = 0;
+        for (const code of document.querySelectorAll("pre code.mermaid")) {
+          const pre = code.parentElement;
+          mermaid.render("mermaid-" + id++, code.textContent).then(({svg}) => {
+            const div = document.createElement("div");
+            div.innerHTML = svg;
+            pre.replaceWith(div);
+          });
+        }
+      });
+    </script>
+    """
+  end
+
+  defp mermaid(_format), do: ""
 
   # `mix check` is the single quality gate (used by humans, CI and AI agents).
   defp aliases do
     [
+      # the API docs, then the user guide and the manual beside them, where
+      # the README's links (docs/guide/…, docs/manual/…) find them
+      docs: ["docs", &copy_user_docs/1],
       check: [
         "format --check-formatted",
         "compile --warnings-as-errors --force",

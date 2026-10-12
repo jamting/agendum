@@ -87,7 +87,7 @@ Its ideas outlived it, carried forward by the people who loved it:
 | Year | Descendant or echo                                                                                                                                                                                                |
 | ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2020 | VC Brad Feld on Roam Research: "Agenda is the only product that augmented my brain and how I think until I started using Roam" ([Feld](https://feld.com/archives/2020/11/roam-my-new-favorite-software-product/)) |
-| 2008 | Kapor's open-source [Chandler](<https://en.wikipedia.org/wiki/Chandler_(software)>) 1.0, "inspired by" Agenda's free-form approach; its troubled development is the subject of the book _Dreaming in Code_        |
+| 2008 | Kapor's open-source [Chandler](https://en.wikipedia.org/wiki/Chandler_%28software%29) 1.0, "inspired by" Agenda's free-form approach; its troubled development is the subject of the book _Dreaming in Code_        |
 | 2003 | Microsoft Outlook adds search folders, similar to Agenda's rule-based categories ([Wikipedia](https://en.wikipedia.org/wiki/Lotus_Agenda))                                                                        |
 | 1997 | James Fallows writes that he still uses Agenda despite the difficulty of running it under Windows ([Wikipedia](https://en.wikipedia.org/wiki/Lotus_Agenda))                                                       |
 
@@ -115,10 +115,10 @@ The history also gives a design lesson. Agenda's power came with a learning curv
 
 - [Oral History of Mitch Kapor](http://archive.computerhistory.org/resources/text/Oral_History/Kapor_Mitch/Kapor_Mitch.oral_history.2006.102657943.pdf), interviewed by William Aspray, Computer History Museum, 2006
 - [PC TAP Consumer Report #1: Personal Information Management Systems](https://mirrorservice.org/sites/www.bitsavers.org/pdf/us_epa/pc_tap/PC_TAP_Consumer_Report_%2301_Personal_Information_Managment_Systems_198908.pdf), US EPA, August 1989
-- [US patent 5,115,504, Information Management System](https://patents.google.com/patent/US5115504A/en), Belove et al., Lotus Development Corporation, 1992 (also in [`reference/`](reference/))
+- [US patent 5,115,504, Information Management System](https://patents.google.com/patent/US5115504A/en), Belove et al., Lotus Development Corporation, 1992 (also in `docs/reference/`)
 - [Lotus Agenda 2.0 manuals](https://archive.org/details/lotus-agenda-users-guide) (User's Guide, Quick Start), Internet Archive
 - [Agenda: a personal information manager](https://cacm.acm.org/author/todd-r-drake/), Kaplan, Kapor, Belove, Landsman, Drake, _Communications of the ACM_ 33(7), 1990 (bibliographic entry only)
-- [Lotus Agenda](https://en.wikipedia.org/wiki/Lotus_Agenda) and [Chandler (software)](<https://en.wikipedia.org/wiki/Chandler_(software)>), Wikipedia
+- [Lotus Agenda](https://en.wikipedia.org/wiki/Lotus_Agenda) and [Chandler (software)](https://en.wikipedia.org/wiki/Chandler_%28software%29), Wikipedia
 - [A Brief History of Lotus Agenda](https://www.palmtoppaper.com/ptphtml/43/43c00005.htm), The Palmtop Paper
 - ["Interesting Software" Update](https://fallows.substack.com/p/interesting-software-update), James Fallows
 - [Roam: My New Favorite Software Product](https://feld.com/archives/2020/11/roam-my-new-favorite-software-product/), Brad Feld, November 2020

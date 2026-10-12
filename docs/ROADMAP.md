@@ -126,7 +126,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] The name Wol's Agendum: command, files (`.agendum`), preferences, JSON format, texts; the old names still read (ADR 0019)
 - [ ] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agenda` and `test/agenda`, the repository folder; one mechanical commit (ADR 0019)
 - [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agenda.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
-- [ ] API documentation with `ex_doc` (dev only): `mix docs` from the `@moduledoc`s and `@spec`s, for whoever builds on the core facade (ADR 0020)
+- [x] API documentation with `ex_doc` (dev only): `mix docs` from the `@moduledoc`s and `@spec`s, for whoever builds on the core facade (ADR 0020)
 
 ## Beyond Agenda
 

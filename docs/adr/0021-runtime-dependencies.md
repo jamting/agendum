@@ -56,3 +56,7 @@ Runtime dependencies taken so far: none.
   the criteria if that falls short.
 - The escript must still be checked to run on its own after adding any
   dependency (build it and start it outside the project directory).
+- `mix escript.build` always builds for prod (`preferred_envs` in
+  `mix.exs`): an escript built in dev bundled every dev and test package
+  (Credo, Dialyxir, StreamData…), so the rule held for the code but not for
+  the binary.

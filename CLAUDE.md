@@ -17,7 +17,8 @@ mix check                 # THE quality gate: format, warnings-as-errors, Credo,
 mix test                  # tests only
 mix test test/agenda/core # one directory
 mix run -e 'Agenda.CLI.main(["--demo"])'   # run the TUI with sample data (needs a real terminal)
-mix escript.build && ./agendum my.agendum  # build and run the standalone binary
+mix escript.build && ./agendum my.agendum  # build (always for prod: no dev tools inside) and run the binary
+mix docs                  # API docs and the design documents in doc/index.html
 ```
 
 A change is done when `mix check` passes. Do not leave warnings. Credo
