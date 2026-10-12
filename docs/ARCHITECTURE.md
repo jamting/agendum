@@ -35,6 +35,8 @@ shell does terminal I/O and file I/O.
 | `Core.Links`                                 | Bidirectional many-to-many relation (the patent's link structures).                                                                                     |
 | `Core.Assign`                                | Assignment rules: exclusion, category links, text matching, ambiguity resolution.                                                                       |
 | `Core.ViewModel`                             | Read model: projects a view to sections, rows and column cells.                                                                                         |
+| `Core.Datebook`                              | Datebook views: their settings, the time slots of a period, which items a slot shows (R47).                                                             |
+| `Core.MonthCalendar`                         | The pop-up calendar's month as weeks, and the moves of its highlight (R46).                                                                             |
 | `Core.DateParser`                            | Date expressions relative to a given `today`.                                                                                                           |
 | `Core.TextCondition`                         | Agenda's "Also match" text conditions: `;` any, `,` all, `!`, `~`, `^`, wildcards (R15d).                                                               |
 | `Core.TextMatch`                             | How a file matches text to categories: on/off, match on, strength, enclosed text, suffixes, accents (R16a), proper names (R16c).                        |
@@ -81,6 +83,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.DateColumnBox`            | ✔     | The Date Column Properties box: a date column's own format or the global defaults (R41a).                                        |
 | `TUI.InputFormatBox`           | ✔     | The Input Format box: the person's number order, separator and clock, saved as preferences (R41b).                               |
 | `TUI.CustomizeBox`             | ✔     | File ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
+| `TUI.CalendarBox`              | ✔     | The pop-up calendar: F3 in a date column, ALT-C anywhere (R46).                                                                  |
 | `TUI.CalendarsBox`             | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
 | `TUI.NoteSearch`               | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |

@@ -667,6 +667,39 @@ defmodule Agenda.TUI.Render do
   defp tint([], _width), do: []
   defp tint(line, width), do: line |> Draw.paint(@tint) |> Draw.line(width, :row)
 
+  # A datebook slot's name (R47), in the file's date format: "10:00",
+  # "Mon 2026-10-12", "Mon 2026-09-28 → Fri 2026-10-02", "October 2026".
+  @weekdays ~w(Mon Tue Wed Thu Fri Sat Sun)
+  @months ~w(January February March April May June July August September October November December)
+
+  defp slot_label(state, %{kind: :time, from: from}),
+    do: DateFormat.time(NaiveDateTime.to_time(from), state.db.date_format)
+
+  defp slot_label(_state, %{kind: :month, from: from}),
+    do: "#{Enum.at(@months, from.month - 1)} #{from.year}"
+
+  defp slot_label(state, %{kind: :week, from: from, to: to}),
+    do: day_label(state, from) <> " → " <> day_label(state, to)
+
+  defp slot_label(state, %{from: day}), do: day_label(state, day)
+
+  defp day_label(state, date) do
+    format = %{
+      state.db.date_format
+      | day_of_week: false,
+        order: plain_order(state.db.date_format.order)
+    }
+
+    Enum.at(@weekdays, Date.day_of_week(date) - 1) <> " " <> DateFormat.date(date, format)
+  end
+
+  # relative and counting formats name days, not dates; a slot needs its date
+  defp plain_order(order)
+       when order in [:relative, :relative_number, :day_number, :day, :week_number, :week],
+       do: :yyyymmdd
+
+  defp plain_order(order), do: order
+
   # A section's calculations (R29): the label under the item text, each
   # result under its column.
   defp calc_lines(calcs, tw, columns) do
@@ -692,6 +725,9 @@ defmodule Agenda.TUI.Render do
       case editing do
         %{target: {:rename_category, id}} when selected and id == cat.id ->
           [{:normal, " "}] ++ field(editing.line, tw + 1, :edit)
+
+        _ when row.slot != nil ->
+          [{:normal, " "}, {style, Draw.pad(slot_label(state, row.slot), tw + 1)}]
 
         _ ->
           section = Enum.at(State.view(state).sections, row.sidx)

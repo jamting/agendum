@@ -33,7 +33,7 @@ defmodule Agenda.Store do
 
   alias Agenda.Core.Database
 
-  @format_version 22
+  @format_version 23
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
@@ -170,7 +170,8 @@ defmodule Agenda.Store do
       view
       | sections: Enum.map(view.sections, &upgrade_section/1),
         columns: Enum.map(view.columns, &upgrade_column/1),
-        sort: upgrade_keys(view.sort)
+        sort: upgrade_keys(view.sort),
+        datebook: view.datebook && struct(Agenda.Core.Datebook, Map.from_struct(view.datebook))
     }
   end
 

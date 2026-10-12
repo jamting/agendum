@@ -108,6 +108,22 @@ defmodule Agenda.Core.JSONFileTest do
         }
       end)
 
+    {:ok, db, _} =
+      Core.add_datebook_view(db, "Mornings", %Agenda.Core.Datebook{
+        period: :day,
+        interval: 30,
+        start_time: ~T[07:30:00],
+        end_category: due,
+        section_category: urgent,
+        base: "tomorrow"
+      })
+
+    {:ok, db, _} =
+      Core.add_datebook_view(db, "Quarter", %Agenda.Core.Datebook{
+        period: :quarter,
+        interval: :month
+      })
+
     {:ok, db, cal} = Core.subscribe_calendar(db, "Work Calendar", "webcal://example.com/w.ics")
 
     events = [

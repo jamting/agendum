@@ -837,6 +837,41 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   Agenda's screen started on Sunday), the calendar keeps the entry's time
   unless F6 changes it, and Agenda's Set Time box (SPACE between hours and
   minutes, GREY + / −) is a typed time.
+- **R47 ⏳ Datebook views** (User's Guide chapter 10, 10-1 to 10-14; Help
+  "View Add box", "Browse Through Dates"). A datebook view is like a page
+  of an appointment book: its sections are time slots, all headed by one
+  category. Settings: Date category (When by default) places items by
+  their date; End category (optional, a date category) shows an item in
+  every slot up to its end ("Status meeting" 14:00 to 17:00 shows at 14,
+  15 and 16); Section, the head of every section (the date category by
+  default; Meetings shows only meetings); Period, Day, Week (default),
+  Month or Quarter; Interval, what a slot covers: 15 min, 30 min or Hourly
+  (default) for a day, Daily or Weekly (default) for a month, Daily,
+  Weekly (default) or Monthly for a quarter, a week having a slot per day;
+  Start at / End at, the hours of a day (default the file's Morning and
+  Evening, 8:00 and 17:00) or the days of a week (default the file's
+  beginning and end of week, Mon and Fri); Base date on, a relative or
+  absolute date ("today", "tomorrow", "next week", "2026-11-05") read each
+  time the view is shown, the period being the one it falls in (a month's
+  and quarter's weeks run from the file's beginning to end of week and may
+  reach into the next month; quarters start in the file's first quarter
+  month). An item shows in a slot when its date (and time) in the date
+  category falls in it; an item typed into a slot is filed under the
+  Section category and dated at the slot's start, with its time in a day
+  view, as if typed in the date column (so "Status meeting" typed under
+  16:00 today is When today 16:00). Restrictions as in Agenda: a datebook
+  view cannot become a standard view, its sections cannot be added,
+  removed or filtered one by one (view filters apply to all). Deleting a
+  category it uses falls back to When. Our choice: in a day view, items
+  with that date but no time are in a first slot named after the day,
+  above the hours; items timed outside Start at to End at are not shown.
+  Done: the settings, the slots and the items each shows, saving (file
+  format 23, JSON); in the TUI, slots named by their date or time
+  ("Mon 2026-10-12", "10:00", "Mon 2026-09-28 → Fri 2026-10-02",
+  "October 2026"), typing into a slot, and the restrictions (ALT-D/U, DEL
+  or F3 on a slot, collapsing, section filter and sort, ALT-F10 say why
+  not). To come: creating and changing them (View ▸ Add, View ▸
+  Properties), Agenda's look, and browsing (ALT-B, View ▸ Browse).
 
 ## 6. Out of scope for now
 

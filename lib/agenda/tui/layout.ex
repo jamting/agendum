@@ -29,7 +29,11 @@ defmodule Agenda.TUI.Layout do
     |> Enum.with_index()
     |> Enum.flat_map(fn {section, sidx} ->
       # with hide_empty some sections are skipped; recover the real index
-      sidx = Enum.find_index(view.sections, &(&1.category_id == section.category.id)) || sidx
+      # (a datebook view's sections are its slots, R47: not stored)
+      sidx =
+        if section.slot,
+          do: sidx,
+          else: Enum.find_index(view.sections, &(&1.category_id == section.category.id)) || sidx
 
       head = %{
         kind: :section,
@@ -37,7 +41,8 @@ defmodule Agenda.TUI.Layout do
         key: {:section, sidx},
         category: section.category,
         collapsed: section.collapsed,
-        count: length(section.rows)
+        count: length(section.rows),
+        slot: section.slot
       }
 
       items =
@@ -52,7 +57,8 @@ defmodule Agenda.TUI.Layout do
                 item: r.item,
                 cells: r.cells,
                 inherited: r.inherited,
-                category: section.category
+                category: section.category,
+                slot: section.slot
               }
             end)
 

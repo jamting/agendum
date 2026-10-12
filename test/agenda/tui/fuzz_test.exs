@@ -92,15 +92,25 @@ defmodule Agenda.TUI.FuzzTest do
     db
   end
 
+  # With a datebook view of that period (R47), shown first.
+  defp with_datebook(db, nil), do: db
+
+  defp with_datebook(db, period) do
+    datebook = %Agenda.Core.Datebook{period: period}
+    {:ok, db, view} = Agenda.Core.add_datebook_view(db, "Datebook", datebook)
+    Agenda.Core.move_view(db, view, 0)
+  end
+
   property "the UI survives any key sequence" do
     check all(
             keys <- list_of(key(), max_length: 60),
             width <- integer(40..120),
             height <- integer(10..40),
             numeric <- boolean(),
+            datebook <- member_of([nil, nil, :day, :week, :month, :quarter]),
             max_runs: 300
           ) do
-      state = start(sample(numeric), width: width, height: height)
+      state = start(numeric |> sample() |> with_datebook(datebook), width: width, height: height)
 
       Enum.reduce(keys, state, fn key, state ->
         # :tick advances the clock ten minutes, as the shell's loop would

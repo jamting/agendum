@@ -12,7 +12,10 @@ defmodule Agenda.Core.View do
   `Agenda.Core.RangeFilter`); its `sort` keys order the items in every section
   (R36). `match` limits it to items whose text matches a search, as in
   the Show View (R37), or to a list of items (`{:items, ids}`, R43).
-  `hide_dependent` hides items still waiting for a prerequisite (R43). `section_sort` shows the sections in category
+  `hide_dependent` hides items still waiting for a prerequisite (R43).
+  `datebook` makes it a datebook view (R47, `Agenda.Core.Datebook`), whose
+  sections are time slots worked out from its settings; its stored
+  `sections` are not used. `section_sort` shows the sections in category
   order, alphabetically or numerically by name (`section_order`), instead
   of the order they were added in (User's Guide 15-20).
   """
@@ -85,7 +88,8 @@ defmodule Agenda.Core.View do
           match: Agenda.Core.Search.t() | {:items, [Agenda.Core.Item.id()]} | nil,
           hide_dependent: boolean,
           section_sort: :none | :category | :alpha | :numeric,
-          section_order: :asc | :desc
+          section_order: :asc | :desc,
+          datebook: Agenda.Core.Datebook.t() | nil
         }
 
   defstruct [
@@ -101,6 +105,7 @@ defmodule Agenda.Core.View do
     match: nil,
     hide_dependent: false,
     section_sort: :none,
-    section_order: :asc
+    section_order: :asc,
+    datebook: nil
   ]
 end

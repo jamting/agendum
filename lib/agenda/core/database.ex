@@ -237,7 +237,8 @@ defmodule Agenda.Core.Database do
                  ),
                columns: Enum.reject(v.columns, &(&1.category_id in doomed_set)),
                filter: drop_filters(v.filter, doomed_set),
-               sort: drop_keys(v.sort, doomed_set)
+               sort: drop_keys(v.sort, doomed_set),
+               datebook: datebook_without(v.datebook, doomed_set, db.special.when)
            }}
         end)
 
@@ -572,6 +573,20 @@ defmodule Agenda.Core.Database do
   @doc "All views in view-manager order."
   @spec views(t) :: [View.t()]
   def views(%__MODULE__{} = db), do: Enum.map(db.view_order, &db.views[&1])
+
+  # a datebook view whose categories go falls back to When (R47)
+  defp datebook_without(nil, _doomed, _when), do: nil
+
+  defp datebook_without(d, doomed, when_id) do
+    date = if d.date_category in doomed, do: when_id, else: d.date_category
+
+    %{
+      d
+      | date_category: date,
+        section_category: if(d.section_category in doomed, do: date, else: d.section_category),
+        end_category: if(d.end_category in doomed, do: nil, else: d.end_category)
+    }
+  end
 
   @doc "Inserts a view. Options: `:sections` (category ids), `:columns` (`Column` structs)."
   @spec insert_view(t, String.t(), keyword) :: {t, id}

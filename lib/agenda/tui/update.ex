@@ -435,6 +435,7 @@ defmodule Agenda.TUI.Update do
   # ALT-- / ALT-= collapse or expand the current section; pressed twice,
   # every section in the view (User's Guide 5-5).
   defp collapse_sections(state, nil, _collapsed), do: state
+  defp collapse_sections(state, %{slot: %{}}, _collapsed), do: datebook_sections(state)
 
   defp collapse_sections(state, row, collapsed) do
     twice = state.last_key == {:alt, if(collapsed, do: "-", else: "=")}
@@ -545,6 +546,8 @@ defmodule Agenda.TUI.Update do
       else: :erlang.float_to_binary(value, [:short])
   end
 
+  defp delete(state, %{kind: :section, slot: %{}}), do: datebook_sections(state)
+
   defp delete(state, %{kind: :section, sidx: sidx}) do
     state
     |> State.change_db(Core.remove_section(state.db, state.view_id, sidx))
@@ -602,6 +605,8 @@ defmodule Agenda.TUI.Update do
 
   defp choices(state, %{kind: :item, item: item}),
     do: CategoryScreens.open_profile(state, item.id)
+
+  defp choices(state, %{kind: :section, slot: %{}}), do: datebook_sections(state)
 
   defp choices(state, %{kind: :section, sidx: sidx}),
     do: CategoryScreens.open_picker(state, {:change_section, sidx}, nil)
@@ -748,45 +753,12 @@ defmodule Agenda.TUI.Update do
   end
 
   defp commit(state, {:new_item, sidx, key}, text) do
-    if String.trim(text) == "" do
-      state
-    else
-      rows = Layout.rows(state)
-      section_rows = Enum.filter(rows, &(&1.kind == :item and &1.sidx == sidx))
-      section_cat = Enum.at(State.view(state).sections, sidx).category_id
+    datebook = State.view(state).datebook
 
-      {after_id, adjacent} =
-        case key do
-          {:item, _, id} ->
-            next = section_rows |> Enum.drop_while(&(&1.item.id != id)) |> Enum.at(1)
-            {id, [id | List.wrap(next && next.item.id)]}
-
-          {:section, _} ->
-            case section_rows do
-              [] -> {nil, []}
-              [first | _] -> {predecessor(state.db.item_order, first.item.id), [first.item.id]}
-            end
-        end
-
-      section = if section_cat == state.db.main_id, do: nil, else: section_cat
-
-      {db, id} =
-        Core.add_item(state.db, text, State.context(state),
-          section: section,
-          after: after_id,
-          adjacent: adjacent
-        )
-
-      # a filtered view or section gives new items what the filter needs (R28)
-      required = Core.entry_categories(db, state.view_id, sidx)
-      db = Enum.reduce(required, db, &Core.assign(&2, id, &1, State.context(state)))
-      values = Core.entry_values(db, state.view_id, sidx, State.context(state))
-      db = Core.apply_entry_values(db, id, values, State.context(state))
-
-      state
-      |> State.change_db(db)
-      |> Map.put(:cursor_key, {:item, sidx, id})
-      |> report_auto_assignments(id, List.wrap(section) ++ required)
+    cond do
+      String.trim(text) == "" -> state
+      datebook -> new_datebook_item(state, datebook, sidx, text)
+      true -> new_item(state, sidx, key, text)
     end
   end
 
@@ -833,6 +805,66 @@ defmodule Agenda.TUI.Update do
       {:error, :ambiguous} ->
         State.error(state, "\"#{text}\" matches several categories; type more or press F3")
     end
+  end
+
+  # typed into a datebook slot: filed under the Section category, dated at
+  # the slot's start (R47)
+  defp new_datebook_item(state, datebook, sidx, text) do
+    slot =
+      state
+      |> Layout.rows()
+      |> Enum.find(&(&1.kind == :section and &1.sidx == sidx))
+      |> Map.get(:slot)
+
+    section =
+      if datebook.section_category == state.db.main_id, do: nil, else: datebook.section_category
+
+    opts = Keyword.put(Agenda.Core.Datebook.entry(datebook, slot), :section, section)
+    {db, id} = Core.add_item(state.db, text, State.context(state), opts)
+
+    state
+    |> State.change_db(db)
+    |> Map.put(:cursor_key, {:item, sidx, id})
+    |> report_auto_assignments(id, List.wrap(section))
+  end
+
+  defp new_item(state, sidx, key, text) do
+    rows = Layout.rows(state)
+    section_rows = Enum.filter(rows, &(&1.kind == :item and &1.sidx == sidx))
+    section_cat = Enum.at(State.view(state).sections, sidx).category_id
+
+    {after_id, adjacent} =
+      case key do
+        {:item, _, id} ->
+          next = section_rows |> Enum.drop_while(&(&1.item.id != id)) |> Enum.at(1)
+          {id, [id | List.wrap(next && next.item.id)]}
+
+        {:section, _} ->
+          case section_rows do
+            [] -> {nil, []}
+            [first | _] -> {predecessor(state.db.item_order, first.item.id), [first.item.id]}
+          end
+      end
+
+    section = if section_cat == state.db.main_id, do: nil, else: section_cat
+
+    {db, id} =
+      Core.add_item(state.db, text, State.context(state),
+        section: section,
+        after: after_id,
+        adjacent: adjacent
+      )
+
+    # a filtered view or section gives new items what the filter needs (R28)
+    required = Core.entry_categories(db, state.view_id, sidx)
+    db = Enum.reduce(required, db, &Core.assign(&2, id, &1, State.context(state)))
+    values = Core.entry_values(db, state.view_id, sidx, State.context(state))
+    db = Core.apply_entry_values(db, id, values, State.context(state))
+
+    state
+    |> State.change_db(db)
+    |> Map.put(:cursor_key, {:item, sidx, id})
+    |> report_auto_assignments(id, List.wrap(section) ++ required)
   end
 
   defp predecessor(order, id) do
@@ -1070,6 +1102,9 @@ defmodule Agenda.TUI.Update do
 
   # Moves the item(s) to the highlighted position, one after another so
   # marked items keep their order.
+  defp drop_item(state, _move, %{slot: %{}}),
+    do: State.error(state, "In a datebook view, change the item's date instead")
+
   defp drop_item(state, %{moves: moves}, row) do
     to = Enum.at(State.view(state).sections, row.sidx).category_id
     first_after = if row.kind == :item, do: row.item.id
@@ -1503,9 +1538,24 @@ defmodule Agenda.TUI.Update do
 
   @doc "Performs a named action. Used by key handlers and the menu."
   @spec perform(State.t(), atom | tuple) :: State.t()
+  # a datebook view's sections are its time slots (R47)
+  @section_commands [
+    :section_below,
+    :section_above,
+    :remove_section,
+    :collapse_section,
+    :filter_section,
+    :sort_section
+  ]
+
   def perform(state, action) do
-    do_perform(state, action, Layout.current_row(state))
+    if action in @section_commands and State.view(state).datebook,
+      do: datebook_sections(state),
+      else: do_perform(state, action, Layout.current_row(state))
   end
+
+  defp datebook_sections(state),
+    do: State.error(state, "A datebook view's sections are its dates; they follow its settings")
 
   defp do_perform(state, :menu, _row), do: Menu.open(state)
   defp do_perform(state, :view_manager, _), do: ViewManager.open(state)

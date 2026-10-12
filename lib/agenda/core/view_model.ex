@@ -5,7 +5,7 @@ defmodule Agenda.Core.ViewModel do
   TUI renders it, and tests can assert on it without a terminal.
   """
 
-  alias Agenda.Core.{Assign, Database, DateFormat, NumberFormat, View}
+  alias Agenda.Core.{Assign, Database, Datebook, DateFormat, NumberFormat, View}
   alias Agenda.Core.View.SortKey
 
   defmodule Row do
@@ -18,15 +18,17 @@ defmodule Agenda.Core.ViewModel do
     @moduledoc """
     A section of a built view. `calcs` are the calculation lines shown at
     its bottom (R29): `{calculation, [cell per column]}`, with "" for
-    columns that do not show that calculation.
+    columns that do not show that calculation. In a datebook view (R47)
+    `slot` is the time slot it shows; nil in a standard view.
     """
     @type t :: %__MODULE__{
             category: Agenda.Core.Category.t(),
             rows: [Row.t()],
             collapsed: boolean,
-            calcs: [{NumberFormat.calc(), [String.t()]}]
+            calcs: [{NumberFormat.calc(), [String.t()]}],
+            slot: Datebook.Slot.t() | nil
           }
-    defstruct [:category, rows: [], collapsed: false, calcs: []]
+    defstruct [:category, rows: [], collapsed: false, calcs: [], slot: nil]
   end
 
   @doc """
@@ -35,7 +37,58 @@ defmodule Agenda.Core.ViewModel do
   (R28a); without it only ISO dates in filters can be read.
   """
   @spec build(Database.t(), View.t(), Agenda.Core.Context.clock() | nil) :: [SectionModel.t()]
-  def build(%Database{} = db, %View{} = view, today \\ nil) do
+  def build(db, view, today \\ nil)
+
+  # A datebook view (R47): a section per slot, each with the items of the
+  # Section category dated in it, by date and time unless the view sorts.
+  # Its slots need the clock; without one it has none.
+  def build(%Database{}, %View{datebook: %Datebook{}}, nil), do: []
+
+  def build(%Database{} = db, %View{datebook: %Datebook{} = d} = view, today) do
+    category = db.categories[d.section_category]
+
+    items =
+      db
+      |> Database.items_in(category.id)
+      |> Enum.reject(&(view.hide_done and &1.done != nil))
+      |> Enum.filter(
+        &(Assign.criteria_met?(db, &1.id, view.filter, today) and shown?(&1, view.match))
+      )
+      |> Enum.reject(&(view.hide_dependent and Database.waiting?(db, &1.id)))
+      |> Enum.map(&{&1, dated(db, &1.id, d.date_category), dated(db, &1.id, d.end_category)})
+      |> Enum.reject(&(elem(&1, 1) == nil))
+
+    d
+    |> Datebook.slots(db.date_settings, today)
+    |> Enum.map(fn slot ->
+      shown =
+        for {item, start, stop} <- items, Datebook.in_slot?(slot, start, stop), do: {item, start}
+
+      rows =
+        shown
+        |> order(db, view.sort)
+        |> Enum.map(fn item ->
+          %Row{
+            item: item,
+            cells:
+              Enum.map(
+                view.columns,
+                &cell(db, item, &1.category_id, &1.width, &1.number, today: today, date: &1.date)
+              )
+          }
+        end)
+
+      %SectionModel{
+        category: category,
+        rows: rows,
+        slot: slot,
+        calcs: calcs(db, view.columns, rows)
+      }
+    end)
+    |> Enum.reject(&(view.hide_empty and &1.rows == []))
+  end
+
+  def build(%Database{} = db, %View{} = view, today) do
     view.sections
     |> sort_sections(db, view)
     |> Enum.map(fn section ->
@@ -75,6 +128,28 @@ defmodule Agenda.Core.ViewModel do
     end)
     |> Enum.reject(&(view.hide_empty and &1.rows == []))
   end
+
+  # an item's date and time in a date category, or nil
+  defp dated(_db, _item_id, nil), do: nil
+
+  defp dated(db, item_id, cat_id) do
+    case Database.item_date(db, item_id, cat_id) do
+      nil -> nil
+      date -> {date, Database.item_time(db, item_id, cat_id)}
+    end
+  end
+
+  # by date and time (untimed first), then entry order; or by the view's sort
+  defp order(shown, _db, []) do
+    shown
+    |> Enum.sort_by(fn {_item, {date, time}} -> {Date.to_gregorian_days(date), seconds(time)} end)
+    |> Enum.map(&elem(&1, 0))
+  end
+
+  defp order(shown, db, keys), do: shown |> Enum.map(&elem(&1, 0)) |> sort(db, keys)
+
+  defp seconds(nil), do: -1
+  defp seconds(time), do: time |> Time.to_seconds_after_midnight() |> elem(0)
 
   # The calculation lines of a section: every calculation some numeric
   # column asks for, in Agenda's order.

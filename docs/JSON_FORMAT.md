@@ -124,6 +124,7 @@ open.
 | `sort`                                                        | Sort keys: `{"on": "text" or {"category": id} or {"note": id}, "order": "asc", "na": "bottom", "sequence": "hierarchy", "line": 1}` (R36).                                                                   |
 | `match`                                                       | For the Show View: `{"search": {"text": …, "on": "item", "ignore_case": true}}`, `{"items": [ids]}`, or `null` (R37).                                                                                        |
 | `section_sort`, `section_order`                               | How sections are ordered: `"none"`, `"category"`, `"alpha"`, `"numeric"`; `"asc"` or `"desc"`.                                                                                                               |
+| `datebook`                                                    | For a datebook view (R47): `{"date_category": id, "end_category": id or null, "section_category": id, "period": "week", "interval": null, "start_time": null, "end_time": null, "start_day": null, "end_day": null, "base": "today"}`; `null` for a standard view, whose `sections` it then ignores. |
 
 ## Calendars
 

@@ -92,6 +92,7 @@ erDiagram
         bool hide_dependent "hide items waiting for prerequisites"
         atom section_sort "none, category, alpha or numeric"
         atom section_order "asc or desc"
+        map datebook "Datebook settings, or nil for a standard view"
     }
     SECTION {
         int category_id FK
@@ -216,6 +217,17 @@ classDiagram
         +hide_dependent : boolean
         +section_sort : none, category, alpha, numeric
         +section_order : asc or desc
+        +datebook : Datebook or nil
+    }
+    class Datebook {
+        +date_category : id
+        +end_category : id or nil
+        +section_category : id
+        +period : day, week, month, quarter
+        +interval : 15, 30, 60, day, week, month or nil
+        +start_time, end_time : Time or nil
+        +start_day, end_day : 1..7 or nil
+        +base : String
     }
     class Section {
         +category_id : id
@@ -261,6 +273,7 @@ classDiagram
     Database *-- Calendar
     View *-- Section
     View *-- Column
+    View *-- Datebook
     Column *-- NumberFormat
     Column *-- DateFormat
 ```
@@ -418,6 +431,18 @@ The same database as an Elixir term, abbreviated:
   }
 }
 ```
+
+### Datebook views
+
+A view with `datebook` set (R47, `Core.Datebook`) shows time slots instead
+of its stored sections, which it ignores: the hours of a day, the days of a
+week, or the days, weeks or months of a month or quarter, worked out from
+the settings and the clock every time the view is built
+(`Datebook.slots/3`), since `base` is typed text such as "today" or "next
+week". A slot shows the items of the Section category whose date in the
+date category (and, with an End category, their span up to its date) falls
+in it; nothing about slots is stored. Deleting a category a datebook uses
+falls back to When (and the end category to none).
 
 ## Invariants
 

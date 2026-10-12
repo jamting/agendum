@@ -263,6 +263,23 @@ defmodule Agenda.StoreTest do
     assert {:ok, ^db} = Store.load(path)
   end
 
+  test "files in format version 22 get standard views only", %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    views = Map.new(db.views, fn {id, v} -> {id, Map.delete(v, :datebook)} end)
+    path = Path.join(dir, "v22.agenda")
+    File.write!(path, :erlang.term_to_binary({:agenda, 22, %{db | views: views}}))
+    assert {:ok, ^db} = Store.load(path)
+  end
+
+  test "a datebook view is saved", %{tmp_dir: dir} do
+    db = Agenda.Core.new_file()
+    datebook = %Agenda.Core.Datebook{period: :day, interval: 15, base: "tomorrow"}
+    {:ok, db, _} = Agenda.Core.add_datebook_view(db, "Tomorrow", datebook)
+    path = Path.join(dir, "datebook.agenda")
+    :ok = Store.save(db, path)
+    assert {:ok, ^db} = Store.load(path)
+  end
+
   test "newer, unknown format versions are refused", %{tmp_dir: dir} do
     path = Path.join(dir, "future.agenda")
     File.write!(path, :erlang.term_to_binary({:agenda, 99, Agenda.Core.new_file()}))

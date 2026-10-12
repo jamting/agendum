@@ -16,6 +16,7 @@ defmodule Agenda.Core do
     Assign,
     Calendar,
     Context,
+    Datebook,
     Database,
     DateParser,
     DateRule,
@@ -71,10 +72,18 @@ defmodule Agenda.Core do
       db
       |> Assign.auto_assign(id, Keyword.get(opts, :adjacent, []))
       |> item_dates(id, nil, [:entered], today)
+      |> typed_date(id, opts[:date])
       |> settle(before, id, today)
 
     {db, id}
   end
+
+  # an item typed into a datebook slot (R47) gets the slot's date and time,
+  # as if typed in the date column
+  defp typed_date(db, _id, nil), do: db
+
+  defp typed_date(db, id, {cat_id, date, time}),
+    do: put_date_time(db, id, cat_id, date, time, nil)
 
   @doc """
   Changes an item's text, re-runs automatic assignment (it only adds
@@ -568,13 +577,7 @@ defmodule Agenda.Core do
                Context.parser_opts(today, db.date_settings)
              ) do
           {:ok, date, time, rule} ->
-            db = put_date(db, item_id, head_id, date, time)
-
-            db =
-              if Database.date_field(db, head_id) == :when,
-                do: Database.update_item(db, item_id, &%{&1 | when_time: time, recurrence: rule}),
-                else: db
-
+            db = put_date_time(db, item_id, head_id, date, time, rule)
             {:ok, settle(db, before, item_id, today), :date}
 
           :error ->
@@ -1179,6 +1182,16 @@ defmodule Agenda.Core do
 
   # Sets or clears an item's date in a date category; a time is kept only
   # by date categories the user made (When's is set by the caller).
+  # a date and time set by hand (typed, or from a datebook slot); When also
+  # takes the recurrence typed with it
+  defp put_date_time(db, item_id, cat_id, date, time, rule) do
+    db = put_date(db, item_id, cat_id, date, time)
+
+    if Database.date_field(db, cat_id) == :when,
+      do: Database.update_item(db, item_id, &%{&1 | when_time: time, recurrence: rule}),
+      else: db
+  end
+
   defp put_date(db, item_id, cat_id, date, time \\ nil) do
     case Database.date_field(db, cat_id) do
       :when ->
@@ -1785,6 +1798,38 @@ defmodule Agenda.Core do
   # ---------------------------------------------------------------------------
 
   @spec add_view(db, String.t(), [id]) :: {db, id}
+  @doc """
+  Adds a datebook view (R47). Its settings default to Agenda's: When as the
+  date category and section head, a week from today. Fails unless the date
+  and end categories are date categories.
+  """
+  @spec add_datebook_view(db, String.t(), Datebook.t()) ::
+          {:ok, db, id} | {:error, :not_a_date_category}
+  def add_datebook_view(db, name, %Datebook{} = datebook) do
+    with {:ok, datebook} <- check_datebook(db, datebook) do
+      {db, id} = Database.insert_view(db, String.trim(name))
+      {:ok, Database.update_view(db, id, &%{&1 | datebook: datebook}), id}
+    end
+  end
+
+  @doc "Changes a datebook view's settings (R47), checked as when it was added."
+  @spec set_datebook(db, id, Datebook.t()) :: {:ok, db} | {:error, :not_a_date_category}
+  def set_datebook(db, view_id, %Datebook{} = datebook) do
+    with {:ok, datebook} <- check_datebook(db, datebook),
+         do: {:ok, Database.update_view(db, view_id, &%{&1 | datebook: datebook})}
+  end
+
+  defp check_datebook(db, d) do
+    date_cat = d.date_category || db.special.when
+    d = %{d | date_category: date_cat, section_category: d.section_category || date_cat}
+
+    if Database.date_category?(db, date_cat) and
+         (d.end_category == nil or Database.date_category?(db, d.end_category)) and
+         Map.has_key?(db.categories, d.section_category),
+       do: {:ok, d},
+       else: {:error, :not_a_date_category}
+  end
+
   def add_view(db, name, section_ids),
     do: Database.insert_view(db, String.trim(name), sections: section_ids)
 

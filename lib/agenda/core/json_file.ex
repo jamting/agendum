@@ -21,6 +21,7 @@ defmodule Agenda.Core.JSONFile do
     Calendar,
     Category,
     Database,
+    Datebook,
     DateFormat,
     DateRule,
     DateSettings,
@@ -101,6 +102,21 @@ defmodule Agenda.Core.JSONFile do
       unit: {:enum, [:day, :week, :month, :year]},
       weekday: {:nullable, :int},
       day: {:nullable, :int}
+    ]
+  end
+
+  defp spec(Datebook) do
+    [
+      date_category: :int,
+      end_category: {:nullable, :int},
+      section_category: :int,
+      period: {:enum, Datebook.periods()},
+      interval: {:nullable, {:or, [{:enum, [:day, :week, :month]}, :int]}},
+      start_time: {:nullable, :time},
+      end_time: {:nullable, :time},
+      start_day: {:nullable, :int},
+      end_day: {:nullable, :int},
+      base: :string
     ]
   end
 
@@ -294,7 +310,8 @@ defmodule Agenda.Core.JSONFile do
       sort: Enum.map(v.sort, &sort_key/1),
       match: match(v.match),
       section_sort: Atom.to_string(v.section_sort),
-      section_order: Atom.to_string(v.section_order)
+      section_order: Atom.to_string(v.section_order),
+      datebook: v.datebook && struct_obj(v.datebook)
     )
   end
 
@@ -609,7 +626,12 @@ defmodule Agenda.Core.JSONFile do
       match: read_match(v["match"], path <> ".match"),
       section_sort:
         opt(v, "section_sort", {:enum, [:none, :category, :alpha, :numeric]}, :none, path),
-      section_order: opt(v, "section_order", {:enum, [:asc, :desc]}, :asc, path)
+      section_order: opt(v, "section_order", {:enum, [:asc, :desc]}, :asc, path),
+      datebook:
+        case v["datebook"] do
+          nil -> nil
+          _ -> read_struct(v, "datebook", Datebook, path <> ".datebook")
+        end
     }
   end
 
@@ -848,10 +870,16 @@ defmodule Agenda.Core.JSONFile do
   defp view_refs(v, cats, items) do
     ref = &Map.has_key?(cats, &1)
 
+    datebook =
+      case v.datebook do
+        nil -> []
+        d -> Enum.reject([d.date_category, d.section_category, d.end_category], &is_nil/1)
+      end
+
     ids =
       Enum.map(v.sections, & &1.category_id) ++
         Enum.map(v.columns, & &1.category_id) ++
-        Enum.map(v.filter ++ Enum.flat_map(v.sections, & &1.filter), &elem(&1, 0))
+        Enum.map(v.filter ++ Enum.flat_map(v.sections, & &1.filter), &elem(&1, 0)) ++ datebook
 
     matched =
       case v.match do
