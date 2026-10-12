@@ -124,7 +124,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Developer tools: a screen with debugging info and a key tester, on a hidden key (ESC ?)
 - [x] The name Wol's Agendum: command, files (`.agendum`), preferences, JSON format, texts; the old names still read (ADR 0019)
 - [ ] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agenda` and `test/agenda`, the repository folder; one mechanical commit (ADR 0019)
-- [ ] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; now built in `docs/manual/src/capture_screens.exs`, to move into `lib` and be shared by both); `--demo` stays the patent's sample, which the tests use
+- [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agenda.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
 
 ## Beyond Agenda
 

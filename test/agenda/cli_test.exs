@@ -4,11 +4,12 @@ defmodule Agenda.CLITest do
 
   alias Agenda.CLI
 
-  test "a file, the demo and help" do
+  test "a file, the demo, Rabbit's file and help" do
     assert {:ok, %{file: "my.agenda", demo: false, theme: :classic}} =
              CLI.parse_args(["my.agenda"], %{})
 
     assert {:ok, %{file: nil, demo: true}} = CLI.parse_args(["--demo"], %{})
+    assert {:ok, %{file: nil, demo: false, rabbit: true}} = CLI.parse_args(["--rabbit"], %{})
     assert :help = CLI.parse_args(["--help"], %{})
     assert :help = CLI.parse_args(["-h"], %{})
   end

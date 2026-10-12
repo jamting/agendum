@@ -5,6 +5,7 @@ defmodule Agenda.CLI do
       agendum                   start with a new, untitled file
       agendum FILE              open FILE (created on first save if missing)
       agendum --demo            open the sample file from the patent
+      agendum --rabbit          open Rabbit's file from the manual
       agendum --theme NAME      draw with a theme: classic (default), blue or mono
       agendum --mono            the same as --theme mono
       agendum --lang NAME       read dates in item text in a language:
@@ -29,6 +30,7 @@ defmodule Agenda.CLI do
   @type options :: %{
           file: String.t() | nil,
           demo: boolean,
+          rabbit: boolean,
           theme: Theme.name(),
           languages: [DateLanguage.pack()],
           input: InputFormat.t(),
@@ -61,6 +63,7 @@ defmodule Agenda.CLI do
       OptionParser.parse(args,
         strict: [
           demo: :boolean,
+          rabbit: :boolean,
           help: :boolean,
           mono: :boolean,
           theme: :string,
@@ -160,7 +163,13 @@ defmodule Agenda.CLI do
   defp bad_input(:clock, value), do: "Unknown clock #{value}; choose 12 or 24"
 
   defp options(opts, files, theme, languages),
-    do: %{file: List.first(files), demo: opts[:demo] == true, theme: theme, languages: languages}
+    do: %{
+      file: List.first(files),
+      demo: opts[:demo] == true,
+      rabbit: opts[:rabbit] == true,
+      theme: theme,
+      languages: languages
+    }
 
   defp start(options, prefs) do
     today = App.local_today()
@@ -168,6 +177,7 @@ defmodule Agenda.CLI do
     result =
       cond do
         options.demo -> {:ok, Sample.build(today), nil}
+        options.rabbit -> {:ok, Sample.rabbit(today), nil}
         options.file -> open(Store.normalize_path(options.file))
         true -> {:ok, Core.new_file(), nil}
       end
@@ -186,7 +196,7 @@ defmodule Agenda.CLI do
             prefs: prefs
           )
           |> Layout.settle()
-          |> Update.start(options.file == nil and not options.demo)
+          |> Update.start(options.file == nil and not options.demo and not options.rabbit)
 
         case App.run(state) do
           :ok -> :ok

@@ -1,6 +1,7 @@
 # Captures the screens shown in the Agenda manual (docs/manual/index.html)
-# from the program itself: it builds Rabbit's file, drives the real TUI with
-# key presses, and writes each screen as text to docs/manual/src/screens/.
+# from the program itself: it opens Rabbit's file (`Agenda.Sample.rabbit/1`,
+# also `agendum --rabbit`), drives the real TUI with key presses, and writes
+# each screen as text to docs/manual/src/screens/.
 #
 #     MIX_ENV=test mix run docs/manual/src/capture_screens.exs
 #     python3 docs/manual/src/build.py
@@ -22,7 +23,7 @@ defmodule ManualScreens do
 
   def run do
     File.mkdir_p!(@out)
-    state = start(rabbits_file(), width: 80, height: 25)
+    state = start(Agenda.Sample.rabbit(@today), width: 80, height: 25)
 
     state = %{
       state
@@ -39,59 +40,6 @@ defmodule ManualScreens do
     waiting_and_numbers(state)
     calendars(state)
     datebook(state)
-  end
-
-  # Rabbit's file: a Monday, three sections, Priority and Friends columns.
-  defp rabbits_file do
-    db = Core.new_file(view_name: "Rabbit's Week", section_name: "Garden")
-    main = db.main_id
-    [garden] = Database.find_categories(db, "Garden")
-    db = Database.update_category(db, garden, &%{&1 | match_name: true})
-    {:ok, db, notices} = Core.add_category(db, main, "Notices", match_name: true)
-
-    {:ok, db, people} =
-      Core.add_category(db, main, "Friends and Relations",
-        short_name: "Friends",
-        match_name: false
-      )
-
-    db =
-      Enum.reduce(~w(Pooh Piglet Owl Eeyore Kanga Roo Tigger), db, fn name, db ->
-        {:ok, db, _} = Core.add_category(db, people, name)
-        db
-      end)
-
-    {:ok, db, _} = Core.add_category(db, people, "Christopher Robin", short_name: "CR")
-    {:ok, db, _} = Core.add_category(db, people, "Small")
-
-    {:ok, db, priority} =
-      Core.add_category(db, main, "Priority", exclusive: true, match_name: false)
-
-    db =
-      Enum.reduce(~w(High Medium Low), db, fn name, db ->
-        {:ok, db, _} = Core.add_category(db, priority, name)
-        db
-      end)
-
-    [view] = Database.views(db)
-    db = Core.add_column(db, view.id, priority, 1, 8)
-    db = Core.add_column(db, view.id, people, 2, 12)
-    db = Core.add_section(db, view.id, notices, 1)
-    db = Core.add_section(db, view.id, people, 2)
-
-    [
-      {"Weed the carrot bed tomorrow morning", garden, "High"},
-      {"Count the lettuces before Tigger bounces on them", garden, "Medium"},
-      {"Put up a Notice about the Organising Meeting on Friday", notices, "High"},
-      {"Ask Owl how to spell Organising", people, "Low"},
-      {"Find Small, who is lost again", people, "High"},
-      {"Visit Kanga and Roo on Thursday at 3pm", people, "Medium"}
-    ]
-    |> Enum.reduce(db, fn {text, section, prio}, db ->
-      {db, item} = Core.add_item(db, text, @today, section: section)
-      {:ok, db, _} = Core.assign_by_name(db, item, priority, prio, @today)
-      db
-    end)
   end
 
   defp view(state) do

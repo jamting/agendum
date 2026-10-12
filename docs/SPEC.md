@@ -990,7 +990,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   WOL. All rites reserved.", Name and Company, and a word on sharing. Name
   is `name` in the preferences, else the login name; Company is `company`
   (shown only when set). Any key, which does nothing else, or three seconds
-  take it away. When no file was named (and not `--demo`), the prompt "File
+  take it away. When no file was named (and not `--demo` or `--rabbit`), the prompt "File
   to open or create:" waits under it, offering the last file used (F3
   lists files, R51); a file that exists opens, one that does not starts a
   new file there, saved on the first save; ESC leaves an untitled file.

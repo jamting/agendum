@@ -32,6 +32,7 @@ Requires Elixir ≥ 1.20 on OTP ≥ 28 (for the built-in raw terminal mode).
 ```sh
 mix deps.get
 mix run -e 'Agenda.CLI.main(["--demo"])'       # sample data from the Agenda patent
+mix run -e 'Agenda.CLI.main(["--rabbit"])'     # Rabbit's file from the manual
 mix escript.build && ./agendum ~/work.agendum   # standalone binary
 ./agendum --mono ~/work.agendum                 # monochrome (also: --theme mono, or NO_COLOR=1); --theme blue: white on blue
 ./agendum --lang=swedish --fallback=english f   # read dates typed in Swedish (and English)

@@ -17,7 +17,7 @@ only, never as part of a feature.
 | File                    | What it is                                                                    |
 | ----------------------- | ----------------------------------------------------------------------------- |
 | `template.html`         | The text, with `{{screen}}` placeholders                                      |
-| `capture_screens.exs`   | Builds Rabbit's file and drives the real TUI to capture each screen           |
+| `capture_screens.exs`   | Opens Rabbit's file (`Agenda.Sample.rabbit/1`) and drives the real TUI to capture each screen |
 | `screens/*.txt`         | The captured screens (committed, so screen changes show in diffs)             |
 | `build.py`              | Fills the placeholders and writes `../index.html`; fails on broken links      |
 | `../manual.css`         | Dialogue styles; imports `../guide/guide.css` for everything else              |
