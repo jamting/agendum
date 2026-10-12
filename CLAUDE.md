@@ -42,8 +42,10 @@ inline `# credo:disable-for-next-line` with the reason.
    only in `Agenda.Core.Assign`; never re-implement them in the UI.
 4. Subsumption (membership in ancestors) is **computed, never stored**. Only
    explicit links are stored (`Agenda.Core.Links`).
-5. No runtime dependencies. The terminal layer uses OTP 28+ raw mode, not a
-   TUI library (see `docs/adr/0002-own-terminal-layer.md`).
+5. No runtime dependencies in the core and the TUI unless a package meets
+   the criteria of `docs/adr/0021-runtime-dependencies.md` (pure Elixir/Erlang,
+   no runtime files, keeps the single-file escript); none so far. The
+   terminal layer uses OTP 28+ raw mode, not a TUI library (ADR 0002).
 6. Keep everything a second front end (e.g. web) would need in `Agenda.Core`;
    the TUI only handles keys and drawing. A multi-user web app on the same
    core is planned (`docs/MULTIUSER.md`, ADR 0020): keep the logic of a
