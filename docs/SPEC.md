@@ -820,6 +820,23 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   times are converted by the system's rules; alarms, attendees and
   exceptions to repeating events are not read. Subscriptions are saved
   in the file and in its JSON.
+- **R46 ✅ Pop-up calendar** (User's Guide 6-14 to 6-17; Help "Use the
+  Pop-Up Calendar"). F3 (CHOICES) on a column entry in a date column opens
+  a month calendar on the entry's date, or on today when it has none;
+  ALT-C opens it anywhere in a view, on today, for reference. ← → move a
+  day, ↑ ↓ a week, HOME / END to the first / last day of the month, PGUP /
+  PGDN the same day a month back / ahead, CTRL-← / CTRL-→ a year (Mac:
+  `<` / `>`); a month or year move keeps the day where the month has it.
+  Typing a date ("next friday", "2027-03-15") jumps there (Agenda shows
+  what is typed at the top: here the control panel's prompt); F6 (SETTIME)
+  asks for a time to go with the date (empty: none). ENTER sets the date,
+  and the time, in the entry as if typed there (so When is set by hand,
+  R14, date rules and conditions follow, one undo step); for reference it
+  closes. ESC changes nothing. Dates run from 1 AD to 5000, as in Agenda.
+  Our choices: the week starts on the file's Beginning of week (R14e;
+  Agenda's screen started on Sunday), the calendar keeps the entry's time
+  unless F6 changes it, and Agenda's Set Time box (SPACE between hours and
+  minutes, GREY + / −) is a typed time.
 
 ## 6. Out of scope for now
 

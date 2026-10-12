@@ -33,6 +33,10 @@ settings, as described in the second half of this guide.
 | In a note: the next / previous item's (or category's) note                                      | ALT-N / ALT-P                 | ESC then `n` / `p`                                                    |
 | Back to the previous view (LAST VW)                                                             | ALT-F8                        | ESC then `*`, or menu View ▸ Last                                     |
 | Set or cancel an alarm (Item Alarm)                                                             | ALT-A                         | ESC then `a`, or menu Item ▸ Alarm                                    |
+| Pop-up calendar: pick a date (in a date column) / look one up (anywhere in a view)              | F3 / ALT-C                    | ESC then `3` / ESC then `c`                                           |
+| In the calendar: a day, a week; the first / last day of the month                               | ← → ↑ ↓; HOME / END           | fn-← / fn-→ for HOME / END                                            |
+| In the calendar: a month back / ahead; a year back / ahead                                      | PGUP / PGDN; CTRL-← / CTRL-→  | fn-↑ / fn-↓; `<` / `>`                                                |
+| In the calendar: set the date; a time (F6); go to a typed date; cancel                          | ENTER; F6; type it; ESC       | ESC then `6` for F6                                                   |
 | Make the item depend on the marked items, or clear its dependencies                             | ALT-O                         | ESC then `o`                                                          |
 | Execute all conditions and actions on all items / those of the highlighted category             | ALT-X / ALT-E                 | ESC then `x` / `e`, or menu Category ▸ Execute                        |
 | Category manager: add a sibling below / above                                                   | ALT-D (or ALT-I, INS) / ALT-U | ESC then `d` / `u`, or **CTRL-N**                                     |

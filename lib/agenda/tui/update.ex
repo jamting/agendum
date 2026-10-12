@@ -14,6 +14,7 @@ defmodule Agenda.TUI.Update do
   alias Agenda.Core.{Database, DateFormat, ViewModel}
 
   alias Agenda.TUI.{
+    CalendarBox,
     CategoryScreens,
     ColumnProperties,
     Completion,
@@ -303,6 +304,8 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :search_box} = m, key), do: SearchBox.handle(state, m, key)
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
 
+  defp dispatch(state, %{type: :calendar} = m, key), do: CalendarBox.handle(state, m, key)
+
   defp dispatch(state, %{type: type} = m, key)
        when type in [:file_props, :date_settings, :display_format],
        do: FileProperties.handle(state, m, key)
@@ -411,6 +414,7 @@ defmodule Agenda.TUI.Update do
       {:alt, "e"} -> execute_category(state, row)
       {:alt_f, 6} -> SearchBox.open(state, :view)
       {:alt, "a"} -> perform(state, :alarm)
+      {:alt, "c"} -> CalendarBox.open(state, nil)
       {:alt_f, 8} -> perform(state, :last_view)
       {:alt, "-"} -> collapse_sections(state, row, true)
       {:alt, "="} -> collapse_sections(state, row, false)
@@ -586,7 +590,7 @@ defmodule Agenda.TUI.Update do
 
     cond do
       Database.date_category?(state.db, head) ->
-        State.error(state, "Type a date, e.g. tomorrow, friday, 2026-12-24")
+        CalendarBox.open(state, {item_id, head})
 
       state.db.categories[head].kind == :numeric ->
         State.error(state, "Type a number, e.g. 120 or 1,234.50")
@@ -696,6 +700,13 @@ defmodule Agenda.TUI.Update do
 
   # ENTER on a column entry takes the completion shown (R32); with no match
   # the typed name becomes a new category.
+  @doc """
+  Sets a column entry as if typed (replacing what is there), as the pop-up
+  calendar does with the date it picked (R46).
+  """
+  def set_column_entry(state, item_id, head, text),
+    do: commit(state, {:column_entry, item_id, head, :replace}, text)
+
   defp commit(%State{edit: %{target: {:column_entry, item_id, head, how}, line: line}} = state) do
     shown = Completion.shown(state)
     state = %{state | edit: nil}
@@ -1125,6 +1136,10 @@ defmodule Agenda.TUI.Update do
     end
   end
 
+  # the pop-up calendar's F6: an empty time means none (R46)
+  defp prompt_submitted(state, :calendar_time, text),
+    do: CalendarBox.set_time(state, String.trim(text))
+
   defp prompt_submitted(state, action, text) do
     text = String.trim(text)
 
@@ -1145,6 +1160,8 @@ defmodule Agenda.TUI.Update do
     path = Agenda.Store.normalize_path(text)
     state |> Map.put(:path, path) |> State.effect({:save, path}) |> replace_file(command)
   end
+
+  defp prompt_action(state, :calendar_jump, text), do: CalendarBox.jump(state, text)
 
   # Calendars (R45): the address, then a name for its category
   defp prompt_action(state, :calendar_url, text),

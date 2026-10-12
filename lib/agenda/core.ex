@@ -691,6 +691,16 @@ defmodule Agenda.Core do
 
   # The date of a date action, read when it runs; without a clock (the core
   # never reads one) only an ISO date can be read.
+  @doc """
+  A date and/or time typed on its own ("friday 3pm", "2026-12-24", "15:30"),
+  read as in a date column with the file's date settings and the reader's
+  languages and input format: `{:ok, date, time or nil}`. A time alone is
+  today's (R14b). Used by the pop-up calendar (R46).
+  """
+  @spec read_when(db, String.t(), clock) :: {:ok, Date.t(), Time.t() | nil} | :error
+  def read_when(db, text, clock),
+    do: DateParser.parse_when(text, now_of(clock), Context.parser_opts(clock, db.date_settings))
+
   defp action_date(_db, text, nil) do
     case Date.from_iso8601(text) do
       {:ok, date} -> {:ok, date}

@@ -17,6 +17,7 @@ defmodule Agenda.TUI.Render do
   @full_screen [:catmgr, :viewmgr, :help, :note, :devtools]
   @boxes [
     :picker,
+    :calendar,
     :profile,
     :props,
     :choice,
@@ -220,7 +221,7 @@ defmodule Agenda.TUI.Render do
       top && top.type == :move_item ->
         "MOVE"
 
-      top && top.type in [:picker, :scope] ->
+      top && top.type in [:picker, :scope, :calendar] ->
         "CHOICES"
 
       top && top.type in [:profile, :group_profile] ->
@@ -419,6 +420,18 @@ defmodule Agenda.TUI.Render do
     do: [
       {"SPACE", "Assign/Unassign", "Assign or unassign"},
       {"ESC", "Return", "Done"}
+    ]
+
+  defp mode_keys(%{type: :calendar, target: target}),
+    do: [
+      {"←→↑↓", "Day/week", "←→ ↑↓", "Day, week"},
+      {"PGUP/DN", "Month", "PGUP/PGDN", "Month"},
+      {"^←→", "Year", "CTRL-←→ or < >", "Year"},
+      {"ENTER", if(target, do: "Select", else: "Close"),
+       if(target, do: "Set the date", else: "Close")},
+      {"F6", "Time", "Set a time"},
+      {"type", "Go to", "Type a date to go there"},
+      {"ESC", "Cancel"}
     ]
 
   defp mode_keys(%{type: :alarm_list}),
@@ -936,7 +949,9 @@ defmodule Agenda.TUI.Render do
      Type          Add an item, or an entry in the highlighted column
      INS           New item / extra column entry   CTRL-N
      F2            Edit item, section head, entry  CTRL-E
-     F3            Choices: column box / item's profile
+     F3            Choices: column box / item's profile / calendar
+                   (in a date column: ←→↑↓ PGUP PGDN, CTRL-←→ or < > a year,
+                   F6 a time, type a date to go there, ENTER sets it)
      F4            Mark item done                  CTRL-K
      F5            Note
      F6            Item / category properties      ESC 6
@@ -959,6 +974,7 @@ defmodule Agenda.TUI.Render do
      ALT-F6        Search (then ALT-N / ALT-P, F7 mark)  ESC ^
      ALT-F8        Back to the previous view        ESC *
      ALT-A         Set or cancel an alarm            ESC a
+     ALT-C         Show the calendar (to look up a date)  ESC c
      ALT-O         Depend on the marked items (&); with none marked,
                    clear the item's dependencies     ESC o
      ALT-X / ALT-E Execute all conditions and actions / the section's
@@ -1029,7 +1045,7 @@ defmodule Agenda.TUI.Render do
   # two columns further right, so the one beneath still shows; the titles
   # of the boxes beneath are dimmed, the active box's is not.
   defp overlay_box(state, mode, depth, active?, body) do
-    inner = min(state.width - 8, 60)
+    inner = box_width(state, mode)
     top = 1 + depth
     max_rows = max(State.body_height(state) - 4 - depth, 3)
     content = box_content(state, mode, inner, max_rows)
@@ -1041,6 +1057,12 @@ defmodule Agenda.TUI.Render do
     |> Draw.overlay(box, top, left)
     |> Draw.shadow(top, left, length(box), inner + 2)
   end
+
+  # the calendar is a small box, as in Agenda; the others share one width
+  defp box_width(state, %{type: :calendar}), do: min(state.width - 8, 30)
+  defp box_width(state, _mode), do: min(state.width - 8, 60)
+
+  defp box_title(_state, %{type: :calendar} = mode), do: Agenda.TUI.CalendarBox.title(mode)
 
   defp box_title(state, %{type: :picker, purpose: purpose}) do
     case purpose do
@@ -1515,6 +1537,9 @@ defmodule Agenda.TUI.Render do
 
     rows ++ sample ++ [[], [{:box, hint}]]
   end
+
+  defp box_content(state, %{type: :calendar} = mode, _inner, _max_rows),
+    do: Agenda.TUI.CalendarBox.lines(state, mode)
 
   defp box_content(_state, %{type: :note_search} = mode, inner, _max_rows) do
     rows =

@@ -97,7 +97,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 ## Milestone 5 — Time management and automation
 
 - [ ] Datebook views: items by day, week, month or quarter, browsing forward and back (ALT-B); settings Period, Interval, Base date on, Section separators; beginning/end of week in the global date settings (User's Guide chapter 10)
-- [ ] Pop-up calendar: F3 in a date column picks a date (User's Guide chapter 6)
+- [x] Pop-up calendar: F3 in a date column picks a date, ALT-C shows one for reference; F6 a time, typing jumps to a date (R46)
 - [ ] Learn-mode macros: record keystrokes, store them in the file, replay them, attach them to keys (Working with Macros, chapter 1)
 - [ ] A starter file like Agenda's Activities Planner: categories and views, no items (Starter Applications)
 - [x] Preferences file and File ▸ Customize (Utilities Customize): theme, date languages, input format (R40, R14c, R41b)

@@ -70,7 +70,9 @@ flowchart LR
     CatProps -- "Advanced settings, standard category" --> CatMatch["Text matching"]
     CatProps -- "Note" --> Note["Note editor"]
     FileProps["File Properties"]
-    FileProps -- "Input format" --> InputFormat["Input format (yours)"]
+    FileProps -- "Global date settings" --> DateSettings["Global date settings"]
+    DateSettings -- "Display format" --> DisplayFormat["Display format"]
+    DateSettings -- "Input format" --> InputFormat["Input format (yours)"]
     FileProps -- "Auto-assign settings" --> AutoAssign["Auto-assign settings"]
     Customize["Customize (yours)"] -- "Input format" --> InputFormat
     ColProps["Column Properties"]
@@ -94,6 +96,10 @@ or handles it.
     a new view's name, a category name). `TUI.Update`.
   - **Question** `:confirm`: a Y/N question (discard, save changes, make a
     date category). `TUI.Update`.
+  - **Calendar** `:calendar` (F3 in a date column; ALT-C anywhere in a
+    view): the pop-up calendar, to pick a date (and time) for the entry or
+    to look one up (R46). `TUI.CalendarBox`.
+    - **Prompt** `:prompt` for a time (F6) or a date to go to (typing).
   - **Scope** `:scope`: with items marked, whether a command (F3, F4, ALT-F2,
     ALT-F4, ALT-F10, ALT-M, DEL) acts on the highlighted item or all marked
     ones (R35). `TUI.Update`.
@@ -242,6 +248,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:execute`           | box           | `TUI.ExecuteBox`       | Category ▸ Execute                               | R15e          |
 | `:questions`         | box           | `TUI.QuestionsBox`     | Category ▸ Questions                             | R16           |
 | `:alarm_list`        | box           | `TUI.AlarmList`        | Search ▸ Alarms                                  | R38           |
+| `:calendar`          | box           | `TUI.CalendarBox`      | F3 in a date column, ALT-C                       | R46           |
 | `:devtools`          | full screen   | `TUI.DevTools`         | ESC ? (hidden)                                   | —             |
 
 `test/agenda/tui/screens_doc_test.exs` fails when a mode type is added without
