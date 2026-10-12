@@ -20,8 +20,8 @@
 
 /* A conversation: one paragraph per speaker, the name in small capitals. */
 .talk {
-  margin: 1.2rem 0;
-  padding: 0.2rem 0;
+  padding: 0.5rem;
+  margin: 2.5rem 0;
 }
 .talk p {
   margin: 0.45rem 0;
@@ -36,14 +36,13 @@
 }
 .talk p.owl {
   background: var(--owl-bg);
-  border-left: 3px solid var(--owl);
 }
 .talk p.owl b {
   color: var(--owl);
 }
 .talk p.rabbit {
   background: var(--rabbit-bg);
-  border-left: 3px solid var(--rabbit);
+
   margin-left: 2.5rem;
 }
 .talk p.rabbit b {
