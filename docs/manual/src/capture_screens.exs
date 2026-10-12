@@ -38,6 +38,7 @@ defmodule ManualScreens do
     filters_and_questions(state)
     waiting_and_numbers(state)
     calendars(state)
+    datebook(state)
   end
 
   # Rabbit's file: a Monday, three sections, Priority and Friends columns.
@@ -199,6 +200,16 @@ defmodule ManualScreens do
 
     s = Agenda.TUI.Update.calendar_read(s, id, {:ok, events})
     shot("45-calendars", s, :calendars)
+  end
+
+  # The pop-up calendar on the carrot bed's When date, and a datebook view
+  # of Rabbit's week with its settings.
+  defp datebook(state) do
+    shot("39-popup-calendar", press(state, [:down, :right, {:f, 3}]), :calendar)
+
+    add = [{:f, 10}, "v", "a"] ++ String.graphemes("Rabbit's Calendar") ++ [:enter, "d"]
+    shot("47-datebook-props", press(state, add), :datebook_props)
+    shot("46-datebook-week", press(state, add ++ [:esc]), nil)
   end
 
   defp name(state, {id, _depth}), do: state.db.categories[id].name

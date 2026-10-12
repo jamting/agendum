@@ -20,6 +20,7 @@
     <li><a href="#filing">Agendum files for you</a></li>
     <li><a href="#views">Views</a></li>
     <li><a href="#dates">Dates and times</a></li>
+    <li><a href="#datebook">A datebook</a></li>
     <li><a href="#rules">Conditions and actions</a></li>
     <li><a href="#finding">Finding, filtering, sorting</a></li>
     <li><a href="#numbers">Numbers</a></li>
@@ -474,7 +475,7 @@ properties. <kbd>ENTER</kbd> changes the highlighted one.</p>
       Relations</em>, so that “relations” in an item doesn't file it there.</td></tr>
   <tr><td>Also match</td><td>More words that file items here (<a href="#alsomatch">chapter 5</a>).</td></tr>
   <tr><td>Assignment conditions, Assignment actions, Special action</td><td>Rules that pull
-      items in or act on them as they arrive (<a href="#rules">chapter 8</a>).</td></tr>
+      items in or act on them as they arrive (<a href="#rules">chapter 9</a>).</td></tr>
   <tr><td>Excludes</td><td>Categories this one may never share an item with, anywhere in
       the tree: <em>Work</em> and <em>Holiday</em>. This one is our own addition; Lotus
       Agenda only had exclusive children.</td></tr>
@@ -749,7 +750,7 @@ view, <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> go to the next or previous view and
 <p><strong>View ▸ Hide</strong> turns on or off, for this view: <em>Done</em> items,
 <em>Empty</em> sections, <em>Inherited</em> items (those only in a subcategory of the
 section's category) and <em>Pending</em> items (waiting for others,
-<a href="#waiting">chapter 11</a>).</p>
+<a href="#waiting">chapter 12</a>).</p>
 </section>
 
 <!-- ===================================================================== -->
@@ -802,6 +803,41 @@ ways of saying it:</p>
 the When column. A date you set yourself wins over the text from then on; <kbd>DEL</kbd>
 in the When column gives the date back to the text. <strong>File ▸ Dating</strong>
 stops Agendum reading When dates from text in this file.</p>
+
+<h3 id="popup">The pop-up calendar</h3>
+<p>In a date column, <kbd>F3</kbd> opens a month with the entry's date highlighted (or
+today's, when it has none). <kbd>←</kbd> <kbd>→</kbd> move a day, <kbd>↑</kbd>
+<kbd>↓</kbd> a week, <kbd>HOME</kbd> / <kbd>END</kbd> to the month's first and last day,
+<kbd>PGUP</kbd> / <kbd>PGDN</kbd> a month and <kbd>CTRL-←</kbd> / <kbd>CTRL-→</kbd> (or
+<kbd>&lt;</kbd> / <kbd>&gt;</kbd>) a year; typing a date jumps there. <kbd>F6</kbd> adds a
+time, <kbd>ENTER</kbd> puts the date in the entry as if you had typed it, and
+<kbd>ESC</kbd> leaves it alone. <kbd>ALT-C</kbd> shows the calendar anywhere, just to look
+something up.</p>
+
+<!-- screen: 39-popup-calendar -->
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                    CHOICES  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
+<span class="h"> Garden                                  When             Priority Friends</span>
+ • Weed the carrot bed t┌──────── October 2026 ────────┐00 High
+ • Count the lettuces be│ Mon Tue Wed Thu Fri Sat Sun  │   Medium   Tigger
+   bounces on them      │                              │
+                        │               1   2   3   4  │
+<span class="h"> Notices                │   5   6   7   8   9  10  11  │  Priority Friends</span>
+ • Put up a Notice about│  12  13  14  15  16  17  18  │   High
+   Meeting on Friday    │  19  20  21  22  23  24  25  │
+                        │  26  27  28  29  30  31      │
+<span class="h"> Friends and Relations  │                              │  Priority Friends</span>
+ • Count the lettuces be│                              │   Medium   Tigger
+   bounces on them      │ Time: 08:00                  │
+ • Ask Owl how to spell └──────────────────────────────┘   Low      Owl
+<span class="t"> ←→↑↓ Day/week PGUP/DN Month ^←→ Year ENTER Select F6 Time type Go to ESC Cancel</span></pre>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> Which day <em>is</em> the second Friday of November? I
+always have to count on my paws.</p>
+<p class="owl"><b>Owl.</b> <kbd>ALT-C</kbd>, then <kbd>PGDN</kbd>. There it is. Your paws
+may have a rest.</p>
+</div>
 
 <h3>Again and again</h3>
 <p>With <em>every</em>, <em>each</em> or <em>evry</em>, a date recurs: “every Monday”,
@@ -915,8 +951,117 @@ rabbit.</p>
 </section>
 
 <!-- ===================================================================== -->
+<section id="datebook">
+<h2>8. A datebook</h2>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> All very well, Owl, but a list is a list. When I want to
+know what I am doing on Thursday, I want to see Thursday.</p>
+<p class="owl"><b>Owl.</b> Then you want an appointment book. Agendum keeps one inside
+every file; you only have to open it.</p>
+</div>
+
+<p>A <strong>datebook view</strong> is a view whose sections are not categories but
+times: the hours of a day, the days of a week, or the days, weeks or months of a month or
+a quarter. Every dated item sits in its place. Make one with <strong>View ▸ Add</strong>
+(or <kbd>INS</kbd> in the view manager): type its name, then choose
+<em>Datebook</em> instead of <em>Standard</em>. It starts as this week, Monday to
+Friday:</p>
+
+<!-- screen: 46-datebook-week -->
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum *                    READY  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Calendar                                   Datebook for: When   </span>
+ ── Mon 2026-10-12 ────────────────────────────────────────────────────────────
+ ── Tue 2026-10-13 ────────────────────────────────────────────────────────────
+ • Weed the carrot bed tomorrow morning
+ ── Wed 2026-10-14 ────────────────────────────────────────────────────────────
+ ── Thu 2026-10-15 ────────────────────────────────────────────────────────────
+ • Visit Kanga and Roo on Thursday at 3pm
+ ── Fri 2026-10-16 ────────────────────────────────────────────────────────────
+ • Put up a Notice about the Organising Meeting on Friday
+<span class="t"> F1 Help F2 Edit F3 Choices F4 Done F5 Note F6 Props F7 Mark F8 VwMgr F9 CatMgr </span></pre>
+
+<p>The control panel says what the datebook is for (“Datebook for: When”), and the view
+manager marks datebook views with <code>*</code>. Type an item under a day and it gets
+that day; in a day view, under an hour, it gets the hour too. Rabbit types “Dig the
+potato bed” under Wednesday, and it is dated Wednesday at once.</p>
+
+<h3>Its settings</h3>
+<p>A new datebook opens its settings, and <strong>View ▸ Properties</strong> shows them
+again:</p>
+
+<!-- screen: 47-datebook-props -->
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum *                    PROPS  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Calendar                                   Datebook for: When   </span>
+ ── Mon 2026-10-12 ────────────────────────────────────────────────────────────
+ ── Tue 2┌─────────── Datebook settings: Rabbit's Calendar ───────────┐────────
+ • Weed t│ Date category : When                                       │
+ ── Wed 2│ End category  : (none)                                     │────────
+ ── Thu 2│ Section       : When                                       │────────
+ • Visit │ Period        : Week                                       │
+ ── Fri 2│ Interval      : — (a day each)                             │────────
+ • Put up│ Start at      : Mon                                        │
+         │ End at        : Fri                                        │
+         │ Base date on  : today (2026-10-12)                         │
+         │                                                            │
+         │ ENTER picks or types · SPACE/→ ← cycle · DEL clears        │
+         └────────────────────────────────────────────────────────────┘
+<span class="t"> ↑↓ Setting ENTER Pick/type SPACE Next ← Previous DEL Clear ESC Close           </span></pre>
+
+<ul>
+  <li><strong>Period</strong>: a day, a week, a month or a quarter.</li>
+  <li><strong>Interval</strong>: what each section covers: 15 or 30 minutes or an hour of
+      a day; a day or a week of a month; a day, a week or a month of a quarter. A week
+      has a section per day.</li>
+  <li><strong>Start at</strong> and <strong>End at</strong>: the hours of a day (8:00 to
+      17:00 unless you say otherwise) or the days of a week (Monday to Friday). A day
+      view also has a section for items with that date but no time.</li>
+  <li><strong>Base date on</strong>: which day, week or month to show: “today”,
+      “tomorrow”, “next week”, or a date. It is read again every day, so a datebook based
+      on today always shows today.</li>
+  <li><strong>Date category</strong>: whose dates place the items (When).</li>
+  <li><strong>Section</strong>: whose items to show, under every section: When shows
+      every dated item; <em>Friends and Relations</em> would show only visits and calls.</li>
+  <li><strong>End category</strong>: a date category saying when an item ends; the item
+      then shows in every hour or day it lasts. Events from calendars on the web keep
+      their end in a category called <em>Ends</em>, ready for this.</li>
+</ul>
+
+<p><kbd>ENTER</kbd> picks a category or types a value, <kbd>SPACE</kbd> and the arrows
+cycle the choices. A datebook's sections are its dates, so it cannot have sections added
+or removed, and moving an item with <kbd>ALT-F10</kbd> means changing its date
+instead.</p>
+
+<h3>Turning the pages</h3>
+<p><kbd>ALT-B</kbd> (<strong>View ▸ Browse</strong>) turns the datebook's pages:
+<kbd>←</kbd> <kbd>→</kbd> show the previous or next day, week, month or quarter, and
+<kbd>ALT-F5</kbd> jumps to a typed date. <code>BROWSE</code> shows at the top right
+meanwhile. <kbd>ENTER</kbd> stays on the page you have turned to (the datebook is then
+based on that date until you change Base date on); <kbd>ESC</kbd> goes back.</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> And if I only want to peek at next month?</p>
+<p class="owl"><b>Owl.</b> Turn to it, look, and press <kbd>ESC</kbd>. Nothing is changed
+by looking. Even you can look without changing anything, Rabbit.</p>
+<p class="rabbit"><b>Rabbit.</b> I am not sure that is true.</p>
+</div>
+
+<p>An ordinary view with a date filter (“today” to “end of this week”) can be browsed
+the same way: <kbd>ALT-B</kbd> moves the filter's dates, <kbd>←</kbd> <kbd>→</kbd> a day,
+<kbd>↑</kbd> <kbd>↓</kbd> a week, <kbd>PGUP</kbd> / <kbd>PGDN</kbd> a month and
+<kbd>CTRL-PGUP</kbd> / <kbd>CTRL-PGDN</kbd> a year; the highlighted section's own date
+filter moves if it has one.</p>
+
+<h3>One day's schedule</h3>
+<p><strong>Search ▸ Schedule</strong> shows everything on one day without making a
+view: choose the date (typed, or <kbd>F3</kbd> for the calendar), and if you like a
+category to narrow it to, and <kbd>ENTER</kbd> lists that day's items in the Show View.
+<kbd>ALT-B</kbd> then steps to the next day, and the next.</p>
+</section>
+
+<!-- ===================================================================== -->
 <section id="rules">
-<h2>8. Conditions and actions</h2>
+<h2>9. Conditions and actions</h2>
 
 <p>Matching words is not the only way to file. A category can also have rules:
 <em>conditions</em>, which pull items in because of where else they are, and
@@ -979,7 +1124,7 @@ everything on all items, <kbd>ALT-E</kbd> just the highlighted section's categor
 
 <!-- ===================================================================== -->
 <section id="finding">
-<h2>9. Finding, filtering and sorting</h2>
+<h2>10. Finding, filtering and sorting</h2>
 
 <h3>Searching</h3>
 <p><kbd>ALT-F6</kbd> opens the search box: what to look for, in the item text, notes or
@@ -1014,7 +1159,9 @@ for a range instead:</p>
 <p>Relative dates in a range are read again each day: “today” to “end of this week”
 always shows the rest of this week. Put <code>$</code> before one to fix it the day you
 set it (<code>$Monday</code>). The filter shows beside the view's name, and a new item
-typed into a filtered view gets what the filter needs, so it doesn't vanish.</p>
+typed into a filtered view gets what the filter needs, so it doesn't vanish.
+<kbd>ALT-B</kbd> moves a date filter to other days, weeks or months (see
+<a href="#datebook">A datebook</a>).</p>
 
 <h3>Sorting</h3>
 <p><strong>View ▸ Order</strong> sorts the items of every section; <strong>View ▸
@@ -1045,7 +1192,7 @@ value first or last. The same box can sort the sections themselves.</p>
 
 <!-- ===================================================================== -->
 <section id="numbers">
-<h2>10. Numbers</h2>
+<h2>11. Numbers</h2>
 
 <p>A <strong>numeric</strong> category holds a number for each item: cost, hours, how
 many lettuces. Make one with Category Properties ▸ <strong>Type</strong> ▸
@@ -1076,7 +1223,7 @@ bottom of every section.</p>
 
 <!-- ===================================================================== -->
 <section id="waiting">
-<h2>11. Things that wait</h2>
+<h2>12. Things that wait</h2>
 
 <p>Some things can't be done before others. Mark the earlier ones with <kbd>F7</kbd>,
 highlight the later one and press <kbd>ALT-O</kbd>: it now <em>depends</em> on them and
@@ -1115,7 +1262,7 @@ shows <code>&amp;</code> until they are all done.</p>
 
 <!-- ===================================================================== -->
 <section id="files">
-<h2>12. Files and your own settings</h2>
+<h2>13. Files and your own settings</h2>
 
 <table>
   <tr><th>To</th><th>Press or choose</th></tr>
@@ -1170,6 +1317,10 @@ events go in, and reads the calendar at once:</p>
   <li>Every event from today up to 90 days ahead becomes an item: its title the item
       text (filed by text matching like anything Rabbit types), its description the note,
       its start the When date and time.</li>
+  <li>When an event ends goes in a date category called <em>Ends</em>, made the first
+      time an event has an end: the time a meeting finishes, or the last day of an event
+      lasting several days. A datebook can use it to show the event in every hour it
+      lasts.</li>
   <li>A repeating event becomes one repeating item, on its next date: “Poohsticks at
       the bridge” every Wednesday moves on to the next Wednesday when Rabbit marks it
       done.</li>
@@ -1225,7 +1376,7 @@ them, and saves them in your preferences file
 
 <!-- ===================================================================== -->
 <section id="more">
-<h2>13. A few more things</h2>
+<h2>14. A few more things</h2>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> Is there more? My head is full.</p>
@@ -1262,7 +1413,7 @@ until the day you need one, and then you will remember there was something.</p>
 
 <!-- ===================================================================== -->
 <section id="reference">
-<h2>14. Reference</h2>
+<h2>15. Reference</h2>
 
 <p>Every function key also works as <kbd>ESC</kbd> then its digit (<kbd>ESC</kbd>
 <kbd>0</kbd> is <kbd>F10</kbd>), every <kbd>ALT-F</kbd> key as <kbd>ESC</kbd> then the
@@ -1275,7 +1426,7 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>INS</kbd></td><td>New item / another column entry</td><td><kbd>CTRL-N</kbd>, <kbd>ALT-I</kbd></td></tr>
   <tr><td><kbd>F1</kbd></td><td>Help</td><td></td></tr>
   <tr><td><kbd>F2</kbd></td><td>Edit the item, section head or entry</td><td><kbd>CTRL-E</kbd></td></tr>
-  <tr><td><kbd>F3</kbd></td><td>Assignment profile; in a column, its categories</td><td></td></tr>
+  <tr><td><kbd>F3</kbd></td><td>Assignment profile; in a column, its categories; in a date column, the calendar</td><td></td></tr>
   <tr><td><kbd>F4</kbd></td><td>Done / not done</td><td><kbd>CTRL-K</kbd></td></tr>
   <tr><td><kbd>F5</kbd></td><td>Note</td><td></td></tr>
   <tr><td><kbd>F6</kbd></td><td>Item or category properties</td><td></td></tr>
@@ -1290,6 +1441,8 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>ALT-F8</kbd></td><td>Back to the last view</td><td></td></tr>
   <tr><td><kbd>ALT-F10</kbd></td><td>Move the item</td><td></td></tr>
   <tr><td><kbd>ALT-A</kbd></td><td>Alarm</td><td></td></tr>
+  <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter</td><td><kbd>ESC</kbd> <kbd>b</kbd></td></tr>
+  <tr><td><kbd>ALT-C</kbd></td><td>The calendar</td><td><kbd>ESC</kbd> <kbd>c</kbd></td></tr>
   <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-U</kbd></td><td>Section below / above</td><td></td></tr>
   <tr><td><kbd>ALT-R</kbd> / <kbd>ALT-L</kbd></td><td>Column right / left</td><td></td></tr>
   <tr><td><kbd>ALT-J</kbd></td><td>Next marked item</td><td></td></tr>
@@ -1317,8 +1470,8 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td>File</td><td>Retrieve, Save, Write, New, Dating, Properties, Customize, Transfer (Export, Import, Calendars)</td></tr>
   <tr><td>Item</td><td>Properties, Note, When, Show, Alarm, Finished, Mark, Unmark, Categorize, Reposition, Discard</td></tr>
   <tr><td>Category</td><td>Manager, Add, Recalc, Execute, Questions</td></tr>
-  <tr><td>View</td><td>Manager, Add, Rename, Discard, Section (Below, Above, Remove, Collapse, Filter, Sort), Column (After, Before, Remove, Wider, Narrower, Properties), Filter, Order, Last, Hide (Done, Empty, Inherited, Pending)</td></tr>
-  <tr><td>Search</td><td>View, File, Alarms, Depends, Prereqs</td></tr>
+  <tr><td>View</td><td>Manager, Add, Rename, Discard, Properties, Browse, Section (Below, Above, Remove, Collapse, Filter, Sort), Column (After, Before, Remove, Wider, Narrower, Properties), Filter, Order, Last, Hide (Done, Empty, Inherited, Pending)</td></tr>
+  <tr><td>Search</td><td>View, File, Alarms, Schedule, Depends, Prereqs</td></tr>
   <tr><td></td><td>Undo, Redo, Print, Quit</td></tr>
 </table>
 </section>

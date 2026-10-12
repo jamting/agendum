@@ -18,6 +18,7 @@
     <li><a href="#categories">Categories</a></li>
     <li><a href="#views">Views, sections and columns</a></li>
     <li><a href="#dates">Dates, times and alarms</a></li>
+    <li><a href="#datebook">A datebook</a></li>
     <li><a href="#numbers">Numbers and totals</a></li>
     <li><a href="#finding">Finding, filtering and sorting</a></li>
     <li><a href="#dependencies">Things that wait for other things</a></li>
@@ -253,6 +254,8 @@ without a year are always in the future.</p>
 <table>
   <tr><th>To</th><th>Do</th></tr>
   <tr><td>Set or change the When date yourself</td><td><kbd>ALT-F2</kbd>, or type in the When column</td></tr>
+  <tr><td>Pick a date from a calendar</td><td><kbd>F3</kbd> in a date column; <kbd>ENTER</kbd> sets it, <kbd>F6</kbd> adds a time</td></tr>
+  <tr><td>Just look something up in a calendar</td><td><kbd>ALT-C</kbd></td></tr>
   <tr><td>Be reminded before the time</td><td><kbd>ALT-A</kbd> (5 minutes before, unless you say otherwise); the item shows @</td></tr>
   <tr><td>See today's alarms</td><td><strong>Search ▸ Alarms</strong></td></tr>
   <tr><td>Change how dates look</td><td><strong>File ▸ Properties</strong> ▸ Global date settings ▸ Display format</td></tr>
@@ -308,8 +311,53 @@ kept in your own preferences, not in the file, so they follow you from file to f
 </section>
 
 <!-- ===================================================================== -->
+<section id="datebook">
+<h2>7. A datebook</h2>
+
+<p>A <strong>datebook view</strong> is a page of an appointment book: instead of a
+section for each category it has a section for each hour of a day, each day of a week,
+or each day, week or month of a month or a quarter, and every dated item sits in its
+place. Make one with <strong>View ▸ Add</strong>: give it a name, then choose
+<em>Datebook</em> rather than <em>Standard</em>.</p>
+
+<pre class="screen"><span class="t"> File: party.agendum                                    READY  2026-10-08 09:00 </span>
+<span class="t"> View: Party week                                          Datebook for: When </span>
+ ── Mon 2026-10-05 ─────────────────────────────────────────────────────────
+ ── Tue 2026-10-06 ─────────────────────────────────────────────────────────
+ ── Wed 2026-10-07 ─────────────────────────────────────────────────────────
+ • Bake the cake
+ ── Thu 2026-10-08 ─────────────────────────────────────────────────────────
+ • Ask Owl to write on the cake
+ • Eeyore's birthday party at four
+ ── Fri 2026-10-09 ─────────────────────────────────────────────────────────
+ • Buy a balloon for Eeyore
+<span class="t"> F1 Help F2 Edit F3 Choices F4 Done F5 Note F6 Props F7 Mark F8 VwMgr F9 CatMgr </span></pre>
+
+<p><strong>View ▸ Properties</strong> sets what it shows: the <em>period</em> (a day,
+a week, a month or a quarter), what each section covers (15 or 30 minutes or an hour of
+a day; a day or a week of a month), the hours of a day or the days of a week, and the
+<em>base date</em>, such as “today” or “next week”, which is read again every day. Type
+an item under a day or an hour and it gets that date and time. A <em>Section</em>
+category shows only its own items (say, only <em>Visits</em>), and an <em>End
+category</em> shows an item in every hour it lasts.</p>
+
+<table>
+  <tr><th>To</th><th>Do</th></tr>
+  <tr><td>Turn the pages: the previous / next day, week or month</td><td><kbd>ALT-B</kbd> (<strong>View ▸ Browse</strong>), then <kbd>←</kbd> <kbd>→</kbd>; <kbd>ENTER</kbd> stays there, <kbd>ESC</kbd> goes back</td></tr>
+  <tr><td>Jump to a date while turning pages</td><td><kbd>ALT-F5</kbd>, then type it</td></tr>
+  <tr><td>Move an ordinary view's date filter the same way</td><td><kbd>ALT-B</kbd>: <kbd>←</kbd> <kbd>→</kbd> a day, <kbd>↑</kbd> <kbd>↓</kbd> a week, <kbd>PGUP</kbd> <kbd>PGDN</kbd> a month</td></tr>
+  <tr><td>See everything on one day, without making a view</td><td><strong>Search ▸ Schedule</strong></td></tr>
+</table>
+
+<div class="story">Piglet makes a datebook called <em>Party week</em> and types “Bake
+the cake” under Wednesday, so he can see the whole week at once. To check that nothing
+clashes with Christmas, he presses <kbd>ALT-B</kbd> and flips forward a few weeks, then
+<kbd>ESC</kbd> to come back to the party.</div>
+</section>
+
+<!-- ===================================================================== -->
 <section id="numbers">
-<h2>7. Numbers and totals</h2>
+<h2>8. Numbers and totals</h2>
 
 <p>A <strong>numeric</strong> category holds a number for each item, shown in a
 column with a total at the bottom of every section. Make one with <kbd>F6</kbd> ▸
@@ -332,7 +380,7 @@ average, minimum, maximum.</p>
 
 <!-- ===================================================================== -->
 <section id="finding">
-<h2>8. Finding, filtering and sorting</h2>
+<h2>9. Finding, filtering and sorting</h2>
 
 <h3>Searching</h3>
 <p><kbd>ALT-F6</kbd> searches the view; <kbd>ALT-N</kbd> and <kbd>ALT-P</kbd> go to the
@@ -356,7 +404,7 @@ second key breaks ties. It can also sort the section heads themselves.
 
 <!-- ===================================================================== -->
 <section id="dependencies">
-<h2>9. Things that wait for other things</h2>
+<h2>10. Things that wait for other things</h2>
 
 <p>Some tasks can't start before others are done. Mark the earlier ones with
 <kbd>F7</kbd>, highlight the later one and press <kbd>ALT-O</kbd>: it now
@@ -380,7 +428,7 @@ so the cake doesn't trouble him until then.</div>
 
 <!-- ===================================================================== -->
 <section id="automatic">
-<h2>10. Letting Agendum do the filing</h2>
+<h2>11. Letting Agendum do the filing</h2>
 
 <p>Agendum can do more than spot names. All of this is set in a category's properties
 (<kbd>F6</kbd>).</p>
@@ -433,7 +481,7 @@ and <strong>Category ▸ Questions</strong> goes through the suggestions one ite
 
 <!-- ===================================================================== -->
 <section id="files">
-<h2>11. Files, printing and looks</h2>
+<h2>12. Files, printing and looks</h2>
 
 <table>
   <tr><th>To</th><th>Press or choose</th></tr>
@@ -464,8 +512,10 @@ in as items. <strong>File ▸ Transfer ▸ Calendars</strong> lists your subscri
 its events go in. Agendum reads it at once and then every hour while it runs
 (<kbd>F</kbd> changes how often, <kbd>A</kbd> how far ahead, <kbd>ENTER</kbd> reads it now,
 <kbd>DEL</kbd> unsubscribes). Each event becomes an item with its date and time; a
-repeating one becomes a repeating item. When the calendar changes, so do the items,
-but your own notes, categories and done marks stay.</p>
+repeating one becomes a repeating item. When an event ends is kept too, in a date
+category called <em>Ends</em>, which a <a href="#datebook">datebook</a> can use to show
+the event in every hour it lasts. When the calendar changes, so do the items, but your
+own notes, categories and done marks stay.</p>
 
 <div class="story">Kanga keeps Roo's swimming lessons on a calendar on the web.
 Piglet subscribes to it as <em>Roo's swimming</em>, so the party won't clash with
@@ -484,7 +534,7 @@ NO_COLOR=1 ./agendum party.agendum  # mono, unless you chose a theme</pre>
 
 <!-- ===================================================================== -->
 <section id="keys">
-<h2>12. Keyboard reference</h2>
+<h2>13. Keyboard reference</h2>
 
 <p>Every function key also works as <kbd>ESC</kbd> then its digit (<kbd>ESC</kbd>
 <kbd>0</kbd> is <kbd>F10</kbd>), every <kbd>ALT-F</kbd> key as <kbd>ESC</kbd> then the
@@ -494,7 +544,7 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><th>Key</th><th>In a view</th><th>Mac-friendly</th></tr>
   <tr><td><kbd>F1</kbd></td><td>Help</td><td></td></tr>
   <tr><td><kbd>F2</kbd></td><td>Edit item, section head or column entry</td><td><kbd>CTRL-E</kbd></td></tr>
-  <tr><td><kbd>F3</kbd></td><td>Choices: assignment profile, or the categories for a column</td><td></td></tr>
+  <tr><td><kbd>F3</kbd></td><td>Choices: assignment profile, the categories for a column, or the calendar in a date column</td><td></td></tr>
   <tr><td><kbd>F4</kbd></td><td>Done / not done</td><td><kbd>CTRL-K</kbd></td></tr>
   <tr><td><kbd>F5</kbd></td><td>Note</td><td></td></tr>
   <tr><td><kbd>F6</kbd></td><td>Properties of the item or category</td><td></td></tr>
@@ -511,6 +561,8 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>ALT-F8</kbd></td><td>Last view</td><td></td></tr>
   <tr><td><kbd>ALT-F10</kbd></td><td>Move item</td><td></td></tr>
   <tr><td><kbd>ALT-A</kbd></td><td>Alarm</td><td></td></tr>
+  <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter to other dates</td><td><kbd>ESC</kbd> <kbd>b</kbd></td></tr>
+  <tr><td><kbd>ALT-C</kbd></td><td>Show the calendar</td><td><kbd>ESC</kbd> <kbd>c</kbd></td></tr>
   <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-U</kbd></td><td>Add section below / above</td><td></td></tr>
   <tr><td><kbd>ALT-R</kbd> / <kbd>ALT-L</kbd></td><td>Add column right / left</td><td></td></tr>
   <tr><td><kbd>ALT-J</kbd></td><td>Next marked item</td><td></td></tr>
@@ -534,9 +586,9 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
 
 <!-- ===================================================================== -->
 <section id="later">
-<h2>13. Still to come</h2>
-<p class="soon">This guide will grow with the program. Planned next: datebook views by
-day, week and month, a pop-up calendar, recorded keystroke macros, a list of files to
+<h2>14. Still to come</h2>
+<p class="soon">This guide will grow with the program. Planned next: recorded
+keystroke macros, a list of files to
 pick from instead of typing a name, a column that fits its contents, Agenda's own
 structured files (for anyone with old DOS files), a starter file like Agenda's
 Activities Planner, and more of the original's look: its symbols, help with links,

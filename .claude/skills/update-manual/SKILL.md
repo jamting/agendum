@@ -55,9 +55,10 @@ Monday 2026-10-12 at 10:15 in Rabbit's file, so dates in the text stay true.
 
 - **Depth by importance.** Items, categories, automatic filing, views and
   dates get chapters with detail; features most people need less often get
-  a sentence in an "In brief" box (`<div class="brief">`) or in chapter 13,
+  a sentence in an "In brief" box (`<div class="brief">`) or in the chapter
   "A few more things". A new major area may earn its own chapter (add it to
-  `nav.toc`; keep existing anchors stable).
+  `nav.toc`; keep existing anchors stable; links that name a chapter by
+  number need renumbering).
 - **From the user's side.** What it is for, how to reach it, what to expect.
   No internals, no R-numbers, no module names.
 - **The story.** Owl is skilled and a little grand; Rabbit is busy, anxious,

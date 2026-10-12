@@ -1,0 +1,25 @@
+ File: /home/rabbit/rabbit.agendum *                    READY  2026-10-12 10:15
+ View: Rabbit's Calendar                                   Datebook for: When
+ ── Mon 2026-10-12 ────────────────────────────────────────────────────────────
+ ── Tue 2026-10-13 ────────────────────────────────────────────────────────────
+ • Weed the carrot bed tomorrow morning
+ ── Wed 2026-10-14 ────────────────────────────────────────────────────────────
+ ── Thu 2026-10-15 ────────────────────────────────────────────────────────────
+ • Visit Kanga and Roo on Thursday at 3pm
+ ── Fri 2026-10-16 ────────────────────────────────────────────────────────────
+ • Put up a Notice about the Organising Meeting on Friday
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ F1 Help F2 Edit F3 Choices F4 Done F5 Note F6 Props F7 Mark F8 VwMgr F9 CatMgr
