@@ -28,7 +28,7 @@ they learn today's date without the core reading the clock (ADR 0001).
   by remembering which actions ran. Utilities Execute (`Core.execute/3`) can
   pretend an item has just arrived to run actions on old assignments.
 - Today's date and the date languages reach conditions and actions as an
-  optional `clock` argument (a `Date`, `NaiveDateTime` or `Core.Context`),
+  optional `clock` argument (a `Date`, `NaiveDateTime` or `Agenda.Core.Context`),
   passed by the TUI as `State.context(state)`. Without a clock only ISO dates
   in conditions and actions can be read; nothing falls back to the system
   clock. The clock tick re-checks every item when the date changes.

@@ -26,7 +26,7 @@ shared between people with different habits.
   `--mono`, `--lang`, `--fallback`, and NO_COLOR). A preferences file in the
   user's home directory and a Utilities Customize box are planned. They
   will be read by the shell and passed in, never read by the core.
-- The core receives personal settings as arguments: `Core.Context` for the
+- The core receives personal settings as arguments: `Agenda.Core.Context` for the
   time and date languages (ADR 0009), and options such as the separators.
 
 **Amended 2026-10-11 (R41b):** the preferences file now exists,

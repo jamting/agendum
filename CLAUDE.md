@@ -7,7 +7,7 @@ does) and `docs/ARCHITECTURE.md` (how the code is laid out) before larger change
 and the ADRs in `docs/adr/` (why); record new lasting decisions as ADRs.
 For anything touching stored data or queries, also read `docs/DATA_MODEL.md`
 and `docs/DATA_ACCESS.md`, and keep them up to date (Mermaid diagrams included);
-a new stored field also needs a place in the JSON schema (`Core.JSONFile`,
+a new stored field also needs a place in the JSON schema (`Agenda.Core.JSONFile`,
 `docs/JSON_FORMAT.md`), or the round-trip tests fail.
 
 ## Commands
@@ -50,7 +50,7 @@ inline `# credo:disable-for-next-line` with the reason.
 6. Keep everything a second front end (e.g. web) would need in `Agenda.Core`;
    the TUI only handles keys and drawing. A multi-user web app on the same
    core is planned (`docs/MULTIUSER.md`, ADR 0020): keep the logic of a
-   user action in the core, not in `TUI.Update`.
+   user action in the core, not in `Agenda.TUI.Update`.
 
 ## Workflow for a feature
 
@@ -86,9 +86,9 @@ Keep changes small and focused; one feature per commit.
 - Date words and phrases live in language packs (`Core.DateLanguage.*`),
   never in `DateParser`, which only does date arithmetic. Core functions
   that read typed dates take a clock: a `Date`, `NaiveDateTime` or
-  `Core.Context` (which also carries the date languages); the TUI passes
+  `Agenda.Core.Context` (which also carries the date languages); the TUI passes
   `State.context(state)`.
-- Dates display in the file's `Core.DateFormat` (default ISO 8601): use
+- Dates display in the file's `Agenda.Core.DateFormat` (default ISO 8601): use
   `DateFormat.date/2`, `time/2` or `date_time/3` with `db.date_format`. Dates
   offered for editing stay ISO 8601 (`DateParser.format/1`), which the parser reads back.
 - Keys are decoded in `Agenda.TUI.Keys`. Function keys may be awkward in
@@ -97,11 +97,11 @@ Keep changes small and focused; one feature per commit.
   keyboards lack INS/HOME/END and terminals never pass ⌘, so every command
   needs a CTRL (or ESC-prefixed) key. Document it in `docs/KEYBOARD.md` and
   the F1 help. CTRL-I/M/H/[ are unusable (they are TAB/ENTER/BACKSPACE/ESC).
-- Menu entries are chosen by first letter, so every level of `TUI.Menu.tree/0`
+- Menu entries are chosen by first letter, so every level of `Agenda.TUI.Menu.tree/0`
   needs unique first letters (`test/agenda/tui/menu_test.exs` checks this).
   Prefer Agenda's own command names (User's Guide, Appendix A).
 - Undo is automatic: any key that changes `state.db` records one step in
-  `TUI.History`. Do not record history by hand. Keep one user action = one
+  `Agenda.TUI.History`. Do not record history by hand. Keep one user action = one
   database change, so one undo reverses it.
 
 ## Testing the real terminal

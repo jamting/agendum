@@ -89,7 +89,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 - [x] JSON export/import: the modern, human-readable format; round-trips everything in a file (R44, `docs/JSON_FORMAT.md`)
 - [x] iCal import: subscribe to calendars on the web, read on a schedule or on request, mirrored into items (R45)
-- [ ] Time zones in calendar subscriptions: an event with a TZID is now taken as local time, so a calendar from another zone shows the wrong hours; read the calendar's own `VTIMEZONE` definitions (offsets and daylight-saving rules) in `Core.ICal` and convert to local time, with no package (ADR 0021)
+- [ ] Time zones in calendar subscriptions: an event with a TZID is now taken as local time, so a calendar from another zone shows the wrong hours; read the calendar's own `VTIMEZONE` definitions (offsets and daylight-saving rules) in `Agenda.Core.ICal` and convert to local time, with no package (ADR 0021)
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
 - [ ] Optional: Import of structured text files (one item per line, with categories)
 - [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files)
@@ -142,11 +142,11 @@ A web application with accounts and shared files, on the same core (plan:
 [MULTIUSER.md](MULTIUSER.md), ADR 0020). First, in the core and the TUI, a
 few commands at a time:
 
-- [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
+- [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agenda.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
 - [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps
 - [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries, and "describe key"; the F1 help and KEYBOARD.md checked against the keymaps
 - [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
-- [ ] Raw values (dates, numbers) beside the formatted cells in `Core.ViewModel`
+- [ ] Raw values (dates, numbers) beside the formatted cells in `Agenda.Core.ViewModel`
 - [ ] Browsing's date arithmetic into the core
 - [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
 

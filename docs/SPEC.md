@@ -7,13 +7,13 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
 
 ## 1. Concepts
 
-| Concept               | Meaning                                                                                                    | Code                    |
-| --------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------- |
-| **Item**              | A free-form piece of text (up to a few lines), with an optional note. Exists independently of categories.  | `Core.Item`             |
-| **Category**          | A named node in one hierarchy rooted at **MAIN**.                                                          | `Core.Category`         |
-| **Link / assignment** | An independent many-to-many link between an item and a category (the patent's "link structures").          | `Core.Links`            |
-| **View**              | A saved arrangement: **sections** (each headed by a category) and **columns** (each headed by a category). | `Core.View`             |
-| **Date category**     | Entry, When, Done and ones the user makes: categories whose membership is an item's date.                  | `Database.item_date/3`  |
+| Concept               | Meaning                                                                                                    | Code                   |
+| --------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- |
+| **Item**              | A free-form piece of text (up to a few lines), with an optional note. Exists independently of categories.  | `Agenda.Core.Item`     |
+| **Category**          | A named node in one hierarchy rooted at **MAIN**.                                                          | `Agenda.Core.Category` |
+| **Link / assignment** | An independent many-to-many link between an item and a category (the patent's "link structures").          | `Agenda.Core.Links`    |
+| **View**              | A saved arrangement: **sections** (each headed by a category) and **columns** (each headed by a category). | `Agenda.Core.View`     |
+| **Date category**     | Entry, When, Done and ones the user makes: categories whose membership is an item's date.                  | `Database.item_date/3` |
 
 ## 2. Data model rules
 

@@ -15,15 +15,15 @@ cannot read the chosen language from the environment.
 
 ## Decision
 
-- `Core.DateLanguage` is a behaviour. A language pack gives its words (by
+- `Agenda.Core.DateLanguage` is a behaviour. A language pack gives its words (by
   kind: weekdays, months, numbers, relative words …), its phrase patterns,
   each tagged with what it means (`:relative_weekday`, `:in_units`,
   `:past_weekday` …, with capture groups in a fixed order), its day/month
   order and its clock. `English` and `Swedish` are the packs so far.
-- `Core.DateParser` holds no language. It matches every pack's patterns and
+- `Agenda.Core.DateParser` holds no language. It matches every pack's patterns and
   does the date arithmetic for each meaning. With several languages the
   earliest, then longest, match wins, and on a tie the main language wins.
-- `Core.Context` carries the current time and the languages. Wherever the
+- `Agenda.Core.Context` carries the current time and the languages. Wherever the
   core took a "clock" (a `Date` or `NaiveDateTime`) it also accepts a
   context, and a bare date means English. The TUI passes
   `State.context(state)`.

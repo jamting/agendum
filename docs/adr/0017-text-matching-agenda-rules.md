@@ -16,7 +16,7 @@ match differently from Agenda.
 
 ## Decision
 
-- `Core.TextMatch` implements Agenda's rules itself, from its own tables:
+- `Agenda.Core.TextMatch` implements Agenda's rules itself, from its own tables:
   the word pattern, the suffix list (-ing, -ed, -ies…, at most two
   stripped, y restored, final e dropped), the encloser pairs and the
   titles (Mr, Mrs, Dr, Herr, Fru, Fröken…). It is pure, and needs no

@@ -13,7 +13,7 @@ values is cheap: unchanged parts are shared between versions.
 
 ## Decision
 
-- `TUI.History` keeps up to 100 snapshots. A snapshot is the previous
+- `Agenda.TUI.History` keeps up to 100 snapshots. A snapshot is the previous
   `Database` plus where the user was (view and cursor).
 - Recording is automatic: `Update.handle/2` compares the database before
   and after every key, and records one step if it changed. One key press is

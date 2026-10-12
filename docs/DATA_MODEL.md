@@ -454,7 +454,7 @@ The same database as an Elixir term, abbreviated:
 
 ### Datebook views
 
-A view with `datebook` set (R47, `Core.Datebook`) shows time slots instead
+A view with `datebook` set (R47, `Agenda.Core.Datebook`) shows time slots instead
 of its stored sections, which it ignores: the hours of a day, the days of a
 week, or the days, weeks or months of a month or quarter, worked out from
 the settings and the clock every time the view is built
@@ -555,6 +555,6 @@ are not part of the file:
 | -------------- | -------------------------------------------------------------------------------------- |
 | `db`           | The current `Database`.                                                                |
 | `saved_db`     | The database as last saved or loaded; `dirty` is `db != saved_db`.                     |
-| `undo`, `redo` | Snapshots `%{db, view_id, cursor_key}` (max 100), see `TUI.History`.                   |
+| `undo`, `redo` | Snapshots `%{db, view_id, cursor_key}` (max 100), see `Agenda.TUI.History`.            |
 | `view_id`      | The view on screen.                                                                    |
 | `cursor_key`   | `{:section, index}` or `{:item, section_index, item_id}`; re-found after every change. |

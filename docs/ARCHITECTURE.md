@@ -28,85 +28,85 @@ shell does terminal I/O and file I/O.
 
 ### Core (`lib/agenda/core*`) — pure
 
-| Module                                       | Responsibility                                                                                                                                          |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Agenda.Core`                                | Facade with user-level operations (add item, assign by name, add section…). The UI uses this.                                                           |
-| `Core.Database`                              | The file as one immutable struct: items, categories, views, links, id counter. Primitive operations and queries (`member?/3`, `items_in/2`, hierarchy). |
-| `Core.Links`                                 | Bidirectional many-to-many relation (the patent's link structures).                                                                                     |
-| `Core.Assign`                                | Assignment rules: exclusion, category links, text matching, ambiguity resolution.                                                                       |
-| `Core.ViewModel`                             | Read model: projects a view to sections, rows and column cells.                                                                                         |
-| `Core.Datebook`                              | Datebook views: their settings, the time slots of a period, which items a slot shows (R47).                                                             |
-| `Core.MonthCalendar`                         | The pop-up calendar's month as weeks, and the moves of its highlight (R46).                                                                             |
-| `Core.Macro`                                 | A macro kept in the file: name, keystrokes in Agenda's notation, attached key, where it runs (R50).                                                     |
-| `Core.DateParser`                            | Date expressions relative to a given `today`.                                                                                                           |
-| `Core.TextCondition`                         | Agenda's "Also match" text conditions: `;` any, `,` all, `!`, `~`, `^`, wildcards (R15d).                                                               |
-| `Core.TextMatch`                             | How a file matches text to categories: on/off, match on, strength, enclosed text, suffixes, accents (R16a), proper names (R16c).                        |
-| `Core.Recurrence`                            | The rule of a recurring When date and the next date from a base date (R14a).                                                                            |
-| `Core.Context`                               | The time, date languages and input format (R14c, R41b), passed wherever typed dates are read; `parser_opts/2` adds the file's `DateSettings`.           |
-| `Core.InputFormat`                           | How one person types dates: number order, date separator, 12/24-hour clock; nil is the language's (R41b).                                               |
-| `Core.JSONFile`                              | A whole file as JSON and back, checked on import (R44; schema in `JSON_FORMAT.md`).                                                                     |
-| `Core.ICal`                                  | Reads the events of an iCalendar (`.ics`) file: title, description, start, repeat rule, status (R45).                                                   |
-| `Core.Calendar`, `Core.CalendarSync`         | A calendar subscription; a refresh applied to the file, mirroring the calendar (R45).                                                                   |
-| `Core.DateLanguage` (+ `English`, `Swedish`) | Language packs for reading dates: words, phrase patterns, day/month order, clock (R14c). `DateParser` does the arithmetic.                              |
-| `Core.Search`                                | Text search: whether an item's text or note matches (R37).                                                                                              |
-| `Core.RangeFilter`                           | Date and numeric filter ranges: checking, matching, the value a new item gets (R28a).                                                                   |
-| `Core.NumberFormat`                          | Reading and showing numbers, and the calculations of numeric columns (R29).                                                                             |
-| `Core.DateFormat`                            | How a file or date column displays dates and times: order, separator, clock, Relative, Week # (R41, R41a).                                              |
-| `Core.DateRule`                              | How a date category gets dates: Assign item date, Which one, Done and When keys (R6b).                                                                  |
-| `Core.DateSettings`                          | How a file reads dates: week, quarter and year boundaries, month alone, morning/afternoon/evening (R14e).                                               |
-| `Core.TextSearch`                            | Finding and replacing literal text in a note's lines (R39).                                                                                             |
-| `Core.Item`, `Core.Category`, `Core.View`    | Plain structs.                                                                                                                                          |
+| Module                                                         | Responsibility                                                                                                                                          |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Agenda.Core`                                                  | Facade with user-level operations (add item, assign by name, add section…). The UI uses this.                                                           |
+| `Agenda.Core.Database`                                         | The file as one immutable struct: items, categories, views, links, id counter. Primitive operations and queries (`member?/3`, `items_in/2`, hierarchy). |
+| `Agenda.Core.Links`                                            | Bidirectional many-to-many relation (the patent's link structures).                                                                                     |
+| `Agenda.Core.Assign`                                           | Assignment rules: exclusion, category links, text matching, ambiguity resolution.                                                                       |
+| `Agenda.Core.ViewModel`                                        | Read model: projects a view to sections, rows and column cells.                                                                                         |
+| `Agenda.Core.Datebook`                                         | Datebook views: their settings, the time slots of a period, which items a slot shows (R47).                                                             |
+| `Agenda.Core.MonthCalendar`                                    | The pop-up calendar's month as weeks, and the moves of its highlight (R46).                                                                             |
+| `Agenda.Core.Macro`                                            | A macro kept in the file: name, keystrokes in Agenda's notation, attached key, where it runs (R50).                                                     |
+| `Agenda.Core.DateParser`                                       | Date expressions relative to a given `today`.                                                                                                           |
+| `Agenda.Core.TextCondition`                                    | Agenda's "Also match" text conditions: `;` any, `,` all, `!`, `~`, `^`, wildcards (R15d).                                                               |
+| `Agenda.Core.TextMatch`                                        | How a file matches text to categories: on/off, match on, strength, enclosed text, suffixes, accents (R16a), proper names (R16c).                        |
+| `Agenda.Core.Recurrence`                                       | The rule of a recurring When date and the next date from a base date (R14a).                                                                            |
+| `Agenda.Core.Context`                                          | The time, date languages and input format (R14c, R41b), passed wherever typed dates are read; `parser_opts/2` adds the file's `DateSettings`.           |
+| `Agenda.Core.InputFormat`                                      | How one person types dates: number order, date separator, 12/24-hour clock; nil is the language's (R41b).                                               |
+| `Agenda.Core.JSONFile`                                         | A whole file as JSON and back, checked on import (R44; schema in `JSON_FORMAT.md`).                                                                     |
+| `Agenda.Core.ICal`                                             | Reads the events of an iCalendar (`.ics`) file: title, description, start, repeat rule, status (R45).                                                   |
+| `Agenda.Core.Calendar`, `Agenda.Core.CalendarSync`             | A calendar subscription; a refresh applied to the file, mirroring the calendar (R45).                                                                   |
+| `Agenda.Core.DateLanguage` (+ `English`, `Swedish`)            | Language packs for reading dates: words, phrase patterns, day/month order, clock (R14c). `DateParser` does the arithmetic.                              |
+| `Agenda.Core.Search`                                           | Text search: whether an item's text or note matches (R37).                                                                                              |
+| `Agenda.Core.RangeFilter`                                      | Date and numeric filter ranges: checking, matching, the value a new item gets (R28a).                                                                   |
+| `Agenda.Core.NumberFormat`                                     | Reading and showing numbers, and the calculations of numeric columns (R29).                                                                             |
+| `Agenda.Core.DateFormat`                                       | How a file or date column displays dates and times: order, separator, clock, Relative, Week # (R41, R41a).                                              |
+| `Agenda.Core.DateRule`                                         | How a date category gets dates: Assign item date, Which one, Done and When keys (R6b).                                                                  |
+| `Agenda.Core.DateSettings`                                     | How a file reads dates: week, quarter and year boundaries, month alone, morning/afternoon/evening (R14e).                                               |
+| `Agenda.Core.TextSearch`                                       | Finding and replacing literal text in a note's lines (R39).                                                                                             |
+| `Agenda.Core.Item`, `Agenda.Core.Category`, `Agenda.Core.View` | Plain structs.                                                                                                                                          |
 
 ### TUI (`lib/agenda/tui/*`)
 
 Every screen, box and control-panel mode, and how each is reached, is mapped
 in [`SCREENS.md`](SCREENS.md).
 
-| Module                         | Pure? | Responsibility                                                                                                                   |
-| ------------------------------ | ----- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `TUI.State`                    | ✔     | UI state: db, path, cursor, scroll, **mode stack**, inline edit, message, queued effects.                                        |
-| `TUI.Update`                   | ✔     | Key → state transitions for the view, prompts, confirmations, notes, item moves; `perform/2` named actions shared with the menu. |
-| `TUI.Menu`                     | ✔     | The Lotus two-line menu tree.                                                                                                    |
-| `TUI.CategoryScreens`          | ✔     | Category manager, category picker box, assignment profile, category properties.                                                  |
-| `TUI.ViewManager`              | ✔     | View manager.                                                                                                                    |
-| `TUI.Layout`                   | ✔     | Flattens a view to cursor rows and wrapped lines; keeps the cursor anchored and visible.                                         |
-| `TUI.Completion`               | ✔     | Automatic completion while typing a column entry: the matches (from `Core.completions/3`) and the one shown.                     |
-| `TUI.ItemProperties`           | ✔     | The Item Properties box: text, note, statistics and the item's assignments (R34).                                                |
-| `TUI.SortBox`                  | ✔     | The Sort box: a view's or a section's sort keys (R36).                                                                           |
-| `TUI.SearchBox`                | ✔     | The Search box and search mode (ALT-N / ALT-P / F7), and the Show View (R37).                                                    |
-| `TUI.QuestionsBox`             | ✔     | Utilities Questions: confirming suggested assignments (R16).                                                                     |
-| `TUI.ExecuteBox`               | ✔     | Utilities Execute: the Execute box, ALT-X and ALT-E (R15e).                                                                      |
-| `TUI.ActionBox`                | ✔     | The Date Action / Numeric Action box (R15b).                                                                                     |
-| `TUI.RangeFilterBox`           | ✔     | The Date Filter / Numeric Filter box (R28a).                                                                                     |
-| `TUI.ColumnProperties`         | ✔     | The Numeric Column Properties box: number format and calculations (R29).                                                         |
-| `TUI.FileProperties`           | ✔     | The File Properties box: the date display format, with a sample (R41).                                                           |
-| `TUI.DateFormatRows`           | ✔     | The date display settings as box rows, shared by File and Date Column Properties (R41a).                                         |
-| `TUI.DateColumnBox`            | ✔     | The Date Column Properties box: a date column's own format or the global defaults (R41a).                                        |
-| `TUI.InputFormatBox`           | ✔     | The Input Format box: the person's number order, separator and clock, saved as preferences (R41b).                               |
-| `TUI.CustomizeBox`             | ✔     | File ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
-| `TUI.CalendarBox`              | ✔     | The pop-up calendar: F3 in a date column, ALT-C anywhere (R46).                                                                  |
-| `TUI.DatebookBox`, `TUI.Browse` | ✔     | A datebook view's settings box; browsing it to other periods (R47).                                                              |
-| `TUI.ScheduleBox`               | ✔     | Search ▸ Schedule: one date's items in the Show View (R49).                                                                      |
-| `TUI.MacroKeys`                 | ✔     | Key events as macro text in Agenda's notation (`{F10}vc{ENTER}`), and back (R50).                                                |
-| `TUI.Macros`                    | ✔     | The macro manager (ALT-F3), Learn mode and running macros (ALT-Z), one undo step a run (R50).                                    |
-| `TUI.MacroProps`                | ✔     | The Macro Properties box: name, keystrokes, attached key, where it runs (R50).                                                   |
-| `TUI.SelectFile`                | ✔     | The Select File box: F3 in a file-name prompt lists a folder (read by `Store.list_dir/1`) to pick from (R51).                    |
-| `TUI.Splash`                    | ✔     | The splash screen at start, until a key or three seconds; the startup prompt waits under it (R52).                                |
-| `TUI.CalendarsBox`             | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
-| `TUI.NoteSearch`               | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
-| `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
-| `TUI.DevTools`                 | ✔     | The hidden developer screen (ESC ?): state for debugging, and a key tester.                                                      |
-| `TUI.Render`                   | ✔     | State → list of styled lines (control panel, body, key bar, boxes).                                                              |
-| `TUI.Draw`, `TUI.Theme`        | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic, blue or mono, R40).                               |
-| `TUI.Keys`                     | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |
-| `TUI.LineEdit`, `TUI.TextEdit` | ✔     | Single-line and multi-line edit buffers.                                                                                         |
-| `TUI.Screen`                   | ✔     | Diffs two frames into minimal ANSI output.                                                                                       |
-| `TUI.Terminal`                 | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
-| `TUI.App`                      | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |
-| `Agenda.Store`                 | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write); folder listings for the Select File box.                     |
-| `Agenda.Preferences`           | ✘     | The person's preferences file: theme, languages, input format, name, company, last file (`key = value`, ADR 0008).                                         |
-| `Agenda.CalendarFetch`         | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
-| `Agenda.CLI`                   | ✘     | `main/1` for the escript.                                                                                                        |
+| Module                                        | Pure? | Responsibility                                                                                                                   |
+| --------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `Agenda.TUI.State`                            | ✔     | UI state: db, path, cursor, scroll, **mode stack**, inline edit, message, queued effects.                                        |
+| `Agenda.TUI.Update`                           | ✔     | Key → state transitions for the view, prompts, confirmations, notes, item moves; `perform/2` named actions shared with the menu. |
+| `Agenda.TUI.Menu`                             | ✔     | The Lotus two-line menu tree.                                                                                                    |
+| `Agenda.TUI.CategoryScreens`                  | ✔     | Category manager, category picker box, assignment profile, category properties.                                                  |
+| `Agenda.TUI.ViewManager`                      | ✔     | View manager.                                                                                                                    |
+| `Agenda.TUI.Layout`                           | ✔     | Flattens a view to cursor rows and wrapped lines; keeps the cursor anchored and visible.                                         |
+| `Agenda.TUI.Completion`                       | ✔     | Automatic completion while typing a column entry: the matches (from `Core.completions/3`) and the one shown.                     |
+| `Agenda.TUI.ItemProperties`                   | ✔     | The Item Properties box: text, note, statistics and the item's assignments (R34).                                                |
+| `Agenda.TUI.SortBox`                          | ✔     | The Sort box: a view's or a section's sort keys (R36).                                                                           |
+| `Agenda.TUI.SearchBox`                        | ✔     | The Search box and search mode (ALT-N / ALT-P / F7), and the Show View (R37).                                                    |
+| `Agenda.TUI.QuestionsBox`                     | ✔     | Utilities Questions: confirming suggested assignments (R16).                                                                     |
+| `Agenda.TUI.ExecuteBox`                       | ✔     | Utilities Execute: the Execute box, ALT-X and ALT-E (R15e).                                                                      |
+| `Agenda.TUI.ActionBox`                        | ✔     | The Date Action / Numeric Action box (R15b).                                                                                     |
+| `Agenda.TUI.RangeFilterBox`                   | ✔     | The Date Filter / Numeric Filter box (R28a).                                                                                     |
+| `Agenda.TUI.ColumnProperties`                 | ✔     | The Numeric Column Properties box: number format and calculations (R29).                                                         |
+| `Agenda.TUI.FileProperties`                   | ✔     | The File Properties box: the date display format, with a sample (R41).                                                           |
+| `Agenda.TUI.DateFormatRows`                   | ✔     | The date display settings as box rows, shared by File and Date Column Properties (R41a).                                         |
+| `Agenda.TUI.DateColumnBox`                    | ✔     | The Date Column Properties box: a date column's own format or the global defaults (R41a).                                        |
+| `Agenda.TUI.InputFormatBox`                   | ✔     | The Input Format box: the person's number order, separator and clock, saved as preferences (R41b).                               |
+| `Agenda.TUI.CustomizeBox`                     | ✔     | File ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
+| `Agenda.TUI.CalendarBox`                      | ✔     | The pop-up calendar: F3 in a date column, ALT-C anywhere (R46).                                                                  |
+| `Agenda.TUI.DatebookBox`, `Agenda.TUI.Browse` | ✔     | A datebook view's settings box; browsing it to other periods (R47).                                                              |
+| `Agenda.TUI.ScheduleBox`                      | ✔     | Search ▸ Schedule: one date's items in the Show View (R49).                                                                      |
+| `Agenda.TUI.MacroKeys`                        | ✔     | Key events as macro text in Agenda's notation (`{F10}vc{ENTER}`), and back (R50).                                                |
+| `Agenda.TUI.Macros`                           | ✔     | The macro manager (ALT-F3), Learn mode and running macros (ALT-Z), one undo step a run (R50).                                    |
+| `Agenda.TUI.MacroProps`                       | ✔     | The Macro Properties box: name, keystrokes, attached key, where it runs (R50).                                                   |
+| `Agenda.TUI.SelectFile`                       | ✔     | The Select File box: F3 in a file-name prompt lists a folder (read by `Store.list_dir/1`) to pick from (R51).                    |
+| `Agenda.TUI.Splash`                           | ✔     | The splash screen at start, until a key or three seconds; the startup prompt waits under it (R52).                               |
+| `Agenda.TUI.CalendarsBox`                     | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
+| `Agenda.TUI.NoteSearch`                       | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
+| `Agenda.TUI.AlarmList`                        | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
+| `Agenda.TUI.DevTools`                         | ✔     | The hidden developer screen (ESC ?): state for debugging, and a key tester.                                                      |
+| `Agenda.TUI.Render`                           | ✔     | State → list of styled lines (control panel, body, key bar, boxes).                                                              |
+| `Agenda.TUI.Draw`, `Agenda.TUI.Theme`         | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic, blue or mono, R40).                               |
+| `Agenda.TUI.Keys`                             | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |
+| `Agenda.TUI.LineEdit`, `Agenda.TUI.TextEdit`  | ✔     | Single-line and multi-line edit buffers.                                                                                         |
+| `Agenda.TUI.Screen`                           | ✔     | Diffs two frames into minimal ANSI output.                                                                                       |
+| `Agenda.TUI.Terminal`                         | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
+| `Agenda.TUI.App`                              | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |
+| `Agenda.Store`                                | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write); folder listings for the Select File box.                     |
+| `Agenda.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format, name, company, last file (`key = value`, ADR 0008).               |
+| `Agenda.CalendarFetch`                        | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
+| `Agenda.CLI`                                  | ✘     | `main/1` for the escript.                                                                                                        |
 
 ## Key design decisions
 
@@ -136,7 +136,7 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 
 ## Developer tools
 
-- `ESC ?` in the program: debugging info and a key tester (`TUI.DevTools`).
+- `ESC ?` in the program: debugging info and a key tester (`Agenda.TUI.DevTools`).
 - `tools/screenshots/`: draws screens of the TUI as PNGs (macOS), to
   compare its look with Agenda 2.0 (ADR 0018):
   `MIX_ENV=test mix run tools/screenshots/screenshots.exs [--theme NAME]`

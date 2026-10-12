@@ -24,7 +24,7 @@ for where When dates came from (`db.auto_date`, later `db.when_from`).
   `put_item_date/6`, so views, filters, conditions and columns need not
   know where a date is stored.
 - How a category gets dates is a property of the category,
-  `Category.date_rule` (`Core.DateRule`: assign, which, done key, when
+  `Category.date_rule` (`Agenda.Core.DateRule`: assign, which, done key, when
   key), for built-in and user date categories alike. When's rule
   replaced the file-wide `when_from`; Entry, When and Done get Agenda's
   defaults (`DateRule.builtin/1`), and a new date category starts at
