@@ -213,6 +213,11 @@ or handles it.
     the Show View (R49). `TUI.ScheduleBox`.
     - **Picker** `:picker` for the date category, section head and filter.
     - **Prompt** `:prompt` for the date; **Calendar** `:calendar` (F3).
+  - **Macros** `:macros` (ALT-F3, also from notes and the category
+    manager): the macro manager; INS names a new macro, F7 learns its
+    keystrokes, ENTER runs it (R50). `TUI.Macros`.
+    - **Prompt** `:prompt` for a new macro's name.
+    - **Choice** `:choice` (F7 on a macro with keystrokes): replace or append.
   - **Alarm list** `:alarm_list` (Search ▸ Alarms):
     current and past alarms (R38). `TUI.AlarmList`.
 
@@ -267,6 +272,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:datebook_props`    | box           | `TUI.DatebookBox`      | View ▸ Properties of a datebook view             | R47           |
 | `:browse`            | control panel | `TUI.Browse`           | View ▸ Browse, ALT-B                             | R47, R48      |
 | `:schedule`          | box           | `TUI.ScheduleBox`      | Search ▸ Schedule                                | R49           |
+| `:macros`            | box           | `TUI.Macros`           | ALT-F3                                           | R50           |
 | `:devtools`          | full screen   | `TUI.DevTools`         | ESC ? (hidden)                                   | —             |
 
 `test/agenda/tui/screens_doc_test.exs` fails when a mode type is added without

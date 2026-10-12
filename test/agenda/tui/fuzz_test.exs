@@ -68,6 +68,9 @@ defmodule Agenda.TUI.FuzzTest do
     {:alt, "o"},
     {:alt, "x"},
     {:alt, "e"},
+    {:alt_f, 3},
+    {:alt_f, 3},
+    {:alt, "z"},
     :tick
   ]
 
@@ -120,6 +123,23 @@ defmodule Agenda.TUI.FuzzTest do
     Agenda.Core.move_view(db, view, 0)
   end
 
+  defp handle(state, []), do: state
+
+  defp handle(state, [key | keys]) do
+    {state, effects} = Update.handle(state, key)
+    played = for {:play, played} <- effects, k <- played ++ [:macro_done], do: k
+    handle(state, played ++ keys)
+  end
+
+  # With macros (R50): one that types, one that runs the manager's first
+  # macro from inside itself.
+  defp with_macros(db) do
+    {:ok, db, water} = Agenda.Core.add_macro(db, "Water")
+    db = Agenda.Core.set_macro_keys(db, water, "Water the lettuces{ENTER}{DOWN}")
+    {:ok, db, again} = Agenda.Core.add_macro(db, "Again")
+    Agenda.Core.set_macro_keys(db, again, "{AltF3}{ENTER}x{AltZ}")
+  end
+
   property "the UI survives any key sequence" do
     check all(
             keys <- list_of(key(), max_length: 60),
@@ -130,15 +150,20 @@ defmodule Agenda.TUI.FuzzTest do
             filtered <- boolean(),
             max_runs: 300
           ) do
-      db = numeric |> sample() |> with_filter(filtered) |> with_datebook(datebook)
+      db =
+        numeric |> sample() |> with_filter(filtered) |> with_datebook(datebook) |> with_macros()
+
       state = start(db, width: width, height: height)
 
       Enum.reduce(keys, state, fn key, state ->
-        # :tick advances the clock ten minutes, as the shell's loop would
-        {state, _effects} =
+        # :tick advances the clock ten minutes, as the shell's loop would;
+        # a macro run's keys are played next, as the shell plays them
+        state =
           if key == :tick,
-            do: Update.tick(state, NaiveDateTime.add(state.now, 600)),
-            else: Update.handle(state, key)
+            do: state |> Update.tick(NaiveDateTime.add(state.now, 600)) |> elem(0),
+            else: handle(state, [key])
+
+        assert state.macro.playing == 0
 
         screen = Render.render(state)
 

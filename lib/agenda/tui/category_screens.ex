@@ -792,11 +792,20 @@ defmodule Agenda.TUI.CategoryScreens do
       {"Date", "A date and time for each item; children become dates; cannot change back", :date}
     ]
 
+  def choice_options(%{kind: :learn}),
+    do: [
+      {"Replace", "Record new keystrokes instead of the macro's", :replace},
+      {"Append", "Record keystrokes to add after the macro's", :append}
+    ]
+
   def choice_options(%{kind: :view_type}),
     do: [
       {"Standard", "Sections headed by categories you choose", :standard},
       {"Datebook", "Sections for the hours, days, weeks or months of a period", :datebook}
     ]
+
+  def choice_lines(%{kind: :learn}),
+    do: ["The macro already has keystrokes.", "Learn mode should:"]
 
   def choice_lines(%{kind: :view_type}),
     do: ["Sections by category, or by date like an appointment book.", "Type of view:"]
@@ -895,6 +904,9 @@ defmodule Agenda.TUI.CategoryScreens do
 
   defp resolve_choice(state, %{kind: :move} = mode, rule),
     do: apply_move(state, mode.cat_id, mode.relocation, rule)
+
+  defp resolve_choice(state, %{kind: :learn, macro_id: id}, how),
+    do: Agenda.TUI.Macros.learn(state, state.db.macros[id], how)
 
   defp resolve_choice(state, %{kind: :view_type, name: name}, :standard),
     do: open_picker(state, {:new_view, name}, nil)

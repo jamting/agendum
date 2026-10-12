@@ -47,7 +47,7 @@ defmodule Agenda.TUI.NoteSearch do
 
   @doc "Opens the Search/Replace box over the note, with the last settings."
   def open(state) do
-    settings = state.last_note_search || @defaults
+    settings = state.searches.note || @defaults
 
     State.push(state, %{
       type: :note_search,
@@ -76,7 +76,7 @@ defmodule Agenda.TUI.NoteSearch do
 
       :enter ->
         settings = %{mode.settings | text: mode.line.text, replacement: mode.replacement.text}
-        start(%{State.pop(state) | last_note_search: settings}, settings)
+        start(%{State.pop(state) | searches: %{state.searches | note: settings}}, settings)
 
       k when k in [:down, :tab] ->
         State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(rows) - 1)})
@@ -191,7 +191,7 @@ defmodule Agenda.TUI.NoteSearch do
 
   @doc "ALT-S in a note: the next occurrence of the last search, or a beep."
   def next(state, note) do
-    case state.last_note_search do
+    case state.searches.note do
       nil ->
         State.error(state, "Nothing to search for yet; press ALT-F6")
 

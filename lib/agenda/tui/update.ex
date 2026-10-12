@@ -38,15 +38,18 @@ defmodule Agenda.TUI.Update do
 
   @spec handle(State.t(), term) :: {State.t(), [term]}
   def handle(%State{} = state, key) do
-    state = %{state | message: nil, effects: []}
+    # the end of a macro run is not a keypress: what the run said stays
+    message = if key == :macro_done, do: state.message
+    state = %{state | message: message, effects: []}
     key = normalize(state, key)
 
     next =
-      case global_key(state, key) do
-        :pass -> dispatch(state, State.mode(state), key)
-        handled -> handled
-      end
+      with :pass <- Agenda.TUI.Macros.key(state, key),
+           :pass <- global_key(state, key),
+           do: dispatch(state, State.mode(state), key)
 
+    # Learn mode records the key after it has done its work (R50)
+    next = Agenda.TUI.Macros.record(state, key, next)
     state = History.record(state, next)
     state = %{state | dirty: state.db != state.saved_db}
 
@@ -305,6 +308,7 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
 
   defp dispatch(state, %{type: :calendar} = m, key), do: CalendarBox.handle(state, m, key)
+  defp dispatch(state, %{type: :macros} = m, key), do: Agenda.TUI.Macros.handle(state, m, key)
   defp dispatch(state, %{type: :browse} = m, key), do: Agenda.TUI.Browse.handle(state, m, key)
 
   defp dispatch(state, %{type: :schedule} = m, key),
@@ -1255,6 +1259,7 @@ defmodule Agenda.TUI.Update do
     do: Agenda.TUI.DatebookBox.set_time(state, view_id, row, text)
 
   defp prompt_action(state, :browse_to, text), do: Agenda.TUI.Browse.go_to(state, text)
+  defp prompt_action(state, :new_macro, text), do: Agenda.TUI.Macros.create(state, text)
 
   defp prompt_action(state, :schedule_date, text),
     do: Agenda.TUI.ScheduleBox.set_date(state, text)

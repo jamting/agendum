@@ -20,6 +20,7 @@ defmodule Agenda.TUI.Render do
     :calendar,
     :datebook_props,
     :schedule,
+    :macros,
     :profile,
     :props,
     :choice,
@@ -229,6 +230,9 @@ defmodule Agenda.TUI.Render do
     top = State.mode(state)
 
     cond do
+      state.macro.learning ->
+        "LEARN"
+
       Completion.matches(state) != [] ->
         "AUTOC"
 
@@ -476,6 +480,14 @@ defmodule Agenda.TUI.Render do
       {"A-F5", "Go to", "ALT-F5", "Go to a date"},
       {"ENTER", "Keep", "Keep this period"},
       {"ESC", "Back", "Back to where it was"}
+    ]
+
+  defp mode_keys(%{type: :macros}),
+    do: [
+      {"ENTER", "Run", "Run the macro"},
+      {"INS/^N", "New", "INS/CTRL-N", "New macro"},
+      {"F7", "Learn", "Record its keys"},
+      {"ESC", "Close"}
     ]
 
   defp mode_keys(%{type: :schedule}),
@@ -1096,6 +1108,9 @@ defmodule Agenda.TUI.Render do
      ALT-F8        Back to the previous view        ESC *
      ALT-A         Set or cancel an alarm            ESC a
      ALT-C         Show the calendar (to look up a date)  ESC c
+     ALT-F3        Macros: the macro manager; in Learn mode, stop
+                   recording (F7 in the manager learns, ENTER runs)  ESC #
+     ALT-Z         Run the last macro again              ESC z
      ALT-B         Browse a datebook view (← → a period) or a date filter
                    (← → a day, ↑↓ a week, PGUP/PGDN a month, CTRL-PGUP/PGDN
                    a year); ALT-F5 a date, ENTER keeps, ESC goes back   ESC b
@@ -1257,6 +1272,10 @@ defmodule Agenda.TUI.Render do
   defp box_title(_state, %{type: :choice, kind: :view_type, name: name}), do: "New view: #{name}"
 
   defp box_title(_state, %{type: :schedule}), do: "Show Schedule"
+  defp box_title(_state, %{type: :macros}), do: "Macros"
+
+  defp box_title(state, %{type: :choice, kind: :learn, macro_id: id}),
+    do: "Learn: #{state.db.macros[id].name}"
 
   defp box_title(state, %{type: :datebook_props} = mode),
     do: Agenda.TUI.DatebookBox.title(state, mode)
@@ -1684,6 +1703,16 @@ defmodule Agenda.TUI.Render do
         else: " SPACE/→ next choice or open ... · ← previous · ESC closes"
 
     rows ++ sample ++ [[], [{:box, hint}]]
+  end
+
+  defp box_content(state, %{type: :macros} = mode, _inner, max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.Macros.lines(mode)
+      |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
+
+    top = max(mode.cursor - (max_rows - 3), 0)
+    Enum.drop(rows, top) ++ [[], [{:box, " INS new · F7 learns · ENTER runs · ESC closes"}]]
   end
 
   defp box_content(state, %{type: :schedule} = mode, _inner, _max_rows) do

@@ -931,9 +931,24 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   spaces that start a continuation line are left out (a line's end keeps
   them). Ours: `{LBRACE}` and `{RBRACE}` type braces; keys Agenda had no
   name for get one in its style (`{AltBS}`, `{AltShfD}`). Saved in the
-  file (format 24) and its JSON. To come: the macro manager (ALT-F3), Learn
-  mode and running macros (ALT-Z), editing, Properties and attached keys
-  (roadmap).
+  file (format 24) and its JSON. ALT-F3 (MACRO) opens the macro manager:
+  INS (or CTRL-N, or typing) names a new macro; F7 (LEARN) closes the
+  manager and records: LEARN shows at the top right, every key does its
+  usual work and is recorded, in views, notes, the category manager and
+  boxes alike (keys, not their meanings: F7 recorded in the category
+  manager marks when played in a view); ALT-F3 (or ALT-Z) stops ("Learn
+  mode is off: Weed has 19 new keys"). F7 on a macro with keystrokes asks
+  whether to replace or append them. ENTER on a macro runs it where you
+  were; ALT-Z runs the macro run last again. A run plays the keys one by
+  one as if typed, saving, opening files or asking questions on the way
+  (the shell runs each key's effects before the next), and is one undo
+  step; a run that changed nothing is none. Our choices: ALT-F3 and ALT-Z
+  do nothing over a line being typed, a prompt, a question or the menu (in
+  Learn mode they still stop); within a run ALT-Z does nothing (Agenda
+  could not record it); runs started from runs stop 8 deep ("Macros
+  started 8 deep; stopped"); no beep on each recorded key. To come:
+  editing a macro's text, Properties and attached keys, deleting, sorting
+  and moving macros (roadmap).
 
 ## 6. Out of scope for now
 

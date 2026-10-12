@@ -66,6 +66,10 @@ defmodule Agenda.TUI.App do
   defp apply_keys(state, [key | keys]) do
     {state, effects} = Update.handle(state, key)
 
+    # a macro run (R50): its keys come next, one by one, before the rest
+    {plays, effects} = Enum.split_with(effects, &match?({:play, _}, &1))
+    keys = Enum.flat_map(plays, fn {:play, played} -> played ++ [:macro_done] end) ++ keys
+
     case run_effects(state, effects) do
       {:quit, state} -> {:quit, state}
       {:ok, state} -> apply_keys(state, keys)

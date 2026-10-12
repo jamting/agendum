@@ -21,7 +21,7 @@ defmodule Agenda.TUI.SearchBox do
   @ons [:item, :note, :both]
 
   def open(state, scope) do
-    search = state.last_search || %Search{}
+    search = state.searches.view || %Search{}
 
     State.push(state, %{
       type: :search_box,
@@ -91,7 +91,7 @@ defmodule Agenda.TUI.SearchBox do
   # --- running a search ---------------------------------------------------------
 
   defp start(state, %{search: search} = mode) do
-    state = %{state | last_search: search}
+    state = %{state | searches: %{state.searches | view: search}}
 
     cond do
       String.trim(search.text) == "" -> State.error(state, "Type what to search for")

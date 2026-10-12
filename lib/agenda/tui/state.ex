@@ -38,8 +38,11 @@ defmodule Agenda.TUI.State do
           message: {atom, String.t()} | nil,
           collapsed: MapSet.t(Database.id()),
           last_view_id: Database.id() | nil,
-          last_search: Agenda.Core.Search.t() | nil,
-          last_note_search: Agenda.TUI.NoteSearch.settings() | nil,
+          searches: %{
+            view: Agenda.Core.Search.t() | nil,
+            note: Agenda.TUI.NoteSearch.settings() | nil
+          },
+          macro: %{learning: map | nil, last: Database.id() | nil, playing: non_neg_integer},
           key_map: boolean,
           languages: [Agenda.Core.DateLanguage.pack()],
           input: Agenda.Core.InputFormat.t(),
@@ -71,8 +74,10 @@ defmodule Agenda.TUI.State do
             message: nil,
             collapsed: MapSet.new(),
             last_view_id: nil,
-            last_search: nil,
-            last_note_search: nil,
+            searches: %{view: nil, note: nil},
+            # macros (R50): what Learn mode is recording, the last macro
+            # run (ALT-Z), and how many runs are playing, one inside another
+            macro: %{learning: nil, last: nil, playing: 0},
             key_map: true,
             languages: [Agenda.Core.DateLanguage.English],
             input: %Agenda.Core.InputFormat{},

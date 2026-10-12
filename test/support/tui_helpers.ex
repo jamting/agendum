@@ -9,7 +9,11 @@ defmodule Agenda.TUIHelpers do
     |> Layout.settle()
   end
 
-  @doc "Presses keys; a string is typed character by character. Effects are collected in `:effects_seen`."
+  @doc """
+  Presses keys; a string is typed character by character. Effects are
+  collected in `:effects_seen`; a macro run's keys are played next, as the
+  shell plays them (`{:play, keys}`, then `:macro_done`).
+  """
   def press(state, keys) do
     keys
     |> List.wrap()
@@ -17,11 +21,16 @@ defmodule Agenda.TUIHelpers do
       text when is_binary(text) -> text |> String.graphemes() |> Enum.map(&{:char, &1})
       key -> [key]
     end)
-    |> Enum.reduce(state, fn key, state ->
-      {state, effects} = Update.handle(state, key)
-      Process.put(:effects_seen, (Process.get(:effects_seen) || []) ++ effects)
-      state
-    end)
+    |> play(state)
+  end
+
+  defp play([], state), do: state
+
+  defp play([key | keys], state) do
+    {state, effects} = Update.handle(state, key)
+    Process.put(:effects_seen, (Process.get(:effects_seen) || []) ++ effects)
+    played = for {:play, played} <- effects, k <- played ++ [:macro_done], do: k
+    play(played ++ keys, state)
   end
 
   def effects, do: Process.get(:effects_seen) || []
