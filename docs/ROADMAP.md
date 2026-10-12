@@ -135,19 +135,24 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 ## Towards many users
 
 A web application with accounts and shared files, on the same core (plan:
-[MULTIUSER.md](MULTIUSER.md), ADR 0020). First, in the core:
+[MULTIUSER.md](MULTIUSER.md), ADR 0020). First, in the core and the TUI, a
+few commands at a time:
 
 - [ ] A command layer: one named command per user action, applied by the core; `TUI.Update` sends commands instead of composing facade calls
-- [ ] Undo built on commands, so it can later be per person
+- [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps
+- [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries, and "describe key"; the F1 help and KEYBOARD.md checked against the keymaps
+- [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
 - [ ] Raw values (dates, numbers) beside the formatted cells in `Core.ViewModel`
 - [ ] Browsing's date arithmetic into the core
 - [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
 
-Then the web shell:
+Then a web version for one person:
 
-- [ ] Accounts and storage; a file process per open file with snapshots and a command log
-- [ ] LiveView sessions; working in one file together, changes broadcast to everyone in it
-- [ ] Sharing files between accounts
+*[A page here was soaked in the creek. — Rabbit]*
+
+Then working together:
+
+*[A page here was soaked in the creek. — Rabbit]*
 
 ## Ideas
 
