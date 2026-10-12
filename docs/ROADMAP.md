@@ -139,7 +139,7 @@ A web application with accounts and shared files, on the same core (plan:
 [MULTIUSER.md](MULTIUSER.md), ADR 0020). First, in the core and the TUI, a
 few commands at a time:
 
-- [ ] A command layer: one named command per user action, applied by the core; `TUI.Update` sends commands instead of composing facade calls
+- [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
 - [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps
 - [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries, and "describe key"; the F1 help and KEYBOARD.md checked against the keymaps
 - [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
