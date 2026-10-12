@@ -215,6 +215,9 @@ defmodule Agenda.TUI.Render do
     Draw.line([{:title, " Category Manager"}], width, :title) ++ [{:title, count}]
   end
 
+  defp where_line(_state, %{type: :viewmgr, typed: typed}) when typed != "",
+    do: [{:title, " View Manager"}, {:dim, "  Find: " <> typed}]
+
   defp where_line(_state, %{type: :viewmgr}), do: [{:title, " View Manager"}]
 
   defp where_line(_state, %{type: :note, target: {:macro, _}, title: title}),
@@ -1202,6 +1205,16 @@ defmodule Agenda.TUI.Render do
      DEL           Discard category                CTRL-D
      F6            Properties (exclusive, short name, links)
      ESC / F9      Return to the view
+
+   In the view manager (F8)
+     Type          Highlight the next view starting with the letters
+     ENTER         Show the highlighted view
+     INS           Add a view                      CTRL-N
+     F2            Rename                          CTRL-E
+     DEL           Discard view (items are kept)   CTRL-D
+     ALT-F5        Sort the views by name          ESC %
+     ALT-↑ ALT-↓   Reorder                         ⌥↑ / ⌥↓
+     ESC / F8      Return to the view
 
    In a note (F5)
      ALT-F6        Search / replace text            ESC ^

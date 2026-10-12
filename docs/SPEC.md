@@ -997,6 +997,14 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   The last file opened or saved is kept as `last_file` in the preferences.
   Ours: Agenda asked for the file in its File Retrieve box and kept
   Name/Company from installation.
+- **R53 ✅ Typing in the view manager** (User's Guide 9-5; Starter
+  Applications 1-10). Typing in the view manager highlights the next view,
+  round the list, whose name starts with the letters typed (any case);
+  more letters narrow it down, BACKSPACE takes one back, and "Find:"
+  beside the title shows them. A letter that fits no view starts again
+  from that letter, so typing the same letter again goes on to the next
+  view with it; a letter no view starts with is ignored. Any other key
+  forgets what was typed. ENTER shows the highlighted view.
 
 ## 6. Out of scope for now
 

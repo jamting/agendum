@@ -21,6 +21,7 @@ settings, as described in the second half of this guide.
 | Jump to the next marked item                                                                    | ALT-J                         | ESC then `j` (Option-j)                                               |
 | Assign the item or marked items to a category (MakeAssign)                                      | ALT-M                         | ESC then `m` (Option-m), or menu Item ▸ Categorize                    |
 | Go to a section (GO TO, in a view); sort a family (category manager); sort views (view manager) | ALT-F5                        | ESC then `%`                                                          |
+| Highlight a view by typing the start of its name (view manager)                                 | letters                       | —                                                                     |
 | Next / previous view (in a view)                                                                | ALT-N / ALT-P                 | ESC then `n` / `p`                                                    |
 | Show / hide empty sections (in a view)                                                          | ALT-V                         | ESC then `v`                                                          |
 | Insert an item (in a view)                                                                      | ALT-I                         | ESC then `i`, or INS / **CTRL-N**                                     |

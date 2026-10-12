@@ -1,12 +1,20 @@
 defmodule Agenda.TUI.ViewManager do
-  @moduledoc "The view manager (F8): switch between, add, rename and discard views."
+  @moduledoc """
+  The view manager (F8): switch between, add, rename and discard views.
+
+  Typing highlights a view (R53; User's Guide 9-5, Starter Applications
+  1-10): the first letter the next view starting with it, round the list;
+  more letters narrow it down; BACKSPACE takes one back. A letter that
+  fits no view starts again from it, so the same letter again goes on to
+  the next view with it. Moving forgets what was typed.
+  """
 
   alias Agenda.Core
   alias Agenda.TUI.{LineEdit, State, Update}
 
   def open(state) do
     index = Enum.find_index(state.db.view_order, &(&1 == state.view_id)) || 0
-    State.push(state, %{type: :viewmgr, cursor: index})
+    State.push(state, %{type: :viewmgr, cursor: index, typed: "", from: index})
   end
 
   def handle(%State{edit: edit} = state, _mode, key) when edit != nil do
@@ -30,11 +38,18 @@ defmodule Agenda.TUI.ViewManager do
     end
   end
 
+  def handle(state, mode, {:char, c}), do: find(state, mode, mode.typed <> c, c)
+
+  def handle(state, %{typed: typed} = mode, :backspace) when typed != "",
+    do: find(state, mode, String.slice(typed, 0..-2//1), nil)
+
   def handle(state, mode, key) do
     order = state.db.view_order
     count = length(order)
-    # undo can remove views while the manager is open
-    mode = %{mode | cursor: min(mode.cursor, count - 1)}
+    # undo can remove views while the manager is open; any other key
+    # forgets what was typed
+    mode = %{mode | cursor: min(mode.cursor, count - 1), typed: ""}
+    state = State.put_mode(state, mode)
     view_id = Enum.at(order, mode.cursor)
 
     case key do
@@ -81,6 +96,36 @@ defmodule Agenda.TUI.ViewManager do
       _ ->
         state
     end
+  end
+
+  # highlights the first view after `from` whose name starts with `typed`;
+  # failing that, starts again from the letter just typed
+  defp find(state, mode, typed, letter) do
+    from = if mode.typed == "", do: mode.cursor, else: mode.from
+
+    case {typed, match(state, from, typed), letter && match(state, mode.cursor, letter)} do
+      {"", _, _} ->
+        State.put_mode(state, %{mode | typed: "", cursor: from})
+
+      {_, i, _} when i != nil ->
+        State.put_mode(state, %{mode | typed: typed, from: from, cursor: i})
+
+      {_, nil, i} when i != nil ->
+        State.put_mode(state, %{mode | typed: letter, from: mode.cursor, cursor: i})
+
+      _ ->
+        state
+    end
+  end
+
+  defp match(state, from, typed) do
+    order = state.db.view_order
+    count = length(order)
+    typed = String.downcase(typed)
+
+    Enum.find(Enum.map(1..count//1, &rem(from + &1, count)), fn i ->
+      state.db.views[Enum.at(order, i)].name |> String.downcase() |> String.starts_with?(typed)
+    end)
   end
 
   defp reorder(state, mode, delta) do
