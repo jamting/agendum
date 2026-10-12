@@ -186,7 +186,9 @@ defmodule Agenda.Core.JSONFile do
             description: s.description,
             date: date(s.date),
             time: time(s.time),
-            recurrence: s.recurrence && struct_obj(s.recurrence)
+            recurrence: s.recurrence && struct_obj(s.recurrence),
+            end_date: date(s.ends && elem(s.ends, 0)),
+            end_time: time(s.ends && elem(s.ends, 1))
           )
         end)
     )
@@ -594,6 +596,11 @@ defmodule Agenda.Core.JSONFile do
              case e["recurrence"] do
                nil -> nil
                _ -> read_struct(e, "recurrence", Recurrence, p <> ".recurrence")
+             end,
+           ends:
+             case opt(e, "end_date", {:nullable, :date}, nil, p) do
+               nil -> nil
+               date -> {date, opt(e, "end_time", {:nullable, :time}, nil, p)}
              end
          }}
       end)

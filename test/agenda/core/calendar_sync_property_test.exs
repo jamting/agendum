@@ -40,6 +40,7 @@ defmodule Agenda.Core.CalendarSyncPropertyTest do
           summary <- member_of(["Tea", "", "Visit Pooh next Friday", "Choir"]),
           description <- member_of([nil, "", "Room 2"]),
           start <- start(),
+          finish <- one_of([constant(nil), start()]),
           rrule <- rrule(),
           status <- member_of([nil, :cancelled, :confirmed])
         ) do
@@ -48,6 +49,7 @@ defmodule Agenda.Core.CalendarSyncPropertyTest do
         summary: summary,
         description: description,
         start: start,
+        end: finish,
         rrule: rrule,
         status: status
       }

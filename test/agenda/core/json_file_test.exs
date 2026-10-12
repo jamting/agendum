@@ -131,6 +131,7 @@ defmodule Agenda.Core.JSONFileTest do
         uid: "m@x",
         summary: "Standup",
         start: {:local, ~N[2026-10-14 09:15:00]},
+        end: {:local, ~N[2026-10-14 09:30:00]},
         description: "Daily",
         rrule: %{
           freq: :weekly,

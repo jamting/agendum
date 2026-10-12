@@ -2,13 +2,16 @@ defmodule Agenda.Core.ICal do
   @moduledoc """
   Reads the events of an iCalendar file (RFC 5545, `.ics`), for calendar
   subscriptions (SPEC R45). Only what Agendum uses: each VEVENT's UID,
-  SUMMARY, DESCRIPTION, DTSTART, RRULE and STATUS; other components
+  SUMMARY, DESCRIPTION, DTSTART, DTEND (or DURATION), RRULE and STATUS;
+  other components
   (VTODO, VTIMEZONE) and alarms inside events are skipped.
 
   A start is `{:date, Date}` (an all-day event), `{:utc, NaiveDateTime}`
   (a time ending in Z) or `{:local, NaiveDateTime}` (a floating time, or one
   with a TZID, taken as the reader's local time: there is no time-zone
-  database to convert it). Pure.
+  database to convert it). An end has the same forms; an all-day event's
+  end is the day after its last (RFC 5545 3.6.1), and an end that cannot
+  be read or comes before the start is nil. Pure.
   """
 
   defmodule Event do
@@ -19,10 +22,11 @@ defmodule Agenda.Core.ICal do
             summary: String.t(),
             description: String.t() | nil,
             start: start,
+            end: start | nil,
             rrule: map | nil,
             status: :cancelled | :tentative | :confirmed | nil
           }
-    defstruct [:uid, :start, summary: "", description: nil, rrule: nil, status: nil]
+    defstruct [:uid, :start, end: nil, summary: "", description: nil, rrule: nil, status: nil]
   end
 
   @doc "The calendar's events, in file order; `{:error, :not_ical}` for anything else."
@@ -123,6 +127,7 @@ defmodule Agenda.Core.ICal do
         summary: summary,
         description: text(props["DESCRIPTION"]),
         start: start,
+        end: ending(props, start),
         rrule: with({_, rule} <- props["RRULE"], do: rrule(rule)),
         status: status(text(props["STATUS"]))
       }
@@ -130,6 +135,50 @@ defmodule Agenda.Core.ICal do
       _ -> nil
     end
   end
+
+  # DTEND, else DTSTART plus DURATION; nil when neither is readable, or
+  # when it is of another kind than the start or before it
+  defp ending(props, start) do
+    finish =
+      case {props["DTEND"], props["DURATION"]} do
+        {{params, value}, _} ->
+          case start(params, value) do
+            {:ok, at} -> at
+            _ -> nil
+          end
+
+        {nil, {_, value}} ->
+          add_duration(start, duration(value))
+
+        _ ->
+          nil
+      end
+
+    if after?(finish, start), do: finish
+  end
+
+  defp after?({kind, a}, {kind, b}), do: compare(a, b) != :lt
+  defp after?(_finish, _start), do: false
+
+  defp compare(%Date{} = a, b), do: Date.compare(a, b)
+  defp compare(a, b), do: NaiveDateTime.compare(a, b)
+
+  # an ISO 8601 duration ("PT1H30M", "P2D", "P1W") in seconds; nil if unreadable or negative
+  defp duration(value) do
+    case Regex.run(~r/^\+?P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/, value) do
+      [_ | parts] when parts != [] ->
+        [w, d, h, m, sec] = parts |> Enum.concat(List.duplicate("", 5)) |> Enum.take(5)
+        n = fn text -> if text == "", do: 0, else: String.to_integer(text) end
+        ((n.(w) * 7 + n.(d)) * 24 + n.(h)) * 3600 + n.(m) * 60 + n.(sec)
+
+      _ ->
+        nil
+    end
+  end
+
+  defp add_duration(_start, nil), do: nil
+  defp add_duration({:date, date}, seconds), do: {:date, Date.add(date, div(seconds, 86_400))}
+  defp add_duration({kind, at}, seconds), do: {kind, NaiveDateTime.add(at, seconds)}
 
   defp made_up_uid(summary, start),
     do: "agenda-" <> (:erlang.phash2({summary, start}) |> Integer.to_string(16))

@@ -230,6 +230,118 @@ defmodule Agenda.Core.CalendarSyncTest do
     end
   end
 
+  describe "when events end" do
+    defp ends(db, cal, uid) do
+      [ends] = Database.find_categories(db, "Ends")
+      id = item(db, cal, uid).id
+      {Database.item_date(db, id, ends), Database.item_time(db, id, ends)}
+    end
+
+    test "an event's end goes in the date category Ends, made when first needed" do
+      {db, cal} = subscribed()
+      {db, _} = sync(db, cal, [event("a", "Tea", {:local, ~N[2026-10-16 14:00:00]})])
+      assert Database.find_categories(db, "Ends") == []
+
+      meeting =
+        event("m", "Organising Meeting", {:local, ~N[2026-10-16 14:00:00]},
+          end: {:local, ~N[2026-10-16 15:30:00]}
+        )
+
+      {db, _} = sync(db, cal, [meeting])
+      [ends] = Database.find_categories(db, "Ends")
+      assert Database.date_category?(db, ends)
+      assert db.categories[ends].parent_id == db.main_id
+      assert ends(db, cal, "m") == {~D[2026-10-16], ~T[15:30:00]}
+    end
+
+    test "an all-day event over several days ends on its last day; one day has no end" do
+      {db, cal} = subscribed()
+
+      {db, _} =
+        sync(db, cal, [
+          event("h", "Holiday", {:date, ~D[2026-12-24]}, end: {:date, ~D[2026-12-27]}),
+          event("d", "Birthday", {:date, ~D[2026-10-14]}, end: {:date, ~D[2026-10-15]})
+        ])
+
+      assert ends(db, cal, "h") == {~D[2026-12-26], nil}
+      assert ends(db, cal, "d") == {nil, nil}
+    end
+
+    test "a repeating event ends on its next occurrence, keeping its length" do
+      {db, cal} = subscribed()
+
+      weekly = %{
+        freq: :weekly,
+        interval: 1,
+        byday: [],
+        bymonthday: [],
+        count: nil,
+        until: nil,
+        other: []
+      }
+
+      choir =
+        event("c", "Choir", {:local, ~N[2026-09-02 18:00:00]},
+          end: {:local, ~N[2026-09-02 20:00:00]},
+          rrule: weekly
+        )
+
+      {db, _} = sync(db, cal, [choir])
+      assert item(db, cal, "c").when == ~D[2026-10-14]
+      assert ends(db, cal, "c") == {~D[2026-10-14], ~T[20:00:00]}
+    end
+
+    test "a changed end updates the item; a removed one clears it" do
+      {db, cal} = subscribed()
+      start = {:local, ~N[2026-10-16 14:00:00]}
+
+      {db, _} =
+        sync(db, cal, [event("m", "Meeting", start, end: {:local, ~N[2026-10-16 15:00:00]})])
+
+      {db, counts} =
+        sync(db, cal, [event("m", "Meeting", start, end: {:local, ~N[2026-10-16 16:00:00]})])
+
+      assert counts.updated == 1
+      assert ends(db, cal, "m") == {~D[2026-10-16], ~T[16:00:00]}
+
+      {db, _} = sync(db, cal, [event("m", "Meeting", start)])
+      assert ends(db, cal, "m") == {nil, nil}
+    end
+
+    test "events read before ends were get theirs on the next refresh" do
+      {db, cal} = subscribed()
+      start = {:local, ~N[2026-10-16 14:00:00]}
+      {db, _} = sync(db, cal, [event("m", "Meeting", start)])
+      # as saved before ends were read
+      old =
+        Map.update!(db.calendars, cal, fn c ->
+          %{c | events: Map.new(c.events, fn {u, e} -> {u, Map.delete(e, :ends)} end)}
+        end)
+
+      db = %{db | calendars: old}
+
+      {db, _} =
+        sync(db, cal, [event("m", "Meeting", start, end: {:local, ~N[2026-10-16 15:00:00]})])
+
+      assert ends(db, cal, "m") == {~D[2026-10-16], ~T[15:00:00]}
+    end
+
+    test "a category called Ends that is not a date category is left alone" do
+      {db, cal} = subscribed()
+      {:ok, db, _} = Core.add_category(db, db.main_id, "Ends")
+
+      meeting =
+        event("m", "Meeting", {:local, ~N[2026-10-16 14:00:00]},
+          end: {:local, ~N[2026-10-16 15:00:00]}
+        )
+
+      {db, _} = sync(db, cal, [meeting])
+      [ends] = Database.find_categories(db, "Ends")
+      refute Database.date_category?(db, ends)
+      assert item(db, cal, "m").text == "Meeting"
+    end
+  end
+
   describe "refreshing mirrors the calendar" do
     setup do
       {db, cal} = subscribed()

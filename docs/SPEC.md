@@ -804,7 +804,12 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   failed. A read mirrors the calendar: an event from today up to the
   window ahead becomes an item in the category, its title the item text
   (read like typed text, so text matching files it too), its description
-  the note, and its start the When date and time, set as by hand; a
+  the note, and its start the When date and time, set as by hand; its
+  end (DTEND, or DURATION) goes in the date category Ends, made under MAIN
+  the first time an event has one (a category of that name that is not a
+  date category is left alone): a timed event's end date and time, an
+  all-day event's last day when it lasts more than one, a repeating
+  event's end keeping its length on the next date; a
   repeating event becomes one item on its next date, with Agenda's
   recurrence (R14a) when it repeats the same way (daily, weekly on one
   day, monthly on one day, yearly, every n of them), else only that next

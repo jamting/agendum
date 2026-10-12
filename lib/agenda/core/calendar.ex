@@ -10,7 +10,7 @@ defmodule Agenda.Core.Calendar do
       or `nil` for only on request
     * `events`: what each event (by its UID) looked like when last read,
       and its item: `%{item: id, summary, description, date, time,
-      recurrence}`; a refresh changes only what the calendar changed
+      recurrence, ends}`; a refresh changes only what the calendar changed
     * `refreshed_at`, `error`: when it was last read, and why that failed
 
   The helpers here are pure: when a calendar is due, its settings, and the
@@ -27,7 +27,8 @@ defmodule Agenda.Core.Calendar do
           description: String.t(),
           date: Date.t() | nil,
           time: Time.t() | nil,
-          recurrence: Recurrence.t() | nil
+          recurrence: Recurrence.t() | nil,
+          ends: {Date.t(), Time.t() | nil} | nil
         }
   @type t :: %__MODULE__{
           id: pos_integer | nil,
@@ -61,6 +62,28 @@ defmodule Agenda.Core.Calendar do
 
   @doc "The choices for how far ahead to import (days)."
   def ahead_choices, do: @ahead
+
+  @doc """
+  When an occurrence starting at `{date, time}` ends, the event keeping its
+  length: `{date, time}`, or nil without an end. An all-day event ends on
+  the day before its DTEND, and one ending on its own day has no end.
+  """
+  @spec ending(Event.t(), {Date.t(), Time.t() | nil}) :: {Date.t(), Time.t() | nil} | nil
+  def ending(%Event{start: {:date, first}, end: {:date, after_last}}, {date, _time}) do
+    days = Date.diff(after_last, first) - 1
+    if days > 0, do: {Date.add(date, days), nil}
+  end
+
+  def ending(
+        %Event{start: {_, %NaiveDateTime{} = s}, end: {_, %NaiveDateTime{} = e}},
+        {date, time}
+      )
+      when time != nil do
+    finish = NaiveDateTime.add(NaiveDateTime.new!(date, time), NaiveDateTime.diff(e, s))
+    {NaiveDateTime.to_date(finish), NaiveDateTime.to_time(finish)}
+  end
+
+  def ending(_event, _occurrence), do: nil
 
   @doc "A web address as Agenda reads it: https for webcal; :error unless http(s)."
   @spec normalize_url(String.t()) :: {:ok, String.t()} | :error

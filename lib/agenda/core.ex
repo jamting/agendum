@@ -609,6 +609,16 @@ defmodule Agenda.Core do
     db |> put_date(item_id, cat_id, date) |> settle(db, item_id, clock)
   end
 
+  @doc """
+  Sets the date and time of a date category, as typed in its column (set
+  by hand), then re-checks conditions; a nil date clears it.
+  """
+  @spec set_date_time(db, id, id, Date.t() | nil, Time.t() | nil, clock | nil) :: db
+  def set_date_time(db, item_id, cat_id, date, time, clock \\ nil) do
+    unless Database.date_category?(db, cat_id), do: raise(ArgumentError, "not a date category")
+    db |> put_date_time(item_id, cat_id, date, time, nil) |> settle(db, item_id, clock)
+  end
+
   # A When date set or cleared by the user: set is explicit and overrides
   # the text; cleared hands the When date back to the text (R14).
   # --- conditions and actions after a change (R15, R15b) ------------------------

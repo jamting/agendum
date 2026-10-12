@@ -42,6 +42,29 @@ defmodule Agenda.Core.ICalTest do
              {:local, ~N[2026-10-16 09:00:00]}
   end
 
+  test "the end: DTEND, or DTSTART plus DURATION; an all-day DTEND is the day after" do
+    ev = fn lines -> one("BEGIN:VEVENT\nUID:1\n" <> lines <> "END:VEVENT\n") end
+
+    assert ev.("DTSTART:20261016T140000\nDTEND:20261016T153000\n").end ==
+             {:local, ~N[2026-10-16 15:30:00]}
+
+    assert ev.("DTSTART:20261016T120000Z\nDTEND:20261016T130000Z\n").end ==
+             {:utc, ~N[2026-10-16 13:00:00]}
+
+    assert ev.("DTSTART;VALUE=DATE:20261224\nDTEND;VALUE=DATE:20261227\n").end ==
+             {:date, ~D[2026-12-27]}
+
+    assert ev.("DTSTART:20261016T140000\nDURATION:PT1H30M\n").end ==
+             {:local, ~N[2026-10-16 15:30:00]}
+
+    assert ev.("DTSTART;VALUE=DATE:20261224\nDURATION:P2D\n").end == {:date, ~D[2026-12-26]}
+    assert ev.("DTSTART:20261016T140000\nDURATION:P1W\n").end == {:local, ~N[2026-10-23 14:00:00]}
+    assert ev.("DTSTART:20261016T140000\n").end == nil
+    # an end that cannot be read, or before the start, is none
+    assert ev.("DTSTART:20261016T140000\nDURATION:soon\n").end == nil
+    assert ev.("DTSTART:20261016T140000\nDTEND:20261015T100000\n").end == nil
+  end
+
   test "folded lines are joined, and Unix line endings work" do
     event =
       one(

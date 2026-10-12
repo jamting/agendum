@@ -126,7 +126,13 @@ defmodule Agenda.Store do
         views: Map.new(db.views, fn {id, v} -> {id, upgrade_view(v)} end),
         calendars:
           Map.new(db.calendars, fn {id, c} ->
-            {id, struct(Agenda.Core.Calendar, Map.from_struct(c))}
+            c = struct(Agenda.Core.Calendar, Map.from_struct(c))
+            # events read before ends were (format 23 and earlier) have none
+            {id,
+             %{
+               c
+               | events: Map.new(c.events, fn {uid, s} -> {uid, Map.put_new(s, :ends, nil)} end)
+             }}
           end)
     }
   end

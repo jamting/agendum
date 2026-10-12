@@ -72,12 +72,15 @@ defmodule Agenda.CalendarFetch do
   defp short(:timeout), do: "timed out"
   defp short(reason), do: reason |> inspect() |> String.slice(0, 60)
 
-  @doc "An event with a UTC start moved to local time; others as they are."
+  @doc "An event with its UTC start and end moved to local time; other times as they are."
   @spec localize(ICal.Event.t()) :: ICal.Event.t()
-  def localize(%ICal.Event{start: {:utc, at}} = event) do
+  def localize(%ICal.Event{} = event),
+    do: %{event | start: local(event.start), end: local(event.end)}
+
+  defp local({:utc, at}) do
     local = at |> NaiveDateTime.to_erl() |> :calendar.universal_time_to_local_time()
-    %{event | start: {:local, NaiveDateTime.from_erl!(local)}}
+    {:local, NaiveDateTime.from_erl!(local)}
   end
 
-  def localize(event), do: event
+  defp local(time), do: time
 end

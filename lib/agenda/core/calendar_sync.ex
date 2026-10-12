@@ -8,7 +8,8 @@ defmodule Agenda.Core.CalendarSync do
       item text (read like typed text, so text matching files it too), the
       description its note, and the start its When date and time, set as by
       hand; a repeating event gets its next date and, where Agenda can
-      repeat it the same way, its rule
+      repeat it the same way, its rule; its end goes in the date category
+      Ends (made under MAIN when first needed), keeping the event's length
     * an event seen before updates its item, but only in what the calendar
       changed since the last refresh, so the person's own edits, categories
       and done marks stay
@@ -78,22 +79,34 @@ defmodule Agenda.Core.CalendarSync do
               else: db
 
           db = set_when(db, id, date, time, rec, clock)
-          snap = Map.merge(wanted, %{item: id, date: date, time: time, recurrence: rec})
+          ends = Calendar.ending(event, {date, time})
+          db = set_ends(db, id, ends, clock)
+
+          snap =
+            Map.merge(wanted, %{item: id, date: date, time: time, recurrence: rec, ends: ends})
+
           {db, Map.put(snaps, event.uid, snap), bump(counts, :added)}
         end
 
       {snap, _} ->
-        update(db, snaps, counts, event.uid, snap, wanted, occurrence, clock)
+        update(db, snaps, counts, event, snap, wanted, occurrence, clock)
     end
   end
 
   # Only what the calendar changed since the last refresh reaches the item.
-  defp update(db, snaps, counts, uid, snap, wanted, occurrence, clock) do
+  defp update(db, snaps, counts, event, snap, wanted, occurrence, clock) do
+    uid = event.uid
+
     when_now =
       case occurrence do
-        {date, time, rec} -> %{date: date, time: time, recurrence: rec}
-        :ended -> Map.take(snap, [:date, :time, :recurrence])
+        {date, time, rec} ->
+          %{date: date, time: time, recurrence: rec, ends: Calendar.ending(event, {date, time})}
+
+        :ended ->
+          %{date: snap.date, time: snap.time, recurrence: snap.recurrence, ends: snap[:ends]}
       end
+
+    when_before = %{date: snap.date, time: snap.time, recurrence: snap.recurrence}
 
     id = snap.item
 
@@ -102,8 +115,10 @@ defmodule Agenda.Core.CalendarSync do
         {wanted.summary != snap.summary, &Core.edit_item(&1, id, wanted.summary, clock)},
         {wanted.description != snap.description,
          &Core.set_note(&1, id, wanted.description, clock)},
-        {when_now != Map.take(snap, [:date, :time, :recurrence]),
-         &set_when(&1, id, when_now.date, when_now.time, when_now.recurrence, clock)}
+        {Map.delete(when_now, :ends) != when_before,
+         &set_when(&1, id, when_now.date, when_now.time, when_now.recurrence, clock)},
+        # snapshots from before ends were read have none: filled in once
+        {when_now.ends != snap[:ends], &set_ends(&1, id, when_now.ends, clock)}
       ]
 
       changed = for {true, change} <- changes, do: change
@@ -121,6 +136,45 @@ defmodule Agenda.Core.CalendarSync do
     db
     |> Core.set_date(id, db.special.when, date, clock)
     |> Database.update_item(id, &%{&1 | when_time: time, recurrence: rec})
+  end
+
+  # The end in the date category Ends, set as by hand; a removed end clears it.
+  defp set_ends(db, id, nil, clock) do
+    case existing_ends(db) do
+      nil ->
+        db
+
+      cat ->
+        if Database.item_date(db, id, cat),
+          do: Core.set_date_time(db, id, cat, nil, nil, clock),
+          else: db
+    end
+  end
+
+  defp set_ends(db, id, {date, time}, clock) do
+    case ends_category(db, clock) do
+      {db, nil} -> db
+      {db, cat} -> Core.set_date_time(db, id, cat, date, time, clock)
+    end
+  end
+
+  @ends "Ends"
+
+  defp existing_ends(db),
+    do: db |> Database.find_categories(@ends) |> Enum.find(&Database.date_category?(db, &1))
+
+  # the date category Ends, made under MAIN unless one of that name exists;
+  # nil when a category called Ends is not a date category (it is left alone)
+  defp ends_category(db, clock) do
+    case {existing_ends(db), Database.find_categories(db, @ends)} do
+      {nil, []} ->
+        {:ok, db, cat} = Core.add_category(db, db.main_id, @ends, match_name: false)
+        {:ok, db} = Core.make_date(db, cat, clock)
+        {db, cat}
+
+      {cat, _} ->
+        {db, cat}
+    end
   end
 
   defp bump(counts, key), do: Map.update!(counts, key, &(&1 + 1))

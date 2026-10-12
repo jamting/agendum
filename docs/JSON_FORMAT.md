@@ -136,7 +136,7 @@ open.
 | `ahead_days`            | How far ahead events are imported: 30, 90, 180 or 365.                                                                                                                 |
 | `refresh_minutes`       | How often it is read again while Agendum runs (60, 360, 1440), or `null` for only on request.                                                                          |
 | `refreshed_at`, `error` | When it was last read, and why that failed; or `null`.                                                                                                                 |
-| `events`                | For each event read: `uid`, its `item`, and the `summary`, `description`, `date`, `time` and `recurrence` it had, so a refresh only changes what the calendar changed. |
+| `events`                | For each event read: `uid`, its `item`, and the `summary`, `description`, `date`, `time`, `recurrence`, `end_date` and `end_time` it had, so a refresh only changes what the calendar changed. |
 
 ## What is checked on import
 
