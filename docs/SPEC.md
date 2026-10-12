@@ -588,8 +588,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   selects mono unless `--theme` or the preferences name a theme. The
   theme is a personal preference, not part of the file, as in Agenda,
   where Utilities Customize set Color (Mono, Color, Plasma or Custom,
-  with a colour for each screen element) for all files. Not done: custom
-  colours.
+  with a colour for each screen element) for all files. Custom colours
+  are not planned: a new look is a new theme (ADR 0022).
   - `classic`: black text on a grey screen; section heads, column heads and
     column entries in blue; the highlight white on red; title bar and
     control panel white (hints yellow) on blue; boxes cyan in a solid blue
