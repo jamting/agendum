@@ -55,7 +55,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
   end
 
   test "F8 view manager adds a view", %{state: state} do
-    state = press(state, [{:f, 8}, :insert, "People", :enter, "Contact", :enter])
+    state = press(state, [{:f, 8}, :insert, "People", :enter, "s", "Contact", :enter])
     assert Agenda.TUI.State.view(state).name == "People"
     assert screen(state) =~ ~r/Contact/
     assert state.modes == []
@@ -76,7 +76,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
   end
 
   test "ALT-↓ in the view manager reorders views", %{state: state} do
-    state = press(state, [{:f, 8}, :insert, "People", :enter, "Contact", :enter])
+    state = press(state, [{:f, 8}, :insert, "People", :enter, "s", "Contact", :enter])
     people = state.view_id
     state = press(state, [{:f, 8}, :up, {:alt, :down}])
     assert List.first(state.db.view_order) == people

@@ -96,6 +96,12 @@ or handles it.
     a new view's name, a category name). `TUI.Update`.
   - **Question** `:confirm`: a Y/N question (discard, save changes, make a
     date category). `TUI.Update`.
+  - **Datebook settings** `:datebook_props` (View ▸ Properties of a datebook
+    view; after View ▸ Add with Type Datebook): its categories, period,
+    interval, start and end, base date (R47). `TUI.DatebookBox`.
+    - **Picker** `:picker` for the Date category, End category and Section.
+    - **Prompt** `:prompt` for a time (Start at / End at of a day) or the base date.
+  - **Choice** `:choice` (View ▸ Add, after the name): Standard or Datebook.
   - **Calendar** `:calendar` (F3 in a date column; ALT-C anywhere in a
     view): the pop-up calendar, to pick a date (and time) for the entry or
     to look one up (R46). `TUI.CalendarBox`.
@@ -249,6 +255,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:questions`         | box           | `TUI.QuestionsBox`     | Category ▸ Questions                             | R16           |
 | `:alarm_list`        | box           | `TUI.AlarmList`        | Search ▸ Alarms                                  | R38           |
 | `:calendar`          | box           | `TUI.CalendarBox`      | F3 in a date column, ALT-C                       | R46           |
+| `:datebook_props`    | box           | `TUI.DatebookBox`      | View ▸ Properties of a datebook view             | R47           |
 | `:devtools`          | full screen   | `TUI.DevTools`         | ESC ? (hidden)                                   | —             |
 
 `test/agenda/tui/screens_doc_test.exs` fails when a mode type is added without

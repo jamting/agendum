@@ -32,7 +32,7 @@ defmodule Agenda.TUI.DatebookViewTest do
 
     item = state.db.items |> Map.values() |> Enum.find(&(&1.text == "Picnic with Pooh"))
     assert item.when == ~D[2026-10-14]
-    assert screen(state) =~ ~r/Wed 2026-10-14\n • Picnic with Pooh/
+    assert screen(state) =~ ~r/── Wed 2026-10-14 ─+\n • Picnic with Pooh/u
   end
 
   test "its sections cannot be added, removed, changed or collapsed", %{state: state} do
@@ -40,6 +40,77 @@ defmodule Agenda.TUI.DatebookViewTest do
       after_ = press(state, keys)
       assert after_.db == state.db
       assert screen(after_) =~ "A datebook view's sections are its dates"
+    end
+  end
+
+  describe "creating and changing one" do
+    setup %{state: state} do
+      %{plain: state |> State.switch_view(hd(state.db.view_order)) |> Layout.settle()}
+    end
+
+    defp datebook(state), do: State.view(state).datebook
+    defp settings(state), do: press(state, [{:f, 10}, "v", "p"])
+
+    test "View ▸ Add asks the type; Datebook makes one and opens its settings", %{plain: state} do
+      state = press(state, [{:f, 10}, "v", "a", "Mornings", :enter])
+      assert screen(state) =~ "Type of view:"
+
+      state = press(state, "d")
+      assert State.view(state).name == "Mornings"
+      assert %Datebook{period: :week} = datebook(state)
+      assert %{type: :datebook_props} = State.mode(state)
+      assert screen(state) =~ ~r/Period +: Week/
+      assert screen(state) =~ ~r/Base date on +: today \(2026-10-12\)/
+    end
+
+    test "the settings change the slots at once, one undo step each", %{state: state} do
+      # Period: Week -> Month -> Quarter -> Day
+      state = settings(state) |> press([:down, :down, :down, " ", " ", " "])
+      assert datebook(state).period == :day
+      assert screen(state) =~ ~r/Interval +: Hourly/
+      assert screen(state) =~ ~r/Start at +: 08:00/
+
+      state = press(state, [:down, " "])
+      assert datebook(state).interval == 15
+
+      # a time without am/pm falls between 8:00 and 19:59, as everywhere (R14b)
+      state = press(state, [:down, :enter, {:ctrl, "u"}, "7:30am", :enter])
+      assert datebook(state).start_time == ~T[07:30:00]
+
+      state = press(state, [:down, :down, :enter, {:ctrl, "u"}, "next week", :enter])
+      assert datebook(state).base == "next week"
+      assert screen(state) =~ "(2026-10-19)"
+
+      state = press(state, [:enter, {:ctrl, "u"}, "zebra", :enter])
+      assert screen(state) =~ "Not a date: zebra"
+      assert datebook(state).base == "next week"
+
+      assert Agenda.TUI.History.undo(state) |> datebook() |> Map.get(:base) == "today"
+    end
+
+    test "a week's days cycle; categories are picked, End cleared with DEL", %{state: state} do
+      state = settings(state) |> press([:down, :down, :down, :down, :down, " "])
+      assert datebook(state).start_day == 2
+
+      # End category: a standard category is refused
+      state = press(state, [:up, :up, :up, :up, :enter, "Calls", :enter])
+      assert screen(state) =~ "Pick a date category"
+      assert datebook(state).end_category == nil
+
+      state = press(state, [:enter, "Done", :enter])
+      assert datebook(state).end_category == state.db.special.done
+      state = press(state, :delete)
+      assert datebook(state).end_category == nil
+    end
+
+    test "a standard view has no datebook settings", %{plain: state} do
+      assert panel(settings(state)) =~
+               "A standard view's settings are in View ▸ Hide, Filter and Order"
+    end
+
+    test "the control panel names the Section; the view manager marks it with *", %{state: state} do
+      assert screen(state) =~ ~r/View: This week +Datebook for: When/
+      assert screen(press(state, {:f, 8})) =~ ~r/\*This week +Datebook: week, When/
     end
   end
 end

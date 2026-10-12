@@ -65,7 +65,7 @@ defmodule Agenda.TUI.HistoryTest do
   end
 
   test "undo returns to the view where the change happened", %{state: state} do
-    state = press(state, [{:f, 8}, :insert, "People", :enter, "Contact", :enter])
+    state = press(state, [{:f, 8}, :insert, "People", :enter, "s", "Contact", :enter])
     people = state.view_id
     state = press(state, [{:f, 8}, :up, :enter])
     refute state.view_id == people

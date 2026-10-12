@@ -59,6 +59,7 @@ defmodule Agenda.TUI.Menu do
          {"Add", "Create a new view", :add_view},
          {"Rename", "Rename the current view", :rename_view},
          {"Discard", "Delete the current view (items are kept)", :discard_view},
+         {"Properties", "A datebook view's settings: period, base date, categories", :view_props},
          {"Section", "Add, remove or collapse sections",
           [
             {"Below", "Add a section below the current one (ALT-D)", :section_below},

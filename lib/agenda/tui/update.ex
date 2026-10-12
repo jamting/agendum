@@ -306,6 +306,9 @@ defmodule Agenda.TUI.Update do
 
   defp dispatch(state, %{type: :calendar} = m, key), do: CalendarBox.handle(state, m, key)
 
+  defp dispatch(state, %{type: :datebook_props} = m, key),
+    do: Agenda.TUI.DatebookBox.handle(state, m, key)
+
   defp dispatch(state, %{type: type} = m, key)
        when type in [:file_props, :date_settings, :display_format],
        do: FileProperties.handle(state, m, key)
@@ -1239,9 +1242,15 @@ defmodule Agenda.TUI.Update do
     end
   end
 
-  defp prompt_action(state, :add_view, text) do
-    CategoryScreens.open_picker(state, {:new_view, text}, nil)
-  end
+  # a new view's name, then its type: Standard or Datebook (R47)
+  defp prompt_action(state, :add_view, text),
+    do: State.push(state, %{type: :choice, kind: :view_type, name: text, cursor: 0})
+
+  defp prompt_action(state, {:datebook_time, view_id, row}, text),
+    do: Agenda.TUI.DatebookBox.set_time(state, view_id, row, text)
+
+  defp prompt_action(state, {:datebook_base, view_id}, text),
+    do: Agenda.TUI.DatebookBox.set_base(state, view_id, text)
 
   defp prompt_action(state, {:when_items, ids}, text) do
     Enum.reduce_while(ids, {:ok, state.db}, fn id, {:ok, db} ->
@@ -1777,6 +1786,12 @@ defmodule Agenda.TUI.Update do
   end
 
   defp do_perform(state, :add_view, _), do: prompt(state, "Name of new view:", :add_view)
+
+  defp do_perform(state, :view_props, _) do
+    if State.view(state).datebook,
+      do: Agenda.TUI.DatebookBox.open(state, state.view_id),
+      else: State.error(state, "A standard view's settings are in View ▸ Hide, Filter and Order")
+  end
 
   defp do_perform(state, :rename_view, _),
     do: prompt(state, "Rename view to:", :rename_view, State.view(state).name)

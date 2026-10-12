@@ -865,13 +865,19 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   category it uses falls back to When. Our choice: in a day view, items
   with that date but no time are in a first slot named after the day,
   above the hours; items timed outside Start at to End at are not shown.
-  Done: the settings, the slots and the items each shows, saving (file
-  format 23, JSON); in the TUI, slots named by their date or time
-  ("Mon 2026-10-12", "10:00", "Mon 2026-09-28 → Fri 2026-10-02",
-  "October 2026"), typing into a slot, and the restrictions (ALT-D/U, DEL
-  or F3 on a slot, collapsing, section filter and sort, ALT-F10 say why
-  not). To come: creating and changing them (View ▸ Add, View ▸
-  Properties), Agenda's look, and browsing (ALT-B, View ▸ Browse).
+  In the TUI: View ▸ Add (or INS in the view manager) asks for the name,
+  then the Type, Standard or Datebook; a datebook view starts with
+  Agenda's defaults and opens its Datebook settings box, which View ▸
+  Properties shows again (ENTER picks a category or types a time or base
+  date, SPACE/→ ← cycle Period, Interval and a week's days, DEL clears the
+  End category; a time without am/pm is read as everywhere, R14b). Each
+  slot's head is a line across with its name, in the file's date format
+  ("── Mon 2026-10-12 ──", "10:00", "Mon 2026-09-28 → Fri 2026-10-02",
+  "October 2026"), without a blank line above; the control panel says
+  "Datebook for: When" (the Section) at the top right, and the view
+  manager marks datebook views with *. Typing into a slot dates the item;
+  ALT-D/U, DEL or F3 on a slot, collapsing, section filter and sort, and
+  ALT-F10 say why not. To come: browsing (ALT-B, View ▸ Browse).
 
 ## 6. Out of scope for now
 

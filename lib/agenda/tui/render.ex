@@ -18,6 +18,7 @@ defmodule Agenda.TUI.Render do
   @boxes [
     :picker,
     :calendar,
+    :datebook_props,
     :profile,
     :props,
     :choice,
@@ -171,7 +172,14 @@ defmodule Agenda.TUI.Render do
       |> Enum.filter(&elem(&1, 0))
       |> Enum.map_join(" ", &elem(&1, 1))
 
-    right = if hides == "", do: "", else: hides <> " "
+    # a datebook view names its Section at the top right, as Agenda did (R47)
+    datebook =
+      case view.datebook do
+        nil -> ""
+        d -> "Datebook for: #{state.db.categories[d.section_category].name}  "
+      end
+
+    right = if hides == "" and datebook == "", do: "", else: datebook <> hides <> " "
     # at least two spaces between the view's name and filter and the rest
     room = max(state.width - String.length(right) - 2, 0)
     left = Draw.truncate(" View: " <> view.name <> filter_text(state, view.filter), room)
@@ -235,6 +243,7 @@ defmodule Agenda.TUI.Render do
             :file_props,
             :date_settings,
             :display_format,
+            :datebook_props,
             :input_format,
             :customize,
             :calendars,
@@ -432,6 +441,16 @@ defmodule Agenda.TUI.Render do
       {"F6", "Time", "Set a time"},
       {"type", "Go to", "Type a date to go there"},
       {"ESC", "Cancel"}
+    ]
+
+  defp mode_keys(%{type: :datebook_props}),
+    do: [
+      {"↑↓", "Setting", "Move between settings"},
+      {"ENTER", "Pick/type", "Pick a category or type a value"},
+      {"SPACE", "Next", "SPACE/→", "Next choice"},
+      {"←", "Previous", "Previous choice"},
+      {"DEL", "Clear", "Clear the End category"},
+      {"ESC", "Close"}
     ]
 
   defp mode_keys(%{type: :alarm_list}),
@@ -667,6 +686,17 @@ defmodule Agenda.TUI.Render do
   defp tint([], _width), do: []
   defp tint(line, width), do: line |> Draw.paint(@tint) |> Draw.line(width, :row)
 
+  # A datebook slot's head: its name in a line across, as Agenda drew it
+  defp slot_rule(label, style, width) do
+    rest = max(width - 3 - String.length(label) - 2, 0)
+
+    Draw.line(
+      [{:section, " ──"}, {style, " " <> label <> " "}, {:section, String.duplicate("─", rest)}],
+      width,
+      :section
+    )
+  end
+
   # A datebook slot's name (R47), in the file's date format: "10:00",
   # "Mon 2026-10-12", "Mon 2026-09-28 → Fri 2026-10-02", "October 2026".
   @weekdays ~w(Mon Tue Wed Thu Fri Sat Sun)
@@ -727,7 +757,7 @@ defmodule Agenda.TUI.Render do
           [{:normal, " "}] ++ field(editing.line, tw + 1, :edit)
 
         _ when row.slot != nil ->
-          [{:normal, " "}, {style, Draw.pad(slot_label(state, row.slot), tw + 1)}]
+          slot_rule(slot_label(state, row.slot), style, tw + 2)
 
         _ ->
           section = Enum.at(State.view(state).sections, row.sidx)
@@ -749,7 +779,7 @@ defmodule Agenda.TUI.Render do
       end)
 
     head = name_part ++ heads
-    if index == 0, do: [head], else: [[], head]
+    if index == 0 or row.slot, do: [head], else: [[], head]
   end
 
   defp row_lines(state, %{kind: :item, item: item} = row, _index, selected, editing, tw, columns) do
@@ -940,8 +970,19 @@ defmodule Agenda.TUI.Render do
             _ -> [{if(selected, do: :cursor, else: :item), Draw.pad(v.name, 30)}]
           end
 
-        sections = Enum.map_join(v.sections, ", ", &state.db.categories[&1.category_id].name)
-        [{:symbol, " #{current} "}] ++ name ++ [{:dim, "  Sections: " <> sections}]
+        # * marks a datebook view, as in Agenda's view manager (R47)
+        {star, about} =
+          case v.datebook do
+            nil ->
+              {" ",
+               "Sections: " <>
+                 Enum.map_join(v.sections, ", ", &state.db.categories[&1.category_id].name)}
+
+            d ->
+              {"*", "Datebook: #{d.period}, #{state.db.categories[d.section_category].name}"}
+          end
+
+        [{:symbol, " #{current}#{star}"}] ++ name ++ [{:dim, "  " <> about}]
       end)
 
     [[] | views]
@@ -1117,6 +1158,15 @@ defmodule Agenda.TUI.Render do
       {:new_view, name} ->
         "First section for view #{name}"
 
+      {:datebook, _view, :date_category} ->
+        "Date category (a date category)"
+
+      {:datebook, _view, :end_category} ->
+        "End category (a date category)"
+
+      {:datebook, _view, :section_category} ->
+        "Section (the head of every section)"
+
       {:move_category, id} ->
         "New parent for " <> state.db.categories[id].name
 
@@ -1215,6 +1265,11 @@ defmodule Agenda.TUI.Render do
 
   defp box_title(state, %{type: :choice, kind: :move, cat_id: id}),
     do: "Moving #{state.db.categories[id].name} creates a conflict"
+
+  defp box_title(_state, %{type: :choice, kind: :view_type, name: name}), do: "New view: #{name}"
+
+  defp box_title(state, %{type: :datebook_props} = mode),
+    do: Agenda.TUI.DatebookBox.title(state, mode)
 
   defp box_title(state, %{type: :choice, kind: :type, cat_id: id}),
     do: "Category type: #{state.db.categories[id].name}"
@@ -1572,6 +1627,21 @@ defmodule Agenda.TUI.Render do
         else: " SPACE/→ next choice or open ... · ← previous · ESC closes"
 
     rows ++ sample ++ [[], [{:box, hint}]]
+  end
+
+  defp box_content(state, %{type: :datebook_props} = mode, _inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.DatebookBox.lines(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        [
+          {:box, " " <> Draw.pad(label, 14) <> ": "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), value}
+        ]
+      end)
+
+    rows ++ [[], [{:box, " ENTER picks or types · SPACE/→ ← cycle · DEL clears"}]]
   end
 
   defp box_content(state, %{type: :calendar} = mode, _inner, _max_rows),

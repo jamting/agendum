@@ -55,6 +55,10 @@ defmodule Screenshots do
       {"13-category-manager", press(s, [{:f, 9}, :down, :down])},
       {"14-category-props", press(s, [{:f, 9}, :down, :down, :down, :down, {:f, 6}])},
       {"15-question", press(s, [:down, {:alt_f, 4}])},
+      {"19-datebook-week", press(s, [{:f, 10}, "v", "a", "This Week", :enter, "d", :esc])},
+      {"20-datebook-month",
+       press(s, [{:f, 10}, "v", "a", "This Month", :enter, "d", :down, :down, :down, " ", :esc])},
+      {"21-datebook-settings", press(s, [{:f, 10}, "v", "a", "This Week", :enter, "d"])},
       {"18-calendar", press(s, [:down, :right, {:f, 3}])},
       {"17-file-props", press(s, [{:f, 10}, "f", "p", " ", " "])},
       {"16-nested-box", press(s, [{:f, 9}, :down, :down, :down, :down, {:f, 6}, :down, :down, :enter])}

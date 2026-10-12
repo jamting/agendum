@@ -593,6 +593,9 @@ defmodule Agenda.TUI.CategoryScreens do
 
   defp pick(state, _purpose, nil), do: state
 
+  defp pick(state, {:datebook, view_id, row}, id),
+    do: Agenda.TUI.DatebookBox.set_category(state, view_id, row, id)
+
   defp pick(state, {:add_section, index}, id) do
     index = min(index, length(State.view(state).sections))
 
@@ -777,6 +780,15 @@ defmodule Agenda.TUI.CategoryScreens do
       {"Date", "A date and time for each item; children become dates; cannot change back", :date}
     ]
 
+  def choice_options(%{kind: :view_type}),
+    do: [
+      {"Standard", "Sections headed by categories you choose", :standard},
+      {"Datebook", "Sections for the hours, days, weeks or months of a period", :datebook}
+    ]
+
+  def choice_lines(%{kind: :view_type}),
+    do: ["Sections by category, or by date like an appointment book.", "Type of view:"]
+
   def choice_lines(%{kind: :type}),
     do: ["Standard categories can become numeric or date categories.", "Change the type to:"]
 
@@ -871,6 +883,20 @@ defmodule Agenda.TUI.CategoryScreens do
 
   defp resolve_choice(state, %{kind: :move} = mode, rule),
     do: apply_move(state, mode.cat_id, mode.relocation, rule)
+
+  defp resolve_choice(state, %{kind: :view_type, name: name}, :standard),
+    do: open_picker(state, {:new_view, name}, nil)
+
+  # a datebook view with Agenda's defaults (When, a week from today), then
+  # its settings (R47)
+  defp resolve_choice(state, %{kind: :view_type, name: name}, :datebook) do
+    {:ok, db, view_id} = Core.add_datebook_view(state.db, name, %Agenda.Core.Datebook{})
+
+    state
+    |> State.change_db(db)
+    |> State.switch_view(view_id)
+    |> Agenda.TUI.DatebookBox.open(view_id)
+  end
 
   defp resolve_choice(state, %{kind: :type} = mode, :numeric),
     do: to_numeric(state, state.db.categories[mode.cat_id])

@@ -90,6 +90,8 @@ defmodule Agenda.TUI.Layout do
       own =
         case row do
           %{kind: :section} when index == 0 -> 1
+          # a datebook slot is a line across, with no blank line above (R47)
+          %{kind: :section, slot: %{}} -> 1
           %{kind: :section} -> 2
           %{kind: :item, item: item} -> length(Draw.wrap(item.text, text_width))
         end
