@@ -191,4 +191,49 @@ defmodule Agenda.Core.RangeFiltersTest do
       assert Database.number(db, id, cost) == 100.0
     end
   end
+
+  describe "shifting date filters (browsing, R48)" do
+    setup do
+      db = Agenda.Core.new_file()
+      {:ok, db, cost} = Agenda.Core.add_category(db, db.main_id, "Cost")
+      {:ok, db} = Agenda.Core.make_numeric(db, cost)
+      %{db: db, when: db.special.when, cost: cost}
+    end
+
+    @monday ~N[2026-10-12 10:00:00]
+
+    test "date ranges move by days and months and become fixed dates",
+         %{db: db, when: when_id, cost: cost} do
+      # this week ends on Friday, the 16th (the file's end of week)
+      filters = [
+        {when_id, {:range, "today", "end of this week", :inside}},
+        {cost, {:range, 5.0, nil, :inside}},
+        {db.main_id, :assigned}
+      ]
+
+      assert Agenda.Core.shift_filters(db, filters, %{days: 7, months: 0}, @monday) == [
+               {when_id, {:range, "2026-10-19", "2026-10-23", :inside}},
+               {cost, {:range, 5.0, nil, :inside}},
+               {db.main_id, :assigned}
+             ]
+
+      [{_, range} | _] = Agenda.Core.shift_filters(db, filters, %{days: 0, months: -1}, @monday)
+      assert range == {:range, "2026-09-12", "2026-09-16", :inside}
+    end
+
+    test "an open end stays open; nothing moves without a shift", %{db: db, when: when_id} do
+      filters = [{when_id, {:range, nil, "2026-12-31", :outside}}]
+
+      assert Agenda.Core.shift_filters(db, filters, %{days: 1, months: 0}, @monday) ==
+               [{when_id, {:range, nil, "2027-01-01", :outside}}]
+
+      assert Agenda.Core.shift_filters(db, filters, %{days: 0, months: 0}, @monday) == filters
+    end
+
+    test "which filters can be browsed", %{db: db, when: when_id, cost: cost} do
+      assert Agenda.Core.date_filters?(db, [{when_id, {:range, "today", nil, :inside}}])
+      refute Agenda.Core.date_filters?(db, [{cost, {:range, 1.0, 2.0, :inside}}])
+      refute Agenda.Core.date_filters?(db, [{when_id, :assigned}])
+    end
+  end
 end

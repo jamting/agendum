@@ -107,9 +107,15 @@ defmodule Agenda.TUI.Render do
         %{type: :confirm, question: q} ->
           text_lines(state, base, :prompt, q)
 
-        %{type: :browse} ->
+        %{type: :browse, date: _} ->
           period = State.view(state).datebook.period
-          hint = "← → another #{period} · ALT-F5 go to a date · ENTER keeps it · ESC goes back"
+          hint = "← → another #{period} · ENTER keeps · ESC back"
+          text_lines(state, base, :panel_hint, hint)
+
+        %{type: :browse} ->
+          # short, so the view's line with the dates being moved stays in sight
+          hint = "← → ↑↓ PGUP PGDN · ENTER keeps · ESC back"
+
           text_lines(state, base, :panel_hint, hint)
 
         _ ->
@@ -449,6 +455,17 @@ defmodule Agenda.TUI.Render do
       {"F6", "Time", "Set a time"},
       {"type", "Go to", "Type a date to go there"},
       {"ESC", "Cancel"}
+    ]
+
+  defp mode_keys(%{type: :browse, shift: _}),
+    do: [
+      {"←→", "Day", "← →", "A day"},
+      {"↑↓", "Week", "↑↓ or CTRL-←→", "A week"},
+      {"PGUP/DN", "Month", "PGUP/PGDN", "A month"},
+      {"^PGUP/DN", "Year", "CTRL-PGUP/PGDN", "A year"},
+      {"A-F5", "Go to", "ALT-F5", "Go to a date"},
+      {"ENTER", "Keep"},
+      {"ESC", "Back"}
     ]
 
   defp mode_keys(%{type: :browse}),
@@ -1068,8 +1085,9 @@ defmodule Agenda.TUI.Render do
      ALT-F8        Back to the previous view        ESC *
      ALT-A         Set or cancel an alarm            ESC a
      ALT-C         Show the calendar (to look up a date)  ESC c
-     ALT-B         Browse a datebook view: ← → a period, ALT-F5 a date,
-                   ENTER keeps it, ESC goes back      ESC b
+     ALT-B         Browse a datebook view (← → a period) or a date filter
+                   (← → a day, ↑↓ a week, PGUP/PGDN a month, CTRL-PGUP/PGDN
+                   a year); ALT-F5 a date, ENTER keeps, ESC goes back   ESC b
      ALT-O         Depend on the marked items (&); with none marked,
                    clear the item's dependencies     ESC o
      ALT-X / ALT-E Execute all conditions and actions / the section's

@@ -2130,6 +2130,40 @@ defmodule Agenda.Core do
     end)
   end
 
+  @doc """
+  Whether filters have a date range, which browsing can move (R48).
+  """
+  @spec date_filters?(db, [{id, View.filter_term()}]) :: boolean
+  def date_filters?(db, filters),
+    do:
+      Enum.any?(
+        filters,
+        &(match?({_, {:range, _, _, _}}, &1) and Database.date_category?(db, elem(&1, 0)))
+      )
+
+  @doc """
+  Filters with their date ranges moved by `%{days: n, months: n}`, as fixed
+  dates (browsing, R48); other criteria as they are.
+  """
+  @spec shift_filters(db, [{id, View.filter_term()}], %{days: integer, months: integer}, clock) ::
+          [{id, View.filter_term()}]
+  def shift_filters(db, filters, shift, clock) do
+    Enum.map(filters, fn
+      {cat, {:range, _, _, _} = range} = criterion ->
+        if Database.date_category?(db, cat),
+          do: {cat, RangeFilter.shift(db, range, shift, clock)},
+          else: criterion
+
+      criterion ->
+        criterion
+    end)
+  end
+
+  @doc "Replaces the filters of a view (`:view`) or one of its sections."
+  @spec set_filters(db, id, :view | {:section, non_neg_integer}, [{id, View.filter_term()}]) :: db
+  def set_filters(db, view_id, scope, filters),
+    do: put_scoped(db, view_id, scope, :filter, filters)
+
   @doc "Toggles a boolean view option such as `:hide_done`."
   @spec toggle_view_option(db, id, :hide_done | :hide_empty | :hide_inherited | :hide_dependent) ::
           db

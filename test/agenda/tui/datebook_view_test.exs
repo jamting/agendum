@@ -165,7 +165,8 @@ defmodule Agenda.TUI.DatebookViewTest do
       plain =
         state |> press(:esc) |> State.switch_view(hd(state.db.view_order)) |> Layout.settle()
 
-      assert panel(press(plain, {:alt, "b"})) =~ "Browse needs a datebook view"
+      assert panel(press(plain, {:alt, "b"})) =~
+               "Browse needs a date filter (View ▸ Filter) or a datebook view"
     end
   end
 end

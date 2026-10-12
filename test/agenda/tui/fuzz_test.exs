@@ -92,6 +92,25 @@ defmodule Agenda.TUI.FuzzTest do
     db
   end
 
+  # With a date filter on the view, to browse (R48).
+  defp with_filter(db, false), do: db
+
+  defp with_filter(db, true) do
+    range = {:assigned, "today", "end of this week", :inside}
+
+    {:ok, db} =
+      Agenda.Core.set_range_filter(
+        db,
+        hd(db.view_order),
+        :view,
+        db.special.when,
+        range,
+        ~D[2026-10-08]
+      )
+
+    db
+  end
+
   # With a datebook view of that period (R47), shown first.
   defp with_datebook(db, nil), do: db
 
@@ -108,9 +127,11 @@ defmodule Agenda.TUI.FuzzTest do
             height <- integer(10..40),
             numeric <- boolean(),
             datebook <- member_of([nil, nil, :day, :week, :month, :quarter]),
+            filtered <- boolean(),
             max_runs: 300
           ) do
-      state = start(numeric |> sample() |> with_datebook(datebook), width: width, height: height)
+      db = numeric |> sample() |> with_filter(filtered) |> with_datebook(datebook)
+      state = start(db, width: width, height: height)
 
       Enum.reduce(keys, state, fn key, state ->
         # :tick advances the clock ten minutes, as the shell's loop would

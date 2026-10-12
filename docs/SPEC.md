@@ -887,8 +887,21 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   for a date and shows its period, ENTER keeps the period shown (the base
   date becomes its date, one undo step; a view based on "today" then stays
   there until Base date on is set again, as in Agenda) and ESC goes back;
-  while browsing nothing else can be done. Not yet: browsing standard
-  views with date filters, and Show Schedule (roadmap).
+  while browsing nothing else can be done. Standard views with date
+  filters are browsed too (R48). Not yet: Show Schedule (roadmap).
+- **R48 ✅ Browsing date filters** (Help "Browse Through Dates"). In a
+  standard view, View ▸ Browse or ALT-B moves the date filter of the
+  highlighted section, when it has one, else the view's: ← / → a day,
+  CTRL-← / CTRL-→ (or ↑ / ↓) a week, PGUP / PGDN a month, CTRL-PGUP /
+  CTRL-PGDN (⌥↑ / ⌥↓ on a Mac) a year; ALT-F5 moves the range to start on
+  a typed date. Each end of a date range is read against today, moved,
+  and shown as a fixed date (the view's line shows them; open ends stay
+  open; numeric ranges and category criteria do not move); items come and
+  go as the dates move. ENTER keeps the moved dates in the filter, one
+  undo step ("today".."end of this week" becomes, a week on,
+  "2026-10-19".."2026-10-23": fixed, no longer following today, as in
+  Agenda); ESC puts the filter back. Without a date filter, ALT-B says so.
+  BROWSE shows at the top right, and nothing else can be done meanwhile.
 
 ## 6. Out of scope for now
 

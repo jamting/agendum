@@ -168,6 +168,32 @@ defmodule Agenda.Core.RangeFilter do
   defp step(%Date{} = date, days), do: Date.add(date, days)
   defp step(number, n), do: number + n
 
+  @doc """
+  A date range moved by `days` and `months` (browsing, R48): each end is
+  read against the clock, moved, and kept as a fixed date; an open end
+  stays open. With no shift it is unchanged.
+  """
+  @spec shift(Database.t(), term_, %{days: integer, months: integer}, Context.clock()) :: term_
+  def shift(_db, range, %{days: 0, months: 0}, _clock), do: range
+
+  def shift(db, {:range, from, to, where}, shift, clock),
+    do: {:range, shift_bound(db, from, shift, clock), shift_bound(db, to, shift, clock), where}
+
+  defp shift_bound(_db, nil, _shift, _clock), do: nil
+
+  defp shift_bound(db, text, %{days: days, months: months}, clock) do
+    case resolve(db, text, clock) do
+      nil ->
+        text
+
+      date ->
+        date
+        |> Agenda.Core.MonthCalendar.move(:month, months)
+        |> Agenda.Core.MonthCalendar.move(:day, days)
+        |> Date.to_iso8601()
+    end
+  end
+
   @doc "The range as the title bar shows it, in the file's formats."
   @spec describe(Database.t(), term_, Context.clock() | nil) :: String.t()
   def describe(db, {:range, from, to, where}, today) do
