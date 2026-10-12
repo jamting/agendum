@@ -3,8 +3,8 @@ defmodule Agenda.TUI.CustomizeBox do
   The Customize box (File ▸ Customize; Agenda's Utilities Customize,
   ADR 0008): the person's own settings, for every file: Theme (R40), Date
   language and Fallback language (R14c), Input format, which opens
-  `Agenda.TUI.InputFormatBox` (R41b), Display key map and Confirm mode
-  (R54). A change applies at once, is not
+  `Agenda.TUI.InputFormatBox` (R41b), Display key map, Confirm mode and
+  Auto-save interval (R54). A change applies at once, is not
   part of undo, and is saved to the preferences file
   (`State.change_preference/3`).
 
@@ -15,7 +15,9 @@ defmodule Agenda.TUI.CustomizeBox do
   alias Agenda.Core.DateLanguage
   alias Agenda.TUI.{InputFormatBox, State, Theme}
 
-  @rows [:theme, :lang, :fallback, :input_format, :key_map, :confirm]
+  @rows [:theme, :lang, :fallback, :input_format, :key_map, :confirm, :auto_save]
+  # Agenda took any number of minutes from 1 to 60; these are the steps
+  @auto_save [0, 1, 2, 5, 10, 15, 20, 30, 45, 60]
 
   def open(state), do: State.push(state, %{type: :customize, cursor: 0})
 
@@ -34,6 +36,11 @@ defmodule Agenda.TUI.CustomizeBox do
 
   defp change(state, :input_format, _step), do: InputFormatBox.open(state)
   defp change(state, :key_map, _step), do: State.toggle_key_map(state)
+
+  defp change(state, :auto_save, step) do
+    minutes = next(@auto_save, state.prefs.auto_save, step)
+    State.change_preference(state, & &1, &%{&1 | auto_save: minutes})
+  end
 
   defp change(state, :confirm, _step) do
     on = not state.prefs.confirm
@@ -82,9 +89,14 @@ defmodule Agenda.TUI.CustomizeBox do
        end},
       {"Input format", "(SPACE)"},
       {"Display key map", yes_no(state.key_map)},
-      {"Confirm mode", yes_no(state.prefs.confirm)}
+      {"Confirm mode", yes_no(state.prefs.confirm)},
+      {"Auto-save interval", minutes(state.prefs.auto_save)}
     ]
   end
+
+  defp minutes(0), do: "Off"
+  defp minutes(1), do: "1 minute"
+  defp minutes(n), do: "#{n} minutes"
 
   defp yes_no(true), do: "Yes"
   defp yes_no(false), do: "No"

@@ -531,7 +531,7 @@ defmodule Agenda.TUI.CategoryScreens do
   # expands the highlighted category's family; pressed twice, everything.
   defp collapse_key(state, id, key) do
     db = state.db
-    twice = state.last_key == key
+    twice = state.last_key.key == key
 
     {collapsed, target} =
       case key do

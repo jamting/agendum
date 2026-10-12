@@ -60,7 +60,7 @@ defmodule Agenda.TUI.Update do
          do: Layout.settle(state),
          else: state
 
-    {%{state | effects: [], last_key: key}, state.effects}
+    {%{state | effects: [], last_key: %{key: key, at: state.now}}, state.effects}
   end
 
   # the splash screen goes at any key, which does nothing else (R52)
@@ -188,6 +188,7 @@ defmodule Agenda.TUI.Update do
       end
 
     state = %{state | dirty: state.db != state.saved_db}
+    {state, save} = auto_save(state, now)
 
     # calendars due to be read again (R45), one read at a time each
     state =
@@ -195,7 +196,7 @@ defmodule Agenda.TUI.Update do
       |> Core.calendars_due(now)
       |> Enum.reduce(%{state | effects: []}, &fetch_calendar(&2, &1.id, :auto))
 
-    {state, fetches} = {%{state | effects: []}, state.effects}
+    {state, fetches} = {%{state | effects: []}, save ++ state.effects}
 
     case rung do
       [] ->
@@ -206,6 +207,20 @@ defmodule Agenda.TUI.Update do
         {%{state | alarm_rang: true} |> State.info("Alarm: " <> texts), [:bell | fetches]}
     end
   end
+
+  # Auto-save (R54): a named file with unsaved changes is saved once no key
+  # has come for the person's interval; trying restarts the idle time, so
+  # a save that fails is tried again an interval later, not every second
+  defp auto_save(%State{prefs: %{auto_save: minutes}, dirty: true, path: path} = state, now)
+       when minutes > 0 and path != nil do
+    idle_since = state.last_key.at || now
+
+    if NaiveDateTime.diff(now, idle_since) >= minutes * 60,
+      do: {%{state | last_key: %{state.last_key | at: now}}, [{:save, path}]},
+      else: {state, []}
+  end
+
+  defp auto_save(state, _now), do: {state, []}
 
   @doc """
   Asks the shell to read a calendar (`{:fetch_calendar, id, url}`), unless
@@ -509,7 +524,7 @@ defmodule Agenda.TUI.Update do
   defp collapse_sections(state, %{slot: %{}}, _collapsed), do: datebook_sections(state)
 
   defp collapse_sections(state, row, collapsed) do
-    twice = state.last_key == {:alt, if(collapsed, do: "-", else: "=")}
+    twice = state.last_key.key == {:alt, if(collapsed, do: "-", else: "=")}
 
     db =
       if twice,

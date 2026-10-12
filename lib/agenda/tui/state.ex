@@ -9,7 +9,9 @@ defmodule Agenda.TUI.State do
 
   `collapsed` holds the categories whose families are collapsed wherever
   the hierarchy is shown (a display preference, not part of the file), and
-  `last_key` the previous key, so that pressing a key twice can mean more.
+  `last_key` the previous key and when it came, so that pressing a key
+  twice can mean more and auto-save (R54) knows how long the keyboard has
+  been idle.
 
   `undo` and `redo` hold snapshots for `Agenda.TUI.History`. `saved_db` is the
   database as last saved or loaded; the file is dirty whenever `db` differs.
@@ -49,7 +51,7 @@ defmodule Agenda.TUI.State do
           prefs: Agenda.Preferences.t(),
           fetching: %{optional(pos_integer) => :manual | :auto},
           theme: Agenda.TUI.Theme.name(),
-          last_key: term,
+          last_key: %{key: term, at: NaiveDateTime.t() | nil},
           undo: [map],
           redo: [map],
           saved_db: Database.t() | nil,
@@ -84,7 +86,7 @@ defmodule Agenda.TUI.State do
             prefs: %Agenda.Preferences{},
             fetching: %{},
             theme: :classic,
-            last_key: nil,
+            last_key: %{key: nil, at: nil},
             undo: [],
             redo: [],
             saved_db: nil,
@@ -92,14 +94,17 @@ defmodule Agenda.TUI.State do
 
   @spec new(Database.t(), keyword) :: t
   def new(%Database{} = db, opts \\ []) do
+    now =
+      Keyword.get_lazy(opts, :now, fn ->
+        NaiveDateTime.new!(Keyword.fetch!(opts, :today), ~T[09:00:00])
+      end)
+
     %__MODULE__{
       db: db,
       path: opts[:path],
       today: Keyword.fetch!(opts, :today),
-      now:
-        Keyword.get_lazy(opts, :now, fn ->
-          NaiveDateTime.new!(Keyword.fetch!(opts, :today), ~T[09:00:00])
-        end),
+      now: now,
+      last_key: %{key: nil, at: now},
       width: Keyword.get(opts, :width, 80),
       height: Keyword.get(opts, :height, 25),
       languages: Keyword.get(opts, :languages, [Agenda.Core.DateLanguage.English]),

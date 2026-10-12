@@ -20,7 +20,8 @@ defmodule Agenda.Preferences do
   `name` and `company` are shown on the splash screen, `last_file` is
   offered when Agendum starts without one (R52). `key_map`: whether the
   key bar shows; `confirm`: whether "are you sure?" questions are asked
-  (Confirm mode; both R54). `path` is where they are
+  (Confirm mode); `auto_save`: minutes without a key before unsaved
+  changes are saved, 0 for never (all R54). `path` is where they are
   kept (nil: not saved) and `user` the login name (the splash's name when
   none is set); neither is written in them.
   """
@@ -33,6 +34,7 @@ defmodule Agenda.Preferences do
           last_file: String.t() | nil,
           key_map: boolean,
           confirm: boolean,
+          auto_save: 0..60,
           path: String.t() | nil,
           user: String.t() | nil
         }
@@ -44,6 +46,7 @@ defmodule Agenda.Preferences do
             last_file: nil,
             key_map: true,
             confirm: true,
+            auto_save: 0,
             path: nil,
             user: nil
 
@@ -119,8 +122,16 @@ defmodule Agenda.Preferences do
       company: text.("company"),
       last_file: text.("last_file"),
       key_map: pick.("key_map", &yes_no/1) != :no,
-      confirm: pick.("confirm", &yes_no/1) != :no
+      confirm: pick.("confirm", &yes_no/1) != :no,
+      auto_save: pick.("auto_save", &minutes/1) || 0
     }
+  end
+
+  defp minutes(value) do
+    case Integer.parse(value) do
+      {n, ""} when n in 0..60 -> {:ok, n}
+      _ -> :error
+    end
   end
 
   # :yes or :no (not booleans, which `pick` would take for "not found")
@@ -177,7 +188,8 @@ defmodule Agenda.Preferences do
         {"last_file", prefs.last_file},
         # only what differs from the default
         {"key_map", if(prefs.key_map, do: nil, else: "no")},
-        {"confirm", if(prefs.confirm, do: nil, else: "no")}
+        {"confirm", if(prefs.confirm, do: nil, else: "no")},
+        {"auto_save", if(prefs.auto_save > 0, do: Integer.to_string(prefs.auto_save))}
       ]
       |> Enum.reject(&(elem(&1, 1) == nil))
       |> Enum.map(fn {key, value} -> "#{key} = #{value}\n" end)
@@ -188,7 +200,8 @@ defmodule Agenda.Preferences do
       Enum.map_join(DateLanguage.packs(), " ", & &1.name()) <>
       "\n# number_order: mdy myd dmy dym ydm ymd; date_separator: / - . , :;\n" <>
       "# clock: 12 or 24. name, company: shown when Agendum starts;\n" <>
-      "# last_file: the file offered then (kept by Agendum); key_map, confirm: yes or no.\n" <>
+      "# last_file: the file offered then (kept by Agendum); key_map, confirm: yes or no;\n" <>
+      "# auto_save: minutes without a key before saving, 1 to 60 (0: never).\n" <>
       Enum.join(lines)
   end
 end

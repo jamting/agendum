@@ -93,4 +93,13 @@ defmodule Agenda.PreferencesTest do
     assert text =~ "confirm = no\n"
     refute Preferences.parse(text).confirm
   end
+
+  test "the auto-save interval, 0 (off) to 60 minutes" do
+    assert Preferences.parse("").auto_save == 0
+    text = Preferences.format(%Preferences{auto_save: 10})
+    assert text =~ "auto_save = 10\n"
+    assert Preferences.parse(text).auto_save == 10
+    assert Preferences.parse("auto_save = 61").auto_save == 0
+    assert Preferences.parse("auto_save = soon").auto_save == 0
+  end
 end

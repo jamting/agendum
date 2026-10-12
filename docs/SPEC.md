@@ -1019,6 +1019,13 @@ Extras that are not in the original (details in `KEYBOARD.md`):
     others. Questions whose Y and N do different things are still asked:
     "Save changes first?" and, when unsubscribing, whether to discard the
     calendar's items too. Undo (R30) still reverses what was done.
+  - ✅ **Auto-save interval** (User's Guide 22-8): a file with a name and
+    unsaved changes is saved once no key has been pressed for that many
+    minutes, with the usual "Saved" message. Off (the default) or 1 to 60
+    minutes; File ▸ Customize steps through 1, 2, 5, 10, 15, 20, 30, 45
+    and 60, and `auto_save = N` in the file takes any of them. An untitled
+    file is never saved by itself. A save that fails is tried again an
+    interval later.
 
 ## 6. Out of scope for now
 
