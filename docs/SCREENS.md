@@ -282,6 +282,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:macros`            | box           | `TUI.Macros`           | ALT-F3                                           | R50           |
 | `:macro_props`       | box           | `TUI.MacroProps`       | F6 in the macro manager                          | R50           |
 | `:select_file`       | box           | `TUI.SelectFile`       | F3 in a file-name prompt                         | R51           |
+| `:splash`            | full screen   | `TUI.Splash`           | at start; any key or three seconds close it      | R52           |
 | `:devtools`          | full screen   | `TUI.DevTools`         | ESC ? (hidden)                                   | —             |
 
 `test/agenda/tui/screens_doc_test.exs` fails when a mode type is added without

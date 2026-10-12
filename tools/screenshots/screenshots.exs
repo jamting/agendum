@@ -40,6 +40,7 @@ defmodule Screenshots do
 
   defp shots(s) do
     [
+      {"00-splash", Agenda.TUI.Update.start(%{s | prefs: %{s.prefs | user: "rabbit"}}, true)},
       {"01-view", s},
       {"02-view-column", press(s, [:down, :right])},
       {"03-menu", press(s, {:f, 10})},

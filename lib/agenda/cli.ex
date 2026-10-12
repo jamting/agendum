@@ -24,7 +24,7 @@ defmodule Agenda.CLI do
 
   alias Agenda.{Core, Preferences, Sample, Store}
   alias Agenda.Core.{DateLanguage, InputFormat}
-  alias Agenda.TUI.{App, Layout, State, Theme}
+  alias Agenda.TUI.{App, Layout, State, Theme, Update}
 
   @type options :: %{
           file: String.t() | nil,
@@ -39,6 +39,8 @@ defmodule Agenda.CLI do
     env = System.get_env()
     path = Preferences.path(env)
     prefs = if path, do: Preferences.load(path), else: %Preferences{}
+    # the splash screen's name when none is set (R52)
+    prefs = %{prefs | user: env["USER"]}
 
     case parse_args(args, env, prefs) do
       :help -> IO.puts(@moduledoc)
@@ -184,6 +186,7 @@ defmodule Agenda.CLI do
             prefs: prefs
           )
           |> Layout.settle()
+          |> Update.start(options.file == nil and not options.demo)
 
         case App.run(state) do
           :ok -> :ok

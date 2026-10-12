@@ -166,7 +166,8 @@ defmodule Agenda.TUI.Draw do
   """
   @spec box(String.t(), [line], pos_integer) :: [line]
   def box(title, content, inner_width) do
-    title = String.slice(" #{title} ", 0, inner_width)
+    # an untitled box (the splash screen) has an unbroken top
+    title = if title == "", do: "", else: String.slice(" #{title} ", 0, inner_width)
     left = div(inner_width - String.length(title), 2)
     right = inner_width - left - String.length(title)
 

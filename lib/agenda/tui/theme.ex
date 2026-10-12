@@ -96,7 +96,10 @@ defmodule Agenda.TUI.Theme do
       catmgr: {:black, :cyan},
       catmgr_head: {:blue, :cyan},
       catmgr_note: {:blue, :cyan},
-      help: {:yellow, :blue}
+      help: {:yellow, :blue},
+      splash_logo: {:white, :black},
+      splash_title: {:white, :cyan},
+      splash_value: {:blue, :cyan}
     },
     blue: %{
       normal: "0;97;44",
@@ -138,7 +141,10 @@ defmodule Agenda.TUI.Theme do
       catmgr: "0;97;44",
       catmgr_head: "0;1;93;44",
       catmgr_note: "0;37;44",
-      help: "0;97;44"
+      help: "0;97;44",
+      splash_logo: "0;97;40",
+      splash_title: "0;1;30;47",
+      splash_value: "0;34;47"
     },
     mono: %{
       normal: "0",
@@ -180,7 +186,10 @@ defmodule Agenda.TUI.Theme do
       catmgr: "0",
       catmgr_head: "0;1",
       catmgr_note: "0;2",
-      help: "0"
+      help: "0",
+      splash_logo: "0;1",
+      splash_title: "0;1;7",
+      splash_value: "0;4;7"
     }
   }
 

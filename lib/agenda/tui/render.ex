@@ -52,6 +52,8 @@ defmodule Agenda.TUI.Render do
   ]
 
   @spec render(State.t()) :: [Draw.line()]
+  def render(%State{modes: [%{type: :splash} | _]} = state), do: Agenda.TUI.Splash.render(state)
+
   def render(%State{width: w} = state) do
     {base, overlays} = split_modes(state.modes)
     {styles, fill} = surface(base)

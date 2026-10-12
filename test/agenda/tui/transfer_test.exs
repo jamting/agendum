@@ -73,7 +73,9 @@ defmodule Agenda.TUI.TransferTest do
           Update.imported(state, "/x.json", {:ok, JSONFile.encode(state.db)}),
           Update.loaded(state, "/x.agenda", {:ok, state.db})
         ] do
-      assert {next.theme, next.input, next.prefs} == {state.theme, state.input, state.prefs}
+      # only the last file used changes (R52)
+      assert {next.theme, next.input, %{next.prefs | last_file: nil}} ==
+               {state.theme, state.input, state.prefs}
     end
   end
 end

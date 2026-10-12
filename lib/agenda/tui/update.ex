@@ -44,7 +44,8 @@ defmodule Agenda.TUI.Update do
     key = normalize(state, key)
 
     next =
-      with :pass <- Agenda.TUI.Macros.key(state, key),
+      with :pass <- splash_key(state, key),
+           :pass <- Agenda.TUI.Macros.key(state, key),
            :pass <- global_key(state, key),
            do: dispatch(state, State.mode(state), key)
 
@@ -60,6 +61,26 @@ defmodule Agenda.TUI.Update do
          else: state
 
     {%{state | effects: [], last_key: key}, state.effects}
+  end
+
+  # the splash screen goes at any key, which does nothing else (R52)
+  defp splash_key(%State{modes: [%{type: :splash} | _]} = state, key) when key != :macro_done,
+    do: Agenda.TUI.Splash.close(state)
+
+  defp splash_key(_state, _key), do: :pass
+
+  @doc """
+  How the program starts (R52): the splash screen, and when no file was
+  named (`ask_file`), under it the prompt for a file to open or create,
+  with the last file used.
+  """
+  def start(state, ask_file) do
+    state =
+      if ask_file,
+        do: prompt(state, "File to open or create:", :startup_open, state.prefs.last_file || ""),
+        else: state
+
+    Agenda.TUI.Splash.open(state)
   end
 
   # --- keyboard aliases -------------------------------------------------------
@@ -155,6 +176,17 @@ defmodule Agenda.TUI.Update do
 
     {db, rung} = Core.ring_alarms(db, now)
     state = %{state | now: now, today: today, db: db}
+
+    # the splash screen's three seconds (R52)
+    state =
+      case state.modes do
+        [%{type: :splash} = splash | _] ->
+          if Agenda.TUI.Splash.over?(splash, now), do: Agenda.TUI.Splash.close(state), else: state
+
+        _ ->
+          state
+      end
+
     state = %{state | dirty: state.db != state.saved_db}
 
     # calendars due to be read again (R45), one read at a time each
@@ -240,17 +272,37 @@ defmodule Agenda.TUI.Update do
 
   def saved(state, path, :ok) do
     %{state | path: path, dirty: false, saved_db: state.db}
+    |> remember(path)
     |> State.info("Saved #{Path.basename(path)}")
   end
 
   def saved(state, _path, {:error, reason}),
     do: State.error(state, "Could not save: #{inspect(reason)}")
 
+  # the file offered when Agendum next starts without one (R52); the shell
+  # saves the preferences when this changed them
+  defp remember(state, path), do: %{state | prefs: %{state.prefs | last_file: path}}
+
+  @doc """
+  The startup prompt's file (R52): opened when it exists; otherwise a new
+  file, saved there on the first save.
+  """
+  def opened(state, path, {:error, :enoent}) do
+    state
+    |> State.reopen(Core.new_file(), path)
+    |> remember(path)
+    |> State.info("New file #{Path.basename(path)} (saved there on the first save)")
+    |> Layout.settle()
+  end
+
+  def opened(state, path, result), do: loaded(state, path, result)
+
   def loaded(state, path, {:ok, db}) do
     %State{
       State.reopen(state, db, path)
       | message: {:message, "Retrieved #{Path.basename(path)}"}
     }
+    |> remember(path)
     |> Layout.settle()
   end
 
@@ -1245,6 +1297,9 @@ defmodule Agenda.TUI.Update do
         State.error(state, "A calendar needs a name")
     end
   end
+
+  defp prompt_action(state, :startup_open, text),
+    do: State.effect(state, {:open_or_create, Agenda.Store.normalize_path(text)})
 
   defp prompt_action(state, :retrieve, text),
     do: State.effect(state, {:load, Agenda.Store.normalize_path(text)})

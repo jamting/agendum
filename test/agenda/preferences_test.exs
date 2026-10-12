@@ -62,4 +62,19 @@ defmodule Agenda.PreferencesTest do
     path = Path.join([dir, "agendum", "preferences"])
     assert Preferences.load(path) == %Preferences{theme: :mono, path: path}
   end
+
+  test "the name and company for the splash screen, and the last file used" do
+    prefs = %Preferences{
+      name: "Rabbit",
+      company: "Friends and Relations",
+      last_file: "/home/rabbit/rabbit.agendum"
+    }
+
+    text = Preferences.format(prefs)
+    assert text =~ "name = Rabbit\n"
+    assert text =~ "last_file = /home/rabbit/rabbit.agendum\n"
+    assert Preferences.parse(text) == prefs
+    # the login name and where they are kept are not written
+    refute Preferences.format(%{prefs | user: "rabbit", path: "/p"}) =~ "user"
+  end
 end

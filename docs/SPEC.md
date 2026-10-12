@@ -977,6 +977,20 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   it was. Ours: file names keep their extensions (Agenda left them out);
   Agenda's F4 (delete), F6 (EXPAND), F8 (descriptions), F9 (rename) and
   INS are not offered.
+- **R52 ✅ Startup** (screenshot `docs/reference/screens/image0001-raw.png`).
+  Agendum starts with a splash screen laid out as Agenda's: a box over an
+  empty screen with the WOL block, the title "W O L ' S   A G E N D U M",
+  the tagline "Hoo's in control? You are.", the release, "Copyright JW&D +
+  WOL. All rites reserved.", Name and Company, and a word on sharing. Name
+  is `name` in the preferences, else the login name; Company is `company`
+  (shown only when set). Any key, which does nothing else, or three seconds
+  take it away. When no file was named (and not `--demo`), the prompt "File
+  to open or create:" waits under it, offering the last file used (F3
+  lists files, R51); a file that exists opens, one that does not starts a
+  new file there, saved on the first save; ESC leaves an untitled file.
+  The last file opened or saved is kept as `last_file` in the preferences.
+  Ours: Agenda asked for the file in its File Retrieve box and kept
+  Name/Company from installation.
 
 ## 6. Out of scope for now
 

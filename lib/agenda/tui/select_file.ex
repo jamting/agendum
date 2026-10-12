@@ -22,6 +22,7 @@ defmodule Agenda.TUI.SelectFile do
 
   @extensions %{
     retrieve: [".agendum", ".agenda"],
+    startup_open: [".agendum", ".agenda"],
     new_file: [".agendum", ".agenda"],
     save_as: [".agendum", ".agenda"],
     save_as_then_quit: [".agendum", ".agenda"],

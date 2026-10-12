@@ -80,6 +80,8 @@ defmodule Agenda.TUI.App do
   defp run_effects(state, [:quit | _]), do: {:quit, state}
 
   defp run_effects(state, [effect | rest]) do
+    before = state.prefs
+
     state =
       case effect do
         {:save, path} ->
@@ -87,6 +89,9 @@ defmodule Agenda.TUI.App do
 
         {:load, path} ->
           Update.loaded(state, path, Store.load(path))
+
+        {:open_or_create, path} ->
+          Update.opened(state, path, Store.load(path))
 
         {:write_text, path, text} ->
           Update.written(state, path, File.write(path, text))
@@ -105,6 +110,10 @@ defmodule Agenda.TUI.App do
           Task.start(fn -> send(loop, {:calendar_read, id, CalendarFetch.read(url)}) end)
           state
       end
+
+    # the last file used changed the preferences (R52): keep them
+    if state.prefs != before and state.prefs.path,
+      do: Preferences.save(state.prefs, state.prefs.path)
 
     run_effects(state, rest)
   end

@@ -91,6 +91,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.Macros`                    | ✔     | The macro manager (ALT-F3), Learn mode and running macros (ALT-Z), one undo step a run (R50).                                    |
 | `TUI.MacroProps`                | ✔     | The Macro Properties box: name, keystrokes, attached key, where it runs (R50).                                                   |
 | `TUI.SelectFile`                | ✔     | The Select File box: F3 in a file-name prompt lists a folder (read by `Store.list_dir/1`) to pick from (R51).                    |
+| `TUI.Splash`                    | ✔     | The splash screen at start, until a key or three seconds; the startup prompt waits under it (R52).                                |
 | `TUI.CalendarsBox`             | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
 | `TUI.NoteSearch`               | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
@@ -103,7 +104,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.Terminal`                 | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
 | `TUI.App`                      | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |
 | `Agenda.Store`                 | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write); folder listings for the Select File box.                     |
-| `Agenda.Preferences`           | ✘     | The person's preferences file: theme, languages, input format (`key = value`, ADR 0008).                                         |
+| `Agenda.Preferences`           | ✘     | The person's preferences file: theme, languages, input format, name, company, last file (`key = value`, ADR 0008).                                         |
 | `Agenda.CalendarFetch`         | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
 | `Agenda.CLI`                   | ✘     | `main/1` for the escript.                                                                                                        |
 
