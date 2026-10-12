@@ -84,6 +84,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.InputFormatBox`           | ✔     | The Input Format box: the person's number order, separator and clock, saved as preferences (R41b).                               |
 | `TUI.CustomizeBox`             | ✔     | File ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
 | `TUI.CalendarBox`              | ✔     | The pop-up calendar: F3 in a date column, ALT-C anywhere (R46).                                                                  |
+| `TUI.DatebookBox`, `TUI.Browse` | ✔     | A datebook view's settings box; browsing it to other periods (R47).                                                              |
 | `TUI.CalendarsBox`             | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
 | `TUI.NoteSearch`               | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |

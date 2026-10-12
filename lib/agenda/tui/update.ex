@@ -52,7 +52,7 @@ defmodule Agenda.TUI.Update do
 
     state =
       if state.modes == [] or
-           match?(%{type: t} when t in [:move_item, :searching], State.mode(state)),
+           match?(%{type: t} when t in [:move_item, :searching, :browse], State.mode(state)),
          do: Layout.settle(state),
          else: state
 
@@ -305,6 +305,7 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
 
   defp dispatch(state, %{type: :calendar} = m, key), do: CalendarBox.handle(state, m, key)
+  defp dispatch(state, %{type: :browse} = m, key), do: Agenda.TUI.Browse.handle(state, m, key)
 
   defp dispatch(state, %{type: :datebook_props} = m, key),
     do: Agenda.TUI.DatebookBox.handle(state, m, key)
@@ -418,6 +419,7 @@ defmodule Agenda.TUI.Update do
       {:alt_f, 6} -> SearchBox.open(state, :view)
       {:alt, "a"} -> perform(state, :alarm)
       {:alt, "c"} -> CalendarBox.open(state, nil)
+      {:alt, "b"} -> Agenda.TUI.Browse.open(state)
       {:alt_f, 8} -> perform(state, :last_view)
       {:alt, "-"} -> collapse_sections(state, row, true)
       {:alt, "="} -> collapse_sections(state, row, false)
@@ -1249,6 +1251,8 @@ defmodule Agenda.TUI.Update do
   defp prompt_action(state, {:datebook_time, view_id, row}, text),
     do: Agenda.TUI.DatebookBox.set_time(state, view_id, row, text)
 
+  defp prompt_action(state, :browse_to, text), do: Agenda.TUI.Browse.go_to(state, text)
+
   defp prompt_action(state, {:datebook_base, view_id}, text),
     do: Agenda.TUI.DatebookBox.set_base(state, view_id, text)
 
@@ -1786,6 +1790,8 @@ defmodule Agenda.TUI.Update do
   end
 
   defp do_perform(state, :add_view, _), do: prompt(state, "Name of new view:", :add_view)
+
+  defp do_perform(state, :browse, _), do: Agenda.TUI.Browse.open(state)
 
   defp do_perform(state, :view_props, _) do
     if State.view(state).datebook,

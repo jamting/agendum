@@ -107,6 +107,11 @@ defmodule Agenda.TUI.Render do
         %{type: :confirm, question: q} ->
           text_lines(state, base, :prompt, q)
 
+        %{type: :browse} ->
+          period = State.view(state).datebook.period
+          hint = "← → another #{period} · ALT-F5 go to a date · ENTER keeps it · ESC goes back"
+          text_lines(state, base, :panel_hint, hint)
+
         _ ->
           case message_line(state) do
             [] -> {file_line(state, base), where_line(state, base)}
@@ -231,6 +236,9 @@ defmodule Agenda.TUI.Render do
 
       top && top.type in [:picker, :scope, :calendar] ->
         "CHOICES"
+
+      top && top.type == :browse ->
+        "BROWSE"
 
       top && top.type in [:profile, :group_profile] ->
         "ASSIGN"
@@ -441,6 +449,14 @@ defmodule Agenda.TUI.Render do
       {"F6", "Time", "Set a time"},
       {"type", "Go to", "Type a date to go there"},
       {"ESC", "Cancel"}
+    ]
+
+  defp mode_keys(%{type: :browse}),
+    do: [
+      {"←→", "Period", "← → or < >", "Previous / next period"},
+      {"A-F5", "Go to", "ALT-F5", "Go to a date"},
+      {"ENTER", "Keep", "Keep this period"},
+      {"ESC", "Back", "Back to where it was"}
     ]
 
   defp mode_keys(%{type: :datebook_props}),
@@ -1052,6 +1068,8 @@ defmodule Agenda.TUI.Render do
      ALT-F8        Back to the previous view        ESC *
      ALT-A         Set or cancel an alarm            ESC a
      ALT-C         Show the calendar (to look up a date)  ESC c
+     ALT-B         Browse a datebook view: ← → a period, ALT-F5 a date,
+                   ENTER keeps it, ESC goes back      ESC b
      ALT-O         Depend on the marked items (&); with none marked,
                    clear the item's dependencies     ESC o
      ALT-X / ALT-E Execute all conditions and actions / the section's

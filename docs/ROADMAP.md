@@ -96,7 +96,9 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ## Milestone 5 — Time management and automation
 
-- [ ] Datebook views: items by day, week, month or quarter, browsing forward and back (ALT-B); settings Period, Interval, Base date on, Section separators; beginning/end of week in the global date settings (User's Guide chapter 10)
+- [x] Datebook views: items by day, week, month or quarter, browsing forward and back (ALT-B); settings Date and End category, Section, Period, Interval, Start and End at, Base date on (R47)
+- [ ] Browse standard views and sections with date filters: ALT-B shifts the filters by a day (← →), week (CTRL-← →), month (PGUP/PGDN) or year (CTRL-PGUP/PGDN); ENTER keeps, ESC restores (Help "Browse Through Dates")
+- [ ] Show Schedule (Utilities Show Sched): the items of one date, optionally of one category, in the Show View (User's Guide 10-14 to 10-16)
 - [x] Pop-up calendar: F3 in a date column picks a date, ALT-C shows one for reference; F6 a time, typing jumps to a date (R46)
 - [ ] Learn-mode macros: record keystrokes, store them in the file, replay them, attach them to keys (Working with Macros, chapter 1)
 - [ ] A starter file like Agenda's Activities Planner: categories and views, no items (Starter Applications)

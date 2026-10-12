@@ -153,8 +153,19 @@ defmodule Agenda.TUI.State do
     }
   end
 
+  @doc """
+  The current view; while a datebook view is browsed (R47), with the
+  browsed period instead of its own.
+  """
   @spec view(t) :: Agenda.Core.View.t()
-  def view(%__MODULE__{db: db, view_id: id}), do: Database.view(db, id)
+  def view(%__MODULE__{db: db, view_id: id} = state) do
+    view = Database.view(db, id)
+
+    case view.datebook && Agenda.TUI.Browse.browsed(state, id) do
+      %Date{} = date -> %{view | datebook: %{view.datebook | base: Date.to_iso8601(date)}}
+      _ -> view
+    end
+  end
 
   @spec mode(t) :: map | nil
   def mode(%__MODULE__{modes: [top | _]}), do: top

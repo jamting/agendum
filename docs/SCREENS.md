@@ -102,6 +102,10 @@ or handles it.
     - **Picker** `:picker` for the Date category, End category and Section.
     - **Prompt** `:prompt` for a time (Start at / End at of a day) or the base date.
   - **Choice** `:choice` (View ▸ Add, after the name): Standard or Datebook.
+  - **Browsing** `:browse` (View ▸ Browse, ALT-B, in a datebook view): the
+    view flips to other periods until ENTER keeps one or ESC goes back
+    (R47). `TUI.Browse`.
+    - **Prompt** `:prompt` for a date to go to (ALT-F5).
   - **Calendar** `:calendar` (F3 in a date column; ALT-C anywhere in a
     view): the pop-up calendar, to pick a date (and time) for the entry or
     to look one up (R46). `TUI.CalendarBox`.
@@ -256,6 +260,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:alarm_list`        | box           | `TUI.AlarmList`        | Search ▸ Alarms                                  | R38           |
 | `:calendar`          | box           | `TUI.CalendarBox`      | F3 in a date column, ALT-C                       | R46           |
 | `:datebook_props`    | box           | `TUI.DatebookBox`      | View ▸ Properties of a datebook view             | R47           |
+| `:browse`            | control panel | `TUI.Browse`           | View ▸ Browse, ALT-B                             | R47           |
 | `:devtools`          | full screen   | `TUI.DevTools`         | ESC ? (hidden)                                   | —             |
 
 `test/agenda/tui/screens_doc_test.exs` fails when a mode type is added without

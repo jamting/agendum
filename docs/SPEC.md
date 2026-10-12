@@ -837,7 +837,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   Agenda's screen started on Sunday), the calendar keeps the entry's time
   unless F6 changes it, and Agenda's Set Time box (SPACE between hours and
   minutes, GREY + / −) is a typed time.
-- **R47 ⏳ Datebook views** (User's Guide chapter 10, 10-1 to 10-14; Help
+- **R47 ✅ Datebook views** (User's Guide chapter 10, 10-1 to 10-14; Help
   "View Add box", "Browse Through Dates"). A datebook view is like a page
   of an appointment book: its sections are time slots, all headed by one
   category. Settings: Date category (When by default) places items by
@@ -877,7 +877,13 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   "Datebook for: When" (the Section) at the top right, and the view
   manager marks datebook views with *. Typing into a slot dates the item;
   ALT-D/U, DEL or F3 on a slot, collapsing, section filter and sort, and
-  ALT-F10 say why not. To come: browsing (ALT-B, View ▸ Browse).
+  ALT-F10 say why not. Browsing (View ▸ Browse or ALT-B, BROWSE at the
+  top right): ← → (or < >) show the previous / next period, ALT-F5 asks
+  for a date and shows its period, ENTER keeps the period shown (the base
+  date becomes its date, one undo step; a view based on "today" then stays
+  there until Base date on is set again, as in Agenda) and ESC goes back;
+  while browsing nothing else can be done. Not yet: browsing standard
+  views with date filters, and Show Schedule (roadmap).
 
 ## 6. Out of scope for now
 

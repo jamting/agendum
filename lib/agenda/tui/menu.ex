@@ -60,6 +60,7 @@ defmodule Agenda.TUI.Menu do
          {"Rename", "Rename the current view", :rename_view},
          {"Discard", "Delete the current view (items are kept)", :discard_view},
          {"Properties", "A datebook view's settings: period, base date, categories", :view_props},
+         {"Browse", "Flip a datebook view to other days, weeks or months (ALT-B)", :browse},
          {"Section", "Add, remove or collapse sections",
           [
             {"Below", "Add a section below the current one (ALT-D)", :section_below},

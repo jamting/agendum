@@ -113,4 +113,59 @@ defmodule Agenda.TUI.DatebookViewTest do
       assert screen(press(state, {:f, 8})) =~ ~r/\*This week +Datebook: week, When/
     end
   end
+
+  describe "browsing (ALT-B)" do
+    defp first_slot(state), do: Layout.rows(state) |> hd() |> Map.get(:slot) |> Map.get(:from)
+
+    test "← → flip through the weeks; ESC goes back, the file unchanged", %{state: state} do
+      db = state.db
+      state = press(state, {:alt, "b"})
+      assert %{type: :browse} = State.mode(state)
+      assert screen(state) =~ "BROWSE"
+
+      state = press(state, [:right, :right])
+      assert first_slot(state) == ~D[2026-10-26]
+      assert screen(state) =~ "Mon 2026-10-26"
+      assert state.db == db
+
+      state = press(state, :esc)
+      assert state.modes == []
+      assert first_slot(state) == ~D[2026-10-12]
+    end
+
+    test "ENTER keeps the period: the base date becomes its date, one undo step", %{state: state} do
+      state = press(state, [{:alt, "b"}, :left, :enter])
+      assert state.modes == []
+      assert State.view(state).datebook.base == "2026-10-05"
+      assert first_slot(state) == ~D[2026-10-05]
+
+      undone = Agenda.TUI.History.undo(state)
+      assert State.view(undone).datebook.base == "today"
+    end
+
+    test "ALT-F5 goes to the period of a typed date", %{state: state} do
+      state = press(state, [{:alt, "b"}, {:alt_f, 5}, "2026-12-24", :enter])
+      assert %{type: :browse} = State.mode(state)
+      assert first_slot(state) == ~D[2026-12-21]
+    end
+
+    test "while browsing, nothing else can be done", %{state: state} do
+      db = state.db
+      state = press(state, [{:alt, "b"}, "x", :enter])
+      assert state.db == db
+    end
+
+    test "a month view moves by months; a standard view cannot be browsed", %{state: state} do
+      state = press(state, [{:f, 10}, "v", "p", :down, :down, :down, " ", :esc])
+      state = press(state, [{:alt, "b"}, :right])
+      assert State.view(state).datebook.period == :month
+      assert screen(state) =~ "Mon 2026-10-26 → Fri 2026-10-30"
+      assert screen(state) =~ "Mon 2026-11-02"
+
+      plain =
+        state |> press(:esc) |> State.switch_view(hd(state.db.view_order)) |> Layout.settle()
+
+      assert panel(press(plain, {:alt, "b"})) =~ "Browse needs a datebook view"
+    end
+  end
 end
