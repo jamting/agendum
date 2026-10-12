@@ -6,8 +6,10 @@ defmodule Agenda.TUI.MacroKeys do
   `{CtlN}`, `{CtlLeft}`, `{PGDN}` … Names are read in any case. As in
   Agenda, a misspelt name is typed as written, line breaks are not keys,
   and the spaces that start a continuation line are left out (the end of a
-  line keeps its spaces). Ours: `{LBRACE}` and `{RBRACE}` type braces, and
-  keys Agenda had no name for get one in its style (`{AltBS}`, `{AltShfD}`).
+  line keeps its spaces). `{CALL Name}` runs another macro (Agenda's
+  {CALL}, what Learn mode records for a key attached to a macro). Ours:
+  `{LBRACE}` and `{RBRACE}` type braces, and keys Agenda had no name for
+  get one in its style (`{AltBS}`, `{AltShfD}`).
 
   Pure; the key events are `Agenda.TUI.Keys`'.
   """
@@ -43,6 +45,7 @@ defmodule Agenda.TUI.MacroKeys do
   @spec encode([term]) :: String.t()
   def encode(keys), do: Enum.map_join(keys, &name/1)
 
+  defp name({:call, macro}), do: "{CALL #{macro}}"
   defp name({:char, "{"}), do: "{LBRACE}"
   defp name({:char, "}"}), do: "{RBRACE}"
   defp name({:char, c}), do: c
@@ -90,10 +93,20 @@ defmodule Agenda.TUI.MacroKeys do
     lower = String.downcase(name)
 
     cond do
-      lower == "lbrace" -> {:char, "{"}
-      lower == "rbrace" -> {:char, "}"}
-      Map.has_key?(@by_name, lower) -> @by_name[lower]
-      true -> numbered(lower) || modified(name, lower)
+      String.starts_with?(lower, "call ") and String.trim(String.slice(name, 5..-1//1)) != "" ->
+        {:call, name |> String.slice(5..-1//1) |> String.trim()}
+
+      lower == "lbrace" ->
+        {:char, "{"}
+
+      lower == "rbrace" ->
+        {:char, "}"}
+
+      Map.has_key?(@by_name, lower) ->
+        @by_name[lower]
+
+      true ->
+        numbered(lower) || modified(name, lower)
     end
   end
 

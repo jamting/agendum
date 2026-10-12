@@ -150,4 +150,94 @@ defmodule Agenda.TUI.MacrosTest do
     assert stopped.macro.learning == nil
     assert macro(stopped, "Half").keys == "half an item"
   end
+
+  describe "editing, properties and attached keys" do
+    setup %{state: state} do
+      %{state: learned(state)}
+    end
+
+    test "F2 edits the keystrokes as text, a line after each {ENTER}", %{state: state} do
+      state = press(state, [{:alt_f, 3}, {:f, 2}])
+      assert screen(state) =~ "Macro: Water"
+      assert screen(state) =~ "Water the lettuces{ENTER}"
+
+      state = press(state, [:ctrl_end, "Weed{ENTER}", :esc])
+      assert macro(state, "Water").keys == "Water the lettuces{ENTER}\nWeed{ENTER}"
+      state = press(state, [:esc, {:alt_f, 3}, :enter])
+      assert count(state, "Weed") == 1
+    end
+
+    test "a key attached in Properties runs the macro, in views by default", %{state: state} do
+      state = press(state, [{:alt_f, 3}, {:f, 6}, :down, :down, :enter, "{F4}", :enter])
+      assert macro(state, "Water").key == "{F4}"
+      assert screen(state) =~ ~r/Attach to key +: \{F4\}/
+
+      state = press(state, [:esc, :esc])
+      # the key bar shows the macro's name on F4
+      assert screen(state) =~ "F4 Water"
+      state = press(state, {:f, 4})
+      assert count(state, "Water the lettuces") == 2
+
+      # not in the category manager unless it may run there
+      state =
+        press(state, [{:alt_f, 3}, {:f, 6}, :down, :down, :down, :down, :down, " ", :esc, :esc])
+
+      refute macro(state, "Water").run_from.catmgr
+      assert press(state, [{:f, 9}, {:f, 4}]) |> count("Water the lettuces") == 2
+    end
+
+    test "Everywhere else needs an attached key; ALT-F3 cannot be one", %{state: state} do
+      state = press(state, [{:alt_f, 3}, {:f, 6}] ++ List.duplicate(:down, 6) ++ [" "])
+      assert panel(state) =~ "Only a macro attached to a key runs everywhere else"
+
+      state = press(state, [:up, :up, :up, :up, :enter, "{AltF3}", :enter])
+      assert panel(state) =~ "ALT-F1, ALT-F3 and ALT-Z cannot run a macro"
+
+      state = press(state, [:enter, "{F4}{F5}", :enter])
+      assert panel(state) =~ "Type one key"
+    end
+
+    test "inside a run, an attached key does its own work", %{state: state} do
+      {:ok, db, mark} = Core.add_macro(state.db, "Mark")
+      db = db |> Core.set_macro_keys(mark, "{F7}") |> Core.attach_macro(mark, "{F7}")
+      state = %{state | db: db}
+      # F7 runs Mark, whose F7 marks the item
+      state = press(state, [:down, {:f, 7}])
+      assert Enum.any?(Map.values(state.db.items), & &1.marked)
+    end
+
+    test "learning records an attached key as a call; {CALL} runs it", %{state: state} do
+      state =
+        press(state, [{:alt_f, 3}, {:f, 6}, :down, :down, :enter, "{F4}", :enter, :esc, :esc])
+
+      state = press(state, [{:alt_f, 3}, :insert, "Twice", :enter, {:f, 7}, {:f, 4}, {:alt_f, 3}])
+      assert macro(state, "Twice").keys == "{CALL Water}"
+      assert count(state, "Water the lettuces") == 2
+
+      state = press(state, [{:alt_f, 3}, :down, :enter])
+      assert count(state, "Water the lettuces") == 3
+    end
+
+    test "DEL deletes after asking; ALT-F5 sorts; ALT-↑↓ moves", %{state: state} do
+      state = press(state, [{:alt_f, 3}, :insert, "Apples", :enter])
+      names = fn s -> s.db |> Agenda.Core.Database.macros() |> Enum.map(& &1.name) end
+      assert names.(state) == ["Water", "Apples"]
+
+      state = press(state, {:alt_f, 5})
+      assert names.(state) == ["Apples", "Water"]
+      assert %{cursor: 0} = State.mode(state)
+
+      state = press(state, {:alt, :down})
+      assert names.(state) == ["Water", "Apples"]
+      assert %{cursor: 1} = State.mode(state)
+
+      state = press(state, [:delete, "y"])
+      assert names.(state) == ["Water"]
+    end
+
+    test "Properties renames", %{state: state} do
+      state = press(state, [{:alt_f, 3}, {:f, 6}, :enter, {:ctrl, "u"}, "Watering", :enter])
+      assert macro(state, "Watering")
+    end
+  end
 end

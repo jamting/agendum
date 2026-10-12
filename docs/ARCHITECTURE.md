@@ -89,6 +89,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `TUI.ScheduleBox`               | ✔     | Search ▸ Schedule: one date's items in the Show View (R49).                                                                      |
 | `TUI.MacroKeys`                 | ✔     | Key events as macro text in Agenda's notation (`{F10}vc{ENTER}`), and back (R50).                                                |
 | `TUI.Macros`                    | ✔     | The macro manager (ALT-F3), Learn mode and running macros (ALT-Z), one undo step a run (R50).                                    |
+| `TUI.MacroProps`                | ✔     | The Macro Properties box: name, keystrokes, attached key, where it runs (R50).                                                   |
 | `TUI.CalendarsBox`             | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
 | `TUI.NoteSearch`               | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `TUI.AlarmList`                | ✔     | The alarm list box: current and past alarms (R38).                                                                               |

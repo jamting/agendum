@@ -21,6 +21,7 @@ defmodule Agenda.TUI.Render do
     :datebook_props,
     :schedule,
     :macros,
+    :macro_props,
     :profile,
     :props,
     :choice,
@@ -206,6 +207,10 @@ defmodule Agenda.TUI.Render do
   end
 
   defp where_line(_state, %{type: :viewmgr}), do: [{:title, " View Manager"}]
+
+  defp where_line(_state, %{type: :note, target: {:macro, _}, title: title}),
+    do: [{:title, " Macro: " <> title}]
+
   defp where_line(_state, %{type: :note, title: title}), do: [{:title, " Note for: " <> title}]
   defp where_line(_state, %{type: :help}), do: [{:title, " Help"}]
   defp where_line(_state, %{type: :devtools}), do: [{:title, " Developer tools"}]
@@ -264,6 +269,7 @@ defmodule Agenda.TUI.Render do
             :display_format,
             :datebook_props,
             :schedule,
+            :macro_props,
             :input_format,
             :customize,
             :calendars,
@@ -381,11 +387,29 @@ defmodule Agenda.TUI.Render do
       end
       |> Enum.map(&full_entry/1)
 
+    keys = Enum.map(keys, &attached_label(state, &1))
     full = keybar_segments(keys, fn {_, _, key, label} -> {key, label} end, " ")
     short = keybar_segments(keys, fn {key, label, _, _} -> {key, label} end, "")
     segments = if Draw.width(full) <= state.width, do: full, else: short
     Draw.line(segments, state.width, :keybar)
   end
+
+  # a function key attached to a macro shows the macro's name, as in
+  # Agenda (its first seven letters in the short bar, R50)
+  defp attached_label(state, {"F" <> n = key, _, long_key, _} = entry) do
+    case Integer.parse(n) do
+      {number, ""} ->
+        case Agenda.TUI.Macros.attached(state, {:f, number}) do
+          nil -> entry
+          macro -> {key, String.slice(macro.name, 0, 7), long_key, macro.name}
+        end
+
+      _ ->
+        entry
+    end
+  end
+
+  defp attached_label(_state, entry), do: entry
 
   defp full_entry({key, label}), do: {key, label, key, label}
   defp full_entry({key, label, full}), do: {key, label, key, full}
@@ -487,6 +511,20 @@ defmodule Agenda.TUI.Render do
       {"ENTER", "Run", "Run the macro"},
       {"INS/^N", "New", "INS/CTRL-N", "New macro"},
       {"F7", "Learn", "Record its keys"},
+      {"F2", "Edit", "Edit its keys"},
+      {"F6", "Props", "Properties"},
+      {"DEL", "Delete"},
+      {"A-F5", "Sort", "ALT-F5", "Sort by name"},
+      {"A-↑↓", "Move", "ALT-↑↓", "Move"},
+      {"ESC", "Close"}
+    ]
+
+  defp mode_keys(%{type: :macro_props}),
+    do: [
+      {"↑↓", "Setting", "Move between settings"},
+      {"ENTER", "Change", "Change the setting"},
+      {"SPACE", "Yes/No", "Switch Yes/No"},
+      {"DEL", "Detach", "Detach the key"},
       {"ESC", "Close"}
     ]
 
@@ -1109,7 +1147,8 @@ defmodule Agenda.TUI.Render do
      ALT-A         Set or cancel an alarm            ESC a
      ALT-C         Show the calendar (to look up a date)  ESC c
      ALT-F3        Macros: the macro manager; in Learn mode, stop
-                   recording (F7 in the manager learns, ENTER runs)  ESC #
+                   recording (F7 in the manager learns, ENTER runs, F2
+                   edits, F6 properties: attach to a key)  ESC #
      ALT-Z         Run the last macro again              ESC z
      ALT-B         Browse a datebook view (← → a period) or a date filter
                    (← → a day, ↑↓ a week, PGUP/PGDN a month, CTRL-PGUP/PGDN
@@ -1273,6 +1312,9 @@ defmodule Agenda.TUI.Render do
 
   defp box_title(_state, %{type: :schedule}), do: "Show Schedule"
   defp box_title(_state, %{type: :macros}), do: "Macros"
+
+  defp box_title(state, %{type: :macro_props} = mode),
+    do: Agenda.TUI.MacroProps.title(state, mode)
 
   defp box_title(state, %{type: :choice, kind: :learn, macro_id: id}),
     do: "Learn: #{state.db.macros[id].name}"
@@ -1712,7 +1754,24 @@ defmodule Agenda.TUI.Render do
       |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
 
     top = max(mode.cursor - (max_rows - 3), 0)
-    Enum.drop(rows, top) ++ [[], [{:box, " INS new · F7 learns · ENTER runs · ESC closes"}]]
+
+    Enum.drop(rows, top) ++
+      [[], [{:box, " INS new · F7 learn · ENTER run · F2 edit · F6 props · DEL"}]]
+  end
+
+  defp box_content(state, %{type: :macro_props} = mode, _inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.MacroProps.lines(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        [
+          {:box, " " <> Draw.pad(label, 26) <> ": "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), value}
+        ]
+      end)
+
+    rows ++ [[], [{:box, " ENTER changes · SPACE switches Yes/No · DEL detaches"}]]
   end
 
   defp box_content(state, %{type: :schedule} = mode, _inner, _max_rows) do

@@ -52,6 +52,13 @@ defmodule Agenda.TUI.MacroKeysTest do
     assert MacroKeys.decode("a{b") == [{:char, "a"}, {:char, "{"}, {:char, "b"}]
   end
 
+  test "{CALL Name} runs another macro" do
+    assert MacroKeys.decode("x{call Water the garden}y") ==
+             [{:char, "x"}, {:call, "Water the garden"}, {:char, "y"}]
+
+    assert MacroKeys.encode([{:call, "Water"}]) == "{CALL Water}"
+  end
+
   test "keys the decoder could not name are left out" do
     assert MacroKeys.encode([:unknown, {:char, "x"}]) == "x"
   end

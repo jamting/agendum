@@ -131,11 +131,12 @@ defmodule Agenda.TUI.FuzzTest do
     handle(state, played ++ keys)
   end
 
-  # With macros (R50): one that types, one that runs the manager's first
-  # macro from inside itself.
+  # With macros (R50): one on F4 that types and calls the other, which runs
+  # the manager's first macro from inside itself.
   defp with_macros(db) do
     {:ok, db, water} = Agenda.Core.add_macro(db, "Water")
-    db = Agenda.Core.set_macro_keys(db, water, "Water the lettuces{ENTER}{DOWN}")
+    db = Agenda.Core.set_macro_keys(db, water, "Water the lettuces{ENTER}{DOWN}{CALL Again}")
+    db = Agenda.Core.attach_macro(db, water, "{F4}")
     {:ok, db, again} = Agenda.Core.add_macro(db, "Again")
     Agenda.Core.set_macro_keys(db, again, "{AltF3}{ENTER}x{AltZ}")
   end

@@ -914,7 +914,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   browses it to other days (R48). The Show View starts afresh each time it
   is used, by a schedule, a search (R37) or a dependency list (R43): its
   section and filter are those of the last use.
-- **R50 ⏳ Learn-mode macros** (Working with Macros, chapter 1). A file
+- **R50 ✅ Learn-mode macros** (Working with Macros, chapter 1). A file
   keeps macros (Agenda allowed 100): each has a name of up to 35
   characters, unique case aside, its keystrokes, the key it is attached to
   (a key belongs to one macro at a time) and where it can be run from:
@@ -946,9 +946,23 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   do nothing over a line being typed, a prompt, a question or the menu (in
   Learn mode they still stop); within a run ALT-Z does nothing (Agenda
   could not record it); runs started from runs stop 8 deep ("Macros
-  started 8 deep; stopped"); no beep on each recorded key. To come:
-  editing a macro's text, Properties and attached keys, deleting, sorting
-  and moving macros (roadmap).
+  started 8 deep; stopped"); no beep on each recorded key. In the manager
+  F2 opens the macro edit screen, the note editor with the keystrokes as
+  text (a line after each {ENTER}; saved on leaving), F6 the Macro
+  Properties box: Name (ENTER renames), Keystrokes (edits them), Attach to
+  key (ENTER asks for one key in the notation, `{F4}`, `{ShfF4}`,
+  `{CtlE}`; DEL detaches; ALT-F1, ALT-F3 and ALT-Z cannot be attached) and
+  Run from View, Note, Category manager and, for an attached key only,
+  Everywhere else (SPACE switches Yes / No). An attached key runs its
+  macro where the macro may run, instead of its own command; a function key
+  attached to a macro shows the macro's name in the key bar. Within a run
+  an attached key does its own work, as in Agenda; `{CALL Name}` runs
+  another macro (Agenda's {CALL}), and Learn mode records a key attached
+  to a macro as such a call, not the keys that macro plays. DEL deletes a
+  macro after asking, ALT-F5 sorts the list by name. Ours: ALT-↑ / ALT-↓
+  move a macro in the list, as in the view manager (Agenda: ALT-F10 then
+  ENTER). Not done: the macro command language (Working with Macros,
+  chapters 2–3), external macro files, protection and hidden macros.
 
 ## 6. Out of scope for now
 

@@ -218,6 +218,10 @@ or handles it.
     keystrokes, ENTER runs it (R50). `TUI.Macros`.
     - **Prompt** `:prompt` for a new macro's name.
     - **Choice** `:choice` (F7 on a macro with keystrokes): replace or append.
+    - **Note editor** `:note` (F2): the macro edit screen, its keystrokes as text.
+    - **Macro Properties** `:macro_props` (F6): name, keystrokes, attached key,
+      where it can run (R50). `TUI.MacroProps`.
+      - **Prompt** `:prompt` for the name or the key.
   - **Alarm list** `:alarm_list` (Search ▸ Alarms):
     current and past alarms (R38). `TUI.AlarmList`.
 
@@ -273,6 +277,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:browse`            | control panel | `TUI.Browse`           | View ▸ Browse, ALT-B                             | R47, R48      |
 | `:schedule`          | box           | `TUI.ScheduleBox`      | Search ▸ Schedule                                | R49           |
 | `:macros`            | box           | `TUI.Macros`           | ALT-F3                                           | R50           |
+| `:macro_props`       | box           | `TUI.MacroProps`       | F6 in the macro manager                          | R50           |
 | `:devtools`          | full screen   | `TUI.DevTools`         | ESC ? (hidden)                                   | —             |
 
 `test/agenda/tui/screens_doc_test.exs` fails when a mode type is added without

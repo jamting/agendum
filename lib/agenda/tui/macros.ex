@@ -46,15 +46,75 @@ defmodule Agenda.TUI.Macros do
   def key(state, {:alt_f, 3}), do: open(state)
   def key(%State{macro: %{playing: n}} = state, {:alt, "z"}) when n > 0, do: state
   def key(state, {:alt, "z"}), do: run_last(state)
+
+  # {CALL Name} in a macro runs that macro
+  def key(state, {:call, name}) do
+    case Database.find_macro(state.db, name) do
+      nil -> State.error(state, "No macro is called #{name}")
+      macro -> run(state, macro)
+    end
+  end
+
+  # a key attached to a macro runs it, where the macro may run; within a
+  # run the key does its own work, as in Agenda
+  def key(%State{macro: %{playing: 0}} = state, key) do
+    case attached(state, key) do
+      nil -> :pass
+      macro -> run(state, macro)
+    end
+  end
+
   def key(_state, _key), do: :pass
 
-  @doc "In Learn mode, `key` is recorded into the macro (after it did its work)."
-  def record(%State{macro: %{learning: %{} = l}}, key, %State{macro: %{learning: %{}}} = next)
+  @doc """
+  In Learn mode, `key` is recorded into the macro (after it did its work);
+  a key attached to a macro is recorded as a call to it ({CALL Name}).
+  """
+  # (keys a run plays are not the user's: only the call is recorded)
+  def record(
+        %State{macro: %{learning: %{} = l, playing: 0}} = before,
+        key,
+        %State{macro: %{learning: %{}}} = next
+      )
       when key not in [:macro_done, {:alt_f, 3}, {:alt, "z"}] do
-    %{next | macro: %{next.macro | learning: %{l | keys: [key | l.keys]}}}
+    recorded =
+      case attached(before, key) do
+        nil -> key
+        macro -> {:call, macro.name}
+      end
+
+    %{next | macro: %{next.macro | learning: %{l | keys: [recorded | l.keys]}}}
   end
 
   def record(_before, _key, next), do: next
+
+  @doc "The macro a key is attached to, if it may run here."
+  def attached(state, key) do
+    with place when place != :none <- place(state),
+         notation when notation != "" <- MacroKeys.encode([key]) do
+      Enum.find(Database.macros(state.db), &(&1.key == notation and &1.run_from[place]))
+    else
+      _ -> nil
+    end
+  end
+
+  @doc """
+  Where the user is, for where a macro may run: `:view`, `:note`,
+  `:catmgr` or `:elsewhere` (boxes, typing); `:none` in the macro manager
+  and while a macro's text or key is being edited.
+  """
+  def place(state) do
+    case {state.edit, State.mode(state)} do
+      {_, %{type: t}} when t in [:macros, :macro_props, :devtools] -> :none
+      {_, %{type: :note, target: {:macro, _}}} -> :none
+      {_, %{type: :prompt, action: {:attach_macro, _}}} -> :none
+      {%{}, _} -> :elsewhere
+      {nil, nil} -> :view
+      {nil, %{type: :note}} -> :note
+      {nil, %{type: :catmgr}} -> :catmgr
+      _ -> :elsewhere
+    end
+  end
 
   # --- the macro manager -------------------------------------------------------------------
 
@@ -89,6 +149,28 @@ defmodule Agenda.TUI.Macros do
       {:enter, macro} ->
         run(State.pop(state), macro)
 
+      {{:f, 2}, macro} ->
+        edit_text(state, macro)
+
+      {{:f, 6}, macro} ->
+        Agenda.TUI.MacroProps.open(state, macro.id)
+
+      {k, macro} when k in [:delete, {:ctrl, "d"}] ->
+        Update.confirm(state, "Delete the macro #{macro.name}? (Y/N)", {:delete_macro, macro.id})
+
+      {{:alt_f, 5}, macro} ->
+        state |> State.change_db(Core.sort_macros(state.db)) |> follow(macro.id)
+
+      {{:alt, :up}, macro} ->
+        state
+        |> State.change_db(Core.move_macro(state.db, macro.id, mode.cursor - 1))
+        |> follow(macro.id)
+
+      {{:alt, :down}, macro} ->
+        state
+        |> State.change_db(Core.move_macro(state.db, macro.id, mode.cursor + 1))
+        |> follow(macro.id)
+
       {{:f, 7}, %{keys: ""} = macro} ->
         learn(state, macro, :replace)
 
@@ -116,6 +198,24 @@ defmodule Agenda.TUI.Macros do
       {:error, :empty_name} ->
         state
     end
+  end
+
+  # the highlight stays on a macro that moved
+  defp follow(state, id), do: select(state, Enum.find_index(state.db.macro_order, &(&1 == id)))
+
+  @doc """
+  The macro edit screen (F2): the note editor with the macro's text, a line
+  after each {ENTER}; line breaks are not keys, so the text reads the same.
+  """
+  def edit_text(state, macro) do
+    text = Regex.replace(~r/\{ENTER\}(?! )/i, macro.keys, "{ENTER}\n")
+
+    State.push(state, %{
+      type: :note,
+      target: {:macro, macro.id},
+      title: macro.name,
+      edit: Agenda.TUI.TextEdit.new(text)
+    })
   end
 
   defp select(state, index) do

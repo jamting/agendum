@@ -309,6 +309,10 @@ defmodule Agenda.TUI.Update do
 
   defp dispatch(state, %{type: :calendar} = m, key), do: CalendarBox.handle(state, m, key)
   defp dispatch(state, %{type: :macros} = m, key), do: Agenda.TUI.Macros.handle(state, m, key)
+
+  defp dispatch(state, %{type: :macro_props} = m, key),
+    do: Agenda.TUI.MacroProps.handle(state, m, key)
+
   defp dispatch(state, %{type: :browse} = m, key), do: Agenda.TUI.Browse.handle(state, m, key)
 
   defp dispatch(state, %{type: :schedule} = m, key),
@@ -1261,6 +1265,12 @@ defmodule Agenda.TUI.Update do
   defp prompt_action(state, :browse_to, text), do: Agenda.TUI.Browse.go_to(state, text)
   defp prompt_action(state, :new_macro, text), do: Agenda.TUI.Macros.create(state, text)
 
+  defp prompt_action(state, {:rename_macro, id}, text),
+    do: Agenda.TUI.MacroProps.rename(state, id, text)
+
+  defp prompt_action(state, {:attach_macro, id}, text),
+    do: Agenda.TUI.MacroProps.attach(state, id, text)
+
   defp prompt_action(state, :schedule_date, text),
     do: Agenda.TUI.ScheduleBox.set_date(state, text)
 
@@ -1366,6 +1376,10 @@ defmodule Agenda.TUI.Update do
   end
 
   defp confirmed(state, {:make_numeric, id}, true), do: make_numeric(state, id)
+
+  defp confirmed(state, {:delete_macro, id}, true),
+    do: State.change_db(state, Core.delete_macro(state.db, id))
+
   defp confirmed(state, {:make_date, id}, true), do: make_date(state, id)
 
   defp confirmed(state, {:make_dependent, id, prerequisites}, true) do
@@ -1497,6 +1511,7 @@ defmodule Agenda.TUI.Update do
       case mode.target do
         {:item, id} -> Core.set_note(state.db, id, text, State.context(state))
         {:category, id} -> Core.set_category_note(state.db, id, text)
+        {:macro, id} -> Core.set_macro_keys(state.db, id, text)
       end
 
     if db == state.db, do: State.pop(state), else: state |> State.pop() |> State.change_db(db)
