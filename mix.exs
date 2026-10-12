@@ -97,9 +97,10 @@ defmodule Agenda.MixProject do
   # `mix check` is the single quality gate (used by humans, CI and AI agents).
   defp aliases do
     [
-      # the API docs, then the user guide and the manual beside them, where
-      # the README's links (docs/guide/…, docs/manual/…) find them
-      docs: ["docs", &copy_user_docs/1],
+      # the user guide and the manual, where the README's links
+      # (docs/guide/…, docs/manual/…) find them, then the API docs; ex_doc
+      # keeps files it did not make, and gets the arguments (`--open`)
+      docs: [&copy_user_docs/1, "docs"],
       check: [
         "format --check-formatted",
         "compile --warnings-as-errors --force",

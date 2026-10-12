@@ -34,7 +34,7 @@ mix deps.get
 mix run -e 'Agenda.CLI.main(["--demo"])'       # sample data from the Agenda patent
 mix run -e 'Agenda.CLI.main(["--rabbit"])'     # Rabbit's file from the manual
 mix escript.build && ./agendum ~/work.agendum   # standalone binary
-mix docs                                        # API and design docs in doc/index.html
+mix docs --open                                 # API and design docs, guide and manual, in the browser
 ./agendum --mono ~/work.agendum                 # monochrome (also: --theme mono, or NO_COLOR=1); --theme blue: white on blue
 ./agendum --lang=swedish --fallback=english f   # read dates typed in Swedish (and English)
 ./agendum --number-order=dmy --date-separator=. f  # type dates as 12.11.26 for this session
