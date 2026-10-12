@@ -209,6 +209,10 @@ or handles it.
     - **Picker** `:picker` for the root.
   - **Questions** `:questions` (Category ▸ Questions): confirm suggested
     assignments, item by item (R16). `TUI.QuestionsBox`.
+  - **Show Schedule** `:schedule` (Search ▸ Schedule): one date's items in
+    the Show View (R49). `TUI.ScheduleBox`.
+    - **Picker** `:picker` for the date category, section head and filter.
+    - **Prompt** `:prompt` for the date; **Calendar** `:calendar` (F3).
   - **Alarm list** `:alarm_list` (Search ▸ Alarms):
     current and past alarms (R38). `TUI.AlarmList`.
 
@@ -262,6 +266,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:calendar`          | box           | `TUI.CalendarBox`      | F3 in a date column, ALT-C                       | R46           |
 | `:datebook_props`    | box           | `TUI.DatebookBox`      | View ▸ Properties of a datebook view             | R47           |
 | `:browse`            | control panel | `TUI.Browse`           | View ▸ Browse, ALT-B                             | R47, R48      |
+| `:schedule`          | box           | `TUI.ScheduleBox`      | Search ▸ Schedule                                | R49           |
 | `:devtools`          | full screen   | `TUI.DevTools`         | ESC ? (hidden)                                   | —             |
 
 `test/agenda/tui/screens_doc_test.exs` fails when a mode type is added without

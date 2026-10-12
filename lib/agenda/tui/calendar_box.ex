@@ -44,6 +44,10 @@ defmodule Agenda.TUI.CalendarBox do
   def open(state, nil),
     do: State.push(state, %{type: :calendar, date: state.today, time: nil, target: nil})
 
+  # the date of the Show Schedule box beneath (R49)
+  def open(state, {:schedule, date}),
+    do: State.push(state, %{type: :calendar, date: date, time: nil, target: :schedule})
+
   def open(state, {item_id, cat_id} = target) do
     date = Database.item_date(state.db, item_id, cat_id) || state.today
     time = Database.item_time(state.db, item_id, cat_id)
@@ -78,6 +82,9 @@ defmodule Agenda.TUI.CalendarBox do
   end
 
   defp choose(state, %{target: nil}), do: state
+
+  defp choose(state, %{target: :schedule, date: date}),
+    do: Agenda.TUI.ScheduleBox.set_date(state, date)
 
   defp choose(state, %{target: {item_id, cat_id}, date: date, time: time}) do
     text = Enum.join([Date.to_iso8601(date), time_text(time)], " ") |> String.trim()

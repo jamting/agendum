@@ -307,6 +307,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :calendar} = m, key), do: CalendarBox.handle(state, m, key)
   defp dispatch(state, %{type: :browse} = m, key), do: Agenda.TUI.Browse.handle(state, m, key)
 
+  defp dispatch(state, %{type: :schedule} = m, key),
+    do: Agenda.TUI.ScheduleBox.handle(state, m, key)
+
   defp dispatch(state, %{type: :datebook_props} = m, key),
     do: Agenda.TUI.DatebookBox.handle(state, m, key)
 
@@ -1253,6 +1256,9 @@ defmodule Agenda.TUI.Update do
 
   defp prompt_action(state, :browse_to, text), do: Agenda.TUI.Browse.go_to(state, text)
 
+  defp prompt_action(state, :schedule_date, text),
+    do: Agenda.TUI.ScheduleBox.set_date(state, text)
+
   defp prompt_action(state, {:datebook_base, view_id}, text),
     do: Agenda.TUI.DatebookBox.set_base(state, view_id, text)
 
@@ -1792,6 +1798,7 @@ defmodule Agenda.TUI.Update do
   defp do_perform(state, :add_view, _), do: prompt(state, "Name of new view:", :add_view)
 
   defp do_perform(state, :browse, _), do: Agenda.TUI.Browse.open(state)
+  defp do_perform(state, :show_schedule, _), do: Agenda.TUI.ScheduleBox.open(state)
 
   defp do_perform(state, :view_props, _) do
     if State.view(state).datebook,

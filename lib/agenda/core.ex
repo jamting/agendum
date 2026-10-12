@@ -2076,14 +2076,46 @@ defmodule Agenda.Core do
   @spec show_match(db, Agenda.Core.Search.t()) :: {db, id}
   def show_match(db, %Agenda.Core.Search{} = search), do: show(db, search)
 
-  defp show(db, match) do
-    case Enum.find(Database.views(db), &(&1.name == @show_view)) do
-      nil ->
-        {db, view_id} = Database.insert_view(db, @show_view, sections: [db.main_id])
-        {Database.update_view(db, view_id, &%{&1 | match: match}), view_id}
+  # The Show View, made the first time; each use starts it afresh, so one
+  # use's section and filter do not linger into the next.
+  defp show(db, match, section \\ nil, filter \\ []) do
+    {db, view_id} =
+      case Enum.find(Database.views(db), &(&1.name == @show_view)) do
+        nil -> Database.insert_view(db, @show_view)
+        view -> {db, view.id}
+      end
 
-      view ->
-        {Database.update_view(db, view.id, &%{&1 | match: match}), view.id}
+    section = %Section{category_id: section || db.main_id}
+
+    db =
+      Database.update_view(
+        db,
+        view_id,
+        &%{&1 | match: match, sections: [section], filter: filter, datebook: nil}
+      )
+
+    {db, view_id}
+  end
+
+  @doc """
+  Shows a schedule (Agenda's Utilities Show Sched, R49): the items whose
+  date in `date_category` is `date`, in the Show View under `section`
+  (often the date category itself), narrowed by `filter`, criteria such
+  as `[{calls, :assigned}]`. The date is a date filter, so the Show View
+  can be browsed to other days (R48). Returns the view.
+  """
+  @spec show_schedule(db, id, id, Date.t(), [{id, View.filter_term()}]) ::
+          {:ok, db, id} | {:error, :not_a_date_category}
+  def show_schedule(db, date_category, section, %Date{} = date, filter) do
+    if Database.date_category?(db, date_category) do
+      day = Date.to_iso8601(date)
+
+      {db, view_id} =
+        show(db, nil, section, [{date_category, {:range, day, day, :inside}} | filter])
+
+      {:ok, db, view_id}
+    else
+      {:error, :not_a_date_category}
     end
   end
 

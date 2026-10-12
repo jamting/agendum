@@ -66,7 +66,7 @@ defmodule Agenda.TUI.CategoryScreens do
 
   # MAIN is a valid choice for sections, views and new parents only
   defp all_rows(state, %{type: :picker, root: nil, purpose: {tag, _}})
-       when tag in [:add_section, :change_section, :new_view, :move_category],
+       when tag in [:add_section, :change_section, :new_view, :move_category, :schedule],
        do: Database.hierarchy(state.db)
 
   defp all_rows(state, %{type: :picker, root: nil}), do: state.db |> Database.hierarchy() |> tl()
@@ -285,7 +285,14 @@ defmodule Agenda.TUI.CategoryScreens do
         State.pop(state)
 
       # filters, conditions and actions are set several at a time: the box stays open
-      :enter when elem(mode.purpose, 0) in [:filter, :condition, :also_assign, :excludes] ->
+      :enter
+      when elem(mode.purpose, 0) in [
+             :filter,
+             :condition,
+             :also_assign,
+             :excludes,
+             :schedule_filter
+           ] ->
         pick(state, mode.purpose, current_id(rows, mode))
 
       :enter ->
@@ -592,6 +599,11 @@ defmodule Agenda.TUI.CategoryScreens do
   # --- picker results -------------------------------------------------------------------------
 
   defp pick(state, _purpose, nil), do: state
+
+  defp pick(state, {:schedule, field}, id),
+    do: Agenda.TUI.ScheduleBox.set_category(state, field, id)
+
+  defp pick(state, {:schedule_filter, _}, id), do: Agenda.TUI.ScheduleBox.cycle_filter(state, id)
 
   defp pick(state, {:datebook, view_id, row}, id),
     do: Agenda.TUI.DatebookBox.set_category(state, view_id, row, id)

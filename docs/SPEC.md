@@ -888,7 +888,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   date becomes its date, one undo step; a view based on "today" then stays
   there until Base date on is set again, as in Agenda) and ESC goes back;
   while browsing nothing else can be done. Standard views with date
-  filters are browsed too (R48). Not yet: Show Schedule (roadmap).
+  filters are browsed too (R48), and Show Schedule shows one date (R49).
 - **R48 ✅ Browsing date filters** (Help "Browse Through Dates"). In a
   standard view, View ▸ Browse or ALT-B moves the date filter of the
   highlighted section, when it has one, else the view's: ← / → a day,
@@ -902,6 +902,18 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   "2026-10-19".."2026-10-23": fixed, no longer following today, as in
   Agenda); ESC puts the filter back. Without a date filter, ALT-B says so.
   BROWSE shows at the top right, and nothing else can be done meanwhile.
+- **R49 ✅ Show Schedule** (User's Guide 10-14 to 10-16; Help "Show
+  Schedule Box"; Agenda's Utilities Show Sched). Search ▸ Schedule opens
+  the Show Schedule box: Date category (When by default; must be a date
+  category), Section head (the date category by default), Date (today;
+  typed, or F3 for the pop-up calendar, R46) and Filter (categories whose
+  items to show, + assigned or − not assigned, as in a view filter). SPACE
+  changes the highlighted setting, ENTER shows the items of that date in
+  the Show View under the section head, ESC cancels. The date is a date
+  filter on the Show View ("[When 2026-12-14..2026-12-14]"), so ALT-B
+  browses it to other days (R48). The Show View starts afresh each time it
+  is used, by a schedule, a search (R37) or a dependency list (R43): its
+  section and filter are those of the last use.
 
 ## 6. Out of scope for now
 

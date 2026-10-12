@@ -98,6 +98,7 @@ defmodule Agenda.TUI.Menu do
          {"View", "Search this view: ALT-N next, ALT-P previous, F7 mark (ALT-F6)", :search_view},
          {"File", "Show every matching item in the file in the Show View", :search_file},
          {"Alarms", "Current alarms and today's past alarms", :alarm_list},
+         {"Schedule", "One date's items in the Show View (Utilities Show Sched)", :show_schedule},
          {"Depends", "Show the items that depend on this one (Utilities Show Depends)",
           [
             {"One level", "Items directly depending on this one",

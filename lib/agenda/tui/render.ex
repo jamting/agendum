@@ -19,6 +19,7 @@ defmodule Agenda.TUI.Render do
     :picker,
     :calendar,
     :datebook_props,
+    :schedule,
     :profile,
     :props,
     :choice,
@@ -258,6 +259,7 @@ defmodule Agenda.TUI.Render do
             :date_settings,
             :display_format,
             :datebook_props,
+            :schedule,
             :input_format,
             :customize,
             :calendars,
@@ -474,6 +476,15 @@ defmodule Agenda.TUI.Render do
       {"A-F5", "Go to", "ALT-F5", "Go to a date"},
       {"ENTER", "Keep", "Keep this period"},
       {"ESC", "Back", "Back to where it was"}
+    ]
+
+  defp mode_keys(%{type: :schedule}),
+    do: [
+      {"↑↓", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Change the setting"},
+      {"F3", "Calendar", "Pick the date"},
+      {"ENTER", "Show", "Show the schedule"},
+      {"ESC", "Cancel"}
     ]
 
   defp mode_keys(%{type: :datebook_props}),
@@ -1177,66 +1188,7 @@ defmodule Agenda.TUI.Render do
 
   defp box_title(_state, %{type: :calendar} = mode), do: Agenda.TUI.CalendarBox.title(mode)
 
-  defp box_title(state, %{type: :picker, purpose: purpose}) do
-    case purpose do
-      {:add_section, _} ->
-        "Section head"
-
-      {:change_section, _} ->
-        "Change section head"
-
-      {:add_column, _} ->
-        "Column head"
-
-      {:assign_column, _, head} ->
-        "Choose " <> state.db.categories[head].name
-
-      {:new_view, name} ->
-        "First section for view #{name}"
-
-      {:datebook, _view, :date_category} ->
-        "Date category (a date category)"
-
-      {:datebook, _view, :end_category} ->
-        "End category (a date category)"
-
-      {:datebook, _view, :section_category} ->
-        "Section (the head of every section)"
-
-      {:move_category, id} ->
-        "New parent for " <> state.db.categories[id].name
-
-      {:also_assign, id} ->
-        "Actions for items joining #{state.db.categories[id].name}"
-
-      {:excludes, id} ->
-        "Categories that may not share items with #{state.db.categories[id].name}"
-
-      {:assign_items, [_]} ->
-        "Assign the item to"
-
-      {:assign_items, ids} ->
-        "Assign #{Draw.count(length(ids), "marked item")} to"
-
-      {:condition, id} ->
-        "Conditions for #{state.db.categories[id].name}"
-
-      {:filter, :view} ->
-        "Filter the view"
-
-      {:filter, {:section, i}} ->
-        "Filter the #{section_name(state, i)} section"
-
-      {:sort_category, _, _} ->
-        "Sort by the children of"
-
-      {:sort_note, _, _} ->
-        "Choose the category whose notes to sort by"
-
-      :execute_root ->
-        "Apply the conditions of this category and its children"
-    end
-  end
+  defp box_title(state, %{type: :picker, purpose: purpose}), do: picker_title(state, purpose)
 
   defp box_title(_state, %{type: :item_props}), do: "Item properties"
 
@@ -1304,6 +1256,8 @@ defmodule Agenda.TUI.Render do
 
   defp box_title(_state, %{type: :choice, kind: :view_type, name: name}), do: "New view: #{name}"
 
+  defp box_title(_state, %{type: :schedule}), do: "Show Schedule"
+
   defp box_title(state, %{type: :datebook_props} = mode),
     do: Agenda.TUI.DatebookBox.title(state, mode)
 
@@ -1315,6 +1269,73 @@ defmodule Agenda.TUI.Render do
 
   defp box_title(state, %{type: :props, cat_id: id}),
     do: "Category properties: " <> state.db.categories[id].name
+
+  # one title per picker purpose
+  defp picker_title(_state, {:add_section, _}),
+    do: "Section head"
+
+  defp picker_title(_state, {:change_section, _}),
+    do: "Change section head"
+
+  defp picker_title(_state, {:add_column, _}),
+    do: "Column head"
+
+  defp picker_title(state, {:assign_column, _, head}),
+    do: "Choose " <> state.db.categories[head].name
+
+  defp picker_title(_state, {:new_view, name}),
+    do: "First section for view #{name}"
+
+  defp picker_title(_state, {:schedule, :date_category}),
+    do: "Date category of the schedule"
+
+  defp picker_title(_state, {:schedule, :section}),
+    do: "Section head of the schedule"
+
+  defp picker_title(_state, {:schedule_filter, _}),
+    do: "Filter the schedule"
+
+  defp picker_title(_state, {:datebook, _view, :date_category}),
+    do: "Date category (a date category)"
+
+  defp picker_title(_state, {:datebook, _view, :end_category}),
+    do: "End category (a date category)"
+
+  defp picker_title(_state, {:datebook, _view, :section_category}),
+    do: "Section (the head of every section)"
+
+  defp picker_title(state, {:move_category, id}),
+    do: "New parent for " <> state.db.categories[id].name
+
+  defp picker_title(state, {:also_assign, id}),
+    do: "Actions for items joining #{state.db.categories[id].name}"
+
+  defp picker_title(state, {:excludes, id}),
+    do: "Categories that may not share items with #{state.db.categories[id].name}"
+
+  defp picker_title(_state, {:assign_items, [_]}),
+    do: "Assign the item to"
+
+  defp picker_title(_state, {:assign_items, ids}),
+    do: "Assign #{Draw.count(length(ids), "marked item")} to"
+
+  defp picker_title(state, {:condition, id}),
+    do: "Conditions for #{state.db.categories[id].name}"
+
+  defp picker_title(_state, {:filter, :view}),
+    do: "Filter the view"
+
+  defp picker_title(state, {:filter, {:section, i}}),
+    do: "Filter the #{section_name(state, i)} section"
+
+  defp picker_title(_state, {:sort_category, _, _}),
+    do: "Sort by the children of"
+
+  defp picker_title(_state, {:sort_note, _, _}),
+    do: "Choose the category whose notes to sort by"
+
+  defp picker_title(_state, :execute_root),
+    do: "Apply the conditions of this category and its children"
 
   defp box_content(state, %{type: type} = mode, inner, max_rows)
        when type in [:picker, :profile, :group_profile] do
@@ -1665,6 +1686,21 @@ defmodule Agenda.TUI.Render do
     rows ++ sample ++ [[], [{:box, hint}]]
   end
 
+  defp box_content(state, %{type: :schedule} = mode, _inner, _max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.ScheduleBox.lines(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, value}, i} ->
+        [
+          {:box, " " <> Draw.pad(label, 14) <> ": "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), value}
+        ]
+      end)
+
+    rows ++ [[], [{:box, " SPACE changes · F3 calendar · ENTER shows · ESC cancels"}]]
+  end
+
   defp box_content(state, %{type: :datebook_props} = mode, _inner, _max_rows) do
     rows =
       state
@@ -1879,7 +1915,7 @@ defmodule Agenda.TUI.Render do
       _ when elem(mode.purpose, 0) == :excludes ->
         [{:box, " ENTER toggles: x may not share items"}]
 
-      _ when elem(mode.purpose, 0) in [:condition, :filter] ->
+      _ when elem(mode.purpose, 0) in [:condition, :filter, :schedule_filter] ->
         [{:box, " ENTER cycles: + assigned · - not assigned · none"}]
 
       _ ->
@@ -1953,6 +1989,9 @@ defmodule Agenda.TUI.Render do
       true -> " "
     end
   end
+
+  defp profile_marker(state, %{type: :picker, purpose: {:schedule_filter, _}}, id),
+    do: Agenda.TUI.ScheduleBox.filter_mark(state, id)
 
   defp profile_marker(state, %{type: :picker, purpose: {:excludes, cat_id}}, id),
     do: if(id in state.db.categories[cat_id].excludes, do: "x", else: " ")
