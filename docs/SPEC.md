@@ -963,6 +963,20 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   move a macro in the list, as in the view manager (Agenda: ALT-F10 then
   ENTER). Not done: the macro command language (Working with Macros,
   chapters 2–3), external macro files, protection and hidden macros.
+- **R51 ✅ Select File box** (User's Guide 22-4 to 22-5; Help "Select a
+  File"). A prompt for a file name (File ▸ Retrieve or CTRL-O, File ▸ New,
+  saving under a name, File ▸ Transfer ▸ Import and Export, printing to a
+  file) says "F3 lists files"; F3 shows the Select File box for the folder
+  of what is typed (or of the open file): `../` to go up, the subfolders
+  (ending in `/`, Agenda's `<DIR>`) and the files the prompt can use
+  (`.agendum` and `.agenda`, `.json`, or `.txt`), hidden ones left out.
+  ↑ ↓ PGUP PGDN HOME END move; typing narrows the list to names that
+  contain what is typed; ENTER opens a folder, or puts the file's whole
+  path in the prompt, where ENTER then uses it as if typed; F7 shows when
+  each was last changed (Agenda's DATES); ESC goes back to the prompt as
+  it was. Ours: file names keep their extensions (Agenda left them out);
+  Agenda's F4 (delete), F6 (EXPAND), F8 (descriptions), F9 (rename) and
+  INS are not offered.
 
 ## 6. Out of scope for now
 

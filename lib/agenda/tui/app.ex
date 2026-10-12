@@ -94,6 +94,9 @@ defmodule Agenda.TUI.App do
         {:import_json, path} ->
           Update.imported(state, path, File.read(path))
 
+        {:list_dir, dir} ->
+          Update.dir_listed(state, dir, Store.list_dir(dir))
+
         {:save_preferences, path, prefs} ->
           Update.preferences_saved(state, Preferences.save(prefs, path))
 

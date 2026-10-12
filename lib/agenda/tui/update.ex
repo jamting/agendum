@@ -310,6 +310,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :calendar} = m, key), do: CalendarBox.handle(state, m, key)
   defp dispatch(state, %{type: :macros} = m, key), do: Agenda.TUI.Macros.handle(state, m, key)
 
+  defp dispatch(state, %{type: :select_file} = m, key),
+    do: Agenda.TUI.SelectFile.handle(state, m, key)
+
   defp dispatch(state, %{type: :macro_props} = m, key),
     do: Agenda.TUI.MacroProps.handle(state, m, key)
 
@@ -1137,6 +1140,9 @@ defmodule Agenda.TUI.Update do
 
   # --- prompts and confirmations ------------------------------------------------
 
+  @doc "A folder read for the Select File box (R51)."
+  def dir_listed(state, dir, result), do: Agenda.TUI.SelectFile.listed(state, dir, result)
+
   @doc "Opens a one-line prompt; `action` is passed to `prompt_submitted/3`."
   def prompt(state, label, action, initial \\ "") do
     state
@@ -1175,6 +1181,12 @@ defmodule Agenda.TUI.Update do
     case key do
       :esc ->
         State.pop(state)
+
+      # a file name can be picked from a list (R51)
+      {:f, 3} ->
+        if Agenda.TUI.SelectFile.file_prompt?(mode.action),
+          do: Agenda.TUI.SelectFile.open(state, mode),
+          else: state
 
       :enter ->
         state.edit.line.text |> then(&prompt_submitted(State.pop(state), mode.action, &1))

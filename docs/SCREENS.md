@@ -94,6 +94,9 @@ or handles it.
     `TUI.Render`.
   - **Prompt** `:prompt`: one line of text in the control panel (a file name,
     a new view's name, a category name). `TUI.Update`.
+    - **Select File** `:select_file` (F3 in a prompt for a file name): the
+      folder's subfolders and the files that fit, to pick one (R51).
+      `TUI.SelectFile`.
   - **Question** `:confirm`: a Y/N question (discard, save changes, make a
     date category). `TUI.Update`.
   - **Datebook settings** `:datebook_props` (View ▸ Properties of a datebook
@@ -278,6 +281,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:schedule`          | box           | `TUI.ScheduleBox`      | Search ▸ Schedule                                | R49           |
 | `:macros`            | box           | `TUI.Macros`           | ALT-F3                                           | R50           |
 | `:macro_props`       | box           | `TUI.MacroProps`       | F6 in the macro manager                          | R50           |
+| `:select_file`       | box           | `TUI.SelectFile`       | F3 in a file-name prompt                         | R51           |
 | `:devtools`          | full screen   | `TUI.DevTools`         | ESC ? (hidden)                                   | —             |
 
 `test/agenda/tui/screens_doc_test.exs` fails when a mode type is added without

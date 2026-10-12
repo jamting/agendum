@@ -297,6 +297,22 @@ defmodule Agenda.StoreTest do
     assert {:ok, ^db} = Store.load(path)
   end
 
+  test "a folder is listed for the Select File box: folders, then files, hidden ones left out",
+       %{tmp_dir: dir} do
+    File.mkdir_p!(Path.join(dir, "Garden"))
+    File.write!(Path.join(dir, "rabbit.agendum"), "")
+    File.write!(Path.join(dir, "notes.txt"), "")
+    File.write!(Path.join(dir, ".hidden"), "")
+
+    assert {:ok, entries} = Store.list_dir(dir)
+
+    assert Enum.map(entries, &{&1.name, &1.dir?}) ==
+             [{"Garden", true}, {"notes.txt", false}, {"rabbit.agendum", false}]
+
+    assert %NaiveDateTime{} = hd(entries).modified
+    assert {:error, _} = Store.list_dir(Path.join(dir, "nowhere"))
+  end
+
   test "newer, unknown format versions are refused", %{tmp_dir: dir} do
     path = Path.join(dir, "future.agenda")
     File.write!(path, :erlang.term_to_binary({:agenda, 99, Agenda.Core.new_file()}))

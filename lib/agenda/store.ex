@@ -209,6 +209,35 @@ defmodule Agenda.Store do
     Enum.each(modules, &Code.ensure_loaded/1)
   end
 
+  @doc """
+  A folder's contents for the Select File box: its folders, then its files,
+  each by name, with when it was last changed (local time); hidden ones
+  (starting with a dot) are left out.
+  """
+  @spec list_dir(Path.t()) ::
+          {:ok, [%{name: String.t(), dir?: boolean, modified: NaiveDateTime.t()}]}
+          | {:error, String.t()}
+  def list_dir(dir) do
+    case File.ls(dir) do
+      {:ok, names} ->
+        entries =
+          for name <- names,
+              not String.starts_with?(name, "."),
+              {:ok, stat} <- [File.stat(Path.join(dir, name), time: :local)] do
+            %{
+              name: name,
+              dir?: stat.type == :directory,
+              modified: NaiveDateTime.from_erl!(stat.mtime)
+            }
+          end
+
+        {:ok, Enum.sort_by(entries, &{not &1.dir?, String.downcase(&1.name)})}
+
+      {:error, reason} ->
+        {:error, :file.format_error(reason) |> to_string()}
+    end
+  end
+
   @doc "Adds the default extension when the path has none."
   @spec normalize_path(String.t()) :: String.t()
   def normalize_path(path) do

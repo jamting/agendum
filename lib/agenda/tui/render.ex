@@ -22,6 +22,7 @@ defmodule Agenda.TUI.Render do
     :schedule,
     :macros,
     :macro_props,
+    :select_file,
     :profile,
     :props,
     :choice,
@@ -103,7 +104,13 @@ defmodule Agenda.TUI.Render do
         %{type: :menu} = m ->
           menu_lines(m)
 
-        %{type: :prompt, label: label} ->
+        %{type: :prompt, label: label, action: action} ->
+          # a file name can be picked from a list (R51), as Agenda said
+          label =
+            if Agenda.TUI.SelectFile.file_prompt?(action),
+              do: label <> "  F3 lists files",
+              else: label
+
           {beside_indicators(state, base, [{:prompt, " " <> label}]),
            [{:panel, " "}] ++ field(state.edit.line, w - 2, :edit)}
 
@@ -250,7 +257,7 @@ defmodule Agenda.TUI.Render do
       top && top.type == :move_item ->
         "MOVE"
 
-      top && top.type in [:picker, :scope, :calendar] ->
+      top && top.type in [:picker, :scope, :calendar, :select_file] ->
         "CHOICES"
 
       top && top.type == :browse ->
@@ -517,6 +524,14 @@ defmodule Agenda.TUI.Render do
       {"A-F5", "Sort", "ALT-F5", "Sort by name"},
       {"A-↑↓", "Move", "ALT-↑↓", "Move"},
       {"ESC", "Close"}
+    ]
+
+  defp mode_keys(%{type: :select_file}),
+    do: [
+      {"ENTER", "Open", "Open the folder or pick the file"},
+      {"type", "Narrow", "Narrow the list"},
+      {"F7", "Dates", "Show the dates"},
+      {"ESC", "Back", "Back to the prompt"}
     ]
 
   defp mode_keys(%{type: :macro_props}),
@@ -1167,6 +1182,7 @@ defmodule Agenda.TUI.Render do
      CTRL-PGUP/DN  Previous / next section         ⌥↑ / ⌥↓
 
    Everywhere
+     F3 in a prompt for a file name: pick it from a list of files
      CTRL-Z / CTRL-Y   Undo / redo
      CTRL-S            Save              CTRL-O   Open (retrieve) a file
      CTRL-P            Print to file     CTRL-Q   Quit (also ALT-Q)
@@ -1312,6 +1328,9 @@ defmodule Agenda.TUI.Render do
 
   defp box_title(_state, %{type: :schedule}), do: "Show Schedule"
   defp box_title(_state, %{type: :macros}), do: "Macros"
+
+  defp box_title(state, %{type: :select_file} = mode),
+    do: Agenda.TUI.SelectFile.title(mode, box_width(state, mode))
 
   defp box_title(state, %{type: :macro_props} = mode),
     do: Agenda.TUI.MacroProps.title(state, mode)
@@ -1757,6 +1776,15 @@ defmodule Agenda.TUI.Render do
 
     Enum.drop(rows, top) ++
       [[], [{:box, " INS new · F7 learn · ENTER run · F2 edit · F6 props · DEL"}]]
+  end
+
+  defp box_content(state, %{type: :select_file} = mode, _inner, max_rows) do
+    rows =
+      state
+      |> Agenda.TUI.SelectFile.lines(mode, max_rows)
+      |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
+
+    rows ++ [[{:box, " ENTER opens · type to narrow · F7 dates · ESC back"}]]
   end
 
   defp box_content(state, %{type: :macro_props} = mode, _inner, _max_rows) do
