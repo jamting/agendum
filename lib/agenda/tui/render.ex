@@ -1191,7 +1191,7 @@ defmodule Agenda.TUI.Render do
      CTRL-Z / CTRL-Y   Undo / redo
      CTRL-S            Save              CTRL-O   Open (retrieve) a file
      CTRL-P            Print to file     CTRL-Q   Quit (also ALT-Q)
-     ALT-K             Show / hide the function key map
+     ALT-K             Show / hide the function key map (kept)
 
    In the category manager (F9)
      Type / INS    Add a category below            CTRL-N, ALT-D, ALT-I

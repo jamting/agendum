@@ -27,7 +27,7 @@ settings, as described in the second half of this guide.
 | Insert an item (in a view)                                                                      | ALT-I                         | ESC then `i`, or INS / **CTRL-N**                                     |
 | Save / retrieve a file (in a view)                                                              | ALT-W / ALT-G                 | ESC then `w` / `g`, or **CTRL-S** / **CTRL-O**                        |
 | Quit                                                                                            | ALT-Q                         | ESC then `q`, or **CTRL-Q**                                           |
-| Show / hide the function key map                                                                | ALT-K                         | ESC then `k`                                                          |
+| Show / hide the function key map (kept for next time)                                           | ALT-K                         | ESC then `k`                                                          |
 | Search this view; then next / previous match                                                    | ALT-F6; ALT-N / ALT-P         | ESC then `^`; ESC then `n` / `p`                                      |
 | In a note: search / replace; find the next occurrence (after a single replacement: replace it)  | ALT-F6; ALT-S                 | ESC then `^`; ESC then `s`                                            |
 | In a note: insert today's date / the time                                                       | ALT-D / ALT-T                 | ESC then `d` / `t`                                                    |

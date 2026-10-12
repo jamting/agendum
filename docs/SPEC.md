@@ -1005,6 +1005,13 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   from that letter, so typing the same letter again goes on to the next
   view with it; a letter no view starts with is ignored. Any other key
   forgets what was typed. ENTER shows the highlighted view.
+- **R54 More preferences** (Setting Up Agenda 1-25 to 1-28; User's
+  Guide 2-22 to 2-23). More of Agenda's Utilities Customize settings, in
+  File ▸ Customize, kept in the person's preferences file like the rest
+  (ADR 0008):
+  - ✅ **Display key map** (Yes, the default, or No): whether the key bar
+    shows at the bottom of the screen. ALT-K shows or hides it and, as
+    the setting, is kept for next time (`key_map = no` in the file).
 
 ## 6. Out of scope for now
 

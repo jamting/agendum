@@ -32,6 +32,23 @@ defmodule Agenda.TUI.CustomizeBoxTest do
     assert text =~ ~r/Date language +: English/
     assert text =~ ~r/Fallback language +: None/
     assert text =~ ~r/Input format +: \(SPACE\)/
+    assert text =~ ~r/Display key map +: Yes/
+  end
+
+  test "Display key map hides the key bar, and is saved; ALT-K changes it too", %{state: state} do
+    {state, effects} = state |> open_box() |> press(List.duplicate(:down, 4)) |> key({:char, " "})
+    refute state.key_map
+    assert [{:save_preferences, "/prefs", %Preferences{key_map: false}}] = effects
+    assert screen(state) =~ ~r/Display key map +: No/
+
+    {state, effects} = state |> press(:esc) |> key({:alt, "k"})
+    assert state.key_map
+    assert [{:save_preferences, "/prefs", %Preferences{key_map: true}}] = effects
+  end
+
+  test "the key map starts as the preferences say" do
+    state = start(Agenda.Sample.build(~D[2026-10-08]), prefs: %Preferences{key_map: false})
+    refute state.key_map
   end
 
   test "the theme changes at once and is saved", %{state: state} do

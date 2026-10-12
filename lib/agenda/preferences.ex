@@ -18,7 +18,8 @@ defmodule Agenda.Preferences do
   @typedoc """
   `theme` nil and `languages` [] mean the defaults (classic, English);
   `name` and `company` are shown on the splash screen, `last_file` is
-  offered when Agendum starts without one (R52). `path` is where they are
+  offered when Agendum starts without one (R52). `key_map`: whether the
+  key bar shows (R54). `path` is where they are
   kept (nil: not saved) and `user` the login name (the splash's name when
   none is set); neither is written in them.
   """
@@ -29,6 +30,7 @@ defmodule Agenda.Preferences do
           name: String.t() | nil,
           company: String.t() | nil,
           last_file: String.t() | nil,
+          key_map: boolean,
           path: String.t() | nil,
           user: String.t() | nil
         }
@@ -38,6 +40,7 @@ defmodule Agenda.Preferences do
             name: nil,
             company: nil,
             last_file: nil,
+            key_map: true,
             path: nil,
             user: nil
 
@@ -111,8 +114,18 @@ defmodule Agenda.Preferences do
       input: input,
       name: text.("name"),
       company: text.("company"),
-      last_file: text.("last_file")
+      last_file: text.("last_file"),
+      key_map: pick.("key_map", &yes_no/1) != :no
     }
+  end
+
+  # :yes or :no (not booleans, which `pick` would take for "not found")
+  defp yes_no(value) do
+    case String.downcase(value) do
+      "yes" -> {:ok, :yes}
+      "no" -> {:ok, :no}
+      _ -> :error
+    end
   end
 
   defp ok({:ok, value}), do: value
@@ -157,7 +170,9 @@ defmodule Agenda.Preferences do
         {"clock", input.clock && Integer.to_string(input.clock)},
         {"name", prefs.name},
         {"company", prefs.company},
-        {"last_file", prefs.last_file}
+        {"last_file", prefs.last_file},
+        # only what differs from the default
+        {"key_map", if(prefs.key_map, do: nil, else: "no")}
       ]
       |> Enum.reject(&(elem(&1, 1) == nil))
       |> Enum.map(fn {key, value} -> "#{key} = #{value}\n" end)
@@ -168,6 +183,7 @@ defmodule Agenda.Preferences do
       Enum.map_join(DateLanguage.packs(), " ", & &1.name()) <>
       "\n# number_order: mdy myd dmy dym ydm ymd; date_separator: / - . , :;\n" <>
       "# clock: 12 or 24. name, company: shown when Agendum starts;\n" <>
-      "# last_file: the file offered then (kept by Agendum).\n" <> Enum.join(lines)
+      "# last_file: the file offered then (kept by Agendum); key_map: yes or no.\n" <>
+      Enum.join(lines)
   end
 end

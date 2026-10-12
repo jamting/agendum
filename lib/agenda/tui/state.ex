@@ -105,6 +105,7 @@ defmodule Agenda.TUI.State do
       languages: Keyword.get(opts, :languages, [Agenda.Core.DateLanguage.English]),
       input: Keyword.get(opts, :input, %Agenda.Core.InputFormat{}),
       prefs: Keyword.get(opts, :prefs, %Agenda.Preferences{}),
+      key_map: Keyword.get(opts, :prefs, %Agenda.Preferences{}).key_map,
       theme: Keyword.get(opts, :theme, :classic),
       view_id: hd(db.view_order),
       saved_db: db
@@ -133,6 +134,13 @@ defmodule Agenda.TUI.State do
     if state.prefs.path,
       do: effect(state, {:save_preferences, state.prefs.path, state.prefs}),
       else: state
+  end
+
+  @doc "Shows or hides the key bar (ALT-K, File ▸ Customize; R54), and keeps it so."
+  @spec toggle_key_map(t) :: t
+  def toggle_key_map(state) do
+    shown = not state.key_map
+    change_preference(state, &%{&1 | key_map: shown}, &%{&1 | key_map: shown})
   end
 
   @doc """

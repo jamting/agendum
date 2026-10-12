@@ -77,4 +77,13 @@ defmodule Agenda.PreferencesTest do
     # the login name and where they are kept are not written
     refute Preferences.format(%{prefs | user: "rabbit", path: "/p"}) =~ "user"
   end
+
+  test "the key map is shown unless the person says no" do
+    assert Preferences.parse("").key_map
+    refute Preferences.format(%Preferences{}) =~ "key_map ="
+    text = Preferences.format(%Preferences{key_map: false})
+    assert text =~ "key_map = no\n"
+    refute Preferences.parse(text).key_map
+    assert Preferences.parse("key_map = yes").key_map
+  end
 end

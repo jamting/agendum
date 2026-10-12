@@ -128,7 +128,7 @@ defmodule Agenda.TUI.Update do
         if undoable?(top), do: History.redo(state), else: :pass
 
       key == {:alt, "k"} ->
-        %{state | key_map: not state.key_map}
+        State.toggle_key_map(state)
 
       key == {:ctrl, "s"} ->
         perform(state, :save)
@@ -1560,7 +1560,7 @@ defmodule Agenda.TUI.Update do
         state |> close_note(mode) |> perform(:quit)
 
       {:alt, "k"} ->
-        %{state | key_map: not state.key_map}
+        State.toggle_key_map(state)
 
       _ ->
         case TextEdit.handle(mode.edit, key) do
