@@ -52,9 +52,9 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] Questions as Yes/No boxes; Category Properties in two columns with "..." sub-boxes opened by SPACE; View Manager as a box
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark); the note editor's "Note for: … Line 1 INS EDIT" header
 - [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix
-- [ ] Startup: a splash screen, and a File Retrieve box when no file is named
+- [ ] Startup: a splash screen, and a File Retrieve box when no file is named. Splash screen content: Title: "WOL'S AGENDUM"; Tagline: "Hoo's in control? You are."; Copyright: "Copyright JW&D + WOL. All rites reserved. "
 - [ ] Hypertext help: topics with links (TAB, ENTER), Index, Find, Review (Agenda's F1)
-- [ ] Splash screen as original Agenda. Title: "WOL'S AGENDUM" Tagline: "Hoo's in control? You are." Copyright: "Copyright JWD + WOL. All rites reserved. "
+- [ ] Splash screen as original Agenda.
 
 ## Milestone 3 — Smarter assignment
 
@@ -90,6 +90,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 - [x] JSON export/import: the modern, human-readable format; round-trips everything in a file (R44, `docs/JSON_FORMAT.md`)
 - [x] iCal import: subscribe to calendars on the web, read on a schedule or on request, mirrored into items (R45)
+- [ ] Send alerts via Signal app
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
 - [ ] Optional: Import of structured text files (one item per line, with categories)
 - [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files)
@@ -117,6 +118,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Developer tools: a screen with debugging info and a key tester, on a hidden key (ESC ?)
 - [x] The name Wol's Agendum: command, files (`.agendum`), preferences, JSON format, texts; the old names still read (ADR 0019)
 - [ ] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agenda` and `test/agenda`, the repository folder; one mechanical commit (ADR 0019)
+- [ ] --demo flag should use database from manual and userguide
 
 ## Beyond Agenda
 
