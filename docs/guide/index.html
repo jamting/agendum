@@ -24,6 +24,7 @@
     <li><a href="#dependencies">Things that wait for other things</a></li>
     <li><a href="#automatic">Letting Agendum do the filing</a></li>
     <li><a href="#files">Files, printing and looks</a></li>
+    <li><a href="#macros">Macros: doing it again</a></li>
     <li><a href="#keys">Keyboard reference</a></li>
     <li><a href="#later">Still to come</a></li>
   </ol>
@@ -76,8 +77,16 @@ We will follow him through this guide.</div>
 <h2>2. Getting started</h2>
 
 <pre class="shell">./agendum party.agendum      # open (or start) a file
-./agendum --demo             # try it with sample data
+./agendum                    # ask which file, offering the last one used
+./agendum --rabbit           # try it with Rabbit's file from the manual
+./agendum --demo             # or with the sample from Agenda's patent
 ./agendum --help             # every option</pre>
+
+<p>Agendum greets you with a title screen for a moment (any key skips it). Started
+without a file, it then asks <em>File to open or create</em>, offering the file you
+used last: <kbd>ENTER</kbd> opens it, or type another name. A name that doesn't exist
+yet starts a new file, saved there the first time you save; <kbd>F3</kbd> picks a file
+from a list instead.</p>
 
 <p>The screen has three parts, coloured as Agenda 2.0 was on a colour screen:</p>
 
@@ -225,7 +234,8 @@ item, such as its date or who it involves.</p>
   <tr><td>Jump to another section (GO TO)</td><td><kbd>ALT-F5</kbd></td></tr>
   <tr><td>Fold a section away / open it again</td><td><kbd>ALT-−</kbd> / <kbd>ALT-=</kbd> (twice: all)</td></tr>
   <tr><td>Next / previous view; back to the last one</td><td><kbd>ALT-N</kbd> / <kbd>ALT-P</kbd>; <kbd>ALT-F8</kbd></td></tr>
-  <tr><td>Switch, add, rename or discard views</td><td><kbd>F8</kbd> view manager</td></tr>
+  <tr><td>Switch, add, rename or discard views</td><td><kbd>F8</kbd> view manager; type the start of a view's name to jump to it</td></tr>
+  <tr><td>Make a column wider / narrower; fit it to what it shows</td><td><strong>View ▸ Column ▸ Wider</strong> / <strong>Narrower</strong>; <strong>Fit</strong></td></tr>
   <tr><td>Hide empty sections</td><td><kbd>ALT-V</kbd></td></tr>
 </table>
 
@@ -486,13 +496,18 @@ and <strong>Category ▸ Questions</strong> goes through the suggestions one ite
 <table>
   <tr><th>To</th><th>Press or choose</th></tr>
   <tr><td>Save</td><td><kbd>CTRL-S</kbd> (or <kbd>ALT-W</kbd>); <strong>File ▸ Write</strong> to save under a new name</td></tr>
-  <tr><td>Open another file</td><td><kbd>CTRL-O</kbd> (or <kbd>ALT-G</kbd>)</td></tr>
+  <tr><td>Open another file</td><td><kbd>CTRL-O</kbd> (or <kbd>ALT-G</kbd>); <kbd>F3</kbd> picks it from a list</td></tr>
   <tr><td>Start a new file</td><td><strong>File ▸ New</strong></td></tr>
   <tr><td>Print the view to a text file</td><td><kbd>CTRL-P</kbd></td></tr>
   <tr><td>Undo / redo</td><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td></tr>
   <tr><td>Quit</td><td><kbd>CTRL-Q</kbd> (or <kbd>ALT-Q</kbd>)</td></tr>
   <tr><td>Your theme, date languages and input format</td><td><strong>File ▸ Customize</strong></td></tr>
 </table>
+
+<p>Wherever Agendum asks for a file name, <kbd>F3</kbd> lists the folder's files and
+folders: <kbd>↑</kbd> <kbd>↓</kbd> move, typing narrows the list, <kbd>ENTER</kbd> opens a
+folder or takes the file, <code>../</code> goes up, and <kbd>F7</kbd> shows when each was
+last changed.</p>
 
 <p>Before quitting, opening another file, starting a new one or importing, Agendum asks
 “Save changes first?” if there are any: <kbd>Y</kbd> saves, <kbd>N</kbd> doesn't,
@@ -533,8 +548,37 @@ NO_COLOR=1 ./agendum party.agendum  # mono, unless you chose a theme</pre>
 </section>
 
 <!-- ===================================================================== -->
+<section id="macros">
+<h2>13. Macros: doing it again</h2>
+
+<p>A macro remembers keystrokes and plays them back. <kbd>ALT-F3</kbd> opens the
+<strong>macro manager</strong>; <kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) names a new macro and
+<kbd>F7</kbd> starts <em>Learn mode</em>: <code>LEARN</code> shows at the top right, and
+everything you press is done as usual and recorded, until <kbd>ALT-F3</kbd> stops it.</p>
+
+<table>
+  <tr><th>To</th><th>Press</th></tr>
+  <tr><td>Run a macro</td><td><kbd>ENTER</kbd> on it in the macro manager</td></tr>
+  <tr><td>Run the last macro again</td><td><kbd>ALT-Z</kbd></td></tr>
+  <tr><td>Read or change its keystrokes</td><td><kbd>F2</kbd> in the macro manager</td></tr>
+  <tr><td>Give it a key of its own, or say where it may run</td><td><kbd>F6</kbd> Macro Properties</td></tr>
+  <tr><td>Delete; sort by name; move in the list</td><td><kbd>DEL</kbd>; <kbd>ALT-F5</kbd>; <kbd>ALT-↑</kbd> <kbd>ALT-↓</kbd></td></tr>
+</table>
+
+<p>The keystrokes are written as Agenda wrote them, text as itself and keys in braces:
+<code>Bring a small present{ENTER}</code>, <code>{F10}vc</code>. A macro attached to one
+of <kbd>F1</kbd>…<kbd>F10</kbd> shows its name on the key bar. One run is one step for
+<kbd>CTRL-Z</kbd>, however much it did.</p>
+
+<div class="story">Every friend has to be asked to bring something. Piglet records a
+macro, <em>Ask</em>, that adds “Ask … to bring a small something” under <em>To do</em>,
+attaches it to <kbd>F4</kbd> … no, Owl points out, <kbd>F4</kbd> is Done … to
+<kbd>SHIFT-F4</kbd>, and asks six friends in six key presses.</div>
+</section>
+
+<!-- ===================================================================== -->
 <section id="keys">
-<h2>13. Keyboard reference</h2>
+<h2>14. Keyboard reference</h2>
 
 <p>Every function key also works as <kbd>ESC</kbd> then its digit (<kbd>ESC</kbd>
 <kbd>0</kbd> is <kbd>F10</kbd>), every <kbd>ALT-F</kbd> key as <kbd>ESC</kbd> then the
@@ -554,6 +598,7 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>INS</kbd></td><td>New item (or column entry)</td><td><kbd>CTRL-N</kbd>, <kbd>ALT-I</kbd></td></tr>
   <tr><td><kbd>DEL</kbd></td><td>Remove from section or column</td><td><kbd>fn-⌫</kbd></td></tr>
   <tr><td><kbd>ALT-F2</kbd></td><td>When date</td><td></td></tr>
+  <tr><td><kbd>ALT-F3</kbd></td><td>Macro manager; in Learn mode, stop recording</td><td><kbd>ESC</kbd> <kbd>#</kbd></td></tr>
   <tr><td><kbd>ALT-F4</kbd></td><td>Discard</td><td><kbd>CTRL-D</kbd></td></tr>
   <tr><td><kbd>ALT-F5</kbd></td><td>Go to a section</td><td></td></tr>
   <tr><td><kbd>ALT-F6</kbd></td><td>Search (then <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd>)</td><td></td></tr>
@@ -572,6 +617,7 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>ALT-O</kbd></td><td>Depend on the marked items</td><td></td></tr>
   <tr><td><kbd>ALT-V</kbd></td><td>Show / hide empty sections</td><td></td></tr>
   <tr><td><kbd>ALT-X</kbd> / <kbd>ALT-E</kbd></td><td>Execute everything / one category</td><td></td></tr>
+  <tr><td><kbd>ALT-Z</kbd></td><td>Run the last macro again</td><td><kbd>ESC</kbd> <kbd>z</kbd></td></tr>
   <tr><td><kbd>ALT-−</kbd> / <kbd>ALT-=</kbd></td><td>Collapse / expand section</td><td></td></tr>
   <tr><td><kbd>CTRL-PGUP</kbd> / <kbd>CTRL-PGDN</kbd></td><td>Previous / next section</td><td><kbd>⌥↑</kbd> / <kbd>⌥↓</kbd></td></tr>
   <tr><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td><td>Undo / redo</td><td></td></tr>
@@ -586,13 +632,13 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
 
 <!-- ===================================================================== -->
 <section id="later">
-<h2>14. Still to come</h2>
-<p class="soon">This guide will grow with the program. Planned next: recorded
-keystroke macros, a list of files to
-pick from instead of typing a name, a column that fits its contents, Agenda's own
-structured files (for anyone with old DOS files), a starter file like Agenda's
-Activities Planner, and more of the original's look: its symbols, help with links,
-and the boxes laid out as Agenda laid them out.</p>
+<h2>15. Still to come</h2>
+<p class="soon">This guide will grow with the program. Planned next: a starter file
+like Agenda's Activities Planner, Agenda's own structured files (for anyone with old
+DOS files), more of the original's look (its symbols, help with links, the boxes laid
+out as Agenda laid them out), a list of every command with its key and keys you choose
+yourself, and, further off, Agendum in a web browser, where friends can share a
+file.</p>
 
 <div class="story">And the party? Eeyore got a balloon, though it didn't stay round for
 long, and a pot to put it in, which turned out to be exactly what he needed. Piglet

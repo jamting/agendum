@@ -26,6 +26,7 @@
     <li><a href="#numbers">Numbers</a></li>
     <li><a href="#waiting">Things that wait</a></li>
     <li><a href="#files">Files and your own settings</a></li>
+    <li><a href="#macros">Macros</a></li>
     <li><a href="#more">A few more things</a></li>
     <li><a href="#reference">Reference</a></li>
     <li><a href="#evening">Evening</a></li>
@@ -64,6 +65,7 @@
 <!-- ===================================================================== -->
 <section id="invitation">
 <h2>An invitation</h2>
+<p class="in-which">In Which Rabbit Is Invited to Tea at The Chestnuts and Promised a Method</p>
 
 <div class="story">It had been a Very Busy week for Rabbit. There were carrots to weed
 and lettuces to count, a Notice to put up about an Organising Meeting, Small (who was
@@ -96,13 +98,28 @@ automatic filing, views and dates) get the most room. Features most people need 
 often are gathered in <a href="#more">A few more things</a>.</p>
 
 <pre class="shell">./agendum rabbit.agendum     # open a file, or start one with that name
-./agendum --demo             # try Agendum on the sample file
+./agendum                    # ask which file, offering the last one used
+./agendum --rabbit           # open Rabbit's file, the one in this manual
+./agendum --demo             # or the sample from Agenda's patent
 ./agendum --help             # every command-line option</pre>
+
+<p>Agendum begins with a title screen, as Agenda did, which goes after a moment or at
+any key. Started without a file, it asks <em>File to open or create</em> and offers the
+file used last, so most days <kbd>ENTER</kbd> is all it takes. A name that doesn't
+exist yet starts a new file there.</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> “Hoo's in control? You are.” Is that a spelling
+mistake, Owl?</p>
+<p class="owl"><b>Owl.</b> It is a motto. Mottoes are allowed to be spelt
+distinctively.</p>
+</div>
 </section>
 
 <!-- ===================================================================== -->
 <section id="idea">
 <h2>1. The idea</h2>
+<p class="in-which">In Which an Item Lives Nowhere and Everywhere, and Tigger Is Enough</p>
 
 <p>Agendum keeps three kinds of things:</p>
 <ul>
@@ -161,6 +178,7 @@ under <em>Friends and Relations</em>, because its text mentions Tigger. The
 <!-- ===================================================================== -->
 <section id="screen">
 <h2>2. The screen and the keys</h2>
+<p class="in-which">In Which Rabbit's Very Modern Keyboard Has No F10, and Nobody Is Left Out</p>
 
 <p>Every screen has the same three parts, in the colours Agenda 2.0 had on a colour
 screen:</p>
@@ -236,6 +254,7 @@ press <kbd>ESC</kbd> before the letter) for the <kbd>ALT</kbd> keys.</div>
 <!-- ===================================================================== -->
 <section id="items">
 <h2>3. Items</h2>
+<p class="in-which">In Which Next Tuesday Turns Out to Be the Twentieth, and Rabbit Was Only Testing</p>
 
 <h3>Writing things down</h3>
 <p>To add an item, highlight an item in a section (or the section's head) and just
@@ -360,6 +379,7 @@ three garden jobs, press <kbd>F4</kbd>, answer <kbd>M</kbd>, and all three are d
 <!-- ===================================================================== -->
 <section id="categories">
 <h2>4. Categories</h2>
+<p class="in-which">In Which Every One of Rabbit's Jobs Is High Priority, and So None of Them Is</p>
 
 <p>All categories form one tree under <code>MAIN</code>. You see and change it in the
 <strong>category manager</strong>, <kbd>F9</kbd>. Each line shows how many items are in
@@ -488,6 +508,7 @@ properties. <kbd>ENTER</kbd> changes the highlighted one.</p>
 <!-- ===================================================================== -->
 <section id="filing">
 <h2>5. Agendum files for you</h2>
+<p class="in-which">In Which Small Is Filed Under Small, and Owl Has Spelt Enough for One Week</p>
 
 <p>This is the heart of Agendum, as it was of Agenda, and the reason it exists. When
 you write or change an item, Agendum reads it and assigns it to every category whose name appears in it.</p>
@@ -680,6 +701,7 @@ am usually right.</p>
 <!-- ===================================================================== -->
 <section id="views">
 <h2>6. Views</h2>
+<p class="in-which">In Which Rabbit Types Lo and Gets Low Before He Has Finished</p>
 
 <p>A view is a saved way of looking: which categories have sections, which have
 columns, and what to hide or sort. A file can have as many views as you like.</p>
@@ -706,7 +728,9 @@ the item is in: the Priority column shows <em>High</em>, the Friends column the 
 A column headed by a category without children shows <code>*</code> for its items; a
 date column shows the date. <kbd>←</kbd> <kbd>→</kbd> or <kbd>TAB</kbd> move between
 the item and its columns; <strong>View ▸ Column</strong> removes, widens and narrows
-them.</p>
+them, and <strong>Fit</strong> makes the highlighted column exactly as wide as its head
+and the longest entry the view shows just then, full names and all. It fits once; a
+longer name typed later doesn't widen it again.</p>
 
 <h3 id="completion">Typing in a column</h3>
 <p>Typing in a column assigns the item. Agendum completes the name as you type, among
@@ -742,7 +766,9 @@ them. Rather like you, at parties.</p>
 <h3>Many views</h3>
 <p><kbd>F8</kbd> opens the <strong>view manager</strong>: <kbd>ENTER</kbd> switches to a
 view, <kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) adds one, <kbd>F2</kbd> renames, <kbd>ALT-↑</kbd> /
-<kbd>ALT-↓</kbd> reorder, <kbd>DEL</kbd> discards (items and categories are kept). From a
+<kbd>ALT-↓</kbd> reorder, <kbd>DEL</kbd> discards (items and categories are kept).
+Typing the start of a view's name jumps to it: with many views, <kbd>c</kbd> goes to the
+next one beginning with C, and more letters narrow it down. From a
 view, <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> go to the next or previous view and
 <kbd>ALT-F8</kbd> back to the last one.</p>
 
@@ -756,6 +782,7 @@ section's category) and <em>Pending</em> items (waiting for others,
 <!-- ===================================================================== -->
 <section id="dates">
 <h2>7. Dates and times</h2>
+<p class="in-which">In Which the Second Friday of November Is Found and Rabbit's Paws Have a Rest</p>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> This is the part I need. Everything I have to do has a
@@ -953,6 +980,7 @@ rabbit.</p>
 <!-- ===================================================================== -->
 <section id="datebook">
 <h2>8. A datebook</h2>
+<p class="in-which">In Which Rabbit Wants to See Thursday, and Looks Without Changing Anything</p>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> All very well, Owl, but a list is a list. When I want to
@@ -1062,6 +1090,7 @@ category to narrow it to, and <kbd>ENTER</kbd> lists that day's items in the Sho
 <!-- ===================================================================== -->
 <section id="rules">
 <h2>9. Conditions and actions</h2>
+<p class="in-which">In Which Owl Says the Most Beautiful Thing Rabbit Has Ever Heard</p>
 
 <p>Matching words is not the only way to file. A category can also have rules:
 <em>conditions</em>, which pull items in because of where else they are, and
@@ -1125,6 +1154,7 @@ everything on all items, <kbd>ALT-E</kbd> just the highlighted section's categor
 <!-- ===================================================================== -->
 <section id="finding">
 <h2>10. Finding, filtering and sorting</h2>
+<p class="in-which">In Which lett* Finds Every Lettuce and Everything Is Put in Order</p>
 
 <h3>Searching</h3>
 <p><kbd>ALT-F6</kbd> opens the search box: what to look for, in the item text, notes or
@@ -1193,6 +1223,7 @@ value first or last. The same box can sort the sections themselves.</p>
 <!-- ===================================================================== -->
 <section id="numbers">
 <h2>11. Numbers</h2>
+<p class="in-which">In Which Rabbit Finds Out What His Carrot Seeds Cost</p>
 
 <p>A <strong>numeric</strong> category holds a number for each item: cost, hours, how
 many lettuces. Make one with Category Properties ▸ <strong>Type</strong> ▸
@@ -1224,6 +1255,7 @@ bottom of every section.</p>
 <!-- ===================================================================== -->
 <section id="waiting">
 <h2>12. Things that wait</h2>
+<p class="in-which">In Which a Notice Waits for Owl to Spell Organising</p>
 
 <p>Some things can't be done before others. Mark the earlier ones with <kbd>F7</kbd>,
 highlight the later one and press <kbd>ALT-O</kbd>: it now <em>depends</em> on them and
@@ -1263,17 +1295,26 @@ shows <code>&amp;</code> until they are all done.</p>
 <!-- ===================================================================== -->
 <section id="files">
 <h2>13. Files and your own settings</h2>
+<p class="in-which">In Which Christopher Robin's Expotitions Come In from the Web</p>
 
 <table>
   <tr><th>To</th><th>Press or choose</th></tr>
   <tr><td>Save</td><td><kbd>CTRL-S</kbd> (or <kbd>ALT-W</kbd>); <strong>File ▸ Write</strong> saves under a new name</td></tr>
-  <tr><td>Open another file</td><td><kbd>CTRL-O</kbd> (or <kbd>ALT-G</kbd>), or <strong>File ▸ Retrieve</strong></td></tr>
+  <tr><td>Open another file</td><td><kbd>CTRL-O</kbd> (or <kbd>ALT-G</kbd>), or <strong>File ▸ Retrieve</strong>; <kbd>F3</kbd> picks it from a list</td></tr>
   <tr><td>Start a new, empty file</td><td><strong>File ▸ New</strong></td></tr>
   <tr><td>Print the view to a text file</td><td><kbd>CTRL-P</kbd></td></tr>
   <tr><td>Export the whole file as JSON / open a JSON file</td><td><strong>File ▸ Transfer ▸ Export</strong> / <strong>Import</strong></td></tr>
   <tr><td>Subscribe to a calendar on the web</td><td><strong>File ▸ Transfer ▸ Calendars</strong></td></tr>
   <tr><td>Quit</td><td><kbd>CTRL-Q</kbd> (or <kbd>ALT-Q</kbd>)</td></tr>
 </table>
+
+<p>Wherever Agendum asks for a file name (opening, saving under a name, exporting,
+printing to a file), <kbd>F3</kbd> shows the <strong>Select File</strong> box instead:
+the folders and the files that fit, in the folder of what you had typed. <kbd>↑</kbd>
+<kbd>↓</kbd> move, typing narrows the list to names containing what you type,
+<kbd>ENTER</kbd> opens a folder or puts the file in the prompt, <code>../</code> goes up,
+<kbd>F7</kbd> shows when each file was last changed, and <kbd>ESC</kbd> goes back to the
+prompt as it was.</p>
 
 <p>Quitting, opening another file, starting a new one and importing all replace what is
 on the screen, so when the file has unsaved changes Agendum first asks “Save changes
@@ -1375,8 +1416,72 @@ them, and saves them in your preferences file
 </section>
 
 <!-- ===================================================================== -->
+<section id="macros">
+<h2>14. Macros</h2>
+<p class="in-which">In Which Rabbit Teaches Agendum to Water the Carrots, and Tigger Goes Round in Circles</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> Every morning I go down to the Garden section and type
+“Water the carrots”. Every single morning, Owl.</p>
+<p class="owl"><b>Owl.</b> Then teach Agendum to do it. Show it once; it remembers the
+keys and plays them back whenever you like. That is a <em>macro</em>.</p>
+</div>
+
+<p><kbd>ALT-F3</kbd> opens the <strong>macro manager</strong>. <kbd>INS</kbd> (or
+<kbd>CTRL-N</kbd>) names a new macro, and <kbd>F7</kbd> starts <em>Learn mode</em>: the
+manager closes, <code>LEARN</code> shows at the top right, and every key Rabbit presses
+does its usual work and is recorded too. <kbd>ALT-F3</kbd> stops recording. Here is
+Rabbit's <em>Water</em>, and behind the box the item it typed while he taught it:</p>
+
+<!-- screen: 48-macros -->
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum *                    READY  2026-10-12 10:15 </span>
+<span class="t"> View: Rabbit's Week                                                            </span>
+<span class="h"> Garden                                  When             Priority Friends</span>
+ • Weed t┌────────────────────────── Macros ──────────────────────────┐
+ • Water │ Water                                                      │
+ • Count │                                                            │ger
+   bounce│ INS new · F7 learn · ENTER run · F2 edit · F6 props · DEL  │
+         └────────────────────────────────────────────────────────────┘
+<span class="h"> Notices                                 When             Priority Friends</span>
+ • Put up a Notice about the Organising   2026-10-16       High
+   Meeting on Friday
+
+<span class="h"> Friends and Relations                   When             Priority Friends</span>
+ • Count the lettuces before Tigger                        Medium   Tigger
+   bounces on them
+ • Ask Owl how to spell Organising                         Low      Owl
+ • Find Small, who is lost again                           High     Small
+ • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+<span class="t"> ENTER Run INS/^N New F7 Learn F2 Edit F6 Props DEL Delete A-F5 Sort A-↑↓ Move E</span></pre>
+
+<ul>
+  <li><kbd>ENTER</kbd> in the manager runs the highlighted macro; <kbd>ALT-Z</kbd>, anywhere,
+      runs the last one again.</li>
+  <li><kbd>F2</kbd> shows the keystrokes as text, written as Agenda wrote them: text as
+      itself, other keys in braces, such as <code>{DOWN}Water the carrots{ENTER}</code>
+      or <code>{F10}vc</code>. You may change them there.</li>
+  <li><kbd>F6</kbd> opens Macro Properties: rename it, attach it to a key of its own
+      (<code>{ShfF4}</code>, <code>{CtlE}</code> …), and choose where it may run (views,
+      notes, the category manager, or with a key, everywhere else). A macro on one of
+      <kbd>F1</kbd>…<kbd>F10</kbd> shows its name on the key bar.</li>
+  <li><kbd>F7</kbd> on a macro that already has keystrokes asks whether to replace them
+      or add to them. <kbd>DEL</kbd> deletes a macro, <kbd>ALT-F5</kbd> sorts the list,
+      <kbd>ALT-↑</kbd> / <kbd>ALT-↓</kbd> move one.</li>
+  <li>A whole run is one step for <kbd>CTRL-Z</kbd>, however much it did.</li>
+</ul>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> And if a macro runs another macro, which runs the
+first one again?</p>
+<p class="owl"><b>Owl.</b> Then Agendum stops it after a few rounds and says so. A
+Method should not go round in circles. That is what Tigger is for.</p>
+</div>
+</section>
+
+<!-- ===================================================================== -->
 <section id="more">
-<h2>14. A few more things</h2>
+<h2>15. A few more things</h2>
+<p class="in-which">In Which Rabbit's Head Is Full, and There Is a Little More, All of It Small</p>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> Is there more? My head is full.</p>
@@ -1413,7 +1518,8 @@ until the day you need one, and then you will remember there was something.</p>
 
 <!-- ===================================================================== -->
 <section id="reference">
-<h2>15. Reference</h2>
+<h2>16. Reference</h2>
+<p class="in-which">In Which Every Key Is Written Down, for the Day Rabbit Forgets One</p>
 
 <p>Every function key also works as <kbd>ESC</kbd> then its digit (<kbd>ESC</kbd>
 <kbd>0</kbd> is <kbd>F10</kbd>), every <kbd>ALT-F</kbd> key as <kbd>ESC</kbd> then the
@@ -1435,6 +1541,7 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>F10</kbd></td><td>Menu</td><td><kbd>/</kbd></td></tr>
   <tr><td><kbd>DEL</kbd></td><td>Remove from the section or column</td><td><kbd>fn-⌫</kbd></td></tr>
   <tr><td><kbd>ALT-F2</kbd></td><td>When date</td><td></td></tr>
+  <tr><td><kbd>ALT-F3</kbd></td><td>Macro manager; in Learn mode, stop recording</td><td><kbd>ESC</kbd> <kbd>#</kbd></td></tr>
   <tr><td><kbd>ALT-F4</kbd></td><td>Discard</td><td><kbd>CTRL-D</kbd></td></tr>
   <tr><td><kbd>ALT-F5</kbd></td><td>Go to a section</td><td></td></tr>
   <tr><td><kbd>ALT-F6</kbd></td><td>Search; then <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd></td><td></td></tr>
@@ -1452,6 +1559,7 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>ALT-O</kbd></td><td>Depend on the marked items</td><td></td></tr>
   <tr><td><kbd>ALT-V</kbd></td><td>Empty sections</td><td></td></tr>
   <tr><td><kbd>ALT-X</kbd> / <kbd>ALT-E</kbd></td><td>Execute all / one category</td><td></td></tr>
+  <tr><td><kbd>ALT-Z</kbd></td><td>Run the last macro again</td><td><kbd>ESC</kbd> <kbd>z</kbd></td></tr>
   <tr><td><kbd>ALT-−</kbd> / <kbd>ALT-=</kbd></td><td>Collapse / expand</td><td></td></tr>
   <tr><td><kbd>CTRL-PGUP</kbd> / <kbd>CTRL-PGDN</kbd></td><td>Previous / next section</td><td><kbd>⌥↑</kbd> / <kbd>⌥↓</kbd></td></tr>
   <tr><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td><td>Undo / redo</td><td></td></tr>
@@ -1470,7 +1578,7 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td>File</td><td>Retrieve, Save, Write, New, Dating, Properties, Customize, Transfer (Export, Import, Calendars)</td></tr>
   <tr><td>Item</td><td>Properties, Note, When, Show, Alarm, Finished, Mark, Unmark, Categorize, Reposition, Discard</td></tr>
   <tr><td>Category</td><td>Manager, Add, Recalc, Execute, Questions</td></tr>
-  <tr><td>View</td><td>Manager, Add, Rename, Discard, Properties, Browse, Section (Below, Above, Remove, Collapse, Filter, Sort), Column (After, Before, Remove, Wider, Narrower, Properties), Filter, Order, Last, Hide (Done, Empty, Inherited, Pending)</td></tr>
+  <tr><td>View</td><td>Manager, Add, Rename, Discard, Properties, Browse, Section (Below, Above, Remove, Collapse, Filter, Sort), Column (After, Before, Remove, Wider, Narrower, Fit, Properties), Filter, Order, Last, Hide (Done, Empty, Inherited, Pending)</td></tr>
   <tr><td>Search</td><td>View, File, Alarms, Schedule, Depends, Prereqs</td></tr>
   <tr><td></td><td>Undo, Redo, Print, Quit</td></tr>
 </table>
@@ -1479,6 +1587,7 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
 <!-- ===================================================================== -->
 <section id="evening">
 <h2>Evening</h2>
+<p class="in-which">In Which Rabbit Has Not Written on His Paws for Nearly Three Hours</p>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> Owl, I have a confession. I have not written anything on

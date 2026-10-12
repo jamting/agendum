@@ -40,6 +40,7 @@ defmodule ManualScreens do
     waiting_and_numbers(state)
     calendars(state)
     datebook(state)
+    macros(state)
   end
 
   defp view(state) do
@@ -158,6 +159,16 @@ defmodule ManualScreens do
     add = [{:f, 10}, "v", "a"] ++ String.graphemes("Rabbit's Calendar") ++ [:enter, "d"]
     shot("47-datebook-props", press(state, add), :datebook_props)
     shot("46-datebook-week", press(state, add ++ [:esc]), nil)
+  end
+
+  # A macro Rabbit learns: it adds "Water the carrots" under Garden.
+  defp macros(state) do
+    learn =
+      [{:alt_f, 3}, :insert] ++
+        String.graphemes("Water") ++
+        [:enter, {:f, 7}, :down] ++ String.graphemes("Water the carrots") ++ [:enter, {:alt_f, 3}]
+
+    shot("48-macros", press(state, learn ++ [{:alt_f, 3}]), :macros)
   end
 
   defp name(state, {id, _depth}), do: state.db.categories[id].name
