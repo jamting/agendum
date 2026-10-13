@@ -17,5 +17,15 @@
 - `ag2qanda.txt.html`: Lotus technical support questions and answers about
   Agenda 2.0 (1990–91): known bugs fixed by the Update Kits (recurring dates,
   datebook views, structured files) and how features behave in practice.
-- Kaplan, Kapor, Belove, Landsman, Drake: "Agenda: A Personal Information
-  Manager", _Communications of the ACM_ 33(7), 1990.
+- `AGENDA- A Personal Information Manager (PIM).md`: Kaplan, Kapor, Belove,
+  Landsman, Drake, "Agenda: A Personal Information Manager", _Communications
+  of the ACM_ 33(7), 1990, as text (references to illustrations removed). The
+  designers' own account: what personal information is, items and
+  categories, views, automatic assignment and why users accept the program
+  acting on its own.
+- `Hidden Agendas, Lost Cities - System Stack.md`: an essay from the blog
+  System Stack on using Agenda today (on a Pocket 8086 and in DOSBox-X):
+  what it does that modern task managers (Todoist, OmniFocus …) don't, set
+  against Getting Things Done's fixed "places", with links to further
+  material (Tavis Ormandy's tour, Bob Newell's FAQ, Tools for Thought).
+  Background on why the program still matters to people.

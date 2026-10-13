@@ -120,7 +120,10 @@ and look at the output. In raw mode the tty must not intercept control keys;
 ## Reference material
 
 - `docs/AGENDA_HISTORY.md`: why people used Agenda and what made it unique;
-  read it to judge which behaviours matter most to users.
+  read it to judge which behaviours matter most to users. Background in
+  `docs/reference/`: the designers' 1990 CACM article ("AGENDA- A Personal
+  Information Manager (PIM).md") and a modern essay on using it ("Hidden
+  Agendas, Lost Cities …").
 - `docs/reference/US5115504.pdf`: the Agenda patent (data model).
 - Lotus Agenda 2.0 manuals (User's Guide, Quick Start, Setting Up Agenda,
   Starter Applications, Working with Definition Files, Working with Macros)
