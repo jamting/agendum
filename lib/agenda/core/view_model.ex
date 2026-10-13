@@ -526,6 +526,27 @@ defmodule Agenda.Core.ViewModel do
       else: category.short_name || category.name
   end
 
+  @doc """
+  The category an item's entry in `column` stands for, whose note the
+  note symbol and NOTE (F5) are about (User's Guide 12-2): the first
+  category the entry shows, or the head itself for an item assigned to
+  the head (a Star or Yes/No entry, or a childless head's `*`). A date or
+  a number is no category: nil, as for an empty entry.
+  """
+  @spec entry_category(Database.t(), Database.id(), View.Column.t()) :: Database.id() | nil
+  def entry_category(db, item_id, %View.Column{category_id: head_id}) do
+    if db.categories[head_id].kind == :numeric or Database.date_category?(db, head_id) do
+      nil
+    else
+      case column_entries(db, item_id, head_id) do
+        # `[first | _]` matches a list with at least one element
+        [first | _] -> first
+        # an `if` without `else` gives nil when its test fails
+        [] -> if Database.explicit?(db, item_id, head_id), do: head_id
+      end
+    end
+  end
+
   @doc "Descendants of `head_id` the item is explicitly assigned to, in hierarchy order."
   @spec column_entries(Database.t(), Database.id(), Database.id()) :: [Database.id()]
   def column_entries(db, item_id, head_id) do

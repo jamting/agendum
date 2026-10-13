@@ -126,7 +126,9 @@ defmodule Agenda.TUI.Render.ControlPanel do
         d -> "Datebook for: #{state.db.categories[d.section_category].name}  "
       end
 
-    right = if hides == "" and datebook == "", do: "", else: datebook <> hides <> " "
+    # ♪ when what is highlighted has a note (User's Guide 12-2)
+    note = if Agenda.TUI.Layout.note_here?(state), do: "♪ ", else: ""
+    right = if hides == "", do: datebook <> note, else: datebook <> hides <> " " <> note
     # at least two spaces between the view's name and filter and the rest
     room = max(state.width - String.length(right) - 2, 0)
     left = Draw.truncate(" View: " <> view.name <> Text.filter_text(state, view.filter), room)

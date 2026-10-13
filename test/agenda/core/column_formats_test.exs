@@ -145,4 +145,37 @@ defmodule Agenda.Core.ColumnFormatsTest do
       assert Core.set_column_note(db, other, staff, 1, "x") == {:error, :no_category}
     end
   end
+
+  describe "the category a column entry stands for (its note's ♪ and F5, User's Guide 12-2)" do
+    defp column(db, v), do: db.views[v] |> Agenda.Core.View.columns(0) |> hd()
+
+    test "the first category the entry shows, in every Format", %{
+      db: db,
+      view_id: v,
+      tom_item: tom,
+      other: other
+    } do
+      tom_id = cat(db, "Tom")
+      assert ViewModel.entry_category(db, tom, column(db, v)) == tom_id
+      assert ViewModel.entry_category(db, other, column(db, v)) == nil
+
+      db = Core.set_column_display(db, v, {0, 0}, format: :note)
+      assert ViewModel.entry_category(db, tom, column(db, v)) == tom_id
+    end
+
+    test "a Star or Yes/No entry of an item in the head itself: the head", %{
+      db: db,
+      view_id: v,
+      other: other
+    } do
+      db = Core.assign(db, other, cat(db, "Staff"))
+      db = Core.set_column_display(db, v, {0, 0}, format: :star)
+      assert ViewModel.entry_category(db, other, column(db, v)) == cat(db, "Staff")
+    end
+
+    test "a date or a number is no category", %{db: db, view_id: v, tom_item: tom} do
+      when_column = %{column(db, v) | category_id: db.special.when}
+      assert ViewModel.entry_category(db, tom, when_column) == nil
+    end
+  end
 end

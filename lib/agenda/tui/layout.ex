@@ -208,4 +208,46 @@ defmodule Agenda.TUI.Layout do
   end
 
   def current_column(_state), do: nil
+
+  @doc """
+  What the highlight is on, for its note (User's Guide 12-2): the item,
+  the section head's category, a column head's category, or the category
+  a column entry stands for (`Agenda.Core.ViewModel.entry_category/3`).
+  Nil for an entry that is no category: a date, a number, or nothing.
+  """
+  @spec note_target(State.t()) :: {:item, Agenda.Core.Item.id()} | {:category, integer} | nil
+  def note_target(state) do
+    row = current_row(state)
+    column = if row && state.col > 0, do: Enum.at(row.columns, state.col - 1)
+
+    case {row, column} do
+      {nil, _} ->
+        nil
+
+      {%{kind: :section, category: cat}, nil} ->
+        {:category, cat.id}
+
+      {%{kind: :section}, column} ->
+        {:category, column.category_id}
+
+      {%{kind: :item, item: item}, nil} ->
+        {:item, item.id}
+
+      {%{kind: :item, item: item}, column} ->
+        case ViewModel.entry_category(state.db, item.id, column) do
+          nil -> nil
+          id -> {:category, id}
+        end
+    end
+  end
+
+  @doc "Whether what the highlight is on has a note (the ♪ in the control panel)."
+  @spec note_here?(State.t()) :: boolean
+  def note_here?(state) do
+    case note_target(state) do
+      {:item, id} -> state.db.items[id].note != ""
+      {:category, id} -> state.db.categories[id].note != ""
+      nil -> false
+    end
+  end
 end

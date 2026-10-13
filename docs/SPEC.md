@@ -604,6 +604,17 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   lines either way (R47); File ▸ Print to a file has no lines, as Agenda
   printed none ("The lines between sections do not appear when you
   print").
+- **R59 ✅ The note symbol and NOTE for what is highlighted** (User's
+  Guide 12-2 to 12-4; screenshot 126). In a view, ♪ at the right of the
+  control panel's second line shows that what the highlight is on has a
+  note: the item, the section head's category, a column head's category,
+  or the category a column entry stands for, the first the entry shows
+  (a Star or Yes/No entry: the head, when the item is in it). A date or
+  a number is no category, so it has no note. NOTE (F5) opens that note:
+  in a column, the column head's or the entry's category's (Agenda:
+  "Highlight the item or category"), where it used to open the item's;
+  on a date, number or empty entry it says "No category here to have a
+  note". Item ▸ Note still opens the item's note.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the
@@ -837,7 +848,7 @@ ones ("F8 VwMgr").
 | F2          | Edit item / section head / column entry                             | Rename                  |
 | F3 | Choices (category box for a column; assignment profile for an item) | |
 | F4          | Done                                                                |                         |
-| F5          | Note                                                                | Note                    |
+| F5          | Note of the item, or of the category highlighted (R59)              | Note                    |
 | F6 | Properties (item: Item Properties box; section head: category properties) | Properties |
 | F7          | Mark                                                                | Promote                 |
 | F8          | View manager                                                        | Demote                  |

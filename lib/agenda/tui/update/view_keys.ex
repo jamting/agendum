@@ -103,6 +103,10 @@ defmodule Agenda.TUI.Update.ViewKeys do
       {:f, 4} ->
         scoped(state, :done, row)
 
+      # in a column, the note of the column head or of the entry's category
+      {:f, 5} when state.col > 0 ->
+        column_note(state)
+
       {:f, 5} ->
         Actions.perform(state, :note)
 
@@ -298,6 +302,15 @@ defmodule Agenda.TUI.Update.ViewKeys do
   defp note_target(state, row) do
     {column, _at} = Layout.current_column(state)
     {:note_line, row.item.id, column.category_id, column.note_line}
+  end
+
+  # NOTE (F5) in a column opens the note of the category highlighted there
+  # (User's Guide 12-4: "Highlight the item or category")
+  defp column_note(state) do
+    case Layout.note_target(state) do
+      {:category, id} -> CategoryScreens.open_note(state, id)
+      _ -> State.error(state, "No category here to have a note")
+    end
   end
 
   defp column_target(state, row, how) do
