@@ -39,7 +39,8 @@ defmodule Agenda.TUI.Update.Actions do
     :remove_section,
     :collapse_section,
     :filter_section,
-    :sort_section
+    :sort_section,
+    :section_props
   ]
 
   def perform(state, action) do
@@ -264,6 +265,9 @@ defmodule Agenda.TUI.Update.Actions do
     do: CategoryScreens.open_picker(state, {:filter, {:section, sidx}}, nil)
 
   defp do_perform(state, :sort_section, %{sidx: sidx}), do: SortBox.open(state, {:section, sidx})
+
+  defp do_perform(state, :section_props, %{sidx: sidx}),
+    do: Agenda.TUI.SectionBox.open(state, sidx)
 
   defp do_perform(state, :unmark_all, _) do
     state |> State.change_db(Core.unmark_all(state.db)) |> State.info("All items unmarked")

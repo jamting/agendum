@@ -71,6 +71,8 @@ defmodule Agenda.TUI.Menu do
             {"Filter", "Show only items in (or not in) chosen categories, in this section",
              :filter_section},
             {"Sort", "How this section's items are ordered", :sort_section},
+            {"Properties", "The section's head, sorting, filter and columns (F6 on its head)",
+             :section_props},
             {"Lines", "Lines between the sections (section separators)",
              {:toggle_view, :section_separators}}
           ]},

@@ -488,8 +488,9 @@ defmodule Agenda.TUI.Update.ViewKeys do
 
   defp props(state, %{kind: :item, item: item}), do: ItemProperties.open(state, item.id)
 
-  defp props(state, %{kind: :section, category: cat}),
-    do: CategoryScreens.open_props(state, cat.id)
+  # Agenda's PROPS on a section head: Section Properties, whose head field
+  # opens the category's properties with F6 again
+  defp props(state, %{kind: :section}), do: Actions.perform(state, :section_props)
 
   defp props(state, nil), do: state
 

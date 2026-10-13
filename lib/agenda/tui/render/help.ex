@@ -15,7 +15,7 @@ defmodule Agenda.TUI.Render.Help do
                    F6 a time, type a date to go there, ENTER sets it)
      F4            Mark item done                  CTRL-K
      F5            Note of the item, or of the category highlighted
-     F6            Item / category properties      ESC 6
+     F6            Item / section properties       ESC 6
      F7            Mark item (on a section: all)  ALT-F7 unmark all, ALT-J next
      F8 / F9       View manager / category manager
      F10 or /      Menu

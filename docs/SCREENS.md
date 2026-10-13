@@ -107,6 +107,11 @@ or handles it.
     Section separators (R58). `Agenda.TUI.DatebookBox`.
     - **Picker** `:picker` for the Date category, End category and Section.
     - **Prompt** `:prompt` for a time (Start at / End at of a day) or the base date.
+  - **Section Properties** `:section_props` (View ▸ Section ▸ Properties, F6
+    on a section head): the section's head, Item sorting, Section
+    statistics, Filter and its columns (R61). `Agenda.TUI.SectionBox`.
+    - **Picker** `:picker` for the section head or the filter.
+    - **Sort** `:sort` for Item sorting; **Column Add** `:column_add` for INS.
   - **Choice** `:choice` (View ▸ Add, after the name): Standard or Datebook.
   - **Choice** `:choice` (View ▸ Column ▸ Remove on a column linked into
     other sections): All sections in view or Current section only (R55).
@@ -311,6 +316,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:alarm_list`        | box           | `Agenda.TUI.AlarmList`                  | Search ▸ Alarms                                  | R38           |
 | `:calendar`          | box           | `Agenda.TUI.CalendarBox`                | F3 in a date column, ALT-C                       | R46           |
 | `:datebook_props`    | box           | `Agenda.TUI.DatebookBox`                | View ▸ Properties of a datebook view             | R47           |
+| `:section_props`     | box           | `Agenda.TUI.SectionBox`                 | View ▸ Section ▸ Properties, F6 on a section head | R61          |
 | `:browse`            | control panel | `Agenda.TUI.Browse`                     | View ▸ Browse, ALT-B                             | R47, R48      |
 | `:column_width`      | control panel | `Agenda.TUI.ColumnWidth`                | View ▸ Column ▸ Width                            | R22a, R55     |
 | `:column_move`       | control panel | `Agenda.TUI.ColumnMove`                 | View ▸ Column ▸ Move, ALT-F10 on a column head   | R55           |

@@ -1,0 +1,223 @@
+defmodule Agenda.TUI.SectionBox do
+  @moduledoc """
+  The Section Properties box (View ▸ Section ▸ Properties, or F6 on a
+  section head, as Agenda's PROPS; R61; Help "Section Properties/Add
+  Box"): one section's settings in one place.
+
+    * Section head: type a name (a new category if need be) or F3 to pick
+      one; F6 opens the head category's properties
+    * Item sorting ...: the section's sort (`Agenda.TUI.SortBox`)
+    * Section statistics ...: how many items the section shows
+    * Filter: the section's filter (the filter picker)
+    * Columns: the section's columns in their order, the item column as
+      `<Items>`; DEL removes one from this section, ALT-↑ ↓ move one
+      (the item column too), INS adds one right of the highlighted one
+      (Column Add). Agenda's ALT-F10 moved them; ours are the macro
+      manager's keys.
+
+  SPACE or ENTER on a setting opens it; ESC (or ENTER on a column) closes
+  the box. Each change is one undo step. The settings are drawn from
+  `@layout` (`Agenda.TUI.Template`), the columns listed below it. Pure.
+  """
+
+  alias Agenda.Core
+  alias Agenda.Core.{View, ViewColumns, ViewModel}
+  alias Agenda.TUI.{CategoryScreens, ColumnAddBox, FieldTyping, SortBox, State, Template}
+  alias Agenda.TUI.Render.Text
+
+  @layout """
+   Section head       : [head                          ]
+   Item sorting       : [sorting                       ]
+   Section statistics : [statistics                    ]
+   Filter             : [filter                        ]
+
+   Columns:
+  """
+  @fields Template.fields(@layout)
+  @hint " SPACE opens · DEL removes · ALT-↑↓ moves · INS adds"
+
+  @doc "Opens the box for section `sidx` of the current view."
+  def open(state, sidx),
+    do: State.push(state, %{type: :section_props, sidx: sidx, cursor: 0})
+
+  defp section(state, mode), do: Enum.at(State.view(state).sections, mode.sidx)
+  defp slots(state, mode), do: ViewColumns.slots(State.view(state), mode.sidx)
+
+  # the highlighted row: a setting, or `{:slot, n}` for the nth column listed
+  defp row(state, mode) do
+    rows = @fields ++ Enum.map(0..(length(slots(state, mode)) - 1)//1, &{:slot, &1})
+    Enum.at(rows, min(mode.cursor, length(rows) - 1))
+  end
+
+  defp last(state, mode), do: length(@fields) + length(slots(state, mode)) - 1
+
+  def handle(state, mode, key) do
+    if FieldTyping.typing?(mode),
+      do: FieldTyping.key(state, mode, key, &typed/3),
+      else: settings_key(state, mode, key)
+  end
+
+  # a typed head: that category heads the section (a new one is made under
+  # MAIN when no category has the name), one change
+  defp typed(state, :head, name) do
+    mode = State.mode(state)
+
+    FieldTyping.head_named(state, name, fn state, db, id ->
+      State.change_db(state, Core.set_section_category(db, state.view_id, mode.sidx, id))
+    end)
+  end
+
+  defp settings_key(state, mode, key) do
+    row = row(state, mode)
+
+    case key do
+      :esc ->
+        State.pop(state)
+
+      :up ->
+        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
+
+      :down ->
+        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last(state, mode))})
+
+      {:f, 3} when row == :head ->
+        CategoryScreens.open_picker(state, {:change_section, mode.sidx}, nil)
+
+      {:f, 6} when row == :head ->
+        CategoryScreens.open_props(state, section(state, mode).category_id)
+
+      {:char, c} when row == :head and c != " " ->
+        FieldTyping.start(state, mode, :head, c)
+
+      k when k in [{:char, " "}, :enter] and is_atom(row) ->
+        open_setting(state, mode, row)
+
+      :enter ->
+        State.pop(state)
+
+      k when k in [:delete, {:ctrl, "d"}] ->
+        remove(state, mode, row)
+
+      {:alt, dir} when dir in [:up, :down] ->
+        move(state, mode, row, if(dir == :up, do: -1, else: 1))
+
+      :insert ->
+        add(state, mode, row)
+
+      _ ->
+        state
+    end
+  end
+
+  defp open_setting(state, mode, :head),
+    do: CategoryScreens.open_picker(state, {:change_section, mode.sidx}, nil)
+
+  defp open_setting(state, mode, :sorting), do: SortBox.open(state, {:section, mode.sidx})
+
+  defp open_setting(state, mode, :statistics) do
+    name = state.db.categories[section(state, mode).category_id].name
+    State.info(state, "#{Agenda.TUI.Draw.count(item_count(state, mode), "item")} in #{name}")
+  end
+
+  defp open_setting(state, mode, :filter),
+    do: CategoryScreens.open_picker(state, {:filter, {:section, mode.sidx}}, nil)
+
+  # the items the section shows now, as the view draws it
+  defp item_count(state, mode) do
+    state.db
+    |> ViewModel.build(State.view(state), State.context(state))
+    |> Enum.at(mode.sidx)
+    |> Map.fetch!(:rows)
+    |> length()
+  end
+
+  defp remove(state, mode, {:slot, n}) do
+    case Enum.at(slots(state, mode), n) do
+      :items ->
+        State.error(state, "The item column stays; remove the other columns")
+
+      index ->
+        db = Core.remove_column(state.db, state.view_id, {mode.sidx, index}, :section)
+        # the highlight stays on the row, which is now the next column
+        state = State.change_db(state, db)
+        State.put_mode(state, %{mode | cursor: min(mode.cursor, last(state, mode))})
+    end
+  end
+
+  defp remove(state, _mode, _row), do: state
+
+  defp move(state, mode, {:slot, n}, step) do
+    to = n + step
+
+    if to < 0 or to >= length(slots(state, mode)) do
+      state
+    else
+      state
+      |> State.change_db(Core.move_column(state.db, state.view_id, mode.sidx, n, to))
+      |> State.put_mode(%{mode | cursor: mode.cursor + step})
+    end
+  end
+
+  defp move(state, _mode, _row, _step), do: state
+
+  # Column Add counts the view's columns from 1, 0 being the item text
+  defp add(state, mode, {:slot, n}) do
+    col =
+      case Enum.at(slots(state, mode), n) do
+        :items -> 0
+        index -> index + 1
+      end
+
+    ColumnAddBox.open(state, mode.sidx, col)
+  end
+
+  defp add(state, mode, _row), do: ColumnAddBox.open(state, mode.sidx, 0)
+
+  # --- drawing ---
+
+  @doc "The box's title."
+  def title(state, mode),
+    do: "Section Properties: #{state.db.categories[section(state, mode).category_id].name}"
+
+  @doc "The box's lines, the highlighted row selected."
+  def content(state, mode) do
+    section = section(state, mode)
+    view = State.view(state)
+    row = row(state, mode)
+
+    values = %{
+      head: state.db.categories[section.category_id].name,
+      sorting: if(section.sort == nil, do: "As the view ...", else: "Its own ..."),
+      statistics: "...",
+      filter: filter(state, section.filter)
+    }
+
+    opts = [selected: row] ++ FieldTyping.editing(mode)
+
+    Template.render(@layout, values, opts) ++
+      columns(state, view, mode, row) ++ [[], [{:box, @hint}]]
+  end
+
+  defp filter(_state, []), do: "(none)"
+  defp filter(state, filter), do: Text.filter_text(state, filter)
+
+  defp columns(state, view, mode, row) do
+    columns = View.columns(view, mode.sidx)
+
+    state
+    |> slots(mode)
+    |> Enum.with_index()
+    |> Enum.map(fn {slot, n} ->
+      name =
+        case slot do
+          :items -> "<Items>"
+          index -> column_name(state, Enum.at(columns, index))
+        end
+
+      [{:box, "   "}, {if(row == {:slot, n}, do: :box_selected, else: :box), name}]
+    end)
+  end
+
+  defp column_name(_state, %View.Column{title: title}) when is_binary(title), do: title
+  defp column_name(state, column), do: state.db.categories[column.category_id].name
+end

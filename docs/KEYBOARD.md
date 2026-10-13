@@ -13,6 +13,7 @@ settings, as described in the second half of this guide.
 | Edit (item, section head, column entry, category)                                               | F2                            | **CTRL-E**                                                            |
 | Mark done                                                                                       | F4                            | **CTRL-K**                                                            |
 | On a column head (→ / TAB on a section head): remove the column; replace the head; its properties; rename it; move it (← →, ENTER) | DEL; F3; F6; F2; ALT-F10 | fn-⌫; ESC then `3` / `6`; **CTRL-E**; ESC then `)`, or menu View ▸ Column ▸ Move |
+| On a section head: Section Properties; in it: remove a column from the section; move it; add one; the head's category properties | F6; DEL; ALT-↑ / ALT-↓; INS; F6 on Section head | ESC then `6`; fn-⌫; ⌥↑ / ⌥↓; **CTRL-N** |
 | Discard                                                                                         | ALT-F4                        | **CTRL-D**                                                            |
 | Set the When date                                                                               | ALT-F2                        | ESC then `@`, or menu Item ▸ When                                     |
 | Next / previous completion while typing a column entry                                          | F8 / F7                       | ALT-N / ALT-P (ESC then `n` / `p`)                                    |

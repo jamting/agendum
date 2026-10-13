@@ -99,8 +99,8 @@ defmodule Agenda.TUI.ItemPropertiesTest do
     assert press(state, :esc).modes == []
   end
 
-  test "F6 on a section head still opens category properties" do
-    state = start(Agenda.Sample.build(~D[2026-10-08])) |> press({:f, 6})
+  test "F6 on a section head opens Section Properties, and F6 there the category's (R61)" do
+    state = start(Agenda.Sample.build(~D[2026-10-08])) |> press([{:f, 6}, {:f, 6}])
     assert screen(state) =~ "Category properties: Calls"
   end
 end

@@ -83,6 +83,10 @@ defmodule Agenda.TUI.Render.Boxes do
 
   # the column's head is the box's first row, as in Agenda (screenshot 142)
   defp box_title(_state, %{type: :column_props}), do: "Column Properties"
+
+  defp box_title(state, %{type: :section_props} = mode),
+    do: Agenda.TUI.SectionBox.title(state, mode)
+
   defp box_title(_state, %{type: :column_add}), do: "Column Add"
   defp box_title(_state, %{type: :item_column}), do: "Item Column Properties"
 
@@ -449,6 +453,9 @@ defmodule Agenda.TUI.Render.Boxes do
         [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]
       ]
   end
+
+  defp box_content(state, %{type: :section_props} = mode, _inner, _max_rows),
+    do: Agenda.TUI.SectionBox.content(state, mode)
 
   defp box_content(state, %{type: :column_props} = mode, _inner, _max_rows),
     do: Agenda.TUI.ColumnBox.content(state, mode)

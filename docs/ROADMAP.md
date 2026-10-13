@@ -50,7 +50,9 @@ Rule numbers refer to `SPEC.md`.
 - [x] Hide column heads (R57): View ▸ Hide ▸ Column heads, column heads only on the first section on the screen, as Agenda's datebooks are; also in the datebook settings box, with Section separators (R58), the box drawn from a layout
 - [x] Section separators (R58): View ▸ Section ▸ Lines, each section head a line across in place of the blank line; in the View Properties box when there is one
 - [x] ♪ in the control panel (R59) when the highlighted section head, column entry or column head has a category note, not only an item (User's Guide 12-2; screenshot 126), so a note-line column (R56) shows whose note it reads
-- [ ] Section Properties box (View ▸ Section ▸ Properties; Help "Section Properties/Add Box"): Section head, Item sorting, Filter, a Columns list with `<Items>` (ALT-F10 rearranges) and Select numeric functions (the calculations of every numeric column in the section, the R29 gap), drawn from a layout
+- [ ] Section Properties box (View ▸ Section ▸ Properties; Help "Section Properties/Add Box") (R61)
+  - [x] Section head, Item sorting, Section statistics, Filter, a Columns list with `<Items>` (DEL, ALT-↑↓, INS), drawn from a layout; F6 on a section head opens it
+  - [ ] Select numeric functions: the calculations of every numeric column in the section (the R29 gap)
 - [ ] Moving a section within its view: ALT-F10 on a section head or View ▸ Section ▸ Move, the sections collapsed while it moves (User's Guide 5-8 to 5-9); in that view only
 
 ## Look and feel — after screenshots of Agenda 2.0 (ADR 0018)

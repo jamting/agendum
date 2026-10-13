@@ -53,6 +53,7 @@ defmodule Agenda.TUI.Render do
     :column_props,
     :column_add,
     :item_column,
+    :section_props,
     :alarm_list
   ]
 

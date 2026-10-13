@@ -647,6 +647,20 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   made, is in the file, and Sample Person's note has the phone number and
   company it shows. The macros that need the command language (Sort items
   in view, Create/Update contact list) are left out.
+- **R61 ✅ Section Properties** (Help "Section Properties/Add Box"; User's
+  Guide 5-5 to 5-10). One section's settings in one box, opened with View
+  ▸ Section ▸ Properties or F6 (PROPS) on a section head, as in Agenda
+  (F6 on a section head used to open the head category's properties; F6
+  on the box's Section head does that now). Section head: a typed name
+  (a new category if no category has it) or F3 picks one; Item sorting
+  opens the section's sort (R36); Section statistics says how many items
+  the section shows; Filter opens the section's filter (R28); Columns
+  lists the section's columns in their order with the item column as
+  `<Items>`: DEL removes a column from this section only (the item
+  column stays), ALT-↑ ↓ move a column or the item column (Agenda:
+  ALT-F10), INS adds a column right of the highlighted one (Column Add,
+  R55). Each change is one undo step. Not in a datebook view, whose
+  sections are its dates (R47).
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the
