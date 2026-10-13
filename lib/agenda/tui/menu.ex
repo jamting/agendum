@@ -94,7 +94,9 @@ defmodule Agenda.TUI.Menu do
             {"Inherited", "Hide or show items only in subcategories",
              {:toggle_view, :hide_inherited}},
             {"Pending", "Hide or show items waiting for others to be done (ALT-O)",
-             {:toggle_view, :hide_dependent}}
+             {:toggle_view, :hide_dependent}},
+            {"Column heads", "Show column heads only in the first section on the screen",
+             {:toggle_view, :hide_column_heads}}
           ]}
        ]},
       {"Search", "Find items by their text",

@@ -22,7 +22,7 @@ defmodule Agenda.TUI.Render.View do
       tw = Layout.text_width(state, row)
       selected = index == state.cursor
       lines = row_lines(state, row, index, selected, editing, tw, columns)
-      lines = if selected, do: Enum.map(lines, &tint(&1, state.width)), else: lines
+      lines = if selected, do: Enum.map(lines, &tint_line(&1, state.width)), else: lines
 
       lines =
         case editing do
@@ -42,7 +42,27 @@ defmodule Agenda.TUI.Render.View do
       lines ++ calc_lines(Map.get(row, :calcs, []), tw, row)
     end)
     |> Enum.drop(state.scroll)
+    |> first_heads_only()
   end
+
+  # Hide column heads (R57): a section head line comes as
+  # `{:head, with_heads, without}` when its heads may be hidden; only the
+  # first on the screen (after scrolling) keeps them. `Enum.map_reduce/3`
+  # carries whether that one has been seen from line to line.
+  defp first_heads_only(lines) do
+    lines
+    |> Enum.map_reduce(false, fn
+      {:head, with_heads, _without}, false -> {with_heads, true}
+      {:head, _with_heads, without}, true -> {without, true}
+      line, seen -> {line, seen}
+    end)
+    |> elem(0)
+  end
+
+  defp tint_line({:head, with_heads, without}, width),
+    do: {:head, tint(with_heads, width), tint(without, width)}
+
+  defp tint_line(line, width), do: tint(line, width)
 
   # The highlighted line is a lighter shade across the screen, so the eye
   # finds it when the highlight is in a column (Agenda drew a » instead).
@@ -166,6 +186,14 @@ defmodule Agenda.TUI.Render.View do
       end)
 
     head = around_items(heads, row, name_part)
+
+    # with Hide column heads (R57) the heads may give way to blanks of the
+    # same width; not while one of them is highlighted
+    head =
+      if State.view(state).hide_column_heads and not (selected and state.col > 0),
+        do: {:head, head, around_items(blank_heads(columns), row, name_part)},
+        else: head
+
     if index == 0 or row.slot, do: [head], else: [[], head]
   end
 
@@ -206,6 +234,13 @@ defmodule Agenda.TUI.Render.View do
 
   # An item's cells, one list of segments per column: its entry (or the
   # field being typed into) and, beside a number, its "% tot".
+  # a section head's column heads as blanks of the same width (R57)
+  defp blank_heads(columns) do
+    Enum.map(columns, fn c ->
+      [{:normal, String.duplicate(" ", c.width + 1)}] ++ percent_part(c, {:normal, ""})
+    end)
+  end
+
   defp item_cells(state, %{item: item} = row, selected, editing) do
     row.columns
     |> Enum.zip(row.cells)

@@ -766,8 +766,11 @@ defmodule Agenda.Core.Facade.Views do
     do: put_scoped(db, view_id, scope, :filter, filters)
 
   @doc "Toggles a boolean view option such as `:hide_done`."
-  @spec toggle_view_option(db, id, :hide_done | :hide_empty | :hide_inherited | :hide_dependent) ::
-          db
+  @spec toggle_view_option(
+          db,
+          id,
+          :hide_done | :hide_empty | :hide_inherited | :hide_dependent | :hide_column_heads
+        ) :: db
   def toggle_view_option(db, view_id, option) do
     # `Map.update!/3` applies a function to the current value of one key
     Database.update_view(db, view_id, &Map.update!(&1, option, fn value -> not value end))

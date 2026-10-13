@@ -581,6 +581,17 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     number and Column title for Category note; a Star or Yes/No column
     starts 2 wide (User's Guide 5-31, 5-33), so a column can be 1 wide
     (Agenda's 1 to 76; ours up to 80).
+- **R57 ✅ Hide column heads** (User's Guide 5-14 to 5-15, 15-21;
+  screenshots 55, 67, 69, 71, 143). A view setting, No by default: with
+  Yes, column heads show only on the first section head on the screen
+  (after scrolling, the first one shown), so heads that every section
+  repeats are not drawn again; the other section heads keep their names.
+  Set with View ▸ Hide ▸ Column heads (Agenda: View Properties ▸ Hide
+  column heads; ours until View Properties is a box), one undo step. Our
+  choices: a section head whose column head is highlighted shows its
+  heads, so the highlight can be seen; File ▸ Print to a file still names
+  each column, as it labels every entry with it. In a datebook view the
+  first slot on the screen shows them.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

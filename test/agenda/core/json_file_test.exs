@@ -112,6 +112,7 @@ defmodule Agenda.Core.JSONFileTest do
             match: %Search{text: "bill", on: :both, ignore_case: false},
             hide_done: true,
             hide_dependent: true,
+            hide_column_heads: true,
             section_sort: :alpha,
             section_order: :desc
         }

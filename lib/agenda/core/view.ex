@@ -13,6 +13,8 @@ defmodule Agenda.Core.View do
   (R36). `match` limits it to items whose text matches a search, as in
   the Show View (R37), or to a list of items (`{:items, ids}`, R43).
   `hide_dependent` hides items still waiting for a prerequisite (R43).
+  `hide_column_heads` shows column heads only on the first section head
+  on the screen (R57); how a front end draws it is its own.
   `datebook` makes it a datebook view (R47, `Agenda.Core.Datebook`), whose
   sections are time slots worked out from its settings; its stored
   `sections` are not used. `section_sort` shows the sections in category
@@ -179,6 +181,7 @@ defmodule Agenda.Core.View do
           sort: [SortKey.t()],
           match: Agenda.Core.Search.t() | {:items, [Agenda.Core.Item.id()]} | nil,
           hide_dependent: boolean,
+          hide_column_heads: boolean,
           section_sort: :none | :category | :alpha | :numeric,
           section_order: :asc | :desc,
           datebook: Agenda.Core.Datebook.t() | nil
@@ -196,6 +199,7 @@ defmodule Agenda.Core.View do
     sort: [],
     match: nil,
     hide_dependent: false,
+    hide_column_heads: false,
     section_sort: :none,
     section_order: :asc,
     datebook: nil
