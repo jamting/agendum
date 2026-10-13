@@ -37,7 +37,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Original keys in views: ALT-F5 GO TO a section, ALT-N/ALT-P next/previous view, ALT-W/G/Q save/retrieve/quit, ALT-V empty sections, ALT-K key map, ALT-I insert (R42)
 - [x] Original keys in the category manager: ALT-R child, ALT-L uncle, ALT-D/ALT-U/ALT-I sibling below/above (R42)
 - [x] Original keys in notes: ALT-D/ALT-T insert date/time, ALT-N/ALT-P next/previous note, ALT-S repeats a replacement (R39, R42)
-- [ ] Original keys that need new features: ALT-F9 copy item, ALT-Y yank back removed item, ALT-H hop to next occurrence, ALT-F7 make item from note text, ALT-F2 make category from note text (R42)
+- [ ] Original keys that need new features (R42): ~~ALT-F9 copy item~~ (done: the Copy box), ALT-Y yank back removed item, ALT-H hop to next occurrence, ALT-F7 make item from note text, ALT-F2 make category from note text (R42)
 - [x] Columns per section (User's Guide 3-16, 3-27, 5-22 to 5-25): a column belongs to one section or to all; linked columns change together; removing asks all sections or this one; each section's item text fills what its columns leave. Existing files load with every column in every section, linked (R55)
 - [x] File ▸ Properties ▸ Insert new columns in (All sections / Current section), with the File Properties box drawn from a layout as in screenshot 130 (R55)
 - [x] Column Properties for standard columns, with Link with other sections (unlink, or link with the columns of the same head, type, format and width), drawn from a layout as in screenshot 127 (R55)

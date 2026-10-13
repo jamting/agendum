@@ -29,7 +29,10 @@ defmodule Agenda.TUI.Render.Boxes do
 
   # the calendar is a small box, as in Agenda; the others share one width
   defp box_width(state, %{type: :calendar}), do: min(state.width - 8, 30)
-  defp box_width(state, %{type: :numeric_functions}), do: min(state.width - 8, 32)
+
+  defp box_width(state, %{type: type}) when type in [:numeric_functions, :copy_items],
+    do: min(state.width - 8, 32)
+
   # File Properties and Column Properties have Agenda's two columns of
   # settings side by side (screenshots 130, 127)
   defp box_width(state, %{type: type})
@@ -89,6 +92,7 @@ defmodule Agenda.TUI.Render.Boxes do
     do: Agenda.TUI.SectionBox.title(state, mode)
 
   defp box_title(_state, %{type: :numeric_functions}), do: "Select Numeric Functions"
+  defp box_title(_state, %{type: :copy_items}), do: "Copy"
 
   defp box_title(_state, %{type: :column_add}), do: "Column Add"
   defp box_title(_state, %{type: :item_column}), do: "Item Column Properties"
@@ -460,6 +464,9 @@ defmodule Agenda.TUI.Render.Boxes do
   defp box_content(state, %{type: :section_props} = mode, _inner, _max_rows),
     do: Agenda.TUI.SectionBox.content(state, mode)
 
+  defp box_content(state, %{type: :copy_items} = mode, _inner, _max_rows),
+    do: Agenda.TUI.CopyBox.lines(state, mode)
+
   defp box_content(state, %{type: :numeric_functions} = mode, _inner, _max_rows),
     do: Agenda.TUI.NumericFunctionsBox.content(state, mode)
 
@@ -753,6 +760,7 @@ defmodule Agenda.TUI.Render.Boxes do
       :remove -> "Remove from this section:"
       :when -> "Set the When date of:"
       :move_item -> "Move:"
+      :copy_item -> "Copy:"
       :make_assign -> "Assign to a category:"
       :profile -> "Show the assignments of:"
     end

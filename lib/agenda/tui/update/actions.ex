@@ -185,6 +185,11 @@ defmodule Agenda.TUI.Update.Actions do
   defp do_perform(state, :assign, %{kind: :item, item: item}),
     do: CategoryScreens.open_profile(state, item.id)
 
+  defp do_perform(state, :copy_item, %{kind: :item, item: item}),
+    do: Agenda.TUI.CopyBox.open(state, [item.id])
+
+  defp do_perform(state, :copy_item, _row), do: State.error(state, "Highlight an item to copy")
+
   defp do_perform(state, :move_item, %{kind: :item, item: item, category: cat}) do
     Marked.start_move(state, [{item.id, cat.id}])
   end

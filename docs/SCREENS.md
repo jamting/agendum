@@ -140,10 +140,12 @@ or handles it.
     to look one up (R46). `Agenda.TUI.CalendarBox`.
     - **Prompt** `:prompt` for a time (F6) or a date to go to (typing).
   - **Scope** `:scope`: with items marked, whether a command (F3, F4, ALT-F2,
-    ALT-F4, ALT-F10, ALT-M, DEL) acts on the highlighted item or all marked
+    ALT-F4, ALT-F9, ALT-F10, ALT-M, DEL) acts on the highlighted item or all marked
     ones (R35). `Agenda.TUI.Update.Marked`.
   - **Moving items** `:move_item` (ALT-F10, Item ▸ Reposition): the item
     follows the cursor until ENTER (R26). `Agenda.TUI.Update.Marked`.
+  - **Copy** `:copy_items` (ALT-F9): the view's sections; ENTER puts the
+    item(s) in the chosen one as well (R42). `Agenda.TUI.CopyBox`.
   - **Note editor** `:note` (F5, Item ▸ Note): a full screen for an item's
     note; also a category's note from Category Properties or the category
     manager. `Agenda.TUI.TextEdit`, `Agenda.TUI.Update.Notes`.
@@ -287,6 +289,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:prompt`            | control panel | `Agenda.TUI.Update.Prompts`             | commands that ask for a line of text             | §5            |
 | `:confirm`           | control panel | `Agenda.TUI.Update.Prompts`             | commands that ask Y/N                            | §5            |
 | `:scope`             | box           | `Agenda.TUI.Update.Marked`              | a command with items marked                      | R35           |
+| `:copy_items`        | box           | `Agenda.TUI.CopyBox`                    | ALT-F9 on an item                                | R42           |
 | `:move_item`         | control panel | `Agenda.TUI.Update.Marked`              | ALT-F10, Item ▸ Reposition                       | R26           |
 | `:searching`         | control panel | `Agenda.TUI.SearchBox`                  | the Search box                                   | R37           |
 | `:help`              | full screen   | `Agenda.TUI.Render.Help`                | F1                                               | §5            |

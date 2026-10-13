@@ -946,7 +946,15 @@ sibling, CTRL-HOME/END = first/last.
   previous category; elsewhere they do nothing. Not done: a category added
   to a family whose other members are all sections of a view does not
   become a section of that view (User's Guide 16-11).
-  Later, with their features: ALT-F9 copy, ALT-Y yank back, ALT-H hop,
+  ALT-F9 COPY (User's Guide 13-8 to 13-9): the Copy box lists the view's
+  sections, the current one highlighted; ENTER puts the item (or, after
+  asking, the marked items) in the chosen one as well, assigned to its
+  head and keeping its other sections, one undo step. It is the same
+  item, not a duplicate; a mutually exclusive section head takes it away
+  from the old one (R15). Our choices: Agenda put the copy at the bottom
+  of the section, but a file's items have one order, so it shows in its
+  usual place; not in a datebook view, whose sections are dates.
+  Later, with their features: ALT-Y yank back, ALT-H hop,
   ALT-B browse, ALT-C calendar, ALT-O dependency, ALT-E / ALT-X execute
   conditions and actions, ALT-Z run macro, ALT-S sort now.
 
@@ -1007,8 +1015,8 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   many marked items are in it, and SPACE assigns or unassigns them all. Our
   deviation: marks belong to the item, not to one section, so a marked item
   shows marked everywhere; a moved item leaves the first section of the
-  current view that holds it. Not done: copying marked items (no item copy
-  yet).
+  current view that holds it. ALT-F9 copies the marked items, or the
+  current one, to another section (R42).
 
 ## 5a. Data interchange
 

@@ -22,11 +22,12 @@ defmodule Agenda.TUI.Render.Help do
      DEL           Remove from section or column   fn-⌫
      ALT-F4        Discard item                    CTRL-D
      ALT-M         Assign to a category (MakeAssign)   ESC m
-     With marked items, F4 DEL ALT-F2 ALT-F4 ALT-F10 ALT-M F3 ask:
+     With marked items, F4 DEL ALT-F2 ALT-F4 ALT-F9 ALT-F10 ALT-M F3 ask:
                    marked items (M) or the current item (C)
      ALT-F2        Set the When date (or menu Item When)
      ALT-F10       Move item to another section (on a section
                    head: move the section, ↑ ↓, ENTER)
+     ALT-F9        Copy item to another section    ESC (
      ALT-− / ALT-= Collapse / expand section (twice: all)
      ALT-F5        Go to a section (GO TO)           ESC %
      ALT-N / ALT-P Next / previous view              ESC n / ESC p

@@ -155,6 +155,9 @@ defmodule Agenda.TUI.Update.ViewKeys do
       {:alt_f, 10} ->
         scoped(state, :move_item, row)
 
+      {:alt_f, 9} ->
+        scoped(state, :copy_item, row)
+
       {:alt, "d"} ->
         Actions.perform(state, :section_below)
 

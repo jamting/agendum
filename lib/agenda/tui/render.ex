@@ -55,6 +55,7 @@ defmodule Agenda.TUI.Render do
     :item_column,
     :section_props,
     :numeric_functions,
+    :copy_items,
     :alarm_list
   ]
 

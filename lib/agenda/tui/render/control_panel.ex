@@ -191,7 +191,7 @@ defmodule Agenda.TUI.Render.ControlPanel do
       top && top.type in [:move_item, :column_move, :section_move] ->
         "MOVE"
 
-      top && top.type in [:picker, :scope, :calendar, :select_file] ->
+      top && top.type in [:picker, :scope, :calendar, :select_file, :copy_items] ->
         "CHOICES"
 
       top && top.type == :browse ->

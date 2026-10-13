@@ -53,7 +53,7 @@ defmodule Agenda.TUI.Update.Marked do
       marked == [] or (on_item and state.col > 0 and action in [:done, :when, :make_assign]) ->
         single(state, action, row)
 
-      not on_item and action in [:discard, :move_item, :remove, :profile] ->
+      not on_item and action in [:discard, :move_item, :copy_item, :remove, :profile] ->
         single(state, action, row)
 
       not on_item ->
@@ -154,6 +154,8 @@ defmodule Agenda.TUI.Update.Marked do
 
     start_move(state, froms)
   end
+
+  defp bulk(state, :copy_item, ids, _row), do: Agenda.TUI.CopyBox.open(state, ids)
 
   defp bulk(state, :make_assign, ids, _row),
     do: CategoryScreens.open_picker(state, {:assign_items, ids}, nil)
