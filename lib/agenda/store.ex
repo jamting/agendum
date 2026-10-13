@@ -34,14 +34,15 @@ defmodule Agenda.Store do
   28 adds `View.Section.item_column` (R55); 29 adds its `position`;
   30 adds `NumberFormat.percent` (Display % of total); 31 adds
   `View.Column.format`, `note_line` and `title` (standard column formats);
-  32 adds `View.hide_column_heads` (R57).
+  32 adds `View.hide_column_heads` (R57); 33 adds `View.section_separators`
+  (R58).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 32
+  @format_version 33
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"

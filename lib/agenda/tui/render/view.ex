@@ -185,16 +185,25 @@ defmodule Agenda.TUI.Render.View do
         ] ++ percent_part(c, {:column_head, "% tot"})
       end)
 
-    head = around_items(heads, row, name_part)
+    view = State.view(state)
+    renaming = match?(%{target: {:rename_category, _}}, editing) and selected
+
+    # with Section separators (R58) the head line is a rule across the
+    # screen, except while its name is being typed; a datebook's slots are
+    # lines already (R47)
+    rule? = view.section_separators and not renaming and row.slot == nil
+    draw = fn line -> if rule?, do: ruled(line, state.width), else: line end
+
+    head = draw.(around_items(heads, row, name_part))
 
     # with Hide column heads (R57) the heads may give way to blanks of the
     # same width; not while one of them is highlighted
     head =
-      if State.view(state).hide_column_heads and not (selected and state.col > 0),
-        do: {:head, head, around_items(blank_heads(columns), row, name_part)},
+      if view.hide_column_heads and not (selected and state.col > 0),
+        do: {:head, head, draw.(around_items(blank_heads(columns), row, name_part))},
         else: head
 
-    if index == 0 or row.slot, do: [head], else: [[], head]
+    if index == 0 or row.slot != nil or view.section_separators, do: [head], else: [[], head]
   end
 
   defp row_lines(state, %{kind: :item, item: item} = row, _index, selected, editing, tw, columns) do
@@ -234,6 +243,27 @@ defmodule Agenda.TUI.Render.View do
 
   # An item's cells, one list of segments per column: its entry (or the
   # field being typed into) and, beside a number, its "% tot".
+  # A section head line as a rule (R58): the spaces before and after each
+  # part become the line, the words stay, and the line runs on to the edge
+  # of the screen, as in Agenda's screenshot 48.
+  defp ruled(line, width) do
+    parts =
+      Enum.flat_map(line, fn {style, text} ->
+        core = String.trim(text)
+        before = String.length(text) - String.length(String.trim_leading(text))
+        after_core = String.length(text) - String.length(core) - before
+
+        if core == "",
+          do: [rule(String.length(text))],
+          else: [rule(before), {style, core}, rule(after_core)]
+      end)
+
+    # parts with no text (no space to turn into the line) are left out
+    Enum.reject(parts ++ [rule(width - Draw.width(parts))], &(elem(&1, 1) == ""))
+  end
+
+  defp rule(n), do: {:section, String.duplicate("─", max(n, 0))}
+
   # a section head's column heads as blanks of the same width (R57)
   defp blank_heads(columns) do
     Enum.map(columns, fn c ->

@@ -769,7 +769,12 @@ defmodule Agenda.Core.Facade.Views do
   @spec toggle_view_option(
           db,
           id,
-          :hide_done | :hide_empty | :hide_inherited | :hide_dependent | :hide_column_heads
+          :hide_done
+          | :hide_empty
+          | :hide_inherited
+          | :hide_dependent
+          | :hide_column_heads
+          | :section_separators
         ) :: db
   def toggle_view_option(db, view_id, option) do
     # `Map.update!/3` applies a function to the current value of one key

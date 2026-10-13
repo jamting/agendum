@@ -70,7 +70,9 @@ defmodule Agenda.TUI.Menu do
             {"Collapse", "Collapse or expand the current section", :collapse_section},
             {"Filter", "Show only items in (or not in) chosen categories, in this section",
              :filter_section},
-            {"Sort", "How this section's items are ordered", :sort_section}
+            {"Sort", "How this section's items are ordered", :sort_section},
+            {"Lines", "Lines between the sections (section separators)",
+             {:toggle_view, :section_separators}}
           ]},
          {"Column", "Add, remove or resize columns",
           [

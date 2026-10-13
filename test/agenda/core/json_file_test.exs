@@ -113,6 +113,7 @@ defmodule Agenda.Core.JSONFileTest do
             hide_done: true,
             hide_dependent: true,
             hide_column_heads: true,
+            section_separators: true,
             section_sort: :alpha,
             section_order: :desc
         }

@@ -48,7 +48,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] The item column in View ▸ Column ▸ Width and Move: its width typed or fitted, and moving it among the other columns, as Agenda could (User's Guide 5-20, 5-21)
 - [x] Standard column formats (R56): Name only, Parent:Category, Ancestor, Star, Yes/No and Category note (a column showing line N of the note of the item's category in that family, as Agenda's Activities Planner shows Phone # and Company from a person's note), in Column Properties and the Column Add box, with typing in Star, Yes/No and Category note columns
 - [x] Hide column heads (R57): View ▸ Hide ▸ Column heads, column heads only on the first section on the screen, as Agenda's datebooks are; in the datebook settings box with View Properties as a box
-- [ ] Section separators (View Properties): a line between sections, the section head on it
+- [x] Section separators (R58): View ▸ Section ▸ Lines, each section head a line across in place of the blank line; in the View Properties box when there is one
 - [ ] ♪ in the control panel when the highlighted section head, column entry or column head has a category note, not only an item (User's Guide 12-2; screenshot 126), so a note-line column (R56) shows whose note it reads
 - [ ] Section Properties box (View ▸ Section ▸ Properties; Help "Section Properties/Add Box"): Section head, Item sorting, Filter, a Columns list with `<Items>` (ALT-F10 rearranges) and Select numeric functions (the calculations of every numeric column in the section, the R29 gap), drawn from a layout
 - [ ] Moving a section within its view: ALT-F10 on a section head or View ▸ Section ▸ Move, the sections collapsed while it moves (User's Guide 5-8 to 5-9); in that view only

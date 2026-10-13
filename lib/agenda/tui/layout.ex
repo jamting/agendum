@@ -4,9 +4,9 @@ defmodule Agenda.TUI.Layout do
 
   A *row* is something the cursor can rest on: a section head or an item.
   Each row occupies one or more screen *lines* (item text wraps, and
-  sections after the first are preceded by a blank line). The last row of
-  a section also carries the section's calculation lines (`calcs`, R29),
-  drawn below it. Every row carries its section's `columns` (R55): the item
+  sections after the first are preceded by a blank line, unless the view
+  has Section separators, R58). The last row of a section also carries the
+  section's calculation lines (`calcs`, R29), drawn below it. Every row carries its section's `columns` (R55): the item
   text fills the width they leave, so it differs from section to section.
   """
 
@@ -115,6 +115,8 @@ defmodule Agenda.TUI.Layout do
   @doc "How many screen lines each row takes (in order)."
   @spec heights([row], State.t()) :: [pos_integer]
   def heights(rows, %State{} = state) do
+    separators = rows != [] and State.view(state).section_separators
+
     rows
     |> Enum.with_index()
     |> Enum.map(fn {row, index} ->
@@ -127,8 +129,10 @@ defmodule Agenda.TUI.Layout do
           %{kind: :section, slot: %{}} ->
             1
 
+          # so is a section head with Section separators (R58); otherwise
+          # a blank line comes before it
           %{kind: :section} ->
-            2
+            if separators, do: 1, else: 2
 
           %{kind: :item, item: item} ->
             length(Draw.wrap(item.text, text_width(state, row)))

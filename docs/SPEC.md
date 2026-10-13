@@ -592,6 +592,18 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   heads, so the highlight can be seen; File ▸ Print to a file still names
   each column, as it labels every entry with it. In a datebook view the
   first slot on the screen shows them.
+- **R58 ✅ Section separators** (User's Guide 5-12, 15-21; screenshots 48,
+  54, 143). A view setting, No by default: with Yes, each section head is a
+  line across the screen, the section's name and its column heads on it,
+  in place of the blank line before the section, so more fits on the
+  screen. The highlight on a section head covers its name only. Set with
+  View ▸ Section ▸ Lines (Agenda: View Properties ▸ Section separators;
+  its index has them under "Lines"; ours until View Properties is a box),
+  one undo step. With Hide column heads (R57), the other section heads are
+  their names on a plain line. Our choices: a datebook view's slots are
+  lines either way (R47); File ▸ Print to a file has no lines, as Agenda
+  printed none ("The lines between sections do not appear when you
+  print").
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

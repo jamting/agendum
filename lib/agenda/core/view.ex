@@ -15,6 +15,8 @@ defmodule Agenda.Core.View do
   `hide_dependent` hides items still waiting for a prerequisite (R43).
   `hide_column_heads` shows column heads only on the first section head
   on the screen (R57); how a front end draws it is its own.
+  `section_separators` draws each section head as a line across, in place
+  of the blank line between sections (R58).
   `datebook` makes it a datebook view (R47, `Agenda.Core.Datebook`), whose
   sections are time slots worked out from its settings; its stored
   `sections` are not used. `section_sort` shows the sections in category
@@ -182,6 +184,7 @@ defmodule Agenda.Core.View do
           match: Agenda.Core.Search.t() | {:items, [Agenda.Core.Item.id()]} | nil,
           hide_dependent: boolean,
           hide_column_heads: boolean,
+          section_separators: boolean,
           section_sort: :none | :category | :alpha | :numeric,
           section_order: :asc | :desc,
           datebook: Agenda.Core.Datebook.t() | nil
@@ -200,6 +203,7 @@ defmodule Agenda.Core.View do
     match: nil,
     hide_dependent: false,
     hide_column_heads: false,
+    section_separators: false,
     section_sort: :none,
     section_order: :asc,
     datebook: nil
