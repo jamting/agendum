@@ -962,7 +962,12 @@ sibling, CTRL-HOME/END = first/last.
   after a yank there is nothing left to yank. Not done: Agenda's ALT-Y
   also recovered the latest discarded item from the trash, which we do
   not have yet (CTRL-Z undoes a discard). Not in a datebook view.
-  Later, with their features: ALT-H hop,
+  ALT-H hop (User's Guide 13-9): the highlighted item's next occurrence,
+  in a later section of this view, else in the next view that shows it
+  (the view manager's order, round to the first; the control panel names
+  the view; ALT-F8 goes back); "No other occurrence" when it shows only
+  once. Items in collapsed sections are not found.
+  Later, with their features:
   ALT-B browse, ALT-C calendar, ALT-O dependency, ALT-E / ALT-X execute
   conditions and actions, ALT-Z run macro, ALT-S sort now.
 

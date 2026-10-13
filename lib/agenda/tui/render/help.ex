@@ -29,6 +29,7 @@ defmodule Agenda.TUI.Render.Help do
                    head: move the section, ↑ ↓, ENTER)
      ALT-F9        Copy item to another section    ESC (
      ALT-Y         Yank back the item DEL removed  ESC y
+     ALT-H         Hop to item's next occurrence   ESC h
      ALT-− / ALT-= Collapse / expand section (twice: all)
      ALT-F5        Go to a section (GO TO)           ESC %
      ALT-N / ALT-P Next / previous view              ESC n / ESC p

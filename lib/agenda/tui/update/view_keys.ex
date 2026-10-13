@@ -161,6 +161,9 @@ defmodule Agenda.TUI.Update.ViewKeys do
       {:alt, "y"} ->
         yank(state, row)
 
+      {:alt, "h"} ->
+        hop(state, row)
+
       {:alt, "d"} ->
         Actions.perform(state, :section_below)
 
@@ -458,6 +461,41 @@ defmodule Agenda.TUI.Update.ViewKeys do
   end
 
   def delete(state, nil), do: state
+
+  # ALT-H (User's Guide 13-9): the highlighted item's next occurrence,
+  # further down this view, else in the next view that shows it (in the
+  # view manager's order, round to this view's top). Moves the highlight
+  # only.
+  defp hop(state, %{kind: :item, item: item}) do
+    here = for {r, i} <- Enum.with_index(Layout.rows(state)), i > state.cursor, do: {r, i}
+
+    case Enum.find(here, fn {r, _} -> occurrence?(r, item.id) end) do
+      {_, index} -> Layout.move_to(state, index)
+      nil -> hop_views(state, item.id)
+    end
+  end
+
+  defp hop(state, _row), do: State.error(state, "Highlight an item to hop to its next occurrence")
+
+  defp hop_views(state, id) do
+    {before, [current | rest]} = Enum.split_while(state.db.view_order, &(&1 != state.view_id))
+
+    Enum.find_value(rest ++ before ++ [current], fn view_id ->
+      shown = state |> State.switch_view(view_id) |> Layout.settle()
+      index = Enum.find_index(Layout.rows(shown), &occurrence?(&1, id))
+
+      cond do
+        index == nil -> nil
+        # round to this view again: its first occurrence, if not this one
+        view_id == state.view_id and index == state.cursor -> nil
+        view_id == state.view_id -> Layout.move_to(state, index)
+        true -> shown |> Layout.move_to(index) |> State.info("In view #{shown_name(shown)}")
+      end
+    end) || State.error(state, "No other occurrence of this item")
+  end
+
+  defp occurrence?(row, id), do: row.kind == :item and row.item.id == id
+  defp shown_name(state), do: State.view(state).name
 
   # ALT-Y (User's Guide 4-10): the item DEL last removed goes into the
   # highlighted item's section, below it (on a section head, in its usual
