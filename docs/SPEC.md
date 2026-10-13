@@ -214,7 +214,8 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   not record the language. Phrases kept in the file and read again each
   time (a date filter's ends, a datebook's base date, a date action's
   date) are read in the person's languages and then in English, so a file
-  made in English, such as a starter file, works in every language. Each language is a pack
+  made in English, such as a starter file, works in every language
+  (ADR 0029). Each language is a pack
   (`Agenda.Core.DateLanguage`): its words, phrase patterns, day/month
   order and clock. Swedish reads weekdays ("fredag", "på fre", "nästa
   fredag", "förra måndagen", "i fredags" = the latest past Friday), days
@@ -619,7 +620,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   "Highlight the item or category"), where it used to open the item's;
   on a date, number or empty entry it says "No category here to have a
   note". Item ▸ Note still opens the item's note.
-- **R60 ✅ The Activities Planner starter file** (Starter Applications;
+- **R60 ✅ The Activities Planner starter file** (ADR 0028; Starter Applications;
   screenshots 37-144). A file shipped with Agendum,
   `starters/planner.agendum`, which a person copies and fills in, as
   Agenda's `apps\planner` was. No items. Its categories: People (Sample

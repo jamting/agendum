@@ -103,7 +103,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `Agenda.TUI.NoteSearch`                       | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `Agenda.TUI.AlarmList`                        | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
 | `Agenda.TUI.DevTools`                         | ✔     | The hidden developer screen (ESC ?): state for debugging, and a key tester.                                                      |
-| `Agenda.Starters.Planner`                     | ✔     | The Activities Planner starter file, built through `Agenda.Core` (R60); `Planner.Views`, `Planner.Macros`, `Planner.Samples` (sample data). |
+| `Agenda.Starters.Planner`                     | ✔     | The Activities Planner starter file, built through `Agenda.Core` (R60, ADR 0028); `Planner.Views`, `Planner.Macros`, `Planner.Samples` (sample data). |
 | `Mix.Tasks.Agendum.Starters`                  | ✘     | `mix agendum.starters [--samples]`: writes the starter file (a build tool, not part of the program).                             |
 | `Agenda.TUI.Render`                           | ✔     | State → list of styled lines: the control panel, the body (the view or a full screen), the boxes over it, the key bar.           |
 | `Agenda.TUI.Render.*`                         | ✔     | Its parts: `ControlPanel`, `View`, `Managers`, `Note`, `Help` (F1 text), `Boxes`, `CategoryBoxes`, `KeyBar`, `Text`, `Export`.   |
@@ -189,3 +189,5 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0025](adr/0025-columns-per-section.md)                 | Columns belong to sections, linked by a shared number            |
 | [0026](adr/0026-previewing-a-change.md)                 | Previewing a change before it is kept                            |
 | [0027](adr/0027-debug-log.md)                           | A debug log of each session, on by an environment variable       |
+| [0028](adr/0028-starter-files-built-from-code.md)       | Starter files are built from code, the committed file kept equal |
+| [0029](adr/0029-stored-date-phrases-read-in-english-too.md) | Stored date phrases are read in the reader's languages, then English |
