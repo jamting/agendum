@@ -39,8 +39,9 @@ inline `# credo:disable-for-next-line` with the reason.
 3. The TUI calls the core through `Agenda.Core` (the facade) and reads the
    database through `Agenda.Core.Database` queries. It never calls
    `Database` write functions; `test/agenda/architecture_test.exs` fails if
-   it does. Add a facade function instead. Assignment rules live
-   only in `Agenda.Core.Assign`; never re-implement them in the UI.
+   it does. Add a facade function instead (written in an area module under
+   `lib/agenda/core/facade/`, delegated from `Agenda.Core`). Assignment
+   rules live only in `Agenda.Core.Assign`; never re-implement them in the UI.
 4. Subsumption (membership in ancestors) is **computed, never stored**. Only
    explicit links are stored (`Agenda.Core.Links`).
 5. No runtime dependencies in the core and the TUI unless a package meets

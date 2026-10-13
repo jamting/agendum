@@ -30,7 +30,9 @@ shell does terminal I/O and file I/O.
 
 | Module                                                         | Responsibility                                                                                                                                          |
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Agenda.Core`                                                  | Facade with user-level operations (add item, assign by name, add section…). The UI uses this.                                                           |
+| `Agenda.Core`                                                  | Facade with user-level operations (add item, assign by name, add section…): a table of contents of `defdelegate`s. The UI uses this.                    |
+| `Agenda.Core.Facade.*`                                         | Its areas: `Files`, `Items`, `Assignments`, `Dates`, `Alarms`, `Numbers`, `Dependencies`, `Rules`, `Categories`, `Views`, `Macros`, `Calendars`.        |
+| `Agenda.Core.Facade.Changes`                                   | What every change to an item goes through: user assignments, dates from rules, settling (conditions, actions).                                          |
 | `Agenda.Core.Database`                                         | The file as one immutable struct: items, categories, views, links, id counter. Primitive operations and queries (`member?/3`, `items_in/2`, hierarchy). |
 | `Agenda.Core.Links`                                            | Bidirectional many-to-many relation (the patent's link structures).                                                                                     |
 | `Agenda.Core.Assign`                                           | Assignment rules: exclusion, category links, text matching, ambiguity resolution.                                                                       |

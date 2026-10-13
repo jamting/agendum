@@ -54,7 +54,7 @@ defmodule Agenda.MixProject do
       ],
       groups_for_modules: [
         Overview: [Agenda],
-        "Core facade": [Agenda.Core],
+        "Core facade": [Agenda.Core, ~r/^Agenda\.Core\.Facade\./],
         Core: ~r/^Agenda\.Core\./,
         "Terminal UI": ~r/^Agenda\.TUI\./,
         Shell: [Agenda.CLI, Agenda.Store, Agenda.Preferences, Agenda.CalendarFetch, Agenda.Sample]
