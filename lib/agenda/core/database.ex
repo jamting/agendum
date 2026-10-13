@@ -603,7 +603,7 @@ defmodule Agenda.Core.Database do
   @spec insert_view(t, String.t(), keyword) :: {t, id}
   def insert_view(%__MODULE__{} = db, name, opts \\ []) do
     {db, id} = take_id(db)
-    columns = opts |> Keyword.get(:columns, []) |> Enum.map(&%{&1 | linked: true})
+    columns = opts |> Keyword.get(:columns, []) |> View.numbered_links()
 
     sections =
       opts

@@ -70,23 +70,26 @@ defmodule Agenda.Core.View do
     shows its dates, `nil` for the file's (global defaults, R41a). Other
     columns ignore them.
 
-    `linked` (Column Properties ▸ Link with other sections, R55): the
-    linked columns of a view with the same head are one column shown in
-    several sections, so a change to one is made to all of them.
+    `link` (Column Properties ▸ Link with other sections, R55): columns
+    of a view with the same `link` are one column shown in several
+    sections, so a change to one is made to all of them; `nil` for a
+    column in one section only. Each column added to all sections gets a
+    link of its own, numbered within the view, so two columns with the
+    same head stay two columns, as in Agenda.
     """
     @type t :: %__MODULE__{
             category_id: Agenda.Core.Category.id(),
             width: pos_integer,
             number: Agenda.Core.NumberFormat.t(),
             date: Agenda.Core.DateFormat.t() | nil,
-            linked: boolean
+            link: pos_integer | nil
           }
     defstruct [
       :category_id,
       width: 12,
       number: %Agenda.Core.NumberFormat{},
       date: nil,
-      linked: true
+      link: nil
     ]
   end
 
@@ -158,11 +161,11 @@ defmodule Agenda.Core.View do
   @doc """
   A standard view whose columns are stored in `columns`, as files from
   before columns per section were (R55), gets them in every section,
-  linked. Other views are returned as they are.
+  linked: each column one link. Other views are returned as they are.
   """
   @spec columns_into_sections(t) :: t
   def columns_into_sections(%__MODULE__{datebook: nil, columns: [_ | _] = columns} = view) do
-    columns = Enum.map(columns, &%{&1 | linked: true})
+    columns = numbered_links(columns)
 
     %{
       view
@@ -172,4 +175,58 @@ defmodule Agenda.Core.View do
   end
 
   def columns_into_sections(%__MODULE__{} = view), do: view
+
+  @doc """
+  Columns each linked to every section: link 1, 2, 3 … in order.
+  """
+  @spec numbered_links([Column.t()]) :: [Column.t()]
+  def numbered_links(columns) do
+    # with_index(1) numbers from 1, as links are positive
+    columns |> Enum.with_index(1) |> Enum.map(fn {c, n} -> %{c | link: n} end)
+  end
+
+  @doc """
+  Files from formats 25 and 26 (and JSON with `linked`) marked columns
+  only as linked or not, and linked columns of a head were one column.
+  Now each column is its own: in every section the first linked column
+  of a head gets one link, the second another, and so on. `linked` holds
+  the places (`{section, column}`) that were linked.
+  """
+  @spec link_by_head(t, MapSet.t(at)) :: t
+  def link_by_head(%__MODULE__{} = view, linked) do
+    # {head, n}: the nth linked column of that head in a section
+    keys =
+      for {section, s} <- Enum.with_index(view.sections) do
+        section.columns
+        |> Enum.with_index()
+        # map_reduce: walks the columns with a count per head (`seen`)
+        |> Enum.map_reduce(%{}, fn {c, i}, seen ->
+          if MapSet.member?(linked, {s, i}) do
+            n = Map.get(seen, c.category_id, 0)
+            {{c.category_id, n}, Map.put(seen, c.category_id, n + 1)}
+          else
+            {nil, seen}
+          end
+        end)
+        |> elem(0)
+      end
+
+    numbers =
+      keys
+      |> List.flatten()
+      |> Enum.reject(&is_nil/1)
+      |> Enum.uniq()
+      |> Enum.with_index(1)
+      |> Map.new()
+
+    sections =
+      Enum.zip_with(view.sections, keys, fn section, section_keys ->
+        columns =
+          Enum.zip_with(section.columns, section_keys, &%{&1 | link: numbers[&2]})
+
+        %{section | columns: columns}
+      end)
+
+    %{view | sections: sections}
+  end
 end

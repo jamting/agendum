@@ -243,6 +243,28 @@ defmodule Agenda.Core.JSONFileTest do
       assert Agenda.Core.Database.member?(db, 6, 5)
     end
 
+    test "columns marked `linked` (before links) become one column per place" do
+      # two linked When columns in Calls, one in Ideas: the first in each
+      # section are one column, the second a column of its own
+      text = ~s({"format": "agendum-json", "version": 1, "next_id": 9, "main": 1,
+        "special": {"entry": 2, "when": 3, "done": 4},
+        "categories": [
+          {"id": 1, "name": "MAIN", "children": [2, 3, 4, 5, 6]},
+          {"id": 2, "name": "Entry", "parent": 1, "kind": "date"},
+          {"id": 3, "name": "When", "parent": 1, "kind": "date"},
+          {"id": 4, "name": "Done", "parent": 1, "kind": "date"},
+          {"id": 5, "name": "Calls", "parent": 1},
+          {"id": 6, "name": "Ideas", "parent": 1}],
+        "views": [{"id": 7, "name": "Calls", "sections": [
+          {"category": 5, "columns": [{"category": 3, "linked": true}, {"category": 3}]},
+          {"category": 6, "columns": [{"category": 3}, {"category": 3, "linked": false}]}]}]})
+
+      assert {:ok, db} = JSONFile.decode(text)
+      links = Enum.map(db.views[7].sections, fn s -> Enum.map(s.columns, & &1.link) end)
+      assert [[a, b], [a, nil]] = links
+      assert a != b
+    end
+
     test "errors say what is wrong and where" do
       good = JSONFile.encode(Core.new_file())
       assert JSONFile.decode("{oops") == {:error, "not valid JSON"}

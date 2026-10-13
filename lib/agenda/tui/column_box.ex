@@ -121,7 +121,7 @@ defmodule Agenda.TUI.ColumnBox do
     do: State.change_db(state, Core.resize_column(state.db, state.view_id, mode.column, step))
 
   defp change(state, mode, :linked, _step) do
-    linked = not column(state, mode).linked
+    linked = column(state, mode).link == nil
     State.change_db(state, Core.set_column_linked(state.db, state.view_id, mode.column, linked))
   end
 
@@ -191,7 +191,7 @@ defmodule Agenda.TUI.ColumnBox do
       head: state.db.categories[column.category_id].name,
       type: kind |> Atom.to_string() |> String.capitalize(),
       width: Integer.to_string(column.width),
-      linked: yes_no(column.linked)
+      linked: yes_no(column.link != nil)
     }
 
     values = Map.merge(top, values(state, mode, kind))

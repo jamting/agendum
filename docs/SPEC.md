@@ -453,25 +453,30 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   (R55) fits the entries of every section it is in.
 - **R55 ✅ Columns per section** (User's Guide 3-16, 3-27, 5-22 to 5-25;
   screenshots 42, 60, 127). A column belongs to one section or to all.
-  - Added to all sections (the default), it is *linked*: the linked
-    columns of a view with the same head are one column, so changing the
-    width or format of one changes all of them. Added to one section, it
-    is not linked and changes alone. Moving a column (not done yet) would
+  - Added to all sections (the default), it is *linked*: one column shown
+    in several sections, so changing its width or format in one changes
+    all of them. Added to one section, it is not linked and changes alone.
+    Each column added is a column of its own, even with the head of
+    another: a section can show When twice, and removing or widening one
+    leaves the other alone (as Agenda does, checked in DOSBox). Moving a column (not done yet) would
     move it in the current section only, as in Agenda.
   - Where the other sections get it (ours; Agenda does not say): beside
     the same column as where it was added (after the column on its left,
     or else before the one on its right), at the end when the section has
-    neither. A column joining linked columns of its head takes their width
-    and formats.
+    neither: in a section with two of that head, beside the one linked
+    to it.
   - Removing a column that is linked into other sections asks: *All
-    sections in view* (it and its linked columns go; unlinked columns of
-    the same head stay) or *Current section only*.
+    sections in view* (it goes from every section it is in; other columns
+    of the same head stay) or *Current section only*.
   - A new section (ALT-D, ALT-U) gets the linked columns of the section the
     cursor was in (ours).
   - Each section's item text fills the width its own columns leave, so a
     column every section has stays in the same place (screenshots 42, 60).
   - A datebook view's slots share one set of columns (R47).
   - Files from before this keep every column in every section, linked.
+    Files that marked columns only as linked (formats 25, 26) get one
+    column for the first linked column of a head in each section, another
+    for the second, and so on.
   - File Properties ▸ Insert new columns in (screenshots 130, 131): All
     sections (the default) or Current section, for the file; it decides
     where ALT-R and ALT-L put a new column.
@@ -479,14 +484,14 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     for others.
   - Column Properties ▸ Link with other sections (screenshot 127): No
     unlinks the column, which changes alone from then on. Yes links it to
-    the linked columns of its head, taking their width and formats; when
-    there are none, to the columns of its head with the same width and
-    formats (Agenda: "the same column head, category type, format, and
-    width"). Yes on a linked column changes nothing.
+    a linked column of its head that is not yet in its section, taking
+    its width and formats; when there is none, to an unlinked column of
+    its head with the same width and formats in each other section
+    (Agenda: "the same column head, category type, format, and width").
+    Yes on a linked column changes nothing.
   - Column Properties ▸ Column head (screenshot 144): F3 (or SPACE) picks
     another category from the whole hierarchy; the column and the columns
-    linked to it show it instead. A linked column moved to a head that has
-    linked columns already joins them and takes their settings; an
+    linked to it show it instead, staying a column of their own; an
     unlinked one changes alone.
   - The column heads on a section head line can be highlighted (→ / TAB,
     User's Guide 5-22, 5-25), so an empty section's columns can be reached:

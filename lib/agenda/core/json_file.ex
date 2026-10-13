@@ -326,7 +326,7 @@ defmodule Agenda.Core.JSONFile do
     obj(
       category: c.category_id,
       width: c.width,
-      linked: c.linked,
+      link: c.link,
       number: struct_obj(c.number),
       date: c.date && struct_obj(c.date)
     )
@@ -656,9 +656,10 @@ defmodule Agenda.Core.JSONFile do
   end
 
   # A standard view's columns at the view level are from before columns
-  # per section (R55): every section gets them.
+  # per section (R55): every section gets them. Columns with `linked`
+  # rather than `link` are from before each column had a link of its own.
   defp read_view(v, path) do
-    View.columns_into_sections(%View{
+    %View{
       id: req(v, "id", :int, path),
       name: req(v, "name", :string, path),
       sections: list(v, "sections", path <> ".sections", &read_section/2),
@@ -678,7 +679,27 @@ defmodule Agenda.Core.JSONFile do
           nil -> nil
           _ -> read_struct(v, "datebook", Datebook, path <> ".datebook")
         end
-    })
+    }
+    |> link_old_columns(v)
+    |> View.columns_into_sections()
+  end
+
+  defp link_old_columns(view, v) do
+    raw = for s <- v["sections"] || [], do: s["columns"] || []
+
+    if Enum.any?(raw, fn columns -> Enum.any?(columns, &(not Map.has_key?(&1, "link"))) end) do
+      # `linked` was true unless it said false
+      linked =
+        for {columns, s} <- Enum.with_index(raw),
+            {c, i} <- Enum.with_index(columns),
+            c["linked"] != false,
+            into: MapSet.new(),
+            do: {s, i}
+
+      View.link_by_head(view, linked)
+    else
+      view
+    end
   end
 
   defp read_section(s, path) do
@@ -699,7 +720,7 @@ defmodule Agenda.Core.JSONFile do
     %Column{
       category_id: req(c, "category", :int, path),
       width: opt(c, "width", :int, 12, path),
-      linked: opt(c, "linked", :bool, true, path),
+      link: opt(c, "link", {:nullable, :int}, nil, path),
       number: read_struct(c, "number", NumberFormat, path <> ".number"),
       date:
         case c["date"] do

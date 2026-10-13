@@ -2,7 +2,9 @@ defmodule Agenda.Core.SectionColumnsTest do
   @moduledoc """
   Columns per section (R55; User's Guide 3-16, 3-27, 5-22 to 5-25): a
   column belongs to one section or to all, and a column added to all
-  sections is linked, so changing one changes them all.
+  sections is linked: it is one column, shown in several sections, so
+  changing it in one changes it in all. Each column added is a column of
+  its own, even with the head of another (as Agenda does).
   """
   use ExUnit.Case, async: true
 
@@ -43,14 +45,15 @@ defmodule Agenda.Core.SectionColumnsTest do
     test "to the current section only: the other sections do not get it", %{db: db, view_id: v} do
       db = Core.add_column(db, v, cat(db, "People"), {0, 0}, 12, :section)
       assert heads(db, v) == [["People", "When"], ["When"], ["When"]]
-      refute column(db, v, {0, 0}).linked
+      assert column(db, v, {0, 0}).link == nil
     end
 
     test "to all sections: each gets it, linked", %{db: db, view_id: v} do
       db = Core.add_column(db, v, cat(db, "People"), {1, 1}, 14, :all)
       assert heads(db, v) == [["When", "People"], ["When", "People"], ["When", "People"]]
       assert Enum.all?([{0, 1}, {1, 1}, {2, 1}], &(column(db, v, &1).width == 14))
-      assert Enum.all?([{0, 1}, {1, 1}, {2, 1}], &column(db, v, &1).linked)
+      [link] = Enum.uniq(Enum.map([{0, 1}, {1, 1}, {2, 1}], &column(db, v, &1).link))
+      assert link != nil
     end
 
     test "to all sections: beside the same column where a section has it", %{db: db, view_id: v} do
@@ -82,10 +85,12 @@ defmodule Agenda.Core.SectionColumnsTest do
       assert Enum.at(heads(db, v), 1) == ["Amount", "When", "Ideas"]
     end
 
-    test "joining linked columns of the same head takes their settings", %{db: db, view_id: v} do
-      db = Core.resize_column(db, v, {0, 0}, 4)
+    test "a second column of the same head is a column of its own", %{db: db, view_id: v} do
       db = Core.add_column(db, v, cat(db, "When"), {0, 1}, 12, :all)
-      assert column(db, v, {1, 1}).width == column(db, v, {0, 0}).width
+      assert heads(db, v) == [["When", "When"], ["When", "When"], ["When", "When"]]
+      db = Core.resize_column(db, v, {0, 1}, 2)
+      assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [16, 16, 16]
+      assert Enum.map(0..2, &column(db, v, {&1, 1}).width) == [14, 14, 14]
     end
   end
 
@@ -141,19 +146,19 @@ defmodule Agenda.Core.SectionColumnsTest do
   describe "Link with other sections (Column Properties)" do
     test "No: the column changes alone from then on", %{db: db, view_id: v} do
       db = Core.set_column_linked(db, v, {1, 0}, false)
-      refute column(db, v, {1, 0}).linked
+      assert column(db, v, {1, 0}).link == nil
       db = Core.resize_column(db, v, {1, 0}, 4)
       assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [16, 20, 16]
       db = Core.resize_column(db, v, {0, 0}, 2)
       assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [18, 20, 18]
     end
 
-    test "Yes: it joins the linked columns of its head, taking their settings",
+    test "Yes: it joins a linked column of its head, taking its settings",
          %{db: db, view_id: v} do
       db = Core.set_column_linked(db, v, {1, 0}, false)
       db = Core.resize_column(db, v, {1, 0}, 4)
       db = Core.set_column_linked(db, v, {1, 0}, true)
-      assert column(db, v, {1, 0}).linked
+      assert column(db, v, {1, 0}).link == column(db, v, {0, 0}).link
       assert column(db, v, {1, 0}).width == 16
       db = Core.resize_column(db, v, {1, 0}, 2)
       assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [18, 18, 18]
@@ -170,7 +175,8 @@ defmodule Agenda.Core.SectionColumnsTest do
       db = Core.add_column(db, v, cat(db, "People"), {1, 0}, 12, :section)
       db = Core.add_column(db, v, cat(db, "People"), {2, 0}, 14, :section)
       db = Core.set_column_linked(db, v, {0, 0}, true)
-      assert Enum.map(0..2, &column(db, v, {&1, 0}).linked) == [true, true, false]
+      assert [a, a, nil] = Enum.map(0..2, &column(db, v, {&1, 0}).link)
+      assert a != nil
       db = Core.resize_column(db, v, {0, 0}, 1)
       assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [13, 13, 14]
     end
@@ -188,14 +194,14 @@ defmodule Agenda.Core.SectionColumnsTest do
       assert heads(db, v) == [["When"], ["People"], ["When"]]
     end
 
-    test "joining linked columns of the new head takes their settings", %{db: db, view_id: v} do
+    test "a column with the head of another stays a column of its own", %{db: db, view_id: v} do
       # People, 9 wide, linked in every section; When (16) becomes People
       db = Core.add_column(db, v, cat(db, "People"), {0, 1}, 9, :all)
       db = Core.set_column_head(db, v, {1, 0}, cat(db, "People"))
-      assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [9, 9, 9]
+      assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [16, 16, 16]
       db = Core.resize_column(db, v, {0, 1}, 1)
       widths = for s <- 0..2, i <- 0..1, do: column(db, v, {s, i}).width
-      assert widths == [10, 10, 10, 10, 10, 10]
+      assert widths == [16, 10, 16, 10, 16, 10]
     end
   end
 
@@ -209,6 +215,18 @@ defmodule Agenda.Core.SectionColumnsTest do
       db = Core.add_column(db, v, cat(db, "When"), {1, 1}, 12, :section)
       db = Core.remove_column(db, v, {0, 0}, :all)
       assert heads(db, v) == [[], ["When"], []]
+    end
+
+    test "from all sections: only that column, not another of the same head",
+         %{db: db, view_id: v} do
+      # what Agenda does: removing takes one column, from every section it is in
+      db = Core.add_column(db, v, cat(db, "When"), {0, 0}, 12, :section)
+      db = Core.add_column(db, v, cat(db, "When"), {0, 2}, 12, :all)
+      assert heads(db, v) == [["When", "When", "When"], ["When", "When"], ["When", "When"]]
+      db = Core.remove_column(db, v, {0, 2}, :all)
+      assert heads(db, v) == [["When", "When"], ["When"], ["When"]]
+      assert column(db, v, {0, 0}).link == nil
+      assert column(db, v, {0, 1}).link == column(db, v, {1, 0}).link
     end
 
     test "whether it is in other sections, for the question", %{db: db, view_id: v} do
@@ -253,7 +271,27 @@ defmodule Agenda.Core.SectionColumnsTest do
 
     view = View.columns_into_sections(old)
     assert view.columns == []
-    assert Enum.all?(view.sections, &match?([%Column{width: 9, linked: true}], &1.columns))
+
+    assert [[link]] =
+             view.sections |> Enum.map(&Enum.map(&1.columns, fn c -> c.link end)) |> Enum.uniq()
+
+    assert link != nil
+  end
+
+  test "columns linked the old way (by head) become one column per place",
+       %{db: db, view_id: v} do
+    # two When columns in Calls, one in Follow up, all `linked: true` as a
+    # format 26 file has them: the first in each section are one column
+    view = db.views[v]
+    calls = Enum.at(view.sections, 0)
+    calls = %{calls | columns: calls.columns ++ calls.columns}
+    view = %{view | sections: List.replace_at(view.sections, 0, calls)}
+    linked = MapSet.new([{0, 0}, {0, 1}, {1, 0}, {2, 0}])
+
+    view = View.link_by_head(view, linked)
+    links = Enum.map(view.sections, fn s -> Enum.map(s.columns, & &1.link) end)
+    assert [[a, b], [a], [a]] = links
+    assert a != b and a != nil and b != nil
   end
 
   test "a datebook view keeps one set of columns for all its slots", %{db: db} do

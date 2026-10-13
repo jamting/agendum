@@ -49,13 +49,13 @@ defmodule Agenda.TUI.ColumnBoxTest do
        %{state: state, view_id: v} do
     # Column head, Category type, Width, Link: in reading order
     state = press(state, [:down, :down, :down, " "])
-    refute people(state, v, 0).linked
+    assert people(state, v, 0).link == nil
     assert screen(state) =~ ~r/Link with other sections: +No/
     state = press(state, [:up, :right])
     assert {people(state, v, 0).width, people(state, v, 1).width} == {13, 12}
     state = History.undo(state)
     assert people(state, v, 0).width == 12
-    assert History.undo(state) |> people(v, 0) |> Map.fetch!(:linked)
+    assert History.undo(state) |> people(v, 0) |> Map.fetch!(:link)
   end
 
   test "Column head: F3 picks another category, in every linked section; the box shows its part",

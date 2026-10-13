@@ -29,14 +29,15 @@ defmodule Agenda.Store do
   `Database.calendars`, calendar subscriptions (R45); 23 adds
   `View.datebook` (R47); 24 adds `Database.macros` and `macro_order` (R50);
   25 moves a standard view's columns into its sections and adds
-  `View.Column.linked` (R55); 26 adds `Database.insert_columns` (R55).
+  `View.Column.linked` (R55); 26 adds `Database.insert_columns` (R55); 27
+  replaces `View.Column.linked` with `link`, each column one of its own (R55).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 26
+  @format_version 27
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
@@ -176,15 +177,32 @@ defmodule Agenda.Store do
   defp upgrade_view(view) do
     alias Agenda.Core.View
     view = struct(View, Map.from_struct(view))
+    # 25 and 26 marked columns `linked`, read before the structs drop it
+    linked = old_linked(view.sections)
 
     # before 25 a standard view's columns were the view's, in every section
-    View.columns_into_sections(%{
+    %{
       view
       | sections: Enum.map(view.sections, &upgrade_section/1),
         columns: Enum.map(view.columns, &upgrade_column/1),
         sort: upgrade_keys(view.sort),
         datebook: view.datebook && struct(Agenda.Core.Datebook, Map.from_struct(view.datebook))
-    })
+    }
+    |> then(fn view -> if linked, do: View.link_by_head(view, linked), else: view end)
+    |> View.columns_into_sections()
+  end
+
+  # The places of the columns marked `linked: true`, or nil when the file
+  # has no such marks (before 25, or from 27 on).
+  defp old_linked(sections) do
+    places =
+      for {section, s} <- Enum.with_index(sections),
+          {column, i} <- Enum.with_index(Map.get(section, :columns, [])),
+          Map.has_key?(column, :linked),
+          do: {{s, i}, column.linked}
+
+    if places != [],
+      do: for({place, true} <- places, into: MapSet.new(), do: place)
   end
 
   defp upgrade_section(section) do

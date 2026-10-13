@@ -83,7 +83,7 @@ defmodule Agenda.TUI.CategoryScreens.Choices do
 
   def choice_options(%{kind: :remove_column}),
     do: [
-      {"All sections in view", "Remove the column, linked, from every section", :all},
+      {"All sections in view", "Remove the column from every section it is in", :all},
       {"Current section only", "Remove the column from this section; the others keep it",
        :section}
     ]

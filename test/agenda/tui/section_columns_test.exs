@@ -89,6 +89,23 @@ defmodule Agenda.TUI.SectionColumnsTest do
     assert state.db.views[v] |> View.columns(1) |> Enum.map(& &1.category_id) == [cat(db, "When")]
   end
 
+  test "removing a second When from all sections leaves the first (as Agenda does)",
+       %{state: state, view_id: v} do
+    # When in one section, then When in all: removing the last takes only
+    # that column, from every section it is in
+    state = %{state | db: Core.set_insert_columns(state.db, :section)}
+    state = press(state, [:down, {:alt, "r"}, "When", :enter])
+    state = %{state | db: Core.set_insert_columns(state.db, :all)}
+    state = press(state, [{:alt, "r"}, "When", :enter])
+    # Calls: the unlinked When, the new linked When, People, the first When
+    assert heads(state, v) == [["When", "When", "People", "When"], ["When", "When"]]
+    state = press(state, [:up, :left, :left, :left, :left, :right, :right, :delete, "a"])
+    assert heads(state, v) == [["When", "People", "When"], ["When"]]
+    view = state.db.views[v]
+    assert [nil, nil, link] = view |> View.columns(0) |> Enum.map(& &1.link)
+    assert [%{link: ^link}] = View.columns(view, 1)
+  end
+
   describe "a column head on the section head line (User's Guide 5-22, 5-25)" do
     # Ideas, a third section with no items: its column head is the only
     # place to highlight its column

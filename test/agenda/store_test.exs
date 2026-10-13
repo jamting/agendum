@@ -238,6 +238,46 @@ defmodule Agenda.StoreTest do
     assert loaded == db
   end
 
+  test "files in format version 26 get a link for each linked column", %{tmp_dir: dir} do
+    alias Agenda.Core.View
+    db = Agenda.Sample.build(~D[2026-10-08])
+    path = Path.join(dir, "v26.agenda")
+    # as 26 stored them: `linked: true` rather than a link
+    old =
+      update_in(db.views, fn views ->
+        Map.new(views, fn {id, v} ->
+          sections =
+            Enum.map(v.sections, fn s ->
+              columns =
+                Enum.map(
+                  s.columns,
+                  &(&1 |> Map.put(:linked, &1.link != nil) |> Map.delete(:link))
+                )
+
+              %{s | columns: columns}
+            end)
+
+          {id, %{v | sections: sections}}
+        end)
+      end)
+
+    File.write!(path, :erlang.term_to_binary({:agenda, 26, old}))
+    assert {:ok, loaded} = Store.load(path)
+
+    # the same columns, linked the same way (the numbers may differ)
+    same = fn db ->
+      for {_, v} <- db.views, View.columns(v, 0) != [] do
+        Enum.map(v.sections, fn s -> Enum.map(s.columns, &{&1.category_id, &1.link != nil}) end)
+      end
+    end
+
+    assert same.(loaded) == same.(db)
+
+    for {id, v} <- loaded.views, s <- v.sections, c <- s.columns do
+      refute Map.has_key?(c, :linked), "view #{id}"
+    end
+  end
+
   test "files in format version 21 get no calendars", %{tmp_dir: dir} do
     db = Agenda.Sample.build(~D[2026-10-08])
     path = Path.join(dir, "v21.agenda")
