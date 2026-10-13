@@ -53,7 +53,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Section Properties box (View ▸ Section ▸ Properties; Help "Section Properties/Add Box") (R61)
   - [x] Section head, Item sorting, Section statistics, Filter, a Columns list with `<Items>` (DEL, ALT-↑↓, INS), drawn from a layout; F6 on a section head opens it
   - [x] Select numeric functions: the calculations of every numeric column in the section (the R29 gap), written into the columns (linked ones change everywhere)
-- [ ] Moving a section within its view: ALT-F10 on a section head or View ▸ Section ▸ Move, the sections collapsed while it moves (User's Guide 5-8 to 5-9); in that view only
+- [x] Moving a section within its view (R62): ALT-F10 on a section head or View ▸ Section ▸ Move, the sections collapsed while it moves (User's Guide 5-8 to 5-9); in that view only
 
 ## Look and feel — after screenshots of Agenda 2.0 (ADR 0018)
 

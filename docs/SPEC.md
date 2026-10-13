@@ -666,6 +666,16 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   ALT-F10), INS adds a column right of the highlighted one (Column Add,
   R55). Each change is one undo step. Not in a datebook view, whose
   sections are its dates (R47).
+- **R62 ✅ Moving a section** (User's Guide 5-8 to 5-9). ALT-F10 (MOVE)
+  on a section head, or View ▸ Section ▸ Move from anywhere in a
+  section, moves it within its view: every section is shown collapsed
+  (§ and its item count), ↑ ↓ (or < >) move it, ENTER keeps the new
+  place (one undo step; the sections open again) and ESC puts it back.
+  Only this view changes, not the category hierarchy. The file is not
+  changed while it moves (ADR 0026). Our choices: a view that sorts its
+  sections (View Properties ▸ Section sorting) says so instead, as the
+  sort would put the section back; a datebook view's sections are its
+  dates (R47).
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

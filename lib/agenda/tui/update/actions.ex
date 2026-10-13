@@ -40,7 +40,8 @@ defmodule Agenda.TUI.Update.Actions do
     :collapse_section,
     :filter_section,
     :sort_section,
-    :section_props
+    :section_props,
+    :section_move
   ]
 
   def perform(state, action) do
@@ -268,6 +269,14 @@ defmodule Agenda.TUI.Update.Actions do
 
   defp do_perform(state, :section_props, %{sidx: sidx}),
     do: Agenda.TUI.SectionBox.open(state, sidx)
+
+  # a view that sorts its sections shows them in that order whatever their
+  # place (View Properties ▸ Section sorting)
+  defp do_perform(state, :section_move, %{sidx: sidx}) do
+    if State.view(state).section_sort == :none,
+      do: Agenda.TUI.SectionMove.open(state, sidx),
+      else: State.error(state, "This view sorts its sections; set Section sorting to None first")
+  end
 
   defp do_perform(state, :unmark_all, _) do
     state |> State.change_db(Core.unmark_all(state.db)) |> State.info("All items unmarked")

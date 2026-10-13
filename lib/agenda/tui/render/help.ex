@@ -25,7 +25,8 @@ defmodule Agenda.TUI.Render.Help do
      With marked items, F4 DEL ALT-F2 ALT-F4 ALT-F10 ALT-M F3 ask:
                    marked items (M) or the current item (C)
      ALT-F2        Set the When date (or menu Item When)
-     ALT-F10       Move item to another section
+     ALT-F10       Move item to another section (on a section
+                   head: move the section, ↑ ↓, ENTER)
      ALT-− / ALT-= Collapse / expand section (twice: all)
      ALT-F5        Go to a section (GO TO)           ESC %
      ALT-N / ALT-P Next / previous view              ESC n / ESC p

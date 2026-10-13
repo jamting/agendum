@@ -148,6 +148,10 @@ defmodule Agenda.TUI.Update.ViewKeys do
       {:alt_f, 10} when row.kind == :section and state.col > 0 ->
         Actions.perform(state, :column_move)
 
+      # on a section head the section moves (User's Guide 5-8)
+      {:alt_f, 10} when row.kind == :section ->
+        Actions.perform(state, :section_move)
+
       {:alt_f, 10} ->
         scoped(state, :move_item, row)
 

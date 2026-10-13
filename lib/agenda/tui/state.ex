@@ -191,6 +191,7 @@ defmodule Agenda.TUI.State do
       |> then(&Agenda.TUI.Browse.view(state, &1))
       |> then(&Agenda.TUI.ColumnWidth.view(state, &1))
       |> then(&Agenda.TUI.ColumnMove.view(state, &1))
+      |> then(&Agenda.TUI.SectionMove.view(state, &1))
     end
   end
 

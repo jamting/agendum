@@ -73,6 +73,8 @@ defmodule Agenda.TUI.Menu do
             {"Sort", "How this section's items are ordered", :sort_section},
             {"Properties", "The section's head, sorting, filter and columns (F6 on its head)",
              :section_props},
+            {"Move", "Move the section up or down in this view (ALT-F10 on its head)",
+             :section_move},
             {"Lines", "Lines between the sections (section separators)",
              {:toggle_view, :section_separators}}
           ]},

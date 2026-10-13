@@ -76,6 +76,20 @@ defmodule Agenda.Core.Facade.Views do
     %{db | view_order: List.insert_at(rest, index, view_id)}
   end
 
+  @doc """
+  Moves the section at `from` to place `to` (kept within the view), with
+  its columns, filter and sort (R62; User's Guide 5-8): in this view only,
+  the category hierarchy unchanged. The order is the one shown when the
+  view does not sort its sections.
+  """
+  @spec move_section(db, id, non_neg_integer, integer) :: db
+  def move_section(db, view_id, from, to) do
+    Database.update_view(db, view_id, fn view ->
+      {section, rest} = List.pop_at(view.sections, from)
+      %{view | sections: List.insert_at(rest, to |> max(0) |> min(length(rest)), section)}
+    end)
+  end
+
   @doc "Changes the category heading the section at `index`."
   @spec set_section_category(db, id, non_neg_integer, id) :: db
   def set_section_category(db, view_id, index, cat_id) do
