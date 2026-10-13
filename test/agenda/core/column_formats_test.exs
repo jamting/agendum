@@ -98,4 +98,30 @@ defmodule Agenda.Core.ColumnFormatsTest do
     assert Enum.map(0..1, &(db.views[v] |> Core.View.columns(&1) |> hd()).format) ==
              [:yes_no, :yes_no]
   end
+
+  describe "typing in the formats (User's Guide 5-31 to 5-37)" do
+    test "Star and Yes/No: in the head directly, or out of it and all under it",
+         %{db: db, tom_item: tom, other: other} do
+      staff = cat(db, "Staff")
+      db = Core.set_in_column(db, other, staff, true, today())
+      assert Database.explicit?(db, other, staff)
+      db = Core.set_in_column(db, tom, staff, false, today())
+      refute Database.member?(db, tom, staff)
+      # already in it (through Tom): nothing more is assigned
+      db2 = Core.assign(db, tom, cat(db, "Tom"))
+      refute Database.explicit?(Core.set_in_column(db2, tom, staff, true, today()), tom, staff)
+    end
+
+    test "Category note: the line of the item's category's note, its label kept",
+         %{db: db, tom_item: tom, other: other} do
+      staff = cat(db, "Staff")
+      assert {:ok, db} = Core.set_column_note(db, tom, staff, 1, "555-9999")
+      assert db.categories[cat(db, "Tom")].note == "Telephone: 555-9999\nRoom 12"
+      assert {:ok, db} = Core.set_column_note(db, tom, staff, 4, "Floor 3")
+      assert db.categories[cat(db, "Tom")].note == "Telephone: 555-9999\nRoom 12\n\nFloor 3"
+      assert {:ok, db} = Core.set_column_note(db, tom, staff, 2, "")
+      assert db.categories[cat(db, "Tom")].note == "Telephone: 555-9999\n\n\nFloor 3"
+      assert Core.set_column_note(db, other, staff, 1, "x") == {:error, :no_category}
+    end
+  end
 end

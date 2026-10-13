@@ -569,9 +569,15 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     most 69 characters; the head's name when blank) instead of the head;
     File ▸ Print uses the title too.
   - Too narrow, Name only, Parent:Category and Ancestor use short names.
-  - Not done yet: typing in Star, Yes/No and Category note columns as
-    Agenda does (SPACE, Y/N, writing the note line), and Format in the
-    Column Add box.
+  - Typing (User's Guide 5-31 to 5-37): in a Star column SPACE stars an
+    item (assigning it to the head itself, unless it is in it already) or
+    unstars it (out of the head and every category under it); in a Yes/No
+    column Y and N do the same. Other letters type a name, as in Name only.
+    DEL unstars too. In a Category note column the text typed, or edited
+    with F2, becomes that line of the note of the item's category there
+    (the first, if several), after the label the line had; DEL empties it;
+    an item with no category there is told so. One undo step each.
+  - Not done yet: Format in the Column Add box.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

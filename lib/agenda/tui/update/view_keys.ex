@@ -249,8 +249,17 @@ defmodule Agenda.TUI.Update.ViewKeys do
     Enum.find_value(candidates, from, fn {r, i} -> if r.kind == :section, do: i end)
   end
 
+  # In a standard column the Format decides (R56; User's Guide 5-31 to
+  # 5-37): SPACE stars, Y and N answer, a Category note line is typed;
+  # otherwise the letter starts a column entry.
   defp start_typing(state, %{kind: :item} = row, c) when state.col > 0 do
-    %{state | edit: %{target: column_target(state, row, :replace), line: LineEdit.new(c)}}
+    case {standard_format(state), c} do
+      {:star, " "} -> star(state, row)
+      {:yes_no, y} when y in ["y", "Y"] -> set_in_column(state, row, true)
+      {:yes_no, n} when n in ["n", "N"] -> set_in_column(state, row, false)
+      {:note, _} -> %{state | edit: %{target: note_target(state, row), line: LineEdit.new(c)}}
+      _ -> %{state | edit: %{target: column_target(state, row, :replace), line: LineEdit.new(c)}}
+    end
   end
 
   defp start_typing(state, row, c) when row != nil, do: begin_new_item(state, row, c)
@@ -267,6 +276,28 @@ defmodule Agenda.TUI.Update.ViewKeys do
 
   defp begin_new_item(state, row, text) do
     %{state | col: 0, edit: %{target: {:new_item, row.sidx, row.key}, line: LineEdit.new(text)}}
+  end
+
+  # the highlighted column's Format, for a standard column; nil otherwise
+  defp standard_format(state) do
+    {column, _at} = Layout.current_column(state)
+    if state.db.categories[column.category_id].kind == :standard, do: column.format
+  end
+
+  defp star(state, row) do
+    {:column_entry, item_id, head, _} = column_target(state, row, :replace)
+    set_in_column(state, row, not Database.member?(state.db, item_id, head))
+  end
+
+  defp set_in_column(state, row, in?) do
+    {:column_entry, item_id, head, _} = column_target(state, row, :replace)
+    State.change_db(state, Core.set_in_column(state.db, item_id, head, in?, State.context(state)))
+  end
+
+  # what a Category note column's cell types into: that line of the note
+  defp note_target(state, row) do
+    {column, _at} = Layout.current_column(state)
+    {:note_line, row.item.id, column.category_id, column.note_line}
   end
 
   defp column_target(state, row, how) do
@@ -286,7 +317,28 @@ defmodule Agenda.TUI.Update.ViewKeys do
     %{state | edit: %{target: {:edit_item, item.id}, line: LineEdit.new(item.text)}}
   end
 
-  defp edit(state, %{kind: :item} = row) do
+  # F2 in a Category note column: what its line says now (R56)
+  defp edit(state, %{kind: :item} = row) when state.col > 0 do
+    if standard_format(state) == :note,
+      do: edit_note(state, row),
+      else: edit_entry(state, row)
+  end
+
+  defp edit(state, nil), do: state
+
+  defp edit_note(state, row) do
+    {:note_line, item_id, head, n} = target = note_target(state, row)
+
+    text =
+      case ViewModel.column_entries(state.db, item_id, head) do
+        [] -> ""
+        [cat_id | _] -> ViewModel.note_line(state.db.categories[cat_id].note, n)
+      end
+
+    %{state | edit: %{target: target, line: LineEdit.new(text)}}
+  end
+
+  defp edit_entry(state, row) do
     {:column_entry, item_id, head, _} = column_target(state, row, :replace)
     numeric = state.db.categories[head].kind == :numeric
 
@@ -328,8 +380,6 @@ defmodule Agenda.TUI.Update.ViewKeys do
     end
   end
 
-  defp edit(state, nil), do: state
-
   defp rename(state, cat) do
     if Database.protected?(state.db, cat.id),
       do: State.error(state, "#{cat.name} cannot be renamed"),
@@ -363,9 +413,24 @@ defmodule Agenda.TUI.Update.ViewKeys do
     end
   end
 
+  # DEL in a column: a Category note line is emptied, a Star or Yes/No
+  # column takes the item out of the head (R56), others lose their entries
   def delete(state, %{kind: :item} = row) do
-    {:column_entry, item_id, head, _} = column_target(state, row, :replace)
-    State.change_db(state, Editing.clear_column(state.db, item_id, head, State.context(state)))
+    case standard_format(state) do
+      :note ->
+        Editing.set_note_line(state, note_target(state, row), "")
+
+      format when format in [:star, :yes_no] ->
+        set_in_column(state, row, false)
+
+      _ ->
+        {:column_entry, item_id, head, _} = column_target(state, row, :replace)
+
+        State.change_db(
+          state,
+          Editing.clear_column(state.db, item_id, head, State.context(state))
+        )
+    end
   end
 
   def delete(state, nil), do: state

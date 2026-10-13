@@ -200,6 +200,8 @@ defmodule Agenda.Core do
   defdelegate item_column_fit(db, view_id, sidx, clock, screen), to: Views
   defdelegate set_column_format(db, view_id, at, format), to: Views
   defdelegate set_column_display(db, view_id, at, changes), to: Views
+  defdelegate set_in_column(db, item_id, head_id, in?, clock), to: Views
+  defdelegate set_column_note(db, item_id, head_id, n, text), to: Views
   defdelegate set_column_date_format(db, view_id, at, format), to: Views
   defdelegate resize_column(db, view_id, at, delta), to: Views
   defdelegate set_column_width(db, view_id, at, width), to: Views

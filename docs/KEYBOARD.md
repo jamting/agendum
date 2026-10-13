@@ -39,6 +39,8 @@ settings, as described in the second half of this guide.
 | In the macro manager: new macro; learn its keystrokes; run it                                   | INS; F7; ENTER                | **CTRL-N** or type its name; ESC then `7`                             |
 | In the macro manager: edit the keystrokes; properties (attach to a key, where it runs); delete; sort; move | F2; F6; DEL; ALT-F5; ALT-↑ / ALT-↓ | ESC then `2` / `6`; fn-⌫; ESC then `%`; ⌥↑ / ⌥↓                       |
 | Pop-up calendar: pick a date (in a date column) / look one up (anywhere in a view)              | F3 / ALT-C                    | ESC then `3` / ESC then `c`                                           |
+| In a Star column: star or unstar; in a Yes/No column: yes or no (R56)                           | SPACE; Y / N                  | —                                                                     |
+| In a Category note column: type the line; edit it; empty it (R56)                               | type; F2; DEL                 | CTRL-E for F2; fn-⌫ for DEL                                           |
 | In the calendar: a day, a week; the first / last day of the month                               | ← → ↑ ↓; HOME / END           | fn-← / fn-→ for HOME / END                                            |
 | In the calendar: a month back / ahead; a year back / ahead                                      | PGUP / PGDN; CTRL-← / CTRL-→  | fn-↑ / fn-↓; `<` / `>`                                                |
 | In the calendar: set the date; a time (F6); go to a typed date; cancel                          | ENTER; F6; type it; ESC       | ESC then `6` for F6                                                   |

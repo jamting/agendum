@@ -218,6 +218,11 @@ defmodule Agenda.TUI.Render.View do
           when selected and id == item.id and head == column.category_id and state.col == i ->
             completion_field(state, editing.line, column.width)
 
+          # a Category note line being typed (R56)
+          %{target: {:note_line, id, head, _}}
+          when selected and id == item.id and head == column.category_id and state.col == i ->
+            Draw.input(editing.line, column.width, :edit)
+
           _ ->
             text =
               if Text.numeric?(state, column),

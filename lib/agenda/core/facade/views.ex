@@ -9,7 +9,7 @@ defmodule Agenda.Core.Facade.Views do
 
   alias Agenda.Core.{Assign, Database, Datebook, NumberFormat, RangeFilter, View, ViewColumns}
   alias Agenda.Core.ViewModel
-  alias Agenda.Core.Facade.{Dates, Numbers}
+  alias Agenda.Core.Facade.{Assignments, Categories, Dates, Numbers}
   # `View.Column` and `View.Section` are nested modules; nesting is only a
   # naming convention, so they are aliased like any other module.
   alias Agenda.Core.View.{Column, ItemColumn, Section}
@@ -343,6 +343,64 @@ defmodule Agenda.Core.Facade.Views do
       end)
 
     update_column(db, view_id, at, &Map.merge(&1, changes))
+  end
+
+  @doc """
+  SPACE in a Star column, Y or N in a Yes/No column (User's Guide 5-31 to
+  5-34): `true` assigns the item to the column head itself, unless it is
+  in it already (directly or through a descendant); `false` takes it out
+  of the head and of every category under it, so the column shows it as
+  not in.
+  """
+  @spec set_in_column(db, id, id, boolean, clock) :: db
+  def set_in_column(db, item_id, head_id, true, clock) do
+    if Database.member?(db, item_id, head_id),
+      do: db,
+      else: Assignments.assign(db, item_id, head_id, clock)
+  end
+
+  def set_in_column(db, item_id, head_id, false, clock) do
+    db
+    |> Database.subtree(head_id)
+    |> Enum.filter(&Database.explicit?(db, item_id, &1))
+    |> Enum.reduce(db, &Assignments.remove_from_category(&2, item_id, &1, clock))
+  end
+
+  @doc """
+  Typing in a Category note column (User's Guide 5-37: "Agenda puts it in
+  the correct line of the category note"): line `n` of the note of the
+  category the item has in the column headed by `head_id` (the first, if
+  several) becomes `text`, after the label the line had ("Telephone:
+  555-9999"); missing lines are added empty. An item with no category in
+  the column has no note to write: `{:error, :no_category}`.
+  """
+  @spec set_column_note(db, id, id, pos_integer, String.t()) :: {:ok, db} | {:error, :no_category}
+  def set_column_note(db, item_id, head_id, n, text) do
+    case ViewModel.column_entries(db, item_id, head_id) do
+      [] ->
+        {:error, :no_category}
+
+      [cat_id | _] ->
+        lines = String.split(db.categories[cat_id].note, "\n")
+        # as many lines as line `n` needs (`max/2` with 0 when there are more)
+        lines = lines ++ List.duplicate("", max(n - length(lines), 0))
+        lines = List.update_at(lines, n - 1, &with_label(&1, String.trim(text)))
+
+        {:ok,
+         Categories.set_category_note(
+           db,
+           cat_id,
+           lines |> Enum.join("\n") |> String.trim_trailing()
+         )}
+    end
+  end
+
+  # the line's label (up to its colon), kept before the new text
+  defp with_label(line, text) do
+    case String.split(line, ":", parts: 2) do
+      [label, _value] -> String.trim_trailing(label <> ": " <> text)
+      [_text] -> text
+    end
   end
 
   defp column_title(nil), do: nil

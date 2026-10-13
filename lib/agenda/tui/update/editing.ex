@@ -125,6 +125,8 @@ defmodule Agenda.TUI.Update.Editing do
     end
   end
 
+  defp commit(state, {:note_line, _, _, _} = target, text), do: set_note_line(state, target, text)
+
   defp commit(state, {:column_entry, item_id, head, how}, text) do
     db =
       if how == :replace and String.trim(text) != "",
@@ -260,6 +262,25 @@ defmodule Agenda.TUI.Update.Editing do
       do: value |> round() |> Integer.to_string(),
       else:
         value |> :erlang.float_to_binary([:short]) |> String.replace(".", opts[:decimal] || ".")
+  end
+
+  @doc """
+  Writes a Category note column's line for an item (R56): the note of the
+  item's category in that column; an item with none there is told so.
+  """
+  def set_note_line(state, {:note_line, item_id, head, n}, text) do
+    case Core.set_column_note(state.db, item_id, head, n, text) do
+      {:ok, db} ->
+        State.change_db(state, db)
+
+      {:error, :no_category} ->
+        item = state.db.items[item_id].text
+
+        State.error(
+          state,
+          "#{item} has no #{state.db.categories[head].name} category to write in"
+        )
+    end
   end
 
   @doc "Removes an item's entries in the column whose head category is `head`."

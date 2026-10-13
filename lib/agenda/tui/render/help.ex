@@ -57,6 +57,8 @@ defmodule Agenda.TUI.Render.Help do
                    F8/ALT-N and F7/ALT-P cycle, INS/^N makes it a new one
      Numeric column Type a number; F2 edits, DEL removes it; the format and
                    totals are in View ▸ Column ▸ Properties
+     Star column   SPACE stars or unstars; Yes/No column: Y or N
+     Note column   Type that line of the category's note; F2 edits it
      CTRL-PGUP/DN  Previous / next section         ⌥↑ / ⌥↓
 
    Everywhere
