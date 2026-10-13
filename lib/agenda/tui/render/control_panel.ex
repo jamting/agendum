@@ -271,6 +271,8 @@ defmodule Agenda.TUI.Render.ControlPanel do
         {:new_item, _, _} -> "Type the new item; ENTER to finish, ESC to cancel"
         {:edit_item, _} -> "Edit the item; ENTER to finish, ESC to cancel"
         {:rename_category, _} -> "Edit the category name; ENTER to finish"
+        # a Category note column's cell (R56): the line written into
+        {:note_line, _, _, n} -> "Type line #{n} of the category's note; ENTER to set"
       end
 
     [{:dim, " " <> hint}]
