@@ -127,6 +127,13 @@ defmodule Agenda.Core.SectionColumnsTest do
     test "its width changes in every section", %{db: db, view_id: v} do
       db = Core.resize_column(db, v, {2, 0}, 2)
       assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [18, 18, 18]
+      db = Core.set_column_width(db, v, {1, 0}, 20)
+      assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [20, 20, 20]
+    end
+
+    test "a width set is at least 3 and at most 80", %{db: db, view_id: v} do
+      assert column(Core.set_column_width(db, v, {0, 0}, 1), v, {0, 0}).width == 3
+      assert column(Core.set_column_width(db, v, {0, 0}, 999), v, {0, 0}).width == 80
     end
 
     test "its formats change in every section", %{db: db, view_id: v} do

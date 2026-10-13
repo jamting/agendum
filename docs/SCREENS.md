@@ -113,6 +113,10 @@ or handles it.
     filter moves, until ENTER keeps it or ESC goes back (R47, R48).
     `Agenda.TUI.Browse`.
     - **Prompt** `:prompt` for a date to go to (ALT-F5).
+  - **Column width** `:column_width` (View ▸ Column ▸ Width): the control
+    panel shows the highlighted column's width; ← →, a typed number or
+    SHIFT-? (fit, R22a) change it in the view until ENTER keeps it or ESC
+    goes back. `Agenda.TUI.ColumnWidth`.
   - **Calendar** `:calendar` (F3 in a date column; ALT-C anywhere in a
     view): the pop-up calendar, to pick a date (and time) for the entry or
     to look one up (R46). `Agenda.TUI.CalendarBox`.
@@ -292,6 +296,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:calendar`          | box           | `Agenda.TUI.CalendarBox`                | F3 in a date column, ALT-C                       | R46           |
 | `:datebook_props`    | box           | `Agenda.TUI.DatebookBox`                | View ▸ Properties of a datebook view             | R47           |
 | `:browse`            | control panel | `Agenda.TUI.Browse`                     | View ▸ Browse, ALT-B                             | R47, R48      |
+| `:column_width`      | control panel | `Agenda.TUI.ColumnWidth`                | View ▸ Column ▸ Width                            | R22a, R55     |
 | `:schedule`          | box           | `Agenda.TUI.ScheduleBox`                | Search ▸ Schedule                                | R49           |
 | `:macros`            | box           | `Agenda.TUI.Macros`                     | ALT-F3                                           | R50           |
 | `:macro_props`       | box           | `Agenda.TUI.MacroProps`                 | F6 in the macro manager                          | R50           |

@@ -254,9 +254,9 @@ defmodule Agenda.TUI.ViewTest do
     # the Contact column is 16 wide: "Abigail Scheer" fits
     assert screen(state) =~ "Abigail Scheer"
 
-    # highlight the Contact column and narrow it to 10 (three steps of 2)
-    narrower = [{:f, 10}, "v", "c", "n"]
-    state = press(state, [:down, :right, :right, :right] ++ narrower ++ narrower ++ narrower)
+    # highlight the Contact column and narrow it to 10
+    width = [{:f, 10}, "v", "c", "w", "1", "0", :enter]
+    state = press(state, [:down, :right, :right, :right] ++ width)
     screen = screen(state)
     # the column ends right after the short names
     assert screen =~ ~r/Low\s+Abigail\n/

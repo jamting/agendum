@@ -37,6 +37,9 @@ defmodule Agenda.TUI.Render.ControlPanel do
         %{type: :confirm, question: q} ->
           text_lines(state, base, :prompt, q)
 
+        %{type: :column_width} = m ->
+          text_lines(state, base, :panel_hint, Agenda.TUI.ColumnWidth.panel(m))
+
         %{type: :browse, date: _} ->
           period = State.view(state).datebook.period
           hint = "← → another #{period} · ENTER keeps · ESC back"

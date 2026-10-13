@@ -444,8 +444,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   When a column is too narrow for a category's full name, the category's
   short name is shown instead, for column entries and column heads alike
   (User's Guide 19-2). Each section has its own columns (R55).
-- **R22a ✅ Fit column to contents** (ours; Agenda only had View ▸ Column
-  ▸ Width). View ▸ Column ▸ Fit sets the highlighted column's width to the
+- **R22a ✅ Fit column to contents** (Agenda's SHIFT-? in View ▸ Column ▸
+  Width, User's Guide 5-21). SHIFT-? while choosing a width sets the
+  highlighted column's width to the
   widest of its head and the entries of the items the view shows at that
   moment (collapsed sections left out), with full names rather than short
   ones and its calculation lines; at least 3, at most 80. It is done once:
@@ -511,7 +512,12 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     file's Insert new columns in and overrides it for this column. ENTER
     adds the column, one undo step; ALT-R and ALT-L skip the box. The
     View ▸ Column menu follows Agenda's (screenshot 9): Properties, Add,
-    Remove, then ours.
+    Remove, Width.
+  - View ▸ Column ▸ Width (User's Guide 5-21 to 5-22): the control panel
+    shows the highlighted column's width; ← → change it by one, a typed
+    number replaces it, SHIFT-? fits it (R22a), at least 3 and at most 80.
+    The view shows the new width at once; ENTER keeps it (one undo step,
+    in every linked section), ESC goes back.
   - Not done yet: the Column Add box's Category type for a new category
     (it is changed in Category Properties); Display %
     of total (a numeric column's "% tot" column); typing a new name for

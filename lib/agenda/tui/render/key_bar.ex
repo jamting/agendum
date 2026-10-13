@@ -355,6 +355,14 @@ defmodule Agenda.TUI.Render.KeyBar do
 
   defp mode_keys(%{type: :help}), do: [{"↑↓", "Scroll"}, {"any other key", "Return"}]
 
+  defp mode_keys(%{type: :column_width}),
+    do: [
+      {"←→", "Width", "← →", "Narrower, wider"},
+      {"?", "Fit", "SHIFT-?", "Fit to contents"},
+      {"ENTER", "Keep"},
+      {"ESC", "Cancel"}
+    ]
+
   defp mode_keys(%{type: :move_item}),
     do: [
       {"↑↓", "Choose position", "Choose where it goes"},

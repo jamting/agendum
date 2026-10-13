@@ -12,6 +12,7 @@ defmodule Agenda.TUI.Update.Actions do
     CategoryScreens,
     ColumnAddBox,
     ColumnBox,
+    ColumnWidth,
     Draw,
     FileProperties,
     History,
@@ -334,19 +335,8 @@ defmodule Agenda.TUI.Update.Actions do
     end)
   end
 
-  defp do_perform(state, action, _) when action in [:wider, :narrower] do
-    with_column(state, fn at ->
-      delta = if action == :wider, do: 2, else: -2
-      State.change_db(state, Core.resize_column(state.db, state.view_id, at, delta))
-    end)
-  end
-
-  defp do_perform(state, :fit_column, _) do
-    with_column(state, fn at ->
-      db = Core.fit_column(state.db, state.view_id, at, State.context(state))
-      State.change_db(state, db)
-    end)
-  end
+  defp do_perform(state, :column_width, _),
+    do: with_column(state, &ColumnWidth.open(state, &1))
 
   defp do_perform(state, {:toggle_view, option}, _),
     do: State.change_db(state, Core.toggle_view_option(state.db, state.view_id, option))

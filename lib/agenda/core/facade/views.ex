@@ -202,6 +202,14 @@ defmodule Agenda.Core.Facade.Views do
   def set_column_date_format(db, view_id, at, format),
     do: update_column(db, view_id, at, &%{&1 | date: format})
 
+  @doc """
+  View ▸ Column ▸ Width: the column at `at` and the columns linked to it
+  become `width` wide, at least 3 and at most #{@fit_room}.
+  """
+  @spec set_column_width(db, id, View.at(), integer) :: db
+  def set_column_width(db, view_id, at, width),
+    do: update_column(db, view_id, at, &%{&1 | width: width |> max(3) |> min(@fit_room)})
+
   @spec resize_column(db, id, View.at(), integer) :: db
   def resize_column(db, view_id, at, delta),
     do: update_column(db, view_id, at, &%{&1 | width: max(3, &1.width + delta)})

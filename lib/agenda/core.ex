@@ -195,6 +195,7 @@ defmodule Agenda.Core do
   defdelegate set_column_format(db, view_id, at, format), to: Views
   defdelegate set_column_date_format(db, view_id, at, format), to: Views
   defdelegate resize_column(db, view_id, at, delta), to: Views
+  defdelegate set_column_width(db, view_id, at, width), to: Views
   defdelegate fit_column(db, view_id, at, clock), to: Views
   defdelegate cycle_filter(db, view_id, scope, cat_id), to: Views
   defdelegate set_range_filter(db, view_id, scope, cat_id, filter, today), to: Views

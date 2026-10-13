@@ -45,6 +45,7 @@ settings, as described in the second half of this guide.
 | In a prompt for a file name: pick it from a list (Select File box: ENTER opens, typing narrows, F7 dates, ESC back) | F3                            | ESC then `3`                                                          |
 | Browse a datebook view: previous / next period; go to a date; keep; go back                     | ALT-B: ← →; ALT-F5; ENTER; ESC | ESC then `b`; `<` / `>`; ESC then `%`                                 |
 | Browse a date filter (standard view): a day; a week; a month; a year                            | ALT-B: ← →; CTRL-← →; PGUP/PGDN; CTRL-PGUP/PGDN | ESC then `b`; ↑ ↓ for a week; ⌥↑ / ⌥↓ for a year                      |
+| Column width (View ▸ Column ▸ Width): narrower / wider; a width; fit to contents; keep; go back | ← →; type it; SHIFT-?; ENTER; ESC               | `?` (no SHIFT needed); opened from menu View ▸ Column ▸ Width         |
 | Make the item depend on the marked items, or clear its dependencies                             | ALT-O                         | ESC then `o`                                                          |
 | Execute all conditions and actions on all items / those of the highlighted category             | ALT-X / ALT-E                 | ESC then `x` / `e`, or menu Category ▸ Execute                        |
 | Category manager: add a sibling below / above                                                   | ALT-D (or ALT-I, INS) / ALT-U | ESC then `d` / `u`, or **CTRL-N**                                     |
