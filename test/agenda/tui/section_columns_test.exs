@@ -77,6 +77,10 @@ defmodule Agenda.TUI.SectionColumnsTest do
     assert heads(state, v) == [["When"], ["When"]]
   end
 
+  test "MAIN can head a new section", %{state: state} do
+    assert press(state, {:alt, "d"}) |> screen() =~ "MAIN"
+  end
+
   test "a new section below gets the linked columns of the one the cursor is in",
        %{state: state, view_id: v} do
     {:ok, db, _} = Core.add_category(state.db, state.db.main_id, "Ideas")

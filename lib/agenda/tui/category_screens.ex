@@ -70,9 +70,18 @@ defmodule Agenda.TUI.CategoryScreens do
   defp all_rows(state, %{type: type}) when type in [:profile, :group_profile],
     do: state.db |> Database.hierarchy() |> tl()
 
-  # MAIN is a valid choice for sections, views and new parents only
-  defp all_rows(state, %{type: :picker, root: nil, purpose: {tag, _}})
-       when tag in [:add_section, :change_section, :new_view, :move_category, :schedule],
+  # MAIN is a valid choice for sections, views and new parents only.
+  # (`elem(purpose, 0)` is the tag, whatever the purpose tuple's size;
+  # `elem/2` is allowed in a guard.)
+  defp all_rows(state, %{type: :picker, root: nil, purpose: purpose})
+       when is_tuple(purpose) and
+              elem(purpose, 0) in [
+                :add_section,
+                :change_section,
+                :new_view,
+                :move_category,
+                :schedule
+              ],
        do: Database.hierarchy(state.db)
 
   defp all_rows(state, %{type: :picker, root: nil}), do: state.db |> Database.hierarchy() |> tl()
