@@ -1,15 +1,15 @@
  File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
  View: Rabbit's Week
- Garden                                  When             Priority Friends
+ Garden                                   When             Priority Friends
  • Weed t┌───────────────────── Filter the view ──────────────────────┐
  • Count │ ┌──────────────────── Date filter: When ─────────────────────┐r
    bounce│ │ Show items      : Assigned                                 │
          │ │ Start date      : today                                    │
- Notices │ │ End date        : end of this week                         │s
+ Notices │ │ End date        : end of this week                         │ds
  • Put up│ │ Items should be : Inside range                             │
    Meetin│ │                                                            │
          │ │ Blank = open · ENTER applies · DEL removes · ESC cancels   │
- Friends │ └────────────────────────────────────────────────────────────┘s
+ Friends │ └────────────────────────────────────────────────────────────┘ds
  • Count │       Owl                                                   ger
    bounce│       Eeyore                                               │
  • Ask Ow│       Kanga                                                │

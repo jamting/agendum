@@ -1,15 +1,15 @@
  Expotitions: 2 new                                     PROPS  2026-10-12 10:15
  View: Rabbit's Week
- Garden                                  When             Priority Friends
+ Garden                                   When             Priority Friends
  • Weed t┌──────────────────────── Calendars ─────────────────────────┐
  • Count │ Expotitions              read 2026-10-12 10:15             │ger
    bounce│    https://example.org/expotitions.ics                     │
          │    every hour · 90 days ahead                              │
- Notices │                                                            │nds
+ Notices │                                                            │ends
  • Put up│ INS subscribe · ENTER read now · DEL unsubscribe           │
    Meetin│ F how often · A how far ahead                              │
          └────────────────────────────────────────────────────────────┘
- Friends and Relations                   When             Priority Friends
+ Friends and Relations                    When             Priority Friends
  • Count the lettuces before Tigger                        Medium   Tigger
    bounces on them
  • Ask Owl how to spell Organising                         Low      Owl

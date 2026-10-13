@@ -41,6 +41,7 @@ defmodule ManualScreens do
     calendars(state)
     datebook(state)
     macros(state)
+    columns(state)
   end
 
   defp view(state) do
@@ -107,7 +108,7 @@ defmodule ManualScreens do
     {:ok, db, cost} = Core.add_category(db, db.main_id, "Cost")
     {:ok, db} = Core.make_numeric(db, cost)
     view = hd(db.view_order)
-    db = db |> Core.remove_column(view, 2) |> Core.add_column(view, cost, 2, 9)
+    db = db |> Core.remove_column(view, {0, 2}) |> Core.add_column(view, cost, {0, 2}, 9)
     garden = hd(Database.find_categories(db, "Garden"))
     {db, seeds} = Core.add_item(db, "Buy carrot seeds", @today, section: garden)
     {:ok, db} = Core.set_number(db, seeds, cost, 2.4)
@@ -169,6 +170,13 @@ defmodule ManualScreens do
         [:enter, {:f, 7}, :down] ++ String.graphemes("Water the carrots") ++ [:enter, {:alt_f, 3}]
 
     shot("48-macros", press(state, learn ++ [{:alt_f, 3}]), :macros)
+  end
+
+  # The Column Add box, and Column Properties on the Friends column.
+  defp columns(state) do
+    shot("49-column-add", press(state, [{:f, 10}, "v", "c", "a"]), :column_add)
+    friends = [:down, :right, :right, :right, {:f, 10}, "v", "c", "p"]
+    shot("50-column-props", press(state, friends), :column_props)
   end
 
   defp name(state, {id, _depth}), do: state.db.categories[id].name

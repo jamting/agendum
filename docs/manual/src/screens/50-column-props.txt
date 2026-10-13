@@ -1,0 +1,25 @@
+ File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
+ View: Rabbit's Week
+ Garden                                   When             Priority Friends
+ • ┌────────────────────────── Column Properties ───────────────────────────┐
+ • │ Column head: Friends and Rel…  Category type:            Standard      │
+   │ Width:       12                Link with other sections: Yes           │
+   │ Format:       Name only                                                │
+ No│                                                                        │
+ • │ SPACE/→ next choice · ← previous · F3 picks the head · ESC closes      │
+   └────────────────────────────────────────────────────────────────────────┘
+
+ Friends and Relations                    When             Priority Friends
+ • Count the lettuces before Tigger                        Medium   Tigger
+   bounces on them
+ • Ask Owl how to spell Organising                         Low      Owl
+ • Find Small, who is lost again                           High     Small
+ • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+
+
+
+
+
+
+
+ ↑↓ Move between settings  SPACE/→ Next choice  ← Previous choice  ESC Close

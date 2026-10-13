@@ -1,15 +1,15 @@
  File: /home/rabbit/rabbit.agendum                       SORT  2026-10-12 10:15
  View: Rabbit's Week
- Garden                                  When             Priority Friends
+ Garden                                   When             Priority Friends
  • Weed t┌──────────────── Sort items in all sections ────────────────┐
  • Count │ Sort on         : None                                     │ger
    bounce│ Order           : -                                        │
          │ Sort n/a's      : -                                        │
- Notices │ Sequence        : -                                        │nds
+ Notices │ Sequence        : -                                        │ends
  • Put up│ Line number     : -                                        │
    Meetin│ Then by         : None                                     │
          │ Then order      : -                                        │
- Friends │ Section sorting : None                                     │nds
+ Friends │ Section sorting : None                                     │ends
  • Count │ Section order   : -                                        │ger
    bounce│                                                            │
  • Ask Ow│ ENTER changes the highlighted setting · ESC closes         │

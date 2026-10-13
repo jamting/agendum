@@ -1,16 +1,16 @@
  File: /home/rabbit/rabbit.agendum *                    READY  2026-10-12 10:15
  View: Rabbit's Week
- Garden                                  When             Priority Friends
+ Garden                                   When             Priority Friends
  • Weed t┌────────────────────────── Macros ──────────────────────────┐
  • Water │ Water                                                      │
  • Count │                                                            │ger
    bounce│ INS new · F7 learn · ENTER run · F2 edit · F6 props · DEL  │
          └────────────────────────────────────────────────────────────┘
- Notices                                 When             Priority Friends
+ Notices                                  When             Priority Friends
  • Put up a Notice about the Organising   2026-10-16       High
    Meeting on Friday
 
- Friends and Relations                   When             Priority Friends
+ Friends and Relations                    When             Priority Friends
  • Count the lettuces before Tigger                        Medium   Tigger
    bounces on them
  • Ask Owl how to spell Organising                         Low      Owl

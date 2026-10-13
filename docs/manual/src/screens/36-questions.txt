@@ -1,16 +1,16 @@
  File: /home/rabbit/rabbit.agendum *                  ? READY  2026-10-12 10:15
  View: Rabbit's Week
- Garden                                  When             Priority Friends
+ Garden                                   When             Priority Friends
  • Weed t┌────────────────── Suggested assignments ───────────────────┐
  • Count │ Ask Piglet and Pooh to help dig                            │ger
    bounce│                                                            │
  • Ask Pi│ Assign to:                                                 │
          │   Pooh                                                     │
- Notices │   Piglet                                                   │nds
+ Notices │   Piglet                                                   │ends
  • Put up│                                                            │
    Meetin│ SPACE picks · TAB picks all · ENTER assigns · ESC stops    │
          └────────────────────────────────────────────────────────────┘
- Friends and Relations                   When             Priority Friends
+ Friends and Relations                    When             Priority Friends
  • Count the lettuces before Tigger                        Medium   Tigger
    bounces on them
  • Ask Owl how to spell Organising                         Low      Owl

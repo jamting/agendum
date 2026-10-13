@@ -1,15 +1,15 @@
  1 category begins with "Lo" · ENTER accepts · INS      AUTOC  2026-10-12 10:15
  new category
- Garden                                  When             Priority Friends
+ Garden                                   When             Priority Friends
  • Weed the carrot bed tomorrow morning   2026-10-13 08:00 Low
  • Count the lettuces before Tigger                        Medium   Tigger
    bounces on them
 
- Notices                                 When             Priority Friends
+ Notices                                  When             Priority Friends
  • Put up a Notice about the Organising   2026-10-16       High
    Meeting on Friday
 
- Friends and Relations                   When             Priority Friends
+ Friends and Relations                    When             Priority Friends
  • Count the lettuces before Tigger                        Medium   Tigger
    bounces on them
  • Ask Owl how to spell Organising                         Low      Owl

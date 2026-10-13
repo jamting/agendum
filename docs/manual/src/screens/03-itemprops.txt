@@ -1,15 +1,15 @@
  File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
  View: Rabbit's Week
- Garden                                  When             Priority Friends
+ Garden                                   When             Priority Friends
  • Weed t┌───────────────────── Item properties ──────────────────────┐
  • Count │ Item text   : Weed the carrot bed tomorrow morning         │ger
    bounce│ Note        : (none)                                       │
          │ Statistics  : 4 categories · entered 2026-10-12            │
- Notices │ Assigned to : Entry (2026-10-12)                           │nds
+ Notices │ Assigned to : Entry (2026-10-12)                           │ends
  • Put up│               When (2026-10-13 08:00)                      │
    Meetin│               Garden                                       │
          │               High                                         │
- Friends │               (type a category name to add)                │nds
+ Friends │               (type a category name to add)                │ends
  • Count │                                                            │ger
    bounce│ ENTER edit · DEL remove · type to assign · F3 profile      │
  • Ask Ow└────────────────────────────────────────────────────────────┘

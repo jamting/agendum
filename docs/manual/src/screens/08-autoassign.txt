@@ -1,15 +1,15 @@
  File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
  View: Rabbit's Week
- Garden                                  When             Priority Friends
- • Weed t┌───────────────────── File properties ──────────────────────┐
- • Count │ ┌─────────────────── Auto-assign settings ───────────────────┐r
-   bounce│ │ Text matching           : On                               │
-         │ │ Match on                : Item text                        │
- Notices │ │ Required match strength : Exact match - 100%               │s
- • Put up└─│ Confirm assignments     : Never                            │
-   Meeting │ Ignore text enclosed by : " "                              │
+ Garden                                   When             Priority Friends
+ • ┌─────────────────────────── File properties ────────────────────────────┐
+ • │ Insert┌─────────────────── Auto-assign settings ───────────────────┐   │
+   │       │ Text matching           : On                               │   │
+   │ Global│ Match on                : Item text                        │   │
+ No│       │ Required match strength : Exact match - 100%               │   │
+ • │ SPACE/│ Confirm assignments     : Never                            │   │
+   └───────│ Ignore text enclosed by : " "                              │  ─┘
            │ Ignore suffixes         : Yes                              │
- Friends an│ Ignore accents          : No                               │s
+ Friends an│ Ignore accents          : No                               │ds
  • Count th│                                                            │r
    bounces │ SPACE/→ next choice · ← previous · ESC closes              │
  • Ask Owl └────────────────────────────────────────────────────────────┘
