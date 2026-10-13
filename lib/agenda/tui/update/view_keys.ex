@@ -40,62 +40,178 @@ defmodule Agenda.TUI.Update.ViewKeys do
     ncols = if row, do: length(row.columns), else: 0
 
     case key do
-      :up -> Layout.move_to(state, state.cursor - 1)
-      :down -> Layout.move_to(state, state.cursor + 1)
-      :enter -> Layout.move_to(state, state.cursor + 1)
-      :pgup -> Layout.move_to(state, state.cursor - State.body_height(state))
-      :pgdn -> Layout.move_to(state, state.cursor + State.body_height(state))
-      :home -> Layout.move_to(state, 0)
-      :end -> Layout.move_to(state, length(rows) - 1)
-      :ctrl_home -> Layout.move_to(state, 0)
-      :ctrl_end -> Layout.move_to(state, length(rows) - 1)
-      :ctrl_pgup -> Layout.move_to(state, section_head_index(rows, state.cursor, -1))
-      :ctrl_pgdn -> Layout.move_to(state, section_head_index(rows, state.cursor, 1))
-      k when k in [:right, :tab] -> %{state | col: min(state.col + 1, ncols)}
-      k when k in [:left, :shift_tab] -> %{state | col: max(state.col - 1, 0)}
-      {:char, "/"} -> Actions.perform(state, :menu)
-      {:char, c} -> start_typing(state, row, c)
-      :insert -> insert(state, row)
-      :delete -> if bulk?(state, row), do: scoped(state, :remove, row), else: delete(state, row)
-      {:f, 1} -> Actions.perform(state, :help)
-      {:f, 2} -> edit(state, row)
-      {:f, 3} -> if bulk?(state, row), do: scoped(state, :profile, row), else: choices(state, row)
-      {:f, 4} -> scoped(state, :done, row)
-      {:f, 5} -> Actions.perform(state, :note)
-      {:f, 6} -> props(state, row)
-      {:f, 7} -> mark(state, row)
-      {:alt_f, 7} -> Actions.perform(state, :unmark_all)
-      {:alt, "j"} -> jump_to_marked(state, rows)
-      {:alt, "m"} -> scoped(state, :make_assign, row)
-      {:f, 8} -> Actions.perform(state, :view_manager)
-      {:f, 9} -> Actions.perform(state, :category_manager)
-      {:f, 10} -> Actions.perform(state, :menu)
-      {:alt_f, 4} -> scoped(state, :discard, row)
-      {:alt_f, 2} -> scoped(state, :when, row)
-      {:ctrl, "d"} -> scoped(state, :discard, row)
-      {:alt_f, 10} -> scoped(state, :move_item, row)
-      {:alt, "d"} -> Actions.perform(state, :section_below)
-      {:alt_f, 5} -> GoTo.open(state)
-      {:alt, "n"} -> step_view(state, 1)
-      {:alt, "p"} -> step_view(state, -1)
-      {:alt, "w"} -> Actions.perform(state, :save)
-      {:alt, "g"} -> Actions.perform(state, :retrieve)
-      {:alt, "v"} -> Actions.perform(state, {:toggle_view, :hide_empty})
-      {:alt, "i"} -> insert(state, row)
-      {:alt, "o"} -> dependency(state, row)
-      {:alt, "x"} -> Agenda.TUI.ExecuteBox.run(state, state.db.main_id, :all)
-      {:alt, "e"} -> execute_category(state, row)
-      {:alt_f, 6} -> SearchBox.open(state, :view)
-      {:alt, "a"} -> Actions.perform(state, :alarm)
-      {:alt, "c"} -> CalendarBox.open(state, nil)
-      {:alt, "b"} -> Agenda.TUI.Browse.open(state)
-      {:alt_f, 8} -> Actions.perform(state, :last_view)
-      {:alt, "-"} -> collapse_sections(state, row, true)
-      {:alt, "="} -> collapse_sections(state, row, false)
-      {:alt, "u"} -> Actions.perform(state, :section_above)
-      {:alt, "r"} -> Actions.perform(state, :column_right)
-      {:alt, "l"} -> Actions.perform(state, :column_left)
-      _ -> state
+      :up ->
+        Layout.move_to(state, state.cursor - 1)
+
+      :down ->
+        Layout.move_to(state, state.cursor + 1)
+
+      :enter ->
+        Layout.move_to(state, state.cursor + 1)
+
+      :pgup ->
+        Layout.move_to(state, state.cursor - State.body_height(state))
+
+      :pgdn ->
+        Layout.move_to(state, state.cursor + State.body_height(state))
+
+      :home ->
+        Layout.move_to(state, 0)
+
+      :end ->
+        Layout.move_to(state, length(rows) - 1)
+
+      :ctrl_home ->
+        Layout.move_to(state, 0)
+
+      :ctrl_end ->
+        Layout.move_to(state, length(rows) - 1)
+
+      :ctrl_pgup ->
+        Layout.move_to(state, section_head_index(rows, state.cursor, -1))
+
+      :ctrl_pgdn ->
+        Layout.move_to(state, section_head_index(rows, state.cursor, 1))
+
+      k when k in [:right, :tab] ->
+        %{state | col: min(state.col + 1, ncols)}
+
+      k when k in [:left, :shift_tab] ->
+        %{state | col: max(state.col - 1, 0)}
+
+      {:char, "/"} ->
+        Actions.perform(state, :menu)
+
+      {:char, c} ->
+        start_typing(state, row, c)
+
+      :insert ->
+        insert(state, row)
+
+      :delete ->
+        if bulk?(state, row), do: scoped(state, :remove, row), else: delete(state, row)
+
+      {:f, 1} ->
+        Actions.perform(state, :help)
+
+      {:f, 2} ->
+        edit(state, row)
+
+      {:f, 3} ->
+        if bulk?(state, row), do: scoped(state, :profile, row), else: choices(state, row)
+
+      {:f, 4} ->
+        scoped(state, :done, row)
+
+      {:f, 5} ->
+        Actions.perform(state, :note)
+
+      {:f, 6} ->
+        props(state, row)
+
+      {:f, 7} ->
+        mark(state, row)
+
+      {:alt_f, 7} ->
+        Actions.perform(state, :unmark_all)
+
+      {:alt, "j"} ->
+        jump_to_marked(state, rows)
+
+      {:alt, "m"} ->
+        scoped(state, :make_assign, row)
+
+      {:f, 8} ->
+        Actions.perform(state, :view_manager)
+
+      {:f, 9} ->
+        Actions.perform(state, :category_manager)
+
+      {:f, 10} ->
+        Actions.perform(state, :menu)
+
+      {:alt_f, 4} ->
+        scoped(state, :discard, row)
+
+      {:alt_f, 2} ->
+        scoped(state, :when, row)
+
+      {:ctrl, "d"} ->
+        scoped(state, :discard, row)
+
+      # on a column head (a section head line) the column moves, as in
+      # Agenda (User's Guide 5-20); elsewhere the item(s)
+      {:alt_f, 10} when row.kind == :section and state.col > 0 ->
+        Actions.perform(state, :column_move)
+
+      {:alt_f, 10} ->
+        scoped(state, :move_item, row)
+
+      {:alt, "d"} ->
+        Actions.perform(state, :section_below)
+
+      {:alt_f, 5} ->
+        GoTo.open(state)
+
+      {:alt, "n"} ->
+        step_view(state, 1)
+
+      {:alt, "p"} ->
+        step_view(state, -1)
+
+      {:alt, "w"} ->
+        Actions.perform(state, :save)
+
+      {:alt, "g"} ->
+        Actions.perform(state, :retrieve)
+
+      {:alt, "v"} ->
+        Actions.perform(state, {:toggle_view, :hide_empty})
+
+      {:alt, "i"} ->
+        insert(state, row)
+
+      {:alt, "o"} ->
+        dependency(state, row)
+
+      {:alt, "x"} ->
+        Agenda.TUI.ExecuteBox.run(state, state.db.main_id, :all)
+
+      {:alt, "e"} ->
+        execute_category(state, row)
+
+      {:alt_f, 6} ->
+        SearchBox.open(state, :view)
+
+      {:alt, "a"} ->
+        Actions.perform(state, :alarm)
+
+      {:alt, "c"} ->
+        CalendarBox.open(state, nil)
+
+      {:alt, "b"} ->
+        Agenda.TUI.Browse.open(state)
+
+      {:alt_f, 8} ->
+        Actions.perform(state, :last_view)
+
+      {:alt, "-"} ->
+        collapse_sections(state, row, true)
+
+      {:alt, "="} ->
+        collapse_sections(state, row, false)
+
+      {:alt, "u"} ->
+        Actions.perform(state, :section_above)
+
+      {:alt, "r"} ->
+        Actions.perform(state, :column_right)
+
+      {:alt, "l"} ->
+        Actions.perform(state, :column_left)
+
+      _ ->
+        state
     end
   end
 

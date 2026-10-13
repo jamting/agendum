@@ -363,6 +363,13 @@ defmodule Agenda.TUI.Render.KeyBar do
       {"ESC", "Cancel"}
     ]
 
+  defp mode_keys(%{type: :column_move}),
+    do: [
+      {"←→", "Move", "← → or < >", "Move the column"},
+      {"ENTER", "Here", "Keep it here"},
+      {"ESC", "Cancel", "Put it back"}
+    ]
+
   defp mode_keys(%{type: :move_item}),
     do: [
       {"↑↓", "Choose position", "Choose where it goes"},

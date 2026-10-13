@@ -182,11 +182,16 @@ defmodule Agenda.TUI.State do
   @spec view(t) :: Agenda.Core.View.t()
   def view(%__MODULE__{db: db, view_id: id, modes: modes} = state) do
     view = Database.view(db, id)
-    # while browsing (R48) or choosing a column's width, the view is shown
-    # as it would be, before anything is kept
-    if modes == [],
-      do: view,
-      else: Agenda.TUI.ColumnWidth.view(state, Agenda.TUI.Browse.view(state, view))
+    # while browsing (R48), choosing a column's width or moving a column,
+    # the view is shown as it would be, before anything is kept
+    if modes == [] do
+      view
+    else
+      view
+      |> then(&Agenda.TUI.Browse.view(state, &1))
+      |> then(&Agenda.TUI.ColumnWidth.view(state, &1))
+      |> then(&Agenda.TUI.ColumnMove.view(state, &1))
+    end
   end
 
   @spec mode(t) :: map | nil

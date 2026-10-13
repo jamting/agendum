@@ -40,6 +40,9 @@ defmodule Agenda.TUI.Render.ControlPanel do
         %{type: :column_width} = m ->
           text_lines(state, base, :panel_hint, Agenda.TUI.ColumnWidth.panel(m))
 
+        %{type: :column_move} = m ->
+          text_lines(state, base, :panel_hint, Agenda.TUI.ColumnMove.panel(state, m))
+
         %{type: :browse, date: _} ->
           period = State.view(state).datebook.period
           hint = "← → another #{period} · ENTER keeps · ESC back"
@@ -180,7 +183,7 @@ defmodule Agenda.TUI.Render.ControlPanel do
       top && top.type == :menu ->
         "MENU"
 
-      top && top.type == :move_item ->
+      top && top.type in [:move_item, :column_move] ->
         "MOVE"
 
       top && top.type in [:picker, :scope, :calendar, :select_file] ->

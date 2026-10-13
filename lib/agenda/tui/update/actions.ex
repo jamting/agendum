@@ -338,6 +338,9 @@ defmodule Agenda.TUI.Update.Actions do
   defp do_perform(state, :column_width, _),
     do: with_column(state, &ColumnWidth.open(state, &1))
 
+  defp do_perform(state, :column_move, _),
+    do: with_column(state, &Agenda.TUI.ColumnMove.open(state, &1))
+
   defp do_perform(state, {:toggle_view, option}, _),
     do: State.change_db(state, Core.toggle_view_option(state.db, state.view_id, option))
 

@@ -189,6 +189,14 @@ defmodule Agenda.Core.Facade.Views do
   def remove_column(db, view_id, at, from \\ :all),
     do: Database.update_view(db, view_id, &ViewColumns.remove(&1, at, from))
 
+  @doc """
+  View ▸ Column ▸ Move: the column at `at` goes to place `to` in its
+  section only (`Agenda.Core.ViewColumns.move/3`).
+  """
+  @spec move_column(db, id, View.at(), non_neg_integer) :: db
+  def move_column(db, view_id, at, to),
+    do: Database.update_view(db, view_id, &ViewColumns.move(&1, at, to))
+
   @doc "Sets how a numeric column shows its numbers and calculations (R29)."
   @spec set_column_format(db, id, View.at(), NumberFormat.t()) :: db
   def set_column_format(db, view_id, at, %NumberFormat{} = format),

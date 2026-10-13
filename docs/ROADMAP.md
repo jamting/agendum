@@ -42,7 +42,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] File ▸ Properties ▸ Insert new columns in (All sections / Current section), with the File Properties box drawn from a layout as in screenshot 130 (R55)
 - [x] Column Properties for standard columns, with Link with other sections (unlink, or link with the columns of the same head, type, format and width), drawn from a layout as in screenshot 127 (R55)
 - [x] One Column Properties box for every column, as Agenda's: the numeric and date boxes become the lower part of it, below Column head, Width, Category type and Link with other sections (screenshots 127, 133); Column head changed there with F3 (linked columns change too) (R55)
-- [ ] Smaller column leftovers (R55), after the Column Add box and View ▸ Column ▸ Width (done): moving a column within its section (View ▸ Column ▸ Move, ALT-F10 on a column head); Item Column Properties (the item column's width per section, set automatically or by hand, linked)
+- [ ] Smaller column leftovers (R55), after the Column Add box, View ▸ Column ▸ Width and Move (done): Item Column Properties (the item column's width per section, set automatically or by hand, linked); moving the item column among the others, as Agenda could
 - [ ] Note-line columns (Column Properties ▸ Format: Category note, Line number, Column title): a column showing line N of the note of the item's category in that family, as Agenda's Activities Planner shows Phone # and Company from a person's note
 - [ ] Hide column heads (View Properties): a view without its column heads, as Agenda's datebooks are
 - [ ] Section separators (View Properties): a line between sections, the section head on it

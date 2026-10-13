@@ -157,6 +157,20 @@ defmodule Agenda.Core.ViewColumns do
   def set_head(%View{} = view, at, cat_id),
     do: update(view, at, &%{&1 | category_id: cat_id})
 
+  @doc """
+  View ▸ Column ▸ Move (User's Guide 5-20): the column at `at` goes to
+  place `to` in its section (the end, past the last). Only that section
+  changes, even for a linked column, as in Agenda; it stays linked.
+  """
+  @spec move(View.t(), View.at(), non_neg_integer) :: View.t()
+  def move(%View{} = view, {sidx, index}, to) do
+    put_columns(view, sidx, fn columns ->
+      # `List.pop_at/2` gives the element and the list without it
+      {column, rest} = List.pop_at(columns, index)
+      List.insert_at(rest, min(to, length(rest)), column)
+    end)
+  end
+
   @doc "The columns a section added next to the one at `sidx` starts with: its linked ones."
   @spec for_new_section(View.t(), non_neg_integer) :: [Column.t()]
   def for_new_section(%View{} = view, sidx),

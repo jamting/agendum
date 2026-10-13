@@ -459,8 +459,12 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     all of them. Added to one section, it is not linked and changes alone.
     Each column added is a column of its own, even with the head of
     another: a section can show When twice, and removing or widening one
-    leaves the other alone (as Agenda does, checked in DOSBox). Moving a column (not done yet) would
-    move it in the current section only, as in Agenda.
+    leaves the other alone (as Agenda does, checked in DOSBox).
+  - View ▸ Column ▸ Move, or ALT-F10 on a column head (User's Guide 5-20):
+    ← → (or < >) move the highlighted column in its section, shown at
+    once; ENTER keeps the place (one undo step), ESC puts it back. Only
+    the current section changes, even for a linked column, which stays
+    linked. Moving the item column (Agenda could) is not done yet.
   - Where the other sections get it (ours; Agenda does not say): beside
     the same column as where it was added (after the column on its left,
     or else before the one on its right), at the end when the section has
@@ -512,7 +516,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     file's Insert new columns in and overrides it for this column. ENTER
     adds the column, one undo step; ALT-R and ALT-L skip the box. The
     View ▸ Column menu follows Agenda's (screenshot 9): Properties, Add,
-    Remove, Width.
+    Remove, Move, Width.
   - View ▸ Column ▸ Width (User's Guide 5-21 to 5-22): the control panel
     shows the highlighted column's width; ← → change it by one, a typed
     number replaces it, SHIFT-? fits it (R22a), at least 3 and at most 80.

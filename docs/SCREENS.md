@@ -117,6 +117,9 @@ or handles it.
     panel shows the highlighted column's width; ← →, a typed number or
     SHIFT-? (fit, R22a) change it in the view until ENTER keeps it or ESC
     goes back. `Agenda.TUI.ColumnWidth`.
+  - **Moving a column** `:column_move` (View ▸ Column ▸ Move, ALT-F10 on a
+    column head): ← → move it in its section, shown at once, until ENTER
+    keeps it or ESC puts it back (R55). `Agenda.TUI.ColumnMove`.
   - **Calendar** `:calendar` (F3 in a date column; ALT-C anywhere in a
     view): the pop-up calendar, to pick a date (and time) for the entry or
     to look one up (R46). `Agenda.TUI.CalendarBox`.
@@ -297,6 +300,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:datebook_props`    | box           | `Agenda.TUI.DatebookBox`                | View ▸ Properties of a datebook view             | R47           |
 | `:browse`            | control panel | `Agenda.TUI.Browse`                     | View ▸ Browse, ALT-B                             | R47, R48      |
 | `:column_width`      | control panel | `Agenda.TUI.ColumnWidth`                | View ▸ Column ▸ Width                            | R22a, R55     |
+| `:column_move`       | control panel | `Agenda.TUI.ColumnMove`                 | View ▸ Column ▸ Move, ALT-F10 on a column head   | R55           |
 | `:schedule`          | box           | `Agenda.TUI.ScheduleBox`                | Search ▸ Schedule                                | R49           |
 | `:macros`            | box           | `Agenda.TUI.Macros`                     | ALT-F3                                           | R50           |
 | `:macro_props`       | box           | `Agenda.TUI.MacroProps`                 | F6 in the macro manager                          | R50           |

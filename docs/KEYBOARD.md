@@ -12,7 +12,7 @@ settings, as described in the second half of this guide.
 | New item / column entry / category / view                                                       | INS                           | **CTRL-N**                                                            |
 | Edit (item, section head, column entry, category)                                               | F2                            | **CTRL-E**                                                            |
 | Mark done                                                                                       | F4                            | **CTRL-K**                                                            |
-| On a column head (→ / TAB on a section head): remove the column; replace the head; its properties; rename it | DEL; F3; F6; F2 | fn-⌫; ESC then `3` / `6`; **CTRL-E**                                  |
+| On a column head (→ / TAB on a section head): remove the column; replace the head; its properties; rename it; move it (← →, ENTER) | DEL; F3; F6; F2; ALT-F10 | fn-⌫; ESC then `3` / `6`; **CTRL-E**; ESC then `)`, or menu View ▸ Column ▸ Move |
 | Discard                                                                                         | ALT-F4                        | **CTRL-D**                                                            |
 | Set the When date                                                                               | ALT-F2                        | ESC then `@`, or menu Item ▸ When                                     |
 | Next / previous completion while typing a column entry                                          | F8 / F7                       | ALT-N / ALT-P (ESC then `n` / `p`)                                    |

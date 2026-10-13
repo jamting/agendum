@@ -51,7 +51,8 @@ defmodule Agenda.TUI.Render.Help do
      ALT-R / ALT-L Add column right / left
      ←→ TAB        Move between item and columns (on a section head:
                    its column heads; DEL removes the column, F3
-                   replaces the head, F6 its properties, F2 renames)
+                   replaces the head, F6 its properties, F2 renames,
+                   ALT-F10 moves it: ← →, ENTER)
      In a column   Type a name: the first match shows; ENTER accepts,
                    F8/ALT-N and F7/ALT-P cycle, INS/^N makes it a new one
      Numeric column Type a number; F2 edits, DEL removes it; the format and

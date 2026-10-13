@@ -448,6 +448,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :column_width} = m, key),
     do: Agenda.TUI.ColumnWidth.handle(state, m, key)
 
+  defp dispatch(state, %{type: :column_move} = m, key),
+    do: Agenda.TUI.ColumnMove.handle(state, m, key)
+
   defp dispatch(state, %{type: :alarm_list} = m, key), do: AlarmList.handle(state, m, key)
 
   defp dispatch(state, %{type: :searching} = m, key),

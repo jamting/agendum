@@ -79,6 +79,8 @@ defmodule Agenda.TUI.Menu do
              :column_props},
             {"Add", "Add a column, right or left of the current one (ALT-R, ALT-L)", :column_add},
             {"Remove", "Remove the highlighted column", :remove_column},
+            {"Move", "Move the highlighted column in its section (ALT-F10 on its head)",
+             :column_move},
             {"Width", "The highlighted column's width: ← →, a number, or ? to fit it",
              :column_width}
           ]},
