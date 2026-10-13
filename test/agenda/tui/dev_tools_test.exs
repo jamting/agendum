@@ -77,7 +77,7 @@ defmodule Agenda.TUI.DevToolsTest do
   end
 
   test "it is not in the F1 help or the menus" do
-    refute Agenda.TUI.Render.help_text() =~ "Developer"
+    refute Agenda.TUI.Render.Help.text() =~ "Developer"
     refute inspect(Agenda.TUI.Menu.tree()) =~ "devtools"
   end
 end

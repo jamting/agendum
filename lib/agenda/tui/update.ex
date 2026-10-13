@@ -1001,7 +1001,7 @@ defmodule Agenda.TUI.Update do
 
   defp help_key(state, mode, key) do
     page = State.body_height(state)
-    last = max(Agenda.TUI.Render.help_line_count() - page, 0)
+    last = max(Agenda.TUI.Render.Help.line_count() - page, 0)
 
     top =
       case key do
@@ -1461,7 +1461,7 @@ defmodule Agenda.TUI.Update do
 
   defp prompt_action(state, :export, text) do
     path = Path.expand(text)
-    State.effect(state, {:write_text, path, Agenda.TUI.Render.export_text(state)})
+    State.effect(state, {:write_text, path, Agenda.TUI.Render.Export.text(state)})
   end
 
   defp confirm_key(state, mode, key) do

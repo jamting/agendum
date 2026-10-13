@@ -32,7 +32,7 @@ git diff "$last"..HEAD -- docs/SPEC.md docs/KEYBOARD.md docs/ROADMAP.md docs/SCR
 
 Read the new or changed SPEC rules and KEYBOARD.md rows; they are the source
 of truth. Check menu paths against `Agenda.TUI.Menu.tree/0`, keys against the
-F1 help in `Agenda.TUI.Render`, and box names and rows against the program
+F1 help in `Agenda.TUI.Render.Help`, and box names and rows against the program
 (the captures show them). Never describe a key or a menu path you have not
 checked.
 

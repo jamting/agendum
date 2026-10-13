@@ -86,12 +86,12 @@ Indentation shows what opens what. `type` is the mode's type; the module draws
 or handles it.
 
 - **View** (no mode): the current view's sections, items and columns.
-  `Agenda.TUI.Update`, `Agenda.TUI.Layout`, `Agenda.TUI.Render`.
+  `Agenda.TUI.Update`, `Agenda.TUI.Layout`, `Agenda.TUI.Render.View`.
   - **Menu** `:menu` (F10 or `/`): File, Item, Category, View, Search, Undo,
     Redo, Print, Quit. `Agenda.TUI.Menu`. Its commands open most of the boxes below;
     the menu path is given with each.
   - **Help** `:help` (F1; also from the category manager): keys and commands.
-    `Agenda.TUI.Render`.
+    `Agenda.TUI.Render.Help`.
   - **Prompt** `:prompt`: one line of text in the control panel (a file name,
     a new view's name, a category name). `Agenda.TUI.Update`.
     - **Select File** `:select_file` (F3 in a prompt for a file name): the
@@ -245,7 +245,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:scope`             | box           | `Agenda.TUI.Update`           | a command with items marked                      | R35           |
 | `:move_item`         | control panel | `Agenda.TUI.Update`           | ALT-F10, Item ▸ Reposition                       | R26           |
 | `:searching`         | control panel | `Agenda.TUI.SearchBox`        | the Search box                                   | R37           |
-| `:help`              | full screen   | `Agenda.TUI.Render`           | F1                                               | §5            |
+| `:help`              | full screen   | `Agenda.TUI.Render.Help`      | F1                                               | §5            |
 | `:note`              | full screen   | `Agenda.TUI.Update`           | F5, Item Properties, Category Properties         | §5            |
 | `:catmgr`            | full screen   | `Agenda.TUI.CategoryScreens`  | F9, Category ▸ Manager                           | R2–R8         |
 | `:viewmgr`           | full screen   | `Agenda.TUI.ViewManager`      | F8, View ▸ Manager                               | §5            |

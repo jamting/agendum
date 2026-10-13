@@ -58,7 +58,7 @@ defmodule Agenda.TUI.NumbersTest do
 
   test "printing to a file includes the calculations", %{state: state} do
     state = press(state, ["120", :enter])
-    assert Agenda.TUI.Render.export_text(state) =~ "TOTAL  [Amount: 120.00]"
+    assert Agenda.TUI.Render.Export.text(state) =~ "TOTAL  [Amount: 120.00]"
   end
 
   test "text that is not a number is refused", %{state: state} do

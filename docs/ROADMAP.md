@@ -131,10 +131,10 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agenda` and `test/agenda`, the repository folder; one mechanical commit (ADR 0019); with it, group the small TUI modules in subfolders (e.g. `tui/boxes/`, `tui/terminal/` for Terminal, Keys, Screen, Draw and Theme), so module names change only once
 - [ ] Draw the settings boxes from layouts (`Agenda.TUI.Template`, as File ▸ Customize is now), a few at a time and with the split of `render.ex`; their layouts closer to Agenda's screenshots where that is easy (e.g. Category Properties in two columns)
 - [ ] Split the four largest files into subfolders, by the sections they already have; pure moves, no change in behaviour, one file per commit (best in a fresh session each):
-  - `tui/render.ex` (~2,300 lines) → `tui/render/`: `Render` keeps `render/1`; `ControlPanel`, `KeyBar`, `View`, `Managers`, `Note`, `Help`, `Boxes` (perhaps two, or each box module drawing its own content, as `SelectFile` does), `Export`
-  - `tui/update.ex` (~2,000) → `tui/update/`: `Update` keeps `handle/2`, `tick/2`, dispatch and effect results; `ViewKeys`, `Editing`, `Marked`, `Prompts`, `Notes`, `Actions` (prepares the command layer, ADR 0020)
-  - `tui/category_screens.ex` (~1,200) → `tui/category_screens/`: `Manager`, `Picker`, `Profile`, `Moves`, `Properties`
-  - `core.ex` (~2,300, the facade) → `Agenda.Core` stays the one entry point (rule 3) as a table of contents of `defdelegate`s to area modules (`Agenda.Core.Facade.Items`, `.Dates`, `.Rules`, `.Views`, `.Numbers`…), where the functions and their docs live
+  - [x] `tui/render.ex` (~2,300 lines) → `tui/render/`: `Render` keeps `render/1`; `ControlPanel`, `KeyBar`, `View`, `Managers`, `Note`, `Help`, `Boxes` and `CategoryBoxes`, `Text` (shared words), `Export`
+  - [ ] `tui/update.ex` (~2,000) → `tui/update/`: `Update` keeps `handle/2`, `tick/2`, dispatch and effect results; `ViewKeys`, `Editing`, `Marked`, `Prompts`, `Notes`, `Actions` (prepares the command layer, ADR 0020)
+  - [ ] `tui/category_screens.ex` (~1,200) → `tui/category_screens/`: `Manager`, `Picker`, `Profile`, `Moves`, `Properties`
+  - [ ] `core.ex` (~2,300, the facade) → `Agenda.Core` stays the one entry point (rule 3) as a table of contents of `defdelegate`s to area modules (`Agenda.Core.Facade.Items`, `.Dates`, `.Rules`, `.Views`, `.Numbers`…), where the functions and their docs live
 - [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agenda.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
 - [x] API documentation with `ex_doc` (dev only): `mix docs` from the `@moduledoc`s and `@spec`s, for whoever builds on the core facade (ADR 0020)
 

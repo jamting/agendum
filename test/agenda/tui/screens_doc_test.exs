@@ -6,7 +6,7 @@ defmodule Agenda.TUI.ScreensDocTest do
 
   # Every `type: :name` a TUI module puts in a mode map.
   defp mode_types do
-    "lib/agenda/tui/*.ex"
+    "lib/agenda/tui/**/*.ex"
     |> Path.wildcard()
     |> Enum.flat_map(fn path ->
       ~r/%\{\s*type: :([a-z_]+)/
