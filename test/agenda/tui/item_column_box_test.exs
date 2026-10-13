@@ -57,10 +57,10 @@ defmodule Agenda.TUI.ItemColumnBoxTest do
        %{state: state} do
     # Manually, then 40 steps narrower: 40 wide
     state = press(state, [:down, " ", :down] ++ List.duplicate(:left, 40) ++ [:esc])
-    # the section head line: a space, 41 for the name, a space, then When
-    # (not at the screen's right edge, where an automatic one puts it)
+    # " • ", 40 for the text, a space: When starts at 44, as its entries
+    # do (not at the screen's right edge, where an automatic one puts it)
     head = state |> screen() |> String.split("\n") |> Enum.find(&(&1 =~ "Calls"))
-    assert :binary.match(head, "When") == {43, 4}
+    assert :binary.match(head, "When") == {44, 4}
   end
 
   test "Minimum width, and unlinking: the section changes alone", %{state: state, view_id: v} do

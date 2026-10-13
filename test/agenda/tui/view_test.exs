@@ -18,6 +18,39 @@ defmodule Agenda.TUI.ViewTest do
     assert screen =~ "F9 CatMgr F10 Menu"
   end
 
+  test "a column head starts where its entries do, as in Agenda (screenshot 9)",
+       %{state: state} do
+    [head, item] =
+      state
+      |> screen()
+      |> String.split("\n")
+      |> Enum.filter(&(&1 =~ ~r/^ Calls|Anna Lasky with/))
+
+    assert at(head, "Priority") == at(item, "High")
+    # (the last Anna Lasky: the item's text names her too)
+    assert at(head, "Contact") == at_last(item, "Anna Lasky")
+  end
+
+  # the column (in characters, not bytes: • is three bytes) where `text` starts
+  defp at(line, text), do: line |> String.split(text) |> hd() |> String.length()
+
+  defp at_last(line, text),
+    do: line |> String.split(text) |> Enum.drop(-1) |> Enum.join(text) |> String.length()
+
+  test "while a section is renamed, its column heads stay over their entries",
+       %{state: state} do
+    # renaming the section: the input line ends where the first column starts
+    state = press(state, {:f, 2})
+
+    [head, item] =
+      state
+      |> screen()
+      |> String.split("\n")
+      |> Enum.filter(&(&1 =~ ~r/Priority|Anna Lasky with/))
+
+    assert at(head, "Priority") == at(item, "High")
+  end
+
   test "typing under a section adds an item and assigns it", %{state: state} do
     state = press(state, ["Ring Anna about the budget", :enter])
     id = Enum.find(Database.items(state.db), &(&1.text == "Ring Anna about the budget")).id

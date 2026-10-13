@@ -116,13 +116,15 @@ defmodule Agenda.TUI.Render.View do
     cat = row.category
     style = if selected and state.col == 0, do: :cursor, else: :section
 
+    # The name part is as wide as an item line's " •♪" and text (tw + 3),
+    # so each column head starts where its entries do, as in Agenda.
     name_part =
       case editing do
         %{target: {:rename_category, id}} when selected and id == cat.id ->
-          [{:normal, " "}] ++ Draw.input(editing.line, tw + 1, :edit)
+          [{:normal, " "}] ++ Draw.input(editing.line, tw + 2, :edit)
 
         _ when row.slot != nil ->
-          slot_rule(slot_label(state, row.slot), style, tw + 2)
+          slot_rule(slot_label(state, row.slot), style, tw + 3)
 
         _ ->
           section = Enum.at(State.view(state).sections, row.sidx)
@@ -131,7 +133,7 @@ defmodule Agenda.TUI.Render.View do
             if(row.collapsed, do: " §#{row.count}", else: "") <>
               Text.filter_text(state, section.filter)
 
-          [{:normal, " "}, {style, Draw.pad(cat.name <> suffix, tw + 1)}]
+          [{:normal, " "}, {style, Draw.pad(cat.name <> suffix, tw + 2)}]
       end
 
     heads =
