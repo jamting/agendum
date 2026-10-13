@@ -159,7 +159,7 @@ defmodule Agenda.TUI.Update.Actions do
         Agenda.TUI.DateColumnBox.open(state, at)
 
       true ->
-        State.error(state, "Column properties are for numeric and date columns only, so far")
+        Agenda.TUI.ColumnBox.open(state, at)
     end
   end
 

@@ -29,8 +29,11 @@ defmodule Agenda.TUI.Render.Boxes do
 
   # the calendar is a small box, as in Agenda; the others share one width
   defp box_width(state, %{type: :calendar}), do: min(state.width - 8, 30)
-  # File Properties has Agenda's two settings side by side (screenshot 130)
-  defp box_width(state, %{type: :file_props}), do: min(state.width - 8, 72)
+  # File Properties and Column Properties have Agenda's two columns of
+  # settings side by side (screenshots 130, 127)
+  defp box_width(state, %{type: type}) when type in [:file_props, :standard_column_props],
+    do: min(state.width - 8, 72)
+
   defp box_width(state, _mode), do: min(state.width - 8, 60)
 
   defp box_title(_state, %{type: :calendar} = mode), do: Agenda.TUI.CalendarBox.title(mode)
@@ -81,6 +84,11 @@ defmodule Agenda.TUI.Render.Boxes do
     do:
       "Numeric column: " <>
         state.db.categories[Agenda.TUI.ColumnProperties.column(state, mode).category_id].name
+
+  defp box_title(state, %{type: :standard_column_props} = mode),
+    do:
+      "Column Properties: " <>
+        state.db.categories[Agenda.TUI.ColumnBox.column(state, mode).category_id].name
 
   defp box_title(state, %{type: :date_column_props} = mode),
     do:
@@ -487,6 +495,9 @@ defmodule Agenda.TUI.Render.Boxes do
         [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]
       ]
   end
+
+  defp box_content(state, %{type: :standard_column_props} = mode, _inner, _max_rows),
+    do: Agenda.TUI.ColumnBox.content(state, mode)
 
   defp box_content(state, %{type: :file_props} = mode, _inner, _max_rows),
     do: Agenda.TUI.FileProperties.content(state, mode)

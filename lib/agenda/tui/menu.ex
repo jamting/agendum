@@ -80,7 +80,9 @@ defmodule Agenda.TUI.Menu do
             {"Wider", "Make the highlighted column wider", :wider},
             {"Narrower", "Make the highlighted column narrower", :narrower},
             {"Fit", "Fit the highlighted column to its head and entries, once", :fit_column},
-            {"Properties", "How a numeric or date column shows its values", :column_props}
+            {"Properties",
+             "The column's width, link with other sections, and how it shows values",
+             :column_props}
           ]},
          {"Filter", "Show only items in (or not in) chosen categories", :filter_view},
          {"Order", "Sort the items in every section (the view's sort settings)", :sort_view},

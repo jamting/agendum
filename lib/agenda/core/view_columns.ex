@@ -95,6 +95,42 @@ defmodule Agenda.Core.ViewColumns do
   def remove(%View{} = view, at, :section), do: remove_places(view, [at])
   def remove(%View{} = view, at, :all), do: remove_places(view, linked(view, at))
 
+  @doc """
+  Column Properties ▸ Link with other sections (R55; User's Guide 5-24 to
+  5-25). No unlinks the column at `at`: it changes alone from then on.
+  Yes links it: to the linked columns of its head if there are any, taking
+  their width and formats so they stay one column; otherwise to the
+  columns of its head with the same width and formats, as Agenda links
+  "columns with the same column head, category type, format, and width".
+  """
+  @spec set_linked(View.t(), View.at(), boolean) :: View.t()
+  def set_linked(%View{} = view, at, false), do: update_one(view, at, &%{&1 | linked: false})
+
+  def set_linked(%View{} = view, {sidx, index} = at, true) do
+    column = view |> View.columns(sidx) |> Enum.at(index)
+
+    # `^column` pins: it matches only the value `column` already has, rather
+    # than binding a new variable
+    case like_linked(view, column) do
+      _ when column.linked ->
+        view
+
+      # no linked columns of its head: those just like it join it. A `for`
+      # with `reduce:` folds over what it generates, like `Enum.reduce/3`:
+      # `view` starts as the value after `reduce:`, each pass returns the next
+      ^column ->
+        for {section, s} <- Enum.with_index(view.sections),
+            {other, i} <- Enum.with_index(section.columns),
+            same_settings?(other, column),
+            reduce: update_one(view, at, &%{&1 | linked: true}) do
+          view -> update_one(view, {s, i}, &%{&1 | linked: true})
+        end
+
+      joined ->
+        update_one(view, at, fn _ -> %{joined | linked: true} end)
+    end
+  end
+
   @doc "The columns a section added next to the one at `sidx` starts with: its linked ones."
   @spec for_new_section(View.t(), non_neg_integer) :: [Column.t()]
   def for_new_section(%View{} = view, sidx),
@@ -143,12 +179,18 @@ defmodule Agenda.Core.ViewColumns do
     end
   end
 
+  defp same_settings?(a, b),
+    do: {a.category_id, a.width, a.number, a.date} == {b.category_id, b.width, b.number, b.date}
+
   # A column joining linked columns of its head takes their settings, so
-  # all of them stay one column.
+  # all of them stay one column. (Itself does not count, when it is one.)
   defp like_linked(view, column) do
     twin =
       Enum.find_value(view.sections, fn section ->
-        Enum.find(section.columns, &(&1.linked and &1.category_id == column.category_id))
+        Enum.find(
+          section.columns,
+          &(&1.linked and &1.category_id == column.category_id and &1 != column)
+        )
       end)
 
     case twin do

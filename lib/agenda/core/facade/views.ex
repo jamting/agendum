@@ -147,6 +147,14 @@ defmodule Agenda.Core.Facade.Views do
   end
 
   @doc """
+  Column Properties ▸ Link with other sections (R55): `false` unlinks the
+  column at `at`, `true` links it (`Agenda.Core.ViewColumns.set_linked/3`).
+  """
+  @spec set_column_linked(db, id, View.at(), boolean) :: db
+  def set_column_linked(db, view_id, at, linked) when is_boolean(linked),
+    do: Database.update_view(db, view_id, &ViewColumns.set_linked(&1, at, linked))
+
+  @doc """
   File Properties ▸ Insert new columns in (R55): whether a column added
   without saying where goes into all sections (`:all`, Agenda's default)
   or only the one it is added in (`:section`).

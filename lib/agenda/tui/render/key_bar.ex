@@ -322,6 +322,7 @@ defmodule Agenda.TUI.Render.KeyBar do
        when type in [
               :column_props,
               :date_column_props,
+              :standard_column_props,
               :category_match,
               :auto_assign,
               :date_rule,

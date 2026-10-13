@@ -138,6 +138,44 @@ defmodule Agenda.Core.SectionColumnsTest do
     end
   end
 
+  describe "Link with other sections (Column Properties)" do
+    test "No: the column changes alone from then on", %{db: db, view_id: v} do
+      db = Core.set_column_linked(db, v, {1, 0}, false)
+      refute column(db, v, {1, 0}).linked
+      db = Core.resize_column(db, v, {1, 0}, 4)
+      assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [16, 20, 16]
+      db = Core.resize_column(db, v, {0, 0}, 2)
+      assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [18, 20, 18]
+    end
+
+    test "Yes: it joins the linked columns of its head, taking their settings",
+         %{db: db, view_id: v} do
+      db = Core.set_column_linked(db, v, {1, 0}, false)
+      db = Core.resize_column(db, v, {1, 0}, 4)
+      db = Core.set_column_linked(db, v, {1, 0}, true)
+      assert column(db, v, {1, 0}).linked
+      assert column(db, v, {1, 0}).width == 16
+      db = Core.resize_column(db, v, {1, 0}, 2)
+      assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [18, 18, 18]
+    end
+
+    test "Yes on a linked column changes nothing", %{db: db, view_id: v} do
+      db = Core.add_column(db, v, cat(db, "When"), {1, 1}, 16, :section)
+      assert Core.set_column_linked(db, v, {0, 0}, true) == db
+    end
+
+    test "Yes with no linked columns of its head: it links those of the same width and format",
+         %{db: db, view_id: v} do
+      db = Core.add_column(db, v, cat(db, "People"), {0, 0}, 12, :section)
+      db = Core.add_column(db, v, cat(db, "People"), {1, 0}, 12, :section)
+      db = Core.add_column(db, v, cat(db, "People"), {2, 0}, 14, :section)
+      db = Core.set_column_linked(db, v, {0, 0}, true)
+      assert Enum.map(0..2, &column(db, v, {&1, 0}).linked) == [true, true, false]
+      db = Core.resize_column(db, v, {0, 0}, 1)
+      assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [13, 13, 14]
+    end
+  end
+
   describe "removing a column" do
     test "from the current section only", %{db: db, view_id: v} do
       db = Core.remove_column(db, v, {1, 0}, :section)

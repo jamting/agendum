@@ -78,6 +78,7 @@ flowchart LR
     ColProps["Column Properties"]
     ColProps -- "numeric column" --> NumCol["Numeric column"]
     ColProps -- "date column" --> DateCol["Date column"]
+    ColProps -- "standard column" --> StdCol["Column Properties (standard)"]
 ```
 
 ## Everything, by where it is reached
@@ -213,6 +214,9 @@ or handles it.
       (R29). `Agenda.TUI.ColumnProperties`.
     - **Date column** `:date_column_props`: the column's own date format or
       the global defaults (R41a). `Agenda.TUI.DateColumnBox`.
+    - **Standard column** `:standard_column_props`: head, width, category
+      type and Link with other sections, laid out as in Agenda (screenshot
+      127; R55). `Agenda.TUI.ColumnBox`.
   - **Execute** `:execute` (Category ▸ Execute): apply conditions and actions
     to existing items, from a root category (R15e). `Agenda.TUI.ExecuteBox`.
     - **Picker** `:picker` for the root.
@@ -278,6 +282,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:auto_assign`       | box           | `Agenda.TUI.AutoAssignBox`              | File Properties ▸ Auto-assign settings           | R16a          |
 | `:column_props`      | box           | `Agenda.TUI.ColumnProperties`           | View ▸ Column ▸ Properties, numeric column       | R29           |
 | `:date_column_props` | box           | `Agenda.TUI.DateColumnBox`              | View ▸ Column ▸ Properties, date column          | R41a          |
+| `:standard_column_props` | box       | `Agenda.TUI.ColumnBox`                  | View ▸ Column ▸ Properties, standard column      | R55           |
 | `:execute`           | box           | `Agenda.TUI.ExecuteBox`                 | Category ▸ Execute                               | R15e          |
 | `:questions`         | box           | `Agenda.TUI.QuestionsBox`               | Category ▸ Questions                             | R16           |
 | `:alarm_list`        | box           | `Agenda.TUI.AlarmList`                  | Search ▸ Alarms                                  | R38           |

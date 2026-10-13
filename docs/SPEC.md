@@ -477,12 +477,19 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     where ALT-R and ALT-L put a new column.
   - A new column is 16 wide for a date category (a date and a time), 12
     for others.
+  - Column Properties ▸ Link with other sections (screenshot 127): No
+    unlinks the column, which changes alone from then on. Yes links it to
+    the linked columns of its head, taking their width and formats; when
+    there are none, to the columns of its head with the same width and
+    formats (Agenda: "the same column head, category type, format, and
+    width"). Yes on a linked column changes nothing. The box of a standard
+    column shows its head, width (→ ← by one), category type and link,
+    laid out as in Agenda.
   - Not done yet: the Column Add box's Insert in, which overrides the
-    file's setting for one column (the core already takes it); Column Properties
-    ▸ Link with other sections, which unlinks a column, or links it to
-    the columns with the same head, type, format and width (joining
-    linked columns of that head takes their settings); the item column's
-    own width per section.
+    file's setting for one column (the core already takes it); the same
+    Column Properties rows for numeric and date columns, whose boxes are
+    still their own; changing the column head there (F3); the item
+    column's own width per section.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

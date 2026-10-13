@@ -72,8 +72,8 @@ defmodule Agenda.TUI.DateColumnsTest do
     assert screen(state) =~ "26-10-09 14:00"
   end
 
-  test "Column Properties on a standard column says what it is for", %{state: state} do
+  test "Column Properties on a standard column opens its own box (R55)", %{state: state} do
     state = press(state, [:right, {:f, 10}, "v", "c", "p"])
-    assert screen(state) =~ "numeric and date columns only"
+    assert %{type: :standard_column_props} = State.mode(state)
   end
 end
