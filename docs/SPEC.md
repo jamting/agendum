@@ -503,8 +503,17 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     one) and Link with other sections at the top; below a rule, a numeric
     column's Numeric Column Properties (R29) or a date column's Date
     Column Properties (R41a), with formatted samples.
-  - Not done yet: the Column Add box's Insert in, which overrides the
-    file's setting for one column (the core already takes it); Display %
+  - View ▸ Column ▸ Add opens the Column Add box (User's Guide 3-15 to
+    3-18): Column head (F3, SPACE or → picks it; ENTER without one too),
+    Category type (shown), Width (→ ← by one, starting at the default
+    above), Position (Right of current column, the default, or Left) and
+    Insert in (All sections or Current section), which starts at the
+    file's Insert new columns in and overrides it for this column. ENTER
+    adds the column, one undo step; ALT-R and ALT-L skip the box. The
+    View ▸ Column menu follows Agenda's (screenshot 9): Properties, Add,
+    Remove, then ours.
+  - Not done yet: the Column Add box's Category type for a new category
+    (it is changed in Category Properties); Display %
     of total (a numeric column's "% tot" column); typing a new name for
     the column head in the box (the picker takes one); the item column's
     own width per section.

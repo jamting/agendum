@@ -24,6 +24,7 @@ defmodule Agenda.TUI.Update do
     AlarmList,
     CalendarBox,
     CategoryScreens,
+    ColumnAddBox,
     ColumnBox,
     FileProperties,
     GoTo,
@@ -442,6 +443,7 @@ defmodule Agenda.TUI.Update do
     do: RangeFilterBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :column_props} = m, key), do: ColumnBox.handle(state, m, key)
+  defp dispatch(state, %{type: :column_add} = m, key), do: ColumnAddBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :alarm_list} = m, key), do: AlarmList.handle(state, m, key)
 

@@ -46,6 +46,7 @@ flowchart LR
     Menu -- "Category ▸ Execute" --> Execute["Execute box"]
     Menu -- "Category ▸ Questions" --> Questions["Questions box"]
     Menu -- "View ▸ Column ▸ Properties" --> ColProps["Column Properties"]
+    Menu -- "View ▸ Column ▸ Add" --> ColAdd["Column Add"]
     Menu -- "View ▸ Order / Section ▸ Sort" --> Sort["Sort box"]
     Menu -- "Search ▸ Alarms" --> Alarms["Alarm list"]
     CatMgr -- F6 --> CatProps
@@ -77,6 +78,7 @@ flowchart LR
     Customize["Customize (yours)"] -- "Input format" --> InputFormat
     ColProps["Column Properties"]
     ColProps -- "F3 on Column head" --> ColHead["Picker: column head"]
+    ColAdd["Column Add"] -- "F3 on Column head" --> ColHead
 ```
 
 ## Everything, by where it is reached
@@ -214,6 +216,11 @@ or handles it.
     a date column's own date format or the global defaults (R41a).
     `Agenda.TUI.ColumnBox`.
     - **Picker** `:picker` for the column head (F3 on Column head).
+  - **Column Add** (View ▸ Column ▸ Add): `:column_add`, a new column's
+    head, width, Position (right or left of the current column) and Insert
+    in (all sections or this one, overriding the file's setting; R55).
+    ENTER adds it. `Agenda.TUI.ColumnAddBox`.
+    - **Picker** `:picker` for the column head (F3 on Column head).
   - **Execute** `:execute` (Category ▸ Execute): apply conditions and actions
     to existing items, from a root category (R15e). `Agenda.TUI.ExecuteBox`.
     - **Picker** `:picker` for the root.
@@ -278,6 +285,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:calendars`         | box           | `Agenda.TUI.CalendarsBox`               | File ▸ Transfer ▸ Calendars                      | R45           |
 | `:auto_assign`       | box           | `Agenda.TUI.AutoAssignBox`              | File Properties ▸ Auto-assign settings           | R16a          |
 | `:column_props`      | box           | `Agenda.TUI.ColumnBox`                  | View ▸ Column ▸ Properties                       | R55, R29, R41a |
+| `:column_add`        | box           | `Agenda.TUI.ColumnAddBox`               | View ▸ Column ▸ Add                              | R55           |
 | `:execute`           | box           | `Agenda.TUI.ExecuteBox`                 | Category ▸ Execute                               | R15e          |
 | `:questions`         | box           | `Agenda.TUI.QuestionsBox`               | Category ▸ Questions                             | R16           |
 | `:alarm_list`        | box           | `Agenda.TUI.AlarmList`                  | Search ▸ Alarms                                  | R38           |

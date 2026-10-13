@@ -140,10 +140,20 @@ defmodule Agenda.Core.Facade.Views do
   @spec add_column(db, id, id, View.at(), pos_integer | nil, :all | :section | nil) :: db
   def add_column(db, view_id, cat_id, at, width \\ nil, insert_in \\ nil) do
     # `||` gives its right side when the left is nil (or false)
-    width = width || if(Database.date_category?(db, cat_id), do: 16, else: 12)
+    width = width || default_column_width(db, cat_id)
     column = %Column{category_id: cat_id, width: width}
     insert_in = insert_in || db.insert_columns
     Database.update_view(db, view_id, &ViewColumns.add(&1, at, column, insert_in))
+  end
+
+  @doc """
+  The width a new column headed by `cat_id` gets unless told otherwise:
+  16 for a date category, room for a date and a time, and 12 for others
+  (also without a head yet, as in the Column Add box).
+  """
+  @spec default_column_width(db, id | nil) :: pos_integer
+  def default_column_width(db, cat_id) do
+    if cat_id && Database.date_category?(db, cat_id), do: 16, else: 12
   end
 
   @doc """

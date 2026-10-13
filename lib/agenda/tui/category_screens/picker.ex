@@ -96,6 +96,9 @@ defmodule Agenda.TUI.CategoryScreens.Picker do
       | col: index + 1
     }
 
+  # Column Add ▸ Column head: back in the box, which adds it on ENTER
+  def pick(state, :column_add, id), do: Agenda.TUI.ColumnAddBox.set_head(state, id)
+
   # Column Properties ▸ Column head (R55): back in the box, which shows the
   # column's new head (and its kind's settings)
   def pick(state, {:column_head, at}, id),

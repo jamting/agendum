@@ -207,6 +207,7 @@ defmodule Agenda.TUI.Render.ControlPanel do
             :category_match,
             :auto_assign,
             :column_props,
+            :column_add,
             :range_filter,
             :action_box,
             :execute

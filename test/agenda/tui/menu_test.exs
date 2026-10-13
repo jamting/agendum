@@ -49,9 +49,8 @@ defmodule Agenda.TUI.MenuTest do
       assert screen(press(state, [{:f, 10}, "f", "w"])) =~ "Save file as:"
     end
 
-    test "View > Column > After and Before add columns", %{state: state} do
-      assert %{type: :picker} = Agenda.TUI.State.mode(press(state, [{:f, 10}, "v", "c", "a"]))
-      assert %{type: :picker} = Agenda.TUI.State.mode(press(state, [{:f, 10}, "v", "c", "b"]))
+    test "View > Column > Add opens the Column Add box", %{state: state} do
+      assert %{type: :column_add} = Agenda.TUI.State.mode(press(state, [{:f, 10}, "v", "c", "a"]))
     end
   end
 end

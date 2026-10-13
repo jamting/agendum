@@ -74,15 +74,14 @@ defmodule Agenda.TUI.Menu do
           ]},
          {"Column", "Add, remove or resize columns",
           [
-            {"After", "Add a column after (right of) the current one (ALT-R)", :column_right},
-            {"Before", "Add a column before (left of) the current one (ALT-L)", :column_left},
+            {"Properties",
+             "The column's width, link with other sections, and how it shows values",
+             :column_props},
+            {"Add", "Add a column, right or left of the current one (ALT-R, ALT-L)", :column_add},
             {"Remove", "Remove the highlighted column", :remove_column},
             {"Wider", "Make the highlighted column wider", :wider},
             {"Narrower", "Make the highlighted column narrower", :narrower},
-            {"Fit", "Fit the highlighted column to its head and entries, once", :fit_column},
-            {"Properties",
-             "The column's width, link with other sections, and how it shows values",
-             :column_props}
+            {"Fit", "Fit the highlighted column to its head and entries, once", :fit_column}
           ]},
          {"Filter", "Show only items in (or not in) chosen categories", :filter_view},
          {"Order", "Sort the items in every section (the view's sort settings)", :sort_view},

@@ -10,6 +10,7 @@ defmodule Agenda.TUI.Update.Actions do
   alias Agenda.TUI.{
     AlarmList,
     CategoryScreens,
+    ColumnAddBox,
     ColumnBox,
     Draw,
     FileProperties,
@@ -320,6 +321,9 @@ defmodule Agenda.TUI.Update.Actions do
 
   defp do_perform(state, :column_left, row),
     do: CategoryScreens.open_picker(state, {:add_column, {sidx(row), max(state.col - 1, 0)}}, nil)
+
+  # the Column Add box: its own Position and Insert in (R55)
+  defp do_perform(state, :column_add, row), do: ColumnAddBox.open(state, sidx(row), state.col)
 
   defp do_perform(state, :remove_column, _) do
     with_column(state, fn at ->

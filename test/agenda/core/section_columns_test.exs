@@ -119,6 +119,8 @@ defmodule Agenda.Core.SectionColumnsTest do
     db = Core.add_column(db, v, cat(db, "People"), {0, 0})
     db = Core.add_column(db, v, due, {0, 0})
     assert Enum.map(View.columns(db.views[v], 0), & &1.width) == [16, 12, 16]
+    # the same default, asked before adding (the Column Add box shows it)
+    assert {Core.default_column_width(db, due), Core.default_column_width(db, nil)} == {16, 12}
   end
 
   describe "changing a linked column" do
