@@ -52,6 +52,7 @@ defmodule Agenda.TUI.Render do
     :questions,
     :column_props,
     :column_add,
+    :item_column,
     :alarm_list
   ]
 

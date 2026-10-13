@@ -214,6 +214,7 @@ defmodule Agenda.TUI.Render.ControlPanel do
             :auto_assign,
             :column_props,
             :column_add,
+            :item_column,
             :range_filter,
             :action_box,
             :execute

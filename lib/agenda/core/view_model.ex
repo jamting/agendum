@@ -20,7 +20,8 @@ defmodule Agenda.Core.ViewModel do
     its bottom (R29): `{calculation, [cell per column]}`, with "" for
     columns that do not show that calculation. In a datebook view (R47)
     `slot` is the time slot it shows; nil in a standard view. `columns`
-    are the columns it shows (R55), `index` its place among the view's
+    are the columns it shows (R55), `item_column` how wide its item text
+    is (a datebook slot's is the default), `index` its place among the view's
     stored sections (it may be shown elsewhere when sections are sorted;
     nil for a datebook slot).
     """
@@ -31,9 +32,19 @@ defmodule Agenda.Core.ViewModel do
             calcs: [{NumberFormat.calc(), [String.t()]}],
             slot: Datebook.Slot.t() | nil,
             columns: [View.Column.t()],
+            item_column: View.ItemColumn.t(),
             index: non_neg_integer | nil
           }
-    defstruct [:category, :index, rows: [], collapsed: false, calcs: [], slot: nil, columns: []]
+    defstruct [
+      :category,
+      :index,
+      rows: [],
+      collapsed: false,
+      calcs: [],
+      slot: nil,
+      columns: [],
+      item_column: %View.ItemColumn{}
+    ]
   end
 
   @doc """
@@ -133,6 +144,7 @@ defmodule Agenda.Core.ViewModel do
         rows: rows,
         collapsed: section.collapsed,
         columns: section.columns,
+        item_column: section.item_column,
         calcs: calcs(db, section.columns, rows, Context.number_opts(today))
       }
     end)

@@ -31,8 +31,9 @@ defmodule Agenda.TUI.Render.Boxes do
   defp box_width(state, %{type: :calendar}), do: min(state.width - 8, 30)
   # File Properties and Column Properties have Agenda's two columns of
   # settings side by side (screenshots 130, 127)
-  defp box_width(state, %{type: type}) when type in [:file_props, :column_props, :column_add],
-    do: min(state.width - 8, 72)
+  defp box_width(state, %{type: type})
+       when type in [:file_props, :column_props, :column_add, :item_column],
+       do: min(state.width - 8, 72)
 
   defp box_width(state, _mode), do: min(state.width - 8, 60)
 
@@ -83,6 +84,7 @@ defmodule Agenda.TUI.Render.Boxes do
   # the column's head is the box's first row, as in Agenda (screenshot 142)
   defp box_title(_state, %{type: :column_props}), do: "Column Properties"
   defp box_title(_state, %{type: :column_add}), do: "Column Add"
+  defp box_title(_state, %{type: :item_column}), do: "Item Column Properties"
 
   defp box_title(_state, %{type: :search_box, scope: :file}),
     do: "Search the whole file (Show View)"
@@ -452,6 +454,9 @@ defmodule Agenda.TUI.Render.Boxes do
 
   defp box_content(state, %{type: :column_add} = mode, _inner, _max_rows),
     do: Agenda.TUI.ColumnAddBox.content(state, mode)
+
+  defp box_content(state, %{type: :item_column} = mode, _inner, _max_rows),
+    do: Agenda.TUI.ItemColumnBox.content(state, mode)
 
   defp box_content(state, %{type: :file_props} = mode, _inner, _max_rows),
     do: Agenda.TUI.FileProperties.content(state, mode)

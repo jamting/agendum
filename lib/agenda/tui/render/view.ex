@@ -18,7 +18,7 @@ defmodule Agenda.TUI.Render.View do
     |> Enum.flat_map(fn {row, index} ->
       # each section has its own columns, and its item text the rest (R55)
       columns = row.columns
-      tw = Layout.text_width(state, columns)
+      tw = Layout.text_width(state, row)
       selected = index == state.cursor
       lines = row_lines(state, row, index, selected, editing, tw, columns)
       lines = if selected, do: Enum.map(lines, &tint(&1, state.width)), else: lines

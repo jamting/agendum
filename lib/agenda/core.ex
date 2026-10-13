@@ -193,6 +193,8 @@ defmodule Agenda.Core do
   defdelegate set_column_head(db, view_id, at, cat_id), to: Views
   defdelegate remove_column(db, view_id, at, from \\ :all), to: Views
   defdelegate move_column(db, view_id, at, to), to: Views
+  defdelegate set_item_column(db, view_id, sidx, changes), to: Views
+  defdelegate set_item_column_linked(db, view_id, sidx, linked), to: Views
   defdelegate set_column_format(db, view_id, at, format), to: Views
   defdelegate set_column_date_format(db, view_id, at, format), to: Views
   defdelegate resize_column(db, view_id, at, delta), to: Views

@@ -35,7 +35,7 @@ defmodule Agenda.Core.JSONFile do
     View
   }
 
-  alias Agenda.Core.View.{Column, Section, SortKey}
+  alias Agenda.Core.View.{Column, ItemColumn, Section, SortKey}
 
   @format "agendum-json"
   # the name before the program was called Wol's Agendum (ADR 0019)
@@ -85,6 +85,10 @@ defmodule Agenda.Core.JSONFile do
 
   defp spec(DateRule) do
     [assign: {:enum, DateRule.assigns()}, which: :int, done_key: :bool, when_key: :bool]
+  end
+
+  defp spec(ItemColumn) do
+    [set: {:enum, [:auto, :manual]}, width: :int, minimum: :int, linked: :bool]
   end
 
   defp spec(NumberFormat) do
@@ -305,7 +309,8 @@ defmodule Agenda.Core.JSONFile do
             collapsed: &1.collapsed,
             filter: Enum.map(&1.filter, fn c -> criterion(c) end),
             sort: &1.sort && Enum.map(&1.sort, fn k -> sort_key(k) end),
-            columns: Enum.map(&1.columns, fn c -> column(c) end)
+            columns: Enum.map(&1.columns, fn c -> column(c) end),
+            item_column: struct_obj(&1.item_column)
           )
         ),
       columns: Enum.map(v.columns, &column/1),
@@ -712,7 +717,9 @@ defmodule Agenda.Core.JSONFile do
           nil -> nil
           _ -> list(s, "sort", path <> ".sort", &read_sort_key/2)
         end,
-      columns: list(s, "columns", path <> ".columns", &read_column/2)
+      columns: list(s, "columns", path <> ".columns", &read_column/2),
+      # missing in files from before item column settings: the defaults
+      item_column: read_struct(s, "item_column", ItemColumn, path <> ".item_column")
     }
   end
 

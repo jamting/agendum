@@ -445,6 +445,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :column_props} = m, key), do: ColumnBox.handle(state, m, key)
   defp dispatch(state, %{type: :column_add} = m, key), do: ColumnAddBox.handle(state, m, key)
 
+  defp dispatch(state, %{type: :item_column} = m, key),
+    do: Agenda.TUI.ItemColumnBox.handle(state, m, key)
+
   defp dispatch(state, %{type: :column_width} = m, key),
     do: Agenda.TUI.ColumnWidth.handle(state, m, key)
 

@@ -47,20 +47,60 @@ defmodule Agenda.Core.View do
     defstruct on: :text, order: :asc, na: :bottom, sequence: :hierarchy, line: 1
   end
 
+  defmodule ItemColumn do
+    @moduledoc """
+    A section's item column, the one with the items (R55; User's Guide 3-18
+    to 3-19, Help "Item Column Properties Box"). `set` is how its width is
+    found: `:auto`, as wide as the section's columns leave but at least
+    `minimum`, or `:manual`, `width` wide whatever the columns. `linked`
+    item columns are one: a change to one is made to all the linked ones
+    of the view (`Agenda.Core.ViewColumns.update_items/3`).
+    """
+    @type t :: %__MODULE__{
+            set: :auto | :manual,
+            width: pos_integer,
+            minimum: pos_integer,
+            linked: boolean
+          }
+    defstruct set: :auto, width: 40, minimum: 10, linked: true
+
+    @doc """
+    How wide the item text is in a screen `screen` wide, beside `columns`:
+    3 go to the bullet and the margin, and each column takes its width
+    and a space.
+    """
+    @spec text_width(t, [Agenda.Core.View.Column.t()], pos_integer) :: pos_integer
+    def text_width(%__MODULE__{set: :manual, width: width}, _columns, _screen), do: width
+
+    def text_width(%__MODULE__{minimum: minimum}, columns, screen) do
+      used = columns |> Enum.map(&(&1.width + 1)) |> Enum.sum()
+      max(screen - 3 - used, minimum)
+    end
+  end
+
   defmodule Section do
     @moduledoc """
     A view section headed by a category. `filter` narrows it further (R28);
     `sort` overrides the view's sort keys (`nil` = use the view's).
-    `columns` are the columns it shows (R55).
+    `columns` are the columns it shows (R55), and `item_column` how wide
+    its item text is.
     """
     @type t :: %__MODULE__{
             category_id: Agenda.Core.Category.id(),
             collapsed: boolean,
             filter: [{Agenda.Core.Category.id(), Agenda.Core.View.filter_term()}],
             sort: [SortKey.t()] | nil,
-            columns: [Agenda.Core.View.Column.t()]
+            columns: [Agenda.Core.View.Column.t()],
+            item_column: ItemColumn.t()
           }
-    defstruct [:category_id, collapsed: false, filter: [], sort: nil, columns: []]
+    defstruct [
+      :category_id,
+      collapsed: false,
+      filter: [],
+      sort: nil,
+      columns: [],
+      item_column: %ItemColumn{}
+    ]
   end
 
   defmodule Column do

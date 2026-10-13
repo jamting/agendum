@@ -477,6 +477,17 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     cursor was in (ours).
   - Each section's item text fills the width its own columns leave, so a
     column every section has stays in the same place (screenshots 42, 60).
+  - Item Column Properties (View ▸ Column ▸ Properties on the item text;
+    User's Guide 3-18 to 3-19, Help "Item Column Properties Box"): the
+    Section head (F3 picks another); Set width Automatically (the default:
+    as wide as the section's columns leave, at least Minimum width, 10) or
+    Manually (Width, the columns following right after it; Manually starts
+    at the width the text has then); Link with other sections (Yes by
+    default): linked item columns change together, No makes one change
+    alone, Yes again takes the linked ones' settings. Widths 5 to 200
+    (Agenda: 77, its screen). A new section gets the linked ones'
+    settings. Each change is one undo step. A datebook view's item text
+    always fills what its columns leave.
   - A datebook view's slots share one set of columns (R47).
   - Files from before this keep every column in every section, linked.
     Files that marked columns only as linked (formats 25, 26) get one
@@ -525,8 +536,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   - Not done yet: the Column Add box's Category type for a new category
     (it is changed in Category Properties); Display %
     of total (a numeric column's "% tot" column); typing a new name for
-    the column head in the box (the picker takes one); the item column's
-    own width per section.
+    the column head in the box (the picker takes one); View ▸ Column ▸
+    Width and Move on the item column.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

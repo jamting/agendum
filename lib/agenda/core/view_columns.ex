@@ -17,7 +17,7 @@ defmodule Agenda.Core.ViewColumns do
   """
 
   alias Agenda.Core.View
-  alias Agenda.Core.View.Column
+  alias Agenda.Core.View.{Column, ItemColumn}
 
   @doc """
   The column at `at` and the columns linked to it, as places: just `[at]`
@@ -170,6 +170,60 @@ defmodule Agenda.Core.ViewColumns do
       List.insert_at(rest, min(to, length(rest)), column)
     end)
   end
+
+  @doc """
+  Item Column Properties (R55): changes the item column of section `sidx`
+  with `fun`, and, when it is linked, the linked item columns of the
+  other sections too, so they stay one.
+  """
+  @spec update_items(View.t(), non_neg_integer, (ItemColumn.t() -> ItemColumn.t())) :: View.t()
+  def update_items(%View{} = view, sidx, fun) do
+    linked = Enum.at(view.sections, sidx).item_column.linked
+
+    sections =
+      view.sections
+      |> Enum.with_index()
+      |> Enum.map(fn {section, i} ->
+        if i == sidx or (linked and section.item_column.linked),
+          do: %{section | item_column: fun.(section.item_column)},
+          else: section
+      end)
+
+    %{view | sections: sections}
+  end
+
+  @doc """
+  Item Column Properties ▸ Link with other sections: No unlinks the item
+  column of section `sidx`, which then changes alone; Yes links it again,
+  and it takes the settings of the linked ones (if any are left).
+  """
+  @spec set_items_linked(View.t(), non_neg_integer, boolean) :: View.t()
+  def set_items_linked(%View{} = view, sidx, false),
+    do: put_items(view, sidx, &%{&1 | linked: false})
+
+  def set_items_linked(%View{} = view, sidx, true),
+    do: put_items(view, sidx, fn _ -> linked_items(view, sidx) end)
+
+  @doc """
+  The item column a section added next to the one at `sidx` starts with:
+  the linked ones' settings (a new section is linked), or the defaults
+  when no section is linked.
+  """
+  @spec items_for_new_section(View.t(), non_neg_integer) :: ItemColumn.t()
+  def items_for_new_section(%View{} = view, sidx), do: linked_items(view, sidx)
+
+  # the settings of a linked item column, that of section `sidx` first
+  defp linked_items(view, sidx) do
+    {here, others} = List.pop_at(view.sections, sidx)
+    found = Enum.find([here | others], &(&1 && &1.item_column.linked))
+    if found, do: found.item_column, else: %ItemColumn{}
+  end
+
+  defp put_items(view, sidx, fun),
+    do: %{
+      view
+      | sections: List.update_at(view.sections, sidx, &%{&1 | item_column: fun.(&1.item_column)})
+    }
 
   @doc "The columns a section added next to the one at `sidx` starts with: its linked ones."
   @spec for_new_section(View.t(), non_neg_integer) :: [Column.t()]

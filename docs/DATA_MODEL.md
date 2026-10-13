@@ -105,6 +105,7 @@ erDiagram
         list filter "on top of the view filter"
         list sort "nil = as the view"
         list columns "Column list (R55)"
+        ItemColumn item_column "set auto or manual, width, minimum, linked (R55)"
     }
     COLUMN {
         int category_id FK
@@ -252,6 +253,13 @@ classDiagram
         +filter : [id and kind]
         +sort : [SortKey] or nil
         +columns : [Column]
+        +item_column : ItemColumn
+    }
+    class ItemColumn {
+        +set : auto or manual
+        +width : pos_integer
+        +minimum : pos_integer
+        +linked : boolean
     }
     class Column {
         +category_id : id
@@ -300,6 +308,7 @@ classDiagram
     Database *-- Macro
     View *-- Section
     Section *-- Column
+    Section *-- ItemColumn
     View *-- Column
     View *-- Datebook
     Column *-- NumberFormat
@@ -544,7 +553,7 @@ flowchart LR
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
 - **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16); 14 added `Database.date_settings` (R14e); 15 replaced `Database.auto_date` with `Database.when_from` (R14f); 16 added `Category.excludes` (R9); 17 added `Database.dates` (R6a); 18 added `Category.date_rule` (R6b), replacing `Database.when_from` with When's rule; 19 added `Database.match_settings` (R16a); 20 added `Category.match_overrides` (R16b); 21 added `View.Column.date` and the `DateFormat` fields `show`, `am_pm` and `time_separator` (R41a); 22 added `Database.calendars` (R45); 23 added `View.datebook` (R47); 24 added `Database.macros` and `macro_order` (R50); 25 moved a standard view's columns into its sections and added `View.Column.linked` (R55); 26 added `Database.insert_columns` (R55); 27 replaced `View.Column.linked` with `link`, so each column added is a column of its own (R55)
+  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16); 14 added `Database.date_settings` (R14e); 15 replaced `Database.auto_date` with `Database.when_from` (R14f); 16 added `Category.excludes` (R9); 17 added `Database.dates` (R6a); 18 added `Category.date_rule` (R6b), replacing `Database.when_from` with When's rule; 19 added `Database.match_settings` (R16a); 20 added `Category.match_overrides` (R16b); 21 added `View.Column.date` and the `DateFormat` fields `show`, `am_pm` and `time_separator` (R41a); 22 added `Database.calendars` (R45); 23 added `View.datebook` (R47); 24 added `Database.macros` and `macro_order` (R50); 25 moved a standard view's columns into its sections and added `View.Column.linked` (R55); 26 added `Database.insert_columns` (R55); 27 replaced `View.Column.linked` with `link`, so each column added is a column of its own (R55); 28 added `View.Section.item_column` (R55)
   (R14). Old terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their

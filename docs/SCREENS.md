@@ -47,6 +47,7 @@ flowchart LR
     Menu -- "Category ▸ Questions" --> Questions["Questions box"]
     Menu -- "View ▸ Column ▸ Properties" --> ColProps["Column Properties"]
     Menu -- "View ▸ Column ▸ Add" --> ColAdd["Column Add"]
+    Menu -- "View ▸ Column ▸ Properties on the item text" --> ItemCol["Item Column Properties"]
     Menu -- "View ▸ Order / Section ▸ Sort" --> Sort["Sort box"]
     Menu -- "Search ▸ Alarms" --> Alarms["Alarm list"]
     CatMgr -- F6 --> CatProps
@@ -223,6 +224,11 @@ or handles it.
     a date column's own date format or the global defaults (R41a).
     `Agenda.TUI.ColumnBox`.
     - **Picker** `:picker` for the column head (F3 on Column head).
+  - **Item Column Properties** (View ▸ Column ▸ Properties on the item
+    text): `:item_column`, the section head, Set width (Automatically or
+    Manually), Width or Minimum width, Link with other sections (R55).
+    `Agenda.TUI.ItemColumnBox`.
+    - **Picker** `:picker` for the section head (F3 on Section head).
   - **Column Add** (View ▸ Column ▸ Add): `:column_add`, a new column's
     head, width, Position (right or left of the current column) and Insert
     in (all sections or this one, overriding the file's setting; R55).
@@ -293,6 +299,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:auto_assign`       | box           | `Agenda.TUI.AutoAssignBox`              | File Properties ▸ Auto-assign settings           | R16a          |
 | `:column_props`      | box           | `Agenda.TUI.ColumnBox`                  | View ▸ Column ▸ Properties                       | R55, R29, R41a |
 | `:column_add`        | box           | `Agenda.TUI.ColumnAddBox`               | View ▸ Column ▸ Add                              | R55           |
+| `:item_column`       | box           | `Agenda.TUI.ItemColumnBox`              | View ▸ Column ▸ Properties on the item text      | R55           |
 | `:execute`           | box           | `Agenda.TUI.ExecuteBox`                 | Category ▸ Execute                               | R15e          |
 | `:questions`         | box           | `Agenda.TUI.QuestionsBox`               | Category ▸ Questions                             | R16           |
 | `:alarm_list`        | box           | `Agenda.TUI.AlarmList`                  | Search ▸ Alarms                                  | R38           |

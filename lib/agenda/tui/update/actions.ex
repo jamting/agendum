@@ -156,6 +156,13 @@ defmodule Agenda.TUI.Update.Actions do
     ColumnBox.open(state, at)
   end
 
+  # on the item text: the section's item column (R55)
+  defp do_perform(state, :column_props, row) when row != nil do
+    if State.view(state).datebook,
+      do: State.error(state, "A datebook view's item text fills the width its columns leave"),
+      else: Agenda.TUI.ItemColumnBox.open(state, row.sidx)
+  end
+
   defp do_perform(state, :column_props, _),
     do: State.error(state, "Highlight a column head or entry first")
 

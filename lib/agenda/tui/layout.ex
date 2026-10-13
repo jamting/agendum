@@ -10,6 +10,7 @@ defmodule Agenda.TUI.Layout do
   text fills the width they leave, so it differs from section to section.
   """
 
+  alias Agenda.Core.View.ItemColumn
   alias Agenda.Core.ViewModel
   alias Agenda.TUI.{Draw, State}
 
@@ -18,6 +19,7 @@ defmodule Agenda.TUI.Layout do
           required(:sidx) => non_neg_integer,
           required(:key) => State.cursor_key(),
           required(:columns) => [Agenda.Core.View.Column.t()],
+          required(:item_column) => ItemColumn.t(),
           optional(atom) => term
         }
 
@@ -41,7 +43,8 @@ defmodule Agenda.TUI.Layout do
         collapsed: section.collapsed,
         count: length(section.rows),
         slot: section.slot,
-        columns: section.columns
+        columns: section.columns,
+        item_column: section.item_column
       }
 
       items =
@@ -58,7 +61,8 @@ defmodule Agenda.TUI.Layout do
                 inherited: r.inherited,
                 category: section.category,
                 slot: section.slot,
-                columns: section.columns
+                columns: section.columns,
+                item_column: section.item_column
               }
             end)
 
@@ -74,12 +78,13 @@ defmodule Agenda.TUI.Layout do
   defp attach_calcs(calcs, rows, false),
     do: List.update_at(rows, -1, &Map.put(&1, :calcs, calcs))
 
-  @doc "Width available for item text in a section with these columns."
-  @spec text_width(State.t(), [Agenda.Core.View.Column.t()]) :: pos_integer
-  def text_width(%State{width: w}, columns) do
-    used = columns |> Enum.map(&(&1.width + 1)) |> Enum.sum()
-    max(w - 3 - used, 10)
-  end
+  @doc """
+  Width of a row's item text: its section's item column, set by hand or
+  as wide as its columns leave (R55, `Agenda.Core.View.ItemColumn`).
+  """
+  @spec text_width(State.t(), row) :: pos_integer
+  def text_width(%State{width: w}, row),
+    do: ItemColumn.text_width(row.item_column, row.columns, w)
 
   @doc "How many screen lines each row takes (in order)."
   @spec heights([row], State.t()) :: [pos_integer]
@@ -100,7 +105,7 @@ defmodule Agenda.TUI.Layout do
             2
 
           %{kind: :item, item: item} ->
-            length(Draw.wrap(item.text, text_width(state, row.columns)))
+            length(Draw.wrap(item.text, text_width(state, row)))
         end
 
       own + length(Map.get(row, :calcs, []))

@@ -21,6 +21,8 @@ defmodule Agenda.Core.Facade.Views do
   @show_view "Show View"
   # the widest a fitted column gets (R22a)
   @fit_room 80
+  # the widest item column: Agenda's 77 was the screen; terminals are wider
+  @item_room 200
 
   @doc """
   Adds a datebook view (R47). Its settings default to Agenda's: When as the
@@ -95,8 +97,10 @@ defmodule Agenda.Core.Facade.Views do
   def add_section(db, view_id, cat_id, index, from \\ nil) do
     # an anonymous function can pattern match its argument like a `def`
     Database.update_view(db, view_id, fn %View{} = v ->
-      columns = ViewColumns.for_new_section(v, from || max(index - 1, 0))
-      section = %Section{category_id: cat_id, columns: columns}
+      from = from || max(index - 1, 0)
+      columns = ViewColumns.for_new_section(v, from)
+      items = ViewColumns.items_for_new_section(v, from)
+      section = %Section{category_id: cat_id, columns: columns, item_column: items}
       %{v | sections: List.insert_at(v.sections, index, section)}
     end)
   end
@@ -188,6 +192,36 @@ defmodule Agenda.Core.Facade.Views do
   @spec remove_column(db, id, View.at(), :all | :section) :: db
   def remove_column(db, view_id, at, from \\ :all),
     do: Database.update_view(db, view_id, &ViewColumns.remove(&1, at, from))
+
+  @doc """
+  Item Column Properties (R55): sets the item column of section `sidx`
+  (and the linked ones, `Agenda.Core.ViewColumns.update_items/3`):
+  `set: :auto | :manual`, `width:` and `minimum:`, each width kept
+  between 5 and #{@item_room}.
+  """
+  @spec set_item_column(db, id, non_neg_integer, keyword) :: db
+  def set_item_column(db, view_id, sidx, changes) do
+    changes =
+      Map.new(changes, fn
+        {key, n} when key in [:width, :minimum] -> {key, n |> max(5) |> min(@item_room)}
+        {:set, set} when set in [:auto, :manual] -> {:set, set}
+      end)
+
+    Database.update_view(
+      db,
+      view_id,
+      &ViewColumns.update_items(&1, sidx, fn c -> Map.merge(c, changes) end)
+    )
+  end
+
+  @doc """
+  Item Column Properties ▸ Link with other sections: `false` unlinks the
+  item column of section `sidx`, `true` links it, taking the linked ones'
+  settings (`Agenda.Core.ViewColumns.set_items_linked/3`).
+  """
+  @spec set_item_column_linked(db, id, non_neg_integer, boolean) :: db
+  def set_item_column_linked(db, view_id, sidx, linked) when is_boolean(linked),
+    do: Database.update_view(db, view_id, &ViewColumns.set_items_linked(&1, sidx, linked))
 
   @doc """
   View ▸ Column ▸ Move: the column at `at` goes to place `to` in its

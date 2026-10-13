@@ -87,6 +87,8 @@ defmodule Agenda.Core.JSONFileTest do
       })
 
     db = Core.set_column_date_format(db, view, {0, 0}, %DateFormat{order: :relative, show: :date})
+    db = Core.set_item_column(db, view, 0, set: :manual, width: 33, minimum: 7)
+    db = Core.set_item_column_linked(db, view, 0, false)
     {db, view2} = Core.add_view(db, "Found", [people, urgent])
 
     db =
@@ -211,6 +213,8 @@ defmodule Agenda.Core.JSONFileTest do
       assert text =~ ~s("morning": "07:30:00")
       assert text =~ ~s("note": "Ränta: \\"5%\\" ✓")
       assert text =~ ~s("url": "https://example.com/w.ics")
+      assert text =~ ~s("item_column": {\n)
+      assert text =~ ~s("set": "manual")
       # an item's fields start with its id and text
       assert text =~ ~r/\{\n\s+"id": \d+,\n\s+"text": "Pay the bill"/
       assert text == JSONFile.encode(rich())
@@ -240,6 +244,7 @@ defmodule Agenda.Core.JSONFileTest do
       assert db.categories[5].match_name
       assert db.date_format == %DateFormat{}
       assert hd(db.views[7].sections).collapsed == false
+      assert hd(db.views[7].sections).item_column == %Agenda.Core.View.ItemColumn{}
       assert Agenda.Core.Database.member?(db, 6, 5)
     end
 
