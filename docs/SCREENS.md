@@ -112,6 +112,9 @@ or handles it.
     statistics, Filter and its columns (R61). `Agenda.TUI.SectionBox`.
     - **Picker** `:picker` for the section head or the filter.
     - **Sort** `:sort` for Item sorting; **Column Add** `:column_add` for INS.
+    - **Select Numeric Functions** `:numeric_functions`: Count, Total,
+      Average, Minimum, Maximum for the section's numeric columns.
+      `Agenda.TUI.NumericFunctionsBox`.
   - **Choice** `:choice` (View ▸ Add, after the name): Standard or Datebook.
   - **Choice** `:choice` (View ▸ Column ▸ Remove on a column linked into
     other sections): All sections in view or Current section only (R55).
@@ -317,6 +320,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:calendar`          | box           | `Agenda.TUI.CalendarBox`                | F3 in a date column, ALT-C                       | R46           |
 | `:datebook_props`    | box           | `Agenda.TUI.DatebookBox`                | View ▸ Properties of a datebook view             | R47           |
 | `:section_props`     | box           | `Agenda.TUI.SectionBox`                 | View ▸ Section ▸ Properties, F6 on a section head | R61          |
+| `:numeric_functions` | box           | `Agenda.TUI.NumericFunctionsBox`        | Section Properties ▸ Select numeric functions    | R61, R29      |
 | `:browse`            | control panel | `Agenda.TUI.Browse`                     | View ▸ Browse, ALT-B                             | R47, R48      |
 | `:column_width`      | control panel | `Agenda.TUI.ColumnWidth`                | View ▸ Column ▸ Width                            | R22a, R55     |
 | `:column_move`       | control panel | `Agenda.TUI.ColumnMove`                 | View ▸ Column ▸ Move, ALT-F10 on a column head   | R55           |

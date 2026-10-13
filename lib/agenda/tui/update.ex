@@ -447,6 +447,9 @@ defmodule Agenda.TUI.Update do
   defp dispatch(state, %{type: :section_props} = m, key),
     do: Agenda.TUI.SectionBox.handle(state, m, key)
 
+  defp dispatch(state, %{type: :numeric_functions} = m, key),
+    do: Agenda.TUI.NumericFunctionsBox.handle(state, m, key)
+
   defp dispatch(state, %{type: :column_add} = m, key), do: ColumnAddBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :item_column} = m, key),

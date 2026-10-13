@@ -8,6 +8,9 @@ defmodule Agenda.TUI.SectionBox do
       one; F6 opens the head category's properties
     * Item sorting ...: the section's sort (`Agenda.TUI.SortBox`)
     * Section statistics ...: how many items the section shows
+    * Select numeric functions ...: the calculations of all the section's
+      numeric columns (`Agenda.TUI.NumericFunctionsBox`), shown only when
+      it has one
     * Filter: the section's filter (the filter picker)
     * Columns: the section's columns in their order, the item column as
       `<Items>`; DEL removes one from this section, ALT-↑ ↓ move one
@@ -22,18 +25,30 @@ defmodule Agenda.TUI.SectionBox do
 
   alias Agenda.Core
   alias Agenda.Core.{View, ViewColumns, ViewModel}
-  alias Agenda.TUI.{CategoryScreens, ColumnAddBox, FieldTyping, SortBox, State, Template}
+
+  alias Agenda.TUI.{
+    CategoryScreens,
+    ColumnAddBox,
+    FieldTyping,
+    NumericFunctionsBox,
+    SortBox,
+    State,
+    Template
+  }
+
   alias Agenda.TUI.Render.Text
 
+  # Select numeric functions shows only for a section with a numeric
+  # column (its value nil leaves the row out)
   @layout """
-   Section head       : [head                          ]
-   Item sorting       : [sorting                       ]
-   Section statistics : [statistics                    ]
-   Filter             : [filter                        ]
+   Section head             : [head                        ]
+   Item sorting             : [sorting                     ]
+   Section statistics       : [statistics                  ]
+   Select numeric functions : [numeric                     ]
+   Filter                   : [filter                      ]
 
    Columns:
   """
-  @fields Template.fields(@layout)
   @hint " SPACE opens · DEL removes · ALT-↑↓ moves · INS adds"
 
   @doc "Opens the box for section `sidx` of the current view."
@@ -43,13 +58,21 @@ defmodule Agenda.TUI.SectionBox do
   defp section(state, mode), do: Enum.at(State.view(state).sections, mode.sidx)
   defp slots(state, mode), do: ViewColumns.slots(State.view(state), mode.sidx)
 
+  # the settings shown, in the cursor's order
+  defp fields(state, mode) do
+    fields = Template.fields(@layout)
+    if numeric?(state, mode), do: fields, else: List.delete(fields, :numeric)
+  end
+
+  defp numeric?(state, mode), do: Core.section_calcs(state.db, state.view_id, mode.sidx) != nil
+
   # the highlighted row: a setting, or `{:slot, n}` for the nth column listed
   defp row(state, mode) do
-    rows = @fields ++ Enum.map(0..(length(slots(state, mode)) - 1)//1, &{:slot, &1})
+    rows = fields(state, mode) ++ Enum.map(0..(length(slots(state, mode)) - 1)//1, &{:slot, &1})
     Enum.at(rows, min(mode.cursor, length(rows) - 1))
   end
 
-  defp last(state, mode), do: length(@fields) + length(slots(state, mode)) - 1
+  defp last(state, mode), do: length(fields(state, mode)) + length(slots(state, mode)) - 1
 
   def handle(state, mode, key) do
     if FieldTyping.typing?(mode),
@@ -118,6 +141,8 @@ defmodule Agenda.TUI.SectionBox do
     name = state.db.categories[section(state, mode).category_id].name
     State.info(state, "#{Agenda.TUI.Draw.count(item_count(state, mode), "item")} in #{name}")
   end
+
+  defp open_setting(state, mode, :numeric), do: NumericFunctionsBox.open(state, mode.sidx)
 
   defp open_setting(state, mode, :filter),
     do: CategoryScreens.open_picker(state, {:filter, {:section, mode.sidx}}, nil)
@@ -189,6 +214,7 @@ defmodule Agenda.TUI.SectionBox do
       head: state.db.categories[section.category_id].name,
       sorting: if(section.sort == nil, do: "As the view ...", else: "Its own ..."),
       statistics: "...",
+      numeric: if(numeric?(state, mode), do: "..."),
       filter: filter(state, section.filter)
     }
 

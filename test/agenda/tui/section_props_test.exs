@@ -105,6 +105,37 @@ defmodule Agenda.TUI.SectionPropsTest do
     end
   end
 
+  describe "Select numeric functions (User's Guide 8-10)" do
+    # Expense Entry: one section, Expenses, with an Amount column (TOTAL)
+    defp expenses(state) do
+      view = Enum.find(Database.views(state.db), &(&1.name == "Expense Entry"))
+      state |> State.switch_view(view.id) |> press({:f, 6})
+    end
+
+    test "only in a section with a numeric column", %{state: state} do
+      refute screen(props(state)) =~ "Select numeric functions"
+      assert screen(expenses(state)) =~ ~r/Select numeric functions +: \.\.\./
+    end
+
+    test "its box switches each calculation for the section, one undo step", %{state: state} do
+      # head, sorting, statistics, then Select numeric functions
+      state = expenses(state) |> press([:down, :down, :down, " "])
+      assert %{type: :numeric_functions, sidx: 0} = State.mode(state)
+      assert screen(state) =~ ~r/Count +: No/
+      assert screen(state) =~ ~r/Total +: Yes/
+
+      state = press(state, " ")
+      assert screen(state) =~ ~r/Count +: Yes/
+      assert Agenda.Core.section_calcs(state.db, state.view_id, 0) == [:count, :total]
+      # the section shows it at once, behind the boxes
+      assert state |> press([:esc, :esc]) |> screen() =~ "COUNT"
+
+      assert History.undo(state) |> then(&Agenda.Core.section_calcs(&1.db, &1.view_id, 0)) == [
+               :total
+             ]
+    end
+  end
+
   test "a datebook view has no sections to set", %{state: state} do
     view = Enum.find(Database.views(state.db), &(&1.name == "Today"))
     state = state |> State.switch_view(view.id) |> props()

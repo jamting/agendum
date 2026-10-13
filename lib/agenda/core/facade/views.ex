@@ -441,6 +441,49 @@ defmodule Agenda.Core.Facade.Views do
     do: update_column(db, view_id, at, &%{&1 | number: format})
 
   @doc """
+  Select numeric functions (R61, R29; User's Guide 8-10): gives every
+  numeric column of section `sidx` the calculations `calcs`, in Agenda's
+  order, as one change. They are the columns' own settings, so a linked
+  column changes in its other sections too.
+  """
+  @spec set_section_calcs(db, id, non_neg_integer, [NumberFormat.calc()]) :: db
+  def set_section_calcs(db, view_id, sidx, calcs) do
+    calcs = Enum.filter(NumberFormat.calcs(), &(&1 in calcs))
+
+    db
+    |> numeric_columns(view_id, sidx)
+    |> Enum.reduce(db, fn index, db ->
+      update_column(db, view_id, {sidx, index}, &put_in(&1.number.calcs, calcs))
+    end)
+  end
+
+  @doc """
+  The calculations section `sidx` shows for all its numeric columns: those
+  every one of them has; nil when it has no numeric column.
+  """
+  @spec section_calcs(db, id, non_neg_integer) :: [NumberFormat.calc()] | nil
+  def section_calcs(db, view_id, sidx) do
+    columns = View.columns(db.views[view_id], sidx)
+
+    case numeric_columns(db, view_id, sidx) do
+      [] ->
+        nil
+
+      indexes ->
+        Enum.filter(NumberFormat.calcs(), fn calc ->
+          Enum.all?(indexes, &(calc in Enum.at(columns, &1).number.calcs))
+        end)
+    end
+  end
+
+  # the indexes of the section's columns headed by a numeric category
+  defp numeric_columns(db, view_id, sidx) do
+    for {column, index} <- Enum.with_index(View.columns(db.views[view_id], sidx)),
+        db.categories[column.category_id].kind == :numeric,
+        do: index
+  end
+
+  @doc """
   Gives a date column its own display format, or `nil` to use the file's
   again (Global defaults, R41a).
   """

@@ -199,6 +199,8 @@ defmodule Agenda.Core do
   defdelegate set_item_column_linked(db, view_id, sidx, linked), to: Views
   defdelegate item_column_fit(db, view_id, sidx, clock, screen), to: Views
   defdelegate set_column_format(db, view_id, at, format), to: Views
+  defdelegate set_section_calcs(db, view_id, sidx, calcs), to: Views
+  defdelegate section_calcs(db, view_id, sidx), to: Views
   defdelegate set_column_display(db, view_id, at, changes), to: Views
   defdelegate set_in_column(db, item_id, head_id, in?, clock), to: Views
   defdelegate set_column_note(db, item_id, head_id, n, text), to: Views

@@ -654,7 +654,12 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   on the box's Section head does that now). Section head: a typed name
   (a new category if no category has it) or F3 picks one; Item sorting
   opens the section's sort (R36); Section statistics says how many items
-  the section shows; Filter opens the section's filter (R28); Columns
+  the section shows; Select numeric functions (only in a section with a
+  numeric column; User's Guide 8-10) opens a box of Count, Total,
+  Average, Minimum and Maximum, Yes or No, for every numeric column of
+  the section at once: they are the columns' own calculations (R29), so a
+  linked column changes in its other sections too, and a function shows
+  Yes when every numeric column has it; Filter opens the section's filter (R28); Columns
   lists the section's columns in their order with the item column as
   `<Items>`: DEL removes a column from this section only (the item
   column stays), ALT-↑ ↓ move a column or the item column (Agenda:
@@ -719,7 +724,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   printing to a file adds it after the number; User's Guide 8-7), and the
   calculations
   shown at the bottom of every section: count, total (the default),
-  average, minimum, maximum. A number too wide for its column is shown in
+  average, minimum, maximum (per column, or for all the numeric columns
+  of a section at once with Section Properties ▸ Select numeric
+  functions, R61). A number too wide for its column is shown in
   scientific notation. Items sort by their number (R36), Item Properties
   shows and edits it, the assignment profile asks for it, and printing to
   a file includes the calculations. Our choices: numbers are binary
