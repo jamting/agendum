@@ -89,6 +89,9 @@ defmodule Agenda.TUI.Template do
     end
   end
 
+  # an empty selected value is one highlighted space, or the cursor would
+  # vanish on it and the field look out of reach
+  defp segments("", :box_selected), do: [{:box_selected, " "}]
   defp segments(text, style) when is_binary(text), do: [{style, text}]
   defp segments(segments, _style) when is_list(segments), do: segments
 

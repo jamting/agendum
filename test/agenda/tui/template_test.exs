@@ -46,6 +46,15 @@ defmodule Agenda.TUI.TemplateTest do
     refute Enum.any?(line, &match?({:box_selected, "Calls"}, &1))
   end
 
+  test "a selected empty value still shows the highlight, one space wide" do
+    [_, line | _] =
+      Template.render(@layout, %{name: "Calls", type: "Standard", note: ""}, selected: :note)
+
+    assert {:box_selected, " "} in line
+    # and the row keeps its width
+    assert Draw.width(line) == 37
+  end
+
   test "a field being edited is the input line, the whole width of the field" do
     edit = LineEdit.new("Cal")
 
