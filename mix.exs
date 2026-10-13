@@ -49,7 +49,7 @@ defmodule Agenda.MixProject do
       extras:
         ["README.md", "CLAUDE.md"] ++ Path.wildcard("docs/*.md") ++ Path.wildcard("docs/adr/*.md"),
       groups_for_extras: [
-        Design: ~r{docs/[A-Z_]+\.md},
+        Design: ~r{docs/[A-Z_-]+\.md},
         Decisions: ~r{docs/adr/}
       ],
       groups_for_modules: [

@@ -1,0 +1,104 @@
+# Wol in the machine: a personal agent inside the file
+
+An idea, not a plan yet (Roadmap, "Ideas"). Written down on 2026-10-13
+from a conversation between the owner and Claude; to be turned into a
+plan and an ADR when its time comes.
+
+**The idea.** A language model agent that lives inside a person's
+Agendum file: it reads their items, categories and views, and helps
+them file, find and plan, the way an assistant who knows the file well
+would. Wol, the owl who knows the Hundred Acre Wood, inside the program
+named after him.
+
+## Why Agendum is a good home for an agent
+
+Most apps make an agent guess what matters to a person. An Agendum file
+says it, in the person's own words:
+
+- **Items are free text**, exactly what a language model reads best.
+- **Categories are the person's own ontology.** Someone who builds
+  People ▸ Kanga, Roo or Priority ▸ High has written down how they see
+  their world. That structure is explicit, named and theirs.
+- **Assignments** link the free text to that structure; subsumption
+  (R4) adds what follows from the hierarchy.
+- **Views are saved questions**: "what is due this week, by person?".
+  Their sections, columns, filters and sorting say what the person wants
+  to see together.
+- **Conditions and actions** (R15, R15b) are rules the person has
+  already stated; **dates** (When, Done, date categories) put items in
+  time; **notes** hold the detail.
+
+And Agenda was reaching for this from the start: its designers'
+1990 CACM article describes text matching and automatic assignment as
+a step towards a program that understands what is typed into it (see
+`docs/reference/` and `docs/AGENDA_HISTORY.md`). A language model is the
+natural successor of the string matching in R15 and R16.
+
+## What it could do
+
+- **File new items** better than word matching: "Ask Owl about the cake"
+  goes to People ▸ Owl and Party, even with no word in common.
+- **Suggest categories**, or a cleaner hierarchy when the tree has grown
+  untidy (duplicates, a family that should be exclusive).
+- **Answer questions with a view or a filter**, not only with text:
+  "what am I waiting for before the party?" becomes a view the person can
+  keep.
+- **Turn a long note into items** (as Agenda's ALT-F7 made items from
+  note text), each filed.
+- **Write conditions in plain words**: "anything about the garden that
+  is not done" becomes a condition or a filter.
+- **Summarise**: a section, a person's items, the week ahead.
+
+## The pieces Agendum already has
+
+- **Tools.** The core facade (`Agenda.Core`) is the set of everything a
+  user can do. The planned command layer ("Towards many users": one named
+  command per user action, commands that describe themselves with name,
+  summary and arguments; ADR 0020) is almost exactly a tool definition
+  for a language model. The same work serves the web app and an agent.
+- **Context.** The `agendum-json` format (`docs/JSON_FORMAT.md`,
+  `Agenda.Core.JSONFile`) is a complete, readable serialization of a
+  file; `Agenda.Core.ViewModel` gives what the person is looking at now.
+- **Proposing, not imposing.** Confirm assignments and the Questions
+  box (R16) already let the program suggest assignments that the person
+  accepts or refuses. An agent should suggest through the same path.
+- **Undo.** Every action is one undo step (R30), so anything the agent
+  does that the person accepted can still be taken back.
+
+## Principles
+
+1. **The agent proposes; the person decides.** No silent changes to the
+   file: suggestions go through Questions or a confirmation, unless the
+   person has said otherwise for a kind of change.
+2. **The core stays pure** (CLAUDE.md, rule 1). Calling a model is I/O,
+   so it lives in the shell, like `Agenda.CalendarFetch`: an effect the
+   TUI asks for, whose answer comes back as ordinary commands applied by
+   the core. OTP's `:httpc` avoids a new runtime dependency (ADR 0021).
+3. **Private by default.** A file is someone's life. The agent is opt-in,
+   says what it will send and to whom, sends no more than the task needs,
+   and can use a local model. Nothing is sent without the person
+   turning it on.
+4. **Tested without a model.** A fake model in tests, so they stay
+   deterministic.
+5. **Agenda first.** The agent adds to Agenda's ideas, it does not
+   replace them: categories stay the person's, text matching still works
+   without a model.
+
+## Open questions
+
+- Which model or models, and a local one (privacy, cost, working
+  offline)?
+- How much of the file to send: all of it, the view, or what a search
+  finds first?
+- Does the agent remember between sessions, and where (a note, a
+  category, the preferences)?
+- In the multi-user web app (`docs/MULTIUSER.md`): one agent per person
+  or per file, and whose suggestions does a shared file accept?
+- The first small step. A good candidate: smarter filing of a new item,
+  shown as Questions (R16), with nothing else changed.
+
+## Where it fits
+
+After the command layer (Roadmap, "Towards many users"), which gives the
+agent its tools; before that, an experiment on the JSON export could show
+what a model makes of a real file.

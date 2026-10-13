@@ -185,3 +185,4 @@ Then working together:
 ## Ideas
 
 - Multiple files open; a launcher listing recent files
+- Wol in the machine: a personal agent (a language model) inside the file, using its items, categories, views and rules as the person's own meaning; it files, finds and plans by proposing, never silently changing; the core stays pure and privacy comes first. Builds on the command layer (Towards many users). Thoughts in [`docs/WOL-IN-THE-MACHINE.md`](WOL-IN-THE-MACHINE.md)
