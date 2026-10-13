@@ -10,7 +10,7 @@ defmodule Agenda.TUI.DateRulesTest do
   end
 
   defp date_settings(state, cat_id) do
-    index = Enum.find_index(CategoryScreens.props_fields(), &(&1 == :advanced))
+    index = Enum.find_index(CategoryScreens.Properties.props_fields(), &(&1 == :advanced))
     state = CategoryScreens.open_props(state, cat_id)
     state = State.put_mode(state, %{State.mode(state) | cursor: index})
     press(state, :enter)

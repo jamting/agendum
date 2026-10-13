@@ -16,7 +16,7 @@ defmodule Agenda.TUI.NumbersTest do
     def props(state, cat_id), do: CategoryScreens.open_props(state, cat_id)
 
     def choose(state, field) do
-      index = Enum.find_index(CategoryScreens.props_fields(), &(&1 == field))
+      index = Enum.find_index(CategoryScreens.Properties.props_fields(), &(&1 == field))
       state = State.put_mode(state, %{State.mode(state) | cursor: index})
       Agenda.TUIHelpers.press(state, :enter)
     end

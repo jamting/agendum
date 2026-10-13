@@ -10,7 +10,7 @@ defmodule Agenda.TUI.UserDateCategoriesTest do
   @today ~D[2026-10-08]
 
   defp choose_type(state) do
-    index = Enum.find_index(CategoryScreens.props_fields(), &(&1 == :type))
+    index = Enum.find_index(CategoryScreens.Properties.props_fields(), &(&1 == :type))
     state = Agenda.TUI.State.put_mode(state, %{Agenda.TUI.State.mode(state) | cursor: index})
     press(state, :enter)
   end

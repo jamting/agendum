@@ -132,12 +132,13 @@ or handles it.
     - **Note editor** `:note` (ENTER on Note).
   - **Assignment profile** `:profile` (F3 on an item, Item ▸ Show): every
     category with the item's assignments marked; SPACE assigns.
-    `Agenda.TUI.CategoryScreens`.
+    `Agenda.TUI.CategoryScreens.Profile`.
   - **Group profile** `:group_profile` (F3 with items marked, "all marked"):
-    the same for several items (R35). `Agenda.TUI.CategoryScreens`.
+    the same for several items (R35).
+    `Agenda.TUI.CategoryScreens.Profile`.
   - **Category picker** `:picker`: choose a category from the hierarchy,
-    with search. `Agenda.TUI.CategoryScreens`. Its `purpose` says what the choice
-    does:
+    with search. `Agenda.TUI.CategoryScreens.Picker`. Its `purpose` says
+    what the choice does:
     - a column entry (F3 in a column), assigning items (ALT-M, Item ▸
       Categorize), a section's category (F3 on a head), a new section (ALT-D,
       ALT-U) or column (ALT-R, ALT-L), a new view's first section
@@ -150,10 +151,11 @@ or handles it.
   - **Category Properties** `:props` (F6 on a section head; F6 in the
     category manager): name, short name, type, exclusive children, matching,
     conditions, actions, negative links, special actions, advanced settings,
-    note. `Agenda.TUI.CategoryScreens`.
+    note. `Agenda.TUI.CategoryScreens.Properties`.
     - **Choice** `:choice`: a list of choices with an explanation: the
       category's type (Standard, Numeric, Date; R6a), how to resolve items
       that break exclusive children (R7a) or a move (R7b).
+      `Agenda.TUI.CategoryScreens.Choices`.
     - **Picker** `:picker` for Conditions, Also assign and Excludes (R15,
       R15b, R9).
       - **Range filter** `:range_filter` as a condition on a date or numeric
@@ -167,7 +169,7 @@ or handles it.
     - **Note editor** `:note`.
   - **Category manager** `:catmgr` (F9, Category ▸ Manager): full screen of
     the hierarchy; add, rename, promote, demote, move, sort, discard (R2–R8).
-    `Agenda.TUI.CategoryScreens`.
+    `Agenda.TUI.CategoryScreens.Manager`.
     - **Category Properties** `:props` (F6), **Note editor** `:note` (F5),
       **Help** `:help` (F1), **Picker** `:picker` (ALT-F10, where to move),
       **Choice** `:choice` (conflicts of a move).
@@ -237,53 +239,53 @@ dependencies after its question, Undo, Save) are not listed.
 
 ## By type
 
-| `type`               | Kind          | Module                        | Reached from                                     | SPEC          |
-| -------------------- | ------------- | ----------------------------- | ------------------------------------------------ | ------------- |
-| `:menu`              | control panel | `Agenda.TUI.Menu`             | F10 or `/`                                       | §5            |
-| `:prompt`            | control panel | `Agenda.TUI.Update.Prompts`   | commands that ask for a line of text             | §5            |
-| `:confirm`           | control panel | `Agenda.TUI.Update.Prompts`   | commands that ask Y/N                            | §5            |
-| `:scope`             | box           | `Agenda.TUI.Update.Marked`    | a command with items marked                      | R35           |
-| `:move_item`         | control panel | `Agenda.TUI.Update.Marked`    | ALT-F10, Item ▸ Reposition                       | R26           |
-| `:searching`         | control panel | `Agenda.TUI.SearchBox`        | the Search box                                   | R37           |
-| `:help`              | full screen   | `Agenda.TUI.Render.Help`      | F1                                               | §5            |
-| `:note`              | full screen   | `Agenda.TUI.Update.Notes`     | F5, Item Properties, Category Properties         | §5            |
-| `:catmgr`            | full screen   | `Agenda.TUI.CategoryScreens`  | F9, Category ▸ Manager                           | R2–R8         |
-| `:viewmgr`           | full screen   | `Agenda.TUI.ViewManager`      | F8, View ▸ Manager                               | §5            |
-| `:picker`            | box           | `Agenda.TUI.CategoryScreens`  | many (see above)                                 | §5            |
-| `:profile`           | box           | `Agenda.TUI.CategoryScreens`  | F3 on an item, Item ▸ Show, Item Properties      | §5            |
-| `:group_profile`     | box           | `Agenda.TUI.CategoryScreens`  | F3 with items marked                             | R35           |
-| `:props`             | box           | `Agenda.TUI.CategoryScreens`  | F6 on a section head or in the category manager  | §5            |
-| `:choice`            | box           | `Agenda.TUI.CategoryScreens`  | Category Properties, moves in the manager        | R6a, R7a, R7b |
-| `:item_props`        | box           | `Agenda.TUI.ItemProperties`   | F6 on an item, Item ▸ Properties                 | R34, R43      |
-| `:goto`              | box           | `Agenda.TUI.GoTo`             | ALT-F5                                           | R42           |
-| `:search_box`        | box           | `Agenda.TUI.SearchBox`        | ALT-F6, Search ▸ View / File                     | R37           |
-| `:note_search`       | box           | `Agenda.TUI.NoteSearch`       | ALT-F6 in a note                                 | R39           |
-| `:sort`              | box           | `Agenda.TUI.SortBox`          | View ▸ Order, View ▸ Section ▸ Sort              | R36           |
-| `:range_filter`      | box           | `Agenda.TUI.RangeFilterBox`   | a filter or condition on a date/numeric category | R28a, R15a    |
-| `:action_box`        | box           | `Agenda.TUI.ActionBox`        | Also assign on a date/numeric category           | R15b          |
-| `:date_rule`         | box           | `Agenda.TUI.DateRuleBox`      | Advanced settings of a date category             | R6b           |
-| `:category_match`    | box           | `Agenda.TUI.CategoryMatchBox` | Advanced settings of a standard category         | R16b          |
-| `:file_props`        | box           | `Agenda.TUI.FileProperties`   | File ▸ Properties                                | R41, R14e     |
-| `:date_settings`     | box           | `Agenda.TUI.FileProperties`   | File Properties ▸ Global date settings           | R14e          |
-| `:display_format`    | box           | `Agenda.TUI.FileProperties`   | Global date settings ▸ Display format            | R41, R41a     |
-| `:input_format`      | box           | `Agenda.TUI.InputFormatBox`   | Global date settings or Customize ▸ Input format | R41b          |
-| `:customize`         | box           | `Agenda.TUI.CustomizeBox`     | File ▸ Customize                                 | R40, R14c     |
-| `:calendars`         | box           | `Agenda.TUI.CalendarsBox`     | File ▸ Transfer ▸ Calendars                      | R45           |
-| `:auto_assign`       | box           | `Agenda.TUI.AutoAssignBox`    | File Properties ▸ Auto-assign settings           | R16a          |
-| `:column_props`      | box           | `Agenda.TUI.ColumnProperties` | View ▸ Column ▸ Properties, numeric column       | R29           |
-| `:date_column_props` | box           | `Agenda.TUI.DateColumnBox`    | View ▸ Column ▸ Properties, date column          | R41a          |
-| `:execute`           | box           | `Agenda.TUI.ExecuteBox`       | Category ▸ Execute                               | R15e          |
-| `:questions`         | box           | `Agenda.TUI.QuestionsBox`     | Category ▸ Questions                             | R16           |
-| `:alarm_list`        | box           | `Agenda.TUI.AlarmList`        | Search ▸ Alarms                                  | R38           |
-| `:calendar`          | box           | `Agenda.TUI.CalendarBox`      | F3 in a date column, ALT-C                       | R46           |
-| `:datebook_props`    | box           | `Agenda.TUI.DatebookBox`      | View ▸ Properties of a datebook view             | R47           |
-| `:browse`            | control panel | `Agenda.TUI.Browse`           | View ▸ Browse, ALT-B                             | R47, R48      |
-| `:schedule`          | box           | `Agenda.TUI.ScheduleBox`      | Search ▸ Schedule                                | R49           |
-| `:macros`            | box           | `Agenda.TUI.Macros`           | ALT-F3                                           | R50           |
-| `:macro_props`       | box           | `Agenda.TUI.MacroProps`       | F6 in the macro manager                          | R50           |
-| `:select_file`       | box           | `Agenda.TUI.SelectFile`       | F3 in a file-name prompt                         | R51           |
-| `:splash`            | full screen   | `Agenda.TUI.Splash`           | at start; any key or three seconds close it      | R52           |
-| `:devtools`          | full screen   | `Agenda.TUI.DevTools`         | ESC ? (hidden)                                   | —             |
+| `type`               | Kind          | Module                                  | Reached from                                     | SPEC          |
+| -------------------- | ------------- | --------------------------------------- | ------------------------------------------------ | ------------- |
+| `:menu`              | control panel | `Agenda.TUI.Menu`                       | F10 or `/`                                       | §5            |
+| `:prompt`            | control panel | `Agenda.TUI.Update.Prompts`             | commands that ask for a line of text             | §5            |
+| `:confirm`           | control panel | `Agenda.TUI.Update.Prompts`             | commands that ask Y/N                            | §5            |
+| `:scope`             | box           | `Agenda.TUI.Update.Marked`              | a command with items marked                      | R35           |
+| `:move_item`         | control panel | `Agenda.TUI.Update.Marked`              | ALT-F10, Item ▸ Reposition                       | R26           |
+| `:searching`         | control panel | `Agenda.TUI.SearchBox`                  | the Search box                                   | R37           |
+| `:help`              | full screen   | `Agenda.TUI.Render.Help`                | F1                                               | §5            |
+| `:note`              | full screen   | `Agenda.TUI.Update.Notes`               | F5, Item Properties, Category Properties         | §5            |
+| `:catmgr`            | full screen   | `Agenda.TUI.CategoryScreens.Manager`    | F9, Category ▸ Manager                           | R2–R8         |
+| `:viewmgr`           | full screen   | `Agenda.TUI.ViewManager`                | F8, View ▸ Manager                               | §5            |
+| `:picker`            | box           | `Agenda.TUI.CategoryScreens.Picker`     | many (see above)                                 | §5            |
+| `:profile`           | box           | `Agenda.TUI.CategoryScreens.Profile`    | F3 on an item, Item ▸ Show, Item Properties      | §5            |
+| `:group_profile`     | box           | `Agenda.TUI.CategoryScreens.Profile`    | F3 with items marked                             | R35           |
+| `:props`             | box           | `Agenda.TUI.CategoryScreens.Properties` | F6 on a section head or in the category manager  | §5            |
+| `:choice`            | box           | `Agenda.TUI.CategoryScreens.Choices`    | Category Properties, moves in the manager        | R6a, R7a, R7b |
+| `:item_props`        | box           | `Agenda.TUI.ItemProperties`             | F6 on an item, Item ▸ Properties                 | R34, R43      |
+| `:goto`              | box           | `Agenda.TUI.GoTo`                       | ALT-F5                                           | R42           |
+| `:search_box`        | box           | `Agenda.TUI.SearchBox`                  | ALT-F6, Search ▸ View / File                     | R37           |
+| `:note_search`       | box           | `Agenda.TUI.NoteSearch`                 | ALT-F6 in a note                                 | R39           |
+| `:sort`              | box           | `Agenda.TUI.SortBox`                    | View ▸ Order, View ▸ Section ▸ Sort              | R36           |
+| `:range_filter`      | box           | `Agenda.TUI.RangeFilterBox`             | a filter or condition on a date/numeric category | R28a, R15a    |
+| `:action_box`        | box           | `Agenda.TUI.ActionBox`                  | Also assign on a date/numeric category           | R15b          |
+| `:date_rule`         | box           | `Agenda.TUI.DateRuleBox`                | Advanced settings of a date category             | R6b           |
+| `:category_match`    | box           | `Agenda.TUI.CategoryMatchBox`           | Advanced settings of a standard category         | R16b          |
+| `:file_props`        | box           | `Agenda.TUI.FileProperties`             | File ▸ Properties                                | R41, R14e     |
+| `:date_settings`     | box           | `Agenda.TUI.FileProperties`             | File Properties ▸ Global date settings           | R14e          |
+| `:display_format`    | box           | `Agenda.TUI.FileProperties`             | Global date settings ▸ Display format            | R41, R41a     |
+| `:input_format`      | box           | `Agenda.TUI.InputFormatBox`             | Global date settings or Customize ▸ Input format | R41b          |
+| `:customize`         | box           | `Agenda.TUI.CustomizeBox`               | File ▸ Customize                                 | R40, R14c     |
+| `:calendars`         | box           | `Agenda.TUI.CalendarsBox`               | File ▸ Transfer ▸ Calendars                      | R45           |
+| `:auto_assign`       | box           | `Agenda.TUI.AutoAssignBox`              | File Properties ▸ Auto-assign settings           | R16a          |
+| `:column_props`      | box           | `Agenda.TUI.ColumnProperties`           | View ▸ Column ▸ Properties, numeric column       | R29           |
+| `:date_column_props` | box           | `Agenda.TUI.DateColumnBox`              | View ▸ Column ▸ Properties, date column          | R41a          |
+| `:execute`           | box           | `Agenda.TUI.ExecuteBox`                 | Category ▸ Execute                               | R15e          |
+| `:questions`         | box           | `Agenda.TUI.QuestionsBox`               | Category ▸ Questions                             | R16           |
+| `:alarm_list`        | box           | `Agenda.TUI.AlarmList`                  | Search ▸ Alarms                                  | R38           |
+| `:calendar`          | box           | `Agenda.TUI.CalendarBox`                | F3 in a date column, ALT-C                       | R46           |
+| `:datebook_props`    | box           | `Agenda.TUI.DatebookBox`                | View ▸ Properties of a datebook view             | R47           |
+| `:browse`            | control panel | `Agenda.TUI.Browse`                     | View ▸ Browse, ALT-B                             | R47, R48      |
+| `:schedule`          | box           | `Agenda.TUI.ScheduleBox`                | Search ▸ Schedule                                | R49           |
+| `:macros`            | box           | `Agenda.TUI.Macros`                     | ALT-F3                                           | R50           |
+| `:macro_props`       | box           | `Agenda.TUI.MacroProps`                 | F6 in the macro manager                          | R50           |
+| `:select_file`       | box           | `Agenda.TUI.SelectFile`                 | F3 in a file-name prompt                         | R51           |
+| `:splash`            | full screen   | `Agenda.TUI.Splash`                     | at start; any key or three seconds close it      | R52           |
+| `:devtools`          | full screen   | `Agenda.TUI.DevTools`                   | ESC ? (hidden)                                   | —             |
 
 `test/agenda/tui/screens_doc_test.exs` fails when a mode type is added without
 being listed here.

@@ -292,7 +292,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
     # Meetings has no short name and no category links
     state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}])
 
-    Enum.reduce(Agenda.TUI.CategoryScreens.props_fields(), state, fn field, state ->
+    Enum.reduce(Agenda.TUI.CategoryScreens.Properties.props_fields(), state, fn field, state ->
       highlighted =
         state
         |> Agenda.TUI.Render.render()

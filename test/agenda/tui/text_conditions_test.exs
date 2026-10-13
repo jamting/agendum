@@ -13,7 +13,7 @@ defmodule Agenda.TUI.TextConditionsTest do
   defp item(state, text), do: Enum.find(Database.items(state.db), &(&1.text == text))
 
   defp downs_to(field) do
-    index = Enum.find_index(Agenda.TUI.CategoryScreens.props_fields(), &(&1 == field))
+    index = Enum.find_index(Agenda.TUI.CategoryScreens.Properties.props_fields(), &(&1 == field))
     List.duplicate(:down, index)
   end
 

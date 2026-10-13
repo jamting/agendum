@@ -6,6 +6,7 @@ defmodule Agenda.TUI.Render.CategoryBoxes do
 
   alias Agenda.Core.Database
   alias Agenda.TUI.{CategoryScreens, Draw, State}
+  alias Agenda.TUI.CategoryScreens.{Choices, Properties}
   alias Agenda.TUI.Render.Text
 
   @doc "The content of one of these boxes, `inner` wide, at most `max_rows` of list."
@@ -38,8 +39,8 @@ defmodule Agenda.TUI.Render.CategoryBoxes do
   end
 
   def content(_state, %{type: :choice} = mode, _inner, _max_rows) do
-    options = CategoryScreens.choice_options(mode)
-    [problem, question] = CategoryScreens.choice_lines(mode)
+    options = Choices.choice_options(mode)
+    [problem, question] = Choices.choice_lines(mode)
     {_, description, _} = Enum.at(options, mode.cursor)
 
     choices =
@@ -97,7 +98,7 @@ defmodule Agenda.TUI.Render.CategoryBoxes do
       note: "Note"
     }
 
-    CategoryScreens.props_fields()
+    Properties.props_fields()
     |> Enum.with_index()
     |> Enum.map(fn {prop, i} ->
       label = [{:box, " " <> Draw.pad(labels[prop], 28) <> ": "}]

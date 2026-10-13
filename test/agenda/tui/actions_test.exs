@@ -15,7 +15,7 @@ defmodule Agenda.TUI.ActionsTest do
   defp cat(state, name), do: hd(Database.find_categories(state.db, name))
 
   defp downs_to(field) do
-    index = Enum.find_index(Agenda.TUI.CategoryScreens.props_fields(), &(&1 == field))
+    index = Enum.find_index(Agenda.TUI.CategoryScreens.Properties.props_fields(), &(&1 == field))
     List.duplicate(:down, index)
   end
 

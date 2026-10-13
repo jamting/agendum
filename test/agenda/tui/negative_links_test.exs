@@ -14,7 +14,9 @@ defmodule Agenda.TUI.NegativeLinksTest do
   defp cat(state, name), do: hd(Database.find_categories(state.db, name))
 
   defp open_excludes(state) do
-    index = Enum.find_index(Agenda.TUI.CategoryScreens.props_fields(), &(&1 == :excludes))
+    index =
+      Enum.find_index(Agenda.TUI.CategoryScreens.Properties.props_fields(), &(&1 == :excludes))
+
     press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ List.duplicate(:down, index) ++ [:enter])
   end
 

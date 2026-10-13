@@ -68,7 +68,8 @@ in [`SCREENS.md`](SCREENS.md).
 | `Agenda.TUI.Update`                           | ✔     | Key → state transitions: keys for every screen, the clock (`tick/2`), effect results, dispatch to the screen on top.             |
 | `Agenda.TUI.Update.*`                         | ✔     | Its parts: `ViewKeys`, `Editing` (inline), `Marked` (and moves), `Prompts` (and Y/N), `Notes`, `Actions` (`perform/2`).          |
 | `Agenda.TUI.Menu`                             | ✔     | The Lotus two-line menu tree.                                                                                                    |
-| `Agenda.TUI.CategoryScreens`                  | ✔     | Category manager, category picker box, assignment profile, category properties.                                                  |
+| `Agenda.TUI.CategoryScreens`                  | ✔     | Hierarchy screens: opening them, their rows, cursor, collapsing families, inline edits, dispatch to the parts.                   |
+| `Agenda.TUI.CategoryScreens.*`                | ✔     | Its parts: `Manager` (F9), `Picker`, `Profile` (F3), `Properties` (F6), `Choices` (exclusive children, moves).                   |
 | `Agenda.TUI.ViewManager`                      | ✔     | View manager.                                                                                                                    |
 | `Agenda.TUI.Layout`                           | ✔     | Flattens a view to cursor rows and wrapped lines; keeps the cursor anchored and visible.                                         |
 | `Agenda.TUI.Completion`                       | ✔     | Automatic completion while typing a column entry: the matches (from `Core.completions/3`) and the one shown.                     |

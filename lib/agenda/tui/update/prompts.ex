@@ -7,7 +7,8 @@ defmodule Agenda.TUI.Update.Prompts do
 
   alias Agenda.Core
   alias Agenda.Core.DateFormat
-  alias Agenda.TUI.{CalendarBox, CategoryScreens, Draw, LineEdit, State, Update}
+  alias Agenda.TUI.{CalendarBox, Draw, LineEdit, State, Update}
+  alias Agenda.TUI.CategoryScreens.Choices
   alias Agenda.TUI.Update.Actions
 
   # --- prompts and confirmations ------------------------------------------------
@@ -208,7 +209,7 @@ defmodule Agenda.TUI.Update.Prompts do
   end
 
   defp prompt_action(state, {:move_new_category, id, relocation}, text) do
-    CategoryScreens.apply_move(state, id, relocation, {:new_category, text})
+    Choices.apply_move(state, id, relocation, {:new_category, text})
   end
 
   defp prompt_action(state, {:alarm, item_id}, text) do
@@ -248,7 +249,7 @@ defmodule Agenda.TUI.Update.Prompts do
   end
 
   defp prompt_action(state, {:exclusive_new_child, cat_id}, text) do
-    CategoryScreens.apply_exclusive(state, cat_id, {:new_child, text})
+    Choices.apply_exclusive(state, cat_id, {:new_child, text})
   end
 
   defp prompt_action(state, :export_json, text),

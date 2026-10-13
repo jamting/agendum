@@ -133,7 +133,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] Split the four largest files into subfolders, by the sections they already have; pure moves, no change in behaviour, one file per commit (best in a fresh session each):
   - [x] `tui/render.ex` (~2,300 lines) → `tui/render/`: `Render` keeps `render/1`; `ControlPanel`, `KeyBar`, `View`, `Managers`, `Note`, `Help`, `Boxes` and `CategoryBoxes`, `Text` (shared words), `Export`
   - [x] `tui/update.ex` (~2,000) → `tui/update/`: `Update` keeps `handle/2`, `tick/2`, dispatch, effect results and the help screen's keys; `ViewKeys`, `Editing`, `Marked` (with moving items), `Prompts`, `Notes`, `Actions` (prepares the command layer, ADR 0020)
-  - [ ] `tui/category_screens.ex` (~1,200) → `tui/category_screens/`: `Manager`, `Picker`, `Profile`, `Moves`, `Properties`
+  - [x] `tui/category_screens.ex` (~1,200) → `tui/category_screens/`: `CategoryScreens` keeps opening, rows, cursor, collapsing, inline edits and dispatch; `Manager`, `Picker`, `Profile`, `Choices` (the choice boxes: exclusive children, moves, type, Learn, view type), `Properties`
   - [ ] `core.ex` (~2,300, the facade) → `Agenda.Core` stays the one entry point (rule 3) as a table of contents of `defdelegate`s to area modules (`Agenda.Core.Facade.Items`, `.Dates`, `.Rules`, `.Views`, `.Numbers`…), where the functions and their docs live
 - [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agenda.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
 - [x] API documentation with `ex_doc` (dev only): `mix docs` from the `@moduledoc`s and `@spec`s, for whoever builds on the core facade (ADR 0020)

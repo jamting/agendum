@@ -8,7 +8,7 @@ defmodule Agenda.TUI.CategoryMatchingTest do
   setup do
     state = start(Agenda.Sample.build(~D[2026-10-08]))
     meetings = hd(Agenda.Core.Database.find_categories(state.db, "Meetings"))
-    index = Enum.find_index(CategoryScreens.props_fields(), &(&1 == :advanced))
+    index = Enum.find_index(CategoryScreens.Properties.props_fields(), &(&1 == :advanced))
     state = CategoryScreens.open_props(state, meetings)
     state = State.put_mode(state, %{State.mode(state) | cursor: index}) |> press(:enter)
     %{state: state, meetings: meetings}
