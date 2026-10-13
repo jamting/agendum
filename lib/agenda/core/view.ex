@@ -18,6 +18,12 @@ defmodule Agenda.Core.View do
   `sections` are not used. `section_sort` shows the sections in category
   order, alphabetically or numerically by name (`section_order`), instead
   of the order they were added in (User's Guide 15-20).
+
+  Columns belong to sections (R55): each `Section` has its own. A datebook
+  view keeps one set in `columns` for all its slots, as its sections are
+  not stored; a standard view's `columns` is empty. `columns/2` reads
+  either. How columns are added, linked and removed is
+  `Agenda.Core.ViewColumns`.
   """
 
   defmodule SortKey do
@@ -45,14 +51,16 @@ defmodule Agenda.Core.View do
     @moduledoc """
     A view section headed by a category. `filter` narrows it further (R28);
     `sort` overrides the view's sort keys (`nil` = use the view's).
+    `columns` are the columns it shows (R55).
     """
     @type t :: %__MODULE__{
             category_id: Agenda.Core.Category.id(),
             collapsed: boolean,
             filter: [{Agenda.Core.Category.id(), Agenda.Core.View.filter_term()}],
-            sort: [SortKey.t()] | nil
+            sort: [SortKey.t()] | nil,
+            columns: [Agenda.Core.View.Column.t()]
           }
-    defstruct [:category_id, collapsed: false, filter: [], sort: nil]
+    defstruct [:category_id, collapsed: false, filter: [], sort: nil, columns: []]
   end
 
   defmodule Column do
@@ -61,14 +69,25 @@ defmodule Agenda.Core.View do
     shows its numbers and calculations (R29); `date` how a date column
     shows its dates, `nil` for the file's (global defaults, R41a). Other
     columns ignore them.
+
+    `linked` (Column Properties ▸ Link with other sections, R55): the
+    linked columns of a view with the same head are one column shown in
+    several sections, so a change to one is made to all of them.
     """
     @type t :: %__MODULE__{
             category_id: Agenda.Core.Category.id(),
             width: pos_integer,
             number: Agenda.Core.NumberFormat.t(),
-            date: Agenda.Core.DateFormat.t() | nil
+            date: Agenda.Core.DateFormat.t() | nil,
+            linked: boolean
           }
-    defstruct [:category_id, width: 12, number: %Agenda.Core.NumberFormat{}, date: nil]
+    defstruct [
+      :category_id,
+      width: 12,
+      number: %Agenda.Core.NumberFormat{},
+      date: nil,
+      linked: true
+    ]
   end
 
   @typedoc "One filter criterion on a category (R28, R28a)."
@@ -108,4 +127,49 @@ defmodule Agenda.Core.View do
     section_order: :asc,
     datebook: nil
   ]
+
+  @typedoc "Where a column is: `{section index, column index}` (R55)."
+  @type at :: {non_neg_integer, non_neg_integer}
+
+  @doc """
+  The columns of the section at `sidx`; for a datebook view, the columns
+  all its slots share, whatever `sidx` is.
+  """
+  @spec columns(t, non_neg_integer) :: [Column.t()]
+  def columns(%__MODULE__{datebook: %Agenda.Core.Datebook{}} = view, _sidx), do: view.columns
+
+  def columns(%__MODULE__{} = view, sidx) do
+    # `Enum.at/2` gives nil past the end, and `nil.columns` would raise, so
+    # a section index the view does not have reads as no columns
+    case Enum.at(view.sections, sidx) do
+      nil -> []
+      section -> section.columns
+    end
+  end
+
+  @doc """
+  Whether the column at `at` is linked to a column in another section, so
+  removing it asks "All sections in view" or "Current section only".
+  """
+  @spec in_other_sections?(t, at) :: boolean
+  def in_other_sections?(%__MODULE__{} = view, {sidx, _} = at),
+    do: view |> Agenda.Core.ViewColumns.linked(at) |> Enum.any?(fn {s, _} -> s != sidx end)
+
+  @doc """
+  A standard view whose columns are stored in `columns`, as files from
+  before columns per section were (R55), gets them in every section,
+  linked. Other views are returned as they are.
+  """
+  @spec columns_into_sections(t) :: t
+  def columns_into_sections(%__MODULE__{datebook: nil, columns: [_ | _] = columns} = view) do
+    columns = Enum.map(columns, &%{&1 | linked: true})
+
+    %{
+      view
+      | sections: Enum.map(view.sections, &%{&1 | columns: &1.columns ++ columns}),
+        columns: []
+    }
+  end
+
+  def columns_into_sections(%__MODULE__{} = view), do: view
 end

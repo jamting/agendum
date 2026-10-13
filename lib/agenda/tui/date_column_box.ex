@@ -19,11 +19,13 @@ defmodule Agenda.TUI.DateColumnBox do
 
   @rows [:settings | DateFormatRows.rows()]
 
-  def open(state, index),
-    do: State.push(state, %{type: :date_column_props, column: index, cursor: 0})
+  @doc "Opens the box for the column at `at` (`{section, column}`, R55)."
+  def open(state, at),
+    do: State.push(state, %{type: :date_column_props, column: at, cursor: 0})
 
   @doc "The column the box is for."
-  def column(state, mode), do: Enum.at(State.view(state).columns, mode.column)
+  def column(state, %{column: {sidx, index}}),
+    do: state |> State.view() |> Agenda.Core.View.columns(sidx) |> Enum.at(index)
 
   @doc "The format the column shows: its own or the file's."
   def format(state, mode), do: column(state, mode).date || state.db.date_format

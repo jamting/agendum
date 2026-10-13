@@ -73,11 +73,13 @@ defmodule Agenda.TUI.CategoryScreens.Picker do
   def pick(state, {:datebook, view_id, row}, id),
     do: Agenda.TUI.DatebookBox.set_category(state, view_id, row, id)
 
-  def pick(state, {:add_section, index}, id) do
+  # `from`: the section the cursor was in, whose linked columns the new
+  # one gets (R55)
+  def pick(state, {:add_section, index, from}, id) do
     index = min(index, length(State.view(state).sections))
 
     %{
-      State.change_db(state, Core.add_section(state.db, state.view_id, id, index))
+      State.change_db(state, Core.add_section(state.db, state.view_id, id, index, from))
       | cursor_key: {:section, index}
     }
   end
@@ -87,11 +89,11 @@ defmodule Agenda.TUI.CategoryScreens.Picker do
     %{State.change_db(state, db) | cursor_key: {:section, sidx}}
   end
 
-  def pick(state, {:add_column, index}, id) do
+  def pick(state, {:add_column, {_sidx, index} = at}, id) do
     width = if Database.date_category?(state.db, id), do: 16, else: 12
 
     %{
-      State.change_db(state, Core.add_column(state.db, state.view_id, id, index, width))
+      State.change_db(state, Core.add_column(state.db, state.view_id, id, at, width))
       | col: index + 1
     }
   end

@@ -33,7 +33,7 @@ defmodule Agenda.Store do
 
   alias Agenda.Core.Database
 
-  @format_version 24
+  @format_version 25
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
@@ -174,18 +174,24 @@ defmodule Agenda.Store do
     alias Agenda.Core.View
     view = struct(View, Map.from_struct(view))
 
-    %{
+    # before 25 a standard view's columns were the view's, in every section
+    View.columns_into_sections(%{
       view
       | sections: Enum.map(view.sections, &upgrade_section/1),
         columns: Enum.map(view.columns, &upgrade_column/1),
         sort: upgrade_keys(view.sort),
         datebook: view.datebook && struct(Agenda.Core.Datebook, Map.from_struct(view.datebook))
-    }
+    })
   end
 
   defp upgrade_section(section) do
     section = struct(Agenda.Core.View.Section, Map.from_struct(section))
-    %{section | sort: upgrade_keys(section.sort)}
+
+    %{
+      section
+      | sort: upgrade_keys(section.sort),
+        columns: Enum.map(section.columns, &upgrade_column/1)
+    }
   end
 
   # Sort keys gain fields too (`line`, R36).

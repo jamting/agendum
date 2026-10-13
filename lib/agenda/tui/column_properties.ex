@@ -19,10 +19,12 @@ defmodule Agenda.TUI.ColumnProperties do
 
   def rows, do: @rows
 
-  def open(state, index), do: State.push(state, %{type: :column_props, column: index, cursor: 0})
+  @doc "Opens the box for the column at `at` (`{section, column}`, R55)."
+  def open(state, at), do: State.push(state, %{type: :column_props, column: at, cursor: 0})
 
   @doc "The column the box is for."
-  def column(state, mode), do: Enum.at(State.view(state).columns, mode.column)
+  def column(state, %{column: {sidx, index}}),
+    do: state |> State.view() |> Agenda.Core.View.columns(sidx) |> Enum.at(index)
 
   def handle(state, mode, key) do
     row = Enum.at(@rows, mode.cursor)

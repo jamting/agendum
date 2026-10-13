@@ -11,13 +11,14 @@ defmodule Agenda.TUI.Render.View do
   @doc "The view's lines, scrolled."
   def lines(state) do
     rows = Layout.rows(state)
-    tw = Layout.text_width(state)
-    columns = State.view(state).columns
     editing = state.modes == [] && state.edit
 
     rows
     |> Enum.with_index()
     |> Enum.flat_map(fn {row, index} ->
+      # each section has its own columns, and its item text the rest (R55)
+      columns = row.columns
+      tw = Layout.text_width(state, columns)
       selected = index == state.cursor
       lines = row_lines(state, row, index, selected, editing, tw, columns)
       lines = if selected, do: Enum.map(lines, &tint(&1, state.width)), else: lines

@@ -31,8 +31,8 @@ defmodule Agenda.Sample do
     {:ok, db, _} = Core.add_category(db, main, "Meetings", match_name: true)
 
     [view] = Database.views(db)
-    db = Core.add_column(db, view.id, priority, 1, 8)
-    db = Core.add_column(db, view.id, contact, 2, 16)
+    db = Core.add_column(db, view.id, priority, {0, 1}, 8)
+    db = Core.add_column(db, view.id, contact, {0, 2}, 16)
 
     entries = [
       {"Set up meeting at Terracotta Corp to discuss CopyCat before the end of the month.",
@@ -90,8 +90,8 @@ defmodule Agenda.Sample do
       end)
 
     [view] = Database.views(db)
-    db = Core.add_column(db, view.id, priority, 1, 8)
-    db = Core.add_column(db, view.id, people, 2, 12)
+    db = Core.add_column(db, view.id, priority, {0, 1}, 8)
+    db = Core.add_column(db, view.id, people, {0, 2}, 12)
     db = Core.add_section(db, view.id, notices, 1)
     db = Core.add_section(db, view.id, people, 2)
 

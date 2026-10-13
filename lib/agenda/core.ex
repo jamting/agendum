@@ -181,17 +181,17 @@ defmodule Agenda.Core do
   defdelegate discard_view(db, view_id), to: Views
   defdelegate move_view(db, view_id, index), to: Views
   defdelegate set_section_category(db, view_id, index, cat_id), to: Views
-  defdelegate add_section(db, view_id, cat_id, index), to: Views
+  defdelegate add_section(db, view_id, cat_id, index, from \\ nil), to: Views
   defdelegate remove_section(db, view_id, index), to: Views
   defdelegate set_section_collapsed(db, view_id, index, collapsed), to: Views
   defdelegate set_all_sections_collapsed(db, view_id, collapsed), to: Views
   defdelegate toggle_section_collapsed(db, view_id, index), to: Views
-  defdelegate add_column(db, view_id, cat_id, index, width \\ 12), to: Views
-  defdelegate remove_column(db, view_id, index), to: Views
-  defdelegate set_column_format(db, view_id, index, format), to: Views
-  defdelegate set_column_date_format(db, view_id, index, format), to: Views
-  defdelegate resize_column(db, view_id, index, delta), to: Views
-  defdelegate fit_column(db, view_id, index, clock), to: Views
+  defdelegate add_column(db, view_id, cat_id, at, width \\ 12, insert_in \\ :all), to: Views
+  defdelegate remove_column(db, view_id, at, from \\ :all), to: Views
+  defdelegate set_column_format(db, view_id, at, format), to: Views
+  defdelegate set_column_date_format(db, view_id, at, format), to: Views
+  defdelegate resize_column(db, view_id, at, delta), to: Views
+  defdelegate fit_column(db, view_id, at, clock), to: Views
   defdelegate cycle_filter(db, view_id, scope, cat_id), to: Views
   defdelegate set_range_filter(db, view_id, scope, cat_id, filter, today), to: Views
   defdelegate remove_filter(db, view_id, scope, cat_id), to: Views

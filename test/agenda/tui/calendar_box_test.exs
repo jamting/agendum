@@ -85,7 +85,7 @@ defmodule Agenda.TUI.CalendarBoxTest do
   test "it works for a date category of the user's own", %{state: state} do
     {:ok, db, due} = Agenda.Core.add_category(state.db, state.db.main_id, "Due")
     {:ok, db} = Agenda.Core.make_date(db, due, ~D[2026-10-08])
-    db = Agenda.Core.add_column(db, state.view_id, due, 0, 12)
+    db = Agenda.Core.add_column(db, state.view_id, due, {0, 0}, 12)
     state = Layout.settle(%{state | db: db})
 
     state = press(state, [{:f, 3}, :right, :enter])

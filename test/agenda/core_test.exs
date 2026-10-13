@@ -89,7 +89,7 @@ defmodule Agenda.CoreTest do
     test "childless column heads show a star" do
       db = with_categories(Core.new_file(), ["Urgent"])
       [view] = Database.views(db)
-      db = Core.add_column(db, view.id, cat(db, "Urgent"), 0)
+      db = Core.add_column(db, view.id, cat(db, "Urgent"), {0, 0})
       [%{category_id: section}] = view.sections
       {db, _} = Core.add_item(db, "Urgent: fix roof", today(), section: section)
 

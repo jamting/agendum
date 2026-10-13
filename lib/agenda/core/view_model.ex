@@ -19,16 +19,21 @@ defmodule Agenda.Core.ViewModel do
     A section of a built view. `calcs` are the calculation lines shown at
     its bottom (R29): `{calculation, [cell per column]}`, with "" for
     columns that do not show that calculation. In a datebook view (R47)
-    `slot` is the time slot it shows; nil in a standard view.
+    `slot` is the time slot it shows; nil in a standard view. `columns`
+    are the columns it shows (R55), `index` its place among the view's
+    stored sections (it may be shown elsewhere when sections are sorted;
+    nil for a datebook slot).
     """
     @type t :: %__MODULE__{
             category: Agenda.Core.Category.t(),
             rows: [Row.t()],
             collapsed: boolean,
             calcs: [{NumberFormat.calc(), [String.t()]}],
-            slot: Datebook.Slot.t() | nil
+            slot: Datebook.Slot.t() | nil,
+            columns: [View.Column.t()],
+            index: non_neg_integer | nil
           }
-    defstruct [:category, rows: [], collapsed: false, calcs: [], slot: nil]
+    defstruct [:category, :index, rows: [], collapsed: false, calcs: [], slot: nil, columns: []]
   end
 
   @doc """
@@ -82,6 +87,7 @@ defmodule Agenda.Core.ViewModel do
         category: category,
         rows: rows,
         slot: slot,
+        columns: view.columns,
         calcs: calcs(db, view.columns, rows, Context.number_opts(today))
       }
     end)
@@ -90,8 +96,10 @@ defmodule Agenda.Core.ViewModel do
 
   def build(%Database{} = db, %View{} = view, today) do
     view.sections
+    # each section with its index, kept through the sorting
+    |> Enum.with_index()
     |> sort_sections(db, view, Context.number_opts(today))
-    |> Enum.map(fn section ->
+    |> Enum.map(fn {section, index} ->
       category = db.categories[section.category_id]
 
       rows =
@@ -112,7 +120,7 @@ defmodule Agenda.Core.ViewModel do
             inherited: inherited,
             cells:
               Enum.map(
-                view.columns,
+                section.columns,
                 &cell(db, item, &1.category_id, &1.width, &1.number, today: today, date: &1.date)
               )
           }
@@ -121,9 +129,11 @@ defmodule Agenda.Core.ViewModel do
 
       %SectionModel{
         category: category,
+        index: index,
         rows: rows,
         collapsed: section.collapsed,
-        calcs: calcs(db, view.columns, rows, Context.number_opts(today))
+        columns: section.columns,
+        calcs: calcs(db, section.columns, rows, Context.number_opts(today))
       }
     end)
     |> Enum.reject(&(view.hide_empty and &1.rows == []))
@@ -196,7 +206,9 @@ defmodule Agenda.Core.ViewModel do
   defp sort_sections(sections, db, %View{section_sort: :numeric, section_order: order}, opts) do
     {numbers, others} =
       sections
-      |> Enum.map(&{&1, NumberFormat.parse(db.categories[&1.category_id].name, opts)})
+      |> Enum.map(fn {section, _} = pair ->
+        {pair, NumberFormat.parse(db.categories[section.category_id].name, opts)}
+      end)
       |> Enum.split_with(&match?({_, {:ok, _}}, &1))
 
     numbers
@@ -209,11 +221,16 @@ defmodule Agenda.Core.ViewModel do
     position =
       db |> Database.hierarchy() |> Enum.with_index() |> Map.new(fn {{id, _}, i} -> {id, i} end)
 
-    Enum.sort_by(sections, &position[&1.category_id], order)
+    Enum.sort_by(sections, fn {section, _} -> position[section.category_id] end, order)
   end
 
   defp sort_sections(sections, db, %View{section_sort: :alpha, section_order: order}, _opts),
-    do: Enum.sort_by(sections, &String.downcase(db.categories[&1.category_id].name), order)
+    do:
+      Enum.sort_by(
+        sections,
+        fn {section, _} -> String.downcase(db.categories[section.category_id].name) end,
+        order
+      )
 
   @doc """
   Orders items by sort keys (R36). The first key decides; the next breaks

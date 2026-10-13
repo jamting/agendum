@@ -443,16 +443,41 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   head shows `*` when the item is a member. A date column shows the date.
   When a column is too narrow for a category's full name, the category's
   short name is shown instead, for column entries and column heads alike
-  (User's Guide 19-2). Not done: columns per section. In Agenda a column
-  belongs to one section or to all (File Properties ▸ Insert new columns
-  in; linked columns, User's Guide 5-22 to 5-25); here every column is in
-  every section of the view.
+  (User's Guide 19-2). Each section has its own columns (R55).
 - **R22a ✅ Fit column to contents** (ours; Agenda only had View ▸ Column
   ▸ Width). View ▸ Column ▸ Fit sets the highlighted column's width to the
   widest of its head and the entries of the items the view shows at that
   moment (collapsed sections left out), with full names rather than short
   ones and its calculation lines; at least 3, at most 80. It is done once:
-  the width does not follow later changes. One undo step.
+  the width does not follow later changes. One undo step. A linked column
+  (R55) fits the entries of every section it is in.
+- **R55 ✅ Columns per section** (User's Guide 3-16, 3-27, 5-22 to 5-25;
+  screenshots 42, 60, 127). A column belongs to one section or to all.
+  - Added to all sections (the default), it is *linked*: the linked
+    columns of a view with the same head are one column, so changing the
+    width or format of one changes all of them. Added to one section, it
+    is not linked and changes alone. Moving a column (not done yet) would
+    move it in the current section only, as in Agenda.
+  - Where the other sections get it (ours; Agenda does not say): beside
+    the same column as where it was added (after the column on its left,
+    or else before the one on its right), at the end when the section has
+    neither. A column joining linked columns of its head takes their width
+    and formats.
+  - Removing a column that is linked into other sections asks: *All
+    sections in view* (it and its linked columns go; unlinked columns of
+    the same head stay) or *Current section only*.
+  - A new section (ALT-D, ALT-U) gets the linked columns of the section the
+    cursor was in (ours).
+  - Each section's item text fills the width its own columns leave, so a
+    column every section has stays in the same place (screenshots 42, 60).
+  - A datebook view's slots share one set of columns (R47).
+  - Files from before this keep every column in every section, linked.
+  - Not done yet: File Properties ▸ Insert new columns in (All sections /
+    Current section) and the Column Add box's Insert in; Column Properties
+    ▸ Link with other sections, which unlinks a column, or links it to
+    the columns with the same head, type, format and width (joining
+    linked columns of that head takes their settings); the item column's
+    own width per section.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

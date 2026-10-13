@@ -31,7 +31,7 @@ defmodule Agenda.TUI.NumbersTest do
     {:ok, db} = Core.make_numeric(db, amount)
     view = hd(db.view_order)
     db = Core.set_section_category(db, view, 0, expenses)
-    db = Core.add_column(db, view, amount, 1)
+    db = Core.add_column(db, view, amount, {0, 1})
 
     db =
       Enum.reduce(["heat", "rent", "phone"], db, fn text, db ->
@@ -91,7 +91,7 @@ defmodule Agenda.TUI.NumbersTest do
     # Symbol None -> $; Thousands separator Yes; Average Yes
     state = press(state, [" ", :down, :down, " ", :down, :down, :down, :down, " ", :esc])
 
-    assert hd(tl(state.db.views[view].columns)).number ==
+    assert hd(tl(Agenda.Core.View.columns(state.db.views[view], 0))).number ==
              %NumberFormat{symbol: "$", thousands: true, calcs: [:total, :average]}
 
     text = screen(state)
@@ -101,7 +101,7 @@ defmodule Agenda.TUI.NumbersTest do
 
   test "decimal places go up and down with → and ←", %{state: state, view: view} do
     state = press(state, [{:f, 10}, "v", "c", "p", :down, :right, :right, :left, :esc])
-    assert hd(tl(state.db.views[view].columns)).number.decimals == 3
+    assert hd(tl(Agenda.Core.View.columns(state.db.views[view], 0))).number.decimals == 3
   end
 
   test "Column Properties on the When column opens the date settings", %{state: state} do

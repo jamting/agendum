@@ -81,6 +81,13 @@ defmodule Agenda.TUI.CategoryScreens.Choices do
       {"Append", "Record keystrokes to add after the macro's", :append}
     ]
 
+  def choice_options(%{kind: :remove_column}),
+    do: [
+      {"All sections in view", "Remove the column, linked, from every section", :all},
+      {"Current section only", "Remove the column from this section; the others keep it",
+       :section}
+    ]
+
   def choice_options(%{kind: :view_type}),
     do: [
       {"Standard", "Sections headed by categories you choose", :standard},
@@ -89,6 +96,9 @@ defmodule Agenda.TUI.CategoryScreens.Choices do
 
   def choice_lines(%{kind: :learn}),
     do: ["The macro already has keystrokes.", "Learn mode should:"]
+
+  def choice_lines(%{kind: :remove_column}),
+    do: ["The column is in more than one section.", "Remove it from:"]
 
   def choice_lines(%{kind: :view_type}),
     do: ["Sections by category, or by date like an appointment book.", "Type of view:"]
@@ -192,6 +202,9 @@ defmodule Agenda.TUI.CategoryScreens.Choices do
 
   defp resolve_choice(state, %{kind: :learn, macro_id: id}, how),
     do: Agenda.TUI.Macros.learn(state, state.db.macros[id], how)
+
+  defp resolve_choice(state, %{kind: :remove_column, at: at}, from),
+    do: Agenda.TUI.Update.Actions.remove_column(state, at, from)
 
   defp resolve_choice(state, %{kind: :view_type, name: name}, :standard),
     do: CategoryScreens.open_picker(state, {:new_view, name}, nil)

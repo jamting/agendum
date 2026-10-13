@@ -18,10 +18,10 @@ defmodule Agenda.Core.NumberSeparatorsTest do
     {:ok, db, cost} = Core.add_category(db, db.main_id, "Cost")
     {:ok, db} = Core.make_numeric(db, cost)
     [view] = Database.views(db)
-    db = Core.add_column(db, view.id, cost, 0, 12)
+    db = Core.add_column(db, view.id, cost, {0, 0}, 12)
 
     db =
-      Core.set_column_format(db, view.id, 0, %NumberFormat{thousands: true, calcs: [:total]})
+      Core.set_column_format(db, view.id, {0, 0}, %NumberFormat{thousands: true, calcs: [:total]})
 
     # the view again, with its columns
     [view] = Database.views(db)

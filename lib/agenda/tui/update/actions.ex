@@ -5,7 +5,7 @@ defmodule Agenda.TUI.Update.Actions do
   """
 
   alias Agenda.Core
-  alias Agenda.Core.Database
+  alias Agenda.Core.{Database, View}
 
   alias Agenda.TUI.{
     AlarmList,
@@ -149,14 +149,14 @@ defmodule Agenda.TUI.Update.Actions do
   defp do_perform(state, :questions, _), do: Agenda.TUI.QuestionsBox.open(state)
 
   defp do_perform(state, :column_props, %{kind: :item}) when state.col > 0 do
-    column = Enum.at(State.view(state).columns, state.col - 1)
+    {column, at} = Layout.current_column(state)
 
     cond do
       state.db.categories[column.category_id].kind == :numeric ->
-        ColumnProperties.open(state, state.col - 1)
+        ColumnProperties.open(state, at)
 
       Database.date_category?(state.db, column.category_id) ->
-        Agenda.TUI.DateColumnBox.open(state, state.col - 1)
+        Agenda.TUI.DateColumnBox.open(state, at)
 
       true ->
         State.error(state, "Column properties are for numeric and date columns only, so far")
@@ -300,11 +300,16 @@ defmodule Agenda.TUI.Update.Actions do
     )
   end
 
-  defp do_perform(state, :section_below, row),
-    do: CategoryScreens.open_picker(state, {:add_section, section_index(state, row) + 1}, nil)
+  # the new section gets the columns of the one the cursor is in (R55)
+  defp do_perform(state, :section_below, row) do
+    from = section_index(state, row)
+    CategoryScreens.open_picker(state, {:add_section, from + 1, max(from, 0)}, nil)
+  end
 
-  defp do_perform(state, :section_above, row),
-    do: CategoryScreens.open_picker(state, {:add_section, max(section_index(state, row), 0)}, nil)
+  defp do_perform(state, :section_above, row) do
+    from = max(section_index(state, row), 0)
+    CategoryScreens.open_picker(state, {:add_section, from, from}, nil)
+  end
 
   defp do_perform(state, :remove_section, %{sidx: sidx}) do
     State.change_db(state, Core.remove_section(state.db, state.view_id, sidx))
@@ -317,44 +322,35 @@ defmodule Agenda.TUI.Update.Actions do
     }
   end
 
-  defp do_perform(state, :column_right, _),
-    do: CategoryScreens.open_picker(state, {:add_column, state.col}, nil)
+  # a new column goes into the section the cursor is in, and into the
+  # others as File ▸ Properties says (R55; all sections for now)
+  defp do_perform(state, :column_right, row),
+    do: CategoryScreens.open_picker(state, {:add_column, {sidx(row), state.col}}, nil)
 
-  defp do_perform(state, :column_left, _),
-    do: CategoryScreens.open_picker(state, {:add_column, max(state.col - 1, 0)}, nil)
+  defp do_perform(state, :column_left, row),
+    do: CategoryScreens.open_picker(state, {:add_column, {sidx(row), max(state.col - 1, 0)}}, nil)
 
   defp do_perform(state, :remove_column, _) do
-    if state.col == 0,
-      do: State.error(state, "Highlight a column first (use → or TAB)"),
-      else: %{
-        State.change_db(state, Core.remove_column(state.db, state.view_id, state.col - 1))
-        | col: state.col - 1
-      }
+    with_column(state, fn at ->
+      # a column linked into other sections: which to remove it from (R55)
+      if View.in_other_sections?(State.view(state), at),
+        do: State.push(state, %{type: :choice, kind: :remove_column, at: at, cursor: 0}),
+        else: remove_column(state, at, :section)
+    end)
   end
 
   defp do_perform(state, action, _) when action in [:wider, :narrower] do
-    if state.col == 0,
-      do: State.error(state, "Highlight a column first (use → or TAB)"),
-      else:
-        State.change_db(
-          state,
-          Core.resize_column(
-            state.db,
-            state.view_id,
-            state.col - 1,
-            if(action == :wider, do: 2, else: -2)
-          )
-        )
+    with_column(state, fn at ->
+      delta = if action == :wider, do: 2, else: -2
+      State.change_db(state, Core.resize_column(state.db, state.view_id, at, delta))
+    end)
   end
 
   defp do_perform(state, :fit_column, _) do
-    if state.col == 0,
-      do: State.error(state, "Highlight a column first (use → or TAB)"),
-      else:
-        State.change_db(
-          state,
-          Core.fit_column(state.db, state.view_id, state.col - 1, State.context(state))
-        )
+    with_column(state, fn at ->
+      db = Core.fit_column(state.db, state.view_id, at, State.context(state))
+      State.change_db(state, db)
+    end)
   end
 
   defp do_perform(state, {:toggle_view, option}, _),
@@ -364,4 +360,26 @@ defmodule Agenda.TUI.Update.Actions do
 
   defp section_index(state, nil), do: length(State.view(state).sections) - 1
   defp section_index(_state, row), do: row.sidx
+
+  defp sidx(nil), do: 0
+  defp sidx(row), do: row.sidx
+
+  @doc """
+  Removes the column at `at` from its section only or from all (R55); the
+  highlight moves to the column on its left.
+  """
+  def remove_column(state, at, from) do
+    %{
+      State.change_db(state, Core.remove_column(state.db, state.view_id, at, from))
+      | col: state.col - 1
+    }
+  end
+
+  # Does `fun` with the place of the highlighted column, or says to highlight one.
+  defp with_column(state, fun) do
+    case Layout.current_column(state) do
+      nil -> State.error(state, "Highlight a column first (use → or TAB)")
+      {_column, at} -> fun.(at)
+    end
+  end
 end

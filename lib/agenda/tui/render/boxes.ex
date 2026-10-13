@@ -101,6 +101,11 @@ defmodule Agenda.TUI.Render.Boxes do
 
   defp box_title(_state, %{type: :choice, kind: :view_type, name: name}), do: "New view: #{name}"
 
+  defp box_title(state, %{type: :choice, kind: :remove_column, at: {sidx, index}}) do
+    column = state |> State.view() |> Agenda.Core.View.columns(sidx) |> Enum.at(index)
+    "Remove column: #{state.db.categories[column.category_id].name}"
+  end
+
   defp box_title(_state, %{type: :schedule}), do: "Show Schedule"
   defp box_title(_state, %{type: :macros}), do: "Macros"
 
@@ -126,7 +131,7 @@ defmodule Agenda.TUI.Render.Boxes do
     do: "Category properties: " <> state.db.categories[id].name
 
   # one title per picker purpose
-  defp picker_title(_state, {:add_section, _}),
+  defp picker_title(_state, {:add_section, _, _}),
     do: "Section head"
 
   defp picker_title(_state, {:change_section, _}),

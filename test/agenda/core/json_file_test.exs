@@ -74,16 +74,16 @@ defmodule Agenda.Core.JSONFileTest do
         dates: Map.put(db.dates, {a, due}, {~D[2026-11-01], ~T[09:30:00], false})
     }
 
-    db = Core.add_column(db, view, cost, 1, 9)
+    db = Core.add_column(db, view, cost, {0, 1}, 9)
 
     db =
-      Core.set_column_format(db, view, 1, %NumberFormat{
+      Core.set_column_format(db, view, {0, 1}, %NumberFormat{
         symbol: "£",
         decimals: 0,
         calcs: [:count, :maximum]
       })
 
-    db = Core.set_column_date_format(db, view, 0, %DateFormat{order: :relative, show: :date})
+    db = Core.set_column_date_format(db, view, {0, 0}, %DateFormat{order: :relative, show: :date})
     {db, view2} = Core.add_view(db, "Found", [people, urgent])
 
     db =

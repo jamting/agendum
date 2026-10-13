@@ -59,7 +59,7 @@ defmodule Agenda.TUI.UserDateCategoriesTest do
 
   test "a date column of it takes a date and a time", %{state: state, due: due, view: view} do
     {:ok, db} = Core.make_date(state.db, due, @today)
-    db = Core.add_column(db, view, due, 1, 16)
+    db = Core.add_column(db, view, due, {0, 1}, 16)
     state = %{state | db: db} |> press([:down, :right, :right, "next friday 3pm", :enter])
 
     heat = Enum.find(Map.values(state.db.items), &(&1.text == "heat")).id

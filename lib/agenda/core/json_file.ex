@@ -303,19 +303,11 @@ defmodule Agenda.Core.JSONFile do
             category: &1.category_id,
             collapsed: &1.collapsed,
             filter: Enum.map(&1.filter, fn c -> criterion(c) end),
-            sort: &1.sort && Enum.map(&1.sort, fn k -> sort_key(k) end)
+            sort: &1.sort && Enum.map(&1.sort, fn k -> sort_key(k) end),
+            columns: Enum.map(&1.columns, fn c -> column(c) end)
           )
         ),
-      columns:
-        Enum.map(
-          v.columns,
-          &obj(
-            category: &1.category_id,
-            width: &1.width,
-            number: struct_obj(&1.number),
-            date: &1.date && struct_obj(&1.date)
-          )
-        ),
+      columns: Enum.map(v.columns, &column/1),
       hide_done: v.hide_done,
       hide_empty: v.hide_empty,
       hide_inherited: v.hide_inherited,
@@ -326,6 +318,16 @@ defmodule Agenda.Core.JSONFile do
       section_sort: Atom.to_string(v.section_sort),
       section_order: Atom.to_string(v.section_order),
       datebook: v.datebook && struct_obj(v.datebook)
+    )
+  end
+
+  defp column(%Column{} = c) do
+    obj(
+      category: c.category_id,
+      width: c.width,
+      linked: c.linked,
+      number: struct_obj(c.number),
+      date: c.date && struct_obj(c.date)
     )
   end
 
@@ -650,8 +652,10 @@ defmodule Agenda.Core.JSONFile do
     }
   end
 
+  # A standard view's columns at the view level are from before columns
+  # per section (R55): every section gets them.
   defp read_view(v, path) do
-    %View{
+    View.columns_into_sections(%View{
       id: req(v, "id", :int, path),
       name: req(v, "name", :string, path),
       sections: list(v, "sections", path <> ".sections", &read_section/2),
@@ -671,7 +675,7 @@ defmodule Agenda.Core.JSONFile do
           nil -> nil
           _ -> read_struct(v, "datebook", Datebook, path <> ".datebook")
         end
-    }
+    })
   end
 
   defp read_section(s, path) do
@@ -683,7 +687,8 @@ defmodule Agenda.Core.JSONFile do
         case s["sort"] do
           nil -> nil
           _ -> list(s, "sort", path <> ".sort", &read_sort_key/2)
-        end
+        end,
+      columns: list(s, "columns", path <> ".columns", &read_column/2)
     }
   end
 
@@ -691,6 +696,7 @@ defmodule Agenda.Core.JSONFile do
     %Column{
       category_id: req(c, "category", :int, path),
       width: opt(c, "width", :int, 12, path),
+      linked: opt(c, "linked", :bool, true, path),
       number: read_struct(c, "number", NumberFormat, path <> ".number"),
       date:
         case c["date"] do
@@ -917,7 +923,7 @@ defmodule Agenda.Core.JSONFile do
 
     ids =
       Enum.map(v.sections, & &1.category_id) ++
-        Enum.map(v.columns, & &1.category_id) ++
+        Enum.map(v.columns ++ Enum.flat_map(v.sections, & &1.columns), & &1.category_id) ++
         Enum.map(v.filter ++ Enum.flat_map(v.sections, & &1.filter), &elem(&1, 0)) ++ datebook
 
     matched =

@@ -6,7 +6,8 @@ defmodule Agenda.TUI.Layout do
   Each row occupies one or more screen *lines* (item text wraps, and
   sections after the first are preceded by a blank line). The last row of
   a section also carries the section's calculation lines (`calcs`, R29),
-  drawn below it.
+  drawn below it. Every row carries its section's `columns` (R55): the item
+  text fills the width they leave, so it differs from section to section.
   """
 
   alias Agenda.Core.ViewModel
@@ -16,24 +17,21 @@ defmodule Agenda.TUI.Layout do
           required(:kind) => :section | :item,
           required(:sidx) => non_neg_integer,
           required(:key) => State.cursor_key(),
+          required(:columns) => [Agenda.Core.View.Column.t()],
           optional(atom) => term
         }
 
   @doc "All cursor rows of the current view."
   @spec rows(State.t()) :: [row]
   def rows(%State{} = state) do
-    view = State.view(state)
-
     state.db
-    |> ViewModel.build(view, State.context(state))
+    |> ViewModel.build(State.view(state), State.context(state))
     |> Enum.with_index()
-    |> Enum.flat_map(fn {section, sidx} ->
-      # with hide_empty some sections are skipped; recover the real index
-      # (a datebook view's sections are its slots, R47: not stored)
-      sidx =
-        if section.slot,
-          do: sidx,
-          else: Enum.find_index(view.sections, &(&1.category_id == section.category.id)) || sidx
+    |> Enum.flat_map(fn {section, shown} ->
+      # the stored section's index (sorting and hide_empty may show it
+      # elsewhere); a datebook view's sections are its slots (R47), not
+      # stored, so they go by where they are shown
+      sidx = section.index || shown
 
       head = %{
         kind: :section,
@@ -42,7 +40,8 @@ defmodule Agenda.TUI.Layout do
         category: section.category,
         collapsed: section.collapsed,
         count: length(section.rows),
-        slot: section.slot
+        slot: section.slot,
+        columns: section.columns
       }
 
       items =
@@ -58,7 +57,8 @@ defmodule Agenda.TUI.Layout do
                 cells: r.cells,
                 inherited: r.inherited,
                 category: section.category,
-                slot: section.slot
+                slot: section.slot,
+                columns: section.columns
               }
             end)
 
@@ -74,26 +74,33 @@ defmodule Agenda.TUI.Layout do
   defp attach_calcs(calcs, rows, false),
     do: List.update_at(rows, -1, &Map.put(&1, :calcs, calcs))
 
-  @doc "Width available for item text, given the view's columns."
-  @spec text_width(State.t()) :: pos_integer
-  def text_width(%State{width: w} = state) do
-    columns = State.view(state).columns |> Enum.map(&(&1.width + 1)) |> Enum.sum()
-    max(w - 3 - columns, 10)
+  @doc "Width available for item text in a section with these columns."
+  @spec text_width(State.t(), [Agenda.Core.View.Column.t()]) :: pos_integer
+  def text_width(%State{width: w}, columns) do
+    used = columns |> Enum.map(&(&1.width + 1)) |> Enum.sum()
+    max(w - 3 - used, 10)
   end
 
   @doc "How many screen lines each row takes (in order)."
-  @spec heights([row], pos_integer) :: [pos_integer]
-  def heights(rows, text_width) do
+  @spec heights([row], State.t()) :: [pos_integer]
+  def heights(rows, %State{} = state) do
     rows
     |> Enum.with_index()
     |> Enum.map(fn {row, index} ->
       own =
         case row do
-          %{kind: :section} when index == 0 -> 1
+          %{kind: :section} when index == 0 ->
+            1
+
           # a datebook slot is a line across, with no blank line above (R47)
-          %{kind: :section, slot: %{}} -> 1
-          %{kind: :section} -> 2
-          %{kind: :item, item: item} -> length(Draw.wrap(item.text, text_width))
+          %{kind: :section, slot: %{}} ->
+            1
+
+          %{kind: :section} ->
+            2
+
+          %{kind: :item, item: item} ->
+            length(Draw.wrap(item.text, text_width(state, row.columns)))
         end
 
       own + length(Map.get(row, :calcs, []))
@@ -115,15 +122,15 @@ defmodule Agenda.TUI.Layout do
         state.cursor |> min(count - 1) |> max(0)
 
     row = Enum.at(rows, index)
-    ncols = length(State.view(state).columns)
-    col = if row && row.kind == :item, do: min(state.col, ncols), else: 0
+    # the column cursor stays within the section's own columns (R55)
+    col = if row && row.kind == :item, do: min(state.col, length(row.columns)), else: 0
 
     %{state | cursor: index, cursor_key: row && row.key, col: col}
     |> scroll_to_cursor(rows)
   end
 
   defp scroll_to_cursor(state, rows) do
-    heights = heights(rows, text_width(state))
+    heights = heights(rows, state)
     start = heights |> Enum.take(state.cursor) |> Enum.sum()
     height = Enum.at(heights, state.cursor, 1)
     body = State.body_height(state)
@@ -148,4 +155,20 @@ defmodule Agenda.TUI.Layout do
 
   @spec current_row(State.t()) :: row | nil
   def current_row(state), do: state |> rows() |> Enum.at(state.cursor)
+
+  @doc """
+  The highlighted column and where it is (`{section, column}`, R55), or
+  nil when the highlight is on the item text or a section head.
+  """
+  @spec current_column(State.t()) :: {Agenda.Core.View.Column.t(), Agenda.Core.View.at()} | nil
+  def current_column(%State{col: col} = state) when col > 0 do
+    # `with` runs its clauses in order; the first that does not match
+    # (no row, or no column there) is returned as it is, here nil
+    with %{sidx: sidx, columns: columns} <- current_row(state),
+         %Agenda.Core.View.Column{} = column <- Enum.at(columns, col - 1) do
+      {column, {sidx, col - 1}}
+    end
+  end
+
+  def current_column(_state), do: nil
 end

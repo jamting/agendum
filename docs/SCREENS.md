@@ -105,6 +105,8 @@ or handles it.
     - **Picker** `:picker` for the Date category, End category and Section.
     - **Prompt** `:prompt` for a time (Start at / End at of a day) or the base date.
   - **Choice** `:choice` (View ▸ Add, after the name): Standard or Datebook.
+  - **Choice** `:choice` (View ▸ Column ▸ Remove on a column linked into
+    other sections): All sections in view or Current section only (R55).
   - **Browsing** `:browse` (View ▸ Browse, ALT-B, in a datebook view or a
     view with a date filter): the view flips to other periods, or its date
     filter moves, until ENTER keeps it or ESC goes back (R47, R48).

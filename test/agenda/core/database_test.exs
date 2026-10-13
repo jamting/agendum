@@ -102,12 +102,12 @@ defmodule Agenda.Core.DatabaseTest do
       db =
         db
         |> Core.add_section(view.id, cat(db, "Doomed"), 1)
-        |> Core.add_column(view.id, cat(db, "Doomed"), 0)
+        |> Core.add_column(view.id, cat(db, "Doomed"), {0, 0})
 
       {:ok, db} = Database.delete_category(db, cat(db, "Doomed"))
       [view] = Database.views(db)
       assert length(view.sections) == 1
-      assert length(view.columns) == 1
+      assert length(Agenda.Core.View.columns(view, 0)) == 1
     end
   end
 

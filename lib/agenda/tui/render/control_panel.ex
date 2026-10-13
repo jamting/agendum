@@ -151,9 +151,9 @@ defmodule Agenda.TUI.Render.ControlPanel do
 
   # "#" while the highlight is in a numeric column (User's Guide 8-3).
   defp numeric_marker(%State{modes: [], col: col} = state) when col > 0 do
-    case Enum.at(State.view(state).columns, col - 1) do
+    case Agenda.TUI.Layout.current_column(state) do
       nil -> ""
-      column -> if Text.numeric?(state, column), do: "# ", else: ""
+      {column, _at} -> if Text.numeric?(state, column), do: "# ", else: ""
     end
   end
 

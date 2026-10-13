@@ -7,7 +7,8 @@ defmodule Agenda.Core.Facade.Views do
   Called through `Agenda.Core`.
   """
 
-  alias Agenda.Core.{Assign, Database, Datebook, NumberFormat, RangeFilter, View, ViewModel}
+  alias Agenda.Core.{Assign, Database, Datebook, NumberFormat, RangeFilter, View, ViewColumns}
+  alias Agenda.Core.ViewModel
   alias Agenda.Core.Facade.{Dates, Numbers}
   # `View.Column` and `View.Section` are nested modules; nesting is only a
   # naming convention, so they are aliased like any other module.
@@ -85,12 +86,18 @@ defmodule Agenda.Core.Facade.Views do
     end)
   end
 
-  @doc "Inserts a section headed by `cat_id` at `index` in the view."
-  @spec add_section(db, id, id, non_neg_integer) :: db
-  def add_section(db, view_id, cat_id, index) do
+  @doc """
+  Inserts a section headed by `cat_id` at `index` in the view. It gets the
+  linked columns of the section at `from` (R55), the one the user was in;
+  by default the one above where it goes, or the first.
+  """
+  @spec add_section(db, id, id, non_neg_integer, non_neg_integer | nil) :: db
+  def add_section(db, view_id, cat_id, index, from \\ nil) do
     # an anonymous function can pattern match its argument like a `def`
     Database.update_view(db, view_id, fn %View{} = v ->
-      %{v | sections: List.insert_at(v.sections, index, %Section{category_id: cat_id})}
+      columns = ViewColumns.for_new_section(v, from || max(index - 1, 0))
+      section = %Section{category_id: cat_id, columns: columns}
+      %{v | sections: List.insert_at(v.sections, index, section)}
     end)
   end
 
@@ -122,68 +129,70 @@ defmodule Agenda.Core.Facade.Views do
     end)
   end
 
-  @doc "Inserts a column headed by `cat_id` at `index` in the view."
-  @spec add_column(db, id, id, non_neg_integer, pos_integer) :: db
-  def add_column(db, view_id, cat_id, index, width \\ 12) do
-    Database.update_view(db, view_id, fn v ->
-      %{v | columns: List.insert_at(v.columns, index, %Column{category_id: cat_id, width: width})}
-    end)
+  @doc """
+  Inserts a column headed by `cat_id` at `at` (`{section, column}`): in
+  all sections, linked, or in that section only (`insert_in`, R55; see
+  `Agenda.Core.ViewColumns.add/4` for where the other sections get it).
+  """
+  @spec add_column(db, id, id, View.at(), pos_integer, :all | :section) :: db
+  def add_column(db, view_id, cat_id, at, width \\ 12, insert_in \\ :all) do
+    column = %Column{category_id: cat_id, width: width}
+    Database.update_view(db, view_id, &ViewColumns.add(&1, at, column, insert_in))
   end
 
-  @spec remove_column(db, id, non_neg_integer) :: db
-  def remove_column(db, view_id, index) do
-    Database.update_view(db, view_id, &%{&1 | columns: List.delete_at(&1.columns, index)})
-  end
+  @doc """
+  Removes the column at `at` from all sections, with the columns linked to
+  it (`:all`), or from its section only (`:section`, R55).
+  """
+  @spec remove_column(db, id, View.at(), :all | :section) :: db
+  def remove_column(db, view_id, at, from \\ :all),
+    do: Database.update_view(db, view_id, &ViewColumns.remove(&1, at, from))
 
   @doc "Sets how a numeric column shows its numbers and calculations (R29)."
-  @spec set_column_format(db, id, non_neg_integer, NumberFormat.t()) :: db
-  def set_column_format(db, view_id, index, %NumberFormat{} = format) do
-    Database.update_view(db, view_id, fn v ->
-      %{v | columns: List.update_at(v.columns, index, &%{&1 | number: format})}
-    end)
-  end
+  @spec set_column_format(db, id, View.at(), NumberFormat.t()) :: db
+  def set_column_format(db, view_id, at, %NumberFormat{} = format),
+    do: update_column(db, view_id, at, &%{&1 | number: format})
 
   @doc """
   Gives a date column its own display format, or `nil` to use the file's
   again (Global defaults, R41a).
   """
-  @spec set_column_date_format(db, id, non_neg_integer, Agenda.Core.DateFormat.t() | nil) :: db
-  def set_column_date_format(db, view_id, index, format) do
-    Database.update_view(db, view_id, fn v ->
-      %{v | columns: List.update_at(v.columns, index, &%{&1 | date: format})}
-    end)
-  end
+  @spec set_column_date_format(db, id, View.at(), Agenda.Core.DateFormat.t() | nil) :: db
+  def set_column_date_format(db, view_id, at, format),
+    do: update_column(db, view_id, at, &%{&1 | date: format})
 
-  @spec resize_column(db, id, non_neg_integer, integer) :: db
-  def resize_column(db, view_id, index, delta) do
-    Database.update_view(db, view_id, fn v ->
-      %{v | columns: List.update_at(v.columns, index, &%{&1 | width: max(3, &1.width + delta)})}
-    end)
-  end
+  @spec resize_column(db, id, View.at(), integer) :: db
+  def resize_column(db, view_id, at, delta),
+    do: update_column(db, view_id, at, &%{&1 | width: max(3, &1.width + delta)})
 
   @doc """
   Fits a column to its contents (R22a): its width becomes that of the
   widest of its head and the entries of the items the view shows now
   (collapsed sections left out), full names rather than short ones, and
-  its calculation lines; at least 3, at most #{@fit_room}. Done once: the width
+  its calculation lines; at least 3, at most #{@fit_room}. A linked column
+  fits the entries of every section it is in (R55). Done once: the width
   does not follow later changes.
   """
   # (`#{@fit_room}` above: a `@doc` is a normal string, so it can
   # interpolate a module attribute, evaluated at compile time.)
-  @spec fit_column(db, id, non_neg_integer, clock) :: db
-  def fit_column(db, view_id, index, clock) do
+  @spec fit_column(db, id, View.at(), clock) :: db
+  def fit_column(db, view_id, {sidx, index} = at, clock) do
     view = db.views[view_id]
-    column = Enum.at(view.columns, index)
+    column = view |> View.columns(sidx) |> Enum.at(index)
+    places = ViewColumns.linked(view, at)
     # as wide as anything could be, so every entry shows its full names
-    roomy = %{view | columns: List.update_at(view.columns, index, &%{&1 | width: @fit_room})}
+    roomy = ViewColumns.update(view, at, &%{&1 | width: @fit_room})
 
     entries =
       for section <- ViewModel.build(db, roomy, clock),
           not section.collapsed,
+          # which of this section's columns it is: a datebook slot has no
+          # index of its own and shares the view's columns
+          i <- column_indexes(section, places, index),
           # `& &1.cells` is `fn row -> row.cells end`; `elem(t, 1)` reads a
           # tuple's second element (tuples are zero-indexed)
           cells <- Enum.map(section.rows, & &1.cells) ++ Enum.map(section.calcs, &elem(&1, 1)),
-          do: cells |> Enum.at(index) |> String.trim()
+          do: cells |> Enum.at(i) |> String.trim()
 
     width =
       [db.categories[column.category_id].name | entries]
@@ -192,10 +201,17 @@ defmodule Agenda.Core.Facade.Views do
       |> max(3)
       |> min(@fit_room)
 
-    Database.update_view(db, view_id, fn v ->
-      %{v | columns: List.update_at(v.columns, index, &%{&1 | width: width})}
-    end)
+    update_column(db, view_id, at, &%{&1 | width: width})
   end
+
+  defp column_indexes(%{index: nil}, _places, index), do: [index]
+
+  defp column_indexes(%{index: sidx}, places, _index),
+    do: for({^sidx, i} <- places, do: i)
+
+  # A change to a column is made to the columns linked to it too (R55).
+  defp update_column(db, view_id, at, fun),
+    do: Database.update_view(db, view_id, &ViewColumns.update(&1, at, fun))
 
   # --- filters (R28) and sorting (R36) ---
 

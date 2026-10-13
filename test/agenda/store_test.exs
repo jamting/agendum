@@ -124,10 +124,7 @@ defmodule Agenda.StoreTest do
        %{tmp_dir: dir} do
     db = Agenda.Sample.build(~D[2026-10-08])
 
-    v7_views =
-      Map.new(db.views, fn {id, v} ->
-        {id, %{v | columns: Enum.map(v.columns, &Map.delete(&1, :number))}}
-      end)
+    v7_views = old_columns(db.views, &Map.delete(&1, :number))
 
     v7 = db |> Map.delete(:numbers) |> Map.put(:views, v7_views)
     path = Path.join(dir, "v7.agenda")
@@ -220,10 +217,7 @@ defmodule Agenda.StoreTest do
     db = Agenda.Sample.build(~D[2026-10-08])
     old_format = Map.drop(db.date_format, [:show, :am_pm, :time_separator])
 
-    v20_views =
-      Map.new(db.views, fn {id, v} ->
-        {id, %{v | columns: Enum.map(v.columns, &Map.delete(&1, :date))}}
-      end)
+    v20_views = old_columns(db.views, &Map.delete(&1, :date))
 
     v20 = %{db | date_format: old_format, views: v20_views}
     path = Path.join(dir, "v20.agenda")
@@ -231,6 +225,16 @@ defmodule Agenda.StoreTest do
 
     assert {:ok, loaded} = Store.load(path)
     assert loaded.date_format == %Agenda.Core.DateFormat{}
+    assert loaded == db
+  end
+
+  test "files in format version 24 get their columns in every section, linked",
+       %{tmp_dir: dir} do
+    db = Agenda.Sample.build(~D[2026-10-08])
+    path = Path.join(dir, "v24.agenda")
+    old = %{db | views: old_columns(db.views, & &1)}
+    File.write!(path, :erlang.term_to_binary({:agenda, 24, old}))
+    assert {:ok, loaded} = Store.load(path)
     assert loaded == db
   end
 
@@ -257,7 +261,7 @@ defmodule Agenda.StoreTest do
     db = Agenda.Sample.build(~D[2026-10-08])
     view = hd(db.view_order)
     format = %Agenda.Core.DateFormat{order: :relative, show: :date}
-    db = Agenda.Core.set_column_date_format(db, view, 0, format)
+    db = Agenda.Core.set_column_date_format(db, view, {0, 0}, format)
     path = Path.join(dir, "col.agenda")
     :ok = Store.save(db, path)
     assert {:ok, ^db} = Store.load(path)
@@ -325,4 +329,20 @@ defmodule Agenda.StoreTest do
       db
       | categories: Map.new(db.categories, fn {id, c} -> {id, Map.delete(c, :date_rule)} end)
     }
+
+  # Views as files before format 25 stored them (R55): the columns, every
+  # section's, in the view, without `linked`, and changed by `fun` for
+  # older formats still.
+  defp old_columns(views, fun) do
+    Map.new(views, fn {id, v} ->
+      columns =
+        v.sections
+        |> hd()
+        |> Map.fetch!(:columns)
+        |> Enum.map(&(&1 |> Map.delete(:linked) |> fun.()))
+
+      sections = Enum.map(v.sections, &Map.delete(&1, :columns))
+      {id, %{v | columns: columns, sections: sections}}
+    end)
+  end
 end

@@ -73,7 +73,7 @@ defmodule Agenda.Core.NumbersTest do
     {:ok, db} = Core.make_numeric(db, amount)
     view_id = hd(db.view_order)
     db = Core.set_section_category(db, view_id, 0, expenses)
-    db = Core.add_column(db, view_id, amount, 1)
+    db = Core.add_column(db, view_id, amount, {0, 1})
 
     {db, ids} =
       Enum.reduce(["heat", "rent", "phone"], {db, []}, fn text, {db, ids} ->
@@ -193,7 +193,7 @@ defmodule Agenda.Core.NumbersTest do
 
     test "each column chooses its calculations", %{db: db, view: view} do
       format = %NumberFormat{calcs: [:count, :total, :average, :minimum, :maximum]}
-      db = Core.set_column_format(db, view, 1, format)
+      db = Core.set_column_format(db, view, {0, 1}, format)
       [section] = ViewModel.build(db, db.views[view])
 
       assert section.calcs == [

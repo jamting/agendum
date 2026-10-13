@@ -36,7 +36,8 @@ defmodule Agenda.TUI.Update.ViewKeys do
   def view_key(state, key) do
     row = Layout.current_row(state)
     rows = Layout.rows(state)
-    ncols = length(State.view(state).columns)
+    # the section's own columns (R55)
+    ncols = if row, do: length(row.columns), else: 0
 
     case key do
       :up -> Layout.move_to(state, state.cursor - 1)
@@ -153,7 +154,7 @@ defmodule Agenda.TUI.Update.ViewKeys do
   end
 
   defp column_target(state, row, how) do
-    column = Enum.at(State.view(state).columns, state.col - 1)
+    {column, _at} = Layout.current_column(state)
     {:column_entry, row.item.id, column.category_id, how}
   end
 

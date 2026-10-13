@@ -19,13 +19,13 @@ defmodule Agenda.TUI.DateColumnsTest do
     {:ok, db, people} = Core.add_category(db, db.main_id, "People")
     view = hd(db.view_order)
     db = Core.set_section_category(db, view, 0, calls)
-    db = Core.add_column(db, view, people, 1)
+    db = Core.add_column(db, view, people, {0, 1})
     {db, _} = Core.add_item(db, "Call Anna tomorrow at 2pm", @today, section: calls)
     state = db |> start() |> press([:down, :right])
     %{state: state, view: view}
   end
 
-  defp column(state, view), do: hd(state.db.views[view].columns)
+  defp column(state, view), do: hd(Agenda.Core.View.columns(state.db.views[view], 0))
 
   test "opens a box of the date settings, using the global defaults", %{state: state} do
     state = press(state, [{:f, 10}, "v", "c", "p"])

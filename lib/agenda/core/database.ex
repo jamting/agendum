@@ -236,7 +236,8 @@ defmodule Agenda.Core.Database do
                    &%{
                      &1
                      | filter: drop_filters(&1.filter, doomed_set),
-                       sort: drop_keys(&1.sort, doomed_set)
+                       sort: drop_keys(&1.sort, doomed_set),
+                       columns: Enum.reject(&1.columns, fn c -> c.category_id in doomed_set end)
                    }
                  ),
                columns: Enum.reject(v.columns, &(&1.category_id in doomed_set)),
@@ -592,12 +593,21 @@ defmodule Agenda.Core.Database do
     }
   end
 
-  @doc "Inserts a view. Options: `:sections` (category ids), `:columns` (`Column` structs)."
+  @doc """
+  Inserts a view. Options: `:sections` (category ids), `:columns` (`Column`
+  structs, which every section gets, linked: R55).
+  """
   @spec insert_view(t, String.t(), keyword) :: {t, id}
   def insert_view(%__MODULE__{} = db, name, opts \\ []) do
     {db, id} = take_id(db)
-    sections = opts |> Keyword.get(:sections, []) |> Enum.map(&%Section{category_id: &1})
-    view = %View{id: id, name: name, sections: sections, columns: Keyword.get(opts, :columns, [])}
+    columns = opts |> Keyword.get(:columns, []) |> Enum.map(&%{&1 | linked: true})
+
+    sections =
+      opts
+      |> Keyword.get(:sections, [])
+      |> Enum.map(&%Section{category_id: &1, columns: columns})
+
+    view = %View{id: id, name: name, sections: sections}
     {%{db | views: Map.put(db.views, id, view), view_order: db.view_order ++ [id]}, id}
   end
 

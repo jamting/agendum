@@ -124,7 +124,7 @@ defmodule Agenda.Core.DateDisplayOptionsTest do
       {db, id} = Core.add_item(db, "Lunch tomorrow at 1pm", @today)
       view = db.views |> Map.values() |> hd()
       db = Core.assign(db, id, hd(view.sections).category_id)
-      db = Core.add_column(db, view.id, db.special.when, 0)
+      db = Core.add_column(db, view.id, db.special.when, {0, 0})
       %{db: db, view: view.id, item: id}
     end
 
@@ -141,18 +141,18 @@ defmodule Agenda.Core.DateDisplayOptionsTest do
     end
 
     test "its own format overrides the global one", %{db: db, view: view} do
-      db = Core.set_column_date_format(db, view, 0, fmt(order: :relative, show: :date))
+      db = Core.set_column_date_format(db, view, {0, 0}, fmt(order: :relative, show: :date))
       assert cells(db, view, @today) == "Tomorrow"
       assert cells(db, view, ~D[1990-12-14]) == "Today"
       assert cells(db, view, ~D[1991-01-14]) == "1990-12-14"
 
-      db = Core.set_column_date_format(db, view, 0, nil)
+      db = Core.set_column_date_format(db, view, {0, 0}, nil)
       assert cells(db, view, @today) == "1990-12-14 13:00"
     end
 
     test "falls back on the global format outside the relative week", %{db: db, view: view} do
       db = Core.set_date_format(db, fmt(order: :ddmmyyyy, separator: "/"))
-      db = Core.set_column_date_format(db, view, 0, fmt(order: :relative, show: :date))
+      db = Core.set_column_date_format(db, view, {0, 0}, fmt(order: :relative, show: :date))
       assert cells(db, view, ~D[1991-01-14]) == "14/12/1990"
     end
   end

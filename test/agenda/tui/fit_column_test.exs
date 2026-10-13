@@ -11,7 +11,7 @@ defmodule Agenda.TUI.FitColumnTest do
 
   defp contact_width(state) do
     [view] = Database.views(state.db)
-    Enum.at(view.columns, 2).width
+    view |> Agenda.Core.View.columns(0) |> Enum.at(2) |> Map.fetch!(:width)
   end
 
   test "fits the highlighted column, as one undo step", %{state: state} do

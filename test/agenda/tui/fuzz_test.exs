@@ -90,7 +90,7 @@ defmodule Agenda.TUI.FuzzTest do
     db = sample(false)
     {:ok, db, amount} = Agenda.Core.add_category(db, db.main_id, "Amount")
     {:ok, db} = Agenda.Core.make_numeric(db, amount)
-    db = Agenda.Core.add_column(db, hd(db.view_order), amount, 0)
+    db = Agenda.Core.add_column(db, hd(db.view_order), amount, {0, 0})
     {:ok, db} = Agenda.Core.set_number(db, hd(db.item_order), amount, 12.5)
     db
   end

@@ -23,7 +23,8 @@ erDiagram
     CATEGORY }o--o{ CATEGORY : "also_assign"
     CATEGORY }o--o{ CATEGORY : "excludes (both ways)"
     VIEW ||--o{ SECTION : "sections (ordered)"
-    VIEW ||--o{ COLUMN : "columns (ordered)"
+    SECTION ||--o{ COLUMN : "columns (ordered, R55)"
+    VIEW ||--o{ COLUMN : "a datebook's columns"
     SECTION }o--|| CATEGORY : "headed by"
     COLUMN }o--|| CATEGORY : "headed by"
 
@@ -102,12 +103,14 @@ erDiagram
         bool collapsed
         list filter "on top of the view filter"
         list sort "nil = as the view"
+        list columns "Column list (R55)"
     }
     COLUMN {
         int category_id FK
         int width
         NumberFormat number "numeric columns (R29)"
         DateFormat date "date columns; nil = the file's (R41a)"
+        bool linked "one column with the linked ones of its head (R55)"
     }
     LINKS {
         map by_left "item id => set of category ids"
@@ -219,7 +222,7 @@ classDiagram
         +id : id
         +name : String
         +sections : [Section]
-        +columns : [Column]
+        +columns : [Column], a datebook's
         +hide_done : boolean
         +hide_empty : boolean
         +hide_inherited : boolean
@@ -246,12 +249,14 @@ classDiagram
         +collapsed : boolean
         +filter : [id and kind]
         +sort : [SortKey] or nil
+        +columns : [Column]
     }
     class Column {
         +category_id : id
         +width : pos_integer
         +number : NumberFormat
         +date : DateFormat or nil
+        +linked : boolean
     }
     class NumberFormat {
         +symbol : nil, $, %, ¢, £, ¥
@@ -292,6 +297,7 @@ classDiagram
     Database *-- Calendar
     Database *-- Macro
     View *-- Section
+    Section *-- Column
     View *-- Column
     View *-- Datebook
     Column *-- NumberFormat
@@ -327,7 +333,7 @@ Maps are unordered, so order is stored separately:
 | Items              | `db.item_order`                 | Global order of items. Sections show their items in this order, and a new item is inserted after the highlighted one. |
 | Sibling categories | `category.children`             | Order in the hierarchy (category manager, column choices).                                                            |
 | Views              | `db.view_order`                 | Order in the view manager. The first view opens on start.                                                             |
-| Sections, columns  | `view.sections`, `view.columns` | Top-to-bottom, left-to-right.                                                                                         |
+| Sections, columns  | `view.sections`, `section.columns` | Top-to-bottom, left-to-right; a datebook view's columns are `view.columns` (R55).                                  |
 
 ## Items, categories and links
 
@@ -443,7 +449,7 @@ The same database as an Elixir term, abbreviated:
     12 => %Category{id: 12, name: "Anna Lasky", short_name: "Anna", parent_id: 11},
     ...
   },
-  views: %{6 => %View{id: 6, name: "Activities", sections: [%Section{category_id: 5}], columns: [...]}},
+  views: %{6 => %View{id: 6, name: "Activities", sections: [%Section{category_id: 5, columns: [...]}]}},
   view_order: [6],
   links: %Links{
     by_left: %{16 => MapSet.new([5, 9]), 17 => MapSet.new([5, 8, 12]), ...},
@@ -515,7 +521,7 @@ tests in `database_test.exs` and `links_test.exs`):
 | Category chains: first/last child, sibling pointers (FIG. 1) | `parent_id` + ordered `children` list                                     |
 | Genealogy object (cached ancestors)                          | `Database.ancestors/2`, computed on demand                                |
 | Subsumption / inheritance (FIG. 4)                           | `Database.member?/3`, computed on demand                                  |
-| View linked to categories (FIG. 5)                           | `View.sections` / `View.columns` holding category ids                     |
+| View linked to categories (FIG. 5)                           | `View.sections` / `Section.columns` holding category ids                     |
 | Category-to-category links (FIG. 6)                          | `Category.also_assign`                                                    |
 | Negative links (FIG. 6, crossed squares)                     | `Category.exclusive` (for siblings) and `Category.excludes` (any two, R9) |
 | Free object / free link lists                                | not needed: immutable maps, ids never reused                              |

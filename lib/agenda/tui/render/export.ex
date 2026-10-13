@@ -10,11 +10,12 @@ defmodule Agenda.TUI.Render.Export do
   @spec text(State.t()) :: String.t()
   def text(state) do
     view = State.view(state)
-    heads = Enum.map(view.columns, &state.db.categories[&1.category_id].name)
 
     state.db
     |> Agenda.Core.ViewModel.build(view, State.context(state))
     |> Enum.map_join("\n\n", fn section ->
+      # each section has its own columns (R55)
+      heads = Enum.map(section.columns, &state.db.categories[&1.category_id].name)
       header = Enum.join([section.category.name | heads], " | ")
 
       items =
