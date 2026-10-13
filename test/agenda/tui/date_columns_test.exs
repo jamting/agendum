@@ -9,6 +9,10 @@ defmodule Agenda.TUI.DateColumnsTest do
   alias Agenda.Core
   alias Agenda.TUI.{History, State}
 
+  # Column Properties of a date column: Column head, Category type, Width,
+  # Link, then Settings and Display date and/or time (R55, R41a)
+  @to_show [{:f, 10}, "v", "c", "p"] ++ List.duplicate(:down, 5)
+
   @today ~D[2026-10-08]
 
   # A Calls section with the columns When and People; the cursor starts on
@@ -29,21 +33,24 @@ defmodule Agenda.TUI.DateColumnsTest do
 
   test "opens a box of the date settings, using the global defaults", %{state: state} do
     state = press(state, [{:f, 10}, "v", "c", "p"])
-    assert %{type: :date_column_props} = State.mode(state)
+    assert %{type: :column_props} = State.mode(state)
     text = screen(state)
-    assert text =~ "Date column: When"
-    assert text =~ ~r/Settings +: Global defaults/
-    assert text =~ ~r/Display date\/time +: Date time/
-    assert text =~ ~r/Date format +: YYYYMMDD/
-    assert text =~ "Sample: 1990-11-13 15:25"
+    assert text =~ ~r/Column head: +When +Category type: +Date/
+    assert text =~ "Date Column Properties"
+    assert text =~ ~r/Settings: +Global defaults/
+    assert text =~ ~r/Display date and\/or time: +Date time/
+    assert text =~ ~r/Date format: +YYYYMMDD/
+    assert text =~ "Formatted Sample"
+    assert text =~ "1990-11-13 15:25"
   end
 
   test "changing a setting makes them the column's own", %{state: state, view: view} do
-    # Display date/time -> Date only, then Date format back to Relative
-    state = press(state, [{:f, 10}, "v", "c", "p", :down, " ", :down, :down, :left, :left])
+    # Display date/time -> Date only, then (past Clock, day of week and
+    # am/pm) Date format back to Relative
+    state = press(state, @to_show ++ [" ", :down, :down, :down, :down, :left, :left])
     assert column(state, view).date.show == :date
     assert column(state, view).date.order == :relative
-    assert screen(state) =~ ~r/Settings +: Local settings/
+    assert screen(state) =~ ~r/Settings: +Local settings/
 
     state = press(state, :esc)
     assert state.modes == []
@@ -52,14 +59,14 @@ defmodule Agenda.TUI.DateColumnsTest do
   end
 
   test "Settings goes back to the global defaults", %{state: state, view: view} do
-    state = press(state, [{:f, 10}, "v", "c", "p", :down, " ", :up, " "])
+    state = press(state, @to_show ++ [" ", :up, " "])
     assert column(state, view).date == nil
-    assert screen(state) =~ ~r/Settings +: Global defaults/
+    assert screen(state) =~ ~r/Settings: +Global defaults/
     assert screen(press(state, :esc)) =~ "2026-10-09 14:00"
   end
 
   test "each change is one undo step", %{state: state, view: view} do
-    state = press(state, [{:f, 10}, "v", "c", "p", :down, " ", " ", :esc])
+    state = press(state, @to_show ++ [" ", " ", :esc])
     assert column(state, view).date.show == :time_date
     state = History.undo(state)
     assert column(state, view).date.show == :date
@@ -72,8 +79,9 @@ defmodule Agenda.TUI.DateColumnsTest do
     assert screen(state) =~ "26-10-09 14:00"
   end
 
-  test "Column Properties on a standard column opens its own box (R55)", %{state: state} do
+  test "Column Properties on a standard column has no date part (R55)", %{state: state} do
     state = press(state, [:right, {:f, 10}, "v", "c", "p"])
-    assert %{type: :standard_column_props} = State.mode(state)
+    assert %{type: :column_props} = State.mode(state)
+    refute screen(state) =~ "Date Column Properties"
   end
 end

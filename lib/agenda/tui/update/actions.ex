@@ -10,7 +10,7 @@ defmodule Agenda.TUI.Update.Actions do
   alias Agenda.TUI.{
     AlarmList,
     CategoryScreens,
-    ColumnProperties,
+    ColumnBox,
     Draw,
     FileProperties,
     History,
@@ -148,19 +148,10 @@ defmodule Agenda.TUI.Update.Actions do
   defp do_perform(state, :execute, _), do: Agenda.TUI.ExecuteBox.open(state)
   defp do_perform(state, :questions, _), do: Agenda.TUI.QuestionsBox.open(state)
 
+  # one box for every column, its lower part by the column's kind (R55)
   defp do_perform(state, :column_props, %{kind: :item}) when state.col > 0 do
-    {column, at} = Layout.current_column(state)
-
-    cond do
-      state.db.categories[column.category_id].kind == :numeric ->
-        ColumnProperties.open(state, at)
-
-      Database.date_category?(state.db, column.category_id) ->
-        Agenda.TUI.DateColumnBox.open(state, at)
-
-      true ->
-        Agenda.TUI.ColumnBox.open(state, at)
-    end
+    {_column, at} = Layout.current_column(state)
+    ColumnBox.open(state, at)
   end
 
   defp do_perform(state, :column_props, _),

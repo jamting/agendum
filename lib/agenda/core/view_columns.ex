@@ -131,6 +131,26 @@ defmodule Agenda.Core.ViewColumns do
     end
   end
 
+  @doc """
+  Column Properties ▸ Column head (R55): the column at `at`, and the
+  columns linked to it, show `cat_id` instead. If the view has linked
+  columns of that head already, they join them and take their settings,
+  so they all stay one column.
+  """
+  @spec set_head(View.t(), View.at(), Agenda.Core.Category.id()) :: View.t()
+  def set_head(%View{} = view, {sidx, index} = at, cat_id) do
+    places = linked(view, at)
+    # every place's column gets the new head; `&2` is the accumulator
+    view = Enum.reduce(places, view, &update_one(&2, &1, fn c -> %{c | category_id: cat_id} end))
+    column = view |> View.columns(sidx) |> Enum.at(index)
+
+    case like_linked(view, column) do
+      _ when not column.linked -> view
+      ^column -> view
+      joined -> Enum.reduce(places, view, &update_one(&2, &1, fn _ -> joined end))
+    end
+  end
+
   @doc "The columns a section added next to the one at `sidx` starts with: its linked ones."
   @spec for_new_section(View.t(), non_neg_integer) :: [Column.t()]
   def for_new_section(%View{} = view, sidx),

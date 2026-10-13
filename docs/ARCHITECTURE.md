@@ -83,10 +83,9 @@ in [`SCREENS.md`](SCREENS.md).
 | `Agenda.TUI.ExecuteBox`                       | ✔     | Utilities Execute: the Execute box, ALT-X and ALT-E (R15e).                                                                      |
 | `Agenda.TUI.ActionBox`                        | ✔     | The Date Action / Numeric Action box (R15b).                                                                                     |
 | `Agenda.TUI.RangeFilterBox`                   | ✔     | The Date Filter / Numeric Filter box (R28a).                                                                                     |
-| `Agenda.TUI.ColumnProperties`                 | ✔     | The Numeric Column Properties box: number format and calculations (R29).                                                         |
+| `Agenda.TUI.ColumnBox`                        | ✔     | The Column Properties box, one for every column: head, width, link (R55); a numeric column's format (R29), a date column's (R41a). |
 | `Agenda.TUI.FileProperties`                   | ✔     | The File Properties box: the date display format, with a sample (R41).                                                           |
-| `Agenda.TUI.DateFormatRows`                   | ✔     | The date display settings as box rows, shared by File and Date Column Properties (R41a).                                         |
-| `Agenda.TUI.DateColumnBox`                    | ✔     | The Date Column Properties box: a date column's own format or the global defaults (R41a).                                        |
+| `Agenda.TUI.DateFormatRows`                   | ✔     | The date display settings as box rows, shared by File and Column Properties (R41a).                                              |
 | `Agenda.TUI.InputFormatBox`                   | ✔     | The Input Format box: the person's number order, separator and clock, saved as preferences (R41b).                               |
 | `Agenda.TUI.CustomizeBox`                     | ✔     | File ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
 | `Agenda.TUI.CalendarBox`                      | ✔     | The pop-up calendar: F3 in a date column, ALT-C anywhere (R46).                                                                  |

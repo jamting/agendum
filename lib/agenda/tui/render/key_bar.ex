@@ -321,8 +321,6 @@ defmodule Agenda.TUI.Render.KeyBar do
   defp mode_keys(%{type: type})
        when type in [
               :column_props,
-              :date_column_props,
-              :standard_column_props,
               :category_match,
               :auto_assign,
               :date_rule,

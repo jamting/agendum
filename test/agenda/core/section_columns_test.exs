@@ -176,6 +176,29 @@ defmodule Agenda.Core.SectionColumnsTest do
     end
   end
 
+  describe "Column head (Column Properties)" do
+    test "another category: in every section the column is linked into", %{db: db, view_id: v} do
+      db = Core.set_column_head(db, v, {1, 0}, cat(db, "People"))
+      assert heads(db, v) == [["People"], ["People"], ["People"]]
+    end
+
+    test "an unlinked column changes alone", %{db: db, view_id: v} do
+      db = Core.set_column_linked(db, v, {1, 0}, false)
+      db = Core.set_column_head(db, v, {1, 0}, cat(db, "People"))
+      assert heads(db, v) == [["When"], ["People"], ["When"]]
+    end
+
+    test "joining linked columns of the new head takes their settings", %{db: db, view_id: v} do
+      # People, 9 wide, linked in every section; When (16) becomes People
+      db = Core.add_column(db, v, cat(db, "People"), {0, 1}, 9, :all)
+      db = Core.set_column_head(db, v, {1, 0}, cat(db, "People"))
+      assert Enum.map(0..2, &column(db, v, {&1, 0}).width) == [9, 9, 9]
+      db = Core.resize_column(db, v, {0, 1}, 1)
+      widths = for s <- 0..2, i <- 0..1, do: column(db, v, {s, i}).width
+      assert widths == [10, 10, 10, 10, 10, 10]
+    end
+  end
+
   describe "removing a column" do
     test "from the current section only", %{db: db, view_id: v} do
       db = Core.remove_column(db, v, {1, 0}, :section)

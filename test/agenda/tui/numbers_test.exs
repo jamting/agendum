@@ -84,12 +84,15 @@ defmodule Agenda.TUI.NumbersTest do
        %{state: state, view: view} do
     state = press(state, ["1234.5", :enter, {:f, 10}, "v", "c", "p"])
     text = screen(state)
-    assert text =~ "Numeric column: Amount"
-    assert text =~ ~r/Decimal places\s+: 2/
-    assert text =~ "Sample: 1234.50 -1234.50"
+    assert text =~ ~r/Column head: +Amount +Category type: +Numeric/
+    assert text =~ ~r/Decimal places: +2/
+    assert text =~ "Formatted Samples"
+    assert text =~ ~r/1234.50 +-1234.50/
 
-    # Symbol None -> $; Thousands separator Yes; Average Yes
-    state = press(state, [" ", :down, :down, " ", :down, :down, :down, :down, " ", :esc])
+    # in reading order after the four rows every column has: Symbol None ->
+    # $; (Count, Decimal places, Total) Thousands separator Yes; Average Yes
+    downs = &List.duplicate(:down, &1)
+    state = press(state, downs.(4) ++ [" "] ++ downs.(4) ++ [" ", :down, " ", :esc])
 
     assert hd(tl(Agenda.Core.View.columns(state.db.views[view], 0))).number ==
              %NumberFormat{symbol: "$", thousands: true, calcs: [:total, :average]}
@@ -100,13 +103,15 @@ defmodule Agenda.TUI.NumbersTest do
   end
 
   test "decimal places go up and down with → and ←", %{state: state, view: view} do
-    state = press(state, [{:f, 10}, "v", "c", "p", :down, :right, :right, :left, :esc])
+    # Decimal places: after the four common rows, Symbol and Count
+    keys = [{:f, 10}, "v", "c", "p"] ++ List.duplicate(:down, 6) ++ [:right, :right, :left, :esc]
+    state = press(state, keys)
     assert hd(tl(Agenda.Core.View.columns(state.db.views[view], 0))).number.decimals == 3
   end
 
   test "Column Properties on the When column opens the date settings", %{state: state} do
     state = press(state, [:left, {:f, 10}, "v", "c", "p"])
-    assert screen(state) =~ "Date column: When"
+    assert screen(state) =~ "Date Column Properties"
   end
 
   test "Item Properties lists the number; ENTER changes it", %{state: state, amount: amount} do

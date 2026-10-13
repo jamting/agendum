@@ -96,6 +96,11 @@ defmodule Agenda.TUI.CategoryScreens.Picker do
       | col: index + 1
     }
 
+  # Column Properties ▸ Column head (R55): back in the box, which shows the
+  # column's new head (and its kind's settings)
+  def pick(state, {:column_head, at}, id),
+    do: State.change_db(state, Core.set_column_head(state.db, state.view_id, at, id))
+
   def pick(state, {:filter, scope}, id) do
     if Agenda.Core.RangeFilter.range_category?(state.db, id) do
       Agenda.TUI.RangeFilterBox.open(state, scope, id)

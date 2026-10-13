@@ -1,8 +1,9 @@
 defmodule Agenda.TUI.ColumnBoxTest do
   @moduledoc """
   Column Properties of a standard column (View ▸ Column ▸ Properties;
-  User's Guide 3-18 to 3-19, screenshot 127): its head, width, category
-  type, and Link with other sections (R55).
+  User's Guide 3-18 to 3-19, screenshots 127, 142, 144): its head, width,
+  category type, and Link with other sections (R55), the part every
+  column's box has.
   """
   use ExUnit.Case, async: true
 
@@ -30,9 +31,9 @@ defmodule Agenda.TUI.ColumnBoxTest do
     do: state.db.views[view_id] |> View.columns(sidx) |> hd()
 
   test "shows the column's settings, laid out as in Agenda", %{state: state} do
-    assert %{type: :standard_column_props} = State.mode(state)
+    assert %{type: :column_props} = State.mode(state)
     text = screen(state)
-    assert text =~ "Column Properties: People"
+    assert text =~ "Column Properties"
     assert text =~ ~r/Column head: +People +Category type: +Standard/
     assert text =~ ~r/Width: +12 +Link with other sections: +Yes/
   end
@@ -55,6 +56,20 @@ defmodule Agenda.TUI.ColumnBoxTest do
     state = History.undo(state)
     assert people(state, v, 0).width == 12
     assert History.undo(state) |> people(v, 0) |> Map.fetch!(:linked)
+  end
+
+  test "Column head: F3 picks another category, in every linked section; the box shows its part",
+       %{state: state, view_id: v} do
+    state = press(state, {:f, 3})
+    assert screen(state) =~ "Column Head"
+    state = press(state, ["When", :enter])
+    assert %{type: :column_props} = State.mode(state)
+    assert people(state, v, 0).category_id == state.db.special.when
+    assert people(state, v, 1).category_id == state.db.special.when
+    assert screen(state) =~ "Date Column Properties"
+
+    assert History.undo(state) |> people(v, 0) |> Map.fetch!(:category_id) ==
+             cat(state.db, "People")
   end
 
   test "ESC and ENTER close it", %{state: state} do

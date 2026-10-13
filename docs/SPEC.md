@@ -482,14 +482,22 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     the linked columns of its head, taking their width and formats; when
     there are none, to the columns of its head with the same width and
     formats (Agenda: "the same column head, category type, format, and
-    width"). Yes on a linked column changes nothing. The box of a standard
-    column shows its head, width (→ ← by one), category type and link,
-    laid out as in Agenda.
+    width"). Yes on a linked column changes nothing.
+  - Column Properties ▸ Column head (screenshot 144): F3 (or SPACE) picks
+    another category from the whole hierarchy; the column and the columns
+    linked to it show it instead. A linked column moved to a head that has
+    linked columns already joins them and takes their settings; an
+    unlinked one changes alone.
+  - Column Properties is one box for every column, as in Agenda
+    (screenshot 142): Column head, Category type (shown), Width (→ ← by
+    one) and Link with other sections at the top; below a rule, a numeric
+    column's Numeric Column Properties (R29) or a date column's Date
+    Column Properties (R41a), with formatted samples.
   - Not done yet: the Column Add box's Insert in, which overrides the
-    file's setting for one column (the core already takes it); the same
-    Column Properties rows for numeric and date columns, whose boxes are
-    still their own; changing the column head there (F3); the item
-    column's own width per section.
+    file's setting for one column (the core already takes it); Display %
+    of total (a numeric column's "% tot" column); typing a new name for
+    the column head in the box (the picker takes one); the item column's
+    own width per section.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

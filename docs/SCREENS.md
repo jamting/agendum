@@ -76,9 +76,7 @@ flowchart LR
     FileProps -- "Auto-assign settings" --> AutoAssign["Auto-assign settings"]
     Customize["Customize (yours)"] -- "Input format" --> InputFormat
     ColProps["Column Properties"]
-    ColProps -- "numeric column" --> NumCol["Numeric column"]
-    ColProps -- "date column" --> DateCol["Date column"]
-    ColProps -- "standard column" --> StdCol["Column Properties (standard)"]
+    ColProps -- "F3 on Column head" --> ColHead["Picker: column head"]
 ```
 
 ## Everything, by where it is reached
@@ -210,13 +208,12 @@ or handles it.
     `Agenda.TUI.CustomizeBox`.
     - **Input format** `:input_format` (Input format).
   - **Column Properties** (View ▸ Column ▸ Properties, on a column entry):
-    - **Numeric column** `:column_props`: number format and calculations
-      (R29). `Agenda.TUI.ColumnProperties`.
-    - **Date column** `:date_column_props`: the column's own date format or
-      the global defaults (R41a). `Agenda.TUI.DateColumnBox`.
-    - **Standard column** `:standard_column_props`: head, width, category
-      type and Link with other sections, laid out as in Agenda (screenshot
-      127; R55). `Agenda.TUI.ColumnBox`.
+    `:column_props`, one box for every column as in Agenda (screenshot
+    142): head, category type, width and Link with other sections (R55);
+    below them a numeric column's number format and calculations (R29) or
+    a date column's own date format or the global defaults (R41a).
+    `Agenda.TUI.ColumnBox`.
+    - **Picker** `:picker` for the column head (F3 on Column head).
   - **Execute** `:execute` (Category ▸ Execute): apply conditions and actions
     to existing items, from a root category (R15e). `Agenda.TUI.ExecuteBox`.
     - **Picker** `:picker` for the root.
@@ -280,9 +277,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:customize`         | box           | `Agenda.TUI.CustomizeBox`               | File ▸ Customize                                 | R40, R14c     |
 | `:calendars`         | box           | `Agenda.TUI.CalendarsBox`               | File ▸ Transfer ▸ Calendars                      | R45           |
 | `:auto_assign`       | box           | `Agenda.TUI.AutoAssignBox`              | File Properties ▸ Auto-assign settings           | R16a          |
-| `:column_props`      | box           | `Agenda.TUI.ColumnProperties`           | View ▸ Column ▸ Properties, numeric column       | R29           |
-| `:date_column_props` | box           | `Agenda.TUI.DateColumnBox`              | View ▸ Column ▸ Properties, date column          | R41a          |
-| `:standard_column_props` | box       | `Agenda.TUI.ColumnBox`                  | View ▸ Column ▸ Properties, standard column      | R55           |
+| `:column_props`      | box           | `Agenda.TUI.ColumnBox`                  | View ▸ Column ▸ Properties                       | R55, R29, R41a |
 | `:execute`           | box           | `Agenda.TUI.ExecuteBox`                 | Category ▸ Execute                               | R15e          |
 | `:questions`         | box           | `Agenda.TUI.QuestionsBox`               | Category ▸ Questions                             | R16           |
 | `:alarm_list`        | box           | `Agenda.TUI.AlarmList`                  | Search ▸ Alarms                                  | R38           |

@@ -147,6 +147,14 @@ defmodule Agenda.Core.Facade.Views do
   end
 
   @doc """
+  Column Properties ▸ Column head (R55): the column at `at` and the columns
+  linked to it show `cat_id` instead (`Agenda.Core.ViewColumns.set_head/3`).
+  """
+  @spec set_column_head(db, id, View.at(), id) :: db
+  def set_column_head(db, view_id, at, cat_id),
+    do: Database.update_view(db, view_id, &ViewColumns.set_head(&1, at, cat_id))
+
+  @doc """
   Column Properties ▸ Link with other sections (R55): `false` unlinks the
   column at `at`, `true` links it (`Agenda.Core.ViewColumns.set_linked/3`).
   """
