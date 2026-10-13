@@ -128,7 +128,12 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Documentation: a hierarchical overview of the different TUI screens and boxes (`docs/SCREENS.md`)
 - [x] Developer tools: a screen with debugging info and a key tester, on a hidden key (ESC ?)
 - [x] The name Wol's Agendum: command, files (`.agendum`), preferences, JSON format, texts; the old names still read (ADR 0019)
-- [ ] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agenda` and `test/agenda`, the repository folder; one mechanical commit (ADR 0019)
+- [ ] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agenda` and `test/agenda`, the repository folder; one mechanical commit (ADR 0019); with it, group the small TUI modules in subfolders (e.g. `tui/boxes/`, `tui/terminal/` for Terminal, Keys, Screen, Draw and Theme), so module names change only once
+- [ ] Split the four largest files into subfolders, by the sections they already have; pure moves, no change in behaviour, one file per commit (best in a fresh session each):
+  - `tui/render.ex` (~2,300 lines) → `tui/render/`: `Render` keeps `render/1`; `ControlPanel`, `KeyBar`, `View`, `Managers`, `Note`, `Help`, `Boxes` (perhaps two, or each box module drawing its own content, as `SelectFile` does), `Export`
+  - `tui/update.ex` (~2,000) → `tui/update/`: `Update` keeps `handle/2`, `tick/2`, dispatch and effect results; `ViewKeys`, `Editing`, `Marked`, `Prompts`, `Notes`, `Actions` (prepares the command layer, ADR 0020)
+  - `tui/category_screens.ex` (~1,200) → `tui/category_screens/`: `Manager`, `Picker`, `Profile`, `Moves`, `Properties`
+  - `core.ex` (~2,300, the facade) → `Agenda.Core` stays the one entry point (rule 3) as a table of contents of `defdelegate`s to area modules (`Agenda.Core.Facade.Items`, `.Dates`, `.Rules`, `.Views`, `.Numbers`…), where the functions and their docs live
 - [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agenda.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
 - [x] API documentation with `ex_doc` (dev only): `mix docs` from the `@moduledoc`s and `@spec`s, for whoever builds on the core facade (ADR 0020)
 
