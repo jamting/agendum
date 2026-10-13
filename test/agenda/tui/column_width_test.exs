@@ -69,8 +69,40 @@ defmodule Agenda.TUI.ColumnWidthTest do
     assert state |> History.undo() |> contact_width() == 16
   end
 
-  test "asks for a column first", %{state: state} do
-    state = press(state, [:left, :left, :left] ++ @width)
-    assert panel(state) =~ "Highlight a column"
+  describe "on the item text: the section's item column (R55)" do
+    setup %{state: state}, do: %{state: press(state, [:left, :left, :left])}
+
+    defp items(state), do: hd(hd(Database.views(state.db)).sections).item_column
+
+    defp shown_items(state), do: hd(State.view(state).sections).item_column
+
+    test "starts at the width the text has; ENTER sets it by hand, one undo step",
+         %{state: state} do
+      state = press(state, @width)
+      # 100 wide: 3 for the bullet, 17 + 9 + 17 for When, Priority, Contact
+      assert panel(state) =~ "Item column width: 54"
+      state = press(state, [:left, :left])
+      assert {shown_items(state).set, shown_items(state).width} == {:manual, 52}
+      assert items(state).set == :auto
+      state = press(state, :enter)
+      assert {items(state).set, items(state).width} == {:manual, 52}
+      assert state |> History.undo() |> items() |> Map.fetch!(:set) == :auto
+    end
+
+    test "SHIFT-? fits it to the longest item text, within the room", %{state: state} do
+      state = press(state, @width ++ ["?"])
+      # the sample's items are longer than the 54 the columns leave
+      assert panel(state) =~ "Item column width: 54"
+      state = press(state, ["3", "0", :enter])
+      assert items(state).width == 30
+    end
+  end
+
+  test "a datebook view's item text has no width of its own", %{state: state} do
+    {:ok, db, v} =
+      Agenda.Core.add_datebook_view(state.db, "Day", %Agenda.Core.Datebook{period: :day})
+
+    state = %{state | db: db, view_id: v, cursor: 0, col: 0} |> press(@width)
+    assert panel(state) =~ "datebook"
   end
 end

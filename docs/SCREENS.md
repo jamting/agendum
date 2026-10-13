@@ -117,7 +117,8 @@ or handles it.
   - **Column width** `:column_width` (View ▸ Column ▸ Width): the control
     panel shows the highlighted column's width; ← →, a typed number or
     SHIFT-? (fit, R22a) change it in the view until ENTER keeps it or ESC
-    goes back. `Agenda.TUI.ColumnWidth`.
+    goes back; on the item text, the section's item column (R55).
+    `Agenda.TUI.ColumnWidth`.
   - **Moving a column** `:column_move` (View ▸ Column ▸ Move, ALT-F10 on a
     column head): ← → move it in its section, shown at once, until ENTER
     keeps it or ESC puts it back (R55). `Agenda.TUI.ColumnMove`.

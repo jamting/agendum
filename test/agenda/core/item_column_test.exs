@@ -75,6 +75,22 @@ defmodule Agenda.Core.ItemColumnTest do
     assert Enum.map(model, & &1.item_column.set) == [:auto, :manual, :auto]
   end
 
+  test "fitting: the longest item text or section name of the linked sections, within the room",
+       %{db: db, view_id: v} do
+    {db, _} = Core.add_item(db, "Call Bo", ~D[2026-10-13], section: cat(db, "Calls"))
+
+    {db, _} =
+      Core.add_item(db, "Ask about the long weekend", ~D[2026-10-13], section: cat(db, "Ideas"))
+
+    # 26 for "Ask about the long weekend", in Ideas, linked
+    assert Core.item_column_fit(db, v, 0, ~D[2026-10-13], 100) == 26
+    # an unlinked one looks at its own section: "Follow up" (9) and no items
+    db = Core.set_item_column_linked(db, v, 1, false)
+    assert Core.item_column_fit(db, v, 1, ~D[2026-10-13], 100) == 9
+    # at most what the section's columns leave: 40 - 3 - 17 for When
+    assert Core.item_column_fit(db, v, 0, ~D[2026-10-13], 40) == 20
+  end
+
   test "the item column's text width: by hand, or what the columns leave" do
     columns = [%Core.View.Column{category_id: 1, width: 12}]
     # 80 wide: 3 for the bullet and margin, 13 for the column

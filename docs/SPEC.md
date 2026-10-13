@@ -532,12 +532,16 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     shows the highlighted column's width; ← → change it by one, a typed
     number replaces it, SHIFT-? fits it (R22a), at least 3 and at most 80.
     The view shows the new width at once; ENTER keeps it (one undo step,
-    in every linked section), ESC goes back.
+    in every linked section), ESC goes back. On the item text (a section
+    head or an item) it is the section's item column: it starts at the
+    width the text has, a width chosen sets it Manually (5 to 200), and
+    SHIFT-? fits it to the longest item text or section name of the
+    sections it is linked with, within what the columns leave.
   - Not done yet: the Column Add box's Category type for a new category
     (it is changed in Category Properties); Display %
     of total (a numeric column's "% tot" column); typing a new name for
     the column head in the box (the picker takes one); View ▸ Column ▸
-    Width and Move on the item column.
+    Move on the item column.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

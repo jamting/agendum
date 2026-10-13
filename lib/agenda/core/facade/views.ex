@@ -12,7 +12,7 @@ defmodule Agenda.Core.Facade.Views do
   alias Agenda.Core.Facade.{Dates, Numbers}
   # `View.Column` and `View.Section` are nested modules; nesting is only a
   # naming convention, so they are aliased like any other module.
-  alias Agenda.Core.View.{Column, Section}
+  alias Agenda.Core.View.{Column, ItemColumn, Section}
 
   @typep db :: Agenda.Core.db()
   @typep id :: Agenda.Core.id()
@@ -213,6 +213,45 @@ defmodule Agenda.Core.Facade.Views do
       &ViewColumns.update_items(&1, sidx, fn c -> Map.merge(c, changes) end)
     )
   end
+
+  @doc """
+  View ▸ Column ▸ Width, SHIFT-? on the item text (R55): the width that
+  fits the item column of section `sidx`: its longest item text or section
+  name, in it and the sections its item column is linked with (collapsed
+  ones left out), at least 5 and at most what its columns leave on a
+  screen `screen` wide. Only worked out; `set_item_column/4` sets it.
+  """
+  @spec item_column_fit(db, id, non_neg_integer, clock, pos_integer) :: pos_integer
+  def item_column_fit(db, view_id, sidx, clock, screen) do
+    view = db.views[view_id]
+    here = Enum.at(view.sections, sidx)
+
+    # the stored sections whose item column is this one: itself, and the
+    # linked ones when it is linked
+    together =
+      for {section, i} <- Enum.with_index(view.sections),
+          i == sidx or (here.item_column.linked and section.item_column.linked),
+          into: MapSet.new(),
+          do: i
+
+    texts =
+      for section <- ViewModel.build(db, view, clock),
+          section.index in together,
+          text <- [section.category.name | collapsed_or(section, & &1.item.text)],
+          do: text
+
+    room = ItemColumn.text_width(%ItemColumn{minimum: 5}, here.columns, screen)
+
+    texts
+    |> Enum.map(&String.length/1)
+    |> Enum.max(fn -> 5 end)
+    |> max(5)
+    |> min(room)
+  end
+
+  # a collapsed section's items are not shown, so they do not count
+  defp collapsed_or(%{collapsed: true}, _fun), do: []
+  defp collapsed_or(section, fun), do: Enum.map(section.rows, fun)
 
   @doc """
   Item Column Properties ▸ Link with other sections: `false` unlinks the

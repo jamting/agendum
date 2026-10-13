@@ -342,8 +342,15 @@ defmodule Agenda.TUI.Update.Actions do
     end)
   end
 
+  # on the item text (a section head or an item): the item column's (R55)
+  defp do_perform(state, :column_width, row) when row != nil and state.col == 0 do
+    if State.view(state).datebook,
+      do: State.error(state, "A datebook view's item text fills the width its columns leave"),
+      else: ColumnWidth.open(state, {:items, row.sidx})
+  end
+
   defp do_perform(state, :column_width, _),
-    do: with_column(state, &ColumnWidth.open(state, &1))
+    do: with_column(state, &ColumnWidth.open(state, {:column, &1}))
 
   defp do_perform(state, :column_move, _),
     do: with_column(state, &Agenda.TUI.ColumnMove.open(state, &1))
