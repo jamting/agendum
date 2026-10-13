@@ -108,6 +108,19 @@ defmodule Agenda.TUI.Draw do
     [{style, before}, {cursor_style, at}, {style, after_}]
   end
 
+  @doc """
+  A line being typed (`Agenda.TUI.LineEdit`) as an input field `width`
+  wide, scrolled so that the cursor shows.
+  """
+  @spec input(%{text: String.t(), pos: non_neg_integer}, non_neg_integer, atom) :: line
+  def input(%{text: text, pos: pos}, width, style) do
+    width = max(width, 1)
+    offset = max(pos - width + 1, 0)
+    visible = String.slice(text, offset, width)
+    text_field = field(visible, pos - offset, style)
+    line(text_field, width, style)
+  end
+
   @doc "Overlays `box` lines onto `screen` starting at row `top`, column `left`."
   @spec overlay([line], [line], non_neg_integer, non_neg_integer) :: [line]
   def overlay(screen, box, top, left) do

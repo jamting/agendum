@@ -97,6 +97,11 @@ Keep changes small and focused; one feature per commit.
   keyboards lack INS/HOME/END and terminals never pass ⌘, so every command
   needs a CTRL (or ESC-prefixed) key. Document it in `docs/KEYBOARD.md` and
   the F1 help. CTRL-I/M/H/[ are unusable (they are TAB/ENTER/BACKSPACE/ESC).
+- A settings box is drawn from a layout written as it looks on screen,
+  with `[field    ]` placeholders (`Agenda.TUI.Template`; `CustomizeBox`
+  is the example): its fields are also the cursor's order. Look at the
+  DOSBox screenshots (`docs/reference/screens/notes.md`) for how Agenda
+  laid out the box.
 - Menu entries are chosen by first letter, so every level of `Agenda.TUI.Menu.tree/0`
   needs unique first letters (`test/agenda/tui/menu_test.exs` checks this).
   Prefer Agenda's own command names (User's Guide, Appendix A).

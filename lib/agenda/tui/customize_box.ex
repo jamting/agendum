@@ -4,28 +4,35 @@ defmodule Agenda.TUI.CustomizeBox do
   ADR 0008): the person's own settings, for every file: Theme (R40), Date
   language and Fallback language (R14c), Input format, which opens
   `Agenda.TUI.InputFormatBox` (R41b), Display key map, Confirm mode,
-  Auto-save interval and the Decimal and Thousands separators (R54). A change applies at once, is not
-  part of undo, and is saved to the preferences file
-  (`State.change_preference/3`).
+  Auto-save interval and the Decimal and Thousands separators (R54). A
+  change applies at once, is not part of undo, and is saved to the
+  preferences file (`State.change_preference/3`).
+
+  The box is drawn from `@layout` (`Agenda.TUI.Template`): the rows and
+  their order, for the cursor too, are the fields there.
 
   ↑↓ choose a setting; SPACE or → shows the next choice, ← the previous
   one. ESC or ENTER closes the box. Pure.
   """
 
   alias Agenda.Core.{DateLanguage, InputFormat}
-  alias Agenda.TUI.{InputFormatBox, State, Theme}
+  alias Agenda.TUI.{InputFormatBox, State, Template, Theme}
 
-  @rows [
-    :theme,
-    :lang,
-    :fallback,
-    :input_format,
-    :key_map,
-    :confirm,
-    :auto_save,
-    :decimal,
-    :thousands
-  ]
+  @layout """
+   Theme               : [theme                ]
+   Date language       : [lang                 ]
+   Fallback language   : [fallback             ]
+   Input format        : [input_format         ]
+   Display key map     : [key_map              ]
+   Confirm mode        : [confirm              ]
+   Auto-save interval  : [auto_save            ]
+   Decimal separator   : [decimal              ]
+   Thousands separator : [thousands            ]
+
+   Saved in your preferences, not in this file.
+   SPACE/→ next choice · ← previous · ESC closes
+  """
+  @rows Template.fields(@layout)
   # Agenda took any number of minutes from 1 to 60; these are the steps
   @auto_save [0, 1, 2, 5, 10, 15, 20, 30, 45, 60]
 
@@ -104,25 +111,29 @@ defmodule Agenda.TUI.CustomizeBox do
     Enum.at(list, Integer.mod(index + step, length(list)))
   end
 
-  @doc "`{label, value}` for each row."
-  def lines(state) do
-    [main | rest] = state.languages
+  @doc "The box's lines, the highlighted setting selected."
+  def content(state, mode),
+    do: Template.render(@layout, values(state), selected: Enum.at(@rows, mode.cursor))
 
-    [
-      {"Theme", state.theme |> Atom.to_string() |> String.capitalize()},
-      {"Date language", String.capitalize(main.name())},
-      {"Fallback language",
-       case rest do
-         [fallback | _] -> String.capitalize(fallback.name())
-         [] -> "None"
-       end},
-      {"Input format", "(SPACE)"},
-      {"Display key map", yes_no(state.key_map)},
-      {"Confirm mode", yes_no(state.prefs.confirm)},
-      {"Auto-save interval", minutes(state.prefs.auto_save)},
-      {"Decimal separator", separator(State.number_opts(state)[:decimal])},
-      {"Thousands separator", separator(State.number_opts(state)[:thousands])}
-    ]
+  defp values(state) do
+    [main | rest] = state.languages
+    numbers = State.number_opts(state)
+
+    %{
+      theme: state.theme |> Atom.to_string() |> String.capitalize(),
+      lang: String.capitalize(main.name()),
+      fallback:
+        case rest do
+          [fallback | _] -> String.capitalize(fallback.name())
+          [] -> "None"
+        end,
+      input_format: "(SPACE)",
+      key_map: yes_no(state.key_map),
+      confirm: yes_no(state.prefs.confirm),
+      auto_save: minutes(state.prefs.auto_save),
+      decimal: separator(numbers[:decimal]),
+      thousands: separator(numbers[:thousands])
+    }
   end
 
   # as Agenda listed them: ". (Dot)"

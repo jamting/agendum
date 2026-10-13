@@ -993,13 +993,7 @@ defmodule Agenda.TUI.Render do
   end
 
   # A one-line edit field that scrolls horizontally to keep the cursor visible.
-  defp field(line, width, style) do
-    width = max(width, 1)
-    offset = max(line.pos - width + 1, 0)
-    visible = String.slice(line.text, offset, width)
-    segments = Draw.field(visible, line.pos - offset, style)
-    Draw.line(segments, width, style)
-  end
+  defp field(line, width, style), do: Draw.input(line, width, style)
 
   # --- category manager --------------------------------------------------------------------------
 
@@ -1723,15 +1717,13 @@ defmodule Agenda.TUI.Render do
       ]
   end
 
-  defp box_content(state, %{type: type} = mode, _inner, _max_rows)
-       when type in [:input_format, :customize] do
-    lines =
-      if type == :customize,
-        do: Agenda.TUI.CustomizeBox.lines(state),
-        else: Agenda.TUI.InputFormatBox.lines(state)
+  defp box_content(state, %{type: :customize} = mode, _inner, _max_rows),
+    do: Agenda.TUI.CustomizeBox.content(state, mode)
 
+  defp box_content(state, %{type: :input_format} = mode, _inner, _max_rows) do
     rows =
-      lines
+      state
+      |> Agenda.TUI.InputFormatBox.lines()
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [

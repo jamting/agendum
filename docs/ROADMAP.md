@@ -129,6 +129,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Developer tools: a screen with debugging info and a key tester, on a hidden key (ESC ?)
 - [x] The name Wol's Agendum: command, files (`.agendum`), preferences, JSON format, texts; the old names still read (ADR 0019)
 - [ ] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agenda` and `test/agenda`, the repository folder; one mechanical commit (ADR 0019); with it, group the small TUI modules in subfolders (e.g. `tui/boxes/`, `tui/terminal/` for Terminal, Keys, Screen, Draw and Theme), so module names change only once
+- [ ] Draw the settings boxes from layouts (`Agenda.TUI.Template`, as File ▸ Customize is now), a few at a time and with the split of `render.ex`; their layouts closer to Agenda's screenshots where that is easy (e.g. Category Properties in two columns)
 - [ ] Split the four largest files into subfolders, by the sections they already have; pure moves, no change in behaviour, one file per commit (best in a fresh session each):
   - `tui/render.ex` (~2,300 lines) → `tui/render/`: `Render` keeps `render/1`; `ControlPanel`, `KeyBar`, `View`, `Managers`, `Note`, `Help`, `Boxes` (perhaps two, or each box module drawing its own content, as `SelectFile` does), `Export`
   - `tui/update.ex` (~2,000) → `tui/update/`: `Update` keeps `handle/2`, `tick/2`, dispatch and effect results; `ViewKeys`, `Editing`, `Marked`, `Prompts`, `Notes`, `Actions` (prepares the command layer, ADR 0020)
