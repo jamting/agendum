@@ -39,7 +39,7 @@ defmodule Agenda.TUI.State do
           edit: map | nil,
           message: {atom, String.t()} | nil,
           collapsed: MapSet.t(Database.id()),
-          last_view_id: Database.id() | nil,
+          last: %{view: Database.id() | nil, removed: Database.id() | nil},
           searches: %{
             view: Agenda.Core.Search.t() | nil,
             note: Agenda.TUI.NoteSearch.settings() | nil
@@ -75,7 +75,9 @@ defmodule Agenda.TUI.State do
             edit: nil,
             message: nil,
             collapsed: MapSet.new(),
-            last_view_id: nil,
+            # what a key goes back to: the view shown before this one
+            # (ALT-F8), the item DEL last took out of a section (ALT-Y, R42)
+            last: %{view: nil, removed: nil},
             searches: %{view: nil, note: nil},
             # macros (R50): what Learn mode is recording, the last macro
             # run (ALT-Z), and how many runs are playing, one inside another
@@ -220,7 +222,7 @@ defmodule Agenda.TUI.State do
   def switch_view(state, view_id) do
     %{
       state
-      | last_view_id: state.view_id,
+      | last: %{state.last | view: state.view_id},
         view_id: view_id,
         cursor: 0,
         cursor_key: nil,

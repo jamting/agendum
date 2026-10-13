@@ -158,6 +158,9 @@ defmodule Agenda.TUI.Update.ViewKeys do
       {:alt_f, 9} ->
         scoped(state, :copy_item, row)
 
+      {:alt, "y"} ->
+        yank(state, row)
+
       {:alt, "d"} ->
         Actions.perform(state, :section_below)
 
@@ -429,6 +432,7 @@ defmodule Agenda.TUI.Update.ViewKeys do
       |> State.change_db(
         Core.remove_from_category(state.db, item.id, cat.id, State.context(state))
       )
+      |> then(&%{&1 | last: %{&1.last | removed: item.id}})
       |> State.info("Removed from #{cat.name}")
     end
   end
@@ -454,6 +458,43 @@ defmodule Agenda.TUI.Update.ViewKeys do
   end
 
   def delete(state, nil), do: state
+
+  # ALT-Y (User's Guide 4-10): the item DEL last removed goes into the
+  # highlighted item's section, below it (on a section head, in its usual
+  # place), assigned to the section's head. One at a time, as in Agenda.
+  defp yank(state, row) do
+    id = state.last.removed
+
+    cond do
+      id == nil or not Map.has_key?(state.db.items, id) ->
+        State.error(state, "No removed item to yank back")
+
+      row == nil ->
+        state
+
+      # every row has a slot; only a datebook's rows have one that is a map
+      match?(%{slot: %{}}, row) ->
+        Actions.datebook_sections(state)
+
+      Database.member?(state.db, id, row.category.id) ->
+        State.error(state, "#{state.db.items[id].text} is already in #{row.category.name}")
+
+      true ->
+        after_id = if row.kind == :item, do: row.item.id
+        clock = State.context(state)
+
+        db =
+          Core.move_item(state.db, id, state.db.main_id, row.category.id,
+            after: after_id,
+            clock: clock
+          )
+
+        state = State.change_db(state, db)
+
+        %{state | last: %{state.last | removed: nil}, cursor_key: {:item, row.sidx, id}}
+        |> State.info("Yanked back into #{row.category.name}")
+    end
+  end
 
   @doc """
   F3 (CHOICES) on the highlighted row: the column's choices or calendar,

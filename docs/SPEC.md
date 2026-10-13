@@ -954,7 +954,15 @@ sibling, CTRL-HOME/END = first/last.
   from the old one (R15). Our choices: Agenda put the copy at the bottom
   of the section, but a file's items have one order, so it shows in its
   usual place; not in a datebook view, whose sections are dates.
-  Later, with their features: ALT-Y yank back, ALT-H hop,
+  ALT-Y yank back (User's Guide 4-10): the item last taken out of a
+  section with DEL goes into the current section, below the highlighted
+  item (on a section head, in its usual place), assigned to the section's
+  head, one undo step; it can go back where it was or anywhere else. One
+  is remembered, and removing marked items does not count, as in Agenda;
+  after a yank there is nothing left to yank. Not done: Agenda's ALT-Y
+  also recovered the latest discarded item from the trash, which we do
+  not have yet (CTRL-Z undoes a discard). Not in a datebook view.
+  Later, with their features: ALT-H hop,
   ALT-B browse, ALT-C calendar, ALT-O dependency, ALT-E / ALT-X execute
   conditions and actions, ALT-Z run macro, ALT-S sort now.
 

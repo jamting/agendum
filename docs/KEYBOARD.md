@@ -16,6 +16,7 @@ settings, as described in the second half of this guide.
 | On a section head: Section Properties; in it: remove a column from the section; move it; add one; the head's category properties | F6; DEL; ALT-↑ / ALT-↓; INS; F6 on Section head | ESC then `6`; fn-⌫; ⌥↑ / ⌥↓; **CTRL-N** |
 | On a section head: move the section up or down in the view (↑ ↓, ENTER keeps, ESC puts back) | ALT-F10 | ESC then `)`, or menu View ▸ Section ▸ Move |
 | Copy the item (or the marked items) to another section of the view as well: the Copy box | ALT-F9 | ESC then `(` |
+| Yank back the item DEL last removed from a section: into the current section, below the highlighted item | ALT-Y | ESC then `y` |
 | Discard                                                                                         | ALT-F4                        | **CTRL-D**                                                            |
 | Set the When date                                                                               | ALT-F2                        | ESC then `@`, or menu Item ▸ When                                     |
 | Next / previous completion while typing a column entry                                          | F8 / F7                       | ALT-N / ALT-P (ESC then `n` / `p`)                                    |

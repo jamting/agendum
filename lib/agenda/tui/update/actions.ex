@@ -257,8 +257,8 @@ defmodule Agenda.TUI.Update.Actions do
 
   # ALT-F8 (LAST VW): back to the view shown before this one.
   defp do_perform(state, :last_view, _) do
-    if state.last_view_id && Map.has_key?(state.db.views, state.last_view_id),
-      do: State.switch_view(state, state.last_view_id),
+    if state.last.view && Map.has_key?(state.db.views, state.last.view),
+      do: State.switch_view(state, state.last.view),
       else: State.error(state, "No previous view")
   end
 
