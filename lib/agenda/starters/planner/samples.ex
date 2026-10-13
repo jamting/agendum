@@ -2,8 +2,9 @@ defmodule Agenda.Starters.Planner.Samples do
   @moduledoc """
   Sample data for the Activities Planner, for trying it out and testing
   (`mix agendum.starters --samples`): five people with phone numbers and
-  companies in their notes, three projects, a business trip, and about
-  forty items. There are tasks, calls, meetings, mail, reading,
+  companies in their notes (and a blank item each in Contacts), three
+  projects, a business trip, sections for them in People and Expense
+  Reports, and about forty items. There are tasks, calls, meetings, mail, reading,
   follow-ups, issues and ideas, and the trip's expenses. Some items are
   overdue, some due today at a time, some done, and a few are left for the
   catch-alls (Unassigned, No Priority Assigned, No Type, No Purpose).
@@ -51,7 +52,7 @@ defmodule Agenda.Starters.Planner.Samples do
     {"Write the chairman's letter", "Tasks", in: ["Annual report", "Medium"], when: 12},
     {"Proofread the annual report", "Tasks", in: ["Annual report", "Low"], when: 20},
     {"Order moving boxes", "Tasks", in: ["Office move", "Low"], when: 1},
-    {"Book the movers", "Tasks", in: ["Office move", "Johan Lind", "High"], when: -1, done: 2},
+    {"Book the movers", "Tasks", in: ["Office move", "Johan Lind", "High"], when: -1, done: 0},
     {"Update the staff contact list", "Tasks",
      in: ["Miscellaneous Project", "Low"], when: -2, done: 1},
     {"Renew the software licences", "Tasks", in: ["High"], when: 0},
@@ -127,6 +128,36 @@ defmodule Agenda.Starters.Planner.Samples do
     |> add_children("Project", @projects)
     |> add_children("Report ID", [@trip])
     |> items(today)
+    |> contacts(today)
+    |> sections()
+  end
+
+  # Contacts lists one blank item per person, as Agenda's "Create/Update
+  # contact list" macro made them: the person's name, phone and company
+  # are in the columns (shot 110)
+  defp contacts(db, today) do
+    Enum.reduce(@people, db, fn {name, _, _}, db ->
+      {db, item} = Core.add_item(db, "", Date.add(today, -20), section: id(db, "Contact List"))
+      Core.assign(db, item, id(db, name), today)
+    end)
+  end
+
+  # sections a person would add for the new categories: one per person in
+  # People, and the trip in Expense Reports
+  defp sections(db) do
+    db
+    |> add_sections("People", Enum.map(@people, fn {name, _, _} -> name end))
+    |> add_sections("Expense Reports", [@trip])
+  end
+
+  defp add_sections(db, view_name, names) do
+    view = Enum.find(Database.views(db), &(&1.name == view_name))
+
+    names
+    |> Enum.with_index(length(view.sections))
+    |> Enum.reduce(db, fn {name, index}, db ->
+      Core.add_section(db, view.id, id(db, name), index)
+    end)
   end
 
   defp add_children(db, parent, names) do

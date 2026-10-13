@@ -633,7 +633,12 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   No Priority Assigned (−Priority, Tasks), No Type (Expenses, −Type);
   Miscellaneous Activity, Miscellaneous Project and No Purpose are there
   to assign by hand. An amount makes an item an expense (Amount's action
-  Expenses). Our choices: the file's date settings are Agendum's defaults
+  Expenses). Its views: Tasks (where it opens), Activities and Priorities
+  (with columns that differ per section), Calls (with Phone #, line 1 of
+  the person's note), Completed This Week and Overdue (date filters),
+  three expense views (Expenses only, totals, lines between sections),
+  People, Projects, and the datebooks Today, Tomorrow, This Week, Next
+  Week and This Month. Our choices: the file's date settings are Agendum's defaults
   (Agenda's are American: weeks from Sunday, dates MDY, amounts in $);
   the Contacts view, which Agenda's "Create/Update contact list" macro
   made, is in the file, and Sample Person's note has the phone number and

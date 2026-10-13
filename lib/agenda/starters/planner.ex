@@ -24,6 +24,7 @@ defmodule Agenda.Starters.Planner do
   def build do
     Core.new_file(view_name: "Tasks", section_name: "Tasks")
     |> categories()
+    |> Agenda.Starters.Planner.Views.add()
   end
 
   @doc """
