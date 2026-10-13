@@ -108,7 +108,8 @@ defmodule Agenda.Core.Facade.Rules do
     # here (`~D[...]` is a `Date` literal)
     today = if clock, do: Changes.date_of(clock), else: ~D[2000-01-01]
 
-    case DateParser.parse(text, today, Context.parser_opts(clock, settings)) do
+    # kept and read when the action runs, so read as a kept phrase
+    case DateParser.parse(text, today, Context.stored_parser_opts(clock, settings)) do
       {:ok, _} -> {:ok, {:set, String.trim(text)}}
       :error -> {:error, :invalid_date}
     end

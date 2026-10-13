@@ -74,7 +74,7 @@ defmodule Agenda.Core.RangeFilter do
     case DateParser.parse(
            words,
            Context.today(today),
-           Context.parser_opts(today, db.date_settings)
+           Context.stored_parser_opts(today, db.date_settings)
          ) do
       {:ok, date} -> {:ok, if(fixed?, do: Date.to_iso8601(date), else: text)}
       :error -> {:error, :invalid_date}
@@ -131,7 +131,7 @@ defmodule Agenda.Core.RangeFilter do
     case DateParser.parse(
            text,
            Context.today(clock),
-           Context.parser_opts(clock, db.date_settings)
+           Context.stored_parser_opts(clock, db.date_settings)
          ) do
       {:ok, date} -> date
       :error -> nil

@@ -211,7 +211,10 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   dates are read). It applies to every date typed: item text, date
   columns, the When prompt and date filters. Nothing else changes: menus,
   messages and how dates are shown stay as they are, and the file does
-  not record the language. Each language is a pack
+  not record the language. Phrases kept in the file and read again each
+  time (a date filter's ends, a datebook's base date, a date action's
+  date) are read in the person's languages and then in English, so a file
+  made in English, such as a starter file, works in every language. Each language is a pack
   (`Agenda.Core.DateLanguage`): its words, phrase patterns, day/month
   order and clock. Swedish reads weekdays ("fredag", "på fre", "nästa
   fredag", "förra måndagen", "i fredags" = the latest past Friday), days

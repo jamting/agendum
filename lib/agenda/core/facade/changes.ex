@@ -338,7 +338,8 @@ defmodule Agenda.Core.Facade.Changes do
   end
 
   defp action_date(db, text, clock),
-    do: DateParser.parse(text, date_of(clock), Context.parser_opts(clock, db.date_settings))
+    do:
+      DateParser.parse(text, date_of(clock), Context.stored_parser_opts(clock, db.date_settings))
 
   defp apply_special(db, item_id, _special, _clock) when not is_map_key(db.items, item_id),
     do: db

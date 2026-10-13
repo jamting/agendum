@@ -95,7 +95,7 @@ defmodule Agenda.Core.Datebook do
   def base_date(d, settings, clock) do
     today = Context.today(clock)
 
-    case DateParser.parse(d.base, today, Context.parser_opts(clock, settings)) do
+    case DateParser.parse(d.base, today, Context.stored_parser_opts(clock, settings)) do
       {:ok, date} -> date
       :error -> today
     end

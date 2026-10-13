@@ -51,4 +51,18 @@ defmodule Agenda.Core.Context do
   @spec parser_opts(clock | nil, Agenda.Core.DateSettings.t() | nil) :: keyword
   def parser_opts(clock, settings),
     do: [languages: languages(clock), settings: settings, input: input(clock)]
+
+  @doc """
+  Options for reading a date phrase kept in the file (a date filter's
+  ends, a datebook's base date), read again each time by whoever opens
+  it: as `parser_opts/2`, then English. A file made in English, such as a
+  starter file, then works in every language.
+  """
+  @spec stored_parser_opts(clock | nil, Agenda.Core.DateSettings.t() | nil) :: keyword
+  def stored_parser_opts(clock, settings) do
+    # Keyword.update!/3 changes one option, keeping the others
+    clock
+    |> parser_opts(settings)
+    |> Keyword.update!(:languages, &Enum.uniq(&1 ++ [DateLanguage.English]))
+  end
 end
