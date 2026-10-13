@@ -615,6 +615,27 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   "Highlight the item or category"), where it used to open the item's;
   on a date, number or empty entry it says "No category here to have a
   note". Item ▸ Note still opens the item's note.
+- **R60 ⏳ The Activities Planner starter file** (Starter Applications;
+  screenshots 37-144). A file shipped with Agendum,
+  `starters/planner.agendum`, which a person copies and fills in, as
+  Agenda's `apps\planner` was. No items. Its categories: People (Sample
+  Person), Project (Sample Project), Tasks, Activity (Calls, Meetings,
+  Mail, Reading, Follow up, Issues, Ideas), Expenses, Priority (High,
+  Medium, Low), Contact List, Type (Lodging, Breakfast, Lunch, Dinner,
+  Entertainment, Air, Transportation, Miscellaneous), Report ID (Sample
+  Trip) and the numeric Amount; Priority, Type and Report ID have
+  exclusive children. Short names and Also match find them in an item's
+  text (Calls: Phone, Telephone; Lodging: Hotel, Motel, Inn). Catch-alls
+  take what the others miss, by conditions: Unassigned (−People, Tasks),
+  No Priority Assigned (−Priority, Tasks), No Type (Expenses, −Type);
+  Miscellaneous Activity, Miscellaneous Project and No Purpose are there
+  to assign by hand. An amount makes an item an expense (Amount's action
+  Expenses). Our choices: the file's date settings are Agendum's defaults
+  (Agenda's are American: weeks from Sunday, dates MDY, amounts in $);
+  the Contacts view, which Agenda's "Create/Update contact list" macro
+  made, is in the file, and Sample Person's note has the phone number and
+  company it shows. The macros that need the command language (Sort items
+  in view, Create/Update contact list) are left out.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

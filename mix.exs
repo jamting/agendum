@@ -12,7 +12,9 @@ defmodule Agenda.MixProject do
       aliases: aliases(),
       deps: deps(),
       name: "Wol's Agendum",
-      docs: docs()
+      docs: docs(),
+      # mix tasks in lib/mix/tasks (`mix agendum.starters`) use Mix itself
+      dialyzer: [plt_add_apps: [:mix]]
     ]
   end
 
