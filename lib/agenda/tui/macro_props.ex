@@ -16,7 +16,8 @@ defmodule Agenda.TUI.MacroProps do
 
   alias Agenda.Core
   alias Agenda.Core.Macro
-  alias Agenda.TUI.{MacroKeys, Macros, State, Update}
+  alias Agenda.TUI.{MacroKeys, Macros, State}
+  alias Agenda.TUI.Update.Prompts
 
   @rows [:name, :keys, :key, :view, :note, :catmgr, :elsewhere]
   @place_names %{
@@ -45,13 +46,13 @@ defmodule Agenda.TUI.MacroProps do
         State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
 
       {:enter, :name} ->
-        Update.prompt(state, "Rename the macro to:", {:rename_macro, macro.id}, macro.name)
+        Prompts.prompt(state, "Rename the macro to:", {:rename_macro, macro.id}, macro.name)
 
       {k, :keys} when k in [:enter, {:char, " "}] ->
         Macros.edit_text(state, macro)
 
       {:enter, :key} ->
-        Update.prompt(
+        Prompts.prompt(
           state,
           "Attach to key (e.g. {ShfF4}, {CtlE}):",
           {:attach_macro, macro.id},

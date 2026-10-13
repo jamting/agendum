@@ -10,7 +10,8 @@ defmodule Agenda.TUI.ViewManager do
   """
 
   alias Agenda.Core
-  alias Agenda.TUI.{LineEdit, State, Update}
+  alias Agenda.TUI.{LineEdit, State}
+  alias Agenda.TUI.Update.Prompts
 
   def open(state) do
     index = Enum.find_index(state.db.view_order, &(&1 == state.view_id)) || 0
@@ -72,7 +73,7 @@ defmodule Agenda.TUI.ViewManager do
         state |> State.pop() |> State.switch_view(view_id)
 
       :insert ->
-        Update.prompt(state, "Name of new view:", :add_view)
+        Prompts.prompt(state, "Name of new view:", :add_view)
 
       {:f, 2} ->
         %{state | edit: %{target: view_id, line: LineEdit.new(state.db.views[view_id].name)}}
@@ -87,7 +88,7 @@ defmodule Agenda.TUI.ViewManager do
         reorder(state, mode, 1)
 
       k when k in [:delete, {:alt_f, 4}, {:ctrl, "d"}] ->
-        Update.confirm(
+        Prompts.confirm(
           state,
           "Discard view #{state.db.views[view_id].name}? Items are kept. (Y/N)",
           {:discard_view, view_id}

@@ -86,19 +86,19 @@ Indentation shows what opens what. `type` is the mode's type; the module draws
 or handles it.
 
 - **View** (no mode): the current view's sections, items and columns.
-  `Agenda.TUI.Update`, `Agenda.TUI.Layout`, `Agenda.TUI.Render.View`.
+  `Agenda.TUI.Update.ViewKeys`, `Agenda.TUI.Layout`, `Agenda.TUI.Render.View`.
   - **Menu** `:menu` (F10 or `/`): File, Item, Category, View, Search, Undo,
     Redo, Print, Quit. `Agenda.TUI.Menu`. Its commands open most of the boxes below;
     the menu path is given with each.
   - **Help** `:help` (F1; also from the category manager): keys and commands.
     `Agenda.TUI.Render.Help`.
   - **Prompt** `:prompt`: one line of text in the control panel (a file name,
-    a new view's name, a category name). `Agenda.TUI.Update`.
+    a new view's name, a category name). `Agenda.TUI.Update.Prompts`.
     - **Select File** `:select_file` (F3 in a prompt for a file name): the
       folder's subfolders and the files that fit, to pick one (R51).
       `Agenda.TUI.SelectFile`.
   - **Question** `:confirm`: a Y/N question (discard, save changes, make a
-    date category). `Agenda.TUI.Update`.
+    date category). `Agenda.TUI.Update.Prompts`.
   - **Datebook settings** `:datebook_props` (View ▸ Properties of a datebook
     view; after View ▸ Add with Type Datebook): its categories, period,
     interval, start and end, base date (R47). `Agenda.TUI.DatebookBox`.
@@ -116,12 +116,12 @@ or handles it.
     - **Prompt** `:prompt` for a time (F6) or a date to go to (typing).
   - **Scope** `:scope`: with items marked, whether a command (F3, F4, ALT-F2,
     ALT-F4, ALT-F10, ALT-M, DEL) acts on the highlighted item or all marked
-    ones (R35). `Agenda.TUI.Update`.
+    ones (R35). `Agenda.TUI.Update.Marked`.
   - **Moving items** `:move_item` (ALT-F10, Item ▸ Reposition): the item
-    follows the cursor until ENTER (R26). `Agenda.TUI.Update`.
+    follows the cursor until ENTER (R26). `Agenda.TUI.Update.Marked`.
   - **Note editor** `:note` (F5, Item ▸ Note): a full screen for an item's
     note; also a category's note from Category Properties or the category
-    manager. `Agenda.TUI.TextEdit`, `Agenda.TUI.Update`.
+    manager. `Agenda.TUI.TextEdit`, `Agenda.TUI.Update.Notes`.
     - **Note search** `:note_search` (ALT-F6 in a note): search and replace,
       then Y/N per match (R39). `Agenda.TUI.NoteSearch`.
   - **Item Properties** `:item_props` (F6 on an item, Item ▸ Properties):
@@ -240,13 +240,13 @@ dependencies after its question, Undo, Save) are not listed.
 | `type`               | Kind          | Module                        | Reached from                                     | SPEC          |
 | -------------------- | ------------- | ----------------------------- | ------------------------------------------------ | ------------- |
 | `:menu`              | control panel | `Agenda.TUI.Menu`             | F10 or `/`                                       | §5            |
-| `:prompt`            | control panel | `Agenda.TUI.Update`           | commands that ask for a line of text             | §5            |
-| `:confirm`           | control panel | `Agenda.TUI.Update`           | commands that ask Y/N                            | §5            |
-| `:scope`             | box           | `Agenda.TUI.Update`           | a command with items marked                      | R35           |
-| `:move_item`         | control panel | `Agenda.TUI.Update`           | ALT-F10, Item ▸ Reposition                       | R26           |
+| `:prompt`            | control panel | `Agenda.TUI.Update.Prompts`   | commands that ask for a line of text             | §5            |
+| `:confirm`           | control panel | `Agenda.TUI.Update.Prompts`   | commands that ask Y/N                            | §5            |
+| `:scope`             | box           | `Agenda.TUI.Update.Marked`    | a command with items marked                      | R35           |
+| `:move_item`         | control panel | `Agenda.TUI.Update.Marked`    | ALT-F10, Item ▸ Reposition                       | R26           |
 | `:searching`         | control panel | `Agenda.TUI.SearchBox`        | the Search box                                   | R37           |
 | `:help`              | full screen   | `Agenda.TUI.Render.Help`      | F1                                               | §5            |
-| `:note`              | full screen   | `Agenda.TUI.Update`           | F5, Item Properties, Category Properties         | §5            |
+| `:note`              | full screen   | `Agenda.TUI.Update.Notes`     | F5, Item Properties, Category Properties         | §5            |
 | `:catmgr`            | full screen   | `Agenda.TUI.CategoryScreens`  | F9, Category ▸ Manager                           | R2–R8         |
 | `:viewmgr`           | full screen   | `Agenda.TUI.ViewManager`      | F8, View ▸ Manager                               | §5            |
 | `:picker`            | box           | `Agenda.TUI.CategoryScreens`  | many (see above)                                 | §5            |

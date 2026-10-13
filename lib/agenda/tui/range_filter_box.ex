@@ -16,7 +16,8 @@ defmodule Agenda.TUI.RangeFilterBox do
   """
 
   alias Agenda.Core
-  alias Agenda.TUI.{LineEdit, State, Update}
+  alias Agenda.TUI.{LineEdit, State}
+  alias Agenda.TUI.Update.Editing
 
   @rows [:show, :from, :to, :where]
   def rows, do: @rows
@@ -61,7 +62,7 @@ defmodule Agenda.TUI.RangeFilterBox do
   defp criteria(state, {:condition, owner}), do: state.db.categories[owner].conditions
 
   defp text(nil, _opts), do: ""
-  defp text(number, opts) when is_number(number), do: Update.number_text(number, opts)
+  defp text(number, opts) when is_number(number), do: Editing.number_text(number, opts)
   defp text(date_expression, _opts), do: date_expression
 
   @doc "Whether the box is about a numeric category (else a date category)."

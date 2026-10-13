@@ -65,7 +65,8 @@ in [`SCREENS.md`](SCREENS.md).
 | Module                                        | Pure? | Responsibility                                                                                                                   |
 | --------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `Agenda.TUI.State`                            | ✔     | UI state: db, path, cursor, scroll, **mode stack**, inline edit, message, queued effects.                                        |
-| `Agenda.TUI.Update`                           | ✔     | Key → state transitions for the view, prompts, confirmations, notes, item moves; `perform/2` named actions shared with the menu. |
+| `Agenda.TUI.Update`                           | ✔     | Key → state transitions: keys for every screen, the clock (`tick/2`), effect results, dispatch to the screen on top.             |
+| `Agenda.TUI.Update.*`                         | ✔     | Its parts: `ViewKeys`, `Editing` (inline), `Marked` (and moves), `Prompts` (and Y/N), `Notes`, `Actions` (`perform/2`).          |
 | `Agenda.TUI.Menu`                             | ✔     | The Lotus two-line menu tree.                                                                                                    |
 | `Agenda.TUI.CategoryScreens`                  | ✔     | Category manager, category picker box, assignment profile, category properties.                                                  |
 | `Agenda.TUI.ViewManager`                      | ✔     | View manager.                                                                                                                    |

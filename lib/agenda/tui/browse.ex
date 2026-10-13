@@ -29,7 +29,8 @@ defmodule Agenda.TUI.Browse do
 
   alias Agenda.Core
   alias Agenda.Core.{Datebook, MonthCalendar}
-  alias Agenda.TUI.{Layout, State, Update}
+  alias Agenda.TUI.{Layout, State}
+  alias Agenda.TUI.Update.Prompts
 
   @no_shift %{days: 0, months: 0}
 
@@ -118,7 +119,7 @@ defmodule Agenda.TUI.Browse do
         move(state, mode, shift, @filter_moves[k])
 
       {{:alt_f, 5}, _} ->
-        Update.prompt(state, "Date:", :browse_to)
+        Prompts.prompt(state, "Date:", :browse_to)
 
       {:enter, _} ->
         keep(State.pop(state), mode)

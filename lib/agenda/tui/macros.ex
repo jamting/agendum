@@ -19,7 +19,8 @@ defmodule Agenda.TUI.Macros do
 
   alias Agenda.Core
   alias Agenda.Core.Database
-  alias Agenda.TUI.{History, MacroKeys, State, Update}
+  alias Agenda.TUI.{History, MacroKeys, State}
+  alias Agenda.TUI.Update.Prompts
 
   @max_depth 8
 
@@ -138,10 +139,10 @@ defmodule Agenda.TUI.Macros do
         State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, max(count - 1, 0))})
 
       {k, _} when k in [:insert, {:ctrl, "n"}] ->
-        Update.prompt(state, "Name of the new macro:", :new_macro)
+        Prompts.prompt(state, "Name of the new macro:", :new_macro)
 
       {{:char, c}, _} when c != " " ->
-        Update.prompt(state, "Name of the new macro:", :new_macro, c)
+        Prompts.prompt(state, "Name of the new macro:", :new_macro, c)
 
       {_, nil} ->
         state
@@ -156,7 +157,7 @@ defmodule Agenda.TUI.Macros do
         Agenda.TUI.MacroProps.open(state, macro.id)
 
       {k, macro} when k in [:delete, {:ctrl, "d"}] ->
-        Update.confirm(state, "Delete the macro #{macro.name}? (Y/N)", {:delete_macro, macro.id})
+        Prompts.confirm(state, "Delete the macro #{macro.name}? (Y/N)", {:delete_macro, macro.id})
 
       {{:alt_f, 5}, macro} ->
         state |> State.change_db(Core.sort_macros(state.db)) |> follow(macro.id)

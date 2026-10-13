@@ -17,7 +17,8 @@ defmodule Agenda.TUI.ScheduleBox do
 
   alias Agenda.Core
   alias Agenda.Core.{Database, DateFormat}
-  alias Agenda.TUI.{CalendarBox, CategoryScreens, State, Update}
+  alias Agenda.TUI.{CalendarBox, CategoryScreens, State}
+  alias Agenda.TUI.Update.Prompts
 
   @rows [:date_category, :section, :date, :filter]
 
@@ -66,7 +67,7 @@ defmodule Agenda.TUI.ScheduleBox do
 
   defp change(state, mode, :date),
     do:
-      Update.prompt(
+      Prompts.prompt(
         state,
         "Date (e.g. friday, 2026-12-14; F3 in the box: calendar):",
         :schedule_date,

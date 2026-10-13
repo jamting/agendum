@@ -20,7 +20,8 @@ defmodule Agenda.TUI.ItemProperties do
   """
 
   alias Agenda.Core
-  alias Agenda.TUI.{CategoryScreens, Completion, LineEdit, State, TextEdit, Update}
+  alias Agenda.TUI.{CategoryScreens, Completion, LineEdit, State, TextEdit}
+  alias Agenda.TUI.Update.{Editing, Prompts}
 
   def open(state, item_id),
     do: State.push(state, %{type: :item_props, item_id: item_id, cursor: 0})
@@ -153,14 +154,14 @@ defmodule Agenda.TUI.ItemProperties do
   end
 
   # Prompts for a date for a date category (When, Done, Entry); see
-  # `Update.prompt_action/3` for {:item_date, item, category}.
+  # `Update.Prompts` (`prompt_action/3`) for {:item_date, item, category}.
   defp ask_date(state, mode, cat_id) do
     db = state.db
 
     current =
       Agenda.Core.DateParser.format(Agenda.Core.Database.item_date(db, mode.item_id, cat_id))
 
-    Update.prompt(
+    Prompts.prompt(
       state,
       "#{db.categories[cat_id].name} date:",
       {:item_date, mode.item_id, cat_id},
@@ -169,13 +170,13 @@ defmodule Agenda.TUI.ItemProperties do
   end
 
   # Prompts for the number in a numeric category (R29); see
-  # `Update.prompt_action/3` for {:item_number, item, category}.
+  # `Update.Prompts` (`prompt_action/3`) for {:item_number, item, category}.
   defp ask_number(state, mode, %{category: cat_id, number: number}) do
-    Update.prompt(
+    Prompts.prompt(
       state,
       "#{state.db.categories[cat_id].name}:",
       {:item_number, mode.item_id, cat_id},
-      Update.number_text(number, State.number_opts(state))
+      Editing.number_text(number, State.number_opts(state))
     )
   end
 

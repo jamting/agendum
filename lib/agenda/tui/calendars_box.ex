@@ -18,6 +18,7 @@ defmodule Agenda.TUI.CalendarsBox do
   alias Agenda.Core
   alias Agenda.Core.{Calendar, Database, DateFormat}
   alias Agenda.TUI.{Draw, State, Update}
+  alias Agenda.TUI.Update.Prompts
 
   def open(state), do: State.push(state, %{type: :calendars, cursor: 0})
 
@@ -41,7 +42,7 @@ defmodule Agenda.TUI.CalendarsBox do
         State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, max(count - 1, 0))})
 
       {k, _} when k in [:insert, {:ctrl, "n"}] ->
-        Update.prompt(state, "Calendar's web address (https:// or webcal://):", :calendar_url)
+        Prompts.prompt(state, "Calendar's web address (https:// or webcal://):", :calendar_url)
 
       {_, nil} ->
         state
@@ -69,7 +70,7 @@ defmodule Agenda.TUI.CalendarsBox do
   defp unsubscribe(state, cal) do
     items = Enum.count(cal.events, fn {_, %{item: id}} -> Map.has_key?(state.db.items, id) end)
 
-    Update.ask(
+    Prompts.ask(
       state,
       "Unsubscribe from #{cal.name}. Discard its #{Draw.count(items, "item")} too? (Y/N, ESC to cancel)",
       {:unsubscribe_calendar, cal.id}

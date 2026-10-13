@@ -8,7 +8,8 @@ defmodule Agenda.TUI.Menu do
   ESC backs up one level.
   """
 
-  alias Agenda.TUI.{State, Update}
+  alias Agenda.TUI.State
+  alias Agenda.TUI.Update.Actions
 
   @doc "The menu tree: `{label, description, children_or_action}`."
   def tree do
@@ -187,7 +188,7 @@ defmodule Agenda.TUI.Menu do
         State.put_mode(state, %{mode | path: mode.path ++ [index], selected: 0})
 
       {_, _, action} ->
-        state |> State.pop() |> Update.perform(action)
+        state |> State.pop() |> Actions.perform(action)
     end
   end
 end

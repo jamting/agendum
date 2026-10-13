@@ -9,7 +9,8 @@ defmodule Agenda.TUI.ActionBox do
   """
 
   alias Agenda.Core
-  alias Agenda.TUI.{LineEdit, State, Update}
+  alias Agenda.TUI.{LineEdit, State}
+  alias Agenda.TUI.Update.Editing
 
   @rows [:what, :value]
   def rows, do: @rows
@@ -21,7 +22,7 @@ defmodule Agenda.TUI.ActionBox do
           {true, ""}
 
         {_, {:set, value}} when is_number(value) ->
-          {false, Update.number_text(value, State.number_opts(state))}
+          {false, Editing.number_text(value, State.number_opts(state))}
 
         {_, {:set, value}} ->
           {false, value}

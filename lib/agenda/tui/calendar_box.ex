@@ -17,7 +17,8 @@ defmodule Agenda.TUI.CalendarBox do
 
   alias Agenda.Core
   alias Agenda.Core.{Database, MonthCalendar}
-  alias Agenda.TUI.{State, Update}
+  alias Agenda.TUI.State
+  alias Agenda.TUI.Update.{Editing, Prompts}
 
   @moves %{
     :left => {:day, -1},
@@ -66,7 +67,7 @@ defmodule Agenda.TUI.CalendarBox do
         choose(State.pop(state), mode)
 
       {{:f, 6}, _} ->
-        Update.prompt(
+        Prompts.prompt(
           state,
           "Time (e.g. 3pm, 15:30; empty for none):",
           :calendar_time,
@@ -74,7 +75,7 @@ defmodule Agenda.TUI.CalendarBox do
         )
 
       {{:char, c}, _} when c != " " ->
-        Update.prompt(state, "Go to date:", :calendar_jump, c)
+        Prompts.prompt(state, "Go to date:", :calendar_jump, c)
 
       _ ->
         state
@@ -88,7 +89,7 @@ defmodule Agenda.TUI.CalendarBox do
 
   defp choose(state, %{target: {item_id, cat_id}, date: date, time: time}) do
     text = Enum.join([Date.to_iso8601(date), time_text(time)], " ") |> String.trim()
-    Update.set_column_entry(state, item_id, cat_id, text)
+    Editing.set_column_entry(state, item_id, cat_id, text)
   end
 
   @doc "F6's answer: the time to go with the date; empty for none."

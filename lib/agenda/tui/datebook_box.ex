@@ -19,7 +19,8 @@ defmodule Agenda.TUI.DatebookBox do
 
   alias Agenda.Core
   alias Agenda.Core.{Datebook, DateFormat}
-  alias Agenda.TUI.{CategoryScreens, State, Update}
+  alias Agenda.TUI.{CategoryScreens, State}
+  alias Agenda.TUI.Update.Prompts
 
   @rows [
     :date_category,
@@ -95,12 +96,12 @@ defmodule Agenda.TUI.DatebookBox do
     {first, last} = Datebook.hours(d, state.db.date_settings)
     time = if row == :start, do: first, else: last
     label = if row == :start, do: "Start at (a time):", else: "End at (a time):"
-    Update.prompt(state, label, {:datebook_time, mode.view_id, row}, time_text(time))
+    Prompts.prompt(state, label, {:datebook_time, mode.view_id, row}, time_text(time))
   end
 
   defp change(state, mode, d, :base, _step, key) when key in [:enter, {:char, " "}],
     do:
-      Update.prompt(
+      Prompts.prompt(
         state,
         "Base date on (e.g. today, next week, 2026-11-05):",
         {:datebook_base, mode.view_id},

@@ -14,7 +14,8 @@ defmodule Agenda.TUI.CategoryScreens do
 
   alias Agenda.Core
   alias Agenda.Core.Database
-  alias Agenda.TUI.{Draw, LineEdit, State, TextEdit, Update}
+  alias Agenda.TUI.{Draw, LineEdit, State, TextEdit}
+  alias Agenda.TUI.Update.Prompts
 
   # --- opening -------------------------------------------------------------------
 
@@ -248,7 +249,7 @@ defmodule Agenda.TUI.CategoryScreens do
         open_props(state, id)
 
       {:alt_f, 5} ->
-        Update.confirm(
+        Prompts.confirm(
           state,
           "Sort the children of #{cat.name} alphabetically? (Y/N)",
           {:sort_children, id}
@@ -263,7 +264,7 @@ defmodule Agenda.TUI.CategoryScreens do
         if Database.protected?(db, id),
           do: State.error(state, "#{cat.name} cannot be discarded"),
           else:
-            Update.confirm(
+            Prompts.confirm(
               state,
               "Discard #{cat.name} and all its children? (Y/N)",
               {:discard_category, id}
@@ -370,7 +371,7 @@ defmodule Agenda.TUI.CategoryScreens do
             State.error(state, "Set dates by typing in a date column")
 
           numeric?(db, id) and not Database.explicit?(db, item_id, id) ->
-            Update.prompt(state, "#{db.categories[id].name}:", {:item_number, item_id, id})
+            Prompts.prompt(state, "#{db.categories[id].name}:", {:item_number, item_id, id})
 
           true ->
             State.change_db(state, Core.toggle_assignment(db, item_id, id, State.context(state)))
@@ -895,7 +896,7 @@ defmodule Agenda.TUI.CategoryScreens do
   end
 
   defp resolve_choice(state, %{kind: :move} = mode, :new_category) do
-    Update.prompt(
+    Prompts.prompt(
       state,
       "New category for the conflicting items:",
       {:move_new_category, mode.cat_id, mode.relocation}
@@ -930,7 +931,7 @@ defmodule Agenda.TUI.CategoryScreens do
 
   defp resolve_choice(state, mode, :new_child),
     do:
-      Update.prompt(
+      Prompts.prompt(
         state,
         "New category for the conflicting items:",
         {:exclusive_new_child, mode.cat_id}
@@ -1103,15 +1104,15 @@ defmodule Agenda.TUI.CategoryScreens do
 
   defp to_numeric(state, cat) do
     case numeric_question(cat, Core.numeric_conversion(state.db, cat.id, State.context(state))) do
-      nil -> Update.make_numeric(state, cat.id)
-      question -> Update.confirm(state, question, {:make_numeric, cat.id})
+      nil -> Prompts.make_numeric(state, cat.id)
+      question -> Prompts.confirm(state, question, {:make_numeric, cat.id})
     end
   end
 
   defp to_date(state, cat) do
     case date_question(cat, Core.date_conversion(state.db, cat.id, State.context(state))) do
-      nil -> Update.make_date(state, cat.id)
-      question -> Update.confirm(state, question, {:make_date, cat.id})
+      nil -> Prompts.make_date(state, cat.id)
+      question -> Prompts.confirm(state, question, {:make_date, cat.id})
     end
   end
 

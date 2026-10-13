@@ -27,7 +27,8 @@ defmodule Agenda.TUI.Render.Text do
           "-" <> name.(id)
 
         {id, {:set, value}} when is_number(value) ->
-          name.(id) <> "=" <> Agenda.TUI.Update.number_text(value, State.number_opts(state))
+          name.(id) <>
+            "=" <> Agenda.TUI.Update.Editing.number_text(value, State.number_opts(state))
 
         {id, {:set, value}} ->
           name.(id) <> "=" <> value
