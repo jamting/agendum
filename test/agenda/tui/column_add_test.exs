@@ -81,6 +81,50 @@ defmodule Agenda.TUI.ColumnAddTest do
     assert screen(state) =~ ~r/Width: +16/
   end
 
+  describe "Category type (User's Guide 3-17)" do
+    defp kind(state, name), do: state.db.categories[cat(state.db, name)].kind
+
+    test "a standard head can be made Date or Numeric; ENTER does both, one undo step",
+         %{state: state, view_id: v} do
+      state = state |> pick_priority() |> press([:down, " "])
+      assert screen(state) =~ ~r/Category type: +Date/
+      # the width follows the type until it is changed
+      assert screen(state) =~ ~r/Width: +16/
+      state = press(state, " ")
+      assert screen(state) =~ ~r/Category type: +Numeric/
+      assert screen(state) =~ ~r/Width: +12/
+      state = press(state, :enter)
+      assert kind(state, "Priority") == :numeric
+      assert heads(state, v, 0) == ["People", "Priority", "When"]
+      state = History.undo(state)
+      assert {kind(state, "Priority"), heads(state, v, 0)} == {:standard, ["People", "When"]}
+    end
+
+    test "chosen before the head, it stays for a standard head", %{state: state} do
+      state = state |> press([:down, " ", :up]) |> pick_priority()
+      assert screen(state) =~ ~r/Category type: +Date/
+    end
+
+    test "when children or items would change, it asks first, as Category Properties does",
+         %{state: state} do
+      {:ok, db, _} = Core.add_category(state.db, cat(state.db, "Priority"), "High")
+      state = %{state | db: db} |> pick_priority() |> press([:down, " ", " ", :enter])
+      assert panel(state) =~ "Convert Priority to numeric?"
+      state = press(state, "n")
+      # nothing changed, and the box is still open
+      assert {kind(state, "Priority"), State.mode(state).type} == {:standard, :column_add}
+      state = press(state, [:enter, "y"])
+      assert kind(state, "Priority") == :numeric
+      assert State.mode(state) == nil
+    end
+
+    test "a date head stays a date category", %{state: state} do
+      state = press(state, [{:f, 3}, "w", "h", "e", "n", :enter, :down, " "])
+      assert panel(state) =~ "stays a date category"
+      assert screen(state) =~ ~r/Category type: +Date/
+    end
+  end
+
   test "the box starts with the file's Insert new columns in", %{state: state} do
     db = Core.set_insert_columns(state.db, :section)
     state = %{state | db: db} |> press(:esc) |> press([{:f, 10}, "v", "c", "a"])

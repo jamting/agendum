@@ -232,7 +232,8 @@ or handles it.
     `Agenda.TUI.ItemColumnBox`.
     - **Picker** `:picker` for the section head (F3 on Section head).
   - **Column Add** (View ▸ Column ▸ Add): `:column_add`, a new column's
-    head, width, Position (right or left of the current column) and Insert
+    head, its category type (a standard head can become date or numeric),
+    width, Position (right or left of the current column) and Insert
     in (all sections or this one, overriding the file's setting; R55).
     ENTER adds it. `Agenda.TUI.ColumnAddBox`.
     - **Picker** `:picker` for the column head (F3 on Column head).

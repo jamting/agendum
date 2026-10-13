@@ -160,12 +160,53 @@ defmodule Agenda.Core.Facade.Views do
   end
 
   @doc """
+  Column Add with a Category type (User's Guide 3-17): a standard
+  `cat_id` is first made a date or numeric category (`kind`; see
+  `Agenda.Core.Facade.Dates.make_date/3` and
+  `Agenda.Core.Facade.Numbers.make_numeric/3` for what becomes of its
+  children and items), then added as `add_column/6` does, so the whole is
+  one change. A category already of `kind` is just added; a date or
+  numeric one cannot change type (`{:error, :not_standard}`), as in
+  Agenda. Options: `width:`, `insert_in:`, and `clock:` for reading
+  children as dates.
+  """
+  @spec add_column_as(
+          db,
+          id,
+          id,
+          Agenda.Core.Category.kind(),
+          {non_neg_integer, ViewColumns.place()},
+          keyword
+        ) :: {:ok, db} | {:error, :not_standard | :protected | :too_deep}
+  def add_column_as(db, view_id, cat_id, kind, at, opts \\ []) do
+    clock = Keyword.get(opts, :clock)
+
+    converted =
+      case {db.categories[cat_id].kind, kind} do
+        {same, same} -> {:ok, db}
+        {:standard, :date} -> Dates.make_date(db, cat_id, clock)
+        {:standard, :numeric} -> Numbers.make_numeric(db, cat_id, clock)
+        _ -> {:error, :not_standard}
+      end
+
+    # `with` goes on while each clause matches; an error falls through as it is
+    with {:ok, db} <- converted do
+      {:ok, add_column(db, view_id, cat_id, at, opts[:width], opts[:insert_in])}
+    end
+  end
+
+  @doc """
   The width a new column headed by `cat_id` gets unless told otherwise:
   16 for a date category, room for a date and a time, and 12 for others
-  (also without a head yet, as in the Column Add box).
+  (also without a head yet, as in the Column Add box). With `kind`, the
+  width for a head about to become that type (Column Add ▸ Category type).
   """
-  @spec default_column_width(db, id | nil) :: pos_integer
-  def default_column_width(db, cat_id) do
+  @spec default_column_width(db, id | nil, Agenda.Core.Category.kind() | nil) :: pos_integer
+  def default_column_width(db, cat_id, kind \\ nil)
+  def default_column_width(_db, _cat_id, :date), do: 16
+  def default_column_width(_db, _cat_id, kind) when kind in [:standard, :numeric], do: 12
+
+  def default_column_width(db, cat_id, nil) do
     if cat_id && Database.date_category?(db, cat_id), do: 16, else: 12
   end
 

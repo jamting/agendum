@@ -5,9 +5,12 @@ defmodule Agenda.TUI.ColumnAddBox do
 
     * Column head: F3, SPACE or → opens the picker (the whole hierarchy,
       where INS makes a new category); ENTER without a head does too.
-    * Category type: the head's, shown (a category's type is changed in
-      its Category Properties).
-    * Width: → ← by one; until changed, the core's default for the head
+    * Category type (User's Guide 3-17): Standard, Date or Numeric. A
+      standard head (or none yet) can be given another type, which it gets
+      when the column is added, after the same question Category
+      Properties asks when children or items would change; a date or
+      numeric head keeps its type, as in Agenda.
+    * Width: → ← by one; until changed, the core's default for the type
       (16 for a date category, 12 for others).
     * Position: Right of current column (Agenda's default) or Left.
     * Insert in: All sections or Current section, starting at the file's
@@ -19,8 +22,9 @@ defmodule Agenda.TUI.ColumnAddBox do
   """
 
   alias Agenda.Core
-  alias Agenda.Core.Database
   alias Agenda.TUI.{CategoryScreens, State, Template}
+  alias Agenda.TUI.CategoryScreens.Properties
+  alias Agenda.TUI.Update.Prompts
 
   @layout """
    Column head: [head          ]  Category type: [type    ]
@@ -42,6 +46,7 @@ defmodule Agenda.TUI.ColumnAddBox do
       sidx: sidx,
       col: col,
       head: nil,
+      kind: :standard,
       width: nil,
       position: :right,
       insert_in: state.db.insert_columns,
@@ -49,8 +54,14 @@ defmodule Agenda.TUI.ColumnAddBox do
     })
   end
 
-  @doc "The picker chose the head (`Picker.pick/3`)."
-  def set_head(state, id), do: update(state, &%{&1 | head: id})
+  @doc """
+  The picker chose the head (`Picker.pick/3`). A standard one keeps the
+  type chosen; a date or numeric one brings its own.
+  """
+  def set_head(state, id) do
+    kind = state.db.categories[id].kind
+    update(state, &%{&1 | head: id, kind: if(kind == :standard, do: &1.kind, else: kind)})
+  end
 
   # the box may not be on top (the picker just closed above it), so it is
   # found by its type, as `ScheduleBox` does
@@ -82,8 +93,16 @@ defmodule Agenda.TUI.ColumnAddBox do
 
   defp change(state, _mode, :head, _step), do: pick_head(state)
 
-  defp change(state, _mode, :type, _step),
-    do: State.error(state, "A category's type is changed in its Category Properties")
+  @kinds [:standard, :date, :numeric]
+
+  defp change(state, mode, :type, step) do
+    if mode.head && state.db.categories[mode.head].kind != :standard do
+      State.error(state, "#{name(state, mode.head)} stays a #{kind_name(mode.kind)} category")
+    else
+      index = Enum.find_index(@kinds, &(&1 == mode.kind))
+      State.put_mode(state, %{mode | kind: Enum.at(@kinds, Integer.mod(index + step, 3))})
+    end
+  end
 
   defp change(state, mode, :width, step),
     do: State.put_mode(state, %{mode | width: max(3, width(state, mode) + step)})
@@ -100,30 +119,62 @@ defmodule Agenda.TUI.ColumnAddBox do
   defp flip(a, a, b), do: b
   defp flip(_value, a, _b), do: a
 
-  # The column goes right or left of the highlighted column or of the item
-  # text (R55). The highlight ends on the new column: columns are counted
-  # from 0, the cursor from 1 (0 is the item text).
+  # A head about to change type is asked about first, when its children or
+  # items would change (Y comes back to `add_now/1`).
   defp add(state, mode) do
+    case question(state, mode) do
+      nil -> add_now(state)
+      question -> Prompts.confirm(state, question, :column_add)
+    end
+  end
+
+  defp question(state, %{head: head, kind: kind}) do
+    cat = state.db.categories[head]
+    clock = State.context(state)
+
+    case {cat.kind, kind} do
+      {:standard, :date} ->
+        Properties.date_question(cat, Core.date_conversion(state.db, head, clock))
+
+      {:standard, :numeric} ->
+        Properties.numeric_question(cat, Core.numeric_conversion(state.db, head, clock))
+
+      _ ->
+        nil
+    end
+  end
+
+  @doc """
+  Adds the column the box (on top) describes, with its head made the type
+  chosen: one change, one undo step. It goes right or left of the
+  highlighted column or of the item text (R55), and the highlight ends on
+  it: columns are counted from 0, the cursor from 1 (0 is the item text).
+  """
+  def add_now(state) do
+    mode = State.mode(state)
     side = if mode.position == :right, do: :right_of, else: :left_of
     place = {side, if(mode.col == 0, do: :items, else: mode.col - 1)}
     index = Agenda.Core.ViewColumns.insert_index(State.view(state), mode.sidx, place)
+    opts = [width: mode.width, insert_in: mode.insert_in, clock: State.context(state)]
 
-    db =
-      Core.add_column(
-        state.db,
-        state.view_id,
-        mode.head,
-        {mode.sidx, place},
-        mode.width,
-        mode.insert_in
-      )
-
-    %{State.change_db(State.pop(state), db) | col: index + 1}
+    case Core.add_column_as(
+           state.db,
+           state.view_id,
+           mode.head,
+           mode.kind,
+           {mode.sidx, place},
+           opts
+         ) do
+      {:ok, db} -> %{State.change_db(State.pop(state), db) | col: index + 1}
+      {:error, _} -> State.error(state, "#{name(state, mode.head)} cannot change type")
+    end
   end
 
-  # the width chosen, or the core's default for the head
+  defp name(state, id), do: state.db.categories[id].name
+
+  # the width chosen, or the core's default for the type
   defp width(_state, %{width: width}) when width != nil, do: width
-  defp width(state, mode), do: Core.default_column_width(state.db, mode.head)
+  defp width(state, mode), do: Core.default_column_width(state.db, mode.head, mode.kind)
 
   # --- drawing ---
 
@@ -131,7 +182,7 @@ defmodule Agenda.TUI.ColumnAddBox do
   def content(state, mode) do
     values = %{
       head: if(mode.head, do: state.db.categories[mode.head].name, else: "(F3 to pick)"),
-      type: type(state, mode.head),
+      type: kind_name(mode.kind) |> String.capitalize(),
       width: Integer.to_string(width(state, mode)),
       position:
         if(mode.position == :right, do: "Right of current column", else: "Left of current column"),
@@ -142,13 +193,5 @@ defmodule Agenda.TUI.ColumnAddBox do
       [[], [{:box, @hint}]]
   end
 
-  defp type(_state, nil), do: ""
-
-  defp type(state, id) do
-    cond do
-      state.db.categories[id].kind == :numeric -> "Numeric"
-      Database.date_category?(state.db, id) -> "Date"
-      true -> "Standard"
-    end
-  end
+  defp kind_name(kind), do: Atom.to_string(kind)
 end

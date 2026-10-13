@@ -280,6 +280,9 @@ defmodule Agenda.TUI.Update.Prompts do
 
   defp confirmed(state, {:make_date, id}, true), do: make_date(state, id)
 
+  # Column Add ▸ Category type: the conversion is agreed to; the box is on top again
+  defp confirmed(state, :column_add, true), do: Agenda.TUI.ColumnAddBox.add_now(state)
+
   defp confirmed(state, {:make_dependent, id, prerequisites}, true) do
     case Core.make_dependent(state.db, id, prerequisites) do
       {:ok, db} ->

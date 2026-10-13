@@ -181,9 +181,14 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
     end
   end
 
-  defp date_question(_cat, %{children: 0, assigned: 0}), do: nil
+  @doc """
+  The question to ask before `cat` becomes a date category, or nil when
+  nothing would change (`Core.date_conversion/3`). Also asked by Column
+  Add ▸ Category type.
+  """
+  def date_question(_cat, %{children: 0, assigned: 0}), do: nil
 
-  defp date_question(cat, conversion) do
+  def date_question(cat, conversion) do
     parts =
       [
         conversion.children > 0 && "children become dates",
@@ -195,9 +200,13 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
     "Make #{cat.name} a date category? " <> Enum.join(parts, "; ") <> " (Y/N)"
   end
 
-  defp numeric_question(_cat, %{children: 0, assigned: 0}), do: nil
+  @doc """
+  The question to ask before `cat` becomes numeric, or nil when nothing
+  would change (`Core.numeric_conversion/3`).
+  """
+  def numeric_question(_cat, %{children: 0, assigned: 0}), do: nil
 
-  defp numeric_question(cat, conversion) do
+  def numeric_question(cat, conversion) do
     zeros =
       case conversion.non_numeric do
         [] -> nil

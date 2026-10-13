@@ -121,6 +121,39 @@ defmodule Agenda.Core.SectionColumnsTest do
     assert Enum.map(View.columns(db.views[v], 0), & &1.width) == [16, 12, 16]
     # the same default, asked before adding (the Column Add box shows it)
     assert {Core.default_column_width(db, due), Core.default_column_width(db, nil)} == {16, 12}
+    # for a head about to become a date category
+    assert Core.default_column_width(db, cat(db, "People"), :date) == 16
+  end
+
+  describe "adding a column as a type (Column Add ▸ Category type)" do
+    test "a standard head made a date category, then added, 16 wide", %{db: db, view_id: v} do
+      assert {:ok, db} =
+               Core.add_column_as(db, v, cat(db, "Ideas"), :date, {0, 0}, clock: today())
+
+      assert db.categories[cat(db, "Ideas")].kind == :date
+      assert column(db, v, {0, 0}).width == 16
+    end
+
+    test "made numeric, the width given", %{db: db, view_id: v} do
+      assert {:ok, db} =
+               Core.add_column_as(db, v, cat(db, "Amount"), :numeric, {0, 0},
+                 width: 9,
+                 insert_in: :section,
+                 clock: today()
+               )
+
+      assert db.categories[cat(db, "Amount")].kind == :numeric
+      assert heads(db, v) == [["Amount", "When"], ["When"], ["When"]]
+    end
+
+    test "its own type: just added; another type for a date category: refused",
+         %{db: db, view_id: v} do
+      assert {:ok, db} = Core.add_column_as(db, v, cat(db, "People"), :standard, {0, 0})
+      assert column(db, v, {0, 0}).width == 12
+
+      assert Core.add_column_as(db, v, db.special.when, :standard, {0, 0}) ==
+               {:error, :not_standard}
+    end
   end
 
   describe "changing a linked column" do

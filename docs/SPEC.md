@@ -526,8 +526,12 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     Column Properties (R41a), with formatted samples.
   - View ▸ Column ▸ Add opens the Column Add box (User's Guide 3-15 to
     3-18): Column head (F3, SPACE or → picks it; ENTER without one too),
-    Category type (shown), Width (→ ← by one, starting at the default
-    above), Position (Right of current column, the default, or Left) and
+    Category type (Standard, Date or Numeric: a standard head, or none yet,
+    can be given another type, which it gets when the column is added,
+    after the question Category Properties asks when children or items
+    would change; a date or numeric head keeps its type, as in Agenda;
+    User's Guide 3-17), Width (→ ← by one, starting at the default for
+    the type), Position (Right of current column, the default, or Left) and
     Insert in (All sections or Current section), which starts at the
     file's Insert new columns in and overrides it for this column. ENTER
     adds the column, one undo step; ALT-R and ALT-L skip the box. The
@@ -542,8 +546,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     width the text has, a width chosen sets it Manually (5 to 200), and
     SHIFT-? fits it to the longest item text or section name of the
     sections it is linked with, within what the columns leave.
-  - Not done yet: the Column Add box's Category type for a new category
-    (it is changed in Category Properties); Display %
+  - Not done yet: Display %
     of total (a numeric column's "% tot" column); typing a new name for
     the column head in the box (the picker takes one).
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
