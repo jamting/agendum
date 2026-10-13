@@ -13,6 +13,9 @@ defmodule Agenda.Core.Facade.Alarms do
 
   @doc "An item's When date and time (midnight when it has no time), or nil."
   @spec when_at(Agenda.Core.Item.t()) :: NaiveDateTime.t() | nil
+  # Matching on a map pattern in the head picks a clause by the item's
+  # fields. `time || ~T[00:00:00]`: `||` returns the left side unless it is
+  # nil or false; `~T[...]` is a sigil, a literal `Time`.
   def when_at(%{when: nil}), do: nil
   def when_at(%{when: date, when_time: time}), do: NaiveDateTime.new!(date, time || ~T[00:00:00])
 
@@ -22,6 +25,10 @@ defmodule Agenda.Core.Facade.Alarms do
   """
   @spec set_alarm(db, id, integer) :: {:ok, db} | {:error, :no_when | :minutes}
   def set_alarm(db, id, minutes) do
+    # `cond` runs the first branch whose condition is truthy; `true` is the
+    # else. Returning `{:ok, value} | {:error, reason}` instead of raising is
+    # the convention for failures the caller should handle (here the UI
+    # turns the atom into a message).
     cond do
       minutes not in 0..60 -> {:error, :minutes}
       db.items[id].when == nil -> {:error, :no_when}
@@ -38,6 +45,10 @@ defmodule Agenda.Core.Facade.Alarms do
   """
   @spec ring_alarms(db, NaiveDateTime.t()) :: {db, [id]}
   def ring_alarms(db, %NaiveDateTime{} = now) do
+    # `%NaiveDateTime{} = now` in the head only accepts that struct: calling
+    # with a `Date` fails at once with a FunctionClauseError instead of
+    # somewhere deeper. In the `for`, `at = when_at(item)` binds a value
+    # for the filters after it.
     due =
       for item <- Database.items(db),
           item.alarm_minutes != nil,
@@ -64,6 +75,9 @@ defmodule Agenda.Core.Facade.Alarms do
     current =
       items
       |> Enum.filter(&(&1.alarm_minutes != nil))
+      # `&when_at/1` captures a named function as a value. Passing the module
+      # `NaiveDateTime` as the sorter makes `sort_by` use its `compare/2`:
+      # `<` on structs would compare their fields, not the moment.
       |> Enum.sort_by(&when_at/1, NaiveDateTime)
       |> Enum.map(& &1.id)
 

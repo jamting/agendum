@@ -25,6 +25,7 @@ defmodule Agenda.Core.Facade.Rules do
   """
   @spec execute(db, [id], keyword) :: db
   def execute(db, item_ids, opts \\ []) do
+    # `opts[:root] || default`: the usual way to default a keyword option
     root = opts[:root] || db.main_id
     only = if root == db.main_id, do: nil, else: MapSet.new(Database.subtree(db, root))
     clock = opts[:clock]
@@ -32,7 +33,13 @@ defmodule Agenda.Core.Facade.Rules do
 
     Enum.reduce(item_ids, db, fn id, db ->
       if Map.has_key?(db.items, id) do
-        # as if the item had just arrived, every membership counts as new
+        # as if the item had just arrived, every membership counts as new.
+        # Domain: actions normally run only for categories an item *joins*
+        # (see `Changes.settle/4`). Execute with "old & new" (R15e) must
+        # also run them for memberships the item already had, e.g. after
+        # adding an action to a category full of items. Rather than a
+        # second code path, it hands `run_actions` a `before` in which the
+        # item doesn't exist, so every membership looks newly joined.
         before = if opts[:old_assignments], do: %{db | items: Map.delete(db.items, id)}, else: db
 
         db
@@ -54,8 +61,12 @@ defmodule Agenda.Core.Facade.Rules do
   """
   @spec set_action(db, id, id, :assign | :remove | :clear | {:set, String.t()}, clock | nil) ::
           {:ok, db} | {:error, :self | :invalid_date | :not_a_number | :not_allowed}
+  # A bodiless head declares the default argument once for all clauses
+  # below (defaults may not be repeated on each clause).
   def set_action(db, cat_id, target, action, clock \\ nil)
 
+  # `cat_id` twice in one head matches only when both arguments are equal:
+  # a category can't act on itself.
   def set_action(_db, cat_id, cat_id, _action, _clock), do: {:error, :self}
 
   def set_action(db, cat_id, target, action, clock) do
@@ -84,6 +95,8 @@ defmodule Agenda.Core.Facade.Rules do
     end
   end
 
+  # One clause per valid (kind, action) pair, then a catch-all for the
+  # rest: a validation table written as function heads.
   defp check_action(:standard, action, _settings, _clock) when action in [:assign, :remove],
     do: {:ok, action}
 
@@ -91,6 +104,8 @@ defmodule Agenda.Core.Facade.Rules do
     do: {:ok, :clear}
 
   defp check_action(:date, {:set, text}, settings, clock) do
+    # with no clock, any fixed day will do: only whether it parses matters
+    # here (`~D[...]` is a `Date` literal)
     today = if clock, do: Changes.date_of(clock), else: ~D[2000-01-01]
 
     case DateParser.parse(text, today, Context.parser_opts(clock, settings)) do
@@ -114,7 +129,10 @@ defmodule Agenda.Core.Facade.Rules do
     Database.update_category(db, cat_id, fn cat ->
       %{
         cat
-        | actions: List.keydelete(cat.actions, target, 0),
+        | # `actions` is a list of `{target, action}` tuples; the `List.key*`
+          # functions treat such a list as a small ordered map, keyed by the
+          # tuple element at the index given (0 here).
+          actions: List.keydelete(cat.actions, target, 0),
           also_assign: List.delete(cat.also_assign, target)
       }
     end)
@@ -148,6 +166,8 @@ defmodule Agenda.Core.Facade.Rules do
   def set_match_settings(db, %Agenda.Core.TextMatch{} = settings),
     do: %{db | match_settings: settings}
 
+  # A module attribute used as a constant: its value is fixed at compile
+  # time and pasted in wherever `@match_overrides` appears.
   @match_overrides [:enabled, :match_on, :strength, :confirm, :ignore_suffixes, :ignore_accents]
 
   @doc """
@@ -217,6 +237,8 @@ defmodule Agenda.Core.Facade.Rules do
   """
   @spec reassign_all(db, clock) :: db
   def reassign_all(db, today) do
+    # The accumulator is named `before`: the database as it was before this
+    # item's turn, which `settle/4` compares with to find new memberships.
     Enum.reduce(db.item_order, db, fn id, before ->
       db = Assign.auto_assign(before, id, [])
       db = if db.items[id].when, do: db, else: Changes.item_dates(db, id, nil, [], today)

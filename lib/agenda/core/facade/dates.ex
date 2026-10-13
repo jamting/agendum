@@ -23,6 +23,9 @@ defmodule Agenda.Core.Facade.Dates do
   def toggle_auto_date(db) do
     rule = db.categories[db.special.when].date_rule
     assign = if rule.assign == :never, do: :item_text, else: :never
+    # `=` is a match, not just assignment: this asserts the result is
+    # `{:ok, db}` and raises a MatchError otherwise. Fine here, since When
+    # is always a date category, so an error would be a bug ("let it crash").
     {:ok, db} = set_date_rule(db, db.special.when, %{rule | assign: assign})
     db
   end
@@ -36,6 +39,8 @@ defmodule Agenda.Core.Facade.Dates do
   the dates they have.
   """
   @spec set_date_rule(db, id, DateRule.t()) :: {:ok, db} | {:error, :not_a_date_category}
+  # `%DateRule{} = rule` accepts only a `DateRule` struct. A struct is a map
+  # with a fixed set of keys and a `__struct__` field naming its module.
   def set_date_rule(db, cat_id, %DateRule{} = rule) do
     if Database.date_category?(db, cat_id),
       do: {:ok, Database.update_category(db, cat_id, &%{&1 | date_rule: rule})},
@@ -60,6 +65,8 @@ defmodule Agenda.Core.Facade.Dates do
   """
   @spec when_key(db, id, String.t(), clock) :: {:ok, db} | {:error, :invalid_date}
   def when_key(db, item_id, text, clock) do
+    # A `with` without `else` returns the first non-matching value as it is,
+    # so an `{:error, :invalid_date}` passes straight through to the caller.
     with {:ok, db, :date} <- Assignments.assign_by_name(db, item_id, db.special.when, text, clock) do
       {:ok, Changes.key_dates(db, item_id, :when_key, clock)}
     end
@@ -71,6 +78,8 @@ defmodule Agenda.Core.Facade.Dates do
   """
   @spec set_date(db, id, id, Date.t() | nil, clock | nil) :: db
   def set_date(db, item_id, cat_id, date, clock \\ nil) do
+    # Raising is for programmer errors (the UI only offers date categories
+    # here); expected failures return `{:error, reason}` instead.
     unless Database.date_category?(db, cat_id), do: raise(ArgumentError, "not a date category")
     db |> Changes.put_date(item_id, cat_id, date) |> Changes.settle(db, item_id, clock)
   end
@@ -146,6 +155,9 @@ defmodule Agenda.Core.Facade.Dates do
         {:error, :too_deep}
 
       true ->
+        # Two generators nest like two loops. A generator with a pattern
+        # skips what doesn't match: wrapping the parse in a one-element
+        # list makes `{:ok, date, time} <- [...]` a filter that also binds.
         dates =
           for child <- cat.children,
               {:ok, date, time} <- [child_date(db, db.categories[child].name, clock)],

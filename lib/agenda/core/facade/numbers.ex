@@ -84,6 +84,9 @@ defmodule Agenda.Core.Facade.Numbers do
         {:error, :too_deep}
 
       true ->
+        # `++` joins two lists (it copies the left one, so keep that the
+        # shorter). `for(...)` with parentheses is the same comprehension
+        # written on one line.
         values =
           for(item <- Changes.direct_items(db, cat_id), do: {item, 0.0}) ++
             for child <- cat.children,
@@ -110,6 +113,8 @@ defmodule Agenda.Core.Facade.Numbers do
     end
   end
 
+  # Floats: Elixir keeps integers and floats apart (`0` vs `0.0`); numbers
+  # in numeric categories are always stored as floats.
   defp child_value(name, clock) do
     case NumberFormat.parse(name, Context.number_opts(clock)) do
       {:ok, value} -> value

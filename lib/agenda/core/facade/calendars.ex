@@ -25,6 +25,8 @@ defmodule Agenda.Core.Facade.Calendars do
   def subscribe_calendar(db, name, url) do
     name = String.trim(name)
 
+    # Tagging a step (`{:name, true} <- {:name, ...}`) lets `else` tell which
+    # step failed: a bare `false` could come from anywhere.
     with {:name, true} <- {:name, name != ""},
          {:ok, url} <- Calendar.normalize_url(url) do
       {db, category} =
@@ -50,6 +52,8 @@ defmodule Agenda.Core.Facade.Calendars do
   def unsubscribe_calendar(db, cal_id, remove_items) do
     items =
       if remove_items,
+        # iterating a map yields `{key, value}` tuples; the pattern takes the
+        # `item` field out of each value
         do: for({_, %{item: id}} <- db.calendars[cal_id].events, do: id),
         else: []
 

@@ -20,6 +20,8 @@ defmodule Agenda.Core.Facade.Macros do
   @spec add_macro(db, String.t()) ::
           {:ok, db, id} | {:error, :empty_name | :name_too_long | :name_taken}
   def add_macro(db, name) do
+    # `with` and its `do` body: runs only if `macro_name/3` gave
+    # `{:ok, name}`; an `{:error, _}` is returned unchanged.
     with {:ok, name} <- macro_name(db, name, nil) do
       {db, id} = Database.add_macro(db, %Macro{name: name})
       {:ok, db, id}
@@ -43,6 +45,9 @@ defmodule Agenda.Core.Facade.Macros do
       String.length(name) > Macro.max_name() ->
         {:error, :name_too_long}
 
+      # `match?(pattern, value)` tests a pattern without binding; the pattern
+      # can carry a guard (`when ...`). Here: a macro of that name exists
+      # and it is not the one being renamed.
       match?(%{id: other} when other != own, Database.find_macro(db, name)) ->
         {:error, :name_taken}
 
@@ -82,6 +87,8 @@ defmodule Agenda.Core.Facade.Macros do
   @spec move_macro(db, id, integer) :: db
   def move_macro(db, id, index) do
     rest = List.delete(db.macro_order, id)
+    # Lists are linked lists: `length/1`, `List.delete/2` and
+    # `List.insert_at/3` walk the list (O(n)); fine for a few dozen macros.
     index = index |> max(0) |> min(length(rest))
     %{db | macro_order: List.insert_at(rest, index, id)}
   end

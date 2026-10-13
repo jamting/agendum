@@ -21,6 +21,9 @@ defmodule Agenda.Core.Facade.Assignments do
   """
   @spec remove_from_category(db, id, id, clock | nil) :: db
   def remove_from_category(db, item_id, cat_id, clock \\ nil) do
+    # `if c, do: a, else: b` is the keyword form of `if ... do ... else ...
+    # end` (the block form is sugar for it). `if` is an expression: its
+    # value is the function's result.
     if Database.date_category?(db, cat_id),
       do: Changes.put_date(db, item_id, cat_id, nil),
       else:
@@ -72,6 +75,9 @@ defmodule Agenda.Core.Facade.Assignments do
         {:error, :empty}
 
       db.categories[head_id].kind == :numeric ->
+        # `with` chains steps that may fail: each `pattern <- expr` must
+        # match to go on; the first that doesn't falls to `else` (here any
+        # error becomes `:not_a_number`). It replaces nested `case`s.
         with {:ok, value} <- NumberFormat.parse(text, Context.number_opts(today)),
              {:ok, db} <- Numbers.set_number(db, item_id, head_id, value, today) do
           {:ok, db, :number}
@@ -128,6 +134,8 @@ defmodule Agenda.Core.Facade.Assignments do
 
     db
     |> Database.hierarchy()
+    # `flat_map` with `[]` or `[x]` per element: filter and map in one pass.
+    # `{id, _depth}` takes each 2-tuple apart right in the function's head.
     |> Enum.flat_map(fn {id, _depth} ->
       cond do
         Database.date_category?(db, id) ->
@@ -136,6 +144,8 @@ defmodule Agenda.Core.Facade.Assignments do
             date -> [%{category: id, kind: :date, date: date}]
           end
 
+        # a `cond` condition can bind: the branch runs when `number` is
+        # truthy (not nil or false) and can use it
         number = Database.number(db, item_id, id) ->
           [%{category: id, kind: :numeric, date: nil, number: number}]
 
@@ -204,6 +214,9 @@ defmodule Agenda.Core.Facade.Assignments do
   defp fold(text) do
     text
     |> String.trim()
+    # `:unicode` is an Erlang module, called directly (Erlang modules are
+    # atoms). NFD splits "é" into "e" plus a combining accent, which the
+    # regex (`~r/.../u`, a Unicode regex sigil) then removes.
     |> :unicode.characters_to_nfd_binary()
     |> String.replace(~r/\p{Mn}/u, "")
     |> String.downcase()
@@ -215,6 +228,8 @@ defmodule Agenda.Core.Facade.Assignments do
     wanted = Database.normalize(text)
     candidates = Database.descendants(db, root)
 
+    # `--` removes elements from a list; `[id | _]` matches a non-empty list
+    # and binds its head (first element), `[]` the empty one, `[id]` exactly one.
     case Database.find_categories(db, text, root) -- [root] do
       [id | _] ->
         {:ok, id}

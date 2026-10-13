@@ -9,6 +9,8 @@ defmodule Agenda.Core.Facade.Views do
 
   alias Agenda.Core.{Assign, Database, Datebook, NumberFormat, RangeFilter, View, ViewModel}
   alias Agenda.Core.Facade.{Dates, Numbers}
+  # `View.Column` and `View.Section` are nested modules; nesting is only a
+  # naming convention, so they are aliased like any other module.
   alias Agenda.Core.View.{Column, Section}
 
   @typep db :: Agenda.Core.db()
@@ -42,6 +44,8 @@ defmodule Agenda.Core.Facade.Views do
 
   defp check_datebook(db, d) do
     date_cat = d.date_category || db.special.when
+    # `d` is rebound to a copy with the defaults filled in; the caller's
+    # struct is untouched
     d = %{d | date_category: date_cat, section_category: d.section_category || date_cat}
 
     if Database.date_category?(db, date_cat) and
@@ -73,6 +77,10 @@ defmodule Agenda.Core.Facade.Views do
   @spec set_section_category(db, id, non_neg_integer, id) :: db
   def set_section_category(db, view_id, index, cat_id) do
     Database.update_view(db, view_id, fn v ->
+      # Updating something nested means rebuilding the path to it: a new
+      # view with a new sections list holding one new section.
+      # (`update_in/2` with an `Access` path, e.g. `Access.at(index)`, can
+      # do it in one call; the code here spells it out.)
       %{v | sections: List.update_at(v.sections, index, &%{&1 | category_id: cat_id})}
     end)
   end
@@ -80,6 +88,7 @@ defmodule Agenda.Core.Facade.Views do
   @doc "Inserts a section headed by `cat_id` at `index` in the view."
   @spec add_section(db, id, id, non_neg_integer) :: db
   def add_section(db, view_id, cat_id, index) do
+    # an anonymous function can pattern match its argument like a `def`
     Database.update_view(db, view_id, fn %View{} = v ->
       %{v | sections: List.insert_at(v.sections, index, %Section{category_id: cat_id})}
     end)
@@ -159,6 +168,8 @@ defmodule Agenda.Core.Facade.Views do
   its calculation lines; at least 3, at most #{@fit_room}. Done once: the width
   does not follow later changes.
   """
+  # (`#{@fit_room}` above: a `@doc` is a normal string, so it can
+  # interpolate a module attribute, evaluated at compile time.)
   @spec fit_column(db, id, non_neg_integer, clock) :: db
   def fit_column(db, view_id, index, clock) do
     view = db.views[view_id]
@@ -169,6 +180,8 @@ defmodule Agenda.Core.Facade.Views do
     entries =
       for section <- ViewModel.build(db, roomy, clock),
           not section.collapsed,
+          # `& &1.cells` is `fn row -> row.cells end`; `elem(t, 1)` reads a
+          # tuple's second element (tuples are zero-indexed)
           cells <- Enum.map(section.rows, & &1.cells) ++ Enum.map(section.calcs, &elem(&1, 1)),
           do: cells |> Enum.at(index) |> String.trim()
 
@@ -266,6 +279,8 @@ defmodule Agenda.Core.Facade.Views do
     view = Database.view(db, view_id)
     section = Enum.at(view.sections, index)
 
+    # The generator's pattern keeps only range criteria: `{cat, :assigned}`
+    # doesn't match `{cat, {:range, ...}}`, so it is skipped silently.
     for {cat, {:range, _, _, _} = range} <- view.filter ++ section.filter,
         value = RangeFilter.entry_value(db, cat, range, today),
         do: {cat, value}
@@ -275,6 +290,7 @@ defmodule Agenda.Core.Facade.Views do
   @spec apply_entry_values(db, id, [{id, {:date, Date.t()} | {:number, float}}], clock | nil) ::
           db
   def apply_entry_values(db, item_id, values, clock \\ nil) do
+    # `fn` with several clauses, chosen by pattern like a `def`'s
     Enum.reduce(values, db, fn
       {cat, {:date, date}}, db ->
         Dates.set_date(db, item_id, cat, date, clock)
@@ -322,6 +338,8 @@ defmodule Agenda.Core.Facade.Views do
 
   # The Show View, made the first time; each use starts it afresh, so one
   # use's section and filter do not linger into the next.
+  # private functions take defaults too: this defines `show/2`, `show/3`
+  # and `show/4`
   defp show(db, match, section \\ nil, filter \\ []) do
     {db, view_id} =
       case Enum.find(Database.views(db), &(&1.name == @show_view)) do
@@ -383,6 +401,9 @@ defmodule Agenda.Core.Facade.Views do
   def sort_views(db),
     do: %{db | view_order: Enum.sort_by(db.view_order, &String.downcase(db.views[&1].name))}
 
+  # `scope` is `:view` or `{:section, index}`, one clause each. `Map.fetch!`
+  # raises if the key is missing; the bang (`!`) names functions that raise
+  # instead of returning an error.
   defp get_scoped(db, view_id, :view, field), do: Map.fetch!(Database.view(db, view_id), field)
 
   defp get_scoped(db, view_id, {:section, index}, field),
@@ -436,6 +457,7 @@ defmodule Agenda.Core.Facade.Views do
   @spec toggle_view_option(db, id, :hide_done | :hide_empty | :hide_inherited | :hide_dependent) ::
           db
   def toggle_view_option(db, view_id, option) do
+    # `Map.update!/3` applies a function to the current value of one key
     Database.update_view(db, view_id, &Map.update!(&1, option, fn value -> not value end))
   end
 end

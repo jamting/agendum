@@ -26,17 +26,28 @@ defmodule Agenda.Core.Facade.Items do
   """
   @spec add_item(db, String.t(), clock, keyword) :: {db, id}
   def add_item(db, text, today, opts \\ []) do
+    # Data is immutable: "changing" `db` makes a new database and leaves the
+    # old one intact (sharing most of its memory). So `before` is a real
+    # snapshot that `Changes.settle/4` can compare against afterwards.
+    # Rebinding `db = ...` below gives the name a new value; nothing mutates.
     before = db
 
+    # A tuple `{db, id}` returned and taken apart by pattern matching: the
+    # usual way to return two things.
     {db, id} =
       Database.insert_item(db, String.trim(text), Changes.date_of(today), after: opts[:after])
 
+    # `opts` is a keyword list (`[section: 3, after: 7]`); `opts[:section]`
+    # is nil when the option is missing. `case` matches the value against
+    # patterns in order; `section` in the second clause binds whatever it is.
     db =
       case opts[:section] do
         nil -> db
         section -> Changes.user_assign(db, id, section)
       end
 
+    # The pipe `x |> f(a)` means `f(x, a)`: each step's result becomes the
+    # next call's first argument. That is why core functions take `db` first.
     db =
       db
       |> Assign.auto_assign(id, Keyword.get(opts, :adjacent, []))
@@ -48,7 +59,11 @@ defmodule Agenda.Core.Facade.Items do
   end
 
   # an item typed into a datebook slot (R47) gets the slot's date and time,
-  # as if typed in the date column
+  # as if typed in the date column.
+  # Several clauses of one function, chosen by pattern matching on the
+  # arguments, top to bottom, replace an if/else: `nil` matches only nil,
+  # `{cat_id, date, time}` only a 3-tuple. `defp` is private to the module;
+  # a leading `_` marks an argument as deliberately unused.
   defp typed_date(db, _id, nil), do: db
 
   defp typed_date(db, id, {cat_id, date, time}),
@@ -64,6 +79,10 @@ defmodule Agenda.Core.Facade.Items do
     text = String.trim(text)
     events = if text == db.items[id].text, do: [], else: [:item_edited]
 
+    # `&%{&1 | text: text}` is a short anonymous function, `fn item ->
+    # %{item | text: text} end`; `&1` is its first argument. `%{map | key: v}`
+    # copies a map (here an `Item` struct) with one key changed, and fails if
+    # the key does not exist, so a typo is an error, not a new key.
     db
     |> Database.update_item(id, &%{&1 | text: text})
     |> Assign.auto_assign(id, adjacent)
@@ -103,6 +122,8 @@ defmodule Agenda.Core.Facade.Items do
         if to == db.main_id, do: db, else: Changes.user_assign(db, item_id, to)
       end
 
+    # `^item_id` (the pin) compares with the existing `item_id` instead of
+    # binding a new variable: "placed after itself" changes nothing.
     db =
       case opts[:after] do
         nil -> db
@@ -134,6 +155,8 @@ defmodule Agenda.Core.Facade.Items do
   """
   @spec mark_done(db, id, clock) :: db
   def mark_done(db, id, today) do
+    # `%{done: nil} = item` matches any map whose `done` is nil and also
+    # binds the whole map to `item`; `_` matches everything else.
     case db.items[id] do
       %{done: nil} = item ->
         db
@@ -167,6 +190,9 @@ defmodule Agenda.Core.Facade.Items do
         }
       end)
 
+    # `Enum.reduce(list, acc, fn x, acc -> ... end)` is the functional loop:
+    # each step gets the accumulator (here the database) and returns the new
+    # one. The inner `db` shadows the outer one; no variable is ever mutated.
     db
     |> Database.explicit_categories(item.id)
     |> Enum.reduce(db, fn cat, db ->
@@ -186,11 +212,15 @@ defmodule Agenda.Core.Facade.Items do
 
   @doc "Marked items, in item order (the group bulk commands act on)."
   @spec marked_items(db) :: [id]
+  # A `for` comprehension: a generator (`item <- list`), then filters (any
+  # expression; elements for which it is falsy are skipped), then the value.
   def marked_items(db), do: for(item <- Database.items(db), item.marked, do: item.id)
 
   @doc "Marks (true) or unmarks (false) a group of items (F7 on a section head)."
   @spec set_marked(db, [id], boolean) :: db
   def set_marked(db, ids, marked),
+    # `&Database.update_item(&2, &1, ...)` is a two-argument function: `&1` is
+    # the id (the element), `&2` the database (the accumulator).
     do: Enum.reduce(ids, db, &Database.update_item(&2, &1, fn i -> %{i | marked: marked} end))
 
   @doc "Unmarks every item in the file (ALT-F7 UNMKALL)."

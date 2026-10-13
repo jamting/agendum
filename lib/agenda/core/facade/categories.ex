@@ -59,6 +59,7 @@ defmodule Agenda.Core.Facade.Categories do
   end
 
   defdelegate discard_category(db, id), to: Database, as: :delete_category
+
   # --- moving categories (SPEC R7b, R7c, R7d) ---
 
   @doc """
@@ -85,6 +86,13 @@ defmodule Agenda.Core.Facade.Categories do
       conflict hinges on and move the items there (only when there are
       conflicts)
   """
+  # Domain: membership is inherited (an item in Europe is in Sales too), so
+  # moving a category moves its items with it, and that can break the rules
+  # (R7b, R7c). E.g. with an exclusive Priority (High | Low), moving
+  # Urgent (a category of its own) under High puts items that were in
+  # both Urgent and Low into High and Low at once. The move is done first, on a copy; the items it
+  # put in conflict are found by comparing with the category's `original`
+  # subtree, and the user's chosen resolution decides which assignment goes.
   @spec relocate(db, id, relocation, move_resolution) :: {:ok, db} | {:error, atom}
   def relocate(db, id, relocation, resolution \\ :remove_moved) do
     with {:ok, moved_db} <- do_relocate(db, id, relocation) do
@@ -100,12 +108,16 @@ defmodule Agenda.Core.Facade.Categories do
     end
   end
 
+  # The relocation is a tagged value (`:promote`, `:demote` or
+  # `{:move, parent, after_id}`): one clause per shape, the way Elixir does
+  # what other languages do with a sum type or a small class hierarchy.
   defp move(db, id, :promote), do: Database.promote(db, id)
   defp move(db, id, :demote), do: Database.demote(db, id)
 
   defp move(db, id, {:move, parent, after_id}),
     do: Database.move_category(db, id, parent, after_id)
 
+  # `[]` in the head: no conflicting items, nothing to resolve.
   defp resolve_move(db, _id, _original, [], _resolution), do: {:ok, db}
 
   defp resolve_move(db, id, original, items, {:new_category, name}) do
@@ -117,6 +129,9 @@ defmodule Agenda.Core.Facade.Categories do
     end
   end
 
+  # A guard (`when ...`) adds a condition to a clause. Only a few
+  # side-effect-free expressions are allowed in guards (comparisons, `in`
+  # with a literal list, `is_integer/1` …), so they stay cheap and safe.
   defp resolve_move(db, _id, original, items, rule) when rule in [:remove_moved, :remove_other] do
     {:ok, Enum.reduce(items, db, &Assign.resolve_placement(&2, original, &1, rule))}
   end
@@ -164,6 +179,8 @@ defmodule Agenda.Core.Facade.Categories do
   def make_exclusive(db, id, resolution \\ :parent) do
     conflicts = Assign.exclusive_conflicts(db, id)
 
+    # A `with` step can be any expression: here a plain check written as
+    # `:ok` or an error, so it chains like the steps that return data.
     with :ok <- if(Database.protected?(db, id), do: {:error, :protected}, else: :ok),
          {:ok, db, rule} <- exclusive_rule(db, id, resolution, conflicts) do
       db = Enum.reduce(conflicts, db, &Assign.resolve_exclusive(&2, id, &1, rule))
@@ -219,6 +236,9 @@ defmodule Agenda.Core.Facade.Categories do
         {:error, :self}
 
       linked? ->
+        # Functions are values: the same `set_exclude/4` adds or removes,
+        # depending on the function passed in (`&List.delete/2` or the
+        # append below).
         {:ok, set_exclude(db, a, b, &List.delete/2)}
 
       Enum.any?([a, b], &(&1 == db.main_id or db.categories[&1].kind != :standard)) ->

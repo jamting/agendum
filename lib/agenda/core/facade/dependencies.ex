@@ -22,6 +22,8 @@ defmodule Agenda.Core.Facade.Dependencies do
   def make_dependent(db, item_id, prerequisite_ids) do
     below = related_items(db, item_id, :dependents, :all)
 
+    # `&(...)` with `&1` inside: a one-argument anonymous function. `in` is
+    # list membership (a linear scan; fine for a few items).
     if Enum.any?(prerequisite_ids, &(&1 == item_id or &1 in below)) do
       {:error, :cycle}
     else
@@ -59,7 +61,12 @@ defmodule Agenda.Core.Facade.Dependencies do
   for `:every`.
   """
   @spec related_items(db, id | nil, :dependents | :prerequisites, :one | :all | :every) :: [id]
+  # A literal in the head (`:every`) selects this clause for that atom only;
+  # every other level falls to the next clause. Clauses of one function
+  # must sit together; the compiler warns otherwise.
   def related_items(db, _item_id, direction, :every) do
+    # `step` holds a function; calling a function value needs the dot:
+    # `step.(db, id)`, which tells it apart from a named function call.
     step = step_fun(direction)
     for id <- db.item_order, step.(db, id) != [], do: id
   end
@@ -73,6 +80,9 @@ defmodule Agenda.Core.Facade.Dependencies do
   defp step_fun(:prerequisites), do: &Database.prerequisites/2
 
   # The items reached from `frontier`, one step (or all steps) at a time.
+  # Recursion instead of a while loop: the base clause (empty frontier)
+  # ends it. The recursive call is the last thing the function does (a tail
+  # call), so the BEAM runs it in constant stack space, like a loop.
   defp reach(_db, _step, [], seen, _level), do: seen
 
   defp reach(db, step, frontier, seen, level) do

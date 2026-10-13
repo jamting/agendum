@@ -7,8 +7,12 @@ defmodule Agenda.Core.Facade.Files do
 
   alias Agenda.Core.Database
 
+  # `@typep` is a private type: a local short name for `Agenda.Core.db()`,
+  # so the `@spec`s below read the same as they did in `Agenda.Core`.
   @typep db :: Agenda.Core.db()
 
+  # `as:` delegates to a function with another name: `new_file/1` here
+  # calls `Database.new/1`.
   defdelegate new_file(opts \\ []), to: Database, as: :new
 
   # --- JSON (R44) -----------------------------------------------------------------

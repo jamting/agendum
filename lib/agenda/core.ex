@@ -20,6 +20,9 @@ defmodule Agenda.Core do
   `Agenda.Core.Facade.Changes`.
   """
 
+  # `alias` only shortens names inside this module (`Database` for
+  # `Agenda.Core.Database`); it imports nothing. The `{...}` form aliases
+  # several modules that share a prefix at once.
   alias Agenda.Core.Database
 
   alias Agenda.Core.Facade.{
@@ -37,6 +40,9 @@ defmodule Agenda.Core do
     Views
   }
 
+  # `@type` declares a public type (for `@spec`s and Dialyzer, the static
+  # checker run by `mix check`); other modules refer to it as `Agenda.Core.db()`.
+  # Types have no effect at runtime: Elixir is dynamically typed.
   @type db :: Database.t()
   @type id :: Database.id()
 
@@ -52,6 +58,13 @@ defmodule Agenda.Core do
 
   @typedoc "How items that a move puts in conflict are resolved."
   @type move_resolution :: :remove_moved | :remove_other | {:new_category, String.t()}
+
+  # `defdelegate f(a, b), to: M` defines a public `f/2` here that just calls
+  # `M.f(a, b)`; this module holds no code of its own. A default argument
+  # (`opts \\ []`) defines two functions, `f/1` and `f/2`: in Elixir a
+  # function is known by name *and* arity, so `new_file/0` and `new_file/1`
+  # are separate functions. Delegates have no `@doc`, so the API docs show
+  # "See Agenda.Core.Facade.Files.new_file/1" and the docs live there.
 
   # files: new, and as JSON (R44)
   defdelegate new_file(opts \\ []), to: Files
