@@ -30,6 +30,8 @@ defmodule Agenda.Starters.Planner.Views do
   #   filter:    [{category, :assigned | :not_assigned}]
   #   range:     {date category, from, to}: a date filter, phrases read each day
   #   sort:      the items' sort: [{:category, name, :alpha}]
+  #   item_column:   Item Column Properties for every section
+  #              (`Core.set_item_column/4`)
   #   options:   view options switched on (`Core.toggle_view_option/3`)
   @views [
     {"Activities",
@@ -39,14 +41,20 @@ defmodule Agenda.Starters.Planner.Views do
     {"Calls", ["Calls"], columns: [{"People", []}, @phone, {"When", []}]},
     {"Completed This Week", ["Tasks"],
      columns: [{"Done", []}], range: {"Done", "beginning of this week", "end of this week"}},
-    {"Contacts", ["Contact List"],
-     columns: [
-       {"People", width: 20},
-       @phone,
-       {"People", format: :note, note_line: 2, width: 16, title: "Company"}
-     ],
-     sort: [{:category, "People", :alpha}],
-     options: [:section_separators]},
+    {
+      "Contacts",
+      ["Contact List"],
+      # its items are blank (the person is in the People column), so their
+      # text takes as little room as it can and the columns read as a list
+      columns: [
+        {"People", width: 20},
+        @phone,
+        {"People", format: :note, note_line: 2, width: 16, title: "Company"}
+      ],
+      sort: [{:category, "People", :alpha}],
+      item_column: [set: :manual, width: 5],
+      options: [:section_separators]
+    },
     {"Expense Analysis - Type",
      ~w(Air Breakfast Dinner Entertainment Lodging Lunch Miscellaneous) ++
        ["No Type", "Transportation"],
@@ -126,6 +134,7 @@ defmodule Agenda.Starters.Planner.Views do
     |> filter(view, Keyword.get(settings, :filter, []))
     |> range(view, settings[:range])
     |> sort(view, settings[:sort])
+    |> item_column(view, settings[:item_column])
     |> options(view, Keyword.get(settings, :options, []))
   end
 
@@ -188,6 +197,9 @@ defmodule Agenda.Starters.Planner.Views do
 
     Core.set_sort(db, view, :view, keys)
   end
+
+  defp item_column(db, _view, nil), do: db
+  defp item_column(db, view, changes), do: Core.set_item_column(db, view, 0, changes)
 
   defp options(db, view, options),
     do: Enum.reduce(options, db, &Core.toggle_view_option(&2, view, &1))

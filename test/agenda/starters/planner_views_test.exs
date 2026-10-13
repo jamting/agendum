@@ -132,6 +132,8 @@ defmodule Agenda.Starters.PlannerViewsTest do
     [_people, phone, company] = hd(view(db, "Contacts").sections).columns
     assert {phone.note_line, company.note_line} == {1, 2}
     assert [%View.SortKey{on: {:category, people}, sequence: :alpha}] = view(db, "Contacts").sort
+    # the items are blank: their text takes as little room as it can
+    assert %{set: :manual, width: 5} = hd(view(db, "Contacts").sections).item_column
     assert db.categories[people].name == "People"
   end
 
@@ -167,7 +169,8 @@ defmodule Agenda.Starters.PlannerViewsTest do
 
     test "Contacts shows each person's phone number and company", %{samples: db} do
       text = show(db, "Contacts")
-      assert text =~ ~r/Anna Berg +555-0101 +Nordvik/
+      # near the left margin, as a list: People, Phone #, Company
+      assert text =~ ~r/\n • {1,9}Anna Berg +555-0101 +Nordvik/
       assert text =~ ~r/Sarah Miller +555-0105/
     end
 

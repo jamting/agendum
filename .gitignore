@@ -32,6 +32,8 @@ agenda-*.tar
 *.agendum.tmp
 *.agenda
 *.agenda.tmp
+# except the starter files shipped with Agendum (mix agendum.starters)
+!starters/*.agendum
 
 # macOS
 .DS_Store

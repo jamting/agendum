@@ -41,6 +41,14 @@ mix docs --open                                 # API and design docs, guide and
 # File ▸ Customize saves your theme, date languages and input format in ~/.config/agendum/preferences
 ```
 
+To start from Agenda's Activities Planner (tasks, people, projects,
+priorities, expenses, sixteen views and a few macros, no items), copy the
+starter file and open the copy:
+
+```sh
+cp starters/planner.agendum ~/planner.agendum && ./agendum ~/planner.agendum
+```
+
 ## Quick tour
 
 The [user guide](docs/guide/index.html) is the short version, with a worked
@@ -77,4 +85,6 @@ behaviour, [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for structure,
 
 ```sh
 mix check   # format + warnings-as-errors + tests
+mix agendum.starters             # rebuild starters/planner.agendum (a test checks it is current)
+mix agendum.starters --samples   # a copy full of sample data, for testing: tmp/planner-samples.agendum
 ```

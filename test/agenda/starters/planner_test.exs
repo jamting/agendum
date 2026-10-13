@@ -114,6 +114,17 @@ defmodule Agenda.Starters.PlannerTest do
     end
   end
 
+  test "starters/planner.agendum is what the code builds (run mix agendum.starters)", %{db: db} do
+    # compared as data, not bytes: how a map is encoded may differ between
+    # OTP versions
+    assert {:ok, committed} = Agenda.Store.load("starters/planner.agendum")
+
+    assert committed == db, """
+    starters/planner.agendum is out of date with Agenda.Starters.Planner.
+    Run `mix agendum.starters` and commit the file.
+    """
+  end
+
   describe "the rules at work" do
     test "a task with nobody and no priority is in Unassigned and No Priority Assigned",
          %{db: db} do
