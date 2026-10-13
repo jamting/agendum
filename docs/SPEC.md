@@ -546,7 +546,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     Remove, Move, Width.
   - View ▸ Column ▸ Width (User's Guide 5-21 to 5-22): the control panel
     shows the highlighted column's width; ← → change it by one, a typed
-    number replaces it, SHIFT-? fits it (R22a), at least 3 and at most 80.
+    number replaces it, SHIFT-? fits it (R22a), at least 1 and at most 80.
     The view shows the new width at once; ENTER keeps it (one undo step,
     in every linked section), ESC goes back. On the item text (a section
     head or an item) it is the section's item column: it starts at the
@@ -577,7 +577,10 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     with F2, becomes that line of the note of the item's category there
     (the first, if several), after the label the line had; DEL empties it;
     an item with no category there is told so. One undo step each.
-  - Not done yet: Format in the Column Add box.
+  - The Column Add box has Format too, for a standard column, with Line
+    number and Column title for Category note; a Star or Yes/No column
+    starts 2 wide (User's Guide 5-31, 5-33), so a column can be 1 wide
+    (Agenda's 1 to 76; ours up to 80).
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

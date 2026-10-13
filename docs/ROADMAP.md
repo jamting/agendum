@@ -46,7 +46,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Typing a column head's name in Column Add and Column Properties: an existing category or a new one under MAIN (User's Guide 3-17, R55)
 - [x] Column Add ▸ Category type: a standard head made a date or numeric category as the column is added, asking first as Category Properties does (User's Guide 3-17, R55)
 - [x] The item column in View ▸ Column ▸ Width and Move: its width typed or fitted, and moving it among the other columns, as Agenda could (User's Guide 5-20, 5-21)
-- [ ] Standard column formats (R56): Name only, Parent:Category, Ancestor, Star, Yes/No and Category note (a column showing line N of the note of the item's category in that family, as Agenda's Activities Planner shows Phone # and Company from a person's note), in Column Properties and typing in Star, Yes/No and Category note columns (done); Format in the Column Add box
+- [x] Standard column formats (R56): Name only, Parent:Category, Ancestor, Star, Yes/No and Category note (a column showing line N of the note of the item's category in that family, as Agenda's Activities Planner shows Phone # and Company from a person's note), in Column Properties and the Column Add box, with typing in Star, Yes/No and Category note columns
 - [ ] Hide column heads (View Properties): a view without its column heads, as Agenda's datebooks are
 - [ ] Section separators (View Properties): a line between sections, the section head on it
 

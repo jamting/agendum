@@ -154,7 +154,10 @@ defmodule Agenda.Core.Facade.Views do
   def add_column(db, view_id, cat_id, at, width \\ nil, insert_in \\ nil) do
     # `||` gives its right side when the left is nil (or false)
     width = width || default_column_width(db, cat_id)
-    column = %Column{category_id: cat_id, width: width}
+    insert_column(db, view_id, %Column{category_id: cat_id, width: width}, at, insert_in)
+  end
+
+  defp insert_column(db, view_id, column, at, insert_in) do
     insert_in = insert_in || db.insert_columns
     Database.update_view(db, view_id, &ViewColumns.add(&1, at, column, insert_in))
   end
@@ -191,7 +194,18 @@ defmodule Agenda.Core.Facade.Views do
 
     # `with` goes on while each clause matches; an error falls through as it is
     with {:ok, db} <- converted do
-      {:ok, add_column(db, view_id, cat_id, at, opts[:width], opts[:insert_in])}
+      # a Format is for standard columns only (R56)
+      format = if kind == :standard, do: Keyword.get(opts, :format, :name), else: :name
+
+      column = %Column{
+        category_id: cat_id,
+        width: opts[:width] || default_column_width(db, cat_id, kind, format),
+        format: format,
+        note_line: opts |> Keyword.get(:note_line, 1) |> max(1) |> min(999),
+        title: column_title(opts[:title])
+      }
+
+      {:ok, insert_column(db, view_id, column, at, opts[:insert_in])}
     end
   end
 
@@ -199,14 +213,23 @@ defmodule Agenda.Core.Facade.Views do
   The width a new column headed by `cat_id` gets unless told otherwise:
   16 for a date category, room for a date and a time, and 12 for others
   (also without a head yet, as in the Column Add box). With `kind`, the
-  width for a head about to become that type (Column Add ▸ Category type).
+  width for a head about to become that type (Column Add ▸ Category type),
+  and for a standard one in `format`: 2 for Star and Yes/No (R56).
   """
-  @spec default_column_width(db, id | nil, Agenda.Core.Category.kind() | nil) :: pos_integer
-  def default_column_width(db, cat_id, kind \\ nil)
-  def default_column_width(_db, _cat_id, :date), do: 16
-  def default_column_width(_db, _cat_id, kind) when kind in [:standard, :numeric], do: 12
+  @spec default_column_width(
+          db,
+          id | nil,
+          Agenda.Core.Category.kind() | nil,
+          Column.format()
+        ) :: pos_integer
+  def default_column_width(db, cat_id, kind \\ nil, format \\ :name)
+  def default_column_width(_db, _cat_id, :date, _format), do: 16
+  def default_column_width(_db, _cat_id, :numeric, _format), do: 12
+  # a Star or Yes/No column is two wide (User's Guide 5-31, 5-33)
+  def default_column_width(_db, _cat_id, :standard, format) when format in [:star, :yes_no], do: 2
+  def default_column_width(_db, _cat_id, :standard, _format), do: 12
 
-  def default_column_width(db, cat_id, nil) do
+  def default_column_width(db, cat_id, nil, _format) do
     if cat_id && Database.date_category?(db, cat_id), do: 16, else: 12
   end
 
@@ -427,11 +450,12 @@ defmodule Agenda.Core.Facade.Views do
 
   @doc """
   View ▸ Column ▸ Width: the column at `at` and the columns linked to it
-  become `width` wide, at least 3 and at most #{@fit_room}.
+  become `width` wide, at least 1 (Agenda's least, for a Star or Yes/No
+  column) and at most #{@fit_room}.
   """
   @spec set_column_width(db, id, View.at(), integer) :: db
   def set_column_width(db, view_id, at, width),
-    do: update_column(db, view_id, at, &%{&1 | width: width |> max(3) |> min(@fit_room)})
+    do: update_column(db, view_id, at, &%{&1 | width: width |> max(1) |> min(@fit_room)})
 
   @spec resize_column(db, id, View.at(), integer) :: db
   def resize_column(db, view_id, at, delta),

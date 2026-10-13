@@ -235,7 +235,7 @@ or handles it.
     - **Picker** `:picker` for the section head (F3 on Section head).
   - **Column Add** (View ▸ Column ▸ Add): `:column_add`, a new column's
     head, its category type (a standard head can become date or numeric),
-    width, Position (right or left of the current column) and Insert
+    width, a standard column's Format (R56), Position (right or left of the current column) and Insert
     in (all sections or this one, overriding the file's setting; R55).
     ENTER adds it. `Agenda.TUI.ColumnAddBox`.
     - **Picker** `:picker` for the column head (F3 on Column head).

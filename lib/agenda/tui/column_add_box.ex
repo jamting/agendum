@@ -13,7 +13,11 @@ defmodule Agenda.TUI.ColumnAddBox do
       Properties asks when children or items would change; a date or
       numeric head keeps its type, as in Agenda.
     * Width: → ← by one; until changed, the core's default for the type
-      (16 for a date category, 12 for others).
+      (16 for a date category, 2 for a Star or Yes/No column, 12 for
+      others).
+    * Format, for a standard column (R56): Name only, Parent:Category,
+      Ancestor, Star, Yes/No or Category note, which adds Line number and
+      a typed Column title.
     * Position: Right of current column (Agenda's default) or Left.
     * Insert in: All sections or Current section, starting at the file's
       Insert new columns in, which it overrides for this column (R55).
@@ -24,19 +28,24 @@ defmodule Agenda.TUI.ColumnAddBox do
   """
 
   alias Agenda.Core
-  alias Agenda.TUI.{CategoryScreens, FieldTyping, State, Template}
+  alias Agenda.Core.View
+  alias Agenda.TUI.{CategoryScreens, ColumnBox, FieldTyping, State, Template}
   alias Agenda.TUI.CategoryScreens.Properties
   alias Agenda.TUI.Update.Prompts
 
+  # Format shows for a standard column, Line number and Column title for
+  # Category note (R56); a row whose value is nil is left out
   @layout """
-   Column head: [head          ]  Category type: [type    ]
-   Width:       [width ]
-   Position:    [position              ]
-   Insert in:   [insert_in      ]
+   Column head:  [head          ]  Category type: [type    ]
+   Width:        [width ]
+   Format:       [format              ]
+   Line number:  [note_line ]
+   Column title: [title                        ]
+   Position:     [position              ]
+   Insert in:    [insert_in      ]
   """
 
   @hint " SPACE/→ next choice · ← previous · F3 picks the head · ENTER adds"
-  @fields Template.fields(@layout)
 
   @doc """
   Opens the box for a column beside the highlighted one: `sidx` is its
@@ -49,6 +58,9 @@ defmodule Agenda.TUI.ColumnAddBox do
       col: col,
       head: nil,
       kind: :standard,
+      format: :name,
+      note_line: 1,
+      title: nil,
       width: nil,
       position: :right,
       insert_in: state.db.insert_columns,
@@ -88,21 +100,56 @@ defmodule Agenda.TUI.ColumnAddBox do
         state |> State.change_db(db) |> set_head(id)
       end)
 
+  # a Category note column's title, kept with the box until ENTER
+  defp typed(state, :title, text), do: update(state, &%{&1 | title: text})
+
+  # The fields shown, in the cursor's order: no Format for a date or
+  # numeric column, and Line number and Column title only for Category note.
+  defp fields(mode) do
+    hidden =
+      cond do
+        mode.kind != :standard -> [:format, :note_line, :title]
+        mode.format != :note -> [:note_line, :title]
+        true -> []
+      end
+
+    Template.fields(@layout) -- hidden
+  end
+
   defp settings_key(state, mode, key) do
-    last = length(@fields) - 1
-    field = Enum.at(@fields, mode.cursor)
+    last = length(fields(mode)) - 1
+    field = Enum.at(fields(mode), min(mode.cursor, last))
 
     case key do
-      :esc -> State.pop(state)
-      :enter when mode.head == nil -> pick_head(state)
-      :enter -> add(state, mode)
-      :up -> State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-      :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
-      {:f, 3} when field == :head -> pick_head(state)
-      {:char, c} when field == :head and c != " " -> FieldTyping.start(state, mode, :head, c)
-      k when k in [{:char, " "}, :right] -> change(state, mode, field, 1)
-      :left -> change(state, mode, field, -1)
-      _ -> state
+      :esc ->
+        State.pop(state)
+
+      :enter when mode.head == nil ->
+        pick_head(state)
+
+      :enter ->
+        add(state, mode)
+
+      :up ->
+        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
+
+      :down ->
+        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
+
+      {:f, 3} when field == :head ->
+        pick_head(state)
+
+      {:char, c} when field in [:head, :title] and c != " " ->
+        FieldTyping.start(state, mode, field, c)
+
+      k when k in [{:char, " "}, :right] ->
+        change(state, mode, field, 1)
+
+      :left ->
+        change(state, mode, field, -1)
+
+      _ ->
+        state
     end
   end
 
@@ -122,7 +169,23 @@ defmodule Agenda.TUI.ColumnAddBox do
   end
 
   defp change(state, mode, :width, step),
-    do: State.put_mode(state, %{mode | width: max(3, width(state, mode) + step)})
+    do: State.put_mode(state, %{mode | width: max(1, width(state, mode) + step)})
+
+  # Agenda's formats, in its order (R56)
+  defp change(state, mode, :format, step) do
+    formats = View.Column.formats()
+    index = Enum.find_index(formats, &(&1 == mode.format))
+
+    State.put_mode(state, %{
+      mode
+      | format: Enum.at(formats, Integer.mod(index + step, length(formats)))
+    })
+  end
+
+  defp change(state, mode, :note_line, step),
+    do: State.put_mode(state, %{mode | note_line: (mode.note_line + step) |> max(1) |> min(999)})
+
+  defp change(state, _mode, :title, _step), do: State.error(state, "Type the column's title")
 
   # two choices each, so any step flips them
   defp change(state, mode, :position, _step),
@@ -172,7 +235,15 @@ defmodule Agenda.TUI.ColumnAddBox do
     side = if mode.position == :right, do: :right_of, else: :left_of
     place = {side, if(mode.col == 0, do: :items, else: mode.col - 1)}
     index = Agenda.Core.ViewColumns.insert_index(State.view(state), mode.sidx, place)
-    opts = [width: mode.width, insert_in: mode.insert_in, clock: State.context(state)]
+
+    opts = [
+      width: mode.width,
+      insert_in: mode.insert_in,
+      clock: State.context(state),
+      format: mode.format,
+      note_line: mode.note_line,
+      title: mode.title
+    ]
 
     case Core.add_column_as(
            state.db,
@@ -189,9 +260,11 @@ defmodule Agenda.TUI.ColumnAddBox do
 
   defp name(state, id), do: state.db.categories[id].name
 
-  # the width chosen, or the core's default for the type
+  # the width chosen, or the core's default for the type and Format
   defp width(_state, %{width: width}) when width != nil, do: width
-  defp width(state, mode), do: Core.default_column_width(state.db, mode.head, mode.kind)
+
+  defp width(state, mode),
+    do: Core.default_column_width(state.db, mode.head, mode.kind, mode.format)
 
   # --- drawing ---
 
@@ -206,7 +279,18 @@ defmodule Agenda.TUI.ColumnAddBox do
       insert_in: if(mode.insert_in == :all, do: "All sections", else: "Current section")
     }
 
-    opts = [selected: Enum.at(@fields, mode.cursor)] ++ FieldTyping.editing(mode)
+    # the rows not shown get nil, which leaves them out
+    shown = fields(mode)
+
+    values =
+      Map.merge(values, %{
+        format: if(:format in shown, do: ColumnBox.format_name(mode.format)),
+        note_line: if(:note_line in shown, do: Integer.to_string(mode.note_line)),
+        title: if(:title in shown, do: mode.title || "")
+      })
+
+    field = Enum.at(shown, min(mode.cursor, length(shown) - 1))
+    opts = [selected: field] ++ FieldTyping.editing(mode)
 
     Template.render(@layout, values, opts) ++
       [[], [{:box, @hint}]]

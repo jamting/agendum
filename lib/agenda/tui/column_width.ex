@@ -77,7 +77,7 @@ defmodule Agenda.TUI.ColumnWidth do
     end
   end
 
-  # the width as the core would keep it (a column 3 to 80, the item column
+  # the width as the core would keep it (a column 1 to 80, the item column
   # 5 to 200), so what the control panel says is what ENTER keeps
   defp put_width(state, mode, width) do
     view = chosen(state, %{mode | width: width}).views[mode.view_id]

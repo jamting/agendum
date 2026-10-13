@@ -99,6 +99,27 @@ defmodule Agenda.Core.ColumnFormatsTest do
              [:yes_no, :yes_no]
   end
 
+  describe "added with a Format (Column Add)" do
+    test "Star and Yes/No start 2 wide (User's Guide 5-31, 5-33)", %{db: db, view_id: v} do
+      {:ok, db} = Core.add_column_as(db, v, cat(db, "Staff"), :standard, {0, 0}, format: :star)
+      assert %Column{format: :star, width: 2} = hd(Core.View.columns(db.views[v], 0))
+      assert Core.default_column_width(db, cat(db, "Staff"), :standard, :yes_no) == 2
+    end
+
+    test "Category note with its line and title", %{db: db, view_id: v} do
+      opts = [format: :note, note_line: 2, title: "Room", width: 10]
+      {:ok, db} = Core.add_column_as(db, v, cat(db, "Staff"), :standard, {0, 0}, opts)
+
+      assert %Column{format: :note, note_line: 2, title: "Room", width: 10} =
+               hd(Core.View.columns(db.views[v], 0))
+    end
+
+    test "a date or numeric column has no Format", %{db: db, view_id: v} do
+      {:ok, db} = Core.add_column_as(db, v, db.special.when, :date, {0, 0}, format: :star)
+      assert %Column{format: :name, width: 16} = hd(Core.View.columns(db.views[v], 0))
+    end
+  end
+
   describe "typing in the formats (User's Guide 5-31 to 5-37)" do
     test "Star and Yes/No: in the head directly, or out of it and all under it",
          %{db: db, tom_item: tom, other: other} do

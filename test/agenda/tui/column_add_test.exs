@@ -16,7 +16,7 @@ defmodule Agenda.TUI.ColumnAddTest do
 
   # Calls and Follow up, each with People and the new file's When (both
   # linked); the cursor on People in Calls, the box open. The box's fields:
-  # Column head, Category type, Width, Position, Insert in.
+  # Column head, Category type, Width, Format (standard), Position, Insert in.
   setup do
     db = Core.new_file(view_name: "Activities", section_name: "Calls")
     db = with_categories(db, ["Follow up", "People", "Priority"])
@@ -61,14 +61,14 @@ defmodule Agenda.TUI.ColumnAddTest do
 
   test "Insert in: Current section adds it to this section only, one undo step",
        %{state: state, view_id: v} do
-    state = state |> pick_priority() |> press([:down, :down, :down, :down, " ", :enter])
+    state = state |> pick_priority() |> press([:down, :down, :down, :down, :down, " ", :enter])
     assert heads(state, v, 0) == ["People", "Priority", "When"]
     assert heads(state, v, 1) == ["People", "When"]
     assert heads(History.undo(state), v, 0) == ["People", "When"]
   end
 
   test "Position: Left of current column puts it before", %{state: state, view_id: v} do
-    state = state |> pick_priority() |> press([:down, :down, :down, " ", :enter])
+    state = state |> pick_priority() |> press([:down, :down, :down, :down, " ", :enter])
     assert heads(state, v, 0) == ["Priority", "People", "When"]
     assert state.col == 1
   end
@@ -106,6 +106,32 @@ defmodule Agenda.TUI.ColumnAddTest do
       {:ok, db, _} = Core.add_category(state.db, cat(state.db, "Follow up"), "People")
       state = press(%{state | db: db}, ["p", "e", "o", "p", "l", "e", :enter])
       assert panel(state) =~ "Several categories are called people"
+    end
+  end
+
+  describe "Format (R56)" do
+    test "Star: 2 wide, added as a star column", %{state: state, view_id: v} do
+      state = state |> pick_priority() |> press([:down, :down, :down, " ", " ", " "])
+      assert screen(state) =~ ~r/Format: +Star \(\*\)/
+      assert screen(state) =~ ~r/Width: +2 /
+      state = press(state, :enter)
+      column = state.db.views[v] |> View.columns(0) |> Enum.at(1)
+      assert {column.format, column.width} == {:star, 2}
+    end
+
+    test "Category note: Line number and a typed Column title", %{state: state, view_id: v} do
+      state = state |> pick_priority() |> press([:down, :down, :down, :left])
+      assert screen(state) =~ ~r/Format: +Category note/
+      state = press(state, [:down, :right, :down, "C", "o", "s", "t", :enter])
+      assert screen(state) =~ ~r/Column title: +Cost/
+      state = press(state, :enter)
+      column = state.db.views[v] |> View.columns(0) |> Enum.at(1)
+      assert {column.format, column.note_line, column.title} == {:note, 2, "Cost"}
+    end
+
+    test "a date column has no Format", %{state: state} do
+      state = press(state, [{:f, 3}, "w", "h", "e", "n", :enter])
+      refute screen(state) =~ "Format:"
     end
   end
 
