@@ -103,6 +103,21 @@ defmodule Agenda.TUI.DatebookViewTest do
       assert datebook(state).end_category == nil
     end
 
+    test "Hide column heads and Section separators, after Base date on (R57, R58; shot 55)",
+         %{state: state} do
+      state = settings(state)
+      assert screen(state) =~ ~r/Hide column heads +: No/
+      assert screen(state) =~ ~r/Section separators +: No/
+
+      # the last two rows; SPACE switches each, one undo step
+      state = press(state, List.duplicate(:down, 8) ++ [" "])
+      assert State.view(state).hide_column_heads
+      assert screen(state) =~ ~r/Hide column heads +: Yes/
+      state = press(state, [:down, " "])
+      assert State.view(state).section_separators
+      refute Agenda.TUI.History.undo(state) |> State.view() |> Map.get(:section_separators)
+    end
+
     test "a standard view has no datebook settings", %{plain: state} do
       assert panel(settings(state)) =~
                "A standard view's settings are in View ▸ Hide, Filter and Order"

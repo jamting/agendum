@@ -3,7 +3,12 @@ defmodule Agenda.TUI.DatebookBox do
   The Datebook settings box (View ▸ Properties of a datebook view, and
   after View ▸ Add with Type Datebook; SPEC R47; User's Guide 10-6 to
   10-10, Help "View Add box"): Date category, End category, Section,
-  Period, Interval, Start at, End at, Base date on.
+  Period, Interval, Start at, End at, Base date on, then the view's Hide
+  column heads (R57) and Section separators (R58), as Agenda's View
+  Properties of a datebook has them (screenshot 55).
+
+  The box is drawn from `@layout` (`Agenda.TUI.Template`): the rows and
+  their order, for the cursor too, are the fields there.
 
     * ENTER (or SPACE) on a category row picks the category; DEL clears
       the End category
@@ -11,6 +16,7 @@ defmodule Agenda.TUI.DatebookBox do
       week (a day of the week)
     * ENTER on Start at / End at of a day, or Base date on, asks for it
       (a time; a date such as "today", "next week" or "2026-11-05")
+    * SPACE, ENTER or → / ← switch Hide column heads and Section separators
     * ESC closes the box
 
   Every change applies at once and is one undo step. Rows that do not
@@ -19,19 +25,27 @@ defmodule Agenda.TUI.DatebookBox do
 
   alias Agenda.Core
   alias Agenda.Core.{Datebook, DateFormat}
-  alias Agenda.TUI.{CategoryScreens, State}
+  alias Agenda.TUI.{CategoryScreens, State, Template}
   alias Agenda.TUI.Update.Prompts
 
-  @rows [
-    :date_category,
-    :end_category,
-    :section_category,
-    :period,
-    :interval,
-    :start,
-    :end,
-    :base
-  ]
+  @layout """
+   Date category      : [date_category         ]
+   End category       : [end_category          ]
+   Section            : [section_category      ]
+   Period             : [period                ]
+   Interval           : [interval              ]
+   Start at           : [start                 ]
+   End at             : [end                   ]
+   Base date on       : [base                                ]
+
+   Hide column heads  : [hide_column_heads     ]
+   Section separators : [section_separators    ]
+
+   ENTER picks or types · SPACE/→ ← cycle · DEL clears
+  """
+  @rows Template.fields(@layout)
+  # the view's own settings, switched on or off (not the datebook's)
+  @options [:hide_column_heads, :section_separators]
   @days ~w(Mon Tue Wed Thu Fri Sat Sun)
 
   def open(state, view_id),
@@ -66,6 +80,10 @@ defmodule Agenda.TUI.DatebookBox do
         state
     end
   end
+
+  # any of SPACE, ENTER, → or ← switches a Yes/No, so `_step` and `_key` are ignored
+  defp change(state, mode, _d, row, _step, _key) when row in @options,
+    do: State.change_db(state, Core.toggle_view_option(state.db, mode.view_id, row))
 
   defp change(state, mode, _d, row, _step, key)
        when row in [:date_category, :end_category, :section_category] and
@@ -170,24 +188,30 @@ defmodule Agenda.TUI.DatebookBox do
   @doc "The box's title."
   def title(state, mode), do: "Datebook settings: #{state.db.views[mode.view_id].name}"
 
-  @doc "`{label, value}` for each row."
-  def lines(state, mode) do
+  @doc "The box's lines, the highlighted setting selected."
+  def content(state, mode) do
     d = datebook(state, mode)
     db = state.db
+    view = db.views[mode.view_id]
     name = fn id -> if id, do: db.categories[id].name, else: "(none)" end
+    yes_no = fn on -> if on, do: "Yes", else: "No" end
     {start, stop} = range_text(state, d)
     base = Datebook.base_date(d, db.date_settings, State.context(state))
 
-    [
-      {"Date category", name.(d.date_category)},
-      {"End category", name.(d.end_category)},
-      {"Section", name.(d.section_category)},
-      {"Period", d.period |> Atom.to_string() |> String.capitalize()},
-      {"Interval", interval_text(d)},
-      {"Start at", start},
-      {"End at", stop},
-      {"Base date on", "#{d.base} (#{DateFormat.date(base, db.date_format)})"}
-    ]
+    values = %{
+      date_category: name.(d.date_category),
+      end_category: name.(d.end_category),
+      section_category: name.(d.section_category),
+      period: d.period |> Atom.to_string() |> String.capitalize(),
+      interval: interval_text(d),
+      start: start,
+      end: stop,
+      base: "#{d.base} (#{DateFormat.date(base, db.date_format)})",
+      hide_column_heads: yes_no.(view.hide_column_heads),
+      section_separators: yes_no.(view.section_separators)
+    }
+
+    Template.render(@layout, values, selected: Enum.at(@rows, mode.cursor))
   end
 
   defp range_text(state, %{period: :day} = d) do

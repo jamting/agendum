@@ -590,7 +590,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   (after scrolling, the first one shown), so heads that every section
   repeats are not drawn again; the other section heads keep their names.
   Set with View ▸ Hide ▸ Column heads (Agenda: View Properties ▸ Hide
-  column heads; ours until View Properties is a box), one undo step. Our
+  column heads; ours until View Properties is a box; in a datebook view
+  also its settings box, as Agenda's), one undo step. Our
   choices: a section head whose column head is highlighted shows its
   heads, so the highlight can be seen; File ▸ Print to a file still names
   each column, as it labels every entry with it. In a datebook view the
@@ -601,8 +602,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   in place of the blank line before the section, so more fits on the
   screen. The highlight on a section head covers its name only. Set with
   View ▸ Section ▸ Lines (Agenda: View Properties ▸ Section separators;
-  its index has them under "Lines"; ours until View Properties is a box),
-  one undo step. With Hide column heads (R57), the other section heads are
+  its index has them under "Lines"; ours until View Properties is a box;
+  in a datebook view also its settings box), one undo step. With Hide column heads (R57), the other section heads are
   their names on a plain line. Our choices: a datebook view's slots are
   lines either way (R47); File ▸ Print to a file has no lines, as Agenda
   printed none ("The lines between sections do not appear when you

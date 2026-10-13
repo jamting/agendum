@@ -546,20 +546,8 @@ defmodule Agenda.TUI.Render.Boxes do
     rows ++ [[], [{:box, " SPACE changes · F3 calendar · ENTER shows · ESC cancels"}]]
   end
 
-  defp box_content(state, %{type: :datebook_props} = mode, _inner, _max_rows) do
-    rows =
-      state
-      |> Agenda.TUI.DatebookBox.lines(mode)
-      |> Enum.with_index()
-      |> Enum.map(fn {{label, value}, i} ->
-        [
-          {:box, " " <> Draw.pad(label, 14) <> ": "},
-          {if(i == mode.cursor, do: :box_selected, else: :box), value}
-        ]
-      end)
-
-    rows ++ [[], [{:box, " ENTER picks or types · SPACE/→ ← cycle · DEL clears"}]]
-  end
+  defp box_content(state, %{type: :datebook_props} = mode, _inner, _max_rows),
+    do: Agenda.TUI.DatebookBox.content(state, mode)
 
   defp box_content(state, %{type: :calendar} = mode, _inner, _max_rows),
     do: Agenda.TUI.CalendarBox.lines(state, mode)

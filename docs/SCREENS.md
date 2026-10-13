@@ -103,7 +103,8 @@ or handles it.
     date category). `Agenda.TUI.Update.Prompts`.
   - **Datebook settings** `:datebook_props` (View ▸ Properties of a datebook
     view; after View ▸ Add with Type Datebook): its categories, period,
-    interval, start and end, base date (R47). `Agenda.TUI.DatebookBox`.
+    interval, start and end, base date (R47), Hide column heads (R57) and
+    Section separators (R58). `Agenda.TUI.DatebookBox`.
     - **Picker** `:picker` for the Date category, End category and Section.
     - **Prompt** `:prompt` for a time (Start at / End at of a day) or the base date.
   - **Choice** `:choice` (View ▸ Add, after the name): Standard or Datebook.
