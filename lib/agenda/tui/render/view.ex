@@ -135,10 +135,15 @@ defmodule Agenda.TUI.Render.View do
       end
 
     heads =
-      Enum.flat_map(columns, fn c ->
+      columns
+      # with_index(1): column i is highlighted when state.col == i (0 is the name)
+      |> Enum.with_index(1)
+      |> Enum.flat_map(fn {c, i} ->
+        head_style = if selected and state.col == i, do: :cursor_cell, else: :column_head
+
         [
           {:normal, " "},
-          {:column_head,
+          {head_style,
            Draw.pad(ViewModel.column_label(state.db, c.category_id, c.width), c.width)}
         ]
       end)

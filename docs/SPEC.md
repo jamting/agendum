@@ -488,6 +488,11 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     linked to it show it instead. A linked column moved to a head that has
     linked columns already joins them and takes their settings; an
     unlinked one changes alone.
+  - The column heads on a section head line can be highlighted (→ / TAB,
+    User's Guide 5-22, 5-25), so an empty section's columns can be reached:
+    DEL removes the column (asking which sections, as above), F3 replaces
+    the column head, F6 opens Column Properties, and F2 renames the head's
+    category (ours; the manual does not say).
   - Column Properties is one box for every column, as in Agenda
     (screenshot 142): Column head, Category type (shown), Width (→ ← by
     one) and Link with other sections at the top; below a rule, a numeric

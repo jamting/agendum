@@ -122,8 +122,9 @@ defmodule Agenda.TUI.Layout do
         state.cursor |> min(count - 1) |> max(0)
 
     row = Enum.at(rows, index)
-    # the column cursor stays within the section's own columns (R55)
-    col = if row && row.kind == :item, do: min(state.col, length(row.columns)), else: 0
+    # the column cursor stays within the section's own columns (R55); on a
+    # section head line it rests on a column head (User's Guide 5-22)
+    col = if row, do: min(state.col, length(row.columns)), else: 0
 
     %{state | cursor: index, cursor_key: row && row.key, col: col}
     |> scroll_to_cursor(rows)
@@ -157,8 +158,9 @@ defmodule Agenda.TUI.Layout do
   def current_row(state), do: state |> rows() |> Enum.at(state.cursor)
 
   @doc """
-  The highlighted column and where it is (`{section, column}`, R55), or
-  nil when the highlight is on the item text or a section head.
+  The highlighted column and where it is (`{section, column}`, R55): a
+  column entry, or a column head on a section head line. Nil when the
+  highlight is on the item text or the section name.
   """
   @spec current_column(State.t()) :: {Agenda.Core.View.Column.t(), Agenda.Core.View.at()} | nil
   def current_column(%State{col: col} = state) when col > 0 do

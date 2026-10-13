@@ -158,11 +158,13 @@ defmodule Agenda.TUI.Update.ViewKeys do
     {:column_entry, row.item.id, column.category_id, how}
   end
 
-  defp edit(state, %{kind: :section, category: cat}) do
-    if Database.protected?(state.db, cat.id),
-      do: State.error(state, "#{cat.name} cannot be renamed"),
-      else: %{state | edit: %{target: {:rename_category, cat.id}, line: LineEdit.new(cat.name)}}
+  # on a column head (ours; the manual does not say): the head's category
+  defp edit(state, %{kind: :section}) when state.col > 0 do
+    {column, _at} = Layout.current_column(state)
+    rename(state, state.db.categories[column.category_id])
   end
+
+  defp edit(state, %{kind: :section, category: cat}), do: rename(state, cat)
 
   defp edit(state, %{kind: :item, item: item}) when state.col == 0 do
     %{state | edit: %{target: {:edit_item, item.id}, line: LineEdit.new(item.text)}}
@@ -212,10 +214,19 @@ defmodule Agenda.TUI.Update.ViewKeys do
 
   defp edit(state, nil), do: state
 
+  defp rename(state, cat) do
+    if Database.protected?(state.db, cat.id),
+      do: State.error(state, "#{cat.name} cannot be renamed"),
+      else: %{state | edit: %{target: {:rename_category, cat.id}, line: LineEdit.new(cat.name)}}
+  end
+
   @doc """
-  DEL on the highlighted row: removes the section from the view, the item
-  from the section's category, or the column entry.
+  DEL on the highlighted row: removes the column (on its head), the section
+  from the view, the item from the section's category, or the column entry.
   """
+  def delete(state, %{kind: :section}) when state.col > 0,
+    do: Actions.perform(state, :remove_column)
+
   def delete(state, %{kind: :section, slot: %{}}), do: Actions.datebook_sections(state)
 
   def delete(state, %{kind: :section, sidx: sidx}) do
@@ -245,7 +256,8 @@ defmodule Agenda.TUI.Update.ViewKeys do
 
   @doc """
   F3 (CHOICES) on the highlighted row: the column's choices or calendar,
-  the item's assignment profile, or the categories for the section.
+  the item's assignment profile, or the categories for the section or
+  column head (User's Guide 5-25).
   """
   def choices(state, %{kind: :item} = row) when state.col > 0 do
     {:column_entry, item_id, head, _} = column_target(state, row, :replace)
@@ -265,12 +277,20 @@ defmodule Agenda.TUI.Update.ViewKeys do
   def choices(state, %{kind: :item, item: item}),
     do: CategoryScreens.open_profile(state, item.id)
 
+  def choices(state, %{kind: :section}) when state.col > 0 do
+    {_column, at} = Layout.current_column(state)
+    CategoryScreens.open_picker(state, {:column_head, at}, nil)
+  end
+
   def choices(state, %{kind: :section, slot: %{}}), do: Actions.datebook_sections(state)
 
   def choices(state, %{kind: :section, sidx: sidx}),
     do: CategoryScreens.open_picker(state, {:change_section, sidx}, nil)
 
   def choices(state, nil), do: state
+
+  defp props(state, %{kind: :section}) when state.col > 0,
+    do: Actions.perform(state, :column_props)
 
   defp props(state, %{kind: :item, item: item}), do: ItemProperties.open(state, item.id)
 

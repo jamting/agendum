@@ -149,13 +149,13 @@ defmodule Agenda.TUI.Update.Actions do
   defp do_perform(state, :questions, _), do: Agenda.TUI.QuestionsBox.open(state)
 
   # one box for every column, its lower part by the column's kind (R55)
-  defp do_perform(state, :column_props, %{kind: :item}) when state.col > 0 do
+  defp do_perform(state, :column_props, row) when row != nil and state.col > 0 do
     {_column, at} = Layout.current_column(state)
     ColumnBox.open(state, at)
   end
 
   defp do_perform(state, :column_props, _),
-    do: State.error(state, "Highlight a column entry of an item first")
+    do: State.error(state, "Highlight a column head or entry first")
 
   defp do_perform(state, :toggle_auto_date, _) do
     db = Core.toggle_auto_date(state.db)

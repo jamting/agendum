@@ -88,4 +88,61 @@ defmodule Agenda.TUI.SectionColumnsTest do
     state = press(state, [{:alt, "d"}, "Ideas", :enter])
     assert state.db.views[v] |> View.columns(1) |> Enum.map(& &1.category_id) == [cat(db, "When")]
   end
+
+  describe "a column head on the section head line (User's Guide 5-22, 5-25)" do
+    # Ideas, a third section with no items: its column head is the only
+    # place to highlight its column
+    setup %{state: state, view_id: v} do
+      db = with_categories(state.db, ["Ideas"])
+      db = Core.add_section(db, v, cat(db, "Ideas"), 2)
+      # rows: Calls, its item, Follow up, its item, Ideas
+      %{state: press(%{state | db: db}, [:end])}
+    end
+
+    defp highlighted(state) do
+      for line <- Agenda.TUI.Render.render(state),
+          {:cursor_cell, text} <- line,
+          do: String.trim(text)
+    end
+
+    test "→ highlights it in an empty section", %{state: state} do
+      state = press(state, :right)
+      assert state.col == 1
+      assert highlighted(state) == ["When"]
+    end
+
+    test "DEL removes the column, asking which sections", %{state: state, view_id: v} do
+      state = press(state, [:right, :delete])
+      assert screen(state) =~ "Current section only"
+      state = press(state, "c")
+      assert state.db.views[v] |> View.columns(2) == []
+      assert state.db.views[v] |> View.columns(1) |> length() == 1
+    end
+
+    test "F6 opens Column Properties", %{state: state} do
+      state = press(state, [:right, {:f, 6}])
+      assert screen(state) =~ "Link with other sections"
+    end
+
+    test "F3 replaces the column head", %{state: state, view_id: v} do
+      state = press(state, [:right, {:f, 3}, "People", :enter])
+
+      assert state.db.views[v] |> View.columns(2) |> Enum.map(& &1.category_id) ==
+               [cat(state.db, "People")]
+    end
+
+    test "F2 renames the column head's category", %{state: state} do
+      state = press(state, [:right, {:f, 2}])
+      assert screen(state) =~ "When cannot be renamed"
+      # People, a column head that may be renamed: the first in Calls (the
+      # column cursor stays on the first column when the row changes)
+      state = press(state, [:home, {:f, 2}, {:ctrl, "u"}, "Contacts", :enter])
+      assert state.db.categories[cat(state.db, "Contacts")]
+    end
+
+    test "on the section name, DEL still removes the section", %{state: state, view_id: v} do
+      state = press(state, :delete)
+      assert length(state.db.views[v].sections) == 2
+    end
+  end
 end
