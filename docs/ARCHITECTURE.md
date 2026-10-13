@@ -181,3 +181,4 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0023](adr/0023-core-facade-over-area-modules.md)       | The core facade: one entry point over area modules               |
 | [0024](adr/0024-boxes-drawn-from-layouts.md)            | Settings boxes are drawn from layouts written as they look       |
 | [0025](adr/0025-columns-per-section.md)                 | Columns belong to sections, linked by a shared number            |
+| [0026](adr/0026-previewing-a-change.md)                 | Previewing a change before it is kept                            |
