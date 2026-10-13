@@ -136,7 +136,7 @@ defmodule Agenda.Core.Facade.Views do
   @doc """
   Inserts a column headed by `cat_id` at `at` (`{section, place}`: a
   column index, or right or left of the item column or a column,
-  `Agenda.Core.ViewColumns.place/0`): in
+  `t:Agenda.Core.ViewColumns.place/0`): in
   all sections, linked, or in that section only (`insert_in`, R55; see
   `Agenda.Core.ViewColumns.add/4` for where the other sections get it).
   Without `insert_in` the file's Insert new columns in decides
