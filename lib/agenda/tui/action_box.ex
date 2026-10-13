@@ -17,10 +17,17 @@ defmodule Agenda.TUI.ActionBox do
   def open(state, owner, target) do
     {clear, value} =
       case List.keyfind(state.db.categories[owner].actions, target, 0) do
-        {_, :clear} -> {true, ""}
-        {_, {:set, value}} when is_number(value) -> {false, Update.number_text(value)}
-        {_, {:set, value}} -> {false, value}
-        nil -> {false, ""}
+        {_, :clear} ->
+          {true, ""}
+
+        {_, {:set, value}} when is_number(value) ->
+          {false, Update.number_text(value, State.number_opts(state))}
+
+        {_, {:set, value}} ->
+          {false, value}
+
+        nil ->
+          {false, ""}
       end
 
     State.push(state, %{

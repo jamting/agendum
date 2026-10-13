@@ -567,7 +567,7 @@ defmodule Agenda.Core do
         {:error, :empty}
 
       db.categories[head_id].kind == :numeric ->
-        with {:ok, value} <- NumberFormat.parse(text),
+        with {:ok, value} <- NumberFormat.parse(text, Context.number_opts(today)),
              {:ok, db} <- set_number(db, item_id, head_id, value, today) do
           {:ok, db, :number}
         else
@@ -818,8 +818,8 @@ defmodule Agenda.Core do
     end
   end
 
-  defp check_action(:numeric, {:set, text}, _settings, _clock) do
-    case NumberFormat.parse(to_string(text)) do
+  defp check_action(:numeric, {:set, text}, _settings, clock) do
+    case NumberFormat.parse(to_string(text), Context.number_opts(clock)) do
       {:ok, number} -> {:ok, {:set, number}}
       :error -> {:error, :not_a_number}
     end
@@ -1120,19 +1120,21 @@ defmodule Agenda.Core do
   What converting a standard category to numeric would do to its children
   (User's Guide 8-11): they are removed, and their items get the child's
   name as their number, or 0 for the names listed in `non_numeric`; the
-  `assigned` items assigned to the category itself get 0.
+  `assigned` items assigned to the category itself get 0. Names are read
+  as numbers with the person's separators, from `clock` (R54).
   """
-  @spec numeric_conversion(db, id) :: %{
+  @spec numeric_conversion(db, id, clock | nil) :: %{
           children: non_neg_integer,
           non_numeric: [String.t()],
           assigned: non_neg_integer
         }
-  def numeric_conversion(db, cat_id) do
+  def numeric_conversion(db, cat_id, clock \\ nil) do
     children = Enum.map(db.categories[cat_id].children, &db.categories[&1])
+    opts = Context.number_opts(clock)
 
     %{
       children: length(children),
-      non_numeric: for(c <- children, NumberFormat.parse(c.name) == :error, do: c.name),
+      non_numeric: for(c <- children, NumberFormat.parse(c.name, opts) == :error, do: c.name),
       assigned: db |> direct_items(cat_id) |> length()
     }
   end
@@ -1142,12 +1144,13 @@ defmodule Agenda.Core do
 
   @doc """
   Converts a standard category to a numeric one (User's Guide 8-11 to
-  8-12). Its children, if any, become numbers (see `numeric_conversion/2`);
+  8-12). Its children, if any, become numbers (see `numeric_conversion/3`);
   a category with grandchildren cannot be converted. Numeric categories do
   not match item text.
   """
-  @spec make_numeric(db, id) :: {:ok, db} | {:error, :not_standard | :protected | :too_deep}
-  def make_numeric(db, cat_id) do
+  @spec make_numeric(db, id, clock | nil) ::
+          {:ok, db} | {:error, :not_standard | :protected | :too_deep}
+  def make_numeric(db, cat_id, clock \\ nil) do
     cat = db.categories[cat_id]
 
     cond do
@@ -1164,7 +1167,7 @@ defmodule Agenda.Core do
         values =
           for(item <- direct_items(db, cat_id), do: {item, 0.0}) ++
             for child <- cat.children,
-                value = child_value(db.categories[child].name),
+                value = child_value(db.categories[child].name, clock),
                 item <- Database.items_in(db, child),
                 do: {item.id, value}
 
@@ -1187,8 +1190,8 @@ defmodule Agenda.Core do
     end
   end
 
-  defp child_value(name) do
-    case NumberFormat.parse(name) do
+  defp child_value(name, clock) do
+    case NumberFormat.parse(name, Context.number_opts(clock)) do
       {:ok, value} -> value
       :error -> 0.0
     end

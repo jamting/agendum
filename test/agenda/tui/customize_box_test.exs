@@ -101,4 +101,23 @@ defmodule Agenda.TUI.CustomizeBoxTest do
     assert saved == %Preferences{theme: :mono, languages: [Swedish], path: "/prefs"}
     assert state.input.clock == 24
   end
+
+  test "the decimal and thousands separators change how numbers show, and are saved",
+       %{state: state} do
+    state = open_box(state) |> press(List.duplicate(:down, 7))
+    assert screen(state) =~ ~r/Decimal separator +: \. \(Dot\)/
+    assert screen(state) =~ ~r/Thousands separator +: , \(Comma\)/
+
+    {state, [{:save_preferences, _, saved}]} = key(state, {:char, " "})
+    assert saved.input.decimal == ","
+    assert State.number_opts(state) == [decimal: ",", thousands: "."]
+    assert screen(state) =~ ~r/Decimal separator +: , \(Comma\)/
+    assert screen(state) =~ ~r/Thousands separator +: \. \(Dot\)/
+
+    # the thousands separator skips the decimal one
+    state = press(state, [:down, " "])
+    assert screen(state) =~ ~r/Thousands separator +: +\(Space\)/
+    state = press(state, " ")
+    assert screen(state) =~ ~r/Thousands separator +: \. \(Dot\)/
+  end
 end

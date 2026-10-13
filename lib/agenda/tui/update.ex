@@ -586,7 +586,7 @@ defmodule Agenda.TUI.Update do
 
     case Database.date_category?(state.db, head) do
       false when numeric ->
-        text = number_text(Database.number(state.db, item_id, head))
+        text = number_text(Database.number(state.db, item_id, head), State.number_opts(state))
 
         %{
           state
@@ -623,13 +623,18 @@ defmodule Agenda.TUI.Update do
 
   defp edit(state, nil), do: state
 
-  @doc "A number as offered for editing: in full, without formatting."
-  def number_text(nil), do: ""
+  @doc """
+  A number as offered for editing: in full, without formatting, with the
+  person's decimal separator (`State.number_opts/1`, R54).
+  """
+  def number_text(value, opts \\ [])
+  def number_text(nil, _opts), do: ""
 
-  def number_text(value) do
+  def number_text(value, opts) do
     if value == Float.round(value),
       do: value |> round() |> Integer.to_string(),
-      else: :erlang.float_to_binary(value, [:short])
+      else:
+        value |> :erlang.float_to_binary([:short]) |> String.replace(".", opts[:decimal] || ".")
   end
 
   defp delete(state, %{kind: :section, slot: %{}}), do: datebook_sections(state)
@@ -1219,7 +1224,7 @@ defmodule Agenda.TUI.Update do
 
   @doc "Converts a category to numeric (R29), reporting the result."
   def make_numeric(state, cat_id) do
-    case Core.make_numeric(state.db, cat_id) do
+    case Core.make_numeric(state.db, cat_id, State.context(state)) do
       {:ok, db} ->
         state |> State.change_db(db) |> State.info("#{db.categories[cat_id].name} is now numeric")
 

@@ -175,7 +175,7 @@ defmodule Agenda.TUI.ItemProperties do
       state,
       "#{state.db.categories[cat_id].name}:",
       {:item_number, mode.item_id, cat_id},
-      Update.number_text(number)
+      Update.number_text(number, State.number_opts(state))
     )
   end
 

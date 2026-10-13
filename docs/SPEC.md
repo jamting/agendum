@@ -509,8 +509,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   shows and edits it, the assignment profile asks for it, and printing to
   a file includes the calculations. Our choices: numbers are binary
   floating point, as in Agenda; the decimal and thousands characters
-  default to "." and "," until personal preferences exist (Utilities
-  Customize); calculation lines are not shown under collapsed sections.
+  are the person's (R54), "." and "," by default; calculation lines are not shown under collapsed sections.
   Not done: the "% of total" column, section-wide calculation settings
   (Section Properties ▸ Select numeric functions), choosing the category
   type when adding a column, and numeric ranges in conditions and filters
@@ -1005,7 +1004,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   from that letter, so typing the same letter again goes on to the next
   view with it; a letter no view starts with is ignored. Any other key
   forgets what was typed. ENTER shows the highlighted view.
-- **R54 More preferences** (Setting Up Agenda 1-25 to 1-28; User's
+- **R54 ✅ More preferences** (Setting Up Agenda 1-25 to 1-28; User's
   Guide 2-22 to 2-23). More of Agenda's Utilities Customize settings, in
   File ▸ Customize, kept in the person's preferences file like the rest
   (ADR 0008):
@@ -1026,6 +1025,15 @@ Extras that are not in the original (details in `KEYBOARD.md`):
     and 60, and `auto_save = N` in the file takes any of them. An untitled
     file is never saved by itself. A save that fails is tried again an
     interval later.
+  - ✅ **Decimal separator** ("." the default, or ",") and **Thousands
+    separator** ("," the default, ".", or a space; Setting Up Agenda 1-25,
+    1-28): how numbers are shown and read everywhere: column entries and
+    calculations, typed numbers, range filters and conditions, actions,
+    Item Properties, and category names read as numbers. The two are never
+    the same: with a decimal comma the thousands separator is a dot unless
+    a space is chosen. They belong to the person's input format, so they
+    reach the core with the clock (`Agenda.Core.Context`), as dates do
+    (`decimal_separator` and `thousands_separator = space` in the file).
 
 ## 6. Out of scope for now
 

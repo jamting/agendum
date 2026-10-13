@@ -3,8 +3,8 @@ defmodule Agenda.TUI.CustomizeBox do
   The Customize box (File ▸ Customize; Agenda's Utilities Customize,
   ADR 0008): the person's own settings, for every file: Theme (R40), Date
   language and Fallback language (R14c), Input format, which opens
-  `Agenda.TUI.InputFormatBox` (R41b), Display key map, Confirm mode and
-  Auto-save interval (R54). A change applies at once, is not
+  `Agenda.TUI.InputFormatBox` (R41b), Display key map, Confirm mode,
+  Auto-save interval and the Decimal and Thousands separators (R54). A change applies at once, is not
   part of undo, and is saved to the preferences file
   (`State.change_preference/3`).
 
@@ -12,10 +12,20 @@ defmodule Agenda.TUI.CustomizeBox do
   one. ESC or ENTER closes the box. Pure.
   """
 
-  alias Agenda.Core.DateLanguage
+  alias Agenda.Core.{DateLanguage, InputFormat}
   alias Agenda.TUI.{InputFormatBox, State, Theme}
 
-  @rows [:theme, :lang, :fallback, :input_format, :key_map, :confirm, :auto_save]
+  @rows [
+    :theme,
+    :lang,
+    :fallback,
+    :input_format,
+    :key_map,
+    :confirm,
+    :auto_save,
+    :decimal,
+    :thousands
+  ]
   # Agenda took any number of minutes from 1 to 60; these are the steps
   @auto_save [0, 1, 2, 5, 10, 15, 20, 30, 45, 60]
 
@@ -36,6 +46,17 @@ defmodule Agenda.TUI.CustomizeBox do
 
   defp change(state, :input_format, _step), do: InputFormatBox.open(state)
   defp change(state, :key_map, _step), do: State.toggle_key_map(state)
+
+  # the separators are part of the person's input format (R54)
+  defp change(state, :decimal, step) do
+    [decimal: decimal, thousands: _] = State.number_opts(state)
+    set_input(state, :decimal, next(InputFormat.decimals(), decimal, step))
+  end
+
+  defp change(state, :thousands, step) do
+    [decimal: decimal, thousands: thousands] = State.number_opts(state)
+    set_input(state, :thousands, next(InputFormat.thousands() -- [decimal], thousands, step))
+  end
 
   defp change(state, :auto_save, step) do
     minutes = next(@auto_save, state.prefs.auto_save, step)
@@ -66,6 +87,14 @@ defmodule Agenda.TUI.CustomizeBox do
     set_languages(state, [main | List.wrap(fallback)])
   end
 
+  defp set_input(state, field, value) do
+    State.change_preference(
+      state,
+      &%{&1 | input: Map.put(&1.input, field, value)},
+      &%{&1 | input: Map.put(&1.input, field, value)}
+    )
+  end
+
   defp set_languages(state, languages),
     do:
       State.change_preference(state, &%{&1 | languages: languages}, &%{&1 | languages: languages})
@@ -90,9 +119,16 @@ defmodule Agenda.TUI.CustomizeBox do
       {"Input format", "(SPACE)"},
       {"Display key map", yes_no(state.key_map)},
       {"Confirm mode", yes_no(state.prefs.confirm)},
-      {"Auto-save interval", minutes(state.prefs.auto_save)}
+      {"Auto-save interval", minutes(state.prefs.auto_save)},
+      {"Decimal separator", separator(State.number_opts(state)[:decimal])},
+      {"Thousands separator", separator(State.number_opts(state)[:thousands])}
     ]
   end
+
+  # as Agenda listed them: ". (Dot)"
+  defp separator("."), do: ". (Dot)"
+  defp separator(","), do: ", (Comma)"
+  defp separator(" "), do: "  (Space)"
 
   defp minutes(0), do: "Off"
   defp minutes(1), do: "1 minute"

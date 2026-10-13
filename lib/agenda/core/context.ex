@@ -40,6 +40,10 @@ defmodule Agenda.Core.Context do
   def input(%__MODULE__{input: input}), do: input
   def input(_clock), do: %InputFormat{}
 
+  @doc "How to show and read numbers: the person's separators (R54), or Agenda's."
+  @spec number_opts(clock | nil) :: [decimal: String.t(), thousands: String.t()]
+  def number_opts(clock), do: clock |> input() |> InputFormat.number_opts()
+
   @doc """
   Options for `Agenda.Core.DateParser`: the reader's languages and input
   format, and the file's date settings (R14e).

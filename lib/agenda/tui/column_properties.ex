@@ -83,6 +83,7 @@ defmodule Agenda.TUI.ColumnProperties do
   @doc "The formatted samples shown at the bottom of the box."
   def sample(state, mode) do
     f = column(state, mode).number
-    NumberFormat.format(1234.5, f) <> " " <> NumberFormat.format(-1234.5, f)
+    opts = State.number_opts(state)
+    NumberFormat.format(1234.5, f, opts) <> " " <> NumberFormat.format(-1234.5, f, opts)
   end
 end

@@ -104,7 +104,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `Agenda.TUI.Terminal`                         | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
 | `Agenda.TUI.App`                              | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |
 | `Agenda.Store`                                | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write); folder listings for the Select File box.                     |
-| `Agenda.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format, key map, confirm mode, auto-save, name, company, last file (`key = value`, ADR 0008).               |
+| `Agenda.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format (with the number separators), key map, confirm mode, auto-save, name, company, last file (`key = value`, ADR 0008).               |
 | `Agenda.CalendarFetch`                        | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
 | `Agenda.CLI`                                  | ✘     | `main/1` for the escript.                                                                                                        |
 

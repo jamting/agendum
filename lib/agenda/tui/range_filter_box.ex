@@ -30,9 +30,15 @@ defmodule Agenda.TUI.RangeFilterBox do
   defp open_for(state, purpose, cat_id) do
     {show, from, to, where} =
       case List.keyfind(criteria(state, purpose), cat_id, 0) do
-        {_, :not_assigned} -> {:not_assigned, "", "", :inside}
-        {_, {:range, from, to, where}} -> {:assigned, text(from), text(to), where}
-        _ -> {:assigned, "", "", :inside}
+        {_, :not_assigned} ->
+          {:not_assigned, "", "", :inside}
+
+        {_, {:range, from, to, where}} ->
+          opts = State.number_opts(state)
+          {:assigned, text(from, opts), text(to, opts), where}
+
+        _ ->
+          {:assigned, "", "", :inside}
       end
 
     State.push(state, %{
@@ -54,9 +60,9 @@ defmodule Agenda.TUI.RangeFilterBox do
 
   defp criteria(state, {:condition, owner}), do: state.db.categories[owner].conditions
 
-  defp text(nil), do: ""
-  defp text(number) when is_number(number), do: Update.number_text(number)
-  defp text(date_expression), do: date_expression
+  defp text(nil, _opts), do: ""
+  defp text(number, opts) when is_number(number), do: Update.number_text(number, opts)
+  defp text(date_expression, _opts), do: date_expression
 
   @doc "Whether the box is about a numeric category (else a date category)."
   def numeric?(state, mode), do: state.db.categories[mode.cat_id].kind == :numeric
@@ -115,7 +121,8 @@ defmodule Agenda.TUI.RangeFilterBox do
         State.error(state, "Not a date: #{bad(mode, &parse_date(&1, state))}")
 
       {:error, :not_a_number} ->
-        State.error(state, "Not a number: #{bad(mode, &Core.NumberFormat.parse/1)}")
+        opts = State.number_opts(state)
+        State.error(state, "Not a number: #{bad(mode, &Core.NumberFormat.parse(&1, opts))}")
 
       {:error, :self} ->
         State.error(state, "A category cannot depend on itself")

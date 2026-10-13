@@ -102,4 +102,13 @@ defmodule Agenda.PreferencesTest do
     assert Preferences.parse("auto_save = 61").auto_save == 0
     assert Preferences.parse("auto_save = soon").auto_save == 0
   end
+
+  test "the decimal and thousands separators" do
+    prefs = %Preferences{input: %InputFormat{decimal: ",", thousands: " "}}
+    text = Preferences.format(prefs)
+    assert text =~ "decimal_separator = ,\n"
+    assert text =~ "thousands_separator = space\n"
+    assert Preferences.parse(text).input == prefs.input
+    assert Preferences.parse("decimal_separator = ;").input.decimal == nil
+  end
 end

@@ -1054,7 +1054,7 @@ defmodule Agenda.TUI.Render do
       cat.exclusive && "exclusive",
       cat.short_name && "aka #{cat.short_name}",
       cat.conditions != [] && "if " <> conditions_text(state, cat),
-      (cat.also_assign != [] or cat.actions != []) && "→ " <> actions_text(db, cat),
+      (cat.also_assign != [] or cat.actions != []) && "→ " <> actions_text(state, cat),
       cat.excludes != [] && "not with " <> names_text(db, cat.excludes),
       Agenda.TUI.CategoryMatchBox.manager_tag(cat.match_overrides),
       cat.note != "" && "♪",
@@ -1931,7 +1931,7 @@ defmodule Agenda.TUI.Render do
 
             {:assigned, a} ->
               {if(a == hd(assignments), do: "Assigned to", else: ""),
-               assignment_text(state.db, a, item)}
+               assignment_text(state, a, item)}
 
             :add ->
               {if(assignments == [], do: "Assigned to", else: ""),
@@ -1990,7 +1990,7 @@ defmodule Agenda.TUI.Render do
       also_assign:
         if(cat.also_assign == [] and cat.actions == [],
           do: "(none)",
-          else: actions_text(state.db, cat)
+          else: actions_text(state, cat)
         ),
       conditions: if(cat.conditions == [], do: "(none)", else: conditions_text(state, cat)),
       excludes: if(cat.excludes == [], do: "(none)", else: names_text(state.db, cat.excludes)),
@@ -2133,7 +2133,7 @@ defmodule Agenda.TUI.Render do
 
   # "Taxes, not People": a category's assignment conditions in words.
   # "Sales, -Receivables, When=tomorrow, Amount=150" (R15b)
-  defp actions_text(db, cat) do
+  defp actions_text(%State{db: db} = state, cat) do
     name = &db.categories[&1].name
 
     Enum.map(cat.also_assign, name)
@@ -2143,7 +2143,7 @@ defmodule Agenda.TUI.Render do
           "-" <> name.(id)
 
         {id, {:set, value}} when is_number(value) ->
-          name.(id) <> "=" <> Agenda.TUI.Update.number_text(value)
+          name.(id) <> "=" <> Agenda.TUI.Update.number_text(value, State.number_opts(state))
 
         {id, {:set, value}} ->
           name.(id) <> "=" <> value
@@ -2168,13 +2168,13 @@ defmodule Agenda.TUI.Render do
 
   # One assignment in the Item Properties box: "When (2026-10-13)",
   # "Anna Lasky (c)" for a conditional one.
-  defp assignment_text(db, %{category: id}, item) when id == db.special.when do
+  defp assignment_text(%{db: db}, %{category: id}, item) when id == db.special.when do
     db.categories[id].name <>
       " (#{DateFormat.date_time(item.when, item.when_time, db.date_format)})" <>
       recurrence_note(item) <> alarm_note(item)
   end
 
-  defp assignment_text(db, a, _item), do: assignment_text(db, a)
+  defp assignment_text(state, a, _item), do: assignment_text(state, a)
 
   # R43: the first row of each kind is labelled
   defp dependency_label(rows, {kind, _} = row) do
@@ -2196,11 +2196,18 @@ defmodule Agenda.TUI.Render do
   defp alarm_note(%{alarm_minutes: nil}), do: ""
   defp alarm_note(%{alarm_minutes: m}), do: " · alarm #{m} min before"
 
-  defp assignment_text(db, %{category: id, kind: :numeric, number: number}),
-    do:
-      "#{db.categories[id].name} (#{Agenda.Core.NumberFormat.format(number, %Agenda.Core.NumberFormat{})})"
+  defp assignment_text(state, %{category: id, kind: :numeric, number: number}) do
+    number =
+      Agenda.Core.NumberFormat.format(
+        number,
+        %Agenda.Core.NumberFormat{},
+        State.number_opts(state)
+      )
 
-  defp assignment_text(db, %{category: id, kind: kind, date: date}) do
+    "#{state.db.categories[id].name} (#{number})"
+  end
+
+  defp assignment_text(%{db: db}, %{category: id, kind: kind, date: date}) do
     name = db.categories[id].name
 
     case kind do

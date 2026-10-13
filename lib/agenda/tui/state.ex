@@ -126,6 +126,10 @@ defmodule Agenda.TUI.State do
   def context(%__MODULE__{now: now, languages: languages, input: input}),
     do: %Agenda.Core.Context{now: now, languages: languages, input: input}
 
+  @doc "How numbers are shown and read for this person (R54)."
+  @spec number_opts(t) :: [decimal: String.t(), thousands: String.t()]
+  def number_opts(state), do: state |> context() |> Agenda.Core.Context.number_opts()
+
   @doc """
   Changes one of the person's preferences (R40, R14c, R41b): `change`
   updates what the session uses, and the same field of the stored

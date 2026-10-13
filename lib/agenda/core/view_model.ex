@@ -5,7 +5,7 @@ defmodule Agenda.Core.ViewModel do
   TUI renders it, and tests can assert on it without a terminal.
   """
 
-  alias Agenda.Core.{Assign, Database, Datebook, DateFormat, NumberFormat, View}
+  alias Agenda.Core.{Assign, Context, Database, Datebook, DateFormat, NumberFormat, View}
   alias Agenda.Core.View.SortKey
 
   defmodule Row do
@@ -82,7 +82,7 @@ defmodule Agenda.Core.ViewModel do
         category: category,
         rows: rows,
         slot: slot,
-        calcs: calcs(db, view.columns, rows)
+        calcs: calcs(db, view.columns, rows, Context.number_opts(today))
       }
     end)
     |> Enum.reject(&(view.hide_empty and &1.rows == []))
@@ -90,7 +90,7 @@ defmodule Agenda.Core.ViewModel do
 
   def build(%Database{} = db, %View{} = view, today) do
     view.sections
-    |> sort_sections(db, view)
+    |> sort_sections(db, view, Context.number_opts(today))
     |> Enum.map(fn section ->
       category = db.categories[section.category_id]
 
@@ -123,7 +123,7 @@ defmodule Agenda.Core.ViewModel do
         category: category,
         rows: rows,
         collapsed: section.collapsed,
-        calcs: calcs(db, view.columns, rows)
+        calcs: calcs(db, view.columns, rows, Context.number_opts(today))
       }
     end)
     |> Enum.reject(&(view.hide_empty and &1.rows == []))
@@ -153,7 +153,7 @@ defmodule Agenda.Core.ViewModel do
 
   # The calculation lines of a section: every calculation some numeric
   # column asks for, in Agenda's order.
-  defp calcs(db, columns, rows) do
+  defp calcs(db, columns, rows, opts) do
     numeric = Enum.filter(columns, &(db.categories[&1.category_id].kind == :numeric))
 
     wanted =
@@ -163,7 +163,7 @@ defmodule Agenda.Core.ViewModel do
       cells =
         Enum.map(columns, fn column ->
           if column in numeric and calc in column.number.calcs,
-            do: calc_cell(db, calc, column, rows),
+            do: calc_cell(db, calc, column, rows, opts),
             else: ""
         end)
 
@@ -171,7 +171,7 @@ defmodule Agenda.Core.ViewModel do
     end
   end
 
-  defp calc_cell(db, calc, column, rows) do
+  defp calc_cell(db, calc, column, rows, opts) do
     values =
       for row <- rows,
           value = Database.number(db, row.item.id, column.category_id),
@@ -181,7 +181,7 @@ defmodule Agenda.Core.ViewModel do
     case NumberFormat.calculate(calc, values) do
       nil -> ""
       count when calc == :count -> count |> round() |> Integer.to_string()
-      value -> NumberFormat.format(value, column.number, width: column.width)
+      value -> NumberFormat.format(value, column.number, [width: column.width] ++ opts)
     end
   end
 
@@ -191,12 +191,12 @@ defmodule Agenda.Core.ViewModel do
 
   # Section heads in category order, by name, or by name as a number with
   # the other names last (User's Guide 15-20). The sort is stable.
-  defp sort_sections(sections, _db, %View{section_sort: :none}), do: sections
+  defp sort_sections(sections, _db, %View{section_sort: :none}, _opts), do: sections
 
-  defp sort_sections(sections, db, %View{section_sort: :numeric, section_order: order}) do
+  defp sort_sections(sections, db, %View{section_sort: :numeric, section_order: order}, opts) do
     {numbers, others} =
       sections
-      |> Enum.map(&{&1, NumberFormat.parse(db.categories[&1.category_id].name)})
+      |> Enum.map(&{&1, NumberFormat.parse(db.categories[&1.category_id].name, opts)})
       |> Enum.split_with(&match?({_, {:ok, _}}, &1))
 
     numbers
@@ -205,14 +205,14 @@ defmodule Agenda.Core.ViewModel do
     |> Enum.map(&elem(&1, 0))
   end
 
-  defp sort_sections(sections, db, %View{section_sort: :category, section_order: order}) do
+  defp sort_sections(sections, db, %View{section_sort: :category, section_order: order}, _opts) do
     position =
       db |> Database.hierarchy() |> Enum.with_index() |> Map.new(fn {{id, _}, i} -> {id, i} end)
 
     Enum.sort_by(sections, &position[&1.category_id], order)
   end
 
-  defp sort_sections(sections, db, %View{section_sort: :alpha, section_order: order}),
+  defp sort_sections(sections, db, %View{section_sort: :alpha, section_order: order}, _opts),
     do: Enum.sort_by(sections, &String.downcase(db.categories[&1.category_id].name), order)
 
   @doc """
@@ -339,8 +339,15 @@ defmodule Agenda.Core.ViewModel do
     cond do
       head.kind == :numeric ->
         case Database.number(db, item.id, head_id) do
-          nil -> ""
-          value -> NumberFormat.format(value, number, width: width)
+          nil ->
+            ""
+
+          value ->
+            NumberFormat.format(
+              value,
+              number,
+              [width: width] ++ Context.number_opts(opts[:today])
+            )
         end
 
       Database.date_category?(db, head_id) ->

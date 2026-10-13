@@ -54,7 +54,8 @@ defmodule Agenda.Core.RangeFilter do
         {:ok, nil}
 
       db.categories[cat_id].kind == :numeric ->
-        with :error <- NumberFormat.parse(text), do: {:error, :not_a_number}
+        with :error <- NumberFormat.parse(text, Context.number_opts(today)),
+             do: {:error, :not_a_number}
 
       true ->
         date_bound(db, text, today)
@@ -203,7 +204,12 @@ defmodule Agenda.Core.RangeFilter do
 
       number when is_number(number) ->
         decimals = if number == Float.round(number), do: 0, else: 2
-        NumberFormat.format(number, %NumberFormat{decimals: decimals, thousands: true})
+
+        NumberFormat.format(
+          number,
+          %NumberFormat{decimals: decimals, thousands: true},
+          Context.number_opts(today)
+        )
 
       text ->
         Agenda.Core.DateFormat.date(resolve(db, text, today), db.date_format)

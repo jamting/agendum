@@ -1102,7 +1102,7 @@ defmodule Agenda.TUI.CategoryScreens do
   end
 
   defp to_numeric(state, cat) do
-    case numeric_question(cat, Core.numeric_conversion(state.db, cat.id)) do
+    case numeric_question(cat, Core.numeric_conversion(state.db, cat.id, State.context(state))) do
       nil -> Update.make_numeric(state, cat.id)
       question -> Update.confirm(state, question, {:make_numeric, cat.id})
     end

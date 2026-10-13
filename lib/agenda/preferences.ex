@@ -161,6 +161,12 @@ defmodule Agenda.Preferences do
   def setting("date_separator", value) when value in ["/", "-", ".", ",", ":"],
     do: {:ok, :separator, value}
 
+  def setting("decimal_separator", value) when value in [".", ","], do: {:ok, :decimal, value}
+  def setting("thousands_separator", "space"), do: {:ok, :thousands, " "}
+
+  def setting("thousands_separator", value) when value in [",", "."],
+    do: {:ok, :thousands, value}
+
   def setting("clock", "12"), do: {:ok, :clock, 12}
   def setting("clock", "24"), do: {:ok, :clock, 24}
   def setting(_key, _value), do: :error
@@ -183,6 +189,8 @@ defmodule Agenda.Preferences do
         {"number_order", input.number_order && Atom.to_string(input.number_order)},
         {"date_separator", input.separator},
         {"clock", input.clock && Integer.to_string(input.clock)},
+        {"decimal_separator", input.decimal},
+        {"thousands_separator", if(input.thousands == " ", do: "space", else: input.thousands)},
         {"name", prefs.name},
         {"company", prefs.company},
         {"last_file", prefs.last_file},
@@ -199,7 +207,8 @@ defmodule Agenda.Preferences do
       "# theme: #{Enum.join(Theme.names(), " ")}; lang, fallback: " <>
       Enum.map_join(DateLanguage.packs(), " ", & &1.name()) <>
       "\n# number_order: mdy myd dmy dym ydm ymd; date_separator: / - . , :;\n" <>
-      "# clock: 12 or 24. name, company: shown when Agendum starts;\n" <>
+      "# clock: 12 or 24; decimal_separator: . or ,; thousands_separator: , . or space.\n" <>
+      "# name, company: shown when Agendum starts;\n" <>
       "# last_file: the file offered then (kept by Agendum); key_map, confirm: yes or no;\n" <>
       "# auto_save: minutes without a key before saving, 1 to 60 (0: never).\n" <>
       Enum.join(lines)
