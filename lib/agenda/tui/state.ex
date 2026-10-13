@@ -39,7 +39,11 @@ defmodule Agenda.TUI.State do
           edit: map | nil,
           message: {atom, String.t()} | nil,
           collapsed: MapSet.t(Database.id()),
-          last: %{view: Database.id() | nil, removed: Database.id() | nil},
+          last: %{
+            view: Database.id() | nil,
+            removed: Database.id() | nil,
+            copied: String.t() | nil
+          },
           searches: %{
             view: Agenda.Core.Search.t() | nil,
             note: Agenda.TUI.NoteSearch.settings() | nil
@@ -76,8 +80,9 @@ defmodule Agenda.TUI.State do
             message: nil,
             collapsed: MapSet.new(),
             # what a key goes back to: the view shown before this one
-            # (ALT-F8), the item DEL last took out of a section (ALT-Y, R42)
-            last: %{view: nil, removed: nil},
+            # (ALT-F8), the item DEL last took out of a section (ALT-Y, R42),
+            # the text last cut or copied in a note (F2 PASTE, R63)
+            last: %{view: nil, removed: nil, copied: nil},
             searches: %{view: nil, note: nil},
             # macros (R50): what Learn mode is recording, the last macro
             # run (ALT-Z), and how many runs are playing, one inside another

@@ -96,14 +96,19 @@ defmodule Agenda.TUI.Render.Help do
      ESC / F8      Return to the view
 
    In a note (F5)
+     F7            Mark text (then move the cursor; F7 again unmarks)
+     F3 / F4       Copy / cut the marked text (else: word, line, all)
+     ALT-F4        Delete the marked text (not kept)  ESC $
+     F2            Paste the text last copied or cut
      ALT-F6        Search / replace text            ESC ^
      ALT-S         Find the next occurrence         ESC s
                    (after a single replacement: replace it)
      ALT-D / ALT-T Insert today's date / the time   ESC d / ESC t
      ALT-N / ALT-P Save; next / previous item's note
-     ALT-F7        Make the word / line / all text an
-                   item (MAKEITM; it leaves the note)   ESC &
-     ALT-F2        Make the word a category (MAKECAT)   ESC @
+     ALT-F7        Make the marked text (or word / line /
+                   all) an item (MAKEITM; it leaves the note)  ESC &
+     ALT-F2        Make the marked text or the word a
+                   category (MAKECAT)                   ESC @
      ESC / F5      Save the note and return
 
    While typing

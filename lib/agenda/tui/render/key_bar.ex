@@ -280,11 +280,13 @@ defmodule Agenda.TUI.Render.KeyBar do
   defp mode_keys(%{type: :note}),
     do: [
       {"ESC", "Return", "Save and return"},
-      {"F5", "Return", "Save and return"},
+      {"F2", "Paste", "Paste the text kept"},
+      {"F3", "Copy", "Copy the marked text (or a word, line, all)"},
+      {"F4", "Cut", "Cut the marked text (or a word, line, all)"},
+      {"F7", "Mark", "Mark text: F7, then move the cursor"},
       {"ALT-F6", "Search", "Search and replace"},
-      {"ALT-S", "Next", "Next occurrence"},
       {"ALT-F7", "MakeItm", "Make text into an item"},
-      {"ALT-F2", "MakeCat", "Make the word a category"}
+      {"ALT-F2", "MakeCat", "Make the text a category"}
     ]
 
   defp mode_keys(%{type: :questions}),

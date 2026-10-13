@@ -88,6 +88,8 @@ defmodule Agenda.TUI.CategoryScreens.Choices do
        :section}
     ]
 
+  def choice_options(%{kind: :clip}), do: choice_options(%{kind: :make_item})
+
   def choice_options(%{kind: :make_item}),
     do: [
       {"Word", "The word at the cursor", :word},
@@ -106,6 +108,12 @@ defmodule Agenda.TUI.CategoryScreens.Choices do
 
   def choice_lines(%{kind: :remove_column}),
     do: ["The column is in more than one section.", "Remove it from:"]
+
+  def choice_lines(%{kind: :clip, action: :copy}), do: ["Nothing is marked (F7).", "Copy:"]
+  def choice_lines(%{kind: :clip, action: :cut}), do: ["Nothing is marked (F7).", "Cut:"]
+
+  def choice_lines(%{kind: :clip, action: :delete}),
+    do: ["Nothing is marked (F7). Deleted text is not kept.", "Delete:"]
 
   def choice_lines(%{kind: :make_item}),
     do: ["The text leaves the note and becomes a new item.", "Make into an item:"]
@@ -215,6 +223,9 @@ defmodule Agenda.TUI.CategoryScreens.Choices do
 
   defp resolve_choice(state, %{kind: :remove_column, at: at}, from),
     do: Agenda.TUI.Update.Actions.remove_column(state, at, from)
+
+  defp resolve_choice(state, %{kind: :clip, action: action}, what),
+    do: Agenda.TUI.Update.Notes.clip(state, action, what)
 
   defp resolve_choice(state, %{kind: :make_item}, what),
     do: Agenda.TUI.Update.Notes.make_item(state, what)

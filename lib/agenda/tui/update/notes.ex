@@ -1,8 +1,9 @@
 defmodule Agenda.TUI.Update.Notes do
   @moduledoc """
   Keys in the full-screen note of an item, a category or a macro: editing,
-  ALT-D / ALT-T, ALT-N / ALT-P to the next note, ALT-F7 MAKEITM and ALT-F2
-  MAKECAT (R42), and saving on close. Pure.
+  ALT-D / ALT-T, ALT-N / ALT-P to the next note, F7 MARK, F3 COPY, F4 CUT,
+  ALT-F4 DELETE and F2 PASTE (R63), ALT-F7 MAKEITM and ALT-F2 MAKECAT
+  (R42), and saving on close. Pure.
   """
 
   alias Agenda.Core
@@ -24,8 +25,24 @@ defmodule Agenda.TUI.Update.Notes do
       {:alt, "s"} ->
         NoteSearch.next(state, mode)
 
-      k when k in [:esc, {:f, 5}, {:f, 4}] ->
+      # F4 is CUT in a note, as in Agenda
+      k when k in [:esc, {:f, 5}] ->
         close_note(state, mode)
+
+      {:f, 7} ->
+        State.put_mode(state, %{mode | edit: TextEdit.toggle_mark(mode.edit)})
+
+      {:f, 3} ->
+        clip(state, :copy)
+
+      {:f, 4} ->
+        clip(state, :cut)
+
+      {:alt_f, 4} ->
+        clip(state, :delete)
+
+      {:f, 2} ->
+        paste(state, mode)
 
       {:alt, "d"} ->
         type_in_note(state, mode, DateFormat.date(state.today, state.db.date_format))
@@ -71,12 +88,70 @@ defmodule Agenda.TUI.Update.Notes do
   @name_room 69
 
   # The new item goes into the view's section, so the note must have been
-  # opened from a view (nothing under it on the mode stack).
+  # opened from a view (nothing under it on the mode stack). Marked text
+  # is taken as it is; else Agenda asks Word, Line or All text.
   defp ask_make_item(state) do
-    if length(state.modes) == 1,
-      do: State.push(state, %{type: :choice, kind: :make_item, cursor: 0}),
-      else: State.error(state, "ALT-F7 makes items from a note opened in a view")
+    cond do
+      length(state.modes) > 1 ->
+        State.error(state, "ALT-F7 makes items from a note opened in a view")
+
+      marked?(State.mode(state)) ->
+        make_item(state, :mark)
+
+      true ->
+        State.push(state, %{type: :choice, kind: :make_item, cursor: 0})
+    end
   end
+
+  defp marked?(mode), do: TextEdit.marked(mode.edit) not in [nil, ""]
+
+  # --- F3 COPY, F4 CUT, ALT-F4 DELETE, F2 PASTE (User's Guide 14-5 to 14-8) ---
+
+  # the marked text, or else what the person chooses: Word, Line, All text
+  defp clip(state, action) do
+    if marked?(State.mode(state)),
+      do: clip(state, action, :mark),
+      else: State.push(state, %{type: :choice, kind: :clip, action: action, cursor: 0})
+  end
+
+  @doc """
+  Copies, cuts or deletes the marked text, or the word, line or all text
+  at the cursor. Copied and cut text is kept for F2 (one piece, for the
+  session); deleted text is not.
+  """
+  def clip(state, action, what) do
+    mode = State.mode(state)
+
+    case TextEdit.take(mode.edit, what) do
+      nil ->
+        State.error(state, "Nothing there to #{action}")
+
+      {text, taken} ->
+        # copying leaves the text where it is (and drops the mark)
+        edit = if action == :copy, do: %{mode.edit | mark: nil}, else: taken
+        state = State.put_mode(state, %{mode | edit: edit, match: nil})
+
+        case action do
+          :delete -> State.info(state, "Deleted")
+          _ -> %{state | last: %{state.last | copied: text}} |> State.info(clipped(action))
+        end
+    end
+  end
+
+  defp clipped(:copy), do: "Copied; F2 pastes it"
+  defp clipped(:cut), do: "Cut; F2 pastes it"
+
+  # F2: the text last copied or cut, at the cursor; it stays kept
+  defp paste(%State{last: %{copied: nil}} = state, _mode),
+    do: State.error(state, "Nothing to paste: F3 copies, F4 cuts")
+
+  defp paste(state, mode),
+    do:
+      State.put_mode(state, %{
+        mode
+        | edit: TextEdit.insert(mode.edit, state.last.copied),
+          match: nil
+      })
 
   @doc """
   ALT-F7, after Word, Line or All text was chosen: that text leaves the
@@ -113,7 +188,9 @@ defmodule Agenda.TUI.Update.Notes do
   # ALT-F2: the word at the cursor, its punctuation off, becomes a category
   # under the parent picked next (`Agenda.TUI.CategoryScreens.Picker`)
   defp make_category(state, mode) do
-    case mode.edit |> TextEdit.word() |> name_of() do
+    text = if marked?(mode), do: TextEdit.marked(mode.edit), else: TextEdit.word(mode.edit)
+
+    case name_of(text) do
       nil -> State.error(state, "No word at the cursor to make into a category")
       name -> CategoryScreens.open_picker(state, {:make_category, name}, nil)
     end
@@ -122,8 +199,11 @@ defmodule Agenda.TUI.Update.Notes do
   defp name_of(nil), do: nil
 
   defp name_of(word) do
-    # punctuation at either end goes ("Jones," is Jones)
-    case String.replace(word, ~r/^[[:punct:]]+|[[:punct:]]+$/u, "") do
+    # punctuation at either end goes ("Jones," is Jones); a name is one line
+    case word
+         |> String.replace("\n", " ")
+         |> String.trim()
+         |> String.replace(~r/^[[:punct:]]+|[[:punct:]]+$/u, "") do
       "" -> nil
       name -> name
     end

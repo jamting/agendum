@@ -113,6 +113,9 @@ defmodule Agenda.TUI.Render.Boxes do
 
   defp box_title(_state, %{type: :choice, kind: :view_type, name: name}), do: "New view: #{name}"
   defp box_title(_state, %{type: :choice, kind: :make_item}), do: "Make item (ALT-F7)"
+  defp box_title(_state, %{type: :choice, kind: :clip, action: :copy}), do: "Copy (F3)"
+  defp box_title(_state, %{type: :choice, kind: :clip, action: :cut}), do: "Cut (F4)"
+  defp box_title(_state, %{type: :choice, kind: :clip, action: :delete}), do: "Delete (ALT-F4)"
 
   defp box_title(state, %{type: :choice, kind: :remove_column, at: {sidx, index}}) do
     column = state |> State.view() |> Agenda.Core.View.columns(sidx) |> Enum.at(index)

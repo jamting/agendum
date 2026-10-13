@@ -676,6 +676,17 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   sections (View Properties ▸ Section sorting) says so instead, as the
   sort would put the section back; a datebook view's sections are its
   dates (R47).
+- **R63 ✅ Marking, copying, cutting and pasting in a note** (User's
+  Guide 14-4 to 14-8). F7 MARK anchors a region at the cursor; moving the
+  cursor stretches it, either way and over lines, and it shows marked; F7
+  again drops it, and typing drops it first. F3 COPY keeps the marked
+  text, F4 CUT keeps it and takes it out, ALT-F4 DELETE takes it out
+  without keeping it; with nothing marked each asks Word (at the cursor,
+  or just before it), Line or All text. F2 PASTE puts the text kept at
+  the cursor and keeps it, so it can be pasted again; one piece is kept,
+  for the session, across notes. In a note F4 is CUT, as in Agenda (it
+  used to close the note: ESC and F5 do). Not done: the same keys in
+  item text and category names, and the system clipboard.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the
@@ -975,7 +986,8 @@ sibling, CTRL-HOME/END = first/last.
   note opened from a view. ALT-F2 MAKECAT makes the word at the cursor
   (its punctuation off) a new category under a parent picked from the
   hierarchy; the note keeps it (past 69 characters the rest is the
-  category's note). Not done: marked text (F7 MARK in notes) for both.
+  category's note). With text marked (R63), both take the marked text
+  without asking.
   Later, with their features:
   ALT-B browse, ALT-C calendar, ALT-O dependency, ALT-E / ALT-X execute
   conditions and actions, ALT-Z run macro, ALT-S sort now.

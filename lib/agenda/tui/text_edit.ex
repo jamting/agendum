@@ -1,8 +1,18 @@
 defmodule Agenda.TUI.TextEdit do
-  @moduledoc "A pure multi-line text buffer, used for notes."
+  @moduledoc """
+  A pure multi-line text buffer, used for notes. `mark` is where F7 MARK
+  anchored a region (R63): the region runs from it to the cursor, either
+  way; nil when nothing is marked.
+  """
 
-  @type t :: %__MODULE__{lines: [String.t()], row: non_neg_integer, col: non_neg_integer}
-  defstruct lines: [""], row: 0, col: 0
+  @type position :: {non_neg_integer, non_neg_integer}
+  @type t :: %__MODULE__{
+          lines: [String.t()],
+          row: non_neg_integer,
+          col: non_neg_integer,
+          mark: position | nil
+        }
+  defstruct lines: [""], row: 0, col: 0, mark: nil
 
   @spec new(String.t()) :: t
   def new(text) do
@@ -15,6 +25,14 @@ defmodule Agenda.TUI.TextEdit do
   def text(%__MODULE__{lines: lines}), do: lines |> Enum.join("\n") |> String.trim_trailing()
 
   @spec handle(t, term) :: {:ok, t} | :unhandled
+  # a key that changes the text drops the mark first; moving keeps it, so
+  # the cursor stretches the region
+  def handle(%__MODULE__{mark: mark} = e, key)
+      when mark != nil and
+             (key in [:enter, :backspace, :delete, {:ctrl, "d"}] or
+                (is_tuple(key) and elem(key, 0) == :char)),
+      do: handle(%{e | mark: nil}, key)
+
   def handle(%__MODULE__{} = e, key) do
     line = current(e)
 
@@ -90,6 +108,60 @@ defmodule Agenda.TUI.TextEdit do
     end
   end
 
+  @doc "F7 MARK: anchors a region at the cursor, or drops the one there is."
+  @spec toggle_mark(t) :: t
+  def toggle_mark(%__MODULE__{mark: nil} = e), do: %{e | mark: {e.row, e.col}}
+  def toggle_mark(e), do: %{e | mark: nil}
+
+  @doc "The marked region, start first (`{from, to}`, `to` not included); nil without a mark."
+  @spec region(t) :: {position, position} | nil
+  def region(%__MODULE__{mark: nil}), do: nil
+  # tuples compare element by element, so {row, col} sort as positions do
+  def region(%__MODULE__{mark: mark} = e), do: Enum.min_max([mark, {e.row, e.col}])
+
+  @doc "The marked text, lines joined with newlines (\"\" for an empty mark, nil for none)."
+  @spec marked(t) :: String.t() | nil
+  def marked(e) do
+    case region(e) do
+      nil -> nil
+      {from, to} -> e |> slice(from, to) |> elem(1)
+    end
+  end
+
+  # the text before `from`, between `from` and `to`, and after `to`
+  defp slice(e, {r1, c1}, {r2, c2}) do
+    text = Enum.join(e.lines, "\n")
+    start = offset(e, r1, c1)
+    stop = offset(e, r2, c2)
+
+    {String.slice(text, 0, start), String.slice(text, start, stop - start),
+     String.slice(text, stop..-1//1)}
+  end
+
+  # the characters before a position: the lines above (each with its newline) and the column
+  defp offset(e, row, col),
+    do: (e.lines |> Enum.take(row) |> Enum.map(&(String.length(&1) + 1)) |> Enum.sum()) + col
+
+  @doc "Inserts text at the cursor (F2 PASTE); it may hold newlines. The cursor ends after it."
+  @spec insert(t, String.t()) :: t
+  def insert(e, text) do
+    line = current(e)
+    {before, rest} = String.split_at(line, e.col)
+    [first | more] = String.split(text, "\n")
+
+    case more do
+      [] ->
+        %{put(e, before <> first <> rest) | col: e.col + String.length(first), mark: nil}
+
+      _ ->
+        last = List.last(more)
+        middle = Enum.drop(more, -1)
+        new = [before <> first] ++ middle ++ [last <> rest]
+        lines = e.lines |> List.replace_at(e.row, new) |> List.flatten()
+        %{e | lines: lines, row: e.row + length(more), col: String.length(last), mark: nil}
+    end
+  end
+
   @doc """
   The word at the cursor (letters and anything but spaces), or the one
   just before it; nil on a blank line or between words' spaces.
@@ -122,7 +194,22 @@ defmodule Agenda.TUI.TextEdit do
   the text out of the buffer (ALT-F7 MAKEITM): `{text, buffer}`, or nil
   when there is nothing to take.
   """
-  @spec take(t, :word | :line | :all) :: {String.t(), t} | nil
+  @spec take(t, :mark | :word | :line | :all) :: {String.t(), t} | nil
+  def take(e, :mark) do
+    case region(e) do
+      {same, same} ->
+        nil
+
+      {{r1, c1} = from, to} ->
+        {before, text, after_} = slice(e, from, to)
+        e = %{new(before <> after_) | row: r1, col: c1}
+        {text, e}
+
+      nil ->
+        nil
+    end
+  end
+
   def take(e, :all) do
     case text(e) do
       "" -> nil
