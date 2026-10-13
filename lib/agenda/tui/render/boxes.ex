@@ -29,6 +29,8 @@ defmodule Agenda.TUI.Render.Boxes do
 
   # the calendar is a small box, as in Agenda; the others share one width
   defp box_width(state, %{type: :calendar}), do: min(state.width - 8, 30)
+  # File Properties has Agenda's two settings side by side (screenshot 130)
+  defp box_width(state, %{type: :file_props}), do: min(state.width - 8, 72)
   defp box_width(state, _mode), do: min(state.width - 8, 60)
 
   defp box_title(_state, %{type: :calendar} = mode), do: Agenda.TUI.CalendarBox.title(mode)
@@ -486,8 +488,11 @@ defmodule Agenda.TUI.Render.Boxes do
       ]
   end
 
+  defp box_content(state, %{type: :file_props} = mode, _inner, _max_rows),
+    do: Agenda.TUI.FileProperties.content(state, mode)
+
   defp box_content(state, %{type: type} = mode, _inner, _max_rows)
-       when type in [:file_props, :date_settings, :display_format] do
+       when type in [:date_settings, :display_format] do
     rows =
       state
       |> Agenda.TUI.FileProperties.lines(type)

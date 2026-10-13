@@ -185,8 +185,10 @@ or handles it.
   - **Sort box** `:sort` (View ▸ Order, View ▸ Section ▸ Sort): the sort keys
     of a view or a section (R36). `Agenda.TUI.SortBox`.
     - **Picker** `:picker` for a key's category or note category.
-  - **File Properties** `:file_props` (File ▸ Properties): two "..." rows
-    opening Agenda's boxes, nested as in Agenda 2.0. `Agenda.TUI.FileProperties`.
+  - **File Properties** `:file_props` (File ▸ Properties): Insert new
+    columns in (R55), and two "..." rows opening Agenda's boxes, nested as in
+    Agenda 2.0; drawn from a layout like Agenda's (screenshot 130).
+    `Agenda.TUI.FileProperties`.
     - **Global date settings** `:date_settings` (Global date settings): the
       week, quarter, year and times of day (R14e). `Agenda.TUI.FileProperties`.
       - **Display format** `:display_format` (Display format): how the file
@@ -267,7 +269,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:action_box`        | box           | `Agenda.TUI.ActionBox`                  | Also assign on a date/numeric category           | R15b          |
 | `:date_rule`         | box           | `Agenda.TUI.DateRuleBox`                | Advanced settings of a date category             | R6b           |
 | `:category_match`    | box           | `Agenda.TUI.CategoryMatchBox`           | Advanced settings of a standard category         | R16b          |
-| `:file_props`        | box           | `Agenda.TUI.FileProperties`             | File ▸ Properties                                | R41, R14e     |
+| `:file_props`        | box           | `Agenda.TUI.FileProperties`             | File ▸ Properties                                | R55, R14e     |
 | `:date_settings`     | box           | `Agenda.TUI.FileProperties`             | File Properties ▸ Global date settings           | R14e          |
 | `:display_format`    | box           | `Agenda.TUI.FileProperties`             | Global date settings ▸ Display format            | R41, R41a     |
 | `:input_format`      | box           | `Agenda.TUI.InputFormatBox`             | Global date settings or Customize ▸ Input format | R41b          |

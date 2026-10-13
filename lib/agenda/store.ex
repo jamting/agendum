@@ -26,14 +26,17 @@ defmodule Agenda.Store do
   hand in `Database.dates`; 19 adds `Database.match_settings` (R16a); 20 adds
   `Category.match_overrides` (R16b); 21 adds `View.Column.date` and the
   `DateFormat` fields `show`, `am_pm` and `time_separator` (R41a); 22 adds
-  `Database.calendars`, calendar subscriptions (R45).
+  `Database.calendars`, calendar subscriptions (R45); 23 adds
+  `View.datebook` (R47); 24 adds `Database.macros` and `macro_order` (R50);
+  25 moves a standard view's columns into its sections and adds
+  `View.Column.linked` (R55); 26 adds `Database.insert_columns` (R55).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 25
+  @format_version 26
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"

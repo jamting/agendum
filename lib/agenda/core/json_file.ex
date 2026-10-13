@@ -156,7 +156,8 @@ defmodule Agenda.Core.JSONFile do
           date_format: struct_obj(db.date_format),
           date_settings: struct_obj(db.date_settings),
           match_settings: struct_obj(db.match_settings),
-          confirm_assignments: Atom.to_string(db.confirm_assignments)
+          confirm_assignments: Atom.to_string(db.confirm_assignments),
+          insert_columns: Atom.to_string(db.insert_columns)
         ),
       categories: Enum.map(category_order(db), &category(db.categories[&1])),
       items: Enum.map(db.item_order, &item(db, rel, db.items[&1])),
@@ -465,6 +466,8 @@ defmodule Agenda.Core.JSONFile do
         read_struct(settings, "match_settings", TextMatch, "settings.match_settings"),
       confirm_assignments:
         opt(settings, "confirm_assignments", {:enum, @confirm}, :never, "settings"),
+      insert_columns:
+        opt(settings, "insert_columns", {:enum, [:all, :section]}, :all, "settings"),
       categories: Map.new(categories, &{&1.id, &1}),
       items: Map.new(items, fn {item, _} -> {item.id, item} end),
       item_order: Enum.map(items, fn {item, _} -> item.id end),

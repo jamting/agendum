@@ -4,8 +4,11 @@ defmodule Agenda.TUI.FileProperties do
   and the boxes it opens, nested as in Agenda 2.0, each row with "..."
   opening the next box:
 
-    * File Properties (`:file_props`): Global date settings ..., and
-      Auto-assign settings ... (`Agenda.TUI.AutoAssignBox`, R16a)
+    * File Properties (`:file_props`): Insert new columns in (R55), Global
+      date settings ..., and Auto-assign settings ...
+      (`Agenda.TUI.AutoAssignBox`, R16a). Drawn from `@layout`
+      (`Agenda.TUI.Template`), Agenda's box (screenshot 130) with only the
+      settings Agendum has
     * Global Date Settings (`:date_settings`, R14e): Display format ...,
       Input format ... (the person's own box, `Agenda.TUI.InputFormatBox`,
       R41b), then beginning and end of week, first quarter, beginning of
@@ -20,7 +23,17 @@ defmodule Agenda.TUI.FileProperties do
 
   alias Agenda.Core
   alias Agenda.Core.{DateFormat, DateSettings}
-  alias Agenda.TUI.{DateFormatRows, State}
+  alias Agenda.TUI.{DateFormatRows, State, Template}
+
+  # Agenda's File Properties (screenshot 130), its other settings left out
+  # until Agendum has them
+  @layout """
+   Insert new columns in:  [insert_columns ]
+
+   Global date settings:   [dates]   Auto-assign settings:  [auto ]
+
+   SPACE/→ next choice or open ... · ← previous · ESC closes
+  """
 
   @format_rows DateFormatRows.rows()
   @settings_rows [
@@ -34,7 +47,7 @@ defmodule Agenda.TUI.FileProperties do
     :evening
   ]
   @rows %{
-    file_props: [:date_settings, :auto_assign],
+    file_props: Template.fields(@layout),
     date_settings: [:display_format, :input_format | @settings_rows],
     display_format: @format_rows
   }
@@ -60,9 +73,16 @@ defmodule Agenda.TUI.FileProperties do
     end
   end
 
-  defp change(state, :date_settings, _step), do: open(state, :date_settings)
+  defp change(state, :dates, _step), do: open(state, :date_settings)
   defp change(state, :display_format, _step), do: open(state, :display_format)
-  defp change(state, :auto_assign, _step), do: Agenda.TUI.AutoAssignBox.open(state)
+  defp change(state, :auto, _step), do: Agenda.TUI.AutoAssignBox.open(state)
+
+  # two choices, so SPACE, → and ← all flip it
+  defp change(state, :insert_columns, _step) do
+    where = if state.db.insert_columns == :all, do: :section, else: :all
+    State.change_db(state, Core.set_insert_columns(state.db, where))
+  end
+
   defp change(state, :input_format, _step), do: Agenda.TUI.InputFormatBox.open(state)
 
   defp change(state, row, step) when row in @settings_rows do
@@ -75,11 +95,20 @@ defmodule Agenda.TUI.FileProperties do
     State.change_db(state, Core.set_date_format(state.db, format))
   end
 
-  @doc "`{label, value}` for each row of a box."
-  def lines(state, type \\ :file_props)
+  @doc "The File Properties box's lines, the highlighted setting selected."
+  def content(state, mode) do
+    values = %{
+      insert_columns:
+        if(state.db.insert_columns == :all, do: "All sections", else: "Current section"),
+      dates: "...",
+      auto: "..."
+    }
 
-  def lines(_state, :file_props),
-    do: [{"Global date settings", "..."}, {"Auto-assign settings", "..."}]
+    Template.render(@layout, values, selected: Enum.at(@rows.file_props, mode.cursor))
+  end
+
+  @doc "`{label, value}` for each row of the boxes inside File Properties."
+  def lines(state, type)
 
   def lines(state, :display_format), do: DateFormatRows.lines(state.db.date_format)
 

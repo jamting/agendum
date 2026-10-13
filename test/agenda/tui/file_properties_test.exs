@@ -1,5 +1,8 @@
 defmodule Agenda.TUI.FilePropertiesTest do
-  @moduledoc "File ▸ Properties: the date display format (R41) and date settings (R14e)."
+  @moduledoc """
+  File ▸ Properties: where new columns go (R55), the date display format
+  (R41) and date settings (R14e).
+  """
   use ExUnit.Case, async: true
 
   import Agenda.TUIHelpers
@@ -9,17 +12,18 @@ defmodule Agenda.TUI.FilePropertiesTest do
     %{state: start(Agenda.Sample.build(~D[2026-10-08]))}
   end
 
-  # File Properties ▸ Global date settings ▸ Display format, as in Agenda
-  @dates [{:f, 10}, "f", "p", " "]
+  # File Properties ▸ Global date settings (below Insert new columns in) ▸
+  # Display format, as in Agenda
+  @dates [{:f, 10}, "f", "p", :down, " "]
   @display @dates ++ [" "]
 
   test "File Properties opens Agenda's boxes, one inside the other", %{state: state} do
     state = press(state, [{:f, 10}, "f", "p"])
     assert %{type: :file_props} = State.mode(state)
-    assert screen(state) =~ ~r/Global date settings +: \.\.\./
-    assert screen(state) =~ ~r/Auto-assign settings +: \.\.\./
+    assert screen(state) =~ ~r/Global date settings: +\.\.\./
+    assert screen(state) =~ ~r/Auto-assign settings: +\.\.\./
 
-    state = press(state, " ")
+    state = press(state, [:down, " "])
     assert %{type: :date_settings} = State.mode(state)
     assert screen(state) =~ ~r/Display format +: \.\.\./
 
@@ -34,11 +38,58 @@ defmodule Agenda.TUI.FilePropertiesTest do
     state = %{state | height: 25, width: 80}
 
     # each box's last row, and the bottom of its frame below it
-    for {keys, last} <- [{[], "Auto-assign"}, {[" "], "Evening"}, {[" ", " "], "Sample"}] do
+    for {keys, last} <- [
+          {[], "Auto-assign"},
+          {[:down, " "], "Evening"},
+          {[:down, " ", " "], "Sample"}
+        ] do
       lines = state |> press([{:f, 10}, "f", "p"] ++ keys) |> screen() |> String.split("\n")
       row = Enum.find_index(lines, &String.contains?(&1, last))
       assert row, "#{last} is not on the screen"
       assert Enum.any?(Enum.drop(lines, row + 1), &String.contains?(&1, "└"))
+    end
+  end
+
+  describe "Insert new columns in (R55)" do
+    test "is the first row, All sections in a new file", %{state: state} do
+      state = press(state, [{:f, 10}, "f", "p"])
+      assert screen(state) =~ ~r/Insert new columns in: +All sections/
+    end
+
+    test "SPACE makes it Current section, as one undo step", %{state: state} do
+      state = press(state, [{:f, 10}, "f", "p", " "])
+      assert state.db.insert_columns == :section
+      assert screen(state) =~ ~r/Insert new columns in: +Current section/
+      assert History.undo(state).db.insert_columns == :all
+    end
+
+    test "then ALT-R adds a column to the current section only", %{state: state} do
+      {:ok, db, _} = Agenda.Core.add_category(state.db, state.db.main_id, "Ideas")
+      {:ok, db, _} = Agenda.Core.add_category(db, db.main_id, "Mood")
+      [view] = Agenda.Core.Database.views(db)
+      db = Agenda.Core.add_section(db, view.id, Agenda.Fixtures.cat(db, "Ideas"), 1)
+
+      state =
+        press(%{state | db: db}, [
+          {:f, 10},
+          "f",
+          "p",
+          " ",
+          :esc,
+          :down,
+          {:alt, "r"},
+          "Mood",
+          :enter
+        ])
+
+      heads = fn sidx ->
+        state.db.views[view.id]
+        |> Agenda.Core.View.columns(sidx)
+        |> Enum.map(&state.db.categories[&1.category_id].name)
+      end
+
+      assert "Mood" in heads.(0)
+      refute "Mood" in heads.(1)
     end
   end
 

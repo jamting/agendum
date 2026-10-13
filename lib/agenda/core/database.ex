@@ -39,7 +39,8 @@ defmodule Agenda.Core.Database do
           suggestions: %{optional(id) => [id]},
           calendars: %{optional(id) => Agenda.Core.Calendar.t()},
           macros: %{optional(id) => Agenda.Core.Macro.t()},
-          macro_order: [id]
+          macro_order: [id],
+          insert_columns: :all | :section
         }
 
   defstruct items: %{},
@@ -62,7 +63,9 @@ defmodule Agenda.Core.Database do
             suggestions: %{},
             calendars: %{},
             macros: %{},
-            macro_order: []
+            macro_order: [],
+            # File Properties ▸ Insert new columns in (R55)
+            insert_columns: :all
 
   @date_fields %{entry: :entry, when: :when, done: :done}
 

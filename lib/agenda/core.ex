@@ -186,7 +186,8 @@ defmodule Agenda.Core do
   defdelegate set_section_collapsed(db, view_id, index, collapsed), to: Views
   defdelegate set_all_sections_collapsed(db, view_id, collapsed), to: Views
   defdelegate toggle_section_collapsed(db, view_id, index), to: Views
-  defdelegate add_column(db, view_id, cat_id, at, width \\ 12, insert_in \\ :all), to: Views
+  defdelegate add_column(db, view_id, cat_id, at, width \\ nil, insert_in \\ nil), to: Views
+  defdelegate set_insert_columns(db, where), to: Views
   defdelegate remove_column(db, view_id, at, from \\ :all), to: Views
   defdelegate set_column_format(db, view_id, at, format), to: Views
   defdelegate set_column_date_format(db, view_id, at, format), to: Views

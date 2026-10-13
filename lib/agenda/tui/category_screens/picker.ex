@@ -89,14 +89,12 @@ defmodule Agenda.TUI.CategoryScreens.Picker do
     %{State.change_db(state, db) | cursor_key: {:section, sidx}}
   end
 
-  def pick(state, {:add_column, {_sidx, index} = at}, id) do
-    width = if Database.date_category?(state.db, id), do: 16, else: 12
-
-    %{
-      State.change_db(state, Core.add_column(state.db, state.view_id, id, at, width))
+  # the core decides its width and which sections get it (R55)
+  def pick(state, {:add_column, {_sidx, index} = at}, id),
+    do: %{
+      State.change_db(state, Core.add_column(state.db, state.view_id, id, at))
       | col: index + 1
     }
-  end
 
   def pick(state, {:filter, scope}, id) do
     if Agenda.Core.RangeFilter.range_category?(state.db, id) do

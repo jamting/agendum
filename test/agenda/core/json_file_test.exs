@@ -75,6 +75,9 @@ defmodule Agenda.Core.JSONFileTest do
     }
 
     db = Core.add_column(db, view, cost, {0, 1}, 9)
+    # a column in one section only, not linked; new ones go there too (R55)
+    db = Core.add_column(db, view, people, {0, 0}, 10, :section)
+    db = Core.set_insert_columns(db, :section)
 
     db =
       Core.set_column_format(db, view, {0, 1}, %NumberFormat{

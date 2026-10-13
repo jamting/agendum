@@ -16,10 +16,10 @@ defmodule Agenda.TUI.InputFormatBoxTest do
   end
 
   # File Properties ▸ Global date settings ▸ Input format
-  defp open_box(state), do: press(state, [{:f, 10}, "f", "p", " ", :down, " "])
+  defp open_box(state), do: press(state, [{:f, 10}, "f", "p", :down, " ", :down, " "])
 
   test "Global date settings has an Input format row that opens the box", %{state: state} do
-    assert screen(press(state, [{:f, 10}, "f", "p", " "])) =~
+    assert screen(press(state, [{:f, 10}, "f", "p", :down, " "])) =~
              ~r/Input format +: \.\.\. \(yours\)/
 
     state = open_box(state)

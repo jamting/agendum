@@ -472,8 +472,13 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     column every section has stays in the same place (screenshots 42, 60).
   - A datebook view's slots share one set of columns (R47).
   - Files from before this keep every column in every section, linked.
-  - Not done yet: File Properties ▸ Insert new columns in (All sections /
-    Current section) and the Column Add box's Insert in; Column Properties
+  - File Properties ▸ Insert new columns in (screenshots 130, 131): All
+    sections (the default) or Current section, for the file; it decides
+    where ALT-R and ALT-L put a new column.
+  - A new column is 16 wide for a date category (a date and a time), 12
+    for others.
+  - Not done yet: the Column Add box's Insert in, which overrides the
+    file's setting for one column (the core already takes it); Column Properties
     ▸ Link with other sections, which unlinks a column, or links it to
     the columns with the same head, type, format and width (joining
     linked columns of that head takes their settings); the item column's

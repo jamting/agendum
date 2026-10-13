@@ -89,6 +89,33 @@ defmodule Agenda.Core.SectionColumnsTest do
     end
   end
 
+  describe "the file's Insert new columns in (File Properties)" do
+    test "is All sections in a new file", %{db: db} do
+      assert db.insert_columns == :all
+    end
+
+    test "Current section: a new column goes into that section only", %{db: db, view_id: v} do
+      db = Core.set_insert_columns(db, :section)
+      db = Core.add_column(db, v, cat(db, "People"), {1, 0})
+      assert heads(db, v) == [["When"], ["People", "When"], ["When"]]
+    end
+
+    test "adding a column can say otherwise (the Column Add box's Insert in)",
+         %{db: db, view_id: v} do
+      db = Core.set_insert_columns(db, :section)
+      db = Core.add_column(db, v, cat(db, "People"), {1, 0}, nil, :all)
+      assert heads(db, v) == [["People", "When"], ["People", "When"], ["People", "When"]]
+    end
+  end
+
+  test "a new column is 16 wide for a date category, 12 for others", %{db: db, view_id: v} do
+    {:ok, db, due} = Core.add_category(db, db.main_id, "Due")
+    {:ok, db} = Core.make_date(db, due, today())
+    db = Core.add_column(db, v, cat(db, "People"), {0, 0})
+    db = Core.add_column(db, v, due, {0, 0})
+    assert Enum.map(View.columns(db.views[v], 0), & &1.width) == [16, 12, 16]
+  end
+
   describe "changing a linked column" do
     test "its width changes in every section", %{db: db, view_id: v} do
       db = Core.resize_column(db, v, {2, 0}, 2)

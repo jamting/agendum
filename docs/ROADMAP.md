@@ -39,7 +39,7 @@ Rule numbers refer to `SPEC.md`.
 - [x] Original keys in notes: ALT-D/ALT-T insert date/time, ALT-N/ALT-P next/previous note, ALT-S repeats a replacement (R39, R42)
 - [ ] Original keys that need new features: ALT-F9 copy item, ALT-Y yank back removed item, ALT-H hop to next occurrence, ALT-F7 make item from note text, ALT-F2 make category from note text (R42)
 - [x] Columns per section (User's Guide 3-16, 3-27, 5-22 to 5-25): a column belongs to one section or to all; linked columns change together; removing asks all sections or this one; each section's item text fills what its columns leave. Existing files load with every column in every section, linked (R55)
-- [ ] File ▸ Properties ▸ Insert new columns in (All sections / Current section), with the File Properties box drawn from a layout as in screenshot 130 (R55)
+- [x] File ▸ Properties ▸ Insert new columns in (All sections / Current section), with the File Properties box drawn from a layout as in screenshot 130 (R55)
 - [ ] Column Properties for standard columns, with Link with other sections (unlink, or link with the columns of the same head, type, format and width), drawn from a layout as in screenshot 127 (R55)
 - [ ] Smaller column leftovers (R55): the Column Add box with its own Insert in; moving a column within its section (ALT-F10 on a column head); the item column's own width per section
 - [ ] Note-line columns (Column Properties ▸ Format: Category note, Line number, Column title): a column showing line N of the note of the item's category in that family, as Agenda's Activities Planner shows Phone # and Company from a person's note

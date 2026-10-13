@@ -133,12 +133,27 @@ defmodule Agenda.Core.Facade.Views do
   Inserts a column headed by `cat_id` at `at` (`{section, column}`): in
   all sections, linked, or in that section only (`insert_in`, R55; see
   `Agenda.Core.ViewColumns.add/4` for where the other sections get it).
+  Without `insert_in` the file's Insert new columns in decides
+  (`set_insert_columns/2`); without `width` it is 16 for a date category,
+  room for a date and a time, and 12 for others.
   """
-  @spec add_column(db, id, id, View.at(), pos_integer, :all | :section) :: db
-  def add_column(db, view_id, cat_id, at, width \\ 12, insert_in \\ :all) do
+  @spec add_column(db, id, id, View.at(), pos_integer | nil, :all | :section | nil) :: db
+  def add_column(db, view_id, cat_id, at, width \\ nil, insert_in \\ nil) do
+    # `||` gives its right side when the left is nil (or false)
+    width = width || if(Database.date_category?(db, cat_id), do: 16, else: 12)
     column = %Column{category_id: cat_id, width: width}
+    insert_in = insert_in || db.insert_columns
     Database.update_view(db, view_id, &ViewColumns.add(&1, at, column, insert_in))
   end
+
+  @doc """
+  File Properties ▸ Insert new columns in (R55): whether a column added
+  without saying where goes into all sections (`:all`, Agenda's default)
+  or only the one it is added in (`:section`).
+  """
+  @spec set_insert_columns(db, :all | :section) :: db
+  def set_insert_columns(db, where) when where in [:all, :section],
+    do: %{db | insert_columns: where}
 
   @doc """
   Removes the column at `at` from all sections, with the columns linked to

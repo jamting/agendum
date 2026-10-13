@@ -65,6 +65,7 @@ and `json_round_trip_test.exs` check that a round trip changes nothing.
 | `date_format`         | How dates display (R41, R41a): `order` (`"yyyymmdd"`, `"mmddyy"`, … `"week"`, `"relative"`), `separator`, `clock` (12 or 24), `day_of_week`, `show` (`"date_time"`, `"date"`, `"time_date"`, `"time"`), `am_pm`, `time_separator` (`":"` or `"hm"`). |
 | `date_settings`       | How dates are read (R14e): `week_start`, `week_end` (1 = Monday … 7), `quarter_start`, `year_start` (1–12), `month_alone` (`"first"`, `"last"` or a day), `morning`, `afternoon`, `evening` (times).                                                 |
 | `match_settings`      | Text matching (R16a): `enabled`, `match_on` (`"item"`, `"note"`, `"both"`), `strength` (`"exact"`, `"partial"`, `"minimal"`), `enclosed_by` (`"quotes"`, `"brackets"`, …), `ignore_suffixes`, `ignore_accents`.                                      |
+| `insert_columns`      | Where a new column goes: `"all"` sections (the default) or the current `"section"` (R55).                                                                                                                                                             |
 | `confirm_assignments` | `"never"`, `"always"` or `"sometimes"` (R16).                                                                                                                                                                                                        |
 
 ## Categories
