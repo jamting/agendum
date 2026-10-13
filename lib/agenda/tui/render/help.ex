@@ -101,6 +101,9 @@ defmodule Agenda.TUI.Render.Help do
                    (after a single replacement: replace it)
      ALT-D / ALT-T Insert today's date / the time   ESC d / ESC t
      ALT-N / ALT-P Save; next / previous item's note
+     ALT-F7        Make the word / line / all text an
+                   item (MAKEITM; it leaves the note)   ESC &
+     ALT-F2        Make the word a category (MAKECAT)   ESC @
      ESC / F5      Save the note and return
 
    While typing

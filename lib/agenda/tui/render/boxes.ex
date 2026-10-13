@@ -112,6 +112,7 @@ defmodule Agenda.TUI.Render.Boxes do
     do: "Moving #{state.db.categories[id].name} creates a conflict"
 
   defp box_title(_state, %{type: :choice, kind: :view_type, name: name}), do: "New view: #{name}"
+  defp box_title(_state, %{type: :choice, kind: :make_item}), do: "Make item (ALT-F7)"
 
   defp box_title(state, %{type: :choice, kind: :remove_column, at: {sidx, index}}) do
     column = state |> State.view() |> Agenda.Core.View.columns(sidx) |> Enum.at(index)
@@ -150,6 +151,7 @@ defmodule Agenda.TUI.Render.Boxes do
     do: "Change section head"
 
   defp picker_title(_state, {:column_head, _}), do: "Column Head: select a category"
+  defp picker_title(_state, {:make_category, name}), do: "Parent of the new category #{name}"
   defp picker_title(_state, :column_add), do: "Column Head: select a category"
 
   defp picker_title(_state, {:add_column, _}),

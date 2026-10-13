@@ -38,6 +38,7 @@ settings, as described in the second half of this guide.
 | In a note: search / replace; find the next occurrence (after a single replacement: replace it)  | ALT-F6; ALT-S                 | ESC then `^`; ESC then `s`                                            |
 | In a note: insert today's date / the time                                                       | ALT-D / ALT-T                 | ESC then `d` / `t`                                                    |
 | In a note: the next / previous item's (or category's) note                                      | ALT-N / ALT-P                 | ESC then `n` / `p`                                                    |
+| In a note: make the word, line or all text into a new item (it leaves the note; MAKEITM) / the word into a new category under a parent you pick (MAKECAT) | ALT-F7 / ALT-F2 | ESC then `&` / `@` |
 | Back to the previous view (LAST VW)                                                             | ALT-F8                        | ESC then `*`, or menu View ▸ Last                                     |
 | Set or cancel an alarm (Item Alarm)                                                             | ALT-A                         | ESC then `a`, or menu Item ▸ Alarm                                    |
 | Macros: the macro manager; in Learn mode, stop recording / run the last macro again             | ALT-F3 / ALT-Z                | ESC then `#` / ESC then `z`                                           |

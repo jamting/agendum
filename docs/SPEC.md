@@ -967,6 +967,15 @@ sibling, CTRL-HOME/END = first/last.
   (the view manager's order, round to the first; the control panel names
   the view; ALT-F8 goes back); "No other occurrence" when it shows only
   once. Items in collapsed sections are not found.
+  In a note (User's Guide 12-8 to 12-9): ALT-F7 MAKEITM asks Word, Line
+  or All text and makes that text a new item in the section the
+  highlight is in, below the note's item, taking it out of the note
+  (line breaks become spaces; past 350 characters the rest is the new
+  item's note); the shorter note and the item are one change. Only in a
+  note opened from a view. ALT-F2 MAKECAT makes the word at the cursor
+  (its punctuation off) a new category under a parent picked from the
+  hierarchy; the note keeps it (past 69 characters the rest is the
+  category's note). Not done: marked text (F7 MARK in notes) for both.
   Later, with their features:
   ALT-B browse, ALT-C calendar, ALT-O dependency, ALT-E / ALT-X execute
   conditions and actions, ALT-Z run macro, ALT-S sort now.

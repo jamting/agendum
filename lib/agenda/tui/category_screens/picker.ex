@@ -70,6 +70,10 @@ defmodule Agenda.TUI.CategoryScreens.Picker do
 
   def pick(state, {:schedule_filter, _}, id), do: Agenda.TUI.ScheduleBox.cycle_filter(state, id)
 
+  # ALT-F2 MAKECAT in a note: back in the note, the category made
+  def pick(state, {:make_category, name}, id),
+    do: Agenda.TUI.Update.Notes.add_category(state, name, id)
+
   def pick(state, {:datebook, view_id, row}, id),
     do: Agenda.TUI.DatebookBox.set_category(state, view_id, row, id)
 

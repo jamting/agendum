@@ -282,7 +282,9 @@ defmodule Agenda.TUI.Render.KeyBar do
       {"ESC", "Return", "Save and return"},
       {"F5", "Return", "Save and return"},
       {"ALT-F6", "Search", "Search and replace"},
-      {"ALT-S", "Next", "Next occurrence"}
+      {"ALT-S", "Next", "Next occurrence"},
+      {"ALT-F7", "MakeItm", "Make text into an item"},
+      {"ALT-F2", "MakeCat", "Make the word a category"}
     ]
 
   defp mode_keys(%{type: :questions}),

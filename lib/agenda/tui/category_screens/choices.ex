@@ -88,6 +88,13 @@ defmodule Agenda.TUI.CategoryScreens.Choices do
        :section}
     ]
 
+  def choice_options(%{kind: :make_item}),
+    do: [
+      {"Word", "The word at the cursor", :word},
+      {"Line", "The line the cursor is on", :line},
+      {"All text", "Everything in the note", :all}
+    ]
+
   def choice_options(%{kind: :view_type}),
     do: [
       {"Standard", "Sections headed by categories you choose", :standard},
@@ -99,6 +106,9 @@ defmodule Agenda.TUI.CategoryScreens.Choices do
 
   def choice_lines(%{kind: :remove_column}),
     do: ["The column is in more than one section.", "Remove it from:"]
+
+  def choice_lines(%{kind: :make_item}),
+    do: ["The text leaves the note and becomes a new item.", "Make into an item:"]
 
   def choice_lines(%{kind: :view_type}),
     do: ["Sections by category, or by date like an appointment book.", "Type of view:"]
@@ -205,6 +215,9 @@ defmodule Agenda.TUI.CategoryScreens.Choices do
 
   defp resolve_choice(state, %{kind: :remove_column, at: at}, from),
     do: Agenda.TUI.Update.Actions.remove_column(state, at, from)
+
+  defp resolve_choice(state, %{kind: :make_item}, what),
+    do: Agenda.TUI.Update.Notes.make_item(state, what)
 
   defp resolve_choice(state, %{kind: :view_type, name: name}, :standard),
     do: CategoryScreens.open_picker(state, {:new_view, name}, nil)

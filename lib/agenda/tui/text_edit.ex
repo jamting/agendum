@@ -90,6 +90,86 @@ defmodule Agenda.TUI.TextEdit do
     end
   end
 
+  @doc """
+  The word at the cursor (letters and anything but spaces), or the one
+  just before it; nil on a blank line or between words' spaces.
+  """
+  @spec word(t) :: String.t() | nil
+  def word(e) do
+    case word_span(e) do
+      {from, to} -> e |> current() |> String.slice(from, to - from)
+      nil -> nil
+    end
+  end
+
+  # the columns the word at the cursor runs from and to (exclusive)
+  defp word_span(e) do
+    line = current(e)
+    graphemes = String.graphemes(line)
+    word_char? = fn i -> i >= 0 and i < length(graphemes) and Enum.at(graphemes, i) != " " end
+    # on a word, or just after one
+    at = if word_char?.(e.col), do: e.col, else: e.col - 1
+
+    if word_char?.(at) do
+      from = Enum.find(at..0//-1, &(not word_char?.(&1 - 1)))
+      to = Enum.find(at..length(graphemes), &(not word_char?.(&1)))
+      {from, to}
+    end
+  end
+
+  @doc """
+  Takes the word at the cursor (with a space beside it), its line, or all
+  the text out of the buffer (ALT-F7 MAKEITM): `{text, buffer}`, or nil
+  when there is nothing to take.
+  """
+  @spec take(t, :word | :line | :all) :: {String.t(), t} | nil
+  def take(e, :all) do
+    case text(e) do
+      "" -> nil
+      text -> {text, new("")}
+    end
+  end
+
+  def take(e, :line) do
+    case String.trim(current(e)) do
+      "" ->
+        nil
+
+      text when length(e.lines) == 1 ->
+        {text, new("")}
+
+      text ->
+        {text,
+         clamp(%{
+           e
+           | lines: List.delete_at(e.lines, e.row),
+             row: min(e.row, length(e.lines) - 2),
+             col: 0
+         })}
+    end
+  end
+
+  def take(e, :word) do
+    case word_span(e) do
+      nil ->
+        nil
+
+      {from, to} ->
+        line = current(e)
+        {before, rest} = String.split_at(line, to)
+        before = String.slice(before, 0, from)
+        # one space goes with it: the one after, or else the one before
+        {before, rest} =
+          case rest do
+            " " <> rest -> {before, rest}
+            _ -> {String.trim_trailing(before, " "), rest}
+          end
+
+        word = String.slice(line, from, to - from)
+        {word, %{put(e, before <> rest) | col: String.length(before)}}
+    end
+  end
+
   defp current(e), do: Enum.at(e.lines, e.row)
   defp put(e, line), do: %{e | lines: List.replace_at(e.lines, e.row, line)}
 
