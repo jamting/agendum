@@ -443,7 +443,10 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   head shows `*` when the item is a member. A date column shows the date.
   When a column is too narrow for a category's full name, the category's
   short name is shown instead, for column entries and column heads alike
-  (User's Guide 19-2).
+  (User's Guide 19-2). Not done: columns per section. In Agenda a column
+  belongs to one section or to all (File Properties ▸ Insert new columns
+  in; linked columns, User's Guide 5-22 to 5-25); here every column is in
+  every section of the view.
 - **R22a ✅ Fit column to contents** (ours; Agenda only had View ▸ Column
   ▸ Width). View ▸ Column ▸ Fit sets the highlighted column's width to the
   widest of its head and the entries of the items the view shows at that

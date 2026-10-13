@@ -38,6 +38,10 @@ Rule numbers refer to `SPEC.md`.
 - [x] Original keys in the category manager: ALT-R child, ALT-L uncle, ALT-D/ALT-U/ALT-I sibling below/above (R42)
 - [x] Original keys in notes: ALT-D/ALT-T insert date/time, ALT-N/ALT-P next/previous note, ALT-S repeats a replacement (R39, R42)
 - [ ] Original keys that need new features: ALT-F9 copy item, ALT-Y yank back removed item, ALT-H hop to next occurrence, ALT-F7 make item from note text, ALT-F2 make category from note text (R42)
+- [ ] Columns per section (User's Guide 3-16, 3-27, 5-22 to 5-25): a column belongs to one section or to all; File ▸ Properties ▸ Insert new columns in (All sections / Current section), overridden when adding; linked columns (Column Properties ▸ Link with other sections) change together; removing asks all sections or this one. Existing files load with every column in every section, linked
+- [ ] Note-line columns (Column Properties ▸ Format: Category note, Line number, Column title): a column showing line N of the note of the item's category in that family, as Agenda's Activities Planner shows Phone # and Company from a person's note
+- [ ] Hide column heads (View Properties): a view without its column heads, as Agenda's datebooks are
+- [ ] Section separators (View Properties): a line between sections, the section head on it
 
 ## Look and feel — after screenshots of Agenda 2.0 (ADR 0018)
 
@@ -106,7 +110,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] ALT-F3 macro manager: name a macro, F7 learns (LEARN), ALT-F3 stops; ENTER runs, ALT-Z runs the last; a run plays the keys through the shell one by one (effects in between) and is one undo step; runaway guard (call depth); replace or append when learning again (R50)
   - [x] F2 edits the macro's text (note editor), F6 Properties (attach to key, run from views / notes / category manager / everywhere else), attached keys and their key-bar names, {CALL Name}, DEL, ALT-F5 sort, ALT-↑↓ move
   - Not planned now: the macro command language (chapters 2–3), external `.MAC` files, protection
-- [ ] A starter file like Agenda's Activities Planner: categories and views, no items (Starter Applications)
+- [ ] A starter file like Agenda's Activities Planner: categories and views, no items (Starter Applications), bundled as a file the user copies (`starters/planner.agendum`, built from code); needs columns per section, note-line columns, hide column heads and section separators (Milestone 2)
 - [x] Preferences file and File ▸ Customize (Utilities Customize): theme, date languages, input format (R40, R14c, R41b)
 - [x] More preferences (R54): key map on/off, kept (ALT-K); confirm mode; auto-save interval; decimal and thousands separators (Setting Up Agenda 1-25 to 1-31). Custom colours are not planned: we keep to themes (ADR 0022)
 - [x] Select File box (R51): pick a file from a list instead of typing its name, for File ▸ Retrieve (ALT-G, CTRL-O) and Write, and Transfer ▸ Import/Export: the folders and files of the current folder, ENTER opens a folder or chooses a file, `..` goes up, typing narrows the list; F7 shows dates, as Agenda's Select File box did (User's Guide 22-4 to 22-5)
