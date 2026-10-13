@@ -88,7 +88,9 @@ defmodule Agenda.TUI.ColumnAddTest do
   end
 
   test "ENTER without a head opens the picker; ESC adds nothing", %{state: state, view_id: v} do
-    assert %{type: :picker} = State.mode(press(state, :enter))
+    picking = press(state, :enter)
+    assert %{type: :picker} = State.mode(picking)
+    assert screen(picking) =~ "Column Head: select a category"
     state = press(state, :esc)
     assert State.mode(state) == nil
     assert heads(state, v, 0) == ["People", "When"]

@@ -139,6 +139,7 @@ defmodule Agenda.TUI.Render.Boxes do
     do: "Change section head"
 
   defp picker_title(_state, {:column_head, _}), do: "Column Head: select a category"
+  defp picker_title(_state, :column_add), do: "Column Head: select a category"
 
   defp picker_title(_state, {:add_column, _}),
     do: "Column head"
