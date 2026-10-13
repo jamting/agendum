@@ -11,7 +11,7 @@ defmodule Agenda.Core.ItemColumnTest do
   import Agenda.Fixtures
 
   alias Agenda.Core
-  alias Agenda.Core.{Database, ViewModel}
+  alias Agenda.Core.{Database, ViewColumns, ViewModel}
   alias Agenda.Core.View.ItemColumn
 
   # Calls, Follow up and Ideas
@@ -89,6 +89,60 @@ defmodule Agenda.Core.ItemColumnTest do
     assert Core.item_column_fit(db, v, 1, ~D[2026-10-13], 100) == 9
     # at most what the section's columns leave: 40 - 3 - 17 for When
     assert Core.item_column_fit(db, v, 0, ~D[2026-10-13], 40) == 20
+  end
+
+  describe "the item column's place among the columns (User's Guide 5-20)" do
+    defp slots(db, v, sidx), do: ViewColumns.slots(db.views[v], sidx)
+
+    defp heads(db, v, sidx),
+      do: db.views[v] |> Core.View.columns(sidx) |> Enum.map(&db.categories[&1.category_id].name)
+
+    test "first by default; moving it moves it in its section only", %{db: db, view_id: v} do
+      assert slots(db, v, 0) == [:items, 0]
+      db = Core.move_column(db, v, 0, 0, 1)
+      assert {slots(db, v, 0), slots(db, v, 1)} == {[0, :items], [:items, 0]}
+      assert Enum.at(items(db, v), 0).position == 1
+    end
+
+    test "a column added left or right of it, or of a column, lands there",
+         %{db: db, view_id: v} do
+      db = Core.move_column(db, v, 0, 0, 1)
+      people = cat(db, "Follow up")
+      # When, then the item column: right of When is left of the items
+      db1 = Core.add_column(db, v, people, {0, {:right_of, 0}}, 12, :section)
+      assert {heads(db1, v, 0), slots(db1, v, 0)} == {["When", "Follow up"], [0, 1, :items]}
+      db2 = Core.add_column(db, v, people, {0, {:right_of, :items}}, 12, :section)
+      assert {heads(db2, v, 0), slots(db2, v, 0)} == {["When", "Follow up"], [0, :items, 1]}
+      db3 = Core.add_column(db, v, people, {0, {:left_of, :items}}, 12, :section)
+      assert slots(db3, v, 0) == [0, 1, :items]
+      db4 = Core.add_column(db, v, people, {0, {:left_of, 0}}, 12, :section)
+      assert {heads(db4, v, 0), slots(db4, v, 0)} == {["Follow up", "When"], [0, 1, :items]}
+    end
+
+    test "removing a column left of it keeps it where it is", %{db: db, view_id: v} do
+      db = Core.move_column(db, v, 0, 0, 1)
+      db = Core.remove_column(db, v, {0, 0}, :section)
+      assert {slots(db, v, 0), Enum.at(items(db, v), 0).position} == {[:items], 0}
+    end
+
+    test "a column added to all sections goes beside the same column in each",
+         %{db: db, view_id: v} do
+      # Follow up shows When, then its items
+      db = Core.move_column(db, v, 1, 0, 1)
+      db = Core.add_column(db, v, cat(db, "Ideas"), {0, {:left_of, 0}}, 12, :all)
+      assert slots(db, v, 0) == [:items, 0, 1]
+      assert slots(db, v, 1) == [0, 1, :items]
+    end
+
+    test "linking again keeps its own place; a new section takes it from where it is added",
+         %{db: db, view_id: v} do
+      db = Core.move_column(db, v, 1, 0, 1)
+      db = Core.set_item_column_linked(db, v, 1, false)
+      db = Core.set_item_column_linked(db, v, 1, true)
+      assert slots(db, v, 1) == [0, :items]
+      db = Core.add_section(db, v, cat(db, "Ideas"), 2, 1)
+      assert slots(db, v, 2) == [0, :items]
+    end
   end
 
   test "the item column's text width: by hand, or what the columns leave" do

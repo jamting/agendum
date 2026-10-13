@@ -86,6 +86,31 @@ defmodule Agenda.TUI.Layout do
   def text_width(%State{width: w}, row),
     do: ItemColumn.text_width(row.item_column, row.columns, w)
 
+  @doc """
+  The row's columns in the order they are shown, as `state.col` counts
+  them (0 the item text, `i` the `i`th column): the item column is after
+  as many columns as its `position` says (R55).
+  """
+  @spec shown_cols(row) :: [non_neg_integer]
+  def shown_cols(row) do
+    n = length(row.columns)
+    List.insert_at(Enum.to_list(1..n//1), items_at(row), 0)
+  end
+
+  @doc "How many of the row's columns are shown left of its item text."
+  @spec items_at(row) :: non_neg_integer
+  def items_at(row), do: min(row.item_column.position, length(row.columns))
+
+  @doc "The highlight `n` columns right (or left) as they are shown, within the row."
+  @spec step_col(State.t(), row | nil, integer) :: State.t()
+  def step_col(state, nil, _n), do: state
+
+  def step_col(state, row, n) do
+    cols = shown_cols(row)
+    at = Enum.find_index(cols, &(&1 == state.col)) || 0
+    %{state | col: Enum.at(cols, (at + n) |> max(0) |> min(length(cols) - 1))}
+  end
+
   @doc "How many screen lines each row takes (in order)."
   @spec heights([row], State.t()) :: [pos_integer]
   def heights(rows, %State{} = state) do

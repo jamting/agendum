@@ -217,7 +217,8 @@ defmodule Agenda.Core.SectionColumnsTest do
   describe "moving a column (User's Guide 5-20)" do
     test "moves it in its section only, even when it is linked", %{db: db, view_id: v} do
       db = Core.add_column(db, v, cat(db, "People"), {0, 1}, 12, :all)
-      db = Core.move_column(db, v, {1, 1}, 0)
+      # places on screen: the item column, When, People
+      db = Core.move_column(db, v, 1, 2, 1)
       assert heads(db, v) == [["When", "People"], ["People", "When"], ["When", "People"]]
       # still one column: a change to it is made everywhere
       db = Core.set_column_width(db, v, {1, 0}, 20)
@@ -226,7 +227,7 @@ defmodule Agenda.Core.SectionColumnsTest do
 
     test "a place past the end is the end", %{db: db, view_id: v} do
       db = Core.add_column(db, v, cat(db, "People"), {0, 0}, 12, :section)
-      assert heads(Core.move_column(db, v, {0, 0}, 9), v) |> hd() == ["When", "People"]
+      assert heads(Core.move_column(db, v, 0, 1, 9), v) |> hd() == ["When", "People"]
     end
   end
 

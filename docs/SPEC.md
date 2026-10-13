@@ -464,7 +464,12 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     ← → (or < >) move the highlighted column in its section, shown at
     once; ENTER keeps the place (one undo step), ESC puts it back. Only
     the current section changes, even for a linked column, which stays
-    linked. Moving the item column (Agenda could) is not done yet.
+    linked. On the item text it moves the item column among the columns
+    (not in a datebook view, whose item text stays first): the columns
+    left of it are drawn before the bullet, and → ← go through the columns
+    as they are shown. A column added right or left of the item text or
+    of a column (ALT-R, ALT-L, the Column Add box) lands there, and the
+    item column keeps its place when columns are added or removed.
   - Where the other sections get it (ours; Agenda does not say): beside
     the same column as where it was added (after the column on its left,
     or else before the one on its right), at the end when the section has
@@ -540,8 +545,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   - Not done yet: the Column Add box's Category type for a new category
     (it is changed in Category Properties); Display %
     of total (a numeric column's "% tot" column); typing a new name for
-    the column head in the box (the picker takes one); View ▸ Column ▸
-    Move on the item column.
+    the column head in the box (the picker takes one).
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

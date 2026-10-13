@@ -134,14 +134,23 @@ defmodule Agenda.Core.Facade.Views do
   end
 
   @doc """
-  Inserts a column headed by `cat_id` at `at` (`{section, column}`): in
+  Inserts a column headed by `cat_id` at `at` (`{section, place}`: a
+  column index, or right or left of the item column or a column,
+  `Agenda.Core.ViewColumns.place/0`): in
   all sections, linked, or in that section only (`insert_in`, R55; see
   `Agenda.Core.ViewColumns.add/4` for where the other sections get it).
   Without `insert_in` the file's Insert new columns in decides
   (`set_insert_columns/2`); without `width` it is 16 for a date category,
   room for a date and a time, and 12 for others.
   """
-  @spec add_column(db, id, id, View.at(), pos_integer | nil, :all | :section | nil) :: db
+  @spec add_column(
+          db,
+          id,
+          id,
+          {non_neg_integer, ViewColumns.place()},
+          pos_integer | nil,
+          :all | :section | nil
+        ) :: db
   def add_column(db, view_id, cat_id, at, width \\ nil, insert_in \\ nil) do
     # `||` gives its right side when the left is nil (or false)
     width = width || default_column_width(db, cat_id)
@@ -263,12 +272,13 @@ defmodule Agenda.Core.Facade.Views do
     do: Database.update_view(db, view_id, &ViewColumns.set_items_linked(&1, sidx, linked))
 
   @doc """
-  View ▸ Column ▸ Move: the column at `at` goes to place `to` in its
-  section only (`Agenda.Core.ViewColumns.move/3`).
+  View ▸ Column ▸ Move: what is at slot `from` of section `sidx` (a column
+  or the item column, `Agenda.Core.ViewColumns.slots/2`) goes to slot `to`,
+  in that section only (`Agenda.Core.ViewColumns.move/4`).
   """
-  @spec move_column(db, id, View.at(), non_neg_integer) :: db
-  def move_column(db, view_id, at, to),
-    do: Database.update_view(db, view_id, &ViewColumns.move(&1, at, to))
+  @spec move_column(db, id, non_neg_integer, non_neg_integer, non_neg_integer) :: db
+  def move_column(db, view_id, sidx, from, to),
+    do: Database.update_view(db, view_id, &ViewColumns.move(&1, sidx, from, to))
 
   @doc "Sets how a numeric column shows its numbers and calculations (R29)."
   @spec set_column_format(db, id, View.at(), NumberFormat.t()) :: db

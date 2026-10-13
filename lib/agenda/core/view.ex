@@ -54,15 +54,18 @@ defmodule Agenda.Core.View do
     found: `:auto`, as wide as the section's columns leave but at least
     `minimum`, or `:manual`, `width` wide whatever the columns. `linked`
     item columns are one: a change to one is made to all the linked ones
-    of the view (`Agenda.Core.ViewColumns.update_items/3`).
+    of the view (`Agenda.Core.ViewColumns.update_items/3`). `position` is
+    its place among the section's columns: how many are left of it
+    (User's Guide 5-20); it is the section's own, linked or not.
     """
     @type t :: %__MODULE__{
             set: :auto | :manual,
             width: pos_integer,
             minimum: pos_integer,
-            linked: boolean
+            linked: boolean,
+            position: non_neg_integer
           }
-    defstruct set: :auto, width: 40, minimum: 10, linked: true
+    defstruct set: :auto, width: 40, minimum: 10, linked: true, position: 0
 
     @doc """
     How wide the item text is in a screen `screen` wide, beside `columns`:

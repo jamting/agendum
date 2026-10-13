@@ -36,8 +36,6 @@ defmodule Agenda.TUI.Update.ViewKeys do
   def view_key(state, key) do
     row = Layout.current_row(state)
     rows = Layout.rows(state)
-    # the section's own columns (R55)
-    ncols = if row, do: length(row.columns), else: 0
 
     case key do
       :up ->
@@ -73,11 +71,13 @@ defmodule Agenda.TUI.Update.ViewKeys do
       :ctrl_pgdn ->
         Layout.move_to(state, section_head_index(rows, state.cursor, 1))
 
+      # the highlight goes left and right as the columns are shown: the
+      # item column may be among them (R55)
       k when k in [:right, :tab] ->
-        %{state | col: min(state.col + 1, ncols)}
+        Layout.step_col(state, row, 1)
 
       k when k in [:left, :shift_tab] ->
-        %{state | col: max(state.col - 1, 0)}
+        Layout.step_col(state, row, -1)
 
       {:char, "/"} ->
         Actions.perform(state, :menu)

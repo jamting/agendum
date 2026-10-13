@@ -59,8 +59,42 @@ defmodule Agenda.TUI.ColumnMoveTest do
     assert state.undo == []
   end
 
-  test "asks for a column first", %{state: state} do
-    state = press(state, [:down, {:f, 10}, "v", "c", "m"])
-    assert panel(state) =~ "Highlight a column"
+  describe "the item column (R55)" do
+    # the screen's lines with Calls' head and its first item
+    defp lines(state) do
+      state |> screen() |> String.split("\n") |> Enum.filter(&(&1 =~ ~r/Contact|Terracotta/))
+    end
+
+    defp position(state), do: hd(stored(state).sections).item_column.position
+
+    test "Move on the item text moves the item column among the columns", %{state: state} do
+      state = press(state, [:down, {:f, 10}, "v", "c", "m"])
+      assert panel(state) =~ "Moving the item column"
+      state = press(state, [:right, :right, :enter])
+      # When and Priority, then the item text, then Contact
+      assert [head, item | _] = lines(state)
+      assert head =~ ~r/^ When +Priority +Calls +Contact/
+      assert item =~ ~r/^ 2026-10-31 +Medium +• Set up meeting/
+      assert position(state) == 2
+      # the highlight stays on the item text
+      assert state.col == 0
+      assert state |> History.undo() |> position() == 0
+    end
+
+    test "→ and ← go through the columns as they are shown", %{state: state} do
+      state = press(state, [:down, {:f, 10}, "v", "c", "m", :right, :enter])
+      # When, the item text, Priority, Contact: from the item text → is Priority
+      assert state |> press(:right) |> Map.fetch!(:col) == 2
+      assert state |> press(:left) |> Map.fetch!(:col) == 1
+      assert state |> press([:left, :left, :left]) |> Map.fetch!(:col) == 1
+    end
+
+    test "ALT-R on the item text adds the column right of it", %{state: state} do
+      state = press(state, [:down, {:f, 10}, "v", "c", "m", :right, :enter])
+      state = press(state, [{:alt, "r"}, "p", "r", :enter])
+      assert heads(state) == ["When", "Priority", "Priority", "Contact"]
+      assert position(state) == 1
+      assert state.col == 2
+    end
   end
 end

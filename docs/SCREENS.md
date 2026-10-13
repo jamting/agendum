@@ -121,7 +121,8 @@ or handles it.
     `Agenda.TUI.ColumnWidth`.
   - **Moving a column** `:column_move` (View ▸ Column ▸ Move, ALT-F10 on a
     column head): ← → move it in its section, shown at once, until ENTER
-    keeps it or ESC puts it back (R55). `Agenda.TUI.ColumnMove`.
+    keeps it or ESC puts it back (R55); on the item text, the item column.
+    `Agenda.TUI.ColumnMove`.
   - **Calendar** `:calendar` (F3 in a date column; ALT-C anywhere in a
     view): the pop-up calendar, to pick a date (and time) for the entry or
     to look one up (R46). `Agenda.TUI.CalendarBox`.

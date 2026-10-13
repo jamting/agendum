@@ -90,11 +90,11 @@ defmodule Agenda.TUI.CategoryScreens.Picker do
   end
 
   # the core decides its width and which sections get it (R55)
-  def pick(state, {:add_column, {_sidx, index} = at}, id),
-    do: %{
-      State.change_db(state, Core.add_column(state.db, state.view_id, id, at))
-      | col: index + 1
-    }
+  # the highlight goes to the new column (`state.col` counts from 1)
+  def pick(state, {:add_column, {sidx, place} = at}, id) do
+    index = Agenda.Core.ViewColumns.insert_index(State.view(state), sidx, place)
+    %{State.change_db(state, Core.add_column(state.db, state.view_id, id, at)) | col: index + 1}
+  end
 
   # Column Add ▸ Column head: back in the box, which adds it on ENTER
   def pick(state, :column_add, id), do: Agenda.TUI.ColumnAddBox.set_head(state, id)

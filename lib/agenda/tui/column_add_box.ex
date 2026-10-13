@@ -100,16 +100,23 @@ defmodule Agenda.TUI.ColumnAddBox do
   defp flip(a, a, b), do: b
   defp flip(_value, a, _b), do: a
 
-  # The column goes right of the highlighted one or left of it; on the
-  # item text (col 0) both mean first. Columns are counted from 0, the
-  # cursor from 1 (0 is the item text), so right of cursor `col` is index
-  # `col`. The highlight ends on the new column.
+  # The column goes right or left of the highlighted column or of the item
+  # text (R55). The highlight ends on the new column: columns are counted
+  # from 0, the cursor from 1 (0 is the item text).
   defp add(state, mode) do
-    index = if mode.position == :right, do: mode.col, else: max(mode.col - 1, 0)
-    at = {mode.sidx, index}
+    side = if mode.position == :right, do: :right_of, else: :left_of
+    place = {side, if(mode.col == 0, do: :items, else: mode.col - 1)}
+    index = Agenda.Core.ViewColumns.insert_index(State.view(state), mode.sidx, place)
 
     db =
-      Core.add_column(state.db, state.view_id, mode.head, at, mode.width, mode.insert_in)
+      Core.add_column(
+        state.db,
+        state.view_id,
+        mode.head,
+        {mode.sidx, place},
+        mode.width,
+        mode.insert_in
+      )
 
     %{State.change_db(State.pop(state), db) | col: index + 1}
   end

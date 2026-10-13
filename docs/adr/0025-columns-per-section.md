@@ -61,7 +61,41 @@ How to store this needed a choice:
   (marked "ours" in R55): where the other sections place a column, and
   that a new section gets the linked columns of the section the cursor
   was in.
-- Moving a column is not done yet. With columns per section, it moves in
-  the current section only, as in Agenda.
+- Moving a column (View ▸ Column ▸ Move) moves it in the current section
+  only, as in Agenda; a linked column stays linked.
 - The JSON format, `DATA_MODEL.md` and `DATA_ACCESS.md` describe the
   `link` field. A front end reads columns per section from the view model.
+
+## Addendum, 2026-10-13: the item column has a place among the columns
+
+Agenda lets the item column move among a section's columns (User's Guide
+5-20), and each section's item column has its own settings (Item Column
+Properties, User's Guide 3-18 to 3-19). We store them in
+`Section.item_column` (`View.ItemColumn`: how its width is set, and
+whether it is linked), with its place as `position`: how many of the
+section's columns are left of it (format 29).
+
+The first idea was to keep that number right in every function that adds,
+removes or moves a column by its index. Only one place shows the
+problem: a column added at the item column's index could be meant on
+either side of it ("right of the column left of the item text" or "right
+of the item text"). So:
+
+- A section has **slots**: its columns and its item column (`:items`) in
+  the order they are shown (`ViewColumns.slots/2`). Adding, removing and
+  moving all change the slots, and the columns and `position` are read
+  back from them (`put_slots`), so `position` cannot drift.
+- A new column can be placed as Agenda's Position says: right or left of
+  the item column or of a column (`{:right_of | :left_of, :items | index}`).
+  A plain column index still works, with the item column keeping the
+  columns left of it.
+- `Core.move_column/5` moves by slot, so one function moves a column or
+  the item column.
+- The item column's place belongs to its section, even when the item
+  column is linked: Agenda moves "in the current section only".
+- A datebook view's item column stays first; its slots share one set of
+  columns.
+
+The TUI's `state.col` still counts 0 for the item text and `i` for the
+`i`th column. ← → follow the slots (`Layout.shown_cols/1`), and the view
+draws the columns left of the item text before the bullet.

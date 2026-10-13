@@ -88,7 +88,7 @@ defmodule Agenda.Core.JSONFile do
   end
 
   defp spec(ItemColumn) do
-    [set: {:enum, [:auto, :manual]}, width: :int, minimum: :int, linked: :bool]
+    [set: {:enum, [:auto, :manual]}, width: :int, minimum: :int, linked: :bool, position: :int]
   end
 
   defp spec(NumberFormat) do

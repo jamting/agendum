@@ -89,6 +89,7 @@ defmodule Agenda.Core.JSONFileTest do
     db = Core.set_column_date_format(db, view, {0, 0}, %DateFormat{order: :relative, show: :date})
     db = Core.set_item_column(db, view, 0, set: :manual, width: 33, minimum: 7)
     db = Core.set_item_column_linked(db, view, 0, false)
+    db = Core.move_column(db, view, 0, 0, 1)
     {db, view2} = Core.add_view(db, "Found", [people, urgent])
 
     db =

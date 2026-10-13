@@ -13,7 +13,14 @@ defmodule Agenda.Core.ViewColumns do
 
   A column is addressed by `{section index, column index}` (`View.at/0`).
   A datebook view's slots share one set of columns (`view.columns`), so in
-  a datebook view the section index does not matter. Pure.
+  a datebook view the section index does not matter.
+
+  The item column has a place among a section's columns too
+  (`ItemColumn.position`, the number of columns left of it; User's Guide
+  5-20). A section's *slots* are its columns and its item column (`:items`)
+  in the order they are shown (`slots/2`); adding, removing and moving go
+  through them, so the item column keeps its place among the columns. A
+  datebook view's item column is always first. Pure.
   """
 
   alias Agenda.Core.View
@@ -52,40 +59,73 @@ defmodule Agenda.Core.ViewColumns do
     |> Enum.reduce(view, fn place, view -> update_one(view, place, fun) end)
   end
 
-  @doc """
-  Inserts `column` at `at`. With `:section` only that section gets it, not
-  linked. With `:all` every section does, linked under a new link: in
-  each other section beside the same column as where it was added (after
-  the column to its left, or else before the one to its right), at the
-  end when the section has neither.
+  @typedoc """
+  Where a new column goes in its section: a column index (it becomes that
+  column; the item column keeps the columns left of it), or right or left
+  of the item column (`:items`) or of the column with that index, as
+  Agenda's Position says.
   """
-  @spec add(View.t(), View.at(), Column.t(), :all | :section) :: View.t()
-  def add(%View{datebook: %{}} = view, {_sidx, index}, column, _insert_in),
-    do: %{view | columns: List.insert_at(view.columns, index, column)}
+  @type place :: non_neg_integer | {:right_of | :left_of, :items | non_neg_integer}
 
-  def add(%View{} = view, {sidx, index}, column, :section),
-    do: put_columns(view, sidx, &List.insert_at(&1, index, %{column | link: nil}))
+  @doc """
+  The section's slots, in the order they are shown: `:items` for the item
+  column, and the index of each column.
+  """
+  @spec slots(View.t(), non_neg_integer) :: [:items | non_neg_integer]
+  def slots(%View{} = view, sidx) do
+    n = length(View.columns(view, sidx))
+    List.insert_at(Enum.to_list(0..(n - 1)//1), items_at(view, sidx), :items)
+  end
 
-  def add(%View{} = view, {sidx, index}, column, :all) do
+  @doc "The index a column added at `place` in section `sidx` gets."
+  @spec insert_index(View.t(), non_neg_integer, place) :: non_neg_integer
+  def insert_index(%View{} = view, sidx, place) do
+    # the columns left of the slot it goes into
+    slot = slot_for(view, sidx, place)
+    view |> slots(sidx) |> Enum.take(slot) |> Enum.count(&(&1 != :items))
+  end
+
+  @doc """
+  Inserts `column` at `{sidx, place}`. With `:section` only that section
+  gets it, not linked. With `:all` every section does, linked under a new
+  link: in each other section beside the same column as where it was
+  added (after the nearest column to its left, or else before the nearest
+  one to its right), at the end when the section has neither.
+  """
+  @spec add(View.t(), {non_neg_integer, place}, Column.t(), :all | :section) :: View.t()
+  def add(%View{datebook: %{}} = view, {sidx, place}, column, _insert_in),
+    do: put_slots(view, sidx, &List.insert_at(&1, slot_for(view, sidx, place), column))
+
+  def add(%View{} = view, {sidx, place}, column, :section) do
+    slot = slot_for(view, sidx, place)
+    put_slots(view, sidx, &List.insert_at(&1, slot, %{column | link: nil}))
+  end
+
+  def add(%View{} = view, {sidx, place}, column, :all) do
     column = %{column | link: next_link(view)}
-    here = View.columns(view, sidx)
-    # the columns it goes between; `index - 1` is -1 at the start, and
-    # `Enum.at/2` would read -1 from the end, so that case is spelled out
-    left = if index > 0, do: Enum.at(here, index - 1)
-    right = Enum.at(here, index)
+    slot = slot_for(view, sidx, place)
+    here = section_slots(view, sidx)
+    # the nearest columns it goes between (the item column does not count)
+    left = here |> Enum.take(slot) |> Enum.reject(&(&1 == :items)) |> List.last()
+    right = here |> Enum.drop(slot) |> Enum.find(&(&1 != :items))
 
-    sections =
-      view.sections
-      |> Enum.with_index()
-      |> Enum.map(fn
-        {section, ^sidx} ->
-          %{section | columns: List.insert_at(section.columns, index, column)}
+    view.sections
+    |> Enum.with_index()
+    |> Enum.reduce(view, fn
+      {_section, ^sidx}, view -> put_slots(view, sidx, &List.insert_at(&1, slot, column))
+      {_section, s}, view -> put_slots(view, s, &beside(&1, column, left, right))
+    end)
+  end
 
-        {section, _} ->
-          %{section | columns: beside(section.columns, column, left, right)}
-      end)
+  # the slot a place means: a column index counts the columns, an anchor
+  # is right or left of the item column's or that column's slot
+  defp slot_for(view, sidx, index) when is_integer(index) do
+    if index < items_at(view, sidx), do: index, else: index + 1
+  end
 
-    %{view | sections: sections}
+  defp slot_for(view, sidx, {side, anchor}) do
+    at = Enum.find_index(slots(view, sidx), &(&1 == anchor)) || 0
+    if side == :right_of, do: at + 1, else: at
   end
 
   @doc """
@@ -158,16 +198,18 @@ defmodule Agenda.Core.ViewColumns do
     do: update(view, at, &%{&1 | category_id: cat_id})
 
   @doc """
-  View ▸ Column ▸ Move (User's Guide 5-20): the column at `at` goes to
-  place `to` in its section (the end, past the last). Only that section
-  changes, even for a linked column, as in Agenda; it stays linked.
+  View ▸ Column ▸ Move (User's Guide 5-20): what is at slot `from` of
+  section `sidx` (a column or the item column, `slots/2`) goes to slot
+  `to` (the end, past the last). Only that section changes, even for a
+  linked column, as in Agenda; it stays linked. In a datebook view the
+  item column stays first.
   """
-  @spec move(View.t(), View.at(), non_neg_integer) :: View.t()
-  def move(%View{} = view, {sidx, index}, to) do
-    put_columns(view, sidx, fn columns ->
+  @spec move(View.t(), non_neg_integer, non_neg_integer, non_neg_integer) :: View.t()
+  def move(%View{} = view, sidx, from, to) do
+    put_slots(view, sidx, fn slots ->
       # `List.pop_at/2` gives the element and the list without it
-      {column, rest} = List.pop_at(columns, index)
-      List.insert_at(rest, min(to, length(rest)), column)
+      {moved, rest} = List.pop_at(slots, from)
+      List.insert_at(rest, min(to, length(rest)), moved)
     end)
   end
 
@@ -201,16 +243,26 @@ defmodule Agenda.Core.ViewColumns do
   def set_items_linked(%View{} = view, sidx, false),
     do: put_items(view, sidx, &%{&1 | linked: false})
 
+  # (its place among its section's columns stays its own)
   def set_items_linked(%View{} = view, sidx, true),
-    do: put_items(view, sidx, fn _ -> linked_items(view, sidx) end)
+    do: put_items(view, sidx, &%{linked_items(view, sidx) | position: &1.position})
 
   @doc """
   The item column a section added next to the one at `sidx` starts with:
   the linked ones' settings (a new section is linked), or the defaults
-  when no section is linked.
+  when no section is linked; placed after as many of the new section's
+  columns (`for_new_section/2`) as are left of it in section `sidx`.
   """
   @spec items_for_new_section(View.t(), non_neg_integer) :: ItemColumn.t()
-  def items_for_new_section(%View{} = view, sidx), do: linked_items(view, sidx)
+  def items_for_new_section(%View{} = view, sidx) do
+    left =
+      view
+      |> View.columns(sidx)
+      |> Enum.take(items_at(view, sidx))
+      |> Enum.count(&(&1.link != nil))
+
+    %{linked_items(view, sidx) | position: left}
+  end
 
   # the settings of a linked item column, that of section `sidx` first
   defp linked_items(view, sidx) do
@@ -236,8 +288,44 @@ defmodule Agenda.Core.ViewColumns do
     places
     |> Enum.sort(:desc)
     |> Enum.reduce(view, fn {sidx, index}, view ->
-      put_columns(view, sidx, &List.delete_at(&1, index))
+      slot = slot_for(view, sidx, index)
+      put_slots(view, sidx, &List.delete_at(&1, slot))
     end)
+  end
+
+  # The item column's slot: after `position` columns (fewer when the
+  # section has fewer); first in a datebook view.
+  defp items_at(%View{datebook: %{}}, _sidx), do: 0
+
+  defp items_at(%View{} = view, sidx) do
+    case Enum.at(view.sections, sidx) do
+      nil -> 0
+      section -> min(section.item_column.position, length(section.columns))
+    end
+  end
+
+  # A section's columns with `:items` where the item column is shown.
+  defp section_slots(view, sidx),
+    do: List.insert_at(View.columns(view, sidx), items_at(view, sidx), :items)
+
+  # Changes a section's slots with `fun`: its columns are the slots left
+  # when `:items` is taken out, and the item column's place is where
+  # `:items` was. A datebook's shared columns keep their item column first.
+  defp put_slots(%View{datebook: %{}} = view, sidx, fun) do
+    columns = view |> section_slots(sidx) |> fun.() |> Enum.reject(&(&1 == :items))
+    %{view | columns: columns}
+  end
+
+  defp put_slots(%View{} = view, sidx, fun) do
+    slots = fun.(section_slots(view, sidx))
+    position = Enum.find_index(slots, &(&1 == :items))
+    columns = Enum.reject(slots, &(&1 == :items))
+
+    put_items(
+      %{view | sections: List.update_at(view.sections, sidx, &%{&1 | columns: columns})},
+      sidx,
+      &%{&1 | position: position}
+    )
   end
 
   defp update_one(view, {sidx, index}, fun),
@@ -258,29 +346,30 @@ defmodule Agenda.Core.ViewColumns do
   end
 
   # Where a column added beside `left` and `right` (the columns it went
-  # between where it was added) goes in another section: beside the same
-  # column there, that is the one linked to it, or else one of the same
-  # head (an unlinked one).
-  defp beside(columns, column, left, right) do
+  # between where it was added) goes in another section's slots: beside
+  # the same column there, that is the one linked to it, or else one of the
+  # same head (an unlinked one); at the end when there is neither.
+  defp beside(slots, column, left, right) do
     # `a && b` is nil when `a` is nil; only nil and false are falsy, so a
     # found index of 0 still counts below
-    after_left = left && same_index(columns, left)
-    before_right = right && same_index(columns, right)
+    after_left = left && same_index(slots, left)
+    before_right = right && same_index(slots, right)
 
     # `cond` takes the first branch whose condition is truthy
     cond do
-      after_left -> List.insert_at(columns, after_left + 1, column)
-      before_right -> List.insert_at(columns, before_right, column)
-      true -> columns ++ [column]
+      after_left -> List.insert_at(slots, after_left + 1, column)
+      before_right -> List.insert_at(slots, before_right, column)
+      true -> slots ++ [column]
     end
   end
 
-  defp same_index(columns, %Column{link: nil, category_id: head}),
-    do: Enum.find_index(columns, &(&1.category_id == head))
+  # (the slots' `:items` is no column, so `match?/2` keeps it out)
+  defp same_index(slots, %Column{link: nil, category_id: head}),
+    do: Enum.find_index(slots, &match?(%Column{category_id: ^head}, &1))
 
-  defp same_index(columns, %Column{link: link, category_id: head}) do
-    Enum.find_index(columns, &(&1.link == link)) ||
-      Enum.find_index(columns, &(&1.category_id == head))
+  defp same_index(slots, %Column{link: link, category_id: head}) do
+    Enum.find_index(slots, &match?(%Column{link: ^link}, &1)) ||
+      Enum.find_index(slots, &match?(%Column{category_id: ^head}, &1))
   end
 
   defp same_settings?(a, b),

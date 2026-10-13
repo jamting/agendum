@@ -26,14 +26,19 @@ defmodule Agenda.TUI.Render.View do
       lines =
         case editing do
           %{target: {:new_item, _, key}} when selected and key == row.key ->
+            {left, right} = Enum.split(columns, Layout.items_at(row))
+
             lines ++
-              [[{:symbol, " • "}] ++ Draw.input(editing.line, tw, :edit) ++ blank_cells(columns)]
+              [
+                blank_cells(left) ++
+                  [{:symbol, " • "}] ++ Draw.input(editing.line, tw, :edit) ++ blank_cells(right)
+              ]
 
           _ ->
             lines
         end
 
-      lines ++ calc_lines(Map.get(row, :calcs, []), tw, columns)
+      lines ++ calc_lines(Map.get(row, :calcs, []), tw, row)
     end)
     |> Enum.drop(state.scroll)
   end
@@ -99,15 +104,23 @@ defmodule Agenda.TUI.Render.View do
 
   # A section's calculations (R29): the label under the item text, each
   # result under its column.
-  defp calc_lines(calcs, tw, columns) do
+  defp calc_lines(calcs, tw, row) do
     Enum.map(calcs, fn {calc, cells} ->
       label = Agenda.Core.NumberFormat.label(calc)
 
-      [{:normal, "   "}, {:calc, String.pad_leading(label <> " ", tw)}] ++
-        Enum.flat_map(Enum.zip(columns, cells), fn {column, cell} ->
-          [{:normal, " "}, {:calc, right(cell, column.width)}]
-        end)
+      row.columns
+      |> Enum.zip(cells)
+      |> Enum.map(fn {column, cell} -> [{:normal, " "}, {:calc, right(cell, column.width)}] end)
+      |> around_items(row, [{:normal, "   "}, {:calc, String.pad_leading(label <> " ", tw)}])
     end)
+  end
+
+  # A line's column parts (one list of segments per column) with `middle`,
+  # the item text's part, among them where the item column is shown (R55):
+  # after the columns left of it.
+  defp around_items(per_column, row, middle) do
+    {left, right} = Enum.split(per_column, Layout.items_at(row))
+    Enum.concat(left) ++ middle ++ Enum.concat(right)
   end
 
   defp right(text, width), do: text |> String.pad_leading(width) |> Draw.pad(width)
@@ -140,7 +153,7 @@ defmodule Agenda.TUI.Render.View do
       columns
       # with_index(1): column i is highlighted when state.col == i (0 is the name)
       |> Enum.with_index(1)
-      |> Enum.flat_map(fn {c, i} ->
+      |> Enum.map(fn {c, i} ->
         head_style = if selected and state.col == i, do: :cursor_cell, else: :column_head
 
         [
@@ -150,7 +163,7 @@ defmodule Agenda.TUI.Render.View do
         ]
       end)
 
-    head = name_part ++ heads
+    head = around_items(heads, row, name_part)
     if index == 0 or row.slot, do: [head], else: [[], head]
   end
 
@@ -184,7 +197,7 @@ defmodule Agenda.TUI.Render.View do
       columns
       |> Enum.zip(row.cells)
       |> Enum.with_index(1)
-      |> Enum.flat_map(fn {{column, cell}, i} ->
+      |> Enum.map(fn {{column, cell}, i} ->
         cell_part =
           case editing do
             %{target: {:column_entry, id, head, _}}
@@ -204,8 +217,10 @@ defmodule Agenda.TUI.Render.View do
       end)
 
     [first | rest] = text_lines
-    first_line = [{:symbol, " " <> symbol}, {:symbol, note}] ++ first ++ cells
-    [first_line | Enum.map(rest, &([{:normal, "   "}] ++ &1))]
+    first_line = around_items(cells, row, [{:symbol, " " <> symbol}, {:symbol, note}] ++ first)
+    # a wrapped line keeps its text under the first, past the columns left of it
+    blank = columns |> Enum.take(Layout.items_at(row)) |> blank_cells()
+    [first_line | Enum.map(rest, &(blank ++ [{:normal, "   "}] ++ &1))]
   end
 
   defp blank_cells(columns),

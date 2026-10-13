@@ -325,10 +325,16 @@ defmodule Agenda.TUI.Update.Actions do
   # a new column goes into the section the cursor is in, and into the
   # others as File ▸ Properties says (R55; all sections for now)
   defp do_perform(state, :column_right, row),
-    do: CategoryScreens.open_picker(state, {:add_column, {sidx(row), state.col}}, nil)
+    do:
+      CategoryScreens.open_picker(
+        state,
+        {:add_column, {sidx(row), beside(state, :right_of)}},
+        nil
+      )
 
   defp do_perform(state, :column_left, row),
-    do: CategoryScreens.open_picker(state, {:add_column, {sidx(row), max(state.col - 1, 0)}}, nil)
+    do:
+      CategoryScreens.open_picker(state, {:add_column, {sidx(row), beside(state, :left_of)}}, nil)
 
   # the Column Add box: its own Position and Insert in (R55)
   defp do_perform(state, :column_add, row), do: ColumnAddBox.open(state, sidx(row), state.col)
@@ -352,8 +358,15 @@ defmodule Agenda.TUI.Update.Actions do
   defp do_perform(state, :column_width, _),
     do: with_column(state, &ColumnWidth.open(state, {:column, &1}))
 
+  # on the item text: the item column among the columns (R55)
+  defp do_perform(state, :column_move, row) when row != nil and state.col == 0 do
+    if State.view(state).datebook,
+      do: State.error(state, "A datebook view's item text stays first"),
+      else: Agenda.TUI.ColumnMove.open(state, row.sidx, :items)
+  end
+
   defp do_perform(state, :column_move, _),
-    do: with_column(state, &Agenda.TUI.ColumnMove.open(state, &1))
+    do: with_column(state, fn {sidx, index} -> Agenda.TUI.ColumnMove.open(state, sidx, index) end)
 
   defp do_perform(state, {:toggle_view, option}, _),
     do: State.change_db(state, Core.toggle_view_option(state.db, state.view_id, option))
@@ -365,6 +378,12 @@ defmodule Agenda.TUI.Update.Actions do
 
   defp sidx(nil), do: 0
   defp sidx(row), do: row.sidx
+
+  @doc """
+  Where a column added right or left of the highlight goes: beside the
+  item column or the highlighted column, as Agenda's Position says (R55).
+  """
+  def beside(state, side), do: {side, if(state.col == 0, do: :items, else: state.col - 1)}
 
   @doc """
   Removes the column at `at` from its section only or from all (R55); the
