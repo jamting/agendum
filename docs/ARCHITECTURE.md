@@ -85,6 +85,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `Agenda.TUI.RangeFilterBox`                   | ✔     | The Date Filter / Numeric Filter box (R28a).                                                                                     |
 | `Agenda.TUI.ColumnAddBox`                     | ✔     | The Column Add box: a new column's head, width, position and Insert in (R55).                                                      |
 | `Agenda.TUI.ItemColumnBox`                    | ✔     | Item Column Properties: a section's item column, automatic or by hand, linked (R55).                                               |
+| `Agenda.TUI.HeadTyping`                       | ✔     | Typing a column head's name in Column Add and Column Properties: an existing category or a new one.                                |
 | `Agenda.TUI.ColumnBox`                        | ✔     | The Column Properties box, one for every column: head, width, link (R55); a numeric column's format (R29), a date column's (R41a). |
 | `Agenda.TUI.FileProperties`                   | ✔     | The File Properties box: the date display format, with a sample (R41).                                                           |
 | `Agenda.TUI.DateFormatRows`                   | ✔     | The date display settings as box rows, shared by File and Column Properties (R41a).                                              |

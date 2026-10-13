@@ -125,6 +125,24 @@ defmodule Agenda.Core.SectionColumnsTest do
     assert Core.default_column_width(db, cat(db, "People"), :date) == 16
   end
 
+  describe "a column head typed by name (User's Guide 3-17)" do
+    test "an existing category, whatever the case", %{db: db} do
+      assert Core.find_or_add_category(db, " people ") == {:ok, db, cat(db, "People")}
+    end
+
+    test "a new name: a new category under MAIN", %{db: db} do
+      assert {:ok, db, id} = Core.find_or_add_category(db, "Phone")
+      assert db.categories[id].name == "Phone"
+      assert id in db.categories[db.main_id].children
+    end
+
+    test "a name several categories have, or none, is refused", %{db: db} do
+      {:ok, db, _} = Core.add_category(db, cat(db, "Ideas"), "People")
+      assert Core.find_or_add_category(db, "People") == {:error, :ambiguous}
+      assert Core.find_or_add_category(db, "  ") == {:error, :empty}
+    end
+  end
+
   describe "adding a column as a type (Column Add ▸ Category type)" do
     test "a standard head made a date category, then added, 16 wide", %{db: db, view_id: v} do
       assert {:ok, db} =

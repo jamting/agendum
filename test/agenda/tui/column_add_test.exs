@@ -81,6 +81,34 @@ defmodule Agenda.TUI.ColumnAddTest do
     assert screen(state) =~ ~r/Width: +16/
   end
 
+  describe "typing the column head (User's Guide 3-17)" do
+    test "the name of an existing category makes it the head", %{state: state, view_id: v} do
+      state = press(state, ["p", "r", "i"])
+      assert screen(state) =~ ~r/Column head: +pri/
+      state = press(state, ["o", "r", "i", "t", "y", :enter])
+      assert screen(state) =~ ~r/Column head: +Priority/
+      state = press(state, :enter)
+      assert heads(state, v, 0) == ["People", "Priority", "When"]
+    end
+
+    test "a new name makes a new category", %{state: state, view_id: v} do
+      state = press(state, ["P", "h", "o", "n", "e", :enter, :enter])
+      assert heads(state, v, 0) == ["People", "Phone", "When"]
+    end
+
+    test "ESC leaves the name, not the box", %{state: state} do
+      state = press(state, ["x", :esc])
+      assert %{type: :column_add} = State.mode(state)
+      assert screen(state) =~ ~r/Column head: +\(F3 to pick\)/
+    end
+
+    test "a name several categories have asks for the picker", %{state: state} do
+      {:ok, db, _} = Core.add_category(state.db, cat(state.db, "Follow up"), "People")
+      state = press(%{state | db: db}, ["p", "e", "o", "p", "l", "e", :enter])
+      assert panel(state) =~ "Several categories are called people"
+    end
+  end
+
   describe "Category type (User's Guide 3-17)" do
     defp kind(state, name), do: state.db.categories[cat(state.db, name)].kind
 

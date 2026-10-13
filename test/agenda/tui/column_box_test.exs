@@ -38,6 +38,18 @@ defmodule Agenda.TUI.ColumnBoxTest do
     assert text =~ ~r/Width: +12 +Link with other sections: +Yes/
   end
 
+  test "typing on Column head: another category, or a new one, in the linked sections too",
+       %{state: state, view_id: v} do
+    state = press(state, ["F", "o", "l", "l", "o", "w", " ", "u", "p", :enter])
+    assert screen(state) =~ ~r/Column head: +Follow up/
+    assert people(state, v, 1).category_id == cat(state.db, "Follow up")
+    state = press(state, ["C", "o", "m", "p", "a", "n", "y", :enter])
+    assert state.db.categories[people(state, v, 0).category_id].name == "Company"
+    # one undo step each
+    assert History.undo(state) |> people(v, 0) |> Map.fetch!(:category_id) ==
+             cat(state.db, "Follow up")
+  end
+
   test "Width: → and ← change it by one, in every linked section", %{state: state, view_id: v} do
     state = press(state, [:down, :down, :right, :right, :left])
     assert people(state, v, 0).width == 13

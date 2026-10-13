@@ -4,8 +4,9 @@ defmodule Agenda.TUI.ColumnBox do
   to 3-19, 6-19 to 6-22, 8-6 to 8-7; screenshots 127, 133, 142): one box
   for every column, as Agenda's.
 
-    * The top part is every column's: Column head (F3, SPACE or → picks
-      another category, R55), Category type (shown; a category's type is
+    * The top part is every column's: Column head (typing a name gives
+      the category of that name, or a new one, `Agenda.TUI.HeadTyping`;
+      F3, SPACE or → picks another category, R55), Category type (shown; a category's type is
       changed in its Category Properties), Width (→ ← by one) and Link
       with other sections (R55).
     * Below a rule, a numeric column has its Numeric Column Properties
@@ -26,7 +27,7 @@ defmodule Agenda.TUI.ColumnBox do
 
   alias Agenda.Core
   alias Agenda.Core.{Database, DateFormat, NumberFormat, View}
-  alias Agenda.TUI.{CategoryScreens, DateFormatRows, Draw, State, Template}
+  alias Agenda.TUI.{CategoryScreens, DateFormatRows, Draw, HeadTyping, State, Template}
 
   @top """
    Column head: [head          ]  Category type:            [type    ]
@@ -93,6 +94,17 @@ defmodule Agenda.TUI.ColumnBox do
   end
 
   def handle(state, mode, key) do
+    if HeadTyping.typing?(mode),
+      do: HeadTyping.key(state, mode, key, &typed_head(&1, &2, &3, mode.column)),
+      else: settings_key(state, mode, key)
+  end
+
+  # a typed name: the column (and those linked to it) shows it, with a new
+  # category made for it if need be, as one change
+  defp typed_head(state, db, id, at),
+    do: State.change_db(state, Core.set_column_head(db, state.view_id, at, id))
+
+  defp settings_key(state, mode, key) do
     last = length(fields(kind(state, mode))) - 1
     row = field(state, mode)
 
@@ -101,6 +113,7 @@ defmodule Agenda.TUI.ColumnBox do
       :up -> State.put_mode(state, %{mode | cursor: max(min(mode.cursor, last) - 1, 0)})
       :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
       {:f, 3} when row == :head -> pick_head(state, mode)
+      {:char, c} when row == :head and c != " " -> HeadTyping.start(state, mode, c)
       k when k in [{:char, " "}, :right] -> change(state, mode, row, 1)
       :left -> change(state, mode, row, -1)
       _ -> state
@@ -198,7 +211,8 @@ defmodule Agenda.TUI.ColumnBox do
     }
 
     values = Map.merge(top, values(state, mode, kind))
-    lines = Template.render(layout(kind), values, selected: field(state, mode))
+    opts = [selected: field(state, mode)] ++ HeadTyping.editing(mode)
+    lines = Template.render(layout(kind), values, opts)
     lines ++ samples(state, mode, kind) ++ [[], [{:box, @hint}]]
   end
 

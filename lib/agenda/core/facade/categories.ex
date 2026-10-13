@@ -16,6 +16,29 @@ defmodule Agenda.Core.Facade.Categories do
   @typep move_resolution :: Agenda.Core.move_resolution()
 
   @doc """
+  A category named `name` (case and surrounding spaces aside), or a new
+  one under MAIN when none is, as typing a column head does (User's Guide
+  3-17: "the name of a new or existing category"). A name more than one
+  category has is `{:error, :ambiguous}` (names are unique only among
+  siblings): the picker chooses among them.
+  """
+  @spec find_or_add_category(db, String.t()) ::
+          {:ok, db, id} | {:error, :ambiguous | :empty}
+  def find_or_add_category(db, name) do
+    wanted = name |> String.trim() |> String.downcase()
+
+    found =
+      for {id, cat} <- db.categories, String.downcase(cat.name) == wanted, do: id
+
+    case found do
+      _ when wanted == "" -> {:error, :empty}
+      [id] -> {:ok, db, id}
+      [] -> add_category(db, db.main_id, String.trim(name))
+      _several -> {:error, :ambiguous}
+    end
+  end
+
+  @doc """
   Adds a category under `parent_id`. Names must be unique among siblings.
   Accepts the same options as `Database.insert_category/4`.
   """

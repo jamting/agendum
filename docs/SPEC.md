@@ -514,6 +514,12 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     another category from the whole hierarchy; the column and the columns
     linked to it show it instead, staying a column of their own; an
     unlinked one changes alone.
+  - Typing on Column head, in Column Properties or the Column Add box
+    (User's Guide 3-17: "the name of a new or existing category"), gives
+    the category of that name, case aside, or a new one under MAIN; a
+    name several categories have is left to F3. ESC drops the name. In
+    Column Properties the head changes with it, one undo step; in Column
+    Add a new category is made at once and the column waits for ENTER.
   - The column heads on a section head line can be highlighted (→ / TAB,
     User's Guide 5-22, 5-25), so an empty section's columns can be reached:
     DEL removes the column (asking which sections, as above), F3 replaces
@@ -525,7 +531,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     column's Numeric Column Properties (R29) or a date column's Date
     Column Properties (R41a), with formatted samples.
   - View ▸ Column ▸ Add opens the Column Add box (User's Guide 3-15 to
-    3-18): Column head (F3, SPACE or → picks it; ENTER without one too),
+    3-18): Column head (typed, or F3, SPACE or → picks it; ENTER without
+    one too),
     Category type (Standard, Date or Numeric: a standard head, or none yet,
     can be given another type, which it gets when the column is added,
     after the question Category Properties asks when children or items
@@ -546,8 +553,6 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     width the text has, a width chosen sets it Manually (5 to 200), and
     SHIFT-? fits it to the longest item text or section name of the
     sections it is linked with, within what the columns leave.
-  - Not done yet: typing a new name for the column head in the box (the
-    picker takes one).
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

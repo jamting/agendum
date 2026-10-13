@@ -3,8 +3,10 @@ defmodule Agenda.TUI.ColumnAddBox do
   The Column Add box (View ▸ Column ▸ Add; User's Guide 3-15 to 3-18):
   the settings of a column before it is added.
 
-    * Column head: F3, SPACE or → opens the picker (the whole hierarchy,
-      where INS makes a new category); ENTER without a head does too.
+    * Column head: typing a name gives the category of that name, or a
+      new one (`Agenda.TUI.HeadTyping`); F3, SPACE or → opens the picker
+      (the whole hierarchy, where INS makes a new category); ENTER without
+      a head does too.
     * Category type (User's Guide 3-17): Standard, Date or Numeric. A
       standard head (or none yet) can be given another type, which it gets
       when the column is added, after the same question Category
@@ -22,7 +24,7 @@ defmodule Agenda.TUI.ColumnAddBox do
   """
 
   alias Agenda.Core
-  alias Agenda.TUI.{CategoryScreens, State, Template}
+  alias Agenda.TUI.{CategoryScreens, HeadTyping, State, Template}
   alias Agenda.TUI.CategoryScreens.Properties
   alias Agenda.TUI.Update.Prompts
 
@@ -73,6 +75,16 @@ defmodule Agenda.TUI.ColumnAddBox do
   end
 
   def handle(state, mode, key) do
+    if HeadTyping.typing?(mode),
+      do: HeadTyping.key(state, mode, key, &typed_head/3),
+      else: settings_key(state, mode, key)
+  end
+
+  # a typed name: a new category is kept at once (one undo step), and the
+  # box takes it as the head
+  defp typed_head(state, db, id), do: state |> State.change_db(db) |> set_head(id)
+
+  defp settings_key(state, mode, key) do
     last = length(@fields) - 1
     field = Enum.at(@fields, mode.cursor)
 
@@ -83,6 +95,7 @@ defmodule Agenda.TUI.ColumnAddBox do
       :up -> State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
       :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
       {:f, 3} when field == :head -> pick_head(state)
+      {:char, c} when field == :head and c != " " -> HeadTyping.start(state, mode, c)
       k when k in [{:char, " "}, :right] -> change(state, mode, field, 1)
       :left -> change(state, mode, field, -1)
       _ -> state
@@ -189,7 +202,9 @@ defmodule Agenda.TUI.ColumnAddBox do
       insert_in: if(mode.insert_in == :all, do: "All sections", else: "Current section")
     }
 
-    Template.render(@layout, values, selected: Enum.at(@fields, mode.cursor)) ++
+    opts = [selected: Enum.at(@fields, mode.cursor)] ++ HeadTyping.editing(mode)
+
+    Template.render(@layout, values, opts) ++
       [[], [{:box, @hint}]]
   end
 
