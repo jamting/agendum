@@ -240,7 +240,9 @@ item, such as its date or who it involves.</p>
   <tr><td>Fold a section away / open it again</td><td><kbd>ALT-−</kbd> / <kbd>ALT-=</kbd> (twice: all)</td></tr>
   <tr><td>Next / previous view; back to the last one</td><td><kbd>ALT-N</kbd> / <kbd>ALT-P</kbd>; <kbd>ALT-F8</kbd></td></tr>
   <tr><td>Switch, add, rename or discard views</td><td><kbd>F8</kbd> view manager; type the start of a view's name to jump to it</td></tr>
-  <tr><td>Make a column wider / narrower; fit it to what it shows</td><td><strong>View ▸ Column ▸ Wider</strong> / <strong>Narrower</strong>; <strong>Fit</strong></td></tr>
+  <tr><td>Change a column's width</td><td><strong>View ▸ Column ▸ Width</strong>: <kbd>←</kbd> <kbd>→</kbd> or type a number, <kbd>?</kbd> fits it to what it shows, <kbd>ENTER</kbd> keeps it</td></tr>
+  <tr><td>Move a column (or the item text) left or right</td><td><kbd>ALT-F10</kbd> on its head, or <strong>View ▸ Column ▸ Move</strong>: <kbd>←</kbd> <kbd>→</kbd>, then <kbd>ENTER</kbd></td></tr>
+  <tr><td>Add a column, choosing where and how</td><td><strong>View ▸ Column ▸ Add</strong></td></tr>
   <tr><td>Hide empty sections</td><td><kbd>ALT-V</kbd></td></tr>
 </table>
 
@@ -248,6 +250,36 @@ item, such as its date or who it involves.</p>
 <kbd>R</kbd> and Agendum offers <em>Rabbit</em> (<kbd>ENTER</kbd> takes it,
 <kbd>F8</kbd>/<kbd>F7</kbd> show the other matches, <kbd>INS</kbd> makes a new category).
 Typing a name that doesn't exist yet simply creates it.</p>
+
+<h3>Columns in one section or in all</h3>
+<p>Each section has its own columns. A column added to all sections (the usual way) is
+<em>linked</em>: widen it in one section and it widens in all of them. A column added
+to just the current section changes on its own. <strong>View ▸ Column ▸ Add</strong>
+lets you choose the column's head, its type, width, which side it goes on, and whether
+it goes in this section or all of them. <strong>File ▸ Properties</strong> sets which of
+those is the default for <kbd>ALT-R</kbd> and <kbd>ALT-L</kbd>. When you remove a linked
+column, Agendum asks whether to take it out of every section or only this one. To reach
+the columns of an empty section, press <kbd>→</kbd> on its head.</p>
+
+<p><strong>View ▸ Column ▸ Properties</strong> (or <kbd>F6</kbd> on a column head) is one
+box for every column: its head, width, whether it is linked, and how it shows things.
+On the item text, the same command sets the width of the item text itself.</p>
+
+<h3>What a column shows</h3>
+<p>A column headed by an ordinary category shows, by default, the names of the
+categories under that head that the item is filed in. Its <strong>Format</strong> can
+show them as <em>Parent:Category</em>, or just the <em>Ancestor</em> they come under.
+It can also show a <em>Star</em> (<code>*</code>), or <em>Yes/No</em>, when the item is
+in the head at all. In a Star column <kbd>SPACE</kbd> stars or unstars an item; in a
+Yes/No column, <kbd>Y</kbd> and <kbd>N</kbd> do the same. A <em>Category note</em>
+column shows one line of the category's note, so a phone number written in Owl's note
+can sit beside every item about Owl, and typing there changes that line of the
+note.</p>
+
+<div class="story">Piglet adds a <em>Bring?</em> column in Yes/No format to the
+<em>Food</em> section only, and presses <kbd>Y</kbd> beside the honey. In the
+<em>People</em> section a Category note column shows where each friend lives, read
+from their notes.</div>
 
 <p><strong>View ▸ Hide</strong> hides done items, empty sections, items that are only
 in a subcategory, or <a href="#dependencies">items still waiting</a> for others.</p>
@@ -393,7 +425,14 @@ in a numeric column.</p>
 
 <p><strong>View ▸ Column ▸ Properties</strong> chooses the currency or label, decimals,
 thousands separator, how negatives look, and which results to show: count, total,
-average, minimum, maximum.</p>
+average, minimum, maximum. <strong>Display % of total</strong> adds a narrow
+<em>% tot</em> column beside the numbers, with each item's share of its section's
+total.</p>
+
+<p>Whether numbers are written <code>1,234.50</code> or <code>1 234,50</code> is your own
+choice, in <strong>File ▸ Customize</strong> (<em>Decimal separator</em> and
+<em>Thousands separator</em>); it holds for numbers you see and numbers you type, in
+every file.</p>
 </section>
 
 <!-- ===================================================================== -->
@@ -513,8 +552,14 @@ and <strong>Category ▸ Questions</strong> goes through the suggestions one ite
   <tr><td>Print the view to a text file</td><td><kbd>CTRL-P</kbd></td></tr>
   <tr><td>Undo / redo</td><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td></tr>
   <tr><td>Quit</td><td><kbd>CTRL-Q</kbd> (or <kbd>ALT-Q</kbd>)</td></tr>
-  <tr><td>Your theme, date languages and input format</td><td><strong>File ▸ Customize</strong></td></tr>
+  <tr><td>Your theme, date languages, input format and the preferences below</td><td><strong>File ▸ Customize</strong></td></tr>
 </table>
+
+<p><strong>File ▸ Customize</strong> also holds a few preferences that follow you to every
+file. <em>Auto-save interval</em> saves a named file by itself after that many minutes
+without a key press. <em>Confirm mode</em> set to No stops the “are you sure?”
+questions (undo still works). <em>Display key map</em> decides whether the key bar is
+shown; <kbd>ALT-K</kbd> switches it, and Agendum remembers your choice.</p>
 
 <p>Wherever Agendum asks for a file name, <kbd>F3</kbd> lists the folder's files and
 folders: <kbd>↑</kbd> <kbd>↓</kbd> move, typing narrows the list, <kbd>ENTER</kbd> opens a
@@ -618,14 +663,15 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>ALT-F6</kbd></td><td>Search (then <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd>)</td><td></td></tr>
   <tr><td><kbd>ALT-F7</kbd></td><td>Unmark all</td><td></td></tr>
   <tr><td><kbd>ALT-F8</kbd></td><td>Last view</td><td></td></tr>
-  <tr><td><kbd>ALT-F10</kbd></td><td>Move item</td><td></td></tr>
+  <tr><td><kbd>ALT-F10</kbd></td><td>Move item; on a column head, move the column</td><td></td></tr>
   <tr><td><kbd>ALT-A</kbd></td><td>Alarm</td><td></td></tr>
   <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter to other dates</td><td><kbd>ESC</kbd> <kbd>b</kbd></td></tr>
   <tr><td><kbd>ALT-C</kbd></td><td>Show the calendar</td><td><kbd>ESC</kbd> <kbd>c</kbd></td></tr>
   <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-U</kbd></td><td>Add section below / above</td><td></td></tr>
   <tr><td><kbd>ALT-R</kbd> / <kbd>ALT-L</kbd></td><td>Add column right / left</td><td></td></tr>
   <tr><td><kbd>ALT-J</kbd></td><td>Next marked item</td><td></td></tr>
-  <tr><td><kbd>ALT-K</kbd></td><td>Show / hide the key bar</td><td></td></tr>
+  <tr><td><kbd>ALT-K</kbd></td><td>Show / hide the key bar (remembered)</td><td></td></tr>
+  <tr><td><kbd>SPACE</kbd>; <kbd>Y</kbd> / <kbd>N</kbd></td><td>In a Star column: star or unstar; in a Yes/No column: yes or no</td><td></td></tr>
   <tr><td><kbd>ALT-M</kbd></td><td>Assign to a category</td><td></td></tr>
   <tr><td><kbd>ALT-N</kbd> / <kbd>ALT-P</kbd></td><td>Next / previous view</td><td></td></tr>
   <tr><td><kbd>ALT-O</kbd></td><td>Depend on the marked items</td><td></td></tr>
