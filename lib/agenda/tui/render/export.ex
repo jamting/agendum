@@ -20,8 +20,13 @@ defmodule Agenda.TUI.Render.Export do
 
       items =
         Enum.map(section.rows, fn row ->
+          # a number's "% tot" (R29) goes after it in brackets
           extra =
             row.cells
+            |> Enum.zip_with(row.percents, fn
+              cell, p when p in [nil, ""] -> cell
+              cell, p -> "#{cell} (#{p})"
+            end)
             |> Enum.zip(heads)
             |> Enum.reject(&(elem(&1, 0) == ""))
             |> Enum.map_join("; ", fn {c, h} -> "#{h}: #{c}" end)

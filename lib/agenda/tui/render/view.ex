@@ -5,6 +5,7 @@ defmodule Agenda.TUI.Render.View do
   """
 
   alias Agenda.Core.{DateFormat, ViewModel}
+  alias Agenda.Core.View.Column
   alias Agenda.TUI.{Completion, Draw, Layout, State}
   alias Agenda.TUI.Render.Text
 
@@ -110,7 +111,9 @@ defmodule Agenda.TUI.Render.View do
 
       row.columns
       |> Enum.zip(cells)
-      |> Enum.map(fn {column, cell} -> [{:normal, " "}, {:calc, right(cell, column.width)}] end)
+      |> Enum.map(fn {column, cell} ->
+        [{:normal, " "}, {:calc, right(cell, column.width)}] ++ percent_part(column, {:calc, ""})
+      end)
       |> around_items(row, [{:normal, "   "}, {:calc, String.pad_leading(label <> " ", tw)}])
     end)
   end
@@ -160,7 +163,7 @@ defmodule Agenda.TUI.Render.View do
           {:normal, " "},
           {head_style,
            Draw.pad(ViewModel.column_label(state.db, c.category_id, c.width), c.width)}
-        ]
+        ] ++ percent_part(c, {:column_head, "% tot"})
       end)
 
     head = around_items(heads, row, name_part)
@@ -193,28 +196,7 @@ defmodule Agenda.TUI.Render.View do
           )
       end
 
-    cells =
-      columns
-      |> Enum.zip(row.cells)
-      |> Enum.with_index(1)
-      |> Enum.map(fn {{column, cell}, i} ->
-        cell_part =
-          case editing do
-            %{target: {:column_entry, id, head, _}}
-            when selected and id == item.id and head == column.category_id and state.col == i ->
-              completion_field(state, editing.line, column.width)
-
-            _ ->
-              text =
-                if Text.numeric?(state, column),
-                  do: right(cell, column.width),
-                  else: Draw.pad(cell, column.width)
-
-              [{if(selected and state.col == i, do: :cursor_cell, else: :cell), text}]
-          end
-
-        [{:normal, " "} | cell_part]
-      end)
+    cells = item_cells(state, row, selected, editing)
 
     [first | rest] = text_lines
     first_line = around_items(cells, row, [{:symbol, " " <> symbol}, {:symbol, note}] ++ first)
@@ -223,8 +205,43 @@ defmodule Agenda.TUI.Render.View do
     [first_line | Enum.map(rest, &(blank ++ [{:normal, "   "}] ++ &1))]
   end
 
+  # An item's cells, one list of segments per column: its entry (or the
+  # field being typed into) and, beside a number, its "% tot".
+  defp item_cells(state, %{item: item} = row, selected, editing) do
+    row.columns
+    |> Enum.zip(row.cells)
+    |> Enum.zip(row.percents)
+    |> Enum.with_index(1)
+    |> Enum.map(fn {{{column, cell}, percent}, i} ->
+      cell_part =
+        case editing do
+          %{target: {:column_entry, id, head, _}}
+          when selected and id == item.id and head == column.category_id and state.col == i ->
+            completion_field(state, editing.line, column.width)
+
+          _ ->
+            text =
+              if Text.numeric?(state, column),
+                do: right(cell, column.width),
+                else: Draw.pad(cell, column.width)
+
+            [{if(selected and state.col == i, do: :cursor_cell, else: :cell), text}]
+        end
+
+      [{:normal, " "} | cell_part] ++ percent_part(column, {:cell, percent || ""})
+    end)
+  end
+
   defp blank_cells(columns),
-    do: Enum.flat_map(columns, &[{:normal, " "}, {:normal, Draw.spaces(&1.width)}])
+    do: Enum.flat_map(columns, &[{:normal, " "}, {:normal, Draw.spaces(Column.shown_width(&1))}])
+
+  # A numeric column's "% tot" beside it (Display % of total, R29): a
+  # space and 5 for the text, right-aligned as numbers are; nothing for a
+  # column without it.
+  defp percent_part(%Column{number: %{percent: true}}, {style, text}),
+    do: [{:normal, " "}, {style, right(text, 5)}]
+
+  defp percent_part(_column, _part), do: []
 
   @doc """
   A column cell being typed into, with the rest of the shown completion

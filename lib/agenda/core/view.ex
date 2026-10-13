@@ -76,7 +76,7 @@ defmodule Agenda.Core.View do
     def text_width(%__MODULE__{set: :manual, width: width}, _columns, _screen), do: width
 
     def text_width(%__MODULE__{minimum: minimum}, columns, screen) do
-      used = columns |> Enum.map(&(&1.width + 1)) |> Enum.sum()
+      used = columns |> Enum.map(&(Agenda.Core.View.Column.shown_width(&1) + 1)) |> Enum.sum()
       max(screen - 3 - used, minimum)
     end
   end
@@ -134,6 +134,14 @@ defmodule Agenda.Core.View do
       date: nil,
       link: nil
     ]
+
+    @doc """
+    How wide the column is on the screen: its width, and 6 more for a
+    numeric column's "% tot" beside it (a space and 5).
+    """
+    @spec shown_width(t) :: pos_integer
+    def shown_width(%__MODULE__{width: width, number: %{percent: true}}), do: width + 6
+    def shown_width(%__MODULE__{width: width}), do: width
   end
 
   @typedoc "One filter criterion on a category (R28, R28a)."

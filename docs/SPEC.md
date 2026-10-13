@@ -546,9 +546,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     width the text has, a width chosen sets it Manually (5 to 200), and
     SHIFT-? fits it to the longest item text or section name of the
     sections it is linked with, within what the columns leave.
-  - Not done yet: Display %
-    of total (a numeric column's "% tot" column); typing a new name for
-    the column head in the box (the picker takes one).
+  - Not done yet: typing a new name for the column head in the box (the
+    picker takes one).
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the
@@ -589,8 +588,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 - **R29 ✅ Numeric columns** (User's Guide chapter 8). A numeric category
   holds a number for each item assigned to it; the number is a value of
   the assignment, not a category. A standard category becomes numeric
-  with Category Properties ▸ Type (only that way; a numeric category cannot
-  change back); its children, if any, are removed and their items get the
+  with Category Properties ▸ Type or Column Add ▸ Category type (R55; a
+  numeric category cannot change back); its children, if any, are removed and their items get the
   child's name as their number ("112" → 112, other names → 0), items
   assigned to the category itself get 0, and Agenda asks first when items
   or children are affected. A category with grandchildren cannot be
@@ -601,7 +600,11 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   in a numeric column. Numbers are right-aligned and shown in the column's
   format (View ▸ Column ▸ Properties): label or currency symbol (None, $,
   %, ¢, £, ¥), decimal places (2; numbers are rounded for display only),
-  thousands separator, negative style (-1 or (1)), and the calculations
+  thousands separator, negative style (-1 or (1)), Display % of total (a
+  "% tot" column beside the numbers, 5 wide, with each number's share of
+  its section's total, rounded, as "12%"; nothing typed there, and
+  printing to a file adds it after the number; User's Guide 8-7), and the
+  calculations
   shown at the bottom of every section: count, total (the default),
   average, minimum, maximum. A number too wide for its column is shown in
   scientific notation. Items sort by their number (R36), Item Properties
@@ -609,10 +612,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   a file includes the calculations. Our choices: numbers are binary
   floating point, as in Agenda; the decimal and thousands characters
   are the person's (R54), "." and "," by default; calculation lines are not shown under collapsed sections.
-  Not done: the "% of total" column, section-wide calculation settings
-  (Section Properties ▸ Select numeric functions), choosing the category
-  type when adding a column, and numeric ranges in conditions and filters
-  (with the date filters, next on the roadmap).
+  Not done: section-wide calculation settings (Section Properties ▸ Select
+  numeric functions), and numeric ranges in conditions and filters (with
+  the date filters, next on the roadmap).
 - **R36 ✅ Sorting items** (User's Guide chapter 15). A view has sort
   settings for all its sections; a section can override them or use the
   view's. Up to two keys (primary, then a secondary for ties): item text;

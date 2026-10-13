@@ -31,14 +31,15 @@ defmodule Agenda.Store do
   25 moves a standard view's columns into its sections and adds
   `View.Column.linked` (R55); 26 adds `Database.insert_columns` (R55); 27
   replaces `View.Column.linked` with `link`, each column one of its own (R55);
-  28 adds `View.Section.item_column` (R55); 29 adds its `position`.
+  28 adds `View.Section.item_column` (R55); 29 adds its `position`;
+  30 adds `NumberFormat.percent` (Display % of total).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agenda.Core.Database
 
-  @format_version 29
+  @format_version 30
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"

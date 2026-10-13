@@ -10,7 +10,8 @@ defmodule Agenda.TUI.ColumnBox do
       with other sections (R55).
     * Below a rule, a numeric column has its Numeric Column Properties
       (R29): currency symbol, decimal places, thousands separator, negative
-      indicator and the calculations, with formatted samples.
+      indicator, Display % of total (a "% tot" column beside it) and the
+      calculations, with formatted samples.
     * A date column has its Date Column Properties (R41a): Settings says
       "Global defaults" while it uses the file's format and "Local
       settings" once it has its own (any change makes them its own; SPACE
@@ -39,7 +40,7 @@ defmodule Agenda.TUI.ColumnBox do
    Decimal places:           [decimals  ]  Total:   [total]
    Use thousands separator:  [thousands ]  Average: [average]
    Negative indicator:       [negative  ]  Minimum: [minimum]
-                                           Maximum: [maximum]
+   Display % of total:       [percent   ]  Maximum: [maximum]
   """
 
   @date """
@@ -165,6 +166,8 @@ defmodule Agenda.TUI.ColumnBox do
   defp step(f, :negative, _step),
     do: %{f | negative: if(f.negative == :minus, do: :parens, else: :minus)}
 
+  defp step(f, :percent, _step), do: %{f | percent: not f.percent}
+
   # a calculation: on or off, kept in Agenda's order
   defp step(f, calc, _step) do
     calcs =
@@ -211,6 +214,7 @@ defmodule Agenda.TUI.ColumnBox do
       symbol: f.symbol || "None",
       decimals: Integer.to_string(f.decimals),
       thousands: yes_no(f.thousands),
+      percent: yes_no(f.percent),
       negative: if(f.negative == :minus, do: "-", else: "()")
     })
   end

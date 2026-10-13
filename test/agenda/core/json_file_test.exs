@@ -83,7 +83,8 @@ defmodule Agenda.Core.JSONFileTest do
       Core.set_column_format(db, view, {0, 1}, %NumberFormat{
         symbol: "£",
         decimals: 0,
-        calcs: [:count, :maximum]
+        calcs: [:count, :maximum],
+        percent: true
       })
 
     db = Core.set_column_date_format(db, view, {0, 0}, %DateFormat{order: :relative, show: :date})

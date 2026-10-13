@@ -186,6 +186,42 @@ defmodule Agenda.Core.NumbersTest do
       assert cells[phone] == ["", ""]
     end
 
+    test "Display % of total: each number's share of the section's total (User's Guide 8-7)",
+         %{db: db, view: view, amount: amount, ids: [heat, rent, phone]} do
+      [section] = ViewModel.build(db, db.views[view])
+      assert Enum.map(section.rows, & &1.percents) == List.duplicate([nil, nil], 3)
+
+      # 120 + 800.5 + 79.5 = 1000
+      {:ok, db} = Core.set_number(db, phone, amount, 79.5)
+      db = Core.set_column_format(db, view, {0, 1}, %NumberFormat{percent: true})
+      [section] = ViewModel.build(db, db.views[view])
+      percents = Map.new(section.rows, &{&1.item.id, &1.percents})
+
+      assert {percents[heat], percents[rent], percents[phone]} ==
+               {[nil, "12%"], [nil, "80%"], [nil, "8%"]}
+    end
+
+    test "% of total: nothing without a number, or when the total is 0" do
+      assert NumberFormat.percent_of(nil, 10.0) == ""
+      assert NumberFormat.percent_of(5.0, 0.0) == ""
+      assert NumberFormat.percent_of(5.0, 20.0) == "25%"
+    end
+
+    test "% of total takes room on the screen beside the column" do
+      column = %Column{category_id: 1, width: 12, number: %NumberFormat{percent: true}}
+      assert Column.shown_width(column) == 18
+      assert Column.shown_width(%{column | number: %NumberFormat{}}) == 12
+    end
+
+    test "a column given a standard head does not keep % of total",
+         %{db: db, view: view, ids: [heat | _]} do
+      db = Core.set_column_format(db, view, {0, 1}, %NumberFormat{percent: true})
+      {:ok, db, other} = Core.add_category(db, db.main_id, "Other")
+      _ = heat
+      db = Core.set_column_head(db, view, {0, 1}, other)
+      refute (db.views[view] |> Agenda.Core.View.columns(0) |> Enum.at(1)).number.percent
+    end
+
     test "a section shows the total by default", %{db: db, view: view} do
       [section] = ViewModel.build(db, db.views[view])
       assert section.calcs == [{:total, ["", "920.50"]}]

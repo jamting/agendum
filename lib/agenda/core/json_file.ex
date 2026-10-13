@@ -97,7 +97,8 @@ defmodule Agenda.Core.JSONFile do
       decimals: :int,
       thousands: :bool,
       negative: {:enum, [:minus, :parens]},
-      calcs: {:list, {:enum, NumberFormat.calcs()}}
+      calcs: {:list, {:enum, NumberFormat.calcs()}},
+      percent: :bool
     ]
   end
 

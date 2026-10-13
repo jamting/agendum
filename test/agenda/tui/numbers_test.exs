@@ -102,6 +102,31 @@ defmodule Agenda.TUI.NumbersTest do
     assert text =~ ~r/AVERAGE\s+\$1,234\.50/
   end
 
+  test "Display % of total: a % tot column beside the numbers (User's Guide 8-7)",
+       %{state: state, view: view} do
+    state = press(state, ["120", :enter, :down, "800.5", :enter, :down, "79.5", :enter])
+    state = press(state, [{:f, 10}, "v", "c", "p"])
+    assert screen(state) =~ ~r/Display % of total: +No +Maximum: +No/
+    # after the four common rows and four rows of two: Display % of total
+    state = press(state, List.duplicate(:down, 12) ++ [" ", :esc])
+    assert hd(tl(Agenda.Core.View.columns(state.db.views[view], 0))).number.percent
+    # and in print, after the number
+    assert Agenda.TUI.Render.Export.text(state) =~ "heat  [Amount: 120.00 (12%)]"
+
+    lines = state |> screen() |> String.split("\n")
+    head = Enum.find(lines, &(&1 =~ "Amount"))
+    assert head =~ ~r/Amount +% tot/
+    # each share right-aligned under "% tot", 120 of 1000 being 12%
+    heat = Enum.find(lines, &(&1 =~ "heat"))
+    assert heat =~ ~r/120\.00 +12%/
+    assert at_end(head, "% tot") == at_end(heat, "12%")
+    assert Enum.find(lines, &(&1 =~ "rent")) =~ ~r/800\.50 +80%/
+  end
+
+  # the column (in characters) where `text` ends in `line`
+  defp at_end(line, text),
+    do: (line |> String.split(text) |> hd() |> String.length()) + String.length(text)
+
   test "decimal places go up and down with → and ←", %{state: state, view: view} do
     # Decimal places: after the four common rows, Symbol and Count
     keys = [{:f, 10}, "v", "c", "p"] ++ List.duplicate(:down, 6) ++ [:right, :right, :left, :esc]

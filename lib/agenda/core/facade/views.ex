@@ -215,8 +215,14 @@ defmodule Agenda.Core.Facade.Views do
   linked to it show `cat_id` instead (`Agenda.Core.ViewColumns.set_head/3`).
   """
   @spec set_column_head(db, id, View.at(), id) :: db
-  def set_column_head(db, view_id, at, cat_id),
-    do: Database.update_view(db, view_id, &ViewColumns.set_head(&1, at, cat_id))
+  def set_column_head(db, view_id, at, cat_id) do
+    db = Database.update_view(db, view_id, &ViewColumns.set_head(&1, at, cat_id))
+
+    # "% tot" is for numbers only: a column given another head drops it
+    if db.categories[cat_id].kind == :numeric,
+      do: db,
+      else: update_column(db, view_id, at, &%{&1 | number: %{&1.number | percent: false}})
+  end
 
   @doc """
   Column Properties ▸ Link with other sections (R55): `false` unlinks the

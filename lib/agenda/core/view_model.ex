@@ -9,9 +9,18 @@ defmodule Agenda.Core.ViewModel do
   alias Agenda.Core.View.SortKey
 
   defmodule Row do
-    @moduledoc "One item as shown in a section."
-    @type t :: %__MODULE__{item: Agenda.Core.Item.t(), cells: [String.t()], inherited: boolean}
-    defstruct [:item, cells: [], inherited: false]
+    @moduledoc """
+    One item as shown in a section: a cell per column, and per column its
+    "% tot" ("12%", "" without a number) or nil when the column shows none
+    (Display % of total, R29).
+    """
+    @type t :: %__MODULE__{
+            item: Agenda.Core.Item.t(),
+            cells: [String.t()],
+            percents: [String.t() | nil],
+            inherited: boolean
+          }
+    defstruct [:item, cells: [], percents: [], inherited: false]
   end
 
   defmodule SectionModel do
@@ -96,7 +105,7 @@ defmodule Agenda.Core.ViewModel do
 
       %SectionModel{
         category: category,
-        rows: rows,
+        rows: percents(rows, db, view.columns),
         slot: slot,
         columns: view.columns,
         calcs: calcs(db, view.columns, rows, Context.number_opts(today))
@@ -141,7 +150,7 @@ defmodule Agenda.Core.ViewModel do
       %SectionModel{
         category: category,
         index: index,
-        rows: rows,
+        rows: percents(rows, db, section.columns),
         collapsed: section.collapsed,
         columns: section.columns,
         item_column: section.item_column,
@@ -175,6 +184,32 @@ defmodule Agenda.Core.ViewModel do
 
   # The calculation lines of a section: every calculation some numeric
   # column asks for, in Agenda's order.
+  # Each row's "% tot" per column: its number's share of the section's
+  # total in a column that shows % of total, nil in the others.
+  defp percents(rows, db, columns) do
+    totals =
+      Enum.map(columns, fn column ->
+        if column.number.percent and db.categories[column.category_id].kind == :numeric,
+          do:
+            rows
+            |> Enum.map(&(Database.number(db, &1.item.id, column.category_id) || 0))
+            |> Enum.sum()
+      end)
+
+    Enum.map(rows, fn row ->
+      percents =
+        Enum.zip_with(columns, totals, fn
+          _column, nil ->
+            nil
+
+          column, total ->
+            NumberFormat.percent_of(Database.number(db, row.item.id, column.category_id), total)
+        end)
+
+      %{row | percents: percents}
+    end)
+  end
+
   defp calcs(db, columns, rows, opts) do
     numeric = Enum.filter(columns, &(db.categories[&1.category_id].kind == :numeric))
 

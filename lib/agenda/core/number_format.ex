@@ -11,6 +11,8 @@ defmodule Agenda.Core.NumberFormat do
     * `negative`: `:minus` ("-12.50") or `:parens` ("(12.50)")
     * `calcs`: any of `:count`, `:total`, `:average`, `:minimum`,
       `:maximum`, in that order (default: total)
+    * `percent`: Display % of total, a "% tot" column beside the numbers
+      with each one's share of its section's total (`percent_of/2`)
 
   The decimal and thousands characters are personal settings (Agenda's
   Utilities Customize), so they are options here, defaulting to "." and
@@ -23,9 +25,24 @@ defmodule Agenda.Core.NumberFormat do
           decimals: non_neg_integer,
           thousands: boolean,
           negative: :minus | :parens,
-          calcs: [calc]
+          calcs: [calc],
+          percent: boolean
         }
-  defstruct symbol: nil, decimals: 2, thousands: false, negative: :minus, calcs: [:total]
+  defstruct symbol: nil,
+            decimals: 2,
+            thousands: false,
+            negative: :minus,
+            calcs: [:total],
+            percent: false
+
+  @doc """
+  A number's share of a total, rounded, as the "% tot" column shows it
+  ("12%"); "" for no number or a total of 0.
+  """
+  @spec percent_of(number | nil, number) :: String.t()
+  def percent_of(nil, _total), do: ""
+  def percent_of(_value, total) when total == 0, do: ""
+  def percent_of(value, total), do: "#{round(value / total * 100)}%"
 
   @symbols [nil, "$", "%", "¢", "£", "¥"]
   @calcs [:count, :total, :average, :minimum, :maximum]

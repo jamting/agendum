@@ -68,6 +68,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 ## Milestone 3 — Smarter assignment
 
 - [x] Numeric categories and columns with totals (R29)
+- [x] Display % of total: a "% tot" column beside a numeric column, each number's share of its section's total (R29)
 - [x] Date and numeric filters (R28a)
 - [x] Sorting by a line of a category note (R36)
 - [x] Sorting section heads (R36)

@@ -58,6 +58,7 @@ defmodule Agenda.TUI.Layout do
                 key: {:item, sidx, r.item.id},
                 item: r.item,
                 cells: r.cells,
+                percents: r.percents,
                 inherited: r.inherited,
                 category: section.category,
                 slot: section.slot,
