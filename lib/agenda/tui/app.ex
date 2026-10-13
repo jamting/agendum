@@ -5,7 +5,7 @@ defmodule Agenda.TUI.App do
   """
 
   alias Agenda.{CalendarFetch, Preferences, Store}
-  alias Agenda.TUI.{Keys, Layout, Render, Screen, State, Terminal, Theme, Update}
+  alias Agenda.TUI.{DebugLog, Keys, Layout, Render, Screen, State, Terminal, Theme, Update}
 
   # How long to wait for the rest of an escape sequence before treating ESC as a key.
   @escape_timeout 40
@@ -34,45 +34,70 @@ defmodule Agenda.TUI.App do
   defp loop(state, previous, buffer, theme) do
     previous = if state.theme == theme, do: previous, else: nil
     theme = state.theme
-    {state, previous} = draw(state, previous, theme)
+    {state, previous} = logged(state, fn -> draw(state, previous, theme) end)
     timeout = if buffer == "", do: @idle_timeout, else: @escape_timeout
 
     receive do
       {:input, data} ->
         {keys, rest} = Keys.decode(buffer <> data)
+        DebugLog.input(data, keys, state)
         continue(state, previous, keys, rest, theme)
 
       :input_closed ->
+        DebugLog.write("input closed")
         :ok
 
       # a calendar read in the background (R45)
       {:calendar_read, id, result} ->
-        loop(Update.calendar_read(state, id, result), previous, buffer, theme)
+        DebugLog.write("calendar #{id} read: #{elem(result, 0)}")
+        state = logged(state, fn -> Update.calendar_read(state, id, result) end)
+        loop(state, previous, buffer, theme)
     after
       timeout ->
-        continue(state, previous, Keys.flush(buffer), "", theme)
+        keys = Keys.flush(buffer)
+        if keys != [], do: DebugLog.input(buffer, keys, state)
+        continue(state, previous, keys, "", theme)
     end
   end
 
   defp continue(state, previous, keys, rest, theme) do
-    case apply_keys(state, keys) do
+    case logged(state, fn -> apply_keys(state, keys) end) do
       {:quit, _state} -> :ok
       {:ok, state} -> loop(state, previous, rest, theme)
     end
   end
 
+  # A crash in `fun` goes to the debug log with `state`, the state it
+  # started from, and is then raised again unchanged. (`catch kind, reason`
+  # catches all three kinds of Erlang failure: error, throw and exit.)
+  defp logged(state, fun) do
+    fun.()
+  catch
+    kind, reason ->
+      DebugLog.crash(kind, reason, __STACKTRACE__, state)
+      :erlang.raise(kind, reason, __STACKTRACE__)
+  end
+
   defp apply_keys(state, []), do: {:ok, state}
 
   defp apply_keys(state, [key | keys]) do
+    before = state
     {state, effects} = Update.handle(state, key)
 
     # a macro run (R50): its keys come next, one by one, before the rest
     {plays, effects} = Enum.split_with(effects, &match?({:play, _}, &1))
-    keys = Enum.flat_map(plays, fn {:play, played} -> played ++ [:macro_done] end) ++ keys
+    played = Enum.flat_map(plays, fn {:play, played} -> played ++ [:macro_done] end)
+    if played != [], do: DebugLog.macro(played)
+    keys = played ++ keys
 
     case run_effects(state, effects) do
-      {:quit, state} -> {:quit, state}
-      {:ok, state} -> apply_keys(state, keys)
+      {:quit, state} ->
+        DebugLog.write("quit")
+        {:quit, state}
+
+      {:ok, state} ->
+        DebugLog.message(before, state)
+        apply_keys(state, keys)
     end
   end
 
@@ -80,6 +105,7 @@ defmodule Agenda.TUI.App do
   defp run_effects(state, [:quit | _]), do: {:quit, state}
 
   defp run_effects(state, [effect | rest]) do
+    DebugLog.effect(effect)
     before = state.prefs
 
     state =
@@ -123,10 +149,14 @@ defmodule Agenda.TUI.App do
 
   defp draw(state, previous, theme) do
     {width, height} = Terminal.size()
+    before = state
     {state, effects} = Update.tick(state, local_now())
     if :bell in effects, do: Terminal.write("\a")
     {:ok, state} = run_effects(state, List.delete(effects, :bell))
+    # an alarm or an auto-save says so
+    DebugLog.message(before, state)
     resized = {width, height} != {state.width, state.height}
+    if resized, do: DebugLog.write("terminal #{width}×#{height}")
     state = %{state | width: width, height: height}
     state = if resized, do: Layout.settle(state), else: state
     previous = if resized, do: nil, else: previous

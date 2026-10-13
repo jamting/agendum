@@ -21,11 +21,15 @@ defmodule Agenda.CLI do
   format; these flags override them for this session. Setting the
   NO_COLOR environment variable selects mono unless --theme or your
   preferences name a theme.
+
+  Setting AGENDUM_LOG=1 writes a debug log of each session (keys,
+  messages, crashes) to ~/.local/state/agendum/logs, the last five
+  sessions kept; AGENDUM_LOG=FOLDER writes it there instead.
   """
 
   alias Agenda.{Core, Preferences, Sample, Store}
   alias Agenda.Core.{DateLanguage, InputFormat}
-  alias Agenda.TUI.{App, Layout, State, Theme, Update}
+  alias Agenda.TUI.{App, DebugLog, Layout, State, Theme, Update}
 
   @type options :: %{
           file: String.t() | nil,
@@ -46,7 +50,7 @@ defmodule Agenda.CLI do
 
     case parse_args(args, env, prefs) do
       :help -> IO.puts(@moduledoc)
-      {:ok, options} -> start(options, prefs)
+      {:ok, options} -> start(options, prefs, DebugLog.start(env, args))
       {:error, message} -> exit_with(message)
     end
   end
@@ -171,7 +175,8 @@ defmodule Agenda.CLI do
       languages: languages
     }
 
-  defp start(options, prefs) do
+  # `log` is the debug log's path, or nil when it is off
+  defp start(options, prefs, log) do
     today = App.local_today()
 
     result =
@@ -198,14 +203,24 @@ defmodule Agenda.CLI do
           |> Layout.settle()
           |> Update.start(options.file == nil and not options.demo and not options.rabbit)
 
-        case App.run(state) do
-          :ok -> :ok
+        case run(state, log) do
+          :ok -> DebugLog.stop()
           {:error, reason} -> exit_with("Could not start the terminal UI: #{inspect(reason)}")
         end
 
       {:error, message} ->
         exit_with(message)
     end
+  end
+
+  # after a crash the terminal is back to normal (App.run/1 restores it),
+  # so the log's path can be shown above Elixir's own report
+  defp run(state, log) do
+    App.run(state)
+  catch
+    kind, reason ->
+      if log, do: IO.puts(:stderr, "Agendum crashed; the debug log is #{log}")
+      :erlang.raise(kind, reason, __STACKTRACE__)
   end
 
   defp open(path) do
@@ -221,6 +236,7 @@ defmodule Agenda.CLI do
 
   @spec exit_with(String.t()) :: no_return()
   defp exit_with(message) do
+    DebugLog.write("exit: " <> message)
     IO.puts(:stderr, message)
     System.halt(1)
   end

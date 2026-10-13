@@ -112,6 +112,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `Agenda.TUI.Screen`                           | ✔     | Diffs two frames into minimal ANSI output.                                                                                       |
 | `Agenda.TUI.Terminal`                         | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
 | `Agenda.TUI.App`                              | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |
+| `Agenda.TUI.DebugLog`                         | ✘     | The debug log when `AGENDUM_LOG` is set: input, effects, messages, crashes with the state; five sessions kept (ADR 0027).        |
 | `Agenda.Store`                                | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write); folder listings for the Select File box.                     |
 | `Agenda.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format (with the number separators), key map, confirm mode, auto-save, name, company, last file (`key = value`, ADR 0008).               |
 | `Agenda.CalendarFetch`                        | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
@@ -146,6 +147,9 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 ## Developer tools
 
 - `ESC ?` in the program: debugging info and a key tester (`Agenda.TUI.DevTools`).
+- `AGENDUM_LOG=1`: a debug log of each session in `~/.local/state/agendum/logs`
+  (or `AGENDUM_LOG=FOLDER`), the last five kept; a crash writes its stack
+  trace and the state (`Agenda.TUI.DebugLog`, ADR 0027).
 - `tools/screenshots/`: draws screens of the TUI as PNGs (macOS), to
   compare its look with Agenda 2.0 (ADR 0018):
   `MIX_ENV=test mix run tools/screenshots/screenshots.exs [--theme NAME]`
@@ -182,3 +186,4 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0024](adr/0024-boxes-drawn-from-layouts.md)            | Settings boxes are drawn from layouts written as they look       |
 | [0025](adr/0025-columns-per-section.md)                 | Columns belong to sections, linked by a shared number            |
 | [0026](adr/0026-previewing-a-change.md)                 | Previewing a change before it is kept                            |
+| [0027](adr/0027-debug-log.md)                           | A debug log of each session, on by an environment variable       |
