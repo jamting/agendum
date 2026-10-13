@@ -103,7 +103,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `Agenda.TUI.NoteSearch`                       | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `Agenda.TUI.AlarmList`                        | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
 | `Agenda.TUI.DevTools`                         | ✔     | The hidden developer screen (ESC ?): state for debugging, and a key tester.                                                      |
-| `Agenda.Starters.Planner`                     | ✔     | The Activities Planner starter file, built through `Agenda.Core` (R60); `Planner.Views` its views, `Planner.Samples` sample data.  |
+| `Agenda.Starters.Planner`                     | ✔     | The Activities Planner starter file, built through `Agenda.Core` (R60); `Planner.Views`, `Planner.Macros`, `Planner.Samples` (sample data). |
 | `Mix.Tasks.Agendum.Starters`                  | ✘     | `mix agendum.starters [--samples]`: writes the starter file (a build tool, not part of the program).                             |
 | `Agenda.TUI.Render`                           | ✔     | State → list of styled lines: the control panel, the body (the view or a full screen), the boxes over it, the key bar.           |
 | `Agenda.TUI.Render.*`                         | ✔     | Its parts: `ControlPanel`, `View`, `Managers`, `Note`, `Help` (F1 text), `Boxes`, `CategoryBoxes`, `KeyBar`, `Text`, `Export`.   |

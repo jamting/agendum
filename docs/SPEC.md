@@ -638,7 +638,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   the person's note), Completed This Week and Overdue (date filters),
   three expense views (Expenses only, totals, lines between sections),
   People, Projects, and the datebooks Today, Tomorrow, This Week, Next
-  Week and This Month. Our choices: the file's date settings are Agendum's defaults
+  Week and This Month. Its macros, run from views: Customize date
+  settings (File ▸ Properties), Hide/Display done items (View ▸ Hide ▸
+  Done) and Print current view (Print). Our choices: the file's date settings are Agendum's defaults
   (Agenda's are American: weeks from Sunday, dates MDY, amounts in $);
   the Contacts view, which Agenda's "Create/Update contact list" macro
   made, is in the file, and Sample Person's note has the phone number and

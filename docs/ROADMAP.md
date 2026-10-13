@@ -124,7 +124,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] A starter file like Agenda's Activities Planner: categories and views, no items (Starter Applications), bundled as a file the user copies (`starters/planner.agendum`, built from code); needs columns per section, note-line columns, hide column heads and section separators (Milestone 2) (R60)
   - [x] Its categories, with short names, Also match, conditions and Amount's action (`Agenda.Starters.Planner`)
   - [x] Its views: the 16 of Agenda's View Manager, and Contacts (`Planner.Views`); the sample data adds contact items and sections for its people and trip
-  - [ ] Its keystroke macros: Customize date settings, Hide/Display done items, Print current view
+  - [x] Its keystroke macros: Customize date settings, Hide/Display done items, Print current view (`Planner.Macros`; through Agendum's menus, without Agenda's {ALERT} boxes)
   - [x] `mix agendum.starters` writes `starters/planner.agendum`; `--samples` writes a copy with realistic sample data for testing (`tmp/planner-samples.agendum`; dates from `--today`, so the same day gives the same file)
   - [ ] `starters/planner.agendum` committed; a test checks it is what the code builds; the README says to copy it
   - Left out: the macros Sort items in view and Create/Update contact list, which need the macro command language. The Contacts view that Create/Update contact list made is in the file instead, but it is not kept up to date: a new person needs a blank item in it by hand
