@@ -334,7 +334,10 @@ defmodule Agenda.Core.JSONFile do
       width: c.width,
       link: c.link,
       number: struct_obj(c.number),
-      date: c.date && struct_obj(c.date)
+      date: c.date && struct_obj(c.date),
+      format: Atom.to_string(c.format),
+      note_line: c.note_line,
+      title: c.title
     )
   end
 
@@ -734,7 +737,10 @@ defmodule Agenda.Core.JSONFile do
         case c["date"] do
           nil -> nil
           _ -> read_struct(c, "date", DateFormat, path <> ".date")
-        end
+        end,
+      format: opt(c, "format", {:enum, Column.formats()}, :name, path),
+      note_line: opt(c, "note_line", :int, 1, path),
+      title: opt(c, "title", {:nullable, :string}, nil, path)
     }
   end
 

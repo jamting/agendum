@@ -5,7 +5,7 @@ defmodule Agenda.TUI.ColumnBox do
   for every column, as Agenda's.
 
     * The top part is every column's: Column head (typing a name gives
-      the category of that name, or a new one, `Agenda.TUI.HeadTyping`;
+      the category of that name, or a new one, `Agenda.TUI.FieldTyping`;
       F3, SPACE or → picks another category, R55), Category type (shown; a category's type is
       changed in its Category Properties), Width (→ ← by one) and Link
       with other sections (R55).
@@ -27,11 +27,22 @@ defmodule Agenda.TUI.ColumnBox do
 
   alias Agenda.Core
   alias Agenda.Core.{Database, DateFormat, NumberFormat, View}
-  alias Agenda.TUI.{CategoryScreens, DateFormatRows, Draw, HeadTyping, State, Template}
+  alias Agenda.TUI.{CategoryScreens, DateFormatRows, Draw, FieldTyping, State, Template}
 
   @top """
    Column head: [head          ]  Category type:            [type    ]
    Width:       [width ]          Link with other sections: [linked  ]
+  """
+
+  # a standard column's Format (R56); Category note has a line and a title
+  @standard """
+   Format:       [format              ]
+  """
+
+  @note """
+   Format:       [format              ]
+   Line number:  [note_line ]
+   Column title: [title                        ]
   """
 
   @numeric """
@@ -66,10 +77,11 @@ defmodule Agenda.TUI.ColumnBox do
     do: state |> State.view() |> View.columns(sidx) |> Enum.at(index)
 
   @doc "The box's fields for a column of this kind, in the cursor's order."
-  @spec fields(:standard | :numeric | :date) :: [atom]
+  @spec fields(:standard | :note | :numeric | :date) :: [atom]
   def fields(kind), do: kind |> layout() |> Template.fields()
 
-  defp layout(:standard), do: @top
+  defp layout(:standard), do: @top <> @standard
+  defp layout(:note), do: @top <> @note
   defp layout(:numeric), do: @top <> rule() <> @numeric
   defp layout(:date), do: @top <> rule() <> @date
 
@@ -82,6 +94,7 @@ defmodule Agenda.TUI.ColumnBox do
     cond do
       state.db.categories[cat_id].kind == :numeric -> :numeric
       Database.date_category?(state.db, cat_id) -> :date
+      column(state, mode).format == :note -> :note
       true -> :standard
     end
   end
@@ -94,29 +107,51 @@ defmodule Agenda.TUI.ColumnBox do
   end
 
   def handle(state, mode, key) do
-    if HeadTyping.typing?(mode),
-      do: HeadTyping.key(state, mode, key, &typed_head(&1, &2, &3, mode.column)),
+    if FieldTyping.typing?(mode),
+      do: FieldTyping.key(state, mode, key, &typed(&1, &2, &3, mode.column)),
       else: settings_key(state, mode, key)
   end
 
-  # a typed name: the column (and those linked to it) shows it, with a new
+  # a typed head: the column (and those linked to it) shows it, with a new
   # category made for it if need be, as one change
-  defp typed_head(state, db, id, at),
-    do: State.change_db(state, Core.set_column_head(db, state.view_id, at, id))
+  defp typed(state, :head, name, at) do
+    FieldTyping.head_named(state, name, fn state, db, id ->
+      State.change_db(state, Core.set_column_head(db, state.view_id, at, id))
+    end)
+  end
+
+  # a Category note column's title (R56)
+  defp typed(state, :title, text, at),
+    do: State.change_db(state, Core.set_column_display(state.db, state.view_id, at, title: text))
 
   defp settings_key(state, mode, key) do
     last = length(fields(kind(state, mode))) - 1
     row = field(state, mode)
 
     case key do
-      k when k in [:esc, :enter] -> State.pop(state)
-      :up -> State.put_mode(state, %{mode | cursor: max(min(mode.cursor, last) - 1, 0)})
-      :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
-      {:f, 3} when row == :head -> pick_head(state, mode)
-      {:char, c} when row == :head and c != " " -> HeadTyping.start(state, mode, c)
-      k when k in [{:char, " "}, :right] -> change(state, mode, row, 1)
-      :left -> change(state, mode, row, -1)
-      _ -> state
+      k when k in [:esc, :enter] ->
+        State.pop(state)
+
+      :up ->
+        State.put_mode(state, %{mode | cursor: max(min(mode.cursor, last) - 1, 0)})
+
+      :down ->
+        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
+
+      {:f, 3} when row == :head ->
+        pick_head(state, mode)
+
+      {:char, c} when row in [:head, :title] and c != " " ->
+        FieldTyping.start(state, mode, row, c)
+
+      k when k in [{:char, " "}, :right] ->
+        change(state, mode, row, 1)
+
+      :left ->
+        change(state, mode, row, -1)
+
+      _ ->
+        state
     end
   end
 
@@ -139,6 +174,20 @@ defmodule Agenda.TUI.ColumnBox do
     State.change_db(state, Core.set_column_linked(state.db, state.view_id, mode.column, linked))
   end
 
+  # --- a standard column's Format (R56) ---
+
+  defp change(state, mode, :format, step) do
+    formats = View.Column.formats()
+    index = Enum.find_index(formats, &(&1 == column(state, mode).format))
+    format = Enum.at(formats, Integer.mod(index + step, length(formats)))
+    display(state, mode, format: format)
+  end
+
+  defp change(state, mode, :note_line, step),
+    do: display(state, mode, note_line: column(state, mode).note_line + step)
+
+  defp change(state, _mode, :title, _step), do: State.error(state, "Type the column's title")
+
   # --- a date column ---
 
   defp change(state, mode, :settings, _step) do
@@ -158,6 +207,13 @@ defmodule Agenda.TUI.ColumnBox do
     format = state |> column(mode) |> Map.fetch!(:number) |> step(row, step)
     State.change_db(state, Core.set_column_format(state.db, state.view_id, mode.column, format))
   end
+
+  defp display(state, mode, changes),
+    do:
+      State.change_db(
+        state,
+        Core.set_column_display(state.db, state.view_id, mode.column, changes)
+      )
 
   defp set_date(state, mode, format),
     do:
@@ -205,18 +261,27 @@ defmodule Agenda.TUI.ColumnBox do
 
     top = %{
       head: state.db.categories[column.category_id].name,
-      type: kind |> Atom.to_string() |> String.capitalize(),
+      type:
+        if(kind == :note, do: "Standard", else: kind |> Atom.to_string() |> String.capitalize()),
       width: Integer.to_string(column.width),
       linked: yes_no(column.link != nil)
     }
 
     values = Map.merge(top, values(state, mode, kind))
-    opts = [selected: field(state, mode)] ++ HeadTyping.editing(mode)
+    opts = [selected: field(state, mode)] ++ FieldTyping.editing(mode)
     lines = Template.render(layout(kind), values, opts)
     lines ++ samples(state, mode, kind) ++ [[], [{:box, @hint}]]
   end
 
-  defp values(_state, _mode, :standard), do: %{}
+  defp values(state, mode, kind) when kind in [:standard, :note] do
+    column = column(state, mode)
+
+    %{
+      format: format_name(column.format),
+      note_line: Integer.to_string(column.note_line),
+      title: column.title || ""
+    }
+  end
 
   defp values(state, mode, :numeric) do
     f = column(state, mode).number
@@ -249,7 +314,7 @@ defmodule Agenda.TUI.ColumnBox do
     )
   end
 
-  defp samples(_state, _mode, :standard), do: []
+  defp samples(_state, _mode, kind) when kind in [:standard, :note], do: []
 
   defp samples(state, mode, :numeric) do
     f = column(state, mode).number
@@ -267,6 +332,14 @@ defmodule Agenda.TUI.ColumnBox do
   # centred in the box, as Agenda's headings are
   defp centred(text),
     do: [{:box, Draw.pad(Draw.spaces(div(70 - String.length(text), 2)) <> text, 70)}]
+
+  @doc "A Format's name as Agenda's box says it."
+  def format_name(:name), do: "Name only"
+  def format_name(:parent), do: "Parent:Category"
+  def format_name(:ancestor), do: "Ancestor"
+  def format_name(:star), do: "Star (*)"
+  def format_name(:yes_no), do: "Yes/No"
+  def format_name(:note), do: "Category note"
 
   defp yes_no(true), do: "Yes"
   defp yes_no(false), do: "No"

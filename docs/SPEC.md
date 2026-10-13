@@ -553,6 +553,25 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     width the text has, a width chosen sets it Manually (5 to 200), and
     SHIFT-? fits it to the longest item text or section name of the
     sections it is linked with, within what the columns leave.
+- **R56 ✅ Standard column formats** (User's Guide 5-26 to 5-37; Help
+  "Standard Column Properties/Add Box"; screenshot 127). Column
+  Properties ▸ Format, for a standard column, in it and its linked
+  columns:
+  - Name only (the default): the names of the head's descendants the item
+    is assigned to (`*` when the head has no children).
+  - Parent:Category: each with its parent's name before it ("Sales:Tom").
+  - Ancestor: the head's child each is under ("Sales" for Tom), once.
+  - Star (*): `*` when the item is in the head, directly or through a
+    descendant; Yes/No: `Y` or `N` the same way.
+  - Category note: line Line number (1 to 999) of the notes of the
+    categories Name only would show, without a label before a colon
+    ("Telephone: 555-1234" shows "555-1234"), headed by Column title (at
+    most 69 characters; the head's name when blank) instead of the head;
+    File ▸ Print uses the title too.
+  - Too narrow, Name only, Parent:Category and Ancestor use short names.
+  - Not done yet: typing in Star, Yes/No and Category note columns as
+    Agenda does (SPACE, Y/N, writing the note line), and Format in the
+    Column Add box.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

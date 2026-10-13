@@ -327,6 +327,33 @@ defmodule Agenda.Core.Facade.Views do
   def move_column(db, view_id, sidx, from, to),
     do: Database.update_view(db, view_id, &ViewColumns.move(&1, sidx, from, to))
 
+  @doc """
+  Column Properties ▸ Format of a standard column (User's Guide 5-26 to
+  5-37; `View.Column`), in the column at `at` and those linked to it:
+  `format:` (`View.Column.formats/0`), `note_line:` (1 to 999) and
+  `title:` (at most 69 characters; blank for none) for Category note.
+  """
+  @spec set_column_display(db, id, View.at(), keyword) :: db
+  def set_column_display(db, view_id, at, changes) do
+    changes =
+      Map.new(changes, fn
+        {:format, format} -> {:format, format}
+        {:note_line, n} -> {:note_line, n |> max(1) |> min(999)}
+        {:title, title} -> {:title, column_title(title)}
+      end)
+
+    update_column(db, view_id, at, &Map.merge(&1, changes))
+  end
+
+  defp column_title(nil), do: nil
+
+  defp column_title(title) do
+    case String.trim(title) do
+      "" -> nil
+      title -> String.slice(title, 0, 69)
+    end
+  end
+
   @doc "Sets how a numeric column shows its numbers and calculations (R29)."
   @spec set_column_format(db, id, View.at(), NumberFormat.t()) :: db
   def set_column_format(db, view_id, at, %NumberFormat{} = format),

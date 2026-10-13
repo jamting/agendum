@@ -119,21 +119,40 @@ defmodule Agenda.Core.View do
     column in one section only. Each column added to all sections gets a
     link of its own, numbered within the view, so two columns with the
     same head stay two columns, as in Agenda.
+
+    `format` is how a standard column shows an item's assignments (User's
+    Guide 5-26 to 5-37): `:name` (Name only, the names of the categories
+    under the head it is in), `:parent` (Parent:Category), `:ancestor` (the
+    head's child they are under), `:star` (* when the item is in the head),
+    `:yes_no` (Y or N) or `:note` (Category note: line `note_line` of those
+    categories' notes, headed by `title` instead of the head's name).
+    Date and numeric columns ignore it.
     """
+    @type format :: :name | :parent | :ancestor | :star | :yes_no | :note
     @type t :: %__MODULE__{
             category_id: Agenda.Core.Category.id(),
             width: pos_integer,
             number: Agenda.Core.NumberFormat.t(),
             date: Agenda.Core.DateFormat.t() | nil,
-            link: pos_integer | nil
+            link: pos_integer | nil,
+            format: format,
+            note_line: pos_integer,
+            title: String.t() | nil
           }
     defstruct [
       :category_id,
       width: 12,
       number: %Agenda.Core.NumberFormat{},
       date: nil,
-      link: nil
+      link: nil,
+      format: :name,
+      note_line: 1,
+      title: nil
     ]
+
+    @doc "The formats a standard column can have, in the order Agenda offers them."
+    @spec formats() :: [format]
+    def formats, do: [:name, :parent, :ancestor, :star, :yes_no, :note]
 
     @doc """
     How wide the column is on the screen: its width, and 6 more for a

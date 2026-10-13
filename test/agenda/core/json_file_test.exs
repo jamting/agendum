@@ -91,6 +91,8 @@ defmodule Agenda.Core.JSONFileTest do
     db = Core.set_item_column(db, view, 0, set: :manual, width: 33, minimum: 7)
     db = Core.set_item_column_linked(db, view, 0, false)
     db = Core.move_column(db, view, 0, 0, 1)
+    db = Core.add_column(db, view, people, {0, 0}, 14, :section)
+    db = Core.set_column_display(db, view, {0, 0}, format: :note, note_line: 2, title: "Phone #")
     {db, view2} = Core.add_view(db, "Found", [people, urgent])
 
     db =

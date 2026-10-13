@@ -98,7 +98,7 @@ defmodule Agenda.Core.ViewModel do
             cells:
               Enum.map(
                 view.columns,
-                &cell(db, item, &1.category_id, &1.width, &1.number, today: today, date: &1.date)
+                &cell(db, item, &1.category_id, &1.width, &1.number, cell_opts(&1, today))
               )
           }
         end)
@@ -141,7 +141,7 @@ defmodule Agenda.Core.ViewModel do
             cells:
               Enum.map(
                 section.columns,
-                &cell(db, item, &1.category_id, &1.width, &1.number, today: today, date: &1.date)
+                &cell(db, item, &1.category_id, &1.width, &1.number, cell_opts(&1, today))
               )
           }
         end)
@@ -184,6 +184,10 @@ defmodule Agenda.Core.ViewModel do
 
   # The calculation lines of a section: every calculation some numeric
   # column asks for, in Agenda's order.
+  # what `cell/6` needs from a column besides its head, width and numbers
+  defp cell_opts(column, today),
+    do: [today: today, date: column.date, format: column.format, note_line: column.note_line]
+
   # Each row's "% tot" per column: its number's share of the section's
   # total in a column that shows % of total, nil in the others.
   defp percents(rows, db, columns) do
@@ -383,11 +387,12 @@ defmodule Agenda.Core.ViewModel do
   The text a column shows for an item: the item's date for a date column,
   in the column's own format (`date:`) or the file's, relative dates
   counted from `today:` (R41a);
-  its number in `number`'s format for a numeric column (R29); `*` for a
-  childless ("yes/no") column head the item belongs to; otherwise the names
-  of the head's descendants the item is assigned to. When those names do
-  not fit in `width`, categories with a short name show it instead (User's
-  Guide 19-2).
+  its number in `number`'s format for a numeric column (R29); for a
+  standard column, its assignments in the column's `format:` (Name only by
+  default: the names of the head's descendants the item is assigned to, or
+  `*` for a childless head the item belongs to; `View.Column`, with
+  `note_line:` for Category note). When the names do not fit in `width`,
+  categories with a short name show it instead (User's Guide 19-2).
   """
   @spec cell(
           Database.t(),
@@ -423,18 +428,90 @@ defmodule Agenda.Core.ViewModel do
           global: db.date_format
         )
 
-      head.children == [] ->
-        if Database.member?(db, item.id, head_id), do: "*", else: ""
-
       true ->
-        categories = db |> column_entries(item.id, head_id) |> Enum.map(&db.categories[&1])
-        full = Enum.map_join(categories, ", ", & &1.name)
-
-        if width == nil or String.length(full) <= width,
-          do: full,
-          else: Enum.map_join(categories, ", ", &(&1.short_name || &1.name))
+        standard_cell(db, item.id, head, width, opts[:format] || :name, opts[:note_line] || 1)
     end
   end
+
+  # A standard column in its Format (User's Guide 5-26 to 5-37).
+  defp standard_cell(db, item_id, head, _width, :star, _line),
+    do: if(Database.member?(db, item_id, head.id), do: "*", else: "")
+
+  defp standard_cell(db, item_id, head, _width, :yes_no, _line),
+    do: if(Database.member?(db, item_id, head.id), do: "Y", else: "N")
+
+  # a childless head has no names to show: * when the item is in it
+  defp standard_cell(db, item_id, %{children: []} = head, width, format, line)
+       when format != :note,
+       do: standard_cell(db, item_id, head, width, :star, line)
+
+  defp standard_cell(db, item_id, head, _width, :note, line) do
+    db
+    |> column_entries(item_id, head.id)
+    |> Enum.map(&note_line(db.categories[&1].note, line))
+    |> Enum.reject(&(&1 == ""))
+    |> Enum.join(", ")
+  end
+
+  defp standard_cell(db, item_id, head, width, format, _line) do
+    entries = entries_as(db, column_entries(db, item_id, head.id), head.id, format)
+    full = Enum.map_join(entries, ", ", &label(&1, :name))
+
+    if width == nil or String.length(full) <= width,
+      do: full,
+      else: Enum.map_join(entries, ", ", &label(&1, :short))
+  end
+
+  # The categories a column shows, each as the categories its label is
+  # made of: itself (Name only), its parent and itself (Parent:Category),
+  # or the head's child it is under, once each (Ancestor).
+  defp entries_as(db, ids, _head_id, :name), do: Enum.map(ids, &[db.categories[&1]])
+
+  defp entries_as(db, ids, _head_id, :parent) do
+    Enum.map(ids, fn id ->
+      cat = db.categories[id]
+      [db.categories[cat.parent_id], cat]
+    end)
+  end
+
+  defp entries_as(db, ids, head_id, :ancestor) do
+    ids
+    |> Enum.map(fn id ->
+      # the ancestors, nearest first, end at MAIN; the one just under the
+      # head is the last before the head (or the category itself)
+      chain = [id | Database.ancestors(db, id)]
+      chain |> Enum.take_while(&(&1 != head_id)) |> List.last()
+    end)
+    |> Enum.uniq()
+    |> Enum.map(&[db.categories[&1]])
+  end
+
+  defp label(categories, :name), do: Enum.map_join(categories, ":", & &1.name)
+  defp label(categories, :short), do: Enum.map_join(categories, ":", &(&1.short_name || &1.name))
+
+  @doc """
+  Line `n` of a note as a Category note column shows it: without the
+  label before a colon ("Telephone: 555-1234" shows "555-1234"), trimmed;
+  "" when the note has no such line (User's Guide 5-36).
+  """
+  @spec note_line(String.t(), pos_integer) :: String.t()
+  def note_line(note, n) do
+    line = note |> String.split("\n") |> Enum.at(n - 1, "")
+
+    case String.split(line, ":", parts: 2) do
+      [_label, value] -> String.trim(value)
+      [text] -> String.trim(text)
+    end
+  end
+
+  @doc """
+  A column's head as shown above it: a Category note column's title, if
+  it has one; otherwise the head category's name, or its short name when
+  the name does not fit (`column_label/3`).
+  """
+  @spec column_head(Database.t(), View.Column.t()) :: String.t()
+  def column_head(_db, %View.Column{format: :note, title: title}) when is_binary(title), do: title
+  def column_head(db, column), do: column_label(db, column.category_id, column.width)
 
   @doc """
   A column head as shown above a column `width` characters wide: the

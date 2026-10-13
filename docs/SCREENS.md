@@ -222,8 +222,10 @@ or handles it.
   - **Column Properties** (View ▸ Column ▸ Properties, on a column entry):
     `:column_props`, one box for every column as in Agenda (screenshot
     142): head, category type, width and Link with other sections (R55);
-    below them a numeric column's number format and calculations (R29) or
-    a date column's own date format or the global defaults (R41a).
+    a standard column's Format, with Line number and Column title for
+    Category note (R56, screenshot 127); below them a numeric column's
+    number format and calculations (R29) or a date column's own date
+    format or the global defaults (R41a).
     `Agenda.TUI.ColumnBox`.
     - **Picker** `:picker` for the column head (F3 on Column head).
   - **Item Column Properties** (View ▸ Column ▸ Properties on the item

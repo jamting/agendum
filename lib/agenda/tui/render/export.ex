@@ -15,7 +15,13 @@ defmodule Agenda.TUI.Render.Export do
     |> Agenda.Core.ViewModel.build(view, State.context(state))
     |> Enum.map_join("\n\n", fn section ->
       # each section has its own columns (R55)
-      heads = Enum.map(section.columns, &state.db.categories[&1.category_id].name)
+      # a Category note column's title stands in for its head's name (R56)
+      heads =
+        Enum.map(section.columns, fn
+          %{format: :note, title: title} when is_binary(title) -> title
+          column -> state.db.categories[column.category_id].name
+        end)
+
       header = Enum.join([section.category.name | heads], " | ")
 
       items =

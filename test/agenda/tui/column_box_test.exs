@@ -50,6 +50,35 @@ defmodule Agenda.TUI.ColumnBoxTest do
              cat(state.db, "Follow up")
   end
 
+  describe "Format (R56; screenshot 127)" do
+    test "SPACE goes through Agenda's formats, in every linked section", %{
+      state: state,
+      view_id: v
+    } do
+      # after Column head, Category type, Width and Link: Format
+      state = press(state, [:down, :down, :down, :down])
+      assert screen(state) =~ ~r/Format: +Name only/
+      state = press(state, " ")
+      assert screen(state) =~ ~r/Format: +Parent:Category/
+      state = press(state, [" ", " ", " "])
+      assert screen(state) =~ ~r/Format: +Yes\/No/
+      assert {people(state, v, 0).format, people(state, v, 1).format} == {:yes_no, :yes_no}
+      refute screen(state) =~ "Line number"
+    end
+
+    test "Category note: Line number and Column title, which heads the column",
+         %{state: state, view_id: v} do
+      state = press(state, [:down, :down, :down, :down, :left])
+      assert screen(state) =~ ~r/Format: +Category note/
+      assert screen(state) =~ ~r/Line number: +1/
+      state = press(state, [:down, :right, :down, "P", "h", "o", "n", "e", " ", "#", :enter])
+      assert {people(state, v, 0).note_line, people(state, v, 0).title} == {2, "Phone #"}
+      assert screen(state) =~ ~r/Column title: *Phone #/
+      # in the view, Phone # heads the column instead of People
+      assert state |> press(:esc) |> screen() =~ ~r/Calls +Phone #/
+    end
+  end
+
   test "Width: → and ← change it by one, in every linked section", %{state: state, view_id: v} do
     state = press(state, [:down, :down, :right, :right, :left])
     assert people(state, v, 0).width == 13

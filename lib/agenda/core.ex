@@ -199,6 +199,7 @@ defmodule Agenda.Core do
   defdelegate set_item_column_linked(db, view_id, sidx, linked), to: Views
   defdelegate item_column_fit(db, view_id, sidx, clock, screen), to: Views
   defdelegate set_column_format(db, view_id, at, format), to: Views
+  defdelegate set_column_display(db, view_id, at, changes), to: Views
   defdelegate set_column_date_format(db, view_id, at, format), to: Views
   defdelegate resize_column(db, view_id, at, delta), to: Views
   defdelegate set_column_width(db, view_id, at, width), to: Views

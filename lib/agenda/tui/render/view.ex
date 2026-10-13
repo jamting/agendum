@@ -161,8 +161,7 @@ defmodule Agenda.TUI.Render.View do
 
         [
           {:normal, " "},
-          {head_style,
-           Draw.pad(ViewModel.column_label(state.db, c.category_id, c.width), c.width)}
+          {head_style, Draw.pad(ViewModel.column_head(state.db, c), c.width)}
         ] ++ percent_part(c, {:column_head, "% tot"})
       end)
 
