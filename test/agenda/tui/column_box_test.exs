@@ -66,6 +66,22 @@ defmodule Agenda.TUI.ColumnBoxTest do
       refute screen(state) =~ "Line number"
     end
 
+    test "its value lines up with the values above it", %{state: state} do
+      # Category note, with a title, so every row has a value
+      state = press(state, [:down, :down, :down, :down, :left, :down, :down, "P", :enter])
+      lines = String.split(screen(state), "\n")
+
+      # where the value after each label starts on the screen
+      starts =
+        for label <- ["Column head:", "Width:", "Format:", "Line number:", "Column title:"] do
+          line = Enum.find(lines, &String.contains?(&1, label))
+          [_, before] = Regex.run(~r/^(.*#{Regex.escape(label)} *)/u, line)
+          String.length(before)
+        end
+
+      assert length(Enum.uniq(starts)) == 1
+    end
+
     test "Category note: Line number and Column title, which heads the column",
          %{state: state, view_id: v} do
       state = press(state, [:down, :down, :down, :down, :left])

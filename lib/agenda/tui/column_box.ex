@@ -30,8 +30,8 @@ defmodule Agenda.TUI.ColumnBox do
   alias Agenda.TUI.{CategoryScreens, DateFormatRows, Draw, FieldTyping, State, Template}
 
   @top """
-   Column head: [head          ]  Category type:            [type    ]
-   Width:       [width ]          Link with other sections: [linked  ]
+   Column head:  [head         ]  Category type:            [type    ]
+   Width:        [width ]         Link with other sections: [linked  ]
   """
 
   # a standard column's Format (R56); Category note has a line and a title
