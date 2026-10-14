@@ -74,6 +74,7 @@ defmodule Agenda.TUI.FieldHelp do
       "Highlight the section to copy the item to and press ENTER; " <>
         "it stays in its other sections.",
     goto: "Highlight the section to go to and press ENTER, or type its first letter.",
+    choice_list: "Highlight the choice and press ENTER.",
     questions:
       "Pick the categories to assign the item to: SPACE one, TAB all. " <>
         "ENTER assigns them and shows the next item.",

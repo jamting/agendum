@@ -40,7 +40,7 @@ defmodule Agenda.TUI.Update do
     ViewManager
   }
 
-  alias Agenda.TUI.BoxCancel
+  alias Agenda.TUI.{BoxCancel, BoxChoices}
   alias Agenda.TUI.Update.{Actions, Marked, Notes, Prompts, ViewKeys}
 
   @spec handle(State.t(), term) :: {State.t(), [term]}
@@ -55,6 +55,7 @@ defmodule Agenda.TUI.Update do
            :pass <- Agenda.TUI.Macros.key(state, key),
            :pass <- global_key(state, key),
            :pass <- BoxCancel.cancel(state, key),
+           :pass <- BoxChoices.key(state, key),
            do: dispatch(state, State.mode(state), key)
 
     # a settings box keeps how things were when it opened, for ESC
@@ -382,8 +383,16 @@ defmodule Agenda.TUI.Update do
 
   # --- dispatch --------------------------------------------------------------
 
+  @doc """
+  A key for the box on top alone, without what `handle/2` does around it
+  (undo, macros): `Agenda.TUI.BoxChoices` tries SPACE with it.
+  """
+  @spec box_key(State.t(), term) :: State.t()
+  def box_key(state, key), do: dispatch(state, State.mode(state), key)
+
   defp dispatch(state, nil, key), do: ViewKeys.view_key(state, key)
   defp dispatch(state, %{type: :menu} = m, key), do: Menu.handle(state, m, key)
+  defp dispatch(state, %{type: :choice_list} = m, key), do: BoxChoices.list_key(state, m, key)
   defp dispatch(state, %{type: :viewmgr} = m, key), do: ViewManager.handle(state, m, key)
   defp dispatch(state, %{type: :prompt} = m, key), do: Prompts.prompt_key(state, m, key)
   defp dispatch(state, %{type: :confirm} = m, key), do: Prompts.confirm_key(state, m, key)

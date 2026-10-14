@@ -203,6 +203,9 @@ or handles it.
   - **View manager** `:viewmgr` (F8, View ▸ Manager): full screen of the
     views; switch, add, rename, reorder, discard. `Agenda.TUI.ViewManager`.
   - **Go to** `:goto` (ALT-F5): jump to a section (R42). `Agenda.TUI.GoTo`.
+  - **Choices** `:choice_list` (F3 on a setting in a box that has a list
+    of choices): its choices, the current one first; ENTER takes the
+    highlighted one (§5). `Agenda.TUI.BoxChoices`.
   - **Search box** `:search_box` (ALT-F6, Search ▸ View or File): what to
     find, in item text, note or both, the direction, ignoring case (R37). `Agenda.TUI.SearchBox`.
     - **Searching** `:searching`: ALT-N / ALT-P step through matches, F7
@@ -301,6 +304,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:group_profile`     | box           | `Agenda.TUI.CategoryScreens.Profile`    | F3 with items marked                             | R35           |
 | `:props`             | box           | `Agenda.TUI.CategoryScreens.Properties` | F6 on a section head or in the category manager  | §5            |
 | `:choice`            | box           | `Agenda.TUI.CategoryScreens.Choices`    | Category Properties, moves in the manager        | R6a, R7a, R7b |
+| `:choice_list`       | box           | `Agenda.TUI.BoxChoices`                 | F3 on a setting with choices in a box            | §5            |
 | `:item_props`        | box           | `Agenda.TUI.ItemProperties`             | F6 on an item, Item ▸ Properties                 | R34, R43      |
 | `:goto`              | box           | `Agenda.TUI.GoTo`                       | ALT-F5                                           | R42           |
 | `:search_box`        | box           | `Agenda.TUI.SearchBox`                  | ALT-F6, Search ▸ View / File                     | R37           |

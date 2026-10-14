@@ -69,6 +69,7 @@ settings, as described in the second half of this guide.
 | In the menu: back up a level; in a box, prompt or question opened from it: back to the menu       | ESC                           | ESC                                                                   |
 | In a box: move between settings (→ ← along a row, on to the next or previous; ↓ ↑ keep to the side); first / last setting | ↑ ↓ ← →, TAB / SHIFT-TAB; HOME / END | fn-← / fn-→ for HOME / END                                            |
 | In a box: change or open a setting; type a number (width, decimal places, line); edit a text field; pick from a list; done; cancel the box's changes | SPACE; digits; F2; F3; ENTER; ESC | SPACE; digits; **CTRL-E**; ESC then `3`; ENTER; ESC                 |
+| In a box, on a setting with choices: the next choice starting with a letter; list the choices | the letter; F3 | the letter; ESC then `3`                                              |
 
 While typing text:
 

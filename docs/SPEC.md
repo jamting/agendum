@@ -953,7 +953,11 @@ only that); HOME / END the first / last. On a text or date being typed
 text instead. A setting is changed with SPACE (the next choice), edited
 with F2, picked from with F3; a number (a width, decimal places, a line
 number) is typed, and so are Morning, Afternoon and Evening (SPACE asks).
-Our choice: Agenda's first letter of a choice is not yet taken. Our choices: the
+On a setting with a list of choices, as in Agenda, a letter picks the
+next choice starting with it ("r": Relative; one undo step), and F3
+(CHOICES) lists them in a box, the current one first. The choices are
+what SPACE goes through (`Agenda.TUI.BoxChoices`); on a setting that is
+typed, letters are typed as before. Our choices: the
 function-key bar stays one line with the keys'
 names and labels side by side (Agenda had two lines of ten fixed slots).
 When the screen is wide enough for all of them, it shows fuller labels

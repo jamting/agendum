@@ -27,6 +27,49 @@ defmodule Agenda.TUI.Render.Boxes do
     |> Draw.shadow(top, left, length(box), inner + 2)
   end
 
+  @doc """
+  The highlighted value of the box on top, as shown: `Agenda.TUI.BoxChoices`
+  reads a setting's choices with it.
+  """
+  @spec selected_value(State.t()) :: String.t()
+  def selected_value(state) do
+    state
+    |> selected_line()
+    |> Enum.filter(&(elem(&1, 0) == :box_selected))
+    |> Enum.map_join(&elem(&1, 1))
+    |> String.trim()
+  end
+
+  @doc """
+  The name of the highlighted setting: the words before its value on its
+  line ("Date format" in " Date format : YYYYMMDD"), after anything to the
+  left of it in a box of two columns.
+  """
+  @spec selected_name(State.t()) :: String.t()
+  def selected_name(state) do
+    before =
+      state
+      |> selected_line()
+      |> Enum.take_while(&(elem(&1, 0) != :box_selected))
+      |> Enum.map_join(&elem(&1, 1))
+
+    # without its colon, the last piece after a gap of two spaces or more
+    before
+    |> String.trim_trailing()
+    |> String.trim_trailing(":")
+    |> String.split(~r/\s{2,}/, trim: true)
+    |> List.last("")
+    |> String.trim()
+  end
+
+  defp selected_line(state) do
+    mode = State.mode(state)
+
+    state
+    |> box_content(mode, box_width(state, mode), State.body_height(state))
+    |> Enum.find([], fn line -> Enum.any?(line, &(elem(&1, 0) == :box_selected)) end)
+  end
+
   # Agenda's words in the bottom edge (screenshots 130, 138, 144): how to
   # finish the box. A short form when the long one does not fit.
   @done {"Press ENTER when done, ESC to cancel", "ENTER done · ESC cancel"}
@@ -44,7 +87,7 @@ defmodule Agenda.TUI.Render.Boxes do
     :note_search
   ]
   # boxes to choose one thing in
-  @accept_boxes [:goto, :copy_items, :calendar, :select_file, :choice, :scope]
+  @accept_boxes [:goto, :copy_items, :calendar, :select_file, :choice, :scope, :choice_list]
   # pickers where ENTER cycles a category's choice and ESC finishes
   @esc_pickers [:filter, :condition, :also_assign, :excludes, :schedule_filter]
 
@@ -66,8 +109,9 @@ defmodule Agenda.TUI.Render.Boxes do
   # the calendar is a small box, as in Agenda; the others share one width
   defp box_width(state, %{type: :calendar}), do: min(state.width - 8, 30)
 
-  defp box_width(state, %{type: type}) when type in [:numeric_functions, :copy_items],
-    do: min(state.width - 8, 32)
+  defp box_width(state, %{type: type})
+       when type in [:numeric_functions, :copy_items, :choice_list],
+       do: min(state.width - 8, 32)
 
   # File Properties and Column Properties have Agenda's two columns of
   # settings side by side (screenshots 130, 127)
@@ -82,6 +126,8 @@ defmodule Agenda.TUI.Render.Boxes do
   defp box_title(state, %{type: :picker, purpose: purpose}), do: picker_title(state, purpose)
 
   defp box_title(_state, %{type: :item_props}), do: "Item properties"
+  defp box_title(_state, %{type: :choice_list, title: ""}), do: "Choices"
+  defp box_title(_state, %{type: :choice_list, title: title}), do: "Choices: " <> title
 
   defp box_title(_state, %{type: :group_profile, item_ids: ids}),
     do: "Assignments: #{Draw.count(length(ids), "marked item")}"
@@ -256,6 +302,19 @@ defmodule Agenda.TUI.Render.Boxes do
   defp box_content(state, %{type: type} = mode, inner, max_rows)
        when type in [:picker, :profile, :group_profile, :choice, :props],
        do: CategoryBoxes.content(state, mode, inner, max_rows)
+
+  # F3 on a setting (`Agenda.TUI.BoxChoices`): its choices, one a line
+  defp box_content(_state, %{type: :choice_list} = mode, _inner, max_rows) do
+    top = max(mode.cursor - max_rows + 1, 0)
+
+    mode.labels
+    |> Enum.with_index()
+    |> Enum.drop(top)
+    |> Enum.take(max_rows)
+    |> Enum.map(fn {label, i} ->
+      [{:box, " "}, {if(i == mode.cursor, do: :box_selected, else: :box), label}]
+    end)
+  end
 
   defp box_content(state, %{type: :alarm_list} = mode, inner, _max_rows) do
     rows = Agenda.TUI.AlarmList.rows(state)
