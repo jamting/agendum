@@ -232,14 +232,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ENTER/ESC", "End search"}
     ]
 
-  defp mode_keys(%{type: :sort}),
-    do: [
-      {"↑↓←→", "Setting", "Move between settings"},
-      {"SPACE", "Change", "Change the setting"},
-      {"ENTER", "Done"},
-      {"ESC", "Cancel"}
-    ]
-
   defp mode_keys(%{type: :scope}),
     do: [
       {"M", "Marked items"},

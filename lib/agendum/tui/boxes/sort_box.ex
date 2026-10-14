@@ -12,19 +12,49 @@ defmodule Agendum.TUI.Boxes.SortBox do
   settings ("As the view"). The view's box also sorts the section heads
   (Section sorting: None, Category order, Alphabetic, Numeric; Section
   order). ENTER closes the box; ESC closes it and cancels its changes
-  (`Agendum.TUI.Boxes.BoxCancel`). Pure.
+  (`Agendum.TUI.Boxes.BoxCancel`). Drawn from `@layout`
+  (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "SORT", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
 
   alias Agendum.Core
   alias Agendum.Core.Database
   alias Agendum.Core.View.SortKey
+  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
   alias Agendum.TUI.{CategoryScreens, State}
 
-  @rows [:on, :order, :na, :sequence, :line, :then_on, :then_order]
+  # the last two rows only in the view's box (a section has no sections)
+  @layout """
+   Sort on         : [on                                     ]
+   Order           : [order                                  ]
+   Sort n/a's      : [na                                     ]
+   Sequence        : [sequence                               ]
+   Line number     : [line                                   ]
+   Then by         : [then_on                                ]
+   Then order      : [then_order                             ]
+   Section sorting : [sections                               ]
+   Section order   : [section_order                          ]
+  """
+
   @section_rows [:sections, :section_order]
+  @rows Template.fields(@layout) -- @section_rows
+
+  @help %{
+    on: "What to sort the items on: item text, a category, or a category note. SPACE.",
+    order: "Sort in ascending or descending order. SPACE switches.",
+    na: "Where items with nothing to sort on go: the top or the bottom. SPACE switches.",
+    sequence:
+      "Sort on the children of the category in their hierarchy order or alphabetically. " <>
+        "SPACE switches.",
+    line: "Which line of the category note to sort on. Type it (1 to 9).",
+    then_on: "What to sort items on when they are equal so far. SPACE changes it.",
+    then_order: "Sort the second key in ascending or descending order. SPACE switches.",
+    sections: "How to order the sections: none, by category order, alphabetic or numeric. SPACE.",
+    section_order: "Sort the sections in ascending or descending order. SPACE switches."
+  }
 
   @doc "The rows of the box: the view's box also sorts its section heads."
   def rows(%{scope: :view}), do: @rows ++ @section_rows
@@ -33,13 +63,14 @@ defmodule Agendum.TUI.Boxes.SortBox do
   def open(state, scope), do: State.push(state, %{type: :sort, scope: scope, cursor: 0})
 
   @doc "The keys in effect for the scope: the section's own, or `nil` when it uses the view's."
-  @spec keys(State.t(), map) :: [SortKey.t()] | nil
-  def keys(state, %{scope: :view}), do: State.view(state).sort
-  def keys(state, %{scope: {:section, i}}), do: Enum.at(State.view(state).sections, i).sort
+  @spec sort_keys(State.t(), map) :: [SortKey.t()] | nil
+  def sort_keys(state, %{scope: :view}), do: State.view(state).sort
+  def sort_keys(state, %{scope: {:section, i}}), do: Enum.at(State.view(state).sections, i).sort
 
   # What the rows show when a section uses the view's keys.
-  defp effective(state, mode), do: keys(state, mode) || State.view(state).sort
+  defp effective(state, mode), do: sort_keys(state, mode) || State.view(state).sort
 
+  @impl Box
   def handle(state, mode, key) do
     case key do
       # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
@@ -47,7 +78,7 @@ defmodule Agendum.TUI.Boxes.SortBox do
         State.pop(state)
 
       k when is_move(k) ->
-        BoxNav.move(state, mode, BoxNav.column(rows(mode)), k)
+        BoxNav.move(state, mode, Template.grid(@layout, rows(mode)), k)
 
       {:char, " "} ->
         change(state, mode, Enum.at(rows(mode), mode.cursor))
@@ -67,7 +98,7 @@ defmodule Agendum.TUI.Boxes.SortBox do
   # Category note… → …
   defp change(state, mode, row) when row in [:on, :then_on] do
     index = if row == :on, do: 0, else: 1
-    keys = keys(state, mode)
+    keys = sort_keys(state, mode)
     current = keys && Enum.at(keys, index)
 
     no_primary = index == 1 and effective(state, mode) == []
@@ -187,34 +218,48 @@ defmodule Agendum.TUI.Boxes.SortBox do
 
   # --- what the rows say ---------------------------------------------------------
 
-  @doc "`{label, value}` for each row."
-  def lines(state, mode) do
-    own = keys(state, mode)
+  @impl Box
+  def title(_state, %{scope: :view}), do: "Sort items in all sections"
+
+  def title(state, %{scope: {:section, i}}) do
+    section = Enum.at(State.view(state).sections, i)
+    "Sort items in " <> state.db.categories[section.category_id].name
+  end
+
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
+    Template.render(@layout, values(state, mode), selected: field(state, mode)) ++
+      [[], Box.hint(keys(state, mode), inner)]
+  end
+
+  # a setting that does not apply shows "-"
+  defp values(state, mode) do
+    own = sort_keys(state, mode)
     keys = effective(state, mode)
     first = Enum.at(keys, 0)
     second = Enum.at(keys, 1)
 
-    [
-      {"Sort on",
-       if(own == nil,
-         do: "As the view (#{describe(state.db, first)})",
-         else: describe(state.db, first)
-       )},
-      {"Order", first && order_text(first.order)},
-      {"Sort n/a's",
-       first && if(first.na == :bottom, do: "Bottom of section", else: "Top of section")},
-      {"Sequence",
-       first && category_key?(first) &&
-         if(first.sequence == :hierarchy, do: "Category hierarchy", else: "Alphabetic")},
-      {"Line number", first && note_key?(first) && Integer.to_string(first.line)},
-      {"Then by", describe(state.db, second)},
-      {"Then order", second && order_text(second.order)}
-    ]
-    |> Enum.concat(section_lines(state, mode))
-    |> Enum.map(fn {label, value} -> {label, value || "-"} end)
+    %{
+      on:
+        if(own == nil,
+          do: "As the view (#{describe(state.db, first)})",
+          else: describe(state.db, first)
+        ),
+      order: first && order_text(first.order),
+      na: first && if(first.na == :bottom, do: "Bottom of section", else: "Top of section"),
+      sequence:
+        first && category_key?(first) &&
+          if(first.sequence == :hierarchy, do: "Category hierarchy", else: "Alphabetic"),
+      line: first && note_key?(first) && Integer.to_string(first.line),
+      then_on: describe(state.db, second),
+      then_order: second && order_text(second.order)
+    }
+    |> Map.new(fn {field, value} -> {field, value || "-"} end)
+    |> Map.merge(section_values(state, mode))
   end
 
-  defp section_lines(state, %{scope: :view}) do
+  # nil leaves the rows out (`Agendum.TUI.Boxes.Template`)
+  defp section_values(state, %{scope: :view}) do
     view = State.view(state)
 
     sort =
@@ -222,13 +267,25 @@ defmodule Agendum.TUI.Boxes.SortBox do
         view.section_sort
       ]
 
-    [
-      {"Section sorting", sort},
-      {"Section order", view.section_sort != :none && order_text(view.section_order)}
-    ]
+    %{
+      sections: sort,
+      section_order: if(view.section_sort == :none, do: "-", else: order_text(view.section_order))
+    }
   end
 
-  defp section_lines(_state, _mode), do: []
+  defp section_values(_state, _mode), do: %{sections: nil, section_order: nil}
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓←→", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Change the setting"},
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
 
   defp describe(_db, nil), do: "None"
   defp describe(_db, %SortKey{on: :text}), do: "Item text"
@@ -248,6 +305,6 @@ defmodule Agendum.TUI.Boxes.SortBox do
   defp order_text(:asc), do: "Ascending"
   defp order_text(:desc), do: "Descending"
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
   def field(_state, mode), do: Enum.at(rows(mode), mode.cursor)
 end

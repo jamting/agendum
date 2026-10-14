@@ -224,11 +224,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :search_box, scope: :file}),
     do: "Search the whole file (Show View)"
 
-  defp box_title(_state, %{type: :sort, scope: :view}), do: "Sort items in all sections"
-
-  defp box_title(state, %{type: :sort, scope: {:section, i}}),
-    do: "Sort items in #{section_name(state, i)}"
-
   defp box_title(state, %{type: :profile, item_id: id}),
     do: "Assignments: " <> String.slice(state.db.items[id].text, 0, 40)
 
@@ -597,22 +592,6 @@ defmodule Agendum.TUI.Render.Boxes do
       end)
 
     rows ++ [[], [{:box, " Finds the text anywhere · ALT-S in the note: next one"}]]
-  end
-
-  defp box_content(state, %{type: :sort} = mode, inner, _max_rows) do
-    rows =
-      state
-      |> Agendum.TUI.Boxes.SortBox.lines(mode)
-      |> Enum.with_index()
-      |> Enum.map(fn {{label, value}, i} ->
-        [
-          {:box, " " <> Draw.pad(label, 16) <> ": "},
-          {if(i == mode.cursor, do: :box_selected, else: :box),
-           String.slice(value, 0, inner - 20)}
-        ]
-      end)
-
-    rows ++ [[], [{:box, " SPACE changes the highlighted setting"}]]
   end
 
   defp box_content(_state, %{type: :scope} = mode, _inner, _max_rows) do

@@ -215,9 +215,6 @@ defmodule Agendum.TUI.Render.ControlPanel do
           ] ->
         "PROPS"
 
-      top && top.type == :sort ->
-        "SORT"
-
       top && top.type in [:search_box, :searching, :note_search] ->
         "SEARCH"
 

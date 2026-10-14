@@ -34,7 +34,6 @@ defmodule Agendum.TUI.Update do
     Typing.NoteSearch,
     Boxes.RangeFilterBox,
     Boxes.SearchBox,
-    Boxes.SortBox,
     State,
     Boxes.ViewManager
   }
@@ -417,7 +416,6 @@ defmodule Agendum.TUI.Update do
   defp dispatch(state, %{type: :move_item} = m, key), do: Marked.move_key(state, m, key)
   defp dispatch(state, %{type: :item_props} = m, key), do: ItemProperties.handle(state, m, key)
   defp dispatch(state, %{type: :scope} = m, key), do: Marked.scope_key(state, m, key)
-  defp dispatch(state, %{type: :sort} = m, key), do: SortBox.handle(state, m, key)
   defp dispatch(state, %{type: :search_box} = m, key), do: SearchBox.handle(state, m, key)
   defp dispatch(state, %{type: :note_search} = m, key), do: NoteSearch.handle(state, m, key)
 

@@ -23,7 +23,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.RangeFilterBox,
     Boxes.SearchBox,
     Boxes.SectionBox,
-    Boxes.SortBox,
     State
   }
 
@@ -36,7 +35,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   # The box types and the module that knows their highlighted field
   @boxes %{
     datebook_props: DatebookBox,
-    sort: SortBox,
     search_box: SearchBox,
     section_props: SectionBox,
     column_props: ColumnBox,
@@ -95,20 +93,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
           "read each time the view is shown. SPACE types it.",
       hide_column_heads: "Whether the column heads show above each section. SPACE switches.",
       section_separators: "Whether a line separates the sections. SPACE switches."
-    },
-    sort: %{
-      on: "What to sort the items on: item text, a category, or a category note. SPACE.",
-      order: "Sort in ascending or descending order. SPACE switches.",
-      na: "Where items with nothing to sort on go: the top or the bottom. SPACE switches.",
-      sequence:
-        "Sort on the children of the category in their hierarchy order or alphabetically. " <>
-          "SPACE switches.",
-      line: "Which line of the category note to sort on. Type it (1 to 9).",
-      then_on: "What to sort items on when they are equal so far. SPACE changes it.",
-      then_order: "Sort the second key in ascending or descending order. SPACE switches.",
-      sections:
-        "How to order the sections: none, by category order, alphabetic or numeric. SPACE.",
-      section_order: "Sort the sections in ascending or descending order. SPACE switches."
     },
     search_box: %{
       text: "Type the text to search for. Pat* finds Pat and Patty. ENTER searches.",

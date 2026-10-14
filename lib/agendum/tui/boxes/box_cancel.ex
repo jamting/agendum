@@ -23,7 +23,6 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
   # range filters, actions, Execute, Schedule, Search) apply only on ENTER
   @boxes [
     :datebook_props,
-    :sort,
     :section_props,
     :column_props,
     :item_column,
