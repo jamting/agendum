@@ -41,7 +41,7 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
       [_ | _] = choices ->
         labels = Enum.map(choices, &elem(&1, 0))
         title = Boxes.selected_name(state)
-        State.push(state, %{type: :choice_list, labels: labels, title: title, cursor: 0})
+        Agendum.TUI.Boxes.ChoiceListBox.open(state, labels, title)
 
       _ ->
         :pass
@@ -49,35 +49,6 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
   end
 
   def key(_state, _key), do: :pass
-
-  @doc "A key in the list of choices: ↑↓ choose, ENTER takes it, ESC leaves it."
-  @spec list_key(State.t(), map, term) :: State.t()
-  def list_key(state, mode, key) do
-    last = length(mode.labels) - 1
-
-    case key do
-      :esc ->
-        State.pop(state)
-
-      :enter ->
-        state |> State.pop() |> press(mode.cursor)
-
-      k when k in [:up, :left] ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      k when k in [:down, :right] ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
-
-      :home ->
-        State.put_mode(state, %{mode | cursor: 0})
-
-      :end ->
-        State.put_mode(state, %{mode | cursor: last})
-
-      _ ->
-        state
-    end
-  end
 
   # a letter, in any alphabet (a digit is typed into a number instead)
   defp letter?(c), do: String.match?(c, ~r/^\p{L}$/u)
@@ -87,7 +58,7 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
     wanted = String.downcase(c)
 
     case Enum.find(tl(choices), fn {label, _} -> initial(label) == wanted end) do
-      {_label, steps} -> press(state, steps)
+      {_label, steps} -> choose(state, steps)
       nil -> State.error(state, "No choice starts with #{String.upcase(c)}")
     end
   end
@@ -157,8 +128,9 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
       Map.get(State.mode(after_), :typing) == nil
   end
 
-  # the choice `n` presses on, as one change; a preference saved once
-  defp press(state, n) do
+  @doc "The choice `n` presses of SPACE on, as one change; a preference saved once."
+  @spec choose(State.t(), non_neg_integer) :: State.t()
+  def choose(state, n) do
     pressed = space(state, n) || state
     {saves, others} = Enum.split_with(pressed.effects, &match?({:save_preferences, _, _}, &1))
     %{pressed | effects: others ++ Enum.take(saves, -1), message: nil}

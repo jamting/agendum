@@ -393,7 +393,6 @@ defmodule Agendum.TUI.Update do
     do: @boxes[type].handle(state, m, key)
 
   defp dispatch(state, %{type: :menu} = m, key), do: Menu.handle(state, m, key)
-  defp dispatch(state, %{type: :choice_list} = m, key), do: BoxChoices.list_key(state, m, key)
 
   defp dispatch(state, %{type: :viewmgr} = m, key), do: ViewManager.handle(state, m, key)
   defp dispatch(state, %{type: :prompt} = m, key), do: Prompts.prompt_key(state, m, key)

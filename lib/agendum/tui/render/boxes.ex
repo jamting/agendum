@@ -96,7 +96,6 @@ defmodule Agendum.TUI.Render.Boxes do
     :select_file,
     :choice,
     :scope,
-    :choice_list,
     :confirm
   ]
   # boxes that only show something
@@ -144,10 +143,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_width(state, %{type: :confirm, question: q}),
     do: (String.length(q) + 7) |> max(40) |> min(state.width - 8)
 
-  defp box_width(state, %{type: type})
-       when type in [:choice_list],
-       do: min(state.width - 8, 32)
-
   defp box_width(state, _mode), do: min(state.width - 8, 60)
 
   defp box_title(state, %{type: type} = mode) when is_map_key(@boxes, type),
@@ -160,9 +155,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :viewmgr}), do: "View Manager"
   # a question has no title, as Agenda's
   defp box_title(_state, %{type: :confirm}), do: ""
-
-  defp box_title(_state, %{type: :choice_list, title: ""}), do: "Choices"
-  defp box_title(_state, %{type: :choice_list, title: title}), do: "Choices: " <> title
 
   defp box_title(_state, %{type: :group_profile, item_ids: ids}),
     do: "Assignments: #{Draw.count(length(ids), "marked item")}"
@@ -299,17 +291,6 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   # F3 on a setting (`Agendum.TUI.Boxes.BoxChoices`): its choices, one a line
-  defp box_content(_state, %{type: :choice_list} = mode, _inner, max_rows) do
-    top = max(mode.cursor - max_rows + 1, 0)
-
-    mode.labels
-    |> Enum.with_index()
-    |> Enum.drop(top)
-    |> Enum.take(max_rows)
-    |> Enum.map(fn {label, i} ->
-      [{:box, " "}, {if(i == mode.cursor, do: :box_selected, else: :box), label}]
-    end)
-  end
 
   defp box_content(state, %{type: :alarm_list} = mode, inner, _max_rows) do
     rows = Agendum.TUI.Boxes.AlarmList.rows(state)

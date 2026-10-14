@@ -23,7 +23,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     calendars:
       "Your calendar subscriptions. ENTER reads one now, F sets how often, " <>
         "A how far ahead; INS adds one, DEL removes it.",
-    choice_list: "Highlight the choice and press ENTER.",
     viewmgr:
       "To display a view, highlight the view name and press ENTER. " <>
         "Press INS to create a new view.",

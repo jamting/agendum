@@ -215,7 +215,7 @@ or handles it.
   - **Go to** `:goto` (ALT-F5): jump to a section (R42). `Agendum.TUI.Boxes.GoTo`.
   - **Choices** `:choice_list` (F3 on a setting in a box that has a list
     of choices): its choices, the current one first; ENTER takes the
-    highlighted one (§5). `Agendum.TUI.Boxes.BoxChoices`.
+    highlighted one (§5). `Agendum.TUI.Boxes.ChoiceListBox`.
   - **Search box** `:search_box` (ALT-F6, Search ▸ View or File): what to
     find, in item text, note or both, the direction, ignoring case (R37). `Agendum.TUI.Boxes.SearchBox`.
     - **Searching** `:searching`: ALT-N / ALT-P step through matches, F7
@@ -314,7 +314,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:group_profile`     | box           | `Agendum.TUI.CategoryScreens.Profile`    | F3 with items marked                             | R35           |
 | `:props`             | box           | `Agendum.TUI.CategoryScreens.Properties` | F6 on a section head or in the category manager  | §5            |
 | `:choice`            | box           | `Agendum.TUI.CategoryScreens.Choices`    | Category Properties, moves in the manager        | R6a, R7a, R7b |
-| `:choice_list`       | box           | `Agendum.TUI.Boxes.BoxChoices`                 | F3 on a setting with choices in a box            | §5            |
+| `:choice_list`       | box           | `Agendum.TUI.Boxes.ChoiceListBox`              | F3 on a setting with choices in a box            | §5            |
 | `:category_stats`    | box           | `Agendum.TUI.Boxes.CategoryStatsBox`       | Category Properties ▸ Statistics                 | §5            |
 | `:item_props`        | box           | `Agendum.TUI.Boxes.ItemProperties`             | F6 on an item, Item ▸ Properties                 | R34, R43      |
 | `:goto`              | box           | `Agendum.TUI.Boxes.GoTo`                       | ALT-F5                                           | R42           |
