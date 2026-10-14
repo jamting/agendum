@@ -23,7 +23,6 @@ defmodule Agendum.TUI.Render do
     :picker,
     :calendar,
     :datebook_props,
-    :schedule,
     :macros,
     :select_file,
     :profile,

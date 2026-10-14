@@ -21,7 +21,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.ItemProperties,
     Boxes.NumericFunctionsBox,
     Boxes.RangeFilterBox,
-    Boxes.ScheduleBox,
     Boxes.SearchBox,
     Boxes.SectionBox,
     Boxes.SortBox,
@@ -37,7 +36,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   # The box types and the module that knows their highlighted field
   @boxes %{
     datebook_props: DatebookBox,
-    schedule: ScheduleBox,
     sort: SortBox,
     search_box: SearchBox,
     section_props: SectionBox,
@@ -97,14 +95,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
           "read each time the view is shown. SPACE types it.",
       hide_column_heads: "Whether the column heads show above each section. SPACE switches.",
       section_separators: "Whether a line separates the sections. SPACE switches."
-    },
-    schedule: %{
-      date_category: "The date category whose items the schedule shows. SPACE picks one.",
-      section: "The category the schedule's section is headed by. SPACE picks one.",
-      date: "The date to show the schedule of. SPACE types it; F3 picks it from a calendar.",
-      filter:
-        "Show only items in (or not in) some categories. SPACE lists them. " <>
-          "ENTER shows the schedule."
     },
     sort: %{
       on: "What to sort the items on: item text, a category, or a category note. SPACE.",

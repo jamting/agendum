@@ -12,18 +12,38 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
       assigned, none)
     * ENTER shows the schedule; ESC closes the box
 
-  The settings live in the box until it is used. Pure.
+  The settings live in the box until it is used. Drawn from `@layout`
+  (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
 
   alias Agendum.Core
   alias Agendum.Core.{Database, DateFormat}
-  alias Agendum.TUI.{Boxes.CalendarBox, CategoryScreens, State}
+  alias Agendum.TUI.Boxes.{Box, BoxNav, CalendarBox, Template}
+  alias Agendum.TUI.{CategoryScreens, State}
   alias Agendum.TUI.Update.Prompts
 
-  @rows [:date_category, :section, :date, :filter]
+  @layout """
+   Date category  : [date_category                            ]
+   Section head   : [section                                  ]
+   Date           : [date                                     ]
+   Filter         : [filter                                   ]
+  """
+
+  @rows Template.fields(@layout)
+  @grid Template.grid(@layout, @rows)
+
+  @help %{
+    date_category: "The date category whose items the schedule shows. SPACE picks one.",
+    section: "The category the schedule's section is headed by. SPACE picks one.",
+    date: "The date to show the schedule of. SPACE types it; F3 picks it from a calendar.",
+    filter:
+      "Show only items in (or not in) some categories. SPACE lists them. " <>
+        "ENTER shows the schedule."
+  }
 
   def open(state) do
     w = state.db.special.when
@@ -38,15 +58,16 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
     })
   end
 
+  @impl Box
   def handle(state, mode, key) do
-    row = Enum.at(@rows, mode.cursor)
+    row = field(state, mode)
 
     case {key, row} do
       {:esc, _} ->
         State.pop(state)
 
       {k, _} when is_move(k) ->
-        BoxNav.move(state, mode, BoxNav.column(@rows), k)
+        BoxNav.move(state, mode, @grid, k)
 
       {:enter, _} ->
         show(State.pop(state), mode)
@@ -154,8 +175,16 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
     end
   end
 
-  @doc "`{label, value}` for each row."
-  def lines(state, mode) do
+  @impl Box
+  def title(_state, _mode), do: "Show Schedule"
+
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
+    Template.render(@layout, values(state, mode), selected: field(state, mode)) ++
+      [[], Box.hint(keys(state, mode), inner)]
+  end
+
+  defp values(state, mode) do
     db = state.db
     name = &db.categories[&1].name
 
@@ -170,14 +199,27 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
           end)
       end
 
-    [
-      {"Date category", name.(mode.date_category)},
-      {"Section head", name.(mode.section)},
-      {"Date", DateFormat.date(mode.date, %{db.date_format | day_of_week: true})},
-      {"Filter", filter}
-    ]
+    %{
+      date_category: name.(mode.date_category),
+      section: name.(mode.section),
+      date: DateFormat.date(mode.date, %{db.date_format | day_of_week: true}),
+      filter: filter
+    }
   end
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓←→", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Change the setting"},
+      {"F3", "Calendar", "Pick the date"},
+      {"ENTER", "Show", "Show the schedule"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
+
+  @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

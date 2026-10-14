@@ -183,15 +183,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Back", "Back to the prompt"}
     ]
 
-  defp mode_keys(%{type: :schedule}),
-    do: [
-      {"↑↓←→", "Setting", "Move between settings"},
-      {"SPACE", "Change", "Change the setting"},
-      {"F3", "Calendar", "Pick the date"},
-      {"ENTER", "Show", "Show the schedule"},
-      {"ESC", "Cancel"}
-    ]
-
   defp mode_keys(%{type: :datebook_props}),
     do: [
       {"↑↓←→", "Setting", "Move between settings"},

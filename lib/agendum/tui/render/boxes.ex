@@ -92,7 +92,6 @@ defmodule Agendum.TUI.Render.Boxes do
     :column_add,
     :range_filter,
     :action_box,
-    :schedule,
     :search_box,
     :note_search
   ]
@@ -247,7 +246,6 @@ defmodule Agendum.TUI.Render.Boxes do
     "Remove column: #{state.db.categories[column.category_id].name}"
   end
 
-  defp box_title(_state, %{type: :schedule}), do: "Show Schedule"
   defp box_title(_state, %{type: :macros}), do: "Macros"
 
   defp box_title(state, %{type: :select_file} = mode),
@@ -575,21 +573,6 @@ defmodule Agendum.TUI.Render.Boxes do
       |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
 
     rows ++ [[{:box, " ENTER opens · type to narrow · F7 dates · ESC back"}]]
-  end
-
-  defp box_content(state, %{type: :schedule} = mode, _inner, _max_rows) do
-    rows =
-      state
-      |> Agendum.TUI.Boxes.ScheduleBox.lines(mode)
-      |> Enum.with_index()
-      |> Enum.map(fn {{label, value}, i} ->
-        [
-          {:box, " " <> Draw.pad(label, 14) <> ": "},
-          {if(i == mode.cursor, do: :box_selected, else: :box), value}
-        ]
-      end)
-
-    rows ++ [[], [{:box, " SPACE changes · F3 calendar · ENTER shows · ESC cancels"}]]
   end
 
   defp box_content(state, %{type: :datebook_props} = mode, _inner, _max_rows),

@@ -77,7 +77,8 @@ defmodule Agendum.TUI.Boxes.Box do
     execute: Agendum.TUI.Boxes.ExecuteBox,
     file_props: Agendum.TUI.Boxes.FileProperties,
     input_format: Agendum.TUI.Boxes.InputFormatBox,
-    macro_props: Agendum.TUI.Boxes.MacroProps
+    macro_props: Agendum.TUI.Boxes.MacroProps,
+    schedule: Agendum.TUI.Boxes.ScheduleBox
   }
 
   @doc "The box modules, by mode type."
