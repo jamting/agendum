@@ -197,3 +197,4 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0028](adr/0028-starter-files-built-from-code.md)       | Starter files are built from code, the committed file kept equal |
 | [0029](adr/0029-stored-date-phrases-read-in-english-too.md) | Stored date phrases are read in the reader's languages, then English |
 | [0030](adr/0030-enter-done-esc-cancels-in-boxes.md)     | In a settings box, ENTER is done and ESC cancels                 |
+| [0031](adr/0031-box-keys-as-agenda.md)                  | Keys in a box as Agenda: the arrows move, SPACE changes          |
