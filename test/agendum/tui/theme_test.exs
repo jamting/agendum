@@ -3,7 +3,7 @@ defmodule Agendum.TUI.ThemeTest do
   use ExUnit.Case, async: true
 
   import Agendum.TUIHelpers
-  alias Agendum.TUI.{Render, Screen, Theme}
+  alias Agendum.TUI.{Render, Terminal.Screen, Terminal.Theme}
 
   test "every theme defines every style" do
     styles = Theme.styles(:classic)
@@ -240,7 +240,7 @@ defmodule Agendum.TUI.LookTest do
 
   test "a shadow on a box beneath hides its frame's lines" do
     line = [{:box_frame, "│"}, {:box, " text "}, {:box_frame, "│"}]
-    [_, shaded] = Agendum.TUI.Draw.shadow([[], line], 0, 0, 2, 6)
+    [_, shaded] = Agendum.TUI.Terminal.Draw.shadow([[], line], 0, 0, 2, 6)
     # the two columns right of a 6-wide box: the last space, and the frame
     assert shaded == [{:box_frame, "│"}, {:box, " text"}, {:shadow, " "}, {:shadow, " "}]
   end

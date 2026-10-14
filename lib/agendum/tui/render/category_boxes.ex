@@ -5,7 +5,7 @@ defmodule Agendum.TUI.Render.CategoryBoxes do
   """
 
   alias Agendum.Core.Database
-  alias Agendum.TUI.{CategoryScreens, Draw, State}
+  alias Agendum.TUI.{CategoryScreens, Terminal.Draw, State}
   alias Agendum.TUI.CategoryScreens.{Choices, Properties}
   alias Agendum.TUI.Render.Text
 
@@ -147,7 +147,7 @@ defmodule Agendum.TUI.Render.CategoryBoxes do
   end
 
   defp profile_marker(state, %{type: :picker, purpose: {:schedule_filter, _}}, id),
-    do: Agendum.TUI.ScheduleBox.filter_mark(state, id)
+    do: Agendum.TUI.Boxes.ScheduleBox.filter_mark(state, id)
 
   defp profile_marker(state, %{type: :picker, purpose: {:excludes, cat_id}}, id),
     do: if(id in state.db.categories[cat_id].excludes, do: "x", else: " ")

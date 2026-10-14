@@ -5,7 +5,7 @@ defmodule Agendum.TUI.Render.Managers do
   """
 
   alias Agendum.Core.Database
-  alias Agendum.TUI.{CategoryScreens, Draw, State}
+  alias Agendum.TUI.{CategoryScreens, Terminal.Draw, State}
   alias Agendum.TUI.Render.Text
 
   @doc "The category manager's lines, scrolled to the highlight."
@@ -62,7 +62,7 @@ defmodule Agendum.TUI.Render.Managers do
       cat.conditions != [] && "if " <> Text.conditions_text(state, cat),
       (cat.also_assign != [] or cat.actions != []) && "→ " <> Text.actions_text(state, cat),
       cat.excludes != [] && "not with " <> Text.names_text(db, cat.excludes),
-      Agendum.TUI.CategoryMatchBox.manager_tag(cat.match_overrides),
+      Agendum.TUI.Boxes.CategoryMatchBox.manager_tag(cat.match_overrides),
       cat.note != "" && "♪",
       count && "#{count}"
     ]

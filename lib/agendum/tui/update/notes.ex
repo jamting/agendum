@@ -8,7 +8,7 @@ defmodule Agendum.TUI.Update.Notes do
 
   alias Agendum.Core
   alias Agendum.Core.DateFormat
-  alias Agendum.TUI.{CategoryScreens, Layout, NoteSearch, State, TextEdit}
+  alias Agendum.TUI.{CategoryScreens, Layout, Typing.NoteSearch, State, Typing.TextEdit}
   alias Agendum.TUI.Update.Actions
 
   # --- notes --------------------------------------------------------------------

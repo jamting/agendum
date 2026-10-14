@@ -3,7 +3,7 @@ defmodule Agendum.TUI.Render.KeyBar do
   The function key bar on the last line: the keys of what is on top. Pure.
   """
 
-  alias Agendum.TUI.{Completion, Draw, State}
+  alias Agendum.TUI.{Typing.Completion, Terminal.Draw, State}
 
   # Each key has a short label, as in Agenda's 8-character slots, and may
   # have a fuller one (and a fuller name, "CTRL-N" for "^N"). The bar shows

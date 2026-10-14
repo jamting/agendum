@@ -11,7 +11,7 @@ defmodule Agendum.TUI.NoteMakeTest do
   import Agendum.TUIHelpers
 
   alias Agendum.Core.Database
-  alias Agendum.TUI.{Layout, State, TextEdit}
+  alias Agendum.TUI.{Layout, State, Typing.TextEdit}
 
   @first "Set up meeting at Terracotta Corp to discuss CopyCat before the end of the month."
 

@@ -13,7 +13,7 @@ Code.require_file("test/support/tui_helpers.ex")
 defmodule Screenshots do
   @moduledoc false
   import Agendum.TUIHelpers
-  alias Agendum.TUI.{Render, Theme}
+  alias Agendum.TUI.{Render, Terminal.Theme}
 
   @renderer "tmp/render-screen"
   @today ~D[2026-10-12]

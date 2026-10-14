@@ -14,7 +14,7 @@ defmodule Agendum.TUI.NoteKeysTest do
   end
 
   defp note(state), do: State.mode(state)
-  defp text(state), do: Agendum.TUI.TextEdit.text(note(state).edit)
+  defp text(state), do: Agendum.TUI.Typing.TextEdit.text(note(state).edit)
   defp item_id(state), do: Layout.current_row(state).item.id
 
   test "ALT-D and ALT-T insert today's date and the time, in the file's format",

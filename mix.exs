@@ -57,9 +57,14 @@ defmodule Agendum.MixProject do
       ],
       groups_for_modules: [
         Overview: [Agendum],
-        "Core facade": [Agendum.Core, ~r/^Agenda\.Core\.Facade\./],
-        Core: ~r/^Agenda\.Core\./,
-        "Terminal UI": ~r/^Agenda\.TUI\./,
+        "Core facade": [Agendum.Core, ~r/^Agendum\.Core\.Facade\./],
+        Core: ~r/^Agendum\.Core\./,
+        # the TUI's folders first: a module goes in the first group it fits
+        "Terminal UI: boxes": ~r/^Agendum\.TUI\.Boxes\./,
+        "Terminal UI: typing": ~r/^Agendum\.TUI\.Typing\./,
+        "Terminal UI: moves": ~r/^Agendum\.TUI\.Moves\./,
+        "Terminal UI: terminal": [Agendum.TUI.Terminal, ~r/^Agendum\.TUI\.Terminal\./],
+        "Terminal UI": ~r/^Agendum\.TUI\./,
         Shell: [
           Agendum.CLI,
           Agendum.Store,

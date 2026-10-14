@@ -2,7 +2,7 @@ defmodule Agendum.TUI.TemplateTest do
   @moduledoc "Box layouts drawn as text, with named fields in brackets."
   use ExUnit.Case, async: true
 
-  alias Agendum.TUI.{Draw, LineEdit, Template}
+  alias Agendum.TUI.{Terminal.Draw, Typing.LineEdit, Boxes.Template}
 
   @layout """
    Name: [name        ]   Type: [type  ]

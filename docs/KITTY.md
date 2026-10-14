@@ -52,7 +52,7 @@ prefix below still works.
 
 ### 1. CTRL-F keys
 
-- `Agendum.TUI.Keys` decodes CTRL-F1…F10 as `{:ctrl_f, n}`.
+- `Agendum.TUI.Terminal.Keys` decodes CTRL-F1…F10 as `{:ctrl_f, n}`.
 - `Agendum.TUI.MacroKeys` reads and writes them as `{CtlF4}`, so a macro can
   be attached to one. Nothing else uses them.
 - Tests: `keys_test`, `macro_keys_test`.
@@ -84,7 +84,7 @@ prefix below still works.
   `CSI ? flags u` reply comes before the device attributes reply, it pushes
   the flags with `CSI > 31 u`; `stop/0` pops them with `CSI < u`. The reply
   is read in `Agendum.TUI.App`, with a timeout.
-- `Agendum.TUI.Keys` decodes `CSI … u`, and `:event` on the legacy `~`,
+- `Agendum.TUI.Terminal.Keys` decodes `CSI … u`, and `:event` on the legacy `~`,
   `ABCD` and `PQS` forms (the CSI regex must accept `:`).
 - Lock bits (caps lock 64, num lock 128) are masked off. Repeat counts as a
   press. Releases of other keys are dropped. Modifier key codes 57441–57449

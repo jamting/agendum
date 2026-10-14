@@ -114,7 +114,7 @@ defmodule Agendum.TUI.DependenciesTest do
 
     defp row_of(state, text) do
       mode = State.mode(state)
-      rows = Agendum.TUI.ItemProperties.rows(state, mode)
+      rows = Agendum.TUI.Boxes.ItemProperties.rows(state, mode)
 
       Enum.find_index(rows, fn
         {kind, id} when kind in [:prerequisite, :dependent] -> state.db.items[id].text =~ text
@@ -139,7 +139,7 @@ defmodule Agendum.TUI.DependenciesTest do
       refute text =~ "Depends on"
 
       state = press(state, :esc)
-      state = Agendum.TUI.ItemProperties.open(state, id_of(state, "Contact Daniel"))
+      state = Agendum.TUI.Boxes.ItemProperties.open(state, id_of(state, "Contact Daniel"))
       assert screen(state) =~ ~r/Depends on\s*: √ Set up meeting/
     end
 

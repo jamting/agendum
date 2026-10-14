@@ -139,7 +139,7 @@ defmodule Agendum.TUI.ColumnBoxTest do
   end
 
   describe "moving between settings, as Agenda (User's Guide 2-16)" do
-    defp at(state), do: Agendum.TUI.ColumnBox.field(state, State.mode(state))
+    defp at(state), do: Agendum.TUI.Boxes.ColumnBox.field(state, State.mode(state))
 
     test "→ ← along a row, on to the next or back to the previous", %{state: state} do
       assert at(state) == :head

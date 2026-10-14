@@ -125,7 +125,7 @@ one: `Category Properties in two columns, as Agenda's (screenshot 74)`.
 - **Undo is automatic:** one key that changes the file is one undo step;
   never record history by hand.
 - **Boxes** are drawn from layouts written as they look on screen
-  (`Agendum.TUI.Template`); their keys follow Agenda's (ADRs 0030, 0031).
+  (`Agendum.TUI.Boxes.Template`); their keys follow Agenda's (ADRs 0030, 0031).
 
 ## 6. Questions and bugs
 

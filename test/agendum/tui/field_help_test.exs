@@ -3,7 +3,7 @@ defmodule Agendum.TUI.FieldHelpTest do
   use ExUnit.Case, async: true
 
   import Agendum.TUIHelpers
-  alias Agendum.TUI.{Draw, FieldHelp, State}
+  alias Agendum.TUI.{Terminal.Draw, Boxes.FieldHelp, State}
 
   setup do
     %{state: start(Agendum.Sample.build(~D[2026-10-08]), width: 80, height: 25)}

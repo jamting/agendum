@@ -3,7 +3,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   Category Properties (F6): its fields, its keys, and changing a
   category's type to numeric or date (User's Guide 7-3, 8-11). Pure.
 
-  The box is drawn from `@layout` (`Agendum.TUI.Template`), Agenda's two
+  The box is drawn from `@layout` (`Agendum.TUI.Boxes.Template`), Agenda's two
   columns (screenshot 74): the name, parent, short name, Also match and
   note on the left with the children, special actions, Statistics and
   Advanced settings; the type and name matching on the right, with the
@@ -13,12 +13,21 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   left out.
   """
 
-  import Agendum.TUI.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.BoxNav
+  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
+  alias Agendum.TUI.Boxes.BoxNav
 
   alias Agendum.Core
   alias Agendum.Core.Database
-  alias Agendum.TUI.{CategoryScreens, Draw, LineEdit, State, Template, TextEdit}
+
+  alias Agendum.TUI.{
+    CategoryScreens,
+    Terminal.Draw,
+    Typing.LineEdit,
+    State,
+    Boxes.Template,
+    Typing.TextEdit
+  }
+
   alias Agendum.TUI.Render.Text
   alias Agendum.TUI.CategoryScreens.Choices
   alias Agendum.TUI.Update.Prompts
@@ -43,7 +52,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   @doc "The settings, in the cursor's order (reading order)."
   def props_fields, do: @props
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.FieldHelp`)."
+  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
   def field(_state, mode), do: Enum.at(@props, mode.cursor)
 
   @doc "The box's lines, the highlighted setting selected (or being edited)."
@@ -121,7 +130,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
     cat = state.db.categories[mode.cat_id]
 
     case key do
-      # ENTER is done (ESC cancels: `Agendum.TUI.BoxCancel`)
+      # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
       k when k in [:esc, :enter, {:f, 6}] ->
         State.pop(state)
 
@@ -179,8 +188,8 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   # a standard one matches text (R16b)
   defp open_prop(state, cat, :advanced) do
     case cat.kind do
-      :date -> Agendum.TUI.DateRuleBox.open(state, cat.id)
-      :standard -> Agendum.TUI.CategoryMatchBox.open(state, cat.id)
+      :date -> Agendum.TUI.Boxes.DateRuleBox.open(state, cat.id)
+      :standard -> Agendum.TUI.Boxes.CategoryMatchBox.open(state, cat.id)
       :numeric -> State.error(state, "Numeric categories have no advanced settings")
     end
   end

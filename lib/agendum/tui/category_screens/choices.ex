@@ -241,7 +241,7 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
     state
     |> State.change_db(db)
     |> State.switch_view(view_id)
-    |> Agendum.TUI.DatebookBox.open(view_id)
+    |> Agendum.TUI.Boxes.DatebookBox.open(view_id)
   end
 
   defp resolve_choice(state, %{kind: :type} = mode, :numeric),

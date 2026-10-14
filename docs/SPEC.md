@@ -849,7 +849,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     panel in reverse video, the highlighted line in bold, box titles and
     dimmed titles, the faded screen behind a box.
   - The terminal schemes share one layout in their own colours
-    (`Agendum.TUI.Theme.Palettes`): the screen in the scheme's background
+    (`Agendum.TUI.Terminal.Theme.Palettes`): the screen in the scheme's background
     and foreground; the control panel, menus and the line being edited in
     its selection colours; the highlight in its cursor colours; the
     highlighted line, boxes and the key bar on a tint of the background;
@@ -926,7 +926,7 @@ highlighted field does and which keys change it ("Choose to insert new
 columns in one or all sections in the view."; screenshots 130 to 143);
 a list box (Go to, Copy, Calendars…) has one such help for the whole box.
 A message comes first. The texts follow Agenda's (its F1 help's tables
-of settings), with Agendum's keys (`Agendum.TUI.FieldHelp`). In the menu,
+of settings), with Agendum's keys (`Agendum.TUI.Boxes.FieldHelp`). In the menu,
 ESC backs up one level; a box, prompt or question opened from the menu
 goes back to the menu level it was chosen from on ESC, and ESC again backs
 up until the view, as in Agenda (User's Guide 2-13: "back up one step at a
@@ -951,8 +951,8 @@ and ESC puts the file and your preferences back as they were when the
 box opened (one undo step, which undo reverses); a box opened from a box
 cancels only its own changes, and work done in a full screen opened from
 a box (a note, the macro edit screen) stays. ESC while typing in a field
-only stops the typing (`Agendum.TUI.BoxCancel`). In a box the arrows move
-between settings as in Agenda (User's Guide 2-16, `Agendum.TUI.BoxNav`):
+only stops the typing (`Agendum.TUI.Boxes.BoxCancel`). In a box the arrows move
+between settings as in Agenda (User's Guide 2-16, `Agendum.TUI.Boxes.BoxNav`):
 → or TAB right one setting, or on to the next when there is none to the
 right; ← or SHIFT-TAB left, or back to the previous; ↓ ↑ to the next or
 previous row, onto the setting nearest the same place (from a right-hand
@@ -965,7 +965,7 @@ number) is typed, and so are Morning, Afternoon and Evening (SPACE asks).
 On a setting with a list of choices, as in Agenda, a letter picks the
 next choice starting with it ("r": Relative; one undo step), and F3
 (CHOICES) lists them in a box, the current one first. The choices are
-what SPACE goes through (`Agendum.TUI.BoxChoices`); on a setting that is
+what SPACE goes through (`Agendum.TUI.Boxes.BoxChoices`); on a setting that is
 typed, letters are typed as before. In Category Properties, as Agenda
 (screenshot 74), Note, Statistics and Advanced settings show "..." and
 SPACE opens each one's box; Statistics (Agenda's Category Statistics)

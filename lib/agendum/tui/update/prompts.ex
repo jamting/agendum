@@ -7,7 +7,7 @@ defmodule Agendum.TUI.Update.Prompts do
 
   alias Agendum.Core
   alias Agendum.Core.DateFormat
-  alias Agendum.TUI.{CalendarBox, Draw, LineEdit, State, Update}
+  alias Agendum.TUI.{Boxes.CalendarBox, Terminal.Draw, Typing.LineEdit, State, Update}
   alias Agendum.TUI.CategoryScreens.Choices
   alias Agendum.TUI.Update.Actions
 
@@ -70,8 +70,8 @@ defmodule Agendum.TUI.Update.Prompts do
 
       # a file name can be picked from a list (R51)
       {:f, 3} ->
-        if Agendum.TUI.SelectFile.file_prompt?(mode.action),
-          do: Agendum.TUI.SelectFile.open(state, mode),
+        if Agendum.TUI.Boxes.SelectFile.file_prompt?(mode.action),
+          do: Agendum.TUI.Boxes.SelectFile.open(state, mode),
           else: state
 
       :enter ->
@@ -161,25 +161,25 @@ defmodule Agendum.TUI.Update.Prompts do
     do: State.push(state, %{type: :choice, kind: :view_type, name: text, cursor: 0})
 
   defp prompt_action(state, {:datebook_time, view_id, row}, text),
-    do: Agendum.TUI.DatebookBox.set_time(state, view_id, row, text)
+    do: Agendum.TUI.Boxes.DatebookBox.set_time(state, view_id, row, text)
 
   defp prompt_action(state, {:date_setting_time, row}, text),
-    do: Agendum.TUI.FileProperties.set_time(state, row, text)
+    do: Agendum.TUI.Boxes.FileProperties.set_time(state, row, text)
 
-  defp prompt_action(state, :browse_to, text), do: Agendum.TUI.Browse.go_to(state, text)
+  defp prompt_action(state, :browse_to, text), do: Agendum.TUI.Moves.Browse.go_to(state, text)
   defp prompt_action(state, :new_macro, text), do: Agendum.TUI.Macros.create(state, text)
 
   defp prompt_action(state, {:rename_macro, id}, text),
-    do: Agendum.TUI.MacroProps.rename(state, id, text)
+    do: Agendum.TUI.Boxes.MacroProps.rename(state, id, text)
 
   defp prompt_action(state, {:attach_macro, id}, text),
-    do: Agendum.TUI.MacroProps.attach(state, id, text)
+    do: Agendum.TUI.Boxes.MacroProps.attach(state, id, text)
 
   defp prompt_action(state, :schedule_date, text),
-    do: Agendum.TUI.ScheduleBox.set_date(state, text)
+    do: Agendum.TUI.Boxes.ScheduleBox.set_date(state, text)
 
   defp prompt_action(state, {:datebook_base, view_id}, text),
-    do: Agendum.TUI.DatebookBox.set_base(state, view_id, text)
+    do: Agendum.TUI.Boxes.DatebookBox.set_base(state, view_id, text)
 
   defp prompt_action(state, {:when_items, ids}, text) do
     Enum.reduce_while(ids, {:ok, state.db}, fn id, {:ok, db} ->
@@ -305,7 +305,7 @@ defmodule Agendum.TUI.Update.Prompts do
   defp confirmed(state, {:make_date, id}, true), do: make_date(state, id)
 
   # Column Add ▸ Category type: the conversion is agreed to; the box is on top again
-  defp confirmed(state, :column_add, true), do: Agendum.TUI.ColumnAddBox.add_now(state)
+  defp confirmed(state, :column_add, true), do: Agendum.TUI.Boxes.ColumnAddBox.add_now(state)
 
   defp confirmed(state, {:make_dependent, id, prerequisites}, true) do
     case Core.make_dependent(state.db, id, prerequisites) do

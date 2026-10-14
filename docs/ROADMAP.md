@@ -66,7 +66,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
 - [x] Boxes: help for the highlighted field in the control panel (§5)
 - [x] Boxes: "Press ENTER when done, ESC to cancel" in the frame, and in every settings box ENTER is done and ESC cancels its changes (ADR 0030); ESC steps back through the menu levels (§5)
-- [x] Boxes: moving between settings as Agenda (User's Guide 2-16): → or TAB right one setting, or to the next one when there is none to the right; ← or SHIFT-TAB left, or to the previous one; ↓ ↑ to the setting in the next row nearest the same place (from a right-hand setting to the right-hand one below, else the left); HOME / END the first / last. The rows and places come from the box's layout (`Agendum.TUI.Template.grid/2`, `Agendum.TUI.BoxNav`); boxes that list one setting a row move down and up with → ←. Choices change with SPACE; numbers and times are typed, no longer → ← (§5)
+- [x] Boxes: moving between settings as Agenda (User's Guide 2-16): → or TAB right one setting, or to the next one when there is none to the right; ← or SHIFT-TAB left, or to the previous one; ↓ ↑ to the setting in the next row nearest the same place (from a right-hand setting to the right-hand one below, else the left); HOME / END the first / last. The rows and places come from the box's layout (`Agendum.TUI.Boxes.Template.grid/2`, `Agendum.TUI.Boxes.BoxNav`); boxes that list one setting a row move down and up with → ←. Choices change with SPACE; numbers and times are typed, no longer → ← (§5)
 - [x] Boxes: the first letter of a choice picks it (User's Guide 2-17), and F3 lists a setting's choices (§5)
 - [x] Category Properties in two columns, as Agenda's (screenshot 74), drawn from a layout; a box opened from a box sits two columns right of it whatever their widths
 - [x] "..." for Category Properties' sub-boxes, as Agenda: Note, Statistics (Agenda's Category Statistics box, new) and Advanced settings, opened by SPACE
@@ -75,7 +75,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] Boxes: F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) every setting in the box, CTRL-ENTER clears a setting (User's Guide 2-17)
 - [ ] Search/Replace in a note: "Replace this occurrence?" as a Yes/No box, as the other questions (it is still asked in the control panel)
 - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash, Tab size; screenshot 130) where Agendum has them, and the File Statistics box (screenshot 140), as Category Statistics
-- [ ] Look into: one fuzz run (2026-10-14, while letters in boxes were built) printed a stack trace through `Agendum.TUI.BoxChoices` yet passed; not reproduced in three later 1,500–2,000-run sweeps
+- [ ] Look into: one fuzz run (2026-10-14, while letters in boxes were built) printed a stack trace through `Agendum.TUI.Boxes.BoxChoices` yet passed; not reproduced in three later 1,500–2,000-run sweeps
 - [x] In notes: F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, and their key bar (R63)
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names; the note editor's "Note for: … Line 1 INS EDIT" header
 - [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix (plan: `docs/KITTY.md`)
@@ -162,8 +162,9 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] A debug log of each session when `AGENDUM_LOG` is set: keys, effects, messages and crashes with the state; the last five sessions kept (ADR 0027)
 - [x] The name Wol's Agendum: command, files (`.agendum`), preferences, JSON format, texts; the old names still read (ADR 0019)
 - [x] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agendum` and `test/agendum`; files saved with the old struct names still load (ADR 0019)
-- [ ] Group the small TUI modules in subfolders (e.g. `tui/boxes/`, `tui/terminal/` for Terminal, Keys, Screen, Draw and Theme); rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it
-- [ ] Draw the settings boxes from layouts (`Agendum.TUI.Template`, as File ▸ Customize is now), a few at a time and with the split of `render.ex`; their layouts closer to Agenda's screenshots where that is easy (Category Properties done)
+- [x] Group the small TUI modules in subfolders: `tui/boxes/`, `tui/terminal/`, `tui/typing/`, `tui/moves/` (ARCHITECTURE.md, TUI)
+- [ ] Rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it ([`docs/RENAME_REPO.md`](RENAME_REPO.md))
+- [ ] Draw the settings boxes from layouts (`Agendum.TUI.Boxes.Template`, as File ▸ Customize is now), a few at a time and with the split of `render.ex`; their layouts closer to Agenda's screenshots where that is easy (Category Properties done)
 - [x] Split the four largest files into subfolders, by the sections they already have; pure moves, no change in behaviour, one file per commit (best in a fresh session each):
   - [x] `tui/render.ex` (~2,300 lines) → `tui/render/`: `Render` keeps `render/1`; `ControlPanel`, `KeyBar`, `View`, `Managers`, `Note`, `Help`, `Boxes` and `CategoryBoxes`, `Text` (shared words), `Export`
   - [x] `tui/update.ex` (~2,000) → `tui/update/`: `Update` keeps `handle/2`, `tick/2`, dispatch, effect results and the help screen's keys; `ViewKeys`, `Editing`, `Marked` (with moving items), `Prompts`, `Notes`, `Actions` (prepares the command layer, ADR 0020)

@@ -7,7 +7,7 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
 
   alias Agendum.Core
   alias Agendum.Core.Database
-  alias Agendum.TUI.{CategoryScreens, LineEdit, State}
+  alias Agendum.TUI.{CategoryScreens, Typing.LineEdit, State}
   alias Agendum.TUI.CategoryScreens.Choices
   alias Agendum.TUI.Update.Prompts
 
@@ -41,7 +41,7 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
         insert_category(state, id, :above)
 
       {:alt, "e"} ->
-        Agendum.TUI.ExecuteBox.run(state, id, :all)
+        Agendum.TUI.Boxes.ExecuteBox.run(state, id, :all)
 
       {:alt, "l"} ->
         insert_category(state, id, :uncle)

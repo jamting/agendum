@@ -1,7 +1,7 @@
 defmodule Agendum.TUI.KeysTest do
   use ExUnit.Case, async: true
 
-  alias Agendum.TUI.Keys
+  alias Agendum.TUI.Terminal.Keys
 
   test "decodes printable text, including multi-byte characters" do
     assert Keys.decode("hå!") == {[{:char, "h"}, {:char, "å"}, {:char, "!"}], ""}

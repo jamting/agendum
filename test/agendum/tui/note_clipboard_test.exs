@@ -9,7 +9,7 @@ defmodule Agendum.TUI.NoteClipboardTest do
 
   import Agendum.TUIHelpers
 
-  alias Agendum.TUI.{Render, State, TextEdit}
+  alias Agendum.TUI.{Render, State, Typing.TextEdit}
 
   describe "TextEdit" do
     # "Ask Lisa Jones" / "about the budget", the cursor on the L of Lisa

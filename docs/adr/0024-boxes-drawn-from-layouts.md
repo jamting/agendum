@@ -25,7 +25,7 @@ into one column. That worked, but:
   screen. A field is its name in square brackets, `[name      ]`, and the
   brackets' width is the field's width. Everything else is plain text in
   the box style.
-- `Agendum.TUI.Template.render/3` fills in the values, padding them or
+- `Agendum.TUI.Boxes.Template.render/3` fills in the values, padding them or
   cutting them with `…` to the field's width, so the columns line up by
   themselves. It also highlights the selected field, draws the field
   being edited as the input line, and leaves out a row whose value is

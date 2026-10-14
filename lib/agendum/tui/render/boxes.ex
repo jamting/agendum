@@ -6,7 +6,7 @@ defmodule Agendum.TUI.Render.Boxes do
   """
 
   alias Agendum.Core.DateFormat
-  alias Agendum.TUI.{Completion, Draw, State}
+  alias Agendum.TUI.{Typing.Completion, Terminal.Draw, State}
   alias Agendum.TUI.Render.{CategoryBoxes, View}
 
   # A box opened from another box (`depth` 1, 2 …) sits a line lower and
@@ -34,7 +34,7 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   @doc """
-  The highlighted value of the box on top, as shown: `Agendum.TUI.BoxChoices`
+  The highlighted value of the box on top, as shown: `Agendum.TUI.Boxes.BoxChoices`
   reads a setting's choices with it.
   """
   @spec selected_value(State.t()) :: String.t()
@@ -114,7 +114,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp footer(mode, inner) do
     {long, short} =
       cond do
-        Agendum.TUI.BoxCancel.cancels?(mode.type) or mode.type in @done_boxes -> @done
+        Agendum.TUI.Boxes.BoxCancel.cancels?(mode.type) or mode.type in @done_boxes -> @done
         mode.type == :picker and esc_picker?(mode.purpose) -> @esc_done
         mode.type in [:picker | @accept_boxes] -> @accept
         mode.type in @return_boxes -> @return
@@ -150,7 +150,7 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_width(state, _mode), do: min(state.width - 8, 60)
 
-  defp box_title(_state, %{type: :calendar} = mode), do: Agendum.TUI.CalendarBox.title(mode)
+  defp box_title(_state, %{type: :calendar} = mode), do: Agendum.TUI.Boxes.CalendarBox.title(mode)
 
   defp box_title(state, %{type: :picker, purpose: purpose}), do: picker_title(state, purpose)
 
@@ -193,12 +193,12 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :execute}), do: "Execute conditions and actions"
 
   defp box_title(state, %{type: :action_box} = mode) do
-    kind = if Agendum.TUI.ActionBox.numeric?(state, mode), do: "Numeric", else: "Date"
+    kind = if Agendum.TUI.Boxes.ActionBox.numeric?(state, mode), do: "Numeric", else: "Date"
     "#{kind} action: #{state.db.categories[mode.target].name}"
   end
 
   defp box_title(state, %{type: :range_filter} = mode) do
-    kind = if Agendum.TUI.RangeFilterBox.numeric?(state, mode), do: "Numeric", else: "Date"
+    kind = if Agendum.TUI.Boxes.RangeFilterBox.numeric?(state, mode), do: "Numeric", else: "Date"
     what = if match?({:condition, _}, mode.purpose), do: "condition", else: "filter"
     "#{kind} #{what}: #{state.db.categories[mode.cat_id].name}"
   end
@@ -207,7 +207,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :column_props}), do: "Column Properties"
 
   defp box_title(state, %{type: :section_props} = mode),
-    do: Agendum.TUI.SectionBox.title(state, mode)
+    do: Agendum.TUI.Boxes.SectionBox.title(state, mode)
 
   defp box_title(_state, %{type: :numeric_functions}), do: "Select Numeric Functions"
   defp box_title(_state, %{type: :copy_items}), do: "Copy"
@@ -244,16 +244,16 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :macros}), do: "Macros"
 
   defp box_title(state, %{type: :select_file} = mode),
-    do: Agendum.TUI.SelectFile.title(mode, box_width(state, mode))
+    do: Agendum.TUI.Boxes.SelectFile.title(mode, box_width(state, mode))
 
   defp box_title(state, %{type: :macro_props} = mode),
-    do: Agendum.TUI.MacroProps.title(state, mode)
+    do: Agendum.TUI.Boxes.MacroProps.title(state, mode)
 
   defp box_title(state, %{type: :choice, kind: :learn, macro_id: id}),
     do: "Learn: #{state.db.macros[id].name}"
 
   defp box_title(state, %{type: :datebook_props} = mode),
-    do: Agendum.TUI.DatebookBox.title(state, mode)
+    do: Agendum.TUI.Boxes.DatebookBox.title(state, mode)
 
   defp box_title(state, %{type: :choice, kind: :type, cat_id: id}),
     do: "Category type: #{state.db.categories[id].name}"
@@ -356,7 +356,7 @@ defmodule Agendum.TUI.Render.Boxes do
       [[{:box, " " <> last <> "  "}, {:box_selected, answer}]]
   end
 
-  # F3 on a setting (`Agendum.TUI.BoxChoices`): its choices, one a line
+  # F3 on a setting (`Agendum.TUI.Boxes.BoxChoices`): its choices, one a line
   defp box_content(_state, %{type: :choice_list} = mode, _inner, max_rows) do
     top = max(mode.cursor - max_rows + 1, 0)
 
@@ -370,7 +370,7 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   defp box_content(state, %{type: :alarm_list} = mode, inner, _max_rows) do
-    rows = Agendum.TUI.AlarmList.rows(state)
+    rows = Agendum.TUI.Boxes.AlarmList.rows(state)
     cursor = min(mode.cursor, max(length(rows) - 1, 0))
 
     lines =
@@ -430,7 +430,7 @@ defmodule Agendum.TUI.Render.Boxes do
 
     rows =
       mode
-      |> Agendum.TUI.SearchBox.rows()
+      |> Agendum.TUI.Boxes.SearchBox.rows()
       |> Enum.with_index()
       |> Enum.map(fn {row, i} ->
         label = [{:box, " " <> Draw.pad(labels[row], 12) <> ": "}]
@@ -451,7 +451,7 @@ defmodule Agendum.TUI.Render.Boxes do
 
     cats =
       state
-      |> Agendum.TUI.QuestionsBox.suggestions(mode)
+      |> Agendum.TUI.Boxes.QuestionsBox.suggestions(mode)
       |> Enum.with_index()
       |> Enum.map(fn {cat, i} ->
         mark = if cat in mode.picked, do: "*", else: " "
@@ -469,7 +469,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_content(state, %{type: :execute} = mode, _inner, _max_rows) do
     rows =
       state
-      |> Agendum.TUI.ExecuteBox.lines(mode)
+      |> Agendum.TUI.Boxes.ExecuteBox.lines(mode)
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
@@ -484,7 +484,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_content(state, %{type: :action_box} = mode, inner, _max_rows) do
     rows =
       state
-      |> Agendum.TUI.ActionBox.lines(mode)
+      |> Agendum.TUI.Boxes.ActionBox.lines(mode)
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         label = [{:box, " " <> Draw.pad(label, 12) <> ": "}]
@@ -502,7 +502,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_content(state, %{type: :range_filter} = mode, inner, _max_rows) do
     rows =
       state
-      |> Agendum.TUI.RangeFilterBox.lines(mode)
+      |> Agendum.TUI.Boxes.RangeFilterBox.lines(mode)
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         label = [{:box, " " <> Draw.pad(label, 16) <> ": "}]
@@ -518,7 +518,7 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   defp box_content(state, %{type: :goto} = mode, _inner, max_rows) do
-    names = Agendum.TUI.GoTo.names(state)
+    names = Agendum.TUI.Boxes.GoTo.names(state)
     top = max(mode.cursor - max_rows + 1, 0)
 
     names
@@ -533,7 +533,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_content(state, %{type: :category_match} = mode, _inner, _max_rows) do
     rows =
       state
-      |> Agendum.TUI.CategoryMatchBox.lines(mode)
+      |> Agendum.TUI.Boxes.CategoryMatchBox.lines(mode)
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
@@ -548,7 +548,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_content(state, %{type: :auto_assign} = mode, _inner, _max_rows) do
     rows =
       state
-      |> Agendum.TUI.AutoAssignBox.lines()
+      |> Agendum.TUI.Boxes.AutoAssignBox.lines()
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
@@ -563,7 +563,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_content(state, %{type: :date_rule} = mode, _inner, _max_rows) do
     rows =
       state
-      |> Agendum.TUI.DateRuleBox.lines(mode)
+      |> Agendum.TUI.Boxes.DateRuleBox.lines(mode)
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
@@ -578,7 +578,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_content(state, %{type: :calendars} = mode, _inner, _max_rows) do
     rows =
       state
-      |> Agendum.TUI.CalendarsBox.lines(mode)
+      |> Agendum.TUI.Boxes.CalendarsBox.lines(mode)
       |> Enum.map(fn {style, text} ->
         [{if(style == :selected, do: :box_selected, else: :box), " " <> text}]
       end)
@@ -592,12 +592,12 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   defp box_content(state, %{type: :customize} = mode, _inner, _max_rows),
-    do: Agendum.TUI.CustomizeBox.content(state, mode)
+    do: Agendum.TUI.Boxes.CustomizeBox.content(state, mode)
 
   defp box_content(state, %{type: :input_format} = mode, _inner, _max_rows) do
     rows =
       state
-      |> Agendum.TUI.InputFormatBox.lines()
+      |> Agendum.TUI.Boxes.InputFormatBox.lines()
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
@@ -615,31 +615,31 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   defp box_content(state, %{type: :section_props} = mode, _inner, _max_rows),
-    do: Agendum.TUI.SectionBox.content(state, mode)
+    do: Agendum.TUI.Boxes.SectionBox.content(state, mode)
 
   defp box_content(state, %{type: :copy_items} = mode, _inner, _max_rows),
-    do: Agendum.TUI.CopyBox.lines(state, mode)
+    do: Agendum.TUI.Boxes.CopyBox.lines(state, mode)
 
   defp box_content(state, %{type: :numeric_functions} = mode, _inner, _max_rows),
-    do: Agendum.TUI.NumericFunctionsBox.content(state, mode)
+    do: Agendum.TUI.Boxes.NumericFunctionsBox.content(state, mode)
 
   defp box_content(state, %{type: :column_props} = mode, _inner, _max_rows),
-    do: Agendum.TUI.ColumnBox.content(state, mode)
+    do: Agendum.TUI.Boxes.ColumnBox.content(state, mode)
 
   defp box_content(state, %{type: :column_add} = mode, _inner, _max_rows),
-    do: Agendum.TUI.ColumnAddBox.content(state, mode)
+    do: Agendum.TUI.Boxes.ColumnAddBox.content(state, mode)
 
   defp box_content(state, %{type: :item_column} = mode, _inner, _max_rows),
-    do: Agendum.TUI.ItemColumnBox.content(state, mode)
+    do: Agendum.TUI.Boxes.ItemColumnBox.content(state, mode)
 
   defp box_content(state, %{type: :file_props} = mode, _inner, _max_rows),
-    do: Agendum.TUI.FileProperties.content(state, mode)
+    do: Agendum.TUI.Boxes.FileProperties.content(state, mode)
 
   defp box_content(state, %{type: type} = mode, _inner, _max_rows)
        when type in [:date_settings, :display_format] do
     rows =
       state
-      |> Agendum.TUI.FileProperties.lines(type)
+      |> Agendum.TUI.Boxes.FileProperties.lines(type)
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
@@ -683,7 +683,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_content(state, %{type: :select_file} = mode, _inner, max_rows) do
     rows =
       state
-      |> Agendum.TUI.SelectFile.lines(mode, max_rows)
+      |> Agendum.TUI.Boxes.SelectFile.lines(mode, max_rows)
       |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
 
     rows ++ [[{:box, " ENTER opens · type to narrow · F7 dates · ESC back"}]]
@@ -692,7 +692,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_content(state, %{type: :macro_props} = mode, _inner, _max_rows) do
     rows =
       state
-      |> Agendum.TUI.MacroProps.lines(mode)
+      |> Agendum.TUI.Boxes.MacroProps.lines(mode)
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
@@ -707,7 +707,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_content(state, %{type: :schedule} = mode, _inner, _max_rows) do
     rows =
       state
-      |> Agendum.TUI.ScheduleBox.lines(mode)
+      |> Agendum.TUI.Boxes.ScheduleBox.lines(mode)
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
@@ -720,15 +720,15 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   defp box_content(state, %{type: :datebook_props} = mode, _inner, _max_rows),
-    do: Agendum.TUI.DatebookBox.content(state, mode)
+    do: Agendum.TUI.Boxes.DatebookBox.content(state, mode)
 
   defp box_content(state, %{type: :calendar} = mode, _inner, _max_rows),
-    do: Agendum.TUI.CalendarBox.lines(state, mode)
+    do: Agendum.TUI.Boxes.CalendarBox.lines(state, mode)
 
   defp box_content(_state, %{type: :note_search} = mode, inner, _max_rows) do
     rows =
       mode
-      |> Agendum.TUI.NoteSearch.lines()
+      |> Agendum.TUI.Typing.NoteSearch.lines()
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         label = [{:box, " " <> Draw.pad(label, 19) <> ": "}]
@@ -746,7 +746,7 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_content(state, %{type: :sort} = mode, inner, _max_rows) do
     rows =
       state
-      |> Agendum.TUI.SortBox.lines(mode)
+      |> Agendum.TUI.Boxes.SortBox.lines(mode)
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
@@ -774,7 +774,7 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_content(state, %{type: :item_props} = mode, inner, max_rows) do
     item = state.db.items[mode.item_id]
-    rows = Agendum.TUI.ItemProperties.rows(state, mode)
+    rows = Agendum.TUI.Boxes.ItemProperties.rows(state, mode)
     cursor = min(mode.cursor, length(rows) - 1)
     value_width = inner - 16
     assignments = Agendum.Core.item_assignments(state.db, item.id)

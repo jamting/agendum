@@ -7,7 +7,7 @@ defmodule Agendum.TUI.Update.Editing do
 
   alias Agendum.Core
   alias Agendum.Core.{Database, DateFormat, ViewModel}
-  alias Agendum.TUI.{Completion, Layout, LineEdit, State}
+  alias Agendum.TUI.{Typing.Completion, Layout, Typing.LineEdit, State}
   alias Agendum.TUI.Update.ViewKeys
 
   # --- inline editing in the view ---------------------------------------------

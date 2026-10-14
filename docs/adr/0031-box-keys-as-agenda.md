@@ -18,8 +18,8 @@ Properties, Column Add, later Category Properties).
 ## Decision
 
 - In every box the arrows move between settings, as Agenda's
-  (`Agendum.TUI.BoxNav`). The places come from the box's layout
-  (`Agendum.TUI.Template.grid/2`): ↓ ↑ keep to the same side, onto the
+  (`Agendum.TUI.Boxes.BoxNav`). The places come from the box's layout
+  (`Agendum.TUI.Boxes.Template.grid/2`): ↓ ↑ keep to the same side, onto the
   setting starting nearest the same column; a box listing one setting a
   row moves down and up with → ←. On text being typed (Search, a range
   filter, an action's value) ← → still move in the text.
@@ -27,7 +27,7 @@ Properties, Column Add, later Category Properties).
   (widths, decimal places, line numbers) are typed; times (Morning,
   Afternoon, Evening, a datebook's start and end) are asked for.
 - A letter picks the next choice starting with it, and F3 lists the
-  choices (`Agendum.TUI.BoxChoices`). The choices are not listed again by
+  choices (`Agendum.TUI.Boxes.BoxChoices`). The choices are not listed again by
   each box: they are found by trying SPACE on the box, keeping nothing,
   and reading the highlighted value after each press until it comes back
   round. A setting where SPACE opens a box, asks, starts typing, or never

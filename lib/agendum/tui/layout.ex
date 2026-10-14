@@ -12,7 +12,7 @@ defmodule Agendum.TUI.Layout do
 
   alias Agendum.Core.View.ItemColumn
   alias Agendum.Core.ViewModel
-  alias Agendum.TUI.{Draw, State}
+  alias Agendum.TUI.{Terminal.Draw, State}
 
   @type row :: %{
           required(:kind) => :section | :item,

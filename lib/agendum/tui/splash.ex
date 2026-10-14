@@ -7,7 +7,7 @@ defmodule Agendum.TUI.Splash do
   and `Update.tick/2`). Pure.
   """
 
-  alias Agendum.TUI.{Draw, State}
+  alias Agendum.TUI.{Terminal.Draw, State}
 
   @version Mix.Project.config()[:version]
   @seconds 5

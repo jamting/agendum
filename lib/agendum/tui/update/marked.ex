@@ -6,7 +6,7 @@ defmodule Agendum.TUI.Update.Marked do
   """
 
   alias Agendum.Core
-  alias Agendum.TUI.{CategoryScreens, Draw, Layout, State}
+  alias Agendum.TUI.{CategoryScreens, Terminal.Draw, Layout, State}
   alias Agendum.TUI.Update.{Actions, Prompts, ViewKeys}
 
   # --- marked items (User's Guide 13-1 to 13-4) ----------------------------------
@@ -155,7 +155,7 @@ defmodule Agendum.TUI.Update.Marked do
     start_move(state, froms)
   end
 
-  defp bulk(state, :copy_item, ids, _row), do: Agendum.TUI.CopyBox.open(state, ids)
+  defp bulk(state, :copy_item, ids, _row), do: Agendum.TUI.Boxes.CopyBox.open(state, ids)
 
   defp bulk(state, :make_assign, ids, _row),
     do: CategoryScreens.open_picker(state, {:assign_items, ids}, nil)

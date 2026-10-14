@@ -8,22 +8,22 @@ defmodule Agendum.TUI.Update.Actions do
   alias Agendum.Core.{Database, View}
 
   alias Agendum.TUI.{
-    AlarmList,
+    Boxes.AlarmList,
     CategoryScreens,
-    ColumnAddBox,
-    ColumnBox,
-    ColumnWidth,
-    Draw,
-    FileProperties,
+    Boxes.ColumnAddBox,
+    Boxes.ColumnBox,
+    Moves.ColumnWidth,
+    Terminal.Draw,
+    Boxes.FileProperties,
     History,
-    ItemProperties,
+    Boxes.ItemProperties,
     Layout,
     Menu,
-    SearchBox,
-    SortBox,
+    Boxes.SearchBox,
+    Boxes.SortBox,
     State,
-    TextEdit,
-    ViewManager
+    Typing.TextEdit,
+    Boxes.ViewManager
   }
 
   alias Agendum.TUI.Update.{Marked, Prompts, ViewKeys}
@@ -147,10 +147,10 @@ defmodule Agendum.TUI.Update.Actions do
   end
 
   defp do_perform(state, :file_props, _), do: FileProperties.open(state)
-  defp do_perform(state, :customize, _), do: Agendum.TUI.CustomizeBox.open(state)
-  defp do_perform(state, :calendars, _), do: Agendum.TUI.CalendarsBox.open(state)
-  defp do_perform(state, :execute, _), do: Agendum.TUI.ExecuteBox.open(state)
-  defp do_perform(state, :questions, _), do: Agendum.TUI.QuestionsBox.open(state)
+  defp do_perform(state, :customize, _), do: Agendum.TUI.Boxes.CustomizeBox.open(state)
+  defp do_perform(state, :calendars, _), do: Agendum.TUI.Boxes.CalendarsBox.open(state)
+  defp do_perform(state, :execute, _), do: Agendum.TUI.Boxes.ExecuteBox.open(state)
+  defp do_perform(state, :questions, _), do: Agendum.TUI.Boxes.QuestionsBox.open(state)
 
   # one box for every column, its lower part by the column's kind (R55)
   defp do_perform(state, :column_props, row) when row != nil and state.col > 0 do
@@ -162,7 +162,7 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :column_props, row) when row != nil do
     if State.view(state).datebook,
       do: State.error(state, "A datebook view's item text fills the width its columns leave"),
-      else: Agendum.TUI.ItemColumnBox.open(state, row.sidx)
+      else: Agendum.TUI.Boxes.ItemColumnBox.open(state, row.sidx)
   end
 
   defp do_perform(state, :column_props, _),
@@ -186,7 +186,7 @@ defmodule Agendum.TUI.Update.Actions do
     do: CategoryScreens.open_profile(state, item.id)
 
   defp do_perform(state, :copy_item, %{kind: :item, item: item}),
-    do: Agendum.TUI.CopyBox.open(state, [item.id])
+    do: Agendum.TUI.Boxes.CopyBox.open(state, [item.id])
 
   defp do_perform(state, :copy_item, _row), do: State.error(state, "Highlight an item to copy")
 
@@ -273,13 +273,13 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :sort_section, %{sidx: sidx}), do: SortBox.open(state, {:section, sidx})
 
   defp do_perform(state, :section_props, %{sidx: sidx}),
-    do: Agendum.TUI.SectionBox.open(state, sidx)
+    do: Agendum.TUI.Boxes.SectionBox.open(state, sidx)
 
   # a view that sorts its sections shows them in that order whatever their
   # place (View Properties ▸ Section sorting)
   defp do_perform(state, :section_move, %{sidx: sidx}) do
     if State.view(state).section_sort == :none,
-      do: Agendum.TUI.SectionMove.open(state, sidx),
+      do: Agendum.TUI.Moves.SectionMove.open(state, sidx),
       else: State.error(state, "This view sorts its sections; set Section sorting to None first")
   end
 
@@ -298,12 +298,12 @@ defmodule Agendum.TUI.Update.Actions do
 
   defp do_perform(state, :add_view, _), do: Prompts.prompt(state, "Name of new view:", :add_view)
 
-  defp do_perform(state, :browse, _), do: Agendum.TUI.Browse.open(state)
-  defp do_perform(state, :show_schedule, _), do: Agendum.TUI.ScheduleBox.open(state)
+  defp do_perform(state, :browse, _), do: Agendum.TUI.Moves.Browse.open(state)
+  defp do_perform(state, :show_schedule, _), do: Agendum.TUI.Boxes.ScheduleBox.open(state)
 
   defp do_perform(state, :view_props, _) do
     if State.view(state).datebook,
-      do: Agendum.TUI.DatebookBox.open(state, state.view_id),
+      do: Agendum.TUI.Boxes.DatebookBox.open(state, state.view_id),
       else: State.error(state, "A standard view's settings are in View ▸ Hide, Filter and Order")
   end
 
@@ -380,12 +380,14 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :column_move, row) when row != nil and state.col == 0 do
     if State.view(state).datebook,
       do: State.error(state, "A datebook view's item text stays first"),
-      else: Agendum.TUI.ColumnMove.open(state, row.sidx, :items)
+      else: Agendum.TUI.Moves.ColumnMove.open(state, row.sidx, :items)
   end
 
   defp do_perform(state, :column_move, _),
     do:
-      with_column(state, fn {sidx, index} -> Agendum.TUI.ColumnMove.open(state, sidx, index) end)
+      with_column(state, fn {sidx, index} ->
+        Agendum.TUI.Moves.ColumnMove.open(state, sidx, index)
+      end)
 
   defp do_perform(state, {:toggle_view, option}, _),
     do: State.change_db(state, Core.toggle_view_option(state.db, state.view_id, option))

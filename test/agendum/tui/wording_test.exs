@@ -3,7 +3,7 @@ defmodule Agendum.TUI.WordingTest do
   use ExUnit.Case, async: true
 
   import Agendum.TUIHelpers
-  alias Agendum.TUI.{Draw, State}
+  alias Agendum.TUI.{Terminal.Draw, State}
 
   setup do
     %{state: start(Agendum.Sample.build(~D[2026-10-08]))}
@@ -45,7 +45,9 @@ defmodule Agendum.TUI.WordingTest do
     [file, view | _] = String.split(screen(state), "\n")
     assert file =~ ~r/File: \/home\/rabbit\/rabbit\.agenda \*\s{2,}READY/
     assert view =~ "View: Activities [When 2026-10-08..2026-11-30]"
-    assert state |> Agendum.TUI.Render.render() |> hd() |> Agendum.TUI.Draw.width() == state.width
+
+    assert state |> Agendum.TUI.Render.render() |> hd() |> Agendum.TUI.Terminal.Draw.width() ==
+             state.width
 
     # narrower, the path loses its beginning and the filter its end
     [file, view | _] = String.split(screen(%{state | width: 40}), "\n")

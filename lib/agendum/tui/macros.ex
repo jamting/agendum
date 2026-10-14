@@ -154,7 +154,7 @@ defmodule Agendum.TUI.Macros do
         edit_text(state, macro)
 
       {{:f, 6}, macro} ->
-        Agendum.TUI.MacroProps.open(state, macro.id)
+        Agendum.TUI.Boxes.MacroProps.open(state, macro.id)
 
       {k, macro} when k in [:delete, {:ctrl, "d"}] ->
         Prompts.confirm(state, "Delete the macro #{macro.name}?", {:delete_macro, macro.id})
@@ -215,7 +215,7 @@ defmodule Agendum.TUI.Macros do
       type: :note,
       target: {:macro, macro.id},
       title: macro.name,
-      edit: Agendum.TUI.TextEdit.new(text)
+      edit: Agendum.TUI.Typing.TextEdit.new(text)
     })
   end
 
@@ -253,7 +253,7 @@ defmodule Agendum.TUI.Macros do
     %{state | macro: %{state.macro | learning: nil}}
     |> State.change_db(Core.set_macro_keys(state.db, l.id, keys))
     |> State.info(
-      "Learn mode is off: #{macro.name} has #{Agendum.TUI.Draw.count(count, "new key")}"
+      "Learn mode is off: #{macro.name} has #{Agendum.TUI.Terminal.Draw.count(count, "new key")}"
     )
   end
 
@@ -301,7 +301,7 @@ defmodule Agendum.TUI.Macros do
         macros
         |> Enum.with_index()
         |> Enum.map(fn {m, i} ->
-          text = Agendum.TUI.Draw.pad(m.name, 36) <> (m.key || "")
+          text = Agendum.TUI.Terminal.Draw.pad(m.name, 36) <> (m.key || "")
           {if(i == mode.cursor, do: :box_selected, else: :box), text}
         end)
     end

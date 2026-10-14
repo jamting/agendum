@@ -7,7 +7,7 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
 
   alias Agendum.Core
   alias Agendum.Core.Database
-  alias Agendum.TUI.{CategoryScreens, LineEdit, State}
+  alias Agendum.TUI.{CategoryScreens, Typing.LineEdit, State}
   alias Agendum.TUI.CategoryScreens.Choices
 
   # --- category picker ------------------------------------------------------------------
@@ -66,16 +66,17 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   def pick(state, _purpose, nil), do: state
 
   def pick(state, {:schedule, field}, id),
-    do: Agendum.TUI.ScheduleBox.set_category(state, field, id)
+    do: Agendum.TUI.Boxes.ScheduleBox.set_category(state, field, id)
 
-  def pick(state, {:schedule_filter, _}, id), do: Agendum.TUI.ScheduleBox.cycle_filter(state, id)
+  def pick(state, {:schedule_filter, _}, id),
+    do: Agendum.TUI.Boxes.ScheduleBox.cycle_filter(state, id)
 
   # ALT-F2 MAKECAT in a note: back in the note, the category made
   def pick(state, {:make_category, name}, id),
     do: Agendum.TUI.Update.Notes.add_category(state, name, id)
 
   def pick(state, {:datebook, view_id, row}, id),
-    do: Agendum.TUI.DatebookBox.set_category(state, view_id, row, id)
+    do: Agendum.TUI.Boxes.DatebookBox.set_category(state, view_id, row, id)
 
   # `from`: the section the cursor was in, whose linked columns the new
   # one gets (R55)
@@ -101,7 +102,7 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   end
 
   # Column Add ▸ Column head: back in the box, which adds it on ENTER
-  def pick(state, :column_add, id), do: Agendum.TUI.ColumnAddBox.set_head(state, id)
+  def pick(state, :column_add, id), do: Agendum.TUI.Boxes.ColumnAddBox.set_head(state, id)
 
   # Column Properties ▸ Column head (R55): back in the box, which shows the
   # column's new head (and its kind's settings)
@@ -110,20 +111,20 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
 
   def pick(state, {:filter, scope}, id) do
     if Agendum.Core.RangeFilter.range_category?(state.db, id) do
-      Agendum.TUI.RangeFilterBox.open(state, scope, id)
+      Agendum.TUI.Boxes.RangeFilterBox.open(state, scope, id)
     else
       {:ok, db} = Core.cycle_filter(state.db, state.view_id, scope, id)
       State.change_db(state, db)
     end
   end
 
-  def pick(state, :execute_root, id), do: Agendum.TUI.ExecuteBox.set_root(state, id)
+  def pick(state, :execute_root, id), do: Agendum.TUI.Boxes.ExecuteBox.set_root(state, id)
 
   def pick(state, {:sort_note, scope, index}, id),
-    do: Agendum.TUI.SortBox.set_note(state, scope, index, id)
+    do: Agendum.TUI.Boxes.SortBox.set_note(state, scope, index, id)
 
   def pick(state, {:sort_category, scope, index}, id),
-    do: Agendum.TUI.SortBox.set_category(state, scope, index, id)
+    do: Agendum.TUI.Boxes.SortBox.set_category(state, scope, index, id)
 
   # ALT-M (MakeAssign): one item or all marked items
   def pick(state, {:assign_items, ids}, id) do
@@ -158,7 +159,7 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   # ENTER on a category cycles its condition: none → assigned → not assigned
   def pick(state, {:condition, cat_id}, target) do
     if Agendum.Core.RangeFilter.range_category?(state.db, target),
-      do: Agendum.TUI.RangeFilterBox.open_condition(state, cat_id, target),
+      do: Agendum.TUI.Boxes.RangeFilterBox.open_condition(state, cat_id, target),
       else: cycle_condition(state, cat_id, target)
   end
 
@@ -169,7 +170,7 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
 
     cond do
       Agendum.Core.RangeFilter.range_category?(state.db, target) ->
-        Agendum.TUI.ActionBox.open(state, cat_id, target)
+        Agendum.TUI.Boxes.ActionBox.open(state, cat_id, target)
 
       target in cat.also_assign ->
         action_result(state, Core.set_action(state.db, cat_id, target, :remove))

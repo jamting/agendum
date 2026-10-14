@@ -3,7 +3,7 @@ defmodule Agendum.TUI.Render.Note do
   The full-screen note editor (F5). Pure.
   """
 
-  alias Agendum.TUI.{Draw, State, TextEdit}
+  alias Agendum.TUI.{Terminal.Draw, State, Typing.TextEdit}
 
   @doc """
   The note's lines, scrolled to the cursor: a search match highlighted,

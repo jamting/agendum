@@ -8,7 +8,7 @@ defmodule Agendum.TUI.DevTools do
   top first) and undo depth.
 
   It also tests keys: every key but ESC is shown as decoded
-  (`Agendum.TUI.Keys`), before any alias or global command, and does
+  (`Agendum.TUI.Terminal.Keys`), before any alias or global command, and does
   nothing else; ↑↓ PGUP PGDN also scroll. ESC closes it. Not in the
   menus or the F1 help. Pure.
   """

@@ -19,7 +19,7 @@ so only changed lines are rewritten.
 ## Consequences
 
 - Requires OTP ≥ 28. The project uses Elixir 1.20 / OTP 29.
-- We decode keys ourselves (`Agendum.TUI.Keys`) and must handle terminal
+- We decode keys ourselves (`Agendum.TUI.Terminal.Keys`) and must handle terminal
   differences. ESC+digit aliases for function keys cover the hard cases.
 - Raw mode leaves `ixon`, `isig` and `iexten` on, so `Terminal` disables
   them with `stty` on the tty device. That way CTRL-S/Q/C/Z/O/V arrive as

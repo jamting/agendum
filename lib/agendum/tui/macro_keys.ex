@@ -11,7 +11,7 @@ defmodule Agendum.TUI.MacroKeys do
   `{LBRACE}` and `{RBRACE}` type braces, and keys Agenda had no name for
   get one in its style (`{AltBS}`, `{AltShfD}`).
 
-  Pure; the key events are `Agendum.TUI.Keys`'.
+  Pure; the key events are `Agendum.TUI.Terminal.Keys`'.
   """
 
   @names %{

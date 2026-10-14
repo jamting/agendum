@@ -4,7 +4,7 @@ defmodule Agendum.TUI.KeyboardTest do
 
   import Agendum.TUIHelpers
   alias Agendum.Core.Database
-  alias Agendum.TUI.{Layout, LineEdit, State}
+  alias Agendum.TUI.{Layout, Typing.LineEdit, State}
 
   setup do
     Process.delete(:effects_seen)

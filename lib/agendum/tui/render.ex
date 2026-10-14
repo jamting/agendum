@@ -15,7 +15,7 @@ defmodule Agendum.TUI.Render do
   `CategoryBoxes`, `KeyBar`; `Export` writes a view as plain text.
   """
 
-  alias Agendum.TUI.{Draw, State}
+  alias Agendum.TUI.{Terminal.Draw, State}
   alias Agendum.TUI.Render.{Boxes, ControlPanel, Help, KeyBar, Managers, Note, View}
 
   @full_screen [:catmgr, :help, :note, :devtools]

@@ -66,57 +66,75 @@ shell does terminal I/O and file I/O.
 Every screen, box and control-panel mode, and how each is reached, is mapped
 in [`SCREENS.md`](SCREENS.md).
 
+The folder keeps at its top what everything goes through (`State`,
+`Update`, `Render`, `App`, `Layout`, `Menu`, `History`, the macros, the
+splash and developer screens, `DebugLog`, `CategoryScreens`), and groups
+the rest by what it is for:
+
+- `tui/boxes/` (`Agendum.TUI.Boxes.*`): every box, and the machinery they
+  share: `Template` (layouts), `BoxNav` (moving), `BoxCancel` (ESC),
+  `BoxChoices` (letters and F3), `FieldHelp`, `FieldTyping`;
+- `tui/terminal/` (`Agendum.TUI.Terminal.*`): keys in, screen out: `Keys`,
+  `Screen`, `Draw`, `Theme` and its palettes (`Agendum.TUI.Terminal` itself,
+  the raw terminal, is the folder's parent module);
+- `tui/typing/` (`Agendum.TUI.Typing.*`): typing text: `LineEdit`,
+  `TextEdit`, `Completion`, `NoteSearch`;
+- `tui/moves/` (`Agendum.TUI.Moves.*`): the control-panel modes that move
+  something: `Browse`, `ColumnMove`, `ColumnWidth`, `SectionMove`;
+- `tui/render/`, `tui/update/`, `tui/category_screens/`: the parts of
+  `Render`, `Update` and `CategoryScreens`.
+
 | Module                                        | Pure? | Responsibility                                                                                                                   |
 | --------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `Agendum.TUI.State`                            | ✔     | UI state: db, path, cursor, scroll, **mode stack**, inline edit, message, queued effects.                                        |
 | `Agendum.TUI.Update`                           | ✔     | Key → state transitions: keys for every screen, the clock (`tick/2`), effect results, dispatch to the screen on top.             |
 | `Agendum.TUI.Update.*`                         | ✔     | Its parts: `ViewKeys`, `Editing` (inline), `Marked` (and moves), `Prompts` (and Y/N), `Notes`, `Actions` (`perform/2`).          |
 | `Agendum.TUI.Menu`                             | ✔     | The Lotus two-line menu tree.                                                                                                    |
-| `Agendum.TUI.BoxNav`                           | ✔     | Moving between a box's settings as Agenda: → ← along a row, ↓ ↑ keeping to the side (`Template.grid/2`).                         |
-| `Agendum.TUI.BoxChoices`                       | ✔     | A setting's choices (what SPACE goes through): the first letter picks one, F3 lists them.                                        |
-| `Agendum.TUI.BoxCancel`                        | ✔     | ESC cancels a settings box: the file and preferences as they were when it opened (ADR 0030).                                     |
-| `Agendum.TUI.FieldHelp`                        | ✔     | Help for a box's highlighted field, in the control panel (SPEC §5).                                                              |
+| `Agendum.TUI.Boxes.BoxNav`                           | ✔     | Moving between a box's settings as Agenda: → ← along a row, ↓ ↑ keeping to the side (`Template.grid/2`).                         |
+| `Agendum.TUI.Boxes.BoxChoices`                       | ✔     | A setting's choices (what SPACE goes through): the first letter picks one, F3 lists them.                                        |
+| `Agendum.TUI.Boxes.BoxCancel`                        | ✔     | ESC cancels a settings box: the file and preferences as they were when it opened (ADR 0030).                                     |
+| `Agendum.TUI.Boxes.FieldHelp`                        | ✔     | Help for a box's highlighted field, in the control panel (SPEC §5).                                                              |
 | `Agendum.TUI.CategoryScreens`                  | ✔     | Hierarchy screens: opening them, their rows, cursor, collapsing families, inline edits, dispatch to the parts.                   |
 | `Agendum.TUI.CategoryScreens.*`                | ✔     | Its parts: `Manager` (F9), `Picker`, `Profile` (F3), `Properties` (F6), `Choices` (exclusive children, moves).                   |
-| `Agendum.TUI.ViewManager`                      | ✔     | View manager.                                                                                                                    |
+| `Agendum.TUI.Boxes.ViewManager`                      | ✔     | View manager.                                                                                                                    |
 | `Agendum.TUI.Layout`                           | ✔     | Flattens a view to cursor rows and wrapped lines; keeps the cursor anchored and visible.                                         |
-| `Agendum.TUI.Completion`                       | ✔     | Automatic completion while typing a column entry: the matches (from `Core.completions/3`) and the one shown.                     |
-| `Agendum.TUI.ItemProperties`                   | ✔     | The Item Properties box: text, note, statistics and the item's assignments (R34).                                                |
-| `Agendum.TUI.SortBox`                          | ✔     | The Sort box: a view's or a section's sort keys (R36).                                                                           |
-| `Agendum.TUI.SearchBox`                        | ✔     | The Search box and search mode (ALT-N / ALT-P / F7), and the Show View (R37).                                                    |
-| `Agendum.TUI.QuestionsBox`                     | ✔     | Utilities Questions: confirming suggested assignments (R16).                                                                     |
-| `Agendum.TUI.ExecuteBox`                       | ✔     | Utilities Execute: the Execute box, ALT-X and ALT-E (R15e).                                                                      |
-| `Agendum.TUI.ActionBox`                        | ✔     | The Date Action / Numeric Action box (R15b).                                                                                     |
-| `Agendum.TUI.RangeFilterBox`                   | ✔     | The Date Filter / Numeric Filter box (R28a).                                                                                     |
-| `Agendum.TUI.ColumnAddBox`                     | ✔     | The Column Add box: a new column's head, width, position and Insert in (R55).                                                      |
-| `Agendum.TUI.ItemColumnBox`                    | ✔     | Item Column Properties: a section's item column, automatic or by hand, linked (R55).                                               |
-| `Agendum.TUI.FieldTyping`                      | ✔     | Typing text into a box's field: a column head's name (an existing category or a new one), a column title.                          |
-| `Agendum.TUI.ColumnBox`                        | ✔     | The Column Properties box, one for every column: head, width, link (R55); a numeric column's format (R29), a date column's (R41a). |
-| `Agendum.TUI.FileProperties`                   | ✔     | The File Properties box: the date display format, with a sample (R41).                                                           |
-| `Agendum.TUI.DateFormatRows`                   | ✔     | The date display settings as box rows, shared by File and Column Properties (R41a).                                              |
-| `Agendum.TUI.InputFormatBox`                   | ✔     | The Input Format box: the person's number order, separator and clock, saved as preferences (R41b).                               |
-| `Agendum.TUI.CustomizeBox`                     | ✔     | File ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
-| `Agendum.TUI.CalendarBox`                      | ✔     | The pop-up calendar: F3 in a date column, ALT-C anywhere (R46).                                                                  |
-| `Agendum.TUI.DatebookBox`, `Agendum.TUI.Browse` | ✔     | A datebook view's settings box; browsing it to other periods (R47).                                                              |
-| `Agendum.TUI.ScheduleBox`                      | ✔     | Search ▸ Schedule: one date's items in the Show View (R49).                                                                      |
+| `Agendum.TUI.Typing.Completion`                       | ✔     | Automatic completion while typing a column entry: the matches (from `Core.completions/3`) and the one shown.                     |
+| `Agendum.TUI.Boxes.ItemProperties`                   | ✔     | The Item Properties box: text, note, statistics and the item's assignments (R34).                                                |
+| `Agendum.TUI.Boxes.SortBox`                          | ✔     | The Sort box: a view's or a section's sort keys (R36).                                                                           |
+| `Agendum.TUI.Boxes.SearchBox`                        | ✔     | The Search box and search mode (ALT-N / ALT-P / F7), and the Show View (R37).                                                    |
+| `Agendum.TUI.Boxes.QuestionsBox`                     | ✔     | Utilities Questions: confirming suggested assignments (R16).                                                                     |
+| `Agendum.TUI.Boxes.ExecuteBox`                       | ✔     | Utilities Execute: the Execute box, ALT-X and ALT-E (R15e).                                                                      |
+| `Agendum.TUI.Boxes.ActionBox`                        | ✔     | The Date Action / Numeric Action box (R15b).                                                                                     |
+| `Agendum.TUI.Boxes.RangeFilterBox`                   | ✔     | The Date Filter / Numeric Filter box (R28a).                                                                                     |
+| `Agendum.TUI.Boxes.ColumnAddBox`                     | ✔     | The Column Add box: a new column's head, width, position and Insert in (R55).                                                      |
+| `Agendum.TUI.Boxes.ItemColumnBox`                    | ✔     | Item Column Properties: a section's item column, automatic or by hand, linked (R55).                                               |
+| `Agendum.TUI.Boxes.FieldTyping`                      | ✔     | Typing text into a box's field: a column head's name (an existing category or a new one), a column title.                          |
+| `Agendum.TUI.Boxes.ColumnBox`                        | ✔     | The Column Properties box, one for every column: head, width, link (R55); a numeric column's format (R29), a date column's (R41a). |
+| `Agendum.TUI.Boxes.FileProperties`                   | ✔     | The File Properties box: the date display format, with a sample (R41).                                                           |
+| `Agendum.TUI.Boxes.DateFormatRows`                   | ✔     | The date display settings as box rows, shared by File and Column Properties (R41a).                                              |
+| `Agendum.TUI.Boxes.InputFormatBox`                   | ✔     | The Input Format box: the person's number order, separator and clock, saved as preferences (R41b).                               |
+| `Agendum.TUI.Boxes.CustomizeBox`                     | ✔     | File ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
+| `Agendum.TUI.Boxes.CalendarBox`                      | ✔     | The pop-up calendar: F3 in a date column, ALT-C anywhere (R46).                                                                  |
+| `Agendum.TUI.Boxes.DatebookBox`, `Agendum.TUI.Moves.Browse` | ✔     | A datebook view's settings box; browsing it to other periods (R47).                                                              |
+| `Agendum.TUI.Boxes.ScheduleBox`                      | ✔     | Search ▸ Schedule: one date's items in the Show View (R49).                                                                      |
 | `Agendum.TUI.MacroKeys`                        | ✔     | Key events as macro text in Agenda's notation (`{F10}vc{ENTER}`), and back (R50).                                                |
 | `Agendum.TUI.Macros`                           | ✔     | The macro manager (ALT-F3), Learn mode and running macros (ALT-Z), one undo step a run (R50).                                    |
-| `Agendum.TUI.MacroProps`                       | ✔     | The Macro Properties box: name, keystrokes, attached key, where it runs (R50).                                                   |
-| `Agendum.TUI.SelectFile`                       | ✔     | The Select File box: F3 in a file-name prompt lists a folder (read by `Store.list_dir/1`) to pick from (R51).                    |
+| `Agendum.TUI.Boxes.MacroProps`                       | ✔     | The Macro Properties box: name, keystrokes, attached key, where it runs (R50).                                                   |
+| `Agendum.TUI.Boxes.SelectFile`                       | ✔     | The Select File box: F3 in a file-name prompt lists a folder (read by `Store.list_dir/1`) to pick from (R51).                    |
 | `Agendum.TUI.Splash`                           | ✔     | The splash screen at start, until a key or three seconds; the startup prompt waits under it (R52).                               |
-| `Agendum.TUI.CalendarsBox`                     | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
-| `Agendum.TUI.NoteSearch`                       | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
-| `Agendum.TUI.AlarmList`                        | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
+| `Agendum.TUI.Boxes.CalendarsBox`                     | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
+| `Agendum.TUI.Typing.NoteSearch`                       | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
+| `Agendum.TUI.Boxes.AlarmList`                        | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
 | `Agendum.TUI.DevTools`                         | ✔     | The hidden developer screen (ESC ?): state for debugging, and a key tester.                                                      |
 | `Agendum.Starters.Planner`                     | ✔     | The Activities Planner starter file, built through `Agendum.Core` (R60, ADR 0028); `Planner.Views`, `Planner.Macros`, `Planner.Samples` (sample data). |
 | `Mix.Tasks.Agendum.Starters`                  | ✘     | `mix agendum.starters [--samples]`: writes the starter file (a build tool, not part of the program).                             |
 | `Agendum.TUI.Render`                           | ✔     | State → list of styled lines: the control panel, the body (the view or a full screen), the boxes over it, the key bar.           |
 | `Agendum.TUI.Render.*`                         | ✔     | Its parts: `ControlPanel`, `View`, `Managers`, `Note`, `Help` (F1 text), `Boxes`, `CategoryBoxes`, `KeyBar`, `Text`, `Export`.   |
-| `Agendum.TUI.Draw`, `Agendum.TUI.Theme`         | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic, mono and the terminal schemes, R40).                               |
-| `Agendum.TUI.Template`                         | ✔     | Box layouts written as they look: `[field   ]` in brackets, filled and lined up; the fields' order is the cursor's.                |
-| `Agendum.TUI.Keys`                             | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |
-| `Agendum.TUI.LineEdit`, `Agendum.TUI.TextEdit`  | ✔     | Single-line and multi-line edit buffers.                                                                                         |
-| `Agendum.TUI.Screen`                           | ✔     | Diffs two frames into minimal ANSI output.                                                                                       |
+| `Agendum.TUI.Terminal.Draw`, `Agendum.TUI.Terminal.Theme`         | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic, mono and the terminal schemes, R40).                               |
+| `Agendum.TUI.Boxes.Template`                         | ✔     | Box layouts written as they look: `[field   ]` in brackets, filled and lined up; the fields' order is the cursor's.                |
+| `Agendum.TUI.Terminal.Keys`                             | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |
+| `Agendum.TUI.Typing.LineEdit`, `Agendum.TUI.Typing.TextEdit`  | ✔     | Single-line and multi-line edit buffers.                                                                                         |
+| `Agendum.TUI.Terminal.Screen`                           | ✔     | Diffs two frames into minimal ANSI output.                                                                                       |
 | `Agendum.TUI.Terminal`                         | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
 | `Agendum.TUI.App`                              | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |
 | `Agendum.TUI.DebugLog`                         | ✘     | The debug log when `AGENDUM_LOG` is set: input, effects, messages, crashes with the state; five sessions kept (ADR 0027).        |

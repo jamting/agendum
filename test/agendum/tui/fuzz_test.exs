@@ -3,7 +3,7 @@ defmodule Agendum.TUI.FuzzTest do
   use ExUnit.Case, async: true
   use ExUnitProperties
 
-  alias Agendum.TUI.{Draw, Render, Update}
+  alias Agendum.TUI.{Terminal.Draw, Render, Update}
   import Agendum.TUIHelpers, only: [start: 2]
 
   @keys [

@@ -32,7 +32,7 @@ defmodule Agendum.TUI.SelectFileTest do
   end
 
   defp rows(state),
-    do: state |> State.mode() |> Agendum.TUI.SelectFile.rows() |> Enum.map(& &1.name)
+    do: state |> State.mode() |> Agendum.TUI.Boxes.SelectFile.rows() |> Enum.map(& &1.name)
 
   test "F3 in File ▸ Retrieve lists the file's folder: up, folders, Agendum files", %{
     state: state,

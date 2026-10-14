@@ -46,7 +46,7 @@ defmodule Agendum.TUI.State do
           },
           searches: %{
             view: Agendum.Core.Search.t() | nil,
-            note: Agendum.TUI.NoteSearch.settings() | nil
+            note: Agendum.TUI.Typing.NoteSearch.settings() | nil
           },
           macro: %{learning: map | nil, last: Database.id() | nil, playing: non_neg_integer},
           key_map: boolean,
@@ -54,7 +54,7 @@ defmodule Agendum.TUI.State do
           input: Agendum.Core.InputFormat.t(),
           prefs: Agendum.Preferences.t(),
           fetching: %{optional(pos_integer) => :manual | :auto},
-          theme: Agendum.TUI.Theme.name(),
+          theme: Agendum.TUI.Terminal.Theme.name(),
           last_key: %{key: term, at: NaiveDateTime.t() | nil},
           undo: [map],
           redo: [map],
@@ -195,10 +195,10 @@ defmodule Agendum.TUI.State do
       view
     else
       view
-      |> then(&Agendum.TUI.Browse.view(state, &1))
-      |> then(&Agendum.TUI.ColumnWidth.view(state, &1))
-      |> then(&Agendum.TUI.ColumnMove.view(state, &1))
-      |> then(&Agendum.TUI.SectionMove.view(state, &1))
+      |> then(&Agendum.TUI.Moves.Browse.view(state, &1))
+      |> then(&Agendum.TUI.Moves.ColumnWidth.view(state, &1))
+      |> then(&Agendum.TUI.Moves.ColumnMove.view(state, &1))
+      |> then(&Agendum.TUI.Moves.SectionMove.view(state, &1))
     end
   end
 

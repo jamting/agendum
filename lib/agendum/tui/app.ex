@@ -5,14 +5,25 @@ defmodule Agendum.TUI.App do
   """
 
   alias Agendum.{CalendarFetch, Preferences, Store}
-  alias Agendum.TUI.{DebugLog, Keys, Layout, Render, Screen, State, Terminal, Theme, Update}
+
+  alias Agendum.TUI.{
+    DebugLog,
+    Terminal.Keys,
+    Layout,
+    Render,
+    Terminal.Screen,
+    State,
+    Terminal,
+    Terminal.Theme,
+    Update
+  }
 
   # How long to wait for the rest of an escape sequence before treating ESC as a key.
   @escape_timeout 40
   # How often to check for terminal resizes and date changes when idle.
   @idle_timeout 500
 
-  @doc "Runs the program until it quits, drawing with the state's `Agendum.TUI.Theme`."
+  @doc "Runs the program until it quits, drawing with the state's `Agendum.TUI.Terminal.Theme`."
   @spec run(State.t()) :: :ok | {:error, term}
   def run(%State{} = state) do
     case Terminal.start() do

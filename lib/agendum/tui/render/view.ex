@@ -6,7 +6,7 @@ defmodule Agendum.TUI.Render.View do
 
   alias Agendum.Core.{DateFormat, ViewModel}
   alias Agendum.Core.View.Column
-  alias Agendum.TUI.{Completion, Draw, Layout, State}
+  alias Agendum.TUI.{Typing.Completion, Terminal.Draw, Layout, State}
   alias Agendum.TUI.Render.Text
 
   @doc "The view's lines, scrolled."

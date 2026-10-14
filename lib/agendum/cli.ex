@@ -31,7 +31,7 @@ defmodule Agendum.CLI do
 
   alias Agendum.{Core, Preferences, Sample, Store}
   alias Agendum.Core.{DateLanguage, InputFormat}
-  alias Agendum.TUI.{App, DebugLog, Layout, State, Theme, Update}
+  alias Agendum.TUI.{App, DebugLog, Layout, State, Terminal.Theme, Update}
 
   @type options :: %{
           file: String.t() | nil,

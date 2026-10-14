@@ -19,7 +19,7 @@ defmodule Agendum.TUI.CategoryScreens do
 
   alias Agendum.Core
   alias Agendum.Core.Database
-  alias Agendum.TUI.{LineEdit, State, TextEdit}
+  alias Agendum.TUI.{Typing.LineEdit, State, Typing.TextEdit}
   alias Agendum.TUI.CategoryScreens.{Choices, Manager, Picker, Profile, Properties}
 
   # --- opening -------------------------------------------------------------------

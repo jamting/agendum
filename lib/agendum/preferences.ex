@@ -13,7 +13,7 @@ defmodule Agendum.Preferences do
   """
 
   alias Agendum.Core.{DateLanguage, InputFormat}
-  alias Agendum.TUI.Theme
+  alias Agendum.TUI.Terminal.Theme
 
   @typedoc """
   `theme` nil and `languages` [] mean the defaults (classic, English);

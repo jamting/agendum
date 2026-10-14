@@ -3,12 +3,12 @@ defmodule Agendum.TUI.Render.ControlPanel do
   The control panel: Agenda's two top lines. Normally the file, with the
   indicators (marks, mode, time) on the right, then what is shown; the menu,
   a prompt, a question, a message or a hint take them over while they last,
-  and in a box the help for its highlighted field (`Agendum.TUI.FieldHelp`).
+  and in a box the help for its highlighted field (`Agendum.TUI.Boxes.FieldHelp`).
   Pure.
   """
 
   alias Agendum.Core.{Database, DateFormat}
-  alias Agendum.TUI.{Completion, Draw, Menu, State}
+  alias Agendum.TUI.{Typing.Completion, Terminal.Draw, Menu, State}
   alias Agendum.TUI.Render.Text
 
   # white and yellow on blue
@@ -28,7 +28,7 @@ defmodule Agendum.TUI.Render.ControlPanel do
         %{type: :prompt, label: label, action: action} ->
           # a file name can be picked from a list (R51), as Agenda said
           label =
-            if Agendum.TUI.SelectFile.file_prompt?(action),
+            if Agendum.TUI.Boxes.SelectFile.file_prompt?(action),
               do: label <> "  F3 lists files",
               else: label
 
@@ -36,13 +36,13 @@ defmodule Agendum.TUI.Render.ControlPanel do
            [{:panel, " "}] ++ Draw.input(state.edit.line, w - 2, :edit)}
 
         %{type: :column_width} = m ->
-          text_lines(state, base, :panel_hint, Agendum.TUI.ColumnWidth.panel(m))
+          text_lines(state, base, :panel_hint, Agendum.TUI.Moves.ColumnWidth.panel(m))
 
         %{type: :column_move} = m ->
-          text_lines(state, base, :panel_hint, Agendum.TUI.ColumnMove.panel(state, m))
+          text_lines(state, base, :panel_hint, Agendum.TUI.Moves.ColumnMove.panel(state, m))
 
         %{type: :section_move} = m ->
-          text_lines(state, base, :panel_hint, Agendum.TUI.SectionMove.panel(state, m))
+          text_lines(state, base, :panel_hint, Agendum.TUI.Moves.SectionMove.panel(state, m))
 
         %{type: :browse, date: _} ->
           period = State.view(state).datebook.period
@@ -57,7 +57,7 @@ defmodule Agendum.TUI.Render.ControlPanel do
 
         _ ->
           # a message first; else the help for a box's highlighted field
-          case {message_line(state), Agendum.TUI.FieldHelp.text(state)} do
+          case {message_line(state), Agendum.TUI.Boxes.FieldHelp.text(state)} do
             {[], nil} -> {file_line(state, base), where_line(state, base)}
             {[], help} -> text_lines(state, base, :panel_hint, help)
             {[{style, text} | _], _} -> text_lines(state, base, style, String.trim(text))

@@ -21,26 +21,26 @@ defmodule Agendum.TUI.Update do
   alias Agendum.Core
 
   alias Agendum.TUI.{
-    AlarmList,
-    CalendarBox,
+    Boxes.AlarmList,
+    Boxes.CalendarBox,
     CategoryScreens,
-    ColumnAddBox,
-    ColumnBox,
-    FileProperties,
-    GoTo,
+    Boxes.ColumnAddBox,
+    Boxes.ColumnBox,
+    Boxes.FileProperties,
+    Boxes.GoTo,
     History,
-    ItemProperties,
+    Boxes.ItemProperties,
     Layout,
     Menu,
-    NoteSearch,
-    RangeFilterBox,
-    SearchBox,
-    SortBox,
+    Typing.NoteSearch,
+    Boxes.RangeFilterBox,
+    Boxes.SearchBox,
+    Boxes.SortBox,
     State,
-    ViewManager
+    Boxes.ViewManager
   }
 
-  alias Agendum.TUI.{BoxCancel, BoxChoices}
+  alias Agendum.TUI.{Boxes.BoxCancel, Boxes.BoxChoices}
   alias Agendum.TUI.Update.{Actions, Marked, Notes, Prompts, ViewKeys}
 
   @spec handle(State.t(), term) :: {State.t(), [term]}
@@ -381,13 +381,13 @@ defmodule Agendum.TUI.Update do
     do: State.error(state, "Could not write: #{inspect(reason)}")
 
   @doc "A folder read for the Select File box (R51)."
-  def dir_listed(state, dir, result), do: Agendum.TUI.SelectFile.listed(state, dir, result)
+  def dir_listed(state, dir, result), do: Agendum.TUI.Boxes.SelectFile.listed(state, dir, result)
 
   # --- dispatch --------------------------------------------------------------
 
   @doc """
   A key for the box on top alone, without what `handle/2` does around it
-  (undo, macros): `Agendum.TUI.BoxChoices` tries SPACE with it.
+  (undo, macros): `Agendum.TUI.Boxes.BoxChoices` tries SPACE with it.
   """
   @spec box_key(State.t(), term) :: State.t()
   def box_key(state, key), do: dispatch(state, State.mode(state), key)
@@ -419,51 +419,52 @@ defmodule Agendum.TUI.Update do
   defp dispatch(state, %{type: :macros} = m, key), do: Agendum.TUI.Macros.handle(state, m, key)
 
   defp dispatch(state, %{type: :select_file} = m, key),
-    do: Agendum.TUI.SelectFile.handle(state, m, key)
+    do: Agendum.TUI.Boxes.SelectFile.handle(state, m, key)
 
   defp dispatch(state, %{type: :macro_props} = m, key),
-    do: Agendum.TUI.MacroProps.handle(state, m, key)
+    do: Agendum.TUI.Boxes.MacroProps.handle(state, m, key)
 
-  defp dispatch(state, %{type: :browse} = m, key), do: Agendum.TUI.Browse.handle(state, m, key)
+  defp dispatch(state, %{type: :browse} = m, key),
+    do: Agendum.TUI.Moves.Browse.handle(state, m, key)
 
   defp dispatch(state, %{type: :schedule} = m, key),
-    do: Agendum.TUI.ScheduleBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.ScheduleBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :datebook_props} = m, key),
-    do: Agendum.TUI.DatebookBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.DatebookBox.handle(state, m, key)
 
   defp dispatch(state, %{type: type} = m, key)
        when type in [:file_props, :date_settings, :display_format],
        do: FileProperties.handle(state, m, key)
 
   defp dispatch(state, %{type: :calendars} = m, key),
-    do: Agendum.TUI.CalendarsBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.CalendarsBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :customize} = m, key),
-    do: Agendum.TUI.CustomizeBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.CustomizeBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :input_format} = m, key),
-    do: Agendum.TUI.InputFormatBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.InputFormatBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :category_match} = m, key),
-    do: Agendum.TUI.CategoryMatchBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.CategoryMatchBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :auto_assign} = m, key),
-    do: Agendum.TUI.AutoAssignBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.AutoAssignBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :date_rule} = m, key),
-    do: Agendum.TUI.DateRuleBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.DateRuleBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :goto} = m, key), do: GoTo.handle(state, m, key)
 
   defp dispatch(state, %{type: :questions} = m, key),
-    do: Agendum.TUI.QuestionsBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.QuestionsBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :execute} = m, key),
-    do: Agendum.TUI.ExecuteBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.ExecuteBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :action_box} = m, key),
-    do: Agendum.TUI.ActionBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.ActionBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :range_filter} = m, key),
     do: RangeFilterBox.handle(state, m, key)
@@ -471,27 +472,27 @@ defmodule Agendum.TUI.Update do
   defp dispatch(state, %{type: :column_props} = m, key), do: ColumnBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :section_props} = m, key),
-    do: Agendum.TUI.SectionBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.SectionBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :numeric_functions} = m, key),
-    do: Agendum.TUI.NumericFunctionsBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.NumericFunctionsBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :column_add} = m, key), do: ColumnAddBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :item_column} = m, key),
-    do: Agendum.TUI.ItemColumnBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.ItemColumnBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :column_width} = m, key),
-    do: Agendum.TUI.ColumnWidth.handle(state, m, key)
+    do: Agendum.TUI.Moves.ColumnWidth.handle(state, m, key)
 
   defp dispatch(state, %{type: :column_move} = m, key),
-    do: Agendum.TUI.ColumnMove.handle(state, m, key)
+    do: Agendum.TUI.Moves.ColumnMove.handle(state, m, key)
 
   defp dispatch(state, %{type: :copy_items} = m, key),
-    do: Agendum.TUI.CopyBox.handle(state, m, key)
+    do: Agendum.TUI.Boxes.CopyBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :section_move} = m, key),
-    do: Agendum.TUI.SectionMove.handle(state, m, key)
+    do: Agendum.TUI.Moves.SectionMove.handle(state, m, key)
 
   defp dispatch(state, %{type: :alarm_list} = m, key), do: AlarmList.handle(state, m, key)
 

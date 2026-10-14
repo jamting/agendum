@@ -2,7 +2,7 @@ defmodule Agendum.TUI.BoxNavTest do
   @moduledoc "Moving between the settings of a box, as Agenda (User's Guide 2-16)."
   use ExUnit.Case, async: true
 
-  alias Agendum.TUI.BoxNav
+  alias Agendum.TUI.Boxes.BoxNav
 
   # Two columns, then a row with only a left setting, then two again:
   #   head    type

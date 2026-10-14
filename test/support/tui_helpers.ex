@@ -1,7 +1,7 @@
 defmodule Agendum.TUIHelpers do
   @moduledoc "Drive the pure TUI with keys and inspect the rendered text."
 
-  alias Agendum.TUI.{Draw, Layout, Render, State, Update}
+  alias Agendum.TUI.{Terminal.Draw, Layout, Render, State, Update}
 
   def start(db, opts \\ []) do
     db
