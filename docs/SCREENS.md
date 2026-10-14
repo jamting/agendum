@@ -296,62 +296,62 @@ dependencies after its question, Undo, Save) are not listed.
 
 ## By type
 
-| `type`               | Kind          | Module                                  | Reached from                                     | SPEC          |
-| -------------------- | ------------- | --------------------------------------- | ------------------------------------------------ | ------------- |
-| `:menu`              | control panel | `Agendum.TUI.Menu`                       | F10 or `/`                                       | §5            |
-| `:prompt`            | control panel | `Agendum.TUI.Update.Prompts`             | commands that ask for a line of text             | §5            |
-| `:confirm`           | box           | `Agendum.TUI.Update.Prompts`             | commands that ask Y/N                            | §5            |
-| `:scope`             | box           | `Agendum.TUI.Update.Marked`              | a command with items marked                      | R35           |
-| `:copy_items`        | box           | `Agendum.TUI.Boxes.CopyBox`                    | ALT-F9 on an item                                | R42           |
-| `:move_item`         | control panel | `Agendum.TUI.Update.Marked`              | ALT-F10, Item ▸ Reposition                       | R26           |
-| `:searching`         | control panel | `Agendum.TUI.Boxes.SearchBox`                  | the Search box                                   | R37           |
-| `:help`              | full screen   | `Agendum.TUI.Render.Help`                | F1                                               | §5            |
-| `:note`              | full screen   | `Agendum.TUI.Update.Notes`               | F5, Item Properties, Category Properties         | §5            |
-| `:catmgr`            | full screen   | `Agendum.TUI.CategoryScreens.Manager`    | F9, Category ▸ Manager                           | R2–R8         |
-| `:viewmgr`           | box           | `Agendum.TUI.Boxes.ViewManager`                | F8, View ▸ Manager                               | §5            |
-| `:picker`            | box           | `Agendum.TUI.CategoryScreens.Picker`     | many (see above)                                 | §5            |
-| `:profile`           | box           | `Agendum.TUI.CategoryScreens.Profile`    | F3 on an item, Item ▸ Show, Item Properties      | §5            |
-| `:group_profile`     | box           | `Agendum.TUI.CategoryScreens.Profile`    | F3 with items marked                             | R35           |
-| `:props`             | box           | `Agendum.TUI.CategoryScreens.Properties` | F6 on a section head or in the category manager  | §5            |
-| `:choice`            | box           | `Agendum.TUI.CategoryScreens.Choices`    | Category Properties, moves in the manager        | R6a, R7a, R7b |
-| `:choice_list`       | box           | `Agendum.TUI.Boxes.ChoiceListBox`              | F3 on a setting with choices in a box            | §5            |
-| `:category_stats`    | box           | `Agendum.TUI.Boxes.CategoryStatsBox`       | Category Properties ▸ Statistics                 | §5            |
-| `:item_props`        | box           | `Agendum.TUI.Boxes.ItemProperties`             | F6 on an item, Item ▸ Properties                 | R34, R43      |
-| `:goto`              | box           | `Agendum.TUI.Boxes.GoTo`                       | ALT-F5                                           | R42           |
-| `:search_box`        | box           | `Agendum.TUI.Boxes.SearchBox`                  | ALT-F6, Search ▸ View / File                     | R37           |
-| `:note_search`       | box           | `Agendum.TUI.Typing.NoteSearch`                 | ALT-F6 in a note                                 | R39           |
-| `:sort`              | box           | `Agendum.TUI.Boxes.SortBox`                    | View ▸ Order, View ▸ Section ▸ Sort              | R36           |
-| `:range_filter`      | box           | `Agendum.TUI.Boxes.RangeFilterBox`             | a filter or condition on a date/numeric category | R28a, R15a    |
-| `:action_box`        | box           | `Agendum.TUI.Boxes.ActionBox`                  | Also assign on a date/numeric category           | R15b          |
-| `:date_rule`         | box           | `Agendum.TUI.Boxes.DateRuleBox`                | Advanced settings of a date category             | R6b           |
-| `:category_match`    | box           | `Agendum.TUI.Boxes.CategoryMatchBox`           | Advanced settings of a standard category         | R16b          |
-| `:file_props`        | box           | `Agendum.TUI.Boxes.FileProperties`             | File ▸ Properties                                | R55, R14e     |
-| `:date_settings`     | box           | `Agendum.TUI.Boxes.DateSettingsBox`            | File Properties ▸ Global date settings           | R14e          |
-| `:display_format`    | box           | `Agendum.TUI.Boxes.DisplayFormatBox`           | Global date settings ▸ Display format            | R41, R41a     |
-| `:input_format`      | box           | `Agendum.TUI.Boxes.InputFormatBox`             | Global date settings or Customize ▸ Input format | R41b          |
-| `:customize`         | box           | `Agendum.TUI.Boxes.CustomizeBox`               | File ▸ Customize                                 | R40, R14c     |
-| `:calendars`         | box           | `Agendum.TUI.Boxes.CalendarsBox`               | File ▸ Transfer ▸ Calendars                      | R45           |
-| `:auto_assign`       | box           | `Agendum.TUI.Boxes.AutoAssignBox`              | File Properties ▸ Auto-assign settings           | R16a          |
-| `:column_props`      | box           | `Agendum.TUI.Boxes.ColumnBox`                  | View ▸ Column ▸ Properties                       | R55, R29, R41a |
-| `:column_add`        | box           | `Agendum.TUI.Boxes.ColumnAddBox`               | View ▸ Column ▸ Add                              | R55           |
-| `:item_column`       | box           | `Agendum.TUI.Boxes.ItemColumnBox`              | View ▸ Column ▸ Properties on the item text      | R55           |
-| `:execute`           | box           | `Agendum.TUI.Boxes.ExecuteBox`                 | Category ▸ Execute                               | R15e          |
-| `:questions`         | box           | `Agendum.TUI.Boxes.QuestionsBox`               | Category ▸ Questions                             | R16           |
-| `:alarm_list`        | box           | `Agendum.TUI.Boxes.AlarmList`                  | Search ▸ Alarms                                  | R38           |
-| `:calendar`          | box           | `Agendum.TUI.Boxes.CalendarBox`                | F3 in a date column, ALT-C                       | R46           |
-| `:datebook_props`    | box           | `Agendum.TUI.Boxes.DatebookBox`                | View ▸ Properties of a datebook view             | R47           |
-| `:section_props`     | box           | `Agendum.TUI.Boxes.SectionBox`                 | View ▸ Section ▸ Properties, F6 on a section head | R61          |
-| `:numeric_functions` | box           | `Agendum.TUI.Boxes.NumericFunctionsBox`        | Section Properties ▸ Select numeric functions    | R61, R29      |
-| `:browse`            | control panel | `Agendum.TUI.Moves.Browse`                     | View ▸ Browse, ALT-B                             | R47, R48      |
-| `:column_width`      | control panel | `Agendum.TUI.Moves.ColumnWidth`                | View ▸ Column ▸ Width                            | R22a, R55     |
-| `:column_move`       | control panel | `Agendum.TUI.Moves.ColumnMove`                 | View ▸ Column ▸ Move, ALT-F10 on a column head   | R55           |
-| `:section_move`      | control panel | `Agendum.TUI.Moves.SectionMove`                | View ▸ Section ▸ Move, ALT-F10 on a section head | R62           |
-| `:schedule`          | box           | `Agendum.TUI.Boxes.ScheduleBox`                | Search ▸ Schedule                                | R49           |
-| `:macros`            | box           | `Agendum.TUI.Macros`                     | ALT-F3                                           | R50           |
-| `:macro_props`       | box           | `Agendum.TUI.Boxes.MacroProps`                 | F6 in the macro manager                          | R50           |
-| `:select_file`       | box           | `Agendum.TUI.Boxes.SelectFile`                 | F3 in a file-name prompt                         | R51           |
-| `:splash`            | full screen   | `Agendum.TUI.Splash`                     | at start; any key or three seconds close it      | R52           |
-| `:devtools`          | full screen   | `Agendum.TUI.DevTools`                   | ESC ? (hidden)                                   | —             |
+| `type`               | Kind          | Module                                   | Reached from                                      | SPEC           |
+| -------------------- | ------------- | ---------------------------------------- | ------------------------------------------------- | -------------- |
+| `:menu`              | control panel | `Agendum.TUI.Menu`                       | F10 or `/`                                        | §5             |
+| `:prompt`            | control panel | `Agendum.TUI.Update.Prompts`             | commands that ask for a line of text              | §5             |
+| `:confirm`           | box           | `Agendum.TUI.Update.Prompts`             | commands that ask Y/N                             | §5             |
+| `:scope`             | box           | `Agendum.TUI.Update.Marked`              | a command with items marked                       | R35            |
+| `:copy_items`        | box           | `Agendum.TUI.Boxes.CopyBox`              | ALT-F9 on an item                                 | R42            |
+| `:move_item`         | control panel | `Agendum.TUI.Update.Marked`              | ALT-F10, Item ▸ Reposition                        | R26            |
+| `:searching`         | control panel | `Agendum.TUI.Boxes.SearchBox`            | the Search box                                    | R37            |
+| `:help`              | full screen   | `Agendum.TUI.Render.Help`                | F1                                                | §5             |
+| `:note`              | full screen   | `Agendum.TUI.Update.Notes`               | F5, Item Properties, Category Properties          | §5             |
+| `:catmgr`            | full screen   | `Agendum.TUI.CategoryScreens.Manager`    | F9, Category ▸ Manager                            | R2–R8          |
+| `:viewmgr`           | box           | `Agendum.TUI.Boxes.ViewManager`          | F8, View ▸ Manager                                | §5             |
+| `:picker`            | box           | `Agendum.TUI.CategoryScreens.Picker`     | many (see above)                                  | §5             |
+| `:profile`           | box           | `Agendum.TUI.CategoryScreens.Profile`    | F3 on an item, Item ▸ Show, Item Properties       | §5             |
+| `:group_profile`     | box           | `Agendum.TUI.CategoryScreens.Profile`    | F3 with items marked                              | R35            |
+| `:props`             | box           | `Agendum.TUI.CategoryScreens.Properties` | F6 on a section head or in the category manager   | §5             |
+| `:choice`            | box           | `Agendum.TUI.CategoryScreens.Choices`    | Category Properties, moves in the manager         | R6a, R7a, R7b  |
+| `:choice_list`       | box           | `Agendum.TUI.Boxes.ChoiceListBox`        | F3 on a setting with choices in a box             | §5             |
+| `:category_stats`    | box           | `Agendum.TUI.Boxes.CategoryStatsBox`     | Category Properties ▸ Statistics                  | §5             |
+| `:item_props`        | box           | `Agendum.TUI.Boxes.ItemProperties`       | F6 on an item, Item ▸ Properties                  | R34, R43       |
+| `:goto`              | box           | `Agendum.TUI.Boxes.GoTo`                 | ALT-F5                                            | R42            |
+| `:search_box`        | box           | `Agendum.TUI.Boxes.SearchBox`            | ALT-F6, Search ▸ View / File                      | R37            |
+| `:note_search`       | box           | `Agendum.TUI.Typing.NoteSearch`          | ALT-F6 in a note                                  | R39            |
+| `:sort`              | box           | `Agendum.TUI.Boxes.SortBox`              | View ▸ Order, View ▸ Section ▸ Sort               | R36            |
+| `:range_filter`      | box           | `Agendum.TUI.Boxes.RangeFilterBox`       | a filter or condition on a date/numeric category  | R28a, R15a     |
+| `:action_box`        | box           | `Agendum.TUI.Boxes.ActionBox`            | Also assign on a date/numeric category            | R15b           |
+| `:date_rule`         | box           | `Agendum.TUI.Boxes.DateRuleBox`          | Advanced settings of a date category              | R6b            |
+| `:category_match`    | box           | `Agendum.TUI.Boxes.CategoryMatchBox`     | Advanced settings of a standard category          | R16b           |
+| `:file_props`        | box           | `Agendum.TUI.Boxes.FileProperties`       | File ▸ Properties                                 | R55, R14e      |
+| `:date_settings`     | box           | `Agendum.TUI.Boxes.DateSettingsBox`      | File Properties ▸ Global date settings            | R14e           |
+| `:display_format`    | box           | `Agendum.TUI.Boxes.DisplayFormatBox`     | Global date settings ▸ Display format             | R41, R41a      |
+| `:input_format`      | box           | `Agendum.TUI.Boxes.InputFormatBox`       | Global date settings or Customize ▸ Input format  | R41b           |
+| `:customize`         | box           | `Agendum.TUI.Boxes.CustomizeBox`         | File ▸ Customize                                  | R40, R14c      |
+| `:calendars`         | box           | `Agendum.TUI.Boxes.CalendarsBox`         | File ▸ Transfer ▸ Calendars                       | R45            |
+| `:auto_assign`       | box           | `Agendum.TUI.Boxes.AutoAssignBox`        | File Properties ▸ Auto-assign settings            | R16a           |
+| `:column_props`      | box           | `Agendum.TUI.Boxes.ColumnBox`            | View ▸ Column ▸ Properties                        | R55, R29, R41a |
+| `:column_add`        | box           | `Agendum.TUI.Boxes.ColumnAddBox`         | View ▸ Column ▸ Add                               | R55            |
+| `:item_column`       | box           | `Agendum.TUI.Boxes.ItemColumnBox`        | View ▸ Column ▸ Properties on the item text       | R55            |
+| `:execute`           | box           | `Agendum.TUI.Boxes.ExecuteBox`           | Category ▸ Execute                                | R15e           |
+| `:questions`         | box           | `Agendum.TUI.Boxes.QuestionsBox`         | Category ▸ Questions                              | R16            |
+| `:alarm_list`        | box           | `Agendum.TUI.Boxes.AlarmList`            | Search ▸ Alarms                                   | R38            |
+| `:calendar`          | box           | `Agendum.TUI.Boxes.CalendarBox`          | F3 in a date column, ALT-C                        | R46            |
+| `:datebook_props`    | box           | `Agendum.TUI.Boxes.DatebookBox`          | View ▸ Properties of a datebook view              | R47            |
+| `:section_props`     | box           | `Agendum.TUI.Boxes.SectionBox`           | View ▸ Section ▸ Properties, F6 on a section head | R61            |
+| `:numeric_functions` | box           | `Agendum.TUI.Boxes.NumericFunctionsBox`  | Section Properties ▸ Select numeric functions     | R61, R29       |
+| `:browse`            | control panel | `Agendum.TUI.Moves.Browse`               | View ▸ Browse, ALT-B                              | R47, R48       |
+| `:column_width`      | control panel | `Agendum.TUI.Moves.ColumnWidth`          | View ▸ Column ▸ Width                             | R22a, R55      |
+| `:column_move`       | control panel | `Agendum.TUI.Moves.ColumnMove`           | View ▸ Column ▸ Move, ALT-F10 on a column head    | R55            |
+| `:section_move`      | control panel | `Agendum.TUI.Moves.SectionMove`          | View ▸ Section ▸ Move, ALT-F10 on a section head  | R62            |
+| `:schedule`          | box           | `Agendum.TUI.Boxes.ScheduleBox`          | Search ▸ Schedule                                 | R49            |
+| `:macros`            | box           | `Agendum.TUI.Macros`                     | ALT-F3                                            | R50            |
+| `:macro_props`       | box           | `Agendum.TUI.Boxes.MacroProps`           | F6 in the macro manager                           | R50            |
+| `:select_file`       | box           | `Agendum.TUI.Boxes.SelectFile`           | F3 in a file-name prompt                          | R51            |
+| `:splash`            | full screen   | `Agendum.TUI.Splash`                     | at start; any key or three seconds close it       | R52            |
+| `:devtools`          | full screen   | `Agendum.TUI.DevTools`                   | ESC ? (hidden)                                    | —              |
 
 `test/agendum/tui/screens_doc_test.exs` fails when a mode type is added without
 being listed here.
