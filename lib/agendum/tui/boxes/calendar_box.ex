@@ -15,9 +15,11 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
   The month and the moves are `Agendum.Core.MonthCalendar`. Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
+
   alias Agendum.Core
   alias Agendum.Core.{Database, MonthCalendar}
-  alias Agendum.TUI.State
+  alias Agendum.TUI.{Boxes.Box, State}
   alias Agendum.TUI.Update.{Editing, Prompts}
 
   @moves %{
@@ -55,6 +57,7 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
     State.push(state, %{type: :calendar, date: date, time: time, target: target})
   end
 
+  @impl Box
   def handle(state, mode, key) do
     case {key, @moves[key]} do
       {_, {move, n}} ->
@@ -120,14 +123,14 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
   defp time_text(nil), do: ""
   defp time_text(time), do: time |> Time.to_string() |> String.slice(0, 5)
 
-  @doc "The box's title: the month and year."
-  def title(mode), do: "#{Enum.at(@months, mode.date.month - 1)} #{mode.date.year}"
+  # the month and year
+  @impl Box
+  def title(_state, mode), do: "#{Enum.at(@months, mode.date.month - 1)} #{mode.date.year}"
 
-  @doc """
-  The box's lines: the weekday names from the file's beginning of week, the
-  six weeks with the highlighted day, and the time.
-  """
-  def lines(state, mode) do
+  # the weekday names from the file's beginning of week, the six weeks
+  # with the highlighted day, and the time
+  @impl Box
+  def content(state, mode, _inner, _max_rows) do
     week_start = state.db.date_settings.week_start
     names = Enum.map_join(0..6, " ", &Enum.at(@days, Integer.mod(week_start - 1 + &1, 7)))
 
@@ -142,6 +145,29 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
     time = if mode.time, do: time_text(mode.time), else: "(none; F6 sets one)"
     [[{:box, " " <> names}], []] ++ weeks ++ [[], [{:box, " Time: " <> time}]]
   end
+
+  # a small box, as in Agenda
+  @impl Box
+  def width(state, _mode), do: min(state.width - 8, 30)
+
+  @impl Box
+  def keys(_state, %{target: target}),
+    do: [
+      {"←→↑↓", "Day/week", "←→ ↑↓", "Day, week"},
+      {"PGUP/DN", "Month", "PGUP/PGDN", "Month"},
+      {"^←→", "Year", "CTRL-←→ or < >", "Year"},
+      {"ENTER", if(target, do: "Select", else: "Close"),
+       if(target, do: "Set the date", else: "Close")},
+      {"F6", "Time", "Set a time"},
+      {"type", "Go to", "Type a date to go there"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help,
+    do:
+      "Move the highlight to a date and press ENTER. PGUP/PGDN for another month; " <>
+        "type a date to go there; F6 adds a time."
 
   defp cell(nil, _highlight), do: {:box, "   "}
   defp cell(date, date), do: {:box_selected, String.pad_leading("#{date.day}", 3)}

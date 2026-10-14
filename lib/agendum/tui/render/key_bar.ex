@@ -117,18 +117,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Return", "Back to the view"}
     ]
 
-  defp mode_keys(%{type: :calendar, target: target}),
-    do: [
-      {"←→↑↓", "Day/week", "←→ ↑↓", "Day, week"},
-      {"PGUP/DN", "Month", "PGUP/PGDN", "Month"},
-      {"^←→", "Year", "CTRL-←→ or < >", "Year"},
-      {"ENTER", if(target, do: "Select", else: "Close"),
-       if(target, do: "Set the date", else: "Close")},
-      {"F6", "Time", "Set a time"},
-      {"type", "Go to", "Type a date to go there"},
-      {"ESC", "Cancel"}
-    ]
-
   defp mode_keys(%{type: :browse, shift: _}),
     do: [
       {"←→", "Day", "← →", "A day"},

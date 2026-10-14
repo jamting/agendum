@@ -90,7 +90,6 @@ defmodule Agendum.TUI.Render.Boxes do
   ]
   # boxes to choose one thing in
   @accept_boxes [
-    :calendar,
     :select_file,
     :scope,
     :confirm
@@ -122,9 +121,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_width(state, %{type: type} = mode) when is_map_key(@boxes, type),
     do: @boxes[type].width(state, mode)
 
-  # the calendar is a small box, as in Agenda; the others share one width
-  defp box_width(state, %{type: :calendar}), do: min(state.width - 8, 30)
-
   defp box_width(state, %{type: :viewmgr}), do: min(state.width - 8, 50)
 
   # a question is as wide as it and its answer need, as Agenda's (and
@@ -136,8 +132,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_title(state, %{type: type} = mode) when is_map_key(@boxes, type),
     do: @boxes[type].title(state, mode)
-
-  defp box_title(_state, %{type: :calendar} = mode), do: Agendum.TUI.Boxes.CalendarBox.title(mode)
 
   defp box_title(_state, %{type: :viewmgr}), do: "View Manager"
   # a question has no title, as Agenda's
@@ -208,9 +202,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
     rows ++ [[{:box, " ENTER opens · type to narrow · F7 dates · ESC back"}]]
   end
-
-  defp box_content(state, %{type: :calendar} = mode, _inner, _max_rows),
-    do: Agendum.TUI.Boxes.CalendarBox.lines(state, mode)
 
   defp box_content(_state, %{type: :scope} = mode, _inner, _max_rows) do
     options = ["Marked items (#{length(mode.marked)})", "Current item"]

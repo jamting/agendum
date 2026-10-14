@@ -76,6 +76,7 @@ defmodule Agendum.TUI.Boxes.Box do
     action_box: Agendum.TUI.Boxes.ActionBox,
     alarm_list: Agendum.TUI.Boxes.AlarmList,
     auto_assign: Agendum.TUI.Boxes.AutoAssignBox,
+    calendar: Agendum.TUI.Boxes.CalendarBox,
     category_match: Agendum.TUI.Boxes.CategoryMatchBox,
     category_stats: Agendum.TUI.Boxes.CategoryStatsBox,
     choice: Agendum.TUI.CategoryScreens.Choices,

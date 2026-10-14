@@ -26,10 +26,7 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     viewmgr:
       "To display a view, highlight the view name and press ENTER. " <>
         "Press INS to create a new view.",
-    confirm: "Y or N answers. SPACE switches the answer; ENTER accepts the one shown.",
-    calendar:
-      "Move the highlight to a date and press ENTER. PGUP/PGDN for another month; " <>
-        "type a date to go there; F6 adds a time."
+    confirm: "Y or N answers. SPACE switches the answer; ENTER accepts the one shown."
   }
 
   @doc "The help for the highlighted field of the box on top, or nil."

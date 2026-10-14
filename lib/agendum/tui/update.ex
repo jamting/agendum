@@ -21,7 +21,6 @@ defmodule Agendum.TUI.Update do
   alias Agendum.Core
 
   alias Agendum.TUI.{
-    Boxes.CalendarBox,
     CategoryScreens,
     History,
     Layout,
@@ -405,7 +404,6 @@ defmodule Agendum.TUI.Update do
   defp dispatch(state, %{type: :move_item} = m, key), do: Marked.move_key(state, m, key)
   defp dispatch(state, %{type: :scope} = m, key), do: Marked.scope_key(state, m, key)
 
-  defp dispatch(state, %{type: :calendar} = m, key), do: CalendarBox.handle(state, m, key)
   defp dispatch(state, %{type: :macros} = m, key), do: Agendum.TUI.Macros.handle(state, m, key)
 
   defp dispatch(state, %{type: :select_file} = m, key),
