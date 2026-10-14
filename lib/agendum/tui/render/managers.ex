@@ -1,7 +1,6 @@
 defmodule Agendum.TUI.Render.Managers do
   @moduledoc """
-  The full-screen category manager (F9), and the view manager's box (F8).
-  Pure.
+  The full-screen category manager (F9). Pure.
   """
 
   alias Agendum.Core.Database
@@ -71,42 +70,5 @@ defmodule Agendum.TUI.Render.Managers do
       [] -> ""
       tags -> "   " <> Enum.join(tags, " · ")
     end
-  end
-
-  @doc """
-  The view manager's box (Agenda's, screenshot 40): the views' names in
-  order, * before a datebook view (R47), the name being renamed as an input
-  line; an arrow at the left where the list goes on above or below, and
-  what was typed to find a view.
-  """
-  def view_box(state, mode, inner, max_rows) do
-    views = Database.views(state.db)
-    find = if mode.typed == "", do: [], else: [[], [{:dim, " Find: " <> mode.typed}]]
-    rows = max(max_rows - length(find), 1)
-    top = mode.cursor |> Kernel.-(rows - 1) |> max(0)
-    shown = views |> Enum.with_index() |> Enum.drop(top) |> Enum.take(rows)
-    last = top + length(shown) - 1
-
-    lines =
-      Enum.map(shown, fn {v, i} ->
-        arrow =
-          cond do
-            i == top and top > 0 -> "↑"
-            i == last and last < length(views) - 1 -> "↓"
-            true -> " "
-          end
-
-        star = if v.datebook, do: "*", else: " "
-
-        name =
-          case state.edit do
-            %{target: id} when id == v.id -> Draw.input(state.edit.line, inner - 6, :edit)
-            _ -> [{if(i == mode.cursor, do: :box_selected, else: :box), v.name}]
-          end
-
-        [{:box, " #{arrow} #{star} "}] ++ name
-      end)
-
-    lines ++ find
   end
 end

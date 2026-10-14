@@ -26,8 +26,7 @@ defmodule Agendum.TUI.Update do
     Layout,
     Menu,
     Boxes.SearchBox,
-    State,
-    Boxes.ViewManager
+    State
   }
 
   alias Agendum.TUI.{Boxes.BoxCancel, Boxes.BoxChoices}
@@ -392,7 +391,6 @@ defmodule Agendum.TUI.Update do
 
   defp dispatch(state, %{type: :menu} = m, key), do: Menu.handle(state, m, key)
 
-  defp dispatch(state, %{type: :viewmgr} = m, key), do: ViewManager.handle(state, m, key)
   defp dispatch(state, %{type: :prompt} = m, key), do: Prompts.prompt_key(state, m, key)
   defp dispatch(state, %{type: :note} = m, key), do: Notes.note_key(state, m, key)
   defp dispatch(state, %{type: :help} = m, key), do: help_key(state, m, key)

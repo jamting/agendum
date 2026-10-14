@@ -19,14 +19,10 @@ defmodule Agendum.TUI.Render do
   alias Agendum.TUI.Render.{Boxes, ControlPanel, Help, KeyBar, Managers, Note, View}
 
   @full_screen [:catmgr, :help, :note, :devtools]
-  @boxes [
-    :viewmgr
-  ]
-
   @doc "Whether a mode is drawn as a box over the screen."
   @spec box?(map) :: boolean
   def box?(%{type: type}),
-    do: type in @boxes or is_map_key(Agendum.TUI.Boxes.Box.registry(), type)
+    do: is_map_key(Agendum.TUI.Boxes.Box.registry(), type)
 
   @spec render(State.t()) :: [Draw.line()]
   def render(%State{modes: [%{type: :splash} | _]} = state), do: Agendum.TUI.Splash.render(state)

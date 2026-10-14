@@ -199,9 +199,6 @@ defmodule Agendum.TUI.Render.ControlPanel do
       base && base.type == :catmgr ->
         "CAT MGR"
 
-      top && top.type == :viewmgr ->
-        "VW MGR"
-
       base && base.type == :note ->
         "NOTE"
 

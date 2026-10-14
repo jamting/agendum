@@ -1,8 +1,7 @@
 defmodule Agendum.TUI.Boxes.ViewManager do
   @moduledoc """
   The view manager (F8): switch between, add, rename and discard views. A
-  box over the view, as Agenda's (screenshot 40;
-  `Agendum.TUI.Render.Managers.view_box/4`).
+  box over the view, as Agenda's (screenshot 40).
 
   Typing highlights a view (R53; User's Guide 9-5, Starter Applications
   1-10): the first letter the next view starting with it, round the list;
@@ -11,8 +10,12 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   the next view with it. Moving forgets what was typed.
   """
 
+  # ENTER shows the view, ESC goes back to the one shown, as in Agenda
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "VW MGR"
+
   alias Agendum.Core
-  alias Agendum.TUI.{Typing.LineEdit, State}
+  alias Agendum.Core.Database
+  alias Agendum.TUI.{Boxes.Box, Terminal.Draw, Typing.LineEdit, State}
   alias Agendum.TUI.Update.Prompts
 
   def open(state) do
@@ -20,6 +23,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
     State.push(state, %{type: :viewmgr, cursor: index, typed: "", from: index})
   end
 
+  @impl Box
   def handle(%State{edit: edit} = state, _mode, key) when edit != nil do
     case key do
       :esc ->
@@ -143,4 +147,63 @@ defmodule Agendum.TUI.Boxes.ViewManager do
       state |> State.change_db(db) |> State.put_mode(%{mode | cursor: target})
     end
   end
+
+  @impl Box
+  def title(_state, _mode), do: "View Manager"
+
+  @impl Box
+  def width(state, _mode), do: min(state.width - 8, 50)
+
+  # Agenda's (screenshot 40): the views' names in order, * before a
+  # datebook view (R47), the name being renamed as an input line; an arrow
+  # at the left where the list goes on above or below, and what was typed
+  # to find a view
+  @impl Box
+  def content(state, mode, inner, max_rows) do
+    views = Database.views(state.db)
+    find = if mode.typed == "", do: [], else: [[], [{:dim, " Find: " <> mode.typed}]]
+    rows = max(max_rows - length(find), 1)
+    top = mode.cursor |> Kernel.-(rows - 1) |> max(0)
+    shown = views |> Enum.with_index() |> Enum.drop(top) |> Enum.take(rows)
+    last = top + length(shown) - 1
+
+    lines =
+      Enum.map(shown, fn {v, i} ->
+        arrow =
+          cond do
+            i == top and top > 0 -> "↑"
+            i == last and last < length(views) - 1 -> "↓"
+            true -> " "
+          end
+
+        star = if v.datebook, do: "*", else: " "
+
+        name =
+          case state.edit do
+            %{target: id} when id == v.id -> Draw.input(state.edit.line, inner - 6, :edit)
+            _ -> [{if(i == mode.cursor, do: :box_selected, else: :box), v.name}]
+          end
+
+        [{:box, " #{arrow} #{star} "}] ++ name
+      end)
+
+    lines ++ find
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"ENTER", "Select", "Show the view"},
+      {"INS", "Add", "Add a view"},
+      {"F2", "Rename"},
+      {"DEL/F4", "Discard"},
+      {"A-↑↓", "Reorder", "ALT-↑↓", "Reorder"},
+      {"ESC", "Return", "Back to the view"}
+    ]
+
+  @impl Box
+  def help,
+    do:
+      "To display a view, highlight the view name and press ENTER. " <>
+        "Press INS to create a new view."
 end

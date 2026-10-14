@@ -112,7 +112,8 @@ defmodule Agendum.TUI.Boxes.Box do
     search_box: Agendum.TUI.Boxes.SearchBox,
     section_props: Agendum.TUI.Boxes.SectionBox,
     select_file: Agendum.TUI.Boxes.SelectFile,
-    sort: Agendum.TUI.Boxes.SortBox
+    sort: Agendum.TUI.Boxes.SortBox,
+    viewmgr: Agendum.TUI.Boxes.ViewManager
   }
 
   @doc "The box modules, by mode type."

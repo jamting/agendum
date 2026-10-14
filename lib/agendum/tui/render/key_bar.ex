@@ -107,16 +107,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Return"}
     ]
 
-  defp mode_keys(%{type: :viewmgr}),
-    do: [
-      {"ENTER", "Select", "Show the view"},
-      {"INS", "Add", "Add a view"},
-      {"F2", "Rename"},
-      {"DEL/F4", "Discard"},
-      {"A-↑↓", "Reorder", "ALT-↑↓", "Reorder"},
-      {"ESC", "Return", "Back to the view"}
-    ]
-
   defp mode_keys(%{type: :browse, shift: _}),
     do: [
       {"←→", "Day", "← →", "A day"},

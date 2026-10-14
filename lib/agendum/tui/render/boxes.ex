@@ -83,11 +83,6 @@ defmodule Agendum.TUI.Render.Boxes do
   @accept {"Press ENTER to accept, ESC to cancel", "ENTER accept · ESC cancel"}
   @esc_done {"Press ESC when done", "ESC when done"}
 
-  # settings boxes, and the boxes that act on ENTER (the view manager too,
-  # as Agenda's: ENTER shows the view, ESC goes back to the one shown)
-  @done_boxes [
-    :viewmgr
-  ]
   # boxes that only show something
   @return {"Press ENTER or ESC to return", "ENTER/ESC return"}
 
@@ -99,7 +94,7 @@ defmodule Agendum.TUI.Render.Boxes do
             box.finish(mode)
           ]
 
-        Agendum.TUI.Boxes.BoxCancel.cancels?(mode.type) or mode.type in @done_boxes ->
+        Agendum.TUI.Boxes.BoxCancel.cancels?(mode.type) ->
           @done
 
         true ->
@@ -112,20 +107,11 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_width(state, %{type: type} = mode) when is_map_key(@boxes, type),
     do: @boxes[type].width(state, mode)
 
-  defp box_width(state, %{type: :viewmgr}), do: min(state.width - 8, 50)
-
   defp box_width(state, _mode), do: min(state.width - 8, 60)
 
   defp box_title(state, %{type: type} = mode) when is_map_key(@boxes, type),
     do: @boxes[type].title(state, mode)
 
-  defp box_title(_state, %{type: :viewmgr}), do: "View Manager"
-
-  # the column's head is the box's first row, as in Agenda (screenshot 142)
-
   defp box_content(state, %{type: type} = mode, inner, max_rows) when is_map_key(@boxes, type),
     do: @boxes[type].content(state, mode, inner, max_rows)
-
-  defp box_content(state, %{type: :viewmgr} = mode, inner, max_rows),
-    do: Agendum.TUI.Render.Managers.view_box(state, mode, inner, max_rows)
 end

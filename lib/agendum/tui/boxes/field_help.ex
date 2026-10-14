@@ -19,11 +19,7 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   @registered Box.registry()
 
   # Help for boxes that are lists: the same whatever is highlighted
-  @lists %{
-    viewmgr:
-      "To display a view, highlight the view name and press ENTER. " <>
-        "Press INS to create a new view."
-  }
+  @lists %{}
 
   @doc "The help for the highlighted field of the box on top, or nil."
   @spec text(State.t()) :: String.t() | nil
