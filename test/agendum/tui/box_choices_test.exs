@@ -51,6 +51,12 @@ defmodule Agendum.TUI.BoxChoicesTest do
     assert %{type: :column_props, typing: {:head, _}} = State.mode(state)
   end
 
+  test "F3, then ENTER on the choice already set, changes nothing", %{state: state} do
+    state = date_format(state)
+    chosen = press(state, [{:f, 3}, :enter])
+    assert chosen.db.date_format.order == :yyyymmdd
+  end
+
   test "F3 lists the choices; ENTER takes the highlighted one", %{state: state} do
     state = press(date_format(state), {:f, 3})
     assert %{type: :choice_list} = State.mode(state)

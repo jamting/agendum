@@ -16,7 +16,7 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
   undo step); preferences changed on the way are saved once. Pure.
   """
 
-  alias Agendum.TUI.{Boxes.BoxCancel, State}
+  alias Agendum.TUI.State
   alias Agendum.TUI.Render.Boxes
 
   # the longest list of choices: Date format has 20
@@ -90,9 +90,9 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
 
   def choices(_state), do: []
 
-  defp cycles?(%{type: type} = mode) do
+  defp cycles?(mode) do
     case Agendum.TUI.Boxes.Box.module(mode) do
-      nil -> BoxCancel.cancels?(type)
+      nil -> false
       box -> box.choices?()
     end
   end
@@ -114,8 +114,9 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
 
   # SPACE pressed n times on the box, or nil when that leaves the box (opens
   # another, asks, starts typing): those settings are not lists
+  # (`1..n//1` is empty for n = 0; a plain `1..0` would count down, 1 then 0)
   defp space(state, n) do
-    Enum.reduce_while(1..n, state, fn _, s ->
+    Enum.reduce_while(1..n//1, state, fn _, s ->
       next = Agendum.TUI.Update.box_key(s, {:char, " "})
 
       if same_box?(s, next), do: {:cont, next}, else: {:halt, nil}
