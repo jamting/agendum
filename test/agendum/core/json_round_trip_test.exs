@@ -2,7 +2,7 @@ defmodule Agendum.Core.JSONRoundTripTest do
   @moduledoc """
   Whatever a person does to a file, writing it as JSON and reading it back
   gives the same file (R44): random key sequences on the sample file, as in
-  `Agendum.TUI.FuzzTest`, make the files.
+  `Agendum.TUI.Fuzz`, make the files.
   """
   use ExUnit.Case, async: true
   use ExUnitProperties

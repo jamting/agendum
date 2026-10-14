@@ -1,7 +1,13 @@
-defmodule Agendum.TUI.FuzzTest do
-  @moduledoc "Random key sequences must never crash the UI, and every frame must fill the screen."
-  use ExUnit.Case, async: true
+defmodule Agendum.TUI.Fuzz do
+  @moduledoc """
+  Random key sequences must never crash the UI, and every frame must fill the
+  screen. The runs are shared among `@parts` test modules (defined at the end
+  of this file) so that ExUnit runs them side by side (`async: true` runs
+  modules in parallel, never the tests inside one module); one module alone
+  set the length of the whole suite.
+  """
   use ExUnitProperties
+  import ExUnit.Assertions
 
   alias Agendum.TUI.{Terminal.Draw, Render, Update}
   import Agendum.TUIHelpers, only: [start: 2]
@@ -144,11 +150,20 @@ defmodule Agendum.TUI.FuzzTest do
   # 300 runs in the suite; FUZZ_RUNS sets more for a longer search after a
   # large TUI change: FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs
   @runs String.to_integer(System.get_env("FUZZ_RUNS", "300"))
+  @parts 4
 
-  # ExUnit's 60 seconds per test, for every 300 runs
-  @tag timeout: 60_000 * max(1, div(@runs, 300))
+  @doc "How many test modules share the runs."
+  def parts, do: @parts
 
-  property "the UI survives any key sequence" do
+  @doc "ExUnit's timeout for one part: its 60 seconds for every 300 runs."
+  def timeout, do: 60_000 * max(1, div(@runs, 300))
+
+  @doc """
+  Runs part `part` (1..parts) of the property. Each part starts from its own
+  seed, ExUnit's plus the part, so the parts try different sequences and
+  `mix test --seed N` still repeats a failure.
+  """
+  def run(part) do
     check all(
             keys <- list_of(key(), max_length: 60),
             width <- integer(40..120),
@@ -156,7 +171,8 @@ defmodule Agendum.TUI.FuzzTest do
             numeric <- boolean(),
             datebook <- member_of([nil, nil, :day, :week, :month, :quarter]),
             filtered <- boolean(),
-            max_runs: @runs
+            max_runs: div(@runs + @parts - 1, @parts),
+            initial_seed: ExUnit.configuration()[:seed] + part
           ) do
       db =
         numeric |> sample() |> with_filter(filtered) |> with_datebook(datebook) |> with_macros()
@@ -182,6 +198,22 @@ defmodule Agendum.TUI.FuzzTest do
 
         state
       end)
+    end
+  end
+end
+
+# One test module per part; `for` at the top level defines them when the file
+# is loaded, and a module body sees the variables around it, so `@part` keeps
+# each one's number.
+for part <- 1..Agendum.TUI.Fuzz.parts() do
+  defmodule Module.concat(Agendum.TUI.FuzzTest, "Part#{part}") do
+    @moduledoc "Part #{part} of the fuzz property (`Agendum.TUI.Fuzz`)."
+    use ExUnit.Case, async: true
+    @part part
+
+    @tag timeout: Agendum.TUI.Fuzz.timeout()
+    test "the UI survives any key sequence (part #{@part})" do
+      Agendum.TUI.Fuzz.run(@part)
     end
   end
 end
