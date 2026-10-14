@@ -16,7 +16,7 @@ defmodule Agenda.TUI.ActionsTest do
 
   defp downs_to(field) do
     index = Enum.find_index(Agenda.TUI.CategoryScreens.Properties.props_fields(), &(&1 == field))
-    List.duplicate(:down, index)
+    List.duplicate(:tab, index)
   end
 
   defp open_actions(state),
@@ -38,7 +38,7 @@ defmodule Agenda.TUI.ActionsTest do
 
   test "the row lists the actions", %{state: state} do
     state = open_actions(state) |> press(["Calls", :enter, :enter, :esc, :esc])
-    assert screen(state) =~ ~r/Assignment actions\s+: -Calls/
+    assert screen(state) =~ ~r/Assignment actions:.*\n.*-Calls/
   end
 
   test "a date category opens the Date Action box", %{state: state} do
@@ -80,7 +80,7 @@ defmodule Agenda.TUI.ActionsTest do
   test "Special action cycles none, done, discard", %{state: state} do
     state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ downs_to(:special) ++ [" "])
     assert state.db.categories[cat(state, "Meetings")].special == :done
-    assert screen(state) =~ ~r/Special action\s+: Mark items done/
+    assert screen(state) =~ ~r/Special actions: +Mark items done/
     state = press(state, " ")
     assert state.db.categories[cat(state, "Meetings")].special == :discard
     state = press(state, " ")

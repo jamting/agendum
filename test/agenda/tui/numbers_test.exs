@@ -182,11 +182,11 @@ defmodule Agenda.TUI.NumbersTest do
     test "a category without children converts at once", %{state: state} do
       {:ok, db, cost} = Core.add_category(state.db, state.db.main_id, "Cost")
       state = %{state | db: db} |> CategoryHelpers.props(cost)
-      assert screen(state) =~ ~r/Type\s+: Standard/
+      assert screen(state) =~ ~r/Type: +Standard/
 
       state = state |> CategoryHelpers.choose(:type) |> press("n")
       assert state.db.categories[cost].kind == :numeric
-      assert screen(state) =~ ~r/Type\s+: Numeric/
+      assert screen(state) =~ ~r/Type: +Numeric/
     end
 
     test "with children, Agenda asks first and says which names become 0", %{state: state} do

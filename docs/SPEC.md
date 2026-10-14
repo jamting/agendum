@@ -345,7 +345,7 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   item's assignment there) → none, and a date or numeric category opens
   the Date / Numeric Action box: give items a date (an expression read
   when the action runs, in the reader's languages) or a number, or remove
-  it. Special action: None, Mark items done (today, recurring items get
+  it. Special action: None ("No action" in the box, as Agenda), Mark items done (today, recurring items get
   their next one) or Discard items. A parent's actions also run for items
   that join its children, children's first; special actions run last.
   Actions make explicit assignments, which stay when the triggering one

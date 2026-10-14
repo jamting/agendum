@@ -45,7 +45,7 @@ defmodule Agenda.TUI.DateRulesTest do
     assert state.db.categories[state.db.special.when].date_rule.which == 2
 
     state = press(state, :enter)
-    assert screen(state) =~ ~r/Advanced settings\s+: From the item text, date 2/
+    assert screen(state) =~ ~r/Advanced settings: +From the item text, date 2/
 
     state = History.undo(state)
     assert state.db.categories[state.db.special.when].date_rule.which == 1

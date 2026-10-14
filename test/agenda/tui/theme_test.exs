@@ -231,7 +231,7 @@ defmodule Agenda.TUI.LookTest do
     props = press(state, [{:f, 9}, :down, :down, :down, :down, {:f, 6}])
     assert [{row, col}] = corners.(props)
 
-    type_box = press(props, [:down, :down, " "])
+    type_box = press(props, [:right, " "])
     assert %{type: :choice} = Agenda.TUI.State.mode(type_box)
     assert [{^row, ^col}, {lower, right}] = corners.(type_box)
     assert {lower, right} == {row + 1, col + 2}
@@ -257,7 +257,7 @@ defmodule Agenda.TUI.LookTest do
     props = press(state, [{:f, 9}, :down, :down, :down, :down, {:f, 6}])
     assert titles.(props) == [{:box_title, "Category properties: Calls"}]
 
-    nested = press(props, [:down, :down, " "])
+    nested = press(props, [:right, " "])
 
     assert titles.(nested) == [
              {:box_title_dim, "Category properties: Calls"},

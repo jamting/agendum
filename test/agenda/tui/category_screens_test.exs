@@ -8,6 +8,12 @@ defmodule Agenda.TUI.CategoryScreensTest do
     %{state: start(Agenda.Sample.build(~D[2026-10-08]))}
   end
 
+  # TAB goes through Category Properties in reading order, to `field`
+  defp tabs_to(field) do
+    index = Enum.find_index(Agenda.TUI.CategoryScreens.Properties.props_fields(), &(&1 == field))
+    List.duplicate(:tab, index)
+  end
+
   defp cat(state, name), do: hd(Database.find_categories(state.db, name))
 
   test "F9 shows the hierarchy", %{state: state} do
@@ -50,7 +56,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
   end
 
   test "category properties toggle exclusivity", %{state: state} do
-    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}, :down, :down, :down, " "])
+    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ tabs_to(:exclusive) ++ [" "])
     assert state.db.categories[cat(state, "Meetings")].exclusive
   end
 
@@ -71,7 +77,12 @@ defmodule Agenda.TUI.CategoryScreensTest do
 
   test "category properties set a short name", %{state: state} do
     # Meetings is last; the second property is the short name
-    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}, :down, {:f, 2}, "mtg", :enter])
+    state =
+      press(
+        state,
+        [{:f, 9}, :ctrl_end, {:f, 6}] ++ tabs_to(:short_name) ++ [{:f, 2}, "mtg", :enter]
+      )
+
     assert state.db.categories[cat(state, "Meetings")].short_name == "mtg"
   end
 
@@ -91,7 +102,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
       opened =
         press(
           state,
-          [{:f, 9}] ++ List.duplicate(:down, 9) ++ [{:f, 6}, :down, :down, :down, " "]
+          [{:f, 9}] ++ List.duplicate(:down, 9) ++ [{:f, 6}] ++ tabs_to(:exclusive) ++ [" "]
         )
 
       %{opened: opened, item: item}
@@ -275,10 +286,9 @@ defmodule Agenda.TUI.CategoryScreensTest do
   test "assignment conditions are set in category properties (R15)", %{state: state} do
     # Meetings is last in the category manager; Calls is a top-level category
     state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}])
-    assert screen(state) =~ ~r/Assignment conditions\s+:\s+\(none\)/
+    assert screen(state) =~ ~r/Assignment conditions:.*\n.*\(none\)/
 
-    # the conditions line is the seventh property
-    state = press(state, List.duplicate(:down, 6) ++ [" ", "Calls", :enter])
+    state = press(state, tabs_to(:conditions) ++ [" ", "Calls", :enter])
     meetings = state.db.categories[cat(state, "Meetings")]
     assert meetings.conditions == [{cat(state, "Calls"), :assigned}]
     assert screen(state) =~ "Meetings now assigns items in Calls"

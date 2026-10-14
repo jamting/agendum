@@ -14,7 +14,7 @@ defmodule Agenda.TUI.TextConditionsTest do
 
   defp downs_to(field) do
     index = Enum.find_index(Agenda.TUI.CategoryScreens.Properties.props_fields(), &(&1 == field))
-    List.duplicate(:down, index)
+    List.duplicate(:tab, index)
   end
 
   test "Also match is set in Category Properties and pulls items in", %{state: state} do
@@ -27,7 +27,7 @@ defmodule Agenda.TUI.TextConditionsTest do
       )
 
     assert state.db.categories[meetings(state)].also_match == "meet;(talk to)"
-    assert screen(state) =~ ~r/Also match\s+: meet;\(talk to\)/
+    assert screen(state) =~ ~r/Also match: +meet;\(talk to\)/
 
     state = press(state, [:enter, :esc, "Talk to Sue about the budget", :enter])
     item = item(state, "Talk to Sue about the budget")

@@ -74,11 +74,13 @@ defmodule Agenda.TUI.Render do
     # behind a box, the screen fades (Agenda greys it out)
     body = if overlays == [], do: body, else: Enum.map(body, &Draw.paint(&1, :backdrop))
 
-    body =
+    # each box knows where the one beneath it starts (`Enum.reduce/3` carries
+    # the body and that column along)
+    {body, _left} =
       overlays
       |> Enum.with_index()
-      |> Enum.reduce(body, fn {mode, depth}, body ->
-        Boxes.overlay(state, mode, depth, depth == length(overlays) - 1, body)
+      |> Enum.reduce({body, nil}, fn {mode, depth}, {body, beneath} ->
+        Boxes.overlay(state, mode, depth, depth == length(overlays) - 1, body, beneath)
       end)
 
     ControlPanel.lines(state, base) ++

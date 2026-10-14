@@ -2,6 +2,14 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
   @moduledoc """
   Category Properties (F6): its fields, its keys, and changing a
   category's type to numeric or date (User's Guide 7-3, 8-11). Pure.
+
+  The box is drawn from `@layout` (`Agenda.TUI.Template`), Agenda's two
+  columns (screenshot 74): the name, parent, short name, Also match and
+  note on the left with the children and special actions; the type and
+  name matching on the right, with the conditions, actions and excludes
+  (ours) below them; Advanced settings across the bottom, where its
+  summary has room. "Parent is" is shown, not a setting. Agenda's Note
+  file and Statistics are left out.
   """
 
   import Agenda.TUI.BoxNav, only: [is_move: 1]
@@ -9,28 +17,75 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
 
   alias Agenda.Core
   alias Agenda.Core.Database
-  alias Agenda.TUI.{CategoryScreens, Draw, LineEdit, State, TextEdit}
+  alias Agenda.TUI.{CategoryScreens, Draw, LineEdit, State, Template, TextEdit}
+  alias Agenda.TUI.Render.Text
   alias Agenda.TUI.CategoryScreens.Choices
   alias Agenda.TUI.Update.Prompts
 
-  @props [
-    :name,
-    :short_name,
-    :type,
-    :exclusive,
-    :match_name,
-    :also_match,
-    :conditions,
-    :also_assign,
-    :excludes,
-    :special,
-    :advanced,
-    :note
-  ]
+  @layout """
+   Category name:      [name          ]  Type:                [type      ]
+   Parent is [parent                  ]  Match category name: [match_name]
+   Short name:         [short_name    ]
+   Also match:         [also_match    ]
+   Note:               [note          ]
+   Exclusive children: [exclusive     ]  Assignment conditions:
+   Special actions:    [special       ]  [conditions                     ]
+                                         Assignment actions:
+                                         [also_assign                    ]
+                                         Excludes:
+                                         [excludes                       ]
+   Advanced settings:  [advanced                                         ]
+  """
+  # the settings in reading order, for the cursor: the parent is only shown
+  @props Template.fields(@layout) -- [:parent]
+  @grid Template.grid(@layout, @props)
+
+  @doc "The settings, in the cursor's order (reading order)."
   def props_fields, do: @props
 
   @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
   def field(_state, mode), do: Enum.at(@props, mode.cursor)
+
+  @doc "The box's lines, the highlighted setting selected (or being edited)."
+  def content(state, mode) do
+    cat = state.db.categories[mode.cat_id]
+    yes_no = fn b -> if b, do: "Yes", else: "No" end
+
+    values = %{
+      name: cat.name,
+      parent: if(cat.parent_id, do: state.db.categories[cat.parent_id].name, else: "(none)"),
+      # an empty value would leave the highlighted row invisible
+      short_name: cat.short_name || "(none)",
+      type: cat.kind |> Atom.to_string() |> String.capitalize(),
+      exclusive: yes_no.(cat.exclusive),
+      match_name: yes_no.(cat.match_name),
+      also_match: if(cat.also_match == "", do: "(none)", else: cat.also_match),
+      special:
+        %{nil => "No action", done: "Mark items done", discard: "Discard items"}[cat.special],
+      also_assign:
+        if(cat.also_assign == [] and cat.actions == [],
+          do: "(none)",
+          else: Text.actions_text(state, cat)
+        ),
+      conditions: if(cat.conditions == [], do: "(none)", else: Text.conditions_text(state, cat)),
+      excludes:
+        if(cat.excludes == [], do: "(none)", else: Text.names_text(state.db, cat.excludes)),
+      advanced:
+        if(cat.kind == :date,
+          do: Agenda.TUI.DateRuleBox.summary(cat.date_rule),
+          else: Agenda.TUI.CategoryMatchBox.summary(cat.match_overrides)
+        ),
+      note: if(cat.note == "", do: "(none)", else: "#{String.length(cat.note)} characters")
+    }
+
+    editing =
+      case state.edit do
+        %{target: field, line: line} when is_atom(field) -> [editing: {field, line}]
+        _ -> []
+      end
+
+    Template.render(@layout, values, [selected: Enum.at(@props, mode.cursor)] ++ editing)
+  end
 
   # --- category properties -----------------------------------------------------------------------
 
@@ -73,7 +128,7 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
         State.pop(state)
 
       k when is_move(k) ->
-        BoxNav.move(state, mode, BoxNav.column(@props), k)
+        BoxNav.move(state, mode, @grid, k)
 
       k when k in [{:char, " "}, {:f, 2}, {:f, 3}] ->
         open_prop(state, cat, Enum.at(@props, mode.cursor))

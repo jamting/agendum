@@ -43,7 +43,7 @@ defmodule Agenda.TUI.UserDateCategoriesTest do
 
     state = press(state, "d")
     assert state.db.categories[due].kind == :date
-    assert screen(state) =~ ~r/Type\s+: Date/
+    assert screen(state) =~ ~r/Type: +Date/
   end
 
   test "with children, it asks first and says what is dropped", %{state: state, due: due} do

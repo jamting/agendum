@@ -18,7 +18,7 @@ defmodule Agenda.TUI.RangeConditionsTest do
 
   defp downs_to(field) do
     index = Enum.find_index(Agenda.TUI.CategoryScreens.Properties.props_fields(), &(&1 == field))
-    List.duplicate(:down, index)
+    List.duplicate(:tab, index)
   end
 
   test "choosing a date category in the conditions box asks for a date range",
@@ -34,7 +34,7 @@ defmodule Agenda.TUI.RangeConditionsTest do
 
     # ESC clears the picker's search, then closes it
     state = press(state, [:esc, :esc])
-    assert screen(state) =~ ~r/Assignment conditions\s+: When 2026-10-05\.\.2026-10-09/
+    assert screen(state) =~ ~r/Assignment conditions:.*\n.*When 2026-10-05\.\.2026-10-09/
   end
 
   test "items are pulled in by the date condition when their date changes",

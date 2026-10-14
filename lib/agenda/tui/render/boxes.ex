@@ -10,21 +10,27 @@ defmodule Agenda.TUI.Render.Boxes do
   alias Agenda.TUI.Render.{CategoryBoxes, View}
 
   # A box opened from another box (`depth` 1, 2 …) sits a line lower and
-  # two columns further right, so the one beneath still shows; the titles
-  # of the boxes beneath are dimmed, the active box's is not.
-  @doc "Draws the box of `mode` over `body`."
-  def overlay(state, mode, depth, active?, body) do
+  # two columns right of the box beneath (`beneath`, that box's left
+  # column; nil for the first box, which is centred), so the one beneath
+  # still shows, whatever their widths; the titles of the boxes beneath
+  # are dimmed, the active box's is not.
+  @doc "Draws the box of `mode` over `body`; also returns the column it starts at."
+  def overlay(state, mode, depth, active?, body, beneath \\ nil) do
     inner = box_width(state, mode)
     top = 1 + depth
     max_rows = max(State.body_height(state) - 4 - depth, 3)
     content = box_content(state, mode, inner, max_rows)
     box = Draw.box(box_title(state, mode), content, inner, footer(mode, inner))
     box = if active?, do: box, else: Enum.map(box, &Draw.paint(&1, %{box_title: :box_title_dim}))
-    left = min(div(state.width - inner - 2, 2) + 2 * depth, max(state.width - inner - 2, 0))
+    wanted = if beneath, do: beneath + 2, else: div(state.width - inner - 2, 2)
+    left = min(wanted, max(state.width - inner - 2, 0))
 
-    body
-    |> Draw.overlay(box, top, left)
-    |> Draw.shadow(top, left, length(box), inner + 2)
+    body =
+      body
+      |> Draw.overlay(box, top, left)
+      |> Draw.shadow(top, left, length(box), inner + 2)
+
+    {body, left}
   end
 
   @doc """
@@ -116,7 +122,7 @@ defmodule Agenda.TUI.Render.Boxes do
   # File Properties and Column Properties have Agenda's two columns of
   # settings side by side (screenshots 130, 127)
   defp box_width(state, %{type: type})
-       when type in [:file_props, :column_props, :column_add, :item_column],
+       when type in [:file_props, :column_props, :column_add, :item_column, :props],
        do: min(state.width - 8, 72)
 
   defp box_width(state, _mode), do: min(state.width - 8, 60)

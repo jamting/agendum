@@ -29,7 +29,7 @@ defmodule Agenda.TUI.CategoryMatchingTest do
     assert screen(state) =~ ~r/Match on\s+: Note text/
 
     state = press(state, :enter)
-    assert screen(state) =~ ~r/Advanced settings\s+: Match on: Note text/
+    assert screen(state) =~ ~r/Advanced settings: +Match on: Note text/
 
     state = press(state, [:enter, {:f, 9}])
     assert screen(state) =~ "T= Note"

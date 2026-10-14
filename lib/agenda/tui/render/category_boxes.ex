@@ -54,64 +54,8 @@ defmodule Agenda.TUI.Render.CategoryBoxes do
       choices ++ [[], [{:box, " " <> description}]]
   end
 
-  def content(state, %{type: :props} = mode, inner, _max_rows) do
-    cat = state.db.categories[mode.cat_id]
-    yes_no = fn b -> if b, do: "Yes", else: "No" end
-
-    values = %{
-      name: cat.name,
-      # an empty value would leave the highlighted row invisible
-      short_name: cat.short_name || "(none)",
-      type: cat.kind |> Atom.to_string() |> String.capitalize(),
-      exclusive: yes_no.(cat.exclusive),
-      match_name: yes_no.(cat.match_name),
-      also_match: if(cat.also_match == "", do: "(none)", else: cat.also_match),
-      special: %{nil => "None", done: "Mark items done", discard: "Discard items"}[cat.special],
-      also_assign:
-        if(cat.also_assign == [] and cat.actions == [],
-          do: "(none)",
-          else: Text.actions_text(state, cat)
-        ),
-      conditions: if(cat.conditions == [], do: "(none)", else: Text.conditions_text(state, cat)),
-      excludes:
-        if(cat.excludes == [], do: "(none)", else: Text.names_text(state.db, cat.excludes)),
-      advanced:
-        if(cat.kind == :date,
-          do: Agenda.TUI.DateRuleBox.summary(cat.date_rule),
-          else: Agenda.TUI.CategoryMatchBox.summary(cat.match_overrides)
-        ),
-      note: if(cat.note == "", do: "(none)", else: "#{String.length(cat.note)} characters")
-    }
-
-    labels = %{
-      name: "Category name",
-      short_name: "Short name",
-      type: "Type",
-      exclusive: "Children mutually exclusive",
-      match_name: "Assign items mentioning it",
-      also_match: "Also match",
-      also_assign: "Assignment actions",
-      excludes: "Excludes",
-      advanced: "Advanced settings",
-      special: "Special action",
-      conditions: "Assignment conditions",
-      note: "Note"
-    }
-
-    Properties.props_fields()
-    |> Enum.with_index()
-    |> Enum.map(fn {prop, i} ->
-      label = [{:box, " " <> Draw.pad(labels[prop], 28) <> ": "}]
-
-      value =
-        case state.edit do
-          %{target: ^prop} -> Draw.input(state.edit.line, inner - 32, :edit)
-          _ -> [{if(i == mode.cursor, do: :box_selected, else: :box), values[prop]}]
-        end
-
-      label ++ value
-    end)
-  end
+  def content(state, %{type: :props} = mode, _inner, _max_rows),
+    do: Properties.content(state, mode)
 
   defp box_footer(state, %{type: :picker} = mode, inner) do
     case state.edit do

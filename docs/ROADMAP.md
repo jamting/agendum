@@ -68,7 +68,8 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Boxes: "Press ENTER when done, ESC to cancel" in the frame, and in every settings box ENTER is done and ESC cancels its changes (ADR 0030); ESC steps back through the menu levels (§5)
 - [x] Boxes: moving between settings as Agenda (User's Guide 2-16): → or TAB right one setting, or to the next one when there is none to the right; ← or SHIFT-TAB left, or to the previous one; ↓ ↑ to the setting in the next row nearest the same place (from a right-hand setting to the right-hand one below, else the left); HOME / END the first / last. The rows and places come from the box's layout (`Agenda.TUI.Template.grid/2`, `Agenda.TUI.BoxNav`); boxes that list one setting a row move down and up with → ←. Choices change with SPACE; numbers and times are typed, no longer → ← (§5)
 - [x] Boxes: the first letter of a choice picks it (User's Guide 2-17), and F3 lists a setting's choices (§5)
-- [ ] Questions as Yes/No boxes; Category Properties in two columns with "..." sub-boxes opened by SPACE; View Manager as a box
+- [x] Category Properties in two columns, as Agenda's (screenshot 74), drawn from a layout; a box opened from a box sits two columns right of it whatever their widths
+- [ ] Questions as Yes/No boxes; "..." for Category Properties' sub-boxes (Agenda showed "..." for Note, Statistics and Advanced settings, opened by SPACE); View Manager as a box
 - [x] In notes: F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, and their key bar (R63)
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names; the note editor's "Note for: … Line 1 INS EDIT" header
 - [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix (plan: `docs/KITTY.md`)
@@ -154,7 +155,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] A debug log of each session when `AGENDUM_LOG` is set: keys, effects, messages and crashes with the state; the last five sessions kept (ADR 0027)
 - [x] The name Wol's Agendum: command, files (`.agendum`), preferences, JSON format, texts; the old names still read (ADR 0019)
 - [ ] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agenda` and `test/agenda`, the repository folder; one mechanical commit (ADR 0019); with it, group the small TUI modules in subfolders (e.g. `tui/boxes/`, `tui/terminal/` for Terminal, Keys, Screen, Draw and Theme), so module names change only once
-- [ ] Draw the settings boxes from layouts (`Agenda.TUI.Template`, as File ▸ Customize is now), a few at a time and with the split of `render.ex`; their layouts closer to Agenda's screenshots where that is easy (e.g. Category Properties in two columns)
+- [ ] Draw the settings boxes from layouts (`Agenda.TUI.Template`, as File ▸ Customize is now), a few at a time and with the split of `render.ex`; their layouts closer to Agenda's screenshots where that is easy (Category Properties done)
 - [x] Split the four largest files into subfolders, by the sections they already have; pure moves, no change in behaviour, one file per commit (best in a fresh session each):
   - [x] `tui/render.ex` (~2,300 lines) → `tui/render/`: `Render` keeps `render/1`; `ControlPanel`, `KeyBar`, `View`, `Managers`, `Note`, `Help`, `Boxes` and `CategoryBoxes`, `Text` (shared words), `Export`
   - [x] `tui/update.ex` (~2,000) → `tui/update/`: `Update` keeps `handle/2`, `tick/2`, dispatch, effect results and the help screen's keys; `ViewKeys`, `Editing`, `Marked` (with moving items), `Prompts`, `Notes`, `Actions` (prepares the command layer, ADR 0020)

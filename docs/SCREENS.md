@@ -176,9 +176,11 @@ or handles it.
       (ALT-F10 in the category manager), conditions, actions and negative
       links (from Category Properties)
   - **Category Properties** `:props` (F6 on a section head; F6 in the
-    category manager): name, short name, type, exclusive children, matching,
-    conditions, actions, negative links, special actions, advanced settings,
-    note. `Agenda.TUI.CategoryScreens.Properties`.
+    category manager), in Agenda's two columns (screenshot 74): name,
+    parent (shown), short name, Also match, note, exclusive children and
+    special actions on the left; type, name matching, conditions, actions
+    and negative links on the right; advanced settings across the bottom.
+    `Agenda.TUI.CategoryScreens.Properties`.
     - **Choice** `:choice`: a list of choices with an explanation: the
       category's type (Standard, Numeric, Date; R6a), how to resolve items
       that break exclusive children (R7a) or a move (R7b).
