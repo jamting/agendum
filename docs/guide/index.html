@@ -81,6 +81,7 @@ We will follow him through this guide.</div>
 <pre class="shell">./agendum party.agendum      # open (or start) a file
 ./agendum                    # ask which file, offering the last one used
 ./agendum --rabbit           # try it with Rabbit's file from the manual
+cp starters/planner.agendum my.agendum   # or begin from the ready-made planner
 ./agendum --demo             # or with the sample from Agenda's patent
 ./agendum --help             # every option</pre>
 
@@ -116,6 +117,18 @@ from a list instead.</p>
 the new one sits a little lower and to the right, and the title of the one beneath
 dims, so you can see where you are; <kbd>ESC</kbd> closes them one at a time.</p>
 
+<p>In a box, the arrow keys (or <kbd>TAB</kbd>) move between its settings, and the
+control panel says what the highlighted one does. <kbd>SPACE</kbd> changes a setting or
+opens it (a setting ending in “…” opens a box of its own), a letter picks the next
+choice starting with it, <kbd>F3</kbd> lists the choices, and numbers are simply typed.
+Changes show at once. <kbd>ENTER</kbd> keeps them; <kbd>ESC</kbd> cancels the box and
+puts everything back as it was, as the bottom edge of the box reminds you. A box chosen
+from the menu goes back to the menu on <kbd>ESC</kbd>, one level at a time.</p>
+
+<p>Questions such as “Discard this item from the whole file?” come in a small box too: <kbd>Y</kbd> or
+<kbd>N</kbd> answers at once, or <kbd>SPACE</kbd> switches the answer shown and
+<kbd>ENTER</kbd> accepts it.</p>
+
 <p>Press <kbd>F10</kbd> (or <kbd>/</kbd>) for the menu and choose a command by its first
 letter. <kbd>F1</kbd> shows help, <kbd>ESC</kbd> goes back, and <kbd>CTRL-Z</kbd> undoes
 almost anything.</p>
@@ -146,7 +159,10 @@ then a digit for a function key (<kbd>ESC</kbd> <kbd>5</kbd> is <kbd>F5</kbd>), 
   <tr><td>See and change all about it</td><td><kbd>F6</kbd> Item Properties</td></tr>
   <tr><td>Mark several items to act on together (♦)</td><td><kbd>F7</kbd>; <kbd>ALT-F7</kbd> unmarks all</td></tr>
   <tr><td>Move it to another section</td><td><kbd>ALT-F10</kbd></td></tr>
+  <tr><td>Put it in another section as well (the same item, not a copy)</td><td><kbd>ALT-F9</kbd></td></tr>
   <tr><td>Take it out of this section only</td><td><kbd>DEL</kbd></td></tr>
+  <tr><td>Bring back the item <kbd>DEL</kbd> last took out, into this section</td><td><kbd>ALT-Y</kbd></td></tr>
+  <tr><td>Hop to the same item further on, in this view or the next that shows it</td><td><kbd>ALT-H</kbd>; <kbd>ALT-F8</kbd> comes back</td></tr>
   <tr><td>Throw it away altogether</td><td><kbd>ALT-F4</kbd> (or <kbd>CTRL-D</kbd>)</td></tr>
 </table>
 
@@ -156,6 +172,20 @@ whether you mean the marked items or just the current one.</p>
 <p>In a note, <kbd>ALT-D</kbd> and <kbd>ALT-T</kbd> type today's date and the time,
 <kbd>ALT-F6</kbd> searches (and replaces), and <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> move on to
 the next or previous item's note.</p>
+
+<p>Text in a note can be cut and pasted as in Agenda. <kbd>F7</kbd> starts marking at the
+cursor (move it to stretch the marked text; <kbd>F7</kbd> again stops). <kbd>F3</kbd>
+copies it, <kbd>F4</kbd> cuts it, <kbd>ALT-F4</kbd> deletes it, and <kbd>F2</kbd> pastes
+it, as often as you like, in this note or another. With nothing marked, Agendum asks
+whether you mean the word, the line or all the text.</p>
+
+<p>A note can grow into new items and categories, too: <kbd>ALT-F7</kbd> makes the
+marked text (or the word, line or all the text) a new item of its own, taking it out of
+the note, and <kbd>ALT-F2</kbd> makes it a new category, under a parent you pick.</p>
+
+<div class="story">Piglet's note on “Plan the party” has turned into a list. He puts the
+cursor on “Fetch the honey from Pooh's”, presses <kbd>ALT-F7</kbd>, chooses
+<em>Line</em>, and it becomes an item beneath, ready for a date.</div>
 </section>
 
 <!-- ===================================================================== -->
@@ -197,7 +227,9 @@ the item leaves Owl again. Assignments you make yourself always stay.</p>
 or all marked items.</p>
 
 <h3>Category properties</h3>
-<p><kbd>F6</kbd> on a category (or on a section head in a view) opens its properties:</p>
+<p><kbd>F6</kbd> on a category opens its properties, a box in two columns as Agenda's
+was. <em>Note</em>, <em>Statistics</em> (how many items are in it, where it is used) and
+<em>Advanced settings</em> end in “…”: <kbd>SPACE</kbd> opens each. The settings are:</p>
 <ul>
   <li><strong>Short name</strong>: a nickname that also counts when matching text and
       shows in narrow columns (<em>Christopher Robin</em> → <em>CR</em>).</li>
@@ -244,7 +276,21 @@ item, such as its date or who it involves.</p>
   <tr><td>Move a column (or the item text) left or right</td><td><kbd>ALT-F10</kbd> on its head, or <strong>View ▸ Column ▸ Move</strong>: <kbd>←</kbd> <kbd>→</kbd>, then <kbd>ENTER</kbd></td></tr>
   <tr><td>Add a column, choosing where and how</td><td><strong>View ▸ Column ▸ Add</strong></td></tr>
   <tr><td>Hide empty sections</td><td><kbd>ALT-V</kbd></td></tr>
+  <tr><td>A section's settings: its head, sorting, filter and columns</td><td><kbd>F6</kbd> on its head, or <strong>View ▸ Section ▸ Properties</strong></td></tr>
+  <tr><td>Move a section up or down in the view</td><td><kbd>ALT-F10</kbd> on its head, or <strong>View ▸ Section ▸ Move</strong>: <kbd>↑</kbd> <kbd>↓</kbd>, then <kbd>ENTER</kbd></td></tr>
+  <tr><td>A line across for each section head</td><td><strong>View ▸ Section ▸ Lines</strong></td></tr>
+  <tr><td>Column heads on the first section only</td><td><strong>View ▸ Hide ▸ Column heads</strong></td></tr>
 </table>
+
+<p><strong>Section Properties</strong> lists the section's columns, with the item text
+as <code>&lt;Items&gt;</code>: <kbd>DEL</kbd> takes a column out of this section,
+<kbd>ALT-↑</kbd> <kbd>ALT-↓</kbd> move one, <kbd>INS</kbd> adds one. <kbd>F6</kbd> on
+its <em>Section head</em> opens the head category's own properties. While a section
+moves, every section is folded up so you can see where it goes; <kbd>ESC</kbd> puts it
+back.</p>
+
+<p>The view manager (<kbd>F8</kbd>) is a box listing your views, with <code>*</code>
+before a datebook: <kbd>ENTER</kbd> shows one, <kbd>DEL</kbd> discards one.</p>
 
 <p>Typing in a column assigns the item: in the <em>People</em> column, Piglet types
 <kbd>R</kbd> and Agendum offers <em>Rabbit</em> (<kbd>ENTER</kbd> takes it,
@@ -276,6 +322,10 @@ column shows one line of the category's note, so a phone number written in Owl's
 can sit beside every item about Owl, and typing there changes that line of the
 note.</p>
 
+<p>Categories have notes as items do. ♪ at the right of the control panel says the
+highlighted thing has one, whether an item, a section head, a column head or the
+category a column entry shows; <kbd>F5</kbd> opens it.</p>
+
 <div class="story">Piglet adds a <em>Bring?</em> column in Yes/No format to the
 <em>Food</em> section only, and presses <kbd>Y</kbd> beside the honey. In the
 <em>People</em> section a Category note column shows where each friend lives, read
@@ -285,7 +335,9 @@ from their notes.</div>
 in a subcategory, or <a href="#dependencies">items still waiting</a> for others.</p>
 
 <div class="story">Piglet makes a second view, <em>By friend</em>, with a section for
-each of his friends, so he can see at a glance what to tell whom when they come by.</div>
+each of his friends, so he can see at a glance what to tell whom when they come by.
+The balloon is in <em>To do</em> and under <em>Eeyore</em>; <kbd>ALT-H</kbd> on it in
+one place hops to it in the other.</div>
 </section>
 
 <!-- ===================================================================== -->
@@ -386,7 +438,8 @@ place. Make one with <strong>View ▸ Add</strong>: give it a name, then choose
 a week, a month or a quarter), what each section covers (15 or 30 minutes or an hour of
 a day; a day or a week of a month), the hours of a day or the days of a week, and the
 <em>base date</em>, such as “today” or “next week”, which is read again every day. Type
-an item under a day or an hour and it gets that date and time. A <em>Section</em>
+an item under a day or an hour and it gets that date and time. The same box can hide
+the column heads after the first day and draw a line for each day. A <em>Section</em>
 category shows only its own items (say, only <em>Visits</em>), and an <em>End
 category</em> shows an item in every hour it lasts.</p>
 
@@ -425,7 +478,8 @@ in a numeric column.</p>
 
 <p><strong>View ▸ Column ▸ Properties</strong> chooses the currency or label, decimals,
 thousands separator, how negatives look, and which results to show: count, total,
-average, minimum, maximum. <strong>Display % of total</strong> adds a narrow
+average, minimum, maximum. <strong>Section Properties ▸ Select numeric functions</strong>
+sets these for every numeric column of a section at once. <strong>Display % of total</strong> adds a narrow
 <em>% tot</em> column beside the numbers, with each item's share of its section's
 total.</p>
 
@@ -586,7 +640,8 @@ its events go in. Agendum reads it at once and then every hour while it runs
 <kbd>DEL</kbd> unsubscribes). Each event becomes an item with its date and time; a
 repeating one becomes a repeating item. When an event ends is kept too, in a date
 category called <em>Ends</em>, which a <a href="#datebook">datebook</a> can use to show
-the event in every hour it lasts. When the calendar changes, so do the items, but your
+the event in every hour it lasts. An event set in another time zone is moved to your
+own time. When the calendar changes, so do the items, but your
 own notes, categories and done marks stay.</p>
 
 <div class="story">Kanga keeps Roo's swimming lessons on a calendar on the web.
@@ -594,14 +649,29 @@ Piglet subscribes to it as <em>Roo's swimming</em>, so the party won't clash wit
 Thursday's lesson.</div>
 
 <h3>Looks</h3>
-<p>Agendum looks as Agenda 2.0 did on a colour screen: grey, with blue and cyan. Two
-other themes are in <strong>File ▸ Customize</strong>: <em>Blue</em>, white on blue,
-and <em>Mono</em>, for plain terminals, which uses only bold, dim, underline and
-reverse. For one session:</p>
-<pre class="shell">./agendum --theme blue party.agendum
+<p>Agendum looks as Agenda 2.0 did on a colour screen: grey, with blue and cyan. Other
+themes are in <strong>File ▸ Customize</strong>: <em>Mono</em>, for plain terminals,
+which uses only bold, dim, underline and reverse; <em>Borland</em>, yellow on blue as
+the old DOS programming tools were; and the colours of some well-liked terminal schemes,
+<em>Modus Operandi</em> (light), <em>Modus Vivendi</em> (dark), <em>Alabaster</em>,
+<em>Zenburn</em> and <em>Ayu</em>. For one session:</p>
+<pre class="shell">./agendum --theme zenburn party.agendum
 ./agendum --mono party.agendum      # the same as --theme mono
 NO_COLOR=1 ./agendum party.agendum  # mono, unless you chose a theme</pre>
-<p>In a terminal that shows 24-bit colour, the colours are exactly Agenda's.</p>
+<p>In a terminal that shows 24-bit colour, the colours are exact.</p>
+
+<h3 id="planner">A ready-made planner</h3>
+<p>Agenda came with ready-made files to start from, and Agendum with one of them: the
+<em>Activities Planner</em>, in <code>starters/planner.agendum</code>. Copy it and open
+the copy. It has no items yet, but categories for people, projects, tasks, activities
+(calls, meetings, mail …), priorities and expenses, which file what you type, and views
+to go with them: Tasks, Calls, Overdue, expense reports, datebooks for today, tomorrow,
+this week and this month. Three macros come with it: change the date settings, hide or
+show done items, and print the view.</p>
+<pre class="shell">cp starters/planner.agendum ~/planner.agendum && ./agendum ~/planner.agendum</pre>
+
+<div class="story">Rabbit, of course, starts from the planner, and has his
+friends-and-relations filed under <em>People</em> by lunchtime.</div>
 </section>
 
 <!-- ===================================================================== -->
@@ -649,8 +719,8 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>F2</kbd></td><td>Edit item, section head or column entry</td><td><kbd>CTRL-E</kbd></td></tr>
   <tr><td><kbd>F3</kbd></td><td>Choices: assignment profile, the categories for a column, or the calendar in a date column</td><td></td></tr>
   <tr><td><kbd>F4</kbd></td><td>Done / not done</td><td><kbd>CTRL-K</kbd></td></tr>
-  <tr><td><kbd>F5</kbd></td><td>Note</td><td></td></tr>
-  <tr><td><kbd>F6</kbd></td><td>Properties of the item or category</td><td></td></tr>
+  <tr><td><kbd>F5</kbd></td><td>Note of the item, or of the category highlighted</td><td></td></tr>
+  <tr><td><kbd>F6</kbd></td><td>Properties of the item, section (on its head) or column (on its head)</td><td></td></tr>
   <tr><td><kbd>F7</kbd></td><td>Mark (on a section head: all its items)</td><td></td></tr>
   <tr><td><kbd>F8</kbd> / <kbd>F9</kbd></td><td>View manager / category manager</td><td></td></tr>
   <tr><td><kbd>F10</kbd></td><td>Menu</td><td><kbd>/</kbd></td></tr>
@@ -663,11 +733,13 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>ALT-F6</kbd></td><td>Search (then <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd>)</td><td></td></tr>
   <tr><td><kbd>ALT-F7</kbd></td><td>Unmark all</td><td></td></tr>
   <tr><td><kbd>ALT-F8</kbd></td><td>Last view</td><td></td></tr>
-  <tr><td><kbd>ALT-F10</kbd></td><td>Move item; on a column head, move the column</td><td></td></tr>
+  <tr><td><kbd>ALT-F9</kbd></td><td>Copy the item (or the marked ones) to another section as well</td><td><kbd>ESC</kbd> <kbd>(</kbd></td></tr>
+  <tr><td><kbd>ALT-F10</kbd></td><td>Move item; on a section or column head, move the section or column</td><td><kbd>ESC</kbd> <kbd>)</kbd></td></tr>
   <tr><td><kbd>ALT-A</kbd></td><td>Alarm</td><td></td></tr>
   <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter to other dates</td><td><kbd>ESC</kbd> <kbd>b</kbd></td></tr>
   <tr><td><kbd>ALT-C</kbd></td><td>Show the calendar</td><td><kbd>ESC</kbd> <kbd>c</kbd></td></tr>
   <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-U</kbd></td><td>Add section below / above</td><td></td></tr>
+  <tr><td><kbd>ALT-H</kbd></td><td>Hop to the item's next occurrence</td><td><kbd>ESC</kbd> <kbd>h</kbd></td></tr>
   <tr><td><kbd>ALT-R</kbd> / <kbd>ALT-L</kbd></td><td>Add column right / left</td><td></td></tr>
   <tr><td><kbd>ALT-J</kbd></td><td>Next marked item</td><td></td></tr>
   <tr><td><kbd>ALT-K</kbd></td><td>Show / hide the key bar (remembered)</td><td></td></tr>
@@ -677,6 +749,7 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>ALT-O</kbd></td><td>Depend on the marked items</td><td></td></tr>
   <tr><td><kbd>ALT-V</kbd></td><td>Show / hide empty sections</td><td></td></tr>
   <tr><td><kbd>ALT-X</kbd> / <kbd>ALT-E</kbd></td><td>Execute everything / one category</td><td></td></tr>
+  <tr><td><kbd>ALT-Y</kbd></td><td>Yank back the item <kbd>DEL</kbd> last removed</td><td><kbd>ESC</kbd> <kbd>y</kbd></td></tr>
   <tr><td><kbd>ALT-Z</kbd></td><td>Run the last macro again</td><td><kbd>ESC</kbd> <kbd>z</kbd></td></tr>
   <tr><td><kbd>ALT-−</kbd> / <kbd>ALT-=</kbd></td><td>Collapse / expand section</td><td></td></tr>
   <tr><td><kbd>CTRL-PGUP</kbd> / <kbd>CTRL-PGDN</kbd></td><td>Previous / next section</td><td><kbd>⌥↑</kbd> / <kbd>⌥↓</kbd></td></tr>
@@ -688,16 +761,33 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
 <p>While typing, <kbd>CTRL-A</kbd> / <kbd>CTRL-E</kbd> go to the start or end of the line,
 <kbd>⌥←</kbd> / <kbd>⌥→</kbd> move by word, <kbd>CTRL-K</kbd> deletes to the end,
 <kbd>CTRL-W</kbd> deletes a word and <kbd>CTRL-U</kbd> clears the line.</p>
+
+<table>
+  <tr><th>Key</th><th>In a note</th><th>Mac-friendly</th></tr>
+  <tr><td><kbd>F7</kbd></td><td>Mark text (again: stop)</td><td><kbd>ESC</kbd> <kbd>7</kbd></td></tr>
+  <tr><td><kbd>F3</kbd> / <kbd>F4</kbd> / <kbd>ALT-F4</kbd></td><td>Copy / cut / delete the marked text (or a word, line or all)</td><td><kbd>ESC</kbd> <kbd>3</kbd> / <kbd>4</kbd> / <kbd>$</kbd></td></tr>
+  <tr><td><kbd>F2</kbd></td><td>Paste</td><td><kbd>ESC</kbd> <kbd>2</kbd></td></tr>
+  <tr><td><kbd>ALT-F7</kbd> / <kbd>ALT-F2</kbd></td><td>Make a new item / category from the text</td><td><kbd>ESC</kbd> <kbd>&amp;</kbd> / <kbd>@</kbd></td></tr>
+  <tr><td><kbd>F5</kbd> or <kbd>ESC</kbd></td><td>Back to the view</td><td></td></tr>
+</table>
+
+<table>
+  <tr><th>Key</th><th>In a box</th></tr>
+  <tr><td><kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd>, <kbd>TAB</kbd>; <kbd>HOME</kbd> / <kbd>END</kbd></td><td>Move between settings; the first / last (fn-← / fn-→ on a Mac)</td></tr>
+  <tr><td><kbd>SPACE</kbd>; a letter</td><td>Change or open a setting; pick the choice starting with it</td></tr>
+  <tr><td><kbd>F2</kbd>; <kbd>F3</kbd></td><td>Edit a text; list the choices</td></tr>
+  <tr><td><kbd>ENTER</kbd> / <kbd>ESC</kbd></td><td>Done / cancel the box's changes</td></tr>
+</table>
 </section>
 
 <!-- ===================================================================== -->
 <section id="later">
 <h2>15. Still to come</h2>
 <p class="in-which">In Which Eeyore Gets a Balloon, and a Pot to Put It In</p>
-<p class="soon">This guide will grow with the program. Planned next: a starter file
-like Agenda's Activities Planner, Agenda's own structured files (for anyone with old
-DOS files), more of the original's look (its symbols, help with links, the boxes laid
-out as Agenda laid them out), a list of every command with its key and keys you choose
+<p class="soon">This guide will grow with the program. Planned next: Agenda's own
+structured files (for anyone with old DOS files), more of the original's look (its
+symbols, help with links, the rest of the boxes laid out as Agenda laid them out, cut
+and paste in item text), a list of every command with its key and keys you choose
 yourself, and, further off, Agendum in a web browser, where friends can share a
 file.</p>
 
