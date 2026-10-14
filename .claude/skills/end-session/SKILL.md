@@ -1,6 +1,6 @@
 ---
 name: end-session
-description: Close a working session on Agendum - review what was done (commits, uncommitted changes, open threads), record what is worth remembering (memory, docs/ROADMAP.md, plan documents), and give the owner a summary of the session's work with a cheerful compliment and recommended next steps. Use when the owner says they are ending the session, asks for a session summary or wrap-up, or types /end-session.
+description: Close a working session on Agendum - review what was done (commits, uncommitted changes, open threads), record what is worth remembering (memory, docs/ROADMAP.md, plan documents), and give the owner a summary of the session's work with a cheerful compliment, learnings and recommended next steps, also saved in docs/summaries/. Use when the owner says they are ending the session, asks for a session summary or wrap-up, or types /end-session.
 ---
 
 # End the session
@@ -60,7 +60,7 @@ nothing is).
 
 ## 3. Report to the owner
 
-Write the summary in the terminal (not a file), in this order:
+Write the summary in the terminal, in this order:
 
 1. **A cheerful compliment** about the day's work, one or two sentences,
    specific to what was actually achieved (name the thing, the number of
@@ -74,10 +74,25 @@ Write the summary in the terminal (not a file), in this order:
    were not run, open questions for the owner. Plainly, no hedging.
 4. **Remembered**: what was written to memory, the roadmap or plan
    documents in step 2, in one line each.
-5. **Recommended next steps**: two to five, most valuable first, each one
+5. **Learnings**: anything either of us learned this session that is
+   worth keeping: for Claude, a mistake caught and how it is avoided now,
+   or something about the code or the owner's way of working; for the
+   owner, an Elixir idiom met, a design idea, something about working
+   with Claude. Honest and specific; a learning not clearly the owner's
+   is offered as "perhaps". Leave the section out when there is nothing.
+6. **Recommended next steps**: two to five, most valuable first, each one
    line with why. Prefer finishing paused work and closing skipped checks
    before new features. If something needs the owner (trying a habit
    change in the real terminal, a decision), say so.
 
 Keep it short enough to read in a minute: headings and bullets, no
 paragraphs of narration.
+
+## 4. Save the summary
+
+Save the same summary as Markdown in `docs/summaries/`, named by the
+session's end date and time: `docs/summaries/2026-10-14-1955.md` (from
+`date '+%Y-%m-%d-%H%M'`), with a first line `# Session summary,
+2026-10-14 19:55`. The folder is the owner's own record of the work, git
+ignored for now: do not commit it, and never overwrite an earlier
+summary.
