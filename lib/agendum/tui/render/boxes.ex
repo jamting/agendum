@@ -141,8 +141,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   # the column's head is the box's first row, as in Agenda (screenshot 142)
 
-  defp box_title(_state, %{type: :macros}), do: "Macros"
-
   defp box_title(state, %{type: :select_file} = mode),
     do: Agendum.TUI.Boxes.SelectFile.title(mode, box_width(state, mode))
 
@@ -164,18 +162,6 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   # F3 on a setting (`Agendum.TUI.Boxes.BoxChoices`): its choices, one a line
-
-  defp box_content(state, %{type: :macros} = mode, _inner, max_rows) do
-    rows =
-      state
-      |> Agendum.TUI.Macros.lines(mode)
-      |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
-
-    top = max(mode.cursor - (max_rows - 3), 0)
-
-    Enum.drop(rows, top) ++
-      [[], [{:box, " INS new · F7 learn · ENTER run · F2 edit · F6 props · DEL"}]]
-  end
 
   defp box_content(state, %{type: :select_file} = mode, _inner, max_rows) do
     rows =

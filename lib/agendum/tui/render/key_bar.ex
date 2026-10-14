@@ -136,19 +136,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Back", "Back to where it was"}
     ]
 
-  defp mode_keys(%{type: :macros}),
-    do: [
-      {"ENTER", "Run", "Run the macro"},
-      {"INS/^N", "New", "INS/CTRL-N", "New macro"},
-      {"F7", "Learn", "Record its keys"},
-      {"F2", "Edit", "Edit its keys"},
-      {"F6", "Props", "Properties"},
-      {"DEL", "Delete"},
-      {"A-F5", "Sort", "ALT-F5", "Sort by name"},
-      {"A-↑↓", "Move", "ALT-↑↓", "Move"},
-      {"ESC", "Close"}
-    ]
-
   defp mode_keys(%{type: :select_file}),
     do: [
       {"ENTER", "Open", "Open the folder or pick the file"},

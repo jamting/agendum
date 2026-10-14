@@ -17,9 +17,11 @@ defmodule Agendum.TUI.Macros do
   from runs stop eight deep. Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :none, indicator: nil
+
   alias Agendum.Core
   alias Agendum.Core.Database
-  alias Agendum.TUI.{History, MacroKeys, State}
+  alias Agendum.TUI.{Boxes.Box, History, MacroKeys, State}
   alias Agendum.TUI.Update.Prompts
 
   @max_depth 8
@@ -123,6 +125,7 @@ defmodule Agendum.TUI.Macros do
 
   defp current(state, mode), do: state.db |> Database.macros() |> Enum.at(mode.cursor)
 
+  @impl Box
   def handle(state, mode, key) do
     count = length(Database.macros(state.db))
     mode = %{mode | cursor: mode.cursor |> min(count - 1) |> max(0)}
@@ -291,8 +294,37 @@ defmodule Agendum.TUI.Macros do
 
   # --- drawing -----------------------------------------------------------------------------------
 
-  @doc "The manager's lines: each macro's name, and the key it is attached to."
-  def lines(state, mode) do
+  @impl Box
+  def title(_state, _mode), do: "Macros"
+
+  @impl Box
+  def content(state, mode, _inner, max_rows) do
+    rows = state |> lines(mode) |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
+    top = max(mode.cursor - (max_rows - 3), 0)
+
+    Enum.drop(rows, top) ++
+      [[], [{:box, " INS new · F7 learn · ENTER run · F2 edit · F6 props · DEL"}]]
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"ENTER", "Run", "Run the macro"},
+      {"INS/^N", "New", "INS/CTRL-N", "New macro"},
+      {"F7", "Learn", "Record its keys"},
+      {"F2", "Edit", "Edit its keys"},
+      {"F6", "Props", "Properties"},
+      {"DEL", "Delete"},
+      {"A-F5", "Sort", "ALT-F5", "Sort by name"},
+      {"A-↑↓", "Move", "ALT-↑↓", "Move"},
+      {"ESC", "Close"}
+    ]
+
+  @impl Box
+  def help, do: nil
+
+  # each macro's name, and the key it is attached to
+  defp lines(state, mode) do
     case Database.macros(state.db) do
       [] ->
         [{:box, "No macros yet · INS (or type a name) makes one"}]
