@@ -170,6 +170,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] `core.ex` (~2,300, the facade) → `core/facade/`: `Agenda.Core` stays the one entry point (rule 3) as a table of contents of `defdelegate`s to area modules, where the functions and their docs live: `Files`, `Items`, `Assignments`, `Dates`, `Alarms`, `Numbers`, `Dependencies`, `Rules` (actions, text matching, conditions, Execute, Recalc), `Categories`, `Views`, `Macros`, `Calendars`; `Changes` keeps what every change to an item goes through (dates, settling)
 - [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agenda.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
 - [x] API documentation with `ex_doc` (dev only): `mix docs` from the `@moduledoc`s and `@spec`s, for whoever builds on the core facade (ADR 0020)
+- [ ] The real Agenda for Claude to try: DOSBox Staging started by a script, keys sent with its `AUTOTYPE`, the window captured with `screencapture`, to check Agenda's behaviour and compare screens without asking the owner for screenshots (plan and what the owner sets up: [`docs/DOSBOX_STAGING.md`](DOSBOX_STAGING.md))
 
 ## Beyond Agenda
 
