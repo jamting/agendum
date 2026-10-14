@@ -18,7 +18,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.DatebookBox,
     Boxes.ItemColumnBox,
     Boxes.ItemProperties,
-    Boxes.NumericFunctionsBox,
     Boxes.SectionBox,
     State
   }
@@ -36,7 +35,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     column_props: ColumnBox,
     column_add: ColumnAddBox,
     item_column: ItemColumnBox,
-    numeric_functions: NumericFunctionsBox,
     props: Properties,
     item_props: ItemProperties
   }
@@ -149,13 +147,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       minimum: "The narrowest the item text may become. Type it.",
       linked:
         "Whether the item column changes with the item columns of other sections. SPACE switches."
-    },
-    numeric_functions: %{
-      count: "Show how many items have a number, in every numeric column. SPACE switches.",
-      total: "Show the total of every numeric column. SPACE switches.",
-      average: "Show the average of every numeric column. SPACE switches.",
-      minimum: "Show the smallest number of every numeric column. SPACE switches.",
-      maximum: "Show the largest number of every numeric column. SPACE switches."
     },
     props: %{
       name: "The category's name. F2 (or SPACE) edits it.",

@@ -26,7 +26,6 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
     :section_props,
     :column_props,
     :item_column,
-    :numeric_functions,
     :props,
     :item_props
   ]

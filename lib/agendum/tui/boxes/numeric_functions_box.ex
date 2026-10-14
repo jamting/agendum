@@ -12,11 +12,13 @@ defmodule Agendum.TUI.Boxes.NumericFunctionsBox do
   from `@layout` (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
 
   alias Agendum.Core
-  alias Agendum.TUI.{State, Boxes.Template}
+  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
+  alias Agendum.TUI.State
 
   @layout """
    Count   : [count  ]
@@ -24,16 +26,23 @@ defmodule Agendum.TUI.Boxes.NumericFunctionsBox do
    Average : [average]
    Minimum : [minimum]
    Maximum : [maximum]
-
-   SPACE switches
   """
   @rows Template.fields(@layout)
+
+  @help %{
+    count: "Show how many items have a number, in every numeric column. SPACE switches.",
+    total: "Show the total of every numeric column. SPACE switches.",
+    average: "Show the average of every numeric column. SPACE switches.",
+    minimum: "Show the smallest number of every numeric column. SPACE switches.",
+    maximum: "Show the largest number of every numeric column. SPACE switches."
+  }
 
   @doc "Opens the box for section `sidx` of the current view."
   def open(state, sidx), do: State.push(state, %{type: :numeric_functions, sidx: sidx, cursor: 0})
 
   defp calcs(state, mode), do: Core.section_calcs(state.db, state.view_id, mode.sidx) || []
 
+  @impl Box
   def handle(state, mode, key) do
     case key do
       k when k in [:esc, :enter] ->
@@ -57,13 +66,34 @@ defmodule Agendum.TUI.Boxes.NumericFunctionsBox do
     State.change_db(state, Core.set_section_calcs(state.db, state.view_id, mode.sidx, calcs))
   end
 
-  @doc "The box's lines, the highlighted function selected."
-  def content(state, mode) do
+  @impl Box
+  def title(_state, _mode), do: "Select Numeric Functions"
+
+  # a small box, as Agenda's
+  @impl Box
+  def width(state, _mode), do: min(state.width - 8, 32)
+
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
     calcs = calcs(state, mode)
     values = Map.new(@rows, &{&1, if(&1 in calcs, do: "Yes", else: "No")})
-    Template.render(@layout, values, selected: Enum.at(@rows, mode.cursor))
+
+    Template.render(@layout, values, selected: field(state, mode)) ++
+      [[], Box.hint(keys(state, mode), inner)]
   end
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓←→", "Function", "Move between the calculations"},
+      {"SPACE", "Yes/No", "Switch it for the section's numeric columns"},
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
+
+  @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

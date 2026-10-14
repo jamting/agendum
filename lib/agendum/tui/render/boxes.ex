@@ -153,7 +153,7 @@ defmodule Agendum.TUI.Render.Boxes do
     do: (String.length(q) + 7) |> max(40) |> min(state.width - 8)
 
   defp box_width(state, %{type: type})
-       when type in [:numeric_functions, :copy_items, :choice_list],
+       when type in [:copy_items, :choice_list],
        do: min(state.width - 8, 32)
 
   # File Properties and Column Properties have Agenda's two columns of
@@ -198,7 +198,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(state, %{type: :section_props} = mode),
     do: Agendum.TUI.Boxes.SectionBox.title(state, mode)
 
-  defp box_title(_state, %{type: :numeric_functions}), do: "Select Numeric Functions"
   defp box_title(_state, %{type: :copy_items}), do: "Copy"
 
   defp box_title(_state, %{type: :column_add}), do: "Column Add"
@@ -445,9 +444,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_content(state, %{type: :copy_items} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.CopyBox.lines(state, mode)
-
-  defp box_content(state, %{type: :numeric_functions} = mode, _inner, _max_rows),
-    do: Agendum.TUI.Boxes.NumericFunctionsBox.content(state, mode)
 
   defp box_content(state, %{type: :column_props} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.ColumnBox.content(state, mode)

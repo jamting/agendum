@@ -205,14 +205,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Cancel"}
     ]
 
-  defp mode_keys(%{type: :numeric_functions}),
-    do: [
-      {"↑↓←→", "Function", "Move between the calculations"},
-      {"SPACE", "Yes/No", "Switch it for the section's numeric columns"},
-      {"ENTER", "Done"},
-      {"ESC", "Cancel"}
-    ]
-
   defp mode_keys(%{type: :alarm_list}),
     do: [{"DEL", "Remove past alarm"}, {"ALT-A", "Cancel alarm"}, {"ESC", "Close"}]
 
