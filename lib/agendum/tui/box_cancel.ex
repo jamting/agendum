@@ -81,13 +81,21 @@ defmodule Agendum.TUI.BoxCancel do
     end
   end
 
-  # the file and the person's own settings, which a box can change
+  # the file, the view shown and the person's own settings, which a box can
+  # change (View ▸ Add makes a view and opens its settings with one key)
   defp snapshot(state),
-    do: Map.take(state, [:db, :theme, :languages, :input, :key_map, :prefs])
+    do: Map.take(state, [:db, :view_id, :theme, :languages, :input, :key_map, :prefs])
 
   defp restore(state, opened) do
     state = if state.db == opened.db, do: state, else: State.change_db(state, opened.db)
-    prefs = Map.delete(opened, :db)
+
+    # a view the cancelled change made is gone: show the one shown before
+    state =
+      if Map.has_key?(state.db.views, state.view_id),
+        do: state,
+        else: %{state | view_id: opened.view_id}
+
+    prefs = Map.drop(opened, [:db, :view_id])
 
     if Map.take(state, Map.keys(prefs)) == prefs,
       do: state,

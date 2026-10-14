@@ -92,4 +92,21 @@ defmodule Agendum.TUI.BoxCancelTest do
     assert press(props, {:f, 2}).edit != nil
     assert State.mode(press(props, :enter)) == nil
   end
+
+  # found by tools/screenshots: View ▸ Add makes the view and opens its
+  # settings with one key, so ESC there takes the new view away again
+  test "ESC on a new datebook view's settings cancels the view, and shows the one before",
+       %{state: state} do
+    shown = state.view_id
+    views = map_size(state.db.views)
+    state = press(state, [{:f, 10}, "v", "a", "This Week", :enter, "d"])
+    assert %{type: :datebook_props} = State.mode(state)
+
+    state = press(state, :esc)
+    assert map_size(state.db.views) == views
+    assert state.view_id == shown
+    # back at the View menu (ESC steps back), the view drawn behind it (it crashed here)
+    assert %{type: :menu} = State.mode(state)
+    assert screen(state) =~ "Set up meeting"
+  end
 end
