@@ -29,7 +29,6 @@ defmodule Agendum.TUI.Render do
     :group_profile,
     :scope,
     :calendars,
-    :questions,
     :confirm,
     :viewmgr
   ]

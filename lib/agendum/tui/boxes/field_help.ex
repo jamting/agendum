@@ -27,9 +27,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       "To display a view, highlight the view name and press ENTER. " <>
         "Press INS to create a new view.",
     confirm: "Y or N answers. SPACE switches the answer; ENTER accepts the one shown.",
-    questions:
-      "Pick the categories to assign the item to: SPACE one, TAB all. " <>
-        "ENTER assigns them and shows the next item.",
     calendar:
       "Move the highlight to a date and press ENTER. PGUP/PGDN for another month; " <>
         "type a date to go there; F6 adds a time."

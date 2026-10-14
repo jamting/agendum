@@ -93,6 +93,7 @@ defmodule Agendum.TUI.Boxes.Box do
     note_search: Agendum.TUI.Typing.NoteSearch,
     numeric_functions: Agendum.TUI.Boxes.NumericFunctionsBox,
     props: Agendum.TUI.CategoryScreens.Properties,
+    questions: Agendum.TUI.Boxes.QuestionsBox,
     range_filter: Agendum.TUI.Boxes.RangeFilterBox,
     schedule: Agendum.TUI.Boxes.ScheduleBox,
     search_box: Agendum.TUI.Boxes.SearchBox,

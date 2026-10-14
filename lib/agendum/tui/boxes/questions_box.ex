@@ -7,7 +7,10 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
   shows the next item, ESC stops (the rest stay suggested). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :none, indicator: nil
+
   alias Agendum.Core
+  alias Agendum.TUI.Boxes.Box
   alias Agendum.TUI.State
 
   def open(state) do
@@ -20,6 +23,7 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
   @doc "The suggested categories of the item shown."
   def suggestions(state, mode), do: Map.get(state.db.suggestions, mode.item, [])
 
+  @impl Box
   def handle(state, mode, key) do
     cats = suggestions(state, mode)
 
@@ -52,6 +56,46 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
         state
     end
   end
+
+  @impl Box
+  def title(_state, _mode), do: "Suggested assignments"
+
+  # the item, then its suggested categories, * before the picked ones
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
+    item = state.db.items[mode.item]
+
+    cats =
+      state
+      |> suggestions(mode)
+      |> Enum.with_index()
+      |> Enum.map(fn {cat, i} ->
+        mark = if cat in mode.picked, do: "*", else: " "
+
+        [
+          {:box, " #{mark} "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), state.db.categories[cat].name}
+        ]
+      end)
+
+    [[{:box, " " <> String.slice(item.text, 0, inner - 2)}], [], [{:box, " Assign to:"}]] ++
+      cats ++ [[], Box.hint(keys(state, mode), inner)]
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"SPACE", "Pick", "Pick a suggestion"},
+      {"TAB", "All", "Pick all"},
+      {"ENTER", "Assign", "Assign the picked"},
+      {"ESC", "Stop"}
+    ]
+
+  @impl Box
+  def help,
+    do:
+      "Pick the categories to assign the item to: SPACE one, TAB all. " <>
+        "ENTER assigns them and shows the next item."
 
   defp open_next(state) do
     case Core.questions(state.db) do

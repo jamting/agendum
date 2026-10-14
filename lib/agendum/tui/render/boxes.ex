@@ -161,8 +161,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :scope}), do: "Marked items"
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
-  defp box_title(_state, %{type: :questions}), do: "Suggested assignments"
-
   # the column's head is the box's first row, as in Agenda (screenshot 142)
 
   defp box_title(state, %{type: :profile, item_id: id}),
@@ -289,26 +287,6 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   # F3 on a setting (`Agendum.TUI.Boxes.BoxChoices`): its choices, one a line
-
-  defp box_content(state, %{type: :questions} = mode, inner, _max_rows) do
-    item = state.db.items[mode.item]
-
-    cats =
-      state
-      |> Agendum.TUI.Boxes.QuestionsBox.suggestions(mode)
-      |> Enum.with_index()
-      |> Enum.map(fn {cat, i} ->
-        mark = if cat in mode.picked, do: "*", else: " "
-
-        [
-          {:box, " #{mark} "},
-          {if(i == mode.cursor, do: :box_selected, else: :box), state.db.categories[cat].name}
-        ]
-      end)
-
-    [[{:box, " " <> String.slice(item.text, 0, inner - 2)}], [], [{:box, " Assign to:"}]] ++
-      cats ++ [[], [{:box, " SPACE picks · TAB picks all · ENTER assigns · ESC stops"}]]
-  end
 
   defp box_content(state, %{type: :calendars} = mode, _inner, _max_rows) do
     rows =

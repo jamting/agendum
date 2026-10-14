@@ -417,9 +417,6 @@ defmodule Agendum.TUI.Update do
   defp dispatch(state, %{type: :calendars} = m, key),
     do: Agendum.TUI.Boxes.CalendarsBox.handle(state, m, key)
 
-  defp dispatch(state, %{type: :questions} = m, key),
-    do: Agendum.TUI.Boxes.QuestionsBox.handle(state, m, key)
-
   defp dispatch(state, %{type: :column_width} = m, key),
     do: Agendum.TUI.Moves.ColumnWidth.handle(state, m, key)
 

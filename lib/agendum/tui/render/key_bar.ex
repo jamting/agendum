@@ -217,14 +217,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ALT-F2", "MakeCat", "Make the text a category"}
     ]
 
-  defp mode_keys(%{type: :questions}),
-    do: [
-      {"SPACE", "Pick", "Pick a suggestion"},
-      {"TAB", "All", "Pick all"},
-      {"ENTER", "Assign", "Assign the picked"},
-      {"ESC", "Stop"}
-    ]
-
   defp mode_keys(%{type: :calendars}),
     do: [
       {"INS", "Subscribe", "Subscribe to a calendar"},
