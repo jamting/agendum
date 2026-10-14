@@ -166,7 +166,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Group the small TUI modules in subfolders: `tui/boxes/`, `tui/terminal/`, `tui/typing/`, `tui/moves/` (ARCHITECTURE.md, TUI)
 - [ ] Rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it ([`docs/RENAME_REPO.md`](RENAME_REPO.md))
 - [ ] Draw the settings boxes from layouts (`Agendum.TUI.Boxes.Template`, as File ▸ Customize is now), a few at a time and with the split of `render.ex`; their layouts closer to Agenda's screenshots where that is easy (Category Properties done)
-- [ ] Every box in a module of its own behind `Agendum.TUI.Boxes.Box` (keys, drawing, key bar, help, ending), then the fallbacks removed from Update, Render.Boxes, KeyBar, FieldHelp, BoxCancel and BoxChoices: 30 of 41 done, the rest and how in [`docs/REFACTORING.md`](REFACTORING.md) step 3
+- [x] Every box in a module of its own behind `Agendum.TUI.Boxes.Box` (keys, drawing, key bar, help, ending), then the fallbacks removed from Update, Render.Boxes, FieldHelp, BoxCancel and BoxChoices ([`docs/REFACTORING.md`](REFACTORING.md) step 3)
 - [ ] The plans (`GITHUB.md`, `DOSBOX_STAGING.md`, `KITTY.md`, `RENAME_REPO.md`, `WOL-IN-THE-MACHINE.md`, `MULTIUSER.md`, `REFACTORING.md`) moved to `docs/plans/`, so `docs/` is what Agendum is (REFACTORING.md step 5)
 - [x] Split the four largest files into subfolders, by the sections they already have; pure moves, no change in behaviour, one file per commit (best in a fresh session each):
   - [x] `tui/render.ex` (~2,300 lines) → `tui/render/`: `Render` keeps `render/1`; `ControlPanel`, `KeyBar`, `View`, `Managers`, `Note`, `Help`, `Boxes` and `CategoryBoxes`, `Text` (shared words), `Export`
