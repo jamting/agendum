@@ -11,8 +11,8 @@ defmodule Agendum.TUI.Render do
       last line   function key bar
 
   Each part is drawn by a module of its own under `Agendum.TUI.Render`:
-  `ControlPanel`, `View`, `Managers`, `Note`, `Help`, `Boxes` and
-  `CategoryBoxes`, `KeyBar`; `Export` writes a view as plain text.
+  `ControlPanel`, `View`, `Managers`, `Note`, `Help`, `Boxes`, `KeyBar`;
+  `Export` writes a view as plain text.
   """
 
   alias Agendum.TUI.{Terminal.Draw, State}
@@ -23,7 +23,6 @@ defmodule Agendum.TUI.Render do
     :calendar,
     :macros,
     :select_file,
-    :choice,
     :scope,
     :calendars,
     :confirm,

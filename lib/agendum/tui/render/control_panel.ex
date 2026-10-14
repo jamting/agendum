@@ -196,11 +196,7 @@ defmodule Agendum.TUI.Render.ControlPanel do
       top && top.type == :browse ->
         "BROWSE"
 
-      top &&
-          top.type in [
-            :choice,
-            :calendars
-          ] ->
+      top && top.type == :calendars ->
         "PROPS"
 
       top && top.type in [:searching] ->

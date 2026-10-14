@@ -6,11 +6,71 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
   category's type, Learn mode and a new view's type. Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :accept
+
   alias Agendum.Core
   alias Agendum.Core.Database
-  alias Agendum.TUI.{CategoryScreens, State}
+  alias Agendum.TUI.{Boxes.Box, CategoryScreens, State}
   alias Agendum.TUI.CategoryScreens.Properties
   alias Agendum.TUI.Update.Prompts
+
+  # --- the box (`Agendum.TUI.Boxes.Box`) ---------------------------------------------------
+
+  @impl Box
+  def handle(state, mode, key), do: choice_key(state, mode, key)
+
+  @impl Box
+  def title(state, %{kind: :move, cat_id: id}),
+    do: "Moving #{state.db.categories[id].name} creates a conflict"
+
+  def title(_state, %{kind: :view_type, name: name}), do: "New view: #{name}"
+
+  def title(_state, %{kind: :make_item}), do: "Make item (ALT-F7)"
+
+  def title(_state, %{kind: :clip, action: :copy}), do: "Copy (F3)"
+
+  def title(_state, %{kind: :clip, action: :cut}), do: "Cut (F4)"
+
+  def title(_state, %{kind: :clip, action: :delete}), do: "Delete (ALT-F4)"
+
+  def title(state, %{kind: :remove_column, at: {sidx, index}}) do
+    column = state |> State.view() |> Agendum.Core.View.columns(sidx) |> Enum.at(index)
+    "Remove column: #{state.db.categories[column.category_id].name}"
+  end
+
+  def title(state, %{kind: :learn, macro_id: id}),
+    do: "Learn: #{state.db.macros[id].name}"
+
+  def title(state, %{kind: :type, cat_id: id}),
+    do: "Category type: #{state.db.categories[id].name}"
+
+  def title(state, %{cat_id: id}),
+    do: "Make children of #{state.db.categories[id].name} mutually exclusive"
+
+  # what is wrong and what to do, the choices, and what the highlighted one does
+  @impl Box
+  def content(_state, mode, _inner, _max_rows) do
+    options = choice_options(mode)
+    [problem, question] = choice_lines(mode)
+    {_, description, _} = Enum.at(options, mode.cursor)
+
+    choices =
+      options
+      |> Enum.with_index()
+      |> Enum.map(fn {{label, _, _}, i} ->
+        [{:box, "   "}, {if(i == mode.cursor, do: :box_selected, else: :box), " #{label} "}]
+      end)
+
+    [[{:box, " " <> problem}], [], [{:box, " " <> question}]] ++
+      choices ++ [[], [{:box, " " <> description}]]
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [{"↑↓", "Highlight", "Highlight a choice"}, {"ENTER", "Select"}, {"ESC", "Cancel"}]
+
+  @impl Box
+  def help, do: nil
 
   # --- making children mutually exclusive -----------------------------------------------------
 

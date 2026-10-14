@@ -1,12 +1,11 @@
 defmodule Agendum.TUI.Render.Boxes do
   @moduledoc """
-  The boxes drawn over the screen: their place, title and content. The
-  category lists and Category Properties are in `Agendum.TUI.Render.CategoryBoxes`.
+  The boxes drawn over the screen: their place, title and content; the
+  boxes with a module of their own (`Agendum.TUI.Boxes.Box`) give theirs.
   Pure.
   """
 
   alias Agendum.TUI.{Boxes.Box, Terminal.Draw, State}
-  alias Agendum.TUI.Render.CategoryBoxes
 
   # boxes with a module of their own (`Agendum.TUI.Boxes.Box`) draw themselves
   @boxes Box.registry()
@@ -93,7 +92,6 @@ defmodule Agendum.TUI.Render.Boxes do
   @accept_boxes [
     :calendar,
     :select_file,
-    :choice,
     :scope,
     :confirm
   ]
@@ -150,40 +148,13 @@ defmodule Agendum.TUI.Render.Boxes do
 
   # the column's head is the box's first row, as in Agenda (screenshot 142)
 
-  defp box_title(state, %{type: :choice, kind: :move, cat_id: id}),
-    do: "Moving #{state.db.categories[id].name} creates a conflict"
-
-  defp box_title(_state, %{type: :choice, kind: :view_type, name: name}), do: "New view: #{name}"
-  defp box_title(_state, %{type: :choice, kind: :make_item}), do: "Make item (ALT-F7)"
-  defp box_title(_state, %{type: :choice, kind: :clip, action: :copy}), do: "Copy (F3)"
-  defp box_title(_state, %{type: :choice, kind: :clip, action: :cut}), do: "Cut (F4)"
-  defp box_title(_state, %{type: :choice, kind: :clip, action: :delete}), do: "Delete (ALT-F4)"
-
-  defp box_title(state, %{type: :choice, kind: :remove_column, at: {sidx, index}}) do
-    column = state |> State.view() |> Agendum.Core.View.columns(sidx) |> Enum.at(index)
-    "Remove column: #{state.db.categories[column.category_id].name}"
-  end
-
   defp box_title(_state, %{type: :macros}), do: "Macros"
 
   defp box_title(state, %{type: :select_file} = mode),
     do: Agendum.TUI.Boxes.SelectFile.title(mode, box_width(state, mode))
 
-  defp box_title(state, %{type: :choice, kind: :learn, macro_id: id}),
-    do: "Learn: #{state.db.macros[id].name}"
-
-  defp box_title(state, %{type: :choice, kind: :type, cat_id: id}),
-    do: "Category type: #{state.db.categories[id].name}"
-
-  defp box_title(state, %{type: :choice, cat_id: id}),
-    do: "Make children of #{state.db.categories[id].name} mutually exclusive"
-
   defp box_content(state, %{type: type} = mode, inner, max_rows) when is_map_key(@boxes, type),
     do: @boxes[type].content(state, mode, inner, max_rows)
-
-  defp box_content(state, %{type: type} = mode, inner, max_rows)
-       when type in [:choice],
-       do: CategoryBoxes.content(state, mode, inner, max_rows)
 
   defp box_content(state, %{type: :viewmgr} = mode, inner, max_rows),
     do: Agendum.TUI.Render.Managers.view_box(state, mode, inner, max_rows)
