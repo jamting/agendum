@@ -35,7 +35,9 @@ mix run -e 'Agenda.CLI.main(["--demo"])'       # sample data from the Agenda pat
 mix run -e 'Agenda.CLI.main(["--rabbit"])'     # Rabbit's file from the manual
 mix escript.build && ./agendum ~/work.agendum   # standalone binary
 mix docs --open                                 # API and design docs, guide and manual, in the browser
-./agendum --mono ~/work.agendum                 # monochrome (also: --theme mono, or NO_COLOR=1); --theme blue: white on blue
+./agendum --mono ~/work.agendum                 # monochrome (also: --theme mono, or NO_COLOR=1)
+./agendum --theme zenburn ~/work.agendum        # themes: classic (Agenda's colours, the default), mono,
+                                                #   modus-operandi, modus-vivendi, alabaster, zenburn, ayu, borland
 ./agendum --lang=swedish --fallback=english f   # read dates typed in Swedish (and English)
 ./agendum --number-order=dmy --date-separator=. f  # type dates as 12.11.26 for this session
 # File ▸ Customize saves your theme, date languages and input format in ~/.config/agendum/preferences
@@ -84,7 +86,15 @@ behaviour, [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for structure,
 [`docs/ROADMAP.md`](docs/ROADMAP.md) for what's next.
 
 ```sh
-mix check   # format + warnings-as-errors + tests
+mix check   # the quality gate: format, warnings as errors, Credo, Dialyzer, tests
 mix agendum.starters             # rebuild starters/planner.agendum (a test checks it is current)
 mix agendum.starters --samples   # a copy full of sample data, for testing: tmp/planner-samples.agendum
 ```
+
+## Contributing
+
+[`CONTRIBUTING.md`](CONTRIBUTING.md) takes you from a fresh machine to a
+first change: installing Erlang and Elixir, running the checks, finding
+your way in the code and the documents, and the workflow for a change.
+The plan for putting the project on GitHub, with checks on every push and
+the documentation on GitHub Pages, is in [`docs/GITHUB.md`](docs/GITHUB.md).

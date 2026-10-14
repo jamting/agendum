@@ -49,7 +49,8 @@ defmodule Agenda.MixProject do
       main: "readme",
       formatters: ["html", "markdown"],
       extras:
-        ["README.md", "CLAUDE.md"] ++ Path.wildcard("docs/*.md") ++ Path.wildcard("docs/adr/*.md"),
+        ["README.md", "CONTRIBUTING.md", "CLAUDE.md"] ++
+          Path.wildcard("docs/*.md") ++ Path.wildcard("docs/adr/*.md"),
       groups_for_extras: [
         Design: ~r{docs/[A-Z_-]+\.md},
         Decisions: ~r{docs/adr/}
