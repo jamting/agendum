@@ -92,7 +92,6 @@ defmodule Agendum.TUI.Render.Boxes do
   ]
   # boxes to choose one thing in
   @accept_boxes [
-    :copy_items,
     :calendar,
     :select_file,
     :choice,
@@ -146,7 +145,7 @@ defmodule Agendum.TUI.Render.Boxes do
     do: (String.length(q) + 7) |> max(40) |> min(state.width - 8)
 
   defp box_width(state, %{type: type})
-       when type in [:copy_items, :choice_list],
+       when type in [:choice_list],
        do: min(state.width - 8, 32)
 
   defp box_width(state, _mode), do: min(state.width - 8, 60)
@@ -175,8 +174,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :questions}), do: "Suggested assignments"
 
   # the column's head is the box's first row, as in Agenda (screenshot 142)
-
-  defp box_title(_state, %{type: :copy_items}), do: "Copy"
 
   defp box_title(state, %{type: :profile, item_id: id}),
     do: "Assignments: " <> String.slice(state.db.items[id].text, 0, 40)
@@ -391,9 +388,6 @@ defmodule Agendum.TUI.Render.Boxes do
         [{:box, " F how often · A how far ahead"}]
       ]
   end
-
-  defp box_content(state, %{type: :copy_items} = mode, _inner, _max_rows),
-    do: Agendum.TUI.Boxes.CopyBox.lines(state, mode)
 
   defp box_content(state, %{type: :macros} = mode, _inner, max_rows) do
     rows =

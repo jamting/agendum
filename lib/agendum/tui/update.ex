@@ -428,9 +428,6 @@ defmodule Agendum.TUI.Update do
   defp dispatch(state, %{type: :column_move} = m, key),
     do: Agendum.TUI.Moves.ColumnMove.handle(state, m, key)
 
-  defp dispatch(state, %{type: :copy_items} = m, key),
-    do: Agendum.TUI.Boxes.CopyBox.handle(state, m, key)
-
   defp dispatch(state, %{type: :section_move} = m, key),
     do: Agendum.TUI.Moves.SectionMove.handle(state, m, key)
 

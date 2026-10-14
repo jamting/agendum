@@ -30,7 +30,6 @@ defmodule Agendum.TUI.Render do
     :scope,
     :calendars,
     :questions,
-    :copy_items,
     :alarm_list,
     :choice_list,
     :confirm,

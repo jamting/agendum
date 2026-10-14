@@ -273,13 +273,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Cancel", "Put it back"}
     ]
 
-  defp mode_keys(%{type: :copy_items}),
-    do: [
-      {"↑↓", "Section", "Choose the section"},
-      {"ENTER", "Copy", "Put the item(s) there as well"},
-      {"ESC", "Cancel"}
-    ]
-
   defp mode_keys(%{type: :section_move}),
     do: [
       {"↑↓", "Move", "↑ ↓ or < >", "Move the section"},

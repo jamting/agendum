@@ -14,7 +14,10 @@ defmodule Agendum.TUI.Boxes.CopyBox do
   sections are its dates (R47). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
+
   alias Agendum.Core
+  alias Agendum.TUI.Boxes.Box
   alias Agendum.TUI.{Terminal.Draw, Layout, State}
 
   @doc "Opens the box for the items `ids`."
@@ -27,6 +30,7 @@ defmodule Agendum.TUI.Boxes.CopyBox do
     end
   end
 
+  @impl Box
   def handle(state, mode, key) do
     last = length(State.view(state).sections) - 1
 
@@ -50,8 +54,30 @@ defmodule Agendum.TUI.Boxes.CopyBox do
     state |> State.change_db(db) |> State.info("Copied #{what}to #{name}")
   end
 
-  @doc "The box's lines: the question, then the sections, the chosen one selected."
-  def lines(state, mode) do
+  @impl Box
+  def title(_state, _mode), do: "Copy"
+
+  # a small box, as Agenda's
+  @impl Box
+  def width(state, _mode), do: min(state.width - 8, 32)
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓", "Section", "Choose the section"},
+      {"ENTER", "Copy", "Put the item(s) there as well"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help,
+    do:
+      "Highlight the section to copy the item to and press ENTER; " <>
+        "it stays in its other sections."
+
+  # the question, then the sections, the chosen one selected
+  @impl Box
+  def content(state, mode, _inner, _max_rows) do
     sections =
       state
       |> State.view()

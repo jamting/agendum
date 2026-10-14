@@ -75,6 +75,7 @@ defmodule Agendum.TUI.Boxes.Box do
     category_stats: Agendum.TUI.Boxes.CategoryStatsBox,
     column_add: Agendum.TUI.Boxes.ColumnAddBox,
     column_props: Agendum.TUI.Boxes.ColumnBox,
+    copy_items: Agendum.TUI.Boxes.CopyBox,
     customize: Agendum.TUI.Boxes.CustomizeBox,
     datebook_props: Agendum.TUI.Boxes.DatebookBox,
     date_rule: Agendum.TUI.Boxes.DateRuleBox,
