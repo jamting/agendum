@@ -30,9 +30,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     questions:
       "Pick the categories to assign the item to: SPACE one, TAB all. " <>
         "ENTER assigns them and shows the next item.",
-    alarm_list:
-      "The items with alarms, and today's alarms that have gone off. " <>
-        "DEL removes a past alarm, ALT-A cancels a current one.",
     calendar:
       "Move the highlight to a date and press ENTER. PGUP/PGDN for another month; " <>
         "type a date to go there; F6 adds a time."

@@ -21,7 +21,6 @@ defmodule Agendum.TUI.Update do
   alias Agendum.Core
 
   alias Agendum.TUI.{
-    Boxes.AlarmList,
     Boxes.CalendarBox,
     CategoryScreens,
     History,
@@ -429,8 +428,6 @@ defmodule Agendum.TUI.Update do
 
   defp dispatch(state, %{type: :section_move} = m, key),
     do: Agendum.TUI.Moves.SectionMove.handle(state, m, key)
-
-  defp dispatch(state, %{type: :alarm_list} = m, key), do: AlarmList.handle(state, m, key)
 
   defp dispatch(state, %{type: :searching} = m, key),
     do: SearchBox.searching_key(state, m, key, &ViewKeys.view_key/2)

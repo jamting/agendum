@@ -30,7 +30,6 @@ defmodule Agendum.TUI.Render do
     :scope,
     :calendars,
     :questions,
-    :alarm_list,
     :confirm,
     :viewmgr
   ]

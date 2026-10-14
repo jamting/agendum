@@ -5,7 +5,6 @@ defmodule Agendum.TUI.Render.Boxes do
   Pure.
   """
 
-  alias Agendum.Core.DateFormat
   alias Agendum.TUI.{Boxes.Box, Terminal.Draw, State}
   alias Agendum.TUI.Render.CategoryBoxes
 
@@ -160,7 +159,6 @@ defmodule Agendum.TUI.Render.Boxes do
     do: "Assignments: #{Draw.count(length(ids), "marked item")}"
 
   defp box_title(_state, %{type: :scope}), do: "Marked items"
-  defp box_title(_state, %{type: :alarm_list}), do: "Alarm list"
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
   defp box_title(_state, %{type: :questions}), do: "Suggested assignments"
@@ -291,48 +289,6 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   # F3 on a setting (`Agendum.TUI.Boxes.BoxChoices`): its choices, one a line
-
-  defp box_content(state, %{type: :alarm_list} = mode, inner, _max_rows) do
-    rows = Agendum.TUI.Boxes.AlarmList.rows(state)
-    cursor = min(mode.cursor, max(length(rows) - 1, 0))
-
-    lines =
-      rows
-      |> Enum.with_index()
-      |> Enum.map(fn {{kind, id}, i} ->
-        item = state.db.items[id]
-
-        when_text =
-          case kind do
-            :current ->
-              at = NaiveDateTime.add(Agendum.Core.when_at(item), -item.alarm_minutes * 60)
-              "rings " <> DateFormat.datetime(at, state.db.date_format)
-
-            :past ->
-              "rang " <>
-                DateFormat.time(NaiveDateTime.to_time(item.alarm_rung_at), state.db.date_format)
-          end
-
-        text = Draw.pad(item.text, max(inner - 28, 10))
-
-        {kind,
-         [
-           {:box, " "},
-           {if(i == cursor, do: :box_selected, else: :box), text},
-           {:box, " " <> when_text}
-         ]}
-      end)
-
-    current = for {:current, line} <- lines, do: line
-    past = for {:past, line} <- lines, do: line
-    none = [[{:box, "   (none)"}]]
-
-    [[{:box, " Current alarms"}]] ++
-      if(current == [], do: none, else: current) ++
-      [[], [{:box, " Past alarms today"}]] ++
-      if(past == [], do: none, else: past) ++
-      [[], [{:box, " DEL removes a past alarm · ALT-A cancels a current one"}]]
-  end
 
   defp box_content(state, %{type: :questions} = mode, inner, _max_rows) do
     item = state.db.items[mode.item]

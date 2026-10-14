@@ -183,9 +183,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Back", "Back to the prompt"}
     ]
 
-  defp mode_keys(%{type: :alarm_list}),
-    do: [{"DEL", "Remove past alarm"}, {"ALT-A", "Cancel alarm"}, {"ESC", "Close"}]
-
   defp mode_keys(%{type: :searching}),
     do: [
       {"ALT-N", "Next", "Next match"},
