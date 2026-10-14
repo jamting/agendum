@@ -123,7 +123,10 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
 - [ ] Optional: Import of structured text files (one item per line, with categories)
 - [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files)
-- [ ] Optional: read original `.AG` files directly (format undocumented; research; STF covers most needs)
+- [ ] Optional: read original `.AG` files directly. The format is now largely known (`docs/AGENDA_FILE_FORMAT.md`; research log `docs/plans/AGENDA_FILE_FORMAT_LOG.md`; reference reader `tools/agformat/agdump.py`): items, notes, categories, assignments with values, views, sections, columns
+  - [x] Reverse engineer the format: container, items, categories, values, views (2026-10-14)
+  - [ ] Settle the open parts: view/section sort and filter words, relative-date encoding, actions (experiments listed in the log)
+  - [ ] Elixir reader outside the pure core, converting to the JSON format; File ▸ Transfer ▸ Import of a `.AG`
 
 ## Milestone 5 — Time management and automation
 
