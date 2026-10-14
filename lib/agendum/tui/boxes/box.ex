@@ -71,6 +71,7 @@ defmodule Agendum.TUI.Boxes.Box do
     auto_assign: Agendum.TUI.Boxes.AutoAssignBox,
     category_match: Agendum.TUI.Boxes.CategoryMatchBox,
     date_rule: Agendum.TUI.Boxes.DateRuleBox,
+    date_settings: Agendum.TUI.Boxes.DateSettingsBox,
     input_format: Agendum.TUI.Boxes.InputFormatBox,
     macro_props: Agendum.TUI.Boxes.MacroProps
   }

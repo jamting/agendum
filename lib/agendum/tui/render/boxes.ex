@@ -196,7 +196,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
   defp box_title(_state, %{type: :file_props}), do: "File properties"
-  defp box_title(_state, %{type: :date_settings}), do: "Global date settings"
   defp box_title(_state, %{type: :display_format}), do: "Display format"
   defp box_title(_state, %{type: :customize}), do: "Customize (yours, for every file)"
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
@@ -584,11 +583,10 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_content(state, %{type: :file_props} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.FileProperties.content(state, mode)
 
-  defp box_content(state, %{type: type} = mode, _inner, _max_rows)
-       when type in [:date_settings, :display_format] do
+  defp box_content(state, %{type: :display_format} = mode, _inner, _max_rows) do
     rows =
       state
-      |> Agendum.TUI.Boxes.FileProperties.lines(type)
+      |> Agendum.TUI.Boxes.FileProperties.lines(:display_format)
       |> Enum.with_index()
       |> Enum.map(fn {{label, value}, i} ->
         [
@@ -598,23 +596,8 @@ defmodule Agendum.TUI.Render.Boxes do
       end)
 
     # the sample under the display settings it shows
-    sample =
-      if type == :display_format,
-        do: [
-          [],
-          [
-            {:box,
-             " " <> Draw.pad("Sample", 21) <> ": " <> DateFormat.sample(state.db.date_format)}
-          ]
-        ],
-        else: []
-
-    hint =
-      if type == :display_format,
-        do: " SPACE next choice · arrows move",
-        else: " SPACE next choice or open ... · arrows move"
-
-    rows ++ sample ++ [[], [{:box, hint}]]
+    sample = " " <> Draw.pad("Sample", 21) <> ": " <> DateFormat.sample(state.db.date_format)
+    rows ++ [[], [{:box, sample}], [], [{:box, " SPACE next choice · arrows move"}]]
   end
 
   defp box_content(state, %{type: :macros} = mode, _inner, max_rows) do

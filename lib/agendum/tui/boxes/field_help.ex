@@ -41,7 +41,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   @boxes %{
     customize: CustomizeBox,
     file_props: FileProperties,
-    date_settings: FileProperties,
     display_format: FileProperties,
     datebook_props: DatebookBox,
     schedule: ScheduleBox,
@@ -131,24 +130,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       dates:
         "Press SPACE BAR to choose date and time formats to use as defaults throughout the file.",
       auto: "Press SPACE BAR to choose how items are assigned to categories by their text."
-    },
-    date_settings: %{
-      display_format:
-        "Press SPACE BAR to choose how dates and times are displayed throughout the file. " <>
-          "Date columns can override it.",
-      input_format:
-        "Press SPACE BAR to choose how you type dates. It is yours, " <>
-          "for every file, not part of this one.",
-      week_start: "The first day of a week, for \"this week\" and datebooks. SPACE for the next.",
-      week_end: "The last day of a week, for \"end of week\" and datebooks. SPACE for the next.",
-      quarter_start: "The month the first quarter begins in. SPACE for the next month.",
-      year_start: "The month the year begins in, for \"this year\". SPACE for the next month.",
-      month_alone:
-        "Which day a month typed alone means (\"April\"): its first, its last, or another day. " <>
-          "SPACE for the next.",
-      morning: "The time \"morning\" means in a date. SPACE asks for it.",
-      afternoon: "The time \"afternoon\" means in a date. SPACE asks for it.",
-      evening: "The time \"evening\" means in a date. SPACE asks for it."
     },
     display_format: @date_format,
     datebook_props: %{

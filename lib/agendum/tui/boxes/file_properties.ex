@@ -9,16 +9,13 @@ defmodule Agendum.TUI.Boxes.FileProperties do
       (`Agendum.TUI.Boxes.AutoAssignBox`, R16a). Drawn from `@layout`
       (`Agendum.TUI.Boxes.Template`), Agenda's box (screenshot 130) with only the
       settings Agendum has
-    * Global Date Settings (`:date_settings`, R14e): Display format ...,
-      Input format ... (the person's own box, `Agendum.TUI.Boxes.InputFormatBox`,
-      R41b), then beginning and end of week, first quarter, beginning of
-      year, month alone means, morning, afternoon, evening
+    * Global Date Settings (`Agendum.TUI.Boxes.DateSettingsBox`, R14e)
     * Display Format (`:display_format`, R41): the Date Column Properties
       rows (`Agendum.TUI.Boxes.DateFormatRows`), with a formatted sample below
 
   SPACE shows the next choice (or opens a "..." box), the arrows move
-  between settings (`Agendum.TUI.Boxes.BoxNav`), Morning, Afternoon and Evening
-  are typed; every change applies at once and is one undo step. ENTER closes
+  between settings (`Agendum.TUI.Boxes.BoxNav`); every change applies at once
+  and is one undo step. ENTER closes
   the box, ESC closes it and cancels its changes (`Agendum.TUI.Boxes.BoxCancel`);
   either goes back to the box beneath. Pure.
   """
@@ -27,7 +24,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   alias Agendum.TUI.Boxes.BoxNav
 
   alias Agendum.Core
-  alias Agendum.Core.{DateFormat, DateSettings}
+  alias Agendum.Core.DateFormat
   alias Agendum.TUI.{Boxes.DateFormatRows, State, Boxes.Template}
 
   # Agenda's File Properties (screenshot 130), its other settings left out
@@ -41,30 +38,13 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   """
 
   @format_rows DateFormatRows.rows()
-  @settings_rows [
-    :week_start,
-    :week_end,
-    :quarter_start,
-    :year_start,
-    :month_alone,
-    :morning,
-    :afternoon,
-    :evening
-  ]
   @rows %{
     file_props: Template.fields(@layout),
-    date_settings: [:display_format, :input_format | @settings_rows],
     display_format: @format_rows
   }
   # File Properties has two settings side by side; the others one a row
   defp grid(:file_props), do: Template.grid(@layout, @rows.file_props)
   defp grid(type), do: BoxNav.column(@rows[type])
-
-  @days ~w(Mon Tue Wed Thu Fri Sat Sun)
-  @months ~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
-
-  @doc "The box types, outermost first."
-  def types, do: [:file_props, :date_settings, :display_format]
 
   def open(state, type \\ :file_props), do: State.push(state, %{type: type, cursor: 0})
 
@@ -80,8 +60,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
     end
   end
 
-  defp change(state, :dates, _step), do: open(state, :date_settings)
-  defp change(state, :display_format, _step), do: open(state, :display_format)
+  defp change(state, :dates, _step), do: Agendum.TUI.Boxes.DateSettingsBox.open(state)
   defp change(state, :auto, _step), do: Agendum.TUI.Boxes.AutoAssignBox.open(state)
 
   # two choices, so SPACE, → and ← all flip it
@@ -90,35 +69,9 @@ defmodule Agendum.TUI.Boxes.FileProperties do
     State.change_db(state, Core.set_insert_columns(state.db, where))
   end
 
-  defp change(state, :input_format, _step), do: Agendum.TUI.Boxes.InputFormatBox.open(state)
-
-  # a time is typed, as Agenda's (SPACE asks for it)
-  defp change(state, row, _step) when row in [:morning, :afternoon, :evening] do
-    time = Map.fetch!(state.db.date_settings, row) |> Time.to_string() |> String.slice(0, 5)
-    label = "#{row |> Atom.to_string() |> String.capitalize()} (a time):"
-    Agendum.TUI.Update.Prompts.prompt(state, label, {:date_setting_time, row}, time)
-  end
-
-  defp change(state, row, step) when row in @settings_rows do
-    settings = DateSettings.cycle(state.db.date_settings, row, step)
-    State.change_db(state, Core.set_date_settings(state.db, settings))
-  end
-
   defp change(state, row, step) do
     format = DateFormat.cycle(state.db.date_format, row, step)
     State.change_db(state, Core.set_date_format(state.db, format))
-  end
-
-  @doc "The time typed for Morning, Afternoon or Evening; unreadable text is refused."
-  def set_time(state, row, text) do
-    case Core.read_when(state.db, text, State.context(state)) do
-      {:ok, _date, %Time{} = time} ->
-        settings = Map.put(state.db.date_settings, row, time)
-        State.change_db(state, Core.set_date_settings(state.db, settings))
-
-      _ ->
-        State.error(state, "Not a time: #{text}")
-    end
   end
 
   @doc "The File Properties box's lines, the highlighted setting selected."
@@ -137,28 +90,6 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   def lines(state, type)
 
   def lines(state, :display_format), do: DateFormatRows.lines(state.db.date_format)
-
-  def lines(state, :date_settings) do
-    f = state.db.date_format
-    s = state.db.date_settings
-
-    [
-      {"Display format", "..."},
-      {"Input format", "... (yours)"},
-      {"Beginning of week", Enum.at(@days, s.week_start - 1)},
-      {"End of week", Enum.at(@days, s.week_end - 1)},
-      {"First quarter", Enum.at(@months, s.quarter_start - 1) <> " 1"},
-      {"Beginning of year", Enum.at(@months, s.year_start - 1) <> " 1"},
-      {"Month alone means", month_alone(s.month_alone)},
-      {"Morning", DateFormat.time(s.morning, f)},
-      {"Afternoon", DateFormat.time(s.afternoon, f)},
-      {"Evening", DateFormat.time(s.evening, f)}
-    ]
-  end
-
-  defp month_alone(:first), do: "First day"
-  defp month_alone(:last), do: "Last day"
-  defp month_alone(day), do: "Day #{day}"
 
   @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
   def field(_state, mode), do: Enum.at(@rows[mode.type], mode.cursor)

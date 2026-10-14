@@ -164,7 +164,7 @@ defmodule Agendum.TUI.Update.Prompts do
     do: Agendum.TUI.Boxes.DatebookBox.set_time(state, view_id, row, text)
 
   defp prompt_action(state, {:date_setting_time, row}, text),
-    do: Agendum.TUI.Boxes.FileProperties.set_time(state, row, text)
+    do: Agendum.TUI.Boxes.DateSettingsBox.set_time(state, row, text)
 
   defp prompt_action(state, :browse_to, text), do: Agendum.TUI.Moves.Browse.go_to(state, text)
   defp prompt_action(state, :new_macro, text), do: Agendum.TUI.Macros.create(state, text)

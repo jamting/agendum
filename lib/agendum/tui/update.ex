@@ -438,7 +438,7 @@ defmodule Agendum.TUI.Update do
     do: Agendum.TUI.Boxes.DatebookBox.handle(state, m, key)
 
   defp dispatch(state, %{type: type} = m, key)
-       when type in [:file_props, :date_settings, :display_format],
+       when type in [:file_props, :display_format],
        do: FileProperties.handle(state, m, key)
 
   defp dispatch(state, %{type: :calendars} = m, key),

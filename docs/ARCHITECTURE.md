@@ -118,6 +118,7 @@ the rest by what it is for:
 | `Agendum.TUI.Boxes.ColumnBox`                        | ✔     | The Column Properties box, one for every column: head, width, link (R55); a numeric column's format (R29), a date column's (R41a). |
 | `Agendum.TUI.Boxes.FileProperties`                   | ✔     | The File Properties box: the date display format, with a sample (R41).                                                           |
 | `Agendum.TUI.Boxes.DateFormatRows`                   | ✔     | The date display settings as box rows, shared by File and Column Properties (R41a).                                              |
+| `Agendum.TUI.Boxes.DateSettingsBox`                  | ✔     | Global Date Settings: the file's week, quarter, year and times of day (R14e).                                                     |
 | `Agendum.TUI.Boxes.InputFormatBox`                   | ✔     | The Input Format box: the person's number order, separator and clock, saved as preferences (R41b).                               |
 | `Agendum.TUI.Boxes.CustomizeBox`                     | ✔     | File ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
 | `Agendum.TUI.Boxes.CalendarBox`                      | ✔     | The pop-up calendar: F3 in a date column, ALT-C anywhere (R46).                                                                  |

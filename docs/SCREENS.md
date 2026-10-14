@@ -228,7 +228,7 @@ or handles it.
     Agenda 2.0; drawn from a layout like Agenda's (screenshot 130).
     `Agendum.TUI.Boxes.FileProperties`.
     - **Global date settings** `:date_settings` (Global date settings): the
-      week, quarter, year and times of day (R14e). `Agendum.TUI.Boxes.FileProperties`.
+      week, quarter, year and times of day (R14e). `Agendum.TUI.Boxes.DateSettingsBox`.
       - **Display format** `:display_format` (Display format): how the file
         shows dates, with a sample (R41, R41a). `Agendum.TUI.Boxes.FileProperties`, rows
         from `Agendum.TUI.Boxes.DateFormatRows`.
@@ -326,7 +326,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:date_rule`         | box           | `Agendum.TUI.Boxes.DateRuleBox`                | Advanced settings of a date category             | R6b           |
 | `:category_match`    | box           | `Agendum.TUI.Boxes.CategoryMatchBox`           | Advanced settings of a standard category         | R16b          |
 | `:file_props`        | box           | `Agendum.TUI.Boxes.FileProperties`             | File ▸ Properties                                | R55, R14e     |
-| `:date_settings`     | box           | `Agendum.TUI.Boxes.FileProperties`             | File Properties ▸ Global date settings           | R14e          |
+| `:date_settings`     | box           | `Agendum.TUI.Boxes.DateSettingsBox`            | File Properties ▸ Global date settings           | R14e          |
 | `:display_format`    | box           | `Agendum.TUI.Boxes.FileProperties`             | Global date settings ▸ Display format            | R41, R41a     |
 | `:input_format`      | box           | `Agendum.TUI.Boxes.InputFormatBox`             | Global date settings or Customize ▸ Input format | R41b          |
 | `:customize`         | box           | `Agendum.TUI.Boxes.CustomizeBox`               | File ▸ Customize                                 | R40, R14c     |

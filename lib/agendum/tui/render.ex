@@ -36,7 +36,6 @@ defmodule Agendum.TUI.Render do
     :search_box,
     :note_search,
     :file_props,
-    :date_settings,
     :display_format,
     :customize,
     :calendars,
