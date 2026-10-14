@@ -315,7 +315,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:props`             | box           | `Agendum.TUI.CategoryScreens.Properties` | F6 on a section head or in the category manager  | §5            |
 | `:choice`            | box           | `Agendum.TUI.CategoryScreens.Choices`    | Category Properties, moves in the manager        | R6a, R7a, R7b |
 | `:choice_list`       | box           | `Agendum.TUI.Boxes.BoxChoices`                 | F3 on a setting with choices in a box            | §5            |
-| `:category_stats`    | box           | `Agendum.TUI.CategoryScreens.Properties` | Category Properties ▸ Statistics                 | §5            |
+| `:category_stats`    | box           | `Agendum.TUI.Boxes.CategoryStatsBox`       | Category Properties ▸ Statistics                 | §5            |
 | `:item_props`        | box           | `Agendum.TUI.Boxes.ItemProperties`             | F6 on an item, Item ▸ Properties                 | R34, R43      |
 | `:goto`              | box           | `Agendum.TUI.Boxes.GoTo`                       | ALT-F5                                           | R42           |
 | `:search_box`        | box           | `Agendum.TUI.Boxes.SearchBox`                  | ALT-F6, Search ▸ View / File                     | R37           |

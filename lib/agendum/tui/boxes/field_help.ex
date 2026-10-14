@@ -41,9 +41,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       "To display a view, highlight the view name and press ENTER. " <>
         "Press INS to create a new view.",
     confirm: "Y or N answers. SPACE switches the answer; ENTER accepts the one shown.",
-    category_stats:
-      "How much of the file uses the category: its items, children, sections, " <>
-        "filters, conditions and actions.",
     questions:
       "Pick the categories to assign the item to: SPACE one, TAB all. " <>
         "ENTER assigns them and shows the next item.",

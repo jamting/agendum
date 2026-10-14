@@ -397,9 +397,6 @@ defmodule Agendum.TUI.Update do
   defp dispatch(state, %{type: :menu} = m, key), do: Menu.handle(state, m, key)
   defp dispatch(state, %{type: :choice_list} = m, key), do: BoxChoices.list_key(state, m, key)
 
-  defp dispatch(state, %{type: :category_stats} = m, key),
-    do: Agendum.TUI.CategoryScreens.Properties.stats_key(state, m, key)
-
   defp dispatch(state, %{type: :viewmgr} = m, key), do: ViewManager.handle(state, m, key)
   defp dispatch(state, %{type: :prompt} = m, key), do: Prompts.prompt_key(state, m, key)
   defp dispatch(state, %{type: :confirm} = m, key), do: Prompts.confirm_key(state, m, key)

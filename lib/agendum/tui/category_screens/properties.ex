@@ -200,7 +200,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
 
   # how much of the file uses the category (Agenda's Category Statistics)
   defp open_prop(state, cat, :statistics),
-    do: State.push(state, %{type: :category_stats, cat_id: cat.id})
+    do: Agendum.TUI.Boxes.CategoryStatsBox.open(state, cat.id)
 
   defp open_prop(state, cat, :short_name) do
     %{state | edit: %{target: :short_name, line: LineEdit.new(cat.short_name || "")}}
@@ -340,25 +340,4 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
 
     "Convert #{cat.name} to numeric? " <> Enum.join(parts, "; ") <> "."
   end
-
-  # --- Category Statistics ---
-
-  @stats """
-   Items in category:          [items  ]
-   Child categories:           [children]
-   Used as section heads:      [section_heads]
-   Included in view filters:   [view_filters]
-   Included in conditions:     [conditions]
-   Included in actions:        [actions]
-  """
-
-  @doc "The Category Statistics box's lines: counts only, nothing to change."
-  def stats_content(state, mode) do
-    counts = Database.category_statistics(state.db, mode.cat_id)
-    Template.render(@stats, Map.new(counts, fn {k, n} -> {k, Integer.to_string(n)} end))
-  end
-
-  @doc "Keys of Category Statistics: ENTER or ESC go back to Category Properties."
-  def stats_key(state, _mode, key) when key in [:enter, :esc], do: State.pop(state)
-  def stats_key(state, _mode, _key), do: state
 end

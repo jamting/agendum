@@ -213,8 +213,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Cancel"}
     ]
 
-  defp mode_keys(%{type: :category_stats}), do: [{"ENTER/ESC", "Return"}]
-
   defp mode_keys(%{type: :choice_list}),
     do: [{"↑↓", "Highlight", "Highlight a choice"}, {"ENTER", "Select"}, {"ESC", "Cancel"}]
 

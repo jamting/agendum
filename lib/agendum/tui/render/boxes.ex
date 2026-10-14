@@ -102,7 +102,6 @@ defmodule Agendum.TUI.Render.Boxes do
     :confirm
   ]
   # boxes that only show something
-  @return_boxes [:category_stats]
   @return {"Press ENTER or ESC to return", "ENTER/ESC return"}
   # pickers where ENTER cycles a category's choice and ESC finishes
   @esc_pickers [:filter, :condition, :also_assign, :excludes, :schedule_filter]
@@ -124,9 +123,6 @@ defmodule Agendum.TUI.Render.Boxes do
         mode.type in [:picker | @accept_boxes] ->
           @accept
 
-        mode.type in @return_boxes ->
-          @return
-
         true ->
           {"", ""}
       end
@@ -143,7 +139,6 @@ defmodule Agendum.TUI.Render.Boxes do
   # the calendar is a small box, as in Agenda; the others share one width
   defp box_width(state, %{type: :calendar}), do: min(state.width - 8, 30)
 
-  defp box_width(state, %{type: :category_stats}), do: min(state.width - 8, 44)
   defp box_width(state, %{type: :viewmgr}), do: min(state.width - 8, 50)
 
   # a question is as wide as it and its answer need, as Agenda's (and
@@ -168,9 +163,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :viewmgr}), do: "View Manager"
   # a question has no title, as Agenda's
   defp box_title(_state, %{type: :confirm}), do: ""
-
-  defp box_title(state, %{type: :category_stats, cat_id: id}),
-    do: "Category statistics: " <> state.db.categories[id].name
 
   defp box_title(_state, %{type: :choice_list, title: ""}), do: "Choices"
   defp box_title(_state, %{type: :choice_list, title: title}), do: "Choices: " <> title
@@ -300,9 +292,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_content(state, %{type: :viewmgr} = mode, inner, max_rows),
     do: Agendum.TUI.Render.Managers.view_box(state, mode, inner, max_rows)
-
-  defp box_content(state, %{type: :category_stats} = mode, _inner, _max_rows),
-    do: Agendum.TUI.CategoryScreens.Properties.stats_content(state, mode)
 
   # a Y/N question: the question, its answer highlighted after it; a long
   # question goes on over more lines

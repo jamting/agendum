@@ -35,7 +35,6 @@ defmodule Agendum.TUI.Render do
     :copy_items,
     :alarm_list,
     :choice_list,
-    :category_stats,
     :confirm,
     :viewmgr
   ]
