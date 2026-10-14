@@ -11,7 +11,7 @@ defmodule Mix.Tasks.Agendum.Starters do
       mix agendum.starters --clinic           # tmp/hundred-acre-clinic.agendum
 
   `--clinic` writes Christopher Robin's clinic (`Agendum.Starters.Clinic`,
-  an Easter egg also opened by `agendum --pooh`), dated from `--today`.
+  an Easter egg also opened by `agendum --clinic`), dated from `--today`.
 
   `--samples` fills a copy with sample data for testing (never the
   committed file, so it goes to `tmp/` unless `--output` says otherwise).

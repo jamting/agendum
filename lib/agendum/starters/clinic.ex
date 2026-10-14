@@ -17,7 +17,7 @@ defmodule Agendum.Starters.Clinic do
   Fee whose action files the item under Fees, views with columns,
   filters, date ranges and totals, and datebooks.
 
-  `agendum --pooh` opens it (not in `--help`: an Easter egg), and `mix
+  `agendum --clinic` opens it (not in `--help`: an Easter egg), and `mix
   agendum.starters --clinic` writes it to a file. Every date is counted
   from `today`, so it is always mid-week at the clinic. Pure.
   """

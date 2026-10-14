@@ -37,7 +37,7 @@ defmodule Agendum.CLI do
           file: String.t() | nil,
           demo: boolean,
           rabbit: boolean,
-          pooh: boolean,
+          clinic: boolean,
           theme: Theme.name(),
           languages: [DateLanguage.pack()],
           input: InputFormat.t(),
@@ -72,7 +72,7 @@ defmodule Agendum.CLI do
           demo: :boolean,
           rabbit: :boolean,
           # an Easter egg, not in --help: Christopher Robin's clinic
-          pooh: :boolean,
+          clinic: :boolean,
           help: :boolean,
           mono: :boolean,
           theme: :string,
@@ -176,7 +176,7 @@ defmodule Agendum.CLI do
       file: List.first(files),
       demo: opts[:demo] == true,
       rabbit: opts[:rabbit] == true,
-      pooh: opts[:pooh] == true,
+      clinic: opts[:clinic] == true,
       theme: theme,
       languages: languages
     }
@@ -189,7 +189,7 @@ defmodule Agendum.CLI do
       cond do
         options.demo -> {:ok, Sample.build(today), nil}
         options.rabbit -> {:ok, Sample.rabbit(today), nil}
-        options.pooh -> {:ok, Agendum.Starters.Clinic.build(today), nil}
+        options.clinic -> {:ok, Agendum.Starters.Clinic.build(today), nil}
         options.file -> open(Store.normalize_path(options.file))
         true -> {:ok, Core.new_file(), nil}
       end
@@ -209,7 +209,7 @@ defmodule Agendum.CLI do
           )
           |> Layout.settle()
           |> Update.start(
-            options.file == nil and not (options.demo or options.rabbit or options.pooh)
+            options.file == nil and not (options.demo or options.rabbit or options.clinic)
           )
 
         case run(state, log) do

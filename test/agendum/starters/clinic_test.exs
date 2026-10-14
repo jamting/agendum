@@ -1,6 +1,6 @@
 defmodule Agendum.Starters.ClinicTest do
   @moduledoc """
-  The Hundred Acre clinic (`agendum --pooh`): Christopher Robin's file,
+  The Hundred Acre clinic (`agendum --clinic`): Christopher Robin's file,
   mid-work. An Easter egg, and a showcase, so every view must have
   something in it, and the story must hold together.
   """
