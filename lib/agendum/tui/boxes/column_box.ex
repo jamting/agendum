@@ -25,8 +25,10 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   closes it and cancels its changes (`Agendum.TUI.Boxes.BoxCancel`). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
+  alias Agendum.TUI.Boxes.{Box, BoxNav}
 
   alias Agendum.Core
   alias Agendum.Core.{Database, DateFormat, NumberFormat, View}
@@ -76,7 +78,6 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
    Date separator:           [separator  ]  Time separator: [time_sep]
   """
 
-  @hint " SPACE next choice · type a number · F3 picks the head"
   @max_decimals 6
   @date_rows DateFormatRows.rows()
 
@@ -112,12 +113,13 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
 
   # The highlighted field. After the head changes the column may be of
   # another kind, with fewer fields, so the cursor is kept within them.
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
   def field(state, mode) do
     fields = fields(kind(state, mode))
     Enum.at(fields, min(mode.cursor, length(fields) - 1))
   end
 
+  @impl Box
   def handle(state, mode, key) do
     if FieldTyping.typing?(mode),
       do: FieldTyping.key(state, mode, key, &typed(&1, &2, &3, mode.column)),
@@ -293,8 +295,16 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
 
   # --- drawing ---
 
-  @doc "The box's lines, the highlighted setting selected."
-  def content(state, mode) do
+  # the column's head is the box's first row, as in Agenda (screenshot 142)
+  @impl Box
+  def title(_state, _mode), do: "Column Properties"
+
+  # two columns of settings, as Agenda's (screenshot 127)
+  @impl Box
+  def width(state, _mode), do: min(state.width - 8, 72)
+
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
     kind = kind(state, mode)
     column = column(state, mode)
 
@@ -309,7 +319,39 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
     values = Map.merge(top, values(state, mode, kind))
     opts = [selected: field(state, mode)] ++ FieldTyping.editing(mode)
     lines = Template.render(layout(kind), values, opts)
-    lines ++ samples(state, mode, kind) ++ [[], [{:box, @hint}]]
+    lines ++ samples(state, mode, kind) ++ [[], Box.hint(keys(state, mode), inner)]
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: Box.settings_keys([{"type", "Number", "a number"}, {"F3", "Choices", "Pick the head"}])
+
+  @impl Box
+  def help do
+    Map.merge(DateFormatRows.help(), %{
+      head: "Press F3 to pick a category or type a new one.",
+      type:
+        "The type of the column's category: standard, date or numeric. " <>
+          "Change it in the category's properties.",
+      width: "The width of the column, in characters. Type it.",
+      linked:
+        "Whether the column changes with the same column in other sections. SPACE switches.",
+      format:
+        "How the column shows categories: name only, parent:category, ancestor, star, " <>
+          "yes/no or a note line. SPACE changes it.",
+      note_line: "Which line of the category note the column shows. Type it.",
+      title: "Type the column's title.",
+      symbol: "The label or currency symbol shown with numbers. SPACE for the next one.",
+      decimals: "How many decimal places numbers show. Type it, or SPACE for one more.",
+      thousands: "Whether numbers show a separator between thousands. SPACE switches.",
+      negative: "How negative numbers show: with a minus sign or in parentheses. SPACE.",
+      percent: "Whether a column with each number's percent of the total shows beside it. SPACE.",
+      count: "Whether the section shows how many items have a number. SPACE switches.",
+      total: "Whether the section shows the total of the column. SPACE switches.",
+      average: "Whether the section shows the average of the column. SPACE switches.",
+      minimum: "Whether the section shows the smallest number in the column. SPACE switches.",
+      maximum: "Whether the section shows the largest number in the column. SPACE switches."
+    })
   end
 
   defp values(state, mode, kind) when kind in [:standard, :note] do
@@ -338,12 +380,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   end
 
   defp values(state, mode, :date) do
-    # `DateFormatRows.lines/1` gives `{label, value}` in its rows' order;
-    # `Enum.zip/2` pairs each row's name with its value
-    dates =
-      DateFormatRows.rows()
-      |> Enum.zip(DateFormatRows.lines(date_format(state, mode)))
-      |> Map.new(fn {row, {_label, value}} -> {row, value} end)
+    dates = DateFormatRows.values(date_format(state, mode))
 
     dates
     |> Map.put(:time_sep, dates.time_separator)

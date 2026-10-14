@@ -35,8 +35,8 @@ defmodule Agendum.TUI.Boxes.DateFormatRows do
   def values(%DateFormat{} = f),
     do: @rows |> Enum.zip(lines(f)) |> Map.new(fn {row, {_, v}} -> {row, v} end)
 
-  @doc "`{label, value}` for each row."
-  def lines(%DateFormat{} = f) do
+  # `{label, value}` for each row, in the rows' order
+  defp lines(%DateFormat{} = f) do
     yes_no = &if(&1, do: "Yes", else: "No")
 
     [

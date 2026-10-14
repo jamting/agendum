@@ -282,7 +282,6 @@ defmodule Agendum.TUI.Render.KeyBar do
   # the settings boxes: one setting per line, SPACE cycles its choices
   defp mode_keys(%{type: type})
        when type in [
-              :column_props,
               :column_add
             ],
        do: [

@@ -159,7 +159,7 @@ defmodule Agendum.TUI.Render.Boxes do
   # File Properties and Column Properties have Agenda's two columns of
   # settings side by side (screenshots 130, 127)
   defp box_width(state, %{type: type})
-       when type in [:column_props, :column_add, :props],
+       when type in [:column_add, :props],
        do: min(state.width - 8, 72)
 
   defp box_width(state, _mode), do: min(state.width - 8, 60)
@@ -193,7 +193,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :goto}), do: "Go to section"
 
   # the column's head is the box's first row, as in Agenda (screenshot 142)
-  defp box_title(_state, %{type: :column_props}), do: "Column Properties"
 
   defp box_title(_state, %{type: :copy_items}), do: "Copy"
 
@@ -437,9 +436,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_content(state, %{type: :copy_items} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.CopyBox.lines(state, mode)
-
-  defp box_content(state, %{type: :column_props} = mode, _inner, _max_rows),
-    do: Agendum.TUI.Boxes.ColumnBox.content(state, mode)
 
   defp box_content(state, %{type: :column_add} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.ColumnAddBox.content(state, mode)

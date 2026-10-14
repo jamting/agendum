@@ -14,7 +14,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
 
   alias Agendum.TUI.{
     Boxes.ColumnAddBox,
-    Boxes.ColumnBox,
     Boxes.DatebookBox,
     Boxes.ItemProperties,
     State
@@ -29,7 +28,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   # The box types and the module that knows their highlighted field
   @boxes %{
     datebook_props: DatebookBox,
-    column_props: ColumnBox,
     column_add: ColumnAddBox,
     props: Properties,
     item_props: ItemProperties
@@ -82,32 +80,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       hide_column_heads: "Whether the column heads show above each section. SPACE switches.",
       section_separators: "Whether a line separates the sections. SPACE switches."
     },
-    column_props:
-      Map.merge(Agendum.TUI.Boxes.DateFormatRows.help(), %{
-        head: "Press F3 to pick a category or type a new one.",
-        type:
-          "The type of the column's category: standard, date or numeric. " <>
-            "Change it in the category's properties.",
-        width: "The width of the column, in characters. Type it.",
-        linked:
-          "Whether the column changes with the same column in other sections. SPACE switches.",
-        format:
-          "How the column shows categories: name only, parent:category, ancestor, star, " <>
-            "yes/no or a note line. SPACE changes it.",
-        note_line: "Which line of the category note the column shows. Type it.",
-        title: "Type the column's title.",
-        symbol: "The label or currency symbol shown with numbers. SPACE for the next one.",
-        decimals: "How many decimal places numbers show. Type it, or SPACE for one more.",
-        thousands: "Whether numbers show a separator between thousands. SPACE switches.",
-        negative: "How negative numbers show: with a minus sign or in parentheses. SPACE.",
-        percent:
-          "Whether a column with each number's percent of the total shows beside it. SPACE.",
-        count: "Whether the section shows how many items have a number. SPACE switches.",
-        total: "Whether the section shows the total of the column. SPACE switches.",
-        average: "Whether the section shows the average of the column. SPACE switches.",
-        minimum: "Whether the section shows the smallest number in the column. SPACE switches.",
-        maximum: "Whether the section shows the largest number in the column. SPACE switches."
-      }),
     column_add: %{
       head: "Type the name of a new or existing category, or press F3 to pick one.",
       type:
