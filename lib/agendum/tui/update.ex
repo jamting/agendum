@@ -394,7 +394,6 @@ defmodule Agendum.TUI.Update do
 
   defp dispatch(state, %{type: :viewmgr} = m, key), do: ViewManager.handle(state, m, key)
   defp dispatch(state, %{type: :prompt} = m, key), do: Prompts.prompt_key(state, m, key)
-  defp dispatch(state, %{type: :confirm} = m, key), do: Prompts.confirm_key(state, m, key)
   defp dispatch(state, %{type: :note} = m, key), do: Notes.note_key(state, m, key)
   defp dispatch(state, %{type: :help} = m, key), do: help_key(state, m, key)
 

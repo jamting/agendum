@@ -88,10 +88,6 @@ defmodule Agendum.TUI.Render.Boxes do
   @done_boxes [
     :viewmgr
   ]
-  # boxes to choose one thing in
-  @accept_boxes [
-    :confirm
-  ]
   # boxes that only show something
   @return {"Press ENTER or ESC to return", "ENTER/ESC return"}
 
@@ -106,9 +102,6 @@ defmodule Agendum.TUI.Render.Boxes do
         Agendum.TUI.Boxes.BoxCancel.cancels?(mode.type) or mode.type in @done_boxes ->
           @done
 
-        mode.type in @accept_boxes ->
-          @accept
-
         true ->
           {"", ""}
       end
@@ -121,19 +114,12 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_width(state, %{type: :viewmgr}), do: min(state.width - 8, 50)
 
-  # a question is as wide as it and its answer need, as Agenda's (and
-  # wide enough for the words in its frame)
-  defp box_width(state, %{type: :confirm, question: q}),
-    do: (String.length(q) + 7) |> max(40) |> min(state.width - 8)
-
   defp box_width(state, _mode), do: min(state.width - 8, 60)
 
   defp box_title(state, %{type: type} = mode) when is_map_key(@boxes, type),
     do: @boxes[type].title(state, mode)
 
   defp box_title(_state, %{type: :viewmgr}), do: "View Manager"
-  # a question has no title, as Agenda's
-  defp box_title(_state, %{type: :confirm}), do: ""
 
   # the column's head is the box's first row, as in Agenda (screenshot 142)
 
@@ -142,17 +128,4 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_content(state, %{type: :viewmgr} = mode, inner, max_rows),
     do: Agendum.TUI.Render.Managers.view_box(state, mode, inner, max_rows)
-
-  # a Y/N question: the question, its answer highlighted after it; a long
-  # question goes on over more lines
-  defp box_content(_state, %{type: :confirm} = mode, inner, _max_rows) do
-    answer = if mode.answer, do: "Yes", else: "No "
-    lines = Draw.wrap(mode.question, inner - 7)
-    {first, [last]} = Enum.split(lines, -1)
-
-    Enum.map(first, &[{:box, " " <> &1}]) ++
-      [[{:box, " " <> last <> "  "}, {:box_selected, answer}]]
-  end
-
-  # F3 on a setting (`Agendum.TUI.Boxes.BoxChoices`): its choices, one a line
 end

@@ -22,8 +22,7 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   @lists %{
     viewmgr:
       "To display a view, highlight the view name and press ENTER. " <>
-        "Press INS to create a new view.",
-    confirm: "Y or N answers. SPACE switches the answer; ENTER accepts the one shown."
+        "Press INS to create a new view."
   }
 
   @doc "The help for the highlighted field of the box on top, or nil."

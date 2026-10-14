@@ -84,6 +84,7 @@ defmodule Agendum.TUI.Boxes.Box do
     choice_list: Agendum.TUI.Boxes.ChoiceListBox,
     column_add: Agendum.TUI.Boxes.ColumnAddBox,
     column_props: Agendum.TUI.Boxes.ColumnBox,
+    confirm: Agendum.TUI.Update.Prompts,
     copy_items: Agendum.TUI.Boxes.CopyBox,
     customize: Agendum.TUI.Boxes.CustomizeBox,
     datebook_props: Agendum.TUI.Boxes.DatebookBox,

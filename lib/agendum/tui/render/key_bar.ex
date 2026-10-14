@@ -206,13 +206,4 @@ defmodule Agendum.TUI.Render.KeyBar do
     ]
 
   defp mode_keys(%{type: :prompt}), do: [{"ENTER", "Accept"}, {"ESC", "Cancel"}]
-
-  defp mode_keys(%{type: :confirm}),
-    do: [
-      {"Y", "Yes"},
-      {"N", "No"},
-      {"SPACE", "Switch", "Switch the answer"},
-      {"ENTER", "Accept"},
-      {"ESC", "Cancel"}
-    ]
 end

@@ -2,12 +2,15 @@ defmodule Agendum.TUI.Update.Prompts do
   @moduledoc """
   Prompts and confirmations in the control panel: a line of text
   (`prompt/4`) and what is done with it, and Y/N questions (`confirm/3`,
-  `ask/3`) and their answers. Pure.
+  `ask/3`) and their answers. A Y/N question is a box, this module's
+  (`Agendum.TUI.Boxes.Box`, `:confirm`). Pure.
   """
+
+  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: nil
 
   alias Agendum.Core
   alias Agendum.Core.DateFormat
-  alias Agendum.TUI.{Boxes.CalendarBox, Terminal.Draw, Typing.LineEdit, State, Update}
+  alias Agendum.TUI.{Boxes.Box, Boxes.CalendarBox, Terminal.Draw, Typing.LineEdit, State, Update}
   alias Agendum.TUI.CategoryScreens.Choices
   alias Agendum.TUI.Update.Actions
 
@@ -275,7 +278,8 @@ defmodule Agendum.TUI.Update.Prompts do
   accepts the answer shown, Y or N answer at once (our choice: Agenda's
   first letter only picked it), ESC cancels.
   """
-  def confirm_key(state, mode, key) do
+  @impl Box
+  def handle(state, mode, key) do
     case key do
       {:char, c} when c in ["y", "Y"] ->
         state |> State.pop() |> confirmed(mode.action, true)
@@ -296,6 +300,40 @@ defmodule Agendum.TUI.Update.Prompts do
         state
     end
   end
+
+  # a question has no title, as Agenda's
+  @impl Box
+  def title(_state, _mode), do: ""
+
+  # the question, its answer highlighted after it; a long question goes on
+  # over more lines
+  @impl Box
+  def content(_state, mode, inner, _max_rows) do
+    answer = if mode.answer, do: "Yes", else: "No "
+    lines = Draw.wrap(mode.question, inner - 7)
+    {first, [last]} = Enum.split(lines, -1)
+
+    Enum.map(first, &[{:box, " " <> &1}]) ++
+      [[{:box, " " <> last <> "  "}, {:box_selected, answer}]]
+  end
+
+  # as wide as the question and its answer need, as Agenda's (and wide
+  # enough for the words in its frame)
+  @impl Box
+  def width(state, %{question: q}), do: (String.length(q) + 7) |> max(40) |> min(state.width - 8)
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"Y", "Yes"},
+      {"N", "No"},
+      {"SPACE", "Switch", "Switch the answer"},
+      {"ENTER", "Accept"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: "Y or N answers. SPACE switches the answer; ENTER accepts the one shown."
 
   defp confirmed(state, {:make_numeric, id}, true), do: make_numeric(state, id)
 
