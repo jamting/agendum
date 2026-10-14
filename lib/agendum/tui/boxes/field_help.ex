@@ -26,7 +26,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     copy_items:
       "Highlight the section to copy the item to and press ENTER; " <>
         "it stays in its other sections.",
-    goto: "Highlight the section to go to and press ENTER, or type its first letter.",
     choice_list: "Highlight the choice and press ENTER.",
     viewmgr:
       "To display a view, highlight the view name and press ENTER. " <>

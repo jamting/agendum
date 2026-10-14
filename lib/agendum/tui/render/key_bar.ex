@@ -231,14 +231,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Stop"}
     ]
 
-  defp mode_keys(%{type: :goto}),
-    do: [
-      {"↑↓", "Highlight", "Highlight a section"},
-      {"letter", "Next starting with it"},
-      {"ENTER", "Go"},
-      {"ESC", "Cancel"}
-    ]
-
   defp mode_keys(%{type: :calendars}),
     do: [
       {"INS", "Subscribe", "Subscribe to a calendar"},

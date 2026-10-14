@@ -16,7 +16,8 @@ defmodule Agendum.TUI.Boxes.Box do
 
     * `finish:` the words in the bottom edge: `:done` ("Press ENTER when
       done, ESC to cancel"), `:accept`, `:esc_done`, `:return` or `:none`
-    * `indicator:` the mode shown at the top right ("PROPS")
+    * `indicator:` the mode shown at the top right ("PROPS"); nil for the
+      one of what is beneath (READY in a view)
     * `cancels:` whether ESC puts back the changes made in the box
       (`Agendum.TUI.Boxes.BoxCancel`)
     * `choices:` whether a letter or F3 picks a setting's choice
@@ -81,6 +82,7 @@ defmodule Agendum.TUI.Boxes.Box do
     display_format: Agendum.TUI.Boxes.DisplayFormatBox,
     execute: Agendum.TUI.Boxes.ExecuteBox,
     file_props: Agendum.TUI.Boxes.FileProperties,
+    goto: Agendum.TUI.Boxes.GoTo,
     input_format: Agendum.TUI.Boxes.InputFormatBox,
     item_column: Agendum.TUI.Boxes.ItemColumnBox,
     item_props: Agendum.TUI.Boxes.ItemProperties,

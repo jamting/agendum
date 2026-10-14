@@ -24,7 +24,6 @@ defmodule Agendum.TUI.Update do
     Boxes.AlarmList,
     Boxes.CalendarBox,
     CategoryScreens,
-    Boxes.GoTo,
     History,
     Layout,
     Menu,
@@ -419,8 +418,6 @@ defmodule Agendum.TUI.Update do
 
   defp dispatch(state, %{type: :calendars} = m, key),
     do: Agendum.TUI.Boxes.CalendarsBox.handle(state, m, key)
-
-  defp dispatch(state, %{type: :goto} = m, key), do: GoTo.handle(state, m, key)
 
   defp dispatch(state, %{type: :questions} = m, key),
     do: Agendum.TUI.Boxes.QuestionsBox.handle(state, m, key)

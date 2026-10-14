@@ -6,6 +6,9 @@ defmodule Agendum.TUI.Boxes.GoTo do
   cancels. Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: nil
+
+  alias Agendum.TUI.Boxes.Box
   alias Agendum.TUI.{Layout, State}
 
   def open(state) do
@@ -25,6 +28,7 @@ defmodule Agendum.TUI.Boxes.GoTo do
   defp sections(state),
     do: for(%{kind: :section} = row <- Layout.rows(state), do: {row.sidx, row.category.name})
 
+  @impl Box
   def handle(state, mode, key) do
     count = length(names(state))
 
@@ -57,6 +61,35 @@ defmodule Agendum.TUI.Boxes.GoTo do
       step -> rem(from + step, count)
     end
   end
+
+  @impl Box
+  def title(_state, _mode), do: "Go to section"
+
+  @impl Box
+  def content(state, mode, _inner, max_rows) do
+    top = max(mode.cursor - max_rows + 1, 0)
+
+    state
+    |> names()
+    |> Enum.with_index()
+    |> Enum.drop(top)
+    |> Enum.take(max_rows)
+    |> Enum.map(fn {name, i} ->
+      [{:box, " "}, {if(i == mode.cursor, do: :box_selected, else: :box), name}]
+    end)
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓", "Highlight", "Highlight a section"},
+      {"letter", "Next starting with it"},
+      {"ENTER", "Go"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: "Highlight the section to go to and press ENTER, or type its first letter."
 
   defp go(state, position) do
     {sidx, _name} = Enum.at(sections(state), position)

@@ -183,8 +183,9 @@ defmodule Agendum.TUI.Render.ControlPanel do
       top && top.type == :menu ->
         "MENU"
 
-      box = Agendum.TUI.Boxes.Box.module(top) ->
-        box.indicator()
+      # a box module's own; nil leaves the one of what is beneath
+      indicator = box_indicator(top) ->
+        indicator
 
       top && top.type in [:move_item, :column_move, :section_move] ->
         "MOVE"
@@ -225,6 +226,13 @@ defmodule Agendum.TUI.Render.ControlPanel do
 
       true ->
         "READY"
+    end
+  end
+
+  defp box_indicator(mode) do
+    case Agendum.TUI.Boxes.Box.module(mode) do
+      nil -> nil
+      box -> box.indicator()
     end
   end
 

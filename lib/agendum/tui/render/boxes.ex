@@ -92,7 +92,6 @@ defmodule Agendum.TUI.Render.Boxes do
   ]
   # boxes to choose one thing in
   @accept_boxes [
-    :goto,
     :copy_items,
     :calendar,
     :select_file,
@@ -174,7 +173,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
   defp box_title(_state, %{type: :questions}), do: "Suggested assignments"
-  defp box_title(_state, %{type: :goto}), do: "Go to section"
 
   # the column's head is the box's first row, as in Agenda (screenshot 142)
 
@@ -376,19 +374,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
     [[{:box, " " <> String.slice(item.text, 0, inner - 2)}], [], [{:box, " Assign to:"}]] ++
       cats ++ [[], [{:box, " SPACE picks · TAB picks all · ENTER assigns · ESC stops"}]]
-  end
-
-  defp box_content(state, %{type: :goto} = mode, _inner, max_rows) do
-    names = Agendum.TUI.Boxes.GoTo.names(state)
-    top = max(mode.cursor - max_rows + 1, 0)
-
-    names
-    |> Enum.with_index()
-    |> Enum.drop(top)
-    |> Enum.take(max_rows)
-    |> Enum.map(fn {name, i} ->
-      [{:box, " "}, {if(i == mode.cursor, do: :box_selected, else: :box), name}]
-    end)
   end
 
   defp box_content(state, %{type: :calendars} = mode, _inner, _max_rows) do
