@@ -136,6 +136,15 @@ and look at the output. In raw mode the tty must not intercept control keys;
 
 ## Reference material
 
+- **Real Agenda, on demand.** `tools/agformat/agenda_driver.py` runs Lotus
+  Agenda 2.0 headlessly in DOSBox Staging (its memory REST API): type keys,
+  read the screen as text, find the highlighted row. Use it to check how
+  Agenda behaves or lays out a box, rather than asking the owner for
+  screenshots. Run it on a copy of the install (`AGENDA_DOS_ROOT`), never on
+  `~/Dosbox` itself, and say in the summary what Agenda showed. Ask the owner
+  only for what text cannot show (colours, pixels). The `.AG` file format is
+  in `docs/AGENDA_FILE_FORMAT.md`.
+
 - `docs/AGENDA_HISTORY.md`: why people used Agenda and what made it unique;
   read it to judge which behaviours matter most to users. Background in
   `docs/reference/`: the designers' 1990 CACM article ("AGENDA- A Personal
