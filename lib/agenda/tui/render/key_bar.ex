@@ -106,7 +106,7 @@ defmodule Agenda.TUI.Render.KeyBar do
       {"ENTER", "Select", "Show the view"},
       {"INS", "Add", "Add a view"},
       {"F2", "Rename"},
-      {"DEL", "Discard"},
+      {"DEL/F4", "Discard"},
       {"A-↑↓", "Reorder", "ALT-↑↓", "Reorder"},
       {"ESC", "Return", "Back to the view"}
     ]

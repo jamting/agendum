@@ -18,7 +18,7 @@ defmodule Agenda.TUI.Render do
   alias Agenda.TUI.{Draw, State}
   alias Agenda.TUI.Render.{Boxes, ControlPanel, Help, KeyBar, Managers, Note, View}
 
-  @full_screen [:catmgr, :viewmgr, :help, :note, :devtools]
+  @full_screen [:catmgr, :help, :note, :devtools]
   @boxes [
     :picker,
     :calendar,
@@ -59,7 +59,8 @@ defmodule Agenda.TUI.Render do
     :alarm_list,
     :choice_list,
     :category_stats,
-    :confirm
+    :confirm,
+    :viewmgr
   ]
 
   @doc "Whether a mode is drawn as a box over the screen."
@@ -110,7 +111,6 @@ defmodule Agenda.TUI.Render do
 
   defp body(state, nil), do: fit(View.lines(state), state)
   defp body(state, %{type: :catmgr} = mode), do: fit(Managers.category_lines(state, mode), state)
-  defp body(state, %{type: :viewmgr} = mode), do: fit(Managers.view_lines(state, mode), state)
   defp body(state, %{type: :help} = mode), do: fit(Enum.drop(Help.lines(), mode.top), state)
 
   defp body(state, %{type: :devtools} = mode) do

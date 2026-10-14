@@ -1,6 +1,8 @@
 defmodule Agenda.TUI.ViewManager do
   @moduledoc """
-  The view manager (F8): switch between, add, rename and discard views.
+  The view manager (F8): switch between, add, rename and discard views. A
+  box over the view, as Agenda's (screenshot 40;
+  `Agenda.TUI.Render.Managers.view_box/4`).
 
   Typing highlights a view (R53; User's Guide 9-5, Starter Applications
   1-10): the first letter the next view starting with it, round the list;
@@ -87,7 +89,8 @@ defmodule Agenda.TUI.ViewManager do
       {:alt, :down} ->
         reorder(state, mode, 1)
 
-      k when k in [:delete, {:alt_f, 4}, {:ctrl, "d"}] ->
+      # F4 (DELETE) is Agenda's key here; DEL and ALT-F4 as everywhere
+      k when k in [:delete, {:f, 4}, {:alt_f, 4}, {:ctrl, "d"}] ->
         Prompts.confirm(
           state,
           "Discard view #{state.db.views[view_id].name}? Items are kept.",

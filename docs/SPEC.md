@@ -917,7 +917,7 @@ Screen: Agenda's two-line control panel, the body, and a function-key bar.
 The control panel shows the file with the indicators (marks, mode such as
 READY / EDIT / MENU / CAT MGR) and the time on its first line, and what is
 shown on its second: the view with its filter and hide settings, or
-"Category Manager", "View Manager", "Note for: …", "Help". The menu (its
+"Category Manager", "Note for: …", "Help". The menu (its
 entries, then the highlighted entry's commands or description), a prompt
 (its label, then the field), a message or a hint take it over while
 they last; messages and hints keep the indicators beside them and go on into the second line when long, as Agenda's help
@@ -931,6 +931,11 @@ ESC backs up one level; a box, prompt or question opened from the menu
 goes back to the menu level it was chosen from on ESC, and ESC again backs
 up until the view, as in Agenda (User's Guide 2-13: "back up one step at a
 time"); finished any other way (ENTER), it goes back to the view.
+The view manager is a box over the view, as Agenda's (screenshot 40):
+the views' names in order, * before a datebook view, an arrow where the
+list goes on; ENTER shows the highlighted view, ESC goes back to the one
+shown, F4 (or DEL) discards one. Our choice: Agenda's view manager showed
+no more, so each view's sections are no longer listed beside its name.
 A Y/N question is a small box without a title, as Agenda's (screenshots
 36, 141): the question, then its answer highlighted, Yes at first; SPACE
 (or an arrow) switches it, ENTER accepts the answer shown, ESC cancels.

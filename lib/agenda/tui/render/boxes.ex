@@ -82,8 +82,10 @@ defmodule Agenda.TUI.Render.Boxes do
   @accept {"Press ENTER to accept, ESC to cancel", "ENTER accept · ESC cancel"}
   @esc_done {"Press ESC when done", "ESC when done"}
 
-  # settings boxes, and the boxes that act on ENTER
+  # settings boxes, and the boxes that act on ENTER (the view manager too,
+  # as Agenda's: ENTER shows the view, ESC goes back to the one shown)
   @done_boxes [
+    :viewmgr,
     :column_add,
     :range_filter,
     :action_box,
@@ -129,6 +131,7 @@ defmodule Agenda.TUI.Render.Boxes do
   defp box_width(state, %{type: :calendar}), do: min(state.width - 8, 30)
 
   defp box_width(state, %{type: :category_stats}), do: min(state.width - 8, 44)
+  defp box_width(state, %{type: :viewmgr}), do: min(state.width - 8, 50)
 
   # a question is as wide as it and its answer need, as Agenda's (and
   # wide enough for the words in its frame)
@@ -152,6 +155,7 @@ defmodule Agenda.TUI.Render.Boxes do
   defp box_title(state, %{type: :picker, purpose: purpose}), do: picker_title(state, purpose)
 
   defp box_title(_state, %{type: :item_props}), do: "Item properties"
+  defp box_title(_state, %{type: :viewmgr}), do: "View Manager"
   # a question has no title, as Agenda's
   defp box_title(_state, %{type: :confirm}), do: ""
 
@@ -334,6 +338,9 @@ defmodule Agenda.TUI.Render.Boxes do
   defp box_content(state, %{type: type} = mode, inner, max_rows)
        when type in [:picker, :profile, :group_profile, :choice, :props],
        do: CategoryBoxes.content(state, mode, inner, max_rows)
+
+  defp box_content(state, %{type: :viewmgr} = mode, inner, max_rows),
+    do: Agenda.TUI.Render.Managers.view_box(state, mode, inner, max_rows)
 
   defp box_content(state, %{type: :category_stats} = mode, _inner, _max_rows),
     do: Agenda.TUI.CategoryScreens.Properties.stats_content(state, mode)

@@ -208,8 +208,10 @@ or handles it.
     - **Category Properties** `:props` (F6), **Note editor** `:note` (F5),
       **Help** `:help` (F1), **Picker** `:picker` (ALT-F10, where to move),
       **Choice** `:choice` (conflicts of a move).
-  - **View manager** `:viewmgr` (F8, View ▸ Manager): full screen of the
-    views; switch, add, rename, reorder, discard. `Agenda.TUI.ViewManager`.
+  - **View manager** `:viewmgr` (F8, View ▸ Manager): a box over the view,
+    as Agenda's (screenshot 40): the views' names, * before a datebook
+    view; switch, add, rename, reorder, discard (DEL or F4).
+    `Agenda.TUI.ViewManager`.
   - **Go to** `:goto` (ALT-F5): jump to a section (R42). `Agenda.TUI.GoTo`.
   - **Choices** `:choice_list` (F3 on a setting in a box that has a list
     of choices): its choices, the current one first; ENTER takes the
@@ -306,7 +308,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:help`              | full screen   | `Agenda.TUI.Render.Help`                | F1                                               | §5            |
 | `:note`              | full screen   | `Agenda.TUI.Update.Notes`               | F5, Item Properties, Category Properties         | §5            |
 | `:catmgr`            | full screen   | `Agenda.TUI.CategoryScreens.Manager`    | F9, Category ▸ Manager                           | R2–R8         |
-| `:viewmgr`           | full screen   | `Agenda.TUI.ViewManager`                | F8, View ▸ Manager                               | §5            |
+| `:viewmgr`           | box           | `Agenda.TUI.ViewManager`                | F8, View ▸ Manager                               | §5            |
 | `:picker`            | box           | `Agenda.TUI.CategoryScreens.Picker`     | many (see above)                                 | §5            |
 | `:profile`           | box           | `Agenda.TUI.CategoryScreens.Profile`    | F3 on an item, Item ▸ Show, Item Properties      | §5            |
 | `:group_profile`     | box           | `Agenda.TUI.CategoryScreens.Profile`    | F3 with items marked                             | R35           |

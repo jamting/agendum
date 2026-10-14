@@ -1,6 +1,7 @@
 defmodule Agenda.TUI.Render.Managers do
   @moduledoc """
-  The full-screen category manager (F9) and view manager (F8). Pure.
+  The full-screen category manager (F9), and the view manager's box (F8).
+  Pure.
   """
 
   alias Agenda.Core.Database
@@ -72,37 +73,40 @@ defmodule Agenda.TUI.Render.Managers do
     end
   end
 
-  @doc "The view manager's lines."
-  def view_lines(state, mode) do
-    views =
-      state.db
-      |> Database.views()
-      |> Enum.with_index()
-      |> Enum.map(fn {v, i} ->
-        selected = i == mode.cursor
-        current = if v.id == state.view_id, do: "►", else: " "
+  @doc """
+  The view manager's box (Agenda's, screenshot 40): the views' names in
+  order, * before a datebook view (R47), the name being renamed as an input
+  line; an arrow at the left where the list goes on above or below, and
+  what was typed to find a view.
+  """
+  def view_box(state, mode, inner, max_rows) do
+    views = Database.views(state.db)
+    find = if mode.typed == "", do: [], else: [[], [{:dim, " Find: " <> mode.typed}]]
+    rows = max(max_rows - length(find), 1)
+    top = mode.cursor |> Kernel.-(rows - 1) |> max(0)
+    shown = views |> Enum.with_index() |> Enum.drop(top) |> Enum.take(rows)
+    last = top + length(shown) - 1
+
+    lines =
+      Enum.map(shown, fn {v, i} ->
+        arrow =
+          cond do
+            i == top and top > 0 -> "↑"
+            i == last and last < length(views) - 1 -> "↓"
+            true -> " "
+          end
+
+        star = if v.datebook, do: "*", else: " "
 
         name =
           case state.edit do
-            %{target: id} when id == v.id -> Draw.input(state.edit.line, 30, :edit)
-            _ -> [{if(selected, do: :cursor, else: :item), Draw.pad(v.name, 30)}]
+            %{target: id} when id == v.id -> Draw.input(state.edit.line, inner - 6, :edit)
+            _ -> [{if(i == mode.cursor, do: :box_selected, else: :box), v.name}]
           end
 
-        # * marks a datebook view, as in Agenda's view manager (R47)
-        {star, about} =
-          case v.datebook do
-            nil ->
-              {" ",
-               "Sections: " <>
-                 Enum.map_join(v.sections, ", ", &state.db.categories[&1.category_id].name)}
-
-            d ->
-              {"*", "Datebook: #{d.period}, #{state.db.categories[d.section_category].name}"}
-          end
-
-        [{:symbol, " #{current}#{star}"}] ++ name ++ [{:dim, "  " <> about}]
+        [{:box, " #{arrow} #{star} "}] ++ name
       end)
 
-    [[] | views]
+    lines ++ find
   end
 end

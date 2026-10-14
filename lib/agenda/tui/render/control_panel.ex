@@ -144,11 +144,6 @@ defmodule Agenda.TUI.Render.ControlPanel do
     Draw.line([{:title, " Category Manager"}], width, :title) ++ [{:title, count}]
   end
 
-  defp where_line(_state, %{type: :viewmgr, typed: typed}) when typed != "",
-    do: [{:title, " View Manager"}, {:dim, "  Find: " <> typed}]
-
-  defp where_line(_state, %{type: :viewmgr}), do: [{:title, " View Manager"}]
-
   defp where_line(_state, %{type: :note, target: {:macro, _}, title: title}),
     do: [{:title, " Macro: " <> title}]
 
@@ -237,7 +232,7 @@ defmodule Agenda.TUI.Render.ControlPanel do
       base && base.type == :catmgr ->
         "CAT MGR"
 
-      base && base.type == :viewmgr ->
+      top && top.type == :viewmgr ->
         "VW MGR"
 
       base && base.type == :note ->
