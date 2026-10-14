@@ -180,7 +180,11 @@ or handles it.
     parent (shown), short name, Also match, note, exclusive children and
     special actions on the left; type, name matching, conditions, actions
     and negative links on the right; advanced settings across the bottom.
-    `Agenda.TUI.CategoryScreens.Properties`.
+    `Agenda.TUI.CategoryScreens.Properties`. Note, Statistics and Advanced
+    settings show "..." and open boxes of their own with SPACE.
+    - **Category statistics** `:category_stats` (Statistics ...): the items
+      in the category, its children, the sections it heads, and the view
+      filters, conditions and actions that name it; nothing to change.
     - **Choice** `:choice`: a list of choices with an explanation: the
       category's type (Standard, Numeric, Date; R6a), how to resolve items
       that break exclusive children (R7a) or a move (R7b).
@@ -307,6 +311,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:props`             | box           | `Agenda.TUI.CategoryScreens.Properties` | F6 on a section head or in the category manager  | §5            |
 | `:choice`            | box           | `Agenda.TUI.CategoryScreens.Choices`    | Category Properties, moves in the manager        | R6a, R7a, R7b |
 | `:choice_list`       | box           | `Agenda.TUI.BoxChoices`                 | F3 on a setting with choices in a box            | §5            |
+| `:category_stats`    | box           | `Agenda.TUI.CategoryScreens.Properties` | Category Properties ▸ Statistics                 | §5            |
 | `:item_props`        | box           | `Agenda.TUI.ItemProperties`             | F6 on an item, Item ▸ Properties                 | R34, R43      |
 | `:goto`              | box           | `Agenda.TUI.GoTo`                       | ALT-F5                                           | R42           |
 | `:search_box`        | box           | `Agenda.TUI.SearchBox`                  | ALT-F6, Search ▸ View / File                     | R37           |

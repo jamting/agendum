@@ -40,12 +40,13 @@ defmodule Agenda.TUI.DateRulesTest do
     assert {item.note, item.when} == {"Booked for next Tuesday", ~D[2026-10-13]}
   end
 
-  test "each change is one undo step; the row sums it up", %{state: state} do
+  test "each change is one undo step", %{state: state} do
     state = date_settings(state, state.db.special.when) |> press([:down, " "])
     assert state.db.categories[state.db.special.when].date_rule.which == 2
 
+    # back in Category Properties the row is Agenda's "..."
     state = press(state, :enter)
-    assert screen(state) =~ ~r/Advanced settings: +From the item text, date 2/
+    assert screen(state) =~ ~r/Advanced settings: +\.\.\./
 
     state = History.undo(state)
     assert state.db.categories[state.db.special.when].date_rule.which == 1

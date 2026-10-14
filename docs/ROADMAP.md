@@ -69,7 +69,8 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Boxes: moving between settings as Agenda (User's Guide 2-16): → or TAB right one setting, or to the next one when there is none to the right; ← or SHIFT-TAB left, or to the previous one; ↓ ↑ to the setting in the next row nearest the same place (from a right-hand setting to the right-hand one below, else the left); HOME / END the first / last. The rows and places come from the box's layout (`Agenda.TUI.Template.grid/2`, `Agenda.TUI.BoxNav`); boxes that list one setting a row move down and up with → ←. Choices change with SPACE; numbers and times are typed, no longer → ← (§5)
 - [x] Boxes: the first letter of a choice picks it (User's Guide 2-17), and F3 lists a setting's choices (§5)
 - [x] Category Properties in two columns, as Agenda's (screenshot 74), drawn from a layout; a box opened from a box sits two columns right of it whatever their widths
-- [ ] Questions as Yes/No boxes; "..." for Category Properties' sub-boxes (Agenda showed "..." for Note, Statistics and Advanced settings, opened by SPACE); View Manager as a box
+- [x] "..." for Category Properties' sub-boxes, as Agenda: Note, Statistics (Agenda's Category Statistics box, new) and Advanced settings, opened by SPACE
+- [ ] Questions as Yes/No boxes; View Manager as a box
 - [x] In notes: F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, and their key bar (R63)
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names; the note editor's "Note for: … Line 1 INS EDIT" header
 - [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix (plan: `docs/KITTY.md`)

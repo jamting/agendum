@@ -582,6 +582,38 @@ defmodule Agenda.Core.Database do
   @spec views(t) :: [View.t()]
   def views(%__MODULE__{} = db), do: Enum.map(db.view_order, &db.views[&1])
 
+  @doc """
+  How much of the file uses a category (Category Properties ▸ Statistics,
+  Agenda's Category Statistics box): the items in it, its children, the
+  sections it heads (a datebook's Section heads all its slots: one), the
+  views filtered on it (the view or one of its sections), and the
+  categories whose conditions or actions name it.
+  """
+  @spec category_statistics(t, id) :: %{atom => non_neg_integer}
+  def category_statistics(%__MODULE__{} = db, cat_id) do
+    views = views(db)
+    others = Map.values(db.categories)
+    # `List.keymember?/3`: a {category, _} pair for this category in the list
+    names? = &List.keymember?(&1, cat_id, 0)
+
+    %{
+      items: length(items_in(db, cat_id)),
+      children: length(db.categories[cat_id].children),
+      section_heads:
+        Enum.sum_by(views, fn
+          # a datebook's stored sections are not shown: its slots are (R47)
+          %{datebook: %{section_category: head}} -> if head == cat_id, do: 1, else: 0
+          view -> Enum.count(view.sections, &(&1.category_id == cat_id))
+        end),
+      view_filters:
+        Enum.count(views, fn view ->
+          names?.(view.filter) or Enum.any?(view.sections, &names?.(&1.filter))
+        end),
+      conditions: Enum.count(others, &names?.(&1.conditions)),
+      actions: Enum.count(others, &(cat_id in &1.also_assign or names?.(&1.actions)))
+    }
+  end
+
   # a datebook view whose categories go falls back to When (R47)
   defp datebook_without(nil, _doomed, _when), do: nil
 

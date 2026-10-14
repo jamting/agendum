@@ -94,6 +94,9 @@ defmodule Agenda.TUI.Render.Boxes do
   ]
   # boxes to choose one thing in
   @accept_boxes [:goto, :copy_items, :calendar, :select_file, :choice, :scope, :choice_list]
+  # boxes that only show something
+  @return_boxes [:category_stats]
+  @return {"Press ENTER or ESC to return", "ENTER/ESC return"}
   # pickers where ENTER cycles a category's choice and ESC finishes
   @esc_pickers [:filter, :condition, :also_assign, :excludes, :schedule_filter]
 
@@ -103,6 +106,7 @@ defmodule Agenda.TUI.Render.Boxes do
         Agenda.TUI.BoxCancel.cancels?(mode.type) or mode.type in @done_boxes -> @done
         mode.type == :picker and esc_picker?(mode.purpose) -> @esc_done
         mode.type in [:picker | @accept_boxes] -> @accept
+        mode.type in @return_boxes -> @return
         true -> {"", ""}
       end
 
@@ -114,6 +118,8 @@ defmodule Agenda.TUI.Render.Boxes do
 
   # the calendar is a small box, as in Agenda; the others share one width
   defp box_width(state, %{type: :calendar}), do: min(state.width - 8, 30)
+
+  defp box_width(state, %{type: :category_stats}), do: min(state.width - 8, 44)
 
   defp box_width(state, %{type: type})
        when type in [:numeric_functions, :copy_items, :choice_list],
@@ -132,6 +138,10 @@ defmodule Agenda.TUI.Render.Boxes do
   defp box_title(state, %{type: :picker, purpose: purpose}), do: picker_title(state, purpose)
 
   defp box_title(_state, %{type: :item_props}), do: "Item properties"
+
+  defp box_title(state, %{type: :category_stats, cat_id: id}),
+    do: "Category statistics: " <> state.db.categories[id].name
+
   defp box_title(_state, %{type: :choice_list, title: ""}), do: "Choices"
   defp box_title(_state, %{type: :choice_list, title: title}), do: "Choices: " <> title
 
@@ -308,6 +318,9 @@ defmodule Agenda.TUI.Render.Boxes do
   defp box_content(state, %{type: type} = mode, inner, max_rows)
        when type in [:picker, :profile, :group_profile, :choice, :props],
        do: CategoryBoxes.content(state, mode, inner, max_rows)
+
+  defp box_content(state, %{type: :category_stats} = mode, _inner, _max_rows),
+    do: Agenda.TUI.CategoryScreens.Properties.stats_content(state, mode)
 
   # F3 on a setting (`Agenda.TUI.BoxChoices`): its choices, one a line
   defp box_content(_state, %{type: :choice_list} = mode, _inner, max_rows) do

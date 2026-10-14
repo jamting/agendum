@@ -75,17 +75,6 @@ defmodule Agenda.TUI.CategoryMatchBox do
     end
   end
 
-  @doc "A short summary for the Category Properties row: Global, or what the category sets."
-  def summary(overrides) when overrides == %{}, do: "Global"
-
-  def summary(overrides),
-    do:
-      Enum.map_join(
-        Keyword.keys(@choices) |> Enum.filter(&Map.has_key?(overrides, &1)),
-        ", ",
-        &"#{@labels[&1]}: #{name(&1, overrides[&1])}"
-      )
-
   @doc ~S|The category manager's mark for a Match on of its own ("T= Note").|
   def manager_tag(%{match_on: match_on}), do: "T= " <> short_match_on(match_on)
   def manager_tag(_overrides), do: nil

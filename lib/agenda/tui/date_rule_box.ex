@@ -59,16 +59,6 @@ defmodule Agenda.TUI.DateRuleBox do
     ]
   end
 
-  @doc "A short summary for the Category Properties row."
-  def summary(nil), do: "(date categories only)"
-
-  def summary(rule) do
-    which =
-      if DateRule.sources(rule) != [] and rule.which > 1, do: ", date #{rule.which}", else: ""
-
-    DateRule.label(rule.assign) <> which
-  end
-
   @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

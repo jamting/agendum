@@ -75,6 +75,9 @@ defmodule Agenda.TUI.FieldHelp do
         "it stays in its other sections.",
     goto: "Highlight the section to go to and press ENTER, or type its first letter.",
     choice_list: "Highlight the choice and press ENTER.",
+    category_stats:
+      "How much of the file uses the category: its items, children, sections, " <>
+        "filters, conditions and actions.",
     questions:
       "Pick the categories to assign the item to: SPACE one, TAB all. " <>
         "ENTER assigns them and shows the next item.",
@@ -352,6 +355,7 @@ defmodule Agenda.TUI.FieldHelp do
       special:
         "An action for items that join the category: mark them done, or discard them. SPACE.",
       advanced: "Press SPACE BAR for how the category gets dates or matches item text.",
+      statistics: "Press SPACE BAR to display current statistics for the category.",
       note: "The category's note. SPACE opens it."
     },
     item_props: %{

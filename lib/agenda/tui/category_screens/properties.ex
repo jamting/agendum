@@ -5,11 +5,12 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
 
   The box is drawn from `@layout` (`Agenda.TUI.Template`), Agenda's two
   columns (screenshot 74): the name, parent, short name, Also match and
-  note on the left with the children and special actions; the type and
-  name matching on the right, with the conditions, actions and excludes
-  (ours) below them; Advanced settings across the bottom, where its
-  summary has room. "Parent is" is shown, not a setting. Agenda's Note
-  file and Statistics are left out.
+  note on the left with the children, special actions, Statistics and
+  Advanced settings; the type and name matching on the right, with the
+  conditions, actions and excludes (ours) below them. "Parent is" is
+  shown, not a setting. Note, Statistics and Advanced settings show
+  "...": SPACE opens each one's box, as in Agenda. Agenda's Note file is
+  left out.
   """
 
   import Agenda.TUI.BoxNav, only: [is_move: 1]
@@ -31,10 +32,9 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
    Exclusive children: [exclusive     ]  Assignment conditions:
    Special actions:    [special       ]  [conditions                     ]
                                          Assignment actions:
-                                         [also_assign                    ]
-                                         Excludes:
+   Statistics:         [statistics    ]  [also_assign                    ]
+   Advanced settings:  [advanced      ]  Excludes:
                                          [excludes                       ]
-   Advanced settings:  [advanced                                         ]
   """
   # the settings in reading order, for the cursor: the parent is only shown
   @props Template.fields(@layout) -- [:parent]
@@ -70,12 +70,10 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
       conditions: if(cat.conditions == [], do: "(none)", else: Text.conditions_text(state, cat)),
       excludes:
         if(cat.excludes == [], do: "(none)", else: Text.names_text(state.db, cat.excludes)),
-      advanced:
-        if(cat.kind == :date,
-          do: Agenda.TUI.DateRuleBox.summary(cat.date_rule),
-          else: Agenda.TUI.CategoryMatchBox.summary(cat.match_overrides)
-        ),
-      note: if(cat.note == "", do: "(none)", else: "#{String.length(cat.note)} characters")
+      # boxes of their own, opened with SPACE, as Agenda's "..."
+      note: "...",
+      statistics: "...",
+      advanced: "..."
     }
 
     editing =
@@ -144,6 +142,10 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
       do: State.error(state, "#{cat.name} cannot be renamed"),
       else: %{state | edit: %{target: :name, line: LineEdit.new(cat.name)}}
   end
+
+  # how much of the file uses the category (Agenda's Category Statistics)
+  defp open_prop(state, cat, :statistics),
+    do: State.push(state, %{type: :category_stats, cat_id: cat.id})
 
   defp open_prop(state, cat, :short_name) do
     %{state | edit: %{target: :short_name, line: LineEdit.new(cat.short_name || "")}}
@@ -283,4 +285,25 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
 
     "Convert #{cat.name} to numeric? " <> Enum.join(parts, "; ") <> ". (Y/N)"
   end
+
+  # --- Category Statistics ---
+
+  @stats """
+   Items in category:          [items  ]
+   Child categories:           [children]
+   Used as section heads:      [section_heads]
+   Included in view filters:   [view_filters]
+   Included in conditions:     [conditions]
+   Included in actions:        [actions]
+  """
+
+  @doc "The Category Statistics box's lines: counts only, nothing to change."
+  def stats_content(state, mode) do
+    counts = Database.category_statistics(state.db, mode.cat_id)
+    Template.render(@stats, Map.new(counts, fn {k, n} -> {k, Integer.to_string(n)} end))
+  end
+
+  @doc "Keys of Category Statistics: ENTER or ESC go back to Category Properties."
+  def stats_key(state, _mode, key) when key in [:enter, :esc], do: State.pop(state)
+  def stats_key(state, _mode, _key), do: state
 end

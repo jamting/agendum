@@ -957,7 +957,11 @@ On a setting with a list of choices, as in Agenda, a letter picks the
 next choice starting with it ("r": Relative; one undo step), and F3
 (CHOICES) lists them in a box, the current one first. The choices are
 what SPACE goes through (`Agenda.TUI.BoxChoices`); on a setting that is
-typed, letters are typed as before. Our choices: the
+typed, letters are typed as before. In Category Properties, as Agenda
+(screenshot 74), Note, Statistics and Advanced settings show "..." and
+SPACE opens each one's box; Statistics (Agenda's Category Statistics)
+counts the items in the category, its children, the sections it heads,
+and the view filters, conditions and actions that name it. Our choices: the
 function-key bar stays one line with the keys'
 names and labels side by side (Agenda had two lines of ten fixed slots).
 When the screen is wide enough for all of them, it shows fuller labels
