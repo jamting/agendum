@@ -83,4 +83,27 @@ defmodule Agenda.TUI.TemplateTest do
     lines = Template.render(" [Yes] or [No]: [answer ]\n", %{answer: "y"})
     assert text(lines) == [" [Yes] or [No]: y        "]
   end
+
+  describe "grid/2" do
+    @two """
+     Head:  [head   ]  Type:  [type  ]
+     Width: [width  ]  Link:  [linked]
+
+            A heading
+     Count: [count  ]
+    """
+
+    test "the rows with fields, each field with the column it starts at" do
+      assert Template.grid(@two, Template.fields(@two)) == [
+               [head: 8, type: 26],
+               [width: 8, linked: 26],
+               [count: 8]
+             ]
+    end
+
+    test "fields the box hides are left out, and so are rows left empty" do
+      assert Template.grid(@two, [:head, :width, :count]) == [[head: 8], [width: 8], [count: 8]]
+      assert Template.grid(@two, [:type, :count]) == [[type: 26], [count: 8]]
+    end
+  end
 end

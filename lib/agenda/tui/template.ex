@@ -46,6 +46,32 @@ defmodule Agenda.TUI.Template do
   @spec fields(String.t()) :: [atom]
   def fields(layout), do: for(row <- rows(layout), {:field, name, _} <- row, do: name)
 
+  @doc """
+  The layout's rows that have fields, each a keyword list of its fields and
+  the column each starts at, for moving between them (`Agenda.TUI.BoxNav`).
+  Only the fields in `shown` count: those the box hides are left out, and
+  rows left without fields with them.
+  """
+  @spec grid(String.t(), [atom]) :: [[{atom, non_neg_integer}]]
+  def grid(layout, shown) do
+    layout
+    |> rows()
+    |> Enum.map(&placed(&1, shown))
+    |> Enum.reject(&(&1 == []))
+  end
+
+  # a row's fields with their columns: the text and fields before each,
+  # added up (`Enum.flat_map_reduce/3` carries the column along)
+  defp placed(parts, shown) do
+    {fields, _x} =
+      Enum.flat_map_reduce(parts, 0, fn
+        {:text, text}, x -> {[], x + String.length(text)}
+        {:field, name, width}, x -> {if(name in shown, do: [{name, x}], else: []), x + width}
+      end)
+
+    fields
+  end
+
   # each row: text and fields, {:text, text} | {:field, name, width}
   defp rows(layout) do
     layout
