@@ -92,7 +92,6 @@ defmodule Agendum.TUI.Render.Boxes do
     :column_add,
     :range_filter,
     :action_box,
-    :search_box,
     :note_search
   ]
   # boxes to choose one thing in
@@ -191,7 +190,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_title(_state, %{type: :scope}), do: "Marked items"
   defp box_title(_state, %{type: :alarm_list}), do: "Alarm list"
-  defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
@@ -220,9 +218,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_title(_state, %{type: :column_add}), do: "Column Add"
   defp box_title(_state, %{type: :item_column}), do: "Item Column Properties"
-
-  defp box_title(_state, %{type: :search_box, scope: :file}),
-    do: "Search the whole file (Show View)"
 
   defp box_title(state, %{type: :profile, item_id: id}),
     do: "Assignments: " <> String.slice(state.db.items[id].text, 0, 40)
@@ -409,41 +404,6 @@ defmodule Agendum.TUI.Render.Boxes do
       [[], [{:box, " Past alarms today"}]] ++
       if(past == [], do: none, else: past) ++
       [[], [{:box, " DEL removes a past alarm · ALT-A cancels a current one"}]]
-  end
-
-  defp box_content(_state, %{type: :search_box} = mode, inner, _max_rows) do
-    values = %{
-      on: %{item: "Item text", note: "Note text", both: "Both item & note"}[mode.search.on],
-      direction:
-        %{forward: "Forward", backward: "Backward", beginning: "Search from beginning"}[
-          mode.direction
-        ],
-      ignore_case: if(mode.search.ignore_case, do: "Yes", else: "No")
-    }
-
-    labels = %{
-      text: "Search for",
-      on: "Match on",
-      direction: "Direction",
-      ignore_case: "Ignore case"
-    }
-
-    rows =
-      mode
-      |> Agendum.TUI.Boxes.SearchBox.rows()
-      |> Enum.with_index()
-      |> Enum.map(fn {row, i} ->
-        label = [{:box, " " <> Draw.pad(labels[row], 12) <> ": "}]
-
-        value =
-          if row == :text,
-            do: Draw.input(mode.line, inner - 16, :edit),
-            else: [{if(i == mode.cursor, do: :box_selected, else: :box), values[row]}]
-
-        label ++ value
-      end)
-
-    rows ++ [[], [{:box, " Pat* finds Pat, Patty… · (a phrase) · ENTER searches"}]]
   end
 
   defp box_content(state, %{type: :questions} = mode, inner, _max_rows) do

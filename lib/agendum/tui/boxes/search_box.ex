@@ -11,15 +11,35 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   Searching the view highlights the first match and enters search mode:
   ALT-N / ALT-P go to the next / previous match, F7 marks the highlighted
   item, ENTER or ESC ends. Searching the file fills the Show View.
-  The matching rules are `Agendum.Core.Search`. Pure.
+  The matching rules are `Agendum.Core.Search`. The box is drawn from
+  `@layout` (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "SEARCH", choices: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
 
   alias Agendum.Core
   alias Agendum.Core.Search
+  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
   alias Agendum.TUI.{Layout, Typing.LineEdit, State}
+
+  # Direction only when searching the view
+  @layout """
+   Search for  : [text                                        ]
+   Match on    : [on                                          ]
+   Direction   : [direction                                   ]
+   Ignore case : [ignore_case                                 ]
+
+   Pat* finds Pat, Patty… · (a phrase)
+  """
+
+  @help %{
+    text: "Type the text to search for. Pat* finds Pat and Patty. ENTER searches.",
+    on: "Choose whether to search the item text, the note, or both. SPACE changes it.",
+    direction: "Search forward, backward, or from the beginning of the view. SPACE changes it.",
+    ignore_case: "Whether capital and small letters match alike. SPACE switches."
+  }
 
   @directions [:forward, :backward, :beginning]
   @ons [:item, :note, :both]
@@ -41,6 +61,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   def rows(%{scope: :view}), do: [:text, :on, :direction, :ignore_case]
   def rows(%{scope: :file}), do: [:text, :on, :ignore_case]
 
+  @impl Box
   def handle(state, mode, key) do
     rows = rows(mode)
     row = Enum.at(rows, mode.cursor)
@@ -54,7 +75,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
 
       # on the text, ← → HOME END move in it; ↑ ↓ TAB still move between settings
       k when is_move(k) and (row != :text or k in [:up, :down, :tab, :shift_tab]) ->
-        BoxNav.move(state, mode, BoxNav.column(rows), k)
+        BoxNav.move(state, mode, Template.grid(@layout, rows), k)
 
       {:char, " "} when row != :text ->
         State.put_mode(state, change(mode, row, 1))
@@ -193,6 +214,45 @@ defmodule Agendum.TUI.Boxes.SearchBox do
     )
   end
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  # --- the box -------------------------------------------------------------------
+
+  @impl Box
+  def title(_state, %{scope: :view}), do: "Search this view"
+  def title(_state, %{scope: :file}), do: "Search the whole file (Show View)"
+
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
+    values = %{
+      # the text is always typed in, so it is drawn as the input line
+      text: "",
+      on: %{item: "Item text", note: "Note text", both: "Both item & note"}[mode.search.on],
+      # nil leaves the row out: searching the file has no direction
+      direction:
+        if(mode.scope == :view,
+          do:
+            %{forward: "Forward", backward: "Backward", beginning: "Search from beginning"}[
+              mode.direction
+            ]
+        ),
+      ignore_case: if(mode.search.ignore_case, do: "Yes", else: "No")
+    }
+
+    Template.render(@layout, values, selected: field(state, mode), editing: {:text, mode.line}) ++
+      [Box.hint(keys(state, mode), inner)]
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"ENTER", "Search"},
+      {"TAB/↓", "Next setting"},
+      {"SPACE", "Change", "Change the setting"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
+
+  @impl Box
   def field(_state, mode), do: Enum.at(rows(mode), mode.cursor)
 end

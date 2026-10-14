@@ -215,7 +215,7 @@ defmodule Agendum.TUI.Render.ControlPanel do
           ] ->
         "PROPS"
 
-      top && top.type in [:search_box, :searching, :note_search] ->
+      top && top.type in [:searching, :note_search] ->
         "SEARCH"
 
       base && base.type == :catmgr ->

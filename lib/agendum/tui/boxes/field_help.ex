@@ -21,7 +21,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.ItemProperties,
     Boxes.NumericFunctionsBox,
     Boxes.RangeFilterBox,
-    Boxes.SearchBox,
     Boxes.SectionBox,
     State
   }
@@ -35,7 +34,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   # The box types and the module that knows their highlighted field
   @boxes %{
     datebook_props: DatebookBox,
-    search_box: SearchBox,
     section_props: SectionBox,
     column_props: ColumnBox,
     column_add: ColumnAddBox,
@@ -93,12 +91,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
           "read each time the view is shown. SPACE types it.",
       hide_column_heads: "Whether the column heads show above each section. SPACE switches.",
       section_separators: "Whether a line separates the sections. SPACE switches."
-    },
-    search_box: %{
-      text: "Type the text to search for. Pat* finds Pat and Patty. ENTER searches.",
-      on: "Choose whether to search the item text, the note, or both. SPACE changes it.",
-      direction: "Search forward, backward, or from the beginning of the view. SPACE changes it.",
-      ignore_case: "Whether capital and small letters match alike. SPACE switches."
     },
     section_props: %{
       head:

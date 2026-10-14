@@ -79,6 +79,7 @@ defmodule Agendum.TUI.Boxes.Box do
     input_format: Agendum.TUI.Boxes.InputFormatBox,
     macro_props: Agendum.TUI.Boxes.MacroProps,
     schedule: Agendum.TUI.Boxes.ScheduleBox,
+    search_box: Agendum.TUI.Boxes.SearchBox,
     sort: Agendum.TUI.Boxes.SortBox
   }
 
