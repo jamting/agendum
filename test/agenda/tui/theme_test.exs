@@ -90,7 +90,6 @@ defmodule Agenda.TUI.ThemeTest do
   test "a screen is encoded with the chosen theme" do
     line = [{:cursor, "x"}]
     assert IO.iodata_to_binary(Screen.frame(nil, [line], :classic)) =~ "\e[0;97;41mx"
-    assert IO.iodata_to_binary(Screen.frame(nil, [line], :blue)) =~ "\e[0;30;47mx"
 
     assert IO.iodata_to_binary(Screen.frame(nil, [line], :classic, :truecolor)) =~
              "\e[0;38;2;255;255;255;48;2;170;0;0mx"
@@ -128,7 +127,9 @@ defmodule Agenda.TUI.ThemeTest do
   test "theme names are parsed" do
     assert Theme.parse("mono") == {:ok, :mono}
     assert Theme.parse("CLASSIC") == {:ok, :classic}
-    assert Theme.parse("blue") == {:ok, :blue}
+    assert Theme.parse("borland") == {:ok, :borland}
+    # the old blue theme is gone: a preference for it falls back to the default
+    assert Theme.parse("blue") == :error
     assert Theme.parse("pink") == :error
   end
 end

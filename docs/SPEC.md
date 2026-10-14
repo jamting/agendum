@@ -822,10 +822,10 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   Note/Macro Box" describes.
 - **R40 ✅ Colour themes** (Setting Up Agenda 1-25 to 1-31). The screen is
   drawn with a theme chosen at start: `classic` (the default: Agenda 2.0's
-  colours, from screenshots of the real program, ADR 0018), `blue` (white
-  on blue), `mono` (bold, dim, underline and reverse only), or one of five
-  terminal colour schemes (`docs/THEMES.md`): `modus_operandi`,
-  `modus_vivendi`, `alabaster`, `zenburn` and `ayu`.
+  colours, from screenshots of the real program, ADR 0018), `mono` (bold,
+  dim, underline and reverse only), or one of six terminal colour schemes
+  (`docs/THEMES.md`): `modus_operandi`, `modus_vivendi`, `alabaster`,
+  `zenburn`, `ayu` and `borland`.
   File ▸ Customize (Agenda's Utilities Customize) changes it at once and
   saves it in the person's preferences file (R41b); `--theme NAME` or
   `--mono` choose it for one session; the NO_COLOR environment variable
@@ -845,9 +845,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   - A box opened from another box sits one line lower and two columns
     further right, so the one beneath still shows, and the titles of the
     boxes beneath are dimmed (our choice).
-  - `blue` and `mono` have the same parts in their own colours: the control
-    panel (black on cyan; reverse video), the highlighted line (bright blue;
-    bold), box titles and dimmed titles, the faded screen behind a box.
+  - `mono` has the same parts in bold, dim and reverse video: the control
+    panel in reverse video, the highlighted line in bold, box titles and
+    dimmed titles, the faded screen behind a box.
   - The terminal schemes share one layout in their own colours
     (`Agenda.TUI.Theme.Palettes`): the screen in the scheme's background
     and foreground; the control panel, menus and the line being edited in

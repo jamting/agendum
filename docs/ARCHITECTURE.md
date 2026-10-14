@@ -112,7 +112,7 @@ in [`SCREENS.md`](SCREENS.md).
 | `Mix.Tasks.Agendum.Starters`                  | ✘     | `mix agendum.starters [--samples]`: writes the starter file (a build tool, not part of the program).                             |
 | `Agenda.TUI.Render`                           | ✔     | State → list of styled lines: the control panel, the body (the view or a full screen), the boxes over it, the key bar.           |
 | `Agenda.TUI.Render.*`                         | ✔     | Its parts: `ControlPanel`, `View`, `Managers`, `Note`, `Help` (F1 text), `Boxes`, `CategoryBoxes`, `KeyBar`, `Text`, `Export`.   |
-| `Agenda.TUI.Draw`, `Agenda.TUI.Theme`         | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic, blue or mono, R40).                               |
+| `Agenda.TUI.Draw`, `Agenda.TUI.Theme`         | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic, mono and the terminal schemes, R40).                               |
 | `Agenda.TUI.Template`                         | ✔     | Box layouts written as they look: `[field   ]` in brackets, filled and lined up; the fields' order is the cursor's.                |
 | `Agenda.TUI.Keys`                             | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |
 | `Agenda.TUI.LineEdit`, `Agenda.TUI.TextEdit`  | ✔     | Single-line and multi-line edit buffers.                                                                                         |

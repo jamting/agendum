@@ -7,15 +7,11 @@ defmodule Agenda.TUI.Theme do
       black text on a grey screen, blue section heads and column entries,
       white-on-red highlights, cyan boxes in a solid blue frame with a
       shadow, a cyan category manager and yellow-on-blue help
-    * `:blue` is white on blue, the look of the clone before it was
-      compared with the real Agenda, with the same parts: a control panel
-      (black on cyan), the highlighted line (bright blue), box titles,
-      shadows and the faded screen behind a box
     * `:mono` uses only bold, dim, underline and reverse video, for
       monochrome terminals, screen readers and NO_COLOR: the control panel
       in reverse video like the title bar, the highlighted line in bold
-    * `:modus_operandi`, `:modus_vivendi`, `:alabaster`, `:zenburn` and
-      `:ayu` take the colours of those terminal schemes (`docs/THEMES.md`),
+    * `:modus_operandi`, `:modus_vivendi`, `:alabaster`, `:zenburn`,
+      `:ayu` and `:borland` take the colours of those terminal schemes (`docs/THEMES.md`),
       all laid out alike by `Agenda.TUI.Theme.Palettes`: the screen in the
       scheme's colours, the control panel and menus in its selection
       colours, the highlight in its cursor colours, boxes on a tint
@@ -37,13 +33,13 @@ defmodule Agenda.TUI.Theme do
 
   @type name ::
           :classic
-          | :blue
           | :mono
           | :modus_operandi
           | :modus_vivendi
           | :alabaster
           | :zenburn
           | :ayu
+          | :borland
   @type depth :: :ansi16 | :truecolor
   @type colour :: atom
   @type attribute :: :bold | :dim | :reverse
@@ -124,51 +120,6 @@ defmodule Agenda.TUI.Theme do
       splash_title: {:white, :cyan},
       splash_value: {:blue, :cyan}
     },
-    blue: %{
-      normal: "0;97;44",
-      title: "0;30;46",
-      indicator: "0;1;93;46",
-      section: "0;1;93;44",
-      column_head: "0;1;96;44",
-      item: "0;97;44",
-      item_done: "0;37;44",
-      cell: "0;96;44",
-      row: "0;97;104",
-      row_done: "0;37;104",
-      row_cell: "0;96;104",
-      cursor: "0;30;47",
-      cursor_cell: "0;30;106",
-      edit: "0;30;107",
-      edit_cursor: "0;97;40",
-      edit_hint: "0;90;107",
-      symbol: "0;1;92;44",
-      menu: "0;30;46",
-      menu_selected: "0;97;40",
-      menu_help: "0;30;46",
-      panel: "0;30;46",
-      panel_hint: "0;34;46",
-      prompt: "0;30;46",
-      message: "0;1;34;46",
-      error: "0;1;97;41",
-      keybar: "0;30;46",
-      keybar_key: "0;1;97;46",
-      box: "0;30;47",
-      box_selected: "0;97;40",
-      box_frame: "0;30;47",
-      box_title: "0;1;34;47",
-      box_title_dim: "0;90;47",
-      shadow: "0;37;40",
-      backdrop: "0;90;44",
-      dim: "0;37;44",
-      calc: "0;1;96;44",
-      catmgr: "0;97;44",
-      catmgr_head: "0;1;93;44",
-      catmgr_note: "0;37;44",
-      help: "0;97;44",
-      splash_logo: "0;97;40",
-      splash_title: "0;1;30;47",
-      splash_value: "0;34;47"
-    },
     mono: %{
       normal: "0",
       title: "0;7",
@@ -221,7 +172,7 @@ defmodule Agenda.TUI.Theme do
 
   @doc "The theme names, default first."
   @spec names() :: [name]
-  def names, do: [:classic, :blue, :mono | Palettes.names()]
+  def names, do: [:classic, :mono | Palettes.names()]
 
   @doc "The style → spec map of a theme: SGR codes, or a pair of VGA colours."
   @spec styles(name) :: %{atom => spec}

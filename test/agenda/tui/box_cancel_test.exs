@@ -70,7 +70,7 @@ defmodule Agenda.TUI.BoxCancelTest do
   test "your preferences go back too, and are saved as they were", %{state: state} do
     state = %{state | prefs: %Preferences{path: "/prefs"}}
     state = press(state, [{:f, 10}, "f", "c", " "])
-    assert state.theme == :blue
+    assert state.theme == :mono
 
     {state, effects} = Update.handle(state, :esc)
     assert state.theme == :classic

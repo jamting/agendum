@@ -6,9 +6,9 @@ defmodule Agenda.CLI do
       agendum FILE              open FILE (created on first save if missing)
       agendum --demo            open the sample file from the patent
       agendum --rabbit          open Rabbit's file from the manual
-      agendum --theme NAME      draw with a theme: classic (default), blue, mono,
+      agendum --theme NAME      draw with a theme: classic (default), mono,
                                 modus-operandi, modus-vivendi, alabaster,
-                                zenburn or ayu
+                                zenburn, ayu or borland
       agendum --mono            the same as --theme mono
       agendum --lang NAME       read dates in item text in a language:
                                 english (default) or swedish

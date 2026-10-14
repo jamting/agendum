@@ -18,7 +18,7 @@ defmodule Agenda.CLITest do
     assert {:ok, %{theme: :mono}} = CLI.parse_args(["--theme", "mono", "f"], %{})
     assert {:ok, %{theme: :mono, file: "f"}} = CLI.parse_args(["f", "--mono"], %{})
     assert {:error, message} = CLI.parse_args(["--theme", "pink"], %{})
-    assert message =~ "classic, blue, mono"
+    assert message =~ "classic, mono, modus_operandi"
   end
 
   test "NO_COLOR forces monochrome unless a theme is given" do

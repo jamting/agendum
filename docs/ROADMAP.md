@@ -60,7 +60,7 @@ Rule numbers refer to `SPEC.md`.
 The general look and feel of the real program, step by step; not pixel fidelity.
 `tools/screenshots/` draws our screens for comparison.
 
-- [x] Agenda's colours as the default theme: grey screen, blue heads and entries, white-on-red highlight, cyan boxes in a solid blue frame with a centred title and a shadow, the screen behind a box greyed out, cyan category manager, yellow-on-blue help; exact VGA colours on 24-bit terminals; the old look as `blue`; the highlighted line tinted (R40)
+- [x] Agenda's colours as the default theme: grey screen, blue heads and entries, white-on-red highlight, cyan boxes in a solid blue frame with a centred title and a shadow, the screen behind a box greyed out, cyan category manager, yellow-on-blue help; exact VGA colours on 24-bit terminals; the highlighted line tinted (R40)
 - [x] Two-line control panel (File with indicators and time, then View or the manager shown) that the menu, prompts, questions and messages take over; the key bar stays one line (our choice)
 - [x] More descriptive key bar labels when the terminal is wide enough ("F8 View manager"); Agenda's short ones otherwise
 - [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
@@ -137,7 +137,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] `mix agendum.starters` writes `starters/planner.agendum`; `--samples` writes a copy with realistic sample data for testing (`tmp/planner-samples.agendum`; dates from `--today`, so the same day gives the same file)
   - [x] `starters/planner.agendum` committed; a test checks it is what the code builds; the README says to copy it
   - Left out: the macros Sort items in view and Create/Update contact list, which need the macro command language. The Contacts view that Create/Update contact list made is in the file instead, but it is not kept up to date: a new person needs a blank item in it by hand
-- [x] Themes from terminal colour schemes (`docs/THEMES.md`): Modus Operandi, Modus Vivendi, Alabaster, Zenburn, Ayu (R40)
+- [x] Themes from terminal colour schemes (`docs/THEMES.md`): Modus Operandi, Modus Vivendi, Alabaster, Zenburn, Ayu, Borland; the old `blue` theme removed (R40)
 - [x] Preferences file and File ▸ Customize (Utilities Customize): theme, date languages, input format (R40, R14c, R41b)
 - [x] More preferences (R54): key map on/off, kept (ALT-K); confirm mode; auto-save interval; decimal and thousands separators (Setting Up Agenda 1-25 to 1-31). Custom colours are not planned: we keep to themes (ADR 0022)
 - [x] Select File box (R51): pick a file from a list instead of typing its name, for File ▸ Retrieve (ALT-G, CTRL-O) and Write, and Transfer ▸ Import/Export: the folders and files of the current folder, ENTER opens a folder or chooses a file, `..` goes up, typing narrows the list; F7 shows dates, as Agenda's Select File box did (User's Guide 22-4 to 22-5)

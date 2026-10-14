@@ -1,8 +1,8 @@
 defmodule Agenda.TUI.Theme.Palettes do
   @moduledoc """
   Themes made from terminal colour schemes (`docs/THEMES.md`, copied from
-  terminalthemes.com): Modus Operandi, Modus Vivendi, Alabaster, Zenburn
-  and Ayu (SPEC R40).
+  terminalthemes.com): Modus Operandi, Modus Vivendi, Alabaster, Zenburn,
+  Ayu and Borland (SPEC R40).
 
   A scheme gives a palette of colour roles (background, foreground,
   selection, cursor and a few ANSI colours); `styles/0` lays every screen
@@ -109,6 +109,23 @@ defmodule Agenda.TUI.Theme.Palettes do
       accent: {"#53bdfa", 34},
       accent2: {"#f9af4f", 33},
       alert: {"#ea6c73", 31}
+    },
+    # yellow on blue, as Borland's DOS tools
+    borland: %{
+      bg: {"#0000a4", 39},
+      fg: {"#ffff4e", 39},
+      sel_bg: {"#a4a4a4", 37},
+      sel_fg: {"#0000a4", 34},
+      # the scheme's cursor text (white) is faint on its orange: the screen's blue
+      cursor: {"#ffa560", 33},
+      cursor_fg: {"#0000a4", 34},
+      tint: {"#1c1cc4", 90},
+      shade: {"#000050", 30},
+      # ANSI 8 (#7c7c7c) is hard to read on the blue: the selection's grey
+      muted: {"#a4a4a4", 37},
+      accent: {"#ffffff", 97},
+      accent2: {"#a8ff60", 92},
+      alert: {"#ff6c60", 31}
     }
   }
 
@@ -164,7 +181,7 @@ defmodule Agenda.TUI.Theme.Palettes do
 
   @doc "The schemes' names, in the order they are offered."
   @spec names() :: [atom]
-  def names, do: [:modus_operandi, :modus_vivendi, :alabaster, :zenburn, :ayu]
+  def names, do: [:modus_operandi, :modus_vivendi, :alabaster, :zenburn, :ayu, :borland]
 
   @doc """
   The colour roles of a scheme, each as `{"r;g;b", ansi}`: the hex colour

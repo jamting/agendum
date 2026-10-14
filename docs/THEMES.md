@@ -137,3 +137,29 @@ ANSI 13 (bright): #d2a6ff
 ANSI 14 (bright): #95e6cb
 ANSI 15 (bright): #ffffff
 Cursor Guide Color: #e6b450
+
+## Borland
+
+Background: #0000a4
+Foreground: #ffff4e
+Bold: #ffff4e
+Selection background: #a4a4a4
+Selected text: #0000a4
+Cursor: #ffa560
+Cursor text: #ffffff
+ANSI 0: #4f4f4f
+ANSI 1: #ff6c60
+ANSI 2: #a8ff60
+ANSI 3: #ffffb6
+ANSI 4: #96cbfe
+ANSI 5: #ff73fd
+ANSI 6: #c6c5fe
+ANSI 7: #eeeeee
+ANSI 8 (bright): #7c7c7c
+ANSI 9 (bright): #ffb6b0
+ANSI 10 (bright): #ceffac
+ANSI 11 (bright): #ffffcc
+ANSI 12 (bright): #b5dcff
+ANSI 13 (bright): #ff9cfe
+ANSI 14 (bright): #dfdffe
+ANSI 15 (bright): #ffffff
