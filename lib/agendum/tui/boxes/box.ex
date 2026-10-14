@@ -68,6 +68,7 @@ defmodule Agendum.TUI.Boxes.Box do
   # name only (no call at compile time), so the boxes and this module can
   # refer to each other.
   @registry %{
+    input_format: Agendum.TUI.Boxes.InputFormatBox,
     macro_props: Agendum.TUI.Boxes.MacroProps
   }
 
@@ -103,25 +104,37 @@ defmodule Agendum.TUI.Boxes.Box do
   end
 
   @doc """
-  The hint at the bottom of a box: its keys from `c:keys/2` without the
-  arrows and the ways to close it, which its bottom edge names
-  (" SPACE change · F2 edit · DEL detach"). One list for the key bar and
-  the hint, so they cannot disagree.
+  The hint at the bottom of a box `inner` wide: its keys from `c:keys/2`
+  without the arrows and the ways to close it, which its bottom edge
+  names; with the keys' fuller labels when they fit ("SPACE next choice"),
+  else the short ones ("SPACE change · F2 edit · DEL detach"). One list
+  for the key bar and the hint, so they cannot disagree.
   """
-  @spec hint([key_entry]) :: Draw.line()
-  def hint(keys) do
-    text =
-      keys
-      |> Enum.reject(fn entry -> closing?(entry) or moving?(elem(entry, 0)) end)
-      |> Enum.map_join(" · ", fn entry ->
-        elem(entry, 0) <> " " <> String.downcase(elem(entry, 1))
-      end)
+  @spec hint([key_entry], pos_integer) :: Draw.line()
+  def hint(keys, inner) do
+    shown = Enum.reject(keys, fn entry -> closing?(entry) or moving?(elem(entry, 0)) end)
+    # the fuller label is the last in an entry, the short one the second
+    full = hint_text(shown, fn entry -> entry |> Tuple.to_list() |> List.last() end)
+    short = hint_text(shown, &elem(&1, 1))
 
-    [{:box, " " <> text}]
+    [{:box, " " <> if(String.length(full) < inner - 1, do: full, else: short)}]
   end
+
+  defp hint_text(keys, label),
+    do: Enum.map_join(keys, " · ", &(elem(&1, 0) <> " " <> String.downcase(label.(&1))))
 
   defp closing?(entry), do: elem(entry, 1) in ~w(Done Cancel Select Accept Close Return)
   defp moving?(key), do: String.starts_with?(key, ["↑", "↓", "←", "→"])
+
+  @doc """
+  The keys of a box of settings whose choices SPACE goes through, for
+  `c:keys/2`: moving, SPACE, ENTER and ESC; `extra` goes before ENTER.
+  """
+  @spec settings_keys([key_entry]) :: [key_entry]
+  def settings_keys(extra \\ []) do
+    [{"↑↓←→", "Setting", "Move between settings"}, {"SPACE", "Next", "Next choice"}] ++
+      extra ++ [{"ENTER", "Done"}, {"ESC", "Cancel"}]
+  end
 
   @doc """
   `use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true`

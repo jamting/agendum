@@ -9,25 +9,46 @@ defmodule Agendum.TUI.Boxes.InputFormatBox do
 
   The arrows choose a setting (`Agendum.TUI.Boxes.BoxNav`); SPACE shows the next choice.
   ENTER closes the box; ESC closes it and cancels its changes
-  (`Agendum.TUI.Boxes.BoxCancel`). Pure.
+  (`Agendum.TUI.Boxes.BoxCancel`). Drawn from `@layout`
+  (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
+  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
 
   alias Agendum.Core.InputFormat
   alias Agendum.TUI.State
 
-  @rows [:number_order, :separator, :clock]
+  @layout """
+   Number order         : [number_order                    ]
+   Input date separator : [separator                       ]
+   Input clock          : [clock                           ]
+
+   Saved in your preferences, not in this file.
+  """
+
+  @rows Template.fields(@layout)
+  @grid Template.grid(@layout, @rows)
+
+  @help %{
+    number_order:
+      "Choose the order in which you enter day, month, and year, so Agendum can read " <>
+        "dates such as 3/2. SPACE for the next.",
+    separator: "The character you type between the numbers of a date. SPACE for the next choice.",
+    clock: "Choose whether you type times on a 12-hour or a 24-hour clock. SPACE switches."
+  }
 
   def open(state), do: State.push(state, %{type: :input_format, cursor: 0})
 
+  @impl Box
   def handle(state, mode, key) do
     row = Enum.at(@rows, mode.cursor)
 
     case key do
       k when k in [:esc, :enter] -> State.pop(state)
-      k when is_move(k) -> BoxNav.move(state, mode, BoxNav.column(@rows), k)
+      k when is_move(k) -> BoxNav.move(state, mode, @grid, k)
       {:char, " "} -> change(state, row, 1)
       _ -> state
     end
@@ -44,17 +65,23 @@ defmodule Agendum.TUI.Boxes.InputFormatBox do
     )
   end
 
-  @doc "`{label, value}` for each row."
-  def lines(state) do
-    label = &InputFormat.label(state.input, &1, state.languages)
+  @impl Box
+  def title(_state, _mode), do: "Input format (yours, for every file)"
 
-    [
-      {"Number order", label.(:number_order)},
-      {"Input date separator", label.(:separator)},
-      {"Input clock", label.(:clock)}
-    ]
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
+    values = Map.new(@rows, &{&1, InputFormat.label(state.input, &1, state.languages)})
+
+    Template.render(@layout, values, selected: field(state, mode)) ++
+      [Box.hint(keys(state, mode), inner)]
   end
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
+  def keys(_state, _mode), do: Box.settings_keys()
+
+  @impl Box
+  def help, do: @help
+
+  @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

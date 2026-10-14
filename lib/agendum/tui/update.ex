@@ -447,9 +447,6 @@ defmodule Agendum.TUI.Update do
   defp dispatch(state, %{type: :customize} = m, key),
     do: Agendum.TUI.Boxes.CustomizeBox.handle(state, m, key)
 
-  defp dispatch(state, %{type: :input_format} = m, key),
-    do: Agendum.TUI.Boxes.InputFormatBox.handle(state, m, key)
-
   defp dispatch(state, %{type: :category_match} = m, key),
     do: Agendum.TUI.Boxes.CategoryMatchBox.handle(state, m, key)
 

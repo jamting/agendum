@@ -198,7 +198,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :file_props}), do: "File properties"
   defp box_title(_state, %{type: :date_settings}), do: "Global date settings"
   defp box_title(_state, %{type: :display_format}), do: "Display format"
-  defp box_title(_state, %{type: :input_format}), do: "Input format (yours, for every file)"
   defp box_title(_state, %{type: :customize}), do: "Customize (yours, for every file)"
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
@@ -616,26 +615,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_content(state, %{type: :customize} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.CustomizeBox.content(state, mode)
-
-  defp box_content(state, %{type: :input_format} = mode, _inner, _max_rows) do
-    rows =
-      state
-      |> Agendum.TUI.Boxes.InputFormatBox.lines()
-      |> Enum.with_index()
-      |> Enum.map(fn {{label, value}, i} ->
-        [
-          {:box, " " <> Draw.pad(label, 20) <> ": "},
-          {if(i == mode.cursor, do: :box_selected, else: :box), value}
-        ]
-      end)
-
-    rows ++
-      [
-        [],
-        [{:box, " Saved in your preferences, not in this file."}],
-        [{:box, " SPACE next choice · arrows move"}]
-      ]
-  end
 
   defp box_content(state, %{type: :section_props} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.SectionBox.content(state, mode)

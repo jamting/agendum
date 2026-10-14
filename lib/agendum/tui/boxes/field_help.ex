@@ -23,7 +23,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.DateRuleBox,
     Boxes.ExecuteBox,
     Boxes.FileProperties,
-    Boxes.InputFormatBox,
     Boxes.ItemColumnBox,
     Boxes.ItemProperties,
     Boxes.NumericFunctionsBox,
@@ -44,7 +43,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   # The box types and the module that knows their highlighted field
   @boxes %{
     customize: CustomizeBox,
-    input_format: InputFormatBox,
     file_props: FileProperties,
     date_settings: FileProperties,
     display_format: FileProperties,
@@ -148,14 +146,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       decimal: "The character before the decimals of a number you type. SPACE switches.",
       thousands:
         "The character between thousands in a number you type. SPACE for the next choice."
-    },
-    input_format: %{
-      number_order:
-        "Choose the order in which you enter day, month, and year, so Agendum can read " <>
-          "dates such as 3/2. SPACE for the next.",
-      separator:
-        "The character you type between the numbers of a date. SPACE for the next choice.",
-      clock: "Choose whether you type times on a 12-hour or a 24-hour clock. SPACE switches."
     },
     file_props: %{
       insert_columns:
