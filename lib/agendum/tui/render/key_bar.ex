@@ -279,19 +279,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Close"}
     ]
 
-  # the settings boxes: one setting per line, SPACE cycles its choices
-  defp mode_keys(%{type: type})
-       when type in [
-              :column_add
-            ],
-       do: [
-         {"↑↓←→", "Setting", "Move between settings"},
-         {"SPACE", "Next", "Next choice"},
-         {"type", "Number", "Type a width or number"},
-         {"ENTER", "Done"},
-         {"ESC", "Cancel"}
-       ]
-
   defp mode_keys(%{type: :menu}),
     do: [
       {"←→", "Highlight", "Highlight a command"},

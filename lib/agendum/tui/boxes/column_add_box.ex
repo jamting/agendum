@@ -27,8 +27,10 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
   skip the box: they open the picker and use the file's setting. Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
+  alias Agendum.TUI.Boxes.{Box, BoxNav}
 
   alias Agendum.Core
   alias Agendum.Core.View
@@ -48,7 +50,20 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
    Insert in:    [insert_in      ]
   """
 
-  @hint " SPACE/→ next choice · ← previous · F3 picks the head · ENTER adds"
+  @help %{
+    head: "Type the name of a new or existing category, or press F3 to pick one.",
+    type:
+      "The type of the column's category: standard, date or numeric. " <>
+        "SPACE changes it for a new head.",
+    width: "The width of the column, in characters. Type it.",
+    format:
+      "How the column shows categories: name only, parent:category, ancestor, star, " <>
+        "yes/no or a note line. SPACE changes it.",
+    note_line: "Which line of the category note the column shows. Type it.",
+    title: "Type the column's title.",
+    position: "Add the column right or left of the highlighted one. SPACE switches.",
+    insert_in: "Add the column to all sections in the view, or only this one. SPACE switches."
+  }
 
   @doc """
   Opens the box for a column beside the highlighted one: `sidx` is its
@@ -89,6 +104,7 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
     end
   end
 
+  @impl Box
   def handle(state, mode, key) do
     if FieldTyping.typing?(mode),
       do: FieldTyping.key(state, mode, key, &typed/3),
@@ -177,7 +193,7 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
   end
 
   defp change(state, mode, :width, step),
-    do: State.put_mode(state, %{mode | width: max(1, width(state, mode) + step)})
+    do: State.put_mode(state, %{mode | width: max(1, column_width(state, mode) + step)})
 
   # Agenda's formats, in its order (R56)
   defp change(state, mode, :format, step) do
@@ -269,19 +285,27 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
   defp name(state, id), do: state.db.categories[id].name
 
   # the width chosen, or the core's default for the type and Format
-  defp width(_state, %{width: width}) when width != nil, do: width
+  defp column_width(_state, %{width: width}) when width != nil, do: width
 
-  defp width(state, mode),
+  defp column_width(state, mode),
     do: Core.default_column_width(state.db, mode.head, mode.kind, mode.format)
 
   # --- drawing ---
 
   @doc "The box's lines, the highlighted setting selected."
-  def content(state, mode) do
+  @impl Box
+  def title(_state, _mode), do: "Column Add"
+
+  # two columns of settings, as Column Properties
+  @impl Box
+  def width(state, _mode), do: min(state.width - 8, 72)
+
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
     values = %{
       head: if(mode.head, do: state.db.categories[mode.head].name, else: "(F3 to pick)"),
       type: kind_name(mode.kind) |> String.capitalize(),
-      width: Integer.to_string(width(state, mode)),
+      width: Integer.to_string(column_width(state, mode)),
       position:
         if(mode.position == :right, do: "Right of current column", else: "Left of current column"),
       insert_in: if(mode.insert_in == :all, do: "All sections", else: "Current section")
@@ -300,12 +324,25 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
     field = Enum.at(shown, min(mode.cursor, length(shown) - 1))
     opts = [selected: field] ++ FieldTyping.editing(mode)
 
-    Template.render(@layout, values, opts) ++
-      [[], [{:box, @hint}]]
+    Template.render(@layout, values, opts) ++ [[], Box.hint(keys(state, mode), inner)]
   end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓←→", "Setting", "Move between settings"},
+      {"SPACE", "Next", "Next choice"},
+      {"type", "Number", "a number"},
+      {"F3", "Choices", "Pick the head"},
+      {"ENTER", "Add"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
 
   defp kind_name(kind), do: Atom.to_string(kind)
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
   def field(_state, mode), do: Enum.at(fields(mode), min(mode.cursor, length(fields(mode)) - 1))
 end

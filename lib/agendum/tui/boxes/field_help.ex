@@ -13,7 +13,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   """
 
   alias Agendum.TUI.{
-    Boxes.ColumnAddBox,
     Boxes.DatebookBox,
     Boxes.ItemProperties,
     State
@@ -28,7 +27,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   # The box types and the module that knows their highlighted field
   @boxes %{
     datebook_props: DatebookBox,
-    column_add: ColumnAddBox,
     props: Properties,
     item_props: ItemProperties
   }
@@ -79,20 +77,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
           "read each time the view is shown. SPACE types it.",
       hide_column_heads: "Whether the column heads show above each section. SPACE switches.",
       section_separators: "Whether a line separates the sections. SPACE switches."
-    },
-    column_add: %{
-      head: "Type the name of a new or existing category, or press F3 to pick one.",
-      type:
-        "The type of the column's category: standard, date or numeric. " <>
-          "SPACE changes it for a new head.",
-      width: "The width of the column, in characters. Type it.",
-      format:
-        "How the column shows categories: name only, parent:category, ancestor, star, " <>
-          "yes/no or a note line. SPACE changes it.",
-      note_line: "Which line of the category note the column shows. Type it.",
-      title: "Type the column's title.",
-      position: "Add the column right or left of the highlighted one. SPACE switches.",
-      insert_in: "Add the column to all sections in the view, or only this one. SPACE switches."
     },
     props: %{
       name: "The category's name. F2 (or SPACE) edits it.",

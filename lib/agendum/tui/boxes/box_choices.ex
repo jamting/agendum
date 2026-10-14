@@ -22,9 +22,6 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
   # the longest list of choices: Date format has 20
   @max 30
 
-  # boxes with settings that SPACE cycles, besides those ESC cancels
-  @boxes [:column_add]
-
   @doc """
   A key on a box: a letter picks a choice, F3 lists them; `:pass` when the
   key or the setting is not for this.
@@ -124,7 +121,7 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
 
   defp cycles?(%{type: type} = mode) do
     case Agendum.TUI.Boxes.Box.module(mode) do
-      nil -> BoxCancel.cancels?(type) or type in @boxes
+      nil -> BoxCancel.cancels?(type)
       box -> box.choices?()
     end
   end

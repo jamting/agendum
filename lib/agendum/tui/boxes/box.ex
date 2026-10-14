@@ -71,6 +71,7 @@ defmodule Agendum.TUI.Boxes.Box do
     action_box: Agendum.TUI.Boxes.ActionBox,
     auto_assign: Agendum.TUI.Boxes.AutoAssignBox,
     category_match: Agendum.TUI.Boxes.CategoryMatchBox,
+    column_add: Agendum.TUI.Boxes.ColumnAddBox,
     column_props: Agendum.TUI.Boxes.ColumnBox,
     customize: Agendum.TUI.Boxes.CustomizeBox,
     date_rule: Agendum.TUI.Boxes.DateRuleBox,
