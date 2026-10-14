@@ -196,9 +196,6 @@ defmodule Agendum.TUI.Render.ControlPanel do
       top && top.type == :browse ->
         "BROWSE"
 
-      top && top.type in [:profile, :group_profile] ->
-        "ASSIGN"
-
       top &&
           top.type in [
             :choice,

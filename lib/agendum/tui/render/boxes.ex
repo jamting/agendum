@@ -145,16 +145,10 @@ defmodule Agendum.TUI.Render.Boxes do
   # a question has no title, as Agenda's
   defp box_title(_state, %{type: :confirm}), do: ""
 
-  defp box_title(_state, %{type: :group_profile, item_ids: ids}),
-    do: "Assignments: #{Draw.count(length(ids), "marked item")}"
-
   defp box_title(_state, %{type: :scope}), do: "Marked items"
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
   # the column's head is the box's first row, as in Agenda (screenshot 142)
-
-  defp box_title(state, %{type: :profile, item_id: id}),
-    do: "Assignments: " <> String.slice(state.db.items[id].text, 0, 40)
 
   defp box_title(state, %{type: :choice, kind: :move, cat_id: id}),
     do: "Moving #{state.db.categories[id].name} creates a conflict"
@@ -188,7 +182,7 @@ defmodule Agendum.TUI.Render.Boxes do
     do: @boxes[type].content(state, mode, inner, max_rows)
 
   defp box_content(state, %{type: type} = mode, inner, max_rows)
-       when type in [:profile, :group_profile, :choice],
+       when type in [:choice],
        do: CategoryBoxes.content(state, mode, inner, max_rows)
 
   defp box_content(state, %{type: :viewmgr} = mode, inner, max_rows),

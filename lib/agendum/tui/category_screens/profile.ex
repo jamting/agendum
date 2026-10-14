@@ -1,13 +1,80 @@
 defmodule Agendum.TUI.CategoryScreens.Profile do
   @moduledoc """
   The assignment profile (F3): an item's assignments, or the marked
-  items' (User's Guide 4-17), toggled with SPACE. Pure.
+  items' (User's Guide 4-17), toggled with SPACE. One module for both
+  boxes (`:profile` and `:group_profile`). Pure.
   """
+
+  use Agendum.TUI.Boxes.Box, finish: :none, indicator: "ASSIGN"
 
   alias Agendum.Core
   alias Agendum.Core.Database
-  alias Agendum.TUI.{CategoryScreens, State}
+  alias Agendum.TUI.{Boxes.Box, CategoryScreens, Terminal.Draw, State}
   alias Agendum.TUI.Update.Prompts
+
+  # --- the box (`Agendum.TUI.Boxes.Box`) ---------------------------------------------------
+
+  @impl Box
+  def handle(state, mode, key), do: CategoryScreens.handle(state, mode, key)
+
+  @impl Box
+  def title(_state, %{type: :group_profile, item_ids: ids}),
+    do: "Assignments: #{Draw.count(length(ids), "marked item")}"
+
+  def title(state, %{type: :profile, item_id: id}),
+    do: "Assignments: " <> String.slice(state.db.items[id].text, 0, 40)
+
+  @impl Box
+  def content(state, mode, inner, max_rows),
+    do: CategoryScreens.list_lines(state, mode, inner, max_rows, &marker/3) ++ [[], legend(mode)]
+
+  defp legend(%{type: :group_profile}),
+    do: [{:box, " N = marked items assigned · SPACE assigns or unassigns all"}]
+
+  defp legend(%{type: :profile}),
+    do: [{:box, " * assigned  c by a condition  + via subcategory  SPACE"}]
+
+  # how many marked items are in the category (+ for ten or more)
+  defp marker(state, %{type: :group_profile, item_ids: ids}, id) do
+    case CategoryScreens.group_count(state.db, ids, id) do
+      0 -> " "
+      n when n < 10 -> Integer.to_string(n)
+      _ -> "+"
+    end
+  end
+
+  # how the item is in the category: a date, by a condition, assigned, or
+  # through a subcategory
+  defp marker(state, %{type: :profile, item_id: item_id}, id) do
+    db = state.db
+
+    cond do
+      Database.date_category?(db, id) ->
+        if Database.item_date(db, item_id, id), do: "◊", else: " "
+
+      Database.conditional?(db, item_id, id) ->
+        "c"
+
+      Database.explicit?(db, item_id, id) ->
+        "*"
+
+      Database.member?(db, item_id, id) ->
+        "+"
+
+      true ->
+        " "
+    end
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"SPACE", "Assign/Unassign", "Assign or unassign"},
+      {"ESC", "Return", "Done"}
+    ]
+
+  @impl Box
+  def help, do: nil
 
   # --- assignment profile -----------------------------------------------------------------
 
