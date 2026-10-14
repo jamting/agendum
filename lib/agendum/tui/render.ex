@@ -22,7 +22,6 @@ defmodule Agendum.TUI.Render do
   @boxes [
     :picker,
     :calendar,
-    :datebook_props,
     :macros,
     :select_file,
     :profile,

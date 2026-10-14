@@ -13,7 +13,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   """
 
   alias Agendum.TUI.{
-    Boxes.DatebookBox,
     Boxes.ItemProperties,
     State
   }
@@ -26,7 +25,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
 
   # The box types and the module that knows their highlighted field
   @boxes %{
-    datebook_props: DatebookBox,
     props: Properties,
     item_props: ItemProperties
   }
@@ -61,23 +59,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
 
   # date format rows: the global Display Format and a date column's
   @help %{
-    datebook_props: %{
-      date_category: "The date category whose dates place items in the slots. SPACE picks one.",
-      end_category:
-        "A date category for the end of items that last a while. SPACE picks one, DEL clears it.",
-      section_category: "The category at the head of every section. SPACE picks one.",
-      period:
-        "How long the datebook shows: a day, a week, a month or a quarter. SPACE changes it.",
-      interval: "How long each section (slot) is. SPACE for the next choice.",
-      start:
-        "Where the datebook starts: an hour of the day or a day of the week. SPACE changes it.",
-      end: "Where the datebook ends: an hour of the day or a day of the week. SPACE changes it.",
-      base:
-        "The date the period is taken from, such as \"today\" or \"next week\", " <>
-          "read each time the view is shown. SPACE types it.",
-      hide_column_heads: "Whether the column heads show above each section. SPACE switches.",
-      section_separators: "Whether a line separates the sections. SPACE switches."
-    },
     props: %{
       name: "The category's name. F2 (or SPACE) edits it.",
       short_name:

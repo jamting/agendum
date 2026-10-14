@@ -24,8 +24,10 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
   apply to the period show "—". Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
+  alias Agendum.TUI.Boxes.{Box, BoxNav}
 
   alias Agendum.Core
   alias Agendum.Core.{Datebook, DateFormat}
@@ -44,19 +46,35 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
 
    Hide column heads  : [hide_column_heads     ]
    Section separators : [section_separators    ]
-
-   SPACE picks, types or cycles · DEL clears
   """
   @rows Template.fields(@layout)
   # the view's own settings, switched on or off (not the datebook's)
   @options [:hide_column_heads, :section_separators]
   @days ~w(Mon Tue Wed Thu Fri Sat Sun)
 
+  @help %{
+    date_category: "The date category whose dates place items in the slots. SPACE picks one.",
+    end_category:
+      "A date category for the end of items that last a while. SPACE picks one, DEL clears it.",
+    section_category: "The category at the head of every section. SPACE picks one.",
+    period: "How long the datebook shows: a day, a week, a month or a quarter. SPACE changes it.",
+    interval: "How long each section (slot) is. SPACE for the next choice.",
+    start:
+      "Where the datebook starts: an hour of the day or a day of the week. SPACE changes it.",
+    end: "Where the datebook ends: an hour of the day or a day of the week. SPACE changes it.",
+    base:
+      "The date the period is taken from, such as \"today\" or \"next week\", " <>
+        "read each time the view is shown. SPACE types it.",
+    hide_column_heads: "Whether the column heads show above each section. SPACE switches.",
+    section_separators: "Whether a line separates the sections. SPACE switches."
+  }
+
   def open(state, view_id),
     do: State.push(state, %{type: :datebook_props, view_id: view_id, cursor: 0})
 
   defp datebook(state, mode), do: state.db.views[mode.view_id].datebook
 
+  @impl Box
   def handle(state, mode, key) do
     row = Enum.at(@rows, mode.cursor)
     d = datebook(state, mode)
@@ -184,11 +202,11 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
 
   defp time_text(time), do: time |> Time.to_string() |> String.slice(0, 5)
 
-  @doc "The box's title."
+  @impl Box
   def title(state, mode), do: "Datebook settings: #{state.db.views[mode.view_id].name}"
 
-  @doc "The box's lines, the highlighted setting selected."
-  def content(state, mode) do
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
     d = datebook(state, mode)
     db = state.db
     view = db.views[mode.view_id]
@@ -210,8 +228,22 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
       section_separators: yes_no.(view.section_separators)
     }
 
-    Template.render(@layout, values, selected: Enum.at(@rows, mode.cursor))
+    Template.render(@layout, values, selected: field(state, mode)) ++
+      [[], Box.hint(keys(state, mode), inner)]
   end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓←→", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Pick, type or next choice"},
+      {"DEL", "Clear", "Clear the End category"},
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
 
   defp range_text(state, %{period: :day} = d) do
     {first, last} = Datebook.hours(d, state.db.date_settings)
@@ -235,6 +267,6 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
   defp interval_name(:week), do: "Weekly"
   defp interval_name(:month), do: "Monthly"
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

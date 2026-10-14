@@ -74,6 +74,7 @@ defmodule Agendum.TUI.Boxes.Box do
     column_add: Agendum.TUI.Boxes.ColumnAddBox,
     column_props: Agendum.TUI.Boxes.ColumnBox,
     customize: Agendum.TUI.Boxes.CustomizeBox,
+    datebook_props: Agendum.TUI.Boxes.DatebookBox,
     date_rule: Agendum.TUI.Boxes.DateRuleBox,
     date_settings: Agendum.TUI.Boxes.DateSettingsBox,
     display_format: Agendum.TUI.Boxes.DisplayFormatBox,

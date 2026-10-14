@@ -220,9 +220,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(state, %{type: :choice, kind: :learn, macro_id: id}),
     do: "Learn: #{state.db.macros[id].name}"
 
-  defp box_title(state, %{type: :datebook_props} = mode),
-    do: Agendum.TUI.Boxes.DatebookBox.title(state, mode)
-
   defp box_title(state, %{type: :choice, kind: :type, cat_id: id}),
     do: "Category type: #{state.db.categories[id].name}"
 
@@ -454,9 +451,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
     rows ++ [[{:box, " ENTER opens · type to narrow · F7 dates · ESC back"}]]
   end
-
-  defp box_content(state, %{type: :datebook_props} = mode, _inner, _max_rows),
-    do: Agendum.TUI.Boxes.DatebookBox.content(state, mode)
 
   defp box_content(state, %{type: :calendar} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.CalendarBox.lines(state, mode)

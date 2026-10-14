@@ -183,15 +183,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Back", "Back to the prompt"}
     ]
 
-  defp mode_keys(%{type: :datebook_props}),
-    do: [
-      {"↑↓←→", "Setting", "Move between settings"},
-      {"SPACE", "Change", "Pick, type or next choice"},
-      {"DEL", "Clear", "Clear the End category"},
-      {"ENTER", "Done"},
-      {"ESC", "Cancel"}
-    ]
-
   defp mode_keys(%{type: :alarm_list}),
     do: [{"DEL", "Remove past alarm"}, {"ALT-A", "Cancel alarm"}, {"ESC", "Close"}]
 

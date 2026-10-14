@@ -422,9 +422,6 @@ defmodule Agendum.TUI.Update do
   defp dispatch(state, %{type: :browse} = m, key),
     do: Agendum.TUI.Moves.Browse.handle(state, m, key)
 
-  defp dispatch(state, %{type: :datebook_props} = m, key),
-    do: Agendum.TUI.Boxes.DatebookBox.handle(state, m, key)
-
   defp dispatch(state, %{type: :calendars} = m, key),
     do: Agendum.TUI.Boxes.CalendarsBox.handle(state, m, key)
 
