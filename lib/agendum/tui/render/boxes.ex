@@ -90,8 +90,7 @@ defmodule Agendum.TUI.Render.Boxes do
   @done_boxes [
     :viewmgr,
     :column_add,
-    :range_filter,
-    :action_box
+    :range_filter
   ]
   # boxes to choose one thing in
   @accept_boxes [
@@ -193,11 +192,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_title(_state, %{type: :questions}), do: "Suggested assignments"
   defp box_title(_state, %{type: :goto}), do: "Go to section"
-
-  defp box_title(state, %{type: :action_box} = mode) do
-    kind = if Agendum.TUI.Boxes.ActionBox.numeric?(state, mode), do: "Numeric", else: "Date"
-    "#{kind} action: #{state.db.categories[mode.target].name}"
-  end
 
   defp box_title(state, %{type: :range_filter} = mode) do
     kind = if Agendum.TUI.Boxes.RangeFilterBox.numeric?(state, mode), do: "Numeric", else: "Date"
@@ -422,24 +416,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
     [[{:box, " " <> String.slice(item.text, 0, inner - 2)}], [], [{:box, " Assign to:"}]] ++
       cats ++ [[], [{:box, " SPACE picks · TAB picks all · ENTER assigns · ESC stops"}]]
-  end
-
-  defp box_content(state, %{type: :action_box} = mode, inner, _max_rows) do
-    rows =
-      state
-      |> Agendum.TUI.Boxes.ActionBox.lines(mode)
-      |> Enum.with_index()
-      |> Enum.map(fn {{label, value}, i} ->
-        label = [{:box, " " <> Draw.pad(label, 12) <> ": "}]
-
-        case value do
-          {:line, line} when i == mode.cursor -> label ++ Draw.input(line, inner - 16, :edit)
-          {:line, line} -> label ++ [{:box, line.text}]
-          text -> label ++ [{if(i == mode.cursor, do: :box_selected, else: :box), text}]
-        end
-      end)
-
-    rows ++ [[], [{:box, " SPACE changes · ENTER applies · DEL removes · ESC cancels"}]]
   end
 
   defp box_content(state, %{type: :range_filter} = mode, inner, _max_rows) do

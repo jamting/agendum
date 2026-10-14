@@ -23,7 +23,7 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
   @max 30
 
   # boxes with settings that SPACE cycles, besides those ESC cancels
-  @boxes [:range_filter, :action_box, :column_add]
+  @boxes [:range_filter, :column_add]
 
   @doc """
   A key on a box: a letter picks a choice, F3 lists them; `:pass` when the

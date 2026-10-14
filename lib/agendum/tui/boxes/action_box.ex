@@ -5,18 +5,37 @@ defmodule Agendum.TUI.Boxes.ActionBox do
   Assignment actions. Rows: what to do (set a date or number, or clear it)
   and the date or value. The arrows move; SPACE changes the choice; typing
   goes into the value. ENTER applies, DEL removes the action, ESC cancels.
-  Pure.
+  Drawn from a layout (`Agendum.TUI.Boxes.Template`), one for a date and one
+  for a number. Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
 
   alias Agendum.Core
+  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
   alias Agendum.TUI.{Typing.LineEdit, State}
   alias Agendum.TUI.Update.Editing
 
-  @rows [:what, :value]
-  def rows, do: @rows
+  @date_layout """
+   Action      : [what                                        ]
+   With date   : [value                                       ]
+  """
+  @number_layout """
+   Action      : [what                                        ]
+   With value  : [value                                       ]
+  """
+
+  @rows Template.fields(@date_layout)
+  @grid Template.grid(@date_layout, @rows)
+
+  @help %{
+    what: "Choose whether the action gives items a date or a number, or removes it. SPACE.",
+    value:
+      "Type the date (\"tomorrow\", read when the action runs) or the number. " <>
+        "ENTER applies, DEL removes the action."
+  }
 
   def open(state, owner, target) do
     {clear, value} =
@@ -47,6 +66,7 @@ defmodule Agendum.TUI.Boxes.ActionBox do
   @doc "Whether the action is on a numeric category (else a date category)."
   def numeric?(state, mode), do: state.db.categories[mode.target].kind == :numeric
 
+  @impl Box
   def handle(state, mode, key) do
     row = Enum.at(@rows, mode.cursor)
 
@@ -59,7 +79,7 @@ defmodule Agendum.TUI.Boxes.ActionBox do
 
       # on the value, ← → HOME END move in it; ↑ ↓ TAB still move between settings
       k when is_move(k) and (row != :value or k in [:up, :down, :tab, :shift_tab]) ->
-        BoxNav.move(state, mode, BoxNav.column(@rows), k)
+        BoxNav.move(state, mode, @grid, k)
 
       k when row == :value ->
         case LineEdit.handle(mode.line, k) do
@@ -98,18 +118,45 @@ defmodule Agendum.TUI.Boxes.ActionBox do
     end
   end
 
-  @doc "`{label, value}` for each row; the value row gives its `LineEdit`."
-  def lines(state, mode) do
-    name = state.db.categories[mode.target].name
-    noun = if numeric?(state, mode), do: "value", else: "date"
-
-    [
-      {"Action",
-       if(mode.clear, do: "Remove the #{noun} in #{name}", else: "Give items a #{noun}")},
-      {if(numeric?(state, mode), do: "With value", else: "With date"), {:line, mode.line}}
-    ]
+  @impl Box
+  def title(state, mode) do
+    kind = if numeric?(state, mode), do: "Numeric", else: "Date"
+    "#{kind} action: #{state.db.categories[mode.target].name}"
   end
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
+    name = state.db.categories[mode.target].name
+
+    {layout, noun} =
+      if numeric?(state, mode), do: {@number_layout, "value"}, else: {@date_layout, "date"}
+
+    values = %{
+      what: if(mode.clear, do: "Remove the #{noun} in #{name}", else: "Give items a #{noun}"),
+      value: mode.line.text
+    }
+
+    # the value on the cursor is drawn as the line being typed
+    row = field(state, mode)
+    editing = if row == :value, do: [editing: {:value, mode.line}], else: []
+
+    Template.render(layout, values, [selected: row] ++ editing) ++
+      [[], Box.hint(keys(state, mode), inner)]
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓←→", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Change the setting"},
+      {"ENTER", "Apply"},
+      {"DEL", "Remove"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
+
+  @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

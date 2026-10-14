@@ -34,7 +34,6 @@ defmodule Agendum.TUI.Render do
     :calendars,
     :goto,
     :range_filter,
-    :action_box,
     :questions,
     :column_props,
     :column_add,

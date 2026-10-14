@@ -13,7 +13,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   """
 
   alias Agendum.TUI.{
-    Boxes.ActionBox,
     Boxes.ColumnAddBox,
     Boxes.ColumnBox,
     Boxes.DatebookBox,
@@ -40,7 +39,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     item_column: ItemColumnBox,
     numeric_functions: NumericFunctionsBox,
     range_filter: RangeFilterBox,
-    action_box: ActionBox,
     props: Properties,
     item_props: ItemProperties
   }
@@ -168,12 +166,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       where:
         "Choose items inside the range or outside it. SPACE switches. " <>
           "ENTER applies, DEL removes the category."
-    },
-    action_box: %{
-      what: "Choose whether the action gives items a date or a number, or removes it. SPACE.",
-      value:
-        "Type the date (\"tomorrow\", read when the action runs) or the number. " <>
-          "ENTER applies, DEL removes the action."
     },
     props: %{
       name: "The category's name. F2 (or SPACE) edits it.",
