@@ -385,6 +385,8 @@ defmodule Agendum.TUI.Update do
 
   # --- dispatch --------------------------------------------------------------
 
+  @boxes Agendum.TUI.Boxes.Box.registry()
+
   @doc """
   A key for the box on top alone, without what `handle/2` does around it
   (undo, macros): `Agendum.TUI.Boxes.BoxChoices` tries SPACE with it.
@@ -393,6 +395,11 @@ defmodule Agendum.TUI.Update do
   def box_key(state, key), do: dispatch(state, State.mode(state), key)
 
   defp dispatch(state, nil, key), do: ViewKeys.view_key(state, key)
+
+  # a box with a module of its own (`Agendum.TUI.Boxes.Box`)
+  defp dispatch(state, %{type: type} = m, key) when is_map_key(@boxes, type),
+    do: @boxes[type].handle(state, m, key)
+
   defp dispatch(state, %{type: :menu} = m, key), do: Menu.handle(state, m, key)
   defp dispatch(state, %{type: :choice_list} = m, key), do: BoxChoices.list_key(state, m, key)
 
@@ -420,9 +427,6 @@ defmodule Agendum.TUI.Update do
 
   defp dispatch(state, %{type: :select_file} = m, key),
     do: Agendum.TUI.Boxes.SelectFile.handle(state, m, key)
-
-  defp dispatch(state, %{type: :macro_props} = m, key),
-    do: Agendum.TUI.Boxes.MacroProps.handle(state, m, key)
 
   defp dispatch(state, %{type: :browse} = m, key),
     do: Agendum.TUI.Moves.Browse.handle(state, m, key)

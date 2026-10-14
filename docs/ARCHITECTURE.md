@@ -72,8 +72,13 @@ splash and developer screens, `DebugLog`, `CategoryScreens`), and groups
 the rest by what it is for:
 
 - `tui/boxes/` (`Agendum.TUI.Boxes.*`): every box, and the machinery they
-  share: `Template` (layouts), `BoxNav` (moving), `BoxCancel` (ESC),
-  `BoxChoices` (letters and F3), `FieldHelp`, `FieldTyping`;
+  share: `Box` (the behaviour a box module implements, and the registry
+  from mode type to module), `Template` (layouts), `BoxNav` (moving),
+  `BoxCancel` (ESC), `BoxChoices` (letters and F3), `FieldHelp`,
+  `FieldTyping`. A box moved to `Box` keeps everything about it in its own
+  module: keys, drawing, key bar, help, how it ends (docs/REFACTORING.md,
+  step 3; the others still have clauses in `Update`, `Render.Boxes`,
+  `KeyBar` and the rest);
 - `tui/terminal/` (`Agendum.TUI.Terminal.*`): keys in, screen out: `Keys`,
   `Screen`, `Draw`, `Theme` and its palettes (`Agendum.TUI.Terminal` itself,
   the raw terminal, is the folder's parent module);
@@ -90,6 +95,7 @@ the rest by what it is for:
 | `Agendum.TUI.Update`                           | ✔     | Key → state transitions: keys for every screen, the clock (`tick/2`), effect results, dispatch to the screen on top.             |
 | `Agendum.TUI.Update.*`                         | ✔     | Its parts: `ViewKeys`, `Editing` (inline), `Marked` (and moves), `Prompts` (and Y/N), `Notes`, `Actions` (`perform/2`).          |
 | `Agendum.TUI.Menu`                             | ✔     | The Lotus two-line menu tree.                                                                                                    |
+| `Agendum.TUI.Boxes.Box`                              | ✔     | The behaviour of a box module (handle, title, content, keys, help, width; finish, indicator, cancels, choices) and the registry of box modules. |
 | `Agendum.TUI.Boxes.BoxNav`                           | ✔     | Moving between a box's settings as Agenda: → ← along a row, ↓ ↑ keeping to the side (`Template.grid/2`).                         |
 | `Agendum.TUI.Boxes.BoxChoices`                       | ✔     | A setting's choices (what SPACE goes through): the first letter picks one, F3 lists them.                                        |
 | `Agendum.TUI.Boxes.BoxCancel`                        | ✔     | ESC cancels a settings box: the file and preferences as they were when it opened (ADR 0030).                                     |

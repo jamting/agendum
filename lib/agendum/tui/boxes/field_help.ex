@@ -26,7 +26,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.InputFormatBox,
     Boxes.ItemColumnBox,
     Boxes.ItemProperties,
-    Boxes.MacroProps,
     Boxes.NumericFunctionsBox,
     Boxes.RangeFilterBox,
     Boxes.ScheduleBox,
@@ -37,6 +36,10 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   }
 
   alias Agendum.TUI.CategoryScreens.Properties
+  alias Agendum.TUI.Boxes.Box
+
+  # boxes with a module of their own keep their help there (`Agendum.TUI.Boxes.Box`)
+  @registered Box.registry()
 
   # The box types and the module that knows their highlighted field
   @boxes %{
@@ -60,7 +63,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     range_filter: RangeFilterBox,
     action_box: ActionBox,
     execute: ExecuteBox,
-    macro_props: MacroProps,
     props: Properties,
     item_props: ItemProperties
   }
@@ -332,15 +334,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
         "Apply actions to new assignments only, or to old and new ones. SPACE switches. " <>
           "ENTER runs it."
     },
-    macro_props: %{
-      name: "The macro's name. F2 (or SPACE) renames it.",
-      keys: "The keystrokes the macro plays. SPACE (or F2) edits them.",
-      key: "The key that runs the macro. SPACE attaches a key, DEL detaches it.",
-      view: "Whether the macro can run from views. SPACE switches.",
-      note: "Whether the macro can run in notes. SPACE switches.",
-      catmgr: "Whether the macro can run in the category manager. SPACE switches.",
-      elsewhere: "Whether the macro's key runs it in boxes and everywhere else. SPACE switches."
-    },
     props: %{
       name: "The category's name. F2 (or SPACE) edits it.",
       short_name:
@@ -380,21 +373,30 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   @doc "The help for the highlighted field of the box on top, or nil."
   @spec text(State.t()) :: String.t() | nil
   def text(state) do
-    case State.mode(state) do
-      %{type: type} = mode when is_map_key(@boxes, type) ->
+    mode = State.mode(state)
+
+    case mode do
+      nil ->
+        nil
+
+      %{type: type} when is_map_key(@registered, type) ->
+        Box.help_text(@registered[type], state, mode)
+
+      %{type: type} when is_map_key(@boxes, type) ->
         get_in(@help, [type, @boxes[type].field(state, mode)])
 
       %{type: type} ->
         @lists[type]
-
-      nil ->
-        nil
     end
   end
 
   @doc "Every help text, for the tests."
   @spec all() :: [String.t()]
-  def all, do: Map.values(@lists) ++ Enum.flat_map(Map.values(@help), &Map.values/1)
+  def all,
+    do:
+      Map.values(@lists) ++
+        Enum.flat_map(Map.values(@help), &Map.values/1) ++
+        Enum.flat_map(Map.values(@registered), &Box.help_texts/1)
 
   @doc "The fields that have help, by box type, for the tests."
   @spec fields() :: %{atom => [atom]}
@@ -402,5 +404,8 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
 
   @doc "The box types whose fields have help, with the module that names the field."
   @spec boxes() :: %{atom => module}
-  def boxes, do: @boxes
+  def boxes do
+    moved = for {type, box} <- @registered, is_map(box.help()), into: %{}, do: {type, box}
+    Map.merge(@boxes, moved)
+  end
 end

@@ -183,6 +183,9 @@ defmodule Agendum.TUI.Render.ControlPanel do
       top && top.type == :menu ->
         "MENU"
 
+      box = Agendum.TUI.Boxes.Box.module(top) ->
+        box.indicator()
+
       top && top.type in [:move_item, :column_move, :section_move] ->
         "MOVE"
 
@@ -205,7 +208,6 @@ defmodule Agendum.TUI.Render.ControlPanel do
             :display_format,
             :datebook_props,
             :schedule,
-            :macro_props,
             :input_format,
             :customize,
             :calendars,

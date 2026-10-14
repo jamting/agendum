@@ -13,29 +13,47 @@ defmodule Agendum.TUI.Boxes.MacroProps do
     * ENTER closes the box; ESC closes it and cancels its changes
       (`Agendum.TUI.Boxes.BoxCancel`)
 
-  Every change is one undo step. Pure.
+  Every change is one undo step. The box is drawn from `@layout`
+  (`Agendum.TUI.Boxes.Template`), whose fields are also the cursor's order. Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
+  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
 
   alias Agendum.Core
-  alias Agendum.Core.Macro
   alias Agendum.TUI.{MacroKeys, Macros, State}
   alias Agendum.TUI.Update.Prompts
 
-  @rows [:name, :keys, :key, :view, :note, :catmgr, :elsewhere]
-  @place_names %{
-    view: "View",
-    note: "Note",
-    catmgr: "Category manager",
-    elsewhere: "Everywhere else"
+  @layout """
+   Name                      : [name                        ]
+   Keystrokes                : [keys                        ]
+   Attach to key             : [key                         ]
+   Run from View             : [view                        ]
+   Run from Note             : [note                        ]
+   Run from Category manager : [catmgr                      ]
+   Run from Everywhere else  : [elsewhere                   ]
+  """
+
+  @rows Template.fields(@layout)
+  @grid Template.grid(@layout, @rows)
+
+  @help %{
+    name: "The macro's name. F2 (or SPACE) renames it.",
+    keys: "The keystrokes the macro plays. SPACE (or F2) edits them.",
+    key: "The key that runs the macro. SPACE attaches a key, DEL detaches it.",
+    view: "Whether the macro can run from views. SPACE switches.",
+    note: "Whether the macro can run in notes. SPACE switches.",
+    catmgr: "Whether the macro can run in the category manager. SPACE switches.",
+    elsewhere: "Whether the macro's key runs it in boxes and everywhere else. SPACE switches."
   }
   # keys Agenda would not attach a macro to: they run macros themselves
   @reserved [{:alt_f, 3}, {:alt, "z"}, {:alt_f, 1}]
 
   def open(state, id), do: State.push(state, %{type: :macro_props, macro_id: id, cursor: 0})
 
+  @impl Box
   def handle(state, mode, key) do
     macro = state.db.macros[mode.macro_id]
     row = Enum.at(@rows, mode.cursor)
@@ -46,7 +64,7 @@ defmodule Agendum.TUI.Boxes.MacroProps do
         State.pop(state)
 
       {k, _} when is_move(k) ->
-        BoxNav.move(state, mode, BoxNav.column(@rows), k)
+        BoxNav.move(state, mode, @grid, k)
 
       {k, :name} when k in [{:f, 2}, {:char, " "}] ->
         Prompts.prompt(state, "Rename the macro to:", {:rename_macro, macro.id}, macro.name)
@@ -110,27 +128,43 @@ defmodule Agendum.TUI.Boxes.MacroProps do
     end
   end
 
+  @impl Box
   def title(state, mode), do: "Macro properties: #{state.db.macros[mode.macro_id].name}"
 
-  @doc "`{label, value}` for each row."
-  def lines(state, mode) do
-    m = state.db.macros[mode.macro_id]
-    yes = &if(&1, do: "Yes", else: "No")
-    keys = if m.keys == "", do: "(none) ...", else: "#{String.slice(m.keys, 0, 30)} ..."
-
-    [
-      {"Name", m.name},
-      {"Keystrokes", keys},
-      {"Attach to key", m.key || "(none)"}
-    ] ++
-      Enum.map(Macro.places(), fn place ->
-        value =
-          if place == :elsewhere and m.key == nil, do: "—", else: yes.(m.run_from[place])
-
-        {"Run from " <> @place_names[place], value}
-      end)
+  @impl Box
+  def content(state, mode, _inner, _max_rows) do
+    Template.render(@layout, values(state.db.macros[mode.macro_id]), selected: field(state, mode)) ++
+      [[], Box.hint(keys(state, mode))]
   end
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  defp values(macro) do
+    yes = &if(&1, do: "Yes", else: "No")
+    keys = if macro.keys == "", do: "(none) ...", else: "#{String.slice(macro.keys, 0, 23)} ..."
+    # a macro runs everywhere else only from a key of its own (`Map.new/2`
+    # makes the four "Run from" values from the macro's places)
+    run_from =
+      Map.new(macro.run_from, fn
+        {:elsewhere, _} when macro.key == nil -> {:elsewhere, "—"}
+        {place, yes?} -> {place, yes.(yes?)}
+      end)
+
+    Map.merge(%{name: macro.name, keys: keys, key: macro.key || "(none)"}, run_from)
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓←→", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Change the setting"},
+      {"F2", "Edit", "Rename, or edit the keys"},
+      {"DEL", "Detach", "Detach the key"},
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
+
+  @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

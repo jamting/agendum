@@ -122,7 +122,12 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
 
   def choices(_state), do: []
 
-  defp cycles?(%{type: type}), do: BoxCancel.cancels?(type) or type in @boxes
+  defp cycles?(%{type: type} = mode) do
+    case Agendum.TUI.Boxes.Box.module(mode) do
+      nil -> BoxCancel.cancels?(type) or type in @boxes
+      box -> box.choices?()
+    end
+  end
 
   # SPACE once more from where the last press left it, until the first
   # label comes back; a press that leaves the box, or no change, ends it

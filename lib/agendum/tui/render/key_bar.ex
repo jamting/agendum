@@ -5,6 +5,9 @@ defmodule Agendum.TUI.Render.KeyBar do
 
   alias Agendum.TUI.{Typing.Completion, Terminal.Draw, State}
 
+  # boxes with a module of their own (`Agendum.TUI.Boxes.Box`) list their keys
+  @boxes Agendum.TUI.Boxes.Box.registry()
+
   # Each key has a short label, as in Agenda's 8-character slots, and may
   # have a fuller one (and a fuller name, "CTRL-N" for "^N"). The bar shows
   # the fuller ones when they all fit the screen's width, the short ones
@@ -33,7 +36,10 @@ defmodule Agendum.TUI.Render.KeyBar do
           ]
 
         true ->
-          mode_keys(State.mode(state))
+          case State.mode(state) do
+            mode when is_map_key(@boxes, mode.type) -> @boxes[mode.type].keys(state, mode)
+            mode -> mode_keys(mode)
+          end
       end
       |> Enum.map(&full_entry/1)
 
@@ -175,16 +181,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"type", "Narrow", "Narrow the list"},
       {"F7", "Dates", "Show the dates"},
       {"ESC", "Back", "Back to the prompt"}
-    ]
-
-  defp mode_keys(%{type: :macro_props}),
-    do: [
-      {"↑↓←→", "Setting", "Move between settings"},
-      {"SPACE", "Change", "Change the setting"},
-      {"F2", "Edit", "Rename, or edit the keys"},
-      {"DEL", "Detach", "Detach the key"},
-      {"ENTER", "Done"},
-      {"ESC", "Cancel"}
     ]
 
   defp mode_keys(%{type: :schedule}),

@@ -64,6 +64,9 @@ One box per commit, its layout converted to a template in the same commit
 `render/boxes.ex`, the `dispatch` clauses and the lists in `render.ex` and
 `box_cancel.ex` are gone, and the stale-hint bug with them.
 
+Progress: `Agendum.TUI.Boxes.Box` and its registry are in place; moved:
+Macro Properties.
+
 ## 4. Logic in `Agendum.TUI.Update`: wait for the command layer
 
 `Agendum.TUI.Update` still decides things that belong in the core. The

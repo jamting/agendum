@@ -6,8 +6,11 @@ defmodule Agendum.TUI.Render.Boxes do
   """
 
   alias Agendum.Core.DateFormat
-  alias Agendum.TUI.{Typing.Completion, Terminal.Draw, State}
+  alias Agendum.TUI.{Boxes.Box, Typing.Completion, Terminal.Draw, State}
   alias Agendum.TUI.Render.{CategoryBoxes, View}
+
+  # boxes with a module of their own (`Agendum.TUI.Boxes.Box`) draw themselves
+  @boxes Box.registry()
 
   # A box opened from another box (`depth` 1, 2 …) sits a line lower and
   # two columns right of the box beneath (`beneath`, that box's left
@@ -114,11 +117,25 @@ defmodule Agendum.TUI.Render.Boxes do
   defp footer(mode, inner) do
     {long, short} =
       cond do
-        Agendum.TUI.Boxes.BoxCancel.cancels?(mode.type) or mode.type in @done_boxes -> @done
-        mode.type == :picker and esc_picker?(mode.purpose) -> @esc_done
-        mode.type in [:picker | @accept_boxes] -> @accept
-        mode.type in @return_boxes -> @return
-        true -> {"", ""}
+        box = Box.module(mode) ->
+          %{done: @done, accept: @accept, esc_done: @esc_done, return: @return, none: {"", ""}}[
+            box.finish()
+          ]
+
+        Agendum.TUI.Boxes.BoxCancel.cancels?(mode.type) or mode.type in @done_boxes ->
+          @done
+
+        mode.type == :picker and esc_picker?(mode.purpose) ->
+          @esc_done
+
+        mode.type in [:picker | @accept_boxes] ->
+          @accept
+
+        mode.type in @return_boxes ->
+          @return
+
+        true ->
+          {"", ""}
       end
 
     if String.length(long) + 2 <= inner - 2, do: long, else: short
@@ -126,6 +143,9 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp esc_picker?(purpose) when is_tuple(purpose), do: elem(purpose, 0) in @esc_pickers
   defp esc_picker?(_purpose), do: false
+
+  defp box_width(state, %{type: type} = mode) when is_map_key(@boxes, type),
+    do: @boxes[type].width(state, mode)
 
   # the calendar is a small box, as in Agenda; the others share one width
   defp box_width(state, %{type: :calendar}), do: min(state.width - 8, 30)
@@ -149,6 +169,9 @@ defmodule Agendum.TUI.Render.Boxes do
        do: min(state.width - 8, 72)
 
   defp box_width(state, _mode), do: min(state.width - 8, 60)
+
+  defp box_title(state, %{type: type} = mode) when is_map_key(@boxes, type),
+    do: @boxes[type].title(state, mode)
 
   defp box_title(_state, %{type: :calendar} = mode), do: Agendum.TUI.Boxes.CalendarBox.title(mode)
 
@@ -246,9 +269,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(state, %{type: :select_file} = mode),
     do: Agendum.TUI.Boxes.SelectFile.title(mode, box_width(state, mode))
 
-  defp box_title(state, %{type: :macro_props} = mode),
-    do: Agendum.TUI.Boxes.MacroProps.title(state, mode)
-
   defp box_title(state, %{type: :choice, kind: :learn, macro_id: id}),
     do: "Learn: #{state.db.macros[id].name}"
 
@@ -334,6 +354,9 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp picker_title(_state, :execute_root),
     do: "Apply the conditions of this category and its children"
+
+  defp box_content(state, %{type: type} = mode, inner, max_rows) when is_map_key(@boxes, type),
+    do: @boxes[type].content(state, mode, inner, max_rows)
 
   defp box_content(state, %{type: type} = mode, inner, max_rows)
        when type in [:picker, :profile, :group_profile, :choice, :props],
@@ -687,21 +710,6 @@ defmodule Agendum.TUI.Render.Boxes do
       |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
 
     rows ++ [[{:box, " ENTER opens · type to narrow · F7 dates · ESC back"}]]
-  end
-
-  defp box_content(state, %{type: :macro_props} = mode, _inner, _max_rows) do
-    rows =
-      state
-      |> Agendum.TUI.Boxes.MacroProps.lines(mode)
-      |> Enum.with_index()
-      |> Enum.map(fn {{label, value}, i} ->
-        [
-          {:box, " " <> Draw.pad(label, 26) <> ": "},
-          {if(i == mode.cursor, do: :box_selected, else: :box), value}
-        ]
-      end)
-
-    rows ++ [[], [{:box, " ENTER changes · SPACE switches Yes/No · DEL detaches"}]]
   end
 
   defp box_content(state, %{type: :schedule} = mode, _inner, _max_rows) do

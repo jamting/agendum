@@ -36,7 +36,6 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
     :column_props,
     :item_column,
     :numeric_functions,
-    :macro_props,
     :props,
     :item_props
   ]
@@ -46,14 +45,23 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
 
   @doc "Whether ESC cancels the changes made in a box of this type."
   @spec cancels?(atom) :: boolean
-  def cancels?(type), do: type in @boxes
+  def cancels?(type) do
+    case Agendum.TUI.Boxes.Box.registry() do
+      %{^type => box} -> box.cancels?()
+      _ -> type in @boxes
+    end
+  end
 
   @doc "ESC on a settings box with nothing being typed: the box closes and its changes go."
   @spec cancel(State.t(), term) :: State.t() | :pass
   def cancel(%State{edit: nil} = state, :esc) do
     case State.mode(state) do
-      %{type: type, opened: opened} = mode when type in @boxes ->
-        if Map.get(mode, :typing), do: :pass, else: state |> State.pop() |> restore(opened)
+      %{type: type, opened: opened} = mode ->
+        cond do
+          not cancels?(type) -> :pass
+          Map.get(mode, :typing) -> :pass
+          true -> state |> State.pop() |> restore(opened)
+        end
 
       _ ->
         :pass
@@ -69,12 +77,14 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
   """
   @spec track(State.t(), State.t()) :: State.t()
   def track(before, %State{} = state) do
-    case {State.mode(before), State.mode(state)} do
-      {_, %{type: type} = mode} when type in @boxes and not is_map_key(mode, :opened) ->
-        State.put_mode(state, Map.put(mode, :opened, snapshot(before)))
+    top = State.mode(state)
 
-      {%{type: screen}, %{type: type} = mode} when screen in @screens and type in @boxes ->
-        State.put_mode(state, %{mode | opened: snapshot(state)})
+    case {State.mode(before), top && cancels?(top.type)} do
+      {_, true} when not is_map_key(top, :opened) ->
+        State.put_mode(state, Map.put(top, :opened, snapshot(before)))
+
+      {%{type: screen}, true} when screen in @screens ->
+        State.put_mode(state, %{top | opened: snapshot(state)})
 
       _ ->
         state

@@ -25,7 +25,6 @@ defmodule Agendum.TUI.Render do
     :datebook_props,
     :schedule,
     :macros,
-    :macro_props,
     :select_file,
     :profile,
     :props,
@@ -65,7 +64,8 @@ defmodule Agendum.TUI.Render do
 
   @doc "Whether a mode is drawn as a box over the screen."
   @spec box?(map) :: boolean
-  def box?(%{type: type}), do: type in @boxes
+  def box?(%{type: type}),
+    do: type in @boxes or is_map_key(Agendum.TUI.Boxes.Box.registry(), type)
 
   @spec render(State.t()) :: [Draw.line()]
   def render(%State{modes: [%{type: :splash} | _]} = state), do: Agendum.TUI.Splash.render(state)
@@ -106,7 +106,7 @@ defmodule Agendum.TUI.Render do
   defp split_modes(modes) do
     {above, rest} = Enum.split_while(modes, &(&1.type not in @full_screen))
     base = List.first(rest)
-    {base, above |> Enum.filter(&(&1.type in @boxes)) |> Enum.reverse()}
+    {base, above |> Enum.filter(&box?/1) |> Enum.reverse()}
   end
 
   defp body(state, nil), do: fit(View.lines(state), state)
