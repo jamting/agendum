@@ -14,7 +14,7 @@ data inconsistent.
 
 ## Decision
 
-- Only *explicit* links are stored, in `Agenda.Core.Links`, a bidirectional
+- Only *explicit* links are stored, in `Agendum.Core.Links`, a bidirectional
   many-to-many relation (the patent's link structures). Links made by
   category links (`also_assign`, R8) and by conditions (R15) are explicit
   links too; the condition-made ones are also listed in
@@ -34,7 +34,7 @@ data inconsistent.
   can get out of step. Promote, demote and move only edit the hierarchy, plus
   the conflict checks for exclusive families (R7a–R7d).
 - Assignment rules (exclusion, "not both a category and its ancestor",
-  category links) are checked in one place, `Agenda.Core.Assign`, when links are
+  category links) are checked in one place, `Agendum.Core.Assign`, when links are
   made.
 - Membership queries walk a subtree each time. That is fast enough for
   personal data; ADR 0001 notes where to add indexes if it ever isn't.

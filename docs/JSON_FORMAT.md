@@ -6,7 +6,7 @@ everything in the file, so an export imported again gives the same file. It
 is meant for backups you can read, diffs, scripts and moving data to other
 tools. The working format stays the Erlang-term `.agendum` file (ADR 0003).
 
-The code is `Agenda.Core.JSONFile`; `test/agenda/core/json_file_test.exs`
+The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs`
 and `json_round_trip_test.exs` check that a round trip changes nothing.
 
 ## Conventions

@@ -1,7 +1,7 @@
-defmodule Agenda.TUIHelpers do
+defmodule Agendum.TUIHelpers do
   @moduledoc "Drive the pure TUI with keys and inspect the rendered text."
 
-  alias Agenda.TUI.{Draw, Layout, Render, State, Update}
+  alias Agendum.TUI.{Draw, Layout, Render, State, Update}
 
   def start(db, opts \\ []) do
     db
@@ -59,12 +59,12 @@ defmodule Agenda.TUIHelpers do
   "meeting", which tests that use Meetings as an empty category do not want.
   """
   def quiet_meetings(db) do
-    alias Agenda.Core
-    meetings = hd(Agenda.Core.Database.find_categories(db, "Meetings"))
+    alias Agendum.Core
+    meetings = hd(Agendum.Core.Database.find_categories(db, "Meetings"))
     db = Core.toggle_match_name(db, meetings)
 
     db
-    |> Agenda.Core.Database.items_in(meetings)
+    |> Agendum.Core.Database.items_in(meetings)
     |> Enum.reduce(db, &Core.remove_from_category(&2, &1.id, meetings))
   end
 end

@@ -13,11 +13,11 @@ outside world, such as today's date, is passed in as an argument.
 ```mermaid
 flowchart TB
     subgraph shell ["Imperative shell"]
-        TUI["Agenda.TUI.Update / Render<br/>(key handling, drawing)"]
-        Store["Agenda.Store<br/>save / load"]
+        TUI["Agendum.TUI.Update / Render<br/>(key handling, drawing)"]
+        Store["Agendum.Store<br/>save / load"]
     end
     subgraph core ["Functional core (pure)"]
-        Facade["Agenda.Core<br/><i>user-level operations</i>"]
+        Facade["Agendum.Core<br/><i>user-level operations</i>"]
         VM["Core.ViewModel<br/><i>read model for views</i>"]
         Assign["Core.Assign<br/><i>assignment rules</i>"]
         DB["Core.Database<br/><i>primitives and queries</i>"]
@@ -39,16 +39,16 @@ flowchart TB
 
 | Layer                   | Use it for                                                                                                                                                     | Do not                                          |
 | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| `Agenda.Core` (facade)  | **All changes made by users.** Applies the rules (assignment, auto-assignment, validation) and returns `{:ok, …}`/`{:error, atom}` where input can be invalid. | Bypass it from the UI for writes.               |
-| `Agenda.Core.ViewModel` | Building what a view shows (sections, rows, cells).                                                                                                            | Put display formatting elsewhere.               |
-| `Agenda.Core.Assign`    | Rules for how items get into categories. Only the facade calls it.                                                                                             | Re-implement exclusivity or matching in the UI. |
-| `Agenda.Core.Database`  | Primitive writes (no rules) and **all queries**.                                                                                                               | Expect primitives to enforce assignment rules.  |
-| `Agenda.Core.Links`     | The raw relation. Only `Database` touches it.                                                                                                                  | Read `db.links` directly elsewhere.             |
+| `Agendum.Core` (facade)  | **All changes made by users.** Applies the rules (assignment, auto-assignment, validation) and returns `{:ok, …}`/`{:error, atom}` where input can be invalid. | Bypass it from the UI for writes.               |
+| `Agendum.Core.ViewModel` | Building what a view shows (sections, rows, cells).                                                                                                            | Put display formatting elsewhere.               |
+| `Agendum.Core.Assign`    | Rules for how items get into categories. Only the facade calls it.                                                                                             | Re-implement exclusivity or matching in the UI. |
+| `Agendum.Core.Database`  | Primitive writes (no rules) and **all queries**.                                                                                                               | Expect primitives to enforce assignment rules.  |
+| `Agendum.Core.Links`     | The raw relation. Only `Database` touches it.                                                                                                                  | Read `db.links` directly elsewhere.             |
 
 The UI reads freely through `Database` queries (e.g. `member?/3`,
-`hierarchy/1`), but **every change goes through `Agenda.Core`**, even
-simple field updates with no rules. `test/agenda/architecture_test.exs`
-enforces this. It fails if any file under `lib/agenda/tui/` calls a
+`hierarchy/1`), but **every change goes through `Agendum.Core`**, even
+simple field updates with no rules. `test/agendum/architecture_test.exs`
+enforces this. It fails if any file under `lib/agendum/tui/` calls a
 `Database` write function (`insert_*`, `update_*`, `delete_*`, `link`,
 `unlink`, `reorder_item`, …) or updates the `db` struct directly.
 
@@ -103,7 +103,7 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.assign(db, item, cat)`                                                                                             | write        | Explicit assignment with exclusivity and `also_assign` (see below).                                                                                                        |
 | `Core.toggle_assignment(db, item, cat)`                                                                                  | write        | Assignment profile: remove just that explicit link, or `assign`.                                                                                                           |
 | `Core.add_condition(db, cat, target, :assigned \| :not_assigned)`, `remove_condition/3`, `cycle_condition/3`             | write        | Assignment conditions (R15). `{:error, :self \| :duplicate}`. New conditions reach existing items through `reassign_all/2`.                                                |
-| `Core.set_action(db, cat, target, action, clock)` / `Core.remove_action/3` / `Core.set_special_action/3`                 | write        | Actions (R15b), run once by every facade change when an item joins the category (`settle/4` in `Agenda.Core`).                                                             |
+| `Core.set_action(db, cat, target, action, clock)` / `Core.remove_action/3` / `Core.set_special_action/3`                 | write        | Actions (R15b), run once by every facade change when an item joins the category (`settle/4` in `Agendum.Core`).                                                             |
 | `Core.set_match_override(db, cat, setting, value \| :global)`, `Core.match_settings(db, cat)`, `Core.confirm_mode(db, cat)` | write / read | One category's own text matching settings, and the effective ones (R16b). |
 | `Core.set_match_settings(db, settings)`, `Assign.match_levels(db, text)` | write / read | How text matches categories (`TextMatch`, R16a); which categories a text matches, fully or partially. |
 | `Core.set_confirm_assignments(db, :never \| :always \| :sometimes)`, `Core.questions/1`, `Core.answer_question(db, item, cats, clock)` | write / read | Suggested assignments (R16): with Always, text matches are suggested; answering assigns the chosen ones explicitly.                                                        |
@@ -172,7 +172,7 @@ enforces this. It fails if any file under `lib/agenda/tui/` calls a
 | `Core.ring_alarms(db, now)`                                                                                                                           | write        | Rings due alarms, moving them to today's past alarms; returns the items that rang.                                                                                                            |
 | `Core.alarm_list(db, today)`, `remove_past_alarm/2`, `clear_old_alarms/2`                                                                             | read / write | Current and past alarms; past ones are forgotten the next day.                                                                                                                                |
 | `DateParser.parse_recurring/3`, `extract_recurring/3`                                                                                                 | read         | Like `parse_when` / `extract_when`, also giving the `Recurrence` of a recurring date, or nil (R14a).                                                                                          |
-| `DateParser.parse_when(text, now, opts)`, `extract_when(text, now, opts)`                                                                             | read         | Dates with times of day (R14b), in the languages of `opts[:languages]` (R14c). Core functions take a `clock`: a date, a date and time, or a `Agenda.Core.Context` (time plus date languages). |
+| `DateParser.parse_when(text, now, opts)`, `extract_when(text, now, opts)`                                                                             | read         | Dates with times of day (R14b), in the languages of `opts[:languages]` (R14c). Core functions take a `clock`: a date, a date and time, or a `Agendum.Core.Context` (time plus date languages). |
 | `Core.set_sort(db, view, :view \| {:section, i}, keys)`                                                                                               | write        | Sort keys (`View.SortKey`, at most two); a section's `nil` uses the view's (R36).                                                                                                             |
 | `Core.make_dependent(db, item, prerequisites)` / `Core.clear_dependencies/2`                                                                          | write        | Item dependencies (R43); `{:error, :cycle}` if an item would depend on itself.                                                                                                                |
 | `Core.remove_dependency(db, item, prerequisite)`                                                                                                      | write        | Removes one dependency (DEL in Item Properties, R43).                                                                                                                                         |
@@ -267,7 +267,7 @@ acceptance implement the patent's ambiguity resolution (claim 7).
 sequenceDiagram
     actor U as User
     participant UP as TUI.Update
-    participant C as Agenda.Core
+    participant C as Agendum.Core
     participant D as Core.Database
     participant A as Core.Assign
     participant H as TUI.History
@@ -294,7 +294,7 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant UP as TUI.Update
-    participant C as Agenda.Core
+    participant C as Agendum.Core
     participant D as Core.Database
     participant A as Core.Assign
     UP->>UP: :replace → clear existing column entries first
@@ -364,11 +364,11 @@ If large files ever become slow, the first candidates are caching
 1. **New stored field**: add it to the struct with a default. Bump the format
    version in `Store` and migrate old files in `Store.load/1`. Document it in
    `DATA_MODEL.md`.
-2. **New query**: add it to `Agenda.Core.Database` (or `ViewModel` for display),
-   with `@spec` and a test in `test/agenda/core/`.
-3. **New rule**: implement it in `Agenda.Core.Assign` and expose it through
-   `Agenda.Core`. Give it a rule number in `SPEC.md`.
-4. **New user action**: add it to `Agenda.Core`, returning
+2. **New query**: add it to `Agendum.Core.Database` (or `ViewModel` for display),
+   with `@spec` and a test in `test/agendum/core/`.
+3. **New rule**: implement it in `Agendum.Core.Assign` and expose it through
+   `Agendum.Core`. Give it a rule number in `SPEC.md`.
+4. **New user action**: add it to `Agendum.Core`, returning
    `{:ok, db} | {:error, atom}` when input can be invalid. The UI calls it,
    and undo works automatically.
 5. Keep every function pure: no clock, no I/O, no processes.

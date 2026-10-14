@@ -10,7 +10,7 @@ and easy for AI assistants to change safely.
 
 ## Decision
 
-All domain logic lives in pure modules under `lib/agenda/core`, operating on
+All domain logic lives in pure modules under `lib/agendum/core`, operating on
 one immutable `Database` value. The UI is Elm-style: a pure
 `Update.handle(state, key) → {state, effects}` and a pure
 `Render.render(state) → lines`. Only `Terminal`, `App`, `Store`,

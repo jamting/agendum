@@ -21,7 +21,7 @@ terminal today has its own colour settings, and its own themes.
 
 - We keep to themes. There is no Custom Colors box and no per-element
   colours in the preferences.
-- A new look is a new theme in `Agenda.TUI.Theme`, defining every style,
+- A new look is a new theme in `Agendum.TUI.Theme`, defining every style,
   so it is designed and tested as a whole.
 - Drop shadows, box animation and wide borders are not settings: boxes
   have shadows in the themes that draw them, and do not animate.

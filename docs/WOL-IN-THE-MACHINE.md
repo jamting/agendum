@@ -53,14 +53,14 @@ natural successor of the string matching in R15 and R16.
 
 ## The pieces Agendum already has
 
-- **Tools.** The core facade (`Agenda.Core`) is the set of everything a
+- **Tools.** The core facade (`Agendum.Core`) is the set of everything a
   user can do. The planned command layer ("Towards many users": one named
   command per user action, commands that describe themselves with name,
   summary and arguments; ADR 0020) is almost exactly a tool definition
   for a language model. The same work serves the web app and an agent.
 - **Context.** The `agendum-json` format (`docs/JSON_FORMAT.md`,
-  `Agenda.Core.JSONFile`) is a complete, readable serialization of a
-  file; `Agenda.Core.ViewModel` gives what the person is looking at now.
+  `Agendum.Core.JSONFile`) is a complete, readable serialization of a
+  file; `Agendum.Core.ViewModel` gives what the person is looking at now.
 - **Proposing, not imposing.** Confirm assignments and the Questions
   box (R16) already let the program suggest assignments that the person
   accepts or refuses. An agent should suggest through the same path.
@@ -73,7 +73,7 @@ natural successor of the string matching in R15 and R16.
    file: suggestions go through Questions or a confirmation, unless the
    person has said otherwise for a kind of change.
 2. **The core stays pure** (CLAUDE.md, rule 1). Calling a model is I/O,
-   so it lives in the shell, like `Agenda.CalendarFetch`: an effect the
+   so it lives in the shell, like `Agendum.CalendarFetch`: an effect the
    TUI asks for, whose answer comes back as ordinary commands applied by
    the core. OTP's `:httpc` avoids a new runtime dependency (ADR 0021).
 3. **Private by default.** A file is someone's life. The agent is opt-in,

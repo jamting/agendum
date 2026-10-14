@@ -23,7 +23,7 @@ with different languages, which the planned web front end will have
 ## Decision
 
 A phrase kept in the file is read in the reader's languages first, then
-in English (`Agenda.Core.Context.stored_parser_opts/2`). The datebook
+in English (`Agendum.Core.Context.stored_parser_opts/2`). The datebook
 base date, the range filter (when set and when read) and the date action
 (when set and when run) use it.
 

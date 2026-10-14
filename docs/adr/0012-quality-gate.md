@@ -25,8 +25,8 @@ would cost context in every session.
   (`.credo.exs`). Strict mode (alias suggestions) is off.
 - What the tools report is fixed, not silenced. An exception needs an inline
   `# credo:disable-for-next-line` with the reason beside it.
-- `test/agenda/architecture_test.exs` enforces the architecture rules that a
-  linter cannot: the TUI changes the database only through `Agenda.Core`, and
+- `test/agendum/architecture_test.exs` enforces the architecture rules that a
+  linter cannot: the TUI changes the database only through `Agendum.Core`, and
   the core never calls the clock, I/O, the environment, randomness or
   processes.
 

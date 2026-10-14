@@ -2,7 +2,7 @@ defmodule Mix.Tasks.Agendum.Starters do
   @shortdoc "Writes the starter files (starters/planner.agendum)"
   @moduledoc """
   Writes the Activities Planner starter file (R60) from
-  `Agenda.Starters.Planner`:
+  `Agendum.Starters.Planner`:
 
       mix agendum.starters                    # starters/planner.agendum
       mix agendum.starters --samples          # tmp/planner-samples.agendum
@@ -16,8 +16,8 @@ defmodule Mix.Tasks.Agendum.Starters do
   """
   use Mix.Task
 
-  alias Agenda.Starters.Planner
-  alias Agenda.Store
+  alias Agendum.Starters.Planner
+  alias Agendum.Store
 
   @impl Mix.Task
   def run(args) do
@@ -40,7 +40,7 @@ defmodule Mix.Tasks.Agendum.Starters do
     end
   end
 
-  defp today(nil), do: Agenda.TUI.App.local_today()
+  defp today(nil), do: Agendum.TUI.App.local_today()
 
   defp today(text) do
     case Date.from_iso8601(text) do

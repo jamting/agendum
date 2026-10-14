@@ -42,7 +42,7 @@ after that it takes about a minute. If it passes, you are set up.
 ## 2. Run it
 
 ```sh
-mix run -e 'Agenda.CLI.main(["--demo"])'     # sample data, in your terminal
+mix run -e 'Agendum.CLI.main(["--demo"])'     # sample data, in your terminal
 mix escript.build && ./agendum my.agendum      # the standalone program
 AGENDUM_LOG=1 ./agendum my.agendum             # with a debug log of the session
 ```
@@ -70,18 +70,18 @@ user guide and the manual in your browser.
 
 The code in brief:
 
-- `lib/agenda/core/` is a **pure functional core**: no I/O, no clock, no
+- `lib/agendum/core/` is a **pure functional core**: no I/O, no clock, no
   processes. Everything a front end needs goes through the facade,
-  `Agenda.Core`.
-- `lib/agenda/tui/` is the **terminal UI**, Elm style:
-  `Agenda.TUI.Update.handle(state, key)` returns the new state and effects,
-  `Agenda.TUI.Render.render(state)` returns the screen. Only a few modules
+  `Agendum.Core`.
+- `lib/agendum/tui/` is the **terminal UI**, Elm style:
+  `Agendum.TUI.Update.handle(state, key)` returns the new state and effects,
+  `Agendum.TUI.Render.render(state)` returns the screen. Only a few modules
   touch the outside world (the terminal, files, preferences).
 - A web front end on the same core is planned
   ([`docs/MULTIUSER.md`](docs/MULTIUSER.md)), so the logic of a user action
   belongs in the core, not in the UI.
 
-`test/agenda/architecture_test.exs` checks the most important of these
+`test/agendum/architecture_test.exs` checks the most important of these
 rules; [`CLAUDE.md`](CLAUDE.md) lists them all.
 
 ## 4. Make a change
@@ -95,14 +95,14 @@ a feature"):
 2. **Find the behaviour** in Agenda's manuals (`docs/reference/*_djvu.txt`)
    and add or update its rule in `docs/SPEC.md`. Where we differ from
    Agenda on purpose, the rule says "Our choice".
-3. **Write a failing test**: core rules in `test/agenda/core/`, UI
-   behaviour in `test/agenda/tui/` (press keys with
-   `Agenda.TUIHelpers.press/2`, look at `screen/1`).
+3. **Write a failing test**: core rules in `test/agendum/core/`, UI
+   behaviour in `test/agendum/tui/` (press keys with
+   `Agendum.TUIHelpers.press/2`, look at `screen/1`).
 4. **Implement it**, core first, then the UI.
 5. **Run `mix check`** until it passes, with no warnings. Fix what Credo
    and Dialyzer report rather than silencing them.
 6. **Update the docs** the change touches: tick the roadmap item, and
-   `docs/SCREENS.md`, the F1 help (`Agenda.TUI.Render.Help`) and
+   `docs/SCREENS.md`, the F1 help (`Agendum.TUI.Render.Help`) and
    `docs/KEYBOARD.md` if screens or keys changed. A lasting decision gets
    an ADR. (The user guide and the manual are updated now and then, not
    with every change.)
@@ -115,17 +115,17 @@ one: `Category Properties in two columns, as Agenda's (screenshot 74)`.
 
 - **Names:** the program is **Wol's Agendum** (titles) or **Agendum**
   (running text); **Agenda** means the original Lotus Agenda. The code
-  still uses the `Agenda` namespace (ADR 0019).
+  is `Agendum` too, `Agendum.*` modules in `lib/agendum` (ADR 0019).
 - **Every key needs a Mac-friendly alternative:** a CTRL key or ESC then a
   key, documented in `docs/KEYBOARD.md` and the F1 help.
-- **Dates** are read by language packs (`Agenda.Core.DateLanguage.*`);
+- **Dates** are read by language packs (`Agendum.Core.DateLanguage.*`);
   core functions that read dates take the clock as an argument.
 - **No new runtime dependencies** unless they meet ADR 0021 (pure
   Elixir/Erlang, keeps the single-file program).
 - **Undo is automatic:** one key that changes the file is one undo step;
   never record history by hand.
 - **Boxes** are drawn from layouts written as they look on screen
-  (`Agenda.TUI.Template`); their keys follow Agenda's (ADRs 0030, 0031).
+  (`Agendum.TUI.Template`); their keys follow Agenda's (ADRs 0030, 0031).
 
 ## 6. Questions and bugs
 

@@ -16,7 +16,7 @@ was no original screen, key or storage to follow.
   both categories of a pair by one facade function,
   `Core.toggle_exclude/3`. It is a property of the categories, like
   `also_assign`, not a third relation in the database.
-- It is enforced where mutual exclusion is, in `Agenda.Core.Assign`:
+- It is enforced where mutual exclusion is, in `Agendum.Core.Assign`:
   assigning an item to a category (or below it) removes it from the
   categories it, or an ancestor, excludes, and their subtrees;
   `Assign.conflict?/3` treats a negative link like an exclusive family, so
@@ -33,7 +33,7 @@ was no original screen, key or storage to follow.
 ## Consequences
 
 - The mutual-exclusion code path now covers both rules; changes to one
-  must keep the other (`test/agenda/core/negative_links_test.exs`).
+  must keep the other (`test/agendum/core/negative_links_test.exs`).
 - Refusing instead of resolving is simpler than Agenda's conflict boxes
   (R7a) but asks more of the user; a resolution box could be added later
   without changing the storage.

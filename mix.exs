@@ -1,14 +1,14 @@
-defmodule Agenda.MixProject do
+defmodule Agendum.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :agenda,
+      app: :agendum,
       version: "0.1.0",
       elixir: "~> 1.20",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
-      escript: [main_module: Agenda.CLI, name: "agendum"],
+      escript: [main_module: Agendum.CLI, name: "agendum"],
       aliases: aliases(),
       deps: deps(),
       name: "Wol's Agendum",
@@ -56,11 +56,17 @@ defmodule Agenda.MixProject do
         Decisions: ~r{docs/adr/}
       ],
       groups_for_modules: [
-        Overview: [Agenda],
-        "Core facade": [Agenda.Core, ~r/^Agenda\.Core\.Facade\./],
+        Overview: [Agendum],
+        "Core facade": [Agendum.Core, ~r/^Agenda\.Core\.Facade\./],
         Core: ~r/^Agenda\.Core\./,
         "Terminal UI": ~r/^Agenda\.TUI\./,
-        Shell: [Agenda.CLI, Agenda.Store, Agenda.Preferences, Agenda.CalendarFetch, Agenda.Sample]
+        Shell: [
+          Agendum.CLI,
+          Agendum.Store,
+          Agendum.Preferences,
+          Agendum.CalendarFetch,
+          Agendum.Sample
+        ]
       ],
       before_closing_body_tag: &mermaid/1
     ]

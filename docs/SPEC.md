@@ -9,10 +9,10 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
 
 | Concept               | Meaning                                                                                                    | Code                   |
 | --------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- |
-| **Item**              | A free-form piece of text (up to a few lines), with an optional note. Exists independently of categories.  | `Agenda.Core.Item`     |
-| **Category**          | A named node in one hierarchy rooted at **MAIN**.                                                          | `Agenda.Core.Category` |
-| **Link / assignment** | An independent many-to-many link between an item and a category (the patent's "link structures").          | `Agenda.Core.Links`    |
-| **View**              | A saved arrangement: **sections** (each headed by a category) and **columns** (each headed by a category). | `Agenda.Core.View`     |
+| **Item**              | A free-form piece of text (up to a few lines), with an optional note. Exists independently of categories.  | `Agendum.Core.Item`     |
+| **Category**          | A named node in one hierarchy rooted at **MAIN**.                                                          | `Agendum.Core.Category` |
+| **Link / assignment** | An independent many-to-many link between an item and a category (the patent's "link structures").          | `Agendum.Core.Links`    |
+| **View**              | A saved arrangement: **sections** (each headed by a category) and **columns** (each headed by a category). | `Agendum.Core.View`     |
 | **Date category**     | Entry, When, Done and ones the user makes: categories whose membership is an item's date.                  | `Database.item_date/3` |
 
 ## 2. Data model rules
@@ -216,7 +216,7 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   date) are read in the person's languages and then in English, so a file
   made in English, such as a starter file, works in every language
   (ADR 0029). Each language is a pack
-  (`Agenda.Core.DateLanguage`): its words, phrase patterns, day/month
+  (`Agendum.Core.DateLanguage`): its words, phrase patterns, day/month
   order and clock. Swedish reads weekdays ("fredag", "på fre", "nästa
   fredag", "förra måndagen", "i fredags" = the latest past Friday), days
   ("idag", "i morgon", "i övermorgon", "i går", "i förrgår"), "den 5
@@ -849,7 +849,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     panel in reverse video, the highlighted line in bold, box titles and
     dimmed titles, the faded screen behind a box.
   - The terminal schemes share one layout in their own colours
-    (`Agenda.TUI.Theme.Palettes`): the screen in the scheme's background
+    (`Agendum.TUI.Theme.Palettes`): the screen in the scheme's background
     and foreground; the control panel, menus and the line being edited in
     its selection colours; the highlight in its cursor colours; the
     highlighted line, boxes and the key bar on a tint of the background;
@@ -926,7 +926,7 @@ highlighted field does and which keys change it ("Choose to insert new
 columns in one or all sections in the view."; screenshots 130 to 143);
 a list box (Go to, Copy, Calendars…) has one such help for the whole box.
 A message comes first. The texts follow Agenda's (its F1 help's tables
-of settings), with Agendum's keys (`Agenda.TUI.FieldHelp`). In the menu,
+of settings), with Agendum's keys (`Agendum.TUI.FieldHelp`). In the menu,
 ESC backs up one level; a box, prompt or question opened from the menu
 goes back to the menu level it was chosen from on ESC, and ESC again backs
 up until the view, as in Agenda (User's Guide 2-13: "back up one step at a
@@ -951,8 +951,8 @@ and ESC puts the file and your preferences back as they were when the
 box opened (one undo step, which undo reverses); a box opened from a box
 cancels only its own changes, and work done in a full screen opened from
 a box (a note, the macro edit screen) stays. ESC while typing in a field
-only stops the typing (`Agenda.TUI.BoxCancel`). In a box the arrows move
-between settings as in Agenda (User's Guide 2-16, `Agenda.TUI.BoxNav`):
+only stops the typing (`Agendum.TUI.BoxCancel`). In a box the arrows move
+between settings as in Agenda (User's Guide 2-16, `Agendum.TUI.BoxNav`):
 → or TAB right one setting, or on to the next when there is none to the
 right; ← or SHIFT-TAB left, or back to the previous; ↓ ↑ to the next or
 previous row, onto the setting nearest the same place (from a right-hand
@@ -965,7 +965,7 @@ number) is typed, and so are Morning, Afternoon and Evening (SPACE asks).
 On a setting with a list of choices, as in Agenda, a letter picks the
 next choice starting with it ("r": Relative; one undo step), and F3
 (CHOICES) lists them in a box, the current one first. The choices are
-what SPACE goes through (`Agenda.TUI.BoxChoices`); on a setting that is
+what SPACE goes through (`Agendum.TUI.BoxChoices`); on a setting that is
 typed, letters are typed as before. In Category Properties, as Agenda
 (screenshot 74), Note, Statistics and Advanced settings show "..." and
 SPACE opens each one's box; Statistics (Agenda's Category Statistics)
@@ -1373,7 +1373,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
     Item Properties, and category names read as numbers. The two are never
     the same: with a decimal comma the thousands separator is a dot unless
     a space is chosen. They belong to the person's input format, so they
-    reach the core with the clock (`Agenda.Core.Context`), as dates do
+    reach the core with the clock (`Agendum.Core.Context`), as dates do
     (`decimal_separator` and `thousands_separator = space` in the file).
 
 ## 6. Out of scope for now

@@ -19,7 +19,7 @@ file can change.
 ## Decision
 
 - Settings about the calendar of the information go in the file
-  (`Agenda.Core.DateSettings`, `db.date_settings`): beginning and end of week,
+  (`Agendum.Core.DateSettings`, `db.date_settings`): beginning and end of week,
   first quarter, beginning of year, month alone, and the times of
   morning, afternoon and evening. Everyone opening the file reads "end of
   the quarter" the same way.
@@ -28,10 +28,10 @@ file can change.
   a habit of the person typing, like the words they type.
 - (Amended 2026-10-11, R41b.) The person may override their language's
   number order, the date separator and the 12/24-hour clock with their
-  own Input format (`Agenda.Core.InputFormat`, in `Agenda.Core.Context`), kept in their
+  own Input format (`Agendum.Core.InputFormat`, in `Agendum.Core.Context`), kept in their
   preferences (ADR 0008), never in the file.
 - Every parser call gets both through `Context.parser_opts(clock,
-  db.date_settings)`: the languages from the clock (`Agenda.Core.Context`), the
+  db.date_settings)`: the languages from the clock (`Agendum.Core.Context`), the
   settings from the file. There is no other way into `DateParser`.
 - Language packs name "morning", "afternoon" and "evening" (and their
   translations) by the setting (`:morning` …), not by a time, so one file

@@ -16,8 +16,8 @@ not be repeated.
 
 ## Decision
 
-- **The code is the source.** `Agenda.Starters.Planner.build/0` builds
-  the file through the `Agenda.Core` facade, as a person would: its
+- **The code is the source.** `Agendum.Starters.Planner.build/0` builds
+  the file through the `Agendum.Core` facade, as a person would: its
   categories, views (`Planner.Views`) and macros (`Planner.Macros`).
   It never writes to the database directly, so the file always obeys the
   core's rules and is in the current format.
@@ -43,7 +43,7 @@ not be repeated.
   `mix agendum.starters`, then commit `starters/planner.agendum`. The
   failing test says so.
 - More starter files (Agenda had several) follow the same pattern: a
-  module under `Agenda.Starters`, written by the same mix task, with the
+  module under `Agendum.Starters`, written by the same mix task, with the
   same test.
 - Building through the facade tests the facade too: the Planner exercises
   columns per section, note columns, filters, datebooks and macros

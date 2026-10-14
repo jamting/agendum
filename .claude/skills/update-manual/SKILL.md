@@ -17,7 +17,7 @@ only, never as part of a feature.
 | File                    | What it is                                                                    |
 | ----------------------- | ----------------------------------------------------------------------------- |
 | `template.html`         | The text, with `{{screen}}` placeholders                                      |
-| `capture_screens.exs`   | Opens Rabbit's file (`Agenda.Sample.rabbit/1`) and drives the real TUI to capture each screen |
+| `capture_screens.exs`   | Opens Rabbit's file (`Agendum.Sample.rabbit/1`) and drives the real TUI to capture each screen |
 | `screens/*.txt`         | The captured screens (committed, so screen changes show in diffs)             |
 | `build.py`              | Fills the placeholders and writes `../index.html`; fails on broken links      |
 | `../manual.css`         | Dialogue styles; imports `../guide/guide.css` for everything else              |
@@ -31,8 +31,8 @@ git diff "$last"..HEAD -- docs/SPEC.md docs/KEYBOARD.md docs/ROADMAP.md docs/SCR
 ```
 
 Read the new or changed SPEC rules and KEYBOARD.md rows; they are the source
-of truth. Check menu paths against `Agenda.TUI.Menu.tree/0`, keys against the
-F1 help in `Agenda.TUI.Render.Help`, and box names and rows against the program
+of truth. Check menu paths against `Agendum.TUI.Menu.tree/0`, keys against the
+F1 help in `Agendum.TUI.Render.Help`, and box names and rows against the program
 (the captures show them). Never describe a key or a menu path you have not
 checked.
 

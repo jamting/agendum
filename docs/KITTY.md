@@ -40,7 +40,7 @@ prefix below still works.
 ## Found while planning
 
 1. **"ESC then 3" only works when the bytes arrive within 40 ms**
-   (`@escape_timeout` in `Agenda.TUI.App`), as from a terminal key binding or
+   (`@escape_timeout` in `Agendum.TUI.App`), as from a terminal key binding or
    Option-as-Meta. Typed by hand, ESC does nothing in a view and `3` starts
    a new item. `docs/KEYBOARD.md` promises more than the program does; the
    ESC prefix in step 2 makes it true (in a view).
@@ -52,15 +52,15 @@ prefix below still works.
 
 ### 1. CTRL-F keys
 
-- `Agenda.TUI.Keys` decodes CTRL-F1…F10 as `{:ctrl_f, n}`.
-- `Agenda.TUI.MacroKeys` reads and writes them as `{CtlF4}`, so a macro can
+- `Agendum.TUI.Keys` decodes CTRL-F1…F10 as `{:ctrl_f, n}`.
+- `Agendum.TUI.MacroKeys` reads and writes them as `{CtlF4}`, so a macro can
   be attached to one. Nothing else uses them.
 - Tests: `keys_test`, `macro_keys_test`.
 
 ### 2. The bars (pure) and the ESC prefix
 
 - `State` gets `held` (`nil | :alt | :ctrl`) and `prefix` (`nil | :esc`).
-- `Agenda.TUI.Render.KeyBar.line/1` gets `alt_keys(mode)` and
+- `Agendum.TUI.Render.KeyBar.line/1` gets `alt_keys(mode)` and
   `ctrl_keys(mode)`, with Agenda's short labels and our fuller ones when
   they fit.
 - Attached macros' names also show on ALT-F and CTRL-F keys
@@ -80,11 +80,11 @@ prefix below still works.
 
 ### 3. The kitty protocol in the terminal layer
 
-- `Agenda.TUI.Terminal.start/0` asks `CSI ? u` followed by `CSI c`. If the
+- `Agendum.TUI.Terminal.start/0` asks `CSI ? u` followed by `CSI c`. If the
   `CSI ? flags u` reply comes before the device attributes reply, it pushes
   the flags with `CSI > 31 u`; `stop/0` pops them with `CSI < u`. The reply
-  is read in `Agenda.TUI.App`, with a timeout.
-- `Agenda.TUI.Keys` decodes `CSI … u`, and `:event` on the legacy `~`,
+  is read in `Agendum.TUI.App`, with a timeout.
+- `Agendum.TUI.Keys` decodes `CSI … u`, and `:event` on the legacy `~`,
   `ABCD` and `PQS` forms (the CSI regex must accept `:`).
 - Lock bits (caps lock 64, num lock 128) are masked off. Repeat counts as a
   press. Releases of other keys are dropped. Modifier key codes 57441–57449

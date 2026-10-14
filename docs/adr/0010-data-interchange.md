@@ -28,7 +28,7 @@ chapters 23–24).
 
 ## JSON as built (2026-10-11)
 
-- `Agenda.Core.JSONFile` is pure and in the core, so a web front end can
+- `Agendum.Core.JSONFile` is pure and in the core, so a web front end can
   use it; the facade offers `Core.export_json/1` and `Core.import_json/1`.
   The shell reads and writes the file (App effects).
 - A hand-written schema, not a generic term encoding: readable keys, enums

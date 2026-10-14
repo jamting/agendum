@@ -18,8 +18,8 @@ git diff "$last"..HEAD -- docs/SPEC.md docs/KEYBOARD.md docs/ROADMAP.md
 
 Read the new or changed SPEC rules (R-numbers) and KEYBOARD.md rows; these
 are the source of truth for keys, menu paths and behaviour. Check menu paths
-against `Agenda.TUI.Menu.tree/0` and keys against the F1 help in
-`Agenda.TUI.Render.Help` before writing them down.
+against `Agendum.TUI.Menu.tree/0` and keys against the F1 help in
+`Agendum.TUI.Render.Help` before writing them down.
 
 ## 2. Edit the guide
 

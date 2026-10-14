@@ -12,7 +12,7 @@ program are therefore hard to reproduce, by the owner or by Claude.
 
 ## Decision
 
-- `Agenda.TUI.DebugLog` writes a log of each session when the
+- `Agendum.TUI.DebugLog` writes a log of each session when the
   `AGENDUM_LOG` environment variable is set: `1` (or any word) to
   `$XDG_STATE_HOME/agendum/logs`, default `~/.local/state/agendum/logs`
   (logs are state, not configuration); a path to that folder. Unset,

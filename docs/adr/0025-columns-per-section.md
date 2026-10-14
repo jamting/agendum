@@ -42,7 +42,7 @@ How to store this needed a choice:
   The facade's column functions take this place.
 - The rules (adding to all sections or one, where the other sections get
   it, removing from all or one, linking and unlinking, changing the head)
-  live in the pure `Agenda.Core.ViewColumns`, not in the TUI.
+  live in the pure `Agendum.Core.ViewColumns`, not in the TUI.
 - Where a new column goes is a file setting, File Properties ▸ Insert new
   columns in (All sections by default, R55), stored in
   `Database.insert_columns`.

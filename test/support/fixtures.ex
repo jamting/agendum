@@ -1,8 +1,8 @@
-defmodule Agenda.Fixtures do
+defmodule Agendum.Fixtures do
   @moduledoc "Helpers for building databases in tests."
 
-  alias Agenda.Core
-  alias Agenda.Core.Database
+  alias Agendum.Core
+  alias Agendum.Core.Database
 
   def today, do: ~D[2026-10-08]
 

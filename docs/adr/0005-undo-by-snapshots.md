@@ -13,7 +13,7 @@ values is cheap: unchanged parts are shared between versions.
 
 ## Decision
 
-- `Agenda.TUI.History` keeps up to 100 snapshots. A snapshot is the previous
+- `Agendum.TUI.History` keeps up to 100 snapshots. A snapshot is the previous
   `Database` plus where the user was (view and cursor).
 - Recording is automatic: `Update.handle/2` compares the database before
   and after every key, and records one step if it changed. One key press is
@@ -30,7 +30,7 @@ values is cheap: unchanged parts are shared between versions.
   never record history by hand.
 - Long edits inside one screen, such as a whole note editing session, are
   one undo step, because the note is saved when it closes.
-- Undo lives in the TUI, not in `Agenda.Core`. A web front end (planned)
+- Undo lives in the TUI, not in `Agendum.Core`. A web front end (planned)
   must keep its own history, or this module moves to the core first. The
   snapshot approach itself carries over unchanged.
 - Memory use is bounded by the 100-step limit and by structural sharing.

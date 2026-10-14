@@ -1,5 +1,5 @@
 # Captures the screens shown in the Agenda manual (docs/manual/index.html)
-# from the program itself: it opens Rabbit's file (`Agenda.Sample.rabbit/1`,
+# from the program itself: it opens Rabbit's file (`Agendum.Sample.rabbit/1`,
 # also `agendum --rabbit`), drives the real TUI with key presses, and writes
 # each screen as text to docs/manual/src/screens/.
 #
@@ -13,17 +13,17 @@ Code.require_file("test/support/tui_helpers.ex")
 
 defmodule ManualScreens do
   @moduledoc false
-  alias Agenda.Core
-  alias Agenda.Core.Database
-  alias Agenda.TUI.{CategoryScreens, Layout, State}
-  import Agenda.TUIHelpers
+  alias Agendum.Core
+  alias Agendum.Core.Database
+  alias Agendum.TUI.{CategoryScreens, Layout, State}
+  import Agendum.TUIHelpers
 
   @out "docs/manual/src/screens"
   @today ~D[2026-10-12]
 
   def run do
     File.mkdir_p!(@out)
-    state = start(Agenda.Sample.rabbit(@today), width: 80, height: 25)
+    state = start(Agendum.Sample.rabbit(@today), width: 80, height: 25)
 
     state = %{
       state
@@ -135,12 +135,12 @@ defmodule ManualScreens do
     }
 
     events = [
-      %Agenda.Core.ICal.Event{
+      %Agendum.Core.ICal.Event{
         uid: "north-pole",
         summary: "Expotition to the North Pole",
         start: {:local, ~N[2026-10-16 10:00:00]}
       },
-      %Agenda.Core.ICal.Event{
+      %Agendum.Core.ICal.Event{
         uid: "poohsticks",
         summary: "Poohsticks at the bridge",
         start: {:local, ~N[2026-10-14 16:00:00]},
@@ -148,7 +148,7 @@ defmodule ManualScreens do
       }
     ]
 
-    s = Agenda.TUI.Update.calendar_read(s, id, {:ok, events})
+    s = Agendum.TUI.Update.calendar_read(s, id, {:ok, events})
     shot("45-calendars", s, :calendars)
   end
 

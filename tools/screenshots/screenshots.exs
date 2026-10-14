@@ -12,8 +12,8 @@ Code.require_file("test/support/tui_helpers.ex")
 
 defmodule Screenshots do
   @moduledoc false
-  import Agenda.TUIHelpers
-  alias Agenda.TUI.{Render, Theme}
+  import Agendum.TUIHelpers
+  alias Agendum.TUI.{Render, Theme}
 
   @renderer "tmp/render-screen"
   @today ~D[2026-10-12]
@@ -25,7 +25,7 @@ defmodule Screenshots do
     File.mkdir_p!(out)
     build_renderer()
 
-    state = start(Agenda.Sample.build(@today), width: 80, height: 25)
+    state = start(Agendum.Sample.build(@today), width: 80, height: 25)
     state = %{state | now: ~N[2026-10-12 20:52:00], today: @today, path: "/home/me/planner.agendum"}
 
     for {name, screen} <- shots(state) do
@@ -40,7 +40,7 @@ defmodule Screenshots do
 
   defp shots(s) do
     [
-      {"00-splash", Agenda.TUI.Update.start(%{s | prefs: %{s.prefs | user: "rabbit"}}, true)},
+      {"00-splash", Agendum.TUI.Update.start(%{s | prefs: %{s.prefs | user: "rabbit"}}, true)},
       {"01-view", s},
       {"02-view-column", press(s, [:down, :right])},
       {"03-menu", press(s, {:f, 10})},

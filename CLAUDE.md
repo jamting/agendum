@@ -7,7 +7,7 @@ does) and `docs/ARCHITECTURE.md` (how the code is laid out) before larger change
 and the ADRs in `docs/adr/` (why); record new lasting decisions as ADRs.
 For anything touching stored data or queries, also read `docs/DATA_MODEL.md`
 and `docs/DATA_ACCESS.md`, and keep them up to date (Mermaid diagrams included);
-a new stored field also needs a place in the JSON schema (`Agenda.Core.JSONFile`,
+a new stored field also needs a place in the JSON schema (`Agendum.Core.JSONFile`,
 `docs/JSON_FORMAT.md`), or the round-trip tests fail.
 
 ## Commands
@@ -15,8 +15,8 @@ a new stored field also needs a place in the JSON schema (`Agenda.Core.JSONFile`
 ```sh
 mix check                 # THE quality gate: format, warnings-as-errors, Credo, Dialyzer, tests
 mix test                  # tests only
-mix test test/agenda/core # one directory
-mix run -e 'Agenda.CLI.main(["--demo"])'   # run the TUI with sample data (needs a real terminal)
+mix test test/agendum/core # one directory
+mix run -e 'Agendum.CLI.main(["--demo"])'   # run the TUI with sample data (needs a real terminal)
 mix escript.build && ./agendum my.agendum  # build (always for prod: no dev tools inside) and run the binary
 mix docs --open           # API docs, design documents, guide and manual (doc/index.html), in the browser
 ```
@@ -28,30 +28,30 @@ inline `# credo:disable-for-next-line` with the reason.
 
 ## Architecture rules (do not break these)
 
-1. **`lib/agenda/core/**` and `lib/agenda/core.ex` are pure.** No I/O, no
+1. **`lib/agendum/core/**` and `lib/agendum/core.ex` are pure.** No I/O, no
    processes, no clock (`Date.utc_today/0` etc.), no randomness. Anything
    external, like today's date, is passed in as an argument
-   (`test/agenda/architecture_test.exs` checks for clock and I/O calls).
-2. **The TUI is Elm-style.** `Agenda.TUI.Update.handle(state, key)` is pure and
-   returns `{state, effects}`; `Agenda.TUI.Render.render(state)` is pure and
+   (`test/agendum/architecture_test.exs` checks for clock and I/O calls).
+2. **The TUI is Elm-style.** `Agendum.TUI.Update.handle(state, key)` is pure and
+   returns `{state, effects}`; `Agendum.TUI.Render.render(state)` is pure and
    returns styled lines. Only `Terminal`, `App`, `DebugLog`, `Store`, `Preferences`, `CalendarFetch` and `CLI` touch the
    outside world. New side effects become new effect tuples handled in `App`.
-3. The TUI calls the core through `Agenda.Core` (the facade) and reads the
-   database through `Agenda.Core.Database` queries. It never calls
-   `Database` write functions; `test/agenda/architecture_test.exs` fails if
+3. The TUI calls the core through `Agendum.Core` (the facade) and reads the
+   database through `Agendum.Core.Database` queries. It never calls
+   `Database` write functions; `test/agendum/architecture_test.exs` fails if
    it does. Add a facade function instead (written in an area module under
-   `lib/agenda/core/facade/`, delegated from `Agenda.Core`). Assignment
-   rules live only in `Agenda.Core.Assign`; never re-implement them in the UI.
+   `lib/agendum/core/facade/`, delegated from `Agendum.Core`). Assignment
+   rules live only in `Agendum.Core.Assign`; never re-implement them in the UI.
 4. Subsumption (membership in ancestors) is **computed, never stored**. Only
-   explicit links are stored (`Agenda.Core.Links`).
+   explicit links are stored (`Agendum.Core.Links`).
 5. No runtime dependencies in the core and the TUI unless a package meets
    the criteria of `docs/adr/0021-runtime-dependencies.md` (pure Elixir/Erlang,
    no runtime files, keeps the single-file escript); none so far. The
    terminal layer uses OTP 28+ raw mode, not a TUI library (ADR 0002).
-6. Keep everything a second front end (e.g. web) would need in `Agenda.Core`;
+6. Keep everything a second front end (e.g. web) would need in `Agendum.Core`;
    the TUI only handles keys and drawing. A multi-user web app on the same
    core is planned (`docs/MULTIUSER.md`, ADR 0020): keep the logic of a
-   user action in the core, not in `Agenda.TUI.Update`.
+   user action in the core, not in `Agendum.TUI.Update`.
 
 ## Workflow for a feature
 
@@ -61,18 +61,18 @@ inline `# credo:disable-for-next-line` with the reason.
    found halfway costs the most: it spreads through the tests.
 1. Find or add the behaviour in `docs/SPEC.md` (rules are numbered, e.g. `R7`).
 2. Write a failing test first:
-   - core rules → `test/agenda/core/*_test.exs` (use `Agenda.Fixtures`)
-   - UI behaviour → `test/agenda/tui/*_test.exs`: drive keys with
-     `Agenda.TUIHelpers.press/2` and assert on `screen/1` text
+   - core rules → `test/agendum/core/*_test.exs` (use `Agendum.Fixtures`)
+   - UI behaviour → `test/agendum/tui/*_test.exs`: drive keys with
+     `Agendum.TUIHelpers.press/2` and assert on `screen/1` text
    - in a box, reach a setting by name, not by counting ↓ presses (a
-     helper going to a field by name; add it to `Agenda.TUIHelpers` if it
+     helper going to a field by name; add it to `Agendum.TUIHelpers` if it
      is not there yet): layouts and keys change, names rarely do
 3. Implement it in the core first, then wire it into the TUI.
 4. Run `mix check`. After a large TUI change, also run the fuzz property
    longer than the suite's 300 runs (a temporary copy at 2,000–3,000
    runs): it finds crashes the short run misses. Update `docs/ROADMAP.md`
    (tick the box), `docs/SCREENS.md` if a box or screen was added (a test
-   checks), and the help text in `Agenda.TUI.Render.Help` if keys changed.
+   checks), and the help text in `Agendum.TUI.Render.Help` if keys changed.
    - A box or screen with an Agenda screenshot: draw ours as a PNG
      (`tools/screenshots/`) and compare it with Agenda's side by side,
      for spacing and layout the text tests cannot see.
@@ -90,8 +90,10 @@ Keep changes small and focused; one feature per commit.
 
 - Names: in text the user sees, our program is **Wol's Agendum** (titles,
   headings, the splash screen) or **Agendum** (menus, help, running text);
-  **Agenda** means the original Lotus Agenda ("as Agenda does"). Code keeps
-  the `Agenda` namespace for now (ADR 0019). Files are `.agendum`, the
+  **Agenda** means the original Lotus Agenda ("as Agenda does"). The code is
+  `Agendum` too: the Mix app `:agendum`, the `Agendum.*` modules in
+  `lib/agendum` (ADR 0019); a file's format tag stays `:agenda`, and files
+  saved with the old `Agenda.*` struct names still load. Files are `.agendum`, the
   preferences `~/.config/agendum/`, the JSON format `agendum-json`; the old
   names are still read.
 - Match the surrounding style: small pure functions, pattern matching,
@@ -102,27 +104,27 @@ Keep changes small and focused; one feature per commit.
 - Date words and phrases live in language packs (`Core.DateLanguage.*`),
   never in `DateParser`, which only does date arithmetic. Core functions
   that read typed dates take a clock: a `Date`, `NaiveDateTime` or
-  `Agenda.Core.Context` (which also carries the date languages); the TUI passes
+  `Agendum.Core.Context` (which also carries the date languages); the TUI passes
   `State.context(state)`.
-- Dates display in the file's `Agenda.Core.DateFormat` (default ISO 8601): use
+- Dates display in the file's `Agendum.Core.DateFormat` (default ISO 8601): use
   `DateFormat.date/2`, `time/2` or `date_time/3` with `db.date_format`. Dates
   offered for editing stay ISO 8601 (`DateParser.format/1`), which the parser reads back.
-- Keys are decoded in `Agenda.TUI.Keys`. Function keys may be awkward in
+- Keys are decoded in `Agendum.TUI.Keys`. Function keys may be awkward in
   some terminals, so every F-key also works as ESC + digit, and ALT-Fn as
   ESC + shifted digit. Keep an alternative whenever you add a key: Mac
   keyboards lack INS/HOME/END and terminals never pass ⌘, so every command
   needs a CTRL (or ESC-prefixed) key. Document it in `docs/KEYBOARD.md` and
   the F1 help. CTRL-I/M/H/[ are unusable (they are TAB/ENTER/BACKSPACE/ESC).
 - A settings box is drawn from a layout written as it looks on screen,
-  with `[field    ]` placeholders (`Agenda.TUI.Template`; `CustomizeBox`
+  with `[field    ]` placeholders (`Agendum.TUI.Template`; `CustomizeBox`
   is the example): its fields are also the cursor's order. Look at the
   DOSBox screenshots (`docs/reference/screens/notes.md`) for how Agenda
   laid out the box.
-- Menu entries are chosen by first letter, so every level of `Agenda.TUI.Menu.tree/0`
-  needs unique first letters (`test/agenda/tui/menu_test.exs` checks this).
+- Menu entries are chosen by first letter, so every level of `Agendum.TUI.Menu.tree/0`
+  needs unique first letters (`test/agendum/tui/menu_test.exs` checks this).
   Prefer Agenda's own command names (User's Guide, Appendix A).
 - Undo is automatic: any key that changes `state.db` records one step in
-  `Agenda.TUI.History`. Do not record history by hand. Keep one user action = one
+  `Agendum.TUI.History`. Do not record history by hand. Keep one user action = one
   database change, so one undo reverses it.
 
 ## Testing the real terminal

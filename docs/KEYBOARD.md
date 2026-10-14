@@ -209,7 +209,7 @@ table (CTRL-N, CTRL-Z, CTRL-S, …).
 
 Raw terminal mode would normally let the tty driver swallow some of these
 keys: CTRL-S/Q (flow control), CTRL-C/Z (signals), CTRL-O/V (discard,
-literal-next). `Agenda.TUI.Terminal` turns those features off with `stty`
+literal-next). `Agendum.TUI.Terminal` turns those features off with `stty`
 while Agenda runs and restores them on exit, so every CTRL key reaches
 Agenda.
 
@@ -222,4 +222,4 @@ preferences, terminal size), file counts and versions. Every key but ESC is
 only shown, not acted on, so it doubles as a key tester: press a key and see
 whether your terminal sends what you expect (CTRL-E shows `{:ctrl, "e"}`,
 not the F2 it stands for elsewhere). ↑↓ PGUP PGDN scroll; ESC returns. It is
-not in the menus or the F1 help (`Agenda.TUI.DevTools`).
+not in the menus or the F1 help (`Agendum.TUI.DevTools`).

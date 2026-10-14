@@ -1,6 +1,6 @@
 ---
 name: learning-comments
-description: Add learning comments to Elixir source files or folders the owner names (e.g. "add learning comments to lib/agenda/tui/update/"): explain the Elixir idioms used, for an experienced programmer new to Elixir, and the complicated places from Agenda's domain side. Comments only, never code changes; one commit per request after asking. Use only when the user asks for learning comments.
+description: Add learning comments to Elixir source files or folders the owner names (e.g. "add learning comments to lib/agendum/tui/update/"): explain the Elixir idioms used, for an experienced programmer new to Elixir, and the complicated places from Agenda's domain side. Comments only, never code changes; one commit per request after asking. Use only when the user asks for learning comments.
 ---
 
 # Add learning comments
@@ -14,7 +14,7 @@ itself:
 2. **Domain logic.** Explain the complicated places in Agenda's terms:
    what the code does for the user and why it is done this way.
 
-The model is commit `47dd1cf` (the core facade, `lib/agenda/core/facade/`).
+The model is commit `47dd1cf` (the core facade, `lib/agendum/core/facade/`).
 Read a couple of its files first (`items.ex`, `changes.ex`) to match the
 voice and density.
 

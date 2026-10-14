@@ -66,7 +66,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
 - [x] Boxes: help for the highlighted field in the control panel (§5)
 - [x] Boxes: "Press ENTER when done, ESC to cancel" in the frame, and in every settings box ENTER is done and ESC cancels its changes (ADR 0030); ESC steps back through the menu levels (§5)
-- [x] Boxes: moving between settings as Agenda (User's Guide 2-16): → or TAB right one setting, or to the next one when there is none to the right; ← or SHIFT-TAB left, or to the previous one; ↓ ↑ to the setting in the next row nearest the same place (from a right-hand setting to the right-hand one below, else the left); HOME / END the first / last. The rows and places come from the box's layout (`Agenda.TUI.Template.grid/2`, `Agenda.TUI.BoxNav`); boxes that list one setting a row move down and up with → ←. Choices change with SPACE; numbers and times are typed, no longer → ← (§5)
+- [x] Boxes: moving between settings as Agenda (User's Guide 2-16): → or TAB right one setting, or to the next one when there is none to the right; ← or SHIFT-TAB left, or to the previous one; ↓ ↑ to the setting in the next row nearest the same place (from a right-hand setting to the right-hand one below, else the left); HOME / END the first / last. The rows and places come from the box's layout (`Agendum.TUI.Template.grid/2`, `Agendum.TUI.BoxNav`); boxes that list one setting a row move down and up with → ←. Choices change with SPACE; numbers and times are typed, no longer → ← (§5)
 - [x] Boxes: the first letter of a choice picks it (User's Guide 2-17), and F3 lists a setting's choices (§5)
 - [x] Category Properties in two columns, as Agenda's (screenshot 74), drawn from a layout; a box opened from a box sits two columns right of it whatever their widths
 - [x] "..." for Category Properties' sub-boxes, as Agenda: Note, Statistics (Agenda's Category Statistics box, new) and Advanced settings, opened by SPACE
@@ -75,7 +75,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] Boxes: F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) every setting in the box, CTRL-ENTER clears a setting (User's Guide 2-17)
 - [ ] Search/Replace in a note: "Replace this occurrence?" as a Yes/No box, as the other questions (it is still asked in the control panel)
 - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash, Tab size; screenshot 130) where Agendum has them, and the File Statistics box (screenshot 140), as Category Statistics
-- [ ] Look into: one fuzz run (2026-10-14, while letters in boxes were built) printed a stack trace through `Agenda.TUI.BoxChoices` yet passed; not reproduced in three later 1,500–2,000-run sweeps
+- [ ] Look into: one fuzz run (2026-10-14, while letters in boxes were built) printed a stack trace through `Agendum.TUI.BoxChoices` yet passed; not reproduced in three later 1,500–2,000-run sweeps
 - [x] In notes: F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, and their key bar (R63)
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names; the note editor's "Note for: … Line 1 INS EDIT" header
 - [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix (plan: `docs/KITTY.md`)
@@ -117,7 +117,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 - [x] JSON export/import: the modern, human-readable format; round-trips everything in a file (R44, `docs/JSON_FORMAT.md`)
 - [x] iCal import: subscribe to calendars on the web, read on a schedule or on request, mirrored into items (R45)
-- [x] Time zones in calendar subscriptions: a time with a TZID is converted by the calendar's own `VTIMEZONE` definitions (offsets and yearly daylight-saving rules or RDATEs, `Agenda.Core.ICal.TimeZone`) to UTC, then to local time; a zone the calendar does not define stays local time; no package (ADR 0021) (R45)
+- [x] Time zones in calendar subscriptions: a time with a TZID is converted by the calendar's own `VTIMEZONE` definitions (offsets and yearly daylight-saving rules or RDATEs, `Agendum.Core.ICal.TimeZone`) to UTC, then to local time; a zone the calendar does not define stays local time; no package (ADR 0021) (R45)
 - [ ] Repeating events in a calendar from another time zone: each occurrence converted in its own zone, so the weeks between the two zones' summer-time changes are not an hour off (SPEC R45)
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
 - [ ] Optional: Import of structured text files (one item per line, with categories)
@@ -136,7 +136,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] F2 edits the macro's text (note editor), F6 Properties (attach to key, run from views / notes / category manager / everywhere else), attached keys and their key-bar names, {CALL Name}, DEL, ALT-F5 sort, ALT-↑↓ move
   - Not planned now: the macro command language (chapters 2–3), external `.MAC` files, protection
 - [x] A starter file like Agenda's Activities Planner: categories and views, no items (Starter Applications), bundled as a file the user copies (`starters/planner.agendum`, built from code); needs columns per section, note-line columns, hide column heads and section separators (Milestone 2) (R60)
-  - [x] Its categories, with short names, Also match, conditions and Amount's action (`Agenda.Starters.Planner`)
+  - [x] Its categories, with short names, Also match, conditions and Amount's action (`Agendum.Starters.Planner`)
   - [x] Its views: the 16 of Agenda's View Manager, and Contacts (`Planner.Views`); the sample data adds contact items and sections for its people and trip
   - [x] Its keystroke macros: Customize date settings, Hide/Display done items, Print current view (`Planner.Macros`; through Agendum's menus, without Agenda's {ALERT} boxes)
   - [x] `mix agendum.starters` writes `starters/planner.agendum`; `--samples` writes a copy with realistic sample data for testing (`tmp/planner-samples.agendum`; dates from `--today`, so the same day gives the same file)
@@ -152,7 +152,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ## Housekeeping
 
-- [x] Move the TUI's direct `Database` writes into `Agenda.Core` operations (enforced by `architecture_test.exs`)
+- [x] Move the TUI's direct `Database` writes into `Agendum.Core` operations (enforced by `architecture_test.exs`)
 - [x] Resolve existing conflicts when making children exclusive, as Agenda 2.0 does (R7a)
 - [x] Resolve conflicts when moving categories into exclusive families, as Agenda 2.0 does (R7b)
 - [x] Enforce "no direct assignment to both a category and its ancestor", including in moves (R7c)
@@ -161,14 +161,15 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Developer tools: a screen with debugging info and a key tester, on a hidden key (ESC ?)
 - [x] A debug log of each session when `AGENDUM_LOG` is set: keys, effects, messages and crashes with the state; the last five sessions kept (ADR 0027)
 - [x] The name Wol's Agendum: command, files (`.agendum`), preferences, JSON format, texts; the old names still read (ADR 0019)
-- [ ] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agenda` and `test/agenda`, the repository folder; one mechanical commit (ADR 0019); with it, group the small TUI modules in subfolders (e.g. `tui/boxes/`, `tui/terminal/` for Terminal, Keys, Screen, Draw and Theme), so module names change only once
-- [ ] Draw the settings boxes from layouts (`Agenda.TUI.Template`, as File ▸ Customize is now), a few at a time and with the split of `render.ex`; their layouts closer to Agenda's screenshots where that is easy (Category Properties done)
+- [x] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agendum` and `test/agendum`; files saved with the old struct names still load (ADR 0019)
+- [ ] Group the small TUI modules in subfolders (e.g. `tui/boxes/`, `tui/terminal/` for Terminal, Keys, Screen, Draw and Theme); rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it
+- [ ] Draw the settings boxes from layouts (`Agendum.TUI.Template`, as File ▸ Customize is now), a few at a time and with the split of `render.ex`; their layouts closer to Agenda's screenshots where that is easy (Category Properties done)
 - [x] Split the four largest files into subfolders, by the sections they already have; pure moves, no change in behaviour, one file per commit (best in a fresh session each):
   - [x] `tui/render.ex` (~2,300 lines) → `tui/render/`: `Render` keeps `render/1`; `ControlPanel`, `KeyBar`, `View`, `Managers`, `Note`, `Help`, `Boxes` and `CategoryBoxes`, `Text` (shared words), `Export`
   - [x] `tui/update.ex` (~2,000) → `tui/update/`: `Update` keeps `handle/2`, `tick/2`, dispatch, effect results and the help screen's keys; `ViewKeys`, `Editing`, `Marked` (with moving items), `Prompts`, `Notes`, `Actions` (prepares the command layer, ADR 0020)
   - [x] `tui/category_screens.ex` (~1,200) → `tui/category_screens/`: `CategoryScreens` keeps opening, rows, cursor, collapsing, inline edits and dispatch; `Manager`, `Picker`, `Profile`, `Choices` (the choice boxes: exclusive children, moves, type, Learn, view type), `Properties`
-  - [x] `core.ex` (~2,300, the facade) → `core/facade/`: `Agenda.Core` stays the one entry point (rule 3) as a table of contents of `defdelegate`s to area modules, where the functions and their docs live: `Files`, `Items`, `Assignments`, `Dates`, `Alarms`, `Numbers`, `Dependencies`, `Rules` (actions, text matching, conditions, Execute, Recalc), `Categories`, `Views`, `Macros`, `Calendars`; `Changes` keeps what every change to an item goes through (dates, settling)
-- [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agenda.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
+  - [x] `core.ex` (~2,300, the facade) → `core/facade/`: `Agendum.Core` stays the one entry point (rule 3) as a table of contents of `defdelegate`s to area modules, where the functions and their docs live: `Files`, `Items`, `Assignments`, `Dates`, `Alarms`, `Numbers`, `Dependencies`, `Rules` (actions, text matching, conditions, Execute, Recalc), `Categories`, `Views`, `Macros`, `Calendars`; `Changes` keeps what every change to an item goes through (dates, settling)
+- [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agendum.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
 - [x] API documentation with `ex_doc` (dev only): `mix docs` from the `@moduledoc`s and `@spec`s, for whoever builds on the core facade (ADR 0020)
 - [ ] The real Agenda for Claude to try: DOSBox Staging started by a script, keys sent with its `AUTOTYPE`, the window captured with `screencapture`, to check Agenda's behaviour and compare screens without asking the owner for screenshots (plan and what the owner sets up: [`docs/DOSBOX_STAGING.md`](DOSBOX_STAGING.md))
 *[A page here was soaked in the creek. — Rabbit]*
@@ -177,7 +178,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 - [x] Dates in other languages: `--lang=swedish`, `--fallback=english`; Swedish (R14c)
 - [x] General negative links between any two categories, from the patent: Category Properties ▸ Excludes (R9)
-- [ ] More date languages (one `Agenda.Core.DateLanguage` pack each)
+- [ ] More date languages (one `Agendum.Core.DateLanguage` pack each)
 - [x] Fit column to contents (R22a): a command (View ▸ Column) that sets the highlighted column's width to fit its head and the entries of the items shown at that moment; a one-time adjustment, not kept in step as items change
 - [ ] Modern by default: today's names and standard keys out of the box (Open not Retrieve, Delete not Discard, CTRL-O/S/Z/F/N…), with Agenda's names and keys one setting away ("Agenda mode"). Agenda's steep learning curve limited its audience (AGENDA_HISTORY.md); the power should stay, the strangeness should not be the first thing people meet. Builds on the keymaps, self-describing commands and own key bindings (Towards many users); departs from ADR 0006 and 0007, so it needs an ADR of its own
 - [ ] Flashcards with active recall and spaced repetition: an item is the question, its note the answer; a deck is any category. The schedule is kept in ordinary categories made the first time (date category Due; numeric Interval, Ease and Reviews), so filters, datebooks, sorting and JSON work on cards as they are, with no new stored fields. A review mode on the due items: the question, SPACE shows the note, then Again / Hard / Good / Easy sets the next Due date (one undo step per card). Scheduling is SM-2 to begin with, in a pure core module with the clock passed in, behind an interface that FSRS could replace
@@ -190,11 +191,11 @@ A web application with accounts and shared files, on the same core (plan:
 [MULTIUSER.md](MULTIUSER.md), ADR 0020). First, in the core and the TUI, a
 few commands at a time:
 
-- [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agenda.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
+- [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agendum.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
 - [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps
 - [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries, and "describe key"; the F1 help and KEYBOARD.md checked against the keymaps
 - [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
-- [ ] Raw values (dates, numbers) beside the formatted cells in `Agenda.Core.ViewModel`
+- [ ] Raw values (dates, numbers) beside the formatted cells in `Agendum.Core.ViewModel`
 - [ ] Browsing's date arithmetic into the core
 - [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
 

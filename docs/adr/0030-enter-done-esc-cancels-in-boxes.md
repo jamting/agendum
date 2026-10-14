@@ -20,7 +20,7 @@ text would have been untrue in all of them.
   ESC, which cancels them; the frame says so in Agenda's words.
 - Changes still apply at once while the box is open. When a settings box
   opens, the file and the person's preferences are kept with its mode;
-  ESC puts them back (`Agenda.TUI.BoxCancel`), as one change, so one undo
+  ESC puts them back (`Agendum.TUI.BoxCancel`), as one change, so one undo
   brings the cancelled changes back. Preferences that were saved are
   saved again as they were.
 - A box opened from a box keeps its own snapshot, so ESC there cancels
@@ -41,7 +41,7 @@ text would have been untrue in all of them.
 - The frame text is true everywhere, and ENTER and ESC mean the same in
   every box, as in Agenda.
 - People used to ENTER on a field in the six boxes press SPACE (or F2)
-  instead; the help in the control panel (`Agenda.TUI.FieldHelp`) and the
+  instead; the help in the control panel (`Agendum.TUI.FieldHelp`) and the
   key bar say so.
 - Cancelling restores whole snapshots, so it is simple and covers every
   setting, present and future, without per-box code.

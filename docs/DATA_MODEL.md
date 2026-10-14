@@ -3,9 +3,9 @@
 How an Agenda file is represented in memory and on disk. For how the data
 is read and changed, see [`DATA_ACCESS.md`](DATA_ACCESS.md).
 
-An Agenda file is **one immutable value**, `%Agenda.Core.Database{}`. Every
+An Agenda file is **one immutable value**, `%Agendum.Core.Database{}`. Every
 change produces a new value; nothing is updated in place. This is what
-makes undo a matter of keeping old values (`Agenda.TUI.History`).
+makes undo a matter of keeping old values (`Agendum.TUI.History`).
 
 ## Overview
 
@@ -329,15 +329,15 @@ classDiagram
 
 | Struct                                | Module                             | Notes                                                                                                |
 | ------------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `Database`                            | `lib/agenda/core/database.ex`      | The whole file. Maps are keyed by id; order lives in separate lists.                                 |
-| `Item`                                | `lib/agenda/core/item.ex`          | Free text and dates. **Does not know its categories.**                                               |
-| `Category`                            | `lib/agenda/core/category.ex`      | Tree node with flags for the assignment rules. **Does not know its items.**                          |
-| `View`, `View.Section`, `View.Column` | `lib/agenda/core/view.ex`          | Pure presentation config; references categories by id.                                               |
-| `Links`                               | `lib/agenda/core/links.ex`         | Generic bidirectional many-to-many relation.                                                         |
-| `DateFormat`                          | `lib/agenda/core/date_format.ex`   | How the file and date columns display dates and times (R41, R41a).                                   |
-| `DateSettings`                        | `lib/agenda/core/date_settings.ex` | How the file reads typed dates: week, quarter and year boundaries, month alone, times of day (R14e). |
-| `NumberFormat`                        | `lib/agenda/core/number_format.ex` | How a numeric column shows numbers and which calculations it shows; also reads typed numbers (R29).  |
-| `Calendar`                            | `lib/agenda/core/calendar.ex`      | A calendar subscription: its address, its category, and the events it last read (R45).               |
+| `Database`                            | `lib/agendum/core/database.ex`      | The whole file. Maps are keyed by id; order lives in separate lists.                                 |
+| `Item`                                | `lib/agendum/core/item.ex`          | Free text and dates. **Does not know its categories.**                                               |
+| `Category`                            | `lib/agendum/core/category.ex`      | Tree node with flags for the assignment rules. **Does not know its items.**                          |
+| `View`, `View.Section`, `View.Column` | `lib/agendum/core/view.ex`          | Pure presentation config; references categories by id.                                               |
+| `Links`                               | `lib/agendum/core/links.ex`         | Generic bidirectional many-to-many relation.                                                         |
+| `DateFormat`                          | `lib/agendum/core/date_format.ex`   | How the file and date columns display dates and times (R41, R41a).                                   |
+| `DateSettings`                        | `lib/agendum/core/date_settings.ex` | How the file reads typed dates: week, quarter and year boundaries, month alone, times of day (R14e). |
+| `NumberFormat`                        | `lib/agendum/core/number_format.ex` | How a numeric column shows numbers and which calculations it shows; also reads typed numbers (R29).  |
+| `Calendar`                            | `lib/agendum/core/calendar.ex`      | A calendar subscription: its address, its category, and the events it last read (R45).               |
 
 ### Ids
 
@@ -382,7 +382,7 @@ flowchart LR
 ```
 
 `Links.link/3` and `Links.unlink/3` always update both maps, and empty
-sets are removed. A property test (`test/agenda/core/links_test.exs`)
+sets are removed. A property test (`test/agendum/core/links_test.exs`)
 checks that the two indexes always describe the same relation.
 
 Only **explicit** assignments are stored. Membership through the hierarchy
@@ -407,7 +407,7 @@ field (`Database.date_field/2` maps a category id to `:entry`, `:when` or
 
 ## Worked example
 
-The demo file (`Agenda.Sample.build/1`), based on the patent's example
+The demo file (`Agendum.Sample.build/1`), based on the patent's example
 view. Its category hierarchy, with ids:
 
 ```mermaid
@@ -457,7 +457,7 @@ shows "Anna Lasky".
 The same database as an Elixir term, abbreviated:
 
 ```elixir
-%Agenda.Core.Database{
+%Agendum.Core.Database{
   main_id: 1,
   special: %{entry: 2, when: 3, done: 4},
   next_id: 21,
@@ -483,7 +483,7 @@ The same database as an Elixir term, abbreviated:
 
 ### Datebook views
 
-A view with `datebook` set (R47, `Agenda.Core.Datebook`) shows time slots instead
+A view with `datebook` set (R47, `Agendum.Core.Datebook`) shows time slots instead
 of its stored sections, which it ignores: the hours of a day, the days of a
 week, or the days, weeks or months of a month or quarter, worked out from
 the settings and the clock every time the view is built
@@ -551,7 +551,7 @@ tests in `database_test.exs` and `links_test.exs`):
 
 ## On disk
 
-`Agenda.Store` writes the whole `Database` value as one Erlang term:
+`Agendum.Store` writes the whole `Database` value as one Erlang term:
 
 ```mermaid
 flowchart LR
@@ -577,13 +577,13 @@ flowchart LR
 
 ## UI state around the database
 
-The TUI keeps a few database-related values in `Agenda.TUI.State`. They
+The TUI keeps a few database-related values in `Agendum.TUI.State`. They
 are not part of the file:
 
 | Field          | Purpose                                                                                |
 | -------------- | -------------------------------------------------------------------------------------- |
 | `db`           | The current `Database`.                                                                |
 | `saved_db`     | The database as last saved or loaded; `dirty` is `db != saved_db`.                     |
-| `undo`, `redo` | Snapshots `%{db, view_id, cursor_key}` (max 100), see `Agenda.TUI.History`.            |
+| `undo`, `redo` | Snapshots `%{db, view_id, cursor_key}` (max 100), see `Agendum.TUI.History`.            |
 | `view_id`      | The view on screen.                                                                    |
 | `cursor_key`   | `{:section, index}` or `{:item, section_index, item_id}`; re-found after every change. |

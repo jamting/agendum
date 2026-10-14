@@ -19,7 +19,7 @@ they learn today's date without the core reading the clock (ADR 0001).
 
 - Every facade function that changes an item's assignments, text, dates or
   numbers ends in one private step, `settle(db, before, item, clock)` in
-  `Agenda.Core`: first the conditions are checked again
+  `Agendum.Core`: first the conditions are checked again
   (`Assign.apply_conditions`), then the actions of every category the item
   belongs to now but did not belong to in `before` run, children's before
   their parents', special actions last; repeated until nothing new happens,
@@ -28,7 +28,7 @@ they learn today's date without the core reading the clock (ADR 0001).
   by remembering which actions ran. Utilities Execute (`Core.execute/3`) can
   pretend an item has just arrived to run actions on old assignments.
 - Today's date and the date languages reach conditions and actions as an
-  optional `clock` argument (a `Date`, `NaiveDateTime` or `Agenda.Core.Context`),
+  optional `clock` argument (a `Date`, `NaiveDateTime` or `Agendum.Core.Context`),
   passed by the TUI as `State.context(state)`. Without a clock only ISO dates
   in conditions and actions can be read; nothing falls back to the system
   clock. The clock tick re-checks every item when the date changes.
