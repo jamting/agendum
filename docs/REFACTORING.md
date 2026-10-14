@@ -64,8 +64,47 @@ One box per commit, its layout converted to a template in the same commit
 `render/boxes.ex`, the `dispatch` clauses and the lists in `render.ex` and
 `box_cancel.ex` are gone, and the stale-hint bug with them.
 
-Progress: `Agendum.TUI.Boxes.Box` and its registry are in place; moved:
-Macro Properties.
+### Progress (paused 2026-10-14)
+
+`Agendum.TUI.Boxes.Box` and its registry (`Box.registry/0`) are in place.
+30 of 41 box types are moved, one commit each: macro_props, input_format,
+auto_assign, category_match, date_rule, date_settings (new module
+`DateSettingsBox`), display_format (`DisplayFormatBox`), file_props,
+customize, execute, schedule, sort, search_box, note_search, action_box,
+range_filter, numeric_functions, section_props, item_column,
+column_props, column_add, datebook_props, props, category_stats
+(`CategoryStatsBox`), item_props, goto, copy_items, choice_list
+(`ChoiceListBox`), alarm_list, questions.
+
+Left (11): the category boxes drawn by `Agendum.TUI.Render.CategoryBoxes`
+(picker, profile, group_profile, choice), calendar, calendars, macros,
+select_file, scope, confirm, viewmgr. They are lists, so they keep their
+rows' drawing; only a box with fixed settings gets a template layout.
+
+Moving one box:
+
+1. In its module: `use Agendum.TUI.Boxes.Box` with `finish:` (the words in
+   its bottom edge, from `@done_boxes`/`@accept_boxes` in
+   `Agendum.TUI.Render.Boxes`), `indicator:` (from the control panel's lists;
+   nil when it had none), `cancels:` (from `Agendum.TUI.Boxes.BoxCancel`'s list),
+   `choices:`; `@impl Box` on `handle/3`, and `title/2`, `content/4`,
+   `keys/2` (moved from `Agendum.TUI.Render.KeyBar`), `help/0` (moved from
+   `Agendum.TUI.Boxes.FieldHelp`'s `@lists`), `field/2` and `width/2` where needed;
+   the in-box hint is `Box.hint(keys(state, mode), inner)`.
+2. Add the type to `Box.registry/0`.
+3. Remove the type everywhere else: its `dispatch` clause in
+   `Agendum.TUI.Update` (and an alias left unused), `@boxes` in
+   `Agendum.TUI.Render`, its `box_title`/`box_width`/`box_content` clauses and
+   list entries in `Agendum.TUI.Render.Boxes`, its `mode_keys` clause in
+   `Agendum.TUI.Render.KeyBar`, the control panel's indicator lists, BoxCancel's
+   list, FieldHelp's `@lists`. A list left empty goes with its clause
+   (Dialyzer reports an `in []` guard). `mix check`, look at the box on
+   screen (`TUIHelpers.screen/1`), commit.
+
+When the last one has moved: the fallbacks go (`dispatch` keeps the
+non-box modes; `Render.Boxes` keeps only `overlay/6` and the frame;
+`FieldHelp` only `text/1` and the tests' helpers; `BoxCancel` and
+`BoxChoices` ask the registry alone), and ARCHITECTURE.md says so.
 
 ## 4. Logic in `Agendum.TUI.Update`: wait for the command layer
 
