@@ -76,7 +76,7 @@ the rest by what it is for:
   from mode type to module), `Template` (layouts), `BoxNav` (moving),
   `BoxCancel` (ESC), `BoxChoices` (letters and F3), `FieldHelp`,
   `FieldTyping`. Every box keeps everything about it in its own module:
-  keys, drawing, key bar, help, how it ends (docs/REFACTORING.md, step 3).
+  keys, drawing, key bar, help, how it ends (docs/plans/REFACTORING.md, step 3).
   `Update` sends a box its keys, and `Render.Boxes` draws its frame, through
   the registry; a new box is a module and a line in `Box.registry/0`;
 - `tui/terminal/` (`Agendum.TUI.Terminal.*`): keys in, screen out: `Keys`,

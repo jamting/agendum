@@ -42,7 +42,7 @@ for anything about the project, and memory for how the owner works:
 
 - **docs/ROADMAP.md**: tick what was finished; add bugs or ideas found on
   the way (with enough detail to act on later).
-- **Plan documents** (e.g. `docs/REFACTORING.md`): update a "Progress"
+- **Plan documents** (e.g. `docs/plans/REFACTORING.md`): update a "Progress"
   section for work that is paused: what is done, what is left, how to
   continue.
 - **ADRs** (`docs/adr/`): a lasting decision made this session that has

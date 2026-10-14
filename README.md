@@ -97,7 +97,7 @@ mix agendum.starters --samples   # a copy full of sample data, for testing: tmp/
 first change: installing Erlang and Elixir, running the checks, finding
 your way in the code and the documents, and the workflow for a change.
 The plan for putting the project on GitHub, with checks on every push and
-the documentation on GitHub Pages, is in [`docs/GITHUB.md`](docs/GITHUB.md).
+the documentation on GitHub Pages, is in [`docs/plans/GITHUB.md`](docs/plans/GITHUB.md).
 
 ## Licence
 

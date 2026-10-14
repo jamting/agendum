@@ -101,10 +101,11 @@ a separate refactoring now would be done twice.
   test ties them together. The lasting fix is to generate the key tables
   from self-describing commands (ROADMAP, after the command layer); until
   then the `update-guide` and `update-manual` skills catch the drift.
-- Plans sit among the reference documents: `GITHUB.md`, `DOSBOX_STAGING.md`,
+- Plans sat among the reference documents: `GITHUB.md`, `DOSBOX_STAGING.md`,
   `KITTY.md`, `RENAME_REPO.md`, `WOL-IN-THE-MACHINE.md`, `MULTIUSER.md` and
-  this one. Moving them to `docs/plans/` would leave `docs/` as what
-  Agendum is. `RENAME_REPO.md` goes once the folder is renamed.
+  this one. ✅ Moved to `docs/plans/` (2026-10-14), a group of their own
+  (Plans) in `mix docs`, so `docs/` is what Agendum is. `RENAME_REPO.md`
+  goes once the folder is renamed.
 
 ## 6. Mix commands, skills, tools: no change
 

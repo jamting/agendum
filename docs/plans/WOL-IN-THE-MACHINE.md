@@ -94,7 +94,7 @@ natural successor of the string matching in R15 and R16.
   finds first?
 - Does the agent remember between sessions, and where (a note, a
   category, the preferences)?
-- In the multi-user web app (`docs/MULTIUSER.md`): one agent per person
+- In the multi-user web app (`docs/plans/MULTIUSER.md`): one agent per person
   or per file, and whose suggestions does a shared file accept?
 - The first small step. A good candidate: smarter filing of a new item,
   shown as Questions (R16), with nothing else changed.

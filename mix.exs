@@ -50,9 +50,13 @@ defmodule Agendum.MixProject do
       formatters: ["html", "markdown"],
       extras:
         ["README.md", "CONTRIBUTING.md", "CLAUDE.md"] ++
-          Path.wildcard("docs/*.md") ++ Path.wildcard("docs/adr/*.md"),
+          Path.wildcard("docs/*.md") ++
+          Path.wildcard("docs/plans/*.md") ++ Path.wildcard("docs/adr/*.md"),
+      # docs/ describes Agendum as it is; docs/plans/ what is planned or
+      # under way (each plan says how far it has come)
       groups_for_extras: [
         Design: ~r{docs/[A-Z_-]+\.md},
+        Plans: ~r{docs/plans/},
         Decisions: ~r{docs/adr/}
       ],
       groups_for_modules: [

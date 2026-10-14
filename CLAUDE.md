@@ -50,7 +50,7 @@ inline `# credo:disable-for-next-line` with the reason.
    terminal layer uses OTP 28+ raw mode, not a TUI library (ADR 0002).
 6. Keep everything a second front end (e.g. web) would need in `Agendum.Core`;
    the TUI only handles keys and drawing. A multi-user web app on the same
-   core is planned (`docs/MULTIUSER.md`, ADR 0020): keep the logic of a
+   core is planned (`docs/plans/MULTIUSER.md`, ADR 0020): keep the logic of a
    user action in the core, not in `Agendum.TUI.Update`.
 
 ## Workflow for a feature

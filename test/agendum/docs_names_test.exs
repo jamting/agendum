@@ -6,7 +6,8 @@ defmodule Agendum.DocsNamesTest do
   use ExUnit.Case, async: true
 
   @files ["README.md", "CLAUDE.md"] ++
-           Path.wildcard("docs/*.md") ++ Path.wildcard("docs/adr/*.md")
+           Path.wildcard("docs/*.md") ++
+           Path.wildcard("docs/plans/*.md") ++ Path.wildcard("docs/adr/*.md")
   # a short module name, perhaps with a function and arity, alone in backticks
   @short ~r/`((?:Core|TUI)\.[A-Z][\w.]*?)(?:\.[a-z_][\w?!]*(?:\/\d+)?)?`/
 

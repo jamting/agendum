@@ -79,7 +79,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] Look into: one fuzz run (2026-10-14, while letters in boxes were built) printed a stack trace through `Agendum.TUI.Boxes.BoxChoices` yet passed; not reproduced in three later 1,500–2,000-run sweeps
 - [x] In notes: F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, and their key bar (R63)
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names; the note editor's "Note for: … Line 1 INS EDIT" header
-- [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix (plan: `docs/KITTY.md`)
+- [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix (plan: `docs/plans/KITTY.md`)
 - [x] Startup (R52): a splash screen laid out as Agenda's (a cyan box in a solid blue frame with a shadow, the title spaced out, the release, Name and Company lines) with Title "WOL'S AGENDUM", Tagline "Hoo's in control? You are." and Copyright "Copyright JW&D + WOL. All rites reserved."; then a File Retrieve box when no file is named
 - [ ] Hypertext help: topics with links (TAB, ENTER), Index, Find, Review (Agenda's F1)
 
@@ -165,10 +165,10 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] The name Wol's Agendum: command, files (`.agendum`), preferences, JSON format, texts; the old names still read (ADR 0019)
 - [x] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agendum` and `test/agendum`; files saved with the old struct names still load (ADR 0019)
 - [x] Group the small TUI modules in subfolders: `tui/boxes/`, `tui/terminal/`, `tui/typing/`, `tui/moves/` (ARCHITECTURE.md, TUI)
-- [ ] Rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it ([`docs/RENAME_REPO.md`](RENAME_REPO.md))
+- [ ] Rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it ([`docs/plans/RENAME_REPO.md`](plans/RENAME_REPO.md))
 - [ ] Draw the settings boxes from layouts (`Agendum.TUI.Boxes.Template`, as File ▸ Customize is now), a few at a time and with the split of `render.ex`; their layouts closer to Agenda's screenshots where that is easy (Category Properties done)
-- [x] Every box in a module of its own behind `Agendum.TUI.Boxes.Box` (keys, drawing, key bar, help, ending), then the fallbacks removed from Update, Render.Boxes, FieldHelp, BoxCancel and BoxChoices ([`docs/REFACTORING.md`](REFACTORING.md) step 3)
-- [ ] The plans (`GITHUB.md`, `DOSBOX_STAGING.md`, `KITTY.md`, `RENAME_REPO.md`, `WOL-IN-THE-MACHINE.md`, `MULTIUSER.md`, `REFACTORING.md`) moved to `docs/plans/`, so `docs/` is what Agendum is (REFACTORING.md step 5)
+- [x] Every box in a module of its own behind `Agendum.TUI.Boxes.Box` (keys, drawing, key bar, help, ending), then the fallbacks removed from Update, Render.Boxes, FieldHelp, BoxCancel and BoxChoices ([`docs/plans/REFACTORING.md`](plans/REFACTORING.md) step 3)
+- [x] The plans (`GITHUB.md`, `DOSBOX_STAGING.md`, `KITTY.md`, `RENAME_REPO.md`, `WOL-IN-THE-MACHINE.md`, `MULTIUSER.md`, `REFACTORING.md`) moved to `docs/plans/`, so `docs/` is what Agendum is; a group of their own, Plans, in the generated docs (REFACTORING.md step 5)
 - [x] Split the four largest files into subfolders, by the sections they already have; pure moves, no change in behaviour, one file per commit (best in a fresh session each):
   - [x] `tui/render.ex` (~2,300 lines) → `tui/render/`: `Render` keeps `render/1`; `ControlPanel`, `KeyBar`, `View`, `Managers`, `Note`, `Help`, `Boxes` and `CategoryBoxes`, `Text` (shared words), `Export`
   - [x] `tui/update.ex` (~2,000) → `tui/update/`: `Update` keeps `handle/2`, `tick/2`, dispatch, effect results and the help screen's keys; `ViewKeys`, `Editing`, `Marked` (with moving items), `Prompts`, `Notes`, `Actions` (prepares the command layer, ADR 0020)
@@ -176,7 +176,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] `core.ex` (~2,300, the facade) → `core/facade/`: `Agendum.Core` stays the one entry point (rule 3) as a table of contents of `defdelegate`s to area modules, where the functions and their docs live: `Files`, `Items`, `Assignments`, `Dates`, `Alarms`, `Numbers`, `Dependencies`, `Rules` (actions, text matching, conditions, Execute, Recalc), `Categories`, `Views`, `Macros`, `Calendars`; `Changes` keeps what every change to an item goes through (dates, settling)
 - [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agendum.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
 - [x] API documentation with `ex_doc` (dev only): `mix docs` from the `@moduledoc`s and `@spec`s, for whoever builds on the core facade (ADR 0020)
-- [ ] The real Agenda for Claude to try: DOSBox Staging started by a script, keys sent with its `AUTOTYPE`, the window captured with `screencapture`, to check Agenda's behaviour and compare screens without asking the owner for screenshots (plan and what the owner sets up: [`docs/DOSBOX_STAGING.md`](DOSBOX_STAGING.md))
+- [ ] The real Agenda for Claude to try: DOSBox Staging started by a script, keys sent with its `AUTOTYPE`, the window captured with `screencapture`, to check Agenda's behaviour and compare screens without asking the owner for screenshots (plan and what the owner sets up: [`docs/plans/DOSBOX_STAGING.md`](plans/DOSBOX_STAGING.md))
 *[A page here was soaked in the creek. — Rabbit]*
 
 ## Beyond Agenda
@@ -193,7 +193,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 ## Towards many users
 
 A web application with accounts and shared files, on the same core (plan:
-[MULTIUSER.md](MULTIUSER.md), ADR 0020). First, in the core and the TUI, a
+[MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). First, in the core and the TUI, a
 few commands at a time:
 
 - [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agendum.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
@@ -216,4 +216,4 @@ Then working together:
 
 - Multiple files open; a launcher listing recent files
 - In-line help in boxes: the hint inside a box (made from its keys, `Box.hint/2`) as the start of a fuller help, with longer texts in a help box of their own (the owner's idea, 2026-10-14)
-- Wol in the machine: a personal agent (a language model) inside the file, using its items, categories, views and rules as the person's own meaning; it files, finds and plans by proposing, never silently changing; the core stays pure and privacy comes first. Builds on the command layer (Towards many users). Thoughts in [`docs/WOL-IN-THE-MACHINE.md`](WOL-IN-THE-MACHINE.md)
+- Wol in the machine: a personal agent (a language model) inside the file, using its items, categories, views and rules as the person's own meaning; it files, finds and plans by proposing, never silently changing; the core stays pure and privacy comes first. Builds on the command layer (Towards many users). Thoughts in [`docs/plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)

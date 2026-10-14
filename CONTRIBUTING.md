@@ -6,7 +6,7 @@ first change.
 Agendum is not open source (see the README's Licence section). Before your
 first contribution, the owner will agree with you the terms it comes under,
 *[A page here was soaked in the creek. — Rabbit]*
-([`docs/GITHUB.md`](docs/GITHUB.md), section 7). The rules for the code itself are in [`CLAUDE.md`](CLAUDE.md):
+([`docs/plans/GITHUB.md`](docs/plans/GITHUB.md), section 7). The rules for the code itself are in [`CLAUDE.md`](CLAUDE.md):
 it is written for Claude, the AI assistant that has written much of the
 code with the owner, and it applies to people just the same.
 
@@ -78,7 +78,7 @@ The code in brief:
   `Agendum.TUI.Render.render(state)` returns the screen. Only a few modules
   touch the outside world (the terminal, files, preferences).
 - A web front end on the same core is planned
-  ([`docs/MULTIUSER.md`](docs/MULTIUSER.md)), so the logic of a user action
+  ([`docs/plans/MULTIUSER.md`](docs/plans/MULTIUSER.md)), so the logic of a user action
   belongs in the core, not in the UI.
 
 `test/agendum/architecture_test.exs` checks the most important of these
