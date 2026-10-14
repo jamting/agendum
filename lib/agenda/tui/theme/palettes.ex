@@ -36,8 +36,10 @@ defmodule Agenda.TUI.Theme.Palettes do
       fg: {"#000000", 39},
       sel_bg: {"#bdbdbd", 37},
       sel_fg: {"#000000", 30},
-      cursor: {"#000000", 30},
-      cursor_fg: {"#ffffff", 97},
+      # the scheme's cursor (black) is too harsh for the highlight:
+      # Modus's own intense blue background
+      cursor: {"#9fcfff", 36},
+      cursor_fg: {"#000000", 97},
       # Modus's own colour for the current line
       tint: {"#dae5ec", 37},
       shade: {"#9f9f9f", 90},
@@ -51,8 +53,10 @@ defmodule Agenda.TUI.Theme.Palettes do
       fg: {"#ffffff", 39},
       sel_bg: {"#5a5a5a", 90},
       sel_fg: {"#ffffff", 97},
-      cursor: {"#ffffff", 97},
-      cursor_fg: {"#000000", 30},
+      # the scheme's cursor (white) is too harsh for the highlight:
+      # Modus's own intense blue background
+      cursor: {"#2a40b8", 34},
+      cursor_fg: {"#ffffff", 30},
       tint: {"#2f3849", 90},
       shade: {"#000000", 30},
       # ANSI 8 (#595959) is too dark to read on black
