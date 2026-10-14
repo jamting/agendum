@@ -282,15 +282,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Stop"}
     ]
 
-  defp mode_keys(%{type: type}) when type in [:range_filter],
-    do: [
-      {"↑↓←→", "Setting", "Move between settings"},
-      {"SPACE", "Change", "Change the setting"},
-      {"ENTER", "Apply"},
-      {"DEL", "Remove"},
-      {"ESC", "Cancel"}
-    ]
-
   defp mode_keys(%{type: :goto}),
     do: [
       {"↑↓", "Highlight", "Highlight a section"},

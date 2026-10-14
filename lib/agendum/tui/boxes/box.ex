@@ -80,6 +80,7 @@ defmodule Agendum.TUI.Boxes.Box do
     input_format: Agendum.TUI.Boxes.InputFormatBox,
     macro_props: Agendum.TUI.Boxes.MacroProps,
     note_search: Agendum.TUI.Typing.NoteSearch,
+    range_filter: Agendum.TUI.Boxes.RangeFilterBox,
     schedule: Agendum.TUI.Boxes.ScheduleBox,
     search_box: Agendum.TUI.Boxes.SearchBox,
     sort: Agendum.TUI.Boxes.SortBox

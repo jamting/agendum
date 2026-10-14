@@ -89,8 +89,7 @@ defmodule Agendum.TUI.Render.Boxes do
   # as Agenda's: ENTER shows the view, ESC goes back to the one shown)
   @done_boxes [
     :viewmgr,
-    :column_add,
-    :range_filter
+    :column_add
   ]
   # boxes to choose one thing in
   @accept_boxes [
@@ -192,12 +191,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_title(_state, %{type: :questions}), do: "Suggested assignments"
   defp box_title(_state, %{type: :goto}), do: "Go to section"
-
-  defp box_title(state, %{type: :range_filter} = mode) do
-    kind = if Agendum.TUI.Boxes.RangeFilterBox.numeric?(state, mode), do: "Numeric", else: "Date"
-    what = if match?({:condition, _}, mode.purpose), do: "condition", else: "filter"
-    "#{kind} #{what}: #{state.db.categories[mode.cat_id].name}"
-  end
 
   # the column's head is the box's first row, as in Agenda (screenshot 142)
   defp box_title(_state, %{type: :column_props}), do: "Column Properties"
@@ -416,24 +409,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
     [[{:box, " " <> String.slice(item.text, 0, inner - 2)}], [], [{:box, " Assign to:"}]] ++
       cats ++ [[], [{:box, " SPACE picks · TAB picks all · ENTER assigns · ESC stops"}]]
-  end
-
-  defp box_content(state, %{type: :range_filter} = mode, inner, _max_rows) do
-    rows =
-      state
-      |> Agendum.TUI.Boxes.RangeFilterBox.lines(mode)
-      |> Enum.with_index()
-      |> Enum.map(fn {{label, value}, i} ->
-        label = [{:box, " " <> Draw.pad(label, 16) <> ": "}]
-
-        case value do
-          {:line, line} when i == mode.cursor -> label ++ Draw.input(line, inner - 20, :edit)
-          {:line, line} -> label ++ [{:box, line.text}]
-          text -> label ++ [{if(i == mode.cursor, do: :box_selected, else: :box), text}]
-        end
-      end)
-
-    rows ++ [[], [{:box, " Blank = open · ENTER applies · DEL removes · ESC cancels"}]]
   end
 
   defp box_content(state, %{type: :goto} = mode, _inner, max_rows) do

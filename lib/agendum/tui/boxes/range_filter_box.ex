@@ -13,18 +13,43 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
   ← → move in the text); SPACE changes a choice;
   typing goes into the dates or numbers. ENTER applies the filter, ESC
   cancels, DEL on a choice row removes the category from the filter. The
-  rules are `Agendum.Core.RangeFilter`. Pure.
+  rules are `Agendum.Core.RangeFilter`. Drawn from a layout
+  (`Agendum.TUI.Boxes.Template`), one for dates and one for numbers. Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
 
   alias Agendum.Core
+  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
   alias Agendum.TUI.{Typing.LineEdit, State}
   alias Agendum.TUI.Update.Editing
 
-  @rows [:show, :from, :to, :where]
-  def rows, do: @rows
+  @date_layout """
+   Show items       : [show                                   ]
+   Start date       : [from                                   ]
+   End date         : [to                                     ]
+   Items should be  : [where                                  ]
+  """
+  @number_layout """
+   Show items       : [show                                   ]
+   Minimum value    : [from                                   ]
+   Maximum value    : [to                                     ]
+   Items should be  : [where                                  ]
+  """
+
+  @rows Template.fields(@date_layout)
+  @grid Template.grid(@date_layout, @rows)
+
+  @help %{
+    show: "Choose items assigned to the category, or items not assigned. SPACE switches.",
+    from: "Type the start of the range: a date or a number. Leave it blank for no start.",
+    to: "Type the end of the range: a date or a number. Leave it blank for no end.",
+    where:
+      "Choose items inside the range or outside it. SPACE switches. " <>
+        "ENTER applies, DEL removes the category."
+  }
 
   @doc "Opens the box for a view's or section's filter on `cat_id`."
   def open(state, scope, cat_id), do: open_for(state, {:filter, scope}, cat_id)
@@ -72,6 +97,7 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
   @doc "Whether the box is about a numeric category (else a date category)."
   def numeric?(state, mode), do: state.db.categories[mode.cat_id].kind == :numeric
 
+  @impl Box
   def handle(state, mode, key) do
     row = Enum.at(@rows, mode.cursor)
 
@@ -84,7 +110,7 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
 
       # on a date or number, ← → HOME END move in it; ↑ ↓ TAB still move between settings
       k when is_move(k) and (row not in [:from, :to] or k in [:up, :down, :tab, :shift_tab]) ->
-        BoxNav.move(state, mode, BoxNav.column(@rows), k)
+        BoxNav.move(state, mode, @grid, k)
 
       k when row in [:from, :to] ->
         case LineEdit.handle(Map.fetch!(mode, row), k) do
@@ -172,17 +198,45 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
   end
 
   @doc "`{label, value}` for each row; text rows give their `LineEdit`."
-  def lines(state, mode) do
-    numeric = numeric?(state, mode)
-
-    [
-      {"Show items", if(mode.show == :assigned, do: "Assigned", else: "Not assigned")},
-      {if(numeric, do: "Minimum value", else: "Start date"), {:line, mode.from}},
-      {if(numeric, do: "Maximum value", else: "End date"), {:line, mode.to}},
-      {"Items should be", if(mode.where == :inside, do: "Inside range", else: "Outside range")}
-    ]
+  @impl Box
+  def title(state, mode) do
+    kind = if numeric?(state, mode), do: "Numeric", else: "Date"
+    what = if match?({:condition, _}, mode.purpose), do: "condition", else: "filter"
+    "#{kind} #{what}: #{state.db.categories[mode.cat_id].name}"
   end
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
+    layout = if numeric?(state, mode), do: @number_layout, else: @date_layout
+
+    values = %{
+      show: if(mode.show == :assigned, do: "Assigned", else: "Not assigned"),
+      from: mode.from.text,
+      to: mode.to.text,
+      where: if(mode.where == :inside, do: "Inside range", else: "Outside range")
+    }
+
+    # a date or number on the cursor is drawn as the line being typed
+    row = field(state, mode)
+    editing = if row in [:from, :to], do: [editing: {row, Map.fetch!(mode, row)}], else: []
+
+    Template.render(layout, values, [selected: row] ++ editing) ++
+      [[], Box.hint(keys(state, mode), inner)]
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓←→", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Change the setting"},
+      {"ENTER", "Apply"},
+      {"DEL", "Remove"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
+
+  @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

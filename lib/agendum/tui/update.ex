@@ -31,7 +31,6 @@ defmodule Agendum.TUI.Update do
     Boxes.ItemProperties,
     Layout,
     Menu,
-    Boxes.RangeFilterBox,
     Boxes.SearchBox,
     State,
     Boxes.ViewManager
@@ -435,9 +434,6 @@ defmodule Agendum.TUI.Update do
 
   defp dispatch(state, %{type: :questions} = m, key),
     do: Agendum.TUI.Boxes.QuestionsBox.handle(state, m, key)
-
-  defp dispatch(state, %{type: :range_filter} = m, key),
-    do: RangeFilterBox.handle(state, m, key)
 
   defp dispatch(state, %{type: :column_props} = m, key), do: ColumnBox.handle(state, m, key)
 

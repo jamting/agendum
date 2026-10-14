@@ -19,7 +19,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.ItemColumnBox,
     Boxes.ItemProperties,
     Boxes.NumericFunctionsBox,
-    Boxes.RangeFilterBox,
     Boxes.SectionBox,
     State
   }
@@ -38,7 +37,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     column_add: ColumnAddBox,
     item_column: ItemColumnBox,
     numeric_functions: NumericFunctionsBox,
-    range_filter: RangeFilterBox,
     props: Properties,
     item_props: ItemProperties
   }
@@ -158,14 +156,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       average: "Show the average of every numeric column. SPACE switches.",
       minimum: "Show the smallest number of every numeric column. SPACE switches.",
       maximum: "Show the largest number of every numeric column. SPACE switches."
-    },
-    range_filter: %{
-      show: "Choose items assigned to the category, or items not assigned. SPACE switches.",
-      from: "Type the start of the range: a date or a number. Leave it blank for no start.",
-      to: "Type the end of the range: a date or a number. Leave it blank for no end.",
-      where:
-        "Choose items inside the range or outside it. SPACE switches. " <>
-          "ENTER applies, DEL removes the category."
     },
     props: %{
       name: "The category's name. F2 (or SPACE) edits it.",
