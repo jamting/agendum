@@ -18,29 +18,20 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
 
   @registered Box.registry()
 
-  # Help for boxes that are lists: the same whatever is highlighted
-  @lists %{}
-
   @doc "The help for the highlighted field of the box on top, or nil."
   @spec text(State.t()) :: String.t() | nil
   def text(state) do
     mode = State.mode(state)
 
-    case mode do
-      nil ->
-        nil
-
-      %{type: type} when is_map_key(@registered, type) ->
-        Box.help_text(@registered[type], state, mode)
-
-      %{type: type} ->
-        @lists[type]
+    case Box.module(mode) do
+      nil -> nil
+      box -> Box.help_text(box, state, mode)
     end
   end
 
   @doc "Every help text, for the tests."
   @spec all() :: [String.t()]
-  def all, do: Map.values(@lists) ++ Enum.flat_map(Map.values(@registered), &Box.help_texts/1)
+  def all, do: Enum.flat_map(Map.values(@registered), &Box.help_texts/1)
 
   @doc "The box types with help for each field, with their modules, for the tests."
   @spec boxes() :: %{atom => module}

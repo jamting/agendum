@@ -9,8 +9,8 @@ defmodule Agendum.TUI.Boxes.Box do
   (`%{type: :macro_props}`) to its module; the shared code (`Agendum.TUI.Update`'s
   dispatch, `Agendum.TUI.Render.Boxes`, `Agendum.TUI.Render.KeyBar`, the control
   panel, `Agendum.TUI.Boxes.BoxCancel`, `Agendum.TUI.Boxes.BoxChoices`,
-  `Agendum.TUI.Boxes.FieldHelp`) asks the module through this registry. Boxes not
-  moved here yet are still handled by those modules' own clauses.
+  `Agendum.TUI.Boxes.FieldHelp`) asks the module through this registry; every
+  box has one.
 
   Options of `use`:
 
@@ -69,7 +69,7 @@ defmodule Agendum.TUI.Boxes.Box do
   @doc "The width inside the frame; by default 60 columns, less on a narrow screen."
   @callback width(State.t(), mode) :: pos_integer
 
-  # The boxes moved here, by their mode's type. A module holds a box's
+  # The boxes, by their mode's type. A module holds a box's
   # name only (no call at compile time), so the boxes and this module can
   # refer to each other.
   @registry %{
@@ -120,10 +120,14 @@ defmodule Agendum.TUI.Boxes.Box do
   @spec registry() :: %{atom => module}
   def registry, do: @registry
 
-  @doc "The module of the box `mode` is, or nil for a box not moved here (and other modes)."
+  @doc "The module of the box `mode` is, or nil for a mode that is not a box."
   @spec module(mode | nil) :: module | nil
   def module(%{type: type}), do: Map.get(@registry, type)
   def module(_mode), do: nil
+
+  @doc "The module of the box `mode` is, where only a box can be on top."
+  @spec module!(mode) :: module
+  def module!(%{type: type}), do: Map.fetch!(@registry, type)
 
   @doc """
   The help for the highlighted setting of `box`, on top as `mode`, or nil:

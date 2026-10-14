@@ -75,10 +75,10 @@ the rest by what it is for:
   share: `Box` (the behaviour a box module implements, and the registry
   from mode type to module), `Template` (layouts), `BoxNav` (moving),
   `BoxCancel` (ESC), `BoxChoices` (letters and F3), `FieldHelp`,
-  `FieldTyping`. A box moved to `Box` keeps everything about it in its own
-  module: keys, drawing, key bar, help, how it ends (docs/REFACTORING.md,
-  step 3; the others still have clauses in `Update`, `Render.Boxes`,
-  `KeyBar` and the rest);
+  `FieldTyping`. Every box keeps everything about it in its own module:
+  keys, drawing, key bar, help, how it ends (docs/REFACTORING.md, step 3).
+  `Update` sends a box its keys, and `Render.Boxes` draws its frame, through
+  the registry; a new box is a module and a line in `Box.registry/0`;
 - `tui/terminal/` (`Agendum.TUI.Terminal.*`): keys in, screen out: `Keys`,
   `Screen`, `Draw`, `Theme` and its palettes (`Agendum.TUI.Terminal` itself,
   the raw terminal, is the folder's parent module);

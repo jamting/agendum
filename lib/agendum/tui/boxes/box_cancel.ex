@@ -19,19 +19,19 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
 
   alias Agendum.TUI.State
 
-  # the boxes whose changes apply at once; the others (Column Add, the
-  # range filters, actions, Execute, Schedule, Search) apply only on ENTER
-  @boxes []
-
   # full screens a box can open, whose work stays
   @screens [:note, :catmgr, :viewmgr, :help]
 
-  @doc "Whether ESC cancels the changes made in a box of this type."
+  @doc """
+  Whether ESC cancels the changes made in a box of this type: those whose
+  changes apply at once (`cancels: true`); the others (Column Add, the range
+  filters, actions, Execute, Schedule, Search) apply only on ENTER.
+  """
   @spec cancels?(atom) :: boolean
   def cancels?(type) do
     case Agendum.TUI.Boxes.Box.registry() do
       %{^type => box} -> box.cancels?()
-      _ -> type in @boxes
+      _ -> false
     end
   end
 

@@ -1,14 +1,12 @@
 defmodule Agendum.TUI.Render.Boxes do
   @moduledoc """
-  The boxes drawn over the screen: their place, title and content; the
-  boxes with a module of their own (`Agendum.TUI.Boxes.Box`) give theirs.
+  The boxes drawn over the screen: their place, their frame and the words
+  in its bottom edge, and the highlighted setting. What is inside a box,
+  its title and its width come from the box's module (`Agendum.TUI.Boxes.Box`).
   Pure.
   """
 
   alias Agendum.TUI.{Boxes.Box, Terminal.Draw, State}
-
-  # boxes with a module of their own (`Agendum.TUI.Boxes.Box`) draw themselves
-  @boxes Box.registry()
 
   # A box opened from another box (`depth` 1, 2 …) sits a line lower and
   # two columns right of the box beneath (`beneath`, that box's left
@@ -69,12 +67,17 @@ defmodule Agendum.TUI.Render.Boxes do
     |> String.trim()
   end
 
+  # nothing is highlighted when no box is on top
   defp selected_line(state) do
     mode = State.mode(state)
 
-    state
-    |> box_content(mode, box_width(state, mode), State.body_height(state))
-    |> Enum.find([], fn line -> Enum.any?(line, &(elem(&1, 0) == :box_selected)) end)
+    if Box.module(mode) do
+      state
+      |> box_content(mode, box_width(state, mode), State.body_height(state))
+      |> Enum.find([], fn line -> Enum.any?(line, &(elem(&1, 0) == :box_selected)) end)
+    else
+      []
+    end
   end
 
   # Agenda's words in the bottom edge (screenshots 130, 138, 144): how to
@@ -86,32 +89,16 @@ defmodule Agendum.TUI.Render.Boxes do
   # boxes that only show something
   @return {"Press ENTER or ESC to return", "ENTER/ESC return"}
 
+  @finish %{done: @done, accept: @accept, esc_done: @esc_done, return: @return, none: {"", ""}}
+
   defp footer(mode, inner) do
-    {long, short} =
-      cond do
-        box = Box.module(mode) ->
-          %{done: @done, accept: @accept, esc_done: @esc_done, return: @return, none: {"", ""}}[
-            box.finish(mode)
-          ]
-
-        Agendum.TUI.Boxes.BoxCancel.cancels?(mode.type) ->
-          @done
-
-        true ->
-          {"", ""}
-      end
-
+    {long, short} = @finish[Box.module!(mode).finish(mode)]
     if String.length(long) + 2 <= inner - 2, do: long, else: short
   end
 
-  defp box_width(state, %{type: type} = mode) when is_map_key(@boxes, type),
-    do: @boxes[type].width(state, mode)
+  defp box_width(state, mode), do: Box.module!(mode).width(state, mode)
+  defp box_title(state, mode), do: Box.module!(mode).title(state, mode)
 
-  defp box_width(state, _mode), do: min(state.width - 8, 60)
-
-  defp box_title(state, %{type: type} = mode) when is_map_key(@boxes, type),
-    do: @boxes[type].title(state, mode)
-
-  defp box_content(state, %{type: type} = mode, inner, max_rows) when is_map_key(@boxes, type),
-    do: @boxes[type].content(state, mode, inner, max_rows)
+  defp box_content(state, mode, inner, max_rows),
+    do: Box.module!(mode).content(state, mode, inner, max_rows)
 end
