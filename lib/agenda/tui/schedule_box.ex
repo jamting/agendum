@@ -15,6 +15,9 @@ defmodule Agenda.TUI.ScheduleBox do
   The settings live in the box until it is used. Pure.
   """
 
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
+
   alias Agenda.Core
   alias Agenda.Core.{Database, DateFormat}
   alias Agenda.TUI.{CalendarBox, CategoryScreens, State}
@@ -42,11 +45,8 @@ defmodule Agenda.TUI.ScheduleBox do
       {:esc, _} ->
         State.pop(state)
 
-      {:up, _} ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      {:down, _} ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
+      {k, _} when is_move(k) ->
+        BoxNav.move(state, mode, BoxNav.column(@rows), k)
 
       {:enter, _} ->
         show(State.pop(state), mode)
@@ -54,7 +54,7 @@ defmodule Agenda.TUI.ScheduleBox do
       {{:f, 3}, :date} ->
         CalendarBox.open(state, {:schedule, mode.date})
 
-      {k, row} when k in [{:char, " "}, :right] ->
+      {{:char, " "}, row} ->
         change(state, mode, row)
 
       _ ->

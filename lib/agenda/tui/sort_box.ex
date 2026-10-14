@@ -6,7 +6,7 @@ defmodule Agenda.TUI.SortBox do
   Rows: the primary key (Sort on), its Order, where items without a value
   go (Sort n/a's), the Sequence of a category's children, the Line number
   of a category note, then a secondary key (Then by) and its order. SPACE
-  (or →) changes the highlighted row (→ and ← change the line number);
+  changes the highlighted row (the line number is typed, 1 to 9);
   Sort on cycles None, Item text, Category… and Category note…, the last
   two through the category box. A section can also use the view's
   settings ("As the view"). The view's box also sorts the section heads
@@ -14,6 +14,9 @@ defmodule Agenda.TUI.SortBox do
   order). ENTER closes the box; ESC closes it and cancels its changes
   (`Agenda.TUI.BoxCancel`). Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core
   alias Agenda.Core.Database
@@ -43,17 +46,17 @@ defmodule Agenda.TUI.SortBox do
       k when k in [:esc, :enter, {:alt_f, 5}] ->
         State.pop(state)
 
-      :up ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
+      k when is_move(k) ->
+        BoxNav.move(state, mode, BoxNav.column(rows(mode)), k)
 
-      :down ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(rows(mode)) - 1)})
-
-      k when k in [{:char, " "}, :right] ->
+      {:char, " "} ->
         change(state, mode, Enum.at(rows(mode), mode.cursor))
 
-      :left ->
-        line(state, mode, Enum.at(rows(mode), mode.cursor), -1)
+      # Line number: typed, a digit (Agenda's "type your own choice")
+      {:char, c} ->
+        if Enum.at(rows(mode), mode.cursor) == :line and c in ~w(1 2 3 4 5 6 7 8 9),
+          do: line(state, mode, :line, String.to_integer(c), :set),
+          else: state
 
       _ ->
         state
@@ -134,19 +137,19 @@ defmodule Agenda.TUI.SortBox do
   end
 
   # The line of the category note to sort on (1 or more).
-  defp line(state, mode, :line, step) do
+  # a step from the line number now, or (`:set`) a line typed
+  defp line(state, mode, :line, n, how \\ :step) do
     keys = effective(state, mode)
 
     case List.first(keys) do
       %SortKey{on: {:note, _}} = key ->
-        put(state, mode, List.replace_at(keys, 0, %{key | line: max(key.line + step, 1)}))
+        line = if how == :set, do: n, else: max(key.line + n, 1)
+        put(state, mode, List.replace_at(keys, 0, %{key | line: line}))
 
       _ ->
         State.error(state, "The line number is for sorting on a category note")
     end
   end
-
-  defp line(state, _mode, _row, _step), do: state
 
   defp next_section_sort(:none), do: :category
   defp next_section_sort(:category), do: :alpha

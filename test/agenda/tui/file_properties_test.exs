@@ -123,22 +123,9 @@ defmodule Agenda.TUI.FilePropertiesTest do
     assert text =~ "26.10.08 09:00"
   end
 
-  test "← goes back through the choices; the clock and day of week toggle", %{state: state} do
-    keys = [
-      :down,
-      " ",
-      :down,
-      :left,
-      :left,
-      :left,
-      :left,
-      :left,
-      :left,
-      :left,
-      :down,
-      :down,
-      :right
-    ]
+  test "SPACE goes on through the choices; the clock and day of week toggle", %{state: state} do
+    # Show day of week; Date format on to DDMMMYYYY; Clock
+    keys = [:down, " ", :down] ++ List.duplicate(" ", 13) ++ [:down, :down, " "]
 
     state = press(state, @display ++ keys)
     f = state.db.date_format
@@ -150,13 +137,13 @@ defmodule Agenda.TUI.FilePropertiesTest do
 
   test "Agenda's other display settings and formats", %{state: state} do
     # Display date/time -> Date only; Date format back to Relative; am/pm off
-    state = press(state, @display ++ [" ", :down, :down, :left, :left])
+    state = press(state, @display ++ [" ", :down, :down] ++ List.duplicate(" ", 18))
     assert state.db.date_format.show == :date
     assert state.db.date_format.order == :relative
     assert screen(state) =~ ~r/Date format +: Relative/
     assert screen(state) =~ ~r/Sample +: Tomorrow/
 
-    state = press(state, [:down, :down, :right, :down, " ", :down, " "])
+    state = press(state, [:down, :down, " ", :down, " ", :down, " "])
     f = state.db.date_format
     assert {f.clock, f.am_pm, f.time_separator} == {12, false, "hm"}
   end
@@ -187,7 +174,8 @@ defmodule Agenda.TUI.FilePropertiesTest do
     assert state.db.date_settings.month_alone == :last
     assert screen(state) =~ ~r/Month alone means +: Last day/
 
-    state = press(state, [:down, :left])
+    # Morning is typed (SPACE asks for it)
+    state = press(state, [:down, " ", {:ctrl, "u"}, "7:30am", :enter])
     assert state.db.date_settings.morning == ~T[07:30:00]
 
     state = History.undo(state)

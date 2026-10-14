@@ -12,17 +12,20 @@ defmodule Agenda.TUI.DatebookBox do
 
     * SPACE on a category row picks the category; DEL clears the End
       category
-    * SPACE or → / ← cycle Period and Interval, and Start at / End at of a
+    * SPACE cycles Period and Interval, and Start at / End at of a
       week (a day of the week)
     * SPACE on Start at / End at of a day, or Base date on, asks for it
       (a time; a date such as "today", "next week" or "2026-11-05")
-    * SPACE or → / ← switch Hide column heads and Section separators
+    * SPACE switches Hide column heads and Section separators
     * ENTER closes the box; ESC closes it and cancels its changes
       (`Agenda.TUI.BoxCancel`)
 
   Every change applies at once and is one undo step. Rows that do not
   apply to the period show "—". Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core
   alias Agenda.Core.{Datebook, DateFormat}
@@ -42,7 +45,7 @@ defmodule Agenda.TUI.DatebookBox do
    Hide column heads  : [hide_column_heads     ]
    Section separators : [section_separators    ]
 
-   ENTER picks or types · SPACE/→ ← cycle · DEL clears
+   SPACE picks, types or cycles · DEL clears
   """
   @rows Template.fields(@layout)
   # the view's own settings, switched on or off (not the datebook's)
@@ -63,17 +66,11 @@ defmodule Agenda.TUI.DatebookBox do
       k when k in [:esc, :enter] ->
         State.pop(state)
 
-      :up ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
+      k when is_move(k) ->
+        BoxNav.move(state, mode, Template.grid(@layout, @rows), k)
 
-      :down ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
-
-      k when k in [{:char, " "}, :right] ->
-        change(state, mode, d, row, 1, k)
-
-      :left ->
-        change(state, mode, d, row, -1, :left)
+      {:char, " "} ->
+        change(state, mode, d, row, 1, {:char, " "})
 
       k when k in [:delete, {:ctrl, "d"}] and row == :end_category ->
         set(state, mode, %{d | end_category: nil})
@@ -83,7 +80,7 @@ defmodule Agenda.TUI.DatebookBox do
     end
   end
 
-  # any of SPACE, → or ← switches a Yes/No, so `_step` and `_key` are ignored
+  # SPACE switches a Yes/No, so `_step` and `_key` are ignored
   defp change(state, mode, _d, row, _step, _key) when row in @options,
     do: State.change_db(state, Core.toggle_view_option(state.db, mode.view_id, row))
 

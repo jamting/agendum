@@ -13,9 +13,9 @@ defmodule Agenda.TUI.QuestionsTest do
   defp cat(state, name), do: hd(Database.find_categories(state.db, name))
   defp item(state, text), do: Enum.find(Database.items(state.db), &(&1.text == text))
 
-  # File ▸ Properties ▸ Auto-assign settings (the last row), then down to
-  # Confirm assignments, the fourth row of that box
-  @to_confirm List.duplicate(:down, 20) ++ [" ", :down, :down, :down]
+  # File ▸ Properties ▸ Auto-assign settings (beside Global date settings),
+  # then down to Confirm assignments, the fourth row of that box
+  @to_confirm [:down, :right, " ", :down, :down, :down]
 
   defp confirm_always(state),
     do: press(state, [{:f, 10}, "f", "p"] ++ @to_confirm ++ [" ", :enter, :enter])

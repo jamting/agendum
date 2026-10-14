@@ -7,10 +7,13 @@ defmodule Agenda.TUI.InputFormatBox do
   is saved to their preferences file (`{:save_preferences, path, prefs}`)
   and is not part of undo.
 
-  ↑↓ choose a setting; SPACE or → shows the next choice, ← the previous one.
+  The arrows choose a setting (`Agenda.TUI.BoxNav`); SPACE shows the next choice.
   ENTER closes the box; ESC closes it and cancels its changes
   (`Agenda.TUI.BoxCancel`). Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core.InputFormat
   alias Agenda.TUI.State
@@ -24,10 +27,8 @@ defmodule Agenda.TUI.InputFormatBox do
 
     case key do
       k when k in [:esc, :enter] -> State.pop(state)
-      :up -> State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-      :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
-      k when k in [{:char, " "}, :right] -> change(state, row, 1)
-      :left -> change(state, row, -1)
+      k when is_move(k) -> BoxNav.move(state, mode, BoxNav.column(@rows), k)
+      {:char, " "} -> change(state, row, 1)
       _ -> state
     end
   end

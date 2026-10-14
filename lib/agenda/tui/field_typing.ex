@@ -2,7 +2,9 @@ defmodule Agenda.TUI.FieldTyping do
   @moduledoc """
   Typing text into a field of a settings box: a column head's name in
   Column Add and Column Properties (User's Guide 3-17: "Type the name of a
-  new or existing category"), or a Category note column's title.
+  new or existing category"), a Category note column's title, or a number
+  (a width, decimal places, a line number): Agenda's "type your own
+  choice" (User's Guide 2-17).
 
   A character on such a field starts an input line in it (the box's mode
   holds it as `typing: {field, line}`). ENTER hands the text to the box;
@@ -55,6 +57,19 @@ defmodule Agenda.TUI.FieldTyping do
 
       {:error, :ambiguous} ->
         State.error(state, "Several categories are called #{String.trim(name)}; F3 picks one")
+    end
+  end
+
+  @doc "Whether a typed character starts a number (a width, decimal places, a line)."
+  @spec digit?(String.t()) :: boolean
+  def digit?(c), do: c in ~w(0 1 2 3 4 5 6 7 8 9)
+
+  @doc "A typed whole number from `min` to `max`; `:error` for anything else."
+  @spec number(String.t(), integer, integer) :: {:ok, integer} | :error
+  def number(text, min, max) do
+    case Integer.parse(String.trim(text)) do
+      {n, ""} when n >= min and n <= max -> {:ok, n}
+      _ -> :error
     end
   end
 

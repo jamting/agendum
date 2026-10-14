@@ -35,8 +35,11 @@ defmodule Agenda.TUI.InputFormatBoxTest do
     state = open_box(state)
     db = state.db
     {state, effects} = Update.handle(state, {:char, " "})
-    {state, _} = Update.handle(state, :left)
-    {state, effects2} = Update.handle(state, :left)
+    # on through MYD, DMY, DYM, YDM to YMD
+    state =
+      Enum.reduce(1..4, state, fn _, state -> elem(Update.handle(state, {:char, " "}), 0) end)
+
+    {state, effects2} = Update.handle(state, {:char, " "})
 
     assert state.input.number_order == :ymd
     assert state.db == db
@@ -62,7 +65,7 @@ defmodule Agenda.TUI.InputFormatBoxTest do
 
   test "without a preferences file the change lasts the session", %{state: state} do
     state = open_box(%{state | prefs: %Agenda.Preferences{}})
-    {state, effects} = Update.handle(state, :down) |> elem(0) |> Update.handle(:right)
+    {state, effects} = Update.handle(state, :down) |> elem(0) |> Update.handle({:char, " "})
     assert state.input.separator == "/"
     assert effects == []
   end

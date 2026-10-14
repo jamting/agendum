@@ -159,6 +159,9 @@ defmodule Agenda.TUI.Update.Prompts do
   defp prompt_action(state, {:datebook_time, view_id, row}, text),
     do: Agenda.TUI.DatebookBox.set_time(state, view_id, row, text)
 
+  defp prompt_action(state, {:date_setting_time, row}, text),
+    do: Agenda.TUI.FileProperties.set_time(state, row, text)
+
   defp prompt_action(state, :browse_to, text), do: Agenda.TUI.Browse.go_to(state, text)
   defp prompt_action(state, :new_macro, text), do: Agenda.TUI.Macros.create(state, text)
 

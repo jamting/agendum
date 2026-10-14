@@ -61,20 +61,20 @@ defmodule Agenda.TUI.ColumnAddTest do
 
   test "Insert in: Current section adds it to this section only, one undo step",
        %{state: state, view_id: v} do
-    state = state |> pick_priority() |> press([:down, :down, :down, :down, :down, " ", :enter])
+    state = state |> pick_priority() |> press([:down, :down, :down, :down, " ", :enter])
     assert heads(state, v, 0) == ["People", "Priority", "When"]
     assert heads(state, v, 1) == ["People", "When"]
     assert heads(History.undo(state), v, 0) == ["People", "When"]
   end
 
   test "Position: Left of current column puts it before", %{state: state, view_id: v} do
-    state = state |> pick_priority() |> press([:down, :down, :down, :down, " ", :enter])
+    state = state |> pick_priority() |> press([:down, :down, :down, " ", :enter])
     assert heads(state, v, 0) == ["Priority", "People", "When"]
     assert state.col == 1
   end
 
-  test "Width: → and ← by one; a date category starts at 16", %{state: state, view_id: v} do
-    state = state |> pick_priority() |> press([:down, :down, :right, :right, :left, :enter])
+  test "Width: typed; a date category starts at 16", %{state: state, view_id: v} do
+    state = state |> pick_priority() |> press([:down, "1", "3", :enter, :enter])
     assert (state.db.views[v] |> View.columns(0) |> Enum.at(1)).width == 13
 
     state = press(state, [{:f, 10}, "v", "c", "a", {:f, 3}, "w", "h", "e", "n", :enter])
@@ -111,7 +111,7 @@ defmodule Agenda.TUI.ColumnAddTest do
 
   describe "Format (R56)" do
     test "Star: 2 wide, added as a star column", %{state: state, view_id: v} do
-      state = state |> pick_priority() |> press([:down, :down, :down, " ", " ", " "])
+      state = state |> pick_priority() |> press([:down, :down, " ", " ", " "])
       assert screen(state) =~ ~r/Format: +Star \(\*\)/
       assert screen(state) =~ ~r/Width: +2 /
       state = press(state, :enter)
@@ -120,9 +120,9 @@ defmodule Agenda.TUI.ColumnAddTest do
     end
 
     test "Category note: Line number and a typed Column title", %{state: state, view_id: v} do
-      state = state |> pick_priority() |> press([:down, :down, :down, :left])
+      state = state |> pick_priority() |> press([:down, :down] ++ List.duplicate(" ", 5))
       assert screen(state) =~ ~r/Format: +Category note/
-      state = press(state, [:down, :right, :down, "C", "o", "s", "t", :enter])
+      state = press(state, [:down, "2", :enter, :down, "C", "o", "s", "t", :enter])
       assert screen(state) =~ ~r/Column title: +Cost/
       state = press(state, :enter)
       column = state.db.views[v] |> View.columns(0) |> Enum.at(1)
@@ -140,7 +140,7 @@ defmodule Agenda.TUI.ColumnAddTest do
 
     test "a standard head can be made Date or Numeric; ENTER does both, one undo step",
          %{state: state, view_id: v} do
-      state = state |> pick_priority() |> press([:down, " "])
+      state = state |> pick_priority() |> press([:right, " "])
       assert screen(state) =~ ~r/Category type: +Date/
       # the width follows the type until it is changed
       assert screen(state) =~ ~r/Width: +16/
@@ -155,14 +155,14 @@ defmodule Agenda.TUI.ColumnAddTest do
     end
 
     test "chosen before the head, it stays for a standard head", %{state: state} do
-      state = state |> press([:down, " ", :up]) |> pick_priority()
+      state = state |> press([:right, " ", :left]) |> pick_priority()
       assert screen(state) =~ ~r/Category type: +Date/
     end
 
     test "when children or items would change, it asks first, as Category Properties does",
          %{state: state} do
       {:ok, db, _} = Core.add_category(state.db, cat(state.db, "Priority"), "High")
-      state = %{state | db: db} |> pick_priority() |> press([:down, " ", " ", :enter])
+      state = %{state | db: db} |> pick_priority() |> press([:right, " ", " ", :enter])
       assert panel(state) =~ "Convert Priority to numeric?"
       state = press(state, "n")
       # nothing changed, and the box is still open
@@ -173,7 +173,7 @@ defmodule Agenda.TUI.ColumnAddTest do
     end
 
     test "a date head stays a date category", %{state: state} do
-      state = press(state, [{:f, 3}, "w", "h", "e", "n", :enter, :down, " "])
+      state = press(state, [{:f, 3}, "w", "h", "e", "n", :enter, :right, " "])
       assert panel(state) =~ "stays a date category"
       assert screen(state) =~ ~r/Category type: +Date/
     end

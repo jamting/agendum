@@ -430,7 +430,7 @@ defmodule Agenda.TUI.Render.Boxes do
         ]
       end)
 
-    rows ++ [[], [{:box, " SPACE/→ next choice · ← previous"}]]
+    rows ++ [[], [{:box, " SPACE next choice · arrows move"}]]
   end
 
   defp box_content(state, %{type: :auto_assign} = mode, _inner, _max_rows) do
@@ -445,7 +445,7 @@ defmodule Agenda.TUI.Render.Boxes do
         ]
       end)
 
-    rows ++ [[], [{:box, " SPACE/→ next choice · ← previous"}]]
+    rows ++ [[], [{:box, " SPACE next choice · arrows move"}]]
   end
 
   defp box_content(state, %{type: :date_rule} = mode, _inner, _max_rows) do
@@ -460,7 +460,7 @@ defmodule Agenda.TUI.Render.Boxes do
         ]
       end)
 
-    rows ++ [[], [{:box, " SPACE/→ next choice · ← previous"}]]
+    rows ++ [[], [{:box, " SPACE next choice · arrows move"}]]
   end
 
   defp box_content(state, %{type: :calendars} = mode, _inner, _max_rows) do
@@ -498,7 +498,7 @@ defmodule Agenda.TUI.Render.Boxes do
       [
         [],
         [{:box, " Saved in your preferences, not in this file."}],
-        [{:box, " SPACE/→ next choice · ← previous"}]
+        [{:box, " SPACE next choice · arrows move"}]
       ]
   end
 
@@ -550,8 +550,8 @@ defmodule Agenda.TUI.Render.Boxes do
 
     hint =
       if type == :display_format,
-        do: " SPACE/→ next choice · ← previous",
-        else: " SPACE/→ next choice or open ... · ← previous"
+        do: " SPACE next choice · arrows move",
+        else: " SPACE next choice or open ... · arrows move"
 
     rows ++ sample ++ [[], [{:box, hint}]]
   end

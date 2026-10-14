@@ -41,22 +41,22 @@ defmodule Agenda.TUI.ItemColumnBoxTest do
     assert text =~ ~r/Link with other sections: +Yes/
   end
 
-  test "Manually keeps the width it has, then → ← change it, in the linked sections too",
+  test "Manually keeps the width it has, then a typed one, in the linked sections too",
        %{state: state, view_id: v} do
     state = press(state, [:down, " "])
     # the screen is 100 wide: 3 for the bullet and margin, 17 for When
     assert items(state, v, 0).set == :manual
     assert items(state, v, 0).width == 80
     assert screen(state) =~ ~r/Width: +80/
-    state = press(state, [:down, :left, :left])
+    state = press(state, [:down, "7", "8", :enter])
     assert {items(state, v, 0).width, items(state, v, 1).width} == {78, 78}
-    assert state |> History.undo() |> items(v, 0) |> Map.fetch!(:width) == 79
+    assert state |> History.undo() |> items(v, 0) |> Map.fetch!(:width) == 80
   end
 
   test "a narrow item column: the columns follow it, not the screen's edge",
        %{state: state} do
-    # Manually, then 40 steps narrower: 40 wide
-    state = press(state, [:down, " ", :down] ++ List.duplicate(:left, 40) ++ [:enter])
+    # Manually, then 40 wide (typed; ENTER keeps the width, ENTER again the box)
+    state = press(state, [:down, " ", :down, "4", "0", :enter, :enter])
     # " • ", 40 for the text, a space: When starts at 44, as its entries
     # do (not at the screen's right edge, where an automatic one puts it)
     head = state |> screen() |> String.split("\n") |> Enum.find(&(&1 =~ "Calls"))
@@ -64,7 +64,7 @@ defmodule Agenda.TUI.ItemColumnBoxTest do
   end
 
   test "Minimum width, and unlinking: the section changes alone", %{state: state, view_id: v} do
-    state = press(state, [:down, :down, :down, " ", :up, :right, :right])
+    state = press(state, [:down, :down, :down, " ", :up, "1", "2", :enter])
     assert items(state, v, 0).linked == false
     assert {items(state, v, 0).minimum, items(state, v, 1).minimum} == {12, 10}
     assert screen(state) =~ ~r/Link with other sections: +No/

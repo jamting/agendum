@@ -52,7 +52,7 @@ defmodule Agenda.TUI.ExecuteTest do
 
   test "Apply conditions of: a chosen family", %{state: state, meetings: meetings} do
     # Contact's family has no conditions: nothing changes
-    state = press(state, [{:f, 10}, "c", "e", :enter, "Contact", :enter, :down, :down, :enter])
+    state = press(state, [{:f, 10}, "c", "e", " ", "Contact", :enter, :down, :down, :enter])
     assert in_meetings(state, meetings) == 0
   end
 

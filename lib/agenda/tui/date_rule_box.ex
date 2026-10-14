@@ -2,12 +2,15 @@ defmodule Agenda.TUI.DateRuleBox do
   @moduledoc """
   A date category's Advanced settings (Category Properties ▸ Date
   settings; User's Guide 7-5 to 7-8, SPEC R6b): Assign item date, Which
-  one, and whether F4 (DONE) and ALT-F2 (WHEN) set the date. SPACE or →
-  shows the next choice, ← the previous one; every change applies at once
+  one, and whether F4 (DONE) and ALT-F2 (WHEN) set the date. SPACE shows
+  the next choice (the arrows move); every change applies at once
   and is one undo step. Done always takes the Done key and When the When
   key. ENTER closes the box; ESC closes it and cancels its changes
   (`Agenda.TUI.BoxCancel`). Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core
   alias Agenda.Core.DateRule
@@ -20,10 +23,8 @@ defmodule Agenda.TUI.DateRuleBox do
   def handle(state, mode, key) do
     case key do
       k when k in [:esc, :enter] -> State.pop(state)
-      :up -> State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-      :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
-      k when k in [{:char, " "}, :right] -> change(state, mode, 1)
-      :left -> change(state, mode, -1)
+      k when is_move(k) -> BoxNav.move(state, mode, BoxNav.column(@rows), k)
+      {:char, " "} -> change(state, mode, 1)
       _ -> state
     end
   end

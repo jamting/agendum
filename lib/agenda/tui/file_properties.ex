@@ -16,11 +16,15 @@ defmodule Agenda.TUI.FileProperties do
     * Display Format (`:display_format`, R41): the Date Column Properties
       rows (`Agenda.TUI.DateFormatRows`), with a formatted sample below
 
-  SPACE or → shows the next choice (or opens a "..." box), ← the previous
-  one; every change applies at once and is one undo step. ENTER closes
+  SPACE shows the next choice (or opens a "..." box), the arrows move
+  between settings (`Agenda.TUI.BoxNav`), Morning, Afternoon and Evening
+  are typed; every change applies at once and is one undo step. ENTER closes
   the box, ESC closes it and cancels its changes (`Agenda.TUI.BoxCancel`);
   either goes back to the box beneath. Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core
   alias Agenda.Core.{DateFormat, DateSettings}
@@ -33,7 +37,7 @@ defmodule Agenda.TUI.FileProperties do
 
    Global date settings:   [dates]   Auto-assign settings:  [auto ]
 
-   SPACE/→ next choice or open ... · ← previous
+   SPACE next choice or open ... · arrows move
   """
 
   @format_rows DateFormatRows.rows()
@@ -52,6 +56,10 @@ defmodule Agenda.TUI.FileProperties do
     date_settings: [:display_format, :input_format | @settings_rows],
     display_format: @format_rows
   }
+  # File Properties has two settings side by side; the others one a row
+  defp grid(:file_props), do: Template.grid(@layout, @rows.file_props)
+  defp grid(type), do: BoxNav.column(@rows[type])
+
   @days ~w(Mon Tue Wed Thu Fri Sat Sun)
   @months ~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
 
@@ -66,10 +74,8 @@ defmodule Agenda.TUI.FileProperties do
 
     case key do
       k when k in [:esc, :enter] -> State.pop(state)
-      :up -> State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-      :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(rows) - 1)})
-      k when k in [{:char, " "}, :right] -> change(state, row, 1)
-      :left -> change(state, row, -1)
+      k when is_move(k) -> BoxNav.move(state, mode, grid(mode.type), k)
+      {:char, " "} -> change(state, row, 1)
       _ -> state
     end
   end
@@ -86,6 +92,13 @@ defmodule Agenda.TUI.FileProperties do
 
   defp change(state, :input_format, _step), do: Agenda.TUI.InputFormatBox.open(state)
 
+  # a time is typed, as Agenda's (SPACE asks for it)
+  defp change(state, row, _step) when row in [:morning, :afternoon, :evening] do
+    time = Map.fetch!(state.db.date_settings, row) |> Time.to_string() |> String.slice(0, 5)
+    label = "#{row |> Atom.to_string() |> String.capitalize()} (a time):"
+    Agenda.TUI.Update.Prompts.prompt(state, label, {:date_setting_time, row}, time)
+  end
+
   defp change(state, row, step) when row in @settings_rows do
     settings = DateSettings.cycle(state.db.date_settings, row, step)
     State.change_db(state, Core.set_date_settings(state.db, settings))
@@ -94,6 +107,18 @@ defmodule Agenda.TUI.FileProperties do
   defp change(state, row, step) do
     format = DateFormat.cycle(state.db.date_format, row, step)
     State.change_db(state, Core.set_date_format(state.db, format))
+  end
+
+  @doc "The time typed for Morning, Afternoon or Evening; unreadable text is refused."
+  def set_time(state, row, text) do
+    case Core.read_when(state.db, text, State.context(state)) do
+      {:ok, _date, %Time{} = time} ->
+        settings = Map.put(state.db.date_settings, row, time)
+        State.change_db(state, Core.set_date_settings(state.db, settings))
+
+      _ ->
+        State.error(state, "Not a time: #{text}")
+    end
   end
 
   @doc "The File Properties box's lines, the highlighted setting selected."

@@ -49,7 +49,7 @@ defmodule Agenda.TUI.FieldHelpTest do
     state = press(state, [{:f, 10}, "f", "c", :down])
     [first, second] = panel_lines(state)
     assert first =~ "The language you type dates in"
-    assert second =~ "SPACE or → for the next"
+    assert second =~ "SPACE for the next"
   end
 
   test "a message comes before the help", %{state: state} do

@@ -4,10 +4,10 @@ defmodule Agenda.TUI.ItemColumnBox do
   highlight on the item text; User's Guide 3-18 to 3-19, Help "Item
   Column Properties Box"): the section's item column (R55).
 
-    * Section head: F3, SPACE or → picks another category for the section.
+    * Section head: F3 or SPACE picks another category for the section.
     * Set width: Automatically (as wide as the columns leave) or Manually.
       Manually starts at the width the item text has at that moment.
-    * Width (Manually) or Minimum width (Automatically): → ← by one.
+    * Width (Manually) or Minimum width (Automatically): typed.
     * Link with other sections: a linked item column changes with the
       other linked ones; No makes it change alone, Yes takes their
       settings again.
@@ -17,10 +17,13 @@ defmodule Agenda.TUI.ItemColumnBox do
   (`Agenda.TUI.BoxCancel`). Pure.
   """
 
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
+
   alias Agenda.Core
   alias Agenda.Core.View
   alias Agenda.Core.View.ItemColumn
-  alias Agenda.TUI.{CategoryScreens, State, Template}
+  alias Agenda.TUI.{CategoryScreens, FieldTyping, State, Template}
 
   @layout """
    Section head:             [head              ]
@@ -30,7 +33,7 @@ defmodule Agenda.TUI.ItemColumnBox do
    Link with other sections: [linked]
   """
 
-  @hint " SPACE/→ next choice · ← previous · F3 picks the head"
+  @hint " SPACE next choice · type a width · F3 picks the head"
 
   @doc "Opens the box for the item column of section `sidx`."
   def open(state, sidx), do: State.push(state, %{type: :item_column, sidx: sidx, cursor: 0})
@@ -48,18 +51,47 @@ defmodule Agenda.TUI.ItemColumnBox do
   def field(state, mode), do: Enum.at(fields(state, mode), mode.cursor)
 
   def handle(state, mode, key) do
-    last = length(fields(state, mode)) - 1
+    if FieldTyping.typing?(mode),
+      do: FieldTyping.key(state, mode, key, &typed/3),
+      else: settings_key(state, mode, key)
+  end
+
+  # a typed width (the item text's room is at least 1, at most the screen's)
+  defp typed(state, field, text) do
+    mode = State.mode(state)
+
+    case FieldTyping.number(text, 1, 500) do
+      {:ok, n} -> set(state, mode, [{field, n}])
+      :error -> State.error(state, "Type a width, a number")
+    end
+  end
+
+  defp settings_key(state, mode, key) do
     field = field(state, mode)
 
     case key do
-      k when k in [:esc, :enter] -> State.pop(state)
-      :up -> State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-      :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
-      {:f, 3} when field == :head -> pick_head(state, mode)
-      k when k in [{:char, " "}, :right] -> change(state, mode, field, 1)
-      :left -> change(state, mode, field, -1)
-      _ -> state
+      k when k in [:esc, :enter] ->
+        State.pop(state)
+
+      k when is_move(k) ->
+        BoxNav.move(state, mode, Template.grid(@layout, fields(state, mode)), k)
+
+      {:f, 3} when field == :head ->
+        pick_head(state, mode)
+
+      {:char, " "} ->
+        change(state, mode, field, 1)
+
+      {:char, c} when field in [:width, :minimum] ->
+        type_number(state, mode, field, c)
+
+      _ ->
+        state
     end
+  end
+
+  defp type_number(state, mode, field, c) do
+    if FieldTyping.digit?(c), do: FieldTyping.start(state, mode, field, c), else: state
   end
 
   defp pick_head(state, mode),
@@ -108,6 +140,7 @@ defmodule Agenda.TUI.ItemColumnBox do
       linked: if(items.linked, do: "Yes", else: "No")
     }
 
-    Template.render(@layout, values, selected: field(state, mode)) ++ [[], [{:box, @hint}]]
+    opts = [selected: field(state, mode)] ++ FieldTyping.editing(mode)
+    Template.render(@layout, values, opts) ++ [[], [{:box, @hint}]]
   end
 end

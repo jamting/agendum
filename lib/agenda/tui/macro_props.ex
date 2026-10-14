@@ -16,6 +16,9 @@ defmodule Agenda.TUI.MacroProps do
   Every change is one undo step. Pure.
   """
 
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
+
   alias Agenda.Core
   alias Agenda.Core.Macro
   alias Agenda.TUI.{MacroKeys, Macros, State}
@@ -42,11 +45,8 @@ defmodule Agenda.TUI.MacroProps do
       {k, _} when k in [:esc, :enter] ->
         State.pop(state)
 
-      {:up, _} ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      {:down, _} ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
+      {k, _} when is_move(k) ->
+        BoxNav.move(state, mode, BoxNav.column(@rows), k)
 
       {k, :name} when k in [{:f, 2}, {:char, " "}] ->
         Prompts.prompt(state, "Rename the macro to:", {:rename_macro, macro.id}, macro.name)
@@ -65,12 +65,10 @@ defmodule Agenda.TUI.MacroProps do
       {k, :key} when k in [:delete, {:ctrl, "d"}] ->
         State.change_db(state, Core.attach_macro(state.db, macro.id, nil))
 
-      {k, :elsewhere} when k in [{:char, " "}, :right, :left] and macro.key == nil ->
+      {{:char, " "}, :elsewhere} when macro.key == nil ->
         State.error(state, "Only a macro attached to a key runs everywhere else")
 
-      {k, place}
-      when k in [{:char, " "}, :right, :left] and
-             place in [:view, :note, :catmgr, :elsewhere] ->
+      {{:char, " "}, place} when place in [:view, :note, :catmgr, :elsewhere] ->
         State.change_db(
           state,
           Core.set_macro_run_from(state.db, macro.id, place, not macro.run_from[place])

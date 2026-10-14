@@ -179,7 +179,7 @@ defmodule Agenda.TUI.Render.KeyBar do
 
   defp mode_keys(%{type: :macro_props}),
     do: [
-      {"↑↓", "Setting", "Move between settings"},
+      {"↑↓←→", "Setting", "Move between settings"},
       {"SPACE", "Change", "Change the setting"},
       {"F2", "Edit", "Rename, or edit the keys"},
       {"DEL", "Detach", "Detach the key"},
@@ -189,7 +189,7 @@ defmodule Agenda.TUI.Render.KeyBar do
 
   defp mode_keys(%{type: :schedule}),
     do: [
-      {"↑↓", "Setting", "Move between settings"},
+      {"↑↓←→", "Setting", "Move between settings"},
       {"SPACE", "Change", "Change the setting"},
       {"F3", "Calendar", "Pick the date"},
       {"ENTER", "Show", "Show the schedule"},
@@ -198,9 +198,8 @@ defmodule Agenda.TUI.Render.KeyBar do
 
   defp mode_keys(%{type: :datebook_props}),
     do: [
-      {"↑↓", "Setting", "Move between settings"},
-      {"SPACE", "Change", "SPACE/→", "Pick, type or next choice"},
-      {"←", "Previous", "Previous choice"},
+      {"↑↓←→", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Pick, type or next choice"},
       {"DEL", "Clear", "Clear the End category"},
       {"ENTER", "Done"},
       {"ESC", "Cancel"}
@@ -208,7 +207,7 @@ defmodule Agenda.TUI.Render.KeyBar do
 
   defp mode_keys(%{type: :section_props}),
     do: [
-      {"↑↓", "Setting", "Move between settings and columns"},
+      {"↑↓←→", "Setting", "Move between settings and columns"},
       {"SPACE", "Open", "Open the setting"},
       {"F3", "Choices", "Pick the section head"},
       {"F6", "Props", "The head category's properties"},
@@ -221,7 +220,7 @@ defmodule Agenda.TUI.Render.KeyBar do
 
   defp mode_keys(%{type: :numeric_functions}),
     do: [
-      {"↑↓", "Function", "Move between the calculations"},
+      {"↑↓←→", "Function", "Move between the calculations"},
       {"SPACE", "Yes/No", "Switch it for the section's numeric columns"},
       {"ENTER", "Done"},
       {"ESC", "Cancel"}
@@ -248,7 +247,7 @@ defmodule Agenda.TUI.Render.KeyBar do
 
   defp mode_keys(%{type: :sort}),
     do: [
-      {"↑↓", "Setting", "Move between settings"},
+      {"↑↓←→", "Setting", "Move between settings"},
       {"SPACE", "Change", "Change the setting"},
       {"ENTER", "Done"},
       {"ESC", "Cancel"}
@@ -309,7 +308,7 @@ defmodule Agenda.TUI.Render.KeyBar do
 
   defp mode_keys(%{type: :execute}),
     do: [
-      {"↑↓", "Setting", "Move between settings"},
+      {"↑↓←→", "Setting", "Move between settings"},
       {"SPACE", "Change", "Change the setting"},
       {"ENTER", "Run"},
       {"ESC", "Cancel"}
@@ -317,7 +316,7 @@ defmodule Agenda.TUI.Render.KeyBar do
 
   defp mode_keys(%{type: type}) when type in [:action_box, :range_filter],
     do: [
-      {"↑↓", "Setting", "Move between settings"},
+      {"↑↓←→", "Setting", "Move between settings"},
       {"SPACE", "Change", "Change the setting"},
       {"ENTER", "Apply"},
       {"DEL", "Remove"},
@@ -344,7 +343,7 @@ defmodule Agenda.TUI.Render.KeyBar do
 
   defp mode_keys(%{type: :note_search}),
     do: [
-      {"↑↓", "Setting", "Move between settings"},
+      {"↑↓←→", "Setting", "Move between settings"},
       {"SPACE", "Change", "Change the setting"},
       {"ENTER", "Search"},
       {"ESC", "Cancel"}
@@ -366,9 +365,9 @@ defmodule Agenda.TUI.Render.KeyBar do
               :display_format
             ],
        do: [
-         {"↑↓", "Setting", "Move between settings"},
-         {"SPACE", "Next", "SPACE/→", "Next choice"},
-         {"←", "Previous", "Previous choice"},
+         {"↑↓←→", "Setting", "Move between settings"},
+         {"SPACE", "Next", "Next choice"},
+         {"type", "Number", "Type a width or number"},
          {"ENTER", "Done"},
          {"ESC", "Cancel"}
        ]

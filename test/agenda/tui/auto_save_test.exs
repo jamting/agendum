@@ -75,6 +75,6 @@ defmodule Agenda.TUI.AutoSaveTest do
     assert screen(state) =~ ~r/Auto-save interval +: 1 minute/
     state = press(state, [" ", " "])
     assert screen(state) =~ ~r/Auto-save interval +: 5 minutes/
-    assert press(state, :left).prefs.auto_save == 2
+    assert press(state, " ").prefs.auto_save == 10
   end
 end

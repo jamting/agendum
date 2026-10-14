@@ -11,7 +11,8 @@ defmodule Agenda.TUI.DateColumnsTest do
 
   # Column Properties of a date column: Column head, Category type, Width,
   # Link, then Settings and Display date and/or time (R55, R41a)
-  @to_show [{:f, 10}, "v", "c", "p"] ++ List.duplicate(:down, 5)
+  # ↓ from Column head: Width, Settings, then Display date and/or time
+  @to_show [{:f, 10}, "v", "c", "p", :down, :down, :down]
 
   @today ~D[2026-10-08]
 
@@ -47,7 +48,8 @@ defmodule Agenda.TUI.DateColumnsTest do
   test "changing a setting makes them the column's own", %{state: state, view: view} do
     # Display date/time -> Date only, then (past Clock, day of week and
     # am/pm) Date format back to Relative
-    state = press(state, @to_show ++ [" ", :down, :down, :down, :down, :left, :left])
+    # ↓ ↓: Show day of week, then Date format, which SPACE takes on to Relative
+    state = press(state, @to_show ++ [" ", :down, :down] ++ List.duplicate(" ", 18))
     assert column(state, view).date.show == :date
     assert column(state, view).date.order == :relative
     assert screen(state) =~ ~r/Settings: +Local settings/

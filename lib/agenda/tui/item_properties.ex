@@ -20,6 +20,9 @@ defmodule Agenda.TUI.ItemProperties do
   Pure, like the rest of the TUI state machine.
   """
 
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
+
   alias Agenda.Core
   alias Agenda.TUI.{CategoryScreens, Completion, LineEdit, State, TextEdit}
   alias Agenda.TUI.Update.{Editing, Prompts}
@@ -52,17 +55,8 @@ defmodule Agenda.TUI.ItemProperties do
       {k, _} when k in [:esc, :enter, {:f, 6}] ->
         State.pop(state)
 
-      {:up, _} ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      {:down, _} ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(rows) - 1)})
-
-      {:home, _} ->
-        State.put_mode(state, %{mode | cursor: 0})
-
-      {:end, _} ->
-        State.put_mode(state, %{mode | cursor: length(rows) - 1})
+      {k, _} when is_move(k) ->
+        BoxNav.move(state, mode, BoxNav.column(rows), k)
 
       {{:f, 3}, _} ->
         CategoryScreens.open_profile(state, mode.item_id)

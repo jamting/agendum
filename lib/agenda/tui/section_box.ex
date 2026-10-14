@@ -24,6 +24,9 @@ defmodule Agenda.TUI.SectionBox do
   `@layout` (`Agenda.TUI.Template`), the columns listed below it. Pure.
   """
 
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
+
   alias Agenda.Core
   alias Agenda.Core.{View, ViewColumns, ViewModel}
 
@@ -67,9 +70,13 @@ defmodule Agenda.TUI.SectionBox do
 
   defp numeric?(state, mode), do: Core.section_calcs(state.db, state.view_id, mode.sidx) != nil
 
-  # the highlighted row: a setting, or `{:slot, n}` for the nth column listed
+  # the rows: the settings, then `{:slot, n}` for the nth column listed
+  defp rows(state, mode),
+    do: fields(state, mode) ++ Enum.map(0..(length(slots(state, mode)) - 1)//1, &{:slot, &1})
+
+  # the highlighted row
   defp row(state, mode) do
-    rows = fields(state, mode) ++ Enum.map(0..(length(slots(state, mode)) - 1)//1, &{:slot, &1})
+    rows = rows(state, mode)
     Enum.at(rows, min(mode.cursor, length(rows) - 1))
   end
 
@@ -98,11 +105,8 @@ defmodule Agenda.TUI.SectionBox do
       :esc ->
         State.pop(state)
 
-      :up ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      :down ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last(state, mode))})
+      k when is_move(k) ->
+        BoxNav.move(state, mode, BoxNav.column(rows(state, mode)), k)
 
       {:f, 3} when row == :head ->
         CategoryScreens.open_picker(state, {:change_section, mode.sidx}, nil)

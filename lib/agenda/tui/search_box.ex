@@ -5,13 +5,17 @@ defmodule Agenda.TUI.SearchBox do
   The Search box asks what to search for, where (item text, note text or
   both), in which direction (forward, backward, from the beginning; view
   search only) and whether to ignore case. Typing goes into the text; ↑↓
-  or TAB move between settings and SPACE or ←→ change them; ENTER starts.
+  or TAB move between settings (← → too, off the text) and SPACE changes
+  them; ENTER starts.
 
   Searching the view highlights the first match and enters search mode:
   ALT-N / ALT-P go to the next / previous match, F7 marks the highlighted
   item, ENTER or ESC ends. Searching the file fills the Show View.
   The matching rules are `Agenda.Core.Search`. Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core
   alias Agenda.Core.Search
@@ -48,17 +52,12 @@ defmodule Agenda.TUI.SearchBox do
       :enter ->
         start(State.pop(state), %{mode | search: %{mode.search | text: mode.line.text}})
 
-      k when k in [:down, :tab] ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(rows) - 1)})
+      # on the text, ← → HOME END move in it; ↑ ↓ TAB still move between settings
+      k when is_move(k) and (row != :text or k in [:up, :down, :tab, :shift_tab]) ->
+        BoxNav.move(state, mode, BoxNav.column(rows), k)
 
-      k when k in [:up, :shift_tab] ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      k when row != :text and k in [{:char, " "}, :right] ->
+      {:char, " "} when row != :text ->
         State.put_mode(state, change(mode, row, 1))
-
-      :left when row != :text ->
-        State.put_mode(state, change(mode, row, -1))
 
       _ when row == :text ->
         edit_text(state, mode, key)

@@ -89,10 +89,9 @@ defmodule Agenda.TUI.NumbersTest do
     assert text =~ "Formatted Samples"
     assert text =~ ~r/1234.50 +-1234.50/
 
-    # in reading order after the four rows every column has: Symbol None ->
-    # $; (Count, Decimal places, Total) Thousands separator Yes; Average Yes
-    downs = &List.duplicate(:down, &1)
-    state = press(state, downs.(4) ++ [" "] ++ downs.(4) ++ [" ", :down, " ", :enter])
+    # ↓ from Column head: Width, then Symbol: None -> $; ↓ ↓ Thousands
+    # separator: Yes; → beside it, Average: Yes
+    state = press(state, [:down, :down, " ", :down, :down, " ", :right, " ", :enter])
 
     assert hd(tl(Agenda.Core.View.columns(state.db.views[view], 0))).number ==
              %NumberFormat{symbol: "$", thousands: true, calcs: [:total, :average]}
@@ -107,8 +106,8 @@ defmodule Agenda.TUI.NumbersTest do
     state = press(state, ["120", :enter, :down, "800.5", :enter, :down, "79.5", :enter])
     state = press(state, [{:f, 10}, "v", "c", "p"])
     assert screen(state) =~ ~r/Display % of total: +No +Maximum: +No/
-    # after the four common rows and four rows of two: Display % of total
-    state = press(state, List.duplicate(:down, 12) ++ [" ", :enter])
+    # ↓ from Column head: Width, then the five rows of two; % of total is the last left
+    state = press(state, List.duplicate(:down, 6) ++ [" ", :enter])
     assert hd(tl(Agenda.Core.View.columns(state.db.views[view], 0))).number.percent
     # and in print, after the number
     assert Agenda.TUI.Render.Export.text(state) =~ "heat  [Amount: 120.00 (12%)]"
@@ -127,10 +126,9 @@ defmodule Agenda.TUI.NumbersTest do
   defp at_end(line, text),
     do: (line |> String.split(text) |> hd() |> String.length()) + String.length(text)
 
-  test "decimal places go up and down with → and ←", %{state: state, view: view} do
-    # Decimal places: after the four common rows, Symbol and Count
-    keys =
-      [{:f, 10}, "v", "c", "p"] ++ List.duplicate(:down, 6) ++ [:right, :right, :left, :enter]
+  test "decimal places are typed", %{state: state, view: view} do
+    # ↓ from Column head: Width, Symbol, Decimal places; ENTER keeps it, ENTER the box
+    keys = [{:f, 10}, "v", "c", "p", :down, :down, :down, "3", :enter, :enter]
 
     state = press(state, keys)
     assert hd(tl(Agenda.Core.View.columns(state.db.views[view], 0))).number.decimals == 3

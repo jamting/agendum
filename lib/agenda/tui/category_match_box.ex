@@ -4,11 +4,14 @@ defmodule Agenda.TUI.CategoryMatchBox do
   settings; User's Guide 19-14 to 19-15, SPEC R16b): its own Text
   matching, Match on, Required match strength, Confirm assignments,
   Ignore suffixes and Ignore accents, each Global (the file's, shown in
-  brackets) unless set. SPACE or → shows the next choice, ← the previous
-  one; every change applies at once and is one undo step. ENTER closes
+  brackets) unless set. SPACE shows the next choice (the arrows move);
+  every change applies at once and is one undo step. ENTER closes
   the box; ESC closes it and cancels its changes (`Agenda.TUI.BoxCancel`).
   Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core
   alias Agenda.TUI.State
@@ -38,10 +41,8 @@ defmodule Agenda.TUI.CategoryMatchBox do
   def handle(state, mode, key) do
     case key do
       k when k in [:esc, :enter] -> State.pop(state)
-      :up -> State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-      :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
-      k when k in [{:char, " "}, :right] -> change(state, mode, 1)
-      :left -> change(state, mode, -1)
+      k when is_move(k) -> BoxNav.move(state, mode, BoxNav.column(@rows), k)
+      {:char, " "} -> change(state, mode, 1)
       _ -> state
     end
   end

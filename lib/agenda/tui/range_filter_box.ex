@@ -9,11 +9,15 @@ defmodule Agenda.TUI.RangeFilterBox do
 
   Rows: Show items (Assigned / Not assigned), Start date and End date (or
   Minimum and Maximum value; blank means open), and Items should be
-  (Inside / Outside range). ↑↓ or TAB move; SPACE or ←→ change a choice;
+  (Inside / Outside range). The arrows or TAB move (in a date or number,
+  ← → move in the text); SPACE changes a choice;
   typing goes into the dates or numbers. ENTER applies the filter, ESC
   cancels, DEL on a choice row removes the category from the filter. The
   rules are `Agenda.Core.RangeFilter`. Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core
   alias Agenda.TUI.{LineEdit, State}
@@ -78,11 +82,9 @@ defmodule Agenda.TUI.RangeFilterBox do
       :enter ->
         apply_filter(state, mode)
 
-      k when k in [:down, :tab] ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
-
-      k when k in [:up, :shift_tab] ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
+      # on a date or number, ← → HOME END move in it; ↑ ↓ TAB still move between settings
+      k when is_move(k) and (row not in [:from, :to] or k in [:up, :down, :tab, :shift_tab]) ->
+        BoxNav.move(state, mode, BoxNav.column(@rows), k)
 
       k when row in [:from, :to] ->
         case LineEdit.handle(Map.fetch!(mode, row), k) do
@@ -93,7 +95,7 @@ defmodule Agenda.TUI.RangeFilterBox do
       :delete ->
         state |> State.pop() |> State.change_db(remove(state, mode))
 
-      k when k in [{:char, " "}, :left, :right] ->
+      {:char, " "} ->
         State.put_mode(state, toggle(mode, row))
 
       _ ->

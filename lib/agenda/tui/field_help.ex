@@ -90,14 +90,14 @@ defmodule Agenda.TUI.FieldHelp do
     settings:
       "Global defaults uses the file's date format; any change gives the column its own. " <>
         "SPACE goes back to the global defaults.",
-    show: "Choose whether to display date, time, or both. SPACE or → for the next choice.",
+    show: "Choose whether to display date, time, or both. SPACE for the next choice.",
     day_of_week: "Choose whether to show the day of the week with the date. SPACE switches.",
-    order: "Choose the order of month, day and year in dates. SPACE or → for the next choice.",
-    separator: "Choose the character between the numbers of a date. SPACE or → for the next.",
+    order: "Choose the order of month, day and year in dates. SPACE for the next choice.",
+    separator: "Choose the character between the numbers of a date. SPACE for the next.",
     clock: "Choose a 12-hour or a 24-hour clock for times. SPACE switches.",
     am_pm: "Choose whether a 12-hour time shows am or pm. SPACE switches.",
-    time_separator: "Choose the character between hours and minutes. SPACE or → for the next.",
-    time_sep: "Choose the character between hours and minutes. SPACE or → for the next."
+    time_separator: "Choose the character between hours and minutes. SPACE for the next.",
+    time_sep: "Choose the character between hours and minutes. SPACE for the next."
   }
 
   @auto_assign %{
@@ -105,13 +105,13 @@ defmodule Agenda.TUI.FieldHelp do
       "Assign items to categories whose names or Also match words are in their text. " <>
         "SPACE switches.",
     match_on:
-      "Choose whether to match the item text, the note, or both. SPACE or → for the next choice.",
+      "Choose whether to match the item text, the note, or both. SPACE for the next choice.",
     strength:
-      "How closely text must match a name: exact, partial or minimal. SPACE or → for the next.",
+      "How closely text must match a name: exact, partial or minimal. SPACE for the next.",
     confirm:
       "Whether Agendum asks before assigning by text (Utilities Questions). " <>
-        "SPACE or → for the next.",
-    enclosed_by: "Text between these characters is not matched. SPACE or → for the next choice.",
+        "SPACE for the next.",
+    enclosed_by: "Text between these characters is not matched. SPACE for the next choice.",
     ignore_suffixes:
       "Match a name with endings such as -s, -ed or -ing (Call matches Calls). SPACE switches.",
     ignore_accents: "Match letters with and without accents alike (é and e). SPACE switches."
@@ -119,11 +119,11 @@ defmodule Agenda.TUI.FieldHelp do
 
   @help %{
     customize: %{
-      theme: "The colours Agendum draws with, in every file. SPACE or → for the next theme.",
+      theme: "The colours Agendum draws with, in every file. SPACE for the next theme.",
       lang:
         "The language you type dates in (\"next friday\", \"nästa fredag\"). " <>
-          "SPACE or → for the next.",
-      fallback: "A second language dates are read in as well. SPACE or → for the next, or None.",
+          "SPACE for the next.",
+      fallback: "A second language dates are read in as well. SPACE for the next, or None.",
       input_format:
         "How you type dates and times: the order of the numbers, the separator and the clock. " <>
           "SPACE opens the box.",
@@ -134,17 +134,17 @@ defmodule Agenda.TUI.FieldHelp do
           "SPACE switches.",
       auto_save:
         "Save the file by itself after this many minutes without a key. " <>
-          "SPACE or → for longer, ← for shorter.",
+          "SPACE for the next interval.",
       decimal: "The character before the decimals of a number you type. SPACE switches.",
       thousands:
-        "The character between thousands in a number you type. SPACE or → for the next choice."
+        "The character between thousands in a number you type. SPACE for the next choice."
     },
     input_format: %{
       number_order:
         "Choose the order in which you enter day, month, and year, so Agendum can read " <>
-          "dates such as 3/2. SPACE or → for the next.",
+          "dates such as 3/2. SPACE for the next.",
       separator:
-        "The character you type between the numbers of a date. SPACE or → for the next choice.",
+        "The character you type between the numbers of a date. SPACE for the next choice.",
       clock: "Choose whether you type times on a 12-hour or a 24-hour clock. SPACE switches."
     },
     file_props: %{
@@ -162,19 +162,16 @@ defmodule Agenda.TUI.FieldHelp do
       input_format:
         "Press SPACE BAR to choose how you type dates. It is yours, " <>
           "for every file, not part of this one.",
-      week_start:
-        "The first day of a week, for \"this week\" and datebooks. SPACE or → for the next.",
-      week_end:
-        "The last day of a week, for \"end of week\" and datebooks. SPACE or → for the next.",
-      quarter_start: "The month the first quarter begins in. SPACE or → for the next month.",
-      year_start:
-        "The month the year begins in, for \"this year\". SPACE or → for the next month.",
+      week_start: "The first day of a week, for \"this week\" and datebooks. SPACE for the next.",
+      week_end: "The last day of a week, for \"end of week\" and datebooks. SPACE for the next.",
+      quarter_start: "The month the first quarter begins in. SPACE for the next month.",
+      year_start: "The month the year begins in, for \"this year\". SPACE for the next month.",
       month_alone:
         "Which day a month typed alone means (\"April\"): its first, its last, or another day. " <>
-          "SPACE or → for the next.",
-      morning: "The time \"morning\" means in a date. SPACE or → later, ← earlier.",
-      afternoon: "The time \"afternoon\" means in a date. SPACE or → later, ← earlier.",
-      evening: "The time \"evening\" means in a date. SPACE or → later, ← earlier."
+          "SPACE for the next.",
+      morning: "The time \"morning\" means in a date. SPACE asks for it.",
+      afternoon: "The time \"afternoon\" means in a date. SPACE asks for it.",
+      evening: "The time \"evening\" means in a date. SPACE asks for it."
     },
     display_format: @date_format,
     auto_assign: @auto_assign,
@@ -185,9 +182,8 @@ defmodule Agenda.TUI.FieldHelp do
     date_rule: %{
       assign:
         "When the category gets a date: never, from the clock as the item is entered or " <>
-          "edited, or from its text. SPACE or →.",
-      which:
-        "Which date in the text to take: the first, the second… SPACE or → for the next one.",
+          "edited, or from its text. SPACE changes it.",
+      which: "Which date in the text to take: the first, the second… SPACE for the next one.",
       done_key: "Whether F4 (DONE) sets this date to the current date and time. SPACE switches.",
       when_key: "Whether ALT-F2 (WHEN) sets this date as well. SPACE switches."
     },
@@ -196,10 +192,12 @@ defmodule Agenda.TUI.FieldHelp do
       end_category:
         "A date category for the end of items that last a while. SPACE picks one, DEL clears it.",
       section_category: "The category at the head of every section. SPACE picks one.",
-      period: "How long the datebook shows: a day, a week, a month or a quarter. SPACE or →.",
-      interval: "How long each section (slot) is. SPACE or → for the next choice.",
-      start: "Where the datebook starts: an hour of the day or a day of the week. SPACE or →.",
-      end: "Where the datebook ends: an hour of the day or a day of the week. SPACE or →.",
+      period:
+        "How long the datebook shows: a day, a week, a month or a quarter. SPACE changes it.",
+      interval: "How long each section (slot) is. SPACE for the next choice.",
+      start:
+        "Where the datebook starts: an hour of the day or a day of the week. SPACE changes it.",
+      end: "Where the datebook ends: an hour of the day or a day of the week. SPACE changes it.",
       base:
         "The date the period is taken from, such as \"today\" or \"next week\", " <>
           "read each time the view is shown. SPACE types it.",
@@ -221,7 +219,7 @@ defmodule Agenda.TUI.FieldHelp do
       sequence:
         "Sort on the children of the category in their hierarchy order or alphabetically. " <>
           "SPACE switches.",
-      line: "Which line of the category note to sort on. → or ← changes it.",
+      line: "Which line of the category note to sort on. Type it (1 to 9).",
       then_on: "What to sort items on when they are equal so far. SPACE changes it.",
       then_order: "Sort the second key in ascending or descending order. SPACE switches.",
       sections:
@@ -230,8 +228,8 @@ defmodule Agenda.TUI.FieldHelp do
     },
     search_box: %{
       text: "Type the text to search for. Pat* finds Pat and Patty. ENTER searches.",
-      on: "Choose whether to search the item text, the note, or both. SPACE or →.",
-      direction: "Search forward, backward, or from the beginning of the view. SPACE or →.",
+      on: "Choose whether to search the item text, the note, or both. SPACE changes it.",
+      direction: "Search forward, backward, or from the beginning of the view. SPACE changes it.",
       ignore_case: "Whether capital and small letters match alike. SPACE switches."
     },
     section_props: %{
@@ -254,16 +252,16 @@ defmodule Agenda.TUI.FieldHelp do
         type:
           "The type of the column's category: standard, date or numeric. " <>
             "Change it in the category's properties.",
-        width: "The width of the column, in characters. → wider, ← narrower.",
+        width: "The width of the column, in characters. Type it.",
         linked:
           "Whether the column changes with the same column in other sections. SPACE switches.",
         format:
           "How the column shows categories: name only, parent:category, ancestor, star, " <>
-            "yes/no or a note line. SPACE or →.",
-        note_line: "Which line of the category note the column shows. → or ← changes it.",
+            "yes/no or a note line. SPACE changes it.",
+        note_line: "Which line of the category note the column shows. Type it.",
         title: "Type the column's title.",
-        symbol: "The label or currency symbol shown with numbers. SPACE or → for the next one.",
-        decimals: "How many decimal places numbers show. SPACE or → for more, ← for fewer.",
+        symbol: "The label or currency symbol shown with numbers. SPACE for the next one.",
+        decimals: "How many decimal places numbers show. Type it, or SPACE for one more.",
         thousands: "Whether numbers show a separator between thousands. SPACE switches.",
         negative: "How negative numbers show: with a minus sign or in parentheses. SPACE.",
         percent:
@@ -278,21 +276,21 @@ defmodule Agenda.TUI.FieldHelp do
       head: "Type the name of a new or existing category, or press F3 to pick one.",
       type:
         "The type of the column's category: standard, date or numeric. " <>
-          "SPACE or → for a new head.",
-      width: "The width of the column, in characters. → wider, ← narrower.",
+          "SPACE changes it for a new head.",
+      width: "The width of the column, in characters. Type it.",
       format:
         "How the column shows categories: name only, parent:category, ancestor, star, " <>
-          "yes/no or a note line. SPACE or →.",
-      note_line: "Which line of the category note the column shows. → or ← changes it.",
+          "yes/no or a note line. SPACE changes it.",
+      note_line: "Which line of the category note the column shows. Type it.",
       title: "Type the column's title.",
       position: "Add the column right or left of the highlighted one. SPACE switches.",
       insert_in: "Add the column to all sections in the view, or only this one. SPACE switches."
     },
     item_column: %{
-      head: "The category at the head of the section. F3, SPACE or → picks another.",
+      head: "The category at the head of the section. F3 or SPACE picks another.",
       set: "Set the width of the item text automatically, or by hand. SPACE switches.",
-      width: "The width of the item text, in characters. → wider, ← narrower.",
-      minimum: "The narrowest the item text may become. → wider, ← narrower.",
+      width: "The width of the item text, in characters. Type it.",
+      minimum: "The narrowest the item text may become. Type it.",
       linked:
         "Whether the item column changes with the item columns of other sections. SPACE switches."
     },
@@ -318,7 +316,7 @@ defmodule Agenda.TUI.FieldHelp do
           "ENTER applies, DEL removes the action."
     },
     execute: %{
-      root: "Apply the conditions of this category and its children. ENTER picks a category.",
+      root: "Apply the conditions of this category and its children. SPACE picks a category.",
       against:
         "The items to apply them to: all, the current item, the marked ones, " <>
           "the section or the view. SPACE.",

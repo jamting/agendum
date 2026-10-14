@@ -3,10 +3,13 @@ defmodule Agenda.TUI.ActionBox do
   The Date Action and Numeric Action boxes (SPEC R15b; User's Guide 21-4 to
   21-7), opened when a date or numeric category is chosen in a category's
   Assignment actions. Rows: what to do (set a date or number, or clear it)
-  and the date or value. ↑↓ move; SPACE or ←→ change the choice; typing
+  and the date or value. The arrows move; SPACE changes the choice; typing
   goes into the value. ENTER applies, DEL removes the action, ESC cancels.
   Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core
   alias Agenda.TUI.{LineEdit, State}
@@ -54,11 +57,9 @@ defmodule Agenda.TUI.ActionBox do
       :enter ->
         apply_action(state, mode)
 
-      k when k in [:down, :tab] ->
-        State.put_mode(state, %{mode | cursor: 1})
-
-      k when k in [:up, :shift_tab] ->
-        State.put_mode(state, %{mode | cursor: 0})
+      # on the value, ← → HOME END move in it; ↑ ↓ TAB still move between settings
+      k when is_move(k) and (row != :value or k in [:up, :down, :tab, :shift_tab]) ->
+        BoxNav.move(state, mode, BoxNav.column(@rows), k)
 
       k when row == :value ->
         case LineEdit.handle(mode.line, k) do
@@ -71,7 +72,7 @@ defmodule Agenda.TUI.ActionBox do
         |> State.pop()
         |> State.change_db(Core.remove_action(state.db, mode.owner, mode.target))
 
-      k when k in [{:char, " "}, :left, :right] ->
+      {:char, " "} ->
         State.put_mode(state, %{mode | clear: not mode.clear})
 
       _ ->

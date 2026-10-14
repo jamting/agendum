@@ -942,8 +942,18 @@ and ESC puts the file and your preferences back as they were when the
 box opened (one undo step, which undo reverses); a box opened from a box
 cancels only its own changes, and work done in a full screen opened from
 a box (a note, the macro edit screen) stays. ESC while typing in a field
-only stops the typing. A field is changed with SPACE (or →, ←), edited
-with F2, picked from with F3 (`Agenda.TUI.BoxCancel`). Our choices: the
+only stops the typing (`Agenda.TUI.BoxCancel`). In a box the arrows move
+between settings as in Agenda (User's Guide 2-16, `Agenda.TUI.BoxNav`):
+→ or TAB right one setting, or on to the next when there is none to the
+right; ← or SHIFT-TAB left, or back to the previous; ↓ ↑ to the next or
+previous row, onto the setting nearest the same place (from a right-hand
+setting to the right-hand one below, or the left one when the row has
+only that); HOME / END the first / last. On a text or date being typed
+(Search, a range filter, an action's value), ← → HOME END move in the
+text instead. A setting is changed with SPACE (the next choice), edited
+with F2, picked from with F3; a number (a width, decimal places, a line
+number) is typed, and so are Morning, Afternoon and Evening (SPACE asks).
+Our choice: Agenda's first letter of a choice is not yet taken. Our choices: the
 function-key bar stays one line with the keys'
 names and labels side by side (Agenda had two lines of ten fixed slots).
 When the screen is wide enough for all of them, it shows fuller labels

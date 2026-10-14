@@ -3,10 +3,13 @@ defmodule Agenda.TUI.AutoAssignBox do
   File Properties ▸ Auto-assign settings (User's Guide 19-7 to 19-12, SPEC
   R16, R16a): Text matching, Match on, Required match strength, Confirm
   assignments, Ignore text enclosed by, Ignore suffixes and Ignore
-  accents. SPACE or → shows the next choice, ← the previous one; every
+  accents. SPACE shows the next choice (the arrows move); every
   change applies at once and is one undo step. ENTER closes the box; ESC
   closes it and cancels its changes (`Agenda.TUI.BoxCancel`). Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core
   alias Agenda.Core.TextMatch
@@ -28,10 +31,8 @@ defmodule Agenda.TUI.AutoAssignBox do
   def handle(state, mode, key) do
     case key do
       k when k in [:esc, :enter] -> State.pop(state)
-      :up -> State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-      :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
-      k when k in [{:char, " "}, :right] -> change(state, Enum.at(@rows, mode.cursor), 1)
-      :left -> change(state, Enum.at(@rows, mode.cursor), -1)
+      k when is_move(k) -> BoxNav.move(state, mode, BoxNav.column(@rows), k)
+      {:char, " "} -> change(state, Enum.at(@rows, mode.cursor), 1)
       _ -> state
     end
   end

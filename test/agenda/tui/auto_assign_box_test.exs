@@ -7,7 +7,8 @@ defmodule Agenda.TUI.AutoAssignBoxTest do
 
   setup do
     state = start(Agenda.Sample.build(~D[2026-10-08]))
-    %{state: press(state, [{:f, 10}, "f", "p"] ++ List.duplicate(:down, 20) ++ [" "])}
+    # File Properties: ↓ to Global date settings, → to Auto-assign settings beside it
+    %{state: press(state, [{:f, 10}, "f", "p", :down, :right, " "])}
   end
 
   test "shows Agenda's settings with their defaults", %{state: state} do
@@ -20,15 +21,17 @@ defmodule Agenda.TUI.AutoAssignBoxTest do
     assert text =~ ~r/Ignore accents\s+: No/
   end
 
-  test "SPACE and ← change a setting; each change is one undo step", %{state: state} do
+  test "SPACE changes a setting; each change is one undo step", %{state: state} do
     state = press(state, [:down, :down, " "])
     assert state.db.match_settings.strength == :partial
-    state = press(state, [:up, :left])
+    # Match on: Item text -> Note text -> Both item & note
+    state = press(state, [:up, " ", " "])
     assert state.db.match_settings.match_on == :both
     assert screen(state) =~ ~r/Match on\s+: Both item & note/
 
+    # one step back: the first SPACE's Note text
     state = History.undo(state)
-    assert state.db.match_settings.match_on == :item
+    assert state.db.match_settings.match_on == :note
   end
 
   test "with text matching off, a new item matches nothing", %{state: state} do

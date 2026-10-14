@@ -8,10 +8,14 @@ defmodule Agenda.TUI.ExecuteBox do
   of (a category and its children; MAIN for all, ENTER opens the category
   box), Against (all items, the current item, the marked items, the items
   in the section or in the view) and Apply actions to (new assignments
-  only, or old and new). SPACE or ←→ change a setting; ENTER runs it, ESC
+  only, or old and new). SPACE changes a setting (on the first row: picks
+  the category); the arrows move; ENTER runs it, ESC
   cancels. ALT-X runs everything on all items; ALT-E runs the highlighted
   category's family on all items. Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core
   alias Agenda.TUI.{CategoryScreens, Layout, State}
@@ -38,24 +42,20 @@ defmodule Agenda.TUI.ExecuteBox do
       :esc ->
         State.pop(state)
 
-      :enter when row == :root ->
-        CategoryScreens.open_picker(state, :execute_root, nil)
-
       :enter ->
         state |> State.pop() |> run(mode.root, mode.against, mode.old)
 
-      :down ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
+      k when is_move(k) ->
+        BoxNav.move(state, mode, BoxNav.column(@rows), k)
 
-      :up ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
+      {:char, " "} when row == :root ->
+        CategoryScreens.open_picker(state, :execute_root, nil)
 
-      k when k in [{:char, " "}, :right, :left] and row == :against ->
-        step = if k == :left, do: -1, else: 1
+      {:char, " "} when row == :against ->
         index = Enum.find_index(@against, &(&1 == mode.against))
-        State.put_mode(state, %{mode | against: Enum.at(@against, Integer.mod(index + step, 5))})
+        State.put_mode(state, %{mode | against: Enum.at(@against, Integer.mod(index + 1, 5))})
 
-      k when k in [{:char, " "}, :right, :left] and row == :actions ->
+      {:char, " "} when row == :actions ->
         State.put_mode(state, %{mode | old: not mode.old})
 
       _ ->

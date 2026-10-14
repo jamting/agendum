@@ -6,8 +6,8 @@ defmodule Agenda.TUI.ColumnBox do
 
     * The top part is every column's: Column head (typing a name gives
       the category of that name, or a new one, `Agenda.TUI.FieldTyping`;
-      F3, SPACE or → picks another category, R55), Category type (shown; a category's type is
-      changed in its Category Properties), Width (→ ← by one) and Link
+      F3 or SPACE picks another category, R55), Category type (shown; a category's type is
+      changed in its Category Properties), Width (typed) and Link
       with other sections (R55).
     * Below a rule, a numeric column has its Numeric Column Properties
       (R29): currency symbol, decimal places, thousands separator, negative
@@ -24,6 +24,9 @@ defmodule Agenda.TUI.ColumnBox do
   the columns linked to it, and is one undo step. ENTER closes the box; ESC
   closes it and cancels its changes (`Agenda.TUI.BoxCancel`). Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core
   alias Agenda.Core.{Database, DateFormat, NumberFormat, View}
@@ -65,7 +68,7 @@ defmodule Agenda.TUI.ColumnBox do
    Date separator:           [separator  ]  Time separator: [time_sep]
   """
 
-  @hint " SPACE/→ next choice · ← previous · F3 picks the head"
+  @hint " SPACE next choice · type a number · F3 picks the head"
   @max_decimals 6
   @date_rows DateFormatRows.rows()
 
@@ -125,19 +128,46 @@ defmodule Agenda.TUI.ColumnBox do
   defp typed(state, :title, text, at),
     do: State.change_db(state, Core.set_column_display(state.db, state.view_id, at, title: text))
 
+  # a typed number (Agenda's "type your own choice"): the width, the line
+  # of the category note, or the decimal places
+  defp typed(state, :width, text, at) do
+    case FieldTyping.number(text, 1, 200) do
+      {:ok, n} -> State.change_db(state, Core.set_column_width(state.db, state.view_id, at, n))
+      :error -> State.error(state, "Type a width, a number")
+    end
+  end
+
+  defp typed(state, :note_line, text, at) do
+    case FieldTyping.number(text, 1, 99) do
+      {:ok, n} ->
+        State.change_db(state, Core.set_column_display(state.db, state.view_id, at, note_line: n))
+
+      :error ->
+        State.error(state, "Type a line number")
+    end
+  end
+
+  defp typed(state, :decimals, text, at) do
+    case FieldTyping.number(text, 0, @max_decimals) do
+      {:ok, n} ->
+        format = %{column(state, State.mode(state)).number | decimals: n}
+        State.change_db(state, Core.set_column_format(state.db, state.view_id, at, format))
+
+      :error ->
+        State.error(state, "Type 0 to #{@max_decimals} decimal places")
+    end
+  end
+
   defp settings_key(state, mode, key) do
-    last = length(fields(kind(state, mode))) - 1
+    kind = kind(state, mode)
     row = field(state, mode)
 
     case key do
       k when k in [:esc, :enter] ->
         State.pop(state)
 
-      :up ->
-        State.put_mode(state, %{mode | cursor: max(min(mode.cursor, last) - 1, 0)})
-
-      :down ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
+      k when is_move(k) ->
+        BoxNav.move(state, mode, Template.grid(layout(kind), fields(kind)), k)
 
       {:f, 3} when row == :head ->
         pick_head(state, mode)
@@ -145,11 +175,11 @@ defmodule Agenda.TUI.ColumnBox do
       {:char, c} when row in [:head, :title] and c != " " ->
         FieldTyping.start(state, mode, row, c)
 
-      k when k in [{:char, " "}, :right] ->
+      {:char, " "} ->
         change(state, mode, row, 1)
 
-      :left ->
-        change(state, mode, row, -1)
+      {:char, c} when row in [:width, :note_line, :decimals] ->
+        if FieldTyping.digit?(c), do: FieldTyping.start(state, mode, row, c), else: state
 
       _ ->
         state

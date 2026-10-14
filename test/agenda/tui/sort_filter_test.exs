@@ -94,8 +94,8 @@ defmodule Agenda.TUI.SortFilterTest do
     assert screen(state) =~ "Category note: Contact"
     assert screen(state) =~ ~r/Line number\s+: 1/
 
-    # Line number 2: the towns; Amsterdam (Abigail) first
-    state = press(state, [:down, :down, :down, :down, :right])
+    # Line number 2 (typed): the towns; Amsterdam (Abigail) first
+    state = press(state, [:down, :down, :down, :down, "2"])
     assert hd(State.view(state).sort).line == 2
     assert hd(texts(state)) =~ "Abigail"
 

@@ -4,7 +4,7 @@ defmodule Agenda.TUI.ColumnAddBox do
   the settings of a column before it is added.
 
     * Column head: typing a name gives the category of that name, or a
-      new one (`Agenda.TUI.FieldTyping`); F3, SPACE or → opens the picker
+      new one (`Agenda.TUI.FieldTyping`); F3 or SPACE opens the picker
       (the whole hierarchy, where INS makes a new category); ENTER without
       a head does too.
     * Category type (User's Guide 3-17): Standard, Date or Numeric. A
@@ -12,7 +12,7 @@ defmodule Agenda.TUI.ColumnAddBox do
       when the column is added, after the same question Category
       Properties asks when children or items would change; a date or
       numeric head keeps its type, as in Agenda.
-    * Width: → ← by one; until changed, the core's default for the type
+    * Width: typed; until changed, the core's default for the type
       (16 for a date category, 2 for a Star or Yes/No column, 12 for
       others).
     * Format, for a standard column (R56): Name only, Parent:Category,
@@ -26,6 +26,9 @@ defmodule Agenda.TUI.ColumnAddBox do
   whole box is one database change and one undo step. ALT-R and ALT-L
   skip the box: they open the picker and use the file's setting. Pure.
   """
+
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
 
   alias Agenda.Core
   alias Agenda.Core.View
@@ -103,6 +106,14 @@ defmodule Agenda.TUI.ColumnAddBox do
   # a Category note column's title, kept with the box until ENTER
   defp typed(state, :title, text), do: update(state, &%{&1 | title: text})
 
+  # a typed width or line number, kept with the box until ENTER
+  defp typed(state, field, text) when field in [:width, :note_line] do
+    case FieldTyping.number(text, 1, 999) do
+      {:ok, n} -> update(state, &Map.put(&1, field, n))
+      :error -> State.error(state, "Type a number")
+    end
+  end
+
   # The fields shown, in the cursor's order: no Format for a date or
   # numeric column, and Line number and Column title only for Category note.
   defp fields(mode) do
@@ -130,11 +141,8 @@ defmodule Agenda.TUI.ColumnAddBox do
       :enter ->
         add(state, mode)
 
-      :up ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      :down ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
+      k when is_move(k) ->
+        BoxNav.move(state, mode, Template.grid(@layout, fields(mode)), k)
 
       {:f, 3} when field == :head ->
         pick_head(state)
@@ -142,11 +150,11 @@ defmodule Agenda.TUI.ColumnAddBox do
       {:char, c} when field in [:head, :title] and c != " " ->
         FieldTyping.start(state, mode, field, c)
 
-      k when k in [{:char, " "}, :right] ->
+      {:char, " "} ->
         change(state, mode, field, 1)
 
-      :left ->
-        change(state, mode, field, -1)
+      {:char, c} when field in [:width, :note_line] ->
+        if FieldTyping.digit?(c), do: FieldTyping.start(state, mode, field, c), else: state
 
       _ ->
         state

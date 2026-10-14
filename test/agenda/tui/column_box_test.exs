@@ -67,8 +67,10 @@ defmodule Agenda.TUI.ColumnBoxTest do
     end
 
     test "its value lines up with the values above it", %{state: state} do
-      # Category note, with a title, so every row has a value
-      state = press(state, [:down, :down, :down, :down, :left, :down, :down, "P", :enter])
+      # Category note (the last format), with a title, so every row has a value
+      state =
+        press(state, [:down, :down] ++ List.duplicate(" ", 5) ++ [:down, :down, "P", :enter])
+
       lines = String.split(screen(state), "\n")
 
       # where the value after each label starts on the screen
@@ -84,10 +86,12 @@ defmodule Agenda.TUI.ColumnBoxTest do
 
     test "Category note: Line number and Column title, which heads the column",
          %{state: state, view_id: v} do
-      state = press(state, [:down, :down, :down, :down, :left])
+      # ↓ from Column head: Width, then Format; SPACE five times: Category note
+      state = press(state, [:down, :down] ++ List.duplicate(" ", 5))
       assert screen(state) =~ ~r/Format: +Category note/
       assert screen(state) =~ ~r/Line number: +1/
-      state = press(state, [:down, :right, :down, "P", "h", "o", "n", "e", " ", "#", :enter])
+      # a line number is typed
+      state = press(state, [:down, "2", :enter, :down, "P", "h", "o", "n", "e", " ", "#", :enter])
       assert {people(state, v, 0).note_line, people(state, v, 0).title} == {2, "Phone #"}
       assert screen(state) =~ ~r/Column title: *Phone #/
       # in the view, Phone # heads the column instead of People
@@ -95,8 +99,8 @@ defmodule Agenda.TUI.ColumnBoxTest do
     end
   end
 
-  test "Width: → and ← change it by one, in every linked section", %{state: state, view_id: v} do
-    state = press(state, [:down, :down, :right, :right, :left])
+  test "Width: typed, in every linked section", %{state: state, view_id: v} do
+    state = press(state, [:down, "1", "3", :enter])
     assert people(state, v, 0).width == 13
     assert people(state, v, 1).width == 13
     assert screen(state) =~ ~r/Width: +13/
@@ -104,11 +108,11 @@ defmodule Agenda.TUI.ColumnBoxTest do
 
   test "Link with other sections: No, then the column changes alone, one undo step each",
        %{state: state, view_id: v} do
-    # Column head, Category type, Width, Link: in reading order
-    state = press(state, [:down, :down, :down, " "])
+    # Column head | Category type, then Width | Link: ↓ then → is Link
+    state = press(state, [:down, :right, " "])
     assert people(state, v, 0).link == nil
     assert screen(state) =~ ~r/Link with other sections: +No/
-    state = press(state, [:up, :right])
+    state = press(state, [:left, "1", "3", :enter])
     assert {people(state, v, 0).width, people(state, v, 1).width} == {13, 12}
     state = History.undo(state)
     assert people(state, v, 0).width == 12
@@ -132,5 +136,26 @@ defmodule Agenda.TUI.ColumnBoxTest do
   test "ENTER closes it; ESC goes back to the menu it came from", %{state: state} do
     assert %{type: :menu} = State.mode(press(state, :esc))
     assert press(state, :enter).modes == []
+  end
+
+  describe "moving between settings, as Agenda (User's Guide 2-16)" do
+    defp at(state), do: Agenda.TUI.ColumnBox.field(state, State.mode(state))
+
+    test "→ ← along a row, on to the next or back to the previous", %{state: state} do
+      assert at(state) == :head
+      assert at(press(state, :right)) == :type
+      assert at(press(state, [:right, :right])) == :width
+      assert at(press(state, [:right, :right, :left])) == :type
+      assert at(press(state, [:tab, :tab, :shift_tab])) == :type
+    end
+
+    test "↓ ↑ keep to their side, to the left one when there is none", %{state: state} do
+      # Category type is right of Column head; Link right of Width; Format alone
+      assert at(press(state, [:right, :down])) == :linked
+      assert at(press(state, [:right, :down, :down])) == :format
+      assert at(press(state, [:right, :down, :down, :up])) == :width
+      assert at(press(state, :end)) == :format
+      assert at(press(state, [:end, :home])) == :head
+    end
   end
 end

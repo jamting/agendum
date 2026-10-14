@@ -12,6 +12,9 @@ defmodule Agenda.TUI.NumericFunctionsBox do
   from `@layout` (`Agenda.TUI.Template`). Pure.
   """
 
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
+
   alias Agenda.Core
   alias Agenda.TUI.{State, Template}
 
@@ -36,13 +39,10 @@ defmodule Agenda.TUI.NumericFunctionsBox do
       k when k in [:esc, :enter] ->
         State.pop(state)
 
-      :up ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
+      k when is_move(k) ->
+        BoxNav.move(state, mode, Template.grid(@layout, @rows), k)
 
-      :down ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
-
-      k when k in [{:char, " "}, :right, :left] ->
+      {:char, " "} ->
         switch(state, mode, Enum.at(@rows, mode.cursor))
 
       _ ->

@@ -4,6 +4,9 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
   category's type to numeric or date (User's Guide 7-3, 8-11). Pure.
   """
 
+  import Agenda.TUI.BoxNav, only: [is_move: 1]
+  alias Agenda.TUI.BoxNav
+
   alias Agenda.Core
   alias Agenda.Core.Database
   alias Agenda.TUI.{CategoryScreens, Draw, LineEdit, State, TextEdit}
@@ -63,18 +66,14 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
 
   def props_key(state, mode, key) do
     cat = state.db.categories[mode.cat_id]
-    count = length(@props)
 
     case key do
       # ENTER is done (ESC cancels: `Agenda.TUI.BoxCancel`)
       k when k in [:esc, :enter, {:f, 6}] ->
         State.pop(state)
 
-      :up ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      :down ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, count - 1)})
+      k when is_move(k) ->
+        BoxNav.move(state, mode, BoxNav.column(@props), k)
 
       k when k in [{:char, " "}, {:f, 2}, {:f, 3}] ->
         open_prop(state, cat, Enum.at(@props, mode.cursor))
