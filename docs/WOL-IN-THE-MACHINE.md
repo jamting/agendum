@@ -1,5 +1,7 @@
 # Wol in the machine: a personal agent inside the file
 
+(Name of file is a reference to Ghost in the Machine)
+
 An idea, not a plan yet (Roadmap, "Ideas"). Written down on 2026-10-13
 from a conversation between the owner and Claude; to be turned into a
 plan and an ADR when its time comes.
