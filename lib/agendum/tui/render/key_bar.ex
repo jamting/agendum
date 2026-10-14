@@ -283,8 +283,7 @@ defmodule Agendum.TUI.Render.KeyBar do
   defp mode_keys(%{type: type})
        when type in [
               :column_props,
-              :column_add,
-              :item_column
+              :column_add
             ],
        do: [
          {"↑↓←→", "Setting", "Move between settings"},

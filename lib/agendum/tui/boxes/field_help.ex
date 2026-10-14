@@ -16,7 +16,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.ColumnAddBox,
     Boxes.ColumnBox,
     Boxes.DatebookBox,
-    Boxes.ItemColumnBox,
     Boxes.ItemProperties,
     State
   }
@@ -32,7 +31,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     datebook_props: DatebookBox,
     column_props: ColumnBox,
     column_add: ColumnAddBox,
-    item_column: ItemColumnBox,
     props: Properties,
     item_props: ItemProperties
   }
@@ -123,14 +121,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       title: "Type the column's title.",
       position: "Add the column right or left of the highlighted one. SPACE switches.",
       insert_in: "Add the column to all sections in the view, or only this one. SPACE switches."
-    },
-    item_column: %{
-      head: "The category at the head of the section. F3 or SPACE picks another.",
-      set: "Set the width of the item text automatically, or by hand. SPACE switches.",
-      width: "The width of the item text, in characters. Type it.",
-      minimum: "The narrowest the item text may become. Type it.",
-      linked:
-        "Whether the item column changes with the item columns of other sections. SPACE switches."
     },
     props: %{
       name: "The category's name. F2 (or SPACE) edits it.",

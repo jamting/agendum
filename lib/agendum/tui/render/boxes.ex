@@ -159,7 +159,7 @@ defmodule Agendum.TUI.Render.Boxes do
   # File Properties and Column Properties have Agenda's two columns of
   # settings side by side (screenshots 130, 127)
   defp box_width(state, %{type: type})
-       when type in [:column_props, :column_add, :item_column, :props],
+       when type in [:column_props, :column_add, :props],
        do: min(state.width - 8, 72)
 
   defp box_width(state, _mode), do: min(state.width - 8, 60)
@@ -198,7 +198,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :copy_items}), do: "Copy"
 
   defp box_title(_state, %{type: :column_add}), do: "Column Add"
-  defp box_title(_state, %{type: :item_column}), do: "Item Column Properties"
 
   defp box_title(state, %{type: :profile, item_id: id}),
     do: "Assignments: " <> String.slice(state.db.items[id].text, 0, 40)
@@ -444,9 +443,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_content(state, %{type: :column_add} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.ColumnAddBox.content(state, mode)
-
-  defp box_content(state, %{type: :item_column} = mode, _inner, _max_rows),
-    do: Agendum.TUI.Boxes.ItemColumnBox.content(state, mode)
 
   defp box_content(state, %{type: :macros} = mode, _inner, max_rows) do
     rows =

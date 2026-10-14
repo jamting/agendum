@@ -439,9 +439,6 @@ defmodule Agendum.TUI.Update do
 
   defp dispatch(state, %{type: :column_add} = m, key), do: ColumnAddBox.handle(state, m, key)
 
-  defp dispatch(state, %{type: :item_column} = m, key),
-    do: Agendum.TUI.Boxes.ItemColumnBox.handle(state, m, key)
-
   defp dispatch(state, %{type: :column_width} = m, key),
     do: Agendum.TUI.Moves.ColumnWidth.handle(state, m, key)
 

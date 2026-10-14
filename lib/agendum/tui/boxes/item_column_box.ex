@@ -17,8 +17,10 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
   (`Agendum.TUI.Boxes.BoxCancel`). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
+  alias Agendum.TUI.Boxes.{Box, BoxNav}
 
   alias Agendum.Core
   alias Agendum.Core.View
@@ -33,7 +35,14 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
    Link with other sections: [linked]
   """
 
-  @hint " SPACE next choice · type a width · F3 picks the head"
+  @help %{
+    head: "The category at the head of the section. F3 or SPACE picks another.",
+    set: "Set the width of the item text automatically, or by hand. SPACE switches.",
+    width: "The width of the item text, in characters. Type it.",
+    minimum: "The narrowest the item text may become. Type it.",
+    linked:
+      "Whether the item column changes with the item columns of other sections. SPACE switches."
+  }
 
   @doc "Opens the box for the item column of section `sidx`."
   def open(state, sidx), do: State.push(state, %{type: :item_column, sidx: sidx, cursor: 0})
@@ -47,9 +56,10 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
     List.delete(Template.fields(@layout), hidden)
   end
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
   def field(state, mode), do: Enum.at(fields(state, mode), mode.cursor)
 
+  @impl Box
   def handle(state, mode, key) do
     if FieldTyping.typing?(mode),
       do: FieldTyping.key(state, mode, key, &typed/3),
@@ -126,8 +136,15 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
 
   # --- drawing ---
 
-  @doc "The box's lines, the highlighted setting selected."
-  def content(state, mode) do
+  @impl Box
+  def title(_state, _mode), do: "Item Column Properties"
+
+  # as wide as Column Properties, which it stands for on the item text
+  @impl Box
+  def width(state, _mode), do: min(state.width - 8, 72)
+
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
     items = item_column(state, mode)
     section = Enum.at(State.view(state).sections, mode.sidx)
 
@@ -141,6 +158,13 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
     }
 
     opts = [selected: field(state, mode)] ++ FieldTyping.editing(mode)
-    Template.render(@layout, values, opts) ++ [[], [{:box, @hint}]]
+    Template.render(@layout, values, opts) ++ [[], Box.hint(keys(state, mode), inner)]
   end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: Box.settings_keys([{"type", "Width", "a width"}, {"F3", "Choices", "Pick the head"}])
+
+  @impl Box
+  def help, do: @help
 end

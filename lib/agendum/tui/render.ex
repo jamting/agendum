@@ -36,7 +36,6 @@ defmodule Agendum.TUI.Render do
     :questions,
     :column_props,
     :column_add,
-    :item_column,
     :copy_items,
     :alarm_list,
     :choice_list,
