@@ -20,9 +20,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
 
   # Help for boxes that are lists: the same whatever is highlighted
   @lists %{
-    calendars:
-      "Your calendar subscriptions. ENTER reads one now, F sets how often, " <>
-        "A how far ahead; INS adds one, DEL removes it.",
     viewmgr:
       "To display a view, highlight the view name and press ENTER. " <>
         "Press INS to create a new view.",

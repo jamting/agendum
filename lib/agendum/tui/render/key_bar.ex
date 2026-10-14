@@ -188,16 +188,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ALT-F2", "MakeCat", "Make the text a category"}
     ]
 
-  defp mode_keys(%{type: :calendars}),
-    do: [
-      {"INS", "Subscribe", "Subscribe to a calendar"},
-      {"ENTER", "Read now"},
-      {"F", "How often", "How often to read it"},
-      {"A", "Ahead", "How far ahead"},
-      {"DEL", "Unsubscribe"},
-      {"ESC", "Close"}
-    ]
-
   defp mode_keys(%{type: :menu}),
     do: [
       {"←→", "Highlight", "Highlight a command"},

@@ -23,7 +23,6 @@ defmodule Agendum.TUI.Render do
     :macros,
     :select_file,
     :scope,
-    :calendars,
     :confirm,
     :viewmgr
   ]

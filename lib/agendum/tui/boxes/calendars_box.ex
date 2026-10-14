@@ -15,9 +15,11 @@ defmodule Agendum.TUI.Boxes.CalendarsBox do
   comes back through `Agendum.TUI.Update.calendar_read/3`. Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :none
+
   alias Agendum.Core
   alias Agendum.Core.{Calendar, Database, DateFormat}
-  alias Agendum.TUI.{Terminal.Draw, State, Update}
+  alias Agendum.TUI.{Boxes.Box, Terminal.Draw, State, Update}
   alias Agendum.TUI.Update.Prompts
 
   def open(state), do: State.push(state, %{type: :calendars, cursor: 0})
@@ -25,6 +27,7 @@ defmodule Agendum.TUI.Boxes.CalendarsBox do
   @doc "The calendar the highlight is on, if any."
   def current(state, mode), do: state.db |> Database.calendars() |> Enum.at(mode.cursor)
 
+  @impl Box
   def handle(state, mode, key) do
     count = length(Database.calendars(state.db))
     mode = %{mode | cursor: mode.cursor |> min(count - 1) |> max(0)}
@@ -77,8 +80,45 @@ defmodule Agendum.TUI.Boxes.CalendarsBox do
     )
   end
 
-  @doc "The box's lines: for each calendar its name and state, address, and settings."
-  def lines(state, mode) do
+  @impl Box
+  def title(_state, _mode), do: "Calendars"
+
+  @impl Box
+  def content(state, mode, _inner, _max_rows) do
+    rows =
+      state
+      |> lines(mode)
+      |> Enum.map(fn {style, text} ->
+        [{if(style == :selected, do: :box_selected, else: :box), " " <> text}]
+      end)
+
+    rows ++
+      [
+        [],
+        [{:box, " INS subscribe · ENTER read now · DEL unsubscribe"}],
+        [{:box, " F how often · A how far ahead"}]
+      ]
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"INS", "Subscribe", "Subscribe to a calendar"},
+      {"ENTER", "Read now"},
+      {"F", "How often", "How often to read it"},
+      {"A", "Ahead", "How far ahead"},
+      {"DEL", "Unsubscribe"},
+      {"ESC", "Close"}
+    ]
+
+  @impl Box
+  def help,
+    do:
+      "Your calendar subscriptions. ENTER reads one now, F sets how often, " <>
+        "A how far ahead; INS adds one, DEL removes it."
+
+  # for each calendar its name and state, address, and settings
+  defp lines(state, mode) do
     case Database.calendars(state.db) do
       [] ->
         [{:normal, "No calendars yet · INS subscribes to one"}]

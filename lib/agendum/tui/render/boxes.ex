@@ -138,7 +138,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :confirm}), do: ""
 
   defp box_title(_state, %{type: :scope}), do: "Marked items"
-  defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
   # the column's head is the box's first row, as in Agenda (screenshot 142)
 
@@ -165,22 +164,6 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   # F3 on a setting (`Agendum.TUI.Boxes.BoxChoices`): its choices, one a line
-
-  defp box_content(state, %{type: :calendars} = mode, _inner, _max_rows) do
-    rows =
-      state
-      |> Agendum.TUI.Boxes.CalendarsBox.lines(mode)
-      |> Enum.map(fn {style, text} ->
-        [{if(style == :selected, do: :box_selected, else: :box), " " <> text}]
-      end)
-
-    rows ++
-      [
-        [],
-        [{:box, " INS subscribe · ENTER read now · DEL unsubscribe"}],
-        [{:box, " F how often · A how far ahead"}]
-      ]
-  end
 
   defp box_content(state, %{type: :macros} = mode, _inner, max_rows) do
     rows =
