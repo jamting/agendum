@@ -8,12 +8,6 @@ defmodule Agendum.TUI.CategoryScreensTest do
     %{state: start(Agendum.Sample.build(~D[2026-10-08]))}
   end
 
-  # TAB goes through Category Properties in reading order, to `field`
-  defp tabs_to(field) do
-    index = Enum.find_index(Agendum.TUI.CategoryScreens.Properties.props_fields(), &(&1 == field))
-    List.duplicate(:tab, index)
-  end
-
   defp cat(state, name), do: hd(Database.find_categories(state.db, name))
 
   test "F9 shows the hierarchy", %{state: state} do
@@ -56,7 +50,12 @@ defmodule Agendum.TUI.CategoryScreensTest do
   end
 
   test "category properties toggle exclusivity", %{state: state} do
-    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ tabs_to(:exclusive) ++ [" "])
+    state =
+      state
+      |> press([{:f, 9}, :ctrl_end, {:f, 6}])
+      |> to_setting("Exclusive children")
+      |> press(" ")
+
     assert state.db.categories[cat(state, "Meetings")].exclusive
   end
 
@@ -76,12 +75,12 @@ defmodule Agendum.TUI.CategoryScreensTest do
   end
 
   test "category properties set a short name", %{state: state} do
-    # Meetings is last; the second property is the short name
+    # Meetings is last in the category manager
     state =
-      press(
-        state,
-        [{:f, 9}, :ctrl_end, {:f, 6}] ++ tabs_to(:short_name) ++ [{:f, 2}, "mtg", :enter]
-      )
+      state
+      |> press([{:f, 9}, :ctrl_end, {:f, 6}])
+      |> to_setting("Short name")
+      |> press([{:f, 2}, "mtg", :enter])
 
     assert state.db.categories[cat(state, "Meetings")].short_name == "mtg"
   end
@@ -100,10 +99,10 @@ defmodule Agendum.TUI.CategoryScreensTest do
       item = Agendum.TUI.Layout.current_row(state).item.id
       # category manager: MAIN Entry When Done Calls Priority High Medium Low Contact
       opened =
-        press(
-          state,
-          [{:f, 9}] ++ List.duplicate(:down, 9) ++ [{:f, 6}] ++ tabs_to(:exclusive) ++ [" "]
-        )
+        state
+        |> press([{:f, 9}] ++ List.duplicate(:down, 9) ++ [{:f, 6}])
+        |> to_setting("Exclusive children")
+        |> press(" ")
 
       %{opened: opened, item: item}
     end
@@ -288,7 +287,7 @@ defmodule Agendum.TUI.CategoryScreensTest do
     state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}])
     assert screen(state) =~ ~r/Assignment conditions:.*\n.*\(none\)/
 
-    state = press(state, tabs_to(:conditions) ++ [" ", "Calls", :enter])
+    state = state |> to_setting("Assignment conditions") |> press([" ", "Calls", :enter])
     meetings = state.db.categories[cat(state, "Meetings")]
     assert meetings.conditions == [{cat(state, "Calls"), :assigned}]
     assert screen(state) =~ "Meetings now assigns items in Calls"

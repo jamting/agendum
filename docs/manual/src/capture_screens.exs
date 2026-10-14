@@ -54,9 +54,8 @@ defmodule ManualScreens do
   end
 
   defp boxes(state) do
-    # File Properties: ↓ to Global date settings, → to Auto-assign settings beside it
-    auto = [{:f, 10}, "f", "p", :down, :right, " "]
-    shot("08-autoassign", press(state, auto), :auto_assign)
+    auto = state |> press([{:f, 10}, "f", "p"]) |> to_setting("Auto-assign settings")
+    shot("08-autoassign", press(auto, " "), :auto_assign)
     shot("10-sort", press(state, [{:f, 10}, "v", "o"]), :sort)
     shot("14-execute", press(state, [{:f, 10}, "c", "e"]), :execute)
     shot("15-customize", press(state, [{:f, 10}, "f", "c"]), :customize)
@@ -68,18 +67,21 @@ defmodule ManualScreens do
     shot("21-typed", press(s, :enter), nil)
     shot("22-complete", press(state, [:down, :right, :right] ++ String.graphemes("Lo")), nil)
 
-    garden_props = [{:f, 9}, :down, :down, :down, :down, {:f, 6}, :down, :down, :down]
+    also_match =
+      state
+      |> press([{:f, 9}, :down, :down, :down, :down, {:f, 6}])
+      |> to_setting("Also match")
+
     words = String.graphemes("carrot*;lettuce*;(vegetable patch)")
-    shot("24-alsomatch", press(state, garden_props ++ [" "] ++ words ++ [:enter]), :props)
+    shot("24-alsomatch", press(also_match, [" "] ++ words ++ [:enter]), :props)
   end
 
   defp date_category(state) do
     s = press(state, [{:f, 10}, "c", "a"] ++ String.graphemes("Harvest") ++ [:enter, {:f, 9}])
     index = Enum.find_index(CategoryScreens.rows(s, State.mode(s)), &(name(s, &1) == "Harvest"))
-    s = press(s, List.duplicate(:down, index) ++ [{:f, 6}, :right, " "])
+    s = s |> press(List.duplicate(:down, index) ++ [{:f, 6}]) |> to_setting("Type") |> press(" ")
     shot("30-type-choice", s, :choice)
-    # Date, then Advanced settings, the last setting on the left
-    s = press(s, [:down, :enter, :home] ++ List.duplicate(:down, 8) ++ [" "])
+    s = s |> press([:down, :enter]) |> to_setting("Advanced settings") |> press(" ")
     shot("32-daterule", s, :date_rule)
   end
 
@@ -92,11 +94,18 @@ defmodule ManualScreens do
       :range_filter
     )
 
-    # Auto-assign settings ▸ Confirm assignments: Always; ENTER keeps it (ESC would cancel)
-    confirm = [{:f, 10}, "f", "p", :down, :right, " ", :down, :down, :down, " ", :enter, :enter]
 
     item = [:down, :down] ++ String.graphemes("Ask Piglet and Pooh to help dig") ++ [:enter]
-    shot("36-questions", press(state, confirm ++ item ++ [{:f, 10}, "c", "q"]), :questions)
+    # Auto-assign settings ▸ Confirm assignments: Always; ENTER keeps it (ESC would cancel)
+    confirm =
+      state
+      |> press([{:f, 10}, "f", "p"])
+      |> to_setting("Auto-assign settings")
+      |> press(" ")
+      |> to_setting("Confirm assignments")
+      |> press([" ", :enter, :enter])
+
+    shot("36-questions", press(confirm, item ++ [{:f, 10}, "c", "q"]), :questions)
     shot("38-alarm", press(state, [:ctrl_end, {:alt, "a"}, :enter]), nil)
   end
 

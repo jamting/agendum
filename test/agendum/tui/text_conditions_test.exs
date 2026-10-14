@@ -12,19 +12,13 @@ defmodule Agendum.TUI.TextConditionsTest do
   defp meetings(state), do: hd(Database.find_categories(state.db, "Meetings"))
   defp item(state, text), do: Enum.find(Database.items(state.db), &(&1.text == text))
 
-  defp downs_to(field) do
-    index = Enum.find_index(Agendum.TUI.CategoryScreens.Properties.props_fields(), &(&1 == field))
-    List.duplicate(:tab, index)
-  end
-
   test "Also match is set in Category Properties and pulls items in", %{state: state} do
     # Meetings is the last category
     state =
-      press(
-        state,
-        [{:f, 9}, :ctrl_end, {:f, 6}] ++
-          downs_to(:also_match) ++ [" ", "meet;(talk to)", :enter]
-      )
+      state
+      |> press([{:f, 9}, :ctrl_end, {:f, 6}])
+      |> to_setting("Also match")
+      |> press([" ", "meet;(talk to)", :enter])
 
     assert state.db.categories[meetings(state)].also_match == "meet;(talk to)"
     assert screen(state) =~ ~r/Also match: +meet;\(talk to\)/

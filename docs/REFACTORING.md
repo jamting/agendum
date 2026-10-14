@@ -10,7 +10,7 @@ modules (ADR 0023), `mix check` as the one quality gate (ADR 0012), the ADRs.
 The one real structural problem is how a settings box is spread over many
 files. The rest is small.
 
-## 1. Reaching box settings by name; longer fuzz runs ✅ first
+## 1. Reaching box settings by name; longer fuzz runs ✅
 
 - `CLAUDE.md` asks tests to reach a box's setting by name, but there was no
   helper: the tests counted ↓ presses (26 places), and so did the manual's

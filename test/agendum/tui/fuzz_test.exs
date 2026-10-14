@@ -141,6 +141,10 @@ defmodule Agendum.TUI.FuzzTest do
     Agendum.Core.set_macro_keys(db, again, "{AltF3}{ENTER}x{AltZ}")
   end
 
+  # 300 runs in the suite; FUZZ_RUNS sets more for a longer search after a
+  # large TUI change: FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs
+  @runs String.to_integer(System.get_env("FUZZ_RUNS", "300"))
+
   property "the UI survives any key sequence" do
     check all(
             keys <- list_of(key(), max_length: 60),
@@ -149,7 +153,7 @@ defmodule Agendum.TUI.FuzzTest do
             numeric <- boolean(),
             datebook <- member_of([nil, nil, :day, :week, :month, :quarter]),
             filtered <- boolean(),
-            max_runs: 300
+            max_runs: @runs
           ) do
       db =
         numeric |> sample() |> with_filter(filtered) |> with_datebook(datebook) |> with_macros()

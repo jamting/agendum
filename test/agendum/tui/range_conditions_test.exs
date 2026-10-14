@@ -14,12 +14,7 @@ defmodule Agendum.TUI.RangeConditionsTest do
   end
 
   defp open_conditions(state, keys \\ [{:f, 9}, :ctrl_end]),
-    do: press(state, keys ++ [{:f, 6}] ++ downs_to(:conditions) ++ [" "])
-
-  defp downs_to(field) do
-    index = Enum.find_index(Agendum.TUI.CategoryScreens.Properties.props_fields(), &(&1 == field))
-    List.duplicate(:tab, index)
-  end
+    do: state |> press(keys ++ [{:f, 6}]) |> to_setting("Assignment conditions") |> press(" ")
 
   test "choosing a date category in the conditions box asks for a date range",
        %{state: state, meetings: meetings} do

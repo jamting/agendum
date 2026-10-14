@@ -188,10 +188,15 @@ defmodule Agendum.TUI.MacrosTest do
     end
 
     test "Everywhere else needs an attached key; ALT-F3 cannot be one", %{state: state} do
-      state = press(state, [{:alt_f, 3}, {:f, 6}] ++ List.duplicate(:down, 6) ++ [" "])
+      state =
+        state
+        |> press([{:alt_f, 3}, {:f, 6}])
+        |> to_setting("Run from Everywhere else")
+        |> press(" ")
+
       assert panel(state) =~ "Only a macro attached to a key runs everywhere else"
 
-      state = press(state, [:up, :up, :up, :up, " ", "{AltF3}", :enter])
+      state = state |> to_setting("Attach to key") |> press([" ", "{AltF3}", :enter])
       assert panel(state) =~ "ALT-F1, ALT-F3 and ALT-Z cannot run a macro"
 
       state = press(state, [" ", "{F4}{F5}", :enter])

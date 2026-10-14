@@ -13,15 +13,19 @@ defmodule Agendum.TUI.QuestionsTest do
   defp cat(state, name), do: hd(Database.find_categories(state.db, name))
   defp item(state, text), do: Enum.find(Database.items(state.db), &(&1.text == text))
 
-  # File ▸ Properties ▸ Auto-assign settings (beside Global date settings),
-  # then down to Confirm assignments, the fourth row of that box
-  @to_confirm [:down, :right, " ", :down, :down, :down]
+  # File ▸ Properties ▸ Auto-assign settings ▸ Confirm assignments
+  defp to_confirm(state) do
+    state
+    |> press([{:f, 10}, "f", "p"])
+    |> to_setting("Auto-assign settings")
+    |> press(" ")
+    |> to_setting("Confirm assignments")
+  end
 
-  defp confirm_always(state),
-    do: press(state, [{:f, 10}, "f", "p"] ++ @to_confirm ++ [" ", :enter, :enter])
+  defp confirm_always(state), do: state |> to_confirm() |> press([" ", :enter, :enter])
 
   test "File Properties ▸ Auto-assign settings sets Confirm assignments", %{state: state} do
-    state = press(state, [{:f, 10}, "f", "p"] ++ @to_confirm)
+    state = to_confirm(state)
     assert screen(state) =~ "Auto-assign settings"
     assert screen(state) =~ ~r/Confirm assignments\s+: Never/
     state = press(state, " ")

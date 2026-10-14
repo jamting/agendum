@@ -169,13 +169,13 @@ defmodule Agendum.TUI.FilePropertiesTest do
   end
 
   test "changing a date setting changes how dates are read", %{state: state} do
-    # down to Month alone means, then First day -> Last day
-    state = press(state, @dates ++ List.duplicate(:down, 6) ++ [" "])
+    # Month alone means: First day -> Last day
+    state = state |> press(@dates) |> to_setting("Month alone means") |> press(" ")
     assert state.db.date_settings.month_alone == :last
     assert screen(state) =~ ~r/Month alone means +: Last day/
 
     # Morning is typed (SPACE asks for it)
-    state = press(state, [:down, " ", {:ctrl, "u"}, "7:30am", :enter])
+    state = state |> to_setting("Morning") |> press([" ", {:ctrl, "u"}, "7:30am", :enter])
     assert state.db.date_settings.morning == ~T[07:30:00]
 
     state = History.undo(state)

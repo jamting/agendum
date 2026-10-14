@@ -6,18 +6,12 @@ defmodule Agendum.TUI.CategoryStatsTest do
   use ExUnit.Case, async: true
 
   import Agendum.TUIHelpers
-  alias Agendum.TUI.CategoryScreens.Properties
   alias Agendum.TUI.State
 
   setup do
     state = start(Agendum.Sample.build(~D[2026-10-08]), width: 80, height: 30)
     # Calls, in the category manager
     %{state: press(state, [{:f, 9}, :down, :down, :down, :down, {:f, 6}])}
-  end
-
-  defp tabs_to(field) do
-    index = Enum.find_index(Properties.props_fields(), &(&1 == field))
-    List.duplicate(:tab, index)
   end
 
   test "Note, Statistics and Advanced settings show \"...\"", %{state: state} do
@@ -28,7 +22,7 @@ defmodule Agendum.TUI.CategoryStatsTest do
   end
 
   test "Statistics opens a box of how much of the file uses the category", %{state: state} do
-    state = press(state, tabs_to(:statistics) ++ [" "])
+    state = state |> to_setting("Statistics") |> press(" ")
     assert %{type: :category_stats} = State.mode(state)
     text = screen(state)
     assert text =~ "Category statistics: Calls"
@@ -43,7 +37,9 @@ defmodule Agendum.TUI.CategoryStatsTest do
   end
 
   test "Advanced settings and Note open theirs with SPACE", %{state: state} do
-    assert %{type: :category_match} = State.mode(press(state, tabs_to(:advanced) ++ [" "]))
-    assert %{type: :note} = State.mode(press(state, tabs_to(:note) ++ [" "]))
+    assert %{type: :category_match} =
+             State.mode(state |> to_setting("Advanced settings") |> press(" "))
+
+    assert %{type: :note} = State.mode(state |> to_setting("Note") |> press(" "))
   end
 end

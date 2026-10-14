@@ -11,15 +11,12 @@ defmodule Agendum.TUI.NumbersTest do
 
   defmodule CategoryHelpers do
     @moduledoc false
-    alias Agendum.TUI.{CategoryScreens, State}
+    alias Agendum.TUI.CategoryScreens
 
     def props(state, cat_id), do: CategoryScreens.open_props(state, cat_id)
 
-    def choose(state, field) do
-      index = Enum.find_index(CategoryScreens.Properties.props_fields(), &(&1 == field))
-      state = State.put_mode(state, %{State.mode(state) | cursor: index})
-      Agendum.TUIHelpers.press(state, " ")
-    end
+    def choose(state, label),
+      do: state |> Agendum.TUIHelpers.to_setting(label) |> Agendum.TUIHelpers.press(" ")
   end
 
   # An Expenses section with the columns When and Amount (numeric), and the
@@ -106,8 +103,7 @@ defmodule Agendum.TUI.NumbersTest do
     state = press(state, ["120", :enter, :down, "800.5", :enter, :down, "79.5", :enter])
     state = press(state, [{:f, 10}, "v", "c", "p"])
     assert screen(state) =~ ~r/Display % of total: +No +Maximum: +No/
-    # ↓ from Column head: Width, then the five rows of two; % of total is the last left
-    state = press(state, List.duplicate(:down, 6) ++ [" ", :enter])
+    state = state |> to_setting("Display % of total") |> press([" ", :enter])
     assert hd(tl(Agendum.Core.View.columns(state.db.views[view], 0))).number.percent
     # and in print, after the number
     assert Agendum.TUI.Render.Export.text(state) =~ "heat  [Amount: 120.00 (12%)]"
@@ -184,7 +180,7 @@ defmodule Agendum.TUI.NumbersTest do
       state = %{state | db: db} |> CategoryHelpers.props(cost)
       assert screen(state) =~ ~r/Type: +Standard/
 
-      state = state |> CategoryHelpers.choose(:type) |> press("n")
+      state = state |> CategoryHelpers.choose("Type") |> press("n")
       assert state.db.categories[cost].kind == :numeric
       assert screen(state) =~ ~r/Type: +Numeric/
     end
@@ -197,7 +193,7 @@ defmodule Agendum.TUI.NumbersTest do
       state =
         %{state | db: db}
         |> CategoryHelpers.props(forecast)
-        |> CategoryHelpers.choose(:type)
+        |> CategoryHelpers.choose("Type")
         |> press("n")
 
       # the question box (it wraps the text over its lines)
@@ -210,7 +206,7 @@ defmodule Agendum.TUI.NumbersTest do
 
     test "a date category cannot change type", %{state: state} do
       state =
-        state |> CategoryHelpers.props(state.db.special.when) |> CategoryHelpers.choose(:type)
+        state |> CategoryHelpers.props(state.db.special.when) |> CategoryHelpers.choose("Type")
 
       assert screen(state) =~ "Only standard categories can change type"
     end

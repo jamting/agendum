@@ -3,17 +3,17 @@ defmodule Agendum.TUI.DateRulesTest do
   use ExUnit.Case, async: true
 
   import Agendum.TUIHelpers
-  alias Agendum.TUI.{CategoryScreens, History, State}
+  alias Agendum.TUI.{CategoryScreens, History}
 
   setup do
     %{state: start(Agendum.Sample.build(~D[2026-10-08]))}
   end
 
   defp date_settings(state, cat_id) do
-    index = Enum.find_index(CategoryScreens.Properties.props_fields(), &(&1 == :advanced))
-    state = CategoryScreens.open_props(state, cat_id)
-    state = State.put_mode(state, %{State.mode(state) | cursor: index})
-    press(state, " ")
+    state
+    |> CategoryScreens.open_props(cat_id)
+    |> to_setting("Advanced settings")
+    |> press(" ")
   end
 
   test "When's settings: from the item text, and the When key always", %{state: state} do

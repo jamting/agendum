@@ -10,9 +10,7 @@ defmodule Agendum.TUI.UserDateCategoriesTest do
   @today ~D[2026-10-08]
 
   defp choose_type(state) do
-    index = Enum.find_index(CategoryScreens.Properties.props_fields(), &(&1 == :type))
-    state = Agendum.TUI.State.put_mode(state, %{Agendum.TUI.State.mode(state) | cursor: index})
-    press(state, " ")
+    state |> to_setting("Type") |> press(" ")
   end
 
   # A Bills section with a Due column, and the items heat and rent; the

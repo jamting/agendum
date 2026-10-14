@@ -33,6 +33,66 @@ defmodule Agendum.TUIHelpers do
     play(played ++ keys, state)
   end
 
+  @doc """
+  Moves the highlight in the box on top to the setting labelled `label`
+  as on the screen ("Also match", "Confirm assignments"), by pressing keys
+  as a person would: HOME, then TAB (or ↓ where TAB does not move) until
+  the highlighted value has that label just left of it, or just above it
+  (a value under its label, as Assignment conditions). Raises when no
+  setting has it, so a test fails at the step that went wrong.
+
+  Tests reach settings by name, not by counting ↓ presses: a box's layout
+  and keys change, its labels rarely do (CLAUDE.md).
+  """
+  def to_setting(state, label), do: state |> press(:home) |> seek(label, 80)
+
+  defp seek(state, label, steps) do
+    here = highlights(state)
+
+    if Enum.any?(here, &labelled?(&1, label)) do
+      state
+    else
+      # TAB goes on to the next setting in reading order; boxes that list
+      # one setting a row and ignore TAB move with ↓. Neither moving
+      # means the last setting was reached.
+      moved =
+        Enum.find_value([:tab, :down], fn key ->
+          next = press(state, key)
+          if highlights(next) != here, do: next
+        end)
+
+      if moved && steps > 0,
+        do: seek(moved, label, steps - 1),
+        else: raise("no setting labelled #{inspect(label)}:\n" <> screen(state))
+    end
+  end
+
+  # the highlighted values on the screen, each as the text of its line and
+  # the line above, and its column; a box beneath the one on top may show
+  # its own highlight too
+  defp highlights(state) do
+    texts =
+      state
+      |> Render.render()
+      |> Enum.map(fn line -> {line, Enum.map_join(line, &elem(&1, 1))} end)
+
+    for {{line, text}, row} <- Enum.with_index(texts),
+        {before, [{:box_selected, _} | _]} <- splits(line) do
+      above = if row > 0, do: elem(Enum.at(texts, row - 1), 1), else: ""
+      {text, above, before |> Enum.map_join(&elem(&1, 1)) |> String.length()}
+    end
+  end
+
+  # each way to split a line before one of its segments
+  defp splits(line), do: for(i <- 0..(length(line) - 1)//1, do: Enum.split(line, i))
+
+  defp labelled?({text, above, column}, label) do
+    left = text |> String.slice(0, column) |> String.replace(~r/[\s:]+$/, "")
+
+    String.ends_with?(left, label) or
+      String.starts_with?(String.slice(above, column..-1//1), label)
+  end
+
   def effects, do: Process.get(:effects_seen) || []
 
   def screen(state), do: state |> Render.render() |> Draw.to_text()

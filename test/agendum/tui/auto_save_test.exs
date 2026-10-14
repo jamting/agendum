@@ -67,7 +67,7 @@ defmodule Agendum.TUI.AutoSaveTest do
   test "Auto-save interval is in File ▸ Customize, and saved" do
     state = changed(0)
     state = %{state | prefs: %{state.prefs | path: "/prefs"}}
-    state = press(state, [{:f, 10}, "f", "c"] ++ List.duplicate(:down, 6))
+    state = state |> press([{:f, 10}, "f", "c"]) |> to_setting("Auto-save interval")
     assert screen(state) =~ ~r/Auto-save interval +: Off/
 
     {state, effects} = Update.handle(state, {:char, " "})

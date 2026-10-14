@@ -75,7 +75,12 @@ defmodule Agendum.TUI.BoxChoicesTest do
 
   test "F3 on a setting without a list of choices leaves it to the box", %{state: state} do
     # Global date settings ▸ Morning is typed: no list
-    state = press(state, [{:f, 10}, "f", "p", :down, " "] ++ List.duplicate(:down, 7))
+    state =
+      press(state, [{:f, 10}, "f", "p"])
+      |> to_setting("Global date settings")
+      |> press(" ")
+      |> to_setting("Morning")
+
     assert %{type: :date_settings} = State.mode(press(state, {:f, 3}))
   end
 

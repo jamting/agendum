@@ -36,7 +36,7 @@ defmodule Agendum.TUI.CustomizeBoxTest do
   end
 
   test "Display key map hides the key bar, and is saved; ALT-K changes it too", %{state: state} do
-    {state, effects} = state |> open_box() |> press(List.duplicate(:down, 4)) |> key({:char, " "})
+    {state, effects} = state |> open_box() |> to_setting("Display key map") |> key({:char, " "})
     refute state.key_map
     assert [{:save_preferences, "/prefs", %Preferences{key_map: false}}] = effects
     assert screen(state) =~ ~r/Display key map +: No/
@@ -110,7 +110,7 @@ defmodule Agendum.TUI.CustomizeBoxTest do
 
   test "the decimal and thousands separators change how numbers show, and are saved",
        %{state: state} do
-    state = open_box(state) |> press(List.duplicate(:down, 7))
+    state = open_box(state) |> to_setting("Decimal separator")
     assert screen(state) =~ ~r/Decimal separator +: \. \(Dot\)/
     assert screen(state) =~ ~r/Thousands separator +: , \(Comma\)/
 

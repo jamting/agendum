@@ -14,10 +14,7 @@ defmodule Agendum.TUI.NegativeLinksTest do
   defp cat(state, name), do: hd(Database.find_categories(state.db, name))
 
   defp open_excludes(state) do
-    index =
-      Enum.find_index(Agendum.TUI.CategoryScreens.Properties.props_fields(), &(&1 == :excludes))
-
-    press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ List.duplicate(:tab, index) ++ [" "])
+    state |> press([{:f, 9}, :ctrl_end, {:f, 6}]) |> to_setting("Excludes") |> press(" ")
   end
 
   test "ENTER on a category toggles the negative link; the row lists it", %{state: state} do

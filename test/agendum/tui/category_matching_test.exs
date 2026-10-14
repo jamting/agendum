@@ -8,9 +8,13 @@ defmodule Agendum.TUI.CategoryMatchingTest do
   setup do
     state = start(Agendum.Sample.build(~D[2026-10-08]))
     meetings = hd(Agendum.Core.Database.find_categories(state.db, "Meetings"))
-    index = Enum.find_index(CategoryScreens.Properties.props_fields(), &(&1 == :advanced))
-    state = CategoryScreens.open_props(state, meetings)
-    state = State.put_mode(state, %{State.mode(state) | cursor: index}) |> press(" ")
+
+    state =
+      state
+      |> CategoryScreens.open_props(meetings)
+      |> to_setting("Advanced settings")
+      |> press(" ")
+
     %{state: state, meetings: meetings}
   end
 

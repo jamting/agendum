@@ -9,10 +9,9 @@ defmodule Agendum.TUI.DateColumnsTest do
   alias Agendum.Core
   alias Agendum.TUI.{History, State}
 
-  # Column Properties of a date column: Column head, Category type, Width,
-  # Link, then Settings and Display date and/or time (R55, R41a)
-  # ↓ from Column head: Width, Settings, then Display date and/or time
-  @to_show [{:f, 10}, "v", "c", "p", :down, :down, :down]
+  # Column Properties of a date column, on Display date and/or time (R55, R41a)
+  defp to_show(state),
+    do: state |> press([{:f, 10}, "v", "c", "p"]) |> to_setting("Display date and/or time")
 
   @today ~D[2026-10-08]
 
@@ -46,10 +45,14 @@ defmodule Agendum.TUI.DateColumnsTest do
   end
 
   test "changing a setting makes them the column's own", %{state: state, view: view} do
-    # Display date/time -> Date only, then (past Clock, day of week and
-    # am/pm) Date format back to Relative
-    # ↓ ↓: Show day of week, then Date format, which SPACE takes on to Relative
-    state = press(state, @to_show ++ [" ", :down, :down] ++ List.duplicate(" ", 18))
+    # Display date/time -> Date only, then Date format on to Relative
+    state =
+      state
+      |> to_show()
+      |> press(" ")
+      |> to_setting("Date format")
+      |> press(List.duplicate(" ", 18))
+
     assert column(state, view).date.show == :date
     assert column(state, view).date.order == :relative
     assert screen(state) =~ ~r/Settings: +Local settings/
@@ -61,14 +64,14 @@ defmodule Agendum.TUI.DateColumnsTest do
   end
 
   test "Settings goes back to the global defaults", %{state: state, view: view} do
-    state = press(state, @to_show ++ [" ", :up, " "])
+    state = state |> to_show() |> press(" ") |> to_setting("Settings") |> press(" ")
     assert column(state, view).date == nil
     assert screen(state) =~ ~r/Settings: +Global defaults/
     assert screen(press(state, :esc)) =~ "2026-10-09 14:00"
   end
 
   test "each change is one undo step", %{state: state, view: view} do
-    state = press(state, @to_show ++ [" ", " ", :enter])
+    state = state |> to_show() |> press([" ", " ", :enter])
     assert column(state, view).date.show == :time_date
     state = History.undo(state)
     assert column(state, view).date.show == :date

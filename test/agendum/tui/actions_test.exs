@@ -14,13 +14,12 @@ defmodule Agendum.TUI.ActionsTest do
 
   defp cat(state, name), do: hd(Database.find_categories(state.db, name))
 
-  defp downs_to(field) do
-    index = Enum.find_index(Agendum.TUI.CategoryScreens.Properties.props_fields(), &(&1 == field))
-    List.duplicate(:tab, index)
-  end
-
   defp open_actions(state),
-    do: press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ downs_to(:also_assign) ++ [" "])
+    do:
+      state
+      |> press([{:f, 9}, :ctrl_end, {:f, 6}])
+      |> to_setting("Assignment actions")
+      |> press(" ")
 
   test "ENTER on a category cycles: assign, remove, none", %{state: state} do
     state = open_actions(state) |> press(["Calls", :enter])
@@ -78,7 +77,9 @@ defmodule Agendum.TUI.ActionsTest do
   end
 
   test "Special action cycles none, done, discard", %{state: state} do
-    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ downs_to(:special) ++ [" "])
+    state =
+      state |> press([{:f, 9}, :ctrl_end, {:f, 6}]) |> to_setting("Special actions") |> press(" ")
+
     assert state.db.categories[cat(state, "Meetings")].special == :done
     assert screen(state) =~ ~r/Special actions: +Mark items done/
     state = press(state, " ")

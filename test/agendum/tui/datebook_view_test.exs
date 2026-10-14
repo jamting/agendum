@@ -109,8 +109,8 @@ defmodule Agendum.TUI.DatebookViewTest do
       assert screen(state) =~ ~r/Hide column heads +: No/
       assert screen(state) =~ ~r/Section separators +: No/
 
-      # the last two rows; SPACE switches each, one undo step
-      state = press(state, List.duplicate(:down, 8) ++ [" "])
+      # SPACE switches each, one undo step
+      state = state |> to_setting("Hide column heads") |> press(" ")
       assert State.view(state).hide_column_heads
       assert screen(state) =~ ~r/Hide column heads +: Yes/
       state = press(state, [:down, " "])

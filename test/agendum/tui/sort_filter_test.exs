@@ -117,7 +117,7 @@ defmodule Agendum.TUI.SortFilterTest do
 
     test "the view's Sort box sorts the section heads", %{state: state} do
       assert heads(state) == ["Calls", "Contact", "Priority"]
-      state = press(state, [{:f, 10}, "v", "o"] ++ List.duplicate(:down, 7))
+      state = state |> press([{:f, 10}, "v", "o"]) |> to_setting("Section sorting")
       assert screen(state) =~ ~r/Section sorting\s+: None/
 
       # None -> Category order -> Alphabetic

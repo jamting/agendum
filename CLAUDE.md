@@ -64,13 +64,13 @@ inline `# credo:disable-for-next-line` with the reason.
    - core rules → `test/agendum/core/*_test.exs` (use `Agendum.Fixtures`)
    - UI behaviour → `test/agendum/tui/*_test.exs`: drive keys with
      `Agendum.TUIHelpers.press/2` and assert on `screen/1` text
-   - in a box, reach a setting by name, not by counting ↓ presses (a
-     helper going to a field by name; add it to `Agendum.TUIHelpers` if it
-     is not there yet): layouts and keys change, names rarely do
+   - in a box, reach a setting by its label, not by counting ↓ presses:
+     `Agendum.TUIHelpers.to_setting(state, "Also match")`; layouts and keys
+     change, labels rarely do
 3. Implement it in the core first, then wire it into the TUI.
 4. Run `mix check`. After a large TUI change, also run the fuzz property
-   longer than the suite's 300 runs (a temporary copy at 2,000–3,000
-   runs): it finds crashes the short run misses. Update `docs/ROADMAP.md`
+   longer than the suite's 300 runs (`FUZZ_RUNS=3000 mix test
+   test/agendum/tui/fuzz_test.exs`): it finds crashes the short run misses. Update `docs/ROADMAP.md`
    (tick the box), `docs/SCREENS.md` if a box or screen was added (a test
    checks), and the help text in `Agendum.TUI.Render.Help` if keys changed.
    - A box or screen with an Agenda screenshot: draw ours as a PNG
