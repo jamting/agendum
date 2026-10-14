@@ -66,7 +66,8 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
     count = length(@props)
 
     case key do
-      k when k in [:esc, {:f, 6}] ->
+      # ENTER is done (ESC cancels: `Agenda.TUI.BoxCancel`)
+      k when k in [:esc, :enter, {:f, 6}] ->
         State.pop(state)
 
       :up ->
@@ -75,7 +76,7 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
       :down ->
         State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, count - 1)})
 
-      k when k in [:enter, {:char, " "}, {:f, 2}, {:f, 3}] ->
+      k when k in [{:char, " "}, {:f, 2}, {:f, 3}] ->
         open_prop(state, cat, Enum.at(@props, mode.cursor))
 
       _ ->
@@ -83,7 +84,7 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
     end
   end
 
-  # ENTER (or SPACE, F2, F3) on a row of Category Properties
+  # SPACE (or F2, F3) on a row of Category Properties
   defp open_prop(state, cat, :name) do
     if Database.protected?(state.db, cat.id),
       do: State.error(state, "#{cat.name} cannot be renamed"),

@@ -162,7 +162,7 @@ defmodule Agenda.TUI.FilePropertiesTest do
   end
 
   test "each change is one undo step", %{state: state} do
-    state = press(state, @display ++ [:down, :down, " ", " ", :esc])
+    state = press(state, @display ++ [:down, :down, " ", " ", :enter])
     assert state.db.date_format.order == :yyyyddmm
     state = History.undo(state)
     assert state.db.date_format.order == :yymmdd

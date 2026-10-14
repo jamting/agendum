@@ -56,7 +56,7 @@ defmodule Agenda.TUI.ItemColumnBoxTest do
   test "a narrow item column: the columns follow it, not the screen's edge",
        %{state: state} do
     # Manually, then 40 steps narrower: 40 wide
-    state = press(state, [:down, " ", :down] ++ List.duplicate(:left, 40) ++ [:esc])
+    state = press(state, [:down, " ", :down] ++ List.duplicate(:left, 40) ++ [:enter])
     # " • ", 40 for the text, a space: When starts at 44, as its entries
     # do (not at the screen's right edge, where an automatic one puts it)
     head = state |> screen() |> String.split("\n") |> Enum.find(&(&1 =~ "Calls"))

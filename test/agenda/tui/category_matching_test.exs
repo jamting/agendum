@@ -10,7 +10,7 @@ defmodule Agenda.TUI.CategoryMatchingTest do
     meetings = hd(Agenda.Core.Database.find_categories(state.db, "Meetings"))
     index = Enum.find_index(CategoryScreens.Properties.props_fields(), &(&1 == :advanced))
     state = CategoryScreens.open_props(state, meetings)
-    state = State.put_mode(state, %{State.mode(state) | cursor: index}) |> press(:enter)
+    state = State.put_mode(state, %{State.mode(state) | cursor: index}) |> press(" ")
     %{state: state, meetings: meetings}
   end
 
@@ -28,10 +28,10 @@ defmodule Agenda.TUI.CategoryMatchingTest do
     assert state.db.categories[meetings].match_overrides == %{match_on: :note}
     assert screen(state) =~ ~r/Match on\s+: Note text/
 
-    state = press(state, :esc)
+    state = press(state, :enter)
     assert screen(state) =~ ~r/Advanced settings\s+: Match on: Note text/
 
-    state = press(state, [:esc, {:f, 9}])
+    state = press(state, [:enter, {:f, 9}])
     assert screen(state) =~ "T= Note"
 
     state = History.undo(state)

@@ -14,7 +14,7 @@ defmodule Agenda.TUI.RangeConditionsTest do
   end
 
   defp open_conditions(state, keys \\ [{:f, 9}, :ctrl_end]),
-    do: press(state, keys ++ [{:f, 6}] ++ downs_to(:conditions) ++ [:enter])
+    do: press(state, keys ++ [{:f, 6}] ++ downs_to(:conditions) ++ [" "])
 
   defp downs_to(field) do
     index = Enum.find_index(Agenda.TUI.CategoryScreens.Properties.props_fields(), &(&1 == field))

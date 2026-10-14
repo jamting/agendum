@@ -65,7 +65,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] More descriptive key bar labels when the terminal is wide enough ("F8 View manager"); Agenda's short ones otherwise
 - [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
 - [x] Boxes: help for the highlighted field in the control panel (§5)
-- [ ] Boxes: "Press ENTER when done, ESC to cancel" in the frame; ESC steps back through the menu levels
+- [x] Boxes: "Press ENTER when done, ESC to cancel" in the frame, and in every settings box ENTER is done and ESC cancels its changes (ADR 0030); ESC steps back through the menu levels (§5)
 - [ ] Questions as Yes/No boxes; Category Properties in two columns with "..." sub-boxes opened by SPACE; View Manager as a box
 - [x] In notes: F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, and their key bar (R63)
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names; the note editor's "Note for: … Line 1 INS EDIT" header

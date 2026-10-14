@@ -4,12 +4,14 @@ defmodule Agenda.TUI.MacroProps do
   Macros 1-15 to 1-18): Name, Keystrokes, Attach to key, and where the
   macro can be run from.
 
-    * ENTER on Name renames it; on Keystrokes (or SPACE) edits them in the
-      macro edit screen; on Attach to key asks for the key (DEL detaches)
-    * SPACE (or ENTER, → ←) switches View, Note, Category manager and
+    * F2 or SPACE on Name renames it; on Keystrokes edits them in the
+      macro edit screen; SPACE on Attach to key asks for the key (DEL
+      detaches)
+    * SPACE (or → ←) switches View, Note, Category manager and
       Everywhere else between Yes and No; Everywhere else only for a macro
       attached to a key, as in Agenda
-    * ESC closes the box
+    * ENTER closes the box; ESC closes it and cancels its changes
+      (`Agenda.TUI.BoxCancel`)
 
   Every change is one undo step. Pure.
   """
@@ -36,7 +38,8 @@ defmodule Agenda.TUI.MacroProps do
     row = Enum.at(@rows, mode.cursor)
 
     case {key, row} do
-      {:esc, _} ->
+      # ENTER is done (ESC cancels: `Agenda.TUI.BoxCancel`)
+      {k, _} when k in [:esc, :enter] ->
         State.pop(state)
 
       {:up, _} ->
@@ -45,13 +48,13 @@ defmodule Agenda.TUI.MacroProps do
       {:down, _} ->
         State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
 
-      {:enter, :name} ->
+      {k, :name} when k in [{:f, 2}, {:char, " "}] ->
         Prompts.prompt(state, "Rename the macro to:", {:rename_macro, macro.id}, macro.name)
 
-      {k, :keys} when k in [:enter, {:char, " "}] ->
+      {k, :keys} when k in [{:f, 2}, {:char, " "}] ->
         Macros.edit_text(state, macro)
 
-      {:enter, :key} ->
+      {{:char, " "}, :key} ->
         Prompts.prompt(
           state,
           "Attach to key (e.g. {ShfF4}, {CtlE}):",
@@ -62,11 +65,11 @@ defmodule Agenda.TUI.MacroProps do
       {k, :key} when k in [:delete, {:ctrl, "d"}] ->
         State.change_db(state, Core.attach_macro(state.db, macro.id, nil))
 
-      {k, :elsewhere} when k in [:enter, {:char, " "}, :right, :left] and macro.key == nil ->
+      {k, :elsewhere} when k in [{:char, " "}, :right, :left] and macro.key == nil ->
         State.error(state, "Only a macro attached to a key runs everywhere else")
 
       {k, place}
-      when k in [:enter, {:char, " "}, :right, :left] and
+      when k in [{:char, " "}, :right, :left] and
              place in [:view, :note, :catmgr, :elsewhere] ->
         State.change_db(
           state,

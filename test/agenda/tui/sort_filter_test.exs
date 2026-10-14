@@ -66,13 +66,13 @@ defmodule Agenda.TUI.SortFilterTest do
     assert %{type: :sort} = State.mode(state)
     assert screen(state) =~ "Sort items in all sections"
 
-    state = press(state, :enter)
+    state = press(state, " ")
     assert State.view(state).sort == [%SortKey{on: :text}]
 
     assert hd(texts(state)) ==
              "Call Marketing to arrange a Rapidfire demo for Abigail Scheer this Tuesday."
 
-    state = press(state, [:down, :enter])
+    state = press(state, [:down, " "])
 
     assert hd(texts(state)) ==
              "Set up meeting at Terracotta Corp to discuss CopyCat before the end of the month."
@@ -87,7 +87,7 @@ defmodule Agenda.TUI.SortFilterTest do
     state = %{state | db: db}
 
     # None -> Item text -> Category (Contact) -> Category note (Contact)
-    state = press(state, [{:f, 10}, "v", "o", :enter, :enter, "Contact", :enter, :enter])
+    state = press(state, [{:f, 10}, "v", "o", " ", " ", "Contact", :enter, " "])
     assert screen(state) =~ "Choose the category whose notes to sort by"
     state = press(state, ["Contact", :enter])
     assert State.view(state).sort == [%SortKey{on: {:note, cat(state, "Contact")}}]
@@ -100,7 +100,7 @@ defmodule Agenda.TUI.SortFilterTest do
     assert hd(texts(state)) =~ "Abigail"
 
     # Category note -> None
-    state = press(state, [:up, :up, :up, :up, :enter])
+    state = press(state, [:up, :up, :up, :up, " "])
     assert State.view(state).sort == []
   end
 
@@ -121,14 +121,14 @@ defmodule Agenda.TUI.SortFilterTest do
       assert screen(state) =~ ~r/Section sorting\s+: None/
 
       # None -> Category order -> Alphabetic
-      state = press(state, [:enter, :enter])
+      state = press(state, [" ", " "])
       assert screen(state) =~ ~r/Section sorting\s+: Alphabetic/
-      state = press(state, [:down, :enter])
+      state = press(state, [:down, " "])
       assert screen(state) =~ ~r/Section order\s+: Descending/
       assert heads(state) == ["Priority", "Contact", "Calls"]
 
       # Alphabetic -> Numeric -> None
-      state = press(state, [:up, :enter, :enter])
+      state = press(state, [:up, " ", " "])
       assert State.view(state).section_sort == :none
     end
 
@@ -146,7 +146,7 @@ defmodule Agenda.TUI.SortFilterTest do
   end
 
   test "sorting on a category uses the category box", %{state: state} do
-    state = press(state, [{:f, 10}, "v", "o", :enter, :enter, "Prio", :enter])
+    state = press(state, [{:f, 10}, "v", "o", " ", " ", "Prio", :enter])
     assert State.view(state).sort == [%SortKey{on: {:category, cat(state, "Priority")}}]
     assert screen(state) =~ "Category: Priority"
     # High first: the Anna Lasky item
@@ -159,7 +159,7 @@ defmodule Agenda.TUI.SortFilterTest do
     assert screen(state) =~ "Sort items in Calls"
     assert screen(state) =~ "As the view (None)"
 
-    state = press(state, [:enter, :enter])
+    state = press(state, [" ", " "])
     assert hd(State.view(state).sections).sort == [%SortKey{on: :text}]
   end
 

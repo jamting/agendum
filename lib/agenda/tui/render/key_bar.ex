@@ -180,10 +180,11 @@ defmodule Agenda.TUI.Render.KeyBar do
   defp mode_keys(%{type: :macro_props}),
     do: [
       {"↑↓", "Setting", "Move between settings"},
-      {"ENTER", "Change", "Change the setting"},
-      {"SPACE", "Yes/No", "Switch Yes/No"},
+      {"SPACE", "Change", "Change the setting"},
+      {"F2", "Edit", "Rename, or edit the keys"},
       {"DEL", "Detach", "Detach the key"},
-      {"ESC", "Close"}
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
     ]
 
   defp mode_keys(%{type: :schedule}),
@@ -198,11 +199,11 @@ defmodule Agenda.TUI.Render.KeyBar do
   defp mode_keys(%{type: :datebook_props}),
     do: [
       {"↑↓", "Setting", "Move between settings"},
-      {"ENTER", "Pick/type", "Pick a category or type a value"},
-      {"SPACE", "Next", "SPACE/→", "Next choice"},
+      {"SPACE", "Change", "SPACE/→", "Pick, type or next choice"},
       {"←", "Previous", "Previous choice"},
       {"DEL", "Clear", "Clear the End category"},
-      {"ESC", "Close"}
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
     ]
 
   defp mode_keys(%{type: :section_props}),
@@ -214,14 +215,16 @@ defmodule Agenda.TUI.Render.KeyBar do
       {"DEL", "Remove", "Remove the column from this section"},
       {"ALT-↑↓", "Move", "Move the column"},
       {"INS", "Add", "Add a column"},
-      {"ESC", "Close"}
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
     ]
 
   defp mode_keys(%{type: :numeric_functions}),
     do: [
       {"↑↓", "Function", "Move between the calculations"},
       {"SPACE", "Yes/No", "Switch it for the section's numeric columns"},
-      {"ESC", "Close"}
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
     ]
 
   defp mode_keys(%{type: :alarm_list}),
@@ -245,9 +248,10 @@ defmodule Agenda.TUI.Render.KeyBar do
 
   defp mode_keys(%{type: :sort}),
     do: [
-      {"ENTER", "Change", "Change the setting"},
       {"↑↓", "Setting", "Move between settings"},
-      {"ESC", "Close"}
+      {"SPACE", "Change", "Change the setting"},
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
     ]
 
   defp mode_keys(%{type: :scope}),
@@ -259,16 +263,22 @@ defmodule Agenda.TUI.Render.KeyBar do
     ]
 
   defp mode_keys(%{type: :props}),
-    do: [{"ENTER", "Change", "Change the setting"}, {"ESC", "Return", "Close"}]
+    do: [
+      {"SPACE", "Change", "Change the setting"},
+      {"F2", "Edit", "Edit the name"},
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
+    ]
 
   defp mode_keys(%{type: :item_props}),
     do: [
-      {"ENTER", "Edit"},
+      {"F2", "Edit", "Edit the text"},
       {"DEL", "Remove", "Remove the assignment"},
       {"type", "Assign", "Assign to a category"},
       {"F4", "Date", "Set the date"},
       {"F3", "Profile", "Assignment profile"},
-      {"ESC", "Close"}
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
     ]
 
   defp mode_keys(%{type: :choice}),
@@ -359,7 +369,8 @@ defmodule Agenda.TUI.Render.KeyBar do
          {"↑↓", "Setting", "Move between settings"},
          {"SPACE", "Next", "SPACE/→", "Next choice"},
          {"←", "Previous", "Previous choice"},
-         {"ESC", "Close"}
+         {"ENTER", "Done"},
+         {"ESC", "Cancel"}
        ]
 
   defp mode_keys(%{type: :menu}),

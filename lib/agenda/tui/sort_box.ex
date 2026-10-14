@@ -5,13 +5,14 @@ defmodule Agenda.TUI.SortBox do
 
   Rows: the primary key (Sort on), its Order, where items without a value
   go (Sort n/a's), the Sequence of a category's children, the Line number
-  of a category note, then a secondary key (Then by) and its order. ENTER
-  or SPACE changes the highlighted row (→ and ← change the line number);
+  of a category note, then a secondary key (Then by) and its order. SPACE
+  (or →) changes the highlighted row (→ and ← change the line number);
   Sort on cycles None, Item text, Category… and Category note…, the last
   two through the category box. A section can also use the view's
   settings ("As the view"). The view's box also sorts the section heads
   (Section sorting: None, Category order, Alphabetic, Numeric; Section
-  order). ESC closes the box. Pure.
+  order). ENTER closes the box; ESC closes it and cancels its changes
+  (`Agenda.TUI.BoxCancel`). Pure.
   """
 
   alias Agenda.Core
@@ -38,7 +39,8 @@ defmodule Agenda.TUI.SortBox do
 
   def handle(state, mode, key) do
     case key do
-      k when k in [:esc, {:alt_f, 5}] ->
+      # ENTER is done (ESC cancels: `Agenda.TUI.BoxCancel`)
+      k when k in [:esc, :enter, {:alt_f, 5}] ->
         State.pop(state)
 
       :up ->
@@ -47,7 +49,7 @@ defmodule Agenda.TUI.SortBox do
       :down ->
         State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(rows(mode)) - 1)})
 
-      k when k in [:enter, {:char, " "}, :right] ->
+      k when k in [{:char, " "}, :right] ->
         change(state, mode, Enum.at(rows(mode), mode.cursor))
 
       :left ->

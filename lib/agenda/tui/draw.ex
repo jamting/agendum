@@ -173,12 +173,14 @@ defmodule Agenda.TUI.Draw do
 
   @doc """
   Builds a framed box (list of lines) around content lines, with the title
-  centred in the top edge. The frame is drawn in `:box_frame` and the title
-  in `:box_title`: a theme can show the frame as lines or, giving it the
-  same colour in front and behind, as a solid band like Agenda's.
+  centred in the top edge, and a footer (Agenda's "Press ENTER when done,
+  ESC to cancel") centred in the bottom edge. The frame is drawn in
+  `:box_frame`, the title and footer in `:box_title`: a theme can show the
+  frame as lines or, giving it the same colour in front and behind, as a
+  solid band like Agenda's.
   """
-  @spec box(String.t(), [line], pos_integer) :: [line]
-  def box(title, content, inner_width) do
+  @spec box(String.t(), [line], pos_integer, String.t()) :: [line]
+  def box(title, content, inner_width, footer \\ "") do
     # an untitled box (the splash screen) has an unbroken top
     title = if title == "", do: "", else: String.slice(" #{title} ", 0, inner_width)
     left = div(inner_width - String.length(title), 2)
@@ -190,7 +192,7 @@ defmodule Agenda.TUI.Draw do
       {:box_frame, String.duplicate("─", right) <> "┐"}
     ]
 
-    bottom = [{:box_frame, "└" <> String.duplicate("─", inner_width) <> "┘"}]
+    bottom = edge("└", footer, inner_width, "┘")
 
     body =
       Enum.map(content, fn l ->
@@ -198,6 +200,24 @@ defmodule Agenda.TUI.Draw do
       end)
 
     [top | body] ++ [bottom]
+  end
+
+  # a bottom edge with `text` in its middle; without text (or room), a plain line
+  defp edge(left, text, inner_width, right) do
+    text = if text == "", do: "", else: " #{text} "
+
+    if text == "" or String.length(text) > inner_width - 2 do
+      [{:box_frame, left <> String.duplicate("─", inner_width) <> right}]
+    else
+      before = div(inner_width - String.length(text), 2)
+      after_ = inner_width - before - String.length(text)
+
+      [
+        {:box_frame, left <> String.duplicate("─", before)},
+        {:box_title, text},
+        {:box_frame, String.duplicate("─", after_) <> right}
+      ]
+    end
   end
 
   @doc """

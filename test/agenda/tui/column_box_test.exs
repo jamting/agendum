@@ -91,7 +91,7 @@ defmodule Agenda.TUI.ColumnBoxTest do
       assert {people(state, v, 0).note_line, people(state, v, 0).title} == {2, "Phone #"}
       assert screen(state) =~ ~r/Column title: *Phone #/
       # in the view, Phone # heads the column instead of People
-      assert state |> press(:esc) |> screen() =~ ~r/Calls +Phone #/
+      assert state |> press(:enter) |> screen() =~ ~r/Calls +Phone #/
     end
   end
 

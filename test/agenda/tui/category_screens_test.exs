@@ -50,7 +50,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
   end
 
   test "category properties toggle exclusivity", %{state: state} do
-    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}, :down, :down, :down, :enter])
+    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}, :down, :down, :down, " "])
     assert state.db.categories[cat(state, "Meetings")].exclusive
   end
 
@@ -71,7 +71,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
 
   test "category properties set a short name", %{state: state} do
     # Meetings is last; the second property is the short name
-    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}, :down, :enter, "mtg", :enter])
+    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}, :down, {:f, 2}, "mtg", :enter])
     assert state.db.categories[cat(state, "Meetings")].short_name == "mtg"
   end
 
@@ -91,7 +91,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
       opened =
         press(
           state,
-          [{:f, 9}] ++ List.duplicate(:down, 9) ++ [{:f, 6}, :down, :down, :down, :enter]
+          [{:f, 9}] ++ List.duplicate(:down, 9) ++ [{:f, 6}, :down, :down, :down, " "]
         )
 
       %{opened: opened, item: item}
@@ -141,7 +141,8 @@ defmodule Agenda.TUI.CategoryScreensTest do
     end
 
     test "the whole change is one undo step", %{opened: state, item: item} do
-      state = press(state, [:enter, :esc, :esc, {:ctrl, "z"}])
+      # ENTER keeps Category Properties (ESC there would cancel it)
+      state = press(state, [:enter, :enter, :esc, {:ctrl, "z"}])
       refute state.db.categories[cat(state, "Contact")].exclusive
       assert contacts(state, item) == ["Anna Lasky", "Daniel Fiske"]
     end
@@ -277,7 +278,7 @@ defmodule Agenda.TUI.CategoryScreensTest do
     assert screen(state) =~ ~r/Assignment conditions\s+:\s+\(none\)/
 
     # the conditions line is the seventh property
-    state = press(state, List.duplicate(:down, 6) ++ [:enter, "Calls", :enter])
+    state = press(state, List.duplicate(:down, 6) ++ [" ", "Calls", :enter])
     meetings = state.db.categories[cat(state, "Meetings")]
     assert meetings.conditions == [{cat(state, "Calls"), :assigned}]
     assert screen(state) =~ "Meetings now assigns items in Calls"

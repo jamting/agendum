@@ -12,8 +12,9 @@ defmodule Agenda.TUI.ItemColumnBox do
       other linked ones; No makes it change alone, Yes takes their
       settings again.
 
-  Each change applies at once and is one undo step, as in Column
-  Properties. ESC or ENTER closes the box. Pure.
+  Each change applies at once and is one undo step, as in Column Properties.
+  ENTER closes the box; ESC closes it and cancels its changes
+  (`Agenda.TUI.BoxCancel`). Pure.
   """
 
   alias Agenda.Core
@@ -29,7 +30,7 @@ defmodule Agenda.TUI.ItemColumnBox do
    Link with other sections: [linked]
   """
 
-  @hint " SPACE/→ next choice · ← previous · F3 picks the head · ESC closes"
+  @hint " SPACE/→ next choice · ← previous · F3 picks the head"
 
   @doc "Opens the box for the item column of section `sidx`."
   def open(state, sidx), do: State.push(state, %{type: :item_column, sidx: sidx, cursor: 0})

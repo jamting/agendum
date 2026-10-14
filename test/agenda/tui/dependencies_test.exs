@@ -143,8 +143,8 @@ defmodule Agenda.TUI.DependenciesTest do
       assert screen(state) =~ ~r/Depends on\s*: √ Set up meeting/
     end
 
-    test "ENTER opens that item's properties; ESC comes back", %{state: state} do
-      state = state |> press({:f, 6}) |> to_row("Don't forget") |> press(:enter)
+    test "SPACE opens that item's properties; ESC comes back", %{state: state} do
+      state = state |> press({:f, 6}) |> to_row("Don't forget") |> press(" ")
       assert State.mode(state).item_id == id_of(state, "Don't forget")
       assert screen(state) =~ ~r/Needed by\s*: Contact Daniel/
 

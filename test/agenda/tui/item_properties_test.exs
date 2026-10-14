@@ -39,8 +39,8 @@ defmodule Agenda.TUI.ItemPropertiesTest do
     assert screen =~ "Anna Lasky"
   end
 
-  test "ENTER on the text edits it", %{state: state, item: item} do
-    state = press(state, [:enter, {:ctrl, "u"}, "Call Anna about the report", :enter])
+  test "F2 on the text edits it", %{state: state, item: item} do
+    state = press(state, [{:f, 2}, {:ctrl, "u"}, "Call Anna about the report", :enter])
     assert state.db.items[item].text == "Call Anna about the report"
     assert %{type: :item_props} = State.mode(state)
   end

@@ -148,7 +148,7 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   until every prerequisite is done or discarded, also when done items are
   hidden too (the Q&A's bug). Item Properties lists by name the items it
   depends on ("Depends on") and those depending on it ("Needed by"), done
-  ones ticked √; ENTER on one opens its Item Properties (ESC comes back),
+  ones ticked √; SPACE on one opens its Item Properties (ESC comes back),
   DEL removes that one dependency. As in Agenda, a dependent item can still be
   marked done or discarded first. Search ▸ Depends and Search ▸ Prereqs
   (Agenda's Utilities Show Depends / Show Prereqs) list, in the Show View,
@@ -931,7 +931,20 @@ of settings), with Agendum's keys (`Agenda.TUI.FieldHelp`). In the menu,
 ESC backs up one level; a box, prompt or question opened from the menu
 goes back to the menu level it was chosen from on ESC, and ESC again backs
 up until the view, as in Agenda (User's Guide 2-13: "back up one step at a
-time"); finished any other way (ENTER), it goes back to the view. Our choices: the function-key bar stays one line with the keys'
+time"); finished any other way (ENTER), it goes back to the view.
+A box's bottom edge says how to finish it, in Agenda's words
+(screenshots 130, 138, 144): "Press ENTER when done, ESC to cancel" on a
+settings box, "Press ENTER to accept, ESC to cancel" on a box to choose
+from, "Press ESC when done" on a category list where ENTER switches
+choices (filters, conditions, actions, Excludes). In every settings box
+ENTER is done and ESC cancels, as in Agenda: its changes show at once,
+and ESC puts the file and your preferences back as they were when the
+box opened (one undo step, which undo reverses); a box opened from a box
+cancels only its own changes, and work done in a full screen opened from
+a box (a note, the macro edit screen) stays. ESC while typing in a field
+only stops the typing. A field is changed with SPACE (or →, ←), edited
+with F2, picked from with F3 (`Agenda.TUI.BoxCancel`). Our choices: the
+function-key bar stays one line with the keys'
 names and labels side by side (Agenda had two lines of ten fixed slots).
 When the screen is wide enough for all of them, it shows fuller labels
 ("F8 View manager", "INS/CTRL-N Add a category"); otherwise Agenda's short
@@ -1050,11 +1063,12 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   sight. In a view, the same keys collapse and expand the current section
   (twice: all sections), shown with "§".
 - **R34 ✅ Item Properties box** (User's Guide 4-13 to 4-15). F6 on an
-  item (or Item ▸ Properties) shows its text (ENTER/F2 edits), note
-  (ENTER/SPACE opens it), statistics (number of categories, entry date) and
+  item (or Item ▸ Properties) shows its text (F2 edits), note
+  (SPACE or F2 opens it), statistics (number of categories, entry date) and
   every assignment in hierarchy order: dates in parentheses, conditional
   assignments marked "(c)". DEL breaks an assignment (the Entry date cannot
-  be removed); F4 or ENTER changes a date; typing assigns a category, with
+  be removed); F4 changes a date or number; ENTER closes the box (§5);
+  typing assigns a category, with
   automatic completion over all categories (R32), asking for the date when
   a date category is chosen; INS creates exactly the typed name under MAIN;
   F3 opens the assignment profile. Not done: note files.
@@ -1178,7 +1192,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   In the TUI: View ▸ Add (or INS in the view manager) asks for the name,
   then the Type, Standard or Datebook; a datebook view starts with
   Agenda's defaults and opens its Datebook settings box, which View ▸
-  Properties shows again (ENTER picks a category or types a time or base
+  Properties shows again (SPACE picks a category or types a time or base
   date, SPACE/→ ← cycle Period, Interval and a week's days, DEL clears the
   End category; a time without am/pm is read as everywhere, R14b). Each
   slot's head is a line across with its name, in the file's date format
@@ -1254,8 +1268,8 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   started 8 deep; stopped"); no beep on each recorded key. In the manager
   F2 opens the macro edit screen, the note editor with the keystrokes as
   text (a line after each {ENTER}; saved on leaving), F6 the Macro
-  Properties box: Name (ENTER renames), Keystrokes (edits them), Attach to
-  key (ENTER asks for one key in the notation, `{F4}`, `{ShfF4}`,
+  Properties box: Name (F2 or SPACE renames), Keystrokes (edits them), Attach to
+  key (SPACE asks for one key in the notation, `{F4}`, `{ShfF4}`,
   `{CtlE}`; DEL detaches; ALT-F1, ALT-F3 and ALT-Z cannot be attached) and
   Run from View, Note, Category manager and, for an attached key only,
   Everywhere else (SPACE switches Yes / No). An attached key runs its

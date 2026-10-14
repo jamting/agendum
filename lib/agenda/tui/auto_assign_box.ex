@@ -4,8 +4,8 @@ defmodule Agenda.TUI.AutoAssignBox do
   R16, R16a): Text matching, Match on, Required match strength, Confirm
   assignments, Ignore text enclosed by, Ignore suffixes and Ignore
   accents. SPACE or → shows the next choice, ← the previous one; every
-  change applies at once and is one undo step. ESC or ENTER closes the
-  box. Pure.
+  change applies at once and is one undo step. ENTER closes the box; ESC
+  closes it and cancels its changes (`Agenda.TUI.BoxCancel`). Pure.
   """
 
   alias Agenda.Core

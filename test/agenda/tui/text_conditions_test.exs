@@ -23,13 +23,13 @@ defmodule Agenda.TUI.TextConditionsTest do
       press(
         state,
         [{:f, 9}, :ctrl_end, {:f, 6}] ++
-          downs_to(:also_match) ++ [:enter, "meet;(talk to)", :enter]
+          downs_to(:also_match) ++ [" ", "meet;(talk to)", :enter]
       )
 
     assert state.db.categories[meetings(state)].also_match == "meet;(talk to)"
     assert screen(state) =~ ~r/Also match\s+: meet;\(talk to\)/
 
-    state = press(state, [:esc, :esc, "Talk to Sue about the budget", :enter])
+    state = press(state, [:enter, :esc, "Talk to Sue about the budget", :enter])
     item = item(state, "Talk to Sue about the budget")
     assert Database.member?(state.db, item.id, meetings(state))
 

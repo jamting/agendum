@@ -192,18 +192,17 @@ defmodule Agenda.TUI.FieldHelp do
       when_key: "Whether ALT-F2 (WHEN) sets this date as well. SPACE switches."
     },
     datebook_props: %{
-      date_category: "The date category whose dates place items in the slots. ENTER picks one.",
+      date_category: "The date category whose dates place items in the slots. SPACE picks one.",
       end_category:
-        "A date category for the end of items that last a while. ENTER picks one, DEL clears it.",
-      section_category: "The category at the head of every section. ENTER picks one.",
+        "A date category for the end of items that last a while. SPACE picks one, DEL clears it.",
+      section_category: "The category at the head of every section. SPACE picks one.",
       period: "How long the datebook shows: a day, a week, a month or a quarter. SPACE or →.",
       interval: "How long each section (slot) is. SPACE or → for the next choice.",
-      start:
-        "Where the datebook starts: an hour of the day or a day of the week. SPACE, → or ENTER.",
-      end: "Where the datebook ends: an hour of the day or a day of the week. SPACE, → or ENTER.",
+      start: "Where the datebook starts: an hour of the day or a day of the week. SPACE or →.",
+      end: "Where the datebook ends: an hour of the day or a day of the week. SPACE or →.",
       base:
         "The date the period is taken from, such as \"today\" or \"next week\", " <>
-          "read each time the view is shown. ENTER types it.",
+          "read each time the view is shown. SPACE types it.",
       hide_column_heads: "Whether the column heads show above each section. SPACE switches.",
       section_separators: "Whether a line separates the sections. SPACE switches."
     },
@@ -216,14 +215,14 @@ defmodule Agenda.TUI.FieldHelp do
           "ENTER shows the schedule."
     },
     sort: %{
-      on: "What to sort the items on: item text, a category, or a category note. SPACE or ENTER.",
+      on: "What to sort the items on: item text, a category, or a category note. SPACE.",
       order: "Sort in ascending or descending order. SPACE switches.",
       na: "Where items with nothing to sort on go: the top or the bottom. SPACE switches.",
       sequence:
         "Sort on the children of the category in their hierarchy order or alphabetically. " <>
           "SPACE switches.",
       line: "Which line of the category note to sort on. → or ← changes it.",
-      then_on: "What to sort items on when they are equal so far. SPACE or ENTER.",
+      then_on: "What to sort items on when they are equal so far. SPACE changes it.",
       then_order: "Sort the second key in ascending or descending order. SPACE switches.",
       sections:
         "How to order the sections: none, by category order, alphabetic or numeric. SPACE.",
@@ -328,42 +327,42 @@ defmodule Agenda.TUI.FieldHelp do
           "ENTER runs it."
     },
     macro_props: %{
-      name: "The macro's name. ENTER renames it.",
-      keys: "The keystrokes the macro plays. ENTER or SPACE edits them.",
-      key: "The key that runs the macro. ENTER attaches a key, DEL detaches it.",
+      name: "The macro's name. F2 (or SPACE) renames it.",
+      keys: "The keystrokes the macro plays. SPACE (or F2) edits them.",
+      key: "The key that runs the macro. SPACE attaches a key, DEL detaches it.",
       view: "Whether the macro can run from views. SPACE switches.",
       note: "Whether the macro can run in notes. SPACE switches.",
       catmgr: "Whether the macro can run in the category manager. SPACE switches.",
       elsewhere: "Whether the macro's key runs it in boxes and everywhere else. SPACE switches."
     },
     props: %{
-      name: "The category's name. ENTER (or F2) edits it.",
+      name: "The category's name. F2 (or SPACE) edits it.",
       short_name:
-        "A short name for the category, also matched in item text. ENTER (or F2) edits it.",
-      type: "Standard, date or numeric. ENTER changes a standard category's type.",
-      exclusive: "Whether an item can be in only one of the category's children. ENTER switches.",
-      match_name: "Assign items whose text mentions the category's name. ENTER switches.",
+        "A short name for the category, also matched in item text. F2 (or SPACE) edits it.",
+      type: "Standard, date or numeric. SPACE changes a standard category's type.",
+      exclusive: "Whether an item can be in only one of the category's children. SPACE switches.",
+      match_name: "Assign items whose text mentions the category's name. SPACE switches.",
       also_match:
-        "Other words and phrases, separated by semicolons, that assign items too. ENTER edits.",
+        "Other words and phrases, separated by semicolons, that assign items too. F2 edits.",
       conditions:
-        "Assign items to the category when they are in (or not in) other categories. ENTER.",
+        "Assign items to the category when they are in (or not in) other categories. SPACE.",
       also_assign:
-        "What happens to items that join the category: other categories, dates, numbers. ENTER.",
+        "What happens to items that join the category: other categories, dates, numbers. SPACE.",
       excludes:
-        "Categories that may not share items with this one: joining one leaves the other. ENTER.",
+        "Categories that may not share items with this one: joining one leaves the other. SPACE.",
       special:
-        "An action for items that join the category: mark them done, or discard them. ENTER.",
-      advanced: "Press ENTER for how the category gets dates or matches item text.",
-      note: "The category's note. ENTER opens it."
+        "An action for items that join the category: mark them done, or discard them. SPACE.",
+      advanced: "Press SPACE BAR for how the category gets dates or matches item text.",
+      note: "The category's note. SPACE opens it."
     },
     item_props: %{
-      text: "The item's text. ENTER (or F2) edits it.",
-      note: "The item's note. ENTER or SPACE opens it.",
+      text: "The item's text. F2 edits it.",
+      note: "The item's note. SPACE (or F2) opens it.",
       stats: "When the item was entered and last changed.",
-      prerequisite: "An item this one depends on. ENTER shows it, DEL removes the dependency.",
-      dependent: "An item that depends on this one. ENTER shows it, DEL removes the dependency.",
+      prerequisite: "An item this one depends on. SPACE shows it, DEL removes the dependency.",
+      dependent: "An item that depends on this one. SPACE shows it, DEL removes the dependency.",
       assigned:
-        "A category the item is assigned to. DEL breaks the assignment; F4 or ENTER " <>
+        "A category the item is assigned to. DEL breaks the assignment; F4 " <>
           "changes a date or number.",
       add:
         "Type a category name to assign the item to it. ENTER accepts, INS makes a new one, " <>

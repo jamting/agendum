@@ -20,6 +20,8 @@ defmodule Agenda.TUI.Render.Help do
      F8 / F9       View manager / category manager
      F10 or /      Menu (ESC backs up a level; ESC in a box
                    it opened goes back to it)
+     In a box      SPACE changes, F2 edits, F3 picks;
+                   ENTER done, ESC cancels its changes
      DEL           Remove from section or column   fn-⌫
      ALT-F4        Discard item                    CTRL-D
      ALT-M         Assign to a category (MakeAssign)   ESC m

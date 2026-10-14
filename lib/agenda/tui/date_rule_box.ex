@@ -5,7 +5,8 @@ defmodule Agenda.TUI.DateRuleBox do
   one, and whether F4 (DONE) and ALT-F2 (WHEN) set the date. SPACE or →
   shows the next choice, ← the previous one; every change applies at once
   and is one undo step. Done always takes the Done key and When the When
-  key. ESC or ENTER closes the box. Pure.
+  key. ENTER closes the box; ESC closes it and cancels its changes
+  (`Agenda.TUI.BoxCancel`). Pure.
   """
 
   alias Agenda.Core

@@ -5,16 +5,17 @@ defmodule Agenda.TUI.ItemProperties do
   and those depending on it ("Needed by", R43), and every category it is
   assigned to.
 
-    * ENTER / F2 on the text edits it; ENTER / SPACE on the note opens it
-    * on a dependency: ENTER opens that item's properties (ESC comes
+    * F2 on the text edits it; SPACE (or F2) on the note opens it
+    * on a dependency: SPACE opens that item's properties (ESC comes
       back); DEL removes that one dependency
-    * on an assignment: DEL breaks it; F4 (or ENTER) changes a date or a
+    * on an assignment: DEL breaks it; F4 changes a date or a
       number
     * typing anywhere in the assignments assigns a category, with automatic
       completion over all categories (ENTER accepts, F8/F7 cycle, INS
       creates exactly what was typed under MAIN); a date category asks for
       its date
-    * F3 opens the assignment profile; ESC or F6 closes the box
+    * F3 opens the assignment profile; ENTER or F6 closes the box, ESC
+      closes it and cancels its changes (`Agenda.TUI.BoxCancel`)
 
   Pure, like the rest of the TUI state machine.
   """
@@ -47,7 +48,8 @@ defmodule Agenda.TUI.ItemProperties do
     row = Enum.at(rows, mode.cursor)
 
     case {key, row} do
-      {k, _} when k in [:esc, {:f, 6}] ->
+      # ENTER is done (ESC cancels: `Agenda.TUI.BoxCancel`)
+      {k, _} when k in [:esc, :enter, {:f, 6}] ->
         State.pop(state)
 
       {:up, _} ->
@@ -65,25 +67,25 @@ defmodule Agenda.TUI.ItemProperties do
       {{:f, 3}, _} ->
         CategoryScreens.open_profile(state, mode.item_id)
 
-      {k, :text} when k in [:enter, {:f, 2}] ->
+      {{:f, 2}, :text} ->
         edit_text(state, mode)
 
-      {k, :note} when k in [:enter, {:char, " "}] ->
+      {k, :note} when k in [{:f, 2}, {:char, " "}] ->
         open_note(state, mode)
 
       {k, {kind, id}} when kind in [:prerequisite, :dependent] ->
         dependency_key(state, mode, k, kind, id)
 
-      {k, {:assigned, %{kind: :date} = a}} when k in [:enter, {:f, 4}] ->
+      {{:f, 4}, {:assigned, %{kind: :date} = a}} ->
         ask_date(state, mode, a.category)
 
-      {k, {:assigned, %{kind: :numeric} = a}} when k in [:enter, {:f, 4}] ->
+      {{:f, 4}, {:assigned, %{kind: :numeric} = a}} ->
         ask_number(state, mode, a)
 
       {:delete, {:assigned, a}} ->
         remove(state, mode, a)
 
-      {k, row} when k in [:insert, :enter] and row != :text and row != :note ->
+      {:insert, row} when row != :text and row != :note ->
         start_assign(state, "")
 
       {{:char, c}, row} when row == :stats or row == :add or elem(row, 0) == :assigned ->
@@ -94,7 +96,7 @@ defmodule Agenda.TUI.ItemProperties do
     end
   end
 
-  defp dependency_key(state, _mode, :enter, _kind, id), do: open(state, id)
+  defp dependency_key(state, _mode, {:char, " "}, _kind, id), do: open(state, id)
 
   defp dependency_key(state, mode, :delete, :prerequisite, id),
     do: State.change_db(state, Core.remove_dependency(state.db, mode.item_id, id))

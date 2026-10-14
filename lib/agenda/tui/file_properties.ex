@@ -17,8 +17,9 @@ defmodule Agenda.TUI.FileProperties do
       rows (`Agenda.TUI.DateFormatRows`), with a formatted sample below
 
   SPACE or → shows the next choice (or opens a "..." box), ← the previous
-  one; every change applies at once and is one undo step. ESC goes back to
-  the box beneath; ENTER closes the box too. Pure.
+  one; every change applies at once and is one undo step. ENTER closes
+  the box, ESC closes it and cancels its changes (`Agenda.TUI.BoxCancel`);
+  either goes back to the box beneath. Pure.
   """
 
   alias Agenda.Core
@@ -32,7 +33,7 @@ defmodule Agenda.TUI.FileProperties do
 
    Global date settings:   [dates]   Auto-assign settings:  [auto ]
 
-   SPACE/→ next choice or open ... · ← previous · ESC closes
+   SPACE/→ next choice or open ... · ← previous
   """
 
   @format_rows DateFormatRows.rows()

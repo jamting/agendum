@@ -20,7 +20,7 @@ defmodule Agenda.TUI.ActionsTest do
   end
 
   defp open_actions(state),
-    do: press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ downs_to(:also_assign) ++ [:enter])
+    do: press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ downs_to(:also_assign) ++ [" "])
 
   test "ENTER on a category cycles: assign, remove, none", %{state: state} do
     state = open_actions(state) |> press(["Calls", :enter])
@@ -78,12 +78,12 @@ defmodule Agenda.TUI.ActionsTest do
   end
 
   test "Special action cycles none, done, discard", %{state: state} do
-    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ downs_to(:special) ++ [:enter])
+    state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ downs_to(:special) ++ [" "])
     assert state.db.categories[cat(state, "Meetings")].special == :done
     assert screen(state) =~ ~r/Special action\s+: Mark items done/
-    state = press(state, :enter)
+    state = press(state, " ")
     assert state.db.categories[cat(state, "Meetings")].special == :discard
-    state = press(state, :enter)
+    state = press(state, " ")
     assert state.db.categories[cat(state, "Meetings")].special == nil
   end
 

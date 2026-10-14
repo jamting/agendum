@@ -231,7 +231,7 @@ defmodule Agenda.TUI.LookTest do
     props = press(state, [{:f, 9}, :down, :down, :down, :down, {:f, 6}])
     assert [{row, col}] = corners.(props)
 
-    type_box = press(props, [:down, :down, :enter])
+    type_box = press(props, [:down, :down, " "])
     assert %{type: :choice} = Agenda.TUI.State.mode(type_box)
     assert [{^row, ^col}, {lower, right}] = corners.(type_box)
     assert {lower, right} == {row + 1, col + 2}
@@ -249,13 +249,15 @@ defmodule Agenda.TUI.LookTest do
       for line <- Render.render(state),
           {style, text} <- line,
           style in [:box_title, :box_title_dim],
+          # the bottom edge's "Press ENTER when done, ESC to cancel" is not a title
+          not String.contains?(text, "ESC"),
           do: {style, String.trim(text)}
     end
 
     props = press(state, [{:f, 9}, :down, :down, :down, :down, {:f, 6}])
     assert titles.(props) == [{:box_title, "Category properties: Calls"}]
 
-    nested = press(props, [:down, :down, :enter])
+    nested = press(props, [:down, :down, " "])
 
     assert titles.(nested) == [
              {:box_title_dim, "Category properties: Calls"},

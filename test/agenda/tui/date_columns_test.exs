@@ -66,7 +66,7 @@ defmodule Agenda.TUI.DateColumnsTest do
   end
 
   test "each change is one undo step", %{state: state, view: view} do
-    state = press(state, @to_show ++ [" ", " ", :esc])
+    state = press(state, @to_show ++ [" ", " ", :enter])
     assert column(state, view).date.show == :time_date
     state = History.undo(state)
     assert column(state, view).date.show == :date

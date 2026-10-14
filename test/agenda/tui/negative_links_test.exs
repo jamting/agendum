@@ -17,7 +17,7 @@ defmodule Agenda.TUI.NegativeLinksTest do
     index =
       Enum.find_index(Agenda.TUI.CategoryScreens.Properties.props_fields(), &(&1 == :excludes))
 
-    press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ List.duplicate(:down, index) ++ [:enter])
+    press(state, [{:f, 9}, :ctrl_end, {:f, 6}] ++ List.duplicate(:down, index) ++ [" "])
   end
 
   test "ENTER on a category toggles the negative link; the row lists it", %{state: state} do
@@ -31,7 +31,8 @@ defmodule Agenda.TUI.NegativeLinksTest do
     state = press(state, [:esc, :esc])
     assert screen(state) =~ ~r/Excludes\s+: Calls/
 
-    state = press(state, :esc)
+    # ENTER keeps what was set (ESC would cancel it)
+    state = press(state, :enter)
     assert screen(state) =~ "Meetings   not with Calls"
   end
 

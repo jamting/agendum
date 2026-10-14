@@ -7,8 +7,9 @@ defmodule Agenda.TUI.NumericFunctionsBox do
   A function shows Yes when every numeric column has it.
 
   SPACE (or ←, →) switches the highlighted one at once, one undo step, so
-  the section's calculation lines change behind the box; ESC or ENTER
-  closes it. Drawn from `@layout` (`Agenda.TUI.Template`). Pure.
+  the section's calculation lines change behind the box; ENTER closes the
+  box; ESC closes it and cancels its changes (`Agenda.TUI.BoxCancel`). Drawn
+  from `@layout` (`Agenda.TUI.Template`). Pure.
   """
 
   alias Agenda.Core
@@ -21,7 +22,7 @@ defmodule Agenda.TUI.NumericFunctionsBox do
    Minimum : [minimum]
    Maximum : [maximum]
 
-   SPACE switches · ESC closes
+   SPACE switches
   """
   @rows Template.fields(@layout)
 

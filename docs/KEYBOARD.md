@@ -67,6 +67,7 @@ settings, as described in the second half of this guide.
 | ALT-F1…ALT-F10                                                                                  |                               | ESC then the shifted digit (`!` … `)`)                                |
 | Menu                                                                                            | F10                           | `/`                                                                   |
 | In the menu: back up a level; in a box, prompt or question opened from it: back to the menu       | ESC                           | ESC                                                                   |
+| In a box: change or open a setting; edit a text field; pick from a list; done; cancel the box's changes | SPACE (→ ←); F2; F3; ENTER; ESC | SPACE; **CTRL-E**; ESC then `3`; ENTER; ESC                         |
 
 While typing text:
 

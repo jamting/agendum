@@ -7,8 +7,9 @@ defmodule Agenda.TUI.InputFormatBox do
   is saved to their preferences file (`{:save_preferences, path, prefs}`)
   and is not part of undo.
 
-  ↑↓ choose a setting; SPACE or → shows the next choice, ← the previous
-  one. ESC or ENTER closes the box. Pure.
+  ↑↓ choose a setting; SPACE or → shows the next choice, ← the previous one.
+  ENTER closes the box; ESC closes it and cancels its changes
+  (`Agenda.TUI.BoxCancel`). Pure.
   """
 
   alias Agenda.Core.InputFormat

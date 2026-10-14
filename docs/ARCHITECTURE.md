@@ -72,6 +72,8 @@ in [`SCREENS.md`](SCREENS.md).
 | `Agenda.TUI.Update`                           | ✔     | Key → state transitions: keys for every screen, the clock (`tick/2`), effect results, dispatch to the screen on top.             |
 | `Agenda.TUI.Update.*`                         | ✔     | Its parts: `ViewKeys`, `Editing` (inline), `Marked` (and moves), `Prompts` (and Y/N), `Notes`, `Actions` (`perform/2`).          |
 | `Agenda.TUI.Menu`                             | ✔     | The Lotus two-line menu tree.                                                                                                    |
+| `Agenda.TUI.BoxCancel`                        | ✔     | ESC cancels a settings box: the file and preferences as they were when it opened (ADR 0030).                                     |
+| `Agenda.TUI.FieldHelp`                        | ✔     | Help for a box's highlighted field, in the control panel (SPEC §5).                                                              |
 | `Agenda.TUI.CategoryScreens`                  | ✔     | Hierarchy screens: opening them, their rows, cursor, collapsing families, inline edits, dispatch to the parts.                   |
 | `Agenda.TUI.CategoryScreens.*`                | ✔     | Its parts: `Manager` (F9), `Picker`, `Profile` (F3), `Properties` (F6), `Choices` (exclusive children, moves).                   |
 | `Agenda.TUI.ViewManager`                      | ✔     | View manager.                                                                                                                    |
@@ -192,3 +194,4 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0027](adr/0027-debug-log.md)                           | A debug log of each session, on by an environment variable       |
 | [0028](adr/0028-starter-files-built-from-code.md)       | Starter files are built from code, the committed file kept equal |
 | [0029](adr/0029-stored-date-phrases-read-in-english-too.md) | Stored date phrases are read in the reader's languages, then English |
+| [0030](adr/0030-enter-done-esc-cancels-in-boxes.md)     | In a settings box, ENTER is done and ESC cancels                 |

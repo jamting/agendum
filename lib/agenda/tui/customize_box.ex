@@ -11,8 +11,9 @@ defmodule Agenda.TUI.CustomizeBox do
   The box is drawn from `@layout` (`Agenda.TUI.Template`): the rows and
   their order, for the cursor too, are the fields there.
 
-  ↑↓ choose a setting; SPACE or → shows the next choice, ← the previous
-  one. ESC or ENTER closes the box. Pure.
+  ↑↓ choose a setting; SPACE or → shows the next choice, ← the previous one.
+  ENTER closes the box; ESC closes it and cancels its changes
+  (`Agenda.TUI.BoxCancel`). Pure.
   """
 
   alias Agenda.Core.{DateLanguage, InputFormat}
@@ -30,7 +31,7 @@ defmodule Agenda.TUI.CustomizeBox do
    Thousands separator : [thousands            ]
 
    Saved in your preferences, not in this file.
-   SPACE/→ next choice · ← previous · ESC closes
+   SPACE/→ next choice · ← previous
   """
   @rows Template.fields(@layout)
   # Agenda took any number of minutes from 1 to 60; these are the steps

@@ -5,8 +5,9 @@ defmodule Agenda.TUI.CategoryMatchBox do
   matching, Match on, Required match strength, Confirm assignments,
   Ignore suffixes and Ignore accents, each Global (the file's, shown in
   brackets) unless set. SPACE or → shows the next choice, ← the previous
-  one; every change applies at once and is one undo step. ESC or ENTER
-  closes the box. Pure.
+  one; every change applies at once and is one undo step. ENTER closes
+  the box; ESC closes it and cancels its changes (`Agenda.TUI.BoxCancel`).
+  Pure.
   """
 
   alias Agenda.Core

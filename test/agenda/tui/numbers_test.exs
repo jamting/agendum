@@ -18,7 +18,7 @@ defmodule Agenda.TUI.NumbersTest do
     def choose(state, field) do
       index = Enum.find_index(CategoryScreens.Properties.props_fields(), &(&1 == field))
       state = State.put_mode(state, %{State.mode(state) | cursor: index})
-      Agenda.TUIHelpers.press(state, :enter)
+      Agenda.TUIHelpers.press(state, " ")
     end
   end
 
@@ -92,7 +92,7 @@ defmodule Agenda.TUI.NumbersTest do
     # in reading order after the four rows every column has: Symbol None ->
     # $; (Count, Decimal places, Total) Thousands separator Yes; Average Yes
     downs = &List.duplicate(:down, &1)
-    state = press(state, downs.(4) ++ [" "] ++ downs.(4) ++ [" ", :down, " ", :esc])
+    state = press(state, downs.(4) ++ [" "] ++ downs.(4) ++ [" ", :down, " ", :enter])
 
     assert hd(tl(Agenda.Core.View.columns(state.db.views[view], 0))).number ==
              %NumberFormat{symbol: "$", thousands: true, calcs: [:total, :average]}
@@ -108,7 +108,7 @@ defmodule Agenda.TUI.NumbersTest do
     state = press(state, [{:f, 10}, "v", "c", "p"])
     assert screen(state) =~ ~r/Display % of total: +No +Maximum: +No/
     # after the four common rows and four rows of two: Display % of total
-    state = press(state, List.duplicate(:down, 12) ++ [" ", :esc])
+    state = press(state, List.duplicate(:down, 12) ++ [" ", :enter])
     assert hd(tl(Agenda.Core.View.columns(state.db.views[view], 0))).number.percent
     # and in print, after the number
     assert Agenda.TUI.Render.Export.text(state) =~ "heat  [Amount: 120.00 (12%)]"
@@ -129,7 +129,9 @@ defmodule Agenda.TUI.NumbersTest do
 
   test "decimal places go up and down with → and ←", %{state: state, view: view} do
     # Decimal places: after the four common rows, Symbol and Count
-    keys = [{:f, 10}, "v", "c", "p"] ++ List.duplicate(:down, 6) ++ [:right, :right, :left, :esc]
+    keys =
+      [{:f, 10}, "v", "c", "p"] ++ List.duplicate(:down, 6) ++ [:right, :right, :left, :enter]
+
     state = press(state, keys)
     assert hd(tl(Agenda.Core.View.columns(state.db.views[view], 0))).number.decimals == 3
   end
@@ -139,12 +141,12 @@ defmodule Agenda.TUI.NumbersTest do
     assert screen(state) =~ "Date Column Properties"
   end
 
-  test "Item Properties lists the number; ENTER changes it", %{state: state, amount: amount} do
+  test "Item Properties lists the number; F4 changes it", %{state: state, amount: amount} do
     state = press(state, ["120", :enter, :left, :left, {:f, 6}])
     assert screen(state) =~ "Amount (120.00)"
 
     # rows: text, note, stats, Entry, Expenses, Amount
-    state = press(state, [:down, :down, :down, :down, :down, :enter])
+    state = press(state, [:down, :down, :down, :down, :down, {:f, 4}])
     assert screen(state) =~ "Amount:"
     state = press(state, [{:ctrl, "u"}, "75", :enter])
     assert Database.number(state.db, heat(state), amount) == 75.0

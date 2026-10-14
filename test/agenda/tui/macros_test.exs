@@ -168,11 +168,12 @@ defmodule Agenda.TUI.MacrosTest do
     end
 
     test "a key attached in Properties runs the macro, in views by default", %{state: state} do
-      state = press(state, [{:alt_f, 3}, {:f, 6}, :down, :down, :enter, "{F4}", :enter])
+      state = press(state, [{:alt_f, 3}, {:f, 6}, :down, :down, " ", "{F4}", :enter])
       assert macro(state, "Water").key == "{F4}"
       assert screen(state) =~ ~r/Attach to key +: \{F4\}/
 
-      state = press(state, [:esc, :esc])
+      # ENTER keeps it (ESC would cancel), ESC closes the manager
+      state = press(state, [:enter, :esc])
       # the key bar shows the macro's name on F4
       assert screen(state) =~ "F4 Water"
       state = press(state, {:f, 4})
@@ -180,7 +181,7 @@ defmodule Agenda.TUI.MacrosTest do
 
       # not in the category manager unless it may run there
       state =
-        press(state, [{:alt_f, 3}, {:f, 6}, :down, :down, :down, :down, :down, " ", :esc, :esc])
+        press(state, [{:alt_f, 3}, {:f, 6}, :down, :down, :down, :down, :down, " ", :enter, :esc])
 
       refute macro(state, "Water").run_from.catmgr
       assert press(state, [{:f, 9}, {:f, 4}]) |> count("Water the lettuces") == 2
@@ -190,10 +191,10 @@ defmodule Agenda.TUI.MacrosTest do
       state = press(state, [{:alt_f, 3}, {:f, 6}] ++ List.duplicate(:down, 6) ++ [" "])
       assert panel(state) =~ "Only a macro attached to a key runs everywhere else"
 
-      state = press(state, [:up, :up, :up, :up, :enter, "{AltF3}", :enter])
+      state = press(state, [:up, :up, :up, :up, " ", "{AltF3}", :enter])
       assert panel(state) =~ "ALT-F1, ALT-F3 and ALT-Z cannot run a macro"
 
-      state = press(state, [:enter, "{F4}{F5}", :enter])
+      state = press(state, [" ", "{F4}{F5}", :enter])
       assert panel(state) =~ "Type one key"
     end
 
@@ -208,7 +209,7 @@ defmodule Agenda.TUI.MacrosTest do
 
     test "learning records an attached key as a call; {CALL} runs it", %{state: state} do
       state =
-        press(state, [{:alt_f, 3}, {:f, 6}, :down, :down, :enter, "{F4}", :enter, :esc, :esc])
+        press(state, [{:alt_f, 3}, {:f, 6}, :down, :down, " ", "{F4}", :enter, :enter, :esc])
 
       state = press(state, [{:alt_f, 3}, :insert, "Twice", :enter, {:f, 7}, {:f, 4}, {:alt_f, 3}])
       assert macro(state, "Twice").keys == "{CALL Water}"
@@ -236,7 +237,7 @@ defmodule Agenda.TUI.MacrosTest do
     end
 
     test "Properties renames", %{state: state} do
-      state = press(state, [{:alt_f, 3}, {:f, 6}, :enter, {:ctrl, "u"}, "Watering", :enter])
+      state = press(state, [{:alt_f, 3}, {:f, 6}, {:f, 2}, {:ctrl, "u"}, "Watering", :enter])
       assert macro(state, "Watering")
     end
   end

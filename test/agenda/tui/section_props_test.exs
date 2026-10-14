@@ -68,7 +68,7 @@ defmodule Agenda.TUI.SectionPropsTest do
     assert %{type: :sort, scope: {:section, 0}} = state |> press([:down, " "]) |> State.mode()
 
     assert %{type: :picker, purpose: {:filter, {:section, 0}}} =
-             state |> press([:down, :down, :down, :enter]) |> State.mode()
+             state |> press([:down, :down, :down, " "]) |> State.mode()
   end
 
   test "Section statistics: the items in the section", %{state: state} do
@@ -128,7 +128,7 @@ defmodule Agenda.TUI.SectionPropsTest do
       assert screen(state) =~ ~r/Count +: Yes/
       assert Agenda.Core.section_calcs(state.db, state.view_id, 0) == [:count, :total]
       # the section shows it at once, behind the boxes
-      assert state |> press([:esc, :esc]) |> screen() =~ "COUNT"
+      assert state |> press([:enter, :enter]) |> screen() =~ "COUNT"
 
       assert History.undo(state) |> then(&Agenda.Core.section_calcs(&1.db, &1.view_id, 0)) == [
                :total

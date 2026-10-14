@@ -40,6 +40,7 @@ defmodule Agenda.TUI.Update do
     ViewManager
   }
 
+  alias Agenda.TUI.BoxCancel
   alias Agenda.TUI.Update.{Actions, Marked, Notes, Prompts, ViewKeys}
 
   @spec handle(State.t(), term) :: {State.t(), [term]}
@@ -53,7 +54,11 @@ defmodule Agenda.TUI.Update do
       with :pass <- splash_key(state, key),
            :pass <- Agenda.TUI.Macros.key(state, key),
            :pass <- global_key(state, key),
+           :pass <- BoxCancel.cancel(state, key),
            do: dispatch(state, State.mode(state), key)
+
+    # a settings box keeps how things were when it opened, for ESC
+    next = BoxCancel.track(state, next)
 
     # a box opened from the menu goes back to it on ESC (Agenda's menus)
     next = Menu.resumed(next, key)

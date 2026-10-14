@@ -10,14 +10,15 @@ defmodule Agenda.TUI.DatebookBox do
   The box is drawn from `@layout` (`Agenda.TUI.Template`): the rows and
   their order, for the cursor too, are the fields there.
 
-    * ENTER (or SPACE) on a category row picks the category; DEL clears
-      the End category
+    * SPACE on a category row picks the category; DEL clears the End
+      category
     * SPACE or → / ← cycle Period and Interval, and Start at / End at of a
       week (a day of the week)
-    * ENTER on Start at / End at of a day, or Base date on, asks for it
+    * SPACE on Start at / End at of a day, or Base date on, asks for it
       (a time; a date such as "today", "next week" or "2026-11-05")
-    * SPACE, ENTER or → / ← switch Hide column heads and Section separators
-    * ESC closes the box
+    * SPACE or → / ← switch Hide column heads and Section separators
+    * ENTER closes the box; ESC closes it and cancels its changes
+      (`Agenda.TUI.BoxCancel`)
 
   Every change applies at once and is one undo step. Rows that do not
   apply to the period show "—". Pure.
@@ -58,7 +59,8 @@ defmodule Agenda.TUI.DatebookBox do
     d = datebook(state, mode)
 
     case key do
-      :esc ->
+      # ENTER is done (ESC cancels: `Agenda.TUI.BoxCancel`)
+      k when k in [:esc, :enter] ->
         State.pop(state)
 
       :up ->
@@ -67,7 +69,7 @@ defmodule Agenda.TUI.DatebookBox do
       :down ->
         State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(@rows) - 1)})
 
-      k when k in [:enter, {:char, " "}, :right] ->
+      k when k in [{:char, " "}, :right] ->
         change(state, mode, d, row, 1, k)
 
       :left ->
@@ -81,13 +83,13 @@ defmodule Agenda.TUI.DatebookBox do
     end
   end
 
-  # any of SPACE, ENTER, → or ← switches a Yes/No, so `_step` and `_key` are ignored
+  # any of SPACE, → or ← switches a Yes/No, so `_step` and `_key` are ignored
   defp change(state, mode, _d, row, _step, _key) when row in @options,
     do: State.change_db(state, Core.toggle_view_option(state.db, mode.view_id, row))
 
   defp change(state, mode, _d, row, _step, key)
        when row in [:date_category, :end_category, :section_category] and
-              key in [:enter, {:char, " "}],
+              key == {:char, " "},
        do: CategoryScreens.open_picker(state, {:datebook, mode.view_id, row}, nil)
 
   defp change(state, mode, d, :period, step, _key) do
@@ -110,14 +112,14 @@ defmodule Agenda.TUI.DatebookBox do
   end
 
   defp change(state, mode, %{period: :day} = d, row, _step, key)
-       when row in [:start, :end] and key in [:enter, {:char, " "}] do
+       when row in [:start, :end] and key == {:char, " "} do
     {first, last} = Datebook.hours(d, state.db.date_settings)
     time = if row == :start, do: first, else: last
     label = if row == :start, do: "Start at (a time):", else: "End at (a time):"
     Prompts.prompt(state, label, {:datebook_time, mode.view_id, row}, time_text(time))
   end
 
-  defp change(state, mode, d, :base, _step, key) when key in [:enter, {:char, " "}],
+  defp change(state, mode, d, :base, _step, {:char, " "}),
     do:
       Prompts.prompt(
         state,

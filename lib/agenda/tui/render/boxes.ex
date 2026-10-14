@@ -18,7 +18,7 @@ defmodule Agenda.TUI.Render.Boxes do
     top = 1 + depth
     max_rows = max(State.body_height(state) - 4 - depth, 3)
     content = box_content(state, mode, inner, max_rows)
-    box = Draw.box(box_title(state, mode), content, inner)
+    box = Draw.box(box_title(state, mode), content, inner, footer(mode, inner))
     box = if active?, do: box, else: Enum.map(box, &Draw.paint(&1, %{box_title: :box_title_dim}))
     left = min(div(state.width - inner - 2, 2) + 2 * depth, max(state.width - inner - 2, 0))
 
@@ -26,6 +26,42 @@ defmodule Agenda.TUI.Render.Boxes do
     |> Draw.overlay(box, top, left)
     |> Draw.shadow(top, left, length(box), inner + 2)
   end
+
+  # Agenda's words in the bottom edge (screenshots 130, 138, 144): how to
+  # finish the box. A short form when the long one does not fit.
+  @done {"Press ENTER when done, ESC to cancel", "ENTER done · ESC cancel"}
+  @accept {"Press ENTER to accept, ESC to cancel", "ENTER accept · ESC cancel"}
+  @esc_done {"Press ESC when done", "ESC when done"}
+
+  # settings boxes, and the boxes that act on ENTER
+  @done_boxes [
+    :column_add,
+    :range_filter,
+    :action_box,
+    :execute,
+    :schedule,
+    :search_box,
+    :note_search
+  ]
+  # boxes to choose one thing in
+  @accept_boxes [:goto, :copy_items, :calendar, :select_file, :choice, :scope]
+  # pickers where ENTER cycles a category's choice and ESC finishes
+  @esc_pickers [:filter, :condition, :also_assign, :excludes, :schedule_filter]
+
+  defp footer(mode, inner) do
+    {long, short} =
+      cond do
+        Agenda.TUI.BoxCancel.cancels?(mode.type) or mode.type in @done_boxes -> @done
+        mode.type == :picker and esc_picker?(mode.purpose) -> @esc_done
+        mode.type in [:picker | @accept_boxes] -> @accept
+        true -> {"", ""}
+      end
+
+    if String.length(long) + 2 <= inner - 2, do: long, else: short
+  end
+
+  defp esc_picker?(purpose) when is_tuple(purpose), do: elem(purpose, 0) in @esc_pickers
+  defp esc_picker?(_purpose), do: false
 
   # the calendar is a small box, as in Agenda; the others share one width
   defp box_width(state, %{type: :calendar}), do: min(state.width - 8, 30)
@@ -394,7 +430,7 @@ defmodule Agenda.TUI.Render.Boxes do
         ]
       end)
 
-    rows ++ [[], [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]]
+    rows ++ [[], [{:box, " SPACE/→ next choice · ← previous"}]]
   end
 
   defp box_content(state, %{type: :auto_assign} = mode, _inner, _max_rows) do
@@ -409,7 +445,7 @@ defmodule Agenda.TUI.Render.Boxes do
         ]
       end)
 
-    rows ++ [[], [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]]
+    rows ++ [[], [{:box, " SPACE/→ next choice · ← previous"}]]
   end
 
   defp box_content(state, %{type: :date_rule} = mode, _inner, _max_rows) do
@@ -424,7 +460,7 @@ defmodule Agenda.TUI.Render.Boxes do
         ]
       end)
 
-    rows ++ [[], [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]]
+    rows ++ [[], [{:box, " SPACE/→ next choice · ← previous"}]]
   end
 
   defp box_content(state, %{type: :calendars} = mode, _inner, _max_rows) do
@@ -462,7 +498,7 @@ defmodule Agenda.TUI.Render.Boxes do
       [
         [],
         [{:box, " Saved in your preferences, not in this file."}],
-        [{:box, " SPACE/→ next choice · ← previous · ESC closes"}]
+        [{:box, " SPACE/→ next choice · ← previous"}]
       ]
   end
 
@@ -514,8 +550,8 @@ defmodule Agenda.TUI.Render.Boxes do
 
     hint =
       if type == :display_format,
-        do: " SPACE/→ next choice · ← previous · ESC closes",
-        else: " SPACE/→ next choice or open ... · ← previous · ESC closes"
+        do: " SPACE/→ next choice · ← previous",
+        else: " SPACE/→ next choice or open ... · ← previous"
 
     rows ++ sample ++ [[], [{:box, hint}]]
   end
@@ -608,7 +644,7 @@ defmodule Agenda.TUI.Render.Boxes do
         ]
       end)
 
-    rows ++ [[], [{:box, " ENTER changes the highlighted setting · ESC closes"}]]
+    rows ++ [[], [{:box, " SPACE changes the highlighted setting"}]]
   end
 
   defp box_content(_state, %{type: :scope} = mode, _inner, _max_rows) do

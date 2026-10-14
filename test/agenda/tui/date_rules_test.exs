@@ -13,7 +13,7 @@ defmodule Agenda.TUI.DateRulesTest do
     index = Enum.find_index(CategoryScreens.Properties.props_fields(), &(&1 == :advanced))
     state = CategoryScreens.open_props(state, cat_id)
     state = State.put_mode(state, %{State.mode(state) | cursor: index})
-    press(state, :enter)
+    press(state, " ")
   end
 
   test "When's settings: from the item text, and the When key always", %{state: state} do
@@ -35,7 +35,7 @@ defmodule Agenda.TUI.DateRulesTest do
     assert screen(state) =~ ~r/Assign item date\s+: From the note text/
 
     # back to the view; the first item, below the Calls section head
-    state = press(state, [:esc, :esc, :down, {:f, 5}, "Booked for next Tuesday", :esc])
+    state = press(state, [:enter, :enter, :down, {:f, 5}, "Booked for next Tuesday", :esc])
     item = Agenda.TUI.Layout.current_row(state).item
     assert {item.note, item.when} == {"Booked for next Tuesday", ~D[2026-10-13]}
   end
@@ -44,7 +44,7 @@ defmodule Agenda.TUI.DateRulesTest do
     state = date_settings(state, state.db.special.when) |> press([:down, " "])
     assert state.db.categories[state.db.special.when].date_rule.which == 2
 
-    state = press(state, :esc)
+    state = press(state, :enter)
     assert screen(state) =~ ~r/Advanced settings\s+: From the item text, date 2/
 
     state = History.undo(state)

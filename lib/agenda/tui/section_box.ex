@@ -18,8 +18,9 @@ defmodule Agenda.TUI.SectionBox do
       (Column Add). Agenda's ALT-F10 moved them; ours are the macro
       manager's keys.
 
-  SPACE or ENTER on a setting opens it; ESC (or ENTER on a column) closes
-  the box. Each change is one undo step. The settings are drawn from
+  SPACE on a setting opens it; ENTER closes the box, ESC closes it and
+  cancels its changes (`Agenda.TUI.BoxCancel`). Each change is one undo
+  step. The settings are drawn from
   `@layout` (`Agenda.TUI.Template`), the columns listed below it. Pure.
   """
 
@@ -112,9 +113,10 @@ defmodule Agenda.TUI.SectionBox do
       {:char, c} when row == :head and c != " " ->
         FieldTyping.start(state, mode, :head, c)
 
-      k when k in [{:char, " "}, :enter] and is_atom(row) ->
+      {:char, " "} when is_atom(row) ->
         open_setting(state, mode, row)
 
+      # ENTER is done (ESC cancels: `Agenda.TUI.BoxCancel`)
       :enter ->
         State.pop(state)
 

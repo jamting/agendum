@@ -74,14 +74,14 @@ defmodule Agenda.TUI.DatebookViewTest do
       assert datebook(state).interval == 15
 
       # a time without am/pm falls between 8:00 and 19:59, as everywhere (R14b)
-      state = press(state, [:down, :enter, {:ctrl, "u"}, "7:30am", :enter])
+      state = press(state, [:down, " ", {:ctrl, "u"}, "7:30am", :enter])
       assert datebook(state).start_time == ~T[07:30:00]
 
-      state = press(state, [:down, :down, :enter, {:ctrl, "u"}, "next week", :enter])
+      state = press(state, [:down, :down, " ", {:ctrl, "u"}, "next week", :enter])
       assert datebook(state).base == "next week"
       assert screen(state) =~ "(2026-10-19)"
 
-      state = press(state, [:enter, {:ctrl, "u"}, "zebra", :enter])
+      state = press(state, [" ", {:ctrl, "u"}, "zebra", :enter])
       assert screen(state) =~ "Not a date: zebra"
       assert datebook(state).base == "next week"
 
@@ -93,11 +93,11 @@ defmodule Agenda.TUI.DatebookViewTest do
       assert datebook(state).start_day == 2
 
       # End category: a standard category is refused
-      state = press(state, [:up, :up, :up, :up, :enter, "Calls", :enter])
+      state = press(state, [:up, :up, :up, :up, " ", "Calls", :enter])
       assert screen(state) =~ "Pick a date category"
       assert datebook(state).end_category == nil
 
-      state = press(state, [:enter, "Done", :enter])
+      state = press(state, [" ", "Done", :enter])
       assert datebook(state).end_category == state.db.special.done
       state = press(state, :delete)
       assert datebook(state).end_category == nil
@@ -171,7 +171,7 @@ defmodule Agenda.TUI.DatebookViewTest do
     end
 
     test "a month view moves by months; a standard view cannot be browsed", %{state: state} do
-      state = press(state, [{:f, 10}, "v", "p", :down, :down, :down, " ", :esc, :esc, :esc])
+      state = press(state, [{:f, 10}, "v", "p", :down, :down, :down, " ", :enter])
       state = press(state, [{:alt, "b"}, :right])
       assert State.view(state).datebook.period == :month
       assert screen(state) =~ "Mon 2026-10-26 → Fri 2026-10-30"

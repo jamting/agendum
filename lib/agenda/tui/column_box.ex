@@ -19,10 +19,10 @@ defmodule Agenda.TUI.ColumnBox do
       on Settings goes back), then `Agenda.TUI.DateFormatRows`, with a
       formatted sample.
 
-  Each part is a layout (`Agenda.TUI.Template`); the cursor goes through
-  the fields in reading order. Every change applies at once to the column
-  and the columns linked to it, and is one undo step. ESC or ENTER closes
-  the box. Pure.
+  Each part is a layout (`Agenda.TUI.Template`); the cursor goes through the
+  fields in reading order. Every change applies at once to the column and
+  the columns linked to it, and is one undo step. ENTER closes the box; ESC
+  closes it and cancels its changes (`Agenda.TUI.BoxCancel`). Pure.
   """
 
   alias Agenda.Core
@@ -65,7 +65,7 @@ defmodule Agenda.TUI.ColumnBox do
    Date separator:           [separator  ]  Time separator: [time_sep]
   """
 
-  @hint " SPACE/→ next choice · ← previous · F3 picks the head · ESC closes"
+  @hint " SPACE/→ next choice · ← previous · F3 picks the head"
   @max_decimals 6
   @date_rows DateFormatRows.rows()
 
