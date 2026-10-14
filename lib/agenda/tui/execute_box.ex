@@ -133,4 +133,7 @@ defmodule Agenda.TUI.ExecuteBox do
        if(mode.old, do: "Old & new assignments", else: "New assignments only")}
     ]
   end
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

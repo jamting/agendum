@@ -108,4 +108,7 @@ defmodule Agenda.TUI.CategoryMatchBox do
 
   defp name(:confirm, value),
     do: %{never: "Never", always: "Always", sometimes: "Sometimes"}[value]
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

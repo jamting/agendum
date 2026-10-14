@@ -245,4 +245,15 @@ defmodule Agenda.TUI.ItemProperties do
         state
     end
   end
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(state, mode) do
+    rows = rows(state, mode)
+
+    case Enum.at(rows, mode.cursor |> min(length(rows) - 1) |> max(0)) do
+      # a dependency or an assignment: the kind of row, not which one
+      {kind, _id} -> kind
+      row -> row
+    end
+  end
 end

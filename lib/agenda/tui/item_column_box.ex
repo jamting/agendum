@@ -43,7 +43,8 @@ defmodule Agenda.TUI.ItemColumnBox do
     List.delete(Template.fields(@layout), hidden)
   end
 
-  defp field(state, mode), do: Enum.at(fields(state, mode), mode.cursor)
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(state, mode), do: Enum.at(fields(state, mode), mode.cursor)
 
   def handle(state, mode, key) do
     last = length(fields(state, mode)) - 1

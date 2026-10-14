@@ -66,4 +66,7 @@ defmodule Agenda.TUI.AutoAssignBox do
       {"Ignore accents", yes_no.(s.ignore_accents)}
     ]
   end
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

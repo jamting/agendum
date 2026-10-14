@@ -242,4 +242,7 @@ defmodule Agenda.TUI.SortBox do
 
   defp order_text(:asc), do: "Ascending"
   defp order_text(:desc), do: "Descending"
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(rows(mode), mode.cursor)
 end

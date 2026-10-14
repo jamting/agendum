@@ -52,4 +52,7 @@ defmodule Agenda.TUI.InputFormatBox do
       {"Input clock", label.(:clock)}
     ]
   end
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

@@ -297,4 +297,7 @@ defmodule Agenda.TUI.ColumnAddBox do
   end
 
   defp kind_name(kind), do: Atom.to_string(kind)
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(fields(mode), min(mode.cursor, length(fields(mode)) - 1))
 end

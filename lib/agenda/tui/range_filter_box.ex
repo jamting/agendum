@@ -180,4 +180,7 @@ defmodule Agenda.TUI.RangeFilterBox do
       {"Items should be", if(mode.where == :inside, do: "Inside range", else: "Outside range")}
     ]
   end
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

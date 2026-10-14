@@ -922,7 +922,12 @@ entries, then the highlighted entry's commands or description), a prompt
 (its label, then the field), a Y/N question, a message or a hint take it
 over while they last; questions, messages and hints keep the indicators
 beside them and go on into the second line when long, as Agenda's help
-lines did. Our choices: the function-key bar stays one line with the keys'
+lines did. While a box is open, the control panel says what its
+highlighted field does and which keys change it ("Choose to insert new
+columns in one or all sections in the view."; screenshots 130 to 143);
+a list box (Go to, Copy, Calendars…) has one such help for the whole box.
+A message comes first. The texts follow Agenda's (its F1 help's tables
+of settings), with Agendum's keys (`Agenda.TUI.FieldHelp`). Our choices: the function-key bar stays one line with the keys'
 names and labels side by side (Agenda had two lines of ten fixed slots).
 When the screen is wide enough for all of them, it shows fuller labels
 ("F8 View manager", "INS/CTRL-N Add a category"); otherwise Agenda's short

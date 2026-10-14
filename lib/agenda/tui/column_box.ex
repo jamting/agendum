@@ -101,7 +101,8 @@ defmodule Agenda.TUI.ColumnBox do
 
   # The highlighted field. After the head changes the column may be of
   # another kind, with fewer fields, so the cursor is kept within them.
-  defp field(state, mode) do
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(state, mode) do
     fields = fields(kind(state, mode))
     Enum.at(fields, min(mode.cursor, length(fields) - 1))
   end

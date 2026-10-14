@@ -177,4 +177,7 @@ defmodule Agenda.TUI.ScheduleBox do
       {"Filter", filter}
     ]
   end
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

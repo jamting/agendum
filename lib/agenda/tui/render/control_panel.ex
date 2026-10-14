@@ -2,7 +2,8 @@ defmodule Agenda.TUI.Render.ControlPanel do
   @moduledoc """
   The control panel: Agenda's two top lines. Normally the file, with the
   indicators (marks, mode, time) on the right, then what is shown; the menu,
-  a prompt, a question, a message or a hint take them over while they last.
+  a prompt, a question, a message or a hint take them over while they last,
+  and in a box the help for its highlighted field (`Agenda.TUI.FieldHelp`).
   Pure.
   """
 
@@ -58,9 +59,11 @@ defmodule Agenda.TUI.Render.ControlPanel do
           text_lines(state, base, :panel_hint, hint)
 
         _ ->
-          case message_line(state) do
-            [] -> {file_line(state, base), where_line(state, base)}
-            [{style, text} | _] -> text_lines(state, base, style, String.trim(text))
+          # a message first; else the help for a box's highlighted field
+          case {message_line(state), Agenda.TUI.FieldHelp.text(state)} do
+            {[], nil} -> {file_line(state, base), where_line(state, base)}
+            {[], help} -> text_lines(state, base, :panel_hint, help)
+            {[{style, text} | _], _} -> text_lines(state, base, style, String.trim(text))
           end
       end
 

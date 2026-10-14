@@ -62,4 +62,7 @@ defmodule Agenda.TUI.NumericFunctionsBox do
     values = Map.new(@rows, &{&1, if(&1 in calcs, do: "Yes", else: "No")})
     Template.render(@layout, values, selected: Enum.at(@rows, mode.cursor))
   end
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

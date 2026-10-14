@@ -26,6 +26,9 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
   ]
   def props_fields, do: @props
 
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(@props, mode.cursor)
+
   # --- category properties -----------------------------------------------------------------------
 
   @doc "Keys of Category Properties."

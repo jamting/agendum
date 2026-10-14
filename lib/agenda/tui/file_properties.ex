@@ -133,4 +133,7 @@ defmodule Agenda.TUI.FileProperties do
   defp month_alone(:first), do: "First day"
   defp month_alone(:last), do: "Last day"
   defp month_alone(day), do: "Day #{day}"
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(@rows[mode.type], mode.cursor)
 end

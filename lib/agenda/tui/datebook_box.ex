@@ -235,4 +235,7 @@ defmodule Agenda.TUI.DatebookBox do
   defp interval_name(:day), do: "Daily"
   defp interval_name(:week), do: "Weekly"
   defp interval_name(:month), do: "Monthly"
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

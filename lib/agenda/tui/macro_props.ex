@@ -129,4 +129,7 @@ defmodule Agenda.TUI.MacroProps do
         {"Run from " <> @place_names[place], value}
       end)
   end
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

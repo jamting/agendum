@@ -193,4 +193,7 @@ defmodule Agenda.TUI.SearchBox do
       "Match #{position} of #{length(found)} · ALT-N next · ALT-P previous · F7 mark · ENTER ends"
     )
   end
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(_state, mode), do: Enum.at(rows(mode), mode.cursor)
 end

@@ -246,4 +246,12 @@ defmodule Agenda.TUI.SectionBox do
 
   defp column_name(_state, %View.Column{title: title}) when is_binary(title), do: title
   defp column_name(state, column), do: state.db.categories[column.category_id].name
+
+  @doc "The highlighted field, for its help in the control panel (`Agenda.TUI.FieldHelp`)."
+  def field(state, mode) do
+    case row(state, mode) do
+      {:slot, _} -> :columns
+      field -> field
+    end
+  end
 end
