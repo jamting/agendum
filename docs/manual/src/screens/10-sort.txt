@@ -1,5 +1,5 @@
- File: /home/rabbit/rabbit.agendum                       SORT  2026-10-12 10:15
- View: Rabbit's Week
+ What to sort the items on: item text, a category, or    SORT  2026-10-12 10:15
+ a category note. SPACE.
  Garden                                   When             Priority Friends
  • Weed t┌──────────────── Sort items in all sections ────────────────┐
  • Count │ Sort on         : None                                     │ger
@@ -12,8 +12,8 @@
  Friends │ Section sorting : None                                     │ends
  • Count │ Section order   : -                                        │ger
    bounce│                                                            │
- • Ask Ow│ ENTER changes the highlighted setting · ESC closes         │
- • Find S└────────────────────────────────────────────────────────────┘ll
+ • Ask Ow│ SPACE changes the highlighted setting                      │
+ • Find S└─────────── Press ENTER when done, ESC to cancel ───────────┘ll
  • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
 
 
@@ -22,4 +22,4 @@
 
 
 
- ENTER Change the setting  ↑↓ Move between settings  ESC Close
+ ↑↓←→ Move between settings  SPACE Change the setting  ENTER Done  ESC Cancel

@@ -1,5 +1,5 @@
- File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
- View: Rabbit's Week
+ Type the name of a new or existing category, or        PROPS  2026-10-12 10:15
+ press F3 to pick one.
  Garden                                   When             Priority Friends
  • ┌────────────────────────────── Column Add ──────────────────────────────┐
  • │ Column head:  (F3 to pick)      Category type: Standard                │
@@ -9,7 +9,7 @@
  • │ Insert in:    All sections                                             │
    │                                                                        │
    │ SPACE/→ next choice · ← previous · F3 picks the head · ENTER adds      │
- Fr└────────────────────────────────────────────────────────────────────────┘
+ Fr└───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
  • Count the lettuces before Tigger                        Medium   Tigger
    bounces on them
  • Ask Owl how to spell Organising                         Low      Owl
@@ -22,4 +22,4 @@
 
 
 
- ↑↓ Move between settings  SPACE/→ Next choice  ← Previous choice  ESC Close
+ ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel

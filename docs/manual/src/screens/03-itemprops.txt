@@ -1,4 +1,4 @@
- File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
+ The item's text. F2 edits it.                          PROPS  2026-10-12 10:15
  View: Rabbit's Week
  Garden                                   When             Priority Friends
  • Weed t┌───────────────────── Item properties ──────────────────────┐
@@ -12,7 +12,7 @@
  Friends │               (type a category name to add)                │ends
  • Count │                                                            │ger
    bounce│ ENTER edit · DEL remove · type to assign · F3 profile      │
- • Ask Ow└────────────────────────────────────────────────────────────┘
+ • Ask Ow└─────────── Press ENTER when done, ESC to cancel ───────────┘
  • Find Small, who is lost again                           High     Small
  • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
 
@@ -22,4 +22,4 @@
 
 
 
- ENTER Edit DEL Remove type Assign F4 Date F3 Profile ESC Close
+ F2 Edit DEL Remove type Assign F4 Date F3 Profile ENTER Done ESC Cancel

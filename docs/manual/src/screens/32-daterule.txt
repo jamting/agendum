@@ -1,20 +1,20 @@
- File: /home/rabbit/rabbit.agendum *                    PROPS  2026-10-12 10:15
- Category Manager                                                 21 categories
+ When the category gets a date: never, from the clock   PROPS  2026-10-12 10:15
+ as the item is entered or edited, or from its text. SPACE changes it.
  MAIN   6
-    Entry┌─────────────── Category properties: Harvest ───────────────┐
-    When │ ┌──────────────── Advanced settings: Harvest ────────────────┐
-    Done │ │ Assign item date       : Never                             │
-    Garde│ │ Which one              : (dates from text only)            │
-    Notic│ │ Set date from Done key : No                                │
-    Frien│ │ Set date from When key : No                                │
-       Po│ │                                                            │
-       Pi│ │ SPACE/→ next choice · ← previous · ESC closes              │
-       Ow│ └────────────────────────────────────────────────────────────┘
-       Ee│ Excludes                    : (none)
-       Ka│ Special action              : None                         │
-       Ro│ Advanced settings           : Never                        │
-       Ti│ Note                        : (none)                       │
-       Ch└────────────────────────────────────────────────────────────┘
+   ┌───────────────────── Category properties: Harvest ─────────────────────┐
+   │ ┌──────────────── Advanced settings: Harvest ────────────────┐e        │
+   │ │ Assign item date       : Never                             │         │
+   │ │ Which one              : (dates from text only)            │         │
+   │ │ Set date from Done key : No                                │         │
+   │ │ Set date from When key : No                                │         │
+   │ │                                                            │         │
+   │ │ SPACE next choice · arrows move                            │         │
+   │ └─────────── Press ENTER when done, ESC to cancel ───────────┘         │
+   │ Statistics:         ...               (none)                           │
+   │ Advanced settings:  ...               Excludes:                        │
+   │                                       (none)                           │
+   └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
+       Christopher Robin   aka CR · 0
        Small   1
     Priority   exclusive · 6
        High   3
@@ -22,4 +22,4 @@
        Low   1
     Harvest   date · 0
 
- ↑↓ Move between settings  SPACE/→ Next choice  ← Previous choice  ESC Close
+ ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel

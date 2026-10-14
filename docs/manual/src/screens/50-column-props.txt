@@ -1,13 +1,13 @@
- File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
+ Press F3 to pick a category or type a new one.         PROPS  2026-10-12 10:15
  View: Rabbit's Week
  Garden                                   When             Priority Friends
  • ┌────────────────────────── Column Properties ───────────────────────────┐
- • │ Column head: Friends and Rel…  Category type:            Standard      │
-   │ Width:       12                Link with other sections: Yes           │
+ • │ Column head:  Friends and Re…  Category type:            Standard      │
+   │ Width:        12               Link with other sections: Yes           │
    │ Format:       Name only                                                │
  No│                                                                        │
- • │ SPACE/→ next choice · ← previous · F3 picks the head · ESC closes      │
-   └────────────────────────────────────────────────────────────────────────┘
+ • │ SPACE next choice · type a number · F3 picks the head                  │
+   └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
 
  Friends and Relations                    When             Priority Friends
  • Count the lettuces before Tigger                        Medium   Tigger
@@ -22,4 +22,4 @@
 
 
 
- ↑↓ Move between settings  SPACE/→ Next choice  ← Previous choice  ESC Close
+ ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel

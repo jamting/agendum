@@ -1,20 +1,20 @@
  File: /home/rabbit/rabbit.agendum *                    PROPS  2026-10-12 10:15
  Category Manager                                                 21 categories
  MAIN   6
-    Entry┌─────────────── Category properties: Harvest ───────────────┐
-    When │ ┌────────────────── Category type: Harvest ──────────────────┐
-    Done │ │ Standard categories can become numeric or date categories. │
-    Garde│ │                                                            │
-    Notic│ │ Change the type to:                                        │
-    Frien│ │    Numeric                                                 │
-       Po│ │    Date                                                    │
-       Pi│ │                                                            │
-       Ow│ │ A number for each item: totals and averages; children becom│
-       Ee│ └────────────────────────────────────────────────────────────┘
-       Ka│ Special action              : None
-       Ro│ Advanced settings           : Global                       │
-       Ti│ Note                        : (none)                       │
-       Ch└────────────────────────────────────────────────────────────┘
+   ┌───────────────────── Category properties: Harvest ─────────────────────┐
+   │ ┌────────────────── Category type: Harvest ──────────────────┐ndard    │
+   │ │ Standard categories can become numeric or date categories. │         │
+   │ │                                                            │         │
+   │ │ Change the type to:                                        │         │
+   │ │    Numeric                                                 │         │
+   │ │    Date                                                    │         │
+   │ │                                                            │         │
+   │ │ A number for each item: totals and averages; children becom│         │
+   │ └─────────── Press ENTER to accept, ESC to cancel ───────────┘         │
+   │ Advanced settings:  ...               Excludes:                        │
+   │                                       (none)                           │
+   └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
+       Christopher Robin   aka CR · 0
        Small   1
     Priority   exclusive · 6
        High   3

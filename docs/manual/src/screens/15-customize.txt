@@ -1,5 +1,5 @@
- File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
- View: Rabbit's Week
+ The colours Agendum draws with, in every file. SPACE   PROPS  2026-10-12 10:15
+ for the next theme.
  Garden                                   When             Priority Friends
  • Weed t┌──────────── Customize (yours, for every file) ─────────────┐
  • Count │ Theme               : Classic                              │ger
@@ -13,8 +13,8 @@
  • Count │ Thousands separator : , (Comma)                            │ger
    bounce│                                                            │
  • Ask Ow│ Saved in your preferences, not in this file.               │
- • Find S│ SPACE/→ next choice · ← previous · ESC closes              │ll
- • Visit └────────────────────────────────────────────────────────────┘ga, Roo
+ • Find S│ SPACE next choice · arrows move                            │ll
+ • Visit └─────────── Press ENTER when done, ESC to cancel ───────────┘ga, Roo
 
 
 
@@ -22,4 +22,4 @@
 
 
 
- ↑↓ Move between settings  SPACE/→ Next choice  ← Previous choice  ESC Close
+ ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel

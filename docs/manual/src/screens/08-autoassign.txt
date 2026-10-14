@@ -1,18 +1,18 @@
- File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
- View: Rabbit's Week
+ Assign items to categories whose names or Also match   PROPS  2026-10-12 10:15
+ words are in their text. SPACE switches.
  Garden                                   When             Priority Friends
  • ┌─────────────────────────── File properties ────────────────────────────┐
- • │ Insert┌─────────────────── Auto-assign settings ───────────────────┐   │
-   │       │ Text matching           : On                               │   │
-   │ Global│ Match on                : Item text                        │   │
- No│       │ Required match strength : Exact match - 100%               │   │
- • │ SPACE/│ Confirm assignments     : Never                            │   │
-   └───────│ Ignore text enclosed by : " "                              │  ─┘
-           │ Ignore suffixes         : Yes                              │
- Friends an│ Ignore accents          : No                               │ds
- • Count th│                                                            │r
-   bounces │ SPACE/→ next choice · ← previous · ESC closes              │
- • Ask Owl └────────────────────────────────────────────────────────────┘
+ • │ ┌─────────────────── Auto-assign settings ───────────────────┐         │
+   │ │ Text matching           : On                               │         │
+   │ │ Match on                : Item text                        │         │
+ No│ │ Required match strength : Exact match - 100%               │         │
+ • │ │ Confirm assignments     : Never                            │         │
+   └─│ Ignore text enclosed by : " "                              │  ───────┘
+     │ Ignore suffixes         : Yes                              │
+ Frie│ Ignore accents          : No                               │ Friends
+ • Co│                                                            │ Tigger
+   bo│ SPACE next choice · arrows move                            │
+ • As└─────────── Press ENTER when done, ESC to cancel ───────────┘ Owl
  • Find Small, who is lost again                           High     Small
  • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
 
@@ -22,4 +22,4 @@
 
 
 
- ↑↓ Move between settings  SPACE/→ Next choice  ← Previous choice  ESC Close
+ ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel

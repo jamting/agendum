@@ -1,5 +1,5 @@
- File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
- View: Rabbit's Week
+ Type the end of the range: a date or a number. Leave   PROPS  2026-10-12 10:15
+ it blank for no end.
  Garden                                   When             Priority Friends
  • Weed t┌───────────────────── Filter the view ──────────────────────┐
  • Count │ ┌──────────────────── Date filter: When ─────────────────────┐r
@@ -9,7 +9,7 @@
  • Put up│ │ Items should be : Inside range                             │
    Meetin│ │                                                            │
          │ │ Blank = open · ENTER applies · DEL removes · ESC cancels   │
- Friends │ └────────────────────────────────────────────────────────────┘ds
+ Friends │ └─────────── Press ENTER when done, ESC to cancel ───────────┘ds
  • Count │       Owl                                                   ger
    bounce│       Eeyore                                               │
  • Ask Ow│       Kanga                                                │
@@ -22,4 +22,4 @@
          │       Medium                                               │
          │                                                            │
          │ ENTER cycles: + assigned · - not assigned · none           │
- ↑↓ Setting SPACE Change ENTER Apply DEL Remove ESC Cancel
+ ↑↓←→ Setting SPACE Change ENTER Apply DEL Remove ESC Cancel

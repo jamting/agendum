@@ -1,25 +1,25 @@
- File: /home/rabbit/rabbit.agendum *                    PROPS  2026-10-12 10:15
- View: Rabbit's Calendar                                   Datebook for: When
+ The date category whose dates place items in the       PROPS  2026-10-12 10:15
+ slots. SPACE picks one.
  ── Mon 2026-10-12 ─────────────────────────────────────────────────────────────
  ── Tue 2┌─────────── Datebook settings: Rabbit's Calendar ───────────┐─────────
- • Weed t│ Date category : When                                       │
- ── Wed 2│ End category  : (none)                                     │─────────
- ── Thu 2│ Section       : When                                       │─────────
- • Visit │ Period        : Week                                       │
- ── Fri 2│ Interval      : — (a day each)                             │─────────
- • Put up│ Start at      : Mon                                        │
-         │ End at        : Fri                                        │
-         │ Base date on  : today (2026-10-12)                         │
+ • Weed t│ Date category      : When                                  │
+ ── Wed 2│ End category       : (none)                                │─────────
+ ── Thu 2│ Section            : When                                  │─────────
+ • Visit │ Period             : Week                                  │
+ ── Fri 2│ Interval           : — (a day each)                        │─────────
+ • Put up│ Start at           : Mon                                   │
+         │ End at             : Fri                                   │
+         │ Base date on       : today (2026-10-12)                    │
          │                                                            │
-         │ ENTER picks or types · SPACE/→ ← cycle · DEL clears        │
-         └────────────────────────────────────────────────────────────┘
+         │ Hide column heads  : No                                    │
+         │ Section separators : No                                    │
+         │                                                            │
+         │ SPACE picks, types or cycles · DEL clears                  │
+         └─────────── Press ENTER when done, ESC to cancel ───────────┘
 
 
 
 
 
 
-
-
-
- ↑↓ Setting ENTER Pick/type SPACE Next ← Previous DEL Clear ESC Close
+ ↑↓←→ Setting SPACE Change DEL Clear ENTER Done ESC Cancel

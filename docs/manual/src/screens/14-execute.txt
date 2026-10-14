@@ -1,5 +1,5 @@
- File: /home/rabbit/rabbit.agendum                      PROPS  2026-10-12 10:15
- View: Rabbit's Week
+ Apply the conditions of this category and its          PROPS  2026-10-12 10:15
+ children. SPACE picks a category.
  Garden                                   When             Priority Friends
  • Weed t┌────────────── Execute conditions and actions ──────────────┐
  • Count │ Apply conditions of : MAIN (all categories)                │ger
@@ -7,7 +7,7 @@
          │ Apply actions to    : New assignments only                 │
  Notices │                                                            │ends
  • Put up│ ENTER runs · on the first row: choose · SPACE changes      │
-   Meetin└────────────────────────────────────────────────────────────┘
+   Meetin└─────────── Press ENTER when done, ESC to cancel ───────────┘
 
  Friends and Relations                    When             Priority Friends
  • Count the lettuces before Tigger                        Medium   Tigger
@@ -22,4 +22,4 @@
 
 
 
- ↑↓ Move between settings  SPACE Change the setting  ENTER Run  ESC Cancel
+ ↑↓←→ Move between settings  SPACE Change the setting  ENTER Run  ESC Cancel

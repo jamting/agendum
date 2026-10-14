@@ -1,5 +1,5 @@
- File: /home/rabbit/rabbit.agendum *                  ? READY  2026-10-12 10:15
- View: Rabbit's Week
+ Pick the categories to assign the item to: SPACE     ? READY  2026-10-12 10:15
+ one, TAB all. ENTER assigns them and shows the next item.
  Garden                                   When             Priority Friends
  • Weed t┌────────────────── Suggested assignments ───────────────────┐
  • Count │ Ask Piglet and Pooh to help dig                            │ger

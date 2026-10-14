@@ -1,20 +1,20 @@
- File: /home/rabbit/rabbit.agendum *                    PROPS  2026-10-12 10:15
- Category Manager                                                 20 categories
+ Other words and phrases, separated by semicolons,      PROPS  2026-10-12 10:15
+ that assign items too. F2 edits.
  MAIN   6
-    Entry┌─────────────── Category properties: Garden ────────────────┐
-    When │ Category name               : Garden                       │
-    Done │ Short name                  : (none)                       │
-    Garde│ Type                        : Standard                     │
-    Notic│ Children mutually exclusive : No                           │
-    Frien│ Assign items mentioning it  : Yes                          │
-       Po│ Also match                  : carrot*;lettuce*;(vegetable p│
-       Pi│ Assignment conditions       : (none)                       │
-       Ow│ Assignment actions          : (none)                       │
-       Ee│ Excludes                    : (none)                       │
-       Ka│ Special action              : None                         │
-       Ro│ Advanced settings           : Global                       │
-       Ti│ Note                        : (none)                       │
-       Ch└────────────────────────────────────────────────────────────┘
+   ┌───────────────────── Category properties: Garden ──────────────────────┐
+   │ Category name:      Garden            Type:                Standard    │
+   │ Parent is MAIN                        Match category name: Yes         │
+   │ Short name:         (none)                                             │
+   │ Also match:         carrot*;lettuce…                                   │
+   │ Note:               ...                                                │
+   │ Exclusive children: No                Assignment conditions:           │
+   │ Special actions:    No action         (none)                           │
+   │                                       Assignment actions:              │
+   │ Statistics:         ...               (none)                           │
+   │ Advanced settings:  ...               Excludes:                        │
+   │                                       (none)                           │
+   └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
+       Christopher Robin   aka CR · 0
        Small   1
     Priority   exclusive · 6
        High   3
@@ -22,4 +22,4 @@
        Low   1
 
 
- ENTER Change the setting  ESC Close
+ SPACE Change the setting  F2 Edit the name  ENTER Done  ESC Cancel

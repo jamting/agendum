@@ -1,5 +1,5 @@
- File: /home/rabbit/rabbit.agendum                    CHOICES  2026-10-12 10:15
- View: Rabbit's Week
+ Move the highlight to a date and press ENTER.        CHOICES  2026-10-12 10:15
+ PGUP/PGDN for another month; type a date to go there; F6 adds a time.
  Garden                                   When             Priority Friends
  • Weed the carrot bed t┌──────── October 2026 ────────┐00 High
  • Count the lettuces be│ Mon Tue Wed Thu Fri Sat Sun  │   Medium   Tigger
@@ -12,7 +12,7 @@
  Friends and Relations  │                              │   Priority Friends
  • Count the lettuces be│                              │   Medium   Tigger
    bounces on them      │ Time: 08:00                  │
- • Ask Owl how to spell └──────────────────────────────┘   Low      Owl
+ • Ask Owl how to spell └─ ENTER accept · ESC cancel ──┘   Low      Owl
  • Find Small, who is lost again                           High     Small
  • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
 
