@@ -30,7 +30,7 @@ defmodule Agenda.TUI.RangeFiltersTest do
       press(
         state,
         [{:f, 10}, "v", "f", "When", :enter] ++
-          [:down, "2026-10-01", :down, "2026-10-07", :enter, :esc, :esc]
+          [:down, "2026-10-01", :down, "2026-10-07", :enter, :esc, :esc, :esc, :esc]
       )
 
     assert state.modes == []
@@ -44,7 +44,7 @@ defmodule Agenda.TUI.RangeFiltersTest do
       press(
         state,
         [{:f, 10}, "v", "f", "When", :enter, :down, "2026-10-01", :enter] ++
-          [:esc, :esc, "Plan the offsite", :enter]
+          [:esc, :esc, :esc, :esc, "Plan the offsite", :enter]
       )
 
     item = Enum.find(Database.items(state.db), &(&1.text == "Plan the offsite"))
@@ -57,14 +57,16 @@ defmodule Agenda.TUI.RangeFiltersTest do
       press(
         state,
         [{:f, 10}, "v", "f", "When", :enter] ++
-          [:down, "2026-10-01", :down, "2026-10-07", :down, " ", :enter, :esc, :esc]
+          [:down, "2026-10-01", :down, "2026-10-07", :down, " ", :enter, :esc, :esc, :esc, :esc]
       )
 
     assert screen(state) =~ "[When not 2026-10-01..2026-10-07]"
     assert [only] = texts(state)
     assert only =~ "Terracotta"
 
-    state = press(state, [{:f, 10}, "v", "f", "When", :enter, " ", :enter, :esc, :esc])
+    state =
+      press(state, [{:f, 10}, "v", "f", "When", :enter, " ", :enter, :esc, :esc, :esc, :esc])
+
     assert screen(state) =~ "[-When]"
     assert length(texts(state)) == 3
   end
@@ -112,7 +114,7 @@ defmodule Agenda.TUI.RangeFiltersTest do
     assert text =~ "Minimum value"
     assert text =~ "Maximum value"
 
-    state = press(state, [:down, "1000", :enter, :esc, :esc])
+    state = press(state, [:down, "1000", :enter, :esc, :esc, :esc, :esc])
     assert screen(state) =~ "[Cost 1,000..]"
     assert length(texts(state)) == 1
 

@@ -66,7 +66,7 @@ defmodule Agenda.TUI.UnsavedChangesTest do
   end
 
   test "ESC cancels and keeps the file", %{changed: changed} do
-    {state, effects} = keys(changed, [{:f, 10}, "f", "r", :esc])
+    {state, effects} = keys(changed, [{:f, 10}, "f", "r", :esc, :esc, :esc])
     assert effects == []
     assert state.modes == []
     assert state.db == changed.db

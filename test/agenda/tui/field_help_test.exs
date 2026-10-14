@@ -39,8 +39,10 @@ defmodule Agenda.TUI.FieldHelpTest do
     assert %{type: :date_settings} = State.mode(state)
     assert panel(state) =~ "how dates and times are displayed"
 
+    # back to the File menu, then to the view
     state = press(state, [:esc, :esc])
-    assert panel(state) =~ "File:"
+    assert %{type: :menu} = State.mode(state)
+    assert panel(press(state, [:esc, :esc])) =~ "File:"
   end
 
   test "a long help goes on into the second line", %{state: state} do

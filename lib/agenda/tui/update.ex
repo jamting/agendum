@@ -55,6 +55,9 @@ defmodule Agenda.TUI.Update do
            :pass <- global_key(state, key),
            do: dispatch(state, State.mode(state), key)
 
+    # a box opened from the menu goes back to it on ESC (Agenda's menus)
+    next = Menu.resumed(next, key)
+
     # Learn mode records the key after it has done its work (R50)
     next = Agenda.TUI.Macros.record(state, key, next)
     state = History.record(state, next)

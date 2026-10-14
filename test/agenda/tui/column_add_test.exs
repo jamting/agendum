@@ -181,7 +181,7 @@ defmodule Agenda.TUI.ColumnAddTest do
 
   test "the box starts with the file's Insert new columns in", %{state: state} do
     db = Core.set_insert_columns(state.db, :section)
-    state = %{state | db: db} |> press(:esc) |> press([{:f, 10}, "v", "c", "a"])
+    state = %{state | db: db, modes: []} |> press([{:f, 10}, "v", "c", "a"])
     assert screen(state) =~ ~r/Insert in: +Current section/
   end
 
@@ -189,8 +189,9 @@ defmodule Agenda.TUI.ColumnAddTest do
     picking = press(state, :enter)
     assert %{type: :picker} = State.mode(picking)
     assert screen(picking) =~ "Column Head: select a category"
+    # back to the View ▸ Column menu it came from
     state = press(state, :esc)
-    assert State.mode(state) == nil
+    assert %{type: :menu} = State.mode(state)
     assert heads(state, v, 0) == ["People", "When"]
   end
 end

@@ -28,7 +28,7 @@ defmodule Agenda.TUI.SortFilterTest do
     state = press(state, [{:f, 10}, "v", "f", "High", :enter])
     assert %{type: :picker} = State.mode(state)
     assert State.view(state).filter == [{cat(state, "High"), :assigned}]
-    state = press(state, [:esc, :esc])
+    state = press(state, [:esc, :esc, :esc, :esc])
     assert state.modes == []
     assert screen(state) =~ "View: Activities [High]"
     assert length(texts(state)) == 1
@@ -42,7 +42,19 @@ defmodule Agenda.TUI.SortFilterTest do
 
   test "typing into a filtered view assigns the new item to the filter", %{state: state} do
     state =
-      press(state, [{:f, 10}, "v", "f", "High", :enter, :esc, :esc, "Call the bank", :enter])
+      press(state, [
+        {:f, 10},
+        "v",
+        "f",
+        "High",
+        :enter,
+        :esc,
+        :esc,
+        :esc,
+        :esc,
+        "Call the bank",
+        :enter
+      ])
 
     item = Enum.find(Database.items(state.db), &(&1.text == "Call the bank"))
     assert Database.member?(state.db, item.id, cat(state, "High"))

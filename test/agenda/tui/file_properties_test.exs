@@ -29,9 +29,10 @@ defmodule Agenda.TUI.FilePropertiesTest do
 
     state = press(state, " ")
     assert %{type: :display_format} = State.mode(state)
-    # ESC goes back one box at a time
+    # ESC goes back one box at a time, then through the menu
     assert %{type: :date_settings} = state |> press(:esc) |> State.mode()
-    assert state |> press([:esc, :esc, :esc]) |> Map.get(:modes) == []
+    assert %{type: :menu} = state |> press([:esc, :esc, :esc]) |> State.mode()
+    assert state |> press([:esc, :esc, :esc, :esc, :esc]) |> Map.get(:modes) == []
   end
 
   test "every box fits a 25-line screen, with its frame", %{state: state} do
@@ -75,7 +76,7 @@ defmodule Agenda.TUI.FilePropertiesTest do
           "f",
           "p",
           " ",
-          :esc,
+          :enter,
           :down,
           {:alt, "r"},
           "Mood",
@@ -115,7 +116,7 @@ defmodule Agenda.TUI.FilePropertiesTest do
     assert state.db.date_format.separator == "."
     assert screen(state) =~ ~r/Sample +: 90\.11\.13 15:25/
 
-    state = press(state, [:esc, :esc, :esc])
+    state = press(state, [:enter, :enter, :enter])
     assert state.modes == []
     text = screen(state)
     assert text =~ "26.10.31"

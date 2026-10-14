@@ -18,7 +18,7 @@ defmodule Agenda.TUI.QuestionsTest do
   @to_confirm List.duplicate(:down, 20) ++ [" ", :down, :down, :down]
 
   defp confirm_always(state),
-    do: press(state, [{:f, 10}, "f", "p"] ++ @to_confirm ++ [" ", :esc, :esc])
+    do: press(state, [{:f, 10}, "f", "p"] ++ @to_confirm ++ [" ", :enter, :enter])
 
   test "File Properties ▸ Auto-assign settings sets Confirm assignments", %{state: state} do
     state = press(state, [{:f, 10}, "f", "p"] ++ @to_confirm)

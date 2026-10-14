@@ -32,7 +32,7 @@ defmodule Agenda.TUI.AutoAssignBoxTest do
   end
 
   test "with text matching off, a new item matches nothing", %{state: state} do
-    state = press(state, [" ", :esc, :esc, "Set up a meeting with Anna", :enter])
+    state = press(state, [" ", :enter, :enter, "Set up a meeting with Anna", :enter])
     item = Enum.find(Map.values(state.db.items), &(&1.text == "Set up a meeting with Anna"))
 
     assert Agenda.Core.Database.explicit_categories(state.db, item.id)

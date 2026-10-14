@@ -52,7 +52,7 @@ defmodule Agenda.TUI.DateColumnsTest do
     assert column(state, view).date.order == :relative
     assert screen(state) =~ ~r/Settings: +Local settings/
 
-    state = press(state, :esc)
+    state = press(state, :enter)
     assert state.modes == []
     assert screen(state) =~ ~r/Tomorrow/
     assert state.db.date_format == %Core.DateFormat{}

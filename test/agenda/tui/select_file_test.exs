@@ -81,7 +81,9 @@ defmodule Agenda.TUI.SelectFileTest do
     state = press(state, [{:f, 10}, "f", "t", "i", {:f, 3}]) |> serve()
     assert rows(state) == ["..", "Garden", "export.json"]
 
-    state = state |> press([:esc, :esc]) |> press([{:ctrl, "p"}, {:f, 3}]) |> serve()
+    state =
+      state |> press([:esc, :esc, :esc, :esc, :esc]) |> press([{:ctrl, "p"}, {:f, 3}]) |> serve()
+
     assert rows(state) == ["..", "Garden", "notes.txt"]
   end
 

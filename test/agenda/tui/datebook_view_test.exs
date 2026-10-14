@@ -171,7 +171,7 @@ defmodule Agenda.TUI.DatebookViewTest do
     end
 
     test "a month view moves by months; a standard view cannot be browsed", %{state: state} do
-      state = press(state, [{:f, 10}, "v", "p", :down, :down, :down, " ", :esc])
+      state = press(state, [{:f, 10}, "v", "p", :down, :down, :down, " ", :esc, :esc, :esc])
       state = press(state, [{:alt, "b"}, :right])
       assert State.view(state).datebook.period == :month
       assert screen(state) =~ "Mon 2026-10-26 → Fri 2026-10-30"

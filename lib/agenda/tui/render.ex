@@ -59,6 +59,10 @@ defmodule Agenda.TUI.Render do
     :alarm_list
   ]
 
+  @doc "Whether a mode is drawn as a box over the screen."
+  @spec box?(map) :: boolean
+  def box?(%{type: type}), do: type in @boxes
+
   @spec render(State.t()) :: [Draw.line()]
   def render(%State{modes: [%{type: :splash} | _]} = state), do: Agenda.TUI.Splash.render(state)
 

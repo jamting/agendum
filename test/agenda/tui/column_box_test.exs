@@ -129,8 +129,8 @@ defmodule Agenda.TUI.ColumnBoxTest do
              cat(state.db, "People")
   end
 
-  test "ESC and ENTER close it", %{state: state} do
-    assert press(state, :esc).modes == []
+  test "ENTER closes it; ESC goes back to the menu it came from", %{state: state} do
+    assert %{type: :menu} = State.mode(press(state, :esc))
     assert press(state, :enter).modes == []
   end
 end

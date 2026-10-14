@@ -6,6 +6,12 @@ defmodule Agenda.TUI.Menu do
   shows the highlighted command's subcommands or a description. Select a
   command with the arrow keys and ENTER, or by typing its first letter.
   ESC backs up one level.
+
+  A command that opens a box, a prompt or a question keeps the menu
+  beneath it, as Agenda did: ESC there comes back to the menu level the
+  command was chosen from, and ESC again backs up a level until the view
+  (screenshot notes 8 to 15). A box finished any other way (ENTER) closes
+  the menu too (`resumed/2`).
   """
 
   alias Agenda.TUI.State
@@ -198,7 +204,35 @@ defmodule Agenda.TUI.Menu do
         State.put_mode(state, %{mode | path: mode.path ++ [index], selected: 0})
 
       {_, _, action} ->
-        state |> State.pop() |> Actions.perform(action)
+        below = State.pop(state)
+        below |> Actions.perform(action) |> keep_beneath(below, %{mode | selected: index})
     end
   end
+
+  # The modes the command pushed onto `below`: if they are boxes, prompts
+  # or questions, the menu goes beneath them, to come back to on ESC.
+  defp keep_beneath(state, below, menu) do
+    pushed = length(state.modes) - length(below.modes)
+    {new, old} = Enum.split(state.modes, max(pushed, 0))
+
+    if pushed > 0 and old == below.modes and Enum.all?(new, &overlay?/1),
+      do: %{state | modes: new ++ [Map.put(menu, :resume, true) | old]},
+      else: state
+  end
+
+  defp overlay?(mode), do: mode.type in [:prompt, :confirm] or Agenda.TUI.Render.box?(mode)
+
+  @doc """
+  After any key: when the box above a kept menu has just closed, ESC
+  shows the menu again (stepping back); any other key that closed it
+  finished the command, so the menu goes too.
+  """
+  @spec resumed(State.t(), term) :: State.t()
+  def resumed(%State{modes: [%{type: :menu, resume: true} = menu | _]} = state, key) do
+    if key == :esc,
+      do: State.put_mode(state, Map.delete(menu, :resume)),
+      else: State.pop(state)
+  end
+
+  def resumed(state, _key), do: state
 end

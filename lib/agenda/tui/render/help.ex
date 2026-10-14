@@ -18,7 +18,8 @@ defmodule Agenda.TUI.Render.Help do
      F6            Item / section properties       ESC 6
      F7            Mark item (on a section: all)  ALT-F7 unmark all, ALT-J next
      F8 / F9       View manager / category manager
-     F10 or /      Menu
+     F10 or /      Menu (ESC backs up a level; ESC in a box
+                   it opened goes back to it)
      DEL           Remove from section or column   fn-⌫
      ALT-F4        Discard item                    CTRL-D
      ALT-M         Assign to a category (MakeAssign)   ESC m

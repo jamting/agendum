@@ -66,6 +66,7 @@ settings, as described in the second half of this guide.
 | Any function key Fn                                                                             | F1…F10                        | ESC then the digit (ESC 0 = F10)                                      |
 | ALT-F1…ALT-F10                                                                                  |                               | ESC then the shifted digit (`!` … `)`)                                |
 | Menu                                                                                            | F10                           | `/`                                                                   |
+| In the menu: back up a level; in a box, prompt or question opened from it: back to the menu       | ESC                           | ESC                                                                   |
 
 While typing text:
 

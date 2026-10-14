@@ -41,7 +41,7 @@ defmodule Agenda.TUI.CustomizeBoxTest do
     assert [{:save_preferences, "/prefs", %Preferences{key_map: false}}] = effects
     assert screen(state) =~ ~r/Display key map +: No/
 
-    {state, effects} = state |> press(:esc) |> key({:alt, "k"})
+    {state, effects} = state |> press(:enter) |> key({:alt, "k"})
     assert state.key_map
     assert [{:save_preferences, "/prefs", %Preferences{key_map: true}}] = effects
   end
