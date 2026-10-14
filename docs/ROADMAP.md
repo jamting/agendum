@@ -171,7 +171,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agenda.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
 - [x] API documentation with `ex_doc` (dev only): `mix docs` from the `@moduledoc`s and `@spec`s, for whoever builds on the core facade (ADR 0020)
 - [ ] The real Agenda for Claude to try: DOSBox Staging started by a script, keys sent with its `AUTOTYPE`, the window captured with `screencapture`, to check Agenda's behaviour and compare screens without asking the owner for screenshots (plan and what the owner sets up: [`docs/DOSBOX_STAGING.md`](DOSBOX_STAGING.md))
-- [ ] On GitHub: a private repository first, with the README and a guide for setting up and contributing (`CONTRIBUTING.md`, done), `mix check` on every push (GitHub Actions), and the documentation, guide, manual and a product page on GitHub Pages if the plan allows (decisions to make first, and the order of work: [`docs/GITHUB.md`](GITHUB.md))
+*[A page here was soaked in the creek. — Rabbit]*
 
 ## Beyond Agenda
 

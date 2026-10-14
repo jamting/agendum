@@ -1,7 +1,12 @@
 # Contributing to Wol's Agendum
 
 Thank you for helping. This guide gets you from a fresh machine to a
-first change. The rules for the code itself are in [`CLAUDE.md`](CLAUDE.md):
+first change.
+
+Agendum is not open source (see the README's Licence section). Before your
+first contribution, the owner will agree with you the terms it comes under,
+*[A page here was soaked in the creek. — Rabbit]*
+([`docs/GITHUB.md`](docs/GITHUB.md), section 7). The rules for the code itself are in [`CLAUDE.md`](CLAUDE.md):
 it is written for Claude, the AI assistant that has written much of the
 code with the owner, and it applies to people just the same.
 

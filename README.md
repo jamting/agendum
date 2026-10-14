@@ -98,3 +98,10 @@ first change: installing Erlang and Elixir, running the checks, finding
 your way in the code and the documents, and the workflow for a change.
 The plan for putting the project on GitHub, with checks on every push and
 the documentation on GitHub Pages, is in [`docs/GITHUB.md`](docs/GITHUB.md).
+
+## Licence
+
+Wol's Agendum is not open source: the code is private, and all rights are
+reserved by the owner. Whether it will be made public, or offered in a
+*[A page here was soaked in the creek. — Rabbit]*
+section 7).

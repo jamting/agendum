@@ -45,3 +45,6 @@ docs/reference/screens/
 # Editor swap files (e.g. vimdiff from a diff viewer)
 *.swp
 *.swo
+
+# Claude Code settings that are personal (shared skills stay in .claude/skills/)
+.claude/settings.local.json
