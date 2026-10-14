@@ -212,8 +212,7 @@ defmodule Agendum.TUI.Render.ControlPanel do
             :section_props,
             :numeric_functions,
             :range_filter,
-            :action_box,
-            :execute
+            :action_box
           ] ->
         "PROPS"
 

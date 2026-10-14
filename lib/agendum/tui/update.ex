@@ -444,9 +444,6 @@ defmodule Agendum.TUI.Update do
   defp dispatch(state, %{type: :questions} = m, key),
     do: Agendum.TUI.Boxes.QuestionsBox.handle(state, m, key)
 
-  defp dispatch(state, %{type: :execute} = m, key),
-    do: Agendum.TUI.Boxes.ExecuteBox.handle(state, m, key)
-
   defp dispatch(state, %{type: :action_box} = m, key),
     do: Agendum.TUI.Boxes.ActionBox.handle(state, m, key)
 

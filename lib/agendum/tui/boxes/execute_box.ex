@@ -11,19 +11,37 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
   only, or old and new). SPACE changes a setting (on the first row: picks
   the category); the arrows move; ENTER runs it, ESC
   cancels. ALT-X runs everything on all items; ALT-E runs the highlighted
-  category's family on all items. Pure.
+  category's family on all items. Drawn from `@layout`
+  (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
 
   alias Agendum.Core
+  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
   alias Agendum.TUI.{CategoryScreens, Layout, State}
 
-  @rows [:root, :against, :actions]
+  @layout """
+   Apply conditions of  : [root                              ]
+   Against              : [against                           ]
+   Apply actions to     : [actions                           ]
+  """
+
+  @rows Template.fields(@layout)
+  @grid Template.grid(@layout, @rows)
   @against [:all, :current, :marked, :section, :view]
 
-  def rows, do: @rows
+  @help %{
+    root: "Apply the conditions of this category and its children. SPACE picks a category.",
+    against:
+      "The items to apply them to: all, the current item, the marked ones, " <>
+        "the section or the view. SPACE.",
+    actions:
+      "Apply actions to new assignments only, or to old and new ones. SPACE switches. " <>
+        "ENTER runs it."
+  }
 
   def open(state),
     do:
@@ -35,8 +53,9 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
         cursor: 0
       })
 
+  @impl Box
   def handle(state, mode, key) do
-    row = Enum.at(@rows, mode.cursor)
+    row = field(state, mode)
 
     case key do
       :esc ->
@@ -46,7 +65,7 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
         state |> State.pop() |> run(mode.root, mode.against, mode.old)
 
       k when is_move(k) ->
-        BoxNav.move(state, mode, BoxNav.column(@rows), k)
+        BoxNav.move(state, mode, @grid, k)
 
       {:char, " "} when row == :root ->
         CategoryScreens.open_picker(state, :execute_root, nil)
@@ -110,8 +129,16 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
   defp items(state, :view),
     do: for(%{kind: :item} = r <- Layout.rows(state), uniq: true, do: r.item.id)
 
-  @doc "`{label, value}` for each row."
-  def lines(state, mode) do
+  @impl Box
+  def title(_state, _mode), do: "Execute conditions and actions"
+
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
+    Template.render(@layout, values(state, mode), selected: field(state, mode)) ++
+      [[], Box.hint(keys(state, mode), inner)]
+  end
+
+  defp values(state, mode) do
     root =
       if mode.root == state.db.main_id,
         do: "MAIN (all categories)",
@@ -126,14 +153,25 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
         view: "Items in view"
       }[mode.against]
 
-    [
-      {"Apply conditions of", root},
-      {"Against", against},
-      {"Apply actions to",
-       if(mode.old, do: "Old & new assignments", else: "New assignments only")}
-    ]
+    %{
+      root: root,
+      against: against,
+      actions: if(mode.old, do: "Old & new assignments", else: "New assignments only")
+    }
   end
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓←→", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Change the setting"},
+      {"ENTER", "Run"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
+
+  @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

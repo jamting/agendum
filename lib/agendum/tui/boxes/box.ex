@@ -74,6 +74,7 @@ defmodule Agendum.TUI.Boxes.Box do
     date_rule: Agendum.TUI.Boxes.DateRuleBox,
     date_settings: Agendum.TUI.Boxes.DateSettingsBox,
     display_format: Agendum.TUI.Boxes.DisplayFormatBox,
+    execute: Agendum.TUI.Boxes.ExecuteBox,
     file_props: Agendum.TUI.Boxes.FileProperties,
     input_format: Agendum.TUI.Boxes.InputFormatBox,
     macro_props: Agendum.TUI.Boxes.MacroProps

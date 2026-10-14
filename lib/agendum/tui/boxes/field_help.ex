@@ -17,7 +17,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.ColumnAddBox,
     Boxes.ColumnBox,
     Boxes.DatebookBox,
-    Boxes.ExecuteBox,
     Boxes.ItemColumnBox,
     Boxes.ItemProperties,
     Boxes.NumericFunctionsBox,
@@ -48,7 +47,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     numeric_functions: NumericFunctionsBox,
     range_filter: RangeFilterBox,
     action_box: ActionBox,
-    execute: ExecuteBox,
     props: Properties,
     item_props: ItemProperties
   }
@@ -210,15 +208,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       value:
         "Type the date (\"tomorrow\", read when the action runs) or the number. " <>
           "ENTER applies, DEL removes the action."
-    },
-    execute: %{
-      root: "Apply the conditions of this category and its children. SPACE picks a category.",
-      against:
-        "The items to apply them to: all, the current item, the marked ones, " <>
-          "the section or the view. SPACE.",
-      actions:
-        "Apply actions to new assignments only, or to old and new ones. SPACE switches. " <>
-          "ENTER runs it."
     },
     props: %{
       name: "The category's name. F2 (or SPACE) edits it.",
