@@ -24,7 +24,6 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
   @boxes [
     :customize,
     :file_props,
-    :display_format,
     :datebook_props,
     :sort,
     :section_props,

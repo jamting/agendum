@@ -230,7 +230,7 @@ or handles it.
     - **Global date settings** `:date_settings` (Global date settings): the
       week, quarter, year and times of day (R14e). `Agendum.TUI.Boxes.DateSettingsBox`.
       - **Display format** `:display_format` (Display format): how the file
-        shows dates, with a sample (R41, R41a). `Agendum.TUI.Boxes.FileProperties`, rows
+        shows dates, with a sample (R41, R41a). `Agendum.TUI.Boxes.DisplayFormatBox`, rows
         from `Agendum.TUI.Boxes.DateFormatRows`.
       - **Input format** `:input_format` (Input format): the person's number
         order, date separator and clock, saved as preferences (R41b).
@@ -327,7 +327,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:category_match`    | box           | `Agendum.TUI.Boxes.CategoryMatchBox`           | Advanced settings of a standard category         | R16b          |
 | `:file_props`        | box           | `Agendum.TUI.Boxes.FileProperties`             | File ▸ Properties                                | R55, R14e     |
 | `:date_settings`     | box           | `Agendum.TUI.Boxes.DateSettingsBox`            | File Properties ▸ Global date settings           | R14e          |
-| `:display_format`    | box           | `Agendum.TUI.Boxes.FileProperties`             | Global date settings ▸ Display format            | R41, R41a     |
+| `:display_format`    | box           | `Agendum.TUI.Boxes.DisplayFormatBox`           | Global date settings ▸ Display format            | R41, R41a     |
 | `:input_format`      | box           | `Agendum.TUI.Boxes.InputFormatBox`             | Global date settings or Customize ▸ Input format | R41b          |
 | `:customize`         | box           | `Agendum.TUI.Boxes.CustomizeBox`               | File ▸ Customize                                 | R40, R14c     |
 | `:calendars`         | box           | `Agendum.TUI.Boxes.CalendarsBox`               | File ▸ Transfer ▸ Calendars                      | R45           |

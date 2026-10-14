@@ -41,7 +41,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   @boxes %{
     customize: CustomizeBox,
     file_props: FileProperties,
-    display_format: FileProperties,
     datebook_props: DatebookBox,
     schedule: ScheduleBox,
     sort: SortBox,
@@ -87,20 +86,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   }
 
   # date format rows: the global Display Format and a date column's
-  @date_format %{
-    settings:
-      "Global defaults uses the file's date format; any change gives the column its own. " <>
-        "SPACE goes back to the global defaults.",
-    show: "Choose whether to display date, time, or both. SPACE for the next choice.",
-    day_of_week: "Choose whether to show the day of the week with the date. SPACE switches.",
-    order: "Choose the order of month, day and year in dates. SPACE for the next choice.",
-    separator: "Choose the character between the numbers of a date. SPACE for the next.",
-    clock: "Choose a 12-hour or a 24-hour clock for times. SPACE switches.",
-    am_pm: "Choose whether a 12-hour time shows am or pm. SPACE switches.",
-    time_separator: "Choose the character between hours and minutes. SPACE for the next.",
-    time_sep: "Choose the character between hours and minutes. SPACE for the next."
-  }
-
   @help %{
     customize: %{
       theme: "The colours Agendum draws with, in every file. SPACE for the next theme.",
@@ -131,7 +116,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
         "Press SPACE BAR to choose date and time formats to use as defaults throughout the file.",
       auto: "Press SPACE BAR to choose how items are assigned to categories by their text."
     },
-    display_format: @date_format,
     datebook_props: %{
       date_category: "The date category whose dates place items in the slots. SPACE picks one.",
       end_category:
@@ -192,7 +176,7 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
           "ALT-↑ ↓ moves it."
     },
     column_props:
-      Map.merge(@date_format, %{
+      Map.merge(Agendum.TUI.Boxes.DateFormatRows.help(), %{
         head: "Press F3 to pick a category or type a new one.",
         type:
           "The type of the column's category: standard, date or numeric. " <>

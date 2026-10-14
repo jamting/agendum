@@ -196,7 +196,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
   defp box_title(_state, %{type: :file_props}), do: "File properties"
-  defp box_title(_state, %{type: :display_format}), do: "Display format"
   defp box_title(_state, %{type: :customize}), do: "Customize (yours, for every file)"
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
@@ -582,23 +581,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_content(state, %{type: :file_props} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.FileProperties.content(state, mode)
-
-  defp box_content(state, %{type: :display_format} = mode, _inner, _max_rows) do
-    rows =
-      state
-      |> Agendum.TUI.Boxes.FileProperties.lines(:display_format)
-      |> Enum.with_index()
-      |> Enum.map(fn {{label, value}, i} ->
-        [
-          {:box, " " <> Draw.pad(label, 21) <> ": "},
-          {if(i == mode.cursor, do: :box_selected, else: :box), value}
-        ]
-      end)
-
-    # the sample under the display settings it shows
-    sample = " " <> Draw.pad("Sample", 21) <> ": " <> DateFormat.sample(state.db.date_format)
-    rows ++ [[], [{:box, sample}], [], [{:box, " SPACE next choice · arrows move"}]]
-  end
 
   defp box_content(state, %{type: :macros} = mode, _inner, max_rows) do
     rows =

@@ -10,8 +10,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
       (`Agendum.TUI.Boxes.Template`), Agenda's box (screenshot 130) with only the
       settings Agendum has
     * Global Date Settings (`Agendum.TUI.Boxes.DateSettingsBox`, R14e)
-    * Display Format (`:display_format`, R41): the Date Column Properties
-      rows (`Agendum.TUI.Boxes.DateFormatRows`), with a formatted sample below
+    * Display Format (`Agendum.TUI.Boxes.DisplayFormatBox`, R41)
 
   SPACE shows the next choice (or opens a "..." box), the arrows move
   between settings (`Agendum.TUI.Boxes.BoxNav`); every change applies at once
@@ -24,8 +23,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   alias Agendum.TUI.Boxes.BoxNav
 
   alias Agendum.Core
-  alias Agendum.Core.DateFormat
-  alias Agendum.TUI.{Boxes.DateFormatRows, State, Boxes.Template}
+  alias Agendum.TUI.{State, Boxes.Template}
 
   # Agenda's File Properties (screenshot 130), its other settings left out
   # until Agendum has them
@@ -37,11 +35,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
    SPACE next choice or open ... · arrows move
   """
 
-  @format_rows DateFormatRows.rows()
-  @rows %{
-    file_props: Template.fields(@layout),
-    display_format: @format_rows
-  }
+  @rows %{file_props: Template.fields(@layout)}
   # File Properties has two settings side by side; the others one a row
   defp grid(:file_props), do: Template.grid(@layout, @rows.file_props)
   defp grid(type), do: BoxNav.column(@rows[type])
@@ -61,17 +55,13 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   end
 
   defp change(state, :dates, _step), do: Agendum.TUI.Boxes.DateSettingsBox.open(state)
+  defp change(state, :display_format, _step), do: Agendum.TUI.Boxes.DisplayFormatBox.open(state)
   defp change(state, :auto, _step), do: Agendum.TUI.Boxes.AutoAssignBox.open(state)
 
   # two choices, so SPACE, → and ← all flip it
   defp change(state, :insert_columns, _step) do
     where = if state.db.insert_columns == :all, do: :section, else: :all
     State.change_db(state, Core.set_insert_columns(state.db, where))
-  end
-
-  defp change(state, row, step) do
-    format = DateFormat.cycle(state.db.date_format, row, step)
-    State.change_db(state, Core.set_date_format(state.db, format))
   end
 
   @doc "The File Properties box's lines, the highlighted setting selected."
@@ -85,11 +75,6 @@ defmodule Agendum.TUI.Boxes.FileProperties do
 
     Template.render(@layout, values, selected: Enum.at(@rows.file_props, mode.cursor))
   end
-
-  @doc "`{label, value}` for each row of the boxes inside File Properties."
-  def lines(state, type)
-
-  def lines(state, :display_format), do: DateFormatRows.lines(state.db.date_format)
 
   @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
   def field(_state, mode), do: Enum.at(@rows[mode.type], mode.cursor)

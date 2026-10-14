@@ -2,7 +2,7 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
   @moduledoc """
   The Global Date Settings box (File ▸ Properties ▸ Global date settings;
   User's Guide 7-13 to 7-17, SPEC R14e): Display format ... (the file's,
-  `Agendum.TUI.Boxes.FileProperties`), Input format ... (the person's own box,
+  `Agendum.TUI.Boxes.DisplayFormatBox`), Input format ... (the person's own box,
   `Agendum.TUI.Boxes.InputFormatBox`, R41b), then beginning and end of week,
   first quarter, beginning of year, month alone means, morning, afternoon
   and evening.
@@ -20,7 +20,7 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
 
   alias Agendum.Core
   alias Agendum.Core.{DateFormat, DateSettings}
-  alias Agendum.TUI.Boxes.{Box, BoxNav, FileProperties, InputFormatBox, Template}
+  alias Agendum.TUI.Boxes.{Box, BoxNav, DisplayFormatBox, InputFormatBox, Template}
   alias Agendum.TUI.State
   alias Agendum.TUI.Update.Prompts
 
@@ -75,7 +75,7 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
     end
   end
 
-  defp change(state, :display_format), do: FileProperties.open(state, :display_format)
+  defp change(state, :display_format), do: DisplayFormatBox.open(state)
   defp change(state, :input_format), do: InputFormatBox.open(state)
 
   # a time is typed, as Agenda's (SPACE asks for it)

@@ -72,6 +72,7 @@ defmodule Agendum.TUI.Boxes.Box do
     category_match: Agendum.TUI.Boxes.CategoryMatchBox,
     date_rule: Agendum.TUI.Boxes.DateRuleBox,
     date_settings: Agendum.TUI.Boxes.DateSettingsBox,
+    display_format: Agendum.TUI.Boxes.DisplayFormatBox,
     input_format: Agendum.TUI.Boxes.InputFormatBox,
     macro_props: Agendum.TUI.Boxes.MacroProps
   }

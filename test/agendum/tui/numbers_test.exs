@@ -5,7 +5,6 @@ defmodule Agendum.TUI.NumbersTest do
   import Agendum.TUIHelpers
   alias Agendum.Core
   alias Agendum.Core.{Database, NumberFormat}
-  alias Agendum.TUI.State
 
   @today ~D[2026-10-08]
 
