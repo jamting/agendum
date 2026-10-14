@@ -41,7 +41,6 @@ defmodule Agendum.TUI.Render do
     :customize,
     :calendars,
     :date_rule,
-    :category_match,
     :goto,
     :range_filter,
     :action_box,

@@ -14,8 +14,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
 
   alias Agendum.TUI.{
     Boxes.ActionBox,
-    Boxes.AutoAssignBox,
-    Boxes.CategoryMatchBox,
     Boxes.ColumnAddBox,
     Boxes.ColumnBox,
     Boxes.CustomizeBox,
@@ -46,7 +44,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     file_props: FileProperties,
     date_settings: FileProperties,
     display_format: FileProperties,
-    category_match: CategoryMatchBox,
     date_rule: DateRuleBox,
     datebook_props: DatebookBox,
     schedule: ScheduleBox,
@@ -156,10 +153,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       evening: "The time \"evening\" means in a date. SPACE asks for it."
     },
     display_format: @date_format,
-    category_match:
-      Map.new(AutoAssignBox.help(), fn {field, text} ->
-        {field, "Global: the file's setting. " <> text}
-      end),
     date_rule: %{
       assign:
         "When the category gets a date: never, from the clock as the item is entered or " <>

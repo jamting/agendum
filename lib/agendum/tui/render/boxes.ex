@@ -201,9 +201,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :customize}), do: "Customize (yours, for every file)"
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
-  defp box_title(state, %{type: :category_match, cat_id: id}),
-    do: "Advanced settings: " <> state.db.categories[id].name
-
   defp box_title(state, %{type: :date_rule, cat_id: id}),
     do: "Advanced settings: " <> state.db.categories[id].name
 
@@ -548,21 +545,6 @@ defmodule Agendum.TUI.Render.Boxes do
     |> Enum.map(fn {name, i} ->
       [{:box, " "}, {if(i == mode.cursor, do: :box_selected, else: :box), name}]
     end)
-  end
-
-  defp box_content(state, %{type: :category_match} = mode, _inner, _max_rows) do
-    rows =
-      state
-      |> Agendum.TUI.Boxes.CategoryMatchBox.lines(mode)
-      |> Enum.with_index()
-      |> Enum.map(fn {{label, value}, i} ->
-        [
-          {:box, " " <> Draw.pad(label, 24) <> ": "},
-          {if(i == mode.cursor, do: :box_selected, else: :box), value}
-        ]
-      end)
-
-    rows ++ [[], [{:box, " SPACE next choice · arrows move"}]]
   end
 
   defp box_content(state, %{type: :date_rule} = mode, _inner, _max_rows) do

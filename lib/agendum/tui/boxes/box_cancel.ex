@@ -26,7 +26,6 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
     :file_props,
     :date_settings,
     :display_format,
-    :category_match,
     :date_rule,
     :datebook_props,
     :sort,

@@ -69,6 +69,7 @@ defmodule Agendum.TUI.Boxes.Box do
   # refer to each other.
   @registry %{
     auto_assign: Agendum.TUI.Boxes.AutoAssignBox,
+    category_match: Agendum.TUI.Boxes.CategoryMatchBox,
     input_format: Agendum.TUI.Boxes.InputFormatBox,
     macro_props: Agendum.TUI.Boxes.MacroProps
   }

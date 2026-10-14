@@ -7,11 +7,13 @@ defmodule Agendum.TUI.Boxes.CategoryMatchBox do
   brackets) unless set. SPACE shows the next choice (the arrows move);
   every change applies at once and is one undo step. ENTER closes
   the box; ESC closes it and cancels its changes (`Agendum.TUI.Boxes.BoxCancel`).
-  Pure.
+  Drawn from `@layout` (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
+  alias Agendum.TUI.Boxes.{AutoAssignBox, Box, BoxNav, Template}
 
   alias Agendum.Core
   alias Agendum.TUI.State
@@ -24,24 +26,27 @@ defmodule Agendum.TUI.Boxes.CategoryMatchBox do
     ignore_suffixes: [:global, true, false],
     ignore_accents: [:global, true, false]
   ]
-  @rows Keyword.keys(@choices)
 
-  @labels %{
-    enabled: "Text matching",
-    match_on: "Match on",
-    strength: "Required match strength",
-    confirm: "Confirm assignments",
-    ignore_suffixes: "Ignore suffixes",
-    ignore_accents: "Ignore accents"
-  }
+  @layout """
+   Text matching           : [enabled                         ]
+   Match on                : [match_on                        ]
+   Required match strength : [strength                        ]
+   Confirm assignments     : [confirm                         ]
+   Ignore suffixes         : [ignore_suffixes                 ]
+   Ignore accents          : [ignore_accents                  ]
+  """
+
+  @rows Template.fields(@layout)
+  @grid Template.grid(@layout, @rows)
 
   def open(state, cat_id),
     do: State.push(state, %{type: :category_match, cat_id: cat_id, cursor: 0})
 
+  @impl Box
   def handle(state, mode, key) do
     case key do
       k when k in [:esc, :enter] -> State.pop(state)
-      k when is_move(k) -> BoxNav.move(state, mode, BoxNav.column(@rows), k)
+      k when is_move(k) -> BoxNav.move(state, mode, @grid, k)
       {:char, " "} -> change(state, mode, 1)
       _ -> state
     end
@@ -57,22 +62,39 @@ defmodule Agendum.TUI.Boxes.CategoryMatchBox do
     State.change_db(state, db)
   end
 
-  @doc "`{label, value}` for each row."
-  def lines(state, mode) do
+  @impl Box
+  def title(state, mode), do: "Advanced settings: " <> state.db.categories[mode.cat_id].name
+
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
+    Template.render(@layout, values(state, mode), selected: field(state, mode)) ++
+      [[], Box.hint(keys(state, mode), inner)]
+  end
+
+  # each setting the category's own, or Global with the file's in brackets
+  defp values(state, mode) do
     overrides = state.db.categories[mode.cat_id].match_overrides
 
     file =
       Map.put(Map.from_struct(state.db.match_settings), :confirm, state.db.confirm_assignments)
 
-    for field <- @rows do
-      value =
-        case Map.fetch(overrides, field) do
-          {:ok, value} -> name(field, value)
-          :error -> "Global (#{name(field, file[field])})"
-        end
+    Map.new(@rows, fn field ->
+      case Map.fetch(overrides, field) do
+        {:ok, value} -> {field, name(field, value)}
+        :error -> {field, "Global (#{name(field, file[field])})"}
+      end
+    end)
+  end
 
-      {@labels[field], value}
-    end
+  @impl Box
+  def keys(_state, _mode), do: Box.settings_keys()
+
+  # the file's settings' help, each starting with what Global means
+  @impl Box
+  def help do
+    AutoAssignBox.help()
+    |> Map.take(@rows)
+    |> Map.new(fn {field, text} -> {field, "Global: the file's setting. " <> text} end)
   end
 
   @doc ~S|The category manager's mark for a Match on of its own ("T= Note").|
@@ -100,6 +122,6 @@ defmodule Agendum.TUI.Boxes.CategoryMatchBox do
   defp name(:confirm, value),
     do: %{never: "Never", always: "Always", sometimes: "Sometimes"}[value]
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end
