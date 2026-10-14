@@ -10,7 +10,8 @@ defmodule Agendum.TUI.Boxes.FileProperties do
       (`Agendum.TUI.Boxes.Template`), Agenda's box (screenshot 130) with only the
       settings Agendum has
     * Global Date Settings (`Agendum.TUI.Boxes.DateSettingsBox`, R14e)
-    * Display Format (`Agendum.TUI.Boxes.DisplayFormatBox`, R41)
+    * Display Format (`Agendum.TUI.Boxes.DisplayFormatBox`, R41), from Global
+      Date Settings
 
   SPACE shows the next choice (or opens a "..." box), the arrows move
   between settings (`Agendum.TUI.Boxes.BoxNav`); every change applies at once
@@ -19,11 +20,13 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   either goes back to the box beneath. Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
 
   alias Agendum.Core
-  alias Agendum.TUI.{State, Boxes.Template}
+  alias Agendum.TUI.Boxes.{AutoAssignBox, Box, BoxNav, DateSettingsBox, Template}
+  alias Agendum.TUI.State
 
   # Agenda's File Properties (screenshot 130), its other settings left out
   # until Agendum has them
@@ -31,41 +34,51 @@ defmodule Agendum.TUI.Boxes.FileProperties do
    Insert new columns in:  [insert_columns ]
 
    Global date settings:   [dates]   Auto-assign settings:  [auto ]
-
-   SPACE next choice or open ... · arrows move
   """
 
-  @rows %{file_props: Template.fields(@layout)}
-  # File Properties has two settings side by side; the others one a row
-  defp grid(:file_props), do: Template.grid(@layout, @rows.file_props)
-  defp grid(type), do: BoxNav.column(@rows[type])
+  @rows Template.fields(@layout)
+  # two settings side by side, as Agenda's
+  @grid Template.grid(@layout, @rows)
 
-  def open(state, type \\ :file_props), do: State.push(state, %{type: type, cursor: 0})
+  @help %{
+    insert_columns:
+      "Choose to insert new columns in one or all sections in the view. " <>
+        "You can override when you add individual columns.",
+    dates:
+      "Press SPACE BAR to choose date and time formats to use as defaults throughout the file.",
+    auto: "Press SPACE BAR to choose how items are assigned to categories by their text."
+  }
 
+  def open(state), do: State.push(state, %{type: :file_props, cursor: 0})
+
+  @impl Box
   def handle(state, mode, key) do
-    rows = @rows[mode.type]
-    row = Enum.at(rows, mode.cursor)
-
     case key do
       k when k in [:esc, :enter] -> State.pop(state)
-      k when is_move(k) -> BoxNav.move(state, mode, grid(mode.type), k)
-      {:char, " "} -> change(state, row, 1)
+      k when is_move(k) -> BoxNav.move(state, mode, @grid, k)
+      {:char, " "} -> change(state, field(state, mode))
       _ -> state
     end
   end
 
-  defp change(state, :dates, _step), do: Agendum.TUI.Boxes.DateSettingsBox.open(state)
-  defp change(state, :display_format, _step), do: Agendum.TUI.Boxes.DisplayFormatBox.open(state)
-  defp change(state, :auto, _step), do: Agendum.TUI.Boxes.AutoAssignBox.open(state)
+  defp change(state, :dates), do: DateSettingsBox.open(state)
+  defp change(state, :auto), do: AutoAssignBox.open(state)
 
-  # two choices, so SPACE, → and ← all flip it
-  defp change(state, :insert_columns, _step) do
+  # two choices, so SPACE flips it
+  defp change(state, :insert_columns) do
     where = if state.db.insert_columns == :all, do: :section, else: :all
     State.change_db(state, Core.set_insert_columns(state.db, where))
   end
 
-  @doc "The File Properties box's lines, the highlighted setting selected."
-  def content(state, mode) do
+  @impl Box
+  def title(_state, _mode), do: "File properties"
+
+  # two columns of settings, as Agenda's (screenshot 130)
+  @impl Box
+  def width(state, _mode), do: min(state.width - 8, 72)
+
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
     values = %{
       insert_columns:
         if(state.db.insert_columns == :all, do: "All sections", else: "Current section"),
@@ -73,9 +86,22 @@ defmodule Agendum.TUI.Boxes.FileProperties do
       auto: "..."
     }
 
-    Template.render(@layout, values, selected: Enum.at(@rows.file_props, mode.cursor))
+    Template.render(@layout, values, selected: field(state, mode)) ++
+      [[], Box.hint(keys(state, mode), inner)]
   end
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
-  def field(_state, mode), do: Enum.at(@rows[mode.type], mode.cursor)
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓←→", "Setting", "Move between settings"},
+      {"SPACE", "Next", "Next choice or open ..."},
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
+
+  @impl Box
+  def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

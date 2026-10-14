@@ -26,7 +26,6 @@ defmodule Agendum.TUI.Update do
     CategoryScreens,
     Boxes.ColumnAddBox,
     Boxes.ColumnBox,
-    Boxes.FileProperties,
     Boxes.GoTo,
     History,
     Boxes.ItemProperties,
@@ -436,8 +435,6 @@ defmodule Agendum.TUI.Update do
 
   defp dispatch(state, %{type: :datebook_props} = m, key),
     do: Agendum.TUI.Boxes.DatebookBox.handle(state, m, key)
-
-  defp dispatch(state, %{type: :file_props} = m, key), do: FileProperties.handle(state, m, key)
 
   defp dispatch(state, %{type: :calendars} = m, key),
     do: Agendum.TUI.Boxes.CalendarsBox.handle(state, m, key)

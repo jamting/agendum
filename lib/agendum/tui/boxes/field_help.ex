@@ -19,7 +19,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.CustomizeBox,
     Boxes.DatebookBox,
     Boxes.ExecuteBox,
-    Boxes.FileProperties,
     Boxes.ItemColumnBox,
     Boxes.ItemProperties,
     Boxes.NumericFunctionsBox,
@@ -40,7 +39,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   # The box types and the module that knows their highlighted field
   @boxes %{
     customize: CustomizeBox,
-    file_props: FileProperties,
     datebook_props: DatebookBox,
     schedule: ScheduleBox,
     sort: SortBox,
@@ -107,14 +105,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       decimal: "The character before the decimals of a number you type. SPACE switches.",
       thousands:
         "The character between thousands in a number you type. SPACE for the next choice."
-    },
-    file_props: %{
-      insert_columns:
-        "Choose to insert new columns in one or all sections in the view. " <>
-          "You can override when you add individual columns.",
-      dates:
-        "Press SPACE BAR to choose date and time formats to use as defaults throughout the file.",
-      auto: "Press SPACE BAR to choose how items are assigned to categories by their text."
     },
     datebook_props: %{
       date_category: "The date category whose dates place items in the slots. SPACE picks one.",

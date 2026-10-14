@@ -165,7 +165,7 @@ defmodule Agendum.TUI.Render.Boxes do
   # File Properties and Column Properties have Agenda's two columns of
   # settings side by side (screenshots 130, 127)
   defp box_width(state, %{type: type})
-       when type in [:file_props, :column_props, :column_add, :item_column, :props],
+       when type in [:column_props, :column_add, :item_column, :props],
        do: min(state.width - 8, 72)
 
   defp box_width(state, _mode), do: min(state.width - 8, 60)
@@ -195,7 +195,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :alarm_list}), do: "Alarm list"
   defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
-  defp box_title(_state, %{type: :file_props}), do: "File properties"
   defp box_title(_state, %{type: :customize}), do: "Customize (yours, for every file)"
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
@@ -578,9 +577,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_content(state, %{type: :item_column} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.ItemColumnBox.content(state, mode)
-
-  defp box_content(state, %{type: :file_props} = mode, _inner, _max_rows),
-    do: Agendum.TUI.Boxes.FileProperties.content(state, mode)
 
   defp box_content(state, %{type: :macros} = mode, _inner, max_rows) do
     rows =

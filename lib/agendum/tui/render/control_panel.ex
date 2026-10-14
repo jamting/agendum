@@ -203,7 +203,6 @@ defmodule Agendum.TUI.Render.ControlPanel do
             :props,
             :choice,
             :item_props,
-            :file_props,
             :datebook_props,
             :schedule,
             :customize,
