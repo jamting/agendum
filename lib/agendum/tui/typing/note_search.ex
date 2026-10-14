@@ -19,11 +19,29 @@ defmodule Agendum.TUI.Typing.NoteSearch do
   The search starts at the cursor; when nothing is found there it
   continues from the top (or, backward, from the bottom). The note is
   saved when it is closed, so the whole edit is one undo step. The text
-  rules are `Agendum.Core.TextSearch`. Pure.
+  rules are `Agendum.Core.TextSearch`. The box is a box module
+  (`Agendum.TUI.Boxes.Box`), drawn from `@layout` (`Agendum.TUI.Boxes.Template`).
+  Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "SEARCH"
+
   alias Agendum.Core.TextSearch
+  alias Agendum.TUI.Boxes.{Box, Template}
   alias Agendum.TUI.{Typing.LineEdit, State, Typing.TextEdit}
+
+  # the replacement's rows only when Replace text is Yes
+  @layout """
+   Search for          : [text                                ]
+   Replace text        : [replace                             ]
+   Replace with        : [replacement                         ]
+   Direction           : [direction                           ]
+   Ignore case         : [ignore_case                         ]
+   Global replacement  : [global                              ]
+   Confirm replacement : [confirm                             ]
+
+   Finds the text anywhere · ALT-S in the note: next one
+  """
 
   @type settings :: %{
           text: String.t(),
@@ -66,6 +84,7 @@ defmodule Agendum.TUI.Typing.NoteSearch do
 
   # --- the box ---------------------------------------------------------------------
 
+  @impl Box
   def handle(state, mode, key) do
     rows = rows(mode)
     row = Enum.at(rows, mode.cursor)
@@ -109,21 +128,56 @@ defmodule Agendum.TUI.Typing.NoteSearch do
 
   defp change(settings, row), do: Map.update!(settings, row, &(not &1))
 
-  @doc "`{label, value}` for each row."
-  def lines(mode) do
+  @impl Box
+  def title(_state, _mode), do: "Search/Replace in note"
+
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
     s = mode.settings
     yes_no = &if(&1, do: "Yes", else: "No")
+    # the rows shown; a row not in them is left out (nil)
+    shown = rows(mode)
 
-    Enum.map(rows(mode), fn
-      :text -> {"Search for", {:line, mode.line}}
-      :replace -> {"Replace text", yes_no.(s.replace)}
-      :replacement -> {"Replace with", {:line, mode.replacement}}
-      :direction -> {"Direction", if(s.direction == :forward, do: "Forward", else: "Backward")}
-      :ignore_case -> {"Ignore case", yes_no.(s.ignore_case)}
-      :global -> {"Global replacement", yes_no.(s.global)}
-      :confirm -> {"Confirm replacement", yes_no.(s.confirm)}
-    end)
+    values =
+      %{
+        text: mode.line.text,
+        replace: yes_no.(s.replace),
+        replacement: mode.replacement.text,
+        direction: if(s.direction == :forward, do: "Forward", else: "Backward"),
+        ignore_case: yes_no.(s.ignore_case),
+        global: yes_no.(s.global),
+        confirm: yes_no.(s.confirm)
+      }
+      |> Map.new(fn {row, value} -> {row, if(row in shown, do: value)} end)
+
+    # the text row on the cursor is drawn as the line being typed
+    row = field(state, mode)
+
+    editing =
+      case row do
+        :text -> [editing: {:text, mode.line}]
+        :replacement -> [editing: {:replacement, mode.replacement}]
+        _ -> []
+      end
+
+    Template.render(@layout, values, [selected: row] ++ editing) ++
+      [Box.hint(keys(state, mode), inner)]
   end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓←→", "Setting", "Move between settings"},
+      {"SPACE", "Change", "Change the setting"},
+      {"ENTER", "Search"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: nil
+
+  @impl Box
+  def field(_state, mode), do: Enum.at(rows(mode), mode.cursor)
 
   # --- running it --------------------------------------------------------------------
   #

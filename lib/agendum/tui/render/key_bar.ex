@@ -309,14 +309,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Close"}
     ]
 
-  defp mode_keys(%{type: :note_search}),
-    do: [
-      {"↑↓←→", "Setting", "Move between settings"},
-      {"SPACE", "Change", "Change the setting"},
-      {"ENTER", "Search"},
-      {"ESC", "Cancel"}
-    ]
-
   # the settings boxes: one setting per line, SPACE cycles its choices
   defp mode_keys(%{type: type})
        when type in [

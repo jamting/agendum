@@ -31,7 +31,6 @@ defmodule Agendum.TUI.Render do
     :item_props,
     :group_profile,
     :scope,
-    :note_search,
     :calendars,
     :goto,
     :range_filter,

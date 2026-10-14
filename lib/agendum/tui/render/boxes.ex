@@ -91,8 +91,7 @@ defmodule Agendum.TUI.Render.Boxes do
     :viewmgr,
     :column_add,
     :range_filter,
-    :action_box,
-    :note_search
+    :action_box
   ]
   # boxes to choose one thing in
   @accept_boxes [
@@ -190,7 +189,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_title(_state, %{type: :scope}), do: "Marked items"
   defp box_title(_state, %{type: :alarm_list}), do: "Alarm list"
-  defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
   defp box_title(_state, %{type: :questions}), do: "Suggested assignments"
@@ -535,24 +533,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_content(state, %{type: :calendar} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.CalendarBox.lines(state, mode)
-
-  defp box_content(_state, %{type: :note_search} = mode, inner, _max_rows) do
-    rows =
-      mode
-      |> Agendum.TUI.Typing.NoteSearch.lines()
-      |> Enum.with_index()
-      |> Enum.map(fn {{label, value}, i} ->
-        label = [{:box, " " <> Draw.pad(label, 19) <> ": "}]
-
-        case value do
-          {:line, line} when i == mode.cursor -> label ++ Draw.input(line, inner - 23, :edit)
-          {:line, line} -> label ++ [{:box, line.text}]
-          text -> label ++ [{if(i == mode.cursor, do: :box_selected, else: :box), text}]
-        end
-      end)
-
-    rows ++ [[], [{:box, " Finds the text anywhere · ALT-S in the note: next one"}]]
-  end
 
   defp box_content(_state, %{type: :scope} = mode, _inner, _max_rows) do
     options = ["Marked items (#{length(mode.marked)})", "Current item"]
