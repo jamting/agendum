@@ -90,7 +90,6 @@ defmodule Agendum.TUI.Render.Boxes do
   ]
   # boxes to choose one thing in
   @accept_boxes [
-    :select_file,
     :scope,
     :confirm
   ]
@@ -141,9 +140,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   # the column's head is the box's first row, as in Agenda (screenshot 142)
 
-  defp box_title(state, %{type: :select_file} = mode),
-    do: Agendum.TUI.Boxes.SelectFile.title(mode, box_width(state, mode))
-
   defp box_content(state, %{type: type} = mode, inner, max_rows) when is_map_key(@boxes, type),
     do: @boxes[type].content(state, mode, inner, max_rows)
 
@@ -162,15 +158,6 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   # F3 on a setting (`Agendum.TUI.Boxes.BoxChoices`): its choices, one a line
-
-  defp box_content(state, %{type: :select_file} = mode, _inner, max_rows) do
-    rows =
-      state
-      |> Agendum.TUI.Boxes.SelectFile.lines(mode, max_rows)
-      |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
-
-    rows ++ [[{:box, " ENTER opens · type to narrow · F7 dates · ESC back"}]]
-  end
 
   defp box_content(_state, %{type: :scope} = mode, _inner, _max_rows) do
     options = ["Marked items (#{length(mode.marked)})", "Current item"]

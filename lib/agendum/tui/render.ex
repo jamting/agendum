@@ -20,7 +20,6 @@ defmodule Agendum.TUI.Render do
 
   @full_screen [:catmgr, :help, :note, :devtools]
   @boxes [
-    :select_file,
     :scope,
     :confirm,
     :viewmgr

@@ -17,8 +17,10 @@ defmodule Agendum.TUI.Boxes.SelectFile do
   `listed/3`); until then the box says it is reading. Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
+
   alias Agendum.Core.DateFormat
-  alias Agendum.TUI.{Typing.LineEdit, State}
+  alias Agendum.TUI.{Boxes.Box, Typing.LineEdit, State}
 
   @extensions %{
     retrieve: [".agendum", ".agenda"],
@@ -81,6 +83,7 @@ defmodule Agendum.TUI.Boxes.SelectFile do
     end
   end
 
+  @impl Box
   def handle(state, mode, key) do
     rows = rows(mode)
     last = max(length(rows) - 1, 0)
@@ -141,10 +144,11 @@ defmodule Agendum.TUI.Boxes.SelectFile do
 
   def rows(_mode), do: []
 
-  @doc "The box's title: the folder, its start left out when long."
-  def title(mode, width) do
+  # the folder, its start left out when long
+  @impl Box
+  def title(state, mode) do
     dir = mode.dir
-    room = max(width - 16, 10)
+    room = max(width(state, mode) - 16, 10)
 
     dir =
       if String.length(dir) > room, do: "…" <> String.slice(dir, -(room - 1)..-1//1), else: dir
@@ -152,8 +156,30 @@ defmodule Agendum.TUI.Boxes.SelectFile do
     "Select file: " <> dir
   end
 
-  @doc "The box's lines: `{style, text}`, the highlighted row selected."
-  def lines(state, mode, max_rows) do
+  @impl Box
+  def content(state, mode, _inner, max_rows) do
+    rows =
+      state
+      |> lines(mode, max_rows)
+      |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
+
+    rows ++ [[{:box, " ENTER opens · type to narrow · F7 dates · ESC back"}]]
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"ENTER", "Open", "Open the folder or pick the file"},
+      {"type", "Narrow", "Narrow the list"},
+      {"F7", "Dates", "Show the dates"},
+      {"ESC", "Back", "Back to the prompt"}
+    ]
+
+  @impl Box
+  def help, do: nil
+
+  # `{style, text}`, the highlighted row selected
+  defp lines(state, mode, max_rows) do
     body =
       case mode.entries do
         :reading ->

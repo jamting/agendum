@@ -136,14 +136,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Back", "Back to where it was"}
     ]
 
-  defp mode_keys(%{type: :select_file}),
-    do: [
-      {"ENTER", "Open", "Open the folder or pick the file"},
-      {"type", "Narrow", "Narrow the list"},
-      {"F7", "Dates", "Show the dates"},
-      {"ESC", "Back", "Back to the prompt"}
-    ]
-
   defp mode_keys(%{type: :searching}),
     do: [
       {"ALT-N", "Next", "Next match"},

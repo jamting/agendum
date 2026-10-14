@@ -190,7 +190,7 @@ defmodule Agendum.TUI.Render.ControlPanel do
       top && top.type in [:move_item, :column_move, :section_move] ->
         "MOVE"
 
-      top && top.type in [:scope, :select_file] ->
+      top && top.type in [:scope] ->
         "CHOICES"
 
       top && top.type == :browse ->
