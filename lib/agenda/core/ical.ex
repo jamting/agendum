@@ -3,13 +3,14 @@ defmodule Agenda.Core.ICal do
   Reads the events of an iCalendar file (RFC 5545, `.ics`), for calendar
   subscriptions (SPEC R45). Only what Agendum uses: each VEVENT's UID,
   SUMMARY, DESCRIPTION, DTSTART, DTEND (or DURATION), RRULE and STATUS;
-  other components
-  (VTODO, VTIMEZONE) and alarms inside events are skipped.
+  the calendar's own time zones (VTIMEZONE, `Agenda.Core.ICal.TimeZone`);
+  other components (VTODO) and alarms inside events are skipped.
 
   A start is `{:date, Date}` (an all-day event), `{:utc, NaiveDateTime}`
-  (a time ending in Z) or `{:local, NaiveDateTime}` (a floating time, or one
-  with a TZID, taken as the reader's local time: there is no time-zone
-  database to convert it). An end has the same forms; an all-day event's
+  (a time ending in Z, or one with a TZID the calendar defines, turned
+  into UTC by that zone's rules) or `{:local, NaiveDateTime}` (a floating
+  time, or one in a zone the calendar does not define, taken as the
+  reader's local time: there is no time-zone database). An end has the same forms; an all-day event's
   end is the day after its last (RFC 5545 3.6.1), and an end that cannot
   be read or comes before the start is nil. Pure.
   """
@@ -29,14 +30,20 @@ defmodule Agenda.Core.ICal do
     defstruct [:uid, :start, end: nil, summary: "", description: nil, rrule: nil, status: nil]
   end
 
+  alias Agenda.Core.ICal.TimeZone
+
   @doc "The calendar's events, in file order; `{:error, :not_ical}` for anything else."
   @spec parse(String.t()) :: {:ok, [Event.t()]} | {:error, :not_ical}
   def parse(text) do
     lines = text |> String.replace("\r\n", "\n") |> String.replace("\r", "\n") |> unfold()
 
-    if Enum.any?(lines, &(String.upcase(&1) == "BEGIN:VCALENDAR")),
-      do: {:ok, lines |> Enum.map(&content_line/1) |> events([], nil, 0)},
-      else: {:error, :not_ical}
+    if Enum.any?(lines, &(String.upcase(&1) == "BEGIN:VCALENDAR")) do
+      lines = Enum.map(lines, &content_line/1)
+      # the zones first: a VTIMEZONE may come after the events that use it
+      {:ok, events(lines, [], nil, 0, TimeZone.zones(lines))}
+    else
+      {:error, :not_ical}
+    end
   end
 
   # A line starting with a space or tab continues the one before (RFC 5545 3.1).
@@ -86,40 +93,41 @@ defmodule Agenda.Core.ICal do
     do: split_unquoted(rest, char, quoted, acc <> <<c::utf8>>)
 
   # Walks the lines: `event` is the VEVENT being read (its properties, first
-  # of each kind), `depth` how deep inside it a nested component is.
-  defp events([], acc, _event, _depth), do: Enum.reverse(acc)
+  # of each kind), `depth` how deep inside it a nested component is;
+  # `zones` the calendar's time zones, by TZID.
+  defp events([], acc, _event, _depth, _zones), do: Enum.reverse(acc)
 
-  defp events([{"BEGIN", _, v} | rest], acc, nil, 0) do
+  defp events([{"BEGIN", _, v} | rest], acc, nil, 0, zones) do
     if String.upcase(v) == "VEVENT",
-      do: events(rest, acc, %{}, 0),
-      else: events(rest, acc, nil, 0)
+      do: events(rest, acc, %{}, 0, zones),
+      else: events(rest, acc, nil, 0, zones)
   end
 
-  defp events([{"BEGIN", _, _} | rest], acc, event, depth) when event != nil,
-    do: events(rest, acc, event, depth + 1)
+  defp events([{"BEGIN", _, _} | rest], acc, event, depth, zones) when event != nil,
+    do: events(rest, acc, event, depth + 1, zones)
 
-  defp events([{"END", _, _} | rest], acc, event, depth) when event != nil and depth > 0,
-    do: events(rest, acc, event, depth - 1)
+  defp events([{"END", _, _} | rest], acc, event, depth, zones) when event != nil and depth > 0,
+    do: events(rest, acc, event, depth - 1, zones)
 
-  defp events([{"END", _, v} | rest], acc, event, 0) when event != nil do
+  defp events([{"END", _, v} | rest], acc, event, 0, zones) when event != nil do
     if String.upcase(v) == "VEVENT" do
-      case build(event) do
-        nil -> events(rest, acc, nil, 0)
-        e -> events(rest, [e | acc], nil, 0)
+      case build(event, zones) do
+        nil -> events(rest, acc, nil, 0, zones)
+        e -> events(rest, [e | acc], nil, 0, zones)
       end
     else
-      events(rest, acc, event, 0)
+      events(rest, acc, event, 0, zones)
     end
   end
 
-  defp events([{name, params, value} | rest], acc, event, 0) when event != nil,
-    do: events(rest, acc, Map.put_new(event, name, {params, value}), 0)
+  defp events([{name, params, value} | rest], acc, event, 0, zones) when event != nil,
+    do: events(rest, acc, Map.put_new(event, name, {params, value}), 0, zones)
 
-  defp events([_ | rest], acc, event, depth), do: events(rest, acc, event, depth)
+  defp events([_ | rest], acc, event, depth, zones), do: events(rest, acc, event, depth, zones)
 
-  defp build(props) do
+  defp build(props, zones) do
     with {params, value} <- props["DTSTART"],
-         {:ok, start} <- start(params, value) do
+         {:ok, start} <- start(params, value, zones) do
       summary = text(props["SUMMARY"]) || ""
 
       %Event{
@@ -127,7 +135,7 @@ defmodule Agenda.Core.ICal do
         summary: summary,
         description: text(props["DESCRIPTION"]),
         start: start,
-        end: ending(props, start),
+        end: ending(props, start, zones),
         rrule: with({_, rule} <- props["RRULE"], do: rrule(rule)),
         status: status(text(props["STATUS"]))
       }
@@ -138,11 +146,11 @@ defmodule Agenda.Core.ICal do
 
   # DTEND, else DTSTART plus DURATION; nil when neither is readable, or
   # when it is of another kind than the start or before it
-  defp ending(props, start) do
+  defp ending(props, start, zones) do
     finish =
       case {props["DTEND"], props["DURATION"]} do
         {{params, value}, _} ->
-          case start(params, value) do
+          case start(params, value, zones) do
             {:ok, at} -> at
             _ -> nil
           end
@@ -199,13 +207,17 @@ defmodule Agenda.Core.ICal do
         String.upcase(s)
       ]
 
-  defp start(params, value) do
+  defp start(params, value, zones) do
     cond do
       params["VALUE"] == "DATE" or String.length(value) == 8 -> date(value)
       String.ends_with?(value, "Z") -> with {:ok, t} <- datetime(value), do: {:ok, {:utc, t}}
-      true -> with {:ok, t} <- datetime(value), do: {:ok, {:local, t}}
+      true -> with {:ok, t} <- datetime(value), do: {:ok, zoned(t, zones[params["TZID"]])}
     end
   end
+
+  # a time in a zone the calendar defines becomes UTC; any other stays local
+  defp zoned(at, nil), do: {:local, at}
+  defp zoned(at, zone), do: {:utc, TimeZone.to_utc(zone, at)}
 
   defp date(<<y::binary-4, m::binary-2, d::binary-2>>) do
     with {y, ""} <- Integer.parse(y),

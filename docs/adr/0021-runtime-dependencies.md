@@ -53,7 +53,8 @@ Runtime dependencies taken so far: none.
 - Choices become judgements against stated criteria. The first one is time
   zones in calendar subscriptions: reading each calendar's own `VTIMEZONE`
   definitions needs no package at all and is preferred; `tz` would pass
-  the criteria if that falls short.
+  the criteria if that falls short. (Done that way, with no package:
+  `Agenda.Core.ICal.TimeZone`.)
 - The escript must still be checked to run on its own after adding any
   dependency (build it and start it outside the project directory).
 - `mix escript.build` always builds for prod (`preferred_envs` in

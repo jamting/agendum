@@ -4,8 +4,9 @@ defmodule Agenda.CalendarFetch do
   downloads it over HTTPS with the system's certificates (OTP's `:httpc`,
   no other dependency), reads its events (`Agenda.Core.ICal`), and turns
   times given in UTC into local time by the operating system's rules.
-  Times in a named zone are taken as local time (there is no time-zone
-  database). Errors come back as a short sentence for the person.
+  Times in a named zone arrive in UTC already when the calendar defines
+  the zone (`Agenda.Core.ICal.TimeZone`), else as local time (there is no
+  time-zone database). Errors come back as a short sentence for the person.
   """
 
   alias Agenda.Core.ICal

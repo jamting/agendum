@@ -1111,8 +1111,14 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   step; a scheduled read is quiet unless something changed. Reading
   happens in the background (the screen does not wait), with the
   system's certificates checked. Our choices: there is no time-zone
-  database, so times in a named zone are taken as local time and UTC
-  times are converted by the system's rules; alarms, attendees and
+  database; a time in a named zone is converted by the calendar's own
+  definition of that zone (VTIMEZONE: its offsets and yearly
+  daylight-saving rules, as calendars from Google, Apple and Microsoft
+  include them) to UTC, and UTC times to local time by the system's rules;
+  a zone the calendar does not define is taken as local time. A repeating
+  event keeps the local time of its first occurrence, so where the
+  calendar's zone and yours change to summer time on different days, a
+  few weeks of a year may be an hour off; alarms, attendees and
   exceptions to repeating events are not read. Subscriptions are saved
   in the file and in its JSON.
 - **R46 ✅ Pop-up calendar** (User's Guide 6-14 to 6-17; Help "Use the

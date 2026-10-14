@@ -107,7 +107,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 - [x] JSON export/import: the modern, human-readable format; round-trips everything in a file (R44, `docs/JSON_FORMAT.md`)
 - [x] iCal import: subscribe to calendars on the web, read on a schedule or on request, mirrored into items (R45)
-- [ ] Time zones in calendar subscriptions: an event with a TZID is now taken as local time, so a calendar from another zone shows the wrong hours; read the calendar's own `VTIMEZONE` definitions (offsets and daylight-saving rules) in `Agenda.Core.ICal` and convert to local time, with no package (ADR 0021)
+- [x] Time zones in calendar subscriptions: a time with a TZID is converted by the calendar's own `VTIMEZONE` definitions (offsets and yearly daylight-saving rules or RDATEs, `Agenda.Core.ICal.TimeZone`) to UTC, then to local time; a zone the calendar does not define stays local time; no package (ADR 0021) (R45)
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
 - [ ] Optional: Import of structured text files (one item per line, with categories)
 - [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files)
