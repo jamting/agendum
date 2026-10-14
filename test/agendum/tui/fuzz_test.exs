@@ -145,6 +145,9 @@ defmodule Agendum.TUI.FuzzTest do
   # large TUI change: FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs
   @runs String.to_integer(System.get_env("FUZZ_RUNS", "300"))
 
+  # ExUnit's 60 seconds per test, for every 300 runs
+  @tag timeout: 60_000 * max(1, div(@runs, 300))
+
   property "the UI survives any key sequence" do
     check all(
             keys <- list_of(key(), max_length: 60),
