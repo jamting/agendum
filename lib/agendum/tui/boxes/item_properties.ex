@@ -17,15 +17,42 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
     * F3 opens the assignment profile; ENTER or F6 closes the box, ESC
       closes it and cancels its changes (`Agendum.TUI.Boxes.BoxCancel`)
 
-  Pure, like the rest of the TUI state machine.
+  The text, note and statistics are drawn from `@layout`
+  (`Agendum.TUI.Boxes.Template`), the dependencies and assignments listed below
+  them. Pure, like the rest of the TUI state machine.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
 
   alias Agendum.Core
+  alias Agendum.Core.{DateFormat, NumberFormat, Recurrence}
+  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
   alias Agendum.TUI.{CategoryScreens, Typing.Completion, Typing.LineEdit, State, Typing.TextEdit}
+  alias Agendum.TUI.Render.View
+  alias Agendum.TUI.Terminal.Draw
   alias Agendum.TUI.Update.{Editing, Prompts}
+
+  @layout """
+   Item text   : [text                                        ]
+   Note        : [note                                        ]
+   Statistics  : [stats                                       ]
+  """
+
+  @help %{
+    text: "The item's text. F2 edits it.",
+    note: "The item's note. SPACE (or F2) opens it.",
+    stats: "When the item was entered and last changed.",
+    prerequisite: "An item this one depends on. SPACE shows it, DEL removes the dependency.",
+    dependent: "An item that depends on this one. SPACE shows it, DEL removes the dependency.",
+    assigned:
+      "A category the item is assigned to. DEL breaks the assignment; F4 " <>
+        "changes a date or number.",
+    add:
+      "Type a category name to assign the item to it. ENTER accepts, INS makes a new one, " <>
+        "F3 shows the profile."
+  }
 
   def open(state, item_id),
     do: State.push(state, %{type: :item_props, item_id: item_id, cursor: 0})
@@ -41,6 +68,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
 
   # --- keys ---------------------------------------------------------------------
 
+  @impl Box
   def handle(%State{edit: edit} = state, mode, key) when edit != nil,
     do: edit_key(state, mode, key)
 
@@ -242,7 +270,165 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
     end
   end
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  # --- the box -------------------------------------------------------------------
+
+  @impl Box
+  def title(_state, _mode), do: "Item properties"
+
+  @impl Box
+  def content(state, mode, inner, max_rows) do
+    item = state.db.items[mode.item_id]
+    rows = rows(state, mode)
+    cursor = min(mode.cursor, length(rows) - 1)
+    row = Enum.at(rows, cursor)
+    value_width = inner - 16
+    assignments = Core.item_assignments(state.db, item.id)
+    entered = DateFormat.date(item.entry, state.db.date_format)
+
+    values = %{
+      text: item.text,
+      note: if(item.note == "", do: "(none)", else: item.note |> String.split("\n") |> hd()),
+      stats: "#{Draw.count(length(assignments), "category", "categories")} · entered #{entered}"
+    }
+
+    editing =
+      case state.edit do
+        %{target: {:item_text, _}, line: line} -> [editing: {:text, line}]
+        _ -> []
+      end
+
+    head = Template.render(@layout, values, [selected: row] ++ editing)
+
+    # the dependencies and assignments, each row labelled as the first of its kind
+    list =
+      rows
+      |> Enum.with_index()
+      |> Enum.drop(3)
+      |> Enum.map(fn {row, i} ->
+        list_row(state, item, rows, assignments, row, i == cursor, value_width)
+      end)
+
+    top = max(cursor - max_rows + 1, 0)
+    Enum.drop(head ++ list, top) ++ [[], hint(state, mode, inner)]
+  end
+
+  defp list_row(state, item, rows, assignments, row, selected, value_width) do
+    # the name being typed shows on the highlighted assignment or the add row
+    assign_row = row == :add or (selected and is_tuple(row))
+
+    {label, value} =
+      case row do
+        {kind, id} when kind in [:prerequisite, :dependent] ->
+          {dependency_label(rows, row), dependency_text(state.db, id)}
+
+        {:assigned, a} ->
+          {if(a == hd(assignments), do: "Assigned to", else: ""), assignment_text(state, a, item)}
+
+        :add ->
+          {if(assignments == [], do: "Assigned to", else: ""), "(type a category name to add)"}
+      end
+
+    value_part =
+      case state.edit do
+        %{target: {:assign_category, _}} when assign_row ->
+          View.completion_field(state, state.edit.line, value_width)
+
+        _ ->
+          [{if(selected, do: :box_selected, else: :box), String.slice(value, 0, value_width)}]
+      end
+
+    separator = if label == "", do: "  ", else: ": "
+    [{:box, " " <> Draw.pad(label, 12) <> separator}] ++ value_part
+  end
+
+  # One assignment in the Item Properties box: "When (2026-10-13)",
+  # "Anna Lasky (c)" for a conditional one.
+  defp assignment_text(%{db: db}, %{category: id}, item) when id == db.special.when do
+    db.categories[id].name <>
+      " (#{DateFormat.date_time(item.when, item.when_time, db.date_format)})" <>
+      recurrence_note(item) <> alarm_note(item)
+  end
+
+  defp assignment_text(state, a, _item), do: assignment_text(state, a)
+
+  # R43: the first row of each kind is labelled
+  defp dependency_label(rows, {kind, _} = row) do
+    cond do
+      Enum.find(rows, &match?({^kind, _}, &1)) != row -> ""
+      kind == :prerequisite -> "Depends on"
+      true -> "Needed by"
+    end
+  end
+
+  defp dependency_text(db, id) do
+    item = db.items[id]
+    if item.done, do: "√ " <> item.text, else: item.text
+  end
+
+  defp recurrence_note(%{recurrence: nil}), do: ""
+  defp recurrence_note(%{recurrence: rule}), do: " · " <> Recurrence.describe(rule)
+
+  defp alarm_note(%{alarm_minutes: nil}), do: ""
+  defp alarm_note(%{alarm_minutes: m}), do: " · alarm #{m} min before"
+
+  defp assignment_text(state, %{category: id, kind: :numeric, number: number}) do
+    number =
+      NumberFormat.format(
+        number,
+        %NumberFormat{},
+        State.number_opts(state)
+      )
+
+    "#{state.db.categories[id].name} (#{number})"
+  end
+
+  defp assignment_text(%{db: db}, %{category: id, kind: kind, date: date}) do
+    name = db.categories[id].name
+
+    case kind do
+      :date -> "#{name} (#{DateFormat.date(date, db.date_format)})"
+      :conditional -> name <> " (c)"
+      :explicit -> name
+    end
+  end
+
+  # while a category name is typed: what ENTER will do; else the box's keys
+  defp hint(state, mode, inner) do
+    case state.edit do
+      %{target: {:assign_category, _}} ->
+        n = length(Completion.matches(state))
+        text = String.trim(state.edit.line.text)
+
+        text =
+          cond do
+            text == "" -> "Type a category name"
+            n == 0 -> "New category: #{text} · ENTER creates it"
+            true -> "#{n} match · ENTER accepts · F8/F7 cycle · INS new"
+          end
+
+        [{:box, " " <> text}]
+
+      _ ->
+        Box.hint(keys(state, mode), inner)
+    end
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"F2", "Edit", "Edit the text"},
+      {"DEL", "Remove", "Remove the assignment"},
+      {"type", "To assign", "Assign to a category"},
+      {"F4", "Date", "Set the date"},
+      {"F3", "Profile", "Assignment profile"},
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
+
+  @impl Box
   def field(state, mode) do
     rows = rows(state, mode)
 

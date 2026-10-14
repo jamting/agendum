@@ -83,6 +83,7 @@ defmodule Agendum.TUI.Boxes.Box do
     file_props: Agendum.TUI.Boxes.FileProperties,
     input_format: Agendum.TUI.Boxes.InputFormatBox,
     item_column: Agendum.TUI.Boxes.ItemColumnBox,
+    item_props: Agendum.TUI.Boxes.ItemProperties,
     macro_props: Agendum.TUI.Boxes.MacroProps,
     note_search: Agendum.TUI.Typing.NoteSearch,
     numeric_functions: Agendum.TUI.Boxes.NumericFunctionsBox,

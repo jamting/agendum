@@ -6,8 +6,8 @@ defmodule Agendum.TUI.Render.Boxes do
   """
 
   alias Agendum.Core.DateFormat
-  alias Agendum.TUI.{Boxes.Box, Typing.Completion, Terminal.Draw, State}
-  alias Agendum.TUI.Render.{CategoryBoxes, View}
+  alias Agendum.TUI.{Boxes.Box, Terminal.Draw, State}
+  alias Agendum.TUI.Render.CategoryBoxes
 
   # boxes with a module of their own (`Agendum.TUI.Boxes.Box`) draw themselves
   @boxes Box.registry()
@@ -159,7 +159,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_title(state, %{type: :picker, purpose: purpose}), do: picker_title(state, purpose)
 
-  defp box_title(_state, %{type: :item_props}), do: "Item properties"
   defp box_title(_state, %{type: :viewmgr}), do: "View Manager"
   # a question has no title, as Agenda's
   defp box_title(_state, %{type: :confirm}), do: ""
@@ -446,135 +445,6 @@ defmodule Agendum.TUI.Render.Boxes do
       end)
 
     [[{:box, " " <> scope_question(mode.action)}], []] ++ choices
-  end
-
-  defp box_content(state, %{type: :item_props} = mode, inner, max_rows) do
-    item = state.db.items[mode.item_id]
-    rows = Agendum.TUI.Boxes.ItemProperties.rows(state, mode)
-    cursor = min(mode.cursor, length(rows) - 1)
-    value_width = inner - 16
-    assignments = Agendum.Core.item_assignments(state.db, item.id)
-    entered = DateFormat.date(item.entry, state.db.date_format)
-
-    lines =
-      rows
-      |> Enum.with_index()
-      |> Enum.map(fn {row, i} ->
-        selected = i == cursor
-        # the name being typed shows on the highlighted assignment or the add row
-        assign_row = row == :add or (selected and is_tuple(row))
-
-        {label, value} =
-          case row do
-            :text ->
-              {"Item text", item.text}
-
-            :note ->
-              {"Note",
-               if(item.note == "", do: "(none)", else: item.note |> String.split("\n") |> hd())}
-
-            :stats ->
-              {"Statistics",
-               "#{Draw.count(length(assignments), "category", "categories")} · entered #{entered}"}
-
-            {kind, id} when kind in [:prerequisite, :dependent] ->
-              {dependency_label(rows, row), dependency_text(state.db, id)}
-
-            {:assigned, a} ->
-              {if(a == hd(assignments), do: "Assigned to", else: ""),
-               assignment_text(state, a, item)}
-
-            :add ->
-              {if(assignments == [], do: "Assigned to", else: ""),
-               "(type a category name to add)"}
-          end
-
-        value_part =
-          case state.edit do
-            %{target: {:item_text, _}} when row == :text ->
-              Draw.input(state.edit.line, value_width, :edit)
-
-            %{target: {:assign_category, _}} when assign_row ->
-              View.completion_field(state, state.edit.line, value_width)
-
-            _ ->
-              [{if(selected, do: :box_selected, else: :box), String.slice(value, 0, value_width)}]
-          end
-
-        separator = if label == "", do: "  ", else: ": "
-        [{:box, " " <> Draw.pad(label, 12) <> separator}] ++ value_part
-      end)
-
-    top = max(cursor - max_rows + 1, 0)
-    Enum.drop(lines, top) ++ [[], [{:box, " " <> item_props_hint(state)}]]
-  end
-
-  # One assignment in the Item Properties box: "When (2026-10-13)",
-  # "Anna Lasky (c)" for a conditional one.
-  defp assignment_text(%{db: db}, %{category: id}, item) when id == db.special.when do
-    db.categories[id].name <>
-      " (#{DateFormat.date_time(item.when, item.when_time, db.date_format)})" <>
-      recurrence_note(item) <> alarm_note(item)
-  end
-
-  defp assignment_text(state, a, _item), do: assignment_text(state, a)
-
-  # R43: the first row of each kind is labelled
-  defp dependency_label(rows, {kind, _} = row) do
-    cond do
-      Enum.find(rows, &match?({^kind, _}, &1)) != row -> ""
-      kind == :prerequisite -> "Depends on"
-      true -> "Needed by"
-    end
-  end
-
-  defp dependency_text(db, id) do
-    item = db.items[id]
-    if item.done, do: "√ " <> item.text, else: item.text
-  end
-
-  defp recurrence_note(%{recurrence: nil}), do: ""
-  defp recurrence_note(%{recurrence: rule}), do: " · " <> Agendum.Core.Recurrence.describe(rule)
-
-  defp alarm_note(%{alarm_minutes: nil}), do: ""
-  defp alarm_note(%{alarm_minutes: m}), do: " · alarm #{m} min before"
-
-  defp assignment_text(state, %{category: id, kind: :numeric, number: number}) do
-    number =
-      Agendum.Core.NumberFormat.format(
-        number,
-        %Agendum.Core.NumberFormat{},
-        State.number_opts(state)
-      )
-
-    "#{state.db.categories[id].name} (#{number})"
-  end
-
-  defp assignment_text(%{db: db}, %{category: id, kind: kind, date: date}) do
-    name = db.categories[id].name
-
-    case kind do
-      :date -> "#{name} (#{DateFormat.date(date, db.date_format)})"
-      :conditional -> name <> " (c)"
-      :explicit -> name
-    end
-  end
-
-  defp item_props_hint(state) do
-    case state.edit do
-      %{target: {:assign_category, _}} ->
-        n = length(Completion.matches(state))
-        text = String.trim(state.edit.line.text)
-
-        cond do
-          text == "" -> "Type a category name"
-          n == 0 -> "New category: #{text} · ENTER creates it"
-          true -> "#{n} match · ENTER accepts · F8/F7 cycle · INS new"
-        end
-
-      _ ->
-        "ENTER edit · DEL remove · type to assign · F3 profile"
-    end
   end
 
   defp section_name(state, index) do

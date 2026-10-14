@@ -202,17 +202,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Cancel"}
     ]
 
-  defp mode_keys(%{type: :item_props}),
-    do: [
-      {"F2", "Edit", "Edit the text"},
-      {"DEL", "Remove", "Remove the assignment"},
-      {"type", "Assign", "Assign to a category"},
-      {"F4", "Date", "Set the date"},
-      {"F3", "Profile", "Assignment profile"},
-      {"ENTER", "Done"},
-      {"ESC", "Cancel"}
-    ]
-
   defp mode_keys(%{type: :choice_list}),
     do: [{"↑↓", "Highlight", "Highlight a choice"}, {"ENTER", "Select"}, {"ESC", "Cancel"}]
 

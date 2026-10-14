@@ -26,7 +26,6 @@ defmodule Agendum.TUI.Update do
     CategoryScreens,
     Boxes.GoTo,
     History,
-    Boxes.ItemProperties,
     Layout,
     Menu,
     Boxes.SearchBox,
@@ -407,7 +406,6 @@ defmodule Agendum.TUI.Update do
     do: Agendum.TUI.DevTools.handle(state, m, key)
 
   defp dispatch(state, %{type: :move_item} = m, key), do: Marked.move_key(state, m, key)
-  defp dispatch(state, %{type: :item_props} = m, key), do: ItemProperties.handle(state, m, key)
   defp dispatch(state, %{type: :scope} = m, key), do: Marked.scope_key(state, m, key)
 
   defp dispatch(state, %{type: :calendar} = m, key), do: CalendarBox.handle(state, m, key)

@@ -5,27 +5,18 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   short description of the file. Press F2 to edit."). What a setting
   does, then the keys that change it.
 
-  Each box says which field is highlighted (its `field/2`); the texts are
-  here, so they read alike and are checked together: every one fits the
-  control panel's two lines at 80 columns. The texts follow Agenda's help
-  (its F1 help's SETTING/DESCRIPTION tables), with Agendum's keys. A box
-  without help here leaves the control panel as it was. Pure.
+  A box module (`Agendum.TUI.Boxes.Box`) keeps its help and says which field
+  is highlighted (`help/0`, `field/2`); the tests check every text here
+  together: each fits the control panel's two lines at 80 columns. The
+  texts follow Agenda's help (its F1 help's SETTING/DESCRIPTION tables),
+  with Agendum's keys. A box without help leaves the control panel as it
+  was. Pure.
   """
 
-  alias Agendum.TUI.{
-    Boxes.ItemProperties,
-    State
-  }
-
   alias Agendum.TUI.Boxes.Box
+  alias Agendum.TUI.State
 
-  # boxes with a module of their own keep their help there (`Agendum.TUI.Boxes.Box`)
   @registered Box.registry()
-
-  # The box types and the module that knows their highlighted field
-  @boxes %{
-    item_props: ItemProperties
-  }
 
   # Help for boxes that are lists: the same whatever is highlighted
   @lists %{
@@ -52,23 +43,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
         "type a date to go there; F6 adds a time."
   }
 
-  # date format rows: the global Display Format and a date column's
-  @help %{
-    item_props: %{
-      text: "The item's text. F2 edits it.",
-      note: "The item's note. SPACE (or F2) opens it.",
-      stats: "When the item was entered and last changed.",
-      prerequisite: "An item this one depends on. SPACE shows it, DEL removes the dependency.",
-      dependent: "An item that depends on this one. SPACE shows it, DEL removes the dependency.",
-      assigned:
-        "A category the item is assigned to. DEL breaks the assignment; F4 " <>
-          "changes a date or number.",
-      add:
-        "Type a category name to assign the item to it. ENTER accepts, INS makes a new one, " <>
-          "F3 shows the profile."
-    }
-  }
-
   @doc "The help for the highlighted field of the box on top, or nil."
   @spec text(State.t()) :: String.t() | nil
   def text(state) do
@@ -81,9 +55,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       %{type: type} when is_map_key(@registered, type) ->
         Box.help_text(@registered[type], state, mode)
 
-      %{type: type} when is_map_key(@boxes, type) ->
-        get_in(@help, [type, @boxes[type].field(state, mode)])
-
       %{type: type} ->
         @lists[type]
     end
@@ -91,20 +62,9 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
 
   @doc "Every help text, for the tests."
   @spec all() :: [String.t()]
-  def all,
-    do:
-      Map.values(@lists) ++
-        Enum.flat_map(Map.values(@help), &Map.values/1) ++
-        Enum.flat_map(Map.values(@registered), &Box.help_texts/1)
+  def all, do: Map.values(@lists) ++ Enum.flat_map(Map.values(@registered), &Box.help_texts/1)
 
-  @doc "The fields that have help, by box type, for the tests."
-  @spec fields() :: %{atom => [atom]}
-  def fields, do: Map.new(@help, fn {type, texts} -> {type, Map.keys(texts)} end)
-
-  @doc "The box types whose fields have help, with the module that names the field."
+  @doc "The box types with help for each field, with their modules, for the tests."
   @spec boxes() :: %{atom => module}
-  def boxes do
-    moved = for {type, box} <- @registered, is_map(box.help()), into: %{}, do: {type, box}
-    Map.merge(@boxes, moved)
-  end
+  def boxes, do: for({type, box} <- @registered, is_map(box.help()), into: %{}, do: {type, box})
 end

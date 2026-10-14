@@ -201,7 +201,6 @@ defmodule Agendum.TUI.Render.ControlPanel do
       top &&
           top.type in [
             :choice,
-            :item_props,
             :calendars
           ] ->
         "PROPS"
