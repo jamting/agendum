@@ -18,7 +18,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.DatebookBox,
     Boxes.ItemColumnBox,
     Boxes.ItemProperties,
-    Boxes.SectionBox,
     State
   }
 
@@ -31,7 +30,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   # The box types and the module that knows their highlighted field
   @boxes %{
     datebook_props: DatebookBox,
-    section_props: SectionBox,
     column_props: ColumnBox,
     column_add: ColumnAddBox,
     item_column: ItemColumnBox,
@@ -85,20 +83,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
           "read each time the view is shown. SPACE types it.",
       hide_column_heads: "Whether the column heads show above each section. SPACE switches.",
       section_separators: "Whether a line separates the sections. SPACE switches."
-    },
-    section_props: %{
-      head:
-        "Type a new or existing category name, or press F3 to pick one. " <>
-          "F6 shows the category's properties.",
-      sorting: "Press SPACE BAR to choose how the items in this section are sorted.",
-      statistics: "Press SPACE BAR to see how many items the section shows.",
-      numeric:
-        "Press SPACE BAR to choose the calculations (total, average…) " <>
-          "of the section's numeric columns.",
-      filter: "Show only items in (or not in) some categories. Press SPACE BAR to choose them.",
-      columns:
-        "The section's columns. INS adds one, DEL removes it from this section, " <>
-          "ALT-↑ ↓ moves it."
     },
     column_props:
       Map.merge(Agendum.TUI.Boxes.DateFormatRows.help(), %{

@@ -37,7 +37,6 @@ defmodule Agendum.TUI.Render do
     :column_props,
     :column_add,
     :item_column,
-    :section_props,
     :copy_items,
     :alarm_list,
     :choice_list,

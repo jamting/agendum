@@ -84,6 +84,7 @@ defmodule Agendum.TUI.Boxes.Box do
     range_filter: Agendum.TUI.Boxes.RangeFilterBox,
     schedule: Agendum.TUI.Boxes.ScheduleBox,
     search_box: Agendum.TUI.Boxes.SearchBox,
+    section_props: Agendum.TUI.Boxes.SectionBox,
     sort: Agendum.TUI.Boxes.SortBox
   }
 
@@ -122,17 +123,28 @@ defmodule Agendum.TUI.Boxes.Box do
   The hint at the bottom of a box `inner` wide: its keys from `c:keys/2`
   without the arrows and the ways to close it, which its bottom edge
   names; with the keys' fuller labels when they fit ("SPACE next choice"),
-  else the short ones ("SPACE change · F2 edit · DEL detach"). One list
-  for the key bar and the hint, so they cannot disagree.
+  else the short ones ("SPACE change · F2 edit · DEL detach"), and as many
+  of those as fit (the key bar has them all). One list for the key bar and
+  the hint, so they cannot disagree.
   """
   @spec hint([key_entry], pos_integer) :: Draw.line()
   def hint(keys, inner) do
     shown = Enum.reject(keys, fn entry -> closing?(entry) or moving?(elem(entry, 0)) end)
     # the fuller label is the last in an entry, the short one the second
     full = hint_text(shown, fn entry -> entry |> Tuple.to_list() |> List.last() end)
-    short = hint_text(shown, &elem(&1, 1))
+    fits? = &(String.length(&1) < inner - 1)
 
-    [{:box, " " <> if(String.length(full) < inner - 1, do: full, else: short)}]
+    text =
+      if fits?.(full),
+        do: full,
+        else: shown |> short_hints() |> Enum.find("", fits?)
+
+    [{:box, " " <> text}]
+  end
+
+  # the short hint of all the keys, then of one fewer, and so on
+  defp short_hints(keys) do
+    for n <- length(keys)..1//-1, do: hint_text(Enum.take(keys, n), &elem(&1, 1))
   end
 
   defp hint_text(keys, label),

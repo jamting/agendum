@@ -24,8 +24,10 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   `@layout` (`Agendum.TUI.Boxes.Template`), the columns listed below it. Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
+  alias Agendum.TUI.Boxes.{Box, BoxNav}
 
   alias Agendum.Core
   alias Agendum.Core.{View, ViewColumns, ViewModel}
@@ -53,7 +55,21 @@ defmodule Agendum.TUI.Boxes.SectionBox do
 
    Columns:
   """
-  @hint " SPACE opens · DEL removes · ALT-↑↓ moves · INS adds"
+
+  @help %{
+    head:
+      "Type a new or existing category name, or press F3 to pick one. " <>
+        "F6 shows the category's properties.",
+    sorting: "Press SPACE BAR to choose how the items in this section are sorted.",
+    statistics: "Press SPACE BAR to see how many items the section shows.",
+    numeric:
+      "Press SPACE BAR to choose the calculations (total, average…) " <>
+        "of the section's numeric columns.",
+    filter: "Show only items in (or not in) some categories. Press SPACE BAR to choose them.",
+    columns:
+      "The section's columns. INS adds one, DEL removes it from this section, " <>
+        "ALT-↑ ↓ moves it."
+  }
 
   @doc "Opens the box for section `sidx` of the current view."
   def open(state, sidx),
@@ -82,6 +98,7 @@ defmodule Agendum.TUI.Boxes.SectionBox do
 
   defp last(state, mode), do: length(fields(state, mode)) + length(slots(state, mode)) - 1
 
+  @impl Box
   def handle(state, mode, key) do
     if FieldTyping.typing?(mode),
       do: FieldTyping.key(state, mode, key, &typed/3),
@@ -210,12 +227,12 @@ defmodule Agendum.TUI.Boxes.SectionBox do
 
   # --- drawing ---
 
-  @doc "The box's title."
+  @impl Box
   def title(state, mode),
     do: "Section Properties: #{state.db.categories[section(state, mode).category_id].name}"
 
-  @doc "The box's lines, the highlighted row selected."
-  def content(state, mode) do
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
     section = section(state, mode)
     view = State.view(state)
     row = row(state, mode)
@@ -231,7 +248,7 @@ defmodule Agendum.TUI.Boxes.SectionBox do
     opts = [selected: row] ++ FieldTyping.editing(mode)
 
     Template.render(@layout, values, opts) ++
-      columns(state, view, mode, row) ++ [[], [{:box, @hint}]]
+      columns(state, view, mode, row) ++ [[], Box.hint(keys(state, mode), inner)]
   end
 
   defp filter(_state, []), do: "(none)"
@@ -257,7 +274,24 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   defp column_name(_state, %View.Column{title: title}) when is_binary(title), do: title
   defp column_name(state, column), do: state.db.categories[column.category_id].name
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"↑↓←→", "Setting", "Move between settings and columns"},
+      {"SPACE", "Open", "Open the setting"},
+      {"DEL", "Remove", "Remove the column from this section"},
+      {"ALT-↑↓", "Move", "Move the column"},
+      {"INS", "Add", "Add a column"},
+      {"F3", "Choices", "Pick the section head"},
+      {"F6", "Props", "The head category's properties"},
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
+
+  @impl Box
   def field(state, mode) do
     case row(state, mode) do
       {:slot, _} -> :columns

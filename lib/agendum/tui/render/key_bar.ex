@@ -192,19 +192,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Cancel"}
     ]
 
-  defp mode_keys(%{type: :section_props}),
-    do: [
-      {"↑↓←→", "Setting", "Move between settings and columns"},
-      {"SPACE", "Open", "Open the setting"},
-      {"F3", "Choices", "Pick the section head"},
-      {"F6", "Props", "The head category's properties"},
-      {"DEL", "Remove", "Remove the column from this section"},
-      {"ALT-↑↓", "Move", "Move the column"},
-      {"INS", "Add", "Add a column"},
-      {"ENTER", "Done"},
-      {"ESC", "Cancel"}
-    ]
-
   defp mode_keys(%{type: :alarm_list}),
     do: [{"DEL", "Remove past alarm"}, {"ALT-A", "Cancel alarm"}, {"ESC", "Close"}]
 

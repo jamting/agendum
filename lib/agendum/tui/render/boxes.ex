@@ -195,9 +195,6 @@ defmodule Agendum.TUI.Render.Boxes do
   # the column's head is the box's first row, as in Agenda (screenshot 142)
   defp box_title(_state, %{type: :column_props}), do: "Column Properties"
 
-  defp box_title(state, %{type: :section_props} = mode),
-    do: Agendum.TUI.Boxes.SectionBox.title(state, mode)
-
   defp box_title(_state, %{type: :copy_items}), do: "Copy"
 
   defp box_title(_state, %{type: :column_add}), do: "Column Add"
@@ -438,9 +435,6 @@ defmodule Agendum.TUI.Render.Boxes do
         [{:box, " F how often · A how far ahead"}]
       ]
   end
-
-  defp box_content(state, %{type: :section_props} = mode, _inner, _max_rows),
-    do: Agendum.TUI.Boxes.SectionBox.content(state, mode)
 
   defp box_content(state, %{type: :copy_items} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.CopyBox.lines(state, mode)
