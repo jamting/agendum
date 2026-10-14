@@ -51,3 +51,6 @@ docs/reference/screens/
 
 # session summaries from the end-session skill: the owner's own notes, for now
 docs/summaries/
+
+# Python bytecode from the research tools in tools/
+__pycache__/

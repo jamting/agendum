@@ -15,16 +15,24 @@ APPS/AGENDA (it is mounted as C:). Example:
     d.show()                        # print the screen
     d.keys("F10", "q"); d.stop()    # quit; TEST.AG is now in its saved layout
 
-See docs/AGENDA_FILE_FORMAT_LOG.md for how it was used.
+See DRIVING_AGENDA.md (this directory) for what works and what to watch out for,
+and docs/plans/AGENDA_FILE_FORMAT_LOG.md for how it was used.
 """
 import urllib.request, json, time, subprocess, os, re, base64
 S=os.environ.get("AGENDA_DOS_ROOT", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dos"))
 U="http://127.0.0.1:8765/api/v1/memory"
 DOSBOX="/Applications/DOSBox Staging.app/Contents/MacOS/dosbox"
-def rd(addr,n): return urllib.request.urlopen(f"{U}/{addr:#x}/{n}").read()
+def _http(req, tries=5):
+    # the DOSBox web server occasionally stalls a request; time out and retry
+    for i in range(tries):
+        try: return urllib.request.urlopen(req, timeout=5).read()
+        except (TimeoutError, OSError) as e:
+            if i == tries - 1: raise
+            time.sleep(0.3)
+def rd(addr,n): return _http(f"{U}/{addr:#x}/{n}")
 def wr(addr,data):
     r=urllib.request.Request(f"{U}/{addr:#x}",data=json.dumps({"data":base64.b64encode(bytes(data)).decode()}).encode(),method="PUT",headers={"Content-Type":"application/json"})
-    urllib.request.urlopen(r).read()
+    _http(r)
 def screen():
     d=rd(0xB8000,4000)
     return [''.join(chr(d[(r*80+c)*2]) if 32<=d[(r*80+c)*2]<127 else ('#' if d[(r*80+c)*2]>=128 else ' ') for c in range(80)).rstrip() for r in range(25)]
@@ -60,8 +68,8 @@ def idle(timeout=10):
         s=rd(0xB8000,4000)
         if h==t and s==last: stable+=1
         else: stable=0
-        if stable>=3: return
-        last=s; time.sleep(0.1)
+        if stable>=2: return
+        last=s; time.sleep(0.06)
       except Exception: return
 def keys(*ks,delay=0.03):
     """each arg: a named key like 'F10', 'ALT-x', 'CTRL-x' or a literal string ('t:text')"""
@@ -133,12 +141,63 @@ def select(text,key=None,maxn=40):
     """press key until the row containing text is highlighted (its attr differs from most rows)"""
     for _ in range(maxn):
         sc=screen()
-        rows=[r for r,l in enumerate(sc) if text in l]
-        if rows:
-            r=rows[0]; c=sc[r].index(text)
+        for r,l in enumerate(sc):
+            if r<2 or text not in l: continue
+            c=l.index(text)
             a=attr_at(r,c)
-            # compare with attr of a non-matching neighbour row in same column
+            # highlighted: its attribute differs from every other non-blank row in the same column
             others=[attr_at(rr,c) for rr in range(2,23) if rr!=r and sc[rr][c:c+1].strip()]
             if others and all(a!=o for o in others): return True
         keys(key)
     raise RuntimeError('not found '+text)
+
+# --- settings boxes and saving (see DRIVING_AGENDA.md) -----------------------
+def current_label(attr=0x3f):
+    """The label of the current field in a settings box: drawn with attribute 0x3F."""
+    m=rd(0xB8000,4000); out=[]
+    for r in range(1,23):
+        s="".join(chr(m[(r*80+c)*2]) for c in range(80) if m[(r*80+c)*2+1]==attr)
+        if s.strip(): out.append(s.strip())
+    return " | ".join(out)
+def current_row(attr=0x3f):
+    m=rd(0xB8000,4000)
+    for r in range(1,23):
+        if any(m[(r*80+c)*2+1]==attr and m[(r*80+c)*2]>32 for c in range(80)): return r
+def goto(label,key="DOWN",maxn=24):
+    """Move to the box field whose label contains `label`: down the left column, then the right."""
+    want=label.lower()
+    def here(): return want in current_label().lower()
+    if here(): return
+    for side in (None,"RIGHT","RIGHT","LEFT","LEFT"):
+        if side: keys(side)
+        seen=[]
+        for _ in range(maxn):
+            if here(): return
+            cl=(current_label(),current_row())
+            if seen.count(cl)>=2: break
+            seen.append(cl); keys(key)
+    show(); raise RuntimeError("field not found: "+label+" (at "+current_label()+")")
+def setf(label,presses=1,key="SPACE"):
+    """Go to a field and press SPACE (cycle a choice) `presses` times."""
+    goto(label)
+    for _ in range(presses): keys(key)
+def in_view(): return screen()[1].strip().startswith("View:")
+def home():
+    """ESC until the main view shows (cancels any open box or menu)."""
+    for _ in range(6):
+        if in_view(): return
+        keys("ESC"); idle()
+    raise RuntimeError("cannot get back to the view")
+def robust_save():
+    """File Save without quitting, checking the screen after each key (keys are occasionally lost)."""
+    for attempt in range(4):
+        home()
+        keys("F10"); idle()
+        if not screen()[0].strip().startswith("File"): continue
+        keys("f"); idle()
+        if not screen()[0].strip().startswith("Retrieve"): continue
+        keys("s"); idle()
+        if not any("Save File" in l for l in screen()): continue
+        keys("ENTER"); idle()
+        if in_view(): return
+    raise RuntimeError("save failed")
