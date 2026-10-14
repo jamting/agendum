@@ -107,6 +107,7 @@ defmodule Agendum.TUI.Boxes.Box do
     questions: Agendum.TUI.Boxes.QuestionsBox,
     range_filter: Agendum.TUI.Boxes.RangeFilterBox,
     schedule: Agendum.TUI.Boxes.ScheduleBox,
+    scope: Agendum.TUI.Update.Marked,
     search_box: Agendum.TUI.Boxes.SearchBox,
     section_props: Agendum.TUI.Boxes.SectionBox,
     select_file: Agendum.TUI.Boxes.SelectFile,

@@ -2,11 +2,14 @@ defmodule Agendum.TUI.Update.Marked do
   @moduledoc """
   Marked items (User's Guide 13-1 to 13-4): F7 and ALT-J, the box asking
   whether a command acts on the marked items or the current one, the bulk
-  commands, and moving items between sections (ALT-F10, R26). Pure.
+  commands, and moving items between sections (ALT-F10, R26). The box is
+  this module's (`Agendum.TUI.Boxes.Box`, `:scope`). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
+
   alias Agendum.Core
-  alias Agendum.TUI.{CategoryScreens, Terminal.Draw, Layout, State}
+  alias Agendum.TUI.{Boxes.Box, CategoryScreens, Terminal.Draw, Layout, State}
   alias Agendum.TUI.Update.{Actions, Prompts, ViewKeys}
 
   # --- marked items (User's Guide 13-1 to 13-4) ----------------------------------
@@ -64,8 +67,10 @@ defmodule Agendum.TUI.Update.Marked do
     end
   end
 
-  @doc "A key in the box asking whether a command acts on the marked items or the current one."
-  def scope_key(state, mode, key) do
+  # --- the box asking whether a command acts on the marked items or the current one
+
+  @impl Box
+  def handle(state, mode, key) do
     case key do
       k when k in [{:char, "m"}, {:char, "M"}] ->
         state |> State.pop() |> bulk(mode.action, mode.marked, mode.row)
@@ -89,6 +94,48 @@ defmodule Agendum.TUI.Update.Marked do
         state
     end
   end
+
+  @impl Box
+  def title(_state, _mode), do: "Marked items"
+
+  @impl Box
+  def content(_state, mode, _inner, _max_rows) do
+    options = ["Marked items (#{length(mode.marked)})", "Current item"]
+
+    choices =
+      options
+      |> Enum.with_index()
+      |> Enum.map(fn {label, i} ->
+        [{:box, "   "}, {if(i == mode.cursor, do: :box_selected, else: :box), " #{label} "}]
+      end)
+
+    [[{:box, " " <> scope_question(mode.action)}], []] ++ choices
+  end
+
+  defp scope_question(action) do
+    case action do
+      :done -> "Mark as done:"
+      :discard -> "Discard:"
+      :remove -> "Remove from this section:"
+      :when -> "Set the When date of:"
+      :move_item -> "Move:"
+      :copy_item -> "Copy:"
+      :make_assign -> "Assign to a category:"
+      :profile -> "Show the assignments of:"
+    end
+  end
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"M", "Marked items"},
+      {"C", "Current item", "The highlighted item"},
+      {"ENTER", "Select"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: nil
 
   # The command for the highlighted item (what it did before marks existed).
   defp single(state, :done, row), do: ViewKeys.toggle_done(state, row)

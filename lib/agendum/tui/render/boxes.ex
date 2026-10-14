@@ -90,7 +90,6 @@ defmodule Agendum.TUI.Render.Boxes do
   ]
   # boxes to choose one thing in
   @accept_boxes [
-    :scope,
     :confirm
   ]
   # boxes that only show something
@@ -136,8 +135,6 @@ defmodule Agendum.TUI.Render.Boxes do
   # a question has no title, as Agenda's
   defp box_title(_state, %{type: :confirm}), do: ""
 
-  defp box_title(_state, %{type: :scope}), do: "Marked items"
-
   # the column's head is the box's first row, as in Agenda (screenshot 142)
 
   defp box_content(state, %{type: type} = mode, inner, max_rows) when is_map_key(@boxes, type),
@@ -158,30 +155,4 @@ defmodule Agendum.TUI.Render.Boxes do
   end
 
   # F3 on a setting (`Agendum.TUI.Boxes.BoxChoices`): its choices, one a line
-
-  defp box_content(_state, %{type: :scope} = mode, _inner, _max_rows) do
-    options = ["Marked items (#{length(mode.marked)})", "Current item"]
-
-    choices =
-      options
-      |> Enum.with_index()
-      |> Enum.map(fn {label, i} ->
-        [{:box, "   "}, {if(i == mode.cursor, do: :box_selected, else: :box), " #{label} "}]
-      end)
-
-    [[{:box, " " <> scope_question(mode.action)}], []] ++ choices
-  end
-
-  defp scope_question(action) do
-    case action do
-      :done -> "Mark as done:"
-      :discard -> "Discard:"
-      :remove -> "Remove from this section:"
-      :when -> "Set the When date of:"
-      :move_item -> "Move:"
-      :copy_item -> "Copy:"
-      :make_assign -> "Assign to a category:"
-      :profile -> "Show the assignments of:"
-    end
-  end
 end

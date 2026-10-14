@@ -402,7 +402,6 @@ defmodule Agendum.TUI.Update do
     do: Agendum.TUI.DevTools.handle(state, m, key)
 
   defp dispatch(state, %{type: :move_item} = m, key), do: Marked.move_key(state, m, key)
-  defp dispatch(state, %{type: :scope} = m, key), do: Marked.scope_key(state, m, key)
 
   defp dispatch(state, %{type: :browse} = m, key),
     do: Agendum.TUI.Moves.Browse.handle(state, m, key)
