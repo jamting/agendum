@@ -8,6 +8,10 @@ defmodule Mix.Tasks.Agendum.Starters do
       mix agendum.starters --samples          # tmp/planner-samples.agendum
       mix agendum.starters --samples --today 2026-10-12
       mix agendum.starters --output PATH      # somewhere else
+      mix agendum.starters --clinic           # tmp/hundred-acre-clinic.agendum
+
+  `--clinic` writes Christopher Robin's clinic (`Agendum.Starters.Clinic`,
+  an Easter egg also opened by `agendum --pooh`), dated from `--today`.
 
   `--samples` fills a copy with sample data for testing (never the
   committed file, so it goes to `tmp/` unless `--output` says otherwise).
@@ -22,15 +26,22 @@ defmodule Mix.Tasks.Agendum.Starters do
   @impl Mix.Task
   def run(args) do
     {opts, _rest} =
-      OptionParser.parse!(args, strict: [samples: :boolean, today: :string, output: :string])
+      OptionParser.parse!(args,
+        strict: [samples: :boolean, clinic: :boolean, today: :string, output: :string]
+      )
 
-    db =
-      if opts[:samples],
-        do: Planner.with_samples(Planner.build(), today(opts[:today])),
-        else: Planner.build()
+    {db, default} =
+      cond do
+        opts[:clinic] ->
+          {Agendum.Starters.Clinic.build(today(opts[:today])), "tmp/hundred-acre-clinic.agendum"}
 
-    default =
-      if opts[:samples], do: "tmp/planner-samples.agendum", else: "starters/planner.agendum"
+        opts[:samples] ->
+          {Planner.with_samples(Planner.build(), today(opts[:today])),
+           "tmp/planner-samples.agendum"}
+
+        true ->
+          {Planner.build(), "starters/planner.agendum"}
+      end
 
     path = opts[:output] || default
 

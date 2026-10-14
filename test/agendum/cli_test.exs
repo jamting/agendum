@@ -10,6 +10,8 @@ defmodule Agendum.CLITest do
 
     assert {:ok, %{file: nil, demo: true}} = CLI.parse_args(["--demo"], %{})
     assert {:ok, %{file: nil, demo: false, rabbit: true}} = CLI.parse_args(["--rabbit"], %{})
+    # an Easter egg: Christopher Robin's clinic
+    assert {:ok, %{file: nil, demo: false, pooh: true}} = CLI.parse_args(["--pooh"], %{})
     assert :help = CLI.parse_args(["--help"], %{})
     assert :help = CLI.parse_args(["-h"], %{})
   end

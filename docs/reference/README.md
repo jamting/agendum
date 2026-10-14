@@ -29,3 +29,8 @@
   against Getting Things Done's fixed "places", with links to further
   material (Tavis Ormandy's tour, Bob Newell's FAQ, Tools for Thought).
   Background on why the program still matters to people.
+- `1557.full.pdf`: Shea, Gordon, Hawkins, Kawchuk, Smith, "Pathology in the
+  Hundred Acre Wood: a neurodevelopmental perspective on A.A. Milne",
+  _CMAJ_ 163(12), 2000, 1557–1559. A tongue-in-cheek paper ("Research of the
+  Holiday Kind"), behind the diagnoses in the Easter egg `agendum --pooh`
+  (`Agendum.Starters.Clinic`), which disagrees with some of them.

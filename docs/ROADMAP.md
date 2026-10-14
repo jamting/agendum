@@ -142,6 +142,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] Its keystroke macros: Customize date settings, Hide/Display done items, Print current view (`Planner.Macros`; through Agendum's menus, without Agenda's {ALERT} boxes)
   - [x] `mix agendum.starters` writes `starters/planner.agendum`; `--samples` writes a copy with realistic sample data for testing (`tmp/planner-samples.agendum`; dates from `--today`, so the same day gives the same file)
   - [x] `starters/planner.agendum` committed; a test checks it is what the code builds; the README says to copy it
+- [x] An Easter egg and showcase: `agendum --pooh` opens Christopher Robin's psychotherapy clinic for the Hundred Acre Wood, mid-work (after Shea et al., CMAJ 2000, `docs/reference/1557.full.pdf`); `mix agendum.starters --clinic` writes it (`Agendum.Starters.Clinic`)
   - Left out: the macros Sort items in view and Create/Update contact list, which need the macro command language. The Contacts view that Create/Update contact list made is in the file instead, but it is not kept up to date: a new person needs a blank item in it by hand
 - [x] Themes from terminal colour schemes (`docs/THEMES.md`): Modus Operandi, Modus Vivendi, Alabaster, Zenburn, Ayu, Borland; the old `blue` theme removed (R40)
 - [x] Preferences file and File ▸ Customize (Utilities Customize): theme, date languages, input format (R40, R14c, R41b)
