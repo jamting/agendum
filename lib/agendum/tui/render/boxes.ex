@@ -155,12 +155,6 @@ defmodule Agendum.TUI.Render.Boxes do
        when type in [:copy_items, :choice_list],
        do: min(state.width - 8, 32)
 
-  # File Properties and Column Properties have Agenda's two columns of
-  # settings side by side (screenshots 130, 127)
-  defp box_width(state, %{type: type})
-       when type in [:props],
-       do: min(state.width - 8, 72)
-
   defp box_width(state, _mode), do: min(state.width - 8, 60)
 
   defp box_title(state, %{type: type} = mode) when is_map_key(@boxes, type),
@@ -225,9 +219,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
   defp box_title(state, %{type: :choice, cat_id: id}),
     do: "Make children of #{state.db.categories[id].name} mutually exclusive"
-
-  defp box_title(state, %{type: :props, cat_id: id}),
-    do: "Category properties: " <> state.db.categories[id].name
 
   # one title per picker purpose
   defp picker_title(_state, {:add_section, _, _}),
@@ -304,7 +295,7 @@ defmodule Agendum.TUI.Render.Boxes do
     do: @boxes[type].content(state, mode, inner, max_rows)
 
   defp box_content(state, %{type: type} = mode, inner, max_rows)
-       when type in [:picker, :profile, :group_profile, :choice, :props],
+       when type in [:picker, :profile, :group_profile, :choice],
        do: CategoryBoxes.content(state, mode, inner, max_rows)
 
   defp box_content(state, %{type: :viewmgr} = mode, inner, max_rows),

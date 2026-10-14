@@ -11,10 +11,14 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   shown, not a setting. Note, Statistics and Advanced settings show
   "...": SPACE opens each one's box, as in Agenda. Agenda's Note file is
   left out.
+
+  The box is a box module (`Agendum.TUI.Boxes.Box`).
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
+  alias Agendum.TUI.Boxes.{Box, BoxNav}
 
   alias Agendum.Core
   alias Agendum.Core.Database
@@ -52,11 +56,53 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   @doc "The settings, in the cursor's order (reading order)."
   def props_fields, do: @props
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @help %{
+    name: "The category's name. F2 (or SPACE) edits it.",
+    short_name:
+      "A short name for the category, also matched in item text. F2 (or SPACE) edits it.",
+    type: "Standard, date or numeric. SPACE changes a standard category's type.",
+    exclusive: "Whether an item can be in only one of the category's children. SPACE switches.",
+    match_name: "Assign items whose text mentions the category's name. SPACE switches.",
+    also_match:
+      "Other words and phrases, separated by semicolons, that assign items too. F2 edits.",
+    conditions:
+      "Assign items to the category when they are in (or not in) other categories. SPACE.",
+    also_assign:
+      "What happens to items that join the category: other categories, dates, numbers. SPACE.",
+    excludes:
+      "Categories that may not share items with this one: joining one leaves the other. SPACE.",
+    special:
+      "An action for items that join the category: mark them done, or discard them. SPACE.",
+    advanced: "Press SPACE BAR for how the category gets dates or matches item text.",
+    statistics: "Press SPACE BAR to display current statistics for the category.",
+    note: "The category's note. SPACE opens it."
+  }
+
+  @impl Box
   def field(_state, mode), do: Enum.at(@props, mode.cursor)
 
-  @doc "The box's lines, the highlighted setting selected (or being edited)."
-  def content(state, mode) do
+  @impl Box
+  def title(state, mode), do: "Category properties: " <> state.db.categories[mode.cat_id].name
+
+  # two columns of settings, as Agenda's (screenshot 74)
+  @impl Box
+  def width(state, _mode), do: min(state.width - 8, 72)
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"SPACE", "Change", "Change the setting"},
+      {"F2", "Edit", "Edit the name"},
+      {"ENTER", "Done"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: @help
+
+  # no hint inside: Agenda's box is full (screenshot 74); the key bar has the keys
+  @impl Box
+  def content(state, mode, _inner, _max_rows) do
     cat = state.db.categories[mode.cat_id]
     yes_no = fn b -> if b, do: "Yes", else: "No" end
 
@@ -96,8 +142,8 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
 
   # --- category properties -----------------------------------------------------------------------
 
-  @doc "Keys of Category Properties."
-  def props_key(%State{edit: edit} = state, mode, key) when edit != nil do
+  @impl Box
+  def handle(%State{edit: edit} = state, mode, key) when edit != nil do
     case key do
       :esc ->
         %{state | edit: nil}
@@ -126,7 +172,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
     end
   end
 
-  def props_key(state, mode, key) do
+  def handle(state, mode, key) do
     cat = state.db.categories[mode.cat_id]
 
     case key do

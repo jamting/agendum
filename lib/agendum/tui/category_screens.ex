@@ -20,7 +20,7 @@ defmodule Agendum.TUI.CategoryScreens do
   alias Agendum.Core
   alias Agendum.Core.Database
   alias Agendum.TUI.{Typing.LineEdit, State, Typing.TextEdit}
-  alias Agendum.TUI.CategoryScreens.{Choices, Manager, Picker, Profile, Properties}
+  alias Agendum.TUI.CategoryScreens.{Choices, Manager, Picker, Profile}
 
   # --- opening -------------------------------------------------------------------
 
@@ -93,7 +93,6 @@ defmodule Agendum.TUI.CategoryScreens do
 
   # --- dispatch ----------------------------------------------------------------------
 
-  def handle(state, %{type: :props} = mode, key), do: Properties.props_key(state, mode, key)
   def handle(state, %{type: :choice} = mode, key), do: Choices.choice_key(state, mode, key)
 
   def handle(%State{edit: edit} = state, mode, key) when edit != nil do

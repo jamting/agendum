@@ -25,7 +25,6 @@ defmodule Agendum.TUI.Render do
     :macros,
     :select_file,
     :profile,
-    :props,
     :choice,
     :item_props,
     :group_profile,

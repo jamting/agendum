@@ -202,14 +202,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Cancel"}
     ]
 
-  defp mode_keys(%{type: :props}),
-    do: [
-      {"SPACE", "Change", "Change the setting"},
-      {"F2", "Edit", "Edit the name"},
-      {"ENTER", "Done"},
-      {"ESC", "Cancel"}
-    ]
-
   defp mode_keys(%{type: :item_props}),
     do: [
       {"F2", "Edit", "Edit the text"},

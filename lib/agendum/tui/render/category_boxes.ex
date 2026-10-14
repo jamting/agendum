@@ -6,7 +6,7 @@ defmodule Agendum.TUI.Render.CategoryBoxes do
 
   alias Agendum.Core.Database
   alias Agendum.TUI.{CategoryScreens, Terminal.Draw, State}
-  alias Agendum.TUI.CategoryScreens.{Choices, Properties}
+  alias Agendum.TUI.CategoryScreens.Choices
   alias Agendum.TUI.Render.Text
 
   @doc "The content of one of these boxes, `inner` wide, at most `max_rows` of list."
@@ -53,9 +53,6 @@ defmodule Agendum.TUI.Render.CategoryBoxes do
     [[{:box, " " <> problem}], [], [{:box, " " <> question}]] ++
       choices ++ [[], [{:box, " " <> description}]]
   end
-
-  def content(state, %{type: :props} = mode, _inner, _max_rows),
-    do: Properties.content(state, mode)
 
   defp box_footer(state, %{type: :picker} = mode, inner) do
     case state.edit do

@@ -17,7 +17,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     State
   }
 
-  alias Agendum.TUI.CategoryScreens.Properties
   alias Agendum.TUI.Boxes.Box
 
   # boxes with a module of their own keep their help there (`Agendum.TUI.Boxes.Box`)
@@ -25,7 +24,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
 
   # The box types and the module that knows their highlighted field
   @boxes %{
-    props: Properties,
     item_props: ItemProperties
   }
 
@@ -59,27 +57,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
 
   # date format rows: the global Display Format and a date column's
   @help %{
-    props: %{
-      name: "The category's name. F2 (or SPACE) edits it.",
-      short_name:
-        "A short name for the category, also matched in item text. F2 (or SPACE) edits it.",
-      type: "Standard, date or numeric. SPACE changes a standard category's type.",
-      exclusive: "Whether an item can be in only one of the category's children. SPACE switches.",
-      match_name: "Assign items whose text mentions the category's name. SPACE switches.",
-      also_match:
-        "Other words and phrases, separated by semicolons, that assign items too. F2 edits.",
-      conditions:
-        "Assign items to the category when they are in (or not in) other categories. SPACE.",
-      also_assign:
-        "What happens to items that join the category: other categories, dates, numbers. SPACE.",
-      excludes:
-        "Categories that may not share items with this one: joining one leaves the other. SPACE.",
-      special:
-        "An action for items that join the category: mark them done, or discard them. SPACE.",
-      advanced: "Press SPACE BAR for how the category gets dates or matches item text.",
-      statistics: "Press SPACE BAR to display current statistics for the category.",
-      note: "The category's note. SPACE opens it."
-    },
     item_props: %{
       text: "The item's text. F2 edits it.",
       note: "The item's note. SPACE (or F2) opens it.",
