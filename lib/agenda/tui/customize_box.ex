@@ -120,7 +120,7 @@ defmodule Agenda.TUI.CustomizeBox do
     numbers = State.number_opts(state)
 
     %{
-      theme: state.theme |> Atom.to_string() |> String.capitalize(),
+      theme: Theme.label(state.theme),
       lang: String.capitalize(main.name()),
       fallback:
         case rest do

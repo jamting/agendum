@@ -131,6 +131,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] `mix agendum.starters` writes `starters/planner.agendum`; `--samples` writes a copy with realistic sample data for testing (`tmp/planner-samples.agendum`; dates from `--today`, so the same day gives the same file)
   - [x] `starters/planner.agendum` committed; a test checks it is what the code builds; the README says to copy it
   - Left out: the macros Sort items in view and Create/Update contact list, which need the macro command language. The Contacts view that Create/Update contact list made is in the file instead, but it is not kept up to date: a new person needs a blank item in it by hand
+- [x] Themes from terminal colour schemes (`docs/THEMES.md`): Modus Operandi, Modus Vivendi, Alabaster, Zenburn, Ayu (R40)
 - [x] Preferences file and File ▸ Customize (Utilities Customize): theme, date languages, input format (R40, R14c, R41b)
 - [x] More preferences (R54): key map on/off, kept (ALT-K); confirm mode; auto-save interval; decimal and thousands separators (Setting Up Agenda 1-25 to 1-31). Custom colours are not planned: we keep to themes (ADR 0022)
 - [x] Select File box (R51): pick a file from a list instead of typing its name, for File ▸ Retrieve (ALT-G, CTRL-O) and Write, and Transfer ▸ Import/Export: the folders and files of the current folder, ENTER opens a folder or chooses a file, `..` goes up, typing narrows the list; F7 shows dates, as Agenda's Select File box did (User's Guide 22-4 to 22-5)

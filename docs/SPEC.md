@@ -823,7 +823,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 - **R40 ✅ Colour themes** (Setting Up Agenda 1-25 to 1-31). The screen is
   drawn with a theme chosen at start: `classic` (the default: Agenda 2.0's
   colours, from screenshots of the real program, ADR 0018), `blue` (white
-  on blue) or `mono` (bold, dim, underline and reverse only).
+  on blue), `mono` (bold, dim, underline and reverse only), or one of five
+  terminal colour schemes (`docs/THEMES.md`): `modus_operandi`,
+  `modus_vivendi`, `alabaster`, `zenburn` and `ayu`.
   File ▸ Customize (Agenda's Utilities Customize) changes it at once and
   saves it in the person's preferences file (R41b); `--theme NAME` or
   `--mono` choose it for one session; the NO_COLOR environment variable
@@ -846,6 +848,15 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   - `blue` and `mono` have the same parts in their own colours: the control
     panel (black on cyan; reverse video), the highlighted line (bright blue;
     bold), box titles and dimmed titles, the faded screen behind a box.
+  - The terminal schemes share one layout in their own colours
+    (`Agenda.TUI.Theme.Palettes`): the screen in the scheme's background
+    and foreground; the control panel, menus and the line being edited in
+    its selection colours; the highlight in its cursor colours; the
+    highlighted line, boxes and the key bar on a tint of the background;
+    heads, entries and box frames in its blue. Exact on 24-bit terminals;
+    elsewhere they use the terminal's default colours and its ANSI
+    colours, so a terminal set to the same scheme still shows it. Typed
+    as `modus-operandi` or `Modus Operandi` too.
   - Our choices: the highlighted line is drawn in a lighter shade across
     the whole screen, so it shows when the highlight is in a column; Agenda
     put a » in front of it instead.

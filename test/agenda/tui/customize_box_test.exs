@@ -58,6 +58,12 @@ defmodule Agenda.TUI.CustomizeBoxTest do
     assert screen(state) =~ ~r/Theme +: Blue/
   end
 
+  test "a scheme's theme is shown by its name", %{state: state} do
+    state = %{state | theme: :mono} |> open_box() |> press(" ")
+    assert state.theme == :modus_operandi
+    assert screen(state) =~ ~r/Theme +: Modus Operandi/
+  end
+
   test "the date languages change how dates are read", %{state: state} do
     state = open_box(state)
     {state, _} = key(state, :down)

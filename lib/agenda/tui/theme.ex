@@ -14,11 +14,18 @@ defmodule Agenda.TUI.Theme do
     * `:mono` uses only bold, dim, underline and reverse video, for
       monochrome terminals, screen readers and NO_COLOR: the control panel
       in reverse video like the title bar, the highlighted line in bold
+    * `:modus_operandi`, `:modus_vivendi`, `:alabaster`, `:zenburn` and
+      `:ayu` take the colours of those terminal schemes (`docs/THEMES.md`),
+      all laid out alike by `Agenda.TUI.Theme.Palettes`: the screen in the
+      scheme's colours, the control panel and menus in its selection
+      colours, the highlight in its cursor colours, boxes on a tint
 
   A `:classic` style is a pair of the 16 VGA colours (plus `:tint`, the
-  background of the highlighted line). Terminals that say they take 24-bit
-  colour (`COLORTERM=truecolor`) get the VGA colours exactly; others get the
-  nearest of their 16 ANSI colours, whose shades depend on the terminal.
+  background of the highlighted line); a scheme's style is a pair of its
+  colour roles, perhaps with attributes (`{fg, bg, [:bold]}`). Terminals
+  that say they take 24-bit colour (`COLORTERM=truecolor`) get the colours
+  exactly; others get the nearest of their 16 ANSI colours, whose shades
+  depend on the terminal.
 
   Like Agenda, where Utilities Customize chose colour or monochrome for all
   files, the theme is the person's: File ▸ Customize, saved in their
@@ -26,10 +33,21 @@ defmodule Agenda.TUI.Theme do
   in the file.
   """
 
-  @type name :: :classic | :blue | :mono
+  alias Agenda.TUI.Theme.Palettes
+
+  @type name ::
+          :classic
+          | :blue
+          | :mono
+          | :modus_operandi
+          | :modus_vivendi
+          | :alabaster
+          | :zenburn
+          | :ayu
   @type depth :: :ansi16 | :truecolor
   @type colour :: atom
-  @type spec :: String.t() | {colour, colour}
+  @type attribute :: :bold | :dim | :reverse
+  @type spec :: String.t() | {colour, colour} | {colour, colour, [attribute]}
 
   # The VGA text-mode palette: {24-bit colour, ANSI foreground code}. An ANSI
   # background code is the foreground's plus 10.
@@ -53,6 +71,11 @@ defmodule Agenda.TUI.Theme do
     # not VGA: the highlighted line, a lighter grey than the screen
     tint: {"200;200;200", 97}
   }
+
+  # Each scheme's colours, in the same {24-bit colour, ANSI code} form
+  @palettes Map.new(Palettes.names(), &{&1, Palettes.palette(&1)})
+
+  @attributes %{bold: 1, dim: 2, reverse: 7}
 
   # SGR: 0 reset, 1 bold, 2 dim, 4 underline, 7 reverse; 30-37 fg, 40-47 bg, 90-97 bright fg
   @themes %{
@@ -193,18 +216,28 @@ defmodule Agenda.TUI.Theme do
     }
   }
 
+  # the schemes share one layout (Palettes.styles/0), in their own colours
+  @themes Map.merge(@themes, Map.new(Palettes.names(), &{&1, Palettes.styles()}))
+
   @doc "The theme names, default first."
   @spec names() :: [name]
-  def names, do: [:classic, :blue, :mono]
+  def names, do: [:classic, :blue, :mono | Palettes.names()]
 
   @doc "The style → spec map of a theme: SGR codes, or a pair of VGA colours."
   @spec styles(name) :: %{atom => spec}
   def styles(theme), do: Map.fetch!(@themes, theme)
 
-  @doc "A theme name typed by the user."
+  @doc "A theme's name as the user sees it: `:modus_operandi` → \"Modus Operandi\"."
+  @spec label(name) :: String.t()
+  def label(theme),
+    do: theme |> Atom.to_string() |> String.split("_") |> Enum.map_join(" ", &String.capitalize/1)
+
+  @doc ~S'A theme name typed by the user: "modus_operandi", "modus-operandi" or "Modus Operandi".'
   @spec parse(String.t()) :: {:ok, name} | :error
   def parse(text) do
-    case Enum.find(names(), &(Atom.to_string(&1) == String.downcase(text))) do
+    typed = text |> String.downcase() |> String.replace(["-", " "], "_")
+
+    case Enum.find(names(), &(Atom.to_string(&1) == typed)) do
       nil -> :error
       name -> {:ok, name}
     end
@@ -219,20 +252,22 @@ defmodule Agenda.TUI.Theme do
   @spec sgr(atom, name, depth) :: String.t()
   def sgr(style, theme \\ :classic, depth \\ :ansi16) do
     styles = styles(theme)
-    "\e[" <> codes(Map.get(styles, style, styles.normal), depth) <> "m"
+    "\e[" <> codes(Map.get(styles, style, styles.normal), palette(theme), depth) <> "m"
   end
 
-  defp codes(sgr, _depth) when is_binary(sgr), do: sgr
+  # the colours a theme's pairs name: a scheme's roles, or the VGA colours
+  defp palette(theme), do: Map.get(@palettes, theme, @colours)
 
-  defp codes({fg, bg}, :ansi16) do
-    {_, f} = Map.fetch!(@colours, fg)
-    {_, b} = Map.fetch!(@colours, bg)
-    "0;#{f};#{b + 10}"
+  defp codes(sgr, _palette, _depth) when is_binary(sgr), do: sgr
+  defp codes({fg, bg}, palette, depth), do: codes({fg, bg, []}, palette, depth)
+
+  defp codes({fg, bg, attributes}, palette, depth) do
+    # "0" resets, then e.g. ";1" for bold, before the colours
+    prefix = Enum.map_join(["0" | Enum.map(attributes, &@attributes[&1])], ";", &to_string/1)
+    prefix <> ";" <> colours(Map.fetch!(palette, fg), Map.fetch!(palette, bg), depth)
   end
 
-  defp codes({fg, bg}, :truecolor) do
-    {f, _} = Map.fetch!(@colours, fg)
-    {b, _} = Map.fetch!(@colours, bg)
-    "0;38;2;#{f};48;2;#{b}"
-  end
+  # An ANSI background code is the foreground's plus 10 (39, the default, too).
+  defp colours({_, f}, {_, b}, :ansi16), do: "#{f};#{b + 10}"
+  defp colours({f, _}, {b, _}, :truecolor), do: "38;2;#{f};48;2;#{b}"
 end

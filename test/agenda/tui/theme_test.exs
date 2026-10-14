@@ -98,6 +98,33 @@ defmodule Agenda.TUI.ThemeTest do
     assert IO.iodata_to_binary(Screen.frame(nil, [line], :mono)) =~ "\e[0;7mx"
   end
 
+  test "the terminal schemes draw their own colours exactly on 24-bit terminals" do
+    assert Theme.sgr(:item, :modus_vivendi, :truecolor) == "\e[0;38;2;255;255;255;48;2;0;0;0m"
+    assert Theme.sgr(:section, :zenburn, :truecolor) == "\e[0;1;38;2;148;191;243;48;2;63;63;63m"
+    # the highlight is the scheme's cursor
+    assert Theme.sgr(:cursor, :ayu, :truecolor) == "\e[0;38;2;11;14;20;48;2;230;180;80m"
+  end
+
+  test "on 16 colours the schemes use the terminal's own ANSI colours and defaults" do
+    # the screen is the terminal's default colours, so it matches its scheme
+    assert Theme.sgr(:item, :alabaster) == "\e[0;39;49m"
+    assert Theme.sgr(:section, :modus_operandi) == "\e[0;1;34;49m"
+    # errors: the screen's colour on the scheme's red
+    assert Theme.sgr(:error, :ayu) == "\e[0;1;7;31;49m"
+  end
+
+  test "theme names are shown and typed with spaces or dashes" do
+    assert Theme.label(:modus_operandi) == "Modus Operandi"
+    assert Theme.label(:classic) == "Classic"
+    assert Theme.parse("modus-vivendi") == {:ok, :modus_vivendi}
+    assert Theme.parse("Modus Operandi") == {:ok, :modus_operandi}
+    assert Theme.parse("zenburn") == {:ok, :zenburn}
+
+    for theme <- Theme.names() do
+      assert theme |> Theme.label() |> Theme.parse() == {:ok, theme}
+    end
+  end
+
   test "theme names are parsed" do
     assert Theme.parse("mono") == {:ok, :mono}
     assert Theme.parse("CLASSIC") == {:ok, :classic}
