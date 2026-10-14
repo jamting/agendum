@@ -99,24 +99,19 @@ defmodule Agendum.TUI.Render.Boxes do
   ]
   # boxes that only show something
   @return {"Press ENTER or ESC to return", "ENTER/ESC return"}
-  # pickers where ENTER cycles a category's choice and ESC finishes
-  @esc_pickers [:filter, :condition, :also_assign, :excludes, :schedule_filter]
 
   defp footer(mode, inner) do
     {long, short} =
       cond do
         box = Box.module(mode) ->
           %{done: @done, accept: @accept, esc_done: @esc_done, return: @return, none: {"", ""}}[
-            box.finish()
+            box.finish(mode)
           ]
 
         Agendum.TUI.Boxes.BoxCancel.cancels?(mode.type) or mode.type in @done_boxes ->
           @done
 
-        mode.type == :picker and esc_picker?(mode.purpose) ->
-          @esc_done
-
-        mode.type in [:picker | @accept_boxes] ->
+        mode.type in @accept_boxes ->
           @accept
 
         true ->
@@ -125,9 +120,6 @@ defmodule Agendum.TUI.Render.Boxes do
 
     if String.length(long) + 2 <= inner - 2, do: long, else: short
   end
-
-  defp esc_picker?(purpose) when is_tuple(purpose), do: elem(purpose, 0) in @esc_pickers
-  defp esc_picker?(_purpose), do: false
 
   defp box_width(state, %{type: type} = mode) when is_map_key(@boxes, type),
     do: @boxes[type].width(state, mode)
@@ -148,8 +140,6 @@ defmodule Agendum.TUI.Render.Boxes do
     do: @boxes[type].title(state, mode)
 
   defp box_title(_state, %{type: :calendar} = mode), do: Agendum.TUI.Boxes.CalendarBox.title(mode)
-
-  defp box_title(state, %{type: :picker, purpose: purpose}), do: picker_title(state, purpose)
 
   defp box_title(_state, %{type: :viewmgr}), do: "View Manager"
   # a question has no title, as Agenda's
@@ -194,82 +184,11 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(state, %{type: :choice, cat_id: id}),
     do: "Make children of #{state.db.categories[id].name} mutually exclusive"
 
-  # one title per picker purpose
-  defp picker_title(_state, {:add_section, _, _}),
-    do: "Section head"
-
-  defp picker_title(_state, {:change_section, _}),
-    do: "Change section head"
-
-  defp picker_title(_state, {:column_head, _}), do: "Column Head: select a category"
-  defp picker_title(_state, {:make_category, name}), do: "Parent of the new category #{name}"
-  defp picker_title(_state, :column_add), do: "Column Head: select a category"
-
-  defp picker_title(_state, {:add_column, _}),
-    do: "Column head"
-
-  defp picker_title(state, {:assign_column, _, head}),
-    do: "Choose " <> state.db.categories[head].name
-
-  defp picker_title(_state, {:new_view, name}),
-    do: "First section for view #{name}"
-
-  defp picker_title(_state, {:schedule, :date_category}),
-    do: "Date category of the schedule"
-
-  defp picker_title(_state, {:schedule, :section}),
-    do: "Section head of the schedule"
-
-  defp picker_title(_state, {:schedule_filter, _}),
-    do: "Filter the schedule"
-
-  defp picker_title(_state, {:datebook, _view, :date_category}),
-    do: "Date category (a date category)"
-
-  defp picker_title(_state, {:datebook, _view, :end_category}),
-    do: "End category (a date category)"
-
-  defp picker_title(_state, {:datebook, _view, :section_category}),
-    do: "Section (the head of every section)"
-
-  defp picker_title(state, {:move_category, id}),
-    do: "New parent for " <> state.db.categories[id].name
-
-  defp picker_title(state, {:also_assign, id}),
-    do: "Actions for items joining #{state.db.categories[id].name}"
-
-  defp picker_title(state, {:excludes, id}),
-    do: "Categories that may not share items with #{state.db.categories[id].name}"
-
-  defp picker_title(_state, {:assign_items, [_]}),
-    do: "Assign the item to"
-
-  defp picker_title(_state, {:assign_items, ids}),
-    do: "Assign #{Draw.count(length(ids), "marked item")} to"
-
-  defp picker_title(state, {:condition, id}),
-    do: "Conditions for #{state.db.categories[id].name}"
-
-  defp picker_title(_state, {:filter, :view}),
-    do: "Filter the view"
-
-  defp picker_title(state, {:filter, {:section, i}}),
-    do: "Filter the #{section_name(state, i)} section"
-
-  defp picker_title(_state, {:sort_category, _, _}),
-    do: "Sort by the children of"
-
-  defp picker_title(_state, {:sort_note, _, _}),
-    do: "Choose the category whose notes to sort by"
-
-  defp picker_title(_state, :execute_root),
-    do: "Apply the conditions of this category and its children"
-
   defp box_content(state, %{type: type} = mode, inner, max_rows) when is_map_key(@boxes, type),
     do: @boxes[type].content(state, mode, inner, max_rows)
 
   defp box_content(state, %{type: type} = mode, inner, max_rows)
-       when type in [:picker, :profile, :group_profile, :choice],
+       when type in [:profile, :group_profile, :choice],
        do: CategoryBoxes.content(state, mode, inner, max_rows)
 
   defp box_content(state, %{type: :viewmgr} = mode, inner, max_rows),
@@ -339,11 +258,6 @@ defmodule Agendum.TUI.Render.Boxes do
       end)
 
     [[{:box, " " <> scope_question(mode.action)}], []] ++ choices
-  end
-
-  defp section_name(state, index) do
-    section = Enum.at(State.view(state).sections, index)
-    state.db.categories[section.category_id].name
   end
 
   defp scope_question(action) do

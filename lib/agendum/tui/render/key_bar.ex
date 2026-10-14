@@ -117,14 +117,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Return", "Back to the view"}
     ]
 
-  defp mode_keys(%{type: :picker}),
-    do: [
-      {"ENTER", "Select"},
-      {"INS", "New category"},
-      {"type", "Search", "Search by name"},
-      {"ESC", "Cancel"}
-    ]
-
   defp mode_keys(%{type: type}) when type in [:profile, :group_profile],
     do: [
       {"SPACE", "Assign/Unassign", "Assign or unassign"},

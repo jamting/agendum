@@ -5,10 +5,187 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   filter, a condition, an action, a negative link, ...). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
+
   alias Agendum.Core
   alias Agendum.Core.Database
-  alias Agendum.TUI.{CategoryScreens, Typing.LineEdit, State}
+  alias Agendum.TUI.{Boxes.Box, CategoryScreens, Terminal.Draw, Typing.LineEdit, State}
   alias Agendum.TUI.CategoryScreens.Choices
+
+  # purposes where ENTER cycles a category's choice and ESC finishes
+  @esc_pickers [:filter, :condition, :also_assign, :excludes, :schedule_filter]
+
+  # --- the box (`Agendum.TUI.Boxes.Box`) ---------------------------------------------------
+
+  @impl Box
+  def handle(state, mode, key), do: CategoryScreens.handle(state, mode, key)
+
+  # several categories are set at a time in some pickers: ESC ends them
+  @impl Box
+  def finish(%{purpose: purpose}) when is_tuple(purpose) and elem(purpose, 0) in @esc_pickers,
+    do: :esc_done
+
+  def finish(_mode), do: :accept
+
+  @impl Box
+  def title(state, mode), do: title_for(state, mode.purpose)
+
+  # one title per purpose
+  defp title_for(_state, {:add_section, _, _}),
+    do: "Section head"
+
+  defp title_for(_state, {:change_section, _}),
+    do: "Change section head"
+
+  defp title_for(_state, {:column_head, _}), do: "Column Head: select a category"
+  defp title_for(_state, {:make_category, name}), do: "Parent of the new category #{name}"
+  defp title_for(_state, :column_add), do: "Column Head: select a category"
+
+  defp title_for(_state, {:add_column, _}),
+    do: "Column head"
+
+  defp title_for(state, {:assign_column, _, head}),
+    do: "Choose " <> state.db.categories[head].name
+
+  defp title_for(_state, {:new_view, name}),
+    do: "First section for view #{name}"
+
+  defp title_for(_state, {:schedule, :date_category}),
+    do: "Date category of the schedule"
+
+  defp title_for(_state, {:schedule, :section}),
+    do: "Section head of the schedule"
+
+  defp title_for(_state, {:schedule_filter, _}),
+    do: "Filter the schedule"
+
+  defp title_for(_state, {:datebook, _view, :date_category}),
+    do: "Date category (a date category)"
+
+  defp title_for(_state, {:datebook, _view, :end_category}),
+    do: "End category (a date category)"
+
+  defp title_for(_state, {:datebook, _view, :section_category}),
+    do: "Section (the head of every section)"
+
+  defp title_for(state, {:move_category, id}),
+    do: "New parent for " <> state.db.categories[id].name
+
+  defp title_for(state, {:also_assign, id}),
+    do: "Actions for items joining #{state.db.categories[id].name}"
+
+  defp title_for(state, {:excludes, id}),
+    do: "Categories that may not share items with #{state.db.categories[id].name}"
+
+  defp title_for(_state, {:assign_items, [_]}),
+    do: "Assign the item to"
+
+  defp title_for(_state, {:assign_items, ids}),
+    do: "Assign #{Draw.count(length(ids), "marked item")} to"
+
+  defp title_for(state, {:condition, id}),
+    do: "Conditions for #{state.db.categories[id].name}"
+
+  defp title_for(_state, {:filter, :view}),
+    do: "Filter the view"
+
+  defp title_for(state, {:filter, {:section, i}}),
+    do: "Filter the #{section_name(state, i)} section"
+
+  defp title_for(_state, {:sort_category, _, _}),
+    do: "Sort by the children of"
+
+  defp title_for(_state, {:sort_note, _, _}),
+    do: "Choose the category whose notes to sort by"
+
+  defp title_for(_state, :execute_root),
+    do: "Apply the conditions of this category and its children"
+
+  defp section_name(state, index) do
+    section = Enum.at(State.view(state).sections, index)
+    state.db.categories[section.category_id].name
+  end
+
+  @impl Box
+  def content(state, mode, inner, max_rows),
+    do:
+      CategoryScreens.list_lines(state, mode, inner, max_rows, &marker/3) ++
+        [[], footer(state, mode, inner)]
+
+  defp footer(state, mode, inner) do
+    case state.edit do
+      %{target: :new_pick} ->
+        [{:box, " New category: "}] ++ Draw.input(state.edit.line, inner - 16, :edit)
+
+      _ when mode.search != "" ->
+        [{:box, " Search: " <> mode.search}]
+
+      _ when elem(mode.purpose, 0) == :also_assign ->
+        [{:box, " ENTER cycles: + assign · - remove · none (dates, numbers: a box)"}]
+
+      _ when elem(mode.purpose, 0) == :excludes ->
+        [{:box, " ENTER toggles: x may not share items"}]
+
+      _ when elem(mode.purpose, 0) in [:condition, :filter, :schedule_filter] ->
+        [{:box, " ENTER cycles: + assigned · - not assigned · none"}]
+
+      _ ->
+        [{:box, " ENTER selects · INS creates · type to search"}]
+    end
+  end
+
+  # the mark left of a category: what choosing it again would undo
+  defp marker(state, %{purpose: {:filter, scope}}, id) do
+    view = State.view(state)
+
+    filter =
+      if scope == :view, do: view.filter, else: Enum.at(view.sections, elem(scope, 1)).filter
+
+    case List.keyfind(filter, id, 0) do
+      {_, :not_assigned} -> "-"
+      {_, _assigned_or_range} -> "+"
+      nil -> " "
+    end
+  end
+
+  defp marker(state, %{purpose: {:condition, cat_id}}, id) do
+    case List.keyfind(state.db.categories[cat_id].conditions, id, 0) do
+      {_, :not_assigned} -> "-"
+      {_, _assigned_or_range} -> "+"
+      nil -> " "
+    end
+  end
+
+  defp marker(state, %{purpose: {:also_assign, cat_id}}, id) do
+    cat = state.db.categories[cat_id]
+
+    cond do
+      id in cat.also_assign -> "+"
+      List.keyfind(cat.actions, id, 0) in [{id, :remove}, {id, :clear}] -> "-"
+      List.keymember?(cat.actions, id, 0) -> "="
+      true -> " "
+    end
+  end
+
+  defp marker(state, %{purpose: {:schedule_filter, _}}, id),
+    do: Agendum.TUI.Boxes.ScheduleBox.filter_mark(state, id)
+
+  defp marker(state, %{purpose: {:excludes, cat_id}}, id),
+    do: if(id in state.db.categories[cat_id].excludes, do: "x", else: " ")
+
+  defp marker(_state, _mode, _id), do: " "
+
+  @impl Box
+  def keys(_state, _mode),
+    do: [
+      {"ENTER", "Select"},
+      {"INS", "New category"},
+      {"type", "Search", "Search by name"},
+      {"ESC", "Cancel"}
+    ]
+
+  @impl Box
+  def help, do: nil
 
   # --- category picker ------------------------------------------------------------------
 

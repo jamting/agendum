@@ -15,7 +15,8 @@ defmodule Agendum.TUI.Boxes.Box do
   Options of `use`:
 
     * `finish:` the words in the bottom edge: `:done` ("Press ENTER when
-      done, ESC to cancel"), `:accept`, `:esc_done`, `:return` or `:none`
+      done, ESC to cancel"), `:accept`, `:esc_done`, `:return` or `:none`;
+      a box whose words depend on its mode defines `finish/1` instead
     * `indicator:` the mode shown at the top right ("PROPS"); nil for the
       one of what is beneath (READY in a view)
     * `cancels:` whether ESC puts back the changes made in the box
@@ -62,6 +63,9 @@ defmodule Agendum.TUI.Boxes.Box do
   @doc "The highlighted setting, the key of its help; nil (the default) for a box with one help."
   @callback field(State.t(), mode) :: atom | nil
 
+  @doc "The words in the bottom edge (`finish:`); by default the same for every mode."
+  @callback finish(mode) :: :done | :accept | :esc_done | :return | :none
+
   @doc "The width inside the frame; by default 60 columns, less on a narrow screen."
   @callback width(State.t(), mode) :: pos_integer
 
@@ -92,6 +96,7 @@ defmodule Agendum.TUI.Boxes.Box do
     macro_props: Agendum.TUI.Boxes.MacroProps,
     note_search: Agendum.TUI.Typing.NoteSearch,
     numeric_functions: Agendum.TUI.Boxes.NumericFunctionsBox,
+    picker: Agendum.TUI.CategoryScreens.Picker,
     props: Agendum.TUI.CategoryScreens.Properties,
     questions: Agendum.TUI.Boxes.QuestionsBox,
     range_filter: Agendum.TUI.Boxes.RangeFilterBox,
@@ -179,7 +184,7 @@ defmodule Agendum.TUI.Boxes.Box do
   @doc """
   `use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true`
   declares the module a box: it must define the callbacks, and gets
-  `finish/0`, `indicator/0`, `cancels?/0` and `choices?/0` from the options.
+  `finish/1`, `indicator/0`, `cancels?/0` and `choices?/0` from the options.
   """
   # `use` runs this macro in the box module: the `quote` block is code
   # written into that module, with the options' values put in by `unquote`
@@ -189,8 +194,8 @@ defmodule Agendum.TUI.Boxes.Box do
     quote do
       @behaviour Agendum.TUI.Boxes.Box
 
-      @doc false
-      def finish, do: unquote(Keyword.get(opts, :finish, :done))
+      @impl true
+      def finish(_mode), do: unquote(Keyword.get(opts, :finish, :done))
       @doc false
       def indicator, do: unquote(Keyword.get(opts, :indicator, "PROPS"))
       @doc false
@@ -203,7 +208,7 @@ defmodule Agendum.TUI.Boxes.Box do
       def width(state, _mode), do: min(state.width - 8, 60)
       @impl true
       def field(_state, _mode), do: nil
-      defoverridable width: 2, field: 2
+      defoverridable width: 2, field: 2, finish: 1
     end
   end
 end

@@ -19,7 +19,8 @@ defmodule Agendum.TUI.CategoryScreens do
 
   alias Agendum.Core
   alias Agendum.Core.Database
-  alias Agendum.TUI.{Typing.LineEdit, State, Typing.TextEdit}
+  alias Agendum.TUI.{Terminal.Draw, Typing.LineEdit, State, Typing.TextEdit}
+  alias Agendum.TUI.Render.Text
   alias Agendum.TUI.CategoryScreens.{Choices, Manager, Picker, Profile}
 
   # --- opening -------------------------------------------------------------------
@@ -89,6 +90,31 @@ defmodule Agendum.TUI.CategoryScreens do
   defp all_rows(state, %{type: :picker, root: root}) do
     base = Database.depth(state.db, root) + 1
     state.db |> Database.descendants(root) |> Enum.map(&{&1, Database.depth(state.db, &1) - base})
+  end
+
+  @doc """
+  The lines of a box listing categories, `inner` wide, at most `max_rows`
+  of them, scrolled to the cursor: each with the mark `marker.(state, mode,
+  id)` gives it (one character) to its left.
+  """
+  def list_lines(state, mode, inner, max_rows, marker) do
+    rows = rows(state, mode)
+    cursor = min(mode.cursor, max(length(rows) - 1, 0))
+    top = max(cursor - max_rows + 1, 0)
+
+    list =
+      rows
+      |> Enum.with_index()
+      |> Enum.drop(top)
+      |> Enum.take(max_rows)
+      |> Enum.map(fn {{id, depth}, i} ->
+        style = if i == cursor, do: :box_selected, else: :box
+        cat = state.db.categories[id]
+        name = String.duplicate("  ", depth) <> cat.name <> Text.ellipsis(state, cat)
+        [{:box, " " <> marker.(state, mode, id) <> " "}, {style, Draw.pad(name, inner - 6)}]
+      end)
+
+    if list == [], do: [[{:box, "  (no categories yet — press INS to create one)"}]], else: list
   end
 
   # --- dispatch ----------------------------------------------------------------------
