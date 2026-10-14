@@ -116,4 +116,23 @@ defmodule Agenda.TUI.NoteClipboardTest do
 
     assert %{type: :picker, purpose: {:make_category, "about"}} = State.mode(state)
   end
+
+  describe "in the macro edit screen" do
+    setup do
+      db = Agenda.Sample.build(~D[2026-10-08])
+      {:ok, db, id} = Agenda.Core.add_macro(db, "Water")
+      %{state: start(Agenda.Core.set_macro_keys(db, id, "Water the lettuces"))}
+    end
+
+    # found by the fuzz test: the macro screen's mode has no search match
+    test "copying, cutting and pasting work there too", %{state: state} do
+      state = press(state, [{:alt_f, 3}, {:f, 2}])
+      assert %{type: :note, target: {:macro, _}} = State.mode(state)
+
+      state = press(state, [{:f, 3}, "a"])
+      assert state.last.copied =~ "Water the lettuces"
+      state = press(state, {:f, 2})
+      assert %{type: :note} = State.mode(state)
+    end
+  end
 end

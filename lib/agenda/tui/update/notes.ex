@@ -129,7 +129,8 @@ defmodule Agenda.TUI.Update.Notes do
       {text, taken} ->
         # copying leaves the text where it is (and drops the mark)
         edit = if action == :copy, do: %{mode.edit | mark: nil}, else: taken
-        state = State.put_mode(state, %{mode | edit: edit, match: nil})
+        # Map.merge, not %{mode | …}: the macro edit screen's mode has no :match
+        state = State.put_mode(state, Map.merge(mode, %{edit: edit, match: nil}))
 
         case action do
           :delete -> State.info(state, "Deleted")
@@ -147,11 +148,10 @@ defmodule Agenda.TUI.Update.Notes do
 
   defp paste(state, mode),
     do:
-      State.put_mode(state, %{
-        mode
-        | edit: TextEdit.insert(mode.edit, state.last.copied),
-          match: nil
-      })
+      State.put_mode(
+        state,
+        Map.merge(mode, %{edit: TextEdit.insert(mode.edit, state.last.copied), match: nil})
+      )
 
   @doc """
   ALT-F7, after Word, Line or All text was chosen: that text leaves the
@@ -179,7 +179,7 @@ defmodule Agenda.TUI.Update.Notes do
         db = if rest == "", do: db, else: Core.set_note(db, id, String.trim(rest), clock)
 
         state
-        |> State.put_mode(%{mode | edit: edit, match: nil})
+        |> State.put_mode(Map.merge(mode, %{edit: edit, match: nil}))
         |> State.change_db(db)
         |> State.info("New item in #{row.category.name}: #{text}")
     end
