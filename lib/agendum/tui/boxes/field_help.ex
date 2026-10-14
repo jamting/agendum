@@ -16,7 +16,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.ActionBox,
     Boxes.ColumnAddBox,
     Boxes.ColumnBox,
-    Boxes.CustomizeBox,
     Boxes.DatebookBox,
     Boxes.ExecuteBox,
     Boxes.ItemColumnBox,
@@ -38,7 +37,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
 
   # The box types and the module that knows their highlighted field
   @boxes %{
-    customize: CustomizeBox,
     datebook_props: DatebookBox,
     schedule: ScheduleBox,
     sort: SortBox,
@@ -85,27 +83,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
 
   # date format rows: the global Display Format and a date column's
   @help %{
-    customize: %{
-      theme: "The colours Agendum draws with, in every file. SPACE for the next theme.",
-      lang:
-        "The language you type dates in (\"next friday\", \"nästa fredag\"). " <>
-          "SPACE for the next.",
-      fallback: "A second language dates are read in as well. SPACE for the next, or None.",
-      input_format:
-        "How you type dates and times: the order of the numbers, the separator and the clock. " <>
-          "SPACE opens the box.",
-      key_map:
-        "Whether the key bar shows at the bottom of the screen (ALT-K too). SPACE switches.",
-      confirm:
-        "Choose whether Agendum asks \"are you sure?\" before discarding or removing. " <>
-          "SPACE switches.",
-      auto_save:
-        "Save the file by itself after this many minutes without a key. " <>
-          "SPACE for the next interval.",
-      decimal: "The character before the decimals of a number you type. SPACE switches.",
-      thousands:
-        "The character between thousands in a number you type. SPACE for the next choice."
-    },
     datebook_props: %{
       date_category: "The date category whose dates place items in the slots. SPACE picks one.",
       end_category:

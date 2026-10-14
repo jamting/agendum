@@ -70,6 +70,7 @@ defmodule Agendum.TUI.Boxes.Box do
   @registry %{
     auto_assign: Agendum.TUI.Boxes.AutoAssignBox,
     category_match: Agendum.TUI.Boxes.CategoryMatchBox,
+    customize: Agendum.TUI.Boxes.CustomizeBox,
     date_rule: Agendum.TUI.Boxes.DateRuleBox,
     date_settings: Agendum.TUI.Boxes.DateSettingsBox,
     display_format: Agendum.TUI.Boxes.DisplayFormatBox,

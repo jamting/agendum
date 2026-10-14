@@ -22,7 +22,6 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
   # the boxes whose changes apply at once; the others (Column Add, the
   # range filters, actions, Execute, Schedule, Search) apply only on ENTER
   @boxes [
-    :customize,
     :datebook_props,
     :sort,
     :section_props,

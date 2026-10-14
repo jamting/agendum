@@ -16,8 +16,10 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
   (`Agendum.TUI.Boxes.BoxCancel`). Pure.
   """
 
+  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.BoxNav
+  alias Agendum.TUI.Boxes.{Box, BoxNav}
 
   alias Agendum.Core.{DateLanguage, InputFormat}
   alias Agendum.TUI.{Boxes.InputFormatBox, State, Boxes.Template, Terminal.Theme}
@@ -34,15 +36,35 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
    Thousands separator : [thousands            ]
 
    Saved in your preferences, not in this file.
-   SPACE next choice · arrows move
   """
   @rows Template.fields(@layout)
   @grid Template.grid(@layout, @rows)
+
+  @help %{
+    theme: "The colours Agendum draws with, in every file. SPACE for the next theme.",
+    lang:
+      "The language you type dates in (\"next friday\", \"nästa fredag\"). " <>
+        "SPACE for the next.",
+    fallback: "A second language dates are read in as well. SPACE for the next, or None.",
+    input_format:
+      "How you type dates and times: the order of the numbers, the separator and the clock. " <>
+        "SPACE opens the box.",
+    key_map: "Whether the key bar shows at the bottom of the screen (ALT-K too). SPACE switches.",
+    confirm:
+      "Choose whether Agendum asks \"are you sure?\" before discarding or removing. " <>
+        "SPACE switches.",
+    auto_save:
+      "Save the file by itself after this many minutes without a key. " <>
+        "SPACE for the next interval.",
+    decimal: "The character before the decimals of a number you type. SPACE switches.",
+    thousands: "The character between thousands in a number you type. SPACE for the next choice."
+  }
   # Agenda took any number of minutes from 1 to 60; these are the steps
   @auto_save [0, 1, 2, 5, 10, 15, 20, 30, 45, 60]
 
   def open(state), do: State.push(state, %{type: :customize, cursor: 0})
 
+  @impl Box
   def handle(state, mode, key) do
     row = Enum.at(@rows, mode.cursor)
 
@@ -114,9 +136,20 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
     Enum.at(list, Integer.mod(index + step, length(list)))
   end
 
-  @doc "The box's lines, the highlighted setting selected."
-  def content(state, mode),
-    do: Template.render(@layout, values(state), selected: Enum.at(@rows, mode.cursor))
+  @impl Box
+  def title(_state, _mode), do: "Customize (yours, for every file)"
+
+  @impl Box
+  def content(state, mode, inner, _max_rows) do
+    Template.render(@layout, values(state), selected: field(state, mode)) ++
+      [Box.hint(keys(state, mode), inner)]
+  end
+
+  @impl Box
+  def keys(_state, _mode), do: Box.settings_keys()
+
+  @impl Box
+  def help, do: @help
 
   defp values(state) do
     [main | rest] = state.languages
@@ -151,6 +184,6 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
   defp yes_no(true), do: "Yes"
   defp yes_no(false), do: "No"
 
-  @doc "The highlighted field, for its help in the control panel (`Agendum.TUI.Boxes.FieldHelp`)."
+  @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
 end

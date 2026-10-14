@@ -355,8 +355,7 @@ defmodule Agendum.TUI.Render.KeyBar do
        when type in [
               :column_props,
               :column_add,
-              :item_column,
-              :customize
+              :item_column
             ],
        do: [
          {"↑↓←→", "Setting", "Move between settings"},

@@ -195,7 +195,6 @@ defmodule Agendum.TUI.Render.Boxes do
   defp box_title(_state, %{type: :alarm_list}), do: "Alarm list"
   defp box_title(_state, %{type: :search_box, scope: :view}), do: "Search this view"
   defp box_title(_state, %{type: :note_search}), do: "Search/Replace in note"
-  defp box_title(_state, %{type: :customize}), do: "Customize (yours, for every file)"
   defp box_title(_state, %{type: :calendars}), do: "Calendars"
 
   defp box_title(_state, %{type: :questions}), do: "Suggested assignments"
@@ -556,9 +555,6 @@ defmodule Agendum.TUI.Render.Boxes do
         [{:box, " F how often · A how far ahead"}]
       ]
   end
-
-  defp box_content(state, %{type: :customize} = mode, _inner, _max_rows),
-    do: Agendum.TUI.Boxes.CustomizeBox.content(state, mode)
 
   defp box_content(state, %{type: :section_props} = mode, _inner, _max_rows),
     do: Agendum.TUI.Boxes.SectionBox.content(state, mode)
