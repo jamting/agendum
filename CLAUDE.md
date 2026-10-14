@@ -55,15 +55,30 @@ inline `# credo:disable-for-next-line` with the reason.
 
 ## Workflow for a feature
 
+0. Before any code, list for the owner every key or behaviour the item
+   would change for someone already using Agendum (what ENTER or ESC does,
+   which key changes a value…), and settle them first. A habit change
+   found halfway costs the most: it spreads through the tests.
 1. Find or add the behaviour in `docs/SPEC.md` (rules are numbered, e.g. `R7`).
 2. Write a failing test first:
    - core rules → `test/agenda/core/*_test.exs` (use `Agenda.Fixtures`)
    - UI behaviour → `test/agenda/tui/*_test.exs`: drive keys with
      `Agenda.TUIHelpers.press/2` and assert on `screen/1` text
+   - in a box, reach a setting by name, not by counting ↓ presses (a
+     helper going to a field by name; add it to `Agenda.TUIHelpers` if it
+     is not there yet): layouts and keys change, names rarely do
 3. Implement it in the core first, then wire it into the TUI.
-4. Run `mix check`. Update `docs/ROADMAP.md` (tick the box), `docs/SCREENS.md`
-   if a box or screen was added (a test checks), and the help text
-   in `Agenda.TUI.Render.Help` if keys changed.
+4. Run `mix check`. After a large TUI change, also run the fuzz property
+   longer than the suite's 300 runs (a temporary copy at 2,000–3,000
+   runs): it finds crashes the short run misses. Update `docs/ROADMAP.md`
+   (tick the box), `docs/SCREENS.md` if a box or screen was added (a test
+   checks), and the help text in `Agenda.TUI.Render.Help` if keys changed.
+   - A box or screen with an Agenda screenshot: draw ours as a PNG
+     (`tools/screenshots/`) and compare it with Agenda's side by side,
+     for spacing and layout the text tests cannot see.
+   - Keys, ESC or drawing changed: smoke-test the real terminal (below)
+     and say in the summary what was seen. When a change alters habits,
+     the owner tries it before the next one is built on it.
 5. Do not update the user guide (`docs/guide/index.html`) or the manual
    (`docs/manual/`, generated from `docs/manual/src/`) per feature; the owner
    asks for them from time to time (the `update-guide` and `update-manual`
