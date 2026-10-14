@@ -41,15 +41,15 @@ longer disagree.
 
 A box's code is spread over about eight files. `:macro_props` appears in:
 
-| File                                | What it does for the box                   |
-| ----------------------------------- | ------------------------------------------ |
-| `lib/agendum/tui/update.ex`         | a `dispatch` clause sends it the keys (47 such clauses) |
-| `lib/agendum/tui/render.ex`         | a list of box types                        |
-| `lib/agendum/tui/render/boxes.ex`   | draws it (921 lines, none from a layout)   |
-| `lib/agendum/tui/render/key_bar.ex` | a `mode_keys` clause for the key bar       |
-| `lib/agendum/tui/render/control_panel.ex`, `lib/agendum/tui/boxes/field_help.ex` | the help for the highlighted setting |
-| `lib/agendum/tui/boxes/box_cancel.ex` | the list of boxes ESC cancels            |
-| `lib/agendum/tui/boxes/macro_props.ex` | its keys                                |
+| File                                                                             | What it does for the box                                |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `lib/agendum/tui/update.ex`                                                      | a `dispatch` clause sends it the keys (47 such clauses) |
+| `lib/agendum/tui/render.ex`                                                      | a list of box types                                     |
+| `lib/agendum/tui/render/boxes.ex`                                                | draws it (921 lines, none from a layout)                |
+| `lib/agendum/tui/render/key_bar.ex`                                              | a `mode_keys` clause for the key bar                    |
+| `lib/agendum/tui/render/control_panel.ex`, `lib/agendum/tui/boxes/field_help.ex` | the help for the highlighted setting                    |
+| `lib/agendum/tui/boxes/box_cancel.ex`                                            | the list of boxes ESC cancels                           |
+| `lib/agendum/tui/boxes/macro_props.ex`                                           | its keys                                                |
 
 Plan: a behaviour, `Agendum.TUI.Boxes.Box`, whose callbacks are everything
 about one box: its keys (`handle/3`), its drawing (from a
@@ -67,19 +67,25 @@ One box per commit, its layout converted to a template in the same commit
 ### Progress (paused 2026-10-14)
 
 `Agendum.TUI.Boxes.Box` and its registry (`Box.registry/0`) are in place.
-30 of 41 box types are moved, one commit each: macro_props, input_format,
+34 of 41 box types are moved, one commit each: macro_props, input_format,
 auto_assign, category_match, date_rule, date_settings (new module
 `DateSettingsBox`), display_format (`DisplayFormatBox`), file_props,
 customize, execute, schedule, sort, search_box, note_search, action_box,
 range_filter, numeric_functions, section_props, item_column,
 column_props, column_add, datebook_props, props, category_stats
 (`CategoryStatsBox`), item_props, goto, copy_items, choice_list
-(`ChoiceListBox`), alarm_list, questions.
+(`ChoiceListBox`), alarm_list, questions, picker, profile and
+group_profile (one module), choice. `Render.CategoryBoxes` is gone: the
+category lists share `CategoryScreens.list_lines/5`, each box with its
+own marks. A box's bottom edge may depend on its mode (`finish/1`, the
+picker's).
 
-Left (11): the category boxes drawn by `Agendum.TUI.Render.CategoryBoxes`
-(picker, profile, group_profile, choice), calendar, calendars, macros,
-select_file, scope, confirm, viewmgr. They are lists, so they keep their
-rows' drawing; only a box with fixed settings gets a template layout.
+Left (7): calendar, calendars, macros, select_file, scope, confirm,
+viewmgr. They are lists, so they keep their rows' drawing; only a box
+with fixed settings gets a template layout.
+
+The fuzz property runs as four test modules side by side (the suite took
+32 s, now about 12 s), so `mix check` is quicker between boxes.
 
 Moving one box:
 
