@@ -18,8 +18,8 @@ defmodule Agendum.DocsNamesTest do
       for file <- @files,
           {line, number} <- file |> File.read!() |> outside_code_blocks(),
           [_, name] <- Regex.scan(@short, line),
-          MapSet.member?(known, "Agenda." <> name),
-          do: "#{file}:#{number}: `#{name}` (write `Agenda.#{name}`)"
+          MapSet.member?(known, "Agendum." <> name),
+          do: "#{file}:#{number}: `#{name}` (write `Agendum.#{name}`)"
 
     assert short == [], Enum.join(short, "\n")
   end
