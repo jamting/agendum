@@ -357,7 +357,6 @@ defmodule Agendum.TUI.Render.KeyBar do
               :column_add,
               :item_column,
               :category_match,
-              :auto_assign,
               :date_rule,
               :customize,
               :file_props,

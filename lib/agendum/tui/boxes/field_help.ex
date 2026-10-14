@@ -46,7 +46,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     file_props: FileProperties,
     date_settings: FileProperties,
     display_format: FileProperties,
-    auto_assign: AutoAssignBox,
     category_match: CategoryMatchBox,
     date_rule: DateRuleBox,
     datebook_props: DatebookBox,
@@ -108,23 +107,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     time_sep: "Choose the character between hours and minutes. SPACE for the next."
   }
 
-  @auto_assign %{
-    enabled:
-      "Assign items to categories whose names or Also match words are in their text. " <>
-        "SPACE switches.",
-    match_on:
-      "Choose whether to match the item text, the note, or both. SPACE for the next choice.",
-    strength:
-      "How closely text must match a name: exact, partial or minimal. SPACE for the next.",
-    confirm:
-      "Whether Agendum asks before assigning by text (Utilities Questions). " <>
-        "SPACE for the next.",
-    enclosed_by: "Text between these characters is not matched. SPACE for the next choice.",
-    ignore_suffixes:
-      "Match a name with endings such as -s, -ed or -ing (Call matches Calls). SPACE switches.",
-    ignore_accents: "Match letters with and without accents alike (é and e). SPACE switches."
-  }
-
   @help %{
     customize: %{
       theme: "The colours Agendum draws with, in every file. SPACE for the next theme.",
@@ -174,9 +156,8 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       evening: "The time \"evening\" means in a date. SPACE asks for it."
     },
     display_format: @date_format,
-    auto_assign: @auto_assign,
     category_match:
-      Map.new(@auto_assign, fn {field, text} ->
+      Map.new(AutoAssignBox.help(), fn {field, text} ->
         {field, "Global: the file's setting. " <> text}
       end),
     date_rule: %{

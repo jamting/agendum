@@ -450,9 +450,6 @@ defmodule Agendum.TUI.Update do
   defp dispatch(state, %{type: :category_match} = m, key),
     do: Agendum.TUI.Boxes.CategoryMatchBox.handle(state, m, key)
 
-  defp dispatch(state, %{type: :auto_assign} = m, key),
-    do: Agendum.TUI.Boxes.AutoAssignBox.handle(state, m, key)
-
   defp dispatch(state, %{type: :date_rule} = m, key),
     do: Agendum.TUI.Boxes.DateRuleBox.handle(state, m, key)
 

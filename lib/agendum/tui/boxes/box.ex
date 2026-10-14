@@ -68,6 +68,7 @@ defmodule Agendum.TUI.Boxes.Box do
   # name only (no call at compile time), so the boxes and this module can
   # refer to each other.
   @registry %{
+    auto_assign: Agendum.TUI.Boxes.AutoAssignBox,
     input_format: Agendum.TUI.Boxes.InputFormatBox,
     macro_props: Agendum.TUI.Boxes.MacroProps
   }

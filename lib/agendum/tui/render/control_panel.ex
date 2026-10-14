@@ -212,7 +212,6 @@ defmodule Agendum.TUI.Render.ControlPanel do
             :calendars,
             :date_rule,
             :category_match,
-            :auto_assign,
             :column_props,
             :column_add,
             :item_column,
