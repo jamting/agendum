@@ -18,7 +18,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     Boxes.ColumnBox,
     Boxes.CustomizeBox,
     Boxes.DatebookBox,
-    Boxes.DateRuleBox,
     Boxes.ExecuteBox,
     Boxes.FileProperties,
     Boxes.ItemColumnBox,
@@ -44,7 +43,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
     file_props: FileProperties,
     date_settings: FileProperties,
     display_format: FileProperties,
-    date_rule: DateRuleBox,
     datebook_props: DatebookBox,
     schedule: ScheduleBox,
     sort: SortBox,
@@ -153,14 +151,6 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
       evening: "The time \"evening\" means in a date. SPACE asks for it."
     },
     display_format: @date_format,
-    date_rule: %{
-      assign:
-        "When the category gets a date: never, from the clock as the item is entered or " <>
-          "edited, or from its text. SPACE changes it.",
-      which: "Which date in the text to take: the first, the second… SPACE for the next one.",
-      done_key: "Whether F4 (DONE) sets this date to the current date and time. SPACE switches.",
-      when_key: "Whether ALT-F2 (WHEN) sets this date as well. SPACE switches."
-    },
     datebook_props: %{
       date_category: "The date category whose dates place items in the slots. SPACE picks one.",
       end_category:
