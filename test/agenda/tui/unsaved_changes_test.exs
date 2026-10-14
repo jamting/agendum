@@ -8,7 +8,7 @@ defmodule Agenda.TUI.UnsavedChangesTest do
   import Agenda.TUIHelpers
   alias Agenda.TUI.{State, Update}
 
-  @question "Save changes first? (Y/N, ESC to cancel)"
+  @question "Save changes first?"
   @commands [
     {"Retrieve", [{:f, 10}, "f", "r"], "File to retrieve:"},
     {"New", [{:f, 10}, "f", "n"], "Name of new file:"},

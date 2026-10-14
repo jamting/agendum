@@ -78,7 +78,7 @@ defmodule Agenda.TUI.CategoryScreens.Manager do
       {:alt_f, 5} ->
         Prompts.confirm(
           state,
-          "Sort the children of #{cat.name} alphabetically? (Y/N)",
+          "Sort the children of #{cat.name} alphabetically?",
           {:sort_children, id}
         )
 
@@ -93,7 +93,7 @@ defmodule Agenda.TUI.CategoryScreens.Manager do
           else:
             Prompts.confirm(
               state,
-              "Discard #{cat.name} and all its children? (Y/N)",
+              "Discard #{cat.name} and all its children?",
               {:discard_category, id}
             )
 

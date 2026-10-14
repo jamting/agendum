@@ -257,7 +257,7 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
       ]
       |> Enum.filter(& &1)
 
-    "Make #{cat.name} a date category? " <> Enum.join(parts, "; ") <> " (Y/N)"
+    "Make #{cat.name} a date category? " <> Enum.join(parts, "; ") <> ""
   end
 
   @doc """
@@ -283,7 +283,7 @@ defmodule Agenda.TUI.CategoryScreens.Properties do
       ]
       |> Enum.filter(& &1)
 
-    "Convert #{cat.name} to numeric? " <> Enum.join(parts, "; ") <> ". (Y/N)"
+    "Convert #{cat.name} to numeric? " <> Enum.join(parts, "; ") <> "."
   end
 
   # --- Category Statistics ---

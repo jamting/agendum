@@ -35,9 +35,6 @@ defmodule Agenda.TUI.Render.ControlPanel do
           {beside_indicators(state, base, [{:prompt, " " <> label}]),
            [{:panel, " "}] ++ Draw.input(state.edit.line, w - 2, :edit)}
 
-        %{type: :confirm, question: q} ->
-          text_lines(state, base, :prompt, q)
-
         %{type: :column_width} = m ->
           text_lines(state, base, :panel_hint, Agenda.TUI.ColumnWidth.panel(m))
 

@@ -93,7 +93,16 @@ defmodule Agenda.TUI.Render.Boxes do
     :note_search
   ]
   # boxes to choose one thing in
-  @accept_boxes [:goto, :copy_items, :calendar, :select_file, :choice, :scope, :choice_list]
+  @accept_boxes [
+    :goto,
+    :copy_items,
+    :calendar,
+    :select_file,
+    :choice,
+    :scope,
+    :choice_list,
+    :confirm
+  ]
   # boxes that only show something
   @return_boxes [:category_stats]
   @return {"Press ENTER or ESC to return", "ENTER/ESC return"}
@@ -121,6 +130,11 @@ defmodule Agenda.TUI.Render.Boxes do
 
   defp box_width(state, %{type: :category_stats}), do: min(state.width - 8, 44)
 
+  # a question is as wide as it and its answer need, as Agenda's (and
+  # wide enough for the words in its frame)
+  defp box_width(state, %{type: :confirm, question: q}),
+    do: (String.length(q) + 7) |> max(40) |> min(state.width - 8)
+
   defp box_width(state, %{type: type})
        when type in [:numeric_functions, :copy_items, :choice_list],
        do: min(state.width - 8, 32)
@@ -138,6 +152,8 @@ defmodule Agenda.TUI.Render.Boxes do
   defp box_title(state, %{type: :picker, purpose: purpose}), do: picker_title(state, purpose)
 
   defp box_title(_state, %{type: :item_props}), do: "Item properties"
+  # a question has no title, as Agenda's
+  defp box_title(_state, %{type: :confirm}), do: ""
 
   defp box_title(state, %{type: :category_stats, cat_id: id}),
     do: "Category statistics: " <> state.db.categories[id].name
@@ -321,6 +337,17 @@ defmodule Agenda.TUI.Render.Boxes do
 
   defp box_content(state, %{type: :category_stats} = mode, _inner, _max_rows),
     do: Agenda.TUI.CategoryScreens.Properties.stats_content(state, mode)
+
+  # a Y/N question: the question, its answer highlighted after it; a long
+  # question goes on over more lines
+  defp box_content(_state, %{type: :confirm} = mode, inner, _max_rows) do
+    answer = if mode.answer, do: "Yes", else: "No "
+    lines = Draw.wrap(mode.question, inner - 7)
+    {first, [last]} = Enum.split(lines, -1)
+
+    Enum.map(first, &[{:box, " " <> &1}]) ++
+      [[{:box, " " <> last <> "  "}, {:box_selected, answer}]]
+  end
 
   # F3 on a setting (`Agenda.TUI.BoxChoices`): its choices, one a line
   defp box_content(_state, %{type: :choice_list} = mode, _inner, max_rows) do

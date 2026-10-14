@@ -20,7 +20,7 @@ defmodule Agenda.TUI.WordingTest do
   test "depending on one marked item says so in the singular", %{state: state} do
     # mark the first item, then ALT-O on the second
     state = press(state, [:down, {:f, 7}, :down, {:alt, "o"}])
-    assert screen(state) =~ "Make this item depend on the 1 marked item? (Y/N)"
+    assert screen(state) =~ "Make this item depend on the 1 marked item?"
     assert screen(press(state, "y")) =~ "Depends on 1 item"
     refute screen(press(state, "y")) =~ "1 items"
   end

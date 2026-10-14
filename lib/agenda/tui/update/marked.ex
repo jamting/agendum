@@ -111,7 +111,7 @@ defmodule Agenda.TUI.Update.Marked do
     do:
       Prompts.confirm(
         state,
-        "Discard #{Draw.count(length(ids), "marked item")} from the whole file? (Y/N)",
+        "Discard #{Draw.count(length(ids), "marked item")} from the whole file?",
         {:discard_items, ids}
       )
 

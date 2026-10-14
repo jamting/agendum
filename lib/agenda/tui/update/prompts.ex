@@ -54,9 +54,13 @@ defmodule Agenda.TUI.Update.Prompts do
 
   def confirm(state, question, action), do: ask(state, question, action)
 
-  @doc "Asks a Y/N question, whatever Confirm mode says: Y and N do different things."
+  @doc """
+  Asks a Y/N question, whatever Confirm mode says: Y and N do different
+  things. It is a box, as Agenda's (screenshots 36, 141): the question with
+  its answer, Yes at first, "Press ENTER to accept, ESC to cancel".
+  """
   def ask(state, question, action),
-    do: State.push(state, %{type: :confirm, question: question, action: action})
+    do: State.push(state, %{type: :confirm, question: question, action: action, answer: true})
 
   @doc "A key in a one-line prompt; ENTER does its action, ESC cancels."
   def prompt_key(state, mode, key) do
@@ -266,13 +270,30 @@ defmodule Agenda.TUI.Update.Prompts do
     State.effect(state, {:write_text, path, Agenda.TUI.Render.Export.text(state)})
   end
 
-  @doc "A key in a Y/N question; ESC cancels."
+  @doc """
+  A key in a Y/N question: SPACE (or an arrow) switches the answer, ENTER
+  accepts the answer shown, Y or N answer at once (our choice: Agenda's
+  first letter only picked it), ESC cancels.
+  """
   def confirm_key(state, mode, key) do
     case key do
-      {:char, c} when c in ["y", "Y"] -> state |> State.pop() |> confirmed(mode.action, true)
-      {:char, c} when c in ["n", "N"] -> state |> State.pop() |> confirmed(mode.action, false)
-      :esc -> State.pop(state)
-      _ -> state
+      {:char, c} when c in ["y", "Y"] ->
+        state |> State.pop() |> confirmed(mode.action, true)
+
+      {:char, c} when c in ["n", "N"] ->
+        state |> State.pop() |> confirmed(mode.action, false)
+
+      :enter ->
+        state |> State.pop() |> confirmed(mode.action, mode.answer)
+
+      k when k in [{:char, " "}, :left, :right, :up, :down] ->
+        State.put_mode(state, %{mode | answer: not mode.answer})
+
+      :esc ->
+        State.pop(state)
+
+      _ ->
+        state
     end
   end
 

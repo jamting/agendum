@@ -50,8 +50,9 @@ defmodule Agenda.TUI.UserDateCategoriesTest do
     {:ok, db, _} = Core.add_category(state.db, due, "after the meeting")
     state = %{state | db: db} |> CategoryScreens.open_props(due) |> choose_type() |> press("d")
 
-    assert panel(state) =~
-             "Make Due a date category? children become dates; dropped: after the meeting (Y/N)"
+    # the question box (it wraps the text over its lines)
+    assert Agenda.TUI.State.mode(state).question ==
+             "Make Due a date category? children become dates; dropped: after the meeting"
 
     state = press(state, "y")
     assert state.db.categories[due].kind == :date

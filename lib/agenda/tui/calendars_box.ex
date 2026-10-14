@@ -72,7 +72,7 @@ defmodule Agenda.TUI.CalendarsBox do
 
     Prompts.ask(
       state,
-      "Unsubscribe from #{cal.name}. Discard its #{Draw.count(items, "item")} too? (Y/N, ESC to cancel)",
+      "Unsubscribe from #{cal.name}. Discard its #{Draw.count(items, "item")} too?",
       {:unsubscribe_calendar, cal.id}
     )
   end

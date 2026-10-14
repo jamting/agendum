@@ -121,7 +121,7 @@ defmodule Agenda.TUI.CalendarsTest do
     state = Update.calendar_read(state, id, {:ok, events()})
 
     {asked, _} = keys(state, :delete)
-    assert screen(asked) =~ "Unsubscribe from Work. Discard its 2 items too? (Y/N, ESC to cancel)"
+    assert screen(asked) =~ "Unsubscribe from Work. Discard its 2 items too?"
 
     {kept, _} = keys(asked, "n")
     assert kept.db.calendars == %{}

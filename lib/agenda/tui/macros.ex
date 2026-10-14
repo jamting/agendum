@@ -157,7 +157,7 @@ defmodule Agenda.TUI.Macros do
         Agenda.TUI.MacroProps.open(state, macro.id)
 
       {k, macro} when k in [:delete, {:ctrl, "d"}] ->
-        Prompts.confirm(state, "Delete the macro #{macro.name}? (Y/N)", {:delete_macro, macro.id})
+        Prompts.confirm(state, "Delete the macro #{macro.name}?", {:delete_macro, macro.id})
 
       {{:alt_f, 5}, macro} ->
         state |> State.change_db(Core.sort_macros(state.db)) |> follow(macro.id)

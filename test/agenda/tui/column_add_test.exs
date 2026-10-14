@@ -163,7 +163,7 @@ defmodule Agenda.TUI.ColumnAddTest do
          %{state: state} do
       {:ok, db, _} = Core.add_category(state.db, cat(state.db, "Priority"), "High")
       state = %{state | db: db} |> pick_priority() |> press([:right, " ", " ", :enter])
-      assert panel(state) =~ "Convert Priority to numeric?"
+      assert screen(state) =~ "Convert Priority to numeric?"
       state = press(state, "n")
       # nothing changed, and the box is still open
       assert {kind(state, "Priority"), State.mode(state).type} == {:standard, :column_add}

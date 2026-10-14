@@ -919,9 +919,8 @@ READY / EDIT / MENU / CAT MGR) and the time on its first line, and what is
 shown on its second: the view with its filter and hide settings, or
 "Category Manager", "View Manager", "Note for: …", "Help". The menu (its
 entries, then the highlighted entry's commands or description), a prompt
-(its label, then the field), a Y/N question, a message or a hint take it
-over while they last; questions, messages and hints keep the indicators
-beside them and go on into the second line when long, as Agenda's help
+(its label, then the field), a message or a hint take it over while
+they last; messages and hints keep the indicators beside them and go on into the second line when long, as Agenda's help
 lines did. While a box is open, the control panel says what its
 highlighted field does and which keys change it ("Choose to insert new
 columns in one or all sections in the view."; screenshots 130 to 143);
@@ -932,6 +931,11 @@ ESC backs up one level; a box, prompt or question opened from the menu
 goes back to the menu level it was chosen from on ESC, and ESC again backs
 up until the view, as in Agenda (User's Guide 2-13: "back up one step at a
 time"); finished any other way (ENTER), it goes back to the view.
+A Y/N question is a small box without a title, as Agenda's (screenshots
+36, 141): the question, then its answer highlighted, Yes at first; SPACE
+(or an arrow) switches it, ENTER accepts the answer shown, ESC cancels.
+Our choice: Y and N answer at once (Agenda's first letter only picked
+the answer).
 A box's bottom edge says how to finish it, in Agenda's words
 (screenshots 130, 138, 144): "Press ENTER when done, ESC to cancel" on a
 settings box, "Press ENTER to accept, ESC to cancel" on a box to choose

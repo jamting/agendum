@@ -58,7 +58,8 @@ defmodule Agenda.TUI.Render do
     :copy_items,
     :alarm_list,
     :choice_list,
-    :category_stats
+    :category_stats,
+    :confirm
   ]
 
   @doc "Whether a mode is drawn as a box over the screen."

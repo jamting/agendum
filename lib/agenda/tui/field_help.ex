@@ -75,6 +75,7 @@ defmodule Agenda.TUI.FieldHelp do
         "it stays in its other sections.",
     goto: "Highlight the section to go to and press ENTER, or type its first letter.",
     choice_list: "Highlight the choice and press ENTER.",
+    confirm: "Y or N answers. SPACE switches the answer; ENTER accepts the one shown.",
     category_stats:
       "How much of the file uses the category: its items, children, sections, " <>
         "filters, conditions and actions.",

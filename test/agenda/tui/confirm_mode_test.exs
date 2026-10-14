@@ -39,7 +39,7 @@ defmodule Agenda.TUI.ConfirmModeTest do
   test "with No, saving first is still asked" do
     state = started(false) |> press(["New thing", :enter, {:ctrl, "q"}])
     assert %{type: :confirm} = State.mode(state)
-    assert panel(state) =~ "Save changes before quitting?"
+    assert screen(state) =~ "Save changes before quitting?"
   end
 
   test "Confirm mode is in File ▸ Customize, and saved" do

@@ -90,7 +90,7 @@ defmodule Agenda.TUI.ViewManager do
       k when k in [:delete, {:alt_f, 4}, {:ctrl, "d"}] ->
         Prompts.confirm(
           state,
-          "Discard view #{state.db.views[view_id].name}? Items are kept. (Y/N)",
+          "Discard view #{state.db.views[view_id].name}? Items are kept.",
           {:discard_view, view_id}
         )
 

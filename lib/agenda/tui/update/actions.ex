@@ -73,7 +73,7 @@ defmodule Agenda.TUI.Update.Actions do
   # Commands that replace the open file ask first when it has unsaved changes.
   defp do_perform(%State{dirty: true} = state, command, _)
        when command in [:retrieve, :new_file, :import_json],
-       do: Prompts.ask(state, "Save changes first? (Y/N, ESC to cancel)", {:leave_for, command})
+       do: Prompts.ask(state, "Save changes first?", {:leave_for, command})
 
   defp do_perform(state, command, _) when command in [:retrieve, :new_file, :import_json],
     do: Prompts.replace_file(state, command)
@@ -88,7 +88,7 @@ defmodule Agenda.TUI.Update.Actions do
 
   defp do_perform(state, :quit, _) do
     if state.dirty,
-      do: Prompts.ask(state, "Save changes before quitting? (Y/N, ESC to cancel)", :quit),
+      do: Prompts.ask(state, "Save changes before quitting?", :quit),
       else: State.effect(state, :quit)
   end
 
@@ -119,7 +119,7 @@ defmodule Agenda.TUI.Update.Actions do
   defp do_perform(state, :discard, %{kind: :item, item: item}) do
     Prompts.confirm(
       state,
-      "Discard this item from the whole file? (Y/N)",
+      "Discard this item from the whole file?",
       {:discard_item, item.id}
     )
   end
@@ -130,7 +130,7 @@ defmodule Agenda.TUI.Update.Actions do
       else:
         Prompts.confirm(
           state,
-          "Discard category #{cat.name} and its children? (Y/N)",
+          "Discard category #{cat.name} and its children?",
           {:discard_category, cat.id}
         )
   end
@@ -313,7 +313,7 @@ defmodule Agenda.TUI.Update.Actions do
   defp do_perform(state, :discard_view, _) do
     Prompts.confirm(
       state,
-      "Discard view #{State.view(state).name}? Items and categories are kept. (Y/N)",
+      "Discard view #{State.view(state).name}? Items and categories are kept.",
       {:discard_view, state.view_id}
     )
   end

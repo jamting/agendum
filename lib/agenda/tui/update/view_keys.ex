@@ -596,14 +596,14 @@ defmodule Agenda.TUI.Update.ViewKeys do
       marked != [] ->
         Prompts.confirm(
           state,
-          "Make this item depend on the #{Draw.count(length(marked), "marked item")}? (Y/N)",
+          "Make this item depend on the #{Draw.count(length(marked), "marked item")}?",
           {:make_dependent, item.id, marked}
         )
 
       Core.prerequisites(state.db, item.id) != [] ->
         Prompts.confirm(
           state,
-          "Clear this item's dependencies? (Y/N)",
+          "Clear this item's dependencies?",
           {:clear_dependencies, item.id}
         )
 

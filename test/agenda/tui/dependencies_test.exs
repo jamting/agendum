@@ -20,7 +20,7 @@ defmodule Agenda.TUI.DependenciesTest do
 
   test "ALT-O asks, then makes the item depend on the marked items", %{state: state} do
     state = make_dependent(state)
-    assert screen(state) =~ "Make this item depend on the 2 marked items? (Y/N)"
+    assert screen(state) =~ "Make this item depend on the 2 marked items?"
 
     state = press(state, "y")
     daniel = id_of(state, "Contact Daniel")
@@ -37,7 +37,7 @@ defmodule Agenda.TUI.DependenciesTest do
 
   test "ALT-O on a dependent item, with nothing marked, offers to clear", %{state: state} do
     state = make_dependent(state) |> press(["y", {:alt_f, 7}, {:alt, "o"}])
-    assert screen(state) =~ "Clear this item's dependencies? (Y/N)"
+    assert screen(state) =~ "Clear this item's dependencies?"
     state = press(state, "y")
     assert Core.prerequisites(state.db, id_of(state, "Contact Daniel")) == []
     refute screen(state) =~ "& Contact"

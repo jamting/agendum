@@ -100,7 +100,9 @@ or handles it.
       folder's subfolders and the files that fit, to pick one (R51).
       `Agenda.TUI.SelectFile`.
   - **Question** `:confirm`: a Y/N question (discard, save changes, make a
-    date category). `Agenda.TUI.Update.Prompts`.
+    date category) in a small untitled box, as Agenda's (screenshots 36,
+    141): the question with its answer highlighted, Yes at first.
+    `Agenda.TUI.Update.Prompts`.
   - **Datebook settings** `:datebook_props` (View ▸ Properties of a datebook
     view; after View ▸ Add with Type Datebook): its categories, period,
     interval, start and end, base date (R47), Hide column heads (R57) and
@@ -296,7 +298,7 @@ dependencies after its question, Undo, Save) are not listed.
 | -------------------- | ------------- | --------------------------------------- | ------------------------------------------------ | ------------- |
 | `:menu`              | control panel | `Agenda.TUI.Menu`                       | F10 or `/`                                       | §5            |
 | `:prompt`            | control panel | `Agenda.TUI.Update.Prompts`             | commands that ask for a line of text             | §5            |
-| `:confirm`           | control panel | `Agenda.TUI.Update.Prompts`             | commands that ask Y/N                            | §5            |
+| `:confirm`           | box           | `Agenda.TUI.Update.Prompts`             | commands that ask Y/N                            | §5            |
 | `:scope`             | box           | `Agenda.TUI.Update.Marked`              | a command with items marked                      | R35           |
 | `:copy_items`        | box           | `Agenda.TUI.CopyBox`                    | ALT-F9 on an item                                | R42           |
 | `:move_item`         | control panel | `Agenda.TUI.Update.Marked`              | ALT-F10, Item ▸ Reposition                       | R26           |

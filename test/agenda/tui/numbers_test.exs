@@ -200,8 +200,9 @@ defmodule Agenda.TUI.NumbersTest do
         |> CategoryHelpers.choose(:type)
         |> press("n")
 
-      assert panel(state) =~
-               "Convert Forecast to numeric? Its 1 children become numbers; Good becomes 0"
+      # the question box (it wraps the text over its lines)
+      assert Agenda.TUI.State.mode(state).question ==
+               "Convert Forecast to numeric? Its 1 children become numbers; Good becomes 0."
 
       state = press(state, "y")
       assert state.db.categories[forecast].kind == :numeric
