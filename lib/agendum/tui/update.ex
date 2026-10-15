@@ -47,6 +47,9 @@ defmodule Agendum.TUI.Update do
            :pass <- BoxChoices.key(state, key),
            do: dispatch(state, State.mode(state), key)
 
+    # a count (ALT-digits, R65) lasts until the next key has used it
+    next = if count_key?(key), do: next, else: %{next | count: nil}
+
     # a settings box keeps how things were when it opened, for ESC
     next = BoxCancel.track(state, next)
 
@@ -66,6 +69,9 @@ defmodule Agendum.TUI.Update do
 
     {%{state | effects: [], last_key: %{key: key, at: state.now}}, state.effects}
   end
+
+  defp count_key?({:alt, d}), do: d in ~w(0 1 2 3 4 5 6 7 8 9)
+  defp count_key?(_key), do: false
 
   # the splash screen goes at any key, which does nothing else (R52)
   defp splash_key(%State{modes: [%{type: :splash} | _]} = state, key) when key != :macro_done,

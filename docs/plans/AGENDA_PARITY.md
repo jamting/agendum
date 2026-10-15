@@ -135,6 +135,9 @@ What Agendum has that Agenda did not:
   8601 by default; R41).
 - Colour themes beyond Agenda's (R40).
 - Word wrap in the note editor (R64).
+- A count before a command in a view, as Emacs's numeric prefix: ALT-1
+  ALT-0 ↓ moves ten rows (R65). In Agenda ALT-digits typed DOS character
+  codes.
 - File ▸ New, File ▸ Dating (When dates from text on or off, shown as
   `[No Auto Dates]`), Category ▸ Recalc, View ▸ Rename, View ▸ Last,
   Item ▸ Note / When / Show / Finished / Mark / Unmark on the menu.

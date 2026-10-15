@@ -17,6 +17,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
     Terminal.Draw,
     Boxes.GoTo,
     Boxes.ItemProperties,
+    Commands,
     Keymap,
     Layout,
     Typing.LineEdit,
@@ -35,6 +36,10 @@ defmodule Agendum.TUI.Update.ViewKeys do
   def view_key(%State{edit: edit} = state, key) when edit != nil,
     do: Editing.view_edit_key(state, key)
 
+  # view commands that take a count themselves (`step/4`)
+  @own [:up, :down, :page_up, :page_down, :previous_section, :next_section] ++
+         [:next_column, :previous_column]
+
   # view commands that are the menu's named actions as they are
   @actions [
     :unmark_all,
@@ -52,44 +57,85 @@ defmodule Agendum.TUI.Update.ViewKeys do
     :retrieve
   ]
 
-  # A key runs the command the view's keymap binds it to (ADR 0033); an
-  # unbound character starts typing an item or a column entry.
+  # A key runs the command the view's keymap binds it to (ADR 0033), with
+  # the count typed before it; an unbound character starts typing an item
+  # or a column entry. ALT-digits build the count (R65).
+  def view_key(state, {:alt, d} = key) when d in ~w(0 1 2 3 4 5 6 7 8 9),
+    do: add_digit(state, String.to_integer(d), Keymap.lookup(:view, key))
+
   def view_key(state, key) do
     case {Keymap.lookup(:view, key), key} do
       {nil, {:char, c}} -> start_typing(state, Layout.current_row(state), c)
       {nil, _} -> state
-      {id, _} -> run(state, id)
+      {id, _} -> run(state, id, state.count || 1)
     end
   end
 
+  @max_count 999
+
+  # a leading 0 starts nothing (ALT-0 ALT-5 is 5); `Update.handle/2`
+  # forgets the count after any other key
+  defp add_digit(state, 0, _bound) when state.count == nil, do: state
+
+  defp add_digit(state, d, _bound) do
+    count = min((state.count || 0) * 10 + d, @max_count)
+    State.info(%{state | count: count}, "Count: #{count}")
+  end
+
   @doc """
-  Runs a view command (`Agendum.TUI.Commands`) on the highlighted row.
-  One clause per command; where the highlight is decides what some do
-  (F3, F5, DEL …), as in Agenda.
+  Runs a view command (`Agendum.TUI.Commands`) on the highlighted row,
+  `n` times for a count (R65): a command that takes one moves n rows at
+  once (`:own`) or runs again until n, stopping as soon as a run changes
+  nothing or reports an error (`:repeat`); the others run once. Where the
+  highlight is decides what some do (F3, F5, DEL …), as in Agenda.
   """
-  @spec run(State.t(), atom) :: State.t()
-  def run(state, id), do: command(state, id, Layout.current_row(state))
+  @spec run(State.t(), atom, pos_integer) :: State.t()
+  def run(state, id, n \\ 1)
 
-  defp command(state, :up, _row), do: Layout.move_to(state, state.cursor - 1)
-  defp command(state, :down, _row), do: Layout.move_to(state, state.cursor + 1)
+  def run(state, id, n) when n > 1 do
+    case Commands.get(:view, id).count do
+      :own -> step(state, id, Layout.current_row(state), n)
+      :repeat -> repeat(state, id, n)
+      :none -> run(state, id, 1)
+    end
+  end
 
-  defp command(state, :page_up, _row),
-    do: Layout.move_to(state, state.cursor - State.body_height(state))
+  def run(state, id, _n), do: command(state, id, Layout.current_row(state))
 
-  defp command(state, :page_down, _row),
-    do: Layout.move_to(state, state.cursor + State.body_height(state))
+  defp repeat(state, _id, 0), do: state
+
+  defp repeat(state, id, n) do
+    next = run(state, id, 1)
+
+    if next == state or match?({:error, _}, next.message),
+      do: next,
+      else: repeat(next, id, n - 1)
+  end
+
+  # the commands that use a count themselves: one build of the view for
+  # all n steps
+  defp step(state, :up, _row, n), do: Layout.move_to(state, state.cursor - n)
+  defp step(state, :down, _row, n), do: Layout.move_to(state, state.cursor + n)
+
+  defp step(state, :page_up, _row, n),
+    do: Layout.move_to(state, state.cursor - n * State.body_height(state))
+
+  defp step(state, :page_down, _row, n),
+    do: Layout.move_to(state, state.cursor + n * State.body_height(state))
+
+  defp step(state, :previous_section, _row, n),
+    do: Layout.move_to(state, section_heads(Layout.rows(state), state.cursor, -1, n))
+
+  defp step(state, :next_section, _row, n),
+    do: Layout.move_to(state, section_heads(Layout.rows(state), state.cursor, 1, n))
+
+  defp step(state, :next_column, row, n), do: Layout.step_col(state, row, n)
+  defp step(state, :previous_column, row, n), do: Layout.step_col(state, row, -n)
 
   defp command(state, :top, _row), do: Layout.move_to(state, 0)
   defp command(state, :bottom, _row), do: Layout.move_to(state, length(Layout.rows(state)) - 1)
 
-  defp command(state, :previous_section, _row),
-    do: Layout.move_to(state, section_head_index(Layout.rows(state), state.cursor, -1))
-
-  defp command(state, :next_section, _row),
-    do: Layout.move_to(state, section_head_index(Layout.rows(state), state.cursor, 1))
-
-  defp command(state, :next_column, row), do: Layout.step_col(state, row, 1)
-  defp command(state, :previous_column, row), do: Layout.step_col(state, row, -1)
+  defp command(state, id, row) when id in @own, do: step(state, id, row, 1)
   defp command(state, :insert, row), do: insert(state, row)
 
   defp command(state, :remove, row),
@@ -166,6 +212,16 @@ defmodule Agendum.TUI.Update.ViewKeys do
         else: Core.set_section_collapsed(state.db, state.view_id, row.sidx, collapsed)
 
     %{State.change_db(state, db) | cursor_key: {:section, row.sidx}}
+  end
+
+  # the nth section head above or below; stops at the last one there is
+  defp section_heads(_rows, from, _direction, 0), do: from
+
+  defp section_heads(rows, from, direction, n) do
+    case section_head_index(rows, from, direction) do
+      ^from -> from
+      next -> section_heads(rows, next, direction, n - 1)
+    end
   end
 
   defp section_head_index(rows, from, direction) do

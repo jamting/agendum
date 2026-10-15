@@ -67,6 +67,9 @@ defmodule Agendum.TUI.Render.Help do
      Star column   SPACE stars or unstars; Yes/No column: Y or N
      Note column   Type that line of the category's note; F2 edits it
      CTRL-PGUP/DN  Previous / next section         ⌥↑ / ⌥↓
+     ALT-1…ALT-9   A count for the next move: ALT-1 ALT-0 ↓ goes ten rows
+                   down (also PGUP PGDN ←→, sections, ALT-J ALT-H ALT-N
+                   ALT-P); ESC drops it
 
    Everywhere
      F3 in a prompt for a file name: pick it from a list of files

@@ -1214,7 +1214,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 - **R65 ⏳ Commands, keymaps and a count** (ours, after Emacs; ADR 0033).
   ✅ In a view, every key runs a named command (`Agendum.TUI.Commands`)
   through the view's keymap (`Agendum.TUI.Keymap`), ALT-letters included;
-  a printable character that is not bound starts typing. ⏳ A count:
+  a printable character that is not bound starts typing. ✅ A count:
   ALT-digits typed in a view (ALT-1 ALT-0) are shown in the control panel
   and make the next command run that many times, for commands that take a
   count (moving the highlight, next marked item, hop, next and previous

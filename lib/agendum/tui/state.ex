@@ -11,7 +11,8 @@ defmodule Agendum.TUI.State do
   the hierarchy is shown (a display preference, not part of the file), and
   `last_key` the previous key and when it came, so that pressing a key
   twice can mean more and auto-save (R54) knows how long the keyboard has
-  been idle.
+  been idle. `count` is the count typed with ALT-digits for the next
+  command in a view (R65), nil when there is none.
 
   `undo` and `redo` hold snapshots for `Agendum.TUI.History`. `saved_db` is the
   database as last saved or loaded; the file is dirty whenever `db` differs.
@@ -56,6 +57,7 @@ defmodule Agendum.TUI.State do
           fetching: %{optional(pos_integer) => :manual | :auto},
           theme: Agendum.TUI.Terminal.Theme.name(),
           last_key: %{key: term, at: NaiveDateTime.t() | nil},
+          count: pos_integer | nil,
           history: %{undo: [map], redo: [map], step: Database.t() | nil},
           saved_db: Database.t() | nil,
           effects: [term]
@@ -93,6 +95,7 @@ defmodule Agendum.TUI.State do
             fetching: %{},
             theme: :classic,
             last_key: %{key: nil, at: nil},
+            count: nil,
             history: %{undo: [], redo: [], step: nil},
             saved_db: nil,
             effects: []

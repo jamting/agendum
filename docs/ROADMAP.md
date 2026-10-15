@@ -81,8 +81,11 @@ A web application with accounts and shared files, on the same core (plan:
 few commands at a time:
 
 - [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agendum.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
-- [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps
-- [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries, and "describe key"; the F1 help and KEYBOARD.md checked against the keymaps
+- [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps (R65, ADR 0033)
+  - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)
+  - [x] A count with ALT-digits in views, for the commands chosen to take one; a repeat that changes nothing stops
+  - [ ] The other places' keys (category and view managers, notes, boxes, the global keys and CTRL aliases) into keymaps
+- [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries (F1 then `c`), and "describe key" (F1 then `d`); the F1 help and KEYBOARD.md checked against the keymaps
 - [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
 - [ ] Raw values (dates, numbers) beside the formatted cells in `Agendum.Core.ViewModel`
 - [ ] Browsing's date arithmetic into the core
