@@ -15,11 +15,11 @@
  • Ask Ow│       Kanga                                                │
  • Find S│       Roo                                                  │ll
  • Visit │       Tigger                                               │ga, Roo
-         │       Christopher Robin                                    │
-         │       Small                                                │
-         │ +   Priority                                               │
-         │ *     High                                                 │
-         │       Medium                                               │
          │                                                            │
          │ * assigned  c by a condition  + via subcategory  SPACE     │
+         └────────────────────────────────────────────────────────────┘
+
+
+
+
  SPACE Assign or unassign  ESC Done

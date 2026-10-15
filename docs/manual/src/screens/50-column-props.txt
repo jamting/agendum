@@ -6,7 +6,7 @@
    │ Width:        12               Link with other sections: Yes           │
    │ Format:       Name only                                                │
  No│                                                                        │
- • │ SPACE next choice · type a number · F3 picks the head                  │
+ • │ SPACE next choice · type a number · F3 pick the head                   │
    └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
 
  Friends and Relations                    When             Priority Friends
@@ -22,4 +22,4 @@
 
 
 
- ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel
+ ↑↓←→ Setting SPACE Next type Number F3 Choices ENTER Done ESC Cancel

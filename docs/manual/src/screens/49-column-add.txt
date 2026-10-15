@@ -8,7 +8,7 @@
  No│ Position:     Right of current column                                  │
  • │ Insert in:    All sections                                             │
    │                                                                        │
-   │ SPACE/→ next choice · ← previous · F3 picks the head · ENTER adds      │
+   │ SPACE next choice · type a number · F3 pick the head · ENTER add       │
  Fr└───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
  • Count the lettuces before Tigger                        Medium   Tigger
    bounces on them
@@ -22,4 +22,4 @@
 
 
 
- ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel
+ ↑↓←→ Setting SPACE Next type Number F3 Choices ENTER Add ESC Cancel

@@ -11,7 +11,7 @@
          │               High                                         │
  Friends │               (type a category name to add)                │ends
  • Count │                                                            │ger
-   bounce│ ENTER edit · DEL remove · type to assign · F3 profile      │
+   bounce│ F2 edit · DEL remove · type to assign · F4 date            │
  • Ask Ow└─────────── Press ENTER when done, ESC to cancel ───────────┘
  • Find Small, who is lost again                           High     Small
  • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
@@ -22,4 +22,4 @@
 
 
 
- F2 Edit DEL Remove type Assign F4 Date F3 Profile ENTER Done ESC Cancel
+ F2 Edit DEL Remove type To assign F4 Date F3 Profile ENTER Done ESC Cancel

@@ -178,7 +178,7 @@ under <em>Friends and Relations</em>, because its text mentions Tigger. The
 <!-- ===================================================================== -->
 <section id="screen">
 <h2>2. The screen and the keys</h2>
-<p class="in-which">In Which Rabbit's Very Modern Keyboard Has No F10, and Nobody Is Left Out</p>
+<p class="in-which">In Which Rabbit Finds the F10 His Very Modern Keyboard Was Hiding</p>
 
 <p>Every screen has the same three parts, in the colours Agenda 2.0 had on a colour
 screen:</p>
@@ -263,11 +263,12 @@ can back out a step at a time. This manual writes menu paths like <strong>File �
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> My keyboard hasn't got an <kbd>F10</kbd>. Or an
 <kbd>INS</kbd>. It is a very modern keyboard.</p>
-<p class="owl"><b>Owl.</b> Then press <kbd>ESC</kbd> and then <kbd>0</kbd>. Any function
-key is <kbd>ESC</kbd> followed by its digit, so <kbd>ESC</kbd> <kbd>5</kbd> is
-<kbd>F5</kbd>; <kbd>ESC</kbd> followed by a shifted digit is <kbd>ALT</kbd> and that
-F-key; <kbd>ESC</kbd> followed by a letter is <kbd>ALT</kbd> and that letter. And
-<kbd>CTRL-N</kbd> does what <kbd>INS</kbd> does. Nobody is left out.</p>
+<p class="owl"><b>Owl.</b> It has. Look along the top row: the keys with the little
+pictures of brightness and sound. Hold <kbd>fn</kbd> and they become <kbd>F1</kbd> to
+<kbd>F12</kbd>, or tell your computer, once, in System Settings ▸ Keyboard, to use them
+as standard function keys. Agendum needs them, as Agenda did. For the menu,
+<kbd>/</kbd> will do; <kbd>ESC</kbd> followed by a letter is <kbd>ALT</kbd> and that
+letter; and <kbd>CTRL-N</kbd> does what <kbd>INS</kbd> does.</p>
 <p class="rabbit"><b>Rabbit.</b> And if I press something dreadful?</p>
 <p class="owl"><b>Owl.</b> <kbd>CTRL-Z</kbd>. Almost everything can be undone, and undo
 even takes you back to where the change happened.</p>
@@ -275,7 +276,8 @@ even takes you back to where the change happened.</p>
 
 <div class="tip">The <a href="#reference">reference</a> at the end lists every key with
 its Mac-friendly alternative. On a Mac, set your terminal to use Option as Meta (or
-press <kbd>ESC</kbd> before the letter) for the <kbd>ALT</kbd> keys.</div>
+press <kbd>ESC</kbd> before the letter) for the <kbd>ALT</kbd> keys; <kbd>ALT-F</kbd>
+keys are <kbd>⌥</kbd> with the function key.</div>
 </section>
 
 <!-- ===================================================================== -->
@@ -373,6 +375,13 @@ Items with a note show <code>♪</code>. In a note:</p>
       occurrence.</li>
 </ul>
 
+<p>A line longer than the screen is wide wraps onto as many rows as it needs, broken
+after a space, so the whole of it always shows; the wrapping is only on the screen,
+and no line break goes into the text. <kbd>↑</kbd> and <kbd>↓</kbd> move through the
+rows you see, keeping to the column you were in; <kbd>HOME</kbd> and <kbd>END</kbd>
+(<kbd>CTRL-A</kbd>, <kbd>CTRL-E</kbd>) go to the start and end of the row, and pressed
+there, to the start and end of the whole line.</p>
+
 <p>Text in a note is cut and pasted with Agenda's keys. <kbd>F7</kbd> starts marking at
 the cursor; move the cursor and the marked text stretches with it, over several lines
 if you like, and <kbd>F7</kbd> again stops. Then <kbd>F3</kbd> copies it, <kbd>F4</kbd>
@@ -413,9 +422,9 @@ parentheses.</p>
          │               High                                         │
  Friends │               (type a category name to add)                │ends
  • Count │                                                            │ger
-   bounce│ ENTER edit · DEL remove · type to assign · F3 profile      │
+   bounce│ F2 edit · DEL remove · type to assign · F4 date            │
  • Ask Ow└─────────── Press ENTER when done, ESC to cancel ───────────┘
-<span class="t"> F2 Edit DEL Remove type Assign F4 Date F3 Profile ENTER Done ESC Cancel        </span></pre>
+<span class="t"> F2 Edit DEL Remove type To assign F4 Date F3 Profile ENTER Done ESC Cancel     </span></pre>
 
 <p>In this box <kbd>F2</kbd> on the text edits it, <kbd>SPACE</kbd> on the note opens it,
 <kbd>DEL</kbd> on an assignment breaks it, and typing a category name assigns the item
@@ -648,13 +657,9 @@ spelt enough for one week.</p>
  • Ask Ow│       Kanga                                                │
  • Find S│       Roo                                                  │ll
  • Visit │       Tigger                                               │ga, Roo
-         │       Christopher Robin                                    │
-         │       Small                                                │
-         │ +   Priority                                               │
-         │ *     High                                                 │
-         │       Medium                                               │
          │                                                            │
          │ * assigned  c by a condition  + via subcategory  SPACE     │
+         └────────────────────────────────────────────────────────────┘
 <span class="t"> SPACE Assign or unassign  ESC Done                                             </span></pre>
 
 <h3 id="alsomatch">Also match: more words for a category</h3>
@@ -711,8 +716,9 @@ lists them.</p>
    │ │ Match on                : Item text                        │         │
  No│ │ Required match strength : Exact match - 100%               │         │
  • │ │ Confirm assignments     : Never                            │         │
-   └─│ Ignore text enclosed by : " "                              │  ───────┘
-<span class="t"> ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel                      </span></pre>
+   │ │ Ignore text enclosed by : " "                              │         │
+   └─│ Ignore suffixes         : Yes                              │  ───────┘
+<span class="t"> ↑↓←→ Move between settings  SPACE Next choice  ENTER Done  ESC Cancel          </span></pre>
 
 <table>
   <tr><th>Setting</th><th>Choices</th></tr>
@@ -752,7 +758,7 @@ assigns the picked ones and moves on, <kbd>ESC</kbd> stops.</p>
          │   Pooh                                                     │
  Notices │   Piglet                                                   │ends
  • Put up│                                                            │
-   Meetin│ SPACE picks · TAB picks all · ENTER assigns · ESC stops    │
+   Meetin│ SPACE pick · TAB all · ENTER assign · ESC stop             │
          └────────────────────────────────────────────────────────────┘
 <span class="t"> SPACE Pick a suggestion  TAB Pick all  ENTER Assign the picked  ESC Stop       </span></pre>
 
@@ -829,9 +835,9 @@ in Notices too. A column added to the current section only changes on its own.
  No│ Position:     Right of current column                                  │
  • │ Insert in:    All sections                                             │
    │                                                                        │
-   │ SPACE/→ next choice · ← previous · F3 picks the head · ENTER adds      │
+   │ SPACE next choice · type a number · F3 pick the head · ENTER add       │
  Fr└───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
-<span class="t"> ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel                      </span></pre>
+<span class="t"> ↑↓←→ Setting SPACE Next type Number F3 Choices ENTER Add ESC Cancel            </span></pre>
 
 <ul>
   <li><strong>Column head</strong>: type a category's name (a new name makes a new
@@ -872,9 +878,9 @@ in Notices too. A column added to the current section only changes on its own.
    │ Width:        12               Link with other sections: Yes           │
    │ Format:       Name only                                                │
  No│                                                                        │
- • │ SPACE next choice · type a number · F3 picks the head                  │
+ • │ SPACE next choice · type a number · F3 pick the head                   │
    └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
-<span class="t"> ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel                      </span></pre>
+<span class="t"> ↑↓←→ Setting SPACE Next type Number F3 Choices ENTER Done ESC Cancel           </span></pre>
 
 <p>An empty section has no items to put the highlight on, so press <kbd>→</kbd> on its
 head to reach its columns.</p>
@@ -1108,9 +1114,9 @@ its column (“next friday 3pm”) or in Item Properties.</p>
    │ │ Set date from Done key : No                                │         │
    │ │ Set date from When key : No                                │         │
    │ │                                                            │         │
-   │ │ SPACE next choice · arrows move                            │         │
+   │ │ SPACE next choice                                          │         │
    │ └─────────── Press ENTER when done, ESC to cancel ───────────┘         │
-<span class="t"> ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel                      </span></pre>
+<span class="t"> ↑↓←→ Move between settings  SPACE Next choice  ENTER Done  ESC Cancel          </span></pre>
 
 <table>
   <tr><th>Setting</th><th>Choices</th></tr>
@@ -1214,7 +1220,7 @@ again:</p>
          │ Hide column heads  : No                                    │
          │ Section separators : No                                    │
          │                                                            │
-         │ SPACE picks, types or cycles · DEL clears                  │
+         │ SPACE change · DEL clear                                   │
          └─────────── Press ENTER when done, ESC to cancel ───────────┘
 <span class="t"> ↑↓←→ Setting SPACE Change DEL Clear ENTER Done ESC Cancel                      </span></pre>
 
@@ -1326,11 +1332,11 @@ everything on all items, <kbd>ALT-E</kbd> just the highlighted section's categor
 <span class="t"> children. SPACE picks a category.                                              </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
  • Weed t┌────────────── Execute conditions and actions ──────────────┐
- • Count │ Apply conditions of : MAIN (all categories)                │ger
-   bounce│ Against             : All items                            │
-         │ Apply actions to    : New assignments only                 │
+ • Count │ Apply conditions of  : MAIN (all categories)               │ger
+   bounce│ Against              : All items                           │
+         │ Apply actions to     : New assignments only                │
  Notices │                                                            │ends
- • Put up│ ENTER runs · on the first row: choose · SPACE changes      │
+ • Put up│ SPACE change the setting · ENTER run                       │
    Meetin└─────────── Press ENTER when done, ESC to cancel ───────────┘
 <span class="t"> ↑↓←→ Move between settings  SPACE Change the setting  ENTER Run  ESC Cancel    </span></pre>
 </section>
@@ -1361,12 +1367,12 @@ for a range instead:</p>
 <span class="h"> Garden                                   When             Priority Friends</span>
  • Weed t┌───────────────────── Filter the view ──────────────────────┐
  • Count │ ┌──────────────────── Date filter: When ─────────────────────┐r
-   bounce│ │ Show items      : Assigned                                 │
-         │ │ Start date      : today                                    │
- Notices │ │ End date        : end of this week                         │ds
- • Put up│ │ Items should be : Inside range                             │
+   bounce│ │ Show items       : Assigned                                │
+         │ │ Start date       : today                                   │
+ Notices │ │ End date         : end of this week                        │ds
+ • Put up│ │ Items should be  : Inside range                            │
    Meetin│ │                                                            │
-         │ │ Blank = open · ENTER applies · DEL removes · ESC cancels   │
+         │ │ SPACE change the setting · ENTER apply · DEL remove        │
  Friends │ └─────────── Press ENTER when done, ESC to cancel ───────────┘ds
 <span class="t"> ↑↓←→ Setting SPACE Change ENTER Apply DEL Remove ESC Cancel                    </span></pre>
 
@@ -1399,7 +1405,7 @@ value first or last. The same box can sort the sections themselves.</p>
  Friends │ Section sorting : None                                     │ends
  • Count │ Section order   : -                                        │ger
    bounce│                                                            │
- • Ask Ow│ SPACE changes the highlighted setting                      │
+ • Ask Ow│ SPACE change the setting                                   │
  • Find S└─────────── Press ENTER when done, ESC to cancel ───────────┘ll
 <span class="t"> ↑↓←→ Move between settings  SPACE Change the setting  ENTER Done  ESC Cancel   </span></pre>
 </section>
@@ -1622,9 +1628,9 @@ them, and saves them in your preferences file
  • Count │ Thousands separator : , (Comma)                            │ger
    bounce│                                                            │
  • Ask Ow│ Saved in your preferences, not in this file.               │
- • Find S│ SPACE next choice · arrows move                            │ll
+ • Find S│ SPACE next choice                                          │ll
  • Visit └─────────── Press ENTER when done, ESC to cancel ───────────┘ga, Roo
-<span class="t"> ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel                      </span></pre>
+<span class="t"> ↑↓←→ Move between settings  SPACE Next choice  ENTER Done  ESC Cancel          </span></pre>
 
 <ul>
   <li><strong>Theme</strong>: <em>Classic</em>, the grey, blue and cyan of Agenda 2.0
@@ -1752,7 +1758,12 @@ until the day you need one, and then you will remember there was something.</p>
   <li><strong>The Show View</strong> is where searches and dependency lists appear;
       <kbd>ALT-F8</kbd> goes back to the view you came from.</li>
   <li><strong>Search and replace in a note</strong>: <kbd>ALT-F6</kbd> in the note,
-      with Replace text <em>Yes</em>; replace all at once or confirm each one.</li>
+      with Replace text <em>Yes</em>; replace all at once or confirm each one, in a
+      Yes/No box that keeps clear of the highlighted occurrence. Each replacement is an
+      undo step of its own.</li>
+  <li><strong>How big is the file?</strong> <strong>File ▸ Properties ▸ File
+      statistics</strong> counts the items, those with notes and the categories, and
+      gives the average number of items per category and categories per item.</li>
   <li><strong>The key bar</strong>: <kbd>ALT-K</kbd> hides it for a little more
       room, and Agendum remembers that next time.</li>
   <li><strong>Undo</strong> goes back up to 100 steps, in views and in the managers;
@@ -1768,9 +1779,10 @@ until the day you need one, and then you will remember there was something.</p>
 <h2>16. Reference</h2>
 <p class="in-which">In Which Every Key Is Written Down, for the Day Rabbit Forgets One</p>
 
-<p>Every function key also works as <kbd>ESC</kbd> then its digit (<kbd>ESC</kbd>
-<kbd>0</kbd> is <kbd>F10</kbd>), every <kbd>ALT-F</kbd> key as <kbd>ESC</kbd> then the
-shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter.</p>
+<p>The function keys are needed, as in Agenda: on a Mac, hold <kbd>fn</kbd> with them
+(<kbd>ALT-F</kbd> keys are <kbd>⌥</kbd> with the function key) or make them standard
+function keys in System Settings ▸ Keyboard. Every <kbd>ALT</kbd> letter also works as
+<kbd>ESC</kbd> then the letter.</p>
 
 <h3>In a view</h3>
 <table>
@@ -1788,13 +1800,13 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>F10</kbd></td><td>Menu</td><td><kbd>/</kbd></td></tr>
   <tr><td><kbd>DEL</kbd></td><td>Remove from the section or column</td><td><kbd>fn-⌫</kbd></td></tr>
   <tr><td><kbd>ALT-F2</kbd></td><td>When date</td><td></td></tr>
-  <tr><td><kbd>ALT-F3</kbd></td><td>Macro manager; in Learn mode, stop recording</td><td><kbd>ESC</kbd> <kbd>#</kbd></td></tr>
+  <tr><td><kbd>ALT-F3</kbd></td><td>Macro manager; in Learn mode, stop recording</td><td></td></tr>
   <tr><td><kbd>ALT-F4</kbd></td><td>Discard</td><td><kbd>CTRL-D</kbd></td></tr>
   <tr><td><kbd>ALT-F5</kbd></td><td>Go to a section</td><td></td></tr>
   <tr><td><kbd>ALT-F6</kbd></td><td>Search; then <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd></td><td></td></tr>
   <tr><td><kbd>ALT-F8</kbd></td><td>Back to the last view</td><td></td></tr>
-  <tr><td><kbd>ALT-F9</kbd></td><td>Copy the item (or the marked ones) to another section as well</td><td><kbd>ESC</kbd> <kbd>(</kbd></td></tr>
-  <tr><td><kbd>ALT-F10</kbd></td><td>Move the item; on a section or column head, the section or column</td><td><kbd>ESC</kbd> <kbd>)</kbd></td></tr>
+  <tr><td><kbd>ALT-F9</kbd></td><td>Copy the item (or the marked ones) to another section as well</td><td></td></tr>
+  <tr><td><kbd>ALT-F10</kbd></td><td>Move the item; on a section or column head, the section or column</td><td>On a head: <strong>View ▸ Section ▸ Move</strong>, <strong>View ▸ Column ▸ Move</strong></td></tr>
   <tr><td><kbd>ALT-A</kbd></td><td>Alarm</td><td></td></tr>
   <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter</td><td><kbd>ESC</kbd> <kbd>b</kbd></td></tr>
   <tr><td><kbd>ALT-C</kbd></td><td>The calendar</td><td><kbd>ESC</kbd> <kbd>c</kbd></td></tr>
@@ -1830,7 +1842,7 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>HOME</kbd> / <kbd>END</kbd></td><td>The first / last setting</td><td><kbd>fn-←</kbd> / <kbd>fn-→</kbd></td></tr>
   <tr><td><kbd>SPACE</kbd></td><td>Next choice, or open the setting</td><td></td></tr>
   <tr><td>a letter</td><td>The next choice beginning with it</td><td></td></tr>
-  <tr><td><kbd>F2</kbd> / <kbd>F3</kbd></td><td>Edit a text / list the choices</td><td><kbd>CTRL-E</kbd> / <kbd>ESC</kbd> <kbd>3</kbd></td></tr>
+  <tr><td><kbd>F2</kbd> / <kbd>F3</kbd></td><td>Edit a text / list the choices</td><td><kbd>CTRL-E</kbd> / —</td></tr>
   <tr><td><kbd>ENTER</kbd> / <kbd>ESC</kbd></td><td>Done / cancel the box's changes</td><td></td></tr>
   <tr><td><kbd>Y</kbd> / <kbd>N</kbd></td><td>In a yes-or-no question: answer at once</td><td></td></tr>
 </table>
@@ -1838,14 +1850,15 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
 <h3>In a note</h3>
 <table>
   <tr><th>Key</th><th>Does</th><th>Mac-friendly</th></tr>
-  <tr><td><kbd>F7</kbd></td><td>Mark text; again, stop marking</td><td><kbd>ESC</kbd> <kbd>7</kbd></td></tr>
-  <tr><td><kbd>F3</kbd> / <kbd>F4</kbd></td><td>Copy / cut the marked text (or a word, line or all)</td><td><kbd>ESC</kbd> <kbd>3</kbd> / <kbd>4</kbd></td></tr>
-  <tr><td><kbd>ALT-F4</kbd></td><td>Delete it, not kept</td><td><kbd>ESC</kbd> <kbd>$</kbd></td></tr>
-  <tr><td><kbd>F2</kbd></td><td>Paste</td><td><kbd>ESC</kbd> <kbd>2</kbd></td></tr>
-  <tr><td><kbd>ALT-F7</kbd> / <kbd>ALT-F2</kbd></td><td>Make a new item / category of the text</td><td><kbd>ESC</kbd> <kbd>&amp;</kbd> / <kbd>@</kbd></td></tr>
+  <tr><td><kbd>F7</kbd></td><td>Mark text; again, stop marking</td><td></td></tr>
+  <tr><td><kbd>F3</kbd> / <kbd>F4</kbd></td><td>Copy / cut the marked text (or a word, line or all)</td><td></td></tr>
+  <tr><td><kbd>ALT-F4</kbd></td><td>Delete it, not kept</td><td></td></tr>
+  <tr><td><kbd>F2</kbd></td><td>Paste</td><td></td></tr>
+  <tr><td><kbd>ALT-F7</kbd> / <kbd>ALT-F2</kbd></td><td>Make a new item / category of the text</td><td></td></tr>
   <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-T</kbd></td><td>Type today's date / the time</td><td></td></tr>
   <tr><td><kbd>ALT-N</kbd> / <kbd>ALT-P</kbd></td><td>The next / previous note</td><td></td></tr>
   <tr><td><kbd>ALT-F6</kbd>; <kbd>ALT-S</kbd></td><td>Search and replace; the next occurrence</td><td></td></tr>
+  <tr><td><kbd>↑</kbd> <kbd>↓</kbd>; <kbd>HOME</kbd> / <kbd>END</kbd></td><td>A row up / down on the screen (long lines wrap); start / end of the row, again: of the line</td><td><kbd>CTRL-A</kbd> / <kbd>CTRL-E</kbd></td></tr>
   <tr><td><kbd>F5</kbd> or <kbd>ESC</kbd></td><td>Save it and go back</td><td></td></tr>
 </table>
 

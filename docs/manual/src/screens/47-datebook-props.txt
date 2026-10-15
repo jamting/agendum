@@ -14,7 +14,7 @@
          │ Hide column heads  : No                                    │
          │ Section separators : No                                    │
          │                                                            │
-         │ SPACE picks, types or cycles · DEL clears                  │
+         │ SPACE change · DEL clear                                   │
          └─────────── Press ENTER when done, ESC to cancel ───────────┘
 
 

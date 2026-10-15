@@ -12,7 +12,7 @@
  Friends │ Section sorting : None                                     │ends
  • Count │ Section order   : -                                        │ger
    bounce│                                                            │
- • Ask Ow│ SPACE changes the highlighted setting                      │
+ • Ask Ow│ SPACE change the setting                                   │
  • Find S└─────────── Press ENTER when done, ESC to cancel ───────────┘ll
  • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
 

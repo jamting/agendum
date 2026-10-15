@@ -13,7 +13,7 @@
  • Count │ Thousands separator : , (Comma)                            │ger
    bounce│                                                            │
  • Ask Ow│ Saved in your preferences, not in this file.               │
- • Find S│ SPACE next choice · arrows move                            │ll
+ • Find S│ SPACE next choice                                          │ll
  • Visit └─────────── Press ENTER when done, ESC to cancel ───────────┘ga, Roo
 
 
@@ -22,4 +22,4 @@
 
 
 
- ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel
+ ↑↓←→ Move between settings  SPACE Next choice  ENTER Done  ESC Cancel

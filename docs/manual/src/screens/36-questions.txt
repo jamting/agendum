@@ -8,7 +8,7 @@
          │   Pooh                                                     │
  Notices │   Piglet                                                   │ends
  • Put up│                                                            │
-   Meetin│ SPACE picks · TAB picks all · ENTER assigns · ESC stops    │
+   Meetin│ SPACE pick · TAB all · ENTER assign · ESC stop             │
          └────────────────────────────────────────────────────────────┘
  Friends and Relations                    When             Priority Friends
  • Count the lettuces before Tigger                        Medium   Tigger

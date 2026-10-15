@@ -8,7 +8,7 @@
    │ │ Set date from Done key : No                                │         │
    │ │ Set date from When key : No                                │         │
    │ │                                                            │         │
-   │ │ SPACE next choice · arrows move                            │         │
+   │ │ SPACE next choice                                          │         │
    │ └─────────── Press ENTER when done, ESC to cancel ───────────┘         │
    │ Statistics:         ...               (none)                           │
    │ Advanced settings:  ...               Excludes:                        │
@@ -22,4 +22,4 @@
        Low   1
     Harvest   date · 0
 
- ↑↓←→ Setting SPACE Next type Number ENTER Done ESC Cancel
+ ↑↓←→ Move between settings  SPACE Next choice  ENTER Done  ESC Cancel
