@@ -86,6 +86,21 @@ defmodule Agendum.TUI.DebugLogTest do
     assert DebugLog.write("nothing") == :ok
   end
 
+  describe "file_text/1" do
+    test "the file in use, with its size" do
+      state = Core.new_file() |> start() |> Map.put(:path, "/h/my.agendum")
+      items = map_size(state.db.items)
+      categories = map_size(state.db.categories)
+
+      assert DebugLog.file_text(state) ==
+               "file /h/my.agendum (#{items} items, #{categories} categories)"
+    end
+
+    test "a file never saved (a sample, a starter) has no path" do
+      assert Core.new_file() |> start() |> DebugLog.file_text() =~ ~r/^file not saved yet \(/
+    end
+  end
+
   describe "slow_text/1" do
     test "an answer of 100 ms or more is logged, split into its parts" do
       answer = %{keys: [:down], total: 230, update: 20, draw: 205}

@@ -13,7 +13,8 @@ has the detail.
 - Quicker answers to keys: keys typed fast or held down are answered
   with one drawing, and views showing many items draw faster.
 - The debug log (`AGENDUM_LOG`) notes every answer to a key that took
-  100 ms or more, with how the time was spent.
+  100 ms or more, with how the time was spent, and names the file in
+  use when the program starts and when another file is opened.
 
 ## 0.2.0 — 2026-10-15
 

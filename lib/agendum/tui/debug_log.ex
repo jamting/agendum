@@ -8,13 +8,16 @@ defmodule Agendum.TUI.DebugLog do
   One file a session (`session-<time>.log`). It holds the program,
   terminal and arguments, every input as bytes and decoded keys (with the
   boxes open), the keys a macro plays, the effects run, new messages and
-  errors, answers to keys that took 100 ms or more, and a crash: the exception, its stack trace and the state as
+  errors, the file in use (at the start and whenever another is opened or
+  saved under a new name), answers to keys that took 100 ms or more, and
+  a crash: the exception, its stack trace and the state as
   the developer screen (`Agendum.TUI.DevTools`) shows it. Starting a
   session deletes all but the newest four, so five are kept.
 
   What is typed is in the log, so it stays on this computer. Logging
   never stops the program: a log that cannot be written is left off.
-  `dir/1`, `file_name/1`, `old_sessions/1` and `slow_text/1` are pure; the rest writes
+  `dir/1`, `file_name/1`, `old_sessions/1`, `file_text/1` and
+  `slow_text/1` are pure; the rest writes
   (imperative shell, called by `Agendum.CLI` and `Agendum.TUI.App`).
   """
 
@@ -121,6 +124,17 @@ defmodule Agendum.TUI.DebugLog do
 
   def effect({:save_preferences, path, _prefs}), do: write("effect save_preferences #{path}")
   def effect(effect), do: write("effect #{inspect(effect)}")
+
+  @doc "The file in use (`file_text/1`)."
+  @spec file(State.t()) :: :ok
+  def file(state), do: write(file_text(state))
+
+  @doc "The log line naming the file in use and its size."
+  @spec file_text(State.t()) :: String.t()
+  def file_text(%State{path: path, db: db}) do
+    "file #{path || "not saved yet"} " <>
+      "(#{map_size(db.items)} items, #{map_size(db.categories)} categories)"
+  end
 
   # an answer this slow, from key to screen, is noticed: log it
   @slow_ms 100

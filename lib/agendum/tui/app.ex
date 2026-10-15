@@ -29,6 +29,7 @@ defmodule Agendum.TUI.App do
     case Terminal.start() do
       :ok ->
         Terminal.start_reader(self())
+        DebugLog.file(state)
 
         try do
           loop(state, nil, "", state.theme)
@@ -161,6 +162,7 @@ defmodule Agendum.TUI.App do
   defp run_effects(state, [effect | rest]) do
     DebugLog.effect(effect)
     before = state.prefs
+    before_path = state.path
 
     state =
       case effect do
@@ -190,6 +192,11 @@ defmodule Agendum.TUI.App do
           Task.start(fn -> send(loop, {:calendar_read, id, CalendarFetch.read(url)}) end)
           state
       end
+
+    # another file opened, or this one saved under a new name
+    if state.path != before_path or
+         match?({kind, _} when kind in [:load, :open_or_create], effect),
+       do: DebugLog.file(state)
 
     # the last file used changed the preferences (R52): keep them
     if state.prefs != before and state.prefs.path,

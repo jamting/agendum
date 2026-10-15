@@ -22,7 +22,9 @@ program are therefore hard to reproduce, by the owner or by Claude.
 - It logs the program, Elixir, OTP, OS, terminal and arguments; every
   input as raw bytes and decoded keys, with the boxes open; the keys a
   macro plays; the effects `App` runs (text written to a file counted,
-  not copied); new messages and errors; terminal resizes; answers to
+  not copied); new messages and errors; terminal resizes; the file in
+  use with its size (at the start, and when another is opened or saved
+  under a new name); answers to
   keys that took 100 ms or more, from the key's arrival to the screen
   drawn (split into waiting, update and draw; added 2026-10-15 to find
   lag felt in use); and a crash:
