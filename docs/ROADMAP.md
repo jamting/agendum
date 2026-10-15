@@ -54,7 +54,7 @@ items have a plan in `docs/plans/` (see `docs/INDEX.md`).
   - [ ] Elixir reader outside the pure core, converting to the JSON format; File ▸ Transfer ▸ Import of a `.AG`
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
 - [ ] Optional: Import of structured text files (one item per line, with categories)
-- [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files)
+- [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files). A first real use: the session summaries in `docs/summaries/` (one per feature, all alike: `#` title, dated, commit hashes, R-numbers), imported with STF and a definition file so text matching files them (the owner's wish, 2026-10-15)
 
 ### Time management (Milestone 5)
 
