@@ -140,6 +140,28 @@ defmodule Agendum.TUI.Keymap do
     {:ctrl, "d"} => :discard
   }
 
+  # a note (F5): any key not here edits the text (`Typing.TextEdit`)
+  @note %{
+    :esc => :close,
+    {:f, 5} => :close,
+    {:f, 1} => :help,
+    {:f, 7} => :mark,
+    {:f, 3} => :copy,
+    {:f, 4} => :cut,
+    {:alt_f, 4} => :delete,
+    {:f, 2} => :paste,
+    {:alt_f, 6} => :search,
+    {:alt, "s"} => :search_next,
+    {:alt, "d"} => :insert_date,
+    {:alt, "t"} => :insert_time,
+    {:alt, "n"} => :next_note,
+    {:alt, "p"} => :previous_note,
+    {:alt_f, 7} => :make_item,
+    {:alt_f, 2} => :make_category,
+    {:alt, "k"} => :key_map,
+    {:alt, "q"} => :quit
+  }
+
   # on every screen, but not while typing or answering (`Update`)
   @global %{
     {:ctrl, "z"} => :undo,
@@ -153,7 +175,7 @@ defmodule Agendum.TUI.Keymap do
     {:ctrl, "c"} => :quit
   }
 
-  @keymaps %{view: @view, catmgr: @catmgr, viewmgr: @viewmgr, global: @global}
+  @keymaps %{view: @view, catmgr: @catmgr, viewmgr: @viewmgr, note: @note, global: @global}
 
   # Keys that stand for other keys (R31): for Mac keyboards without INS,
   # CTRL-N is INS everywhere, CTRL-E is F2 and CTRL-K F4 unless typing
@@ -182,16 +204,21 @@ defmodule Agendum.TUI.Keymap do
   @spec alias_of(term) :: {term, :always | :not_typing | :view} | nil
   def alias_of(key), do: Map.get(@aliases, key)
 
+  # places where the person types text: CTRL-E and CTRL-K edit there
+  @typing [:note]
+
   @doc """
   The key `key` stands for in `place` (not while typing), or nil when it
   stands for itself there: ⌥↑ is CTRL-PGUP in a view, but its own key in
-  the category manager.
+  the category manager; CTRL-E is F2, but in a note it goes to the end of
+  the line.
   """
   @spec alias_in(atom, term) :: term | nil
   def alias_in(place, key) do
     case alias_of(key) do
       {target, :view} -> if place == :view, do: target
-      {target, _always_or_not_typing} -> target
+      {target, :not_typing} -> if place not in @typing, do: target
+      {target, :always} -> target
       nil -> nil
     end
   end

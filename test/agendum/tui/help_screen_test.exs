@@ -77,6 +77,25 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert Enum.map(back.modes, & &1.type) == [:viewmgr]
     end
 
+    test "in a note: its commands only, since the keys of every screen edit text there",
+         %{state: state} do
+      text = screen(press(state, [:down, {:f, 5}, {:f, 1}, "c"]))
+      assert text =~ "COMMANDS IN A NOTE"
+      assert text =~ ~r/Cut +F4 +Cut the marked text/
+      refute text =~ "Undo"
+    end
+
+    test "ENTER runs a note command in the note", %{state: state} do
+      in_note = press(state, [:down, {:f, 5}, "hello"])
+
+      index =
+        Enum.find_index(HelpScreen.commands(:note), fn {c, _, _} -> c.id == :insert_date end)
+
+      ran = press(in_note, [{:f, 1}, "c"] ++ List.duplicate(:down, index) ++ [:enter])
+      assert Enum.map(ran.modes, & &1.type) == [:note]
+      assert screen(ran) =~ "hello2026-10-12"
+    end
+
     test "ENTER runs a category manager command there", %{state: state} do
       in_catmgr = press(state, [{:f, 9}, :down, :down])
       index = Enum.find_index(HelpScreen.commands(:catmgr), fn {c, _, _} -> c.id == :parent end)
@@ -139,6 +158,15 @@ defmodule Agendum.TUI.HelpScreenTest do
       in_viewmgr = press(state, {:f, 8})
       assert described(in_viewmgr, {:f, 4}) =~ "F4 runs Discard in the view manager."
       assert described(in_viewmgr, "w") =~ "w highlights the next view whose name starts"
+    end
+
+    test "in a note: a command, a key that edits, and CTRL-Z, which is not undo there",
+         %{state: state} do
+      in_note = press(state, [:down, {:f, 5}])
+      assert described(in_note, {:f, 4}) =~ "F4 runs Cut in a note."
+      assert described(in_note, :left) =~ "← edits the text"
+      assert described(in_note, {:ctrl, "e"}) =~ "CTRL-E edits the text"
+      refute described(in_note, {:ctrl, "z"}) =~ "Undo"
     end
 
     test "ESC before a key goes back", %{state: state} do

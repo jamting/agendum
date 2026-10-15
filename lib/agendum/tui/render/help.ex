@@ -116,6 +116,7 @@ defmodule Agendum.TUI.Render.Help do
                    all) an item (MAKEITM; it leaves the note)
      ALT-F2        Make the marked text or the word a
                    category (MAKECAT)
+     F1            Help (then c: its commands, d: describe a key)
      ESC / F5      Save the note and return
      ↑↓            Move by the rows shown (long lines wrap)
      HOME / END    Start / end of the row; again: of the line

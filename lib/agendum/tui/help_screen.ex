@@ -12,14 +12,15 @@ defmodule Agendum.TUI.HelpScreen do
       it runs there, or the macro attached to it), then any key returns.
 
   The mode remembers where F1 was pressed (`from`): `:view`, `:catmgr`,
-  `:viewmgr`, or `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
+  `:viewmgr`, `:note`, or `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
   """
 
   alias Agendum.TUI.{Command, Commands, Keymap, Macros, State}
   alias Agendum.TUI.Boxes.ViewManager
   alias Agendum.TUI.CategoryScreens.Manager
   alias Agendum.TUI.Render.Help
-  alias Agendum.TUI.Update.ViewKeys
+  alias Agendum.TUI.Typing.{TextEdit, Wrap}
+  alias Agendum.TUI.Update.{Notes, ViewKeys}
 
   @doc "Opens the help screen on its keys page."
   @spec open(State.t()) :: State.t()
@@ -27,7 +28,7 @@ defmodule Agendum.TUI.HelpScreen do
     from =
       case {state.edit, state.modes} do
         {nil, []} -> :view
-        {nil, [%{type: type} | _]} when type in [:catmgr, :viewmgr] -> type
+        {nil, [%{type: type} | _]} when type in [:catmgr, :viewmgr, :note] -> type
         _ -> :elsewhere
       end
 
@@ -46,10 +47,14 @@ defmodule Agendum.TUI.HelpScreen do
     global =
       for c <- Commands.all(:global),
           c.id not in ids,
+          not typing?(from),
           do: {c, :global, Keymap.keys_for(:global, c.id)}
 
     local ++ global
   end
+
+  # in a note the keys of every screen are not commands: they edit the text
+  defp typing?(from), do: from == :note
 
   # --- keys ---------------------------------------------------------------------
 
@@ -117,6 +122,7 @@ defmodule Agendum.TUI.HelpScreen do
   defp run(state, {%Command{id: id}, :view, _keys}), do: ViewKeys.run(state, id)
   defp run(state, {%Command{id: id}, :catmgr, _keys}), do: Manager.run(state, id)
   defp run(state, {%Command{id: id}, :viewmgr, _keys}), do: ViewManager.run(state, id)
+  defp run(state, {%Command{id: id}, :note, _keys}), do: Notes.run(state, id)
 
   defp run(state, {%Command{id: id, name: name}, :global, _keys}) do
     case Agendum.TUI.Update.run_global(state, id) do
@@ -152,7 +158,7 @@ defmodule Agendum.TUI.HelpScreen do
         ["#{name} runs the macro #{macro.name}, attached to it in this file."] ++
           hidden(from, key)
 
-      command = global_command(key) ->
+      command = not typing?(from) && global_command(key) ->
         [via <> "#{name} runs #{command.name}, everywhere but while typing.", command.summary]
 
       command = local_command(from, key) ->
@@ -170,6 +176,9 @@ defmodule Agendum.TUI.HelpScreen do
       from == :viewmgr and match?({:char, _}, key) ->
         ["#{name} highlights the next view whose name starts with what is typed."]
 
+      from == :note and edits_text?(state, key) ->
+        ["#{name} edits the text: types, moves the cursor or deletes."]
+
       key == :esc ->
         ["ESC cancels or goes back."]
 
@@ -178,8 +187,8 @@ defmodule Agendum.TUI.HelpScreen do
 
       true ->
         [
-          "#{name} is not in a keymap here yet: only the view's and the managers'",
-          "keys are so far. The keys page (F1) lists what it does."
+          "#{name} is not in a keymap here yet: only the keys of views, notes and",
+          "the managers are so far. The keys page (F1) lists what it does."
         ]
     end
   end
@@ -191,12 +200,16 @@ defmodule Agendum.TUI.HelpScreen do
     end
   end
 
+  defp edits_text?(state, key),
+    do: match?({:ok, _}, TextEdit.handle(State.mode(state).edit, key, Wrap.width(state)))
+
   defp global_command(key), do: Commands.get(:global, Keymap.lookup(:global, key))
   defp local_command(from, key), do: Commands.get(from, Keymap.lookup(from, key))
 
   defp place_name(:view), do: "in a view"
   defp place_name(:catmgr), do: "in the category manager"
   defp place_name(:viewmgr), do: "in the view manager"
+  defp place_name(:note), do: "in a note"
   defp place_name(_elsewhere), do: "here"
 
   defp count_line(%Command{count: :none}), do: []
@@ -280,6 +293,7 @@ defmodule Agendum.TUI.HelpScreen do
   defp where(:view), do: "IN A VIEW"
   defp where(:catmgr), do: "IN THE CATEGORY MANAGER"
   defp where(:viewmgr), do: "IN THE VIEW MANAGER"
+  defp where(:note), do: "IN A NOTE"
   defp where(_elsewhere), do: "ON EVERY SCREEN"
 
   defp pad(text, width), do: String.pad_trailing(text, width - 1) <> " "

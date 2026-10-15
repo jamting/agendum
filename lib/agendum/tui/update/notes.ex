@@ -3,80 +3,68 @@ defmodule Agendum.TUI.Update.Notes do
   Keys in the full-screen note of an item, a category or a macro: editing,
   ALT-D / ALT-T, ALT-N / ALT-P to the next note, F7 MARK, F3 COPY, F4 CUT,
   ALT-F4 DELETE and F2 PASTE (R63), ALT-F7 MAKEITM and ALT-F2 MAKECAT
-  (R42), and saving on close. Pure.
+  (R42), and saving on close. Commands run through the note's keymap
+  (R65); other keys edit the text. Pure.
   """
 
   alias Agendum.Core
   alias Agendum.Core.DateFormat
-  alias Agendum.TUI.{CategoryScreens, Layout, Typing.NoteSearch, State, Typing.TextEdit}
+  alias Agendum.TUI.{CategoryScreens, Keymap, Layout, Typing.NoteSearch, State, Typing.TextEdit}
   alias Agendum.TUI.Typing.Wrap
   alias Agendum.TUI.Update.Actions
 
   # --- notes --------------------------------------------------------------------
 
-  @doc "A key in a note."
+  @doc """
+  A key in a note: it runs the command the note's keymap binds it to
+  (`Agendum.TUI.Keymap`, R65); any other key edits the text.
+  """
   def note_key(state, mode, key) do
-    case key do
-      {:alt_f, 6} ->
-        NoteSearch.open(state)
-
-      {:alt, "s"} ->
-        NoteSearch.next(state, mode)
-
-      # F4 is CUT in a note, as in Agenda
-      k when k in [:esc, {:f, 5}] ->
-        close_note(state, mode)
-
-      {:f, 7} ->
-        State.put_mode(state, %{mode | edit: TextEdit.toggle_mark(mode.edit)})
-
-      {:f, 3} ->
-        clip(state, :copy)
-
-      {:f, 4} ->
-        clip(state, :cut)
-
-      {:alt_f, 4} ->
-        clip(state, :delete)
-
-      {:f, 2} ->
-        paste(state, mode)
-
-      {:alt, "d"} ->
-        type_in_note(state, mode, DateFormat.date(state.today, state.db.date_format))
-
-      {:alt, "t"} ->
-        type_in_note(
-          state,
-          mode,
-          DateFormat.time(NaiveDateTime.to_time(state.now), state.db.date_format)
-        )
-
-      {:alt, "n"} ->
-        step_note(state, mode, 1)
-
-      {:alt, "p"} ->
-        step_note(state, mode, -1)
-
-      {:alt, "q"} ->
-        state |> close_note(mode) |> Actions.perform(:quit)
-
-      {:alt, "k"} ->
-        State.toggle_key_map(state)
-
-      {:alt_f, 7} ->
-        ask_make_item(state)
-
-      {:alt_f, 2} ->
-        make_category(state, mode)
-
-      _ ->
-        case TextEdit.handle(mode.edit, key, Wrap.width(state)) do
-          {:ok, edit} -> State.put_mode(state, Map.merge(mode, %{edit: edit, match: nil}))
-          :unhandled -> state
-        end
+    case Keymap.lookup(:note, key) do
+      nil -> edit_text(state, mode, key)
+      id -> command(state, mode, id)
     end
   end
+
+  @doc "Runs a note command (`Agendum.TUI.Commands`) in the note on top."
+  @spec run(State.t(), atom) :: State.t()
+  def run(state, id), do: command(state, State.mode(state), id)
+
+  defp edit_text(state, mode, key) do
+    case TextEdit.handle(mode.edit, key, Wrap.width(state)) do
+      {:ok, edit} -> State.put_mode(state, Map.merge(mode, %{edit: edit, match: nil}))
+      :unhandled -> state
+    end
+  end
+
+  defp command(state, _mode, :search), do: NoteSearch.open(state)
+  defp command(state, mode, :search_next), do: NoteSearch.next(state, mode)
+  defp command(state, mode, :close), do: close_note(state, mode)
+  defp command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
+
+  defp command(state, mode, :mark),
+    do: State.put_mode(state, %{mode | edit: TextEdit.toggle_mark(mode.edit)})
+
+  # F4 is CUT in a note, as in Agenda
+  defp command(state, _mode, :copy), do: clip(state, :copy)
+  defp command(state, _mode, :cut), do: clip(state, :cut)
+  defp command(state, _mode, :delete), do: clip(state, :delete)
+  defp command(state, mode, :paste), do: paste(state, mode)
+
+  defp command(state, mode, :insert_date),
+    do: type_in_note(state, mode, DateFormat.date(state.today, state.db.date_format))
+
+  defp command(state, mode, :insert_time) do
+    time = DateFormat.time(NaiveDateTime.to_time(state.now), state.db.date_format)
+    type_in_note(state, mode, time)
+  end
+
+  defp command(state, mode, :next_note), do: step_note(state, mode, 1)
+  defp command(state, mode, :previous_note), do: step_note(state, mode, -1)
+  defp command(state, mode, :quit), do: state |> close_note(mode) |> Actions.perform(:quit)
+  defp command(state, _mode, :key_map), do: State.toggle_key_map(state)
+  defp command(state, _mode, :make_item), do: ask_make_item(state)
+  defp command(state, mode, :make_category), do: make_category(state, mode)
 
   # --- ALT-F7 MAKEITM and ALT-F2 MAKECAT (User's Guide 12-8 to 12-9) ---
 

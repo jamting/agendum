@@ -85,8 +85,8 @@ few commands at a time:
   - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)
   - [x] A count with ALT-digits in views, for the commands chosen to take one; a repeat that changes nothing stops
   - [x] The global keys (CTRL-Z, CTRL-S …) and the keys that stand for others (CTRL-N = INS) in `Agendum.TUI.Keymap`
-  - [x] The category and view managers' keys in keymaps (F1 `c` and `d` there too)
-  - [ ] The other places' keys (notes, boxes, the menu) into keymaps
+  - [x] The category and view managers' and a note's keys in keymaps (F1 `c` and `d` there too)
+  - [ ] The other places' keys (boxes, the menu) into keymaps
 - [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries (F1 then `c`), and "describe key" (F1 then `d`); the F1 help and KEYBOARD.md checked against the keymaps
   - [x] F1 `c` (ENTER runs the highlighted command) and F1 `d`, in views; elsewhere the global keys
   - [ ] Typing in the command list narrows it; the F1 help and KEYBOARD.md checked against the keymaps

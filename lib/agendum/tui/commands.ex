@@ -5,7 +5,7 @@ defmodule Agendum.TUI.Commands do
   view's. The order is the one the command list will show.
 
   So far the view's (`:view`), the category manager's (`:catmgr`), the view
-  manager's (`:viewmgr`) and the global ones (`:global`); other places move over a few at a time.
+  manager's (`:viewmgr`), a note's (`:note`) and the global ones (`:global`); other places move over a few at a time.
   Pure.
   """
 
@@ -117,6 +117,27 @@ defmodule Agendum.TUI.Commands do
     {:close, "Return", "Back to the view shown", :none}
   ]
 
+  # a note (F5, R39, R42, R63); keys not here edit the text
+  @note [
+    {:mark, "Mark", "Mark text (again: unmark)", :none},
+    {:copy, "Copy", "Copy the marked text (or a word …)", :none},
+    {:cut, "Cut", "Cut the marked text (or a word …)", :none},
+    {:delete, "Delete", "Delete the marked text, not kept", :none},
+    {:paste, "Paste", "Paste what was copied or cut last", :none},
+    {:search, "Search", "Search or replace in the note", :none},
+    {:search_next, "Search again", "Find the next one (or replace it)", :none},
+    {:insert_date, "Date", "Type today's date", :none},
+    {:insert_time, "Time", "Type the time", :none},
+    {:next_note, "Next note", "Save; the next item's note", :none},
+    {:previous_note, "Previous note", "Save; the previous item's note", :none},
+    {:make_item, "Make item", "Make the marked text an item", :none},
+    {:make_category, "Make category", "Make the marked text a category", :none},
+    {:key_map, "Key map", "Show or hide the function key map", :none},
+    {:help, "Help", "Show the keys", :none},
+    {:close, "Return", "Save the note and go back", :none},
+    {:quit, "Quit", "Save the note and quit Agendum", :none}
+  ]
+
   # the keys that work on every screen but while typing (`Update`'s
   # global keys); Save and Retrieve are also the view's ALT-W and ALT-G
   @global [
@@ -140,6 +161,10 @@ defmodule Agendum.TUI.Commands do
       end,
     viewmgr:
       for {id, name, summary, count} <- @viewmgr do
+        %Command{id: id, name: name, summary: summary, count: count}
+      end,
+    note:
+      for {id, name, summary, count} <- @note do
         %Command{id: id, name: name, summary: summary, count: count}
       end,
     global:

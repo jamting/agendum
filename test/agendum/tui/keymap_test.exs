@@ -14,7 +14,7 @@ defmodule Agendum.TUI.KeymapTest do
   @today ~D[2026-10-12]
 
   # the places whose keys are in keymaps (ADR 0033)
-  @places [:view, :catmgr, :viewmgr, :global]
+  @places [:view, :catmgr, :viewmgr, :note, :global]
 
   test "every key in a keymap runs a command in its place's command list" do
     unknown =
@@ -77,6 +77,22 @@ defmodule Agendum.TUI.KeymapTest do
     for c <- Commands.all(:viewmgr), from <- [first, other] do
       assert %Agendum.TUI.State{} = Agendum.TUI.Boxes.ViewManager.run(from, c.id),
              "#{c.id} failed"
+    end
+  end
+
+  test "CTRL-E and CTRL-K are F2 and F4 outside a note; in a note they edit the text" do
+    assert Keymap.alias_in(:view, {:ctrl, "e"}) == {:f, 2}
+    assert Keymap.alias_in(:note, {:ctrl, "e"}) == nil
+    assert Keymap.alias_in(:note, {:ctrl, "n"}) == :insert
+    refute {:ctrl, "k"} in Keymap.keys_for(:note, :cut)
+  end
+
+  test "every note command runs, in an item's note" do
+    state = start(Planner.build() |> Planner.with_samples(@today), today: @today)
+    in_note = press(state, [:down, {:f, 5}, "Call Bob about the plan"])
+
+    for c <- Commands.all(:note) do
+      assert %Agendum.TUI.State{} = Agendum.TUI.Update.Notes.run(in_note, c.id), "#{c.id} failed"
     end
   end
 
