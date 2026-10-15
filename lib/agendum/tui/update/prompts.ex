@@ -294,7 +294,7 @@ defmodule Agendum.TUI.Update.Prompts do
         State.put_mode(state, %{mode | answer: not mode.answer})
 
       :esc ->
-        State.pop(state)
+        state |> State.pop() |> cancelled(mode.action)
 
       _ ->
         state
@@ -336,6 +336,10 @@ defmodule Agendum.TUI.Update.Prompts do
   def help, do: "Y or N answers. SPACE switches the answer; ENTER accepts the one shown."
 
   defp confirmed(state, {:make_numeric, id}, true), do: make_numeric(state, id)
+
+  # Search/Replace in a note: Y replaces this occurrence, N skips it
+  defp confirmed(state, {:note_replace, asked}, answer),
+    do: Agendum.TUI.Typing.NoteSearch.answer(state, asked, answer)
 
   defp confirmed(state, {:delete_macro, id}, true),
     do: State.change_db(state, Core.delete_macro(state.db, id))
@@ -412,6 +416,13 @@ defmodule Agendum.TUI.Update.Prompts do
   defp confirmed(state, :quit, true), do: Actions.perform(state, :save_and_quit)
   defp confirmed(state, :quit, false), do: State.effect(state, :quit)
   defp confirmed(state, _action, false), do: state
+
+  # ESC in a question: most questions just close; a note's replacements
+  # stop there and report how many were made
+  defp cancelled(state, {:note_replace, asked}),
+    do: Agendum.TUI.Typing.NoteSearch.stop(state, asked)
+
+  defp cancelled(state, _action), do: state
 
   @doc "Asks which file replaces the open one (after any question about saving)."
   def replace_file(state, :retrieve), do: prompt(state, "File to retrieve:", :retrieve)

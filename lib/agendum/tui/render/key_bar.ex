@@ -134,9 +134,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ENTER/ESC", "End search"}
     ]
 
-  defp mode_keys(%{type: :note, replacing: r}) when r != nil,
-    do: [{"Y", "Replace"}, {"N", "Skip", "Skip this one"}, {"ESC", "Stop"}]
-
   defp mode_keys(%{type: :note}),
     do: [
       {"ESC", "Return", "Save and return"},

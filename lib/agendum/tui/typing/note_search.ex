@@ -13,8 +13,9 @@ defmodule Agendum.TUI.Typing.NoteSearch do
   ALT-S finds the next one (after a single replacement: replaces it) and
   beeps when there is none. A replacement
   replaces the next occurrence, or every occurrence in the note when
-  global. When confirming, each occurrence is highlighted in turn: Y
-  replaces it, N skips it, ESC stops.
+  global. When confirming, each occurrence is highlighted in turn and a
+  Yes/No box asks "Replace this occurrence?": Yes replaces it, No skips
+  it, ESC stops.
 
   The search starts at the cursor; when nothing is found there it
   continues from the top (or, backward, from the bottom). The note is
@@ -28,7 +29,7 @@ defmodule Agendum.TUI.Typing.NoteSearch do
 
   alias Agendum.Core.TextSearch
   alias Agendum.TUI.Boxes.{Box, Template}
-  alias Agendum.TUI.{Typing.LineEdit, State, Typing.TextEdit}
+  alias Agendum.TUI.{Typing.LineEdit, State, Typing.TextEdit, Update.Prompts}
 
   # the replacement's rows only when Replace text is Yes
   @layout """
@@ -275,31 +276,30 @@ defmodule Agendum.TUI.Typing.NoteSearch do
 
   # --- confirming each replacement ----------------------------------------------------
 
+  # The occurrence is highlighted and a Yes/No box asks about it, as the
+  # other questions (`Agendum.TUI.Update.Prompts.ask/3`); what is being
+  # asked travels in the question's action and comes back to `answer/3`.
   defp ask(state, pos, s, count) do
     state
     |> highlight(pos, s)
-    |> put_note(&Map.put(&1, :replacing, %{settings: s, at: pos, count: count}))
-    |> State.info("Replace this occurrence? (Y/N, ESC stops)")
+    |> Prompts.ask(
+      "Replace this occurrence?",
+      {:note_replace, %{settings: s, at: pos, count: count}}
+    )
   end
 
-  @doc "Keys while a replacement waits for confirmation: Y, N or ESC."
-  def confirm_key(state, note, key) do
-    %{settings: s, at: pos, count: count} = note.replacing
+  @doc """
+  The answer to "Replace this occurrence?", with the note on top again:
+  Yes replaces it, No skips it; then the next one is asked about.
+  """
+  def answer(state, %{settings: s, at: pos, count: count}, true),
+    do: state |> replace(pos, s) |> continue(s, after_replacement(pos, s), count + 1)
 
-    case key do
-      {:char, c} when c in ["y", "Y"] ->
-        state |> replace(pos, s) |> continue(s, after_replacement(pos, s), count + 1)
+  def answer(state, %{settings: s, at: pos, count: count}, false),
+    do: continue(state, s, after_skip(pos, s), count)
 
-      {:char, c} when c in ["n", "N"] ->
-        continue(state, s, after_skip(pos, s), count)
-
-      :esc ->
-        state |> stop() |> replaced(count)
-
-      _ ->
-        state
-    end
-  end
+  @doc "ESC in the question: the replacements stop, and how many were made is shown."
+  def stop(state, %{count: count}), do: state |> stop() |> replaced(count)
 
   defp after_replacement({row, col}, %{direction: :forward} = s),
     do: {row, col + String.length(s.replacement)}
@@ -318,7 +318,7 @@ defmodule Agendum.TUI.Typing.NoteSearch do
     end
   end
 
-  defp stop(state), do: put_note(state, &Map.merge(&1, %{replacing: nil, match: nil}))
+  defp stop(state), do: put_note(state, &Map.put(&1, :match, nil))
 
   # --- changing the note being edited ------------------------------------------------
 

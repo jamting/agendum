@@ -74,7 +74,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] View Manager as a box, as Agenda's (screenshot 40) (§5)
 - [ ] Boxes: F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) every setting in the box, CTRL-ENTER clears a setting (User's Guide 2-17)
 - [x] Bug: hint lines inside two settings boxes still gave the keys from before ENTER meant done (§5, ADR 0030): Item Properties said "ENTER edit", Macro Properties "ENTER changes". Fixed by moving both to `Agendum.TUI.Boxes.Box`, whose hint is made from the same keys as the key bar
-- [ ] Search/Replace in a note: "Replace this occurrence?" as a Yes/No box, as the other questions (it is still asked in the control panel)
+- [x] Search/Replace in a note: "Replace this occurrence?" as a Yes/No box, as the other questions, placed so that it does not cover the occurrence
 - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash, Tab size; screenshot 130) where Agendum has them, and the File Statistics box (screenshot 140), as Category Statistics
 - [ ] Look into: one fuzz run (2026-10-14, while letters in boxes were built) printed a stack trace through `Agendum.TUI.Boxes.BoxChoices` yet passed; not reproduced in three later 1,500–2,000-run sweeps
 - [x] In notes: F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, and their key bar (R63)

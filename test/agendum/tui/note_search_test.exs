@@ -18,6 +18,8 @@ defmodule Agendum.TUI.NoteSearchTest do
   end
 
   defp note(state), do: State.mode(state)
+  # the note under the box on top
+  defp under(%State{modes: [_box, note | _]}), do: note
   defp cursor(state), do: {note(state).edit.row, note(state).edit.col}
 
   test "ALT-F6 in a note opens the Search/Replace box", %{state: state} do
@@ -118,17 +120,21 @@ defmodule Agendum.TUI.NoteSearchTest do
              "Ask the HR\nthen personnel division again\nPERSONNEL DIVISION"
   end
 
-  test "confirming asks at each occurrence: Y replaces, N skips, ESC stops",
+  test "confirming asks at each occurrence in a Yes/No box: Y replaces, N skips, ESC stops",
        %{state: state, id: id} do
     state = replace_box(state, "personnel division", "HR", global: true, confirm: true)
-    assert note(state).match == {0, 8, 18}
-    assert screen(state) =~ "Replace this occurrence? (Y/N, ESC stops)"
+    assert %{type: :confirm, question: "Replace this occurrence?"} = State.mode(state)
+    assert screen(state) =~ ~r"Replace this occurrence\?  Yes"
+    assert screen(state) =~ "Press ENTER to accept"
+    # the note behind keeps the occurrence highlighted
+    assert under(state).match == {0, 8, 18}
 
     state = press(state, "y")
-    assert note(state).match == {1, 5, 18}
+    assert under(state).match == {1, 5, 18}
     state = press(state, "n")
-    assert note(state).match == {2, 0, 18}
+    assert under(state).match == {2, 0, 18}
     state = press(state, :esc)
+    assert %{type: :note} = note(state)
     assert note(state).match == nil
     assert screen(state) =~ "Replaced 1 occurrence"
 
@@ -138,11 +144,34 @@ defmodule Agendum.TUI.NoteSearchTest do
              "Ask the HR\nthen personnel division again\nPERSONNEL DIVISION"
   end
 
+  test "the question box does not cover the occurrence it asks about", %{state: state} do
+    state = replace_box(state, "personnel division", "HR", global: true, confirm: true)
+    state = press(state, "n")
+    assert under(state).match == {1, 5, 18}
+    assert screen(state) =~ "then personnel division again"
+  end
+
+  test "in the question, ENTER accepts the answer shown and SPACE switches it",
+       %{state: state, id: id} do
+    state = replace_box(state, "personnel division", "HR", global: true, confirm: true)
+    state = press(state, [:enter, " ", :enter, :enter])
+    assert %{type: :note} = note(state)
+    assert screen(state) =~ "Replaced 2 occurrences"
+    state = press(state, :esc)
+    assert state.db.items[id].note == "Ask the HR\nthen personnel division again\nHR"
+  end
+
+  test "the question is asked even with Confirm mode off", %{state: state} do
+    state = %{state | prefs: %{state.prefs | confirm: false}}
+    state = replace_box(state, "personnel division", "HR", global: true, confirm: true)
+    assert %{type: :confirm} = State.mode(state)
+  end
+
   test "confirming the last occurrence ends the replacement", %{state: state} do
     state = replace_box(state, "personnel division", "HR", global: true, confirm: true)
     state = press(state, ["y", "y", "y"])
+    assert %{type: :note} = note(state)
     assert note(state).match == nil
-    assert note(state).replacing == nil
     assert screen(state) =~ "Replaced 3 occurrences"
   end
 

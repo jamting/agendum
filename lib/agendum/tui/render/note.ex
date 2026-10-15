@@ -11,8 +11,7 @@ defmodule Agendum.TUI.Render.Note do
   """
   def lines(state, mode) do
     edit = mode.edit
-    visible = State.body_height(state)
-    top = max(edit.row - visible + 1, 0)
+    top = top(state, mode)
     region = TextEdit.region(edit)
 
     edit.lines
@@ -20,6 +19,10 @@ defmodule Agendum.TUI.Render.Note do
     |> Enum.map(fn {text, row} -> line(text, row, edit, region, Map.get(mode, :match)) end)
     |> Enum.drop(top)
   end
+
+  @doc "The first line of the note shown: the note scrolls so that the cursor's line shows."
+  @spec top(State.t(), map) :: non_neg_integer
+  def top(state, %{edit: edit}), do: max(edit.row - State.body_height(state) + 1, 0)
 
   defp line(text, row, _edit, _region, {row, col, len}) do
     {before, rest} = String.split_at(text, col)

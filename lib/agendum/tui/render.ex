@@ -60,6 +60,10 @@ defmodule Agendum.TUI.Render do
 
   # The base is the topmost full-screen mode (or the view); boxes above it
   # are drawn on top, bottom-up.
+  @doc "The full screen the boxes are drawn over (nil: the view)."
+  @spec base([map]) :: map | nil
+  def base(modes), do: Enum.find(modes, &(&1.type in @full_screen))
+
   defp split_modes(modes) do
     {above, rest} = Enum.split_while(modes, &(&1.type not in @full_screen))
     base = List.first(rest)

@@ -13,10 +13,7 @@ defmodule Agendum.TUI.Update.Notes do
 
   # --- notes --------------------------------------------------------------------
 
-  @doc "A key in a note (or in its Search/Replace question)."
-  def note_key(state, %{replacing: replacing} = mode, key) when replacing != nil,
-    do: NoteSearch.confirm_key(state, mode, key)
-
+  @doc "A key in a note."
   def note_key(state, mode, key) do
     case key do
       {:alt_f, 6} ->

@@ -811,7 +811,10 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   moves the cursor to the next occurrence and highlights it; ALT-S finds
   the next one and beeps when there are no more. A replacement replaces
   the next occurrence, or every occurrence when global; when confirming,
-  each occurrence is highlighted and Y replaces it, N skips it, ESC stops.
+  each occurrence is highlighted and a Yes/No box asks "Replace this
+  occurrence?" (as the other questions; asked even with Confirm mode
+  off, R54): Yes replaces it, No skips it, ESC stops. The box moves
+  below the occurrence when it would cover it.
   Our choices: the search starts at the cursor and, when nothing is found
   after it, continues from the top (backward: the bottom), since a note
   opens with the cursor at its end; a global replacement covers the whole

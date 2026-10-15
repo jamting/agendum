@@ -6,7 +6,7 @@ defmodule Agendum.TUI.Render.Boxes do
   Pure.
   """
 
-  alias Agendum.TUI.{Boxes.Box, Terminal.Draw, State}
+  alias Agendum.TUI.{Boxes.Box, Render.Note, Terminal.Draw, State}
 
   # A box opened from another box (`depth` 1, 2 …) sits a line lower and
   # two columns right of the box beneath (`beneath`, that box's left
@@ -16,10 +16,10 @@ defmodule Agendum.TUI.Render.Boxes do
   @doc "Draws the box of `mode` over `body`; also returns the column it starts at."
   def overlay(state, mode, depth, active?, body, beneath \\ nil) do
     inner = box_width(state, mode)
-    top = 1 + depth
     max_rows = max(State.body_height(state) - 4 - depth, 3)
     content = box_content(state, mode, inner, max_rows)
     box = Draw.box(box_title(state, mode), content, inner, footer(mode, inner))
+    top = top(state, depth, length(box))
     box = if active?, do: box, else: Enum.map(box, &Draw.paint(&1, %{box_title: :box_title_dim}))
     wanted = if beneath, do: beneath + 2, else: div(state.width - inner - 2, 2)
     left = min(wanted, max(state.width - inner - 2, 0))
@@ -30,6 +30,31 @@ defmodule Agendum.TUI.Render.Boxes do
       |> Draw.shadow(top, left, length(box), inner + 2)
 
     {body, left}
+  end
+
+  # A box sits at the top of the screen, below the boxes beneath it; but a
+  # question over a note (Search/Replace's "Replace this occurrence?") goes
+  # below the highlighted occurrence when it would cover it.
+  defp top(state, depth, height) do
+    top = 1 + depth
+
+    case match_row(state) do
+      # the box and its shadow cover rows top .. top + height
+      row when is_integer(row) and row >= top and row <= top + height ->
+        min(row + 2, max(State.body_height(state) - height - 1, 0))
+
+      _ ->
+        top
+    end
+  end
+
+  # the screen row (in the body) of a note's search match, when a note is
+  # beneath the boxes
+  defp match_row(%State{modes: modes} = state) do
+    case Agendum.TUI.Render.base(modes) do
+      %{type: :note, match: {row, _col, _len}} = note -> row - Note.top(state, note)
+      _ -> nil
+    end
   end
 
   @doc """
