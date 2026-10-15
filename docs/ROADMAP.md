@@ -90,6 +90,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] File Properties ▸ File statistics: Agenda's File Statistics box (screenshot 140), as Category Statistics
 - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash, Tab size; screenshot 130) where Agendum has them
 - [ ] Look into: one fuzz run (2026-10-14, while letters in boxes were built) printed a stack trace through `Agendum.TUI.Boxes.BoxChoices` yet passed; not reproduced in three later 1,500–2,000-run sweeps
+- [ ] Look into: one `FUZZ_RUNS=3000` run (2026-10-15, after the ESC + digit removal, which the fuzz never reaches) failed 1 of 4 tests; output was cut off (`tail -3`), seed unknown; nine later 3000-run sweeps (seeds 0–3, 11–16) passed. Next time keep the full output and the seed
 - [x] In notes: F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, and their key bar (R63)
 - [x] Word wrap in the note editor (R64): long lines shown whole on several rows, wrapped at the rightmost space, for the screen only; ↑↓ by rows, HOME/END the row's ends then the line's
 - [ ] Undo in the note editor: CTRL-Z / CTRL-Y while editing a note, for typing (in sensible chunks: a word or a line, not every key) and for Search/Replace's replacements, with the note's text and cursor restored in the editor; the steps join the file's history when the note closes (today undo works only after closing the note, ADR 0005)
