@@ -267,7 +267,14 @@ defmodule Agendum.TUI.Macros do
     end
   end
 
-  # ALT-F3 (or ALT-Z) in Learn mode: the keystrokes go into the macro
+  # ALT-F3 (or ALT-Z) in Learn mode: the keystrokes go into the macro;
+  # undo may have taken the macro away while learning (found by the fuzz)
+  defp stop(%State{macro: %{learning: l}} = state)
+       when not is_map_key(state.db.macros, l.id) do
+    %{state | macro: %{state.macro | learning: nil}}
+    |> State.error("Learn mode is off: the macro was undone, so nothing is kept")
+  end
+
   defp stop(%State{macro: %{learning: l}} = state) do
     macro = state.db.macros[l.id]
     recorded = l.keys |> Enum.reverse() |> MacroKeys.encode()

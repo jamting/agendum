@@ -56,6 +56,15 @@ defmodule Agendum.TUI.MacrosTest do
     assert panel(state) =~ "Learn mode is off: Water has 19 new keys"
   end
 
+  test "undo while learning takes the new macro away; stopping then keeps nothing (fuzz)",
+       %{state: state} do
+    learning = press(state, [{:alt_f, 3}, :insert, "Water", :enter, {:f, 7}])
+    stopped = press(learning, [{:ctrl, "z"}, {:alt_f, 3}])
+    assert macro(stopped, "Water") == nil
+    assert stopped.macro.learning == nil
+    assert screen(stopped) =~ "the macro was undone"
+  end
+
   test "ENTER in the manager runs it; ALT-Z runs it again", %{state: state} do
     state = learned(state)
     state = press(state, [{:alt_f, 3}, :enter])
