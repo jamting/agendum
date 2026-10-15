@@ -8,6 +8,13 @@ tagged in git (`v0.2.0`). The roadmap's Done section
 ([`docs/ROADMAP.md`](docs/ROADMAP.md)) lists every finished item; git log
 has the detail.
 
+## Unreleased
+
+- F1 c and F1 d also work in the category manager, the view manager and
+  a note; F1 now opens the help in the view manager and in a note too.
+- The help and the keyboard guide say ⌥m (Option as Meta) where they said
+  ESC m: ESC typed by hand and then a letter is two keys.
+
 ## 0.3.0 — 2026-10-15
 
 Keys run named commands: a count before a command, and help that lists
