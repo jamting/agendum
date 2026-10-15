@@ -828,8 +828,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   An item typed into the view or section gets the start date or minimum
   (with only an end: the end; outside the range: the day or number just
   before the start, or just after the end). ENTER applies, DEL removes
-  the filter, ESC cancels. Not done: browsing the date filter (View
-  Browse, ALT-B; with datebook views).
+  the filter, ESC cancels. Browsing a date filter to other dates (View ▸
+  Browse, ALT-B) is R48.
 - **R29 ✅ Numeric columns** (User's Guide chapter 8). A numeric category
   holds a number for each item assigned to it; the number is a value of
   the assignment, not a category. A standard category becomes numeric
