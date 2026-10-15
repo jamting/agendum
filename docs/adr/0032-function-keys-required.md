@@ -10,7 +10,7 @@ F3, ESC 0 = F10), and every ALT-F-key as ESC followed by the shifted digit
 awkward.
 
 In practice the aliases did not work when typed. A lone ESC is only told
-apart from the start of an escape sequence by a 40 ms timeout
+apart from the start of an escape sequence by a short timeout (40 ms then, 25 ms since 2026-10-15)
 (`@escape_timeout` in `Agendum.TUI.App`), so ESC then `3` typed by hand
 arrives as ESC (nothing, or cancel) and then `3` (a new item). They only
 worked from a terminal key binding, which can send the real F-key sequence

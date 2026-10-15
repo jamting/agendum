@@ -10,6 +10,8 @@ has the detail.
 
 ## Unreleased
 
+- ESC answers sooner: a lone ESC waits 25 ms, not 40, for a key that
+  might follow it.
 - Adding or changing an item is quicker when categories have date
   conditions ("this week", "..yesterday"): their dates are read once.
 

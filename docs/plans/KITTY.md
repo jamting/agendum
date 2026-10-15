@@ -24,7 +24,7 @@ to see it is the **kitty keyboard protocol** (progressive enhancement):
 
 | Flag | What it does                                                        | Why we need it                                     |
 | ---- | ------------------------------------------------------------------- | -------------------------------------------------- |
-| 1    | Disambiguate: ESC arrives as `CSI 27 u`                             | No more 40 ms lone-ESC timeout                     |
+| 1    | Disambiguate: ESC arrives as `CSI 27 u`                             | No more 25 ms lone-ESC timeout                     |
 | 2    | Report press, repeat and release events                             | To know when the modifier is let go                |
 | 4    | Report the shifted key                                              | Shifted letters on any layout                      |
 | 8    | Report all keys as escape codes, the modifier keys alone included   | The held ALT / CTRL itself                         |
@@ -41,7 +41,7 @@ prefix below still works.
 
 ## Found while planning
 
-1. **"ESC then m" only works when the bytes arrive within 40 ms**
+1. **"ESC then m" only works when the bytes arrive within 25 ms**
    (`@escape_timeout` in `Agendum.TUI.App`), as from a terminal key binding or
    Option-as-Meta. Typed by hand, ESC does nothing in a view and `m` starts
    a new item. `docs/KEYBOARD.md` promises more than the program does; the

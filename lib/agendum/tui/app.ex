@@ -18,8 +18,12 @@ defmodule Agendum.TUI.App do
     Update
   }
 
-  # How long to wait for the rest of an escape sequence before treating ESC as a key.
-  @escape_timeout 40
+  # How long to wait for the rest of an escape sequence before treating ESC
+  # as a key: a lone ESC is answered this much later. A terminal sends a
+  # key's bytes together; the debug logs show the rest of a split sequence
+  # 0.3–2 ms after the ESC. (40 ms until 2026-10-15; a slow remote link
+  # might need more.)
+  @escape_timeout 25
   # How often to check for terminal resizes and date changes when idle.
   @idle_timeout 500
 
