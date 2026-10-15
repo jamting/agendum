@@ -13,6 +13,28 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
 
   # --- category manager ------------------------------------------------------------
 
+  @doc "F1's text in the category manager (R65)."
+  @spec about() :: String.t()
+  def about do
+    """
+    The category manager shows every category in its hierarchy, MAIN at
+    the top. Items are assigned to categories; a view's sections and
+    columns are categories too.
+
+    Type to add a category below the highlighted one (or INS). ALT-R adds a
+    child, ALT-U one above, ALT-L a new family after its parent. F2 renames
+    it, F5 opens its note, F6 its properties: how items are assigned to it
+    on their own, its conditions and actions.
+
+    F7 promotes it a level, F8 makes it a child of the one above. ALT-↑ and
+    ALT-↓ move it among its siblings, ALT-F10 under another parent. DEL
+    discards it with its children. ALT-− and ALT-= collapse and expand
+    families.
+
+    ESC or F9 goes back to the view.
+    """
+  end
+
   @doc """
   A key in the category manager (F9): it runs the command the manager's
   keymap binds it to (`Agendum.TUI.Keymap`, R65); an unbound character

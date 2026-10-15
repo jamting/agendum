@@ -30,6 +30,32 @@ defmodule Agendum.TUI.Update.ViewKeys do
   # the key chart in view_key/2 stays one line per key
   import Agendum.TUI.Update.Marked, only: [bulk?: 2, jump_to_marked: 2, mark: 2, scoped: 3]
 
+  @doc "F1's text in a view (R65)."
+  @spec about() :: String.t()
+  def about do
+    """
+    A view shows your items in sections. Each section is a category: an
+    item in a section is assigned to it. The highlight is on an item, a
+    section head, or a column beside them.
+
+    Type to add an item to the highlighted section, or to fill in the
+    highlighted column. An item is assigned to the section it is typed in,
+    and to any category whose name appears in its text; the first date in
+    the text ("call Bob next Friday") becomes its When date.
+
+    F2 edits what is highlighted, F3 shows its choices, F5 its note and F6
+    its properties. F7 marks items, for the commands that work on many at
+    once. F8 lists the views, F9 the categories; F10 or / opens the menu.
+    CTRL-Z undoes.
+
+    ALT-1 … ALT-9 before a move give a count: ALT-1 ALT-0 ↓ goes ten rows
+    down.
+
+    On a Mac, hold fn for the function keys; ALT is ⌥ with "Use Option as
+    Meta key". Press a for every key.
+    """
+  end
+
   # --- the view ----------------------------------------------------------------
 
   @doc "A key in the view: moving, a command on the highlighted row, or inline editing."

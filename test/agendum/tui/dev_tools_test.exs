@@ -77,7 +77,7 @@ defmodule Agendum.TUI.DevToolsTest do
   end
 
   test "it is not in the F1 help or the menus" do
-    refute Agendum.TUI.Render.Help.text() =~ "Developer"
+    refute inspect(Agendum.TUI.Render.Help.lines(100)) =~ "Developer"
     refute inspect(Agendum.TUI.Menu.tree()) =~ "devtools"
   end
 end

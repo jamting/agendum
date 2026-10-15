@@ -109,6 +109,17 @@ defmodule Agendum.TUI.Update.Marked do
   def run(state, _mode, :close), do: State.pop(state)
 
   @impl Box
+  def about(_state, _mode) do
+    """
+    Items are marked, so the command can work on all of them or only on
+    the highlighted one.
+
+    M (or ENTER on the first line) does it to the marked items; C (or ENTER
+    on the second) to the current item only. ESC does nothing.
+    """
+  end
+
+  @impl Box
   def title(_state, _mode), do: "Marked items"
 
   @impl Box
@@ -242,6 +253,19 @@ defmodule Agendum.TUI.Update.Marked do
       nil -> state
       id -> move_command(state, mode, id)
     end
+  end
+
+  @doc "F1's text while moving items (R65)."
+  @spec about_move() :: String.t()
+  def about_move do
+    """
+    You are moving the item, or the marked items. Move the highlight to
+    where they should go (↑ ↓, PGUP PGDN, CTRL-PGUP CTRL-PGDN for the
+    sections) and press ENTER: they are assigned to that section's
+    category and leave the one they came from.
+
+    ESC leaves them where they were.
+    """
   end
 
   @doc "Runs a command of moving items (`Agendum.TUI.Commands`): the view's moves, drop, cancel."

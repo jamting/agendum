@@ -102,6 +102,19 @@ defmodule Agendum.TUI.Moves.Browse do
     end
   end
 
+  @doc "F1's text while browsing dates (R65)."
+  @spec about() :: String.t()
+  def about do
+    """
+    You are browsing dates. A datebook view goes a period at a time with
+    ← and → (or < and >). A view with a date filter moves its dates by a
+    day (← →), a week (↑ ↓), a month (PGUP PGDN) or a year (CTRL-PGUP
+    CTRL-PGDN). ALT-F5 goes to a date you type.
+
+    ENTER keeps the dates shown; ESC goes back to the ones before.
+    """
+  end
+
   @doc "Runs a Browse command (`Agendum.TUI.Commands`)."
   @spec run(State.t(), atom) :: State.t()
   def run(state, id), do: command(state, State.mode(state), id)

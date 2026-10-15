@@ -25,6 +25,15 @@ defmodule Agendum.TUI.Boxes.AlarmList do
   end
 
   @impl Box
+  def about(_state, _mode) do
+    """
+    The alarms: those still to ring, and those that rang today. ALT-A
+    cancels the highlighted one; DEL removes a past one from the list.
+    ENTER or ESC goes back.
+    """
+  end
+
+  @impl Box
   # keys it has no command for keep the highlight on a row (undo can take
   # rows away)
   def handle(state, mode, _key), do: State.put_mode(state, clamp(state, mode))

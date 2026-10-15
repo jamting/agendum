@@ -53,6 +53,17 @@ defmodule Agendum.TUI.Moves.SectionMove do
     end
   end
 
+  @doc "F1's text while moving a section (R65)."
+  @spec about() :: String.t()
+  def about do
+    """
+    You are moving a section. ↑ and ↓ (or < and >) move it up and down
+    the view.
+
+    ENTER keeps it there; ESC puts it back.
+    """
+  end
+
   @doc "Runs a command of moving a section (`Agendum.TUI.Commands`)."
   @spec run(State.t(), atom) :: State.t()
   def run(state, id), do: command(state, State.mode(state), id)

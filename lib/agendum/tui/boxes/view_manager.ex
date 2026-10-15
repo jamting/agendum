@@ -60,6 +60,21 @@ defmodule Agendum.TUI.Boxes.ViewManager do
     end
   end
 
+  @doc "F1's text in the view manager (R65)."
+  @spec about() :: String.t()
+  def about do
+    """
+    The view manager lists the file's views. ENTER shows the highlighted
+    one; type the start of a name to find it.
+
+    INS adds a view, F2 renames one, DEL (or F4) discards one: its items
+    stay in the file. ALT-↑ and ALT-↓ move a view in the list, ALT-F5 sorts
+    them by name.
+
+    ESC or F8 goes back to the view you were in.
+    """
+  end
+
   @doc "Runs a view manager command (`Agendum.TUI.Commands`) on the highlighted view."
   @spec run(State.t(), atom) :: State.t()
   def run(state, command) do

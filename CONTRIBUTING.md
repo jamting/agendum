@@ -98,8 +98,9 @@ a feature"):
 5. **Run `mix check`** until it passes, with no warnings. Fix what Credo
    and Dialyzer report rather than silencing them.
 6. **Update the docs** the change touches: tick the roadmap item, and
-   `docs/SCREENS.md`, the F1 help (`Agendum.TUI.Render.Help`) and
-   `docs/KEYBOARD.md` if screens or keys changed. A lasting decision gets
+   `docs/SCREENS.md` and `docs/KEYBOARD.md` if screens or keys changed.
+   A key is bound in a keymap with a named command, which the F1 help
+   lists by itself; a new screen or box gets its F1 text (`about`). A lasting decision gets
    an ADR. (The user guide and the manual are updated now and then, not
    with every change.)
 

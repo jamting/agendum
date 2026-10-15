@@ -17,6 +17,36 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
   @impl Box
   def handle(state, mode, key), do: CategoryScreens.handle(state, mode, key)
 
+  @impl Box
+  def about(_state, %{type: :group_profile}) do
+    """
+    The assignments of the marked items: every category, with how many of
+    the marked items are in it.
+
+    SPACE or ENTER on a category assigns all the marked items to it, or,
+    when some are in it, takes them out. Dates and numbers are set
+    elsewhere: ALT-F2 or F4 for dates, the item's column for a number.
+
+    ↑ ↓ move, HOME goes to the parent, CTRL-PGUP CTRL-PGDN to the siblings;
+    ALT-− and ALT-= collapse and expand families. ESC closes the box.
+    """
+  end
+
+  def about(_state, _mode) do
+    """
+    The item's assignment profile: every category, with a mark where the
+    item is assigned. Assigning an item to a category is what puts it in
+    that category's sections and columns.
+
+    SPACE or ENTER on a category assigns the item to it, or takes it out.
+    A numeric category asks for the number; dates are typed in a date
+    column. Done marks the item done.
+
+    ↑ ↓ move, HOME goes to the parent, CTRL-PGUP CTRL-PGDN to the siblings;
+    ALT-− and ALT-= collapse and expand families. ESC, F3 or F6 closes it.
+    """
+  end
+
   # R65: the hierarchy's moves; SPACE or ENTER assigns or unassigns (F7
   # too for marked items); ESC, F3 and F6 close (F4 too for one item)
   @impl Box

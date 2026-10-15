@@ -84,6 +84,13 @@ defmodule Agendum.TUI.Boxes.Box do
   @callback run(State.t(), mode, id :: atom) :: State.t()
 
   @doc """
+  F1's text about the box (R65): what it is for and what to do in it,
+  paragraphs separated by a blank line; nil (the default) for the one
+  `default_about/3` makes from its title and its settings' help.
+  """
+  @callback about(State.t(), mode) :: String.t() | nil
+
+  @doc """
   Whether the person is typing in the box, so that every key goes to
   `c:handle/3` and none to the keymap; by default while `state.edit` or
   the mode's `:typing` holds a field being typed.
@@ -298,6 +305,30 @@ defmodule Agendum.TUI.Boxes.Box do
   def run_settings(state, mode, grid, id) when is_map_key(@move_keys, id),
     do: Agendum.TUI.Boxes.BoxNav.move(state, mode, grid, @move_keys[id])
 
+  @doc """
+  F1's text for a box without its own (`c:about/2`): its title, how a box
+  of settings is worked, and the help of the highlighted setting.
+  """
+  @spec default_about(module, State.t(), mode) :: String.t()
+  def default_about(box, state, mode) do
+    title = box.title(state, mode)
+    settings? = Map.get(box.keymap(mode), {:char, " "}) == :change
+
+    work =
+      if settings?,
+        do:
+          "Move between the settings with the arrows or TAB. SPACE changes the " <>
+            "highlighted one; a letter picks the choice it begins, F3 lists the choices. " <>
+            "ENTER keeps what you changed; ESC puts it all back.",
+        else: "F1 then c lists what you can do here, with the keys."
+
+    setting = help_text(box, state, mode)
+
+    [if(title != "", do: title <> "."), work, setting && "This setting: " <> setting]
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join("\n\n")
+  end
+
   # --- the keys of a list box -----------------------------------------------------
 
   @list_moves [
@@ -361,6 +392,8 @@ defmodule Agendum.TUI.Boxes.Box do
       def run(state, _mode, _id), do: state
       @impl true
       def typing?(state, mode), do: state.edit != nil or Map.get(mode, :typing) != nil
+      @impl true
+      def about(_state, _mode), do: nil
 
       defoverridable width: 2,
                      field: 2,
@@ -368,7 +401,8 @@ defmodule Agendum.TUI.Boxes.Box do
                      keymap: 1,
                      commands: 1,
                      run: 3,
-                     typing?: 2
+                     typing?: 2,
+                     about: 2
     end
   end
 end

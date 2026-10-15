@@ -23,8 +23,54 @@ defmodule Agendum.TUI.HelpScreenTest do
     press(state, List.duplicate(:down, index))
   end
 
-  test "the keys page says how to reach the other pages", %{state: state} do
-    assert screen(press(state, {:f, 1})) =~ "c commands · d describe a key"
+  describe "F1, the help about where you are" do
+    test "in a view: what a view is, and how to reach the other pages", %{state: state} do
+      text = screen(press(state, {:f, 1}))
+      assert text =~ "HELP IN A VIEW"
+      assert text =~ "c commands here · d describe a key · a all keys"
+      assert text =~ "A view shows your items in sections"
+    end
+
+    test "in a note, the managers and the menu: their own texts", %{state: state} do
+      assert screen(press(state, [:down, {:f, 5}, {:f, 1}])) =~ "You are writing a note"
+      assert screen(press(state, [{:f, 9}, {:f, 1}])) =~ "The category manager shows"
+      assert screen(press(state, [{:f, 8}, {:f, 1}])) =~ "The view manager lists"
+      assert screen(press(state, [{:f, 10}, {:f, 1}])) =~ "The menu. Its first line"
+    end
+
+    test "in a box with a text of its own: the assignment profile", %{state: state} do
+      text = screen(press(state, [:down, {:f, 3}, {:f, 1}]))
+      assert text =~ "HELP IN THIS BOX"
+      assert text =~ "The item's assignment profile"
+    end
+
+    test "in a settings box without one: its title, how it works, this setting's help",
+         %{state: state} do
+      text = screen(press(Agendum.TUI.Boxes.FileProperties.open(state), {:f, 1}))
+      assert text =~ "File properties."
+      assert text =~ "SPACE changes the"
+      assert text =~ "This setting:"
+    end
+  end
+
+  describe "F1 then a, all the keys" do
+    test "made from the keymaps: everywhere first, then the view, then the note", %{state: state} do
+      text =
+        Agendum.TUI.Render.Help.lines(100)
+        |> Enum.map_join("\n", fn l -> Enum.map_join(l, &elem(&1, 1)) end)
+
+      [everywhere, view, note] =
+        for heading <- ["Almost everywhere", "In a view", "In a note"],
+            do: :binary.match(text, heading) |> elem(0)
+
+      assert everywhere < view and view < note
+      assert text =~ ~r/Undo +CTRL-Z/
+      assert text =~ ~r/Mark +F7/
+      assert text =~ ~r/Cut +F4/
+      assert text =~ ~r/Word left +CTRL-← ALT-B ALT-←/
+      assert text =~ "On a Mac"
+      assert screen(press(state, [{:f, 1}, "a"])) =~ "ALL KEYS"
+    end
   end
 
   describe "F1 c, the command list" do
@@ -210,7 +256,7 @@ defmodule Agendum.TUI.HelpScreenTest do
       text = screen(press(box, [{:f, 1}, "c"]))
       assert text =~ "COMMANDS IN THIS BOX"
       assert text =~ ~r/Edit +F2 +Edit the text, or open the note/
-      assert text =~ ~r/Help +F1 +Show the keys/
+      assert text =~ ~r/Help +F1 +Help about where you are/
       assert text =~ "Save"
       # ESC is the box's own Cancel, so the shared one is not listed again
       refute text =~ "put back the box's changes"

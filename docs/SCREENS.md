@@ -93,10 +93,10 @@ or handles it.
   - **Menu** `:menu` (F10 or `/`): File, Item, Category, View, Search, Undo,
     Redo, Print, Quit. `Agendum.TUI.Menu`. Its commands open most of the boxes below;
     the menu path is given with each.
-  - **Help** `:help` (F1; also from the category manager): three pages,
-    the keys (`Agendum.TUI.Render.Help`), `c` the command list (ENTER runs
-    the highlighted command) and `d` describe key (R65).
-    `Agendum.TUI.HelpScreen`.
+  - **Help** `:help` (F1, wherever the keys are not typing): a text about
+    where you are, then `c` the command list (typing narrows it, ENTER runs
+    the highlighted command), `d` describe key, `a` all the keys, made from
+    the keymaps (`Agendum.TUI.Render.Help`) (R65). `Agendum.TUI.HelpScreen`.
   - **Prompt** `:prompt`: one line of text in the control panel (a file name,
     a new view's name, a category name). `Agendum.TUI.Update.Prompts`.
     - **Select File** `:select_file` (F3 in a prompt for a file name): the

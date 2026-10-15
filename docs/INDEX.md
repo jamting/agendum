@@ -69,7 +69,7 @@ Each plan starts with its status.
 | When you…                              | Update                                                                                         |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | add or change a behaviour              | its rule in `SPEC.md` (and the rule index); the item in `ROADMAP.md`, ticked and moved to Done |
-| add or change a key                    | `KEYBOARD.md` and the F1 help (`Agendum.TUI.Render.Help`)                                       |
+| add or change a key                    | `KEYBOARD.md`; the key's keymap and command (the F1 help is made from them)                     |
 | add a screen or box                    | `SCREENS.md` (a test checks); `ARCHITECTURE.md` if it is a new module                          |
 | add a stored field                     | `DATA_MODEL.md` (and a row in its format versions), `DATA_ACCESS.md` if queried, `JSON_FORMAT.md` and `Agendum.Core.JSONFile` |
 | make a lasting decision                | a new ADR in `adr/`, and a row in `ARCHITECTURE.md`'s ADR list                                 |

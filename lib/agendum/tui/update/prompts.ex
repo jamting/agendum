@@ -317,6 +317,16 @@ defmodule Agendum.TUI.Update.Prompts do
   def run(state, mode, :switch), do: State.put_mode(state, %{mode | answer: not mode.answer})
   def run(state, mode, :close), do: state |> State.pop() |> cancelled(mode.action)
 
+  @impl Box
+  def about(_state, mode) do
+    """
+    A question: #{mode.question}
+
+    Y answers yes, N no. SPACE switches the answer shown, ENTER gives it.
+    ESC does not answer.
+    """
+  end
+
   # a question has no title, as Agenda's
   @impl Box
   def title(_state, _mode), do: ""

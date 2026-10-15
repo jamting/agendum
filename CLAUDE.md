@@ -75,7 +75,10 @@ inline `# credo:disable-for-next-line` with the reason.
    test/agendum/tui/fuzz_test.exs`): it finds crashes the short run misses. Update `docs/ROADMAP.md`
    (tick the box and move it under Done), the rule index at the top of
    `docs/SPEC.md` for a new rule (a test checks), `docs/SCREENS.md` if a box or screen was added (a test
-   checks), and the help text in `Agendum.TUI.Render.Help` if keys changed.
+   checks). Keys are bound in keymaps (`Agendum.TUI.Keymap`, a box's
+   `keymap/1`) with a command (`Agendum.TUI.Commands`, a box's
+   `commands/1`): F1 then `a` and `c` are made from them. A new place or
+   box also gets its F1 text (`about/0`, a box's `about/2`).
    - A box or screen with an Agenda screenshot: draw ours as a PNG
      (`tools/screenshots/`) and compare it with Agenda's side by side,
      for spacing and layout the text tests cannot see.

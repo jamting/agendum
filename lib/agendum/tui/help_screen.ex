@@ -3,8 +3,10 @@ defmodule Agendum.TUI.HelpScreen do
   The help screen (F1) and its two other pages (R65, ADR 0033), as Emacs's
   C-h then a letter:
 
-    * the keys (`Agendum.TUI.Render.Help`'s text): ↑↓ PGUP PGDN scroll,
-      `c` and `d` go to the other pages, any other key returns;
+    * F1 shows a text about where the person is (the view, a note, the
+      box on top …: `about/2`): ↑↓ PGUP PGDN scroll, `c`, `d` and `a` go
+      to the other pages, any other key returns;
+    * `a`, all the keys, made from the keymaps (`Agendum.TUI.Render.Help`);
     * `c`, the command list: the commands that can run where F1 was
       pressed (its own first, then those of every screen), each with its
       keys and summary; ENTER runs the highlighted one, ESC returns;
@@ -29,17 +31,17 @@ defmodule Agendum.TUI.HelpScreen do
   # type of the mode on top, and what runs their commands; a box is found
   # through `Agendum.TUI.Boxes.Box`.
   @places %{
-    view: {ViewKeys, :run},
-    catmgr: {Manager, :run},
-    viewmgr: {ViewManager, :run},
-    note: {Notes, :run},
-    menu: {Menu, :run},
-    move_item: {Agendum.TUI.Update.Marked, :run_move},
-    searching: {Agendum.TUI.Boxes.SearchBox, :run_searching},
-    browse: {Agendum.TUI.Moves.Browse, :run},
-    column_width: {Agendum.TUI.Moves.ColumnWidth, :run},
-    column_move: {Agendum.TUI.Moves.ColumnMove, :run},
-    section_move: {Agendum.TUI.Moves.SectionMove, :run}
+    view: {ViewKeys, :run, :about},
+    catmgr: {Manager, :run, :about},
+    viewmgr: {ViewManager, :run, :about},
+    note: {Notes, :run, :about},
+    menu: {Menu, :run, :about},
+    move_item: {Agendum.TUI.Update.Marked, :run_move, :about_move},
+    searching: {Agendum.TUI.Boxes.SearchBox, :run_searching, :about_searching},
+    browse: {Agendum.TUI.Moves.Browse, :run, :about},
+    column_width: {Agendum.TUI.Moves.ColumnWidth, :run, :about},
+    column_move: {Agendum.TUI.Moves.ColumnMove, :run, :about},
+    section_move: {Agendum.TUI.Moves.SectionMove, :run, :about}
   }
 
   @doc "Opens the help screen on its keys page."
@@ -56,7 +58,7 @@ defmodule Agendum.TUI.HelpScreen do
     State.push(state, %{
       type: :help,
       top: 0,
-      page: :keys,
+      page: :about,
       from: from,
       cursor: 0,
       described: nil,
@@ -149,13 +151,16 @@ defmodule Agendum.TUI.HelpScreen do
 
   @doc "A key on the help screen."
   @spec handle(State.t(), map, term) :: State.t()
-  def handle(state, %{page: :keys} = mode, key) do
+  def handle(state, %{page: :about} = mode, key) do
     case key do
       {:char, "c"} -> State.put_mode(state, %{mode | page: :commands, cursor: 0, top: 0})
       {:char, "d"} -> State.put_mode(state, %{mode | page: :describe, described: nil})
-      _ -> scroll(state, mode, key, Help.line_count())
+      {:char, "a"} -> State.put_mode(state, %{mode | page: :all, top: 0})
+      _ -> scroll(state, mode, key)
     end
   end
+
+  def handle(state, %{page: :all} = mode, key), do: scroll(state, mode, key)
 
   # typing narrows the list (by name or summary); ESC first forgets
   # what was typed, as in the category picker
@@ -200,8 +205,9 @@ defmodule Agendum.TUI.HelpScreen do
 
   def handle(state, %{page: :describe}, _key), do: State.pop(state)
 
-  defp scroll(state, mode, key, count) do
+  defp scroll(state, mode, key) do
     page = State.body_height(state)
+    count = length(page_lines(State.pop(state), mode, state.width))
     last = max(count - page, 0)
 
     top =
@@ -375,11 +381,51 @@ defmodule Agendum.TUI.HelpScreen do
   defp count_digit?({:alt, d}), do: d in ~w(1 2 3 4 5 6 7 8 9 0)
   defp count_digit?(_key), do: false
 
+  # --- the text about where you are (F1) -----------------------------------------
+
+  # the page's lines before scrolling, from the state under the help
+  defp page_lines(_state, %{page: :all}, width), do: Help.lines(width)
+
+  defp page_lines(state, %{page: :about, from: from}, width) do
+    text = about(state, from)
+
+    [
+      [{:normal, " HELP #{where(from)}"}],
+      [{:normal, Help.fit(" c commands here · d describe a key · a all keys", width)}],
+      [{:normal, ""}]
+    ] ++
+      Enum.flat_map(String.split(text, "\n\n"), fn paragraph ->
+        lines =
+          paragraph |> String.replace("\n", " ") |> Agendum.TUI.Terminal.Draw.wrap(width - 4)
+
+        Enum.map(lines, &[{:normal, "  " <> &1}]) ++ [[{:normal, ""}]]
+      end)
+  end
+
+  @doc """
+  F1's text about where the person is (`from`, under the help): the
+  place's (`about/0` of its module), or the box's (`c:Box.about/2`, else
+  one made from its title and settings' help).
+  """
+  @spec about(State.t(), atom) :: String.t()
+  def about(state, :box) do
+    mode = State.mode(state)
+    box = Box.module!(mode)
+    box.about(state, mode) || Box.default_about(box, state, mode)
+  end
+
+  def about(_state, from) when is_map_key(@places, from),
+    do: apply(elem(@places[from], 0), elem(@places[from], 2), [])
+
+  def about(_state, _from),
+    do: "Press c for the commands that work here, d to see what a key does, a for all keys."
+
   # --- drawing --------------------------------------------------------------------
 
   @doc "The help screen's lines, `{style, text}` segments, from its top."
   @spec lines(State.t(), map) :: [[{atom, String.t()}]]
-  def lines(_state, %{page: :keys} = mode), do: Enum.drop(Help.lines(), mode.top)
+  def lines(state, %{page: page} = mode) when page in [:about, :all],
+    do: state |> below(mode) |> page_lines(mode, state.width) |> Enum.drop(mode.top)
 
   def lines(state, %{page: :commands} = mode) do
     page = State.body_height(state) - 2
@@ -393,7 +439,7 @@ defmodule Agendum.TUI.HelpScreen do
       |> Enum.with_index()
       |> Enum.map(fn {{command, _place, keys}, i} ->
         style = if i == mode.cursor, do: :row, else: :normal
-        for text <- entry_lines(command, keys), do: [{style, fit(text, state.width)}]
+        for text <- Help.row(command, keys), do: [{style, Help.fit(text, state.width)}]
       end)
 
     before = entries |> Enum.take(mode.cursor + 1) |> Enum.map(&length/1) |> Enum.sum()
@@ -433,35 +479,6 @@ defmodule Agendum.TUI.HelpScreen do
     end
   end
 
-  @name_width 18
-  @keys_width 23
-
-  # a command's name, keys and summary; keys that do not fit go on to
-  # further lines under the first (DEL F4 ALT-F4 CTRL-D CTRL-K)
-  defp entry_lines(command, keys) do
-    [first | more] = key_lines(Enum.map(keys, &Keymap.name/1))
-    blank = String.duplicate(" ", @name_width)
-
-    [" " <> pad(command.name, @name_width) <> pad(first, @keys_width) <> command.summary] ++
-      for(keys <- more, do: " " <> blank <> keys)
-  end
-
-  defp key_lines(names) do
-    names
-    |> Enum.reduce([], fn
-      name, [] -> [name]
-      name, [line | rest] -> add_key(line, name, rest)
-    end)
-    |> Enum.reverse()
-    |> then(&if(&1 == [], do: [""], else: &1))
-  end
-
-  defp add_key(line, name, rest) do
-    if String.length(line) + 1 + String.length(name) < @keys_width,
-      do: [line <> " " <> name | rest],
-      else: [name, line | rest]
-  end
-
   defp where(:view), do: "IN A VIEW"
   defp where(:catmgr), do: "IN THE CATEGORY MANAGER"
   defp where(:viewmgr), do: "IN THE VIEW MANAGER"
@@ -475,7 +492,4 @@ defmodule Agendum.TUI.HelpScreen do
   defp where(:section_move), do: "WHILE MOVING A SECTION"
   defp where(:box), do: "IN THIS BOX"
   defp where(_elsewhere), do: "ON EVERY SCREEN"
-
-  defp pad(text, width), do: String.pad_trailing(text, width - 1) <> " "
-  defp fit(text, width), do: String.slice(text, 0, max(width, 0))
 end

@@ -167,6 +167,18 @@ defmodule Agendum.TUI.Boxes.SearchBox do
     end
   end
 
+  @doc "F1's text while searching the view (R65)."
+  @spec about_searching() :: String.t()
+  def about_searching do
+    """
+    You are searching the view. ALT-N or F8 goes to the next match, ALT-P
+    to the one before; F7 marks the highlighted item, so the matches can be
+    worked on together.
+
+    ENTER or ESC ends the search.
+    """
+  end
+
   @doc "Runs a command while searching the view (`Agendum.TUI.Commands`)."
   @spec run_searching(State.t(), atom) :: State.t()
   def run_searching(state, id), do: searching(state, State.mode(state), id)

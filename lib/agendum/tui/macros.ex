@@ -128,6 +128,21 @@ defmodule Agendum.TUI.Macros do
   defp current(state, mode), do: state.db |> Database.macros() |> Enum.at(mode.cursor)
 
   @impl Box
+  def about(_state, _mode) do
+    """
+    The macro manager: the file's macros, recorded keystrokes you can play
+    again.
+
+    Type a name (or INS) to make a new macro, then F7 to learn it: the keys
+    you press do their work and are recorded, until ALT-F3. ENTER runs the
+    highlighted macro, ALT-Z the last one run. F2 edits its keystrokes, F6
+    attaches it to a key and says where it may run. DEL deletes it.
+
+    ESC goes back.
+    """
+  end
+
+  @impl Box
   # typing a name makes a new macro
   def handle(state, _mode, {:char, c}) when c != " ",
     do: Prompts.prompt(state, "Name of the new macro:", :new_macro, c)

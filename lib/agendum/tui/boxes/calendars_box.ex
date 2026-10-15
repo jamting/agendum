@@ -30,6 +30,18 @@ defmodule Agendum.TUI.Boxes.CalendarsBox do
   @impl Box
   def handle(state, _mode, _key), do: state
 
+  @impl Box
+  def about(_state, _mode) do
+    """
+    Calendars on the web (iCal) that the file subscribes to: their events
+    become items.
+
+    INS subscribes to one, by its address. ENTER (or R) reads the
+    highlighted one now; F changes how often it is read, A how far ahead.
+    DEL unsubscribes. ESC goes back.
+    """
+  end
+
   # R65
   @impl Box
   def keymap(_mode) do

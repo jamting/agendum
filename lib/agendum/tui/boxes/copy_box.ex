@@ -33,6 +33,15 @@ defmodule Agendum.TUI.Boxes.CopyBox do
   @impl Box
   def handle(state, _mode, _key), do: state
 
+  @impl Box
+  def about(_state, _mode) do
+    """
+    Copy the item (or the marked items) to another section of the view: it
+    is assigned to that section's category as well, and keeps the ones it
+    has. ↑ ↓ choose the section, ENTER copies, ESC does not.
+    """
+  end
+
   # R65
   @impl Box
   def keymap(_mode), do: %{:up => :up, :down => :down, :enter => :copy, :esc => :close}

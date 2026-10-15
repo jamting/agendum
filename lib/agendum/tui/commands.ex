@@ -64,7 +64,7 @@ defmodule Agendum.TUI.Commands do
     {:view_manager, "View manager", "List the file's views", :none},
     {:category_manager, "Category manager", "Show the category hierarchy", :none},
     {:menu, "Menu", "Open the menu", :none},
-    {:help, "Help", "Show the keys", :none},
+    {:help, "Help", "Help about where you are", :none},
     {:save, "Save", "Save the file", :none},
     {:retrieve, "Retrieve", "Open another file", :none}
   ]
@@ -98,7 +98,7 @@ defmodule Agendum.TUI.Commands do
     {:execute, "Execute", "Run its conditions and actions", :none},
     {:collapse, "Collapse", "Collapse the family (twice: all)", :none},
     {:expand, "Expand", "Expand the family (twice: all)", :none},
-    {:help, "Help", "Show the keys", :none},
+    {:help, "Help", "Help about where you are", :none},
     {:close, "Return", "Back to the view", :none}
   ]
 
@@ -115,7 +115,7 @@ defmodule Agendum.TUI.Commands do
     {:move_down, "Move down", "Move the view down the list", :none},
     {:sort, "Sort", "Sort the views by name", :none},
     {:discard, "Discard", "Discard the view (items are kept)", :none},
-    {:help, "Help", "Show the keys", :none},
+    {:help, "Help", "Help about where you are", :none},
     {:close, "Return", "Back to the view shown", :none}
   ]
 
@@ -135,7 +135,7 @@ defmodule Agendum.TUI.Commands do
     {:make_item, "Make item", "Make the marked text an item", :none},
     {:make_category, "Make category", "Make the marked text a category", :none},
     {:key_map, "Key map", "Show or hide the function key map", :none},
-    {:help, "Help", "Show the keys", :none},
+    {:help, "Help", "Help about where you are", :none},
     {:close, "Return", "Save the note and go back", :none},
     {:quit, "Quit", "Save the note and quit Agendum", :none}
   ]
@@ -148,7 +148,7 @@ defmodule Agendum.TUI.Commands do
     {:first, "First", "Highlight the first entry", :none},
     {:last, "Last", "Highlight the last entry", :none},
     {:back, "Back", "Back up a level", :none},
-    {:help, "Help", "Show the keys", :none},
+    {:help, "Help", "Help about where you are", :none},
     {:close, "Leave", "Leave the menu", :none}
   ]
 
@@ -167,7 +167,7 @@ defmodule Agendum.TUI.Commands do
   @move_item [{:drop, "Drop", "Move the item(s) here", :none}] ++
                @view_moves ++
                [
-                 {:help, "Help", "Show the keys", :none},
+                 {:help, "Help", "Help about where you are", :none},
                  {:close, "Cancel", "Leave the item(s) where they were", :none}
                ]
 
@@ -178,7 +178,7 @@ defmodule Agendum.TUI.Commands do
              ] ++
                @view_moves ++
                [
-                 {:help, "Help", "Show the keys", :none},
+                 {:help, "Help", "Help about where you are", :none},
                  {:close, "End search", "Stop searching", :none}
                ]
 
@@ -193,7 +193,7 @@ defmodule Agendum.TUI.Commands do
     {:year_later, "Year later", "In a filter: a year later", :none},
     {:go_to, "Go to", "Go to a date typed", :none},
     {:keep, "Keep", "Keep the dates shown", :none},
-    {:help, "Help", "Show the keys", :none},
+    {:help, "Help", "Help about where you are", :none},
     {:close, "Cancel", "Back to the dates before", :none}
   ]
 
@@ -202,7 +202,7 @@ defmodule Agendum.TUI.Commands do
     {:wider, "Wider", "One column wider", :none},
     {:fit, "Fit", "As wide as what it shows", :none},
     {:keep, "Keep", "Keep this width", :none},
-    {:help, "Help", "Show the keys", :none},
+    {:help, "Help", "Help about where you are", :none},
     {:close, "Cancel", "Keep the width it had", :none}
   ]
 
@@ -210,7 +210,7 @@ defmodule Agendum.TUI.Commands do
     {:left, "Left", "Move the column left", :none},
     {:right, "Right", "Move the column right", :none},
     {:keep, "Keep", "Keep it here", :none},
-    {:help, "Help", "Show the keys", :none},
+    {:help, "Help", "Help about where you are", :none},
     {:close, "Cancel", "Put it back", :none}
   ]
 
@@ -218,7 +218,7 @@ defmodule Agendum.TUI.Commands do
     {:up, "Up", "Move the section up", :none},
     {:down, "Down", "Move the section down", :none},
     {:keep, "Keep", "Keep it here", :none},
-    {:help, "Help", "Show the keys", :none},
+    {:help, "Help", "Help about where you are", :none},
     {:close, "Cancel", "Put it back", :none}
   ]
 
@@ -227,7 +227,7 @@ defmodule Agendum.TUI.Commands do
   @box [
     {:choices, "Choices", "List the setting's choices", :none},
     {:cancel, "Cancel", "Close; put back the box's changes", :none},
-    {:help, "Help", "Show the keys", :none}
+    {:help, "Help", "Help about where you are", :none}
   ]
 
   # the keys that work on every screen but while typing (`Update`'s

@@ -58,6 +58,18 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
   end
 
   @impl Box
+  def about(_state, _mode) do
+    """
+    A calendar. ← → go a day, ↑ ↓ a week, PGUP PGDN a month, CTRL-← CTRL-→
+    (or < >) a year; HOME and END the month's first and last day. Type a
+    date to go there.
+
+    ENTER sets the highlighted date (F6 gives it a time too); ESC closes
+    the calendar.
+    """
+  end
+
+  @impl Box
   # typing a date goes there
   def handle(state, _mode, {:char, c}) when c != " ",
     do: Prompts.prompt(state, "Go to date:", :calendar_jump, c)

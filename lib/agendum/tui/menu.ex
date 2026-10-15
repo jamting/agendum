@@ -153,6 +153,19 @@ defmodule Agendum.TUI.Menu do
     end)
   end
 
+  @doc "F1's text in the menu (R65)."
+  @spec about() :: String.t()
+  def about do
+    """
+    The menu. Its first line lists the commands at this level; the second
+    says what the highlighted one does, or lists what it holds.
+
+    Type a command's first letter, or move with ← → and press ENTER. ESC
+    backs up a level; F10 leaves the menu. A box opened from the menu comes
+    back to it on ESC.
+    """
+  end
+
   @doc """
   A key in the menu: it runs the command the menu's keymap binds it to
   (`Agendum.TUI.Keymap`, R65); a letter chooses the entry it begins.

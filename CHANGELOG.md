@@ -12,6 +12,10 @@ has the detail.
 
 - Undoing the new macro while learning its keystrokes, then stopping
   Learn mode, no longer crashes: nothing is kept, and a message says why.
+- F1 now shows help about where you are: the view, a note, a manager,
+  the menu, or the box you are in, saying what to do there. From it, c
+  lists the commands, d tells what a key does, and a lists every key
+  (made from the keys themselves, so it is always right).
 - F1 c and F1 d also work in the category manager, the view manager, a
   note, the menu and every box; F1 now opens the help in those places
   too. In a box, F1 c lists the box's commands and ENTER runs the one

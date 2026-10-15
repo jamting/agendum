@@ -1222,6 +1222,12 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   count (moving the highlight, next marked item, hop, next and previous
   view); a repeat that changes nothing, or that reports an error, stops
   the count; other commands run once; ESC drops the count; at most 999.
+  ✅ F1 shows a text about where the person is: the view, a note, the
+  category or view manager, the menu, a move, or the box on top (each
+  box's own, else one made from its title, how a settings box works and
+  the highlighted setting's help). From it, `a` lists all the keys, made
+  from the keymaps: those of almost everywhere first, then the view's, the
+  note's and typing's, then the rest, with a few words for Mac keyboards.
   ✅ In the help screen (F1), `c` lists the commands that can run where
   F1 was pressed (a view's own, then those of every screen: undo, save,
   quit …), with their keys and summaries; ↑↓ move, ENTER runs the

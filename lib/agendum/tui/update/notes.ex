@@ -15,6 +15,27 @@ defmodule Agendum.TUI.Update.Notes do
 
   # --- notes --------------------------------------------------------------------
 
+  @doc "F1's text in a note (R65)."
+  @spec about() :: String.t()
+  def about do
+    """
+    You are writing a note: of an item, of a category, or a macro's
+    keystrokes. Type as in any editor; long lines wrap, and ↑ ↓ HOME END
+    follow the rows you see.
+
+    F7 marks text (move the cursor to stretch it; F7 again unmarks). F3
+    copies it, F4 cuts it, ALT-F4 deletes it; F2 pastes what you copied or
+    cut last. With nothing marked, they ask: the word, the line or all.
+
+    ALT-F6 searches or replaces, ALT-S finds the next one. ALT-D and ALT-T
+    type today's date and the time. ALT-F7 makes the marked text an item,
+    ALT-F2 a category.
+
+    ESC or F5 saves the note and goes back; ALT-N and ALT-P save it and go
+    on to the next or the previous item's note.
+    """
+  end
+
   @doc """
   A key in a note: it runs the command the note's keymap binds it to
   (`Agendum.TUI.Keymap`, R65); any other key edits the text.

@@ -59,6 +59,17 @@ defmodule Agendum.TUI.Moves.ColumnMove do
     end
   end
 
+  @doc "F1's text while moving a column (R65)."
+  @spec about() :: String.t()
+  def about do
+    """
+    You are moving a column. ← and → (or < and >) move it along the
+    section.
+
+    ENTER keeps it there; ESC puts it back.
+    """
+  end
+
   @doc "Runs a command of moving a column (`Agendum.TUI.Commands`)."
   @spec run(State.t(), atom) :: State.t()
   def run(state, id), do: command(state, State.mode(state), id)

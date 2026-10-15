@@ -20,6 +20,20 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   @impl Box
   def handle(state, mode, key), do: CategoryScreens.handle(state, mode, key)
 
+  @impl Box
+  def about(state, mode) do
+    """
+    #{title(state, mode)}: choose a category from the hierarchy.
+
+    Move to it with ↑ ↓ (HOME the parent, CTRL-PGUP CTRL-PGDN the siblings),
+    or type the start of its name to jump there. ENTER picks the
+    highlighted category. INS makes a new one, with the name you type.
+    ALT-− and ALT-= collapse and expand families.
+
+    ESC forgets what you typed, then closes the box.
+    """
+  end
+
   # R65: the hierarchy's moves, ENTER picks, INS a new category; typing
   # finds one (in `handle/3`)
   @impl Box

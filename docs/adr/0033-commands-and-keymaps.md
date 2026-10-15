@@ -56,6 +56,12 @@ The owner settled these choices before any code (2026-10-15):
   last two exist; ESC, F1 and the help screen's `c` and `d` will not be
   rebindable.
 
+- **F1 is help about where you are** (owner, 2026-10-15): a text per
+  place (`about/0` in the place's module) and per box (`Box.about/2`, or
+  one made from the box's title and settings' help); `c`, `d` and `a`
+  (all keys, generated from the keymaps) from there. The hand-written key
+  list is gone.
+
 ## Consequences
 
 - The keymap is data that tests can check: every bound command exists,

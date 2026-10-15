@@ -64,6 +64,21 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
       Enum.map(Core.item_assignments(state.db, mode.item_id), &{:assigned, &1}) ++ [:add]
   end
 
+  @impl Box
+  def about(_state, _mode) do
+    """
+    The item's properties: its text, its note, some figures, and every
+    category it is assigned to.
+
+    F2 edits the text, or opens the note. In the assignments, type a
+    category's name to assign the item to it (ENTER takes the one shown);
+    DEL takes the item out of the highlighted one; F4 changes a date or a
+    number. F3 shows the whole assignment profile.
+
+    ENTER or F6 closes the box, keeping what you changed; ESC puts it back.
+    """
+  end
+
   # --- keys ---------------------------------------------------------------------
 
   @impl Box

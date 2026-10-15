@@ -167,8 +167,17 @@ defmodule Agendum.TUI.Render.KeyBar do
   defp mode_keys(%{type: :help, page: :describe}),
     do: [{"any key", "Describe it"}, {"ESC", "Return"}]
 
+  defp mode_keys(%{type: :help, page: :all}),
+    do: [{"↑↓", "Scroll"}, {"any other key", "Return"}]
+
   defp mode_keys(%{type: :help}),
-    do: [{"↑↓", "Scroll"}, {"c", "Commands"}, {"d", "Describe key"}, {"any other key", "Return"}]
+    do: [
+      {"↑↓", "Scroll"},
+      {"c", "Commands"},
+      {"d", "Describe key"},
+      {"a", "All keys"},
+      {"any other key", "Return"}
+    ]
 
   defp mode_keys(%{type: :column_width}),
     do: [

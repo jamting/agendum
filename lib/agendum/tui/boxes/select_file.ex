@@ -84,6 +84,17 @@ defmodule Agendum.TUI.Boxes.SelectFile do
   end
 
   @impl Box
+  def about(_state, _mode) do
+    """
+    Choose a file: the folders and the files that fit, .. going up a
+    folder. Type to narrow the list; BACKSPACE takes a letter back.
+
+    ENTER opens the highlighted folder, or takes the file; F7 shows or hides
+    the dates. ESC goes back to the prompt as it was.
+    """
+  end
+
+  @impl Box
   # typing narrows the list; BACKSPACE takes a letter back
   def handle(state, mode, {:char, c}), do: narrow(state, mode, mode.filter <> c)
 

@@ -26,6 +26,17 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
   @impl Box
   def handle(state, _mode, _key), do: state
 
+  @impl Box
+  def about(_state, _mode) do
+    """
+    Agendum found categories that may fit the item's text, and asks before
+    assigning it to them.
+
+    SPACE picks or unpicks the highlighted category, TAB picks them all.
+    ENTER assigns the item to the ones picked. ESC asks again later.
+    """
+  end
+
   # R65
   @impl Box
   def keymap(_mode) do

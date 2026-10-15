@@ -80,6 +80,17 @@ defmodule Agendum.TUI.Moves.ColumnWidth do
     end
   end
 
+  @doc "F1's text while changing a column's width (R65)."
+  @spec about() :: String.t()
+  def about do
+    """
+    You are changing a column's width. ← makes it narrower, → wider; type a
+    width, or ? to fit it to what it shows.
+
+    ENTER keeps the width; ESC keeps the one it had.
+    """
+  end
+
   @doc "Runs a command of changing a column's width (`Agendum.TUI.Commands`)."
   @spec run(State.t(), atom) :: State.t()
   def run(state, id), do: command(state, State.mode(state), id)

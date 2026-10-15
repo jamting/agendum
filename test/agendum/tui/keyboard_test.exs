@@ -57,7 +57,7 @@ defmodule Agendum.TUI.KeyboardTest do
   end
 
   test "help scrolls and closes", %{state: state} do
-    state = press(state, [{:f, 1}, :pgdn])
+    state = press(state, [{:f, 1}, "a", :pgdn])
     assert %{type: :help, top: top} = State.mode(state)
     assert top > 0
     assert press(state, :esc).modes == []

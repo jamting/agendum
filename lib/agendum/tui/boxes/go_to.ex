@@ -29,6 +29,15 @@ defmodule Agendum.TUI.Boxes.GoTo do
     do: for(%{kind: :section} = row <- Layout.rows(state), do: {row.sidx, row.category.name})
 
   @impl Box
+  def about(_state, _mode) do
+    """
+    Go to a section: the view's sections in order. ↑ ↓ move, a letter goes
+    to the next one starting with it. ENTER highlights it in the view; ESC
+    goes back to where you were.
+    """
+  end
+
+  @impl Box
   # a letter highlights the next section starting with it
   def handle(state, mode, {:char, c}),
     do: State.put_mode(state, %{mode | cursor: next_starting(state, mode.cursor, c)})
