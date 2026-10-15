@@ -689,6 +689,14 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   for the session, across notes. In a note F4 is CUT, as in Agenda (it
   used to close the note: ESC and F5 do). Not done: the same keys in
   item text and category names, and the system clipboard.
+- **R64 ✅ Word wrap in the note editor** (ours). A line wider than the
+  screen is shown on as many rows as it needs, so the whole line always
+  shows: a row ends after the rightmost space that fits, and a word wider
+  than the screen is broken at its edge. It is for the screen only: no
+  line break goes into the text. ↑ ↓ move through the rows on the screen,
+  keeping the column in the row (at a shorter row's end, its end); HOME
+  and END (CTRL-A, CTRL-E) go to the start and end of the row, and pressed
+  there, to the start and end of the whole line. The note scrolls by rows.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is
   matched against the column head's descendants with automatic completion
   (R32); if nothing matches, a new child is created. Typing replaces the

@@ -52,8 +52,11 @@ defmodule Agendum.TUI.Render.Boxes do
   # beneath the boxes
   defp match_row(%State{modes: modes} = state) do
     case Agendum.TUI.Render.base(modes) do
-      %{type: :note, match: {row, _col, _len}} = note -> row - Note.top(state, note)
-      _ -> nil
+      %{type: :note, match: {row, col, _len}} = note ->
+        Note.screen_row(state, note.edit, {row, col}) - Note.top(state, note)
+
+      _ ->
+        nil
     end
   end
 

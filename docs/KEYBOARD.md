@@ -36,6 +36,7 @@ settings, as described in the second half of this guide.
 | Show / hide the function key map (kept for next time)                                           | ALT-K                         | ESC then `k`                                                          |
 | Search this view; then next / previous match                                                    | ALT-F6; ALT-N / ALT-P         | ESC then `^`; ESC then `n` / `p`                                      |
 | In a note: search / replace; find the next occurrence (after a single replacement: replace it)  | ALT-F6; ALT-S                 | ESC then `^`; ESC then `s`                                            |
+| In a note: move by the rows shown (long lines wrap, R64); start / end of the row, again: of the line| ↑ ↓; HOME / END               | CTRL-A / CTRL-E                                                       |
 | In a note: insert today's date / the time                                                       | ALT-D / ALT-T                 | ESC then `d` / `t`                                                    |
 | In a note: the next / previous item's (or category's) note                                      | ALT-N / ALT-P                 | ESC then `n` / `p`                                                    |
 | In a note: make the marked text (or the word, line or all text) into a new item (it leaves the note; MAKEITM) / the marked text or the word into a new category under a parent you pick (MAKECAT) | ALT-F7 / ALT-F2 | ESC then `&` / `@` |

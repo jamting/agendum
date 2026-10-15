@@ -14,6 +14,8 @@ defmodule Agendum.TUI.Typing.TextEdit do
         }
   defstruct lines: [""], row: 0, col: 0, mark: nil
 
+  alias Agendum.TUI.Typing.Wrap
+
   @spec new(String.t()) :: t
   def new(text) do
     lines = String.split(text, "\n")
@@ -23,6 +25,70 @@ defmodule Agendum.TUI.Typing.TextEdit do
 
   @spec text(t) :: String.t()
   def text(%__MODULE__{lines: lines}), do: lines |> Enum.join("\n") |> String.trim_trailing()
+
+  @aliases %{{:ctrl, "a"} => :home, {:ctrl, "e"} => :end, {:ctrl, "d"} => :delete}
+
+  @doc """
+  A key in the text, shown word-wrapped `width` characters wide
+  (`Agendum.TUI.Typing.Wrap`): ↑ ↓ move through the rows on the screen,
+  keeping the column in the row; HOME and END go to the start and end of
+  the row, and pressed there, of the whole line. Without a width (nil)
+  every key works on whole lines.
+  """
+  @spec handle(t, term, pos_integer | nil) :: {:ok, t} | :unhandled
+  def handle(e, key, nil), do: handle(e, key)
+
+  def handle(%__MODULE__{} = e, key, width) do
+    key = Map.get(@aliases, key, key)
+
+    case wrapped_move(e, key, width) do
+      nil -> handle(e, key)
+      moved -> {:ok, moved}
+    end
+  end
+
+  # the cursor's row on the screen: `i` of `rows`, `x` characters into it
+  defp wrapped_move(e, key, width) when key in [:up, :down, :home, :end] do
+    rows = Wrap.rows(current(e), width)
+    i = Wrap.locate(rows, e.col)
+    {start, _len} = Enum.at(rows, i)
+    move_in_rows(e, key, rows, i, e.col - start, width)
+  end
+
+  defp wrapped_move(_e, _key, _width), do: nil
+
+  defp move_in_rows(e, :up, rows, i, x, _width) when i > 0,
+    do: %{e | col: Wrap.column(rows, i - 1, x)}
+
+  # from the first row of a line to the last row of the line above
+  defp move_in_rows(%{row: row} = e, :up, _rows, _i, x, width) when row > 0 do
+    above = Wrap.rows(Enum.at(e.lines, row - 1), width)
+    %{e | row: row - 1, col: Wrap.column(above, length(above) - 1, x)}
+  end
+
+  defp move_in_rows(e, :down, rows, i, x, _width) when i < length(rows) - 1,
+    do: %{e | col: Wrap.column(rows, i + 1, x)}
+
+  defp move_in_rows(%{row: row, lines: lines} = e, :down, _rows, _i, x, width)
+       when row < length(lines) - 1 do
+    below = Wrap.rows(Enum.at(lines, row + 1), width)
+    %{e | row: row + 1, col: Wrap.column(below, 0, x)}
+  end
+
+  # HOME at the start of a row goes on to the start of the line
+  defp move_in_rows(e, :home, rows, i, _x, _width) do
+    {start, _len} = Enum.at(rows, i)
+    %{e | col: if(e.col == start, do: 0, else: start)}
+  end
+
+  # END at the end of a row goes on to the end of the line
+  defp move_in_rows(e, :end, rows, i, _x, _width) do
+    row_end = Wrap.row_end(rows, i)
+    %{e | col: if(e.col == row_end, do: String.length(current(e)), else: row_end)}
+  end
+
+  # ↑ on the first row of the text, ↓ on the last: as without wrapping
+  defp move_in_rows(_e, _key, _rows, _i, _x, _width), do: nil
 
   @spec handle(t, term) :: {:ok, t} | :unhandled
   # a key that changes the text drops the mark first; moving keeps it, so
@@ -36,8 +102,7 @@ defmodule Agendum.TUI.Typing.TextEdit do
   def handle(%__MODULE__{} = e, key) do
     line = current(e)
 
-    key =
-      Map.get(%{{:ctrl, "a"} => :home, {:ctrl, "e"} => :end, {:ctrl, "d"} => :delete}, key, key)
+    key = Map.get(@aliases, key, key)
 
     case key do
       {:char, c} ->

@@ -9,6 +9,7 @@ defmodule Agendum.TUI.Update.Notes do
   alias Agendum.Core
   alias Agendum.Core.DateFormat
   alias Agendum.TUI.{CategoryScreens, Layout, Typing.NoteSearch, State, Typing.TextEdit}
+  alias Agendum.TUI.Typing.Wrap
   alias Agendum.TUI.Update.Actions
 
   # --- notes --------------------------------------------------------------------
@@ -70,7 +71,7 @@ defmodule Agendum.TUI.Update.Notes do
         make_category(state, mode)
 
       _ ->
-        case TextEdit.handle(mode.edit, key) do
+        case TextEdit.handle(mode.edit, key, Wrap.width(state)) do
           {:ok, edit} -> State.put_mode(state, Map.merge(mode, %{edit: edit, match: nil}))
           :unhandled -> state
         end

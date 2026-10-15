@@ -113,6 +113,8 @@ defmodule Agendum.TUI.Render.Help do
      ALT-F2        Make the marked text or the word a
                    category (MAKECAT)                   ESC @
      ESC / F5      Save the note and return
+     ↑↓            Move by the rows shown (long lines wrap)
+     HOME / END    Start / end of the row; again: of the line
 
    While typing
      ←→ HOME END   Move          CTRL-A / CTRL-E   Start / end of line

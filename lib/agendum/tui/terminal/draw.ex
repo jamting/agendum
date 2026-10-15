@@ -143,7 +143,9 @@ defmodule Agendum.TUI.Terminal.Draw do
   @spec width(line) :: non_neg_integer
   def width(line), do: line |> Enum.map(fn {_, t} -> String.length(t) end) |> Enum.sum()
 
-  defp take(line, n) do
+  @doc "The first `n` characters of a styled line."
+  @spec take(line, non_neg_integer) :: line
+  def take(line, n) do
     {acc, _} =
       Enum.reduce(line, {[], n}, fn {s, t}, {acc, left} ->
         cond do
@@ -156,7 +158,9 @@ defmodule Agendum.TUI.Terminal.Draw do
     Enum.reverse(acc)
   end
 
-  defp drop(line, n) do
+  @doc "A styled line without its first `n` characters."
+  @spec drop(line, non_neg_integer) :: line
+  def drop(line, n) do
     {acc, _} =
       Enum.reduce(line, {[], n}, fn {s, t}, {acc, skip} ->
         len = String.length(t)
