@@ -4,8 +4,8 @@ defmodule Agendum.TUI.Commands do
   binds keys to their ids, `Agendum.TUI.Update.ViewKeys.run` runs the
   view's. The order is the one the command list will show.
 
-  Only the view's commands and the global ones (`:global`) so far; other
-  places move over a few at a time.
+  So far the view's (`:view`), the category manager's (`:catmgr`) and the
+  global ones (`:global`); other places move over a few at a time.
   Pure.
   """
 
@@ -26,10 +26,10 @@ defmodule Agendum.TUI.Commands do
     {:previous_column, "Previous column", "Highlight the column to the left", :own},
     {:insert, "Insert", "Add an item below, or a column entry", :none},
     {:edit, "Edit", "Edit the item, head or column entry", :none},
-    {:choices, "Choices", "Column choices, calendar or item profile", :none},
+    {:choices, "Choices", "Column choices, calendar or profile", :none},
     {:done, "Done", "Mark the item(s) done", :none},
     {:note, "Note", "The note of the item or category", :none},
-    {:properties, "Properties", "Properties of the item, section or column", :none},
+    {:properties, "Properties", "Item, section or column properties", :none},
     {:mark, "Mark", "Mark the item, or all in the section", :none},
     {:unmark_all, "Unmark all", "Unmark every marked item", :none},
     {:next_marked, "Next marked", "Highlight the next marked item", :repeat},
@@ -41,11 +41,11 @@ defmodule Agendum.TUI.Commands do
     {:copy, "Copy", "Copy the item to another section", :none},
     {:yank, "Yank", "Put back the item DEL removed last", :none},
     {:hop, "Hop", "Highlight the item's next occurrence", :repeat},
-    {:dependency, "Depend", "Make the item depend on the marked items", :none},
+    {:dependency, "Depend", "Make it depend on the marked items", :none},
     {:section_below, "Add section below", "Add a section below this one", :none},
     {:section_above, "Add section above", "Add a section above this one", :none},
-    {:column_right, "Add column right", "Add a column right of the highlighted one", :none},
-    {:column_left, "Add column left", "Add a column left of the highlighted one", :none},
+    {:column_right, "Add column right", "Add a column to the right", :none},
+    {:column_left, "Add column left", "Add a column to the left", :none},
     {:collapse, "Collapse", "Collapse the section (twice: all)", :none},
     {:expand, "Expand", "Expand the section (twice: all)", :none},
     {:toggle_empty, "Empty sections", "Show or hide empty sections", :none},
@@ -55,7 +55,7 @@ defmodule Agendum.TUI.Commands do
     {:calendar, "Calendar", "Show the calendar", :none},
     {:alarm, "Alarm", "Set an alarm on the item", :none},
     {:execute_all, "Execute all", "Run all conditions and actions", :none},
-    {:execute_category, "Execute", "Run the section's conditions and actions", :none},
+    {:execute_category, "Execute", "Run the section's conditions, actions", :none},
     {:next_view, "Next view", "Show the next view", :repeat},
     {:previous_view, "Previous view", "Show the previous view", :repeat},
     {:last_view, "Last view", "Show the view shown before this one", :none},
@@ -65,6 +65,39 @@ defmodule Agendum.TUI.Commands do
     {:help, "Help", "Show the keys", :none},
     {:save, "Save", "Save the file", :none},
     {:retrieve, "Retrieve", "Open another file", :none}
+  ]
+
+  # the category manager (F9); no counts here yet (ADR 0033: views first)
+  @catmgr [
+    {:up, "Up", "Highlight the category above", :none},
+    {:down, "Down", "Highlight the category below", :none},
+    {:page_up, "Page up", "A screen up", :none},
+    {:page_down, "Page down", "A screen down", :none},
+    {:first, "First", "Highlight MAIN, the first category", :none},
+    {:last, "Last", "Highlight the last category", :none},
+    {:parent, "Parent", "Highlight the parent", :none},
+    {:last_sibling, "Last sibling", "Highlight the last of the siblings", :none},
+    {:previous_sibling, "Previous sibling", "Highlight the sibling above", :none},
+    {:next_sibling, "Next sibling", "Highlight the sibling below", :none},
+    {:add_below, "Add below", "Add a category below this one", :none},
+    {:add_above, "Add above", "Add a category above this one", :none},
+    {:add_child, "Add child", "Add a child of this category", :none},
+    {:add_family, "Add family", "Add a category after the parent", :none},
+    {:rename, "Rename", "Rename the category", :none},
+    {:note, "Note", "The category's note", :none},
+    {:properties, "Properties", "The category's properties", :none},
+    {:promote, "Promote", "Move the category up a level", :none},
+    {:demote, "Demote", "Make it a child of the one above", :none},
+    {:move_up, "Move up", "Move it above its previous sibling", :none},
+    {:move_down, "Move down", "Move it below its next sibling", :none},
+    {:move, "Move", "Move it under another parent", :none},
+    {:sort, "Sort", "Sort its children by name", :none},
+    {:discard, "Discard", "Discard it and its children", :none},
+    {:execute, "Execute", "Run its conditions and actions", :none},
+    {:collapse, "Collapse", "Collapse the family (twice: all)", :none},
+    {:expand, "Expand", "Expand the family (twice: all)", :none},
+    {:help, "Help", "Show the keys", :none},
+    {:close, "Return", "Back to the view", :none}
   ]
 
   # the keys that work on every screen but while typing (`Update`'s
@@ -82,6 +115,10 @@ defmodule Agendum.TUI.Commands do
   @commands %{
     view:
       for {id, name, summary, count} <- @view do
+        %Command{id: id, name: name, summary: summary, count: count}
+      end,
+    catmgr:
+      for {id, name, summary, count} <- @catmgr do
         %Command{id: id, name: name, summary: summary, count: count}
       end,
     global:

@@ -143,6 +143,9 @@ defmodule Agendum.TUI.CategoryScreens do
     end
   end
 
+  # the category manager's keys run commands through its keymap (R65)
+  def handle(state, %{type: :catmgr} = mode, key), do: Manager.handle(state, mode, key)
+
   def handle(state, mode, key) when key in [{:alt, "-"}, {:alt, "="}] do
     rows = rows(state, mode)
 
@@ -178,26 +181,53 @@ defmodule Agendum.TUI.CategoryScreens do
   # has nothing to move to.
   defp navigate(_state, mode, [], key) when key in @nav_keys, do: {:moved, mode}
 
+  # where each moving key goes, in every screen listing the hierarchy
+  @moves %{
+    up: :up,
+    down: :down,
+    pgup: :page_up,
+    pgdn: :page_down,
+    ctrl_home: :first,
+    ctrl_end: :last,
+    home: :parent,
+    end: :last_sibling,
+    ctrl_pgup: :previous_sibling,
+    ctrl_pgdn: :next_sibling
+  }
+
   defp navigate(state, mode, rows, key) do
+    case @moves[key] do
+      nil -> :unhandled
+      where -> {:moved, move(state, mode, rows, where)}
+    end
+  end
+
+  @doc """
+  The mode with its cursor moved in `rows`: `:up`, `:down`, `:page_up`,
+  `:page_down`, `:first`, `:last`, to the `:parent`, the `:last_sibling`,
+  the `:previous_sibling` or the `:next_sibling`.
+  """
+  def move(state, mode, rows, where) do
     count = length(rows)
     id = current_id(rows, mode)
     page = State.body_height(state) - 2
-    at = fn index -> {:moved, %{mode | cursor: index |> min(count - 1) |> max(0)}} end
     index_of = fn target -> Enum.find_index(rows, fn {i, _} -> i == target end) end
 
-    case key do
-      :up -> at.(mode.cursor - 1)
-      :down -> at.(mode.cursor + 1)
-      :pgup -> at.(mode.cursor - page)
-      :pgdn -> at.(mode.cursor + page)
-      :ctrl_home -> at.(0)
-      :ctrl_end -> at.(count - 1)
-      :home -> at.(index_of.(state.db.categories[id].parent_id) || 0)
-      :end -> at.(index_of.(last_sibling(state.db, id)) || mode.cursor)
-      :ctrl_pgup -> at.(index_of.(Database.previous_sibling(state.db, id)) || mode.cursor)
-      :ctrl_pgdn -> at.(index_of.(Database.next_sibling(state.db, id)) || mode.cursor)
-      _ -> :unhandled
-    end
+    index =
+      case where do
+        :up -> mode.cursor - 1
+        :down -> mode.cursor + 1
+        :page_up -> mode.cursor - page
+        :page_down -> mode.cursor + page
+        :first -> 0
+        :last -> count - 1
+        :parent -> index_of.(state.db.categories[id].parent_id) || 0
+        :last_sibling -> index_of.(last_sibling(state.db, id)) || mode.cursor
+        :previous_sibling -> index_of.(Database.previous_sibling(state.db, id)) || mode.cursor
+        :next_sibling -> index_of.(Database.next_sibling(state.db, id)) || mode.cursor
+      end
+
+    %{mode | cursor: index |> min(count - 1) |> max(0)}
   end
 
   defp last_sibling(db, id) do
@@ -214,9 +244,6 @@ defmodule Agendum.TUI.CategoryScreens do
       nil -> nil
     end
   end
-
-  defp screen_key(state, %{type: :catmgr} = mode, rows, key),
-    do: Manager.screen_key(state, mode, rows, key)
 
   defp screen_key(state, %{type: :picker} = mode, rows, key),
     do: Picker.screen_key(state, mode, rows, key)
@@ -285,10 +312,12 @@ defmodule Agendum.TUI.CategoryScreens do
 
   # --- collapsing and expanding families (User's Guide 16-8) -----------------------------------
 
-  # ALT-- collapses the family the highlight is in (its own children when it
-  # has any, otherwise its parent's); pressed twice, every family. ALT-=
-  # expands the highlighted category's family; pressed twice, everything.
-  defp collapse_key(state, id, key) do
+  @doc """
+  ALT-− collapses the family the highlight is in (its own children when it
+  has any, otherwise its parent's); pressed twice, every family. ALT-=
+  expands the highlighted category's family; pressed twice, everything.
+  """
+  def collapse_key(state, id, key) do
     db = state.db
     twice = state.last_key.key == key
 

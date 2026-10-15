@@ -77,6 +77,47 @@ defmodule Agendum.TUI.Keymap do
     {:alt, "l"} => :column_left
   }
 
+  # the category manager (F9; User's Guide 16-1 to 16-12, R42)
+  @catmgr %{
+    :up => :up,
+    :backspace => :up,
+    :down => :down,
+    :enter => :down,
+    :pgup => :page_up,
+    :pgdn => :page_down,
+    :ctrl_home => :first,
+    :ctrl_end => :last,
+    :home => :parent,
+    :end => :last_sibling,
+    :ctrl_pgup => :previous_sibling,
+    :ctrl_pgdn => :next_sibling,
+    :esc => :close,
+    {:f, 9} => :close,
+    {:f, 10} => :close,
+    {:f, 1} => :help,
+    :insert => :add_below,
+    {:alt, "d"} => :add_below,
+    {:alt, "i"} => :add_below,
+    {:alt, "u"} => :add_above,
+    {:alt, "l"} => :add_family,
+    {:alt, "r"} => :add_child,
+    {:alt, "e"} => :execute,
+    {:f, 2} => :rename,
+    {:f, 5} => :note,
+    {:f, 6} => :properties,
+    {:f, 7} => :promote,
+    {:f, 8} => :demote,
+    {:alt, :up} => :move_up,
+    {:alt, :down} => :move_down,
+    {:alt_f, 5} => :sort,
+    {:alt_f, 10} => :move,
+    :delete => :discard,
+    {:alt_f, 4} => :discard,
+    {:ctrl, "d"} => :discard,
+    {:alt, "-"} => :collapse,
+    {:alt, "="} => :expand
+  }
+
   # on every screen, but not while typing or answering (`Update`)
   @global %{
     {:ctrl, "z"} => :undo,
@@ -90,7 +131,7 @@ defmodule Agendum.TUI.Keymap do
     {:ctrl, "c"} => :quit
   }
 
-  @keymaps %{view: @view, global: @global}
+  @keymaps %{view: @view, catmgr: @catmgr, global: @global}
 
   # Keys that stand for other keys (R31): for Mac keyboards without INS,
   # CTRL-N is INS everywhere, CTRL-E is F2 and CTRL-K F4 unless typing
@@ -119,17 +160,32 @@ defmodule Agendum.TUI.Keymap do
   @spec alias_of(term) :: {term, :always | :not_typing | :view} | nil
   def alias_of(key), do: Map.get(@aliases, key)
 
+  @doc """
+  The key `key` stands for in `place` (not while typing), or nil when it
+  stands for itself there: ⌥↑ is CTRL-PGUP in a view, but its own key in
+  the category manager.
+  """
+  @spec alias_in(atom, term) :: term | nil
+  def alias_in(place, key) do
+    case alias_of(key) do
+      {target, :view} -> if place == :view, do: target
+      {target, _always_or_not_typing} -> target
+      nil -> nil
+    end
+  end
+
   @doc "The keys bound to a command in a place, aliases included, in the order shown."
   @spec keys_for(atom, atom) :: [term]
   def keys_for(place, id) do
     keys = for {key, ^id} <- bindings(place), do: key
-    aliases = for {key, {target, _}} <- @aliases, target in keys, do: key
+    aliases = for {key, _} <- @aliases, alias_in(place, key) in keys, do: key
     Enum.sort_by(keys ++ aliases, &{rank(&1), name(&1)})
   end
 
   # the shown order: plain keys (arrows first), F-keys, ALT-F, ALT, then CTRL
   @plain [:up, :down, :left, :right, :pgup, :pgdn, :home, :end, :insert, :delete] ++
-           [:enter, :tab, :shift_tab, :ctrl_pgup, :ctrl_pgdn, :ctrl_home, :ctrl_end]
+           [:esc, :enter, :backspace, :tab, :shift_tab] ++
+           [:ctrl_pgup, :ctrl_pgdn, :ctrl_home, :ctrl_end]
 
   defp rank({:f, n}), do: {1, n}
   defp rank({:alt_f, n}), do: {2, n}

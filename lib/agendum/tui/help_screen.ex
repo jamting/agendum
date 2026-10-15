@@ -11,18 +11,25 @@ defmodule Agendum.TUI.HelpScreen do
     * `d`, describe key: the next key pressed is described (which command
       it runs there, or the macro attached to it), then any key returns.
 
-  The mode remembers where F1 was pressed (`from`): `:view`, or
-  `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
+  The mode remembers where F1 was pressed (`from`): `:view`, `:catmgr`,
+  or `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
   """
 
   alias Agendum.TUI.{Command, Commands, Keymap, Macros, State}
+  alias Agendum.TUI.CategoryScreens.Manager
   alias Agendum.TUI.Render.Help
   alias Agendum.TUI.Update.ViewKeys
 
   @doc "Opens the help screen on its keys page."
   @spec open(State.t()) :: State.t()
   def open(state) do
-    from = if state.modes == [] and state.edit == nil, do: :view, else: :elsewhere
+    from =
+      case {state.edit, state.modes} do
+        {nil, []} -> :view
+        {nil, [%{type: :catmgr} | _]} -> :catmgr
+        _ -> :elsewhere
+      end
+
     State.push(state, %{type: :help, top: 0, page: :keys, from: from, cursor: 0, described: nil})
   end
 
@@ -107,6 +114,7 @@ defmodule Agendum.TUI.HelpScreen do
 
   # a command from the list runs where F1 was pressed, as its key would
   defp run(state, {%Command{id: id}, :view, _keys}), do: ViewKeys.run(state, id)
+  defp run(state, {%Command{id: id}, :catmgr, _keys}), do: Manager.run(state, id)
 
   defp run(state, {%Command{id: id, name: name}, :global, _keys}) do
     case Agendum.TUI.Update.run_global(state, id) do
@@ -129,23 +137,24 @@ defmodule Agendum.TUI.HelpScreen do
     name = Keymap.name(key)
 
     {key, via} =
-      case Keymap.alias_of(key) do
-        {target, _when} -> {target, "#{name} stands for #{Keymap.name(target)}. "}
+      case Keymap.alias_in(from, key) do
         nil -> {key, ""}
+        target -> {target, "#{name} stands for #{Keymap.name(target)}. "}
       end
 
     macro = Macros.attached(state, key)
+    here = place_name(from)
 
     cond do
       macro != nil ->
         ["#{name} runs the macro #{macro.name}, attached to it in this file."] ++
-          hidden(from, key, "Without the macro it would run")
+          hidden(from, key)
 
       command = global_command(key) ->
         [via <> "#{name} runs #{command.name}, everywhere but while typing.", command.summary]
 
-      command = from == :view && view_command(key) ->
-        [via <> "#{name} runs #{command.name} in a view.", command.summary] ++ count_line(command)
+      command = local_command(from, key) ->
+        [via <> "#{name} runs #{command.name} #{here}.", command.summary] ++ count_line(command)
 
       from == :view and count_digit?(key) ->
         ["#{name} adds a digit to a count for the next command (ALT-1 ALT-0 ↓: ten rows)."]
@@ -153,32 +162,36 @@ defmodule Agendum.TUI.HelpScreen do
       from == :view and match?({:char, _}, key) ->
         ["#{name} starts typing an item, or an entry in the highlighted column."]
 
-      key in [:esc, {:f, 1}] ->
-        [
-          "#{name} works on every screen: " <>
-            if(key == :esc, do: "cancel or go back.", else: "help.")
-        ]
+      from == :catmgr and match?({:char, _}, key) ->
+        ["#{name} starts typing a new category below the highlighted one."]
 
-      from == :view ->
-        ["#{name} does nothing in a view."]
+      key == :esc ->
+        ["ESC cancels or goes back."]
+
+      from != :elsewhere ->
+        ["#{name} does nothing #{here}."]
 
       true ->
         [
-          "#{name} is not in a keymap here yet: only the view's keys are so far.",
-          "The keys page (F1) lists what it does."
+          "#{name} is not in a keymap here yet: only the view's and the category",
+          "manager's keys are so far. The keys page (F1) lists what it does."
         ]
     end
   end
 
-  defp hidden(from, key, lead) do
-    case global_command(key) || (from == :view && view_command(key)) do
-      %Command{name: name} -> ["#{lead} #{name}."]
+  defp hidden(from, key) do
+    case global_command(key) || local_command(from, key) do
+      %Command{name: name} -> ["Without the macro it would run #{name}."]
       _ -> []
     end
   end
 
   defp global_command(key), do: Commands.get(:global, Keymap.lookup(:global, key))
-  defp view_command(key), do: Commands.get(:view, Keymap.lookup(:view, key))
+  defp local_command(from, key), do: Commands.get(from, Keymap.lookup(from, key))
+
+  defp place_name(:view), do: "in a view"
+  defp place_name(:catmgr), do: "in the category manager"
+  defp place_name(_elsewhere), do: "here"
 
   defp count_line(%Command{count: :none}), do: []
   defp count_line(_command), do: ["Takes a count: ALT-digits before it run it that many times."]
@@ -202,7 +215,7 @@ defmodule Agendum.TUI.HelpScreen do
         keys = Enum.map_join(keys, " ", &Keymap.name/1)
 
         text =
-          " " <> pad(command.name, 18) <> pad(keys, 20) <> command.summary
+          " " <> pad(command.name, 18) <> pad(keys, 23) <> command.summary
 
         [{if(i == mode.cursor, do: :row, else: :normal), fit(text, state.width)}]
       end
@@ -228,6 +241,7 @@ defmodule Agendum.TUI.HelpScreen do
   end
 
   defp where(:view), do: "IN A VIEW"
+  defp where(:catmgr), do: "IN THE CATEGORY MANAGER"
   defp where(_elsewhere), do: "ON EVERY SCREEN"
 
   defp pad(text, width), do: String.pad_trailing(text, width - 1) <> " "

@@ -8,14 +8,20 @@ defmodule Agendum.TUI.KeymapTest do
   import Agendum.TUIHelpers
 
   alias Agendum.Starters.Planner
-  alias Agendum.TUI.{Commands, Keymap}
+  alias Agendum.TUI.{CategoryScreens, Commands, Keymap}
   alias Agendum.TUI.Update.ViewKeys
 
   @today ~D[2026-10-12]
 
-  test "every key in the view's keymap runs a command in the command list" do
+  # the places whose keys are in keymaps (ADR 0033)
+  @places [:view, :catmgr, :global]
+
+  test "every key in a keymap runs a command in its place's command list" do
     unknown =
-      for {key, id} <- Keymap.bindings(:view), Commands.get(:view, id) == nil, do: {key, id}
+      for place <- @places,
+          {key, id} <- Keymap.bindings(place),
+          Commands.get(place, id) == nil,
+          do: {place, key, id}
 
     assert unknown == []
   end
@@ -31,27 +37,51 @@ defmodule Agendum.TUI.KeymapTest do
     end
   end
 
-  test "every view command has a key" do
-    unbound = for c <- Commands.all(:view), Keymap.keys_for(:view, c.id) == [], do: c.id
+  test "every command has a key" do
+    unbound =
+      for place <- @places,
+          c <- Commands.all(place),
+          Keymap.keys_for(place, c.id) == [],
+          do: {place, c.id}
+
     assert unbound == []
   end
 
   test "names and summaries fit the command list on an 80-column screen" do
-    for c <- Commands.all(:view) ++ Commands.all(:global) do
+    for place <- @places, c <- Commands.all(place) do
       assert String.length(c.name) <= 17, c.name
-      assert String.length(c.summary) <= 41, c.summary
+      assert String.length(c.summary) <= 38, c.summary
     end
 
-    for place <- [:view, :global], c <- Commands.all(place) do
+    for place <- @places, c <- Commands.all(place) do
       keys = place |> Keymap.keys_for(c.id) |> Enum.map_join(" ", &Keymap.name/1)
-      assert String.length(keys) <= 19, keys
+      assert String.length(keys) <= 22, keys
     end
   end
 
-  test "command ids are unique and every command has a name and a summary" do
-    ids = Enum.map(Commands.all(:view), & &1.id)
-    assert ids == Enum.uniq(ids)
-    assert Enum.all?(Commands.all(:view), &(&1.name != "" and &1.summary != ""))
+  test "command ids are unique in a place and every command has a name and a summary" do
+    for place <- @places do
+      ids = Enum.map(Commands.all(place), & &1.id)
+      assert ids == Enum.uniq(ids)
+      assert Enum.all?(Commands.all(place), &(&1.name != "" and &1.summary != ""))
+    end
+  end
+
+  test "⌥↑ stands for CTRL-PGUP in a view only: in the category manager it moves" do
+    assert Keymap.alias_in(:view, {:alt, :up}) == :ctrl_pgup
+    assert Keymap.alias_in(:catmgr, {:alt, :up}) == nil
+    assert {:alt, :up} in Keymap.keys_for(:catmgr, :move_up)
+    refute {:alt, :up} in Keymap.keys_for(:catmgr, :previous_sibling)
+  end
+
+  test "every category manager command runs, on MAIN and on a category below it" do
+    state = start(Planner.build() |> Planner.with_samples(@today), today: @today)
+    on_main = press(state, {:f, 9})
+    below = press(on_main, [:down, :down])
+
+    for c <- Commands.all(:catmgr), from <- [on_main, below] do
+      assert %Agendum.TUI.State{} = CategoryScreens.Manager.run(from, c.id), "#{c.id} failed"
+    end
   end
 
   test "every view command runs, on an item and on a section head" do

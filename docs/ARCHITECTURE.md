@@ -100,8 +100,8 @@ the rest by what it is for:
 | `Agendum.TUI.State`                            | ✔     | UI state: db, path, cursor, scroll, **mode stack**, inline edit, message, queued effects.                                        |
 | `Agendum.TUI.Update`                           | ✔     | Key → state transitions: keys for every screen, the clock (`tick/2`), effect results, dispatch to the screen on top.             |
 | `Agendum.TUI.Update.*`                         | ✔     | Its parts: `ViewKeys` (the view's keymap lookup and `run`), `Editing` (inline), `Marked` (and moves), `Prompts` (and Y/N), `Notes`, `Actions` (`perform/2`).          |
-| `Agendum.TUI.Command`, `Agendum.TUI.Commands`  | ✔     | The commands keys can run, as data: id, name, summary, what a count does; by place: the view's and the global ones so far (R65, ADR 0033).          |
-| `Agendum.TUI.Keymap`                           | ✔     | Which command a key runs, by place (the view, the global keys), the keys that stand for others (CTRL-N = INS) and key names (R65, ADR 0033). |
+| `Agendum.TUI.Command`, `Agendum.TUI.Commands`  | ✔     | The commands keys can run, as data: id, name, summary, what a count does; by place: the view's, the category manager's and the global ones so far (R65, ADR 0033).          |
+| `Agendum.TUI.Keymap`                           | ✔     | Which command a key runs, by place (the view, the category manager, the global keys), the keys that stand for others (CTRL-N = INS) and key names (R65, ADR 0033). |
 | `Agendum.TUI.HelpScreen`                       | ✔     | The help screen (F1): the keys page, `c` the command list, `d` describe key (R65).                                               |
 | `Agendum.TUI.Menu`                             | ✔     | The Lotus two-line menu tree.                                                                                                    |
 | `Agendum.TUI.Boxes.Box`                              | ✔     | The behaviour of a box module (handle, title, content, keys, help, width; finish, indicator, cancels, choices) and the registry of box modules. |

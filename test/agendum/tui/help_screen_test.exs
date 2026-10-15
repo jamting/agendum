@@ -60,11 +60,19 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert back.modes == [] and back.cursor == state.cursor
     end
 
-    test "from the category manager it lists the commands of every screen", %{state: state} do
+    test "from the category manager it lists the manager's commands, then the global ones",
+         %{state: state} do
       text = screen(press(state, [{:f, 9}, {:f, 1}, "c"]))
-      assert text =~ "COMMANDS ON EVERY SCREEN"
-      assert text =~ "Undo"
+      assert text =~ "COMMANDS IN THE CATEGORY MANAGER"
+      assert text =~ ~r/Promote +F7 +Move the category up a level/
       refute text =~ "Next marked"
+    end
+
+    test "ENTER runs a category manager command there", %{state: state} do
+      in_catmgr = press(state, [{:f, 9}, :down, :down])
+      index = Enum.find_index(HelpScreen.commands(:catmgr), fn {c, _, _} -> c.id == :parent end)
+      ran = press(in_catmgr, [{:f, 1}, "c"] ++ List.duplicate(:down, index) ++ [:enter])
+      assert ran == press(in_catmgr, :home) |> Map.put(:last_key, ran.last_key)
     end
   end
 
@@ -108,6 +116,14 @@ defmodule Agendum.TUI.HelpScreenTest do
       back = press(described, :down)
       assert back.modes == [] and back.edit == nil
       assert back.cursor == described.cursor
+    end
+
+    test "in the category manager: its own command, and ⌥↑ is its own key there",
+         %{state: state} do
+      in_catmgr = press(state, {:f, 9})
+      assert described(in_catmgr, {:alt, :up}) =~ "ALT-↑ runs Move up in the category manager."
+      assert described(in_catmgr, "x") =~ "x starts typing a new category"
+      assert described(state, {:alt, :up}) =~ "ALT-↑ stands for CTRL-PGUP."
     end
 
     test "ESC before a key goes back", %{state: state} do
