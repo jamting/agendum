@@ -49,7 +49,7 @@ defmodule Agendum.MixProject do
       main: "readme",
       formatters: ["html", "markdown"],
       extras:
-        ["README.md", "CONTRIBUTING.md", "CLAUDE.md"] ++
+        ["README.md", "CHANGELOG.md", "CONTRIBUTING.md", "CLAUDE.md"] ++
           Path.wildcard("docs/*.md") ++
           Path.wildcard("docs/plans/*.md") ++ Path.wildcard("docs/adr/*.md"),
       # docs/ describes Agendum as it is; docs/plans/ what is planned or

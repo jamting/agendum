@@ -13,6 +13,7 @@ The `tidy-docs` skill brings them up to date and keeps them so.
 | [`../CLAUDE.md`](../CLAUDE.md)               | The rules for changing the code: commands, architecture rules, the workflow, conventions          |
 | [`../CONTRIBUTING.md`](../CONTRIBUTING.md)   | Setting up a machine, and a first change, for a person                                            |
 | [`ROADMAP.md`](ROADMAP.md)                   | What is open (first) and what is done, with rule numbers                                          |
+| [`../CHANGELOG.md`](../CHANGELOG.md)         | What changed in each version (semantic versioning, tagged `vX.Y.Z`)                               |
 
 ## What Agendum does
 
@@ -72,4 +73,5 @@ Each plan starts with its status.
 | add a screen or box                    | `SCREENS.md` (a test checks); `ARCHITECTURE.md` if it is a new module                          |
 | add a stored field                     | `DATA_MODEL.md` (and a row in its format versions), `DATA_ACCESS.md` if queried, `JSON_FORMAT.md` and `Agendum.Core.JSONFile` |
 | make a lasting decision                | a new ADR in `adr/`, and a row in `ARCHITECTURE.md`'s ADR list                                 |
+| finish a major feature or change the file format | the version in `mix.exs` (minor, never 1.0.0 unless the owner says), an entry in `CHANGELOG.md`, a `vX.Y.Z` tag |
 | plan something larger                  | a plan in `plans/`, starting with its status, and a row above                                  |
