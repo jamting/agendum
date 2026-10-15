@@ -21,6 +21,17 @@ Rule numbers refer to `SPEC.md`.
 
 ## Milestone 2 — Fidelity
 
+**The ambition:** Agendum as close to Agenda 2.0 as makes sense: the same screen, keys, menus and behaviour, apart from a list of accepted enhancements (beyond Agenda) and accepted modifications (done differently, on purpose). Everything else that differs is a gap, to close or to move onto one of the lists. Today about 80% overall (control panel and F10 menu about 75%, the note editor about 50%, the data model and views about 90%). The overview, checked in Agenda 2.0 run headless, with the two lists and the steps: [`docs/plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md)
+
+- [ ] Towards parity (AGENDA_PARITY.md, steps):
+  - [ ] The note editor as Agenda's (its own item, below; `NOTE_EDITOR.md`)
+  - [ ] The View Properties box for every view (screenshot 143), F6 on the view
+  - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash
+  - [ ] File ▸ Abandon, File Maintenance Erase, File Transfer Template
+  - [ ] Show ItemsDone, Show Every, Show Circular (with the `o` indicator)
+  - [ ] Control panel symbols and indicators: `*` on a date category or value, `WAIT` while a calendar is fetched, `D` with unindexed categories
+  - [ ] Compare the category, view and macro managers' menus with Agenda's, and add them to the overview
+  - [ ] Optional: Utilities Launch (a shell without quitting)
 - [x] Undo / redo (R30)
 - [x] Mac-friendly keys: CTRL alternatives for INS and F-keys, Mac editing keys, ⌘ mapping guide (R31)
 - [x] Autocompletion while typing column entries (Agenda's AUTOC indicator) (R32)
