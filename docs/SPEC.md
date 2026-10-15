@@ -694,7 +694,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   shows: a row ends after the rightmost space that fits, and a word wider
   than the screen is broken at its edge. It is for the screen only: no
   line break goes into the text. ↑ ↓ move through the rows on the screen,
-  keeping the column in the row (at a shorter row's end, its end); HOME
+  keeping the column in the row: on a shorter row the cursor is at its
+  end, and the next ↑ or ↓ goes on from the column kept (any other key
+  forgets it); HOME
   and END (CTRL-A, CTRL-E) go to the start and end of the row, and pressed
   there, to the start and end of the whole line. The note scrolls by rows.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is

@@ -65,6 +65,31 @@ defmodule Agendum.TUI.NoteWrapTest do
     assert cursor(state) == {0, 66}
   end
 
+  test "↑ and ↓ keep the column through a shorter row", %{state: state} do
+    # column 20 of the middle row, then down to the last row (13 long) and
+    # on to "short": back up, the column is 20 again
+    state = press(state, [:up, :up, :home] ++ List.duplicate(:right, 20))
+    assert cursor(state) == {0, 46}
+    state = press(state, :down)
+    assert cursor(state) == {0, 66}
+    state = press(state, :up)
+    assert cursor(state) == {0, 46}
+
+    # through the five-character line "short" too
+    state = press(state, [:down, :down])
+    assert cursor(state) == {1, 5}
+    state = press(state, [:up, :up])
+    assert cursor(state) == {0, 46}
+  end
+
+  test "any other key forgets the column kept", %{state: state} do
+    state = press(state, [:up, :up, :home] ++ List.duplicate(:right, 20) ++ [:down])
+    assert cursor(state) == {0, 66}
+    # a move left: the column is now that of the cursor
+    state = press(state, [:left, :up])
+    assert cursor(state) == {0, 38}
+  end
+
   test "HOME and END go to the row's ends; pressed again, the line's", %{state: state} do
     state = press(state, [:up, :up])
     assert cursor(state) == {0, 31}

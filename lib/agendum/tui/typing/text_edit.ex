@@ -2,7 +2,9 @@ defmodule Agendum.TUI.Typing.TextEdit do
   @moduledoc """
   A pure multi-line text buffer, used for notes. `mark` is where F7 MARK
   anchored a region (R63): the region runs from it to the cursor, either
-  way; nil when nothing is marked.
+  way; nil when nothing is marked. `goal` is the column in the row on the
+  screen that ↑ and ↓ keep through shorter rows (R64), with the place it
+  was left at: once the cursor is anywhere else, it no longer counts.
   """
 
   @type position :: {non_neg_integer, non_neg_integer}
@@ -10,9 +12,10 @@ defmodule Agendum.TUI.Typing.TextEdit do
           lines: [String.t()],
           row: non_neg_integer,
           col: non_neg_integer,
-          mark: position | nil
+          mark: position | nil,
+          goal: {non_neg_integer, position} | nil
         }
-  defstruct lines: [""], row: 0, col: 0, mark: nil
+  defstruct lines: [""], row: 0, col: 0, mark: nil, goal: nil
 
   alias Agendum.TUI.Typing.Wrap
 
@@ -31,7 +34,7 @@ defmodule Agendum.TUI.Typing.TextEdit do
   @doc """
   A key in the text, shown word-wrapped `width` characters wide
   (`Agendum.TUI.Typing.Wrap`): ↑ ↓ move through the rows on the screen,
-  keeping the column in the row; HOME and END go to the start and end of
+  keeping the column in the row (through shorter rows too); HOME and END go to the start and end of
   the row, and pressed there, of the whole line. Without a width (nil)
   every key works on whole lines.
   """
@@ -47,15 +50,35 @@ defmodule Agendum.TUI.Typing.TextEdit do
     end
   end
 
-  # the cursor's row on the screen: `i` of `rows`, `x` characters into it
-  defp wrapped_move(e, key, width) when key in [:up, :down, :home, :end] do
-    rows = Wrap.rows(current(e), width)
-    i = Wrap.locate(rows, e.col)
-    {start, _len} = Enum.at(rows, i)
-    move_in_rows(e, key, rows, i, e.col - start, width)
+  # the cursor's row on the screen: `i` of `rows`, `x` characters into it;
+  # ↑ and ↓ go on from the column they kept, if the cursor is where they
+  # left it, and keep it again
+  defp wrapped_move(e, key, width) when key in [:up, :down] do
+    {rows, i, x} = place(e, width)
+    x = kept(e, x)
+
+    case move_in_rows(e, key, rows, i, x, width) do
+      nil -> nil
+      moved -> %{moved | goal: {x, {moved.row, moved.col}}}
+    end
+  end
+
+  defp wrapped_move(e, key, width) when key in [:home, :end] do
+    {rows, i, x} = place(e, width)
+    move_in_rows(e, key, rows, i, x, width)
   end
 
   defp wrapped_move(_e, _key, _width), do: nil
+
+  defp kept(%{goal: {goal, at}, row: row, col: col}, _x) when at == {row, col}, do: goal
+  defp kept(_e, x), do: x
+
+  defp place(e, width) do
+    rows = Wrap.rows(current(e), width)
+    i = Wrap.locate(rows, e.col)
+    {start, _len} = Enum.at(rows, i)
+    {rows, i, e.col - start}
+  end
 
   defp move_in_rows(e, :up, rows, i, x, _width) when i > 0,
     do: %{e | col: Wrap.column(rows, i - 1, x)}
