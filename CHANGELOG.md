@@ -17,7 +17,7 @@ has the detail.
   too. In a box, F1 c lists the box's commands and ENTER runs the one
   highlighted; in the menu, it lists the entries by their letters. F1
   also works while moving items, a column or a section, changing a
-  width, browsing and searching.
+  width, browsing and searching. Typing in F1 c's list narrows it.
 - The help and the keyboard guide say ⌥m (Option as Meta) where they said
   ESC m: ESC typed by hand and then a letter is two keys.
 

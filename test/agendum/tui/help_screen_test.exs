@@ -55,6 +55,28 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert Core.marked_items(undone.db) == []
     end
 
+    test "typing narrows the list by name or summary; ENTER runs the first match",
+         %{state: state} do
+      narrowed = press(state, [{:f, 1}, "c", "unmark"])
+      text = screen(narrowed)
+      assert text =~ ~r/Unmark all +ALT-F7/
+      refute text =~ ~r/Down +↓/
+      assert text =~ ~s(Showing those with "unmark")
+
+      marked = press(state, [:down, {:f, 7}])
+      ran = press(marked, [{:f, 1}, "c", "unmark", :enter])
+      assert Core.marked_items(ran.db) == []
+    end
+
+    test "BACKSPACE takes a letter back; ESC first forgets what was typed", %{state: state} do
+      typed = press(state, [{:f, 1}, "c", "xyz"])
+      refute screen(typed) =~ ~r/Down +↓/
+      assert screen(press(typed, [:backspace, :backspace, :backspace])) =~ ~r/Down +↓/
+      cleared = press(typed, :esc)
+      assert State.mode(cleared).type == :help and screen(cleared) =~ ~r/Down +↓/
+      assert press(cleared, :esc).modes == []
+    end
+
     test "ESC returns without running anything", %{state: state} do
       back = press(state, [{:f, 1}, "c", :down, :esc])
       assert back.modes == [] and back.cursor == state.cursor

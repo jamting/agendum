@@ -53,7 +53,15 @@ defmodule Agendum.TUI.HelpScreen do
         _ -> :elsewhere
       end
 
-    State.push(state, %{type: :help, top: 0, page: :keys, from: from, cursor: 0, described: nil})
+    State.push(state, %{
+      type: :help,
+      top: 0,
+      page: :keys,
+      from: from,
+      cursor: 0,
+      described: nil,
+      filter: ""
+    })
   end
 
   @doc """
@@ -72,6 +80,16 @@ defmodule Agendum.TUI.HelpScreen do
           do: {c, :global, Keymap.keys_for(:global, c.id)}
 
     local ++ global
+  end
+
+  # the list as narrowed by what was typed: names and summaries that hold
+  # it, in any case
+  defp shown(state, mode) do
+    wanted = String.downcase(mode.filter)
+
+    for {command, _, _} = entry <- list(state, mode.from),
+        String.contains?(String.downcase(command.name <> " " <> command.summary), wanted),
+        do: entry
   end
 
   # in a note the keys of every screen are not commands: they edit the
@@ -139,8 +157,19 @@ defmodule Agendum.TUI.HelpScreen do
     end
   end
 
+  # typing narrows the list (by name or summary); ESC first forgets
+  # what was typed, as in the category picker
+  def handle(state, %{page: :commands} = mode, {:char, c}),
+    do: State.put_mode(state, %{mode | filter: mode.filter <> c, cursor: 0})
+
+  def handle(state, %{page: :commands, filter: filter} = mode, :backspace) when filter != "",
+    do: State.put_mode(state, %{mode | filter: String.slice(filter, 0..-2//1), cursor: 0})
+
+  def handle(state, %{page: :commands, filter: filter} = mode, :esc) when filter != "",
+    do: State.put_mode(state, %{mode | filter: "", cursor: 0})
+
   def handle(state, %{page: :commands} = mode, key) do
-    list = list(State.pop(state), mode.from)
+    list = shown(State.pop(state), mode)
     page = State.body_height(state) - 2
 
     cursor =
@@ -360,7 +389,7 @@ defmodule Agendum.TUI.HelpScreen do
     entries =
       state
       |> below(mode)
-      |> list(mode.from)
+      |> shown(mode)
       |> Enum.with_index()
       |> Enum.map(fn {{command, _place, keys}, i} ->
         style = if i == mode.cursor, do: :row, else: :normal
@@ -370,9 +399,14 @@ defmodule Agendum.TUI.HelpScreen do
     before = entries |> Enum.take(mode.cursor + 1) |> Enum.map(&length/1) |> Enum.sum()
     top = max(before - page, 0)
 
+    typed =
+      if mode.filter == "",
+        do: "   Type to narrow the list.",
+        else: "   Showing those with \"#{mode.filter}\" (BACKSPACE, ESC to see all)"
+
     [
       [{:normal, " COMMANDS #{where(mode.from)}  (↑↓ move · ENTER runs · ESC returns)"}],
-      [{:normal, ""}] | entries |> Enum.concat() |> Enum.drop(top)
+      [{:normal, typed}] | entries |> Enum.concat() |> Enum.drop(top)
     ]
   end
 

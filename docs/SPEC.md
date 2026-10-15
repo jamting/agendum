@@ -1225,7 +1225,9 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   ✅ In the help screen (F1), `c` lists the commands that can run where
   F1 was pressed (a view's own, then those of every screen: undo, save,
   quit …), with their keys and summaries; ↑↓ move, ENTER runs the
-  highlighted one there, ESC returns. `d` then a key says what that key
+  highlighted one there, ESC returns. Typing narrows the list to the
+  commands whose name or summary holds what was typed (BACKSPACE takes a
+  letter back; ESC first forgets it all). `d` then a key says what that key
   does there: the macro attached to it (and the command it hides), a key
   of every screen, the view's command and whether it takes a count, or
   what a key that stands for another (CTRL-N for INS) stands for; the key
