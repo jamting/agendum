@@ -76,4 +76,8 @@ The owner settled these choices before any code (2026-10-15):
   `Box.list_moves/0`); keys not in it, and every key while the person
   types in one of its fields (`typing?/2`), go to its `handle/3`. The menu has a keymap
   too (2026-10-15); its entries are chosen by their first letters, which
-  the help lists as their keys.
+  the help lists as their keys. So do the modes that move something
+  (items, a column, a section, a width, Browse) and searching the view.
+  What still reads keys directly: typing (inline edits, prompts, text
+  fields), the help screen itself, the splash screen and the developer
+  screen.

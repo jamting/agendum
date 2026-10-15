@@ -19,7 +19,7 @@ defmodule Agendum.TUI.Moves.ColumnMove do
 
   alias Agendum.Core
   alias Agendum.Core.{View, ViewColumns}
-  alias Agendum.TUI.State
+  alias Agendum.TUI.{Keymap, State}
 
   @doc """
   Starts moving, in section `sidx`, the column with that index or the item
@@ -51,16 +51,24 @@ defmodule Agendum.TUI.Moves.ColumnMove do
   defp moved(state, mode),
     do: Core.move_column(state.db, mode.view_id, mode.sidx, mode.from, mode.to)
 
+  @doc "A key while a column moves: the command its keymap binds it to (R65)."
   def handle(state, mode, key) do
-    case key do
-      k when k in [:left, {:char, "<"}] -> step(state, mode, -1)
-      k when k in [:right, {:char, ">"}] -> step(state, mode, 1)
-      :enter -> State.change_db(State.pop(state), moved(state, mode))
-      # the highlight goes back with it
-      :esc -> %{State.pop(state) | col: mode.col}
-      _ -> state
+    case Keymap.lookup(:column_move, key) do
+      nil -> state
+      id -> command(state, mode, id)
     end
   end
+
+  @doc "Runs a command of moving a column (`Agendum.TUI.Commands`)."
+  @spec run(State.t(), atom) :: State.t()
+  def run(state, id), do: command(state, State.mode(state), id)
+
+  defp command(state, mode, :left), do: step(state, mode, -1)
+  defp command(state, mode, :right), do: step(state, mode, 1)
+  defp command(state, mode, :keep), do: State.change_db(State.pop(state), moved(state, mode))
+  # the highlight goes back with it
+  defp command(state, mode, :close), do: %{State.pop(state) | col: mode.col}
+  defp command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
 
   # One place along, within the section's slots. The highlight follows:
   # 0 on the item column, the column's index + 1 on a column (as

@@ -20,7 +20,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   alias Agendum.Core
   alias Agendum.Core.Search
   alias Agendum.TUI.Boxes.{Box, Template}
-  alias Agendum.TUI.{Layout, Typing.LineEdit, State}
+  alias Agendum.TUI.{Keymap, Layout, Typing.LineEdit, State}
 
   # Direction only when searching the view
   @layout """
@@ -160,27 +160,24 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   end
 
   @doc "Keys while searching: next / previous match, mark, end."
-  def searching_key(state, mode, key, view_key) do
-    case key do
-      k when k in [{:alt, "n"}, {:f, 8}] ->
-        step(state, mode.search, 1)
-
-      {:alt, "p"} ->
-        step(state, mode.search, -1)
-
-      {:f, 7} ->
-        mark_current(state)
-
-      k when k in [:enter, :esc] ->
-        state |> State.pop() |> State.info("Search ended")
-
-      k when k in [:up, :down, :pgup, :pgdn, :home, :end, :ctrl_pgup, :ctrl_pgdn] ->
-        view_key.(state, k)
-
-      _ ->
-        state
+  def searching_key(state, mode, key, _view_key) do
+    case Keymap.lookup(:searching, key) do
+      nil -> state
+      id -> searching(state, mode, id)
     end
   end
+
+  @doc "Runs a command while searching the view (`Agendum.TUI.Commands`)."
+  @spec run_searching(State.t(), atom) :: State.t()
+  def run_searching(state, id), do: searching(state, State.mode(state), id)
+
+  defp searching(state, mode, :next_match), do: step(state, mode.search, 1)
+  defp searching(state, mode, :previous_match), do: step(state, mode.search, -1)
+  defp searching(state, _mode, :mark), do: mark_current(state)
+  defp searching(state, _mode, :close), do: state |> State.pop() |> State.info("Search ended")
+  defp searching(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
+  # the highlight moves as in the view
+  defp searching(state, _mode, id), do: Agendum.TUI.Update.ViewKeys.run(state, id)
 
   defp step(state, search, direction) do
     found = matches(state, search)

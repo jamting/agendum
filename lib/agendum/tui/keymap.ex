@@ -177,6 +177,84 @@ defmodule Agendum.TUI.Keymap do
     {:f, 1} => :help
   }
 
+  # the highlight's moves in the view, while items move or a search runs
+  @view_moves %{
+    :up => :up,
+    :down => :down,
+    :pgup => :page_up,
+    :pgdn => :page_down,
+    :home => :top,
+    :end => :bottom,
+    :ctrl_pgup => :previous_section,
+    :ctrl_pgdn => :next_section
+  }
+
+  # moving items (ALT-F10): the highlight shows where they go
+  @move_item Map.merge(@view_moves, %{:enter => :drop, :esc => :close, {:f, 1} => :help})
+
+  # searching the view (ALT-F6, then the matches)
+  @searching Map.merge(@view_moves, %{
+               {:alt, "n"} => :next_match,
+               {:f, 8} => :next_match,
+               {:alt, "p"} => :previous_match,
+               {:f, 7} => :mark,
+               :enter => :close,
+               :esc => :close,
+               {:f, 1} => :help
+             })
+
+  # Browse (ALT-B): a datebook's periods, or a date filter's days
+  @browse %{
+    :left => :earlier,
+    {:char, "<"} => :earlier,
+    :right => :later,
+    {:char, ">"} => :later,
+    :up => :week_earlier,
+    :ctrl_left => :week_earlier,
+    :down => :week_later,
+    :ctrl_right => :week_later,
+    :pgup => :month_earlier,
+    :pgdn => :month_later,
+    :ctrl_pgup => :year_earlier,
+    :ctrl_pgdn => :year_later,
+    {:alt_f, 5} => :go_to,
+    :enter => :keep,
+    :esc => :close,
+    {:f, 1} => :help
+  }
+
+  # a column's width (View ▸ Column ▸ Width); digits type it (`ColumnWidth`)
+  @column_width %{
+    :left => :narrower,
+    :right => :wider,
+    {:char, "?"} => :fit,
+    :enter => :keep,
+    :esc => :close,
+    {:f, 1} => :help
+  }
+
+  # moving a column (ALT-F10 on a column head)
+  @column_move %{
+    :left => :left,
+    {:char, "<"} => :left,
+    :right => :right,
+    {:char, ">"} => :right,
+    :enter => :keep,
+    :esc => :close,
+    {:f, 1} => :help
+  }
+
+  # moving a section (ALT-F10 on a section head)
+  @section_move %{
+    :up => :up,
+    {:char, "<"} => :up,
+    :down => :down,
+    {:char, ">"} => :down,
+    :enter => :keep,
+    :esc => :close,
+    {:f, 1} => :help
+  }
+
   # every box (`Update`'s box stage); its own keys are the box's
   @box %{
     {:f, 1} => :help,
@@ -203,6 +281,12 @@ defmodule Agendum.TUI.Keymap do
     viewmgr: @viewmgr,
     note: @note,
     menu: @menu,
+    move_item: @move_item,
+    searching: @searching,
+    browse: @browse,
+    column_width: @column_width,
+    column_move: @column_move,
+    section_move: @section_move,
     box: @box,
     global: @global
   }

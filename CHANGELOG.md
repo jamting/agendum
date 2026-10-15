@@ -15,7 +15,9 @@ has the detail.
 - F1 c and F1 d also work in the category manager, the view manager, a
   note, the menu and every box; F1 now opens the help in those places
   too. In a box, F1 c lists the box's commands and ENTER runs the one
-  highlighted; in the menu, it lists the entries by their letters.
+  highlighted; in the menu, it lists the entries by their letters. F1
+  also works while moving items, a column or a section, changing a
+  width, browsing and searching.
 - The help and the keyboard guide say ⌥m (Option as Meta) where they said
   ESC m: ESC typed by hand and then a letter is two keys.
 

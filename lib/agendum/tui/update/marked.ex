@@ -9,7 +9,7 @@ defmodule Agendum.TUI.Update.Marked do
   use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
 
   alias Agendum.Core
-  alias Agendum.TUI.{Boxes.Box, CategoryScreens, Terminal.Draw, Layout, State}
+  alias Agendum.TUI.{Boxes.Box, CategoryScreens, Keymap, Terminal.Draw, Layout, State}
   alias Agendum.TUI.Update.{Actions, Prompts, ViewKeys}
 
   # --- marked items (User's Guide 13-1 to 13-4) ----------------------------------
@@ -238,20 +238,24 @@ defmodule Agendum.TUI.Update.Marked do
 
   @doc "A key while moving items: the highlight moves, ENTER drops them, ESC cancels."
   def move_key(state, mode, key) do
-    case key do
-      :esc ->
-        State.pop(state)
-
-      :enter ->
-        state |> State.pop() |> drop_item(mode, Layout.current_row(state))
-
-      k when k in [:up, :down, :pgup, :pgdn, :home, :end, :ctrl_pgup, :ctrl_pgdn] ->
-        ViewKeys.view_key(state, k)
-
-      _ ->
-        state
+    case Keymap.lookup(:move_item, key) do
+      nil -> state
+      id -> move_command(state, mode, id)
     end
   end
+
+  @doc "Runs a command of moving items (`Agendum.TUI.Commands`): the view's moves, drop, cancel."
+  @spec run_move(State.t(), atom) :: State.t()
+  def run_move(state, id), do: move_command(state, State.mode(state), id)
+
+  defp move_command(state, _mode, :close), do: State.pop(state)
+
+  defp move_command(state, mode, :drop),
+    do: state |> State.pop() |> drop_item(mode, Layout.current_row(state))
+
+  defp move_command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
+  # the highlight moves as in the view
+  defp move_command(state, _mode, id), do: ViewKeys.run(state, id)
 
   # Moves the item(s) to the highlighted position, one after another so
   # marked items keep their order.

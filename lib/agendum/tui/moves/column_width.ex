@@ -22,7 +22,7 @@ defmodule Agendum.TUI.Moves.ColumnWidth do
   alias Agendum.Core
   alias Agendum.Core.View
   alias Agendum.Core.View.ItemColumn
-  alias Agendum.TUI.State
+  alias Agendum.TUI.{Keymap, State}
 
   @doc """
   Starts choosing a width: of the column at `{section, column}`
@@ -64,18 +64,32 @@ defmodule Agendum.TUI.Moves.ColumnWidth do
   defp chosen(state, %{target: {:items, sidx}} = mode),
     do: Core.set_item_column(state.db, mode.view_id, sidx, set: :manual, width: mode.width)
 
+  @doc """
+  A key while a column's width changes: the command its keymap binds it to
+  (R65); digits type a width, BACKSPACE takes one back.
+  """
+  def handle(state, mode, {:char, d}) when d in ~w(0 1 2 3 4 5 6 7 8 9),
+    do: type(state, mode, mode.typed <> d)
+
+  def handle(state, mode, :backspace), do: type(state, mode, String.slice(mode.typed, 0..-2//1))
+
   def handle(state, mode, key) do
-    case key do
-      :left -> put_width(state, mode, mode.width - 1)
-      :right -> put_width(state, mode, mode.width + 1)
-      {:char, "?"} -> put_width(state, mode, fitted(state, mode))
-      {:char, d} when d in ~w(0 1 2 3 4 5 6 7 8 9) -> type(state, mode, mode.typed <> d)
-      :backspace -> type(state, mode, String.slice(mode.typed, 0..-2//1))
-      :enter -> State.change_db(State.pop(state), chosen(state, mode))
-      :esc -> State.pop(state)
-      _ -> state
+    case Keymap.lookup(:column_width, key) do
+      nil -> state
+      id -> command(state, mode, id)
     end
   end
+
+  @doc "Runs a command of changing a column's width (`Agendum.TUI.Commands`)."
+  @spec run(State.t(), atom) :: State.t()
+  def run(state, id), do: command(state, State.mode(state), id)
+
+  defp command(state, mode, :narrower), do: put_width(state, mode, mode.width - 1)
+  defp command(state, mode, :wider), do: put_width(state, mode, mode.width + 1)
+  defp command(state, mode, :fit), do: put_width(state, mode, fitted(state, mode))
+  defp command(state, mode, :keep), do: State.change_db(State.pop(state), chosen(state, mode))
+  defp command(state, _mode, :close), do: State.pop(state)
+  defp command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
 
   # the width as the core would keep it (a column 1 to 80, the item column
   # 5 to 200), so what the control panel says is what ENTER keeps

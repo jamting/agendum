@@ -285,4 +285,24 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert described(menu, :backspace) =~ "BACKSPACE runs Back in the menu."
     end
   end
+
+  describe "while moving or browsing" do
+    test "moving items: F1 opens the help, c lists drop and the view's moves", %{state: state} do
+      moving = press(state, [:down, {:alt_f, 10}])
+      assert State.mode(moving).type == :move_item
+      text = screen(press(moving, [{:f, 1}, "c"]))
+      assert text =~ "COMMANDS WHILE MOVING ITEMS"
+      assert text =~ ~r/Drop +ENTER +Move the item\(s\) here/
+      assert described(moving, :down) =~ "↓ runs Down while moving items."
+      assert State.mode(press(moving, [{:f, 1}, :esc])).type == :move_item
+    end
+
+    test "browsing a datebook: c lists its moves, ENTER on one runs it", %{state: state} do
+      datebook = Enum.find(Agendum.Core.Database.views(state.db), & &1.datebook)
+      browsing = state |> State.switch_view(datebook.id) |> press({:alt, "b"})
+      assert State.mode(browsing).type == :browse
+      later = press(browsing, [{:f, 1}, "c", :down, :enter])
+      assert State.mode(later).date == State.mode(press(browsing, :right)).date
+    end
+  end
 end

@@ -13,6 +13,7 @@ defmodule Agendum.TUI.HelpScreen do
 
   The mode remembers where F1 was pressed (`from`): `:view`, `:catmgr`,
   `:viewmgr`, `:note`, `:menu` (its entries first, each by its letter),
+  the moves (`:move_item`, `:browse`, `:column_width` …), `:searching`,
   `:box` (any other box: its own commands from its
   keymap, then the keys every box shares), or
   `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
@@ -25,13 +26,30 @@ defmodule Agendum.TUI.HelpScreen do
   alias Agendum.TUI.Typing.{TextEdit, Wrap}
   alias Agendum.TUI.Update.{Notes, ViewKeys}
 
+  # The places with a keymap of their own (`Agendum.TUI.Keymap`), by the
+  # type of the mode on top, and what runs their commands; a box is found
+  # through `Agendum.TUI.Boxes.Box`.
+  @places %{
+    view: {ViewKeys, :run},
+    catmgr: {Manager, :run},
+    viewmgr: {ViewManager, :run},
+    note: {Notes, :run},
+    menu: {Menu, :run},
+    move_item: {Agendum.TUI.Update.Marked, :run_move},
+    searching: {Agendum.TUI.Boxes.SearchBox, :run_searching},
+    browse: {Agendum.TUI.Moves.Browse, :run},
+    column_width: {Agendum.TUI.Moves.ColumnWidth, :run},
+    column_move: {Agendum.TUI.Moves.ColumnMove, :run},
+    section_move: {Agendum.TUI.Moves.SectionMove, :run}
+  }
+
   @doc "Opens the help screen on its keys page."
   @spec open(State.t()) :: State.t()
   def open(state) do
     from =
       case {state.edit, state.modes} do
         {nil, []} -> :view
-        {nil, [%{type: type} | _]} when type in [:catmgr, :viewmgr, :note, :menu] -> type
+        {nil, [%{type: type} | _]} when is_map_key(@places, type) -> type
         {nil, [top | _]} -> if Box.module(top), do: :box, else: :elsewhere
         _ -> :elsewhere
       end
@@ -173,11 +191,9 @@ defmodule Agendum.TUI.HelpScreen do
   end
 
   # a command from the list runs where F1 was pressed, as its key would
-  defp run(state, {%Command{id: id}, :view, _keys}), do: ViewKeys.run(state, id)
-  defp run(state, {%Command{id: id}, :catmgr, _keys}), do: Manager.run(state, id)
-  defp run(state, {%Command{id: id}, :viewmgr, _keys}), do: ViewManager.run(state, id)
-  defp run(state, {%Command{id: id}, :note, _keys}), do: Notes.run(state, id)
-  defp run(state, {%Command{id: id}, :menu, _keys}), do: Menu.run(state, id)
+  defp run(state, {%Command{id: id}, place, _keys}) when is_map_key(@places, place),
+    do: apply(elem(@places[place], 0), elem(@places[place], 1), [state, id])
+
   defp run(state, {%Command{id: index}, :menu_entry, _keys}), do: Menu.choose(state, index)
 
   defp run(state, {%Command{id: id}, :own, _keys}) do
@@ -316,6 +332,12 @@ defmodule Agendum.TUI.HelpScreen do
   defp place_name(:viewmgr), do: "in the view manager"
   defp place_name(:note), do: "in a note"
   defp place_name(:menu), do: "in the menu"
+  defp place_name(:move_item), do: "while moving items"
+  defp place_name(:searching), do: "while searching"
+  defp place_name(:browse), do: "while browsing"
+  defp place_name(:column_width), do: "while changing a width"
+  defp place_name(:column_move), do: "while moving a column"
+  defp place_name(:section_move), do: "while moving a section"
   defp place_name(:box), do: "in every box"
   defp place_name(_elsewhere), do: "here"
 
@@ -412,6 +434,12 @@ defmodule Agendum.TUI.HelpScreen do
   defp where(:viewmgr), do: "IN THE VIEW MANAGER"
   defp where(:note), do: "IN A NOTE"
   defp where(:menu), do: "IN THE MENU"
+  defp where(:move_item), do: "WHILE MOVING ITEMS"
+  defp where(:searching), do: "WHILE SEARCHING"
+  defp where(:browse), do: "WHILE BROWSING"
+  defp where(:column_width), do: "WHILE CHANGING A WIDTH"
+  defp where(:column_move), do: "WHILE MOVING A COLUMN"
+  defp where(:section_move), do: "WHILE MOVING A SECTION"
   defp where(:box), do: "IN THIS BOX"
   defp where(_elsewhere), do: "ON EVERY SCREEN"
 

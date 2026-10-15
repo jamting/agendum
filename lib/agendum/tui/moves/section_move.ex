@@ -16,7 +16,7 @@ defmodule Agendum.TUI.Moves.SectionMove do
   """
 
   alias Agendum.Core
-  alias Agendum.TUI.State
+  alias Agendum.TUI.{Keymap, State}
 
   @doc "Starts moving section `sidx` of the current view."
   def open(state, sidx) do
@@ -45,25 +45,27 @@ defmodule Agendum.TUI.Moves.SectionMove do
   # the file as it would be with the section moved; kept only on ENTER
   defp moved(state, mode), do: Core.move_section(state.db, mode.view_id, mode.from, mode.to)
 
+  @doc "A key while a section moves: the command its keymap binds it to (R65)."
   def handle(state, mode, key) do
-    case key do
-      k when k in [:up, {:char, "<"}] ->
-        step(state, mode, -1)
-
-      k when k in [:down, {:char, ">"}] ->
-        step(state, mode, 1)
-
-      :enter ->
-        %{State.change_db(State.pop(state), moved(state, mode)) | cursor_key: {:section, mode.to}}
-
-      # the highlight goes back where it was
-      :esc ->
-        %{State.pop(state) | cursor_key: mode.cursor_key}
-
-      _ ->
-        state
+    case Keymap.lookup(:section_move, key) do
+      nil -> state
+      id -> command(state, mode, id)
     end
   end
+
+  @doc "Runs a command of moving a section (`Agendum.TUI.Commands`)."
+  @spec run(State.t(), atom) :: State.t()
+  def run(state, id), do: command(state, State.mode(state), id)
+
+  defp command(state, mode, :up), do: step(state, mode, -1)
+  defp command(state, mode, :down), do: step(state, mode, 1)
+
+  defp command(state, mode, :keep),
+    do: %{State.change_db(State.pop(state), moved(state, mode)) | cursor_key: {:section, mode.to}}
+
+  # the highlight goes back where it was
+  defp command(state, mode, :close), do: %{State.pop(state) | cursor_key: mode.cursor_key}
+  defp command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
 
   defp step(state, mode, n) do
     last = length(state.db.views[mode.view_id].sections) - 1

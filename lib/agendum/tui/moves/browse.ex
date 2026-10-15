@@ -29,7 +29,7 @@ defmodule Agendum.TUI.Moves.Browse do
 
   alias Agendum.Core
   alias Agendum.Core.{Datebook, MonthCalendar}
-  alias Agendum.TUI.{Layout, State}
+  alias Agendum.TUI.{Keymap, Layout, State}
   alias Agendum.TUI.Update.Prompts
 
   @no_shift %{days: 0, months: 0}
@@ -94,43 +94,41 @@ defmodule Agendum.TUI.Moves.Browse do
   defp put_filters(view, {:section, i}, filters),
     do: %{view | sections: List.update_at(view.sections, i, &%{&1 | filter: filters})}
 
-  @filter_moves %{
-    :left => {:days, -1},
-    :right => {:days, 1},
-    :ctrl_left => {:days, -7},
-    :ctrl_right => {:days, 7},
-    :up => {:days, -7},
-    :down => {:days, 7},
-    :pgup => {:months, -1},
-    :pgdn => {:months, 1},
-    :ctrl_pgup => {:months, -12},
-    :ctrl_pgdn => {:months, 12}
-  }
-
+  @doc "A key while browsing: the command Browse's keymap binds it to (R65)."
   def handle(state, mode, key) do
-    case {key, mode} do
-      {k, %{date: _}} when k in [:left, {:char, "<"}] ->
-        step(state, mode, -1)
-
-      {k, %{date: _}} when k in [:right, {:char, ">"}] ->
-        step(state, mode, 1)
-
-      {k, %{shift: shift}} when is_map_key(@filter_moves, k) ->
-        move(state, mode, shift, @filter_moves[k])
-
-      {{:alt_f, 5}, _} ->
-        Prompts.prompt(state, "Date:", :browse_to)
-
-      {:enter, _} ->
-        keep(State.pop(state), mode)
-
-      {:esc, _} ->
-        State.pop(state)
-
-      _ ->
-        state
+    case Keymap.lookup(:browse, key) do
+      nil -> state
+      id -> command(state, mode, id)
     end
   end
+
+  @doc "Runs a Browse command (`Agendum.TUI.Commands`)."
+  @spec run(State.t(), atom) :: State.t()
+  def run(state, id), do: command(state, State.mode(state), id)
+
+  # how far each move goes in a date filter (a datebook goes a period)
+  @shifts %{
+    earlier: {:days, -1},
+    later: {:days, 1},
+    week_earlier: {:days, -7},
+    week_later: {:days, 7},
+    month_earlier: {:months, -1},
+    month_later: {:months, 1},
+    year_earlier: {:months, -12},
+    year_later: {:months, 12}
+  }
+
+  defp command(state, %{date: _} = mode, :earlier), do: step(state, mode, -1)
+  defp command(state, %{date: _} = mode, :later), do: step(state, mode, 1)
+
+  defp command(state, %{shift: shift} = mode, id) when is_map_key(@shifts, id),
+    do: move(state, mode, shift, @shifts[id])
+
+  defp command(state, _mode, :go_to), do: Prompts.prompt(state, "Date:", :browse_to)
+  defp command(state, mode, :keep), do: keep(State.pop(state), mode)
+  defp command(state, _mode, :close), do: State.pop(state)
+  defp command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
+  defp command(state, _mode, _id), do: state
 
   defp step(state, mode, n) do
     d = state.db.views[mode.view_id].datebook

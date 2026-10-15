@@ -152,6 +152,76 @@ defmodule Agendum.TUI.Commands do
     {:close, "Leave", "Leave the menu", :none}
   ]
 
+  # the view's moves, as they are in the view
+  @view_moves [
+    {:up, "Up", "Highlight the row above", :none},
+    {:down, "Down", "Highlight the row below", :none},
+    {:page_up, "Page up", "Highlight the row a screen up", :none},
+    {:page_down, "Page down", "Highlight the row a screen down", :none},
+    {:top, "Top", "Highlight the first row of the view", :none},
+    {:bottom, "Bottom", "Highlight the last row of the view", :none},
+    {:previous_section, "Previous section", "Highlight the section head above", :none},
+    {:next_section, "Next section", "Highlight the section head below", :none}
+  ]
+
+  @move_item [{:drop, "Drop", "Move the item(s) here", :none}] ++
+               @view_moves ++
+               [
+                 {:help, "Help", "Show the keys", :none},
+                 {:close, "Cancel", "Leave the item(s) where they were", :none}
+               ]
+
+  @searching [
+               {:next_match, "Next match", "Highlight the next match", :none},
+               {:previous_match, "Previous match", "Highlight the previous match", :none},
+               {:mark, "Mark", "Mark the highlighted item", :none}
+             ] ++
+               @view_moves ++
+               [
+                 {:help, "Help", "Show the keys", :none},
+                 {:close, "End search", "Stop searching", :none}
+               ]
+
+  @browse [
+    {:earlier, "Earlier", "A period (filter: a day) earlier", :none},
+    {:later, "Later", "A period (filter: a day) later", :none},
+    {:week_earlier, "Week earlier", "In a filter: a week earlier", :none},
+    {:week_later, "Week later", "In a filter: a week later", :none},
+    {:month_earlier, "Month earlier", "In a filter: a month earlier", :none},
+    {:month_later, "Month later", "In a filter: a month later", :none},
+    {:year_earlier, "Year earlier", "In a filter: a year earlier", :none},
+    {:year_later, "Year later", "In a filter: a year later", :none},
+    {:go_to, "Go to", "Go to a date typed", :none},
+    {:keep, "Keep", "Keep the dates shown", :none},
+    {:help, "Help", "Show the keys", :none},
+    {:close, "Cancel", "Back to the dates before", :none}
+  ]
+
+  @column_width [
+    {:narrower, "Narrower", "One column narrower", :none},
+    {:wider, "Wider", "One column wider", :none},
+    {:fit, "Fit", "As wide as what it shows", :none},
+    {:keep, "Keep", "Keep this width", :none},
+    {:help, "Help", "Show the keys", :none},
+    {:close, "Cancel", "Keep the width it had", :none}
+  ]
+
+  @column_move [
+    {:left, "Left", "Move the column left", :none},
+    {:right, "Right", "Move the column right", :none},
+    {:keep, "Keep", "Keep it here", :none},
+    {:help, "Help", "Show the keys", :none},
+    {:close, "Cancel", "Put it back", :none}
+  ]
+
+  @section_move [
+    {:up, "Up", "Move the section up", :none},
+    {:down, "Down", "Move the section down", :none},
+    {:keep, "Keep", "Keep it here", :none},
+    {:help, "Help", "Show the keys", :none},
+    {:close, "Cancel", "Put it back", :none}
+  ]
+
   # what every box shares; each box's own commands are in its module
   # (`Agendum.TUI.Boxes.Box`'s `keymap/1`, `commands/1`)
   @box [
@@ -204,6 +274,25 @@ defmodule Agendum.TUI.Commands do
         %Command{id: id, name: name, summary: summary, count: count}
       end)
   }
+
+  @more %{
+    move_item: @move_item,
+    searching: @searching,
+    browse: @browse,
+    column_width: @column_width,
+    column_move: @column_move,
+    section_move: @section_move
+  }
+
+  @commands Map.merge(
+              @commands,
+              Map.new(@more, fn {place, list} ->
+                {place,
+                 Enum.map(list, fn {id, name, summary, count} ->
+                   %Command{id: id, name: name, summary: summary, count: count}
+                 end)}
+              end)
+            )
 
   @doc "The commands of a place, in the command list's order."
   @spec all(atom) :: [Command.t()]

@@ -1247,7 +1247,9 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   lists the entries of the level shown, each by its first letter (ENTER
   chooses one), then the menu's keys; `d` says which entry a letter
   chooses. The keys of every screen are not listed there (they do nothing
-  in the menu).
+  in the menu). ✅ The same while moving items, a column or a section,
+  changing a column's width, browsing dates and searching the view: each
+  has a keymap, and F1 opens the help there.
 - **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
   category name is typed into a column cell, Agenda shows the first
   matching category (the rest of its name in grey), the top line says how
