@@ -130,6 +130,19 @@ defmodule Agendum.TUI.KeymapTest do
     end
   end
 
+  test "docs/KEYBOARD.md names every F-, ALT- and CTRL-key in the keymaps" do
+    doc = File.read!("docs/KEYBOARD.md")
+
+    missing =
+      for place <- @places,
+          {key, id} <- Keymap.bindings(place),
+          match?({k, _} when k in [:f, :alt_f, :alt, :ctrl], key),
+          not String.contains?(doc, Keymap.name(key)),
+          do: "#{place}: #{Keymap.name(key)} (#{id})"
+
+    assert missing == [], "Not in KEYBOARD.md:\n" <> Enum.join(missing, "\n")
+  end
+
   test "key names read back as keys; a dash is no key" do
     for key <- [{:f, 4}, {:alt_f, 10}, {:ctrl, "d"}, {:alt, "m"}, :pgdn, :ctrl_home, {:alt, :up}] do
       assert Keymap.parse(Keymap.name(key)) == key

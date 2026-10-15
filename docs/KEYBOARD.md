@@ -76,16 +76,21 @@ settings, as described in the second half of this guide.
 | In a box, on a setting with choices: the next choice starting with a letter; list the choices | the letter; F3 | the letter; —                                              |
 | A Yes/No question: answer at once; switch the answer shown; accept it; cancel                   | Y / N; SPACE; ENTER; ESC      | Y / N; SPACE; ENTER; ESC                                              |
 
-While typing text:
+While typing text (on one line; in a note, the first two rows and CTRL-D;
+the keymaps `:line` and `:text`, R65):
 
-| Key                          | Action                                |
-| ---------------------------- | ------------------------------------- |
-| CTRL-A / CTRL-E (HOME / END) | Start / end of line                   |
-| ⌥← / ⌥→ (ALT-B / ALT-F)      | Word left / right                     |
-| CTRL-K                       | Delete to the end of the line         |
-| CTRL-W or ⌥⌫                 | Delete the previous word              |
-| CTRL-U                       | Clear the line                        |
-| CTRL-D                       | Delete the character under the cursor |
+| Key                                         | Action                                |
+| ------------------------------------------- | ------------------------------------- |
+| CTRL-A / CTRL-E (HOME / END)                | Start / end of line                   |
+| CTRL-B / CTRL-F (← / →)                     | A character left / right              |
+| ⌥← / ⌥→ (ALT-← / ALT-→, ALT-B / ALT-F)      | Word left / right                     |
+| CTRL-K                                      | Delete to the end of the line         |
+| CTRL-W or ⌥⌫ (ALT-BACKSPACE)                | Delete the previous word              |
+| CTRL-U                                      | Clear the line                        |
+| CTRL-D                                      | Delete the character under the cursor |
+
+The F1 help lists every key from the keymaps (F1 then `a`); a test checks
+that every F-, ALT- and CTRL-key in them is in this guide.
 
 ALT is ⌥ (Option) on a Mac: ALT-D (add section) is ⌥D, ALT-← is ⌥←. These
 keys need "Use Option as Meta key" (Terminal.app: Settings ▸ Profiles ▸

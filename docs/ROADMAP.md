@@ -92,13 +92,7 @@ few commands at a time:
   - [x] The menu: its keys in a keymap; F1 `c` lists the level's entries by their letters, F1 `d` describes them
   - [x] Moving items, a column or a section, a column's width, Browse and searching the view: keymaps of their own, F1 there too
   - [x] The typing keys in keymaps: one line (`:line`, `Typing.LineEdit`) and a note's text (`:text`, `Typing.TextEdit`)
-  - [ ] What commands still lack: a longer documentation than the summary, and whether a command can run now (`available?`, so the list can leave out or grey what cannot)
-- [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries (F1 then `c`), and "describe key" (F1 then `d`); the F1 help and KEYBOARD.md checked against the keymaps
-  - [x] F1 `c` (ENTER runs the highlighted command) and F1 `d`, in views; elsewhere the global keys
-  - [x] Typing in the command list narrows it (name or summary)
-  - [x] The F1 help made from the keymaps (F1 then `a`), so it cannot drift from them
-  - [ ] KEYBOARD.md checked against the keymaps
-  - [x] F1 shows a longer help about where the person is (the view, a note, the category manager, the box on top …), as Agenda's F1 did, instead of the whole key list. In the help, `c` (commands here) and `d` (describe a key) stay; a new `a` shows all the keys: first those that work almost everywhere, then the view's, then the note editor's, then the rest (managers, menu, boxes, moves). The owner's idea, 2026-10-15. Settled: a box's longer text lives in its own module (a callback beside `help/0`: "you are in the Assign box; what to do now"); one text for the view and one for the note editor, in their modules; the `a` list is generated from the keymaps. The note editor's text-editing keys (`Typing.TextEdit`: arrows, CTRL-A/E/K …) are not in a keymap yet, so they need one, or a written list, for `a`
+  - [ ] What commands still lack: a longer documentation than the summary, and whether a command can run now (`available?`). To settle first with the owner: should F1 `c` leave out, grey or put last what cannot run here? (A cheap way to know: run the command on the state, which is pure, and see if it reports an error; done once when the list opens)
 - [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
 - [ ] Raw values (dates, numbers) beside the formatted cells in `Agendum.Core.ViewModel`
 - [ ] Browsing's date arithmetic into the core
@@ -293,3 +287,12 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Dates in other languages: `--lang=swedish`, `--fallback=english`; Swedish (R14c)
 - [x] General negative links between any two categories, from the patent: Category Properties ▸ Excludes (R9)
 - [x] Fit column to contents (R22a): a command (View ▸ Column) that sets the highlighted column's width to fit its head and the entries of the items shown at that moment; a one-time adjustment, not kept in step as items change
+
+### Towards many users
+
+- [x] In the TUI: help made from the commands and keymaps (R65, ADR 0033), 2026-10-15/16
+  - [x] F1 shows a text about where you are: the view, a note, a manager, the menu, a move, or the box on top (`about/0` per place, `Box.about/2` per box, a default one for the others); the owner's idea
+  - [x] F1 then `c`: the commands that can run there, local then global, with keys and summaries; typing narrows the list, ENTER runs the highlighted one
+  - [x] F1 then `d`: describe key (the macro attached to it, the command it runs there, what an alias stands for)
+  - [x] F1 then `a`: every key, generated from the keymaps (almost everywhere first, then the view, the note, typing, the rest), so it cannot drift from them
+  - [x] KEYBOARD.md checked against the keymaps (a test: every F-, ALT- and CTRL-key in them is in it)
