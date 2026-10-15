@@ -66,7 +66,10 @@ defmodule Agendum.TUI.Terminal do
   def write([]), do: :ok
   def write(iodata), do: IO.write(iodata)
 
-  @doc "Starts a process that forwards keyboard input to `target` as `{:input, binary}`."
+  @doc """
+  Starts a process that forwards keyboard input to `target` as
+  `{:input, binary, at}`, `at` the arrival time in monotonic milliseconds.
+  """
   @spec start_reader(pid) :: pid
   def start_reader(target) do
     spawn_link(fn -> read_loop(target) end)
@@ -75,7 +78,7 @@ defmodule Agendum.TUI.Terminal do
   defp read_loop(target) do
     case IO.getn("", 1) do
       data when is_binary(data) ->
-        send(target, {:input, data})
+        send(target, {:input, data, System.monotonic_time(:millisecond)})
         read_loop(target)
 
       _eof_or_error ->

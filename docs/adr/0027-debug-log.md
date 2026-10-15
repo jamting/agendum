@@ -22,7 +22,10 @@ program are therefore hard to reproduce, by the owner or by Claude.
 - It logs the program, Elixir, OTP, OS, terminal and arguments; every
   input as raw bytes and decoded keys, with the boxes open; the keys a
   macro plays; the effects `App` runs (text written to a file counted,
-  not copied); new messages and errors; terminal resizes; and a crash:
+  not copied); new messages and errors; terminal resizes; answers to
+  keys that took 100 ms or more, from the key's arrival to the screen
+  drawn (split into waiting, update and draw; added 2026-10-15 to find
+  lag felt in use); and a crash:
   the stack trace and the state as `DevTools.lines/2` shows it, with the
   mode stack. After a crash the CLI prints the log's path.
 - Each line is written to disk before the next key (no delayed write),

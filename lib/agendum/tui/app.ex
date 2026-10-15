@@ -42,17 +42,42 @@ defmodule Agendum.TUI.App do
   end
 
   # `theme` is the theme `previous` was drawn with; a new one redraws all.
-  defp loop(state, previous, buffer, theme) do
+  # `answer` times the keys just handled (`DebugLog.slow/1`), or is nil.
+  defp loop(state, previous, buffer, theme, answer \\ nil) do
     previous = if state.theme == theme, do: previous, else: nil
     theme = state.theme
+    started = now_ms()
     {state, previous} = logged(state, fn -> draw(state, previous, theme) end)
+
+    if answer do
+      done = now_ms()
+      %{keys: keys, since: since, update: update} = answer
+      DebugLog.slow(%{keys: keys, total: done - since, update: update, draw: done - started})
+    end
+
+    wait(state, previous, buffer, theme, nil)
+  end
+
+  # Waits for input without drawing. `since` is when the first byte not
+  # yet answered arrived (monotonic ms), or nil.
+  defp wait(state, previous, buffer, theme, since) do
     timeout = if buffer == "", do: @idle_timeout, else: @escape_timeout
 
     receive do
-      {:input, data} ->
+      {:input, data, at} ->
+        # everything typed meanwhile is answered with one drawing, so keys
+        # held down or typed fast never queue up behind the screen
+        data = data <> pending_input()
         {keys, rest} = Keys.decode(buffer <> data)
         DebugLog.input(data, keys, state)
-        continue(state, previous, keys, rest, theme)
+        # `||` keeps the first arrival: the wait for the rest counts too
+        since = since || at
+
+        # only part of an escape sequence (a key's first bytes): nothing
+        # to draw until the rest comes
+        if keys == [],
+          do: wait(state, previous, rest, theme, since),
+          else: continue(state, previous, keys, rest, theme, since)
 
       :input_closed ->
         DebugLog.write("input closed")
@@ -67,16 +92,34 @@ defmodule Agendum.TUI.App do
       timeout ->
         keys = Keys.flush(buffer)
         if keys != [], do: DebugLog.input(buffer, keys, state)
-        continue(state, previous, keys, "", theme)
+        continue(state, previous, keys, "", theme, since)
     end
   end
 
-  defp continue(state, previous, keys, rest, theme) do
-    case logged(state, fn -> apply_keys(state, keys) end) do
-      {:quit, _state} -> :ok
-      {:ok, state} -> loop(state, previous, rest, theme)
+  # The input already in the mailbox, taken without waiting (`after 0`).
+  defp pending_input(acc \\ "") do
+    receive do
+      {:input, data, _at} -> pending_input(acc <> data)
+    after
+      0 -> acc
     end
   end
+
+  defp continue(state, previous, keys, rest, theme, since) do
+    started = now_ms()
+
+    case logged(state, fn -> apply_keys(state, keys) end) do
+      {:quit, _state} ->
+        :ok
+
+      {:ok, state} ->
+        # `&&` gives nil when there is nothing to time (an idle tick)
+        answer = since && %{keys: keys, since: since, update: now_ms() - started}
+        loop(state, previous, rest, theme, answer)
+    end
+  end
+
+  defp now_ms, do: System.monotonic_time(:millisecond)
 
   # A crash in `fun` goes to the debug log with `state`, the state it
   # started from, and is then raised again unchanged. (`catch kind, reason`

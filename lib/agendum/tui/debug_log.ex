@@ -8,13 +8,13 @@ defmodule Agendum.TUI.DebugLog do
   One file a session (`session-<time>.log`). It holds the program,
   terminal and arguments, every input as bytes and decoded keys (with the
   boxes open), the keys a macro plays, the effects run, new messages and
-  errors, and a crash: the exception, its stack trace and the state as
+  errors, answers to keys that took 100 ms or more, and a crash: the exception, its stack trace and the state as
   the developer screen (`Agendum.TUI.DevTools`) shows it. Starting a
   session deletes all but the newest four, so five are kept.
 
   What is typed is in the log, so it stays on this computer. Logging
   never stops the program: a log that cannot be written is left off.
-  `dir/1`, `file_name/1` and `old_sessions/1` are pure; the rest writes
+  `dir/1`, `file_name/1`, `old_sessions/1` and `slow_text/1` are pure; the rest writes
   (imperative shell, called by `Agendum.CLI` and `Agendum.TUI.App`).
   """
 
@@ -121,6 +121,37 @@ defmodule Agendum.TUI.DebugLog do
 
   def effect({:save_preferences, path, _prefs}), do: write("effect save_preferences #{path}")
   def effect(effect), do: write("effect #{inspect(effect)}")
+
+  # an answer this slow, from key to screen, is noticed: log it
+  @slow_ms 100
+
+  @typedoc """
+  How long the answer to some keys took, in milliseconds: `total` from the
+  first key's arrival to the screen drawn, of which `update` handling the
+  keys and `draw` drawing; the rest was waiting (keys queued behind an
+  earlier answer, or the rest of an escape sequence awaited).
+  """
+  @type answer :: %{keys: [term], total: integer, update: integer, draw: integer}
+
+  @doc "An answer to keys that took #{@slow_ms} ms or more (`slow_text/1`)."
+  @spec slow(answer) :: :ok
+  def slow(answer) do
+    case slow_text(answer) do
+      nil -> :ok
+      text -> write(text)
+    end
+  end
+
+  @doc "The log line for a slow answer, nil for a quick one."
+  @spec slow_text(answer) :: String.t() | nil
+  def slow_text(%{total: total}) when total < @slow_ms, do: nil
+
+  def slow_text(%{keys: keys, total: total, update: update, draw: draw}) do
+    waiting = max(total - update - draw, 0)
+
+    "slow answer #{total} ms to #{inspect(keys, limit: 8)} " <>
+      "(waiting #{waiting} ms, update #{update} ms, draw #{draw} ms)"
+  end
 
   @doc "A message or error new on the screen since `before`."
   @spec message(State.t() | nil, State.t()) :: :ok

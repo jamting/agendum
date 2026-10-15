@@ -10,6 +10,11 @@ has the detail.
 
 ## Unreleased
 
+- Quicker answers to keys: keys typed fast or held down are answered
+  with one drawing, and views showing many items draw faster.
+- The debug log (`AGENDUM_LOG`) notes every answer to a key that took
+  100 ms or more, with how the time was spent.
+
 ## 0.2.0 — 2026-10-15
 
 The first numbered version: everything built since the first commit

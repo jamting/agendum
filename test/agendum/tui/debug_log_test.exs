@@ -85,4 +85,25 @@ defmodule Agendum.TUI.DebugLogTest do
     assert DebugLog.start(%{"HOME" => "/h"}, []) == nil
     assert DebugLog.write("nothing") == :ok
   end
+
+  describe "slow_text/1" do
+    test "an answer of 100 ms or more is logged, split into its parts" do
+      answer = %{keys: [:down], total: 230, update: 20, draw: 205}
+
+      assert DebugLog.slow_text(answer) ==
+               "slow answer 230 ms to [:down] (waiting 5 ms, update 20 ms, draw 205 ms)"
+    end
+
+    test "a quick answer is not" do
+      assert DebugLog.slow_text(%{keys: [:down], total: 99, update: 40, draw: 50}) == nil
+    end
+
+    test "a long run of keys is cut short" do
+      text =
+        DebugLog.slow_text(%{keys: List.duplicate(:down, 40), total: 500, update: 0, draw: 0})
+
+      assert text =~ "..."
+      assert String.length(text) < 200
+    end
+  end
 end

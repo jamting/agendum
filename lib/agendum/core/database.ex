@@ -424,8 +424,10 @@ defmodule Agendum.Core.Database do
 
   @doc "Whether an item still waits for a prerequisite that is not done."
   @spec waiting?(t, id) :: boolean
+  # straight from the links, not `prerequisites/2`: the order does not
+  # matter here, and sorting walks every item, once for each item shown
   def waiting?(db, item_id),
-    do: db |> prerequisites(item_id) |> Enum.any?(&(db.items[&1].done == nil))
+    do: db.dependencies |> Links.rights(item_id) |> Enum.any?(&(db.items[&1].done == nil))
 
   defp in_item_order(db, ids), do: Enum.filter(db.item_order, &MapSet.member?(ids, &1))
 
