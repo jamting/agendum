@@ -821,7 +821,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   note; the box remembers its last settings; no length limit (Agenda
   allowed 25 characters); text never matches across lines. Each
   replacement is an undo step of its own (the note is saved as it is
-  made; a global replacement without confirming is one step); the
+  made; a global replacement without confirming is one step), and typing
+  in the note before the first one is a step before it; the
   occurrence asked about stays highlighted behind the question box. After a
   single (not global) replacement, ALT-S replaces the next occurrence
   (confirming first if asked to), as the Help's "Search & Replace in

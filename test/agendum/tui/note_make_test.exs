@@ -74,12 +74,12 @@ defmodule Agendum.TUI.NoteMakeTest do
     end
 
     test "ENTER takes the word; the item and the shorter note are one change", %{state: state} do
-      undo = length(state.undo)
+      undo = length(state.history.undo)
       state = press(state, [{:alt_f, 7}, :enter])
       assert note(state) == "Ask Lisa Jones,\nabout the"
       assert item_id(state.db, "budget")
       assert state.db.items[item_id(state.db, @first)].note == "Ask Lisa Jones,\nabout the"
-      assert length(state.undo) == undo + 1
+      assert length(state.history.undo) == undo + 1
     end
 
     test "text longer than an item can be goes into its note", %{state: state} do

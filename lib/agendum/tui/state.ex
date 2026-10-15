@@ -56,8 +56,7 @@ defmodule Agendum.TUI.State do
           fetching: %{optional(pos_integer) => :manual | :auto},
           theme: Agendum.TUI.Terminal.Theme.name(),
           last_key: %{key: term, at: NaiveDateTime.t() | nil},
-          undo: [map],
-          redo: [map],
+          history: %{undo: [map], redo: [map], step: Database.t() | nil},
           saved_db: Database.t() | nil,
           effects: [term]
         }
@@ -94,8 +93,7 @@ defmodule Agendum.TUI.State do
             fetching: %{},
             theme: :classic,
             last_key: %{key: nil, at: nil},
-            undo: [],
-            redo: [],
+            history: %{undo: [], redo: [], step: nil},
             saved_db: nil,
             effects: []
 
@@ -238,6 +236,15 @@ defmodule Agendum.TUI.State do
 
   @spec change_db(t, Database.t()) :: t
   def change_db(state, db), do: %{state | db: db, dirty: true}
+
+  @doc """
+  Ends an undo step in the middle of a key: what the key changed so far is
+  undone on its own, before the rest (`Agendum.TUI.History.record/2`). For
+  a key that does two things the person would undo separately, such as
+  the first replacement in a note after typing in it.
+  """
+  @spec end_step(t) :: t
+  def end_step(state), do: put_in(state.history.step, state.db)
 
   @doc "Queues a side effect for the imperative shell to perform."
   @spec effect(t, term) :: t

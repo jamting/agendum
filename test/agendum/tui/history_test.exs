@@ -28,11 +28,43 @@ defmodule Agendum.TUI.HistoryTest do
 
   test "each committed action is one undo step; keystrokes while typing are not", %{state: state} do
     state = press(state, ["one", :enter, "two", :enter])
-    assert length(state.undo) == 2
+    assert length(state.history.undo) == 2
 
     state = press(state, [{:ctrl, "z"}])
     assert "one" in texts(state)
     refute "two" in texts(state)
+  end
+
+  describe "a step ended partway through a key (State.end_step/1)" do
+    alias Agendum.TUI.History
+
+    defp add(state, text) do
+      {db, _id} = Agendum.Core.add_item(state.db, text, state.today)
+      State.change_db(state, db)
+    end
+
+    test "makes two undo steps of one key", %{state: state} do
+      before = state
+      middle = add(state, "first")
+      next = middle |> State.end_step() |> add("second")
+
+      state = History.record(before, next)
+      assert length(state.history.undo) == 2
+      assert state.history.step == nil
+
+      state = History.undo(state)
+      assert state.db == middle.db
+      state = History.undo(state)
+      assert state.db == before.db
+    end
+
+    test "is one step when nothing changed before it, or nothing after", %{state: state} do
+      changed = add(state, "one")
+      assert length(History.record(state, State.end_step(changed)).history.undo) == 1
+
+      assert length(History.record(state, state |> State.end_step() |> add("one")).history.undo) ==
+               1
+    end
   end
 
   test "undo reverses column assignments, done marks and discards", %{state: state} do
@@ -41,17 +73,17 @@ defmodule Agendum.TUI.HistoryTest do
     state =
       press(state, [:down, :right, "friday", :enter, :left, {:f, 4}, {:alt_f, 4}, "y"])
 
-    assert length(state.undo) == 3
+    assert length(state.history.undo) == 3
     state = press(state, [{:ctrl, "z"}, {:ctrl, "z"}, {:ctrl, "z"}])
     assert state.db == original
 
-    assert state.undo == []
+    assert state.history.undo == []
     assert screen(press(state, {:ctrl, "z"})) =~ "Nothing to undo"
   end
 
   test "a new change clears the redo stack", %{state: state} do
     state = press(state, ["one", :enter, {:ctrl, "z"}, "two", :enter])
-    assert state.redo == []
+    assert state.history.redo == []
     assert screen(press(state, {:ctrl, "y"})) =~ "Nothing to redo"
   end
 

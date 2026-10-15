@@ -56,7 +56,7 @@ defmodule Agendum.TUI.ColumnMoveTest do
     assert State.mode(state) == nil
     assert heads(state, &State.view/1) == ["When", "Priority", "Contact"]
     assert state.col == 1
-    assert state.undo == []
+    assert state.history.undo == []
   end
 
   describe "the item column (R55)" do

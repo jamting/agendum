@@ -57,7 +57,7 @@ defmodule Agendum.TUI.ColumnWidthTest do
     state = press(state, @width ++ [:right, :right, :esc])
     assert State.mode(state) == nil
     assert {contact_width(state), shown_width(state)} == {16, 16}
-    assert state.undo == []
+    assert state.history.undo == []
   end
 
   test "SHIFT-? fits the column to its head and entries (R22a)", %{state: state} do

@@ -340,10 +340,14 @@ defmodule Agendum.TUI.Typing.NoteSearch do
 
   # The note is saved at once (`Agendum.TUI.Update.Notes.save/2`): the key
   # that replaced (ENTER, Y, ALT-S) changed the database, so it is one undo
-  # step, together with any typing in the note before it.
+  # step. Typing in the note before it is saved first, as a step of its
+  # own, so that undoing the replacement keeps it.
   defp put_lines(state, lines, {row, col}) do
     state =
-      put_note(state, fn note ->
+      state
+      |> Notes.save(State.mode(state))
+      |> State.end_step()
+      |> put_note(fn note ->
         row = min(row, length(lines) - 1)
         col = min(col, String.length(Enum.at(lines, row)))
         %{note | edit: %TextEdit{lines: lines, row: row, col: col}} |> Map.put(:match, nil)

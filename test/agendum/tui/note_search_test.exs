@@ -175,6 +175,26 @@ defmodule Agendum.TUI.NoteSearchTest do
     assert state.db.items[id].note == @note
   end
 
+  test "typing before the first replacement is an undo step of its own", %{state: state, id: id} do
+    # the cursor is at the end of the note: type there, then replace
+    state = press(state, " too")
+    state = replace_box(state, "personnel division", "HR", global: true)
+    state = press(state, :esc)
+    assert state.db.items[id].note == "Ask the HR\nthen HR again\nHR too"
+
+    state = press(state, {:ctrl, "z"})
+    assert state.db.items[id].note == @note <> " too"
+    state = press(state, {:ctrl, "z"})
+    assert state.db.items[id].note == @note
+  end
+
+  test "without typing first, a replacement is one undo step", %{state: state, id: id} do
+    state = replace_box(state, "personnel division", "HR", global: true)
+    state = press(state, [:esc, {:ctrl, "z"}])
+    assert state.db.items[id].note == @note
+    assert state.history.undo == []
+  end
+
   test "ALT-S after a single replacement: each replacement one undo step",
        %{state: state, id: id} do
     state = press(state, [:up, :up, :home])

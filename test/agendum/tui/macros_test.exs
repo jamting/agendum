@@ -75,9 +75,9 @@ defmodule Agendum.TUI.MacrosTest do
     {:ok, db, look} = Core.add_macro(state.db, "Look")
     db = Core.set_macro_keys(db, look, "{DOWN}{DOWN}{UP}")
     state = %{state | db: db}
-    before = length(state.undo)
+    before = length(state.history.undo)
     state = press(state, [{:alt_f, 3}, :down, :enter])
-    assert length(state.undo) == before
+    assert length(state.history.undo) == before
   end
 
   test "F7 on a macro with keystrokes asks: replace or append", %{state: state} do

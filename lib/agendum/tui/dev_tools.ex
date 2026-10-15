@@ -57,7 +57,7 @@ defmodule Agendum.TUI.DevTools do
       {"Cursor key", inspect(state.cursor_key)},
       {"Modes", Enum.map_join(state.modes, " > ", &Atom.to_string(&1.type))},
       {"Edit", if(state.edit, do: inspect(state.edit.target), else: "(none)")},
-      {"Undo / redo", "#{length(state.undo)} / #{length(state.redo)}"},
+      {"Undo / redo", "#{length(state.history.undo)} / #{length(state.history.redo)}"},
       "",
       "Session",
       {"Now", DateFormat.datetime(state.now, %DateFormat{})},
