@@ -8,7 +8,10 @@ tagged in git (`v0.2.0`). The roadmap's Done section
 ([`docs/ROADMAP.md`](docs/ROADMAP.md)) lists every finished item; git log
 has the detail.
 
-## Unreleased
+## 0.3.0 — 2026-10-15
+
+Keys run named commands: a count before a command, and help that lists
+the commands and tells what a key does.
 
 - A count before a command in a view, as in Emacs: ALT-1 ALT-0 ↓ moves
   ten rows down. Counts work with the moves (↑ ↓ PGUP PGDN ← →, previous
