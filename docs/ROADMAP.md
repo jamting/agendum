@@ -82,7 +82,16 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] In notes: F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, and their key bar (R63)
 - [x] Word wrap in the note editor (R64): long lines shown whole on several rows, wrapped at the rightmost space, for the screen only; ↑↓ by rows, HOME/END the row's ends then the line's
 - [ ] Undo in the note editor: CTRL-Z / CTRL-Y while editing a note, for typing (in sensible chunks: a word or a line, not every key) and for Search/Replace's replacements, with the note's text and cursor restored in the editor; the steps join the file's history when the note closes (today undo works only after closing the note, ADR 0005)
-- [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names; the note editor's "Note for: … Line 1 INS EDIT" header
+- [ ] The note editor as Agenda's (checked in Agenda 2.0, 2026-10-15; printing and typesetting, F10 Print and F6 MARKER, out of scope). Evidence, the habit changes to settle first (ESC, INS, TAB, the control panel's first line) and the steps: [`docs/plans/NOTE_EDITOR.md`](plans/NOTE_EDITOR.md)
+  - [ ] Its control panel ("Note for: … Line N INS EDIT", "Note file: …") and key bar (F5 Return, F10 Menu)
+  - [ ] Its F10 menu: File, Import, Export, Clear, Return, Quit
+  - [ ] Import a text file at the cursor; Export the note to a text file
+  - [ ] ESC asks "Discard changes?" (No saves, Yes restores the note as opened)
+  - [ ] Editing keys: INS/OVR, TAB with File Properties ▸ Tab size, ALT-M, word delete (CTRL-BACKSPACE, ALT-W), delete to line end, word moves, PGUP/PGDN, CTRL-HOME/END
+  - [ ] ALT-F9 APPEND, ALT-F8 GETITMS and ALT-C (calendar) in a note
+  - [ ] External note files: File Attach, Detach, Erase (a stored field and an ADR)
+  - [ ] Optional: ALT-F1 COMPOSE
+- [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names (the note editor's header: in the note editor plan above)
 - [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix (plan: `docs/plans/KITTY.md`)
 - [x] Startup (R52): a splash screen laid out as Agenda's (a cyan box in a solid blue frame with a shadow, the title spaced out, the release, Name and Company lines) with Title "WOL'S AGENDUM", Tagline "Hoo's in control? You are." and Copyright "Copyright JW&D + WOL. All rites reserved."; then a File Retrieve box when no file is named
 - [ ] Hypertext help: topics with links (TAB, ENTER), Index, Find, Review (Agenda's F1)
