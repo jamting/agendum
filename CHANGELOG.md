@@ -10,6 +10,9 @@ has the detail.
 
 ## Unreleased
 
+- An ALT-arrow from a Mac with Option as Meta (ESC ESC [ A) is no longer
+  now and then read as ESC and an arrow when its bytes arrive in two
+  reads.
 - ESC answers sooner: a lone ESC waits 25 ms, not 40, for a key that
   might follow it.
 - Adding or changing an item is quicker when categories have date

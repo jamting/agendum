@@ -69,9 +69,10 @@ defmodule Agendum.TUI.Terminal.Keys do
   @doc """
   Decodes as many complete keys as possible.
 
-  Returns `{keys, rest}`; `rest` is an incomplete escape sequence that
-  should be completed by further input, or flushed with `flush/1` after a
-  short timeout (a lone ESC press).
+  Returns `{keys, rest}`; `rest` is an incomplete escape sequence, or the
+  first bytes of a character the read cut off (a paste can be cut
+  anywhere), that should be completed by further input, or flushed with
+  `flush/1` after a short timeout (a lone ESC press).
   """
   @spec decode(String.t()) :: {[term], String.t()}
   def decode(input), do: decode(input, [])
@@ -96,12 +97,35 @@ defmodule Agendum.TUI.Terminal.Keys do
   defp decode(<<c, rest::binary>>, acc) when c in 28..31, do: decode(rest, acc)
 
   defp decode(input, acc) do
+    if cut_character?(input),
+      do: {Enum.reverse(acc), input},
+      else: decode_character(input, acc)
+  end
+
+  defp decode_character(input, acc) do
     case String.next_grapheme(input) do
       {g, rest} when is_map_key(@mac_option, g) -> decode(rest, [{:alt, @mac_option[g]} | acc])
       {g, rest} -> decode(rest, [{:char, g} | acc])
       nil -> {Enum.reverse(acc), ""}
     end
   end
+
+  # The first bytes of a character whose rest has not come yet. In UTF-8
+  # the first byte says how many follow (0xC2–0xDF one, 0xE0–0xEF two,
+  # 0xF0–0xF4 three), and each that follows is 0x80–0xBF.
+  defp cut_character?(<<first, rest::binary>>) when first in 0xC2..0xF4 do
+    following =
+      cond do
+        first >= 0xF0 -> 3
+        first >= 0xE0 -> 2
+        true -> 1
+      end
+
+    byte_size(rest) < following and
+      Enum.all?(:binary.bin_to_list(rest), &(&1 in 0x80..0xBF))
+  end
+
+  defp cut_character?(_input), do: false
 
   @doc "Turns leftover input (after a timeout) into keys: a lone ESC is the Escape key."
   @spec flush(String.t()) :: [term]
@@ -112,7 +136,14 @@ defmodule Agendum.TUI.Terminal.Keys do
     [:esc | keys] ++ flush(rest)
   end
 
-  def flush(other), do: other |> decode() |> elem(0)
+  def flush(other) do
+    case decode(other) do
+      {keys, ""} -> keys
+      {keys, "\e" <> _ = rest} -> keys ++ flush(rest)
+      # a character whose rest never came: its bytes as they are
+      {keys, rest} -> keys ++ [{:char, rest}]
+    end
+  end
 
   # --- escape sequences -------------------------------------------------------
 
@@ -128,15 +159,12 @@ defmodule Agendum.TUI.Terminal.Keys do
   end
 
   # ESC ESC <seq> is how some terminals send ALT + special key.
-  defp escape("\e\e" <> rest = input) do
+  # Unfinished, it waits for the rest like any sequence (a read can end
+  # anywhere in it); after the timeout `flush/1` reads it as ESC + the rest.
+  defp escape("\e\e" <> rest) do
     case escape("\e" <> rest) do
-      {:ok, key, rest} ->
-        {:ok, altify(key), rest}
-
-      :incomplete ->
-        if rest == "",
-          do: :incomplete,
-          else: {:ok, :esc, binary_part(input, 1, byte_size(input) - 1)}
+      {:ok, key, rest} -> {:ok, altify(key), rest}
+      :incomplete -> :incomplete
     end
   end
 
