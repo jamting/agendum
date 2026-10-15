@@ -68,6 +68,15 @@ defmodule Agendum.TUI.HelpScreenTest do
       refute text =~ "Next marked"
     end
 
+    test "in the view manager: F1 opens the help, and c lists its commands", %{state: state} do
+      text = screen(press(state, [{:f, 8}, {:f, 1}, "c"]))
+      assert text =~ "COMMANDS IN THE VIEW MANAGER"
+      # keys that do not fit go on to the next line
+      assert text =~ ~r/Discard +DEL F4 ALT-F4 CTRL-D +Discard the view.*\n +CTRL-K\n/
+      back = press(state, [{:f, 8}, {:f, 1}, "c", :esc])
+      assert Enum.map(back.modes, & &1.type) == [:viewmgr]
+    end
+
     test "ENTER runs a category manager command there", %{state: state} do
       in_catmgr = press(state, [{:f, 9}, :down, :down])
       index = Enum.find_index(HelpScreen.commands(:catmgr), fn {c, _, _} -> c.id == :parent end)
@@ -124,6 +133,12 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert described(in_catmgr, {:alt, :up}) =~ "ALT-↑ runs Move up in the category manager."
       assert described(in_catmgr, "x") =~ "x starts typing a new category"
       assert described(state, {:alt, :up}) =~ "ALT-↑ stands for CTRL-PGUP."
+    end
+
+    test "in the view manager: F4 discards, a letter finds a view", %{state: state} do
+      in_viewmgr = press(state, {:f, 8})
+      assert described(in_viewmgr, {:f, 4}) =~ "F4 runs Discard in the view manager."
+      assert described(in_viewmgr, "w") =~ "w highlights the next view whose name starts"
     end
 
     test "ESC before a key goes back", %{state: state} do

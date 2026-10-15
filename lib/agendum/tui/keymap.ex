@@ -118,6 +118,28 @@ defmodule Agendum.TUI.Keymap do
     {:alt, "="} => :expand
   }
 
+  # the view manager (F8, a box over the view); typing a letter finds a
+  # view (R53). F4 (DELETE) is Agenda's discard here
+  @viewmgr %{
+    :up => :up,
+    :down => :down,
+    :home => :first,
+    :end => :last,
+    :enter => :show,
+    :esc => :close,
+    {:f, 8} => :close,
+    {:f, 1} => :help,
+    :insert => :add,
+    {:f, 2} => :rename,
+    {:alt_f, 5} => :sort,
+    {:alt, :up} => :move_up,
+    {:alt, :down} => :move_down,
+    {:f, 4} => :discard,
+    :delete => :discard,
+    {:alt_f, 4} => :discard,
+    {:ctrl, "d"} => :discard
+  }
+
   # on every screen, but not while typing or answering (`Update`)
   @global %{
     {:ctrl, "z"} => :undo,
@@ -131,7 +153,7 @@ defmodule Agendum.TUI.Keymap do
     {:ctrl, "c"} => :quit
   }
 
-  @keymaps %{view: @view, catmgr: @catmgr, global: @global}
+  @keymaps %{view: @view, catmgr: @catmgr, viewmgr: @viewmgr, global: @global}
 
   # Keys that stand for other keys (R31): for Mac keyboards without INS,
   # CTRL-N is INS everywhere, CTRL-E is F2 and CTRL-K F4 unless typing

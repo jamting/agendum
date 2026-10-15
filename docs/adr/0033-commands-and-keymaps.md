@@ -66,8 +66,8 @@ The owner settled these choices before any code (2026-10-15):
 - ALT-digits are taken in views; on a Mac they need Option as Meta, like
   the ALT-letters. In boxes and notes they do nothing yet.
 - The global keys (CTRL-Z, CTRL-S …) and the keys that stand for others
-  (CTRL-N = INS) are in `Agendum.TUI.Keymap` too, and so is the category
-  manager (2026-10-15). An alias can be limited to a place (⌥↑ is
-  CTRL-PGUP in a view only). The other places (the view manager, notes,
-  boxes, the menu) still read keys directly; they move to keymaps in later
+  (CTRL-N = INS) are in `Agendum.TUI.Keymap` too, and so are the category
+  and view managers (2026-10-15). An alias can be limited to a place (⌥↑ is
+  CTRL-PGUP in a view only). The other places (notes, boxes, the
+  menu) still read keys directly; they move to keymaps in later
   steps, and until then describe key covers only the global keys there.

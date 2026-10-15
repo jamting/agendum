@@ -4,8 +4,8 @@ defmodule Agendum.TUI.Commands do
   binds keys to their ids, `Agendum.TUI.Update.ViewKeys.run` runs the
   view's. The order is the one the command list will show.
 
-  So far the view's (`:view`), the category manager's (`:catmgr`) and the
-  global ones (`:global`); other places move over a few at a time.
+  So far the view's (`:view`), the category manager's (`:catmgr`), the view
+  manager's (`:viewmgr`) and the global ones (`:global`); other places move over a few at a time.
   Pure.
   """
 
@@ -100,6 +100,23 @@ defmodule Agendum.TUI.Commands do
     {:close, "Return", "Back to the view", :none}
   ]
 
+  # the view manager (F8)
+  @viewmgr [
+    {:up, "Up", "Highlight the view above", :none},
+    {:down, "Down", "Highlight the view below", :none},
+    {:first, "First", "Highlight the first view", :none},
+    {:last, "Last", "Highlight the last view", :none},
+    {:show, "Show", "Show the highlighted view", :none},
+    {:add, "Add", "Add a view", :none},
+    {:rename, "Rename", "Rename the view", :none},
+    {:move_up, "Move up", "Move the view up the list", :none},
+    {:move_down, "Move down", "Move the view down the list", :none},
+    {:sort, "Sort", "Sort the views by name", :none},
+    {:discard, "Discard", "Discard the view (items are kept)", :none},
+    {:help, "Help", "Show the keys", :none},
+    {:close, "Return", "Back to the view shown", :none}
+  ]
+
   # the keys that work on every screen but while typing (`Update`'s
   # global keys); Save and Retrieve are also the view's ALT-W and ALT-G
   @global [
@@ -119,6 +136,10 @@ defmodule Agendum.TUI.Commands do
       end,
     catmgr:
       for {id, name, summary, count} <- @catmgr do
+        %Command{id: id, name: name, summary: summary, count: count}
+      end,
+    viewmgr:
+      for {id, name, summary, count} <- @viewmgr do
         %Command{id: id, name: name, summary: summary, count: count}
       end,
     global:

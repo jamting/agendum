@@ -12,10 +12,11 @@ defmodule Agendum.TUI.HelpScreen do
       it runs there, or the macro attached to it), then any key returns.
 
   The mode remembers where F1 was pressed (`from`): `:view`, `:catmgr`,
-  or `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
+  `:viewmgr`, or `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
   """
 
   alias Agendum.TUI.{Command, Commands, Keymap, Macros, State}
+  alias Agendum.TUI.Boxes.ViewManager
   alias Agendum.TUI.CategoryScreens.Manager
   alias Agendum.TUI.Render.Help
   alias Agendum.TUI.Update.ViewKeys
@@ -26,7 +27,7 @@ defmodule Agendum.TUI.HelpScreen do
     from =
       case {state.edit, state.modes} do
         {nil, []} -> :view
-        {nil, [%{type: :catmgr} | _]} -> :catmgr
+        {nil, [%{type: type} | _]} when type in [:catmgr, :viewmgr] -> type
         _ -> :elsewhere
       end
 
@@ -115,6 +116,7 @@ defmodule Agendum.TUI.HelpScreen do
   # a command from the list runs where F1 was pressed, as its key would
   defp run(state, {%Command{id: id}, :view, _keys}), do: ViewKeys.run(state, id)
   defp run(state, {%Command{id: id}, :catmgr, _keys}), do: Manager.run(state, id)
+  defp run(state, {%Command{id: id}, :viewmgr, _keys}), do: ViewManager.run(state, id)
 
   defp run(state, {%Command{id: id, name: name}, :global, _keys}) do
     case Agendum.TUI.Update.run_global(state, id) do
@@ -165,6 +167,9 @@ defmodule Agendum.TUI.HelpScreen do
       from == :catmgr and match?({:char, _}, key) ->
         ["#{name} starts typing a new category below the highlighted one."]
 
+      from == :viewmgr and match?({:char, _}, key) ->
+        ["#{name} highlights the next view whose name starts with what is typed."]
+
       key == :esc ->
         ["ESC cancels or goes back."]
 
@@ -173,8 +178,8 @@ defmodule Agendum.TUI.HelpScreen do
 
       true ->
         [
-          "#{name} is not in a keymap here yet: only the view's and the category",
-          "manager's keys are so far. The keys page (F1) lists what it does."
+          "#{name} is not in a keymap here yet: only the view's and the managers'",
+          "keys are so far. The keys page (F1) lists what it does."
         ]
     end
   end
@@ -191,6 +196,7 @@ defmodule Agendum.TUI.HelpScreen do
 
   defp place_name(:view), do: "in a view"
   defp place_name(:catmgr), do: "in the category manager"
+  defp place_name(:viewmgr), do: "in the view manager"
   defp place_name(_elsewhere), do: "here"
 
   defp count_line(%Command{count: :none}), do: []
@@ -206,23 +212,25 @@ defmodule Agendum.TUI.HelpScreen do
   def lines(_state, %{page: :keys} = mode), do: Enum.drop(Help.lines(), mode.top)
 
   def lines(state, %{page: :commands} = mode) do
-    list = commands(mode.from)
     page = State.body_height(state) - 2
-    top = max(mode.cursor - page + 1, 0)
 
-    rows =
-      for {{command, _place, keys}, i} <- Enum.with_index(list), i >= top do
-        keys = Enum.map_join(keys, " ", &Keymap.name/1)
+    # each command's lines, then the lines of all, scrolled so that the
+    # highlighted command shows whole
+    entries =
+      mode.from
+      |> commands()
+      |> Enum.with_index()
+      |> Enum.map(fn {{command, _place, keys}, i} ->
+        style = if i == mode.cursor, do: :row, else: :normal
+        for text <- entry_lines(command, keys), do: [{style, fit(text, state.width)}]
+      end)
 
-        text =
-          " " <> pad(command.name, 18) <> pad(keys, 23) <> command.summary
-
-        [{if(i == mode.cursor, do: :row, else: :normal), fit(text, state.width)}]
-      end
+    before = entries |> Enum.take(mode.cursor + 1) |> Enum.map(&length/1) |> Enum.sum()
+    top = max(before - page, 0)
 
     [
       [{:normal, " COMMANDS #{where(mode.from)}  (↑↓ move · ENTER runs · ESC returns)"}],
-      [{:normal, ""}] | rows
+      [{:normal, ""}] | entries |> Enum.concat() |> Enum.drop(top)
     ]
   end
 
@@ -240,8 +248,38 @@ defmodule Agendum.TUI.HelpScreen do
       [[{:normal, ""}], [{:normal, "   Any key returns."}]]
   end
 
+  @name_width 18
+  @keys_width 23
+
+  # a command's name, keys and summary; keys that do not fit go on to
+  # further lines under the first (DEL F4 ALT-F4 CTRL-D CTRL-K)
+  defp entry_lines(command, keys) do
+    [first | more] = key_lines(Enum.map(keys, &Keymap.name/1))
+    blank = String.duplicate(" ", @name_width)
+
+    [" " <> pad(command.name, @name_width) <> pad(first, @keys_width) <> command.summary] ++
+      for(keys <- more, do: " " <> blank <> keys)
+  end
+
+  defp key_lines(names) do
+    names
+    |> Enum.reduce([], fn
+      name, [] -> [name]
+      name, [line | rest] -> add_key(line, name, rest)
+    end)
+    |> Enum.reverse()
+    |> then(&if(&1 == [], do: [""], else: &1))
+  end
+
+  defp add_key(line, name, rest) do
+    if String.length(line) + 1 + String.length(name) < @keys_width,
+      do: [line <> " " <> name | rest],
+      else: [name, line | rest]
+  end
+
   defp where(:view), do: "IN A VIEW"
   defp where(:catmgr), do: "IN THE CATEGORY MANAGER"
+  defp where(:viewmgr), do: "IN THE VIEW MANAGER"
   defp where(_elsewhere), do: "ON EVERY SCREEN"
 
   defp pad(text, width), do: String.pad_trailing(text, width - 1) <> " "

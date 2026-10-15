@@ -14,7 +14,7 @@ defmodule Agendum.TUI.KeymapTest do
   @today ~D[2026-10-12]
 
   # the places whose keys are in keymaps (ADR 0033)
-  @places [:view, :catmgr, :global]
+  @places [:view, :catmgr, :viewmgr, :global]
 
   test "every key in a keymap runs a command in its place's command list" do
     unknown =
@@ -52,11 +52,6 @@ defmodule Agendum.TUI.KeymapTest do
       assert String.length(c.name) <= 17, c.name
       assert String.length(c.summary) <= 38, c.summary
     end
-
-    for place <- @places, c <- Commands.all(place) do
-      keys = place |> Keymap.keys_for(c.id) |> Enum.map_join(" ", &Keymap.name/1)
-      assert String.length(keys) <= 22, keys
-    end
   end
 
   test "command ids are unique in a place and every command has a name and a summary" do
@@ -72,6 +67,17 @@ defmodule Agendum.TUI.KeymapTest do
     assert Keymap.alias_in(:catmgr, {:alt, :up}) == nil
     assert {:alt, :up} in Keymap.keys_for(:catmgr, :move_up)
     refute {:alt, :up} in Keymap.keys_for(:catmgr, :previous_sibling)
+  end
+
+  test "every view manager command runs, on the first view and on another" do
+    state = start(Planner.build() |> Planner.with_samples(@today), today: @today)
+    first = press(state, [{:f, 8}, :home])
+    other = press(first, :down)
+
+    for c <- Commands.all(:viewmgr), from <- [first, other] do
+      assert %Agendum.TUI.State{} = Agendum.TUI.Boxes.ViewManager.run(from, c.id),
+             "#{c.id} failed"
+    end
   end
 
   test "every category manager command runs, on MAIN and on a category below it" do

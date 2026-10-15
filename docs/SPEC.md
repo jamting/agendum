@@ -1213,7 +1213,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   fields use Mac/emacs editing keys. ⌘ shortcuts are mapped onto these CTRL
   keys by the terminal.
 - **R65 ✅ Commands, keymaps and a count** (ours, after Emacs; ADR 0033).
-  ✅ In a view and in the category manager, every key runs a named
+  ✅ In a view and in the category and view managers, every key runs a named
   command (`Agendum.TUI.Commands`) through that place's keymap
   (`Agendum.TUI.Keymap`), ALT-letters included;
   a printable character that is not bound starts typing. ✅ A count:
@@ -1229,11 +1229,12 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   does there: the macro attached to it (and the command it hides), a key
   of every screen, the view's command and whether it takes a count, or
   what a key that stands for another (CTRL-N for INS) stands for; the key
-  is not run, and any key then returns. ✅ The category manager's keys
-  are in a keymap of their own too, so `c` and `d` work there (⌥↑ ⌥↓ move
-  a category there, as in Agenda; in a view they stand for CTRL-PGUP /
-  CTRL-PGDN). ⏳ On other screens (view manager, notes, boxes, the menu)
-  only the keys of every screen are listed and described so far.
+  is not run, and any key then returns. ✅ The category manager's and
+  the view manager's keys are in keymaps of their own too, so `c` and `d`
+  work there (F1 opens the help in the view manager too; ⌥↑ ⌥↓ move a
+  category or view there, as in Agenda, while in a view they stand for
+  CTRL-PGUP / CTRL-PGDN). ⏳ On other screens (notes, boxes, the menu) only
+  the keys of every screen are listed and described so far.
 - **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
   category name is typed into a column cell, Agenda shows the first
   matching category (the rest of its name in grey), the top line says how

@@ -96,9 +96,10 @@ defmodule Agendum.TUI.Render.Help do
      ENTER         Show the highlighted view
      INS           Add a view                      CTRL-N
      F2            Rename                          CTRL-E
-     DEL           Discard view (items are kept)   CTRL-D
+     DEL / F4      Discard view (items are kept)   CTRL-D
      ALT-F5        Sort the views by name
      ALT-↑ ALT-↓   Reorder                         ⌥↑ / ⌥↓
+     F1            Help (then c: its commands, d: describe a key)
      ESC / F8      Return to the view
 
    In a note (F5)

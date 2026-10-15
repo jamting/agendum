@@ -7,7 +7,8 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   1-10): the first letter the next view starting with it, round the list;
   more letters narrow it down; BACKSPACE takes one back. A letter that
   fits no view starts again from it, so the same letter again goes on to
-  the next view with it. Moving forgets what was typed.
+  the next view with it. Moving forgets what was typed. Other keys run
+  commands through the view manager's keymap (R65).
   """
 
   # ENTER shows the view, ESC goes back to the one shown, as in Agenda
@@ -15,7 +16,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
 
   alias Agendum.Core
   alias Agendum.Core.Database
-  alias Agendum.TUI.{Boxes.Box, Terminal.Draw, Typing.LineEdit, State}
+  alias Agendum.TUI.{Boxes.Box, Keymap, Terminal.Draw, Typing.LineEdit, State}
   alias Agendum.TUI.Update.Prompts
 
   def open(state) do
@@ -50,60 +51,67 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   def handle(state, %{typed: typed} = mode, :backspace) when typed != "",
     do: find(state, mode, String.slice(typed, 0..-2//1), nil)
 
-  def handle(state, mode, key) do
-    order = state.db.view_order
-    count = length(order)
-    # undo can remove views while the manager is open; any other key
-    # forgets what was typed
-    mode = %{mode | cursor: min(mode.cursor, count - 1), typed: ""}
-    state = State.put_mode(state, mode)
-    view_id = Enum.at(order, mode.cursor)
-
-    case key do
-      k when k in [:esc, {:f, 8}] ->
-        State.pop(state)
-
-      :up ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      :down ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, count - 1)})
-
-      :home ->
-        State.put_mode(state, %{mode | cursor: 0})
-
-      :end ->
-        State.put_mode(state, %{mode | cursor: count - 1})
-
-      :enter ->
-        state |> State.pop() |> State.switch_view(view_id)
-
-      :insert ->
-        Prompts.prompt(state, "Name of new view:", :add_view)
-
-      {:f, 2} ->
-        %{state | edit: %{target: view_id, line: LineEdit.new(state.db.views[view_id].name)}}
-
-      {:alt_f, 5} ->
-        state |> State.change_db(Core.sort_views(state.db)) |> State.put_mode(%{mode | cursor: 0})
-
-      {:alt, :up} ->
-        reorder(state, mode, -1)
-
-      {:alt, :down} ->
-        reorder(state, mode, 1)
-
-      # F4 (DELETE) is Agenda's key here; DEL and ALT-F4 as everywhere
-      k when k in [:delete, {:f, 4}, {:alt_f, 4}, {:ctrl, "d"}] ->
-        Prompts.confirm(
-          state,
-          "Discard view #{state.db.views[view_id].name}? Items are kept.",
-          {:discard_view, view_id}
-        )
-
-      _ ->
-        state
+  # any other key runs the command the view manager's keymap binds it to
+  # (`Agendum.TUI.Keymap`, R65)
+  def handle(state, _mode, key) do
+    case Keymap.lookup(:viewmgr, key) do
+      nil -> clamp(state)
+      id -> run(state, id)
     end
+  end
+
+  @doc "Runs a view manager command (`Agendum.TUI.Commands`) on the highlighted view."
+  @spec run(State.t(), atom) :: State.t()
+  def run(state, command) do
+    state = clamp(state)
+    mode = State.mode(state)
+    command(state, mode, command, Enum.at(state.db.view_order, mode.cursor))
+  end
+
+  # undo can remove views while the manager is open; any key but a letter
+  # forgets what was typed
+  defp clamp(state) do
+    mode = State.mode(state)
+    count = length(state.db.view_order)
+    State.put_mode(state, %{mode | cursor: min(mode.cursor, count - 1), typed: ""})
+  end
+
+  defp command(state, _mode, :close, _view_id), do: State.pop(state)
+  defp command(state, _mode, :help, _view_id), do: Agendum.TUI.HelpScreen.open(state)
+
+  defp command(state, mode, :up, _),
+    do: State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
+
+  defp command(state, mode, :down, _) do
+    last = length(state.db.view_order) - 1
+    State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
+  end
+
+  defp command(state, mode, :first, _), do: State.put_mode(state, %{mode | cursor: 0})
+
+  defp command(state, mode, :last, _),
+    do: State.put_mode(state, %{mode | cursor: length(state.db.view_order) - 1})
+
+  defp command(state, _mode, :show, view_id),
+    do: state |> State.pop() |> State.switch_view(view_id)
+
+  defp command(state, _mode, :add, _), do: Prompts.prompt(state, "Name of new view:", :add_view)
+
+  defp command(state, _mode, :rename, view_id),
+    do: %{state | edit: %{target: view_id, line: LineEdit.new(state.db.views[view_id].name)}}
+
+  defp command(state, mode, :sort, _),
+    do: state |> State.change_db(Core.sort_views(state.db)) |> State.put_mode(%{mode | cursor: 0})
+
+  defp command(state, mode, :move_up, _), do: reorder(state, mode, -1)
+  defp command(state, mode, :move_down, _), do: reorder(state, mode, 1)
+
+  defp command(state, _mode, :discard, view_id) do
+    Prompts.confirm(
+      state,
+      "Discard view #{state.db.views[view_id].name}? Items are kept.",
+      {:discard_view, view_id}
+    )
   end
 
   # highlights the first view after `from` whose name starts with `typed`;
