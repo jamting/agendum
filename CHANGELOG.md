@@ -10,6 +10,13 @@ has the detail.
 
 ## Unreleased
 
+- A count before a command in a view, as in Emacs: ALT-1 ALT-0 ↓ moves
+  ten rows down. Counts work with the moves (↑ ↓ PGUP PGDN ← →, previous
+  and next section), ALT-J, ALT-H and ALT-N / ALT-P; other commands run
+  once, and ESC drops the count.
+- The help screen (F1) has two more pages: `c` lists the commands you can
+  run where you pressed F1, with their keys (ENTER runs one), and `d`
+  tells what the next key you press does there, without doing it.
 - An ALT-arrow from a Mac with Option as Meta (ESC ESC [ A) is no longer
   now and then read as ESC and an arrow when its bytes arrive in two
   reads.

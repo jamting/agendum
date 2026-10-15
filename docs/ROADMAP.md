@@ -84,8 +84,11 @@ few commands at a time:
 - [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps (R65, ADR 0033)
   - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)
   - [x] A count with ALT-digits in views, for the commands chosen to take one; a repeat that changes nothing stops
-  - [ ] The other places' keys (category and view managers, notes, boxes, the global keys and CTRL aliases) into keymaps
+  - [x] The global keys (CTRL-Z, CTRL-S …) and the keys that stand for others (CTRL-N = INS) in `Agendum.TUI.Keymap`
+  - [ ] The other places' keys (category and view managers, notes, boxes) into keymaps
 - [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries (F1 then `c`), and "describe key" (F1 then `d`); the F1 help and KEYBOARD.md checked against the keymaps
+  - [x] F1 `c` (ENTER runs the highlighted command) and F1 `d`, in views; elsewhere the global keys
+  - [ ] Typing in the command list narrows it; the F1 help and KEYBOARD.md checked against the keymaps
 - [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
 - [ ] Raw values (dates, numbers) beside the formatted cells in `Agendum.Core.ViewModel`
 - [ ] Browsing's date arithmetic into the core

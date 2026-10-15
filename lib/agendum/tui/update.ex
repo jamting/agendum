@@ -3,9 +3,10 @@ defmodule Agendum.TUI.Update do
   The UI state machine: `handle/2` maps a key to a new state plus a list of
   side effects for the shell to perform. Pure.
 
-  `Update` keeps the keys that work everywhere, the clock (`tick/2`), the
-  results of effects, the dispatch to the screen on top, and the help
-  screen's keys. The rest lives in modules of its own under
+  `Update` keeps the keys that work everywhere (`Agendum.TUI.Keymap`'s
+  global keys, `run_global/2`), the clock (`tick/2`), the results of
+  effects, and the dispatch to the screen on top; the help screen is
+  `Agendum.TUI.HelpScreen`. The rest lives in modules of its own under
   `Agendum.TUI.Update`: `ViewKeys` (the view), `Editing` (typing in the
   view), `Marked` (marked items and moving items), `Prompts` (prompts and
   Y/N questions), `Notes` and `Actions` (`perform/2`, the named actions
@@ -22,7 +23,9 @@ defmodule Agendum.TUI.Update do
 
   alias Agendum.TUI.{
     CategoryScreens,
+    HelpScreen,
     History,
+    Keymap,
     Layout,
     Menu,
     Boxes.SearchBox,
@@ -114,14 +117,16 @@ defmodule Agendum.TUI.Update do
   # the developer screen shows keys as decoded
   defp normalize(%State{modes: [%{type: :devtools} | _]}, key), do: key
 
+  # describe key (F1 d) is told the key pressed, not the key it stands for
+  defp normalize(%State{modes: [%{type: :help, page: :describe} | _]}, key), do: key
+
+  # the aliases are in `Agendum.TUI.Keymap`
   defp normalize(state, key) do
-    case key do
-      {:ctrl, "n"} -> :insert
-      {:ctrl, "e"} -> if typing?(state), do: key, else: {:f, 2}
-      {:ctrl, "k"} -> if typing?(state), do: key, else: {:f, 4}
-      {:alt, :up} -> if State.mode(state) == nil, do: :ctrl_pgup, else: key
-      {:alt, :down} -> if State.mode(state) == nil, do: :ctrl_pgdn, else: key
-      _ -> key
+    case Keymap.alias_of(key) do
+      {target, :always} -> target
+      {target, :not_typing} -> if typing?(state), do: key, else: target
+      {target, :view} -> if State.mode(state) == nil, do: target, else: key
+      nil -> key
     end
   end
 
@@ -137,29 +142,28 @@ defmodule Agendum.TUI.Update do
       typing?(state) or match?(%{type: t} when t in [:confirm, :menu, :help, :devtools], top) ->
         :pass
 
-      key == {:ctrl, "z"} ->
-        if undoable?(top), do: History.undo(state), else: :pass
-
-      key == {:ctrl, "y"} ->
-        if undoable?(top), do: History.redo(state), else: :pass
-
-      key == {:alt, "k"} ->
-        State.toggle_key_map(state)
-
-      key == {:ctrl, "s"} ->
-        Actions.perform(state, :save)
-
-      key == {:ctrl, "o"} ->
-        Actions.perform(state, :retrieve)
-
-      key == {:ctrl, "p"} and top == nil ->
-        Actions.perform(state, :export)
-
-      key in [{:ctrl, "q"}, {:ctrl, "c"}, {:alt, "q"}] ->
-        Actions.perform(state, :quit)
-
       true ->
-        :pass
+        case Keymap.lookup(:global, key) do
+          nil -> :pass
+          id -> run_global(state, id)
+        end
+    end
+  end
+
+  @doc """
+  Runs a global command (`Agendum.TUI.Commands`, `:global`); `:pass`
+  where it does not apply (undo over a box, print outside a view).
+  """
+  @spec run_global(State.t(), atom) :: State.t() | :pass
+  def run_global(state, id) do
+    top = State.mode(state)
+
+    case id do
+      :undo -> if undoable?(top), do: History.undo(state), else: :pass
+      :redo -> if undoable?(top), do: History.redo(state), else: :pass
+      :key_map -> State.toggle_key_map(state)
+      :export -> if top == nil, do: Actions.perform(state, :export), else: :pass
+      id when id in [:save, :retrieve, :quit] -> Actions.perform(state, id)
     end
   end
 
@@ -399,7 +403,7 @@ defmodule Agendum.TUI.Update do
 
   defp dispatch(state, %{type: :prompt} = m, key), do: Prompts.prompt_key(state, m, key)
   defp dispatch(state, %{type: :note} = m, key), do: Notes.note_key(state, m, key)
-  defp dispatch(state, %{type: :help} = m, key), do: help_key(state, m, key)
+  defp dispatch(state, %{type: :help} = m, key), do: HelpScreen.handle(state, m, key)
 
   defp dispatch(state, %{type: :devtools} = m, key),
     do: Agendum.TUI.DevTools.handle(state, m, key)
@@ -422,24 +426,4 @@ defmodule Agendum.TUI.Update do
     do: SearchBox.searching_key(state, m, key, &ViewKeys.view_key/2)
 
   defp dispatch(state, mode, key), do: CategoryScreens.handle(state, mode, key)
-
-  # --- help -------------------------------------------------------------------
-
-  defp help_key(state, mode, key) do
-    page = State.body_height(state)
-    last = max(Agendum.TUI.Render.Help.line_count() - page, 0)
-
-    top =
-      case key do
-        :up -> mode.top - 1
-        :down -> mode.top + 1
-        :pgup -> mode.top - page
-        k when k in [:pgdn, {:char, " "}] -> mode.top + page
-        _ -> :close
-      end
-
-    if top == :close,
-      do: State.pop(state),
-      else: State.put_mode(state, %{mode | top: top |> min(last) |> max(0)})
-  end
 end

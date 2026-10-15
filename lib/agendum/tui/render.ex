@@ -11,12 +11,13 @@ defmodule Agendum.TUI.Render do
       last line   function key bar
 
   Each part is drawn by a module of its own under `Agendum.TUI.Render`:
-  `ControlPanel`, `View`, `Managers`, `Note`, `Help`, `Boxes`, `KeyBar`;
+  `ControlPanel`, `View`, `Managers`, `Note`, `Boxes`, `KeyBar` (the help
+  screen's pages come from `Agendum.TUI.HelpScreen`);
   `Export` writes a view as plain text.
   """
 
   alias Agendum.TUI.{Terminal.Draw, State}
-  alias Agendum.TUI.Render.{Boxes, ControlPanel, Help, KeyBar, Managers, Note, View}
+  alias Agendum.TUI.Render.{Boxes, ControlPanel, KeyBar, Managers, Note, View}
 
   @full_screen [:catmgr, :help, :note, :devtools]
   @doc "Whether a mode is drawn as a box over the screen."
@@ -81,7 +82,9 @@ defmodule Agendum.TUI.Render do
 
   defp body(state, nil), do: fit(View.lines(state), state)
   defp body(state, %{type: :catmgr} = mode), do: fit(Managers.category_lines(state, mode), state)
-  defp body(state, %{type: :help} = mode), do: fit(Enum.drop(Help.lines(), mode.top), state)
+
+  defp body(state, %{type: :help} = mode),
+    do: fit(Agendum.TUI.HelpScreen.lines(state, mode), state)
 
   defp body(state, %{type: :devtools} = mode) do
     lines =

@@ -57,7 +57,7 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :menu, _row), do: Menu.open(state)
   defp do_perform(state, :view_manager, _), do: ViewManager.open(state)
   defp do_perform(state, :category_manager, _), do: CategoryScreens.open_catmgr(state)
-  defp do_perform(state, :help, _), do: State.push(state, %{type: :help, top: 0})
+  defp do_perform(state, :help, _), do: Agendum.TUI.HelpScreen.open(state)
   defp do_perform(state, :undo, _), do: History.undo(state)
   defp do_perform(state, :redo, _), do: History.redo(state)
 

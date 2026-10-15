@@ -4,7 +4,7 @@ defmodule Agendum.TUI.Render.Help do
   """
 
   @help """
-   AGENDUM KEYS                    (↑↓ PGUP PGDN scroll · any other key returns)
+   AGENDUM KEYS   (↑↓ PGUP PGDN scroll · c commands · d describe a key · other keys return)
 
    In a view                         Mac / no-INS alternative
      Type          Add an item, or an entry in the highlighted column

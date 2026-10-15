@@ -32,7 +32,7 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
         State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(rows) - 1)})
 
       {:f, 1} ->
-        State.push(state, %{type: :help, top: 0})
+        Agendum.TUI.HelpScreen.open(state)
 
       k when k in [:insert, {:alt, "d"}, {:alt, "i"}] ->
         new_category(state, id, "")

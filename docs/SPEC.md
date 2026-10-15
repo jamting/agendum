@@ -1211,7 +1211,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   CTRL-S/O/P/Q = save/open/print/quit. ⌥↑/⌥↓ jump between sections. Text
   fields use Mac/emacs editing keys. ⌘ shortcuts are mapped onto these CTRL
   keys by the terminal.
-- **R65 ⏳ Commands, keymaps and a count** (ours, after Emacs; ADR 0033).
+- **R65 ✅ Commands, keymaps and a count** (ours, after Emacs; ADR 0033).
   ✅ In a view, every key runs a named command (`Agendum.TUI.Commands`)
   through the view's keymap (`Agendum.TUI.Keymap`), ALT-letters included;
   a printable character that is not bound starts typing. ✅ A count:
@@ -1220,9 +1220,15 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   count (moving the highlight, next marked item, hop, next and previous
   view); a repeat that changes nothing, or that reports an error, stops
   the count; other commands run once; ESC drops the count; at most 999.
-  ⏳ In the help screen (F1), `c` lists the commands that can run where
-  F1 was pressed, with their keys and summaries, and `d` then a key says
-  which command that key runs there.
+  ✅ In the help screen (F1), `c` lists the commands that can run where
+  F1 was pressed (a view's own, then those of every screen: undo, save,
+  quit …), with their keys and summaries; ↑↓ move, ENTER runs the
+  highlighted one there, ESC returns. `d` then a key says what that key
+  does there: the macro attached to it (and the command it hides), a key
+  of every screen, the view's command and whether it takes a count, or
+  what a key that stands for another (CTRL-N for INS) stands for; the key
+  is not run, and any key then returns. Elsewhere than a view only the
+  keys of every screen are described so far.
 - **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
   category name is typed into a column cell, Agenda shows the first
   matching category (the rest of its name in grey), the top line says how

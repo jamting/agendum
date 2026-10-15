@@ -77,7 +77,32 @@ defmodule Agendum.TUI.Keymap do
     {:alt, "l"} => :column_left
   }
 
-  @keymaps %{view: @view}
+  # on every screen, but not while typing or answering (`Update`)
+  @global %{
+    {:ctrl, "z"} => :undo,
+    {:ctrl, "y"} => :redo,
+    {:ctrl, "s"} => :save,
+    {:ctrl, "o"} => :retrieve,
+    {:ctrl, "p"} => :export,
+    {:alt, "k"} => :key_map,
+    {:alt, "q"} => :quit,
+    {:ctrl, "q"} => :quit,
+    {:ctrl, "c"} => :quit
+  }
+
+  @keymaps %{view: @view, global: @global}
+
+  # Keys that stand for other keys (R31): for Mac keyboards without INS,
+  # CTRL-N is INS everywhere, CTRL-E is F2 and CTRL-K F4 unless typing
+  # (where they edit text); ⌥↑ ⌥↓ are CTRL-PGUP / CTRL-PGDN in a view.
+  # `Update` turns them into the key they stand for before anything else.
+  @aliases %{
+    {:ctrl, "n"} => {:insert, :always},
+    {:ctrl, "e"} => {{:f, 2}, :not_typing},
+    {:ctrl, "k"} => {{:f, 4}, :not_typing},
+    {:alt, :up} => {:ctrl_pgup, :view},
+    {:alt, :down} => {:ctrl_pgdn, :view}
+  }
 
   @doc "The command id `key` runs in `place`, or nil when it is not bound there."
   @spec lookup(atom, term) :: atom | nil
@@ -87,7 +112,68 @@ defmodule Agendum.TUI.Keymap do
   @spec bindings(atom) :: %{term => atom}
   def bindings(place), do: Map.get(@keymaps, place, %{})
 
-  @doc "The keys bound to a command in a place."
+  @doc """
+  The key `key` stands for, and when: `{key, :always | :not_typing |
+  :view}`; nil when it stands for itself.
+  """
+  @spec alias_of(term) :: {term, :always | :not_typing | :view} | nil
+  def alias_of(key), do: Map.get(@aliases, key)
+
+  @doc "The keys bound to a command in a place, aliases included, in the order shown."
   @spec keys_for(atom, atom) :: [term]
-  def keys_for(place, id), do: for({key, ^id} <- bindings(place), do: key)
+  def keys_for(place, id) do
+    keys = for {key, ^id} <- bindings(place), do: key
+    aliases = for {key, {target, _}} <- @aliases, target in keys, do: key
+    Enum.sort_by(keys ++ aliases, &{rank(&1), name(&1)})
+  end
+
+  # the shown order: plain keys (arrows first), F-keys, ALT-F, ALT, then CTRL
+  @plain [:up, :down, :left, :right, :pgup, :pgdn, :home, :end, :insert, :delete] ++
+           [:enter, :tab, :shift_tab, :ctrl_pgup, :ctrl_pgdn, :ctrl_home, :ctrl_end]
+
+  defp rank({:f, n}), do: {1, n}
+  defp rank({:alt_f, n}), do: {2, n}
+  defp rank({:alt, _}), do: {3, 0}
+  defp rank({:ctrl, _}), do: {4, 0}
+  defp rank(key), do: {0, Enum.find_index(@plain, &(&1 == key)) || length(@plain)}
+
+  @names %{
+    up: "↑",
+    down: "↓",
+    left: "←",
+    right: "→",
+    enter: "ENTER",
+    tab: "TAB",
+    shift_tab: "SHIFT-TAB",
+    backspace: "BACKSPACE",
+    delete: "DEL",
+    insert: "INS",
+    esc: "ESC",
+    home: "HOME",
+    end: "END",
+    pgup: "PGUP",
+    pgdn: "PGDN",
+    ctrl_left: "CTRL-←",
+    ctrl_right: "CTRL-→",
+    ctrl_up: "CTRL-↑",
+    ctrl_down: "CTRL-↓",
+    ctrl_pgup: "CTRL-PGUP",
+    ctrl_pgdn: "CTRL-PGDN",
+    ctrl_home: "CTRL-HOME",
+    ctrl_end: "CTRL-END"
+  }
+
+  @doc "A key's name as the help and KEYBOARD.md write it: `ALT-F4`, `CTRL-D`, `↓`."
+  @spec name(term) :: String.t()
+  def name(key) when is_map_key(@names, key), do: @names[key]
+  def name({:f, n}), do: "F#{n}"
+  def name({:alt_f, n}), do: "ALT-F#{n}"
+  def name({:shift_f, n}), do: "SHIFT-F#{n}"
+  def name({:ctrl, c}), do: "CTRL-" <> String.upcase(c)
+  def name({:alt, key}) when is_atom(key), do: "ALT-" <> name(key)
+  def name({:alt, "-"}), do: "ALT-−"
+  def name({:alt, c}), do: "ALT-" <> String.upcase(c)
+  def name({:char, " "}), do: "SPACE"
+  def name({:char, c}), do: c
+  def name(key), do: inspect(key)
 end

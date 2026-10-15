@@ -103,14 +103,16 @@ defmodule Agendum.TUI.Macros do
 
   @doc """
   Where the user is, for where a macro may run: `:view`, `:note`,
-  `:catmgr` or `:elsewhere` (boxes, typing); `:none` in the macro manager
-  and while a macro's text or key is being edited.
+  `:catmgr` or `:elsewhere` (boxes, typing); `:none` in the macro manager,
+  while a macro's text or key is being edited, and while describe key
+  (F1 d) waits for the key to describe.
   """
   def place(state) do
     case {state.edit, State.mode(state)} do
       {_, %{type: t}} when t in [:macros, :macro_props, :devtools] -> :none
       {_, %{type: :note, target: {:macro, _}}} -> :none
       {_, %{type: :prompt, action: {:attach_macro, _}}} -> :none
+      {_, %{type: :help, page: :describe}} -> :none
       {%{}, _} -> :elsewhere
       {nil, nil} -> :view
       {nil, %{type: :note}} -> :note
