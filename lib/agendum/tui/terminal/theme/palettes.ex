@@ -149,6 +149,7 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
     cursor_cell: {:cursor_fg, :cursor},
     edit: {:sel_fg, :sel_bg},
     edit_cursor: {:cursor_fg, :cursor},
+    note_match: {:cursor_fg, :cursor},
     edit_hint: {:sel_fg, :sel_bg, [:dim]},
     symbol: {:accent2, :bg},
     menu: {:sel_fg, :sel_bg},

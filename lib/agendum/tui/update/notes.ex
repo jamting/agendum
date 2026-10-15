@@ -228,7 +228,14 @@ defmodule Agendum.TUI.Update.Notes do
   defp save(db, {:category, id}, text, _clock), do: Core.set_category_note(db, id, text)
 
   # Saves the note and closes it.
-  defp close_note(state, mode) do
+  defp close_note(state, mode), do: state |> save(mode) |> State.pop()
+
+  @doc """
+  Saves the note being edited (`mode`) into the database, the note staying
+  open: on closing it, and after each Search/Replace replacement, so that
+  each replacement is an undo step of its own.
+  """
+  def save(state, mode) do
     text = TextEdit.text(mode.edit)
 
     db =
@@ -238,7 +245,7 @@ defmodule Agendum.TUI.Update.Notes do
         {:macro, id} -> Core.set_macro_keys(state.db, id, text)
       end
 
-    if db == state.db, do: State.pop(state), else: state |> State.pop() |> State.change_db(db)
+    if db == state.db, do: state, else: State.change_db(state, db)
   end
 
   defp type_in_note(state, mode, text) do

@@ -27,7 +27,7 @@ defmodule Agendum.TUI.Render.Note do
   defp line(text, row, _edit, _region, {row, col, len}) do
     {before, rest} = String.split_at(text, col)
     {found, after_} = String.split_at(rest, len)
-    [{:normal, " " <> before}, {:edit_cursor, found}, {:normal, after_}]
+    [{:normal, " " <> before}, {:note_match, found}, {:normal, after_}]
   end
 
   # an empty mark (just anchored) shows the cursor as usual

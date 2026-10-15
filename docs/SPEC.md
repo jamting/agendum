@@ -819,8 +819,10 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   after it, continues from the top (backward: the bottom), since a note
   opens with the cursor at its end; a global replacement covers the whole
   note; the box remembers its last settings; no length limit (Agenda
-  allowed 25 characters); text never matches across lines. The note is
-  saved when it is closed, so all replacements are one undo step. After a
+  allowed 25 characters); text never matches across lines. Each
+  replacement is an undo step of its own (the note is saved as it is
+  made; a global replacement without confirming is one step); the
+  occurrence asked about stays highlighted behind the question box. After a
   single (not global) replacement, ALT-S replaces the next occurrence
   (confirming first if asked to), as the Help's "Search & Replace in
   Note/Macro Box" describes.

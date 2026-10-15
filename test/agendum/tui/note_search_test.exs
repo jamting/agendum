@@ -151,6 +151,42 @@ defmodule Agendum.TUI.NoteSearchTest do
     assert screen(state) =~ "then personnel division again"
   end
 
+  test "the occurrence stays highlighted behind the question box", %{state: state} do
+    state = replace_box(state, "personnel division", "HR", global: true, confirm: true)
+    assert %{type: :confirm} = State.mode(state)
+
+    highlighted =
+      for line <- Agendum.TUI.Render.render(state), {:note_match, text} <- line, do: text
+
+    assert highlighted == ["Personnel Division"]
+  end
+
+  test "each confirmed replacement is an undo step of its own", %{state: state, id: id} do
+    state = replace_box(state, "personnel division", "HR", global: true, confirm: true)
+    state = press(state, ["y", "y", :esc, :esc])
+    assert state.db.items[id].note == "Ask the HR\nthen HR again\nPERSONNEL DIVISION"
+
+    state = press(state, {:ctrl, "z"})
+
+    assert state.db.items[id].note ==
+             "Ask the HR\nthen personnel division again\nPERSONNEL DIVISION"
+
+    state = press(state, {:ctrl, "z"})
+    assert state.db.items[id].note == @note
+  end
+
+  test "ALT-S after a single replacement: each replacement one undo step",
+       %{state: state, id: id} do
+    state = press(state, [:up, :up, :home])
+    state = replace_box(state, "personnel division", "HR", [])
+    state = press(state, [{:alt, "s"}, :esc])
+    assert state.db.items[id].note == "Ask the HR\nthen HR again\nPERSONNEL DIVISION"
+    state = press(state, {:ctrl, "z"})
+
+    assert state.db.items[id].note ==
+             "Ask the HR\nthen personnel division again\nPERSONNEL DIVISION"
+  end
+
   test "in the question, ENTER accepts the answer shown and SPACE switches it",
        %{state: state, id: id} do
     state = replace_box(state, "personnel division", "HR", global: true, confirm: true)

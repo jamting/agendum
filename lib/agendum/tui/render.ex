@@ -32,7 +32,7 @@ defmodule Agendum.TUI.Render do
     {styles, fill} = surface(base)
     body = Enum.map(body(state, base), &(&1 |> Draw.paint(styles) |> Draw.line(w, fill)))
     # behind a box, the screen fades (Agenda greys it out)
-    body = if overlays == [], do: body, else: Enum.map(body, &Draw.paint(&1, :backdrop))
+    body = if overlays == [], do: body, else: Enum.map(body, &fade/1)
 
     # each box knows where the one beneath it starts (`Enum.reduce/3` carries
     # the body and that column along)
@@ -46,6 +46,15 @@ defmodule Agendum.TUI.Render do
     ControlPanel.lines(state, base) ++
       Enum.map(body, &Draw.line(&1, w)) ++
       if(state.key_map, do: [KeyBar.line(state)], else: [])
+  end
+
+  # Everything fades but a note's search match: Search/Replace's question
+  # asks about it, so it stays highlighted behind the box.
+  defp fade(line) do
+    Enum.map(line, fn
+      {:note_match, _text} = match -> match
+      {_style, text} -> {:backdrop, text}
+    end)
   end
 
   # The colours of a full screen: the category manager is cyan, help

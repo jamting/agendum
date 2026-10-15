@@ -19,7 +19,8 @@ defmodule Agendum.TUI.Typing.NoteSearch do
 
   The search starts at the cursor; when nothing is found there it
   continues from the top (or, backward, from the bottom). The note is
-  saved when it is closed, so the whole edit is one undo step. The text
+  saved at each replacement, so that each is one undo step (a global one
+  without confirming: one step for all), and again when it is closed. The text
   rules are `Agendum.Core.TextSearch`. The box is a box module
   (`Agendum.TUI.Boxes.Box`), drawn from `@layout` (`Agendum.TUI.Boxes.Template`).
   Pure.
@@ -29,7 +30,7 @@ defmodule Agendum.TUI.Typing.NoteSearch do
 
   alias Agendum.Core.TextSearch
   alias Agendum.TUI.Boxes.{Box, Template}
-  alias Agendum.TUI.{Typing.LineEdit, State, Typing.TextEdit, Update.Prompts}
+  alias Agendum.TUI.{Typing.LineEdit, State, Typing.TextEdit, Update.Notes, Update.Prompts}
 
   # the replacement's rows only when Replace text is Yes
   @layout """
@@ -337,12 +338,18 @@ defmodule Agendum.TUI.Typing.NoteSearch do
     put_lines(state, lines, {row, col})
   end
 
+  # The note is saved at once (`Agendum.TUI.Update.Notes.save/2`): the key
+  # that replaced (ENTER, Y, ALT-S) changed the database, so it is one undo
+  # step, together with any typing in the note before it.
   defp put_lines(state, lines, {row, col}) do
-    put_note(state, fn note ->
-      row = min(row, length(lines) - 1)
-      col = min(col, String.length(Enum.at(lines, row)))
-      %{note | edit: %TextEdit{lines: lines, row: row, col: col}} |> Map.put(:match, nil)
-    end)
+    state =
+      put_note(state, fn note ->
+        row = min(row, length(lines) - 1)
+        col = min(col, String.length(Enum.at(lines, row)))
+        %{note | edit: %TextEdit{lines: lines, row: row, col: col}} |> Map.put(:match, nil)
+      end)
+
+    Notes.save(state, State.mode(state))
   end
 
   defp put_note(state, fun), do: State.put_mode(state, fun.(State.mode(state)))
