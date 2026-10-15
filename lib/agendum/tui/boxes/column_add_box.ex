@@ -29,8 +29,7 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.{Box, BoxNav}
+  alias Agendum.TUI.Boxes.{Box}
 
   alias Agendum.Core
   alias Agendum.Core.View
@@ -108,7 +107,7 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
   def handle(state, mode, key) do
     if FieldTyping.typing?(mode),
       do: FieldTyping.key(state, mode, key, &typed/3),
-      else: settings_key(state, mode, key)
+      else: typing_key(state, mode, key)
   end
 
   # a typed head: a new category is kept at once (one undo step), and the
@@ -143,39 +142,50 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
     Template.fields(@layout) -- hidden
   end
 
-  defp settings_key(state, mode, key) do
-    last = length(fields(mode)) - 1
-    field = Enum.at(fields(mode), min(mode.cursor, last))
+  defp current(mode), do: Enum.at(fields(mode), min(mode.cursor, length(fields(mode)) - 1))
 
-    case key do
-      :esc ->
-        State.pop(state)
+  # a letter in Head or Column title, a digit in Width or Line number,
+  # starts typing it
+  defp typing_key(state, mode, {:char, c}) when c != " " do
+    field = current(mode)
 
-      :enter when mode.head == nil ->
-        pick_head(state)
-
-      :enter ->
-        add(state, mode)
-
-      k when is_move(k) ->
-        BoxNav.move(state, mode, Template.grid(@layout, fields(mode)), k)
-
-      {:f, 3} when field == :head ->
-        pick_head(state)
-
-      {:char, c} when field in [:head, :title] and c != " " ->
+    cond do
+      field in [:head, :title] ->
         FieldTyping.start(state, mode, field, c)
 
-      {:char, " "} ->
-        change(state, mode, field, 1)
+      field in [:width, :note_line] and FieldTyping.digit?(c) ->
+        FieldTyping.start(state, mode, field, c)
 
-      {:char, c} when field in [:width, :note_line] ->
-        if FieldTyping.digit?(c), do: FieldTyping.start(state, mode, field, c), else: state
-
-      _ ->
+      true ->
         state
     end
   end
+
+  defp typing_key(state, _mode, _key), do: state
+
+  # the settings box's keys; F3 on Head picks it, ENTER adds (R65)
+  @impl Box
+  def keymap, do: Box.settings_keymap(%{{:f, 3} => :pick_head})
+
+  @impl Box
+  def commands do
+    Box.settings_commands([
+      {:pick_head, "Pick head", "Choose the head's category"},
+      {:done, "Add", "Add the column (first its head)"},
+      {:close, "Cancel", "Close without adding"}
+    ])
+  end
+
+  @impl Box
+  def run(state, %{head: nil}, :done), do: pick_head(state)
+  def run(state, mode, :done), do: add(state, mode)
+  def run(state, mode, :change), do: change(state, mode, current(mode), 1)
+
+  def run(state, mode, :pick_head),
+    do: if(current(mode) == :head, do: pick_head(state), else: state)
+
+  def run(state, mode, id),
+    do: Box.run_settings(state, mode, Template.grid(@layout, fields(mode)), id)
 
   defp pick_head(state), do: CategoryScreens.open_picker(state, :column_add, nil)
 

@@ -27,8 +27,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.{Box, BoxNav}
+  alias Agendum.TUI.Boxes.{Box}
 
   alias Agendum.Core
   alias Agendum.Core.{Database, DateFormat, NumberFormat, View}
@@ -123,7 +122,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   def handle(state, mode, key) do
     if FieldTyping.typing?(mode),
       do: FieldTyping.key(state, mode, key, &typed(&1, &2, &3, mode.column)),
-      else: settings_key(state, mode, key)
+      else: typing_key(state, mode, key)
   end
 
   # a typed head: the column (and those linked to it) shows it, with a new
@@ -168,32 +167,41 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
     end
   end
 
-  defp settings_key(state, mode, key) do
-    kind = kind(state, mode)
+  # a letter in Head or Column title, a digit in a number, starts typing it
+  defp typing_key(state, mode, {:char, c}) when c != " " do
     row = field(state, mode)
 
-    case key do
-      k when k in [:esc, :enter] ->
-        State.pop(state)
-
-      k when is_move(k) ->
-        BoxNav.move(state, mode, Template.grid(layout(kind), fields(kind)), k)
-
-      {:f, 3} when row == :head ->
-        pick_head(state, mode)
-
-      {:char, c} when row in [:head, :title] and c != " " ->
+    cond do
+      row in [:head, :title] ->
         FieldTyping.start(state, mode, row, c)
 
-      {:char, " "} ->
-        change(state, mode, row, 1)
+      row in [:width, :note_line, :decimals] and FieldTyping.digit?(c) ->
+        FieldTyping.start(state, mode, row, c)
 
-      {:char, c} when row in [:width, :note_line, :decimals] ->
-        if FieldTyping.digit?(c), do: FieldTyping.start(state, mode, row, c), else: state
-
-      _ ->
+      true ->
         state
     end
+  end
+
+  defp typing_key(state, _mode, _key), do: state
+
+  # the settings box's keys; F3 on Head picks it (R65)
+  @impl Box
+  def keymap, do: Box.settings_keymap(%{{:f, 3} => :pick_head})
+
+  @impl Box
+  def commands,
+    do: Box.settings_commands([{:pick_head, "Pick head", "Choose the head's category"}])
+
+  @impl Box
+  def run(state, mode, :change), do: change(state, mode, field(state, mode), 1)
+
+  def run(state, mode, :pick_head),
+    do: if(field(state, mode) == :head, do: pick_head(state, mode), else: state)
+
+  def run(state, mode, id) do
+    kind = kind(state, mode)
+    Box.run_settings(state, mode, Template.grid(layout(kind), fields(kind)), id)
   end
 
   # the whole hierarchy, as Agenda's Column Head box (screenshot 144)

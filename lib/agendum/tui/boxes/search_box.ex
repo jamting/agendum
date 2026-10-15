@@ -17,11 +17,9 @@ defmodule Agendum.TUI.Boxes.SearchBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "SEARCH", choices: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-
   alias Agendum.Core
   alias Agendum.Core.Search
-  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
+  alias Agendum.TUI.Boxes.{Box, Template}
   alias Agendum.TUI.{Layout, Typing.LineEdit, State}
 
   # Direction only when searching the view
@@ -62,31 +60,41 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   def rows(%{scope: :file}), do: [:text, :on, :ignore_case]
 
   @impl Box
-  def handle(state, mode, key) do
-    rows = rows(mode)
-    row = Enum.at(rows, mode.cursor)
+  # On the text the person types: ← → HOME END move in it, other keys
+  # edit it; ↑ ↓ TAB still move between settings, ENTER and ESC end.
+  def handle(state, mode, key) when key in [:up, :down, :tab, :shift_tab, :enter, :esc],
+    do: run(state, mode, Map.fetch!(keymap(), key))
 
-    case key do
-      :esc ->
-        State.pop(state)
+  def handle(state, mode, key), do: edit_text(state, mode, key)
 
-      :enter ->
-        start(State.pop(state), %{mode | search: %{mode.search | text: mode.line.text}})
+  @impl Box
+  def typing?(_state, mode), do: Enum.at(rows(mode), mode.cursor) == :text
 
-      # on the text, ← → HOME END move in it; ↑ ↓ TAB still move between settings
-      k when is_move(k) and (row != :text or k in [:up, :down, :tab, :shift_tab]) ->
-        BoxNav.move(state, mode, Template.grid(@layout, rows), k)
+  # the settings box's keys; ENTER searches (R65)
+  @impl Box
+  def keymap, do: Box.settings_keymap()
 
-      {:char, " "} when row != :text ->
-        State.put_mode(state, change(mode, row, 1))
+  @impl Box
+  def commands,
+    do:
+      Box.settings_commands([
+        {:done, "Search", "Search for the text"},
+        {:close, "Cancel", "Close without searching"}
+      ])
 
-      _ when row == :text ->
-        edit_text(state, mode, key)
+  @impl Box
+  def run(state, mode, :done),
+    do: start(State.pop(state), %{mode | search: %{mode.search | text: mode.line.text}})
 
-      _ ->
-        state
+  def run(state, mode, :change) do
+    case Enum.at(rows(mode), mode.cursor) do
+      :text -> state
+      row -> State.put_mode(state, change(mode, row, 1))
     end
   end
+
+  def run(state, mode, id),
+    do: Box.run_settings(state, mode, Template.grid(@layout, rows(mode)), id)
 
   defp edit_text(state, mode, key) do
     case LineEdit.handle(mode.line, key) do

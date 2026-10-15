@@ -17,8 +17,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.{Box, BoxNav}
+  alias Agendum.TUI.Boxes.{Box}
 
   alias Agendum.Core
   alias Agendum.Core.Database
@@ -172,24 +171,23 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
     end
   end
 
-  def handle(state, mode, key) do
-    cat = state.db.categories[mode.cat_id]
+  def handle(state, _mode, _key), do: state
 
-    case key do
-      # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
-      k when k in [:esc, :enter, {:f, 6}] ->
-        State.pop(state)
+  # the settings box's keys; F2 and F3 change a setting too, F6 (which
+  # opened the box) is done (R65)
+  @impl Box
+  def keymap,
+    do: Box.settings_keymap(%{{:f, 2} => :change, {:f, 3} => :change, {:f, 6} => :done})
 
-      k when is_move(k) ->
-        BoxNav.move(state, mode, @grid, k)
+  @impl Box
+  def commands, do: Box.settings_commands()
 
-      k when k in [{:char, " "}, {:f, 2}, {:f, 3}] ->
-        open_prop(state, cat, Enum.at(@props, mode.cursor))
+  # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
+  @impl Box
+  def run(state, mode, :change),
+    do: open_prop(state, state.db.categories[mode.cat_id], Enum.at(@props, mode.cursor))
 
-      _ ->
-        state
-    end
-  end
+  def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
   # SPACE (or F2, F3) on a row of Category Properties
   defp open_prop(state, cat, :name) do

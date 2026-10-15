@@ -26,7 +26,6 @@ defmodule Agendum.TUI.Boxes.SectionBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
   alias Agendum.TUI.Boxes.{Box, BoxNav}
 
   alias Agendum.Core
@@ -102,8 +101,62 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   def handle(state, mode, key) do
     if FieldTyping.typing?(mode),
       do: FieldTyping.key(state, mode, key, &typed/3),
-      else: settings_key(state, mode, key)
+      else: typing_key(state, mode, key)
   end
+
+  # a letter on Head starts typing the head's name
+  defp typing_key(state, mode, {:char, c}) when c != " " do
+    if row(state, mode) == :head, do: FieldTyping.start(state, mode, :head, c), else: state
+  end
+
+  defp typing_key(state, _mode, _key), do: state
+
+  # the settings box's keys, and those of its columns list (R65)
+  @impl Box
+  def keymap do
+    Box.settings_keymap(%{
+      {:f, 3} => :pick,
+      {:f, 6} => :properties,
+      :insert => :add,
+      :delete => :remove,
+      {:ctrl, "d"} => :remove,
+      {:alt, :up} => :move_up,
+      {:alt, :down} => :move_down
+    })
+  end
+
+  @impl Box
+  def commands do
+    Box.settings_commands([
+      {:pick, "Pick head", "Choose the head's category"},
+      {:properties, "Head properties", "The head category's properties"},
+      {:add, "Add column", "Add a column to the section"},
+      {:remove, "Remove column", "Remove the column from the section"},
+      {:move_up, "Move up", "Move the column up"},
+      {:move_down, "Move down", "Move the column down"}
+    ])
+  end
+
+  # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
+  @impl Box
+  def run(state, mode, id), do: command(state, mode, id, row(state, mode))
+
+  defp command(state, mode, :pick, :head),
+    do: CategoryScreens.open_picker(state, {:change_section, mode.sidx}, nil)
+
+  defp command(state, mode, :properties, :head),
+    do: CategoryScreens.open_props(state, section(state, mode).category_id)
+
+  defp command(state, mode, :change, row) when is_atom(row), do: open_setting(state, mode, row)
+  defp command(state, mode, :add, row), do: add(state, mode, row)
+  defp command(state, mode, :remove, row), do: remove(state, mode, row)
+  defp command(state, mode, :move_up, row), do: move(state, mode, row, -1)
+  defp command(state, mode, :move_down, row), do: move(state, mode, row, 1)
+
+  defp command(state, _mode, id, _row) when id in [:pick, :properties, :change], do: state
+
+  defp command(state, mode, id, _row),
+    do: Box.run_settings(state, mode, BoxNav.column(rows(state, mode)), id)
 
   # a typed head: that category heads the section (a new one is made under
   # MAIN when no category has the name), one change
@@ -113,46 +166,6 @@ defmodule Agendum.TUI.Boxes.SectionBox do
     FieldTyping.head_named(state, name, fn state, db, id ->
       State.change_db(state, Core.set_section_category(db, state.view_id, mode.sidx, id))
     end)
-  end
-
-  defp settings_key(state, mode, key) do
-    row = row(state, mode)
-
-    case key do
-      :esc ->
-        State.pop(state)
-
-      k when is_move(k) ->
-        BoxNav.move(state, mode, BoxNav.column(rows(state, mode)), k)
-
-      {:f, 3} when row == :head ->
-        CategoryScreens.open_picker(state, {:change_section, mode.sidx}, nil)
-
-      {:f, 6} when row == :head ->
-        CategoryScreens.open_props(state, section(state, mode).category_id)
-
-      {:char, c} when row == :head and c != " " ->
-        FieldTyping.start(state, mode, :head, c)
-
-      {:char, " "} when is_atom(row) ->
-        open_setting(state, mode, row)
-
-      # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
-      :enter ->
-        State.pop(state)
-
-      k when k in [:delete, {:ctrl, "d"}] ->
-        remove(state, mode, row)
-
-      {:alt, dir} when dir in [:up, :down] ->
-        move(state, mode, row, if(dir == :up, do: -1, else: 1))
-
-      :insert ->
-        add(state, mode, row)
-
-      _ ->
-        state
-    end
   end
 
   defp open_setting(state, mode, :head),

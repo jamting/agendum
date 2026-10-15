@@ -182,25 +182,27 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert Enum.map(back.modes, & &1.type) == [:item_props]
     end
 
-    test "c lists the box's own keys from its key bar, then the shared and global ones",
+    test "c lists the box's commands from its keymap, then the shared and global ones",
          %{box: box} do
       text = screen(press(box, [{:f, 1}, "c"]))
       assert text =~ "COMMANDS IN THIS BOX"
-      assert text =~ ~r/Edit +F2 +Edit the text/
+      assert text =~ ~r/Edit +F2 +Edit the text, or open the note/
       assert text =~ ~r/Help +F1 +Show the keys/
       assert text =~ "Save"
-      # ESC is on the box's own key bar, so the shared Cancel is not listed again
+      # ESC is the box's own Cancel, so the shared one is not listed again
       refute text =~ "put back the box's changes"
     end
 
-    test "ENTER on one of the box's keys presses it in the box", %{box: box} do
-      ran = press(box, [{:f, 1}, "c", :down, :down, :down, :down, :enter])
+    test "ENTER on one of the box's commands runs it in the box", %{box: box} do
+      index =
+        Enum.find_index(Agendum.TUI.Boxes.ItemProperties.commands(), &(elem(&1, 0) == :profile))
+
+      ran = press(box, [{:f, 1}, "c"] ++ List.duplicate(:down, index) ++ [:enter])
       assert Enum.map(ran.modes, & &1.type) == [:profile, :item_props]
     end
 
-    test "d describes a key from the box's key bar, a letter, and a shared key", %{box: box} do
-      assert described(box, {:f, 2}) =~ "F2 in this box: Edit the text"
-      assert described(box, "x") =~ "x in this box: Assign to a category"
+    test "d describes a key of the box and a shared key", %{box: box} do
+      assert described(box, {:f, 2}) =~ "F2 runs Edit in this box."
       assert described(box, {:ctrl, "s"}) =~ "CTRL-S runs Save"
     end
 
@@ -232,6 +234,22 @@ defmodule Agendum.TUI.HelpScreenTest do
     test "d describes a key of its keymap", %{box: box} do
       assert described(box, {:char, " "}) =~ "SPACE runs Change in this box."
       assert described(box, :enter) =~ "ENTER runs Done in this box."
+    end
+  end
+
+  describe "in a box without a keymap of its own yet (Go To)" do
+    setup %{state: state}, do: %{box: press(state, {:alt_f, 5})}
+
+    test "c lists its keys from its key bar, and ENTER presses one", %{box: box} do
+      text = screen(press(box, [{:f, 1}, "c"]))
+      assert text =~ ~r/Highlight +↑↓ +Highlight a section/
+      ran = press(box, [{:f, 1}, "c", :down, :down, :enter])
+      assert ran.modes == []
+    end
+
+    test "d describes a key from its key bar, and a letter", %{box: box} do
+      assert described(box, :enter) =~ "ENTER in this box: Go (ENTER on its key bar)."
+      assert described(box, "x") =~ "x in this box: Next starting with it"
     end
   end
 end

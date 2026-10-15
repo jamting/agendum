@@ -24,8 +24,6 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-
   alias Agendum.Core
   alias Agendum.Core.{DateFormat, NumberFormat, Recurrence}
   alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
@@ -72,61 +70,92 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   def handle(%State{edit: edit} = state, mode, key) when edit != nil,
     do: edit_key(state, mode, key)
 
-  def handle(state, mode, key) do
-    rows = rows(state, mode)
-    mode = %{mode | cursor: mode.cursor |> min(length(rows) - 1) |> max(0)}
-    state = State.put_mode(state, mode)
-    row = Enum.at(rows, mode.cursor)
-
-    case {key, row} do
-      # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
-      {k, _} when k in [:esc, :enter, {:f, 6}] ->
-        State.pop(state)
-
-      {k, _} when is_move(k) ->
-        BoxNav.move(state, mode, BoxNav.column(rows), k)
-
-      {{:f, 3}, _} ->
-        CategoryScreens.open_profile(state, mode.item_id)
-
-      {{:f, 2}, :text} ->
-        edit_text(state, mode)
-
-      {k, :note} when k in [{:f, 2}, {:char, " "}] ->
-        open_note(state, mode)
-
-      {k, {kind, id}} when kind in [:prerequisite, :dependent] ->
-        dependency_key(state, mode, k, kind, id)
-
-      {{:f, 4}, {:assigned, %{kind: :date} = a}} ->
-        ask_date(state, mode, a.category)
-
-      {{:f, 4}, {:assigned, %{kind: :numeric} = a}} ->
-        ask_number(state, mode, a)
-
-      {:delete, {:assigned, a}} ->
-        remove(state, mode, a)
-
-      {:insert, row} when row != :text and row != :note ->
-        start_assign(state, "")
-
-      {{:char, c}, row} when row == :stats or row == :add or elem(row, 0) == :assigned ->
-        start_assign(state, c)
-
-      _ ->
-        state
-    end
+  # typing a letter in the assignments assigns a category
+  def handle(state, mode, {:char, c}) do
+    {state, _mode, row} = clamped(state, mode)
+    if assigning?(row), do: start_assign(state, c), else: state
   end
 
-  defp dependency_key(state, _mode, {:char, " "}, _kind, id), do: open(state, id)
+  def handle(state, _mode, _key), do: state
 
-  defp dependency_key(state, mode, :delete, :prerequisite, id),
+  defp assigning?(row) when row in [:stats, :add], do: true
+  defp assigning?({:assigned, _}), do: true
+  defp assigning?(_row), do: false
+
+  # the cursor kept on a row (undo can take rows away), and that row
+  defp clamped(state, mode) do
+    rows = rows(state, mode)
+    mode = %{mode | cursor: mode.cursor |> min(length(rows) - 1) |> max(0)}
+    {State.put_mode(state, mode), mode, Enum.at(rows, mode.cursor)}
+  end
+
+  # what every settings box does: the moves, done and cancel
+  @settings [:up, :down, :left, :right, :next, :previous, :first, :last, :done, :close]
+
+  # the settings box's keys and the row's (R65)
+  @impl Box
+  def keymap do
+    Box.settings_keymap(%{
+      {:f, 6} => :done,
+      {:f, 2} => :edit,
+      {:f, 3} => :profile,
+      {:f, 4} => :set_value,
+      :delete => :remove,
+      :insert => :assign
+    })
+  end
+
+  @impl Box
+  def commands do
+    Box.settings_commands([
+      {:edit, "Edit", "Edit the text, or open the note"},
+      {:profile, "Profile", "The item's assignment profile"},
+      {:set_value, "Date or number", "Change the date or the number"},
+      {:remove, "Remove", "Remove the assignment or dependency"},
+      {:assign, "Assign", "Assign to a category"}
+    ])
+  end
+
+  # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
+  @impl Box
+  def run(state, mode, id) do
+    {state, mode, row} = clamped(state, mode)
+    command(state, mode, id, row)
+  end
+
+  defp command(state, mode, :profile, _row), do: CategoryScreens.open_profile(state, mode.item_id)
+  defp command(state, mode, :edit, :text), do: edit_text(state, mode)
+  defp command(state, mode, id, :note) when id in [:edit, :change], do: open_note(state, mode)
+
+  defp command(state, _mode, :change, {kind, id}) when kind in [:prerequisite, :dependent],
+    do: open(state, id)
+
+  defp command(state, mode, :remove, {:prerequisite, id}),
     do: State.change_db(state, Core.remove_dependency(state.db, mode.item_id, id))
 
-  defp dependency_key(state, mode, :delete, :dependent, id),
+  defp command(state, mode, :remove, {:dependent, id}),
     do: State.change_db(state, Core.remove_dependency(state.db, id, mode.item_id))
 
-  defp dependency_key(state, _mode, _key, _kind, _id), do: state
+  defp command(state, mode, :set_value, {:assigned, %{kind: :date} = a}),
+    do: ask_date(state, mode, a.category)
+
+  defp command(state, mode, :set_value, {:assigned, %{kind: :numeric} = a}),
+    do: ask_number(state, mode, a)
+
+  defp command(state, mode, :remove, {:assigned, a}), do: remove(state, mode, a)
+
+  defp command(state, _mode, :assign, row) when row not in [:text, :note],
+    do: start_assign(state, "")
+
+  # SPACE in the assignments starts typing, as any letter does
+  defp command(state, _mode, :change, row) do
+    if assigning?(row), do: start_assign(state, " "), else: state
+  end
+
+  defp command(state, mode, id, _row) when id in @settings,
+    do: Box.run_settings(state, mode, BoxNav.column(rows(state, mode)), id)
+
+  defp command(state, _mode, _id, _row), do: state
 
   defp edit_text(state, mode) do
     %{

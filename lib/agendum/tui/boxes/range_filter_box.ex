@@ -19,10 +19,8 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-
   alias Agendum.Core
-  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
+  alias Agendum.TUI.Boxes.{Box, Template}
   alias Agendum.TUI.{Typing.LineEdit, State}
   alias Agendum.TUI.Update.Editing
 
@@ -98,36 +96,43 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
   def numeric?(state, mode), do: state.db.categories[mode.cat_id].kind == :numeric
 
   @impl Box
+  # On a date or number the person types: ← → HOME END move in it, other
+  # keys edit it; ↑ ↓ TAB still move between settings, ENTER and ESC end.
+  def handle(state, mode, key) when key in [:up, :down, :tab, :shift_tab, :enter, :esc],
+    do: run(state, mode, Map.fetch!(keymap(), key))
+
   def handle(state, mode, key) do
     row = Enum.at(@rows, mode.cursor)
 
-    case key do
-      :esc ->
-        State.pop(state)
-
-      :enter ->
-        apply_filter(state, mode)
-
-      # on a date or number, ← → HOME END move in it; ↑ ↓ TAB still move between settings
-      k when is_move(k) and (row not in [:from, :to] or k in [:up, :down, :tab, :shift_tab]) ->
-        BoxNav.move(state, mode, @grid, k)
-
-      k when row in [:from, :to] ->
-        case LineEdit.handle(Map.fetch!(mode, row), k) do
-          {:ok, line} -> State.put_mode(state, Map.put(mode, row, line))
-          :unhandled -> state
-        end
-
-      :delete ->
-        state |> State.pop() |> State.change_db(remove(state, mode))
-
-      {:char, " "} ->
-        State.put_mode(state, toggle(mode, row))
-
-      _ ->
-        state
+    case LineEdit.handle(Map.fetch!(mode, row), key) do
+      {:ok, line} -> State.put_mode(state, Map.put(mode, row, line))
+      :unhandled -> state
     end
   end
+
+  @impl Box
+  def typing?(_state, mode), do: Enum.at(@rows, mode.cursor) in [:from, :to]
+
+  # the settings box's keys; ENTER sets it, DEL removes it (R65)
+  @impl Box
+  def keymap, do: Box.settings_keymap(%{:delete => :remove})
+
+  @impl Box
+  def commands,
+    do:
+      Box.settings_commands([
+        {:done, "Done", "Set it and close"},
+        {:remove, "Remove", "Remove it"}
+      ])
+
+  @impl Box
+  def run(state, mode, :done), do: apply_filter(state, mode)
+
+  def run(state, mode, :change),
+    do: State.put_mode(state, toggle(mode, Enum.at(@rows, mode.cursor)))
+
+  def run(state, mode, :remove), do: state |> State.pop() |> State.change_db(remove(state, mode))
+  def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
   defp toggle(mode, :show),
     do: %{mode | show: if(mode.show == :assigned, do: :not_assigned, else: :assigned)}
