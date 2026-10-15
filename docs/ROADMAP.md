@@ -195,7 +195,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agendum` and `test/agendum`; files saved with the old struct names still load (ADR 0019)
 - [x] Group the small TUI modules in subfolders: `tui/boxes/`, `tui/terminal/`, `tui/typing/`, `tui/moves/` (ARCHITECTURE.md, TUI)
 - [ ] Rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it ([`docs/plans/RENAME_REPO.md`](plans/RENAME_REPO.md))
-- [ ] Draw the settings boxes from layouts (`Agendum.TUI.Boxes.Template`, as File ▸ Customize is now), a few at a time and with the split of `render.ex`; their layouts closer to Agenda's screenshots where that is easy (Category Properties done)
+- [x] Draw the settings boxes from layouts (`Agendum.TUI.Boxes.Template`): every box with fixed settings is (REFACTORING.md step 3); the lists draw their own rows
 - [x] Every box in a module of its own behind `Agendum.TUI.Boxes.Box` (keys, drawing, key bar, help, ending), then the fallbacks removed from Update, Render.Boxes, FieldHelp, BoxCancel and BoxChoices ([`docs/plans/REFACTORING.md`](plans/REFACTORING.md) step 3)
 - [x] The plans (`GITHUB.md`, `DOSBOX_STAGING.md`, `KITTY.md`, `RENAME_REPO.md`, `WOL-IN-THE-MACHINE.md`, `MULTIUSER.md`, `REFACTORING.md`) moved to `docs/plans/`, so `docs/` is what Agendum is; a group of their own, Plans, in the generated docs (REFACTORING.md step 5)
 - [x] Split the four largest files into subfolders, by the sections they already have; pure moves, no change in behaviour, one file per commit (best in a fresh session each):
@@ -205,7 +205,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] `core.ex` (~2,300, the facade) → `core/facade/`: `Agendum.Core` stays the one entry point (rule 3) as a table of contents of `defdelegate`s to area modules, where the functions and their docs live: `Files`, `Items`, `Assignments`, `Dates`, `Alarms`, `Numbers`, `Dependencies`, `Rules` (actions, text matching, conditions, Execute, Recalc), `Categories`, `Views`, `Macros`, `Calendars`; `Changes` keeps what every change to an item goes through (dates, settling)
 - [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agendum.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
 - [x] API documentation with `ex_doc` (dev only): `mix docs` from the `@moduledoc`s and `@spec`s, for whoever builds on the core facade (ADR 0020)
-- [ ] The real Agenda for Claude to try: DOSBox Staging started by a script, keys sent with its `AUTOTYPE`, the window captured with `screencapture`, to check Agenda's behaviour and compare screens without asking the owner for screenshots (plan and what the owner sets up: [`docs/plans/DOSBOX_STAGING.md`](plans/DOSBOX_STAGING.md))
+- [x] The real Agenda for Claude to try (done differently: headless DOSBox Staging driven through its REST API, `tools/agformat/agenda_driver.py`; colours and pixels still need the owner's screenshots). First planned as DOSBox Staging started by a script, keys sent with its `AUTOTYPE`, the window captured with `screencapture`, to check Agenda's behaviour and compare screens without asking the owner for screenshots (plan and what the owner sets up: [`docs/plans/DOSBOX_STAGING.md`](plans/DOSBOX_STAGING.md))
 *[A page here was soaked in the creek. — Rabbit]*
 
 ## Beyond Agenda

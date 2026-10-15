@@ -4,6 +4,11 @@ Agendum grew feature by feature. This is a review of where that left
 unnecessary complexity, in the code and in the tooling around it (Mix
 commands, skills, scripts, documents), and what to do about it, in order.
 
+**Status (2026-10-15):** steps 1 and 3 done; 2 decided (the hints stay);
+4 waits for the command layer (ROADMAP, Towards many users); 5 done for
+now (the plans moved to `docs/plans/`); 6 needs no change. How to add a box is now in
+`docs/ARCHITECTURE.md` (TUI).
+
 **In short:** the foundations are sound and stay as they are: the pure core
 (checked by `test/agendum/architecture_test.exs`), the facade over area
 modules (ADR 0023), `mix check` as the one quality gate (ADR 0012), the ADRs.

@@ -88,7 +88,7 @@ While typing text:
 Keys that need the ⌥ (Option) key, such as ALT-D (add section) or ⌥←, need
 "Use Option as Meta key" (Terminal.app: Settings ▸ Profiles ▸ Keyboard) or
 "Esc+" for the left Option key (iTerm2: Settings ▸ Profiles ▸ Keys). Without
-it, ALT-D, ALT-R and ALT-L still work in Terminal.app (Agenda recognises the
+it, ALT-D, ALT-R and ALT-L still work in Terminal.app (Agendum recognises the
 `∂`, `®` and `¬` characters that Option produces), and ESC followed by the
 letter always works.
 
@@ -101,7 +101,7 @@ key" for them.
 
 **macOS terminals never pass ⌘ keys to the programs running in them.** ⌘N,
 ⌘Z, ⌘S and ⌘Q belong to the terminal itself (new window, undo, …). To use
-them in Agenda, tell your terminal to send Agenda's CTRL key instead:
+them in Agendum, tell your terminal to send Agendum's CTRL key instead:
 
 | ⌘ shortcut | Command               | Send                      |
 | ---------- | --------------------- | ------------------------- |
@@ -116,10 +116,10 @@ them in Agenda, tell your terminal to send Agenda's CTRL key instead:
 | ⌘↑ / ⌘↓    | First / last line     | `\x1b[1;5H` / `\x1b[1;5F` |
 | ⌘/         | Help                  | `\x1bOP` (F1)             |
 
-> ⚠️ **Scope these mappings to Agenda.** Terminal key mappings usually apply to
+> ⚠️ **Scope these mappings to Agendum.** Terminal key mappings usually apply to
 > every tab. In an ordinary shell, CTRL-Z suspends the running program and
 > CTRL-S can freeze output. So put the mappings in a separate profile or
-> configuration used only to run Agenda, as shown below. ⌘Q is left out on
+> configuration used only to run Agendum, as shown below. ⌘Q is left out on
 > purpose: quitting the terminal by accident is worse than typing CTRL-Q.
 
 The snippets below follow each terminal's documented configuration syntax,
@@ -127,8 +127,8 @@ but they have not been tested here. Please report any that need adjusting.
 
 ### iTerm2
 
-Create a profile just for Agenda (Settings ▸ Profiles ▸ +), set its
-_Command_ to the `agenda` binary, then add each shortcut under
+Create a profile just for Agendum (Settings ▸ Profiles ▸ +), set its
+_Command_ to the `agendum` binary, then add each shortcut under
 Profiles ▸ Keys ▸ Key Mappings ▸ + with the action **Send Hex Code**:
 
 | Shortcut | Hex code    |
@@ -142,14 +142,14 @@ Profiles ▸ Keys ▸ Key Mappings ▸ + with the action **Send Hex Code**:
 | ⌘I       | `0x1b 0x5b 0x31 0x37 0x7e` |
 | ⌘⌫       | `0x04`      |
 
-Open Agenda with that profile (Profiles ▸ Agenda). If a ⌘ shortcut still
+Open Agendum with that profile (Profiles ▸ Agendum). If a ⌘ shortcut still
 triggers the iTerm2 menu item, remove or change the menu shortcut in System
 Settings ▸ Keyboard ▸ Keyboard Shortcuts ▸ App Shortcuts.
 
 ### kitty
 
-Save as `~/.config/kitty/agenda.conf` and run
-`kitty --config ~/.config/kitty/kitty.conf --config ~/.config/kitty/agenda.conf agenda`:
+Save as `~/.config/kitty/agendum.conf` and run
+`kitty --config ~/.config/kitty/kitty.conf --config ~/.config/kitty/agendum.conf agendum`:
 
 ```conf
 map cmd+n       send_text all \x0e
@@ -166,8 +166,8 @@ map cmd+down    send_text all \x1b[1;5F
 
 ### Ghostty
 
-Save as `~/.config/ghostty/agenda` and start a separate Ghostty instance
-with `open -na Ghostty --args --config-file=$HOME/.config/ghostty/agenda -e agenda`:
+Save as `~/.config/ghostty/agendum` and start a separate Ghostty instance
+with `open -na Ghostty --args --config-file=$HOME/.config/ghostty/agendum -e agendum`:
 
 ```conf
 keybind = cmd+n=text:\x0e
@@ -184,8 +184,8 @@ keybind = cmd+down=text:\x1b[1;5F
 
 ### WezTerm
 
-Add a separate config (e.g. `~/.config/wezterm/agenda.lua`) and run
-`wezterm --config-file ~/.config/wezterm/agenda.lua start -- agenda`:
+Add a separate config (e.g. `~/.config/wezterm/agendum.lua`) and run
+`wezterm --config-file ~/.config/wezterm/agendum.lua start -- agendum`:
 
 ```lua
 local wezterm = require 'wezterm'
@@ -214,13 +214,13 @@ table (CTRL-N, CTRL-Z, CTRL-S, …).
 Raw terminal mode would normally let the tty driver swallow some of these
 keys: CTRL-S/Q (flow control), CTRL-C/Z (signals), CTRL-O/V (discard,
 literal-next). `Agendum.TUI.Terminal` turns those features off with `stty`
-while Agenda runs and restores them on exit, so every CTRL key reaches
-Agenda.
+while Agendum runs and restores them on exit, so every CTRL key reaches
+Agendum.
 
 ## Developer tools (hidden)
 
 ESC then `?` (ALT-? where Option sends Meta) opens the developer screen from
-anywhere except while typing: the last key as Agenda decoded it, the mode
+anywhere except while typing: the last key as Agendum decoded it, the mode
 stack, cursor, undo depth, session (time, languages, input format, theme,
 preferences, terminal size), file counts and versions. Every key but ESC is
 only shown, not acted on, so it doubles as a key tester: press a key and see

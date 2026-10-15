@@ -1,7 +1,16 @@
 # Running the real Agenda for Claude: DOSBox Staging
 
-**Status:** plan, not set up yet (Roadmap, Housekeeping). Written
-2026-10-14 from a conversation between the owner and Claude.
+**Status:** done, differently (2026-10-14/15). The goal was reached by
+another route than the one planned below: DOSBox Staging runs headless
+(`SDL_VIDEODRIVER=dummy`) with its REST API, the screen is read as text
+from video memory and keys are written into the BIOS keyboard buffer, so
+neither `AUTOTYPE` nor `screencapture` is needed. The tool is
+`tools/agformat/agenda_driver.py`, its notes
+`tools/agformat/DRIVING_AGENDA.md`; CLAUDE.md ("Reference material") says
+when to use it. What it cannot show is colour and pixels: for those the
+owner's screenshots remain the source. The original plan is kept below
+as a record. Written 2026-10-14 from a conversation between the owner and
+Claude.
 
 ## Why
 

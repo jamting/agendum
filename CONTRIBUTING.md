@@ -48,8 +48,8 @@ AGENDUM_LOG=1 ./agendum my.agendum             # with a debug log of the session
 ```
 
 It needs a real terminal (not an editor's output pane). F1 lists every
-key. On a Mac without INS or easy function keys, CTRL-N is INS and ESC
-then a digit is a function key (ESC 6 = F6); see
+key. Function keys are required, as in Agenda (ADR 0032): on a Mac, hold
+fn with them or make them standard function keys. CTRL-N is INS; see
 [`docs/KEYBOARD.md`](docs/KEYBOARD.md).
 
 `mix docs --open` shows the API documentation, the design documents, the
@@ -116,8 +116,10 @@ one: `Category Properties in two columns, as Agenda's (screenshot 74)`.
 - **Names:** the program is **Wol's Agendum** (titles) or **Agendum**
   (running text); **Agenda** means the original Lotus Agenda. The code
   is `Agendum` too, `Agendum.*` modules in `lib/agendum` (ADR 0019).
-- **Every key needs a Mac-friendly alternative:** a CTRL key or ESC then a
-  key, documented in `docs/KEYBOARD.md` and the F1 help.
+- **Keys:** function keys are required, as in Agenda (ADR 0032). A command
+  on INS, HOME or END, or a common one, also needs a CTRL key (a Mac has
+  no INS, HOME or END); ALT letters also work as ESC then the letter.
+  Document keys in `docs/KEYBOARD.md` and the F1 help.
 - **Dates** are read by language packs (`Agendum.Core.DateLanguage.*`);
   core functions that read dates take the clock as an argument.
 - **No new runtime dependencies** unless they meet ADR 0021 (pure

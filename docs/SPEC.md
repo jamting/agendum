@@ -765,9 +765,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   a file includes the calculations. Our choices: numbers are binary
   floating point, as in Agenda; the decimal and thousands characters
   are the person's (R54), "." and "," by default; calculation lines are not shown under collapsed sections.
-  Not done: section-wide calculation settings (Section Properties ▸ Select
-  numeric functions), and numeric ranges in conditions and filters (with
-  the date filters, next on the roadmap).
+  Section-wide calculation settings are in Section Properties ▸ Select
+  numeric functions (R61); numeric ranges in filters and conditions are
+  R28a and R15a.
 - **R36 ✅ Sorting items** (User's Guide chapter 15). A view has sort
   settings for all its sections; a section can override them or use the
   view's. Up to two keys (primary, then a secondary for ties): item text;
@@ -1153,8 +1153,8 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   and the file's settings; the person's own settings (theme, languages,
   input format) are not in it. Import checks types and references and
   says what is wrong and where; a file that fails opens nothing. The
-  schema is `docs/JSON_FORMAT.md`. Agenda's own transfer format (STF) is
-  on the roadmap.
+  schema is `docs/JSON_FORMAT.md`. Agenda's own transfer format (STF) and
+  its `.AG` files are optional roadmap items (Data interchange).
 - **R45 ✅ Calendar subscriptions** (not in Agenda). File ▸ Transfer ▸
   Calendars lists the file's subscriptions to calendars on the web
   (iCalendar `.ics`, `https://` or `webcal://`). INS asks for the address
@@ -1403,6 +1403,6 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 ## 6. Out of scope for now
 
 The macro command language (Working with Macros, chapters 2–3; Learn-mode
-keystroke macros are on the roadmap), printing to a printer and print
+keystroke macros are built, R50), printing to a printer and print
 preview, TXT2STF definition files, networking/file reservations, application
 protection, the Metro accessories.

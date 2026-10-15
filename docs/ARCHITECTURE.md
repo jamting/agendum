@@ -78,7 +78,13 @@ the rest by what it is for:
   `FieldTyping`. Every box keeps everything about it in its own module:
   keys, drawing, key bar, help, how it ends (docs/plans/REFACTORING.md, step 3).
   `Update` sends a box its keys, and `Render.Boxes` draws its frame, through
-  the registry; a new box is a module and a line in `Box.registry/0`;
+  the registry. A new box is a module with `use Agendum.TUI.Boxes.Box` and
+  its options (`finish:`, `indicator:`, `cancels:`, `choices:`), the
+  callbacks (`handle/3`, `title/2`, `content/4`, `keys/2`, `help/0`;
+  `field/2`, `width/2`, `finish/1` where needed), and a line in
+  `Box.registry/0`. A box with fixed settings is drawn from a `Template`
+  layout; the lists (pickers, profiles, calendar, macros, files, views)
+  draw their own rows;
 - `tui/terminal/` (`Agendum.TUI.Terminal.*`): keys in, screen out: `Keys`,
   `Screen`, `Draw`, `Theme` and its palettes (`Agendum.TUI.Terminal` itself,
   the raw terminal, is the folder's parent module);
@@ -109,13 +115,21 @@ the rest by what it is for:
 | `Agendum.TUI.Boxes.ItemProperties`                   | ✔     | The Item Properties box: text, note, statistics and the item's assignments (R34).                                                |
 | `Agendum.TUI.Boxes.SortBox`                          | ✔     | The Sort box: a view's or a section's sort keys (R36).                                                                           |
 | `Agendum.TUI.Boxes.SearchBox`                        | ✔     | The Search box and search mode (ALT-N / ALT-P / F7), and the Show View (R37).                                                    |
+| `Agendum.TUI.Boxes.GoTo`                             | ✔     | ALT-F5 GO TO: a box listing the view's section heads (R42).                                                                       |
+| `Agendum.TUI.Boxes.CopyBox`                          | ✔     | ALT-F9 COPY: the view's sections, to put the item in one as well (R42).                                                           |
 | `Agendum.TUI.Boxes.QuestionsBox`                     | ✔     | Utilities Questions: confirming suggested assignments (R16).                                                                     |
 | `Agendum.TUI.Boxes.ExecuteBox`                       | ✔     | Utilities Execute: the Execute box, ALT-X and ALT-E (R15e).                                                                      |
 | `Agendum.TUI.Boxes.ActionBox`                        | ✔     | The Date Action / Numeric Action box (R15b).                                                                                     |
 | `Agendum.TUI.Boxes.RangeFilterBox`                   | ✔     | The Date Filter / Numeric Filter box (R28a).                                                                                     |
 | `Agendum.TUI.Boxes.CategoryStatsBox`                 | ✔     | Category Statistics: how much of the file uses a category (Category Properties ▸ Statistics).                                     |
+| `Agendum.TUI.Boxes.FileStatsBox`                     | ✔     | File Statistics: the items, those with notes, the categories, and the averages (File Properties ▸ File statistics).               |
+| `Agendum.TUI.Boxes.CategoryMatchBox`                 | ✔     | A standard category's Advanced settings: its own text matching (R16b).                                                            |
+| `Agendum.TUI.Boxes.DateRuleBox`                      | ✔     | A date category's Advanced settings: Assign item date, Which one, Done and When keys (R6b).                                       |
+| `Agendum.TUI.Boxes.AutoAssignBox`                    | ✔     | File Properties ▸ Auto-assign settings: the file's text matching and confirming (R16, R16a).                                       |
 | `Agendum.TUI.Boxes.ColumnAddBox`                     | ✔     | The Column Add box: a new column's head, width, position and Insert in (R55).                                                      |
 | `Agendum.TUI.Boxes.ItemColumnBox`                    | ✔     | Item Column Properties: a section's item column, automatic or by hand, linked (R55).                                               |
+| `Agendum.TUI.Boxes.SectionBox`                       | ✔     | The Section Properties box: head, sorting, statistics, filter and the section's columns (R61).                                    |
+| `Agendum.TUI.Boxes.NumericFunctionsBox`              | ✔     | Select Numeric Functions: the calculations of a section's numeric columns (R61, R29).                                             |
 | `Agendum.TUI.Boxes.FieldTyping`                      | ✔     | Typing text into a box's field: a column head's name (an existing category or a new one), a column title.                          |
 | `Agendum.TUI.Boxes.ColumnBox`                        | ✔     | The Column Properties box, one for every column: head, width, link (R55); a numeric column's format (R29), a date column's (R41a). |
 | `Agendum.TUI.Boxes.FileProperties`                   | ✔     | The File Properties box: Insert new columns in, and the boxes of date and auto-assign settings (R55).                             |
@@ -132,6 +146,7 @@ the rest by what it is for:
 | `Agendum.TUI.Boxes.MacroProps`                       | ✔     | The Macro Properties box: name, keystrokes, attached key, where it runs (R50).                                                   |
 | `Agendum.TUI.Boxes.SelectFile`                       | ✔     | The Select File box: F3 in a file-name prompt lists a folder (read by `Store.list_dir/1`) to pick from (R51).                    |
 | `Agendum.TUI.Splash`                           | ✔     | The splash screen at start, until a key or three seconds; the startup prompt waits under it (R52).                               |
+| `Agendum.Sample`                                | ✔     | The built-in files: `--demo` (the patent's example, used by the tests) and `--rabbit` (Rabbit's file from the manual).            |
 | `Agendum.TUI.Boxes.CalendarsBox`                     | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
 | `Agendum.TUI.Typing.NoteSearch`                       | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `Agendum.TUI.Boxes.AlarmList`                        | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
@@ -142,9 +157,11 @@ the rest by what it is for:
 | `Agendum.TUI.Render`                           | ✔     | State → list of styled lines: the control panel, the body (the view or a full screen), the boxes over it, the key bar.           |
 | `Agendum.TUI.Render.*`                         | ✔     | Its parts: `ControlPanel`, `View`, `Managers`, `Note`, `Help` (F1 text), `Boxes`, `KeyBar`, `Text`, `Export`.   |
 | `Agendum.TUI.Terminal.Draw`, `Agendum.TUI.Terminal.Theme`         | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic, mono and the terminal schemes, R40).                               |
+| `Agendum.TUI.Terminal.Theme.Palettes`                 | ✔     | The themes made from terminal colour schemes (`THEMES.md`, R40).                                                                 |
 | `Agendum.TUI.Boxes.Template`                         | ✔     | Box layouts written as they look: `[field   ]` in brackets, filled and lined up; the fields' order is the cursor's.                |
-| `Agendum.TUI.Terminal.Keys`                             | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC-digit aliases).                                                          |
+| `Agendum.TUI.Terminal.Keys`                             | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC + letter as ALT; no ESC + digit, ADR 0032).                                                          |
 | `Agendum.TUI.Typing.LineEdit`, `Agendum.TUI.Typing.TextEdit`  | ✔     | Single-line and multi-line edit buffers.                                                                                         |
+| `Agendum.TUI.Typing.Wrap`                             | ✔     | Word wrap in the note editor, for the screen only: a note's lines as rows (R64).                                                  |
 | `Agendum.TUI.Terminal.Screen`                           | ✔     | Diffs two frames into minimal ANSI output.                                                                                       |
 | `Agendum.TUI.Terminal`                         | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
 | `Agendum.TUI.App`                              | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |

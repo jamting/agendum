@@ -555,7 +555,7 @@ tests in `database_test.exs` and `links_test.exs`):
 
 ```mermaid
 flowchart LR
-    DB["%Database{}"] --> T["{:agenda, 2, db}<br/>versioned envelope"]
+    DB["%Database{}"] --> T["{:agenda, version, db}<br/>versioned envelope"]
     T --> B[":erlang.term_to_binary(…, [:compressed])"]
     B --> TMP["file.agendum.tmp"]
     TMP -- "File.rename (atomic)" --> F["file.agendum"]
@@ -572,7 +572,8 @@ flowchart LR
   defaults. Adding a field means bumping the version; a change that defaults
   cannot express (a renamed or reshaped field) also needs a migration step
   in `upgrade/1`. Files from a newer version are refused.
-- The format is not human-readable; a text export is on the roadmap.
+- The format is not human-readable; File ▸ Transfer ▸ Export writes a
+  file as JSON ([`JSON_FORMAT.md`](JSON_FORMAT.md), ADR 0010).
   See [ADR 0003](adr/0003-file-format.md).
 
 ## UI state around the database

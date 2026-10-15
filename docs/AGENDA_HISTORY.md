@@ -95,19 +95,21 @@ Kapor summed up why the idea persisted: Agenda "did things you still can't do on
 
 ## What this means for our clone
 
-Our Elixir clone already has the core that made Agenda distinctive; the biggest gap is the "magic" users praised most: dates and rules taken from plain text. Rule numbers refer to [`SPEC.md`](SPEC.md). This section reflects the project as of the date above; [`ROADMAP.md`](ROADMAP.md) has the current status.
+Agendum now has the core that made Agenda distinctive, and the "magic" users praised most: dates and rules taken from plain text. Rule numbers refer to [`SPEC.md`](SPEC.md). The table was first written on 2026-10-08 and brought up to date on 2026-10-15; [`ROADMAP.md`](ROADMAP.md) has the current status, and [`plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) how close Agendum is to Agenda as a whole.
 
-| Agenda feature                                   | In our clone today                                          | Suggested next step                                     |
-| ------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------------------- |
-| Items in many categories, hierarchy, inheritance | Done (R1–R5)                                                | —                                                       |
-| Automatic filing by text                         | Done, by category name and short name (R10–R13)             | —                                                       |
-| Editable views, typing into columns              | Done (R20–R27)                                              | Sorting and filters (R28)                               |
-| Guessing intent from the neighbouring item       | Done (R12)                                                  | —                                                       |
-| Mutually exclusive categories                    | Done, including conflict dialogs (R7, R7a, R7b)             | No direct assignment to a category and its parent (R7c) |
-| Plain-language dates                             | Done: read from item text and typed into When columns (R14) | Times of day and recurring dates (R14a)                 |
-| Conditions and actions                           | Done: assignment conditions (R15); category links (R8)      | Date conditions and actions (R15a, R15b)                |
-| Task dependencies                                | Not started                                                 | Add after R15                                           |
-| Importing and searching text                     | Not started                                                 | Search first (on the roadmap); import later             |
+| Agenda feature                                   | In Agendum today                                                                 | Still open                                                   |
+| ------------------------------------------------ | -------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Items in many categories, hierarchy, inheritance | Done (R1–R5)                                                                     | —                                                            |
+| Automatic filing by text                         | Done: names, short names, Also match, proper names, settings per file and category (R10–R16c) | —                                               |
+| Editable views, typing into columns              | Done, with sorting, filters, columns per section, datebooks (R20–R29, R36, R47, R55–R62) | —                                                    |
+| Guessing intent from the neighbouring item       | Done (R12)                                                                       | —                                                            |
+| Mutually exclusive categories                    | Done, including conflict dialogs (R7–R7d)                                        | —                                                            |
+| Plain-language dates                             | Done: from item text and notes, times, recurring dates, date categories, languages (R6a, R6b, R14–R14f) | Recurring items on every date they recur (`plans/RECURRING_OCCURRENCES.md`) |
+| Conditions and actions                           | Done: conditions, date and numeric conditions, text conditions, actions, Execute (R15–R15e) | —                                                 |
+| Task dependencies                                | Done (R43)                                                                       | —                                                            |
+| Searching text                                   | Done: the view, the file, notes with replace (R37, R39)                          | —                                                            |
+| Importing                                        | JSON and web calendars (R44, R45)                                                | Agenda's own files (`.AG`, STF): the format is known (`AGENDA_FILE_FORMAT.md`), the importer is next |
+| The note editor                                  | Editing, marking, cut and paste, search and replace, word wrap (R39, R63, R64)   | Agenda's own control panel, menu and keys (`plans/NOTE_EDITOR.md`) |
 
 The history also gives a design lesson. Agenda's power came with a learning curve that drove casual users away within a month. Keep the clone's first minutes simple: the demo file, the F1 help and sensible defaults matter as much as features.
 
