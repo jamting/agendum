@@ -162,6 +162,21 @@ defmodule Agendum.TUI.Keymap do
     {:alt, "q"} => :quit
   }
 
+  # the menu (F10 or /): a letter chooses the entry it begins (`Menu`)
+  @menu %{
+    :right => :next,
+    :tab => :next,
+    :left => :previous,
+    :shift_tab => :previous,
+    :home => :first,
+    :end => :last,
+    :enter => :choose,
+    :esc => :back,
+    :backspace => :back,
+    {:f, 10} => :close,
+    {:f, 1} => :help
+  }
+
   # every box (`Update`'s box stage); its own keys are the box's
   @box %{
     {:f, 1} => :help,
@@ -187,6 +202,7 @@ defmodule Agendum.TUI.Keymap do
     catmgr: @catmgr,
     viewmgr: @viewmgr,
     note: @note,
+    menu: @menu,
     box: @box,
     global: @global
   }

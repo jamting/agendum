@@ -74,6 +74,6 @@ The owner settled these choices before any code (2026-10-15):
   `commands/1` by the box's mode, `run/3` of `Agendum.TUI.Boxes.Box`; a
   settings box starts from `Box.settings_keymap/1`, a list box uses
   `Box.list_moves/0`); keys not in it, and every key while the person
-  types in one of its fields (`typing?/2`), go to its `handle/3`. The menu still reads
-  keys directly; it moves to a keymap in a later step, and until then
-  describe key covers only the global keys there.
+  types in one of its fields (`typing?/2`), go to its `handle/3`. The menu has a keymap
+  too (2026-10-15); its entries are chosen by their first letters, which
+  the help lists as their keys.

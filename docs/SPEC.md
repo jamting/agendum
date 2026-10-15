@@ -1243,7 +1243,11 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   keymap of its own (a settings box: the moves, SPACE change, ENTER done,
   ESC cancel, and its own keys), so its commands are listed from it;
   letters a box reads itself (typing a name, a number, finding a line)
-  are described as typing. ⏳ The menu is not covered yet.
+  are described as typing. ✅ In the menu F1 opens the help too: `c`
+  lists the entries of the level shown, each by its first letter (ENTER
+  chooses one), then the menu's keys; `d` says which entry a letter
+  chooses. The keys of every screen are not listed there (they do nothing
+  in the menu).
 - **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
   category name is typed into a column cell, Agenda shows the first
   matching category (the rest of its name in grey), the top line says how

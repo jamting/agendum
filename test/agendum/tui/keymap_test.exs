@@ -14,7 +14,7 @@ defmodule Agendum.TUI.KeymapTest do
   @today ~D[2026-10-12]
 
   # the places whose keys are in keymaps (ADR 0033)
-  @places [:view, :catmgr, :viewmgr, :note, :box, :global]
+  @places [:view, :catmgr, :viewmgr, :note, :menu, :box, :global]
 
   test "every key in a keymap runs a command in its place's command list" do
     unknown =

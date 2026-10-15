@@ -256,4 +256,33 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert described(box, "x") =~ "x picks"
     end
   end
+
+  describe "in the menu" do
+    setup %{state: state}, do: %{menu: press(state, {:f, 10})}
+
+    test "F1 opens the help, and ESC goes back to the menu", %{menu: menu} do
+      back = press(menu, [{:f, 1}, :esc])
+      assert Enum.map(back.modes, & &1.type) == [:menu]
+    end
+
+    test "c lists the level's entries by their letters, then the menu's keys", %{menu: menu} do
+      text = screen(press(menu, [{:f, 1}, "c"]))
+      assert text =~ "COMMANDS IN THE MENU"
+      assert text =~ ~r/File +F +Retrieve, save or create files/
+      assert text =~ ~r/Back +ESC BACKSPACE +Back up a level/
+      # the keys of every screen do nothing in the menu: not listed
+      refute text =~ ~r/Undo +CTRL-Z/
+    end
+
+    test "ENTER on an entry chooses it, as its letter would", %{menu: menu} do
+      ran = press(menu, [{:f, 1}, "c", :enter])
+      assert ran.modes == press(menu, "f").modes
+    end
+
+    test "d describes a letter and a key", %{menu: menu} do
+      assert described(menu, "f") =~ "f chooses File."
+      assert described(menu, "z") =~ "no entry of this level begins with it"
+      assert described(menu, :backspace) =~ "BACKSPACE runs Back in the menu."
+    end
+  end
 end

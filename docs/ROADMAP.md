@@ -89,7 +89,7 @@ few commands at a time:
   - [x] The category and view managers' and a note's keys in keymaps (F1 `c` and `d` there too)
   - [x] The keys every box shares in a keymap (`:box`: F1, F3 choices, ESC cancel); F1 `c` and `d` in every box, its own keys read from its key bar
   - [x] Each box's own keys in a keymap of its own (`Box.keymap/1`, `commands/1`, `run/3`; settings boxes from `Box.settings_keymap/1`); `c` and `d` no longer read key bars
-  - [ ] The menu
+  - [x] The menu: its keys in a keymap; F1 `c` lists the level's entries by their letters, F1 `d` describes them
 - [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries (F1 then `c`), and "describe key" (F1 then `d`); the F1 help and KEYBOARD.md checked against the keymaps
   - [x] F1 `c` (ENTER runs the highlighted command) and F1 `d`, in views; elsewhere the global keys
   - [ ] Typing in the command list narrows it; the F1 help and KEYBOARD.md checked against the keymaps

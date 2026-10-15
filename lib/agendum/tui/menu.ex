@@ -14,7 +14,7 @@ defmodule Agendum.TUI.Menu do
   the menu too (`resumed/2`).
   """
 
-  alias Agendum.TUI.State
+  alias Agendum.TUI.{Keymap, State}
   alias Agendum.TUI.Update.Actions
 
   @doc "The menu tree: `{label, description, children_or_action}`."
@@ -153,44 +153,60 @@ defmodule Agendum.TUI.Menu do
     end)
   end
 
+  @doc """
+  A key in the menu: it runs the command the menu's keymap binds it to
+  (`Agendum.TUI.Keymap`, R65); a letter chooses the entry it begins.
+  """
   def handle(state, mode, key) do
-    entries = entries(mode)
-    count = length(entries)
-
-    case key do
-      k when k in [:right, :tab] ->
-        State.put_mode(state, %{mode | selected: rem(mode.selected + 1, count)})
-
-      k when k in [:left, :shift_tab] ->
-        State.put_mode(state, %{mode | selected: rem(mode.selected - 1 + count, count)})
-
-      :home ->
-        State.put_mode(state, %{mode | selected: 0})
-
-      :end ->
-        State.put_mode(state, %{mode | selected: count - 1})
-
-      :enter ->
-        choose(state, mode, mode.selected)
-
-      k when k in [:esc, :backspace] ->
-        back(state, mode)
-
-      {:f, 10} ->
-        State.pop(state)
-
-      {:char, c} ->
-        case Enum.find_index(entries, fn {label, _, _} ->
-               String.upcase(String.first(label)) == String.upcase(c)
-             end) do
-          nil -> state
-          index -> choose(state, mode, index)
-        end
-
-      _ ->
-        state
+    case {Keymap.lookup(:menu, key), key} do
+      {nil, {:char, c}} -> letter(state, mode, c)
+      {nil, _} -> state
+      {id, _} -> command(state, mode, id)
     end
   end
+
+  @doc "Runs a menu command (`Agendum.TUI.Commands`) in the menu on top."
+  @spec run(State.t(), atom) :: State.t()
+  def run(state, id), do: command(state, State.mode(state), id)
+
+  @doc "Chooses the entry at `index` of the menu on top's level, as its letter would."
+  @spec choose(State.t(), non_neg_integer) :: State.t()
+  def choose(state, index), do: choose(state, State.mode(state), index)
+
+  @doc "The index of the entry a letter chooses at the menu's level, or nil."
+  @spec entry_for(map, String.t()) :: non_neg_integer | nil
+  def entry_for(mode, c) do
+    Enum.find_index(entries(mode), fn {label, _, _} ->
+      String.upcase(String.first(label)) == String.upcase(c)
+    end)
+  end
+
+  defp letter(state, mode, c) do
+    case entry_for(mode, c) do
+      nil -> state
+      index -> choose(state, mode, index)
+    end
+  end
+
+  defp command(state, mode, :next) do
+    count = length(entries(mode))
+    State.put_mode(state, %{mode | selected: rem(mode.selected + 1, count)})
+  end
+
+  defp command(state, mode, :previous) do
+    count = length(entries(mode))
+    State.put_mode(state, %{mode | selected: rem(mode.selected - 1 + count, count)})
+  end
+
+  defp command(state, mode, :first), do: State.put_mode(state, %{mode | selected: 0})
+
+  defp command(state, mode, :last),
+    do: State.put_mode(state, %{mode | selected: length(entries(mode)) - 1})
+
+  defp command(state, mode, :choose), do: choose(state, mode, mode.selected)
+  defp command(state, mode, :back), do: back(state, mode)
+  defp command(state, _mode, :close), do: State.pop(state)
+  defp command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
 
   defp back(state, %{path: []}), do: State.pop(state)
 

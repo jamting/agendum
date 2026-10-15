@@ -13,8 +13,9 @@ has the detail.
 - Undoing the new macro while learning its keystrokes, then stopping
   Learn mode, no longer crashes: nothing is kept, and a message says why.
 - F1 c and F1 d also work in the category manager, the view manager, a
-  note and every box; F1 now opens the help in those places too. In a
-  box, F1 c lists the box's keys and ENTER presses the one highlighted.
+  note, the menu and every box; F1 now opens the help in those places
+  too. In a box, F1 c lists the box's commands and ENTER runs the one
+  highlighted; in the menu, it lists the entries by their letters.
 - The help and the keyboard guide say ⌥m (Option as Meta) where they said
   ESC m: ESC typed by hand and then a letter is two keys.
 

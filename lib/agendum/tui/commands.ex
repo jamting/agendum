@@ -5,7 +5,8 @@ defmodule Agendum.TUI.Commands do
   view's. The order is the one the command list will show.
 
   So far the view's (`:view`), the category manager's (`:catmgr`), the view
-  manager's (`:viewmgr`), a note's (`:note`), every box's (`:box`)
+  manager's (`:viewmgr`), a note's (`:note`), the menu's (`:menu`), every
+  box's (`:box`)
   and the global ones (`:global`); other places move over a few at a time.
   Pure.
   """
@@ -139,8 +140,20 @@ defmodule Agendum.TUI.Commands do
     {:quit, "Quit", "Save the note and quit Agendum", :none}
   ]
 
-  # what every box shares; each box's own keys are in its key bar
-  # (`Agendum.TUI.Boxes.Box`'s `keys/2`)
+  # the menu (F10 or /); its entries are chosen by their first letter
+  @menu [
+    {:choose, "Choose", "Choose the highlighted entry", :none},
+    {:next, "Next", "Highlight the entry to the right", :none},
+    {:previous, "Previous", "Highlight the entry to the left", :none},
+    {:first, "First", "Highlight the first entry", :none},
+    {:last, "Last", "Highlight the last entry", :none},
+    {:back, "Back", "Back up a level", :none},
+    {:help, "Help", "Show the keys", :none},
+    {:close, "Leave", "Leave the menu", :none}
+  ]
+
+  # what every box shares; each box's own commands are in its module
+  # (`Agendum.TUI.Boxes.Box`'s `keymap/1`, `commands/1`)
   @box [
     {:choices, "Choices", "List the setting's choices", :none},
     {:cancel, "Cancel", "Close; put back the box's changes", :none},
@@ -159,31 +172,37 @@ defmodule Agendum.TUI.Commands do
     {:quit, "Quit", "Quit Agendum", :none}
   ]
 
+  # Enum.map, not `for`: an entry of the wrong shape fails at compile
+  # time instead of being left out
   @commands %{
     view:
-      for {id, name, summary, count} <- @view do
+      Enum.map(@view, fn {id, name, summary, count} ->
         %Command{id: id, name: name, summary: summary, count: count}
-      end,
+      end),
     catmgr:
-      for {id, name, summary, count} <- @catmgr do
+      Enum.map(@catmgr, fn {id, name, summary, count} ->
         %Command{id: id, name: name, summary: summary, count: count}
-      end,
+      end),
     viewmgr:
-      for {id, name, summary, count} <- @viewmgr do
+      Enum.map(@viewmgr, fn {id, name, summary, count} ->
         %Command{id: id, name: name, summary: summary, count: count}
-      end,
+      end),
     note:
-      for {id, name, summary, count} <- @note do
+      Enum.map(@note, fn {id, name, summary, count} ->
         %Command{id: id, name: name, summary: summary, count: count}
-      end,
+      end),
+    menu:
+      Enum.map(@menu, fn {id, name, summary, count} ->
+        %Command{id: id, name: name, summary: summary, count: count}
+      end),
     box:
-      for {id, name, summary, count} <- @box do
+      Enum.map(@box, fn {id, name, summary, count} ->
         %Command{id: id, name: name, summary: summary, count: count}
-      end,
+      end),
     global:
-      for {id, name, summary, count} <- @global do
+      Enum.map(@global, fn {id, name, summary, count} ->
         %Command{id: id, name: name, summary: summary, count: count}
-      end
+      end)
   }
 
   @doc "The commands of a place, in the command list's order."

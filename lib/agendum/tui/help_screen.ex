@@ -12,12 +12,13 @@ defmodule Agendum.TUI.HelpScreen do
       it runs there, or the macro attached to it), then any key returns.
 
   The mode remembers where F1 was pressed (`from`): `:view`, `:catmgr`,
-  `:viewmgr`, `:note`, `:box` (any other box: its own commands from its
+  `:viewmgr`, `:note`, `:menu` (its entries first, each by its letter),
+  `:box` (any other box: its own commands from its
   keymap, then the keys every box shares), or
   `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
   """
 
-  alias Agendum.TUI.{Command, Commands, Keymap, Macros, State}
+  alias Agendum.TUI.{Command, Commands, Keymap, Macros, Menu, State}
   alias Agendum.TUI.Boxes.{Box, ViewManager}
   alias Agendum.TUI.CategoryScreens.Manager
   alias Agendum.TUI.Render.Help
@@ -30,7 +31,7 @@ defmodule Agendum.TUI.HelpScreen do
     from =
       case {state.edit, state.modes} do
         {nil, []} -> :view
-        {nil, [%{type: type} | _]} when type in [:catmgr, :viewmgr, :note] -> type
+        {nil, [%{type: type} | _]} when type in [:catmgr, :viewmgr, :note, :menu] -> type
         {nil, [top | _]} -> if Box.module(top), do: :box, else: :elsewhere
         _ -> :elsewhere
       end
@@ -56,8 +57,9 @@ defmodule Agendum.TUI.HelpScreen do
     local ++ global
   end
 
-  # in a note the keys of every screen are not commands: they edit the text
-  defp typing?(from), do: from == :note
+  # in a note the keys of every screen are not commands: they edit the
+  # text; in the menu they do nothing
+  defp typing?(from), do: from in [:note, :menu]
 
   # What the list shows: in a box, first the box's own commands from its
   # keymap, then the keys every box shares that it does not bind itself,
@@ -73,6 +75,19 @@ defmodule Agendum.TUI.HelpScreen do
 
     global = for {_, :global, _} = entry <- commands(:box), do: entry
     own ++ shared ++ global
+  end
+
+  # in the menu, first the entries of its level, each chosen by its letter
+  defp list(state, :menu) do
+    mode = State.mode(state)
+
+    entries =
+      for {{label, description, _}, i} <- Enum.with_index(Menu.entries(mode)) do
+        command = %Command{id: i, name: label, summary: description}
+        {command, :menu_entry, [{:char, String.first(label)}]}
+      end
+
+    entries ++ commands(:menu)
   end
 
   defp list(_state, from), do: commands(from)
@@ -162,6 +177,8 @@ defmodule Agendum.TUI.HelpScreen do
   defp run(state, {%Command{id: id}, :catmgr, _keys}), do: Manager.run(state, id)
   defp run(state, {%Command{id: id}, :viewmgr, _keys}), do: ViewManager.run(state, id)
   defp run(state, {%Command{id: id}, :note, _keys}), do: Notes.run(state, id)
+  defp run(state, {%Command{id: id}, :menu, _keys}), do: Menu.run(state, id)
+  defp run(state, {%Command{id: index}, :menu_entry, _keys}), do: Menu.choose(state, index)
 
   defp run(state, {%Command{id: id}, :own, _keys}) do
     mode = State.mode(state)
@@ -243,6 +260,9 @@ defmodule Agendum.TUI.HelpScreen do
       from == :viewmgr and char? ->
         ["#{name} highlights the next view whose name starts with what is typed."]
 
+      from == :menu and match?({:char, _}, key) ->
+        menu_letter(state, key, name)
+
       from == :note and edits_text?(state, key) ->
         ["#{name} edits the text: types, moves the cursor or deletes."]
 
@@ -272,6 +292,19 @@ defmodule Agendum.TUI.HelpScreen do
     Enum.find_value(own_keys(state), fn {command, :own, keys} -> if key in keys, do: command end)
   end
 
+  defp menu_letter(state, {:char, c}, name) do
+    mode = State.mode(state)
+
+    case Menu.entry_for(mode, c) do
+      nil ->
+        ["#{name} chooses nothing here: no entry of this level begins with it."]
+
+      i ->
+        {label, description, _} = Enum.at(Menu.entries(mode), i)
+        ["#{name} chooses #{label}.", description]
+    end
+  end
+
   defp edits_text?(state, key),
     do: match?({:ok, _}, TextEdit.handle(State.mode(state).edit, key, Wrap.width(state)))
 
@@ -282,6 +315,7 @@ defmodule Agendum.TUI.HelpScreen do
   defp place_name(:catmgr), do: "in the category manager"
   defp place_name(:viewmgr), do: "in the view manager"
   defp place_name(:note), do: "in a note"
+  defp place_name(:menu), do: "in the menu"
   defp place_name(:box), do: "in every box"
   defp place_name(_elsewhere), do: "here"
 
@@ -377,6 +411,7 @@ defmodule Agendum.TUI.HelpScreen do
   defp where(:catmgr), do: "IN THE CATEGORY MANAGER"
   defp where(:viewmgr), do: "IN THE VIEW MANAGER"
   defp where(:note), do: "IN A NOTE"
+  defp where(:menu), do: "IN THE MENU"
   defp where(:box), do: "IN THIS BOX"
   defp where(_elsewhere), do: "ON EVERY SCREEN"
 
