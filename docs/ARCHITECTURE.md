@@ -162,7 +162,7 @@ the rest by what it is for:
 | `Agendum.TUI.Terminal.Draw`, `Agendum.TUI.Terminal.Theme`         | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic, mono and the terminal schemes, R40).                               |
 | `Agendum.TUI.Terminal.Theme.Palettes`                 | ✔     | The themes made from terminal colour schemes (`THEMES.md`, R40).                                                                 |
 | `Agendum.TUI.Boxes.Template`                         | ✔     | Box layouts written as they look: `[field   ]` in brackets, filled and lined up; the fields' order is the cursor's.                |
-| `Agendum.TUI.Terminal.Keys`                             | ✔     | Raw input bytes → key events (xterm sequences, ALT, ESC + letter as ALT; no ESC + digit, ADR 0032).                                                          |
+| `Agendum.TUI.Terminal.Keys`                             | ✔     | Raw input bytes → key events (xterm sequences, ALT; ESC + a key arriving together is ALT, as Option as Meta sends it, ADR 0032).                                                          |
 | `Agendum.TUI.Typing.LineEdit`, `Agendum.TUI.Typing.TextEdit`  | ✔     | Single-line and multi-line edit buffers.                                                                                         |
 | `Agendum.TUI.Typing.Wrap`                             | ✔     | Word wrap in the note editor, for the screen only: a note's lines as rows (R64).                                                  |
 | `Agendum.TUI.Terminal.Screen`                           | ✔     | Diffs two frames into minimal ANSI output.                                                                                       |

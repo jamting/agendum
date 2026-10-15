@@ -3,8 +3,8 @@ defmodule Agendum.TUI.Keymap do
   Which command a key runs, by place (ADR 0033): a key event (as
   `Agendum.TUI.Terminal.Keys` decodes it) to a command id of
   `Agendum.TUI.Commands`. Agenda's keys (SPEC R42), with ours beside them
-  (R31). ALT-letters are here too; ESC + letter is the same key once
-  decoded.
+  (R31). ALT-letters are here too (⌥-letters on a Mac with Option as
+  Meta, which sends ESC and the letter together).
 
   A printable character is not bound in a view: it starts typing an item
   or a column entry (what Emacs calls self-insert). Later the person's own

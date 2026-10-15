@@ -114,7 +114,8 @@ one: `Category Properties in two columns, as Agenda's (screenshot 74)`.
   is `Agendum` too, `Agendum.*` modules in `lib/agendum` (ADR 0019).
 - **Keys:** function keys are required, as in Agenda (ADR 0032). A command
   on INS, HOME or END, or a common one, also needs a CTRL key (a Mac has
-  no INS, HOME or END); ALT letters also work as ESC then the letter.
+  no INS, HOME or END); ALT letters are ⌥ letters on a Mac with Option
+  as Meta (ESC then a letter typed by hand is two keys).
   Document keys in `docs/KEYBOARD.md` and the F1 help.
 - **Dates** are read by language packs (`Agendum.Core.DateLanguage.*`);
   core functions that read dates take the clock as an argument.

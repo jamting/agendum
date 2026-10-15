@@ -116,7 +116,9 @@ Keep changes small and focused; one feature per commit.
   required, as in Agenda: there is no ESC + digit stand-in for them (ADR
   0032). Mac keyboards lack INS/HOME/END and terminals never pass ⌘, so a
   command on INS, HOME or END needs a CTRL key, and so does a common
-  command (CTRL-N, CTRL-E …); ALT-letters also work as ESC + letter.
+  command (CTRL-N, CTRL-E …). ALT-letters are ⌥-letters with Option as
+  Meta (the terminal sends ESC + letter together; typed by hand, ESC then
+  a letter is two keys, ADR 0032).
   Document keys in `docs/KEYBOARD.md` and the F1 help. CTRL-I/M/H/[ are unusable (they are TAB/ENTER/BACKSPACE/ESC).
 - A settings box is drawn from a layout written as it looks on screen,
   with `[field    ]` placeholders (`Agendum.TUI.Boxes.Template`; `CustomizeBox`

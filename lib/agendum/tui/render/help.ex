@@ -24,34 +24,34 @@ defmodule Agendum.TUI.Render.Help do
                    F3 picks, type a number; ENTER done, ESC cancels
      DEL           Remove from section or column   fn-⌫
      ALT-F4        Discard item                    CTRL-D
-     ALT-M         Assign to a category (MakeAssign)   ESC m
+     ALT-M         Assign to a category (MakeAssign)   ⌥m
      With marked items, F4 DEL ALT-F2 ALT-F4 ALT-F9 ALT-F10 ALT-M F3 ask:
                    marked items (M) or the current item (C)
      ALT-F2        Set the When date (or menu Item When)
      ALT-F10       Move item to another section (on a section
                    head: move the section, ↑ ↓, ENTER)
      ALT-F9        Copy item to another section
-     ALT-Y         Yank back the item DEL removed  ESC y
-     ALT-H         Hop to item's next occurrence   ESC h
+     ALT-Y         Yank back the item DEL removed  ⌥y
+     ALT-H         Hop to item's next occurrence   ⌥h
      ALT-− / ALT-= Collapse / expand section (twice: all)
      ALT-F5        Go to a section (GO TO)
-     ALT-N / ALT-P Next / previous view              ESC n / ESC p
-     ALT-V         Show / hide empty sections        ESC v
-     ALT-I         Insert an item (like INS)         ESC i
-     ALT-W / ALT-G Save / retrieve a file            ESC w / ESC g
+     ALT-N / ALT-P Next / previous view              ⌥n / ⌥p
+     ALT-V         Show / hide empty sections        ⌥v
+     ALT-I         Insert an item (like INS)         ⌥i
+     ALT-W / ALT-G Save / retrieve a file            ⌥w / ⌥g
      ALT-F6        Search (then ALT-N / ALT-P, F7 mark)
      ALT-F8        Back to the previous view
-     ALT-A         Set or cancel an alarm            ESC a
-     ALT-C         Show the calendar (to look up a date)  ESC c
+     ALT-A         Set or cancel an alarm            ⌥a
+     ALT-C         Show the calendar (to look up a date)  ⌥c
      ALT-F3        Macros: the macro manager; in Learn mode, stop
                    recording (F7 in the manager learns, ENTER runs, F2
                    edits, F6 properties: attach to a key)
-     ALT-Z         Run the last macro again              ESC z
+     ALT-Z         Run the last macro again              ⌥z
      ALT-B         Browse a datebook view (← → a period) or a date filter
                    (← → a day, ↑↓ a week, PGUP/PGDN a month, CTRL-PGUP/PGDN
-                   a year); ALT-F5 a date, ENTER keeps, ESC goes back   ESC b
+                   a year); ALT-F5 a date, ENTER keeps, ESC goes back   ⌥b
      ALT-O         Depend on the marked items (&); with none marked,
-                   clear the item's dependencies     ESC o
+                   clear the item's dependencies     ⌥o
      ALT-X / ALT-E Execute all conditions and actions / the section's
                    category's, on all items (Category ▸ Execute)
      ALT-D / ALT-U Add section below / above
@@ -80,7 +80,7 @@ defmodule Agendum.TUI.Render.Help do
 
    In the category manager (F9)
      Type / INS    Add a category below            CTRL-N, ALT-D, ALT-I
-     ALT-U         Add a category above            ESC u
+     ALT-U         Add a category above            ⌥u
      ALT-R / ALT-L Add a child / a new family after the parent
      F2            Rename                          CTRL-E
      F7 / F8       Promote / demote
@@ -107,9 +107,9 @@ defmodule Agendum.TUI.Render.Help do
      ALT-F4        Delete the marked text (not kept)
      F2            Paste the text last copied or cut
      ALT-F6        Search / replace text
-     ALT-S         Find the next occurrence         ESC s
+     ALT-S         Find the next occurrence         ⌥s
                    (after a single replacement: replace it)
-     ALT-D / ALT-T Insert today's date / the time   ESC d / ESC t
+     ALT-D / ALT-T Insert today's date / the time   ⌥d / ⌥t
      ALT-N / ALT-P Save; next / previous item's note
      ALT-F7        Make the marked text (or word / line /
                    all) an item (MAKEITM; it leaves the note)

@@ -1206,8 +1206,9 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   view managers, but not while typing. Undoing back to the last save clears
   the "modified" marker. History holds 100 steps.
 - **R31 ✅ Keyboard alternatives.** Function keys are required, as in
-  Agenda: ESC+digit is not an F-key (ADR 0032). ESC+letter = ALT-letter
-  (Option as Meta). CTRL-N = INS, CTRL-E = F2, CTRL-K = F4, CTRL-D = discard,
+  Agenda: ESC+digit is not an F-key (ADR 0032). ALT-letters are ⌥-letters
+  on a Mac with Option as Meta (the terminal sends ESC and the letter
+  together; ESC then a letter typed by hand is ESC, then the letter). CTRL-N = INS, CTRL-E = F2, CTRL-K = F4, CTRL-D = discard,
   CTRL-S/O/P/Q = save/open/print/quit. ⌥↑/⌥↓ jump between sections. Text
   fields use Mac/emacs editing keys. ⌘ shortcuts are mapped onto these CTRL
   keys by the terminal.

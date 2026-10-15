@@ -19,55 +19,55 @@ settings, as described in the second half of this guide.
 | On a section head: Section Properties; in it: remove a column from the section; move it; add one; the head's category properties | F6; DEL; ALT-↑ / ALT-↓; INS; F6 on Section head | —; fn-⌫; ⌥↑ / ⌥↓; **CTRL-N** |
 | On a section head: move the section up or down in the view (↑ ↓, ENTER keeps, ESC puts back) | ALT-F10 | menu View ▸ Section ▸ Move |
 | Copy the item (or the marked items) to another section of the view as well: the Copy box | ALT-F9 | — |
-| Yank back the item DEL last removed from a section: into the current section, below the highlighted item | ALT-Y | ESC then `y` |
-| Hop to the highlighted item's next occurrence: further down this view, else in the next view that shows it (ALT-F8 goes back) | ALT-H | ESC then `h` |
+| Yank back the item DEL last removed from a section: into the current section, below the highlighted item | ALT-Y | ⌥y |
+| Hop to the highlighted item's next occurrence: further down this view, else in the next view that shows it (ALT-F8 goes back) | ALT-H | ⌥h |
 | Discard                                                                                         | ALT-F4                        | **CTRL-D**                                                            |
 | Set the When date                                                                               | ALT-F2                        | menu Item ▸ When                                     |
-| Next / previous completion while typing a column entry                                          | F8 / F7                       | ALT-N / ALT-P (ESC then `n` / `p`)                                    |
+| Next / previous completion while typing a column entry                                          | F8 / F7                       | ALT-N / ALT-P (⌥n / ⌥p)                                    |
 | New category instead of the completion                                                          | F5 or INS                     | **CTRL-N**                                                            |
-| Collapse / expand a family or section (twice: all)                                              | ALT-− / ALT-=                 | ESC then `-` / `=` (Option-− / Option-= also work)                    |
+| Collapse / expand a family or section (twice: all)                                              | ALT-− / ALT-=                 | ⌥− / ⌥=                    |
 | Unmark all items                                                                                | ALT-F7                        | menu Item ▸ Unmark                                   |
-| Jump to the next marked item                                                                    | ALT-J                         | ESC then `j` (Option-j)                                               |
-| Assign the item or marked items to a category (MakeAssign)                                      | ALT-M                         | ESC then `m` (Option-m), or menu Item ▸ Categorize                    |
+| Jump to the next marked item                                                                    | ALT-J                         | ⌥j                                               |
+| Assign the item or marked items to a category (MakeAssign)                                      | ALT-M                         | ⌥m, or menu Item ▸ Categorize                    |
 | Go to a section (GO TO, in a view); sort a family (category manager); sort views (view manager) | ALT-F5                        | —                                                          |
 | Highlight a view by typing the start of its name (view manager)                                 | letters                       | —                                                                     |
-| Next / previous view (in a view)                                                                | ALT-N / ALT-P                 | ESC then `n` / `p`                                                    |
-| Show / hide empty sections (in a view)                                                          | ALT-V                         | ESC then `v`                                                          |
-| Insert an item (in a view)                                                                      | ALT-I                         | ESC then `i`, or INS / **CTRL-N**                                     |
-| Save / retrieve a file (in a view)                                                              | ALT-W / ALT-G                 | ESC then `w` / `g`, or **CTRL-S** / **CTRL-O**                        |
-| Quit                                                                                            | ALT-Q                         | ESC then `q`, or **CTRL-Q**                                           |
-| Show / hide the function key map (kept for next time)                                           | ALT-K                         | ESC then `k`                                                          |
-| Search this view; then next / previous match                                                    | ALT-F6; ALT-N / ALT-P         | —; ESC then `n` / `p`                                      |
-| In a note: search / replace; find the next occurrence (after a single replacement: replace it)  | ALT-F6; ALT-S                 | —; ESC then `s`                                            |
+| Next / previous view (in a view)                                                                | ALT-N / ALT-P                 | ⌥n / ⌥p                                                    |
+| Show / hide empty sections (in a view)                                                          | ALT-V                         | ⌥v                                                          |
+| Insert an item (in a view)                                                                      | ALT-I                         | ⌥i, or INS / **CTRL-N**                                     |
+| Save / retrieve a file (in a view)                                                              | ALT-W / ALT-G                 | ⌥w / ⌥g, or **CTRL-S** / **CTRL-O**                        |
+| Quit                                                                                            | ALT-Q                         | ⌥q, or **CTRL-Q**                                           |
+| Show / hide the function key map (kept for next time)                                           | ALT-K                         | ⌥k                                                          |
+| Search this view; then next / previous match                                                    | ALT-F6; ALT-N / ALT-P         | —; ⌥n / ⌥p                                      |
+| In a note: search / replace; find the next occurrence (after a single replacement: replace it)  | ALT-F6; ALT-S                 | —; ⌥s                                            |
 | In a note: move by the rows shown (long lines wrap, R64); start / end of the row, again: of the line| ↑ ↓; HOME / END               | CTRL-A / CTRL-E                                                       |
-| In a note: insert today's date / the time                                                       | ALT-D / ALT-T                 | ESC then `d` / `t`                                                    |
-| In a note: the next / previous item's (or category's) note                                      | ALT-N / ALT-P                 | ESC then `n` / `p`                                                    |
+| In a note: insert today's date / the time                                                       | ALT-D / ALT-T                 | ⌥d / ⌥t                                                    |
+| In a note: the next / previous item's (or category's) note                                      | ALT-N / ALT-P                 | ⌥n / ⌥p                                                    |
 | In a note: make the marked text (or the word, line or all text) into a new item (it leaves the note; MAKEITM) / the marked text or the word into a new category under a parent you pick (MAKECAT) | ALT-F7 / ALT-F2 | — |
 | In a note: mark text (then move the cursor; again to unmark); copy / cut the marked text, or a word, line or all text; delete it (not kept); paste what was last copied or cut | F7; F3 / F4; ALT-F4; F2 | — |
 | Back to the previous view (LAST VW)                                                             | ALT-F8                        | menu View ▸ Last                                     |
-| Set or cancel an alarm (Item Alarm)                                                             | ALT-A                         | ESC then `a`, or menu Item ▸ Alarm                                    |
-| Macros: the macro manager; in Learn mode, stop recording / run the last macro again             | ALT-F3 / ALT-Z                | — / ESC then `z`                                           |
+| Set or cancel an alarm (Item Alarm)                                                             | ALT-A                         | ⌥a, or menu Item ▸ Alarm                                    |
+| Macros: the macro manager; in Learn mode, stop recording / run the last macro again             | ALT-F3 / ALT-Z                | — / ⌥z                                           |
 | In the macro manager: new macro; learn its keystrokes; run it                                   | INS; F7; ENTER                | **CTRL-N** or type its name; —                             |
 | In the macro manager: edit the keystrokes; properties (attach to a key, where it runs); delete; sort; move | F2; F6; DEL; ALT-F5; ALT-↑ / ALT-↓ | —; fn-⌫; —; ⌥↑ / ⌥↓                       |
-| Pop-up calendar: pick a date (in a date column) / look one up (anywhere in a view)              | F3 / ALT-C                    | — / ESC then `c`                                           |
+| Pop-up calendar: pick a date (in a date column) / look one up (anywhere in a view)              | F3 / ALT-C                    | — / ⌥c                                           |
 | In a Star column: star or unstar; in a Yes/No column: yes or no (R56)                           | SPACE; Y / N                  | —                                                                     |
 | In a Category note column: type the line; edit it; empty it (R56)                               | type; F2; DEL                 | CTRL-E for F2; fn-⌫ for DEL                                           |
 | In the calendar: a day, a week; the first / last day of the month                               | ← → ↑ ↓; HOME / END           | fn-← / fn-→ for HOME / END                                            |
 | In the calendar: a month back / ahead; a year back / ahead                                      | PGUP / PGDN; CTRL-← / CTRL-→  | fn-↑ / fn-↓; `<` / `>`                                                |
 | In the calendar: set the date; a time (F6); go to a typed date; cancel                          | ENTER; F6; type it; ESC       | the same                                                              |
 | In a prompt for a file name: pick it from a list (Select File box: ENTER opens, typing narrows, F7 dates, ESC back) | F3                            | —                                                          |
-| Browse a datebook view: previous / next period; go to a date; keep; go back                     | ALT-B: ← →; ALT-F5; ENTER; ESC | ESC then `b`; `<` / `>`; —                                 |
-| Browse a date filter (standard view): a day; a week; a month; a year                            | ALT-B: ← →; CTRL-← →; PGUP/PGDN; CTRL-PGUP/PGDN | ESC then `b`; ↑ ↓ for a week; ⌥↑ / ⌥↓ for a year                      |
+| Browse a datebook view: previous / next period; go to a date; keep; go back                     | ALT-B: ← →; ALT-F5; ENTER; ESC | ⌥b; `<` / `>`; —                                 |
+| Browse a date filter (standard view): a day; a week; a month; a year                            | ALT-B: ← →; CTRL-← →; PGUP/PGDN; CTRL-PGUP/PGDN | ⌥b; ↑ ↓ for a week; ⌥↑ / ⌥↓ for a year                      |
 | Column width (View ▸ Column ▸ Width): narrower / wider; a width; fit to contents; keep; go back | ← →; type it; SHIFT-?; ENTER; ESC               | `?` (no SHIFT needed); opened from menu View ▸ Column ▸ Width         |
-| Make the item depend on the marked items, or clear its dependencies                             | ALT-O                         | ESC then `o`                                                          |
-| Execute all conditions and actions on all items / those of the highlighted category             | ALT-X / ALT-E                 | ESC then `x` / `e`, or menu Category ▸ Execute                        |
-| Category manager: add a sibling below / above                                                   | ALT-D (or ALT-I, INS) / ALT-U | ESC then `d` / `u`, or **CTRL-N**                                     |
-| Category manager: add a child / a new family after the parent                                   | ALT-R / ALT-L                 | ESC then `r` / `l`                                                    |
+| Make the item depend on the marked items, or clear its dependencies                             | ALT-O                         | ⌥o                                                          |
+| Execute all conditions and actions on all items / those of the highlighted category             | ALT-X / ALT-E                 | ⌥x / ⌥e, or menu Category ▸ Execute                        |
+| Category manager: add a sibling below / above                                                   | ALT-D (or ALT-I, INS) / ALT-U | ⌥d / ⌥u, or **CTRL-N**                                     |
+| Category manager: add a child / a new family after the parent                                   | ALT-R / ALT-L                 | ⌥r / ⌥l                                                    |
 | Remove from section / column                                                                    | DEL                           | fn-⌫ (forward delete)                                                 |
 | Undo / redo                                                                                     | —                             | **CTRL-Z** / **CTRL-Y** (also in the menu)                            |
 | Save / open / print to file / quit                                                              | menu                          | **CTRL-S** / **CTRL-O** / **CTRL-P** / **CTRL-Q** (CTRL-C also quits) |
 | Previous / next section                                                                         | CTRL-PGUP / CTRL-PGDN         | ⌥↑ / ⌥↓ (in a view)                                                   |
-| A count for the next command in a view (R65): ALT-1 ALT-0 ↓ moves ten rows down. Counts work with ↑ ↓ PGUP PGDN ← → TAB, previous / next section, ALT-J, ALT-H, ALT-N / ALT-P; other commands run once; ESC drops the count | ALT-0 … ALT-9 (ours) | Option-digit with Option as Meta |
+| A count for the next command in a view (R65): ALT-1 ALT-0 ↓ moves ten rows down. Counts work with ↑ ↓ PGUP PGDN ← → TAB, previous / next section, ALT-J, ALT-H, ALT-N / ALT-P; other commands run once; ESC drops the count | ALT-0 … ALT-9 (ours) | ⌥0 … ⌥9 (Option as Meta) |
 | Menu                                                                                            | F10                           | `/`                                                                   |
 | Help: the keys; then `c` the command list (ENTER runs one), `d` describe the next key pressed (R65) | F1; then `c` / `d`           | ⌘/ mapped to F1                                                       |
 | In the menu: back up a level; in a box, prompt or question opened from it: back to the menu       | ESC                           | ESC                                                                   |
@@ -87,12 +87,15 @@ While typing text:
 | CTRL-U                       | Clear the line                        |
 | CTRL-D                       | Delete the character under the cursor |
 
-Keys that need the ⌥ (Option) key, such as ALT-D (add section) or ⌥←, need
-"Use Option as Meta key" (Terminal.app: Settings ▸ Profiles ▸ Keyboard) or
-"Esc+" for the left Option key (iTerm2: Settings ▸ Profiles ▸ Keys). Without
-it, ALT-D, ALT-R and ALT-L still work in Terminal.app (Agendum recognises the
-`∂`, `®` and `¬` characters that Option produces), and ESC followed by the
-letter always works.
+ALT is ⌥ (Option) on a Mac: ALT-D (add section) is ⌥D, ALT-← is ⌥←. These
+keys need "Use Option as Meta key" (Terminal.app: Settings ▸ Profiles ▸
+Keyboard) or "Esc+" for the left Option key (iTerm2: Settings ▸ Profiles ▸
+Keys); the terminal then sends ESC and the key together, which Agendum reads
+as ALT. Without it, a few still work in Terminal.app with a US keyboard
+layout: Agendum recognises the characters Option produces for ⌥D, ⌥R, ⌥L,
+⌥T, ⌥W, ⌥J, ⌥M, ⌥− and ⌥= (`∂`, `®`, `¬` …). Pressing ESC and then the
+letter by hand does not work: a lone ESC is ESC (it cancels), and the
+letter then counts on its own (ADR 0032).
 
 Function keys: on a Mac, hold **fn** to send F1…F12, or enable "Use F1, F2,
 etc. keys as standard function keys" in System Settings ▸ Keyboard. ALT-F1…
@@ -221,7 +224,7 @@ Agendum.
 
 ## Developer tools (hidden)
 
-ESC then `?` (ALT-? where Option sends Meta) opens the developer screen from
+ALT-? (⌥? with Option as Meta) opens the developer screen from
 anywhere except while typing: the last key as Agendum decoded it, the mode
 stack, cursor, undo depth, session (time, languages, input format, theme,
 preferences, terminal size), file counts and versions. Every key but ESC is
