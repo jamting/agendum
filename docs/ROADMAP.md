@@ -91,6 +91,7 @@ few commands at a time:
   - [x] Each box's own keys in a keymap of its own (`Box.keymap/1`, `commands/1`, `run/3`; settings boxes from `Box.settings_keymap/1`); `c` and `d` no longer read key bars
   - [x] The menu: its keys in a keymap; F1 `c` lists the level's entries by their letters, F1 `d` describes them
   - [x] Moving items, a column or a section, a column's width, Browse and searching the view: keymaps of their own, F1 there too
+  - [x] The typing keys in keymaps: one line (`:line`, `Typing.LineEdit`) and a note's text (`:text`, `Typing.TextEdit`)
   - [ ] What commands still lack: a longer documentation than the summary, and whether a command can run now (`available?`, so the list can leave out or grey what cannot)
 - [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries (F1 then `c`), and "describe key" (F1 then `d`); the F1 help and KEYBOARD.md checked against the keymaps
   - [x] F1 `c` (ENTER runs the highlighted command) and F1 `d`, in views; elsewhere the global keys

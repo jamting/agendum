@@ -275,7 +275,35 @@ defmodule Agendum.TUI.Commands do
       end)
   }
 
+  @line [
+    {:left, "Left", "A character left", :none},
+    {:right, "Right", "A character right", :none},
+    {:word_left, "Word left", "A word left", :none},
+    {:word_right, "Word right", "A word right", :none},
+    {:line_start, "Start", "The start of the line", :none},
+    {:line_end, "End", "The end of the line", :none},
+    {:delete_back, "Delete back", "Delete the character before", :none},
+    {:delete, "Delete", "Delete the character under the cursor", :none},
+    {:delete_word, "Delete word", "Delete the word before", :none},
+    {:delete_to_end, "Delete to end", "Delete to the end of the line", :none},
+    {:clear, "Clear", "Clear the line", :none}
+  ]
+
+  @text [
+    {:left, "Left", "A character left", :none},
+    {:right, "Right", "A character right", :none},
+    {:up, "Up", "The row above (as shown)", :none},
+    {:down, "Down", "The row below (as shown)", :none},
+    {:line_start, "Start", "Start of the row; again: of the line", :none},
+    {:line_end, "End", "End of the row; again: of the line", :none},
+    {:new_line, "New line", "Break the line here", :none},
+    {:delete_back, "Delete back", "Delete the character before", :none},
+    {:delete, "Delete", "Delete the character under the cursor", :none}
+  ]
+
   @more %{
+    line: @line,
+    text: @text,
     move_item: @move_item,
     searching: @searching,
     browse: @browse,

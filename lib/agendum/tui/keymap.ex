@@ -255,6 +255,48 @@ defmodule Agendum.TUI.Keymap do
     {:f, 1} => :help
   }
 
+  # typing on one line: an item, a name, a box's field, a prompt
+  # (`Typing.LineEdit`); Mac and emacs keys beside the PC ones
+  @line %{
+    :left => :left,
+    {:ctrl, "b"} => :left,
+    :right => :right,
+    {:ctrl, "f"} => :right,
+    :home => :line_start,
+    {:ctrl, "a"} => :line_start,
+    :end => :line_end,
+    {:ctrl, "e"} => :line_end,
+    :ctrl_left => :word_left,
+    {:alt, "b"} => :word_left,
+    {:alt, :left} => :word_left,
+    :ctrl_right => :word_right,
+    {:alt, "f"} => :word_right,
+    {:alt, :right} => :word_right,
+    :backspace => :delete_back,
+    :delete => :delete,
+    {:ctrl, "d"} => :delete,
+    {:ctrl, "k"} => :delete_to_end,
+    {:ctrl, "w"} => :delete_word,
+    {:alt, :backspace} => :delete_word,
+    {:ctrl, "u"} => :clear
+  }
+
+  # typing in a note (`Typing.TextEdit`); the note's own commands are `@note`
+  @text %{
+    :left => :left,
+    :right => :right,
+    :up => :up,
+    :down => :down,
+    :home => :line_start,
+    {:ctrl, "a"} => :line_start,
+    :end => :line_end,
+    {:ctrl, "e"} => :line_end,
+    :enter => :new_line,
+    :backspace => :delete_back,
+    :delete => :delete,
+    {:ctrl, "d"} => :delete
+  }
+
   # every box (`Update`'s box stage); its own keys are the box's
   @box %{
     {:f, 1} => :help,
@@ -281,6 +323,8 @@ defmodule Agendum.TUI.Keymap do
     viewmgr: @viewmgr,
     note: @note,
     menu: @menu,
+    line: @line,
+    text: @text,
     move_item: @move_item,
     searching: @searching,
     browse: @browse,

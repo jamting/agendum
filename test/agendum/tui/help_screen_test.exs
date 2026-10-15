@@ -164,8 +164,9 @@ defmodule Agendum.TUI.HelpScreenTest do
          %{state: state} do
       in_note = press(state, [:down, {:f, 5}])
       assert described(in_note, {:f, 4}) =~ "F4 runs Cut in a note."
-      assert described(in_note, :left) =~ "← edits the text"
-      assert described(in_note, {:ctrl, "e"}) =~ "CTRL-E edits the text"
+      assert described(in_note, :left) =~ "← runs Left in the text."
+      assert described(in_note, {:ctrl, "e"}) =~ "CTRL-E runs End in the text."
+      assert described(in_note, "q") =~ "q is typed into the text."
       refute described(in_note, {:ctrl, "z"}) =~ "Undo"
     end
 

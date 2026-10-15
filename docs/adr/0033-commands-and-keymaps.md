@@ -78,6 +78,7 @@ The owner settled these choices before any code (2026-10-15):
   too (2026-10-15); its entries are chosen by their first letters, which
   the help lists as their keys. So do the modes that move something
   (items, a column, a section, a width, Browse) and searching the view.
-  What still reads keys directly: typing (inline edits, prompts, text
-  fields), the help screen itself, the splash screen and the developer
-  screen.
+  Typing has keymaps too: `:line` for one line (an item, a name, a field,
+  a prompt; `Typing.LineEdit`) and `:text` for a note (`Typing.TextEdit`);
+  a character is typed. What still reads keys directly: the help screen
+  itself, the splash screen and the developer screen.

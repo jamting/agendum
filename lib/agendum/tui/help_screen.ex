@@ -23,7 +23,6 @@ defmodule Agendum.TUI.HelpScreen do
   alias Agendum.TUI.Boxes.{Box, ViewManager}
   alias Agendum.TUI.CategoryScreens.Manager
   alias Agendum.TUI.Render.Help
-  alias Agendum.TUI.Typing.{TextEdit, Wrap}
   alias Agendum.TUI.Update.{Notes, ViewKeys}
 
   # The places with a keymap of their own (`Agendum.TUI.Keymap`), by the
@@ -279,8 +278,11 @@ defmodule Agendum.TUI.HelpScreen do
       from == :menu and match?({:char, _}, key) ->
         menu_letter(state, key, name)
 
-      from == :note and edits_text?(state, key) ->
-        ["#{name} edits the text: types, moves the cursor or deletes."]
+      command = from == :note && Commands.get(:text, Keymap.lookup(:text, key)) ->
+        ["#{name} runs #{command.name} in the text.", command.summary]
+
+      from == :note and match?({:char, _}, key) ->
+        ["#{name} is typed into the text."]
 
       key == :esc ->
         ["ESC cancels or goes back."]
@@ -320,9 +322,6 @@ defmodule Agendum.TUI.HelpScreen do
         ["#{name} chooses #{label}.", description]
     end
   end
-
-  defp edits_text?(state, key),
-    do: match?({:ok, _}, TextEdit.handle(State.mode(state).edit, key, Wrap.width(state)))
 
   defp global_command(key), do: Commands.get(:global, Keymap.lookup(:global, key))
   defp local_command(from, key), do: Commands.get(from, Keymap.lookup(from, key))

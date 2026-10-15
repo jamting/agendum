@@ -1,76 +1,55 @@
 defmodule Agendum.TUI.Typing.LineEdit do
   @moduledoc "A pure single-line text editing buffer (EDIT mode)."
 
+  alias Agendum.TUI.Keymap
+
   @type t :: %__MODULE__{text: String.t(), pos: non_neg_integer}
   defstruct text: "", pos: 0
 
   @spec new(String.t()) :: t
   def new(text \\ ""), do: %__MODULE__{text: text, pos: String.length(text)}
 
-  # Mac and emacs conventions: ⌘←/⌘→ arrive as CTRL-A/CTRL-E in many
-  # terminals, ⌥←/⌥→ as ALT-B/ALT-F or ALT-arrows, ⌘⌫ as CTRL-U.
-  @aliases %{
-    {:ctrl, "a"} => :home,
-    {:ctrl, "e"} => :end,
-    {:ctrl, "b"} => :left,
-    {:ctrl, "f"} => :right,
-    {:ctrl, "d"} => :delete,
-    {:alt, "b"} => :ctrl_left,
-    {:alt, "f"} => :ctrl_right,
-    {:alt, :left} => :ctrl_left,
-    {:alt, :right} => :ctrl_right
-  }
-
-  @doc "Applies a key; returns `{:ok, edit}` or `:unhandled`."
+  @doc """
+  Applies a key; returns `{:ok, edit}` or `:unhandled`. A character is
+  typed; other keys run the command the `:line` keymap binds them to
+  (`Agendum.TUI.Keymap`, R65): Mac and emacs conventions, as ⌘←/⌘→
+  arrive as CTRL-A/CTRL-E in many terminals, ⌥←/⌥→ as ALT-B/ALT-F or
+  ALT-arrows, ⌘⌫ as CTRL-U.
+  """
   @spec handle(t, term) :: {:ok, t} | :unhandled
+  def handle(%__MODULE__{} = e, {:char, c}), do: {:ok, insert(e, c)}
+
   def handle(%__MODULE__{} = e, key) do
-    case Map.get(@aliases, key, key) do
-      {:ctrl, "k"} ->
-        {:ok, %{e | text: String.slice(e.text, 0, e.pos)}}
-
-      k when k in [{:ctrl, "w"}, {:alt, :backspace}] ->
-        start = word_left(e)
-        {before, _} = String.split_at(e.text, start)
-        {_, rest} = String.split_at(e.text, e.pos)
-        {:ok, %{e | text: before <> rest, pos: start}}
-
-      {:char, c} ->
-        {:ok, insert(e, c)}
-
-      :backspace when e.pos > 0 ->
-        {:ok, %{e | text: delete_at(e.text, e.pos - 1), pos: e.pos - 1}}
-
-      :backspace ->
-        {:ok, e}
-
-      :delete ->
-        {:ok, %{e | text: delete_at(e.text, e.pos)}}
-
-      :left ->
-        {:ok, %{e | pos: max(e.pos - 1, 0)}}
-
-      :right ->
-        {:ok, %{e | pos: min(e.pos + 1, String.length(e.text))}}
-
-      :home ->
-        {:ok, %{e | pos: 0}}
-
-      :end ->
-        {:ok, %{e | pos: String.length(e.text)}}
-
-      :ctrl_left ->
-        {:ok, %{e | pos: word_left(e)}}
-
-      :ctrl_right ->
-        {:ok, %{e | pos: word_right(e)}}
-
-      {:ctrl, "u"} ->
-        {:ok, new("")}
-
-      _ ->
-        :unhandled
+    case Keymap.lookup(:line, key) do
+      nil -> :unhandled
+      id -> {:ok, run(e, id)}
     end
   end
+
+  @doc "Runs a line-editing command (`Agendum.TUI.Commands`, `:line`)."
+  @spec run(t, atom) :: t
+  def run(e, :delete_to_end), do: %{e | text: String.slice(e.text, 0, e.pos)}
+
+  def run(e, :delete_word) do
+    start = word_left(e)
+    {before, _} = String.split_at(e.text, start)
+    {_, rest} = String.split_at(e.text, e.pos)
+    %{e | text: before <> rest, pos: start}
+  end
+
+  def run(%{pos: 0} = e, :delete_back), do: e
+
+  def run(e, :delete_back),
+    do: %{e | text: delete_at(e.text, e.pos - 1), pos: e.pos - 1}
+
+  def run(e, :delete), do: %{e | text: delete_at(e.text, e.pos)}
+  def run(e, :left), do: %{e | pos: max(e.pos - 1, 0)}
+  def run(e, :right), do: %{e | pos: min(e.pos + 1, String.length(e.text))}
+  def run(e, :line_start), do: %{e | pos: 0}
+  def run(e, :line_end), do: %{e | pos: String.length(e.text)}
+  def run(e, :word_left), do: %{e | pos: word_left(e)}
+  def run(e, :word_right), do: %{e | pos: word_right(e)}
+  def run(_e, :clear), do: new("")
 
   @spec insert(t, String.t()) :: t
   def insert(%__MODULE__{} = e, str) do

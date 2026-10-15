@@ -17,6 +17,7 @@ defmodule Agendum.TUI.Typing.TextEdit do
         }
   defstruct lines: [""], row: 0, col: 0, mark: nil, goal: nil
 
+  alias Agendum.TUI.Keymap
   alias Agendum.TUI.Typing.Wrap
 
   @spec new(String.t()) :: t
@@ -29,8 +30,6 @@ defmodule Agendum.TUI.Typing.TextEdit do
   @spec text(t) :: String.t()
   def text(%__MODULE__{lines: lines}), do: lines |> Enum.join("\n") |> String.trim_trailing()
 
-  @aliases %{{:ctrl, "a"} => :home, {:ctrl, "e"} => :end, {:ctrl, "d"} => :delete}
-
   @doc """
   A key in the text, shown word-wrapped `width` characters wide
   (`Agendum.TUI.Typing.Wrap`): ↑ ↓ move through the rows on the screen,
@@ -42,9 +41,7 @@ defmodule Agendum.TUI.Typing.TextEdit do
   def handle(e, key, nil), do: handle(e, key)
 
   def handle(%__MODULE__{} = e, key, width) do
-    key = Map.get(@aliases, key, key)
-
-    case wrapped_move(e, key, width) do
+    case wrapped_move(e, Keymap.lookup(:text, key), width) do
       nil -> handle(e, key)
       moved -> {:ok, moved}
     end
@@ -53,22 +50,22 @@ defmodule Agendum.TUI.Typing.TextEdit do
   # the cursor's row on the screen: `i` of `rows`, `x` characters into it;
   # ↑ and ↓ go on from the column they kept, if the cursor is where they
   # left it, and keep it again
-  defp wrapped_move(e, key, width) when key in [:up, :down] do
+  defp wrapped_move(e, id, width) when id in [:up, :down] do
     {rows, i, x} = place(e, width)
     x = kept(e, x)
 
-    case move_in_rows(e, key, rows, i, x, width) do
+    case move_in_rows(e, id, rows, i, x, width) do
       nil -> nil
       moved -> %{moved | goal: {x, {moved.row, moved.col}}}
     end
   end
 
-  defp wrapped_move(e, key, width) when key in [:home, :end] do
+  defp wrapped_move(e, id, width) when id in [:line_start, :line_end] do
     {rows, i, x} = place(e, width)
-    move_in_rows(e, key, rows, i, x, width)
+    move_in_rows(e, id, rows, i, x, width)
   end
 
-  defp wrapped_move(_e, _key, _width), do: nil
+  defp wrapped_move(_e, _id, _width), do: nil
 
   defp kept(%{goal: {goal, at}, row: row, col: col}, _x) when at == {row, col}, do: goal
   defp kept(_e, x), do: x
@@ -99,13 +96,13 @@ defmodule Agendum.TUI.Typing.TextEdit do
   end
 
   # HOME at the start of a row goes on to the start of the line
-  defp move_in_rows(e, :home, rows, i, _x, _width) do
+  defp move_in_rows(e, :line_start, rows, i, _x, _width) do
     {start, _len} = Enum.at(rows, i)
     %{e | col: if(e.col == start, do: 0, else: start)}
   end
 
   # END at the end of a row goes on to the end of the line
-  defp move_in_rows(e, :end, rows, i, _x, _width) do
+  defp move_in_rows(e, :line_end, rows, i, _x, _width) do
     row_end = Wrap.row_end(rows, i)
     %{e | col: if(e.col == row_end, do: String.length(current(e)), else: row_end)}
   end
@@ -113,86 +110,92 @@ defmodule Agendum.TUI.Typing.TextEdit do
   # ↑ on the first row of the text, ↓ on the last: as without wrapping
   defp move_in_rows(_e, _key, _rows, _i, _x, _width), do: nil
 
+  @doc """
+  A key on whole lines: a character is typed; other keys run the command
+  the `:text` keymap binds them to (`Agendum.TUI.Keymap`, R65).
+  """
   @spec handle(t, term) :: {:ok, t} | :unhandled
-  # a key that changes the text drops the mark first; moving keeps it, so
-  # the cursor stretches the region
-  def handle(%__MODULE__{mark: mark} = e, key)
-      when mark != nil and
-             (key in [:enter, :backspace, :delete, {:ctrl, "d"}] or
-                (is_tuple(key) and elem(key, 0) == :char)),
-      do: handle(%{e | mark: nil}, key)
+  def handle(%__MODULE__{} = e, {:char, c}) do
+    e = %{e | mark: nil}
+    {before, rest} = String.split_at(current(e), e.col)
+    {:ok, %{put(e, before <> c <> rest) | col: e.col + String.length(c)}}
+  end
 
   def handle(%__MODULE__{} = e, key) do
+    case Keymap.lookup(:text, key) do
+      nil -> :unhandled
+      id -> {:ok, run(e, id)}
+    end
+  end
+
+  @doc """
+  Runs a text-editing command (`Agendum.TUI.Commands`, `:text`) on whole
+  lines. One that changes the text drops the mark first; moving keeps it,
+  so the cursor stretches the region.
+  """
+  @spec run(t, atom) :: t
+  def run(%__MODULE__{mark: mark} = e, id)
+      when mark != nil and id in [:new_line, :delete_back, :delete],
+      do: run(%{e | mark: nil}, id)
+
+  def run(%__MODULE__{} = e, id) do
     line = current(e)
 
-    key = Map.get(@aliases, key, key)
-
-    case key do
-      {:char, c} ->
-        {before, rest} = String.split_at(line, e.col)
-        {:ok, %{put(e, before <> c <> rest) | col: e.col + String.length(c)}}
-
-      :enter ->
+    case id do
+      :new_line ->
         {before, rest} = String.split_at(line, e.col)
         lines = e.lines |> List.replace_at(e.row, before) |> List.insert_at(e.row + 1, rest)
-        {:ok, %{e | lines: lines, row: e.row + 1, col: 0}}
+        %{e | lines: lines, row: e.row + 1, col: 0}
 
-      :backspace when e.col > 0 ->
+      :delete_back when e.col > 0 ->
         {before, rest} = String.split_at(line, e.col)
-        {:ok, %{put(e, String.slice(before, 0..-2//1) <> rest) | col: e.col - 1}}
+        %{put(e, String.slice(before, 0..-2//1) <> rest) | col: e.col - 1}
 
-      :backspace when e.row > 0 ->
+      :delete_back when e.row > 0 ->
         prev = Enum.at(e.lines, e.row - 1)
         lines = e.lines |> List.delete_at(e.row) |> List.replace_at(e.row - 1, prev <> line)
-        {:ok, %{e | lines: lines, row: e.row - 1, col: String.length(prev)}}
+        %{e | lines: lines, row: e.row - 1, col: String.length(prev)}
 
       :delete ->
         {before, rest} = String.split_at(line, e.col)
 
         cond do
           rest != "" ->
-            {:ok, put(e, before <> String.slice(rest, 1..-1//1))}
+            put(e, before <> String.slice(rest, 1..-1//1))
 
           e.row < length(e.lines) - 1 ->
             next = Enum.at(e.lines, e.row + 1)
-
-            {:ok,
-             %{
-               e
-               | lines:
-                   e.lines |> List.delete_at(e.row + 1) |> List.replace_at(e.row, line <> next)
-             }}
+            lines = e.lines |> List.delete_at(e.row + 1) |> List.replace_at(e.row, line <> next)
+            %{e | lines: lines}
 
           true ->
-            {:ok, e}
+            e
         end
 
       :left when e.col > 0 ->
-        {:ok, %{e | col: e.col - 1}}
+        %{e | col: e.col - 1}
 
       :left when e.row > 0 ->
-        {:ok, %{e | row: e.row - 1, col: String.length(Enum.at(e.lines, e.row - 1))}}
+        %{e | row: e.row - 1, col: String.length(Enum.at(e.lines, e.row - 1))}
 
       :right ->
-        {:ok, if(e.col < String.length(line), do: %{e | col: e.col + 1}, else: down(e, 0))}
+        if e.col < String.length(line), do: %{e | col: e.col + 1}, else: down(e, 0)
 
       :up when e.row > 0 ->
-        {:ok, clamp(%{e | row: e.row - 1})}
+        clamp(%{e | row: e.row - 1})
 
       :down ->
-        {:ok, down(e, e.col)}
+        down(e, e.col)
 
-      :home ->
-        {:ok, %{e | col: 0}}
+      :line_start ->
+        %{e | col: 0}
 
-      :end ->
-        {:ok, %{e | col: String.length(line)}}
+      :line_end ->
+        %{e | col: String.length(line)}
 
-      k when k in [:left, :up, :backspace] ->
-        {:ok, e}
-
+      # ← at the very start, ↑ on the first line, BACKSPACE at the start
       _ ->
-        :unhandled
+        e
     end
   end
 

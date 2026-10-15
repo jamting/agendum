@@ -1249,7 +1249,8 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   chooses. The keys of every screen are not listed there (they do nothing
   in the menu). ✅ The same while moving items, a column or a section,
   changing a column's width, browsing dates and searching the view: each
-  has a keymap, and F1 opens the help there.
+  has a keymap, and F1 opens the help there. Typing keys are in keymaps
+  too (one line, and a note's text), so describe key names them in a note.
 - **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
   category name is typed into a column cell, Agenda shows the first
   matching category (the rest of its name in grey), the top line says how
