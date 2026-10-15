@@ -92,12 +92,20 @@ defmodule Agendum.TUI.CategoryScreens do
     state.db |> Database.descendants(root) |> Enum.map(&{&1, Database.depth(state.db, &1) - base})
   end
 
+  # A box listing categories shows as many as Agenda's Assignment Profile
+  # (13), however tall the terminal; below them the box adds a blank line
+  # and a hint (`@below`)
+  @list_rows 13
+  @below 2
+
   @doc """
-  The lines of a box listing categories, `inner` wide, at most `max_rows`
-  of them, scrolled to the cursor: each with the mark `marker.(state, mode,
-  id)` gives it (one character) to its left.
+  The lines of a box listing categories, `inner` wide, scrolled to the
+  cursor: each with the mark `marker.(state, mode, id)` gives it (one
+  character) to its left. As many as fit in `max_rows` with the two lines
+  the box adds below them, and no more than Agenda's box shows.
   """
   def list_lines(state, mode, inner, max_rows, marker) do
+    max_rows = (max_rows - @below) |> min(@list_rows) |> max(1)
     rows = rows(state, mode)
     cursor = min(mode.cursor, max(length(rows) - 1, 0))
     top = max(cursor - max_rows + 1, 0)

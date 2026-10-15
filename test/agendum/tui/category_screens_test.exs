@@ -10,6 +10,48 @@ defmodule Agendum.TUI.CategoryScreensTest do
 
   defp cat(state, name), do: hd(Database.find_categories(state.db, name))
 
+  describe "the boxes listing categories (F3 on an item, F3 on a section head)" do
+    setup do
+      {:ok, db} = Agendum.Store.load("starters/planner.agendum")
+      %{planner: db}
+    end
+
+    # the screen's lines, and the rows of the box's top and bottom frame
+    defp box_rows(state) do
+      lines = state |> screen() |> String.split("\n")
+      top = Enum.find_index(lines, &String.contains?(&1, "┌"))
+      bottom = Enum.find_index(lines, &String.contains?(&1, "└"))
+      {lines, top, bottom}
+    end
+
+    test "fit a 25-line screen with their frame, as Agenda's", %{planner: db} do
+      # the first is the section head (Change section head), then an item
+      for keys <- [[{:f, 3}], [:down, {:f, 3}]] do
+        state = db |> start(width: 80, height: 25) |> press(keys)
+        {lines, top, bottom} = box_rows(state)
+        assert top && bottom, Enum.join(lines, "\n")
+        # the key bar is the last line; the frame's shadow needs the row above it
+        assert bottom <= length(lines) - 3
+      end
+    end
+
+    test "are no taller than Agenda's in a tall terminal", %{planner: db} do
+      state = db |> start(width: 100, height: 50) |> press([:down, {:f, 3}])
+      {_lines, top, bottom} = box_rows(state)
+      # Agenda's Assignment Profile is 16 rows with its frame: 13 categories
+      # and a "Profile for" line; ours has a blank line and a legend instead
+      assert bottom - top + 1 <= 17
+    end
+
+    test "scroll to the cursor", %{planner: db} do
+      state =
+        db |> start(width: 80, height: 25) |> press([:down, {:f, 3}] ++ List.duplicate(:down, 60))
+
+      assert screen(state) =~ "Report ID"
+      refute screen(state) =~ ~r/│ +MAIN/
+    end
+  end
+
   test "F9 shows the hierarchy", %{state: state} do
     screen = state |> press({:f, 9}) |> screen()
     assert screen =~ "Category Manager"

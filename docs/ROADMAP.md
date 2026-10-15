@@ -75,6 +75,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [ ] Boxes: F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) every setting in the box, CTRL-ENTER clears a setting (User's Guide 2-17)
 - [x] Bug: hint lines inside two settings boxes still gave the keys from before ENTER meant done (§5, ADR 0030): Item Properties said "ENTER edit", Macro Properties "ENTER changes". Fixed by moving both to `Agendum.TUI.Boxes.Box`, whose hint is made from the same keys as the key bar
 - [x] Search/Replace in a note: "Replace this occurrence?" as a Yes/No box, as the other questions, placed so that it does not cover the occurrence
+- [x] Boxes listing categories (F3 on an item or a section head, the pickers): 13 categories as Agenda's Assignment Profile, however tall the terminal, and never past the bottom of the screen (their frame was cut off)
 - [x] File Properties ▸ File statistics: Agenda's File Statistics box (screenshot 140), as Category Statistics
 - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash, Tab size; screenshot 130) where Agendum has them
 - [ ] Look into: one fuzz run (2026-10-14, while letters in boxes were built) printed a stack trace through `Agendum.TUI.Boxes.BoxChoices` yet passed; not reproduced in three later 1,500–2,000-run sweeps
