@@ -417,7 +417,7 @@ defmodule Agendum.TUI.Update do
 
   # a box with a module of its own (`Agendum.TUI.Boxes.Box`)
   defp dispatch(state, %{type: type} = m, key) when is_map_key(@boxes, type),
-    do: @boxes[type].handle(state, m, key)
+    do: Agendum.TUI.Boxes.Box.dispatch(@boxes[type], state, m, key)
 
   defp dispatch(state, %{type: :menu} = m, key), do: Menu.handle(state, m, key)
 

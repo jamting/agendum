@@ -16,11 +16,9 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-
   alias Agendum.Core
   alias Agendum.Core.{DateFormat, DateSettings}
-  alias Agendum.TUI.Boxes.{Box, BoxNav, DisplayFormatBox, InputFormatBox, Template}
+  alias Agendum.TUI.Boxes.{Box, DisplayFormatBox, InputFormatBox, Template}
   alias Agendum.TUI.State
   alias Agendum.TUI.Update.Prompts
 
@@ -66,14 +64,18 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
   def open(state), do: State.push(state, %{type: :date_settings, cursor: 0})
 
   @impl Box
-  def handle(state, mode, key) do
-    case key do
-      k when k in [:esc, :enter] -> State.pop(state)
-      k when is_move(k) -> BoxNav.move(state, mode, @grid, k)
-      {:char, " "} -> change(state, field(state, mode))
-      _ -> state
-    end
-  end
+  # its keys are the settings box's (R65): SPACE changes the setting
+  def handle(state, _mode, _key), do: state
+
+  @impl Box
+  def keymap, do: Box.settings_keymap()
+
+  @impl Box
+  def commands, do: Box.settings_commands()
+
+  @impl Box
+  def run(state, mode, :change), do: change(state, field(state, mode))
+  def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
   defp change(state, :display_format), do: DisplayFormatBox.open(state)
   defp change(state, :input_format), do: InputFormatBox.open(state)

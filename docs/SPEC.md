@@ -1239,9 +1239,11 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   in one of its fields): `c` lists the box's own keys as its key bar
   names them (ENTER presses that key in the box), then the keys every
   box shares (F1, F3 a setting's choices, ESC cancel) and the keys of
-  every screen; `d` describes a key from the same lists. ⏳ The boxes'
-  own keys are read from their key bars, not yet from keymaps; the menu
-  is not covered yet.
+  every screen; `d` describes a key from the same lists. A box with a
+  keymap of its own (the settings boxes: the moves, SPACE change, ENTER
+  done, ESC cancel) lists its commands from it; ⏳ the others' keys are
+  read from their key bars until they have one; the menu is not covered
+  yet.
 - **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
   category name is typed into a column cell, Agenda shows the first
   matching category (the rest of its name in grey), the top line says how

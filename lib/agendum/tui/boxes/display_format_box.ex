@@ -13,11 +13,9 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-
   alias Agendum.Core
   alias Agendum.Core.DateFormat
-  alias Agendum.TUI.Boxes.{Box, BoxNav, DateFormatRows, Template}
+  alias Agendum.TUI.Boxes.{Box, DateFormatRows, Template}
   alias Agendum.TUI.State
 
   @layout """
@@ -39,22 +37,27 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
   def open(state), do: State.push(state, %{type: :display_format, cursor: 0})
 
   @impl Box
-  def handle(state, mode, key) do
-    case key do
-      k when k in [:esc, :enter] ->
-        State.pop(state)
+  # its keys are the settings box's (R65): SPACE changes the setting
+  def handle(state, _mode, _key), do: state
 
-      k when is_move(k) ->
-        BoxNav.move(state, mode, @grid, k)
+  @impl Box
+  def keymap, do: Box.settings_keymap()
 
-      {:char, " "} ->
-        format = DateFormat.cycle(state.db.date_format, field(state, mode), 1)
-        State.change_db(state, Core.set_date_format(state.db, format))
+  @impl Box
+  def commands, do: Box.settings_commands()
 
-      _ ->
-        state
-    end
-  end
+  @impl Box
+  def run(state, mode, :change),
+    do:
+      State.change_db(
+        state,
+        Core.set_date_format(
+          state.db,
+          DateFormat.cycle(state.db.date_format, field(state, mode), 1)
+        )
+      )
+
+  def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
   @impl Box
   def title(_state, _mode), do: "Display format"

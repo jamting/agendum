@@ -23,10 +23,8 @@ defmodule Agendum.TUI.Boxes.FileProperties do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-
   alias Agendum.Core
-  alias Agendum.TUI.Boxes.{AutoAssignBox, Box, BoxNav, DateSettingsBox, FileStatsBox, Template}
+  alias Agendum.TUI.Boxes.{AutoAssignBox, Box, DateSettingsBox, FileStatsBox, Template}
   alias Agendum.TUI.State
 
   # Agenda's File Properties (screenshot 130), its other settings left out
@@ -55,14 +53,18 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   def open(state), do: State.push(state, %{type: :file_props, cursor: 0})
 
   @impl Box
-  def handle(state, mode, key) do
-    case key do
-      k when k in [:esc, :enter] -> State.pop(state)
-      k when is_move(k) -> BoxNav.move(state, mode, @grid, k)
-      {:char, " "} -> change(state, field(state, mode))
-      _ -> state
-    end
-  end
+  # its keys are the settings box's (R65): SPACE changes the setting
+  def handle(state, _mode, _key), do: state
+
+  @impl Box
+  def keymap, do: Box.settings_keymap()
+
+  @impl Box
+  def commands, do: Box.settings_commands()
+
+  @impl Box
+  def run(state, mode, :change), do: change(state, field(state, mode))
+  def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
   defp change(state, :dates), do: DateSettingsBox.open(state)
   defp change(state, :auto), do: AutoAssignBox.open(state)

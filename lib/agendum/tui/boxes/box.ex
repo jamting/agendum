@@ -69,6 +69,20 @@ defmodule Agendum.TUI.Boxes.Box do
   @doc "The width inside the frame; by default 60 columns, less on a narrow screen."
   @callback width(State.t(), mode) :: pos_integer
 
+  @doc """
+  The box's own keys (R65, ADR 0033): key to command id. A box with a
+  keymap gets its keys through `run/3`; keys not in it, and every key
+  while a field is being typed, still go to `c:handle/3`. By default
+  none: the box reads all its keys in `c:handle/3`.
+  """
+  @callback keymap() :: %{term => atom}
+
+  @doc "The box's commands, `{id, name, summary}`, in the order the command list shows."
+  @callback commands() :: [{atom, String.t(), String.t()}]
+
+  @doc "Runs one of the box's commands."
+  @callback run(State.t(), mode, id :: atom) :: State.t()
+
   # The boxes, by their mode's type. A module holds a box's
   # name only (no call at compile time), so the boxes and this module can
   # refer to each other.
@@ -197,6 +211,89 @@ defmodule Agendum.TUI.Boxes.Box do
   end
 
   @doc """
+  A key for `box`, on top as `mode`: the command its keymap binds the key
+  to, or else (and while one of its fields is being typed in) the box's
+  `c:handle/3`.
+  """
+  @spec dispatch(module, State.t(), mode, term) :: State.t()
+  def dispatch(box, state, mode, key) do
+    typing = state.edit != nil or Map.get(mode, :typing) != nil
+
+    case if(typing, do: nil, else: Map.get(box.keymap(), key)) do
+      nil -> box.handle(state, mode, key)
+      id -> box.run(state, mode, id)
+    end
+  end
+
+  # --- the keys of a settings box ----------------------------------------------
+
+  # Agenda's keys in a box of settings (User's Guide 2-16, ADR 0031): the
+  # arrows, TAB, HOME and END move (`BoxNav`), SPACE changes the setting,
+  # ENTER is done and ESC cancels (`BoxCancel` puts the changes back)
+  @settings_keymap %{
+    :up => :up,
+    :down => :down,
+    :left => :left,
+    :right => :right,
+    :tab => :next,
+    :shift_tab => :previous,
+    :home => :first,
+    :end => :last,
+    {:char, " "} => :change,
+    :enter => :done,
+    :esc => :close
+  }
+
+  @settings_commands [
+    {:change, "Change", "Next choice of the setting"},
+    {:up, "Up", "The setting above"},
+    {:down, "Down", "The setting below"},
+    {:left, "Left", "The setting to the left"},
+    {:right, "Right", "The setting to the right"},
+    {:next, "Next", "The next setting"},
+    {:previous, "Previous", "The previous setting"},
+    {:first, "First", "The first setting"},
+    {:last, "Last", "The last setting"},
+    {:done, "Done", "Close, keeping the changes"},
+    {:close, "Cancel", "Close, putting back the changes"}
+  ]
+
+  # the key each move is, for `BoxNav`
+  @move_keys %{
+    up: :up,
+    down: :down,
+    left: :left,
+    right: :right,
+    next: :tab,
+    previous: :shift_tab,
+    first: :home,
+    last: :end
+  }
+
+  @doc "A settings box's keymap: the shared keys, with the box's own (`extra`) over them."
+  @spec settings_keymap(%{term => atom}) :: %{term => atom}
+  def settings_keymap(extra \\ %{}), do: Map.merge(@settings_keymap, extra)
+
+  @doc "A settings box's commands: the shared ones, `extra` after Change."
+  @spec settings_commands([{atom, String.t(), String.t()}]) :: [{atom, String.t(), String.t()}]
+  def settings_commands(extra \\ []) do
+    [change | rest] = @settings_commands
+    ids = for {id, _, _} <- extra, do: id
+    [change | extra] ++ Enum.reject(rest, fn {id, _, _} -> id in ids end)
+  end
+
+  @doc """
+  Runs a command every settings box has: a move through `grid`
+  (`Agendum.TUI.Boxes.BoxNav`), Done or Cancel (both close the box here;
+  ESC's putting back is `BoxCancel`'s, before the box sees the key).
+  """
+  @spec run_settings(State.t(), mode, Agendum.TUI.Boxes.BoxNav.grid(), atom) :: State.t()
+  def run_settings(state, _mode, _grid, id) when id in [:done, :close], do: State.pop(state)
+
+  def run_settings(state, mode, grid, id) when is_map_key(@move_keys, id),
+    do: Agendum.TUI.Boxes.BoxNav.move(state, mode, grid, @move_keys[id])
+
+  @doc """
   `use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true`
   declares the module a box: it must define the callbacks, and gets
   `finish/1`, `indicator/0`, `cancels?/0` and `choices?/0` from the options.
@@ -223,7 +320,14 @@ defmodule Agendum.TUI.Boxes.Box do
       def width(state, _mode), do: min(state.width - 8, 60)
       @impl true
       def field(_state, _mode), do: nil
-      defoverridable width: 2, field: 2, finish: 1
+      # no keymap: the box reads its keys in handle/3
+      @impl true
+      def keymap, do: %{}
+      @impl true
+      def commands, do: []
+      @impl true
+      def run(state, _mode, _id), do: state
+      defoverridable width: 2, field: 2, finish: 1, keymap: 0, commands: 0, run: 3
     end
   end
 end

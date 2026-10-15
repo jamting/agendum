@@ -96,6 +96,23 @@ defmodule Agendum.TUI.KeymapTest do
     end
   end
 
+  test "a box's keymap and its commands agree, and fit the command list" do
+    boxes = for {_type, box} <- Agendum.TUI.Boxes.Box.registry(), box.commands() != [], do: box
+    assert boxes != []
+
+    for box <- Enum.uniq(boxes) do
+      ids = for {id, _, _} <- box.commands(), do: id
+      assert ids == Enum.uniq(ids), inspect(box)
+
+      for {key, id} <- box.keymap(), do: assert(id in ids, "#{inspect(box)}: #{inspect(key)}")
+
+      for {id, name, summary} <- box.commands() do
+        assert id in Map.values(box.keymap()), "#{inspect(box)}: #{id} has no key"
+        assert String.length(name) <= 17 and String.length(summary) <= 38, name
+      end
+    end
+  end
+
   test "key names read back as keys; a dash is no key" do
     for key <- [{:f, 4}, {:alt_f, 10}, {:ctrl, "d"}, {:alt, "m"}, :pgdn, :ctrl_home, {:alt, :up}] do
       assert Keymap.parse(Keymap.name(key)) == key

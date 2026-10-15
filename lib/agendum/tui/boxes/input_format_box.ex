@@ -15,8 +15,7 @@ defmodule Agendum.TUI.Boxes.InputFormatBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
+  alias Agendum.TUI.Boxes.{Box, Template}
 
   alias Agendum.Core.InputFormat
   alias Agendum.TUI.State
@@ -43,16 +42,18 @@ defmodule Agendum.TUI.Boxes.InputFormatBox do
   def open(state), do: State.push(state, %{type: :input_format, cursor: 0})
 
   @impl Box
-  def handle(state, mode, key) do
-    row = Enum.at(@rows, mode.cursor)
+  # its keys are the settings box's (R65): SPACE changes the setting
+  def handle(state, _mode, _key), do: state
 
-    case key do
-      k when k in [:esc, :enter] -> State.pop(state)
-      k when is_move(k) -> BoxNav.move(state, mode, @grid, k)
-      {:char, " "} -> change(state, row, 1)
-      _ -> state
-    end
-  end
+  @impl Box
+  def keymap, do: Box.settings_keymap()
+
+  @impl Box
+  def commands, do: Box.settings_commands()
+
+  @impl Box
+  def run(state, mode, :change), do: change(state, Enum.at(@rows, mode.cursor), 1)
+  def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
   defp change(state, row, step) do
     input = InputFormat.cycle(state.input, row, step)

@@ -64,7 +64,7 @@ defmodule Agendum.TUI.HelpScreen do
   # box shares that the key bar does not name, then the global ones.
   defp list(state, :box) do
     own = own_keys(state)
-    written = for {_, :own, [keys]} <- own, token <- tokens(keys), do: token
+    written = for {_, :own, keys} <- own, key <- keys, token <- names(key), do: token
 
     shared =
       for {_c, :box, keys} = entry <- commands(:box),
@@ -77,11 +77,32 @@ defmodule Agendum.TUI.HelpScreen do
 
   defp list(_state, from), do: commands(from)
 
+  # A box's own commands: from its keymap when it has one (R65), each with
+  # its keys; else from its key bar, each with the keys as written there.
   defp own_keys(state) do
     mode = State.mode(state)
     box = Box.module(mode)
 
-    for entry <- if(box, do: box.keys(state, mode), else: []) do
+    case box && box.commands() do
+      [_ | _] = commands ->
+        keymap = box.keymap()
+
+        for {id, name, summary} <- commands do
+          keys = for {key, ^id} <- keymap, do: key
+
+          {%Command{id: id, name: name, summary: summary}, :own,
+           Enum.sort_by(keys, &Keymap.name/1)}
+        end
+
+      _ ->
+        key_bar(state, box, mode)
+    end
+  end
+
+  defp key_bar(_state, nil, _mode), do: []
+
+  defp key_bar(state, box, mode) do
+    for entry <- box.keys(state, mode) do
       {keys, name, summary} =
         case entry do
           {k, l} -> {k, l, l}
@@ -181,6 +202,11 @@ defmodule Agendum.TUI.HelpScreen do
   defp run(state, {%Command{id: id}, :viewmgr, _keys}), do: ViewManager.run(state, id)
   defp run(state, {%Command{id: id}, :note, _keys}), do: Notes.run(state, id)
   # a box's own key from its key bar: the key is pressed in the box
+  defp run(state, {%Command{id: id}, :own, _keys}) when id != nil do
+    mode = State.mode(state)
+    Box.module!(mode).run(state, mode, id)
+  end
+
   defp run(state, {_command, :own, [keys]}) do
     case keys |> tokens() |> Enum.map(&Keymap.parse/1) do
       [key | _] when key != nil -> Agendum.TUI.Update.box_key(state, key)
@@ -233,8 +259,7 @@ defmodule Agendum.TUI.HelpScreen do
         [via <> "#{name} runs #{command.name}, everywhere but while typing.", command.summary]
 
       from == :box and own_key(state, key) != nil ->
-        {command, :own, [keys]} = own_key(state, key)
-        ["#{name} in this box: #{command.summary} (#{keys} on its key bar)."]
+        own_lines(own_key(state, key), name)
 
       command = local_command(from, key) ->
         [via <> "#{name} runs #{command.name} #{here}.", command.summary] ++ count_line(command)
@@ -288,18 +313,34 @@ defmodule Agendum.TUI.HelpScreen do
     end
   end
 
-  # the box's key bar entry for a key (a letter in any case); a character
-  # is also what the key bar calls "type" or "letter"
+  # the box's command or key bar entry for a key (a letter in any case);
+  # a character is also what a key bar calls "type" or "letter"
   defp own_key(state, key) do
     name = String.upcase(Keymap.name(key))
 
-    Enum.find(own_keys(state), fn {_, :own, [keys]} ->
-      Enum.any?(tokens(keys), fn token ->
-        String.upcase(token) == name or
-          (match?({:char, _}, key) and token in ["type", "letter"])
+    Enum.find(own_keys(state), fn {_, :own, keys} ->
+      Enum.any?(keys, fn
+        written when is_binary(written) ->
+          Enum.any?(tokens(written), fn token ->
+            String.upcase(token) == name or
+              (match?({:char, _}, key) and token in ["type", "letter"])
+          end)
+
+        bound ->
+          bound == key
       end)
     end)
   end
+
+  defp own_lines({%Command{id: nil, summary: summary}, :own, [written]}, name),
+    do: ["#{name} in this box: #{summary} (#{written} on its key bar)."]
+
+  defp own_lines({%Command{name: command, summary: summary}, :own, _keys}, name),
+    do: ["#{name} runs #{command} in this box.", summary]
+
+  # the key names an entry's key stands for
+  defp names(written) when is_binary(written), do: tokens(written)
+  defp names(key), do: [Keymap.name(key)]
 
   defp edits_text?(state, key),
     do: match?({:ok, _}, TextEdit.handle(State.mode(state).edit, key, Wrap.width(state)))

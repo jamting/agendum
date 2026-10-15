@@ -242,8 +242,12 @@ defmodule Agendum.TUI.Keymap do
   def keys_for(place, id) do
     keys = for {key, ^id} <- bindings(place), do: key
     aliases = for {key, _} <- @aliases, alias_in(place, key) in keys, do: key
-    Enum.sort_by(keys ++ aliases, &{rank(&1), name(&1)})
+    sort(keys ++ aliases)
   end
+
+  @doc "Keys in the order the help shows them: plain keys (arrows first), F-keys, ALT, CTRL."
+  @spec sort([term]) :: [term]
+  def sort(keys), do: Enum.sort_by(keys, &{rank(&1), name(&1)})
 
   # the shown order: plain keys (arrows first), F-keys, ALT-F, ALT, then CTRL
   @plain [:up, :down, :left, :right, :pgup, :pgdn, :home, :end, :insert, :delete] ++

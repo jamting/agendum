@@ -217,4 +217,21 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert State.mode(press(typing, {:f, 1})).type == :item_props
     end
   end
+
+  describe "in a settings box with a keymap (File Properties)" do
+    setup %{state: state}, do: %{box: Agendum.TUI.Boxes.FileProperties.open(state)}
+
+    test "c lists its commands from its keymap, and ENTER runs one", %{box: box} do
+      text = screen(press(box, [{:f, 1}, "c"]))
+      assert text =~ ~r/Change +SPACE +Next choice of the setting/
+      assert text =~ ~r/Next +TAB +The next setting/
+      ran = press(box, [{:f, 1}, "c", :down, :down, :enter])
+      assert State.mode(ran).cursor == State.mode(press(box, :down)).cursor
+    end
+
+    test "d describes a key of its keymap", %{box: box} do
+      assert described(box, {:char, " "}) =~ "SPACE runs Change in this box."
+      assert described(box, :enter) =~ "ENTER runs Done in this box."
+    end
+  end
 end
