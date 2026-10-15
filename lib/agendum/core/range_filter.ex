@@ -16,7 +16,7 @@ defmodule Agendum.Core.RangeFilter do
 
   alias Agendum.Core.{Context, Database, DateParser, NumberFormat}
 
-  @type bound :: String.t() | float | nil
+  @type bound :: String.t() | float | Date.t() | nil
   @type term_ :: {:range, bound, bound, :inside | :outside}
 
   @doc "Whether a category takes ranges (date and numeric categories)."
@@ -108,6 +108,17 @@ defmodule Agendum.Core.RangeFilter do
   defp compare(a, b) when a > b, do: :gt
   defp compare(_a, _b), do: :eq
 
+  @doc """
+  The range with its date expressions read against the clock now, so that
+  a view reads "monday" once rather than once for each item (reading a
+  date runs every rule of the date languages). `met?/5` takes the result
+  as it takes the stored range; it is not for storing, as a relative date
+  must be read again each day.
+  """
+  @spec resolve_bounds(Database.t(), term_, Context.clock() | nil) :: term_
+  def resolve_bounds(db, {:range, from, to, where}, today),
+    do: {:range, resolve(db, from, today), resolve(db, to, today), where}
+
   # An item's date (the day only, for When) or number in the category.
   defp value(db, item_id, cat_id) do
     if Database.date_category?(db, cat_id),
@@ -119,6 +130,8 @@ defmodule Agendum.Core.RangeFilter do
   # dates can be read.
   defp resolve(_db, nil, _today), do: nil
   defp resolve(_db, number, _today) when is_number(number), do: number
+  # already read (resolve_bounds/3)
+  defp resolve(_db, %Date{} = date, _today), do: date
 
   defp resolve(_db, text, nil) do
     case Date.from_iso8601(text) do

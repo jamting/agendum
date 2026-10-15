@@ -3,7 +3,7 @@ defmodule Agendum.Core.RangeFiltersTest do
   use ExUnit.Case, async: true
 
   alias Agendum.Core
-  alias Agendum.Core.{Database, ViewModel}
+  alias Agendum.Core.{Database, RangeFilter, ViewModel}
 
   # Thursday
   @today ~D[2026-10-08]
@@ -79,6 +79,21 @@ defmodule Agendum.Core.RangeFiltersTest do
       db = filter(db, view, w, :assigned, "today", "friday")
       assert shown(db, view) == ["b"]
       assert shown(db, view, ~D[2026-10-19]) == ["c"]
+    end
+
+    test "a view reads its relative dates once, and the dates give the same answer",
+         %{db: db, when: w} do
+      range = {:range, "today", "friday", :inside}
+
+      assert RangeFilter.resolve_bounds(db, range, @today) ==
+               {:range, ~D[2026-10-08], ~D[2026-10-09], :inside}
+
+      resolved = RangeFilter.resolve_bounds(db, range, @today)
+
+      for item <- Map.values(db.items) do
+        assert RangeFilter.met?(db, item.id, w, resolved, @today) ==
+                 RangeFilter.met?(db, item.id, w, range, @today)
+      end
     end
 
     test "a date that cannot be read is refused", %{db: db, view: view, when: w} do

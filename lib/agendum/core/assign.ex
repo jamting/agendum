@@ -158,6 +158,19 @@ defmodule Agendum.Core.Assign do
       plain_criteria_met?(db, item_id, criteria)
   end
 
+  @doc """
+  The criteria with the date ranges read against the clock once
+  (`RangeFilter.resolve_bounds/3`), for testing many items with
+  `criteria_met?/4`: a view does this before it filters its items.
+  """
+  @spec resolve_ranges(db, [{id, term}], Agendum.Core.Context.clock() | nil) :: [{id, term}]
+  def resolve_ranges(db, criteria, today) do
+    Enum.map(criteria, fn
+      {cat, {:range, _, _, _} = range} -> {cat, RangeFilter.resolve_bounds(db, range, today)}
+      criterion -> criterion
+    end)
+  end
+
   defp plain_criteria_met?(db, item_id, criteria) do
     {positive, negative} = Enum.split_with(criteria, &(elem(&1, 1) == :assigned))
 

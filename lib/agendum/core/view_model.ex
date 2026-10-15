@@ -72,13 +72,14 @@ defmodule Agendum.Core.ViewModel do
   def build(%Database{} = db, %View{datebook: %Datebook{} = d} = view, today) do
     category = db.categories[d.section_category]
 
+    # date words in the filter ("yesterday") are read once, not per item
+    filter = Assign.resolve_ranges(db, view.filter, today)
+
     items =
       db
       |> Database.items_in(category.id)
       |> Enum.reject(&(view.hide_done and &1.done != nil))
-      |> Enum.filter(
-        &(Assign.criteria_met?(db, &1.id, view.filter, today) and shown?(&1, view.match))
-      )
+      |> Enum.filter(&(Assign.criteria_met?(db, &1.id, filter, today) and shown?(&1, view.match)))
       |> Enum.reject(&(view.hide_dependent and Database.waiting?(db, &1.id)))
       |> Enum.map(&{&1, dated(db, &1.id, d.date_category), dated(db, &1.id, d.end_category)})
       |> Enum.reject(&(elem(&1, 1) == nil))
@@ -121,14 +122,15 @@ defmodule Agendum.Core.ViewModel do
     |> sort_sections(db, view, Context.number_opts(today))
     |> Enum.map(fn {section, index} ->
       category = db.categories[section.category_id]
+      # date words in the filters ("yesterday") are read once, not per item
+      filter = Assign.resolve_ranges(db, view.filter ++ section.filter, today)
 
       rows =
         db
         |> Database.items_in(category.id)
         |> Enum.reject(&(view.hide_done and &1.done != nil))
         |> Enum.filter(
-          &(Assign.criteria_met?(db, &1.id, view.filter ++ section.filter, today) and
-              shown?(&1, view.match))
+          &(Assign.criteria_met?(db, &1.id, filter, today) and shown?(&1, view.match))
         )
         |> Enum.reject(&(view.hide_dependent and Database.waiting?(db, &1.id)))
         |> sort(db, section.sort || view.sort)

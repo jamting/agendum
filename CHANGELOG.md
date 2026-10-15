@@ -12,6 +12,9 @@ has the detail.
 
 - Quicker answers to keys: keys typed fast or held down are answered
   with one drawing, and views showing many items draw faster.
+- A view filtered by dates written in words ("..yesterday", "today
+  ..friday") no longer lags: it reads those dates once, not once for
+  every item, so moving in it is about twenty times quicker.
 - The debug log (`AGENDUM_LOG`) notes every answer to a key that took
   100 ms or more, with how the time was spent, and names the file in
   use when the program starts and when another file is opened.
