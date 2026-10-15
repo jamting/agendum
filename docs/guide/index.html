@@ -133,10 +133,11 @@ from the menu goes back to the menu on <kbd>ESC</kbd>, one level at a time.</p>
 letter. <kbd>F1</kbd> shows help, <kbd>ESC</kbd> goes back, and <kbd>CTRL-Z</kbd> undoes
 almost anything.</p>
 
-<div class="tip">On a Mac, or wherever function keys are awkward: press <kbd>ESC</kbd>
-then a digit for a function key (<kbd>ESC</kbd> <kbd>5</kbd> is <kbd>F5</kbd>), and
-<kbd>ESC</kbd> then a letter for an <kbd>ALT</kbd> key. <kbd>CTRL-N</kbd> stands in for
-<kbd>INS</kbd>. The full list is in the <a href="#keys">keyboard reference</a>.</div>
+<div class="tip">Agendum needs the function keys, as Agenda did. On a Mac, hold
+<kbd>fn</kbd> with them, or turn on “Use F1, F2, etc. keys as standard function keys” in
+System Settings ▸ Keyboard. <kbd>ESC</kbd> then a letter works as the <kbd>ALT</kbd> key
+with it, and <kbd>CTRL-N</kbd> stands in for <kbd>INS</kbd>. The full list is in the
+<a href="#keys">keyboard reference</a>.</div>
 </section>
 
 <!-- ===================================================================== -->
@@ -169,8 +170,15 @@ then a digit for a function key (<kbd>ESC</kbd> <kbd>5</kbd> is <kbd>F5</kbd>), 
 <p>With items marked, <kbd>F4</kbd>, <kbd>DEL</kbd>, <kbd>ALT-F4</kbd> and friends first ask
 whether you mean the marked items or just the current one.</p>
 
+<p>A long line in a note wraps onto as many rows as it needs, so you always see all of
+it (only on the screen: no line break goes into the text). <kbd>↑</kbd> <kbd>↓</kbd> move
+by the rows you see; <kbd>HOME</kbd> and <kbd>END</kbd> (<kbd>CTRL-A</kbd>,
+<kbd>CTRL-E</kbd>) go to the start and end of the row, and pressed again, of the whole
+line.</p>
+
 <p>In a note, <kbd>ALT-D</kbd> and <kbd>ALT-T</kbd> type today's date and the time,
-<kbd>ALT-F6</kbd> searches (and replaces), and <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> move on to
+<kbd>ALT-F6</kbd> searches (and replaces: a Yes/No box asks about each occurrence, which
+stays highlighted, and each replacement can be undone on its own), and <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> move on to
 the next or previous item's note.</p>
 
 <p>Text in a note can be cut and pasted as in Agenda. <kbd>F7</kbd> starts marking at the
@@ -615,6 +623,10 @@ without a key press. <em>Confirm mode</em> set to No stops the “are you sure?�
 questions (undo still works). <em>Display key map</em> decides whether the key bar is
 shown; <kbd>ALT-K</kbd> switches it, and Agendum remembers your choice.</p>
 
+<p><strong>File ▸ Properties ▸ File statistics</strong> counts the file, as Agenda did:
+the items, how many have notes, the categories, and on average how many items each
+category has and how many categories each item is in.</p>
+
 <p>Wherever Agendum asks for a file name, <kbd>F3</kbd> lists the folder's files and
 folders: <kbd>↑</kbd> <kbd>↓</kbd> move, typing narrows the list, <kbd>ENTER</kbd> opens a
 folder or takes the file, <code>../</code> goes up, and <kbd>F7</kbd> shows when each was
@@ -709,9 +721,10 @@ attaches it to <kbd>F4</kbd> … no, Owl points out, <kbd>F4</kbd> is Done … t
 <h2>14. Keyboard reference</h2>
 <p class="in-which">In Which Every Key Is Listed, with Another for a Mac</p>
 
-<p>Every function key also works as <kbd>ESC</kbd> then its digit (<kbd>ESC</kbd>
-<kbd>0</kbd> is <kbd>F10</kbd>), every <kbd>ALT-F</kbd> key as <kbd>ESC</kbd> then the
-shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter.</p>
+<p>The function keys are needed, as in Agenda: on a Mac, hold <kbd>fn</kbd> with them
+(<kbd>ALT-F</kbd> keys are <kbd>⌥</kbd> with the function key) or make them standard
+function keys in System Settings ▸ Keyboard. Every <kbd>ALT</kbd> letter also works as
+<kbd>ESC</kbd> then the letter.</p>
 
 <table>
   <tr><th>Key</th><th>In a view</th><th>Mac-friendly</th></tr>
@@ -727,14 +740,14 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
   <tr><td><kbd>INS</kbd></td><td>New item (or column entry)</td><td><kbd>CTRL-N</kbd>, <kbd>ALT-I</kbd></td></tr>
   <tr><td><kbd>DEL</kbd></td><td>Remove from section or column</td><td><kbd>fn-⌫</kbd></td></tr>
   <tr><td><kbd>ALT-F2</kbd></td><td>When date</td><td></td></tr>
-  <tr><td><kbd>ALT-F3</kbd></td><td>Macro manager; in Learn mode, stop recording</td><td><kbd>ESC</kbd> <kbd>#</kbd></td></tr>
+  <tr><td><kbd>ALT-F3</kbd></td><td>Macro manager; in Learn mode, stop recording</td><td></td></tr>
   <tr><td><kbd>ALT-F4</kbd></td><td>Discard</td><td><kbd>CTRL-D</kbd></td></tr>
   <tr><td><kbd>ALT-F5</kbd></td><td>Go to a section</td><td></td></tr>
   <tr><td><kbd>ALT-F6</kbd></td><td>Search (then <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd>)</td><td></td></tr>
   <tr><td><kbd>ALT-F7</kbd></td><td>Unmark all</td><td></td></tr>
   <tr><td><kbd>ALT-F8</kbd></td><td>Last view</td><td></td></tr>
-  <tr><td><kbd>ALT-F9</kbd></td><td>Copy the item (or the marked ones) to another section as well</td><td><kbd>ESC</kbd> <kbd>(</kbd></td></tr>
-  <tr><td><kbd>ALT-F10</kbd></td><td>Move item; on a section or column head, move the section or column</td><td><kbd>ESC</kbd> <kbd>)</kbd></td></tr>
+  <tr><td><kbd>ALT-F9</kbd></td><td>Copy the item (or the marked ones) to another section as well</td><td></td></tr>
+  <tr><td><kbd>ALT-F10</kbd></td><td>Move item; on a section or column head, move the section or column</td><td>On a head: <strong>View ▸ Section ▸ Move</strong>, <strong>View ▸ Column ▸ Move</strong></td></tr>
   <tr><td><kbd>ALT-A</kbd></td><td>Alarm</td><td></td></tr>
   <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter to other dates</td><td><kbd>ESC</kbd> <kbd>b</kbd></td></tr>
   <tr><td><kbd>ALT-C</kbd></td><td>Show the calendar</td><td><kbd>ESC</kbd> <kbd>c</kbd></td></tr>
@@ -764,10 +777,11 @@ shifted digit, and every <kbd>ALT</kbd> letter as <kbd>ESC</kbd> then the letter
 
 <table>
   <tr><th>Key</th><th>In a note</th><th>Mac-friendly</th></tr>
-  <tr><td><kbd>F7</kbd></td><td>Mark text (again: stop)</td><td><kbd>ESC</kbd> <kbd>7</kbd></td></tr>
-  <tr><td><kbd>F3</kbd> / <kbd>F4</kbd> / <kbd>ALT-F4</kbd></td><td>Copy / cut / delete the marked text (or a word, line or all)</td><td><kbd>ESC</kbd> <kbd>3</kbd> / <kbd>4</kbd> / <kbd>$</kbd></td></tr>
-  <tr><td><kbd>F2</kbd></td><td>Paste</td><td><kbd>ESC</kbd> <kbd>2</kbd></td></tr>
-  <tr><td><kbd>ALT-F7</kbd> / <kbd>ALT-F2</kbd></td><td>Make a new item / category from the text</td><td><kbd>ESC</kbd> <kbd>&amp;</kbd> / <kbd>@</kbd></td></tr>
+  <tr><td><kbd>F7</kbd></td><td>Mark text (again: stop)</td><td></td></tr>
+  <tr><td><kbd>F3</kbd> / <kbd>F4</kbd> / <kbd>ALT-F4</kbd></td><td>Copy / cut / delete the marked text (or a word, line or all)</td><td></td></tr>
+  <tr><td><kbd>F2</kbd></td><td>Paste</td><td></td></tr>
+  <tr><td><kbd>ALT-F7</kbd> / <kbd>ALT-F2</kbd></td><td>Make a new item / category from the text</td><td></td></tr>
+  <tr><td><kbd>↑</kbd> <kbd>↓</kbd>; <kbd>HOME</kbd> / <kbd>END</kbd></td><td>Up / down a row on the screen (long lines wrap); start / end of the row, again: of the line</td><td><kbd>CTRL-A</kbd> / <kbd>CTRL-E</kbd></td></tr>
   <tr><td><kbd>F5</kbd> or <kbd>ESC</kbd></td><td>Back to the view</td><td></td></tr>
 </table>
 
