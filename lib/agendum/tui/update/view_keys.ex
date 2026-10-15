@@ -1,8 +1,11 @@
 defmodule Agendum.TUI.Update.ViewKeys do
   @moduledoc """
-  Keys in the view itself (no box open): moving the highlight, collapsing
-  sections, starting to type an item or a column entry, and the commands
-  on the highlighted row (F2, F3, F4, F6, DEL, ALT-O, ALT-E). Pure.
+  Keys in the view itself (no box open): a key runs the command the
+  view's keymap binds it to (`Agendum.TUI.Keymap`, ADR 0033), and `run/2`
+  runs the view's commands (`Agendum.TUI.Commands`): moving the highlight,
+  collapsing sections, the commands on the highlighted row (F2, F3, F4,
+  F6, DEL, ALT-O, ALT-E …). An unbound character starts typing an item or
+  a column entry. Pure.
   """
 
   alias Agendum.Core
@@ -14,6 +17,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
     Terminal.Draw,
     Boxes.GoTo,
     Boxes.ItemProperties,
+    Keymap,
     Layout,
     Typing.LineEdit,
     Boxes.SearchBox,
@@ -31,206 +35,115 @@ defmodule Agendum.TUI.Update.ViewKeys do
   def view_key(%State{edit: edit} = state, key) when edit != nil,
     do: Editing.view_edit_key(state, key)
 
-  # One branch per key, like Agenda's key chart.
-  # credo:disable-for-next-line Credo.Check.Refactor.CyclomaticComplexity
+  # view commands that are the menu's named actions as they are
+  @actions [
+    :unmark_all,
+    :section_below,
+    :section_above,
+    :column_right,
+    :column_left,
+    :alarm,
+    :last_view,
+    :view_manager,
+    :category_manager,
+    :menu,
+    :help,
+    :save,
+    :retrieve
+  ]
+
+  # A key runs the command the view's keymap binds it to (ADR 0033); an
+  # unbound character starts typing an item or a column entry.
   def view_key(state, key) do
-    row = Layout.current_row(state)
-    rows = Layout.rows(state)
-
-    case key do
-      :up ->
-        Layout.move_to(state, state.cursor - 1)
-
-      :down ->
-        Layout.move_to(state, state.cursor + 1)
-
-      :enter ->
-        Layout.move_to(state, state.cursor + 1)
-
-      :pgup ->
-        Layout.move_to(state, state.cursor - State.body_height(state))
-
-      :pgdn ->
-        Layout.move_to(state, state.cursor + State.body_height(state))
-
-      :home ->
-        Layout.move_to(state, 0)
-
-      :end ->
-        Layout.move_to(state, length(rows) - 1)
-
-      :ctrl_home ->
-        Layout.move_to(state, 0)
-
-      :ctrl_end ->
-        Layout.move_to(state, length(rows) - 1)
-
-      :ctrl_pgup ->
-        Layout.move_to(state, section_head_index(rows, state.cursor, -1))
-
-      :ctrl_pgdn ->
-        Layout.move_to(state, section_head_index(rows, state.cursor, 1))
-
-      # the highlight goes left and right as the columns are shown: the
-      # item column may be among them (R55)
-      k when k in [:right, :tab] ->
-        Layout.step_col(state, row, 1)
-
-      k when k in [:left, :shift_tab] ->
-        Layout.step_col(state, row, -1)
-
-      {:char, "/"} ->
-        Actions.perform(state, :menu)
-
-      {:char, c} ->
-        start_typing(state, row, c)
-
-      :insert ->
-        insert(state, row)
-
-      :delete ->
-        if bulk?(state, row), do: scoped(state, :remove, row), else: delete(state, row)
-
-      {:f, 1} ->
-        Actions.perform(state, :help)
-
-      {:f, 2} ->
-        edit(state, row)
-
-      {:f, 3} ->
-        if bulk?(state, row), do: scoped(state, :profile, row), else: choices(state, row)
-
-      {:f, 4} ->
-        scoped(state, :done, row)
-
-      # in a column, the note of the column head or of the entry's category
-      {:f, 5} when state.col > 0 ->
-        column_note(state)
-
-      {:f, 5} ->
-        Actions.perform(state, :note)
-
-      {:f, 6} ->
-        props(state, row)
-
-      {:f, 7} ->
-        mark(state, row)
-
-      {:alt_f, 7} ->
-        Actions.perform(state, :unmark_all)
-
-      {:alt, "j"} ->
-        jump_to_marked(state, rows)
-
-      {:alt, "m"} ->
-        scoped(state, :make_assign, row)
-
-      {:f, 8} ->
-        Actions.perform(state, :view_manager)
-
-      {:f, 9} ->
-        Actions.perform(state, :category_manager)
-
-      {:f, 10} ->
-        Actions.perform(state, :menu)
-
-      {:alt_f, 4} ->
-        scoped(state, :discard, row)
-
-      {:alt_f, 2} ->
-        scoped(state, :when, row)
-
-      {:ctrl, "d"} ->
-        scoped(state, :discard, row)
-
-      # on a column head (a section head line) the column moves, as in
-      # Agenda (User's Guide 5-20); elsewhere the item(s)
-      {:alt_f, 10} when row.kind == :section and state.col > 0 ->
-        Actions.perform(state, :column_move)
-
-      # on a section head the section moves (User's Guide 5-8)
-      {:alt_f, 10} when row.kind == :section ->
-        Actions.perform(state, :section_move)
-
-      {:alt_f, 10} ->
-        scoped(state, :move_item, row)
-
-      {:alt_f, 9} ->
-        scoped(state, :copy_item, row)
-
-      {:alt, "y"} ->
-        yank(state, row)
-
-      {:alt, "h"} ->
-        hop(state, row)
-
-      {:alt, "d"} ->
-        Actions.perform(state, :section_below)
-
-      {:alt_f, 5} ->
-        GoTo.open(state)
-
-      {:alt, "n"} ->
-        step_view(state, 1)
-
-      {:alt, "p"} ->
-        step_view(state, -1)
-
-      {:alt, "w"} ->
-        Actions.perform(state, :save)
-
-      {:alt, "g"} ->
-        Actions.perform(state, :retrieve)
-
-      {:alt, "v"} ->
-        Actions.perform(state, {:toggle_view, :hide_empty})
-
-      {:alt, "i"} ->
-        insert(state, row)
-
-      {:alt, "o"} ->
-        dependency(state, row)
-
-      {:alt, "x"} ->
-        Agendum.TUI.Boxes.ExecuteBox.run(state, state.db.main_id, :all)
-
-      {:alt, "e"} ->
-        execute_category(state, row)
-
-      {:alt_f, 6} ->
-        SearchBox.open(state, :view)
-
-      {:alt, "a"} ->
-        Actions.perform(state, :alarm)
-
-      {:alt, "c"} ->
-        CalendarBox.open(state, nil)
-
-      {:alt, "b"} ->
-        Agendum.TUI.Moves.Browse.open(state)
-
-      {:alt_f, 8} ->
-        Actions.perform(state, :last_view)
-
-      {:alt, "-"} ->
-        collapse_sections(state, row, true)
-
-      {:alt, "="} ->
-        collapse_sections(state, row, false)
-
-      {:alt, "u"} ->
-        Actions.perform(state, :section_above)
-
-      {:alt, "r"} ->
-        Actions.perform(state, :column_right)
-
-      {:alt, "l"} ->
-        Actions.perform(state, :column_left)
-
-      _ ->
-        state
+    case {Keymap.lookup(:view, key), key} do
+      {nil, {:char, c}} -> start_typing(state, Layout.current_row(state), c)
+      {nil, _} -> state
+      {id, _} -> run(state, id)
     end
   end
+
+  @doc """
+  Runs a view command (`Agendum.TUI.Commands`) on the highlighted row.
+  One clause per command; where the highlight is decides what some do
+  (F3, F5, DEL …), as in Agenda.
+  """
+  @spec run(State.t(), atom) :: State.t()
+  def run(state, id), do: command(state, id, Layout.current_row(state))
+
+  defp command(state, :up, _row), do: Layout.move_to(state, state.cursor - 1)
+  defp command(state, :down, _row), do: Layout.move_to(state, state.cursor + 1)
+
+  defp command(state, :page_up, _row),
+    do: Layout.move_to(state, state.cursor - State.body_height(state))
+
+  defp command(state, :page_down, _row),
+    do: Layout.move_to(state, state.cursor + State.body_height(state))
+
+  defp command(state, :top, _row), do: Layout.move_to(state, 0)
+  defp command(state, :bottom, _row), do: Layout.move_to(state, length(Layout.rows(state)) - 1)
+
+  defp command(state, :previous_section, _row),
+    do: Layout.move_to(state, section_head_index(Layout.rows(state), state.cursor, -1))
+
+  defp command(state, :next_section, _row),
+    do: Layout.move_to(state, section_head_index(Layout.rows(state), state.cursor, 1))
+
+  defp command(state, :next_column, row), do: Layout.step_col(state, row, 1)
+  defp command(state, :previous_column, row), do: Layout.step_col(state, row, -1)
+  defp command(state, :insert, row), do: insert(state, row)
+
+  defp command(state, :remove, row),
+    do: if(bulk?(state, row), do: scoped(state, :remove, row), else: delete(state, row))
+
+  defp command(state, :edit, row), do: edit(state, row)
+
+  defp command(state, :choices, row),
+    do: if(bulk?(state, row), do: scoped(state, :profile, row), else: choices(state, row))
+
+  defp command(state, :done, row), do: scoped(state, :done, row)
+
+  # in a column, the note of the column head or of the entry's category
+  defp command(state, :note, _row) when state.col > 0, do: column_note(state)
+  defp command(state, :note, _row), do: Actions.perform(state, :note)
+  defp command(state, :properties, row), do: props(state, row)
+  defp command(state, :mark, row), do: mark(state, row)
+  defp command(state, :next_marked, _row), do: jump_to_marked(state, Layout.rows(state))
+  defp command(state, :make_assign, row), do: scoped(state, :make_assign, row)
+  defp command(state, :discard, row), do: scoped(state, :discard, row)
+  defp command(state, :when, row), do: scoped(state, :when, row)
+
+  # on a column head (a section head line) the column moves, as in
+  # Agenda (User's Guide 5-20); on a section head the section (5-8);
+  # elsewhere the item(s)
+  defp command(state, :move, %{kind: :section}) when state.col > 0,
+    do: Actions.perform(state, :column_move)
+
+  defp command(state, :move, %{kind: :section}), do: Actions.perform(state, :section_move)
+  defp command(state, :move, row), do: scoped(state, :move_item, row)
+  defp command(state, :copy, row), do: scoped(state, :copy_item, row)
+  defp command(state, :yank, row), do: yank(state, row)
+  defp command(state, :hop, row), do: hop(state, row)
+  defp command(state, :dependency, row), do: dependency(state, row)
+  defp command(state, :collapse, row), do: collapse_sections(state, row, true)
+  defp command(state, :expand, row), do: collapse_sections(state, row, false)
+
+  defp command(state, :toggle_empty, _row),
+    do: Actions.perform(state, {:toggle_view, :hide_empty})
+
+  defp command(state, :go_to, _row), do: GoTo.open(state)
+  defp command(state, :search, _row), do: SearchBox.open(state, :view)
+  defp command(state, :browse, _row), do: Agendum.TUI.Moves.Browse.open(state)
+  defp command(state, :calendar, _row), do: CalendarBox.open(state, nil)
+
+  defp command(state, :execute_all, _row),
+    do: Agendum.TUI.Boxes.ExecuteBox.run(state, state.db.main_id, :all)
+
+  defp command(state, :execute_category, row), do: execute_category(state, row)
+  defp command(state, :next_view, _row), do: step_view(state, 1)
+  defp command(state, :previous_view, _row), do: step_view(state, -1)
+
+  # the rest are named actions shared with the menu
+  defp command(state, id, _row) when id in @actions, do: Actions.perform(state, id)
 
   # ALT-N / ALT-P: the next / previous view in the view manager's order.
   defp step_view(state, step) do

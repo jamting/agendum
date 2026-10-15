@@ -99,7 +99,9 @@ the rest by what it is for:
 | --------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `Agendum.TUI.State`                            | ✔     | UI state: db, path, cursor, scroll, **mode stack**, inline edit, message, queued effects.                                        |
 | `Agendum.TUI.Update`                           | ✔     | Key → state transitions: keys for every screen, the clock (`tick/2`), effect results, dispatch to the screen on top.             |
-| `Agendum.TUI.Update.*`                         | ✔     | Its parts: `ViewKeys`, `Editing` (inline), `Marked` (and moves), `Prompts` (and Y/N), `Notes`, `Actions` (`perform/2`).          |
+| `Agendum.TUI.Update.*`                         | ✔     | Its parts: `ViewKeys` (the view's keymap lookup and `run`), `Editing` (inline), `Marked` (and moves), `Prompts` (and Y/N), `Notes`, `Actions` (`perform/2`).          |
+| `Agendum.TUI.Command`, `Agendum.TUI.Commands`  | ✔     | The commands keys can run, as data: id, name, summary, what a count does; by place, the view's so far (R65, ADR 0033).          |
+| `Agendum.TUI.Keymap`                           | ✔     | Which command a key runs, by place: the view's keymap (R65, ADR 0033).                                                           |
 | `Agendum.TUI.Menu`                             | ✔     | The Lotus two-line menu tree.                                                                                                    |
 | `Agendum.TUI.Boxes.Box`                              | ✔     | The behaviour of a box module (handle, title, content, keys, help, width; finish, indicator, cancels, choices) and the registry of box modules. |
 | `Agendum.TUI.Boxes.BoxNav`                           | ✔     | Moving between a box's settings as Agenda: → ← along a row, ↓ ↑ keeping to the side (`Template.grid/2`).                         |
@@ -245,3 +247,4 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0030](adr/0030-enter-done-esc-cancels-in-boxes.md)     | In a settings box, ENTER is done and ESC cancels                 |
 | [0031](adr/0031-box-keys-as-agenda.md)                  | Keys in a box as Agenda: the arrows move, SPACE changes          |
 | [0032](adr/0032-function-keys-required.md)              | Function keys are required: no ESC + digit stand-in              |
+| [0033](adr/0033-commands-and-keymaps.md)               | Keys run named commands through keymaps; a count with ALT-digits |

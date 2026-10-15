@@ -98,6 +98,7 @@ for a new rule.
 | R62 | Moving a section | 4 |
 | R63 | Marking, copying, cutting and pasting in a note | 4 |
 | R64 | Word wrap in the note editor | 4 |
+| R65 | Commands, keymaps and a count | 5 |
 
 ## 1. Concepts
 
@@ -1210,6 +1211,18 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   CTRL-S/O/P/Q = save/open/print/quit. ⌥↑/⌥↓ jump between sections. Text
   fields use Mac/emacs editing keys. ⌘ shortcuts are mapped onto these CTRL
   keys by the terminal.
+- **R65 ⏳ Commands, keymaps and a count** (ours, after Emacs; ADR 0033).
+  ✅ In a view, every key runs a named command (`Agendum.TUI.Commands`)
+  through the view's keymap (`Agendum.TUI.Keymap`), ALT-letters included;
+  a printable character that is not bound starts typing. ⏳ A count:
+  ALT-digits typed in a view (ALT-1 ALT-0) are shown in the control panel
+  and make the next command run that many times, for commands that take a
+  count (moving the highlight, next marked item, hop, next and previous
+  view); a repeat that changes nothing, or that reports an error, stops
+  the count; other commands run once; ESC drops the count; at most 999.
+  ⏳ In the help screen (F1), `c` lists the commands that can run where
+  F1 was pressed, with their keys and summaries, and `d` then a key says
+  which command that key runs there.
 - **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
   category name is typed into a column cell, Agenda shows the first
   matching category (the rest of its name in grey), the top line says how
