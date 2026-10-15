@@ -8,7 +8,10 @@ tagged in git (`v0.2.0`). The roadmap's Done section
 ([`docs/ROADMAP.md`](docs/ROADMAP.md)) lists every finished item; git log
 has the detail.
 
-## Unreleased
+## 0.4.0 — 2026-10-16
+
+F1 is help about where you are, everywhere; every key goes through a
+keymap, so the help lists every key correctly.
 
 - Undoing the new macro while learning its keystrokes, then stopping
   Learn mode, no longer crashes: nothing is kept, and a message says why.
@@ -22,6 +25,7 @@ has the detail.
   highlighted; in the menu, it lists the entries by their letters. F1
   also works while moving items, a column or a section, changing a
   width, browsing and searching. Typing in F1 c's list narrows it.
+- In a date filter, < and > now move a day while browsing, as ← and → do.
 - The help and the keyboard guide say ⌥m (Option as Meta) where they said
   ESC m: ESC typed by hand and then a letter is two keys.
 
