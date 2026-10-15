@@ -12,7 +12,8 @@ key bar and the F10 menu), checked in the real Agenda 2.0 run headless on
 a copy of PLANNER (2026-10-15: every menu level walked without running a
 command; the view's screen read) and its F1 help ("About Indicators",
 "Mode & Message Indicators", "View Indicators"). The note editor has its
-own plan: [`NOTE_EDITOR.md`](NOTE_EDITOR.md).
+own plan: [`NOTE_EDITOR.md`](NOTE_EDITOR.md). Agenda's menus as they
+are, for reference: [`docs/reference/AGENDA_MENUS.md`](../reference/AGENDA_MENUS.md).
 
 Out of scope, as SPEC §6 says: printing on paper and print preview (F10
 Print and everything under it), typesetting (fonts, attributes), networks
