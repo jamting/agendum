@@ -5,8 +5,9 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   opening the next box:
 
     * File Properties (`:file_props`): Insert new columns in (R55), Global
-      date settings ..., and Auto-assign settings ...
-      (`Agendum.TUI.Boxes.AutoAssignBox`, R16a). Drawn from `@layout`
+      date settings ..., Auto-assign settings ...
+      (`Agendum.TUI.Boxes.AutoAssignBox`, R16a) and File statistics ...
+      (`Agendum.TUI.Boxes.FileStatsBox`). Drawn from `@layout`
       (`Agendum.TUI.Boxes.Template`), Agenda's box (screenshot 130) with only the
       settings Agendum has
     * Global Date Settings (`Agendum.TUI.Boxes.DateSettingsBox`, R14e)
@@ -25,7 +26,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
 
   alias Agendum.Core
-  alias Agendum.TUI.Boxes.{AutoAssignBox, Box, BoxNav, DateSettingsBox, Template}
+  alias Agendum.TUI.Boxes.{AutoAssignBox, Box, BoxNav, DateSettingsBox, FileStatsBox, Template}
   alias Agendum.TUI.State
 
   # Agenda's File Properties (screenshot 130), its other settings left out
@@ -34,6 +35,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
    Insert new columns in:  [insert_columns ]
 
    Global date settings:   [dates]   Auto-assign settings:  [auto ]
+                                     File statistics:       [stats]
   """
 
   @rows Template.fields(@layout)
@@ -46,7 +48,8 @@ defmodule Agendum.TUI.Boxes.FileProperties do
         "You can override when you add individual columns.",
     dates:
       "Press SPACE BAR to choose date and time formats to use as defaults throughout the file.",
-    auto: "Press SPACE BAR to choose how items are assigned to categories by their text."
+    auto: "Press SPACE BAR to choose how items are assigned to categories by their text.",
+    stats: "Press SPACE BAR to display current statistics for the file."
   }
 
   def open(state), do: State.push(state, %{type: :file_props, cursor: 0})
@@ -63,6 +66,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
 
   defp change(state, :dates), do: DateSettingsBox.open(state)
   defp change(state, :auto), do: AutoAssignBox.open(state)
+  defp change(state, :stats), do: FileStatsBox.open(state)
 
   # two choices, so SPACE flips it
   defp change(state, :insert_columns) do
@@ -83,7 +87,8 @@ defmodule Agendum.TUI.Boxes.FileProperties do
       insert_columns:
         if(state.db.insert_columns == :all, do: "All sections", else: "Current section"),
       dates: "...",
-      auto: "..."
+      auto: "...",
+      stats: "..."
     }
 
     Template.render(@layout, values, selected: field(state, mode)) ++

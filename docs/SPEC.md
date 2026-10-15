@@ -974,7 +974,13 @@ typed, letters are typed as before. In Category Properties, as Agenda
 (screenshot 74), Note, Statistics and Advanced settings show "..." and
 SPACE opens each one's box; Statistics (Agenda's Category Statistics)
 counts the items in the category, its children, the sections it heads,
-and the view filters, conditions and actions that name it. Our choices: the
+and the view filters, conditions and actions that name it. File
+Properties has File statistics ..., Agenda's File Statistics box
+(screenshot 140): the items, the items with notes, the categories (MAIN
+too), and the average items per category and categories per item, both
+counting the assignments stored with the items, rounded down (as Agenda
+2.0 counts them, checked on its PLANNER file); Agenda's Unused space and
+Items in trash are left out. Our choices: the
 function-key bar stays one line with the keys'
 names and labels side by side (Agenda had two lines of ten fixed slots).
 When the screen is wide enough for all of them, it shows fuller labels

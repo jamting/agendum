@@ -614,6 +614,31 @@ defmodule Agendum.Core.Database do
     }
   end
 
+  @doc """
+  The file's statistics (File ▸ Properties ▸ File statistics, Agenda's File
+  Statistics box): its items, those with a note, its categories (MAIN
+  too), and the average number of items per category and categories per
+  item. As Agenda, the averages count the assignments stored with the
+  items (not those through a subcategory) and are whole numbers, rounded
+  down; Agenda's other counts (unused space, items in the trash) have no
+  counterpart here.
+  """
+  @spec file_statistics(t) :: %{atom => non_neg_integer}
+  def file_statistics(%__MODULE__{} = db) do
+    items = map_size(db.items)
+    categories = map_size(db.categories)
+    assignments = Links.size(db.links)
+
+    %{
+      items: items,
+      items_with_notes: Enum.count(Map.values(db.items), &(&1.note != "")),
+      categories: categories,
+      # `max(_, 1)`: no division by zero in an empty file
+      items_per_category: div(assignments, max(categories, 1)),
+      categories_per_item: div(assignments, max(items, 1))
+    }
+  end
+
   # a datebook view whose categories go falls back to When (R47)
   defp datebook_without(nil, _doomed, _when), do: nil
 

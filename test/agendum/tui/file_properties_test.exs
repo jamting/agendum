@@ -35,6 +35,29 @@ defmodule Agendum.TUI.FilePropertiesTest do
     assert state |> press([:esc, :esc, :esc, :esc, :esc]) |> Map.get(:modes) == []
   end
 
+  test "File statistics shows how big the file is, as Agenda's", %{state: state} do
+    state = press(state, [{:f, 10}, "f", "p"]) |> to_setting("File statistics")
+    assert screen(state) =~ ~r/File statistics: +\.\.\./
+    state = press(state, " ")
+    assert %{type: :file_stats} = State.mode(state)
+
+    stats = Agendum.Core.Database.file_statistics(state.db)
+    text = screen(state)
+    assert text =~ ~r/Items: +#{stats.items}\b/
+    assert text =~ ~r/Items with notes: +#{stats.items_with_notes}\b/
+    assert text =~ ~r/Categories: +#{stats.categories}\b/
+    assert text =~ ~r/Average items\/category: +#{stats.items_per_category}\b/
+    assert text =~ ~r/Average categories\/item: +#{stats.categories_per_item}\b/
+    assert stats.items > 0
+
+    # nothing to change; ENTER (or ESC) goes back to File Properties
+    db = state.db
+    state = press(state, [" ", "x"])
+    assert state.db == db
+    assert %{type: :file_props} = state |> press(:enter) |> State.mode()
+    assert %{type: :file_props} = state |> press(:esc) |> State.mode()
+  end
+
   test "every box fits a 25-line screen, with its frame", %{state: state} do
     state = %{state | height: 25, width: 80}
 

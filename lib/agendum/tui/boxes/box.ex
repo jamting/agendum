@@ -80,6 +80,7 @@ defmodule Agendum.TUI.Boxes.Box do
     calendars: Agendum.TUI.Boxes.CalendarsBox,
     category_match: Agendum.TUI.Boxes.CategoryMatchBox,
     category_stats: Agendum.TUI.Boxes.CategoryStatsBox,
+    file_stats: Agendum.TUI.Boxes.FileStatsBox,
     choice: Agendum.TUI.CategoryScreens.Choices,
     choice_list: Agendum.TUI.Boxes.ChoiceListBox,
     column_add: Agendum.TUI.Boxes.ColumnAddBox,

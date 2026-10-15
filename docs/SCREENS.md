@@ -76,6 +76,7 @@ flowchart LR
     DateSettings -- "Display format" --> DisplayFormat["Display format"]
     DateSettings -- "Input format" --> InputFormat["Input format (yours)"]
     FileProps -- "Auto-assign settings" --> AutoAssign["Auto-assign settings"]
+    FileProps -- "File statistics" --> FileStats["File statistics"]
     Customize["Customize (yours)"] -- "Input format" --> InputFormat
     ColProps["Column Properties"]
     ColProps -- "F3 on Column head" --> ColHead["Picker: column head"]
@@ -238,6 +239,10 @@ or handles it.
     - **Auto-assign settings** `:auto_assign` (Auto-assign settings): text
       matching for the file and Confirm assignments (R16, R16a).
       `Agendum.TUI.Boxes.AutoAssignBox`.
+    - **File statistics** `:file_stats` (File statistics ...): the items,
+      items with notes, categories and the average assignments, as
+      Agenda's (screenshot 140); nothing to change.
+      `Agendum.TUI.Boxes.FileStatsBox`.
   - **Calendars** `:calendars` (File ▸ Transfer ▸ Calendars): calendar
     subscriptions; INS subscribes (two prompts), ENTER reads now, F and A
     change how often and how far ahead, DEL unsubscribes (R45).
@@ -326,6 +331,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:date_rule`         | box           | `Agendum.TUI.Boxes.DateRuleBox`          | Advanced settings of a date category              | R6b            |
 | `:category_match`    | box           | `Agendum.TUI.Boxes.CategoryMatchBox`     | Advanced settings of a standard category          | R16b           |
 | `:file_props`        | box           | `Agendum.TUI.Boxes.FileProperties`       | File ▸ Properties                                 | R55, R14e      |
+| `:file_stats`        | box           | `Agendum.TUI.Boxes.FileStatsBox`         | File Properties ▸ File statistics                 | §5             |
 | `:date_settings`     | box           | `Agendum.TUI.Boxes.DateSettingsBox`      | File Properties ▸ Global date settings            | R14e           |
 | `:display_format`    | box           | `Agendum.TUI.Boxes.DisplayFormatBox`     | Global date settings ▸ Display format             | R41, R41a      |
 | `:input_format`      | box           | `Agendum.TUI.Boxes.InputFormatBox`       | Global date settings or Customize ▸ Input format  | R41b           |
