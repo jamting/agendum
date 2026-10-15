@@ -10,12 +10,12 @@ project's path**, so after the rename it would start without it.
 
 ## What depends on the folder's path
 
-| What | Where | What to do |
-| --- | --- | --- |
-| Claude Code's memory of the project, and the history of past sessions (for `claude --resume`) | `~/.claude/projects/-Users-mattiasjamting-Code-Lotus-Agenda/` (the path with `/` and spaces turned into `-`): `memory/` and one `.jsonl` file per session | Move it to the name of the new path (step 4) |
-| Agendum's "last file used" | `~/.config/agendum/preferences`, `last_file = /Users/mattiasjamting/Code/Lotus Agenda/…` | Edit the path, or just open a file from the new place once |
-| Compiled files and Dialyzer's tables | `_build/` (they record absolute paths) | Delete `_build/` and rebuild (step 5) |
-| Your editor's recent projects (Zed) | the editor | Open the new folder |
+| What                                                                                          | Where                                                                                                                                                     | What to do                                                 |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Claude Code's memory of the project, and the history of past sessions (for `claude --resume`) | `~/.claude/projects/-Users-mattiasjamting-Code-Lotus-Agenda/` (the path with `/` and spaces turned into `-`): `memory/` and one `.jsonl` file per session | Move it to the name of the new path (step 4)               |
+| Agendum's "last file used"                                                                    | `~/.config/agendum/preferences`, `last_file = /Users/mattiasjamting/Code/Lotus Agenda/…`                                                                  | Edit the path, or just open a file from the new place once |
+| Compiled files and Dialyzer's tables                                                          | `_build/` (they record absolute paths)                                                                                                                    | Delete `_build/` and rebuild (step 5)                      |
+| Your editor's recent projects (Zed)                                                           | the editor                                                                                                                                                | Open the new folder                                        |
 
 Nothing else needs changing: git does not care where the folder is (its
 remotes and history stay), `.claude/skills/` and `CLAUDE.md` live inside

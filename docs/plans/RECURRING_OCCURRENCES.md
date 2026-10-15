@@ -12,18 +12,18 @@ only the base date. SPEC R14a lists this as not done.
 Checked in the real Agenda 2.0 (headless, on a copy, 2026-10-15), and in
 its manuals and file format:
 
-| Question | Agenda's answer | Source |
-| --- | --- | --- |
-| What is stored? | One date per item: the base date (first occurrence) and the rule (unit, weekday, interval, time); kind 2 = recurring | `docs/AGENDA_FILE_FORMAT.md`, Date expressions |
-| Where does it show? | In every datebook section, at any distance, that contains an occurrence counted from the base date, and never before the base date | tried: "every day" from Fri 10/16 shows Fri, Sat and every later day, not Tue–Thu before it |
-| Intervals | Kept from the base date: "every other day" from 10/17 shows on 10/27, 10/29, 10/31, 11/4…; "every 2nd Tuesday" from 10/20 on 11/3, not 10/27 | tried |
-| Ordinary views | A date filter matches too: a view filtered on When 10/26–10/30 lists every Monday, every day, every other day and every 2 weeks, but not every other Monday (next 11/2) or each month (next 11/1) | tried |
-| Timed items | Shown in the hour or half-hour slot of a day view | Lotus Q&A "Recurring Item at 5:30 AM Disappears From Datebook View" (a 2.0 bug, fixed in Update B) |
-| How many items? | One; discarding it in one section discards it everywhere | User's Guide 7-11 |
-| Done | Marks this item done and adds a copy with the next base date | User's Guide 7-12; Agendum does this already (R14a) |
-| Which categories? | Date categories with "Category can use recurring dates" (When by default); with No, "every Tuesday" is read as "Tuesday" | User's Guide 7-8 |
-| Editing the date | ALT-F2 shows `every day (strtng 10/16/2026)`: the rule and its base date in one phrase | tried |
-| Item Properties | Only the base date: `When(10/16/26)` | tried |
+| Question            | Agenda's answer                                                                                                                                                                                   | Source                                                                                             |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| What is stored?     | One date per item: the base date (first occurrence) and the rule (unit, weekday, interval, time); kind 2 = recurring                                                                              | `docs/AGENDA_FILE_FORMAT.md`, Date expressions                                                     |
+| Where does it show? | In every datebook section, at any distance, that contains an occurrence counted from the base date, and never before the base date                                                                | tried: "every day" from Fri 10/16 shows Fri, Sat and every later day, not Tue–Thu before it        |
+| Intervals           | Kept from the base date: "every other day" from 10/17 shows on 10/27, 10/29, 10/31, 11/4…; "every 2nd Tuesday" from 10/20 on 11/3, not 10/27                                                      | tried                                                                                              |
+| Ordinary views      | A date filter matches too: a view filtered on When 10/26–10/30 lists every Monday, every day, every other day and every 2 weeks, but not every other Monday (next 11/2) or each month (next 11/1) | tried                                                                                              |
+| Timed items         | Shown in the hour or half-hour slot of a day view                                                                                                                                                 | Lotus Q&A "Recurring Item at 5:30 AM Disappears From Datebook View" (a 2.0 bug, fixed in Update B) |
+| How many items?     | One; discarding it in one section discards it everywhere                                                                                                                                          | User's Guide 7-11                                                                                  |
+| Done                | Marks this item done and adds a copy with the next base date                                                                                                                                      | User's Guide 7-12; Agendum does this already (R14a)                                                |
+| Which categories?   | Date categories with "Category can use recurring dates" (When by default); with No, "every Tuesday" is read as "Tuesday"                                                                          | User's Guide 7-8                                                                                   |
+| Editing the date    | ALT-F2 shows `every day (strtng 10/16/2026)`: the rule and its base date in one phrase                                                                                                            | tried                                                                                              |
+| Item Properties     | Only the base date: `When(10/16/26)`                                                                                                                                                              | tried                                                                                              |
 
 Agenda never stores the occurrences: a datebook section is a date-range
 filter (`docs/AGENDA_FILE_FORMAT.md`, Datebook view), worked out again
