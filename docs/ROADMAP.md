@@ -44,6 +44,7 @@ items have a plan in `docs/plans/` (see `docs/INDEX.md`).
 
 - [ ] Look into: one fuzz run (2026-10-14, while letters in boxes were built) printed a stack trace through `Agendum.TUI.Boxes.BoxChoices` yet passed; not reproduced in three later 1,500–2,000-run sweeps
 - [ ] Look into: one `FUZZ_RUNS=3000` run (2026-10-15, after the ESC + digit removal, which the fuzz never reaches) failed 1 of 4 tests; output was cut off (`tail -3`), seed unknown; nine later 3000-run sweeps (seeds 0–3, 11–16) passed. Next time keep the full output and the seed
+- [ ] Look into: lag the owner felt in use (2026-10-15). Run with `AGENDUM_LOG=1` and grep the logs for `slow answer` (keys answered in ≥100 ms, split into waiting / update / draw). Frames in the --clinic file measured 2–5 ms, so the cause was not found yet. If the logs point at computing the view: cache the computed view in `State`, recomputed only when the database, view or date changes (needs an ADR; at 3000 items a cursor move still takes ~90 ms in `Update` and ~55 ms in `Render`). A lone ESC waits the 40 ms escape timeout (`App`); it could go to 20–25 ms if ESC feels slow
 
 ### Data interchange (Milestone 4)
 
@@ -266,6 +267,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agendum.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
 - [x] API documentation with `ex_doc` (dev only): `mix docs` from the `@moduledoc`s and `@spec`s, for whoever builds on the core facade (ADR 0020)
 - [x] The real Agenda for Claude to try (done differently: headless DOSBox Staging driven through its REST API, `tools/agformat/agenda_driver.py`; colours and pixels still need the owner's screenshots). First planned as DOSBox Staging started by a script, keys sent with its `AUTOTYPE`, the window captured with `screencapture`, to check Agenda's behaviour and compare screens without asking the owner for screenshots (plan and what the owner sets up: [`docs/plans/DOSBOX_STAGING.md`](plans/DOSBOX_STAGING.md))
+- [x] Quicker answers to keys (2026-10-15): input already waiting is answered with one drawing, and the first bytes of an escape sequence draw nothing; `Database.waiting?/2` no longer walks every item for each item shown (drawing was quadratic in items). The debug log notes answers of 100 ms or more and names the file in use
 
 ### Beyond Agenda
 
