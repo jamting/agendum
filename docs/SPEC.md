@@ -247,7 +247,8 @@ Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
   out right. Item Properties shows the rule ("When (2026-10-12) · every
   Monday"), and F4 says when the next one is. Not done: the "Can use
   recurring dates" property of date categories (only When recurs),
-  recurring items in datebook views, and "every day starting …".
+  recurring items in datebook views and date filters (planned:
+  `docs/plans/RECURRING_OCCURRENCES.md`), and "every day starting …".
 - **R14d ✅ More date phrases** (User's Guide 6-7, 6-10 to 6-11, 7-16).
   Working days ("in five working days", "3 working days ago") skip
   Saturday and Sunday. Quarters ("this/next/last quarter", "end of the
