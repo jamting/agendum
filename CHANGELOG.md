@@ -17,7 +17,10 @@ has the detail.
   every item, so moving in it is about twenty times quicker.
 - The debug log (`AGENDUM_LOG`) notes every answer to a key that took
   100 ms or more, with how the time was spent, and names the file in
-  use when the program starts and when another file is opened.
+  use when the program starts and when another file is opened. It also
+  names the commit the program was built from, the file's size, time and
+  fingerprint on disk, how long saving, loading and calendar reads took,
+  and with each slow answer the view on screen and the memory in use.
 
 ## 0.2.0 — 2026-10-15
 

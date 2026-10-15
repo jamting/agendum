@@ -86,19 +86,79 @@ defmodule Agendum.TUI.DebugLogTest do
     assert DebugLog.write("nothing") == :ok
   end
 
-  describe "file_text/1" do
-    test "the file in use, with its size" do
+  describe "file_text/2" do
+    test "the file in use, with its size, and how it is on disk" do
       state = Core.new_file() |> start() |> Map.put(:path, "/h/my.agendum")
       items = map_size(state.db.items)
       categories = map_size(state.db.categories)
+      disk = %{size: 2048, modified: ~N[2026-10-15 13:20:01], fingerprint: "0a1b2c3d"}
 
-      assert DebugLog.file_text(state) ==
-               "file /h/my.agendum (#{items} items, #{categories} categories)"
+      assert DebugLog.file_text(state, disk) ==
+               "file /h/my.agendum (#{items} items, #{categories} categories) · " <>
+                 "on disk 2048 bytes, changed 2026-10-15T13:20:01, fingerprint 0a1b2c3d"
+
+      assert DebugLog.file_text(state, nil) =~ ~r/categories\) · not on disk$/
     end
 
     test "a file never saved (a sample, a starter) has no path" do
-      assert Core.new_file() |> start() |> DebugLog.file_text() =~ ~r/^file not saved yet \(/
+      text = Core.new_file() |> start() |> DebugLog.file_text(nil)
+      assert text =~ ~r/^file not saved yet \(/
+      refute text =~ "disk"
     end
+
+    @tag :tmp_dir
+    test "the log line reads the file on disk", %{tmp_dir: dir} do
+      path = Path.join(dir, "my.agendum")
+      File.write!(path, "hello")
+      state = Core.new_file() |> start() |> Map.put(:path, path)
+
+      text =
+        Task.async(fn ->
+          log = DebugLog.start(%{"AGENDUM_LOG" => Path.join(dir, "logs")}, [])
+          DebugLog.file(state)
+          DebugLog.stop()
+          File.read!(log)
+        end)
+        |> Task.await()
+
+      assert text =~ "on disk 5 bytes"
+      assert text =~ "fingerprint #{DebugLog.fingerprint("hello")}"
+    end
+  end
+
+  test "fingerprints are eight hex digits, the same for the same bytes" do
+    assert DebugLog.fingerprint("hello") =~ ~r/^[0-9a-f]{8}$/
+    assert DebugLog.fingerprint("hello") == DebugLog.fingerprint("hello")
+    assert DebugLog.fingerprint("hello") != DebugLog.fingerprint("hello!")
+  end
+
+  test "the header names the version, the commit and the build" do
+    assert DebugLog.build_text() =~ ~r/^Wol's Agendum \d+\.\d+\.\d+ \(commit \w+, test build\)$/
+  end
+
+  test "effects are logged with how long they took; written text is counted" do
+    assert DebugLog.effect_text({:save, "/h/my.agendum"}, 12) ==
+             ~s(effect {:save, "/h/my.agendum"} in 12 ms)
+
+    assert DebugLog.effect_text({:write_text, "/h/out.txt", "abc"}, 0) ==
+             "effect write_text /h/out.txt (3 bytes) in 0 ms"
+  end
+
+  test "the view on screen: its sections and filters" do
+    state = Core.new_file() |> start()
+
+    assert DebugLog.view_text(state) ==
+             ~s(view "#{Agendum.TUI.State.view(state).name}" (1 section, 0 filters\))
+  end
+
+  test "the runtime's work: collections between two moments, memory now" do
+    before = %{collections: 10, memory: 50 * 1_048_576, loop: 1_048_576}
+    now = %{collections: 13, memory: 52 * 1_048_576, loop: 3 * 1_048_576}
+
+    assert DebugLog.runtime_text(before, now) ==
+             "3 garbage collections, memory 52.0 MB (main loop 3.0 MB)"
+
+    assert %{collections: _, memory: _, loop: _} = DebugLog.runtime()
   end
 
   describe "slow_text/1" do

@@ -52,8 +52,13 @@ defmodule Agendum.TUI.App do
 
     if answer do
       done = now_ms()
-      %{keys: keys, since: since, update: update} = answer
-      DebugLog.slow(%{keys: keys, total: done - since, update: update, draw: done - started})
+      %{keys: keys, since: since, update: update, runtime: runtime} = answer
+
+      DebugLog.slow(
+        %{keys: keys, total: done - since, update: update, draw: done - started},
+        state,
+        runtime
+      )
     end
 
     wait(state, previous, buffer, theme, nil)
@@ -85,8 +90,8 @@ defmodule Agendum.TUI.App do
         :ok
 
       # a calendar read in the background (R45)
-      {:calendar_read, id, result} ->
-        DebugLog.write("calendar #{id} read: #{elem(result, 0)}")
+      {:calendar_read, id, result, ms} ->
+        DebugLog.write("calendar #{id} read: #{elem(result, 0)} in #{ms} ms")
         state = logged(state, fn -> Update.calendar_read(state, id, result) end)
         loop(state, previous, buffer, theme)
     after
@@ -108,6 +113,8 @@ defmodule Agendum.TUI.App do
 
   defp continue(state, previous, keys, rest, theme, since) do
     started = now_ms()
+    # garbage collections and memory now, for a slow answer's log line
+    runtime = DebugLog.runtime()
 
     case logged(state, fn -> apply_keys(state, keys) end) do
       {:quit, _state} ->
@@ -115,7 +122,9 @@ defmodule Agendum.TUI.App do
 
       {:ok, state} ->
         # `&&` gives nil when there is nothing to time (an idle tick)
-        answer = since && %{keys: keys, since: since, update: now_ms() - started}
+        answer =
+          since && %{keys: keys, since: since, update: now_ms() - started, runtime: runtime}
+
         loop(state, previous, rest, theme, answer)
     end
   end
@@ -160,7 +169,7 @@ defmodule Agendum.TUI.App do
   defp run_effects(state, [:quit | _]), do: {:quit, state}
 
   defp run_effects(state, [effect | rest]) do
-    DebugLog.effect(effect)
+    started = now_ms()
     before = state.prefs
     before_path = state.path
 
@@ -189,9 +198,17 @@ defmodule Agendum.TUI.App do
 
         {:fetch_calendar, id, url} ->
           loop = self()
-          Task.start(fn -> send(loop, {:calendar_read, id, CalendarFetch.read(url)}) end)
+
+          Task.start(fn ->
+            started = now_ms()
+            result = CalendarFetch.read(url)
+            send(loop, {:calendar_read, id, result, now_ms() - started})
+          end)
+
           state
       end
+
+    DebugLog.effect(effect, now_ms() - started)
 
     # another file opened, or this one saved under a new name
     if state.path != before_path or

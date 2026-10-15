@@ -165,7 +165,7 @@ the rest by what it is for:
 | `Agendum.TUI.Terminal.Screen`                           | ✔     | Diffs two frames into minimal ANSI output.                                                                                       |
 | `Agendum.TUI.Terminal`                         | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
 | `Agendum.TUI.App`                              | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |
-| `Agendum.TUI.DebugLog`                         | ✘     | The debug log when `AGENDUM_LOG` is set: input, effects, messages, slow answers, crashes with the state; five sessions kept (ADR 0027).  |
+| `Agendum.TUI.DebugLog`                         | ✘     | The debug log when `AGENDUM_LOG` is set: build, input, timed effects, file fingerprints, slow answers with view and memory, crashes with the state; five kept (ADR 0027). |
 | `Agendum.Store`                                | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write); folder listings for the Select File box.                     |
 | `Agendum.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format (with the number separators), key map, confirm mode, auto-save, name, company, last file (`key = value`, ADR 0008).               |
 | `Agendum.CalendarFetch`                        | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |

@@ -19,15 +19,18 @@ program are therefore hard to reproduce, by the owner or by Claude.
   empty or `0` is off, and nothing is written.
 - One file a session, named by its start time. Starting a session
   deletes all but the newest four, so five are kept.
-- It logs the program, Elixir, OTP, OS, terminal and arguments; every
+- It logs the program (version, the git commit it was built from and
+  dev or prod build), Elixir, OTP, OS, terminal and arguments; every
   input as raw bytes and decoded keys, with the boxes open; the keys a
-  macro plays; the effects `App` runs (text written to a file counted,
-  not copied); new messages and errors; terminal resizes; the file in
-  use with its size (at the start, and when another is opened or saved
-  under a new name); answers to
+  macro plays; the effects `App` runs and how long each took (text
+  written to a file counted, not copied; a calendar read too); new
+  messages and errors; terminal resizes; the file in use with its size
+  and, on disk, its bytes, time and a fingerprint (at the start, and when
+  another is opened or saved under a new name); answers to
   keys that took 100 ms or more, from the key's arrival to the screen
   drawn (split into waiting, update and draw; added 2026-10-15 to find
-  lag felt in use); and a crash:
+  lag felt in use), with the view on screen (its sections and filters)
+  and the garbage collections and memory during the answer; and a crash:
   the stack trace and the state as `DevTools.lines/2` shows it, with the
   mode stack. After a crash the CLI prints the log's path.
 - Each line is written to disk before the next key (no delayed write),
@@ -44,3 +47,7 @@ program are therefore hard to reproduce, by the owner or by Claude.
   its only callers.
 - Not a preference: it is for debugging on one computer, not a setting
   of the program, so it lives in the environment, not in File ▸ Customize.
+- A lag is found by replaying the log's keys on the same file: the
+  commit says which code ran and the fingerprint whether the copy is the
+  file the session began with (added 2026-10-15, after the first lag
+  found this way took a replay to learn which view was open).
