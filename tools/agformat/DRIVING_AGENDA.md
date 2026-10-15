@@ -154,3 +154,24 @@ d.home(); d.keys("F10", "q"); d.stop()
 The second round (2026-10-15) ran about 150 experiments this way, in
 batches of 5–30 per script, each printing the field's new value and the
 diff into a log; the format tables were read from those logs.
+
+## Menus and the note editor (2026-10-15)
+
+- **Walking the F10 menu safely.** A highlighted entry's help on line 1
+  is a comma-separated list of names ("Retrieve, Save, Abandon …") when
+  it opens a submenu, and a sentence when it runs a command. So enter an
+  entry only when its help is such a list, and read each leaf's help by
+  moving onto it with → and nothing else. Start every path from the view
+  (ESC until line 1 says `View:`), then F10 and the letters. The whole
+  view menu was walked this way in about four minutes
+  (`docs/reference/AGENDA_MENUS.md`).
+- **One experiment per fresh start.** Long chains of keys in the note
+  editor go out of step: an extra ESC leaves the note, and an ESC in a
+  changed note opens "Discard changes? No". Copy the file again and
+  restart Agenda for each experiment (about ten seconds each), and print
+  the screen after every step.
+- **Boxes with a file name** (note Import, Export, File Attach) need two
+  ENTERs: the first finishes typing the field, the second the box.
+- **ALT-letter keys sent after typed text** were not reliable in the note
+  editor (ALT-C and ALT-N showed other boxes). Pause before them, or check
+  the key in the F1 help instead ("Notes: Accelerator Keys").
