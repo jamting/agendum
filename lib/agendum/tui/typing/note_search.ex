@@ -87,34 +87,59 @@ defmodule Agendum.TUI.Typing.NoteSearch do
   # --- the box ---------------------------------------------------------------------
 
   @impl Box
-  def handle(state, mode, key) do
-    rows = rows(mode)
-    row = Enum.at(rows, mode.cursor)
+  # On the text or the replacement the person types: every key edits it
+  # but the moves between settings, ENTER and ESC.
+  def handle(state, mode, key) when key in [:up, :down, :tab, :shift_tab, :enter, :esc],
+    do: run(state, mode, Map.fetch!(keymap(mode), key))
 
-    case key do
-      :esc ->
-        State.pop(state)
+  def handle(state, mode, key), do: edit_text(state, mode, Enum.at(rows(mode), mode.cursor), key)
 
-      :enter ->
-        settings = %{mode.settings | text: mode.line.text, replacement: mode.replacement.text}
-        start(%{State.pop(state) | searches: %{state.searches | note: settings}}, settings)
+  @impl Box
+  def typing?(_state, mode), do: Enum.at(rows(mode), mode.cursor) in [:text, :replacement]
 
-      k when k in [:down, :tab] ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(rows) - 1)})
+  # R65
+  @impl Box
+  def keymap(_mode) do
+    %{
+      :up => :up,
+      :shift_tab => :up,
+      :down => :down,
+      :tab => :down,
+      {:char, " "} => :change,
+      :left => :change,
+      :right => :change,
+      :enter => :done,
+      :esc => :close
+    }
+  end
 
-      k when k in [:up, :shift_tab] ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
+  @impl Box
+  def commands(_mode) do
+    [
+      {:change, "Change", "Switch the setting"},
+      {:done, "Search", "Search (and replace)"},
+      {:up, "Up", "The setting above"},
+      {:down, "Down", "The setting below"},
+      {:close, "Cancel", "Close without searching"}
+    ]
+  end
 
-      k when row in [:text, :replacement] ->
-        edit_text(state, mode, row, k)
+  @impl Box
+  def run(state, _mode, :close), do: State.pop(state)
 
-      k when k in [{:char, " "}, :right, :left] ->
-        State.put_mode(state, %{mode | settings: change(mode.settings, row)})
+  def run(state, mode, :done) do
+    settings = %{mode.settings | text: mode.line.text, replacement: mode.replacement.text}
+    start(%{State.pop(state) | searches: %{state.searches | note: settings}}, settings)
+  end
 
-      _ ->
-        state
+  def run(state, mode, :change) do
+    case Enum.at(rows(mode), mode.cursor) do
+      row when row in [:text, :replacement] -> state
+      row -> State.put_mode(state, %{mode | settings: change(mode.settings, row)})
     end
   end
+
+  def run(state, mode, id), do: Box.list_move(state, mode, length(rows(mode)), id)
 
   defp edit_text(state, mode, row, key) do
     field = if row == :text, do: :line, else: :replacement

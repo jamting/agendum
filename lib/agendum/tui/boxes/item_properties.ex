@@ -94,7 +94,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
 
   # the settings box's keys and the row's (R65)
   @impl Box
-  def keymap do
+  def keymap(_mode) do
     Box.settings_keymap(%{
       {:f, 6} => :done,
       {:f, 2} => :edit,
@@ -106,7 +106,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   end
 
   @impl Box
-  def commands do
+  def commands(_mode) do
     Box.settings_commands([
       {:edit, "Edit", "Edit the text, or open the note"},
       {:profile, "Profile", "The item's assignment profile"},

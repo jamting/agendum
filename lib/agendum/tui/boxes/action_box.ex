@@ -68,7 +68,7 @@ defmodule Agendum.TUI.Boxes.ActionBox do
   # On the value the person types: ← → HOME END move in it, other keys
   # edit it; ↑ ↓ TAB still move between settings, ENTER and ESC end.
   def handle(state, mode, key) when key in [:up, :down, :tab, :shift_tab, :enter, :esc],
-    do: run(state, mode, Map.fetch!(keymap(), key))
+    do: run(state, mode, Map.fetch!(keymap(mode), key))
 
   def handle(state, mode, key) do
     case LineEdit.handle(mode.line, key) do
@@ -84,10 +84,10 @@ defmodule Agendum.TUI.Boxes.ActionBox do
   @keymap %{:delete => :remove}
 
   @impl Box
-  def keymap, do: Box.settings_keymap(@keymap)
+  def keymap(_mode), do: Box.settings_keymap(@keymap)
 
   @impl Box
-  def commands,
+  def commands(_mode),
     do:
       Box.settings_commands([
         {:done, "Done", "Set the action and close"},

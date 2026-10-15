@@ -30,8 +30,17 @@ defmodule Agendum.TUI.Boxes.FileStatsBox do
   def open(state), do: State.push(state, %{type: :file_stats})
 
   @impl Box
-  def handle(state, _mode, key) when key in [:enter, :esc], do: State.pop(state)
   def handle(state, _mode, _key), do: state
+
+  # R65
+  @impl Box
+  def keymap(_mode), do: %{:enter => :close, :esc => :close}
+
+  @impl Box
+  def commands(_mode), do: [{:close, "Return", "Close the statistics"}]
+
+  @impl Box
+  def run(state, _mode, :close), do: State.pop(state)
 
   @impl Box
   def title(_state, _mode), do: "File statistics"

@@ -56,10 +56,10 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
   def handle(state, _mode, _key), do: state
 
   @impl Box
-  def keymap, do: Box.settings_keymap()
+  def keymap(_mode), do: Box.settings_keymap()
 
   @impl Box
-  def commands,
+  def commands(_mode),
     do:
       Box.settings_commands([
         {:done, "Execute", "Run the conditions and actions"},

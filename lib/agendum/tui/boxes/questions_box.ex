@@ -24,38 +24,48 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
   def suggestions(state, mode), do: Map.get(state.db.suggestions, mode.item, [])
 
   @impl Box
-  def handle(state, mode, key) do
-    cats = suggestions(state, mode)
+  def handle(state, _mode, _key), do: state
 
-    case key do
-      :esc ->
-        State.pop(state)
-
-      :up ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      :down ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, length(cats) - 1)})
-
-      {:char, " "} ->
-        cat = Enum.at(cats, mode.cursor)
-
-        picked =
-          if cat in mode.picked, do: List.delete(mode.picked, cat), else: mode.picked ++ [cat]
-
-        State.put_mode(state, %{mode | picked: picked})
-
-      :tab ->
-        State.put_mode(state, %{mode | picked: cats})
-
-      :enter ->
-        db = Core.answer_question(state.db, mode.item, mode.picked, State.context(state))
-        state |> State.pop() |> State.change_db(db) |> open_next()
-
-      _ ->
-        state
-    end
+  # R65
+  @impl Box
+  def keymap(_mode) do
+    %{
+      :up => :up,
+      :down => :down,
+      {:char, " "} => :pick,
+      :tab => :pick_all,
+      :enter => :done,
+      :esc => :close
+    }
   end
+
+  @impl Box
+  def commands(_mode) do
+    [
+      {:pick, "Pick", "Pick or unpick the category"},
+      {:pick_all, "Pick all", "Pick every category"},
+      {:done, "Done", "Assign the picked ones"}
+    ] ++ Enum.take(Box.list_moves(), 2) ++ [{:close, "Later", "Close; ask again later"}]
+  end
+
+  @impl Box
+  def run(state, _mode, :close), do: State.pop(state)
+
+  def run(state, mode, :pick) do
+    cat = Enum.at(suggestions(state, mode), mode.cursor)
+    picked = if cat in mode.picked, do: List.delete(mode.picked, cat), else: mode.picked ++ [cat]
+    State.put_mode(state, %{mode | picked: picked})
+  end
+
+  def run(state, mode, :pick_all),
+    do: State.put_mode(state, %{mode | picked: suggestions(state, mode)})
+
+  def run(state, mode, :done) do
+    db = Core.answer_question(state.db, mode.item, mode.picked, State.context(state))
+    state |> State.pop() |> State.change_db(db) |> open_next()
+  end
+
+  def run(state, mode, id), do: Box.list_move(state, mode, length(suggestions(state, mode)), id)
 
   @impl Box
   def title(_state, _mode), do: "Suggested assignments"

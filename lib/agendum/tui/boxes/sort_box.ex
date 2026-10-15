@@ -80,10 +80,10 @@ defmodule Agendum.TUI.Boxes.SortBox do
 
   # the settings box's keys; ALT-F5, which opened it, is done too (R65)
   @impl Box
-  def keymap, do: Box.settings_keymap(%{{:alt_f, 5} => :done})
+  def keymap(_mode), do: Box.settings_keymap(%{{:alt_f, 5} => :done})
 
   @impl Box
-  def commands, do: Box.settings_commands()
+  def commands(_mode), do: Box.settings_commands()
 
   # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
   @impl Box

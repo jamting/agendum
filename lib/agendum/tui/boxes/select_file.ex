@@ -84,24 +84,53 @@ defmodule Agendum.TUI.Boxes.SelectFile do
   end
 
   @impl Box
-  def handle(state, mode, key) do
-    rows = rows(mode)
-    last = max(length(rows) - 1, 0)
-    move = &State.put_mode(state, %{mode | cursor: &1 |> min(last) |> max(0)})
+  # typing narrows the list; BACKSPACE takes a letter back
+  def handle(state, mode, {:char, c}), do: narrow(state, mode, mode.filter <> c)
 
-    case key do
-      :esc -> back(state, mode.line)
-      :up -> move.(mode.cursor - 1)
-      :down -> move.(mode.cursor + 1)
-      :pgup -> move.(mode.cursor - 10)
-      :pgdn -> move.(mode.cursor + 10)
-      :home -> move.(0)
-      :end -> move.(last)
-      {:f, 7} -> State.put_mode(state, %{mode | dates: not mode.dates})
-      :enter -> choose(state, mode, Enum.at(rows, mode.cursor))
-      :backspace -> narrow(state, mode, String.slice(mode.filter, 0..-2//1))
-      {:char, c} -> narrow(state, mode, mode.filter <> c)
-      _ -> state
+  def handle(state, mode, :backspace),
+    do: narrow(state, mode, String.slice(mode.filter, 0..-2//1))
+
+  def handle(state, _mode, _key), do: state
+
+  # R65
+  @impl Box
+  def keymap(_mode) do
+    %{
+      :up => :up,
+      :down => :down,
+      :pgup => :page_up,
+      :pgdn => :page_down,
+      :home => :first,
+      :end => :last,
+      {:f, 7} => :dates,
+      :enter => :open,
+      :esc => :close
+    }
+  end
+
+  @impl Box
+  def commands(_mode) do
+    [{:open, "Open", "Open the file or folder"}, {:dates, "Dates", "Show or hide the dates"}] ++
+      Box.list_moves() ++
+      [
+        {:page_up, "Page up", "Ten up"},
+        {:page_down, "Page down", "Ten down"},
+        {:close, "Back", "Back to the prompt"}
+      ]
+  end
+
+  @impl Box
+  def run(state, mode, :close), do: back(state, mode.line)
+  def run(state, mode, :dates), do: State.put_mode(state, %{mode | dates: not mode.dates})
+  def run(state, mode, :open), do: choose(state, mode, Enum.at(rows(mode), mode.cursor))
+
+  def run(state, mode, id) do
+    count = length(rows(mode))
+
+    case id do
+      :page_up -> Box.list_move(state, %{mode | cursor: mode.cursor - 9}, count, :up)
+      :page_down -> Box.list_move(state, %{mode | cursor: mode.cursor + 9}, count, :down)
+      _ -> Box.list_move(state, mode, count, id)
     end
   end
 

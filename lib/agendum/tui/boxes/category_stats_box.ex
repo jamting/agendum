@@ -27,8 +27,17 @@ defmodule Agendum.TUI.Boxes.CategoryStatsBox do
   def open(state, cat_id), do: State.push(state, %{type: :category_stats, cat_id: cat_id})
 
   @impl Box
-  def handle(state, _mode, key) when key in [:enter, :esc], do: State.pop(state)
   def handle(state, _mode, _key), do: state
+
+  # R65
+  @impl Box
+  def keymap(_mode), do: %{:enter => :close, :esc => :close}
+
+  @impl Box
+  def commands(_mode), do: [{:close, "Return", "Close the statistics"}]
+
+  @impl Box
+  def run(state, _mode, :close), do: State.pop(state)
 
   @impl Box
   def title(state, mode), do: "Category statistics: " <> state.db.categories[mode.cat_id].name

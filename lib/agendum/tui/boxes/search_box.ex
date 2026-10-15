@@ -63,7 +63,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   # On the text the person types: ← → HOME END move in it, other keys
   # edit it; ↑ ↓ TAB still move between settings, ENTER and ESC end.
   def handle(state, mode, key) when key in [:up, :down, :tab, :shift_tab, :enter, :esc],
-    do: run(state, mode, Map.fetch!(keymap(), key))
+    do: run(state, mode, Map.fetch!(keymap(mode), key))
 
   def handle(state, mode, key), do: edit_text(state, mode, key)
 
@@ -72,10 +72,10 @@ defmodule Agendum.TUI.Boxes.SearchBox do
 
   # the settings box's keys; ENTER searches (R65)
   @impl Box
-  def keymap, do: Box.settings_keymap()
+  def keymap(_mode), do: Box.settings_keymap()
 
   @impl Box
-  def commands,
+  def commands(_mode),
     do:
       Box.settings_commands([
         {:done, "Search", "Search for the text"},

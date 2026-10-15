@@ -99,7 +99,7 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
   # On a date or number the person types: ← → HOME END move in it, other
   # keys edit it; ↑ ↓ TAB still move between settings, ENTER and ESC end.
   def handle(state, mode, key) when key in [:up, :down, :tab, :shift_tab, :enter, :esc],
-    do: run(state, mode, Map.fetch!(keymap(), key))
+    do: run(state, mode, Map.fetch!(keymap(mode), key))
 
   def handle(state, mode, key) do
     row = Enum.at(@rows, mode.cursor)
@@ -115,10 +115,10 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
 
   # the settings box's keys; ENTER sets it, DEL removes it (R65)
   @impl Box
-  def keymap, do: Box.settings_keymap(%{:delete => :remove})
+  def keymap(_mode), do: Box.settings_keymap(%{:delete => :remove})
 
   @impl Box
-  def commands,
+  def commands(_mode),
     do:
       Box.settings_commands([
         {:done, "Done", "Set it and close"},

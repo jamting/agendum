@@ -19,6 +19,23 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
   @impl Box
   def handle(state, mode, key), do: choice_key(state, mode, key)
 
+  # R65: ↑ ↓ ENTER ESC; a letter picks the choice starting with it (in
+  # `handle/3`)
+  @impl Box
+  def keymap(_mode), do: %{:up => :up, :down => :down, :enter => :choose, :esc => :close}
+
+  @impl Box
+  def commands(_mode) do
+    [{:choose, "Choose", "Choose the highlighted one"}] ++
+      Enum.take(Box.list_moves(), 2) ++ [{:close, "Cancel", "Close without choosing"}]
+  end
+
+  # the key each command is in `choice_key/3`
+  @keys %{up: :up, down: :down, choose: :enter, close: :esc}
+
+  @impl Box
+  def run(state, mode, id), do: choice_key(state, mode, Map.fetch!(@keys, id))
+
   @impl Box
   def title(state, %{kind: :move, cat_id: id}),
     do: "Moving #{state.db.categories[id].name} creates a conflict"

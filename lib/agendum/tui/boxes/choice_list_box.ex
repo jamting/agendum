@@ -17,32 +17,33 @@ defmodule Agendum.TUI.Boxes.ChoiceListBox do
     do: State.push(state, %{type: :choice_list, labels: labels, title: title, cursor: 0})
 
   @impl Box
-  def handle(state, mode, key) do
-    last = length(mode.labels) - 1
+  def handle(state, _mode, _key), do: state
 
-    case key do
-      :esc ->
-        State.pop(state)
-
-      :enter ->
-        state |> State.pop() |> BoxChoices.choose(mode.cursor)
-
-      k when k in [:up, :left] ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      k when k in [:down, :right] ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
-
-      :home ->
-        State.put_mode(state, %{mode | cursor: 0})
-
-      :end ->
-        State.put_mode(state, %{mode | cursor: last})
-
-      _ ->
-        state
-    end
+  # R65
+  @impl Box
+  def keymap(_mode) do
+    %{
+      :up => :up,
+      :left => :up,
+      :down => :down,
+      :right => :down,
+      :home => :first,
+      :end => :last,
+      :enter => :choose,
+      :esc => :close
+    }
   end
+
+  @impl Box
+  def commands(_mode),
+    do:
+      [{:choose, "Choose", "Choose the highlighted choice"}] ++
+        Box.list_moves() ++ [{:close, "Cancel", "Close without choosing"}]
+
+  @impl Box
+  def run(state, mode, :choose), do: state |> State.pop() |> BoxChoices.choose(mode.cursor)
+  def run(state, _mode, :close), do: State.pop(state)
+  def run(state, mode, id), do: Box.list_move(state, mode, length(mode.labels), id)
 
   @impl Box
   def title(_state, %{title: ""}), do: "Choices"

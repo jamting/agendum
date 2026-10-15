@@ -31,17 +31,22 @@ defmodule Agendum.TUI.Boxes.CopyBox do
   end
 
   @impl Box
-  def handle(state, mode, key) do
-    last = length(State.view(state).sections) - 1
+  def handle(state, _mode, _key), do: state
 
-    case key do
-      :esc -> State.pop(state)
-      :up -> State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-      :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, last)})
-      :enter -> state |> State.pop() |> copy(mode)
-      _ -> state
-    end
+  # R65
+  @impl Box
+  def keymap(_mode), do: %{:up => :up, :down => :down, :enter => :copy, :esc => :close}
+
+  @impl Box
+  def commands(_mode) do
+    [{:copy, "Copy", "Copy to the highlighted section"}] ++
+      Enum.take(Box.list_moves(), 2) ++ [{:close, "Cancel", "Close without copying"}]
   end
+
+  @impl Box
+  def run(state, mode, :copy), do: state |> State.pop() |> copy(mode)
+  def run(state, _mode, :close), do: State.pop(state)
+  def run(state, mode, id), do: Box.list_move(state, mode, length(State.view(state).sections), id)
 
   defp copy(state, mode) do
     cat_id = Enum.at(State.view(state).sections, mode.cursor).category_id

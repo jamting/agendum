@@ -203,6 +203,58 @@ defmodule Agendum.TUI.CategoryScreens do
   end
 
   @doc """
+  The keys every box listing the hierarchy shares (R65): the moves and
+  ALT-− / ALT-= (collapse, expand), for the box's `keymap/1`.
+  """
+  def list_keymap do
+    @moves
+    |> Map.new(fn {key, where} -> {key, where} end)
+    |> Map.merge(%{{:alt, "-"} => :collapse, {:alt, "="} => :expand})
+  end
+
+  @doc "Their commands, `{id, name, summary}`, for the box's `commands/1`."
+  def list_commands do
+    [
+      {:up, "Up", "The category above"},
+      {:down, "Down", "The category below"},
+      {:page_up, "Page up", "A screen up"},
+      {:page_down, "Page down", "A screen down"},
+      {:first, "First", "The first category"},
+      {:last, "Last", "The last category"},
+      {:parent, "Parent", "The parent"},
+      {:last_sibling, "Last sibling", "The last of the siblings"},
+      {:previous_sibling, "Previous sibling", "The sibling above"},
+      {:next_sibling, "Next sibling", "The sibling below"},
+      {:collapse, "Collapse", "Collapse the family (twice: all)"},
+      {:expand, "Expand", "Expand the family (twice: all)"}
+    ]
+  end
+
+  @doc """
+  Runs one of `list_commands/0` in the box on top (`mode`); the box's own
+  commands are its own. The cursor is kept on a row first.
+  """
+  def run_list(state, mode, id) when id in [:collapse, :expand] do
+    case Enum.at(rows(state, mode), mode.cursor) do
+      nil ->
+        state
+
+      {cat, _} ->
+        collapse_key(state, cat, if(id == :collapse, do: {:alt, "-"}, else: {:alt, "="}))
+    end
+  end
+
+  def run_list(state, mode, where) do
+    case rows(state, mode) do
+      [] -> state
+      rows -> State.put_mode(state, move(state, clamp(mode, rows), rows, where))
+    end
+  end
+
+  @doc "The mode with its cursor on one of `rows`."
+  def clamp(mode, rows), do: %{mode | cursor: mode.cursor |> min(length(rows) - 1) |> max(0)}
+
+  @doc """
   The mode with its cursor moved in `rows`: `:up`, `:down`, `:page_up`,
   `:page_down`, `:first`, `:last`, to the `:parent`, the `:last_sibling`,
   the `:previous_sibling` or the `:next_sibling`.

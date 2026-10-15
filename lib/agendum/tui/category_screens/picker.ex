@@ -20,6 +20,31 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   @impl Box
   def handle(state, mode, key), do: CategoryScreens.handle(state, mode, key)
 
+  # R65: the hierarchy's moves, ENTER picks, INS a new category; typing
+  # finds one (in `handle/3`)
+  @impl Box
+  def keymap(_mode),
+    do:
+      Map.merge(CategoryScreens.list_keymap(), %{:enter => :pick, :insert => :new, :esc => :close})
+
+  @impl Box
+  def commands(_mode) do
+    [{:pick, "Pick", "Pick the highlighted category"}, {:new, "New", "Make a new category"}] ++
+      CategoryScreens.list_commands() ++ [{:close, "Cancel", "Close (first: what was typed)"}]
+  end
+
+  # the key each command is in `screen_key/4`
+  @keys %{pick: :enter, new: :insert, close: :esc}
+
+  @impl Box
+  def run(state, mode, id) when id in [:pick, :new, :close] do
+    rows = CategoryScreens.rows(state, mode)
+    mode = if rows == [], do: mode, else: CategoryScreens.clamp(mode, rows)
+    screen_key(State.put_mode(state, mode), mode, rows, Map.fetch!(@keys, id))
+  end
+
+  def run(state, mode, id), do: CategoryScreens.run_list(state, mode, id)
+
   # several categories are set at a time in some pickers: ESC ends them
   @impl Box
   def finish(%{purpose: purpose}) when is_tuple(purpose) and elem(purpose, 0) in @esc_pickers,

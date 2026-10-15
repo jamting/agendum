@@ -28,44 +28,61 @@ defmodule Agendum.TUI.Boxes.CalendarsBox do
   def current(state, mode), do: state.db |> Database.calendars() |> Enum.at(mode.cursor)
 
   @impl Box
-  def handle(state, mode, key) do
+  def handle(state, _mode, _key), do: state
+
+  # R65
+  @impl Box
+  def keymap(_mode) do
+    %{
+      :up => :up,
+      :down => :down,
+      :insert => :subscribe,
+      {:ctrl, "n"} => :subscribe,
+      :enter => :read,
+      {:char, "r"} => :read,
+      {:char, "R"} => :read,
+      {:char, "f"} => :how_often,
+      {:char, "F"} => :how_often,
+      {:char, "a"} => :ahead,
+      {:char, "A"} => :ahead,
+      :delete => :unsubscribe,
+      {:ctrl, "d"} => :unsubscribe,
+      :esc => :close
+    }
+  end
+
+  @impl Box
+  def commands(_mode) do
+    [
+      {:read, "Read now", "Read the calendar now"},
+      {:subscribe, "Subscribe", "Add a calendar by its address"},
+      {:how_often, "How often", "Change how often it is read"},
+      {:ahead, "How far ahead", "Change how far ahead it reads"},
+      {:unsubscribe, "Unsubscribe", "Unsubscribe from the calendar"}
+    ] ++ Enum.take(Box.list_moves(), 2) ++ [{:close, "Return", "Back to the view"}]
+  end
+
+  @impl Box
+  def run(state, _mode, :close), do: State.pop(state)
+
+  def run(state, _mode, :subscribe),
+    do: Prompts.prompt(state, "Calendar's web address (https:// or webcal://):", :calendar_url)
+
+  def run(state, mode, id) do
     count = length(Database.calendars(state.db))
     mode = %{mode | cursor: mode.cursor |> min(count - 1) |> max(0)}
     state = State.put_mode(state, mode)
-    cal = current(state, mode)
-
-    case {key, cal} do
-      {:esc, _} ->
-        State.pop(state)
-
-      {:up, _} ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      {:down, _} ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, max(count - 1, 0))})
-
-      {k, _} when k in [:insert, {:ctrl, "n"}] ->
-        Prompts.prompt(state, "Calendar's web address (https:// or webcal://):", :calendar_url)
-
-      {_, nil} ->
-        state
-
-      {k, cal} when k in [:enter, {:char, "r"}, {:char, "R"}] ->
-        Update.fetch_calendar(state, cal.id, :manual)
-
-      {{:char, c}, cal} when c in ["f", "F"] ->
-        setting(state, cal, :refresh_minutes)
-
-      {{:char, c}, cal} when c in ["a", "A"] ->
-        setting(state, cal, :ahead_days)
-
-      {k, cal} when k in [:delete, {:ctrl, "d"}] ->
-        unsubscribe(state, cal)
-
-      _ ->
-        state
-    end
+    calendar(state, mode, id, current(state, mode), count)
   end
+
+  defp calendar(state, mode, id, _cal, count) when id in [:up, :down],
+    do: Box.list_move(state, mode, max(count, 1), id)
+
+  defp calendar(state, _mode, _id, nil, _count), do: state
+  defp calendar(state, _mode, :read, cal, _), do: Update.fetch_calendar(state, cal.id, :manual)
+  defp calendar(state, _mode, :how_often, cal, _), do: setting(state, cal, :refresh_minutes)
+  defp calendar(state, _mode, :ahead, cal, _), do: setting(state, cal, :ahead_days)
+  defp calendar(state, _mode, :unsubscribe, cal, _), do: unsubscribe(state, cal)
 
   defp setting(state, cal, setting),
     do: State.change_db(state, Core.cycle_calendar_setting(state.db, cal.id, setting, 1))

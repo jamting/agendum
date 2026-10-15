@@ -70,30 +70,43 @@ defmodule Agendum.TUI.Update.Marked do
   # --- the box asking whether a command acts on the marked items or the current one
 
   @impl Box
-  def handle(state, mode, key) do
-    case key do
-      k when k in [{:char, "m"}, {:char, "M"}] ->
-        state |> State.pop() |> bulk(mode.action, mode.marked, mode.row)
+  def handle(state, _mode, _key), do: state
 
-      k when k in [{:char, "c"}, {:char, "C"}] ->
-        state |> State.pop() |> single(mode.action, mode.row)
-
-      :enter when mode.cursor == 0 ->
-        state |> State.pop() |> bulk(mode.action, mode.marked, mode.row)
-
-      :enter ->
-        state |> State.pop() |> single(mode.action, mode.row)
-
-      k when k in [:up, :down] ->
-        State.put_mode(state, %{mode | cursor: 1 - mode.cursor})
-
-      :esc ->
-        State.pop(state)
-
-      _ ->
-        state
-    end
+  # R65
+  @impl Box
+  def keymap(_mode) do
+    %{
+      {:char, "m"} => :marked,
+      {:char, "M"} => :marked,
+      {:char, "c"} => :current,
+      {:char, "C"} => :current,
+      :enter => :choose,
+      :up => :switch,
+      :down => :switch,
+      :esc => :close
+    }
   end
+
+  @impl Box
+  def commands(_mode) do
+    [
+      {:marked, "Marked items", "Do it to the marked items"},
+      {:current, "Current item", "Do it to the highlighted item"},
+      {:choose, "Choose", "Do it to the one highlighted here"},
+      {:switch, "Switch", "Highlight the other choice"},
+      {:close, "Cancel", "Do nothing"}
+    ]
+  end
+
+  @impl Box
+  def run(state, mode, :marked),
+    do: state |> State.pop() |> bulk(mode.action, mode.marked, mode.row)
+
+  def run(state, mode, :current), do: state |> State.pop() |> single(mode.action, mode.row)
+  def run(state, %{cursor: 0} = mode, :choose), do: run(state, mode, :marked)
+  def run(state, mode, :choose), do: run(state, mode, :current)
+  def run(state, mode, :switch), do: State.put_mode(state, %{mode | cursor: 1 - mode.cursor})
+  def run(state, _mode, :close), do: State.pop(state)
 
   @impl Box
   def title(_state, _mode), do: "Marked items"

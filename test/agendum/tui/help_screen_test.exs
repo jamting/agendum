@@ -195,7 +195,10 @@ defmodule Agendum.TUI.HelpScreenTest do
 
     test "ENTER on one of the box's commands runs it in the box", %{box: box} do
       index =
-        Enum.find_index(Agendum.TUI.Boxes.ItemProperties.commands(), &(elem(&1, 0) == :profile))
+        Enum.find_index(
+          Agendum.TUI.Boxes.ItemProperties.commands(%{}),
+          &(elem(&1, 0) == :profile)
+        )
 
       ran = press(box, [{:f, 1}, "c"] ++ List.duplicate(:down, index) ++ [:enter])
       assert Enum.map(ran.modes, & &1.type) == [:profile, :item_props]
@@ -237,19 +240,20 @@ defmodule Agendum.TUI.HelpScreenTest do
     end
   end
 
-  describe "in a box without a keymap of its own yet (Go To)" do
+  describe "in a list box (Go To)" do
     setup %{state: state}, do: %{box: press(state, {:alt_f, 5})}
 
-    test "c lists its keys from its key bar, and ENTER presses one", %{box: box} do
+    test "c lists its commands, and ENTER runs one", %{box: box} do
       text = screen(press(box, [{:f, 1}, "c"]))
-      assert text =~ ~r/Highlight +↑↓ +Highlight a section/
-      ran = press(box, [{:f, 1}, "c", :down, :down, :enter])
+      assert text =~ ~r/Go +ENTER +Highlight that section in the view/
+      ran = press(box, [{:f, 1}, "c", :enter])
       assert ran.modes == []
     end
 
-    test "d describes a key from its key bar, and a letter", %{box: box} do
-      assert described(box, :enter) =~ "ENTER in this box: Go (ENTER on its key bar)."
-      assert described(box, "x") =~ "x in this box: Next starting with it"
+    test "d describes its keys; a letter, which it reads itself, is described as typing",
+         %{box: box} do
+      assert described(box, :enter) =~ "ENTER runs Go in this box."
+      assert described(box, "x") =~ "x picks"
     end
   end
 end

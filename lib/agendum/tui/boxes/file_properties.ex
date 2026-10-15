@@ -57,10 +57,10 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   def handle(state, _mode, _key), do: state
 
   @impl Box
-  def keymap, do: Box.settings_keymap()
+  def keymap(_mode), do: Box.settings_keymap()
 
   @impl Box
-  def commands, do: Box.settings_commands()
+  def commands(_mode), do: Box.settings_commands()
 
   @impl Box
   def run(state, mode, :change), do: change(state, field(state, mode))

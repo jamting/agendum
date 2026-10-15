@@ -78,10 +78,10 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
   def handle(state, _mode, _key), do: state
 
   @impl Box
-  def keymap, do: Box.settings_keymap(%{:delete => :clear, {:ctrl, "d"} => :clear})
+  def keymap(_mode), do: Box.settings_keymap(%{:delete => :clear, {:ctrl, "d"} => :clear})
 
   @impl Box
-  def commands, do: Box.settings_commands([{:clear, "Clear", "Empty End category"}])
+  def commands(_mode), do: Box.settings_commands([{:clear, "Clear", "Empty End category"}])
 
   # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
   @impl Box

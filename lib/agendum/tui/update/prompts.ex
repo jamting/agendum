@@ -279,27 +279,43 @@ defmodule Agendum.TUI.Update.Prompts do
   first letter only picked it), ESC cancels.
   """
   @impl Box
-  def handle(state, mode, key) do
-    case key do
-      {:char, c} when c in ["y", "Y"] ->
-        state |> State.pop() |> confirmed(mode.action, true)
+  def handle(state, _mode, _key), do: state
 
-      {:char, c} when c in ["n", "N"] ->
-        state |> State.pop() |> confirmed(mode.action, false)
-
-      :enter ->
-        state |> State.pop() |> confirmed(mode.action, mode.answer)
-
-      k when k in [{:char, " "}, :left, :right, :up, :down] ->
-        State.put_mode(state, %{mode | answer: not mode.answer})
-
-      :esc ->
-        state |> State.pop() |> cancelled(mode.action)
-
-      _ ->
-        state
-    end
+  # R65
+  @impl Box
+  def keymap(_mode) do
+    %{
+      {:char, "y"} => :yes,
+      {:char, "Y"} => :yes,
+      {:char, "n"} => :no,
+      {:char, "N"} => :no,
+      :enter => :accept,
+      {:char, " "} => :switch,
+      :left => :switch,
+      :right => :switch,
+      :up => :switch,
+      :down => :switch,
+      :esc => :close
+    }
   end
+
+  @impl Box
+  def commands(_mode) do
+    [
+      {:yes, "Yes", "Answer yes"},
+      {:no, "No", "Answer no"},
+      {:switch, "Switch", "Switch the answer shown"},
+      {:accept, "Accept", "Give the answer shown"},
+      {:close, "Cancel", "Do not answer"}
+    ]
+  end
+
+  @impl Box
+  def run(state, mode, :yes), do: state |> State.pop() |> confirmed(mode.action, true)
+  def run(state, mode, :no), do: state |> State.pop() |> confirmed(mode.action, false)
+  def run(state, mode, :accept), do: state |> State.pop() |> confirmed(mode.action, mode.answer)
+  def run(state, mode, :switch), do: State.put_mode(state, %{mode | answer: not mode.answer})
+  def run(state, mode, :close), do: state |> State.pop() |> cancelled(mode.action)
 
   # a question has no title, as Agenda's
   @impl Box

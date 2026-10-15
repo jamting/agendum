@@ -61,10 +61,10 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
   def handle(state, _mode, _key), do: state
 
   @impl Box
-  def keymap, do: Box.settings_keymap(%{{:f, 3} => :calendar})
+  def keymap(_mode), do: Box.settings_keymap(%{{:f, 3} => :calendar})
 
   @impl Box
-  def commands,
+  def commands(_mode),
     do:
       Box.settings_commands([
         {:calendar, "Calendar", "Pick the date from a calendar"},

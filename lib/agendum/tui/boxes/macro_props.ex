@@ -57,11 +57,11 @@ defmodule Agendum.TUI.Boxes.MacroProps do
   def handle(state, _mode, _key), do: state
 
   @impl Box
-  def keymap,
+  def keymap(_mode),
     do: Box.settings_keymap(%{{:f, 2} => :edit, :delete => :detach, {:ctrl, "d"} => :detach})
 
   @impl Box
-  def commands,
+  def commands(_mode),
     do:
       Box.settings_commands([
         {:edit, "Edit", "Edit the name or the keystrokes"},

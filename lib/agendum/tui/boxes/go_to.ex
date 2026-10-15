@@ -29,20 +29,32 @@ defmodule Agendum.TUI.Boxes.GoTo do
     do: for(%{kind: :section} = row <- Layout.rows(state), do: {row.sidx, row.category.name})
 
   @impl Box
-  def handle(state, mode, key) do
-    count = length(names(state))
+  # a letter highlights the next section starting with it
+  def handle(state, mode, {:char, c}),
+    do: State.put_mode(state, %{mode | cursor: next_starting(state, mode.cursor, c)})
 
-    case key do
-      :esc -> State.pop(state)
-      :enter when count > 0 -> state |> State.pop() |> go(mode.cursor)
-      :up -> State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-      :down -> State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, count - 1)})
-      :home -> State.put_mode(state, %{mode | cursor: 0})
-      :end -> State.put_mode(state, %{mode | cursor: count - 1})
-      {:char, c} -> State.put_mode(state, %{mode | cursor: next_starting(state, mode.cursor, c)})
-      _ -> state
-    end
+  def handle(state, _mode, _key), do: state
+
+  # R65
+  @impl Box
+  def keymap(_mode) do
+    %{:up => :up, :down => :down, :home => :first, :end => :last, :enter => :go, :esc => :close}
   end
+
+  @impl Box
+  def commands(_mode) do
+    [{:go, "Go", "Highlight that section in the view"}] ++
+      Box.list_moves() ++ [{:close, "Cancel", "Back to where you were"}]
+  end
+
+  @impl Box
+  def run(state, _mode, :close), do: State.pop(state)
+
+  def run(state, mode, :go) do
+    if names(state) == [], do: state, else: state |> State.pop() |> go(mode.cursor)
+  end
+
+  def run(state, mode, id), do: Box.list_move(state, mode, length(names(state)), id)
 
   # The next section after `from` (wrapping) whose name starts with `letter`.
   defp next_starting(state, from, letter) do

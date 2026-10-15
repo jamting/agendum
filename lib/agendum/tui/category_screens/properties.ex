@@ -176,11 +176,11 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   # the settings box's keys; F2 and F3 change a setting too, F6 (which
   # opened the box) is done (R65)
   @impl Box
-  def keymap,
+  def keymap(_mode),
     do: Box.settings_keymap(%{{:f, 2} => :change, {:f, 3} => :change, {:f, 6} => :done})
 
   @impl Box
-  def commands, do: Box.settings_commands()
+  def commands(_mode), do: Box.settings_commands()
 
   # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
   @impl Box

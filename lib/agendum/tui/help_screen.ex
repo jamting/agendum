@@ -12,8 +12,8 @@ defmodule Agendum.TUI.HelpScreen do
       it runs there, or the macro attached to it), then any key returns.
 
   The mode remembers where F1 was pressed (`from`): `:view`, `:catmgr`,
-  `:viewmgr`, `:note`, `:box` (any other box: its own keys are read from
-  its key bar, `keys/2`, then come the keys every box shares), or
+  `:viewmgr`, `:note`, `:box` (any other box: its own commands from its
+  keymap, then the keys every box shares), or
   `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
   """
 
@@ -59,16 +59,16 @@ defmodule Agendum.TUI.HelpScreen do
   # in a note the keys of every screen are not commands: they edit the text
   defp typing?(from), do: from == :note
 
-  # What the list shows: in a box, first the box's own keys from its key
-  # bar (`{name, :own, [keys as written there]}`), then the keys every
-  # box shares that the key bar does not name, then the global ones.
+  # What the list shows: in a box, first the box's own commands from its
+  # keymap, then the keys every box shares that it does not bind itself,
+  # then the global ones.
   defp list(state, :box) do
     own = own_keys(state)
-    written = for {_, :own, keys} <- own, key <- keys, token <- names(key), do: token
+    bound = for {_, :own, keys} <- own, key <- keys, do: key
 
     shared =
       for {_c, :box, keys} = entry <- commands(:box),
-          not Enum.any?(keys, &(Keymap.name(&1) in written)),
+          not Enum.any?(keys, &(&1 in bound)),
           do: entry
 
     global = for {_, :global, _} = entry <- commands(:box), do: entry
@@ -77,61 +77,22 @@ defmodule Agendum.TUI.HelpScreen do
 
   defp list(_state, from), do: commands(from)
 
-  # A box's own commands: from its keymap when it has one (R65), each with
-  # its keys; else from its key bar, each with the keys as written there.
+  # a box's own commands, from its keymap (R65), each with its keys
   defp own_keys(state) do
     mode = State.mode(state)
-    box = Box.module(mode)
 
-    case box && box.commands() do
-      [_ | _] = commands ->
-        keymap = box.keymap()
+    case Box.module(mode) do
+      nil ->
+        []
 
-        for {id, name, summary} <- commands do
+      box ->
+        keymap = box.keymap(mode)
+
+        for {id, name, summary} <- box.commands(mode) do
           keys = for {key, ^id} <- keymap, do: key
-
-          {%Command{id: id, name: name, summary: summary}, :own,
-           Enum.sort_by(keys, &Keymap.name/1)}
+          {%Command{id: id, name: name, summary: summary}, :own, Keymap.sort(keys)}
         end
-
-      _ ->
-        key_bar(state, box, mode)
     end
-  end
-
-  defp key_bar(_state, nil, _mode), do: []
-
-  defp key_bar(state, box, mode) do
-    for entry <- box.keys(state, mode) do
-      {keys, name, summary} =
-        case entry do
-          {k, l} -> {k, l, l}
-          {k, l, full} -> {k, l, full}
-          {_k, l, full_key, full} -> {full_key, l, full}
-        end
-
-      {%Command{id: nil, name: name, summary: summary}, :own, [keys]}
-    end
-  end
-
-  # the key names a key bar entry's keys stand for: "A-↑↓" is ALT-↑ and
-  # ALT-↓, "^N" CTRL-N, "PGUP/DN" PGUP and PGDN, "DEL/F4" DEL and F4
-  defp tokens(written) do
-    written
-    |> String.replace("PGUP/DN", "PGUP/PGDN")
-    |> String.split(["/", " "], trim: true)
-    |> Enum.flat_map(fn token ->
-      {prefix, rest} =
-        cond do
-          String.starts_with?(token, "A-") -> {"ALT-", String.slice(token, 2..-1//1)}
-          String.starts_with?(token, "^") -> {"CTRL-", String.slice(token, 1..-1//1)}
-          true -> {"", token}
-        end
-
-      if rest =~ ~r/^[↑↓←→]+$/u,
-        do: for(arrow <- String.graphemes(rest), do: prefix <> arrow),
-        else: [prefix <> rest]
-    end)
   end
 
   # --- keys ---------------------------------------------------------------------
@@ -201,17 +162,10 @@ defmodule Agendum.TUI.HelpScreen do
   defp run(state, {%Command{id: id}, :catmgr, _keys}), do: Manager.run(state, id)
   defp run(state, {%Command{id: id}, :viewmgr, _keys}), do: ViewManager.run(state, id)
   defp run(state, {%Command{id: id}, :note, _keys}), do: Notes.run(state, id)
-  # a box's own key from its key bar: the key is pressed in the box
-  defp run(state, {%Command{id: id}, :own, _keys}) when id != nil do
+
+  defp run(state, {%Command{id: id}, :own, _keys}) do
     mode = State.mode(state)
     Box.module!(mode).run(state, mode, id)
-  end
-
-  defp run(state, {_command, :own, [keys]}) do
-    case keys |> tokens() |> Enum.map(&Keymap.parse/1) do
-      [key | _] when key != nil -> Agendum.TUI.Update.box_key(state, key)
-      _ -> State.info(state, "Press #{keys} in the box")
-    end
   end
 
   defp run(state, {%Command{id: id, name: name}, :box, _keys}) do
@@ -258,8 +212,8 @@ defmodule Agendum.TUI.HelpScreen do
       command = not typing?(from) && global_command(key) ->
         [via <> "#{name} runs #{command.name}, everywhere but while typing.", command.summary]
 
-      from == :box and own_key(state, key) != nil ->
-        own_lines(own_key(state, key), name)
+      command = from == :box && own_key(state, key) ->
+        [via <> "#{name} runs #{command.name} in this box.", command.summary]
 
       command = local_command(from, key) ->
         [via <> "#{name} runs #{command.name} #{here}.", command.summary] ++ count_line(command)
@@ -313,34 +267,10 @@ defmodule Agendum.TUI.HelpScreen do
     end
   end
 
-  # the box's command or key bar entry for a key (a letter in any case);
-  # a character is also what a key bar calls "type" or "letter"
+  # the box's own command for a key
   defp own_key(state, key) do
-    name = String.upcase(Keymap.name(key))
-
-    Enum.find(own_keys(state), fn {_, :own, keys} ->
-      Enum.any?(keys, fn
-        written when is_binary(written) ->
-          Enum.any?(tokens(written), fn token ->
-            String.upcase(token) == name or
-              (match?({:char, _}, key) and token in ["type", "letter"])
-          end)
-
-        bound ->
-          bound == key
-      end)
-    end)
+    Enum.find_value(own_keys(state), fn {command, :own, keys} -> if key in keys, do: command end)
   end
-
-  defp own_lines({%Command{id: nil, summary: summary}, :own, [written]}, name),
-    do: ["#{name} in this box: #{summary} (#{written} on its key bar)."]
-
-  defp own_lines({%Command{name: command, summary: summary}, :own, _keys}, name),
-    do: ["#{name} runs #{command} in this box.", summary]
-
-  # the key names an entry's key stands for
-  defp names(written) when is_binary(written), do: tokens(written)
-  defp names(key), do: [Keymap.name(key)]
 
   defp edits_text?(state, key),
     do: match?({:ok, _}, TextEdit.handle(State.mode(state).edit, key, Wrap.width(state)))
@@ -420,16 +350,12 @@ defmodule Agendum.TUI.HelpScreen do
   # a command's name, keys and summary; keys that do not fit go on to
   # further lines under the first (DEL F4 ALT-F4 CTRL-D CTRL-K)
   defp entry_lines(command, keys) do
-    [first | more] = key_lines(Enum.map(keys, &key_name/1))
+    [first | more] = key_lines(Enum.map(keys, &Keymap.name/1))
     blank = String.duplicate(" ", @name_width)
 
     [" " <> pad(command.name, @name_width) <> pad(first, @keys_width) <> command.summary] ++
       for(keys <- more, do: " " <> blank <> keys)
   end
-
-  # a key event's name, or keys as a box's key bar writes them
-  defp key_name(written) when is_binary(written), do: written
-  defp key_name(key), do: Keymap.name(key)
 
   defp key_lines(names) do
     names

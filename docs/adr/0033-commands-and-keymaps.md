@@ -70,10 +70,10 @@ The owner settled these choices before any code (2026-10-15):
   and view managers and the note (2026-10-15). An alias can be limited to
   a place (⌥↑ is CTRL-PGUP in a view only; CTRL-E is F2 except in a note,
   where it edits). The keys every box shares (F1, F3, ESC) have a keymap
-  (`:box`). A box can declare its own keymap and commands (`keymap/0`,
-  `commands/0`, `run/3` of `Agendum.TUI.Boxes.Box`; a settings box starts
-  from `Box.settings_keymap/1`); keys not in it, and every key while one of
-  its fields is typed in, go to its `handle/3`. Until every box has one,
-  the help lists the others' keys from their key bars. The menu still reads
+  (`:box`). Every box declares its own keymap and commands (`keymap/1`,
+  `commands/1` by the box's mode, `run/3` of `Agendum.TUI.Boxes.Box`; a
+  settings box starts from `Box.settings_keymap/1`, a list box uses
+  `Box.list_moves/0`); keys not in it, and every key while the person
+  types in one of its fields (`typing?/2`), go to its `handle/3`. The menu still reads
   keys directly; it moves to a keymap in a later step, and until then
   describe key covers only the global keys there.

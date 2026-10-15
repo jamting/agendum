@@ -113,7 +113,7 @@ defmodule Agendum.TUI.Boxes.SectionBox do
 
   # the settings box's keys, and those of its columns list (R65)
   @impl Box
-  def keymap do
+  def keymap(_mode) do
     Box.settings_keymap(%{
       {:f, 3} => :pick,
       {:f, 6} => :properties,
@@ -126,7 +126,7 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   end
 
   @impl Box
-  def commands do
+  def commands(_mode) do
     Box.settings_commands([
       {:pick, "Pick head", "Choose the head's category"},
       {:properties, "Head properties", "The head category's properties"},

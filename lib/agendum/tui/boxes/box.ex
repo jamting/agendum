@@ -75,10 +75,10 @@ defmodule Agendum.TUI.Boxes.Box do
   while a field is being typed, still go to `c:handle/3`. By default
   none: the box reads all its keys in `c:handle/3`.
   """
-  @callback keymap() :: %{term => atom}
+  @callback keymap(mode) :: %{term => atom}
 
   @doc "The box's commands, `{id, name, summary}`, in the order the command list shows."
-  @callback commands() :: [{atom, String.t(), String.t()}]
+  @callback commands(mode) :: [{atom, String.t(), String.t()}]
 
   @doc "Runs one of the box's commands."
   @callback run(State.t(), mode, id :: atom) :: State.t()
@@ -224,7 +224,7 @@ defmodule Agendum.TUI.Boxes.Box do
   """
   @spec dispatch(module, State.t(), mode, term) :: State.t()
   def dispatch(box, state, mode, key) do
-    case if(box.typing?(state, mode), do: nil, else: Map.get(box.keymap(), key)) do
+    case if(box.typing?(state, mode), do: nil, else: Map.get(box.keymap(mode), key)) do
       nil -> box.handle(state, mode, key)
       id -> box.run(state, mode, id)
     end
@@ -298,6 +298,33 @@ defmodule Agendum.TUI.Boxes.Box do
   def run_settings(state, mode, grid, id) when is_map_key(@move_keys, id),
     do: Agendum.TUI.Boxes.BoxNav.move(state, mode, grid, @move_keys[id])
 
+  # --- the keys of a list box -----------------------------------------------------
+
+  @list_moves [
+    {:up, "Up", "Highlight the one above"},
+    {:down, "Down", "Highlight the one below"},
+    {:first, "First", "Highlight the first"},
+    {:last, "Last", "Highlight the last"}
+  ]
+
+  @doc "A list box's moves, `{id, name, summary}`, for its `c:commands/1`."
+  @spec list_moves() :: [{atom, String.t(), String.t()}]
+  def list_moves, do: @list_moves
+
+  @doc "Moves the highlight of a list box with `count` rows: `:up`, `:down`, `:first` or `:last`."
+  @spec list_move(State.t(), mode, non_neg_integer, atom) :: State.t()
+  def list_move(state, mode, count, id) do
+    cursor =
+      case id do
+        :up -> mode.cursor - 1
+        :down -> mode.cursor + 1
+        :first -> 0
+        :last -> count - 1
+      end
+
+    State.put_mode(state, %{mode | cursor: cursor |> min(count - 1) |> max(0)})
+  end
+
   @doc """
   `use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true`
   declares the module a box: it must define the callbacks, and gets
@@ -327,9 +354,9 @@ defmodule Agendum.TUI.Boxes.Box do
       def field(_state, _mode), do: nil
       # no keymap: the box reads its keys in handle/3
       @impl true
-      def keymap, do: %{}
+      def keymap(_mode), do: %{}
       @impl true
-      def commands, do: []
+      def commands(_mode), do: []
       @impl true
       def run(state, _mode, _id), do: state
       @impl true
@@ -338,8 +365,8 @@ defmodule Agendum.TUI.Boxes.Box do
       defoverridable width: 2,
                      field: 2,
                      finish: 1,
-                     keymap: 0,
-                     commands: 0,
+                     keymap: 1,
+                     commands: 1,
                      run: 3,
                      typing?: 2
     end

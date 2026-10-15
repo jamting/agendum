@@ -25,31 +25,54 @@ defmodule Agendum.TUI.Boxes.AlarmList do
   end
 
   @impl Box
-  def handle(state, mode, key) do
-    rows = rows(state)
-    mode = %{mode | cursor: mode.cursor |> min(length(rows) - 1) |> max(0)}
-    row = Enum.at(rows, mode.cursor)
+  # keys it has no command for keep the highlight on a row (undo can take
+  # rows away)
+  def handle(state, mode, _key), do: State.put_mode(state, clamp(state, mode))
 
-    case {key, row} do
-      {k, _} when k in [:esc, :enter] ->
-        State.pop(state)
+  defp clamp(state, mode),
+    do: %{mode | cursor: mode.cursor |> min(length(rows(state)) - 1) |> max(0)}
 
-      {:up, _} ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      {:down, _} ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, max(length(rows) - 1, 0))})
-
-      {:delete, {:past, id}} ->
-        State.change_db(state, Core.remove_past_alarm(state.db, id))
-
-      {{:alt, "a"}, {:current, id}} ->
-        state |> State.change_db(Core.cancel_alarm(state.db, id)) |> State.info("Alarm cancelled")
-
-      _ ->
-        State.put_mode(state, mode)
-    end
+  # R65
+  @impl Box
+  def keymap(_mode) do
+    %{
+      :up => :up,
+      :down => :down,
+      :delete => :remove,
+      {:alt, "a"} => :cancel_alarm,
+      :enter => :close,
+      :esc => :close
+    }
   end
+
+  @impl Box
+  def commands(_mode) do
+    Enum.take(Box.list_moves(), 2) ++
+      [
+        {:cancel_alarm, "Cancel alarm", "Cancel the highlighted alarm"},
+        {:remove, "Remove", "Remove the highlighted past alarm"},
+        {:close, "Return", "Back to the view"}
+      ]
+  end
+
+  @impl Box
+  def run(state, _mode, :close), do: State.pop(state)
+
+  def run(state, mode, id) do
+    mode = clamp(state, mode)
+    command(State.put_mode(state, mode), mode, id, Enum.at(rows(state), mode.cursor))
+  end
+
+  defp command(state, _mode, :remove, {:past, id}),
+    do: State.change_db(state, Core.remove_past_alarm(state.db, id))
+
+  defp command(state, _mode, :cancel_alarm, {:current, id}),
+    do: state |> State.change_db(Core.cancel_alarm(state.db, id)) |> State.info("Alarm cancelled")
+
+  defp command(state, mode, id, _row) when id in [:up, :down],
+    do: Box.list_move(state, mode, max(length(rows(state)), 1), id)
+
+  defp command(state, _mode, _id, _row), do: state
 
   @impl Box
   def title(_state, _mode), do: "Alarm list"

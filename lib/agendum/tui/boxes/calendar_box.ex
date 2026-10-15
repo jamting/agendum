@@ -22,20 +22,20 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
   alias Agendum.TUI.{Boxes.Box, State}
   alias Agendum.TUI.Update.{Editing, Prompts}
 
-  @moves %{
-    :left => {:day, -1},
-    :right => {:day, 1},
-    :up => {:week, -1},
-    :down => {:week, 1},
-    :home => {:first, 0},
-    :end => {:last, 0},
-    :pgup => {:month, -1},
-    :pgdn => {:month, 1},
-    :ctrl_left => {:year, -1},
-    :ctrl_right => {:year, 1},
-    {:char, "<"} => {:year, -1},
-    {:char, ">"} => {:year, 1}
-  }
+  # each move: its command, how far, and the help's words (R65)
+  @moves [
+    {:previous_day, {:day, -1}, "Previous day", "The day before"},
+    {:next_day, {:day, 1}, "Next day", "The day after"},
+    {:previous_week, {:week, -1}, "Previous week", "A week earlier"},
+    {:next_week, {:week, 1}, "Next week", "A week later"},
+    {:first_day, {:first, 0}, "First day", "The month's first day"},
+    {:last_day, {:last, 0}, "Last day", "The month's last day"},
+    {:previous_month, {:month, -1}, "Previous month", "A month earlier"},
+    {:next_month, {:month, 1}, "Next month", "A month later"},
+    {:previous_year, {:year, -1}, "Previous year", "A year earlier"},
+    {:next_year, {:year, 1}, "Next year", "A year later"}
+  ]
+  @move_by Map.new(@moves, fn {id, move, _, _} -> {id, move} end)
 
   @months ~w(January February March April May June July August September October November December)
   @days ~w(Mon Tue Wed Thu Fri Sat Sun)
@@ -58,31 +58,59 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
   end
 
   @impl Box
-  def handle(state, mode, key) do
-    case {key, @moves[key]} do
-      {_, {move, n}} ->
-        State.put_mode(state, %{mode | date: MonthCalendar.move(mode.date, move, n)})
+  # typing a date goes there
+  def handle(state, _mode, {:char, c}) when c != " ",
+    do: Prompts.prompt(state, "Go to date:", :calendar_jump, c)
 
-      {:esc, _} ->
-        State.pop(state)
+  def handle(state, _mode, _key), do: state
 
-      {:enter, _} ->
-        choose(State.pop(state), mode)
+  @impl Box
+  def keymap(_mode) do
+    %{
+      :left => :previous_day,
+      :right => :next_day,
+      :up => :previous_week,
+      :down => :next_week,
+      :home => :first_day,
+      :end => :last_day,
+      :pgup => :previous_month,
+      :pgdn => :next_month,
+      :ctrl_left => :previous_year,
+      :ctrl_right => :next_year,
+      {:char, "<"} => :previous_year,
+      {:char, ">"} => :next_year,
+      {:f, 6} => :time,
+      :enter => :choose,
+      :esc => :close
+    }
+  end
 
-      {{:f, 6}, _} ->
-        Prompts.prompt(
-          state,
-          "Time (e.g. 3pm, 15:30; empty for none):",
-          :calendar_time,
-          time_text(mode.time)
-        )
+  @impl Box
+  def commands(_mode) do
+    [
+      {:choose, "Choose", "Set the highlighted date"},
+      {:time, "Time", "Give a time with the date"}
+    ] ++
+      for({id, _, name, summary} <- @moves, do: {id, name, summary}) ++
+      [{:close, "Cancel", "Close without a date"}]
+  end
 
-      {{:char, c}, _} when c != " " ->
-        Prompts.prompt(state, "Go to date:", :calendar_jump, c)
+  @impl Box
+  def run(state, _mode, :close), do: State.pop(state)
+  def run(state, mode, :choose), do: choose(State.pop(state), mode)
 
-      _ ->
-        state
-    end
+  def run(state, mode, :time) do
+    Prompts.prompt(
+      state,
+      "Time (e.g. 3pm, 15:30; empty for none):",
+      :calendar_time,
+      time_text(mode.time)
+    )
+  end
+
+  def run(state, mode, id) do
+    {move, n} = Map.fetch!(@move_by, id)
+    State.put_mode(state, %{mode | date: MonthCalendar.move(mode.date, move, n)})
   end
 
   defp choose(state, %{target: nil}), do: state

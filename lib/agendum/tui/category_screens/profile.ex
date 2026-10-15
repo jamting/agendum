@@ -17,6 +17,43 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
   @impl Box
   def handle(state, mode, key), do: CategoryScreens.handle(state, mode, key)
 
+  # R65: the hierarchy's moves; SPACE or ENTER assigns or unassigns (F7
+  # too for marked items); ESC, F3 and F6 close (F4 too for one item)
+  @impl Box
+  def keymap(mode) do
+    own =
+      case mode do
+        %{type: :group_profile} -> %{{:f, 7} => :toggle}
+        _ -> %{{:f, 4} => :close}
+      end
+
+    CategoryScreens.list_keymap()
+    |> Map.merge(%{
+      {:char, " "} => :toggle,
+      :enter => :toggle,
+      :esc => :close,
+      {:f, 3} => :close,
+      {:f, 6} => :close
+    })
+    |> Map.merge(own)
+  end
+
+  @impl Box
+  def commands(_mode) do
+    [{:toggle, "Assign", "Assign or unassign the category"}] ++
+      CategoryScreens.list_commands() ++ [{:close, "Return", "Close the profile"}]
+  end
+
+  @impl Box
+  def run(state, mode, id) when id in [:toggle, :close] do
+    rows = CategoryScreens.rows(state, mode)
+    mode = CategoryScreens.clamp(mode, rows)
+    key = if id == :toggle, do: {:char, " "}, else: :esc
+    screen_key(State.put_mode(state, mode), mode, rows, key)
+  end
+
+  def run(state, mode, id), do: CategoryScreens.run_list(state, mode, id)
+
   @impl Box
   def title(_state, %{type: :group_profile, item_ids: ids}),
     do: "Assignments: #{Draw.count(length(ids), "marked item")}"

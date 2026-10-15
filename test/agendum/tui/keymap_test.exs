@@ -96,18 +96,33 @@ defmodule Agendum.TUI.KeymapTest do
     end
   end
 
+  test "every box has a keymap (the view manager's is a place of its own)" do
+    without =
+      for {type, box} <- Agendum.TUI.Boxes.Box.registry(),
+          type != :viewmgr,
+          box.commands(%{type: type}) == [],
+          do: type
+
+    assert without == []
+  end
+
   test "a box's keymap and its commands agree, and fit the command list" do
-    boxes = for {_type, box} <- Agendum.TUI.Boxes.Box.registry(), box.commands() != [], do: box
+    boxes =
+      for {type, box} <- Agendum.TUI.Boxes.Box.registry(),
+          box.commands(%{type: type}) != [],
+          do: {box, %{type: type}}
+
     assert boxes != []
 
-    for box <- Enum.uniq(boxes) do
-      ids = for {id, _, _} <- box.commands(), do: id
+    for {box, mode} <- boxes do
+      ids = for {id, _, _} <- box.commands(mode), do: id
       assert ids == Enum.uniq(ids), inspect(box)
 
-      for {key, id} <- box.keymap(), do: assert(id in ids, "#{inspect(box)}: #{inspect(key)}")
+      for {key, id} <- box.keymap(mode),
+          do: assert(id in ids, "#{inspect(box)}: #{inspect(key)}")
 
-      for {id, name, summary} <- box.commands() do
-        assert id in Map.values(box.keymap()), "#{inspect(box)}: #{id} has no key"
+      for {id, name, summary} <- box.commands(mode) do
+        assert id in Map.values(box.keymap(mode)), "#{inspect(box)}: #{id} has no key"
         assert String.length(name) <= 17 and String.length(summary) <= 38, name
       end
     end

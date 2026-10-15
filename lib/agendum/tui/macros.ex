@@ -128,65 +128,84 @@ defmodule Agendum.TUI.Macros do
   defp current(state, mode), do: state.db |> Database.macros() |> Enum.at(mode.cursor)
 
   @impl Box
-  def handle(state, mode, key) do
+  # typing a name makes a new macro
+  def handle(state, _mode, {:char, c}) when c != " ",
+    do: Prompts.prompt(state, "Name of the new macro:", :new_macro, c)
+
+  def handle(state, _mode, _key), do: state
+
+  # R65
+  @impl Box
+  def keymap(_mode) do
+    %{
+      :up => :up,
+      :down => :down,
+      :enter => :run,
+      :insert => :new,
+      {:ctrl, "n"} => :new,
+      {:f, 2} => :edit,
+      {:f, 6} => :properties,
+      {:f, 7} => :learn,
+      :delete => :delete,
+      {:ctrl, "d"} => :delete,
+      {:alt_f, 5} => :sort,
+      {:alt, :up} => :move_up,
+      {:alt, :down} => :move_down,
+      :esc => :close
+    }
+  end
+
+  @impl Box
+  def commands(_mode) do
+    [
+      {:run, "Run", "Run the macro"},
+      {:new, "New", "Make a new macro"},
+      {:learn, "Learn", "Record its keystrokes"},
+      {:edit, "Edit", "Edit its keystrokes"},
+      {:properties, "Properties", "Its key and where it runs"},
+      {:delete, "Delete", "Delete the macro"},
+      {:sort, "Sort", "Sort the macros by name"},
+      {:move_up, "Move up", "Move it up the list"},
+      {:move_down, "Move down", "Move it down the list"}
+    ] ++ Enum.take(Box.list_moves(), 2) ++ [{:close, "Return", "Back to where you were"}]
+  end
+
+  @impl Box
+  def run(state, _mode, :close), do: State.pop(state)
+  def run(state, _mode, :new), do: Prompts.prompt(state, "Name of the new macro:", :new_macro)
+
+  def run(state, mode, id) do
     count = length(Database.macros(state.db))
     mode = %{mode | cursor: mode.cursor |> min(count - 1) |> max(0)}
     state = State.put_mode(state, mode)
-
-    case {key, current(state, mode)} do
-      {:esc, _} ->
-        State.pop(state)
-
-      {:up, _} ->
-        State.put_mode(state, %{mode | cursor: max(mode.cursor - 1, 0)})
-
-      {:down, _} ->
-        State.put_mode(state, %{mode | cursor: min(mode.cursor + 1, max(count - 1, 0))})
-
-      {k, _} when k in [:insert, {:ctrl, "n"}] ->
-        Prompts.prompt(state, "Name of the new macro:", :new_macro)
-
-      {{:char, c}, _} when c != " " ->
-        Prompts.prompt(state, "Name of the new macro:", :new_macro, c)
-
-      {_, nil} ->
-        state
-
-      {:enter, macro} ->
-        run(State.pop(state), macro)
-
-      {{:f, 2}, macro} ->
-        edit_text(state, macro)
-
-      {{:f, 6}, macro} ->
-        Agendum.TUI.Boxes.MacroProps.open(state, macro.id)
-
-      {k, macro} when k in [:delete, {:ctrl, "d"}] ->
-        Prompts.confirm(state, "Delete the macro #{macro.name}?", {:delete_macro, macro.id})
-
-      {{:alt_f, 5}, macro} ->
-        state |> State.change_db(Core.sort_macros(state.db)) |> follow(macro.id)
-
-      {{:alt, :up}, macro} ->
-        state
-        |> State.change_db(Core.move_macro(state.db, macro.id, mode.cursor - 1))
-        |> follow(macro.id)
-
-      {{:alt, :down}, macro} ->
-        state
-        |> State.change_db(Core.move_macro(state.db, macro.id, mode.cursor + 1))
-        |> follow(macro.id)
-
-      {{:f, 7}, %{keys: ""} = macro} ->
-        learn(state, macro, :replace)
-
-      {{:f, 7}, macro} ->
-        State.push(state, %{type: :choice, kind: :learn, macro_id: macro.id, cursor: 0})
-
-      _ ->
-        state
-    end
+    command(state, mode, id, current(state, mode), count)
   end
+
+  defp command(state, mode, id, _macro, count) when id in [:up, :down],
+    do: Box.list_move(state, mode, max(count, 1), id)
+
+  defp command(state, _mode, _id, nil, _count), do: state
+  defp command(state, _mode, :run, macro, _), do: run(State.pop(state), macro)
+  defp command(state, _mode, :edit, macro, _), do: edit_text(state, macro)
+
+  defp command(state, _mode, :properties, macro, _),
+    do: Agendum.TUI.Boxes.MacroProps.open(state, macro.id)
+
+  defp command(state, _mode, :delete, macro, _),
+    do: Prompts.confirm(state, "Delete the macro #{macro.name}?", {:delete_macro, macro.id})
+
+  defp command(state, _mode, :sort, macro, _),
+    do: state |> State.change_db(Core.sort_macros(state.db)) |> follow(macro.id)
+
+  defp command(state, mode, :move_up, macro, _), do: reorder(state, macro, mode.cursor - 1)
+  defp command(state, mode, :move_down, macro, _), do: reorder(state, macro, mode.cursor + 1)
+  defp command(state, _mode, :learn, %{keys: ""} = macro, _), do: learn(state, macro, :replace)
+
+  defp command(state, _mode, :learn, macro, _),
+    do: State.push(state, %{type: :choice, kind: :learn, macro_id: macro.id, cursor: 0})
+
+  defp reorder(state, macro, to),
+    do: state |> State.change_db(Core.move_macro(state.db, macro.id, to)) |> follow(macro.id)
 
   @doc "The prompt's answer: a new macro, highlighted."
   def create(state, name) do
