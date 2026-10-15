@@ -94,15 +94,25 @@ defmodule Agendum.Core.Assign do
           only == nil or MapSet.member?(only, id),
           do: id
 
+    # every category's conditions, with their date words ("yesterday")
+    # read once here rather than in each round for each category: reading
+    # a date runs every rule of the date languages. Conditions do not
+    # change while they settle, and neither does the clock.
+    conditions =
+      for {id, %{conditions: [_ | _]}} <- db.categories,
+          into: %{},
+          do: {id, resolve_ranges(db, own_conditions(db, id), clock)}
+
     rounds = length(with_conditions) + 2
-    settle_conditions(db, item_id, Enum.sort(with_conditions), rounds, clock)
+    settle_conditions(db, item_id, Enum.sort(with_conditions), rounds, {conditions, clock})
   end
 
-  defp settle_conditions(db, _item_id, _cats, 0, _clock), do: db
+  defp settle_conditions(db, _item_id, _cats, 0, _conditions), do: db
 
   # Categories with conditions may pull the item in; any conditional link
   # (from conditions or from text, R15c) breaks when neither holds.
-  defp settle_conditions(db, item_id, with_conditions, rounds, clock) do
+  # `conditions` is {category id => its read conditions, clock}.
+  defp settle_conditions(db, item_id, with_conditions, rounds, {read, clock} = conditions) do
     conditional =
       for cat <- Database.explicit_categories(db, item_id),
           Database.conditional?(db, item_id, cat),
@@ -110,7 +120,8 @@ defmodule Agendum.Core.Assign do
 
     next =
       Enum.reduce(Enum.uniq(with_conditions ++ Enum.sort(conditional)), db, fn cat_id, acc ->
-        met = conditions_met?(acc, item_id, cat_id, clock)
+        cat_conditions = Map.get(read, cat_id, [])
+        met = cat_conditions != [] and criteria_met?(acc, item_id, cat_conditions, clock)
 
         cond do
           met and not Database.member?(acc, item_id, cat_id) ->
@@ -127,7 +138,7 @@ defmodule Agendum.Core.Assign do
 
     if next == db,
       do: db,
-      else: settle_conditions(next, item_id, with_conditions, rounds - 1, clock)
+      else: settle_conditions(next, item_id, with_conditions, rounds - 1, conditions)
   end
 
   @doc """
@@ -137,9 +148,14 @@ defmodule Agendum.Core.Assign do
   """
   @spec conditions_met?(db, id, id, Agendum.Core.Context.clock() | nil) :: boolean
   def conditions_met?(db, item_id, cat_id, clock \\ nil) do
-    conditions = Enum.reject(db.categories[cat_id].conditions, &(elem(&1, 0) == cat_id))
+    conditions = own_conditions(db, cat_id)
     conditions != [] and criteria_met?(db, item_id, conditions, clock)
   end
+
+  # A category's conditions, less any on itself (which could never hold
+  # before it is assigned).
+  defp own_conditions(db, cat_id),
+    do: Enum.reject(db.categories[cat_id].conditions, &(elem(&1, 0) == cat_id))
 
   @doc """
   Whether an item meets a list of `{category, :assigned | :not_assigned}`

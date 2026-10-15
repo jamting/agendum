@@ -10,6 +10,9 @@ has the detail.
 
 ## Unreleased
 
+- Adding or changing an item is quicker when categories have date
+  conditions ("this week", "..yesterday"): their dates are read once.
+
 ## 0.2.1 — 2026-10-15
 
 Quicker answers to keys, and a debug log that shows where lag comes from.
