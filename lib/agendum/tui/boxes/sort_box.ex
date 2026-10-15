@@ -18,12 +18,10 @@ defmodule Agendum.TUI.Boxes.SortBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "SORT", cancels: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-
   alias Agendum.Core
   alias Agendum.Core.Database
   alias Agendum.Core.View.SortKey
-  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
+  alias Agendum.TUI.Boxes.{Box, Template}
   alias Agendum.TUI.{CategoryScreens, State}
 
   # the last two rows only in the view's box (a section has no sections)
@@ -71,28 +69,28 @@ defmodule Agendum.TUI.Boxes.SortBox do
   defp effective(state, mode), do: sort_keys(state, mode) || State.view(state).sort
 
   @impl Box
-  def handle(state, mode, key) do
-    case key do
-      # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
-      k when k in [:esc, :enter, {:alt_f, 5}] ->
-        State.pop(state)
-
-      k when is_move(k) ->
-        BoxNav.move(state, mode, Template.grid(@layout, rows(mode)), k)
-
-      {:char, " "} ->
-        change(state, mode, Enum.at(rows(mode), mode.cursor))
-
-      # Line number: typed, a digit (Agenda's "type your own choice")
-      {:char, c} ->
-        if Enum.at(rows(mode), mode.cursor) == :line and c in ~w(1 2 3 4 5 6 7 8 9),
-          do: line(state, mode, :line, String.to_integer(c), :set),
-          else: state
-
-      _ ->
-        state
-    end
+  # Line number: typed, a digit (Agenda's "type your own choice")
+  def handle(state, mode, {:char, c}) do
+    if Enum.at(rows(mode), mode.cursor) == :line and c in ~w(1 2 3 4 5 6 7 8 9),
+      do: line(state, mode, :line, String.to_integer(c), :set),
+      else: state
   end
+
+  def handle(state, _mode, _key), do: state
+
+  # the settings box's keys; ALT-F5, which opened it, is done too (R65)
+  @impl Box
+  def keymap, do: Box.settings_keymap(%{{:alt_f, 5} => :done})
+
+  @impl Box
+  def commands, do: Box.settings_commands()
+
+  # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
+  @impl Box
+  def run(state, mode, :change), do: change(state, mode, Enum.at(rows(mode), mode.cursor))
+
+  def run(state, mode, id),
+    do: Box.run_settings(state, mode, Template.grid(@layout, rows(mode)), id)
 
   # Sort on / Then by cycle: (As the view →) None → Item text → Category… →
   # Category note… → …

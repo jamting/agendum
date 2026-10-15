@@ -19,8 +19,7 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.{Box, BoxNav}
+  alias Agendum.TUI.Boxes.{Box}
 
   alias Agendum.Core
   alias Agendum.Core.View
@@ -63,8 +62,25 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
   def handle(state, mode, key) do
     if FieldTyping.typing?(mode),
       do: FieldTyping.key(state, mode, key, &typed/3),
-      else: settings_key(state, mode, key)
+      else: typing_key(state, mode, key)
   end
+
+  # the settings box's keys, and F3 on Head picks its category (R65)
+  @impl Box
+  def keymap, do: Box.settings_keymap(%{{:f, 3} => :pick_head})
+
+  @impl Box
+  def commands,
+    do: Box.settings_commands([{:pick_head, "Pick head", "Choose the head's category"}])
+
+  @impl Box
+  def run(state, mode, :change), do: change(state, mode, field(state, mode), 1)
+
+  def run(state, mode, :pick_head),
+    do: if(field(state, mode) == :head, do: pick_head(state, mode), else: state)
+
+  def run(state, mode, id),
+    do: Box.run_settings(state, mode, Template.grid(@layout, fields(state, mode)), id)
 
   # a typed width (the item text's room is at least 1, at most the screen's)
   defp typed(state, field, text) do
@@ -76,29 +92,13 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
     end
   end
 
-  defp settings_key(state, mode, key) do
+  # a digit in Width or Minimum starts typing a number
+  defp typing_key(state, mode, {:char, c}) do
     field = field(state, mode)
-
-    case key do
-      k when k in [:esc, :enter] ->
-        State.pop(state)
-
-      k when is_move(k) ->
-        BoxNav.move(state, mode, Template.grid(@layout, fields(state, mode)), k)
-
-      {:f, 3} when field == :head ->
-        pick_head(state, mode)
-
-      {:char, " "} ->
-        change(state, mode, field, 1)
-
-      {:char, c} when field in [:width, :minimum] ->
-        type_number(state, mode, field, c)
-
-      _ ->
-        state
-    end
+    if field in [:width, :minimum], do: type_number(state, mode, field, c), else: state
   end
+
+  defp typing_key(state, _mode, _key), do: state
 
   defp type_number(state, mode, field, c) do
     if FieldTyping.digit?(c), do: FieldTyping.start(state, mode, field, c), else: state

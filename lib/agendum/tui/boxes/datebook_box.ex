@@ -26,8 +26,7 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.{Box, BoxNav}
+  alias Agendum.TUI.Boxes.{Box}
 
   alias Agendum.Core
   alias Agendum.Core.{Datebook, DateFormat}
@@ -75,28 +74,28 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
   defp datebook(state, mode), do: state.db.views[mode.view_id].datebook
 
   @impl Box
-  def handle(state, mode, key) do
-    row = Enum.at(@rows, mode.cursor)
-    d = datebook(state, mode)
+  # its keys are the settings box's, and DEL empties End category (R65)
+  def handle(state, _mode, _key), do: state
 
-    case key do
-      # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
-      k when k in [:esc, :enter] ->
-        State.pop(state)
+  @impl Box
+  def keymap, do: Box.settings_keymap(%{:delete => :clear, {:ctrl, "d"} => :clear})
 
-      k when is_move(k) ->
-        BoxNav.move(state, mode, Template.grid(@layout, @rows), k)
+  @impl Box
+  def commands, do: Box.settings_commands([{:clear, "Clear", "Empty End category"}])
 
-      {:char, " "} ->
-        change(state, mode, d, row, 1, {:char, " "})
-
-      k when k in [:delete, {:ctrl, "d"}] and row == :end_category ->
-        set(state, mode, %{d | end_category: nil})
-
-      _ ->
-        state
-    end
+  # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
+  @impl Box
+  def run(state, mode, :change) do
+    change(state, mode, datebook(state, mode), Enum.at(@rows, mode.cursor), 1, {:char, " "})
   end
+
+  def run(state, mode, :clear) do
+    if Enum.at(@rows, mode.cursor) == :end_category,
+      do: set(state, mode, %{datebook(state, mode) | end_category: nil}),
+      else: state
+  end
+
+  def run(state, mode, id), do: Box.run_settings(state, mode, Template.grid(@layout, @rows), id)
 
   # SPACE switches a Yes/No, so `_step` and `_key` are ignored
   defp change(state, mode, _d, row, _step, _key) when row in @options,
