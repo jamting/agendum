@@ -1,5 +1,7 @@
 # Plan: Agendum as close to Agenda as it makes sense (2026-10-15)
 
+**Status:** under way: about 80% overall on 2026-10-15. The steps are tracked in ROADMAP ("Towards parity with Agenda"); keep the two lists below complete.
+
 The ambition: someone who knew Lotus Agenda 2.0 sits down at Agendum and
 finds the same screen, the same keys, the same menus and the same
 behaviour, apart from a list of **accepted enhancements** (things Agenda
@@ -13,7 +15,7 @@ a copy of PLANNER (2026-10-15: every menu level walked without running a
 command; the view's screen read) and its F1 help ("About Indicators",
 "Mode & Message Indicators", "View Indicators"). The note editor has its
 own plan: [`NOTE_EDITOR.md`](NOTE_EDITOR.md). Agenda's menus as they
-are, for reference: [`docs/reference/AGENDA_MENUS.md`](../reference/AGENDA_MENUS.md).
+are, for reference: `docs/reference/AGENDA_MENUS.md`.
 
 Out of scope, as SPEC §6 says: printing on paper and print preview (F10
 Print and everything under it), typesetting (fonts, attributes), networks

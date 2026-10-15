@@ -57,16 +57,12 @@ user guide and the manual in your browser.
 
 ## 3. Find your way
 
-| Where | What |
-| --- | --- |
-| [`docs/SPEC.md`](docs/SPEC.md) | What Agendum does, as numbered rules (R1, R2 …), each with its source in Agenda's manuals |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | How the code is laid out, module by module, and the list of decisions |
-| `docs/adr/` | Why: one Architecture Decision Record per lasting decision |
-| [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md), [`docs/DATA_ACCESS.md`](docs/DATA_ACCESS.md) | The data and how it is read and changed |
-| [`docs/SCREENS.md`](docs/SCREENS.md) | Every screen and box of the terminal UI |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md) | What is done and what is next: a good place to pick something |
-| [`docs/AGENDA_HISTORY.md`](docs/AGENDA_HISTORY.md) | Why people loved Lotus Agenda, and what matters most to keep |
-| `docs/reference/` | Agenda's manuals as text, its help file and the Lotus support Q&A: grep them to check how the original behaved |
+[`docs/INDEX.md`](docs/INDEX.md) lists every document: what Agendum does
+(`docs/SPEC.md`, as numbered rules R1, R2 …, each with its source in
+Agenda's manuals), how the code is laid out (`docs/ARCHITECTURE.md`), why
+(`docs/adr/`), what is next (`docs/ROADMAP.md`, a good place to pick
+something), and Agenda's manuals as text in `docs/reference/` to grep for
+how the original behaved.
 
 The code in brief:
 

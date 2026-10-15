@@ -564,9 +564,9 @@ flowchart LR
 - **Loading** uses `binary_to_term(…, [:safe])`, which refuses unknown
   atoms. `Store.load/1` therefore loads the app's modules first, so that
   struct field names exist as atoms.
-- **Versioning.** The number in the envelope is the format version:
-  1 is the first; 2 added `Item.when_explicit` and `Database.auto_date`; 3 added `Category.conditions` and `Database.conditional` (R15); 4 added view and section `filter` and `sort` (R28, R36); 5 added the view `match` used by the Show View (R37); 6 added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38); 7 added `Database.date_format` (R41); 8 added `Database.numbers` and `View.Column.number` (R29); 9 added `Item.recurrence` (R14a); 10 added `Database.dependencies` and `View.hide_dependent` (R43); 11 added `Category.also_match` (R15d); 12 added `Category.actions` and `Category.special` (R15b); 13 added `Database.confirm_assignments` and `Database.suggestions` (R16); 14 added `Database.date_settings` (R14e); 15 replaced `Database.auto_date` with `Database.when_from` (R14f); 16 added `Category.excludes` (R9); 17 added `Database.dates` (R6a); 18 added `Category.date_rule` (R6b), replacing `Database.when_from` with When's rule; 19 added `Database.match_settings` (R16a); 20 added `Category.match_overrides` (R16b); 21 added `View.Column.date` and the `DateFormat` fields `show`, `am_pm` and `time_separator` (R41a); 22 added `Database.calendars` (R45); 23 added `View.datebook` (R47); 24 added `Database.macros` and `macro_order` (R50); 25 moved a standard view's columns into its sections and added `View.Column.linked` (R55); 26 added `Database.insert_columns` (R55); 27 replaced `View.Column.linked` with `link`, so each column added is a column of its own (R55); 28 added `View.Section.item_column` (R55); 29 added its `position` among the columns; 30 added `NumberFormat.percent` (Display % of total, R29); 31 added `View.Column.format`, `note_line` and `title` (standard column formats, R56); 32 added `View.hide_column_heads` (R57); 33 added `View.section_separators` (R58)
-  (R14). Old terms decode to structs _without_ the new keys, so
+- **Versioning.** The number in the envelope is the format version
+  (`Agendum.Store.format_version/0`); the history is in the table below. Old
+  terms decode to structs _without_ the new keys, so
   `Store.load/1` accepts every version up to the current one and runs
   `Store.upgrade/1`, which rebuilds each struct so new fields get their
   defaults. Adding a field means bumping the version; a change that defaults
@@ -575,6 +575,44 @@ flowchart LR
 - The format is not human-readable; File ▸ Transfer ▸ Export writes a
   file as JSON ([`JSON_FORMAT.md`](JSON_FORMAT.md), ADR 0010).
   See [ADR 0003](adr/0003-file-format.md).
+
+Format versions:
+
+| Version | Change |
+| ------- | ------ |
+| 1 | The first |
+| 2 | Added `Item.when_explicit` and `Database.auto_date` (R14) |
+| 3 | Added `Category.conditions` and `Database.conditional` (R15) |
+| 4 | Added view and section `filter` and `sort` (R28, R36) |
+| 5 | Added the view `match` used by the Show View (R37) |
+| 6 | Added `Item.when_time`, `alarm_minutes` and `alarm_rung_at` (R14b, R38) |
+| 7 | Added `Database.date_format` (R41) |
+| 8 | Added `Database.numbers` and `View.Column.number` (R29) |
+| 9 | Added `Item.recurrence` (R14a) |
+| 10 | Added `Database.dependencies` and `View.hide_dependent` (R43) |
+| 11 | Added `Category.also_match` (R15d) |
+| 12 | Added `Category.actions` and `Category.special` (R15b) |
+| 13 | Added `Database.confirm_assignments` and `Database.suggestions` (R16) |
+| 14 | Added `Database.date_settings` (R14e) |
+| 15 | Replaced `Database.auto_date` with `Database.when_from` (R14f) |
+| 16 | Added `Category.excludes` (R9) |
+| 17 | Added `Database.dates` (R6a) |
+| 18 | Added `Category.date_rule` (R6b), replacing `Database.when_from` with When's rule |
+| 19 | Added `Database.match_settings` (R16a) |
+| 20 | Added `Category.match_overrides` (R16b) |
+| 21 | Added `View.Column.date` and the `DateFormat` fields `show`, `am_pm` and `time_separator` (R41a) |
+| 22 | Added `Database.calendars` (R45) |
+| 23 | Added `View.datebook` (R47) |
+| 24 | Added `Database.macros` and `macro_order` (R50) |
+| 25 | Moved a standard view's columns into its sections and added `View.Column.linked` (R55) |
+| 26 | Added `Database.insert_columns` (R55) |
+| 27 | Replaced `View.Column.linked` with `link`, so each column added is a column of its own (R55) |
+| 28 | Added `View.Section.item_column` (R55) |
+| 29 | Added the item column's `position` among the columns (`View.Section.item_column`, R55) |
+| 30 | Added `NumberFormat.percent` (Display % of total, R29) |
+| 31 | Added `View.Column.format`, `note_line` and `title` (standard column formats, R56) |
+| 32 | Added `View.hide_column_heads` (R57) |
+| 33 | Added `View.section_separators` (R58) |
 
 ## UI state around the database
 

@@ -14,6 +14,13 @@
   including the key charts for views, notes, the category manager and the
   macro editor ("Agenda Key and Menu Charts"), every settings box, and short
   how-to topics. The best quick check of a key or a box's settings.
+- `AGENDA_MENUS.md`: Agenda 2.0's F10 menus as it shows them (the view's,
+  the note editor's, the category manager's), each command with its help
+  line, walked in Agenda run headless (`tools/agformat/agenda_driver.py`,
+  2026-10-15). The first place to look for a menu path or a command name.
+- `screens/` (git-ignored): the owner's DOSBox screenshots of Agenda 2.0,
+  transcribed in `screens/notes.md`; colours and pixels, which the headless
+  driver cannot show.
 - `ag2qanda.txt.html`: Lotus technical support questions and answers about
   Agenda 2.0 (1990–91): known bugs fixed by the Update Kits (recurring dates,
   datebook views, structured files) and how features behave in practice.

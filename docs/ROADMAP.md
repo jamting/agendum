@@ -1,9 +1,110 @@
 # Roadmap
 
-Small, testable increments. Tick a box when its tests pass under `mix check`.
-Rule numbers refer to `SPEC.md`.
+Small, testable increments. Open work comes first, by area; done work is
+below, by milestone, as the record. Tick a box when its tests pass under
+`mix check`, and move it to Done. Rule numbers refer to `SPEC.md`; larger
+items have a plan in `docs/plans/` (see `docs/INDEX.md`).
 
-## Milestone 1 — Foundation ✅
+## Open
+
+### Towards parity with Agenda (Milestone 2)
+
+**The ambition:** Agendum as close to Agenda 2.0 as makes sense: the same screen, keys, menus and behaviour, apart from a list of accepted enhancements (beyond Agenda) and accepted modifications (done differently, on purpose). Everything else that differs is a gap, to close or to move onto one of the lists. Today about 80% overall (control panel and F10 menu about 75%, the note editor about 50%, the data model and views about 90%). The overview, checked in Agenda 2.0 run headless, with the two lists and the steps: [`docs/plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md)
+
+- [ ] Towards parity (AGENDA_PARITY.md, "The steps"):
+  - [ ] The note editor as Agenda's (its own item, below; `NOTE_EDITOR.md`)
+  - [ ] The View Properties box for every view (screenshot 143), F6 on the view
+  - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash
+  - [ ] File ▸ Abandon, File Maintenance Erase, File Transfer Template
+  - [ ] Show ItemsDone, Show Every, Show Circular (with the `o` indicator)
+  - [ ] Control panel symbols and indicators: `*` on a date category or value, `WAIT` while a calendar is fetched, `D` with unindexed categories (and unindexed categories themselves)
+  - [ ] Compare the category, view and macro managers' menus with Agenda's, and add them to the overview
+  - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash, Tab size; screenshot 130) where Agendum has them
+  - [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix (plan: `docs/plans/KITTY.md`)
+  - [ ] Optional: Utilities Launch (a shell without quitting)
+- [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
+- [ ] Boxes: F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) every setting in the box, CTRL-ENTER clears a setting (User's Guide 2-17)
+- [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names (the note editor's header: in the note editor plan above)
+- [ ] Hypertext help: topics with links (TAB, ENTER), Index, Find, Review (Agenda's F1)
+
+### The note editor (Milestone 2)
+
+- [ ] The note editor as Agenda's (checked in Agenda 2.0, 2026-10-15; printing and typesetting, F10 Print and F6 MARKER, out of scope). Evidence, the habit changes to settle first (ESC, INS, TAB, the control panel's first line) and the steps: [`docs/plans/NOTE_EDITOR.md`](plans/NOTE_EDITOR.md)
+  - [ ] Its control panel ("Note for: … Line N INS EDIT", "Note file: …") and key bar (F5 Return, F10 Menu)
+  - [ ] Its F10 menu: File, Import, Export, Clear, Return, Quit
+  - [ ] Import a text file at the cursor; Export the note to a text file
+  - [ ] ESC asks "Discard changes?" (No saves, Yes restores the note as opened)
+  - [ ] Editing keys: INS/OVR, TAB with File Properties ▸ Tab size, ALT-M, word delete (CTRL-BACKSPACE, ALT-W), delete to line end, word moves, PGUP/PGDN, CTRL-HOME/END
+  - [ ] ALT-F9 APPEND, ALT-F8 GETITMS and ALT-C (calendar) in a note
+  - [ ] External note files: File Attach, Detach, Erase (a stored field and an ADR)
+  - [ ] Optional: ALT-F1 COMPOSE
+- [ ] Undo in the note editor: CTRL-Z / CTRL-Y while editing a note, for typing (in sensible chunks: a word or a line, not every key) and for Search/Replace's replacements, with the note's text and cursor restored in the editor; the steps join the file's history when the note closes (today undo works only after closing the note, ADR 0005)
+
+### To look into
+
+- [ ] Look into: one fuzz run (2026-10-14, while letters in boxes were built) printed a stack trace through `Agendum.TUI.Boxes.BoxChoices` yet passed; not reproduced in three later 1,500–2,000-run sweeps
+- [ ] Look into: one `FUZZ_RUNS=3000` run (2026-10-15, after the ESC + digit removal, which the fuzz never reaches) failed 1 of 4 tests; output was cut off (`tail -3`), seed unknown; nine later 3000-run sweeps (seeds 0–3, 11–16) passed. Next time keep the full output and the seed
+
+### Data interchange (Milestone 4)
+
+- [ ] Repeating events in a calendar from another time zone: each occurrence converted in its own zone, so the weeks between the two zones' summer-time changes are not an hour off (SPEC R45)
+- [ ] Optional: read original `.AG` files directly. The format is now largely known (`docs/AGENDA_FILE_FORMAT.md`; research log `docs/plans/AGENDA_FILE_FORMAT_LOG.md`; reference reader `tools/agformat/agdump.py`): items, notes and note files, categories with all their settings, conditions and actions, assignments with values, relative and recurring dates, alarms, views with sorting and filters, datebooks, sections, columns with formats, file settings
+  - [x] Reverse engineer the format: container, items, categories, values, views (2026-10-14)
+  - [x] Settle the open parts: view/section sort and filter words, relative-date encoding, actions, settings (2026-10-15, second round; how to drive Agenda: `tools/agformat/DRIVING_AGENDA.md`)
+  - [ ] Elixir reader outside the pure core, converting to the JSON format; File ▸ Transfer ▸ Import of a `.AG`
+- [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
+- [ ] Optional: Import of structured text files (one item per line, with categories)
+- [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files)
+
+### Time management (Milestone 5)
+
+- [ ] Recurring items on every date they recur: in each datebook section and in any date filter that covers an occurrence, counted from the base date, still one item (as Agenda does; checked in Agenda 2.0, User's Guide 7-11). Plan with the evidence, the habit changes to settle first and the steps: `docs/plans/RECURRING_OCCURRENCES.md` (R14a)
+- [ ] Alarms sent to your phone with Signal, as well as on the screen: through the separate `signal-cli` program, linked to your Signal account; optional (nothing changes without it), set up in File ▸ Customize
+
+### Housekeeping
+
+- [ ] Rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it ([`docs/plans/RENAME_REPO.md`](plans/RENAME_REPO.md))
+*[A page here was soaked in the creek. — Rabbit]*
+
+### Beyond Agenda
+
+- [ ] More date languages (one `Agendum.Core.DateLanguage` pack each)
+- [ ] Modern by default: today's names and standard keys out of the box (Open not Retrieve, Delete not Discard, CTRL-O/S/Z/F/N…), with Agenda's names and keys one setting away ("Agenda mode"). Agenda's steep learning curve limited its audience (AGENDA_HISTORY.md); the power should stay, the strangeness should not be the first thing people meet. Builds on the keymaps, self-describing commands and own key bindings (Towards many users); departs from ADR 0006 and 0007, so it needs an ADR of its own
+- [ ] Flashcards with active recall and spaced repetition: an item is the question, its note the answer; a deck is any category. The schedule is kept in ordinary categories made the first time (date category Due; numeric Interval, Ease and Reviews), so filters, datebooks, sorting and JSON work on cards as they are, with no new stored fields. A review mode on the due items: the question, SPACE shows the note, then Again / Hard / Good / Easy sets the next Due date (one undo step per card). Scheduling is SM-2 to begin with, in a pure core module with the clock passed in, behind an interface that FSRS could replace
+- [ ] A micro-blog from the file: the items of a chosen category (e.g. Posts) are posts, the item the title, the note the content (a Markdown subset), When the date (else Entry). File ▸ Transfer ▸ Publish writes a static site: an index page newest first, a page per post and an RSS feed (`rss.xml`), plain HTML without JavaScript. The site's title, base address (for the feed's links) and author are kept in the file. The pages are made in a pure core module (`{path, html}` pairs); the shell writes them to a folder, and can then sync the folder to a server with `rsync` over `ssh` (the person's own keys; nothing is stored by Agendum; optional, nothing changes without rsync). Markdown: a small subset of our own, or Earmark if it passes ADR 0021
+- [ ] Zettelkasten IDs and links between items: every item gets an ID when it is made, its creation time as YYMMDDHHMM plus a digit that counts up only when two items are made in the same minute (`26101311140`); stored with the item and never changed (items from older files get one from their Entry date on load). A column kind shows it. `[[26101311140]]` in an item's text or note is a link: shown as typed in the link colour, the target's text in the control panel when the cursor is on it, a broken link marked. Following a link (a key to choose, with a Mac-friendly alternative) shows the target in the Show View (ALT-F8 back); Item Properties lists the items that link to it ("Linked from"), and a search lists them in the Show View. A key inserts a link to the marked item. Text matching ignores links. In the published micro-blog a link is an `<a>` to the target's page, or its title in plain text if the target is not published. Ours, not Agenda's; a stored field (DATA_MODEL, JSON schema, format version)
+
+### Towards many users
+
+A web application with accounts and shared files, on the same core (plan:
+[MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). First, in the core and the TUI, a
+few commands at a time:
+
+- [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agendum.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
+- [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps
+- [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries, and "describe key"; the F1 help and KEYBOARD.md checked against the keymaps
+- [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
+- [ ] Raw values (dates, numbers) beside the formatted cells in `Agendum.Core.ViewModel`
+- [ ] Browsing's date arithmetic into the core
+- [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
+
+Then a web version for one person:
+
+*[A page here was soaked in the creek. — Rabbit]*
+
+Then working together:
+
+*[A page here was soaked in the creek. — Rabbit]*
+
+### Ideas
+
+- Multiple files open; a launcher listing recent files
+- In-line help in boxes: the hint inside a box (made from its keys, `Box.hint/2`) as the start of a fuller help, with longer texts in a help box of their own (the owner's idea, 2026-10-14)
+- Wol in the machine: a personal agent (a language model) inside the file, using its items, categories, views and rules as the person's own meaning; it files, finds and plans by proposing, never silently changing; the core stays pure and privacy comes first. Builds on the command layer (Towards many users). Thoughts in [`docs/plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)
+
+## Done
+
+### Milestone 1 — Foundation
 
 - [x] Pure core: items, category hierarchy, links, views (R1–R5)
 - [x] Subsumption, deletion side effects (R3, R4)
@@ -19,19 +120,8 @@ Rule numbers refer to `SPEC.md`.
 - [x] Escript binary
 - [x] Property-based fuzzing of the UI (random key sequences never crash; frames always fill the screen)
 
-## Milestone 2 — Fidelity
+### Milestone 2 — Fidelity
 
-**The ambition:** Agendum as close to Agenda 2.0 as makes sense: the same screen, keys, menus and behaviour, apart from a list of accepted enhancements (beyond Agenda) and accepted modifications (done differently, on purpose). Everything else that differs is a gap, to close or to move onto one of the lists. Today about 80% overall (control panel and F10 menu about 75%, the note editor about 50%, the data model and views about 90%). The overview, checked in Agenda 2.0 run headless, with the two lists and the steps: [`docs/plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md)
-
-- [ ] Towards parity (AGENDA_PARITY.md, steps):
-  - [ ] The note editor as Agenda's (its own item, below; `NOTE_EDITOR.md`)
-  - [ ] The View Properties box for every view (screenshot 143), F6 on the view
-  - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash
-  - [ ] File ▸ Abandon, File Maintenance Erase, File Transfer Template
-  - [ ] Show ItemsDone, Show Every, Show Circular (with the `o` indicator)
-  - [ ] Control panel symbols and indicators: `*` on a date category or value, `WAIT` while a calendar is fetched, `D` with unindexed categories
-  - [ ] Compare the category, view and macro managers' menus with Agenda's, and add them to the overview
-  - [ ] Optional: Utilities Launch (a shell without quitting)
 - [x] Undo / redo (R30)
 - [x] Mac-friendly keys: CTRL alternatives for INS and F-keys, Mac editing keys, ⌘ mapping guide (R31)
 - [x] Autocompletion while typing column entries (Agenda's AUTOC indicator) (R32)
@@ -66,7 +156,7 @@ Rule numbers refer to `SPEC.md`.
   - [x] Select numeric functions: the calculations of every numeric column in the section (the R29 gap), written into the columns (linked ones change everywhere)
 - [x] Moving a section within its view (R62): ALT-F10 on a section head or View ▸ Section ▸ Move, the sections collapsed while it moves (User's Guide 5-8 to 5-9); in that view only
 
-## Look and feel — after screenshots of Agenda 2.0 (ADR 0018)
+### Look and feel — after screenshots of Agenda 2.0 (ADR 0018)
 
 The general look and feel of the real program, step by step; not pixel fidelity.
 `tools/screenshots/` draws our screens for comparison.
@@ -74,7 +164,6 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Agenda's colours as the default theme: grey screen, blue heads and entries, white-on-red highlight, cyan boxes in a solid blue frame with a centred title and a shadow, the screen behind a box greyed out, cyan category manager, yellow-on-blue help; exact VGA colours on 24-bit terminals; the highlighted line tinted (R40)
 - [x] Two-line control panel (File with indicators and time, then View or the manager shown) that the menu, prompts, questions and messages take over; the key bar stays one line (our choice)
 - [x] More descriptive key bar labels when the terminal is wide enough ("F8 View manager"); Agenda's short ones otherwise
-- [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
 - [x] Boxes: help for the highlighted field in the control panel (§5)
 - [x] Boxes: "Press ENTER when done, ESC to cancel" in the frame, and in every settings box ENTER is done and ESC cancels its changes (ADR 0030); ESC steps back through the menu levels (§5)
 - [x] Boxes: moving between settings as Agenda (User's Guide 2-16): → or TAB right one setting, or to the next one when there is none to the right; ← or SHIFT-TAB left, or to the previous one; ↓ ↑ to the setting in the next row nearest the same place (from a right-hand setting to the right-hand one below, else the left); HOME / END the first / last. The rows and places come from the box's layout (`Agendum.TUI.Boxes.Template.grid/2`, `Agendum.TUI.Boxes.BoxNav`); boxes that list one setting a row move down and up with → ←. Choices change with SPACE; numbers and times are typed, no longer → ← (§5)
@@ -83,32 +172,15 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] "..." for Category Properties' sub-boxes, as Agenda: Note, Statistics (Agenda's Category Statistics box, new) and Advanced settings, opened by SPACE
 - [x] Questions as Yes/No boxes, as Agenda's (screenshots 36, 141) (§5)
 - [x] View Manager as a box, as Agenda's (screenshot 40) (§5)
-- [ ] Boxes: F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) every setting in the box, CTRL-ENTER clears a setting (User's Guide 2-17)
 - [x] Bug: hint lines inside two settings boxes still gave the keys from before ENTER meant done (§5, ADR 0030): Item Properties said "ENTER edit", Macro Properties "ENTER changes". Fixed by moving both to `Agendum.TUI.Boxes.Box`, whose hint is made from the same keys as the key bar
 - [x] Search/Replace in a note: "Replace this occurrence?" as a Yes/No box, as the other questions, placed so that it does not cover the occurrence
 - [x] Boxes listing categories (F3 on an item or a section head, the pickers): 13 categories as Agenda's Assignment Profile, however tall the terminal, and never past the bottom of the screen (their frame was cut off)
 - [x] File Properties ▸ File statistics: Agenda's File Statistics box (screenshot 140), as Category Statistics
-- [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash, Tab size; screenshot 130) where Agendum has them
-- [ ] Look into: one fuzz run (2026-10-14, while letters in boxes were built) printed a stack trace through `Agendum.TUI.Boxes.BoxChoices` yet passed; not reproduced in three later 1,500–2,000-run sweeps
-- [ ] Look into: one `FUZZ_RUNS=3000` run (2026-10-15, after the ESC + digit removal, which the fuzz never reaches) failed 1 of 4 tests; output was cut off (`tail -3`), seed unknown; nine later 3000-run sweeps (seeds 0–3, 11–16) passed. Next time keep the full output and the seed
 - [x] In notes: F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, and their key bar (R63)
 - [x] Word wrap in the note editor (R64): long lines shown whole on several rows, wrapped at the rightmost space, for the screen only; ↑↓ by rows, HOME/END the row's ends then the line's
-- [ ] Undo in the note editor: CTRL-Z / CTRL-Y while editing a note, for typing (in sensible chunks: a word or a line, not every key) and for Search/Replace's replacements, with the note's text and cursor restored in the editor; the steps join the file's history when the note closes (today undo works only after closing the note, ADR 0005)
-- [ ] The note editor as Agenda's (checked in Agenda 2.0, 2026-10-15; printing and typesetting, F10 Print and F6 MARKER, out of scope). Evidence, the habit changes to settle first (ESC, INS, TAB, the control panel's first line) and the steps: [`docs/plans/NOTE_EDITOR.md`](plans/NOTE_EDITOR.md)
-  - [ ] Its control panel ("Note for: … Line N INS EDIT", "Note file: …") and key bar (F5 Return, F10 Menu)
-  - [ ] Its F10 menu: File, Import, Export, Clear, Return, Quit
-  - [ ] Import a text file at the cursor; Export the note to a text file
-  - [ ] ESC asks "Discard changes?" (No saves, Yes restores the note as opened)
-  - [ ] Editing keys: INS/OVR, TAB with File Properties ▸ Tab size, ALT-M, word delete (CTRL-BACKSPACE, ALT-W), delete to line end, word moves, PGUP/PGDN, CTRL-HOME/END
-  - [ ] ALT-F9 APPEND, ALT-F8 GETITMS and ALT-C (calendar) in a note
-  - [ ] External note files: File Attach, Detach, Erase (a stored field and an ADR)
-  - [ ] Optional: ALT-F1 COMPOSE
-- [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names (the note editor's header: in the note editor plan above)
-- [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix (plan: `docs/plans/KITTY.md`)
 - [x] Startup (R52): a splash screen laid out as Agenda's (a cyan box in a solid blue frame with a shadow, the title spaced out, the release, Name and Company lines) with Title "WOL'S AGENDUM", Tagline "Hoo's in control? You are." and Copyright "Copyright JW&D + WOL. All rites reserved."; then a File Retrieve box when no file is named
-- [ ] Hypertext help: topics with links (TAB, ENTER), Index, Find, Review (Agenda's F1)
 
-## Milestone 3 — Smarter assignment
+### Milestone 3 — Smarter assignment
 
 - [x] Numeric categories and columns with totals (R29)
 - [x] Display % of total: a "% tot" column beside a numeric column, each number's share of its section's total (R29)
@@ -139,24 +211,15 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Text matching per category: Advanced settings, "T= Note" (R16b)
 - [x] Proper names and titles in text matching ("Mrs. Wohl" matches Nancy Wohl) (R16c)
 
-## Milestone 4 — Data interchange
+### Milestone 4 — Data interchange
 
 - [x] JSON export/import: the modern, human-readable format; round-trips everything in a file (R44, `docs/JSON_FORMAT.md`)
 - [x] iCal import: subscribe to calendars on the web, read on a schedule or on request, mirrored into items (R45)
 - [x] Time zones in calendar subscriptions: a time with a TZID is converted by the calendar's own `VTIMEZONE` definitions (offsets and yearly daylight-saving rules or RDATEs, `Agendum.Core.ICal.TimeZone`) to UTC, then to local time; a zone the calendar does not define stays local time; no package (ADR 0021) (R45)
-- [ ] Repeating events in a calendar from another time zone: each occurrence converted in its own zone, so the weeks between the two zones' summer-time changes are not an hour off (SPEC R45)
-- [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
-- [ ] Optional: Import of structured text files (one item per line, with categories)
-- [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files)
-- [ ] Optional: read original `.AG` files directly. The format is now largely known (`docs/AGENDA_FILE_FORMAT.md`; research log `docs/plans/AGENDA_FILE_FORMAT_LOG.md`; reference reader `tools/agformat/agdump.py`): items, notes and note files, categories with all their settings, conditions and actions, assignments with values, relative and recurring dates, alarms, views with sorting and filters, datebooks, sections, columns with formats, file settings
-  - [x] Reverse engineer the format: container, items, categories, values, views (2026-10-14)
-  - [x] Settle the open parts: view/section sort and filter words, relative-date encoding, actions, settings (2026-10-15, second round; how to drive Agenda: `tools/agformat/DRIVING_AGENDA.md`)
-  - [ ] Elixir reader outside the pure core, converting to the JSON format; File ▸ Transfer ▸ Import of a `.AG`
 
-## Milestone 5 — Time management and automation
+### Milestone 5 — Time management and automation
 
 - [x] Datebook views: items by day, week, month or quarter, browsing forward and back (ALT-B); settings Date and End category, Section, Period, Interval, Start and End at, Base date on (R47)
-- [ ] Recurring items on every date they recur: in each datebook section and in any date filter that covers an occurrence, counted from the base date, still one item (as Agenda does; checked in Agenda 2.0, User's Guide 7-11). Plan with the evidence, the habit changes to settle first and the steps: `docs/plans/RECURRING_OCCURRENCES.md` (R14a)
 - [x] Browse standard views and sections with date filters: ALT-B shifts the filters by a day (← →), week (CTRL-← → or ↑↓), month (PGUP/PGDN) or year (CTRL-PGUP/PGDN); ENTER keeps, ESC restores (R48)
 - [x] Show Schedule (Search ▸ Schedule; Agenda's Utilities Show Sched): one date's items, optionally filtered, in the Show View (R49)
 - [x] Pop-up calendar: F3 in a date column picks a date, ALT-C shows one for reference; F6 a time, typing jumps to a date (R46)
@@ -171,17 +234,15 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] Its keystroke macros: Customize date settings, Hide/Display done items, Print current view (`Planner.Macros`; through Agendum's menus, without Agenda's {ALERT} boxes)
   - [x] `mix agendum.starters` writes `starters/planner.agendum`; `--samples` writes a copy with realistic sample data for testing (`tmp/planner-samples.agendum`; dates from `--today`, so the same day gives the same file)
   - [x] `starters/planner.agendum` committed; a test checks it is what the code builds; the README says to copy it
-- [x] An Easter egg and showcase: `agendum --clinic` opens Christopher Robin's psychotherapy clinic for the Hundred Acre Wood, mid-work (after Shea et al., CMAJ 2000, `docs/reference/1557.full.pdf`); `mix agendum.starters --clinic` writes it (`Agendum.Starters.Clinic`)
   - Left out: the macros Sort items in view and Create/Update contact list, which need the macro command language. The Contacts view that Create/Update contact list made is in the file instead, but it is not kept up to date: a new person needs a blank item in it by hand
+- [x] An Easter egg and showcase: `agendum --clinic` opens Christopher Robin's psychotherapy clinic for the Hundred Acre Wood, mid-work (after Shea et al., CMAJ 2000, `docs/reference/1557.full.pdf`); `mix agendum.starters --clinic` writes it (`Agendum.Starters.Clinic`)
 - [x] Themes from terminal colour schemes (`docs/THEMES.md`): Modus Operandi, Modus Vivendi, Alabaster, Zenburn, Ayu, Borland; the old `blue` theme removed (R40)
 - [x] Preferences file and File ▸ Customize (Utilities Customize): theme, date languages, input format (R40, R14c, R41b)
 - [x] More preferences (R54): key map on/off, kept (ALT-K); confirm mode; auto-save interval; decimal and thousands separators (Setting Up Agenda 1-25 to 1-31). Custom colours are not planned: we keep to themes (ADR 0022)
 - [x] Select File box (R51): pick a file from a list instead of typing its name, for File ▸ Retrieve (ALT-G, CTRL-O) and Write, and Transfer ▸ Import/Export: the folders and files of the current folder, ENTER opens a folder or chooses a file, `..` goes up, typing narrows the list; F7 shows dates, as Agenda's Select File box did (User's Guide 22-4 to 22-5)
-- [ ] Smaller fidelity items: Trash and Undiscard, File Abandon, unindexed categories
 - [x] Typing in the view manager highlights a view (R53)
-- [ ] Alarms sent to your phone with Signal, as well as on the screen: through the separate `signal-cli` program, linked to your Signal account; optional (nothing changes without it), set up in File ▸ Customize
 
-## Housekeeping
+### Housekeeping
 
 - [x] Move the TUI's direct `Database` writes into `Agendum.Core` operations (enforced by `architecture_test.exs`)
 - [x] Resolve existing conflicts when making children exclusive, as Agenda 2.0 does (R7a)
@@ -194,7 +255,6 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] The name Wol's Agendum: command, files (`.agendum`), preferences, JSON format, texts; the old names still read (ADR 0019)
 - [x] Rename the code to match: the Mix app `:agenda` → `:agendum`, the `Agenda.*` modules → `Agendum.*`, `lib/agendum` and `test/agendum`; files saved with the old struct names still load (ADR 0019)
 - [x] Group the small TUI modules in subfolders: `tui/boxes/`, `tui/terminal/`, `tui/typing/`, `tui/moves/` (ARCHITECTURE.md, TUI)
-- [ ] Rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it ([`docs/plans/RENAME_REPO.md`](plans/RENAME_REPO.md))
 - [x] Draw the settings boxes from layouts (`Agendum.TUI.Boxes.Template`): every box with fixed settings is (REFACTORING.md step 3); the lists draw their own rows
 - [x] Every box in a module of its own behind `Agendum.TUI.Boxes.Box` (keys, drawing, key bar, help, ending), then the fallbacks removed from Update, Render.Boxes, FieldHelp, BoxCancel and BoxChoices ([`docs/plans/REFACTORING.md`](plans/REFACTORING.md) step 3)
 - [x] The plans (`GITHUB.md`, `DOSBOX_STAGING.md`, `KITTY.md`, `RENAME_REPO.md`, `WOL-IN-THE-MACHINE.md`, `MULTIUSER.md`, `REFACTORING.md`) moved to `docs/plans/`, so `docs/` is what Agendum is; a group of their own, Plans, in the generated docs (REFACTORING.md step 5)
@@ -206,43 +266,9 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] `--rabbit` opens Rabbit's file from the manual (garden, Notices, friends and relations; `Agendum.Sample.rabbit/1`, shared with the manual's screen captures); `--demo` stays the patent's sample, which the tests use
 - [x] API documentation with `ex_doc` (dev only): `mix docs` from the `@moduledoc`s and `@spec`s, for whoever builds on the core facade (ADR 0020)
 - [x] The real Agenda for Claude to try (done differently: headless DOSBox Staging driven through its REST API, `tools/agformat/agenda_driver.py`; colours and pixels still need the owner's screenshots). First planned as DOSBox Staging started by a script, keys sent with its `AUTOTYPE`, the window captured with `screencapture`, to check Agenda's behaviour and compare screens without asking the owner for screenshots (plan and what the owner sets up: [`docs/plans/DOSBOX_STAGING.md`](plans/DOSBOX_STAGING.md))
-*[A page here was soaked in the creek. — Rabbit]*
 
-## Beyond Agenda
+### Beyond Agenda
 
 - [x] Dates in other languages: `--lang=swedish`, `--fallback=english`; Swedish (R14c)
 - [x] General negative links between any two categories, from the patent: Category Properties ▸ Excludes (R9)
-- [ ] More date languages (one `Agendum.Core.DateLanguage` pack each)
 - [x] Fit column to contents (R22a): a command (View ▸ Column) that sets the highlighted column's width to fit its head and the entries of the items shown at that moment; a one-time adjustment, not kept in step as items change
-- [ ] Modern by default: today's names and standard keys out of the box (Open not Retrieve, Delete not Discard, CTRL-O/S/Z/F/N…), with Agenda's names and keys one setting away ("Agenda mode"). Agenda's steep learning curve limited its audience (AGENDA_HISTORY.md); the power should stay, the strangeness should not be the first thing people meet. Builds on the keymaps, self-describing commands and own key bindings (Towards many users); departs from ADR 0006 and 0007, so it needs an ADR of its own
-- [ ] Flashcards with active recall and spaced repetition: an item is the question, its note the answer; a deck is any category. The schedule is kept in ordinary categories made the first time (date category Due; numeric Interval, Ease and Reviews), so filters, datebooks, sorting and JSON work on cards as they are, with no new stored fields. A review mode on the due items: the question, SPACE shows the note, then Again / Hard / Good / Easy sets the next Due date (one undo step per card). Scheduling is SM-2 to begin with, in a pure core module with the clock passed in, behind an interface that FSRS could replace
-- [ ] A micro-blog from the file: the items of a chosen category (e.g. Posts) are posts, the item the title, the note the content (a Markdown subset), When the date (else Entry). File ▸ Transfer ▸ Publish writes a static site: an index page newest first, a page per post and an RSS feed (`rss.xml`), plain HTML without JavaScript. The site's title, base address (for the feed's links) and author are kept in the file. The pages are made in a pure core module (`{path, html}` pairs); the shell writes them to a folder, and can then sync the folder to a server with `rsync` over `ssh` (the person's own keys; nothing is stored by Agendum; optional, nothing changes without rsync). Markdown: a small subset of our own, or Earmark if it passes ADR 0021
-- [ ] Zettelkasten IDs and links between items: every item gets an ID when it is made, its creation time as YYMMDDHHMM plus a digit that counts up only when two items are made in the same minute (`26101311140`); stored with the item and never changed (items from older files get one from their Entry date on load). A column kind shows it. `[[26101311140]]` in an item's text or note is a link: shown as typed in the link colour, the target's text in the control panel when the cursor is on it, a broken link marked. Following a link (a key to choose, with a Mac-friendly alternative) shows the target in the Show View (ALT-F8 back); Item Properties lists the items that link to it ("Linked from"), and a search lists them in the Show View. A key inserts a link to the marked item. Text matching ignores links. In the published micro-blog a link is an `<a>` to the target's page, or its title in plain text if the target is not published. Ours, not Agenda's; a stored field (DATA_MODEL, JSON schema, format version)
-
-## Towards many users
-
-A web application with accounts and shared files, on the same core (plan:
-[MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). First, in the core and the TUI, a
-few commands at a time:
-
-- [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agendum.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
-- [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps
-- [ ] In the TUI: a command list of what can run here (local, then global) with keys and summaries, and "describe key"; the F1 help and KEYBOARD.md checked against the keymaps
-- [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
-- [ ] Raw values (dates, numbers) beside the formatted cells in `Agendum.Core.ViewModel`
-- [ ] Browsing's date arithmetic into the core
-- [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
-
-Then a web version for one person:
-
-*[A page here was soaked in the creek. — Rabbit]*
-
-Then working together:
-
-*[A page here was soaked in the creek. — Rabbit]*
-
-## Ideas
-
-- Multiple files open; a launcher listing recent files
-- In-line help in boxes: the hint inside a box (made from its keys, `Box.hint/2`) as the start of a fuller help, with longer texts in a help box of their own (the owner's idea, 2026-10-14)
-- Wol in the machine: a personal agent (a language model) inside the file, using its items, categories, views and rules as the person's own meaning; it files, finds and plans by proposing, never silently changing; the core stays pure and privacy comes first. Builds on the command layer (Towards many users). Thoughts in [`docs/plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)

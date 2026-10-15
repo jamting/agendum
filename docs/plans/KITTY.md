@@ -1,5 +1,7 @@
 # Plan: the ALT and CTRL key bars while the key is held
 
+**Status:** not started (ROADMAP, Towards parity).
+
 A plan for the Roadmap item "The ALT and CTRL key bars while the key is held
 (kitty keyboard protocol), and after ESC as a prefix". Not started yet.
 

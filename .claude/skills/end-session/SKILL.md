@@ -40,10 +40,12 @@ and the F1 help. List anything skipped; do not hide it.
 Write things down where the next session will find them. Prefer the repo
 for anything about the project, and memory for how the owner works:
 
-- **docs/ROADMAP.md**: tick what was finished; add bugs or ideas found on
-  the way (with enough detail to act on later).
-- **Plan documents** (e.g. `docs/plans/REFACTORING.md`): update a "Progress"
-  section for work that is paused: what is done, what is left, how to
+- **docs/ROADMAP.md**: tick what was finished and move it under Done; add
+  bugs or ideas found on the way under Open (with enough detail to act on
+  later).
+- **Plan documents** (e.g. `docs/plans/REFACTORING.md`): update the
+  **Status:** line at the top, and a "Progress" section for work that is
+  paused: what is done, what is left, how to
   continue.
 - **ADRs** (`docs/adr/`): a lasting decision made this session that has
   none yet.

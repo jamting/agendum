@@ -7,7 +7,8 @@ what was tried, with which tools, how far it got, and what to do next. The
 goal is importing old Agenda files into Agendum; this stage only describes
 the format.
 
-**Status (2026-10-15, after the second round):** the format is mapped as
+**Status (2026-10-15, after the second round):** research done; next, the
+importer (ROADMAP, Data interchange; "Next steps" below). The format is mapped as
 far as an import needs, and most of the rest: items, notes and note files,
 categories with every setting of their properties boxes, conditions,
 actions and special actions, assignments with date, numeric and unindexed

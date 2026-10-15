@@ -5,6 +5,100 @@ Management System", Belove, Kapor, Kaplan et al., Lotus 1992) and the Lotus
 Agenda 2.0 manuals. Rules are numbered so tests and commits can refer to them.
 ✅ = implemented and tested, ⏳ = planned (see `ROADMAP.md`).
 
+## Rule index
+
+Every rule, in number order, with the section it is in (rules were added
+where they belong, so the sections are not in number order). Add a row
+for a new rule.
+
+| Rule | Title | § |
+| ---- | ----- | - |
+| R1 | Many-to-many | 2 |
+| R2 | Hierarchy | 2 |
+| R3 | Subsumption | 2 |
+| R4 | Deletion side effects | 2 |
+| R5 | Every item is in MAIN | 2 |
+| R6 | Date categories | 2 |
+| R6a | Date categories the user makes | 2 |
+| R6b | How date categories get dates | 2 |
+| R7 | Mutual exclusion | 2 |
+| R7a | Resolving conflicts when making children exclusive | 2 |
+| R7b | Resolving conflicts when moving categories | 2 |
+| R7c | No direct assignment to both a category and its ancestor | 2 |
+| R7d | Outline-style promote | 2 |
+| R8 | Category links | 2 |
+| R9 | General negative links | 2 |
+| R10 | Text matching | 3 |
+| R11 | Explicit wins | 3 |
+| R12 | Ambiguity (patent claim 7) | 3 |
+| R13 | Recalc | 3 |
+| R14 | When dates from item text | 3 |
+| R14a | Recurring dates | 3 |
+| R14b | Times of day | 3 |
+| R14c | Date languages | 3 |
+| R14d | More date phrases | 3 |
+| R14e | Global date settings | 3 |
+| R14f | Fixed relative dates and dates from notes | 3 |
+| R15 | Assignment conditions | 3 |
+| R15a | Date and numeric conditions | 3 |
+| R15b | Actions | 3 |
+| R15c | Text matches as conditional assignments | 3 |
+| R15d | Text conditions | 3 |
+| R15e | Utilities Execute | 3 |
+| R16 | Suggested assignments | 3 |
+| R16a | Text matching settings | 3 |
+| R16b | Text matching for one category | 3 |
+| R16c | Proper names and titles | 3 |
+| R20 | Sections | 4 |
+| R21 | Entering an item | 4 |
+| R22 | Columns (claim 2) | 4 |
+| R22a | Fit column to contents | 4 |
+| R23 | Typing in a column (claims 3, 6) | 4 |
+| R24 | DEL | 4 |
+| R25 | Editing the structure from a view | 4 |
+| R26 | Move (ALT-F10) | 4 |
+| R27 | View options | 4 |
+| R28 | Filters | 4 |
+| R28a | Date and numeric filters | 4 |
+| R29 | Numeric columns | 4 |
+| R30 | Undo/redo | 5 |
+| R31 | Keyboard alternatives | 5 |
+| R32 | Automatic completion | 5 |
+| R33 | Collapsing and expanding | 5 |
+| R34 | Item Properties box | 5 |
+| R35 | Marked items | 5 |
+| R36 | Sorting items | 4 |
+| R37 | Search | 4 |
+| R38 | Clock and alarms | 4 |
+| R39 | Search and replace in a note | 4 |
+| R40 | Colour themes | 4 |
+| R41 | Date display format | 4 |
+| R41a | More date display options | 4 |
+| R41b | Input format | 4 |
+| R42 | The original keys | 5 |
+| R43 | Item dependencies | 2 |
+| R44 | JSON export and import | 5a |
+| R45 | Calendar subscriptions | 5a |
+| R46 | Pop-up calendar | 5b |
+| R47 | Datebook views | 5b |
+| R48 | Browsing date filters | 5b |
+| R49 | Show Schedule | 5b |
+| R50 | Learn-mode macros | 5c |
+| R51 | Select File box | 5d |
+| R52 | Startup | 5d |
+| R53 | Typing in the view manager | 5d |
+| R54 | More preferences | 5d |
+| R55 | Columns per section | 4 |
+| R56 | Standard column formats | 4 |
+| R57 | Hide column heads | 4 |
+| R58 | Section separators | 4 |
+| R59 | The note symbol and NOTE for what is highlighted | 4 |
+| R60 | The Activities Planner starter file | 4 |
+| R61 | Section Properties | 4 |
+| R62 | Moving a section | 4 |
+| R63 | Marking, copying, cutting and pasting in a note | 4 |
+| R64 | Word wrap in the note editor | 4 |
+
 ## 1. Concepts
 
 | Concept               | Meaning                                                                                                    | Code                   |
@@ -930,6 +1024,8 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 
 ## 5. User interface (Agenda 2.0 conventions)
 
+### The screen and the control panel
+
 Screen: Agenda's two-line control panel, the body, and a function-key bar.
 The control panel shows the file with the indicators (marks, mode such as
 READY / EDIT / MENU / CAT MGR) and the time on its first line, and what is
@@ -943,21 +1039,33 @@ highlighted field does and which keys change it ("Choose to insert new
 columns in one or all sections in the view."; screenshots 130 to 143);
 a list box (Go to, Copy, Calendars…) has one such help for the whole box.
 A message comes first. The texts follow Agenda's (its F1 help's tables
-of settings), with Agendum's keys (`Agendum.TUI.Boxes.FieldHelp`). In the menu,
-ESC backs up one level; a box, prompt or question opened from the menu
+of settings), with Agendum's keys (`Agendum.TUI.Boxes.FieldHelp`).
+
+### ESC in the menu
+
+In the menu, ESC backs up one level; a box, prompt or question opened from the menu
 goes back to the menu level it was chosen from on ESC, and ESC again backs
 up until the view, as in Agenda (User's Guide 2-13: "back up one step at a
 time"); finished any other way (ENTER), it goes back to the view.
+
+### The view manager
+
 The view manager is a box over the view, as Agenda's (screenshot 40):
 the views' names in order, * before a datebook view, an arrow where the
 list goes on; ENTER shows the highlighted view, ESC goes back to the one
 shown, F4 (or DEL) discards one. Our choice: Agenda's view manager showed
 no more, so each view's sections are no longer listed beside its name.
+
+### Questions
+
 A Y/N question is a small box without a title, as Agenda's (screenshots
 36, 141): the question, then its answer highlighted, Yes at first; SPACE
 (or an arrow) switches it, ENTER accepts the answer shown, ESC cancels.
 Our choice: Y and N answer at once (Agenda's first letter only picked
 the answer).
+
+### Finishing a box: ENTER and ESC
+
 A box's bottom edge says how to finish it, in Agenda's words
 (screenshots 130, 138, 144): "Press ENTER when done, ESC to cancel" on a
 settings box, "Press ENTER to accept, ESC to cancel" on a box to choose
@@ -968,7 +1076,11 @@ and ESC puts the file and your preferences back as they were when the
 box opened (one undo step, which undo reverses); a box opened from a box
 cancels only its own changes, and work done in a full screen opened from
 a box (a note, the macro edit screen) stays. ESC while typing in a field
-only stops the typing (`Agendum.TUI.Boxes.BoxCancel`). In a box the arrows move
+only stops the typing (`Agendum.TUI.Boxes.BoxCancel`).
+
+### Moving and changing settings in a box
+
+In a box the arrows move
 between settings as in Agenda (User's Guide 2-16, `Agendum.TUI.Boxes.BoxNav`):
 → or TAB right one setting, or on to the next when there is none to the
 right; ← or SHIFT-TAB left, or back to the previous; ↓ ↑ to the next or
@@ -983,8 +1095,11 @@ On a setting with a list of choices, as in Agenda, a letter picks the
 next choice starting with it ("r": Relative; one undo step), and F3
 (CHOICES) lists them in a box, the current one first. The choices are
 what SPACE goes through (`Agendum.TUI.Boxes.BoxChoices`); on a setting that is
-typed, letters are typed as before. In Category Properties, as Agenda
-(screenshot 74), Note, Statistics and Advanced settings show "..." and
+typed, letters are typed as before.
+
+### Category and File Statistics
+
+In Category Properties, as Agenda (screenshot 74), Note, Statistics and Advanced settings show "..." and
 SPACE opens each one's box; Statistics (Agenda's Category Statistics)
 counts the items in the category, its children, the sections it heads,
 and the view filters, conditions and actions that name it. File
@@ -993,12 +1108,16 @@ Properties has File statistics ..., Agenda's File Statistics box
 too), and the average items per category and categories per item, both
 counting the assignments stored with the items, rounded down (as Agenda
 2.0 counts them, checked on its PLANNER file); Agenda's Unused space and
-Items in trash are left out. Our choices: the
-function-key bar stays one line with the keys'
-names and labels side by side (Agenda had two lines of ten fixed slots).
+Items in trash are left out.
+
+### The key bar
+
+Our choices: the function-key bar stays one line with the keys' names and labels side by side (Agenda had two lines of ten fixed slots).
 When the screen is wide enough for all of them, it shows fuller labels
 ("F8 View manager", "INS/CTRL-N Add a category"); otherwise Agenda's short
 ones ("F8 VwMgr").
+
+### Keys in views and the category manager
 
 | Key         | View                                                                | Category manager        |
 | ----------- | ------------------------------------------------------------------- | ----------------------- |
@@ -1021,6 +1140,8 @@ ones ("F8 VwMgr").
 Category manager navigation (from the manual): ↑/BACKSPACE, ↓/ENTER,
 HOME = parent, END = last of family, CTRL-PGUP/PGDN = previous/next
 sibling, CTRL-HOME/END = first/last.
+
+### Rules of the user interface
 
 - **R42 ✅ The original keys** (Help: "Agenda Key and Menu Charts", in
   `docs/reference/Agenda 2.0 Help File.html`). Keys follow Agenda's charts;
@@ -1195,6 +1316,9 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   few weeks of a year may be an hour off; alarms, attendees and
   exceptions to repeating events are not read. Subscriptions are saved
   in the file and in its JSON.
+
+## 5b. Calendar, datebooks and schedules
+
 - **R46 ✅ Pop-up calendar** (User's Guide 6-14 to 6-17; Help "Use the
   Pop-Up Calendar"). F3 (CHOICES) on a column entry in a date column opens
   a month calendar on the entry's date, or on today when it has none;
@@ -1284,6 +1408,9 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   browses it to other days (R48). The Show View starts afresh each time it
   is used, by a schedule, a search (R37) or a dependency list (R43): its
   section and filter are those of the last use.
+
+## 5c. Macros
+
 - **R50 ✅ Learn-mode macros** (Working with Macros, chapter 1). A file
   keeps macros (Agenda allowed 100): each has a name of up to 35
   characters, unique case aside, its keystrokes, the key it is attached to
@@ -1333,6 +1460,9 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   move a macro in the list, as in the view manager (Agenda: ALT-F10 then
   ENTER). Not done: the macro command language (Working with Macros,
   chapters 2–3), external macro files, protection and hidden macros.
+
+## 5d. Files, startup and preferences
+
 - **R51 ✅ Select File box** (User's Guide 22-4 to 22-5; Help "Select a
   File"). A prompt for a file name (File ▸ Retrieve or CTRL-O, File ▸ New,
   saving under a name, File ▸ Transfer ▸ Import and Export, printing to a

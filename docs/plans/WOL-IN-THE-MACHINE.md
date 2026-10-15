@@ -1,5 +1,7 @@
 # Wol in the machine: a personal agent inside the file
 
+**Status:** an idea, not a plan yet (ROADMAP, Ideas).
+
 (Name of file is a reference to Ghost in the Machine)
 
 An idea, not a plan yet (Roadmap, "Ideas"). Written down on 2026-10-13

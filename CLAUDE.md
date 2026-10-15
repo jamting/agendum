@@ -9,6 +9,8 @@ For anything touching stored data or queries, also read `docs/DATA_MODEL.md`
 and `docs/DATA_ACCESS.md`, and keep them up to date (Mermaid diagrams included);
 a new stored field also needs a place in the JSON schema (`Agendum.Core.JSONFile`,
 `docs/JSON_FORMAT.md`), or the round-trip tests fail.
+`docs/INDEX.md` lists every document, what it is for, and which ones a
+change must update.
 
 ## Commands
 
@@ -71,7 +73,8 @@ inline `# credo:disable-for-next-line` with the reason.
 4. Run `mix check`. After a large TUI change, also run the fuzz property
    longer than the suite's 300 runs (`FUZZ_RUNS=3000 mix test
    test/agendum/tui/fuzz_test.exs`): it finds crashes the short run misses. Update `docs/ROADMAP.md`
-   (tick the box), `docs/SCREENS.md` if a box or screen was added (a test
+   (tick the box and move it under Done), the rule index at the top of
+   `docs/SPEC.md` for a new rule (a test checks), `docs/SCREENS.md` if a box or screen was added (a test
    checks), and the help text in `Agendum.TUI.Render.Help` if keys changed.
    - A box or screen with an Agenda screenshot: draw ours as a PNG
      (`tools/screenshots/`) and compare it with Agenda's side by side,

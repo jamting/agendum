@@ -1,5 +1,7 @@
 # Plan: the note editor as Agenda's (2026-10-15)
 
+**Status:** researched in Agenda 2.0 (2026-10-15); nothing built yet. Settle the six habit changes below with the owner before step 1 (ROADMAP, The note editor).
+
 Agenda's note editor (F5) is a screen of its own: its own control panel,
 its own key bar and its own F10 menu. Agendum's note editor has the text
 editing, marking and Search/Replace, but keeps the view's control panel
