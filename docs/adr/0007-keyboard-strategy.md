@@ -1,6 +1,7 @@
 # ADR 0007 — Keyboard: Agenda's keys first, with alternatives that always work
 
-**Status:** accepted · 2026-10-10 (recording decisions made on 2026-10-08–10)
+**Status:** accepted · 2026-10-10 (recording decisions made on 2026-10-08–10);
+the F-key aliases (ESC + digit, ESC + shifted digit) superseded by ADR 0032
 
 ## Context
 
@@ -18,8 +19,8 @@ charts.
   `docs/reference/Agenda 2.0 Help File.html`). A key of our own must not take
   a key Agenda used for something else (R42).
 - Every command also has a key that works everywhere:
-  - every F-key works as ESC followed by its digit, and every ALT-F-key as
-    ESC followed by the shifted digit;
+  - ~~every F-key works as ESC followed by its digit, and every ALT-F-key as
+    ESC followed by the shifted digit;~~ (dropped, ADR 0032)
   - every ALT-letter works as ESC followed by the letter;
   - commands that need INS, HOME, END or F-keys get a CTRL alternative
     (CTRL-N for INS, CTRL-E for F2, …), which terminals can map ⌘ shortcuts

@@ -127,8 +127,6 @@ Print, Return, Quit), the view manager and the macro manager.
 What Agendum has that Agenda did not:
 
 - Undo and redo of every change (CTRL-Z, CTRL-Y; R30), on the menu too.
-- Keys that work on a Mac and in any terminal: ESC + digit for F-keys,
-  CTRL alternatives for INS/HOME/END (R31, KEYBOARD.md).
 - JSON export and import (R44), a readable file format.
 - Calendar subscriptions (iCal, R45) and time zones.
 - Date languages, Swedish among them, and the file's date format (ISO
@@ -165,6 +163,11 @@ What Agenda had that Agendum does another way, on purpose:
   where Agenda's boxes varied.
 - **Retrieve** asks about unsaved changes; **Write** (Save As) takes
   MakeCopy's place.
+- **CTRL keys** for INS, HOME, END and the most used commands (CTRL-N
+  new, CTRL-E edit, CTRL-K done, CTRL-D discard, CTRL-S/O/P/Q save, open,
+  print, quit; R31, KEYBOARD.md), as Mac keyboards lack those keys and
+  terminals can map ⌘ shortcuts onto them. Function keys are required, as
+  in Agenda: there is no ESC + digit stand-in (ADR 0032).
 - **Export / Import** are JSON, not structured `.STF` files (STF and
   `.AG` import are planned in addition).
 

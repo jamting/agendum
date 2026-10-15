@@ -227,3 +227,4 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0029](adr/0029-stored-date-phrases-read-in-english-too.md) | Stored date phrases are read in the reader's languages, then English |
 | [0030](adr/0030-enter-done-esc-cancels-in-boxes.md)     | In a settings box, ENTER is done and ESC cancels                 |
 | [0031](adr/0031-box-keys-as-agenda.md)                  | Keys in a box as Agenda: the arrows move, SPACE changes          |
+| [0032](adr/0032-function-keys-required.md)              | Function keys are required: no ESC + digit stand-in              |

@@ -1,8 +1,11 @@
 # Keyboard guide
 
 Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT
-key. Each command also has a key that works on a Mac laptop keyboard in
-any terminal. ⌘ (Command) shortcuts can be added through your terminal's
+key. Function keys are required, as in Agenda (ADR 0032): on a Mac, use
+fn with them or make them standard function keys (below). For INS, HOME,
+END and the most used commands there are CTRL alternatives that work on a
+Mac laptop keyboard in any terminal; "—" below means the Agenda key is the
+only one. ⌘ (Command) shortcuts can be added through your terminal's
 settings, as described in the second half of this guide.
 
 ## Keys that work everywhere
@@ -12,21 +15,21 @@ settings, as described in the second half of this guide.
 | New item / column entry / category / view                                                       | INS                           | **CTRL-N**                                                            |
 | Edit (item, section head, column entry, category)                                               | F2                            | **CTRL-E**                                                            |
 | Mark done                                                                                       | F4                            | **CTRL-K**                                                            |
-| On a column head (→ / TAB on a section head): remove the column; replace the head; its properties; rename it; move it (← →, ENTER) | DEL; F3; F6; F2; ALT-F10 | fn-⌫; ESC then `3` / `6`; **CTRL-E**; ESC then `)`, or menu View ▸ Column ▸ Move |
-| On a section head: Section Properties; in it: remove a column from the section; move it; add one; the head's category properties | F6; DEL; ALT-↑ / ALT-↓; INS; F6 on Section head | ESC then `6`; fn-⌫; ⌥↑ / ⌥↓; **CTRL-N** |
-| On a section head: move the section up or down in the view (↑ ↓, ENTER keeps, ESC puts back) | ALT-F10 | ESC then `)`, or menu View ▸ Section ▸ Move |
-| Copy the item (or the marked items) to another section of the view as well: the Copy box | ALT-F9 | ESC then `(` |
+| On a column head (→ / TAB on a section head): remove the column; replace the head; its properties; rename it; move it (← →, ENTER) | DEL; F3; F6; F2; ALT-F10 | fn-⌫; —; **CTRL-E**; menu View ▸ Column ▸ Move |
+| On a section head: Section Properties; in it: remove a column from the section; move it; add one; the head's category properties | F6; DEL; ALT-↑ / ALT-↓; INS; F6 on Section head | —; fn-⌫; ⌥↑ / ⌥↓; **CTRL-N** |
+| On a section head: move the section up or down in the view (↑ ↓, ENTER keeps, ESC puts back) | ALT-F10 | menu View ▸ Section ▸ Move |
+| Copy the item (or the marked items) to another section of the view as well: the Copy box | ALT-F9 | — |
 | Yank back the item DEL last removed from a section: into the current section, below the highlighted item | ALT-Y | ESC then `y` |
 | Hop to the highlighted item's next occurrence: further down this view, else in the next view that shows it (ALT-F8 goes back) | ALT-H | ESC then `h` |
 | Discard                                                                                         | ALT-F4                        | **CTRL-D**                                                            |
-| Set the When date                                                                               | ALT-F2                        | ESC then `@`, or menu Item ▸ When                                     |
+| Set the When date                                                                               | ALT-F2                        | menu Item ▸ When                                     |
 | Next / previous completion while typing a column entry                                          | F8 / F7                       | ALT-N / ALT-P (ESC then `n` / `p`)                                    |
 | New category instead of the completion                                                          | F5 or INS                     | **CTRL-N**                                                            |
 | Collapse / expand a family or section (twice: all)                                              | ALT-− / ALT-=                 | ESC then `-` / `=` (Option-− / Option-= also work)                    |
-| Unmark all items                                                                                | ALT-F7                        | ESC then `&`, or menu Item ▸ Unmark                                   |
+| Unmark all items                                                                                | ALT-F7                        | menu Item ▸ Unmark                                   |
 | Jump to the next marked item                                                                    | ALT-J                         | ESC then `j` (Option-j)                                               |
 | Assign the item or marked items to a category (MakeAssign)                                      | ALT-M                         | ESC then `m` (Option-m), or menu Item ▸ Categorize                    |
-| Go to a section (GO TO, in a view); sort a family (category manager); sort views (view manager) | ALT-F5                        | ESC then `%`                                                          |
+| Go to a section (GO TO, in a view); sort a family (category manager); sort views (view manager) | ALT-F5                        | —                                                          |
 | Highlight a view by typing the start of its name (view manager)                                 | letters                       | —                                                                     |
 | Next / previous view (in a view)                                                                | ALT-N / ALT-P                 | ESC then `n` / `p`                                                    |
 | Show / hide empty sections (in a view)                                                          | ALT-V                         | ESC then `v`                                                          |
@@ -34,26 +37,26 @@ settings, as described in the second half of this guide.
 | Save / retrieve a file (in a view)                                                              | ALT-W / ALT-G                 | ESC then `w` / `g`, or **CTRL-S** / **CTRL-O**                        |
 | Quit                                                                                            | ALT-Q                         | ESC then `q`, or **CTRL-Q**                                           |
 | Show / hide the function key map (kept for next time)                                           | ALT-K                         | ESC then `k`                                                          |
-| Search this view; then next / previous match                                                    | ALT-F6; ALT-N / ALT-P         | ESC then `^`; ESC then `n` / `p`                                      |
-| In a note: search / replace; find the next occurrence (after a single replacement: replace it)  | ALT-F6; ALT-S                 | ESC then `^`; ESC then `s`                                            |
+| Search this view; then next / previous match                                                    | ALT-F6; ALT-N / ALT-P         | —; ESC then `n` / `p`                                      |
+| In a note: search / replace; find the next occurrence (after a single replacement: replace it)  | ALT-F6; ALT-S                 | —; ESC then `s`                                            |
 | In a note: move by the rows shown (long lines wrap, R64); start / end of the row, again: of the line| ↑ ↓; HOME / END               | CTRL-A / CTRL-E                                                       |
 | In a note: insert today's date / the time                                                       | ALT-D / ALT-T                 | ESC then `d` / `t`                                                    |
 | In a note: the next / previous item's (or category's) note                                      | ALT-N / ALT-P                 | ESC then `n` / `p`                                                    |
-| In a note: make the marked text (or the word, line or all text) into a new item (it leaves the note; MAKEITM) / the marked text or the word into a new category under a parent you pick (MAKECAT) | ALT-F7 / ALT-F2 | ESC then `&` / `@` |
-| In a note: mark text (then move the cursor; again to unmark); copy / cut the marked text, or a word, line or all text; delete it (not kept); paste what was last copied or cut | F7; F3 / F4; ALT-F4; F2 | ESC then `7`; ESC then `3` / `4`; ESC then `$`; ESC then `2` |
-| Back to the previous view (LAST VW)                                                             | ALT-F8                        | ESC then `*`, or menu View ▸ Last                                     |
+| In a note: make the marked text (or the word, line or all text) into a new item (it leaves the note; MAKEITM) / the marked text or the word into a new category under a parent you pick (MAKECAT) | ALT-F7 / ALT-F2 | — |
+| In a note: mark text (then move the cursor; again to unmark); copy / cut the marked text, or a word, line or all text; delete it (not kept); paste what was last copied or cut | F7; F3 / F4; ALT-F4; F2 | — |
+| Back to the previous view (LAST VW)                                                             | ALT-F8                        | menu View ▸ Last                                     |
 | Set or cancel an alarm (Item Alarm)                                                             | ALT-A                         | ESC then `a`, or menu Item ▸ Alarm                                    |
-| Macros: the macro manager; in Learn mode, stop recording / run the last macro again             | ALT-F3 / ALT-Z                | ESC then `#` / ESC then `z`                                           |
-| In the macro manager: new macro; learn its keystrokes; run it                                   | INS; F7; ENTER                | **CTRL-N** or type its name; ESC then `7`                             |
-| In the macro manager: edit the keystrokes; properties (attach to a key, where it runs); delete; sort; move | F2; F6; DEL; ALT-F5; ALT-↑ / ALT-↓ | ESC then `2` / `6`; fn-⌫; ESC then `%`; ⌥↑ / ⌥↓                       |
-| Pop-up calendar: pick a date (in a date column) / look one up (anywhere in a view)              | F3 / ALT-C                    | ESC then `3` / ESC then `c`                                           |
+| Macros: the macro manager; in Learn mode, stop recording / run the last macro again             | ALT-F3 / ALT-Z                | — / ESC then `z`                                           |
+| In the macro manager: new macro; learn its keystrokes; run it                                   | INS; F7; ENTER                | **CTRL-N** or type its name; —                             |
+| In the macro manager: edit the keystrokes; properties (attach to a key, where it runs); delete; sort; move | F2; F6; DEL; ALT-F5; ALT-↑ / ALT-↓ | —; fn-⌫; —; ⌥↑ / ⌥↓                       |
+| Pop-up calendar: pick a date (in a date column) / look one up (anywhere in a view)              | F3 / ALT-C                    | — / ESC then `c`                                           |
 | In a Star column: star or unstar; in a Yes/No column: yes or no (R56)                           | SPACE; Y / N                  | —                                                                     |
 | In a Category note column: type the line; edit it; empty it (R56)                               | type; F2; DEL                 | CTRL-E for F2; fn-⌫ for DEL                                           |
 | In the calendar: a day, a week; the first / last day of the month                               | ← → ↑ ↓; HOME / END           | fn-← / fn-→ for HOME / END                                            |
 | In the calendar: a month back / ahead; a year back / ahead                                      | PGUP / PGDN; CTRL-← / CTRL-→  | fn-↑ / fn-↓; `<` / `>`                                                |
-| In the calendar: set the date; a time (F6); go to a typed date; cancel                          | ENTER; F6; type it; ESC       | ESC then `6` for F6                                                   |
-| In a prompt for a file name: pick it from a list (Select File box: ENTER opens, typing narrows, F7 dates, ESC back) | F3                            | ESC then `3`                                                          |
-| Browse a datebook view: previous / next period; go to a date; keep; go back                     | ALT-B: ← →; ALT-F5; ENTER; ESC | ESC then `b`; `<` / `>`; ESC then `%`                                 |
+| In the calendar: set the date; a time (F6); go to a typed date; cancel                          | ENTER; F6; type it; ESC       | the same                                                              |
+| In a prompt for a file name: pick it from a list (Select File box: ENTER opens, typing narrows, F7 dates, ESC back) | F3                            | —                                                          |
+| Browse a datebook view: previous / next period; go to a date; keep; go back                     | ALT-B: ← →; ALT-F5; ENTER; ESC | ESC then `b`; `<` / `>`; —                                 |
 | Browse a date filter (standard view): a day; a week; a month; a year                            | ALT-B: ← →; CTRL-← →; PGUP/PGDN; CTRL-PGUP/PGDN | ESC then `b`; ↑ ↓ for a week; ⌥↑ / ⌥↓ for a year                      |
 | Column width (View ▸ Column ▸ Width): narrower / wider; a width; fit to contents; keep; go back | ← →; type it; SHIFT-?; ENTER; ESC               | `?` (no SHIFT needed); opened from menu View ▸ Column ▸ Width         |
 | Make the item depend on the marked items, or clear its dependencies                             | ALT-O                         | ESC then `o`                                                          |
@@ -64,13 +67,11 @@ settings, as described in the second half of this guide.
 | Undo / redo                                                                                     | —                             | **CTRL-Z** / **CTRL-Y** (also in the menu)                            |
 | Save / open / print to file / quit                                                              | menu                          | **CTRL-S** / **CTRL-O** / **CTRL-P** / **CTRL-Q** (CTRL-C also quits) |
 | Previous / next section                                                                         | CTRL-PGUP / CTRL-PGDN         | ⌥↑ / ⌥↓ (in a view)                                                   |
-| Any function key Fn                                                                             | F1…F10                        | ESC then the digit (ESC 0 = F10)                                      |
-| ALT-F1…ALT-F10                                                                                  |                               | ESC then the shifted digit (`!` … `)`)                                |
 | Menu                                                                                            | F10                           | `/`                                                                   |
 | In the menu: back up a level; in a box, prompt or question opened from it: back to the menu       | ESC                           | ESC                                                                   |
 | In a box: move between settings (→ ← along a row, on to the next or previous; ↓ ↑ keep to the side); first / last setting | ↑ ↓ ← →, TAB / SHIFT-TAB; HOME / END | fn-← / fn-→ for HOME / END                                            |
-| In a box: change or open a setting; type a number (width, decimal places, line); edit a text field; pick from a list; done; cancel the box's changes | SPACE; digits; F2; F3; ENTER; ESC | SPACE; digits; **CTRL-E**; ESC then `3`; ENTER; ESC                 |
-| In a box, on a setting with choices: the next choice starting with a letter; list the choices | the letter; F3 | the letter; ESC then `3`                                              |
+| In a box: change or open a setting; type a number (width, decimal places, line); edit a text field; pick from a list; done; cancel the box's changes | SPACE; digits; F2; F3; ENTER; ESC | SPACE; digits; **CTRL-E**; —; ENTER; ESC                 |
+| In a box, on a setting with choices: the next choice starting with a letter; list the choices | the letter; F3 | the letter; —                                              |
 | A Yes/No question: answer at once; switch the answer shown; accept it; cancel                   | Y / N; SPACE; ENTER; ESC      | Y / N; SPACE; ENTER; ESC                                              |
 
 While typing text:
@@ -92,7 +93,9 @@ it, ALT-D, ALT-R and ALT-L still work in Terminal.app (Agenda recognises the
 letter always works.
 
 Function keys: on a Mac, hold **fn** to send F1…F12, or enable "Use F1, F2,
-etc. keys as standard function keys" in System Settings ▸ Keyboard.
+etc. keys as standard function keys" in System Settings ▸ Keyboard. ALT-F1…
+ALT-F10 are ⌥ with the function key; Terminal.app needs "Use Option as Meta
+key" for them.
 
 ## ⌘ shortcuts
 
@@ -108,10 +111,10 @@ them in Agenda, tell your terminal to send Agenda's CTRL key instead:
 | ⌘S         | Save                  | `\x13` (CTRL-S)           |
 | ⌘O         | Open                  | `\x0f` (CTRL-O)           |
 | ⌘P         | Print to file         | `\x10` (CTRL-P)           |
-| ⌘I         | Properties (Get Info) | `\x1b6` (ESC 6 = F6)      |
+| ⌘I         | Properties (Get Info) | `\x1b[17~` (F6)           |
 | ⌘⌫         | Discard               | `\x04` (CTRL-D)           |
 | ⌘↑ / ⌘↓    | First / last line     | `\x1b[1;5H` / `\x1b[1;5F` |
-| ⌘/         | Help                  | `\x1b1` (ESC 1 = F1)      |
+| ⌘/         | Help                  | `\x1bOP` (F1)             |
 
 > ⚠️ **Scope these mappings to Agenda.** Terminal key mappings usually apply to
 > every tab. In an ordinary shell, CTRL-Z suspends the running program and
@@ -136,7 +139,7 @@ Profiles ▸ Keys ▸ Key Mappings ▸ + with the action **Send Hex Code**:
 | ⌘S       | `0x13`      |
 | ⌘O       | `0x0f`      |
 | ⌘P       | `0x10`      |
-| ⌘I       | `0x1b 0x36` |
+| ⌘I       | `0x1b 0x5b 0x31 0x37 0x7e` |
 | ⌘⌫       | `0x04`      |
 
 Open Agenda with that profile (Profiles ▸ Agenda). If a ⌘ shortcut still
@@ -155,7 +158,7 @@ map cmd+shift+z send_text all \x19
 map cmd+s       send_text all \x13
 map cmd+o       send_text all \x0f
 map cmd+p       send_text all \x10
-map cmd+i       send_text all \x1b6
+map cmd+i       send_text all \x1b[17~
 map cmd+backspace send_text all \x04
 map cmd+up      send_text all \x1b[1;5H
 map cmd+down    send_text all \x1b[1;5F
@@ -173,7 +176,7 @@ keybind = cmd+shift+z=text:\x19
 keybind = cmd+s=text:\x13
 keybind = cmd+o=text:\x0f
 keybind = cmd+p=text:\x10
-keybind = cmd+i=text:\x1b6
+keybind = cmd+i=text:\x1b[17~
 keybind = cmd+backspace=text:\x04
 keybind = cmd+up=text:\x1b[1;5H
 keybind = cmd+down=text:\x1b[1;5F
@@ -195,7 +198,7 @@ return {
     { key = 's', mods = 'CMD', action = send '\x13' },
     { key = 'o', mods = 'CMD', action = send '\x0f' },
     { key = 'p', mods = 'CMD', action = send '\x10' },
-    { key = 'i', mods = 'CMD', action = send '\x1b6' },
+    { key = 'i', mods = 'CMD', action = send '\x1b[17~' },
     { key = 'Backspace', mods = 'CMD', action = send '\x04' },
   },
 }

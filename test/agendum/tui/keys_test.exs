@@ -25,8 +25,14 @@ defmodule Agendum.TUI.KeysTest do
              {[:up, :down, :home, :end, :insert, :delete, :pgdn, :shift_tab], ""}
   end
 
-  test "ESC + digit is a function key, ESC + shifted digit an ALT function key" do
-    assert Keys.decode("\e9\e0\e$") == {[{:f, 9}, {:f, 10}, {:alt_f, 4}], ""}
+  # Function keys are required (ADR 0032): ESC + digit is no stand-in for F9,
+  # just ALT-9, and ESC + shifted digit no stand-in for ALT-F4.
+  test "ESC + digit or shifted digit is an ALT key, not a function key" do
+    assert Keys.decode("\e9\e0\e$") == {[{:alt, "9"}, {:alt, "0"}, {:alt, "$"}], ""}
+  end
+
+  test "Option-as-Meta + function key (ESC before the F-key's sequence) is ALT-Fn" do
+    assert Keys.decode("\e\eOS\e\e[21~") == {[{:alt_f, 4}, {:alt_f, 10}], ""}
   end
 
   test "ALT + letter, including macOS Option characters" do

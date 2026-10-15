@@ -15,7 +15,7 @@ defmodule Agendum.TUI.Render.Help do
                    F6 a time, type a date to go there, ENTER sets it)
      F4            Mark item done                  CTRL-K
      F5            Note of the item, or of the category highlighted
-     F6            Item / section properties       ESC 6
+     F6            Item / section properties
      F7            Mark item (on a section: all)  ALT-F7 unmark all, ALT-J next
      F8 / F9       View manager / category manager
      F10 or /      Menu (ESC backs up a level; ESC in a box
@@ -30,22 +30,22 @@ defmodule Agendum.TUI.Render.Help do
      ALT-F2        Set the When date (or menu Item When)
      ALT-F10       Move item to another section (on a section
                    head: move the section, ↑ ↓, ENTER)
-     ALT-F9        Copy item to another section    ESC (
+     ALT-F9        Copy item to another section
      ALT-Y         Yank back the item DEL removed  ESC y
      ALT-H         Hop to item's next occurrence   ESC h
      ALT-− / ALT-= Collapse / expand section (twice: all)
-     ALT-F5        Go to a section (GO TO)           ESC %
+     ALT-F5        Go to a section (GO TO)
      ALT-N / ALT-P Next / previous view              ESC n / ESC p
      ALT-V         Show / hide empty sections        ESC v
      ALT-I         Insert an item (like INS)         ESC i
      ALT-W / ALT-G Save / retrieve a file            ESC w / ESC g
-     ALT-F6        Search (then ALT-N / ALT-P, F7 mark)  ESC ^
-     ALT-F8        Back to the previous view        ESC *
+     ALT-F6        Search (then ALT-N / ALT-P, F7 mark)
+     ALT-F8        Back to the previous view
      ALT-A         Set or cancel an alarm            ESC a
      ALT-C         Show the calendar (to look up a date)  ESC c
      ALT-F3        Macros: the macro manager; in Learn mode, stop
                    recording (F7 in the manager learns, ENTER runs, F2
-                   edits, F6 properties: attach to a key)  ESC #
+                   edits, F6 properties: attach to a key)
      ALT-Z         Run the last macro again              ESC z
      ALT-B         Browse a datebook view (← → a period) or a date filter
                    (← → a day, ↑↓ a week, PGUP/PGDN a month, CTRL-PGUP/PGDN
@@ -94,24 +94,24 @@ defmodule Agendum.TUI.Render.Help do
      INS           Add a view                      CTRL-N
      F2            Rename                          CTRL-E
      DEL           Discard view (items are kept)   CTRL-D
-     ALT-F5        Sort the views by name          ESC %
+     ALT-F5        Sort the views by name
      ALT-↑ ALT-↓   Reorder                         ⌥↑ / ⌥↓
      ESC / F8      Return to the view
 
    In a note (F5)
      F7            Mark text (then move the cursor; F7 again unmarks)
      F3 / F4       Copy / cut the marked text (else: word, line, all)
-     ALT-F4        Delete the marked text (not kept)  ESC $
+     ALT-F4        Delete the marked text (not kept)
      F2            Paste the text last copied or cut
-     ALT-F6        Search / replace text            ESC ^
+     ALT-F6        Search / replace text
      ALT-S         Find the next occurrence         ESC s
                    (after a single replacement: replace it)
      ALT-D / ALT-T Insert today's date / the time   ESC d / ESC t
      ALT-N / ALT-P Save; next / previous item's note
      ALT-F7        Make the marked text (or word / line /
-                   all) an item (MAKEITM; it leaves the note)  ESC &
+                   all) an item (MAKEITM; it leaves the note)
      ALT-F2        Make the marked text or the word a
-                   category (MAKECAT)                   ESC @
+                   category (MAKECAT)
      ESC / F5      Save the note and return
      ↑↓            Move by the rows shown (long lines wrap)
      HOME / END    Start / end of the row; again: of the line
@@ -121,8 +121,8 @@ defmodule Agendum.TUI.Render.Help do
      ⌥← ⌥→         Word left / right
      CTRL-K        Delete to end  CTRL-W / ⌥⌫      Delete word   CTRL-U  Clear
 
-   Function keys can also be typed as ESC then a digit (ESC 1 = F1 ...
-   ESC 0 = F10), and ALT-F1..ALT-F10 as ESC then a shifted digit (! .. )).
+   On a Mac, hold fn for F1..F10 (or make them standard function keys in
+   System Settings ▸ Keyboard); ALT-Fn is ⌥ + Fn (Option as Meta).
    ⌘ shortcuts (⌘N, ⌘Z, ⌘S ...) work once your terminal maps them to the
    CTRL keys above; see docs/KEYBOARD.md.
 

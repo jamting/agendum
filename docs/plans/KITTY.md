@@ -39,11 +39,12 @@ prefix below still works.
 
 ## Found while planning
 
-1. **"ESC then 3" only works when the bytes arrive within 40 ms**
+1. **"ESC then m" only works when the bytes arrive within 40 ms**
    (`@escape_timeout` in `Agendum.TUI.App`), as from a terminal key binding or
-   Option-as-Meta. Typed by hand, ESC does nothing in a view and `3` starts
+   Option-as-Meta. Typed by hand, ESC does nothing in a view and `m` starts
    a new item. `docs/KEYBOARD.md` promises more than the program does; the
-   ESC prefix in step 2 makes it true (in a view).
+   ESC prefix in step 2 makes it true (in a view). (ESC + digit for F-keys
+   failed the same way and was dropped, ADR 0032.)
 2. **CTRL-F keys are not decoded.** `Keys.modify/2` passes `{:f, 4}`
    through unchanged when the ctrl bit is set, so CTRL-F4 acts as F4. A CTRL
    bar needs `{:ctrl_f, n}`.
@@ -69,13 +70,13 @@ prefix below still works.
   `held`: no undo step, not recorded by macro Learn, nothing interrupted.
 - **ESC prefix in a view:** where ESC now does nothing (a plain view, no
   line being typed), ESC arms `prefix: :esc`, shows the ALT bar and a hint
-  in the control panel. The next key becomes F-n (digit), ALT-F-n (shifted
-  digit) or ALT-letter; ESC again cancels. It is resolved in
+  in the control panel. The next key becomes ALT-letter (not F-n: function
+  keys are required, ADR 0032); ESC again cancels. It is resolved in
   `Update.handle/2` before macro Learn and attached-key lookup, so Learn
-  records `{AltF2}`, not ESC plus a key. Everywhere else ESC keeps its
+  records `{AltM}`, not ESC plus a key. Everywhere else ESC keeps its
   meaning (cancel, return).
 - TUI tests: press `{:modifier, :alt, :press}` and see `AltF4 Discard` on
-  `screen/1`; release brings the normal bar back; ESC then `@` opens When;
+  `screen/1`; release brings the normal bar back; ESC then `m` opens MakeAssign;
   Learn ignores modifier events; no undo step is recorded.
 
 ### 3. The kitty protocol in the terminal layer

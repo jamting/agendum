@@ -10,10 +10,10 @@ defmodule Agendum.TUI.Terminal.Keys do
     * `{:f, n}`, `{:alt_f, n}`, `{:shift_f, n}` – function keys
     * `{:alt, "d"}`, `{:ctrl, "a"}`
 
-  Because many terminals (and macOS laptops) make function keys awkward,
-  ESC/ALT followed by a digit is decoded as the matching function key
-  (`Alt-1` = F1 ... `Alt-0` = F10), and ESC/ALT followed by `!`..`)`
-  (shifted digits) as ALT-F1..ALT-F10.
+  Function keys come only from the terminal's own F-key sequences (ADR
+  0032): ESC followed by a digit is ALT and the digit, not a function key.
+  ALT-F1..ALT-F10 arrive as xterm-modified sequences (`ESC [21;3~`) or, with
+  Option as Meta, as ESC before the F-key's sequence.
   """
 
   @csi_tilde %{
@@ -51,19 +51,6 @@ defmodule Agendum.TUI.Terminal.Keys do
     "R" => {:f, 3},
     "S" => {:f, 4},
     "Z" => :shift_tab
-  }
-
-  @shifted_digits %{
-    "!" => 1,
-    "@" => 2,
-    "#" => 3,
-    "$" => 4,
-    "%" => 5,
-    "^" => 6,
-    "&" => 7,
-    "*" => 8,
-    "(" => 9,
-    ")" => 10
   }
 
   # macOS Option+letter without "Option as Meta"
@@ -153,13 +140,8 @@ defmodule Agendum.TUI.Terminal.Keys do
     end
   end
 
-  defp escape("\e" <> <<c, rest::binary>>) when c in ?0..?9 do
-    {:ok, {:f, if(c == ?0, do: 10, else: c - ?0)}, rest}
-  end
-
   defp escape("\e" <> rest) do
     case String.next_grapheme(rest) do
-      {g, rest} when is_map_key(@shifted_digits, g) -> {:ok, {:alt_f, @shifted_digits[g]}, rest}
       {"\r", rest} -> {:ok, {:alt, :enter}, rest}
       {"\d", rest} -> {:ok, {:alt, :backspace}, rest}
       {g, rest} -> {:ok, {:alt, String.downcase(g)}, rest}

@@ -109,12 +109,12 @@ Keep changes small and focused; one feature per commit.
 - Dates display in the file's `Agendum.Core.DateFormat` (default ISO 8601): use
   `DateFormat.date/2`, `time/2` or `date_time/3` with `db.date_format`. Dates
   offered for editing stay ISO 8601 (`DateParser.format/1`), which the parser reads back.
-- Keys are decoded in `Agendum.TUI.Terminal.Keys`. Function keys may be awkward in
-  some terminals, so every F-key also works as ESC + digit, and ALT-Fn as
-  ESC + shifted digit. Keep an alternative whenever you add a key: Mac
-  keyboards lack INS/HOME/END and terminals never pass ⌘, so every command
-  needs a CTRL (or ESC-prefixed) key. Document it in `docs/KEYBOARD.md` and
-  the F1 help. CTRL-I/M/H/[ are unusable (they are TAB/ENTER/BACKSPACE/ESC).
+- Keys are decoded in `Agendum.TUI.Terminal.Keys`. Function keys are
+  required, as in Agenda: there is no ESC + digit stand-in for them (ADR
+  0032). Mac keyboards lack INS/HOME/END and terminals never pass ⌘, so a
+  command on INS, HOME or END needs a CTRL key, and so does a common
+  command (CTRL-N, CTRL-E …); ALT-letters also work as ESC + letter.
+  Document keys in `docs/KEYBOARD.md` and the F1 help. CTRL-I/M/H/[ are unusable (they are TAB/ENTER/BACKSPACE/ESC).
 - A settings box is drawn from a layout written as it looks on screen,
   with `[field    ]` placeholders (`Agendum.TUI.Boxes.Template`; `CustomizeBox`
   is the example): its fields are also the cursor's order. Look at the
