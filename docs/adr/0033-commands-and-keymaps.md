@@ -67,6 +67,10 @@ The owner settled these choices before any code (2026-10-15):
   the ALT-letters. In boxes and notes they do nothing yet.
 - The global keys (CTRL-Z, CTRL-S …) and the keys that stand for others
   (CTRL-N = INS) are in `Agendum.TUI.Keymap` too, and so are the category
-  and view managers and the note (2026-10-15). An alias can be limited to a place (⌥↑ is
-  CTRL-PGUP in a view only; CTRL-E is F2 except in a note, where it edits). The other places (boxes, the menu) still read keys directly; they move to keymaps in later
-  steps, and until then describe key covers only the global keys there.
+  and view managers and the note (2026-10-15). An alias can be limited to
+  a place (⌥↑ is CTRL-PGUP in a view only; CTRL-E is F2 except in a note,
+  where it edits). The keys every box shares (F1, F3, ESC) have a keymap
+  (`:box`); a box's own keys are still read by the box, and the help lists
+  them from its key bar until each box has a keymap. The menu still reads
+  keys directly; it moves to a keymap in a later step, and until then
+  describe key covers only the global keys there.

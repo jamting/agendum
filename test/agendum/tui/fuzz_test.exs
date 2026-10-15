@@ -77,6 +77,9 @@ defmodule Agendum.TUI.Fuzz do
     {:alt_f, 3},
     {:alt_f, 3},
     {:alt, "z"},
+    # a count (R65)
+    {:alt, "1"},
+    {:alt, "3"},
     :tick
   ]
 
@@ -84,7 +87,7 @@ defmodule Agendum.TUI.Fuzz do
     one_of([
       member_of(@keys),
       map(integer(1..10), &{:f, &1}),
-      map(member_of(~w(a b H h y n v c s m x 1 / ! å) ++ [" "]), &{:char, &1})
+      map(member_of(~w(a b H h y n v c d s m x 1 / ! å) ++ [" "]), &{:char, &1})
     ])
   end
 

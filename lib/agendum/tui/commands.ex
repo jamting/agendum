@@ -5,7 +5,8 @@ defmodule Agendum.TUI.Commands do
   view's. The order is the one the command list will show.
 
   So far the view's (`:view`), the category manager's (`:catmgr`), the view
-  manager's (`:viewmgr`), a note's (`:note`) and the global ones (`:global`); other places move over a few at a time.
+  manager's (`:viewmgr`), a note's (`:note`), every box's (`:box`)
+  and the global ones (`:global`); other places move over a few at a time.
   Pure.
   """
 
@@ -138,6 +139,14 @@ defmodule Agendum.TUI.Commands do
     {:quit, "Quit", "Save the note and quit Agendum", :none}
   ]
 
+  # what every box shares; each box's own keys are in its key bar
+  # (`Agendum.TUI.Boxes.Box`'s `keys/2`)
+  @box [
+    {:choices, "Choices", "List the setting's choices", :none},
+    {:cancel, "Cancel", "Close; put back the box's changes", :none},
+    {:help, "Help", "Show the keys", :none}
+  ]
+
   # the keys that work on every screen but while typing (`Update`'s
   # global keys); Save and Retrieve are also the view's ALT-W and ALT-G
   @global [
@@ -165,6 +174,10 @@ defmodule Agendum.TUI.Commands do
       end,
     note:
       for {id, name, summary, count} <- @note do
+        %Command{id: id, name: name, summary: summary, count: count}
+      end,
+    box:
+      for {id, name, summary, count} <- @box do
         %Command{id: id, name: name, summary: summary, count: count}
       end,
     global:

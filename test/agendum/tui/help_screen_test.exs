@@ -173,4 +173,48 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert press(state, [{:f, 1}, "d", :esc]).modes == []
     end
   end
+
+  describe "in a box (Item Properties)" do
+    setup %{state: state}, do: %{box: press(state, [:down, {:f, 6}])}
+
+    test "F1 opens the help over the box, and ESC goes back to it", %{box: box} do
+      back = press(box, [{:f, 1}, :esc])
+      assert Enum.map(back.modes, & &1.type) == [:item_props]
+    end
+
+    test "c lists the box's own keys from its key bar, then the shared and global ones",
+         %{box: box} do
+      text = screen(press(box, [{:f, 1}, "c"]))
+      assert text =~ "COMMANDS IN THIS BOX"
+      assert text =~ ~r/Edit +F2 +Edit the text/
+      assert text =~ ~r/Help +F1 +Show the keys/
+      assert text =~ "Save"
+      # ESC is on the box's own key bar, so the shared Cancel is not listed again
+      refute text =~ "put back the box's changes"
+    end
+
+    test "ENTER on one of the box's keys presses it in the box", %{box: box} do
+      ran = press(box, [{:f, 1}, "c", :down, :down, :down, :down, :enter])
+      assert Enum.map(ran.modes, & &1.type) == [:profile, :item_props]
+    end
+
+    test "d describes a key from the box's key bar, a letter, and a shared key", %{box: box} do
+      assert described(box, {:f, 2}) =~ "F2 in this box: Edit the text"
+      assert described(box, "x") =~ "x in this box: Assign to a category"
+      assert described(box, {:ctrl, "s"}) =~ "CTRL-S runs Save"
+    end
+
+    test "a box opened over the help does not upset its pages (found by the fuzz)",
+         %{box: box} do
+      over = press(box, [{:f, 1}, "c", {:alt_f, 3}])
+      assert Enum.map(over.modes, & &1.type) == [:macros, :help, :item_props]
+      assert screen(over) =~ "COMMANDS IN THIS BOX"
+    end
+
+    test "F1 while typing in the box does not open the help", %{box: box} do
+      typing = press(box, {:f, 2})
+      assert typing.edit != nil
+      assert State.mode(press(typing, {:f, 1})).type == :item_props
+    end
+  end
 end

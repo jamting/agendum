@@ -1235,8 +1235,13 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   too; ⌥↑ ⌥↓ move a category or view there, as in Agenda, while in a view
   they stand for CTRL-PGUP / CTRL-PGDN). In a note the keys of every
   screen are not listed: they edit the text there (CTRL-E is the end of
-  the line, not F2). ⏳ In boxes and the menu only the keys of every
-  screen are listed and described so far.
+  the line, not F2). ✅ In a box F1 opens the help too (not while typing
+  in one of its fields): `c` lists the box's own keys as its key bar
+  names them (ENTER presses that key in the box), then the keys every
+  box shares (F1, F3 a setting's choices, ESC cancel) and the keys of
+  every screen; `d` describes a key from the same lists. ⏳ The boxes'
+  own keys are read from their key bars, not yet from keymaps; the menu
+  is not covered yet.
 - **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
   category name is typed into a column cell, Agenda shows the first
   matching category (the rest of its name in grey), the top line says how

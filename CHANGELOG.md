@@ -10,8 +10,9 @@ has the detail.
 
 ## Unreleased
 
-- F1 c and F1 d also work in the category manager, the view manager and
-  a note; F1 now opens the help in the view manager and in a note too.
+- F1 c and F1 d also work in the category manager, the view manager, a
+  note and every box; F1 now opens the help in those places too. In a
+  box, F1 c lists the box's keys and ENTER presses the one highlighted.
 - The help and the keyboard guide say ⌥m (Option as Meta) where they said
   ESC m: ESC typed by hand and then a letter is two keys.
 

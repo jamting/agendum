@@ -14,7 +14,7 @@ defmodule Agendum.TUI.KeymapTest do
   @today ~D[2026-10-12]
 
   # the places whose keys are in keymaps (ADR 0033)
-  @places [:view, :catmgr, :viewmgr, :note, :global]
+  @places [:view, :catmgr, :viewmgr, :note, :box, :global]
 
   test "every key in a keymap runs a command in its place's command list" do
     unknown =
@@ -94,6 +94,17 @@ defmodule Agendum.TUI.KeymapTest do
     for c <- Commands.all(:note) do
       assert %Agendum.TUI.State{} = Agendum.TUI.Update.Notes.run(in_note, c.id), "#{c.id} failed"
     end
+  end
+
+  test "key names read back as keys; a dash is no key" do
+    for key <- [{:f, 4}, {:alt_f, 10}, {:ctrl, "d"}, {:alt, "m"}, :pgdn, :ctrl_home, {:alt, :up}] do
+      assert Keymap.parse(Keymap.name(key)) == key
+    end
+
+    assert Keymap.parse("SPACE") == {:char, " "}
+    assert Keymap.parse("y") == {:char, "y"}
+    assert Keymap.parse("—") == nil
+    assert Keymap.parse("type") == nil
   end
 
   test "every category manager command runs, on MAIN and on a category below it" do

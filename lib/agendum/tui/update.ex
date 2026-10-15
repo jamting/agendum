@@ -46,8 +46,7 @@ defmodule Agendum.TUI.Update do
       with :pass <- splash_key(state, key),
            :pass <- Agendum.TUI.Macros.key(state, key),
            :pass <- global_key(state, key),
-           :pass <- BoxCancel.cancel(state, key),
-           :pass <- BoxChoices.key(state, key),
+           :pass <- box_command(state, key),
            do: dispatch(state, State.mode(state), key)
 
     # a count (ALT-digits, R65) lasts until the next key has used it
@@ -166,6 +165,27 @@ defmodule Agendum.TUI.Update do
       id when id in [:save, :retrieve, :quit] -> Actions.perform(state, id)
     end
   end
+
+  # The keys every box shares (`Agendum.TUI.Keymap`'s `:box`, R65): F1
+  # help, ESC cancels a settings box, F3 lists a setting's choices, and a
+  # letter picks one (an unbound key). `:pass` sends the key on to the box.
+  defp box_command(state, key) do
+    if Agendum.TUI.Boxes.Box.module(State.mode(state)) != nil,
+      do: run_box(state, Keymap.lookup(:box, key), key),
+      else: :pass
+  end
+
+  @doc "Runs a command every box shares (`Agendum.TUI.Commands`, `:box`); `:pass` where it does not apply."
+  @spec run_box(State.t(), atom | nil, term) :: State.t() | :pass
+  def run_box(state, :help, _key) do
+    if state.edit == nil and Map.get(State.mode(state), :typing) == nil,
+      do: HelpScreen.open(state),
+      else: :pass
+  end
+
+  def run_box(state, :cancel, _key), do: BoxCancel.cancel(state, :esc)
+  def run_box(state, :choices, _key), do: BoxChoices.key(state, {:f, 3})
+  def run_box(state, nil, key), do: BoxChoices.key(state, key)
 
   # Undo is offered where the screen does not depend on one particular item.
   defp undoable?(nil), do: true

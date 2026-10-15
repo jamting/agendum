@@ -12,11 +12,13 @@ defmodule Agendum.TUI.HelpScreen do
       it runs there, or the macro attached to it), then any key returns.
 
   The mode remembers where F1 was pressed (`from`): `:view`, `:catmgr`,
-  `:viewmgr`, `:note`, or `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
+  `:viewmgr`, `:note`, `:box` (any other box: its own keys are read from
+  its key bar, `keys/2`, then come the keys every box shares), or
+  `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
   """
 
   alias Agendum.TUI.{Command, Commands, Keymap, Macros, State}
-  alias Agendum.TUI.Boxes.ViewManager
+  alias Agendum.TUI.Boxes.{Box, ViewManager}
   alias Agendum.TUI.CategoryScreens.Manager
   alias Agendum.TUI.Render.Help
   alias Agendum.TUI.Typing.{TextEdit, Wrap}
@@ -29,6 +31,7 @@ defmodule Agendum.TUI.HelpScreen do
       case {state.edit, state.modes} do
         {nil, []} -> :view
         {nil, [%{type: type} | _]} when type in [:catmgr, :viewmgr, :note] -> type
+        {nil, [top | _]} -> if Box.module(top), do: :box, else: :elsewhere
         _ -> :elsewhere
       end
 
@@ -56,6 +59,60 @@ defmodule Agendum.TUI.HelpScreen do
   # in a note the keys of every screen are not commands: they edit the text
   defp typing?(from), do: from == :note
 
+  # What the list shows: in a box, first the box's own keys from its key
+  # bar (`{name, :own, [keys as written there]}`), then the keys every
+  # box shares that the key bar does not name, then the global ones.
+  defp list(state, :box) do
+    own = own_keys(state)
+    written = for {_, :own, [keys]} <- own, token <- tokens(keys), do: token
+
+    shared =
+      for {_c, :box, keys} = entry <- commands(:box),
+          not Enum.any?(keys, &(Keymap.name(&1) in written)),
+          do: entry
+
+    global = for {_, :global, _} = entry <- commands(:box), do: entry
+    own ++ shared ++ global
+  end
+
+  defp list(_state, from), do: commands(from)
+
+  defp own_keys(state) do
+    mode = State.mode(state)
+    box = Box.module(mode)
+
+    for entry <- if(box, do: box.keys(state, mode), else: []) do
+      {keys, name, summary} =
+        case entry do
+          {k, l} -> {k, l, l}
+          {k, l, full} -> {k, l, full}
+          {_k, l, full_key, full} -> {full_key, l, full}
+        end
+
+      {%Command{id: nil, name: name, summary: summary}, :own, [keys]}
+    end
+  end
+
+  # the key names a key bar entry's keys stand for: "A-↑↓" is ALT-↑ and
+  # ALT-↓, "^N" CTRL-N, "PGUP/DN" PGUP and PGDN, "DEL/F4" DEL and F4
+  defp tokens(written) do
+    written
+    |> String.replace("PGUP/DN", "PGUP/PGDN")
+    |> String.split(["/", " "], trim: true)
+    |> Enum.flat_map(fn token ->
+      {prefix, rest} =
+        cond do
+          String.starts_with?(token, "A-") -> {"ALT-", String.slice(token, 2..-1//1)}
+          String.starts_with?(token, "^") -> {"CTRL-", String.slice(token, 1..-1//1)}
+          true -> {"", token}
+        end
+
+      if rest =~ ~r/^[↑↓←→]+$/u,
+        do: for(arrow <- String.graphemes(rest), do: prefix <> arrow),
+        else: [prefix <> rest]
+    end)
+  end
+
   # --- keys ---------------------------------------------------------------------
 
   @doc "A key on the help screen."
@@ -69,7 +126,7 @@ defmodule Agendum.TUI.HelpScreen do
   end
 
   def handle(state, %{page: :commands} = mode, key) do
-    list = commands(mode.from)
+    list = list(State.pop(state), mode.from)
     page = State.body_height(state) - 2
 
     cursor =
@@ -123,6 +180,20 @@ defmodule Agendum.TUI.HelpScreen do
   defp run(state, {%Command{id: id}, :catmgr, _keys}), do: Manager.run(state, id)
   defp run(state, {%Command{id: id}, :viewmgr, _keys}), do: ViewManager.run(state, id)
   defp run(state, {%Command{id: id}, :note, _keys}), do: Notes.run(state, id)
+  # a box's own key from its key bar: the key is pressed in the box
+  defp run(state, {_command, :own, [keys]}) do
+    case keys |> tokens() |> Enum.map(&Keymap.parse/1) do
+      [key | _] when key != nil -> Agendum.TUI.Update.box_key(state, key)
+      _ -> State.info(state, "Press #{keys} in the box")
+    end
+  end
+
+  defp run(state, {%Command{id: id, name: name}, :box, _keys}) do
+    case Agendum.TUI.Update.run_box(state, id, nil) do
+      :pass -> State.error(state, "#{name} cannot run here")
+      next -> next
+    end
+  end
 
   defp run(state, {%Command{id: id, name: name}, :global, _keys}) do
     case Agendum.TUI.Update.run_global(state, id) do
@@ -161,19 +232,36 @@ defmodule Agendum.TUI.HelpScreen do
       command = not typing?(from) && global_command(key) ->
         [via <> "#{name} runs #{command.name}, everywhere but while typing.", command.summary]
 
+      from == :box and own_key(state, key) != nil ->
+        {command, :own, [keys]} = own_key(state, key)
+        ["#{name} in this box: #{command.summary} (#{keys} on its key bar)."]
+
       command = local_command(from, key) ->
         [via <> "#{name} runs #{command.name} #{here}.", command.summary] ++ count_line(command)
+
+      true ->
+        unbound(state, from, key, name)
+    end
+  end
+
+  # a key that runs no command there: what typing does, or nothing
+  defp unbound(state, from, key, name) do
+    char? = match?({:char, _}, key)
+
+    cond do
+      from == :box and char? ->
+        ["#{name} picks the setting's choice starting with it, or types into it."]
 
       from == :view and count_digit?(key) ->
         ["#{name} adds a digit to a count for the next command (ALT-1 ALT-0 ↓: ten rows)."]
 
-      from == :view and match?({:char, _}, key) ->
+      from == :view and char? ->
         ["#{name} starts typing an item, or an entry in the highlighted column."]
 
-      from == :catmgr and match?({:char, _}, key) ->
+      from == :catmgr and char? ->
         ["#{name} starts typing a new category below the highlighted one."]
 
-      from == :viewmgr and match?({:char, _}, key) ->
+      from == :viewmgr and char? ->
         ["#{name} highlights the next view whose name starts with what is typed."]
 
       from == :note and edits_text?(state, key) ->
@@ -183,12 +271,12 @@ defmodule Agendum.TUI.HelpScreen do
         ["ESC cancels or goes back."]
 
       from != :elsewhere ->
-        ["#{name} does nothing #{here}."]
+        ["#{name} does nothing #{place_name(from)}."]
 
       true ->
         [
-          "#{name} is not in a keymap here yet: only the keys of views, notes and",
-          "the managers are so far. The keys page (F1) lists what it does."
+          "#{name} is not in a keymap here yet: only the keys of views, notes,",
+          "boxes and the managers are so far. The keys page (F1) lists what it does."
         ]
     end
   end
@@ -198,6 +286,19 @@ defmodule Agendum.TUI.HelpScreen do
       %Command{name: name} -> ["Without the macro it would run #{name}."]
       _ -> []
     end
+  end
+
+  # the box's key bar entry for a key (a letter in any case); a character
+  # is also what the key bar calls "type" or "letter"
+  defp own_key(state, key) do
+    name = String.upcase(Keymap.name(key))
+
+    Enum.find(own_keys(state), fn {_, :own, [keys]} ->
+      Enum.any?(tokens(keys), fn token ->
+        String.upcase(token) == name or
+          (match?({:char, _}, key) and token in ["type", "letter"])
+      end)
+    end)
   end
 
   defp edits_text?(state, key),
@@ -210,6 +311,7 @@ defmodule Agendum.TUI.HelpScreen do
   defp place_name(:catmgr), do: "in the category manager"
   defp place_name(:viewmgr), do: "in the view manager"
   defp place_name(:note), do: "in a note"
+  defp place_name(:box), do: "in every box"
   defp place_name(_elsewhere), do: "here"
 
   defp count_line(%Command{count: :none}), do: []
@@ -230,8 +332,9 @@ defmodule Agendum.TUI.HelpScreen do
     # each command's lines, then the lines of all, scrolled so that the
     # highlighted command shows whole
     entries =
-      mode.from
-      |> commands()
+      state
+      |> below(mode)
+      |> list(mode.from)
       |> Enum.with_index()
       |> Enum.map(fn {{command, _place, keys}, i} ->
         style = if i == mode.cursor, do: :row, else: :normal
@@ -261,18 +364,31 @@ defmodule Agendum.TUI.HelpScreen do
       [[{:normal, ""}], [{:normal, "   Any key returns."}]]
   end
 
+  # the state under this help screen: a box can be drawn over the help
+  # (ALT-F3 opens the macro manager anywhere), so it is not always on top
+  defp below(state, mode) do
+    case Enum.drop_while(state.modes, &(&1 != mode)) do
+      [_help | rest] -> %{state | modes: rest}
+      [] -> State.pop(state)
+    end
+  end
+
   @name_width 18
   @keys_width 23
 
   # a command's name, keys and summary; keys that do not fit go on to
   # further lines under the first (DEL F4 ALT-F4 CTRL-D CTRL-K)
   defp entry_lines(command, keys) do
-    [first | more] = key_lines(Enum.map(keys, &Keymap.name/1))
+    [first | more] = key_lines(Enum.map(keys, &key_name/1))
     blank = String.duplicate(" ", @name_width)
 
     [" " <> pad(command.name, @name_width) <> pad(first, @keys_width) <> command.summary] ++
       for(keys <- more, do: " " <> blank <> keys)
   end
+
+  # a key event's name, or keys as a box's key bar writes them
+  defp key_name(written) when is_binary(written), do: written
+  defp key_name(key), do: Keymap.name(key)
 
   defp key_lines(names) do
     names
@@ -294,6 +410,7 @@ defmodule Agendum.TUI.HelpScreen do
   defp where(:catmgr), do: "IN THE CATEGORY MANAGER"
   defp where(:viewmgr), do: "IN THE VIEW MANAGER"
   defp where(:note), do: "IN A NOTE"
+  defp where(:box), do: "IN THIS BOX"
   defp where(_elsewhere), do: "ON EVERY SCREEN"
 
   defp pad(text, width), do: String.pad_trailing(text, width - 1) <> " "

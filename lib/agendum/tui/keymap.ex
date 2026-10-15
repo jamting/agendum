@@ -162,6 +162,13 @@ defmodule Agendum.TUI.Keymap do
     {:alt, "q"} => :quit
   }
 
+  # every box (`Update`'s box stage); its own keys are the box's
+  @box %{
+    {:f, 1} => :help,
+    {:f, 3} => :choices,
+    :esc => :cancel
+  }
+
   # on every screen, but not while typing or answering (`Update`)
   @global %{
     {:ctrl, "z"} => :undo,
@@ -175,7 +182,14 @@ defmodule Agendum.TUI.Keymap do
     {:ctrl, "c"} => :quit
   }
 
-  @keymaps %{view: @view, catmgr: @catmgr, viewmgr: @viewmgr, note: @note, global: @global}
+  @keymaps %{
+    view: @view,
+    catmgr: @catmgr,
+    viewmgr: @viewmgr,
+    note: @note,
+    box: @box,
+    global: @global
+  }
 
   # Keys that stand for other keys (R31): for Mac keyboards without INS,
   # CTRL-N is INS everywhere, CTRL-E is F2 and CTRL-K F4 unless typing
@@ -267,6 +281,25 @@ defmodule Agendum.TUI.Keymap do
     ctrl_home: "CTRL-HOME",
     ctrl_end: "CTRL-END"
   }
+
+  # every key `parse/1` can read back from its name
+  @parsable Map.keys(@names) ++
+              for(n <- 1..10, k <- [{:f, n}, {:alt_f, n}, {:shift_f, n}], do: k) ++
+              for(c <- ?a..?z, k <- [{:ctrl, <<c>>}, {:alt, <<c>>}], do: k) ++
+              for(k <- [:up, :down, :left, :right, :enter, :backspace], do: {:alt, k})
+
+  @doc """
+  The key a name stands for (`ALT-F4`, `CTRL-D`, `SPACE`, `x`), or nil; a
+  dash, as a key bar writes "no key", is none.
+  """
+  @spec parse(String.t()) :: term | nil
+  def parse("SPACE"), do: {:char, " "}
+  def parse(<<c::utf8>> = char) when c not in [?—, ?-, ?·], do: {:char, char}
+
+  def parse(name) do
+    upper = String.upcase(name)
+    Enum.find(@parsable, &(name(&1) == upper))
+  end
 
   @doc "A key's name as the help and KEYBOARD.md write it: `ALT-F4`, `CTRL-D`, `↓`."
   @spec name(term) :: String.t()
