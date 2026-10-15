@@ -19,8 +19,7 @@ defmodule Agendum.TUI.Boxes.MacroProps do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
+  alias Agendum.TUI.Boxes.{Box, Template}
 
   alias Agendum.Core
   alias Agendum.TUI.{MacroKeys, Macros, State}
@@ -54,48 +53,57 @@ defmodule Agendum.TUI.Boxes.MacroProps do
   def open(state, id), do: State.push(state, %{type: :macro_props, macro_id: id, cursor: 0})
 
   @impl Box
-  def handle(state, mode, key) do
-    macro = state.db.macros[mode.macro_id]
-    row = Enum.at(@rows, mode.cursor)
+  # its keys are the settings box's, F2 edits, DEL detaches (R65)
+  def handle(state, _mode, _key), do: state
 
-    case {key, row} do
-      # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
-      {k, _} when k in [:esc, :enter] ->
-        State.pop(state)
+  @impl Box
+  def keymap,
+    do: Box.settings_keymap(%{{:f, 2} => :edit, :delete => :detach, {:ctrl, "d"} => :detach})
 
-      {k, _} when is_move(k) ->
-        BoxNav.move(state, mode, @grid, k)
+  @impl Box
+  def commands,
+    do:
+      Box.settings_commands([
+        {:edit, "Edit", "Edit the name or the keystrokes"},
+        {:detach, "Detach", "Detach the macro from its key"}
+      ])
 
-      {k, :name} when k in [{:f, 2}, {:char, " "}] ->
-        Prompts.prompt(state, "Rename the macro to:", {:rename_macro, macro.id}, macro.name)
+  # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
+  @impl Box
+  def run(state, mode, id) when id in [:change, :edit, :detach],
+    do: command(state, id, Enum.at(@rows, mode.cursor), state.db.macros[mode.macro_id])
 
-      {k, :keys} when k in [{:f, 2}, {:char, " "}] ->
-        Macros.edit_text(state, macro)
+  def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
-      {{:char, " "}, :key} ->
-        Prompts.prompt(
-          state,
-          "Attach to key (e.g. {ShfF4}, {CtlE}):",
-          {:attach_macro, macro.id},
-          macro.key || ""
-        )
+  defp command(state, id, :name, macro) when id in [:change, :edit],
+    do: Prompts.prompt(state, "Rename the macro to:", {:rename_macro, macro.id}, macro.name)
 
-      {k, :key} when k in [:delete, {:ctrl, "d"}] ->
-        State.change_db(state, Core.attach_macro(state.db, macro.id, nil))
+  defp command(state, id, :keys, macro) when id in [:change, :edit],
+    do: Macros.edit_text(state, macro)
 
-      {{:char, " "}, :elsewhere} when macro.key == nil ->
-        State.error(state, "Only a macro attached to a key runs everywhere else")
-
-      {{:char, " "}, place} when place in [:view, :note, :catmgr, :elsewhere] ->
-        State.change_db(
-          state,
-          Core.set_macro_run_from(state.db, macro.id, place, not macro.run_from[place])
-        )
-
-      _ ->
-        state
-    end
+  defp command(state, :change, :key, macro) do
+    Prompts.prompt(
+      state,
+      "Attach to key (e.g. {ShfF4}, {CtlE}):",
+      {:attach_macro, macro.id},
+      macro.key || ""
+    )
   end
+
+  defp command(state, :detach, :key, macro),
+    do: State.change_db(state, Core.attach_macro(state.db, macro.id, nil))
+
+  defp command(state, :change, :elsewhere, %{key: nil}),
+    do: State.error(state, "Only a macro attached to a key runs everywhere else")
+
+  defp command(state, :change, place, macro) when place in [:view, :note, :catmgr, :elsewhere] do
+    State.change_db(
+      state,
+      Core.set_macro_run_from(state.db, macro.id, place, not macro.run_from[place])
+    )
+  end
+
+  defp command(state, _id, _row, _macro), do: state
 
   @doc "The prompt's answer for Attach to key: one key, in the notation."
   def attach(state, id, text) do

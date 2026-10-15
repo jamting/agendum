@@ -83,6 +83,13 @@ defmodule Agendum.TUI.Boxes.Box do
   @doc "Runs one of the box's commands."
   @callback run(State.t(), mode, id :: atom) :: State.t()
 
+  @doc """
+  Whether the person is typing in the box, so that every key goes to
+  `c:handle/3` and none to the keymap; by default while `state.edit` or
+  the mode's `:typing` holds a field being typed.
+  """
+  @callback typing?(State.t(), mode) :: boolean
+
   # The boxes, by their mode's type. A module holds a box's
   # name only (no call at compile time), so the boxes and this module can
   # refer to each other.
@@ -217,9 +224,7 @@ defmodule Agendum.TUI.Boxes.Box do
   """
   @spec dispatch(module, State.t(), mode, term) :: State.t()
   def dispatch(box, state, mode, key) do
-    typing = state.edit != nil or Map.get(mode, :typing) != nil
-
-    case if(typing, do: nil, else: Map.get(box.keymap(), key)) do
+    case if(box.typing?(state, mode), do: nil, else: Map.get(box.keymap(), key)) do
       nil -> box.handle(state, mode, key)
       id -> box.run(state, mode, id)
     end
@@ -327,7 +332,16 @@ defmodule Agendum.TUI.Boxes.Box do
       def commands, do: []
       @impl true
       def run(state, _mode, _id), do: state
-      defoverridable width: 2, field: 2, finish: 1, keymap: 0, commands: 0, run: 3
+      @impl true
+      def typing?(state, mode), do: state.edit != nil or Map.get(mode, :typing) != nil
+
+      defoverridable width: 2,
+                     field: 2,
+                     finish: 1,
+                     keymap: 0,
+                     commands: 0,
+                     run: 3,
+                     typing?: 2
     end
   end
 end

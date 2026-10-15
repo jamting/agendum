@@ -178,9 +178,11 @@ defmodule Agendum.TUI.Update do
   @doc "Runs a command every box shares (`Agendum.TUI.Commands`, `:box`); `:pass` where it does not apply."
   @spec run_box(State.t(), atom | nil, term) :: State.t() | :pass
   def run_box(state, :help, _key) do
-    if state.edit == nil and Map.get(State.mode(state), :typing) == nil,
-      do: HelpScreen.open(state),
-      else: :pass
+    mode = State.mode(state)
+
+    if Agendum.TUI.Boxes.Box.module!(mode).typing?(state, mode),
+      do: :pass,
+      else: HelpScreen.open(state)
   end
 
   def run_box(state, :cancel, _key), do: BoxCancel.cancel(state, :esc)

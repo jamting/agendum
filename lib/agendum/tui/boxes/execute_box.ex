@@ -17,10 +17,8 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-
   alias Agendum.Core
-  alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
+  alias Agendum.TUI.Boxes.{Box, Template}
   alias Agendum.TUI.{CategoryScreens, Layout, State}
 
   @layout """
@@ -54,39 +52,41 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
       })
 
   @impl Box
-  def handle(state, mode, key) do
-    row = field(state, mode)
+  # its keys are the settings box's; ENTER executes (R65)
+  def handle(state, _mode, _key), do: state
 
-    case key do
-      :esc ->
-        State.pop(state)
+  @impl Box
+  def keymap, do: Box.settings_keymap()
 
-      :enter ->
-        state |> State.pop() |> run(mode.root, mode.against, mode.old)
+  @impl Box
+  def commands,
+    do:
+      Box.settings_commands([
+        {:done, "Execute", "Run the conditions and actions"},
+        {:close, "Cancel", "Close without executing"}
+      ])
 
-      k when is_move(k) ->
-        BoxNav.move(state, mode, @grid, k)
+  @impl Box
+  def run(state, mode, :done),
+    do: state |> State.pop() |> execute(mode.root, mode.against, mode.old)
 
-      {:char, " "} when row == :root ->
-        CategoryScreens.open_picker(state, :execute_root, nil)
+  def run(state, mode, :change), do: change(state, mode, field(state, mode))
+  def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
-      {:char, " "} when row == :against ->
-        index = Enum.find_index(@against, &(&1 == mode.against))
-        State.put_mode(state, %{mode | against: Enum.at(@against, Integer.mod(index + 1, 5))})
+  defp change(state, _mode, :root), do: CategoryScreens.open_picker(state, :execute_root, nil)
 
-      {:char, " "} when row == :actions ->
-        State.put_mode(state, %{mode | old: not mode.old})
-
-      _ ->
-        state
-    end
+  defp change(state, mode, :against) do
+    index = Enum.find_index(@against, &(&1 == mode.against))
+    State.put_mode(state, %{mode | against: Enum.at(@against, Integer.mod(index + 1, 5))})
   end
+
+  defp change(state, mode, :actions), do: State.put_mode(state, %{mode | old: not mode.old})
 
   @doc "Sets the category whose conditions apply (from the category box)."
   def set_root(state, cat_id), do: State.put_mode(state, %{State.mode(state) | root: cat_id})
 
   @doc "Runs Execute from the view: `root`'s family on the chosen items."
-  def run(state, root, against, old \\ false) do
+  def execute(state, root, against, old \\ false) do
     ids = items(state, against)
 
     db =

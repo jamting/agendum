@@ -182,7 +182,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
   defp command(state, :calendar, _row), do: CalendarBox.open(state, nil)
 
   defp command(state, :execute_all, _row),
-    do: Agendum.TUI.Boxes.ExecuteBox.run(state, state.db.main_id, :all)
+    do: Agendum.TUI.Boxes.ExecuteBox.execute(state, state.db.main_id, :all)
 
   defp command(state, :execute_category, row), do: execute_category(state, row)
   defp command(state, :next_view, _row), do: step_view(state, 1)
@@ -554,7 +554,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
   defp execute_category(state, nil), do: state
 
   defp execute_category(state, row),
-    do: Agendum.TUI.Boxes.ExecuteBox.run(state, row.category.id, :all)
+    do: Agendum.TUI.Boxes.ExecuteBox.execute(state, row.category.id, :all)
 
   # ALT-O (User's Guide 13-12): make the item depend on the marked items,
   # or, with nothing marked, clear its dependencies.

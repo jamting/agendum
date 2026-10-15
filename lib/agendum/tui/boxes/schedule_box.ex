@@ -18,11 +18,9 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
 
-  import Agendum.TUI.Boxes.BoxNav, only: [is_move: 1]
-
   alias Agendum.Core
   alias Agendum.Core.{Database, DateFormat}
-  alias Agendum.TUI.Boxes.{Box, BoxNav, CalendarBox, Template}
+  alias Agendum.TUI.Boxes.{Box, CalendarBox, Template}
   alias Agendum.TUI.{CategoryScreens, State}
   alias Agendum.TUI.Update.Prompts
 
@@ -59,29 +57,32 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
   end
 
   @impl Box
-  def handle(state, mode, key) do
-    row = field(state, mode)
+  # its keys are the settings box's; ENTER shows the schedule (R65)
+  def handle(state, _mode, _key), do: state
 
-    case {key, row} do
-      {:esc, _} ->
-        State.pop(state)
+  @impl Box
+  def keymap, do: Box.settings_keymap(%{{:f, 3} => :calendar})
 
-      {k, _} when is_move(k) ->
-        BoxNav.move(state, mode, @grid, k)
+  @impl Box
+  def commands,
+    do:
+      Box.settings_commands([
+        {:calendar, "Calendar", "Pick the date from a calendar"},
+        {:done, "Show", "Show the schedule"},
+        {:close, "Cancel", "Close without showing it"}
+      ])
 
-      {:enter, _} ->
-        show(State.pop(state), mode)
+  @impl Box
+  def run(state, mode, :done), do: show(State.pop(state), mode)
+  def run(state, mode, :change), do: change(state, mode, field(state, mode))
 
-      {{:f, 3}, :date} ->
-        CalendarBox.open(state, {:schedule, mode.date})
-
-      {{:char, " "}, row} ->
-        change(state, mode, row)
-
-      _ ->
-        state
-    end
+  def run(state, mode, :calendar) do
+    if field(state, mode) == :date,
+      do: CalendarBox.open(state, {:schedule, mode.date}),
+      else: state
   end
+
+  def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
   defp change(state, _mode, field) when field in [:date_category, :section],
     do: CategoryScreens.open_picker(state, {:schedule, field}, nil)

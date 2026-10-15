@@ -64,7 +64,7 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
   defp command(state, :add_above, id), do: insert_category(state, id, :above)
   defp command(state, :add_family, id), do: insert_category(state, id, :uncle)
   defp command(state, :add_child, id), do: insert_category(state, id, :child)
-  defp command(state, :execute, id), do: Agendum.TUI.Boxes.ExecuteBox.run(state, id, :all)
+  defp command(state, :execute, id), do: Agendum.TUI.Boxes.ExecuteBox.execute(state, id, :all)
 
   defp command(state, :rename, id) do
     cat = state.db.categories[id]
