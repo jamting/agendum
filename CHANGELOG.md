@@ -10,6 +10,10 @@ has the detail.
 
 ## Unreleased
 
+## 0.2.1 — 2026-10-15
+
+Quicker answers to keys, and a debug log that shows where lag comes from.
+
 - Quicker answers to keys: keys typed fast or held down are answered
   with one drawing, and views showing many items draw faster.
 - A view filtered by dates written in words ("..yesterday", "today
