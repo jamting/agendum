@@ -4,7 +4,7 @@ Small, testable increments. Open work comes first, by area; done work is below, 
 
 ## Open
 
-**Next:** `agendum add` (capture without the keyboard), then parity with Agenda. Towards many users is done up to the web version. The view cache waits for slow answers in real use, CI for GitHub.
+**Next:** parity with Agenda. Towards many users is done up to the web version; capture from outside is paused (a URL scheme rather than `agendum add`). The view cache waits for slow answers in real use, CI for GitHub.
 
 ### Sharpen the saw
 
@@ -94,7 +94,7 @@ Then working together:
   - [ ] Rules for ingested items: keep, promote to a zettel, discard
   - [ ] The JSON export (R44) with a choice of levels; an import of a partial export says so
 - [ ] A GTD starter, like the Planner (R60, ADR 0028): Inbox, Next Actions by context, Projects, Waiting For, Someday/Maybe, and views for a weekly review (items untouched for a while, projects without a next action), so the rules show what they can do in a method many people know (expert review 2026-10-16)
-- [ ] Capture from outside: `agendum add "text" FILE` from the shell, filed by the core as if typed in the view (the file's main view and section), printing where it was filed; later a mail or phone path (expert review 2026-10-16). The first command with no keyboard, and an agent's first tool (second meeting)
+- [ ] Capture from outside (paused, owner 2026-10-16): the owner would rather capture through a URL scheme (such as `agendum://add?text=…`, which a phone, a browser or another program can open) than a shell command, `agendum add "text" FILE`; to be designed when picked up. Filed by the core as if typed in the view (the command `{:add_item, …}`), saying where it was filed; later a mail or phone path (expert review 2026-10-16). The first door without a keyboard, and an agent's first tool (second meeting)
   - [ ] First: notice that the file changed on disk since it was loaded (size and modification time, or a hash) before saving over it, and ask, as for unsaved changes; today the TUI's next save silently undoes what another writer saved (second meeting)
 - [ ] More date languages (one `Agendum.Core.DateLanguage` pack each)
 - [ ] Modern by default: today's names and standard keys out of the box (Open not Retrieve, Delete not Discard, CTRL-O/S/Z/F/N…), with Agenda's names and keys one setting away ("Agenda mode"). Agenda's steep learning curve limited its audience (AGENDA_HISTORY.md); the power should stay, the strangeness should not be the first thing people meet. Builds on the keymaps, self-describing commands and own key bindings (Towards many users); departs from ADR 0006 and 0007, so it needs an ADR of its own
