@@ -4,7 +4,7 @@ Small, testable increments. Open work comes first, by area; done work is below, 
 
 ## Open
 
-**Next:** parity with Agenda; of "Beyond Agenda", the micro-blog, for the owner (group 1) and ahead of the `.AG` importer (meeting 2026-10-16-2, § 8); the guard against a file changed on disk it waited for is done (R71). Towards many users is done up to the web version; capture from outside is paused (a URL scheme rather than `agendum add`). The view cache waits for slow answers in real use, CI for GitHub.
+**Next:** the owner tries the `.AG` import (R72, built 2026-10-16 ahead of the micro-blog, the owner's choice that evening) on old files; then the micro-blog (group 1) and parity with Agenda. The guard against a file changed on disk is done (R71). Towards many users is done up to the web version; capture from outside is paused (a URL scheme rather than `agendum add`). The view cache waits for slow answers in real use, CI for GitHub.
 
 ### Sharpen the saw
 
@@ -64,7 +64,8 @@ Then working together:
 - [ ] Optional: read original `.AG` files directly. The format is now largely known (`docs/AGENDA_FILE_FORMAT.md`; research log `docs/plans/AGENDA_FILE_FORMAT_LOG.md`; reference reader `tools/agformat/agdump.py`): items, notes and note files, categories with all their settings, conditions and actions, assignments with values, relative and recurring dates, alarms, views with sorting and filters, datebooks, sections, columns with formats, file settings
   - [x] Reverse engineer the format: container, items, categories, values, views (2026-10-14)
   - [x] Settle the open parts: view/section sort and filter words, relative-date encoding, actions, settings (2026-10-15, second round; how to drive Agenda: `tools/agformat/DRIVING_AGENDA.md`)
-  - [ ] Elixir reader outside the pure core, converting to the JSON format; File ▸ Transfer ▸ Import of a `.AG`. The first users are likely old Agenda users, and this brings them (expert review 2026-10-16, and again in the second meeting)
+  - [x] An Elixir reader and conversion (pure, `Agendum.Core.AgFile`, through the JSON format's checks); File ▸ Transfer ▸ Import of a `.AG` and `agendum OLD.AG`, with a password and a report of what came over (R72, 2026-10-16)
+  - [ ] Still to bring over: macros (keystrokes into Agendum's notation), note files (read by the shell beside the `.AG`), the global date format, a datebook's base date
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
 - [ ] Optional: Import of structured text files (one item per line, with categories)
 - [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files). A first real use: the session summaries in `docs/summaries/` (one per feature, all alike: `#` title, dated, commit hashes, R-numbers), imported with STF and a definition file so text matching files them (the owner's wish, 2026-10-15)

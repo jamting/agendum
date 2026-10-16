@@ -24,6 +24,7 @@ defmodule Agendum.TUI.Modes do
   # to type in have `typing` (`Agendum.TUI.Boxes.FieldTyping`).
   @modes [
     action_box: [:clear, :cursor, :line, :owner, :target],
+    ag_import: [:report, :source, :top],
     alarm_list: [:cursor],
     auto_assign: [:cursor, :opened],
     away: [:groups],

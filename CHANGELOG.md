@@ -4,6 +4,8 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- Old Lotus Agenda files come over: File ▸ Transfer ▸ Import takes an Agenda `.AG` file as well as JSON, and `agendum OLD.AG` opens one from the command line. Categories, items, notes, dates, numbers, alarms, conditions and views come with it; it opens as `OLD.agendum` beside the old file, saved when you save. Assignments you made by hand are kept; the rest Agendum works out by its own rules, and a report box lists what came over, what was left out (macros, for now), and any item Agendum files differently. A file with a password asks for it.
+
 ## 0.9.0 — 2026-10-16
 
 Agendum guards your file against other writers, and a failed save no longer loses your changes.

@@ -542,6 +542,19 @@ defmodule Agendum.TUI.Update do
   stays.
   """
   def imported(state, path, {:ok, text}) do
+    # Domain: one Import for both kinds of file, told apart by what is in
+    # them (R72): an Agenda file starts with "T", JSON with "{"
+    if Core.agenda_file?(text),
+      do: import_ag(state, path, text, nil),
+      else: import_json(state, path, text)
+  end
+
+  def imported(state, _path, {:error, :enoent}), do: State.error(state, "File not found")
+
+  def imported(state, _path, {:error, reason}),
+    do: State.error(state, "Could not read: #{inspect(reason)}")
+
+  defp import_json(state, path, text) do
     case Core.import_json(text) do
       {:ok, db} ->
         %State{
@@ -558,10 +571,49 @@ defmodule Agendum.TUI.Update do
     end
   end
 
-  def imported(state, _path, {:error, :enoent}), do: State.error(state, "File not found")
+  @doc """
+  Imports a Lotus Agenda file (R72) read from `path`: it opens as a new
+  file of the same name with Agendum's extension, beside it, not saved
+  yet (a file already there is asked about at the first save, R71), and
+  the report of what came over shows. A file with a password asks for it
+  (`password` nil: not asked yet), again when it was wrong.
+  """
+  @spec import_ag(State.t(), String.t(), binary, String.t() | nil) :: State.t()
+  def import_ag(state, path, bytes, password) do
+    name = Path.basename(path)
 
-  def imported(state, _path, {:error, reason}),
-    do: State.error(state, "Could not read: #{inspect(reason)}")
+    case Core.import_ag(bytes, password: password, clock: State.context(state)) do
+      {:ok, db, report} ->
+        into = Path.rootname(path) <> Agendum.Store.extension()
+
+        %State{
+          State.reopen(state, db, into)
+          | dirty: true,
+            saved: %{db: nil, stamp: nil, conflict: false},
+            message: {:message, "Imported #{name} as #{Path.basename(into)} (save it to keep it)"}
+        }
+        |> Layout.settle()
+        |> arrive()
+        |> Agendum.TUI.Boxes.ImportReportBox.open(path, report)
+
+      {:error, :password_required} ->
+        Prompts.password(state, "Password of #{name}:", {:ag_password, path, bytes})
+
+      # as Agenda said it; the prompt has both top lines, so it says it
+      {:error, :wrong_password} ->
+        Prompts.password(
+          state,
+          "The password you typed is incorrect. Retype the password of #{name}:",
+          {:ag_password, path, bytes}
+        )
+
+      {:error, :not_an_agenda_file} ->
+        State.error(state, "#{name} is not an Agenda file Agendum can read")
+
+      {:error, message} ->
+        State.error(state, "Could not import #{name}: #{message}")
+    end
+  end
 
   def written(state, path, :ok), do: State.info(state, "Wrote #{path}")
 

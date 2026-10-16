@@ -32,8 +32,17 @@ defmodule Agendum.TUI.Render.ControlPanel do
               do: label <> "  F3 lists files",
               else: label
 
+          # a password shows as stars (R72)
+          line =
+            if Agendum.TUI.Update.Prompts.password_prompt?(state),
+              do: %{
+                state.edit.line
+                | text: String.duplicate("*", String.length(state.edit.line.text))
+              },
+              else: state.edit.line
+
           {beside_indicators(state, base, [{:prompt, " " <> label}]),
-           [{:panel, " "}] ++ Draw.input(state.edit.line, w - 2, :edit)}
+           [{:panel, " "}] ++ Draw.input(line, w - 2, :edit)}
 
         %{type: :column_width} = m ->
           text_lines(state, base, :panel_hint, Agendum.TUI.Moves.ColumnWidth.panel(m))

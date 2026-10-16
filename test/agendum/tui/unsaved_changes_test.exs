@@ -12,7 +12,7 @@ defmodule Agendum.TUI.UnsavedChangesTest do
   @commands [
     {"Retrieve", [{:f, 10}, "f", "r"], "File to retrieve:"},
     {"New", [{:f, 10}, "f", "n"], "Name of new file:"},
-    {"Import", [{:f, 10}, "f", "t", "i"], "JSON file to import"}
+    {"Import", [{:f, 10}, "f", "t", "i"], "file to import"}
   ]
 
   setup do

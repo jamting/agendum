@@ -548,10 +548,12 @@ An AVL tree over the category names, used by Agenda to find a category when matc
 
 ## Mapping to Agendum
 
+The import is `Agendum.Core.AgFile` (SPEC R72): `Reader` is this document in Elixir (it reads every fixture as `agdump.py` does, a test checks), `Convert` is this table.
+
 | Agenda                                | Agendum (`docs/DATA_MODEL.md`)                                                                                             |
 | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | item block                            | item; text, note                                                                                                           |
-| assignment link                       | explicit link (store only flags 0 = explicit; text-match and condition assignments can be recomputed, or kept as explicit) |
+| assignment link                       | explicit link for flags 0 (by hand); text-match and condition assignments are worked out again by Agendum (R72)            |
 | Entry / When / Done assignment values | the item's entry, when and done dates; a recurring When keeps its expression                                               |
 | category block, hierarchy w16–w18     | category tree; name; short name; also match                                                                                |
 | w26 types                             | standard / exclusive / unindexed / numeric / date                                                                          |
@@ -561,7 +563,7 @@ An AVL tree over the category names, used by Agenda to find a category when matc
 | view flags, sort keys, filters        | view properties: hide done…, sorting, filter                                                                               |
 | datebook view                         | datebook view (period, start/end)                                                                                          |
 | conditions and actions (type 5/6/7)   | assignment conditions and actions, special actions                                                                         |
-| alarms                                | not imported (Agendum has none yet)                                                                                        |
+| alarms                                | the item's alarm, when it is on When (R38)                                                                                  |
 | note files                            | the note text, read from the file                                                                                          |
 | macros, print layout                  | not imported                                                                                                               |
 
@@ -574,4 +576,4 @@ Nothing an import needs. Left open:
 - Macro variables (type 12): the name is clear, the value encoding is not.
 - Some display-state bits (view w13, w18; section w12, w19).
 - The time-format word of date columns (w11) and the global date format words `0x182`/`0x184` in detail.
-- Agenda 1.0 files and the files the owner remembers as encrypted: every 2.0 file seen is unencrypted, password or not.
+- Agenda 1.0 files and the files the owner remembers as encrypted: every 2.0 file seen is unencrypted, password or not. Agenda compares passwords without regard to case ("hoot" opened a file whose password is "Hoot"; checked 2026-10-16).

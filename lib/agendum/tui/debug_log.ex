@@ -135,8 +135,13 @@ defmodule Agendum.TUI.DebugLog do
 
   @doc "Input from the terminal: its bytes, the keys read from them, the boxes open."
   @spec input(binary, [term], State.t()) :: :ok
-  def input(bytes, keys, state),
-    do: write("input #{inspect(bytes)} → #{inspect(keys)}#{modes(state)}")
+  def input(bytes, keys, state) do
+    # an Agenda file's password (R72) stays out of the log: only how many
+    # keys came
+    if Agendum.TUI.Update.Prompts.password_prompt?(state),
+      do: write("input (#{length(keys)} keys hidden: a password)#{modes(state)}"),
+      else: write("input #{inspect(bytes)} → #{inspect(keys)}#{modes(state)}")
+  end
 
   @doc "Keys a macro plays."
   @spec macro([term]) :: :ok

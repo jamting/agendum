@@ -164,6 +164,8 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
 
 - **While you were away** `:away` (by itself, after the splash screen or as a file is retrieved, only when alarms came due while the file was closed): those alarms, grouped by text (R70). `Agendum.TUI.Boxes.AwayBox`.
 
+- **Imported from Agenda** `:ag_import` (by itself, after File ▸ Transfer ▸ Import or `agendum OLD.AG` imported a Lotus Agenda file): what came over, what was left out, and the items filed differently from Agenda; CTRL-P writes it to a text file (R72). `Agendum.TUI.Boxes.ImportReportBox`. Before it, for a file with a password, a **Prompt** `:prompt` whose text shows as stars.
+
 - **Developer tools** `:devtools` (ESC ?, hidden, from anywhere but while typing): a full screen of debugging facts and a key tester; see `docs/KEYBOARD.md`. `Agendum.TUI.DevTools`.
 
 Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies after its question, Undo, Save) are not listed.
@@ -214,6 +216,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:questions`         | box           | `Agendum.TUI.Boxes.QuestionsBox`         | Category ▸ Questions                              | R16            |
 | `:alarm_list`        | box           | `Agendum.TUI.Boxes.AlarmList`            | Search ▸ Alarms                                   | R38            |
 | `:away`              | box           | `Agendum.TUI.Boxes.AwayBox`              | Opening a file with alarms due while it was closed | R70           |
+| `:ag_import`         | box           | `Agendum.TUI.Boxes.ImportReportBox`      | Importing a Lotus Agenda file                     | R72            |
 | `:calendar`          | box           | `Agendum.TUI.Boxes.CalendarBox`          | F3 in a date column, ALT-C                        | R46            |
 | `:datebook_props`    | box           | `Agendum.TUI.Boxes.DatebookBox`          | View ▸ Properties of a datebook view              | R47            |
 | `:section_props`     | box           | `Agendum.TUI.Boxes.SectionBox`           | View ▸ Section ▸ Properties, F6 on a section head | R61            |

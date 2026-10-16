@@ -4,6 +4,8 @@ defmodule Agendum.CLI do
 
       agendum                   start with a new, untitled file
       agendum FILE              open FILE (created on first save if missing)
+      agendum OLD.AG            import a Lotus Agenda file, as OLD.agendum
+                                beside it (written on the first save)
       agendum --demo            open the sample file from the patent
       agendum --rabbit          open Rabbit's file from the manual
       agendum --theme NAME      draw with a theme: classic (default), mono,
@@ -201,36 +203,52 @@ defmodule Agendum.CLI do
       end
 
     case result do
+      # Domain: an Agenda file (R72) is imported as File ▸ Transfer ▸
+      # Import does, into an untitled file first; the import gives it its
+      # name and shows its report under the splash screen
+      {:import, path, bytes} ->
+        Core.new_file()
+        |> State.new(session(options, prefs, today))
+        |> Layout.settle()
+        |> Update.imported(path, {:ok, bytes})
+        |> Update.start(false)
+        |> run_session(log)
+
       {:ok, db, path, stamp} ->
         # Domain: `State.new/2` sets `saved.db` to the database just read, so
         # the file starts clean; `Update.arrive/1` then rings alarms due while
         # it was closed (R70) without making it dirty; `Update.start/2` puts
         # the splash screen (and, with no file named, the file prompt) on top.
-        state =
-          db
-          |> State.new(
-            path: path,
-            stamp: stamp,
-            today: today,
-            now: App.local_now(),
-            languages: options.languages,
-            input: options.input,
-            theme: options.theme,
-            prefs: prefs
-          )
-          |> Layout.settle()
-          |> Update.arrive()
-          |> Update.start(
-            options.file == nil and not (options.demo or options.rabbit or options.clinic)
-          )
-
-        case run(state, log) do
-          :ok -> DebugLog.stop()
-          {:error, reason} -> exit_with("Could not start the terminal UI: #{inspect(reason)}")
-        end
+        db
+        |> State.new([path: path, stamp: stamp] ++ session(options, prefs, today))
+        |> Layout.settle()
+        |> Update.arrive()
+        |> Update.start(
+          options.file == nil and not (options.demo or options.rabbit or options.clinic)
+        )
+        |> run_session(log)
 
       {:error, message} ->
         exit_with(message)
+    end
+  end
+
+  # what `State.new/2` is told about the person and the moment
+  defp session(options, prefs, today) do
+    [
+      today: today,
+      now: App.local_now(),
+      languages: options.languages,
+      input: options.input,
+      theme: options.theme,
+      prefs: prefs
+    ]
+  end
+
+  defp run_session(state, log) do
+    case run(state, log) do
+      :ok -> DebugLog.stop()
+      {:error, reason} -> exit_with("Could not start the terminal UI: #{inspect(reason)}")
     end
   end
 
@@ -251,14 +269,26 @@ defmodule Agendum.CLI do
   # Domain: a named file that does not exist is not an error: it opens as a
   # new file with that name, written there on the first save.
   # A file that exists but cannot be read stops the program with a message.
+  # A Lotus Agenda file (`.AG`, any case) is imported instead (R72).
   defp open(path) do
-    if File.exists?(path) do
-      case Store.load_with_stamp(path) do
-        {:ok, db, stamp} -> {:ok, db, path, stamp}
-        {:error, reason} -> {:error, "Could not open #{path}: #{inspect(reason)}"}
-      end
-    else
-      {:ok, Core.new_file(), path, nil}
+    cond do
+      String.downcase(Path.extname(path)) == ".ag" -> read_agenda(path)
+      File.exists?(path) -> open_existing(path)
+      true -> {:ok, Core.new_file(), path, nil}
+    end
+  end
+
+  defp read_agenda(path) do
+    case File.read(path) do
+      {:ok, bytes} -> {:import, path, bytes}
+      {:error, reason} -> {:error, "Could not read #{path}: #{:file.format_error(reason)}"}
+    end
+  end
+
+  defp open_existing(path) do
+    case Store.load_with_stamp(path) do
+      {:ok, db, stamp} -> {:ok, db, path, stamp}
+      {:error, reason} -> {:error, "Could not open #{path}: #{inspect(reason)}"}
     end
   end
 

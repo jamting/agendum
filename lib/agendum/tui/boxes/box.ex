@@ -102,6 +102,7 @@ defmodule Agendum.TUI.Boxes.Box do
   # refer to each other.
   @registry %{
     action_box: Agendum.TUI.Boxes.ActionBox,
+    ag_import: Agendum.TUI.Boxes.ImportReportBox,
     alarm_list: Agendum.TUI.Boxes.AlarmList,
     auto_assign: Agendum.TUI.Boxes.AutoAssignBox,
     away: Agendum.TUI.Boxes.AwayBox,

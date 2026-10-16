@@ -23,6 +23,17 @@ defmodule Agendum.TUI.Update.Prompts do
     |> Map.put(:edit, %{line: LineEdit.new(initial)})
   end
 
+  @doc """
+  A prompt whose text is hidden as it is typed, and kept out of the debug
+  log (`password_prompt?/1`): the password of an Agenda file (R72).
+  """
+  def password(state, label, action), do: prompt(state, label, action)
+
+  @doc "Whether the prompt on top is for a password, whose keys are not shown or logged."
+  @spec password_prompt?(State.t()) :: boolean
+  def password_prompt?(state),
+    do: match?(%{type: :prompt, action: {:ag_password, _, _}}, State.mode(state))
+
   @doc "Converts a category to numeric (R29), reporting the result."
   def make_numeric(state, cat_id) do
     case State.command(state, {:make_numeric, cat_id}) do
@@ -113,6 +124,10 @@ defmodule Agendum.TUI.Update.Prompts do
     do: State.save(state, Agendum.Store.normalize_path(text), then: {:replace_file, command})
 
   defp prompt_action(state, :calendar_jump, text), do: CalendarBox.jump(state, text)
+
+  # an Agenda file's password (R72): the import is tried again with it
+  defp prompt_action(state, {:ag_password, path, bytes}, text),
+    do: Update.import_ag(state, path, bytes, text)
 
   # Calendars (R45): the address, then a name for its category
   defp prompt_action(state, :calendar_url, text),
@@ -447,5 +462,5 @@ defmodule Agendum.TUI.Update.Prompts do
   def replace_file(state, :new_file), do: prompt(state, "Name of new file:", :new_file)
 
   def replace_file(state, :import_json),
-    do: prompt(state, "JSON file to import (opens as a new file):", :import_json)
+    do: prompt(state, "JSON or Agenda (.AG) file to import (opens as a new file):", :import_json)
 end
