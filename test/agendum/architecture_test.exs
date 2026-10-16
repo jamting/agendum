@@ -148,7 +148,14 @@ defmodule Agendum.ArchitectureTest do
     unmark_all: 1,
     toggle_done: 3,
     mark_done: 3,
-    discard_item: 2
+    discard_item: 2,
+    add_item: 3,
+    add_item: 4,
+    edit_item: 4,
+    edit_item: 5,
+    apply_entry_values: 3,
+    apply_entry_values: 4,
+    entry_values: 4
   ]
 
   test "the TUI sends a command where the core has one", %{calls: calls} do
@@ -170,7 +177,7 @@ defmodule Agendum.ArchitectureTest do
   # included. It may only go down: when a step of the command layer moves
   # more actions into commands, lower it to the new count. The command
   # layer is done when only reads are left (ROADMAP, Towards many users).
-  @core_calls_at_most 139
+  @core_calls_at_most 135
 
   test "the TUI calls no more core functions directly than before", %{calls: calls} do
     used =

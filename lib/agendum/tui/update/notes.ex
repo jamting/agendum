@@ -212,16 +212,29 @@ defmodule Agendum.TUI.Update.Notes do
 
         after_id = if row.kind == :item, do: row.item.id
 
-        db = save(state.db, mode.target, TextEdit.text(edit), clock)
-        {db, id} = Core.add_item(db, text, clock, section: row.category.id, after: after_id)
-        db = if rest == "", do: db, else: Core.set_note(db, id, String.trim(rest), clock)
+        # the shorter note, the new item and its note are one change (one
+        # undo step): all three happen within this one key
+        saved = State.change_db(state, save(state.db, mode.target, TextEdit.text(edit), clock))
+        command = {:add_item, text, section: row.category.id, after: after_id}
 
-        state
-        |> State.put_mode(Map.merge(mode, %{edit: edit, match: nil}))
-        |> State.change_db(db)
-        |> State.info("New item in #{row.category.name}: #{text}")
+        case State.run_with_changes(saved, command) do
+          {saved, %{new: id}} ->
+            saved
+            |> State.put_mode(Map.merge(mode, %{edit: edit, match: nil}))
+            |> note_rest(id, rest, clock)
+            |> State.info("New item in #{row.category.name}: #{text}")
+
+          # only spaces taken: no item, and the note keeps them
+          {_refused, nil} ->
+            State.error(state, "Nothing there to make into an item")
+        end
     end
   end
+
+  defp note_rest(state, _id, "", _clock), do: state
+
+  defp note_rest(state, id, rest, clock),
+    do: State.change_db(state, Core.set_note(state.db, id, String.trim(rest), clock))
 
   # ALT-F2: the word at the cursor, its punctuation off, becomes a category
   # under the parent picked next (`Agendum.TUI.CategoryScreens.Picker`)

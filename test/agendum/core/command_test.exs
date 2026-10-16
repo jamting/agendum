@@ -75,6 +75,72 @@ defmodule Agendum.Core.CommandTest do
     end
   end
 
+  describe "adding and editing items" do
+    setup %{db: db} do
+      db = with_categories(db, ["Work", "Urgent", "Anna"])
+      %{db: db, work: cat(db, "Work"), urgent: cat(db, "Urgent")}
+    end
+
+    test "adds an item under a category, placed after another, and names it", %{
+      db: db,
+      a: a,
+      work: work
+    } do
+      {:ok, db, changes} =
+        Core.run(db, {:add_item, "Call Anna", section: work, after: a}, today())
+
+      id = changes.new
+      assert changes.items.added == [id]
+      assert db.items[id].text == "Call Anna"
+      assert Agendum.Core.Database.explicit?(db, id, work)
+      # matched by its text, as typing it does (R10)
+      assert Agendum.Core.Database.member?(db, id, cat(db, "Anna"))
+      assert Enum.drop_while(db.item_order, &(&1 != a)) |> Enum.at(1) == id
+    end
+
+    test "an item added in a view's section gets what the section's filter needs (R28)", %{
+      db: db,
+      work: work,
+      urgent: urgent
+    } do
+      {db, view} = Core.add_view(db, "Work", [work])
+      {:ok, db} = Core.cycle_filter(db, view, {:section, 0}, urgent)
+
+      {:ok, db, changes} =
+        Core.run(db, {:add_item, "Plan", section: work, view_section: {view, 0}}, today())
+
+      assert Agendum.Core.Database.explicit?(db, changes.new, urgent)
+    end
+
+    test "a datebook slot's date comes with the item (R47)", %{db: db} do
+      when_cat = db.special.when
+      date = {when_cat, ~D[2026-10-09], ~T[10:00:00]}
+      {:ok, db, changes} = Core.run(db, {:add_item, "Dentist", date: date}, today())
+
+      assert db.items[changes.new].when == ~D[2026-10-09]
+    end
+
+    test "edits an item's text, filing it anew by what it now says", %{db: db, a: a} do
+      {:ok, db, changes} = Core.run(db, {:edit_item, a, "Ask Anna"}, today())
+
+      assert db.items[a].text == "Ask Anna"
+      assert Agendum.Core.Database.member?(db, a, cat(db, "Anna"))
+      assert changes.items.changed == [a]
+    end
+
+    test "empty text is refused; ids that do not exist are refused", %{db: db, a: a, work: work} do
+      assert Core.run(db, {:add_item, "  ", []}, today()) == {:error, :empty_text}
+      assert Core.run(db, {:edit_item, a, ""}, today()) == {:error, :empty_text}
+      assert Core.run(db, {:edit_item, 999, "x"}, today()) == {:error, :no_such_item}
+      assert Core.run(db, {:add_item, "x", section: 999}, today()) == {:error, :no_such_category}
+      assert Core.run(db, {:add_item, "x", after: 999}, today()) == {:error, :no_such_item}
+      assert Core.run(db, {:add_item, "x", section: a}, today()) == {:error, :no_such_category}
+
+      assert Core.run(db, {:add_item, "x", section: work, view_section: {999, 0}}, today()) ==
+               {:error, :no_such_view}
+    end
+  end
+
   describe "what changed" do
     test "nothing, when the command changed nothing", %{db: db, a: a} do
       {:ok, db, _} = Core.run(db, {:toggle_done, a}, today())

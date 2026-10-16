@@ -52,11 +52,13 @@ The UI reads freely through `Database` queries (e.g. `member?/3`, `hierarchy/1`)
 
 | Command | Description |
 | ------- | ----------- |
+| `{:add_item, text, section:, after:, adjacent:, date:, view_section:}` | Typing a new item (R21): filed under `section` (a category id), after an item, by its text; `date:` a datebook slot's date (R47); `view_section: {view, index}` also gives it what that section's filters need (R28). `changes.new` is its id. |
+| `{:edit_item, item, text}` | Changing an item's text: filed again by what it now says (R10, R14). |
 | `{:toggle_mark, item}`, `{:set_marked, items, boolean}`, `:unmark_all` | F7 on an item or a section head, ALT-F7. |
 | `{:toggle_done, item}`, `{:mark_done, items}` | F4 on one item (toggles; a recurring one gets its next occurrence, R14a) / on the marked items (only sets). |
 | `{:discard_items, items}` | ALT-F4 on one item or the marked ones. |
 
-`Core.run(db, command, clock)` refuses an unknown command (`:unknown_command`) or an id that is not an item (`:no_such_item`) and changes nothing. `changes` (`Command.Changes`) holds `items`, `categories`, `views`, `macros` and `calendars`, each `%{added:, changed:, removed:}` ids, and `file`, the other fields that changed. `Command.describe(id)` gives a command's name and summary. The facade functions below that a command does are listed in `test/agendum/architecture_test.exs` (`@by_command`), and the TUI may not call them.
+`Core.run(db, command, clock)` refuses an unknown command (`:unknown_command`), an id that is not of its kind (`:no_such_item`, `:no_such_category`, `:no_such_view`) or empty text (`:empty_text`), and changes nothing. `changes` (`Command.Changes`) holds `items`, `categories`, `views`, `macros` and `calendars`, each `%{added:, changed:, removed:}` ids, and `file`, the other fields that changed. `Command.describe(id)` gives a command's name and summary. The facade functions below that a command does are listed in `test/agendum/architecture_test.exs` (`@by_command`), and the TUI may not call them.
 
 ### Items
 

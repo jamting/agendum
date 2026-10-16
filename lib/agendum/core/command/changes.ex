@@ -2,7 +2,8 @@ defmodule Agendum.Core.Command.Changes do
   @moduledoc """
   What a command changed (R66, ADR 0036): the ids of the items,
   categories, views, macros and calendars it added, changed or removed,
-  and which of the file's own settings it changed.
+  and which of the file's own settings it changed. A command that makes
+  an item also says which one (`new:`).
 
   It is found by comparing the database before and after, never reported
   by hand, so it is right for every command, the ones still to come
@@ -21,7 +22,11 @@ defmodule Agendum.Core.Command.Changes do
   @typedoc "Ids added, changed and removed, each list in id order."
   @type ids :: %{added: [Database.id()], changed: [Database.id()], removed: [Database.id()]}
 
+  # `optional(:new) =>` comes first: in a map type, the `key: type` pairs
+  # must come last. `new:` is added by the command, not found by
+  # comparing: the item it made.
   @type t :: %{
+          optional(:new) => Database.id(),
           items: ids,
           categories: ids,
           views: ids,

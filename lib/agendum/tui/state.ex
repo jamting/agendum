@@ -305,6 +305,9 @@ defmodule Agendum.TUI.State do
 
   # the core gives a reason as an atom; the words are the front end's
   defp command_error(:no_such_item), do: "That item is no longer in the file"
+  defp command_error(:no_such_category), do: "That category is no longer in the file"
+  defp command_error(:no_such_view), do: "That view or section is no longer in the file"
+  defp command_error(:empty_text), do: "The text cannot be empty"
   defp command_error(:unknown_command), do: "Agendum cannot do that"
 
   @doc """

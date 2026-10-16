@@ -112,7 +112,7 @@ defmodule Agendum.TUI.Update.Editing do
       old_when = Core.when_at(state.db.items[id])
 
       state
-      |> State.change_db(Core.edit_item(state.db, id, text, State.context(state)))
+      |> State.run({:edit_item, id, text})
       |> report_auto_assignments(id, MapSet.to_list(before), old_when)
     end
   end
@@ -164,12 +164,7 @@ defmodule Agendum.TUI.Update.Editing do
       if datebook.section_category == state.db.main_id, do: nil, else: datebook.section_category
 
     opts = Keyword.put(Agendum.Core.Datebook.entry(datebook, slot), :section, section)
-    {db, id} = Core.add_item(state.db, text, State.context(state), opts)
-
-    state
-    |> State.change_db(db)
-    |> Map.put(:cursor_key, {:item, sidx, id})
-    |> report_auto_assignments(id, List.wrap(section))
+    state |> State.run_with_changes({:add_item, text, opts}) |> added(sidx, List.wrap(section))
   end
 
   defp new_item(state, sidx, key, text) do
@@ -192,24 +187,26 @@ defmodule Agendum.TUI.Update.Editing do
 
     section = if section_cat == state.db.main_id, do: nil, else: section_cat
 
-    {db, id} =
-      Core.add_item(state.db, text, State.context(state),
-        section: section,
-        after: after_id,
-        adjacent: adjacent
-      )
+    # a filtered view or section gives new items what the filter needs
+    # (R28): the command does it, given the view's section
+    required = Core.entry_categories(state.db, state.view_id, sidx)
 
-    # a filtered view or section gives new items what the filter needs (R28)
-    required = Core.entry_categories(db, state.view_id, sidx)
-    db = Enum.reduce(required, db, &Core.assign(&2, id, &1, State.context(state)))
-    values = Core.entry_values(db, state.view_id, sidx, State.context(state))
-    db = Core.apply_entry_values(db, id, values, State.context(state))
+    command =
+      {:add_item, text,
+       section: section, after: after_id, adjacent: adjacent, view_section: {state.view_id, sidx}}
 
-    state
-    |> State.change_db(db)
-    |> Map.put(:cursor_key, {:item, sidx, id})
-    |> report_auto_assignments(id, List.wrap(section) ++ required)
+    state |> State.run_with_changes(command) |> added(sidx, List.wrap(section) ++ required)
   end
+
+  # The new item is highlighted, and what was filed on its own is told;
+  # `already` are the categories it was typed under, not news.
+  defp added({state, %{new: id}}, sidx, already) do
+    state
+    |> Map.put(:cursor_key, {:item, sidx, id})
+    |> report_auto_assignments(id, already)
+  end
+
+  defp added({state, _refused}, _sidx, _already), do: state
 
   defp predecessor(order, id) do
     case Enum.find_index(order, &(&1 == id)) do
