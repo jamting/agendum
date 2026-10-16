@@ -1,10 +1,10 @@
 # Reverse engineering Agenda's .AG format: methods and progress
 
+**Status (2026-10-15, after the second round):** research done; next, the importer (ROADMAP, Data interchange; "Next steps" below). The format is mapped as far as an import needs, and most of the rest: items, notes and note files, categories with every setting of their properties boxes, conditions, actions and special actions, assignments with date, numeric and unindexed values, relative and recurring date expressions, alarms, views with their flags, sort keys, filters and date ranges, datebook views, sections, columns with widths and formats, and the file-level settings in the header. A reference reader (`tools/agformat/agdump.py`) decodes all of it for every file at hand. What is left open is listed at the end of the format document; none of it is needed to import.
+
 2026-10-14 · Claude, for Mattias Jämting
 
 The lab notebook behind [AGENDA_FILE_FORMAT.md](../AGENDA_FILE_FORMAT.md): what was tried, with which tools, how far it got, and what to do next. The goal is importing old Agenda files into Agendum; this stage only describes the format.
-
-**Status (2026-10-15, after the second round):** research done; next, the importer (ROADMAP, Data interchange; "Next steps" below). The format is mapped as far as an import needs, and most of the rest: items, notes and note files, categories with every setting of their properties boxes, conditions, actions and special actions, assignments with date, numeric and unindexed values, relative and recurring date expressions, alarms, views with their flags, sort keys, filters and date ranges, datebook views, sections, columns with widths and formats, and the file-level settings in the header. A reference reader (`tools/agformat/agdump.py`) decodes all of it for every file at hand. What is left open is listed at the end of the format document; none of it is needed to import.
 
 ## Prior art
 

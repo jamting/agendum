@@ -60,7 +60,7 @@ Each plan starts with its status.
 | [`plans/RENAME_REPO.md`](plans/RENAME_REPO.md)                         | Renaming the repository folder, with Claude Code's memory                      |
 | [`plans/ITEM_LEVELS.md`](plans/ITEM_LEVELS.md)                         | Three levels of items: zettels, ingested items, the model's context items (vision) |
 | [`plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)           | An idea: a personal agent inside the file                                      |
-| [`plans/REFACTORING.md`](plans/REFACTORING.md)                         | Where organic growth left complexity (mostly done)                             |
+| [`plans/REFACTORING.md`](plans/REFACTORING.md)                         | Where organic growth left complexity (done; a record)                           |
 | [`plans/DOSBOX_STAGING.md`](plans/DOSBOX_STAGING.md)                   | Running the real Agenda for Claude (done differently; a record)                |
 
 ## Reviews, meetings and study
@@ -68,8 +68,8 @@ Each plan starts with its status.
 | Document                       | About                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
 | `docs/reviews/` (one per date) | Dated expert panel reviews, written as meeting minutes (architecture, code, users, business, vision, methods, tidiness and scope, agent readiness), each following up the last (`expert-review` skill) |
-| [`meetings/dagordning.md`](meetings/dagordning.md) | The next panel meeting's agenda, where the owner collects thoughts to discuss (template `meetings/TEMPLATE.md`); each meeting's agenda and minutes in `docs/meetings/YYYY-MM-DD/` (`meeting` skill) |
-| [`study/STUDY_PLAN.md`](study/STUDY_PLAN.md) | The owner's study of the code: units the panel picks, with questions ticked off when understood (`study-plan` skill) |
+| `docs/meetings/dagordning.md` | The next panel meeting's agenda, where the owner collects thoughts to discuss (template `docs/meetings/TEMPLATE.md`); each meeting's agenda and minutes in `docs/meetings/YYYY-MM-DD/` (`meeting` skill) |
+| `docs/study/STUDY_PLAN.md` | The owner's study of the code: units the panel picks, with questions ticked off when understood (`study-plan` skill) |
 
 ## Where a change is written down
 

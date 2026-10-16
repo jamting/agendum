@@ -1,8 +1,8 @@
 # Refactoring plan (2026-10-14)
 
-Agendum grew feature by feature. This is a review of where that left unnecessary complexity, in the code and in the tooling around it (Mix commands, skills, scripts, documents), and what to do about it, in order.
-
 **Status (2026-10-16):** steps 1 and 3 done; 2 decided (the hints stay); 4 done with the command layer (R66, ADR 0036) and typed UI modes (ADR 0037); 5 done for now (the plans moved to `docs/plans/`; the documents streamlined, with an index in `docs/INDEX.md`); 6 needs no change. How to add a box is now in `docs/ARCHITECTURE.md` (TUI).
+
+Agendum grew feature by feature. This is a review of where that left unnecessary complexity, in the code and in the tooling around it (Mix commands, skills, scripts, documents), and what to do about it, in order.
 
 **In short:** the foundations are sound and stay as they are: the pure core (checked by `test/agendum/architecture_test.exs`), the facade over area modules (ADR 0023), `mix check` as the one quality gate (ADR 0012), the ADRs. The one real structural problem is how a settings box is spread over many files. The rest is small.
 

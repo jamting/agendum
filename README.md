@@ -45,7 +45,6 @@ cp starters/planner.agendum ~/planner.agendum && ./agendum ~/planner.agendum
 
 The [user guide](docs/guide/index.html) is the short version, with a worked example; the [manual](docs/manual/index.html) is the long one, as Owl explains it to Rabbit. Open them in a browser; `mix docs` also puts them beside the API documentation.
 
-
 - **Type** under a section to add an item. It is assigned to that section's category, and automatically to any category it mentions.
 - Dates in the text count: "Call Bob next Friday" gets a When date. **ALT-F2** (or Item ▸ When) sets one explicitly.
 - **→ / TAB** moves into columns. Type a name to assign (new names create subcategories) or a date (`tomorrow`, `friday`, `2026-12-24`) in the When column.

@@ -1,10 +1,10 @@
 # Wol in the machine: a personal agent inside the file
 
-**Status:** an idea, not a plan yet (ROADMAP, Ideas).
+**Status:** an idea, not a plan yet (ROADMAP, Ideas); to be turned into a plan and an ADR when its time comes.
 
 (Name of file is a reference to Ghost in the Machine)
 
-An idea, not a plan yet (Roadmap, "Ideas"). Written down on 2026-10-13 from a conversation between the owner and Claude; to be turned into a plan and an ADR when its time comes.
+Written down on 2026-10-13 from a conversation between the owner and Claude.
 
 **The idea.** A language model agent that lives inside a person's Agendum file: it reads their items, categories and views, and helps them file, find and plan, the way an assistant who knows the file well would. Wol, the owl who knows the Hundred Acre Wood, inside the program named after him.
 
