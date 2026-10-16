@@ -66,7 +66,7 @@ Each plan starts with its status.
 | [`plans/REFACTORING.md`](plans/REFACTORING.md)                         | Where organic growth left complexity (mostly done)                             |
 | [`plans/DOSBOX_STAGING.md`](plans/DOSBOX_STAGING.md)                   | Running the real Agenda for Claude (done differently; a record)                |
 
-## Reviews
+## Reviews and study
 
 | Document                       | About                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------- |

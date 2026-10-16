@@ -116,6 +116,10 @@ Run `mix check` for real (in the background) and report what it said; do
 not assume it passes. Optionally time a large file (the roadmap's
 "Sharpen the saw" items) if performance is a finding.
 
+**The owner's study** (Methods): the table at the top of
+`docs/study/STUDY_PLAN.md`, if it exists (`study-plan` skill): units
+done, boxes ticked, what is next.
+
 **The previous review**: read the newest file in `docs/reviews/`. Each
 of its recommendations is followed up: done, partly, not yet, or dropped
 (with the commit or the reason).
