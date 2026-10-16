@@ -43,8 +43,9 @@ inline `# credo:disable-for-next-line` with the reason.
    outside world. New side effects become new effect tuples handled in `App`.
 3. The TUI calls the core through `Agendum.Core` (the facade) and reads the
    database through `Agendum.Core.Database` queries. It never calls
-   `Database` write functions; `test/agendum/architecture_test.exs` fails if
-   it does. Add a facade function instead (written in an area module under
+   `Database` write functions (any whose `@spec` returns a database, so
+   every public `Database` function needs a spec); `test/agendum/architecture_test.exs`
+   fails if it does, reading the calls from the compiled code (`:xref`). Add a facade function instead (written in an area module under
    `lib/agendum/core/facade/`, delegated from `Agendum.Core`). Assignment
    rules live only in `Agendum.Core.Assign`; never re-implement them in the UI.
 4. Subsumption (membership in ancestors) is **computed, never stored**. Only

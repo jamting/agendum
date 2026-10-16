@@ -48,9 +48,15 @@ flowchart TB
 The UI reads freely through `Database` queries (e.g. `member?/3`,
 `hierarchy/1`), but **every change goes through `Agendum.Core`**, even
 simple field updates with no rules. `test/agendum/architecture_test.exs`
-enforces this. It fails if any file under `lib/agendum/tui/` calls a
-`Database` write function (`insert_*`, `update_*`, `delete_*`, `link`,
-`unlink`, `reorder_item`, …) or updates the `db` struct directly.
+enforces this. It reads every call from the compiled modules with OTP's
+`:xref` (so an alias or an import hides nothing) and fails if an
+`Agendum.TUI` module calls a `Database` write function: any whose `@spec`
+returns a database (`insert_*`, `update_*`, `link`, `unlink`, …; a new one
+is covered without a list, and every public `Database` function must have
+a spec). It also fails if a TUI file updates a database struct by hand
+(`%{state.db | …}`, `put_in(state.db…)`), found in the parsed source. The
+same test checks the core's purity on the compiled calls: no files,
+terminal, environment, processes, clock or randomness.
 
 ## API by concern
 

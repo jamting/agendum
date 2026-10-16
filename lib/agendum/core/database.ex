@@ -745,6 +745,7 @@ defmodule Agendum.Core.Database do
   # ---------------------------------------------------------------------------
 
   @doc false
+  @spec normalize(String.t()) :: String.t()
   def normalize(name),
     do: name |> String.trim() |> String.downcase() |> String.replace(~r/\s+/u, " ")
 
