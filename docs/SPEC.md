@@ -1294,7 +1294,12 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   global command (Item ▸ Finished is Done) has that command's text, so the
   two cannot drift apart (`Agendum.TUI.CommandDocs`).
 - **R65c ✅ The help screen's frame and pane** (ours; the owner,
-  2026-10-16). Every help page (F1's text, `c`, `d`, `a`) has the same
+  2026-10-16). The help is a box over the screen it was opened from:
+  about four fifths of the width and of the height (at least 40 columns
+  and 16 rows where the screen has them), centred, framed with "Help" in
+  its top edge and a shadow, while the screen beneath (with any box open
+  on it) fades as behind any box, so opening help changes less of what
+  is seen. Every help page (F1's text, `c`, `d`, `a`) has the same
   frame: a heading in a colour of its own, with the page's keys on its
   right; a line under it; a rule. The heading stays while the page
   scrolls. The command list leaves a pane of five lines at the foot,
@@ -1306,8 +1311,8 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   commands do not move as the highlight moves; the rule says how many
   are above and below. A summary too long for the screen ends in "…".
   The colours follow the theme (`help_title`, `help_rule`, `help_pane`,
-  `help_pane_title`): in the classic theme a white heading, cyan rules
-  and a black-on-cyan pane, like Agenda's boxes.
+  `help_pane_title`, `help_frame`): in the classic theme a white heading
+  and frame, cyan rules and a black-on-cyan pane, like Agenda's boxes.
 - **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
   category name is typed into a column cell, Agenda shows the first
   matching category (the rest of its name in grey), the top line says how

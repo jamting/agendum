@@ -124,6 +124,7 @@ defmodule Agendum.TUI.Terminal.Theme do
       help_rule: {:cyan, :blue},
       help_pane: {:black, :cyan},
       help_pane_title: {:blue, :cyan},
+      help_frame: {:white, :blue},
       splash_logo: {:white, :black},
       splash_title: {:white, :cyan},
       splash_value: {:blue, :cyan}
@@ -175,6 +176,7 @@ defmodule Agendum.TUI.Terminal.Theme do
       help_rule: "0;2",
       help_pane: "0;7",
       help_pane_title: "0;1;7",
+      help_frame: "0",
       splash_logo: "0;1",
       splash_title: "0;1;7",
       splash_value: "0;4;7"

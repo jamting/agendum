@@ -220,7 +220,10 @@ defmodule Agendum.TUI.HelpScreen do
   # ← → page through the highlighted command's text in the pane
   def handle(state, %{page: :commands} = mode, key) when key in [:left, :right] do
     step = if key == :right, do: 1, else: -1
-    pages = state |> State.pop() |> shown(mode) |> Enum.at(mode.cursor) |> pane_pages(state.width)
+
+    pages =
+      state |> State.pop() |> shown(mode) |> Enum.at(mode.cursor) |> pane_pages(width(state))
+
     State.put_mode(state, %{mode | pane: (mode.pane + step) |> min(length(pages) - 1) |> max(0)})
   end
 
@@ -269,7 +272,7 @@ defmodule Agendum.TUI.HelpScreen do
 
   defp scroll(state, mode, key) do
     page = content_height(state)
-    count = length(page_lines(State.pop(state), mode, state.width))
+    count = length(page_lines(State.pop(state), mode, width(state)))
     last = max(count - page, 0)
 
     top =
@@ -410,7 +413,7 @@ defmodule Agendum.TUI.HelpScreen do
   defp doc_lines(_state, %Command{doc: nil}), do: []
 
   defp doc_lines(state, %Command{doc: doc}),
-    do: ["" | Agendum.TUI.Terminal.Draw.wrap(doc, state.width - 4)]
+    do: ["" | Agendum.TUI.Terminal.Draw.wrap(doc, width(state) - 4)]
 
   defp not_now(state, from, place_id) do
     case unavailable(state, from)[place_id] do
@@ -518,12 +521,12 @@ defmodule Agendum.TUI.HelpScreen do
   @spec lines(State.t(), map) :: [[{atom, String.t()}]]
   def lines(state, %{page: :about, from: from} = mode) do
     head("HELP #{where(from)}", "", " c commands here · d describe a key · a all keys", state) ++
-      (state |> below(mode) |> page_lines(mode, state.width) |> Enum.drop(mode.top))
+      (state |> below(mode) |> page_lines(mode, width(state)) |> Enum.drop(mode.top))
   end
 
   def lines(state, %{page: :all} = mode) do
     head("ALL KEYS", "↑↓ PGUP PGDN scroll", "   Every key, made from the keymaps.", state) ++
-      (state |> below(mode) |> page_lines(mode, state.width) |> Enum.drop(mode.top))
+      (state |> below(mode) |> page_lines(mode, width(state)) |> Enum.drop(mode.top))
   end
 
   def lines(state, %{page: :commands} = mode) do
@@ -546,7 +549,7 @@ defmodule Agendum.TUI.HelpScreen do
             true -> :normal
           end
 
-        for text <- Help.row(command, keys), do: [{style, Help.clip(text, state.width)}]
+        for text <- Help.row(command, keys), do: [{style, Help.clip(text, width(state))}]
       end)
 
     shown = entries |> Enum.drop(top) |> fitting(rows)
@@ -562,8 +565,8 @@ defmodule Agendum.TUI.HelpScreen do
     head("COMMANDS #{where(mode.from)}", "↑↓ move · ENTER runs · ESC returns", typed, state) ++
       visible ++
       List.duplicate([], max(rows - length(visible), 0)) ++
-      [pane_rule(top, after_shown, entry, mode.pane, state.width)] ++
-      pane(entry, reason(unavailable, entry), mode.pane, state.width)
+      [pane_rule(top, after_shown, entry, mode.pane, width(state))] ++
+      pane(entry, reason(unavailable, entry), mode.pane, width(state))
   end
 
   def lines(state, %{page: :describe, described: nil, from: from}),
@@ -583,7 +586,7 @@ defmodule Agendum.TUI.HelpScreen do
   # the heading (with `keys` on its right, when they fit), the line under
   # it, and a rule
   defp head(heading, keys, under, state) do
-    width = state.width
+    width = width(state)
     title = " " <> heading
     gap = width - String.length(title) - String.length(keys) - 1
 
@@ -599,8 +602,24 @@ defmodule Agendum.TUI.HelpScreen do
   defp rule(width), do: " " <> String.duplicate("─", max(width - 2, 0))
 
   # the rows the list has, and the rows a scrolled page shows
-  defp list_height(state), do: max(State.body_height(state) - @head - 1 - @pane, 1)
-  defp content_height(state), do: max(State.body_height(state) - @head, 1)
+  defp list_height(state), do: max(height(state) - @head - 1 - @pane, 1)
+  defp content_height(state), do: max(height(state) - @head, 1)
+
+  @doc """
+  The inside of the help's box, `{width, height}` (R65c): about four
+  fifths of the screen's width and of its body's height, but at least 40
+  columns and 16 rows where the screen has them. `Agendum.TUI.Render`
+  draws the box; every page is laid out to fit inside it.
+  """
+  @spec size(State.t()) :: {pos_integer, pos_integer}
+  def size(state) do
+    w = state.width
+    h = State.body_height(state)
+    {max(min(w, max(div(w * 4, 5), 40)) - 2, 1), max(min(h, max(div(h * 4, 5), 16)) - 2, 1)}
+  end
+
+  defp width(state), do: elem(size(state), 0)
+  defp height(state), do: elem(size(state), 1)
 
   # how many rows each command takes (its keys may need more than one)
   defp heights(list), do: for({command, _, keys} <- list, do: length(Help.row(command, keys)))

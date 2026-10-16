@@ -168,7 +168,8 @@ defmodule Agendum.TUI.AvailableTest do
     end
 
     test "greys what cannot run now, and leaves the rest as it was", %{state: state} do
-      listed = list(on_item(state))
+      # a tall screen, so that Yank is in the list as it opens
+      listed = list(on_item(%{state | height: 80}))
       assert row_style(listed, "Yank") == :dim
       assert row_style(listed, "Edit") == :normal
     end

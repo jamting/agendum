@@ -301,4 +301,4 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] KEYBOARD.md checked against the keymaps (a test: every F-, ALT- and CTRL-key in them is in it)
   - [x] F1 then `c` greys the commands that cannot run now and says why (R65a), 2026-10-16
   - [x] Longer texts for the commands, shown by F1 `c` and `d` (R65b), 2026-10-16
-  - [x] The help page's look and feel (R65c, 2026-10-16): the same frame on every page, colours from the theme, a fixed pane of five lines at the foot with the longer text and the "Not now" reason (← → page through a long text), "…" for a long summary. To try with the owner: the colours
+  - [x] The help page's look and feel (R65c, 2026-10-16): the same frame on every page, colours from the theme, a fixed pane of five lines at the foot with the longer text and the "Not now" reason (← → page through a long text), "…" for a long summary; drawn as a box of four fifths of the screen over the faded screen beneath. To try with the owner: the colours, and whether the box should be taller on an 80×25 screen (the command list has about six rows there)

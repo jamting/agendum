@@ -29,9 +29,17 @@ defmodule Agendum.TUI.Render do
   def render(%State{modes: [%{type: :splash} | _]} = state), do: Agendum.TUI.Splash.render(state)
 
   def render(%State{width: w} = state) do
+    {base, _overlays} = split_modes(state.modes)
+
+    ControlPanel.lines(state, base) ++
+      Enum.map(screen_body(state), &Draw.line(&1, w)) ++
+      if(state.key_map, do: [KeyBar.line(state)], else: [])
+  end
+
+  # the body: the full screen (or the view), and the boxes over it
+  defp screen_body(state) do
     {base, overlays} = split_modes(state.modes)
-    {styles, fill} = surface(base)
-    body = Enum.map(body(state, base), &(&1 |> Draw.paint(styles) |> Draw.line(w, fill)))
+    body = painted_body(state, base)
     # behind a box, the screen fades (Agenda greys it out)
     body = if overlays == [], do: body, else: Enum.map(body, &fade/1)
 
@@ -44,9 +52,42 @@ defmodule Agendum.TUI.Render do
         Boxes.overlay(state, mode, depth, depth == length(overlays) - 1, body, beneath)
       end)
 
-    ControlPanel.lines(state, base) ++
-      Enum.map(body, &Draw.line(&1, w)) ++
-      if(state.key_map, do: [KeyBar.line(state)], else: [])
+    body
+  end
+
+  # The body of the full screen (or the view), in its colours. The help is
+  # a box over the screen it was opened from, which fades behind it as
+  # behind any box (R65c): opening help changes less of what is seen.
+  defp painted_body(state, %{type: :help} = help) do
+    # what F1 was pressed over, boxes and all
+    under = %{state | modes: tl(Enum.drop_while(state.modes, &(&1 != help)))}
+    beneath = under |> screen_body() |> Enum.map(&fade/1)
+    {inner_w, inner_h} = Agendum.TUI.HelpScreen.size(state)
+    {styles, fill} = surface(help)
+
+    content =
+      state
+      |> Agendum.TUI.HelpScreen.lines(help)
+      |> Enum.take(inner_h)
+      |> then(&(&1 ++ List.duplicate([], inner_h - length(&1))))
+      |> Enum.map(&(&1 |> Draw.paint(styles) |> Draw.line(inner_w, fill)))
+
+    box =
+      "Help"
+      |> Draw.box(content, inner_w)
+      |> Enum.map(&Draw.paint(&1, %{box_frame: :help_frame, box_title: :help_title}))
+
+    top = div(State.body_height(state) - inner_h - 2, 2)
+    left = div(state.width - inner_w - 2, 2)
+
+    beneath
+    |> Draw.overlay(box, top, left)
+    |> Draw.shadow(top, left, inner_h + 2, inner_w + 2)
+  end
+
+  defp painted_body(state, base) do
+    {styles, fill} = surface(base)
+    Enum.map(body(state, base), &(&1 |> Draw.paint(styles) |> Draw.line(state.width, fill)))
   end
 
   # Everything fades but a note's search match: Search/Replace's question
@@ -82,9 +123,6 @@ defmodule Agendum.TUI.Render do
 
   defp body(state, nil), do: fit(View.lines(state), state)
   defp body(state, %{type: :catmgr} = mode), do: fit(Managers.category_lines(state, mode), state)
-
-  defp body(state, %{type: :help} = mode),
-    do: fit(Agendum.TUI.HelpScreen.lines(state, mode), state)
 
   defp body(state, %{type: :devtools} = mode) do
     lines =

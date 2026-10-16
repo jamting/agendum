@@ -11,8 +11,9 @@ Everything the TUI shows on top of the current view is a **mode** on a stack,
 returns to what was underneath. `Agendum.TUI.Update.handle/2` sends each key to
 the mode on top; `Agendum.TUI.Render` draws the stack. Modes come in three kinds:
 
-- **Full screens** replace the view: the category manager, the view manager,
-  help and the note editor.
+- **Full screens** replace the view: the category manager, the view manager
+  and the note editor. Help is one too, but drawn as a box of four fifths
+  of the screen over what it was opened from, which fades behind it.
 - **Boxes** are drawn over the view (or over a full screen) in a frame with a
   title. A box opened from a box sits one line lower and two columns right.
 - **Control-panel modes** use only the two lines at the top: the menu, prompts,
@@ -96,7 +97,8 @@ or handles it.
   - **Help** `:help` (F1, wherever the keys are not typing): a text about
     where you are, then `c` the command list (typing narrows it, ENTER runs
     the highlighted command), `d` describe key, `a` all the keys, made from
-    the keymaps (`Agendum.TUI.Render.Help`) (R65). `Agendum.TUI.HelpScreen`.
+    the keymaps (`Agendum.TUI.Render.Help`) (R65). Drawn as a box over the
+    faded screen (R65c). `Agendum.TUI.HelpScreen`.
   - **Prompt** `:prompt`: one line of text in the control panel (a file name,
     a new view's name, a category name). `Agendum.TUI.Update.Prompts`.
     - **Select File** `:select_file` (F3 in a prompt for a file name): the

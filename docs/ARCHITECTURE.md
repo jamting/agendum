@@ -178,8 +178,9 @@ the rest by what it is for:
 
 - **Mode stack.** Overlays (menu, managers, pickers, prompts) are pushed
   on `state.modes`; ESC pops. Full-screen modes (category manager, view
-  manager, note, help) replace the body; boxes (picker, profile,
-  properties) draw over it.
+  manager, note) replace the body; boxes (picker, profile,
+  properties) draw over it. Help is a full-screen mode drawn as a large
+  box over the faded screen it was opened from, boxes and all (R65c).
 - **Effects as data.** `Update` never performs I/O. It queues effects
   (`{:save, path}`, `{:load, path}`, `{:write_text, path, text}`, `:quit`)
   that `App` executes, feeding results back through `Update.saved/3` and

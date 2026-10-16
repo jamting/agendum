@@ -51,7 +51,7 @@ defmodule Agendum.TUI.HelpLayoutTest do
     test "five lines at the foot, under a rule", %{state: state} do
       listed = press(state, [{:f, 1}, "c"])
       lines = body(listed)
-      assert length(lines) == State.body_height(listed)
+      assert length(lines) == elem(HelpScreen.size(listed), 1)
       assert Enum.at(lines, -6) =~ ~r/^ ─/
       assert Enum.at(lines, -5) =~ ~r/^ Up · ↑/
     end
@@ -90,12 +90,16 @@ defmodule Agendum.TUI.HelpLayoutTest do
       narrow = %{state | width: 50}
       listed = press(narrow, [{:f, 1}, "c", "remove"])
       first = Enum.take(body(listed), -4)
-      assert Enum.at(body(listed), -6) =~ "← → 1/2"
+      [_, pages] = Regex.run(~r{← → 1/(\d)}u, Enum.at(body(listed), -6))
+      pages = String.to_integer(pages)
+      assert pages >= 2
 
       next = press(listed, :right)
       assert Enum.take(body(next), -4) != first
-      assert Enum.at(body(next), -6) =~ "← → 2/2"
-      assert press(next, :right) |> body() |> Enum.take(-4) == Enum.take(body(next), -4)
+      assert Enum.at(body(next), -6) =~ "← → 2/#{pages}"
+
+      last = press(listed, List.duplicate(:right, pages + 2))
+      assert Enum.at(body(last), -6) =~ "← → #{pages}/#{pages}"
       assert press(next, :left) |> body() |> Enum.take(-4) == first
     end
 
@@ -107,7 +111,7 @@ defmodule Agendum.TUI.HelpLayoutTest do
 
     test "the list scrolls only when the highlight reaches its edge", %{state: state} do
       listed = press(state, [{:f, 1}, "c"])
-      rows = State.body_height(listed) - 9
+      rows = elem(HelpScreen.size(listed), 1) - 9
       down = press(listed, List.duplicate(:down, rows + 3))
       first = Enum.at(body(down), 3)
       refute first =~ ~r/^ Up /

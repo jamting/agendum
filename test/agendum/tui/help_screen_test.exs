@@ -15,7 +15,7 @@ defmodule Agendum.TUI.HelpScreenTest do
 
   setup do
     db = Planner.build() |> Planner.with_samples(@today)
-    %{state: start(db, today: @today, height: 40, width: 100)}
+    %{state: start(db, today: @today, height: 60, width: 100)}
   end
 
   defp to_command(state, name) do
@@ -140,7 +140,7 @@ defmodule Agendum.TUI.HelpScreenTest do
       text = screen(press(state, [{:f, 8}, {:f, 1}, "c"]))
       assert text =~ "COMMANDS IN THE VIEW MANAGER"
       # keys that do not fit go on to the next line
-      assert text =~ ~r/Discard +DEL F4 ALT-F4 CTRL-D +Discard the view.*\n +CTRL-K\n/
+      assert text =~ ~r/Discard +DEL F4 ALT-F4 CTRL-D +Discard the view.*\n.*│ +CTRL-K /u
       back = press(state, [{:f, 8}, {:f, 1}, "c", :esc])
       assert Enum.map(back.modes, & &1.type) == [:viewmgr]
     end
@@ -282,7 +282,10 @@ defmodule Agendum.TUI.HelpScreenTest do
          %{box: box} do
       over = press(box, [{:f, 1}, "c", {:alt_f, 3}])
       assert Enum.map(over.modes, & &1.type) == [:macros, :help, :item_props]
-      assert screen(over) =~ "COMMANDS IN THIS BOX"
+      # the macro manager covers the help's heading; the help is still there
+      help = Enum.at(over.modes, 1)
+      assert HelpScreen.lines(over, help) |> inspect() =~ "COMMANDS IN THIS BOX"
+      assert screen(over) =~ "Macros"
     end
 
     test "F1 while typing in the box does not open the help", %{box: box} do
