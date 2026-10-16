@@ -130,13 +130,21 @@ from the menu goes back to the menu on <kbd>ESC</kbd>, one level at a time.</p>
 <kbd>ENTER</kbd> accepts it.</p>
 
 <p>Press <kbd>F10</kbd> (or <kbd>/</kbd>) for the menu and choose a command by its first
-letter. <kbd>F1</kbd> shows help, <kbd>ESC</kbd> goes back, and <kbd>CTRL-Z</kbd> undoes
-almost anything.</p>
+letter. <kbd>ESC</kbd> goes back, and <kbd>CTRL-Z</kbd> undoes almost anything.</p>
+
+<p><kbd>F1</kbd> is help about where you are: the view, a note, a manager, the menu or
+the box on top. It opens as a box over the screen, which fades behind it. From there,
+<kbd>c</kbd> lists the commands you can use right here, with their keys: type a few
+letters to narrow the list, and <kbd>ENTER</kbd> runs the highlighted one. Commands that
+can't do anything just now are greyed, with the reason (“Not now: No removed item to yank back”), so
+you still see what the place offers. <kbd>d</kbd> then a key tells you what that key
+does here, without doing it, and <kbd>a</kbd> lists every key.</p>
 
 <div class="tip">Agendum needs the function keys, as Agenda did. On a Mac, hold
 <kbd>fn</kbd> with them, or turn on “Use F1, F2, etc. keys as standard function keys” in
-System Settings ▸ Keyboard. <kbd>ESC</kbd> then a letter works as the <kbd>ALT</kbd> key
-with it, and <kbd>CTRL-N</kbd> stands in for <kbd>INS</kbd>. The full list is in the
+System Settings ▸ Keyboard. <kbd>ALT</kbd> is <kbd>⌥</kbd> (Option), once your terminal
+uses it as the Meta key (Terminal.app: Settings ▸ Profiles ▸ Keyboard), and
+<kbd>CTRL-N</kbd> stands in for <kbd>INS</kbd>. The full list is in the
 <a href="#keys">keyboard reference</a>.</div>
 </section>
 
@@ -232,7 +240,9 @@ the item leaves Owl again. Assignments you make yourself always stay.</p>
 
 <p>To assign by hand, press <kbd>F3</kbd> on an item for its <em>assignment profile</em>
 (<kbd>SPACE</kbd> ticks a category), or <kbd>ALT-M</kbd> to pick one category for the item
-or all marked items.</p>
+or all marked items. In the profile, the control panel says why the item is in the
+highlighted category: typed there by hand, its name in the text, a condition, an action,
+or through a subcategory (“In Urgent: its condition holds”).</p>
 
 <h3>Category properties</h3>
 <p><kbd>F6</kbd> on a category opens its properties, a box in two columns as Agenda's
@@ -298,7 +308,10 @@ moves, every section is folded up so you can see where it goes; <kbd>ESC</kbd> p
 back.</p>
 
 <p>The view manager (<kbd>F8</kbd>) is a box listing your views, with <code>*</code>
-before a datebook: <kbd>ENTER</kbd> shows one, <kbd>DEL</kbd> discards one.</p>
+before a datebook and <code>►</code> before the one you are in: <kbd>ENTER</kbd> shows
+one, <kbd>DEL</kbd> discards one. <kbd>F5</kbd> lists them by when you last used them,
+the one you are in first; <kbd>F5</kbd> again goes back to your own order, and Agendum
+remembers which you chose.</p>
 
 <p>Typing in a column assigns the item: in the <em>People</em> column, Piglet types
 <kbd>R</kbd> and Agendum offers <em>Rabbit</em> (<kbd>ENTER</kbd> takes it,
@@ -370,6 +383,15 @@ without a year are always in the future.</p>
   <tr><td>Give one date column a look of its own</td><td><strong>View ▸ Column ▸ Properties</strong> on the column</td></tr>
   <tr><td>Stop reading dates from item text</td><td><strong>File ▸ Dating</strong></td></tr>
 </table>
+
+<p>Alarms that came due while the file was closed are not lost. When you open it, a
+<em>While you were away</em> box lists them, the latest first, with when each was due
+(the same reminder twice is one line, “×2”). <kbd>ENTER</kbd> or <kbd>ESC</kbd> closes
+it, and they wait in <strong>Search ▸ Alarms</strong> with the other past alarms.</p>
+
+<div class="story">Piglet went out to look for haycorns and forgot the time. When he
+opened his party file again, a box was waiting: “Ask Owl about the cake” had come due
+while he was away.</div>
 
 <p><strong>File ▸ Properties</strong> opens boxes one inside another, as Agenda did: SPACE on
 <em>Global date settings …</em> and then on <em>Display format …</em> sets how the whole
@@ -632,6 +654,10 @@ folders: <kbd>↑</kbd> <kbd>↓</kbd> move, typing narrows the list, <kbd>ENTER
 folder or takes the file, <code>../</code> goes up, and <kbd>F7</kbd> shows when each was
 last changed.</p>
 
+<p>A file opens where you left it: in the same view, on the same item. Agendum keeps
+your place in your own preferences, not in the file, so moving about never counts as
+a change to save.</p>
+
 <p>Before quitting, opening another file, starting a new one or importing, Agendum asks
 “Save changes first?” if there are any: <kbd>Y</kbd> saves, <kbd>N</kbd> doesn't,
 <kbd>ESC</kbd> stays where you are.</p>
@@ -723,12 +749,13 @@ attaches it to <kbd>F4</kbd> … no, Owl points out, <kbd>F4</kbd> is Done … t
 
 <p>The function keys are needed, as in Agenda: on a Mac, hold <kbd>fn</kbd> with them
 (<kbd>ALT-F</kbd> keys are <kbd>⌥</kbd> with the function key) or make them standard
-function keys in System Settings ▸ Keyboard. Every <kbd>ALT</kbd> letter also works as
-<kbd>ESC</kbd> then the letter.</p>
+function keys in System Settings ▸ Keyboard. <kbd>ALT</kbd> letters are <kbd>⌥</kbd>
+letters, with Option set to work as the Meta key in your terminal. <kbd>F1</kbd> then
+<kbd>a</kbd> lists every key, wherever you are.</p>
 
 <table>
   <tr><th>Key</th><th>In a view</th><th>Mac-friendly</th></tr>
-  <tr><td><kbd>F1</kbd></td><td>Help</td><td></td></tr>
+  <tr><td><kbd>F1</kbd></td><td>Help about where you are; then <kbd>c</kbd> the commands, <kbd>d</kbd> what a key does, <kbd>a</kbd> every key</td><td></td></tr>
   <tr><td><kbd>F2</kbd></td><td>Edit item, section head or column entry</td><td><kbd>CTRL-E</kbd></td></tr>
   <tr><td><kbd>F3</kbd></td><td>Choices: assignment profile, the categories for a column, or the calendar in a date column</td><td></td></tr>
   <tr><td><kbd>F4</kbd></td><td>Done / not done</td><td><kbd>CTRL-K</kbd></td></tr>
@@ -749,10 +776,10 @@ function keys in System Settings ▸ Keyboard. Every <kbd>ALT</kbd> letter also 
   <tr><td><kbd>ALT-F9</kbd></td><td>Copy the item (or the marked ones) to another section as well</td><td></td></tr>
   <tr><td><kbd>ALT-F10</kbd></td><td>Move item; on a section or column head, move the section or column</td><td>On a head: <strong>View ▸ Section ▸ Move</strong>, <strong>View ▸ Column ▸ Move</strong></td></tr>
   <tr><td><kbd>ALT-A</kbd></td><td>Alarm</td><td></td></tr>
-  <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter to other dates</td><td><kbd>ESC</kbd> <kbd>b</kbd></td></tr>
-  <tr><td><kbd>ALT-C</kbd></td><td>Show the calendar</td><td><kbd>ESC</kbd> <kbd>c</kbd></td></tr>
+  <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter to other dates</td><td><kbd>⌥b</kbd></td></tr>
+  <tr><td><kbd>ALT-C</kbd></td><td>Show the calendar</td><td><kbd>⌥c</kbd></td></tr>
   <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-U</kbd></td><td>Add section below / above</td><td></td></tr>
-  <tr><td><kbd>ALT-H</kbd></td><td>Hop to the item's next occurrence</td><td><kbd>ESC</kbd> <kbd>h</kbd></td></tr>
+  <tr><td><kbd>ALT-H</kbd></td><td>Hop to the item's next occurrence</td><td><kbd>⌥h</kbd></td></tr>
   <tr><td><kbd>ALT-R</kbd> / <kbd>ALT-L</kbd></td><td>Add column right / left</td><td></td></tr>
   <tr><td><kbd>ALT-J</kbd></td><td>Next marked item</td><td></td></tr>
   <tr><td><kbd>ALT-K</kbd></td><td>Show / hide the key bar (remembered)</td><td></td></tr>
@@ -762,9 +789,10 @@ function keys in System Settings ▸ Keyboard. Every <kbd>ALT</kbd> letter also 
   <tr><td><kbd>ALT-O</kbd></td><td>Depend on the marked items</td><td></td></tr>
   <tr><td><kbd>ALT-V</kbd></td><td>Show / hide empty sections</td><td></td></tr>
   <tr><td><kbd>ALT-X</kbd> / <kbd>ALT-E</kbd></td><td>Execute everything / one category</td><td></td></tr>
-  <tr><td><kbd>ALT-Y</kbd></td><td>Yank back the item <kbd>DEL</kbd> last removed</td><td><kbd>ESC</kbd> <kbd>y</kbd></td></tr>
-  <tr><td><kbd>ALT-Z</kbd></td><td>Run the last macro again</td><td><kbd>ESC</kbd> <kbd>z</kbd></td></tr>
+  <tr><td><kbd>ALT-Y</kbd></td><td>Yank back the item <kbd>DEL</kbd> last removed</td><td><kbd>⌥y</kbd></td></tr>
+  <tr><td><kbd>ALT-Z</kbd></td><td>Run the last macro again</td><td><kbd>⌥z</kbd></td></tr>
   <tr><td><kbd>ALT-−</kbd> / <kbd>ALT-=</kbd></td><td>Collapse / expand section</td><td></td></tr>
+  <tr><td><kbd>ALT-1</kbd> <kbd>ALT-0</kbd> …</td><td>A count: the next move runs that many times (<kbd>ALT-1</kbd> <kbd>ALT-0</kbd> <kbd>↓</kbd> goes ten rows down)</td><td><kbd>⌥1</kbd> <kbd>⌥0</kbd></td></tr>
   <tr><td><kbd>CTRL-PGUP</kbd> / <kbd>CTRL-PGDN</kbd></td><td>Previous / next section</td><td><kbd>⌥↑</kbd> / <kbd>⌥↓</kbd></td></tr>
   <tr><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td><td>Undo / redo</td><td></td></tr>
   <tr><td><kbd>CTRL-S</kbd> / <kbd>CTRL-O</kbd></td><td>Save / open</td><td><kbd>ALT-W</kbd> / <kbd>ALT-G</kbd></td></tr>
@@ -801,9 +829,8 @@ function keys in System Settings ▸ Keyboard. Every <kbd>ALT</kbd> letter also 
 <p class="soon">This guide will grow with the program. Planned next: Agenda's own
 structured files (for anyone with old DOS files), more of the original's look (its
 symbols, help with links, the rest of the boxes laid out as Agenda laid them out, cut
-and paste in item text), a list of every command with its key and keys you choose
-yourself, and, further off, Agendum in a web browser, where friends can share a
-file.</p>
+and paste in item text), and, further off, Agendum in a web browser, with keys you
+choose yourself, where friends can share a file.</p>
 
 <div class="story">And the party? Eeyore got a balloon, though it didn't stay round for
 long, and a pot to put it in, which turned out to be exactly what he needed. Piglet
@@ -816,8 +843,8 @@ pressed <kbd>F4</kbd> on the last item, and went home for a small something.</di
     <rect x="8" y="10" width="24" height="5" rx="2" fill="#8a4a1d"/>
   </svg>
   Pooh, Piglet, Eeyore and their friends come from A. A. Milne's books about the Hundred
-  Acre Wood; their names are borrowed here with affection. This is a guide to an
-  open-source program in the spirit of Lotus Agenda, which was a product of Lotus
+  Acre Wood; their names are borrowed here with affection. This is a guide to a
+  program in the spirit of Lotus Agenda, which was a product of Lotus
   Development Corporation.
 </footer>
 
