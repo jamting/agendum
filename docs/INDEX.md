@@ -1,6 +1,6 @@
 # Index of the documents
 
-What each document is for, and when to read it. `docs/` describes Agendum as it is; `docs/plans/` what is planned or under way; `docs/adr/` why things are as they are. Each fact has one home; other documents link to it. The `tidy-docs` skill brings them up to date and keeps them so.
+What each document is for, and when to read it. `docs/` describes Agendum as it is; `docs/plans/` what is planned or under way (finished plans in `docs/plans/archive/`, as records); `docs/adr/` why things are as they are. Each fact has one home; other documents link to it. The `tidy-docs` skill brings them up to date and keeps them so.
 
 ## Start here
 
@@ -60,8 +60,15 @@ Each plan starts with its status.
 | [`plans/RENAME_REPO.md`](plans/RENAME_REPO.md)                         | Renaming the repository folder, with Claude Code's memory                      |
 | [`plans/ITEM_LEVELS.md`](plans/ITEM_LEVELS.md)                         | Three levels of items: zettels, ingested items, the model's context items (vision) |
 | [`plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)           | An idea: a personal agent inside the file                                      |
-| [`plans/REFACTORING.md`](plans/REFACTORING.md)                         | Where organic growth left complexity (done; a record)                           |
-| [`plans/DOSBOX_STAGING.md`](plans/DOSBOX_STAGING.md)                   | Running the real Agenda for Claude (done differently; a record)                |
+
+## Archive
+
+Finished plans, kept as records of how something was done.
+
+| Plan                                                                   | About                                                                          |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [`plans/archive/REFACTORING.md`](plans/archive/REFACTORING.md)         | Where organic growth left complexity, and what was done about it (done)        |
+| [`plans/archive/DOSBOX_STAGING.md`](plans/archive/DOSBOX_STAGING.md)   | Running the real Agenda for Claude (done differently)                          |
 
 ## Reviews, meetings and study
 
@@ -82,4 +89,4 @@ Each plan starts with its status.
 | make a lasting decision                | a new ADR in `adr/`, and a row in `ARCHITECTURE.md`'s ADR list                                 |
 | finish a major feature or change the file format | the version in `mix.exs` (minor, never 1.0.0 unless the owner says), an entry in `CHANGELOG.md`, a `vX.Y.Z` tag after the long fuzz run passes (`FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs`) |
 | find a way to work faster or safer     | an item under "Sharpen the saw" in `ROADMAP.md`                                                 |
-| plan something larger                  | a plan in `plans/`, starting with its status, and a row above                                  |
+| plan something larger                  | a plan in `plans/`, starting with its status, and a row above; once finished, moved to `plans/archive/` with its row |

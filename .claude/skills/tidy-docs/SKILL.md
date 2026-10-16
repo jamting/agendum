@@ -54,12 +54,12 @@ Keep these in place, and repair them when they drift:
 
 | Structure | Rule |
 | --- | --- |
-| `docs/INDEX.md` | Every document in `docs/` and `docs/plans/` with what it is for; "Where a change is written down" (a test checks the list is complete) |
+| `docs/INDEX.md` | Every document in `docs/`, `docs/plans/` and `docs/plans/archive/` with what it is for; "Where a change is written down" (a test checks the list is complete) |
 | `docs/ROADMAP.md` | `## Open` first: a **Next:** line saying what comes next, then "Sharpen the saw" (tools, checks, ways of working), then by area (`###`); then `## Done` by milestone. One open item per piece of work: if a plan's steps are listed, nest them under one item and fold repeats into it |
 | `docs/SPEC.md` | The rule index at the top: every rule, its title and its `## N.` section (a test checks); long paragraphs split under `###` headings without changing the wording |
-| `docs/plans/*.md` | A `**Status:**` line right under the title: what is done, what is next, where it is tracked |
+| `docs/plans/*.md` | A `**Status:**` line right under the title: what is done, what is next, where it is tracked. A finished plan moves to `docs/plans/archive/` (the owner's decision), a record like an ADR |
 | Tables over walls | A long list run into one paragraph (a version history, a set of conventions) becomes a table or a list |
-| Paths | In `docs/INDEX.md` and other ex_doc pages, link only to Markdown files `mix docs` publishes (`docs/*.md`, `docs/plans/`, `docs/adr/`, README, CONTRIBUTING, CLAUDE); write other files as repo-relative code paths (`` `docs/guide/index.html` ``), or ex_doc warns and the link breaks |
+| Paths | In `docs/INDEX.md` and other ex_doc pages, link only to Markdown files `mix docs` publishes (`docs/*.md`, `docs/plans/` and its `archive/`, `docs/adr/`, README, CONTRIBUTING, CLAUDE); write other files as repo-relative code paths (`` `docs/guide/index.html` ``), or ex_doc warns and the link breaks |
 
 When moving many lines (the roadmap), do it with a script that takes each line by its text and asserts it was placed exactly once; then compare the counts of `- [x]` and `- [ ]` before and after, and explain any difference (a merged duplicate).
 

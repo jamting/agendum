@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.Boxes.Box do
   @moduledoc """
-  Everything about one box, in the box's own module (docs/plans/REFACTORING.md,
+  Everything about one box, in the box's own module (docs/plans/archive/REFACTORING.md,
   step 3): its keys, how it is drawn, the key bar, the help for its
   highlighted setting, and how it ends.
 

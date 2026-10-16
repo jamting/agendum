@@ -2,7 +2,7 @@ defmodule Agendum.DocsIndexTest do
   @moduledoc """
   The two indexes of the documents stay complete: SPEC.md's rule index
   lists every rule with the section it is in, and docs/INDEX.md names
-  every document in `docs/` and `docs/plans/`.
+  every document in `docs/`, `docs/plans/` and `docs/plans/archive/`.
   """
   use ExUnit.Case, async: true
 
@@ -25,7 +25,10 @@ defmodule Agendum.DocsIndexTest do
     index = File.read!("docs/INDEX.md")
 
     missing =
-      for path <- Path.wildcard("docs/*.md") ++ Path.wildcard("docs/plans/*.md"),
+      for path <-
+            Path.wildcard("docs/*.md") ++
+              Path.wildcard("docs/plans/*.md") ++
+              Path.wildcard("docs/plans/archive/*.md"),
           path != "docs/INDEX.md",
           # INDEX.md links relative to docs/, so drop that prefix
           not String.contains?(index, "(" <> Path.relative_to(path, "docs") <> ")"),

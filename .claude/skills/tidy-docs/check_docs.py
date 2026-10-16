@@ -10,7 +10,7 @@ import os
 import re
 
 DOCS = (["README.md", "CONTRIBUTING.md", "CLAUDE.md"]
-        + glob.glob("docs/*.md") + glob.glob("docs/plans/*.md")
+        + glob.glob("docs/*.md") + glob.glob("docs/plans/*.md") + glob.glob("docs/plans/archive/*.md")
         + glob.glob("docs/adr/*.md") + glob.glob("tools/**/*.md", recursive=True)
         + glob.glob(".claude/skills/*/SKILL.md"))
 LIB = glob.glob("lib/**/*.ex", recursive=True)

@@ -28,7 +28,7 @@ Check what `CLAUDE.md` asks after a change and whether it happened: `mix check`,
 Write things down where the next session will find them. Prefer the repo for anything about the project, and memory for how the owner works:
 
 - **docs/ROADMAP.md**: tick what was finished and move it under Done; add bugs or ideas found on the way under Open (with enough detail to act on later); a better tool, check or way of working goes under "Sharpen the saw". Keep the **Next:** line at the top of Open true.
-- **Plan documents** (e.g. `docs/plans/REFACTORING.md`): update the **Status:** line at the top, and a "Progress" section for work that is paused: what is done, what is left, how to continue.
+- **Plan documents** (e.g. `docs/plans/NOTE_EDITOR.md`): update the **Status:** line at the top, and a "Progress" section for work that is paused: what is done, what is left, how to continue.
 - **ADRs** (`docs/adr/`): a lasting decision made this session that has none yet.
 - **Memory** (the memory directory in the system prompt): the owner's preferences and feedback learned this session, decisions not visible in the code, and a pointer to paused work ("resume from …"). Follow the memory rules: one fact per file, update rather than duplicate, link related memories, add a line to `MEMORY.md`, and remove memories that this session made wrong (e.g. paused work that is now finished).
 

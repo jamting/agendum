@@ -58,12 +58,15 @@ defmodule Agendum.MixProject do
       extras:
         ["README.md", "CHANGELOG.md", "CONTRIBUTING.md", "CLAUDE.md"] ++
           Path.wildcard("docs/*.md") ++
-          Path.wildcard("docs/plans/*.md") ++ Path.wildcard("docs/adr/*.md"),
+          Path.wildcard("docs/plans/*.md") ++
+          Path.wildcard("docs/plans/archive/*.md") ++ Path.wildcard("docs/adr/*.md"),
       # docs/ describes Agendum as it is; docs/plans/ what is planned or
-      # under way (each plan says how far it has come)
+      # under way (each plan says how far it has come); docs/plans/archive/
+      # finished plans, kept as records
       groups_for_extras: [
         Design: ~r{docs/[A-Z_-]+\.md},
-        Plans: ~r{docs/plans/},
+        Plans: ~r{docs/plans/[^/]+\.md$},
+        Archive: ~r{docs/plans/archive/},
         Decisions: ~r{docs/adr/}
       ],
       groups_for_modules: [
