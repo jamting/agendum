@@ -115,4 +115,18 @@ defmodule Agendum.Core.ConditionsTest do
     {:ok, db} = Core.discard_category(db, cat(db, "Jan"))
     assert db.categories[watch].conditions == []
   end
+
+  # Found by the golden file (test/fixtures/formats): Watch, made a date
+  # category after it got its condition, keeps the condition, but an item
+  # cannot be linked to a date category, so it must not be marked as
+  # conditionally linked to one either (DATA_MODEL invariant 10).
+  test "a date category's conditions leave no conditional mark", %{db: db} do
+    watch = cat(db, "Watch")
+    {:ok, db} = Core.add_condition(db, watch, cat(db, "Dana"), :assigned)
+    {:ok, db} = Core.make_date(db, watch, today())
+    {db, item} = Core.add_item(db, "Ask Dana", today(), section: cat(db, "Dana"))
+
+    refute Database.conditional?(db, item, watch)
+    assert Agendum.Core.Invariants.violations(db) == []
+  end
 end

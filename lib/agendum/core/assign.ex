@@ -125,7 +125,7 @@ defmodule Agendum.Core.Assign do
 
         cond do
           met and not Database.member?(acc, item_id, cat_id) ->
-            acc |> assign(item_id, cat_id) |> Database.mark_conditional(item_id, cat_id)
+            assign_conditionally(acc, item_id, cat_id)
 
           not met and Database.conditional?(acc, item_id, cat_id) and
               not text_matches?(acc, item_id, cat_id) ->
@@ -139,6 +139,18 @@ defmodule Agendum.Core.Assign do
     if next == db,
       do: db,
       else: settle_conditions(next, item_id, with_conditions, rounds - 1, conditions)
+  end
+
+  # Assigns and marks the link as made by conditions. `assign/3` links
+  # nothing to MAIN or a date category (a category with conditions can be
+  # made a date category later, and keeps them), and then there is no link
+  # to mark (DATA_MODEL invariant 10).
+  defp assign_conditionally(db, item_id, cat_id) do
+    db = assign(db, item_id, cat_id)
+
+    if Database.explicit?(db, item_id, cat_id),
+      do: Database.mark_conditional(db, item_id, cat_id),
+      else: db
   end
 
   @doc """
