@@ -32,7 +32,7 @@ And Agenda was reaching for this from the start: its designers' 1990 CACM articl
 
 ## The pieces Agendum already has
 
-- **Tools.** The core facade (`Agendum.Core`) is the set of everything a user can do. The planned command layer ("Towards many users": one named command per user action, commands that describe themselves with name, summary and arguments; ADR 0020) is almost exactly a tool definition for a language model. The same work serves the web app and an agent.
+- **Tools.** The core facade (`Agendum.Core`) is the set of everything a user can do. The command layer (done, R66, ADR 0036: one named command per user action, each with its name and summary; `Agendum.Core.Command`) is almost exactly a tool definition for a language model. The same work serves the web app and an agent.
 - **Context.** The `agendum-json` format (`docs/JSON_FORMAT.md`, `Agendum.Core.JSONFile`) is a complete, readable serialization of a file; `Agendum.Core.ViewModel` gives what the person is looking at now.
 - **Proposing, not imposing.** Confirm assignments and the Questions box (R16) already let the program suggest assignments that the person accepts or refuses. An agent should suggest through the same path.
 - **Undo.** Every action is one undo step (R30), so anything the agent does that the person accepted can still be taken back.
@@ -56,4 +56,4 @@ And Agenda was reaching for this from the start: its designers' 1990 CACM articl
 
 ## Where it fits
 
-After the command layer (Roadmap, "Towards many users"), which gives the agent its tools; before that, an experiment on the JSON export could show what a model makes of a real file.
+The command layer, which gives the agent its tools, is done (2026-10-16); before that, an experiment on the JSON export could show what a model makes of a real file.

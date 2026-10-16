@@ -2,7 +2,7 @@
 
 Agendum grew feature by feature. This is a review of where that left unnecessary complexity, in the code and in the tooling around it (Mix commands, skills, scripts, documents), and what to do about it, in order.
 
-**Status (2026-10-15):** steps 1 and 3 done; 2 decided (the hints stay); 4 waits for the command layer (ROADMAP, Towards many users); 5 done for now (the plans moved to `docs/plans/`; the documents streamlined, with an index in `docs/INDEX.md`); 6 needs no change. How to add a box is now in `docs/ARCHITECTURE.md` (TUI).
+**Status (2026-10-16):** steps 1 and 3 done; 2 decided (the hints stay); 4 done with the command layer (R66, ADR 0036) and typed UI modes (ADR 0037); 5 done for now (the plans moved to `docs/plans/`; the documents streamlined, with an index in `docs/INDEX.md`); 6 needs no change. How to add a box is now in `docs/ARCHITECTURE.md` (TUI).
 
 **In short:** the foundations are sound and stay as they are: the pure core (checked by `test/agendum/architecture_test.exs`), the facade over area modules (ADR 0023), `mix check` as the one quality gate (ADR 0012), the ADRs. The one real structural problem is how a settings box is spread over many files. The rest is small.
 
@@ -52,9 +52,11 @@ On the way: the fuzz property runs as four test modules side by side (the suite 
 
 `Agendum.TUI.Update` still decides things that belong in the core. The command layer planned in ROADMAP ("Towards many users") is the right fix; a separate refactoring now would be done twice.
 
+Done (2026-10-16): every change to a file is a core command (`Agendum.Core.Command`, run by `Agendum.Core.run/3`; R66, ADR 0036), and every mode on the stack a struct (`Agendum.TUI.Modes`, ADR 0037).
+
 ## 5. Documents
 
-- Keys are described in five places: `docs/KEYBOARD.md`, the F1 help (`Agendum.TUI.Render.Help`), `docs/SCREENS.md`, the guide and the manual. No test ties them together. The lasting fix is to generate the key tables from self-describing commands (ROADMAP, after the command layer); until then the `update-guide` and `update-manual` skills catch the drift.
+- Keys are described in five places: `docs/KEYBOARD.md`, the F1 help (`Agendum.TUI.Render.Help`), `docs/SCREENS.md`, the guide and the manual. No test ties them together. The lasting fix is to generate the key tables from self-describing commands (ROADMAP, after the command layer); until then the `update-guide` and `update-manual` skills catch the drift. Since R65 (2026-10-16) the F1 help is made from the keymaps and commands; `docs/KEYBOARD.md`, `docs/SCREENS.md`, the guide and the manual are still written by hand.
 - Plans sat among the reference documents: `GITHUB.md`, `DOSBOX_STAGING.md`, `KITTY.md`, `RENAME_REPO.md`, `WOL-IN-THE-MACHINE.md`, `MULTIUSER.md` and this one. ✅ Moved to `docs/plans/` (2026-10-14), a group of their own (Plans) in `mix docs`, so `docs/` is what Agendum is. `RENAME_REPO.md` goes once the folder is renamed.
 
 ## 6. Mix commands, skills, tools: no change

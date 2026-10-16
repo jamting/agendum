@@ -1,6 +1,6 @@
 # Plan: Agendum as close to Agenda as it makes sense (2026-10-15)
 
-**Status:** under way: about 80% overall on 2026-10-15; continues after "Sharpen the saw" and the command layer, the next major work (ROADMAP, 2026-10-16). The steps are tracked in ROADMAP ("Towards parity with Agenda"); keep the two lists below complete.
+**Status:** under way: about 80% overall on 2026-10-15; the next major work, now that the command layer is done (ROADMAP, **Next:**, 2026-10-16). The steps are tracked in ROADMAP ("Towards parity with Agenda"); keep the two lists below complete.
 
 The ambition: someone who knew Lotus Agenda 2.0 sits down at Agendum and finds the same screen, the same keys, the same menus and the same behaviour, apart from a list of **accepted enhancements** (things Agenda did not have) and **accepted modifications** (things Agenda had that Agendum does differently, for a reason). Everything else that differs is a gap, to be closed or moved onto one of the two lists on purpose.
 
