@@ -58,6 +58,7 @@ defmodule Agendum.TUI.Commands do
     {:alarm, "Alarm", "Set an alarm on the item", :none},
     {:execute_all, "Execute all", "Run all conditions and actions", :none},
     {:execute_category, "Execute", "Run the section's conditions, actions", :none},
+    {:attach_zettel, "Attach Zettel id", "Give the item(s) the next Zettel id", :none},
     {:next_view, "Next view", "Show the next view", :repeat},
     {:previous_view, "Previous view", "Show the previous view", :repeat},
     {:last_view, "Last view", "Show the view shown before this one", :none},

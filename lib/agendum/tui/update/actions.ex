@@ -146,6 +146,7 @@ defmodule Agendum.TUI.Update.Actions do
 
   defp do_perform(state, :mark, row), do: Marked.mark(state, row)
   defp do_perform(state, :make_assign, row), do: Marked.scoped(state, :make_assign, row)
+  defp do_perform(state, :attach_zettel, row), do: Marked.scoped(state, :attach_zettel, row)
 
   defp do_perform(state, :when, %{kind: :item, item: item}) do
     current = if item.when, do: Agendum.Core.DateParser.format(item.when), else: ""

@@ -26,6 +26,7 @@ defmodule Agendum.Core.Database do
           view_order: [id],
           links: Links.t(),
           next_id: id,
+          next_zettel: pos_integer,
           main_id: id,
           special: %{entry: id, when: id, done: id},
           conditional: MapSet.t({id, id}),
@@ -50,6 +51,8 @@ defmodule Agendum.Core.Database do
             view_order: [],
             links: Links.new(),
             next_id: 1,
+            # the next Zettel id's number (R73): a counter of its own
+            next_zettel: 1,
             main_id: nil,
             special: %{},
             conditional: MapSet.new(),

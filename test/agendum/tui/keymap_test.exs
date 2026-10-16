@@ -39,11 +39,16 @@ defmodule Agendum.TUI.KeymapTest do
     end
   end
 
+  # without a key until the owner chooses one (2026-10-16): reached from
+  # the menu and from F1 c
+  @keyless [{:view, :attach_zettel}]
+
   test "every command has a key" do
     unbound =
       for place <- @places,
           c <- Commands.all(place),
           Keymap.keys_for(place, c.id) == [],
+          {place, c.id} not in @keyless,
           do: {place, c.id}
 
     assert unbound == []

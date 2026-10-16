@@ -92,6 +92,9 @@ defmodule Agendum.Core.Command do
     {:mark_done, "Done (several)",
      "Marks items done today, leaving those already done as they are", [:items], :own},
     {:discard_items, "Discard items", "Deletes items from the whole file", [:items], :own},
+    {:attach_zettels, "Attach Zettel ids",
+     "Gives each item without a Zettel id the next one (bonalaku); an item that has one keeps it (R73)",
+     [:items], :core},
 
     # assignments (R23, R24, R34)
     {:assign, "Assign", "Assigns an item to a category (R7: leaving an exclusive sibling)",

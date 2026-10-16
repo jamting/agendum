@@ -49,6 +49,10 @@ defmodule Agendum.TUI.Menu do
          {"Categorize", "Assign the item, or all marked items, to a category (ALT-M)",
           :make_assign},
          {"Reposition", "Move the item to another section or position (ALT-F10)", :move_item},
+         {"Zettel", "Zettel ids: give the item one, follow its links",
+          [
+            {"Attach", "Give the item, or the marked items, the next Zettel id", :attach_zettel}
+          ]},
          {"Discard", "Delete the item from the file (ALT-F4)", :discard}
        ]},
       {"Category", "Work with categories",

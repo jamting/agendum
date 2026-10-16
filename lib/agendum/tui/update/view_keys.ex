@@ -283,6 +283,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
   defp command(state, :make_assign, row), do: scoped(state, :make_assign, row)
   defp command(state, :discard, row), do: scoped(state, :discard, row)
   defp command(state, :when, row), do: scoped(state, :when, row)
+  defp command(state, :attach_zettel, row), do: scoped(state, :attach_zettel, row)
 
   # on a column head (a section head line) the column moves, as in
   # Agenda (User's Guide 5-20); on a section head the section (5-8);

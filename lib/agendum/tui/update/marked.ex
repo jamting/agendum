@@ -151,6 +151,7 @@ defmodule Agendum.TUI.Update.Marked do
       :copy_item -> "Copy:"
       :make_assign -> "Assign to a category:"
       :profile -> "Show the assignments of:"
+      :attach_zettel -> "Give a Zettel id to:"
     end
   end
 
@@ -175,6 +176,13 @@ defmodule Agendum.TUI.Update.Marked do
     do: CategoryScreens.open_picker(state, {:assign_items, [item.id]}, nil)
 
   defp single(state, :make_assign, _row), do: State.error(state, "Highlight an item first")
+
+  defp single(state, :attach_zettel, %{kind: :item, item: item}),
+    do: attach_zettels(state, [item.id])
+
+  defp single(state, :attach_zettel, _row),
+    do: State.error(state, "Highlight an item, or mark some with F7")
+
   defp single(state, action, _row), do: Actions.perform(state, action)
 
   # The command for every marked item.
@@ -231,6 +239,35 @@ defmodule Agendum.TUI.Update.Marked do
     do: CategoryScreens.open_picker(state, {:assign_items, ids}, nil)
 
   defp bulk(state, :profile, ids, _row), do: CategoryScreens.open_group_profile(state, ids)
+  defp bulk(state, :attach_zettel, ids, _row), do: attach_zettels(state, ids)
+
+  # R73: the message says which ids were given, so they can be said back
+  defp attach_zettels(state, ids) do
+    case State.command(state, {:attach_zettels, ids}) do
+      {:ok, state, %{result: []}} ->
+        State.info(state, already_have(state, ids))
+
+      {:ok, state, %{result: given}} ->
+        words = Enum.map(given, &elem(&1, 1))
+        State.info(state, given_message(words))
+
+      {:error, :zettels_full} ->
+        State.error(state, "Every Zettel id is in use (16,777,216); no more can be given")
+    end
+  end
+
+  defp already_have(state, [id]),
+    do: "The item already has its Zettel id, #{Core.zettel(state.db.items[id])}"
+
+  defp already_have(_state, _ids), do: "Every marked item already has a Zettel id"
+
+  defp given_message([word]), do: "#{word} given"
+
+  defp given_message(words) do
+    {shown, rest} = Enum.split(words, 4)
+    more = if rest == [], do: "", else: " …"
+    "#{length(words)} Zettel ids given: #{Enum.join(shown, ", ")}#{more}"
+  end
 
   @doc "Starts moving items (`{id, from_category}`) to a position the person highlights."
   def start_move(state, moves) do

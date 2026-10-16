@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- Zettel ids: Item ▸ Zettel ▸ Attach gives an item (or the marked items) a Zettel id, eight letters you can say, such as `bonalaku` (Quadsyl-24, `docs/QUADSYL.md`). An item with an id is a zettel; the id never changes and is never given twice. The JSON export writes it as its word. Files are saved in a new format (34); older files open as before.
 ## 0.10.0 — 2026-10-16
 
 Old Lotus Agenda files open in Agendum.

@@ -27,7 +27,12 @@ defmodule Agendum.Core.Invariants do
       ids(db) ++
         links(db) ++
         exclusive(db) ++
-        live_references(db) ++ orders(db) ++ protected(db) ++ lineage(db) ++ conditional(db)
+        live_references(db) ++
+        orders(db) ++
+        protected(db) ++
+        lineage(db) ++
+        conditional(db) ++
+        zettels(db)
     else
       tree
     end
@@ -275,5 +280,25 @@ defmodule Agendum.Core.Invariants do
     for {item, cat} <- db.conditional,
         not Links.linked?(db.links, item, cat),
         do: "10. the conditional mark #{item}–#{cat} has no link"
+  end
+
+  # --- 11. Zettel ids ------------------------------------------------------
+
+  # Each number belongs to one item and is below the counter, so the next
+  # one given is new (R73)
+  defp zettels(db) do
+    numbers = for {_id, %{zettel: n}} <- db.items, n != nil, do: n
+
+    twice =
+      for {n, count} <- Enum.frequencies(numbers),
+          count > 1,
+          do: "11. zettel ids: #{n} is given to #{count} items"
+
+    above =
+      for n <- numbers,
+          not (is_integer(n) and n >= 0 and n < db.next_zettel),
+          do: "11. zettel ids: #{inspect(n)} is not below next_zettel #{db.next_zettel}"
+
+    twice ++ above
   end
 end

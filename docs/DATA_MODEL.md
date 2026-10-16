@@ -33,6 +33,7 @@ erDiagram
         list view_order "view ids, view manager order"
         Links links "item <-> category"
         int next_id "shared id counter"
+        int next_zettel "next Zettel id number (R73)"
         int main_id "the MAIN category"
         map special "entry/when/done => category id"
         set conditional "item-category links made by conditions"
@@ -60,6 +61,7 @@ erDiagram
         time when_time "time of day on the When date, or nil"
         int alarm_minutes "0-60 before When, or nil"
         datetime alarm_rung_at "when the rung alarm was due"
+        int zettel "Zettel id number, or nil (R73)"
         bool marked
         map recurrence "rule of a recurring When date, or nil (R14a)"
     }
@@ -153,6 +155,7 @@ classDiagram
         +view_order : [id]
         +links : Links
         +next_id : pos_integer
+        +next_zettel : pos_integer
         +main_id : id
         +special : Map~entry/when/done, id~
         +conditional : MapSet
@@ -203,6 +206,7 @@ classDiagram
         +when_time : Time or nil
         +alarm_minutes : 0..60 or nil
         +alarm_rung_at : NaiveDateTime or nil
+        +zettel : non_neg_integer or nil
         +marked : boolean
         +recurrence : Recurrence or nil
     }
@@ -376,6 +380,8 @@ classDiagram
 
 Items, categories and views draw ids from **one counter**, `next_id`, just as the patent keeps all objects in one object file (`.AGA`). An id therefore says nothing about its type; look it up in the right map. Ids are never reused. Lower ids were created earlier, and the automatic-assignment tie-break relies on that ("prefer the category created first").
 
+**Zettel ids** (R73, ADR 0039) are a second, separate kind of id: the ids people say and link to, given only to the items made zettels. An item's `zettel` is a number, spelled as a word by `Agendum.Core.ZettelId` (`bonalaku` is 1); the file's own counter, `next_zettel`, starts at 1 and only goes up, skipping the reserved words, so a Zettel id is never given twice. The JSON writes the word.
+
 ### Ordering
 
 Maps are unordered, so order is stored separately:
@@ -508,6 +514,7 @@ The core maintains these, and the tests check them: `Agendum.Core.Invariants.vio
 8. **Protected categories** (MAIN, Entry, When, Done) always exist, keep their names, and stay where they are.
 9. **No direct link to both a category and its ancestor** (SPEC R7c). An item linked to a category is never also linked to one of its ancestors. `Assign.assign/3` clears the item's links to the category's ancestors and descendants before linking, and category moves resolve the conflicts they would create. Files saved before R7c may still contain such pairs; assigning those items again tidies them up.
 10. **Conditional marks are links.** Every `{item, category}` in `db.conditional` is also a link; `Database.unlink/3` and the delete operations remove marks with their links. A user assignment clears the mark, so only condition-made links are ever retracted (SPEC R15).
+11. **Zettel ids are unique.** No two items have the same `zettel`, and each is below `next_zettel` (R73). `Core.attach_zettels/2` takes the next number and counts on; nothing else sets one.
 
 ## Mapping to the patent
 
@@ -578,6 +585,7 @@ Format versions:
 | 31 | Added `View.Column.format`, `note_line` and `title` (standard column formats, R56) |
 | 32 | Added `View.hide_column_heads` (R57) |
 | 33 | Added `View.section_separators` (R58) |
+| 34 | Added `Item.zettel` and `Database.next_zettel`, Zettel ids (R73) |
 
 ## UI state around the database
 

@@ -37,7 +37,8 @@ defmodule Agendum.Store do
   30 adds `NumberFormat.percent` (Display % of total); 31 adds
   `View.Column.format`, `note_line` and `title` (standard column formats);
   32 adds `View.hide_column_heads` (R57); 33 adds `View.section_separators`
-  (R58).
+  (R58); 34 adds `Item.zettel` and `Database.next_zettel`, Zettel ids
+  (R73).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
@@ -48,7 +49,7 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 33
+  @format_version 34
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"

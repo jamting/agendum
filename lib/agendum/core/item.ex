@@ -17,6 +17,10 @@ defmodule Agendum.Core.Item do
   An alarm rings `alarm_minutes` before the When date and time (R38);
   once it has rung, `alarm_rung_at` records when it was due (R70), for
   the list of past alarms.
+
+  `zettel` is the number of the item's Zettel id (R73, ADR 0039), spelled
+  as a word by `Agendum.Core.ZettelId` (`bonalaku`); nil until it is given
+  one. An item with an id is a zettel.
   """
 
   @type id :: pos_integer
@@ -32,6 +36,7 @@ defmodule Agendum.Core.Item do
           recurrence: Agendum.Core.Recurrence.t() | nil,
           alarm_minutes: 0..60 | nil,
           alarm_rung_at: NaiveDateTime.t() | nil,
+          zettel: non_neg_integer | nil,
           marked: boolean
         }
 
@@ -46,6 +51,7 @@ defmodule Agendum.Core.Item do
     recurrence: nil,
     alarm_minutes: nil,
     alarm_rung_at: nil,
+    zettel: nil,
     done: nil,
     marked: false
   ]

@@ -36,6 +36,7 @@ defmodule Agendum.Core.JSONFile do
   }
 
   alias Agendum.Core.View.{Column, ItemColumn, Section, SortKey}
+  alias Agendum.Core.Facade.Zettels
 
   @format "agendum-json"
   # the name before the program was called Wol's Agendum (ADR 0019)
@@ -154,6 +155,7 @@ defmodule Agendum.Core.JSONFile do
       format: @format,
       version: @version,
       next_id: db.next_id,
+      next_zettel: db.next_zettel,
       main: db.main_id,
       special: obj(entry: db.special.entry, when: db.special.when, done: db.special.done),
       settings:
@@ -283,6 +285,8 @@ defmodule Agendum.Core.JSONFile do
       recurrence: i.recurrence && struct_obj(i.recurrence),
       alarm_minutes: i.alarm_minutes,
       alarm_rung_at: i.alarm_rung_at && NaiveDateTime.to_iso8601(i.alarm_rung_at),
+      # the Zettel id as its word, so it can be read without Agendum (R73)
+      zettel: Zettels.zettel(i),
       marked: i.marked,
       categories: db.links |> Links.rights(i.id) |> Enum.sort(),
       conditional: Map.get(rel.conditional, i.id, []),
@@ -470,6 +474,7 @@ defmodule Agendum.Core.JSONFile do
 
     %Database{
       next_id: req(doc, "next_id", :int, "next_id"),
+      next_zettel: next_zettel(doc, items),
       main_id: req(doc, "main", :int, "main"),
       special: %{
         entry: req(special, "entry", :int, "special.entry"),
@@ -596,6 +601,7 @@ defmodule Agendum.Core.JSONFile do
         end,
       alarm_minutes: opt(i, "alarm_minutes", {:nullable, :int}, nil, path),
       alarm_rung_at: opt(i, "alarm_rung_at", {:nullable, :datetime}, nil, path),
+      zettel: read_zettel(i, path),
       marked: opt(i, "marked", :bool, false, path)
     }
 
@@ -617,6 +623,32 @@ defmodule Agendum.Core.JSONFile do
     }
 
     {item, relations}
+  end
+
+  # a Zettel id is written as its word, `null` for none (R73)
+  defp read_zettel(i, path) do
+    case opt(i, "zettel", {:nullable, :string}, nil, path) do
+      nil ->
+        nil
+
+      word ->
+        case Agendum.Core.ZettelId.decode(word) do
+          {:ok, n} -> n
+          {:error, :invalid_id} -> bad(path <> ".zettel", "not a Zettel id: #{inspect(word)}")
+        end
+    end
+  end
+
+  # the counter, or (left out of a hand-written file) one above the
+  # highest id in it
+  defp next_zettel(doc, items) do
+    highest =
+      items
+      |> Enum.map(fn {item, _} -> item.zettel end)
+      |> Enum.reject(&is_nil/1)
+      |> Enum.max(fn -> 0 end)
+
+    opt(doc, "next_zettel", :int, highest + 1, "next_zettel")
   end
 
   defp read_macro(m, path) do
@@ -904,6 +936,9 @@ defmodule Agendum.Core.JSONFile do
         {db.views != %{}, "a file needs at least one view"},
         {Enum.all?(all_ids(db), &(&1 < db.next_id)), "next_id must be above every id"},
         {length(Enum.uniq(all_ids(db))) == length(all_ids(db)), "ids must be unique"},
+        {zettels_unique?(db), "two items have the same Zettel id"},
+        {Enum.all?(Map.values(db.items), &(&1.zettel == nil or &1.zettel < db.next_zettel)),
+         "next_zettel must be above every Zettel id"},
         {Enum.all?(Map.values(db.calendars), &Map.has_key?(cats, &1.category_id)),
          "a calendar's category does not exist"}
       ] ++
@@ -916,6 +951,11 @@ defmodule Agendum.Core.JSONFile do
       nil -> :ok
       {_, message} -> {:error, message}
     end
+  end
+
+  defp zettels_unique?(db) do
+    numbers = for {_id, %{zettel: n}} <- db.items, n != nil, do: n
+    length(Enum.uniq(numbers)) == length(numbers)
   end
 
   defp all_ids(db),

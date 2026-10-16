@@ -75,6 +75,8 @@ defmodule Agendum.Starters.Golden do
     db = ok(Core.set_alarm(db, smack, 5))
     db = Core.toggle_done(db, honey, @today)
     db = Core.toggle_mark(db, party)
+    # Zettel ids (R73): Owl's birthday is bonalaku, the party pigavono
+    {:ok, db, _given} = Core.attach_zettels(db, [owl, party])
     ok(Core.make_dependent(db, party, [honey]))
   end
 

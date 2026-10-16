@@ -42,7 +42,8 @@ defmodule Agendum.Core do
     Macros,
     Numbers,
     Rules,
-    Views
+    Views,
+    Zettels
   }
 
   # `@type` declares a public type (for `@spec`s and Dialyzer, the static
@@ -121,6 +122,12 @@ defmodule Agendum.Core do
   defdelegate read_when(db, text, clock), to: Dates
   defdelegate date_conversion(db, cat_id, clock), to: Dates
   defdelegate make_date(db, cat_id, clock), to: Dates
+
+  # Zettel ids (R73, ADR 0039)
+  defdelegate attach_zettels(db, ids), to: Zettels
+  defdelegate zettel(item), to: Zettels
+  defdelegate item_by_zettel(db, word), to: Zettels
+  defdelegate zettels(db), to: Zettels
 
   # times and alarms (R14b, R38)
   defdelegate when_at(item), to: Alarms

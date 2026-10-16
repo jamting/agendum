@@ -21,6 +21,7 @@ The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs` and 
   "format": "agendum-json",
   "version": 1,
   "next_id": 21,
+  "next_zettel": 3,
   "main": 1,
   "special": {"entry": 2, "when": 3, "done": 4},
   "settings": { … },
@@ -36,6 +37,7 @@ The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs` and 
 | `format`     | Always `"agendum-json"`; `"agenda-json"` (before the rename) is read too. |
 | `version`    | The schema version, 1. Later versions of the program will still read it. |
 | `next_id`    | The next id to hand out; above every id in the file.                     |
+| `next_zettel` | The number of the next Zettel id to give (R73); above every item's. Left out: one above the highest. |
 | `main`       | The id of MAIN, the root category.                                       |
 | `special`    | The ids of the Entry, When and Done date categories.                     |
 | `settings`   | The file's settings (below).                                             |
@@ -89,6 +91,7 @@ A **criterion** (conditions, filters) is `{"category": id, "is": "assigned"}`, `
 | `when_explicit`         | The When date was set by hand, not read from the text (R14).                                     |
 | `recurrence`            | `{"every": 1, "unit": "week", "weekday": 5, "day": null}` or `null` (R14a).                      |
 | `alarm_minutes`         | Minutes before the When time, or `null` (R38); `alarm_rung_at` the moment it was due when it rang (R70), or `null`.    |
+| `zettel`                | The item's Zettel id as its word (`"bonalaku"`, R73), or `null`. The word is the Quadsyl-24 spelling of a number (`docs/QUADSYL.md`), so other tools can decode it; no two items may share one. |
 | `marked`                | Marked with F7.                                                                                  |
 | `categories`            | The categories it is explicitly assigned to (membership in their ancestors is computed, R3).     |
 | `conditional`           | Those of its assignments made by a condition or text match, which can be undone by one (R15c).   |
@@ -134,4 +137,4 @@ A **criterion** (conditions, filters) is `{"category": id, "is": "assigned"}`, `
 
 ## What is checked on import
 
-Beyond the types: MAIN and the special categories exist (and the special ones are date categories); there is a view; ids are unique and below `next_id`; parents and children agree; every category, item and view an object refers to exists. A file that fails opens nothing; the open file stays.
+Beyond the types: MAIN and the special categories exist (and the special ones are date categories); there is a view; ids are unique and below `next_id`; Zettel ids are unique and below `next_zettel`; parents and children agree; every category, item and view an object refers to exists. A file that fails opens nothing; the open file stays.
