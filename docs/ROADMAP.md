@@ -35,7 +35,6 @@ A web application with accounts and shared files, on the same core (plan: [MULTI
   - [ ] Longer texts for the rest, where they would help: the moves (Browse, widths …) and typing
 - [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
 - [ ] Reasons with assignments: automatic assignment says why in its result (the matched word, condition or action, with its rule), for the Questions box (R16), F1 on an assignment and an agent's report ("filed under Kanga because …") (second meeting)
-- [ ] Browsing's date arithmetic into the core
 - [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
 
 Then a web version for one person:
@@ -313,6 +312,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] Every other change, in four batches: assigning and removing, notes, dates, alarms, numbers, dependencies; categories, rules, Execute, the file's dates; views, sections, columns, filters; macros and calendars. Loops over marked items became `{:batch, …}` commands; previews of a move run the command on a copy (`State.preview/2`)
   - [x] Typing over a column entry and a Not-assigned range condition are commands of their own (`:type_in_column`, `:set_condition`), not batches the TUI puts together
 - [x] Raw values beside the formatted cells (2026-10-16): each row of a built view has `values`, what each cell shows as data (a number, `{date, time}`, true or false for a Star or Yes/No column, or the ids of the categories shown), from `Agendum.Core.ViewModel.value/3`, the same for every format
+- [x] Browsing's date arithmetic in the core (2026-10-16): `Agendum.Core.Browse` (through the facade: `browse_start/4`, `browse_move/3`, `browse_to/5`, `browsed_view/4`, `browse_keep/4`) works out where browsing starts, each move, going to a date, the view as browsed and the command that keeps it; the TUI keeps the keys and where the person has browsed to
 - [x] In the TUI: help made from the commands and keymaps (R65, ADR 0033), 2026-10-15/16
   - [x] F1 shows a text about where you are: the view, a note, a manager, the menu, a move, or the box on top (`about/0` per place, `Box.about/2` per box, a default one for the others); the owner's idea
   - [x] F1 then `c`: the commands that can run there, local then global, with keys and summaries; typing narrows the list, ENTER runs the highlighted one

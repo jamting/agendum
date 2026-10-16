@@ -28,71 +28,34 @@ defmodule Agendum.TUI.Moves.Browse do
   """
 
   alias Agendum.Core
-  alias Agendum.Core.{Datebook, MonthCalendar}
   alias Agendum.TUI.{Keymap, Layout, State}
   alias Agendum.TUI.Update.Prompts
 
-  @no_shift %{days: 0, months: 0}
+  # Domain: the date arithmetic is the core's (`Agendum.Core.Browse`); the
+  # mode is where browsing has got to (a place: `date:`, or `scope:` and
+  # `shift:`), with its view's id.
 
   @doc "Starts browsing the current view, if it is a datebook view or has a date filter."
   def open(state) do
     view = State.view(state)
+    sidx = with %{sidx: sidx} <- Layout.current_row(state), do: sidx
 
-    case {view.datebook, filter_scope(state, view)} do
-      {%Datebook{} = d, _} ->
-        date = Datebook.base_date(d, state.db.date_settings, State.context(state))
-        State.push(state, %{type: :browse, view_id: view.id, date: date})
-
-      {nil, nil} ->
+    case Core.browse_start(state.db, view, sidx, State.context(state)) do
+      nil ->
         State.error(state, "Browse needs a date filter (View ▸ Filter) or a datebook view")
 
-      {nil, scope} ->
-        State.push(state, %{type: :browse, view_id: view.id, scope: scope, shift: @no_shift})
-    end
-  end
-
-  # the highlighted section's date filter, else the view's
-  defp filter_scope(state, view) do
-    section =
-      case Layout.current_row(state) do
-        %{sidx: sidx} -> Enum.at(view.sections, sidx)
-        nil -> nil
-      end
-
-    cond do
-      section && Core.date_filters?(state.db, section.filter) ->
-        {:section, Layout.current_row(state).sidx}
-
-      Core.date_filters?(state.db, view.filter) ->
-        :view
-
-      true ->
-        nil
+      place ->
+        State.push(state, Map.merge(%{type: :browse, view_id: view.id}, place))
     end
   end
 
   @doc "A view as shown while it is browsed: with the browsed dates."
   def view(%State{modes: modes} = state, view) do
     case Enum.find(modes, &match?(%{type: :browse, view_id: id} when id == view.id, &1)) do
-      %{date: date} ->
-        %{view | datebook: %{view.datebook | base: Date.to_iso8601(date)}}
-
-      %{scope: scope, shift: shift} ->
-        shifted = Core.shift_filters(state.db, filters(view, scope), shift, State.context(state))
-        put_filters(view, scope, shifted)
-
-      nil ->
-        view
+      nil -> view
+      mode -> Core.browsed_view(state.db, view, mode, State.context(state))
     end
   end
-
-  defp filters(view, :view), do: view.filter
-  defp filters(view, {:section, i}), do: Enum.at(view.sections, i).filter
-
-  defp put_filters(view, :view, filters), do: %{view | filter: filters}
-
-  defp put_filters(view, {:section, i}, filters),
-    do: %{view | sections: List.update_at(view.sections, i, &%{&1 | filter: filters})}
 
   @doc "A key while browsing: the command Browse's keymap binds it to (R65)."
   def handle(state, mode, key) do
@@ -119,102 +82,31 @@ defmodule Agendum.TUI.Moves.Browse do
   @spec run(State.t(), atom) :: State.t()
   def run(state, id), do: command(state, State.mode(state), id)
 
-  # how far each move goes in a date filter (a datebook goes a period)
-  @shifts %{
-    earlier: {:days, -1},
-    later: {:days, 1},
-    week_earlier: {:days, -7},
-    week_later: {:days, 7},
-    month_earlier: {:months, -1},
-    month_later: {:months, 1},
-    year_earlier: {:months, -12},
-    year_later: {:months, 12}
-  }
-
-  defp command(state, %{date: _} = mode, :earlier), do: step(state, mode, -1)
-  defp command(state, %{date: _} = mode, :later), do: step(state, mode, 1)
-
-  defp command(state, %{shift: shift} = mode, id) when is_map_key(@shifts, id),
-    do: move(state, mode, shift, @shifts[id])
-
   defp command(state, _mode, :go_to), do: Prompts.prompt(state, "Date:", :browse_to)
   defp command(state, mode, :keep), do: keep(State.pop(state), mode)
   defp command(state, _mode, :close), do: State.pop(state)
   defp command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
-  defp command(state, _mode, _id), do: state
 
-  defp step(state, mode, n) do
-    d = state.db.views[mode.view_id].datebook
-
-    date =
-      case d.period do
-        :day -> MonthCalendar.move(mode.date, :day, n)
-        :week -> MonthCalendar.move(mode.date, :week, n)
-        :month -> MonthCalendar.move(mode.date, :month, n)
-        :quarter -> MonthCalendar.move(mode.date, :month, 3 * n)
-      end
-
-    State.put_mode(state, %{mode | date: date})
-  end
-
-  defp move(state, mode, shift, {unit, n}),
-    do: State.put_mode(state, %{mode | shift: Map.update!(shift, unit, &(&1 + n))})
+  # the moves: a period in a datebook, a day, week, month or year in a filter
+  defp command(state, mode, id),
+    do: State.put_mode(state, Core.browse_move(state.db.views[mode.view_id], mode, id))
 
   @doc "ALT-F5's answer: go to a typed date."
   def go_to(state, text) do
     with %{type: :browse} = mode <- State.mode(state),
          {:ok, date, _time} <- Core.read_when(state.db, text, State.context(state)) do
-      State.put_mode(state, go_to(state, mode, date))
+      view = state.db.views[mode.view_id]
+      State.put_mode(state, Core.browse_to(state.db, view, mode, date, State.context(state)))
     else
       _ -> State.error(state, "Not a date: #{text}")
     end
   end
 
-  # a datebook shows the period of the date; a filter moves so that its
-  # range starts on it (or ends, when it has no start)
-  defp go_to(_state, %{date: _} = mode, date), do: %{mode | date: date}
-
-  defp go_to(state, mode, date) do
-    case first_date(state, mode) do
-      nil -> mode
-      shown -> %{mode | shift: Map.update!(mode.shift, :days, &(&1 + Date.diff(date, shown)))}
+  # ENTER: what is shown becomes the view's, one undo step
+  defp keep(state, mode) do
+    case Core.browse_keep(state.db, state.db.views[mode.view_id], mode, State.context(state)) do
+      nil -> state
+      command -> State.run(state, command)
     end
-  end
-
-  defp first_date(state, mode) do
-    view = view(state, state.db.views[mode.view_id])
-
-    Enum.find_value(filters(view, mode.scope), fn
-      {cat, {:range, from, to, _}} ->
-        if Core.date_filters?(state.db, [{cat, {:range, from, to, :inside}}]) do
-          with text when text != nil <- from || to,
-               {:ok, date, _} <- Core.read_when(state.db, text, State.context(state)),
-               do: date,
-               else: (_ -> nil)
-        end
-
-      _ ->
-        nil
-    end)
-  end
-
-  # ENTER: what is shown becomes the view's
-  defp keep(state, %{date: date} = mode) do
-    d = state.db.views[mode.view_id].datebook
-    now = Datebook.base_date(d, state.db.date_settings, State.context(state))
-
-    if date == now do
-      state
-    else
-      State.run(state, {:set_datebook, mode.view_id, %{d | base: Date.to_iso8601(date)}})
-    end
-  end
-
-  defp keep(state, %{shift: @no_shift}), do: state
-
-  defp keep(state, %{scope: scope, shift: shift} = mode) do
-    view = state.db.views[mode.view_id]
-    shifted = Core.shift_filters(state.db, filters(view, scope), shift, State.context(state))
-    State.run(state, {:set_filters, mode.view_id, scope, shifted})
   end
 end

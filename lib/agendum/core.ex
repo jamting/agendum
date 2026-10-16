@@ -235,6 +235,14 @@ defmodule Agendum.Core do
   defdelegate set_filters(db, view_id, scope, filters), to: Views
   defdelegate toggle_view_option(db, view_id, option), to: Views
 
+  # browsing dates (R47, R48): where it starts, a move, going to a date,
+  # the view as browsed, and the command that keeps it
+  defdelegate browse_start(db, view, sidx, clock), to: Agendum.Core.Browse, as: :start
+  defdelegate browse_move(view, place, move), to: Agendum.Core.Browse, as: :move
+  defdelegate browse_to(db, view, place, date, clock), to: Agendum.Core.Browse, as: :go_to
+  defdelegate browsed_view(db, view, place, clock), to: Agendum.Core.Browse, as: :shown
+  defdelegate browse_keep(db, view, place, clock), to: Agendum.Core.Browse, as: :keep
+
   # macros (R50)
   defdelegate add_macro(db, name), to: Macros
   defdelegate rename_macro(db, id, name), to: Macros
