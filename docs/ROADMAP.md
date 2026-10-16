@@ -3,7 +3,9 @@
 Small, testable increments. Open work comes first, by area; done work is
 below, by milestone, as the record. Tick a box when its tests pass under
 `mix check`, and move it to Done. Rule numbers refer to `SPEC.md`; larger
-items have a plan in `docs/plans/` (see `docs/INDEX.md`).
+items have a plan in `docs/plans/` (see `docs/INDEX.md`). Open starts with
+what comes next; "Sharpen the saw" is the standing home for work on the
+tools, checks and ways of working that make later changes faster and safer.
 
 ## Open
 

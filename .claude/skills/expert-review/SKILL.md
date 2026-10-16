@@ -137,4 +137,7 @@ style in `docs/`): short sentences, no marketing words. Link to code as
   `lib/` or `test/` changes, so `mix check` is not needed for the commit.
 - In the terminal, give the summary, the scorecard and the top three
   recommendations, with the path to the report. Offer, in one line, to
-  turn recommendations into roadmap items; do not add them unasked.
+  turn recommendations into roadmap items; do not add them unasked. When the
+  owner says yes: tools, checks and ways of working go under "Sharpen the
+  saw", the rest in their areas, each citing the review's date; keep the
+  **Next:** line at the top of Open true.

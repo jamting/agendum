@@ -358,8 +358,8 @@ classDiagram
     Column *-- DateFormat
 ```
 
-| Struct                                | Module                             | Notes                                                                                                |
-| ------------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Struct                                | Module                              | Notes                                                                                                |
+| ------------------------------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `Database`                            | `lib/agendum/core/database.ex`      | The whole file. Maps are keyed by id; order lives in separate lists.                                 |
 | `Item`                                | `lib/agendum/core/item.ex`          | Free text and dates. **Does not know its categories.**                                               |
 | `Category`                            | `lib/agendum/core/category.ex`      | Tree node with flags for the assignment rules. **Does not know its items.**                          |
@@ -369,11 +369,11 @@ classDiagram
 | `DateSettings`                        | `lib/agendum/core/date_settings.ex` | How the file reads typed dates: week, quarter and year boundaries, month alone, times of day (R14e). |
 | `NumberFormat`                        | `lib/agendum/core/number_format.ex` | How a numeric column shows numbers and which calculations it shows; also reads typed numbers (R29).  |
 | `Calendar`                            | `lib/agendum/core/calendar.ex`      | A calendar subscription: its address, its category, and the events it last read (R45).               |
-| `View.SortKey`                        | `lib/agendum/core/view.ex`         | One way to order items: by text, by a category's children, or by a note line (R36).                  |
-| `Search`                              | `lib/agendum/core/search.ex`       | A text search, kept in the Show View's `match` (R37).                                                |
-| `TextMatch`                           | `lib/agendum/core/text_match.ex`   | How the file matches item text to category names; a category may override settings (R16a, R16b).     |
-| `DateRule`                            | `lib/agendum/core/date_rule.ex`    | How a date category gets dates: Assign item date, Which one, Done and When keys (R6b).               |
-| `Macro`                               | `lib/agendum/core/macro.ex`        | A macro: name, keystrokes in Agenda's notation, attached key, where it runs (R50).                   |
+| `View.SortKey`                        | `lib/agendum/core/view.ex`          | One way to order items: by text, by a category's children, or by a note line (R36).                  |
+| `Search`                              | `lib/agendum/core/search.ex`        | A text search, kept in the Show View's `match` (R37).                                                |
+| `TextMatch`                           | `lib/agendum/core/text_match.ex`    | How the file matches item text to category names; a category may override settings (R16a, R16b).     |
+| `DateRule`                            | `lib/agendum/core/date_rule.ex`     | How a date category gets dates: Assign item date, Which one, Done and When keys (R6b).               |
+| `Macro`                               | `lib/agendum/core/macro.ex`         | A macro: name, keystrokes in Agenda's notation, attached key, where it runs (R50).                   |
 
 ### Ids
 

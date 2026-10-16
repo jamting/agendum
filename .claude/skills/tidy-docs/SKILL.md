@@ -58,7 +58,10 @@ table has the current version, and every "planned / not done / not yet"
 claim. Check each claim against the code (`grep -rn` in `lib/`) and the
 roadmap's Done section; known false leads: `Agendum.Core.Facade.Area`
 (ADR 0023's placeholder), `press`/`screen`/`utc_today` (test helpers and
-the clock rule), `tools/dosbox/` (a plan kept as a record).
+the clock rule), `tools/dosbox/` (a plan kept as a record),
+`Agendum.TUI.KeysPropertyTest` (defined in `keys_test.exs`), `ov` (from
+"Nov/12/90" in SPEC), `docs/reviews/YYYY-MM-DD.md` (the expert-review
+skill's naming pattern).
 
 Then look for what the script cannot see:
 
@@ -83,7 +86,7 @@ Keep these in place, and repair them when they drift:
 | Structure | Rule |
 | --- | --- |
 | `docs/INDEX.md` | Every document in `docs/` and `docs/plans/` with what it is for; "Where a change is written down" (a test checks the list is complete) |
-| `docs/ROADMAP.md` | `## Open` first, by area (`###`), then `## Done` by milestone. One open item per piece of work: if a plan's steps are listed, nest them under one item and fold repeats into it |
+| `docs/ROADMAP.md` | `## Open` first: a **Next:** line saying what comes next, then "Sharpen the saw" (tools, checks, ways of working), then by area (`###`); then `## Done` by milestone. One open item per piece of work: if a plan's steps are listed, nest them under one item and fold repeats into it |
 | `docs/SPEC.md` | The rule index at the top: every rule, its title and its `## N.` section (a test checks); long paragraphs split under `###` headings without changing the wording |
 | `docs/plans/*.md` | A `**Status:**` line right under the title: what is done, what is next, where it is tracked |
 | Tables over walls | A long list run into one paragraph (a version history, a set of conventions) becomes a table or a list |

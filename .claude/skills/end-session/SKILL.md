@@ -42,7 +42,8 @@ for anything about the project, and memory for how the owner works:
 
 - **docs/ROADMAP.md**: tick what was finished and move it under Done; add
   bugs or ideas found on the way under Open (with enough detail to act on
-  later).
+  later); a better tool, check or way of working goes under "Sharpen the
+  saw". Keep the **Next:** line at the top of Open true.
 - **Plan documents** (e.g. `docs/plans/REFACTORING.md`): update the
   **Status:** line at the top, and a "Progress" section for work that is
   paused: what is done, what is left, how to

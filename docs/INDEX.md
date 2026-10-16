@@ -80,4 +80,5 @@ Each plan starts with its status.
 | add a stored field                     | `DATA_MODEL.md` (and a row in its format versions), `DATA_ACCESS.md` if queried, `JSON_FORMAT.md` and `Agendum.Core.JSONFile` |
 | make a lasting decision                | a new ADR in `adr/`, and a row in `ARCHITECTURE.md`'s ADR list                                 |
 | finish a major feature or change the file format | the version in `mix.exs` (minor, never 1.0.0 unless the owner says), an entry in `CHANGELOG.md`, a `vX.Y.Z` tag |
+| find a way to work faster or safer     | an item under "Sharpen the saw" in `ROADMAP.md`                                                 |
 | plan something larger                  | a plan in `plans/`, starting with its status, and a row above                                  |
