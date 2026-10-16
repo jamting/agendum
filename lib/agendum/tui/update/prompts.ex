@@ -203,7 +203,7 @@ defmodule Agendum.TUI.Update.Prompts do
   end
 
   defp prompt_action(state, :rename_view, text) do
-    State.change_db(state, Core.rename_view(state.db, state.view_id, text))
+    State.run(state, {:rename_view, state.view_id, text})
   end
 
   defp prompt_action(state, {:move_new_category, id, relocation}, text) do
@@ -395,10 +395,10 @@ defmodule Agendum.TUI.Update.Prompts do
   end
 
   defp confirmed(state, {:discard_view, id}, true) do
-    case Core.discard_view(state.db, id) do
-      {:ok, db} ->
-        view_id = if state.view_id == id, do: hd(db.view_order), else: state.view_id
-        %{State.change_db(state, db) | view_id: view_id, cursor: 0, cursor_key: nil}
+    case State.command(state, {:discard_view, id}) do
+      {:ok, state, _} ->
+        view_id = if state.view_id == id, do: hd(state.db.view_order), else: state.view_id
+        %{state | view_id: view_id, cursor: 0, cursor_key: nil}
 
       {:error, :last_view} ->
         State.error(state, "A file must have at least one view")

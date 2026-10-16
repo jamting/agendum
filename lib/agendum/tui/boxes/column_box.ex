@@ -29,7 +29,6 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
 
   alias Agendum.TUI.Boxes.{Box}
 
-  alias Agendum.Core
   alias Agendum.Core.{Database, DateFormat, NumberFormat, View}
 
   alias Agendum.TUI.{
@@ -135,13 +134,13 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
 
   # a Category note column's title (R56)
   defp typed(state, :title, text, at),
-    do: State.change_db(state, Core.set_column_display(state.db, state.view_id, at, title: text))
+    do: State.run(state, {:set_column_display, state.view_id, at, title: text})
 
   # a typed number (Agenda's "type your own choice"): the width, the line
   # of the category note, or the decimal places
   defp typed(state, :width, text, at) do
     case FieldTyping.number(text, 1, 200) do
-      {:ok, n} -> State.change_db(state, Core.set_column_width(state.db, state.view_id, at, n))
+      {:ok, n} -> State.run(state, {:set_column_width, state.view_id, at, n})
       :error -> State.error(state, "Type a width, a number")
     end
   end
@@ -149,7 +148,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   defp typed(state, :note_line, text, at) do
     case FieldTyping.number(text, 1, 99) do
       {:ok, n} ->
-        State.change_db(state, Core.set_column_display(state.db, state.view_id, at, note_line: n))
+        State.run(state, {:set_column_display, state.view_id, at, note_line: n})
 
       :error ->
         State.error(state, "Type a line number")
@@ -160,7 +159,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
     case FieldTyping.number(text, 0, @max_decimals) do
       {:ok, n} ->
         format = %{column(state, State.mode(state)).number | decimals: n}
-        State.change_db(state, Core.set_column_format(state.db, state.view_id, at, format))
+        State.run(state, {:set_column_format, state.view_id, at, format})
 
       :error ->
         State.error(state, "Type 0 to #{@max_decimals} decimal places")
@@ -216,11 +215,11 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
     do: State.error(state, "A category's type is changed in its Category Properties")
 
   defp change(state, mode, :width, step),
-    do: State.change_db(state, Core.resize_column(state.db, state.view_id, mode.column, step))
+    do: State.run(state, {:resize_column, state.view_id, mode.column, step})
 
   defp change(state, mode, :linked, _step) do
     linked = column(state, mode).link == nil
-    State.change_db(state, Core.set_column_linked(state.db, state.view_id, mode.column, linked))
+    State.run(state, {:set_column_linked, state.view_id, mode.column, linked})
   end
 
   # --- a standard column's Format (R56) ---
@@ -254,22 +253,14 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
 
   defp change(state, mode, row, step) do
     format = state |> column(mode) |> Map.fetch!(:number) |> step(row, step)
-    State.change_db(state, Core.set_column_format(state.db, state.view_id, mode.column, format))
+    State.run(state, {:set_column_format, state.view_id, mode.column, format})
   end
 
   defp display(state, mode, changes),
-    do:
-      State.change_db(
-        state,
-        Core.set_column_display(state.db, state.view_id, mode.column, changes)
-      )
+    do: State.run(state, {:set_column_display, state.view_id, mode.column, changes})
 
   defp set_date(state, mode, format),
-    do:
-      State.change_db(
-        state,
-        Core.set_column_date_format(state.db, state.view_id, mode.column, format)
-      )
+    do: State.run(state, {:set_column_date_format, state.view_id, mode.column, format})
 
   @doc "The date format the column shows: its own or the file's."
   def date_format(state, mode), do: column(state, mode).date || state.db.date_format

@@ -99,7 +99,7 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
 
   # SPACE switches a Yes/No, so `_step` and `_key` are ignored
   defp change(state, mode, _d, row, _step, _key) when row in @options,
-    do: State.change_db(state, Core.toggle_view_option(state.db, mode.view_id, row))
+    do: State.run(state, {:toggle_view_option, mode.view_id, row})
 
   defp change(state, mode, _d, row, _step, key)
        when row in [:date_category, :end_category, :section_category] and
@@ -152,8 +152,8 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
   defp set(state, mode, d), do: set_datebook(state, mode.view_id, d)
 
   defp set_datebook(state, view_id, d) do
-    case Core.set_datebook(state.db, view_id, d) do
-      {:ok, db} -> State.change_db(state, db)
+    case State.command(state, {:set_datebook, view_id, d}) do
+      {:ok, state, _} -> state
       {:error, :not_a_date_category} -> State.error(state, "Pick a date category")
     end
   end

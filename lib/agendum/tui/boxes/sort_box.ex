@@ -18,7 +18,6 @@ defmodule Agendum.TUI.Boxes.SortBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "SORT", cancels: true
 
-  alias Agendum.Core
   alias Agendum.Core.Database
   alias Agendum.Core.View.SortKey
   alias Agendum.TUI.Boxes.{Box, Template}
@@ -138,7 +137,7 @@ defmodule Agendum.TUI.Boxes.SortBox do
         :section_order -> {view.section_sort, toggle(:order, view.section_order)}
       end
 
-    State.change_db(state, Core.set_section_sort(state.db, state.view_id, sort, order))
+    State.run(state, {:set_section_sort, state.view_id, sort, order})
   end
 
   defp change(state, mode, row) do
@@ -212,7 +211,7 @@ defmodule Agendum.TUI.Boxes.SortBox do
   defp set_key(keys, _index, key), do: keys ++ [key]
 
   defp put(state, mode, keys),
-    do: State.change_db(state, Core.set_sort(state.db, state.view_id, mode.scope, keys))
+    do: State.run(state, {:set_sort, state.view_id, mode.scope, keys})
 
   # --- what the rows say ---------------------------------------------------------
 

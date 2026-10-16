@@ -58,11 +58,13 @@ defmodule Agendum.TUI.Moves.ColumnWidth do
 
   # the file as it would be with the width chosen; only shown, never kept
   # until ENTER
-  defp chosen(state, %{target: {:column, at}} = mode),
-    do: Core.set_column_width(state.db, mode.view_id, at, mode.width)
+  defp chosen(state, mode), do: State.preview(state, width_command(mode))
 
-  defp chosen(state, %{target: {:items, sidx}} = mode),
-    do: Core.set_item_column(state.db, mode.view_id, sidx, set: :manual, width: mode.width)
+  defp width_command(%{target: {:column, at}} = mode),
+    do: {:set_column_width, mode.view_id, at, mode.width}
+
+  defp width_command(%{target: {:items, sidx}} = mode),
+    do: {:set_item_column, mode.view_id, sidx, set: :manual, width: mode.width}
 
   @doc """
   A key while a column's width changes: the command its keymap binds it to
@@ -98,7 +100,7 @@ defmodule Agendum.TUI.Moves.ColumnWidth do
   defp command(state, mode, :narrower), do: put_width(state, mode, mode.width - 1)
   defp command(state, mode, :wider), do: put_width(state, mode, mode.width + 1)
   defp command(state, mode, :fit), do: put_width(state, mode, fitted(state, mode))
-  defp command(state, mode, :keep), do: State.change_db(State.pop(state), chosen(state, mode))
+  defp command(state, mode, :keep), do: State.run(State.pop(state), width_command(mode))
   defp command(state, _mode, :close), do: State.pop(state)
   defp command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
 
@@ -124,7 +126,7 @@ defmodule Agendum.TUI.Moves.ColumnWidth do
 
   # R22a's width: the core fits the column, and the width is read back
   defp fitted(state, %{target: {:column, at}} = mode) do
-    db = Core.fit_column(state.db, mode.view_id, at, State.context(state))
+    db = State.preview(state, {:fit_column, mode.view_id, at})
     kept(db.views[mode.view_id], mode.target)
   end
 

@@ -23,7 +23,6 @@ defmodule Agendum.TUI.Boxes.FileProperties do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  alias Agendum.Core
   alias Agendum.TUI.Boxes.{AutoAssignBox, Box, DateSettingsBox, FileStatsBox, Template}
   alias Agendum.TUI.State
 
@@ -73,7 +72,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   # two choices, so SPACE flips it
   defp change(state, :insert_columns) do
     where = if state.db.insert_columns == :all, do: :section, else: :all
-    State.change_db(state, Core.set_insert_columns(state.db, where))
+    State.run(state, {:set_insert_columns, where})
   end
 
   @impl Box

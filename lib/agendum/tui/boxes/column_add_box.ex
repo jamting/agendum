@@ -270,21 +270,16 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
     opts = [
       width: mode.width,
       insert_in: mode.insert_in,
-      clock: State.context(state),
       format: mode.format,
       note_line: mode.note_line,
       title: mode.title
     ]
 
-    case Core.add_column_as(
-           state.db,
-           state.view_id,
-           mode.head,
-           mode.kind,
-           {mode.sidx, place},
-           opts
+    case State.command(
+           state,
+           {:add_column_as, state.view_id, mode.head, mode.kind, {mode.sidx, place}, opts}
          ) do
-      {:ok, db} -> %{State.change_db(State.pop(state), db) | col: index + 1}
+      {:ok, state, _} -> %{State.pop(state) | col: index + 1}
       {:error, _} -> State.error(state, "#{name(state, mode.head)} cannot change type")
     end
   end

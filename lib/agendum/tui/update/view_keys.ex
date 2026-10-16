@@ -332,12 +332,12 @@ defmodule Agendum.TUI.Update.ViewKeys do
   defp collapse_sections(state, row, collapsed) do
     twice = state.last_key.key == {:alt, if(collapsed, do: "-", else: "=")}
 
-    db =
+    command =
       if twice,
-        do: Core.set_all_sections_collapsed(state.db, state.view_id, collapsed),
-        else: Core.set_section_collapsed(state.db, state.view_id, row.sidx, collapsed)
+        do: {:set_all_sections_collapsed, state.view_id, collapsed},
+        else: {:set_section_collapsed, state.view_id, row.sidx, collapsed}
 
-    %{State.change_db(state, db) | cursor_key: {:section, row.sidx}}
+    %{State.run(state, command) | cursor_key: {:section, row.sidx}}
   end
 
   # the nth section head above or below; stops at the last one there is
@@ -517,9 +517,11 @@ defmodule Agendum.TUI.Update.ViewKeys do
   def delete(state, %{kind: :section, slot: %{}}), do: Actions.datebook_sections(state)
 
   def delete(state, %{kind: :section, sidx: sidx}) do
-    state
-    |> State.change_db(Core.remove_section(state.db, state.view_id, sidx))
-    |> State.info("Section removed from view (category kept)")
+    State.run(
+      state,
+      {:remove_section, state.view_id, sidx},
+      "Section removed from view (category kept)"
+    )
   end
 
   def delete(state, %{kind: :item, item: item, category: cat}) when state.col == 0 do

@@ -14,7 +14,6 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   # ENTER shows the view, ESC goes back to the one shown, as in Agenda
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "VW MGR"
 
-  alias Agendum.Core
   alias Agendum.Core.Database
   alias Agendum.TUI.{Boxes.Box, Keymap, Terminal.Draw, Typing.LineEdit, State}
   alias Agendum.TUI.Update.Prompts
@@ -36,7 +35,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
 
         if name == "",
           do: state,
-          else: State.change_db(state, Core.rename_view(state.db, edit.target, name))
+          else: State.run(state, {:rename_view, edit.target, name})
 
       _ ->
         case LineEdit.handle(edit.line, key) do
@@ -134,7 +133,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
     do: %{state | edit: %{target: view_id, line: LineEdit.new(state.db.views[view_id].name)}}
 
   defp command(state, mode, :sort, _),
-    do: state |> State.change_db(Core.sort_views(state.db)) |> State.put_mode(%{mode | cursor: 0})
+    do: state |> State.run(:sort_views) |> State.put_mode(%{mode | cursor: 0})
 
   defp command(state, mode, :move_up, _), do: reorder(state, mode, -1)
   defp command(state, mode, :move_down, _), do: reorder(state, mode, 1)
@@ -184,8 +183,9 @@ defmodule Agendum.TUI.Boxes.ViewManager do
     if target < 0 or target >= length(order) do
       state
     else
-      db = Core.move_view(state.db, Enum.at(order, mode.cursor), target)
-      state |> State.change_db(db) |> State.put_mode(%{mode | cursor: target})
+      state
+      |> State.run({:move_view, Enum.at(order, mode.cursor), target})
+      |> State.put_mode(%{mode | cursor: target})
     end
   end
 

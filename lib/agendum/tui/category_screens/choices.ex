@@ -315,10 +315,10 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
   # a datebook view with Agenda's defaults (When, a week from today), then
   # its settings (R47)
   defp resolve_choice(state, %{kind: :view_type, name: name}, :datebook) do
-    {:ok, db, view_id} = Core.add_datebook_view(state.db, name, %Agendum.Core.Datebook{})
+    {:ok, state, %{new: view_id}} =
+      State.command(state, {:add_datebook_view, name, %Agendum.Core.Datebook{}})
 
     state
-    |> State.change_db(db)
     |> State.switch_view(view_id)
     |> Agendum.TUI.Boxes.DatebookBox.open(view_id)
   end

@@ -21,7 +21,6 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
 
   alias Agendum.TUI.Boxes.{Box}
 
-  alias Agendum.Core
   alias Agendum.Core.View
   alias Agendum.Core.View.ItemColumn
   alias Agendum.TUI.{CategoryScreens, Boxes.FieldTyping, State, Boxes.Template}
@@ -122,12 +121,11 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
 
   defp change(state, mode, :linked, _step) do
     linked = not item_column(state, mode).linked
-    db = Core.set_item_column_linked(state.db, state.view_id, mode.sidx, linked)
-    State.change_db(state, db)
+    State.run(state, {:set_item_column_linked, state.view_id, mode.sidx, linked})
   end
 
   defp set(state, mode, changes),
-    do: State.change_db(state, Core.set_item_column(state.db, state.view_id, mode.sidx, changes))
+    do: State.run(state, {:set_item_column, state.view_id, mode.sidx, changes})
 
   defp shown_width(state, mode) do
     view = State.view(state)

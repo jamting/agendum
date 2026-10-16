@@ -206,8 +206,7 @@ defmodule Agendum.TUI.Moves.Browse do
     if date == now do
       state
     else
-      {:ok, db} = Core.set_datebook(state.db, mode.view_id, %{d | base: Date.to_iso8601(date)})
-      State.change_db(state, db)
+      State.run(state, {:set_datebook, mode.view_id, %{d | base: Date.to_iso8601(date)}})
     end
   end
 
@@ -216,6 +215,6 @@ defmodule Agendum.TUI.Moves.Browse do
   defp keep(state, %{scope: scope, shift: shift} = mode) do
     view = state.db.views[mode.view_id]
     shifted = Core.shift_filters(state.db, filters(view, scope), shift, State.context(state))
-    State.change_db(state, Core.set_filters(state.db, mode.view_id, scope, shifted))
+    State.run(state, {:set_filters, mode.view_id, scope, shifted})
   end
 end

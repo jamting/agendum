@@ -202,9 +202,8 @@ defmodule Agendum.TUI.Boxes.SectionBox do
         State.error(state, "The item column stays; remove the other columns")
 
       index ->
-        db = Core.remove_column(state.db, state.view_id, {mode.sidx, index}, :section)
         # the highlight stays on the row, which is now the next column
-        state = State.change_db(state, db)
+        state = State.run(state, {:remove_column, state.view_id, {mode.sidx, index}, :section})
         State.put_mode(state, %{mode | cursor: min(mode.cursor, last(state, mode))})
     end
   end
@@ -218,7 +217,7 @@ defmodule Agendum.TUI.Boxes.SectionBox do
       state
     else
       state
-      |> State.change_db(Core.move_column(state.db, state.view_id, mode.sidx, n, to))
+      |> State.run({:move_column, state.view_id, mode.sidx, n, to})
       |> State.put_mode(%{mode | cursor: mode.cursor + step})
     end
   end

@@ -58,7 +58,7 @@ defmodule Agendum.TUI.Boxes.NumericFunctionsBox do
     calcs = calcs(state, mode)
     # on: added to what every column has; off: taken away
     calcs = if calc in calcs, do: List.delete(calcs, calc), else: [calc | calcs]
-    State.change_db(state, Core.set_section_calcs(state.db, state.view_id, mode.sidx, calcs))
+    State.run(state, {:set_section_calcs, state.view_id, mode.sidx, calcs})
   end
 
   @impl Box

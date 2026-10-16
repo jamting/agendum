@@ -262,7 +262,7 @@ defmodule Agendum.Core.Command do
     {:add_column, "Add column", "Adds a column headed by a category",
      [:view, :category, :value, :value, :value], :core},
     {:add_column_as, "Add column as", "Adds a column of a kind (date, numeric…) under a head",
-     [:view, :category, :value, :value, :value], :core},
+     [:view, :category, :value, :value, :value], :own},
     {:set_insert_columns, "Insert columns in",
      "Whether a new column goes into one section or all (R55)", [:value], :core},
     {:set_column_head, "Column head", "Changes a column's head", [:view, :value, :category],
@@ -503,6 +503,12 @@ defmodule Agendum.Core.Command do
   # the clock goes into the options, where these functions read it
   defp apply_own(db, {:move_item, id, from, to, opts}, clock),
     do: result(Items.move_item(db, id, from, to, Keyword.put(opts, :clock, clock)))
+
+  defp apply_own(db, {:add_column_as, view, head, kind, at, opts}, clock),
+    do:
+      result(
+        Agendum.Core.add_column_as(db, view, head, kind, at, Keyword.put(opts, :clock, clock))
+      )
 
   defp apply_own(db, {:execute, ids, opts}, clock),
     do: result(Agendum.Core.execute(db, ids, Keyword.put(opts, :clock, clock)))

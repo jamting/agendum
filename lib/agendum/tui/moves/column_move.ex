@@ -17,7 +17,6 @@ defmodule Agendum.TUI.Moves.ColumnMove do
   it. Pure.
   """
 
-  alias Agendum.Core
   alias Agendum.Core.{View, ViewColumns}
   alias Agendum.TUI.{Keymap, State}
 
@@ -48,8 +47,9 @@ defmodule Agendum.TUI.Moves.ColumnMove do
   end
 
   # the file as it would be with the column moved; kept only on ENTER
-  defp moved(state, mode),
-    do: Core.move_column(state.db, mode.view_id, mode.sidx, mode.from, mode.to)
+  defp moved(state, mode), do: State.preview(state, move(mode))
+
+  defp move(mode), do: {:move_column, mode.view_id, mode.sidx, mode.from, mode.to}
 
   @doc "A key while a column moves: the command its keymap binds it to (R65)."
   def handle(state, mode, key) do
@@ -76,7 +76,7 @@ defmodule Agendum.TUI.Moves.ColumnMove do
 
   defp command(state, mode, :left), do: step(state, mode, -1)
   defp command(state, mode, :right), do: step(state, mode, 1)
-  defp command(state, mode, :keep), do: State.change_db(State.pop(state), moved(state, mode))
+  defp command(state, mode, :keep), do: State.run(State.pop(state), move(mode))
   # the highlight goes back with it
   defp command(state, mode, :close), do: %{State.pop(state) | col: mode.col}
   defp command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)

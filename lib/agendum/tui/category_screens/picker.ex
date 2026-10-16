@@ -7,7 +7,6 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
 
   use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
 
-  alias Agendum.Core
   alias Agendum.Core.Database
   alias Agendum.TUI.{Boxes.Box, CategoryScreens, Terminal.Draw, Typing.LineEdit, State}
   alias Agendum.TUI.CategoryScreens.Choices
@@ -300,21 +299,23 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
     index = min(index, length(State.view(state).sections))
 
     %{
-      State.change_db(state, Core.add_section(state.db, state.view_id, id, index, from))
+      State.run(state, {:add_section, state.view_id, id, index, from})
       | cursor_key: {:section, index}
     }
   end
 
   def pick(state, {:change_section, sidx}, id) do
-    db = Core.set_section_category(state.db, state.view_id, sidx, id)
-    %{State.change_db(state, db) | cursor_key: {:section, sidx}}
+    %{
+      State.run(state, {:set_section_category, state.view_id, sidx, id})
+      | cursor_key: {:section, sidx}
+    }
   end
 
   # the core decides its width and which sections get it (R55)
   # the highlight goes to the new column (`state.col` counts from 1)
   def pick(state, {:add_column, {sidx, place} = at}, id) do
     index = Agendum.Core.ViewColumns.insert_index(State.view(state), sidx, place)
-    %{State.change_db(state, Core.add_column(state.db, state.view_id, id, at)) | col: index + 1}
+    %{State.run(state, {:add_column, state.view_id, id, at, nil, nil}) | col: index + 1}
   end
 
   # Column Add ▸ Column head: back in the box, which adds it on ENTER
@@ -323,14 +324,13 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   # Column Properties ▸ Column head (R55): back in the box, which shows the
   # column's new head (and its kind's settings)
   def pick(state, {:column_head, at}, id),
-    do: State.change_db(state, Core.set_column_head(state.db, state.view_id, at, id))
+    do: State.run(state, {:set_column_head, state.view_id, at, id})
 
   def pick(state, {:filter, scope}, id) do
     if Agendum.Core.RangeFilter.range_category?(state.db, id) do
       Agendum.TUI.Boxes.RangeFilterBox.open(state, scope, id)
     else
-      {:ok, db} = Core.cycle_filter(state.db, state.view_id, scope, id)
-      State.change_db(state, db)
+      State.run(state, {:cycle_filter, state.view_id, scope, id})
     end
   end
 
@@ -367,8 +367,8 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
     do: State.run(state, {:assign, item_id, id})
 
   def pick(state, {:new_view, name}, id) do
-    {db, view_id} = Core.add_view(state.db, name, [id])
-    %{State.switch_view(State.change_db(state, db), view_id) | modes: []}
+    {:ok, state, %{new: view_id}} = State.command(state, {:add_view, name, [id]})
+    %{State.switch_view(state, view_id) | modes: []}
   end
 
   def pick(state, {:move_category, cat_id}, parent),

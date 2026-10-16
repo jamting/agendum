@@ -100,12 +100,13 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
     do: CategoryScreens.open_picker(state, {:schedule_filter, nil}, nil)
 
   defp show(state, mode) do
-    case Core.show_schedule(state.db, mode.date_category, mode.section, mode.date, mode.filter) do
-      {:ok, db, view_id} ->
-        day = DateFormat.date(mode.date, %{db.date_format | day_of_week: true})
+    command = {:show_schedule, mode.date_category, mode.section, mode.date, mode.filter}
+
+    case State.command(state, command) do
+      {:ok, state, %{new: view_id}} ->
+        day = DateFormat.date(mode.date, %{state.db.date_format | day_of_week: true})
 
         state
-        |> State.change_db(db)
         |> State.switch_view(view_id)
         |> State.info("Schedule for #{day} (ALT-B: other days)")
 

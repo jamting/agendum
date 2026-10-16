@@ -245,11 +245,10 @@ defmodule Agendum.TUI.Update.Actions do
           )
 
         ids ->
-          {db, view_id} = Core.show_items(state.db, ids)
+          {:ok, state, %{new: view_id}} = State.command(state, {:show_items, ids})
           noun = if direction == :dependents, do: "dependent", else: "prerequisite"
 
           state
-          |> State.change_db(db)
           |> State.switch_view(view_id)
           |> State.info(
             "#{Draw.count(length(ids), noun <> " item")} · ALT-F8 returns to the last view"
@@ -331,12 +330,12 @@ defmodule Agendum.TUI.Update.Actions do
   end
 
   defp do_perform(state, :remove_section, %{sidx: sidx}) do
-    State.change_db(state, Core.remove_section(state.db, state.view_id, sidx))
+    State.run(state, {:remove_section, state.view_id, sidx})
   end
 
   defp do_perform(state, :collapse_section, %{sidx: sidx}) do
     %{
-      State.change_db(state, Core.toggle_section_collapsed(state.db, state.view_id, sidx))
+      State.run(state, {:toggle_section_collapsed, state.view_id, sidx})
       | cursor_key: {:section, sidx}
     }
   end
@@ -391,7 +390,7 @@ defmodule Agendum.TUI.Update.Actions do
       end)
 
   defp do_perform(state, {:toggle_view, option}, _),
-    do: State.change_db(state, Core.toggle_view_option(state.db, state.view_id, option))
+    do: State.run(state, {:toggle_view_option, state.view_id, option})
 
   defp do_perform(state, _action, _row), do: State.error(state, "Highlight an item first")
 
@@ -413,7 +412,7 @@ defmodule Agendum.TUI.Update.Actions do
   """
   def remove_column(state, at, from) do
     %{
-      State.change_db(state, Core.remove_column(state.db, state.view_id, at, from))
+      State.run(state, {:remove_column, state.view_id, at, from})
       | col: state.col - 1
     }
   end

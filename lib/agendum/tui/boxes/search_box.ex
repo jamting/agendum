@@ -17,7 +17,6 @@ defmodule Agendum.TUI.Boxes.SearchBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "SEARCH", choices: true
 
-  alias Agendum.Core
   alias Agendum.Core.Search
   alias Agendum.TUI.Boxes.{Box, Template}
   alias Agendum.TUI.{Keymap, Layout, Typing.LineEdit, State}
@@ -129,8 +128,8 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   end
 
   defp show_match(state, search) do
-    {db, view_id} = Core.show_match(state.db, search)
-    state = state |> State.change_db(db) |> State.switch_view(view_id)
+    {:ok, state, %{new: view_id}} = State.command(state, {:show_match, search})
+    state = State.switch_view(state, view_id)
     count = state |> Layout.rows() |> Enum.count(&(&1.kind == :item))
 
     State.info(

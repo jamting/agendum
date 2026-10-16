@@ -15,7 +15,6 @@ defmodule Agendum.TUI.Moves.SectionMove do
   Pure.
   """
 
-  alias Agendum.Core
   alias Agendum.TUI.{Keymap, State}
 
   @doc "Starts moving section `sidx` of the current view."
@@ -43,7 +42,9 @@ defmodule Agendum.TUI.Moves.SectionMove do
   end
 
   # the file as it would be with the section moved; kept only on ENTER
-  defp moved(state, mode), do: Core.move_section(state.db, mode.view_id, mode.from, mode.to)
+  defp moved(state, mode), do: State.preview(state, move(mode))
+
+  defp move(mode), do: {:move_section, mode.view_id, mode.from, mode.to}
 
   @doc "A key while a section moves: the command its keymap binds it to (R65)."
   def handle(state, mode, key) do
@@ -72,7 +73,7 @@ defmodule Agendum.TUI.Moves.SectionMove do
   defp command(state, mode, :down), do: step(state, mode, 1)
 
   defp command(state, mode, :keep),
-    do: %{State.change_db(State.pop(state), moved(state, mode)) | cursor_key: {:section, mode.to}}
+    do: %{State.run(State.pop(state), move(mode)) | cursor_key: {:section, mode.to}}
 
   # the highlight goes back where it was
   defp command(state, mode, :close), do: %{State.pop(state) | cursor_key: mode.cursor_key}

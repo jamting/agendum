@@ -303,9 +303,32 @@ defmodule Agendum.TUI.State do
   def command(state, command) do
     case Agendum.Core.run(state.db, command, context(state)) do
       # a command that changed nothing leaves the state as it was
-      {:ok, db, changes} when db == state.db -> {:ok, state, changes}
-      {:ok, db, changes} -> {:ok, change_db(state, db), changes}
-      {:error, _reason} = error -> error
+      {:ok, db, changes} when db == state.db ->
+        {:ok, state, changes}
+
+      {:ok, db, changes} ->
+        {:ok, change_db(state, db), changes}
+
+      # a command the core does not know, or with the wrong arguments, is
+      # a mistake in the TUI, not something to tell the person: let it crash
+      {:error, reason} when reason in [:bad_arguments, :unknown_command] ->
+        raise ArgumentError, "the core refused #{inspect(command)}: #{reason}"
+
+      {:error, _reason} = error ->
+        error
+    end
+  end
+
+  @doc """
+  The file as it would be after a command, for showing while the person
+  chooses (a column's width, a section dragged): nothing is kept. A
+  refused command shows the file as it is.
+  """
+  @spec preview(t, Agendum.Core.Command.t()) :: Database.t()
+  def preview(state, command) do
+    case Agendum.Core.run(state.db, command, context(state)) do
+      {:ok, db, _changes} -> db
+      {:error, _reason} -> state.db
     end
   end
 
@@ -324,7 +347,11 @@ defmodule Agendum.TUI.State do
   defp command_error(:no_such_category), do: "That category is no longer in the file"
   defp command_error(:no_such_view), do: "That view or section is no longer in the file"
   defp command_error(:empty_text), do: "The text cannot be empty"
-  defp command_error(:unknown_command), do: "Agendum cannot do that"
+  defp command_error(:no_such_macro), do: "That macro is no longer in the file"
+  defp command_error(:no_such_calendar), do: "That calendar is no longer in the file"
+  # a reason the caller did not expect to need words for (it would have
+  # used `command/2`)
+  defp command_error(reason), do: "Not done (#{inspect(reason)})"
 
   @doc """
   Ends an undo step in the middle of a key: what the key changed so far is

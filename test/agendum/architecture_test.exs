@@ -152,56 +152,18 @@ defmodule Agendum.ArchitectureTest do
   # Commands the TUI does not send yet: the command layer moves them
   # over in batches (ROADMAP), and this list only shrinks.
   @not_yet ~w(
-    add_column
-    add_column_as
-    add_datebook_view
     add_macro
-    add_section
-    add_view
     attach_macro
     calendar_failed
     cycle_calendar_setting
-    cycle_filter
     delete_macro
-    discard_view
-    fit_column
-    move_column
     move_macro
-    move_section
-    move_view
-    remove_column
-    remove_section
     rename_macro
-    rename_view
-    resize_column
-    set_all_sections_collapsed
-    set_column_date_format
-    set_column_display
-    set_column_format
-    set_column_head
-    set_column_linked
-    set_column_width
-    set_datebook
-    set_filters
-    set_insert_columns
-    set_item_column
-    set_item_column_linked
     set_macro_keys
     set_macro_run_from
-    set_section_calcs
-    set_section_category
-    set_section_collapsed
-    set_section_sort
-    set_sort
-    show_items
-    show_match
-    show_schedule
     sort_macros
-    sort_views
     subscribe_calendar
     sync_calendar
-    toggle_section_collapsed
-    toggle_view_option
     unsubscribe_calendar
   )a
 
@@ -237,7 +199,7 @@ defmodule Agendum.ArchitectureTest do
   # included. It may only go down: when a step of the command layer moves
   # more actions into commands, lower it to the new count. The command
   # layer is done when only reads are left (ROADMAP, Towards many users).
-  @core_calls_at_most 78
+  @core_calls_at_most 40
 
   test "the TUI calls no more core functions directly than before", %{calls: calls} do
     used =
