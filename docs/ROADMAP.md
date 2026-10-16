@@ -9,9 +9,11 @@ tools, checks and ways of working that make later changes faster and safer.
 
 ## Open
 
-**Next:** first "Sharpen the saw", small work on the tools and checks;
-then the command layer ("Towards many users"), the next major work.
-Parity with Agenda and the rest continue after it.
+**Next:** the command layer ("Towards many users"), the next major work,
+with a struct for each UI mode as each place moves over. "Sharpen the
+saw" is done (2026-10-16) apart from CI, which waits for GitHub, and the
+view cache, which waits for slow answers. Parity with Agenda and the rest
+continue after the command layer.
 
 ### Sharpen the saw
 
