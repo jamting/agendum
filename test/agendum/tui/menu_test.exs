@@ -104,4 +104,17 @@ defmodule Agendum.TUI.MenuTest do
       assert %{type: :menu} = State.mode(press(state, [:esc, :esc]))
     end
   end
+
+  test "a menu wider than the screen scrolls to the highlighted entry, ◄ ► marking more" do
+    state = Agendum.TUIHelpers.start(Agendum.Sample.build(~D[2026-10-08]), width: 80)
+    first = fn state -> state |> Agendum.TUIHelpers.screen() |> String.split("\n") |> hd() end
+
+    state = Agendum.TUIHelpers.press(state, [{:f, 10}, "i"])
+    assert first.(state) =~ ~r/^  Properties .* ►$/
+    refute first.(state) =~ "Discard"
+
+    state = Agendum.TUIHelpers.press(state, :end)
+    assert first.(state) =~ ~r/^◄ .*Zettel   Discard/
+    assert String.length(first.(state)) <= 80
+  end
 end

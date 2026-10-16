@@ -148,6 +148,28 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :make_assign, row), do: Marked.scoped(state, :make_assign, row)
   defp do_perform(state, :attach_zettel, row), do: Marked.scoped(state, :attach_zettel, row)
 
+  # R73b: the items the highlighted item links to, or that link to it, in
+  # the Show View, as ALT-O lists dependencies
+  defp do_perform(state, :follow_link, %{kind: :item, item: item}) do
+    case Core.link_targets(state.db, item.id) do
+      [] -> State.error(state, "This item has no links to other items")
+      ids -> show_linked(state, ids, "linked item")
+    end
+  end
+
+  defp do_perform(state, :linked_from, %{kind: :item, item: %{zettel: nil}}),
+    do: State.error(state, "The item has no Zettel id, so nothing can link to it")
+
+  defp do_perform(state, :linked_from, %{kind: :item, item: item}) do
+    case Core.linked_from(state.db, item.id) do
+      [] -> State.info(state, "No item links to this one")
+      ids -> show_linked(state, ids, "item linking here", "items linking here")
+    end
+  end
+
+  defp do_perform(state, action, _row) when action in [:follow_link, :linked_from],
+    do: State.error(state, "Highlight an item first")
+
   defp do_perform(state, :when, %{kind: :item, item: item}) do
     current = if item.when, do: Agendum.Core.DateParser.format(item.when), else: ""
     Prompts.prompt(state, "When date (overrides dates in the text):", {:when, item.id}, current)
@@ -425,5 +447,14 @@ defmodule Agendum.TUI.Update.Actions do
       nil -> State.error(state, "Highlight a column first (use → or TAB)")
       {_column, at} -> fun.(at)
     end
+  end
+
+  defp show_linked(state, ids, noun, plural \\ nil) do
+    {:ok, state, %{new: view_id}} = State.command(state, {:show_items, ids})
+    what = if length(ids) == 1, do: "1 #{noun}", else: "#{length(ids)} #{plural || noun <> "s"}"
+
+    state
+    |> State.switch_view(view_id)
+    |> State.info("#{what} · ALT-F8 returns to the last view")
   end
 end

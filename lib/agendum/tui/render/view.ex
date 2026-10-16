@@ -13,6 +13,8 @@ defmodule Agendum.TUI.Render.View do
   def lines(state) do
     rows = Layout.rows(state)
     editing = state.modes == [] && state.edit
+    # the Zettel ids in use, once for the whole screen, to find links (R73b)
+    used = Agendum.Core.zettels(state.db)
 
     rows
     |> Enum.with_index()
@@ -21,7 +23,7 @@ defmodule Agendum.TUI.Render.View do
       columns = row.columns
       tw = Layout.text_width(state, row)
       selected = index == state.cursor
-      lines = row_lines(state, row, index, selected, editing, tw, columns)
+      lines = row_lines(state, row, index, selected, editing, {tw, used}, columns)
       lines = if selected, do: Enum.map(lines, &tint_line(&1, state.width)), else: lines
 
       lines =
@@ -73,7 +75,9 @@ defmodule Agendum.TUI.Render.View do
     item_done: :row_done,
     cell: :row_cell,
     section: :row_cell,
-    column_head: :row_cell
+    column_head: :row_cell,
+    link: :row_link,
+    link_broken: :row_link_broken
   }
 
   defp tint([], _width), do: []
@@ -148,7 +152,7 @@ defmodule Agendum.TUI.Render.View do
 
   defp right(text, width), do: text |> String.pad_leading(width) |> Draw.pad(width)
 
-  defp row_lines(state, %{kind: :section} = row, index, selected, editing, tw, columns) do
+  defp row_lines(state, %{kind: :section} = row, index, selected, editing, {tw, _used}, columns) do
     cat = row.category
     style = if selected and state.col == 0, do: :cursor, else: :section
 
@@ -206,7 +210,15 @@ defmodule Agendum.TUI.Render.View do
     if index == 0 or row.slot != nil or view.section_separators, do: [head], else: [[], head]
   end
 
-  defp row_lines(state, %{kind: :item, item: item} = row, _index, selected, editing, tw, columns) do
+  defp row_lines(
+         state,
+         %{kind: :item, item: item} = row,
+         _index,
+         selected,
+         editing,
+         {tw, used},
+         columns
+       ) do
     symbol =
       cond do
         item.done -> "√"
@@ -227,9 +239,11 @@ defmodule Agendum.TUI.Render.View do
         _ ->
           item.text
           |> Draw.wrap(tw)
-          |> Enum.map(
-            &[{if(selected and state.col == 0, do: :cursor, else: text_style), Draw.pad(&1, tw)}]
-          )
+          |> Enum.map(fn line ->
+            if selected and state.col == 0,
+              do: [{:cursor, Draw.pad(line, tw)}],
+              else: line |> Draw.pad(tw) |> Text.with_links(used, text_style)
+          end)
       end
 
     cells = item_cells(state, row, selected, editing)

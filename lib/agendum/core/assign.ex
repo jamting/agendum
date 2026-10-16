@@ -22,7 +22,7 @@ defmodule Agendum.Core.Assign do
     explicit assignments always win over new automatic ones.
   """
 
-  alias Agendum.Core.{Database, RangeFilter, TextCondition, TextMatch}
+  alias Agendum.Core.{Database, RangeFilter, TextCondition, TextMatch, ZettelLinks}
 
   @type db :: Database.t()
   @type id :: Database.id()
@@ -543,7 +543,7 @@ defmodule Agendum.Core.Assign do
 
       prepared =
         Map.put_new_lazy(prepared, key, fn ->
-          TextMatch.prepare(text_for.(settings.match_on), settings)
+          TextMatch.prepare(ZettelLinks.strip(text_for.(settings.match_on)), settings)
         end)
 
       level = if settings.enabled, do: category_level(cat, prepared[key], settings), else: :none
@@ -558,7 +558,8 @@ defmodule Agendum.Core.Assign do
   @spec text_matches?(db, id, id) :: boolean
   def text_matches?(db, item_id, cat_id) do
     settings = match_settings(db, cat_id)
-    prepared = TextMatch.prepare(match_text(db.items[item_id], settings.match_on), settings)
+    text = ZettelLinks.strip(match_text(db.items[item_id], settings.match_on))
+    prepared = TextMatch.prepare(text, settings)
     settings.enabled and category_level(db.categories[cat_id], prepared, settings) != :none
   end
 

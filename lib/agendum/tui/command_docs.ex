@@ -81,6 +81,16 @@ defmodule Agendum.TUI.CommandDocs do
     hop:
       "An item can show in several sections and views. Hop goes to the next place it " <>
         "shows: further down this view first, then in the views after this one.",
+    attach_zettel:
+      "A Zettel id is eight letters you can say, such as bonalaku: a name for the item " <>
+        "that never changes, to link to it from other items ([[bonalaku]]) and to find it " <>
+        "by. An item that has one keeps it.",
+    follow_link:
+      "Shows the items this one links to, from its text and note, in the Show View: " <>
+        "ALT-F8 comes back.",
+    linked_from:
+      "Shows the items whose text or note links to this one, in the Show View: what " <>
+        "refers to it.",
     dependency:
       "Makes the highlighted item wait for the marked ones: it is shown with & until they " <>
         "are done, and View ▸ Hide can hide it until then. With nothing marked it offers to " <>
@@ -203,6 +213,9 @@ defmodule Agendum.TUI.CommandDocs do
   }
 
   @note %{
+    insert_link:
+      "Types [[bonalaku]], a link to each marked item, at the cursor: mark them in the " <>
+        "view with F7 first, and give them Zettel ids.",
     mark:
       "Marks where a piece of text starts; move to where it ends, then copy, cut or delete " <>
         "it, or make it an item or a category.",
@@ -326,6 +339,9 @@ defmodule Agendum.TUI.CommandDocs do
   # the menu's entries, by their labels from the top (an entry that runs
   # a view's or a global command without one here has that command's text)
   @menu %{
+    ~w(Item Zettel) =>
+      "Zettel ids name items for good, so that items can link to each other: [[bonalaku]] " <>
+        "in a text or note, or the id on its own, is a link.",
     ~w(File Write) =>
       "Saves the file under a new name and goes on in it: for a version to keep, or a " <>
         "file to start another from.",

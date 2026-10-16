@@ -41,9 +41,10 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   @help %{
     text: "The item's text. F2 edits it.",
     note: "The item's note. SPACE (or F2) opens it.",
-    stats: "When the item was entered and last changed.",
+    stats: "Its Zettel id, if it has one (R73), its categories and when it was entered.",
     prerequisite: "An item this one depends on. SPACE shows it, DEL removes the dependency.",
     dependent: "An item that depends on this one. SPACE shows it, DEL removes the dependency.",
+    linked_from: "An item whose text or note links to this one (R73b). SPACE shows it.",
     assigned:
       "A category the item is assigned to. DEL breaks the assignment; F4 " <>
         "changes a date or number.",
@@ -61,6 +62,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
     [:text, :note, :stats] ++
       Enum.map(Core.prerequisites(state.db, mode.item_id), &{:prerequisite, &1}) ++
       Enum.map(Core.dependents(state.db, mode.item_id), &{:dependent, &1}) ++
+      Enum.map(Core.linked_from(state.db, mode.item_id), &{:linked_from, &1}) ++
       Enum.map(Core.item_assignments(state.db, mode.item_id), &{:assigned, &1}) ++ [:add]
   end
 
@@ -142,14 +144,18 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   defp command(state, mode, :edit, :text), do: edit_text(state, mode)
   defp command(state, mode, id, :note) when id in [:edit, :change], do: open_note(state, mode)
 
-  defp command(state, _mode, :change, {kind, id}) when kind in [:prerequisite, :dependent],
-    do: open(state, id)
+  defp command(state, _mode, :change, {kind, id})
+       when kind in [:prerequisite, :dependent, :linked_from],
+       do: open(state, id)
 
   defp command(state, mode, :remove, {:prerequisite, id}),
     do: State.run(state, {:remove_dependency, mode.item_id, id})
 
   defp command(state, mode, :remove, {:dependent, id}),
     do: State.run(state, {:remove_dependency, id, mode.item_id})
+
+  defp command(state, _mode, :remove, {:linked_from, _id}),
+    do: State.error(state, "A link goes when the text that has it is changed")
 
   defp command(state, mode, :set_value, {:assigned, %{kind: :date} = a}),
     do: ask_date(state, mode, a.category)
@@ -324,7 +330,9 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
     values = %{
       text: item.text,
       note: if(item.note == "", do: "(none)", else: item.note |> String.split("\n") |> hd()),
-      stats: "#{Draw.count(length(assignments), "category", "categories")} · entered #{entered}"
+      stats:
+        zettel_stat(item) <>
+          "#{Draw.count(length(assignments), "category", "categories")} · entered #{entered}"
     }
 
     editing =
@@ -354,7 +362,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
 
     {label, value} =
       case row do
-        {kind, id} when kind in [:prerequisite, :dependent] ->
+        {kind, id} when kind in [:prerequisite, :dependent, :linked_from] ->
           {dependency_label(rows, row), dependency_text(state.db, id)}
 
         {:assigned, a} ->
@@ -387,11 +395,20 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
 
   defp assignment_text(state, a, _item), do: assignment_text(state, a)
 
+  # the item's Zettel id first, when it has one (R73)
+  defp zettel_stat(item) do
+    case Core.zettel(item) do
+      nil -> ""
+      word -> "#{word} · "
+    end
+  end
+
   # R43: the first row of each kind is labelled
   defp dependency_label(rows, {kind, _} = row) do
     cond do
       Enum.find(rows, &match?({^kind, _}, &1)) != row -> ""
       kind == :prerequisite -> "Depends on"
+      kind == :linked_from -> "Linked from"
       true -> "Needed by"
     end
   end

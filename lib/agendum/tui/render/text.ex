@@ -7,6 +7,34 @@ defmodule Agendum.TUI.Render.Text do
 
   alias Agendum.TUI.State
 
+  @doc """
+  A line of text as segments in `style`, its Zettel links (R73b) in the
+  link colour, a broken one (`[[id]]` no item has) in its own. `used` is
+  the ids in use (`Agendum.Core.zettels/1`).
+  """
+  @spec with_links(String.t(), map, atom) :: [{atom, String.t()}]
+  def with_links(text, used, style) do
+    # `Enum.flat_map_reduce/3` walks the links carrying how far the text
+    # has been cut: each link gives the plain text before it and itself
+    {parts, rest_at} =
+      text
+      |> Agendum.Core.zettel_links(used)
+      |> Enum.flat_map_reduce(0, fn link, from ->
+        before = String.slice(text, from, link.at - from)
+        word = String.slice(text, link.at, link.length)
+        link_style = if link.target, do: :link, else: :link_broken
+        {[{style, before}, {link_style, word}], link.at + link.length}
+      end)
+
+    rest = String.slice(text, rest_at..-1//1)
+
+    Enum.reject(parts ++ [{style, rest}], &(elem(&1, 1) == ""))
+    |> case do
+      [] -> [{style, ""}]
+      segments -> segments
+    end
+  end
+
   @doc "Whether a column holds numbers."
   def numeric?(state, column), do: state.db.categories[column.category_id].kind == :numeric
 

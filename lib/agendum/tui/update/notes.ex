@@ -64,12 +64,28 @@ defmodule Agendum.TUI.Update.Notes do
       paste: state.last.copied == nil && "Nothing to paste: F3 copies, F4 cuts",
       search_next: state.searches.note == nil && "Nothing to search for yet; press ALT-F6",
       make_item: length(state.modes) > 1 && "ALT-F7 makes items from a note opened in a view",
+      insert_link: link_text(state) |> link_reason(),
       next_note: stepped(state, mode, 1),
       previous_note: stepped(state, mode, -1)
     ]
     |> Enum.filter(fn {_id, reason} -> is_binary(reason) end)
     |> Map.new()
   end
+
+  # R73b: links to the marked items, `[[bonalaku]]`, each needing an id
+  defp link_text(state) do
+    marked = Agendum.Core.marked_items(state.db)
+    words = Enum.map(marked, &Agendum.Core.zettel(state.db.items[&1]))
+
+    cond do
+      marked == [] -> {:error, "Mark the items to link to with F7 first"}
+      nil in words -> {:error, "Give the marked items Zettel ids first (Item ▸ Zettel ▸ Attach)"}
+      true -> {:ok, Enum.map_join(words, " ", &"[[#{&1}]]")}
+    end
+  end
+
+  defp link_reason({:error, reason}), do: reason
+  defp link_reason({:ok, _text}), do: nil
 
   defp stepped(state, mode, step) do
     below = state.modes |> Enum.drop(1) |> List.first()
@@ -108,6 +124,13 @@ defmodule Agendum.TUI.Update.Notes do
   defp command(state, mode, :insert_time) do
     time = DateFormat.time(NaiveDateTime.to_time(state.now), state.db.date_format)
     type_in_note(state, mode, time)
+  end
+
+  defp command(state, mode, :insert_link) do
+    case link_text(state) do
+      {:ok, text} -> type_in_note(state, mode, text)
+      {:error, reason} -> State.error(state, reason)
+    end
   end
 
   defp command(state, mode, :next_note), do: step_note(state, mode, 1)

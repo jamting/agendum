@@ -23,7 +23,7 @@ defmodule Agendum.TUI.Render.ControlPanel do
     {l1, l2} =
       case State.mode(state) do
         %{type: :menu} = m ->
-          menu_lines(m)
+          menu_lines(m, w)
 
         %{type: :prompt, label: label, action: action} ->
           # a file name can be picked from a list (R51), as Agenda said
@@ -69,7 +69,8 @@ defmodule Agendum.TUI.Render.ControlPanel do
           # on an item's profile why it is in the highlighted category (R67)
           help =
             Agendum.TUI.Boxes.FieldHelp.text(state) ||
-              Agendum.TUI.CategoryScreens.Profile.reason(state)
+              Agendum.TUI.CategoryScreens.Profile.reason(state) ||
+              link_under_cursor(state)
 
           case {message_line(state), help} do
             {[], nil} -> {file_line(state, base), where_line(state, base)}
@@ -265,19 +266,48 @@ defmodule Agendum.TUI.Render.ControlPanel do
 
   defp message_line(_), do: []
 
-  defp menu_lines(mode) do
+  defp menu_lines(mode, width) do
     entries = Menu.entries(mode)
 
-    l1 =
+    pieces =
       entries
       |> Enum.with_index()
-      |> Enum.flat_map(fn {{label, _, _}, i} ->
+      |> Enum.map(fn {{label, _, _}, i} ->
         [{if(i == mode.selected, do: :menu_selected, else: :menu), " #{label} "}, {:menu, " "}]
       end)
 
     {_, desc, children} = Enum.at(entries, mode.selected)
     l2 = if is_list(children), do: Enum.map_join(children, "  ", &elem(&1, 0)), else: desc
-    {[{:menu, " "} | l1], [{:menu_help, " " <> l2}]}
+    {menu_line(pieces, mode.selected, width), [{:menu_help, " " <> l2}]}
+  end
+
+  # A menu wider than the screen scrolls so that the highlighted entry
+  # shows, ◄ and ► saying that there is more to the left or the right
+  defp menu_line(pieces, selected, width) do
+    if Draw.width(List.flatten(pieces)) + 1 <= width do
+      [{:menu, " "} | List.flatten(pieces)]
+    else
+      widths = Enum.map(pieces, &Draw.width/1)
+      room = width - 2
+      # the first entry shown: the leftmost from which the highlighted
+      # one still fits
+      first =
+        Enum.find(0..selected, fn start ->
+          widths |> Enum.slice(start..selected) |> Enum.sum() <= room
+        end) || selected
+
+      # as many entries as fit after it
+      count =
+        widths
+        |> Enum.drop(first)
+        |> Enum.scan(&(&1 + &2))
+        |> Enum.count(&(&1 <= room))
+
+      shown = pieces |> Enum.slice(first, count) |> List.flatten()
+      left = if first > 0, do: "◄", else: " "
+      right = if first + count < length(pieces), do: "►", else: " "
+      [{:menu, left}] ++ shown ++ [{:menu, Draw.spaces(room - Draw.width(shown))}, {:menu, right}]
+    end
   end
 
   # Automatic completion (R32): the top line says how many categories match
@@ -301,5 +331,34 @@ defmodule Agendum.TUI.Render.ControlPanel do
            " #{n} categories begin with \"#{text}\" · ENTER accepts · F8/ALT-N next · F7/ALT-P previous · INS new"}
         ]
     end
+  end
+
+  # R73b: on a Zettel link in a note, or in an item being edited, the
+  # control panel says what it points at
+  defp link_under_cursor(state) do
+    with {text, col} <- cursor_text(state),
+         %{} = link <- link_at(state.db, text, col) do
+      case link.target do
+        nil -> "[[#{link.word}]]: no item has this Zettel id"
+        id -> "→ #{String.downcase(link.word)}: #{state.db.items[id].text}"
+      end
+    else
+      _ -> nil
+    end
+  end
+
+  defp cursor_text(state) do
+    case {State.mode(state), state.edit} do
+      {%{type: :note, edit: edit}, _} -> {Enum.at(edit.lines, edit.row), edit.col}
+      {nil, %{target: {:edit_item, _}, line: line}} -> {line.text, line.pos}
+      _ -> nil
+    end
+  end
+
+  # the link the cursor is in, or just after
+  defp link_at(db, text, col) do
+    text
+    |> Agendum.Core.zettel_links(Agendum.Core.zettels(db))
+    |> Enum.find(&(col >= &1.at and col <= &1.at + &1.length))
   end
 end

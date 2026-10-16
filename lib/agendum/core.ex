@@ -128,6 +128,10 @@ defmodule Agendum.Core do
   defdelegate zettel(item), to: Zettels
   defdelegate item_by_zettel(db, word), to: Zettels
   defdelegate zettels(db), to: Zettels
+  # links between zettels (R73b)
+  defdelegate zettel_links(text, used), to: Agendum.Core.ZettelLinks, as: :scan
+  defdelegate link_targets(db, id), to: Agendum.Core.ZettelLinks, as: :targets
+  defdelegate linked_from(db, id), to: Agendum.Core.ZettelLinks
 
   # times and alarms (R14b, R38)
   defdelegate when_at(item), to: Alarms

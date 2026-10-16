@@ -86,6 +86,7 @@ Every change goes through `Core.run(db, command, clock)`. The commands are liste
 | `Database.reorder_item(db, id, after_id)`                                                                  | write | Move within `item_order`.                                                                                                            |
 | `Core.attach_zettels(db, ids)`                                                                             | write | Gives each item without one the next Zettel id from `next_zettel`, skipping reserved words (R73). Returns `{:ok, db, [{id, word}]}`. |
 | `Core.zettel(item)`, `Core.item_by_zettel(db, word)`, `Core.zettels(db)`                                   | read  | An item's Zettel id as its word; the item with a word; every number in use to its item (R73).                                       |
+| `Core.zettel_links(text, used)`, `Core.link_targets(db, id)`, `Core.linked_from(db, id)`                   | read  | The links in a text, with positions and targets (`Agendum.Core.ZettelLinks`); what an item links to; what links to it (R73b). Computed, never stored. |
 
 ### Categories and the hierarchy
 

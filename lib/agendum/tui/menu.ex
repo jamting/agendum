@@ -51,7 +51,9 @@ defmodule Agendum.TUI.Menu do
          {"Reposition", "Move the item to another section or position (ALT-F10)", :move_item},
          {"Zettel", "Zettel ids: give the item one, follow its links",
           [
-            {"Attach", "Give the item, or the marked items, the next Zettel id", :attach_zettel}
+            {"Attach", "Give the item, or the marked items, the next Zettel id", :attach_zettel},
+            {"Follow", "Show the items the item's links point at", :follow_link},
+            {"Linked", "Show the items that link to the item (Linked from)", :linked_from}
           ]},
          {"Discard", "Delete the item from the file (ALT-F4)", :discard}
        ]},

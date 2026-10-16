@@ -64,6 +64,7 @@
 | `Agendum.Core.DateSettings`                                     | How a file reads dates: week, quarter and year boundaries, month alone, morning/afternoon/evening (R14e).                                               |
 | `Agendum.Core.TextSearch`                                       | Finding and replacing literal text in a note's lines (R39).                                                                                             |
 | `Agendum.Core.ZettelId`                                         | Quadsyl-24: a Zettel number to its pronounceable id (`bonalaku`) and back; the reserved words (`docs/QUADSYL.md`, ADR 0039).                              |
+| `Agendum.Core.ZettelLinks`                                      | Links between zettels: `[[bonalaku]]` and bare ids in a text, what an item links to, what links to it (R73b).                                          |
 | `Agendum.Core.Item`, `Agendum.Core.Category`, `Agendum.Core.View` | Plain structs.                                                                                                                                          |
 
 ### TUI (`lib/agendum/tui/*`)

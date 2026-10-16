@@ -15,12 +15,14 @@ defmodule Agendum.TUI.Render.Note do
     edit = mode.edit
     width = Wrap.width(state)
     region = TextEdit.region(edit)
+    # links (R73b) on the lines without the cursor, a mark or a match
+    used = Agendum.Core.zettels(state.db)
 
     edit.lines
     |> Enum.with_index()
     |> Enum.flat_map(fn {text, row} ->
       # the whole line styled, then cut into its rows
-      styled = line(text, row, edit, region, Map.get(mode, :match))
+      styled = line(text, row, edit, region, Map.get(mode, :match), used)
       text |> Wrap.rows(width) |> cut(styled)
     end)
     |> Enum.drop(top(state, mode))
@@ -60,17 +62,18 @@ defmodule Agendum.TUI.Render.Note do
     above + Wrap.locate(Wrap.rows(Enum.at(edit.lines, row), width), col)
   end
 
-  defp line(text, row, _edit, _region, {row, col, len}) do
+  defp line(text, row, _edit, _region, {row, col, len}, _used) do
     {before, rest} = String.split_at(text, col)
     {found, after_} = String.split_at(rest, len)
     [{:normal, before}, {:note_match, found}, {:normal, after_}]
   end
 
   # an empty mark (just anchored) shows the cursor as usual
-  defp line(text, row, edit, {same, same}, _match), do: line(text, row, edit, nil, nil)
+  defp line(text, row, edit, {same, same}, _match, used),
+    do: line(text, row, edit, nil, nil, used)
 
   # a line the marked region covers some of
-  defp line(text, row, _edit, {{r1, c1}, {r2, c2}}, _match) when row >= r1 and row <= r2 do
+  defp line(text, row, _edit, {{r1, c1}, {r2, c2}}, _match, _used) when row >= r1 and row <= r2 do
     from = if row == r1, do: c1, else: 0
     to = if row == r2, do: c2, else: String.length(text)
     {before, rest} = String.split_at(text, from)
@@ -80,8 +83,9 @@ defmodule Agendum.TUI.Render.Note do
     [{:normal, before}, {:edit, marked}, {:normal, after_}]
   end
 
-  defp line(text, row, %{row: row} = edit, _region, _match),
+  defp line(text, row, %{row: row} = edit, _region, _match, _used),
     do: Draw.field(text, edit.col, :normal)
 
-  defp line(text, _row, _edit, _region, _match), do: [{:normal, text}]
+  defp line(text, _row, _edit, _region, _match, used),
+    do: Agendum.TUI.Render.Text.with_links(text, used, :normal)
 end
