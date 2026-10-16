@@ -56,8 +56,13 @@ defmodule Agendum.TUI.Render.ControlPanel do
           text_lines(state, base, :panel_hint, hint)
 
         _ ->
-          # a message first; else the help for a box's highlighted field
-          case {message_line(state), Agendum.TUI.Boxes.FieldHelp.text(state)} do
+          # a message first; else the help for a box's highlighted field, or
+          # on an item's profile why it is in the highlighted category (R67)
+          help =
+            Agendum.TUI.Boxes.FieldHelp.text(state) ||
+              Agendum.TUI.CategoryScreens.Profile.reason(state)
+
+          case {message_line(state), help} do
             {[], nil} -> {file_line(state, base), where_line(state, base)}
             {[], help} -> text_lines(state, base, :panel_hint, help)
             {[{style, text} | _], _} -> text_lines(state, base, style, String.trim(text))

@@ -2,6 +2,10 @@
 
 What changed in each version of Wol's Agendum, for the person using it. Versions follow [semantic versioning](https://semver.org): before 1.0.0, the minor number (0.**3**.0) goes up with every major feature or change to the file format, the patch number (0.3.**1**) with fixes. Each version is tagged in git (`v0.2.0`). The roadmap's Done section ([`docs/ROADMAP.md`](docs/ROADMAP.md)) lists every finished item; git log has the detail.
 
+## Unreleased
+
+- The assignment profile (F3 on an item) says at the top why the item is in the highlighted category: "In Urgent: its condition holds (Calls)", "In People: through Kanga", its text matching, another category's action, or by hand.
+
 ## 0.7.0 — 2026-10-16
 
 The groundwork for a web version is laid in the core and the terminal program; the terminal program keeps Agenda's keys.

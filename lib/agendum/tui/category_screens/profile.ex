@@ -7,11 +7,48 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
 
   use Agendum.TUI.Boxes.Box, finish: :none, indicator: "ASSIGN"
 
-  alias Agendum.Core.Database
+  alias Agendum.Core
+  alias Agendum.Core.{Database, DateFormat}
   alias Agendum.TUI.{Boxes.Box, CategoryScreens, Terminal.Draw, State}
   alias Agendum.TUI.Update.Prompts
 
   # --- the box (`Agendum.TUI.Boxes.Box`) ---------------------------------------------------
+
+  # --- why the item is in the highlighted category (R67) ------------------------
+
+  @doc """
+  What the control panel says on one item's profile: why the item is in
+  the highlighted category ("In Kanga: its text matches"), from the core's
+  reasons (`Agendum.Core.assignment_reasons/4`); nil when it is not in it,
+  or on the marked items' profile.
+  """
+  @spec reason(State.t()) :: String.t() | nil
+  def reason(%State{} = state) do
+    with %{type: :profile, item_id: item_id} = mode <- State.mode(state),
+         cat_id when cat_id != nil <-
+           CategoryScreens.current_id(CategoryScreens.rows(state, mode), mode),
+         [_ | _] = reasons <-
+           Core.assignment_reasons(state.db, item_id, cat_id, State.context(state)) do
+      name = state.db.categories[cat_id].name
+      "In #{name}: " <> Enum.map_join(reasons, "; ", &words(state.db, &1))
+    else
+      _ -> nil
+    end
+  end
+
+  defp words(_db, :main), do: "every item is in MAIN"
+  defp words(db, {:date, date}), do: "dated " <> DateFormat.date(date, db.date_format)
+  defp words(db, {:through, child}), do: "through " <> db.categories[child].name
+  defp words(_db, :text_match), do: "its text matches"
+  defp words(db, {:action, other}), do: "#{db.categories[other].name}'s action assigns it"
+  defp words(_db, :assigned), do: "assigned by hand, or kept from before"
+
+  defp words(db, {:condition, conditions}),
+    do: "its condition holds (" <> Enum.map_join(conditions, ", ", &condition(db, &1)) <> ")"
+
+  # a condition: the category, "not" before one the item must not be in
+  defp condition(db, {cat, :not_assigned}), do: "not " <> db.categories[cat].name
+  defp condition(db, {cat, _}), do: db.categories[cat].name
 
   @impl Box
   def handle(state, mode, key), do: CategoryScreens.handle(state, mode, key)
@@ -35,7 +72,9 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
     """
     The item's assignment profile: every category, with a mark where the
     item is assigned. Assigning an item to a category is what puts it in
-    that category's sections and columns.
+    that category's sections and columns. The line at the top says why the
+    item is in the highlighted category: its text, a condition, an action,
+    a category below it, or you.
 
     SPACE or ENTER on a category assigns the item to it, or takes it out.
     A numeric category asks for the number; dates are typed in a date
