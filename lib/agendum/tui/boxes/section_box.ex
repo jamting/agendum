@@ -72,7 +72,7 @@ defmodule Agendum.TUI.Boxes.SectionBox do
 
   @doc "Opens the box for section `sidx` of the current view."
   def open(state, sidx),
-    do: State.push(state, %{type: :section_props, sidx: sidx, cursor: 0})
+    do: State.push(state, %Agendum.TUI.Modes.SectionProps{sidx: sidx, cursor: 0})
 
   defp section(state, mode), do: Enum.at(State.view(state).sections, mode.sidx)
   defp slots(state, mode), do: ViewColumns.slots(State.view(state), mode.sidx)

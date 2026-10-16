@@ -57,7 +57,7 @@ defmodule Agendum.TUI.Boxes.SortBox do
   def rows(%{scope: :view}), do: @rows ++ @section_rows
   def rows(_mode), do: @rows
 
-  def open(state, scope), do: State.push(state, %{type: :sort, scope: scope, cursor: 0})
+  def open(state, scope), do: State.push(state, %Agendum.TUI.Modes.Sort{scope: scope, cursor: 0})
 
   @doc "The keys in effect for the scope: the section's own, or `nil` when it uses the view's."
   @spec sort_keys(State.t(), map) :: [SortKey.t()] | nil

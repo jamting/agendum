@@ -19,7 +19,7 @@ defmodule Agendum.TUI.Update.Prompts do
   @doc "Opens a one-line prompt; `action` is passed to `prompt_submitted/3`."
   def prompt(state, label, action, initial \\ "") do
     state
-    |> State.push(%{type: :prompt, label: label, action: action})
+    |> State.push(%Agendum.TUI.Modes.Prompt{label: label, action: action})
     |> Map.put(:edit, %{line: LineEdit.new(initial)})
   end
 
@@ -61,7 +61,12 @@ defmodule Agendum.TUI.Update.Prompts do
   its answer, Yes at first, "Press ENTER to accept, ESC to cancel".
   """
   def ask(state, question, action),
-    do: State.push(state, %{type: :confirm, question: question, action: action, answer: true})
+    do:
+      State.push(state, %Agendum.TUI.Modes.Confirm{
+        question: question,
+        action: action,
+        answer: true
+      })
 
   @doc "A key in a one-line prompt; ENTER does its action, ESC cancels."
   def prompt_key(state, mode, key) do
@@ -158,7 +163,7 @@ defmodule Agendum.TUI.Update.Prompts do
 
   # a new view's name, then its type: Standard or Datebook (R47)
   defp prompt_action(state, :add_view, text),
-    do: State.push(state, %{type: :choice, kind: :view_type, name: text, cursor: 0})
+    do: State.push(state, %Agendum.TUI.Modes.Choice{kind: :view_type, name: text, cursor: 0})
 
   defp prompt_action(state, {:datebook_time, view_id, row}, text),
     do: Agendum.TUI.Boxes.DatebookBox.set_time(state, view_id, row, text)

@@ -63,7 +63,12 @@ defmodule Agendum.TUI.Update.Marked do
         bulk(state, action, marked, row)
 
       true ->
-        State.push(state, %{type: :scope, action: action, marked: marked, row: row, cursor: 0})
+        State.push(state, %Agendum.TUI.Modes.Scope{
+          action: action,
+          marked: marked,
+          row: row,
+          cursor: 0
+        })
     end
   end
 
@@ -235,7 +240,7 @@ defmodule Agendum.TUI.Update.Marked do
         else: "Move #{Draw.count(length(moves), "marked item")} to where?"
 
     state
-    |> State.push(%{type: :move_item, moves: moves})
+    |> State.push(%Agendum.TUI.Modes.MoveItem{moves: moves})
     |> State.info(what <> " Highlight the new position and press ENTER (ESC cancels)")
   end
 

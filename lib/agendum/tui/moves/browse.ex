@@ -45,7 +45,7 @@ defmodule Agendum.TUI.Moves.Browse do
         State.error(state, "Browse needs a date filter (View ▸ Filter) or a datebook view")
 
       place ->
-        State.push(state, Map.merge(%{type: :browse, view_id: view.id}, place))
+        State.push(state, Map.merge(%Agendum.TUI.Modes.Browse{view_id: view.id}, place))
     end
   end
 

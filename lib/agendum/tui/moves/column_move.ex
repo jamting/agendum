@@ -27,8 +27,7 @@ defmodule Agendum.TUI.Moves.ColumnMove do
   def open(state, sidx, what) do
     from = state |> State.view() |> ViewColumns.slots(sidx) |> Enum.find_index(&(&1 == what))
 
-    State.push(state, %{
-      type: :column_move,
+    State.push(state, %Agendum.TUI.Modes.ColumnMove{
       view_id: state.view_id,
       sidx: sidx,
       what: what,

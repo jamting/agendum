@@ -80,7 +80,8 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   @date_rows DateFormatRows.rows()
 
   @doc "Opens the box for the column at `at` (`{section, column}`, R55)."
-  def open(state, at), do: State.push(state, %{type: :column_props, column: at, cursor: 0})
+  def open(state, at),
+    do: State.push(state, %Agendum.TUI.Modes.ColumnProps{column: at, cursor: 0})
 
   @doc "The column the box is for."
   def column(state, %{column: {sidx, index}}),

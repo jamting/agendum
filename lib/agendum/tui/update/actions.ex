@@ -104,8 +104,7 @@ defmodule Agendum.TUI.Update.Actions do
   end
 
   defp do_perform(state, :note, %{kind: :item, item: item}) do
-    State.push(state, %{
-      type: :note,
+    State.push(state, %Agendum.TUI.Modes.Note{
       target: {:item, item.id},
       title: item.text,
       edit: TextEdit.new(item.note)
@@ -113,8 +112,7 @@ defmodule Agendum.TUI.Update.Actions do
   end
 
   defp do_perform(state, :note, %{kind: :section, category: cat}) do
-    State.push(state, %{
-      type: :note,
+    State.push(state, %Agendum.TUI.Modes.Note{
       target: {:category, cat.id},
       title: cat.name,
       edit: TextEdit.new(cat.note)
@@ -361,7 +359,7 @@ defmodule Agendum.TUI.Update.Actions do
     with_column(state, fn at ->
       # a column linked into other sections: which to remove it from (R55)
       if View.in_other_sections?(State.view(state), at),
-        do: State.push(state, %{type: :choice, kind: :remove_column, at: at, cursor: 0}),
+        do: State.push(state, %Agendum.TUI.Modes.Choice{kind: :remove_column, at: at, cursor: 0}),
         else: remove_column(state, at, :section)
     end)
   end

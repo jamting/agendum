@@ -48,7 +48,7 @@ defmodule Agendum.TUI.Boxes.AutoAssignBox do
   }
   @confirm [:never, :always, :sometimes]
 
-  def open(state), do: State.push(state, %{type: :auto_assign, cursor: 0})
+  def open(state), do: State.push(state, %Agendum.TUI.Modes.AutoAssign{cursor: 0})
 
   @impl Box
   # its keys are the settings box's (R65): SPACE changes the setting

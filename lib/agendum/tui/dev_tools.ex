@@ -19,7 +19,7 @@ defmodule Agendum.TUI.DevTools do
   @version Mix.Project.config()[:version]
   @built_with "#{System.version()} / OTP #{System.otp_release()}"
 
-  def open(state), do: State.push(state, %{type: :devtools, top: 0, key: nil})
+  def open(state), do: State.push(state, %Agendum.TUI.Modes.Devtools{top: 0, key: nil})
 
   def handle(state, _mode, :esc), do: State.pop(state)
 

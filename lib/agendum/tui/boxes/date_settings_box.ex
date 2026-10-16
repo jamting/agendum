@@ -61,7 +61,7 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
     evening: "The time \"evening\" means in a date. SPACE asks for it."
   }
 
-  def open(state), do: State.push(state, %{type: :date_settings, cursor: 0})
+  def open(state), do: State.push(state, %Agendum.TUI.Modes.DateSettings{cursor: 0})
 
   @impl Box
   # its keys are the settings box's (R65): SPACE changes the setting

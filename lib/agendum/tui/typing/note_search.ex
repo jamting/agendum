@@ -69,8 +69,7 @@ defmodule Agendum.TUI.Typing.NoteSearch do
   def open(state) do
     settings = state.searches.note || @defaults
 
-    State.push(state, %{
-      type: :note_search,
+    State.push(state, %Agendum.TUI.Modes.NoteSearch{
       settings: settings,
       line: LineEdit.new(settings.text),
       replacement: LineEdit.new(settings.replacement),

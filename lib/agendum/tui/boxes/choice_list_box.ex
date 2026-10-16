@@ -14,7 +14,7 @@ defmodule Agendum.TUI.Boxes.ChoiceListBox do
 
   @doc "Opens the list of `labels`, for the setting called `title`."
   def open(state, labels, title),
-    do: State.push(state, %{type: :choice_list, labels: labels, title: title, cursor: 0})
+    do: State.push(state, %Agendum.TUI.Modes.ChoiceList{labels: labels, title: title, cursor: 0})
 
   @impl Box
   def handle(state, _mode, _key), do: state

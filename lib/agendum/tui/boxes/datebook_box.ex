@@ -69,7 +69,7 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
   }
 
   def open(state, view_id),
-    do: State.push(state, %{type: :datebook_props, view_id: view_id, cursor: 0})
+    do: State.push(state, %Agendum.TUI.Modes.DatebookProps{view_id: view_id, cursor: 0})
 
   defp datebook(state, mode), do: state.db.views[mode.view_id].datebook
 

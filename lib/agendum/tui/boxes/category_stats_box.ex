@@ -24,7 +24,7 @@ defmodule Agendum.TUI.Boxes.CategoryStatsBox do
    Included in actions:        [actions]
   """
 
-  def open(state, cat_id), do: State.push(state, %{type: :category_stats, cat_id: cat_id})
+  def open(state, cat_id), do: State.push(state, %Agendum.TUI.Modes.CategoryStats{cat_id: cat_id})
 
   @impl Box
   def handle(state, _mode, _key), do: state

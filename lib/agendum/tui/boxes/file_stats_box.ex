@@ -27,7 +27,7 @@ defmodule Agendum.TUI.Boxes.FileStatsBox do
 
   """
 
-  def open(state), do: State.push(state, %{type: :file_stats})
+  def open(state), do: State.push(state, %Agendum.TUI.Modes.FileStats{})
 
   @impl Box
   def handle(state, _mode, _key), do: state

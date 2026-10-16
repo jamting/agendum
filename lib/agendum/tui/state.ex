@@ -41,7 +41,7 @@ defmodule Agendum.TUI.State do
           cursor_key: cursor_key,
           col: non_neg_integer,
           scroll: non_neg_integer,
-          modes: [map],
+          modes: [Agendum.TUI.Modes.t()],
           edit: map | nil,
           message: {atom, String.t()} | nil,
           collapsed: MapSet.t(Database.id()),
@@ -245,7 +245,9 @@ defmodule Agendum.TUI.State do
   def mode(_), do: nil
 
   @spec push(t, map) :: t
-  def push(state, mode), do: %{state | modes: [mode | state.modes], edit: nil}
+  # a mode written as a map becomes its struct here (`Agendum.TUI.Modes`)
+  def push(state, mode),
+    do: %{state | modes: [Agendum.TUI.Modes.new(mode) | state.modes], edit: nil}
 
   @spec pop(t) :: t
   def pop(%__MODULE__{modes: [_ | rest]} = state), do: %{state | modes: rest, edit: nil}
@@ -253,7 +255,8 @@ defmodule Agendum.TUI.State do
 
   @doc "Replaces the top mode."
   @spec put_mode(t, map) :: t
-  def put_mode(%__MODULE__{modes: [_ | rest]} = state, mode), do: %{state | modes: [mode | rest]}
+  def put_mode(%__MODULE__{modes: [_ | rest]} = state, mode),
+    do: %{state | modes: [Agendum.TUI.Modes.new(mode) | rest]}
 
   @doc """
   Shows another view, remembering the current one for ALT-F8 (LAST VW),

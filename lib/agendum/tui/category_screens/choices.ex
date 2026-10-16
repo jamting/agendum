@@ -119,8 +119,7 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
       true ->
         conflicts = length(Core.exclusive_conflicts(state.db, cat.id))
 
-        State.push(state, %{
-          type: :choice,
+        State.push(state, %Agendum.TUI.Modes.Choice{
           kind: :exclusive,
           cat_id: cat.id,
           conflicts: conflicts,
@@ -220,8 +219,7 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
         apply_move(state, id, relocation, :remove_moved)
 
       {:ok, conflicts} ->
-        State.push(state, %{
-          type: :choice,
+        State.push(state, %Agendum.TUI.Modes.Choice{
           kind: :move,
           cat_id: id,
           relocation: relocation,

@@ -46,8 +46,7 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
   def open(state) do
     w = state.db.special.when
 
-    State.push(state, %{
-      type: :schedule,
+    State.push(state, %Agendum.TUI.Modes.Schedule{
       date_category: w,
       section: w,
       date: state.today,

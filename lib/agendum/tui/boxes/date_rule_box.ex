@@ -36,7 +36,8 @@ defmodule Agendum.TUI.Boxes.DateRuleBox do
     when_key: "Whether ALT-F2 (WHEN) sets this date as well. SPACE switches."
   }
 
-  def open(state, cat_id), do: State.push(state, %{type: :date_rule, cat_id: cat_id, cursor: 0})
+  def open(state, cat_id),
+    do: State.push(state, %Agendum.TUI.Modes.DateRule{cat_id: cat_id, cursor: 0})
 
   @impl Box
   # its keys are the settings box's (R65): SPACE changes the setting

@@ -58,8 +58,7 @@ defmodule Agendum.TUI.HelpScreen do
         _ -> :elsewhere
       end
 
-    State.push(state, %{
-      type: :help,
+    State.push(state, %Agendum.TUI.Modes.Help{
       top: 0,
       page: :about,
       from: from,

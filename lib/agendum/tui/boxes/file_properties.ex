@@ -49,7 +49,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
     stats: "Press SPACE BAR to display current statistics for the file."
   }
 
-  def open(state), do: State.push(state, %{type: :file_props, cursor: 0})
+  def open(state), do: State.push(state, %Agendum.TUI.Modes.FileProps{cursor: 0})
 
   @impl Box
   # its keys are the settings box's (R65): SPACE changes the setting

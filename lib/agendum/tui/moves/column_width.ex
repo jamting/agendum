@@ -29,8 +29,7 @@ defmodule Agendum.TUI.Moves.ColumnWidth do
   (`{:column, at}`), or of section `sidx`'s item column (`{:items, sidx}`).
   """
   def open(state, target) do
-    State.push(state, %{
-      type: :column_width,
+    State.push(state, %Agendum.TUI.Modes.ColumnWidth{
       view_id: state.view_id,
       target: target,
       width: width_now(state, target),

@@ -25,7 +25,7 @@ defmodule Agendum.TUI.Boxes.CopyBox do
       State.error(state, "In a datebook view, give the item another date instead")
     else
       current = (Layout.current_row(state) || %{sidx: 0}).sidx
-      State.push(state, %{type: :copy_items, ids: ids, cursor: current})
+      State.push(state, %Agendum.TUI.Modes.CopyItems{ids: ids, cursor: current})
     end
   end
 

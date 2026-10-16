@@ -33,7 +33,7 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
   @rows Template.fields(@layout) -- [:sample]
   @grid Template.grid(@layout, @rows)
 
-  def open(state), do: State.push(state, %{type: :display_format, cursor: 0})
+  def open(state), do: State.push(state, %Agendum.TUI.Modes.DisplayFormat{cursor: 0})
 
   @impl Box
   # its keys are the settings box's (R65): SPACE changes the setting

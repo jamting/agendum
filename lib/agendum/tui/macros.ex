@@ -122,7 +122,7 @@ defmodule Agendum.TUI.Macros do
 
   # --- the macro manager -------------------------------------------------------------------
 
-  def open(state), do: State.push(state, %{type: :macros, cursor: 0})
+  def open(state), do: State.push(state, %Agendum.TUI.Modes.Macros{cursor: 0})
 
   defp current(state, mode), do: state.db |> Database.macros() |> Enum.at(mode.cursor)
 
@@ -216,7 +216,7 @@ defmodule Agendum.TUI.Macros do
   defp command(state, _mode, :learn, %{keys: ""} = macro, _), do: learn(state, macro, :replace)
 
   defp command(state, _mode, :learn, macro, _),
-    do: State.push(state, %{type: :choice, kind: :learn, macro_id: macro.id, cursor: 0})
+    do: State.push(state, %Agendum.TUI.Modes.Choice{kind: :learn, macro_id: macro.id, cursor: 0})
 
   defp reorder(state, macro, to),
     do: state |> State.run({:move_macro, macro.id, to}) |> follow(macro.id)
@@ -249,8 +249,7 @@ defmodule Agendum.TUI.Macros do
   def edit_text(state, macro) do
     text = Regex.replace(~r/\{ENTER\}(?! )/i, macro.keys, "{ENTER}\n")
 
-    State.push(state, %{
-      type: :note,
+    State.push(state, %Agendum.TUI.Modes.Note{
       target: {:macro, macro.id},
       title: macro.name,
       edit: Agendum.TUI.Typing.TextEdit.new(text)

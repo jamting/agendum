@@ -39,7 +39,7 @@ defmodule Agendum.TUI.Boxes.InputFormatBox do
     clock: "Choose whether you type times on a 12-hour or a 24-hour clock. SPACE switches."
   }
 
-  def open(state), do: State.push(state, %{type: :input_format, cursor: 0})
+  def open(state), do: State.push(state, %Agendum.TUI.Modes.InputFormat{cursor: 0})
 
   @impl Box
   # its keys are the settings box's (R65): SPACE changes the setting

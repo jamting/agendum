@@ -15,7 +15,7 @@ defmodule Agendum.TUI.Splash do
   @doc "Puts the splash screen over the program, until a key or three seconds."
   def open(state) do
     until = NaiveDateTime.add(state.now, @seconds)
-    %{state | modes: [%{type: :splash, until: until} | state.modes]}
+    %{state | modes: [%Agendum.TUI.Modes.Splash{until: until} | state.modes]}
   end
 
   @doc "Takes the splash away, leaving the prompt under it as typed."

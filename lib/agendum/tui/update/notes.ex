@@ -136,7 +136,7 @@ defmodule Agendum.TUI.Update.Notes do
         make_item(state, :mark)
 
       true ->
-        State.push(state, %{type: :choice, kind: :make_item, cursor: 0})
+        State.push(state, %Agendum.TUI.Modes.Choice{kind: :make_item, cursor: 0})
     end
   end
 
@@ -148,7 +148,7 @@ defmodule Agendum.TUI.Update.Notes do
   defp clip(state, action) do
     if marked?(State.mode(state)),
       do: clip(state, action, :mark),
-      else: State.push(state, %{type: :choice, kind: :clip, action: action, cursor: 0})
+      else: State.push(state, %Agendum.TUI.Modes.Choice{kind: :clip, action: action, cursor: 0})
   end
 
   @doc """

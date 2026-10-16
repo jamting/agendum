@@ -4,17 +4,8 @@ defmodule Agendum.TUI.ScreensDocTest do
 
   @doc_path "docs/SCREENS.md"
 
-  # Every `type: :name` a TUI module puts in a mode map.
-  defp mode_types do
-    "lib/agendum/tui/**/*.ex"
-    |> Path.wildcard()
-    |> Enum.flat_map(fn path ->
-      ~r/%\{\s*type: :([a-z_]+)/
-      |> Regex.scan(File.read!(path))
-      |> Enum.map(fn [_, type] -> type end)
-    end)
-    |> Enum.uniq()
-  end
+  # Every kind of mode the TUI can push: a struct each (`Agendum.TUI.Modes`)
+  defp mode_types, do: Enum.map(Agendum.TUI.Modes.types(), &Atom.to_string/1)
 
   test "every mode type is in the screen overview" do
     doc = File.read!(@doc_path)

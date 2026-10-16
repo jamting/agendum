@@ -143,7 +143,7 @@ defmodule Agendum.TUI.Menu do
     ]
   end
 
-  def open(state), do: State.push(state, %{type: :menu, path: [], selected: 0})
+  def open(state), do: State.push(state, %Agendum.TUI.Modes.Menu{path: [], selected: 0})
 
   @doc "The entries at the menu's current level."
   def entries(%{path: path}) do
@@ -257,7 +257,7 @@ defmodule Agendum.TUI.Menu do
     {new, old} = Enum.split(state.modes, max(pushed, 0))
 
     if pushed > 0 and old == below.modes and Enum.all?(new, &overlay?/1),
-      do: %{state | modes: new ++ [Map.put(menu, :resume, true) | old]},
+      do: %{state | modes: new ++ [%{menu | resume: true} | old]},
       else: state
   end
 
@@ -271,7 +271,7 @@ defmodule Agendum.TUI.Menu do
   @spec resumed(State.t(), term) :: State.t()
   def resumed(%State{modes: [%{type: :menu, resume: true} = menu | _]} = state, key) do
     if key == :esc,
-      do: State.put_mode(state, Map.delete(menu, :resume)),
+      do: State.put_mode(state, %{menu | resume: nil}),
       else: State.pop(state)
   end
 

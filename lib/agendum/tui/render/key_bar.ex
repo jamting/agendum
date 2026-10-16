@@ -107,7 +107,7 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ESC", "Return"}
     ]
 
-  defp mode_keys(%{type: :browse, shift: _}),
+  defp mode_keys(%{type: :browse, shift: %{}}),
     do: [
       {"←→", "Day", "← →", "A day"},
       {"↑↓", "Week", "↑↓ or CTRL-←→", "A week"},

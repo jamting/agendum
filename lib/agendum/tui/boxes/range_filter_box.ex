@@ -69,8 +69,7 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
           {:assigned, "", "", :inside}
       end
 
-    State.push(state, %{
-      type: :range_filter,
+    State.push(state, %Agendum.TUI.Modes.RangeFilter{
       purpose: purpose,
       cat_id: cat_id,
       show: show,

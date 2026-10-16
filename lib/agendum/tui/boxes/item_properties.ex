@@ -53,7 +53,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   }
 
   def open(state, item_id),
-    do: State.push(state, %{type: :item_props, item_id: item_id, cursor: 0})
+    do: State.push(state, %Agendum.TUI.Modes.ItemProps{item_id: item_id, cursor: 0})
 
   @doc "The rows of the box, top to bottom."
   @spec rows(State.t(), map) :: [term]
@@ -185,8 +185,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   defp open_note(state, mode) do
     item = state.db.items[mode.item_id]
 
-    State.push(state, %{
-      type: :note,
+    State.push(state, %Agendum.TUI.Modes.Note{
       target: {:item, item.id},
       title: item.text,
       edit: TextEdit.new(item.note)

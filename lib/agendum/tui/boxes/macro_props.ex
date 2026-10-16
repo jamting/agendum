@@ -49,7 +49,8 @@ defmodule Agendum.TUI.Boxes.MacroProps do
   # keys Agenda would not attach a macro to: they run macros themselves
   @reserved [{:alt_f, 3}, {:alt, "z"}, {:alt_f, 1}]
 
-  def open(state, id), do: State.push(state, %{type: :macro_props, macro_id: id, cursor: 0})
+  def open(state, id),
+    do: State.push(state, %Agendum.TUI.Modes.MacroProps{macro_id: id, cursor: 0})
 
   @impl Box
   # its keys are the settings box's, F2 edits, DEL detaches (R65)

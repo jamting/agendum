@@ -20,7 +20,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
 
   def open(state) do
     index = Enum.find_index(state.db.view_order, &(&1 == state.view_id)) || 0
-    State.push(state, %{type: :viewmgr, cursor: index, typed: "", from: index})
+    State.push(state, %Agendum.TUI.Modes.Viewmgr{cursor: index, typed: "", from: index})
   end
 
   @impl Box

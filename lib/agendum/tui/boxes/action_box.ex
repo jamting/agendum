@@ -50,8 +50,7 @@ defmodule Agendum.TUI.Boxes.ActionBox do
           {false, ""}
       end
 
-    State.push(state, %{
-      type: :action_box,
+    State.push(state, %Agendum.TUI.Modes.ActionBox{
       owner: owner,
       target: target,
       clear: clear,

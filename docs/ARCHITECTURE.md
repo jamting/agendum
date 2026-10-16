@@ -79,6 +79,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | Module                                        | Pure? | Responsibility                                                                                                                   |
 | --------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `Agendum.TUI.State`                            | ✔     | UI state: db, path, cursor, scroll, **mode stack**, inline edit, message, queued effects.                                        |
+| `Agendum.TUI.Modes`                            | ✔     | A struct for each kind of mode on the stack (ADR 0037), from one table; `new/1` makes a map one.                               |
 | `Agendum.TUI.Update`                           | ✔     | Key → state transitions: keys for every screen, the clock (`tick/2`), effect results, dispatch to the screen on top.             |
 | `Agendum.TUI.Update.*`                         | ✔     | Its parts: `ViewKeys` (the view's keymap lookup and `run`), `Editing` (inline), `Marked` (and moves), `Prompts` (and Y/N), `Notes`, `Actions` (`perform/2`).          |
 | `Agendum.TUI.Command`, `Agendum.TUI.Commands`, `Agendum.TUI.CommandDocs`  | ✔     | The commands keys can run, as data: id, name, summary, a longer text (R65b), what a count does; by place: the view's, a note's, the menu's, the category and view managers', every box's shared ones and the global ones so far; a box's own are in its module (`Box.keymap/1`, `commands/1`, `run/3`, `typing?/2`) (R65, ADR 0033).          |
@@ -214,3 +215,4 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 | [0034](adr/0034-format-of-record.md)                   | The format of record: Erlang terms now, a database for many users, JSON for people |
 | [0035](adr/0035-caches-travel-in-values.md)            | Caches travel in values the shell keeps                          |
 | [0036](adr/0036-core-commands.md)                      | User actions as core commands on ids, returning what changed     |
+| [0037](adr/0037-ui-modes-are-structs.md)               | UI modes are structs                                             |

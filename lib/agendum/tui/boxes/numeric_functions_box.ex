@@ -36,7 +36,8 @@ defmodule Agendum.TUI.Boxes.NumericFunctionsBox do
   }
 
   @doc "Opens the box for section `sidx` of the current view."
-  def open(state, sidx), do: State.push(state, %{type: :numeric_functions, sidx: sidx, cursor: 0})
+  def open(state, sidx),
+    do: State.push(state, %Agendum.TUI.Modes.NumericFunctions{sidx: sidx, cursor: 0})
 
   defp calcs(state, mode), do: Core.section_calcs(state.db, state.view_id, mode.sidx) || []
 

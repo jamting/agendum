@@ -45,16 +45,16 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
   its date and time, or with `nil` for reference, on today.
   """
   def open(state, nil),
-    do: State.push(state, %{type: :calendar, date: state.today, time: nil, target: nil})
+    do: State.push(state, %Agendum.TUI.Modes.Calendar{date: state.today, time: nil, target: nil})
 
   # the date of the Show Schedule box beneath (R49)
   def open(state, {:schedule, date}),
-    do: State.push(state, %{type: :calendar, date: date, time: nil, target: :schedule})
+    do: State.push(state, %Agendum.TUI.Modes.Calendar{date: date, time: nil, target: :schedule})
 
   def open(state, {item_id, cat_id} = target) do
     date = Database.item_date(state.db, item_id, cat_id) || state.today
     time = Database.item_time(state.db, item_id, cat_id)
-    State.push(state, %{type: :calendar, date: date, time: time, target: target})
+    State.push(state, %Agendum.TUI.Modes.Calendar{date: date, time: time, target: target})
   end
 
   @impl Box

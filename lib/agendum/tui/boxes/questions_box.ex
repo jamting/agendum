@@ -15,8 +15,11 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
 
   def open(state) do
     case Core.questions(state.db) do
-      [] -> State.info(state, "No suggested assignments")
-      [{item, _} | _] -> State.push(state, %{type: :questions, item: item, picked: [], cursor: 0})
+      [] ->
+        State.info(state, "No suggested assignments")
+
+      [{item, _} | _] ->
+        State.push(state, %Agendum.TUI.Modes.Questions{item: item, picked: [], cursor: 0})
     end
   end
 

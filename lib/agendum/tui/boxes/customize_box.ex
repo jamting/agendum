@@ -61,7 +61,7 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
   # Agenda took any number of minutes from 1 to 60; these are the steps
   @auto_save [0, 1, 2, 5, 10, 15, 20, 30, 45, 60]
 
-  def open(state), do: State.push(state, %{type: :customize, cursor: 0})
+  def open(state), do: State.push(state, %Agendum.TUI.Modes.Customize{cursor: 0})
 
   @impl Box
   # its keys are the settings box's (R65): SPACE changes the setting

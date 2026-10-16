@@ -69,8 +69,7 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
   section, `col` the view's column cursor (0 on the item text).
   """
   def open(state, sidx, col) do
-    State.push(state, %{
-      type: :column_add,
+    State.push(state, %Agendum.TUI.Modes.ColumnAdd{
       sidx: sidx,
       col: col,
       head: nil,

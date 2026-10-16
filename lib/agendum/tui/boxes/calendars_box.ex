@@ -21,7 +21,7 @@ defmodule Agendum.TUI.Boxes.CalendarsBox do
   alias Agendum.TUI.{Boxes.Box, Terminal.Draw, State, Update}
   alias Agendum.TUI.Update.Prompts
 
-  def open(state), do: State.push(state, %{type: :calendars, cursor: 0})
+  def open(state), do: State.push(state, %Agendum.TUI.Modes.Calendars{cursor: 0})
 
   @doc "The calendar the highlight is on, if any."
   def current(state, mode), do: state.db |> Database.calendars() |> Enum.at(mode.cursor)

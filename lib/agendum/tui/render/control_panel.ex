@@ -44,7 +44,7 @@ defmodule Agendum.TUI.Render.ControlPanel do
         %{type: :section_move} = m ->
           text_lines(state, base, :panel_hint, Agendum.TUI.Moves.SectionMove.panel(state, m))
 
-        %{type: :browse, date: _} ->
+        %{type: :browse, date: %Date{}} ->
           period = State.view(state).datebook.period
           hint = "← → another #{period} · ENTER keeps · ESC back"
           text_lines(state, base, :panel_hint, hint)

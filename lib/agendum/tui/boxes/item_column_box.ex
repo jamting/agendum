@@ -43,7 +43,8 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
   }
 
   @doc "Opens the box for the item column of section `sidx`."
-  def open(state, sidx), do: State.push(state, %{type: :item_column, sidx: sidx, cursor: 0})
+  def open(state, sidx),
+    do: State.push(state, %Agendum.TUI.Modes.ItemColumn{sidx: sidx, cursor: 0})
 
   defp item_column(state, mode), do: Enum.at(State.view(state).sections, mode.sidx).item_column
 

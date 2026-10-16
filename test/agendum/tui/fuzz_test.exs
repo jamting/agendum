@@ -214,6 +214,8 @@ defmodule Agendum.TUI.Fuzz do
 
         # the file stays sound (docs/DATA_MODEL.md, "Invariants")
         assert Invariants.violations(state.db) == [], "after #{inspect(key)}"
+        # every mode on the stack is its struct, none a bare map (Agendum.TUI.Modes)
+        assert Enum.all?(state.modes, &is_struct/1), "a bare map mode after #{inspect(key)}"
 
         if key != :tick, do: assert_undoable(before, state, key)
 

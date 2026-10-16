@@ -38,7 +38,7 @@ defmodule Agendum.TUI.Boxes.CategoryMatchBox do
   @grid Template.grid(@layout, @rows)
 
   def open(state, cat_id),
-    do: State.push(state, %{type: :category_match, cat_id: cat_id, cursor: 0})
+    do: State.push(state, %Agendum.TUI.Modes.CategoryMatch{cat_id: cat_id, cursor: 0})
 
   @impl Box
   # its keys are the settings box's (R65): SPACE changes the setting

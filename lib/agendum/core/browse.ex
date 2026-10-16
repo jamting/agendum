@@ -69,7 +69,9 @@ defmodule Agendum.Core.Browse do
   the place as it is.
   """
   @spec move(View.t(), place, atom) :: place
-  def move(%View{datebook: %Datebook{period: period}}, %{date: date} = place, id)
+  # a datebook's place has a date; a filter's a shift (a front end's struct
+  # may have both keys, one nil, so the patterns look at the values)
+  def move(%View{datebook: %Datebook{period: period}}, %{date: %Date{} = date} = place, id)
       when id in [:earlier, :later] do
     n = if id == :earlier, do: -1, else: 1
 
@@ -82,7 +84,7 @@ defmodule Agendum.Core.Browse do
     %{place | date: date}
   end
 
-  def move(_view, %{shift: shift} = place, id) when is_map_key(@moves, id) do
+  def move(_view, %{shift: %{} = shift} = place, id) when is_map_key(@moves, id) do
     {unit, n} = @moves[id]
     %{place | shift: Map.update!(shift, unit, &(&1 + n))}
   end
@@ -94,7 +96,7 @@ defmodule Agendum.Core.Browse do
   range starts on it (or ends on it, when it has no start).
   """
   @spec go_to(Database.t(), View.t(), place, Date.t(), Context.clock()) :: place
-  def go_to(_db, _view, %{date: _} = place, date, _clock), do: %{place | date: date}
+  def go_to(_db, _view, %{date: %Date{}} = place, date, _clock), do: %{place | date: date}
 
   def go_to(db, view, place, date, clock) do
     case first_date(db, shown(db, view, place, clock), place.scope, clock) do
@@ -105,7 +107,7 @@ defmodule Agendum.Core.Browse do
 
   @doc "The view as it shows while browsed: with the browsed dates, nothing kept."
   @spec shown(Database.t(), View.t(), place, Context.clock()) :: View.t()
-  def shown(_db, view, %{date: date}, _clock),
+  def shown(_db, view, %{date: %Date{} = date}, _clock),
     do: %{view | datebook: %{view.datebook | base: Date.to_iso8601(date)}}
 
   def shown(db, view, %{scope: scope, shift: shift}, clock) do
@@ -118,7 +120,7 @@ defmodule Agendum.Core.Browse do
   or the filter's dates fixed; nil when nothing moved.
   """
   @spec keep(Database.t(), View.t(), place, Context.clock()) :: Agendum.Core.Command.t() | nil
-  def keep(db, %View{datebook: %Datebook{} = d} = view, %{date: date}, clock) do
+  def keep(db, %View{datebook: %Datebook{} = d} = view, %{date: %Date{} = date}, clock) do
     if date == Datebook.base_date(d, db.date_settings, clock),
       do: nil,
       else: {:set_datebook, view.id, %{d | base: Date.to_iso8601(date)}}

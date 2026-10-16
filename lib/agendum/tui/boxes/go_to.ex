@@ -18,7 +18,7 @@ defmodule Agendum.TUI.Boxes.GoTo do
         _ -> 0
       end
 
-    State.push(state, %{type: :goto, cursor: current})
+    State.push(state, %Agendum.TUI.Modes.Goto{cursor: current})
   end
 
   @doc "The names of the view's section heads, in the order shown."

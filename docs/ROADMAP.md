@@ -4,7 +4,7 @@ Small, testable increments. Open work comes first, by area; done work is below, 
 
 ## Open
 
-**Next:** typed UI modes, a struct per mode (the command layer is done, 2026-10-16, v0.6.0); then `agendum add` (capture without the keyboard) and parity with Agenda. The view cache waits for slow answers in real use, CI for GitHub.
+**Next:** `agendum add` (capture without the keyboard), then parity with Agenda. Towards many users is done up to the web version, apart from what waits for the owner: customizable key bindings and where the TUI shows why an item is in a category (R67). The view cache waits for slow answers in real use, CI for GitHub.
 
 ### Sharpen the saw
 
@@ -17,7 +17,6 @@ Tools and checks that make every later change faster and safer. Do these first: 
 
 A web application with accounts and shared files, on the same core (plan: [MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). Its first step, the command layer, is done (R66, ADR 0036, below under Done): every change to a file is a command the core runs. Typed UI modes come next.
 
-- [ ] Typed UI modes (moved from Sharpen the saw, owner's decision 2026-10-16; done after the command layer rather than with it, owner's decision 2026-10-16): a struct for each mode instead of the `%{type: …}` maps in `State.modes` (about fifty kinds), so the compiler and Dialyzer catch a misspelt field that today only the fuzz test finds. Done when no mode is a bare map; one place at a time, each step with `mix check`, and a long fuzz run at the end
 - [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
 - [ ] Reasons with assignments, shown: the core says why (R67, `assignment_reasons/4`, done 2026-10-16); still to settle with the owner, a habit change: where the TUI shows it. Was: automatic assignment says why in its result (the matched word, condition or action, with its rule), for the Questions box (R16), F1 on an assignment and an agent's report ("filed under Kanga because …") (second meeting)
 - [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
@@ -297,6 +296,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] Every other change, in four batches: assigning and removing, notes, dates, alarms, numbers, dependencies; categories, rules, Execute, the file's dates; views, sections, columns, filters; macros and calendars. Loops over marked items became `{:batch, …}` commands; previews of a move run the command on a copy (`State.preview/2`)
   - [x] Typing over a column entry and a Not-assigned range condition are commands of their own (`:type_in_column`, `:set_condition`), not batches the TUI puts together
 - [x] Raw values beside the formatted cells (2026-10-16): each row of a built view has `values`, what each cell shows as data (a number, `{date, time}`, true or false for a Star or Yes/No column, or the ids of the categories shown), from `Agendum.Core.ViewModel.value/3`, the same for every format
+- [x] Typed UI modes (2026-10-16, ADR 0037): a struct per kind of mode (`Agendum.TUI.Modes`, from one table), every mode on the stack a struct (`State.push/2` and `put_mode/2` make it one, the fuzz walks check), modes written as struct literals so the compiler checks their fields
 - [x] Browsing's date arithmetic in the core (2026-10-16): `Agendum.Core.Browse` (through the facade: `browse_start/4`, `browse_move/3`, `browse_to/5`, `browsed_view/4`, `browse_keep/4`) works out where browsing starts, each move, going to a date, the view as browsed and the command that keeps it; the TUI keeps the keys and where the person has browsed to
 - [x] Commands that describe themselves (2026-10-16) (name, summary, documentation, global or local, available now), keys bound through keymaps (R65, ADR 0033)
   - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)

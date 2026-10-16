@@ -247,8 +247,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   end
 
   defp open_prop(state, cat, :note) do
-    State.push(state, %{
-      type: :note,
+    State.push(state, %Agendum.TUI.Modes.Note{
       target: {:category, cat.id},
       title: cat.name,
       edit: TextEdit.new(cat.note)
@@ -272,7 +271,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
         State.error(state, "A category with grandchildren cannot change type")
 
       true ->
-        State.push(state, %{type: :choice, kind: :type, cat_id: cat.id, cursor: 0})
+        State.push(state, %Agendum.TUI.Modes.Choice{kind: :type, cat_id: cat.id, cursor: 0})
     end
   end
 

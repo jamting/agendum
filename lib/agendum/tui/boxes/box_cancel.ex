@@ -39,7 +39,7 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
   @spec cancel(State.t(), term) :: State.t() | :pass
   def cancel(%State{edit: nil} = state, :esc) do
     case State.mode(state) do
-      %{type: type, opened: opened} = mode ->
+      %{type: type, opened: opened} = mode when opened != nil ->
         cond do
           not cancels?(type) -> :pass
           Map.get(mode, :typing) -> :pass
@@ -63,7 +63,7 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
     top = State.mode(state)
 
     case {State.mode(before), top && cancels?(top.type)} do
-      {_, true} when not is_map_key(top, :opened) ->
+      {_, true} when top.opened == nil ->
         State.put_mode(state, Map.put(top, :opened, snapshot(before)))
 
       {%{type: screen}, true} when screen in @screens ->

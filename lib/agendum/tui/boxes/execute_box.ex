@@ -43,8 +43,7 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
 
   def open(state),
     do:
-      State.push(state, %{
-        type: :execute,
+      State.push(state, %Agendum.TUI.Modes.Execute{
         root: state.db.main_id,
         against: :all,
         old: false,

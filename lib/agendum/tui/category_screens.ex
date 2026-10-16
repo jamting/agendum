@@ -24,20 +24,26 @@ defmodule Agendum.TUI.CategoryScreens do
 
   # --- opening -------------------------------------------------------------------
 
-  def open_catmgr(state), do: State.push(state, %{type: :catmgr, cursor: 0})
+  def open_catmgr(state), do: State.push(state, %Agendum.TUI.Modes.Catmgr{cursor: 0})
 
   def open_picker(state, purpose, root) do
-    State.push(state, %{type: :picker, purpose: purpose, root: root, cursor: 0, search: ""})
+    State.push(state, %Agendum.TUI.Modes.Picker{
+      purpose: purpose,
+      root: root,
+      cursor: 0,
+      search: ""
+    })
   end
 
   def open_profile(state, item_id),
-    do: State.push(state, %{type: :profile, item_id: item_id, cursor: 0})
+    do: State.push(state, %Agendum.TUI.Modes.Profile{item_id: item_id, cursor: 0})
 
   @doc "The assignment profile for a group of marked items (User's Guide 4-17)."
   def open_group_profile(state, item_ids),
-    do: State.push(state, %{type: :group_profile, item_ids: item_ids, cursor: 0})
+    do: State.push(state, %Agendum.TUI.Modes.GroupProfile{item_ids: item_ids, cursor: 0})
 
-  def open_props(state, cat_id), do: State.push(state, %{type: :props, cat_id: cat_id, cursor: 0})
+  def open_props(state, cat_id),
+    do: State.push(state, %Agendum.TUI.Modes.Props{cat_id: cat_id, cursor: 0})
 
   @doc "The `{category_id, depth}` rows a hierarchy screen lists."
   def rows(state, mode) do
@@ -305,8 +311,7 @@ defmodule Agendum.TUI.CategoryScreens do
   def open_note(state, id) do
     cat = state.db.categories[id]
 
-    State.push(state, %{
-      type: :note,
+    State.push(state, %Agendum.TUI.Modes.Note{
       target: {:category, id},
       title: cat.name,
       edit: TextEdit.new(cat.note)

@@ -44,8 +44,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   def open(state, scope) do
     search = state.searches.view || %Search{}
 
-    State.push(state, %{
-      type: :search_box,
+    State.push(state, %Agendum.TUI.Modes.SearchBox{
       scope: scope,
       search: search,
       direction: :forward,
@@ -150,7 +149,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
 
     if index do
       state
-      |> State.push(%{type: :searching, search: search})
+      |> State.push(%Agendum.TUI.Modes.Searching{search: search})
       |> Layout.move_to(index)
       |> report(found, index)
     else
