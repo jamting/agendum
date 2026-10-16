@@ -16,6 +16,14 @@ defmodule Agendum.TUI.State do
 
   `undo` and `redo` hold snapshots for `Agendum.TUI.History`. `saved_db` is the
   database as last saved or loaded; the file is dirty whenever `db` differs.
+
+  Two kinds of field (ROADMAP, Towards many users; `docs/plans/MULTIUSER.md`
+  §7, step 5): the **file** (`file_fields/0`), what everyone working in the
+  same file shares, which a web server would hold once for them all; and
+  the **session** (`session_fields/0`), one person's: what they see, where
+  they are, what they are typing, their undo, their settings. Here both are
+  in one struct; a web version keeps the first in the file's process and
+  the second per person. A test checks every field is one or the other.
   """
 
   alias Agendum.Core.Database
@@ -26,7 +34,7 @@ defmodule Agendum.TUI.State do
   # `__MODULE__` is this module's own name. `defstruct` below gives each
   # field its default. A struct is a map with a fixed set of keys: a
   # misspelt field in `%State{…}` or `state.fild` is an error, which a
-  # plain map would not catch. (`modes` is still a list of plain maps.)
+  # plain map would not catch. (`modes` holds structs too: `Agendum.TUI.Modes`.)
   @type t :: %__MODULE__{
           db: Database.t(),
           path: String.t() | nil,
@@ -106,6 +114,21 @@ defmodule Agendum.TUI.State do
             history: %{undo: [], redo: [], step: nil},
             saved_db: nil,
             effects: []
+
+  # Domain: what is shared by everyone in the file (the database, where it
+  # is kept and whether it is saved, the calendars being read for it);
+  # everything else is one person's session. Undo is the session's: each
+  # person undoes their own changes (MULTIUSER §4).
+  @file_fields [:db, :path, :saved_db, :dirty, :fetching]
+
+  @doc "The fields that belong to the file, shared by everyone working in it."
+  @spec file_fields() :: [atom]
+  def file_fields, do: @file_fields
+
+  @doc "The fields that belong to one person's session: every other field."
+  @spec session_fields() :: [atom]
+  def session_fields,
+    do: (%__MODULE__{} |> Map.from_struct() |> Map.keys() |> Enum.sort()) -- @file_fields
 
   @spec new(Database.t(), keyword) :: t
   def new(%Database{} = db, opts \\ []) do
