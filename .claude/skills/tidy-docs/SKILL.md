@@ -12,7 +12,7 @@ Two goals, done as **two commits** so the owner can revert either one:
 
 Ground rules:
 
-- **Nothing is lost.** Move, merge or shorten; never drop a fact. When something is said twice, keep it in the document it belongs to (see `docs/INDEX.md`) and put a reference in the other.
+- **Nothing is lost.** Move, merge or shorten; never drop a fact. Letting go of a document or a fact that is no longer needed is the owner's decision, usually on Little Marie-Who-Folds's advice in a review or a meeting; here, only propose it. When something is said twice, keep it in the document it belongs to (see `docs/INDEX.md`) and put a reference in the other.
 - **Within reason.** Don't rewrite for style; fix what is wrong, hard to find or repeated.
 - **Stable names.** Code, tests and skills cite file names, `SPEC §5`, `§6` and rule numbers (`R42`): keep them. Rename a file only when the gain is clear, and then fix every reference (`grep -rn` over `lib test docs tools .claude CLAUDE.md README.md CONTRIBUTING.md mix.exs`).
 - **ADRs are records** of past decisions: don't rewrite them. A later change gets "superseded in part by ADR NNNN", as ADR 0007 has.

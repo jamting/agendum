@@ -1,6 +1,6 @@
 ---
 name: meeting
-description: Hold a panel meeting in Owl's house on the owner's own agenda (a classic Swedish dagordning in docs/meetings/dagordning.md, where the owner collects thoughts over time). The expert panel (José, Joe, Carsten, Mitch, David and Claude, as in expert-review) discusses each item with the owner, who decides; decisions go into the roadmap, plans and ADRs, and the worded agenda and the minutes (protokoll) are published in docs/meetings/YYYY-MM-DD/. Use when the owner calls a meeting, asks to go through the dagordning, or types /meeting.
+description: Hold a panel meeting in Owl's house on the owner's own agenda (a classic Swedish dagordning in docs/meetings/dagordning.md, where the owner collects thoughts over time). The experts the agenda calls for (from the panel of expert-review: José, Joe, Carsten, Mitch, David, Marie and Claude) discuss each item with the owner, who decides; decisions go into the roadmap, plans and ADRs, and the worded agenda and the minutes (protokoll) are published in docs/meetings/YYYY-MM-DD/. Use when the owner calls a meeting, asks to go through the dagordning, or types /meeting.
 ---
 
 # Panel meeting
@@ -12,6 +12,7 @@ This is not a review: nothing is scored, and the panel speaks only to the items 
 ## The people and the place
 
 - **The panel and the setting** are those of the `expert-review` skill: read its sections "The panel" and "The setting" (`.claude/skills/expert-review/SKILL.md`) and follow them, including the rules on spelling, on spice (stage notes outside the substance) and on never quoting the real people (minutes report what was said).
+- **Who attends depends on the agenda** ("Who attends" in `expert-review`): only the lenses whose subjects are on it, chosen in step 1. Owl and Claude are always there. A meeting on documents, scope or what to keep calls Little Marie-Who-Folds; one on keys and screens may need only Mitch, Carsten and David.
 - **The owner chairs the meeting** and makes every decision. The panel advises and may disagree; it never votes. Owl hosts (it is his house) and keeps order, kindly; he does not decide.
 - **Claude is the secretary**, and also sits on the panel with its own lens; it keeps the two roles apart in the minutes.
 
@@ -34,7 +35,8 @@ A second meeting on the same day gets `YYYY-MM-DD-2/`.
 2. Read the newest `docs/meetings/*/protokoll.md`, if there is one: its decisions are followed up under § 4 (done, partly, not yet, dropped, with the commit or the roadmap line).
 3. For each item, read what it touches before the meeting: the files and plans it names, the roadmap lines, `docs/VISION.md`, the ADRs, the relevant code, the newest review in `docs/reviews/`. A view given at the meeting needs evidence (`path:line`, a document) as in a review. Where an item asks how Agenda did something, check it (the reference texts, or Agenda run headless, as CLAUDE.md describes).
 4. **Word the agenda.** Give each item a short heading that says what is to be decided or discussed, number it from § 5, and write its background in two to five plain sentences, keeping all of the owner's meaning: nothing dropped, nothing added that they did not raise. Their own questions stay as questions. Several notes on one subject may become one item; one note on two subjects becomes two. Correct spelling and grammar. English, as `docs/` is, unless the owner asks for Swedish.
-5. Show the worded agenda in the terminal (headings and one line each) for § 3, adoption: the owner may reorder, add, strike or merge items.
+5. **Choose who attends**: for each item, the lenses with something distinct to say; the meeting's attendance is their union. Usually three to five, rarely all.
+6. Show the worded agenda in the terminal (headings and one line each), and who is invited, for § 3, adoption: the owner may reorder, add, strike or merge items, and invite or excuse an expert.
 
 ## 2. Hold the meeting
 
@@ -44,7 +46,7 @@ Go through it in order, one item at a time, in the conversation; do not run ahea
 - **§ 4 The previous minutes**: the follow-up of earlier decisions, as a table. Nothing to decide unless something is stuck.
 - **Each item (§ 5 onwards)**:
   1. Claude presents it: the worded background and what the evidence says, in a few lines.
-  2. The panel speaks: the two to four lenses with something distinct to say, each in a few sentences with evidence; say where they disagree. Not every lens on every item.
+  2. The panel speaks: the two to four attending lenses with something distinct to say, each in a few sentences with evidence; say where they disagree. Not every lens on every item.
   3. The panel's advice, if it has one, as one sentence.
   4. **The owner decides.** When the choices are clear, ask with `AskUserQuestion` (two to four options, the panel's advice first, marked "(Recommended)"); otherwise ask in plain text and wait. The owner may discuss before deciding: answer, and record the gist.
   5. Record the outcome as one of:
@@ -79,8 +81,8 @@ After the closing, before the minutes, put every decision in its home, each citi
 # Minutes of the panel meeting, YYYY-MM-DD
 
 **Place:** Owl's house, the Hundred Acre Wood
-**Present:** the owner (chair); José Who Brews, Great-Uncle Joe, Carsten
-Carsten, Old Mitch Lilypad, David the Squirrel, Claude (Owl's cousin); Owl, host
+**Present:** the owner (chair); <the experts invited, e.g. Old Mitch Lilypad,
+Little Marie-Who-Folds>, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** <two panel members>
 **Agenda:** [dagordning.md](dagordning.md) · **At commit:** `<hash>`
 

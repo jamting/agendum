@@ -67,7 +67,7 @@ Each plan starts with its status.
 
 | Document                       | About                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
-| `docs/reviews/` (one per date) | Dated expert panel reviews, written as meeting minutes (architecture, code, users, business, vision, methods, agent readiness), each following up the last (`expert-review` skill) |
+| `docs/reviews/` (one per date) | Dated expert panel reviews, written as meeting minutes (architecture, code, users, business, vision, methods, tidiness and scope, agent readiness), each following up the last (`expert-review` skill) |
 | [`meetings/dagordning.md`](meetings/dagordning.md) | The next panel meeting's agenda, where the owner collects thoughts to discuss (template `meetings/TEMPLATE.md`); each meeting's agenda and minutes in `docs/meetings/YYYY-MM-DD/` (`meeting` skill) |
 | [`study/STUDY_PLAN.md`](study/STUDY_PLAN.md) | The owner's study of the code: units the panel picks, with questions ticked off when understood (`study-plan` skill) |
 

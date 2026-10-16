@@ -1,6 +1,6 @@
 ---
 name: study-plan
-description: Let the expert panel (José, Joe, Carsten, Mitch, David and Claude, as in expert-review) pick the next part of Agendum's code for the owner to study, give it learning comments first (the learning-comments skill), then write it as a unit in docs/study/STUDY_PLAN.md - a reading order with questions and exercises the owner checks off when fully understood. Also reports progress and helps with unticked questions. Use when the owner asks for a study plan, the next thing to study, help understanding the code, or types /study-plan.
+description: Let the expert panel (José, Joe, Carsten, Mitch, David, Marie and Claude, as in expert-review; those the subject calls for) pick the next part of Agendum's code for the owner to study, give it learning comments first (the learning-comments skill), then write it as a unit in docs/study/STUDY_PLAN.md - a reading order with questions and exercises the owner checks off when fully understood. Also reports progress and helps with unticked questions. Use when the owner asks for a study plan, the next thing to study, help understanding the code, or types /study-plan.
 ---
 
 # Study plan
@@ -19,7 +19,7 @@ The owner is an experienced programmer, new to Elixir (see the `learning-comment
 
 ## 1. The panel picks the part
 
-Read `docs/study/STUDY_PLAN.md` (what was studied), the newest review in `docs/reviews/`, `docs/ROADMAP.md` (the **Next:** line) and `docs/ARCHITECTURE.md`. Then let each lens (as in `expert-review`) name one candidate in a sentence, and choose one:
+Read `docs/study/STUDY_PLAN.md` (what was studied), the newest review in `docs/reviews/`, `docs/ROADMAP.md` (the **Next:** line) and `docs/ARCHITECTURE.md`. Then let the lenses with a stake in the code (as in `expert-review`, "Who attends"; José and Joe nearly always) name one candidate each in a sentence, and choose one. Marie may argue against a candidate the project is about to let go (no point studying code on its way out):
 
 - **Central**: code everything else leans on (`Core.Assign`, `Database`, `Update.handle/2` and its effects, `Store`), before the edges.
 - **Next in line**: code the coming work will change (the roadmap's Next). Understanding it first makes the owner a better reviewer of that work.
