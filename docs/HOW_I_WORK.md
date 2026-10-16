@@ -2,12 +2,15 @@
 
 The owner's way of working on Wol's Agendum with Claude: the habits, the rituals and the tools set up for them, in one place, so that a smart way of working is not forgotten once it is made. The second half is about what could work better.
 
+**Start every session with `/start-session`**, end it with `/end-session`. The first reads where the last one stopped and offers one thing to do; the second writes down what must not be lost.
+
 **Keep this up to date:** a new skill, ritual, tool or standing rule gets a line here (`docs/INDEX.md`, "Where a change is written down"; the `end-session` skill checks it).
 
 ## At a glance
 
 | I want to…                                     | Say or type                              | What happens                                                            |
 | ---------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------- |
+| begin a session, or ask "where were we?"      | `/start-session`                         | where the last session stopped, what to try, three things to choose from |
 | build the next thing                           | "next" or name a roadmap item            | Claude lists the habit changes first, then builds it test-first         |
 | park a thought for later                       | write it in `docs/meetings/dagordning.md` | nothing, until a meeting                                                |
 | discuss my parked thoughts with the panel      | `/meeting`                               | a panel meeting on my agenda; I decide; minutes and roadmap updated     |
@@ -41,6 +44,7 @@ All in `.claude/skills/`, each started with `/name` or by asking for it in words
 | Skill               | What it is for                                                                                                                                                                                                 | Writes                                                  |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | `end-session`       | Close a session: what was done, what must not be lost (roadmap, plans, memory), a cheerful summary with learnings and next steps                                                                                | `docs/summaries/YYYY-MM-DD-HHMM.md` (not committed)     |
+| `start-session`     | Open a session: reads the last summary, the roadmap's Next, the study plan and anything uncommitted; lists what to try in the program, offers three things to do, and waits for a choice | nothing                                                 |
 | `expert-review`     | A dated review written as the minutes of a panel meeting in Owl's house: architecture, code, tests, docs, users, business, vision, methods, tidiness, agent readiness; scores, evidence, ranked recommendations | `docs/reviews/YYYY-MM-DD.md` (`-2`, `-3` the same day)  |
 | `meeting`           | A panel meeting on my own agenda (the dagordning): the experts the items call for discuss them, I decide, decisions go into the roadmap, plans and ADRs                                                          | `docs/meetings/YYYY-MM-DD/` (agenda and minutes)        |
 | `study-plan`        | The panel picks the next part of the code for me to study, gives it learning comments, and writes a unit of questions and exercises; also helps with a question                                                 | `docs/study/STUDY_PLAN.md`                              |
@@ -103,6 +107,7 @@ The panel advises; it never votes. I decide.
 - **Run the gate several times** after fixing a failing one: a flaky warning hid behind one green run (2026-10-16).
 - **A meeting turns parked thoughts into decisions**: four items decided and built the same evening (2026-10-16).
 - **Jobs in parallel**: the guide, the manual and a review at once, each agent in its own worktree (2026-10-16).
+- **Start sessions on purpose** with `/start-session` (adopted 2026-10-16): the mirror of `end-session`.
 - **Writing study questions finds bugs**: asking "what happens if this fails?" found a lost-save bug (2026-10-16).
 
 ## How I could work better
@@ -113,7 +118,6 @@ Suggestions, most valuable first. None is decided; take what helps, and move wha
 2. **Try each change before the next one.** The review counted 85 commits in one day. The end-session summary lists "what you'll notice"; spending five minutes in the real program on that list before starting new work keeps your understanding level with the code, and catches habit changes early (CLAUDE.md asks for it).
 3. **Use Agendum for Agendum.** You are its first user. Keeping the project's ideas, bugs and the review's resolutions in an Agendum file (a category per area, a view of what is next) would show daily what is missing, and test the program the way real users will. The dagordning can stay for meetings.
 4. **One open loop at a time.** Several things are open at once: study unit 2, twelve review resolutions not yet on the roadmap, the failed-save bug, real users to find. A meeting to sort the resolutions into the roadmap (or into "not now") empties the pile; the roadmap's **Next:** line then says the one thing.
-5. **Start sessions on purpose.** Sessions end with a ritual but start without one. A short `start-session` skill could read the last summary's next steps, the roadmap's **Next:**, the study plan's progress and anything uncommitted, and offer the three most useful things to do. It is not built; ask for it if it sounds useful.
-6. **A rhythm for reviews.** Three reviews in one day is a lot of advice to act on. One per version (or after each meeting's decisions ship) gives each review a real change to measure (the review's resolution 11).
-7. **Small study doses.** One study question at the start of a session, before building, keeps the plan moving without needing a free evening.
-8. **Real users, with dates.** Two sessions in the calendar with old Agenda users or keyboard-tool lovers, the debug log on. Everything so far rests on your judgement alone (the review's resolution 3).
+5. **A rhythm for reviews.** Three reviews in one day is a lot of advice to act on. One per version (or after each meeting's decisions ship) gives each review a real change to measure (the review's resolution 11).
+6. **Small study doses.** One study question at the start of a session, before building, keeps the plan moving without needing a free evening.
+7. **Real users, with dates.** Two sessions in the calendar with old Agenda users or keyboard-tool lovers, the debug log on. Everything so far rests on your judgement alone (the review's resolution 3).
