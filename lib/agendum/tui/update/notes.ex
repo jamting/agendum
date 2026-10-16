@@ -7,7 +7,6 @@ defmodule Agendum.TUI.Update.Notes do
   (R65); other keys edit the text. Pure.
   """
 
-  alias Agendum.Core
   alias Agendum.Core.DateFormat
   alias Agendum.TUI.{CategoryScreens, Keymap, Layout, Typing.NoteSearch, State, Typing.TextEdit}
   alias Agendum.TUI.Typing.Wrap
@@ -205,7 +204,6 @@ defmodule Agendum.TUI.Update.Notes do
 
       {text, edit} ->
         row = Layout.current_row(state)
-        clock = State.context(state)
         # an item is one line: line breaks become spaces
         {text, rest} =
           String.split_at(text |> String.replace("\n", " ") |> String.trim(), @item_room)
@@ -214,14 +212,18 @@ defmodule Agendum.TUI.Update.Notes do
 
         # the shorter note, the new item and its note are one change (one
         # undo step): all three happen within this one key
-        saved = State.change_db(state, save(state.db, mode.target, TextEdit.text(edit), clock))
-        command = {:add_item, text, section: row.category.id, after: after_id}
+        command =
+          {:batch,
+           [
+             save_command(mode.target, TextEdit.text(edit)),
+             {:add_item, text, section: row.category.id, after: after_id}
+           ]}
 
-        case State.run_with_changes(saved, command) do
+        case State.run_with_changes(state, command) do
           {saved, %{new: id}} ->
             saved
             |> State.put_mode(Map.merge(mode, %{edit: edit, match: nil}))
-            |> note_rest(id, rest, clock)
+            |> note_rest(id, rest)
             |> State.info("New item in #{row.category.name}: #{text}")
 
           # only spaces taken: no item, and the note keeps them
@@ -231,10 +233,8 @@ defmodule Agendum.TUI.Update.Notes do
     end
   end
 
-  defp note_rest(state, _id, "", _clock), do: state
-
-  defp note_rest(state, id, rest, clock),
-    do: State.change_db(state, Core.set_note(state.db, id, String.trim(rest), clock))
+  defp note_rest(state, _id, ""), do: state
+  defp note_rest(state, id, rest), do: State.run(state, {:set_note, id, String.trim(rest)})
 
   # ALT-F2: the word at the cursor, its punctuation off, becomes a category
   # under the parent picked next (`Agendum.TUI.CategoryScreens.Picker`)
@@ -264,11 +264,11 @@ defmodule Agendum.TUI.Update.Notes do
   def add_category(state, name, parent) do
     {name, rest} = String.split_at(name, @name_room)
 
-    case Core.add_category(state.db, parent, name) do
-      {:ok, db, id} ->
-        db = if rest == "", do: db, else: Core.set_category_note(db, id, rest)
+    case State.command(state, {:add_category, parent, name, []}) do
+      {:ok, state, %{new: id}} ->
+        state = if rest == "", do: state, else: State.run(state, {:set_category_note, id, rest})
         parent = state.db.categories[parent].name
-        state |> State.change_db(db) |> State.info("New category #{name} under #{parent}")
+        State.info(state, "New category #{name} under #{parent}")
 
       {:error, :duplicate} ->
         State.error(state, "#{state.db.categories[parent].name} already has a #{name}")
@@ -278,8 +278,10 @@ defmodule Agendum.TUI.Update.Notes do
     end
   end
 
-  defp save(db, {:item, id}, text, clock), do: Core.set_note(db, id, text, clock)
-  defp save(db, {:category, id}, text, _clock), do: Core.set_category_note(db, id, text)
+  # the command that saves a note's text where it belongs
+  defp save_command({:item, id}, text), do: {:set_note, id, text}
+  defp save_command({:category, id}, text), do: {:set_category_note, id, text}
+  defp save_command({:macro, id}, text), do: {:set_macro_keys, id, text}
 
   # Saves the note and closes it.
   defp close_note(state, mode), do: state |> save(mode) |> State.pop()
@@ -290,16 +292,7 @@ defmodule Agendum.TUI.Update.Notes do
   each replacement is an undo step of its own.
   """
   def save(state, mode) do
-    text = TextEdit.text(mode.edit)
-
-    db =
-      case mode.target do
-        {:item, id} -> Core.set_note(state.db, id, text, State.context(state))
-        {:category, id} -> Core.set_category_note(state.db, id, text)
-        {:macro, id} -> Core.set_macro_keys(state.db, id, text)
-      end
-
-    if db == state.db, do: state, else: State.change_db(state, db)
+    State.run(state, save_command(mode.target, TextEdit.text(mode.edit)))
   end
 
   defp type_in_note(state, mode, text) do

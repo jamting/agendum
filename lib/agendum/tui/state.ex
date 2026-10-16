@@ -293,12 +293,28 @@ defmodule Agendum.TUI.State do
     end
   end
 
+  @doc """
+  Runs a core command and gives back the new state and what changed, or
+  the reason it was refused, for the caller to word: the state is left
+  as it was then.
+  """
+  @spec command(t, Agendum.Core.Command.t()) ::
+          {:ok, t, Agendum.Core.Command.Changes.t()} | {:error, atom}
+  def command(state, command) do
+    case Agendum.Core.run(state.db, command, context(state)) do
+      # a command that changed nothing leaves the state as it was
+      {:ok, db, changes} when db == state.db -> {:ok, state, changes}
+      {:ok, db, changes} -> {:ok, change_db(state, db), changes}
+      {:error, _reason} = error -> error
+    end
+  end
+
   @doc "Runs a core command, and also returns what changed (nil if refused)."
   @spec run_with_changes(t, Agendum.Core.Command.t()) ::
           {t, Agendum.Core.Command.Changes.t() | nil}
   def run_with_changes(state, command) do
-    case Agendum.Core.run(state.db, command, context(state)) do
-      {:ok, db, changes} -> {change_db(state, db), changes}
+    case command(state, command) do
+      {:ok, state, changes} -> {state, changes}
       {:error, reason} -> {error(state, command_error(reason)), nil}
     end
   end

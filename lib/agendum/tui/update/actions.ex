@@ -203,9 +203,7 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :alarm, %{kind: :item, item: item}) do
     cond do
       item.alarm_minutes != nil ->
-        state
-        |> State.change_db(Core.cancel_alarm(state.db, item.id))
-        |> State.info("Alarm cancelled")
+        State.run(state, {:cancel_alarm, item.id}, "Alarm cancelled")
 
       item.when == nil ->
         State.error(state, "Give the item a When date and time first (ALT-F2)")

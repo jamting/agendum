@@ -72,8 +72,7 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
     do: State.put_mode(state, %{mode | picked: suggestions(state, mode)})
 
   def run(state, mode, :done) do
-    db = Core.answer_question(state.db, mode.item, mode.picked, State.context(state))
-    state |> State.pop() |> State.change_db(db) |> open_next()
+    state |> State.pop() |> State.run({:answer_question, mode.item, mode.picked}) |> open_next()
   end
 
   def run(state, mode, id), do: Box.list_move(state, mode, length(suggestions(state, mode)), id)

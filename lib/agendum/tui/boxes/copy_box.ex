@@ -16,7 +16,6 @@ defmodule Agendum.TUI.Boxes.CopyBox do
 
   use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
 
-  alias Agendum.Core
   alias Agendum.TUI.Boxes.Box
   alias Agendum.TUI.{Terminal.Draw, Layout, State}
 
@@ -59,13 +58,16 @@ defmodule Agendum.TUI.Boxes.CopyBox do
 
   defp copy(state, mode) do
     cat_id = Enum.at(State.view(state).sections, mode.cursor).category_id
-    db = Enum.reduce(mode.ids, state.db, &Core.assign(&2, &1, cat_id, State.context(state)))
     name = state.db.categories[cat_id].name
 
     what =
       if length(mode.ids) == 1, do: "", else: Draw.count(length(mode.ids), "marked item") <> " "
 
-    state |> State.change_db(db) |> State.info("Copied #{what}to #{name}")
+    State.run(
+      state,
+      {:batch, Enum.map(mode.ids, &{:assign, &1, cat_id})},
+      "Copied #{what}to #{name}"
+    )
   end
 
   @impl Box

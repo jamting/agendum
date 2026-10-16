@@ -73,10 +73,10 @@ defmodule Agendum.TUI.Boxes.AlarmList do
   end
 
   defp command(state, _mode, :remove, {:past, id}),
-    do: State.change_db(state, Core.remove_past_alarm(state.db, id))
+    do: State.run(state, {:remove_past_alarm, id})
 
   defp command(state, _mode, :cancel_alarm, {:current, id}),
-    do: state |> State.change_db(Core.cancel_alarm(state.db, id)) |> State.info("Alarm cancelled")
+    do: State.run(state, {:cancel_alarm, id}, "Alarm cancelled")
 
   defp command(state, mode, id, _row) when id in [:up, :down],
     do: Box.list_move(state, mode, max(length(rows(state)), 1), id)

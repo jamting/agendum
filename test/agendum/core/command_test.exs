@@ -168,6 +168,23 @@ defmodule Agendum.Core.CommandTest do
     end
   end
 
+  test "clearing a column takes an item out of the head's children it is in", %{db: db, a: a} do
+    db = with_categories(db, [{"Who", [], ["Anna", "Bo"]}])
+    who = cat(db, "Who")
+
+    {:ok, db, _} =
+      Core.run(
+        db,
+        {:batch, [{:assign, a, cat(db, "Anna")}, {:assign, a, cat(db, "Bo")}]},
+        today()
+      )
+
+    {:ok, db, changes} = Core.run(db, {:clear_column, a, who}, today())
+    refute Agendum.Core.Database.member?(db, a, cat(db, "Anna"))
+    refute Agendum.Core.Database.member?(db, a, cat(db, "Bo"))
+    assert changes.items.changed == [a]
+  end
+
   describe "several commands as one" do
     test "a batch runs its commands in turn, as one change", %{db: db, a: a, b: b} do
       {:ok, db, changes} =

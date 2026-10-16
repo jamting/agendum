@@ -146,10 +146,10 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
     do: open(state, id)
 
   defp command(state, mode, :remove, {:prerequisite, id}),
-    do: State.change_db(state, Core.remove_dependency(state.db, mode.item_id, id))
+    do: State.run(state, {:remove_dependency, mode.item_id, id})
 
   defp command(state, mode, :remove, {:dependent, id}),
-    do: State.change_db(state, Core.remove_dependency(state.db, id, mode.item_id))
+    do: State.run(state, {:remove_dependency, id, mode.item_id})
 
   defp command(state, mode, :set_value, {:assigned, %{kind: :date} = a}),
     do: ask_date(state, mode, a.category)
@@ -208,16 +208,10 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
         State.error(state, "The Entry date cannot be removed")
 
       kind == :date ->
-        State.change_db(
-          state,
-          Core.remove_from_category(state.db, mode.item_id, cat_id, State.context(state))
-        )
+        State.run(state, {:remove_from_category, mode.item_id, cat_id})
 
       true ->
-        State.change_db(
-          state,
-          Core.toggle_assignment(state.db, mode.item_id, cat_id, State.context(state))
-        )
+        State.run(state, {:toggle_assignment, mode.item_id, cat_id})
     end
   end
 
@@ -292,7 +286,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
         ask_number(state, mode, %{category: shown, number: nil})
 
       shown ->
-        state |> State.change_db(Core.assign(state.db, item_id, shown, State.context(state)))
+        State.run(state, {:assign, item_id, shown})
 
       String.trim(line.text) == "" ->
         state
@@ -304,9 +298,9 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
 
   # INS / F5 (NEWCAT): exactly the typed name, as a new category under MAIN.
   defp new_category(state, mode, text) do
-    case Core.assign_new_by_name(state.db, mode.item_id, state.db.main_id, text) do
-      {:ok, db, cat_id} ->
-        state |> State.change_db(db) |> State.info("Assigned to #{db.categories[cat_id].name}")
+    case State.command(state, {:assign_new_by_name, mode.item_id, state.db.main_id, text}) do
+      {:ok, state, %{new: cat_id}} ->
+        State.info(state, "Assigned to #{state.db.categories[cat_id].name}")
 
       {:error, :empty} ->
         state

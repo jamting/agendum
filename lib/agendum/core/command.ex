@@ -107,6 +107,9 @@ defmodule Agendum.Core.Command do
     {:assign_new_by_name, "Assign to a new category",
      "Makes a category of that name under the head and assigns the item to it (R23)",
      [:item, :category, :value], :core},
+    {:clear_column, "Clear column",
+     "Takes an item out of a column: its entries under the head (DEL in a column, R24)",
+     [:item, :category], :own},
     {:set_in_column, "Set in column",
      "Assigns an item to a yes/no column's head, or takes it out", [:item, :category, :value],
      :clock},
@@ -485,6 +488,17 @@ defmodule Agendum.Core.Command do
 
   defp apply_own(db, {:discard_items, ids}, _clock),
     do: result(Enum.reduce(ids, db, &Items.discard_item(&2, &1)))
+
+  # The item's entries in a column: the head itself when it has no
+  # children (or is a date category), else each child the item is in
+  defp apply_own(db, {:clear_column, item_id, head}, clock) do
+    entries =
+      if Database.date_category?(db, head) or db.categories[head].children == [],
+        do: [head],
+        else: Agendum.Core.ViewModel.column_entries(db, item_id, head)
+
+    result(Enum.reduce(entries, db, &Assignments.remove_from_category(&2, item_id, &1, clock)))
+  end
 
   # the clock goes into the options, where these functions read it
   defp apply_own(db, {:move_item, id, from, to, opts}, clock),

@@ -352,17 +352,19 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
         CategoryScreens.numbers_hint(state, id)
 
       true ->
-        db = Enum.reduce(ids, state.db, &Core.assign(&2, &1, id, State.context(state)))
         noun = if length(ids) == 1, do: "Item", else: "#{length(ids)} items"
+        name = state.db.categories[id].name
 
-        state
-        |> State.change_db(db)
-        |> State.info("#{noun} assigned to #{db.categories[id].name}")
+        State.run(
+          state,
+          {:batch, Enum.map(ids, &{:assign, &1, id})},
+          "#{noun} assigned to #{name}"
+        )
     end
   end
 
   def pick(state, {:assign_column, item_id, _head}, id),
-    do: State.change_db(state, Core.assign(state.db, item_id, id, State.context(state)))
+    do: State.run(state, {:assign, item_id, id})
 
   def pick(state, {:new_view, name}, id) do
     {db, view_id} = Core.add_view(state.db, name, [id])

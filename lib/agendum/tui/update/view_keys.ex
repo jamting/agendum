@@ -403,7 +403,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
 
   defp set_in_column(state, row, in?) do
     {:column_entry, item_id, head, _} = column_target(state, row, :replace)
-    State.change_db(state, Core.set_in_column(state.db, item_id, head, in?, State.context(state)))
+    State.run(state, {:set_in_column, item_id, head, in?})
   end
 
   # what a Category note column's cell types into: that line of the note
@@ -527,11 +527,8 @@ defmodule Agendum.TUI.Update.ViewKeys do
       State.error(state, "Items cannot be removed from MAIN; use ALT-F4 to discard")
     else
       state
-      |> State.change_db(
-        Core.remove_from_category(state.db, item.id, cat.id, State.context(state))
-      )
+      |> State.run({:remove_from_category, item.id, cat.id}, "Removed from #{cat.name}")
       |> then(&%{&1 | last: %{&1.last | removed: item.id}})
-      |> State.info("Removed from #{cat.name}")
     end
   end
 
@@ -548,10 +545,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
       _ ->
         {:column_entry, item_id, head, _} = column_target(state, row, :replace)
 
-        State.change_db(
-          state,
-          Editing.clear_column(state.db, item_id, head, State.context(state))
-        )
+        State.run(state, {:clear_column, item_id, head})
     end
   end
 
@@ -614,15 +608,9 @@ defmodule Agendum.TUI.Update.ViewKeys do
 
       true ->
         after_id = if row.kind == :item, do: row.item.id
-        clock = State.context(state)
 
-        db =
-          Core.move_item(state.db, id, state.db.main_id, row.category.id,
-            after: after_id,
-            clock: clock
-          )
-
-        state = State.change_db(state, db)
+        state =
+          State.run(state, {:move_item, id, state.db.main_id, row.category.id, after: after_id})
 
         %{state | last: %{state.last | removed: nil}, cursor_key: {:item, row.sidx, id}}
         |> State.info("Yanked back into #{row.category.name}")

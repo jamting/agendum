@@ -185,29 +185,19 @@ defmodule Agendum.TUI.Update.Prompts do
     do: Agendum.TUI.Boxes.DatebookBox.set_base(state, view_id, text)
 
   defp prompt_action(state, {:when_items, ids}, text) do
-    Enum.reduce_while(ids, {:ok, state.db}, fn id, {:ok, db} ->
-      case Core.when_key(db, id, text, State.context(state)) do
-        {:ok, db} -> {:cont, {:ok, db}}
-        {:error, _} -> {:halt, :error}
-      end
-    end)
-    |> case do
-      {:ok, db} ->
-        state
-        |> State.change_db(db)
-        |> State.info("When date set for #{Draw.count(length(ids), "item")}")
+    case State.command(state, {:batch, Enum.map(ids, &{:when_key, &1, text})}) do
+      {:ok, state, _} ->
+        State.info(state, "When date set for #{Draw.count(length(ids), "item")}")
 
-      :error ->
+      {:error, _} ->
         State.error(state, "Not a date: #{text} (try friday, next week, 12/24, December 24)")
     end
   end
 
   defp prompt_action(state, {:when, item_id}, text) do
-    case Core.when_key(state.db, item_id, text, State.context(state)) do
-      {:ok, db} ->
-        state
-        |> State.change_db(db)
-        |> State.info("When: " <> DateFormat.date(db.items[item_id].when, db.date_format))
+    case State.command(state, {:when_key, item_id, text}) do
+      {:ok, %{db: db} = state, _} ->
+        State.info(state, "When: " <> DateFormat.date(db.items[item_id].when, db.date_format))
 
       {:error, :invalid_date} ->
         State.error(state, "Not a date: #{text} (try friday, next week, 12/24, December 24)")
@@ -224,21 +214,18 @@ defmodule Agendum.TUI.Update.Prompts do
 
   defp prompt_action(state, {:alarm, item_id}, text) do
     with {minutes, ""} <- Integer.parse(String.trim(text)),
-         {:ok, db} <- Core.set_alarm(state.db, item_id, minutes) do
+         {:ok, %{db: db} = state, _} <- State.command(state, {:set_alarm, item_id, minutes}) do
       at = Core.when_at(db.items[item_id]) |> NaiveDateTime.add(-minutes * 60)
-
-      state
-      |> State.change_db(db)
-      |> State.info("Alarm set for " <> DateFormat.datetime(at, db.date_format))
+      State.info(state, "Alarm set for " <> DateFormat.datetime(at, db.date_format))
     else
       _ -> State.error(state, "Type a number of minutes from 0 to 60")
     end
   end
 
   defp prompt_action(state, {:item_date, item_id, cat_id}, text) do
-    case Core.assign_by_name(state.db, item_id, cat_id, text, State.context(state)) do
-      {:ok, db, :date} ->
-        State.change_db(state, db)
+    case State.command(state, {:assign_by_name, item_id, cat_id, text}) do
+      {:ok, state, %{result: :date}} ->
+        state
 
       {:error, :invalid_date} ->
         State.error(state, "Not a date: #{text} (try friday, next week, 12/24)")
@@ -246,12 +233,12 @@ defmodule Agendum.TUI.Update.Prompts do
   end
 
   defp prompt_action(state, {:item_number, item_id, cat_id}, text) do
-    case Core.assign_by_name(state.db, item_id, cat_id, text, State.context(state)) do
-      {:ok, db, :number} ->
-        State.change_db(state, db)
+    case State.command(state, {:assign_by_name, item_id, cat_id, text}) do
+      {:ok, state, %{result: :number}} ->
+        state
 
       {:error, :empty} ->
-        State.change_db(state, Core.clear_number(state.db, item_id, cat_id, State.context(state)))
+        State.run(state, {:clear_number, item_id, cat_id})
 
       {:error, :not_a_number} ->
         State.error(state, "Not a number: #{String.trim(text)}")
@@ -376,10 +363,10 @@ defmodule Agendum.TUI.Update.Prompts do
   defp confirmed(state, :column_add, true), do: Agendum.TUI.Boxes.ColumnAddBox.add_now(state)
 
   defp confirmed(state, {:make_dependent, id, prerequisites}, true) do
-    case Core.make_dependent(state.db, id, prerequisites) do
-      {:ok, db} ->
-        count = length(Core.prerequisites(db, id))
-        state |> State.change_db(db) |> State.info("Depends on #{Draw.count(count, "item")}")
+    case State.command(state, {:make_dependent, id, prerequisites}) do
+      {:ok, state, _} ->
+        count = length(Core.prerequisites(state.db, id))
+        State.info(state, "Depends on #{Draw.count(count, "item")}")
 
       {:error, :cycle} ->
         State.error(state, "Not done: the item would depend on itself (through the marked items)")
@@ -387,9 +374,7 @@ defmodule Agendum.TUI.Update.Prompts do
   end
 
   defp confirmed(state, {:clear_dependencies, id}, true) do
-    state
-    |> State.change_db(Core.clear_dependencies(state.db, id))
-    |> State.info("Dependencies cleared")
+    State.run(state, {:clear_dependencies, id}, "Dependencies cleared")
   end
 
   defp confirmed(state, {:sort_children, id}, true) do

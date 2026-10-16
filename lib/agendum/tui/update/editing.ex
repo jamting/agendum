@@ -6,7 +6,7 @@ defmodule Agendum.TUI.Update.Editing do
   """
 
   alias Agendum.Core
-  alias Agendum.Core.{Database, DateFormat, ViewModel}
+  alias Agendum.Core.{Database, DateFormat}
   alias Agendum.TUI.{Typing.Completion, Layout, Typing.LineEdit, State}
   alias Agendum.TUI.Update.ViewKeys
 
@@ -59,12 +59,7 @@ defmodule Agendum.TUI.Update.Editing do
     state = %{state | edit: nil}
 
     if shown do
-      db =
-        if how == :replace,
-          do: clear_column(state.db, item_id, head, State.context(state)),
-          else: state.db
-
-      State.change_db(state, Core.assign(db, item_id, shown, State.context(state)))
+      State.run(state, column_entry(item_id, head, how == :replace, {:assign, item_id, shown}))
     else
       commit(state, {:column_entry, item_id, head, how}, line.text)
     end
@@ -80,14 +75,14 @@ defmodule Agendum.TUI.Update.Editing do
        ) do
     state = %{state | edit: nil}
 
-    db =
-      if how == :replace and String.trim(line.text) != "",
-        do: clear_column(state.db, item_id, head, State.context(state)),
-        else: state.db
+    replace? = how == :replace and String.trim(line.text) != ""
 
-    case Core.assign_new_by_name(db, item_id, head, line.text) do
-      {:ok, db, cat_id} ->
-        state |> State.change_db(db) |> State.info("Assigned to #{db.categories[cat_id].name}")
+    command =
+      column_entry(item_id, head, replace?, {:assign_new_by_name, item_id, head, line.text})
+
+    case State.command(state, command) do
+      {:ok, state, %{new: cat_id}} ->
+        State.info(state, "Assigned to #{state.db.categories[cat_id].name}")
 
       {:error, :empty} ->
         state
@@ -128,14 +123,14 @@ defmodule Agendum.TUI.Update.Editing do
   defp commit(state, {:note_line, _, _, _} = target, text), do: set_note_line(state, target, text)
 
   defp commit(state, {:column_entry, item_id, head, how}, text) do
-    db =
-      if how == :replace and String.trim(text) != "",
-        do: clear_column(state.db, item_id, head, State.context(state)),
-        else: state.db
+    replace? = how == :replace and String.trim(text) != ""
 
-    case Core.assign_by_name(db, item_id, head, text, State.context(state)) do
-      {:ok, db, _} ->
-        State.change_db(state, db)
+    case State.command(
+           state,
+           column_entry(item_id, head, replace?, {:assign_by_name, item_id, head, text})
+         ) do
+      {:ok, state, _} ->
+        state
 
       {:error, :empty} ->
         state
@@ -266,9 +261,9 @@ defmodule Agendum.TUI.Update.Editing do
   item's category in that column; an item with none there is told so.
   """
   def set_note_line(state, {:note_line, item_id, head, n}, text) do
-    case Core.set_column_note(state.db, item_id, head, n, text) do
-      {:ok, db} ->
-        State.change_db(state, db)
+    case State.command(state, {:set_column_note, item_id, head, n, text}) do
+      {:ok, state, _} ->
+        state
 
       {:error, :no_category} ->
         item = state.db.items[item_id].text
@@ -280,19 +275,10 @@ defmodule Agendum.TUI.Update.Editing do
     end
   end
 
-  @doc "Removes an item's entries in the column whose head category is `head`."
-  def clear_column(db, item_id, head, context) do
-    case Database.date_category?(db, head) do
-      false ->
-        if db.categories[head].children == [],
-          do: Core.remove_from_category(db, item_id, head, context),
-          else:
-            db
-            |> ViewModel.column_entries(item_id, head)
-            |> Enum.reduce(db, &Core.remove_from_category(&2, item_id, &1, context))
+  # Typing into a column cell: what was there goes first when the entry
+  # replaces it (R23), in the same change
+  defp column_entry(item_id, head, true = _replace?, command),
+    do: {:batch, [{:clear_column, item_id, head}, command]}
 
-      true ->
-        Core.remove_from_category(db, item_id, head, context)
-    end
-  end
+  defp column_entry(_item_id, _head, false, command), do: command
 end

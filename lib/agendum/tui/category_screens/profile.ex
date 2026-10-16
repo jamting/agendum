@@ -7,7 +7,6 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
 
   use Agendum.TUI.Boxes.Box, finish: :none, indicator: "ASSIGN"
 
-  alias Agendum.Core
   alias Agendum.Core.Database
   alias Agendum.TUI.{Boxes.Box, CategoryScreens, Terminal.Draw, State}
   alias Agendum.TUI.Update.Prompts
@@ -166,17 +165,10 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
 
           CategoryScreens.group_count(db, mode.item_ids, id) > 0 ->
             explicit = Enum.filter(mode.item_ids, &Database.explicit?(db, &1, id))
-
-            State.change_db(
-              state,
-              Enum.reduce(explicit, db, &Core.toggle_assignment(&2, &1, id, State.context(state)))
-            )
+            State.run(state, {:batch, Enum.map(explicit, &{:toggle_assignment, &1, id})})
 
           true ->
-            State.change_db(
-              state,
-              Enum.reduce(mode.item_ids, db, &Core.assign(&2, &1, id, State.context(state)))
-            )
+            State.run(state, {:batch, Enum.map(mode.item_ids, &{:assign, &1, id})})
         end
 
       _ ->
@@ -205,7 +197,7 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
             Prompts.prompt(state, "#{db.categories[id].name}:", {:item_number, item_id, id})
 
           true ->
-            State.change_db(state, Core.toggle_assignment(db, item_id, id, State.context(state)))
+            State.run(state, {:toggle_assignment, item_id, id})
         end
 
       _ ->

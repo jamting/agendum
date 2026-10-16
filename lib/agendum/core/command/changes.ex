@@ -22,11 +22,15 @@ defmodule Agendum.Core.Command.Changes do
   @typedoc "Ids added, changed and removed, each list in id order."
   @type ids :: %{added: [Database.id()], changed: [Database.id()], removed: [Database.id()]}
 
-  # `optional(:new) =>` comes first: in a map type, the `key: type` pairs
-  # must come last. `new:` is added by the command, not found by
-  # comparing: the item it made.
+  # The `optional(…) =>` keys come first: in a map type, the `key: type`
+  # pairs must come last. They are added by the command, not found by
+  # comparing: `new:` the id of what it made, `result:` anything else its
+  # function returned (such as `:date` for typing a date), `steps:` what
+  # each command of a batch made.
   @type t :: %{
           optional(:new) => Database.id(),
+          optional(:result) => term,
+          optional(:steps) => [map],
           items: ids,
           categories: ids,
           views: ids,

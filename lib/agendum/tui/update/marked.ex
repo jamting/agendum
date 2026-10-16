@@ -189,16 +189,11 @@ defmodule Agendum.TUI.Update.Marked do
     if cat.id == state.db.main_id do
       State.error(state, "Items cannot be removed from MAIN; use ALT-F4 to discard")
     else
-      db =
-        Enum.reduce(
-          ids,
-          state.db,
-          &Core.remove_from_category(&2, &1, cat.id, State.context(state))
-        )
-
-      state
-      |> State.change_db(db)
-      |> State.info("Removed #{Draw.count(length(ids), "marked item")} from #{cat.name}")
+      State.run(
+        state,
+        {:batch, Enum.map(ids, &{:remove_from_category, &1, cat.id})},
+        "Removed #{Draw.count(length(ids), "marked item")} from #{cat.name}"
+      )
     end
   end
 
@@ -289,13 +284,14 @@ defmodule Agendum.TUI.Update.Marked do
     to = Enum.at(State.view(state).sections, row.sidx).category_id
     first_after = if row.kind == :item, do: row.item.id
 
-    {db, _} =
-      Enum.reduce(moves, {state.db, first_after}, fn {id, from}, {db, after_id} ->
-        from = from || db.main_id
-        {Core.move_item(db, id, from, to, after: after_id, clock: State.context(state)), id}
-      end)
+    # each item goes after the one moved before it
+    afters = [first_after | Enum.map(moves, &elem(&1, 0))]
+
+    commands =
+      for {{id, from}, after_id} <- Enum.zip(moves, afters),
+          do: {:move_item, id, from || state.db.main_id, to, after: after_id}
 
     {last_id, _} = List.last(moves)
-    %{State.change_db(state, db) | cursor_key: {:item, row.sidx, last_id}}
+    %{State.run(state, {:batch, commands}) | cursor_key: {:item, row.sidx, last_id}}
   end
 end
