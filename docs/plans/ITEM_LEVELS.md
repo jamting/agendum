@@ -18,7 +18,7 @@ The volumes of levels 2 and 3 can be substantial: thousands of feed entries, and
 
 - **Zettelkasten IDs** (ROADMAP, "Beyond Agenda"): the ID and the `[[…]]` links become what makes an item a zettel. A promoted item gets its ID when it is promoted.
 - **Calendar subscriptions** (R45) are the first ingested items: `Agendum.Core.CalendarSync` already mirrors a calendar's events into items. They become level 2, and promoting one makes it the person's.
-- **RSS and other feeds**: new sources of level-2 items, fetched by the shell like `Agendum.CalendarFetch`.
+- **RSS and other feeds**: new sources of level-2 items, fetched by the shell like `Agendum.CalendarFetch`; the first is the RSS reader, a roadmap item of its own (ROADMAP, "Beyond Agenda"; meeting 2026-10-16-2, § 7).
 - **Rules for ingested items**: what is kept, promoted or discarded. Agenda's own machinery may carry much of it: conditions and actions (R15, R15b) and the Discard special action already file and remove items by rule.
 - **Wol** (`WOL-IN-THE-MACHINE.md`): context items are where the agent keeps what it has learnt, inside the file, visible to the person, in line with its principle that the person decides; the person steers it by instruction, not by editing its notes.
 - **The JSON export** (R44, ADR 0034): the person chooses which levels to include, as Agenda's STF export chooses which items and assignments go in. An export without some levels is partial on purpose.

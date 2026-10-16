@@ -28,7 +28,7 @@ And Agenda was reaching for this from the start: its designers' 1990 CACM articl
 - **Turn a long note into items** (as Agenda's ALT-F7 made items from note text), each filed.
 - **Write conditions in plain words**: "anything about the garden that is not done" becomes a condition or a filter.
 - **Summarise**: a section, a person's items, the week ahead.
-- **Sift what comes in**: ingested items (calendars, RSS feeds, level 2 in `ITEM_LEVELS.md`) proposed as zettels when they matter to the person, the rest left to the discard rules.
+- **Sift what comes in**: ingested items (calendars, RSS feeds, level 2 in `ITEM_LEVELS.md`) proposed as zettels when they matter to the person, the rest left to the discard rules. The RSS reader comes first without Wol; Wol's summaries and sifting are its second step, after principle 6 and the golden tasks (ROADMAP, "Beyond Agenda"; meeting 2026-10-16-2, § 7).
 
 ## The pieces Agendum already has
 
