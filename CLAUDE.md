@@ -133,7 +133,8 @@ Keep changes small and focused; one feature per commit.
   Prefer Agenda's own command names (User's Guide, Appendix A).
 - Undo is automatic: any key that changes `state.db` records one step in
   `Agendum.TUI.History`. Do not record history by hand. Keep one user action = one
-  database change, so one undo reverses it.
+  database change, so one undo reverses it (the fuzz walks check that undo
+  gives the file back, and `Agendum.Core.Invariants` after every key).
 
 ## Testing the real terminal
 

@@ -20,7 +20,6 @@ first: each is small, and the command layer (below) is a large refactoring
 that leans on them. From the expert review of 2026-10-16
 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
-- [ ] Meaning in the fuzz walks: after every key, the data model's invariants hold (no item directly in both a category and one of its ancestors, R7c; at most one child of an exclusive parent, R7; each link and its reverse agree; every id below `next_id`), and undo back to the start gives the starting file (R30). One pure check of the invariants, used by the fuzz property (`test/agendum/tui/fuzz_test.exs`), the JSON round trip and the core tests
 - [ ] CI: `mix check` on every push (GitHub Actions), once the repository is on GitHub (Housekeeping); until then a git pre-push hook that runs `mix check`. The long fuzz run (`FUZZ_RUNS=3000`) is run by hand before every version is tagged (docs/INDEX.md, "Where a change is written down"); CI could take it over later, nightly
 - [ ] Golden files for the file format: a small file saved by each format version from 33 on, committed when the version is made, all loaded by one test. Today's upgrade tests build old files from today's structs (`test/agendum/store_test.exs`), which can miss what a real old file holds
 - [ ] The format of record (an ADR): which format keeps people's data for years, the JSON schema (`JSON_FORMAT.md`, round-trip tested) or a command log as the web plan needs, with today's Erlang-term file (`Agendum.Store`, ADR 0003) as a fast copy of it. Settle it before the web plan adds its own storage; fewer upgrade paths per stored field
@@ -328,3 +327,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] Longer texts for the commands, shown by F1 `c` and `d` (R65b), 2026-10-16
   - [x] The help page's look and feel (R65c, 2026-10-16): the same frame on every page, colours from the theme, a fixed pane of five lines at the foot with the longer text and the "Not now" reason (← → page through a long text), "…" for a long summary; drawn as a box over the faded screen beneath, taking more of a small screen (80×25: about nine tenths) than of a large one (four fifths). To try with the owner: the colours
   - Dropped (owner, 2026-10-16): the help as a panel over the right-hand side. The help box over the faded screen (R65c) keeps what it was opened from in sight, which was the panel's point
+
+### Sharpen the saw
+
+- [x] Meaning in the fuzz walks (2026-10-16): after every key the data model's invariants hold (`Agendum.Core.Invariants.violations/1`, the list in DATA_MODEL.md plus one id space), and a key that changed the file is reversed exactly by undoing the steps it recorded (R30). The JSON round trip checks the invariants too

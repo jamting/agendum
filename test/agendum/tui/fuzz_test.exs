@@ -9,7 +9,8 @@ defmodule Agendum.TUI.Fuzz do
   use ExUnitProperties
   import ExUnit.Assertions
 
-  alias Agendum.TUI.{Terminal.Draw, Render, Update}
+  alias Agendum.Core.Invariants
+  alias Agendum.TUI.{History, Terminal.Draw, Render, Update}
   import Agendum.TUIHelpers, only: [start: 2]
 
   @keys [
@@ -132,6 +133,23 @@ defmodule Agendum.TUI.Fuzz do
     Agendum.Core.move_view(db, view, 0)
   end
 
+  # A key that changed the file recorded undo steps, and undoing them gives
+  # the file back as it was (R30): one user action, one database change.
+  # Undo takes a step off the stack (redo puts one on, which undo takes
+  # back like any other); a new file starts without history; a full
+  # history (100 steps) has dropped its oldest.
+  defp assert_undoable(before, state, key) do
+    steps = length(state.history.undo) - length(before.history.undo)
+    new_file = state.saved_db != before.saved_db
+    full = length(state.history.undo) >= 100
+
+    if state.db != before.db and steps >= 0 and not new_file and not full do
+      assert steps >= 1, "#{inspect(key)} changed the file but recorded no undo step"
+      undone = Enum.reduce(1..steps, state, fn _, s -> History.undo(s) end)
+      assert undone.db == before.db, "undoing #{inspect(key)} did not give the file back"
+    end
+  end
+
   defp handle(state, []), do: state
 
   defp handle(state, [key | keys]) do
@@ -185,12 +203,19 @@ defmodule Agendum.TUI.Fuzz do
       Enum.reduce(keys, state, fn key, state ->
         # :tick advances the clock ten minutes, as the shell's loop would;
         # a macro run's keys are played next, as the shell plays them
+        before = state
+
         state =
           if key == :tick,
             do: state |> Update.tick(NaiveDateTime.add(state.now, 600)) |> elem(0),
             else: handle(state, [key])
 
         assert state.macro.playing == 0
+
+        # the file stays sound (docs/DATA_MODEL.md, "Invariants")
+        assert Invariants.violations(state.db) == [], "after #{inspect(key)}"
+
+        if key != :tick, do: assert_undoable(before, state, key)
 
         screen = Render.render(state)
 

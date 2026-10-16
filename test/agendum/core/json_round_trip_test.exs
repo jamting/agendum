@@ -37,6 +37,7 @@ defmodule Agendum.Core.JSONRoundTripTest do
           key, state -> elem(Update.handle(state, key), 0)
         end).db
 
+      assert Agendum.Core.Invariants.violations(db) == []
       assert JSONFile.decode(JSONFile.encode(db)) == {:ok, db}
     end
   end
