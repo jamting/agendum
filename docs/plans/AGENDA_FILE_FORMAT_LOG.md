@@ -2,97 +2,46 @@
 
 2026-10-14 · Claude, for Mattias Jämting
 
-The lab notebook behind [AGENDA_FILE_FORMAT.md](../AGENDA_FILE_FORMAT.md):
-what was tried, with which tools, how far it got, and what to do next. The
-goal is importing old Agenda files into Agendum; this stage only describes
-the format.
+The lab notebook behind [AGENDA_FILE_FORMAT.md](../AGENDA_FILE_FORMAT.md): what was tried, with which tools, how far it got, and what to do next. The goal is importing old Agenda files into Agendum; this stage only describes the format.
 
-**Status (2026-10-15, after the second round):** research done; next, the
-importer (ROADMAP, Data interchange; "Next steps" below). The format is mapped as
-far as an import needs, and most of the rest: items, notes and note files,
-categories with every setting of their properties boxes, conditions,
-actions and special actions, assignments with date, numeric and unindexed
-values, relative and recurring date expressions, alarms, views with their
-flags, sort keys, filters and date ranges, datebook views, sections,
-columns with widths and formats, and the file-level settings in the
-header. A reference reader (`tools/agformat/agdump.py`) decodes all of it
-for every file at hand. What is left open is listed at the end of the
-format document; none of it is needed to import.
+**Status (2026-10-15, after the second round):** research done; next, the importer (ROADMAP, Data interchange; "Next steps" below). The format is mapped as far as an import needs, and most of the rest: items, notes and note files, categories with every setting of their properties boxes, conditions, actions and special actions, assignments with date, numeric and unindexed values, relative and recurring date expressions, alarms, views with their flags, sort keys, filters and date ranges, datebook views, sections, columns with widths and formats, and the file-level settings in the header. A reference reader (`tools/agformat/agdump.py`) decodes all of it for every file at hand. What is left open is listed at the end of the format document; none of it is needed to import.
 
 ## Prior art
 
 A web search found no description of the binary `.AG` format.
 
-- Agenda can export to **STF** ("structured file", File Transfer Export), a
-  tagged text format half documented in _Working with Definition Files_,
-  Appendix B. Tavis Ormandy's `stfjson` (github.com/taviso/stfjson) and
-  `jimcollinsworth/new-agenda` read STF; neither reads `.AG`. STF is a
-  fallback import path for anyone who still has Agenda running, and it was
-  useful here as ground truth: it names each category's properties, which
-  could then be matched against the bits in the binary.
-- IBM's Lotus FTP mirror (public.dhe.ibm.com/software/lotus/desktop/Agenda)
-  has the disk images and the Update B kit, no format notes.
-- The Agenda patent (US 5,115,504) describes the data model (items,
-  categories, links), not the file. It matched what the bytes showed: a
-  sparse matrix of item-category links.
+- Agenda can export to **STF** ("structured file", File Transfer Export), a tagged text format half documented in _Working with Definition Files_, Appendix B. Tavis Ormandy's `stfjson` (github.com/taviso/stfjson) and `jimcollinsworth/new-agenda` read STF; neither reads `.AG`. STF is a fallback import path for anyone who still has Agenda running, and it was useful here as ground truth: it names each category's properties, which could then be matched against the bits in the binary.
+- IBM's Lotus FTP mirror (public.dhe.ibm.com/software/lotus/desktop/Agenda) has the disk images and the Update B kit, no format notes.
+- The Agenda patent (US 5,115,504) describes the data model (items, categories, links), not the file. It matched what the bytes showed: a sparse matrix of item-category links.
 
 ## Material
 
-- `docs/reference/agendafiles/`: the four starter applications shipped with
-  Agenda 2.0 (ACCOUNT, INFOSIFT, PEOPLE, PLANNER), dated 1990-10-23, plus a
-  definition file, a text file and a macro file. The `.AG` files are
-  templates: categories, views and macros, but almost no items.
-- The owner's Agenda 2.0 install in DOSBox (`~/Dosbox/APPS/AGENDA`), with a
-  Planner file the owner had used. **Every experiment ran on a copy** in the
-  session's scratch directory; nothing in `~/Dosbox` was changed.
+- `docs/reference/agendafiles/`: the four starter applications shipped with Agenda 2.0 (ACCOUNT, INFOSIFT, PEOPLE, PLANNER), dated 1990-10-23, plus a definition file, a text file and a macro file. The `.AG` files are templates: categories, views and macros, but almost no items.
+- The owner's Agenda 2.0 install in DOSBox (`~/Dosbox/APPS/AGENDA`), with a Planner file the owner had used. **Every experiment ran on a copy** in the session's scratch directory; nothing in `~/Dosbox` was changed.
 
 ## Method
 
 ### 1. Look at the bytes
 
-`xxd` and `strings` showed at once that the files are not encrypted: names,
-macros and the description appear in clear. The header starts with `T\0`
-and the description. File sizes are all 512·k + 8 (or + 10), which hinted
-at 512-byte pages plus a small trailer.
+`xxd` and `strings` showed at once that the files are not encrypted: names, macros and the description appear in clear. The header starts with `T\0` and the description. File sizes are all 512·k + 8 (or + 10), which hinted at 512-byte pages plus a small trailer.
 
-Splitting everything after offset `0x400` into 64-byte pieces made the
-structure visible: each piece starts with its own number, then a type, then
-two more small numbers, the classic layout of a C program's record pool
-(`struct { short id, type, next, prev; char data[56]; }`). The marker
-`FF FF "LINKS" FF` every 512 bytes near the end showed a second region of
-28-byte records. Eight-byte values like `8E E3 38 8E 92 30 E0 40` decode as
-doubles around 33,000: days since 1899-12-30, the Lotus 1-2-3 date, which
-put the starter files in October 1990.
+Splitting everything after offset `0x400` into 64-byte pieces made the structure visible: each piece starts with its own number, then a type, then two more small numbers, the classic layout of a C program's record pool (`struct { short id, type, next, prev; char data[56]; }`). The marker `FF FF "LINKS" FF` every 512 bytes near the end showed a second region of 28-byte records. Eight-byte values like `8E E3 38 8E 92 30 E0 40` decode as doubles around 33,000: days since 1899-12-30, the Lotus 1-2-3 date, which put the starter files in October 1990.
 
 ### 2. Make Agenda an oracle (headless DOSBox)
 
-Guessing from four templates only goes so far. The key step was running the
-real program, unattended, to make files that differ in exactly one thing:
+Guessing from four templates only goes so far. The key step was running the real program, unattended, to make files that differ in exactly one thing:
 
-- **DOSBox Staging 0.83** (already installed) runs without a window with
-  `SDL_VIDEODRIVER=dummy`, and has a REST API (`[webserver]
-webserver_enabled=true`, port 8765):
-  - `GET /api/v1/memory/0xB8000/4000` returns the text screen (character
-    and attribute bytes), so the program's screen can be read as text, and
-    the highlighted row found by its attribute;
-  - `PUT /api/v1/memory/<addr>` with `{"data": base64}` writes memory. Keys
-    are typed by writing scan code/ASCII words into the BIOS keyboard
-    buffer (`0040:001E`–`003D`, head `0040:001A`, tail `0040:001C`). Agenda
-    reads keys through the BIOS, so every key works, F-keys included.
-- `AGENDA NAME` on the DOSBox command line opens or creates
-  `C:\APPS\AGENDA\NAME.AG` directly.
-- This is packaged as `tools/agformat/agenda_driver.py` (start, `keys`,
-  `screen`, `select` a row by its text, quit). Point `AGENDA_DOS_ROOT` at a
-  copy of the install.
+- **DOSBox Staging 0.83** (already installed) runs without a window with `SDL_VIDEODRIVER=dummy`, and has a REST API (`[webserver] webserver_enabled=true`, port 8765):
+  - `GET /api/v1/memory/0xB8000/4000` returns the text screen (character and attribute bytes), so the program's screen can be read as text, and the highlighted row found by its attribute;
+  - `PUT /api/v1/memory/<addr>` with `{"data": base64}` writes memory. Keys are typed by writing scan code/ASCII words into the BIOS keyboard buffer (`0040:001E`–`003D`, head `0040:001A`, tail `0040:001C`). Agenda reads keys through the BIOS, so every key works, F-keys included.
+- `AGENDA NAME` on the DOSBox command line opens or creates `C:\APPS\AGENDA\NAME.AG` directly.
+- This is packaged as `tools/agformat/agenda_driver.py` (start, `keys`, `screen`, `select` a row by its text, quit). Point `AGENDA_DOS_ROOT` at a copy of the install.
 
-One lesson: while a file is open, the `.AG` on disk is Agenda's working
-file and may be stale. Snapshots were therefore taken only after **Quit**
-(F10 q), when Agenda writes the complete file with its trailer.
+One lesson: while a file is open, the `.AG` on disk is Agenda's working file and may be stale. Snapshots were therefore taken only after **Quit** (F10 q), when Agenda writes the complete file with its trailer.
 
 ### 3. Experiments (one change each, then diff)
 
-Each started from a copy of the same empty file (`e0`: a new file with the
-description "Empty test").
+Each started from a copy of the same empty file (`e0`: a new file with the description "Empty test").
 
 | #   | Change                                                            | What it showed                                                                                                                                                                               |
 | --- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -110,44 +59,20 @@ description "Empty test").
 
 ### 4. Check against the real thing
 
-- Views decoded from the Planner starter were compared with Agenda's screen:
-  the Tasks view's columns and widths (Activity 8, People 7, Project 8,
-  When 17) and the View Manager's 16 view names match.
-- `agdump.py --check` walks every list in every file at hand (4 starters,
-  13 experiment files, the owner's used Planner) and checks each assignment
-  points at a category block and an item block: no errors.
-- The owner's own Planner file reads correctly: 10 items with their
-  categories and a note, Swedish letters intact ("Följ upp en artikel som
-  jag läst", "Call Göran").
+- Views decoded from the Planner starter were compared with Agenda's screen: the Tasks view's columns and widths (Activity 8, People 7, Project 8, When 17) and the View Manager's 16 view names match.
+- `agdump.py --check` walks every list in every file at hand (4 starters, 13 experiment files, the owner's used Planner) and checks each assignment points at a category block and an item block: no errors.
+- The owner's own Planner file reads correctly: 10 items with their categories and a note, Swedish letters intact ("Följ upp en artikel som jag läst", "Call Göran").
 
 ## Second round (2026-10-14/15, overnight)
 
-The owner asked for the complete format while they slept. About 150 more
-experiments, all on copies in the session's scratch directory.
+The owner asked for the complete format while they slept. About 150 more experiments, all on copies in the session's scratch directory.
 
 ### What changed in the method
 
-- **Save instead of quit.** File Save writes a complete file while Agenda
-  keeps running (the owner suggested it). One Agenda session now runs
-  dozens of experiments: change one setting, save, copy the file, diff
-  against the previous save. A box setting costs about 8 seconds instead
-  of a DOSBox restart each.
-- **Fields by label.** The current field of a settings box is drawn with
-  attribute `0x3F`; reading those characters gives its label, so scripts
-  say `setf("Hide done items")` instead of counting ↓ presses, and print
-  the field's new value next to the diff as a check.
-- **Many dates in one go.** Date expressions were decoded by typing ~70
-  items such as "Qab next monday at 9am" into one file and saving once;
-  Agenda reads the date out of the text into When. (Item names with digits,
-  like "T04", were themselves read as times; letters only.)
-- **Robustness.** Keys are occasionally lost, the web server sometimes
-  stalls, and an interrupted script leaves a box open for the next one to
-  type into. Every experiment now starts from the main view (`home()`),
-  every save checks the screen after each key, HTTP calls time out and
-  retry, and long batches run in the background one step per line in a
-  log. All of this is written down for next time in
-  `tools/agformat/DRIVING_AGENDA.md`, and the helpers are in
-  `agenda_driver.py`.
+- **Save instead of quit.** File Save writes a complete file while Agenda keeps running (the owner suggested it). One Agenda session now runs dozens of experiments: change one setting, save, copy the file, diff against the previous save. A box setting costs about 8 seconds instead of a DOSBox restart each.
+- **Fields by label.** The current field of a settings box is drawn with attribute `0x3F`; reading those characters gives its label, so scripts say `setf("Hide done items")` instead of counting ↓ presses, and print the field's new value next to the diff as a check.
+- **Many dates in one go.** Date expressions were decoded by typing ~70 items such as "Qab next monday at 9am" into one file and saving once; Agenda reads the date out of the text into When. (Item names with digits, like "T04", were themselves read as times; letters only.)
+- **Robustness.** Keys are occasionally lost, the web server sometimes stalls, and an interrupted script leaves a box open for the next one to type into. Every experiment now starts from the main view (`home()`), every save checks the screen after each key, HTTP calls time out and retry, and long batches run in the background one step per line in a log. All of this is written down for next time in `tools/agformat/DRIVING_AGENDA.md`, and the helpers are in `agenda_driver.py`.
 
 ### Experiments
 
@@ -167,18 +92,13 @@ experiments, all on copies in the session's scratch directory.
 | Datebook view | add one, change the period | stored fully materialized: a section per day with a date-range filter |
 | Utilities Customize, Print | one field each | Customize is not in the file; print layout is a data block |
 
-Checked against the screen: the Planner's views decode to what Agenda
-shows (Activities sorts on When ascending; Completed This Week filters
-Done to this week; Overdue keeps When up to yesterday).
+Checked against the screen: the Planner's views decode to what Agenda shows (Activities sorts on When ascending; Completed This Week filters Done to this week; Overdue keeps When up to yesterday).
 
 ### Corrections to the first round
 
-- Type-8 links are sort keys, not date filters; type-2 links are filter
-  elements; type 13 is a date-range block and also an alarm link type.
-- Category w28: `0x08`/`0x10` turn matching on the name/short name **off**.
-  For date categories w28 is the previous date category, not settings.
-- Category w8/w9 list all references (filters, conditions, actions), not
-  only conditions.
+- Type-8 links are sort keys, not date filters; type-2 links are filter elements; type 13 is a date-range block and also an alarm link type.
+- Category w28: `0x08`/`0x10` turn matching on the name/short name **off**. For date categories w28 is the previous date category, not settings.
+- Category w8/w9 list all references (filters, conditions, actions), not only conditions.
 - Free blocks keep their number in word 0 (type 0).
 
 ## Progress
@@ -204,15 +124,6 @@ Done to this week; Overdue keeps When up to yesterday).
 
 ## Next steps
 
-1. **An importer.** A reader in Elixir following "Reading a file" in the
-   format document, outside the pure core (it reads a file), converting
-   to the existing JSON format. `agdump.py`'s JSON output is a good
-   intermediate to design the mapping against.
-2. **Real files.** If the owner has old personal `.AG` files, run
-   `agdump.py --check` on them; anything unexpected shows up as an error
-   or an unknown value. An Agenda 1.0 file would show whether the format
-   changed between versions.
-3. **Open details** (only if an import turns out to need them): macro
-   variable values, family settings blocks, the time-format word of date
-   columns. Each is one short session with the harness described in
-   `tools/agformat/DRIVING_AGENDA.md`.
+1. **An importer.** A reader in Elixir following "Reading a file" in the format document, outside the pure core (it reads a file), converting to the existing JSON format. `agdump.py`'s JSON output is a good intermediate to design the mapping against.
+2. **Real files.** If the owner has old personal `.AG` files, run `agdump.py --check` on them; anything unexpected shows up as an error or an unknown value. An Agenda 1.0 file would show whether the format changed between versions.
+3. **Open details** (only if an import turns out to need them): macro variable values, family settings blocks, the time-format word of date columns. Each is one short session with the harness described in `tools/agformat/DRIVING_AGENDA.md`.

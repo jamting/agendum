@@ -1,9 +1,6 @@
 # Index of the documents
 
-What each document is for, and when to read it. `docs/` describes Agendum as
-it is; `docs/plans/` what is planned or under way; `docs/adr/` why things
-are as they are. Each fact has one home; other documents link to it.
-The `tidy-docs` skill brings them up to date and keeps them so.
+What each document is for, and when to read it. `docs/` describes Agendum as it is; `docs/plans/` what is planned or under way; `docs/adr/` why things are as they are. Each fact has one home; other documents link to it. The `tidy-docs` skill brings them up to date and keeps them so.
 
 ## Start here
 

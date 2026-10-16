@@ -1,19 +1,10 @@
 # Wol's Agendum
 
-**Wol's Agendum** (Agendum for short) is a clone of **Lotus Agenda**, the 1988
-DOS personal information manager, written in Elixir with a terminal UI that
-looks and feels like the original. Wol is how Owl spells his name in A. A.
-Milne's books about the Hundred Acre Wood, and the program's manual is Owl
-teaching Rabbit to use it; an *agendum* is one thing to be done.
+**Wol's Agendum** (Agendum for short) is a clone of **Lotus Agenda**, the 1988 DOS personal information manager, written in Elixir with a terminal UI that looks and feels like the original. Wol is how Owl spells his name in A. A. Milne's books about the Hundred Acre Wood, and the program's manual is Owl teaching Rabbit to use it; an *agendum* is one thing to be done.
 
-New to Lotus Agenda? [`docs/AGENDA_HISTORY.md`](docs/AGENDA_HISTORY.md) explains
-why people loved the original and what made it unique; where Agendum is
-going is in [`docs/VISION.md`](docs/VISION.md).
+New to Lotus Agenda? [`docs/AGENDA_HISTORY.md`](docs/AGENDA_HISTORY.md) explains why people loved the original and what made it unique; where Agendum is going is in [`docs/VISION.md`](docs/VISION.md).
 
-You type free-form items. Agendum files them into categories: the one you
-typed them under, and any whose names appear in the text. Views show the
-same items arranged in different ways, and you change the data directly
-in the views.
+You type free-form items. Agendum files them into categories: the one you typed them under, and any whose names appear in the text. Views show the same items arranged in different ways, and you change the data directly in the views.
 
 ```
  File: ~/work.agendum                                   READY  2026-10-08 09:00
@@ -44,9 +35,7 @@ mix docs --open                                 # API and design docs, guide and
 # File ▸ Customize saves your theme, date languages and input format in ~/.config/agendum/preferences
 ```
 
-To start from Agenda's Activities Planner (tasks, people, projects,
-priorities, expenses, sixteen views and a few macros, no items), copy the
-starter file and open the copy:
+To start from Agenda's Activities Planner (tasks, people, projects, priorities, expenses, sixteen views and a few macros, no items), copy the starter file and open the copy:
 
 ```sh
 cp starters/planner.agendum ~/planner.agendum && ./agendum ~/planner.agendum
@@ -54,40 +43,21 @@ cp starters/planner.agendum ~/planner.agendum && ./agendum ~/planner.agendum
 
 ## Quick tour
 
-The [user guide](docs/guide/index.html) is the short version, with a worked
-example; the [manual](docs/manual/index.html) is the long one, as Owl explains
-it to Rabbit. Open them in a browser; `mix docs` also puts them beside the API
-documentation.
+The [user guide](docs/guide/index.html) is the short version, with a worked example; the [manual](docs/manual/index.html) is the long one, as Owl explains it to Rabbit. Open them in a browser; `mix docs` also puts them beside the API documentation.
 
 
-- **Type** under a section to add an item. It is assigned to that section's
-  category, and automatically to any category it mentions.
-- Dates in the text count: "Call Bob next Friday" gets a When date. **ALT-F2**
-  (or Item ▸ When) sets one explicitly.
-- **→ / TAB** moves into columns. Type a name to assign (new names create
-  subcategories) or a date (`tomorrow`, `friday`, `2026-12-24`) in the When column.
-- **F9** opens the category manager: type to add, F7/F8 promote/demote, F6
-  properties (mutually exclusive children, short names, category links).
-- **ALT-D / ALT-R** add sections and columns. **F8** manages views.
-  **F10** or **/** opens the menu.
+- **Type** under a section to add an item. It is assigned to that section's category, and automatically to any category it mentions.
+- Dates in the text count: "Call Bob next Friday" gets a When date. **ALT-F2** (or Item ▸ When) sets one explicitly.
+- **→ / TAB** moves into columns. Type a name to assign (new names create subcategories) or a date (`tomorrow`, `friday`, `2026-12-24`) in the When column.
+- **F9** opens the category manager: type to add, F7/F8 promote/demote, F6 properties (mutually exclusive children, short names, category links).
+- **ALT-D / ALT-R** add sections and columns. **F8** manages views. **F10** or **/** opens the menu.
 - **CTRL-Z / CTRL-Y** undo and redo. **CTRL-S** saves, **CTRL-Q** quits.
-- Function keys are required, as in Agenda: on a Mac, hold **fn** with them
-  or make them standard function keys (System Settings ▸ Keyboard).
-  **CTRL-N** replaces INS (new item/category), **CTRL-E** = F2 edit, and
-  ALT is ⌥ (Option) with "Use Option as Meta key" on. To use ⌘N, ⌘Z, ⌘S and
-  so on, map them in your terminal; see [`docs/KEYBOARD.md`](docs/KEYBOARD.md).
-- **F1** is help about where you are; in it, **c** lists the commands there
-  (greyed when they cannot run, with the reason), **d** describes a key and
-  **a** lists every key.
+- Function keys are required, as in Agenda: on a Mac, hold **fn** with them or make them standard function keys (System Settings ▸ Keyboard). **CTRL-N** replaces INS (new item/category), **CTRL-E** = F2 edit, and ALT is ⌥ (Option) with "Use Option as Meta key" on. To use ⌘N, ⌘Z, ⌘S and so on, map them in your terminal; see [`docs/KEYBOARD.md`](docs/KEYBOARD.md).
+- **F1** is help about where you are; in it, **c** lists the commands there (greyed when they cannot run, with the reason), **d** describes a key and **a** lists every key.
 
 ## Development
 
-The code is a pure functional core with an imperative shell. See
-[`CLAUDE.md`](CLAUDE.md) for conventions, [`docs/SPEC.md`](docs/SPEC.md) for
-behaviour, [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for structure,
-[`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) and
-[`docs/DATA_ACCESS.md`](docs/DATA_ACCESS.md) for the data layer, and
-[`docs/ROADMAP.md`](docs/ROADMAP.md) for what's next.
+The code is a pure functional core with an imperative shell. See [`CLAUDE.md`](CLAUDE.md) for conventions, [`docs/SPEC.md`](docs/SPEC.md) for behaviour, [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for structure, [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) and [`docs/DATA_ACCESS.md`](docs/DATA_ACCESS.md) for the data layer, and [`docs/ROADMAP.md`](docs/ROADMAP.md) for what's next.
 
 ```sh
 mix check   # the quality gate: format, warnings as errors, Credo, Dialyzer, tests
@@ -97,15 +67,8 @@ mix agendum.starters --samples   # a copy full of sample data, for testing: tmp/
 
 ## Contributing
 
-[`CONTRIBUTING.md`](CONTRIBUTING.md) takes you from a fresh machine to a
-first change: installing Erlang and Elixir, running the checks, finding
-your way in the code and the documents, and the workflow for a change.
-The plan for putting the project on GitHub, with checks on every push and
-the documentation on GitHub Pages, is in [`docs/plans/GITHUB.md`](docs/plans/GITHUB.md).
+[`CONTRIBUTING.md`](CONTRIBUTING.md) takes you from a fresh machine to a first change: installing Erlang and Elixir, running the checks, finding your way in the code and the documents, and the workflow for a change. The plan for putting the project on GitHub, with checks on every push and the documentation on GitHub Pages, is in [`docs/plans/GITHUB.md`](docs/plans/GITHUB.md).
 
 ## Licence
 
-Wol's Agendum is not open source: the code is private, and all rights are
-reserved by the owner. Whether it will be made public, or offered in a
 *[A page here was soaked in the creek. — Rabbit]*
-section 7).

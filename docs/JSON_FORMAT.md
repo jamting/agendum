@@ -1,35 +1,18 @@
 # The JSON file format
 
-File ▸ Transfer ▸ Export writes a whole Agendum file as JSON, and File ▸
-Transfer ▸ Import reads one back (SPEC R44, ADR 0010). The JSON holds
-everything in the file, so an export imported again gives the same file. It
-is meant for people: exchanging data with others and other tools, and
-looking at a file (backups you can read, diffs, scripts). The working
-format stays the Erlang-term `.agendum` file (ADR 0003, ADR 0034). It is
-Agendum's counterpart of Agenda's structured files (STF), whose export
-also chooses what goes in; Agendum's will ask which item levels to include
-once there are levels (`docs/plans/ITEM_LEVELS.md`).
+File ▸ Transfer ▸ Export writes a whole Agendum file as JSON, and File ▸ Transfer ▸ Import reads one back (SPEC R44, ADR 0010). The JSON holds everything in the file, so an export imported again gives the same file. It is meant for people: exchanging data with others and other tools, and looking at a file (backups you can read, diffs, scripts). The working format stays the Erlang-term `.agendum` file (ADR 0003, ADR 0034). It is Agendum's counterpart of Agenda's structured files (STF), whose export also chooses what goes in; Agendum's will ask which item levels to include once there are levels (`docs/plans/ITEM_LEVELS.md`).
 
-The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs`
-and `json_round_trip_test.exs` check that a round trip changes nothing.
+The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs` and `json_round_trip_test.exs` check that a round trip changes nothing.
 
 ## Conventions
 
-- The file is UTF-8, pretty-printed with two spaces; every object lists its
-  keys in the order given here, so exports of the same file are identical.
-- Ids are the file's integer ids (one counter for categories, items and
-  views); references are by id.
+- The file is UTF-8, pretty-printed with two spaces; every object lists its keys in the order given here, so exports of the same file are identical.
+- Ids are the file's integer ids (one counter for categories, items and views); references are by id.
 - Enumerations are lowercase strings (`"standard"`, `"item_text"`).
-- Dates are ISO 8601 (`"2026-10-31"`), times `"15:30:00"`, moments
-  `"2026-10-09T14:45:00"`. `null` means none.
+- Dates are ISO 8601 (`"2026-10-31"`), times `"15:30:00"`, moments `"2026-10-09T14:45:00"`. `null` means none.
 - Numbers are JSON numbers (`1234.5`).
-- Reading: a key left out takes its default (as for a new category, item or
-  view), so hand-written files can be short. Unknown values, wrong types and
-  references to ids that do not exist are refused with a message naming the
-  place (`categories[3].kind: unknown value "cheese"`). Unknown keys are
-  ignored.
-- Settings that belong to the person (theme, date languages, input format)
-  are never in a file (ADR 0008).
+- Reading: a key left out takes its default (as for a new category, item or view), so hand-written files can be short. Unknown values, wrong types and references to ids that do not exist are refused with a message naming the place (`categories[3].kind: unknown value "cheese"`). Unknown keys are ignored.
+- Settings that belong to the person (theme, date languages, input format) are never in a file (ADR 0008).
 
 ## The document
 
@@ -93,11 +76,7 @@ and `json_round_trip_test.exs` check that a round trip changes nothing.
 | `match_overrides` | Text matching settings of its own (R16b): any of `enabled`, `match_on`, `strength`, `confirm`, `ignore_suffixes`, `ignore_accents`.  |
 | `note`            | The category's note.                                                                                                                 |
 
-A **criterion** (conditions, filters) is `{"category": id, "is": "assigned"}`,
-`{"category": id, "is": "not_assigned"}`, or a range on a date or numeric
-category: `{"category": id, "from": …, "to": …, "outside": false}`, where a
-bound is a date phrase (`"today"`, `"2026-10-31"`), a number, or `null` for
-open.
+A **criterion** (conditions, filters) is `{"category": id, "is": "assigned"}`, `{"category": id, "is": "not_assigned"}`, or a range on a date or numeric category: `{"category": id, "from": …, "to": …, "outside": false}`, where a bound is a date phrase (`"today"`, `"2026-10-31"`), a number, or `null` for open.
 
 ## Items
 
@@ -155,7 +134,4 @@ open.
 
 ## What is checked on import
 
-Beyond the types: MAIN and the special categories exist (and the special ones
-are date categories); there is a view; ids are unique and below `next_id`;
-parents and children agree; every category, item and view an object refers to
-exists. A file that fails opens nothing; the open file stays.
+Beyond the types: MAIN and the special categories exist (and the special ones are date categories); there is a view; ids are unique and below `next_id`; parents and children agree; every category, item and view an object refers to exists. A file that fails opens nothing; the open file stays.

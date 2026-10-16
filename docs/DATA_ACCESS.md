@@ -1,12 +1,8 @@
 # Data access layer
 
-How the `Database` value is queried and changed. For the structures
-themselves, see [`DATA_MODEL.md`](DATA_MODEL.md).
+How the `Database` value is queried and changed. For the structures themselves, see [`DATA_MODEL.md`](DATA_MODEL.md).
 
-There is no database server and no mutable store. "Data access" is a set of
-**pure functions** that take a `Database` and return either an answer or a
-new `Database`. Every function here is deterministic. Anything from the
-outside world, such as today's date, is passed in as an argument.
+There is no database server and no mutable store. "Data access" is a set of **pure functions** that take a `Database` and return either an answer or a new `Database`. Every function here is deterministic. Anything from the outside world, such as today's date, is passed in as an argument.
 
 ## Layers
 
@@ -45,18 +41,7 @@ flowchart TB
 | `Agendum.Core.Database`  | Primitive writes (no rules) and **all queries**.                                                                                                               | Expect primitives to enforce assignment rules.  |
 | `Agendum.Core.Links`     | The raw relation. Only `Database` touches it.                                                                                                                  | Read `db.links` directly elsewhere.             |
 
-The UI reads freely through `Database` queries (e.g. `member?/3`,
-`hierarchy/1`), but **every change goes through `Agendum.Core`**, even
-simple field updates with no rules. `test/agendum/architecture_test.exs`
-enforces this. It reads every call from the compiled modules with OTP's
-`:xref` (so an alias or an import hides nothing) and fails if an
-`Agendum.TUI` module calls a `Database` write function: any whose `@spec`
-returns a database (`insert_*`, `update_*`, `link`, `unlink`, …; a new one
-is covered without a list, and every public `Database` function must have
-a spec). It also fails if a TUI file updates a database struct by hand
-(`%{state.db | …}`, `put_in(state.db…)`), found in the parsed source. The
-same test checks the core's purity on the compiled calls: no files,
-terminal, environment, processes, clock or randomness.
+The UI reads freely through `Database` queries (e.g. `member?/3`, `hierarchy/1`), but **every change goes through `Agendum.Core`**, even simple field updates with no rules. `test/agendum/architecture_test.exs` enforces this. It reads every call from the compiled modules with OTP's `:xref` (so an alias or an import hides nothing) and fails if an `Agendum.TUI` module calls a `Database` write function: any whose `@spec` returns a database (`insert_*`, `update_*`, `link`, `unlink`, …; a new one is covered without a list, and every public `Database` function must have a spec). It also fails if a TUI file updates a database struct by hand (`%{state.db | …}`, `put_in(state.db…)`), found in the parsed source. The same test checks the core's purity on the compiled calls: no files, terminal, environment, processes, clock or randomness.
 
 ## API by concern
 
@@ -225,13 +210,9 @@ flowchart TD
     F -- no --> N["false"]
 ```
 
-`items_in(db, cat)` works the other way round. It unions
-`links.by_right[c]` for every `c` in `subtree(cat)`, then filters
-`item_order` so the result keeps display order.
+`items_in(db, cat)` works the other way round. It unions `links.by_right[c]` for every `c` in `subtree(cat)`, then filters `item_order` so the result keeps display order.
 
-Because subsumption is never stored, there is no need to cascade on
-deletion. Dropping a category's links removes inherited memberships
-automatically (the patent's "deleting C5" example).
+Because subsumption is never stored, there is no need to cascade on deletion. Dropping a category's links removes inherited memberships automatically (the patent's "deleting C5" example).
 
 ### Explicit assignment
 
@@ -262,9 +243,7 @@ flowchart TD
     SP --> AS["assign each remaining category"]
 ```
 
-Two categories **conflict** when they lie under different children of a
-common exclusive ancestor (`Assign.conflict?/3`). The sort and greedy
-acceptance implement the patent's ambiguity resolution (claim 7).
+Two categories **conflict** when they lie under different children of a common exclusive ancestor (`Assign.conflict?/3`). The sort and greedy acceptance implement the patent's ambiguity resolution (claim 7).
 
 ## Sequences
 
@@ -350,8 +329,7 @@ sequenceDiagram
 
 ## Cost
 
-The data lives in memory and is small (a personal database, thousands of
-items), so clarity comes before indexes:
+The data lives in memory and is small (a personal database, thousands of items), so clarity comes before indexes:
 
 | Operation                                       | Cost                                                          |
 | ----------------------------------------------- | ------------------------------------------------------------- |
@@ -363,19 +341,12 @@ items), so clarity comes before indexes:
 | `ViewModel.build/3`                             | O(sections × items × columns × subtree); runs on every render |
 | Any write                                       | O(log n) for the change itself; old versions share structure  |
 
-If large files ever become slow, the first candidates are caching
-`ViewModel.build/3` per database value and keeping a descendants index.
+If large files ever become slow, the first candidates are caching `ViewModel.build/3` per database value and keeping a descendants index.
 
 ## Adding to the data layer
 
-1. **New stored field**: add it to the struct with a default. Bump the format
-   version in `Store` and migrate old files in `Store.load/1`. Document it in
-   `DATA_MODEL.md`.
-2. **New query**: add it to `Agendum.Core.Database` (or `ViewModel` for display),
-   with `@spec` and a test in `test/agendum/core/`.
-3. **New rule**: implement it in `Agendum.Core.Assign` and expose it through
-   `Agendum.Core`. Give it a rule number in `SPEC.md`.
-4. **New user action**: add it to `Agendum.Core`, returning
-   `{:ok, db} | {:error, atom}` when input can be invalid. The UI calls it,
-   and undo works automatically.
+1. **New stored field**: add it to the struct with a default. Bump the format version in `Store` and migrate old files in `Store.load/1`. Document it in `DATA_MODEL.md`.
+2. **New query**: add it to `Agendum.Core.Database` (or `ViewModel` for display), with `@spec` and a test in `test/agendum/core/`.
+3. **New rule**: implement it in `Agendum.Core.Assign` and expose it through `Agendum.Core`. Give it a rule number in `SPEC.md`.
+4. **New user action**: add it to `Agendum.Core`, returning `{:ok, db} | {:error, atom}` when input can be invalid. The UI calls it, and undo works automatically.
 5. Keep every function pure: no clock, no I/O, no processes.

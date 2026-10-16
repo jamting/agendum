@@ -1,11 +1,8 @@
 # Data model
 
-How an Agenda file is represented in memory and on disk. For how the data
-is read and changed, see [`DATA_ACCESS.md`](DATA_ACCESS.md).
+How an Agenda file is represented in memory and on disk. For how the data is read and changed, see [`DATA_ACCESS.md`](DATA_ACCESS.md).
 
-An Agenda file is **one immutable value**, `%Agendum.Core.Database{}`. Every
-change produces a new value; nothing is updated in place. This is what
-makes undo a matter of keeping old values (`Agendum.TUI.History`).
+An Agenda file is **one immutable value**, `%Agendum.Core.Database{}`. Every change produces a new value; nothing is updated in place. This is what makes undo a matter of keeping old values (`Agendum.TUI.History`).
 
 ## Overview
 
@@ -377,11 +374,7 @@ classDiagram
 
 ### Ids
 
-Items, categories and views draw ids from **one counter**, `next_id`, just as
-the patent keeps all objects in one object file (`.AGA`). An id therefore
-says nothing about its type; look it up in the right map. Ids are never
-reused. Lower ids were created earlier, and the automatic-assignment
-tie-break relies on that ("prefer the category created first").
+Items, categories and views draw ids from **one counter**, `next_id`, just as the patent keeps all objects in one object file (`.AGA`). An id therefore says nothing about its type; look it up in the right map. Ids are never reused. Lower ids were created earlier, and the automatic-assignment tie-break relies on that ("prefer the category created first").
 
 ### Ordering
 
@@ -396,11 +389,7 @@ Maps are unordered, so order is stored separately:
 
 ## Items, categories and links
 
-This is the core idea from US patent 5,115,504. Items and categories are
-independent objects, joined by independent **link structures**. In the
-patent each link is a record with four pointers that chains it into the
-item's list and the category's list (FIG. 2, 3B). Here the same relation
-is two indexes kept in lockstep:
+This is the core idea from US patent 5,115,504. Items and categories are independent objects, joined by independent **link structures**. In the patent each link is a record with four pointers that chains it into the item's list and the category's list (FIG. 2, 3B). Here the same relation is two indexes kept in lockstep:
 
 ```mermaid
 flowchart LR
@@ -417,18 +406,13 @@ flowchart LR
     L17 -. same link .- R12
 ```
 
-`Links.link/3` and `Links.unlink/3` always update both maps, and empty
-sets are removed. A property test (`test/agendum/core/links_test.exs`)
-checks that the two indexes always describe the same relation.
+`Links.link/3` and `Links.unlink/3` always update both maps, and empty sets are removed. A property test (`test/agendum/core/links_test.exs`) checks that the two indexes always describe the same relation.
 
-Only **explicit** assignments are stored. Membership through the hierarchy
-(subsumption) is computed when asked; see `Database.member?/3` in
-[`DATA_ACCESS.md`](DATA_ACCESS.md#membership-subsumption).
+Only **explicit** assignments are stored. Membership through the hierarchy (subsumption) is computed when asked; see `Database.member?/3` in [`DATA_ACCESS.md`](DATA_ACCESS.md#membership-subsumption).
 
 ### Special categories
 
-`Database.new/1` creates four categories that cannot be renamed, moved
-or deleted (`Database.protected?/2`):
+`Database.new/1` creates four categories that cannot be renamed, moved or deleted (`Database.protected?/2`):
 
 | Category                   | Kind     | Membership                                                                             |
 | -------------------------- | -------- | -------------------------------------------------------------------------------------- |
@@ -437,14 +421,11 @@ or deleted (`Database.protected?/2`):
 | When (`db.special.when`)   | date     | Item's `when` date: read from its text, or set explicitly (`when_explicit`), SPEC R14. |
 | Done (`db.special.done`)   | date     | Item's `done` date (F4).                                                               |
 
-Date categories are never linked. Their membership _is_ the item's date
-field (`Database.date_field/2` maps a category id to `:entry`, `:when` or
-`:done`).
+Date categories are never linked. Their membership _is_ the item's date field (`Database.date_field/2` maps a category id to `:entry`, `:when` or `:done`).
 
 ## Worked example
 
-The demo file (`Agendum.Sample.build/1`), based on the patent's example
-view. Its category hierarchy, with ids:
+The demo file (`Agendum.Sample.build/1`), based on the patent's example view. Its category hierarchy, with ids:
 
 ```mermaid
 flowchart TB
@@ -463,13 +444,9 @@ flowchart TB
     C11 --> C14["14 Daniel Fiske<br/><i>aka Daniel</i>"]
 ```
 
-There is one view, `6 "Activities"`, with a section on Calls (5) and
-columns When (3), Priority (7) and Contact (11). Note the shared id space:
-the view was created between categories `5` and `7`.
+There is one view, `6 "Activities"`, with a section on Calls (5) and columns When (3), Priority (7) and Contact (11). Note the shared id space: the view was created between categories `5` and `7`.
 
-Item 17, _"Don't forget to call Anna Lasky with the information she
-requested."_, shows the difference between stored links and computed
-membership:
+Item 17, _"Don't forget to call Anna Lasky with the information she requested."_, shows the difference between stored links and computed membership:
 
 ```mermaid
 flowchart LR
@@ -484,11 +461,7 @@ flowchart LR
     C11 -.-> C1
 ```
 
-Only the three thick edges are stored (`links.by_left[17] == {5, 8, 12}`).
-Membership of Priority, Contact and MAIN is derived by walking up the tree.
-In the view, item 17 appears in the Calls section. The Priority column
-shows "High" (the linked descendant of Priority), and the Contact column
-shows "Anna Lasky".
+Only the three thick edges are stored (`links.by_left[17] == {5, 8, 12}`). Membership of Priority, Contact and MAIN is derived by walking up the tree. In the view, item 17 appears in the Calls section. The Priority column shows "High" (the linked descendant of Priority), and the Contact column shows "Anna Lasky".
 
 The same database as an Elixir term, abbreviated:
 
@@ -519,60 +492,22 @@ The same database as an Elixir term, abbreviated:
 
 ### Datebook views
 
-A view with `datebook` set (R47, `Agendum.Core.Datebook`) shows time slots instead
-of its stored sections, which it ignores: the hours of a day, the days of a
-week, or the days, weeks or months of a month or quarter, worked out from
-the settings and the clock every time the view is built
-(`Datebook.slots/3`), since `base` is typed text such as "today" or "next
-week". A slot shows the items of the Section category whose date in the
-date category (and, with an End category, their span up to its date) falls
-in it; nothing about slots is stored. Deleting a category a datebook uses
-falls back to When (and the end category to none).
+A view with `datebook` set (R47, `Agendum.Core.Datebook`) shows time slots instead of its stored sections, which it ignores: the hours of a day, the days of a week, or the days, weeks or months of a month or quarter, worked out from the settings and the clock every time the view is built (`Datebook.slots/3`), since `base` is typed text such as "today" or "next week". A slot shows the items of the Section category whose date in the date category (and, with an End category, their span up to its date) falls in it; nothing about slots is stored. Deleting a category a datebook uses falls back to When (and the end category to none).
 
 ## Invariants
 
-The core maintains these, and the tests check them: `Agendum.Core.Invariants.violations/1`
-checks them all (and that every object is under its own id, all ids share
-one id space below `next_id`, and `macro_order` matches `macros`), and the
-fuzz walks run it after every key, as does the JSON round trip; the
-property tests in `database_test.exs` and `links_test.exs` check some of
-them directly:
+The core maintains these, and the tests check them: `Agendum.Core.Invariants.violations/1` checks them all (and that every object is under its own id, all ids share one id space below `next_id`, and `macro_order` matches `macros`), and the fuzz walks run it after every key, as does the JSON round trip; the property tests in `database_test.exs` and `links_test.exs` check some of them directly:
 
-1. **Tree.** Every category except MAIN has a `parent_id` present in
-   `categories`, and appears exactly once in that parent's `children`.
-   Every category is reachable from MAIN; there are no cycles
-   (`move_category/4` refuses them).
-2. **Links are symmetric.** `item ∈ by_right[c] ⇔ c ∈ by_left[item]`, and no
-   empty sets are stored.
-3. **Links reference live objects.** Deleting an item drops its links
-   (`delete_item/2`). Deleting a category drops the links of its whole
-   subtree (`delete_category/2`).
+1. **Tree.** Every category except MAIN has a `parent_id` present in `categories`, and appears exactly once in that parent's `children`. Every category is reachable from MAIN; there are no cycles (`move_category/4` refuses them).
+2. **Links are symmetric.** `item ∈ by_right[c] ⇔ c ∈ by_left[item]`, and no empty sets are stored.
+3. **Links reference live objects.** Deleting an item drops its links (`delete_item/2`). Deleting a category drops the links of its whole subtree (`delete_category/2`).
 4. **No links to MAIN or date categories.** `Assign.assign/3` ignores them.
-5. **Exclusive families hold at most one branch.** `Assign` clears the
-   siblings before linking, and `Core.make_exclusive/3` resolves items
-   already in several children before setting the flag (SPEC R7a).
-   `Core.move_category/5`, `promote/3` and `demote/3` resolve items a move
-   would put in two branches (SPEC R7b). Only the `Database` primitives
-   skip these checks; the TUI never calls them directly.
-6. **Views reference live categories.** `delete_category/2` removes
-   sections and columns headed by deleted categories, and also removes the
-   deleted ids from every `also_assign` and `excludes` list.
-   Filters and sort keys that name a deleted category are dropped with it.
-7. **Order lists match the maps.** `item_order` holds exactly the keys of
-   `items`, and `view_order` exactly the keys of `views`. At least one view
-   always exists (`delete_view/2` refuses to delete the last one).
-8. **Protected categories** (MAIN, Entry, When, Done) always exist, keep
-   their names, and stay where they are.
-9. **No direct link to both a category and its ancestor** (SPEC R7c). An
-   item linked to a category is never also linked to one of its ancestors.
-   `Assign.assign/3` clears the item's links to the category's ancestors and
-   descendants before linking, and category moves resolve the conflicts
-   they would create. Files saved before R7c may still contain such pairs;
-   assigning those items again tidies them up.
-10. **Conditional marks are links.** Every `{item, category}` in
-    `db.conditional` is also a link; `Database.unlink/3` and the delete
-    operations remove marks with their links. A user assignment clears the
-    mark, so only condition-made links are ever retracted (SPEC R15).
+5. **Exclusive families hold at most one branch.** `Assign` clears the siblings before linking, and `Core.make_exclusive/3` resolves items already in several children before setting the flag (SPEC R7a). `Core.move_category/5`, `promote/3` and `demote/3` resolve items a move would put in two branches (SPEC R7b). Only the `Database` primitives skip these checks; the TUI never calls them directly.
+6. **Views reference live categories.** `delete_category/2` removes sections and columns headed by deleted categories, and also removes the deleted ids from every `also_assign` and `excludes` list. Filters and sort keys that name a deleted category are dropped with it.
+7. **Order lists match the maps.** `item_order` holds exactly the keys of `items`, and `view_order` exactly the keys of `views`. At least one view always exists (`delete_view/2` refuses to delete the last one).
+8. **Protected categories** (MAIN, Entry, When, Done) always exist, keep their names, and stay where they are.
+9. **No direct link to both a category and its ancestor** (SPEC R7c). An item linked to a category is never also linked to one of its ancestors. `Assign.assign/3` clears the item's links to the category's ancestors and descendants before linking, and category moves resolve the conflicts they would create. Files saved before R7c may still contain such pairs; assigning those items again tidies them up.
+10. **Conditional marks are links.** Every `{item, category}` in `db.conditional` is also a link; `Database.unlink/3` and the delete operations remove marks with their links. A user assignment clears the mark, so only condition-made links are ever retracted (SPEC R15).
 
 ## Mapping to the patent
 
@@ -601,30 +536,10 @@ flowchart LR
     TMP -- "File.rename (atomic)" --> F["file.agendum"]
 ```
 
-- **Loading** uses `binary_to_term(…, [:safe])`, which refuses unknown
-  atoms. `Store.load/1` therefore loads the app's modules first, so that
-  struct field names exist as atoms.
-- **Versioning.** The number in the envelope is the format version
-  (`Agendum.Store.format_version/0`); the history is in the table below. Old
-  terms decode to structs _without_ the new keys, so
-  `Store.load/1` accepts every version up to the current one and runs
-  `Store.upgrade/1`, which rebuilds each struct so new fields get their
-  defaults. Adding a field means bumping the version; a change that defaults
-  cannot express (a renamed or reshaped field) also needs a migration step
-  in `upgrade/1`. Files from a newer version are refused.
-- **Golden files.** From version 33 on, each format version has a file it
-  wrote, kept in `test/fixtures/formats/` (`v33.agendum`, with what it says
-  in `v33.facts.exs`), made by `mix agendum.golden` from
-  `Agendum.Starters.Golden`, which uses every stored field (a test checks).
-  `test/agendum/golden_files_test.exs` loads every one: it must upgrade,
-  keep the invariants and its facts, open in the UI and save again; and the
-  current version's file must exist. Raising the version means running
-  `mix agendum.golden` and committing what it writes; a new stored field
-  means setting it in `Agendum.Starters.Golden` first.
-- The format is not human-readable; File ▸ Transfer ▸ Export writes a
-  file as JSON ([`JSON_FORMAT.md`](JSON_FORMAT.md), ADR 0010).
-  See [ADR 0003](adr/0003-file-format.md); it stays the format of record,
-  for speed at large volumes ([ADR 0034](adr/0034-format-of-record.md)).
+- **Loading** uses `binary_to_term(…, [:safe])`, which refuses unknown atoms. `Store.load/1` therefore loads the app's modules first, so that struct field names exist as atoms.
+- **Versioning.** The number in the envelope is the format version (`Agendum.Store.format_version/0`); the history is in the table below. Old terms decode to structs _without_ the new keys, so `Store.load/1` accepts every version up to the current one and runs `Store.upgrade/1`, which rebuilds each struct so new fields get their defaults. Adding a field means bumping the version; a change that defaults cannot express (a renamed or reshaped field) also needs a migration step in `upgrade/1`. Files from a newer version are refused.
+- **Golden files.** From version 33 on, each format version has a file it wrote, kept in `test/fixtures/formats/` (`v33.agendum`, with what it says in `v33.facts.exs`), made by `mix agendum.golden` from `Agendum.Starters.Golden`, which uses every stored field (a test checks). `test/agendum/golden_files_test.exs` loads every one: it must upgrade, keep the invariants and its facts, open in the UI and save again; and the current version's file must exist. Raising the version means running `mix agendum.golden` and committing what it writes; a new stored field means setting it in `Agendum.Starters.Golden` first.
+- The format is not human-readable; File ▸ Transfer ▸ Export writes a file as JSON ([`JSON_FORMAT.md`](JSON_FORMAT.md), ADR 0010). See [ADR 0003](adr/0003-file-format.md); it stays the format of record, for speed at large volumes ([ADR 0034](adr/0034-format-of-record.md)).
 
 Format versions:
 
@@ -666,8 +581,7 @@ Format versions:
 
 ## UI state around the database
 
-The TUI keeps a few database-related values in `Agendum.TUI.State`. They
-are not part of the file:
+The TUI keeps a few database-related values in `Agendum.TUI.State`. They are not part of the file:
 
 | Field          | Purpose                                                                                |
 | -------------- | -------------------------------------------------------------------------------------- |

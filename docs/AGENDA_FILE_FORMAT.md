@@ -2,46 +2,19 @@
 
 2026-10-14/15 · reverse engineered by Claude for Mattias Jämting
 
-What a Lotus Agenda 2.0 data file (`.AG`, backup `.BG`) contains and how to
-read it, so that Agendum can import old Agenda files. Nothing here was
-published by Lotus; it was worked out from the four starter files shipped
-with Agenda 2.0 and from files made by running Agenda headlessly in DOSBox,
-changing one thing and comparing the bytes (about 150 such experiments).
-How that was done, and what is still open, is in
-[the research log](plans/AGENDA_FILE_FORMAT_LOG.md). A reference reader
-that implements this document is `tools/agformat/agdump.py` (`.AG` → JSON);
-how to drive Agenda for more experiments is in
-`tools/agformat/DRIVING_AGENDA.md`.
+What a Lotus Agenda 2.0 data file (`.AG`, backup `.BG`) contains and how to read it, so that Agendum can import old Agenda files. Nothing here was published by Lotus; it was worked out from the four starter files shipped with Agenda 2.0 and from files made by running Agenda headlessly in DOSBox, changing one thing and comparing the bytes (about 150 such experiments). How that was done, and what is still open, is in [the research log](plans/AGENDA_FILE_FORMAT_LOG.md). A reference reader that implements this document is `tools/agformat/agdump.py` (`.AG` → JSON); how to drive Agenda for more experiments is in `tools/agformat/DRIVING_AGENDA.md`.
 
-Confidence marks used below: **✔** confirmed by an experiment (Agenda made
-the change, the bytes moved as described); **~** inferred from consistent
-patterns in all files but not tested one at a time; **?** unknown.
+Confidence marks used below: **✔** confirmed by an experiment (Agenda made the change, the bytes moved as described); **~** inferred from consistent patterns in all files but not tested one at a time; **?** unknown.
 
 ## In short
 
-- The file is a **dump of Agenda's own memory pool**, which explains its
-  shape: Agenda (written in C) keeps everything in fixed-size records that
-  point at each other by number. There is no compression and no encryption.
-- Little-endian 16-bit words throughout; text is 8-bit DOS code page
-  (CP437/CP850) and C strings (NUL-terminated); dates are 8-byte IEEE
-  doubles counting days since 1899-12-30 (the Lotus 1-2-3 / Excel serial
-  date; the fraction is the time of day).
-- Three regions: a **1024-byte header** (file settings), an array of
-  **64-byte blocks** (items, categories, views, sections, text), and
-  **512-byte "LINKS" pages** holding **28-byte link records** (assignments,
-  columns, sort keys, filters, conditions, actions, date values, alarms).
-- An **item** is a block holding its text; its assignments are a doubly
-  linked list of link records. The same link records are also threaded on
-  a second list per **category**: a sparse matrix, items × categories, as
-  the Agenda patent (US 5,115,504) describes.
-- Every setting of every box (view, section, column, category, file
-  properties) is stored; most are bit fields, listed below with the box
-  label they belong to.
-- Relative and recurring dates ("next Friday", "every other Monday at
-  9am") are stored both as the resolved date and as an 8-byte **date
-  expression**, so recurrence survives an import.
-- A **password** does not encrypt the file. It is stored in the header XOR
-  `0xAB`; the data stays readable.
+- The file is a **dump of Agenda's own memory pool**, which explains its shape: Agenda (written in C) keeps everything in fixed-size records that point at each other by number. There is no compression and no encryption.
+- Little-endian 16-bit words throughout; text is 8-bit DOS code page (CP437/CP850) and C strings (NUL-terminated); dates are 8-byte IEEE doubles counting days since 1899-12-30 (the Lotus 1-2-3 / Excel serial date; the fraction is the time of day).
+- Three regions: a **1024-byte header** (file settings), an array of **64-byte blocks** (items, categories, views, sections, text), and **512-byte "LINKS" pages** holding **28-byte link records** (assignments, columns, sort keys, filters, conditions, actions, date values, alarms).
+- An **item** is a block holding its text; its assignments are a doubly linked list of link records. The same link records are also threaded on a second list per **category**: a sparse matrix, items × categories, as the Agenda patent (US 5,115,504) describes.
+- Every setting of every box (view, section, column, category, file properties) is stored; most are bit fields, listed below with the box label they belong to.
+- Relative and recurring dates ("next Friday", "every other Monday at 9am") are stored both as the resolved date and as an 8-byte **date expression**, so recurrence survives an import.
+- A **password** does not encrypt the file. It is stored in the header XOR `0xAB`; the data stays readable.
 
 ```mermaid
 flowchart LR
@@ -80,32 +53,15 @@ flowchart TB
 | next 512 boundary        | 512 × K                 | Link pages                                                        |
 | after the last link page | rest of file            | Trailer                                                           |
 
-Each **link page** holds 18 link records (18 × 28 = 504 bytes) followed by
-the 8-byte marker `FF FF 4C 49 4E 4B 53 FF` (`"LINKS"`). Pages follow each
-other until a page without the marker; record _k_ of a page is free when
-its first word is 0 or its type is 0. A link record's first word is its id,
-so its place in the file does not matter. Stale records can survive (one
-type-8 record in the Information Sifter starter points past the last block;
-nothing refers to it): follow references, do not scan by type alone.
+Each **link page** holds 18 link records (18 × 28 = 504 bytes) followed by the 8-byte marker `FF FF 4C 49 4E 4B 53 FF` (`"LINKS"`). Pages follow each other until a page without the marker; record _k_ of a page is free when its first word is 0 or its type is 0. A link record's first word is its id, so its place in the file does not matter. Stale records can survive (one type-8 record in the Information Sifter starter points past the last block; nothing refers to it): follow references, do not scan by type alone.
 
-The **trailer** is `[count, 0, section block, item block…, 0]` (16-bit
-words, `count` = number of words after it): the rows of the section shown
-when the file was saved, including built-in summary rows. It is a display
-cache; an importer can ignore it.
+The **trailer** is `[count, 0, section block, item block…, 0]` (16-bit words, `count` = number of words after it): the rows of the section shown when the file was saved, including built-in summary rows. It is a display cache; an importer can ignore it.
 
-**File Save writes a complete file** without quitting ✔: the same layout,
-without the trailer and possibly with extra (empty) link pages. Quit also
-saves. A file copied while Agenda was running between saves may be stale.
-The `.BG` file is the previous save, in the same format.
+**File Save writes a complete file** without quitting ✔: the same layout, without the trailer and possibly with extra (empty) link pages. Quit also saves. A file copied while Agenda was running between saves may be stale. The `.BG` file is the previous save, in the same format.
 
 ### Free lists ✔
 
-Free blocks keep their own number in word 0 and have type 0 (word 1);
-words 2 and 3 link them in a doubly linked free list. Agenda grows the pool
-about 30 blocks at a time. Header `0x38`/`0x58` are the head and tail of
-the free-block list and `0x78` its length; `0x3C`/`0x5A`/`0x76` the same for
-free link records. A freed link record keeps its id and is zeroed. An
-importer reads only what the lists of live objects reach and ignores both.
+Free blocks keep their own number in word 0 and have type 0 (word 1); words 2 and 3 link them in a doubly linked free list. Agenda grows the pool about 30 blocks at a time. Header `0x38`/`0x58` are the head and tail of the free-block list and `0x78` its length; `0x3C`/`0x5A`/`0x76` the same for free link records. A freed link record keeps its id and is zeroed. An importer reads only what the lists of live objects reach and ignores both.
 
 ## Header ✔/~
 
@@ -171,9 +127,7 @@ Header `0x08E` (values 1 = no/first choice, 2 = yes/second choice):
 | `0x3000` | Ignore suffixes                                            |
 | `0xC000` | Ignore accents                                             |
 
-Not in the `.AG`: Utilities Customize (colours, key map, decimal
-separator…) is a program setting ✔, and named print sets live in their own
-file ✔.
+Not in the `.AG`: Utilities Customize (colours, key map, decimal separator…) is a program setting ✔, and named print sets live in their own file ✔.
 
 ## Blocks ✔
 
@@ -186,11 +140,7 @@ Every block is 64 bytes and starts with four words:
 | 2    | Usually "next": a continuation block          |
 | 3    | Usually "previous", or the owner of the block |
 
-So a block is found by number at `0x400 + 64·n`, and its first word must
-equal _n_; block 0 is not used. Text longer than a block continues in a
-chain of **text blocks** (type 2) through word 2. Each text block carries a
-C string of up to 55 characters in bytes 8–63; the text of a chain is the
-concatenation of these pieces.
+So a block is found by number at `0x400 + 64·n`, and its first word must equal _n_; block 0 is not used. Text longer than a block continues in a chain of **text blocks** (type 2) through word 2. Each text block carries a C string of up to 55 characters in bytes 8–63; the text of a chain is the concatenation of these pieces.
 
 | Type | Block                                                     | Words 2, 3                        |     |
 | ---- | --------------------------------------------------------- | --------------------------------- | --- |
@@ -209,12 +159,7 @@ concatenation of these pieces.
 | 12   | macro variable (`%name` at byte 8, then its value)        |                                   | ~   |
 | 13   | date range of a filter element                            |                                   | ✔   |
 
-Blocks 1–8 of every file are the four system categories (head + name):
-`!Trash!` (1), `!Circular Reference!` (3), `!Current Alarms!` (5),
-`!Past Alarms!` (7). Block 9 is MAIN; Done is 16, When 18, Entry 20; in a
-new file block 11 is the Initial View and 12 its Initial Section. Blocks
-29–33 are the built-in summary rows `COUNT`, `TOTAL`, `AVERAGE`, `MINIMUM`,
-`MAXIMUM` (item blocks with flag `0x40`).
+Blocks 1–8 of every file are the four system categories (head + name): `!Trash!` (1), `!Circular Reference!` (3), `!Current Alarms!` (5), `!Past Alarms!` (7). Block 9 is MAIN; Done is 16, When 18, Entry 20; in a new file block 11 is the Initial View and 12 its Initial Section. Blocks 29–33 are the built-in summary rows `COUNT`, `TOTAL`, `AVERAGE`, `MINIMUM`, `MAXIMUM` (item blocks with flag `0x40`).
 
 ### Item (type 1) ✔
 
@@ -228,41 +173,25 @@ new file block 11 is the Initial View and 12 its Initial Section. Blocks
 | bytes 50–61  | Start of the item text: up to 11 characters and a NUL |
 | others       | 0 in every file seen                                  |
 
-The item's id is its block number. Item text = bytes 50–61 as a C string,
-then the pieces of the text chain from w2. Example: "The quick brown fox
-jumps…" (118 characters) is 11 characters in the item block plus two text
-blocks.
+The item's id is its block number. Item text = bytes 50–61 as a C string, then the pieces of the text chain from w2. Example: "The quick brown fox jumps…" (118 characters) is 11 characters in the item block plus two text blocks.
 
-An item's **entry date, when date, done date** are not fields of the item:
-they are assignments to the date categories Entry, When and Done, with the
-date as the assignment's value (below). Its **alarm** is an assignment too
-(below). Marks and the cursor are not stored.
+An item's **entry date, when date, done date** are not fields of the item: they are assignments to the date categories Entry, When and Done, with the date as the assignment's value (below). Its **alarm** is an assignment too (below). Marks and the cursor are not stored.
 
-**Discarded items** stay in the file: ALT-F4 removes all their assignments
-and assigns them to `!Trash!` (block 1) instead ✔. An importer skips items
-whose only category is block 1.
+**Discarded items** stay in the file: ALT-F4 removes all their assignments and assigns them to `!Trash!` (block 1) instead ✔. An importer skips items whose only category is block 1.
 
 ### Note (type 7) ✔
 
-w2 = first text block, w3 = owner (item or category). The note text is the
-chain from w2; lines are separated by CR (`0x0D`).
+w2 = first text block, w3 = owner (item or category). The note text is the chain from w2; lines are separated by CR (`0x0D`).
 
-A **note file** (Item Properties, Note file) is a note header with w2 = 0,
-w9 = 1 and w4 = a text block holding the file name (relative to the `.AG`'s
-directory when it is there: `NOTE1.TXT`) ✔. The note's text is not in the
-`.AG`; an importer reads the file, if it still exists.
+A **note file** (Item Properties, Note file) is a note header with w2 = 0, w9 = 1 and w4 = a text block holding the file name (relative to the `.AG`'s directory when it is there: `NOTE1.TXT`) ✔. The note's text is not in the `.AG`; an importer reads the file, if it still exists.
 
 ### Category (type 3) ✔
 
-A category is a head block (type 3) plus a name chain: w2 points at a text
-block whose string is the name field as Agenda stores it:
+A category is a head block (type 3) plus a name chain: w2 points at a text block whose string is the name field as Agenda stores it:
 
     Name;Short name;text condition;text condition…
 
-so `Calls;Phone;Telephone` is the category Calls, short name Phone, also
-matching "Telephone"; `Follow up;;(follow up);(waiting for)` has no short
-name. Quotes, parentheses and other punctuation are Agenda's text-condition
-syntax (User's Guide ch. 19). A long name continues in more text blocks.
+so `Calls;Phone;Telephone` is the category Calls, short name Phone, also matching "Telephone"; `Follow up;;(follow up);(waiting for)` has no short name. Quotes, parentheses and other punctuation are Agenda's text-condition syntax (User's Guide ch. 19). A long name continues in more text blocks.
 
 | Word     | Meaning                                                                                          |     |
 | -------- | ------------------------------------------------------------------------------------------------ | --- |
@@ -288,10 +217,7 @@ syntax (User's Guide ch. 19). A long name continues in more text blocks.
 | w29      | Standard: assignment conditions (0 global, 1 off, 2 on; 4 in new categories). Date: next date category | ✔   |
 | w30      | Date: "Which one" (the n-th date in the text) − 1                                                | ✔   |
 
-The hierarchy starts at MAIN (block 9, header `0x040`) and is walked with
-w17 then w15. The date categories form their own doubly linked list
-(w28 previous, w29 next; header `0x180` first, `0x17E` last): Done, When,
-Entry, then user date categories in creation order.
+The hierarchy starts at MAIN (block 9, header `0x040`) and is walked with w17 then w15. The date categories form their own doubly linked list (w28 previous, w29 next; header `0x180` first, `0x17E` last): Done, When, Entry, then user date categories in creation order.
 
 w26, all categories:
 
@@ -337,14 +263,11 @@ w23 of a date category (Advanced settings):
 | `0x0060` | Assignment conflicts: 0 global, `0x20` keep the old, `0x40` override                                                                                                                       |
 | `0x0003` | Protected, as for standard categories                                                                                                                                                       |
 
-So Entry is `0x8208` (date, set when the item is entered), When `0xCF08`
-(date, recurring, from the item text, When key), Done `0x8088` (date, Done
-key).
+So Entry is `0x8208` (date, set when the item is entered), When `0xCF08` (date, recurring, from the item text, When key), Done `0x8088` (date, Done key).
 
 ### Condition/action set (type 5) ✔
 
-A category with conditions, actions or a special action points (w19) at a
-type-5 block:
+A category with conditions, actions or a special action points (w19) at a type-5 block:
 
 | Word     | Meaning                                                              |
 | -------- | -------------------------------------------------------------------- |
@@ -385,14 +308,7 @@ type-5 block:
 | w21 `0x0040`  | Hide column heads                                                      |
 | w21 `0x0006`  | Section sorting: 0 none, 2 category order, 4 alphabetic, 6 numeric     |
 
-A **datebook view** has w12 `0x200` (or `0x100` with a day period) and the
-period in w12 `0x30` (0 day, `0x10` week, `0x20` month, `0x30` quarter) ✔.
-Agenda stores it fully materialized: one section per day (or per hour
-slot), each headed by the date category, with a section filter whose date
-range is a relative expression for that day ("this Tuesday"), a time-only
-column, and a view sort key on the date category (sequence: date). An
-importer recreates the datebook from the view settings and ignores the
-generated sections.
+A **datebook view** has w12 `0x200` (or `0x100` with a day period) and the period in w12 `0x30` (0 day, `0x10` week, `0x20` month, `0x30` quarter) ✔. Agenda stores it fully materialized: one section per day (or per hour slot), each headed by the date category, with a section filter whose date range is a relative expression for that day ("this Tuesday"), a time-only column, and a view sort key on the date category (sequence: date). An importer recreates the datebook from the view settings and ignores the generated sections.
 
 ### Section (type 6) ✔
 
@@ -412,26 +328,19 @@ generated sections.
 
 ### Macro (type 10) ✔
 
-w3 = previous macro, w5 = next macro; the macro text starts at byte 24 and
-continues through w2. Its first line is the macro's name in braces, for
-example `{Create/Update contact list}`; lines end with CR.
+w3 = previous macro, w5 = next macro; the macro text starts at byte 24 and continues through w2. Its first line is the macro's name in braces, for example `{Create/Update contact list}`; lines end with CR.
 
 ### Data (type 8) ✔
 
-w2 = next data block, w3 = bytes used in this block. Holds binary settings
-(the five blocks 34–38 of every file, the print layout from header
-`0x194`) and the text of unindexed values.
+w2 = next data block, w3 = bytes used in this block. Holds binary settings (the five blocks 34–38 of every file, the print layout from header `0x194`) and the text of unindexed values.
 
 ### Column statistics (type 11) ✔
 
-A numeric column's w10 points at a type-11 block; w2–w4 hold which summary
-rows the column shows: w2 bit 0 count, `0x100` total; w3 bit 0 average,
-`0x100` minimum; w4 bit 0 maximum. The section's w15–w17 hold the same.
+A numeric column's w10 points at a type-11 block; w2–w4 hold which summary rows the column shows: w2 bit 0 count, `0x100` total; w3 bit 0 average, `0x100` minimum; w4 bit 0 maximum. The section's w15–w17 hold the same.
 
 ### Date range (type 13) ✔
 
-The date range of a filter element (View or Section Properties, Filter, F4
-on a date category):
+The date range of a filter element (View or Section Properties, Filter, F4 on a date category):
 
 | Bytes | Meaning                                                      |
 | ----- | ------------------------------------------------------------ |
@@ -489,8 +398,7 @@ Flags in w8:
 | `0x0180` | unindexed value: w9 is a **data block** (type 8) with the text               |
 | `0x0200` | alarm: the category is `!Current Alarms!` and w9 is an **alarm** link        |
 
-Examples seen: Entry `0x140`, Done `0x100`, a numeric Amount `0x80`
-(42.5 stored as the double `0x4045400000000000`), an unindexed Page `0x180`.
+Examples seen: Entry `0x140`, Done `0x100`, a numeric Amount `0x80` (42.5 stored as the double `0x4045400000000000`), an unindexed Page `0x180`.
 
 ### Date value (type 12) ✔
 
@@ -501,20 +409,13 @@ Examples seen: Entry `0x140`, Done `0x100`, a numeric Amount `0x80`
 | 18–25 | **The date** (double)                                                |
 | 26–27 | Kind: 0 absolute, 1 relative, 2 recurring                            |
 
-A date without a time has fraction 0 ("Dentist on 11/20/26" → 46346.0).
-A relative date resolved by days or weeks keeps the time of day at which it
-was entered ("Lunch next Friday" typed at 23:28 got 23:28); one resolved by
-months or longer is at 00:00.
+A date without a time has fraction 0 ("Dentist on 11/20/26" → 46346.0). A relative date resolved by days or weeks keeps the time of day at which it was entered ("Lunch next Friday" typed at 23:28 got 23:28); one resolved by months or longer is at 00:00.
 
 ### Date expressions ✔
 
-The 8 bytes that say how a date was given (date value bytes 10–17, and the
-start and end of a date range). Worked out from about 70 phrases typed as
-item text.
+The 8 bytes that say how a date was given (date value bytes 10–17, and the start and end of a date range). Worked out from about 70 phrases typed as item text.
 
-**Absolute** (kind 0): the 8 bytes are the date as a double; the lowest
-byte is or-ed with `0x80` when a time was given (`11/20/26 at 3pm` →
-`80 00 00 00 54 A1 E6 40`).
+**Absolute** (kind 0): the 8 bytes are the date as a double; the lowest byte is or-ed with `0x80` when a time was given (`11/20/26 at 3pm` → `80 00 00 00 54 A1 E6 40`).
 
 **Relative** (kind 1) and **recurring** (kind 2):
 
@@ -542,9 +443,7 @@ byte is or-ed with `0x80` when a time was given (`11/20/26 at 3pm` →
 | next April                | `02 43 01 00 00 00 18 00` | nov 20                   | `52 B1 00 00 13 00 18 00` |
 | today at 3pm              | `05 00 00 00 00 00 0F 00` | at 3pm / noon            | `05 01 00 00 00 00 0F 00` |
 
-Agenda itself drops what it cannot parse: "every weekday" and "the 15th"
-give no date, "every Tuesday and Thursday" keeps only Tuesday. A bare
-"4:00" is 16:00 (Agenda assumes working hours).
+Agenda itself drops what it cannot parse: "every weekday" and "the 15th" give no date, "every Tuesday and Thursday" keeps only Tuesday. A bare "4:00" is 16:00 (Agenda assumes working hours).
 
 ### Column (type 3) ✔
 
@@ -584,9 +483,7 @@ Numeric column format (w11):
 | `0x4000` | Negative numbers in parentheses            |
 | `0x8000` | Thousands separator                        |
 
-Checked against the screen: the Planner's Tasks view shows `Activity`,
-`People`, `Project`, `When` with widths 8, 7, 8, 17, the order and widths
-read from these records.
+Checked against the screen: the Planner's Tasks view shows `Activity`, `People`, `Project`, `When` with widths 8, 7, 8, 17, the order and widths read from these records.
 
 ### Sort key (type 8) ✔
 
@@ -609,13 +506,11 @@ One per sort key of a view (view w10/w11) or a section (section w10/w11).
 | `0x000C`  | Sequence: 0 category hierarchy, 4 alphabetic, 8 numeric, `0xC` date      |
 | `0x0010`  | Seen on keys on date categories                                          |
 
-Checked against the screen: the Planner's Activities view sorts on When,
-ascending, n/a's at the bottom.
+Checked against the screen: the Planner's Activities view sorts on When, ascending, n/a's at the bottom.
 
 ### Filter element (type 2) ✔
 
-One per category in the Filter of a view (view w5/w6) or a section
-(section w5/w6).
+One per category in the Filter of a view (view w5/w6) or a section (section w5/w6).
 
 | Word   | Meaning                                                           |
 | ------ | ----------------------------------------------------------------- |
@@ -626,59 +521,30 @@ One per category in the Filter of a view (view w5/w6) or a section
 | w8     | `0x1` items must **not** be assigned; `0x2` outside the date range |
 | w9     | Date categories: date range block (type 13), 0 if none            |
 
-The Planner's "Completed This Week" view filters Done between "beginning
-of this week" and "end of this week"; "Overdue" keeps When up to
-"yesterday".
+The Planner's "Completed This Week" view filters Done between "beginning of this week" and "end of this week"; "Overdue" keeps When up to "yesterday".
 
 ### Assignment conditions (type 6) and actions (type 7) ✔
 
-Elements of a category's condition/action set (type-5 block). Both: w2 =
-the category tested or assigned, w3/w4 = previous/next element of the set,
-w5 = the set block, w6/w7 = next/previous reference to that category. w8:
-for a condition 0 = "must be assigned to", 1 = "must not be"; for an
-action 0 = assign, 1 = break the assignment. Planner's Unassigned is "in
-Tasks and not in People", as the STF export says.
+Elements of a category's condition/action set (type-5 block). Both: w2 = the category tested or assigned, w3/w4 = previous/next element of the set, w5 = the set block, w6/w7 = next/previous reference to that category. w8: for a condition 0 = "must be assigned to", 1 = "must not be"; for an action 0 = assign, 1 = break the assignment. Planner's Unassigned is "in Tasks and not in People", as the STF export says.
 
 ### Alarm (type 13) ✔
 
-Item Alarm makes an assignment to `!Current Alarms!` with flag `0x200`;
-its w9 is an alarm link: w5 = the date category the alarm follows (When),
-w6 = minutes before.
+Item Alarm makes an assignment to `!Current Alarms!` with flag `0x200`; its w9 is an alarm link: w5 = the date category the alarm follows (When), w6 = minutes before.
 
 ### Category-name index (type 9) ✔
 
-An AVL tree over the category names, used by Agenda to find a category
-when matching text. w2 = category, w5/w6 = left/right child, w7 = parent,
-w11 = balance. Link 1 holds the root in w5. It holds no data that is not
-also in the category blocks; an importer ignores it.
+An AVL tree over the category names, used by Agenda to find a category when matching text. w2 = category, w5/w6 = left/right child, w7 = parent, w11 = balance. Link 1 holds the root in w5. It holds no data that is not also in the category blocks; an importer ignores it.
 
 ## Reading a file
 
 1. Check `T\0` at offset 0. Read N from `0x3A`.
-2. Load the blocks `0x400 + 64·n` for n = 1..N and the link pages from the
-   next 512-byte boundary on, while each page ends with `FF FF "LINKS" FF`.
-3. **Categories:** from block 9, depth first through w17 (first child) and
-   w15 (next sibling). Name = text chain from w2, split at `;` into name,
-   short name and text conditions. Type from w26, note from w3, settings
-   from w23/w26/w28/w29, conditions and actions from the w19 set.
-4. **Items:** every block with w0 = n, w1 = 1 and no `0x40` in w24. Text =
-   bytes 50–61 + the chain from w2; note from w3 (or the note file it
-   names). Assignments: from w9 through link w4. For each, the category
-   (w2) and, by flags, its value; a date value also has its expression.
-   An assignment to block 5 with flag `0x200` is the alarm. Skip items
-   whose only assignment is to block 1 (`!Trash!`).
-5. **Views:** from header `0x42` through w9. Name = bytes 44–63 + chain
-   from w2; flags from w20/w21; sort keys w10/w11; filter from w5.
-   Sections from w3 through w4, each with its columns (w8 through link w7),
-   filter and sort keys. A datebook (w12 `0x300`) is recreated from its
-   settings.
+2. Load the blocks `0x400 + 64·n` for n = 1..N and the link pages from the next 512-byte boundary on, while each page ends with `FF FF "LINKS" FF`.
+3. **Categories:** from block 9, depth first through w17 (first child) and w15 (next sibling). Name = text chain from w2, split at `;` into name, short name and text conditions. Type from w26, note from w3, settings from w23/w26/w28/w29, conditions and actions from the w19 set.
+4. **Items:** every block with w0 = n, w1 = 1 and no `0x40` in w24. Text = bytes 50–61 + the chain from w2; note from w3 (or the note file it names). Assignments: from w9 through link w4. For each, the category (w2) and, by flags, its value; a date value also has its expression. An assignment to block 5 with flag `0x200` is the alarm. Skip items whose only assignment is to block 1 (`!Trash!`).
+5. **Views:** from header `0x42` through w9. Name = bytes 44–63 + chain from w2; flags from w20/w21; sort keys w10/w11; filter from w5. Sections from w3 through w4, each with its columns (w8 through link w7), filter and sort keys. A datebook (w12 `0x300`) is recreated from its settings.
 6. **File settings** from the header words listed above, if wanted.
 
-`tools/agformat/agdump.py` does all this and checks the cross references;
-it reads all files at hand (the four starters, 13 test files from the
-first round, the owner's used Planner and the files of the second round,
-some 150 experiments) without an error, apart from the one stale record
-mentioned under File layout.
+`tools/agformat/agdump.py` does all this and checks the cross references; it reads all files at hand (the four starters, 13 test files from the first round, the owner's used Planner and the files of the second round, some 150 experiments) without an error, apart from the one stale record mentioned under File layout.
 
 ## Mapping to Agendum
 
@@ -707,7 +573,5 @@ Nothing an import needs. Left open:
 - Header `0x18C`, the 8 bytes at `0x198`, the string at `0x1C4`.
 - Macro variables (type 12): the name is clear, the value encoding is not.
 - Some display-state bits (view w13, w18; section w12, w19).
-- The time-format word of date columns (w11) and the global date format
-  words `0x182`/`0x184` in detail.
-- Agenda 1.0 files and the files the owner remembers as encrypted: every
-  2.0 file seen is unencrypted, password or not.
+- The time-format word of date columns (w11) and the global date format words `0x182`/`0x184` in detail.
+- Agenda 1.0 files and the files the owner remembers as encrypted: every 2.0 file seen is unencrypted, password or not.

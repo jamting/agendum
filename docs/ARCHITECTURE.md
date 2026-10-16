@@ -1,8 +1,6 @@
 # Architecture
 
-**Functional core, imperative shell.** All of Agendum's logic and the
-whole UI state machine are pure functions over immutable values. A thin
-shell does terminal I/O and file I/O.
+**Functional core, imperative shell.** All of Agendum's logic and the whole UI state machine are pure functions over immutable values. A thin shell does terminal I/O and file I/O.
 
 ```
                ┌────────────────────── imperative shell ──────────────────────┐
@@ -64,37 +62,15 @@ shell does terminal I/O and file I/O.
 
 ### TUI (`lib/agendum/tui/*`)
 
-Every screen, box and control-panel mode, and how each is reached, is mapped
-in [`SCREENS.md`](SCREENS.md).
+Every screen, box and control-panel mode, and how each is reached, is mapped in [`SCREENS.md`](SCREENS.md).
 
-The folder keeps at its top what everything goes through (`State`,
-`Update`, `Render`, `App`, `Layout`, `Menu`, `History`, the macros, the
-splash and developer screens, `DebugLog`, `CategoryScreens`), and groups
-the rest by what it is for:
+The folder keeps at its top what everything goes through (`State`, `Update`, `Render`, `App`, `Layout`, `Menu`, `History`, the macros, the splash and developer screens, `DebugLog`, `CategoryScreens`), and groups the rest by what it is for:
 
-- `tui/boxes/` (`Agendum.TUI.Boxes.*`): every box, and the machinery they
-  share: `Box` (the behaviour a box module implements, and the registry
-  from mode type to module), `Template` (layouts), `BoxNav` (moving),
-  `BoxCancel` (ESC), `BoxChoices` (letters and F3), `FieldHelp`,
-  `FieldTyping`. Every box keeps everything about it in its own module:
-  keys, drawing, key bar, help, how it ends (docs/plans/REFACTORING.md, step 3).
-  `Update` sends a box its keys, and `Render.Boxes` draws its frame, through
-  the registry. A new box is a module with `use Agendum.TUI.Boxes.Box` and
-  its options (`finish:`, `indicator:`, `cancels:`, `choices:`), the
-  callbacks (`handle/3`, `title/2`, `content/4`, `keys/2`, `help/0`;
-  `field/2`, `width/2`, `finish/1` where needed), and a line in
-  `Box.registry/0`. A box with fixed settings is drawn from a `Template`
-  layout; the lists (pickers, profiles, calendar, macros, files, views)
-  draw their own rows;
-- `tui/terminal/` (`Agendum.TUI.Terminal.*`): keys in, screen out: `Keys`,
-  `Screen`, `Draw`, `Theme` and its palettes (`Agendum.TUI.Terminal` itself,
-  the raw terminal, is the folder's parent module);
-- `tui/typing/` (`Agendum.TUI.Typing.*`): typing text: `LineEdit`,
-  `TextEdit`, `Completion`, `NoteSearch`;
-- `tui/moves/` (`Agendum.TUI.Moves.*`): the control-panel modes that move
-  something: `Browse`, `ColumnMove`, `ColumnWidth`, `SectionMove`;
-- `tui/render/`, `tui/update/`, `tui/category_screens/`: the parts of
-  `Render`, `Update` and `CategoryScreens`.
+- `tui/boxes/` (`Agendum.TUI.Boxes.*`): every box, and the machinery they share: `Box` (the behaviour a box module implements, and the registry from mode type to module), `Template` (layouts), `BoxNav` (moving), `BoxCancel` (ESC), `BoxChoices` (letters and F3), `FieldHelp`, `FieldTyping`. Every box keeps everything about it in its own module: keys, drawing, key bar, help, how it ends (docs/plans/REFACTORING.md, step 3). `Update` sends a box its keys, and `Render.Boxes` draws its frame, through the registry. A new box is a module with `use Agendum.TUI.Boxes.Box` and its options (`finish:`, `indicator:`, `cancels:`, `choices:`), the callbacks (`handle/3`, `title/2`, `content/4`, `keys/2`, `help/0`; `field/2`, `width/2`, `finish/1` where needed), and a line in `Box.registry/0`. A box with fixed settings is drawn from a `Template` layout; the lists (pickers, profiles, calendar, macros, files, views) draw their own rows;
+- `tui/terminal/` (`Agendum.TUI.Terminal.*`): keys in, screen out: `Keys`, `Screen`, `Draw`, `Theme` and its palettes (`Agendum.TUI.Terminal` itself, the raw terminal, is the folder's parent module);
+- `tui/typing/` (`Agendum.TUI.Typing.*`): typing text: `LineEdit`, `TextEdit`, `Completion`, `NoteSearch`;
+- `tui/moves/` (`Agendum.TUI.Moves.*`): the control-panel modes that move something: `Browse`, `ColumnMove`, `ColumnWidth`, `SectionMove`;
+- `tui/render/`, `tui/update/`, `tui/category_screens/`: the parts of `Render`, `Update` and `CategoryScreens`.
 
 | Module                                        | Pure? | Responsibility                                                                                                                   |
 | --------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -179,42 +155,20 @@ the rest by what it is for:
 
 ## Key design decisions
 
-- **Mode stack.** Overlays (menu, managers, pickers, prompts) are pushed
-  on `state.modes`; ESC pops. Full-screen modes (category manager, view
-  manager, note) replace the body; boxes (picker, profile,
-  properties) draw over it. Help is a full-screen mode drawn as a large
-  box over the faded screen it was opened from, boxes and all (R65c).
-- **Effects as data.** `Update` never performs I/O. It queues effects
-  (`{:save, path}`, `{:load, path}`, `{:write_text, path, text}`, `:quit`)
-  that `App` executes, feeding results back through `Update.saved/3` and
-  similar. This keeps every UI behaviour testable with plain key sequences.
-- **The clock comes in from outside.** On every pass of its loop `App`
-  calls the pure `Update.tick(state, now)`, which updates the clock, rings
-  due alarms and asks for a `:bell` effect. Tests drive time the same way.
-- **Cursor anchoring.** The cursor is stored as a stable key
-  (`{:item, section_index, item_id}` or `{:section, index}`) and re-found
-  after every change (`Layout.settle/1`), so it follows an item when
-  automatic assignment or edits reshuffle the view.
-- **Subsumption is computed.** Only explicit links are stored. Deleting a
-  category therefore needs no cascade logic beyond dropping its links (R4).
-- **One id space.** Items, categories and views share `next_id`, like the
-  patent's single object file.
+- **Mode stack.** Overlays (menu, managers, pickers, prompts) are pushed on `state.modes`; ESC pops. Full-screen modes (category manager, view manager, note) replace the body; boxes (picker, profile, properties) draw over it. Help is a full-screen mode drawn as a large box over the faded screen it was opened from, boxes and all (R65c).
+- **Effects as data.** `Update` never performs I/O. It queues effects (`{:save, path}`, `{:load, path}`, `{:write_text, path, text}`, `:quit`) that `App` executes, feeding results back through `Update.saved/3` and similar. This keeps every UI behaviour testable with plain key sequences.
+- **The clock comes in from outside.** On every pass of its loop `App` calls the pure `Update.tick(state, now)`, which updates the clock, rings due alarms and asks for a `:bell` effect. Tests drive time the same way.
+- **Cursor anchoring.** The cursor is stored as a stable key (`{:item, section_index, item_id}` or `{:section, index}`) and re-found after every change (`Layout.settle/1`), so it follows an item when automatic assignment or edits reshuffle the view.
+- **Subsumption is computed.** Only explicit links are stored. Deleting a category therefore needs no cascade logic beyond dropping its links (R4).
+- **One id space.** Items, categories and views share `next_id`, like the patent's single object file.
 
-See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and
-[`DATA_ACCESS.md`](DATA_ACCESS.md) for the query/update API and its
-algorithms. See `docs/adr/` for the reasoning behind the larger choices.
+See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.md`](DATA_ACCESS.md) for the query/update API and its algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 
 ## Developer tools
 
 - `ESC ?` in the program: debugging info and a key tester (`Agendum.TUI.DevTools`).
-- `AGENDUM_LOG=1`: a debug log of each session in `~/.local/state/agendum/logs`
-  (or `AGENDUM_LOG=FOLDER`), the last five kept; a crash writes its stack
-  trace and the state (`Agendum.TUI.DebugLog`, ADR 0027).
-- `tools/screenshots/`: draws screens of the TUI as PNGs (macOS), to
-  compare its look with Agenda 2.0 (ADR 0018):
-  `MIX_ENV=test mix run tools/screenshots/screenshots.exs [--theme NAME]`
-  writes them to `tmp/screenshots/`. `screenshots.exs` drives the TUI with
-  keys like the tests; `render.swift` draws each screen.
+- `AGENDUM_LOG=1`: a debug log of each session in `~/.local/state/agendum/logs` (or `AGENDUM_LOG=FOLDER`), the last five kept; a crash writes its stack trace and the state (`Agendum.TUI.DebugLog`, ADR 0027).
+- `tools/screenshots/`: draws screens of the TUI as PNGs (macOS), to compare its look with Agenda 2.0 (ADR 0018): `MIX_ENV=test mix run tools/screenshots/screenshots.exs [--theme NAME]` writes them to `tmp/screenshots/`. `screenshots.exs` drives the TUI with keys like the tests; `render.swift` draws each screen.
 
 ## Architecture decision records
 

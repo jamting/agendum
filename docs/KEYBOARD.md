@@ -1,12 +1,6 @@
 # Keyboard guide
 
-Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT
-key. Function keys are required, as in Agenda (ADR 0032): on a Mac, use
-fn with them or make them standard function keys (below). For INS, HOME,
-END and the most used commands there are CTRL alternatives that work on a
-Mac laptop keyboard in any terminal; "—" below means the Agenda key is the
-only one. ⌘ (Command) shortcuts can be added through your terminal's
-settings, as described in the second half of this guide.
+Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Function keys are required, as in Agenda (ADR 0032): on a Mac, use fn with them or make them standard function keys (below). For INS, HOME, END and the most used commands there are CTRL alternatives that work on a Mac laptop keyboard in any terminal; "—" below means the Agenda key is the only one. ⌘ (Command) shortcuts can be added through your terminal's settings, as described in the second half of this guide.
 
 ## Keys that work everywhere
 
@@ -76,8 +70,7 @@ settings, as described in the second half of this guide.
 | In a box, on a setting with choices: the next choice starting with a letter; list the choices | the letter; F3 | the letter; —                                              |
 | A Yes/No question: answer at once; switch the answer shown; accept it; cancel                   | Y / N; SPACE; ENTER; ESC      | Y / N; SPACE; ENTER; ESC                                              |
 
-While typing text (on one line; in a note, the first two rows and CTRL-D;
-the keymaps `:line` and `:text`, R65):
+While typing text (on one line; in a note, the first two rows and CTRL-D; the keymaps `:line` and `:text`, R65):
 
 | Key                                         | Action                                |
 | ------------------------------------------- | ------------------------------------- |
@@ -89,29 +82,15 @@ the keymaps `:line` and `:text`, R65):
 | CTRL-U                                      | Clear the line                        |
 | CTRL-D                                      | Delete the character under the cursor |
 
-The F1 help lists every key from the keymaps (F1 then `a`); a test checks
-that every F-, ALT- and CTRL-key in them is in this guide.
+The F1 help lists every key from the keymaps (F1 then `a`); a test checks that every F-, ALT- and CTRL-key in them is in this guide.
 
-ALT is ⌥ (Option) on a Mac: ALT-D (add section) is ⌥D, ALT-← is ⌥←. These
-keys need "Use Option as Meta key" (Terminal.app: Settings ▸ Profiles ▸
-Keyboard) or "Esc+" for the left Option key (iTerm2: Settings ▸ Profiles ▸
-Keys); the terminal then sends ESC and the key together, which Agendum reads
-as ALT. Without it, a few still work in Terminal.app with a US keyboard
-layout: Agendum recognises the characters Option produces for ⌥D, ⌥R, ⌥L,
-⌥T, ⌥W, ⌥J, ⌥M, ⌥− and ⌥= (`∂`, `®`, `¬` …). Pressing ESC and then the
-letter by hand does not work: a lone ESC is ESC (it cancels), and the
-letter then counts on its own (ADR 0032).
+ALT is ⌥ (Option) on a Mac: ALT-D (add section) is ⌥D, ALT-← is ⌥←. These keys need "Use Option as Meta key" (Terminal.app: Settings ▸ Profiles ▸ Keyboard) or "Esc+" for the left Option key (iTerm2: Settings ▸ Profiles ▸ Keys); the terminal then sends ESC and the key together, which Agendum reads as ALT. Without it, a few still work in Terminal.app with a US keyboard layout: Agendum recognises the characters Option produces for ⌥D, ⌥R, ⌥L, ⌥T, ⌥W, ⌥J, ⌥M, ⌥− and ⌥= (`∂`, `®`, `¬` …). Pressing ESC and then the letter by hand does not work: a lone ESC is ESC (it cancels), and the letter then counts on its own (ADR 0032).
 
-Function keys: on a Mac, hold **fn** to send F1…F12, or enable "Use F1, F2,
-etc. keys as standard function keys" in System Settings ▸ Keyboard. ALT-F1…
-ALT-F10 are ⌥ with the function key; Terminal.app needs "Use Option as Meta
-key" for them.
+Function keys: on a Mac, hold **fn** to send F1…F12, or enable "Use F1, F2, etc. keys as standard function keys" in System Settings ▸ Keyboard. ALT-F1… ALT-F10 are ⌥ with the function key; Terminal.app needs "Use Option as Meta key" for them.
 
 ## ⌘ shortcuts
 
-**macOS terminals never pass ⌘ keys to the programs running in them.** ⌘N,
-⌘Z, ⌘S and ⌘Q belong to the terminal itself (new window, undo, …). To use
-them in Agendum, tell your terminal to send Agendum's CTRL key instead:
+**macOS terminals never pass ⌘ keys to the programs running in them.** ⌘N, ⌘Z, ⌘S and ⌘Q belong to the terminal itself (new window, undo, …). To use them in Agendum, tell your terminal to send Agendum's CTRL key instead:
 
 | ⌘ shortcut | Command               | Send                      |
 | ---------- | --------------------- | ------------------------- |
@@ -126,20 +105,13 @@ them in Agendum, tell your terminal to send Agendum's CTRL key instead:
 | ⌘↑ / ⌘↓    | First / last line     | `\x1b[1;5H` / `\x1b[1;5F` |
 | ⌘/         | Help                  | `\x1bOP` (F1)             |
 
-> ⚠️ **Scope these mappings to Agendum.** Terminal key mappings usually apply to
-> every tab. In an ordinary shell, CTRL-Z suspends the running program and
-> CTRL-S can freeze output. So put the mappings in a separate profile or
-> configuration used only to run Agendum, as shown below. ⌘Q is left out on
-> purpose: quitting the terminal by accident is worse than typing CTRL-Q.
+> ⚠️ **Scope these mappings to Agendum.** Terminal key mappings usually apply to every tab. In an ordinary shell, CTRL-Z suspends the running program and CTRL-S can freeze output. So put the mappings in a separate profile or configuration used only to run Agendum, as shown below. ⌘Q is left out on purpose: quitting the terminal by accident is worse than typing CTRL-Q.
 
-The snippets below follow each terminal's documented configuration syntax,
-but they have not been tested here. Please report any that need adjusting.
+The snippets below follow each terminal's documented configuration syntax, but they have not been tested here. Please report any that need adjusting.
 
 ### iTerm2
 
-Create a profile just for Agendum (Settings ▸ Profiles ▸ +), set its
-_Command_ to the `agendum` binary, then add each shortcut under
-Profiles ▸ Keys ▸ Key Mappings ▸ + with the action **Send Hex Code**:
+Create a profile just for Agendum (Settings ▸ Profiles ▸ +), set its _Command_ to the `agendum` binary, then add each shortcut under Profiles ▸ Keys ▸ Key Mappings ▸ + with the action **Send Hex Code**:
 
 | Shortcut | Hex code    |
 | -------- | ----------- |
@@ -152,14 +124,11 @@ Profiles ▸ Keys ▸ Key Mappings ▸ + with the action **Send Hex Code**:
 | ⌘I       | `0x1b 0x5b 0x31 0x37 0x7e` |
 | ⌘⌫       | `0x04`      |
 
-Open Agendum with that profile (Profiles ▸ Agendum). If a ⌘ shortcut still
-triggers the iTerm2 menu item, remove or change the menu shortcut in System
-Settings ▸ Keyboard ▸ Keyboard Shortcuts ▸ App Shortcuts.
+Open Agendum with that profile (Profiles ▸ Agendum). If a ⌘ shortcut still triggers the iTerm2 menu item, remove or change the menu shortcut in System Settings ▸ Keyboard ▸ Keyboard Shortcuts ▸ App Shortcuts.
 
 ### kitty
 
-Save as `~/.config/kitty/agendum.conf` and run
-`kitty --config ~/.config/kitty/kitty.conf --config ~/.config/kitty/agendum.conf agendum`:
+Save as `~/.config/kitty/agendum.conf` and run `kitty --config ~/.config/kitty/kitty.conf --config ~/.config/kitty/agendum.conf agendum`:
 
 ```conf
 map cmd+n       send_text all \x0e
@@ -176,8 +145,7 @@ map cmd+down    send_text all \x1b[1;5F
 
 ### Ghostty
 
-Save as `~/.config/ghostty/agendum` and start a separate Ghostty instance
-with `open -na Ghostty --args --config-file=$HOME/.config/ghostty/agendum -e agendum`:
+Save as `~/.config/ghostty/agendum` and start a separate Ghostty instance with `open -na Ghostty --args --config-file=$HOME/.config/ghostty/agendum -e agendum`:
 
 ```conf
 keybind = cmd+n=text:\x0e
@@ -194,8 +162,7 @@ keybind = cmd+down=text:\x1b[1;5F
 
 ### WezTerm
 
-Add a separate config (e.g. `~/.config/wezterm/agendum.lua`) and run
-`wezterm --config-file ~/.config/wezterm/agendum.lua start -- agendum`:
+Add a separate config (e.g. `~/.config/wezterm/agendum.lua`) and run `wezterm --config-file ~/.config/wezterm/agendum.lua start -- agendum`:
 
 ```lua
 local wezterm = require 'wezterm'
@@ -216,24 +183,12 @@ return {
 
 ### Terminal.app
 
-Terminal.app cannot remap ⌘ shortcuts, so use the CTRL keys in the first
-table (CTRL-N, CTRL-Z, CTRL-S, …).
+Terminal.app cannot remap ⌘ shortcuts, so use the CTRL keys in the first table (CTRL-N, CTRL-Z, CTRL-S, …).
 
 ## How it works
 
-Raw terminal mode would normally let the tty driver swallow some of these
-keys: CTRL-S/Q (flow control), CTRL-C/Z (signals), CTRL-O/V (discard,
-literal-next). `Agendum.TUI.Terminal` turns those features off with `stty`
-while Agendum runs and restores them on exit, so every CTRL key reaches
-Agendum.
+Raw terminal mode would normally let the tty driver swallow some of these keys: CTRL-S/Q (flow control), CTRL-C/Z (signals), CTRL-O/V (discard, literal-next). `Agendum.TUI.Terminal` turns those features off with `stty` while Agendum runs and restores them on exit, so every CTRL key reaches Agendum.
 
 ## Developer tools (hidden)
 
-ALT-? (⌥? with Option as Meta) opens the developer screen from
-anywhere except while typing: the last key as Agendum decoded it, the mode
-stack, cursor, undo depth, session (time, languages, input format, theme,
-preferences, terminal size), file counts and versions. Every key but ESC is
-only shown, not acted on, so it doubles as a key tester: press a key and see
-whether your terminal sends what you expect (CTRL-E shows `{:ctrl, "e"}`,
-not the F2 it stands for elsewhere). ↑↓ PGUP PGDN scroll; ESC returns. It is
-not in the menus or the F1 help (`Agendum.TUI.DevTools`).
+ALT-? (⌥? with Option as Meta) opens the developer screen from anywhere except while typing: the last key as Agendum decoded it, the mode stack, cursor, undo depth, session (time, languages, input format, theme, preferences, terminal size), file counts and versions. Every key but ESC is only shown, not acted on, so it doubles as a key tester: press a key and see whether your terminal sends what you expect (CTRL-E shows `{:ctrl, "e"}`, not the F2 it stands for elsewhere). ↑↓ PGUP PGDN scroll; ESC returns. It is not in the menus or the F1 help (`Agendum.TUI.DevTools`).

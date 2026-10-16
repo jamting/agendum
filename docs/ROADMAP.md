@@ -1,37 +1,21 @@
 # Roadmap
 
-Small, testable increments. Open work comes first, by area; done work is
-below, by milestone, as the record. Tick a box when its tests pass under
-`mix check`, and move it to Done. Rule numbers refer to `SPEC.md`; larger
-items have a plan in `docs/plans/` (see `docs/INDEX.md`). Open starts with
-what comes next; "Sharpen the saw" is the standing home for work on the
-tools, checks and ways of working that make later changes faster and safer.
+Small, testable increments. Open work comes first, by area; done work is below, by milestone, as the record. Tick a box when its tests pass under `mix check`, and move it to Done. Rule numbers refer to `SPEC.md`; larger items have a plan in `docs/plans/` (see `docs/INDEX.md`). Open starts with what comes next; "Sharpen the saw" is the standing home for work on the tools, checks and ways of working that make later changes faster and safer.
 
 ## Open
 
-**Next:** the command layer ("Towards many users"), the next major work,
-with a struct for each UI mode as each place moves over. "Sharpen the
-saw" is done (2026-10-16) apart from CI, which waits for GitHub, and the
-view cache, which waits for slow answers. Parity with Agenda and the rest
-continue after the command layer.
+**Next:** the command layer ("Towards many users"), the next major work, with a struct for each UI mode as each place moves over. "Sharpen the saw" is done (2026-10-16) apart from CI, which waits for GitHub, and the view cache, which waits for slow answers. Parity with Agenda and the rest continue after the command layer.
 
 ### Sharpen the saw
 
-Tools and checks that make every later change faster and safer. Do these
-first: each is small, and the command layer (below) is a large refactoring
-that leans on them. From the expert review of 2026-10-16
-(`docs/reviews/2026-10-16.md`) and the performance items found earlier.
+Tools and checks that make every later change faster and safer. Do these first: each is small, and the command layer (below) is a large refactoring that leans on them. From the expert review of 2026-10-16 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
 - [ ] CI: `mix check` on every push (GitHub Actions), once the repository is on GitHub (Housekeeping). The long fuzz run (`FUZZ_RUNS=3000`) is run by hand before every version is tagged (docs/INDEX.md, "Where a change is written down"); CI could take it over later, nightly
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key. Measured 2026-10-16, a cursor move: 300 items 6 ms in `Update` + 11 ms in `Render`; 3,000 items 61 + 45 ms; 10,000 items 205 + 231 ms. First build it once per key and share it; then keep it in the session's state between keys as a value with a key that says when it is stale (ADR 0035): the database, the view, the date and time, the screen width, collapsed families, the search. Needs an ADR. **Wait until the debug log shows `slow answer` lines (over 100 ms) in real use** (owner's decision, 2026-10-16); ingested items (`plans/ITEM_LEVELS.md`) will likely be what brings them. Do it after the command layer, which reshapes the state it would live in
 
 ### Towards many users: the command layer (the next major work)
 
-A web application with accounts and shared files, on the same core (plan:
-[MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). First, in the core and the TUI, a
-few commands at a time. The command layer is the next major work, after
-Sharpen the saw: the web, customizable keys, a modern mode and Wol all
-wait for it (expert review 2026-10-16, `docs/reviews/2026-10-16.md`).
+A web application with accounts and shared files, on the same core (plan: [MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). First, in the core and the TUI, a few commands at a time. The command layer is the next major work, after Sharpen the saw: the web, customizable keys, a modern mode and Wol all wait for it (expert review 2026-10-16, `docs/reviews/2026-10-16.md`).
 
 - [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agendum.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so). Each command names its target (an item or category id, not the highlighted row: `ViewKeys.run/3` passes `Layout.current_row/1` today) and returns what changed, so a web page or an agent with no cursor can call it (expert review 2026-10-16, second meeting, `docs/reviews/2026-10-16-2.md`)
   - [ ] Typed UI modes, done with it (moved from Sharpen the saw, owner's decision 2026-10-16): each place whose keys move to commands also gets a struct for its mode, instead of the `%{type: …}` maps in `State.modes` (about fifty kinds), so the compiler and Dialyzer catch a misspelt field that today only the fuzz test finds. Done when no mode is a bare map; one place at a time, each step with `mix check` and a long fuzz run
@@ -203,8 +187,7 @@ Then working together:
 
 ### Look and feel — after screenshots of Agenda 2.0 (ADR 0018)
 
-The general look and feel of the real program, step by step; not pixel fidelity.
-`tools/screenshots/` draws our screens for comparison.
+The general look and feel of the real program, step by step; not pixel fidelity. `tools/screenshots/` draws our screens for comparison.
 
 - [x] Agenda's colours as the default theme: grey screen, blue heads and entries, white-on-red highlight, cyan boxes in a solid blue frame with a centred title and a shadow, the screen behind a box greyed out, cyan category manager, yellow-on-blue help; exact VGA colours on 24-bit terminals; the highlighted line tinted (R40)
 - [x] Two-line control panel (File with indicators and time, then View or the manager shown) that the menu, prompts, questions and messages take over; the key bar stays one line (our choice)

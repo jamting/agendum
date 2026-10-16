@@ -2,22 +2,13 @@
 
 **Status:** researched in Agenda 2.0 (2026-10-15); nothing built yet. Settle the six habit changes below with the owner before step 1 (ROADMAP, The note editor).
 
-Agenda's note editor (F5) is a screen of its own: its own control panel,
-its own key bar and its own F10 menu. Agendum's note editor has the text
-editing, marking and Search/Replace, but keeps the view's control panel
-and has no menu. This plan maps what Agenda's editor does, sets printing
-and typesetting out of scope, and lists the steps for the rest: some new,
-some only a connection to a feature Agendum already has.
+Agenda's note editor (F5) is a screen of its own: its own control panel, its own key bar and its own F10 menu. Agendum's note editor has the text editing, marking and Search/Replace, but keeps the view's control panel and has no menu. This plan maps what Agenda's editor does, sets printing and typesetting out of scope, and lists the steps for the rest: some new, some only a connection to a feature Agendum already has.
 
-The macro editor (F2 in the macro manager) is the same editor in Agenda,
-and in Agendum (`{:macro, id}` notes), so every step below applies to it
-too unless it says otherwise.
+The macro editor (F2 in the macro manager) is the same editor in Agenda, and in Agendum (`{:macro, id}` notes), so every step below applies to it too unless it says otherwise.
 
 ## What Agenda does (the evidence)
 
-Checked in the real Agenda 2.0 (headless, on a copy of PLANNER,
-2026-10-15), and in its F1 help ("Note Editor", "Notes: Accelerator Keys",
-"Discard Note/Macro Changes Box", "Note/Macro File Not Found Box"):
+Checked in the real Agenda 2.0 (headless, on a copy of PLANNER, 2026-10-15), and in its F1 help ("Note Editor", "Notes: Accelerator Keys", "Discard Note/Macro Changes Box", "Note/Macro File Not Found Box"):
 
 | What | Agenda | Source |
 | --- | --- | --- |
@@ -90,39 +81,21 @@ Checked in the real Agenda 2.0 (headless, on a copy of PLANNER,
 Printing on paper and typesetting:
 
 - F10 Print (Final, Preview, Layout, Setup, Named).
-- F6 MARKER: attributes (bold, italic, underscores, sub- and superscript,
-  strikethrough, small caps), fonts, and its Special codes (page number,
-  path name, printer code, time, view name), which are filled in when
-  printing.
+- F6 MARKER: attributes (bold, italic, underscores, sub- and superscript, strikethrough, small caps), fonts, and its Special codes (page number, path name, printer code, time, view name), which are filled in when printing.
 - The control panel's `Font: … Attr: …`.
 
-So the note editor's F6 stays free. If notes get Markdown later
-(roadmap: Ideas), bold and italic come back as text (`**bold**`), not as
-Agenda's printer attributes.
+So the note editor's F6 stays free. If notes get Markdown later (roadmap: Ideas), bold and italic come back as text (`**bold**`), not as Agenda's printer attributes.
 
 ## Habit changes to settle first
 
-These change what a key does for someone using Agendum today; settle
-them with the owner before the step that brings them:
+These change what a key does for someone using Agendum today; settle them with the owner before the step that brings them:
 
-1. **ESC in a note** (step 4). Today ESC saves and leaves. Agenda asks
-   "Discard changes? No": ENTER on No saves and leaves (as today, one key
-   more), Y discards. Options: Agenda's question; or ESC saves as now and
-   discarding is a menu entry (F10 ▸ Return without saving). ADR 0030 made
-   ESC cancel in every settings box, which argues for Agenda's way.
-2. **The control panel's first line** (step 1). Today it holds the help
-   text and messages ("Replaced 3 occurrences"). Agenda shows "Note for: …
-   Line N INS EDIT" there and puts messages over it. Where do messages and
-   the NOTE indicator go?
-3. **INS** (step 5). Today INS does nothing in a note; Overwrite mode is
-   new. Mac keyboards have no INS: which key switches it?
+1. **ESC in a note** (step 4). Today ESC saves and leaves. Agenda asks "Discard changes? No": ENTER on No saves and leaves (as today, one key more), Y discards. Options: Agenda's question; or ESC saves as now and discarding is a menu entry (F10 ▸ Return without saving). ADR 0030 made ESC cancel in every settings box, which argues for Agenda's way.
+2. **The control panel's first line** (step 1). Today it holds the help text and messages ("Replaced 3 occurrences"). Agenda shows "Note for: … Line N INS EDIT" there and puts messages over it. Where do messages and the NOTE indicator go?
+3. **INS** (step 5). Today INS does nothing in a note; Overwrite mode is new. Mac keyboards have no INS: which key switches it?
 4. **TAB** (step 5). Today TAB does nothing in a note; it will type spaces.
-5. **CTRL-ENTER and ALT-W** (step 5). CTRL-ENTER deletes to the end of the
-   line in Agenda; terminals often send it as plain ENTER. Agendum already
-   uses CTRL-K for that in single-line fields: CTRL-K in notes too, with
-   CTRL-ENTER where the terminal tells them apart?
-6. **ALT-N / ALT-P** (step 4). Agenda "optionally saves"; Agendum always
-   saves. Keep it, or ask as ESC does?
+5. **CTRL-ENTER and ALT-W** (step 5). CTRL-ENTER deletes to the end of the line in Agenda; terminals often send it as plain ENTER. Agendum already uses CTRL-K for that in single-line fields: CTRL-K in notes too, with CTRL-ENTER where the terminal tells them apart?
+6. **ALT-N / ALT-P** (step 4). Agenda "optionally saves"; Agendum always saves. Keep it, or ask as ESC does?
 
 ## Steps
 
@@ -130,61 +103,14 @@ Each is one commit, test first, as CLAUDE.md says.
 
 1. **The note editor's control panel and key bar.** Line 1: `Note for:
    <title>` and, on the right, `Line N` (the line of the text, not the
-   wrapped row), `INS`/`OVR` (after step 5) and the indicator. Line 2:
-   `Note file: …` when attached (step 7), else the help line. The key bar
-   as Agenda's (F5 Return, F10 Menu) without F6 Marker. Already a roadmap
-   item ("the note editor's 'Note for: … Line 1 INS EDIT' header"), which
-   this step closes. Draw ours and Agenda's side by side
-   (`tools/screenshots/`).
-2. **The F10 menu in a note.** Its own tree in `Agendum.TUI.Menu`: File
-   (Attach, Detach, Erase; after step 7), Import, Export (step 3), Clear
-   (a Yes/No question; one undo step once the note is saved, as the
-   replacements are), Return, Quit; no Print. Unique first letters, as
-   every menu level.
-3. **Import and Export.** Import a text file at the cursor (a box: File
-   name with F3 listing files, R51's Select File; Strip carriage returns);
-   Export the note to a text file (F3 lists, a new name creates it). The
-   reading and writing are effects done in `App`, as the file's own
-   import and export are; the text in the note goes through the core
-   (`Core.set_note`). Line ends: LF on writing, CR LF read as LF.
-4. **ESC asks "Discard changes?"** (after habit 1 is settled). No (the
-   default) saves and leaves, Yes restores the note as it was opened; not
-   asked when nothing changed. The steps already saved (Search/Replace's
-   replacements, R39) are undone by Yes too, so the note is as it was.
-   ALT-N / ALT-P as settled in habit 6.
-5. **Editing keys.** INS / OVR (with a Mac alternative and the indicator),
-   TAB to the next tab stop with File Properties ▸ Tab size (a new stored
-   setting: DATA_MODEL, JSON schema, JSON_FORMAT; default 5 as Agenda;
-   connects to the roadmap item for File Properties' other settings),
-   ALT-M new line, CTRL-BACKSPACE / ⌥⌫ and ALT-W delete a word, CTRL-K
-   (and CTRL-ENTER) delete to the end of the line, CTRL-← / CTRL-→ (⌥← ⌥→)
-   a word, PGUP / PGDN a page of rows, CTRL-HOME / CTRL-END the start and
-   end of the note (Mac: ESC-prefixed alternatives). Reuse `LineEdit`'s
-   word rules in `TextEdit`. KEYBOARD.md and the F1 help.
-6. **Connections to features Agendum has.** ALT-F9 APPEND: the Word /
-   Line / All text box (as F3 COPY's), moving the text to the end of the
-   item's text or the category's name, one undo step (a core function,
-   with MAKEITM's); ALT-F8 GETITMS: the marked items' text and notes into
-   the note at the cursor, or "There are no marked items in the file.";
-   ALT-C: the calendar, its date typed at the cursor on ENTER (as ALT-D
-   types today's).
-7. **External note files** (File Attach, Detach, Erase). The note is kept
-   in a text file instead of the Agendum file: a new stored field (the
-   file's path on the item, category or macro: DATA_MODEL, JSON schema,
-   JSON_FORMAT), read when the note opens and written when it is saved,
-   by effects in `App`; "Note file was not found. Create a file?" when it
-   is missing; the ♪ symbol as for any note. Needs an ADR: the core stays
-   pure, so the note's text lives outside `db`, and the planned web front
-   end (MULTIUSER.md) cannot reach a person's files, so it shows such
-   notes as attached but not editable. The `.AG` importer (roadmap, Data
-   interchange) reads Agenda's note files (`docs/AGENDA_FILE_FORMAT.md`)
-   and can attach them.
-8. **ALT-F1 COMPOSE** (optional). Agenda typed accented and other
-   characters with compose sequences (`a` `'` → á). A terminal types them
-   already; worth doing only for keyboards that lack them. Low priority.
-9. **Undo inside the editor.** The roadmap item of the same name; after
-   step 4, which settles how a note's own steps and the file's history
-   meet.
+   wrapped row), `INS`/`OVR` (after step 5) and the indicator. Line 2: `Note file: …` when attached (step 7), else the help line. The key bar as Agenda's (F5 Return, F10 Menu) without F6 Marker. Already a roadmap item ("the note editor's 'Note for: … Line 1 INS EDIT' header"), which this step closes. Draw ours and Agenda's side by side (`tools/screenshots/`).
+2. **The F10 menu in a note.** Its own tree in `Agendum.TUI.Menu`: File (Attach, Detach, Erase; after step 7), Import, Export (step 3), Clear (a Yes/No question; one undo step once the note is saved, as the replacements are), Return, Quit; no Print. Unique first letters, as every menu level.
+3. **Import and Export.** Import a text file at the cursor (a box: File name with F3 listing files, R51's Select File; Strip carriage returns); Export the note to a text file (F3 lists, a new name creates it). The reading and writing are effects done in `App`, as the file's own import and export are; the text in the note goes through the core (`Core.set_note`). Line ends: LF on writing, CR LF read as LF.
+4. **ESC asks "Discard changes?"** (after habit 1 is settled). No (the default) saves and leaves, Yes restores the note as it was opened; not asked when nothing changed. The steps already saved (Search/Replace's replacements, R39) are undone by Yes too, so the note is as it was. ALT-N / ALT-P as settled in habit 6.
+5. **Editing keys.** INS / OVR (with a Mac alternative and the indicator), TAB to the next tab stop with File Properties ▸ Tab size (a new stored setting: DATA_MODEL, JSON schema, JSON_FORMAT; default 5 as Agenda; connects to the roadmap item for File Properties' other settings), ALT-M new line, CTRL-BACKSPACE / ⌥⌫ and ALT-W delete a word, CTRL-K (and CTRL-ENTER) delete to the end of the line, CTRL-← / CTRL-→ (⌥← ⌥→) a word, PGUP / PGDN a page of rows, CTRL-HOME / CTRL-END the start and end of the note (Mac: ESC-prefixed alternatives). Reuse `LineEdit`'s word rules in `TextEdit`. KEYBOARD.md and the F1 help.
+6. **Connections to features Agendum has.** ALT-F9 APPEND: the Word / Line / All text box (as F3 COPY's), moving the text to the end of the item's text or the category's name, one undo step (a core function, with MAKEITM's); ALT-F8 GETITMS: the marked items' text and notes into the note at the cursor, or "There are no marked items in the file."; ALT-C: the calendar, its date typed at the cursor on ENTER (as ALT-D types today's).
+7. **External note files** (File Attach, Detach, Erase). The note is kept in a text file instead of the Agendum file: a new stored field (the file's path on the item, category or macro: DATA_MODEL, JSON schema, JSON_FORMAT), read when the note opens and written when it is saved, by effects in `App`; "Note file was not found. Create a file?" when it is missing; the ♪ symbol as for any note. Needs an ADR: the core stays pure, so the note's text lives outside `db`, and the planned web front end (MULTIUSER.md) cannot reach a person's files, so it shows such notes as attached but not editable. The `.AG` importer (roadmap, Data interchange) reads Agenda's note files (`docs/AGENDA_FILE_FORMAT.md`) and can attach them.
+8. **ALT-F1 COMPOSE** (optional). Agenda typed accented and other characters with compose sequences (`a` `'` → á). A terminal types them already; worth doing only for keyboards that lack them. Low priority.
+9. **Undo inside the editor.** The roadmap item of the same name; after step 4, which settles how a note's own steps and the file's history meet.
 
-Steps 1, 2, 5 and 6 are independent of each other (6 is keys only); 3
-needs 2; 4 needs habit 1 settled; 7 needs 2 and an ADR.
+Steps 1, 2, 5 and 6 are independent of each other (6 is keys only); 3 needs 2; 4 needs habit 1 settled; 7 needs 2 and an ADR.
