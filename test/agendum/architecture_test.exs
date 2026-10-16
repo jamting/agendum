@@ -142,13 +142,13 @@ defmodule Agendum.ArchitectureTest do
 
   # Every change to the file is a command (`Agendum.Core.run/3`); the TUI
   # calls the rest of Agendum.Core only to read. These are the reads (and
-  # `new_file/0`, `import_json/1`, which make a file rather than change
-  # one). A new Agendum.Core function must be a command's or be listed
+  # `new_file/0`, `import_json/1` and `import_ag/2`, which make a file
+  # rather than change one). A new Agendum.Core function must be a command's or be listed
   # here, so a new kind of change cannot skip the command layer.
   @reads ~w(
-    alarm_list assignment_reasons auto_dating? browse_keep browse_move browse_start browse_to browsed_view calendars_due completions confirm_mode date_conversion
+    agenda_file? alarm_list assignment_reasons auto_dating? browse_keep browse_move browse_start browse_to browsed_view calendars_due completions confirm_mode date_conversion
     date_filters? default_column_width demote_conflicts dependents entry_categories group_alarms
-    entry_values exclusive_conflicts export_json import_json item_assignments
+    entry_values exclusive_conflicts export_json import_ag import_json item_assignments
     item_column_fit marked_items match_settings move_conflicts new_file
     numeric_conversion prerequisites promote_conflicts questions read_when
     related_items relocation_conflicts section_calcs shift_filters waiting? when_at

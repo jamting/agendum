@@ -1,0 +1,405 @@
+{
+ "description": "Information Sifter",
+ "password": "Hoot",
+ "created": "2026-10-16T21:39",
+ "saved": "2026-10-16T21:39",
+ "settings": {
+  "tab_size": 5,
+  "backup_on_open": false,
+  "empty_trash": "end of day",
+  "process_done_items": "no action",
+  "text_matching": true,
+  "assignment_conditions": true,
+  "assignment_actions": true,
+  "relationship": "or",
+  "week": [
+   "Monday",
+   "Friday"
+  ],
+  "morning": "8:00",
+  "afternoon": "14:00",
+  "evening": "17:00",
+  "month_alone_means": "first day"
+ },
+ "categories": {
+  "id": 9,
+  "name": "MAIN",
+  "type": "standard",
+  "settings": {
+   "exclusive_children": false,
+   "match_name": true,
+   "match_short_name": true,
+   "allow_explicit": true
+  },
+  "children": [
+   {
+    "id": 20,
+    "name": "Entry",
+    "type": "date",
+    "settings": {
+     "exclusive_children": false,
+     "assign_item_date": "when entered",
+     "which_date_in_text": 1,
+     "set_from_done_key": false,
+     "set_from_when_key": false,
+     "recurring_dates": false
+    }
+   },
+   {
+    "id": 18,
+    "name": "When",
+    "type": "date",
+    "settings": {
+     "exclusive_children": false,
+     "assign_item_date": "from item text",
+     "which_date_in_text": 1,
+     "set_from_done_key": false,
+     "set_from_when_key": true,
+     "recurring_dates": true
+    }
+   },
+   {
+    "id": 16,
+    "name": "Done",
+    "type": "date",
+    "settings": {
+     "exclusive_children": false,
+     "assign_item_date": "never",
+     "which_date_in_text": 1,
+     "set_from_done_key": true,
+     "set_from_when_key": false,
+     "recurring_dates": false
+    }
+   },
+   {
+    "id": 12,
+    "name": "Abstracts",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": true,
+     "match_short_name": true,
+     "allow_explicit": true
+    }
+   },
+   {
+    "id": 39,
+    "name": "Issue",
+    "type": "date",
+    "settings": {
+     "exclusive_children": false,
+     "assign_item_date": "never",
+     "which_date_in_text": 1,
+     "set_from_done_key": false,
+     "set_from_when_key": false,
+     "recurring_dates": false
+    }
+   },
+   {
+    "id": 41,
+    "name": "Company Name",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "children": [
+     {
+      "id": 43,
+      "name": "Sample Company",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": false,
+       "match_short_name": false,
+       "match_on": "note text",
+       "allow_explicit": true
+      }
+     }
+    ]
+   },
+   {
+    "id": 46,
+    "name": "Topic",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "children": [
+     {
+      "id": 48,
+      "name": "Sample Topic",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": false,
+       "match_short_name": false,
+       "match_on": "note text",
+       "allow_explicit": true
+      }
+     }
+    ]
+   },
+   {
+    "id": 51,
+    "name": "Journal",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "children": [
+     {
+      "id": 53,
+      "name": "Sample Journal",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": false,
+       "match_short_name": false,
+       "allow_explicit": true
+      }
+     }
+    ]
+   },
+   {
+    "id": 106,
+    "name": "Page",
+    "type": "unindexed",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": true,
+     "match_short_name": true,
+     "allow_explicit": true
+    }
+   }
+  ]
+ },
+ "items": [
+  {
+   "id": 294,
+   "text": "Owls in winter",
+   "note": null,
+   "assignments": [
+    {
+     "category": 20,
+     "how": "automatic",
+     "value": "2026-10-16T21:37"
+    },
+    {
+     "category": 43,
+     "how": "explicit"
+    },
+    {
+     "category": 39,
+     "how": "explicit",
+     "value": "2090-10-01T00:00"
+    },
+    {
+     "category": 106,
+     "how": "explicit",
+     "value": "Barn owls at dusk42"
+    }
+   ],
+   "trashed": false
+  }
+ ],
+ "views": [
+  {
+   "id": 11,
+   "name": "Abstracts by date",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": false,
+   "number_items": false,
+   "section_sorting": null,
+   "sort": [
+    {
+     "on": "category",
+     "descending": true,
+     "n/a first": false,
+     "category": 39,
+     "sequence": "category hierarchy"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [],
+   "sections": [
+    {
+     "category": 12,
+     "columns": [
+      {
+       "category": 51,
+       "width": 15
+      },
+      {
+       "category": 39,
+       "width": 8,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 105,
+   "name": "Companies",
+   "hide_empty_sections": true,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": true,
+   "number_items": false,
+   "section_sorting": "alphabetic",
+   "sort": [],
+   "sort_new_items": "when entered",
+   "filter": [],
+   "sections": [
+    {
+     "category": 43,
+     "columns": [
+      {
+       "category": 51,
+       "width": 12
+      },
+      {
+       "category": 39,
+       "width": 8,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      },
+      {
+       "category": 106,
+       "width": 8
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 108,
+   "name": "Journals",
+   "hide_empty_sections": true,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": true,
+   "number_items": false,
+   "section_sorting": "alphabetic",
+   "sort": [
+    {
+     "on": "category",
+     "descending": true,
+     "n/a first": false,
+     "category": 39,
+     "sequence": "category hierarchy"
+    },
+    {
+     "on": "item text",
+     "descending": false,
+     "n/a first": false
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [],
+   "sections": [
+    {
+     "category": 53,
+     "columns": [
+      {
+       "category": 39,
+       "width": 8,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      },
+      {
+       "category": 106,
+       "width": 8
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 136,
+   "name": "Topics",
+   "hide_empty_sections": true,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": true,
+   "number_items": false,
+   "section_sorting": "alphabetic",
+   "sort": [],
+   "sort_new_items": "on leaving section",
+   "filter": [],
+   "sections": [
+    {
+     "category": 48,
+     "columns": [
+      {
+       "category": 51,
+       "width": 12
+      },
+      {
+       "category": 39,
+       "width": 8,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      },
+      {
+       "category": 106,
+       "width": 8
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "macros": [
+  "{Add a company}",
+  "{Add a topic}",
+  "{Clear current listing}",
+  "{Load a CD/Corporate abstract file}",
+  "{Print current view}",
+  "{Print error handler}"
+ ]
+}

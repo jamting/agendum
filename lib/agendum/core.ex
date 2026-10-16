@@ -75,10 +75,12 @@ defmodule Agendum.Core do
   # the new database and what changed
   defdelegate run(db, command, clock), to: Agendum.Core.Command
 
-  # files: new, and as JSON (R44)
+  # files: new, as JSON (R44), and Lotus Agenda files imported (R72)
   defdelegate new_file(opts \\ []), to: Files
   defdelegate export_json(db), to: Files
   defdelegate import_json(text), to: Files
+  defdelegate agenda_file?(bytes), to: Files
+  defdelegate import_ag(bytes, opts \\ []), to: Files
 
   # items: adding and editing (R21), moving (R26), done, marking (R35), discarding
   defdelegate add_item(db, text, today, opts \\ []), to: Items

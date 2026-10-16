@@ -428,19 +428,25 @@ defmodule Agendum.Core.JSONFile do
   @spec decode(String.t()) :: {:ok, Database.t()} | {:error, String.t()}
   def decode(text) do
     case JSON.decode(text) do
-      {:ok, %{"format" => format, "version" => @version} = doc} when format in @formats ->
-        build(doc)
-
-      {:ok, %{"format" => format, "version" => v}} when format in @formats ->
-        {:error, "unsupported version #{inspect(v)}"}
-
-      {:ok, _} ->
-        {:error, "not an Agendum JSON file"}
-
-      {:error, _} ->
-        {:error, "not valid JSON"}
+      {:ok, doc} -> decode_document(doc)
+      {:error, _} -> {:error, "not valid JSON"}
     end
   end
+
+  @doc """
+  Builds a file from a JSON document already decoded into maps (string
+  keys), as `decode/1` does from its text; the `.AG` import writes one
+  (R72).
+  """
+  @spec decode_document(term) :: {:ok, Database.t()} | {:error, String.t()}
+  def decode_document(%{"format" => format, "version" => @version} = doc)
+      when format in @formats,
+      do: build(doc)
+
+  def decode_document(%{"format" => format, "version" => v}) when format in @formats,
+    do: {:error, "unsupported version #{inspect(v)}"}
+
+  def decode_document(_doc), do: {:error, "not an Agendum JSON file"}
 
   defp build(doc) do
     db = database(doc)
