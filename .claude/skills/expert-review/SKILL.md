@@ -32,7 +32,7 @@ Read before judging; every finding in the report needs a pointer
 (`path:line`, a document, a command's output). Collect into the scratchpad,
 not the repo.
 
-**Mission and plans**: `README.md`, `CLAUDE.md`, `docs/INDEX.md`,
+**Mission and plans**: `README.md`, `docs/VISION.md`, `CLAUDE.md`, `docs/INDEX.md`,
 `docs/AGENDA_HISTORY.md`, `docs/ROADMAP.md` (open first), every plan's
 status line in `docs/plans/`, the newest ADRs, `CHANGELOG.md`.
 

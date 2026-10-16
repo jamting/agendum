@@ -623,7 +623,8 @@ flowchart LR
   means setting it in `Agendum.Starters.Golden` first.
 - The format is not human-readable; File ▸ Transfer ▸ Export writes a
   file as JSON ([`JSON_FORMAT.md`](JSON_FORMAT.md), ADR 0010).
-  See [ADR 0003](adr/0003-file-format.md).
+  See [ADR 0003](adr/0003-file-format.md); it stays the format of record,
+  for speed at large volumes ([ADR 0034](adr/0034-format-of-record.md)).
 
 Format versions:
 

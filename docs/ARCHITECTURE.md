@@ -253,3 +253,4 @@ algorithms. See `docs/adr/` for the reasoning behind the larger choices.
 | [0031](adr/0031-box-keys-as-agenda.md)                  | Keys in a box as Agenda: the arrows move, SPACE changes          |
 | [0032](adr/0032-function-keys-required.md)              | Function keys are required: no ESC + digit stand-in              |
 | [0033](adr/0033-commands-and-keymaps.md)               | Keys run named commands through keymaps; a count with ALT-digits |
+| [0034](adr/0034-format-of-record.md)                   | The format of record: Erlang terms now, a database for many users, JSON for people |

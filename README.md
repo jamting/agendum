@@ -7,7 +7,8 @@ Milne's books about the Hundred Acre Wood, and the program's manual is Owl
 teaching Rabbit to use it; an *agendum* is one thing to be done.
 
 New to Lotus Agenda? [`docs/AGENDA_HISTORY.md`](docs/AGENDA_HISTORY.md) explains
-why people loved the original and what made it unique.
+why people loved the original and what made it unique; where Agendum is
+going is in [`docs/VISION.md`](docs/VISION.md).
 
 You type free-form items. Agendum files them into categories: the one you
 typed them under, and any whose names appear in the text. Views show the

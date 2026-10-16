@@ -1,6 +1,6 @@
 # ADR 0003 — File format
 
-**Status:** accepted · 2026-10-08
+**Status:** accepted · 2026-10-08 · confirmed as the format of record by ADR 0034
 
 ## Decision
 

@@ -12,6 +12,7 @@ The `tidy-docs` skill brings them up to date and keeps them so.
 | [`../README.md`](../README.md)               | What Agendum is, how to run it, a quick tour                                                      |
 | [`../CLAUDE.md`](../CLAUDE.md)               | The rules for changing the code: commands, architecture rules, the workflow, conventions          |
 | [`../CONTRIBUTING.md`](../CONTRIBUTING.md)   | Setting up a machine, and a first change, for a person                                            |
+| [`VISION.md`](VISION.md)                     | Where Agendum is going: Agenda's idea, a knowledge system with a model inside, many users     |
 | [`ROADMAP.md`](ROADMAP.md)                   | What is open (first) and what is done, with rule numbers                                          |
 | [`../CHANGELOG.md`](../CHANGELOG.md)         | What changed in each version (semantic versioning, tagged `vX.Y.Z`)                               |
 
@@ -60,6 +61,7 @@ Each plan starts with its status.
 | [`plans/MULTIUSER.md`](plans/MULTIUSER.md)                             | A web application with accounts and shared files, on the same core (ADR 0020)  |
 | [`plans/GITHUB.md`](plans/GITHUB.md)                                   | Putting the repository on GitHub; public or paid later                         |
 | [`plans/RENAME_REPO.md`](plans/RENAME_REPO.md)                         | Renaming the repository folder, with Claude Code's memory                      |
+| [`plans/ITEM_LEVELS.md`](plans/ITEM_LEVELS.md)                         | Three levels of items: zettels, ingested items, the model's context items (vision) |
 | [`plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)           | An idea: a personal agent inside the file                                      |
 | [`plans/REFACTORING.md`](plans/REFACTORING.md)                         | Where organic growth left complexity (mostly done)                             |
 | [`plans/DOSBOX_STAGING.md`](plans/DOSBOX_STAGING.md)                   | Running the real Agenda for Claude (done differently; a record)                |

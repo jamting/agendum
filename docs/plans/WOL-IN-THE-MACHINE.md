@@ -52,6 +52,9 @@ natural successor of the string matching in R15 and R16.
 - **Write conditions in plain words**: "anything about the garden that
   is not done" becomes a condition or a filter.
 - **Summarise**: a section, a person's items, the week ahead.
+- **Sift what comes in**: ingested items (calendars, RSS feeds, level 2
+  in `ITEM_LEVELS.md`) proposed as zettels when they matter to the
+  person, the rest left to the discard rules.
 
 ## The pieces Agendum already has
 
@@ -94,8 +97,11 @@ natural successor of the string matching in R15 and R16.
   offline)?
 - How much of the file to send: all of it, the view, or what a search
   finds first?
-- Does the agent remember between sessions, and where (a note, a
-  category, the preferences)?
+- Does the agent remember between sessions, and where? The owner's
+  answer (2026-10-16): in **context items**, the third level of items
+  (`ITEM_LEVELS.md`), which it makes to understand what the information
+  means; the person can inspect them but not edit them, and changes them
+  by telling the agent to behave differently.
 - In the multi-user web app (`docs/plans/MULTIUSER.md`): one agent per person
   or per file, and whose suggestions does a shared file accept?
 - The first small step. A good candidate: smarter filing of a new item,

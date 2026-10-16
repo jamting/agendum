@@ -3,8 +3,12 @@
 File ▸ Transfer ▸ Export writes a whole Agendum file as JSON, and File ▸
 Transfer ▸ Import reads one back (SPEC R44, ADR 0010). The JSON holds
 everything in the file, so an export imported again gives the same file. It
-is meant for backups you can read, diffs, scripts and moving data to other
-tools. The working format stays the Erlang-term `.agendum` file (ADR 0003).
+is meant for people: exchanging data with others and other tools, and
+looking at a file (backups you can read, diffs, scripts). The working
+format stays the Erlang-term `.agendum` file (ADR 0003, ADR 0034). It is
+Agendum's counterpart of Agenda's structured files (STF), whose export
+also chooses what goes in; Agendum's will ask which item levels to include
+once there are levels (`docs/plans/ITEM_LEVELS.md`).
 
 The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs`
 and `json_round_trip_test.exs` check that a round trip changes nothing.
