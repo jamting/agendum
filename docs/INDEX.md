@@ -71,6 +71,7 @@ Each plan starts with its status.
 | Document                       | About                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
 | `docs/reviews/` (one per date) | Dated expert panel reviews, written as meeting minutes (architecture, code, users, business, vision, methods, agent readiness), each following up the last (`expert-review` skill) |
+| [`study/STUDY_PLAN.md`](study/STUDY_PLAN.md) | The owner's study of the code: units the panel picks, with questions ticked off when understood (`study-plan` skill) |
 
 ## Where a change is written down
 
