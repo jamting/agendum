@@ -162,6 +162,8 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
       - **Prompt** `:prompt` for the name or the key.
   - **Alarm list** `:alarm_list` (Search ▸ Alarms): current and past alarms (R38). `Agendum.TUI.Boxes.AlarmList`.
 
+- **While you were away** `:away` (by itself, after the splash screen or as a file is retrieved, only when alarms came due while the file was closed): those alarms, grouped by text (R70). `Agendum.TUI.Boxes.AwayBox`.
+
 - **Developer tools** `:devtools` (ESC ?, hidden, from anywhere but while typing): a full screen of debugging facts and a key tester; see `docs/KEYBOARD.md`. `Agendum.TUI.DevTools`.
 
 Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies after its question, Undo, Save) are not listed.
@@ -211,6 +213,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:execute`           | box           | `Agendum.TUI.Boxes.ExecuteBox`           | Category ▸ Execute                                | R15e           |
 | `:questions`         | box           | `Agendum.TUI.Boxes.QuestionsBox`         | Category ▸ Questions                              | R16            |
 | `:alarm_list`        | box           | `Agendum.TUI.Boxes.AlarmList`            | Search ▸ Alarms                                   | R38            |
+| `:away`              | box           | `Agendum.TUI.Boxes.AwayBox`              | Opening a file with alarms due while it was closed | R70           |
 | `:calendar`          | box           | `Agendum.TUI.Boxes.CalendarBox`          | F3 in a date column, ALT-C                        | R46            |
 | `:datebook_props`    | box           | `Agendum.TUI.Boxes.DatebookBox`          | View ▸ Properties of a datebook view              | R47            |
 | `:section_props`     | box           | `Agendum.TUI.Boxes.SectionBox`           | View ▸ Section ▸ Properties, F6 on a section head | R61            |

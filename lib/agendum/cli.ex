@@ -208,6 +208,7 @@ defmodule Agendum.CLI do
             prefs: prefs
           )
           |> Layout.settle()
+          |> Update.arrive()
           |> Update.start(
             options.file == nil and not (options.demo or options.rabbit or options.clinic)
           )

@@ -26,6 +26,7 @@ defmodule Agendum.TUI.Modes do
     action_box: [:clear, :cursor, :line, :owner, :target],
     alarm_list: [:cursor],
     auto_assign: [:cursor, :opened],
+    away: [:groups],
     browse: [:date, :scope, :shift, :view_id],
     calendar: [:date, :target, :time],
     calendars: [:cursor],

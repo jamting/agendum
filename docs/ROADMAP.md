@@ -74,7 +74,6 @@ Then working together:
 ### Time management (Milestone 5)
 
 - [ ] Recurring items on every date they recur: in each datebook section and in any date filter that covers an occurrence, counted from the base date, still one item (as Agenda does; checked in Agenda 2.0, User's Guide 7-11). Plan with the evidence, the habit changes to settle first and the steps: `docs/plans/RECURRING_OCCURRENCES.md` (R14a)
-- [ ] "While you were away": after the splash screen (unchanged), only when alarms came due while the file was closed, a box lists them, newest first, alarms with the same text grouped with a count, ENTER or ESC closes; they stay in Past Alarms. A rung alarm records when it was due (not when the file opened), and ringing is not an edit: it never causes a "Save changes?" question by itself. The grouping in the core, for the web too (R38; meeting 2026-10-16, § 6)
 - [ ] Alarms sent to your phone with Signal, as well as on the screen: through the separate `signal-cli` program, linked to your Signal account; optional (nothing changes without it), set up in File ▸ Customize
 
 ### Housekeeping
@@ -252,6 +251,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] More preferences (R54): key map on/off, kept (ALT-K); confirm mode; auto-save interval; decimal and thousands separators (Setting Up Agenda 1-25 to 1-31). Custom colours are not planned: we keep to themes (ADR 0022)
 - [x] Select File box (R51): pick a file from a list instead of typing its name, for File ▸ Retrieve (ALT-G, CTRL-O) and Write, and Transfer ▸ Import/Export: the folders and files of the current folder, ENTER opens a folder or chooses a file, `..` goes up, typing narrows the list; F7 shows dates, as Agenda's Select File box did (User's Guide 22-4 to 22-5)
 - [x] Typing in the view manager highlights a view (R53)
+- [x] "While you were away": after the splash screen (unchanged), only when alarms came due while the file was closed, a box lists them, the latest first, alarms with the same text grouped with a count, ENTER or ESC closes; they stay in Past Alarms. A rung alarm records when it was due, and ringing is not an edit. The grouping in the core (R70; meeting 2026-10-16, § 6)
 
 ### Housekeeping
 

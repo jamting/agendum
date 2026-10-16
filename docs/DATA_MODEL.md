@@ -59,7 +59,7 @@ erDiagram
         bool when_explicit "When set by the user, not the text"
         time when_time "time of day on the When date, or nil"
         int alarm_minutes "0-60 before When, or nil"
-        datetime alarm_rung_at "when the alarm went off"
+        datetime alarm_rung_at "when the rung alarm was due"
         bool marked
         map recurrence "rule of a recurring When date, or nil (R14a)"
     }

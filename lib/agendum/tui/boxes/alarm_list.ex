@@ -1,8 +1,8 @@
 defmodule Agendum.TUI.Boxes.AlarmList do
   @moduledoc """
   The alarm list (Search ▸ Alarms; Agenda's Utilities Show Alarm, User's
-  Guide 10-18 to 10-20): items with alarms set, and today's alarms that
-  have gone off. DEL on a past alarm removes it from the list, ALT-A on a
+  Guide 10-18 to 10-20): items with alarms set, and the alarms that have
+  gone off since the date changed, each at the time it was due (R70). DEL on a past alarm removes it from the list, ALT-A on a
   current one cancels it. Opening the list clears the alarm symbol in the
   title. Agenda shows this as a Show View with !Current Alarms! and !Past
   Alarms! sections; ours is a box. Pure.
@@ -20,14 +20,15 @@ defmodule Agendum.TUI.Boxes.AlarmList do
 
   @doc "The rows: `{:current, id}` and `{:past, id}`."
   def rows(state) do
-    %{current: current, past: past} = Core.alarm_list(state.db, state.today)
+    %{current: current, past: past} = Core.alarm_list(state.db)
     Enum.map(current, &{:current, &1}) ++ Enum.map(past, &{:past, &1})
   end
 
   @impl Box
   def about(_state, _mode) do
     """
-    The alarms: those still to ring, and those that rang today. ALT-A
+    The alarms: those still to ring, and those that rang since the date
+    changed (or while the file was closed). ALT-A
     cancels the highlighted one; DEL removes a past one from the list.
     ENTER or ESC goes back.
     """
@@ -112,7 +113,7 @@ defmodule Agendum.TUI.Boxes.AlarmList do
 
     [[{:box, " Current alarms"}]] ++
       if(current == [], do: none, else: current) ++
-      [[], [{:box, " Past alarms today"}]] ++
+      [[], [{:box, " Past alarms"}]] ++
       if(past == [], do: none, else: past) ++
       [[], Box.hint(keys(state, mode), inner)]
   end
@@ -122,9 +123,13 @@ defmodule Agendum.TUI.Boxes.AlarmList do
     "rings " <> DateFormat.datetime(at, state.db.date_format)
   end
 
-  defp when_text(state, :past, item),
-    do:
-      "rang " <> DateFormat.time(NaiveDateTime.to_time(item.alarm_rung_at), state.db.date_format)
+  # when it was due (R70): the time alone today, else the date too, for an
+  # alarm that came due while the file was closed
+  defp when_text(state, :past, %{alarm_rung_at: at}) do
+    if NaiveDateTime.to_date(at) == state.today,
+      do: "rang " <> DateFormat.time(NaiveDateTime.to_time(at), state.db.date_format),
+      else: "rang " <> DateFormat.datetime(at, state.db.date_format)
+  end
 
   @impl Box
   def keys(_state, _mode),
@@ -133,6 +138,6 @@ defmodule Agendum.TUI.Boxes.AlarmList do
   @impl Box
   def help,
     do:
-      "The items with alarms, and today's alarms that have gone off. " <>
+      "The items with alarms, and the alarms that have gone off. " <>
         "DEL removes a past alarm, ALT-A cancels a current one."
 end

@@ -70,7 +70,7 @@ defmodule Agendum.Core.AlarmsTest do
       {db, rung} = Core.ring_alarms(db, ~N[2026-10-08 13:55:00])
       assert rung == [id]
       assert db.items[id].alarm_minutes == nil
-      assert Core.alarm_list(db, ~D[2026-10-08]) == %{current: [], past: [id]}
+      assert Core.alarm_list(db) == %{current: [], past: [id]}
     end
 
     test "the alarm list shows current alarms; past ones are cleared the next day", %{
@@ -78,10 +78,43 @@ defmodule Agendum.Core.AlarmsTest do
       id: id
     } do
       {:ok, db} = Core.set_alarm(db, id, 0)
-      assert Core.alarm_list(db, ~D[2026-10-08]) == %{current: [id], past: []}
+      assert Core.alarm_list(db) == %{current: [id], past: []}
 
       {db, _} = Core.ring_alarms(db, ~N[2026-10-08 14:00:00])
-      assert Core.alarm_list(Core.clear_old_alarms(db, ~D[2026-10-09]), ~D[2026-10-09]).past == []
+      assert Core.alarm_list(Core.clear_old_alarms(db, ~D[2026-10-09])).past == []
+    end
+
+    # R70: an alarm that came due while the file was closed keeps when it was due
+    test "a rung alarm records when it was due, not when it rang", %{db: db, id: id} do
+      {:ok, db} = Core.set_alarm(db, id, 5)
+      {db, [^id]} = Core.ring_alarms(db, ~N[2026-10-10 08:00:00])
+      assert db.items[id].alarm_rung_at == ~N[2026-10-08 13:55:00]
+      # still a past alarm until the date changes
+      assert Core.alarm_list(db).past == [id]
+      assert Core.alarm_list(Core.clear_old_alarms(db, ~D[2026-10-09])).past == []
+    end
+
+    test "alarms that rang together are grouped by text, the latest first", %{db: db, id: id} do
+      {db, standup} = Core.add_item(db, "Stand-up at 9:00", @now)
+      {db, standup2} = Core.add_item(db, "Stand-up tomorrow at 9:00", @now)
+      db = Database.update_item(db, standup2, &%{&1 | text: "Stand-up at 9:00"})
+      db = Enum.reduce([id, standup, standup2], db, &elem(Core.set_alarm(&2, &1, 0), 1))
+      {db, rung} = Core.ring_alarms(db, ~N[2026-10-10 08:00:00])
+
+      assert Core.group_alarms(db, rung) == [
+               %{
+                 text: "Stand-up at 9:00",
+                 count: 2,
+                 at: ~N[2026-10-09 09:00:00],
+                 ids: [standup2, standup]
+               },
+               %{
+                 text: "Personnel meeting at 2:00",
+                 count: 1,
+                 at: ~N[2026-10-08 14:00:00],
+                 ids: [id]
+               }
+             ]
     end
 
     test "cancelling an alarm and removing a past one", %{db: db, id: id} do
@@ -89,7 +122,7 @@ defmodule Agendum.Core.AlarmsTest do
       assert Core.cancel_alarm(db, id).items[id].alarm_minutes == nil
 
       {db, _} = Core.ring_alarms(db, ~N[2026-10-08 14:00:00])
-      assert Core.alarm_list(Core.remove_past_alarm(db, id), ~D[2026-10-08]).past == []
+      assert Core.alarm_list(Core.remove_past_alarm(db, id)).past == []
     end
   end
 end

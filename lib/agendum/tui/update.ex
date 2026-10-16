@@ -264,7 +264,7 @@ defmodule Agendum.TUI.Update do
   updates the clock, forgets the previous day's past alarms when the date
   changes, and rings alarms whose time has come (a message, a bell, and
   the alarm symbol in the title until the alarm list is shown). Ringing
-  is not an undo step.
+  is not an undo step, nor an edit (R70).
   """
   @spec tick(State.t(), NaiveDateTime.t()) :: {State.t(), [term]}
   def tick(%State{} = state, %NaiveDateTime{} = now) do
@@ -277,11 +277,8 @@ defmodule Agendum.TUI.Update do
     clock = State.context(%{state | now: now})
     new_day = if today != state.today, do: [:clear_old_alarms, :recheck_conditions], else: []
 
-    {:ok, db, %{steps: steps}} =
-      Core.run(state.db, {:batch, new_day ++ [:ring_alarms]}, clock)
-
-    %{result: rung} = List.last(steps)
-    state = %{state | now: now, today: today, db: db}
+    {state, rung} = run_clock(state, new_day ++ [:ring_alarms], clock)
+    state = %{state | now: now, today: today}
 
     # the splash screen's three seconds (R52)
     state =
@@ -300,7 +297,7 @@ defmodule Agendum.TUI.Update do
 
     # calendars due to be read again (R45), one read at a time each
     state =
-      db
+      state.db
       |> Core.calendars_due(now)
       |> Enum.reduce(%{state | effects: []}, &fetch_calendar(&2, &1.id, :auto))
 
@@ -314,6 +311,41 @@ defmodule Agendum.TUI.Update do
         texts = Enum.map_join(ids, " · ", &state.db.items[&1].text)
         {%{state | alarm_rang: true} |> State.info("Alarm: " <> texts), [:bell | fetches]}
     end
+  end
+
+  # The clock's own changes (R38, R66): not undo steps, and not edits
+  # either (R70): they are made to the file as last saved too, so they
+  # never cause a "Save changes?" question by themselves; quitting without
+  # saving rings the same alarms next time. Returns what the last command
+  # gave (the alarms rung). The saved file is only worked on when the
+  # clock changed something.
+  defp run_clock(state, commands, clock) do
+    {:ok, db, %{steps: steps}} = Core.run(state.db, {:batch, commands}, clock)
+    %{result: result} = List.last(steps)
+
+    saved =
+      if db == state.db or state.saved_db == nil do
+        state.saved_db
+      else
+        {:ok, saved, _changes} = Core.run(state.saved_db, {:batch, commands}, clock)
+        saved
+      end
+
+    {%{state | db: db, saved_db: saved}, result}
+  end
+
+  @doc """
+  A file just opened (at startup, Retrieve, Import): forgets past alarms
+  from before today, and rings the alarms that came due while it was
+  closed, quietly; when there are any, the "While you were away" box
+  lists them (R70), under the splash screen at startup.
+  """
+  @spec arrive(State.t()) :: State.t()
+  def arrive(%State{} = state) do
+    {state, rung} = run_clock(state, [:clear_old_alarms, :ring_alarms], State.context(state))
+    state = %{state | dirty: state.db != state.saved_db}
+
+    if rung == [], do: state, else: Agendum.TUI.Boxes.AwayBox.open(state, rung)
   end
 
   # Auto-save (R54): a named file with unsaved changes is saved once no key
@@ -430,6 +462,7 @@ defmodule Agendum.TUI.Update do
     }
     |> remember(path)
     |> Layout.settle()
+    |> arrive()
   end
 
   def loaded(state, _path, {:error, :enoent}), do: State.error(state, "File not found")
@@ -452,6 +485,7 @@ defmodule Agendum.TUI.Update do
             message: {:message, "Imported #{Path.basename(path)} (save it to keep it)"}
         }
         |> Layout.settle()
+        |> arrive()
 
       {:error, reason} ->
         State.error(state, "Could not import #{Path.basename(path)}: #{reason}")

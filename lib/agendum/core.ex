@@ -125,7 +125,8 @@ defmodule Agendum.Core do
   defdelegate set_alarm(db, id, minutes), to: Alarms
   defdelegate cancel_alarm(db, id), to: Alarms
   defdelegate ring_alarms(db, now), to: Alarms
-  defdelegate alarm_list(db, today), to: Alarms
+  defdelegate alarm_list(db), to: Alarms
+  defdelegate group_alarms(db, ids), to: Alarms
   defdelegate remove_past_alarm(db, id), to: Alarms
   defdelegate clear_old_alarms(db, today), to: Alarms
 

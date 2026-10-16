@@ -136,6 +136,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Boxes.CalendarsBox`                     | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
 | `Agendum.TUI.Typing.NoteSearch`                       | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `Agendum.TUI.Boxes.AlarmList`                        | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
+| `Agendum.TUI.Boxes.AwayBox`                          | ✔     | "While you were away": the alarms that came due while the file was closed, grouped (R70).                                        |
 | `Agendum.TUI.DevTools`                         | ✔     | The hidden developer screen (ESC ?): state for debugging, and a key tester.                                                      |
 | `Agendum.Starters.Planner`                     | ✔     | The Activities Planner starter file, built through `Agendum.Core` (R60, ADR 0028); `Planner.Views`, `Planner.Macros`, `Planner.Samples` (sample data). |
 | `Agendum.Starters.Clinic`                      | ✔     | An Easter egg and showcase (`agendum --clinic`): Christopher Robin's psychotherapy clinic, mid-work, dated from today; `Clinic.Items`, `Clinic.Views`. |

@@ -41,7 +41,9 @@ defmodule Agendum.Core.Facade.Alarms do
 
   @doc """
   Rings the alarms whose time has come: they leave the current alarms and
-  join today's past alarms. Returns the items that rang.
+  join the past alarms, each with the time it was due (not when it rang,
+  which differs for alarms that came due while the file was closed; R38,
+  R70). Returns the items that rang.
   """
   @spec ring_alarms(db, NaiveDateTime.t()) :: {db, [id]}
   def ring_alarms(db, %NaiveDateTime{} = now) do
@@ -58,18 +60,24 @@ defmodule Agendum.Core.Facade.Alarms do
           do: item.id
 
     db =
-      Enum.reduce(
-        due,
-        db,
-        &Database.update_item(&2, &1, fn i -> %{i | alarm_minutes: nil, alarm_rung_at: now} end)
-      )
+      Enum.reduce(due, db, fn id, db ->
+        Database.update_item(db, id, &%{&1 | alarm_minutes: nil, alarm_rung_at: due_at(&1)})
+      end)
 
     {db, due}
   end
 
-  @doc "Current alarms (in When order) and today's past alarms (latest first)."
-  @spec alarm_list(db, Date.t()) :: %{current: [id], past: [id]}
-  def alarm_list(db, %Date{} = today) do
+  # when an item's alarm is due: its minutes before the When moment
+  defp due_at(item), do: NaiveDateTime.add(when_at(item), -item.alarm_minutes * 60)
+
+  @doc """
+  Current alarms (in When order) and past alarms (latest first): those
+  rung since the date last changed (`clear_old_alarms/2` forgets older
+  ones as the date changes and as the file is opened), which may have
+  been due before today when they came due while the file was closed.
+  """
+  @spec alarm_list(db) :: %{current: [id], past: [id]}
+  def alarm_list(db) do
     items = Database.items(db)
 
     current =
@@ -83,11 +91,34 @@ defmodule Agendum.Core.Facade.Alarms do
 
     past =
       items
-      |> Enum.filter(&(&1.alarm_rung_at && NaiveDateTime.to_date(&1.alarm_rung_at) == today))
+      |> Enum.filter(& &1.alarm_rung_at)
       |> Enum.sort_by(& &1.alarm_rung_at, {:desc, NaiveDateTime})
       |> Enum.map(& &1.id)
 
     %{current: current, past: past}
+  end
+
+  @doc """
+  Alarms that rang together, for showing at once ("While you were away",
+  R70): those with the same text in one group, with how many and when the
+  latest was due, the group due latest first. `ids` are rung alarms (their
+  items have `alarm_rung_at`); each group's ids are the latest first.
+  """
+  @spec group_alarms(db, [id]) :: [
+          %{text: String.t(), count: pos_integer, at: NaiveDateTime.t(), ids: [id]}
+        ]
+  def group_alarms(db, ids) do
+    # `Enum.group_by/2` gives a map from text to the items with it; each
+    # list is sorted latest first, and the groups by their latest
+    ids
+    |> Enum.map(&db.items[&1])
+    |> Enum.group_by(& &1.text)
+    |> Enum.map(fn {text, items} ->
+      items = Enum.sort_by(items, & &1.alarm_rung_at, {:desc, NaiveDateTime})
+      at = hd(items).alarm_rung_at
+      %{text: text, count: length(items), at: at, ids: Enum.map(items, & &1.id)}
+    end)
+    |> Enum.sort_by(& &1.at, {:desc, NaiveDateTime})
   end
 
   @doc "Removes an item from the past alarms (DEL in the alarm list)."

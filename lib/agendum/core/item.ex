@@ -15,8 +15,8 @@ defmodule Agendum.Core.Item do
   `Agendum.Core.Recurrence`, R14a); the When date is then its base date.
 
   An alarm rings `alarm_minutes` before the When date and time (R38);
-  once it has rung, `alarm_rung_at` records when, for the day's list of
-  past alarms.
+  once it has rung, `alarm_rung_at` records when it was due (R70), for
+  the list of past alarms.
   """
 
   @type id :: pos_integer

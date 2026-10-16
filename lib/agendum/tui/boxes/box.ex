@@ -104,6 +104,7 @@ defmodule Agendum.TUI.Boxes.Box do
     action_box: Agendum.TUI.Boxes.ActionBox,
     alarm_list: Agendum.TUI.Boxes.AlarmList,
     auto_assign: Agendum.TUI.Boxes.AutoAssignBox,
+    away: Agendum.TUI.Boxes.AwayBox,
     calendar: Agendum.TUI.Boxes.CalendarBox,
     calendars: Agendum.TUI.Boxes.CalendarsBox,
     category_match: Agendum.TUI.Boxes.CategoryMatchBox,

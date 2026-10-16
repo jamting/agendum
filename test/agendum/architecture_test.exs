@@ -147,7 +147,7 @@ defmodule Agendum.ArchitectureTest do
   # here, so a new kind of change cannot skip the command layer.
   @reads ~w(
     alarm_list assignment_reasons auto_dating? browse_keep browse_move browse_start browse_to browsed_view calendars_due completions confirm_mode date_conversion
-    date_filters? default_column_width demote_conflicts dependents entry_categories
+    date_filters? default_column_width demote_conflicts dependents entry_categories group_alarms
     entry_values exclusive_conflicts export_json import_json item_assignments
     item_column_fit marked_items match_settings move_conflicts new_file
     numeric_conversion prerequisites promote_conflicts questions read_when

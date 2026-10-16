@@ -4,6 +4,8 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- Alarms that came due while a file was closed are no longer just a message line: after the splash screen, a "While you were away" box lists them, the latest first, alarms with the same text counted on one line. ENTER or ESC closes it; Search ▸ Alarms still lists them.
+- An alarm going off no longer counts as a change to the file, so it never makes Agendum ask "Save changes?" by itself. A past alarm shows the time it was due.
 - A file opens where you left it: on the view and the item you were on when you quit or opened another file. The place is kept in your preferences, not in the file, so moving around never asks you to save.
 - The view manager (F8) marks the view you are in with ►, wherever the highlight is.
 - F5 in the view manager lists the views by when you last used them, and F5 again in your own order. Only the list changes: ALT-N and ALT-P keep your order. Agendum remembers the choice for each file.

@@ -72,10 +72,10 @@ defmodule Agendum.TUI.AlarmsTest do
     screen = screen(state)
     assert screen =~ "Alarm list"
     assert screen =~ ~r/Review at 4pm.*rings 2026-10-08 15:50/
-    assert screen =~ ~r/Personnel meeting at 2:00.*rang 14:00/
+    assert screen =~ ~r/Personnel meeting at 2:00.*rang 13:55/
 
     state = press(state, [:down, :delete])
-    assert Agendum.Core.alarm_list(state.db, ~D[2026-10-08]).past == []
+    assert Agendum.Core.alarm_list(state.db).past == []
     assert %{type: :alarm_list} = State.mode(state)
   end
 
@@ -83,7 +83,7 @@ defmodule Agendum.TUI.AlarmsTest do
     state = press(state, ["Personnel meeting at 2:00", :enter, {:alt, "a"}, :enter])
     {state, _} = Update.tick(state, ~N[2026-10-08 14:00:00])
     {state, _} = Update.tick(state, ~N[2026-10-09 00:00:05])
-    assert Agendum.Core.alarm_list(state.db, ~D[2026-10-09]).past == []
+    assert Agendum.Core.alarm_list(state.db).past == []
     assert state.today == ~D[2026-10-09]
   end
 end
