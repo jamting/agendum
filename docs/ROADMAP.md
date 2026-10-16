@@ -33,7 +33,7 @@ few commands at a time. The command layer is the next major work, after
 Sharpen the saw: the web, customizable keys, a modern mode and Wol all
 wait for it (expert review 2026-10-16, `docs/reviews/2026-10-16.md`).
 
-- [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agendum.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
+- [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agendum.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so). Each command names its target (an item or category id, not the highlighted row: `ViewKeys.run/3` passes `Layout.current_row/1` today) and returns what changed, so a web page or an agent with no cursor can call it (expert review 2026-10-16, second meeting, `docs/reviews/2026-10-16-2.md`)
   - [ ] Typed UI modes, done with it (moved from Sharpen the saw, owner's decision 2026-10-16): each place whose keys move to commands also gets a struct for its mode, instead of the `%{type: …}` maps in `State.modes` (about fifty kinds), so the compiler and Dialyzer catch a misspelt field that today only the fuzz test finds. Done when no mode is a bare map; one place at a time, each step with `mix check` and a long fuzz run
 - [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps (R65, ADR 0033)
   - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)
@@ -50,6 +50,7 @@ wait for it (expert review 2026-10-16, `docs/reviews/2026-10-16.md`).
   - [x] Longer texts for the menu's entries (by their labels; an entry that runs a view's or a global command has its text) and the boxes' own commands (by box; a settings box's Change and Done shared)
   - [ ] Longer texts for the rest, where they would help: the moves (Browse, widths …) and typing
 - [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
+- [ ] Reasons with assignments: automatic assignment says why in its result (the matched word, condition or action, with its rule), for the Questions box (R16), F1 on an assignment and an agent's report ("filed under Kanga because …") (second meeting)
 - [ ] Raw values (dates, numbers) beside the formatted cells in `Agendum.Core.ViewModel`
 - [ ] Browsing's date arithmetic into the core
 - [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
@@ -102,7 +103,7 @@ Then working together:
 - [ ] Optional: read original `.AG` files directly. The format is now largely known (`docs/AGENDA_FILE_FORMAT.md`; research log `docs/plans/AGENDA_FILE_FORMAT_LOG.md`; reference reader `tools/agformat/agdump.py`): items, notes and note files, categories with all their settings, conditions and actions, assignments with values, relative and recurring dates, alarms, views with sorting and filters, datebooks, sections, columns with formats, file settings
   - [x] Reverse engineer the format: container, items, categories, values, views (2026-10-14)
   - [x] Settle the open parts: view/section sort and filter words, relative-date encoding, actions, settings (2026-10-15, second round; how to drive Agenda: `tools/agformat/DRIVING_AGENDA.md`)
-  - [ ] Elixir reader outside the pure core, converting to the JSON format; File ▸ Transfer ▸ Import of a `.AG`. The first users are likely old Agenda users, and this brings them (expert review 2026-10-16)
+  - [ ] Elixir reader outside the pure core, converting to the JSON format; File ▸ Transfer ▸ Import of a `.AG`. The first users are likely old Agenda users, and this brings them (expert review 2026-10-16, and again in the second meeting)
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
 - [ ] Optional: Import of structured text files (one item per line, with categories)
 - [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files). A first real use: the session summaries in `docs/summaries/` (one per feature, all alike: `#` title, dated, commit hashes, R-numbers), imported with STF and a definition file so text matching files them (the owner's wish, 2026-10-15)
@@ -119,8 +120,8 @@ Then working together:
 
 ### Users and direction
 
-- [ ] Who Agendum is for, in one paragraph at the top of `VISION.md` (which holds the rest of the vision), and the "Beyond Agenda" items weighed against it (expert review 2026-10-16)
-- [ ] Five real users before Milestone 2 is closed: old Agenda users and people who love keyboard tools, with the debug log on (`AGENDUM_LOG`) and a short talk with each; what they stumble on goes here (expert review 2026-10-16)
+- [ ] Who Agendum is for, in one paragraph at the top of `VISION.md` (which holds the rest of the vision), and the "Beyond Agenda" items weighed against it (expert review 2026-10-16); `VISION.md` and this roadmap to agree on what comes first (second meeting)
+- [ ] Five real users before Milestone 2 is closed: old Agenda users and people who love keyboard tools, with the debug log on (`AGENDUM_LOG`) and a short talk with each; what they stumble on goes here (expert review 2026-10-16); with a date set (second meeting)
 
 ### Beyond Agenda
 
@@ -130,7 +131,8 @@ Then working together:
   - [ ] Rules for ingested items: keep, promote to a zettel, discard
   - [ ] The JSON export (R44) with a choice of levels; an import of a partial export says so
 - [ ] A GTD starter, like the Planner (R60, ADR 0028): Inbox, Next Actions by context, Projects, Waiting For, Someday/Maybe, and views for a weekly review (items untouched for a while, projects without a next action), so the rules show what they can do in a method many people know (expert review 2026-10-16)
-- [ ] Capture from outside: `agendum add "text" FILE` from the shell, filed by the core as if typed in the view (the file's main view and section); later a mail or phone path (expert review 2026-10-16)
+- [ ] Capture from outside: `agendum add "text" FILE` from the shell, filed by the core as if typed in the view (the file's main view and section), printing where it was filed; later a mail or phone path (expert review 2026-10-16). The first command with no keyboard, and an agent's first tool (second meeting)
+  - [ ] First: notice that the file changed on disk since it was loaded (size and modification time, or a hash) before saving over it, and ask, as for unsaved changes; today the TUI's next save silently undoes what another writer saved (second meeting)
 - [ ] More date languages (one `Agendum.Core.DateLanguage` pack each)
 - [ ] Modern by default: today's names and standard keys out of the box (Open not Retrieve, Delete not Discard, CTRL-O/S/Z/F/N…), with Agenda's names and keys one setting away ("Agenda mode"). Agenda's steep learning curve limited its audience (AGENDA_HISTORY.md); the power should stay, the strangeness should not be the first thing people meet. Builds on the keymaps, self-describing commands and own key bindings (Towards many users); departs from ADR 0006 and 0007, so it needs an ADR of its own
 - [ ] Flashcards with active recall and spaced repetition: an item is the question, its note the answer; a deck is any category. The schedule is kept in ordinary categories made the first time (date category Due; numeric Interval, Ease and Reviews), so filters, datebooks, sorting and JSON work on cards as they are, with no new stored fields. A review mode on the due items: the question, SPACE shows the note, then Again / Hard / Good / Easy sets the next Due date (one undo step per card). Scheduling is SM-2 to begin with, in a pure core module with the clock passed in, behind an interface that FSRS could replace
@@ -142,6 +144,7 @@ Then working together:
 - Multiple files open; a launcher listing recent files
 - In-line help in boxes: the hint inside a box (made from its keys, `Box.hint/2`) as the start of a fuller help, with longer texts in a help box of their own (the owner's idea, 2026-10-14)
 - Wol in the machine (its memory: the context items of `plans/ITEM_LEVELS.md`): a personal agent (a language model) inside the file, using its items, categories, views and rules as the person's own meaning; it files, finds and plans by proposing, never silently changing; the core stays pure and privacy comes first. Builds on the command layer (Towards many users). Thoughts in [`docs/plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)
+- Before Wol, without a model: golden tasks (a few small files, a request each, and the commands a good answer proposes), which also test the command layer's design; and a sixth principle in the Wol plan, that item text is data and never instructions, before the first feed is read (expert review 2026-10-16, second meeting, `docs/reviews/2026-10-16-2.md`)
 
 ## Done
 
@@ -334,6 +337,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Sharpen the saw
 
+- [x] A deterministic gate (2026-10-16): the architecture test loaded OTP's `tools` (`:xref`) only at run time, so on some runs the compiler warned that `:xref` was undefined and `--warnings-as-errors` failed `mix check` with every test passing (3 of 8 runs); `test/test_helper.exs` now loads it before any test compiles, and ExUnit no longer takes the golden files' `.facts.exs` for tests (`test_ignore_filters`). Ten runs in a row and one from a clean build pass (expert review 2026-10-16, second meeting, `docs/reviews/2026-10-16-2.md`)
 - [x] Meaning in the fuzz walks (2026-10-16): after every key the data model's invariants hold (`Agendum.Core.Invariants.violations/1`, the list in DATA_MODEL.md plus one id space), and a key that changed the file is reversed exactly by undoing the steps it recorded (R30). The JSON round trip checks the invariants too
 - [x] A git pre-push hook that runs `mix check` (`.githooks/pre-push`, turned on by `mix setup`), until CI runs it on GitHub (2026-10-16)
 - [x] Golden files for the file format (2026-10-16): `test/fixtures/formats/v33.agendum` and its facts, made by `mix agendum.golden` from `Agendum.Starters.Golden`, which sets every stored field (a test checks); every golden file must load, upgrade, keep the invariants and its facts, open in every view and save again, and the current version's file must exist. Building it found a bug: a category with conditions made a date category marked items as conditionally assigned to it with no link (fixed in `Assign`)
