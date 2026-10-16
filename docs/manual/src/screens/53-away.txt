@@ -1,0 +1,25 @@
+ Alarms that came due while the file was closed.        READY  2026-10-12 10:15
+ Search ▸ Alarms lists them all.
+ Garden                                   When             Priority Friends
+ • Weed┌───────────────────── While you were away ──────────────────────┐
+ • Coun│ 2 alarms came due:                                             │r
+   boun│                                                                │
+       │ 2026-10-12 09:25  Ask Piglet to bring a basket at 9:30am       │
+ Notice│ 2026-10-12 08:55  Remind Tigger about the lettuces at 9am      │ds
+ • Put └───────────────── Press ENTER or ESC to return ─────────────────┘
+   Meeting on Friday
+
+ Friends and Relations                    When             Priority Friends
+ • Count the lettuces before Tigger                        Medium   Tigger
+   bounces on them
+ • Ask Owl how to spell Organising                         Low      Owl
+ • Find Small, who is lost again                           High     Small
+ • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+ • Remind Tigger about the lettuces at    2026-10-12 09:00          Tigger
+   9am
+ • Ask Piglet to bring a basket at 9:30am 2026-10-12 09:30          Piglet
+
+
+
+
+ ENTER/ESC Return

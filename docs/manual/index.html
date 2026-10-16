@@ -253,7 +253,7 @@ can back out a step at a time. This manual writes menu paths like <strong>File �
 <h3>Keys you will use all the time</h3>
 <table>
   <tr><th>Key</th><th>What it does</th><th>Also</th></tr>
-  <tr><td><kbd>F1</kbd></td><td>Help: every key, wherever you are</td><td></td></tr>
+  <tr><td><kbd>F1</kbd></td><td>Help about where you are; then <kbd>c</kbd> the commands, <kbd>d</kbd> a key, <kbd>a</kbd> every key</td><td></td></tr>
   <tr><td><kbd>ESC</kbd></td><td>Back out of whatever you are in</td><td></td></tr>
   <tr><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td><td>Undo / redo (up to 100 steps)</td><td></td></tr>
   <tr><td><kbd>CTRL-S</kbd></td><td>Save</td><td><kbd>ALT-W</kbd></td></tr>
@@ -267,16 +267,60 @@ can back out a step at a time. This manual writes menu paths like <strong>File �
 pictures of brightness and sound. Hold <kbd>fn</kbd> and they become <kbd>F1</kbd> to
 <kbd>F12</kbd>, or tell your computer, once, in System Settings ▸ Keyboard, to use them
 as standard function keys. Agendum needs them, as Agenda did. For the menu,
-<kbd>/</kbd> will do; <kbd>ESC</kbd> followed by a letter is <kbd>ALT</kbd> and that
-letter; and <kbd>CTRL-N</kbd> does what <kbd>INS</kbd> does.</p>
+<kbd>/</kbd> will do; <kbd>ALT</kbd> is the key marked <kbd>⌥</kbd>, once your terminal
+is told to use it as Meta; and <kbd>CTRL-N</kbd> does what <kbd>INS</kbd> does.</p>
 <p class="rabbit"><b>Rabbit.</b> And if I press something dreadful?</p>
 <p class="owl"><b>Owl.</b> <kbd>CTRL-Z</kbd>. Almost everything can be undone, and undo
 even takes you back to where the change happened.</p>
 </div>
 
+<h3 id="help">Help about where you are</h3>
+<p><kbd>F1</kbd> opens a help box over whatever you were doing: a few words about the
+place you are in, the view, a note, a manager, the menu or the box on top. From there,
+<kbd>c</kbd> lists the commands you can use there, with their keys and what each does;
+the ones that cannot run just now are greyed, and the line under the highlighted one
+says why. Typing narrows the list, and <kbd>ENTER</kbd> runs the highlighted command,
+as if you had pressed its key. <kbd>d</kbd> and then a key says what that key would do,
+without doing it, and <kbd>a</kbd> lists every key in Agendum. <kbd>ESC</kbd> goes
+back.</p>
+
+<!-- screen: 51-help-commands -->
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                       HELP  2026-10-12 10:15 </span>
+<span class="t"> Help                                                                           </span>
+<span class="h"> Garden                                   When             Priority Friends</span>
+ • ┌───────────────────────────────── Help ─────────────────────────────────┐
+ • │ COMMANDS IN A VIEW                  ↑↓ move · ENTER runs · ESC returns │
+   │   Type to narrow the list.                                             │
+   │ ────────────────────────────────────────────────────────────────────── │
+ No│ Up                ↑                      Highlight the row above       │
+ • │ Down              ↓ ENTER                Highlight the row below       │
+   │ Page up           PGUP                   Highlight the row a screen up │
+   │ Page down         PGDN                   Highlight the row a screen do…│
+ Fr│ Top               HOME CTRL-HOME         Highlight the first row of th…│
+ • │ Bottom            END CTRL-END           Highlight the last row of the…│
+   │ Previous section  CTRL-PGUP ALT-↑        Highlight the section head ab…│
+ • │ Next section      CTRL-PGDN ALT-↓        Highlight the section head be…│
+ • │ Next column       → TAB                  Highlight the column to the r…│
+ • │ ─────────────────────────────────────────────────────────── ↓ 47 more ─│o
+   │ Up · ↑                                                                 │
+   │ Highlight the row above                                                │
+   │                                                                        │
+   │                                                                        │
+   │                                                                        │
+   └────────────────────────────────────────────────────────────────────────┘
+<span class="t"> ↑↓ Move  ← → More  ENTER Run  ESC Return                                       </span></pre>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> And if I choose one that cannot be done just now? I
+should hate to break it.</p>
+<p class="owl"><b>Owl.</b> You cannot. It is shown in grey, and the line under it says
+why: <em>Done</em> wants an item, and you are on a section head. It keeps its place in
+the list all the same, so you learn where it lives.</p>
+</div>
+
 <div class="tip">The <a href="#reference">reference</a> at the end lists every key with
-its Mac-friendly alternative. On a Mac, set your terminal to use Option as Meta (or
-press <kbd>ESC</kbd> before the letter) for the <kbd>ALT</kbd> keys; <kbd>ALT-F</kbd>
+its Mac-friendly alternative. On a Mac, set your terminal to use Option as Meta for the
+<kbd>ALT</kbd> keys (pressing <kbd>ESC</kbd> and then the letter is two keys, not one); <kbd>ALT-F</kbd>
 keys are <kbd>⌥</kbd> with the function key.</div>
 </section>
 
@@ -635,12 +679,14 @@ spelt enough for one week.</p>
   <li><kbd>F3</kbd> on an item opens its <strong>assignment profile</strong>, the whole
       tree with the item's categories marked: <code>*</code> assigned, <code>c</code> by
       a condition, <code>+</code> through a subcategory, <code>◊</code> a date.
-      <kbd>SPACE</kbd> assigns or unassigns.</li>
+      <kbd>SPACE</kbd> assigns or unassigns. The control panel says why the item is in
+      the highlighted category: typed there by hand, its name in the text, a condition, a
+      date, or through a child.</li>
   <li><kbd>ALT-M</kbd> picks one category for the item, or for all marked items.</li>
 </ul>
 
 <!-- screen: 04-profile -->
-<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                     ASSIGN  2026-10-12 10:15 </span>
+<pre class="screen"><span class="t"> In Entry: dated 2026-10-12                            ASSIGN  2026-10-12 10:15 </span>
 <span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
  • Weed t┌──── Assignments: Weed the carrot bed tomorrow morning ─────┐
@@ -661,6 +707,13 @@ spelt enough for one week.</p>
          │ * assigned  c by a condition  + via subcategory  SPACE     │
          └────────────────────────────────────────────────────────────┘
 <span class="t"> SPACE Assign or unassign  ESC Done                                             </span></pre>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> I never put the carrot bed in <em>Entry</em>.</p>
+<p class="owl"><b>Owl.</b> The top line says who did: “dated 2026-10-12”, the day you
+wrote it. Move down the list and it tells you, for each category the item is in, why it
+is there. Nothing is filed behind your back without a reason you can read.</p>
+</div>
 
 <h3 id="alsomatch">Also match: more words for a category</h3>
 <p>A category can be filed into by other words than its name. In its properties,
@@ -945,12 +998,25 @@ them. Rather like you, at parties.</p>
 
 <h3>Many views</h3>
 <p><kbd>F8</kbd> opens the <strong>view manager</strong>, a box listing the views, with
-<code>*</code> before a datebook: <kbd>ENTER</kbd> switches to a view, <kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) adds one, <kbd>F2</kbd> renames, <kbd>ALT-↑</kbd> /
+<code>*</code> before a datebook and <code>►</code> before the view you are in, wherever the
+highlight goes: <kbd>ENTER</kbd> switches to a view, <kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) adds one, <kbd>F2</kbd> renames, <kbd>ALT-↑</kbd> /
 <kbd>ALT-↓</kbd> reorder, <kbd>DEL</kbd> discards (items and categories are kept).
 Typing the start of a view's name jumps to it: with many views, <kbd>c</kbd> goes to the
-next one beginning with C, and more letters narrow it down. From a
+next one beginning with C, and more letters narrow it down. <kbd>F5</kbd> lists the
+views by when you last looked at them, the most recent first; <kbd>F5</kbd> again goes
+back to your own order, which is also the order <kbd>ALT-N</kbd> follows. Agendum
+remembers which you chose. From a
 view, <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> go to the next or previous view and
 <kbd>ALT-F8</kbd> back to the last one.</p>
+
+<!-- screen: 52-viewmgr -->
+<pre class="screen"><span class="t"> To display a view, highlight the view name and        VW MGR  2026-10-12 10:15 </span>
+<span class="t"> press ENTER. Press INS to create a new view.                                   </span>
+<span class="h"> Garden                                   When             Priority Friends</span>
+ • Weed the ca┌────────────────── View Manager ──────────────────┐
+ • Count the l│   ►  Rabbit's Week                               │  Tigger
+   bounces on └────── Press ENTER when done, ESC to cancel ──────┘
+<span class="t"> ENTER Select INS Add F2 Rename DEL/F4 Discard F5 Recent A-↑↓ Reorder ESC Return</span></pre>
 
 <h3>Hiding things</h3>
 <p><strong>View ▸ Hide</strong> turns on or off, for this view: <em>Done</em> items,
@@ -1078,6 +1144,31 @@ cancels an alarm.</p>
  • Find Small, who is lost again                           High     Small
  @ Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
 <span class="t"> F1 Help F2 Edit F3 Choices F4 Done F5 Note F6 Props F7 Mark F8 VwMgr F9 CatMgr </span></pre>
+
+<p>Alarms that came due while the file was closed are not lost. The next time you open
+it, they ring quietly and a <strong>While you were away</strong> box lists them, the
+latest first; alarms with the same text share a line, with a count. <kbd>ENTER</kbd> or
+<kbd>ESC</kbd> closes it, and the alarms wait in <strong>Search ▸ Alarms</strong> with
+the others. Ringing does not count as a change, so it never makes Agendum ask you to
+save.</p>
+
+<!-- screen: 53-away -->
+<pre class="screen"><span class="t"> Alarms that came due while the file was closed.        READY  2026-10-12 10:15 </span>
+<span class="t"> Search ▸ Alarms lists them all.                                                </span>
+<span class="h"> Garden                                   When             Priority Friends</span>
+ • Weed┌───────────────────── While you were away ──────────────────────┐
+ • Coun│ 2 alarms came due:                                             │r
+   boun│                                                                │
+       │ 2026-10-12 09:25  Ask Piglet to bring a basket at 9:30am       │
+ Notice│ 2026-10-12 08:55  Remind Tigger about the lettuces at 9am      │ds
+ • Put └───────────────── Press ENTER or ESC to return ─────────────────┘
+<span class="t"> ENTER/ESC Return                                                               </span></pre>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> I was out looking for Small. Piglet's basket!</p>
+<p class="owl"><b>Owl.</b> Half past nine, and it is a quarter past ten. You are late,
+but you know it, which is the next best thing to being on time.</p>
+</div>
 
 <h3 id="datecats">Date categories of your own</h3>
 <p>Besides Entry, When and Done, you can have date categories of your own: <em>Due</em>,
@@ -1518,6 +1609,11 @@ on the screen, so when the file has unsaved changes Agendum first asks “Save c
 first?”: <kbd>Y</kbd> saves (asking for a name if the file has none) and goes on,
 <kbd>N</kbd> goes on without saving, <kbd>ESC</kbd> changes its mind.</p>
 
+<p>A file opens where you left it: the same view, with the highlight on the same item.
+If the item has gone, the highlight waits on its section's head instead. Where you
+were is kept in your own settings, not in the file, so moving about never makes the file
+want saving, and a file you share opens where <em>you</em> left it.</p>
+
 <p>A file keeps everything about the information in it: items, categories, views and the
 file's date and matching settings. <strong>File ▸ Transfer ▸ Export</strong> writes all
 of it as readable JSON, good for backups and for other programs; <strong>Import</strong>
@@ -1768,7 +1864,11 @@ until the day you need one, and then you will remember there was something.</p>
       room, and Agendum remembers that next time.</li>
   <li><strong>Undo</strong> goes back up to 100 steps, in views and in the managers;
       undoing back to the last save clears the <code>*</code>.</li>
-  <li><strong>For the curious</strong>: <kbd>ESC</kbd> then <kbd>?</kbd> opens a hidden
+  <li><strong>Several at once</strong>: <kbd>ALT</kbd> and digits before a command in a
+      view make it run that many times: <kbd>ALT-1</kbd> <kbd>ALT-0</kbd> <kbd>↓</kbd>
+      moves ten rows down. It works for moving the highlight, the next marked item, hop
+      and the next or previous view; <kbd>ESC</kbd> forgets the count.</li>
+  <li><strong>For the curious</strong>: <kbd>ALT-?</kbd> opens a hidden
       screen of technical details, which also shows each key exactly as your terminal
       sends it. <kbd>ESC</kbd> leaves it.</li>
 </ul></div>
@@ -1781,15 +1881,15 @@ until the day you need one, and then you will remember there was something.</p>
 
 <p>The function keys are needed, as in Agenda: on a Mac, hold <kbd>fn</kbd> with them
 (<kbd>ALT-F</kbd> keys are <kbd>⌥</kbd> with the function key) or make them standard
-function keys in System Settings ▸ Keyboard. Every <kbd>ALT</kbd> letter also works as
-<kbd>ESC</kbd> then the letter.</p>
+function keys in System Settings ▸ Keyboard. Every <kbd>ALT</kbd> letter is <kbd>⌥</kbd>
+and the letter, with your terminal set to use Option as Meta.</p>
 
 <h3>In a view</h3>
 <table>
   <tr><th>Key</th><th>Does</th><th>Mac-friendly</th></tr>
   <tr><td>type</td><td>New item, or an entry in the highlighted column</td><td></td></tr>
   <tr><td><kbd>INS</kbd></td><td>New item / another column entry</td><td><kbd>CTRL-N</kbd>, <kbd>ALT-I</kbd></td></tr>
-  <tr><td><kbd>F1</kbd></td><td>Help</td><td></td></tr>
+  <tr><td><kbd>F1</kbd></td><td>Help about where you are; then <kbd>c</kbd> commands, <kbd>d</kbd> describe a key, <kbd>a</kbd> all keys</td><td></td></tr>
   <tr><td><kbd>F2</kbd></td><td>Edit the item, section head or entry</td><td><kbd>CTRL-E</kbd></td></tr>
   <tr><td><kbd>F3</kbd></td><td>Assignment profile; in a column, its categories; in a date column, the calendar</td><td></td></tr>
   <tr><td><kbd>F4</kbd></td><td>Done / not done</td><td><kbd>CTRL-K</kbd></td></tr>
@@ -1808,10 +1908,10 @@ function keys in System Settings ▸ Keyboard. Every <kbd>ALT</kbd> letter also 
   <tr><td><kbd>ALT-F9</kbd></td><td>Copy the item (or the marked ones) to another section as well</td><td></td></tr>
   <tr><td><kbd>ALT-F10</kbd></td><td>Move the item; on a section or column head, the section or column</td><td>On a head: <strong>View ▸ Section ▸ Move</strong>, <strong>View ▸ Column ▸ Move</strong></td></tr>
   <tr><td><kbd>ALT-A</kbd></td><td>Alarm</td><td></td></tr>
-  <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter</td><td><kbd>ESC</kbd> <kbd>b</kbd></td></tr>
-  <tr><td><kbd>ALT-C</kbd></td><td>The calendar</td><td><kbd>ESC</kbd> <kbd>c</kbd></td></tr>
+  <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter</td><td><kbd>⌥b</kbd></td></tr>
+  <tr><td><kbd>ALT-C</kbd></td><td>The calendar</td><td><kbd>⌥c</kbd></td></tr>
   <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-U</kbd></td><td>Section below / above</td><td></td></tr>
-  <tr><td><kbd>ALT-H</kbd></td><td>Hop to the item's next occurrence</td><td><kbd>ESC</kbd> <kbd>h</kbd></td></tr>
+  <tr><td><kbd>ALT-H</kbd></td><td>Hop to the item's next occurrence</td><td><kbd>⌥h</kbd></td></tr>
   <tr><td><kbd>ALT-R</kbd> / <kbd>ALT-L</kbd></td><td>Column right / left</td><td></td></tr>
   <tr><td><kbd>ALT-J</kbd></td><td>Next marked item</td><td></td></tr>
   <tr><td><kbd>ALT-K</kbd></td><td>Show or hide the key bar (remembered)</td><td></td></tr>
@@ -1821,9 +1921,10 @@ function keys in System Settings ▸ Keyboard. Every <kbd>ALT</kbd> letter also 
   <tr><td><kbd>ALT-O</kbd></td><td>Depend on the marked items</td><td></td></tr>
   <tr><td><kbd>ALT-V</kbd></td><td>Empty sections</td><td></td></tr>
   <tr><td><kbd>ALT-X</kbd> / <kbd>ALT-E</kbd></td><td>Execute all / one category</td><td></td></tr>
-  <tr><td><kbd>ALT-Y</kbd></td><td>Yank back the item <kbd>DEL</kbd> last removed</td><td><kbd>ESC</kbd> <kbd>y</kbd></td></tr>
-  <tr><td><kbd>ALT-Z</kbd></td><td>Run the last macro again</td><td><kbd>ESC</kbd> <kbd>z</kbd></td></tr>
+  <tr><td><kbd>ALT-Y</kbd></td><td>Yank back the item <kbd>DEL</kbd> last removed</td><td><kbd>⌥y</kbd></td></tr>
+  <tr><td><kbd>ALT-Z</kbd></td><td>Run the last macro again</td><td><kbd>⌥z</kbd></td></tr>
   <tr><td><kbd>ALT-−</kbd> / <kbd>ALT-=</kbd></td><td>Collapse / expand</td><td></td></tr>
+  <tr><td><kbd>ALT-1</kbd> … <kbd>ALT-9</kbd>, <kbd>ALT-0</kbd></td><td>A count for the next command (<kbd>ALT-1</kbd> <kbd>ALT-0</kbd> <kbd>↓</kbd>: ten rows down)</td><td></td></tr>
   <tr><td><kbd>CTRL-PGUP</kbd> / <kbd>CTRL-PGDN</kbd></td><td>Previous / next section</td><td><kbd>⌥↑</kbd> / <kbd>⌥↓</kbd></td></tr>
   <tr><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td><td>Undo / redo</td><td></td></tr>
   <tr><td><kbd>CTRL-S</kbd> / <kbd>CTRL-O</kbd></td><td>Save / open</td><td><kbd>ALT-W</kbd> / <kbd>ALT-G</kbd></td></tr>

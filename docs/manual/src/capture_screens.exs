@@ -42,6 +42,8 @@ defmodule ManualScreens do
     datebook(state)
     macros(state)
     columns(state)
+    help_and_views(state)
+    away(state)
   end
 
   defp view(state) do
@@ -93,7 +95,6 @@ defmodule ManualScreens do
       press(state, [{:f, 10}, "v", "f", :down, :enter] ++ range),
       :range_filter
     )
-
 
     item = [:down, :down] ++ String.graphemes("Ask Piglet and Pooh to help dig") ++ [:enter]
     # Auto-assign settings ▸ Confirm assignments: Always; ENTER keeps it (ESC would cancel)
@@ -187,6 +188,32 @@ defmodule ManualScreens do
     shot("49-column-add", press(state, [{:f, 10}, "v", "c", "a"]), :column_add)
     friends = [:down, :right, :right, :right, {:f, 10}, "v", "c", "p"]
     shot("50-column-props", press(state, friends), :column_props)
+  end
+
+  # F1 then c: the commands of a view; the view manager with ► on the view
+  # shown.
+  defp help_and_views(state) do
+    shot("51-help-commands", press(state, [{:f, 1}, "c"]), :help)
+    shot("52-viewmgr", press(state, {:f, 8}), :viewmgr)
+  end
+
+  # "While you were away": Rabbit set two alarms at 8 o'clock, left the
+  # file, and opens it again at 10:15, when both have come due. Opening a
+  # file is `Update.arrive/1`; the file as saved is the one with the alarms.
+  defp away(state) do
+    early = %{state | now: ~N[2026-10-12 08:00:00]}
+
+    alarm = fn s, text ->
+      press(s, [:ctrl_end] ++ String.graphemes(text) ++ [:enter, {:alt, "a"}, :enter])
+    end
+
+    s =
+      early
+      |> alarm.("Remind Tigger about the lettuces at 9am")
+      |> alarm.("Ask Piglet to bring a basket at 9:30am")
+
+    s = %{s | saved_db: s.db, now: state.now, message: nil}
+    shot("53-away", Agendum.TUI.Update.arrive(s), :away)
   end
 
   defp name(state, {id, _depth}), do: state.db.categories[id].name
