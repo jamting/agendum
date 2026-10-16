@@ -65,7 +65,7 @@ defmodule Agendum.TUI.Render do
       {%{normal: :catmgr, item: :catmgr, dim: :catmgr_note, section: :catmgr_head, edit: :row},
        :catmgr}
 
-  defp surface(%{type: :help}), do: {%{normal: :help}, :help}
+  defp surface(%{type: :help}), do: {%{normal: :help, dim: :help_dim}, :help}
   defp surface(_base), do: {%{}, :normal}
 
   # The base is the topmost full-screen mode (or the view); boxes above it

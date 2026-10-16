@@ -83,6 +83,24 @@ defmodule Agendum.TUI.Boxes.ViewManager do
     command(state, mode, command, Enum.at(state.db.view_order, mode.cursor))
   end
 
+  @doc """
+  The view manager's commands that cannot run on the highlighted view,
+  each with why (R65a): F1 `c` greys them.
+  """
+  @spec unavailable(State.t()) :: %{atom => String.t()}
+  def unavailable(state) do
+    cursor = State.mode(clamp(state)).cursor
+    last = length(state.db.view_order) - 1
+
+    [
+      move_up: cursor == 0 && "Already the first view",
+      move_down: cursor == last && "Already the last view",
+      discard: last == 0 && "A file must have at least one view"
+    ]
+    |> Enum.filter(fn {_id, reason} -> is_binary(reason) end)
+    |> Map.new()
+  end
+
   # undo can remove views while the manager is open; any key but a letter
   # forgets what was typed
   defp clamp(state) do

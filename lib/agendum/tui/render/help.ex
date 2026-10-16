@@ -104,6 +104,10 @@ defmodule Agendum.TUI.Render.Help do
       for(keys <- more, do: " " <> blank <> keys)
   end
 
+  @doc "The space before a row's keys: a line under a command starts there."
+  @spec indent() :: String.t()
+  def indent, do: String.duplicate(" ", 1 + @name_width)
+
   defp key_lines(names) do
     names
     |> Enum.reduce([], fn

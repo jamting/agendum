@@ -62,6 +62,16 @@ The owner settled these choices before any code (2026-10-15):
   (all keys, generated from the keymaps) from there. The hand-written key
   list is gone.
 
+- **What cannot run now is greyed, not hidden** (owner, 2026-10-16; R65a).
+  F1 `c` keeps every command of the place in its place and greys the ones
+  that cannot run now, with the reason on the highlighted one; hiding
+  them would make commands come and go, putting them last would move
+  them. Each place has an explicit `unavailable/1` beside its `run`,
+  rather than trying every command on the state: many commands open a
+  box or ask first, and only fail later, so a trial run would call them
+  available. A test runs each command said not to run and checks that
+  nothing changed, so the checks cannot claim more than is true.
+
 ## Consequences
 
 - The keymap is data that tests can check: every bound command exists,

@@ -143,34 +143,88 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
   # ALT-U, ALT-L and ALT-R (User's Guide 16-11): a sibling above, a new
   # family after the parent, or the first child.
   defp insert_category(state, id, where) do
-    db = state.db
+    case insert_target(state.db, id, where) do
+      {:error, message} -> State.error(state, message)
+      target -> %{state | edit: %{target: target, line: LineEdit.new("")}}
+    end
+  end
+
+  # where the new category goes, or why it cannot go there
+  defp insert_target(db, id, where) do
     cat = db.categories[id]
     parent = cat.parent_id && db.categories[cat.parent_id]
 
-    target =
-      case where do
-        _ when id == db.main_id and where != :child ->
-          {:error, "Nothing can be added beside MAIN"}
+    case where do
+      _ when id == db.main_id and where != :child ->
+        {:error, "Nothing can be added beside MAIN"}
 
-        :above ->
-          {:new, cat.parent_id, Database.previous_sibling(db, id) || :first}
+      :above ->
+        {:new, cat.parent_id, Database.previous_sibling(db, id) || :first}
 
-        :uncle when parent.id == db.main_id ->
-          {:error, "Nothing can be added at the same level as MAIN"}
+      :uncle when parent.id == db.main_id ->
+        {:error, "Nothing can be added at the same level as MAIN"}
 
-        :uncle ->
-          {:new, parent.parent_id, parent.id}
+      :uncle ->
+        {:new, parent.parent_id, parent.id}
 
-        :child when cat.kind != :standard ->
-          {:error, "Children can be added only to standard categories"}
+      :child when cat.kind != :standard ->
+        {:error, "Children can be added only to standard categories"}
 
-        :child ->
-          {:new, id, :first}
-      end
+      :child ->
+        {:new, id, :first}
+    end
+  end
 
-    case target do
-      {:error, message} -> State.error(state, message)
-      target -> %{state | edit: %{target: target, line: LineEdit.new("")}}
+  @doc """
+  The manager's commands that cannot run on the highlighted category, each
+  with why (R65a): F1 `c` greys them. The reasons are the ones running
+  them reports.
+  """
+  @spec unavailable(State.t()) :: %{atom => String.t()}
+  def unavailable(state) do
+    state = clamp(state, State.mode(state))
+    db = state.db
+    id = current(state)
+    name = db.categories[id].name
+    protected = Database.protected?(db, id)
+
+    [
+      rename: protected && "#{name} cannot be renamed",
+      move: protected && "#{name} cannot be moved",
+      discard: protected && "#{name} cannot be discarded",
+      add_above: added(db, id, :above),
+      add_family: added(db, id, :uncle),
+      add_child: added(db, id, :child),
+      promote: relocated(db, id, :promote),
+      demote: relocated(db, id, :demote),
+      move_up: reordered(db, id, &Database.previous_sibling/2, "first"),
+      move_down: reordered(db, id, &Database.next_sibling/2, "last")
+    ]
+    # `&&` gives false (or nil) for a command that can run: keep the reasons
+    |> Enum.filter(fn {_id, reason} -> is_binary(reason) end)
+    |> Map.new()
+  end
+
+  defp added(db, id, where) do
+    case insert_target(db, id, where) do
+      {:error, message} -> message
+      _target -> nil
+    end
+  end
+
+  # the core tries the move (it is pure) and says why it would fail
+  defp relocated(db, id, relocation) do
+    case Core.relocation_conflicts(db, id, relocation) do
+      {:error, why} -> CategoryScreens.hierarchy_message(why)
+      {:ok, _conflicts} -> nil
+    end
+  end
+
+  defp reordered(db, id, sibling, which) do
+    cond do
+      db.categories[id].parent_id == nil -> CategoryScreens.hierarchy_message(:protected)
+      sibling.(db, id) == nil -> "Already the #{which} of its siblings"
+      true -> nil
     end
   end
 

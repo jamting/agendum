@@ -117,6 +117,8 @@ defmodule Agendum.TUI.Terminal.Theme do
       catmgr_head: {:blue, :cyan},
       catmgr_note: {:blue, :cyan},
       help: {:yellow, :blue},
+      # a command F1 c lists that cannot run now (R65a)
+      help_dim: {:grey, :blue},
       splash_logo: {:white, :black},
       splash_title: {:white, :cyan},
       splash_value: {:blue, :cyan}
@@ -163,6 +165,7 @@ defmodule Agendum.TUI.Terminal.Theme do
       catmgr_head: "0;1",
       catmgr_note: "0;2",
       help: "0",
+      help_dim: "0;2",
       splash_logo: "0;1",
       splash_title: "0;1;7",
       splash_value: "0;4;7"

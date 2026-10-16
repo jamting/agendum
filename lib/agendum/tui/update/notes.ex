@@ -51,6 +51,37 @@ defmodule Agendum.TUI.Update.Notes do
   @spec run(State.t(), atom) :: State.t()
   def run(state, id), do: command(state, State.mode(state), id)
 
+  @step_unsupported "ALT-N / ALT-P work in notes opened from a view or the category manager"
+
+  @doc """
+  A note's commands that cannot run now, each with why (R65a): F1 `c`
+  greys them. The reasons are the ones running them reports.
+  """
+  @spec unavailable(State.t()) :: %{atom => String.t()}
+  def unavailable(state) do
+    mode = State.mode(state)
+
+    [
+      paste: state.last.copied == nil && "Nothing to paste: F3 copies, F4 cuts",
+      search_next: state.searches.note == nil && "Nothing to search for yet; press ALT-F6",
+      make_item: length(state.modes) > 1 && "ALT-F7 makes items from a note opened in a view",
+      next_note: stepped(state, mode, 1),
+      previous_note: stepped(state, mode, -1)
+    ]
+    |> Enum.filter(fn {_id, reason} -> is_binary(reason) end)
+    |> Map.new()
+  end
+
+  defp stepped(state, mode, step) do
+    below = state.modes |> Enum.drop(1) |> List.first()
+
+    case next_note_target(state, below, mode.target, step) do
+      :unsupported -> @step_unsupported
+      nil -> "No more notes in this direction"
+      _target -> nil
+    end
+  end
+
   defp edit_text(state, mode, key) do
     case TextEdit.handle(mode.edit, key, Wrap.width(state)) do
       {:ok, edit} -> State.put_mode(state, Map.merge(mode, %{edit: edit, match: nil}))
@@ -270,10 +301,7 @@ defmodule Agendum.TUI.Update.Notes do
 
     case {below, next_note_target(state, below, mode.target, step)} do
       {_, :unsupported} ->
-        State.error(
-          state,
-          "ALT-N / ALT-P work in notes opened from a view or the category manager"
-        )
+        State.error(state, @step_unsupported)
 
       {_, nil} ->
         state |> State.effect(:bell) |> State.error("No more notes in this direction")

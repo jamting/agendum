@@ -316,27 +316,26 @@ defmodule Agendum.TUI.CategoryScreens do
 
   @doc "Applies a change to the hierarchy, or reports why it failed."
   def hierarchy_change(state, {:ok, db}), do: State.change_db(state, db)
+  def hierarchy_change(state, {:error, why}), do: State.error(state, hierarchy_message(why))
 
-  def hierarchy_change(state, {:error, :top_level}),
-    do: State.error(state, "Already at the top level")
+  @doc """
+  Why a change to the hierarchy failed, as the person reads it; also what
+  F1 `c` says about a command that would fail so (R65a).
+  """
+  @spec hierarchy_message(atom) :: String.t()
+  def hierarchy_message(:top_level), do: "Already at the top level"
 
-  def hierarchy_change(state, {:error, :no_previous_sibling}),
-    do: State.error(state, "Demote needs a category above at the same level")
+  def hierarchy_message(:no_previous_sibling),
+    do: "Demote needs a category above at the same level"
 
-  def hierarchy_change(state, {:error, :protected}),
-    do: State.error(state, "This category cannot be moved")
+  def hierarchy_message(:protected), do: "This category cannot be moved"
+  def hierarchy_message(:cycle), do: "A category cannot be moved under itself"
 
-  def hierarchy_change(state, {:error, :cycle}),
-    do: State.error(state, "A category cannot be moved under itself")
+  def hierarchy_message(:excluded_lineage),
+    do: "Not moved: a category would be under one it excludes"
 
-  def hierarchy_change(state, {:error, :excluded_lineage}),
-    do: State.error(state, "Not moved: a category would be under one it excludes")
-
-  def hierarchy_change(state, {:error, :empty}),
-    do: State.error(state, "A category needs a name")
-
-  def hierarchy_change(state, {:error, :duplicate}),
-    do: State.error(state, "That category already exists there")
+  def hierarchy_message(:empty), do: "A category needs a name"
+  def hierarchy_message(:duplicate), do: "That category already exists there"
 
   @doc "Moves the cursor to a category, expanding the families above it."
   def move_cursor_to(state, id) do

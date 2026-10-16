@@ -99,6 +99,7 @@ for a new rule.
 | R63 | Marking, copying, cutting and pasting in a note | 4 |
 | R64 | Word wrap in the note editor | 4 |
 | R65 | Commands, keymaps and a count | 5 |
+| R65a | Commands that cannot run now | 5 |
 
 ## 1. Concepts
 
@@ -1259,6 +1260,25 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   changing a column's width, browsing dates and searching the view: each
   has a keymap, and F1 opens the help there. Typing keys are in keymaps
   too (one line, and a note's text), so describe key names them in a note.
+- **R65a ✅ Commands that cannot run now** (ours; Agenda had no command
+  list). F1 `c` lists every command of the place, but greys those that
+  cannot run now (the Mac's menus grey them too): a command stays where
+  it always is, so its place in the list can be learnt, and what the place
+  offers can still be seen. The highlighted one says why on a line under
+  it ("Not now: No removed item to yank back"); ENTER on it shows that
+  reason instead of running it. Typing to narrow the list highlights the
+  first match that can run, so typing then ENTER runs something. `d` adds
+  the reason to a key's description. A command cannot run when running it
+  would do nothing, or only report an error: Yank with nothing removed,
+  Next marked and Unmark all with nothing marked, Copy, Hop and Alarm on
+  a section head, Done, When and MakeAssign on a section head with
+  nothing marked, Undo with nothing to undo, Rename and Discard on MAIN,
+  Promote at the top level, Move up on the first sibling or view, Paste in
+  a note with nothing copied … A command that asks first (Discard on an
+  item) can run. Each place says which of its commands cannot run
+  (`unavailable/1` beside its `run`), with the same reason the command
+  gives; a test runs every command said not to run and checks that it
+  changed nothing.
 - **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
   category name is typed into a column cell, Agenda shows the first
   matching category (the rest of its name in grey), the top line says how

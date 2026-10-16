@@ -92,7 +92,8 @@ few commands at a time:
   - [x] The menu: its keys in a keymap; F1 `c` lists the level's entries by their letters, F1 `d` describes them
   - [x] Moving items, a column or a section, a column's width, Browse and searching the view: keymaps of their own, F1 there too
   - [x] The typing keys in keymaps: one line (`:line`, `Typing.LineEdit`) and a note's text (`:text`, `Typing.TextEdit`)
-  - [ ] What commands still lack: a longer documentation than the summary, and whether a command can run now (`available?`). To settle first with the owner: should F1 `c` leave out, grey or put last what cannot run here? (A cheap way to know: run the command on the state, which is pure, and see if it reports an error; done once when the list opens)
+  - [x] Whether a command can run now (R65a): F1 `c` greys what cannot, says why, and ENTER gives the reason; each place's `unavailable/1` (the owner chose grey in place over hiding or putting last, 2026-10-16)
+  - [ ] A longer documentation than the summary, saying why one would use the command where that is not obvious
 - [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
 - [ ] Raw values (dates, numbers) beside the formatted cells in `Agendum.Core.ViewModel`
 - [ ] Browsing's date arithmetic into the core
@@ -296,3 +297,4 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] F1 then `d`: describe key (the macro attached to it, the command it runs there, what an alias stands for)
   - [x] F1 then `a`: every key, generated from the keymaps (almost everywhere first, then the view, the note, typing, the rest), so it cannot drift from them
   - [x] KEYBOARD.md checked against the keymaps (a test: every F-, ALT- and CTRL-key in them is in it)
+  - [x] F1 then `c` greys the commands that cannot run now and says why (R65a), 2026-10-16

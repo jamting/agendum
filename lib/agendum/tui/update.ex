@@ -166,6 +166,32 @@ defmodule Agendum.TUI.Update do
     end
   end
 
+  @doc """
+  The global commands that cannot run where the person is now, each with
+  why (R65a): F1 `c` greys them. Undo and Redo work in a view and the
+  managers (a box keeps its own changes until it closes).
+  """
+  @spec unavailable_global(State.t()) :: %{atom => String.t()}
+  def unavailable_global(state) do
+    top = State.mode(state)
+
+    [
+      undo: undo_reason(top, state.history.undo, "undo"),
+      redo: undo_reason(top, state.history.redo, "redo"),
+      export: top != nil && "Print works in a view"
+    ]
+    |> Enum.filter(fn {_id, reason} -> is_binary(reason) end)
+    |> Map.new()
+  end
+
+  defp undo_reason(top, steps, what) do
+    cond do
+      not undoable?(top) -> "#{String.capitalize(what)} works in a view and the managers"
+      steps == [] -> "Nothing to #{what}"
+      true -> nil
+    end
+  end
+
   # The keys every box shares (`Agendum.TUI.Keymap`'s `:box`, R65): F1
   # help, ESC cancels a settings box, F3 lists a setting's choices, and a
   # letter picks one (an unbound key). `:pass` sends the key on to the box.

@@ -7,9 +7,11 @@ defmodule Agendum.TUI.HelpScreen do
       box on top …: `about/2`): ↑↓ PGUP PGDN scroll, `c`, `d` and `a` go
       to the other pages, any other key returns;
     * `a`, all the keys, made from the keymaps (`Agendum.TUI.Render.Help`);
-    * `c`, the command list: the commands that can run where F1 was
+    * `c`, the command list: the commands of the place where F1 was
       pressed (its own first, then those of every screen), each with its
-      keys and summary; ENTER runs the highlighted one, ESC returns;
+      keys and summary; ENTER runs the highlighted one, ESC returns. Those
+      that cannot run now are greyed, and the highlighted one says why
+      (R65a);
     * `d`, describe key: the next key pressed is described (which command
       it runs there, or the macro attached to it), then any key returns.
 
@@ -28,20 +30,21 @@ defmodule Agendum.TUI.HelpScreen do
   alias Agendum.TUI.Update.{Notes, ViewKeys}
 
   # The places with a keymap of their own (`Agendum.TUI.Keymap`), by the
-  # type of the mode on top, and what runs their commands; a box is found
-  # through `Agendum.TUI.Boxes.Box`.
+  # type of the mode on top: what runs their commands, F1's text, and
+  # what says which commands cannot run now (R65a; nil: all can). A box
+  # is found through `Agendum.TUI.Boxes.Box`.
   @places %{
-    view: {ViewKeys, :run, :about},
-    catmgr: {Manager, :run, :about},
-    viewmgr: {ViewManager, :run, :about},
-    note: {Notes, :run, :about},
-    menu: {Menu, :run, :about},
-    move_item: {Agendum.TUI.Update.Marked, :run_move, :about_move},
-    searching: {Agendum.TUI.Boxes.SearchBox, :run_searching, :about_searching},
-    browse: {Agendum.TUI.Moves.Browse, :run, :about},
-    column_width: {Agendum.TUI.Moves.ColumnWidth, :run, :about},
-    column_move: {Agendum.TUI.Moves.ColumnMove, :run, :about},
-    section_move: {Agendum.TUI.Moves.SectionMove, :run, :about}
+    view: {ViewKeys, :run, :about, :unavailable},
+    catmgr: {Manager, :run, :about, :unavailable},
+    viewmgr: {ViewManager, :run, :about, :unavailable},
+    note: {Notes, :run, :about, :unavailable},
+    menu: {Menu, :run, :about, nil},
+    move_item: {Agendum.TUI.Update.Marked, :run_move, :about_move, nil},
+    searching: {Agendum.TUI.Boxes.SearchBox, :run_searching, :about_searching, nil},
+    browse: {Agendum.TUI.Moves.Browse, :run, :about, nil},
+    column_width: {Agendum.TUI.Moves.ColumnWidth, :run, :about, nil},
+    column_move: {Agendum.TUI.Moves.ColumnMove, :run, :about, nil},
+    section_move: {Agendum.TUI.Moves.SectionMove, :run, :about, nil}
   }
 
   @doc "Opens the help screen on its keys page."
@@ -82,6 +85,41 @@ defmodule Agendum.TUI.HelpScreen do
           do: {c, :global, Keymap.keys_for(:global, c.id)}
 
     local ++ global
+  end
+
+  @doc """
+  The commands that cannot run now where F1 was pressed (`state` is the
+  state under the help), by `{place, id}` as `commands/1` lists them, each
+  with why (R65a). Each place says this of its own commands
+  (`unavailable/1` beside its `run`); `Agendum.TUI.Update` of the global
+  ones.
+  """
+  @spec unavailable(State.t(), atom) :: %{{atom, term} => String.t()}
+  def unavailable(state, from) do
+    own =
+      case @places[from] do
+        {module, _run, _about, fun} when fun != nil -> apply(module, fun, [state])
+        _ -> %{}
+      end
+
+    global = if typing?(from), do: %{}, else: Agendum.TUI.Update.unavailable_global(state)
+
+    Map.merge(
+      Map.new(own, fn {id, reason} -> {{from, id}, reason} end),
+      Map.new(global, fn {id, reason} -> {{:global, id}, reason} end)
+    )
+  end
+
+  # the reason a listed command cannot run now, or nil
+  defp reason(unavailable, {%Command{id: id}, place, _keys}), do: unavailable[{place, id}]
+  defp reason(_unavailable, nil), do: nil
+
+  # after typing narrows the list: the first command that can run, so
+  # that typing then ENTER runs something (the first match if none can)
+  defp first_runnable(state, mode) do
+    below = State.pop(state)
+    unavailable = unavailable(below, mode.from)
+    Enum.find_index(shown(below, mode), &(reason(unavailable, &1) == nil)) || 0
   end
 
   # the list as narrowed by what was typed: names and summaries that hold
@@ -165,10 +203,10 @@ defmodule Agendum.TUI.HelpScreen do
   # typing narrows the list (by name or summary); ESC first forgets
   # what was typed, as in the category picker
   def handle(state, %{page: :commands} = mode, {:char, c}),
-    do: State.put_mode(state, %{mode | filter: mode.filter <> c, cursor: 0})
+    do: narrow(state, %{mode | filter: mode.filter <> c})
 
   def handle(state, %{page: :commands, filter: filter} = mode, :backspace) when filter != "",
-    do: State.put_mode(state, %{mode | filter: String.slice(filter, 0..-2//1), cursor: 0})
+    do: narrow(state, %{mode | filter: String.slice(filter, 0..-2//1)})
 
   def handle(state, %{page: :commands, filter: filter} = mode, :esc) when filter != "",
     do: State.put_mode(state, %{mode | filter: "", cursor: 0})
@@ -192,7 +230,7 @@ defmodule Agendum.TUI.HelpScreen do
 
     case cursor do
       :close -> State.pop(state)
-      :run -> run(State.pop(state), Enum.at(list, mode.cursor))
+      :run -> run_or_say(State.pop(state), mode.from, Enum.at(list, mode.cursor))
       n -> State.put_mode(state, %{mode | cursor: n |> min(length(list) - 1) |> max(0)})
     end
   end
@@ -204,6 +242,9 @@ defmodule Agendum.TUI.HelpScreen do
     do: State.put_mode(state, %{mode | described: describe(State.pop(state), mode.from, key)})
 
   def handle(state, %{page: :describe}, _key), do: State.pop(state)
+
+  defp narrow(state, mode),
+    do: State.put_mode(state, %{mode | cursor: first_runnable(state, mode)})
 
   defp scroll(state, mode, key) do
     page = State.body_height(state)
@@ -222,6 +263,14 @@ defmodule Agendum.TUI.HelpScreen do
     if top == :close,
       do: State.pop(state),
       else: State.put_mode(state, %{mode | top: top |> min(last) |> max(0)})
+  end
+
+  # a command that cannot run now says why instead (R65a)
+  defp run_or_say(state, from, entry) do
+    case reason(unavailable(state, from), entry) do
+      nil -> run(state, entry)
+      why -> State.error(state, why)
+    end
   end
 
   # a command from the list runs where F1 was pressed, as its key would
@@ -277,13 +326,15 @@ defmodule Agendum.TUI.HelpScreen do
           hidden(from, key)
 
       command = not typing?(from) && global_command(key) ->
-        [via <> "#{name} runs #{command.name}, everywhere but while typing.", command.summary]
+        [via <> "#{name} runs #{command.name}, everywhere but while typing.", command.summary] ++
+          not_now(state, from, {:global, command.id})
 
       command = from == :box && own_key(state, key) ->
         [via <> "#{name} runs #{command.name} in this box.", command.summary]
 
       command = local_command(from, key) ->
-        [via <> "#{name} runs #{command.name} #{here}.", command.summary] ++ count_line(command)
+        [via <> "#{name} runs #{command.name} #{here}.", command.summary] ++
+          count_line(command) ++ not_now(state, from, {from, command.id})
 
       true ->
         unbound(state, from, key, name)
@@ -330,6 +381,13 @@ defmodule Agendum.TUI.HelpScreen do
           "#{name} is not in a keymap here yet: only the keys of views, notes,",
           "boxes and the managers are so far. The keys page (F1) lists what it does."
         ]
+    end
+  end
+
+  defp not_now(state, from, place_id) do
+    case unavailable(state, from)[place_id] do
+      nil -> []
+      why -> ["Not now: " <> why]
     end
   end
 
@@ -431,15 +489,30 @@ defmodule Agendum.TUI.HelpScreen do
     page = State.body_height(state) - 2
 
     # each command's lines, then the lines of all, scrolled so that the
-    # highlighted command shows whole
+    # highlighted command shows whole; one that cannot run now is greyed,
+    # and says why when highlighted (R65a)
+    under = below(state, mode)
+    unavailable = unavailable(under, mode.from)
+
     entries =
-      state
-      |> below(mode)
+      under
       |> shown(mode)
       |> Enum.with_index()
-      |> Enum.map(fn {{command, _place, keys}, i} ->
-        style = if i == mode.cursor, do: :row, else: :normal
-        for text <- Help.row(command, keys), do: [{style, Help.fit(text, state.width)}]
+      |> Enum.map(fn {{command, _place, keys} = entry, i} ->
+        why = reason(unavailable, entry)
+
+        style =
+          cond do
+            i == mode.cursor -> :row
+            why != nil -> :dim
+            true -> :normal
+          end
+
+        lines = for text <- Help.row(command, keys), do: [{style, Help.fit(text, state.width)}]
+
+        if i == mode.cursor and why != nil,
+          do: lines ++ [[{:normal, Help.fit(Help.indent() <> "Not now: " <> why, state.width)}]],
+          else: lines
       end)
 
     before = entries |> Enum.take(mode.cursor + 1) |> Enum.map(&length/1) |> Enum.sum()

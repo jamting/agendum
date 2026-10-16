@@ -128,6 +128,96 @@ defmodule Agendum.TUI.Update.ViewKeys do
 
   def run(state, id, _n), do: command(state, id, Layout.current_row(state))
 
+  # the commands that can be unable to run (`unavailable/1`)
+  @checked [:edit, :choices, :note, :properties, :mark, :remove, :discard, :move, :copy] ++
+             [:yank, :hop, :alarm, :dependency, :done, :when, :make_assign, :collapse] ++
+             [:expand, :execute_category, :unmark_all, :next_marked, :last_view] ++
+             [:next_view, :previous_view]
+
+  @no_rows "Nothing is highlighted: this view shows no rows"
+
+  @doc """
+  The view's commands that cannot run on the highlighted row now, each
+  with why (R65a): F1 `c` greys them and says why. Only the commands
+  that would do nothing, or only report an error, are here; one that
+  asks something first (Discard on an item) can run. The reasons are
+  the ones running them reports, where it reports one.
+  """
+  @spec unavailable(State.t()) :: %{atom => String.t()}
+  def unavailable(state) do
+    row = Layout.current_row(state)
+    marked = Core.marked_items(state.db)
+
+    @checked
+    |> Enum.map(&{&1, why_not(state, &1, row, marked)})
+    |> Enum.filter(fn {_id, reason} -> is_binary(reason) end)
+    |> Map.new()
+  end
+
+  # why a command cannot run on `row` (nil: it can): first those that do
+  # not depend on the row, then those that need one, then an item
+  defp why_not(state, :yank, row, _marked) do
+    id = state.last.removed
+
+    cond do
+      id == nil or not Map.has_key?(state.db.items, id) -> "No removed item to yank back"
+      row == nil -> @no_rows
+      true -> nil
+    end
+  end
+
+  defp why_not(_state, :unmark_all, _row, []), do: "No items are marked"
+  defp why_not(_state, :unmark_all, _row, _marked), do: nil
+
+  defp why_not(state, :next_marked, _row, _marked) do
+    unless Enum.any?(Layout.rows(state), &(&1.kind == :item and &1.item.marked)),
+      do: "No marked items in this view"
+  end
+
+  defp why_not(state, :last_view, _row, _marked) do
+    unless state.last.view && Map.has_key?(state.db.views, state.last.view),
+      do: "No previous view"
+  end
+
+  defp why_not(state, id, _row, _marked) when id in [:next_view, :previous_view] do
+    if length(state.db.view_order) == 1, do: "This file has only one view"
+  end
+
+  # with items marked, these work on them wherever the highlight is
+  defp why_not(_state, id, nil, marked) when id in [:done, :when, :make_assign] and marked != [],
+    do: nil
+
+  defp why_not(_state, _id, nil, _marked), do: @no_rows
+
+  # a section head of MAIN (or another category that cannot change)
+  defp why_not(state, id, %{kind: :section, category: cat}, _marked)
+       when id in [:edit, :discard] and state.col == 0 do
+    if Database.protected?(state.db, cat.id),
+      do: "#{cat.name} cannot be #{if id == :edit, do: "renamed", else: "discarded"}"
+  end
+
+  defp why_not(_state, :alarm, %{kind: :item, item: item}, _marked) do
+    if item.alarm_minutes == nil and item.when == nil,
+      do: "Give the item a When date and time first (ALT-F2)"
+  end
+
+  defp why_not(state, :dependency, %{kind: :item, item: item}, marked) do
+    if marked -- [item.id] == [] and Core.prerequisites(state.db, item.id) == [],
+      do: "Mark the items it depends on with F7, then ALT-O"
+  end
+
+  defp why_not(_state, _id, %{kind: :item}, _marked), do: nil
+  defp why_not(_state, :copy, _row, _marked), do: "Highlight an item to copy"
+  defp why_not(_state, :hop, _row, _marked), do: "Highlight an item to hop to its next occurrence"
+
+  defp why_not(_state, id, _row, _marked) when id in [:alarm, :dependency],
+    do: "Highlight an item first"
+
+  defp why_not(_state, id, _row, []) when id in [:done, :when, :make_assign],
+    do: "Highlight an item, or mark some with F7"
+
+  defp why_not(_state, _id, _row, _marked), do: nil
+
   defp repeat(state, _id, 0), do: state
 
   defp repeat(state, id, n) do
