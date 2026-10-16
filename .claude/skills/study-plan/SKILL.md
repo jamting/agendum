@@ -1,6 +1,6 @@
 ---
 name: study-plan
-description: Let the expert panel (José, Joe, Carsten, Mitch, David, Marie and Claude, as in expert-review; those the subject calls for) pick the next part of Agendum's code for the owner to study, give it learning comments first (the learning-comments skill), then write it as a unit in docs/study/STUDY_PLAN.md - a reading order with questions and exercises the owner checks off when fully understood. Also reports progress and helps with unticked questions. Use when the owner asks for a study plan, the next thing to study, help understanding the code, or types /study-plan.
+description: Let the expert panel (José, Joe, Carsten, Mitch, David, Russell, Marie and Claude, as in expert-review; those the subject calls for) pick the next part of Agendum's code for the owner to study, give it learning comments first (the learning-comments skill), then write it as a unit in docs/study/STUDY_PLAN.md - a reading order with questions and exercises the owner checks off when fully understood. Also reports progress and helps with unticked questions. Use when the owner asks for a study plan, the next thing to study, help understanding the code, or types /study-plan.
 ---
 
 # Study plan

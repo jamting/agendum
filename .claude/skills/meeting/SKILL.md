@@ -1,6 +1,6 @@
 ---
 name: meeting
-description: Hold a panel meeting in Owl's house on the owner's own agenda (a classic Swedish dagordning in docs/meetings/dagordning.md, where the owner collects thoughts over time). The experts the agenda calls for (from the panel of expert-review: José, Joe, Carsten, Mitch, David, Marie and Claude) discuss each item with the owner, who decides; decisions go into the roadmap, plans and ADRs, and the worded agenda and the minutes (protokoll) are published in docs/meetings/YYYY-MM-DD/. Use when the owner calls a meeting, asks to go through the dagordning, or types /meeting.
+description: Hold a panel meeting in Owl's house on the owner's own agenda (a classic Swedish dagordning in docs/meetings/dagordning.md, where the owner collects thoughts over time). The experts the agenda calls for (from the panel of expert-review: José, Joe, Carsten, Mitch, David, Russell, Marie and Claude) discuss each item with the owner, who decides; decisions go into the roadmap, plans and ADRs, and the worded agenda and the minutes (protokoll) are published in docs/meetings/YYYY-MM-DD/. Use when the owner calls a meeting, asks to go through the dagordning, or types /meeting.
 ---
 
 # Panel meeting

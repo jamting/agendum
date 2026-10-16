@@ -1,6 +1,6 @@
 ---
 name: expert-review
-description: Produce a dated, in-depth review of Agendum as the minutes of a panel meeting in Owl's house, with seven lenses - José Who Brews (Elixir), Great-Uncle Joe (Erlang/OTP), Carsten Stargazer (Org-mode), Old Mitch Lilypad (Lotus Agenda), David the Squirrel (GTD), Little Marie-Who-Folds (tidiness and scope) and Claude (an owl from Anthropic, Owl's cousin, on readiness for agents) - covering architecture, code quality, helpfulness to users, business value, vision, methods, tidiness and scope, and agent readiness, with scores, findings backed by evidence, ranked recommendations and the trend since the last review. Saved as docs/reviews/YYYY-MM-DD.md. Use when the owner asks for an expert review, a panel review, a project health report, or types /expert-review.
+description: Produce a dated, in-depth review of Agendum as the minutes of a panel meeting in Owl's house, with eight lenses - José Who Brews (Elixir), Great-Uncle Joe (Erlang/OTP), Carsten Stargazer (Org-mode), Old Mitch Lilypad (Lotus Agenda), David the Squirrel (GTD), Dr. Russell (ADHD and overwhelm), Little Marie-Who-Folds (tidiness and scope) and Claude (an owl from Anthropic, Owl's cousin, on readiness for agents) - covering architecture, code quality, helpfulness to users, business value, vision, methods, tidiness and scope, and agent readiness, with scores, findings backed by evidence, ranked recommendations and the trend since the last review. Saved as docs/reviews/YYYY-MM-DD.md. Use when the owner asks for an expert review, a panel review, a project health report, or types /expert-review.
 ---
 
 # Expert panel review
@@ -11,7 +11,7 @@ The report is written as **the minutes of a meeting** of the panel, held in Owl'
 
 ## The panel
 
-Seven lenses, each with its own concerns. The six people are *perspectives in the spirit of* their public work; never invent quotes and attribute them to a real person. The minutes help here: they report what was said ("José noted that …"), they do not quote. Say once, in the opening paragraph, that the voices are lenses written by Claude, not their words.
+Eight lenses, each with its own concerns. The seven people are *perspectives in the spirit of* their public work; never invent quotes and attribute them to a real person. The minutes help here: they report what was said ("José noted that …"), they do not quote. Say once, in the opening paragraph, that the voices are lenses written by Claude, not their words.
 
 | Lens                     | Looks at                                                                                                                                                                  |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -20,6 +20,7 @@ Seven lenses, each with its own concerns. The six people are *perspectives in th
 | **Carsten Stargazer** (Org-mode) | The person's data: plain text, longevity, interchange, keyboard flow, capture, agenda views, extensibility, power users' habits, what a long-lived personal tool needs |
 | **Old Mitch Lilypad** (Lotus Agenda) | Faithfulness to Agenda's *idea* (free-form capture, automatic filing, editable views), the learning curve that limited it, product vision, who it is for, market     |
 | **David the Squirrel** (GTD)    | Does it work as a trusted system: capture, clarify, organize, reflect (weekly review), engage; next actions, contexts, projects, waiting-for; reliability and trust     |
+| **Dr. Russell** (ADHD) | Does it help people with ADHD, and anyone easily overwhelmed by life (`docs/VISION.md`): help at the point of performance (the reminder, the next step, shown where and when it is needed), information kept outside the head instead of in working memory, time made visible (dates, durations, what is overdue), friction at capture (a thought written down before it is lost), how much is on screen at once, recovering after days away without shame or a wall of red, small steps and quick feedback |
 | **Little Marie-Who-Folds** (tidiness) | Is everything in its place, and does each thing still serve the project: code and documents with one clear home each, duplicates, stale plans, dead code and unused functions, folders that grow without being read (reviews, summaries, logs); scope creep (roadmap items that pile up without serving `docs/VISION.md`); and keeping less: stored fields, data and files the program or the project will never need, in Agendum's own files as much as in the repo |
 | **Claude** (an owl from Anthropic) | Readiness for agents: user actions as named commands an agent can call (tools), headless entry points (CLI, JSON in and out), stable schemas, explainable results ("filed under Kanga because …"), proposals before changes and one-step undo of an agent's batch, permissions and scope, a human and an agent editing the same file, how much of a file fits in a model's context (ADR 0034, the item levels), item text as data and never as instructions (prompt injection), documents an LLM can read (CLAUDE.md, `docs/INDEX.md`), and whether agent behaviour can be tested (golden tasks, evals) |
 
@@ -29,14 +30,14 @@ Seven lenses, each with its own concerns. The six people are *perspectives in th
 
 ### Who attends
 
-Not every expert attends every meeting; it depends on the subject. **Owl** (host) and **Claude** (secretary, and its own lens) are always there. A **review** covers every area, so the whole panel is invited, but a lens with nothing new to say in an area keeps quiet there. A **meeting** (`meeting` skill) or a **study plan** (`study-plan` skill) calls only the lenses whose subjects are on the table: José and Joe for code and architecture, Carsten for data and habits, Mitch for Agenda and the product, David for working as a trusted system, Marie for documents, organisation, scope and what to keep. The minutes list who was present and, where it helps, who sent apologies.
+Not every expert attends every meeting; it depends on the subject. **Owl** (host) and **Claude** (secretary, and its own lens) are always there. A **review** covers every area, so the whole panel is invited, but a lens with nothing new to say in an area keeps quiet there. A **meeting** (`meeting` skill) or a **study plan** (`study-plan` skill) calls only the lenses whose subjects are on the table: José and Joe for code and architecture, Carsten for data and habits, Mitch for Agenda and the product, David for working as a trusted system, Russell for people with ADHD or easily overwhelmed, Marie for documents, organisation, scope and what to keep. The minutes list who was present and, where it helps, who sent apologies.
 
 ## The setting
 
 - **Owl's house**, high in a beech tree: a small room with a door knocker and a bell-pull, a chair or two, and portraits of relations (Uncle Robert among them). Owl, the host, chairs the meeting, kindly and a little long-winded; he is not a narcissist (the owner's rule, see `lib/agendum/starters/clinic.ex`). He is not a panel member and does not score.
-- **Tightly squeezed.** Up to eight in a room built for one owl: knees against the table, someone on the stairs, Mitch's papers on the floor. Little Marie-Who-Folds has views on Owl's house (the portraits, the stacks of papers, the umbrella stand); she is gentle about it, and Owl, though fond of every item, is slowly persuaded to thank one or two and let them go. Tea gets spilt on each other, a finding is underlined with a teaspoon, a biscuit tin goes round. Other Hundred Acre Wood animals may put a head through the door (Pooh about honey, Rabbit with a list), briefly.
+- **Tightly squeezed.** Up to nine in a room built for one owl: knees against the table, someone on the stairs, Mitch's papers on the floor. Little Marie-Who-Folds has views on Owl's house (the portraits, the stacks of papers, the umbrella stand); she is gentle about it, and Owl, though fond of every item, is slowly persuaded to thank one or two and let them go. Tea gets spilt on each other, a finding is underlined with a teaspoon, a biscuit tin goes round. Other Hundred Acre Wood animals may put a head through the door (Pooh about honey, Rabbit with a list), briefly.
 - **How much spice.** Stage notes in italics, one or two per section at most, never inside a finding's evidence, a score, a number or a recommendation. The opening, the any-other-business item and the closing may carry more. Find new incidents each time; read the last minutes so the running gags develop rather than repeat. Funny, warm, no innuendo, no mocking the real people.
-- **Spelling.** Owl is famous for spelling badly; these minutes are not. Every word is spelled correctly, including in jokes about Owl's spelling, which describe it rather than reproduce it. Names: José Who Brews, Great-Uncle Joe, Carsten Stargazer, Old Mitch Lilypad, David the Squirrel, Little Marie-Who-Folds, Wol, Hundred Acre Wood, Agendum, Lotus Agenda.
+- **Spelling.** Owl is famous for spelling badly; these minutes are not. Every word is spelled correctly, including in jokes about Owl's spelling, which describe it rather than reproduce it. Names: José Who Brews, Great-Uncle Joe, Carsten Stargazer, Old Mitch Lilypad, David the Squirrel, Dr. Russell, Little Marie-Who-Folds, Wol, Hundred Acre Wood, Agendum, Lotus Agenda.
 
 ## 1. Gather the evidence
 
@@ -96,7 +97,8 @@ Architecture · Code quality · Tests and verification · Documentation · Helpf
 
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** José Who Brews, Great-Uncle Joe, Carsten Stargazer, Old Mitch Lilypad,
-David the Squirrel, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host
+David the Squirrel, Dr. Russell, Little Marie-Who-Folds, Claude (Owl's cousin);
+Owl, host
 **Chair:** Owl · **Minutes:** Claude · **Approvers:** <two panel members>
 **Under review:** commit `<hash>`, version <x.y.z>
 
@@ -115,7 +117,7 @@ named people, written by Claude, not their words; made with the
 ## § 8 Architecture                (José, Joe)
 ## § 9 Code quality                (José)
 ## § 10 Tests and verification     (José, Joe)
-## § 11 Helpfulness to users       (David, Carsten, Mitch)
+## § 11 Helpfulness to users       (David, Carsten, Mitch, Russell)
 ## § 12 Business value             (Mitch, Carsten)
 ## § 13 Vision                     (Mitch, David; Marie on scope)
 ## § 14 Agent readiness            (Claude, with whoever joins in)
