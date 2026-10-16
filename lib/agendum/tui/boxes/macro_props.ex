@@ -21,7 +21,6 @@ defmodule Agendum.TUI.Boxes.MacroProps do
 
   alias Agendum.TUI.Boxes.{Box, Template}
 
-  alias Agendum.Core
   alias Agendum.TUI.{MacroKeys, Macros, State}
   alias Agendum.TUI.Update.Prompts
 
@@ -91,16 +90,13 @@ defmodule Agendum.TUI.Boxes.MacroProps do
   end
 
   defp command(state, :detach, :key, macro),
-    do: State.change_db(state, Core.attach_macro(state.db, macro.id, nil))
+    do: State.run(state, {:attach_macro, macro.id, nil})
 
   defp command(state, :change, :elsewhere, %{key: nil}),
     do: State.error(state, "Only a macro attached to a key runs everywhere else")
 
   defp command(state, :change, place, macro) when place in [:view, :note, :catmgr, :elsewhere] do
-    State.change_db(
-      state,
-      Core.set_macro_run_from(state.db, macro.id, place, not macro.run_from[place])
-    )
+    State.run(state, {:set_macro_run_from, macro.id, place, not macro.run_from[place]})
   end
 
   defp command(state, _id, _row, _macro), do: state
@@ -112,7 +108,7 @@ defmodule Agendum.TUI.Boxes.MacroProps do
         State.error(state, "ALT-F1, ALT-F3 and ALT-Z cannot run a macro")
 
       {:ok, notation, _key} ->
-        State.change_db(state, Core.attach_macro(state.db, id, notation))
+        State.run(state, {:attach_macro, id, notation})
 
       :error ->
         State.error(state, "Type one key, as {F4}, {ShfF4}, {AltD} or {CtlE}")
@@ -121,9 +117,9 @@ defmodule Agendum.TUI.Boxes.MacroProps do
 
   @doc "The prompt's answer for Name."
   def rename(state, id, name) do
-    case Core.rename_macro(state.db, id, name) do
-      {:ok, db} ->
-        State.change_db(state, db)
+    case State.command(state, {:rename_macro, id, name}) do
+      {:ok, state, _} ->
+        state
 
       {:error, :name_taken} ->
         State.error(state, "A macro is already called #{String.trim(name)}")

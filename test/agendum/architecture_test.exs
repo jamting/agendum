@@ -140,83 +140,67 @@ defmodule Agendum.ArchitectureTest do
 
   # --- The command layer (R66, ADR 0036) -----------------------------------
 
-  # Agendum.Core functions a command does, by name (any arity): the ones
-  # a command calls by its own name (`Command.runs/0`), and those inside
-  # the commands written out in `Agendum.Core.Command` (`:own`).
-  defp by_command do
-    named = for {id, _kinds, how} <- Agendum.Core.Command.runs(), how in [:core, :clock], do: id
-    own = [:add_item, :edit_item, :mark_done, :discard_item, :move_item, :execute]
-    MapSet.new(named ++ own ++ [:ring_alarms, :clear_old_alarms, :apply_entry_values])
-  end
-
-  # Commands the TUI does not send yet: the command layer moves them
-  # over in batches (ROADMAP), and this list only shrinks.
-  @not_yet ~w(
-    add_macro
-    attach_macro
-    calendar_failed
-    cycle_calendar_setting
-    delete_macro
-    move_macro
-    rename_macro
-    set_macro_keys
-    set_macro_run_from
-    sort_macros
-    subscribe_calendar
-    sync_calendar
-    unsubscribe_calendar
+  # Every change to the file is a command (`Agendum.Core.run/3`); the TUI
+  # calls the rest of Agendum.Core only to read. These are the reads (and
+  # `new_file/0`, `import_json/1`, which make a file rather than change
+  # one). A new Agendum.Core function must be a command's or be listed
+  # here, so a new kind of change cannot skip the command layer.
+  @reads ~w(
+    alarm_list auto_dating? calendars_due completions confirm_mode date_conversion
+    date_filters? default_column_width demote_conflicts dependents entry_categories
+    entry_values exclusive_conflicts export_json import_json item_assignments
+    item_column_fit marked_items match_settings move_conflicts new_file
+    numeric_conversion prerequisites promote_conflicts questions read_when
+    related_items relocation_conflicts section_calcs shift_filters waiting? when_at
   )a
 
-  test "the TUI sends a command where the core has one", %{calls: calls} do
-    by_command = MapSet.difference(by_command(), MapSet.new(@not_yet))
+  # Agendum.Core functions a command does: the ones a command calls by its
+  # own name (`Command.runs/0`), and those inside the commands written out
+  # in `Agendum.Core.Command` (`:own`).
+  defp by_command do
+    named = for {id, _kinds, how} <- Agendum.Core.Command.runs(), how in [:core, :clock], do: id
 
+    own =
+      ~w(add_item edit_item mark_done discard_item move_item execute add_column_as
+         ring_alarms clear_old_alarms apply_entry_values)a
+
+    MapSet.new(named ++ own)
+  end
+
+  test "every Agendum.Core function is a command's, a read, or run/3" do
+    by_command = by_command()
+
+    unknown =
+      for {name, arity} <- Agendum.Core.__info__(:functions),
+          name != :run,
+          name not in by_command,
+          name not in @reads,
+          uniq: true,
+          do: "#{name}/#{arity}"
+
+    assert unknown == [], """
+    Agendum.Core functions that are neither a command's nor a read: make
+    each a command (Agendum.Core.Command), or list a read in @reads:
+
+      #{Enum.join(unknown, "\n  ")}
+    """
+  end
+
+  test "the TUI changes the file only through commands", %{calls: calls} do
     violations =
       for {{from, f, a}, {Agendum.Core, name, arity}} <- calls,
           in?(from, "Agendum.TUI"),
-          name in by_command,
+          name != :run,
+          name not in @reads,
           uniq: true,
           do: "#{inspect(from)}.#{f}/#{a} calls Core.#{name}/#{arity}"
 
     assert violations == [], """
-    The TUI calls a core function that a command does (use State.run/2):
+    The TUI calls a core function that changes the file (send a command
+    with State.run/2 instead):
 
       #{Enum.join(violations, "\n  ")}
     """
-  end
-
-  test "every function waiting for its command is still called (else take it off @not_yet)",
-       %{calls: calls} do
-    called =
-      for {{from, _, _}, {Agendum.Core, name, _}} <- calls,
-          in?(from, "Agendum.TUI"),
-          into: MapSet.new(),
-          do: name
-
-    assert Enum.reject(@not_yet, &(&1 in called)) == []
-  end
-
-  # How many Agendum.Core functions the TUI still calls directly, reads
-  # included. It may only go down: when a step of the command layer moves
-  # more actions into commands, lower it to the new count. The command
-  # layer is done when only reads are left (ROADMAP, Towards many users).
-  @core_calls_at_most 40
-
-  test "the TUI calls no more core functions directly than before", %{calls: calls} do
-    used =
-      for {{from, _, _}, {Agendum.Core, name, arity}} <- calls,
-          in?(from, "Agendum.TUI"),
-          uniq: true,
-          do: {name, arity}
-
-    count = length(used)
-
-    assert count <= @core_calls_at_most,
-           "the TUI now calls #{count} Agendum.Core functions, more than " <>
-             "#{@core_calls_at_most}: send a command instead (State.run/2)"
-
-    assert count == @core_calls_at_most,
-           "the TUI calls #{count} Agendum.Core functions now: lower " <>
-             "@core_calls_at_most to #{count}"
   end
 
   # --- The core is pure ---------------------------------------------------

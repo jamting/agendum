@@ -17,7 +17,6 @@ defmodule Agendum.TUI.Boxes.CalendarsBox do
 
   use Agendum.TUI.Boxes.Box, finish: :none
 
-  alias Agendum.Core
   alias Agendum.Core.{Calendar, Database, DateFormat}
   alias Agendum.TUI.{Boxes.Box, Terminal.Draw, State, Update}
   alias Agendum.TUI.Update.Prompts
@@ -97,7 +96,7 @@ defmodule Agendum.TUI.Boxes.CalendarsBox do
   defp calendar(state, _mode, :unsubscribe, cal, _), do: unsubscribe(state, cal)
 
   defp setting(state, cal, setting),
-    do: State.change_db(state, Core.cycle_calendar_setting(state.db, cal.id, setting, 1))
+    do: State.run(state, {:cycle_calendar_setting, cal.id, setting, 1})
 
   defp unsubscribe(state, cal) do
     items = Enum.count(cal.events, fn {_, %{item: id}} -> Map.has_key?(state.db.items, id) end)

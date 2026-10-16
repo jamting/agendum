@@ -713,10 +713,4 @@ defmodule Agendum.TUI.Update.ViewKeys do
   end
 
   def toggle_done(state, _row), do: state
-
-  @doc "Changes the database with `fun.(db, item_id)` when the row is an item."
-  def on_item(state, %{kind: :item, item: item}, fun),
-    do: State.change_db(state, fun.(state.db, item.id))
-
-  def on_item(state, _row, _fun), do: state
 end

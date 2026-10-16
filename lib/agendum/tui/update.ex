@@ -345,8 +345,7 @@ defmodule Agendum.TUI.Update do
   end
 
   defp read_into(state, cal, kind, {:ok, events}) do
-    {:ok, db, counts} = Core.sync_calendar(state.db, cal.id, events, State.context(state))
-    state = %{state | db: db}
+    {:ok, state, %{result: counts}} = State.command(state, {:sync_calendar, cal.id, events})
 
     parts =
       [added: "new", updated: "changed", removed: "removed"]
@@ -361,7 +360,7 @@ defmodule Agendum.TUI.Update do
   end
 
   defp read_into(state, cal, kind, {:error, message}) do
-    state = %{state | db: Core.calendar_failed(state.db, cal.id, message, State.context(state))}
+    state = State.run(state, {:calendar_failed, cal.id, message})
     if kind == :manual, do: State.error(state, "#{cal.name}: #{message}"), else: state
   end
 

@@ -19,7 +19,6 @@ defmodule Agendum.TUI.Macros do
 
   use Agendum.TUI.Boxes.Box, finish: :none, indicator: nil
 
-  alias Agendum.Core
   alias Agendum.Core.Database
   alias Agendum.TUI.{Boxes.Box, History, MacroKeys, State}
   alias Agendum.TUI.Update.Prompts
@@ -210,7 +209,7 @@ defmodule Agendum.TUI.Macros do
     do: Prompts.confirm(state, "Delete the macro #{macro.name}?", {:delete_macro, macro.id})
 
   defp command(state, _mode, :sort, macro, _),
-    do: state |> State.change_db(Core.sort_macros(state.db)) |> follow(macro.id)
+    do: state |> State.run(:sort_macros) |> follow(macro.id)
 
   defp command(state, mode, :move_up, macro, _), do: reorder(state, macro, mode.cursor - 1)
   defp command(state, mode, :move_down, macro, _), do: reorder(state, macro, mode.cursor + 1)
@@ -220,14 +219,14 @@ defmodule Agendum.TUI.Macros do
     do: State.push(state, %{type: :choice, kind: :learn, macro_id: macro.id, cursor: 0})
 
   defp reorder(state, macro, to),
-    do: state |> State.change_db(Core.move_macro(state.db, macro.id, to)) |> follow(macro.id)
+    do: state |> State.run({:move_macro, macro.id, to}) |> follow(macro.id)
 
   @doc "The prompt's answer: a new macro, highlighted."
   def create(state, name) do
-    case Core.add_macro(state.db, name) do
-      {:ok, db, id} ->
-        index = Enum.find_index(db.macro_order, &(&1 == id))
-        state |> State.change_db(db) |> select(index) |> State.info("F7 learns its keystrokes")
+    case State.command(state, {:add_macro, name}) do
+      {:ok, state, %{new: id}} ->
+        index = Enum.find_index(state.db.macro_order, &(&1 == id))
+        state |> select(index) |> State.info("F7 learns its keystrokes")
 
       {:error, :name_taken} ->
         State.error(state, "A macro is already called #{String.trim(name)}")
@@ -297,7 +296,7 @@ defmodule Agendum.TUI.Macros do
     count = length(l.keys)
 
     %{state | macro: %{state.macro | learning: nil}}
-    |> State.change_db(Core.set_macro_keys(state.db, l.id, keys))
+    |> State.run({:set_macro_keys, l.id, keys})
     |> State.info(
       "Learn mode is off: #{macro.name} has #{Agendum.TUI.Terminal.Draw.count(count, "new key")}"
     )

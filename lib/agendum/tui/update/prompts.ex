@@ -118,10 +118,9 @@ defmodule Agendum.TUI.Update.Prompts do
     do: prompt(state, "Name of its category (its events go there):", {:calendar_name, text})
 
   defp prompt_action(state, {:calendar_name, url}, name) do
-    case Core.subscribe_calendar(state.db, name, url) do
-      {:ok, db, id} ->
+    case State.command(state, {:subscribe_calendar, name, url}) do
+      {:ok, state, %{new: id}} ->
         state
-        |> State.change_db(db)
         |> State.info("Subscribed to #{name}")
         |> Update.fetch_calendar(id, :manual)
 
@@ -353,7 +352,7 @@ defmodule Agendum.TUI.Update.Prompts do
     do: Agendum.TUI.Typing.NoteSearch.answer(state, asked, answer)
 
   defp confirmed(state, {:delete_macro, id}, true),
-    do: State.change_db(state, Core.delete_macro(state.db, id))
+    do: State.run(state, {:delete_macro, id})
 
   defp confirmed(state, {:make_date, id}, true), do: make_date(state, id)
 
@@ -408,9 +407,7 @@ defmodule Agendum.TUI.Update.Prompts do
   defp confirmed(state, {:unsubscribe_calendar, id}, discard) do
     name = state.db.calendars[id].name
 
-    state
-    |> State.change_db(Core.unsubscribe_calendar(state.db, id, discard))
-    |> State.info("Unsubscribed from #{name}")
+    State.run(state, {:unsubscribe_calendar, id, discard}, "Unsubscribed from #{name}")
   end
 
   defp confirmed(state, {:leave_for, command}, true) do
