@@ -81,7 +81,7 @@ defmodule Agendum.TUI.CommandDocsTest do
     test "F1 d on a letter shows it too", %{state: state} do
       text = state |> press([{:f, 10}, "f", {:f, 1}, "d", "d"]) |> screen()
       assert text =~ "d chooses Dating."
-      assert text =~ "as a reading list"
+      assert text =~ "a reading list"
     end
   end
 

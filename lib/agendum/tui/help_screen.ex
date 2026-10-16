@@ -606,16 +606,21 @@ defmodule Agendum.TUI.HelpScreen do
   defp content_height(state), do: max(height(state) - @head, 1)
 
   @doc """
-  The inside of the help's box, `{width, height}` (R65c): about four
-  fifths of the screen's width and of its body's height, but at least 40
-  columns and 16 rows where the screen has them. `Agendum.TUI.Render`
+  The inside of the help's box, `{width, height}` (R65c). The box leaves
+  a margin of the faded screen around it: at most a tenth of the screen
+  on each side, less on a smaller screen, where the help needs the room
+  more (80×25: about nine tenths; 200×60: four fifths). `Agendum.TUI.Render`
   draws the box; every page is laid out to fit inside it.
   """
   @spec size(State.t()) :: {pos_integer, pos_integer}
   def size(state) do
     w = state.width
     h = State.body_height(state)
-    {max(min(w, max(div(w * 4, 5), 40)) - 2, 1), max(min(h, max(div(h * 4, 5), 16)) - 2, 1)}
+    # the margin on each side: nothing below 60 columns (16 rows), then a
+    # column for every six more (a row for every four), up to a tenth
+    across = (w - 60) |> div(6) |> min(div(w, 10)) |> max(0)
+    down = (h - 16) |> div(4) |> min(div(h, 10)) |> max(0)
+    {max(w - 2 * across - 2, 1), max(h - 2 * down - 2, 1)}
   end
 
   defp width(state), do: elem(size(state), 0)

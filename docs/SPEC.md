@@ -1294,9 +1294,11 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   global command (Item ▸ Finished is Done) has that command's text, so the
   two cannot drift apart (`Agendum.TUI.CommandDocs`).
 - **R65c ✅ The help screen's frame and pane** (ours; the owner,
-  2026-10-16). The help is a box over the screen it was opened from:
-  about four fifths of the width and of the height (at least 40 columns
-  and 16 rows where the screen has them), centred, framed with "Help" in
+  2026-10-16). The help is a box over the screen it was opened from,
+  centred, leaving a margin of the faded screen around it: at most a
+  tenth of the screen on each side, less on a smaller screen, where the
+  help needs the room more (80×25: about nine tenths; 200×60: four
+  fifths), framed with "Help" in
   its top edge and a shadow, while the screen beneath (with any box open
   on it) fades as behind any box, so opening help changes less of what
   is seen. Every help page (F1's text, `c`, `d`, `a`) has the same

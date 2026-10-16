@@ -12,8 +12,8 @@ returns to what was underneath. `Agendum.TUI.Update.handle/2` sends each key to
 the mode on top; `Agendum.TUI.Render` draws the stack. Modes come in three kinds:
 
 - **Full screens** replace the view: the category manager, the view manager
-  and the note editor. Help is one too, but drawn as a box of four fifths
-  of the screen over what it was opened from, which fades behind it.
+  and the note editor. Help is one too, but drawn as a box over most of
+  the screen (more of a small one) over what it was opened from, which fades behind it.
 - **Boxes** are drawn over the view (or over a full screen) in a frame with a
   title. A box opened from a box sits one line lower and two columns right.
 - **Control-panel modes** use only the two lines at the top: the menu, prompts,
