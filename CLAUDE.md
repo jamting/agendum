@@ -15,6 +15,7 @@ change must update.
 ## Commands
 
 ```sh
+mix setup                 # a fresh checkout: dependencies, and the pre-push hook (runs mix check)
 mix check                 # THE quality gate: format, warnings-as-errors, Credo, Dialyzer, tests
 mix test                  # tests only
 mix test test/agendum/core # one directory

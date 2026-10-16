@@ -119,6 +119,9 @@ defmodule Agendum.MixProject do
       # (docs/guide/…, docs/manual/…) find them, then the API docs; ex_doc
       # keeps files it did not make, and gets the arguments (`--open`)
       docs: [&copy_user_docs/1, "docs"],
+      # a fresh checkout: the dependencies, and git's hooks from .githooks
+      # (pre-push runs `mix check`)
+      setup: ["deps.get", "cmd git config core.hooksPath .githooks"],
       check: [
         "format --check-formatted",
         "compile --warnings-as-errors --force",

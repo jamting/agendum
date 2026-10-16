@@ -1,0 +1,15 @@
+#!/bin/sh
+# Runs the quality gate before a push, so nothing reaches the shared
+# repository without passing it (ROADMAP, Sharpen the saw: until CI runs
+# it on every push). Turned on by `mix setup` (git config core.hooksPath
+# .githooks). To push anyway, in a hurry: git push --no-verify
+#
+# git runs a hook from the top of the repository, with what is about to be
+# pushed on stdin (unused here: the whole working tree is checked).
+
+echo "pre-push: running mix check (git push --no-verify skips it)" >&2
+
+if ! mix check; then
+  echo "pre-push: mix check failed; nothing was pushed" >&2
+  exit 1
+fi

@@ -20,7 +20,7 @@ first: each is small, and the command layer (below) is a large refactoring
 that leans on them. From the expert review of 2026-10-16
 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
-- [ ] CI: `mix check` on every push (GitHub Actions), once the repository is on GitHub (Housekeeping); until then a git pre-push hook that runs `mix check`. The long fuzz run (`FUZZ_RUNS=3000`) is run by hand before every version is tagged (docs/INDEX.md, "Where a change is written down"); CI could take it over later, nightly
+- [ ] CI: `mix check` on every push (GitHub Actions), once the repository is on GitHub (Housekeeping). The long fuzz run (`FUZZ_RUNS=3000`) is run by hand before every version is tagged (docs/INDEX.md, "Where a change is written down"); CI could take it over later, nightly
 - [ ] Golden files for the file format: a small file saved by each format version from 33 on, committed when the version is made, all loaded by one test. Today's upgrade tests build old files from today's structs (`test/agendum/store_test.exs`), which can miss what a real old file holds
 - [ ] The format of record (an ADR): which format keeps people's data for years, the JSON schema (`JSON_FORMAT.md`, round-trip tested) or a command log as the web plan needs, with today's Erlang-term file (`Agendum.Store`, ADR 0003) as a fast copy of it. Settle it before the web plan adds its own storage; fewer upgrade paths per stored field
 - [ ] Architecture rules checked on the call graph, not by regex: a compile tracer or `mix xref`, so that an alias (`alias Agendum.Core.Database, as: DB`) or `put_in(state.db…)` cannot get round "the TUI changes the database only through `Agendum.Core`" (`test/agendum/architecture_test.exs`)
@@ -331,3 +331,4 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 ### Sharpen the saw
 
 - [x] Meaning in the fuzz walks (2026-10-16): after every key the data model's invariants hold (`Agendum.Core.Invariants.violations/1`, the list in DATA_MODEL.md plus one id space), and a key that changed the file is reversed exactly by undoing the steps it recorded (R30). The JSON round trip checks the invariants too
+- [x] A git pre-push hook that runs `mix check` (`.githooks/pre-push`, turned on by `mix setup`), until CI runs it on GitHub (2026-10-16)

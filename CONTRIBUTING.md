@@ -32,7 +32,7 @@ mise use erlang@28 elixir@1.20.4-otp-28    # mise and asdf name Elixir builds by
 Then, in the project folder:
 
 ```sh
-mix deps.get
+mix setup            # the dependencies, and git hooks: a push runs mix check first
 mix check            # the quality gate: format, warnings, Credo, Dialyzer, tests
 ```
 
