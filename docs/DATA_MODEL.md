@@ -612,6 +612,15 @@ flowchart LR
   defaults. Adding a field means bumping the version; a change that defaults
   cannot express (a renamed or reshaped field) also needs a migration step
   in `upgrade/1`. Files from a newer version are refused.
+- **Golden files.** From version 33 on, each format version has a file it
+  wrote, kept in `test/fixtures/formats/` (`v33.agendum`, with what it says
+  in `v33.facts.exs`), made by `mix agendum.golden` from
+  `Agendum.Starters.Golden`, which uses every stored field (a test checks).
+  `test/agendum/golden_files_test.exs` loads every one: it must upgrade,
+  keep the invariants and its facts, open in the UI and save again; and the
+  current version's file must exist. Raising the version means running
+  `mix agendum.golden` and committing what it writes; a new stored field
+  means setting it in `Agendum.Starters.Golden` first.
 - The format is not human-readable; File ▸ Transfer ▸ Export writes a
   file as JSON ([`JSON_FORMAT.md`](JSON_FORMAT.md), ADR 0010).
   See [ADR 0003](adr/0003-file-format.md).

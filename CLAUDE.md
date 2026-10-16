@@ -8,7 +8,9 @@ and the ADRs in `docs/adr/` (why); record new lasting decisions as ADRs.
 For anything touching stored data or queries, also read `docs/DATA_MODEL.md`
 and `docs/DATA_ACCESS.md`, and keep them up to date (Mermaid diagrams included);
 a new stored field also needs a place in the JSON schema (`Agendum.Core.JSONFile`,
-`docs/JSON_FORMAT.md`), or the round-trip tests fail.
+`docs/JSON_FORMAT.md`), or the round-trip tests fail, and a value in
+`Agendum.Starters.Golden`; a new format version needs its golden file
+(`mix agendum.golden`, commit both files it writes), or the golden-file tests fail.
 `docs/INDEX.md` lists every document, what it is for, and which ones a
 change must update.
 

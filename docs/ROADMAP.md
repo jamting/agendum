@@ -21,7 +21,6 @@ that leans on them. From the expert review of 2026-10-16
 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
 - [ ] CI: `mix check` on every push (GitHub Actions), once the repository is on GitHub (Housekeeping). The long fuzz run (`FUZZ_RUNS=3000`) is run by hand before every version is tagged (docs/INDEX.md, "Where a change is written down"); CI could take it over later, nightly
-- [ ] Golden files for the file format: a small file saved by each format version from 33 on, committed when the version is made, all loaded by one test. Today's upgrade tests build old files from today's structs (`test/agendum/store_test.exs`), which can miss what a real old file holds
 - [ ] The format of record (an ADR): which format keeps people's data for years, the JSON schema (`JSON_FORMAT.md`, round-trip tested) or a command log as the web plan needs, with today's Erlang-term file (`Agendum.Store`, ADR 0003) as a fast copy of it. Settle it before the web plan adds its own storage; fewer upgrade paths per stored field
 - [ ] Architecture rules checked on the call graph, not by regex: a compile tracer or `mix xref`, so that an alias (`alias Agendum.Core.Database, as: DB`) or `put_in(state.db…)` cannot get round "the TUI changes the database only through `Agendum.Core`" (`test/agendum/architecture_test.exs`)
 - [ ] Typed UI modes: a struct per mode instead of the `%{type: …}` maps in `State.modes` (about fifty kinds), so the compiler and Dialyzer catch a misspelt field that today only the fuzz test finds; box by box, starting where the command layer will work
@@ -79,6 +78,7 @@ Then working together:
   - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash, Tab size; screenshot 130) where Agendum has them
   - [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix (plan: `docs/plans/KITTY.md`)
   - [ ] Optional: Utilities Launch (a shell without quitting)
+- [ ] Look into: should a date category keep assignment conditions? `Core.make_date/3` keeps a category's conditions, which can then never link an item (an item gets a date category through its date, not a link). Check in Agenda 2.0 whether a date category can have conditions, and what they do there; then drop them on conversion, or make them set the date (found 2026-10-16 by the golden file)
 - [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
 - [ ] Boxes: F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) every setting in the box, CTRL-ENTER clears a setting (User's Guide 2-17)
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names (the note editor's header: in the note editor plan above)
@@ -332,3 +332,4 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 - [x] Meaning in the fuzz walks (2026-10-16): after every key the data model's invariants hold (`Agendum.Core.Invariants.violations/1`, the list in DATA_MODEL.md plus one id space), and a key that changed the file is reversed exactly by undoing the steps it recorded (R30). The JSON round trip checks the invariants too
 - [x] A git pre-push hook that runs `mix check` (`.githooks/pre-push`, turned on by `mix setup`), until CI runs it on GitHub (2026-10-16)
+- [x] Golden files for the file format (2026-10-16): `test/fixtures/formats/v33.agendum` and its facts, made by `mix agendum.golden` from `Agendum.Starters.Golden`, which sets every stored field (a test checks); every golden file must load, upgrade, keep the invariants and its facts, open in every view and save again, and the current version's file must exist. Building it found a bug: a category with conditions made a date category marked items as conditionally assigned to it with no link (fixed in `Assign`)

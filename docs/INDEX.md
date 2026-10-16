@@ -77,7 +77,7 @@ Each plan starts with its status.
 | add or change a behaviour              | its rule in `SPEC.md` (and the rule index); the item in `ROADMAP.md`, ticked and moved to Done |
 | add or change a key                    | `KEYBOARD.md`; the key's keymap and command (the F1 help is made from them)                     |
 | add a screen or box                    | `SCREENS.md` (a test checks); `ARCHITECTURE.md` if it is a new module                          |
-| add a stored field                     | `DATA_MODEL.md` (and a row in its format versions), `DATA_ACCESS.md` if queried, `JSON_FORMAT.md` and `Agendum.Core.JSONFile` |
+| add a stored field                     | `DATA_MODEL.md` (and a row in its format versions), `DATA_ACCESS.md` if queried, `JSON_FORMAT.md` and `Agendum.Core.JSONFile`; set it in `Agendum.Starters.Golden`, and with the new format version run `mix agendum.golden` and commit its two files |
 | make a lasting decision                | a new ADR in `adr/`, and a row in `ARCHITECTURE.md`'s ADR list                                 |
 | finish a major feature or change the file format | the version in `mix.exs` (minor, never 1.0.0 unless the owner says), an entry in `CHANGELOG.md`, a `vX.Y.Z` tag after the long fuzz run passes (`FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs`) |
 | find a way to work faster or safer     | an item under "Sharpen the saw" in `ROADMAP.md`                                                 |

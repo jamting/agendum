@@ -34,6 +34,8 @@ agenda-*.tar
 *.agenda.tmp
 # except the starter files shipped with Agendum (mix agendum.starters)
 !starters/*.agendum
+# and the golden files of the file format (mix agendum.golden)
+!test/fixtures/formats/*.agendum
 
 # macOS
 .DS_Store
