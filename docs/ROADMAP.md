@@ -7,6 +7,62 @@ items have a plan in `docs/plans/` (see `docs/INDEX.md`).
 
 ## Open
 
+**Next:** first "Sharpen the saw", small work on the tools and checks;
+then the command layer ("Towards many users"), the next major work.
+Parity with Agenda and the rest continue after it.
+
+### Sharpen the saw
+
+Tools and checks that make every later change faster and safer. Do these
+first: each is small, and the command layer (below) is a large refactoring
+that leans on them. From the expert review of 2026-10-16
+(`docs/reviews/2026-10-16.md`) and the performance items found earlier.
+
+- [ ] Meaning in the fuzz walks: after every key, the data model's invariants hold (no item directly in both a category and one of its ancestors, R7c; at most one child of an exclusive parent, R7; each link and its reverse agree; every id below `next_id`), and undo back to the start gives the starting file (R30). One pure check of the invariants, used by the fuzz property (`test/agendum/tui/fuzz_test.exs`), the JSON round trip and the core tests
+- [ ] CI: `mix check` on every push (GitHub Actions) and the long fuzz run (`FUZZ_RUNS=3000`) nightly, once the repository is on GitHub (Housekeeping); until then a git pre-push hook that runs `mix check`
+- [ ] Golden files for the file format: a small file saved by each format version from 33 on, committed when the version is made, all loaded by one test. Today's upgrade tests build old files from today's structs (`test/agendum/store_test.exs`), which can miss what a real old file holds
+- [ ] The format of record (an ADR): which format keeps people's data for years, the JSON schema (`JSON_FORMAT.md`, round-trip tested) or a command log as the web plan needs, with today's Erlang-term file (`Agendum.Store`, ADR 0003) as a fast copy of it. Settle it before the web plan adds its own storage; fewer upgrade paths per stored field
+- [ ] Architecture rules checked on the call graph, not by regex: a compile tracer or `mix xref`, so that an alias (`alias Agendum.Core.Database, as: DB`) or `put_in(state.db…)` cannot get round "the TUI changes the database only through `Agendum.Core`" (`test/agendum/architecture_test.exs`)
+- [ ] Typed UI modes: a struct per mode instead of the `%{type: …}` maps in `State.modes` (about fifty kinds), so the compiler and Dialyzer catch a misspelt field that today only the fuzz test finds; box by box, starting where the command layer will work
+- [ ] Date rules compiled once: reading a date compiles every rule of the date languages each time (`DateParser.compile/4`, ~100 regexes), the root cost behind the lags fixed on 2026-10-15. Execute over 300 items with dated text takes ~1.1 s, nearly all of it there (two readings an item). The core cannot cache in a process; the compiled rules could travel in `Agendum.Core.Context`, built once when the languages or input format change
+- [ ] A view cache, when the evidence asks for it: a view on a large file is still slow to move in (at 3000 items a cursor move takes ~90 ms in `Update` and ~55 ms in `Render`), as every key rebuilds the view. Cache the computed view in `State`, recomputed only when the database, view or date changes (needs an ADR); wait for a `slow answer` line in the debug log that points at it.
+
+### Towards many users: the command layer (the next major work)
+
+A web application with accounts and shared files, on the same core (plan:
+[MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). First, in the core and the TUI, a
+few commands at a time. The command layer is the next major work, after
+Sharpen the saw: the web, customizable keys, a modern mode and Wol all
+wait for it (expert review 2026-10-16, `docs/reviews/2026-10-16.md`).
+
+- [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agendum.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
+- [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps (R65, ADR 0033)
+  - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)
+  - [x] A count with ALT-digits in views, for the commands chosen to take one; a repeat that changes nothing stops
+  - [x] The global keys (CTRL-Z, CTRL-S …) and the keys that stand for others (CTRL-N = INS) in `Agendum.TUI.Keymap`
+  - [x] The category and view managers' and a note's keys in keymaps (F1 `c` and `d` there too)
+  - [x] The keys every box shares in a keymap (`:box`: F1, F3 choices, ESC cancel); F1 `c` and `d` in every box, its own keys read from its key bar
+  - [x] Each box's own keys in a keymap of its own (`Box.keymap/1`, `commands/1`, `run/3`; settings boxes from `Box.settings_keymap/1`); `c` and `d` no longer read key bars
+  - [x] The menu: its keys in a keymap; F1 `c` lists the level's entries by their letters, F1 `d` describes them
+  - [x] Moving items, a column or a section, a column's width, Browse and searching the view: keymaps of their own, F1 there too
+  - [x] The typing keys in keymaps: one line (`:line`, `Typing.LineEdit`) and a note's text (`:text`, `Typing.TextEdit`)
+  - [x] Whether a command can run now (R65a): F1 `c` greys what cannot, says why, and ENTER gives the reason; each place's `unavailable/1` (the owner chose grey in place over hiding or putting last, 2026-10-16)
+  - [x] A longer text than the summary, saying why one would use the command where that is not obvious (R65b): the view's, the global ones, the managers' and a note's
+  - [x] Longer texts for the menu's entries (by their labels; an entry that runs a view's or a global command has its text) and the boxes' own commands (by box; a settings box's Change and Done shared)
+  - [ ] Longer texts for the rest, where they would help: the moves (Browse, widths …) and typing
+- [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
+- [ ] Raw values (dates, numbers) beside the formatted cells in `Agendum.Core.ViewModel`
+- [ ] Browsing's date arithmetic into the core
+- [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
+
+Then a web version for one person:
+
+*[A page here was soaked in the creek. — Rabbit]*
+
+Then working together:
+
+*[A page here was soaked in the creek. — Rabbit]*
+
 ### Towards parity with Agenda (Milestone 2)
 
 **The ambition:** Agendum as close to Agenda 2.0 as makes sense: the same screen, keys, menus and behaviour, apart from a list of accepted enhancements (beyond Agenda) and accepted modifications (done differently, on purpose). Everything else that differs is a gap, to close or to move onto one of the lists. Today about 80% overall (control panel and F10 menu about 75%, the note editor about 50%, the data model and views about 90%). The overview, checked in Agenda 2.0 run headless, with the two lists and the steps: [`docs/plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md)
@@ -40,18 +96,13 @@ items have a plan in `docs/plans/` (see `docs/INDEX.md`).
   - [ ] Optional: ALT-F1 COMPOSE
 - [ ] Undo in the note editor: CTRL-Z / CTRL-Y while editing a note, for typing (in sensible chunks: a word or a line, not every key) and for Search/Replace's replacements, with the note's text and cursor restored in the editor; the steps join the file's history when the note closes (today undo works only after closing the note, ADR 0005)
 
-### To look into
-
-- [ ] Look into: reading a date compiles every rule of the date languages each time (`DateParser.compile/4`, ~100 regexes), the root cost behind the lags fixed on 2026-10-15. Execute over 300 items with dated text takes ~1.1 s, nearly all of it there (two readings an item). The core cannot cache in a process; the compiled rules could travel in `Agendum.Core.Context`, built once when the languages or input format change
-- [ ] Look into: a view on a large file is still slow to move in (at 3000 items a cursor move takes ~90 ms in `Update` and ~55 ms in `Render`), as every key rebuilds the view. Cache the computed view in `State`, recomputed only when the database, view or date changes (needs an ADR); wait for a `slow answer` line in the debug log that points at it.
-
 ### Data interchange (Milestone 4)
 
 - [ ] Repeating events in a calendar from another time zone: each occurrence converted in its own zone, so the weeks between the two zones' summer-time changes are not an hour off (SPEC R45)
 - [ ] Optional: read original `.AG` files directly. The format is now largely known (`docs/AGENDA_FILE_FORMAT.md`; research log `docs/plans/AGENDA_FILE_FORMAT_LOG.md`; reference reader `tools/agformat/agdump.py`): items, notes and note files, categories with all their settings, conditions and actions, assignments with values, relative and recurring dates, alarms, views with sorting and filters, datebooks, sections, columns with formats, file settings
   - [x] Reverse engineer the format: container, items, categories, values, views (2026-10-14)
   - [x] Settle the open parts: view/section sort and filter words, relative-date encoding, actions, settings (2026-10-15, second round; how to drive Agenda: `tools/agformat/DRIVING_AGENDA.md`)
-  - [ ] Elixir reader outside the pure core, converting to the JSON format; File ▸ Transfer ▸ Import of a `.AG`
+  - [ ] Elixir reader outside the pure core, converting to the JSON format; File ▸ Transfer ▸ Import of a `.AG`. The first users are likely old Agenda users, and this brings them (expert review 2026-10-16)
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated")
 - [ ] Optional: Import of structured text files (one item per line, with categories)
 - [ ] Optional: TXT2STF-style definition files that turn plain text into items (Working with Definition Files). A first real use: the session summaries in `docs/summaries/` (one per feature, all alike: `#` title, dated, commit hashes, R-numbers), imported with STF and a definition file so text matching files them (the owner's wish, 2026-10-15)
@@ -66,47 +117,20 @@ items have a plan in `docs/plans/` (see `docs/INDEX.md`).
 - [ ] Rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it ([`docs/plans/RENAME_REPO.md`](plans/RENAME_REPO.md))
 *[A page here was soaked in the creek. — Rabbit]*
 
+### Users and direction
+
+- [ ] Who Agendum is for, in one paragraph at the top of this roadmap, and the "Beyond Agenda" items weighed against it (expert review 2026-10-16)
+- [ ] Five real users before Milestone 2 is closed: old Agenda users and people who love keyboard tools, with the debug log on (`AGENDUM_LOG`) and a short talk with each; what they stumble on goes here (expert review 2026-10-16)
+
 ### Beyond Agenda
 
+- [ ] A GTD starter, like the Planner (R60, ADR 0028): Inbox, Next Actions by context, Projects, Waiting For, Someday/Maybe, and views for a weekly review (items untouched for a while, projects without a next action), so the rules show what they can do in a method many people know (expert review 2026-10-16)
+- [ ] Capture from outside: `agendum add "text" FILE` from the shell, filed by the core as if typed in the view (the file's main view and section); later a mail or phone path (expert review 2026-10-16)
 - [ ] More date languages (one `Agendum.Core.DateLanguage` pack each)
 - [ ] Modern by default: today's names and standard keys out of the box (Open not Retrieve, Delete not Discard, CTRL-O/S/Z/F/N…), with Agenda's names and keys one setting away ("Agenda mode"). Agenda's steep learning curve limited its audience (AGENDA_HISTORY.md); the power should stay, the strangeness should not be the first thing people meet. Builds on the keymaps, self-describing commands and own key bindings (Towards many users); departs from ADR 0006 and 0007, so it needs an ADR of its own
 - [ ] Flashcards with active recall and spaced repetition: an item is the question, its note the answer; a deck is any category. The schedule is kept in ordinary categories made the first time (date category Due; numeric Interval, Ease and Reviews), so filters, datebooks, sorting and JSON work on cards as they are, with no new stored fields. A review mode on the due items: the question, SPACE shows the note, then Again / Hard / Good / Easy sets the next Due date (one undo step per card). Scheduling is SM-2 to begin with, in a pure core module with the clock passed in, behind an interface that FSRS could replace
 - [ ] A micro-blog from the file: the items of a chosen category (e.g. Posts) are posts, the item the title, the note the content (a Markdown subset), When the date (else Entry). File ▸ Transfer ▸ Publish writes a static site: an index page newest first, a page per post and an RSS feed (`rss.xml`), plain HTML without JavaScript. The site's title, base address (for the feed's links) and author are kept in the file. The pages are made in a pure core module (`{path, html}` pairs); the shell writes them to a folder, and can then sync the folder to a server with `rsync` over `ssh` (the person's own keys; nothing is stored by Agendum; optional, nothing changes without rsync). Markdown: a small subset of our own, or Earmark if it passes ADR 0021
 - [ ] Zettelkasten IDs and links between items: every item gets an ID when it is made, its creation time as YYMMDDHHMM plus a digit that counts up only when two items are made in the same minute (`26101311140`); stored with the item and never changed (items from older files get one from their Entry date on load). A column kind shows it. `[[26101311140]]` in an item's text or note is a link: shown as typed in the link colour, the target's text in the control panel when the cursor is on it, a broken link marked. Following a link (a key to choose, with a Mac-friendly alternative) shows the target in the Show View (ALT-F8 back); Item Properties lists the items that link to it ("Linked from"), and a search lists them in the Show View. A key inserts a link to the marked item. Text matching ignores links. In the published micro-blog a link is an `<a>` to the target's page, or its title in plain text if the target is not published. Ours, not Agenda's; a stored field (DATA_MODEL, JSON schema, format version)
-
-### Towards many users
-
-A web application with accounts and shared files, on the same core (plan:
-[MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). First, in the core and the TUI, a
-few commands at a time:
-
-- [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agendum.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
-- [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps (R65, ADR 0033)
-  - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)
-  - [x] A count with ALT-digits in views, for the commands chosen to take one; a repeat that changes nothing stops
-  - [x] The global keys (CTRL-Z, CTRL-S …) and the keys that stand for others (CTRL-N = INS) in `Agendum.TUI.Keymap`
-  - [x] The category and view managers' and a note's keys in keymaps (F1 `c` and `d` there too)
-  - [x] The keys every box shares in a keymap (`:box`: F1, F3 choices, ESC cancel); F1 `c` and `d` in every box, its own keys read from its key bar
-  - [x] Each box's own keys in a keymap of its own (`Box.keymap/1`, `commands/1`, `run/3`; settings boxes from `Box.settings_keymap/1`); `c` and `d` no longer read key bars
-  - [x] The menu: its keys in a keymap; F1 `c` lists the level's entries by their letters, F1 `d` describes them
-  - [x] Moving items, a column or a section, a column's width, Browse and searching the view: keymaps of their own, F1 there too
-  - [x] The typing keys in keymaps: one line (`:line`, `Typing.LineEdit`) and a note's text (`:text`, `Typing.TextEdit`)
-  - [x] Whether a command can run now (R65a): F1 `c` greys what cannot, says why, and ENTER gives the reason; each place's `unavailable/1` (the owner chose grey in place over hiding or putting last, 2026-10-16)
-  - [x] A longer text than the summary, saying why one would use the command where that is not obvious (R65b): the view's, the global ones, the managers' and a note's
-  - [x] Longer texts for the menu's entries (by their labels; an entry that runs a view's or a global command has its text) and the boxes' own commands (by box; a settings box's Change and Done shared)
-  - [ ] Longer texts for the rest, where they would help: the moves (Browse, widths …) and typing
-- [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
-- [ ] Raw values (dates, numbers) beside the formatted cells in `Agendum.Core.ViewModel`
-- [ ] Browsing's date arithmetic into the core
-- [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
-
-Then a web version for one person:
-
-*[A page here was soaked in the creek. — Rabbit]*
-
-Then working together:
-
-*[A page here was soaked in the creek. — Rabbit]*
 
 ### Ideas
 

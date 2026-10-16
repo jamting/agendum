@@ -65,7 +65,7 @@ grep -n "@format_version" lib/agendum/store.ex              # file format versio
 
 Run `mix check` for real (in the background) and report what it said; do
 not assume it passes. Optionally time a large file (the roadmap's
-"To look into" items) if performance is a finding.
+"Sharpen the saw" items) if performance is a finding.
 
 **The previous review**: read the newest file in `docs/reviews/`. Each
 of its recommendations is followed up: done, partly, not yet, or dropped
