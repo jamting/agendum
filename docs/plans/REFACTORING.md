@@ -96,6 +96,9 @@ On the way: the fuzz property runs as four test modules side by side
 
 ## 4. Logic in `Agendum.TUI.Update`: wait for the command layer
 
+(With the command layer, each place also gets a struct for its UI mode;
+ROADMAP, "Towards many users".)
+
 `Agendum.TUI.Update` still decides things that belong in the core. The
 command layer planned in ROADMAP ("Towards many users") is the right fix;
 a separate refactoring now would be done twice.

@@ -21,7 +21,6 @@ that leans on them. From the expert review of 2026-10-16
 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
 - [ ] CI: `mix check` on every push (GitHub Actions), once the repository is on GitHub (Housekeeping). The long fuzz run (`FUZZ_RUNS=3000`) is run by hand before every version is tagged (docs/INDEX.md, "Where a change is written down"); CI could take it over later, nightly
-- [ ] Typed UI modes: a struct per mode instead of the `%{type: …}` maps in `State.modes` (about fifty kinds), so the compiler and Dialyzer catch a misspelt field that today only the fuzz test finds; box by box, starting where the command layer will work
 - [ ] A view cache, when the evidence asks for it: a view on a large file is still slow to move in (at 3000 items a cursor move takes ~90 ms in `Update` and ~55 ms in `Render`), as every key rebuilds the view. Cache the computed view in `State`, recomputed only when the database, view or date changes (needs an ADR); wait for a `slow answer` line in the debug log that points at it.
 
 ### Towards many users: the command layer (the next major work)
@@ -33,6 +32,7 @@ Sharpen the saw: the web, customizable keys, a modern mode and Wol all
 wait for it (expert review 2026-10-16, `docs/reviews/2026-10-16.md`).
 
 - [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agendum.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so)
+  - [ ] Typed UI modes, done with it (moved from Sharpen the saw, owner's decision 2026-10-16): each place whose keys move to commands also gets a struct for its mode, instead of the `%{type: …}` maps in `State.modes` (about fifty kinds), so the compiler and Dialyzer catch a misspelt field that today only the fuzz test finds. Done when no mode is a bare map; one place at a time, each step with `mix check` and a long fuzz run
 - [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps (R65, ADR 0033)
   - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)
   - [x] A count with ALT-digits in views, for the commands chosen to take one; a repeat that changes nothing stops
