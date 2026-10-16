@@ -17,7 +17,7 @@ Tools and checks that make every later change faster and safer. Do these first: 
 
 A web application with accounts and shared files, on the same core (plan: [MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). Its first step, the command layer, is done (R66, ADR 0036, below under Done): every change to a file is a command the core runs. Typed UI modes come next.
 
-- [ ] Command layer, more: what the TUI still puts together from several commands, as a batch, could become commands of their own, so another front end does not repeat it: typing over a column entry (clear, then assign), a Not-assigned range condition (remove, then add). And reasons in `changes` ("filed by condition X"), which an agent will want
+- [ ] Reasons in a command's `changes` ("filed by condition X"), which an agent will want: see "Reasons with assignments" below
 - [ ] Typed UI modes (moved from Sharpen the saw, owner's decision 2026-10-16; done after the command layer rather than with it, owner's decision 2026-10-16): a struct for each mode instead of the `%{type: …}` maps in `State.modes` (about fifty kinds), so the compiler and Dialyzer catch a misspelt field that today only the fuzz test finds. Done when no mode is a bare map; one place at a time, each step with `mix check`, and a long fuzz run at the end
 - [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps (R65, ADR 0033)
   - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)
@@ -312,6 +312,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] The layer itself and its first commands: marking, done, discarding
   - [x] Adding items (typed, in a datebook slot, from a note's text; a filtered section's needs, R28, in the command) and editing their text
   - [x] Every other change, in four batches: assigning and removing, notes, dates, alarms, numbers, dependencies; categories, rules, Execute, the file's dates; views, sections, columns, filters; macros and calendars. Loops over marked items became `{:batch, …}` commands; previews of a move run the command on a copy (`State.preview/2`)
+  - [x] Typing over a column entry and a Not-assigned range condition are commands of their own (`:type_in_column`, `:set_condition`), not batches the TUI puts together
 - [x] In the TUI: help made from the commands and keymaps (R65, ADR 0033), 2026-10-15/16
   - [x] F1 shows a text about where you are: the view, a note, a manager, the menu, a move, or the box on top (`about/0` per place, `Box.about/2` per box, a default one for the others); the owner's idea
   - [x] F1 then `c`: the commands that can run there, local then global, with keys and summaries; typing narrows the list, ENTER runs the highlighted one

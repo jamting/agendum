@@ -110,6 +110,9 @@ defmodule Agendum.Core.Command do
     {:clear_column, "Clear column",
      "Takes an item out of a column: its entries under the head (DEL in a column, R24)",
      [:item, :category], :own},
+    {:type_in_column, "Type in column",
+     "Typing in a column cell (R23): the entry is a category picked ({:category, id}), a name read as a child, date or number ({:name, text}) or a new child ({:new, text}); with replace? true what was there goes first, when something was typed",
+     [:item, :category, :value, :value], :own},
     {:set_in_column, "Set in column",
      "Assigns an item to a yes/no column's head, or takes it out", [:item, :category, :value],
      :clock},
@@ -190,6 +193,9 @@ defmodule Agendum.Core.Command do
      "Marks done or discards items assigned to a category (R15b)", [:category, :value], :core},
     {:add_condition, "Add condition", "Adds an assignment condition (R15)",
      [:category, :category, :value], :core},
+    {:set_condition, "Set condition",
+     "Sets an assignment condition, replacing the one on that category if there is one (R15)",
+     [:category, :category, :value], :own},
     {:remove_condition, "Remove condition", "Removes an assignment condition",
      [:category, :category], :core},
     {:cycle_condition, "Cycle condition",
@@ -507,6 +513,30 @@ defmodule Agendum.Core.Command do
         else: Agendum.Core.ViewModel.column_entries(db, item_id, head)
 
     result(Enum.reduce(entries, db, &Assignments.remove_from_category(&2, item_id, &1, clock)))
+  end
+
+  # Typing in a column cell: the entry replaces what was there, in the
+  # same change, when `replace?` and something was typed (R23)
+  defp apply_own(db, {:type_in_column, item_id, head, entry, replace?}, clock) do
+    assign =
+      case entry do
+        {:category, id} -> {:assign, item_id, id}
+        {:name, text} -> {:assign_by_name, item_id, head, text}
+        {:new, text} -> {:assign_new_by_name, item_id, head, text}
+      end
+
+    typed? = match?({:category, _}, entry) or String.trim(elem(entry, 1)) != ""
+    clear = if replace? and typed?, do: [{:clear_column, item_id, head}], else: []
+
+    with {:ok, db, %{steps: steps}} <- apply_own(db, {:batch, clear ++ [assign]}, clock),
+         do: {:ok, db, List.last(steps)}
+  end
+
+  defp apply_own(db, {:set_condition, cat_id, target, kind}, _clock) do
+    db
+    |> Agendum.Core.remove_condition(cat_id, target)
+    |> Agendum.Core.add_condition(cat_id, target, kind)
+    |> result()
   end
 
   # the clock goes into the options, where these functions read it

@@ -58,6 +58,8 @@ Every change goes through `Core.run(db, command, clock)`. The commands are liste
 | `{:edit_item, item, text}` | Changing an item's text: filed again by what it now says (R10, R14). |
 | `{:mark_done, items}`, `{:discard_items, items}` | Done on, or discarding, several items. |
 | `{:clear_column, item, head}` | DEL in a column: the item leaves the head, or the head's children it is in. |
+| `{:type_in_column, item, head, entry, replace?}` | Typing in a column cell (R23): `entry` is `{:category, id}` (picked), `{:name, text}` (a child, a date or a number by name) or `{:new, text}` (a new child); with `replace?`, what was there goes first when something was typed. |
+| `{:set_condition, cat, target, kind}` | An assignment condition, replacing the one on that category (R15). |
 | `{:move_item, …, opts}`, `{:execute, items, opts}`, `{:add_column_as, …, opts}` | The clock goes into the options, where the facade reads it. |
 | `:ring_alarms`, `:clear_old_alarms` | The clock's own changes; `changes.result` holds the items whose alarms rang. |
 | `{:batch, commands}` | Several commands as one change; none is made if one is refused. `changes.steps` holds what each made. |

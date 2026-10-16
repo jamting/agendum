@@ -178,13 +178,8 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
   end
 
   # A condition with Not assigned: items without a date (or number).
-  defp set(_state, %{purpose: {:condition, owner}, show: :not_assigned} = mode) do
-    {:batch,
-     [
-       {:remove_condition, owner, mode.cat_id},
-       {:add_condition, owner, mode.cat_id, :not_assigned}
-     ]}
-  end
+  defp set(_state, %{purpose: {:condition, owner}, show: :not_assigned} = mode),
+    do: {:set_condition, owner, mode.cat_id, :not_assigned}
 
   defp set(_state, %{purpose: {:condition, owner}} = mode) do
     range = {mode.from.text, mode.to.text, mode.where}

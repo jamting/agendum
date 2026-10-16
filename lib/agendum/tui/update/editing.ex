@@ -59,7 +59,7 @@ defmodule Agendum.TUI.Update.Editing do
     state = %{state | edit: nil}
 
     if shown do
-      State.run(state, column_entry(item_id, head, how == :replace, {:assign, item_id, shown}))
+      State.run(state, {:type_in_column, item_id, head, {:category, shown}, how == :replace})
     else
       commit(state, {:column_entry, item_id, head, how}, line.text)
     end
@@ -75,10 +75,7 @@ defmodule Agendum.TUI.Update.Editing do
        ) do
     state = %{state | edit: nil}
 
-    replace? = how == :replace and String.trim(line.text) != ""
-
-    command =
-      column_entry(item_id, head, replace?, {:assign_new_by_name, item_id, head, line.text})
+    command = {:type_in_column, item_id, head, {:new, line.text}, how == :replace}
 
     case State.command(state, command) do
       {:ok, state, %{new: cat_id}} ->
@@ -123,12 +120,7 @@ defmodule Agendum.TUI.Update.Editing do
   defp commit(state, {:note_line, _, _, _} = target, text), do: set_note_line(state, target, text)
 
   defp commit(state, {:column_entry, item_id, head, how}, text) do
-    replace? = how == :replace and String.trim(text) != ""
-
-    case State.command(
-           state,
-           column_entry(item_id, head, replace?, {:assign_by_name, item_id, head, text})
-         ) do
+    case State.command(state, {:type_in_column, item_id, head, {:name, text}, how == :replace}) do
       {:ok, state, _} ->
         state
 
@@ -274,11 +266,4 @@ defmodule Agendum.TUI.Update.Editing do
         )
     end
   end
-
-  # Typing into a column cell: what was there goes first when the entry
-  # replaces it (R23), in the same change
-  defp column_entry(item_id, head, true = _replace?, command),
-    do: {:batch, [{:clear_column, item_id, head}, command]}
-
-  defp column_entry(_item_id, _head, false, command), do: command
 end

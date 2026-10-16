@@ -185,6 +185,45 @@ defmodule Agendum.Core.CommandTest do
     assert changes.items.changed == [a]
   end
 
+  describe "typing in a column" do
+    setup %{db: db} do
+      db = with_categories(db, [{"Who", [], ["Anna", "Bo"]}])
+      %{db: db, who: cat(db, "Who"), anna: cat(db, "Anna"), bo: cat(db, "Bo")}
+    end
+
+    test "a name typed over an entry replaces it", %{db: db, a: a, who: who, anna: anna, bo: bo} do
+      {:ok, db, _} = Core.run(db, {:type_in_column, a, who, {:name, "Anna"}, false}, today())
+      {:ok, db, _} = Core.run(db, {:type_in_column, a, who, {:name, "Bo"}, true}, today())
+
+      refute Agendum.Core.Database.member?(db, a, anna)
+      assert Agendum.Core.Database.member?(db, a, bo)
+    end
+
+    test "added, not replacing; a new child; a category picked", %{db: db, a: a, who: who, bo: bo} do
+      {:ok, db, _} = Core.run(db, {:type_in_column, a, who, {:category, bo}, false}, today())
+      {:ok, db, changes} = Core.run(db, {:type_in_column, a, who, {:new, "Cleo"}, false}, today())
+
+      assert db.categories[changes.new].name == "Cleo"
+      assert Agendum.Core.Database.member?(db, a, bo)
+    end
+
+    test "nothing typed over an entry keeps it", %{db: db, a: a, who: who, anna: anna} do
+      {:ok, db, _} = Core.run(db, {:type_in_column, a, who, {:category, anna}, false}, today())
+
+      assert Core.run(db, {:type_in_column, a, who, {:name, " "}, true}, today()) ==
+               {:error, :empty}
+    end
+  end
+
+  test "a condition set replaces the one on that category", %{db: db} do
+    db = with_categories(db, ["Work", "Home"])
+    {work, home} = {cat(db, "Work"), cat(db, "Home")}
+    {:ok, db, _} = Core.run(db, {:add_condition, work, home, :assigned}, today())
+    {:ok, db, _} = Core.run(db, {:set_condition, work, home, :not_assigned}, today())
+
+    assert db.categories[work].conditions == [{home, :not_assigned}]
+  end
+
   describe "several commands as one" do
     test "a batch runs its commands in turn, as one change", %{db: db, a: a, b: b} do
       {:ok, db, changes} =
