@@ -4,6 +4,16 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.13.0 — 2026-10-17
+
+A plain news reader: feeds come in as calendars do.
+
+- File ▸ Transfer ▸ Feeds subscribes to RSS and Atom feeds. Each entry becomes an item under Feeds ▸ the feed's name, its title the text, its summary and link the note, its publish date the Entry date; text matching and conditions file it as any item. The first feed makes a News view, newest first, done items hidden. Feeds are read every hour (or as you set), and when Agendum starts.
+- Nothing asks to be read: no unread counts. F4 Done dismisses an entry; after the feed's days (30 by default) an entry fades away, unless you kept it with a Zettel id, a note of your own or a category you gave it.
+- CTRL-V (Item ▸ Open link) opens an entry's link in your browser.
+- OPML: I in the Feeds box imports a feed list from another reader, E exports yours.
+- Files are saved in a new format (36); older files open as before.
+
 ## 0.12.1 — 2026-10-17
 
 Keys for the Zettel commands.

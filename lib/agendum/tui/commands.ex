@@ -61,6 +61,7 @@ defmodule Agendum.TUI.Commands do
     {:attach_zettel, "Attach Zettel id", "Give the item(s) the next Zettel id", :none},
     {:follow_link, "Follow link", "Show the items its links point at", :none},
     {:linked_from, "Linked from", "Show the items that link to it", :none},
+    {:open_link, "Open link", "Open the item's link in the browser", :none},
     {:next_view, "Next view", "Show the next view", :repeat},
     {:previous_view, "Previous view", "Show the previous view", :repeat},
     {:last_view, "Last view", "Show the view shown before this one", :none},

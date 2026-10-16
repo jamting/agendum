@@ -4,7 +4,7 @@ defmodule Agendum.TUI.App do
   `Update`, performs the resulting effects, and draws `Render` output.
   """
 
-  alias Agendum.{CalendarFetch, Preferences, Publish, Store}
+  alias Agendum.{CalendarFetch, FeedFetch, Preferences, Publish, Store}
 
   alias Agendum.TUI.{
     DebugLog,
@@ -107,6 +107,12 @@ defmodule Agendum.TUI.App do
       :input_closed ->
         DebugLog.write("input closed")
         :ok
+
+      # a feed read in the background (R75)
+      {:feed_read, id, result, ms} ->
+        DebugLog.write("feed #{id} read: #{elem(result, 0)} in #{ms} ms")
+        state = logged(state, fn -> Update.feed_read(state, id, result) end)
+        loop(state, previous, buffer, theme)
 
       # a calendar read in the background (R45)
       {:calendar_read, id, result, ms} ->
@@ -223,6 +229,25 @@ defmodule Agendum.TUI.App do
 
         {:list_dir, dir} ->
           Update.dir_listed(state, dir, Store.list_dir(dir))
+
+        # a feed read in the background, as a calendar is (R75)
+        {:fetch_feed, id, url} ->
+          loop = self()
+
+          Task.start(fn ->
+            started = now_ms()
+            result = FeedFetch.read(url)
+            send(loop, {:feed_read, id, result, now_ms() - started})
+          end)
+
+          state
+
+        # an entry's link in the browser (R75), and a feed list (OPML)
+        {:open_url, url} ->
+          Update.url_opened(state, url, FeedFetch.open_url(url))
+
+        {:read_opml, path} ->
+          Update.opml_read(state, path, File.read(Path.expand(path)))
 
         # the micro-blog (R74): what the folder holds, then writing and
         # uploading it

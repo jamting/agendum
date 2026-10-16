@@ -23,11 +23,18 @@ defmodule Agendum.CalendarFetch do
     end
   end
 
-  defp download(url) do
+  @doc """
+  Downloads `url` over HTTPS with the system's certificates, as a
+  calendar or a feed (`what`, for the messages and the user agent): the
+  body, or why not as a short sentence. Also used by `Agendum.FeedFetch`.
+  """
+  @spec download(String.t(), String.t()) :: {:ok, binary} | {:error, String.t()}
+  def download(url, what \\ "calendar") do
     {:ok, _} = Application.ensure_all_started([:inets, :ssl])
 
     request =
-      {String.to_charlist(url), [{~c"user-agent", ~c"Wol's Agendum (calendar subscription)"}]}
+      {String.to_charlist(url),
+       [{~c"user-agent", String.to_charlist("Wol's Agendum (#{what} subscription)")}]}
 
     http = [
       timeout: @timeout,
@@ -41,10 +48,10 @@ defmodule Agendum.CalendarFetch do
 
     case :httpc.request(:get, request, http, body_format: :binary) do
       {:ok, {{_, 200, _}, _headers, body}} when byte_size(body) <= @max_bytes -> {:ok, body}
-      {:ok, {{_, 200, _}, _, _}} -> {:error, "the calendar is too large"}
+      {:ok, {{_, 200, _}, _, _}} -> {:error, "the #{what} is too large"}
       {:ok, {{_, 401, _}, _, _}} -> {:error, "the address needs a password"}
       {:ok, {{_, 403, _}, _, _}} -> {:error, "the address is not shared"}
-      {:ok, {{_, 404, _}, _, _}} -> {:error, "no calendar at that address"}
+      {:ok, {{_, 404, _}, _, _}} -> {:error, "no #{what} at that address"}
       {:ok, {{_, status, _}, _, _}} -> {:error, "the server answered #{status}"}
       {:error, reason} -> {:error, "could not connect (#{short(reason)})"}
     end

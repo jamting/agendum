@@ -110,6 +110,7 @@ defmodule Agendum.TUI.Boxes.Box do
     calendars: Agendum.TUI.Boxes.CalendarsBox,
     category_match: Agendum.TUI.Boxes.CategoryMatchBox,
     category_stats: Agendum.TUI.Boxes.CategoryStatsBox,
+    feeds: Agendum.TUI.Boxes.FeedsBox,
     file_stats: Agendum.TUI.Boxes.FileStatsBox,
     choice: Agendum.TUI.CategoryScreens.Choices,
     choice_list: Agendum.TUI.Boxes.ChoiceListBox,

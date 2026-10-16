@@ -20,6 +20,8 @@ defmodule Agendum.TUI.Keymap do
     {:ctrl, "t"} => :attach_zettel,
     {:ctrl, "g"} => :follow_link,
     {:ctrl, "r"} => :linked_from,
+    # a feed entry's link in the browser (R75)
+    {:ctrl, "v"} => :open_link,
     :up => :up,
     :down => :down,
     :enter => :down,

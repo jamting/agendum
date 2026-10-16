@@ -63,6 +63,7 @@ defmodule Agendum.TUI.Modes do
     display_format: [:cursor, :opened],
     execute: [:against, :cursor, :old, :root],
     file_props: [:cursor, :opened],
+    feeds: [:cursor],
     file_stats: [],
     goto: [:cursor],
     group_profile: [:cursor, :item_ids],

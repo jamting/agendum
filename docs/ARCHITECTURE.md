@@ -45,6 +45,9 @@
 | `Agendum.Core.MonthCalendar`                                    | The pop-up calendar's month as weeks, and the moves of its highlight (R46).                                                                             |
 | `Agendum.Core.Macro`                                            | A macro kept in the file: name, keystrokes in Agenda's notation, attached key, where it runs (R50).                                                     |
 | `Agendum.Core.Markdown`                                         | The micro-blog's own Markdown subset, with task boxes and Zettel links, as HTML; everything else escaped (R74).                                         |
+| `Agendum.Core.Xml`                                              | A small, forgiving XML reader that makes no atoms from what it reads, for feeds (R75).                                                                   |
+| `Agendum.Core.FeedParser`                                       | RSS 2.0, RSS 1.0 and Atom read into entries; feed dates; HTML as plain text (R75).                                                                      |
+| `Agendum.Core.Feed`, `Agendum.Core.FeedSync`                    | A feed subscription, and its entries mirrored into items: new ones added, changed ones updated, old ones fading unless kept (R75).                       |
 | `Agendum.Core.Blog`                                             | The micro-blog's settings, kept in the file, and its posts, newest first (R74).                                                                         |
 | `Agendum.Core.Site`                                             | The blog as a static site, `{path, content}` pairs: index, a page per post, RSS, JSON Feed, stylesheet; what publishing changes in a folder (R74).       |
 | `Agendum.Core.DateParser`                                       | Date expressions relative to a given `today`.                                                                                                           |
@@ -164,6 +167,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.Store`                                | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write); folder listings for the Select File box.                     |
 | `Agendum.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format (with the number separators), key map, confirm mode, auto-save, name, company, last file, where each file was left (`Agendum.Preferences.Place`, R69) (`key = value`, ADR 0008).               |
 | `Agendum.CalendarFetch`                        | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
+| `Agendum.FeedFetch`                            | ✘     | Reads a feed from the web (the calendar's HTTPS download) and opens a link in the browser (R75).                                 |
 | `Agendum.Publish`                              | ✘     | The blog's folder read and written, and uploaded by rsync or SFTP (`:ssh_sftp`); `~/.netrc` passwords (R74, ADR 0041).           |
 | `Agendum.CLI`                                  | ✘     | `main/1` for the escript.                                                                                                        |
 

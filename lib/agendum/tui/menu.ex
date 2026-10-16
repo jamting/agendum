@@ -29,13 +29,14 @@ defmodule Agendum.TUI.Menu do
          {"Dating", "Turn When dates read from text on or off", :toggle_auto_date},
          {"Properties", "How the file displays dates and times", :file_props},
          {"Customize", "Your theme, date languages and input format, for every file", :customize},
-         {"Transfer", "Export or import the file, calendars, publish the blog",
+         {"Transfer", "Export or import the file, calendars, feeds, publish the blog",
           [
             {"Export", "Write the whole file as a JSON file", :export_json},
             {"Import", "Open a JSON file as a new, untitled file", :import_json},
             {"Calendars", "Subscribe to calendars on the web (iCal); read them now", :calendars},
             {"Publish", "Write the blog from the posts category as a website, and upload it",
-             :publish}
+             :publish},
+            {"Feeds", "Subscribe to RSS and Atom feeds; read them now; OPML", :feeds}
           ]}
        ]},
       {"Item", "Work with the highlighted item",
@@ -51,6 +52,7 @@ defmodule Agendum.TUI.Menu do
          {"Categorize", "Assign the item, or all marked items, to a category (ALT-M)",
           :make_assign},
          {"Reposition", "Move the item to another section or position (ALT-F10)", :move_item},
+         {"Open link", "Open the item's web link in the browser (CTRL-V)", :open_link},
          {"Zettel", "Zettel ids: give the item one, follow its links",
           [
             {"Attach", "Give the item, or the marked items, the next Zettel id", :attach_zettel},

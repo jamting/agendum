@@ -50,6 +50,7 @@ erDiagram
         list macro_order "macro ids in the macro manager's order"
         atom insert_columns "all or section: where new columns go (R55)"
         Blog blog "the micro-blog's settings (R74)"
+        map feeds "id => Feed subscription (R75)"
     }
     ITEM {
         int id PK
@@ -173,6 +174,7 @@ classDiagram
         +macro_order : [id]
         +insert_columns : all or section
         +blog : Blog
+        +feeds : Map~id, Feed~
     }
     class DateFormat {
         +order : yyyymmdd, mmddyy, ddmmmyy, week, relative…
@@ -382,6 +384,8 @@ classDiagram
 
 Items, categories and views draw ids from **one counter**, `next_id`, just as the patent keeps all objects in one object file (`.AGA`). An id therefore says nothing about its type; look it up in the right map. Ids are never reused. Lower ids were created earlier, and the automatic-assignment tie-break relies on that ("prefer the category created first").
 
+**Feeds** (R75): `db.feeds` holds the feed subscriptions (`Agendum.Core.Feed`), each with what every entry looked like when last read and the item it made (nil once it faded), so a refresh changes only what the feed changed and never brings back what faded. The entries' items are ordinary items in Feeds ▸ the feed's name; their publish date is their Entry date.
+
 **The blog** (R74): `db.blog` (`Agendum.Core.Blog`) holds the micro-blog's settings: its posts and drafts categories by id, its title, description, author, language, base address and `rel="me"` links, the folder the site is written to and how it is uploaded (none, rsync, SFTP, ADR 0041). No password is ever stored. The posts themselves are the items of the posts category, computed (`Blog.posts/1`), and the site is made from them each time (`Agendum.Core.Site`); nothing of the site is stored in the file.
 
 **Zettel ids** (R73, ADR 0039) are a second, separate kind of id: the ids people say and link to, given only to the items made zettels. An item's `zettel` is a number, spelled as a word by `Agendum.Core.ZettelId` (`bonalaku` is 1); the file's own counter, `next_zettel`, starts at 1 and only goes up, skipping the reserved words, so a Zettel id is never given twice. The JSON writes the word.
@@ -520,6 +524,7 @@ The core maintains these, and the tests check them: `Agendum.Core.Invariants.vio
 10. **Conditional marks are links.** Every `{item, category}` in `db.conditional` is also a link; `Database.unlink/3` and the delete operations remove marks with their links. A user assignment clears the mark, so only condition-made links are ever retracted (SPEC R15).
 11. **Zettel ids are unique.** No two items have the same `zettel`, and each is below `next_zettel` (R73). `Core.attach_zettels/2` takes the next number and counts on; nothing else sets one.
 12. **The blog's categories exist.** `blog.posts` and `blog.drafts` are categories in the file, or nil; `delete_category/2` clears them when they go (R74).
+13. **Feeds file into categories that exist.** A feed's `category_id` is a category; `delete_category/2` ends the subscription with it (R75). A feed's entries name items that exist, or nil (one that faded or was discarded); a refresh clears those the person discarded.
 
 ## Mapping to the patent
 
@@ -592,6 +597,7 @@ Format versions:
 | 33 | Added `View.section_separators` (R58) |
 | 34 | Added `Item.zettel` and `Database.next_zettel`, Zettel ids (R73) |
 | 35 | Added `Database.blog`, the micro-blog's settings (`Agendum.Core.Blog`, R74) |
+| 36 | Added `Database.feeds`, feed subscriptions (`Agendum.Core.Feed`, R75) |
 
 ## UI state around the database
 

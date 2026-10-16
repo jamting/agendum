@@ -59,6 +59,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Give the item, or the marked items, a Zettel id (ours, R73)                                    | —                             | **CTRL-T**, or menu Item ▸ Zettel ▸ Attach                 |
 | Follow the item's Zettel links / show the items linking to it (ours, R73b)                     | —                             | **CTRL-G** / **CTRL-R**, or Item ▸ Zettel ▸ Follow / Linked |
 | In a note: type a link to each marked item, `[[bonalaku]]` (ours, R73b)                         | —                             | **CTRL-L**                                                  |
+| Open the item's web link in the browser: a feed entry's article (ours, R75)                    | —                             | **CTRL-V**, or menu Item ▸ Open link                       |
 | Category manager: add a sibling below / above                                                   | ALT-D (or ALT-I, INS) / ALT-U | ⌥d / ⌥u, or **CTRL-N**                                     |
 | Category manager: add a child / a new family after the parent                                   | ALT-R / ALT-L                 | ⌥r / ⌥l                                                    |
 | Remove from section / column                                                                    | DEL                           | fn-⌫ (forward delete)                                                 |

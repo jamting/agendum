@@ -302,6 +302,9 @@ defmodule Agendum.TUI.Update do
       |> Core.calendars_due(now)
       |> Enum.reduce(%{state | effects: []}, &fetch_calendar(&2, &1.id, :auto))
 
+    # and feeds (R75)
+    state = state.db |> Core.feeds_due(now) |> Enum.reduce(state, &fetch_feed(&2, &1.id, :auto))
+
     {state, fetches} = {%{state | effects: []}, save ++ state.effects}
 
     case rung do
@@ -431,6 +434,85 @@ defmodule Agendum.TUI.Update do
     state = State.run(state, {:calendar_failed, cal.id, message})
     if kind == :manual, do: State.error(state, "#{cal.name}: #{message}"), else: state
   end
+
+  @doc """
+  Asks the shell to read a feed (`{:fetch_feed, id, url}`, R75), unless it
+  is being read already; `kind` as for calendars.
+  """
+  def fetch_feed(state, feed_id, kind) do
+    feed = state.db.feeds[feed_id]
+
+    if feed == nil or Map.has_key?(state.fetching, feed_id),
+      do: state,
+      else:
+        %{state | fetching: Map.put(state.fetching, feed_id, kind)}
+        |> State.effect({:fetch_feed, feed_id, feed.url})
+  end
+
+  @doc "After the shell read a feed: its entries are filed into the file (R75), or why not."
+  def feed_read(state, feed_id, result) do
+    {kind, fetching} = Map.pop(state.fetching, feed_id)
+    state = %{state | fetching: fetching}
+    feed = state.db.feeds[feed_id]
+
+    if feed == nil do
+      state
+    else
+      next = feed_into(state, feed, kind, result)
+      next = %{History.record(state, next) | dirty: next.db != next.saved.db}
+      if next.modes == [], do: Layout.settle(next), else: next
+    end
+  end
+
+  defp feed_into(state, feed, kind, {:ok, entries}) do
+    {:ok, state, %{result: counts}} = State.command(state, {:sync_feed, feed.id, entries})
+
+    parts =
+      [added: "new", updated: "changed", faded: "faded"]
+      |> Enum.filter(fn {key, _} -> counts[key] > 0 end)
+      |> Enum.map_join(", ", fn {key, word} -> "#{counts[key]} #{word}" end)
+
+    cond do
+      parts != "" -> State.info(state, "#{feed.name}: #{parts}")
+      kind == :manual -> State.info(state, "#{feed.name}: nothing new")
+      true -> state
+    end
+  end
+
+  defp feed_into(state, feed, kind, {:error, message}) do
+    state = State.run(state, {:feed_failed, feed.id, message})
+    if kind == :manual, do: State.error(state, "#{feed.name}: #{message}"), else: state
+  end
+
+  @doc "After the browser was asked to open a link (R75)."
+  def url_opened(state, url, :ok), do: State.info(state, "Opened #{url}")
+
+  def url_opened(state, _url, {:error, reason}),
+    do: State.error(state, "Could not open it: #{reason}")
+
+  @doc "A feed list read for OPML import (R75): each feed not in the file yet is subscribed."
+  def opml_read(state, path, {:ok, text}) do
+    case State.command(state, {:import_opml, text}) do
+      {:ok, state, %{result: []}} ->
+        State.info(state, "#{Path.basename(path)}: no feeds the file does not have already")
+
+      {:ok, state, %{result: ids}} ->
+        state = Enum.reduce(ids, state, &fetch_feed(&2, &1, :auto))
+
+        State.info(
+          state,
+          "Subscribed to #{Agendum.TUI.Terminal.Draw.count(length(ids), "feed")} from #{Path.basename(path)}"
+        )
+
+      {:error, :not_opml} ->
+        State.error(state, "#{Path.basename(path)} is not an OPML feed list")
+    end
+  end
+
+  def opml_read(state, _path, {:error, :enoent}), do: State.error(state, "File not found")
+
+  def opml_read(state, _path, {:error, reason}),
+    do: State.error(state, "Could not read: #{inspect(reason)}")
 
   # --- results of effects -----------------------------------------------------
   #

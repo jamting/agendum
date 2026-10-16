@@ -142,7 +142,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
   @checked [:edit, :choices, :note, :properties, :mark, :remove, :discard, :move, :copy] ++
              [:yank, :hop, :alarm, :dependency, :done, :when, :make_assign, :collapse] ++
              [:expand, :execute_category, :unmark_all, :next_marked, :last_view] ++
-             [:next_view, :previous_view, :follow_link, :linked_from]
+             [:next_view, :previous_view, :follow_link, :linked_from, :open_link]
 
   @no_rows "Nothing is highlighted: this view shows no rows"
 
@@ -220,6 +220,11 @@ defmodule Agendum.TUI.Update.ViewKeys do
     if Core.link_targets(state.db, item.id) == [], do: "This item has no links to other items"
   end
 
+  defp why_not(_state, :open_link, %{kind: :item, item: item}, _marked) do
+    unless Regex.match?(~r{https?://}i, item.note <> "\n" <> item.text),
+      do: "The item has no web address in its note or text"
+  end
+
   defp why_not(state, :linked_from, %{kind: :item, item: item}, _marked) do
     cond do
       item.zettel == nil -> "The item has no Zettel id, so nothing can link to it"
@@ -233,7 +238,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
   defp why_not(_state, :hop, _row, _marked), do: "Highlight an item to hop to its next occurrence"
 
   defp why_not(_state, id, _row, _marked)
-       when id in [:alarm, :dependency, :follow_link, :linked_from],
+       when id in [:alarm, :dependency, :follow_link, :linked_from, :open_link],
        do: "Highlight an item first"
 
   defp why_not(_state, id, _row, []) when id in [:done, :when, :make_assign],
@@ -298,7 +303,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
   defp command(state, :when, row), do: scoped(state, :when, row)
   defp command(state, :attach_zettel, row), do: scoped(state, :attach_zettel, row)
 
-  defp command(state, id, _row) when id in [:follow_link, :linked_from],
+  defp command(state, id, _row) when id in [:follow_link, :linked_from, :open_link],
     do: Actions.perform(state, id)
 
   # on a column head (a section head line) the column moves, as in

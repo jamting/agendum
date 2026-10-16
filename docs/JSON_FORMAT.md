@@ -45,6 +45,7 @@ The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs` and 
 | `items`      | Every item, in file order.                                               |
 | `views`      | Every view, in the view manager's order.                                 |
 | `calendars`  | Calendar subscriptions (R45).                                            |
+| `feeds`      | Feed subscriptions (R75), below.                                         |
 | `macros`     | Macros, in the macro manager's order (R50).                              |
 | `blog`       | The micro-blog's settings (R74), below.                                  |
 
@@ -127,6 +128,18 @@ A **criterion** (conditions, filters) is `{"category": id, "is": "assigned"}`, `
 | `refreshed_at`, `error` | When it was last read, and why that failed; or `null`.                                                                                                                 |
 | `events`                | For each event read: `uid`, its `item`, and the `summary`, `description`, `date`, `time`, `recurrence`, `end_date` and `end_time` it had, so a refresh only changes what the calendar changed. |
 
+## Feeds
+
+| Key | Meaning |
+| --- | ------- |
+| `id`, `name` | Required. |
+| `url` | Where the feed is read from (`https://…`). |
+| `category` | The category its entries' items go in (under Feeds). |
+| `keep_days` | How long an entry stays, from its publish date, unless kept: a number of days, or `null` for ever. |
+| `refresh_minutes` | How often it is read while Agendum runs (60, 360, 1440), or `null` for only on request. |
+| `refreshed_at`, `error` | When it was last read, and why that failed; or `null`. |
+| `entries` | For each entry read: its `id` (guid, else link), its `item` (or `null` once it faded or was discarded), and the `title`, `note`, `link` and `published` date it had, so a refresh only changes what the feed changed. |
+
 ## Macros
 
 | Key        | Meaning                                                                                                   |
@@ -155,4 +168,4 @@ No password is ever in the file.
 
 ## What is checked on import
 
-Beyond the types: MAIN and the special categories exist (and the special ones are date categories); there is a view; ids are unique and below `next_id`; Zettel ids are unique and below `next_zettel`; the blog's categories exist; parents and children agree; every category, item and view an object refers to exists. A file that fails opens nothing; the open file stays.
+Beyond the types: MAIN and the special categories exist (and the special ones are date categories); there is a view; ids are unique and below `next_id`; Zettel ids are unique and below `next_zettel`; the blog's categories exist; each feed's category exists; parents and children agree; every category, item and view an object refers to exists. A file that fails opens nothing; the open file stays.

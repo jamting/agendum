@@ -157,6 +157,35 @@ defmodule Agendum.TUI.Update.Prompts do
     end
   end
 
+  # Feeds (R75): the address, then its name (its category under Feeds)
+  defp prompt_action(state, :feed_url, text),
+    do: prompt(state, "Name of the feed (its category under Feeds):", {:feed_name, text})
+
+  defp prompt_action(state, {:feed_name, url}, name) do
+    case State.command(state, {:subscribe_feed, name, url}) do
+      {:ok, state, %{new: id}} ->
+        state
+        |> State.info("Subscribed to #{String.trim(name)}")
+        |> Update.fetch_feed(id, :manual)
+
+      {:error, :bad_url} ->
+        State.error(state, "A feed needs an https:// or feed:// address")
+
+      {:error, :no_name} ->
+        State.error(state, "A feed needs a name")
+    end
+  end
+
+  defp prompt_action(state, :import_opml, text),
+    do: State.effect(state, {:read_opml, String.trim(text)})
+
+  defp prompt_action(state, :export_opml, text),
+    do:
+      State.effect(
+        state,
+        {:write_text, Path.expand(String.trim(text)), Agendum.Core.export_opml(state.db)}
+      )
+
   defp prompt_action(state, :startup_open, text),
     do: State.effect(state, {:open_or_create, Agendum.Store.normalize_path(text)})
 
@@ -427,6 +456,11 @@ defmodule Agendum.TUI.Update.Prompts do
       {:error, :last_view} ->
         State.error(state, "A file must have at least one view")
     end
+  end
+
+  defp confirmed(state, {:unsubscribe_feed, id}, discard) do
+    name = state.db.feeds[id].name
+    State.run(state, {:unsubscribe_feed, id, discard}, "Unsubscribed from #{name}")
   end
 
   defp confirmed(state, {:unsubscribe_calendar, id}, discard) do

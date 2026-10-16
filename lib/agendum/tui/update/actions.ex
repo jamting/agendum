@@ -179,6 +179,18 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :customize, _), do: Agendum.TUI.Boxes.CustomizeBox.open(state)
   defp do_perform(state, :calendars, _), do: Agendum.TUI.Boxes.CalendarsBox.open(state)
   defp do_perform(state, :publish, _), do: Agendum.TUI.Boxes.PublishBox.open(state)
+  defp do_perform(state, :feeds, _), do: Agendum.TUI.Boxes.FeedsBox.open(state)
+
+  # R75: the first web address in the item's note (a feed entry's link),
+  # else in its text, in the browser
+  defp do_perform(state, :open_link, %{kind: :item, item: item}) do
+    case Regex.run(~r{https?://[^\s<>"]+}i, item.note <> "\n" <> item.text) do
+      [url | _] -> state |> State.info("Opening #{url} …") |> State.effect({:open_url, url})
+      nil -> State.error(state, "The item has no web address in its note or text")
+    end
+  end
+
+  defp do_perform(state, :open_link, _row), do: State.error(state, "Highlight an item first")
   defp do_perform(state, :execute, _), do: Agendum.TUI.Boxes.ExecuteBox.open(state)
   defp do_perform(state, :questions, _), do: Agendum.TUI.Boxes.QuestionsBox.open(state)
 

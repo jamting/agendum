@@ -139,6 +139,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
       - **Input format** `:input_format` (Input format): the person's number order, date separator and clock, saved as preferences (R41b). `Agendum.TUI.Boxes.InputFormatBox`.
     - **Auto-assign settings** `:auto_assign` (Auto-assign settings): text matching for the file and Confirm assignments (R16, R16a). `Agendum.TUI.Boxes.AutoAssignBox`.
     - **File statistics** `:file_stats` (File statistics ...): the items, items with notes, categories and the average assignments, as Agenda's (screenshot 140); nothing to change. `Agendum.TUI.Boxes.FileStatsBox`.
+  - **Feeds** `:feeds` (File ▸ Transfer ▸ Feeds): RSS and Atom feed subscriptions; INS subscribes (two prompts), ENTER reads now, F how often, K how long entries stay, DEL unsubscribes, I and E import and export OPML (prompts for the file) (R75). `Agendum.TUI.Boxes.FeedsBox`.
   - **Calendars** `:calendars` (File ▸ Transfer ▸ Calendars): calendar subscriptions; INS subscribes (two prompts), ENTER reads now, F and A change how often and how far ahead, DEL unsubscribes (R45). `Agendum.TUI.Boxes.CalendarsBox`.
   - **Customize** `:customize` (File ▸ Customize): the person's theme, date language and fallback language, saved as preferences (R40, R14c). `Agendum.TUI.Boxes.CustomizeBox`.
     - **Input format** `:input_format` (Input format).
@@ -211,6 +212,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:input_format`      | box           | `Agendum.TUI.Boxes.InputFormatBox`       | Global date settings or Customize ▸ Input format  | R41b           |
 | `:customize`         | box           | `Agendum.TUI.Boxes.CustomizeBox`         | File ▸ Customize                                  | R40, R14c      |
 | `:calendars`         | box           | `Agendum.TUI.Boxes.CalendarsBox`         | File ▸ Transfer ▸ Calendars                       | R45            |
+| `:feeds`             | box           | `Agendum.TUI.Boxes.FeedsBox`             | File ▸ Transfer ▸ Feeds                           | R75            |
 | `:auto_assign`       | box           | `Agendum.TUI.Boxes.AutoAssignBox`        | File Properties ▸ Auto-assign settings            | R16a           |
 | `:column_props`      | box           | `Agendum.TUI.Boxes.ColumnBox`            | View ▸ Column ▸ Properties                        | R55, R29, R41a |
 | `:column_add`        | box           | `Agendum.TUI.Boxes.ColumnAddBox`         | View ▸ Column ▸ Add                               | R55            |
