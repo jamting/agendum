@@ -14,7 +14,10 @@ defmodule Agendum.MixProject do
       name: "Wol's Agendum",
       docs: docs(),
       # mix tasks in lib/mix/tasks (`mix agendum.starters`) use Mix itself
-      dialyzer: [plt_add_apps: [:mix]]
+      dialyzer: [plt_add_apps: [:mix]],
+      # the golden files' facts (`test/fixtures/formats/*.facts.exs`) are
+      # data read by a test, not tests: ExUnit warns about them otherwise
+      test_ignore_filters: [&String.starts_with?(&1, "test/fixtures/")]
     ]
   end
 
