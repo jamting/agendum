@@ -67,8 +67,7 @@ defmodule Agendum.TUI.Render.Help do
         [[{:normal, " " <> heading}] | rows] ++ notes ++ [[{:normal, ""}]]
       end)
 
-    [[{:normal, " ALL KEYS"}], [{:normal, ""}]] ++
-      parts ++ Enum.map(@mac, &[{:normal, fit(" " <> &1, width)}])
+    [[{:normal, ""}]] ++ parts ++ Enum.map(@mac, &[{:normal, fit(" " <> &1, width)}])
   end
 
   # a place's commands with their keys; a box of settings has the keys
@@ -125,6 +124,14 @@ defmodule Agendum.TUI.Render.Help do
   end
 
   defp pad(text, width), do: String.pad_trailing(text, width - 1) <> " "
+
+  @doc "A line cut to `width`, ending in … when it was longer."
+  @spec clip(String.t(), integer) :: String.t()
+  def clip(text, width) do
+    if String.length(text) > width and width > 1,
+      do: String.slice(text, 0, width - 1) <> "…",
+      else: fit(text, width)
+  end
 
   @doc "A line cut to `width`."
   @spec fit(String.t(), integer) :: String.t()

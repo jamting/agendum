@@ -119,6 +119,11 @@ defmodule Agendum.TUI.Terminal.Theme do
       help: {:yellow, :blue},
       # a command F1 c lists that cannot run now (R65a)
       help_dim: {:grey, :blue},
+      # the help's frame (R65c): its headings, rules and the pane at its foot
+      help_title: {:white, :blue},
+      help_rule: {:cyan, :blue},
+      help_pane: {:black, :cyan},
+      help_pane_title: {:blue, :cyan},
       splash_logo: {:white, :black},
       splash_title: {:white, :cyan},
       splash_value: {:blue, :cyan}
@@ -166,6 +171,10 @@ defmodule Agendum.TUI.Terminal.Theme do
       catmgr_note: "0;2",
       help: "0",
       help_dim: "0;2",
+      help_title: "0;1",
+      help_rule: "0;2",
+      help_pane: "0;7",
+      help_pane_title: "0;1;7",
       splash_logo: "0;1",
       splash_title: "0;1;7",
       splash_value: "0;4;7"

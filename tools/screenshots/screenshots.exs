@@ -52,6 +52,8 @@ defmodule Screenshots do
       {"09-typing", press(s, [:down, :right, :right, "Hi"])},
       {"10-note", press(s, [:down, {:f, 5}, "hello there"])},
       {"11-help", press(s, {:f, 1})},
+      {"11a-help-commands", press(s, [:down, {:f, 1}, "c"] ++ List.duplicate(:down, 25))},
+      {"11b-help-not-now", press(s, [:down, {:f, 1}, "c", "yank"])},
       {"12-view-manager", press(s, {:f, 8})},
       {"13-category-manager", press(s, [{:f, 9}, :down, :down])},
       {"14-category-props", press(s, [{:f, 9}, :down, :down, :down, :down, {:f, 6}])},

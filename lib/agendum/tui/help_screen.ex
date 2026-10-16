@@ -65,7 +65,8 @@ defmodule Agendum.TUI.HelpScreen do
       from: from,
       cursor: 0,
       described: nil,
-      filter: ""
+      filter: "",
+      pane: 0
     })
   end
 
@@ -196,7 +197,7 @@ defmodule Agendum.TUI.HelpScreen do
   @spec handle(State.t(), map, term) :: State.t()
   def handle(state, %{page: :about} = mode, key) do
     case key do
-      {:char, "c"} -> State.put_mode(state, %{mode | page: :commands, cursor: 0, top: 0})
+      {:char, "c"} -> State.put_mode(state, %{mode | page: :commands, cursor: 0, top: 0, pane: 0})
       {:char, "d"} -> State.put_mode(state, %{mode | page: :describe, described: nil})
       {:char, "a"} -> State.put_mode(state, %{mode | page: :all, top: 0})
       _ -> scroll(state, mode, key)
@@ -214,11 +215,18 @@ defmodule Agendum.TUI.HelpScreen do
     do: narrow(state, %{mode | filter: String.slice(filter, 0..-2//1)})
 
   def handle(state, %{page: :commands, filter: filter} = mode, :esc) when filter != "",
-    do: State.put_mode(state, %{mode | filter: "", cursor: 0})
+    do: State.put_mode(state, %{mode | filter: "", cursor: 0, top: 0, pane: 0})
+
+  # ← → page through the highlighted command's text in the pane
+  def handle(state, %{page: :commands} = mode, key) when key in [:left, :right] do
+    step = if key == :right, do: 1, else: -1
+    pages = state |> State.pop() |> shown(mode) |> Enum.at(mode.cursor) |> pane_pages(state.width)
+    State.put_mode(state, %{mode | pane: (mode.pane + step) |> min(length(pages) - 1) |> max(0)})
+  end
 
   def handle(state, %{page: :commands} = mode, key) do
     list = shown(State.pop(state), mode)
-    page = State.body_height(state) - 2
+    page = list_height(state)
 
     cursor =
       case key do
@@ -236,7 +244,7 @@ defmodule Agendum.TUI.HelpScreen do
     case cursor do
       :close -> State.pop(state)
       :run -> run_or_say(State.pop(state), mode.from, Enum.at(list, mode.cursor))
-      n -> State.put_mode(state, %{mode | cursor: n |> min(length(list) - 1) |> max(0)})
+      n -> State.put_mode(state, move_to(state, mode, list, n))
     end
   end
 
@@ -248,11 +256,19 @@ defmodule Agendum.TUI.HelpScreen do
 
   def handle(state, %{page: :describe}, _key), do: State.pop(state)
 
+  # the highlight on command `n`; the list scrolls only when it reaches
+  # an edge, and the pane starts at the text's beginning
+  defp move_to(state, mode, list, n) do
+    cursor = n |> min(length(list) - 1) |> max(0)
+    top = window(heights(list), mode.top, cursor, list_height(state))
+    %{mode | cursor: cursor, top: top, pane: if(cursor == mode.cursor, do: mode.pane, else: 0)}
+  end
+
   defp narrow(state, mode),
-    do: State.put_mode(state, %{mode | cursor: first_runnable(state, mode)})
+    do: State.put_mode(state, %{mode | cursor: first_runnable(state, mode), top: 0, pane: 0})
 
   defp scroll(state, mode, key) do
-    page = State.body_height(state)
+    page = content_height(state)
     count = length(page_lines(State.pop(state), mode, state.width))
     last = max(count - page, 0)
 
@@ -456,17 +472,14 @@ defmodule Agendum.TUI.HelpScreen do
 
   # --- the text about where you are (F1) -----------------------------------------
 
-  # the page's lines before scrolling, from the state under the help
+  # the page's lines under its heading, before scrolling, from the state
+  # under the help
   defp page_lines(_state, %{page: :all}, width), do: Help.lines(width)
 
   defp page_lines(state, %{page: :about, from: from}, width) do
     text = about(state, from)
 
-    [
-      [{:normal, " HELP #{where(from)}"}],
-      [{:normal, Help.fit(" c commands here · d describe a key · a all keys", width)}],
-      [{:normal, ""}]
-    ] ++
+    [[{:normal, ""}]] ++
       Enum.flat_map(String.split(text, "\n\n"), fn paragraph ->
         lines =
           paragraph |> String.replace("\n", " ") |> Agendum.TUI.Terminal.Draw.wrap(width - 4)
@@ -495,78 +508,188 @@ defmodule Agendum.TUI.HelpScreen do
 
   # --- drawing --------------------------------------------------------------------
 
+  # The frame every page has (R65c): a heading (and what keys do there,
+  # on the right), a line under it, a rule; the command list also has a
+  # pane of @pane lines at the foot, under a rule of its own.
+  @head 3
+  @pane 5
+
   @doc "The help screen's lines, `{style, text}` segments, from its top."
   @spec lines(State.t(), map) :: [[{atom, String.t()}]]
-  def lines(state, %{page: page} = mode) when page in [:about, :all],
-    do: state |> below(mode) |> page_lines(mode, state.width) |> Enum.drop(mode.top)
+  def lines(state, %{page: :about, from: from} = mode) do
+    head("HELP #{where(from)}", "", " c commands here · d describe a key · a all keys", state) ++
+      (state |> below(mode) |> page_lines(mode, state.width) |> Enum.drop(mode.top))
+  end
+
+  def lines(state, %{page: :all} = mode) do
+    head("ALL KEYS", "↑↓ PGUP PGDN scroll", "   Every key, made from the keymaps.", state) ++
+      (state |> below(mode) |> page_lines(mode, state.width) |> Enum.drop(mode.top))
+  end
 
   def lines(state, %{page: :commands} = mode) do
-    page = State.body_height(state) - 2
-
-    # each command's lines, then the lines of all, scrolled so that the
-    # highlighted command shows whole; one that cannot run now is greyed,
-    # and says why when highlighted (R65a)
+    # each command's rows, greyed when it cannot run now (R65a); the
+    # list shows from `top` (see `window/4`) and leaves room for the pane
     under = below(state, mode)
     unavailable = unavailable(under, mode.from)
+    list = shown(under, mode)
+    rows = list_height(state)
+    top = window(heights(list), mode.top, mode.cursor, rows)
 
     entries =
-      under
-      |> shown(mode)
+      list
       |> Enum.with_index()
       |> Enum.map(fn {{command, _place, keys} = entry, i} ->
-        why = reason(unavailable, entry)
-
         style =
           cond do
             i == mode.cursor -> :row
-            why != nil -> :dim
+            reason(unavailable, entry) != nil -> :dim
             true -> :normal
           end
 
-        lines = for text <- Help.row(command, keys), do: [{style, Help.fit(text, state.width)}]
-
-        if i == mode.cursor,
-          do: lines ++ more_lines(command, why, state.width),
-          else: lines
+        for text <- Help.row(command, keys), do: [{style, Help.clip(text, state.width)}]
       end)
 
-    before = entries |> Enum.take(mode.cursor + 1) |> Enum.map(&length/1) |> Enum.sum()
-    top = max(before - page, 0)
+    shown = entries |> Enum.drop(top) |> fitting(rows)
+    after_shown = length(entries) - top - length(shown)
+    visible = Enum.concat(shown)
+    entry = Enum.at(list, mode.cursor)
 
     typed =
       if mode.filter == "",
         do: "   Type to narrow the list.",
         else: "   Showing those with \"#{mode.filter}\" (BACKSPACE, ESC to see all)"
 
+    head("COMMANDS #{where(mode.from)}", "↑↓ move · ENTER runs · ESC returns", typed, state) ++
+      visible ++
+      List.duplicate([], max(rows - length(visible), 0)) ++
+      [pane_rule(top, after_shown, entry, mode.pane, state.width)] ++
+      pane(entry, reason(unavailable, entry), mode.pane, state.width)
+  end
+
+  def lines(state, %{page: :describe, described: nil, from: from}),
+    do:
+      head(
+        "DESCRIBE KEY #{where(from)}",
+        "",
+        "   Press a key to see what it does (ESC returns).",
+        state
+      )
+
+  def lines(state, %{page: :describe, described: text, from: from}) do
+    head("DESCRIBE KEY #{where(from)}", "", "   Any key returns.", state) ++
+      [[{:normal, ""}]] ++ Enum.map(text, &[{:normal, "   " <> &1}])
+  end
+
+  # the heading (with `keys` on its right, when they fit), the line under
+  # it, and a rule
+  defp head(heading, keys, under, state) do
+    width = state.width
+    title = " " <> heading
+    gap = width - String.length(title) - String.length(keys) - 1
+
+    right = if keys != "" and gap >= 2, do: String.duplicate(" ", gap) <> keys, else: ""
+
     [
-      [{:normal, " COMMANDS #{where(mode.from)}  (↑↓ move · ENTER runs · ESC returns)"}],
-      [{:normal, typed}] | entries |> Enum.concat() |> Enum.drop(top)
+      [{:help_title, Help.clip(title, width)}, {:normal, right}],
+      [{:normal, Help.clip(under, width)}],
+      [{:help_rule, rule(width)}]
     ]
   end
 
-  def lines(_state, %{page: :describe, described: nil, from: from}) do
-    [
-      [{:normal, " DESCRIBE KEY #{where(from)}"}],
-      [{:normal, ""}],
-      [{:normal, "   Press a key to see what it does (ESC returns)."}]
-    ]
+  defp rule(width), do: " " <> String.duplicate("─", max(width - 2, 0))
+
+  # the rows the list has, and the rows a scrolled page shows
+  defp list_height(state), do: max(State.body_height(state) - @head - 1 - @pane, 1)
+  defp content_height(state), do: max(State.body_height(state) - @head, 1)
+
+  # how many rows each command takes (its keys may need more than one)
+  defp heights(list), do: for({command, _, keys} <- list, do: length(Help.row(command, keys)))
+
+  # The first command shown, so that the highlighted one shows whole: the
+  # list does not move until the highlight would leave it (a pure answer,
+  # kept in the mode by the keys, and worked out again when drawing).
+  defp window(heights, top, cursor, rows) do
+    top = top |> min(cursor) |> max(0)
+
+    if top < cursor and Enum.sum(Enum.slice(heights, top..cursor//1)) > rows,
+      do: window(heights, top + 1, cursor, rows),
+      else: top
   end
 
-  def lines(_state, %{page: :describe, described: text, from: from}) do
-    [[{:normal, " DESCRIBE KEY #{where(from)}"}], [{:normal, ""}]] ++
-      Enum.map(text, &[{:normal, "   " <> &1}]) ++
-      [[{:normal, ""}], [{:normal, "   Any key returns."}]]
+  # the entries that fit in `rows`, whole
+  defp fitting(entries, rows) do
+    entries
+    |> Enum.reduce_while({[], 0}, fn entry, {kept, used} ->
+      if used + length(entry) <= rows,
+        do: {:cont, {[entry | kept], used + length(entry)}},
+        else: {:halt, {kept, used}}
+    end)
+    |> elem(0)
+    |> Enum.reverse()
   end
 
-  # under the highlighted command: its longer text (R65b), and why it
-  # cannot run now (R65a), wrapped below its keys
-  defp more_lines(command, why, width) do
-    texts = [command.doc, why && "Not now: " <> why]
+  # the rule over the pane: where the list goes on, and which part of a
+  # long text the pane shows
+  defp pane_rule(top, after_shown, entry, page, width) do
+    pages = length(pane_pages(entry, width))
 
-    for text <- texts,
-        text != nil,
-        line <- Agendum.TUI.Terminal.Draw.wrap(text, width - String.length(Help.indent()) - 1),
-        do: [{:normal, Help.indent() <> line}]
+    marks =
+      [
+        top > 0 && "↑ #{top} above",
+        after_shown > 0 && "↓ #{after_shown} more",
+        pages > 1 && "← → #{min(page, pages - 1) + 1}/#{pages}"
+      ]
+      |> Enum.filter(&is_binary/1)
+      |> Enum.join(" · ")
+
+    base = rule(width)
+
+    if marks == "" or String.length(marks) + 6 > width do
+      [{:help_rule, base}]
+    else
+      keep = width - String.length(marks) - 4
+      [{:help_rule, String.slice(base, 0, keep) <> "─ " <> marks <> " ─"}]
+    end
+  end
+
+  # The pane (R65c): the command's name and keys, and why it cannot run
+  # now on the right; under them its longer text (R65b), or its summary,
+  # four lines at a time (← → for the rest).
+  defp pane(nil, _why, _page, width),
+    do: List.duplicate([{:help_pane, String.duplicate(" ", width)}], @pane)
+
+  defp pane({command, _place, keys} = entry, why, page, width) do
+    names = Enum.map_join(keys, " ", &Keymap.name/1)
+    title = " " <> command.name <> if(names == "", do: "", else: " · " <> names)
+    not_now = if why, do: "Not now: " <> why <> " ", else: ""
+    gap = width - String.length(title) - String.length(not_now)
+
+    first =
+      if why != nil and gap >= 1,
+        do: [{:help_pane_title, title <> String.duplicate(" ", gap)}, {:error, not_now}],
+        else: [{:help_pane_title, pad(title, width)}]
+
+    pages = pane_pages(entry, width)
+    text = Enum.at(pages, page |> min(length(pages) - 1) |> max(0))
+    body = for line <- text, do: [{:help_pane, pad(" " <> line, width)}]
+
+    [first | body] ++
+      List.duplicate([{:help_pane, String.duplicate(" ", width)}], @pane - 1 - length(body))
+  end
+
+  # the text's lines, wrapped to the pane, @pane - 1 at a time
+  defp pane_pages(nil, _width), do: [[]]
+
+  defp pane_pages({command, _place, _keys}, width) do
+    (command.doc || command.summary)
+    |> Agendum.TUI.Terminal.Draw.wrap(max(width - 3, 10))
+    |> Enum.chunk_every(@pane - 1)
+    |> then(&if(&1 == [], do: [[]], else: &1))
+  end
+
+  defp pad(text, width) do
+    text = Help.clip(text, width)
+    text <> String.duplicate(" ", max(width - String.length(text), 0))
   end
 
   # the state under this help screen: a box can be drawn over the help

@@ -176,6 +176,10 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
     catmgr_note: {:muted, :bg},
     help: {:fg, :bg},
     help_dim: {:muted, :bg},
+    help_title: {:accent, :bg, [:bold]},
+    help_rule: {:muted, :bg},
+    help_pane: {:fg, :tint},
+    help_pane_title: {:accent, :tint, [:bold]},
     splash_logo: {:fg, :bg, [:reverse]},
     splash_title: {:fg, :tint, [:bold]},
     splash_value: {:accent, :tint}

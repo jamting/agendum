@@ -26,7 +26,8 @@ defmodule Agendum.TUI.CommandDocsTest do
     end
   end
 
-  test "F1 c shows the highlighted command's text under it, and no other's", %{state: state} do
+  test "F1 c shows the highlighted command's text in the pane, and no other's",
+       %{state: state} do
     text = state |> press([{:f, 1}, "c", "remove"]) |> screen()
     assert text =~ "Takes the item out of this section's category only."
     refute text =~ "Deletes the item from the whole file"
@@ -36,7 +37,7 @@ defmodule Agendum.TUI.CommandDocsTest do
     narrow = %{state | width: 60}
     lines = narrow |> press([{:f, 1}, "c", "remove"]) |> screen() |> String.split("\n")
     assert Enum.all?(lines, &(String.length(&1) <= 60))
-    assert Enum.count(lines, &(&1 =~ ~r/^ {19}\S/)) >= 3
+    assert Enum.join(lines) =~ "Takes the item out of this"
   end
 
   test "F1 d shows a key's text after its summary", %{state: state} do
