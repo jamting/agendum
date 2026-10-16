@@ -4,7 +4,7 @@ Small, testable increments. Open work comes first, by area; done work is below, 
 
 ## Open
 
-**Next:** the command layer ("Towards many users"), the next major work, with a struct for each UI mode as each place moves over. "Sharpen the saw" is done (2026-10-16) apart from CI, which waits for GitHub, and the view cache, which waits for slow answers. Parity with Agenda and the rest continue after the command layer.
+**Next:** typed UI modes, a struct per mode (the command layer is done, 2026-10-16, v0.6.0); then `agendum add` (capture without the keyboard) and parity with Agenda. The view cache waits for slow answers in real use, CI for GitHub.
 
 ### Sharpen the saw
 
@@ -13,16 +13,12 @@ Tools and checks that make every later change faster and safer. Do these first: 
 - [ ] CI: `mix check` on every push (GitHub Actions), once the repository is on GitHub (Housekeeping). The long fuzz run (`FUZZ_RUNS=3000`) is run by hand before every version is tagged (docs/INDEX.md, "Where a change is written down"); CI could take it over later, nightly
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key. Measured 2026-10-16, a cursor move: 300 items 6 ms in `Update` + 11 ms in `Render`; 3,000 items 61 + 45 ms; 10,000 items 205 + 231 ms. First build it once per key and share it; then keep it in the session's state between keys as a value with a key that says when it is stale (ADR 0035): the database, the view, the date and time, the screen width, collapsed families, the search. Needs an ADR. **Wait until the debug log shows `slow answer` lines (over 100 ms) in real use** (owner's decision, 2026-10-16); ingested items (`plans/ITEM_LEVELS.md`) will likely be what brings them. Do it after the command layer, which reshapes the state it would live in
 
-### Towards many users: the command layer (the next major work)
+### Towards many users
 
-A web application with accounts and shared files, on the same core (plan: [MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). First, in the core and the TUI, a few commands at a time. The command layer is the next major work, after Sharpen the saw: the web, customizable keys, a modern mode and Wol all wait for it (expert review 2026-10-16, `docs/reviews/2026-10-16.md`).
+A web application with accounts and shared files, on the same core (plan: [MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). Its first step, the command layer, is done (R66, ADR 0036, below under Done): every change to a file is a command the core runs. Typed UI modes come next.
 
-- [ ] A command layer: one named command per user action, applied by the core. Existing actions move over a few at a time; done when `Agendum.TUI.Update` only turns keys into commands and has no logic of its own (an architecture test then keeps it so). Each command names its target (an item or category id, not the highlighted row: `ViewKeys.run/3` passes `Layout.current_row/1` today) and returns what changed, so a web page or an agent with no cursor can call it (expert review 2026-10-16, second meeting, `docs/reviews/2026-10-16-2.md`)
-  - [x] The layer itself and its first commands (R66, ADR 0036): `Agendum.Core.run/3` runs a command (a tagged tuple on ids) and returns what changed, found by comparing the file before and after; each command has a name and a summary. Marking, done and discarding items moved over; an architecture test keeps the TUI from calling what a command does, and counts the core functions the TUI still calls (139, then 135), a number that may only go down
-  - [x] Adding items (typed, in a datebook slot, from a note's text; a filtered section's needs, R28, in the command) and editing their text
-  - [ ] The rest of the item commands: assigning and removing (DEL, F3 profile, MakeAssign), When dates, moving and copying, notes, alarms, dependencies
-  - [ ] Categories, views, columns and sections, then macros, calendars and the file's settings
-  - [ ] Typed UI modes, done with it (moved from Sharpen the saw, owner's decision 2026-10-16): each place whose keys move to commands also gets a struct for its mode, instead of the `%{type: …}` maps in `State.modes` (about fifty kinds), so the compiler and Dialyzer catch a misspelt field that today only the fuzz test finds. Done when no mode is a bare map; one place at a time, each step with `mix check` and a long fuzz run
+- [ ] Command layer, more: what the TUI still puts together from several commands, as a batch, could become commands of their own, so another front end does not repeat it: typing over a column entry (clear, then assign), a Not-assigned range condition (remove, then add). And reasons in `changes` ("filed by condition X"), which an agent will want
+- [ ] Typed UI modes (moved from Sharpen the saw, owner's decision 2026-10-16; done after the command layer rather than with it, owner's decision 2026-10-16): a struct for each mode instead of the `%{type: …}` maps in `State.modes` (about fifty kinds), so the compiler and Dialyzer catch a misspelt field that today only the fuzz test finds. Done when no mode is a bare map; one place at a time, each step with `mix check`, and a long fuzz run at the end
 - [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps (R65, ADR 0033)
   - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)
   - [x] A count with ALT-digits in views, for the commands chosen to take one; a repeat that changes nothing stops
@@ -312,6 +308,10 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Towards many users
 
+- [x] The command layer (2026-10-16, v0.6.0): one named command per user action, applied by the core (R66, ADR 0036). Each command names its target (an item or category id, not the highlighted row) and returns what changed, so a web page or an agent with no cursor can call it (expert review 2026-10-16, second meeting). Every change to the file is now a command; the architecture test keeps the TUI to `Agendum.Core.run/3` and an explicit list of reads, and makes every new `Agendum.Core` function a command's or a read
+  - [x] The layer itself and its first commands: marking, done, discarding
+  - [x] Adding items (typed, in a datebook slot, from a note's text; a filtered section's needs, R28, in the command) and editing their text
+  - [x] Every other change, in four batches: assigning and removing, notes, dates, alarms, numbers, dependencies; categories, rules, Execute, the file's dates; views, sections, columns, filters; macros and calendars. Loops over marked items became `{:batch, …}` commands; previews of a move run the command on a copy (`State.preview/2`)
 - [x] In the TUI: help made from the commands and keymaps (R65, ADR 0033), 2026-10-15/16
   - [x] F1 shows a text about where you are: the view, a note, a manager, the menu, a move, or the box on top (`about/0` per place, `Box.about/2` per box, a default one for the others); the owner's idea
   - [x] F1 then `c`: the commands that can run there, local then global, with keys and summaries; typing narrows the list, ENTER runs the highlighted one

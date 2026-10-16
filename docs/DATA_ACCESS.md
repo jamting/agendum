@@ -20,9 +20,9 @@ flowchart TB
         DP["Core.DateParser"]
         Links["Core.Links<br/><i>many-to-many relation</i>"]
     end
-    TUI -- "commands" --> Cmd["Core.Command<br/><i>run on ids, what changed</i>"]
+    TUI -- "commands (all writes)" --> Cmd["Core.Command<br/><i>run on ids, what changed</i>"]
     Cmd --> Facade
-    TUI -- "writes (not yet commands)" --> Facade
+    TUI -- "reads" --> Facade
     TUI -- "reads" --> VM
     TUI -- "reads (queries)" --> DB
     Store -- "whole value" --> DB
@@ -38,7 +38,7 @@ flowchart TB
 | Layer                   | Use it for                                                                                                                                                     | Do not                                          |
 | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
 | `Agendum.Core.run/3` (commands) | **A user action as a command** (R66, ADR 0036): `{:mark_done, ids}` and the like, on ids; returns `{:ok, db, changes}` or `{:error, atom}`. The TUI sends them with `State.run/2`. | Call the facade function a command does. |
-| `Agendum.Core` (facade)  | **All changes made by users.** Applies the rules (assignment, auto-assignment, validation) and returns `{:ok, …}`/`{:error, atom}` where input can be invalid. | Bypass it from the UI for writes.               |
+| `Agendum.Core` (facade)  | **What a command does, and reads.** Applies the rules (assignment, auto-assignment, validation) and returns `{:ok, …}`/`{:error, atom}` where input can be invalid. | Bypass it from the UI for writes.               |
 | `Agendum.Core.ViewModel` | Building what a view shows (sections, rows, cells).                                                                                                            | Put display formatting elsewhere.               |
 | `Agendum.Core.Assign`    | Rules for how items get into categories. Only the facade calls it.                                                                                             | Re-implement exclusivity or matching in the UI. |
 | `Agendum.Core.Database`  | Primitive writes (no rules) and **all queries**.                                                                                                               | Expect primitives to enforce assignment rules.  |
@@ -50,15 +50,19 @@ The UI reads freely through `Database` queries (e.g. `member?/3`, `hierarchy/1`)
 
 ### Commands (R66, ADR 0036)
 
+Every change goes through `Core.run(db, command, clock)`. The commands are listed, with their names, summaries and the kinds of their arguments, in `Agendum.Core.Command` (`ids/0`, `describe/1`); most are the facade function of the same name below, with the database and (where it takes one) the clock left out: `Core.assign(db, item, cat, clock)` is the command `{:assign, item, cat}`. Those that are more than one call:
+
 | Command | Description |
 | ------- | ----------- |
 | `{:add_item, text, section:, after:, adjacent:, date:, view_section:}` | Typing a new item (R21): filed under `section` (a category id), after an item, by its text; `date:` a datebook slot's date (R47); `view_section: {view, index}` also gives it what that section's filters need (R28). `changes.new` is its id. |
 | `{:edit_item, item, text}` | Changing an item's text: filed again by what it now says (R10, R14). |
-| `{:toggle_mark, item}`, `{:set_marked, items, boolean}`, `:unmark_all` | F7 on an item or a section head, ALT-F7. |
-| `{:toggle_done, item}`, `{:mark_done, items}` | F4 on one item (toggles; a recurring one gets its next occurrence, R14a) / on the marked items (only sets). |
-| `{:discard_items, items}` | ALT-F4 on one item or the marked ones. |
+| `{:mark_done, items}`, `{:discard_items, items}` | Done on, or discarding, several items. |
+| `{:clear_column, item, head}` | DEL in a column: the item leaves the head, or the head's children it is in. |
+| `{:move_item, …, opts}`, `{:execute, items, opts}`, `{:add_column_as, …, opts}` | The clock goes into the options, where the facade reads it. |
+| `:ring_alarms`, `:clear_old_alarms` | The clock's own changes; `changes.result` holds the items whose alarms rang. |
+| `{:batch, commands}` | Several commands as one change; none is made if one is refused. `changes.steps` holds what each made. |
 
-`Core.run(db, command, clock)` refuses an unknown command (`:unknown_command`), an id that is not of its kind (`:no_such_item`, `:no_such_category`, `:no_such_view`) or empty text (`:empty_text`), and changes nothing. `changes` (`Command.Changes`) holds `items`, `categories`, `views`, `macros` and `calendars`, each `%{added:, changed:, removed:}` ids, and `file`, the other fields that changed. `Command.describe(id)` gives a command's name and summary. The facade functions below that a command does are listed in `test/agendum/architecture_test.exs` (`@by_command`), and the TUI may not call them.
+`run/3` refuses an unknown command (`:unknown_command`), the wrong arguments (`:bad_arguments`), an id that is not of its kind (`:no_such_item`, `:no_such_category`, `:no_such_view`, `:no_such_macro`, `:no_such_calendar`) or blank text (`:empty_text`), and passes on the facade function's own refusals; a refused command changes nothing. `changes` (`Command.Changes`) holds `items`, `categories`, `views`, `macros` and `calendars`, each `%{added:, changed:, removed:}` ids, and `file`, the other fields that changed; a command adds `new:` (the id of what it made or found), `result:` (anything else its function returned) or `steps:`. The TUI sends commands with `State.run/2,3` and `State.command/2`, and previews one with `State.preview/2`. `test/agendum/architecture_test.exs` keeps it so: the TUI calls `Agendum.Core` only for `run/3` and the reads it lists, and every `Agendum.Core` function is a command's or one of those reads.
 
 ### Items
 

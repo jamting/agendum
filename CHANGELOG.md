@@ -2,6 +2,16 @@
 
 What changed in each version of Wol's Agendum, for the person using it. Versions follow [semantic versioning](https://semver.org): before 1.0.0, the minor number (0.**3**.0) goes up with every major feature or change to the file format, the patch number (0.3.**1**) with fixes. Each version is tagged in git (`v0.2.0`). The roadmap's Done section ([`docs/ROADMAP.md`](docs/ROADMAP.md)) lists every finished item; git log has the detail.
 
+## 0.6.0 — 2026-10-16
+
+Every change to a file is now a command the core runs, the groundwork for a web version, an agent and capture from the command line. The keys work as before.
+
+- Done (F4) on marked items now records the time where a date category keeps the done time, as done on one item always did.
+- ALT-F7 in a note on text of only spaces no longer makes an empty item; the note keeps the spaces.
+- A category with conditions that is made a date or numeric category keeps them, as Agenda does, but they no longer assign items.
+- Adding or editing many dated items is several times quicker: the date words are prepared once.
+- The help box has a background colour of its own in every theme.
+
 ## 0.5.0 — 2026-10-16
 
 Help you can learn from: the command list says what cannot run now and why, each command says why you would use it, and help opens as a box over the screen you were on.
