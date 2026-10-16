@@ -11,7 +11,6 @@ defmodule Agendum.TUI.Boxes.FieldTyping do
   ESC drops it and stays in the box. Pure.
   """
 
-  alias Agendum.Core
   alias Agendum.TUI.{Typing.LineEdit, State}
 
   @doc "Whether the box's mode is typing into a field."
@@ -42,15 +41,16 @@ defmodule Agendum.TUI.Boxes.FieldTyping do
   end
 
   @doc """
-  A typed column head: `chosen` gets the state, the database with the
-  category of that name in it (a new one under MAIN if need be, not yet
-  kept; `Core.find_or_add_category/2`) and its id. A name several
+  A typed column head: `chosen` gets the state, with the category of that
+  name in its file (a new one under MAIN if need be; the command
+  `:find_or_add_category`), and its id; what `chosen` does with them is
+  the same change, one undo step. A name several
   categories have is left to the picker (F3).
   """
   def head_named(state, name, chosen) do
-    case Core.find_or_add_category(state.db, name) do
-      {:ok, db, id} ->
-        chosen.(state, db, id)
+    case State.command(state, {:find_or_add_category, name}) do
+      {:ok, state, %{new: id}} ->
+        chosen.(state, id)
 
       {:error, :empty} ->
         state

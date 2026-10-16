@@ -113,8 +113,8 @@ defmodule Agendum.TUI.Update.Editing do
   end
 
   defp commit(state, {:rename_category, id}, text) do
-    case Core.rename_category(state.db, id, text) do
-      {:ok, db} -> State.change_db(state, db)
+    case State.command(state, {:rename_category, id, text}) do
+      {:ok, state, _} -> state
       {:error, :empty} -> State.error(state, "A category needs a name")
       {:error, :protected} -> State.error(state, "This category cannot be renamed")
     end

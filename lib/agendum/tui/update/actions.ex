@@ -174,14 +174,14 @@ defmodule Agendum.TUI.Update.Actions do
     do: State.error(state, "Highlight a column head or entry first")
 
   defp do_perform(state, :toggle_auto_date, _) do
-    db = Core.toggle_auto_date(state.db)
+    state = State.run(state, :toggle_auto_date)
 
     message =
-      if Core.auto_dating?(db),
+      if Core.auto_dating?(state.db),
         do: "Dates in item text set When dates",
         else: "Dates in item text are ignored"
 
-    state |> State.change_db(db) |> State.info(message)
+    State.info(state, message)
   end
 
   defp do_perform(state, :item_props, %{kind: :item, item: item}),
@@ -294,9 +294,7 @@ defmodule Agendum.TUI.Update.Actions do
     do: Prompts.prompt(state, "New category name (under MAIN):", :add_category)
 
   defp do_perform(state, :recalc, _) do
-    state
-    |> State.change_db(Core.reassign_all(state.db, State.context(state)))
-    |> State.info("Automatic assignments recalculated")
+    State.run(state, :reassign_all, "Automatic assignments recalculated")
   end
 
   defp do_perform(state, :add_view, _), do: Prompts.prompt(state, "Name of new view:", :add_view)

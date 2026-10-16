@@ -51,9 +51,9 @@ defmodule Agendum.Core.Command do
   file (`:no_such_item`, `:no_such_category`, `:no_such_view`,
   `:no_such_macro`, `:no_such_calendar`), `:empty_text`, `:bad_arguments`,
   `:unknown_command`, or the reason the facade function gave (such as
-  `:protected` or `:cycle`).
+  `:protected`, `:cycle`, or `{:shared, items}` with what is in the way).
   """
-  @type error :: atom
+  @type error :: atom | {atom, term}
 
   # Domain: the list of commands, in the order a help screen shows them:
   # {id, name, summary, the kinds of the arguments after the id, how it

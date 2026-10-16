@@ -391,13 +391,13 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
         Agendum.TUI.Boxes.ActionBox.open(state, cat_id, target)
 
       target in cat.also_assign ->
-        action_result(state, Core.set_action(state.db, cat_id, target, :remove))
+        action_result(state, State.command(state, {:set_action, cat_id, target, :remove}))
 
       List.keymember?(cat.actions, target, 0) ->
-        State.change_db(state, Core.remove_action(state.db, cat_id, target))
+        State.run(state, {:remove_action, cat_id, target})
 
       true ->
-        action_result(state, Core.set_action(state.db, cat_id, target, :assign))
+        action_result(state, State.command(state, {:set_action, cat_id, target, :assign}))
     end
   end
 
@@ -405,9 +405,9 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   def pick(state, {:excludes, cat_id}, target) do
     names = fn -> {state.db.categories[cat_id].name, state.db.categories[target].name} end
 
-    case Core.toggle_exclude(state.db, cat_id, target) do
-      {:ok, db} ->
-        State.change_db(state, db)
+    case State.command(state, {:toggle_exclude, cat_id, target}) do
+      {:ok, state, _} ->
+        state
 
       {:error, :self} ->
         State.error(state, "A category cannot exclude itself")
@@ -426,15 +426,15 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
     end
   end
 
-  defp action_result(state, {:ok, db}), do: State.change_db(state, db)
+  defp action_result(_state, {:ok, state, _changes}), do: state
 
   defp action_result(state, {:error, :self}),
     do: State.error(state, "A category cannot act on itself")
 
   defp cycle_condition(state, cat_id, target) do
-    case Core.cycle_condition(state.db, cat_id, target) do
-      {:ok, db} ->
-        state |> State.change_db(db) |> State.info(condition_message(db, cat_id, target))
+    case State.command(state, {:cycle_condition, cat_id, target}) do
+      {:ok, state, _} ->
+        State.info(state, condition_message(state.db, cat_id, target))
 
       {:error, :self} ->
         State.error(state, "A category cannot depend on itself")

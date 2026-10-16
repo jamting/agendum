@@ -156,11 +156,10 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
             CategoryScreens.commit(state, mode, {:rename, mode.cat_id}, text)
 
           :short_name ->
-            State.change_db(state, Core.set_short_name(state.db, mode.cat_id, text))
+            State.run(state, {:set_short_name, mode.cat_id, text})
 
           :also_match ->
-            {:ok, db} = Core.set_also_match(state.db, mode.cat_id, text)
-            State.change_db(state, db)
+            State.run(state, {:set_also_match, mode.cat_id, text})
         end
 
       _ ->
@@ -217,7 +216,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   end
 
   defp open_prop(state, cat, :match_name) do
-    State.change_db(state, Core.toggle_match_name(state.db, cat.id))
+    State.run(state, {:toggle_match_name, cat.id})
   end
 
   defp open_prop(state, cat, :also_assign) do
@@ -240,8 +239,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
 
   defp open_prop(state, cat, :special) do
     next = %{nil => :done, done: :discard, discard: nil}[cat.special]
-    {:ok, db} = Core.set_special_action(state.db, cat.id, next)
-    State.change_db(state, db)
+    State.run(state, {:set_special_action, cat.id, next})
   end
 
   defp open_prop(state, cat, :conditions) do

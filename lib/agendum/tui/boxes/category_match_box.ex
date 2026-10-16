@@ -14,7 +14,6 @@ defmodule Agendum.TUI.Boxes.CategoryMatchBox do
 
   alias Agendum.TUI.Boxes.{AutoAssignBox, Box, Template}
 
-  alias Agendum.Core
   alias Agendum.TUI.State
 
   @choices [
@@ -61,8 +60,7 @@ defmodule Agendum.TUI.Boxes.CategoryMatchBox do
     current = Map.get(state.db.categories[mode.cat_id].match_overrides, field, :global)
     index = Enum.find_index(choices, &(&1 == current)) || 0
     value = Enum.at(choices, Integer.mod(index + step, length(choices)))
-    {:ok, db} = Core.set_match_override(state.db, mode.cat_id, field, value)
-    State.change_db(state, db)
+    State.run(state, {:set_match_override, mode.cat_id, field, value})
   end
 
   @impl Box

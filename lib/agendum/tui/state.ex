@@ -299,7 +299,7 @@ defmodule Agendum.TUI.State do
   as it was then.
   """
   @spec command(t, Agendum.Core.Command.t()) ::
-          {:ok, t, Agendum.Core.Command.Changes.t()} | {:error, atom}
+          {:ok, t, Agendum.Core.Command.Changes.t()} | {:error, Agendum.Core.Command.error()}
   def command(state, command) do
     case Agendum.Core.run(state.db, command, context(state)) do
       # a command that changed nothing leaves the state as it was

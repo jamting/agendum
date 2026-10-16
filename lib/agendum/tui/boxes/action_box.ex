@@ -11,7 +11,6 @@ defmodule Agendum.TUI.Boxes.ActionBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
 
-  alias Agendum.Core
   alias Agendum.TUI.Boxes.{Box, Template}
   alias Agendum.TUI.{Typing.LineEdit, State}
   alias Agendum.TUI.Update.Editing
@@ -101,7 +100,7 @@ defmodule Agendum.TUI.Boxes.ActionBox do
   def run(state, mode, :remove) do
     state
     |> State.pop()
-    |> State.change_db(Core.remove_action(state.db, mode.owner, mode.target))
+    |> State.run({:remove_action, mode.owner, mode.target})
   end
 
   def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
@@ -109,9 +108,9 @@ defmodule Agendum.TUI.Boxes.ActionBox do
   defp apply_action(state, mode) do
     action = if mode.clear, do: :clear, else: {:set, mode.line.text}
 
-    case Core.set_action(state.db, mode.owner, mode.target, action, State.context(state)) do
-      {:ok, db} ->
-        state |> State.pop() |> State.change_db(db)
+    case State.command(state, {:set_action, mode.owner, mode.target, action}) do
+      {:ok, state, _} ->
+        State.pop(state)
 
       {:error, :invalid_date} ->
         State.error(state, "Not a date: #{String.trim(mode.line.text)}")

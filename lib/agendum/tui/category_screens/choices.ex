@@ -104,9 +104,11 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
   def toggle_exclusive(state, cat) do
     cond do
       cat.exclusive ->
-        state
-        |> State.change_db(Core.make_unexclusive(state.db, cat.id))
-        |> State.info("Children of #{cat.name} are no longer mutually exclusive")
+        State.run(
+          state,
+          {:make_unexclusive, cat.id},
+          "Children of #{cat.name} are no longer mutually exclusive"
+        )
 
       Database.protected?(state.db, cat.id) ->
         State.error(state, "#{cat.name} cannot have mutually exclusive children")
@@ -237,9 +239,9 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
     conflicts =
       with {:ok, items} <- Core.relocation_conflicts(state.db, id, relocation), do: length(items)
 
-    case Core.relocate(state.db, id, relocation, rule) do
-      {:ok, db} ->
-        state = state |> State.change_db(db) |> CategoryScreens.move_cursor_to(id)
+    case State.command(state, {:relocate, id, relocation, rule}) do
+      {:ok, state, _} ->
+        state = CategoryScreens.move_cursor_to(state, id)
 
         if conflicts > 0,
           do: State.info(state, "#{conflicts} conflicting item(s) reassigned"),
@@ -342,14 +344,12 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
     name = state.db.categories[cat_id].name
     conflicts = length(Core.exclusive_conflicts(state.db, cat_id))
 
-    case Core.make_exclusive(state.db, cat_id, rule) do
-      {:ok, db} ->
+    case State.command(state, {:make_exclusive, cat_id, rule}) do
+      {:ok, state, _} ->
         resolved =
           if conflicts == 0, do: "", else: "; #{conflicts} conflicting item(s) reassigned"
 
-        state
-        |> State.change_db(db)
-        |> State.info("Children of #{name} are now mutually exclusive" <> resolved)
+        State.info(state, "Children of #{name} are now mutually exclusive" <> resolved)
 
       {:error, :empty} ->
         State.error(state, "A category needs a name")

@@ -14,7 +14,6 @@ defmodule Agendum.TUI.Boxes.DateRuleBox do
 
   alias Agendum.TUI.Boxes.{Box, Template}
 
-  alias Agendum.Core
   alias Agendum.Core.DateRule
   alias Agendum.TUI.State
 
@@ -60,8 +59,7 @@ defmodule Agendum.TUI.Boxes.DateRuleBox do
       State.error(state, "#{state.db.categories[mode.cat_id].name} always takes that key")
     else
       rule = DateRule.cycle(state.db.categories[mode.cat_id].date_rule, row, step)
-      {:ok, db} = Core.set_date_rule(state.db, mode.cat_id, rule)
-      State.change_db(state, db)
+      State.run(state, {:set_date_rule, mode.cat_id, rule})
     end
   end
 

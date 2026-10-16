@@ -13,7 +13,6 @@ defmodule Agendum.TUI.Boxes.AutoAssignBox do
 
   alias Agendum.TUI.Boxes.{Box, Template}
 
-  alias Agendum.Core
   alias Agendum.Core.TextMatch
   alias Agendum.TUI.State
 
@@ -68,12 +67,12 @@ defmodule Agendum.TUI.Boxes.AutoAssignBox do
   defp change(state, :confirm, step) do
     index = Enum.find_index(@confirm, &(&1 == state.db.confirm_assignments)) || 0
     mode = Enum.at(@confirm, Integer.mod(index + step, length(@confirm)))
-    State.change_db(state, Core.set_confirm_assignments(state.db, mode))
+    State.run(state, {:set_confirm_assignments, mode})
   end
 
   defp change(state, row, step) do
     settings = TextMatch.cycle(state.db.match_settings, row, step)
-    State.change_db(state, Core.set_match_settings(state.db, settings))
+    State.run(state, {:set_match_settings, settings})
   end
 
   @impl Box

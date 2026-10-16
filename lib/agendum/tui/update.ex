@@ -252,15 +252,15 @@ defmodule Agendum.TUI.Update do
 
     # a new day: forget yesterday's past alarms and re-check conditions,
     # whose relative dates ("this week") may now mean other days (R15a)
-    db =
-      if today != state.today,
-        do:
-          state.db
-          |> Core.clear_old_alarms(today)
-          |> Core.recheck_conditions(State.context(%{state | now: now})),
-        else: state.db
+    # the clock's own commands: they change the file, but are not undo steps
+    # (ADR 0005), so they go straight to the core
+    clock = State.context(%{state | now: now})
+    new_day = if today != state.today, do: [:clear_old_alarms, :recheck_conditions], else: []
 
-    {db, rung} = Core.ring_alarms(db, now)
+    {:ok, db, %{steps: steps}} =
+      Core.run(state.db, {:batch, new_day ++ [:ring_alarms]}, clock)
+
+    %{result: rung} = List.last(steps)
     state = %{state | now: now, today: today, db: db}
 
     # the splash screen's three seconds (R52)

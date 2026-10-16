@@ -152,61 +152,35 @@ defmodule Agendum.ArchitectureTest do
   # Commands the TUI does not send yet: the command layer moves them
   # over in batches (ROADMAP), and this list only shrinks.
   @not_yet ~w(
-    add_category
     add_column
     add_column_as
-    add_condition
     add_datebook_view
     add_macro
     add_section
     add_view
     attach_macro
     calendar_failed
-    clear_old_alarms
     cycle_calendar_setting
-    cycle_condition
     cycle_filter
     delete_macro
-    discard_category
     discard_view
-    execute
-    find_or_add_category
     fit_column
-    make_date
-    make_exclusive
-    make_numeric
-    make_unexclusive
-    move_category
     move_column
     move_macro
     move_section
     move_view
-    reassign_all
-    recheck_conditions
-    relocate
-    remove_action
     remove_column
-    remove_condition
-    remove_filter
     remove_section
-    rename_category
     rename_macro
     rename_view
     resize_column
-    ring_alarms
-    set_action
     set_all_sections_collapsed
-    set_also_match
     set_column_date_format
     set_column_display
     set_column_format
     set_column_head
     set_column_linked
     set_column_width
-    set_confirm_assignments
-    set_date_format
-    set_date_rule
-    set_date_settings
     set_datebook
     set_filters
     set_insert_columns
@@ -214,28 +188,18 @@ defmodule Agendum.ArchitectureTest do
     set_item_column_linked
     set_macro_keys
     set_macro_run_from
-    set_match_override
-    set_match_settings
-    set_range_condition
-    set_range_filter
     set_section_calcs
     set_section_category
     set_section_collapsed
     set_section_sort
-    set_short_name
     set_sort
-    set_special_action
     show_items
     show_match
     show_schedule
-    sort_children
     sort_macros
     sort_views
     subscribe_calendar
     sync_calendar
-    toggle_auto_date
-    toggle_exclude
-    toggle_match_name
     toggle_section_collapsed
     toggle_view_option
     unsubscribe_calendar
@@ -273,7 +237,7 @@ defmodule Agendum.ArchitectureTest do
   # included. It may only go down: when a step of the command layer moves
   # more actions into commands, lower it to the new count. The command
   # layer is done when only reads are left (ROADMAP, Towards many users).
-  @core_calls_at_most 116
+  @core_calls_at_most 78
 
   test "the TUI calls no more core functions directly than before", %{calls: calls} do
     used =

@@ -89,7 +89,7 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
 
   defp change(state, row) do
     settings = DateSettings.cycle(state.db.date_settings, row, 1)
-    State.change_db(state, Core.set_date_settings(state.db, settings))
+    State.run(state, {:set_date_settings, settings})
   end
 
   @doc "The time typed for Morning, Afternoon or Evening; unreadable text is refused."
@@ -97,7 +97,7 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
     case Core.read_when(state.db, text, State.context(state)) do
       {:ok, _date, %Time{} = time} ->
         settings = Map.put(state.db.date_settings, row, time)
-        State.change_db(state, Core.set_date_settings(state.db, settings))
+        State.run(state, {:set_date_settings, settings})
 
       _ ->
         State.error(state, "Not a time: #{text}")

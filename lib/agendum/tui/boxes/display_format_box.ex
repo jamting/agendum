@@ -13,7 +13,6 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  alias Agendum.Core
   alias Agendum.Core.DateFormat
   alias Agendum.TUI.Boxes.{Box, DateFormatRows, Template}
   alias Agendum.TUI.State
@@ -49,12 +48,9 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
   @impl Box
   def run(state, mode, :change),
     do:
-      State.change_db(
+      State.run(
         state,
-        Core.set_date_format(
-          state.db,
-          DateFormat.cycle(state.db.date_format, field(state, mode), 1)
-        )
+        {:set_date_format, DateFormat.cycle(state.db.date_format, field(state, mode), 1)}
       )
 
   def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)

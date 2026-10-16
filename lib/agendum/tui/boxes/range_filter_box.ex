@@ -131,7 +131,7 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
   def run(state, mode, :change),
     do: State.put_mode(state, toggle(mode, Enum.at(@rows, mode.cursor)))
 
-  def run(state, mode, :remove), do: state |> State.pop() |> State.change_db(remove(state, mode))
+  def run(state, mode, :remove), do: state |> State.pop() |> State.run(remove(state, mode))
   def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
   defp toggle(mode, :show),
@@ -140,16 +140,17 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
   defp toggle(mode, :where),
     do: %{mode | where: if(mode.where == :inside, do: :outside, else: :inside)}
 
+  # the command that takes the filter or condition out
   defp remove(state, %{purpose: {:filter, scope}, cat_id: cat_id}),
-    do: Core.remove_filter(state.db, state.view_id, scope, cat_id)
+    do: {:remove_filter, state.view_id, scope, cat_id}
 
-  defp remove(state, %{purpose: {:condition, owner}, cat_id: cat_id}),
-    do: Core.remove_condition(state.db, owner, cat_id)
+  defp remove(_state, %{purpose: {:condition, owner}, cat_id: cat_id}),
+    do: {:remove_condition, owner, cat_id}
 
   defp apply_filter(state, mode) do
-    case set(state, mode) do
-      {:ok, db} ->
-        state |> State.pop() |> State.change_db(db)
+    case State.command(state, set(state, mode)) do
+      {:ok, state, _} ->
+        State.pop(state)
 
       {:error, :invalid_date} ->
         State.error(state, "Not a date: #{bad(mode, &parse_date(&1, state))}")
@@ -173,26 +174,21 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
 
   defp set(state, %{purpose: {:filter, scope}} = mode) do
     settings = {mode.show, mode.from.text, mode.to.text, mode.where}
-
-    Core.set_range_filter(
-      state.db,
-      state.view_id,
-      scope,
-      mode.cat_id,
-      settings,
-      State.context(state)
-    )
+    {:set_range_filter, state.view_id, scope, mode.cat_id, settings}
   end
 
   # A condition with Not assigned: items without a date (or number).
-  defp set(state, %{purpose: {:condition, owner}, show: :not_assigned} = mode) do
-    db = Core.remove_condition(state.db, owner, mode.cat_id)
-    Core.add_condition(db, owner, mode.cat_id, :not_assigned)
+  defp set(_state, %{purpose: {:condition, owner}, show: :not_assigned} = mode) do
+    {:batch,
+     [
+       {:remove_condition, owner, mode.cat_id},
+       {:add_condition, owner, mode.cat_id, :not_assigned}
+     ]}
   end
 
-  defp set(state, %{purpose: {:condition, owner}} = mode) do
+  defp set(_state, %{purpose: {:condition, owner}} = mode) do
     range = {mode.from.text, mode.to.text, mode.where}
-    Core.set_range_condition(state.db, owner, mode.cat_id, range, State.context(state))
+    {:set_range_condition, owner, mode.cat_id, range}
   end
 
   # The first non-blank bound that does not read.

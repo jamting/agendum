@@ -228,29 +228,31 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
     end
   end
 
+  defp previous_place(db, id) do
+    case Database.previous_sibling(db, id) do
+      nil -> nil
+      prev -> Database.previous_sibling(db, prev) || :first
+    end
+  end
+
   defp reorder(state, id, direction) do
     db = state.db
     parent = db.categories[id].parent_id
 
+    # where it goes: after the sibling before the one above, or after
+    # the one below; nil when it is already at that end
+    after_id =
+      cond do
+        parent == nil -> nil
+        direction < 0 -> previous_place(db, id)
+        true -> Database.next_sibling(db, id)
+      end
+
     result =
       cond do
-        parent == nil ->
-          {:error, :protected}
-
-        direction < 0 ->
-          case Database.previous_sibling(db, id) do
-            nil ->
-              {:ok, db}
-
-            prev ->
-              Core.move_category(db, id, parent, Database.previous_sibling(db, prev) || :first)
-          end
-
-        true ->
-          case Database.next_sibling(db, id) do
-            nil -> {:ok, db}
-            next -> Core.move_category(db, id, parent, next)
-          end
+        parent == nil -> {:error, :protected}
+        after_id == nil -> {:ok, state, %{}}
+        true -> State.command(state, {:move_category, id, parent, after_id, :remove_moved})
       end
 
     state = CategoryScreens.hierarchy_change(state, result)

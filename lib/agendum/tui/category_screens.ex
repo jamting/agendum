@@ -17,7 +17,6 @@ defmodule Agendum.TUI.CategoryScreens do
   choice boxes (exclusive children, moves) in `Choices`. Pure.
   """
 
-  alias Agendum.Core
   alias Agendum.Core.Database
   alias Agendum.TUI.{Terminal.Draw, Typing.LineEdit, State, Typing.TextEdit}
   alias Agendum.TUI.Render.Text
@@ -315,7 +314,7 @@ defmodule Agendum.TUI.CategoryScreens do
   end
 
   @doc "Applies a change to the hierarchy, or reports why it failed."
-  def hierarchy_change(state, {:ok, db}), do: State.change_db(state, db)
+  def hierarchy_change(_state, {:ok, state, _changes}), do: state
   def hierarchy_change(state, {:error, why}), do: State.error(state, hierarchy_message(why))
 
   @doc """
@@ -402,16 +401,16 @@ defmodule Agendum.TUI.CategoryScreens do
 
   @doc "Commits an inline edit: a rename, a new category, or a new category picked."
   def commit(state, _mode, {:rename, id}, text) do
-    case Core.rename_category(state.db, id, text) do
-      {:ok, db} -> State.change_db(state, db)
+    case State.command(state, {:rename_category, id, text}) do
+      {:ok, state, _} -> state
       {:error, _} -> State.error(state, "A category needs a name")
     end
   end
 
   def commit(state, _mode, {:new, parent, after_id}, text) do
-    case Core.add_category(state.db, parent, text, after: after_id) do
-      {:ok, db, id} ->
-        state |> State.change_db(db) |> move_cursor_to(id)
+    case State.command(state, {:add_category, parent, text, after: after_id}) do
+      {:ok, state, %{new: id}} ->
+        move_cursor_to(state, id)
 
       {:error, :empty} ->
         state
@@ -424,9 +423,9 @@ defmodule Agendum.TUI.CategoryScreens do
   def commit(state, mode, :new_pick, text) do
     parent = mode.root || state.db.main_id
 
-    case Core.add_category(state.db, parent, text) do
-      {:ok, db, id} ->
-        state |> State.change_db(db) |> State.pop() |> Picker.pick(mode.purpose, id)
+    case State.command(state, {:add_category, parent, text, []}) do
+      {:ok, state, %{new: id}} ->
+        state |> State.pop() |> Picker.pick(mode.purpose, id)
 
       {:error, :empty} ->
         state

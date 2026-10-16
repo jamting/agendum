@@ -113,10 +113,7 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
   # a typed head: a new category is kept at once (one undo step), and the
   # box takes it as the head
   defp typed(state, :head, name),
-    do:
-      FieldTyping.head_named(state, name, fn state, db, id ->
-        state |> State.change_db(db) |> set_head(id)
-      end)
+    do: FieldTyping.head_named(state, name, &set_head/2)
 
   # a Category note column's title, kept with the box until ENTER
   defp typed(state, :title, text), do: update(state, &%{&1 | title: text})

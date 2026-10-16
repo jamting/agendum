@@ -25,9 +25,9 @@ defmodule Agendum.TUI.Update.Prompts do
 
   @doc "Converts a category to numeric (R29), reporting the result."
   def make_numeric(state, cat_id) do
-    case Core.make_numeric(state.db, cat_id, State.context(state)) do
-      {:ok, db} ->
-        state |> State.change_db(db) |> State.info("#{db.categories[cat_id].name} is now numeric")
+    case State.command(state, {:make_numeric, cat_id}) do
+      {:ok, state, _} ->
+        State.info(state, "#{state.db.categories[cat_id].name} is now numeric")
 
       {:error, _} ->
         State.error(state, "#{state.db.categories[cat_id].name} cannot become numeric")
@@ -36,11 +36,9 @@ defmodule Agendum.TUI.Update.Prompts do
 
   @doc "Converts a category to a date category (R6a), reporting the result."
   def make_date(state, cat_id) do
-    case Core.make_date(state.db, cat_id, State.context(state)) do
-      {:ok, db} ->
-        state
-        |> State.change_db(db)
-        |> State.info("#{db.categories[cat_id].name} is now a date category")
+    case State.command(state, {:make_date, cat_id}) do
+      {:ok, state, _} ->
+        State.info(state, "#{state.db.categories[cat_id].name} is now a date category")
 
       {:error, _} ->
         State.error(state, "#{state.db.categories[cat_id].name} cannot become a date category")
@@ -153,8 +151,8 @@ defmodule Agendum.TUI.Update.Prompts do
   end
 
   defp prompt_action(state, :add_category, text) do
-    case Core.add_category(state.db, state.db.main_id, text) do
-      {:ok, db, _} -> state |> State.change_db(db) |> State.info("Added #{text} under MAIN")
+    case State.command(state, {:add_category, state.db.main_id, text, []}) do
+      {:ok, state, _} -> State.info(state, "Added #{text} under MAIN")
       {:error, :duplicate} -> State.error(state, "#{text} already exists")
     end
   end
@@ -378,7 +376,7 @@ defmodule Agendum.TUI.Update.Prompts do
   end
 
   defp confirmed(state, {:sort_children, id}, true) do
-    State.change_db(state, Core.sort_children(state.db, id))
+    State.run(state, {:sort_children, id})
   end
 
   defp confirmed(state, {:discard_items, ids}, true) do
@@ -390,8 +388,8 @@ defmodule Agendum.TUI.Update.Prompts do
   end
 
   defp confirmed(state, {:discard_category, id}, true) do
-    case Core.discard_category(state.db, id) do
-      {:ok, db} -> state |> State.change_db(db) |> State.info("Category discarded")
+    case State.command(state, {:discard_category, id}) do
+      {:ok, state, _} -> State.info(state, "Category discarded")
       {:error, :protected} -> State.error(state, "This category cannot be discarded")
     end
   end

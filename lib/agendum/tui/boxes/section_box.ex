@@ -163,8 +163,8 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   defp typed(state, :head, name) do
     mode = State.mode(state)
 
-    FieldTyping.head_named(state, name, fn state, db, id ->
-      State.change_db(state, Core.set_section_category(db, state.view_id, mode.sidx, id))
+    FieldTyping.head_named(state, name, fn state, id ->
+      State.run(state, {:set_section_category, state.view_id, mode.sidx, id})
     end)
   end
 

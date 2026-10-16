@@ -89,21 +89,17 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
   def execute(state, root, against, old \\ false) do
     ids = items(state, against)
 
-    db =
-      Core.execute(state.db, ids,
-        root: root,
-        old_assignments: old,
-        clock: State.context(state)
-      )
+    state = State.run(state, {:execute, ids, root: root, old_assignments: old})
 
     what =
       if root == state.db.main_id,
         do: "",
         else: state.db.categories[root].name <> " "
 
-    state
-    |> State.change_db(db)
-    |> State.info("Executed #{what}for #{Agendum.TUI.Terminal.Draw.count(length(ids), "item")}")
+    State.info(
+      state,
+      "Executed #{what}for #{Agendum.TUI.Terminal.Draw.count(length(ids), "item")}"
+    )
   end
 
   defp items(state, :all), do: state.db.item_order

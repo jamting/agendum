@@ -128,8 +128,8 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   # a typed head: the column (and those linked to it) shows it, with a new
   # category made for it if need be, as one change
   defp typed(state, :head, name, at) do
-    FieldTyping.head_named(state, name, fn state, db, id ->
-      State.change_db(state, Core.set_column_head(db, state.view_id, at, id))
+    FieldTyping.head_named(state, name, fn state, id ->
+      State.run(state, {:set_column_head, state.view_id, at, id})
     end)
   end
 
