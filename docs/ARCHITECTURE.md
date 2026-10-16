@@ -216,3 +216,4 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 | [0035](adr/0035-caches-travel-in-values.md)            | Caches travel in values the shell keeps                          |
 | [0036](adr/0036-core-commands.md)                      | User actions as core commands on ids, returning what changed     |
 | [0037](adr/0037-ui-modes-are-structs.md)               | UI modes are structs                                             |
+| [0038](adr/0038-legacy-tui-keeps-agendas-keys.md)      | The terminal keeps Agenda's keys; own keys belong to the web     |

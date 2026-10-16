@@ -4,7 +4,7 @@ Small, testable increments. Open work comes first, by area; done work is below, 
 
 ## Open
 
-**Next:** `agendum add` (capture without the keyboard), then parity with Agenda. Towards many users is done up to the web version, apart from what waits for the owner: customizable key bindings and where the TUI shows why an item is in a category (R67). The view cache waits for slow answers in real use, CI for GitHub.
+**Next:** `agendum add` (capture without the keyboard), then parity with Agenda. Towards many users is done up to the web version; where the TUI shows why an item is in a category (R67) waits for the owner. The view cache waits for slow answers in real use, CI for GitHub.
 
 ### Sharpen the saw
 
@@ -17,9 +17,7 @@ Tools and checks that make every later change faster and safer. Do these first: 
 
 A web application with accounts and shared files, on the same core (plan: [MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). Its first step, the command layer, is done (R66, ADR 0036, below under Done): every change to a file is a command the core runs. Typed UI modes come next.
 
-- [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
 - [ ] Reasons with assignments, shown: the core says why (R67, `assignment_reasons/4`, done 2026-10-16); still to settle with the owner, a habit change: where the TUI shows it. Was: automatic assignment says why in its result (the matched word, condition or action, with its rule), for the Questions box (R16), F1 on an assignment and an agent's report ("filed under Kanga because …") (second meeting)
-- [ ] Split the TUI state into the shared database and the session: its fields are classified (2026-10-16: `State.file_fields/0` and `session_fields/0`, a test makes every new field one or the other); the split itself, moving the file's fields into a struct of their own, touches every `state.db` (356 places) and helps only once a web server holds the file, so it waits for the owner's word, or for the web work
 
 Then a web version for one person:
 
