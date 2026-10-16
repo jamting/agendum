@@ -4,10 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.11.0 — 2026-10-17
+
+Zettel ids: items get names you can say, and link to each other (meeting 2026-10-16-3).
+
 - Zettel ids: Item ▸ Zettel ▸ Attach gives an item (or the marked items) a Zettel id, eight letters you can say, such as `bonalaku` (Quadsyl-24, `docs/QUADSYL.md`). An item with an id is a zettel; the id never changes and is never given twice. The JSON export writes it as its word. Files are saved in a new format (34); older files open as before.
 - A column can show the Zettel ids: choose the Format Zettel id in Column Add or Column Properties.
 - Links between zettels: `[[bonalaku]]` in a text or note, or the id on its own, links to that item, shown in the link colour (a broken one in another). With the cursor on a link the control panel says what it points at. Item ▸ Zettel ▸ Follow and Linked show the items an item links to, and those linking to it, in the Show View; Item Properties lists them under Linked from. In a note, Insert link (from F1 c) types links to the marked items. Text matching ignores links.
 - The menu line scrolls when its entries are wider than the screen, ◄ and ► showing there is more: at 80 columns the Item menu hid Reposition and Discard.
+
 ## 0.10.0 — 2026-10-16
 
 Old Lotus Agenda files open in Agendum.
