@@ -23,7 +23,7 @@ defmodule Agendum.TUI.HelpScreen do
   `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
   """
 
-  alias Agendum.TUI.{Command, Commands, Keymap, Macros, Menu, State}
+  alias Agendum.TUI.{Command, CommandDocs, Commands, Keymap, Macros, Menu, State}
   alias Agendum.TUI.Boxes.{Box, ViewManager}
   alias Agendum.TUI.CategoryScreens.Manager
   alias Agendum.TUI.Render.Help
@@ -156,9 +156,12 @@ defmodule Agendum.TUI.HelpScreen do
   defp list(state, :menu) do
     mode = State.mode(state)
 
+    above = Menu.labels(mode)
+
     entries =
-      for {{label, description, _}, i} <- Enum.with_index(Menu.entries(mode)) do
-        command = %Command{id: i, name: label, summary: description}
+      for {{label, description, action}, i} <- Enum.with_index(Menu.entries(mode)) do
+        doc = CommandDocs.menu(above ++ [label], action)
+        command = %Command{id: i, name: label, summary: description, doc: doc}
         {command, :menu_entry, [{:char, String.first(label)}]}
       end
 
@@ -177,10 +180,12 @@ defmodule Agendum.TUI.HelpScreen do
 
       box ->
         keymap = box.keymap(mode)
+        settings? = Map.get(keymap, {:char, " "}) == :change
 
         for {id, name, summary} <- box.commands(mode) do
           keys = for {key, ^id} <- keymap, do: key
-          {%Command{id: id, name: name, summary: summary}, :own, Keymap.sort(keys)}
+          doc = CommandDocs.box(box, id, settings?)
+          {%Command{id: id, name: name, summary: summary, doc: doc}, :own, Keymap.sort(keys)}
         end
     end
   end
@@ -418,8 +423,11 @@ defmodule Agendum.TUI.HelpScreen do
         ["#{name} chooses nothing here: no entry of this level begins with it."]
 
       i ->
-        {label, description, _} = Enum.at(Menu.entries(mode), i)
-        ["#{name} chooses #{label}.", description]
+        {label, description, action} = Enum.at(Menu.entries(mode), i)
+        doc = CommandDocs.menu(Menu.labels(mode) ++ [label], action)
+
+        ["#{name} chooses #{label}.", description] ++
+          doc_lines(state, %Command{id: i, name: label, summary: description, doc: doc})
     end
   end
 

@@ -1,6 +1,7 @@
 defmodule Agendum.TUI.CommandDocs do
   @moduledoc """
-  The longer texts of the commands (R65b), by place and command id: what
+  The longer texts of the commands (R65b): by place and command id, the
+  menu's entries by their labels, and the boxes' commands by box. What
   F1 `c` shows under the highlighted command and F1 `d` under a key's
   summary. A text says what the summary has no room for, above all why
   one would use the command, where that is not obvious; a command whose
@@ -224,7 +225,211 @@ defmodule Agendum.TUI.CommandDocs do
         "that turn up in notes."
   }
 
+  # what every box shares (`Agendum.TUI.Commands`' `:box`)
+  @box %{
+    choices:
+      "Lists the setting's choices to pick one, rather than stepping through them with SPACE.",
+    cancel: "Closes the box and puts back everything changed in it, so trying things out is safe."
+  }
+
+  # what every box of settings shares (`Agendum.TUI.Boxes.Box.settings_commands/1`)
+  @settings %{
+    change: "Steps to the setting's next choice; F3 lists them all, to pick one.",
+    done: "Closes the box and keeps what was changed in it; ESC would put it back."
+  }
+
+  @column_head "The head is the category the column shows for each item: its children (such " <>
+                 "as People for a Person column), its date, or its number."
+
+  # each box's own commands, by the box's module
+  @boxes %{
+    Agendum.TUI.Macros => %{
+      learn:
+        "Records what is typed from now until it is stopped, as the macro's keystrokes: " <>
+          "the easiest way to make one.",
+      properties: "Attaches it to a key, so that the key runs it, and says where it may run."
+    },
+    Agendum.TUI.CategoryScreens.Profile => %{
+      toggle:
+        "Puts the item in the category, or takes it out. In a family whose children " <>
+          "exclude each other, it also leaves the sibling it was in."
+    },
+    Agendum.TUI.CategoryScreens.Picker => %{
+      new: "Makes a category of what was typed, when none of those listed fits."
+    },
+    Agendum.TUI.Update.Marked => %{
+      marked: "Does it to every marked item, wherever it is in the file.",
+      current: "Does it to the highlighted item only; the marks stay, for later."
+    },
+    Agendum.TUI.Boxes.QuestionsBox => %{
+      done: "Assigns the item to the picked categories; the others are not suggested again.",
+      close:
+        "Leaves the questions for later: the suggestions wait, and ? stays in the title " <>
+          "until they are answered."
+    },
+    Agendum.TUI.Boxes.CalendarBox => %{
+      time: "Gives the date a time as well: for an appointment, or an alarm to ring by."
+    },
+    Agendum.TUI.Boxes.SectionBox => %{
+      properties:
+        "The head category's own properties: its conditions and actions, which reach every " <>
+          "item the section gets.",
+      add: "Adds a column to this section only; the view's other sections keep theirs."
+    },
+    Agendum.TUI.Boxes.CopyBox => %{
+      copy:
+        "Puts the item in that section's category too, and leaves it here: one item, filed " <>
+          "in two places."
+    },
+    Agendum.TUI.Boxes.ColumnAddBox => %{pick_head: @column_head},
+    Agendum.TUI.Boxes.ItemColumnBox => %{pick_head: @column_head},
+    Agendum.TUI.Boxes.ColumnBox => %{pick_head: @column_head},
+    Agendum.TUI.Boxes.AlarmList => %{
+      cancel_alarm: "The alarm will not ring; the item and its When date stay.",
+      remove: "Takes an alarm that has rung off the list; the item stays."
+    },
+    Agendum.TUI.Boxes.ItemProperties => %{
+      profile: "Every category, those the item is in marked: to see why it shows where it does.",
+      set_value:
+        "In a date or a numeric category the item holds a value too, its date or its " <>
+          "number: this changes it.",
+      remove: "Takes the item out of that category, or drops that dependency; the item stays."
+    },
+    Agendum.TUI.Boxes.SelectFile => %{
+      dates: "Shows when each file was last changed: to find the one worked on lately."
+    },
+    Agendum.TUI.Boxes.MacroProps => %{
+      detach:
+        "Takes the macro off its key, which then does what it did before; the macro stays, " <>
+          "to run from the macro list."
+    },
+    Agendum.TUI.Boxes.ExecuteBox => %{
+      done:
+        "Applies the conditions and actions now. They otherwise reach only the items added " <>
+          "or changed after they were set up."
+    },
+    Agendum.TUI.Boxes.CalendarsBox => %{
+      subscribe:
+        "Give the calendar's iCal address (Google, Fastmail and Outlook all have one): its " <>
+          "events come in as items with When dates, beside the rest of the file.",
+      how_often:
+        "Read again this often while Agendum is running, so that changes made elsewhere " <>
+          "show up.",
+      ahead: "How far ahead its events are brought in: a short reach keeps the file small.",
+      unsubscribe: "Stops reading it, and asks whether to discard the items it brought in."
+    }
+  }
+
+  # the menu's entries, by their labels from the top (an entry that runs
+  # a view's or a global command without one here has that command's text)
+  @menu %{
+    ~w(File Write) =>
+      "Saves the file under a new name and goes on in it: for a version to keep, or a " <>
+        "file to start another from.",
+    ~w(File New) => "Starts an empty file. It asks first when this one has unsaved changes.",
+    ~w(File Dating) =>
+      "Agendum reads dates in an item's text (\"call Bob friday\") as its When date. Turn " <>
+        "this off in a file whose text names dates that are not when things happen, such " <>
+        "as a reading list.",
+    ~w(File Properties) =>
+      "How this file shows dates and times, and its other settings. They are kept in the " <>
+        "file, so it looks the same to everyone who opens it.",
+    ~w(File Customize) =>
+      "Settings that are yours, not the file's: the theme, date languages, how numbers and " <>
+        "dates are typed. They hold for every file you open.",
+    ~w(File Transfer) =>
+      "JSON is a readable copy of the whole file: for a backup that can be read, for " <>
+        "scripts, or for moving to another program.",
+    ~w(File Transfer Import) =>
+      "Opens a JSON file as a new, untitled file, so nothing open is overwritten.",
+    ~w(File Transfer Calendars) =>
+      "Subscribed calendars (iCal addresses) come in as items with When dates and are " <>
+        "read again by themselves: appointments beside the things to do.",
+    ~w(Item Show) =>
+      "Every category, those the item is in marked: to see why it shows where it does, and " <>
+        "change it.",
+    ~w(Category Add) =>
+      "Adds a category at the top, under MAIN. To put one elsewhere in the hierarchy, use " <>
+        "the category manager.",
+    ~w(Category Recalc) =>
+      "Assigns and dates every item again from its text, as when it was typed: after " <>
+        "categories were renamed or matching changed, so that older items are filed as new " <>
+        "ones would be.",
+    ~w(Category Execute) =>
+      "Chooses whose conditions and actions to apply now, and to which items. They " <>
+        "otherwise reach only the items added or changed after they were set up.",
+    ~w(Category Questions) =>
+      "When File Properties says to confirm assignments, a text that matches a category is " <>
+        "a suggestion rather than an assignment: here the suggestions are answered.",
+    ~w(View Properties) =>
+      "A datebook view's sections are dates (a day, a week …): how long a period is, the " <>
+        "date it starts from, and which date it goes by.",
+    ~w(View Section Filter) =>
+      "Shows only those of the section's items that are in (or not in) chosen categories: " <>
+        "only the urgent ones under Calls, say.",
+    ~w(View Section Sort) => "This section's own order for its items, instead of the view's.",
+    ~w(View Section Lines) => "Lines between the sections make a long view easier to read.",
+    ~w(View Filter) =>
+      "Shows only the items in (or not in) chosen categories, in every section: one " <>
+        "person's items, say, without making a view for it.",
+    ~w(View Order) =>
+      "How the items of every section are sorted: by a date, by a category, by their text …",
+    ~w(View Hide Done) => "Hides the items that are done, so the view shows what is left to do.",
+    ~w(View Hide Inherited) =>
+      "An item in Anna is in People too. Hiding these shows under People only the items " <>
+        "filed there directly, not those of its children.",
+    ~w(View Hide Pending) =>
+      "Hides the items that wait for others to be done, so the view shows what can be done now.",
+    ["View", "Hide", "Column heads"] =>
+      "Column heads repeat in every section; shown only once on the screen, they leave " <>
+        "more room for items.",
+    ~w(Search File) =>
+      "Finds the text in every item of the file, not only those this view shows, and lists " <>
+        "them in the Show View. ALT-F8 goes back.",
+    ~w(Search Alarms) =>
+      "The alarms set, and today's that have rung: to cancel one, or see what was missed.",
+    ~w(Search Schedule) =>
+      "One date's items, from every category, in the Show View: what a day holds.",
+    ~w(Search Depends) => "The items that wait for this one: what it holds up.",
+    ~w(Search Prereqs) => "The items this one waits for: what must be done first."
+  }
+
+  @doc """
+  A menu entry's text, by its labels from the top (`["View", "Hide",
+  "Inherited"]`), or the text of the command it runs (`action`), or nil.
+  """
+  @spec menu([String.t()], term) :: String.t() | nil
+  def menu(labels, action) do
+    @menu[labels] || (is_atom(action) && (@view[action] || @global[action])) || nil
+  end
+
+  @doc "The menu's own texts, by labels (a test checks each names an entry)."
+  @spec menu_labels() :: [[String.t()]]
+  def menu_labels, do: Map.keys(@menu)
+
+  @doc """
+  A box's command's text: the box's own (`box` is its module), else, in
+  a box of settings (`settings?`), that of what every one shares; nil
+  when it has none. Only settings boxes share them: Done is Search in the
+  search box, and the shared text would be wrong there.
+  """
+  @spec box(module, atom, boolean) :: String.t() | nil
+  def box(box, id, settings?),
+    do: get_in(@boxes, [box, id]) || (settings? && @settings[id]) || nil
+
+  @doc "The boxes' own texts, by module (a test checks each names a command)."
+  @spec boxes() :: %{module => %{atom => String.t()}}
+  def boxes, do: @boxes
+
   @doc "Every place's texts, by command id."
   @spec all() :: %{atom => %{atom => String.t()}}
-  def all, do: %{view: @view, global: @global, catmgr: @catmgr, viewmgr: @viewmgr, note: @note}
+  def all,
+    do: %{
+      view: @view,
+      global: @global,
+      catmgr: @catmgr,
+      viewmgr: @viewmgr,
+      note: @note,
+      box: @box
+    }
 end

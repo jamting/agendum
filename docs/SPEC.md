@@ -1286,8 +1286,12 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   an item out of one category only, so other views still show it; Copy
   files one item in two places). F1 `c` shows it under the highlighted
   command, wrapped below the keys, and F1 `d` after a key's summary. A
-  command whose summary says it all has none. So far the view's, the
-  global ones, the managers' and a note's (`Agendum.TUI.CommandDocs`).
+  command whose summary says it all has none. The view's, the global
+  ones, the managers', a note's, every box's shared ones and each box's
+  own (Change and Done of a settings box are shared by all of them), and
+  the menu's entries, by their labels: an entry that runs a view's or a
+  global command (Item ▸ Finished is Done) has that command's text, so the
+  two cannot drift apart (`Agendum.TUI.CommandDocs`).
 - **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
   category name is typed into a column cell, Agenda shows the first
   matching category (the rest of its name in grey), the top line says how

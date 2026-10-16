@@ -153,6 +153,18 @@ defmodule Agendum.TUI.Menu do
     end)
   end
 
+  @doc "The labels of the entries chosen to reach the menu's current level (`[\"View\", \"Hide\"]`)."
+  @spec labels(map) :: [String.t()]
+  def labels(%{path: path}) do
+    {labels, _level} =
+      Enum.reduce(path, {[], tree()}, fn index, {labels, level} ->
+        {label, _, children} = Enum.at(level, index)
+        {labels ++ [label], children}
+      end)
+
+    labels
+  end
+
   @doc "F1's text in the menu (R65)."
   @spec about() :: String.t()
   def about do
