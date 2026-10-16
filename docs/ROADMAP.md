@@ -77,6 +77,7 @@ Then working together:
 
 ### Housekeeping
 
+- [ ] Bug: a save that fails still goes on. Quitting with unsaved changes, Yes to "Save changes before quitting?" and a failing save (a full disk) quits anyway, and the changes are lost: `App.run_effects/2` runs `{:save, path}` then `:quit` whatever the save gave. "Save changes first?" before Retrieve, New and Import does the same, going on to the next file. Found from reading the code while writing study unit 2 (2026-10-16), not yet reproduced in a test; study exercise 2.x.3 asks about it, so fix it after the owner has done that exercise, with the review's "guard the save" (`docs/reviews/2026-10-16-3.md`, § 18)
 - [ ] Rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it ([`docs/plans/RENAME_REPO.md`](plans/RENAME_REPO.md))
 *[A page here was soaked in the creek. — Rabbit]*
 
