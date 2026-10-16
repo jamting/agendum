@@ -33,6 +33,7 @@ What each document is for, and when to read it. `docs/` describes Agendum as it 
 | [`DATA_MODEL.md`](DATA_MODEL.md)             | The structs of a file, their invariants, the format versions on disk                              |
 | [`DATA_ACCESS.md`](DATA_ACCESS.md)           | How the database is queried and changed: the API by concern, the key algorithms, sequences        |
 | [`JSON_FORMAT.md`](JSON_FORMAT.md)           | The JSON export and import schema (a new stored field needs a place here)                         |
+| [`QUADSYL.md`](QUADSYL.md)                   | Quadsyl-24, the pronounceable Zettel ids (`bonalaku`): format, encoding, reserved words, rules for the future |
 | `docs/adr/`                               | Why: one record per lasting decision, listed in `ARCHITECTURE.md`                                 |
 
 ## Lotus Agenda, the original

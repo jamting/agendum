@@ -5,4 +5,5 @@
 # `mix check` on some runs with every test passing.
 Mix.ensure_application!(:tools)
 
-ExUnit.start()
+# the 2^24 bijection test takes a while: `mix test --include exhaustive`
+ExUnit.start(exclude: [:exhaustive])

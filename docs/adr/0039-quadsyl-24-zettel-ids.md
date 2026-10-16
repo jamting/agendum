@@ -4,7 +4,7 @@
 
 ## Context
 
-Zettels (level 1 in `docs/plans/ITEM_LEVELS.md`) need ids that last as long as the person's notes and that a link can name. The roadmap planned the creation time, `YYMMDDHHMM` plus a digit (`26101311140`). The owner designed Quadsyl-24 instead (its description and module are in the owner's `import-into-project/`, to come in as `docs/QUADSYL.md` and `Agendum.Core.ZettelId`, ROADMAP "Beyond Agenda"): a number from 0 to 16,777,215 is scrambled by a reversible mixing function and spelled as four consonant-vowel syllables, eight letters (`bonalaku`), chosen for Swedish and English speakers. The 267 ids that are real words are reserved for special notes. Eleven digits are hard to hold in mind or say aloud; four syllables are four chunks. The creation time is not lost: the Entry date keeps it.
+Zettels (level 1 in `docs/plans/ITEM_LEVELS.md`) need ids that last as long as the person's notes and that a link can name. The roadmap planned the creation time, `YYMMDDHHMM` plus a digit (`26101311140`). The owner designed Quadsyl-24 instead (`docs/QUADSYL.md`, `Agendum.Core.ZettelId`): a number from 0 to 16,777,215 is scrambled by a reversible mixing function and spelled as four consonant-vowel syllables, eight letters (`bonalaku`), chosen for Swedish and English speakers. The 267 ids that are real words are reserved for special notes. Eleven digits are hard to hold in mind or say aloud; four syllables are four chunks. The creation time is not lost: the Entry date keeps it.
 
 ## Decision
 
