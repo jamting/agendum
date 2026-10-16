@@ -66,11 +66,12 @@ Each plan starts with its status.
 | [`plans/REFACTORING.md`](plans/REFACTORING.md)                         | Where organic growth left complexity (mostly done)                             |
 | [`plans/DOSBOX_STAGING.md`](plans/DOSBOX_STAGING.md)                   | Running the real Agenda for Claude (done differently; a record)                |
 
-## Reviews and study
+## Reviews, meetings and study
 
 | Document                       | About                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
 | `docs/reviews/` (one per date) | Dated expert panel reviews, written as meeting minutes (architecture, code, users, business, vision, methods, agent readiness), each following up the last (`expert-review` skill) |
+| [`meetings/dagordning.md`](meetings/dagordning.md) | The next panel meeting's agenda, where the owner collects thoughts to discuss (template `meetings/TEMPLATE.md`); each meeting's agenda and minutes in `docs/meetings/YYYY-MM-DD/` (`meeting` skill) |
 | [`study/STUDY_PLAN.md`](study/STUDY_PLAN.md) | The owner's study of the code: units the panel picks, with questions ticked off when understood (`study-plan` skill) |
 
 ## Where a change is written down

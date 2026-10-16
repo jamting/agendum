@@ -150,7 +150,7 @@ Writing the questions:
 
 ## 4. Record
 
-- `docs/INDEX.md`: the "Reviews and study" section names
+- `docs/INDEX.md`: the "Reviews, meetings and study" section names
   `docs/study/STUDY_PLAN.md` with a link; add it if missing.
 - Update the table at the top of the plan (the new unit, started today).
 - Commit the plan alone, after the learning comments' own commit:
