@@ -78,6 +78,25 @@ defmodule Agendum.TUI.ThemeTest do
     end
   end
 
+  test "every colour theme draws help on a background of its own" do
+    # the background part of a 24-bit SGR sequence: "48;2;r;g;b"
+    background = fn style, theme ->
+      [bg] = Regex.run(~r/48;2;\d+;\d+;\d+/, Theme.sgr(style, theme, :truecolor))
+      bg
+    end
+
+    for theme <- Theme.names() -- [:mono] do
+      help = background.(:help, theme)
+      refute help == background.(:normal, theme), "#{theme}: help on the screen's background"
+      refute help == background.(:backdrop, theme), "#{theme}: help on the faded screen's"
+      refute help == background.(:help_pane, theme), "#{theme}: the pane on help's background"
+
+      for style <- [:help_dim, :help_title, :help_rule, :help_frame],
+          do:
+            assert(background.(style, theme) == help, "#{theme}: #{style} off help's background")
+    end
+  end
+
   test "the monochrome theme keeps the highlighted things apart from the rest" do
     mono = Theme.styles(:mono)
     refute mono.cursor == mono.item

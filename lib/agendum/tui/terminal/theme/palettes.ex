@@ -24,7 +24,8 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
   #   bg, fg            the screen
   #   sel_bg, sel_fg    the scheme's selection: the control panel and menus
   #   cursor, cursor_fg the highlight (the scheme's cursor colours)
-  #   tint              the highlighted line, boxes and the key bar
+  #   tint              the highlighted line, boxes, the key bar and help's pane
+  #   help_bg           the help box: apart from the screen and the pane
   #   shade             a box's shadow
   #   muted             done items, hints, the screen behind a box
   #   accent            section heads, column entries, box frames
@@ -42,6 +43,8 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
       cursor_fg: {"#000000", 97},
       # Modus's own colour for the current line
       tint: {"#dae5ec", 37},
+      # a shade darker than the screen, apart from the bluish pane
+      help_bg: {"#efefef", 97},
       shade: {"#9f9f9f", 90},
       muted: {"#595959", 90},
       accent: {"#0031a9", 34},
@@ -58,6 +61,8 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
       cursor: {"#2a40b8", 34},
       cursor_fg: {"#ffffff", 30},
       tint: {"#2f3849", 90},
+      # a shade lighter than the black screen, apart from the bluish pane
+      help_bg: {"#242424", 30},
       shade: {"#000000", 30},
       # ANSI 8 (#595959) is too dark to read on black
       muted: {"#989898", 37},
@@ -74,6 +79,8 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
       # the scheme's cursor text (#bfdbfe) is faint on its cursor: white
       cursor_fg: {"#ffffff", 97},
       tint: {"#e4e4e4", 90},
+      # whiter than the screen, like a sheet of paper on it
+      help_bg: {"#ffffff", 97},
       shade: {"#bdbdbd", 90},
       muted: {"#777777", 90},
       accent: {"#325cc0", 34},
@@ -89,6 +96,8 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
       cursor: {"#f0dfaf", 33},
       cursor_fg: {"#3f3f3f", 30},
       tint: {"#4f4f4f", 30},
+      # darker than the screen, with a touch of the selection's green
+      help_bg: {"#2e3631", 30},
       shade: {"#2b2b2b", 30},
       muted: {"#709080", 90},
       # Zenburn's ANSI blue (#506070) is unreadable on its background
@@ -104,6 +113,8 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
       cursor: {"#e6b450", 33},
       cursor_fg: {"#0b0e14", 30},
       tint: {"#1c212b", 90},
+      # a night blue, between the screen and the pane
+      help_bg: {"#141c28", 30},
       shade: {"#000000", 30},
       muted: {"#686868", 90},
       accent: {"#53bdfa", 34},
@@ -120,6 +131,8 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
       cursor: {"#ffa560", 33},
       cursor_fg: {"#0000a4", 34},
       tint: {"#1c1cc4", 90},
+      # navy, darker than the screen's blue
+      help_bg: {"#000080", 34},
       shade: {"#000050", 30},
       # ANSI 8 (#7c7c7c) is hard to read on the blue: the selection's grey
       muted: {"#a4a4a4", 37},
@@ -174,13 +187,13 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
     catmgr: {:fg, :bg},
     catmgr_head: {:accent, :bg, [:bold]},
     catmgr_note: {:muted, :bg},
-    help: {:fg, :bg},
-    help_dim: {:muted, :bg},
-    help_title: {:accent, :bg, [:bold]},
-    help_rule: {:muted, :bg},
+    help: {:fg, :help_bg},
+    help_dim: {:muted, :help_bg},
+    help_title: {:accent, :help_bg, [:bold]},
+    help_rule: {:muted, :help_bg},
     help_pane: {:fg, :tint},
     help_pane_title: {:accent, :tint, [:bold]},
-    help_frame: {:accent, :bg},
+    help_frame: {:accent, :help_bg},
     splash_logo: {:fg, :bg, [:reverse]},
     splash_title: {:fg, :tint, [:bold]},
     splash_value: {:accent, :tint}

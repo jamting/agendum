@@ -972,7 +972,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
     and foreground; the control panel, menus and the line being edited in
     its selection colours; the highlight in its cursor colours; the
     highlighted line, boxes and the key bar on a tint of the background;
-    heads, entries and box frames in its blue. Exact on 24-bit terminals;
+    heads, entries and box frames in its blue; the help box on a
+    background of its own, apart from the screen and from its pane.
+    Exact on 24-bit terminals;
     elsewhere they use the terminal's default colours and its ANSI
     colours, so a terminal set to the same scheme still shows it. Typed
     as `modus-operandi` or `Modus Operandi` too.
