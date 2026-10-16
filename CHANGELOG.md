@@ -2,6 +2,11 @@
 
 What changed in each version of Wol's Agendum, for the person using it. Versions follow [semantic versioning](https://semver.org): before 1.0.0, the minor number (0.**3**.0) goes up with every major feature or change to the file format, the patch number (0.3.**1**) with fixes. Each version is tagged in git (`v0.2.0`). The roadmap's Done section ([`docs/ROADMAP.md`](docs/ROADMAP.md)) lists every finished item; git log has the detail.
 
+## Unreleased
+
+- F1 c and F1 d say more about moving items, searching, browsing dates, a column's width, moving a column or a section, and typing.
+- Inside, for what comes next (a web version, an agent, `agendum add`): typing over a column entry and setting a condition are commands of their own; a view's cells carry their values as data; browsing's dates are worked out in the core; the core can say why an item is in a category (not shown yet); every screen and box is a struct, so a mistake in one is found when the code is compiled.
+
 ## 0.6.0 — 2026-10-16
 
 Every change to a file is now a command the core runs, the groundwork for a web version, an agent and capture from the command line. The keys work as before.
