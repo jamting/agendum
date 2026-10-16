@@ -8,6 +8,28 @@ tagged in git (`v0.2.0`). The roadmap's Done section
 ([`docs/ROADMAP.md`](docs/ROADMAP.md)) lists every finished item; git log
 has the detail.
 
+## 0.5.0 — 2026-10-16
+
+Help you can learn from: the command list says what cannot run now and
+why, each command says why you would use it, and help opens as a box
+over the screen you were on.
+
+- In F1 c, commands that cannot run now are greyed where they always
+  are; the highlighted one says why ("Not now: No removed item to yank
+  back"), and ENTER gives that reason instead of running it. Typing to
+  narrow the list highlights the first match that can run. F1 d says it
+  too.
+- Commands have a longer text that says why you would use them where
+  that is not obvious (Remove takes an item out of one category only, so
+  other views still show it). F1 c shows it, and so does F1 d; in the
+  menu, for its entries; in a box, for its commands.
+- The help opens as a box over the screen you were on, which fades
+  behind it, so you keep your place; it takes more of a small screen.
+  Every help page has the same heading and rule; the command list has a
+  pane at the foot with the highlighted command's text, which ← → page
+  through, and the list no longer moves as the highlight moves. Long
+  summaries end in "…". The colours follow your theme.
+
 ## 0.4.0 — 2026-10-16
 
 F1 is help about where you are, everywhere; every key goes through a
