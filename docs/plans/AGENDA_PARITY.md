@@ -138,6 +138,11 @@ What Agendum has that Agenda did not:
 - A count before a command in a view, as Emacs's numeric prefix: ALT-1
   ALT-0 ↓ moves ten rows (R65). In Agenda ALT-digits typed DOS character
   codes.
+- Help made from the commands and keymaps (R65): from F1, `c` lists the
+  commands that work there (those that cannot run now greyed, with the
+  reason, R65a; each with a longer text saying why one would use it,
+  R65b), `d` describes a key, `a` lists every key. Agenda's F1 help was
+  a fixed text per screen.
 - File ▸ New, File ▸ Dating (When dates from text on or off, shown as
   `[No Auto Dates]`), Category ▸ Recalc, View ▸ Rename, View ▸ Last,
   Item ▸ Note / When / Show / Finished / Mark / Unmark on the menu.
