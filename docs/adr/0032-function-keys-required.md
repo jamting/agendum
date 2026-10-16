@@ -21,4 +21,4 @@ Function keys are central to how Agenda is used: F2 edit, F3 choices, F5 note, F
 
 - Commands only on an F-key (F6, ALT-F5 GO TO, ALT-F9 Copy …) have no alternative key; some are on the F10 menu. A new command does not need one either, unless it is on INS, HOME or END.
 - A terminal without usable function keys cannot run Agendum fully.
-- The ESC prefix planned in `docs/plans/KITTY.md` (ESC, then a key typed by hand) covers ALT-letters only.
+- The ESC prefix planned in `docs/plans/archive/KITTY.md` (ESC, then a key typed by hand) covers ALT-letters only.

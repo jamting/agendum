@@ -55,7 +55,7 @@ Out of scope, as SPEC §6 says: printing on paper and print preview (F10 Print a
 | ------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | In a view           | F1 Help, F2 Edit, F3 Choices, F4 Done, F5 Note, F6 Props, F7 Mark, F8 Vw Mgr, F9 Cat Mgr, F10 Menu | the same keys and labels; longer labels when the screen is wide ("F8 View manager") |
 | Layout              | two lines, ten fixed slots                                                                         | one line (modified, ours)                                                           |
-| Holding ALT or CTRL | the ALT and CTRL key bars                                                                          | ⬜ (roadmap: kitty keyboard protocol, `KITTY.md`)                                   |
+| Holding ALT or CTRL | the ALT and CTRL key bars                                                                          | none: F1's help lists the commands and keys instead (modified, ours)               |
 | ALT-K               | hide / show the key map                                                                            | ✅                                                                                  |
 
 ## The F10 menu, command by command
@@ -142,6 +142,7 @@ What Agenda had that Agendum does another way, on purpose:
 - **Retrieve** asks about unsaved changes; **Write** (Save As) takes MakeCopy's place.
 - **CTRL keys** for INS, HOME, END and the most used commands (CTRL-N new, CTRL-E edit, CTRL-K done, CTRL-D discard, CTRL-S/O/P/Q save, open, print, quit; R31, KEYBOARD.md), as Mac keyboards lack those keys and terminals can map ⌘ shortcuts onto them. Function keys are required, as in Agenda: there is no ESC + digit stand-in (ADR 0032).
 - **Where you left off** (R69, meeting 2026-10-16, § 5): Agenda stored the current view and item in the file; Agendum keeps them in the preferences per file, so moving does not change the file and each person (later, each user) has their own place.
+- **No ALT and CTRL key bars** while the key is held (the owner, 2026-10-16): F1's help does it better (R65: `c` lists the commands where you are, greyed with the reason when they cannot run, `d` describes a key, `a` lists every key), and a terminal sees ALT or CTRL held alone only with the kitty keyboard protocol. The research: `archive/KITTY.md`.
 - **Export / Import** are JSON, not structured `.STF` files (STF and `.AG` import are planned in addition).
 
 Each of these is a candidate for "Agenda mode" (roadmap, Beyond Agenda: Agenda's names and keys one setting away).
@@ -152,7 +153,7 @@ Counting what is in scope (not printing, networks, protection, the macro languag
 
 | Area                                           | Parity                                                                    | What is missing                                                                                                                             |
 | ---------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| The control panel (lines, indicators, key bar) | about 75%                                                                 | INS/OVR, WAIT, the * D o ♫ symbols, the ALT/CTRL key bars                                                                                   |
+| The control panel (lines, indicators, key bar) | about 75%                                                                 | INS/OVR, WAIT, the * D o ♫ symbols                                                                                   |
 | The F10 menu                                   | about 75% (34 of 46 in-scope commands, counting the partial ones as half) | Abandon, Template, Erase, Undisc and Trash, Show ItemsDone / Circular / Every, Launch, the View Properties box, the rest of File Properties |
 | The note editor                                | about 50% (NOTE_EDITOR.md)                                                | its control panel and menu, Import/Export/Clear, ESC's question, the editing keys, APPEND/GETITMS, external note files                      |
 | Data model, assignment, views (SPEC R1–R64)    | about 90%                                                                 | recurring items on every date, unindexed categories, the trash, external note files                                                         |
@@ -172,7 +173,6 @@ To close the gaps or move them onto the lists above on purpose; each one small a
 6. The control panel's `*` (date) symbol, and `WAIT` while a calendar is fetched; `D` with unindexed categories (roadmap).
 7. File Properties' other settings (roadmap item), as far as Agendum has them.
 8. The category manager's, view manager's and macro manager's menus: compare them with Agenda's in the same way, and add their tables here.
-9. The ALT and CTRL key bars (`KITTY.md`).
-10. Optional: Utilities Launch (a shell without quitting).
+9. Optional: Utilities Launch (a shell without quitting).
 
 When a difference is kept, it goes in the enhancements or modifications list above, so that the lists stay the whole truth.

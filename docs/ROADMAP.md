@@ -38,7 +38,6 @@ Then working together:
   - [ ] Control panel symbols and indicators: `*` on a date category or value, `WAIT` while a calendar is fetched, `D` with unindexed categories (and unindexed categories themselves)
   - [ ] Compare the category, view and macro managers' menus with Agenda's, and add them to the overview
   - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash, Tab size; screenshot 130) where Agendum has them
-  - [ ] The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix (plan: `docs/plans/KITTY.md`)
   - [ ] Optional: Utilities Launch (a shell without quitting)
 - [ ] Category properties of a date or numeric category as Agenda's: the box shows only Category name, Type, Parent, Note, Note file, Special actions, Assignment actions, Statistics and Advanced settings; Short name, Match category name, Match short name, Also match, Exclusive children and Assignment conditions go (checked in Agenda 2.0, 2026-10-16, converting a category in its box: the fields vanish as Type changes). A habit change for the box: settle with the owner first; Agendum's Excludes (ours) to decide too
 - [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
@@ -189,6 +188,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] In notes: F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, and their key bar (R63)
 - [x] Word wrap in the note editor (R64): long lines shown whole on several rows, wrapped at the rightmost space, for the screen only; ↑↓ by rows, HOME/END the row's ends then the line's
 - [x] Startup (R52): a splash screen laid out as Agenda's (a cyan box in a solid blue frame with a shadow, the title spaced out, the release, Name and Company lines) with Title "WOL'S AGENDUM", Tagline "Hoo's in control? You are." and Copyright "Copyright JW&D + WOL. All rites reserved."; then a File Retrieve box when no file is named
+- [x] Dropped (the owner, 2026-10-16): the ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix. The F1 help (R65) does better; an accepted modification in AGENDA_PARITY.md; the research in `docs/plans/archive/KITTY.md`
 
 ### Milestone 3 — Smarter assignment
 

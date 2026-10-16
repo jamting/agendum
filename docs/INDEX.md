@@ -53,7 +53,6 @@ Each plan starts with its status.
 | [`plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md)                     | How close Agendum is to Agenda; accepted enhancements and modifications; steps |
 | [`plans/NOTE_EDITOR.md`](plans/NOTE_EDITOR.md)                         | The note editor as Agenda's: evidence, habit changes to settle, steps          |
 | [`plans/RECURRING_OCCURRENCES.md`](plans/RECURRING_OCCURRENCES.md)     | Recurring items on every date they recur, in datebooks and date filters        |
-| [`plans/KITTY.md`](plans/KITTY.md)                                     | The ALT and CTRL key bars while the key is held (kitty keyboard protocol)      |
 | [`plans/AGENDA_FILE_FORMAT_LOG.md`](plans/AGENDA_FILE_FORMAT_LOG.md)   | The research log behind the `.AG` format; next: the importer                   |
 | [`plans/MULTIUSER.md`](plans/MULTIUSER.md)                             | A web application with accounts and shared files, on the same core (ADR 0020)  |
 | [`plans/GITHUB.md`](plans/GITHUB.md)                                   | Putting the repository on GitHub; public or paid later                         |
@@ -63,12 +62,13 @@ Each plan starts with its status.
 
 ## Archive
 
-Finished plans, kept as records of how something was done.
+Finished or dropped plans, kept as records of how something was done or why it was not.
 
 | Plan                                                                   | About                                                                          |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | [`plans/archive/REFACTORING.md`](plans/archive/REFACTORING.md)         | Where organic growth left complexity, and what was done about it (done)        |
 | [`plans/archive/DOSBOX_STAGING.md`](plans/archive/DOSBOX_STAGING.md)   | Running the real Agenda for Claude (done differently)                          |
+| [`plans/archive/KITTY.md`](plans/archive/KITTY.md)                     | The ALT and CTRL key bars while the key is held (dropped: the F1 help does better) |
 
 ## Reviews, meetings and study
 
