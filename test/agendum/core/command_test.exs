@@ -168,6 +168,35 @@ defmodule Agendum.Core.CommandTest do
     end
   end
 
+  describe "several commands as one" do
+    test "a batch runs its commands in turn, as one change", %{db: db, a: a, b: b} do
+      {:ok, db, changes} =
+        Core.run(db, {:batch, [{:toggle_mark, a}, {:add_item, "c", after: b}]}, today())
+
+      assert db.items[a].marked
+      assert [new] = changes.items.added
+      assert changes.new == new
+      assert changes.steps == [%{}, %{new: new}]
+    end
+
+    test "if one is refused, none is made", %{db: db, a: a} do
+      assert Core.run(db, {:batch, [{:toggle_mark, a}, {:toggle_mark, 999}]}, today()) ==
+               {:error, :no_such_item}
+    end
+  end
+
+  test "a command with the wrong number of arguments is refused", %{db: db, a: a} do
+    assert Core.run(db, {:toggle_mark, a, a}, today()) == {:error, :bad_arguments}
+    assert Core.run(db, {:mark_done, a}, today()) == {:error, :bad_arguments}
+  end
+
+  test "every command that calls the facade has a function of its arity there" do
+    for {id, kinds, how} <- Command.runs(), how in [:core, :clock] do
+      arity = 1 + length(kinds) + if(how == :clock, do: 1, else: 0)
+      assert function_exported?(Core, id, arity), "Agendum.Core.#{id}/#{arity} is missing"
+    end
+  end
+
   describe "the commands describe themselves" do
     test "each has a name and a summary" do
       assert Command.ids() == Enum.uniq(Command.ids())
