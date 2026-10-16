@@ -327,13 +327,14 @@ defmodule Agendum.TUI.HelpScreen do
 
       command = not typing?(from) && global_command(key) ->
         [via <> "#{name} runs #{command.name}, everywhere but while typing.", command.summary] ++
-          not_now(state, from, {:global, command.id})
+          doc_lines(state, command) ++ not_now(state, from, {:global, command.id})
 
       command = from == :box && own_key(state, key) ->
         [via <> "#{name} runs #{command.name} in this box.", command.summary]
 
       command = local_command(from, key) ->
         [via <> "#{name} runs #{command.name} #{here}.", command.summary] ++
+          doc_lines(state, command) ++
           count_line(command) ++ not_now(state, from, {from, command.id})
 
       true ->
@@ -383,6 +384,12 @@ defmodule Agendum.TUI.HelpScreen do
         ]
     end
   end
+
+  # the command's longer text (R65b), wrapped as describe key draws it
+  defp doc_lines(_state, %Command{doc: nil}), do: []
+
+  defp doc_lines(state, %Command{doc: doc}),
+    do: ["" | Agendum.TUI.Terminal.Draw.wrap(doc, state.width - 4)]
 
   defp not_now(state, from, place_id) do
     case unavailable(state, from)[place_id] do
@@ -510,8 +517,8 @@ defmodule Agendum.TUI.HelpScreen do
 
         lines = for text <- Help.row(command, keys), do: [{style, Help.fit(text, state.width)}]
 
-        if i == mode.cursor and why != nil,
-          do: lines ++ [[{:normal, Help.fit(Help.indent() <> "Not now: " <> why, state.width)}]],
+        if i == mode.cursor,
+          do: lines ++ more_lines(command, why, state.width),
           else: lines
       end)
 
@@ -541,6 +548,17 @@ defmodule Agendum.TUI.HelpScreen do
     [[{:normal, " DESCRIBE KEY #{where(from)}"}], [{:normal, ""}]] ++
       Enum.map(text, &[{:normal, "   " <> &1}]) ++
       [[{:normal, ""}], [{:normal, "   Any key returns."}]]
+  end
+
+  # under the highlighted command: its longer text (R65b), and why it
+  # cannot run now (R65a), wrapped below its keys
+  defp more_lines(command, why, width) do
+    texts = [command.doc, why && "Not now: " <> why]
+
+    for text <- texts,
+        text != nil,
+        line <- Agendum.TUI.Terminal.Draw.wrap(text, width - String.length(Help.indent()) - 1),
+        do: [{:normal, Help.indent() <> line}]
   end
 
   # the state under this help screen: a box can be drawn over the help

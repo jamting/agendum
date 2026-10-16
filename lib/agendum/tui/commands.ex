@@ -322,6 +322,13 @@ defmodule Agendum.TUI.Commands do
               end)
             )
 
+  # each command's longer text (R65b), from `Agendum.TUI.CommandDocs`
+  @docs Agendum.TUI.CommandDocs.all()
+
+  @commands Map.new(@commands, fn {place, list} ->
+              {place, Enum.map(list, &%{&1 | doc: get_in(@docs, [place, &1.id])})}
+            end)
+
   @doc "The commands of a place, in the command list's order."
   @spec all(atom) :: [Command.t()]
   def all(place), do: Map.get(@commands, place, [])

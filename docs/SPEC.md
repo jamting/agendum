@@ -100,6 +100,7 @@ for a new rule.
 | R64 | Word wrap in the note editor | 4 |
 | R65 | Commands, keymaps and a count | 5 |
 | R65a | Commands that cannot run now | 5 |
+| R65b | The commands' longer texts | 5 |
 
 ## 1. Concepts
 
@@ -1279,6 +1280,14 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   (`unavailable/1` beside its `run`), with the same reason the command
   gives; a test runs every command said not to run and checks that it
   changed nothing.
+- **R65b ✅ The commands' longer texts** (ours). A command can have a
+  longer text than its summary, saying what the summary has no room for,
+  above all why one would use it where that is not obvious (Remove takes
+  an item out of one category only, so other views still show it; Copy
+  files one item in two places). F1 `c` shows it under the highlighted
+  command, wrapped below the keys, and F1 `d` after a key's summary. A
+  command whose summary says it all has none. So far the view's, the
+  global ones, the managers' and a note's (`Agendum.TUI.CommandDocs`).
 - **R32 ✅ Automatic completion** (User's Guide 2-19 to 2-21). While a
   category name is typed into a column cell, Agenda shows the first
   matching category (the rest of its name in grey), the top line says how
