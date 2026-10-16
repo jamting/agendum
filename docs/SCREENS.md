@@ -314,7 +314,7 @@ dependencies after its question, Undo, Save) are not listed.
 | `:copy_items`        | box           | `Agendum.TUI.Boxes.CopyBox`              | ALT-F9 on an item                                 | R42            |
 | `:move_item`         | control panel | `Agendum.TUI.Update.Marked`              | ALT-F10, Item ▸ Reposition                        | R26            |
 | `:searching`         | control panel | `Agendum.TUI.Boxes.SearchBox`            | the Search box                                    | R37            |
-| `:help`              | full screen   | `Agendum.TUI.HelpScreen`                 | F1 (then `c` commands, `d` describe key)          | §5, R65        |
+| `:help`              | full screen   | `Agendum.TUI.HelpScreen`                 | F1 (then `c` commands, `d` describe, `a` all keys) | §5, R65, R65c  |
 | `:note`              | full screen   | `Agendum.TUI.Update.Notes`               | F5, Item Properties, Category Properties          | §5             |
 | `:catmgr`            | full screen   | `Agendum.TUI.CategoryScreens.Manager`    | F9, Category ▸ Manager                            | R2–R8          |
 | `:viewmgr`           | box           | `Agendum.TUI.Boxes.ViewManager`          | F8, View ▸ Manager                                | §5             |

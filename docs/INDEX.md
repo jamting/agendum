@@ -68,7 +68,7 @@ Each plan starts with its status.
 
 | Document                       | About                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
-| `docs/reviews/YYYY-MM-DD.md`   | Dated expert panel reviews (architecture, code, users, business, vision, methods), each following up the last (`expert-review` skill) |
+| `docs/reviews/` (one per date) | Dated expert panel reviews (architecture, code, users, business, vision, methods), each following up the last (`expert-review` skill) |
 
 ## Where a change is written down
 

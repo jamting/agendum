@@ -187,6 +187,14 @@ classDiagram
         +month_alone : first, last or 2..31
         +morning, afternoon, evening : Time
     }
+    class TextMatch {
+        +enabled : boolean
+        +match_on : what text is matched
+        +strength : how closely
+        +enclosed_by : quotes, brackets…
+        +ignore_suffixes : boolean
+        +ignore_accents : boolean
+    }
     class Item {
         +id : id
         +text : String
@@ -226,6 +234,12 @@ classDiagram
         +conditions : [id and kind]
         +note : String
     }
+    class DateRule {
+        +assign : never, entered, item_text…
+        +which : 1..10
+        +done_key : boolean
+        +when_key : boolean
+    }
     class View {
         +id : id
         +name : String
@@ -243,6 +257,18 @@ classDiagram
         +section_sort : none, category, alpha, numeric
         +section_order : asc or desc
         +datebook : Datebook or nil
+    }
+    class Search {
+        +text : String
+        +on : item, note or both
+        +ignore_case : boolean
+    }
+    class SortKey {
+        +on : text, category id or note line of a category
+        +order : asc or desc
+        +na : bottom or top
+        +sequence : hierarchy or alpha
+        +line : pos_integer
     }
     class Datebook {
         +date_category : id
@@ -316,6 +342,8 @@ classDiagram
     Database *-- Links
     Database *-- DateFormat
     Database *-- DateSettings
+    Database *-- TextMatch
+    Category *-- DateRule
     Database *-- Calendar
     Database *-- Macro
     View *-- Section
@@ -323,6 +351,9 @@ classDiagram
     Section *-- ItemColumn
     View *-- Column
     View *-- Datebook
+    View *-- SortKey
+    View *-- Search
+    Section *-- SortKey
     Column *-- NumberFormat
     Column *-- DateFormat
 ```
@@ -338,6 +369,11 @@ classDiagram
 | `DateSettings`                        | `lib/agendum/core/date_settings.ex` | How the file reads typed dates: week, quarter and year boundaries, month alone, times of day (R14e). |
 | `NumberFormat`                        | `lib/agendum/core/number_format.ex` | How a numeric column shows numbers and which calculations it shows; also reads typed numbers (R29).  |
 | `Calendar`                            | `lib/agendum/core/calendar.ex`      | A calendar subscription: its address, its category, and the events it last read (R45).               |
+| `View.SortKey`                        | `lib/agendum/core/view.ex`         | One way to order items: by text, by a category's children, or by a note line (R36).                  |
+| `Search`                              | `lib/agendum/core/search.ex`       | A text search, kept in the Show View's `match` (R37).                                                |
+| `TextMatch`                           | `lib/agendum/core/text_match.ex`   | How the file matches item text to category names; a category may override settings (R16a, R16b).     |
+| `DateRule`                            | `lib/agendum/core/date_rule.ex`    | How a date category gets dates: Assign item date, Which one, Done and When keys (R6b).               |
+| `Macro`                               | `lib/agendum/core/macro.ex`        | A macro: name, keystrokes in Agenda's notation, attached key, where it runs (R50).                   |
 
 ### Ids
 

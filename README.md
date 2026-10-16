@@ -72,10 +72,12 @@ documentation.
 - **CTRL-Z / CTRL-Y** undo and redo. **CTRL-S** saves, **CTRL-Q** quits.
 - Function keys are required, as in Agenda: on a Mac, hold **fn** with them
   or make them standard function keys (System Settings ▸ Keyboard).
-  **CTRL-N** replaces INS (new item/category), **CTRL-E** = F2 edit, and ESC
-  then a letter = ALT and that letter. To use ⌘N, ⌘Z, ⌘S and so on, map them
-  in your terminal; see [`docs/KEYBOARD.md`](docs/KEYBOARD.md).
-- **F1** lists every key.
+  **CTRL-N** replaces INS (new item/category), **CTRL-E** = F2 edit, and
+  ALT is ⌥ (Option) with "Use Option as Meta key" on. To use ⌘N, ⌘Z, ⌘S and
+  so on, map them in your terminal; see [`docs/KEYBOARD.md`](docs/KEYBOARD.md).
+- **F1** is help about where you are; in it, **c** lists the commands there
+  (greyed when they cannot run, with the reason), **d** describes a key and
+  **a** lists every key.
 
 ## Development
 

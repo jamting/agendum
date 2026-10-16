@@ -47,8 +47,8 @@ mix escript.build && ./agendum my.agendum      # the standalone program
 AGENDUM_LOG=1 ./agendum my.agendum             # with a debug log of the session
 ```
 
-It needs a real terminal (not an editor's output pane). F1 lists every
-key. Function keys are required, as in Agenda (ADR 0032): on a Mac, hold
+It needs a real terminal (not an editor's output pane). F1 is help about
+where you are (`a` there lists every key). Function keys are required, as in Agenda (ADR 0032): on a Mac, hold
 fn with them or make them standard function keys. CTRL-N is INS; see
 [`docs/KEYBOARD.md`](docs/KEYBOARD.md).
 
