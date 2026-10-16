@@ -153,6 +153,7 @@ defmodule Agendum.ArchitectureTest do
     numeric_conversion prerequisites promote_conflicts questions read_when
     related_items relocation_conflicts section_calcs shift_filters waiting? when_at
     zettel zettels item_by_zettel zettel_links link_targets linked_from
+    blog_posts site site_changes
   )a
 
   # Agendum.Core functions a command does: the ones a command calls by its

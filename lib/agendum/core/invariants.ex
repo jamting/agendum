@@ -32,7 +32,7 @@ defmodule Agendum.Core.Invariants do
         protected(db) ++
         lineage(db) ++
         conditional(db) ++
-        zettels(db)
+        zettels(db) ++ blog(db)
     else
       tree
     end
@@ -300,5 +300,14 @@ defmodule Agendum.Core.Invariants do
           do: "11. zettel ids: #{inspect(n)} is not below next_zettel #{db.next_zettel}"
 
     twice ++ above
+  end
+
+  # --- 12. The blog's categories -------------------------------------------
+
+  defp blog(db) do
+    for id <- [db.blog.posts, db.blog.drafts],
+        id != nil,
+        not Map.has_key?(db.categories, id),
+        do: "12. blog: category #{id} does not exist"
   end
 end

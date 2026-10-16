@@ -44,6 +44,9 @@
 | `Agendum.Core.Datebook`                                         | Datebook views: their settings, the time slots of a period, which items a slot shows (R47).                                                             |
 | `Agendum.Core.MonthCalendar`                                    | The pop-up calendar's month as weeks, and the moves of its highlight (R46).                                                                             |
 | `Agendum.Core.Macro`                                            | A macro kept in the file: name, keystrokes in Agenda's notation, attached key, where it runs (R50).                                                     |
+| `Agendum.Core.Markdown`                                         | The micro-blog's own Markdown subset, with task boxes and Zettel links, as HTML; everything else escaped (R74).                                         |
+| `Agendum.Core.Blog`                                             | The micro-blog's settings, kept in the file, and its posts, newest first (R74).                                                                         |
+| `Agendum.Core.Site`                                             | The blog as a static site, `{path, content}` pairs: index, a page per post, RSS, JSON Feed, stylesheet; what publishing changes in a folder (R74).       |
 | `Agendum.Core.DateParser`                                       | Date expressions relative to a given `today`.                                                                                                           |
 | `Agendum.Core.TextCondition`                                    | Agenda's "Also match" text conditions: `;` any, `,` all, `!`, `~`, `^`, wildcards (R15d).                                                               |
 | `Agendum.Core.TextMatch`                                        | How a file matches text to categories: on/off, match on, strength, enclosed text, suffixes, accents (R16a), proper names (R16c).                        |
@@ -161,6 +164,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.Store`                                | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write); folder listings for the Select File box.                     |
 | `Agendum.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format (with the number separators), key map, confirm mode, auto-save, name, company, last file, where each file was left (`Agendum.Preferences.Place`, R69) (`key = value`, ADR 0008).               |
 | `Agendum.CalendarFetch`                        | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
+| `Agendum.Publish`                              | ✘     | The blog's folder read and written, and uploaded by rsync or SFTP (`:ssh_sftp`); `~/.netrc` passwords (R74, ADR 0041).           |
 | `Agendum.CLI`                                  | ✘     | `main/1` for the escript.                                                                                                        |
 
 ## Key design decisions
@@ -224,3 +228,4 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 | [0038](adr/0038-legacy-tui-keeps-agendas-keys.md)      | The terminal keeps Agenda's keys; own keys belong to the web     |
 | [0039](adr/0039-quadsyl-24-zettel-ids.md)              | Zettel ids are Quadsyl-24, a frozen part of the file format      |
 | [0040](adr/0040-run-a-command-by-name.md)              | The terminal runs a command by name (CTRL-X), amending 0038      |
+| [0041](adr/0041-blog-uploads-rsync-or-sftp.md)          | The blog uploads by rsync or SFTP, not FTP (OTP deprecates it)   |

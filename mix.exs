@@ -27,7 +27,7 @@ defmodule Agendum.MixProject do
   end
 
   def application do
-    [extra_applications: [:logger, :inets, :ssl, :public_key]]
+    [extra_applications: [:logger, :inets, :ssl, :public_key, :ssh]]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]

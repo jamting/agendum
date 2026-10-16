@@ -18,6 +18,7 @@ defmodule Agendum.Core.JSONFile do
   """
 
   alias Agendum.Core.{
+    Blog,
     Calendar,
     Category,
     Database,
@@ -127,6 +128,25 @@ defmodule Agendum.Core.JSONFile do
     ]
   end
 
+  # the micro-blog (R74)
+  defp spec(Blog) do
+    [
+      posts: {:nullable, :int},
+      drafts: {:nullable, :int},
+      title: :string,
+      description: :string,
+      author: :string,
+      language: :string,
+      base_url: :string,
+      me: :string,
+      folder: :string,
+      upload: {:enum, Blog.uploads()},
+      target: :string,
+      user: :string,
+      remote_dir: :string
+    ]
+  end
+
   defp spec(Search),
     do: [text: :string, on: {:enum, [:item, :note, :both]}, ignore_case: :bool]
 
@@ -170,7 +190,8 @@ defmodule Agendum.Core.JSONFile do
       items: Enum.map(db.item_order, &item(db, rel, db.items[&1])),
       views: Enum.map(db.view_order, &view(db.views[&1])),
       calendars: db |> Database.calendars() |> Enum.map(&calendar/1),
-      macros: db |> Database.macros() |> Enum.map(&macro/1)
+      macros: db |> Database.macros() |> Enum.map(&macro/1),
+      blog: struct_obj(db.blog)
     )
   end
 
@@ -497,7 +518,8 @@ defmodule Agendum.Core.JSONFile do
       view_order: Enum.map(views, & &1.id),
       calendars: Map.new(calendars, &{&1.id, &1}),
       macros: Map.new(macros, &{&1.id, &1}),
-      macro_order: Enum.map(macros, & &1.id)
+      macro_order: Enum.map(macros, & &1.id),
+      blog: read_struct(doc, "blog", Blog, "blog")
     }
     |> put_item_relations(items)
   end
@@ -940,7 +962,9 @@ defmodule Agendum.Core.JSONFile do
         {Enum.all?(Map.values(db.items), &(&1.zettel == nil or &1.zettel < db.next_zettel)),
          "next_zettel must be above every Zettel id"},
         {Enum.all?(Map.values(db.calendars), &Map.has_key?(cats, &1.category_id)),
-         "a calendar's category does not exist"}
+         "a calendar's category does not exist"},
+        {Enum.all?([db.blog.posts, db.blog.drafts], &(&1 == nil or Map.has_key?(cats, &1))),
+         "the blog's posts or drafts category does not exist"}
       ] ++
         Enum.flat_map(Map.values(cats), &category_refs(&1, cats, items)) ++
         Enum.flat_map(Map.keys(items), &item_refs(db, &1)) ++

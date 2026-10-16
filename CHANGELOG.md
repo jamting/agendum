@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- A micro-blog from your file: File ▸ Transfer ▸ Publish writes the items of a Posts category (not those also in Drafts) as a website: an index, a page per post at its Zettel id, an RSS feed and a JSON Feed, plain HTML with an old-school-cool stylesheet you can change. A post's note is written in Markdown, with task boxes `- [ ]`, `- [x]` and `- [-]`, and links to other zettels. Before anything is written, a box shows what will be added, changed and removed; then the folder is written and, if you choose, uploaded by rsync or SFTP (asking for a password when the server wants one, never kept). Files are saved in a new format (35); older files open as before.
 ## 0.11.0 — 2026-10-17
 
 Zettel ids: items get names you can say, and link to each other (meeting 2026-10-16-3).

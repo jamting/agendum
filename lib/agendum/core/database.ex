@@ -41,7 +41,8 @@ defmodule Agendum.Core.Database do
           calendars: %{optional(id) => Agendum.Core.Calendar.t()},
           macros: %{optional(id) => Agendum.Core.Macro.t()},
           macro_order: [id],
-          insert_columns: :all | :section
+          insert_columns: :all | :section,
+          blog: Agendum.Core.Blog.t()
         }
 
   defstruct items: %{},
@@ -68,7 +69,9 @@ defmodule Agendum.Core.Database do
             macros: %{},
             macro_order: [],
             # File Properties ▸ Insert new columns in (R55)
-            insert_columns: :all
+            insert_columns: :all,
+            # the micro-blog (R74)
+            blog: %Agendum.Core.Blog{}
 
   @date_fields %{entry: :entry, when: :when, done: :done}
 
@@ -272,7 +275,13 @@ defmodule Agendum.Core.Database do
            dates: dates,
            suggestions: suggestions,
            # a calendar whose category is gone is no longer read (R45)
-           calendars: Map.reject(db.calendars, fn {_, c} -> c.category_id in doomed_set end)
+           calendars: Map.reject(db.calendars, fn {_, c} -> c.category_id in doomed_set end),
+           # the blog forgets a posts or drafts category that is gone (R74)
+           blog: %{
+             db.blog
+             | posts: if(db.blog.posts in doomed_set, do: nil, else: db.blog.posts),
+               drafts: if(db.blog.drafts in doomed_set, do: nil, else: db.blog.drafts)
+           }
        }}
     end
   end

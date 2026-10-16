@@ -620,6 +620,54 @@ defmodule Agendum.TUI.Update do
   def written(state, _path, {:error, reason}),
     do: State.error(state, "Could not write: #{inspect(reason)}")
 
+  @doc """
+  The site's folder read (R74): what publishing would change there is
+  shown before anything is written.
+  """
+  def publish_scanned(state, folder, files, {:ok, scan}) do
+    changes = Core.site_changes(files, scan.existing, scan.published)
+
+    if Agendum.TUI.Boxes.PublishPreviewBox.nothing?(changes) and state.db.blog.upload == :none,
+      do: State.info(state, "The folder already holds this site: nothing to publish"),
+      else: Agendum.TUI.Boxes.PublishPreviewBox.open(state, folder, files, changes)
+  end
+
+  def publish_scanned(state, _folder, _files, {:error, reason}),
+    do: State.error(state, "Could not read the site's folder: #{reason}")
+
+  @doc """
+  The site written and uploaded (R74), or why not; an SFTP server that
+  refused the keys asks for a password, with the preview still open.
+  """
+  def published(state, changes, :ok) do
+    preview = Agendum.TUI.Boxes.PublishPreviewBox
+    where = if state.db.blog.upload == :none, do: "", else: " and uploaded"
+
+    state
+    |> pop_publish_preview()
+    |> State.info("Published#{where}: #{preview.summary(changes)}")
+  end
+
+  def published(state, _changes, {:error, :password}) do
+    user = state.db.blog.user
+
+    Prompts.password(
+      state,
+      "Password of #{user}@#{state.db.blog.target} (not kept):",
+      {:sftp_password}
+    )
+  end
+
+  def published(state, _changes, {:error, reason}),
+    do: state |> pop_publish_preview() |> State.error("Not published: #{reason}")
+
+  defp pop_publish_preview(state) do
+    case State.mode(state) do
+      %{type: :publish_preview} -> State.pop(state)
+      _ -> state
+    end
+  end
+
   @doc "A folder read for the Select File box (R51)."
   def dir_listed(state, dir, result), do: Agendum.TUI.Boxes.SelectFile.listed(state, dir, result)
 

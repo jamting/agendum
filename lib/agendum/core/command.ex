@@ -95,6 +95,12 @@ defmodule Agendum.Core.Command do
     {:attach_zettels, "Attach Zettel ids",
      "Gives each item without a Zettel id the next one (bonalaku); an item that has one keeps it (R73)",
      [:items], :core},
+    {:set_blog, "Blog settings",
+     "Changes the micro-blog's settings: its posts and drafts categories (by id or {:name, name}), title, address, upload (R74)",
+     [:value], :core},
+    {:prepare_publish, "Publish",
+     "Keeps the blog's settings and gives each post without a Zettel id one, before the site is written (R74)",
+     [:value], :core},
 
     # assignments (R23, R24, R34)
     {:assign, "Assign", "Assigns an item to a category (R7: leaving an exclusive sibling)",

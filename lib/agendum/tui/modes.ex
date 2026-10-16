@@ -79,6 +79,8 @@ defmodule Agendum.TUI.Modes do
     numeric_functions: [:cursor, :opened, :sidx],
     picker: [:cursor, :purpose, :root, :search],
     profile: [:cursor, :item_id],
+    publish: [:cursor, :settings, :typing],
+    publish_preview: [:changes, :files, :folder, :top],
     prompt: [:action, :label],
     props: [:cat_id, :cursor, :opened],
     questions: [:cursor, :item, :picked],

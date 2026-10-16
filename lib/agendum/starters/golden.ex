@@ -222,6 +222,29 @@ defmodule Agendum.Starters.Golden do
       ignore_accents: true
     })
     |> Core.set_insert_columns(:section)
+    |> blog()
+  end
+
+  # the micro-blog (R74), every setting away from its default
+  defp blog(db) do
+    {:ok, db} =
+      Core.set_blog(db, %{
+        posts: {:name, "Posts"},
+        drafts: {:name, "Drafts"},
+        title: "Owl's Notes",
+        description: "Long words, spelled with care",
+        author: "Owl",
+        language: "sv",
+        base_url: "https://owl.example/",
+        me: "https://mastodon.example/@owl",
+        folder: "site",
+        upload: :sftp,
+        target: "owl.example:2222",
+        user: "owl",
+        remote_dir: "public_html"
+      })
+
+    db
   end
 
   # The facade's functions answer in a few shapes; here only the file

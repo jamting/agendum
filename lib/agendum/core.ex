@@ -42,6 +42,7 @@ defmodule Agendum.Core do
     Macros,
     Numbers,
     Rules,
+    Publishing,
     Views,
     Zettels
   }
@@ -132,6 +133,13 @@ defmodule Agendum.Core do
   defdelegate zettel_links(text, used), to: Agendum.Core.ZettelLinks, as: :scan
   defdelegate link_targets(db, id), to: Agendum.Core.ZettelLinks, as: :targets
   defdelegate linked_from(db, id), to: Agendum.Core.ZettelLinks
+
+  # the micro-blog (R74)
+  defdelegate set_blog(db, changes), to: Publishing
+  defdelegate prepare_publish(db, changes), to: Publishing
+  defdelegate blog_posts(db), to: Publishing
+  defdelegate site(db), to: Publishing
+  defdelegate site_changes(files, existing, published), to: Publishing
 
   # times and alarms (R14b, R38)
   defdelegate when_at(item), to: Alarms

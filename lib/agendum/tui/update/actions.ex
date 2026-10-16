@@ -178,6 +178,7 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :file_props, _), do: FileProperties.open(state)
   defp do_perform(state, :customize, _), do: Agendum.TUI.Boxes.CustomizeBox.open(state)
   defp do_perform(state, :calendars, _), do: Agendum.TUI.Boxes.CalendarsBox.open(state)
+  defp do_perform(state, :publish, _), do: Agendum.TUI.Boxes.PublishBox.open(state)
   defp do_perform(state, :execute, _), do: Agendum.TUI.Boxes.ExecuteBox.open(state)
   defp do_perform(state, :questions, _), do: Agendum.TUI.Boxes.QuestionsBox.open(state)
 

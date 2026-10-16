@@ -29,11 +29,13 @@ defmodule Agendum.TUI.Menu do
          {"Dating", "Turn When dates read from text on or off", :toggle_auto_date},
          {"Properties", "How the file displays dates and times", :file_props},
          {"Customize", "Your theme, date languages and input format, for every file", :customize},
-         {"Transfer", "Export the whole file as JSON, or import one",
+         {"Transfer", "Export or import the file, calendars, publish the blog",
           [
             {"Export", "Write the whole file as a JSON file", :export_json},
             {"Import", "Open a JSON file as a new, untitled file", :import_json},
-            {"Calendars", "Subscribe to calendars on the web (iCal); read them now", :calendars}
+            {"Calendars", "Subscribe to calendars on the web (iCal); read them now", :calendars},
+            {"Publish", "Write the blog from the posts category as a website, and upload it",
+             :publish}
           ]}
        ]},
       {"Item", "Work with the highlighted item",

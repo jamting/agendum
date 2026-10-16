@@ -163,6 +163,16 @@ defmodule Agendum.TUI.DebugLog do
   def effect_text({:save_preferences, path, _prefs}, ms),
     do: "effect save_preferences #{path} in #{ms} ms"
 
+  # the site's files are counted, and a password never written (R74)
+  def effect_text({:publish_scan, folder, files}, ms),
+    do: "effect publish_scan #{folder} (#{length(files)} files) in #{ms} ms"
+
+  def effect_text({:publish, folder, _files, changes, password}, ms),
+    do:
+      "effect publish #{folder} (#{length(changes.added)} added, #{length(changes.changed)} " <>
+        "changed, #{length(changes.removed)} removed#{if password, do: ", with a password"}) " <>
+        "in #{ms} ms"
+
   def effect_text(effect, ms), do: "effect #{inspect(effect)} in #{ms} ms"
 
   @doc "The file in use, with its size, time and fingerprint on disk (`file_text/2`)."

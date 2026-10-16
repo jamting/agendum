@@ -32,7 +32,11 @@ defmodule Agendum.TUI.Update.Prompts do
   @doc "Whether the prompt on top is for a password, whose keys are not shown or logged."
   @spec password_prompt?(State.t()) :: boolean
   def password_prompt?(state),
-    do: match?(%{type: :prompt, action: {:ag_password, _, _}}, State.mode(state))
+    do:
+      match?(
+        %{type: :prompt, action: action} when elem(action, 0) in [:ag_password, :sftp_password],
+        State.mode(state)
+      )
 
   @doc "Converts a category to numeric (R29), reporting the result."
   def make_numeric(state, cat_id) do
@@ -128,6 +132,11 @@ defmodule Agendum.TUI.Update.Prompts do
   # an Agenda file's password (R72): the import is tried again with it
   defp prompt_action(state, {:ag_password, path, bytes}, text),
     do: Update.import_ag(state, path, bytes, text)
+
+  # the SFTP server's password (R74): the publish is tried again with it;
+  # the preview box is still under the prompt
+  defp prompt_action(state, {:sftp_password}, text),
+    do: Agendum.TUI.Boxes.PublishPreviewBox.publish(state, State.mode(state), text)
 
   # Calendars (R45): the address, then a name for its category
   defp prompt_action(state, :calendar_url, text),

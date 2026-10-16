@@ -46,6 +46,7 @@ The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs` and 
 | `views`      | Every view, in the view manager's order.                                 |
 | `calendars`  | Calendar subscriptions (R45).                                            |
 | `macros`     | Macros, in the macro manager's order (R50).                              |
+| `blog`       | The micro-blog's settings (R74), below.                                  |
 
 ## Settings
 
@@ -135,6 +136,23 @@ A **criterion** (conditions, filters) is `{"category": id, "is": "assigned"}`, `
 | `key`      | The key it is attached to, in the same notation (`{ShfF4}`), or `null`.                                  |
 | `run_from` | `{"view": true, "note": true, "catmgr": true, "elsewhere": false}`: where it can be run.                 |
 
+## Blog
+
+The micro-blog's settings (R74); left out, none: no posts category.
+
+| Key | Meaning |
+| --- | ------- |
+| `posts`, `drafts` | The posts category and the drafts category (ids), or `null`. |
+| `title`, `description`, `author`, `language` | What the pages and feeds say about the blog; `language` such as `"en"` or `"sv"`. |
+| `base_url` | Where the site is on the web (`"https://example.com/blog/"`), for the feeds' links. |
+| `me` | Addresses of the person's other profiles, for `rel="me"` links, separated by spaces. |
+| `folder` | Where the site is written; a relative folder is beside the file. |
+| `upload` | `"none"`, `"rsync"` or `"sftp"` (ADR 0041). |
+| `target` | For rsync where to (`"me@host:www/blog"`); for SFTP the server (`"host"` or `"host:port"`). |
+| `user`, `remote_dir` | For SFTP: the user name, and the folder on the server. |
+
+No password is ever in the file.
+
 ## What is checked on import
 
-Beyond the types: MAIN and the special categories exist (and the special ones are date categories); there is a view; ids are unique and below `next_id`; Zettel ids are unique and below `next_zettel`; parents and children agree; every category, item and view an object refers to exists. A file that fails opens nothing; the open file stays.
+Beyond the types: MAIN and the special categories exist (and the special ones are date categories); there is a view; ids are unique and below `next_id`; Zettel ids are unique and below `next_zettel`; the blog's categories exist; parents and children agree; every category, item and view an object refers to exists. A file that fails opens nothing; the open file stays.

@@ -4,7 +4,7 @@ defmodule Agendum.TUI.App do
   `Update`, performs the resulting effects, and draws `Render` output.
   """
 
-  alias Agendum.{CalendarFetch, Preferences, Store}
+  alias Agendum.{CalendarFetch, Preferences, Publish, Store}
 
   alias Agendum.TUI.{
     DebugLog,
@@ -223,6 +223,20 @@ defmodule Agendum.TUI.App do
 
         {:list_dir, dir} ->
           Update.dir_listed(state, dir, Store.list_dir(dir))
+
+        # the micro-blog (R74): what the folder holds, then writing and
+        # uploading it
+        {:publish_scan, folder, files} ->
+          Update.publish_scanned(state, folder, files, Publish.scan(Path.expand(folder), files))
+
+        {:publish, folder, files, changes, password} ->
+          dir = Path.expand(folder)
+
+          result =
+            with :ok <- Publish.write(dir, files, changes),
+                 do: Publish.upload(state.db.blog, dir, files, changes, password)
+
+          Update.published(state, changes, result)
 
         {:save_preferences, path, prefs} ->
           Update.preferences_saved(state, Preferences.save(prefs, path))

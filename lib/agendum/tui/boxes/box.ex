@@ -135,6 +135,8 @@ defmodule Agendum.TUI.Boxes.Box do
     numeric_functions: Agendum.TUI.Boxes.NumericFunctionsBox,
     picker: Agendum.TUI.CategoryScreens.Picker,
     profile: Agendum.TUI.CategoryScreens.Profile,
+    publish: Agendum.TUI.Boxes.PublishBox,
+    publish_preview: Agendum.TUI.Boxes.PublishPreviewBox,
     props: Agendum.TUI.CategoryScreens.Properties,
     questions: Agendum.TUI.Boxes.QuestionsBox,
     range_filter: Agendum.TUI.Boxes.RangeFilterBox,

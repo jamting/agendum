@@ -128,7 +128,8 @@ What Agendum has that Agenda did not:
 - The `--clinic` Easter egg.
 - ► before the current view in the view manager, and F5 to list the views by recently used (R68).
 - A "While you were away" box for alarms that came due while the file was closed (R70).
-- Zettel ids (Quadsyl-24, R73, ADR 0039), a Zettel id column (R73a) and links between items (R73b). Planned (meeting 2026-10-16-3): CTRL-X to run a command by name in a small box (ADR 0040).
+- Zettel ids (Quadsyl-24, R73, ADR 0039), a Zettel id column (R73a) and links between items (R73b).
+- A micro-blog published from the file (File ▸ Transfer ▸ Publish, R74). Planned (meeting 2026-10-16-3): CTRL-X to run a command by name in a small box (ADR 0040).
 
 ## Done differently: accepted modifications
 

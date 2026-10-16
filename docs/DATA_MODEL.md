@@ -49,6 +49,7 @@ erDiagram
         map macros "id => Macro (R50)"
         list macro_order "macro ids in the macro manager's order"
         atom insert_columns "all or section: where new columns go (R55)"
+        Blog blog "the micro-blog's settings (R74)"
     }
     ITEM {
         int id PK
@@ -171,6 +172,7 @@ classDiagram
         +macros : Map~id, Macro~
         +macro_order : [id]
         +insert_columns : all or section
+        +blog : Blog
     }
     class DateFormat {
         +order : yyyymmdd, mmddyy, ddmmmyy, week, relative…
@@ -380,6 +382,8 @@ classDiagram
 
 Items, categories and views draw ids from **one counter**, `next_id`, just as the patent keeps all objects in one object file (`.AGA`). An id therefore says nothing about its type; look it up in the right map. Ids are never reused. Lower ids were created earlier, and the automatic-assignment tie-break relies on that ("prefer the category created first").
 
+**The blog** (R74): `db.blog` (`Agendum.Core.Blog`) holds the micro-blog's settings: its posts and drafts categories by id, its title, description, author, language, base address and `rel="me"` links, the folder the site is written to and how it is uploaded (none, rsync, SFTP, ADR 0041). No password is ever stored. The posts themselves are the items of the posts category, computed (`Blog.posts/1`), and the site is made from them each time (`Agendum.Core.Site`); nothing of the site is stored in the file.
+
 **Zettel ids** (R73, ADR 0039) are a second, separate kind of id: the ids people say and link to, given only to the items made zettels. An item's `zettel` is a number, spelled as a word by `Agendum.Core.ZettelId` (`bonalaku` is 1); the file's own counter, `next_zettel`, starts at 1 and only goes up, skipping the reserved words, so a Zettel id is never given twice. The JSON writes the word.
 
 ### Ordering
@@ -515,6 +519,7 @@ The core maintains these, and the tests check them: `Agendum.Core.Invariants.vio
 9. **No direct link to both a category and its ancestor** (SPEC R7c). An item linked to a category is never also linked to one of its ancestors. `Assign.assign/3` clears the item's links to the category's ancestors and descendants before linking, and category moves resolve the conflicts they would create. Files saved before R7c may still contain such pairs; assigning those items again tidies them up.
 10. **Conditional marks are links.** Every `{item, category}` in `db.conditional` is also a link; `Database.unlink/3` and the delete operations remove marks with their links. A user assignment clears the mark, so only condition-made links are ever retracted (SPEC R15).
 11. **Zettel ids are unique.** No two items have the same `zettel`, and each is below `next_zettel` (R73). `Core.attach_zettels/2` takes the next number and counts on; nothing else sets one.
+12. **The blog's categories exist.** `blog.posts` and `blog.drafts` are categories in the file, or nil; `delete_category/2` clears them when they go (R74).
 
 ## Mapping to the patent
 
@@ -586,6 +591,7 @@ Format versions:
 | 32 | Added `View.hide_column_heads` (R57) |
 | 33 | Added `View.section_separators` (R58) |
 | 34 | Added `Item.zettel` and `Database.next_zettel`, Zettel ids (R73) |
+| 35 | Added `Database.blog`, the micro-blog's settings (`Agendum.Core.Blog`, R74) |
 
 ## UI state around the database
 
