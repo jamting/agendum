@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.8.0 — 2026-10-16
+
+Agendum remembers where you were: a file opens where you left it, alarms missed while it was closed are shown when you come back, and the view manager shows where you are and what you used last (the panel meeting of 2026-10-16).
+
 - Alarms that came due while a file was closed are no longer just a message line: after the splash screen, a "While you were away" box lists them, the latest first, alarms with the same text counted on one line. ENTER or ESC closes it; Search ▸ Alarms still lists them.
 - An alarm going off no longer counts as a change to the file, so it never makes Agendum ask "Save changes?" by itself. A past alarm shows the time it was due.
 - A file opens where you left it: on the view and the item you were on when you quit or opened another file. The place is kept in your preferences, not in the file, so moving around never asks you to save.
