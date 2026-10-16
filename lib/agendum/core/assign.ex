@@ -89,8 +89,12 @@ defmodule Agendum.Core.Assign do
   """
   @spec apply_conditions(db, id, Agendum.Core.Context.clock() | nil, MapSet.t(id) | nil) :: db
   def apply_conditions(db, item_id, clock \\ nil, only \\ nil) do
+    # Only a standard category's conditions assign. A category made a date
+    # or numeric category keeps its conditions, but they do nothing, as in
+    # Agenda (its box shows them "Only if Type is Standard"; checked in
+    # Agenda 2.0, 2026-10-16).
     with_conditions =
-      for {id, %{conditions: [_ | _]}} <- db.categories,
+      for {id, %{conditions: [_ | _], kind: :standard}} <- db.categories,
           only == nil or MapSet.member?(only, id),
           do: id
 
@@ -99,7 +103,7 @@ defmodule Agendum.Core.Assign do
     # a date runs every rule of the date languages. Conditions do not
     # change while they settle, and neither does the clock.
     conditions =
-      for {id, %{conditions: [_ | _]}} <- db.categories,
+      for {id, %{conditions: [_ | _], kind: :standard}} <- db.categories,
           into: %{},
           do: {id, resolve_ranges(db, own_conditions(db, id), clock)}
 

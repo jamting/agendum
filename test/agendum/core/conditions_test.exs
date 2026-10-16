@@ -116,17 +116,32 @@ defmodule Agendum.Core.ConditionsTest do
     assert db.categories[watch].conditions == []
   end
 
-  # Found by the golden file (test/fixtures/formats): Watch, made a date
-  # category after it got its condition, keeps the condition, but an item
-  # cannot be linked to a date category, so it must not be marked as
-  # conditionally linked to one either (DATA_MODEL invariant 10).
-  test "a date category's conditions leave no conditional mark", %{db: db} do
+  # Found by the golden file (test/fixtures/formats), then checked in Agenda
+  # 2.0 (2026-10-16): a category with conditions made a date or numeric
+  # category keeps them in the file (agdump shows them), but its box no
+  # longer shows them ("Only if Type is Standard", F1) and they assign
+  # nothing, not even on Utilities Execute: no link, no date, no number.
+  test "a date category's conditions are kept but assign nothing", %{db: db} do
     watch = cat(db, "Watch")
     {:ok, db} = Core.add_condition(db, watch, cat(db, "Dana"), :assigned)
     {:ok, db} = Core.make_date(db, watch, today())
     {db, item} = Core.add_item(db, "Ask Dana", today(), section: cat(db, "Dana"))
 
+    assert db.categories[watch].conditions == [{cat(db, "Dana"), :assigned}]
+    refute Database.member?(db, item, watch)
     refute Database.conditional?(db, item, watch)
     assert Agendum.Core.Invariants.violations(db) == []
+  end
+
+  test "a numeric category's conditions are kept but assign nothing", %{db: db} do
+    watch = cat(db, "Watch")
+    {:ok, db} = Core.add_condition(db, watch, cat(db, "Dana"), :assigned)
+    {:ok, db} = Core.make_numeric(db, watch, today())
+    {db, item} = Core.add_item(db, "Ask Dana", today(), section: cat(db, "Dana"))
+    db = Core.execute(db, [item])
+
+    assert db.categories[watch].conditions == [{cat(db, "Dana"), :assigned}]
+    refute Database.member?(db, item, watch)
+    refute Database.conditional?(db, item, watch)
   end
 end

@@ -410,7 +410,11 @@ for a new rule.
   (ENTER on a category cycles none → assigned → not assigned); the
   category manager shows them ("if Taxes, not People") and the assignment
   profile marks conditional assignments with "c". Contradictory conditions
-  settle after a bounded number of rounds.
+  settle after a bounded number of rounds. Only a standard category's
+  conditions assign: a category made a date or numeric category keeps its
+  conditions in the file, but they assign nothing, not even on Execute
+  (checked in Agenda 2.0, 2026-10-16: its box offers Assignment conditions
+  "Only if Type is Standard", and the stored ones have no effect).
 - **R15a ✅ Date and numeric conditions** (User's Guide 20-5 to 20-7). A
   category's conditions can name a date or numeric category: choosing one
   in the conditions box opens the Date Condition or Numeric Condition box
