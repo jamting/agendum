@@ -333,7 +333,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] KEYBOARD.md checked against the keymaps (a test: every F-, ALT- and CTRL-key in them is in it)
   - [x] F1 then `c` greys the commands that cannot run now and says why (R65a), 2026-10-16
   - [x] Longer texts for the commands, shown by F1 `c` and `d` (R65b), 2026-10-16
-  - [x] The help page's look and feel (R65c, 2026-10-16): the same frame on every page, colours from the theme, a fixed pane of five lines at the foot with the longer text and the "Not now" reason (← → page through a long text), "…" for a long summary; drawn as a box over the faded screen beneath, taking more of a small screen (80×25: about nine tenths) than of a large one (four fifths). To try with the owner: the colours
+  - [x] The help page's look and feel (R65c, 2026-10-16): the same frame on every page, colours from the theme, a fixed pane of five lines at the foot with the longer text and the "Not now" reason (← → page through a long text), "…" for a long summary; drawn as a box over the faded screen beneath, taking more of a small screen (80×25: about nine tenths) than of a large one (four fifths). The colours tried by the owner; the help box then got a background of its own in every theme (`help_bg`, 2026-10-16)
   - Dropped (owner, 2026-10-16): the help as a panel over the right-hand side. The help box over the faded screen (R65c) keeps what it was opened from in sight, which was the panel's point
 
 ### Sharpen the saw
