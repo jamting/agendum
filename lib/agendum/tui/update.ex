@@ -43,6 +43,7 @@ defmodule Agendum.TUI.Update do
     # the end of a macro run is not a keypress: what the run said stays
     message = if key == :macro_done, do: state.message
     state = %{state | message: message, effects: []}
+    before = state
     key = normalize(state, key)
 
     # `with` used as a chain of "not mine, pass it on": each step returns
@@ -81,10 +82,29 @@ defmodule Agendum.TUI.Update do
          do: Layout.settle(state),
          else: state
 
+    state = keep_place(before, state)
+
     # Effects were collected in `state.effects` while the key was handled
     # (`State.effect/2`); they are taken out and returned beside the state,
     # so the state that is kept holds none.
     {%{state | effects: [], last_key: %{key: key, at: state.now}}, state.effects}
+  end
+
+  # Where the person was in the file is kept as they leave it (R69): on
+  # Quit here; Retrieve, New and Import keep it as they open the other file
+  # (`State.reopen/3`). The preferences are saved before quitting:
+  # `Enum.split_while/2` cuts the effects at `:quit`, so the save goes in
+  # just before it.
+  defp keep_place(before, state) do
+    state = if :quit in state.effects, do: Agendum.TUI.Places.remember(state), else: state
+
+    if state.prefs.places != before.prefs.places and state.prefs.path do
+      save = {:save_preferences, state.prefs.path, state.prefs}
+      {now, rest} = Enum.split_while(state.effects, &(&1 != :quit))
+      %{state | effects: now ++ [save | rest]}
+    else
+      state
+    end
   end
 
   defp count_key?({:alt, d}), do: d in ~w(0 1 2 3 4 5 6 7 8 9)

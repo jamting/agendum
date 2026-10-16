@@ -137,25 +137,30 @@ defmodule Agendum.TUI.State do
         NaiveDateTime.new!(Keyword.fetch!(opts, :today), ~T[09:00:00])
       end)
 
-    %__MODULE__{
-      db: db,
-      path: opts[:path],
-      today: Keyword.fetch!(opts, :today),
-      now: now,
-      last_key: %{key: nil, at: now},
-      width: Keyword.get(opts, :width, 80),
-      height: Keyword.get(opts, :height, 25),
-      reader: %Agendum.Core.Context{
-        languages: Keyword.get(opts, :languages, [Agendum.Core.DateLanguage.English]),
-        input: Keyword.get(opts, :input, %Agendum.Core.InputFormat{})
-      },
-      prefs: Keyword.get(opts, :prefs, %Agendum.Preferences{}),
-      key_map: Keyword.get(opts, :prefs, %Agendum.Preferences{}).key_map,
-      theme: Keyword.get(opts, :theme, :classic),
-      view_id: hd(db.view_order),
-      saved_db: db
-    }
-    |> prepare_dates()
+    state =
+      %__MODULE__{
+        db: db,
+        path: opts[:path],
+        today: Keyword.fetch!(opts, :today),
+        now: now,
+        last_key: %{key: nil, at: now},
+        width: Keyword.get(opts, :width, 80),
+        height: Keyword.get(opts, :height, 25),
+        reader: %Agendum.Core.Context{
+          languages: Keyword.get(opts, :languages, [Agendum.Core.DateLanguage.English]),
+          input: Keyword.get(opts, :input, %Agendum.Core.InputFormat{})
+        },
+        prefs: Keyword.get(opts, :prefs, %Agendum.Preferences{}),
+        key_map: Keyword.get(opts, :prefs, %Agendum.Preferences{}).key_map,
+        theme: Keyword.get(opts, :theme, :classic),
+        view_id: hd(db.view_order),
+        saved_db: db
+      }
+      |> prepare_dates()
+
+    # back where the person left this file, if they have been in it (R69);
+    # the match tells the compiler's type checker it is still a `State`
+    %__MODULE__{} = Agendum.TUI.Places.restore(state)
   end
 
   # Compiles the date rules for the reader's languages and input format,
@@ -219,10 +224,14 @@ defmodule Agendum.TUI.State do
   @doc """
   The state for another file (Retrieve, New, Import): a fresh start for
   the file, keeping the session (time, screen size, languages, input
-  format, theme, preferences, key map).
+  format, theme, preferences, key map). Where the person was in the file
+  they leave is kept in their preferences, and the other file opens where
+  they left it (R69).
   """
   @spec reopen(t, Database.t(), String.t() | nil) :: t
   def reopen(state, db, path) do
+    state = Agendum.TUI.Places.remember(state)
+
     %{
       new(db,
         path: path,

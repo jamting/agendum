@@ -5,6 +5,7 @@ defmodule Agendum.PreferencesTest do
   alias Agendum.Core.DateLanguage.{English, Swedish}
   alias Agendum.Core.InputFormat
   alias Agendum.Preferences
+  alias Agendum.Preferences.Place
 
   @moduletag :tmp_dir
 
@@ -110,5 +111,46 @@ defmodule Agendum.PreferencesTest do
     assert text =~ "thousands_separator = space\n"
     assert Preferences.parse(text).input == prefs.input
     assert Preferences.parse("decimal_separator = ;").input.decimal == nil
+  end
+
+  # R69: where the person left each file, by its path, the file left last first
+  test "where each file was left, kept by its path" do
+    place = %Place{view: 3, section: 2, item: 17}
+
+    prefs =
+      %Preferences{}
+      |> Preferences.put_place("/a/old.agendum", %Place{view: 5})
+      |> Preferences.put_place("/a/My work.agendum", place)
+
+    text = Preferences.format(prefs)
+    assert text =~ "place = view:3 section:2 item:17 file:/a/My work.agendum\n"
+    assert text =~ "place = view:5 file:/a/old.agendum\n"
+
+    read = Preferences.parse(text)
+    assert Preferences.place(read, "/a/My work.agendum") == place
+    assert Preferences.place(read, "/a/old.agendum") == %Place{view: 5}
+    assert Preferences.place(read, "/a/never.agendum") == nil
+    assert Preferences.place(read, nil) == nil
+    # the file left last comes first
+    assert [{"/a/My work.agendum", _}, {"/a/old.agendum", _}] = read.places
+  end
+
+  test "a place line without a file, or with bad fields, is ignored or partly read" do
+    assert Preferences.parse("place = view:3").places == []
+    assert Preferences.parse("place = file:/x.agendum").places == [{"/x.agendum", %Place{}}]
+
+    assert Preferences.parse("place = view:x section:-1 item:4 colour:red file:/x").places ==
+             [{"/x", %Place{item: 4}}]
+  end
+
+  test "only the last 50 files' places are kept" do
+    prefs =
+      Enum.reduce(1..60, %Preferences{}, fn n, prefs ->
+        Preferences.put_place(prefs, "/f#{n}", %Place{view: n})
+      end)
+
+    assert length(prefs.places) == 50
+    assert Preferences.place(prefs, "/f60") == %Place{view: 60}
+    assert Preferences.place(prefs, "/f10") == nil
   end
 end

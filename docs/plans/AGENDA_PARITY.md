@@ -141,7 +141,7 @@ What Agenda had that Agendum does another way, on purpose:
 - **Boxes**: ENTER keeps and ESC cancels in every settings box (ADR 0030), where Agenda's boxes varied.
 - **Retrieve** asks about unsaved changes; **Write** (Save As) takes MakeCopy's place.
 - **CTRL keys** for INS, HOME, END and the most used commands (CTRL-N new, CTRL-E edit, CTRL-K done, CTRL-D discard, CTRL-S/O/P/Q save, open, print, quit; R31, KEYBOARD.md), as Mac keyboards lack those keys and terminals can map ⌘ shortcuts onto them. Function keys are required, as in Agenda: there is no ESC + digit stand-in (ADR 0032).
-- **Where you left off** (to build, meeting 2026-10-16, § 5): Agenda stored the current view and item in the file; Agendum keeps them in the preferences per file, so moving does not change the file and each person (later, each user) has their own place.
+- **Where you left off** (R69, meeting 2026-10-16, § 5): Agenda stored the current view and item in the file; Agendum keeps them in the preferences per file, so moving does not change the file and each person (later, each user) has their own place.
 - **Export / Import** are JSON, not structured `.STF` files (STF and `.AG` import are planned in addition).
 
 Each of these is a candidate for "Agenda mode" (roadmap, Beyond Agenda: Agenda's names and keys one setting away).

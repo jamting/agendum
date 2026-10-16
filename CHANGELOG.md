@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- A file opens where you left it: on the view and the item you were on when you quit or opened another file. The place is kept in your preferences, not in the file, so moving around never asks you to save.
 - The view manager (F8) marks the view you are in with ►, wherever the highlight is.
 - The assignment profile (F3 on an item) says at the top why the item is in the highlighted category: "In Urgent: its condition holds (Calls)", "In People: through Kanga", its text matching, another category's action, or by hand.
 

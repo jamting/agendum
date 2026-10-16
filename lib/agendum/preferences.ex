@@ -2,7 +2,8 @@ defmodule Agendum.Preferences do
   @moduledoc """
   The person's preferences, for every file they open (ADR 0008): the
   colour theme (`theme`, R40), the date languages (`lang` and `fallback`,
-  R14c) and the Input format (`Agendum.Core.InputFormat`, R41b). Kept in a plain
+  R14c) and the Input format (`Agendum.Core.InputFormat`, R41b), and where
+  they left each file (`Agendum.Preferences.Place`, R69). Kept in a plain
   text file, one `key = value` per line, in the config directory
   (`$XDG_CONFIG_HOME/agendum/preferences` or
   `~/.config/agendum/preferences`; ADR 0019). A setting left out is the date
@@ -13,6 +14,7 @@ defmodule Agendum.Preferences do
   """
 
   alias Agendum.Core.{DateLanguage, InputFormat}
+  alias Agendum.Preferences.Place
   alias Agendum.TUI.Terminal.Theme
 
   @typedoc """
@@ -21,7 +23,8 @@ defmodule Agendum.Preferences do
   offered when Agendum starts without one (R52). `key_map`: whether the
   key bar shows; `confirm`: whether "are you sure?" questions are asked
   (Confirm mode); `auto_save`: minutes without a key before unsaved
-  changes are saved, 0 for never (all R54). `path` is where they are
+  changes are saved, 0 for never (all R54). `places`: where the person
+  left each file, by its path, the file left last first (R69). `path` is where they are
   kept (nil: not saved) and `user` the login name (the splash's name when
   none is set); neither is written in them.
   """
@@ -35,6 +38,7 @@ defmodule Agendum.Preferences do
           key_map: boolean,
           confirm: boolean,
           auto_save: 0..60,
+          places: [{String.t(), Place.t()}],
           path: String.t() | nil,
           user: String.t() | nil
         }
@@ -47,8 +51,12 @@ defmodule Agendum.Preferences do
             key_map: true,
             confirm: true,
             auto_save: 0,
+            places: [],
             path: nil,
             user: nil
+
+  # how many files' places are kept: the ones used longest ago are forgotten
+  @places 50
 
   @doc "Where the preferences file is, from the environment; nil without a home."
   @spec path(%{String.t() => String.t()}) :: String.t() | nil
@@ -123,8 +131,39 @@ defmodule Agendum.Preferences do
       last_file: text.("last_file"),
       key_map: pick.("key_map", &yes_no/1) != :no,
       confirm: pick.("confirm", &yes_no/1) != :no,
-      auto_save: pick.("auto_save", &minutes/1) || 0
+      auto_save: pick.("auto_save", &minutes/1) || 0,
+      places: places(pairs)
     }
+  end
+
+  # every `place` line, in the order written (the file left last first);
+  # a second line for the same file is ignored
+  defp places(pairs) do
+    for({"place", value} <- pairs, {:ok, path, place} <- [Place.parse(value)], do: {path, place})
+    |> Enum.uniq_by(&elem(&1, 0))
+    |> Enum.take(@places)
+  end
+
+  @doc "Where the person left the file at `path` (R69), or nil."
+  @spec place(t, String.t() | nil) :: Place.t() | nil
+  def place(_prefs, nil), do: nil
+
+  def place(prefs, path) do
+    # `List.keyfind/3` finds the first tuple whose element 0 is `path`
+    case List.keyfind(prefs.places, path, 0) do
+      {^path, place} -> place
+      nil -> nil
+    end
+  end
+
+  @doc """
+  Keeps where the person left the file at `path` (R69): it goes first, as
+  the file left last, and only the last #{@places} files are kept.
+  """
+  @spec put_place(t, String.t(), Place.t()) :: t
+  def put_place(prefs, path, %Place{} = place) do
+    places = [{path, place} | List.keydelete(prefs.places, path, 0)]
+    %{prefs | places: Enum.take(places, @places)}
   end
 
   defp minutes(value) do
@@ -181,24 +220,24 @@ defmodule Agendum.Preferences do
         [] -> {nil, nil}
       end
 
+    # only what differs from the default
     lines =
-      [
-        {"theme", prefs.theme && Atom.to_string(prefs.theme)},
-        {"lang", main},
-        {"fallback", fallback},
-        {"number_order", input.number_order && Atom.to_string(input.number_order)},
-        {"date_separator", input.separator},
-        {"clock", input.clock && Integer.to_string(input.clock)},
-        {"decimal_separator", input.decimal},
-        {"thousands_separator", if(input.thousands == " ", do: "space", else: input.thousands)},
-        {"name", prefs.name},
-        {"company", prefs.company},
-        {"last_file", prefs.last_file},
-        # only what differs from the default
-        {"key_map", if(prefs.key_map, do: nil, else: "no")},
-        {"confirm", if(prefs.confirm, do: nil, else: "no")},
-        {"auto_save", if(prefs.auto_save > 0, do: Integer.to_string(prefs.auto_save))}
-      ]
+      ([
+         {"theme", prefs.theme && Atom.to_string(prefs.theme)},
+         {"lang", main},
+         {"fallback", fallback},
+         {"number_order", input.number_order && Atom.to_string(input.number_order)},
+         {"date_separator", input.separator},
+         {"clock", input.clock && Integer.to_string(input.clock)},
+         {"decimal_separator", input.decimal},
+         {"thousands_separator", if(input.thousands == " ", do: "space", else: input.thousands)},
+         {"name", prefs.name},
+         {"company", prefs.company},
+         {"last_file", prefs.last_file},
+         {"key_map", if(prefs.key_map, do: nil, else: "no")},
+         {"confirm", if(prefs.confirm, do: nil, else: "no")},
+         {"auto_save", if(prefs.auto_save > 0, do: Integer.to_string(prefs.auto_save))}
+       ] ++ Enum.map(prefs.places, fn {path, place} -> {"place", Place.format(path, place)} end))
       |> Enum.reject(&(elem(&1, 1) == nil))
       |> Enum.map(fn {key, value} -> "#{key} = #{value}\n" end)
 
@@ -211,6 +250,7 @@ defmodule Agendum.Preferences do
       "# name, company: shown when Agendum starts;\n" <>
       "# last_file: the file offered then (kept by Agendum); key_map, confirm: yes or no;\n" <>
       "# auto_save: minutes without a key before saving, 1 to 60 (0: never).\n" <>
+      "# place: where you left a file (kept by Agendum), the file left last first.\n" <>
       Enum.join(lines)
   end
 end

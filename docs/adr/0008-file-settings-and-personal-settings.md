@@ -15,6 +15,8 @@ Several settings could live either in the Agenda file or with the person running
 
 **Amended 2026-10-11 (R41b):** the preferences file now exists, `Agendum.Preferences`: plain `key = value` lines in `$XDG_CONFIG_HOME/agenda/preferences` (or `~/.config/agenda/preferences`), read by the CLI at start and written through an App effect when the person changes a setting. It holds the theme, the date languages and the Input format (number order, input date separator, input clock, which Agenda kept in the file); File ▸ Customize sets them, and command-line flags override them for one session. Only a setting the person changes is saved, so a flag never ends up in the file. A preferred theme overrides NO_COLOR, as no-color.org asks of user configuration.
 
+**Amended 2026-10-16 (R69; meeting 2026-10-16, § 5):** where a person left each file (the view and the highlighted item) is theirs too, kept in the preferences by the file's path (`place = …` lines, the 50 files left last), although Agenda kept it in the file. Moving around then never makes the file changed, and two people sharing a file each have their own place; a copied file does not carry it.
+
 ## Consequences
 
 - Opening someone else's file never changes how your screen looks or how your typing is read.

@@ -100,6 +100,7 @@ Every rule, in number order, with the section it is in (rules were added where t
 | R66 | Core commands | 5 |
 | R67 | Why an item is in a category | 3 |
 | R68 | The current view in the view manager | 5d |
+| R69 | Where you left a file | 5d |
 
 ## 1. Concepts
 
@@ -324,6 +325,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - ✅ **Auto-save interval** (User's Guide 22-8): a file with a name and unsaved changes is saved once no key has been pressed for that many minutes, with the usual "Saved" message. Off (the default) or 1 to 60 minutes; File ▸ Customize steps through 1, 2, 5, 10, 15, 20, 30, 45 and 60, and `auto_save = N` in the file takes any of them. An untitled file is never saved by itself. A save that fails is tried again an interval later.
   - ✅ **Decimal separator** ("." the default, or ",") and **Thousands separator** ("," the default, ".", or a space; Setting Up Agenda 1-25, 1-28): how numbers are shown and read everywhere: column entries and calculations, typed numbers, range filters and conditions, actions, Item Properties, and category names read as numbers. The two are never the same: with a decimal comma the thousands separator is a dot unless a space is chosen. They belong to the person's input format, so they reach the core with the clock (`Agendum.Core.Context`), as dates do (`decimal_separator` and `thousands_separator = space` in the file).
 - **R68 ✅ The current view in the view manager** (ours; meeting 2026-10-16, § 7). The view manager shows ► before the name of the view shown, in a column of its own beside the datebook `*`, wherever the highlight goes, so "where am I?" is answered at a glance. Agenda's view manager marked nothing once the highlight moved.
+- **R69 ✅ Where you left a file** (meeting 2026-10-16, § 5). A file opens on the view and the item that were highlighted when it was last left (by Quit, or by Retrieve, New or Import opening another file); an item no longer there leaves the highlight on its section's head, a section no longer there on the top of the view, and a view no longer there opens the file on its first view, as before. Agenda stored the current view and item in the file (`AGENDA_FILE_FORMAT.md`, header `0x044` and `0x1E8`). Ours: the place is kept in the person's preferences, by the file's path (`place = view:3 section:2 item:17 file:/path`, the 50 files left last), never in the file, so moving around never makes the file changed or causes a "Save changes?" question, and each person has their own place in a shared file. A copied or renamed file opens at the top.
 
 ## 6. Out of scope for now
 
