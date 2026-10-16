@@ -74,6 +74,7 @@ Then working together:
 ### Time management (Milestone 5)
 
 - [ ] Recurring items on every date they recur: in each datebook section and in any date filter that covers an occurrence, counted from the base date, still one item (as Agenda does; checked in Agenda 2.0, User's Guide 7-11). Plan with the evidence, the habit changes to settle first and the steps: `docs/plans/RECURRING_OCCURRENCES.md` (R14a)
+- [ ] Check in Agenda 2.0 (headless, `agenda_driver.py`) what it did with alarms that came due while the file was closed, and compare with "While you were away" (R70); move the answer into SPEC R70 and AGENDA_PARITY.md
 - [ ] Alarms sent to your phone with Signal, as well as on the screen: through the separate `signal-cli` program, linked to your Signal account; optional (nothing changes without it), set up in File ▸ Customize
 
 ### Housekeeping
