@@ -20,7 +20,9 @@ flowchart TB
         DP["Core.DateParser"]
         Links["Core.Links<br/><i>many-to-many relation</i>"]
     end
-    TUI -- "writes" --> Facade
+    TUI -- "commands" --> Cmd["Core.Command<br/><i>run on ids, what changed</i>"]
+    Cmd --> Facade
+    TUI -- "writes (not yet commands)" --> Facade
     TUI -- "reads" --> VM
     TUI -- "reads (queries)" --> DB
     Store -- "whole value" --> DB
@@ -35,6 +37,7 @@ flowchart TB
 
 | Layer                   | Use it for                                                                                                                                                     | Do not                                          |
 | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `Agendum.Core.run/3` (commands) | **A user action as a command** (R66, ADR 0036): `{:mark_done, ids}` and the like, on ids; returns `{:ok, db, changes}` or `{:error, atom}`. The TUI sends them with `State.run/2`. | Call the facade function a command does. |
 | `Agendum.Core` (facade)  | **All changes made by users.** Applies the rules (assignment, auto-assignment, validation) and returns `{:ok, …}`/`{:error, atom}` where input can be invalid. | Bypass it from the UI for writes.               |
 | `Agendum.Core.ViewModel` | Building what a view shows (sections, rows, cells).                                                                                                            | Put display formatting elsewhere.               |
 | `Agendum.Core.Assign`    | Rules for how items get into categories. Only the facade calls it.                                                                                             | Re-implement exclusivity or matching in the UI. |
@@ -44,6 +47,16 @@ flowchart TB
 The UI reads freely through `Database` queries (e.g. `member?/3`, `hierarchy/1`), but **every change goes through `Agendum.Core`**, even simple field updates with no rules. `test/agendum/architecture_test.exs` enforces this. It reads every call from the compiled modules with OTP's `:xref` (so an alias or an import hides nothing) and fails if an `Agendum.TUI` module calls a `Database` write function: any whose `@spec` returns a database (`insert_*`, `update_*`, `link`, `unlink`, …; a new one is covered without a list, and every public `Database` function must have a spec). It also fails if a TUI file updates a database struct by hand (`%{state.db | …}`, `put_in(state.db…)`), found in the parsed source. The same test checks the core's purity on the compiled calls: no files, terminal, environment, processes, clock or randomness.
 
 ## API by concern
+
+### Commands (R66, ADR 0036)
+
+| Command | Description |
+| ------- | ----------- |
+| `{:toggle_mark, item}`, `{:set_marked, items, boolean}`, `:unmark_all` | F7 on an item or a section head, ALT-F7. |
+| `{:toggle_done, item}`, `{:mark_done, items}` | F4 on one item (toggles; a recurring one gets its next occurrence, R14a) / on the marked items (only sets). |
+| `{:discard_items, items}` | ALT-F4 on one item or the marked ones. |
+
+`Core.run(db, command, clock)` refuses an unknown command (`:unknown_command`) or an id that is not an item (`:no_such_item`) and changes nothing. `changes` (`Command.Changes`) holds `items`, `categories`, `views`, `macros` and `calendars`, each `%{added:, changed:, removed:}` ids, and `file`, the other fields that changed. `Command.describe(id)` gives a command's name and summary. The facade functions below that a command does are listed in `test/agendum/architecture_test.exs` (`@by_command`), and the TUI may not call them.
 
 ### Items
 
@@ -348,5 +361,5 @@ If large files ever become slow, the first candidates are caching `ViewModel.bui
 1. **New stored field**: add it to the struct with a default. Bump the format version in `Store` and migrate old files in `Store.load/1`. Document it in `DATA_MODEL.md`.
 2. **New query**: add it to `Agendum.Core.Database` (or `ViewModel` for display), with `@spec` and a test in `test/agendum/core/`.
 3. **New rule**: implement it in `Agendum.Core.Assign` and expose it through `Agendum.Core`. Give it a rule number in `SPEC.md`.
-4. **New user action**: add it to `Agendum.Core`, returning `{:ok, db} | {:error, atom}` when input can be invalid. The UI calls it, and undo works automatically.
+4. **New user action**: make it a command (`Agendum.Core.Command`: a type, an entry in its list with name and summary, a clause of `apply_command/3`, its ids checked), written with facade functions that return `{:ok, db} | {:error, atom}` when input can be invalid. The UI sends it with `State.run/2`, and undo works automatically.
 5. Keep every function pure: no clock, no I/O, no processes.

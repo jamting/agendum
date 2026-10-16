@@ -710,18 +710,19 @@ defmodule Agendum.TUI.Update.ViewKeys do
   defp dependency(state, _row), do: State.error(state, "Highlight an item first")
 
   @doc "F4 DONE; for a recurring item, says when its next occurrence is (R14a)."
-  def toggle_done(state, row) do
-    next = on_item(state, row, &Core.toggle_done(&1, &2, State.context(state)))
-
-    case next.db.item_order -- state.db.item_order do
-      [copy] ->
+  def toggle_done(state, %{kind: :item, item: item}) do
+    # what changed tells whether a recurring item got its next occurrence
+    case State.run_with_changes(state, {:toggle_done, item.id}) do
+      {next, %{items: %{added: [copy]}}} ->
         date = DateFormat.date(next.db.items[copy].when, next.db.date_format)
         State.info(next, "Done · the next one is on #{date}")
 
-      _ ->
+      {next, _changes} ->
         next
     end
   end
+
+  def toggle_done(state, _row), do: state
 
   @doc "Changes the database with `fun.(db, item_id)` when the row is an item."
   def on_item(state, %{kind: :item, item: item}, fun),

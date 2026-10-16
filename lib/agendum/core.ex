@@ -18,6 +18,11 @@ defmodule Agendum.Core do
   `Macros` and `Calendars`. What every change to an item goes through
   (dates, conditions and actions after a change) is in
   `Agendum.Core.Facade.Changes`.
+
+  User actions are becoming commands (R66, ADR 0036): `run/3` runs one, a
+  tagged tuple on ids such as `{:mark_done, [42, 43]}`, and returns what
+  changed (`Agendum.Core.Command`). A front end sends the command rather
+  than calling the function it is made of.
   """
 
   # `alias` only shortens names inside this module (`Database` for
@@ -65,6 +70,10 @@ defmodule Agendum.Core do
   # function is known by name *and* arity, so `new_file/0` and `new_file/1`
   # are separate functions. Delegates have no `@doc`, so the API docs show
   # "See Agendum.Core.Facade.Files.new_file/1" and the docs live there.
+
+  # commands (R66, ADR 0036): a user action as data, run on ids; returns
+  # the new database and what changed
+  defdelegate run(db, command, clock), to: Agendum.Core.Command
 
   # files: new, and as JSON (R44)
   defdelegate new_file(opts \\ []), to: Files

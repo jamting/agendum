@@ -289,7 +289,7 @@ defmodule Agendum.TUI.Update.Actions do
   end
 
   defp do_perform(state, :unmark_all, _) do
-    state |> State.change_db(Core.unmark_all(state.db)) |> State.info("All items unmarked")
+    State.run(state, :unmark_all, "All items unmarked")
   end
 
   defp do_perform(state, :add_category, _),

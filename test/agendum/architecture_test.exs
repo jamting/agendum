@@ -138,6 +138,58 @@ defmodule Agendum.ArchitectureTest do
     found
   end
 
+  # --- The command layer (R66, ADR 0036) -----------------------------------
+
+  # Agendum.Core functions a command now does. The TUI sends the command
+  # (`State.run/2`) instead; a step of the command layer adds its own here.
+  @by_command [
+    toggle_mark: 2,
+    set_marked: 3,
+    unmark_all: 1,
+    toggle_done: 3,
+    mark_done: 3,
+    discard_item: 2
+  ]
+
+  test "the TUI sends a command where the core has one", %{calls: calls} do
+    violations =
+      for {{from, f, a}, {Agendum.Core, name, arity}} <- calls,
+          in?(from, "Agendum.TUI"),
+          {name, arity} in @by_command,
+          uniq: true,
+          do: "#{inspect(from)}.#{f}/#{a} calls Core.#{name}/#{arity}"
+
+    assert violations == [], """
+    The TUI calls a core function that a command does (use State.run/2):
+
+      #{Enum.join(violations, "\n  ")}
+    """
+  end
+
+  # How many Agendum.Core functions the TUI still calls directly, reads
+  # included. It may only go down: when a step of the command layer moves
+  # more actions into commands, lower it to the new count. The command
+  # layer is done when only reads are left (ROADMAP, Towards many users).
+  @core_calls_at_most 139
+
+  test "the TUI calls no more core functions directly than before", %{calls: calls} do
+    used =
+      for {{from, _, _}, {Agendum.Core, name, arity}} <- calls,
+          in?(from, "Agendum.TUI"),
+          uniq: true,
+          do: {name, arity}
+
+    count = length(used)
+
+    assert count <= @core_calls_at_most,
+           "the TUI now calls #{count} Agendum.Core functions, more than " <>
+             "#{@core_calls_at_most}: send a command instead (State.run/2)"
+
+    assert count == @core_calls_at_most,
+           "the TUI calls #{count} Agendum.Core functions now: lower " <>
+             "@core_calls_at_most to #{count}"
+  end
+
   # --- The core is pure ---------------------------------------------------
 
   # Modules and functions that reach the outside world: files, the

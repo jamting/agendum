@@ -278,6 +278,36 @@ defmodule Agendum.TUI.State do
   def change_db(state, db), do: %{state | db: db, dirty: true}
 
   @doc """
+  Runs a core command (R66, ADR 0036) on the file, at the state's clock.
+  A refused one leaves the file as it was and says why.
+  """
+  @spec run(t, Agendum.Core.Command.t()) :: t
+  def run(state, command), do: state |> run_with_changes(command) |> elem(0)
+
+  @doc "Runs a core command and, when it ran, shows `text` (\"Item discarded\")."
+  @spec run(t, Agendum.Core.Command.t(), String.t()) :: t
+  def run(state, command, text) do
+    case run_with_changes(state, command) do
+      {state, nil} -> state
+      {state, _changes} -> info(state, text)
+    end
+  end
+
+  @doc "Runs a core command, and also returns what changed (nil if refused)."
+  @spec run_with_changes(t, Agendum.Core.Command.t()) ::
+          {t, Agendum.Core.Command.Changes.t() | nil}
+  def run_with_changes(state, command) do
+    case Agendum.Core.run(state.db, command, context(state)) do
+      {:ok, db, changes} -> {change_db(state, db), changes}
+      {:error, reason} -> {error(state, command_error(reason)), nil}
+    end
+  end
+
+  # the core gives a reason as an atom; the words are the front end's
+  defp command_error(:no_such_item), do: "That item is no longer in the file"
+  defp command_error(:unknown_command), do: "Agendum cannot do that"
+
+  @doc """
   Ends an undo step in the middle of a key: what the key changed so far is
   undone on its own, before the rest (`Agendum.TUI.History.record/2`). For
   a key that does two things the person would undo separately, such as

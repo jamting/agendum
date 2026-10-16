@@ -397,12 +397,11 @@ defmodule Agendum.TUI.Update.Prompts do
   end
 
   defp confirmed(state, {:discard_items, ids}, true) do
-    db = Enum.reduce(ids, state.db, &Core.discard_item(&2, &1))
-    state |> State.change_db(db) |> State.info("#{Draw.count(length(ids), "item")} discarded")
+    State.run(state, {:discard_items, ids}, "#{Draw.count(length(ids), "item")} discarded")
   end
 
   defp confirmed(state, {:discard_item, id}, true) do
-    state |> State.change_db(Core.discard_item(state.db, id)) |> State.info("Item discarded")
+    State.run(state, {:discard_items, [id]}, "Item discarded")
   end
 
   defp confirmed(state, {:discard_category, id}, true) do

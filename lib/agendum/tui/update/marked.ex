@@ -18,12 +18,12 @@ defmodule Agendum.TUI.Update.Marked do
   F7 on an item marks or unmarks it; on a section head it marks every item
   in the section, or unmarks them when all are marked already.
   """
-  def mark(state, %{kind: :item} = row), do: ViewKeys.on_item(state, row, &Core.toggle_mark/2)
+  def mark(state, %{kind: :item, item: item}), do: State.run(state, {:toggle_mark, item.id})
 
   def mark(state, %{kind: :section, sidx: sidx}) do
     ids = for %{kind: :item, sidx: ^sidx, item: item} <- Layout.rows(state), do: item.id
     all_marked = ids != [] and Enum.all?(ids, &state.db.items[&1].marked)
-    State.change_db(state, Core.set_marked(state.db, ids, not all_marked))
+    State.run(state, {:set_marked, ids, not all_marked})
   end
 
   def mark(state, nil), do: state
@@ -174,8 +174,7 @@ defmodule Agendum.TUI.Update.Marked do
 
   # The command for every marked item.
   defp bulk(state, :done, ids, _row) do
-    db = Enum.reduce(ids, state.db, &Core.mark_done(&2, &1, state.today))
-    state |> State.change_db(db) |> State.info("#{Draw.count(length(ids), "marked item")} done")
+    State.run(state, {:mark_done, ids}, "#{Draw.count(length(ids), "marked item")} done")
   end
 
   defp bulk(state, :discard, ids, _row),

@@ -208,7 +208,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
 
   defp mark_current(state) do
     case Layout.current_row(state) do
-      %{kind: :item, item: item} -> State.change_db(state, Core.toggle_mark(state.db, item.id))
+      %{kind: :item, item: item} -> State.run(state, {:toggle_mark, item.id})
       _ -> state
     end
   end

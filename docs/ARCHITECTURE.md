@@ -30,6 +30,8 @@
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Agendum.Core`                                                  | Facade with user-level operations (add item, assign by name, add section…): a table of contents of `defdelegate`s. The UI uses this.                    |
 | `Agendum.Core.Facade.*`                                         | Its areas: `Files`, `Items`, `Assignments`, `Dates`, `Alarms`, `Numbers`, `Dependencies`, `Rules`, `Categories`, `Views`, `Macros`, `Calendars`.        |
+| `Agendum.Core.Command`                                          | The command layer (R66, ADR 0036): a user action as data (`{:mark_done, ids}`), run by `Agendum.Core.run/3` on ids; each command's name and summary. |
+| `Agendum.Core.Command.Changes`                                  | What a command changed, found by comparing the database before and after.                                                                               |
 | `Agendum.Core.Facade.Changes`                                   | What every change to an item goes through: user assignments, dates from rules, settling (conditions, actions).                                          |
 | `Agendum.Core.Database`                                         | The file as one immutable struct: items, categories, views, links, id counter. Primitive operations and queries (`member?/3`, `items_in/2`, hierarchy). |
 | `Agendum.Core.Invariants`                                       | The data model's invariants as one check (`violations/1`), run after every key by the fuzz walks (DATA_MODEL.md, "Invariants").                    |
@@ -209,3 +211,4 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 | [0033](adr/0033-commands-and-keymaps.md)               | Keys run named commands through keymaps; a count with ALT-digits |
 | [0034](adr/0034-format-of-record.md)                   | The format of record: Erlang terms now, a database for many users, JSON for people |
 | [0035](adr/0035-caches-travel-in-values.md)            | Caches travel in values the shell keeps                          |
+| [0036](adr/0036-core-commands.md)                      | User actions as core commands on ids, returning what changed     |

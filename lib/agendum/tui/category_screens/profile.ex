@@ -196,7 +196,7 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
       k when k in [{:char, " "}, :enter] ->
         cond do
           id == db.special.done ->
-            State.change_db(state, Core.toggle_done(db, item_id, state.today))
+            State.run(state, {:toggle_done, item_id})
 
           Database.date_category?(db, id) ->
             State.error(state, "Set dates by typing in a date column")
