@@ -120,7 +120,7 @@ Then working together:
 
 ### Users and direction
 
-- [ ] Who Agendum is for, in one paragraph at the top of `VISION.md` (which holds the rest of the vision), and the "Beyond Agenda" items weighed against it (expert review 2026-10-16); `VISION.md` and this roadmap to agree on what comes first (second meeting)
+- [ ] The "Beyond Agenda" items weighed against who Agendum is for (`VISION.md`, expert review 2026-10-16); `VISION.md` and this roadmap to agree on what comes first (second meeting)
 - [ ] Five real users before Milestone 2 is closed: old Agenda users and people who love keyboard tools, with the debug log on (`AGENDUM_LOG`) and a short talk with each; what they stumble on goes here (expert review 2026-10-16); with a date set (second meeting)
 
 ### Beyond Agenda
@@ -346,3 +346,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] The format of record (ADR 0034, 2026-10-16): the Erlang-term file stays, for speed at large volumes (three item levels, `plans/ITEM_LEVELS.md`); many users most likely get PostgreSQL; JSON is for people, Agendum's counterpart of Agenda's STF; backward compatibility is not promised while the owner is the only user
 - [x] Date rules compiled once (ADR 0035, 2026-10-16): `DateParser.compile_rules/2`, carried in `Agendum.Core.Context` (`prepare/1`) and kept by the TUI in `State.reader`; adding 100 dated items 92 → 13 ms in English, 247 → 24 ms with Swedish and English. Execute over 300 items was already down to ~130 ms (the fixes of 2026-10-15), and what remains there is not date reading
 - [x] Architecture rules checked on the call graph (2026-10-16): `architecture_test.exs` reads every call from the compiled modules with OTP's `:xref`; a `Database` write is any function whose spec returns a database (all public ones must have a spec); struct updates and `put_in` on `.db` are found in the parsed source; the core's purity is checked on real calls. Probes showed it catches what the regexes missed: a write through an alias, `put_in(state.db…)`, the clock read through `import`
+
+### Users and direction
+
+- [x] Who Agendum is for, at the top of `VISION.md` (2026-10-16): curious people, in order: the owner first, then Agenda's old users and people who love keyboard tools, later people who are not nerds, on the web (a guess, to be tested with real people) (expert review 2026-10-16, second meeting)
