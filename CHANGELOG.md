@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.9.0 — 2026-10-16
+
+Agendum guards your file against other writers, and a failed save no longer loses your changes.
+
 - Agendum no longer saves over a file that something else changed after Agendum opened it (another Agendum, a sync tool, an agent). It asks "… has changed on disk since Agendum read it. Save over it?"; No keeps your changes unsaved, and File ▸ Write can save them under another name. Auto-save doesn't ask: it says so and waits for you to save.
 - A save that fails no longer loses your changes on the way out: Quit, with Yes to "Save changes before quitting?", now stays open when the save fails (a full disk) and says why; "Save changes first?" before Retrieve, New or Import opens nothing then either.
 
