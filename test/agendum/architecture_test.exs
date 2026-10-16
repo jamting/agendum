@@ -17,10 +17,8 @@ defmodule Agendum.ArchitectureTest do
   # Every call between functions in the compiled app, as
   # {{module, function, arity}, {module, function, arity}}, read once.
   setup_all do
-    # :xref is in OTP's tools application, which Mix leaves off the code
-    # path because the program does not use it; the escript is unchanged.
-    Mix.ensure_application!(:tools)
-
+    # :xref is in OTP's tools application, put on the code path by
+    # test/test_helper.exs; the escript is unchanged.
     {:ok, xref} =
       :xref.start(xref_mode: :functions, builtins: true, verbose: false, warnings: false)
 
