@@ -109,6 +109,8 @@ The panel advises; it never votes. I decide.
 - **Jobs in parallel**: the guide, the manual and a review at once, each agent in its own worktree (2026-10-16).
 - **Start sessions on purpose** with `/start-session` (adopted 2026-10-16): the mirror of `end-session`.
 - **Writing study questions finds bugs**: asking "what happens if this fails?" found a lost-save bug (2026-10-16).
+- **All the questions up front, then a break**: the owner answered seven questions on the `.AG` import in two rounds and rested while it was built in three tested commits; nothing had to wait for them (2026-10-16).
+- **Smoke tests in a sandbox**: a pty test sets `XDG_CONFIG_HOME` to a scratch folder and unsets `AGENDUM_LOG`, after one test wrote into the owner's real preferences (2026-10-16; CLAUDE.md, Testing the real terminal).
 
 ## How I could work better
 
