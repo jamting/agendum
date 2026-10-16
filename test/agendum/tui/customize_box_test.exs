@@ -68,21 +68,21 @@ defmodule Agendum.TUI.CustomizeBoxTest do
     state = open_box(state)
     {state, _} = key(state, :down)
     {state, effects} = key(state, {:char, " "})
-    assert state.languages == [Swedish]
+    assert Agendum.TUI.State.languages(state) == [Swedish]
     assert [{:save_preferences, _, %Preferences{languages: [Swedish]}}] = effects
 
     {state, _} = key(state, :down)
     {state, _} = key(state, {:char, " "})
-    assert state.languages == [Swedish, English]
+    assert Agendum.TUI.State.languages(state) == [Swedish, English]
     assert screen(state) =~ ~r/Fallback language +: English/
     assert Agendum.TUI.State.context(state).languages == [Swedish, English]
   end
 
   test "the fallback is never the main language", %{state: state} do
     state = open_box(state) |> press([:down, :down, " "])
-    assert state.languages == [English, Swedish]
+    assert Agendum.TUI.State.languages(state) == [English, Swedish]
     state = press(state, " ")
-    assert state.languages == [English]
+    assert Agendum.TUI.State.languages(state) == [English]
   end
 
   test "Input format opens the person's Input format box", %{state: state} do
@@ -95,9 +95,8 @@ defmodule Agendum.TUI.CustomizeBoxTest do
   test "only the changed setting is saved, not one a flag gave", %{state: state} do
     # this session: a flag set the clock; the stored preferences say mono
     state = %{
-      state
-      | input: %InputFormat{clock: 24},
-        theme: :mono,
+      Agendum.TUI.State.put_reader(state, input: %InputFormat{clock: 24})
+      | theme: :mono,
         prefs: %Preferences{theme: :mono, path: "/prefs"}
     }
 
@@ -105,7 +104,7 @@ defmodule Agendum.TUI.CustomizeBoxTest do
       state |> open_box() |> press(:down) |> key({:char, " "})
 
     assert saved == %Preferences{theme: :mono, languages: [Swedish], path: "/prefs"}
-    assert state.input.clock == 24
+    assert Agendum.TUI.State.input(state).clock == 24
   end
 
   test "the decimal and thousands separators change how numbers show, and are saved",

@@ -48,6 +48,22 @@ defmodule Agendum.TUI.DateLanguageTest do
   test "the languages stay when another file is retrieved" do
     state = start_in([Swedish])
     state = Update.loaded(state, "/tmp/x.agenda", {:ok, Agendum.Core.new_file()})
-    assert state.languages == [Swedish]
+    assert Agendum.TUI.State.languages(state) == [Swedish]
+  end
+
+  # Compiling the date rules is most of the cost of reading a date: the
+  # session keeps them compiled for its languages and input format, and
+  # hands them to the core in its context.
+  test "the session's context carries the date rules compiled for its languages" do
+    state = start_in([Swedish])
+    opts = Agendum.Core.Context.parser_opts(State.context(state), nil)
+    assert opts[:languages] == [Swedish]
+    assert opts[:rules]
+
+    # File ▸ Customize changes the languages: the rules follow
+    state = State.change_preference(state, &State.put_reader(&1, languages: [English]), & &1)
+    opts = Agendum.Core.Context.parser_opts(State.context(state), nil)
+    assert opts[:languages] == [English]
+    assert opts[:rules]
   end
 end

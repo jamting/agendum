@@ -51,8 +51,7 @@ defmodule Agendum.TUI.State do
           },
           macro: %{learning: map | nil, last: Database.id() | nil, playing: non_neg_integer},
           key_map: boolean,
-          languages: [Agendum.Core.DateLanguage.pack()],
-          input: Agendum.Core.InputFormat.t(),
+          reader: Agendum.Core.Context.t(),
           prefs: Agendum.Preferences.t(),
           fetching: %{optional(pos_integer) => :manual | :auto},
           theme: Agendum.TUI.Terminal.Theme.name(),
@@ -89,8 +88,11 @@ defmodule Agendum.TUI.State do
             # run (ALT-Z), and how many runs are playing, one inside another
             macro: %{learning: nil, last: nil, playing: 0},
             key_map: true,
-            languages: [Agendum.Core.DateLanguage.English],
-            input: %Agendum.Core.InputFormat{},
+            # the person who reads and types dates: their date languages
+            # (R14c), input format (R41b) and the date rules compiled for
+            # them (`Agendum.Core.Context.prepare/1`); a context without
+            # the time, which `context/1` adds
+            reader: %Agendum.Core.Context{},
             prefs: %Agendum.Preferences{},
             fetching: %{},
             theme: :classic,
@@ -115,15 +117,24 @@ defmodule Agendum.TUI.State do
       last_key: %{key: nil, at: now},
       width: Keyword.get(opts, :width, 80),
       height: Keyword.get(opts, :height, 25),
-      languages: Keyword.get(opts, :languages, [Agendum.Core.DateLanguage.English]),
-      input: Keyword.get(opts, :input, %Agendum.Core.InputFormat{}),
+      reader: %Agendum.Core.Context{
+        languages: Keyword.get(opts, :languages, [Agendum.Core.DateLanguage.English]),
+        input: Keyword.get(opts, :input, %Agendum.Core.InputFormat{})
+      },
       prefs: Keyword.get(opts, :prefs, %Agendum.Preferences{}),
       key_map: Keyword.get(opts, :prefs, %Agendum.Preferences{}).key_map,
       theme: Keyword.get(opts, :theme, :classic),
       view_id: hd(db.view_order),
       saved_db: db
     }
+    |> prepare_dates()
   end
+
+  # Compiles the date rules for the reader's languages and input format,
+  # once rather than at every date read (they are kept by both, so rules
+  # for others are never used, only compiled again).
+  defp prepare_dates(%__MODULE__{} = state),
+    do: %__MODULE__{state | reader: Agendum.Core.Context.prepare(state.reader)}
 
   @doc """
   What the core needs to read typed dates: the current time, the date
@@ -131,8 +142,23 @@ defmodule Agendum.TUI.State do
   format (R41b).
   """
   @spec context(t) :: Agendum.Core.Context.t()
-  def context(%__MODULE__{now: now, languages: languages, input: input}),
-    do: %Agendum.Core.Context{now: now, languages: languages, input: input}
+  def context(%__MODULE__{now: now, reader: reader}), do: %{reader | now: now}
+
+  @doc "The date languages the person reads and types, the main one first (R14c)."
+  @spec languages(t) :: [Agendum.Core.DateLanguage.pack()]
+  def languages(state), do: state.reader.languages
+
+  @doc "How the person types dates (R41b)."
+  @spec input(t) :: Agendum.Core.InputFormat.t()
+  def input(state), do: state.reader.input
+
+  @doc """
+  Sets the person's date languages or input format (`languages:`,
+  `input:`), and compiles the date rules for them.
+  """
+  @spec put_reader(t, keyword) :: t
+  def put_reader(%__MODULE__{} = state, changes),
+    do: prepare_dates(%__MODULE__{state | reader: struct(state.reader, changes)})
 
   @doc "How numbers are shown and read for this person (R54)."
   @spec number_opts(t) :: [decimal: String.t(), thousands: String.t()]
@@ -146,7 +172,9 @@ defmodule Agendum.TUI.State do
   """
   @spec change_preference(t, (t -> t), (Agendum.Preferences.t() -> Agendum.Preferences.t())) :: t
   def change_preference(state, change, change_prefs) do
+    before = {languages(state), input(state)}
     state = %{change.(state) | prefs: change_prefs.(state.prefs)}
+    state = if {languages(state), input(state)} == before, do: state, else: prepare_dates(state)
 
     if state.prefs.path,
       do: effect(state, {:save_preferences, state.prefs.path, state.prefs}),
@@ -174,8 +202,8 @@ defmodule Agendum.TUI.State do
         now: state.now,
         width: state.width,
         height: state.height,
-        languages: state.languages,
-        input: state.input,
+        languages: languages(state),
+        input: input(state),
         theme: state.theme,
         prefs: state.prefs
       )

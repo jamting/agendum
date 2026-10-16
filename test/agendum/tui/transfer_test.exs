@@ -63,9 +63,8 @@ defmodule Agendum.TUI.TransferTest do
 
   test "opening another file keeps the person's session settings", %{state: state} do
     state = %{
-      state
+      Agendum.TUI.State.put_reader(state, input: %InputFormat{clock: 24})
       | theme: :mono,
-        input: %InputFormat{clock: 24},
         prefs: %Agendum.Preferences{theme: :mono, path: "/prefs"}
     }
 
@@ -74,8 +73,8 @@ defmodule Agendum.TUI.TransferTest do
           Update.loaded(state, "/x.agenda", {:ok, state.db})
         ] do
       # only the last file used changes (R52)
-      assert {next.theme, next.input, %{next.prefs | last_file: nil}} ==
-               {state.theme, state.input, state.prefs}
+      assert {next.theme, Agendum.TUI.State.input(next), %{next.prefs | last_file: nil}} ==
+               {state.theme, Agendum.TUI.State.input(state), state.prefs}
     end
   end
 end

@@ -62,19 +62,46 @@ defmodule Agendum.Core.DateParser do
 
   @default [DateLanguage.English]
 
-  # The rules of the given packs as {meaning, whole-word pattern, number of
-  # capture groups, pack, pack's position}; `kind` is :date or :time. The
-  # person's input format (R41b) rewrites calendar notation and clocks.
-  defp compile(languages, kind, in_text, input) do
+  @typedoc """
+  The date and time rules of some language packs, compiled for one input
+  format (`compile_rules/2`). Compiling is most of the cost of reading a
+  date, so a caller that reads many keeps them and passes them as the
+  `rules:` option (`Agendum.Core.Context` does).
+  """
+  @type rules :: %{date: [rule], time: [rule]}
+
+  # {meaning, compiled whole-word regex, number of capture groups, pack,
+  # pack's position, whether the rule is left out when reading free text}
+  @typep rule :: {term, Regex.t(), non_neg_integer, DateLanguage.pack(), non_neg_integer, boolean}
+
+  @doc """
+  Compiles the rules of `languages` (the main one first) for the person's
+  input format (R41b), which rewrites calendar notation and clocks.
+  """
+  @spec compile_rules([DateLanguage.pack()], InputFormat.t()) :: rules
+  def compile_rules(languages, %InputFormat{} = input),
+    do: %{date: compile(languages, :date, input), time: compile(languages, :time, input)}
+
+  # `kind` is :date or :time.
+  defp compile(languages, kind, input) do
     for {pack, position} <- Enum.with_index(languages),
         rule <- if(kind == :date, do: pack.rules(), else: pack.time_rules()),
-        {meaning, pattern} = input_rule(rule, pack, input),
-        not (in_text and kind == :date and meaning in pack.text_excluded()) do
+        {meaning, pattern} = input_rule(rule, pack, input) do
       groups = length(Regex.scan(~r/(?<!\\)\((?!\?)/, pattern))
       pattern = ascii_digits(pattern)
-      {meaning, "(?<![\\p{L}\\p{N}])(?:#{pattern})(?![\\p{L}\\p{N}])", groups, pack, position}
+      regex = Regex.compile!("(?<![\\p{L}\\p{N}])(?:#{pattern})(?![\\p{L}\\p{N}])", "iu")
+      excluded = kind == :date and meaning in pack.text_excluded()
+      {meaning, regex, groups, pack, position, excluded}
     end
   end
+
+  # The rules to read with: those passed in, or compiled now.
+  defp rules(opts, languages, input),
+    do: Keyword.get(opts, :rules) || compile_rules(languages, input)
+
+  # The date rules, without those left out of free text when `in_text`.
+  defp date_rules(rules, in_text),
+    do: if(in_text, do: Enum.reject(rules.date, &elem(&1, 5)), else: rules.date)
 
   # Calendar notation in the person's order and separator: up to three
   # numbers, read by `{:numeric_in, order}`; a month name before the day
@@ -126,9 +153,16 @@ defmodule Agendum.Core.DateParser do
   Options: `languages:` the language packs to read (`Agendum.Core.DateLanguage`),
   the main one first (default English). Every pack's phrases count; where
   two match the same words, the earlier pack wins. `settings:` the file's
-  `Agendum.Core.DateSettings` (default Agenda's).
+  `Agendum.Core.DateSettings` (default Agenda's). `input:` the person's
+  `Agendum.Core.InputFormat`. `rules:` those languages' rules compiled for
+  that input format (`compile_rules/2`), to save compiling them again.
   """
-  @type opts :: [languages: [DateLanguage.pack()], settings: DateSettings.t() | nil]
+  @type opts :: [
+          languages: [DateLanguage.pack()],
+          settings: DateSettings.t() | nil,
+          input: InputFormat.t() | nil,
+          rules: rules | nil
+        ]
 
   @doc """
   Parses a date typed on its own, such as an entry in a date column.
@@ -241,14 +275,16 @@ defmodule Agendum.Core.DateParser do
     input = Keyword.get(opts, :input) || %InputFormat{}
     today = NaiveDateTime.to_date(now)
 
+    rules = rules(opts, languages, input)
+
     dates =
       text
-      |> matches(compile(languages, :date, true, input), &interpret(&1, &2, &3, today, s))
+      |> matches(date_rules(rules, true), &interpret(&1, &2, &3, today, s))
       |> disjoint()
 
     times =
       text
-      |> matches(compile(languages, :time, true, input), &interpret_time(&1, &2, &3, now, s))
+      |> matches(rules.time, &interpret_time(&1, &2, &3, now, s))
       |> Enum.reject(fn {start, neg_len, _, _} ->
         Enum.any?(dates, &overlaps?({nil, &1.span}, {start, -neg_len}))
       end)
@@ -323,14 +359,14 @@ defmodule Agendum.Core.DateParser do
     {languages, s} = {languages(opts), Keyword.get(opts, :settings) || %DateSettings{}}
     input = Keyword.get(opts, :input) || %InputFormat{}
     today = NaiveDateTime.to_date(now)
-    date_rules = compile(languages, :date, in_text, input)
+    rules = rules(opts, languages, input)
 
-    date = first(matches(text, date_rules, &interpret(&1, &2, &3, today, s)))
+    date = first(matches(text, date_rules(rules, in_text), &interpret(&1, &2, &3, today, s)))
 
     # a time may not reuse the date's words ("at 12/24" is a date)
     time =
       text
-      |> matches(compile(languages, :time, in_text, input), &interpret_time(&1, &2, &3, now, s))
+      |> matches(rules.time, &interpret_time(&1, &2, &3, now, s))
       |> Enum.reject(fn {start, neg_len, _, _} -> overlaps?(date, {start, -neg_len}) end)
       |> first()
 
@@ -384,9 +420,8 @@ defmodule Agendum.Core.DateParser do
   # Every valid match of the rules, as {byte_start, -byte_length, pack
   # position, value}.
   defp matches(text, rules, interpreter) do
-    Enum.flat_map(rules, fn {meaning, pattern, group_count, pack, position} ->
-      pattern
-      |> Regex.compile!("iu")
+    Enum.flat_map(rules, fn {meaning, regex, group_count, pack, position, _excluded} ->
+      regex
       |> Regex.scan(text, return: :index)
       |> Enum.flat_map(fn [{start, len} | groups] ->
         # unmatched optional groups at the end are left out by Regex.scan

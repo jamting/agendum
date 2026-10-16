@@ -56,12 +56,12 @@ defmodule Agendum.TUI.Boxes.InputFormatBox do
   def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
   defp change(state, row, step) do
-    input = InputFormat.cycle(state.input, row, step)
+    input = InputFormat.cycle(State.input(state), row, step)
     value = Map.fetch!(input, row)
 
     State.change_preference(
       state,
-      &%{&1 | input: input},
+      &State.put_reader(&1, input: input),
       &%{&1 | input: Map.put(&1.input, row, value)}
     )
   end
@@ -71,7 +71,8 @@ defmodule Agendum.TUI.Boxes.InputFormatBox do
 
   @impl Box
   def content(state, mode, inner, _max_rows) do
-    values = Map.new(@rows, &{&1, InputFormat.label(state.input, &1, state.languages)})
+    values =
+      Map.new(@rows, &{&1, InputFormat.label(State.input(state), &1, State.languages(state))})
 
     Template.render(@layout, values, selected: field(state, mode)) ++
       [Box.hint(keys(state, mode), inner)]

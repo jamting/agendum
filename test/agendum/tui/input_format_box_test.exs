@@ -41,7 +41,7 @@ defmodule Agendum.TUI.InputFormatBoxTest do
 
     {state, effects2} = Update.handle(state, {:char, " "})
 
-    assert state.input.number_order == :ymd
+    assert Agendum.TUI.State.input(state).number_order == :ymd
     assert state.db == db
 
     assert [{:save_preferences, "/prefs", %Agendum.Preferences{input: %{number_order: :mdy}}}] =
@@ -52,7 +52,8 @@ defmodule Agendum.TUI.InputFormatBoxTest do
   end
 
   test "dates are then read the person's way", %{state: state} do
-    state = %{state | input: %InputFormat{number_order: :dmy, separator: "."}}
+    state =
+      Agendum.TUI.State.put_reader(state, input: %InputFormat{number_order: :dmy, separator: "."})
 
     state =
       press(
@@ -66,7 +67,7 @@ defmodule Agendum.TUI.InputFormatBoxTest do
   test "without a preferences file the change lasts the session", %{state: state} do
     state = open_box(%{state | prefs: %Agendum.Preferences{}})
     {state, effects} = Update.handle(state, :down) |> elem(0) |> Update.handle({:char, " "})
-    assert state.input.separator == "/"
+    assert Agendum.TUI.State.input(state).separator == "/"
     assert effects == []
   end
 end

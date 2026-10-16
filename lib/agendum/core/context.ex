@@ -7,18 +7,43 @@ defmodule Agendum.Core.Context do
 
   Wherever the core takes a "clock", it accepts a `Date`, a
   `NaiveDateTime` or a context; a date or time alone means English.
+
+  A context can also carry the date rules compiled for its languages and
+  input format (`prepare/1`): compiling them is most of the cost of
+  reading a date, and the core cannot keep them anywhere else (it has no
+  processes). They are kept by the languages and input format they were
+  made for, so a context whose languages or input format changed since
+  simply compiles again.
   """
 
-  alias Agendum.Core.{DateLanguage, InputFormat}
+  alias Agendum.Core.{DateLanguage, DateParser, InputFormat}
 
+  # `now` is nil in a context kept without the time (a shell's reader,
+  # `Agendum.TUI.State`), which gets it before it is used as a clock
   @type t :: %__MODULE__{
-          now: NaiveDateTime.t(),
+          now: NaiveDateTime.t() | nil,
           languages: [DateLanguage.pack()],
-          input: InputFormat.t()
+          input: InputFormat.t(),
+          rules: %{optional({[DateLanguage.pack()], InputFormat.t()}) => DateParser.rules()}
         }
   @type clock :: Date.t() | NaiveDateTime.t() | t
 
-  defstruct [:now, languages: [DateLanguage.English], input: %InputFormat{}]
+  defstruct [:now, languages: [DateLanguage.English], input: %InputFormat{}, rules: %{}]
+
+  @doc """
+  Compiles the date rules for the context's languages, and for them with
+  English after (`stored_parser_opts/2`), for its input format. A shell
+  keeps the result while the languages and input format stay the same.
+  """
+  @spec prepare(t) :: t
+  def prepare(%__MODULE__{languages: languages, input: input} = context) do
+    rules =
+      for langs <- Enum.uniq([languages, stored_languages(languages)]),
+          into: %{},
+          do: {{langs, input}, DateParser.compile_rules(langs, input)}
+
+    %{context | rules: rules}
+  end
 
   @doc "The current time; a date alone means its midnight."
   @spec now(clock) :: NaiveDateTime.t()
@@ -49,8 +74,7 @@ defmodule Agendum.Core.Context do
   format, and the file's date settings (R14e).
   """
   @spec parser_opts(clock | nil, Agendum.Core.DateSettings.t() | nil) :: keyword
-  def parser_opts(clock, settings),
-    do: [languages: languages(clock), settings: settings, input: input(clock)]
+  def parser_opts(clock, settings), do: opts(clock, languages(clock), settings)
 
   @doc """
   Options for reading a date phrase kept in the file (a date filter's
@@ -59,10 +83,22 @@ defmodule Agendum.Core.Context do
   starter file, then works in every language.
   """
   @spec stored_parser_opts(clock | nil, Agendum.Core.DateSettings.t() | nil) :: keyword
-  def stored_parser_opts(clock, settings) do
-    # Keyword.update!/3 changes one option, keeping the others
-    clock
-    |> parser_opts(settings)
-    |> Keyword.update!(:languages, &Enum.uniq(&1 ++ [DateLanguage.English]))
+  def stored_parser_opts(clock, settings),
+    do: opts(clock, stored_languages(languages(clock)), settings)
+
+  defp stored_languages(languages), do: Enum.uniq(languages ++ [DateLanguage.English])
+
+  # The parser's options for `languages`, with their compiled rules when
+  # the context has them for these languages and its input format.
+  defp opts(clock, languages, settings) do
+    input = input(clock)
+
+    rules =
+      case clock do
+        %__MODULE__{rules: rules} -> Map.get(rules, {languages, input})
+        _date_or_time -> nil
+      end
+
+    [languages: languages, settings: settings, input: input, rules: rules]
   end
 end

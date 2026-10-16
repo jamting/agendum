@@ -108,13 +108,13 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
 
   # the main language and the fallback are saved together
   defp change(state, :lang, step) do
-    [main | rest] = state.languages
+    [main | rest] = State.languages(state)
     main = next(DateLanguage.packs(), main, step)
     set_languages(state, Enum.uniq([main | rest]))
   end
 
   defp change(state, :fallback, step) do
-    [main | rest] = state.languages
+    [main | rest] = State.languages(state)
     choices = [nil | DateLanguage.packs() -- [main]]
     fallback = next(choices, List.first(rest), step)
     set_languages(state, [main | List.wrap(fallback)])
@@ -123,14 +123,18 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
   defp set_input(state, field, value) do
     State.change_preference(
       state,
-      &%{&1 | input: Map.put(&1.input, field, value)},
+      &State.put_reader(&1, input: Map.put(State.input(&1), field, value)),
       &%{&1 | input: Map.put(&1.input, field, value)}
     )
   end
 
   defp set_languages(state, languages),
     do:
-      State.change_preference(state, &%{&1 | languages: languages}, &%{&1 | languages: languages})
+      State.change_preference(
+        state,
+        &State.put_reader(&1, languages: languages),
+        &%{&1 | languages: languages}
+      )
 
   defp next(list, value, step) do
     index = Enum.find_index(list, &(&1 == value)) || 0
@@ -153,7 +157,7 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
   def help, do: @help
 
   defp values(state) do
-    [main | rest] = state.languages
+    [main | rest] = State.languages(state)
     numbers = State.number_opts(state)
 
     %{
