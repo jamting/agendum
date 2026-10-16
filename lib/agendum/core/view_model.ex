@@ -12,15 +12,18 @@ defmodule Agendum.Core.ViewModel do
     @moduledoc """
     One item as shown in a section: a cell per column, and per column its
     "% tot" ("12%", "" without a number) or nil when the column shows none
-    (Display % of total, R29).
+    (Display % of total, R29). `values` holds what each cell shows as
+    data, for a front end that formats or sorts it itself (a web page):
+    see `Agendum.Core.ViewModel.value/3`.
     """
     @type t :: %__MODULE__{
             item: Agendum.Core.Item.t(),
             cells: [String.t()],
+            values: [Agendum.Core.ViewModel.value()],
             percents: [String.t() | nil],
             inherited: boolean
           }
-    defstruct [:item, cells: [], percents: [], inherited: false]
+    defstruct [:item, cells: [], values: [], percents: [], inherited: false]
   end
 
   defmodule SectionModel do
@@ -100,7 +103,8 @@ defmodule Agendum.Core.ViewModel do
               Enum.map(
                 view.columns,
                 &cell(db, item, &1.category_id, &1.width, &1.number, cell_opts(&1, today))
-              )
+              ),
+            values: Enum.map(view.columns, &value(db, item, &1.category_id))
           }
         end)
 
@@ -144,7 +148,8 @@ defmodule Agendum.Core.ViewModel do
               Enum.map(
                 section.columns,
                 &cell(db, item, &1.category_id, &1.width, &1.number, cell_opts(&1, today))
-              )
+              ),
+            values: Enum.map(section.columns, &value(db, item, &1.category_id))
           }
         end)
         |> Enum.reject(&(view.hide_inherited and &1.inherited))
@@ -382,6 +387,41 @@ defmodule Agendum.Core.ViewModel do
           index ->
             index
         end
+    end
+  end
+
+  @typedoc """
+  What a cell shows, as data (`value/3`): a number (or nil) in a numeric
+  column, `{date, time or nil}` (or nil) in a date column, whether the item
+  is in a childless head (a Star or Yes/No column, true or false), else the
+  ids of the head's categories the cell shows, in its order.
+  """
+  @type value :: float | nil | {Date.t(), Time.t() | nil} | boolean | [Database.id()]
+
+  @doc """
+  What `cell/6` shows for an item in the column headed by `head_id`, as
+  data rather than text (`t:value/0`): the same for every format, so a
+  front end can format, sort or edit it itself.
+  """
+  @spec value(Database.t(), Agendum.Core.Item.t(), Database.id()) :: value
+  def value(db, item, head_id) do
+    head = db.categories[head_id]
+
+    cond do
+      head.kind == :numeric ->
+        Database.number(db, item.id, head_id)
+
+      Database.date_category?(db, head_id) ->
+        case Database.item_date(db, item.id, head_id) do
+          nil -> nil
+          date -> {date, Database.item_time(db, item.id, head_id)}
+        end
+
+      head.children == [] ->
+        Database.member?(db, item.id, head_id)
+
+      true ->
+        column_entries(db, item.id, head_id)
     end
   end
 

@@ -345,7 +345,7 @@ sequenceDiagram
         VM->>VM: drop inherited rows if hide_inherited
     end
     VM->>VM: drop empty sections if hide_empty
-    VM-->>R: [%SectionModel{category, rows: [%Row{item, cells, inherited}]}]
+    VM-->>R: [%SectionModel{category, rows: [%Row{item, cells, values, inherited}]}]
 ```
 
 ## Cost
