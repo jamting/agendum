@@ -44,6 +44,9 @@ defmodule Agendum.CLI do
           preferences: String.t() | nil
         }
 
+  # `main/1` is what the escript (the single-file program) calls with the
+  # command line; it is the one place where the program starts. Domain: the
+  # preferences are read first, because the flags only override them.
   def main(args) do
     env = System.get_env()
     path = Preferences.path(env)
@@ -185,6 +188,8 @@ defmodule Agendum.CLI do
   defp start(options, prefs, log) do
     today = App.local_today()
 
+    # Every way to start ends in the same shape, `{:ok, db, path}`, with
+    # `path` nil for a file that has no name yet (Save then asks for one).
     result =
       cond do
         options.demo -> {:ok, Sample.build(today), nil}
@@ -196,6 +201,10 @@ defmodule Agendum.CLI do
 
     case result do
       {:ok, db, path} ->
+        # Domain: `State.new/2` sets `saved_db` to the database just read, so
+        # the file starts clean; `Update.arrive/1` then rings alarms due while
+        # it was closed (R70) without making it dirty; `Update.start/2` puts
+        # the splash screen (and, with no file named, the file prompt) on top.
         state =
           db
           |> State.new(
@@ -225,6 +234,10 @@ defmodule Agendum.CLI do
 
   # after a crash the terminal is back to normal (App.run/1 restores it),
   # so the log's path can be shown above Elixir's own report
+  # A function body can have `catch` (and `rescue`, `after`) without
+  # writing `try`. `catch kind, reason` takes any error, exit or throw;
+  # `:erlang.raise/3` raises it again unchanged, with its original stacktrace,
+  # so the crash report is the real one.
   defp run(state, log) do
     App.run(state)
   catch
@@ -233,6 +246,9 @@ defmodule Agendum.CLI do
       :erlang.raise(kind, reason, __STACKTRACE__)
   end
 
+  # Domain: a named file that does not exist is not an error: it opens as a
+  # new file with that name, written there on the first save.
+  # A file that exists but cannot be read stops the program with a message.
   defp open(path) do
     if File.exists?(path) do
       case Store.load(path) do

@@ -97,6 +97,7 @@ defmodule Agendum.TUI.Update.Actions do
       else: State.effect(state, :quit)
   end
 
+  # Effects run in order (`App.run_effects/2`): the save first, then `:quit`.
   defp do_perform(state, :save_and_quit, _) do
     if state.path,
       do: state |> State.effect({:save, state.path}) |> State.effect(:quit),

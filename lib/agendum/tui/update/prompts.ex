@@ -415,6 +415,9 @@ defmodule Agendum.TUI.Update.Prompts do
     State.run(state, {:unsubscribe_calendar, id, discard}, "Unsubscribed from #{name}")
   end
 
+  # Domain: the answers to "Save changes first?" (Retrieve, New, Import)
+  # and "Save changes before quitting?". Yes saves (asking for a name when
+  # the file has none) and then goes on; No goes on without saving.
   defp confirmed(state, {:leave_for, command}, true) do
     if state.path,
       do: state |> State.effect({:save, state.path}) |> replace_file(command),

@@ -44,6 +44,10 @@ defmodule Agendum.Store do
 
   alias Agendum.Core.Database
 
+  # Module attributes (`@name value`) are constants fixed when the module is
+  # compiled; each use of `@format_version` is replaced by its value.
+  # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
+  # has a row per version, and the golden-file tests hold a file of each.
   @format_version 33
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
@@ -56,9 +60,19 @@ defmodule Agendum.Store do
 
   @spec save(Database.t(), Path.t()) :: :ok | {:error, term}
   def save(%Database{} = db, path) do
+    # Any Elixir value can be turned into bytes by the Erlang runtime
+    # (`:erlang` is an Erlang module, called directly). The tuple is the
+    # envelope: a tag, the format version, then the database itself.
     binary = :erlang.term_to_binary({:agenda, @format_version, db}, [:compressed])
+    # Domain: write to a temporary file, then rename it over the real one. A
+    # rename within one folder is atomic, so a crash or a full disk mid-write
+    # leaves the old file whole instead of half a new one.
     tmp = path <> ".tmp"
 
+    # `with` runs its steps while each result matches its pattern (`:ok`).
+    # With no `else`, the first result that does not match, such as
+    # `{:error, :enospc}`, is returned as it is, so the caller sees either
+    # `:ok` (from `File.rename/2`) or the first error.
     with :ok <- File.mkdir_p(Path.dirname(path)),
          :ok <- File.write(tmp, binary) do
       File.rename(tmp, path)
@@ -72,8 +86,14 @@ defmodule Agendum.Store do
       # exist once their modules are loaded (modules load lazily).
       ensure_modules_loaded()
 
+      # Elixir mostly lets bad input crash ("let it crash"), but a file that
+      # is not an Agendum file is expected input, not a bug: `binary_to_term`
+      # raises `ArgumentError` on bytes it cannot read, and `rescue` turns
+      # that into an error tuple the UI can show as a message.
       try do
         case binary |> :erlang.binary_to_term([:safe]) |> renamed() do
+          # `in` with a range is allowed in a guard. Domain: a file from a newer
+          # Agendum (a version above ours) is refused, not misread.
           {:agenda, version, %{__struct__: Database} = db} when version in 1..@format_version ->
             {:ok, upgrade(db)}
 
@@ -99,6 +119,13 @@ defmodule Agendum.Store do
   def upgrade(%{__struct__: Database} = db) do
     alias Agendum.Core.{Category, View}
 
+    # The upgrade is one idea used everywhere below: `struct(Module, map)`
+    # builds a fresh struct from a map, taking the keys the struct has,
+    # giving missing ones their defaults and dropping unknown ones. A
+    # struct saved by version 5 comes back with every field of today's.
+    # Domain: it runs on every load, current files too; doing it again
+    # changes nothing. Only changes that need a translation (an old setting
+    # that meant something else) have code of their own.
     fields = Map.from_struct(db)
 
     # before 15 a file that did not read dates had auto_date: false; from
@@ -112,6 +139,8 @@ defmodule Agendum.Store do
         _ -> :item_text
       end
 
+    # `db` is rebound step by step: each line makes a new value, and the
+    # name now points at it (nothing is changed in place).
     db = struct(Database, fields)
     db = %{db | dates: Map.new(db.dates, &upgrade_date/1)}
 
@@ -165,6 +194,9 @@ defmodule Agendum.Store do
     %{cat | date_rule: rule}
   end
 
+  # `%_{}` matches any struct (any `__struct__`), so this clause takes a
+  # category that already has a rule; clauses are tried top to bottom, and
+  # the last one, matching anything, is the fallback.
   defp upgrade_category(_db, %{date_rule: %_{} = rule} = cat, _when_assign),
     do: %{cat | date_rule: struct(Agendum.Core.DateRule, Map.from_struct(rule))}
 
@@ -195,8 +227,12 @@ defmodule Agendum.Store do
       | sections: Enum.map(view.sections, &upgrade_section/1),
         columns: Enum.map(view.columns, &upgrade_column/1),
         sort: upgrade_keys(view.sort),
+        # `&&` returns its left side when that is nil or false, so a view
+        # without a datebook keeps nil and only a real one is rebuilt
         datebook: view.datebook && struct(Agendum.Core.Datebook, Map.from_struct(view.datebook))
     }
+    # `then/2` lets a pipe go through a function that does not take the
+    # value as its first argument, here an `if`.
     |> then(fn view -> if linked, do: View.link_by_head(view, linked), else: view end)
     |> View.columns_into_sections()
   end
@@ -210,6 +246,9 @@ defmodule Agendum.Store do
           Map.has_key?(column, :linked),
           do: {{s, i}, column.linked}
 
+    # In a `for`, a generator's pattern filters: only `{place, true}` pairs
+    # pass. `into:` collects into a set instead of a list. An `if` without
+    # `else` gives nil when the condition is false.
     if places != [],
       do: for({place, true} <- places, into: MapSet.new(), do: place)
   end
@@ -229,6 +268,7 @@ defmodule Agendum.Store do
   defp upgrade_keys(nil), do: nil
 
   defp upgrade_keys(keys),
+    # `&struct(..., &1)` is a capture: shorthand for `fn key -> ... end`.
     do: Enum.map(keys, &struct(Agendum.Core.View.SortKey, Map.from_struct(&1)))
 
   defp upgrade_column(column) do
@@ -241,6 +281,10 @@ defmodule Agendum.Store do
     }
   end
 
+  # Atoms (`:name`, and every struct field and module name) are never
+  # garbage-collected and the runtime has a fixed number of them, so `:safe`
+  # decoding refuses to make new ones from a file: a hostile file cannot
+  # fill the table. The atoms a real file needs must therefore exist first.
   defp ensure_modules_loaded do
     {:ok, modules} = :application.get_key(:agendum, :modules)
     Enum.each(modules, &Code.ensure_loaded/1)
@@ -260,8 +304,15 @@ defmodule Agendum.Store do
 
   # Every Agenda.* struct name in a loaded term as the Agendum.* it is now;
   # a term saved since the rename comes back as it was.
+  # One function, a clause per kind of value (guards like `is_map/1` pick
+  # it), calling itself on what is inside: the usual way to walk a whole
+  # nested term in Elixir.
   defp renamed(term) when is_atom(term) do
     case Atom.to_string(term) do
+      # `"prefix" <> rest` in a pattern matches a string that starts with the
+      # prefix and binds the remainder. `to_existing_atom` cannot make new
+      # atoms either; the old names were made, from our own modules only,
+      # by `old_name/1` above.
       "Elixir.Agenda." <> rest -> String.to_existing_atom("Elixir.Agendum." <> rest)
       _ -> term
     end
@@ -292,6 +343,8 @@ defmodule Agendum.Store do
         entries =
           for name <- names,
               not String.starts_with?(name, "."),
+              # a one-element list as a generator: if `File.stat` fails, the
+              # pattern `{:ok, stat}` does not match and the name is skipped
               {:ok, stat} <- [File.stat(Path.join(dir, name), time: :local)] do
             %{
               name: name,
@@ -300,6 +353,8 @@ defmodule Agendum.Store do
             }
           end
 
+        # Tuples compare element by element and `false` sorts before `true`,
+        # so `{not dir?, name}` puts folders first, then by name.
         {:ok, Enum.sort_by(entries, &{not &1.dir?, String.downcase(&1.name)})}
 
       {:error, reason} ->

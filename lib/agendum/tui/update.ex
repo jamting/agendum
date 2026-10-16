@@ -319,6 +319,11 @@ defmodule Agendum.TUI.Update do
   # saving rings the same alarms next time. Returns what the last command
   # gave (the alarms rung). The saved file is only worked on when the
   # clock changed something.
+  # Domain: `saved_db` is what is on disk, `db` what is on screen; the file
+  # is dirty when they differ. A rung alarm changes both the same way, so
+  # they still agree when nothing else changed. `{:ok, db, ...} = ...` is a
+  # match used as an assertion: the clock's commands cannot fail, and if
+  # they ever did, crashing is better than going on with a wrong state.
   defp run_clock(state, commands, clock) do
     {:ok, db, %{steps: steps}} = Core.run(state.db, {:batch, commands}, clock)
     %{result: result} = List.last(steps)
@@ -428,6 +433,9 @@ defmodule Agendum.TUI.Update do
   def preferences_saved(state, {:error, reason}),
     do: State.error(state, "Could not save your preferences: #{inspect(reason)}")
 
+  # Domain: after a good save the database on screen becomes the saved one
+  # (`saved_db: state.db`), so the file is clean. A failed save changes
+  # nothing but the message: the changes are still unsaved, and say so.
   def saved(state, path, :ok) do
     %{state | path: path, dirty: false, saved_db: state.db}
     |> remember(path)
@@ -455,6 +463,9 @@ defmodule Agendum.TUI.Update do
 
   def opened(state, path, result), do: loaded(state, path, result)
 
+  # `%State{expr | message: ...}` is the struct update syntax with the
+  # struct's name: it also checks that `expr` is a `State`. Domain: the new
+  # file goes through `arrive/1` too, as at startup, for its alarms (R70).
   def loaded(state, path, {:ok, db}) do
     %State{
       State.reopen(state, db, path)
