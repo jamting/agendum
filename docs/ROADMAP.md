@@ -46,6 +46,9 @@ Then working together:
 - [ ] Boxes: F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) every setting in the box, CTRL-ENTER clears a setting (User's Guide 2-17)
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names (the note editor's header: in the note editor plan above)
 - [ ] Hypertext help: topics with links (TAB, ENTER), Index, Find, Review (Agenda's F1)
+- [ ] Reopen a file where you left it: the view and the highlighted item (else its section, else the top of the view), as Agenda's file stored them (`AGENDA_FILE_FORMAT.md`, header `0x044`, `0x1E8`). Ours: kept in the preferences per file path, never in the file, so moving never causes a "Save changes?" question; only real edits do. Habit change: a file opens on the view you left, not the first (meeting 2026-10-16, § 5)
+- [ ] View manager: a marker in its own column (e.g. `►`) before the current view's name, apart from the datebook `*`, wherever the highlight is (meeting 2026-10-16, § 7)
+- [ ] View manager: a toggle between your order and recently used, for showing the list only (ALT-N, ALT-P and hop keep the file's order); the toggle and the history in the preferences per file, off at first; settle its key with the owner before building (meeting 2026-10-16, § 8)
 
 ### The note editor (Milestone 2)
 
@@ -74,6 +77,7 @@ Then working together:
 ### Time management (Milestone 5)
 
 - [ ] Recurring items on every date they recur: in each datebook section and in any date filter that covers an occurrence, counted from the base date, still one item (as Agenda does; checked in Agenda 2.0, User's Guide 7-11). Plan with the evidence, the habit changes to settle first and the steps: `docs/plans/RECURRING_OCCURRENCES.md` (R14a)
+- [ ] "While you were away": after the splash screen (unchanged), only when alarms came due while the file was closed, a box lists them, newest first, alarms with the same text grouped with a count, ENTER or ESC closes; they stay in Past Alarms. A rung alarm records when it was due (not when the file opened), and ringing is not an edit: it never causes a "Save changes?" question by itself. The grouping in the core, for the web too (R38; meeting 2026-10-16, § 6)
 - [ ] Alarms sent to your phone with Signal, as well as on the screen: through the separate `signal-cli` program, linked to your Signal account; optional (nothing changes without it), set up in File ▸ Customize
 
 ### Housekeeping
