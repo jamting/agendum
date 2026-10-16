@@ -70,7 +70,7 @@ Each plan starts with its status.
 
 | Document                       | About                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
-| `docs/reviews/` (one per date) | Dated expert panel reviews (architecture, code, users, business, vision, methods), each following up the last (`expert-review` skill) |
+| `docs/reviews/` (one per date) | Dated expert panel reviews, written as meeting minutes (architecture, code, users, business, vision, methods, agent readiness), each following up the last (`expert-review` skill) |
 
 ## Where a change is written down
 

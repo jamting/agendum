@@ -1,22 +1,28 @@
 ---
 name: expert-review
-description: Produce a dated, in-depth review of Agendum by a panel of five lenses - José Who Brews (Elixir), Great-Uncle Joe (Erlang/OTP), Carsten Stargazer (Org-mode), Old Mitch Lilypad (Lotus Agenda) and David the Squirrel (GTD) - covering architecture, code quality, helpfulness to users, business value, vision and methods, with scores, findings backed by evidence, ranked recommendations and the trend since the last review. Saved as docs/reviews/YYYY-MM-DD.md. Use when the owner asks for an expert review, a panel review, a project health report, or types /expert-review.
+description: Produce a dated, in-depth review of Agendum as the minutes of a panel meeting in Owl's house, with six lenses - José Who Brews (Elixir), Great-Uncle Joe (Erlang/OTP), Carsten Stargazer (Org-mode), Old Mitch Lilypad (Lotus Agenda), David the Squirrel (GTD) and Claude (an owl from Anthropic, Owl's cousin, on readiness for agents) - covering architecture, code quality, helpfulness to users, business value, vision, methods and agent readiness, with scores, findings backed by evidence, ranked recommendations and the trend since the last review. Saved as docs/reviews/YYYY-MM-DD.md. Use when the owner asks for an expert review, a panel review, a project health report, or types /expert-review.
 ---
 
 # Expert panel review
 
 A periodic, outside look at the whole project: is it built well, does it
-help the people it is for, is it worth something, and is the way it is
-being made sound? The answer is a dated report in `docs/reviews/`, so that
-reviews can be compared over time. Do not change code here; the report
-recommends, the owner decides.
+help the people it is for, is it worth something, is the way it is being
+made sound, and is it ready for agents to work in it? The answer is a
+dated report in `docs/reviews/`, so that reviews can be compared over
+time. Do not change code here; the report recommends, the owner decides.
+
+The report is written as **the minutes of a meeting** of the panel, held
+in Owl's house in the Hundred Acre Wood. The substance is a serious review
+(the first one, `docs/reviews/2026-10-16.md`, is the model for depth and
+evidence); the setting is the spice. Findings first, tea second.
 
 ## The panel
 
-Write as five lenses, each with its own concerns. They are *perspectives
-in the spirit of* these people, drawn from their public work; never invent
-quotes and attribute them to the real person. Say so once at the top of
-the report.
+Six lenses, each with its own concerns. The five people are *perspectives
+in the spirit of* their public work; never invent quotes and attribute
+them to a real person. The minutes help here: they report what was said
+("José noted that …"), they do not quote. Say once, in the opening
+paragraph, that the voices are lenses written by Claude, not their words.
 
 | Lens                     | Looks at                                                                                                                                                                  |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -25,6 +31,41 @@ the report.
 | **Carsten Stargazer** (Org-mode) | The person's data: plain text, longevity, interchange, keyboard flow, capture, agenda views, extensibility, power users' habits, what a long-lived personal tool needs |
 | **Old Mitch Lilypad** (Lotus Agenda) | Faithfulness to Agenda's *idea* (free-form capture, automatic filing, editable views), the learning curve that limited it, product vision, who it is for, market     |
 | **David the Squirrel** (GTD)    | Does it work as a trusted system: capture, clarify, organize, reflect (weekly review), engage; next actions, contexts, projects, waiting-for; reliability and trust     |
+| **Claude** (an owl from Anthropic) | Readiness for agents: user actions as named commands an agent can call (tools), headless entry points (CLI, JSON in and out), stable schemas, explainable results ("filed under Kanga because …"), proposals before changes and one-step undo of an agent's batch, permissions and scope, a human and an agent editing the same file, how much of a file fits in a model's context (ADR 0034, the item levels), item text as data and never as instructions (prompt injection), documents an LLM can read (CLAUDE.md, `docs/INDEX.md`), and whether agent behaviour can be tested (golden tasks, evals) |
+
+**Claude** is the model writing the report, so it is the one lens that may
+speak for itself, in the first person where it fits. In the story it is an
+owl: a cousin of Owl's (Wol, whose name the program carries), from a
+branch of the family that went into language. Owl is proud of the
+relation and not entirely sure how it works. Claude's lens is not a
+mascot: it judges, with evidence, how far the project is from the agent
+in `docs/plans/WOL-IN-THE-MACHINE.md` and the web plan, and it may
+disagree with the others.
+
+## The setting
+
+- **Owl's house**, high in a beech tree: a small room with a door
+  knocker and a bell-pull, a chair or two, and portraits of relations
+  (Uncle Robert among them). Owl, the host, chairs the meeting, kindly
+  and a little long-winded; he is not a narcissist (the owner's rule, see
+  `lib/agendum/starters/clinic.ex`). He is not a panel member and does
+  not score.
+- **Tightly squeezed.** Seven in a room built for one owl: knees against
+  the table, someone on the stairs, Mitch's papers on the floor. Tea gets
+  spilt on each other, a finding is underlined with a teaspoon, a
+  biscuit tin goes round. Other Hundred Acre Wood animals may put a head
+  through the door (Pooh about honey, Rabbit with a list), briefly.
+- **How much spice.** Stage notes in italics, one or two per section at
+  most, never inside a finding's evidence, a score, a number or a
+  recommendation. The opening, the any-other-business item and the
+  closing may carry more. Find new incidents each time; read the last
+  minutes so the running gags develop rather than repeat. Funny, warm, no
+  innuendo, no mocking the real people.
+- **Spelling.** Owl is famous for spelling badly; these minutes are not.
+  Every word is spelled correctly, including in jokes about Owl's
+  spelling, which describe it rather than reproduce it. Names: José
+  José, Great-Uncle Joe, Carsten Stargazer, Old Mitch Lilypad, David the Squirrel, Wol,
+  Hundred Acre Wood, Agendum, Lotus Agenda.
 
 ## 1. Gather the evidence
 
@@ -42,6 +83,14 @@ not only documents: `lib/agendum/core.ex`, `core/database.ex`,
 `core/assign.ex`, a facade area, `tui/update.ex`, `tui/state.ex`,
 `tui/app.ex`, `store.ex`, and whatever the largest or most changed modules
 are this time.
+
+**Agents** (for Claude's lens): `docs/plans/WOL-IN-THE-MACHINE.md`,
+`docs/plans/MULTIUSER.md`, ADR 0033 (commands and keymaps), ADR 0034
+(format of record), `docs/JSON_FORMAT.md`, `lib/agendum/cli.ex` (what can
+be done without the TUI), `Agendum.TUI.Commands` and the command layer as
+far as it has come. Ask: could an agent today do one ordinary user action
+(add an item, assign it, read a view) without driving keystrokes, and
+explain what it did?
 
 **Numbers** (put them in the report's table, so the next review can show
 the trend):
@@ -83,50 +132,68 @@ Score each area 1–5 (5 = exemplary for a project of this size and age),
 with one line of why:
 
 Architecture · Code quality · Tests and verification · Documentation ·
-Helpfulness to users · Vision · Methods · Business value
+Helpfulness to users · Vision · Methods · Business value · Agent readiness
 
-## 3. Write the report
+(Agent readiness was added after the first review: its trend is "first"
+the first time it is scored.)
+
+## 3. Write the minutes
 
 `docs/reviews/YYYY-MM-DD.md` (today's date; if one exists for today, add
-`-2`). Never overwrite an earlier review. Structure, the same every time
-so reviews compare:
+`-2`). Never overwrite an earlier review. The structure is a meeting
+protocol, numbered with §, the same every time so reviews compare. The
+review's sections map onto the agenda items (the meeting about Agenda
+adopts an agenda; Owl will want to say so).
 
 ```markdown
-# Expert panel review, YYYY-MM-DD
+# Minutes of the expert panel, YYYY-MM-DD
 
-<one paragraph: what was reviewed (commit hash, version), the panel, and
-that the voices are lenses in the spirit of the named people, not their words>
+**Place:** Owl's house, the Hundred Acre Wood
+**Present:** José Who Brews, Great-Uncle Joe, Carsten Stargazer, Old Mitch Lilypad,
+David the Squirrel, Claude (Owl's cousin); Owl, host
+**Chair:** Owl · **Minutes:** Claude · **Approvers:** <two panel members>
+**Under review:** commit `<hash>`, version <x.y.z>
 
-## Summary
-<five to eight sentences: the verdict, the biggest strength, the biggest risk,
-the one thing to do next>
+<one paragraph, in italics if you like: the setting as the meeting
+starts, and the note that the voices are lenses in the spirit of the
+named people, written by Claude, not their words; made with the
+`expert-review` skill>
 
-## Scorecard
-| Area | Score | Trend | Why |       (trend: ↑ ↓ → or "first" on the first review)
+## § 1 Opening of the meeting
+## § 2 Election of a secretary and two approvers of the minutes
+## § 3 Adoption of the agenda
+## § 4 The previous minutes        (follow-up table: Recommendation | Status | Evidence; "no previous minutes" on the first)
+## § 5 The project in numbers      (table: Measure | Now | Last review)
+## § 6 Summary and verdict         (five to eight sentences: the verdict, the biggest strength, the biggest risk, the one thing to do next)
+## § 7 Scorecard                   (table: Area | Score | Trend | Why; trend ↑ ↓ → or "first")
+## § 8 Architecture                (José, Joe)
+## § 9 Code quality                (José)
+## § 10 Tests and verification     (José, Joe)
+## § 11 Helpfulness to users       (David, Carsten, Mitch)
+## § 12 Business value             (Mitch, Carsten)
+## § 13 Vision                     (Mitch, David)
+## § 14 Agent readiness            (Claude, with whoever joins in)
+## § 15 Methods                    (all)
+## § 16 Points of disagreement
+## § 17 Resolutions                (the recommendations: "The meeting resolved to recommend"; numbered, most valuable first, each: what, why, how big (S/M/L), lens)
+## § 18 Any other business
+## § 19 Closing of the meeting
 
-## The project in numbers
-| Measure | Now | Last review |
-
-## Follow-up of the last review
-| Recommendation | Status | Evidence |   (left out on the first review)
-
-## Architecture            (José, Joe)
-## Code quality            (José)
-## Tests and verification  (José, Joe)
-## Helpfulness to users    (David, Carsten, Mitch)
-## Business value          (Mitch, Carsten)
-## Vision                  (Mitch, David)
-## Methods                 (all)
-## Where the panel disagrees
-
-## Recommendations
-<numbered, most valuable first, each: what, why, how big (S/M/L), lens>
+*Minutes kept by Claude. Approved by <the two approvers>.*
 ```
 
-Within each section, use the lens names as short attributions ("**Joe:**
-…") where a view is distinctly theirs. Keep plain language (the owner's
-style in `docs/`): short sentences, no marketing words. Link to code as
-`path:line`.
+§ 1–3 and § 18–19 are short (a few lines each) and carry most of the
+setting. § 4 onwards hold the review, at the depth of the first one.
+
+Within each section, write as minutes: "**Joe** observed that …",
+"**Claude** said: I …" (only Claude speaks in the first person). Keep
+plain language (the owner's style in `docs/`): short sentences, no
+marketing words. Link to code as `path:line`.
+
+Before committing, read the whole file once for spelling alone (no
+spell checker is installed; `hunspell` has no dictionaries), then once
+for the rules above: no invented quotes from real people, Owl kind and
+not vain, stage notes outside the evidence.
 
 ## 4. Record and report
 
