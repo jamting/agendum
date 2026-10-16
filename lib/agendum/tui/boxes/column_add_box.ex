@@ -16,8 +16,8 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
       (16 for a date category, 2 for a Star or Yes/No column, 12 for
       others).
     * Format, for a standard column (R56): Name only, Parent:Category,
-      Ancestor, Star, Yes/No or Category note, which adds Line number and
-      a typed Column title.
+      Ancestor, Star, Yes/No, Category note, which adds Line number and
+      a typed Column title, or (ours) Zettel id.
     * Position: Right of current column (Agenda's default) or Left.
     * Insert in: All sections or Current section, starting at the file's
       Insert new columns in, which it overrides for this column (R55).
@@ -56,8 +56,8 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
         "SPACE changes it for a new head.",
     width: "The width of the column, in characters. Type it.",
     format:
-      "How the column shows categories: name only, parent:category, ancestor, star, " <>
-        "yes/no or a note line. SPACE changes it.",
+      "How the column shows: name, parent:category, ancestor, star, yes/no, " <>
+        "note line or Zettel id. SPACE changes it.",
     note_line: "Which line of the category note the column shows. Type it.",
     title: "Type the column's title.",
     position: "Add the column right or left of the highlighted one. SPACE switches.",

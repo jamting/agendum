@@ -130,11 +130,12 @@ defmodule Agendum.Core.View do
     Guide 5-26 to 5-37): `:name` (Name only, the names of the categories
     under the head it is in), `:parent` (Parent:Category), `:ancestor` (the
     head's child they are under), `:star` (* when the item is in the head),
-    `:yes_no` (Y or N) or `:note` (Category note: line `note_line` of those
+    `:yes_no` (Y or N), `:zettel` (ours: the item's Zettel id, R73a, for
+    every item, whatever the head) or `:note` (Category note: line `note_line` of those
     categories' notes, headed by `title` instead of the head's name).
     Date and numeric columns ignore it.
     """
-    @type format :: :name | :parent | :ancestor | :star | :yes_no | :note
+    @type format :: :name | :parent | :ancestor | :star | :yes_no | :note | :zettel
     @type t :: %__MODULE__{
             category_id: Agendum.Core.Category.id(),
             width: pos_integer,
@@ -158,7 +159,7 @@ defmodule Agendum.Core.View do
 
     @doc "The formats a standard column can have, in the order Agenda offers them."
     @spec formats() :: [format]
-    def formats, do: [:name, :parent, :ancestor, :star, :yes_no, :note]
+    def formats, do: [:name, :parent, :ancestor, :star, :yes_no, :note, :zettel]
 
     @doc """
     How wide the column is on the screen: its width, and 6 more for a

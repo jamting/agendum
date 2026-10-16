@@ -89,4 +89,18 @@ defmodule Agendum.TUI.ColumnFormatsTest do
     state = state |> with_format(v, format: :yes_no) |> press(:delete)
     refute Database.member?(state.db, tom, staff(state))
   end
+
+  # ours (R73a)
+  test "Zettel id: shows the id; typing and DEL say how an id is given",
+       %{state: state, view_id: v, tom_item: tom} do
+    {:ok, db, _} = Core.attach_zettels(state.db, [tom])
+    state = with_format(%{state | db: db}, v, format: :zettel)
+    assert screen(state) =~ ~r/Call Tom +bonalaku/
+    assert screen(state) =~ "Zettel id"
+
+    typed = press(state, "x")
+    assert typed.db == state.db
+    assert screen(typed) =~ "A Zettel id is given by Item ▸ Zettel ▸ Attach"
+    assert press(state, :delete).db == state.db
+  end
 end

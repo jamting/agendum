@@ -241,6 +241,8 @@ defmodule Agendum.Core.Facade.Views do
   def default_column_width(_db, _cat_id, :numeric, _format), do: 12
   # a Star or Yes/No column is two wide (User's Guide 5-31, 5-33)
   def default_column_width(_db, _cat_id, :standard, format) when format in [:star, :yes_no], do: 2
+  # a Zettel id is eight letters (R73a)
+  def default_column_width(_db, _cat_id, :standard, :zettel), do: 9
   def default_column_width(_db, _cat_id, :standard, _format), do: 12
 
   def default_column_width(db, cat_id, nil, _format) do

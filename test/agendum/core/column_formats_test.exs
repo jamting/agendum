@@ -178,4 +178,16 @@ defmodule Agendum.Core.ColumnFormatsTest do
       assert ViewModel.entry_category(db, tom, when_column) == nil
     end
   end
+
+  # ours (R73a)
+  test "Zettel id: every item's id, whatever the head", %{db: db, view_id: v} = ctx do
+    {:ok, db, _} = Core.attach_zettels(db, [ctx.other])
+    shown = shown(db, v, format: :zettel)
+    assert shown["Order paper"] == "bonalaku"
+    assert shown["Contact Tom about the meeting"] == ""
+
+    column = hd(Core.View.columns(db.views[v], 0))
+    assert ViewModel.column_head(db, %{column | format: :zettel}) == "Zettel id"
+    assert Core.default_column_width(db, nil, :standard, :zettel) == 9
+  end
 end

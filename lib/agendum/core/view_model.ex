@@ -476,6 +476,10 @@ defmodule Agendum.Core.ViewModel do
   end
 
   # A standard column in its Format (User's Guide 5-26 to 5-37).
+  # Ours: a Zettel id column shows the item's id, whatever the head (R73a)
+  defp standard_cell(db, item_id, _head, _width, :zettel, _line),
+    do: Agendum.Core.Facade.Zettels.zettel(db.items[item_id]) || ""
+
   defp standard_cell(db, item_id, head, _width, :star, _line),
     do: if(Database.member?(db, item_id, head.id), do: "*", else: "")
 
@@ -552,7 +556,13 @@ defmodule Agendum.Core.ViewModel do
   the name does not fit (`column_label/3`).
   """
   @spec column_head(Database.t(), View.Column.t()) :: String.t()
-  def column_head(_db, %View.Column{format: :note, title: title}) when is_binary(title), do: title
+  def column_head(_db, %View.Column{format: format, title: title})
+      when format in [:note, :zettel] and is_binary(title),
+      do: title
+
+  def column_head(_db, %View.Column{format: :zettel, width: width}),
+    do: String.slice("Zettel id", 0, width)
+
   def column_head(db, column), do: column_label(db, column.category_id, column.width)
 
   @doc """

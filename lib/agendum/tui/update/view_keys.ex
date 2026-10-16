@@ -371,6 +371,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
       {:yes_no, y} when y in ["y", "Y"] -> set_in_column(state, row, true)
       {:yes_no, n} when n in ["n", "N"] -> set_in_column(state, row, false)
       {:note, _} -> %{state | edit: %{target: note_target(state, row), line: LineEdit.new(c)}}
+      {:zettel, _} -> zettel_column(state)
       _ -> %{state | edit: %{target: column_target(state, row, :replace), line: LineEdit.new(c)}}
     end
   end
@@ -545,6 +546,9 @@ defmodule Agendum.TUI.Update.ViewKeys do
       format when format in [:star, :yes_no] ->
         set_in_column(state, row, false)
 
+      :zettel ->
+        zettel_column(state)
+
       _ ->
         {:column_entry, item_id, head, _} = column_target(state, row, :replace)
 
@@ -553,6 +557,10 @@ defmodule Agendum.TUI.Update.ViewKeys do
   end
 
   def delete(state, nil), do: state
+
+  # a Zettel id is given, never typed or taken away (R73a)
+  defp zettel_column(state),
+    do: State.error(state, "A Zettel id is given by Item ▸ Zettel ▸ Attach; it cannot be typed")
 
   # ALT-H (User's Guide 13-9): the highlighted item's next occurrence,
   # further down this view, else in the next view that shows it (in the

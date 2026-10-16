@@ -337,8 +337,8 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
       linked:
         "Whether the column changes with the same column in other sections. SPACE switches.",
       format:
-        "How the column shows categories: name only, parent:category, ancestor, star, " <>
-          "yes/no or a note line. SPACE changes it.",
+        "How the column shows: name, parent:category, ancestor, star, yes/no, " <>
+          "note line or Zettel id. SPACE changes it.",
       note_line: "Which line of the category note the column shows. Type it.",
       title: "Type the column's title.",
       symbol: "The label or currency symbol shown with numbers. SPACE for the next one.",
@@ -416,6 +416,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   def format_name(:star), do: "Star (*)"
   def format_name(:yes_no), do: "Yes/No"
   def format_name(:note), do: "Category note"
+  def format_name(:zettel), do: "Zettel id"
 
   defp yes_no(true), do: "Yes"
   defp yes_no(false), do: "No"

@@ -105,6 +105,7 @@ Every rule, in number order, with the section it is in (rules were added where t
 | R71 | A file changed on disk | 5d |
 | R72 | Importing a Lotus Agenda file | 5a |
 | R73 | Zettel ids | 5e |
+| R73a | A Zettel id column | 5e |
 
 ## 1. Concepts
 
@@ -355,6 +356,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 ## 5e. Zettels
 
 - **R73 ✅ Zettel ids** (ours; meeting 2026-10-16-3, § 5 and § 6; ADR 0039). An item can have a Zettel id: eight pronounceable letters in four syllables, such as `bonalaku`, the Quadsyl-24 spelling of a number (`docs/QUADSYL.md`, `Agendum.Core.ZettelId`). An item with an id is a zettel. Item ▸ Zettel ▸ Attach gives the highlighted item the next id; with items marked it asks, as other commands do, "Give a Zettel id to:" the marked items or the current one. The message line says which id was given ("bonalaku given"; "2 Zettel ids given: bonalaku, pigavono"); an item that has one keeps it ("The item already has its Zettel id, bonalaku"). Ids are given in order from the file's own counter, from 1, skipping the 267 real words, which are reserved for special notes (not given out yet); an id is never given twice, not even after its item is discarded, and never changes. One undo takes the ids back. No key yet: the menu, and F1 `c`.
+- **R73a ✅ A Zettel id column.** A standard column's Format (Column Add and Column Properties, R56) can be **Zettel id**: the column shows each item's id, whatever the column's head, under the head "Zettel id"; nine wide by default. Typing in it, or DEL, changes nothing and says "A Zettel id is given by Item ▸ Zettel ▸ Attach; it cannot be typed".
 
 ## 6. Out of scope for now
 
