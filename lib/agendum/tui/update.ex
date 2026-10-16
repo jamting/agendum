@@ -13,7 +13,8 @@ defmodule Agendum.TUI.Update do
   shared with the menu).
 
   Effects:
-    * `{:save, path}` – write `state.db` to `path`, then call `saved/3`
+    * `{:save, path, opts}` – write `state.db` to `path` if the file there
+      is as `opts.expect` says (R71), then call `saved/4`
     * `{:load, path}` – read a file, then call `loaded/3`
     * `{:write_text, path, text}` – export text, then call `written/3`
     * `:quit`
@@ -74,7 +75,7 @@ defmodule Agendum.TUI.Update do
     # state before the key with the state after it. No key handler records
     # history itself (CLAUDE.md, Undo), so one key is one undo step.
     state = History.record(state, next)
-    state = %{state | dirty: state.db != state.saved_db}
+    state = %{state | dirty: state.db != state.saved.db}
 
     state =
       if state.modes == [] or
@@ -292,7 +293,7 @@ defmodule Agendum.TUI.Update do
           state
       end
 
-    state = %{state | dirty: state.db != state.saved_db}
+    state = %{state | dirty: state.db != state.saved.db}
     {state, save} = auto_save(state, now)
 
     # calendars due to be read again (R45), one read at a time each
@@ -319,7 +320,7 @@ defmodule Agendum.TUI.Update do
   # saving rings the same alarms next time. Returns what the last command
   # gave (the alarms rung). The saved file is only worked on when the
   # clock changed something.
-  # Domain: `saved_db` is what is on disk, `db` what is on screen; the file
+  # Domain: `saved.db` is what is on disk, `db` what is on screen; the file
   # is dirty when they differ. A rung alarm changes both the same way, so
   # they still agree when nothing else changed. `{:ok, db, ...} = ...` is a
   # match used as an assertion: the clock's commands cannot fail, and if
@@ -329,14 +330,14 @@ defmodule Agendum.TUI.Update do
     %{result: result} = List.last(steps)
 
     saved =
-      if db == state.db or state.saved_db == nil do
-        state.saved_db
+      if db == state.db or state.saved.db == nil do
+        state.saved.db
       else
-        {:ok, saved, _changes} = Core.run(state.saved_db, {:batch, commands}, clock)
+        {:ok, saved, _changes} = Core.run(state.saved.db, {:batch, commands}, clock)
         saved
       end
 
-    {%{state | db: db, saved_db: saved}, result}
+    {%{state | db: db, saved: %{state.saved | db: saved}}, result}
   end
 
   @doc """
@@ -348,21 +349,31 @@ defmodule Agendum.TUI.Update do
   @spec arrive(State.t()) :: State.t()
   def arrive(%State{} = state) do
     {state, rung} = run_clock(state, [:clear_old_alarms, :ring_alarms], State.context(state))
-    state = %{state | dirty: state.db != state.saved_db}
+    state = %{state | dirty: state.db != state.saved.db}
 
     if rung == [], do: state, else: Agendum.TUI.Boxes.AwayBox.open(state, rung)
   end
 
   # Auto-save (R54): a named file with unsaved changes is saved once no key
   # has come for the person's interval; trying restarts the idle time, so
-  # a save that fails is tried again an interval later, not every second
-  defp auto_save(%State{prefs: %{auto_save: minutes}, dirty: true, path: path} = state, now)
+  # a save that fails is tried again an interval later, not every second.
+  # A file another writer changed is not auto-saved at all (R71) until a
+  # save the person makes settles it.
+  defp auto_save(
+         %State{prefs: %{auto_save: minutes}, dirty: true, path: path, saved: %{conflict: false}} =
+           state,
+         now
+       )
        when minutes > 0 and path != nil do
     idle_since = state.last_key.at || now
 
-    if NaiveDateTime.diff(now, idle_since) >= minutes * 60,
-      do: {%{state | last_key: %{state.last_key | at: now}}, [{:save, path}]},
-      else: {state, []}
+    if NaiveDateTime.diff(now, idle_since) >= minutes * 60 do
+      state = %{state | last_key: %{state.last_key | at: now}, effects: []}
+      saving = State.save(state, path, auto: true)
+      {%{saving | effects: []}, saving.effects}
+    else
+      {state, []}
+    end
   end
 
   defp auto_save(state, _now), do: {state, []}
@@ -396,7 +407,7 @@ defmodule Agendum.TUI.Update do
       state
     else
       next = read_into(state, cal, kind, result)
-      next = %{History.record(state, next) | dirty: next.db != next.saved_db}
+      next = %{History.record(state, next) | dirty: next.db != next.saved.db}
       if next.modes == [], do: Layout.settle(next), else: next
     end
   end
@@ -434,16 +445,60 @@ defmodule Agendum.TUI.Update do
     do: State.error(state, "Could not save your preferences: #{inspect(reason)}")
 
   # Domain: after a good save the database on screen becomes the saved one
-  # (`saved_db: state.db`), so the file is clean. A failed save changes
-  # nothing but the message: the changes are still unsaved, and say so.
-  def saved(state, path, :ok) do
-    %{state | path: path, dirty: false, saved_db: state.db}
+  # (`saved.db`), so the file is clean, and what waited for the
+  # save goes on (`opts.then`). A failed save changes nothing but the
+  # message: the changes are still unsaved, say so, and nothing that
+  # waited for them happens (R71): Quit stays, Retrieve opens nothing.
+  @doc """
+  After the shell saved the file (`{:save, path, opts}`): the result is
+  the new stamp, or why it was not saved; a file changed on disk is asked
+  about, except by auto-save, which says so and stops (R71).
+  """
+  @spec saved(State.t(), String.t(), {:ok, Agendum.Store.stamp()} | {:error, term}, map) ::
+          State.t()
+  def saved(state, path, {:ok, stamp}, opts) do
+    %{
+      state
+      | path: path,
+        dirty: false,
+        saved: %{db: state.db, stamp: stamp, conflict: false}
+    }
     |> remember(path)
     |> State.info("Saved #{Path.basename(path)}")
+    |> after_save(opts.then)
   end
 
-  def saved(state, _path, {:error, reason}),
-    do: State.error(state, "Could not save: #{inspect(reason)}")
+  def saved(state, path, {:error, :changed_on_disk}, %{auto: true}) do
+    %{state | saved: %{state.saved | conflict: true}}
+    |> State.error(
+      "Not auto-saved: #{Path.basename(path)} changed on disk; save it yourself to choose"
+    )
+  end
+
+  def saved(state, path, {:error, :changed_on_disk}, opts) do
+    # `opts.expect` nil: no file was there when this one was read
+    what = if opts.expect == nil, do: "already exists", else: "has changed on disk"
+
+    Prompts.ask(
+      state,
+      "#{Path.basename(path)} #{what} since Agendum read it. Save over it?",
+      {:overwrite, path, opts.then}
+    )
+  end
+
+  def saved(state, _path, {:error, reason}, opts) do
+    tail = if opts.then == :quit, do: " (not quitting)", else: ""
+    State.error(state, "Could not save: #{inspect(reason)}#{tail}")
+  end
+
+  # what waited for the save: quitting keeps the person's place in the
+  # file first (R69), as `handle/2` does for a Quit without a save
+  defp after_save(state, nil), do: state
+
+  defp after_save(state, :quit),
+    do: state |> Agendum.TUI.Places.remember() |> State.effect(:quit)
+
+  defp after_save(state, {:replace_file, command}), do: Prompts.replace_file(state, command)
 
   # the file offered when Agendum next starts without one (R52); the shell
   # saves the preferences when this changed them
@@ -466,9 +521,9 @@ defmodule Agendum.TUI.Update do
   # `%State{expr | message: ...}` is the struct update syntax with the
   # struct's name: it also checks that `expr` is a `State`. Domain: the new
   # file goes through `arrive/1` too, as at startup, for its alarms (R70).
-  def loaded(state, path, {:ok, db}) do
+  def loaded(state, path, {:ok, db, stamp}) do
     %State{
-      State.reopen(state, db, path)
+      State.reopen(state, db, path, stamp)
       | message: {:message, "Retrieved #{Path.basename(path)}"}
     }
     |> remember(path)
@@ -492,7 +547,7 @@ defmodule Agendum.TUI.Update do
         %State{
           State.reopen(state, db, nil)
           | dirty: true,
-            saved_db: nil,
+            saved: %{db: nil, stamp: nil, conflict: false},
             message: {:message, "Imported #{Path.basename(path)} (save it to keep it)"}
         }
         |> Layout.settle()

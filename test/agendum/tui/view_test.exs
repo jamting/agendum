@@ -149,7 +149,7 @@ defmodule Agendum.TUI.ViewTest do
     state = press(state, [{:ctrl, "s"}])
     assert screen(state) =~ "Save file as:"
     _state = press(state, ["/tmp/x", :enter])
-    assert [{:save, "/tmp/x.agendum"}] = effects()
+    assert [{:save, "/tmp/x.agendum", _}] = effects()
   end
 
   test "quitting with unsaved changes asks first", %{state: state} do

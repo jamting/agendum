@@ -70,7 +70,7 @@ defmodule Agendum.TUI.TransferTest do
 
     for next <- [
           Update.imported(state, "/x.json", {:ok, JSONFile.encode(state.db)}),
-          Update.loaded(state, "/x.agenda", {:ok, state.db})
+          Update.loaded(state, "/x.agenda", {:ok, state.db, "stamp"})
         ] do
       # only the last file used changes (R52)
       assert {next.theme, Agendum.TUI.State.input(next), %{next.prefs | last_file: nil}} ==

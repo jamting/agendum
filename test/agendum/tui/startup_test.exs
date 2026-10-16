@@ -66,11 +66,11 @@ defmodule Agendum.TUI.StartupTest do
 
   test "a file that is there opens; opening and saving remember it" do
     db = Agendum.Sample.build(~D[2026-10-08])
-    state = Update.opened(started(false), "/tmp/garden.agendum", {:ok, db})
+    state = Update.opened(started(false), "/tmp/garden.agendum", {:ok, db, "stamp"})
     assert state.db == db
     assert state.prefs.last_file == "/tmp/garden.agendum"
 
-    state = Update.saved(state, "/tmp/other.agendum", :ok)
+    state = Update.saved(state, "/tmp/other.agendum", {:ok, "stamp"}, %{then: nil})
     assert state.prefs.last_file == "/tmp/other.agendum"
   end
 end

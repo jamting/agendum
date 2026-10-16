@@ -188,20 +188,21 @@ defmodule Agendum.CLI do
   defp start(options, prefs, log) do
     today = App.local_today()
 
-    # Every way to start ends in the same shape, `{:ok, db, path}`, with
-    # `path` nil for a file that has no name yet (Save then asks for one).
+    # Every way to start ends in the same shape, `{:ok, db, path, stamp}`,
+    # with `path` nil for a file that has no name yet (Save then asks for
+    # one), and `stamp` nil for a file not on disk yet (R71).
     result =
       cond do
-        options.demo -> {:ok, Sample.build(today), nil}
-        options.rabbit -> {:ok, Sample.rabbit(today), nil}
-        options.clinic -> {:ok, Agendum.Starters.Clinic.build(today), nil}
+        options.demo -> {:ok, Sample.build(today), nil, nil}
+        options.rabbit -> {:ok, Sample.rabbit(today), nil, nil}
+        options.clinic -> {:ok, Agendum.Starters.Clinic.build(today), nil, nil}
         options.file -> open(Store.normalize_path(options.file))
-        true -> {:ok, Core.new_file(), nil}
+        true -> {:ok, Core.new_file(), nil, nil}
       end
 
     case result do
-      {:ok, db, path} ->
-        # Domain: `State.new/2` sets `saved_db` to the database just read, so
+      {:ok, db, path, stamp} ->
+        # Domain: `State.new/2` sets `saved.db` to the database just read, so
         # the file starts clean; `Update.arrive/1` then rings alarms due while
         # it was closed (R70) without making it dirty; `Update.start/2` puts
         # the splash screen (and, with no file named, the file prompt) on top.
@@ -209,6 +210,7 @@ defmodule Agendum.CLI do
           db
           |> State.new(
             path: path,
+            stamp: stamp,
             today: today,
             now: App.local_now(),
             languages: options.languages,
@@ -251,12 +253,12 @@ defmodule Agendum.CLI do
   # A file that exists but cannot be read stops the program with a message.
   defp open(path) do
     if File.exists?(path) do
-      case Store.load(path) do
-        {:ok, db} -> {:ok, db, path}
+      case Store.load_with_stamp(path) do
+        {:ok, db, stamp} -> {:ok, db, path, stamp}
         {:error, reason} -> {:error, "Could not open #{path}: #{inspect(reason)}"}
       end
     else
-      {:ok, Core.new_file(), path}
+      {:ok, Core.new_file(), path, nil}
     end
   end
 

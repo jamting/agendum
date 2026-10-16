@@ -140,7 +140,7 @@ defmodule Agendum.TUI.Fuzz do
   # history (100 steps) has dropped its oldest.
   defp assert_undoable(before, state, key) do
     steps = length(state.history.undo) - length(before.history.undo)
-    new_file = state.saved_db != before.saved_db
+    new_file = state.saved.db != before.saved.db
     full = length(state.history.undo) >= 100
 
     if state.db != before.db and steps >= 0 and not new_file and not full do

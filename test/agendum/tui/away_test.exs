@@ -79,7 +79,7 @@ defmodule Agendum.TUI.AwayTest do
   end
 
   test "a retrieved file shows its alarms too", %{state: state} do
-    state = Update.loaded(state, "/home/rabbit/rabbit.agendum", {:ok, state.db})
+    state = Update.loaded(state, "/home/rabbit/rabbit.agendum", {:ok, state.db, "stamp"})
     assert screen(state) =~ "While you were away"
     refute state.dirty
   end

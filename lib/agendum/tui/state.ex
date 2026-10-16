@@ -14,8 +14,11 @@ defmodule Agendum.TUI.State do
   been idle. `count` is the count typed with ALT-digits for the next
   command in a view (R65), nil when there is none.
 
-  `undo` and `redo` hold snapshots for `Agendum.TUI.History`. `saved_db` is the
-  database as last saved or loaded; the file is dirty whenever `db` differs.
+  `undo` and `redo` hold snapshots for `Agendum.TUI.History`. `saved` is the file
+  on disk as last saved or loaded: its database (`saved.db`; the file is
+  dirty whenever `db` differs), the stamp of its bytes (`saved.stamp`, nil
+  when it was not on disk) and whether an auto-save found another writer
+  had changed it (`saved.conflict`, R71).
 
   Two kinds of field (ROADMAP, Towards many users; `docs/plans/MULTIUSER.md`
   §7, step 5): the **file** (`file_fields/0`), what everyone working in the
@@ -72,7 +75,11 @@ defmodule Agendum.TUI.State do
           count: pos_integer | nil,
           views: %{recent: [Database.id()], by_recent: boolean},
           history: %{undo: [map], redo: [map], step: Database.t() | nil},
-          saved_db: Database.t() | nil,
+          saved: %{
+            db: Database.t() | nil,
+            stamp: Agendum.Store.stamp() | nil,
+            conflict: boolean
+          },
           effects: [term]
         }
 
@@ -117,14 +124,19 @@ defmodule Agendum.TUI.State do
             # they left the file (`Agendum.TUI.Places`)
             views: %{recent: [], by_recent: false},
             history: %{undo: [], redo: [], step: nil},
-            saved_db: nil,
+            # the file on disk as Agendum last read or wrote it: its
+            # database, the stamp of its bytes (nil: not there then), and
+            # whether an auto-save found another writer had changed it,
+            # which stops auto-saving until a save the person makes settles
+            # it (R71)
+            saved: %{db: nil, stamp: nil, conflict: false},
             effects: []
 
   # Domain: what is shared by everyone in the file (the database, where it
   # is kept and whether it is saved, the calendars being read for it);
   # everything else is one person's session. Undo is the session's: each
   # person undoes their own changes (MULTIUSER §4).
-  @file_fields [:db, :path, :saved_db, :dirty, :fetching]
+  @file_fields [:db, :path, :saved, :dirty, :fetching]
 
   @doc "The fields that belong to the file, shared by everyone working in it."
   @spec file_fields() :: [atom]
@@ -159,7 +171,7 @@ defmodule Agendum.TUI.State do
         key_map: Keyword.get(opts, :prefs, %Agendum.Preferences{}).key_map,
         theme: Keyword.get(opts, :theme, :classic),
         view_id: hd(db.view_order),
-        saved_db: db
+        saved: %{db: db, stamp: opts[:stamp], conflict: false}
       }
       |> prepare_dates()
 
@@ -231,15 +243,17 @@ defmodule Agendum.TUI.State do
   the file, keeping the session (time, screen size, languages, input
   format, theme, preferences, key map). Where the person was in the file
   they leave is kept in their preferences, and the other file opens where
-  they left it (R69).
+  they left it (R69). `stamp` is the file's on disk as it was read (R71),
+  nil for a file not on disk yet.
   """
-  @spec reopen(t, Database.t(), String.t() | nil) :: t
-  def reopen(state, db, path) do
+  @spec reopen(t, Database.t(), String.t() | nil, Agendum.Store.stamp() | nil) :: t
+  def reopen(state, db, path, stamp \\ nil) do
     state = Agendum.TUI.Places.remember(state)
 
     %{
       new(db,
         path: path,
+        stamp: stamp,
         today: state.today,
         now: state.now,
         width: state.width,
@@ -417,6 +431,29 @@ defmodule Agendum.TUI.State do
   # order is worth more than the cost.)
   @spec effect(t, term) :: t
   def effect(state, effect), do: %{state | effects: state.effects ++ [effect]}
+
+  @doc """
+  Asks the shell to save the file to `path` (`{:save, path, opts}`), then
+  to do `then` once the save succeeded (R71): nothing (nil), `:quit`, or
+  `{:replace_file, command}` (the prompt for Retrieve, New or Import).
+  Saved where it was read, the save expects the file as it was then;
+  saved under another name, whatever is there (`:any`). `expect:` and
+  `auto:` (an auto-save, R54) in `opts` say otherwise.
+  """
+  @spec save(t, String.t(), keyword) :: t
+  def save(state, path, opts \\ []) do
+    expect = if path == state.path, do: state.saved.stamp, else: :any
+
+    effect(state, {
+      :save,
+      path,
+      %{
+        expect: Keyword.get(opts, :expect, expect),
+        then: opts[:then],
+        auto: Keyword.get(opts, :auto, false)
+      }
+    })
+  end
 
   def info(state, text), do: %{state | message: {:message, text}}
   def error(state, text), do: %{state | message: {:error, text}}

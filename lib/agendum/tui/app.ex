@@ -206,14 +206,14 @@ defmodule Agendum.TUI.App do
 
     state =
       case effect do
-        {:save, path} ->
-          Update.saved(state, path, Store.save(state.db, path))
+        {:save, path, opts} ->
+          Update.saved(state, path, Store.save(state.db, path, opts.expect), opts)
 
         {:load, path} ->
-          Update.loaded(state, path, Store.load(path))
+          Update.loaded(state, path, Store.load_with_stamp(path))
 
         {:open_or_create, path} ->
-          Update.opened(state, path, Store.load(path))
+          Update.opened(state, path, Store.load_with_stamp(path))
 
         {:write_text, path, text} ->
           Update.written(state, path, File.write(path, text))
@@ -254,7 +254,9 @@ defmodule Agendum.TUI.App do
     if state.prefs != before and state.prefs.path,
       do: Preferences.save(state.prefs, state.prefs.path)
 
-    run_effects(state, rest)
+    # what the result asked for next, such as quitting once the file is
+    # saved (R71), comes before the effects still waiting
+    run_effects(%{state | effects: []}, state.effects ++ rest)
   end
 
   # 24-bit colour when the terminal says it takes it (Theme.depth/1)

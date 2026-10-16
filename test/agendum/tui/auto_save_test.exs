@@ -20,7 +20,7 @@ defmodule Agendum.TUI.AutoSaveTest do
   end
 
   defp tick(state, seconds), do: Update.tick(state, NaiveDateTime.add(@now, seconds))
-  defp saves(effects), do: for({:save, path} <- effects, do: path)
+  defp saves(effects), do: for({:save, path, _opts} <- effects, do: path)
 
   test "saves after the interval without a key, and only then" do
     state = changed(5)

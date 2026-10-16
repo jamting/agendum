@@ -163,7 +163,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 ## Key design decisions
 
 - **Mode stack.** Overlays (menu, managers, pickers, prompts) are pushed on `state.modes`; ESC pops. Full-screen modes (category manager, view manager, note) replace the body; boxes (picker, profile, properties) draw over it. Help is a full-screen mode drawn as a large box over the faded screen it was opened from, boxes and all (R65c).
-- **Effects as data.** `Update` never performs I/O. It queues effects (`{:save, path}`, `{:load, path}`, `{:write_text, path, text}`, `:quit`) that `App` executes, feeding results back through `Update.saved/3` and similar. This keeps every UI behaviour testable with plain key sequences.
+- **Effects as data.** `Update` never performs I/O. It queues effects (`{:save, path, opts}`, `{:load, path}`, `{:write_text, path, text}`, `:quit`) that `App` executes, feeding results back through `Update.saved/4` and similar; effects a result asks for (quitting once a save succeeded, R71) run next. This keeps every UI behaviour testable with plain key sequences.
 - **The clock comes in from outside.** On every pass of its loop `App` calls the pure `Update.tick(state, now)`, which updates the clock, rings due alarms and asks for a `:bell` effect. Tests drive time the same way.
 - **Cursor anchoring.** The cursor is stored as a stable key (`{:item, section_index, item_id}` or `{:section, index}`) and re-found after every change (`Layout.settle/1`), so it follows an item when automatic assignment or edits reshuffle the view.
 - **Subsumption is computed.** Only explicit links are stored. Deleting a category therefore needs no cascade logic beyond dropping its links (R4).

@@ -212,7 +212,7 @@ defmodule ManualScreens do
       |> alarm.("Remind Tigger about the lettuces at 9am")
       |> alarm.("Ask Piglet to bring a basket at 9:30am")
 
-    s = %{s | saved_db: s.db, now: state.now, message: nil}
+    s = %{s | saved: %{s.saved | db: s.db}, now: state.now, message: nil}
     shot("53-away", Agendum.TUI.Update.arrive(s), :away)
   end
 

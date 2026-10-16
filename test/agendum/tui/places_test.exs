@@ -51,16 +51,22 @@ defmodule Agendum.TUI.PlacesTest do
     assert Layout.current_row(again).item.id == item
   end
 
-  test "saving then quitting saves the file, then the preferences", %{state: state} do
+  test "saving then quitting saves the file, then keeps the place and quits", %{state: state} do
     state = press(state, [:down, "Water the haycorns", :enter])
+    place = state.cursor_key
 
-    {_state, effects} =
+    {state, effects} =
       Enum.reduce([{:ctrl, "q"}, {:char, "y"}], {state, []}, fn key, {s, e} ->
         {s, new} = Update.handle(s, key)
         {s, e ++ new}
       end)
 
-    assert [{:save, @path}, {:save_preferences, @prefs_path, _}, :quit] = effects
+    # the quit waits for the save (R71); the shell saves the preferences
+    # when a result changed them, before the quit that result asked for
+    assert [{:save, @path, %{then: :quit} = opts}] = effects
+    state = Update.saved(state, @path, {:ok, "stamp"}, opts)
+    assert state.effects == [:quit]
+    assert Preferences.place(state.prefs, @path).item == elem(place, 2)
   end
 
   test "an item that is gone leaves the highlight on its section head", %{
@@ -94,7 +100,7 @@ defmodule Agendum.TUI.PlacesTest do
     state = press(%{state | prefs: prefs}, :down)
     first_key = state.cursor_key
 
-    state = Update.loaded(state, other, {:ok, state.db})
+    state = Update.loaded(state, other, {:ok, state.db, "stamp"})
     assert state.path == other
     assert state.view_id == everything
     assert Preferences.place(state.prefs, @path).item == elem(first_key, 2)

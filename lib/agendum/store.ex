@@ -58,8 +58,27 @@ defmodule Agendum.Store do
   @doc "The file format version this program writes."
   def format_version, do: @format_version
 
+  @typedoc """
+  A file's bytes as they were when Agendum read or wrote them: their MD5
+  sum, in hex (R71). Two stamps differ when the bytes do.
+  """
+  @type stamp :: String.t()
+
+  @doc "Saves `db` to `path`, whatever is there."
   @spec save(Database.t(), Path.t()) :: :ok | {:error, term}
   def save(%Database{} = db, path) do
+    with {:ok, _stamp} <- save(db, path, :any), do: :ok
+  end
+
+  @doc """
+  Saves `db` to `path` if the file there is still as `expected` (R71): the
+  stamp it was read or last saved with, nil for a file that was not there
+  then, or `:any`. A file removed since is written again. Returns the new
+  file's stamp, or `{:error, :changed_on_disk}` without writing.
+  """
+  @spec save(Database.t(), Path.t(), stamp | nil | :any) ::
+          {:ok, stamp} | {:error, :changed_on_disk | term}
+  def save(%Database{} = db, path, expected) do
     # Any Elixir value can be turned into bytes by the Erlang runtime
     # (`:erlang` is an Erlang module, called directly). The tuple is the
     # envelope: a tag, the format version, then the database itself.
@@ -72,40 +91,84 @@ defmodule Agendum.Store do
     # `with` runs its steps while each result matches its pattern (`:ok`).
     # With no `else`, the first result that does not match, such as
     # `{:error, :enospc}`, is returned as it is, so the caller sees either
-    # `:ok` (from `File.rename/2`) or the first error.
-    with :ok <- File.mkdir_p(Path.dirname(path)),
-         :ok <- File.write(tmp, binary) do
-      File.rename(tmp, path)
+    # `{:ok, stamp}` or the first error.
+    # Domain: another writer could still change the file between this
+    # look and the rename, a moment's window; the guard is for the minutes
+    # and hours a file stays open, not for two saves in the same instant.
+    with :ok <- unchanged(path, expected),
+         :ok <- File.mkdir_p(Path.dirname(path)),
+         :ok <- File.write(tmp, binary),
+         :ok <- File.rename(tmp, path) do
+      {:ok, stamp_of(binary)}
     end
   end
 
+  # `^expected` pins the variable: the clause matches only a stamp equal
+  # to it, instead of binding a new value to the name.
+  defp unchanged(_path, :any), do: :ok
+
+  defp unchanged(path, expected) do
+    case stamp(path) do
+      nil -> :ok
+      ^expected -> :ok
+      _other -> {:error, :changed_on_disk}
+    end
+  end
+
+  @doc "The stamp of the file at `path` as it is now, or nil when there is none (R71)."
+  @spec stamp(Path.t()) :: stamp | nil
+  def stamp(path) do
+    case File.read(path) do
+      {:ok, binary} -> stamp_of(binary)
+      {:error, _} -> nil
+    end
+  end
+
+  # `:erlang.md5/1` is built into the runtime (no `:crypto` needed); it is
+  # no guard against tampering, nor needs to be, only against change.
+  defp stamp_of(binary), do: binary |> :erlang.md5() |> Base.encode16(case: :lower)
+
   @spec load(Path.t()) :: {:ok, Database.t()} | {:error, term}
   def load(path) do
-    with {:ok, binary} <- File.read(path) do
-      # `:safe` decoding refuses unknown atoms, and struct field names only
-      # exist once their modules are loaded (modules load lazily).
-      ensure_modules_loaded()
+    with {:ok, db, _stamp} <- load_with_stamp(path), do: {:ok, db}
+  end
 
-      # Elixir mostly lets bad input crash ("let it crash"), but a file that
-      # is not an Agendum file is expected input, not a bug: `binary_to_term`
-      # raises `ArgumentError` on bytes it cannot read, and `rescue` turns
-      # that into an error tuple the UI can show as a message.
-      try do
-        case binary |> :erlang.binary_to_term([:safe]) |> renamed() do
-          # `in` with a range is allowed in a guard. Domain: a file from a newer
-          # Agendum (a version above ours) is refused, not misread.
-          {:agenda, version, %{__struct__: Database} = db} when version in 1..@format_version ->
-            {:ok, upgrade(db)}
+  @doc """
+  Loads a file, with the stamp of the bytes read, so a later save can tell
+  whether another writer changed it since (R71).
+  """
+  @spec load_with_stamp(Path.t()) :: {:ok, Database.t(), stamp} | {:error, term}
+  def load_with_stamp(path) do
+    with {:ok, binary} <- File.read(path),
+         {:ok, db} <- decode(binary) do
+      {:ok, db, stamp_of(binary)}
+    end
+  end
 
-          {:agenda, version, _} ->
-            {:error, {:unsupported_version, version}}
+  defp decode(binary) do
+    # `:safe` decoding refuses unknown atoms, and struct field names only
+    # exist once their modules are loaded (modules load lazily).
+    ensure_modules_loaded()
 
-          _ ->
-            {:error, :not_an_agenda_file}
-        end
-      rescue
-        ArgumentError -> {:error, :not_an_agenda_file}
+    # Elixir mostly lets bad input crash ("let it crash"), but a file that
+    # is not an Agendum file is expected input, not a bug: `binary_to_term`
+    # raises `ArgumentError` on bytes it cannot read, and `rescue` turns
+    # that into an error tuple the UI can show as a message.
+    try do
+      case binary |> :erlang.binary_to_term([:safe]) |> renamed() do
+        # `in` with a range is allowed in a guard. Domain: a file from a newer
+        # Agendum (a version above ours) is refused, not misread.
+        {:agenda, version, %{__struct__: Database} = db} when version in 1..@format_version ->
+          {:ok, upgrade(db)}
+
+        {:agenda, version, _} ->
+          {:error, {:unsupported_version, version}}
+
+        _ ->
+          {:error, :not_an_agenda_file}
       end
+    rescue
+      ArgumentError -> {:error, :not_an_agenda_file}
     end
   end
 

@@ -39,12 +39,12 @@ defmodule Agendum.TUI.KeyboardTest do
     assert screen(press(state, {:ctrl, "o"})) =~ "File to retrieve:"
     assert screen(press(state, {:ctrl, "p"})) =~ "Print view to text file:"
     assert screen(press(%{state | path: "/tmp/a.agenda"}, {:ctrl, "s"})) =~ ""
-    assert {:save, "/tmp/a.agenda"} in effects()
+    assert Enum.any?(effects(), &match?({:save, "/tmp/a.agenda", _}, &1))
   end
 
   test "CTRL-S also works from the category manager", %{state: state} do
     press(%{state | path: "/tmp/b.agenda"}, [{:f, 9}, {:ctrl, "s"}])
-    assert {:save, "/tmp/b.agenda"} in effects()
+    assert Enum.any?(effects(), &match?({:save, "/tmp/b.agenda", _}, &1))
   end
 
   test "⌥↑ / ⌥↓ jump between sections in a view" do

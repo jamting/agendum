@@ -62,11 +62,12 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :redo, _), do: History.redo(state)
 
   # Saving is not done here: a file name known, the action only asks for
-  # the effect `{:save, path}`, which `App` carries out and reports back
-  # through `Update.saved/3`. Without a name, it asks for one first.
+  # the effect `{:save, path, opts}` (`State.save/3`), which `App` carries
+  # out and reports back through `Update.saved/4`. Without a name, it asks
+  # for one first.
   defp do_perform(state, :save, _) do
     if state.path,
-      do: State.effect(state, {:save, state.path}),
+      do: State.save(state, state.path),
       else: Prompts.prompt(state, "Save file as:", :save_as)
   end
 
@@ -97,10 +98,11 @@ defmodule Agendum.TUI.Update.Actions do
       else: State.effect(state, :quit)
   end
 
-  # Effects run in order (`App.run_effects/2`): the save first, then `:quit`.
+  # Domain: the quit waits for the save (R71): `Update.saved/4` quits once
+  # the file is safely written, and stays open when it could not be.
   defp do_perform(state, :save_and_quit, _) do
     if state.path,
-      do: state |> State.effect({:save, state.path}) |> State.effect(:quit),
+      do: State.save(state, state.path, then: :quit),
       else: Prompts.prompt(state, "Save file as:", :save_as_then_quit)
   end
 

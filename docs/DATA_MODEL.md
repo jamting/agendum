@@ -586,7 +586,7 @@ The TUI keeps a few database-related values in `Agendum.TUI.State`. They are not
 | Field          | Purpose                                                                                |
 | -------------- | -------------------------------------------------------------------------------------- |
 | `db`           | The current `Database`.                                                                |
-| `saved_db`     | The database as last saved or loaded; `dirty` is `db != saved_db`.                     |
+| `saved`        | The file as last saved or loaded: `db` (`dirty` is `db != saved.db`), `stamp` of its bytes and `conflict` (R71). |
 | `undo`, `redo` | Snapshots `%{db, view_id, cursor_key}` (max 100), see `Agendum.TUI.History`.            |
 | `view_id`      | The view on screen.                                                                    |
 | `cursor_key`   | `{:section, index}` or `{:item, section_index, item_id}`; re-found after every change. |

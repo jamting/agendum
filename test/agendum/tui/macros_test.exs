@@ -151,7 +151,9 @@ defmodule Agendum.TUI.MacrosTest do
     # ALT-W on an untitled file asks for a name; ALT-F3 leaves the prompt be
     asked = press(state, [{:alt, "w"}, {:alt_f, 3}])
     assert %{type: :prompt} = State.mode(asked)
-    assert press(asked, ["x.agendum", :enter]).path =~ "x.agendum"
+    press(asked, ["x.agendum", :enter])
+    assert {:save, path, _} = List.last(effects())
+    assert path =~ "x.agendum"
 
     learning = press(state, [{:alt_f, 3}, :insert, "Half", :enter, {:f, 7}, "half an item"])
     assert learning.edit != nil

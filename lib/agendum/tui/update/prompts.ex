@@ -101,20 +101,16 @@ defmodule Agendum.TUI.Update.Prompts do
     if text == "", do: state, else: prompt_action(state, action, text)
   end
 
-  defp prompt_action(state, :save_as, text) do
-    path = Agendum.Store.normalize_path(text)
-    State.effect(%{state | path: path}, {:save, path})
-  end
+  # The file takes the new name once it is saved there (`Update.saved/4`),
+  # so a save that fails leaves it under its old one.
+  defp prompt_action(state, :save_as, text),
+    do: State.save(state, Agendum.Store.normalize_path(text))
 
-  defp prompt_action(state, :save_as_then_quit, text) do
-    path = Agendum.Store.normalize_path(text)
-    state |> Map.put(:path, path) |> State.effect({:save, path}) |> State.effect(:quit)
-  end
+  defp prompt_action(state, :save_as_then_quit, text),
+    do: State.save(state, Agendum.Store.normalize_path(text), then: :quit)
 
-  defp prompt_action(state, {:save_as_then, command}, text) do
-    path = Agendum.Store.normalize_path(text)
-    state |> Map.put(:path, path) |> State.effect({:save, path}) |> replace_file(command)
-  end
+  defp prompt_action(state, {:save_as_then, command}, text),
+    do: State.save(state, Agendum.Store.normalize_path(text), then: {:replace_file, command})
 
   defp prompt_action(state, :calendar_jump, text), do: CalendarBox.jump(state, text)
 
@@ -149,7 +145,7 @@ defmodule Agendum.TUI.Update.Prompts do
     %{
       State.reopen(state, Core.new_file(), path)
       | dirty: true,
-        saved_db: nil
+        saved: %{db: nil, stamp: nil, conflict: false}
     }
     |> State.info("New file #{Path.basename(path)} (not saved yet)")
   end
@@ -420,11 +416,20 @@ defmodule Agendum.TUI.Update.Prompts do
   # the file has none) and then goes on; No goes on without saving.
   defp confirmed(state, {:leave_for, command}, true) do
     if state.path,
-      do: state |> State.effect({:save, state.path}) |> replace_file(command),
+      do: State.save(state, state.path, then: {:replace_file, command}),
       else: prompt(state, "Save file as:", {:save_as_then, command})
   end
 
   defp confirmed(state, {:leave_for, command}, false), do: replace_file(state, command)
+
+  # Domain: the file changed on disk since it was read or saved (R71). Yes
+  # saves over it, then goes on as the save would have (quit, open another
+  # file); No keeps the changes unsaved, and nothing else happens.
+  defp confirmed(state, {:overwrite, path, then}, true),
+    do: State.save(state, path, expect: :any, then: then)
+
+  defp confirmed(state, {:overwrite, _path, _then}, false),
+    do: State.error(state, "Not saved. File ▸ Write saves it under another name, keeping both")
 
   defp confirmed(state, :quit, true), do: Actions.perform(state, :save_and_quit)
   defp confirmed(state, :quit, false), do: State.effect(state, :quit)

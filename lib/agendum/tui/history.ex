@@ -18,7 +18,7 @@ defmodule Agendum.TUI.History do
   @doc """
   Records `before` as an undo step if handling a key changed the database.
   Nothing is recorded when the change came from undo/redo itself (the
-  stacks moved) or when a different file was started (`saved_db` changed).
+  stacks moved) or when a different file was started (`saved.db` changed).
   """
   # Two clauses: this one only when a key ended a step partway (`step` is
   # not nil, checked by the guard); the second one otherwise. The first
@@ -47,7 +47,7 @@ defmodule Agendum.TUI.History do
     cond do
       next.db == before.db -> next
       stacks(next) != stacks(before) -> next
-      next.saved_db != before.saved_db -> put_stacks(next, [], [])
+      next.saved.db != before.saved.db -> put_stacks(next, [], [])
       # a macro playing: its run is one step, recorded as it began
       before.macro.playing > 0 -> next
       true -> put_stacks(next, push(snapshot(before), before.history.undo), [])

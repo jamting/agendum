@@ -13,7 +13,7 @@ defmodule Agendum.TUI.NoteSearchTest do
     state = start(Agendum.Sample.build(~D[2026-10-08])) |> press(:down)
     item = Layout.current_row(state).item
     state = %{state | db: Core.set_note(state.db, item.id, @note, state.today)}
-    state = %{state | saved_db: state.db}
+    state = %{state | saved: %{state.saved | db: state.db}}
     %{state: press(state, {:f, 5}), id: item.id}
   end
 

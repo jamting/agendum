@@ -43,11 +43,14 @@ defmodule Agendum.TUI.UnsavedChangesTest do
     end
   end
 
+  # the shell's report of a good save (R71: what follows waits for it)
+  defp saved(state, {:save, path, opts}), do: Update.saved(state, path, {:ok, "stamp"}, opts)
+
   test "Y saves, then goes on", %{changed: changed} do
     for {name, open, prompt} <- @commands do
       {state, effects} = keys(changed, open ++ ["y"])
-      assert effects == [{:save, "/home/rabbit/rabbit.agenda"}], name
-      assert screen(state) =~ prompt, name
+      assert [{:save, "/home/rabbit/rabbit.agenda", _} = save] = effects, name
+      assert screen(saved(state, save)) =~ prompt, name
     end
   end
 
@@ -55,8 +58,8 @@ defmodule Agendum.TUI.UnsavedChangesTest do
     {state, _} = keys(%{changed | path: nil}, [{:f, 10}, "f", "r", "y"])
     assert screen(state) =~ "Save file as:"
     {state, effects} = keys(state, String.graphemes("/tmp/mine") ++ [:enter])
-    assert effects == [{:save, "/tmp/mine.agendum"}]
-    assert screen(state) =~ "File to retrieve:"
+    assert [{:save, "/tmp/mine.agendum", _} = save] = effects
+    assert screen(saved(state, save)) =~ "File to retrieve:"
   end
 
   test "N goes on without saving", %{changed: changed} do
