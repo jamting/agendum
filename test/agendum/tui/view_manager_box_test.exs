@@ -67,4 +67,19 @@ defmodule Agendum.TUI.ViewManagerBoxTest do
     assert screen(state) =~ "View 30"
     assert screen(state) =~ "↑"
   end
+
+  # R68: the current view keeps a marker of its own, wherever the highlight is
+  test "► marks the current view, apart from the datebook *", %{state: state} do
+    state = press(state, {:f, 8})
+    assert screen(state) =~ ~r/► +Activities/
+    state = press(state, [:down, :down])
+    # the highlight moved; the marker stayed on the view shown
+    assert screen(state) =~ ~r/► +Activities/
+    refute screen(state) =~ ~r/► *\*? *Calls/
+    assert screen(state) =~ ~r/ \* This Week/
+
+    # another view shown, the marker goes with it
+    state = press(state, [:enter, {:f, 8}])
+    assert screen(state) =~ ~r/►\* This Week/
+  end
 end

@@ -63,8 +63,8 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   @spec about() :: String.t()
   def about do
     """
-    The view manager lists the file's views. ENTER shows the highlighted
-    one; type the start of a name to find it.
+    The view manager lists the file's views; ► marks the one shown. ENTER
+    shows the highlighted one; type the start of a name to find it.
 
     INS adds a view, F2 renames one, DEL (or F4) discards one: its items
     stay in the file. ALT-↑ and ALT-↓ move a view in the list, ALT-F5 sorts
@@ -196,7 +196,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   def width(state, _mode), do: min(state.width - 8, 50)
 
   # Agenda's (screenshot 40): the views' names in order, * before a
-  # datebook view (R47), the name being renamed as an input line; an arrow
+  # datebook view (R47), ► before the view shown (ours, R68), the name being renamed as an input line; an arrow
   # at the left where the list goes on above or below, and what was typed
   # to find a view
   @impl Box
@@ -217,15 +217,17 @@ defmodule Agendum.TUI.Boxes.ViewManager do
             true -> " "
           end
 
+        # the view shown keeps its marker wherever the highlight goes (R68)
+        current = if v.id == state.view_id, do: "►", else: " "
         star = if v.datebook, do: "*", else: " "
 
         name =
           case state.edit do
-            %{target: id} when id == v.id -> Draw.input(state.edit.line, inner - 6, :edit)
+            %{target: id} when id == v.id -> Draw.input(state.edit.line, inner - 7, :edit)
             _ -> [{if(i == mode.cursor, do: :box_selected, else: :box), v.name}]
           end
 
-        [{:box, " #{arrow} #{star} "}] ++ name
+        [{:box, " #{arrow} #{current}#{star} "}] ++ name
       end)
 
     lines ++ find

@@ -99,6 +99,7 @@ Every rule, in number order, with the section it is in (rules were added where t
 | R65c | The help screen's frame and pane | 5 |
 | R66 | Core commands | 5 |
 | R67 | Why an item is in a category | 3 |
+| R68 | The current view in the view manager | 5d |
 
 ## 1. Concepts
 
@@ -234,7 +235,7 @@ In the menu, ESC backs up one level; a box, prompt or question opened from the m
 
 ### The view manager
 
-The view manager is a box over the view, as Agenda's (screenshot 40): the views' names in order, * before a datebook view, an arrow where the list goes on; ENTER shows the highlighted view, ESC goes back to the one shown, F4 (or DEL) discards one. Our choice: Agenda's view manager showed no more, so each view's sections are no longer listed beside its name.
+The view manager is a box over the view, as Agenda's (screenshot 40): the views' names in order, * before a datebook view, ► before the view shown (R68), an arrow where the list goes on; ENTER shows the highlighted view, ESC goes back to the one shown, F4 (or DEL) discards one. Our choice: Agenda's view manager showed no more, so each view's sections are no longer listed beside its name.
 
 ### Questions
 
@@ -322,6 +323,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - ✅ **Confirm mode** (Yes, the default, or No): with No, Agendum does what was asked without "are you sure?" questions: discarding items, categories and views, deleting macros, clearing dependencies, sorting a family, changing a category's type, making an item depend on others. Questions whose Y and N do different things are still asked: "Save changes first?" and, when unsubscribing, whether to discard the calendar's items too. Undo (R30) still reverses what was done.
   - ✅ **Auto-save interval** (User's Guide 22-8): a file with a name and unsaved changes is saved once no key has been pressed for that many minutes, with the usual "Saved" message. Off (the default) or 1 to 60 minutes; File ▸ Customize steps through 1, 2, 5, 10, 15, 20, 30, 45 and 60, and `auto_save = N` in the file takes any of them. An untitled file is never saved by itself. A save that fails is tried again an interval later.
   - ✅ **Decimal separator** ("." the default, or ",") and **Thousands separator** ("," the default, ".", or a space; Setting Up Agenda 1-25, 1-28): how numbers are shown and read everywhere: column entries and calculations, typed numbers, range filters and conditions, actions, Item Properties, and category names read as numbers. The two are never the same: with a decimal comma the thousands separator is a dot unless a space is chosen. They belong to the person's input format, so they reach the core with the clock (`Agendum.Core.Context`), as dates do (`decimal_separator` and `thousands_separator = space` in the file).
+- **R68 ✅ The current view in the view manager** (ours; meeting 2026-10-16, § 7). The view manager shows ► before the name of the view shown, in a column of its own beside the datebook `*`, wherever the highlight goes, so "where am I?" is answered at a glance. Agenda's view manager marked nothing once the highlight moved.
 
 ## 6. Out of scope for now
 
