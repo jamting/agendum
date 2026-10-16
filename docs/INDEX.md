@@ -64,6 +64,12 @@ Each plan starts with its status.
 | [`plans/REFACTORING.md`](plans/REFACTORING.md)                         | Where organic growth left complexity (mostly done)                             |
 | [`plans/DOSBOX_STAGING.md`](plans/DOSBOX_STAGING.md)                   | Running the real Agenda for Claude (done differently; a record)                |
 
+## Reviews
+
+| Document                       | About                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------- |
+| `docs/reviews/YYYY-MM-DD.md`   | Dated expert panel reviews (architecture, code, users, business, vision, methods), each following up the last (`expert-review` skill) |
+
 ## Where a change is written down
 
 | When you…                              | Update                                                                                         |
