@@ -1,6 +1,6 @@
 # ADR 0038 — The terminal program keeps Agenda's keys; modern and own keys belong to the web
 
-**Status:** accepted · 2026-10-16
+**Status:** accepted · 2026-10-16 · amended by ADR 0040 (run a command by name in the terminal)
 
 ## Context
 
