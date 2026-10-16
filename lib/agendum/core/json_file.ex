@@ -27,6 +27,7 @@ defmodule Agendum.Core.JSONFile do
     DateRule,
     Macro,
     DateSettings,
+    Feed,
     Item,
     Links,
     NumberFormat,
@@ -190,6 +191,7 @@ defmodule Agendum.Core.JSONFile do
       items: Enum.map(db.item_order, &item(db, rel, db.items[&1])),
       views: Enum.map(db.view_order, &view(db.views[&1])),
       calendars: db |> Database.calendars() |> Enum.map(&calendar/1),
+      feeds: db |> Database.feeds() |> Enum.map(&feed/1),
       macros: db |> Database.macros() |> Enum.map(&macro/1),
       blog: struct_obj(db.blog)
     )
@@ -230,6 +232,33 @@ defmodule Agendum.Core.JSONFile do
             recurrence: s.recurrence && struct_obj(s.recurrence),
             end_date: date(s.ends && elem(s.ends, 0)),
             end_time: time(s.ends && elem(s.ends, 1))
+          )
+        end)
+    )
+  end
+
+  # a feed subscription and each entry as last read (R75)
+  defp feed(%Feed{} = f) do
+    obj(
+      id: f.id,
+      name: f.name,
+      url: f.url,
+      category: f.category_id,
+      keep_days: f.keep_days,
+      refresh_minutes: f.refresh_minutes,
+      refreshed_at: f.refreshed_at && NaiveDateTime.to_iso8601(f.refreshed_at),
+      error: f.error,
+      entries:
+        f.entries
+        |> Enum.sort()
+        |> Enum.map(fn {id, s} ->
+          obj(
+            id: id,
+            item: s.item,
+            title: s.title,
+            note: s.note,
+            link: s.link,
+            published: date(s.published)
           )
         end)
     )
@@ -489,6 +518,7 @@ defmodule Agendum.Core.JSONFile do
     items = list(doc, "items", "items", &read_item/2)
     views = list(doc, "views", "views", &read_view/2)
     calendars = list(doc, "calendars", "calendars", &read_calendar/2)
+    feeds = list(doc, "feeds", "feeds", &read_feed/2)
     macros = list(doc, "macros", "macros", &read_macro/2)
     settings = field(doc, "settings", %{}, "settings")
     special = field(doc, "special", %{}, "special")
@@ -517,6 +547,7 @@ defmodule Agendum.Core.JSONFile do
       views: Map.new(views, &{&1.id, &1}),
       view_order: Enum.map(views, & &1.id),
       calendars: Map.new(calendars, &{&1.id, &1}),
+      feeds: Map.new(feeds, &{&1.id, &1}),
       macros: Map.new(macros, &{&1.id, &1}),
       macro_order: Enum.map(macros, & &1.id),
       blog: read_struct(doc, "blog", Blog, "blog")
@@ -723,6 +754,32 @@ defmodule Agendum.Core.JSONFile do
       refreshed_at: opt(c, "refreshed_at", {:nullable, :datetime}, nil, path),
       error: opt(c, "error", {:nullable, :string}, nil, path),
       events: Map.new(events)
+    }
+  end
+
+  defp read_feed(f, path) do
+    entries =
+      list(f, "entries", path <> ".entries", fn e, p ->
+        {req(e, "id", :string, p),
+         %{
+           item: opt(e, "item", {:nullable, :int}, nil, p),
+           title: opt(e, "title", :string, "", p),
+           note: opt(e, "note", :string, "", p),
+           link: opt(e, "link", :string, "", p),
+           published: req(e, "published", :date, p)
+         }}
+      end)
+
+    %Feed{
+      id: req(f, "id", :int, path),
+      name: req(f, "name", :string, path),
+      url: req(f, "url", :string, path),
+      category_id: req(f, "category", :int, path),
+      keep_days: opt(f, "keep_days", {:nullable, :int}, 30, path),
+      refresh_minutes: opt(f, "refresh_minutes", {:nullable, :int}, 60, path),
+      refreshed_at: opt(f, "refreshed_at", {:nullable, :datetime}, nil, path),
+      error: opt(f, "error", {:nullable, :string}, nil, path),
+      entries: Map.new(entries)
     }
   end
 
@@ -964,7 +1021,9 @@ defmodule Agendum.Core.JSONFile do
         {Enum.all?(Map.values(db.calendars), &Map.has_key?(cats, &1.category_id)),
          "a calendar's category does not exist"},
         {Enum.all?([db.blog.posts, db.blog.drafts], &(&1 == nil or Map.has_key?(cats, &1))),
-         "the blog's posts or drafts category does not exist"}
+         "the blog's posts or drafts category does not exist"},
+        {Enum.all?(Map.values(db.feeds), &Map.has_key?(cats, &1.category_id)),
+         "a feed's category does not exist"}
       ] ++
         Enum.flat_map(Map.values(cats), &category_refs(&1, cats, items)) ++
         Enum.flat_map(Map.keys(items), &item_refs(db, &1)) ++
@@ -985,7 +1044,8 @@ defmodule Agendum.Core.JSONFile do
   defp all_ids(db),
     do:
       Map.keys(db.categories) ++
-        Map.keys(db.items) ++ Map.keys(db.views) ++ Map.keys(db.calendars) ++ Map.keys(db.macros)
+        Map.keys(db.items) ++
+        Map.keys(db.views) ++ Map.keys(db.calendars) ++ Map.keys(db.feeds) ++ Map.keys(db.macros)
 
   defp category_refs(c, cats, _items) do
     ref = &Map.has_key?(cats, &1)

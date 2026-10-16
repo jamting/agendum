@@ -39,6 +39,7 @@ defmodule Agendum.Core.Database do
           match_settings: TextMatch.t(),
           suggestions: %{optional(id) => [id]},
           calendars: %{optional(id) => Agendum.Core.Calendar.t()},
+          feeds: %{optional(id) => Agendum.Core.Feed.t()},
           macros: %{optional(id) => Agendum.Core.Macro.t()},
           macro_order: [id],
           insert_columns: :all | :section,
@@ -66,6 +67,8 @@ defmodule Agendum.Core.Database do
             match_settings: %TextMatch{},
             suggestions: %{},
             calendars: %{},
+            # feed subscriptions (R75)
+            feeds: %{},
             macros: %{},
             macro_order: [],
             # File Properties ▸ Insert new columns in (R55)
@@ -276,6 +279,8 @@ defmodule Agendum.Core.Database do
            suggestions: suggestions,
            # a calendar whose category is gone is no longer read (R45)
            calendars: Map.reject(db.calendars, fn {_, c} -> c.category_id in doomed_set end),
+           # and a feed (R75)
+           feeds: Map.reject(db.feeds, fn {_, f} -> f.category_id in doomed_set end),
            # the blog forgets a posts or drafts category that is gone (R74)
            blog: %{
              db.blog
@@ -718,6 +723,29 @@ defmodule Agendum.Core.Database do
   @doc "The calendar subscriptions, in the order they were made."
   @spec calendars(t) :: [Agendum.Core.Calendar.t()]
   def calendars(%__MODULE__{} = db), do: db.calendars |> Map.values() |> Enum.sort_by(& &1.id)
+
+  # ---------------------------------------------------------------------------
+  # Feed subscriptions (R75)
+  # ---------------------------------------------------------------------------
+
+  @doc "Adds a feed subscription, giving it a new id."
+  @spec add_feed(t, Agendum.Core.Feed.t()) :: {t, id}
+  def add_feed(%__MODULE__{} = db, feed) do
+    {db, id} = take_id(db)
+    {%{db | feeds: Map.put(db.feeds, id, %{feed | id: id})}, id}
+  end
+
+  @doc "Changes a feed subscription."
+  @spec update_feed(t, id, (Agendum.Core.Feed.t() -> Agendum.Core.Feed.t())) :: t
+  def update_feed(%__MODULE__{} = db, id, fun), do: %{db | feeds: Map.update!(db.feeds, id, fun)}
+
+  @doc "Removes a feed subscription (its items stay)."
+  @spec delete_feed(t, id) :: t
+  def delete_feed(%__MODULE__{} = db, id), do: %{db | feeds: Map.delete(db.feeds, id)}
+
+  @doc "The feed subscriptions, in the order they were made."
+  @spec feeds(t) :: [Agendum.Core.Feed.t()]
+  def feeds(%__MODULE__{} = db), do: db.feeds |> Map.values() |> Enum.sort_by(& &1.id)
 
   @doc "Adds a macro (R50) at the end of the list, giving it an id."
   @spec add_macro(t, Agendum.Core.Macro.t()) :: {t, id}

@@ -223,6 +223,31 @@ defmodule Agendum.Starters.Golden do
     })
     |> Core.set_insert_columns(:section)
     |> blog()
+    |> feed()
+  end
+
+  # a feed subscription (R75), read once and then failed, every setting
+  # away from its default
+  defp feed(db) do
+    {:ok, db, id} = Core.subscribe_feed(db, "Owl's Gazette", "https://owl.example/feed.xml")
+
+    entries = [
+      %{
+        id: "gazette-1",
+        title: "Heffalump sighted",
+        link: "https://owl.example/heffalump",
+        summary: "Piglet says so.",
+        published: ~N[2026-10-15 07:00:00]
+      }
+    ]
+
+    {:ok, db, _counts} = Core.sync_feed(db, id, entries, @now)
+
+    db
+    |> Core.cycle_feed_setting(id, :keep_days, 1)
+    |> Core.cycle_feed_setting(id, :refresh_minutes, 1)
+    |> Core.cycle_feed_setting(id, :refresh_minutes, 1)
+    |> Core.feed_failed(id, "the server answered 503", @now)
   end
 
   # the micro-blog (R74), every setting away from its default

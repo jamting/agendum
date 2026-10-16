@@ -32,7 +32,7 @@ defmodule Agendum.Core.Invariants do
         protected(db) ++
         lineage(db) ++
         conditional(db) ++
-        zettels(db) ++ blog(db)
+        zettels(db) ++ blog(db) ++ feeds(db)
     else
       tree
     end
@@ -88,7 +88,7 @@ defmodule Agendum.Core.Invariants do
 
   defp ids(db) do
     kinds = [items: db.items, categories: db.categories, views: db.views, macros: db.macros]
-    kinds = kinds ++ [calendars: db.calendars]
+    kinds = kinds ++ [calendars: db.calendars, feeds: db.feeds]
     all = Enum.flat_map(kinds, fn {_kind, map} -> Map.keys(map) end)
 
     own =
@@ -309,5 +309,13 @@ defmodule Agendum.Core.Invariants do
         id != nil,
         not Map.has_key?(db.categories, id),
         do: "12. blog: category #{id} does not exist"
+  end
+
+  # --- 13. Feeds -------------------------------------------------------------
+
+  defp feeds(db) do
+    for {id, feed} <- db.feeds,
+        not Map.has_key?(db.categories, feed.category_id),
+        do: "13. feeds: feed #{id}'s category #{feed.category_id} does not exist"
   end
 end

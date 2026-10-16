@@ -37,6 +37,7 @@ defmodule Agendum.Core do
     Categories,
     Dates,
     Dependencies,
+    Feeds,
     Files,
     Items,
     Macros,
@@ -287,4 +288,15 @@ defmodule Agendum.Core do
   defdelegate calendar_failed(db, cal_id, message, clock), to: Calendars
   defdelegate cycle_calendar_setting(db, cal_id, setting, step), to: Calendars
   defdelegate calendars_due(db, now), to: Calendars
+
+  # feed subscriptions (R75)
+  defdelegate subscribe_feed(db, name, url), to: Feeds
+  defdelegate unsubscribe_feed(db, feed_id, remove_items), to: Feeds
+  defdelegate sync_feed(db, feed_id, entries, clock), to: Feeds
+  defdelegate feed_failed(db, feed_id, message, clock), to: Feeds
+  defdelegate cycle_feed_setting(db, feed_id, setting, step), to: Feeds
+  defdelegate feeds_due(db, now), to: Feeds
+  defdelegate parse_feed(text), to: Feeds
+  defdelegate export_opml(db), to: Feeds
+  defdelegate import_opml(db, text), to: Feeds
 end

@@ -49,7 +49,7 @@ defmodule Agendum.Core.Command do
   @typedoc """
   Why a command was refused, for the front end to word: an id not in the
   file (`:no_such_item`, `:no_such_category`, `:no_such_view`,
-  `:no_such_macro`, `:no_such_calendar`), `:empty_text`, `:bad_arguments`,
+  `:no_such_macro`, `:no_such_calendar`, `:no_such_feed`), `:empty_text`, `:bad_arguments`,
   `:unknown_command`, or the reason the facade function gave (such as
   `:protected`, `:cycle`, or `{:shared, items}` with what is in the way).
   """
@@ -338,6 +338,20 @@ defmodule Agendum.Core.Command do
     {:cycle_calendar_setting, "Calendar setting", "Steps a calendar's setting up or down",
      [:calendar, :value, :value], :core},
 
+    # feeds (R75)
+    {:subscribe_feed, "Subscribe to feed",
+     "Adds an RSS or Atom feed, its entries filed under Feeds ▸ a category of that name (R75)",
+     [:value, :value], :core},
+    {:unsubscribe_feed, "Unsubscribe feed", "Stops reading a feed, its items removed or kept",
+     [:feed, :value], :core},
+    {:sync_feed, "Read feed", "Files a feed's entries as items; old ones fade (R75)",
+     [:feed, :value], :clock},
+    {:feed_failed, "Feed failed", "Notes that reading a feed failed", [:feed, :value], :clock},
+    {:cycle_feed_setting, "Feed setting", "Steps a feed's setting up or down",
+     [:feed, :value, :value], :core},
+    {:import_opml, "Import OPML", "Subscribes to the feeds of an OPML feed list (R75)", [:value],
+     :core},
+
     # alarms ringing, as the clock moves on (R38)
     {:ring_alarms, "Ring alarms", "Rings the alarms that are due; returns their items", [], :own},
     {:clear_old_alarms, "Clear old alarms", "Forgets alarms rung before today", [], :own},
@@ -432,6 +446,7 @@ defmodule Agendum.Core.Command do
   defp valid(db, :view, id), do: present(db.views, id, :no_such_view)
   defp valid(db, :macro, id), do: present(db.macros, id, :no_such_macro)
   defp valid(db, :calendar, id), do: present(db.calendars, id, :no_such_calendar)
+  defp valid(db, :feed, id), do: present(db.feeds, id, :no_such_feed)
   defp valid(db, :items, ids), do: all(db, :item, ids)
   defp valid(db, :categories, ids), do: all(db, :category, ids)
   defp valid(_db, :value, _arg), do: :ok
