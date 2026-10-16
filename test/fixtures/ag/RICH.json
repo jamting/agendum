@@ -1,0 +1,4005 @@
+{
+ "description": "Activities Planner",
+ "password": null,
+ "created": "1990-10-01T16:31",
+ "saved": "2026-10-16T21:28",
+ "settings": {
+  "tab_size": 5,
+  "backup_on_open": false,
+  "empty_trash": "end of day",
+  "process_done_items": "no action",
+  "text_matching": true,
+  "assignment_conditions": true,
+  "assignment_actions": true,
+  "relationship": "or",
+  "week": [
+   "Sunday",
+   "Saturday"
+  ],
+  "morning": "8:00",
+  "afternoon": "14:00",
+  "evening": "17:00",
+  "month_alone_means": "first day"
+ },
+ "categories": {
+  "id": 9,
+  "name": "MAIN",
+  "type": "standard",
+  "settings": {
+   "exclusive_children": false,
+   "match_name": true,
+   "match_short_name": true,
+   "allow_explicit": true
+  },
+  "children": [
+   {
+    "id": 20,
+    "name": "Entry",
+    "type": "date",
+    "settings": {
+     "exclusive_children": false,
+     "assign_item_date": "when entered",
+     "which_date_in_text": 1,
+     "set_from_done_key": false,
+     "set_from_when_key": false,
+     "recurring_dates": false
+    }
+   },
+   {
+    "id": 18,
+    "name": "When",
+    "type": "date",
+    "settings": {
+     "exclusive_children": false,
+     "assign_item_date": "from item text",
+     "which_date_in_text": 1,
+     "set_from_done_key": false,
+     "set_from_when_key": true,
+     "recurring_dates": true
+    }
+   },
+   {
+    "id": 16,
+    "name": "Done",
+    "type": "date",
+    "settings": {
+     "exclusive_children": false,
+     "assign_item_date": "never",
+     "which_date_in_text": 1,
+     "set_from_done_key": true,
+     "set_from_when_key": false,
+     "recurring_dates": false
+    }
+   },
+   {
+    "id": 41,
+    "name": "People",
+    "short_name": "Who",
+    "also_match": [
+     "\"Contact\""
+    ],
+    "type": "standard",
+    "note": "Phone #:\rCompany:\r",
+    "settings": {
+     "exclusive_children": false,
+     "protected": true,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "children": [
+     {
+      "id": 43,
+      "name": "Sample Person",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": false,
+       "match_short_name": false,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 757,
+      "name": "Anna",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     }
+    ]
+   },
+   {
+    "id": 46,
+    "name": "Unassigned",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "conditions": {
+     "conditions": [
+      {
+       "category": 41,
+       "assigned": false
+      },
+      {
+       "category": 52,
+       "assigned": true
+      }
+     ],
+     "actions": []
+    }
+   },
+   {
+    "id": 48,
+    "name": "Project",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "children": [
+     {
+      "id": 123,
+      "name": "Sample Project",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": false,
+       "match_short_name": false,
+       "allow_explicit": true
+      }
+     }
+    ]
+   },
+   {
+    "id": 50,
+    "name": "Miscellaneous Project",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "conditions": {
+     "conditions": [
+      {
+       "category": 52,
+       "assigned": true
+      },
+      {
+       "category": 48,
+       "assigned": false
+      }
+     ],
+     "actions": []
+    }
+   },
+   {
+    "id": 52,
+    "name": "Tasks",
+    "short_name": "Task",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "protected": true,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "conditions": {
+     "conditions": [
+      {
+       "category": 9,
+       "assigned": true
+      },
+      {
+       "category": 86,
+       "assigned": false
+      },
+      {
+       "category": 73,
+       "assigned": false
+      }
+     ],
+     "actions": []
+    }
+   },
+   {
+    "id": 54,
+    "name": "Activity",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "children": [
+     {
+      "id": 56,
+      "name": "Calls",
+      "short_name": "Phone",
+      "also_match": [
+       "Telephone"
+      ],
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 59,
+      "name": "Meetings",
+      "short_name": "Mtg",
+      "also_match": [
+       "Mtgs",
+       "(meet with)",
+       "(talk to)",
+       "meet"
+      ],
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 61,
+      "name": "Mail",
+      "short_name": "Memo",
+      "also_match": [
+       "Correspondence",
+       "(write to)",
+       "(reply to)"
+      ],
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 63,
+      "name": "Reading",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 65,
+      "name": "Follow up",
+      "also_match": [
+       "(follow up)",
+       "(waiting for)",
+       "(follow-up)"
+      ],
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": false,
+       "match_short_name": false,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 67,
+      "name": "Issues",
+      "also_match": [
+       "Questions",
+       "(find out)"
+      ],
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 69,
+      "name": "Ideas",
+      "also_match": [
+       "(think about)"
+      ],
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     }
+    ]
+   },
+   {
+    "id": 71,
+    "name": "Miscellaneous Activity",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "conditions": {
+     "conditions": [
+      {
+       "category": 54,
+       "assigned": false
+      },
+      {
+       "category": 52,
+       "assigned": true
+      }
+     ],
+     "actions": []
+    }
+   },
+   {
+    "id": 73,
+    "name": "Expenses",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    }
+   },
+   {
+    "id": 75,
+    "name": "Priority",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": true,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "children": [
+     {
+      "id": 77,
+      "name": "High",
+      "short_name": "Hi",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": false,
+       "match_short_name": false,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 80,
+      "name": "Medium",
+      "short_name": "Med",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": false,
+       "match_short_name": false,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 82,
+      "name": "Low",
+      "short_name": "Lo",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": false,
+       "match_short_name": false,
+       "allow_explicit": true
+      }
+     }
+    ]
+   },
+   {
+    "id": 84,
+    "name": "No Priority Assigned",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "conditions": {
+     "conditions": [
+      {
+       "category": 75,
+       "assigned": false
+      },
+      {
+       "category": 52,
+       "assigned": true
+      }
+     ],
+     "actions": []
+    }
+   },
+   {
+    "id": 86,
+    "name": "Contact List",
+    "short_name": "\"   \"",
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    }
+   },
+   {
+    "id": 88,
+    "name": "Type",
+    "also_match": [
+     "\"Expense Type\""
+    ],
+    "type": "standard",
+    "settings": {
+     "exclusive_children": true,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "children": [
+     {
+      "id": 90,
+      "name": "Lodging",
+      "short_name": "Hotel",
+      "also_match": [
+       "Motel",
+       "Inn"
+      ],
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 93,
+      "name": "Breakfast",
+      "short_name": "Bfast",
+      "also_match": [
+       "Bkfst"
+      ],
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 95,
+      "name": "Lunch",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 97,
+      "name": "Dinner",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 99,
+      "name": "Entertainment",
+      "short_name": "Ent",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 101,
+      "name": "Air",
+      "also_match": [
+       "Airline",
+       "Plane",
+       "Flight",
+       "airfare",
+       "(air fare)"
+      ],
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 103,
+      "name": "Transportation",
+      "short_name": "Trans",
+      "also_match": [
+       "Taxi",
+       "Cab",
+       "(Car Rental)",
+       "Toll",
+       "Mileage",
+       "Parking"
+      ],
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": true,
+       "match_short_name": true,
+       "allow_explicit": true
+      }
+     },
+     {
+      "id": 106,
+      "name": "Miscellaneous",
+      "short_name": "Misc",
+      "also_match": [
+       "valet",
+       "publication",
+       "journal",
+       "telephone",
+       "tip"
+      ],
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": false,
+       "match_short_name": false,
+       "allow_explicit": true
+      }
+     }
+    ]
+   },
+   {
+    "id": 109,
+    "name": "No Type",
+    "also_match": [
+     "\"Expenses with No Type\""
+    ],
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "conditions": {
+     "conditions": [
+      {
+       "category": 73,
+       "assigned": true
+      },
+      {
+       "category": 88,
+       "assigned": false
+      }
+     ],
+     "actions": []
+    }
+   },
+   {
+    "id": 111,
+    "name": "Report ID",
+    "short_name": "Purpose",
+    "also_match": [
+     "\"Purpose of Trip\""
+    ],
+    "type": "standard",
+    "settings": {
+     "exclusive_children": true,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "children": [
+     {
+      "id": 113,
+      "name": "Sample Trip",
+      "type": "standard",
+      "settings": {
+       "exclusive_children": false,
+       "match_name": false,
+       "match_short_name": false,
+       "allow_explicit": true
+      }
+     }
+    ]
+   },
+   {
+    "id": 116,
+    "name": "No Purpose",
+    "also_match": [
+     "\"No Purpose Specified\""
+    ],
+    "type": "standard",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": false,
+     "match_short_name": false,
+     "allow_explicit": true
+    },
+    "conditions": {
+     "conditions": [
+      {
+       "category": 73,
+       "assigned": true
+      },
+      {
+       "category": 111,
+       "assigned": false
+      }
+     ],
+     "actions": []
+    }
+   },
+   {
+    "id": 118,
+    "name": "Amount",
+    "type": "numeric",
+    "settings": {
+     "exclusive_children": false,
+     "match_name": true,
+     "match_short_name": true,
+     "allow_explicit": true
+    },
+    "conditions": {
+     "conditions": [],
+     "actions": [
+      {
+       "category": 73,
+       "assign": true
+      }
+     ]
+    }
+   }
+  ]
+ },
+ "items": [
+  {
+   "id": 584,
+   "text": "Meet with Anna next Friday at 9am",
+   "note": null,
+   "assignments": [
+    {
+     "category": 20,
+     "how": "automatic",
+     "value": "2026-10-16T21:27"
+    },
+    {
+     "category": 52,
+     "how": "explicit"
+    },
+    {
+     "category": 18,
+     "how": "automatic",
+     "value": "2026-10-23T09:00",
+     "given_as": {
+      "kind": "relative",
+      "unit": "weekday",
+      "count": 1,
+      "position": "whole",
+      "weekday": "Friday",
+      "time": "09:00"
+     }
+    },
+    {
+     "category": 46,
+     "how": "condition"
+    },
+    {
+     "category": 50,
+     "how": "condition"
+    },
+    {
+     "category": 59,
+     "how": "text match"
+    },
+    {
+     "category": 84,
+     "how": "condition"
+    }
+   ],
+   "trashed": false
+  },
+  {
+   "id": 586,
+   "text": "Call Bob about the budget tomorrow",
+   "note": null,
+   "assignments": [
+    {
+     "category": 757,
+     "how": "explicit"
+    },
+    {
+     "category": 20,
+     "how": "automatic",
+     "value": "2026-10-16T21:27"
+    },
+    {
+     "category": 52,
+     "how": "explicit"
+    },
+    {
+     "category": 18,
+     "how": "automatic",
+     "value": "2026-10-17T21:26",
+     "given_as": {
+      "kind": "relative",
+      "unit": "days",
+      "count": 1
+     }
+    },
+    {
+     "category": 50,
+     "how": "condition"
+    },
+    {
+     "category": 56,
+     "how": "text match"
+    },
+    {
+     "category": 84,
+     "how": "condition"
+    }
+   ],
+   "trashed": false,
+   "alarm": {
+    "date_category": 18,
+    "minutes_before": 15
+   }
+  },
+  {
+   "id": 747,
+   "text": "Gym every Monday",
+   "note": null,
+   "assignments": [
+    {
+     "category": 20,
+     "how": "automatic",
+     "value": "2026-10-16T21:27"
+    },
+    {
+     "category": 52,
+     "how": "explicit"
+    },
+    {
+     "category": 18,
+     "how": "automatic",
+     "value": "2026-10-19T00:00",
+     "given_as": {
+      "kind": "recurring",
+      "unit": "weekday",
+      "interval": 1,
+      "weekday": "Monday"
+     }
+    },
+    {
+     "category": 46,
+     "how": "condition"
+    },
+    {
+     "category": 50,
+     "how": "condition"
+    },
+    {
+     "category": 71,
+     "how": "condition"
+    },
+    {
+     "category": 84,
+     "how": "condition"
+    }
+   ],
+   "trashed": false
+  },
+  {
+   "id": 749,
+   "text": "Write to the bank",
+   "note": "Pages 10 to 20\rAsk Carl about it",
+   "assignments": [
+    {
+     "category": 20,
+     "how": "automatic",
+     "value": "2026-10-16T21:27"
+    },
+    {
+     "category": 52,
+     "how": "explicit"
+    },
+    {
+     "category": 46,
+     "how": "condition"
+    },
+    {
+     "category": 50,
+     "how": "condition"
+    },
+    {
+     "category": 61,
+     "how": "text match"
+    },
+    {
+     "category": 84,
+     "how": "condition"
+    }
+   ],
+   "trashed": false
+  },
+  {
+   "id": 751,
+   "text": "Read the quarterly report",
+   "note": null,
+   "assignments": [
+    {
+     "category": 1,
+     "how": "explicit"
+    }
+   ],
+   "trashed": true
+  },
+  {
+   "id": 753,
+   "text": "Throw this away",
+   "note": null,
+   "assignments": [
+    {
+     "category": 20,
+     "how": "automatic",
+     "value": "2026-10-16T21:27"
+    },
+    {
+     "category": 52,
+     "how": "explicit"
+    },
+    {
+     "category": 46,
+     "how": "condition"
+    },
+    {
+     "category": 50,
+     "how": "condition"
+    },
+    {
+     "category": 71,
+     "how": "condition"
+    },
+    {
+     "category": 84,
+     "how": "condition"
+    }
+   ],
+   "trashed": false
+  }
+ ],
+ "views": [
+  {
+   "id": 12,
+   "name": "Activities",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": false,
+   "number_items": false,
+   "section_sorting": "alphabetic",
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": false,
+     "category": 18,
+     "sequence": "category hierarchy"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [],
+   "sections": [
+    {
+     "category": 56,
+     "columns": [
+      {
+       "category": 41,
+       "width": 12
+      },
+      {
+       "category": 41,
+       "width": 14
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 65,
+     "columns": [
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 69,
+     "columns": [
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 67,
+     "columns": [
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 61,
+     "columns": [
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 59,
+     "columns": [
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 71,
+     "columns": [
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 63,
+     "columns": [
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 140,
+   "name": "Calls",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": false,
+   "number_items": false,
+   "section_sorting": null,
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": false,
+     "category": 18,
+     "sequence": "category hierarchy"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [],
+   "sections": [
+    {
+     "category": 56,
+     "columns": [
+      {
+       "category": 41,
+       "width": 15
+      },
+      {
+       "category": 41,
+       "width": 14
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 142,
+   "name": "Completed This Week",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": false,
+   "number_items": false,
+   "section_sorting": null,
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": false,
+     "category": 16,
+     "sequence": "category hierarchy"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [
+    {
+     "category": 16,
+     "assigned": true,
+     "range": {
+      "start": "1990-07-22T22:05",
+      "start_given_as": {
+       "kind": "relative",
+       "unit": "weeks",
+       "count": 0,
+       "position": "beginning",
+       "this": true
+      },
+      "end": "1990-07-28T22:05",
+      "end_given_as": {
+       "kind": "relative",
+       "unit": "weeks",
+       "count": 0,
+       "position": "end",
+       "this": true
+      }
+     },
+     "inside_range": true
+    }
+   ],
+   "sections": [
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 16,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 155,
+   "name": "Expense Analysis - Type",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": true,
+   "number_items": false,
+   "section_sorting": "alphabetic",
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": false,
+     "category": 18,
+     "sequence": "category hierarchy"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [
+    {
+     "category": 73,
+     "assigned": true
+    }
+   ],
+   "sections": [
+    {
+     "category": 101,
+     "columns": [
+      {
+       "category": 118,
+       "width": 12,
+       "number_format": {
+        "decimals": 2,
+        "label": "$",
+        "thousands_separator": false,
+        "negative_parentheses": false,
+        "percent_of_total": false
+       }
+      },
+      {
+       "category": 111,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 93,
+     "columns": [
+      {
+       "category": 118,
+       "width": 12,
+       "number_format": {
+        "decimals": 2,
+        "label": "$",
+        "thousands_separator": false,
+        "negative_parentheses": false,
+        "percent_of_total": false
+       }
+      },
+      {
+       "category": 111,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 97,
+     "columns": [
+      {
+       "category": 118,
+       "width": 12,
+       "number_format": {
+        "decimals": 2,
+        "label": "$",
+        "thousands_separator": false,
+        "negative_parentheses": false,
+        "percent_of_total": false
+       }
+      },
+      {
+       "category": 111,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 99,
+     "columns": [
+      {
+       "category": 118,
+       "width": 12,
+       "number_format": {
+        "decimals": 2,
+        "label": "$",
+        "thousands_separator": false,
+        "negative_parentheses": false,
+        "percent_of_total": false
+       }
+      },
+      {
+       "category": 111,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 90,
+     "columns": [
+      {
+       "category": 118,
+       "width": 12,
+       "number_format": {
+        "decimals": 2,
+        "label": "$",
+        "thousands_separator": false,
+        "negative_parentheses": false,
+        "percent_of_total": false
+       }
+      },
+      {
+       "category": 111,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 95,
+     "columns": [
+      {
+       "category": 118,
+       "width": 12,
+       "number_format": {
+        "decimals": 2,
+        "label": "$",
+        "thousands_separator": false,
+        "negative_parentheses": false,
+        "percent_of_total": false
+       }
+      },
+      {
+       "category": 111,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 106,
+     "columns": [
+      {
+       "category": 118,
+       "width": 12,
+       "number_format": {
+        "decimals": 2,
+        "label": "$",
+        "thousands_separator": false,
+        "negative_parentheses": false,
+        "percent_of_total": false
+       }
+      },
+      {
+       "category": 111,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 109,
+     "columns": [
+      {
+       "category": 118,
+       "width": 12,
+       "number_format": {
+        "decimals": 2,
+        "label": "$",
+        "thousands_separator": false,
+        "negative_parentheses": false,
+        "percent_of_total": false
+       }
+      },
+      {
+       "category": 111,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 103,
+     "columns": [
+      {
+       "category": 118,
+       "width": 12,
+       "number_format": {
+        "decimals": 2,
+        "label": "$",
+        "thousands_separator": false,
+        "negative_parentheses": false,
+        "percent_of_total": false
+       }
+      },
+      {
+       "category": 111,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 166,
+   "name": "Expense Entry",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": true,
+   "number_items": false,
+   "section_sorting": null,
+   "sort": [],
+   "sort_new_items": "on leaving section",
+   "filter": [],
+   "sections": [
+    {
+     "category": 73,
+     "columns": [
+      {
+       "category": 118,
+       "width": 12,
+       "number_format": {
+        "decimals": 2,
+        "label": "$",
+        "thousands_separator": false,
+        "negative_parentheses": false,
+        "percent_of_total": false
+       }
+      },
+      {
+       "category": 111,
+       "width": 8
+      },
+      {
+       "category": 88,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 170,
+   "name": "Expense Reports",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": true,
+   "number_items": false,
+   "section_sorting": "alphabetic",
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": false,
+     "category": 18,
+     "sequence": "category hierarchy"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [
+    {
+     "category": 73,
+     "assigned": true
+    }
+   ],
+   "sections": [
+    {
+     "category": 116,
+     "columns": [
+      {
+       "category": 118,
+       "width": 12,
+       "number_format": {
+        "decimals": 2,
+        "label": "$",
+        "thousands_separator": false,
+        "negative_parentheses": false,
+        "percent_of_total": false
+       }
+      },
+      {
+       "category": 88,
+       "width": 10
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 113,
+     "columns": [
+      {
+       "category": 118,
+       "width": 12,
+       "number_format": {
+        "decimals": 2,
+        "label": "$",
+        "thousands_separator": false,
+        "negative_parentheses": false,
+        "percent_of_total": false
+       }
+      },
+      {
+       "category": 88,
+       "width": 10
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 175,
+   "name": "Next Week",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": true,
+   "section_separators": true,
+   "number_items": false,
+   "section_sorting": null,
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": true,
+     "category": 18,
+     "sequence": "date"
+    }
+   ],
+   "sort_new_items": "on leaving section",
+   "filter": [],
+   "sections": [
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-29T22:16",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "this": true
+        },
+        "end": "1990-07-29T22:16",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-30T22:16",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Monday",
+         "this": true
+        },
+        "end": "1990-07-30T22:16",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Monday",
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-31T22:16",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Tuesday",
+         "this": true
+        },
+        "end": "1990-07-31T22:16",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Tuesday",
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-08-01T22:16",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Wednesday",
+         "this": true
+        },
+        "end": "1990-08-01T22:16",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Wednesday",
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-08-02T22:16",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Thursday",
+         "this": true
+        },
+        "end": "1990-08-02T22:16",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Thursday",
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-08-03T22:16",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Friday",
+         "this": true
+        },
+        "end": "1990-08-03T22:16",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Friday",
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-08-04T22:16",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Saturday",
+         "this": true
+        },
+        "end": "1990-08-04T22:16",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Saturday",
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    }
+   ],
+   "datebook": {
+    "period": "week",
+    "from": "Sunday",
+    "to": "Saturday"
+   }
+  },
+  {
+   "id": 191,
+   "name": "Overdue",
+   "hide_empty_sections": false,
+   "hide_done": true,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": false,
+   "number_items": false,
+   "section_sorting": null,
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": false,
+     "category": 18,
+     "sequence": "category hierarchy"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [
+    {
+     "category": 18,
+     "assigned": true,
+     "range": {
+      "end": "1990-07-25T22:16",
+      "end_given_as": {
+       "kind": "relative",
+       "unit": "days",
+       "count": -1,
+       "this": true
+      }
+     },
+     "inside_range": true
+    }
+   ],
+   "sections": [
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 41,
+       "width": 8
+      },
+      {
+       "category": 48,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 194,
+   "name": "People",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": false,
+   "number_items": false,
+   "section_sorting": "alphabetic",
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": false,
+     "category": 18,
+     "sequence": "category hierarchy"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [
+    {
+     "category": 86,
+     "assigned": false
+    }
+   ],
+   "sections": [
+    {
+     "category": 757,
+     "columns": [
+      {
+       "category": 75,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 43,
+     "columns": [
+      {
+       "category": 75,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 46,
+     "columns": [
+      {
+       "category": 75,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 198,
+   "name": "Priorities",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": false,
+   "number_items": false,
+   "section_sorting": "category order",
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": false,
+     "category": 18,
+     "sequence": "category hierarchy"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [],
+   "sections": [
+    {
+     "category": 77,
+     "columns": [
+      {
+       "category": 18,
+       "width": 16,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 80,
+     "columns": [
+      {
+       "category": 18,
+       "width": 16,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 82,
+     "columns": [
+      {
+       "category": 18,
+       "width": 16,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 84,
+     "columns": [
+      {
+       "category": 75,
+       "width": 8
+      },
+      {
+       "category": 18,
+       "width": 16,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 199,
+   "name": "Projects",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": false,
+   "number_items": false,
+   "section_sorting": "alphabetic",
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": false,
+     "category": 18,
+     "sequence": "category hierarchy"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [],
+   "sections": [
+    {
+     "category": 50,
+     "columns": [
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      },
+      {
+       "category": 16,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    },
+    {
+     "category": 123,
+     "columns": [
+      {
+       "category": 18,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      },
+      {
+       "category": 16,
+       "width": 9,
+       "date_format": {
+        "display": "date",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 206,
+   "name": "Tasks",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": false,
+   "section_separators": false,
+   "number_items": false,
+   "section_sorting": null,
+   "sort": [],
+   "sort_new_items": "on leaving section",
+   "filter": [],
+   "sections": [
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 54,
+       "width": 7
+      },
+      {
+       "category": 41,
+       "width": 6
+      },
+      {
+       "category": 48,
+       "width": 7
+      },
+      {
+       "category": 18,
+       "width": 16,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 204,
+   "name": "This Month",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": true,
+   "section_separators": true,
+   "number_items": false,
+   "section_sorting": null,
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": true,
+     "category": 18,
+     "sequence": "date"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [],
+   "sections": [
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 16,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-01T00:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "months",
+         "count": 0,
+         "position": "beginning"
+        },
+        "end": "1990-07-07T00:00",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "months",
+         "count": 0,
+         "position": "beginning"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 16,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-08T00:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "months",
+         "count": 0,
+         "position": "beginning"
+        },
+        "end": "1990-07-14T00:00",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "months",
+         "count": 0,
+         "position": "beginning"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 16,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-15T00:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "months",
+         "count": 0,
+         "position": "beginning"
+        },
+        "end": "1990-07-21T00:00",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "months",
+         "count": 0,
+         "position": "beginning"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 16,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-22T00:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "months",
+         "count": 0,
+         "position": "beginning"
+        },
+        "end": "1990-07-28T00:00",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "months",
+         "count": 0,
+         "position": "beginning"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 16,
+       "date_format": {
+        "display": "date time",
+        "format": "global",
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-29T00:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "months",
+         "count": 0,
+         "position": "beginning"
+        },
+        "end": "1990-08-04T00:00",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "months",
+         "count": 0,
+         "position": "beginning"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    }
+   ],
+   "datebook": {
+    "period": "month",
+    "from": "Sunday",
+    "to": "Saturday"
+   }
+  },
+  {
+   "id": 209,
+   "name": "This Week",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": true,
+   "section_separators": true,
+   "number_items": false,
+   "section_sorting": null,
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": true,
+     "category": 18,
+     "sequence": "category hierarchy"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [],
+   "sections": [
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-22T22:28",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "this": true
+        },
+        "end": "1990-07-22T22:28",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-23T22:28",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Monday",
+         "this": true
+        },
+        "end": "1990-07-23T22:28",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Monday",
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-24T22:28",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Tuesday",
+         "this": true
+        },
+        "end": "1990-07-24T22:28",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Tuesday",
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-25T22:28",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Wednesday",
+         "this": true
+        },
+        "end": "1990-07-25T22:28",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Wednesday",
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T22:28",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Thursday",
+         "this": true
+        },
+        "end": "1990-07-26T22:28",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Thursday",
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T22:28",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Friday",
+         "this": true
+        },
+        "end": "1990-07-27T22:28",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Friday",
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-28T22:28",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Saturday",
+         "this": true
+        },
+        "end": "1990-07-28T22:28",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "weekday",
+         "count": 0,
+         "weekday": "Saturday",
+         "this": true
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    }
+   ],
+   "datebook": {
+    "period": "week",
+    "from": "Sunday",
+    "to": "Saturday"
+   }
+  },
+  {
+   "id": 226,
+   "name": "Today",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": true,
+   "section_separators": true,
+   "number_items": false,
+   "section_sorting": null,
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": true,
+     "category": 18,
+     "sequence": "date"
+    }
+   ],
+   "sort_new_items": "on leaving section",
+   "filter": [],
+   "sections": [
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T08:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "08:00"
+        },
+        "end": "1990-07-26T18:00",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "18:00"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T08:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "08:00"
+        },
+        "end": "1990-07-26T08:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "08:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T09:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "09:00"
+        },
+        "end": "1990-07-26T09:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "09:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T10:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "10:00"
+        },
+        "end": "1990-07-26T10:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "10:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T11:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "11:00"
+        },
+        "end": "1990-07-26T11:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "11:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T12:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "12:00"
+        },
+        "end": "1990-07-26T12:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "12:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T13:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "13:00"
+        },
+        "end": "1990-07-26T13:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "13:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T14:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "14:00"
+        },
+        "end": "1990-07-26T14:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "14:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T15:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "15:00"
+        },
+        "end": "1990-07-26T15:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "15:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T16:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "16:00"
+        },
+        "end": "1990-07-26T16:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "16:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T17:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "17:00"
+        },
+        "end": "1990-07-26T17:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "17:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-26T18:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "18:00"
+        },
+        "end": "1990-07-26T18:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "18:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    }
+   ],
+   "datebook": {
+    "period": "day",
+    "from": "8:00",
+    "to": "18:00"
+   }
+  },
+  {
+   "id": 259,
+   "name": "Tomorrow",
+   "hide_empty_sections": false,
+   "hide_done": false,
+   "hide_dependent": false,
+   "hide_inherited": false,
+   "hide_column_heads": true,
+   "section_separators": true,
+   "number_items": false,
+   "section_sorting": null,
+   "sort": [
+    {
+     "on": "category",
+     "descending": false,
+     "n/a first": true,
+     "category": 18,
+     "sequence": "date"
+    }
+   ],
+   "sort_new_items": "when entered",
+   "filter": [],
+   "sections": [
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T08:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "08:00"
+        },
+        "end": "1990-07-27T18:00",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "18:00"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T08:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "08:00"
+        },
+        "end": "1990-07-27T08:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "08:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T09:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "09:00"
+        },
+        "end": "1990-07-27T09:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "09:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T10:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "10:00"
+        },
+        "end": "1990-07-27T10:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "10:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T11:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "11:00"
+        },
+        "end": "1990-07-27T11:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "11:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T12:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "12:00"
+        },
+        "end": "1990-07-27T12:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "12:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T13:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "13:00"
+        },
+        "end": "1990-07-27T13:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "13:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T14:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "14:00"
+        },
+        "end": "1990-07-27T14:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "14:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T15:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "15:00"
+        },
+        "end": "1990-07-27T15:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "15:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T16:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "16:00"
+        },
+        "end": "1990-07-27T16:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "16:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T17:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "17:00"
+        },
+        "end": "1990-07-27T17:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "17:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    },
+    {
+     "category": 52,
+     "columns": [
+      {
+       "category": 18,
+       "width": 7,
+       "date_format": {
+        "display": "time",
+        "format": 1,
+        "separator": "/",
+        "day_of_week": false,
+        "clock_12h": true,
+        "am_pm": true
+       }
+      }
+     ],
+     "filter": [
+      {
+       "category": 18,
+       "assigned": true,
+       "range": {
+        "start": "1990-07-27T18:00",
+        "start_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "18:00"
+        },
+        "end": "1990-07-27T18:59",
+        "end_given_as": {
+         "kind": "relative",
+         "unit": "days",
+         "count": 0,
+         "position": "beginning",
+         "time": "18:59"
+        }
+       },
+       "inside_range": true
+      }
+     ]
+    }
+   ],
+   "datebook": {
+    "period": "day",
+    "from": "8:00",
+    "to": "18:00"
+   }
+  }
+ ],
+ "macros": [
+  "{Create/Update contact list}",
+  "{Customize date settings}",
+  "{Enter new contact in contact list}",
+  "{Hide/Display done items}",
+  "{Print current view}",
+  "{Print error handler}",
+  "{Sort by company}",
+  "{Sort by item text, alphabetically}",
+  "{Sort by when date}",
+  "{Sort items in view}"
+ ]
+}
