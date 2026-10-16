@@ -23,7 +23,7 @@ mix test                  # tests only
 mix test test/agendum/core # one directory
 mix run -e 'Agendum.CLI.main(["--demo"])'   # run the TUI with sample data (needs a real terminal)
 mix escript.build && ./agendum my.agendum  # build (always for prod: no dev tools inside) and run the binary
-mix docs --open           # API docs, design documents, guide and manual (doc/index.html), in the browser
+mix docs --open           # API docs, design documents, guide and manual (_build/docs/index.html), in the browser
 ```
 
 A change is done when `mix check` passes. Do not leave warnings. Credo

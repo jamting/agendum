@@ -44,12 +44,16 @@ defmodule Agendum.MixProject do
     ]
   end
 
-  # `mix docs` writes doc/index.html: the core facade first, for whoever
+  # `mix docs` writes _build/docs/index.html (not ex_doc's default doc/,
+  # too easily confused with docs/): the core facade first, for whoever
   # builds on it (a web front end, ADR 0020), then the rest, and the design
   # documents and decisions as pages.
+  @docs_output "_build/docs"
+
   defp docs do
     [
       main: "readme",
+      output: @docs_output,
       formatters: ["html", "markdown"],
       extras:
         ["README.md", "CHANGELOG.md", "CONTRIBUTING.md", "CLAUDE.md"] ++
@@ -86,7 +90,7 @@ defmodule Agendum.MixProject do
 
   defp copy_user_docs(_args) do
     for file <- ~w(guide/index.html guide/guide.css manual/index.html manual/manual.css) do
-      target = Path.join("doc/docs", file)
+      target = Path.join([@docs_output, "docs", file])
       File.mkdir_p!(Path.dirname(target))
       File.cp!(Path.join("docs", file), target)
     end
