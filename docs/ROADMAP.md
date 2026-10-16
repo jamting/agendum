@@ -125,6 +125,7 @@ Then working together:
 ### Beyond Agenda
 
 - [ ] Three levels of items (vision, the owner's, 2026-10-16; plan with open questions: [`plans/ITEM_LEVELS.md`](plans/ITEM_LEVELS.md)): zettels (the person's items, with Zettelkasten IDs), ingested items (calendar events, RSS entries …: promoted to zettels or discarded by rules) and context items (made by the language model to understand the information; inspected, not edited). The JSON export asks which levels to include, as Agenda's STF export chooses what goes in (ADR 0034). Volumes can be large
+  - [ ] Settle the open questions with the owner before building (`plans/ITEM_LEVELS.md`, "Open questions"): how a level is stored (a field, or derived: a zettel is an item with an ID); what views show by default and how a view asks for levels 2 and 3; whether text matching and conditions run on ingested items or only once promoted; where the rules for ingested items live (Agenda's conditions and actions, or rules of their own) and how long discarded items are kept; how context items refer to what they are about and what happens when that changes or goes; whether ingestion and context items are undo steps
   - [ ] RSS and other feeds as sources of ingested items, fetched by the shell like calendars (R45, whose events become ingested items)
   - [ ] Rules for ingested items: keep, promote to a zettel, discard
   - [ ] The JSON export (R44) with a choice of levels; an import of a partial export says so
