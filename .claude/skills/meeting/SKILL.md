@@ -30,7 +30,7 @@ A second meeting on the same day gets `YYYY-MM-DD-2/`.
 
 ## 1. Prepare
 
-1. Read `docs/meetings/dagordning.md`. If it has no items under "Items to discuss", say so and stop (offer to hold the meeting anyway if the owner has something to raise now; add it to the agenda first).
+1. Read `docs/meetings/dagordning.md`. Everything below the `---` line at its end is off topic: the owner's thoughts being prepared for a later meeting. Do not word, discuss, decide or minute them, and do not prepare them in step 3; they are not part of the agenda. If it has no items under "Items to discuss", say so and stop (offer to hold the meeting anyway if the owner has something to raise now; add it to the agenda first).
 2. Read the newest `docs/meetings/*/protokoll.md`, if there is one: its decisions are followed up under § 4 (done, partly, not yet, dropped, with the commit or the roadmap line).
 3. For each item, read what it touches before the meeting: the files and plans it names, the roadmap lines, `docs/VISION.md`, the ADRs, the relevant code, the newest review in `docs/reviews/`. A view given at the meeting needs evidence (`path:line`, a document) as in a review. Where an item asks how Agenda did something, check it (the reference texts, or Agenda run headless, as CLAUDE.md describes).
 4. **Word the agenda.** Give each item a short heading that says what is to be decided or discussed, number it from § 5, and write its background in two to five plain sentences, keeping all of the owner's meaning: nothing dropped, nothing added that they did not raise. Their own questions stay as questions. Several notes on one subject may become one item; one note on two subjects becomes two. Correct spelling and grammar. English, as `docs/` is, unless the owner asks for Swedish.
@@ -113,7 +113,7 @@ The owner's words are reported as faithfully as the panel's ("The chair said tha
 
 ## 5. Start the next agenda
 
-Replace `docs/meetings/dagordning.md` with `docs/meetings/TEMPLATE.md`, and put every **tabled** item back under "Items to discuss", with a line saying it was tabled at this meeting (and why, in a few words), and the next meeting's date as "Wished date" if one was set.
+Replace `docs/meetings/dagordning.md` with `docs/meetings/TEMPLATE.md`, and put every **tabled** item back under "Items to discuss", with a line saying it was tabled at this meeting (and why, in a few words), and the next meeting's date as "Wished date" if one was set. Copy everything below the `---` line over unchanged: the owner moves an item up when they want it discussed.
 
 ## 6. Commit and report
 
