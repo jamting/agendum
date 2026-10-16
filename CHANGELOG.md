@@ -4,6 +4,12 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.12.1 — 2026-10-17
+
+Keys for the Zettel commands.
+
+- CTRL-T gives the highlighted item (or the marked ones) a Zettel id; CTRL-G follows its links; CTRL-R shows the items linking to it; in a note, CTRL-L types a link to each marked item.
+
 ## 0.12.0 — 2026-10-17
 
 A blog from your file (the owner's own use).

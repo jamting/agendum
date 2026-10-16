@@ -87,4 +87,12 @@ defmodule Agendum.TUI.ZettelLinksTest do
     state = state |> press([:down, {:f, 5}]) |> run_by_name("insert link")
     assert screen(state) =~ "Mark the items to link to with F7 first"
   end
+
+  test "CTRL-G follows, CTRL-R shows what links here, CTRL-L links in a note", %{state: state} do
+    assert screen(press(state, [:down, :down, :down, {:ctrl, "g"}])) =~ "1 linked item"
+    assert screen(press(state, [:down, :down, {:ctrl, "r"}])) =~ "1 item linking here"
+
+    state = state |> press([:down, {:f, 7}, :down, :down, {:f, 5}, {:ctrl, "l"}])
+    assert hd(State.mode(state).edit.lines) == "[[bonalaku]]"
+  end
 end

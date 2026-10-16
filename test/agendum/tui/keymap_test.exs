@@ -39,14 +39,8 @@ defmodule Agendum.TUI.KeymapTest do
     end
   end
 
-  # without a key until the owner chooses one (2026-10-16): reached from
-  # the menu and from F1 c
-  @keyless [
-    {:view, :attach_zettel},
-    {:view, :follow_link},
-    {:view, :linked_from},
-    {:note, :insert_link}
-  ]
+  # commands with no key of their own: reached from the menu and F1 c
+  @keyless []
 
   test "every command has a key" do
     unbound =

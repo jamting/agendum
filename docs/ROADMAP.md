@@ -4,7 +4,7 @@ Small, testable increments. Open work comes first, by area; done work is below, 
 
 ## Open
 
-**Next:** the owner tries the Zettel ids (R73, v0.11.0) and the micro-blog (R74, v0.12.0), built overnight 2026-10-17, and chooses keys for their commands; then parity with Agenda, the RSS reader, and CTRL-X to run a command by name (meeting 2026-10-16-3, Beyond Agenda). The guard against a file changed on disk is done (R71). Towards many users is done up to the web version; capture from outside is paused (a URL scheme rather than `agendum add`). The view cache waits for slow answers in real use, CI for GitHub.
+**Next:** the owner tries the Zettel ids (R73, v0.11.0, keys in v0.12.1) and the micro-blog (R74, v0.12.0), built overnight 2026-10-17; the plain RSS reader (plan `plans/RSS_READER.md`) is being built; then parity with Agenda, the RSS reader, and CTRL-X to run a command by name (meeting 2026-10-16-3, Beyond Agenda). The guard against a file changed on disk is done (R71). Towards many users is done up to the web version; capture from outside is paused (a URL scheme rather than `agendum add`). The view cache waits for slow answers in real use, CI for GitHub.
 
 ### Sharpen the saw
 

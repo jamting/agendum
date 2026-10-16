@@ -45,4 +45,9 @@ defmodule Agendum.TUI.ZettelsTest do
     assert current(state).zettel == nil
     assert state.db.next_zettel == 1
   end
+
+  test "CTRL-T does what Item ▸ Zettel ▸ Attach does", %{state: state} do
+    state = press(state, [:down, {:ctrl, "t"}])
+    assert screen(state) =~ "bonalaku given"
+  end
 end

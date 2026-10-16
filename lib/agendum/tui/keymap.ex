@@ -15,6 +15,11 @@ defmodule Agendum.TUI.Keymap do
 
   # one line per key, like Agenda's key charts
   @view %{
+    # Zettel ids (R73, R73b): ours, on CTRL keys Agenda left free (the
+    # owner's choice, 2026-10-17)
+    {:ctrl, "t"} => :attach_zettel,
+    {:ctrl, "g"} => :follow_link,
+    {:ctrl, "r"} => :linked_from,
     :up => :up,
     :down => :down,
     :enter => :down,
@@ -143,6 +148,7 @@ defmodule Agendum.TUI.Keymap do
 
   # a note (F5): any key not here edits the text (`Typing.TextEdit`)
   @note %{
+    {:ctrl, "l"} => :insert_link,
     :esc => :close,
     {:f, 5} => :close,
     {:f, 1} => :help,
