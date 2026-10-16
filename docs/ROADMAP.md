@@ -17,7 +17,6 @@ Tools and checks that make every later change faster and safer. Do these first: 
 
 A web application with accounts and shared files, on the same core (plan: [MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). Its first step, the command layer, is done (R66, ADR 0036, below under Done): every change to a file is a command the core runs. Typed UI modes come next.
 
-- [ ] Reasons in a command's `changes` ("filed by condition X"), which an agent will want: see "Reasons with assignments" below
 - [ ] Typed UI modes (moved from Sharpen the saw, owner's decision 2026-10-16; done after the command layer rather than with it, owner's decision 2026-10-16): a struct for each mode instead of the `%{type: …}` maps in `State.modes` (about fifty kinds), so the compiler and Dialyzer catch a misspelt field that today only the fuzz test finds. Done when no mode is a bare map; one place at a time, each step with `mix check`, and a long fuzz run at the end
 - [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps (R65, ADR 0033)
   - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)
@@ -34,7 +33,7 @@ A web application with accounts and shared files, on the same core (plan: [MULTI
   - [x] Longer texts for the menu's entries (by their labels; an entry that runs a view's or a global command has its text) and the boxes' own commands (by box; a settings box's Change and Done shared)
   - [ ] Longer texts for the rest, where they would help: the moves (Browse, widths …) and typing
 - [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
-- [ ] Reasons with assignments: automatic assignment says why in its result (the matched word, condition or action, with its rule), for the Questions box (R16), F1 on an assignment and an agent's report ("filed under Kanga because …") (second meeting)
+- [ ] Reasons with assignments, shown: the core says why (R67, `assignment_reasons/4`, done 2026-10-16); still to settle with the owner, a habit change: where the TUI shows it. Was: automatic assignment says why in its result (the matched word, condition or action, with its rule), for the Questions box (R16), F1 on an assignment and an agent's report ("filed under Kanga because …") (second meeting)
 - [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
 
 Then a web version for one person:

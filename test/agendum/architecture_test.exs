@@ -146,7 +146,7 @@ defmodule Agendum.ArchitectureTest do
   # one). A new Agendum.Core function must be a command's or be listed
   # here, so a new kind of change cannot skip the command layer.
   @reads ~w(
-    alarm_list auto_dating? browse_keep browse_move browse_start browse_to browsed_view calendars_due completions confirm_mode date_conversion
+    alarm_list assignment_reasons auto_dating? browse_keep browse_move browse_start browse_to browsed_view calendars_due completions confirm_mode date_conversion
     date_filters? default_column_width demote_conflicts dependents entry_categories
     entry_values exclusive_conflicts export_json import_json item_assignments
     item_column_fit marked_items match_settings move_conflicts new_file

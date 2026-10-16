@@ -99,6 +99,11 @@ defmodule Agendum.Core do
   defdelegate toggle_assignment(db, item_id, cat_id, clock \\ nil), to: Assignments
   defdelegate assign_by_name(db, item_id, head_id, text, today), to: Assignments
   defdelegate item_assignments(db, item_id), to: Assignments
+  # why an item is in a category (R67)
+  defdelegate assignment_reasons(db, item_id, cat_id, clock \\ nil),
+    to: Agendum.Core.Reasons,
+    as: :why
+
   defdelegate completions(db, head_id, text), to: Assignments
   defdelegate assign_new_by_name(db, item_id, head_id, text), to: Assignments
 

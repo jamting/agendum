@@ -31,6 +31,7 @@
 | `Agendum.Core`                                                  | Facade with user-level operations (add item, assign by name, add section…): a table of contents of `defdelegate`s. The UI uses this.                    |
 | `Agendum.Core.Facade.*`                                         | Its areas: `Files`, `Items`, `Assignments`, `Dates`, `Alarms`, `Numbers`, `Dependencies`, `Rules`, `Categories`, `Views`, `Macros`, `Calendars`.        |
 | `Agendum.Core.Browse`                                           | Browsing dates (R47, R48): where it starts, a move, going to a date, the view as browsed, the command that keeps it. |
+| `Agendum.Core.Reasons`                                          | Why an item is in a category (R67), worked out with `Assign`'s rules.                                               |
 | `Agendum.Core.Command`                                          | The command layer (R66, ADR 0036): a user action as data (`{:mark_done, ids}`), run by `Agendum.Core.run/3` on ids; each command's name and summary. |
 | `Agendum.Core.Command.Changes`                                  | What a command changed, found by comparing the database before and after.                                                                               |
 | `Agendum.Core.Facade.Changes`                                   | What every change to an item goes through: user assignments, dates from rules, settling (conditions, actions).                                          |
