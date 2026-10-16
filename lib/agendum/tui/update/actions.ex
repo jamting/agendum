@@ -61,6 +61,9 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :undo, _), do: History.undo(state)
   defp do_perform(state, :redo, _), do: History.redo(state)
 
+  # Saving is not done here: a file name known, the action only asks for
+  # the effect `{:save, path}`, which `App` carries out and reports back
+  # through `Update.saved/3`. Without a name, it asks for one first.
   defp do_perform(state, :save, _) do
     if state.path,
       do: State.effect(state, {:save, state.path}),
@@ -71,6 +74,8 @@ defmodule Agendum.TUI.Update.Actions do
     do: Prompts.prompt(state, "Save file as:", :save_as, state.path || "")
 
   # Commands that replace the open file ask first when it has unsaved changes.
+  # Clause order matters: this one, for a dirty file, must come before the
+  # one below, which would match any state.
   defp do_perform(%State{dirty: true} = state, command, _)
        when command in [:retrieve, :new_file, :import_json],
        do: Prompts.ask(state, "Save changes first?", {:leave_for, command})

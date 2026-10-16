@@ -25,6 +25,11 @@ defmodule Agendum.TUI.Render do
   def box?(%{type: type}),
     do: is_map_key(Agendum.TUI.Boxes.Box.registry(), type)
 
+  # A screen is a list of lines; a line is a list of `{style, text}` pieces
+  # (`Draw.line()`), such as `[{:normal, " Call Anna"}, {:dim, "Fri"}]`.
+  # Styles are names; colours come only when `Terminal.Screen` turns the
+  # lines into terminal output with the theme. So a test can compare text,
+  # and `Render` knows nothing of colours or the terminal.
   @spec render(State.t()) :: [Draw.line()]
   def render(%State{modes: [%{type: :splash} | _]} = state), do: Agendum.TUI.Splash.render(state)
 
@@ -45,6 +50,9 @@ defmodule Agendum.TUI.Render do
 
     # each box knows where the one beneath it starts (`Enum.reduce/3` carries
     # the body and that column along)
+    # `Enum.reduce/3` is the loop: the accumulator is a tuple of two values,
+    # taken apart in the `fn`'s second argument and built again by
+    # `Boxes.overlay/6`, which returns `{body, left}`.
     {body, _left} =
       overlays
       |> Enum.with_index()
@@ -115,6 +123,10 @@ defmodule Agendum.TUI.Render do
   @spec base([map]) :: map | nil
   def base(modes), do: Enum.find(modes, &(&1.type in @full_screen))
 
+  # Domain: the mode stack drawn from the bottom up. Full screens (the
+  # category manager, help, a note) replace the view; boxes above the
+  # nearest full screen are drawn over it, each over the one before.
+  # `&(&1.type …)` is a short anonymous function; `&1` its argument.
   defp split_modes(modes) do
     {above, rest} = Enum.split_while(modes, &(&1.type not in @full_screen))
     base = List.first(rest)

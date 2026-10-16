@@ -8,6 +8,9 @@ defmodule Agendum.TUI.Terminal do
 
   @spec start() :: :ok | {:error, term}
   def start do
+    # `:shell` is an Erlang module: Erlang modules are atoms, called with
+    # the same dot syntax as Elixir ones. Raw mode hands every byte typed
+    # straight to the program, with no line editing or echo.
     case :shell.start_interactive({:noshell, :raw}) do
       :ok ->
         # let CTRL-S / CTRL-Q / CTRL-C / CTRL-O / CTRL-V reach us as keys
@@ -37,6 +40,8 @@ defmodule Agendum.TUI.Terminal do
     with {:unix, _} <- :os.type(),
          device when is_binary(device) <- tty_device(),
          true <- Regex.match?(~r{\A/dev/[\w/.-]+\z}, device) do
+      # `~c"…"` is a charlist (a list of character codes), the string type
+      # Erlang functions such as `:os.cmd/1` expect; `"…"` is a binary.
       # credo:disable-for-next-line Credo.Check.Warning.UnsafeExec
       :os.cmd(~c"stty #{setting} < #{device} 2>/dev/null")
     end
@@ -72,9 +77,16 @@ defmodule Agendum.TUI.Terminal do
   """
   @spec start_reader(pid) :: pid
   def start_reader(target) do
+    # A process of its own, because `IO.getn/2` blocks until a byte comes:
+    # the main loop must stay free to wake for the clock and resizes. Linked
+    # (`spawn_link`), so if either process dies the other goes too, and
+    # no reader is left behind reading a closed terminal.
     spawn_link(fn -> read_loop(target) end)
   end
 
+  # A process's loop is a function calling itself last (a tail call, which
+  # needs no stack), so it can run forever. `send/2` puts a message in
+  # `target`'s mailbox and returns at once; `App.wait/5` takes it out.
   defp read_loop(target) do
     case IO.getn("", 1) do
       data when is_binary(data) ->

@@ -59,6 +59,8 @@ defmodule Agendum.TUI.Update.ViewKeys do
   # --- the view ----------------------------------------------------------------
 
   @doc "A key in the view: moving, a command on the highlighted row, or inline editing."
+  # While a line is being edited, every key goes to the editor: this
+  # clause comes first and matches only then (the guard).
   def view_key(%State{edit: edit} = state, key) when edit != nil,
     do: Editing.view_edit_key(state, key)
 
@@ -89,6 +91,11 @@ defmodule Agendum.TUI.Update.ViewKeys do
   def view_key(state, {:alt, d} = key) when d in ~w(0 1 2 3 4 5 6 7 8 9),
     do: add_digit(state, String.to_integer(d), Keymap.lookup(:view, key))
 
+  # `case` on a tuple of two values matches both at once. Domain: a key is
+  # first looked up in the view's keymap (ADR 0033): bound, it runs its
+  # command (an atom such as `:down` or `:save`); unbound, a printable
+  # character starts a new item or column entry, and anything else does
+  # nothing.
   def view_key(state, key) do
     case {Keymap.lookup(:view, key), key} do
       {nil, {:char, c}} -> start_typing(state, Layout.current_row(state), c)
@@ -115,6 +122,9 @@ defmodule Agendum.TUI.Update.ViewKeys do
   nothing or reports an error (`:repeat`); the others run once. Where the
   highlight is decides what some do (F3, F5, DEL …), as in Agenda.
   """
+  # A head without a body: when a function with a default argument has
+  # several clauses, the default is declared once, here, and the clauses
+  # below leave it out.
   @spec run(State.t(), atom, pos_integer) :: State.t()
   def run(state, id, n \\ 1)
 

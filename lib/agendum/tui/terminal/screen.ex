@@ -14,8 +14,15 @@ defmodule Agendum.TUI.Terminal.Screen do
           Theme.depth()
         ) :: iodata
   def frame(previous, next, theme \\ :classic, depth \\ :ansi16) do
+    # `||` gives its right side when the left is nil or false: no previous
+    # screen (the first frame, or after a resize) means every line is new.
     previous = previous || []
 
+    # The result is iodata: nested lists of strings that `IO.write/1` sends
+    # as they are, without first copying them into one string. `"\e[row;1H"`
+    # moves the terminal's cursor to a line, so only changed lines are sent.
+    # (`Enum.at/2` walks the list from the start each time: fine for 25 to
+    # 60 lines.)
     next
     |> Enum.with_index()
     |> Enum.reject(fn {line, i} -> Enum.at(previous, i) == line end)

@@ -22,6 +22,11 @@ defmodule Agendum.TUI.State do
 
   @type cursor_key :: {:section, non_neg_integer} | {:item, non_neg_integer, Database.id()} | nil
 
+  # `@type t` names the struct's type for `@spec`s and Dialyzer;
+  # `__MODULE__` is this module's own name. `defstruct` below gives each
+  # field its default. A struct is a map with a fixed set of keys: a
+  # misspelt field in `%State{…}` or `state.fild` is an error, which a
+  # plain map would not catch. (`modes` is still a list of plain maps.)
   @type t :: %__MODULE__{
           db: Database.t(),
           path: String.t() | nil,
@@ -231,6 +236,10 @@ defmodule Agendum.TUI.State do
     end
   end
 
+  # Domain: `modes` is a stack kept as a list, the top first. Opening a box
+  # or a menu pushes one (`[mode | modes]`, cheap on a linked list); ESC
+  # pops it. What is on top decides who gets the next key
+  # (`Update.dispatch/3`) and what is drawn over the view (`Render`).
   @spec mode(t) :: map | nil
   def mode(%__MODULE__{modes: [top | _]}), do: top
   def mode(_), do: nil
@@ -275,9 +284,16 @@ defmodule Agendum.TUI.State do
   the first replacement in a note after typing in it.
   """
   @spec end_step(t) :: t
+  # `put_in/2` with a path written as field access updates a value two
+  # levels down and returns the whole new state; the plain way would be
+  # `%{state | history: %{state.history | step: state.db}}`.
   def end_step(state), do: put_in(state.history.step, state.db)
 
   @doc "Queues a side effect for the imperative shell to perform."
+  # Domain: an effect is only data, such as `{:save, path}`. Adding it does
+  # nothing yet; `Update.handle/2` returns the list and `App` performs it.
+  # (`++` copies the left list; effects come one or two per key, so the
+  # order is worth more than the cost.)
   @spec effect(t, term) :: t
   def effect(state, effect), do: %{state | effects: state.effects ++ [effect]}
 

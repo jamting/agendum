@@ -77,8 +77,15 @@ defmodule Agendum.TUI.Terminal.Keys do
   @spec decode(String.t()) :: {[term], String.t()}
   def decode(input), do: decode(input, [])
 
+  # `decode/2` is a different function from `decode/1` (functions are named
+  # by name and arity). It walks the input with an accumulator: each key
+  # found is put in front of `acc` (cheap on a linked list; adding at the
+  # end copies the list), and the list is reversed once at the end.
   defp decode("", acc), do: {Enum.reverse(acc), ""}
 
+  # `"\e" <> _` matches any string that starts with ESC; `= input` binds
+  # the whole string as well. Clauses are tried top to bottom, so the
+  # special bytes below are checked before the catch-all at the end.
   defp decode("\e" <> _ = input, acc) do
     case escape(input) do
       {:ok, key, rest} -> decode(rest, [key | acc])
@@ -86,11 +93,19 @@ defmodule Agendum.TUI.Terminal.Keys do
     end
   end
 
+  # `<<c, rest::binary>>` takes a string apart byte by byte: `c` is the
+  # first byte as an integer, `rest` the bytes after it. `?\r` is the
+  # integer code of a character. Guards (`when`) allow only simple tests
+  # such as `in` with a literal list or range.
   defp decode(<<c, rest::binary>>, acc) when c in [?\r, ?\n], do: decode(rest, [:enter | acc])
   defp decode(<<?\t, rest::binary>>, acc), do: decode(rest, [:tab | acc])
   defp decode(<<c, rest::binary>>, acc) when c in [127, 8], do: decode(rest, [:backspace | acc])
   defp decode(<<0, rest::binary>>, acc), do: decode(rest, acc)
 
+  # CTRL-A … CTRL-Z arrive as bytes 1 to 26; `<<c + ?a - 1>>` builds the
+  # one-byte string "a" … "z" from that. (TAB, ENTER and BACKSPACE are
+  # among those bytes, which is why the clauses above come first, and why
+  # CTRL-I, CTRL-M and CTRL-H can never be keys of their own.)
   defp decode(<<c, rest::binary>>, acc) when c in 1..26,
     do: decode(rest, [{:ctrl, <<c + ?a - 1>>} | acc])
 
@@ -147,6 +162,11 @@ defmodule Agendum.TUI.Terminal.Keys do
 
   # --- escape sequences -------------------------------------------------------
 
+  # Domain: arrows, function keys and ALT-keys all arrive as ESC followed
+  # by more bytes, and a lone ESC press is the same first byte. So an ESC
+  # with nothing after it yet is `:incomplete`: `App` waits a few
+  # milliseconds for the rest and only then calls `flush/1`, which makes it
+  # the ESC key.
   defp escape("\e"), do: :incomplete
   defp escape("\e[" <> rest), do: csi(rest)
   defp escape("\eO"), do: :incomplete

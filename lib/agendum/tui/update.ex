@@ -35,6 +35,9 @@ defmodule Agendum.TUI.Update do
   alias Agendum.TUI.{Boxes.BoxCancel, Boxes.BoxChoices}
   alias Agendum.TUI.Update.{Actions, Marked, Notes, Prompts, ViewKeys}
 
+  # `%State{} = state` in the head both checks that the argument is a
+  # `State` struct (anything else fails to match and crashes here, at the
+  # border, instead of deep inside) and names it `state`.
   @spec handle(State.t(), term) :: {State.t(), [term]}
   def handle(%State{} = state, key) do
     # the end of a macro run is not a keypress: what the run said stays
@@ -42,6 +45,12 @@ defmodule Agendum.TUI.Update do
     state = %{state | message: message, effects: []}
     key = normalize(state, key)
 
+    # `with` used as a chain of "not mine, pass it on": each step returns
+    # `:pass` when the key is not for it, and `with` goes to the next. The
+    # first step that returns anything else (a new state) stops the chain,
+    # and with no `else`, that value is the result. The order is the
+    # priority: the splash screen, a macro key, the keys that work
+    # everywhere, the keys every box shares, then the screen on top.
     next =
       with :pass <- splash_key(state, key),
            :pass <- Agendum.TUI.Macros.key(state, key),
@@ -60,6 +69,9 @@ defmodule Agendum.TUI.Update do
 
     # Learn mode records the key after it has done its work (R50)
     next = Agendum.TUI.Macros.record(state, key, next)
+    # Domain: undo is recorded here, once for every key, by comparing the
+    # state before the key with the state after it. No key handler records
+    # history itself (CLAUDE.md, Undo), so one key is one undo step.
     state = History.record(state, next)
     state = %{state | dirty: state.db != state.saved_db}
 
@@ -69,6 +81,9 @@ defmodule Agendum.TUI.Update do
          do: Layout.settle(state),
          else: state
 
+    # Effects were collected in `state.effects` while the key was handled
+    # (`State.effect/2`); they are taken out and returned beside the state,
+    # so the state that is kept holds none.
     {%{state | effects: [], last_key: %{key: key, at: state.now}}, state.effects}
   end
 
@@ -76,6 +91,9 @@ defmodule Agendum.TUI.Update do
   defp count_key?(_key), do: false
 
   # the splash screen goes at any key, which does nothing else (R52)
+  # The pattern reaches into the struct: it matches only when the first
+  # mode on the stack is a map whose `:type` is `:splash`. A map pattern
+  # matches when those keys are present, whatever other keys there are.
   defp splash_key(%State{modes: [%{type: :splash} | _]} = state, key) when key != :macro_done,
     do: Agendum.TUI.Splash.close(state)
 
@@ -348,6 +366,10 @@ defmodule Agendum.TUI.Update do
   end
 
   # --- results of effects -----------------------------------------------------
+  #
+  # `App` calls these after it has carried out an effect, with its result.
+  # Each has a clause per result shape (`:ok`, `{:ok, value}`,
+  # `{:error, reason}`), so a failure becomes a message, never a crash.
 
   @doc "After saving the person's preferences (R41b): only a failure is reported."
   def preferences_saved(state, :ok), do: state
@@ -432,6 +454,9 @@ defmodule Agendum.TUI.Update do
 
   # --- dispatch --------------------------------------------------------------
 
+  # A module attribute is computed when the module is compiled: the
+  # registry (a map from mode type to box module) is built once, and can
+  # be used in a guard below, where function calls are not allowed.
   @boxes Agendum.TUI.Boxes.Box.registry()
 
   @doc """
@@ -441,6 +466,10 @@ defmodule Agendum.TUI.Update do
   @spec box_key(State.t(), term) :: State.t()
   def box_key(state, key), do: dispatch(state, State.mode(state), key)
 
+  # Domain: the mode on top of the stack decides who gets the key; no mode
+  # (nil) means the view itself. One clause per kind of mode, tried in
+  # order; the last one catches the screens that list categories (the
+  # category manager, pickers, the assignment profile: `CategoryScreens`).
   defp dispatch(state, nil, key), do: ViewKeys.view_key(state, key)
 
   # a box with a module of its own (`Agendum.TUI.Boxes.Box`)

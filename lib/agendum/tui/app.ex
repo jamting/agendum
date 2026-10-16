@@ -35,6 +35,9 @@ defmodule Agendum.TUI.App do
         Terminal.start_reader(self())
         DebugLog.file(state)
 
+        # `try … after` runs `after` however `loop` ends, by returning or
+        # by a crash, so the terminal is always given back in a usable
+        # state (cursor shown, normal mode).
         try do
           loop(state, nil, "", state.theme)
         after
@@ -48,6 +51,13 @@ defmodule Agendum.TUI.App do
 
   # `theme` is the theme `previous` was drawn with; a new one redraws all.
   # `answer` times the keys just handled (`DebugLog.slow/1`), or is nil.
+  #
+  # There are no mutable variables: the program's whole memory between keys
+  # is these arguments. `loop`, `wait` and `continue` call each other as
+  # their last step (tail calls), each with the new values, so the loop
+  # runs forever without growing the stack. `previous` is the screen last
+  # drawn, `buffer` the bytes of a key not yet complete.
+  # `answer \\ nil` is a default argument: it defines `loop/4` as well.
   defp loop(state, previous, buffer, theme, answer \\ nil) do
     previous = if state.theme == theme, do: previous, else: nil
     theme = state.theme
@@ -73,6 +83,11 @@ defmodule Agendum.TUI.App do
   defp wait(state, previous, buffer, theme, since) do
     timeout = if buffer == "", do: @idle_timeout, else: @escape_timeout
 
+    # `receive` takes the first message in this process's mailbox that
+    # matches one of the patterns, waiting until one comes. `after` gives
+    # up after `timeout` milliseconds: half a second when idle, so the
+    # clock and alarms move on with no key pressed (`draw/3` calls
+    # `Update.tick/2`), or a few ms when half an escape sequence is waiting.
     receive do
       {:input, data, at} ->
         # everything typed meanwhile is answered with one drawing, so keys
@@ -106,7 +121,8 @@ defmodule Agendum.TUI.App do
     end
   end
 
-  # The input already in the mailbox, taken without waiting (`after 0`).
+  # The input already in the mailbox, taken without waiting (`after 0`):
+  # `receive` with a zero timeout returns at once when nothing matches.
   defp pending_input(acc \\ "") do
     receive do
       {:input, data, _at} -> pending_input(acc <> data)
@@ -138,6 +154,9 @@ defmodule Agendum.TUI.App do
   # A crash in `fun` goes to the debug log with `state`, the state it
   # started from, and is then raised again unchanged. (`catch kind, reason`
   # catches all three kinds of Erlang failure: error, throw and exit.)
+  # `fun.()` calls a function value; the dot tells it apart from calling a
+  # named function. A `def` body can have `catch` (and `rescue`, `after`)
+  # without writing `try`.
   defp logged(state, fun) do
     fun.()
   catch
@@ -148,6 +167,10 @@ defmodule Agendum.TUI.App do
 
   defp apply_keys(state, []), do: {:ok, state}
 
+  # Domain: the heart of the shell. For each key, the pure `Update.handle/2`
+  # gives a new state and a list of effects (data saying "save this file",
+  # "quit" …), and only here are they carried out. Keys are handled one by
+  # one; the screen is drawn once after all of them (`loop/5`).
   defp apply_keys(state, [key | keys]) do
     before = state
     {state, effects} = Update.handle(state, key)
@@ -169,6 +192,10 @@ defmodule Agendum.TUI.App do
     end
   end
 
+  # Each effect is done, and its result handed back to a pure function of
+  # `Update` (`saved/3`, `loaded/3` …), which decides what the person sees:
+  # `Update` never touches a file, and `App` never decides anything. A
+  # `case` on the effect's shape is the dispatch.
   defp run_effects(state, []), do: {:ok, state}
   defp run_effects(state, [:quit | _]), do: {:quit, state}
 
@@ -201,6 +228,10 @@ defmodule Agendum.TUI.App do
           Update.preferences_saved(state, Preferences.save(prefs, path))
 
         {:fetch_calendar, id, url} ->
+          # `self()` is read here, in the loop's process: inside the `fn`
+          # below it would be the task's own pid. The task reads the
+          # calendar in the background and mails the result back, which
+          # `wait/5` receives as `{:calendar_read, …}`.
           loop = self()
 
           Task.start(fn ->

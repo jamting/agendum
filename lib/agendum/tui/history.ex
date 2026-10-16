@@ -20,6 +20,10 @@ defmodule Agendum.TUI.History do
   Nothing is recorded when the change came from undo/redo itself (the
   stacks moved) or when a different file was started (`saved_db` changed).
   """
+  # Two clauses: this one only when a key ended a step partway (`step` is
+  # not nil, checked by the guard); the second one otherwise. The first
+  # calls `record/2` again with `step` cleared, so the second clause does
+  # the real work.
   @spec record(State.t(), State.t()) :: State.t()
   def record(%State{} = before, %State{history: %{step: step}} = next) when step != nil do
     # a step ended partway through the key (`State.end_step/1`): the
@@ -35,6 +39,10 @@ defmodule Agendum.TUI.History do
     end
   end
 
+  # `cond` runs the first branch whose condition is true. `==` compares two
+  # databases by value, all the way down; the order of the branches is the
+  # order of the questions: did the key change the file at all, was it undo
+  # or redo itself, was another file opened, is a macro playing?
   def record(%State{} = before, %State{} = next) do
     cond do
       next.db == before.db -> next
@@ -86,6 +94,10 @@ defmodule Agendum.TUI.History do
   defp put_stacks(state, undo, redo),
     do: %{state | history: %{state.history | undo: undo, redo: redo}}
 
+  # Domain: a snapshot keeps the whole database, not a diff. That is cheap
+  # because data never changes in place: the new database shares every
+  # part the key did not touch with the old one, so 100 snapshots cost
+  # little more than the parts that changed.
   defp push(snap, steps), do: Enum.take([snap | steps], @limit)
 
   defp snapshot(state), do: %{db: state.db, view_id: state.view_id, cursor_key: state.cursor_key}
