@@ -30,6 +30,7 @@ Write things down where the next session will find them. Prefer the repo for any
 - **docs/ROADMAP.md**: tick what was finished and move it under Done; add bugs or ideas found on the way under Open (with enough detail to act on later); a better tool, check or way of working goes under "Sharpen the saw". Keep the **Next:** line at the top of Open true.
 - **Plan documents** (e.g. `docs/plans/NOTE_EDITOR.md`): update the **Status:** line at the top, and a "Progress" section for work that is paused: what is done, what is left, how to continue.
 - **ADRs** (`docs/adr/`): a lasting decision made this session that has none yet.
+- **docs/HOW_I_WORK.md**: a new skill, ritual, tool or standing way of working from this session gets its line there, so it is not forgotten; a suggestion the owner adopted moves from "How I could work better" into the sections above it.
 - **Memory** (the memory directory in the system prompt): the owner's preferences and feedback learned this session, decisions not visible in the code, and a pointer to paused work ("resume from …"). Follow the memory rules: one fact per file, update rather than duplicate, link related memories, add a line to `MEMORY.md`, and remove memories that this session made wrong (e.g. paused work that is now finished).
 
 Commit repo changes made here in one commit ("Session notes: …"), after `mix check` if anything under `lib/` or `test/` was touched (normally nothing is).

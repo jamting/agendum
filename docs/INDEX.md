@@ -9,6 +9,7 @@ What each document is for, and when to read it. `docs/` describes Agendum as it 
 | [`../README.md`](../README.md)               | What Agendum is, how to run it, a quick tour                                                      |
 | [`../CLAUDE.md`](../CLAUDE.md)               | The rules for changing the code: commands, architecture rules, the workflow, conventions          |
 | [`../CONTRIBUTING.md`](../CONTRIBUTING.md)   | Setting up a machine, and a first change, for a person                                            |
+| [`HOW_I_WORK.md`](HOW_I_WORK.md)             | The owner's way of working: the loop, the skills, the panel, the tools, and what could work better |
 | [`VISION.md`](VISION.md)                     | Where Agendum is going: Agenda's idea, a knowledge system with a model inside, many users     |
 | [`ROADMAP.md`](ROADMAP.md)                   | What is open (first) and what is done, with rule numbers                                          |
 | [`../CHANGELOG.md`](../CHANGELOG.md)         | What changed in each version (semantic versioning, tagged `vX.Y.Z`)                               |
@@ -89,4 +90,5 @@ Finished or dropped plans, kept as records of how something was done or why it w
 | make a lasting decision                | a new ADR in `adr/`, and a row in `ARCHITECTURE.md`'s ADR list                                 |
 | finish a major feature or change the file format | the version in `mix.exs` (minor, never 1.0.0 unless the owner says), an entry in `CHANGELOG.md`, a `vX.Y.Z` tag after the long fuzz run passes (`FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs`) |
 | find a way to work faster or safer     | an item under "Sharpen the saw" in `ROADMAP.md`                                                 |
+| add a skill, a ritual or a standing way of working | a line in `HOW_I_WORK.md` (the table at the top, and the skills table for a skill) |
 | plan something larger                  | a plan in `plans/`, starting with its status, and a row above; once finished, moved to `plans/archive/` with its row |
