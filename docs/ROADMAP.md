@@ -18,20 +18,6 @@ Tools and checks that make every later change faster and safer. Do these first: 
 A web application with accounts and shared files, on the same core (plan: [MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). Its first step, the command layer, is done (R66, ADR 0036, below under Done): every change to a file is a command the core runs. Typed UI modes come next.
 
 - [ ] Typed UI modes (moved from Sharpen the saw, owner's decision 2026-10-16; done after the command layer rather than with it, owner's decision 2026-10-16): a struct for each mode instead of the `%{type: …}` maps in `State.modes` (about fifty kinds), so the compiler and Dialyzer catch a misspelt field that today only the fuzz test finds. Done when no mode is a bare map; one place at a time, each step with `mix check`, and a long fuzz run at the end
-- [ ] Commands that describe themselves (name, summary, documentation, global or local, available now), keys bound through keymaps (R65, ADR 0033)
-  - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)
-  - [x] A count with ALT-digits in views, for the commands chosen to take one; a repeat that changes nothing stops
-  - [x] The global keys (CTRL-Z, CTRL-S …) and the keys that stand for others (CTRL-N = INS) in `Agendum.TUI.Keymap`
-  - [x] The category and view managers' and a note's keys in keymaps (F1 `c` and `d` there too)
-  - [x] The keys every box shares in a keymap (`:box`: F1, F3 choices, ESC cancel); F1 `c` and `d` in every box, its own keys read from its key bar
-  - [x] Each box's own keys in a keymap of its own (`Box.keymap/1`, `commands/1`, `run/3`; settings boxes from `Box.settings_keymap/1`); `c` and `d` no longer read key bars
-  - [x] The menu: its keys in a keymap; F1 `c` lists the level's entries by their letters, F1 `d` describes them
-  - [x] Moving items, a column or a section, a column's width, Browse and searching the view: keymaps of their own, F1 there too
-  - [x] The typing keys in keymaps: one line (`:line`, `Typing.LineEdit`) and a note's text (`:text`, `Typing.TextEdit`)
-  - [x] Whether a command can run now (R65a): F1 `c` greys what cannot, says why, and ENTER gives the reason; each place's `unavailable/1` (the owner chose grey in place over hiding or putting last, 2026-10-16)
-  - [x] A longer text than the summary, saying why one would use the command where that is not obvious (R65b): the view's, the global ones, the managers' and a note's
-  - [x] Longer texts for the menu's entries (by their labels; an entry that runs a view's or a global command has its text) and the boxes' own commands (by box; a settings box's Change and Done shared)
-  - [ ] Longer texts for the rest, where they would help: the moves (Browse, widths …) and typing
 - [ ] Customizable key bindings: the person's own bindings, per place or everywhere, kept in the preferences and set in File ▸ Customize ▸ Keys; they come before macro keys and Agenda's keys; ESC, F1, the command list and describe key cannot be rebound
 - [ ] Reasons with assignments, shown: the core says why (R67, `assignment_reasons/4`, done 2026-10-16); still to settle with the owner, a habit change: where the TUI shows it. Was: automatic assignment says why in its result (the matched word, condition or action, with its rule), for the Questions box (R16), F1 on an assignment and an agent's report ("filed under Kanga because …") (second meeting)
 - [ ] Split the TUI state into the shared database and the session (modes, view, cursor, typing)
@@ -312,6 +298,20 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] Typing over a column entry and a Not-assigned range condition are commands of their own (`:type_in_column`, `:set_condition`), not batches the TUI puts together
 - [x] Raw values beside the formatted cells (2026-10-16): each row of a built view has `values`, what each cell shows as data (a number, `{date, time}`, true or false for a Star or Yes/No column, or the ids of the categories shown), from `Agendum.Core.ViewModel.value/3`, the same for every format
 - [x] Browsing's date arithmetic in the core (2026-10-16): `Agendum.Core.Browse` (through the facade: `browse_start/4`, `browse_move/3`, `browse_to/5`, `browsed_view/4`, `browse_keep/4`) works out where browsing starts, each move, going to a date, the view as browsed and the command that keeps it; the TUI keeps the keys and where the person has browsed to
+- [x] Commands that describe themselves (2026-10-16) (name, summary, documentation, global or local, available now), keys bound through keymaps (R65, ADR 0033)
+  - [x] The view's keys run named commands through a keymap (`Agendum.TUI.Commands`, `Agendum.TUI.Keymap`)
+  - [x] A count with ALT-digits in views, for the commands chosen to take one; a repeat that changes nothing stops
+  - [x] The global keys (CTRL-Z, CTRL-S …) and the keys that stand for others (CTRL-N = INS) in `Agendum.TUI.Keymap`
+  - [x] The category and view managers' and a note's keys in keymaps (F1 `c` and `d` there too)
+  - [x] The keys every box shares in a keymap (`:box`: F1, F3 choices, ESC cancel); F1 `c` and `d` in every box, its own keys read from its key bar
+  - [x] Each box's own keys in a keymap of its own (`Box.keymap/1`, `commands/1`, `run/3`; settings boxes from `Box.settings_keymap/1`); `c` and `d` no longer read key bars
+  - [x] The menu: its keys in a keymap; F1 `c` lists the level's entries by their letters, F1 `d` describes them
+  - [x] Moving items, a column or a section, a column's width, Browse and searching the view: keymaps of their own, F1 there too
+  - [x] The typing keys in keymaps: one line (`:line`, `Typing.LineEdit`) and a note's text (`:text`, `Typing.TextEdit`)
+  - [x] Whether a command can run now (R65a): F1 `c` greys what cannot, says why, and ENTER gives the reason; each place's `unavailable/1` (the owner chose grey in place over hiding or putting last, 2026-10-16)
+  - [x] A longer text than the summary, saying why one would use the command where that is not obvious (R65b): the view's, the global ones, the managers' and a note's
+  - [x] Longer texts for the menu's entries (by their labels; an entry that runs a view's or a global command has its text) and the boxes' own commands (by box; a settings box's Change and Done shared)
+  - [x] Longer texts for the rest, where they would help: moving items, searching, Browse, widths, moving a column or a section, and typing (one line, a note's text)
 - [x] In the TUI: help made from the commands and keymaps (R65, ADR 0033), 2026-10-15/16
   - [x] F1 shows a text about where you are: the view, a note, a manager, the menu, a move, or the box on top (`about/0` per place, `Box.about/2` per box, a default one for the others); the owner's idea
   - [x] F1 then `c`: the commands that can run there, local then global, with keys and summaries; typing narrows the list, ENTER runs the highlighted one

@@ -394,6 +394,88 @@ defmodule Agendum.TUI.CommandDocs do
     ~w(Search Prereqs) => "The items this one waits for: what must be done first."
   }
 
+  # the modes that move something, browsing and searching (R65b)
+  @move_item %{
+    drop:
+      "Puts the item(s) in the highlighted section, below the highlighted item: each " <>
+        "leaves the section it came from and joins this one. Marked items keep their order."
+  }
+
+  @searching %{
+    next_match:
+      "Goes on to the next item that holds what you searched for, in the view's order; " <>
+        "a message says when there are no more.",
+    mark:
+      "Marks the match with ♦, so that one command can then act on every item found, " <>
+        "such as Done, Discard or Move."
+  }
+
+  @browse %{
+    earlier:
+      "In a datebook view, the period before: a day, a week, a month or a quarter, as the " <>
+        "view is set. In a view with a date filter, its dates a day earlier.",
+    later:
+      "In a datebook view, the next period: a day, a week, a month or a quarter, as the " <>
+        "view is set. In a view with a date filter, its dates a day later.",
+    go_to:
+      "Shows the period of a date you type; a date filter moves so that its range starts " <>
+        "on that date.",
+    keep:
+      "Makes the dates shown the view's own: a datebook's date, or the filter's dates, " <>
+        "written as dates. One undo takes it back.",
+    close: "Leaves the view as it was before browsing: nothing was changed while browsing."
+  }
+
+  @column_width %{
+    fit:
+      "Makes the column just wide enough for the longest entry the view shows, so " <>
+        "nothing is cut off and no room is lost."
+  }
+
+  @column_move %{
+    left:
+      "Moves the column one place left in this section. The item text counts as a place, " <>
+        "so a column can stand before it.",
+    right:
+      "Moves the column one place right in this section. The item text counts as a place, " <>
+        "so a column can stand after it."
+  }
+
+  @section_move %{
+    up:
+      "Moves the section above the one before it, in this view only; the categories stay " <>
+        "where they are in the hierarchy.",
+    down:
+      "Moves the section below the one after it, in this view only; the categories stay " <>
+        "where they are in the hierarchy."
+  }
+
+  # typing: one line, and a note's text (R65b)
+  @line %{
+    delete_word:
+      "Deletes back to the start of the word before the cursor: quicker than BACKSPACE " <>
+        "for a word typed wrong.",
+    clear: "Empties the line, to type it again from the start; ESC leaves without a change."
+  }
+
+  @text %{
+    up:
+      "The row above as the note is shown, wrapped to the screen, not the line above in " <>
+        "the text.",
+    down:
+      "The row below as the note is shown, wrapped to the screen, not the line below in " <>
+        "the text.",
+    line_start:
+      "The first press goes to the start of the row shown; a second to the start of the " <>
+        "whole line, which may wrap over several rows.",
+    line_end:
+      "The first press goes to the end of the row shown; a second to the end of the " <>
+        "whole line, which may wrap over several rows.",
+    new_line:
+      "Breaks the line here. A note keeps its line breaks; a long line wraps on screen " <>
+        "by itself, so it needs none."
+  }
+
   @doc """
   A menu entry's text, by its labels from the top (`["View", "Hide",
   "Inherited"]`), or the text of the command it runs (`action`), or nil.
@@ -430,6 +512,14 @@ defmodule Agendum.TUI.CommandDocs do
       catmgr: @catmgr,
       viewmgr: @viewmgr,
       note: @note,
-      box: @box
+      box: @box,
+      move_item: @move_item,
+      searching: @searching,
+      browse: @browse,
+      column_width: @column_width,
+      column_move: @column_move,
+      section_move: @section_move,
+      line: @line,
+      text: @text
     }
 end
