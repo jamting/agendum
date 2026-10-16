@@ -6,6 +6,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 - A file opens where you left it: on the view and the item you were on when you quit or opened another file. The place is kept in your preferences, not in the file, so moving around never asks you to save.
 - The view manager (F8) marks the view you are in with ►, wherever the highlight is.
+- F5 in the view manager lists the views by when you last used them, and F5 again in your own order. Only the list changes: ALT-N and ALT-P keep your order. Agendum remembers the choice for each file.
 - The assignment profile (F3 on an item) says at the top why the item is in the highlighted category: "In Urgent: its condition holds (Calls)", "In People: through Kanga", its text matching, another category's action, or by hand.
 
 ## 0.7.0 — 2026-10-16

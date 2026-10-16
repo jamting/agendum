@@ -153,4 +153,15 @@ defmodule Agendum.PreferencesTest do
     assert Preferences.place(prefs, "/f60") == %Place{view: 60}
     assert Preferences.place(prefs, "/f10") == nil
   end
+
+  test "the views used lately and the view manager's order go with a file's place (R68)" do
+    place = %Place{view: 3, recent: [3, 5, 1], by_recent: true}
+    text = Preferences.format(Preferences.put_place(%Preferences{}, "/x", place))
+    assert text =~ "place = view:3 recent:3,5,1 order:recent file:/x\n"
+    assert Preferences.place(Preferences.parse(text), "/x") == place
+
+    assert Preferences.parse("place = recent:4,x,4,0,2 file:/x").places == [
+             {"/x", %Place{recent: [4, 2]}}
+           ]
+  end
 end

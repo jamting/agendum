@@ -9,6 +9,11 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   fits no view starts again from it, so the same letter again goes on to
   the next view with it. Moving forgets what was typed. Other keys run
   commands through the view manager's keymap (R65).
+
+  F5 lists the views by when they were last shown instead, the view shown
+  first, and back (R68; meeting 2026-10-16, § 8): only the list changes,
+  not the file's order, which ALT-N, ALT-P and hop keep to. Moving and
+  sorting the views wait for the person's own order.
   """
 
   # ENTER shows the view, ESC goes back to the one shown, as in Agenda
@@ -19,7 +24,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   alias Agendum.TUI.Update.Prompts
 
   def open(state) do
-    index = Enum.find_index(state.db.view_order, &(&1 == state.view_id)) || 0
+    index = Enum.find_index(order(state), &(&1 == state.view_id)) || 0
     State.push(state, %Agendum.TUI.Modes.Viewmgr{cursor: index, typed: "", from: index})
   end
 
@@ -68,7 +73,8 @@ defmodule Agendum.TUI.Boxes.ViewManager do
 
     INS adds a view, F2 renames one, DEL (or F4) discards one: its items
     stay in the file. ALT-↑ and ALT-↓ move a view in the list, ALT-F5 sorts
-    them by name.
+    them by name. F5 lists them by when you last used them, and back: the
+    order of the file stays as it is.
 
     ESC or F8 goes back to the view you were in.
     """
@@ -79,8 +85,25 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   def run(state, command) do
     state = clamp(state)
     mode = State.mode(state)
-    command(state, mode, command, Enum.at(state.db.view_order, mode.cursor))
+    command(state, mode, command, Enum.at(order(state), mode.cursor))
   end
+
+  @doc """
+  The views as the view manager lists them: the file's order, or, with
+  `state.views.by_recent`, the views last shown first (the one shown now at the
+  top), then the others in the file's order (R68).
+  """
+  @spec order(State.t()) :: [Database.id()]
+  def order(%State{views: %{by_recent: false}} = state), do: state.db.view_order
+
+  def order(state) do
+    # a view used once but discarded since is left out (`--` takes away)
+    used = Enum.uniq([state.view_id | state.views.recent])
+    recent = Enum.filter(used, &Map.has_key?(state.db.views, &1))
+    recent ++ (state.db.view_order -- recent)
+  end
+
+  @recent_order "Listed by recently used: F5 shows your order"
 
   @doc """
   The view manager's commands that cannot run on the highlighted view,
@@ -90,10 +113,12 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   def unavailable(state) do
     cursor = State.mode(clamp(state)).cursor
     last = length(state.db.view_order) - 1
+    recent = state.views.by_recent && @recent_order
 
     [
-      move_up: cursor == 0 && "Already the first view",
-      move_down: cursor == last && "Already the last view",
+      move_up: recent || (cursor == 0 && "Already the first view"),
+      move_down: recent || (cursor == last && "Already the last view"),
+      sort: recent,
       discard: last == 0 && "A file must have at least one view"
     ]
     |> Enum.filter(fn {_id, reason} -> is_binary(reason) end)
@@ -104,7 +129,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   # forgets what was typed
   defp clamp(state) do
     mode = State.mode(state)
-    count = length(state.db.view_order)
+    count = length(order(state))
     State.put_mode(state, %{mode | cursor: min(mode.cursor, count - 1), typed: ""})
   end
 
@@ -132,11 +157,29 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   defp command(state, _mode, :rename, view_id),
     do: %{state | edit: %{target: view_id, line: LineEdit.new(state.db.views[view_id].name)}}
 
+  # the order of the file is the person's to change, so not while the
+  # list shows another one
+  defp command(%State{views: %{by_recent: true}} = state, _mode, id, _)
+       when id in [:sort, :move_up, :move_down],
+       do: State.error(state, @recent_order)
+
   defp command(state, mode, :sort, _),
     do: state |> State.run(:sort_views) |> State.put_mode(%{mode | cursor: 0})
 
   defp command(state, mode, :move_up, _), do: reorder(state, mode, -1)
   defp command(state, mode, :move_down, _), do: reorder(state, mode, 1)
+
+  # F5: the other order, the highlight staying on its view; kept with
+  # where the person left the file, and saved at once (`Update` saves the
+  # preferences when the place changes)
+  defp command(state, mode, :order, view_id) do
+    state = put_in(state.views.by_recent, not state.views.by_recent)
+    cursor = Enum.find_index(order(state), &(&1 == view_id)) || 0
+
+    state
+    |> State.put_mode(%{mode | cursor: cursor})
+    |> Agendum.TUI.Places.remember()
+  end
 
   defp command(state, _mode, :discard, view_id) do
     Prompts.confirm(
@@ -167,7 +210,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   end
 
   defp match(state, from, typed) do
-    order = state.db.view_order
+    order = order(state)
     count = length(order)
     typed = String.downcase(typed)
 
@@ -190,6 +233,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   end
 
   @impl Box
+  def title(%State{views: %{by_recent: true}}, _mode), do: "View Manager: recently used"
   def title(_state, _mode), do: "View Manager"
 
   @impl Box
@@ -201,7 +245,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   # to find a view
   @impl Box
   def content(state, mode, inner, max_rows) do
-    views = Database.views(state.db)
+    views = Enum.map(order(state), &state.db.views[&1])
     find = if mode.typed == "", do: [], else: [[], [{:dim, " Find: " <> mode.typed}]]
     rows = max(max_rows - length(find), 1)
     top = mode.cursor |> Kernel.-(rows - 1) |> max(0)
@@ -234,12 +278,13 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   end
 
   @impl Box
-  def keys(_state, _mode),
+  def keys(state, _mode),
     do: [
       {"ENTER", "Select", "Show the view"},
       {"INS", "Add", "Add a view"},
       {"F2", "Rename"},
       {"DEL/F4", "Discard"},
+      if(state.views.by_recent, do: {"F5", "Your order"}, else: {"F5", "Recent"}),
       {"A-↑↓", "Reorder", "ALT-↑↓", "Reorder"},
       {"ESC", "Return", "Back to the view"}
     ]

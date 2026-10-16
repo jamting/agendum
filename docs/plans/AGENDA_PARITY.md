@@ -126,8 +126,8 @@ What Agendum has that Agenda did not:
 - The debug log and the developer tools (ALT-?).
 - Descriptive key bar labels on a wide screen.
 - The `--clinic` Easter egg.
-- ► before the current view in the view manager (R68).
-- To build (meeting 2026-10-16): a "While you were away" box for alarms that came due while the file was closed (§ 6); the view manager sorted by recently used, as a toggle (§ 8).
+- ► before the current view in the view manager, and F5 to list the views by recently used (R68).
+- To build (meeting 2026-10-16): a "While you were away" box for alarms that came due while the file was closed (§ 6).
 
 ## Done differently: accepted modifications
 

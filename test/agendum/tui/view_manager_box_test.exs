@@ -82,4 +82,67 @@ defmodule Agendum.TUI.ViewManagerBoxTest do
     state = press(state, [:enter, {:f, 8}])
     assert screen(state) =~ ~r/►\* This Week/
   end
+
+  describe "listed by recently used (F5, R68)" do
+    # the views by name, in the order the list shows them
+    defp listed(state) do
+      for line <- String.split(screen(state), "\n"),
+          [_, name] <- [Regex.run(~r/│ [ ↑↓] [ ►][ *] (\S[^│]*?)\s*│/u, line)],
+          do: name
+    end
+
+    test "F5 lists the views shown last first, and back; the file's order stays", %{
+      state: state
+    } do
+      order = state.db.view_order
+      # show This Week, then Calls
+      state = press(state, [{:f, 8}, :end, :enter, {:f, 8}, :up, :enter])
+      assert State.view(state).name == "Calls"
+
+      state = press(state, {:f, 8})
+      assert listed(state) == ["Activities", "Calls", "This Week"]
+      state = press(state, {:f, 5})
+      assert screen(state) =~ "View Manager: recently used"
+      assert listed(state) == ["Calls", "This Week", "Activities"]
+      # the highlight stayed on the view shown
+      assert State.view(press(state, :enter)).name == "Calls"
+      assert state.db.view_order == order
+
+      state = press(state, {:f, 5})
+      assert listed(state) == ["Activities", "Calls", "This Week"]
+    end
+
+    test "ALT-N keeps the file's order", %{state: state} do
+      state = press(state, [{:f, 8}, :end, :enter, {:f, 8}, {:f, 5}, :esc])
+      assert State.view(state).name == "This Week"
+      assert State.view(press(state, {:alt, "n"})).name == "Activities"
+    end
+
+    test "moving and sorting views wait for your own order", %{state: state} do
+      state = press(state, [{:f, 8}, {:f, 5}, :down])
+      order = state.db.view_order
+
+      for key <- [{:alt, :down}, {:alt, :up}, {:alt_f, 5}] do
+        moved = press(state, key)
+        assert moved.db.view_order == order
+        assert screen(moved) =~ "Listed by recently used: F5 shows your order"
+      end
+    end
+
+    test "the order is kept with where you left the file, and saved at once", %{state: state} do
+      prefs = %Agendum.Preferences{path: "/p/preferences"}
+      state = %{state | path: "/p/x.agendum", prefs: prefs}
+      {state, effects} = Agendum.TUI.Update.handle(press(state, {:f, 8}), {:f, 5})
+      assert [{:save_preferences, "/p/preferences", saved}] = effects
+      assert Agendum.Preferences.place(saved, "/p/x.agendum").by_recent
+
+      again = start(state.db, path: "/p/x.agendum", prefs: saved)
+      assert again.views.by_recent
+    end
+
+    test "starts off", %{state: state} do
+      refute state.views.by_recent
+      assert screen(press(state, {:f, 8})) =~ "F5 Recent"
+    end
+  end
 end

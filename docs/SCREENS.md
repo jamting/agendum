@@ -126,7 +126,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
     - **Note editor** `:note`.
   - **Category manager** `:catmgr` (F9, Category ▸ Manager): full screen of the hierarchy; add, rename, promote, demote, move, sort, discard (R2–R8). `Agendum.TUI.CategoryScreens.Manager`.
     - **Category Properties** `:props` (F6), **Note editor** `:note` (F5), **Help** `:help` (F1), **Picker** `:picker` (ALT-F10, where to move), **Choice** `:choice` (conflicts of a move).
-  - **View manager** `:viewmgr` (F8, View ▸ Manager): a box over the view, as Agenda's (screenshot 40): the views' names, * before a datebook view, ► before the view shown (R68); switch, add, rename, reorder, discard (DEL or F4). `Agendum.TUI.Boxes.ViewManager`.
+  - **View manager** `:viewmgr` (F8, View ▸ Manager): a box over the view, as Agenda's (screenshot 40): the views' names, * before a datebook view, ► before the view shown (R68); switch, add, rename, reorder, discard (DEL or F4), list by recently used (F5). `Agendum.TUI.Boxes.ViewManager`.
   - **Go to** `:goto` (ALT-F5): jump to a section (R42). `Agendum.TUI.Boxes.GoTo`.
   - **Choices** `:choice_list` (F3 on a setting in a box that has a list of choices): its choices, the current one first; ENTER takes the highlighted one (§5). `Agendum.TUI.Boxes.ChoiceListBox`.
   - **Search box** `:search_box` (ALT-F6, Search ▸ View or File): what to find, in item text, note or both, the direction, ignoring case (R37). `Agendum.TUI.Boxes.SearchBox`.

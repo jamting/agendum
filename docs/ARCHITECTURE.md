@@ -96,7 +96,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.CategoryScreens.*`                | ✔     | Its parts: `Manager` (F9), `Picker`, `Profile` (F3), `Properties` (F6), `Choices` (exclusive children, moves).                   |
 | `Agendum.TUI.Boxes.ViewManager`                      | ✔     | View manager.                                                                                                                    |
 | `Agendum.TUI.Layout`                           | ✔     | Flattens a view to cursor rows and wrapped lines; keeps the cursor anchored and visible.                                         |
-| `Agendum.TUI.Places`                           | ✔     | Where the person left a file (R69): kept in the preferences as the file is left, gone back to when it is opened.                 |
+| `Agendum.TUI.Places`                           | ✔     | Where the person left a file (R69) and the views used lately (R68): kept in the preferences as the file is left, gone back to when it is opened.                 |
 | `Agendum.TUI.Typing.Completion`                       | ✔     | Automatic completion while typing a column entry: the matches (from `Core.completions/3`) and the one shown.                     |
 | `Agendum.TUI.Boxes.ItemProperties`                   | ✔     | The Item Properties box: text, note, statistics and the item's assignments (R34).                                                |
 | `Agendum.TUI.Boxes.SortBox`                          | ✔     | The Sort box: a view's or a section's sort keys (R36).                                                                           |

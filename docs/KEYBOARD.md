@@ -25,6 +25,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Assign the item or marked items to a category (MakeAssign)                                      | ALT-M                         | ⌥m, or menu Item ▸ Categorize                    |
 | Go to a section (GO TO, in a view); sort a family (category manager); sort views (view manager) | ALT-F5                        | —                                                          |
 | Highlight a view by typing the start of its name (view manager)                                 | letters                       | —                                                                     |
+| List the views by recently used, or your order (view manager)                                    | F5                            | —                                                                     |
 | Next / previous view (in a view)                                                                | ALT-N / ALT-P                 | ⌥n / ⌥p                                                    |
 | Show / hide empty sections (in a view)                                                          | ALT-V                         | ⌥v                                                          |
 | Insert an item (in a view)                                                                      | ALT-I                         | ⌥i, or INS / **CTRL-N**                                     |

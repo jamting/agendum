@@ -195,6 +195,9 @@ defmodule Agendum.TUI.CommandDocs do
         "shows them differently.",
     move_up: "Next view and Previous view step through the views in this order.",
     move_down: "Next view and Previous view step through the views in this order.",
+    order:
+      "Finds a view used a moment ago in a long list. Only the list changes: Next view " <>
+        "and Previous view keep your order, and the list stays as you set it.",
     discard:
       "Deletes the view only: its items and categories stay, and other views still show them."
   }

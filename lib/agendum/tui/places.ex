@@ -1,7 +1,8 @@
 defmodule Agendum.TUI.Places do
   @moduledoc """
   Where the person left a file (R69; meeting 2026-10-16, § 5): the view
-  shown and the highlighted item, kept in their preferences by the file's
+  shown and the highlighted item, and the views used lately with how the
+  view manager lists them (R68, § 8), kept in their preferences by the file's
   path (`Agendum.Preferences.Place`), never in the file, so moving around
   never makes the file "changed".
 
@@ -31,7 +32,14 @@ defmodule Agendum.TUI.Places do
         nil -> {nil, nil}
       end
 
-    place = %Place{view: state.view_id, section: section, item: item}
+    place = %Place{
+      view: state.view_id,
+      section: section,
+      item: item,
+      recent: Place.recent([state.view_id | state.views.recent]),
+      by_recent: state.views.by_recent
+    }
+
     %{state | prefs: Preferences.put_place(state.prefs, state.path, place)}
   end
 
@@ -39,13 +47,15 @@ defmodule Agendum.TUI.Places do
   @spec restore(State.t()) :: State.t()
   def restore(%State{} = state) do
     case Preferences.place(state.prefs, state.path) do
-      %Place{view: view_id} = place when view_id != nil ->
-        if view_id in state.db.view_order,
-          do: to_row(%{state | view_id: view_id}, place),
-          else: state
-
-      _ ->
+      nil ->
         state
+
+      place ->
+        state = %{state | views: %{recent: place.recent, by_recent: place.by_recent}}
+
+        if place.view in state.db.view_order,
+          do: to_row(%{state | view_id: place.view}, place),
+          else: state
     end
   end
 

@@ -46,7 +46,6 @@ Then working together:
 - [ ] Boxes: F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) every setting in the box, CTRL-ENTER clears a setting (User's Guide 2-17)
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names (the note editor's header: in the note editor plan above)
 - [ ] Hypertext help: topics with links (TAB, ENTER), Index, Find, Review (Agenda's F1)
-- [ ] View manager: a toggle between your order and recently used, for showing the list only (ALT-N, ALT-P and hop keep the file's order); the toggle and the history in the preferences per file, off at first; settle its key with the owner before building (meeting 2026-10-16, § 8)
 
 ### The note editor (Milestone 2)
 
@@ -167,6 +166,7 @@ Then working together:
 - [x] Moving a section within its view (R62): ALT-F10 on a section head or View ▸ Section ▸ Move, the sections collapsed while it moves (User's Guide 5-8 to 5-9); in that view only
 - [x] Reopen a file where you left it: the view and the highlighted item (else its section, else the top of the view), as Agenda's file stored them; ours kept in the preferences per file path, never in the file (R69; meeting 2026-10-16, § 5)
 - [x] View manager: ► in a column of its own before the current view's name, apart from the datebook `*`, wherever the highlight is (R68; meeting 2026-10-16, § 7)
+- [x] View manager: F5 toggles between your order and recently used, for showing the list only (ALT-N, ALT-P and hop keep the file's order); the toggle and the history in the preferences per file, off at first (R68; meeting 2026-10-16, § 8; the key chosen by the owner)
 
 ### Look and feel — after screenshots of Agenda 2.0 (ADR 0018)
 

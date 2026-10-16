@@ -114,6 +114,7 @@ defmodule Agendum.TUI.Commands do
     {:move_up, "Move up", "Move the view up the list", :none},
     {:move_down, "Move down", "Move the view down the list", :none},
     {:sort, "Sort", "Sort the views by name", :none},
+    {:order, "Recently used", "List by when last used, or your order", :none},
     {:discard, "Discard", "Discard the view (items are kept)", :none},
     {:help, "Help", "Help about where you are", :none},
     {:close, "Return", "Back to the view shown", :none}

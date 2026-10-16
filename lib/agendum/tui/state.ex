@@ -70,6 +70,7 @@ defmodule Agendum.TUI.State do
           theme: Agendum.TUI.Terminal.Theme.name(),
           last_key: %{key: term, at: NaiveDateTime.t() | nil},
           count: pos_integer | nil,
+          views: %{recent: [Database.id()], by_recent: boolean},
           history: %{undo: [map], redo: [map], step: Database.t() | nil},
           saved_db: Database.t() | nil,
           effects: [term]
@@ -111,6 +112,10 @@ defmodule Agendum.TUI.State do
             theme: :classic,
             last_key: %{key: nil, at: nil},
             count: nil,
+            # the views shown, the last first, and whether the view manager
+            # lists them in that order (R68): the person's, kept with where
+            # they left the file (`Agendum.TUI.Places`)
+            views: %{recent: [], by_recent: false},
             history: %{undo: [], redo: [], step: nil},
             saved_db: nil,
             effects: []
@@ -291,8 +296,8 @@ defmodule Agendum.TUI.State do
     do: %{state | modes: [Agendum.TUI.Modes.new(mode) | rest]}
 
   @doc """
-  Shows another view, remembering the current one for ALT-F8 (LAST VW),
-  with the cursor at the top.
+  Shows another view, remembering the current one for ALT-F8 (LAST VW)
+  and as recently used (R68), with the cursor at the top.
   """
   @spec switch_view(t, Database.id()) :: t
   def switch_view(%__MODULE__{view_id: id} = state, id), do: state
@@ -302,6 +307,11 @@ defmodule Agendum.TUI.State do
       state
       | last: %{state.last | view: state.view_id},
         view_id: view_id,
+        views: %{
+          state.views
+          | recent:
+              Agendum.Preferences.Place.recent([view_id, state.view_id | state.views.recent])
+        },
         cursor: 0,
         cursor_key: nil,
         col: 0,
