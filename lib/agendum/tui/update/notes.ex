@@ -199,6 +199,9 @@ defmodule Agendum.TUI.Update.Notes do
 
   defp command(state, _mode, :run_by_name), do: Agendum.TUI.Boxes.RunByName.open(state)
   defp command(state, _mode, :make_item), do: ask_make_item(state)
+  defp command(state, mode, :append), do: ask_append(state, mode)
+  defp command(state, mode, :get_items), do: get_items(state, mode)
+  defp command(state, _mode, :calendar), do: Agendum.TUI.Boxes.CalendarBox.open(state, :note)
   defp command(state, mode, :make_category), do: make_category(state, mode)
 
   # --- ALT-F7 MAKEITM and ALT-F2 MAKECAT (User's Guide 12-8 to 12-9) ---
@@ -316,6 +319,93 @@ defmodule Agendum.TUI.Update.Notes do
         end
     end
   end
+
+  # --- ALT-F9 APPEND, ALT-F8 GETITMS, ALT-C (R64f; User's Guide 12-7, 12-10) ---
+
+  # a macro's keystrokes have no item text to append to
+  defp ask_append(state, %{target: {:macro, _}}),
+    do: State.error(state, "ALT-F9 appends to an item or a category")
+
+  defp ask_append(state, mode) do
+    if marked?(mode),
+      do: append(state, :mark),
+      else: State.push(state, %Agendum.TUI.Modes.Choice{kind: :append, cursor: 0})
+  end
+
+  @doc """
+  ALT-F9, after Word, Line or All text was chosen (or with text marked):
+  that text leaves the note and goes on the end of the item's text (the
+  category's name), after a space. What does not fit (350 characters for
+  an item, 69 for a category) stays in the note, at the cursor. The
+  shorter note and the longer text are one change.
+  """
+  @spec append(State.t(), atom) :: State.t()
+  def append(state, what) do
+    mode = State.mode(state)
+
+    with {kind, _id} when kind in [:item, :category] <- mode.target,
+         {text, edit} <- TextEdit.take(mode.edit, what),
+         text = text |> String.replace("\n", " ") |> String.trim(),
+         true <- text != "" do
+      {current, room} = appended_to(state.db, mode.target)
+      {fits, rest} = String.split_at(text, max(room - String.length(current) - 1, 0))
+      append_fitting(state, mode, edit, current, fits, rest)
+    else
+      {:macro, _} -> State.error(state, "ALT-F9 appends to an item or a category")
+      _ -> State.error(state, "Nothing there to append")
+    end
+  end
+
+  defp append_fitting(state, _mode, _edit, _current, "", _rest),
+    do: State.error(state, "There is no room left; the text stays in the note")
+
+  defp append_fitting(state, mode, edit, current, fits, rest) do
+    edit = if rest == "", do: edit, else: TextEdit.insert(edit, rest)
+    longer = current <> " " <> fits
+
+    change =
+      case mode.target do
+        {:item, id} -> {:edit_item, id, longer}
+        {:category, id} -> {:rename_category, id, longer}
+      end
+
+    state
+    |> State.run({:batch, [save_command(mode.target, TextEdit.text(edit)), change]})
+    |> State.put_mode(Map.merge(mode, %{edit: edit, match: nil, title: longer}))
+    |> State.info("Appended: #{fits}")
+  end
+
+  defp appended_to(db, {:item, id}), do: {db.items[id].text, @item_room}
+  defp appended_to(db, {:category, id}), do: {db.categories[id].name, @name_room}
+
+  # ALT-F8: the marked items' text, each with its note, typed in at the
+  # cursor between blank lines; the items stay, marked
+  defp get_items(state, mode) do
+    case Agendum.Core.marked_items(state.db) do
+      [] ->
+        State.error(state, "There are no marked items in the file.")
+
+      ids ->
+        blocks =
+          Enum.map_join(ids, "\n\n", fn id ->
+            item = state.db.items[id]
+            if item.note == "", do: item.text, else: item.text <> "\n" <> item.note
+          end)
+
+        state
+        |> State.put_mode(%{
+          mode
+          | edit: TextEdit.insert(mode.edit, "\n" <> blocks <> "\n\n"),
+            match: nil
+        })
+        |> State.info("Copied #{length(ids)} marked item(s) into the note")
+    end
+  end
+
+  @doc "Types `text` at the cursor of the note being edited (ALT-C's date, R64f)."
+  @spec type_text(State.t(), String.t()) :: State.t()
+  def type_text(state, text),
+    do: update_note(state, &%{&1 | edit: TextEdit.insert(&1.edit, text), match: nil})
 
   defp note_rest(state, _id, ""), do: state
   defp note_rest(state, id, rest), do: State.run(state, {:set_note, id, String.trim(rest)})

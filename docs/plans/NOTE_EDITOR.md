@@ -1,6 +1,6 @@
 # Plan: the note editor as Agenda's (2026-10-15)
 
-**Status:** researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 to 5 done (R64a–R64e, 2026-10-17); step 6 next (ROADMAP, The note editor).
+**Status:** researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 to 6 done (R64a–R64f, 2026-10-17); step 7 next (needs an ADR) (ROADMAP, The note editor).
 
 Agenda's note editor (F5) is a screen of its own: its own control panel, its own key bar and its own F10 menu. Agendum's note editor has the text editing, marking and Search/Replace, but keeps the view's control panel and has no menu. This plan maps what Agenda's editor does, sets printing and typesetting out of scope, and lists the steps for the rest: some new, some only a connection to a feature Agendum already has.
 
@@ -64,13 +64,13 @@ Checked in the real Agenda 2.0 (headless, on a copy of PLANNER, 2026-10-15), and
 | PGUP/PGDN, CTRL-←/→, CTRL-HOME/END | ✅ R64e (⌥←/→, ⌥< ⌥> beside them) | 5 |
 | F7 F3 F4 F2 ALT-F4 | ✅ R63 | – |
 | ALT-F2, ALT-F7 | ✅ R42 | – |
-| ALT-F8 GETITMS | – (marking items: F7 in a view) | 6 |
-| ALT-F9 APPEND | – | 6 |
+| ALT-F8 GETITMS | ✅ R64f (copies only; no discard question) | 6 |
+| ALT-F9 APPEND | ✅ R64f | 6 |
 | ALT-F6, ALT-S | ✅ R39 | – |
 | ALT-F1 COMPOSE | – (a modern terminal types any character) | 8 |
 | ALT-D, ALT-T | ✅ | – |
 | ALT-N, ALT-P | ✅ (always saves: the owner's choice) | 4 |
-| ALT-C | – in a note (the view's ALT-C opens the calendar) | 6 |
+| ALT-C | ✅ R64f | 6 |
 | ALT-Z | ✅ (macros run anywhere) | – |
 | ALT-K, ALT-Q | ✅ | – |
 | Undo inside the editor | – (roadmap item: undo in the note editor) | 9 |

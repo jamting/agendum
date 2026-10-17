@@ -13,6 +13,7 @@ The note editor, as Agenda's (steps 1 to 5 of its plan).
 - ESC in a note now asks "Discard changes?" when you changed it, as Agenda did: No (shown first, ENTER) saves as before, Yes puts the note back as it was when you opened it. F5 saves and goes back without asking, and so do ALT-N and ALT-P.
 - Editing keys in a note, as Agenda's: CTRL-← / CTRL-→ (⌥← ⌥→) move by a word, ⌥⌫ or CTRL-W and ALT-W delete the word before or after the cursor, CTRL-K deletes to the end of the line, ALT-M starts a new line, PGUP / PGDN move a page, CTRL-HOME / CTRL-END (⌥< ⌥>) go to the start and end of the note.
 - INS (or CTRL-N) switches a note between inserting and typing over (OVR in the header). TAB types spaces to the next tab stop; File ▸ Properties ▸ Tab size sets how far apart they are (5, as Agenda).
+- In a note, ALT-F9 moves the word, line or marked text onto the end of the item's text (or the category's name), ALT-F8 copies the marked items (with their notes) into the note, and ALT-C types a date chosen in the calendar.
 - Files are saved in a new format (37), for the Tab size; older files open as before.
 - Fixed: deleting a macro from a macro manager opened over its own Properties box no longer crashes.
 

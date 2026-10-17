@@ -44,6 +44,8 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
 
   def title(_state, %{kind: :make_item}), do: "Make item (ALT-F7)"
 
+  def title(_state, %{kind: :append}), do: "Append (ALT-F9)"
+
   def title(_state, %{kind: :clip, action: :copy}), do: "Copy (F3)"
 
   def title(_state, %{kind: :clip, action: :cut}), do: "Cut (F4)"
@@ -167,6 +169,7 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
     ]
 
   def choice_options(%{kind: :clip}), do: choice_options(%{kind: :make_item})
+  def choice_options(%{kind: :append}), do: choice_options(%{kind: :make_item})
 
   def choice_options(%{kind: :make_item}),
     do: [
@@ -192,6 +195,9 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
 
   def choice_lines(%{kind: :clip, action: :delete}),
     do: ["Nothing is marked (F7). Deleted text is not kept.", "Delete:"]
+
+  def choice_lines(%{kind: :append}),
+    do: ["Nothing is marked (F7). The text leaves the note.", "Append to the item or category:"]
 
   def choice_lines(%{kind: :make_item}),
     do: ["The text leaves the note and becomes a new item.", "Make into an item:"]
@@ -303,6 +309,9 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
 
   defp resolve_choice(state, %{kind: :clip, action: action}, what),
     do: Agendum.TUI.Update.Notes.clip(state, action, what)
+
+  defp resolve_choice(state, %{kind: :append}, what),
+    do: Agendum.TUI.Update.Notes.append(state, what)
 
   defp resolve_choice(state, %{kind: :make_item}, what),
     do: Agendum.TUI.Update.Notes.make_item(state, what)

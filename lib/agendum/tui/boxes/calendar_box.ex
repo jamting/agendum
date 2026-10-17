@@ -47,6 +47,11 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
   def open(state, nil),
     do: State.push(state, %Agendum.TUI.Modes.Calendar{date: state.today, time: nil, target: nil})
 
+  # ALT-C in a note (R64f): ENTER types the date there
+  def open(state, :note),
+    do:
+      State.push(state, %Agendum.TUI.Modes.Calendar{date: state.today, time: nil, target: :note})
+
   # the date of the Show Schedule box beneath (R49)
   def open(state, {:schedule, date}),
     do: State.push(state, %Agendum.TUI.Modes.Calendar{date: date, time: nil, target: :schedule})
@@ -126,6 +131,13 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
   end
 
   defp choose(state, %{target: nil}), do: state
+
+  # in the file's date format, as ALT-D types today (and the time, F6)
+  defp choose(state, %{target: :note, date: date, time: time}) do
+    format = state.db.date_format
+    time = if time, do: " " <> Agendum.Core.DateFormat.time(time, format), else: ""
+    Agendum.TUI.Update.Notes.type_text(state, Agendum.Core.DateFormat.date(date, format) <> time)
+  end
 
   defp choose(state, %{target: :schedule, date: date}),
     do: Agendum.TUI.Boxes.ScheduleBox.set_date(state, date)

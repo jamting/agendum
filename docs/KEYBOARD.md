@@ -41,6 +41,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | In a note: a word left / right (on to the line above or below); delete the word before / after (R64e) | CTRL-← / CTRL-→; CTRL-BACKSPACE / ALT-W | ⌥← / ⌥→; ⌥⌫ or CTRL-W / ⌥w                |
 | In a note: delete to the end of the line; a new line (R64e)                                      | CTRL-ENTER; ALT-M             | **CTRL-K** (terminals send CTRL-ENTER as ENTER); ⌥m        |
 | In a note: insert or type over (INS / OVR); spaces to the next tab stop (File Properties ▸ Tab size; R64e) | INS; TAB             | **CTRL-N**; TAB                                            |
+| In a note: move text onto the item's text (APPEND); copy the marked items in (GETITMS); type a date from the calendar (R64f) | ALT-F9; ALT-F8; ALT-C | ⌥ with F9, F8; ⌥c                           |
 | In a note: a page of rows up / down; the start / end of the note (R64e)                          | PGUP / PGDN; CTRL-HOME / CTRL-END | fn-↑ / fn-↓; ALT-< / ALT-> (⌥< / ⌥>)                    |
 | In a note: make the marked text (or the word, line or all text) into a new item (it leaves the note; MAKEITM) / the marked text or the word into a new category under a parent you pick (MAKECAT) | ALT-F7 / ALT-F2 | — |
 | In a note: mark text (then move the cursor; again to unmark); copy / cut the marked text, or a word, line or all text; delete it (not kept); paste what was last copied or cut | F7; F3 / F4; ALT-F4; F2 | — |
