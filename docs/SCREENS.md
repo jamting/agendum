@@ -128,6 +128,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
     - **Category Properties** `:props` (F6), **Note editor** `:note` (F5), **Help** `:help` (F1), **Picker** `:picker` (ALT-F10, where to move), **Choice** `:choice` (conflicts of a move).
   - **View manager** `:viewmgr` (F8, View ▸ Manager): a box over the view, as Agenda's (screenshot 40): the views' names, * before a datebook view, ► before the view shown (R68); switch, add, rename, reorder, discard (DEL or F4), list by recently used (F5). `Agendum.TUI.Boxes.ViewManager`.
   - **Go to** `:goto` (ALT-F5): jump to a section (R42). `Agendum.TUI.Boxes.GoTo`.
+  - **Run a command** `:run_by_name` (CTRL-X, almost anywhere): the commands that can run there, found by name or initials, each with its key; ENTER runs the highlighted one where CTRL-X was pressed (R65d). `Agendum.TUI.Boxes.RunByName`.
   - **Choices** `:choice_list` (F3 on a setting in a box that has a list of choices): its choices, the current one first; ENTER takes the highlighted one (§5). `Agendum.TUI.Boxes.ChoiceListBox`.
   - **Search box** `:search_box` (ALT-F6, Search ▸ View or File): what to find, in item text, note or both, the direction, ignoring case (R37). `Agendum.TUI.Boxes.SearchBox`.
     - **Searching** `:searching`: ALT-N / ALT-P step through matches, F7 marks. A file search shows the Show View instead.
@@ -202,6 +203,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:note_search`       | box           | `Agendum.TUI.Typing.NoteSearch`          | ALT-F6 in a note                                  | R39            |
 | `:sort`              | box           | `Agendum.TUI.Boxes.SortBox`              | View ▸ Order, View ▸ Section ▸ Sort               | R36            |
 | `:range_filter`      | box           | `Agendum.TUI.Boxes.RangeFilterBox`       | a filter or condition on a date/numeric category  | R28a, R15a     |
+| `:run_by_name`       | box           | `Agendum.TUI.Boxes.RunByName`            | CTRL-X                                            | R65d           |
 | `:action_box`        | box           | `Agendum.TUI.Boxes.ActionBox`            | Also assign on a date/numeric category            | R15b           |
 | `:date_rule`         | box           | `Agendum.TUI.Boxes.DateRuleBox`          | Advanced settings of a date category              | R6b            |
 | `:category_match`    | box           | `Agendum.TUI.Boxes.CategoryMatchBox`     | Advanced settings of a standard category          | R16b           |

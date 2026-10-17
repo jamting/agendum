@@ -141,6 +141,7 @@ defmodule Agendum.TUI.Commands do
     {:make_item, "Make item", "Make the marked text an item", :none},
     {:make_category, "Make category", "Make the marked text a category", :none},
     {:key_map, "Key map", "Show or hide the function key map", :none},
+    {:run_by_name, "Run by name", "Run a command chosen by its name", :none},
     {:help, "Help", "Help about where you are", :none},
     {:close, "Return", "Save the note and go back", :none},
     {:quit, "Quit", "Save the note and quit Agendum", :none}
@@ -245,6 +246,7 @@ defmodule Agendum.TUI.Commands do
     {:retrieve, "Retrieve", "Open another file", :none},
     {:export, "Print", "Print the view to a file (in a view)", :none},
     {:key_map, "Key map", "Show or hide the function key map", :none},
+    {:run_by_name, "Run by name", "Run a command chosen by its name", :none},
     {:quit, "Quit", "Quit Agendum", :none}
   ]
 
@@ -342,4 +344,92 @@ defmodule Agendum.TUI.Commands do
   @doc "A place's command by id, or nil."
   @spec get(atom, atom) :: Command.t() | nil
   def get(place, id), do: Enum.find(all(place), &(&1.id == id))
+
+  # --- finding a command by its name (R65d, ADR 0040) ----------------------------
+
+  @doc """
+  The entries whose name matches `query`, best first: CTRL-X's box and
+  F1 `c`'s narrowing both use it, and so is the web's palette to. Each
+  entry can be anything; the options say how to read it:
+
+    * `name:` its name (required)
+    * `summary:` its summary, matched only by what it holds, after every
+      name (default: none)
+    * `recent:` keys of the recently used, most recent first, and `key:`
+      an entry's key in it (default: its name)
+
+  How well a name matches (case and spaces aside), best first: it starts
+  with `query`; a word of it does, or the letters are the initials of its
+  words in order ("azi" is Attach Zettel id); the letters are in it in
+  order, the closer together the better; then the summaries. Among
+  equals the recently used come first, then the list's order. With
+  nothing typed every entry is kept, the recently used first. Pure.
+  """
+  @spec match([e], String.t(), keyword) :: [e] when e: term
+  def match(entries, query, opts) do
+    name = Keyword.fetch!(opts, :name)
+    summary = Keyword.get(opts, :summary, fn _ -> nil end)
+    key = Keyword.get(opts, :key, name)
+    recent = opts |> Keyword.get(:recent, []) |> Enum.with_index() |> Map.new()
+    query = String.downcase(query)
+
+    # `Enum.with_index/1` numbers the entries, so that a sort on equal
+    # ranks keeps the list's order; a generator (`<-`) whose pattern does
+    # not match skips the entry, so nil from `rank/3` drops it
+    for {entry, i} <- Enum.with_index(entries),
+        {kind, closeness} <- [rank(String.downcase(name.(entry)), summary.(entry), query)] do
+      {kind, Map.get(recent, key.(entry), map_size(recent)), closeness, i, entry}
+    end
+    # tuples compare element by element: the kind of match, how recent,
+    # how close the letters are, then the list's place
+    |> Enum.sort()
+    |> Enum.map(&elem(&1, 4))
+  end
+
+  # how well `name` (lowercased) matches: `{kind, closeness}`, smaller is
+  # better (kind 0 a prefix … 3 the summary only), or nil for no match
+  defp rank(_name, _summary, ""), do: {0, 0}
+
+  defp rank(name, summary, query) do
+    letters = String.replace(query, " ", "")
+    words = String.split(name, " ", trim: true)
+
+    cond do
+      String.starts_with?(name, query) -> {0, 0}
+      String.contains?(" " <> name, " " <> query) -> {1, 0}
+      initials?(words, String.graphemes(letters)) -> {1, 1}
+      span = spread(String.graphemes(String.replace(name, " ", "")), letters) -> {2, span}
+      summary && String.contains?(String.downcase(summary), query) -> {3, 0}
+      true -> nil
+    end
+  end
+
+  # whether each letter begins a word, in order (words may be skipped)
+  defp initials?(_words, []), do: true
+  defp initials?([], _letters), do: false
+
+  defp initials?([word | words], [letter | rest] = letters) do
+    if String.starts_with?(word, letter),
+      do: initials?(words, rest),
+      else: initials?(words, letters)
+  end
+
+  # How far apart the letters of `query` are in `name` (both without
+  # spaces), each found as early as it can be after the one before; nil
+  # when they are not all there in order. The span is how many characters
+  # the match covers beyond the query's own.
+  defp spread(name, query) do
+    query
+    |> String.graphemes()
+    |> Enum.reduce_while({name, 0, nil}, fn letter, {rest, at, first} ->
+      case Enum.find_index(rest, &(&1 == letter)) do
+        nil -> {:halt, nil}
+        i -> {:cont, {Enum.drop(rest, i + 1), at + i + 1, first || at + i}}
+      end
+    end)
+    |> case do
+      nil -> nil
+      {_rest, last, first} -> last - first - String.length(query)
+    end
+  end
 end

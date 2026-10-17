@@ -59,7 +59,8 @@ defmodule Agendum.TUI.State do
           last: %{
             view: Database.id() | nil,
             removed: Database.id() | nil,
-            copied: String.t() | nil
+            copied: String.t() | nil,
+            commands: [{atom, String.t()}]
           },
           searches: %{
             view: Agendum.Core.Search.t() | nil,
@@ -102,8 +103,10 @@ defmodule Agendum.TUI.State do
             collapsed: MapSet.new(),
             # what a key goes back to: the view shown before this one
             # (ALT-F8), the item DEL last took out of a section (ALT-Y, R42),
-            # the text last cut or copied in a note (F2 PASTE, R63)
-            last: %{view: nil, removed: nil, copied: nil},
+            # the text last cut or copied in a note (F2 PASTE, R63), and the
+            # commands last run by name (CTRL-X, F1 c; R65d), the most
+            # recent first, each as `{place, name}`
+            last: %{view: nil, removed: nil, copied: nil, commands: []},
             searches: %{view: nil, note: nil},
             # macros (R50): what Learn mode is recording, the last macro
             # run (ALT-Z), and how many runs are playing, one inside another

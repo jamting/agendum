@@ -51,6 +51,8 @@ defmodule Agendum.TUI.Fuzz do
     {:ctrl, "k"},
     {:ctrl, "a"},
     {:ctrl, "w"},
+    # run by name (R65d): letters then ENTER run whatever matches
+    {:ctrl, "x"},
     {:alt, "b"},
     {:alt, :backspace},
     {:alt, "n"},

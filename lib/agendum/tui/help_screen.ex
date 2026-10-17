@@ -50,23 +50,31 @@ defmodule Agendum.TUI.HelpScreen do
   @doc "Opens the help screen on its keys page."
   @spec open(State.t()) :: State.t()
   def open(state) do
-    from =
-      case {state.edit, state.modes} do
-        {nil, []} -> :view
-        {nil, [%{type: type} | _]} when is_map_key(@places, type) -> type
-        {nil, [top | _]} -> if Box.module(top), do: :box, else: :elsewhere
-        _ -> :elsewhere
-      end
-
     State.push(state, %Agendum.TUI.Modes.Help{
       top: 0,
       page: :about,
-      from: from,
+      from: place(state),
       cursor: 0,
       described: nil,
       filter: "",
       pane: 0
     })
+  end
+
+  @doc """
+  Where the person is, as the command list names places: `:view`, a
+  place with a keymap of its own (`:catmgr`, `:note` …), `:box`, or
+  `:elsewhere`. F1 and CTRL-X (`Agendum.TUI.Boxes.RunByName`) ask this
+  before they open.
+  """
+  @spec place(State.t()) :: atom
+  def place(state) do
+    case {state.edit, state.modes} do
+      {nil, []} -> :view
+      {nil, [%{type: type} | _]} when is_map_key(@places, type) -> type
+      {nil, [top | _]} -> if Box.module(top), do: :box, else: :elsewhere
+      _ -> :elsewhere
+    end
   end
 
   @doc """
@@ -122,24 +130,42 @@ defmodule Agendum.TUI.HelpScreen do
     Enum.find_index(shown(below, mode), &(reason(unavailable, &1) == nil)) || 0
   end
 
-  # the list as narrowed by what was typed: names and summaries that hold
-  # it, in any case
-  defp shown(state, mode) do
-    wanted = String.downcase(mode.filter)
+  # the list as narrowed by what was typed (R65d): the names that match
+  # it, best first, then the summaries that hold it; nothing typed keeps
+  # the list's order, so its places can be learnt
+  defp shown(state, %{filter: ""} = mode), do: entries(state, mode.from)
 
-    for {command, _, _} = entry <- list(state, mode.from),
-        String.contains?(String.downcase(command.name <> " " <> command.summary), wanted),
-        do: entry
+  defp shown(state, mode), do: state |> entries(mode.from) |> match(state, mode.from, mode.filter)
+
+  @doc """
+  The `entries/2` that match `query`, best first, the recently run by
+  name first among equals (`Agendum.TUI.Commands.match/3`).
+  """
+  @spec match([{Command.t(), term, [term]}], State.t(), atom, String.t()) ::
+          [{Command.t(), term, [term]}]
+  def match(entries, state, from, query) do
+    Commands.match(entries, query,
+      name: fn {command, _, _} -> command.name end,
+      summary: fn {command, _, _} -> command.summary end,
+      key: fn {command, _, _} -> {from, command.name} end,
+      recent: state.last.commands
+    )
   end
 
   # in a note the keys of every screen are not commands: they edit the
   # text; in the menu they do nothing
   defp typing?(from), do: from in [:note, :menu]
 
-  # What the list shows: in a box, first the box's own commands from its
-  # keymap, then the keys every box shares that it does not bind itself,
-  # then the global ones.
-  defp list(state, :box) do
+  @doc """
+  The entries `{command, place, keys}` the command list has where the
+  person is (`from`, as `place/1` says; `state` the state there), in its
+  order: in a box, first the box's own commands from its keymap, then the
+  keys every box shares that it does not bind itself, then the global
+  ones; in the menu, first the entries of its level, each chosen by its
+  letter; elsewhere `commands/1`.
+  """
+  @spec entries(State.t(), atom) :: [{Command.t(), term, [term]}]
+  def entries(state, :box) do
     own = own_keys(state)
     bound = for {_, :own, keys} <- own, key <- keys, do: key
 
@@ -152,8 +178,7 @@ defmodule Agendum.TUI.HelpScreen do
     own ++ shared ++ global
   end
 
-  # in the menu, first the entries of its level, each chosen by its letter
-  defp list(state, :menu) do
+  def entries(state, :menu) do
     mode = State.mode(state)
 
     above = Menu.labels(mode)
@@ -168,7 +193,7 @@ defmodule Agendum.TUI.HelpScreen do
     entries ++ commands(:menu)
   end
 
-  defp list(_state, from), do: commands(from)
+  def entries(_state, from), do: commands(from)
 
   # a box's own commands, from its keymap (R65), each with its keys
   defp own_keys(state) do
@@ -288,12 +313,25 @@ defmodule Agendum.TUI.HelpScreen do
       else: State.put_mode(state, %{mode | top: top |> min(last) |> max(0)})
   end
 
-  # a command that cannot run now says why instead (R65a)
-  defp run_or_say(state, from, entry) do
+  @doc """
+  Runs an entry of `entries/2` where the person is (`state`, the state at
+  `from`), as its key would, and remembers it as run by name (R65d); one
+  that cannot run now says why instead (R65a).
+  """
+  @spec run_or_say(State.t(), atom, {Command.t(), term, [term]} | nil) :: State.t()
+  def run_or_say(state, _from, nil), do: state
+
+  def run_or_say(state, from, {command, _, _} = entry) do
     case reason(unavailable(state, from), entry) do
-      nil -> run(state, entry)
+      nil -> state |> remember(from, command.name) |> run(entry)
       why -> State.error(state, why)
     end
+  end
+
+  # the last ten commands run by name, most recent first, each once
+  defp remember(state, from, name) do
+    recent = [{from, name} | List.delete(state.last.commands, {from, name})]
+    %{state | last: %{state.last | commands: Enum.take(recent, 10)}}
   end
 
   # a command from the list runs where F1 was pressed, as its key would
@@ -320,8 +358,6 @@ defmodule Agendum.TUI.HelpScreen do
       next -> next
     end
   end
-
-  defp run(state, nil), do: state
 
   # --- describe key ---------------------------------------------------------------
 

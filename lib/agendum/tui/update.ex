@@ -200,6 +200,7 @@ defmodule Agendum.TUI.Update do
       :undo -> if undoable?(top), do: History.undo(state), else: :pass
       :redo -> if undoable?(top), do: History.redo(state), else: :pass
       :key_map -> State.toggle_key_map(state)
+      :run_by_name -> Agendum.TUI.Boxes.RunByName.open(state)
       :export -> if top == nil, do: Actions.perform(state, :export), else: :pass
       id when id in [:save, :retrieve, :quit] -> Actions.perform(state, id)
     end

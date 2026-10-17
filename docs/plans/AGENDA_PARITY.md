@@ -131,7 +131,7 @@ What Agendum has that Agenda did not:
 - Zettel ids (Quadsyl-24, R73, ADR 0039), a Zettel id column (R73a) and links between items (R73b).
 - A micro-blog published from the file (File ▸ Transfer ▸ Publish, R74).
 - Feeds: a plain RSS and Atom reader, the News view, OPML, CTRL-V to open a link (R75).
-- Planned (meeting 2026-10-16-3): CTRL-X to run a command by name in a small box (ADR 0040).
+- CTRL-X runs a command by name, found by part of it or its initials, in a small box (R65d, ADR 0040); F1 `c` narrows the same way.
 
 ## Done differently: accepted modifications
 

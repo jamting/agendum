@@ -151,6 +151,7 @@ defmodule Agendum.TUI.Keymap do
   # a note (F5): any key not here edits the text (`Typing.TextEdit`)
   @note %{
     {:ctrl, "l"} => :insert_link,
+    {:ctrl, "x"} => :run_by_name,
     :esc => :close,
     {:f, 5} => :close,
     {:f, 1} => :help,
@@ -321,6 +322,8 @@ defmodule Agendum.TUI.Keymap do
     {:ctrl, "o"} => :retrieve,
     {:ctrl, "p"} => :export,
     {:alt, "k"} => :key_map,
+    # ours (R65d, ADR 0040): Agenda left CTRL-X free
+    {:ctrl, "x"} => :run_by_name,
     {:alt, "q"} => :quit,
     {:ctrl, "q"} => :quit,
     {:ctrl, "c"} => :quit

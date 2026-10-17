@@ -4,6 +4,13 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.14.0 — 2026-10-17
+
+Run a command by its name.
+
+- CTRL-X opens a small box: type part of a command's name, or the initials of its words ("azi" for Attach Zettel id), and ENTER runs the highlighted one, as its key would. Only what can run where you are is listed, each with its key, so you can learn it; the commands you last ran this way come first. It works in a view, the managers, a note, a box, and while moving or browsing.
+- F1 then `c` narrows its list the same way, so typing there finds more, best match first.
+
 ## 0.13.0 — 2026-10-17
 
 A plain news reader: feeds come in as calendars do.

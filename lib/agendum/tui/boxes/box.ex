@@ -141,6 +141,7 @@ defmodule Agendum.TUI.Boxes.Box do
     props: Agendum.TUI.CategoryScreens.Properties,
     questions: Agendum.TUI.Boxes.QuestionsBox,
     range_filter: Agendum.TUI.Boxes.RangeFilterBox,
+    run_by_name: Agendum.TUI.Boxes.RunByName,
     schedule: Agendum.TUI.Boxes.ScheduleBox,
     scope: Agendum.TUI.Update.Marked,
     search_box: Agendum.TUI.Boxes.SearchBox,

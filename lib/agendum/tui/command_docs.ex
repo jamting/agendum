@@ -163,6 +163,9 @@ defmodule Agendum.TUI.CommandDocs do
     key_map:
       "The key bar at the foot of the screen names what the function keys do there; " <>
         "hidden, it leaves one more row for items.",
+    run_by_name:
+      "Finds a command by part of its name or its initials (\"azi\" is Attach Zettel id) " <>
+        "and runs it, so a command without a key can be run too, and its key learnt.",
     quit: "Leaves Agendum. It asks first when the file has unsaved changes."
   }
 

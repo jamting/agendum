@@ -64,6 +64,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Category manager: add a child / a new family after the parent                                   | ALT-R / ALT-L                 | ⌥r / ⌥l                                                    |
 | Remove from section / column                                                                    | DEL                           | fn-⌫ (forward delete)                                                 |
 | Undo / redo                                                                                     | —                             | **CTRL-Z** / **CTRL-Y** (also in the menu)                            |
+| Run a command by its name: type part of it or its initials, ENTER runs it (ours, R65d)          | —                             | **CTRL-X** (also in a note)                                           |
 | Save / open / print to file / quit                                                              | menu                          | **CTRL-S** / **CTRL-O** / **CTRL-P** / **CTRL-Q** (CTRL-C also quits) |
 | Previous / next section                                                                         | CTRL-PGUP / CTRL-PGDN         | ⌥↑ / ⌥↓ (in a view)                                                   |
 | A count for the next command in a view (R65): ALT-1 ALT-0 ↓ moves ten rows down. Counts work with ↑ ↓ PGUP PGDN ← → TAB, previous / next section, ALT-J, ALT-H, ALT-N / ALT-P; other commands run once; ESC drops the count | ALT-0 … ALT-9 (ours) | ⌥0 … ⌥9 (Option as Meta) |

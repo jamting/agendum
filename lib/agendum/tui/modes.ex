@@ -86,6 +86,7 @@ defmodule Agendum.TUI.Modes do
     props: [:cat_id, :cursor, :opened],
     questions: [:cursor, :item, :picked],
     range_filter: [:cat_id, :cursor, :from, :purpose, :show, :to, :where],
+    run_by_name: [:cursor, :filter, :from],
     schedule: [:cursor, :date, :date_category, :filter, :section],
     scope: [:action, :cursor, :marked, :row],
     search_box: [:cursor, :direction, :line, :scope, :search],

@@ -137,6 +137,7 @@ defmodule Agendum.TUI.Update.Notes do
   defp command(state, mode, :previous_note), do: step_note(state, mode, -1)
   defp command(state, mode, :quit), do: state |> close_note(mode) |> Actions.perform(:quit)
   defp command(state, _mode, :key_map), do: State.toggle_key_map(state)
+  defp command(state, _mode, :run_by_name), do: Agendum.TUI.Boxes.RunByName.open(state)
   defp command(state, _mode, :make_item), do: ask_make_item(state)
   defp command(state, mode, :make_category), do: make_category(state, mode)
 

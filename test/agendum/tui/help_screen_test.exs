@@ -168,7 +168,13 @@ defmodule Agendum.TUI.HelpScreenTest do
       in_catmgr = press(state, [{:f, 9}, :down, :down])
       index = Enum.find_index(HelpScreen.commands(:catmgr), fn {c, _, _} -> c.id == :parent end)
       ran = press(in_catmgr, [{:f, 1}, "c"] ++ List.duplicate(:down, index) ++ [:enter])
-      assert ran == press(in_catmgr, :home) |> Map.put(:last_key, ran.last_key)
+      # the same as HOME, but for the key last pressed and the command
+      # remembered as run by name (R65d)
+      assert ran.last.commands == [{:catmgr, "Parent"}]
+
+      assert ran ==
+               press(in_catmgr, :home)
+               |> Map.merge(%{last_key: ran.last_key, last: ran.last})
     end
   end
 
