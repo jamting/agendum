@@ -185,7 +185,8 @@ defmodule Agendum.Core.JSONFile do
           date_settings: struct_obj(db.date_settings),
           match_settings: struct_obj(db.match_settings),
           confirm_assignments: Atom.to_string(db.confirm_assignments),
-          insert_columns: Atom.to_string(db.insert_columns)
+          insert_columns: Atom.to_string(db.insert_columns),
+          tab_size: db.tab_size
         ),
       categories: Enum.map(category_order(db), &category(db.categories[&1])),
       items: Enum.map(db.item_order, &item(db, rel, db.items[&1])),
@@ -541,6 +542,7 @@ defmodule Agendum.Core.JSONFile do
         opt(settings, "confirm_assignments", {:enum, @confirm}, :never, "settings"),
       insert_columns:
         opt(settings, "insert_columns", {:enum, [:all, :section]}, :all, "settings"),
+      tab_size: tab_size(opt(settings, "tab_size", :int, 5, "settings")),
       categories: Map.new(categories, &{&1.id, &1}),
       items: Map.new(items, fn {item, _} -> {item.id, item} end),
       item_order: Enum.map(items, fn {item, _} -> item.id end),
@@ -939,6 +941,10 @@ defmodule Agendum.Core.JSONFile do
       _ -> bad("#{path}.#{key}", "is missing")
     end
   end
+
+  # File Properties ▸ Tab size (R64e): 1 to 16
+  defp tab_size(size) when size in 1..16, do: size
+  defp tab_size(size), do: bad("settings.tab_size", "a tab size from 1 to 16, not #{size}")
 
   defp opt(map, key, type, default, path) do
     case Map.fetch(map, key) do

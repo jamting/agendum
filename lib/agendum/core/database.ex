@@ -43,6 +43,7 @@ defmodule Agendum.Core.Database do
           macros: %{optional(id) => Agendum.Core.Macro.t()},
           macro_order: [id],
           insert_columns: :all | :section,
+          tab_size: pos_integer,
           blog: Agendum.Core.Blog.t()
         }
 
@@ -73,6 +74,8 @@ defmodule Agendum.Core.Database do
             macro_order: [],
             # File Properties ▸ Insert new columns in (R55)
             insert_columns: :all,
+            # File Properties ▸ Tab size: the note editor's tab stops (R64e)
+            tab_size: 5,
             # the micro-blog (R74)
             blog: %Agendum.Core.Blog{}
 

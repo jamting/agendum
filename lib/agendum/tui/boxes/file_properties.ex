@@ -4,7 +4,8 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   and the boxes it opens, nested as in Agenda 2.0, each row with "..."
   opening the next box:
 
-    * File Properties (`:file_props`): Insert new columns in (R55), Global
+    * File Properties (`:file_props`): Insert new columns in (R55), Tab
+      size (R64e, typed as a number), Global
       date settings ..., Auto-assign settings ...
       (`Agendum.TUI.Boxes.AutoAssignBox`, R16a) and File statistics ...
       (`Agendum.TUI.Boxes.FileStatsBox`). Drawn from `@layout`
@@ -23,13 +24,16 @@ defmodule Agendum.TUI.Boxes.FileProperties do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  alias Agendum.TUI.Boxes.{AutoAssignBox, Box, DateSettingsBox, FileStatsBox, Template}
+  alias Agendum.TUI.Boxes.{AutoAssignBox, Box, DateSettingsBox, FieldTyping, FileStatsBox}
+  alias Agendum.TUI.Boxes.Template
   alias Agendum.TUI.State
 
   # Agenda's File Properties (screenshot 130), its other settings left out
   # until Agendum has them
   @layout """
    Insert new columns in:  [insert_columns ]
+
+   Tab size:               [tab_size]
 
    Global date settings:   [dates]   Auto-assign settings:  [auto ]
                                      File statistics:       [stats]
@@ -43,6 +47,8 @@ defmodule Agendum.TUI.Boxes.FileProperties do
     insert_columns:
       "Choose to insert new columns in one or all sections in the view. " <>
         "You can override when you add individual columns.",
+    tab_size:
+      "Type the number of characters between tab stops in notes (1 to 16), or SPACE for the next.",
     dates:
       "Press SPACE BAR to choose date and time formats to use as defaults throughout the file.",
     auto: "Press SPACE BAR to choose how items are assigned to categories by their text.",
@@ -52,8 +58,25 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   def open(state), do: State.push(state, %Agendum.TUI.Modes.FileProps{cursor: 0})
 
   @impl Box
-  # its keys are the settings box's (R65): SPACE changes the setting
+  # its keys are the settings box's (R65): SPACE changes the setting; a
+  # digit on Tab size starts typing it, as in Agenda (R64e)
+  def handle(state, %{typing: {_, _}} = mode, key),
+    do: FieldTyping.key(state, mode, key, &typed/3)
+
+  def handle(state, mode, {:char, c}) do
+    if field(state, mode) == :tab_size and FieldTyping.digit?(c),
+      do: FieldTyping.start(state, mode, :tab_size, c),
+      else: state
+  end
+
   def handle(state, _mode, _key), do: state
+
+  defp typed(state, :tab_size, text) do
+    case FieldTyping.number(text, 1, 16) do
+      {:ok, size} -> State.run(state, {:set_tab_size, size})
+      :error -> State.error(state, "Type a tab size from 1 to 16")
+    end
+  end
 
   @impl Box
   def keymap(_mode), do: Box.settings_keymap()
@@ -68,6 +91,10 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   defp change(state, :dates), do: DateSettingsBox.open(state)
   defp change(state, :auto), do: AutoAssignBox.open(state)
   defp change(state, :stats), do: FileStatsBox.open(state)
+
+  # SPACE: the next size, after 16 back to 1 (F3 lists them, `BoxChoices`)
+  defp change(state, :tab_size),
+    do: State.run(state, {:set_tab_size, rem(state.db.tab_size, 16) + 1})
 
   # two choices, so SPACE flips it
   defp change(state, :insert_columns) do
@@ -87,12 +114,13 @@ defmodule Agendum.TUI.Boxes.FileProperties do
     values = %{
       insert_columns:
         if(state.db.insert_columns == :all, do: "All sections", else: "Current section"),
+      tab_size: Integer.to_string(state.db.tab_size),
       dates: "...",
       auto: "...",
       stats: "..."
     }
 
-    Template.render(@layout, values, selected: field(state, mode)) ++
+    Template.render(@layout, values, [selected: field(state, mode)] ++ FieldTyping.editing(mode)) ++
       [[], Box.hint(keys(state, mode), inner)]
   end
 

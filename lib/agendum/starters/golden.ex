@@ -222,6 +222,7 @@ defmodule Agendum.Starters.Golden do
       ignore_accents: true
     })
     |> Core.set_insert_columns(:section)
+    |> Core.set_tab_size(8)
     |> blog()
     |> feed()
   end

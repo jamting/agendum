@@ -45,7 +45,7 @@ defmodule Agendum.TUI.BoxCancelTest do
   end
 
   test "a box opened from a box cancels only its own changes", %{state: state} do
-    state = press(file_props(state), [" ", :down, " "])
+    state = file_props(state) |> press(" ") |> to_setting("Global date settings") |> press(" ")
     assert %{type: :date_settings} = State.mode(state)
     week_start = state.db.date_settings.week_start
 

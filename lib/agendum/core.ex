@@ -83,6 +83,7 @@ defmodule Agendum.Core do
   defdelegate export_json(db), to: Files
   defdelegate import_json(text), to: Files
   defdelegate agenda_file?(bytes), to: Files
+  defdelegate set_tab_size(db, size), to: Files
   defdelegate import_ag(bytes, opts \\ []), to: Files
 
   # items: adding and editing (R21), moving (R26), done, marking (R35), discarding

@@ -8,7 +8,7 @@ defmodule Agendum.TUI.AutoAssignBoxTest do
   setup do
     state = start(Agendum.Sample.build(~D[2026-10-08]))
     # File Properties: ↓ to Global date settings, → to Auto-assign settings beside it
-    %{state: press(state, [{:f, 10}, "f", "p", :down, :right, " "])}
+    %{state: press(state, [{:f, 10}, "f", "p", :down, :down, :right, " "])}
   end
 
   test "shows Agenda's settings with their defaults", %{state: state} do

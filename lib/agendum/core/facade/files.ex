@@ -1,7 +1,7 @@
 defmodule Agendum.Core.Facade.Files do
   @moduledoc """
-  Whole files: a new, empty file, the file as JSON (R44), and a Lotus
-  Agenda file imported (R72).
+  Whole files: a new, empty file, a setting of the whole file (Tab size),
+  the file as JSON (R44), and a Lotus Agenda file imported (R72).
 
   Called through `Agendum.Core`.
   """
@@ -15,6 +15,15 @@ defmodule Agendum.Core.Facade.Files do
   # `as:` delegates to a function with another name: `new_file/1` here
   # calls `Database.new/1`.
   defdelegate new_file(opts \\ []), to: Database, as: :new
+
+  # --- settings -------------------------------------------------------------------
+
+  @doc """
+  File Properties ▸ Tab size (R64e): how far apart the note editor's tab
+  stops are, 1 to 16 characters (5, Agenda's, in a new file).
+  """
+  @spec set_tab_size(db, 1..16) :: db
+  def set_tab_size(db, size) when is_integer(size) and size in 1..16, do: %{db | tab_size: size}
 
   # --- JSON (R44) -----------------------------------------------------------------
 

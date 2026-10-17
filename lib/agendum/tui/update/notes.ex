@@ -170,6 +170,16 @@ defmodule Agendum.TUI.Update.Notes do
   defp command(state, _mode, :key_map), do: State.toggle_key_map(state)
   defp command(state, _mode, :menu), do: Agendum.TUI.Menu.open(state, :note)
 
+  # INS (R64e): typing over, or not; TAB: spaces to the next tab stop,
+  # File Properties ▸ Tab size apart
+  defp command(state, mode, :overwrite),
+    do: State.put_mode(state, %{mode | edit: TextEdit.toggle_overwrite(mode.edit)})
+
+  defp command(state, mode, :tab) do
+    size = state.db.tab_size
+    type_in_note(state, mode, String.duplicate(" ", size - rem(mode.edit.col, size)))
+  end
+
   # PGUP / PGDN (R64e): as many rows as the screen shows, as ↑ ↓ move
   defp command(state, mode, :page_up), do: page(state, mode, :up)
   defp command(state, mode, :page_down), do: page(state, mode, :down)

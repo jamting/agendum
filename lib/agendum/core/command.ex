@@ -289,6 +289,8 @@ defmodule Agendum.Core.Command do
      [:view, :category, :value, :value, :value], :own},
     {:set_insert_columns, "Insert columns in",
      "Whether a new column goes into one section or all (R55)", [:value], :core},
+    {:set_tab_size, "Tab size", "How far apart a note's tab stops are, 1 to 16 (R64e)",
+     [:tab_size], :core},
     {:set_column_head, "Column head", "Changes a column's head", [:view, :value, :category],
      :core},
     {:set_column_linked, "Link column", "Links a column with the other sections' (R55)",
@@ -450,6 +452,7 @@ defmodule Agendum.Core.Command do
   defp valid(db, :items, ids), do: all(db, :item, ids)
   defp valid(db, :categories, ids), do: all(db, :category, ids)
   defp valid(_db, :value, _arg), do: :ok
+  defp valid(_db, :tab_size, size) when is_integer(size) and size in 1..16, do: :ok
 
   defp valid(_db, :text, text),
     do: if(is_binary(text) and String.trim(text) != "", do: :ok, else: {:error, :empty_text})

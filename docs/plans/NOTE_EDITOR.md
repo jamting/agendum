@@ -1,6 +1,6 @@
 # Plan: the note editor as Agenda's (2026-10-15)
 
-**Status:** researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 to 4 done (R64a–R64d, 2026-10-17); step 5 next (ROADMAP, The note editor).
+**Status:** researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 to 5 done (R64a–R64e, 2026-10-17); step 6 next (ROADMAP, The note editor).
 
 Agenda's note editor (F5) is a screen of its own: its own control panel, its own key bar and its own F10 menu. Agendum's note editor has the text editing, marking and Search/Replace, but keeps the view's control panel and has no menu. This plan maps what Agenda's editor does, sets printing and typesetting out of scope, and lists the steps for the rest: some new, some only a connection to a feature Agendum already has.
 
@@ -58,8 +58,8 @@ Checked in the real Agenda 2.0 (headless, on a copy of PLANNER, 2026-10-15), and
 | Clear | ✅ R64b | 2 |
 | Return, Quit | ESC / F5; ALT-Q; ✅ on the menu (R64b) | 2 |
 | ESC: Discard changes? | ✅ R64d | 4 |
-| INS / OVR | – | 5 |
-| TAB, tab size | – (TAB does nothing; no Tab size setting) | 5 |
+| INS / OVR | ✅ R64e (INS, CTRL-N) | 5 |
+| TAB, tab size | ✅ R64e (spaces; Tab size stored, format 37) | 5 |
 | ALT-M, CTRL-ENTER, CTRL-BACKSPACE, ALT-W | ✅ R64e (CTRL-K for CTRL-ENTER; ⌥⌫ and CTRL-W for CTRL-BACKSPACE) | 5 |
 | PGUP/PGDN, CTRL-←/→, CTRL-HOME/END | ✅ R64e (⌥←/→, ⌥< ⌥> beside them) | 5 |
 | F7 F3 F4 F2 ALT-F4 | ✅ R63 | – |

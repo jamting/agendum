@@ -26,7 +26,7 @@ Out of scope, as SPEC §6 says: printing on paper and print preview (F10 Print a
 | BROWSE               | browsing by date                          | ✅                                                                                        |
 | EDIT                 | editing text                              | ✅                                                                                        |
 | LEARN                | Learn mode                                | ✅                                                                                        |
-| INS / OVR            | insert / overwrite in a note              | ⬜ (note editor plan, step 5)                                                             |
+| INS / OVR            | insert / overwrite in a note              | ✅ (R64e; INS or CTRL-N)                                                                  |
 | WAIT / WRKG          | busy / working in the background          | ⬜ (could show while a calendar is fetched)                                               |
 | READONLY             | no reservation on a network file          | – out of scope                                                                            |
 | DEBUG                | debugging a macro                         | – out of scope (macro language)                                                           |
@@ -157,7 +157,7 @@ Counting what is in scope (not printing, networks, protection, the macro languag
 
 | Area                                           | Parity                                                                    | What is missing                                                                                                                             |
 | ---------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| The control panel (lines, indicators, key bar) | about 75%                                                                 | INS/OVR, WAIT, the * D o ♫ symbols                                                                                   |
+| The control panel (lines, indicators, key bar) | about 80%                                                                 | WAIT, the * D o ♫ symbols                                                                                            |
 | The F10 menu                                   | about 75% (34 of 46 in-scope commands, counting the partial ones as half) | Abandon, Template, Erase, Undisc and Trash, Show ItemsDone / Circular / Every, Launch, the View Properties box, the rest of File Properties |
 | The note editor                                | about 50% (NOTE_EDITOR.md)                                                | its control panel and menu, Import/Export/Clear, ESC's question, the editing keys, APPEND/GETITMS, external note files                      |
 | Data model, assignment, views (SPEC R1–R64)    | about 90%                                                                 | recurring items on every date, unindexed categories, the trash, external note files                                                         |

@@ -49,6 +49,7 @@ erDiagram
         map macros "id => Macro (R50)"
         list macro_order "macro ids in the macro manager's order"
         atom insert_columns "all or section: where new columns go (R55)"
+        int tab_size "1 to 16: the note editor's tab stops (R64e)"
         Blog blog "the micro-blog's settings (R74)"
         map feeds "id => Feed subscription (R75)"
     }
@@ -173,6 +174,7 @@ classDiagram
         +macros : Map~id, Macro~
         +macro_order : [id]
         +insert_columns : all or section
+        +tab_size : 1..16
         +blog : Blog
         +feeds : Map~id, Feed~
     }
@@ -598,6 +600,7 @@ Format versions:
 | 34 | Added `Item.zettel` and `Database.next_zettel`, Zettel ids (R73) |
 | 35 | Added `Database.blog`, the micro-blog's settings (`Agendum.Core.Blog`, R74) |
 | 36 | Added `Database.feeds`, feed subscriptions (`Agendum.Core.Feed`, R75) |
+| 37 | Added `Database.tab_size`, File Properties ▸ Tab size (R64e) |
 
 ## UI state around the database
 

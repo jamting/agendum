@@ -62,7 +62,7 @@ defmodule Agendum.TUI.Modes do
     devtools: [:key, :top],
     display_format: [:cursor, :opened],
     execute: [:against, :cursor, :old, :root],
-    file_props: [:cursor, :opened],
+    file_props: [:cursor, :opened, :typing],
     feeds: [:cursor],
     file_stats: [],
     goto: [:cursor],

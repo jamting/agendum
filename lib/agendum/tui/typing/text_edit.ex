@@ -13,9 +13,10 @@ defmodule Agendum.TUI.Typing.TextEdit do
           row: non_neg_integer,
           col: non_neg_integer,
           mark: position | nil,
-          goal: {non_neg_integer, position} | nil
+          goal: {non_neg_integer, position} | nil,
+          overwrite: boolean
         }
-  defstruct lines: [""], row: 0, col: 0, mark: nil, goal: nil
+  defstruct lines: [""], row: 0, col: 0, mark: nil, goal: nil, overwrite: false
 
   alias Agendum.TUI.Keymap
   alias Agendum.TUI.Typing.{LineEdit, Wrap}
@@ -115,9 +116,12 @@ defmodule Agendum.TUI.Typing.TextEdit do
   the `:text` keymap binds them to (`Agendum.TUI.Keymap`, R65).
   """
   @spec handle(t, term) :: {:ok, t} | :unhandled
+  # typed over (OVR, R64e), what is typed replaces as many characters
+  # after the cursor, as far as the line goes
   def handle(%__MODULE__{} = e, {:char, c}) do
     e = %{e | mark: nil}
     {before, rest} = String.split_at(current(e), e.col)
+    rest = if e.overwrite, do: String.slice(rest, String.length(c)..-1//1), else: rest
     {:ok, %{put(e, before <> c <> rest) | col: e.col + String.length(c)}}
   end
 
@@ -259,6 +263,10 @@ defmodule Agendum.TUI.Typing.TextEdit do
     last = length(e.lines) - 1
     %{e | row: last, col: String.length(Enum.at(e.lines, last))}
   end
+
+  @doc "INS (R64e): switches between inserting and typing over."
+  @spec toggle_overwrite(t) :: t
+  def toggle_overwrite(e), do: %{e | overwrite: not e.overwrite}
 
   @doc "F7 MARK: anchors a region at the cursor, or drops the one there is."
   @spec toggle_mark(t) :: t

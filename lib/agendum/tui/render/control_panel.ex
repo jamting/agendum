@@ -120,7 +120,8 @@ defmodule Agendum.TUI.Render.ControlPanel do
 
     case State.mode(state) do
       %{type: :note, edit: edit} when state.edit == nil and state.macro.learning == nil ->
-        marks <> "Line #{String.pad_leading(Integer.to_string(edit.row + 1), 4)} INS EDIT "
+        typing = if edit.overwrite, do: "OVR", else: "INS"
+        marks <> "Line #{String.pad_leading(Integer.to_string(edit.row + 1), 4)} #{typing} EDIT "
 
       _ ->
         marks <>

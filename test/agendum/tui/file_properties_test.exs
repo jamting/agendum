@@ -14,7 +14,7 @@ defmodule Agendum.TUI.FilePropertiesTest do
 
   # File Properties ▸ Global date settings (below Insert new columns in) ▸
   # Display format, as in Agenda
-  @dates [{:f, 10}, "f", "p", :down, " "]
+  @dates [{:f, 10}, "f", "p", :down, :down, " "]
   @display @dates ++ [" "]
 
   test "File Properties opens Agenda's boxes, one inside the other", %{state: state} do
@@ -23,7 +23,7 @@ defmodule Agendum.TUI.FilePropertiesTest do
     assert screen(state) =~ ~r/Global date settings: +\.\.\./
     assert screen(state) =~ ~r/Auto-assign settings: +\.\.\./
 
-    state = press(state, [:down, " "])
+    state = state |> to_setting("Global date settings") |> press(" ")
     assert %{type: :date_settings} = State.mode(state)
     assert screen(state) =~ ~r/Display format +: \.\.\./
 
@@ -64,8 +64,8 @@ defmodule Agendum.TUI.FilePropertiesTest do
     # each box's last row, and the bottom of its frame below it
     for {keys, last} <- [
           {[], "Auto-assign"},
-          {[:down, " "], "Evening"},
-          {[:down, " ", " "], "Sample"}
+          {[:down, :down, " "], "Evening"},
+          {[:down, :down, " ", " "], "Sample"}
         ] do
       lines = state |> press([{:f, 10}, "f", "p"] ++ keys) |> screen() |> String.split("\n")
       row = Enum.find_index(lines, &String.contains?(&1, last))

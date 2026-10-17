@@ -151,6 +151,9 @@ defmodule Agendum.TUI.Keymap do
   # a note (F5): any key not here edits the text (`Typing.TextEdit`)
   @note %{
     {:ctrl, "l"} => :insert_link,
+    # INS / OVR and TAB (R64e); CTRL-N stands for INS
+    :insert => :overwrite,
+    :tab => :tab,
     :pgup => :page_up,
     :pgdn => :page_down,
     {:f, 10} => :menu,

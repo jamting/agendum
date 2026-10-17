@@ -143,6 +143,8 @@ defmodule Agendum.TUI.Commands do
     {:key_map, "Key map", "Show or hide the function key map", :none},
     {:run_by_name, "Run by name", "Run a command chosen by its name", :none},
     {:menu, "Menu", "The note's menu: Import, Export …", :none},
+    {:overwrite, "Insert/Overwrite", "Insert, or type over (OVR)", :none},
+    {:tab, "Tab", "Spaces to the next tab stop", :none},
     {:page_up, "Page up", "A screen of rows up", :none},
     {:page_down, "Page down", "A screen of rows down", :none},
     {:clear, "Clear", "Delete all text in the note", :none},
