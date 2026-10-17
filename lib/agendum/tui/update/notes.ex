@@ -30,8 +30,10 @@ defmodule Agendum.TUI.Update.Notes do
     type today's date and the time. ALT-F7 makes the marked text an item,
     ALT-F2 a category.
 
-    ESC or F5 saves the note and goes back; ALT-N and ALT-P save it and go
-    on to the next or the previous item's note. F10 is the note's menu:
+    F5 saves the note and goes back. ESC asks "Discard changes?" when you
+    changed it: No (ENTER) saves it as F5 does, Yes puts it back as it was
+    when you opened it. ALT-N and ALT-P save it and go on to the next or
+    the previous item's note. F10 is the note's menu:
     Import puts a text file in at the cursor, Export writes the note to
     one, Clear empties the note, Return goes back, Quit leaves Agendum.
     """
@@ -109,6 +111,19 @@ defmodule Agendum.TUI.Update.Notes do
   defp command(state, _mode, :search), do: NoteSearch.open(state)
   defp command(state, mode, :search_next), do: NoteSearch.next(state, mode)
   defp command(state, mode, :close), do: close_note(state, mode)
+
+  # ESC (R64d): with changes, Agenda's "Discard changes?", No shown first
+  defp command(state, mode, :cancel) do
+    if changed?(mode),
+      do:
+        State.push(state, %Agendum.TUI.Modes.Confirm{
+          question: "Discard changes?",
+          action: :discard_note,
+          answer: false
+        }),
+      else: close_note(state, mode)
+  end
+
   defp command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
 
   defp command(state, mode, :mark),
@@ -326,6 +341,44 @@ defmodule Agendum.TUI.Update.Notes do
 
   # Saves the note and closes it.
   defp close_note(state, mode), do: state |> save(mode) |> State.pop()
+
+  # whether the text differs from the text as opened (read through
+  # `TextEdit` both, so that the macro editor's line breaks compare alike)
+  defp changed?(mode),
+    do: TextEdit.text(mode.edit) != TextEdit.text(TextEdit.new(mode.original))
+
+  @doc """
+  The answer to "Discard changes?" (R64d): Yes puts the note's text back
+  as it was opened, what Search/Replace and Clear saved on the way
+  included, and closes it; No saves it and closes it, as F5. The note is
+  found on the stack, under the question.
+  """
+  @spec discard(State.t(), boolean) :: State.t()
+  def discard(state, yes?) do
+    case Enum.split_while(state.modes, &(&1.type != :note)) do
+      {_above, [note | below]} ->
+        text = if yes?, do: note.original, else: TextEdit.text(note.edit)
+        %{State.run(state, save_command(note.target, text)) | modes: below}
+
+      {_, []} ->
+        state
+    end
+  end
+
+  @doc """
+  Opens the note editor on `text`, the note of `target` (`{:item, id}`,
+  `{:category, id}`, `{:macro, id}`), headed by `title`. The text as
+  opened is kept, for ESC's "Discard changes?" (R64d).
+  """
+  @spec open(State.t(), {atom, pos_integer}, String.t(), String.t()) :: State.t()
+  def open(state, target, title, text) do
+    State.push(state, %Agendum.TUI.Modes.Note{
+      target: target,
+      title: title,
+      edit: TextEdit.new(text),
+      original: text
+    })
+  end
 
   @doc """
   Puts text read from a file in at the cursor of the note being edited

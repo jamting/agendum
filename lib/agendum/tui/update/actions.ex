@@ -22,7 +22,6 @@ defmodule Agendum.TUI.Update.Actions do
     Boxes.SearchBox,
     Boxes.SortBox,
     State,
-    Typing.TextEdit,
     Boxes.ViewManager
   }
 
@@ -107,19 +106,11 @@ defmodule Agendum.TUI.Update.Actions do
   end
 
   defp do_perform(state, :note, %{kind: :item, item: item}) do
-    State.push(state, %Agendum.TUI.Modes.Note{
-      target: {:item, item.id},
-      title: item.text,
-      edit: TextEdit.new(item.note)
-    })
+    Agendum.TUI.Update.Notes.open(state, {:item, item.id}, item.text, item.note)
   end
 
   defp do_perform(state, :note, %{kind: :section, category: cat}) do
-    State.push(state, %Agendum.TUI.Modes.Note{
-      target: {:category, cat.id},
-      title: cat.name,
-      edit: TextEdit.new(cat.note)
-    })
+    Agendum.TUI.Update.Notes.open(state, {:category, cat.id}, cat.name, cat.note)
   end
 
   defp do_perform(state, :discard, %{kind: :item, item: item}) do

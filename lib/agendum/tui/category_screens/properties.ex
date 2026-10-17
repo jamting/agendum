@@ -27,8 +27,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
     Terminal.Draw,
     Typing.LineEdit,
     State,
-    Boxes.Template,
-    Typing.TextEdit
+    Boxes.Template
   }
 
   alias Agendum.TUI.Render.Text
@@ -247,11 +246,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   end
 
   defp open_prop(state, cat, :note) do
-    State.push(state, %Agendum.TUI.Modes.Note{
-      target: {:category, cat.id},
-      title: cat.name,
-      edit: TextEdit.new(cat.note)
-    })
+    Agendum.TUI.Update.Notes.open(state, {:category, cat.id}, cat.name, cat.note)
   end
 
   # Category type (User's Guide 7-3, 8-11 to 8-12): a standard category

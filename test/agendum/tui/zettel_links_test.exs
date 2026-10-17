@@ -79,7 +79,7 @@ defmodule Agendum.TUI.ZettelLinksTest do
     assert hd(State.mode(state).edit.lines) == "[[bonalaku]]"
     assert screen(press(state, :left)) =~ "→ bonalaku: Owl's birthday"
 
-    state = press(state, :esc)
+    state = press(state, {:f, 5})
     assert state.db.items[plan].note == "[[bonalaku]]"
   end
 

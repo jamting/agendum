@@ -249,11 +249,7 @@ defmodule Agendum.TUI.Macros do
   def edit_text(state, macro) do
     text = Regex.replace(~r/\{ENTER\}(?! )/i, macro.keys, "{ENTER}\n")
 
-    State.push(state, %Agendum.TUI.Modes.Note{
-      target: {:macro, macro.id},
-      title: macro.name,
-      edit: Agendum.TUI.Typing.TextEdit.new(text)
-    })
+    Agendum.TUI.Update.Notes.open(state, {:macro, macro.id}, macro.name, text)
   end
 
   defp select(state, index) do

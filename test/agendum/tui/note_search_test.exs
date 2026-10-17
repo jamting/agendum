@@ -163,7 +163,7 @@ defmodule Agendum.TUI.NoteSearchTest do
 
   test "each confirmed replacement is an undo step of its own", %{state: state, id: id} do
     state = replace_box(state, "personnel division", "HR", global: true, confirm: true)
-    state = press(state, ["y", "y", :esc, :esc])
+    state = press(state, ["y", "y", :esc, {:f, 5}])
     assert state.db.items[id].note == "Ask the HR\nthen HR again\nPERSONNEL DIVISION"
 
     state = press(state, {:ctrl, "z"})
@@ -179,7 +179,7 @@ defmodule Agendum.TUI.NoteSearchTest do
     # the cursor is at the end of the note: type there, then replace
     state = press(state, " too")
     state = replace_box(state, "personnel division", "HR", global: true)
-    state = press(state, :esc)
+    state = press(state, {:f, 5})
     assert state.db.items[id].note == "Ask the HR\nthen HR again\nHR too"
 
     state = press(state, {:ctrl, "z"})
@@ -190,7 +190,7 @@ defmodule Agendum.TUI.NoteSearchTest do
 
   test "without typing first, a replacement is one undo step", %{state: state, id: id} do
     state = replace_box(state, "personnel division", "HR", global: true)
-    state = press(state, [:esc, {:ctrl, "z"}])
+    state = press(state, [{:f, 5}, {:ctrl, "z"}])
     assert state.db.items[id].note == @note
     assert state.history.undo == []
   end
@@ -199,7 +199,7 @@ defmodule Agendum.TUI.NoteSearchTest do
        %{state: state, id: id} do
     state = press(state, [:up, :up, :home])
     state = replace_box(state, "personnel division", "HR", [])
-    state = press(state, [{:alt, "s"}, :esc])
+    state = press(state, [{:alt, "s"}, {:f, 5}])
     assert state.db.items[id].note == "Ask the HR\nthen HR again\nPERSONNEL DIVISION"
     state = press(state, {:ctrl, "z"})
 

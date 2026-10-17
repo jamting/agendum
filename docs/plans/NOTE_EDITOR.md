@@ -1,6 +1,6 @@
 # Plan: the note editor as Agenda's (2026-10-15)
 
-**Status:** researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 to 3 done (R64a–R64c, 2026-10-17); step 4 next (ROADMAP, The note editor).
+**Status:** researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 to 4 done (R64a–R64d, 2026-10-17); step 5 next (ROADMAP, The note editor).
 
 Agenda's note editor (F5) is a screen of its own: its own control panel, its own key bar and its own F10 menu. Agendum's note editor has the text editing, marking and Search/Replace, but keeps the view's control panel and has no menu. This plan maps what Agenda's editor does, sets printing and typesetting out of scope, and lists the steps for the rest: some new, some only a connection to a feature Agendum already has.
 
@@ -57,7 +57,7 @@ Checked in the real Agenda 2.0 (headless, on a copy of PLANNER, 2026-10-15), and
 | Import, Export | ✅ R64c: prompts (F3 lists `.txt`, `.md`) instead of Agenda's boxes; carriage returns always stripped | 3 |
 | Clear | ✅ R64b | 2 |
 | Return, Quit | ESC / F5; ALT-Q; ✅ on the menu (R64b) | 2 |
-| ESC: Discard changes? | ESC saves and leaves | 4 |
+| ESC: Discard changes? | ✅ R64d | 4 |
 | INS / OVR | – | 5 |
 | TAB, tab size | – (TAB does nothing; no Tab size setting) | 5 |
 | ALT-M, CTRL-ENTER, CTRL-BACKSPACE, ALT-W | – (single-line fields have CTRL-K, CTRL-W, ⌥⌫: `LineEdit`) | 5 |
@@ -69,7 +69,7 @@ Checked in the real Agenda 2.0 (headless, on a copy of PLANNER, 2026-10-15), and
 | ALT-F6, ALT-S | ✅ R39 | – |
 | ALT-F1 COMPOSE | – (a modern terminal types any character) | 8 |
 | ALT-D, ALT-T | ✅ | – |
-| ALT-N, ALT-P | ✅ (always saves) | 4 |
+| ALT-N, ALT-P | ✅ (always saves: the owner's choice) | 4 |
 | ALT-C | – in a note (the view's ALT-C opens the calendar) | 6 |
 | ALT-Z | ✅ (macros run anywhere) | – |
 | ALT-K, ALT-Q | ✅ | – |

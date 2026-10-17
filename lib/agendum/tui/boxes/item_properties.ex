@@ -27,7 +27,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   alias Agendum.Core
   alias Agendum.Core.{DateFormat, NumberFormat, Recurrence}
   alias Agendum.TUI.Boxes.{Box, BoxNav, Template}
-  alias Agendum.TUI.{CategoryScreens, Typing.Completion, Typing.LineEdit, State, Typing.TextEdit}
+  alias Agendum.TUI.{CategoryScreens, Typing.Completion, Typing.LineEdit, State}
   alias Agendum.TUI.Render.View
   alias Agendum.TUI.Terminal.Draw
   alias Agendum.TUI.Update.{Editing, Prompts}
@@ -191,11 +191,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   defp open_note(state, mode) do
     item = state.db.items[mode.item_id]
 
-    State.push(state, %Agendum.TUI.Modes.Note{
-      target: {:item, item.id},
-      title: item.text,
-      edit: TextEdit.new(item.note)
-    })
+    Agendum.TUI.Update.Notes.open(state, {:item, item.id}, item.text, item.note)
   end
 
   defp start_assign(state, text) do

@@ -91,7 +91,7 @@ defmodule Agendum.TUI.NoteMakeTest do
     end
 
     test "only in a note opened from a view", %{state: state} do
-      state = state |> press(:esc) |> press([{:f, 9}, :down, {:f, 5}, "Ideas", {:alt_f, 7}])
+      state = state |> press({:f, 5}) |> press([{:f, 9}, :down, {:f, 5}, "Ideas", {:alt_f, 7}])
       assert panel(state) =~ "ALT-F7 makes items from a note opened in a view"
     end
   end

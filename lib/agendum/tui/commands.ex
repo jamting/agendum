@@ -146,6 +146,7 @@ defmodule Agendum.TUI.Commands do
     {:clear, "Clear", "Delete all text in the note", :none},
     {:help, "Help", "Help about where you are", :none},
     {:close, "Return", "Save the note and go back", :none},
+    {:cancel, "Cancel", "Go back; asks to discard any changes", :none},
     {:quit, "Quit", "Save the note and quit Agendum", :none}
   ]
 

@@ -172,7 +172,7 @@ defmodule Agendum.TUI.MacrosTest do
       assert screen(state) =~ ~r/^ Edit macro:  Water +Line +2 INS EDIT/
       assert screen(state) =~ "Water the lettuces{ENTER}"
 
-      state = press(state, [:ctrl_end, "Weed{ENTER}", :esc])
+      state = press(state, [:ctrl_end, "Weed{ENTER}", {:f, 5}])
       assert macro(state, "Water").keys == "Water the lettuces{ENTER}\nWeed{ENTER}"
       state = press(state, [:esc, {:alt_f, 3}, :enter])
       assert count(state, "Weed") == 1

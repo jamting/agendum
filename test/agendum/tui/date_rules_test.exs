@@ -35,7 +35,7 @@ defmodule Agendum.TUI.DateRulesTest do
     assert screen(state) =~ ~r/Assign item date\s+: From the note text/
 
     # back to the view; the first item, below the Calls section head
-    state = press(state, [:enter, :enter, :down, {:f, 5}, "Booked for next Tuesday", :esc])
+    state = press(state, [:enter, :enter, :down, {:f, 5}, "Booked for next Tuesday", {:f, 5}])
     item = Agendum.TUI.Layout.current_row(state).item
     assert {item.note, item.when} == {"Booked for next Tuesday", ~D[2026-10-13]}
   end

@@ -75,7 +75,7 @@ defmodule Agendum.TUI.Modes do
     macros: [:cursor],
     menu: [:path, :resume, :selected, :tree],
     move_item: [:moves],
-    note: [:edit, :match, :target, :title],
+    note: [:edit, :match, :original, :target, :title],
     note_search: [:cursor, :line, :replacement, :settings],
     numeric_functions: [:cursor, :opened, :sidx],
     picker: [:cursor, :purpose, :root, :search],

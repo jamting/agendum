@@ -153,7 +153,7 @@ defmodule Agendum.TUI.Keymap do
     {:ctrl, "l"} => :insert_link,
     {:f, 10} => :menu,
     {:ctrl, "x"} => :run_by_name,
-    :esc => :close,
+    :esc => :cancel,
     {:f, 5} => :close,
     {:f, 1} => :help,
     {:f, 7} => :mark,

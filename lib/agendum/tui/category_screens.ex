@@ -18,7 +18,7 @@ defmodule Agendum.TUI.CategoryScreens do
   """
 
   alias Agendum.Core.Database
-  alias Agendum.TUI.{Terminal.Draw, Typing.LineEdit, State, Typing.TextEdit}
+  alias Agendum.TUI.{Terminal.Draw, Typing.LineEdit, State}
   alias Agendum.TUI.Render.Text
   alias Agendum.TUI.CategoryScreens.{Manager, Picker, Profile}
 
@@ -311,11 +311,7 @@ defmodule Agendum.TUI.CategoryScreens do
   def open_note(state, id) do
     cat = state.db.categories[id]
 
-    State.push(state, %Agendum.TUI.Modes.Note{
-      target: {:category, id},
-      title: cat.name,
-      edit: TextEdit.new(cat.note)
-    })
+    Agendum.TUI.Update.Notes.open(state, {:category, id}, cat.name, cat.note)
   end
 
   @doc "Applies a change to the hierarchy, or reports why it failed."

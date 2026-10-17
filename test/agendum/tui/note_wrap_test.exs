@@ -34,7 +34,7 @@ defmodule Agendum.TUI.NoteWrapTest do
   end
 
   test "no line break goes into the text", %{state: state, id: id} do
-    state = press(state, [:up, :end, "!", :esc])
+    state = press(state, [:up, :end, "!", {:f, 5}])
     assert state.db.items[id].note == @long <> "!\nshort"
   end
 
@@ -113,7 +113,7 @@ defmodule Agendum.TUI.NoteWrapTest do
     rows = rows(state)
     assert Enum.any?(rows, &(&1 == " " <> String.duplicate("x", 28)))
     assert Enum.any?(rows, &String.starts_with?(&1, " " <> String.duplicate("x", 12)))
-    state = press(state, :esc)
+    state = press(state, {:f, 5})
     assert state.db.items[id].note == @note <> "\n" <> word
   end
 

@@ -418,6 +418,9 @@ defmodule Agendum.TUI.Update.Prompts do
 
   defp confirmed(state, :clear_note, true), do: Agendum.TUI.Update.Notes.clear(state)
 
+  # ESC in a note (R64d): both answers leave the note
+  defp confirmed(state, :discard_note, yes?), do: Agendum.TUI.Update.Notes.discard(state, yes?)
+
   # the macro's own properties box and editor, wherever they are on the
   # stack, go with it (a manager can be opened over them). `^id` pins the
   # pattern to this id, instead of binding a new name

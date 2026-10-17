@@ -51,7 +51,7 @@ Then working together:
   - [x] Its control panel and key bar (R64a, 2026-10-17): line 1 "Note for:   …" (the macro editor's "Edit macro:  …") with "Line N INS EDIT" on the right, a message over it until the next key, hints on line 2; the key bar in Agenda's order, F1 Help … F5 Return, F7 Mark. "Note file: …" comes with external note files, F10 Menu with the menu
   - [x] Its F10 menu (R64b, 2026-10-17): Clear (asks; one undo step), Return, Quit, with Agenda's help lines; Import and Export come with the next item, File with external note files
   - [x] Import a text file at the cursor; Export the note to a text file (R64c, 2026-10-17): prompts with F3 listing `.txt` and `.md`, CR LF read as LF
-  - [ ] ESC asks "Discard changes?" (No saves, Yes restores the note as opened)
+  - [x] ESC asks "Discard changes?" (R64d, 2026-10-17): only when the note changed; No (first) saves, Yes restores the note as opened, saved replacements and Clear included; ESC on it goes back to the note; F5, ALT-N/P save without asking
   - [ ] Editing keys: INS/OVR, TAB with File Properties ▸ Tab size, ALT-M, word delete (CTRL-BACKSPACE, ALT-W), delete to line end, word moves, PGUP/PGDN, CTRL-HOME/END
   - [ ] ALT-F9 APPEND, ALT-F8 GETITMS and ALT-C (calendar) in a note
   - [ ] External note files: File Attach, Detach, Erase (a stored field and an ADR)

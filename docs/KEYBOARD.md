@@ -37,6 +37,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | In a note: move by the rows shown (long lines wrap, R64); start / end of the row, again: of the line| ↑ ↓; HOME / END               | CTRL-A / CTRL-E                                                       |
 | In a note: insert today's date / the time                                                       | ALT-D / ALT-T                 | ⌥d / ⌥t                                                    |
 | In a note: the next / previous item's (or category's) note                                      | ALT-N / ALT-P                 | ⌥n / ⌥p                                                    |
+| In a note: save and go back; go back asking "Discard changes?" when it changed (R64d)           | F5; ESC                       | —                                                          |
 | In a note: make the marked text (or the word, line or all text) into a new item (it leaves the note; MAKEITM) / the marked text or the word into a new category under a parent you pick (MAKECAT) | ALT-F7 / ALT-F2 | — |
 | In a note: mark text (then move the cursor; again to unmark); copy / cut the marked text, or a word, line or all text; delete it (not kept); paste what was last copied or cut | F7; F3 / F4; ALT-F4; F2 | — |
 | Back to the previous view (LAST VW)                                                             | ALT-F8                        | menu View ▸ Last                                     |
@@ -68,7 +69,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Save / open / print to file / quit                                                              | menu                          | **CTRL-S** / **CTRL-O** / **CTRL-P** / **CTRL-Q** (CTRL-C also quits) |
 | Previous / next section                                                                         | CTRL-PGUP / CTRL-PGDN         | ⌥↑ / ⌥↓ (in a view)                                                   |
 | A count for the next command in a view (R65): ALT-1 ALT-0 ↓ moves ten rows down. Counts work with ↑ ↓ PGUP PGDN ← → TAB, previous / next section, ALT-J, ALT-H, ALT-N / ALT-P; other commands run once; ESC drops the count | ALT-0 … ALT-9 (ours) | ⌥0 … ⌥9 (Option as Meta) |
-| Menu (in a note: the note's own menu, Clear, Return, Quit; R64b)                               | F10                           | `/` (not in a note, where it is typed)                                |
+| Menu (in a note: the note's own menu, Import, Export, Clear, Return, Quit; R64b)               | F10                           | `/` (not in a note, where it is typed)                                |
 | Help about where you are; then `c` the command list (typing narrows it, ENTER runs one, ← → page through the highlighted command's text in the pane), `d` describe the next key pressed, `a` all keys (R65) | F1; then `c` / `d` / `a` | ⌘/ mapped to F1 |
 | In the menu: back up a level; in a box, prompt or question opened from it: back to the menu       | ESC                           | ESC                                                                   |
 | In a box: move between settings (→ ← along a row, on to the next or previous; ↓ ↑ keep to the side); first / last setting | ↑ ↓ ← →, TAB / SHIFT-TAB; HOME / END | fn-← / fn-→ for HOME / END                                            |

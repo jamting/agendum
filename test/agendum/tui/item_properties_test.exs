@@ -45,8 +45,8 @@ defmodule Agendum.TUI.ItemPropertiesTest do
     assert %{type: :item_props} = State.mode(state)
   end
 
-  test "SPACE on the note opens it; ESC returns to the box", %{state: state, item: item} do
-    state = state |> row(1) |> press([" ", "remember the figures", :esc])
+  test "SPACE on the note opens it; F5 returns to the box", %{state: state, item: item} do
+    state = state |> row(1) |> press([" ", "remember the figures", {:f, 5}])
     assert state.db.items[item].note == "remember the figures"
     assert %{type: :item_props} = State.mode(state)
   end
