@@ -1,6 +1,6 @@
 # ADR 0041 — The blog uploads by rsync or SFTP, not FTP
 
-**Status:** accepted · 2026-10-17 (built overnight; the owner to confirm). Changes part of meeting 2026-10-16-2, § 8.
+**Status:** accepted · 2026-10-17 (built overnight; confirmed by the owner 2026-10-17 after uploading by SFTP). Changes part of meeting 2026-10-16-2, § 8.
 
 ## Context
 
