@@ -407,8 +407,20 @@ defmodule Agendum.TUI.Update.Prompts do
 
   defp confirmed(state, :clear_note, true), do: Agendum.TUI.Update.Notes.clear(state)
 
-  defp confirmed(state, {:delete_macro, id}, true),
-    do: State.run(state, {:delete_macro, id})
+  # the macro's own properties box and editor, wherever they are on the
+  # stack, go with it (a manager can be opened over them). `^id` pins the
+  # pattern to this id, instead of binding a new name
+  defp confirmed(state, {:delete_macro, id}, true) do
+    state = State.run(state, {:delete_macro, id})
+
+    modes =
+      Enum.reject(state.modes, fn mode ->
+        match?(%{type: :macro_props, macro_id: ^id}, mode) or
+          match?(%{type: :note, target: {:macro, ^id}}, mode)
+      end)
+
+    %{state | modes: modes}
+  end
 
   defp confirmed(state, {:make_date, id}, true), do: make_date(state, id)
 

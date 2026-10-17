@@ -257,4 +257,21 @@ defmodule Agendum.TUI.MacrosTest do
       assert macro(state, "Watering")
     end
   end
+
+  # found by the fuzz walks: the box of a macro deleted from a manager
+  # opened over it was drawn for a macro no longer there
+  test "deleting a macro closes its properties box and editor beneath", %{state: state} do
+    state = learned(state)
+    props = press(state, [{:alt_f, 3}, {:f, 6}, {:alt_f, 3}])
+    assert Enum.map(props.modes, & &1.type) == [:macros, :macro_props, :macros]
+
+    deleted = press(props, [:delete, :enter])
+    assert macro(deleted, "Water") == nil
+    refute :macro_props in Enum.map(deleted.modes, & &1.type)
+    assert is_binary(screen(deleted))
+
+    editing = press(state, [{:alt_f, 3}, {:f, 2}, {:alt_f, 3}, :delete, :enter])
+    refute Enum.any?(editing.modes, &match?(%{type: :note, target: {:macro, _}}, &1))
+    assert is_binary(screen(editing))
+  end
 end
