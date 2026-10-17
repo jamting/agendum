@@ -40,7 +40,8 @@ defmodule Agendum.TUI.KeymapTest do
   end
 
   # commands with no key of their own: reached from the menu and F1 c
-  @keyless []
+  # (Clear in a note: Agenda had no key for it either)
+  @keyless [{:note, :clear}]
 
   test "every command has a key" do
     unbound =

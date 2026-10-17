@@ -1,6 +1,6 @@
 # Plan: the note editor as Agenda's (2026-10-15)
 
-**Status:** researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); step 1 done (R64a, 2026-10-17); step 2 next (ROADMAP, The note editor).
+**Status:** researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 and 2 done (R64a, R64b, 2026-10-17); step 3 next (ROADMAP, The note editor).
 
 Agenda's note editor (F5) is a screen of its own: its own control panel, its own key bar and its own F10 menu. Agendum's note editor has the text editing, marking and Search/Replace, but keeps the view's control panel and has no menu. This plan maps what Agenda's editor does, sets printing and typesetting out of scope, and lists the steps for the rest: some new, some only a connection to a feature Agendum already has.
 
@@ -53,10 +53,10 @@ Checked in the real Agenda 2.0 (headless, on a copy of PLANNER, 2026-10-15), and
 | Note for … Line N INS EDIT | ✅ R64a (INS only until step 5; no clock, as Agenda) | 1 |
 | Note file: line | – | 7 |
 | Key bar | ✅ R64a: F1 Help, F2 Paste, F3 Copy, F4 Cut, F5 Return, F7 Mark, then ALT-F6, ALT-F7, ALT-F2 (one line, as every key bar of ours; F10 Menu with step 2) | 1 |
-| F10 menu | F10 does nothing in a note | 2 |
+| F10 menu | ✅ R64b: Clear, Return, Quit (Import and Export: step 3; File: step 7) | 2 |
 | Import, Export | – (File ▸ Transfer has the file's import/export, and Select File, R51, lists files) | 3 |
-| Clear | – | 2 |
-| Return, Quit | ESC / F5; ALT-Q | 2 (menu entries only) |
+| Clear | ✅ R64b | 2 |
+| Return, Quit | ESC / F5; ALT-Q; ✅ on the menu (R64b) | 2 |
 | ESC: Discard changes? | ESC saves and leaves | 4 |
 | INS / OVR | – | 5 |
 | TAB, tab size | – (TAB does nothing; no Tab size setting) | 5 |

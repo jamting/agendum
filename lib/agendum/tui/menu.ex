@@ -17,8 +17,26 @@ defmodule Agendum.TUI.Menu do
   alias Agendum.TUI.{Keymap, State}
   alias Agendum.TUI.Update.Actions
 
-  @doc "The menu tree: `{label, description, children_or_action}`."
-  def tree do
+  @doc """
+  A menu tree: `{label, description, children_or_action}`. The view's
+  (`:main`, the default) or the note editor's (`:note`, R64b), whose
+  actions are a note's commands, `{:note, id}`.
+  """
+  @spec tree(:main | :note) :: [tuple]
+  def tree(which \\ :main)
+
+  # Agenda's note menu (R64b): File, Print, Import, Export, Clear, Return,
+  # Quit; printing is out of scope, Import and Export come with
+  # NOTE_EDITOR.md step 3, File with external note files (step 7)
+  def tree(:note) do
+    [
+      {"Clear", "Delete all text in the current note", {:note, :clear}},
+      {"Return", "Return to the previous activity (F5)", {:note, :close}},
+      {"Quit", "End this Agendum session (ALT-Q); the note is saved", {:note, :quit}}
+    ]
+  end
+
+  def tree(:main) do
     [
       {"File", "Retrieve, save or create files",
        [
@@ -153,11 +171,16 @@ defmodule Agendum.TUI.Menu do
     ]
   end
 
-  def open(state), do: State.push(state, %Agendum.TUI.Modes.Menu{path: [], selected: 0})
+  @doc "Opens the menu: the view's, or the note editor's (`:note`)."
+  def open(state, which \\ :main),
+    do: State.push(state, %Agendum.TUI.Modes.Menu{path: [], selected: 0, tree: which})
+
+  # the tree a menu mode shows (a menu made before `tree` was a field: the view's)
+  defp tree_of(mode), do: tree(Map.get(mode, :tree) || :main)
 
   @doc "The entries at the menu's current level."
-  def entries(%{path: path}) do
-    Enum.reduce(path, tree(), fn index, level ->
+  def entries(%{path: path} = mode) do
+    Enum.reduce(path, tree_of(mode), fn index, level ->
       {_, _, children} = Enum.at(level, index)
       children
     end)
@@ -165,9 +188,9 @@ defmodule Agendum.TUI.Menu do
 
   @doc "The labels of the entries chosen to reach the menu's current level (`[\"View\", \"Hide\"]`)."
   @spec labels(map) :: [String.t()]
-  def labels(%{path: path}) do
+  def labels(%{path: path} = mode) do
     {labels, _level} =
-      Enum.reduce(path, {[], tree()}, fn index, {labels, level} ->
+      Enum.reduce(path, {[], tree_of(mode)}, fn index, {labels, level} ->
         {label, _, children} = Enum.at(level, index)
         {labels ++ [label], children}
       end)
@@ -253,6 +276,14 @@ defmodule Agendum.TUI.Menu do
     case Enum.at(entries(mode), index) do
       {_, _, children} when is_list(children) ->
         State.put_mode(state, %{mode | path: mode.path ++ [index], selected: 0})
+
+      # a note's command runs in the note beneath the menu (R64b)
+      {_, _, {:note, id}} ->
+        below = State.pop(state)
+
+        below
+        |> Agendum.TUI.Update.Notes.run(id)
+        |> keep_beneath(below, %{mode | selected: index})
 
       {_, _, action} ->
         below = State.pop(state)

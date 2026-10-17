@@ -151,6 +151,7 @@ defmodule Agendum.TUI.Keymap do
   # a note (F5): any key not here edits the text (`Typing.TextEdit`)
   @note %{
     {:ctrl, "l"} => :insert_link,
+    {:f, 10} => :menu,
     {:ctrl, "x"} => :run_by_name,
     :esc => :close,
     {:f, 5} => :close,

@@ -405,6 +405,8 @@ defmodule Agendum.TUI.Update.Prompts do
   defp confirmed(state, {:note_replace, asked}, answer),
     do: Agendum.TUI.Typing.NoteSearch.answer(state, asked, answer)
 
+  defp confirmed(state, :clear_note, true), do: Agendum.TUI.Update.Notes.clear(state)
+
   defp confirmed(state, {:delete_macro, id}, true),
     do: State.run(state, {:delete_macro, id})
 

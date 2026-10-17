@@ -143,6 +143,7 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"F4", "Cut", "Cut the marked text (or a word, line, all)"},
       {"F5", "Return", "Save and return"},
       {"F7", "Mark", "Mark text: F7, then move the cursor"},
+      {"F10", "Menu"},
       {"ALT-F6", "Search", "Search and replace"},
       {"ALT-F7", "MakeItm", "Make text into an item"},
       {"ALT-F2", "MakeCat", "Make the text a category"}

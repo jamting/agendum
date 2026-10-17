@@ -31,7 +31,8 @@ defmodule Agendum.TUI.Update.Notes do
     ALT-F2 a category.
 
     ESC or F5 saves the note and goes back; ALT-N and ALT-P save it and go
-    on to the next or the previous item's note.
+    on to the next or the previous item's note. F10 is the note's menu:
+    Clear empties the note, Return goes back, Quit leaves Agendum.
     """
   end
 
@@ -137,6 +138,12 @@ defmodule Agendum.TUI.Update.Notes do
   defp command(state, mode, :previous_note), do: step_note(state, mode, -1)
   defp command(state, mode, :quit), do: state |> close_note(mode) |> Actions.perform(:quit)
   defp command(state, _mode, :key_map), do: State.toggle_key_map(state)
+  defp command(state, _mode, :menu), do: Agendum.TUI.Menu.open(state, :note)
+
+  # Clear (R64b): asks first, as Agenda ("Clear all text from the note?")
+  defp command(state, _mode, :clear),
+    do: Agendum.TUI.Update.Prompts.confirm(state, "Clear all text from the note?", :clear_note)
+
   defp command(state, _mode, :run_by_name), do: Agendum.TUI.Boxes.RunByName.open(state)
   defp command(state, _mode, :make_item), do: ask_make_item(state)
   defp command(state, mode, :make_category), do: make_category(state, mode)
@@ -309,6 +316,28 @@ defmodule Agendum.TUI.Update.Notes do
 
   # Saves the note and closes it.
   defp close_note(state, mode), do: state |> save(mode) |> State.pop()
+
+  @doc """
+  Empties the note being edited (Clear, R64b), which stays open. The note
+  is saved before and after, as a Search/Replace replacement is: what was
+  typed before is one undo step, the clearing another. The note is found
+  on the stack, since the question and the menu may be above it.
+  """
+  @spec clear(State.t()) :: State.t()
+  def clear(state) do
+    case Enum.find(state.modes, &(&1.type == :note)) do
+      nil ->
+        state
+
+      note ->
+        state = state |> save(note) |> State.end_step()
+        cleared = %{note | edit: %TextEdit{lines: [""], row: 0, col: 0}}
+        # replace the note where it is on the stack (`&1 == note`: the same
+        # note, field for field)
+        modes = Enum.map(state.modes, &if(&1 == note, do: cleared, else: &1))
+        save(%{state | modes: modes}, cleared)
+    end
+  end
 
   @doc """
   Saves the note being edited (`mode`) into the database, the note staying

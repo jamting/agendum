@@ -7,7 +7,8 @@ defmodule Agendum.TUI.MenuTest do
   # command unreachable by letter.
   test "every menu level has unique first letters" do
     clashes =
-      for {path, entries} <- levels(Menu.tree(), []),
+      for tree <- [:main, :note],
+          {path, entries} <- levels(Menu.tree(tree), []),
           {letter, labels} <- Enum.group_by(entries, &String.first(elem(&1, 0)), &elem(&1, 0)),
           length(labels) > 1 do
         "#{Enum.join(path, " > ")}: #{letter} = #{Enum.join(labels, ", ")}"

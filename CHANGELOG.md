@@ -5,6 +5,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 ## Unreleased
 
 - The note editor's top line is Agenda's: "Note for:   …" (in the macro editor "Edit macro:  …") with the line you are on, INS and EDIT on the right. Messages show over it until the next key. The key bar follows Agenda's order, with F5 Return.
+- F10 in a note opens the note's own menu, as in Agenda: Clear empties the note (it asks first, and one undo brings the text back), Return goes back, Quit leaves Agendum.
 
 ## 0.14.0 — 2026-10-17
 
