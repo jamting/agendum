@@ -151,6 +151,8 @@ defmodule Agendum.TUI.Keymap do
   # a note (F5): any key not here edits the text (`Typing.TextEdit`)
   @note %{
     {:ctrl, "l"} => :insert_link,
+    :pgup => :page_up,
+    :pgdn => :page_down,
     {:f, 10} => :menu,
     {:ctrl, "x"} => :run_by_name,
     :esc => :cancel,
@@ -305,7 +307,21 @@ defmodule Agendum.TUI.Keymap do
     :enter => :new_line,
     :backspace => :delete_back,
     :delete => :delete,
-    {:ctrl, "d"} => :delete
+    {:ctrl, "d"} => :delete,
+    # Agenda's (R64e), with the Mac's ⌥ keys and Emacs's beside them
+    {:alt, "m"} => :new_line,
+    :ctrl_left => :word_left,
+    {:alt, :left} => :word_left,
+    :ctrl_right => :word_right,
+    {:alt, :right} => :word_right,
+    {:alt, :backspace} => :delete_word,
+    {:ctrl, "w"} => :delete_word,
+    {:alt, "w"} => :delete_word_right,
+    {:ctrl, "k"} => :delete_to_end,
+    :ctrl_home => :text_start,
+    {:alt, "<"} => :text_start,
+    :ctrl_end => :text_end,
+    {:alt, ">"} => :text_end
   }
 
   # every box (`Update`'s box stage); its own keys are the box's

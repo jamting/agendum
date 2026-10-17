@@ -143,6 +143,8 @@ defmodule Agendum.TUI.Commands do
     {:key_map, "Key map", "Show or hide the function key map", :none},
     {:run_by_name, "Run by name", "Run a command chosen by its name", :none},
     {:menu, "Menu", "The note's menu: Import, Export …", :none},
+    {:page_up, "Page up", "A screen of rows up", :none},
+    {:page_down, "Page down", "A screen of rows down", :none},
     {:clear, "Clear", "Delete all text in the note", :none},
     {:help, "Help", "Help about where you are", :none},
     {:close, "Return", "Save the note and go back", :none},
@@ -309,7 +311,14 @@ defmodule Agendum.TUI.Commands do
     {:line_end, "End", "End of the row; again: of the line", :none},
     {:new_line, "New line", "Break the line here", :none},
     {:delete_back, "Delete back", "Delete the character before", :none},
-    {:delete, "Delete", "Delete the character under the cursor", :none}
+    {:delete, "Delete", "Delete the character under the cursor", :none},
+    {:word_left, "Word left", "A word left, on to the line above", :none},
+    {:word_right, "Word right", "A word right, on to the line below", :none},
+    {:delete_word, "Delete word", "Delete the word before", :none},
+    {:delete_word_right, "Delete next word", "Delete the word after", :none},
+    {:delete_to_end, "Delete to end", "Delete to the end of the line", :none},
+    {:text_start, "Start of note", "The start of the note", :none},
+    {:text_end, "End of note", "The end of the note", :none}
   ]
 
   @more %{

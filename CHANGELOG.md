@@ -7,6 +7,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 - The note editor's top line is Agenda's: "Note for:   …" (in the macro editor "Edit macro:  …") with the line you are on, INS and EDIT on the right. Messages show over it until the next key. The key bar follows Agenda's order, with F5 Return.
 - F10 in a note opens the note's own menu, as in Agenda: Import puts a text file in at the cursor, Export writes the note to a text file (F3 lists the folder's text files), Clear empties the note (it asks first, and one undo brings the text back), Return goes back, Quit leaves Agendum.
 - ESC in a note now asks "Discard changes?" when you changed it, as Agenda did: No (shown first, ENTER) saves as before, Yes puts the note back as it was when you opened it. F5 saves and goes back without asking, and so do ALT-N and ALT-P.
+- Editing keys in a note, as Agenda's: CTRL-← / CTRL-→ (⌥← ⌥→) move by a word, ⌥⌫ or CTRL-W and ALT-W delete the word before or after the cursor, CTRL-K deletes to the end of the line, ALT-M starts a new line, PGUP / PGDN move a page, CTRL-HOME / CTRL-END (⌥< ⌥>) go to the start and end of the note.
 - Fixed: deleting a macro from a macro manager opened over its own Properties box no longer crashes.
 
 ## 0.14.0 — 2026-10-17

@@ -18,7 +18,7 @@ defmodule Agendum.TUI.Typing.TextEdit do
   defstruct lines: [""], row: 0, col: 0, mark: nil, goal: nil
 
   alias Agendum.TUI.Keymap
-  alias Agendum.TUI.Typing.Wrap
+  alias Agendum.TUI.Typing.{LineEdit, Wrap}
 
   @spec new(String.t()) :: t
   def new(text) do
@@ -133,10 +133,19 @@ defmodule Agendum.TUI.Typing.TextEdit do
   lines. One that changes the text drops the mark first; moving keeps it,
   so the cursor stretches the region.
   """
+  # the commands that change the text (guards need lists known when
+  # compiling, so they are module attributes)
+  @changing [:new_line, :delete_back, :delete, :delete_word, :delete_word_right, :delete_to_end]
+  @words [:word_left, :word_right, :delete_word, :delete_word_right, :delete_to_end] ++
+           [:text_start, :text_end]
+
   @spec run(t, atom) :: t
-  def run(%__MODULE__{mark: mark} = e, id)
-      when mark != nil and id in [:new_line, :delete_back, :delete],
-      do: run(%{e | mark: nil}, id)
+  def run(%__MODULE__{mark: mark} = e, id) when mark != nil and id in @changing,
+    do: run(%{e | mark: nil}, id)
+
+  # words and the ends of the note (R64e): a word as one-line fields have
+  # it (`LineEdit`), a move going on to the line above or below
+  def run(%__MODULE__{} = e, id) when id in @words, do: words(e, id, current(e))
 
   def run(%__MODULE__{} = e, id) do
     line = current(e)
@@ -197,6 +206,58 @@ defmodule Agendum.TUI.Typing.TextEdit do
       _ ->
         e
     end
+  end
+
+  defp words(e, :word_left, line) do
+    start = LineEdit.previous_word(line, e.col)
+    blank_before? = String.trim(String.slice(line, 0, e.col)) == ""
+
+    if blank_before? and e.row > 0 do
+      above = Enum.at(e.lines, e.row - 1)
+      %{e | row: e.row - 1, col: LineEdit.previous_word(above, String.length(above))}
+    else
+      %{e | col: start}
+    end
+  end
+
+  defp words(e, :word_right, line) do
+    blank_after? = String.trim(String.slice(line, e.col..-1//1)) == ""
+
+    if blank_after? and e.row < length(e.lines) - 1 do
+      below = Enum.at(e.lines, e.row + 1)
+      %{e | row: e.row + 1, col: LineEdit.next_word(below, 0)}
+    else
+      %{e | col: LineEdit.next_word(line, e.col)}
+    end
+  end
+
+  # at the start of a line the word before is across the line break:
+  # BACKSPACE's joining of the lines does instead
+  defp words(%{col: 0} = e, :delete_word, _line), do: run(e, :delete_back)
+
+  defp words(e, :delete_word, line) do
+    start = LineEdit.previous_word(line, e.col)
+    {before, _} = String.split_at(line, start)
+    {_, rest} = String.split_at(line, e.col)
+    %{put(e, before <> rest) | col: start}
+  end
+
+  defp words(e, :delete_word_right, line) do
+    if e.col == String.length(line) do
+      run(e, :delete)
+    else
+      {before, _} = String.split_at(line, e.col)
+      {_, rest} = String.split_at(line, LineEdit.next_word(line, e.col))
+      put(e, before <> rest)
+    end
+  end
+
+  defp words(e, :delete_to_end, line), do: put(e, String.slice(line, 0, e.col))
+  defp words(e, :text_start, _line), do: %{e | row: 0, col: 0}
+
+  defp words(e, :text_end, _line) do
+    last = length(e.lines) - 1
+    %{e | row: last, col: String.length(Enum.at(e.lines, last))}
   end
 
   @doc "F7 MARK: anchors a region at the cursor, or drops the one there is."

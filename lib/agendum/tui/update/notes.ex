@@ -101,6 +101,20 @@ defmodule Agendum.TUI.Update.Notes do
     end
   end
 
+  defp page(state, mode, key) do
+    width = Wrap.width(state)
+
+    edit =
+      Enum.reduce(1..State.body_height(state)//1, mode.edit, fn _, edit ->
+        case TextEdit.handle(edit, key, width) do
+          {:ok, moved} -> moved
+          :unhandled -> edit
+        end
+      end)
+
+    State.put_mode(state, %{mode | edit: edit, match: nil})
+  end
+
   defp edit_text(state, mode, key) do
     case TextEdit.handle(mode.edit, key, Wrap.width(state)) do
       {:ok, edit} -> State.put_mode(state, Map.merge(mode, %{edit: edit, match: nil}))
@@ -155,6 +169,10 @@ defmodule Agendum.TUI.Update.Notes do
   defp command(state, mode, :quit), do: state |> close_note(mode) |> Actions.perform(:quit)
   defp command(state, _mode, :key_map), do: State.toggle_key_map(state)
   defp command(state, _mode, :menu), do: Agendum.TUI.Menu.open(state, :note)
+
+  # PGUP / PGDN (R64e): as many rows as the screen shows, as ↑ ↓ move
+  defp command(state, mode, :page_up), do: page(state, mode, :up)
+  defp command(state, mode, :page_down), do: page(state, mode, :down)
 
   # Import and Export (R64c): a file name, F3 lists text files; the shell
   # reads or writes it (`Agendum.TUI.Update.note_text_read/3`)

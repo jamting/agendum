@@ -38,6 +38,9 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | In a note: insert today's date / the time                                                       | ALT-D / ALT-T                 | ⌥d / ⌥t                                                    |
 | In a note: the next / previous item's (or category's) note                                      | ALT-N / ALT-P                 | ⌥n / ⌥p                                                    |
 | In a note: save and go back; go back asking "Discard changes?" when it changed (R64d)           | F5; ESC                       | —                                                          |
+| In a note: a word left / right (on to the line above or below); delete the word before / after (R64e) | CTRL-← / CTRL-→; CTRL-BACKSPACE / ALT-W | ⌥← / ⌥→; ⌥⌫ or CTRL-W / ⌥w                |
+| In a note: delete to the end of the line; a new line (R64e)                                      | CTRL-ENTER; ALT-M             | **CTRL-K** (terminals send CTRL-ENTER as ENTER); ⌥m        |
+| In a note: a page of rows up / down; the start / end of the note (R64e)                          | PGUP / PGDN; CTRL-HOME / CTRL-END | fn-↑ / fn-↓; ALT-< / ALT-> (⌥< / ⌥>)                    |
 | In a note: make the marked text (or the word, line or all text) into a new item (it leaves the note; MAKEITM) / the marked text or the word into a new category under a parent you pick (MAKECAT) | ALT-F7 / ALT-F2 | — |
 | In a note: mark text (then move the cursor; again to unmark); copy / cut the marked text, or a word, line or all text; delete it (not kept); paste what was last copied or cut | F7; F3 / F4; ALT-F4; F2 | — |
 | Back to the previous view (LAST VW)                                                             | ALT-F8                        | menu View ▸ Last                                     |

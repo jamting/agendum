@@ -62,6 +62,17 @@ defmodule Agendum.TUI.Typing.LineEdit do
     before <> String.slice(rest, 1..-1//1)
   end
 
+  @doc """
+  Where the word before `pos` in `text` starts (spaces before `pos`
+  skipped); 0 when there is none. The note editor's word keys use it too.
+  """
+  @spec previous_word(String.t(), non_neg_integer) :: non_neg_integer
+  def previous_word(text, pos), do: word_left(%{text: text, pos: pos})
+
+  @doc "Where the word after `pos` in `text` ends; the end of the text when there is none."
+  @spec next_word(String.t(), non_neg_integer) :: non_neg_integer
+  def next_word(text, pos), do: word_right(%{text: text, pos: pos})
+
   defp word_left(%{text: text, pos: pos}) do
     before = text |> String.slice(0, pos) |> String.trim_trailing()
 

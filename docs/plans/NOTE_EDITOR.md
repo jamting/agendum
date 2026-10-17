@@ -60,8 +60,8 @@ Checked in the real Agenda 2.0 (headless, on a copy of PLANNER, 2026-10-15), and
 | ESC: Discard changes? | ✅ R64d | 4 |
 | INS / OVR | – | 5 |
 | TAB, tab size | – (TAB does nothing; no Tab size setting) | 5 |
-| ALT-M, CTRL-ENTER, CTRL-BACKSPACE, ALT-W | – (single-line fields have CTRL-K, CTRL-W, ⌥⌫: `LineEdit`) | 5 |
-| PGUP/PGDN, CTRL-←/→, CTRL-HOME/END | – (↑↓ by wrapped rows, HOME/END: R64) | 5 |
+| ALT-M, CTRL-ENTER, CTRL-BACKSPACE, ALT-W | ✅ R64e (CTRL-K for CTRL-ENTER; ⌥⌫ and CTRL-W for CTRL-BACKSPACE) | 5 |
+| PGUP/PGDN, CTRL-←/→, CTRL-HOME/END | ✅ R64e (⌥←/→, ⌥< ⌥> beside them) | 5 |
 | F7 F3 F4 F2 ALT-F4 | ✅ R63 | – |
 | ALT-F2, ALT-F7 | ✅ R42 | – |
 | ALT-F8 GETITMS | – (marking items: F7 in a view) | 6 |
