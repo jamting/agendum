@@ -23,7 +23,9 @@ defmodule Agendum.Preferences do
   offered when Agendum starts without one (R52). `key_map`: whether the
   key bar shows; `confirm`: whether "are you sure?" questions are asked
   (Confirm mode); `auto_save`: minutes without a key before unsaved
-  changes are saved, 0 for never (all R54). `places`: where the person
+  changes are saved, 0 for never (all R54). `sound`: whether Agendum
+  makes Agenda's sounds at all, `beep_completion`: whether automatic
+  completion beeps (Agenda's Beep on auto-completion; both R76). `places`: where the person
   left each file, by its path, the file left last first (R69). `path` is where they are
   kept (nil: not saved) and `user` the login name (the splash's name when
   none is set); neither is written in them.
@@ -38,6 +40,8 @@ defmodule Agendum.Preferences do
           key_map: boolean,
           confirm: boolean,
           auto_save: 0..60,
+          sound: boolean,
+          beep_completion: boolean,
           places: [{String.t(), Place.t()}],
           path: String.t() | nil,
           user: String.t() | nil
@@ -51,6 +55,8 @@ defmodule Agendum.Preferences do
             key_map: true,
             confirm: true,
             auto_save: 0,
+            sound: true,
+            beep_completion: true,
             places: [],
             path: nil,
             user: nil
@@ -132,6 +138,8 @@ defmodule Agendum.Preferences do
       key_map: pick.("key_map", &yes_no/1) != :no,
       confirm: pick.("confirm", &yes_no/1) != :no,
       auto_save: pick.("auto_save", &minutes/1) || 0,
+      sound: pick.("sound", &yes_no/1) != :no,
+      beep_completion: pick.("beep_on_completion", &yes_no/1) != :no,
       places: places(pairs)
     }
   end
@@ -236,7 +244,9 @@ defmodule Agendum.Preferences do
          {"last_file", prefs.last_file},
          {"key_map", if(prefs.key_map, do: nil, else: "no")},
          {"confirm", if(prefs.confirm, do: nil, else: "no")},
-         {"auto_save", if(prefs.auto_save > 0, do: Integer.to_string(prefs.auto_save))}
+         {"auto_save", if(prefs.auto_save > 0, do: Integer.to_string(prefs.auto_save))},
+         {"sound", if(prefs.sound, do: nil, else: "no")},
+         {"beep_on_completion", if(prefs.beep_completion, do: nil, else: "no")}
        ] ++ Enum.map(prefs.places, fn {path, place} -> {"place", Place.format(path, place)} end))
       |> Enum.reject(&(elem(&1, 1) == nil))
       |> Enum.map(fn {key, value} -> "#{key} = #{value}\n" end)
@@ -250,6 +260,7 @@ defmodule Agendum.Preferences do
       "# name, company: shown when Agendum starts;\n" <>
       "# last_file: the file offered then (kept by Agendum); key_map, confirm: yes or no;\n" <>
       "# auto_save: minutes without a key before saving, 1 to 60 (0: never).\n" <>
+      "# sound, beep_on_completion: yes or no.\n" <>
       "# place: where you left a file (kept by Agendum), the file left last first.\n" <>
       Enum.join(lines)
   end

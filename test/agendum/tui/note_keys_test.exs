@@ -47,7 +47,7 @@ defmodule Agendum.TUI.NoteKeysTest do
     first = item_id(state)
     state = press(state, [{:f, 5}, {:alt, "p"}])
     assert %{type: :note, target: {:item, ^first}} = note(state)
-    assert :bell in effects()
+    assert {:sound, :error} in effects()
   end
 
   test "in the category manager, ALT-N shows the next category's note", %{state: state} do
@@ -76,7 +76,7 @@ defmodule Agendum.TUI.NoteKeysTest do
     state = press(state, [{:alt, "s"}, {:alt, "s"}])
     assert text(state) == "x b x b x"
     press(state, {:alt, "s"})
-    assert :bell in effects()
+    assert {:sound, :error} in effects()
   end
 
   test "ALT-Q saves the note and quits (asking to save the file)", %{state: state} do

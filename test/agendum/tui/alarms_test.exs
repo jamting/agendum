@@ -56,7 +56,7 @@ defmodule Agendum.TUI.AlarmsTest do
     {state, []} = Update.tick(state, ~N[2026-10-08 13:54:00])
 
     {state, effects} = Update.tick(state, ~N[2026-10-08 13:55:00])
-    assert effects == [:bell]
+    assert effects == [{:sound, :alarm}]
     assert screen(state) =~ "Alarm: Personnel meeting at 2:00"
     assert state.alarm_rang
     assert current(state).alarm_minutes == nil

@@ -161,11 +161,13 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Typing.LineEdit`, `Agendum.TUI.Typing.TextEdit`  | ✔     | Single-line and multi-line edit buffers.                                                                                         |
 | `Agendum.TUI.Typing.Wrap`                             | ✔     | Word wrap in the note editor, for the screen only: a note's lines as rows (R64).                                                  |
 | `Agendum.TUI.Terminal.Screen`                           | ✔     | Diffs two frames into minimal ANSI output.                                                                                       |
+| `Agendum.TUI.Sound`, `Agendum.TUI.Update.Sounds` | ✔     | Agenda's sounds: the tones and their WAV bytes; which key makes which, from the state before and after it (R76, ADR 0042).      |
+| `Agendum.TUI.Speaker`                          | ✘     | Plays a sound with `afplay`, `paplay` or `aplay`, or rings the terminal's bell (R76, ADR 0042).                                  |
 | `Agendum.TUI.Terminal`                         | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
 | `Agendum.TUI.App`                              | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |
 | `Agendum.TUI.DebugLog`                         | ✘     | The debug log when `AGENDUM_LOG` is set: build, input, timed effects, file fingerprints, slow answers with view and memory, crashes with the state; five kept (ADR 0027). |
 | `Agendum.Store`                                | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write); folder listings for the Select File box.                     |
-| `Agendum.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format (with the number separators), key map, confirm mode, auto-save, name, company, last file, where each file was left (`Agendum.Preferences.Place`, R69) (`key = value`, ADR 0008).               |
+| `Agendum.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format (with the number separators), key map, confirm mode, auto-save, sound, name, company, last file, where each file was left (`Agendum.Preferences.Place`, R69) (`key = value`, ADR 0008).               |
 | `Agendum.CalendarFetch`                        | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
 | `Agendum.FeedFetch`                            | ✘     | Reads a feed from the web (the calendar's HTTPS download) and opens a link in the browser (R75).                                 |
 | `Agendum.Publish`                              | ✘     | The blog's folder read and written, and uploaded by rsync or SFTP (`:ssh_sftp`); `~/.netrc` passwords (R74, ADR 0041).           |
@@ -233,3 +235,4 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 | [0039](adr/0039-quadsyl-24-zettel-ids.md)              | Zettel ids are Quadsyl-24, a frozen part of the file format      |
 | [0040](adr/0040-run-a-command-by-name.md)              | The terminal runs a command by name (CTRL-X), amending 0038      |
 | [0041](adr/0041-blog-uploads-rsync-or-sftp.md)          | The blog uploads by rsync or SFTP, not FTP (OTP deprecates it)   |
+| [0042](adr/0042-agendas-sounds-through-the-audio-player.md) | Agenda's sounds, played through the computer's audio player      |

@@ -49,7 +49,7 @@ defmodule Agendum.TUI.NoteSearchTest do
 
     state = press(state, {:alt, "s"})
     assert cursor(state) == {2, 0}
-    assert :bell in effects()
+    assert {:sound, :error} in effects()
     assert screen(state) =~ ~s(No more occurrences of "personnel division")
   end
 
@@ -59,7 +59,7 @@ defmodule Agendum.TUI.NoteSearchTest do
     assert cursor(state) == {0, 8}
     state = press(state, {:alt, "s"})
     assert cursor(state) == {0, 8}
-    assert :bell in effects()
+    assert {:sound, :error} in effects()
   end
 
   test "the match is highlighted until the cursor moves", %{state: state} do

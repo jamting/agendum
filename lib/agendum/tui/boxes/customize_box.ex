@@ -4,7 +4,8 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
   ADR 0008): the person's own settings, for every file: Theme (R40), Date
   language and Fallback language (R14c), Input format, which opens
   `Agendum.TUI.Boxes.InputFormatBox` (R41b), Display key map, Confirm mode,
-  Auto-save interval and the Decimal and Thousands separators (R54). A
+  Auto-save interval and the Decimal and Thousands separators (R54), Sound
+  and Beep on auto-completion (R76). A
   change applies at once, is not part of undo, and is saved to the
   preferences file (`State.change_preference/3`).
 
@@ -24,15 +25,17 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
   alias Agendum.TUI.{Boxes.InputFormatBox, State, Boxes.Template, Terminal.Theme}
 
   @layout """
-   Theme               : [theme                ]
-   Date language       : [lang                 ]
-   Fallback language   : [fallback             ]
-   Input format        : [input_format         ]
-   Display key map     : [key_map              ]
-   Confirm mode        : [confirm              ]
-   Auto-save interval  : [auto_save            ]
-   Decimal separator   : [decimal              ]
-   Thousands separator : [thousands            ]
+   Theme                   : [theme                ]
+   Date language           : [lang                 ]
+   Fallback language       : [fallback             ]
+   Input format            : [input_format         ]
+   Display key map         : [key_map              ]
+   Confirm mode            : [confirm              ]
+   Auto-save interval      : [auto_save            ]
+   Decimal separator       : [decimal              ]
+   Thousands separator     : [thousands            ]
+   Sound                   : [sound                ]
+   Beep on auto-completion : [beep_completion      ]
 
    Saved in your preferences, not in this file.
   """
@@ -56,7 +59,13 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
       "Save the file by itself after this many minutes without a key. " <>
         "SPACE for the next interval.",
     decimal: "The character before the decimals of a number you type. SPACE switches.",
-    thousands: "The character between thousands in a number you type. SPACE for the next choice."
+    thousands: "The character between thousands in a number you type. SPACE for the next choice.",
+    sound:
+      "Whether Agendum makes Agenda's sounds: beeps, the Learn mode click, the alarm. " <>
+        "SPACE switches.",
+    beep_completion:
+      "Whether typing a category beeps: high when one matches, low when none does. " <>
+        "SPACE switches."
   }
   # Agenda took any number of minutes from 1 to 60; these are the steps
   @auto_save [0, 1, 2, 5, 10, 15, 20, 30, 45, 60]
@@ -99,6 +108,16 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
   defp change(state, :confirm, _step) do
     on = not state.prefs.confirm
     State.change_preference(state, & &1, &%{&1 | confirm: on})
+  end
+
+  defp change(state, :sound, _step) do
+    on = not state.prefs.sound
+    State.change_preference(state, & &1, &%{&1 | sound: on})
+  end
+
+  defp change(state, :beep_completion, _step) do
+    on = not state.prefs.beep_completion
+    State.change_preference(state, & &1, &%{&1 | beep_completion: on})
   end
 
   defp change(state, :theme, step) do
@@ -173,7 +192,9 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
       confirm: yes_no(state.prefs.confirm),
       auto_save: minutes(state.prefs.auto_save),
       decimal: separator(numbers[:decimal]),
-      thousands: separator(numbers[:thousands])
+      thousands: separator(numbers[:thousands]),
+      sound: yes_no(state.prefs.sound),
+      beep_completion: yes_no(state.prefs.beep_completion)
     }
   end
 

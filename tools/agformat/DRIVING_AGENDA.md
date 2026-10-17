@@ -51,7 +51,9 @@ Practical notes for running the real Agenda 2.0 unattended, to check how it beha
 
 ## Beeps
 
-Agenda beeps on errors (an invalid date, an unknown key). The PC speaker is driven through I/O port `0x61` (and the timer at `0x42/0x43`), not memory, so the memory API cannot see a beep. In practice Agenda shows a message on line 0 or a box with the beep, which `screen()` reads. If a silent beep ever matters, DOSBox can record audio (`[capture]`, speaker enabled) and the WAV can be checked for sound.
+Agenda beeps on errors (an invalid date, an unknown key). The PC speaker is driven through I/O port `0x61` (and the timer at `0x42/0x43`), not memory, so the memory API cannot see a beep. In practice Agenda shows a message on line 0 or a box with the beep, which `screen()` reads. To hear them (done 2026-10-17 for R76), start DOSBox with sound on (`[mixer] nosound=false`, `rate=48000`; `[speaker] pcspeaker=impulse`) and SDL's disk audio driver: `SDL_AUDIODRIVER=disk`, `SDL_DISKAUDIOFILE=out.raw`, and `SDL_DISKAUDIODELAY=10` (without the delay SDL pulls audio as fast as it can and writes gigabytes in seconds). The file is raw 32-bit float stereo at 48 kHz; runs of samples above a threshold are the beeps, their length in samples ÷ 48000 their duration (DOSBox's start shifts them about 4.4 s after the driver's clock). Zero crossings give the pitch roughly; a 20 ms tone of 75 Hz is too short for them.
+
+The tones themselves are constants in A.EXE: its speaker routine is at file offset `0x5C38` (frequency and length in timer ticks of about 3.43 ms, pushed as two words before a far call; `0x1234DC`-style divisor, ports `0x43`/`0x42`/`0x61`), with small wrappers at `0x67B2` (high, 1200 Hz), `0x67C7` (low, 140 Hz), `0x67DC` and `0x67EA` (225 Hz, 30 and 12 ticks), the Learn click at `0x2A298` (75 Hz) and the alarm at `0x25293`. ADR 0042 has the table.
 
 ## An experiment, start to finish
 

@@ -283,9 +283,10 @@ defmodule Agendum.TUI.Typing.NoteSearch do
 
         case find(note, s, from) do
           nil ->
-            state
-            |> State.effect(:bell)
-            |> State.error(~s(No more occurrences of "#{s.text}"))
+            State.error(
+              state,
+              ~s(No more occurrences of "#{s.text}")
+            )
 
           pos when replacing and s.confirm ->
             ask(state, pos, s, 0)

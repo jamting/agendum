@@ -69,7 +69,7 @@ defmodule Agendum.TUI.DiskGuardTest do
     {state, [save]} = keys(changed(), {:ctrl, "s"})
     {state, []} = saved(state, save, {:error, :changed_on_disk})
     {state, effects} = keys(state, "n")
-    assert effects == []
+    assert effects == [{:sound, :error}]
     assert state.dirty
     assert screen(state) =~ "Not saved"
     assert screen(state) =~ "Write"
@@ -128,7 +128,8 @@ defmodule Agendum.TUI.DiskGuardTest do
       {state, [save]} = keys(changed(), [{:f, 10}, "q", "y"])
       {state, []} = saved(state, save, {:error, :changed_on_disk})
       {state, effects} = keys(state, "n")
-      assert effects == []
+      # "Not saved" is an error message, and beeps (R76)
+      assert effects == [{:sound, :error}]
       assert state.dirty
     end
   end

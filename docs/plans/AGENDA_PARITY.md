@@ -139,6 +139,7 @@ What Agenda had that Agendum does another way, on purpose:
 
 - **Saving.** Agenda saves automatically (Quit, Retrieve). Agendum keeps changes until you save and asks before they are lost; ` *` on the File line shows unsaved changes.
 - **The menu's shape.** The same commands, regrouped: Agenda's Utilities are spread over File (Customize), Category (Execute, Questions) and a Search menu (the Show commands); Undo and Redo are on the top level; Print writes a text file.
+- **Sounds** (R76). Agenda's own tones, through the computer's audio player rather than the PC speaker (the terminal's bell where there is none); every error message beeps with the one error beep, where Agenda also had a shorter one; Sound in File ▸ Customize silences them all.
 - **Mode words.** Agendum always shows one (READY, MENU, NOTE, PROPS …); Agenda showed none when ready and had fewer.
 - **The marked-items symbol** is ♦ (Agenda's ▸ is hard to tell from the cursor in a terminal).
 - **The key bar** is one line, names and labels side by side.

@@ -85,7 +85,9 @@ defmodule Agendum.TUI.Macros do
         macro -> {:call, macro.name}
       end
 
+    # Agenda clicks for each key it records (R76)
     %{next | macro: %{next.macro | learning: %{l | keys: [recorded | l.keys]}}}
+    |> State.effect({:sound, :click})
   end
 
   def record(_before, _key, next), do: next

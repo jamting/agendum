@@ -4,6 +4,13 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.16.0 — 2026-10-17
+
+Agenda's sounds.
+
+- Agendum beeps as Agenda did, with Agenda's own tones: a high beep when the category you are typing comes down to one match, a low one when nothing matches (a new category), a beep with every error message, a click for each key recorded in Learn mode, and Agenda's two-pitch tune when an alarm rings. They play through your computer's speaker (`afplay` on a Mac, `paplay` or `aplay` on Linux); without one, or over ssh, the terminal's bell rings instead.
+- File ▸ Customize has Sound (No: no sounds at all) and Agenda's Beep on auto-completion.
+
 ## 0.15.0 — 2026-10-17
 
 The note editor, as Agenda's (steps 1 to 5 of its plan).

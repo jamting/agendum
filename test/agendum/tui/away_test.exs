@@ -88,7 +88,7 @@ defmodule Agendum.TUI.AwayTest do
     state = state |> Update.arrive() |> press(:enter)
     refute state.dirty
     {state, effects} = Update.tick(state, ~N[2026-10-08 15:55:00])
-    assert :bell in effects
+    assert {:sound, :alarm} in effects
     assert screen(state) =~ "Alarm: Review tomorrow at 4pm"
     refute state.dirty
 

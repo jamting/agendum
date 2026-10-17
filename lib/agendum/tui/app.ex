@@ -11,6 +11,7 @@ defmodule Agendum.TUI.App do
     Terminal.Keys,
     Layout,
     Render,
+    Speaker,
     Terminal.Screen,
     State,
     Terminal,
@@ -212,9 +213,9 @@ defmodule Agendum.TUI.App do
 
     state =
       case effect do
-        # an alarm, or a search or a note step that found nothing more
-        :bell ->
-          Terminal.write("\a")
+        # one of Agenda's sounds (R76)
+        {:sound, name} ->
+          Speaker.play(name)
           state
 
         {:save, path, opts} ->

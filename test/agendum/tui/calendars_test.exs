@@ -59,7 +59,7 @@ defmodule Agendum.TUI.CalendarsTest do
     {state, effects} =
       keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed("ftp://nope") ++ typed("Work"))
 
-    assert effects == []
+    assert effects == [{:sound, :error}]
     assert screen(state) =~ "needs an https:// or webcal:// address"
     assert state.db.calendars == %{}
   end

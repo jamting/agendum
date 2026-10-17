@@ -95,6 +95,16 @@ defmodule Agendum.PreferencesTest do
     refute Preferences.parse(text).confirm
   end
 
+  test "Sound and Beep on auto-completion are on unless the person says no (R76)" do
+    prefs = Preferences.parse("")
+    assert prefs.sound and prefs.beep_completion
+    text = Preferences.format(%Preferences{sound: false, beep_completion: false})
+    assert text =~ "sound = no\n"
+    assert text =~ "beep_on_completion = no\n"
+    prefs = Preferences.parse(text)
+    refute prefs.sound or prefs.beep_completion
+  end
+
   test "the auto-save interval, 0 (off) to 60 minutes" do
     assert Preferences.parse("").auto_save == 0
     text = Preferences.format(%Preferences{auto_save: 10})

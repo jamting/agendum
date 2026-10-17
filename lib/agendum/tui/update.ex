@@ -87,6 +87,9 @@ defmodule Agendum.TUI.Update do
 
     state = keep_place(before, state)
 
+    # Agenda's beeps (R76), decided from what the key did
+    state = Agendum.TUI.Update.Sounds.after_key(before, key, state)
+
     # Effects were collected in `state.effects` while the key was handled
     # (`State.effect/2`); they are taken out and returned beside the state,
     # so the state that is kept holds none.
@@ -316,7 +319,9 @@ defmodule Agendum.TUI.Update do
 
       ids ->
         texts = Enum.map_join(ids, " · ", &state.db.items[&1].text)
-        {%{state | alarm_rang: true} |> State.info("Alarm: " <> texts), [:bell | fetches]}
+
+        {%{state | alarm_rang: true} |> State.info("Alarm: " <> texts),
+         Agendum.TUI.Update.Sounds.quiet(state, [{:sound, :alarm} | fetches])}
     end
   end
 

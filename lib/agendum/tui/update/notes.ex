@@ -576,7 +576,7 @@ defmodule Agendum.TUI.Update.Notes do
         State.error(state, @step_unsupported)
 
       {_, nil} ->
-        state |> State.effect(:bell) |> State.error("No more notes in this direction")
+        State.error(state, "No more notes in this direction")
 
       {nil, index} ->
         state |> close_note(mode) |> Layout.move_to(index) |> Actions.perform(:note)
