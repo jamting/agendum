@@ -1,0 +1,44 @@
+# The quality gate, `mix check` (format, warnings as errors, Credo,
+# Dialyzer, the tests), on every push and pull request: the same gate the
+# pre-push hook runs locally (docs/plans/GITHUB.md, section 3).
+name: check
+
+on:
+  push:
+  pull_request:
+
+# a newer push to the same branch makes the older run pointless
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    env:
+      MIX_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+
+      # OTP 28 or later for the terminal's raw mode (ADR 0002); the same
+      # versions as on the owner's Mac
+      - uses: erlef/setup-beam@v1
+        id: beam
+        with:
+          otp-version: "29"
+          elixir-version: "1.20.4"
+
+      # deps, the build and Dialyzer's PLTs (in _build and ~/.mix), or
+      # Dialyzer takes minutes on every run
+      - uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+            ~/.mix
+          key: mix-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            mix-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-
+
+      - run: mix deps.get
+      - run: mix check
