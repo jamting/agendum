@@ -90,6 +90,7 @@ The panel advises; it never votes. I decide.
 | ------------------------------------------------------ | ----------------------------------------------------------------------- |
 | `mix setup`                                            | a fresh checkout: dependencies, and the pre-push hook (runs `mix check`) |
 | `mix check`                                            | the quality gate                                                        |
+| `gh run list` (or the Actions tab on GitHub)           | CI: the same gate on GitHub after every push (`.github/workflows/check.yml`) |
 | `mix run -e 'Agendum.CLI.main(["--demo"])'`            | the program with sample data (`--rabbit`: Rabbit's file; `--clinic`: the Easter egg) |
 | `mix escript.build && ./agendum FILE`                  | the real program                                                        |
 | `AGENDUM_LOG=1 ./agendum FILE`                         | with a debug log (`~/.local/state/agendum/logs`); give it to Claude on a crash or lag |
@@ -116,7 +117,7 @@ The panel advises; it never votes. I decide.
 
 Suggestions, most valuable first. None is decided; take what helps, and move what you adopt into the sections above.
 
-1. **Back the repository up off this Mac.** There is no git remote: the code, its history and the tags exist on one disk, and `docs/summaries/` (git ignored) only there too. A private GitHub repository (`docs/plans/GITHUB.md`) or a bare repository on another disk, pushed at the end of each session, closes that. The pre-push hook already guards the push. This is the one item with real risk today.
+1. **Back the rest up off this Mac.** The code, its history and the tags are on GitHub since 2026-10-17 (private, `jamting/agendum`, with CI); push at the end of each session. `docs/summaries/` (git ignored) and the untracked reference files are still only on this disk: a copy elsewhere (another disk, or a cloud folder) closes that.
 2. **Try each change before the next one.** The review counted 85 commits in one day. The end-session summary lists "what you'll notice"; spending five minutes in the real program on that list before starting new work keeps your understanding level with the code, and catches habit changes early (CLAUDE.md asks for it).
 3. **Use Agendum for Agendum.** You are its first user. Keeping the project's ideas, bugs and the review's resolutions in an Agendum file (a category per area, a view of what is next) would show daily what is missing, and test the program the way real users will. The dagordning can stay for meetings.
 4. **One open loop at a time.** Several things are open at once: study unit 2, twelve review resolutions not yet on the roadmap, the failed-save bug, real users to find. A meeting to sort the resolutions into the roadmap (or into "not now") empties the pile; the roadmap's **Next:** line then says the one thing.

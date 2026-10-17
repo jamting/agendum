@@ -1,8 +1,9 @@
 #!/bin/sh
 # Runs the quality gate before a push, so nothing reaches the shared
-# repository without passing it (ROADMAP, Sharpen the saw: until CI runs
-# it on every push). Turned on by `mix setup` (git config core.hooksPath
-# .githooks). To push anyway, in a hurry: git push --no-verify
+# repository without passing it. CI runs the same gate on GitHub after the
+# push (.github/workflows/check.yml); this hook catches it before.
+# Turned on by `mix setup` (git config core.hooksPath .githooks). To push
+# anyway, in a hurry: git push --no-verify
 #
 # git runs a hook from the top of the repository, with what is about to be
 # pushed on stdin (unused here: the whole working tree is checked).
