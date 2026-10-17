@@ -212,6 +212,11 @@ defmodule Agendum.TUI.App do
 
     state =
       case effect do
+        # an alarm, or a search or a note step that found nothing more
+        :bell ->
+          Terminal.write("\a")
+          state
+
         {:save, path, opts} ->
           Update.saved(state, path, Store.save(state.db, path, opts.expect), opts)
 
@@ -309,8 +314,7 @@ defmodule Agendum.TUI.App do
     {width, height} = Terminal.size()
     before = state
     {state, effects} = Update.tick(state, local_now())
-    if :bell in effects, do: Terminal.write("\a")
-    {:ok, state} = run_effects(state, List.delete(effects, :bell))
+    {:ok, state} = run_effects(state, effects)
     # an alarm or an auto-save says so
     DebugLog.message(before, state)
     resized = {width, height} != {state.width, state.height}

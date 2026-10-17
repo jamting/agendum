@@ -16,6 +16,7 @@ The note editor, as Agenda's (steps 1 to 5 of its plan).
 - In a note, ALT-F9 moves the word, line or marked text onto the end of the item's text (or the category's name), ALT-F8 copies the marked items (with their notes) into the note, and ALT-C types a date chosen in the calendar.
 - Files are saved in a new format (37), for the Tab size; older files open as before.
 - Fixed: deleting a macro from a macro manager opened over its own Properties box no longer crashes.
+- Fixed: ALT-N or ALT-P on the last note, and a note search that finds nothing more, beep and say so instead of crashing.
 
 ## 0.14.0 — 2026-10-17
 
