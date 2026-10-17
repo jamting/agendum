@@ -96,7 +96,7 @@ The panel advises; it never votes. I decide.
 | `mix docs --open`                                      | API docs, design documents, guide and manual in the browser             |
 | `mix agendum.starters`, `mix agendum.golden`           | rebuild the Planner starter; write the golden file of a new format version |
 | `FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs` | the long fuzz run                                                     |
-| `tools/agformat/agenda_driver.py`, `agdump.py`, `agdiff.py` | drive the real Agenda headless; read and compare `.AG` files (`tools/agformat/DRIVING_AGENDA.md`) |
+| `tools/agformat/agenda_driver.py`, `agdump.py`, `agdiff.py` | drive the real Agenda headless (also record its sounds: SDL's disk audio driver); read and compare `.AG` files (`tools/agformat/DRIVING_AGENDA.md`) |
 | `tools/screenshots/`                                   | draw a screen as a PNG, to compare with Agenda's                        |
 
 ## Ways of working that proved themselves
