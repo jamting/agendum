@@ -1,6 +1,6 @@
 # A plain RSS reader
 
-**Status:** built 2026-10-17 (R75, v0.13.0), the owner to try it. Step 1 of "An RSS reader, with Wol later" (ROADMAP, Beyond Agenda; meeting 2026-10-16-2, § 7). Wol's part (summaries, sifting, suggestions) is step 2, after principle 6 of `WOL-IN-THE-MACHINE.md`.
+**Status:** built 2026-10-17 (R75, v0.13.0), approved by the owner the same day (tagged). Step 1 of "An RSS reader, with Wol later" (ROADMAP, Beyond Agenda; meeting 2026-10-16-2, § 7). Wol's part (summaries, sifting, suggestions) is step 2, after principle 6 of `WOL-IN-THE-MACHINE.md`.
 
 ## The idea
 
