@@ -4,7 +4,7 @@ Small, testable increments. Open work comes first, by area; done work is below, 
 
 ## Open
 
-**Next:** the Zettel ids are approved (R73, v0.11.0, 2026-10-17; their feel to improve, Beyond Agenda); the micro-blog (R74, v0.12.0 and v0.12.1) and the plain RSS reader (R75, v0.13.0) are approved too, 2026-10-17; CTRL-X runs a command by name (R65d, v0.14.0), approved 2026-10-17; next parity with Agenda and Wol for the RSS reader (step 2). The guard against a file changed on disk is done (R71). Towards many users is done up to the web version; capture from outside is paused (a URL scheme rather than `agendum add`). The view cache waits for slow answers in real use, CI for GitHub.
+**Next:** the Zettel ids are approved (R73, v0.11.0, 2026-10-17; their feel to improve, Beyond Agenda); the micro-blog (R74, v0.12.0 and v0.12.1) and the plain RSS reader (R75, v0.13.0) are approved too, 2026-10-17; CTRL-X runs a command by name (R65d, v0.14.0), approved 2026-10-17; the note editor's steps 1 to 6 are built (R64a–R64f, v0.15.0, not tagged until the owner has tried it, ESC now asks). Open questions for the owner: should GETITMS ask Agenda's "discard the copied items?"; build step 7, external note files (an ADR; a web version could not edit them), or leave it out on purpose; which parity item next, both habit changes to settle first: F6 on a view opening View Properties, or DEL putting items in a trash. Wol for the RSS reader (step 2) after that. The guard against a file changed on disk is done (R71). Towards many users is done up to the web version; capture from outside is paused (a URL scheme rather than `agendum add`). The view cache waits for slow answers in real use, CI for GitHub.
 
 ### Sharpen the saw
 
