@@ -227,6 +227,10 @@ defmodule Agendum.TUI.App do
         {:import_json, path} ->
           Update.imported(state, path, File.read(path))
 
+        # a note's Import (R64c)
+        {:read_note_text, path} ->
+          Update.note_text_read(state, path, File.read(path))
+
         {:list_dir, dir} ->
           Update.dir_listed(state, dir, Store.list_dir(dir))
 

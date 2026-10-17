@@ -32,7 +32,8 @@ defmodule Agendum.TUI.Update.Notes do
 
     ESC or F5 saves the note and goes back; ALT-N and ALT-P save it and go
     on to the next or the previous item's note. F10 is the note's menu:
-    Clear empties the note, Return goes back, Quit leaves Agendum.
+    Import puts a text file in at the cursor, Export writes the note to
+    one, Clear empties the note, Return goes back, Quit leaves Agendum.
     """
   end
 
@@ -139,6 +140,15 @@ defmodule Agendum.TUI.Update.Notes do
   defp command(state, mode, :quit), do: state |> close_note(mode) |> Actions.perform(:quit)
   defp command(state, _mode, :key_map), do: State.toggle_key_map(state)
   defp command(state, _mode, :menu), do: Agendum.TUI.Menu.open(state, :note)
+
+  # Import and Export (R64c): a file name, F3 lists text files; the shell
+  # reads or writes it (`Agendum.TUI.Update.note_text_read/3`)
+  defp command(state, _mode, :import),
+    do:
+      Agendum.TUI.Update.Prompts.prompt(state, "Text file to import into the note:", :note_import)
+
+  defp command(state, _mode, :export),
+    do: Agendum.TUI.Update.Prompts.prompt(state, "Export the note to text file:", :note_export)
 
   # Clear (R64b): asks first, as Agenda ("Clear all text from the note?")
   defp command(state, _mode, :clear),
@@ -318,6 +328,37 @@ defmodule Agendum.TUI.Update.Notes do
   defp close_note(state, mode), do: state |> save(mode) |> State.pop()
 
   @doc """
+  Puts text read from a file in at the cursor of the note being edited
+  (Import, R64c): CR LF and CR read as LF; the cursor ends after it. The
+  note is found on the stack, as for `clear/1`.
+  """
+  @spec import_text(State.t(), String.t()) :: State.t()
+  def import_text(state, text) do
+    text = text |> String.replace("\r\n", "\n") |> String.replace("\r", "\n")
+
+    update_note(state, fn note ->
+      %{note | edit: TextEdit.insert(note.edit, text), match: nil}
+    end)
+  end
+
+  @doc "The text of the note being edited as a text file (Export, R64c): LF line ends."
+  @spec export_text(State.t()) :: String.t() | nil
+  def export_text(state) do
+    case Enum.find(state.modes, &(&1.type == :note)) do
+      nil -> nil
+      note -> TextEdit.text(note.edit) <> "\n"
+    end
+  end
+
+  # the first note on the stack, changed by `fun`, where it is
+  defp update_note(state, fun) do
+    case Enum.find_index(state.modes, &(&1.type == :note)) do
+      nil -> state
+      i -> %{state | modes: List.update_at(state.modes, i, fun)}
+    end
+  end
+
+  @doc """
   Empties the note being edited (Clear, R64b), which stays open. The note
   is saved before and after, as a Search/Replace replacement is: what was
   typed before is one undo step, the clearing another. The note is found
@@ -330,12 +371,13 @@ defmodule Agendum.TUI.Update.Notes do
         state
 
       note ->
-        state = state |> save(note) |> State.end_step()
         cleared = %{note | edit: %TextEdit{lines: [""], row: 0, col: 0}}
-        # replace the note where it is on the stack (`&1 == note`: the same
-        # note, field for field)
-        modes = Enum.map(state.modes, &if(&1 == note, do: cleared, else: &1))
-        save(%{state | modes: modes}, cleared)
+
+        state
+        |> save(note)
+        |> State.end_step()
+        |> update_note(fn _ -> cleared end)
+        |> save(cleared)
     end
   end
 

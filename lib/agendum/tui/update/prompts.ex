@@ -300,6 +300,17 @@ defmodule Agendum.TUI.Update.Prompts do
     Choices.apply_exclusive(state, cat_id, {:new_child, text})
   end
 
+  # a note's Import and Export (R64c); the shell reads or writes the file
+  defp prompt_action(state, :note_import, text),
+    do: State.effect(state, {:read_note_text, Path.expand(text)})
+
+  defp prompt_action(state, :note_export, text) do
+    case Agendum.TUI.Update.Notes.export_text(state) do
+      nil -> state
+      note -> State.effect(state, {:write_text, Path.expand(text), note})
+    end
+  end
+
   defp prompt_action(state, :export_json, text),
     do: State.effect(state, {:write_text, Path.expand(text), Core.export_json(state.db)})
 

@@ -50,7 +50,7 @@ Then working together:
 - [ ] The note editor as Agenda's (checked in Agenda 2.0, 2026-10-15; printing and typesetting, F10 Print and F6 MARKER, out of scope). Evidence, the habit changes to settle first (ESC, INS, TAB, the control panel's first line) and the steps: [`docs/plans/NOTE_EDITOR.md`](plans/NOTE_EDITOR.md)
   - [x] Its control panel and key bar (R64a, 2026-10-17): line 1 "Note for:   …" (the macro editor's "Edit macro:  …") with "Line N INS EDIT" on the right, a message over it until the next key, hints on line 2; the key bar in Agenda's order, F1 Help … F5 Return, F7 Mark. "Note file: …" comes with external note files, F10 Menu with the menu
   - [x] Its F10 menu (R64b, 2026-10-17): Clear (asks; one undo step), Return, Quit, with Agenda's help lines; Import and Export come with the next item, File with external note files
-  - [ ] Import a text file at the cursor; Export the note to a text file
+  - [x] Import a text file at the cursor; Export the note to a text file (R64c, 2026-10-17): prompts with F3 listing `.txt` and `.md`, CR LF read as LF
   - [ ] ESC asks "Discard changes?" (No saves, Yes restores the note as opened)
   - [ ] Editing keys: INS/OVR, TAB with File Properties ▸ Tab size, ALT-M, word delete (CTRL-BACKSPACE, ALT-W), delete to line end, word moves, PGUP/PGDN, CTRL-HOME/END
   - [ ] ALT-F9 APPEND, ALT-F8 GETITMS and ALT-C (calendar) in a note

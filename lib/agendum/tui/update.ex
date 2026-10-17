@@ -17,6 +17,8 @@ defmodule Agendum.TUI.Update do
       is as `opts.expect` says (R71), then call `saved/4`
     * `{:load, path}` – read a file, then call `loaded/3`
     * `{:write_text, path, text}` – export text, then call `written/3`
+    * `{:read_note_text, path}` – read a text file for a note's Import,
+      then call `note_text_read/3`
     * `:quit`
   """
 
@@ -697,6 +699,23 @@ defmodule Agendum.TUI.Update do
         State.error(state, "Could not import #{name}: #{message}")
     end
   end
+
+  @doc """
+  After the shell read a text file for a note's Import (R64c): its text
+  goes in at the note's cursor; an error, or a file that is not text,
+  leaves the note as it was.
+  """
+  @spec note_text_read(State.t(), String.t(), {:ok, binary} | {:error, term}) :: State.t()
+  def note_text_read(state, path, {:ok, text}) do
+    if String.valid?(text),
+      do: state |> Notes.import_text(text) |> State.info("Imported #{path}"),
+      else: State.error(state, "Not a text file: #{path}")
+  end
+
+  def note_text_read(state, _path, {:error, :enoent}), do: State.error(state, "File not found")
+
+  def note_text_read(state, _path, {:error, reason}),
+    do: State.error(state, "Could not read: #{inspect(reason)}")
 
   def written(state, path, :ok), do: State.info(state, "Wrote #{path}")
 

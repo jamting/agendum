@@ -26,10 +26,12 @@ defmodule Agendum.TUI.Menu do
   def tree(which \\ :main)
 
   # Agenda's note menu (R64b): File, Print, Import, Export, Clear, Return,
-  # Quit; printing is out of scope, Import and Export come with
-  # NOTE_EDITOR.md step 3, File with external note files (step 7)
+  # Quit; printing is out of scope, File comes with external note files
+  # (NOTE_EDITOR.md step 7)
   def tree(:note) do
     [
+      {"Import", "Import a text file into the current note", {:note, :import}},
+      {"Export", "Export the current note to a text file", {:note, :export}},
       {"Clear", "Delete all text in the current note", {:note, :clear}},
       {"Return", "Return to the previous activity (F5)", {:note, :close}},
       {"Quit", "End this Agendum session (ALT-Q); the note is saved", {:note, :quit}}

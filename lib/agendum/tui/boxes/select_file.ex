@@ -30,7 +30,9 @@ defmodule Agendum.TUI.Boxes.SelectFile do
     save_as_then_quit: [".agendum", ".agenda"],
     import_json: [".json"],
     export_json: [".json"],
-    export: [".txt"]
+    export: [".txt"],
+    note_import: [".txt", ".md"],
+    note_export: [".txt", ".md"]
   }
 
   @doc "Whether a prompt asks for a file name (and so offers F3)."

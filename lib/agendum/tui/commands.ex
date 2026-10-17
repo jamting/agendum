@@ -142,7 +142,7 @@ defmodule Agendum.TUI.Commands do
     {:make_category, "Make category", "Make the marked text a category", :none},
     {:key_map, "Key map", "Show or hide the function key map", :none},
     {:run_by_name, "Run by name", "Run a command chosen by its name", :none},
-    {:menu, "Menu", "The note's menu: Clear, Return, Quit", :none},
+    {:menu, "Menu", "The note's menu: Import, Export …", :none},
     {:clear, "Clear", "Delete all text in the note", :none},
     {:help, "Help", "Help about where you are", :none},
     {:close, "Return", "Save the note and go back", :none},
