@@ -73,9 +73,18 @@ defmodule Agendum.TUI.Render.ControlPanel do
               link_under_cursor(state)
 
           case {message_line(state), help} do
-            {[], nil} -> {file_line(state, base), where_line(state, base)}
-            {[], help} -> text_lines(state, base, :panel_hint, help)
-            {[{style, text} | _], _} -> text_lines(state, base, style, String.trim(text))
+            {[], nil} ->
+              {file_line(state, base), where_line(state, base)}
+
+            # in a note the header stays, and a hint goes under it (R64a)
+            {[], help} when base.type == :note ->
+              {file_line(state, base), [{:panel_hint, " " <> help}]}
+
+            {[], help} ->
+              text_lines(state, base, :panel_hint, help)
+
+            {[{style, text} | _], _} ->
+              text_lines(state, base, style, String.trim(text))
           end
       end
 
@@ -102,13 +111,31 @@ defmodule Agendum.TUI.Render.ControlPanel do
     Draw.line(left, state.width - String.length(right), :panel) ++ [{:indicator, right}]
   end
 
-  # the marks, the mode (READY, EDIT …) and the time, at the top right
+  # the marks, the mode (READY, EDIT …) and the time, at the top right;
+  # in a note (on top), as Agenda: the line the cursor is on, INS and EDIT,
+  # without the time (R64a)
   defp indicators(state, base) do
     marked = if Enum.any?(Database.items(state.db), & &1.marked), do: "♦ ", else: ""
+    marks = "  #{marked}#{if state.alarm_rang, do: "@ ", else: ""}#{questions_marker(state)}"
 
-    "  #{marked}#{if state.alarm_rang, do: "@ ", else: ""}#{questions_marker(state)}" <>
-      "#{numeric_marker(state)}#{indicator(state, base)}  " <>
-      DateFormat.datetime(state.now, state.db.date_format) <> " "
+    case State.mode(state) do
+      %{type: :note, edit: edit} when state.edit == nil and state.macro.learning == nil ->
+        marks <> "Line #{String.pad_leading(Integer.to_string(edit.row + 1), 4)} INS EDIT "
+
+      _ ->
+        marks <>
+          "#{numeric_marker(state)}#{indicator(state, base)}  " <>
+          DateFormat.datetime(state.now, state.db.date_format) <> " "
+    end
+  end
+
+  # a note's line 1 (R64a): "Note for:" and what the note is of, padded as
+  # Agenda's to where "Note file:" (step 7) will start its path
+  defp file_line(state, %{type: :note} = note) do
+    # the macro editor is the same editor: "Edit macro:" in Agenda
+    label = if match?({:macro, _}, note.target), do: " Edit macro:  ", else: " Note for:   "
+    room = max(state.width - String.length(indicators(state, note)) - 1, 1)
+    beside_indicators(state, note, [{:title, Draw.truncate(label <> note.title, room)}])
   end
 
   defp file_line(state, base) do
@@ -159,10 +186,9 @@ defmodule Agendum.TUI.Render.ControlPanel do
     Draw.line([{:title, " Category Manager"}], width, :title) ++ [{:title, count}]
   end
 
-  defp where_line(_state, %{type: :note, target: {:macro, _}, title: title}),
-    do: [{:title, " Macro: " <> title}]
-
-  defp where_line(_state, %{type: :note, title: title}), do: [{:title, " Note for: " <> title}]
+  # Agenda's second line in a note is its font, which Agendum has not; the
+  # note's own file goes here (NOTE_EDITOR.md, step 7)
+  defp where_line(_state, %{type: :note}), do: []
   defp where_line(_state, %{type: :help}), do: [{:title, " Help"}]
   defp where_line(_state, %{type: :devtools}), do: [{:title, " Developer tools"}]
 

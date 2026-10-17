@@ -134,12 +134,14 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ENTER/ESC", "End search"}
     ]
 
+  # Agenda's order (R64a); its F6 Marker (fonts) is out of scope
   defp mode_keys(%{type: :note}),
     do: [
-      {"ESC", "Return", "Save and return"},
+      {"F1", "Help"},
       {"F2", "Paste", "Paste the text kept"},
       {"F3", "Copy", "Copy the marked text (or a word, line, all)"},
       {"F4", "Cut", "Cut the marked text (or a word, line, all)"},
+      {"F5", "Return", "Save and return"},
       {"F7", "Mark", "Mark text: F7, then move the cursor"},
       {"ALT-F6", "Search", "Search and replace"},
       {"ALT-F7", "MakeItm", "Make text into an item"},

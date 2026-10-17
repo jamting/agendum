@@ -1,6 +1,6 @@
 # Plan: the note editor as Agenda's (2026-10-15)
 
-**Status:** researched in Agenda 2.0 (2026-10-15); nothing built yet. Settle the six habit changes below with the owner before step 1 (ROADMAP, The note editor).
+**Status:** researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); step 1 done (R64a, 2026-10-17); step 2 next (ROADMAP, The note editor).
 
 Agenda's note editor (F5) is a screen of its own: its own control panel, its own key bar and its own F10 menu. Agendum's note editor has the text editing, marking and Search/Replace, but keeps the view's control panel and has no menu. This plan maps what Agenda's editor does, sets printing and typesetting out of scope, and lists the steps for the rest: some new, some only a connection to a feature Agendum already has.
 
@@ -50,9 +50,9 @@ Checked in the real Agenda 2.0 (headless, on a copy of PLANNER, 2026-10-15), and
 
 | Agenda | Agendum today | Step |
 | --- | --- | --- |
-| Note for … Line N INS EDIT | "Note for: …" on line 2; line 1 is the help line and the NOTE indicator | 1 |
+| Note for … Line N INS EDIT | ✅ R64a (INS only until step 5; no clock, as Agenda) | 1 |
 | Note file: line | – | 7 |
-| Key bar | ESC Return, F2 Paste, F3 Copy, F4 Cut, F7 Mark, ALT-F6, ALT-F7, ALT-F2 | 1 |
+| Key bar | ✅ R64a: F1 Help, F2 Paste, F3 Copy, F4 Cut, F5 Return, F7 Mark, then ALT-F6, ALT-F7, ALT-F2 (one line, as every key bar of ours; F10 Menu with step 2) | 1 |
 | F10 menu | F10 does nothing in a note | 2 |
 | Import, Export | – (File ▸ Transfer has the file's import/export, and Select File, R51, lists files) | 3 |
 | Clear | – | 2 |
@@ -96,6 +96,15 @@ These change what a key does for someone using Agendum today; settle them with t
 4. **TAB** (step 5). Today TAB does nothing in a note; it will type spaces.
 5. **CTRL-ENTER and ALT-W** (step 5). CTRL-ENTER deletes to the end of the line in Agenda; terminals often send it as plain ENTER. Agendum already uses CTRL-K for that in single-line fields: CTRL-K in notes too, with CTRL-ENTER where the terminal tells them apart?
 6. **ALT-N / ALT-P** (step 4). Agenda "optionally saves"; Agendum always saves. Keep it, or ask as ESC does?
+
+**Settled by the owner, 2026-10-17:**
+
+1. ESC asks Agenda's "Discard changes? No" (not when nothing changed).
+2. Line 1 is Agenda's header ("Note for: … Line N INS" and the indicator); a message shows over it until the next key.
+3. INS and CTRL-N (Agendum's stand-in for INS everywhere) switch INS / OVR.
+4. TAB goes to the next tab stop, typing spaces; Tab size a file setting, 5 by default, as Agenda.
+5. CTRL-K deletes to the end of the line, and CTRL-ENTER where the terminal tells it from ENTER.
+6. ALT-N / ALT-P keep saving without asking.
 
 ## Steps
 

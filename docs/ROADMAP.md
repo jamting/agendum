@@ -48,7 +48,7 @@ Then working together:
 ### The note editor (Milestone 2)
 
 - [ ] The note editor as Agenda's (checked in Agenda 2.0, 2026-10-15; printing and typesetting, F10 Print and F6 MARKER, out of scope). Evidence, the habit changes to settle first (ESC, INS, TAB, the control panel's first line) and the steps: [`docs/plans/NOTE_EDITOR.md`](plans/NOTE_EDITOR.md)
-  - [ ] Its control panel ("Note for: … Line N INS EDIT", "Note file: …") and key bar (F5 Return, F10 Menu)
+  - [x] Its control panel and key bar (R64a, 2026-10-17): line 1 "Note for:   …" (the macro editor's "Edit macro:  …") with "Line N INS EDIT" on the right, a message over it until the next key, hints on line 2; the key bar in Agenda's order, F1 Help … F5 Return, F7 Mark. "Note file: …" comes with external note files, F10 Menu with the menu
   - [ ] Its F10 menu: File, Import, Export, Clear, Return, Quit
   - [ ] Import a text file at the cursor; Export the note to a text file
   - [ ] ESC asks "Discard changes?" (No saves, Yes restores the note as opened)

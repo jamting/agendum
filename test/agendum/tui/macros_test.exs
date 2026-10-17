@@ -169,7 +169,7 @@ defmodule Agendum.TUI.MacrosTest do
 
     test "F2 edits the keystrokes as text, a line after each {ENTER}", %{state: state} do
       state = press(state, [{:alt_f, 3}, {:f, 2}])
-      assert screen(state) =~ "Macro: Water"
+      assert screen(state) =~ ~r/^ Edit macro:  Water +Line +2 INS EDIT/
       assert screen(state) =~ "Water the lettuces{ENTER}"
 
       state = press(state, [:ctrl_end, "Weed{ENTER}", :esc])
