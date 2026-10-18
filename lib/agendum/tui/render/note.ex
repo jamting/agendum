@@ -40,12 +40,33 @@ defmodule Agendum.TUI.Render.Note do
   end
 
   @doc """
-  The first row of the note shown: the note scrolls so that the cursor's
-  row shows.
+  The first row of the note shown. The note keeps the first row it showed
+  (`mode.top`) and scrolls only as far as the cursor's row needs, as an
+  editor does: moving up from the bottom moves the cursor, not the note.
+  A note just opened (no `top` yet) shows its end, the cursor on the
+  bottom row.
   """
   @spec top(State.t(), map) :: non_neg_integer
-  def top(state, %{edit: edit}),
-    do: max(screen_row(state, edit, {edit.row, edit.col}) - State.body_height(state) + 1, 0)
+  def top(state, %{edit: edit} = mode) do
+    height = State.body_height(state)
+    cursor = screen_row(state, edit, {edit.row, edit.col})
+    # with no `top` yet, the lowest top that still shows the cursor
+    lowest = max(cursor - height + 1, 0)
+
+    case Map.get(mode, :top) do
+      nil -> lowest
+      # `top` clamped: the cursor's row at or below it, inside the screen
+      top -> top |> min(cursor) |> max(lowest)
+    end
+  end
+
+  @doc """
+  The note with the first row it shows kept (`top/2`), so the next key
+  scrolls from there; `Agendum.TUI.Update` calls it after every key for
+  each note on the stack.
+  """
+  @spec keep_top(State.t(), map) :: map
+  def keep_top(state, mode), do: %{mode | top: top(state, mode)}
 
   @doc """
   The row on the screen, counted from the note's first, of the column

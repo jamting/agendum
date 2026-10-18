@@ -4,6 +4,8 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- In a note longer than the screen, ↑ moves the cursor up the screen; the note scrolls only when the cursor reaches the top row (before, the cursor stayed on the bottom row and the note scrolled under it).
+
 ## 0.16.0 — 2026-10-17
 
 Agenda's sounds.

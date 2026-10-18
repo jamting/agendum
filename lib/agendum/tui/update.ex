@@ -87,6 +87,9 @@ defmodule Agendum.TUI.Update do
 
     state = keep_place(before, state)
 
+    # a note keeps where it is scrolled to, also under a box (ALT-F6 …)
+    state = %{state | modes: Enum.map(state.modes, &keep_note_top(state, &1))}
+
     # Agenda's beeps (R76), decided from what the key did
     state = Agendum.TUI.Update.Sounds.after_key(before, key, state)
 
@@ -95,6 +98,13 @@ defmodule Agendum.TUI.Update do
     # so the state that is kept holds none.
     {%{state | effects: [], last_key: %{key: key, at: state.now}}, state.effects}
   end
+
+  # Domain: only the note on top moves its cursor, but the screen may be
+  # resized under a box, so every note on the stack is settled
+  defp keep_note_top(state, %{type: :note} = mode),
+    do: Agendum.TUI.Render.Note.keep_top(state, mode)
+
+  defp keep_note_top(_state, mode), do: mode
 
   # Where the person was in the file is kept as they leave it (R69): on
   # Quit here; Retrieve, New and Import keep it as they open the other file

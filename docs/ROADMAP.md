@@ -55,6 +55,7 @@ Then working together:
   - [x] Editing keys, part 1 (R64e, 2026-10-17): ALT-M, word moves (CTRL-←/→, ⌥←/→), word delete (⌥⌫, CTRL-W, ALT-W), CTRL-K to the line end, PGUP/PGDN, CTRL-HOME/END (⌥< ⌥>)
   - [x] Editing keys, part 2 (R64e, 2026-10-17, v0.15.0, format 37): INS/OVR (INS, CTRL-N) shown in the header; TAB to the next tab stop, File Properties ▸ Tab size (stored, 5 by default)
   - [x] ALT-F9 APPEND, ALT-F8 GETITMS and ALT-C (calendar) in a note (R64f, 2026-10-17); GETITMS copies only: whether to add Agenda's "discard the copied items?" question is the owner's to decide
+  - [x] Bug: in a note longer than the screen, ↑ from the bottom kept the cursor on the bottom row and scrolled the note under it (found by the owner, 2026-10-18). The note now keeps the row it shows first and scrolls only when the cursor would leave the screen, as an editor does
   - [ ] External note files: File Attach, Detach, Erase (a stored field and an ADR)
   - [ ] Optional: ALT-F1 COMPOSE
 - [ ] Undo in the note editor: CTRL-Z / CTRL-Y while editing a note, for typing (in sensible chunks: a word or a line, not every key) and for Search/Replace's replacements, with the note's text and cursor restored in the editor; the steps join the file's history when the note closes (today undo works only after closing the note, ADR 0005)
