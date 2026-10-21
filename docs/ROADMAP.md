@@ -4,7 +4,7 @@ Small, testable increments. Open work comes first, by area; done work is below, 
 
 ## Open
 
-**Next:** the Zettel ids are approved (R73, v0.11.0, 2026-10-17; their feel to improve, Beyond Agenda); the micro-blog (R74, v0.12.0 and v0.12.1) and the plain RSS reader (R75, v0.13.0) are approved too, 2026-10-17; CTRL-X runs a command by name (R65d, v0.14.0), approved 2026-10-17; the note editor's steps 1 to 6 (R64a–R64f, v0.15.0) and Agenda's sounds (R76, v0.16.0) are approved, 2026-10-19. Open questions for the owner: should GETITMS ask Agenda's "discard the copied items?"; build step 7, external note files (an ADR; a web version could not edit them), or leave it out on purpose; which parity item next, both habit changes to settle first: F6 on a view opening View Properties, or DEL putting items in a trash. Wol for the RSS reader (step 2) after that. The guard against a file changed on disk is done (R71). Towards many users is done up to the web version; capture from outside is paused (a URL scheme rather than `agendum add`). The repository is on GitHub (private, `jamting/agendum`) with CI, 2026-10-17. The view cache waits for slow answers in real use.
+**Next:** a truthful clone of Lotus Agenda first (meeting 2026-10-21, § 5; `VISION.md`, ADR 0043): parity before everything else, "Beyond Agenda" frozen to bug fixes until the clone is declared done. First the clone's own groundwork, in "Towards parity" below: tag each entry on AGENDA_PARITY.md's two lists by ADR 0043's test, with the owner confirming each; then the extras on their own shelf (ADR 0044) and the Extras preference; then Agenda's menus captured in DOSBox and compared by a test. After that the parity steps, the habit changes settled first: F6 on a view opening View Properties, or DEL putting items in a trash; and the note editor's open questions (should GETITMS ask Agenda's "discard the copied items?"; external note files, step 7, or left out on purpose). Approved and tagged up to v0.16.0 (2026-10-19). The repository is on GitHub (private, `jamting/agendum`) with CI, 2026-10-17; a public repository is made from it when the clone is done (Housekeeping). The view cache waits for slow answers in real use.
 
 ### Sharpen the saw
 
@@ -29,6 +29,11 @@ Then working together:
 
 **The ambition:** Agendum as close to Agenda 2.0 as makes sense: the same screen, keys, menus and behaviour, apart from a list of accepted enhancements (beyond Agenda) and accepted modifications (done differently, on purpose). Everything else that differs is a gap, to close or to move onto one of the lists. Today about 80% overall (control panel and F10 menu about 75%, the note editor about 50%, the data model and views about 90%). The overview, checked in Agenda 2.0 run headless, with the two lists and the steps: [`docs/plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md)
 
+- [ ] The truthful clone's groundwork (meeting 2026-10-21, § 5–9), in this order:
+  - [ ] Tag every entry on AGENDA_PARITY.md's two lists (20 enhancements, 11 modifications) by ADR 0043's test: *machine*, *work*, *quiet*, *extra* (hidden) or *change back*; the owner confirms each. Each change back that alters a habit becomes its own item here, settled with the owner first; candidates: the date format's default (Agenda's MM/DD/YY, ISO one setting away), the always-shown mode word (READY), entries added to Agenda's menus (File ▸ New, View ▸ Rename and Last …), the view manager's ► and F5, the descriptive key bar on a wide screen (§ 6)
+  - [ ] The extras on a shelf of their own (ADR 0044): the extras' core modules (blog, site, Markdown, feeds, Zettel ids and links) under `Agendum.Core.Extras.*`, a matching home on the TUI side, and an architecture test (`:xref`) that faithful code calls them only through commands tagged as extras. No change in behaviour (§ 9)
+  - [ ] The Extras preference (ADR 0043): commands tagged as extras; one preference, off by default, hides them from the menus, keymaps, F1 and CTRL-X in one place; the code and the stored fields stay, and a file saved with Extras off keeps the extras' fields (a round-trip test). The habit change: the owner turns Extras on once to keep the blog, the feeds and the Zettel commands (§ 7)
+  - [ ] Agenda in DOSBox as the reference for texts and menus (§ 8): a capture tool run by hand (`tools/agformat/agenda_driver.py`) walks Agenda's F10 menus (the view's, the note editor's, the category manager's) and writes their entries and help lines to a committed JSON reference, which replaces or generates the hand-made table in `docs/reference/AGENDA_MENUS.md`; a test, without DOSBox, compares `Agendum.TUI.Menu.tree/0` with it and fails on any difference not tagged as accepted (the tags above). Differences are found automatically and fixed by hand. Then the labels in settings boxes, the key bar and messages, step by step. Long help lines are Lotus's text: mind them before going public (GITHUB.md § 7)
 - [ ] Towards parity (AGENDA_PARITY.md, "The steps"):
   - [ ] The note editor as Agenda's (its own item, below; `NOTE_EDITOR.md`)
   - [ ] The View Properties box for every view (screenshot 143), F6 on the view
@@ -89,6 +94,8 @@ Then working together:
 - [ ] Five real users before Milestone 2 is closed: old Agenda users and people who love keyboard tools, with the debug log on (`AGENDUM_LOG`) and a short talk with each; what they stumble on goes here (expert review 2026-10-16); with a date set (second meeting)
 
 ### Beyond Agenda
+
+**Frozen to bug fixes until the truthful clone is declared done** (meeting 2026-10-21, § 5); the items below wait, and the built ones are hidden behind the Extras preference (ADR 0043).
 
 Each item names the group in `VISION.md` it serves, group 1 first; items for group 3 or for no group yet wait under Ideas, one line each with a pointer to their plan (meeting 2026-10-16-2, § 6).
 

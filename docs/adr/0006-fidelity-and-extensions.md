@@ -1,6 +1,6 @@
 # ADR 0006 — Faithful to Agenda 2.0, with marked extensions
 
-**Status:** accepted · 2026-10-10
+**Status:** accepted · 2026-10-10 · amended by ADR 0043 (a truthful clone: the test for what may differ, extras hidden behind one switch)
 
 ## Context
 
