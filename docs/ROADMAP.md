@@ -4,6 +4,8 @@ Small, testable increments. Open work comes first, by area; done work is below, 
 
 ## Open
 
+**Next action:** a panel meeting (`/meeting`) that goes through the eleven recommendations of the expert review of 2026-10-21 one by one (`docs/reviews/2026-10-21.md`, § 18), the owner deciding each; on the agenda (`docs/meetings/dagordning.md`). Nothing else is started before it.
+
 **Next:** a truthful clone of Lotus Agenda first (meeting 2026-10-21, § 5; `VISION.md`, ADR 0043): parity before everything else, "Beyond Agenda" frozen to bug fixes until the clone is declared done. First the clone's own groundwork, in "Towards parity" below: tag each entry on AGENDA_PARITY.md's two lists by ADR 0043's test, with the owner confirming each; then the extras on their own shelf (ADR 0044) and the Extras preference; then Agenda's menus captured in DOSBox and compared by a test. After that the parity steps, the habit changes settled first: F6 on a view opening View Properties, or DEL putting items in a trash; and the note editor's open questions (should GETITMS ask Agenda's "discard the copied items?"; external note files, step 7, or left out on purpose). Approved and tagged up to v0.16.0 (2026-10-19). The repository is on GitHub (private, `jamting/agendum`) with CI, 2026-10-17; a public repository is made from it when the clone is done (Housekeeping). The view cache waits for slow answers in real use.
 
 ### Sharpen the saw
