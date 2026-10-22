@@ -57,7 +57,7 @@ Keep changes small and focused; one feature per commit.
 
 ## Testing the real terminal
 
-Unit tests cover everything except the raw terminal. To smoke-test it without a human, drive the app through a pseudo-terminal (Python `pty`), send keys, and look at the output. In raw mode the tty must not intercept control keys; `Terminal` turns off `ixon`, `isig` and `iexten` for that reason. In the child, set `XDG_CONFIG_HOME` to a scratch folder and unset `AGENDUM_LOG`: otherwise Agendum writes `last_file` and `place` to the person's real preferences, and its session log among theirs.
+Unit tests cover everything except the raw terminal. To smoke-test it without a human, use `tools/smoke/smoke.py`: it runs the app in a pseudo-terminal, sends keys (`tools/smoke/smoke.py --highlight DOWN F10`; key names at the top of the file) and prints the screen as text, with the highlighted text listed. It already does the sandboxing below; extend it rather than writing a new pty script. In raw mode the tty must not intercept control keys; `Terminal` turns off `ixon`, `isig` and `iexten` for that reason. In the child, set `XDG_CONFIG_HOME` to a scratch folder and unset `AGENDUM_LOG`: otherwise Agendum writes `last_file` and `place` to the person's real preferences, and its session log among theirs.
 
 ## Reference material
 
