@@ -12,7 +12,8 @@ The owner's way of working on Wol's Agendum with Claude: the habits, the rituals
 | ---------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------- |
 | begin a session, or ask "where were we?"      | `/start-session`                         | where the last session stopped, what to try, three things to choose from |
 | build the next thing                           | "next" or name a roadmap item            | Claude lists the habit changes first, then builds it test-first         |
-| park a thought for later                       | write it in `docs/meetings/dagordning.md` | nothing, until a meeting                                                |
+| park a thought for later                       | an item in Thoughts in my project file (Agendum), or `docs/meetings/dagordning.md` | nothing, until a meeting                                                |
+| put a thought on the next meeting's agenda     | assign it to Next meeting (under Thoughts) | `/meeting` brings it up; afterwards I mark it done (F4)                 |
 | discuss my parked thoughts with the panel      | `/meeting`                               | a panel meeting on my agenda; I decide; minutes and roadmap updated     |
 | know how the project is doing                  | `/expert-review`                         | dated review minutes with scores and ranked recommendations             |
 | understand code I did not write by hand        | `/study-plan`                            | the panel picks a part; learning comments; questions I tick off         |
@@ -97,6 +98,7 @@ The panel advises; it never votes. I decide.
 | `mix docs --open`                                      | API docs, design documents, guide and manual in the browser             |
 | `mix agendum.starters`, `mix agendum.golden`           | rebuild the Planner starter; write the golden file of a new format version |
 | `FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs` | the long fuzz run                                                     |
+| `mix agendum.thoughts` (`--next-meeting`; `--init PATH` once) | my open thoughts from the project file in `$AGENDUM_PROJECT_FILE`, as Markdown; `--init` makes the file |
 | `tools/agformat/agenda_driver.py`, `agdump.py`, `agdiff.py` | drive the real Agenda headless (also record its sounds: SDL's disk audio driver); read and compare `.AG` files (`tools/agformat/DRIVING_AGENDA.md`) |
 | `tools/screenshots/`                                   | draw a screen as a PNG, to compare with Agenda's                        |
 
