@@ -90,7 +90,7 @@ The panel advises; it never votes. I decide.
 | ------------------------------------------------------ | ----------------------------------------------------------------------- |
 | `mix setup`                                            | a fresh checkout: dependencies, and the pre-push hook (runs `mix check`) |
 | `mix check`                                            | the quality gate                                                        |
-| `gh run list` (or the Actions tab on GitHub)           | CI: the same gate on GitHub after every push (`.github/workflows/check.yml`) |
+| `gh run list` (or the Actions tab on GitHub)           | CI: the same gate on GitHub after every push (`.github/workflows/check.yml`), and the long fuzz run every night (`fuzz.yml`; `gh workflow run fuzz.yml` starts it by hand) |
 | `mix run -e 'Agendum.CLI.main(["--demo"])'`            | the program with sample data (`--rabbit`: Rabbit's file; `--clinic`: the Easter egg) |
 | `mix escript.build && ./agendum FILE`                  | the real program                                                        |
 | `AGENDUM_LOG=1 ./agendum FILE`                         | with a debug log (`~/.local/state/agendum/logs`); give it to Claude on a crash or lag |

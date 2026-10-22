@@ -1,0 +1,52 @@
+# The long fuzz run, nightly: the TUI fuzz property with 3000 runs instead
+# of the suite's 300, which finds crashes the short run misses (CLAUDE.md,
+# workflow step 4). It used to be run by hand before every tag. A failure
+# prints the command that repeats it locally, with its seed.
+name: fuzz
+
+on:
+  schedule:
+    - cron: "17 2 * * *" # every night, 02:17 UTC, on main
+  workflow_dispatch: # and by hand: gh workflow run fuzz.yml
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-24.04
+    env:
+      MIX_ENV: test
+      FUZZ_RUNS: "3000"
+    steps:
+      - uses: actions/checkout@v7
+
+      # the same versions as check.yml
+      - uses: erlef/setup-beam@v1
+        id: beam
+        with:
+          otp-version: "29"
+          elixir-version: "1.20.4"
+
+      # check.yml's cache, only read: that workflow keeps it up to date
+      - uses: actions/cache/restore@v6
+        with:
+          path: |
+            deps
+            _build
+            ~/.mix
+          key: mix-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            mix-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-
+
+      - run: mix deps.get
+
+      # a seed of our own, so a failure can name it; each night a new one
+      - id: seed
+        run: echo "seed=$(( $(date +%s) % 1000000 ))" >> "$GITHUB_OUTPUT"
+
+      - run: mix test test/agendum/tui/fuzz_test.exs --seed ${{ steps.seed.outputs.seed }}
+
+      - if: failure()
+        run: |
+          echo "Repeat it locally:" >> "$GITHUB_STEP_SUMMARY"
+          echo '```sh' >> "$GITHUB_STEP_SUMMARY"
+          echo "FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs --seed ${{ steps.seed.outputs.seed }}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"

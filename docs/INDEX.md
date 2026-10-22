@@ -90,7 +90,7 @@ Finished or dropped plans, kept as records of how something was done or why it w
 | add a screen or box                    | `SCREENS.md` (a test checks); `ARCHITECTURE.md` if it is a new module                          |
 | add a stored field                     | `DATA_MODEL.md` (and a row in its format versions), `DATA_ACCESS.md` if queried, `JSON_FORMAT.md` and `Agendum.Core.JSONFile`; set it in `Agendum.Starters.Golden`, and with the new format version run `mix agendum.golden` and commit its two files |
 | make a lasting decision                | a new ADR in `adr/`, and a row in `ARCHITECTURE.md`'s ADR list                                 |
-| finish a major feature or change the file format | the version in `mix.exs` (minor, never 1.0.0 unless the owner says), an entry in `CHANGELOG.md`, a `vX.Y.Z` tag after the long fuzz run passes (`FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs`) |
+| finish a major feature or change the file format | the version in `mix.exs` (minor, never 1.0.0 unless the owner says), an entry in `CHANGELOG.md`, a `vX.Y.Z` tag after the long fuzz run passes on that commit (nightly in CI, `.github/workflows/fuzz.yml`, or by hand: `FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs`) |
 | find a way to work faster or safer     | an item under "Sharpen the saw" in `ROADMAP.md`                                                 |
 | add a skill, a ritual or a standing way of working | a line in `HOW_I_WORK.md` (the table at the top, and the skills table for a skill) |
 | plan something larger                  | a plan in `plans/`, starting with its status, and a row above; once finished, moved to `plans/archive/` with its row |
