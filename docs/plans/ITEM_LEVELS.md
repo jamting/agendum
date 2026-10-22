@@ -35,3 +35,4 @@ To settle with the owner before the work starts:
 - Where the rules for ingested items live: Agenda's conditions and actions, or rules of their own; how long discarded items are kept.
 - How context items refer to what they are about (items, categories) and what happens to them when those change or go.
 - Undo: ingestion and the model's context items are not the person's actions; should they be undo steps at all?
+- Whether ingested items are read-only (meeting 2026-10-22-3, § 6, referred here). Today a feed entry is an ordinary item: editing its text or note keeps it from fading (`Agendum.Core.FeedSync.kept?/3`). The panel's views: Mitch, entries stay ordinary, editable items, as Agenda's idea has it; Carsten, the feed's text stays as written and the person's words go in the note; Claude, Wol needs to tell the feed's words from the person's. Whatever is decided, keeping an item should be visible and deliberate (David), never a side effect of an edit.
