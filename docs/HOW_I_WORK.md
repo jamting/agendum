@@ -119,7 +119,8 @@ The panel advises; it never votes. I decide.
 - **A meeting sorts a review's advice**: the eleven recommendations of 2026-10-21 decided one by one in one sitting, each into its home or dropped, so the roadmap's **Next action** says one thing again (2026-10-22).
 - **Use Agendum for Agendum** (adopted 2026-10-22, meeting § 7b): my thoughts live in a Thoughts view in my own file, and the dagordning file is retired (meeting 2026-10-22-2); the project's documents are to be imported into the same file as Disposable items, deleted and read afresh on each import (ROADMAP, Sharpen the saw).
 - **Off this Mac** (adopted 2026-10-22, meeting § 5h): the code is on GitHub since 2026-10-17; the session summaries are to be committed too (ROADMAP, Housekeeping).
-- **Formatting needs no gate run**: a Claude Code hook (`.claude/settings.json`) runs `mix format` on every `.ex`/`.exs` file Claude writes, so a format failure no longer costs a `mix check` round (2026-10-22).
+- **Formatting needs no gate run**: a Claude Code hook (`.claude/settings.json`) runs `mix format` on every `.ex`/`.exs` file Claude writes, so a format failure no longer costs a `mix check` round (2026-10-22). The same file allows `mix test`, `mix check` and `tools/smoke/smoke.py` without a permission prompt.
+- **Questions first, then a row of builds**: three items (a bug fix release, the `feature` skill, the document import) settled in one round of four questions, then built and committed one after another while the owner went to bed (2026-10-23).
 - **Smoke tests in a sandbox**: a pty test sets `XDG_CONFIG_HOME` to a scratch folder and unsets `AGENDUM_LOG`, after one test wrote into the owner's real preferences (2026-10-16; CLAUDE.md, Testing the real terminal).
 
 ## How I could work better
