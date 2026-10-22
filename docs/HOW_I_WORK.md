@@ -111,16 +111,14 @@ The panel advises; it never votes. I decide.
 - **Start sessions on purpose** with `/start-session` (adopted 2026-10-16): the mirror of `end-session`.
 - **Writing study questions finds bugs**: asking "what happens if this fails?" found a lost-save bug (2026-10-16).
 - **All the questions up front, then a break**: the owner answered seven questions on the `.AG` import in two rounds and rested while it was built in three tested commits; nothing had to wait for them (2026-10-16).
+- **A meeting sorts a review's advice**: the eleven recommendations of 2026-10-21 decided one by one in one sitting, each into its home or dropped, so the roadmap's **Next action** says one thing again (2026-10-22).
+- **Use Agendum for Agendum** (adopted 2026-10-22, meeting § 7b): my thoughts move into a Thoughts view in my own file, and the project's documents into a rebuilt Agendum copy (ROADMAP, Sharpen the saw); until then thoughts still go in the dagordning.
+- **Off this Mac** (adopted 2026-10-22, meeting § 5h): the code is on GitHub since 2026-10-17; the session summaries are to be committed too (ROADMAP, Housekeeping).
 - **Smoke tests in a sandbox**: a pty test sets `XDG_CONFIG_HOME` to a scratch folder and unsets `AGENDUM_LOG`, after one test wrote into the owner's real preferences (2026-10-16; CLAUDE.md, Testing the real terminal).
 
 ## How I could work better
 
 Suggestions, most valuable first. None is decided; take what helps, and move what you adopt into the sections above.
 
-1. **Back the rest up off this Mac.** The code, its history and the tags are on GitHub since 2026-10-17 (private, `jamting/agendum`, with CI); push at the end of each session. `docs/summaries/` (git ignored) and the untracked reference files are still only on this disk: a copy elsewhere (another disk, or a cloud folder) closes that.
-2. **Try each change before the next one.** The review counted 85 commits in one day. The end-session summary lists "what you'll notice"; spending five minutes in the real program on that list before starting new work keeps your understanding level with the code, and catches habit changes early (CLAUDE.md asks for it).
-3. **Use Agendum for Agendum.** You are its first user. Keeping the project's ideas, bugs and the review's resolutions in an Agendum file (a category per area, a view of what is next) would show daily what is missing, and test the program the way real users will. The dagordning can stay for meetings.
-4. **One open loop at a time.** Several things are open at once: study unit 2, twelve review resolutions not yet on the roadmap, the failed-save bug, real users to find. A meeting to sort the resolutions into the roadmap (or into "not now") empties the pile; the roadmap's **Next:** line then says the one thing.
-5. **A rhythm for reviews.** Three reviews in one day is a lot of advice to act on. One per version (or after each meeting's decisions ship) gives each review a real change to measure (the review's resolution 11).
-6. **Small study doses.** One study question at the start of a session, before building, keeps the plan moving without needing a free evening.
-7. **Real users, with dates.** Two sessions in the calendar with old Agenda users or keyboard-tool lovers, the debug log on. Everything so far rests on your judgement alone (the review's resolution 3).
+1. **Try each change before the next one.** The review counted 85 commits in one day. The end-session summary lists "what you'll notice"; spending five minutes in the real program on that list before starting new work keeps your understanding level with the code, and catches habit changes early (CLAUDE.md asks for it).
+2. **A rhythm for reviews.** Three reviews in one day is a lot of advice to act on. One per version (or after each meeting's decisions ship) gives each review a real change to measure (the review's resolution 11).
