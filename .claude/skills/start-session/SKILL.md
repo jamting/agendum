@@ -24,7 +24,7 @@ git remote -v                                    # is there a backup off this Ma
 - **`docs/study/STUDY_PLAN.md`**: the current unit and the first unticked question, to offer a study dose only if it helps. Never report its pace or a lack of progress (the owner learns Elixir outside the project too; meeting 2026-10-22, § 5j).
 - **Memory**: paused work ("resume from …") and decisions waiting for the owner.
 - **The newest review** (`docs/reviews/`) only for resolutions the newest summary says are still waiting for a decision.
-- **Uncommitted changes**: say what they are, except `docs/meetings/dagordning.md`, which is the owner's running notes and is never mentioned (memory: ignore dagordning).
+- **Uncommitted changes**: say what they are.
 
 Check whether the summary's facts still hold (a step may have been done since, in a commit after it); don't offer what is already done.
 
@@ -35,7 +35,7 @@ In the terminal, in this order, short:
 1. **Where we stopped**: one or two lines (the last session's main outcome and date, how long ago).
 2. **Try first** (only when there is something): the changes from the last session the owner has not tried in the real program, as a short list of keys to press. Five minutes in the program before new work keeps understanding level with the code (`docs/HOW_I_WORK.md`, "The loop for a feature", step 8).
 3. **Choose one**: at most three options, most valuable first, each one line with why and a rough size (S, M, L). Prefer, in this order: a risk to the owner's data or work (a known data-losing bug, no backup); paused or half-done work; a decision the owner owes (a habit change to settle, review resolutions to sort); the roadmap's **Next:**. One of the three may be a study question ("help with 2.1.1"), as a small dose before building.
-4. **Warnings**, if any, one line each: uncommitted work that is not the dagordning, a failing or skipped check from last time, no git remote.
+4. **Warnings**, if any, one line each: uncommitted work, a failing or skipped check from last time, no git remote.
 
 End with a plain question: which one? Then stop, and wait for the answer.
 

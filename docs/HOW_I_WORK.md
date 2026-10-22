@@ -12,7 +12,7 @@ The owner's way of working on Wol's Agendum with Claude: the habits, the rituals
 | ---------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------- |
 | begin a session, or ask "where were we?"      | `/start-session`                         | where the last session stopped, what to try, three things to choose from |
 | build the next thing                           | "next" or name a roadmap item            | Claude lists the habit changes first, then builds it test-first         |
-| park a thought for later                       | an item in Thoughts in my project file (Agendum), or `docs/meetings/dagordning.md` | nothing, until a meeting                                                |
+| park a thought for later                       | an item in Thoughts in my project file (Agendum) | nothing, until a meeting                                                |
 | put a thought on the next meeting's agenda     | assign it to Next meeting (under Thoughts) | `/meeting` brings it up; afterwards I mark it done (F4)                 |
 | discuss my parked thoughts with the panel      | `/meeting`                               | a panel meeting on my agenda; I decide; minutes and roadmap updated     |
 | know how the project is doing                  | `/expert-review`                         | dated review minutes with scores and ranked recommendations             |
@@ -47,7 +47,7 @@ All in `.claude/skills/`, each started with `/name` or by asking for it in words
 | `end-session`       | Close a session: what was done, what must not be lost (roadmap, plans, memory), a cheerful summary with learnings and next steps                                                                                | `docs/summaries/YYYY-MM-DD-HHMM.md` (not committed)     |
 | `start-session`     | Open a session: reads the last summary, the roadmap's Next, the study plan and anything uncommitted; lists what to try in the program, offers three things to do, and waits for a choice | nothing                                                 |
 | `expert-review`     | A dated review written as the minutes of a panel meeting in Owl's house: architecture, code, tests, docs, users, business, vision, methods, tidiness, agent readiness; scores, evidence, ranked recommendations | `docs/reviews/YYYY-MM-DD.md` (`-2`, `-3` the same day)  |
-| `meeting`           | A panel meeting on my own agenda (the dagordning): the experts the items call for discuss them, I decide, decisions go into the roadmap, plans and ADRs                                                          | `docs/meetings/YYYY-MM-DD/` (agenda and minutes)        |
+| `meeting`           | A panel meeting on my own agenda (the thoughts under Next meeting in my project file): the experts the items call for discuss them, I decide, decisions go into the roadmap, plans and ADRs                                                          | `docs/meetings/YYYY-MM-DD/` (agenda and minutes)        |
 | `study-plan`        | The panel picks the next part of the code for me to study, gives it learning comments, and writes a unit of questions and exercises; also helps with a question                                                 | `docs/study/STUDY_PLAN.md`                              |
 | `learning-comments` | Comments in the code on Elixir idioms (for an experienced programmer new to Elixir) and on the domain logic; comments only                                                                                     | the files I name                                        |
 | `tidy-docs`         | The documents brought up to date with the code, then streamlined: one home per fact, indexes complete, open work first, a status on every plan                                                                 | two commits                                             |
@@ -77,7 +77,7 @@ The panel advises; it never votes. I decide.
 | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | What comes next                        | [`ROADMAP.md`](ROADMAP.md), the **Next:** line at the top                                      |
 | Every document and what it is for      | [`INDEX.md`](INDEX.md)                                                                         |
-| Thoughts waiting for a meeting         | `docs/meetings/dagordning.md` (template `docs/meetings/TEMPLATE.md`); Claude leaves it alone until I call a meeting |
+| Thoughts waiting for a meeting         | Thoughts ▸ Next meeting in my project file (`$AGENDUM_PROJECT_FILE`), read by `mix agendum.thoughts` |
 | Reviews, meetings, study               | `docs/reviews/`, `docs/meetings/YYYY-MM-DD/`, `docs/study/STUDY_PLAN.md`                       |
 | A record of every session              | `docs/summaries/` (git ignored; kept complete, alike in shape, to import into Agendum one day with STF) |
 | What changed per version               | [`../CHANGELOG.md`](../CHANGELOG.md), and the `vX.Y.Z` tags                                    |
@@ -114,7 +114,7 @@ The panel advises; it never votes. I decide.
 - **Writing study questions finds bugs**: asking "what happens if this fails?" found a lost-save bug (2026-10-16).
 - **All the questions up front, then a break**: the owner answered seven questions on the `.AG` import in two rounds and rested while it was built in three tested commits; nothing had to wait for them (2026-10-16).
 - **A meeting sorts a review's advice**: the eleven recommendations of 2026-10-21 decided one by one in one sitting, each into its home or dropped, so the roadmap's **Next action** says one thing again (2026-10-22).
-- **Use Agendum for Agendum** (adopted 2026-10-22, meeting § 7b): my thoughts move into a Thoughts view in my own file, and the project's documents into a rebuilt Agendum copy (ROADMAP, Sharpen the saw); until then thoughts still go in the dagordning.
+- **Use Agendum for Agendum** (adopted 2026-10-22, meeting § 7b): my thoughts live in a Thoughts view in my own file, and the dagordning file is retired (meeting 2026-10-22-2); the project's documents are to be imported into the same file as Disposable items, deleted and read afresh on each import (ROADMAP, Sharpen the saw).
 - **Off this Mac** (adopted 2026-10-22, meeting § 5h): the code is on GitHub since 2026-10-17; the session summaries are to be committed too (ROADMAP, Housekeeping).
 - **Smoke tests in a sandbox**: a pty test sets `XDG_CONFIG_HOME` to a scratch folder and unsets `AGENDUM_LOG`, after one test wrote into the owner's real preferences (2026-10-16; CLAUDE.md, Testing the real terminal).
 

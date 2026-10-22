@@ -78,7 +78,7 @@ Finished or dropped plans, kept as records of how something was done or why it w
 | Document                       | About                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
 | `docs/reviews/` (one per date) | Dated expert panel reviews, written as meeting minutes (architecture, code, users, business, vision, methods, tidiness and scope, agent readiness), each following up the last (`expert-review` skill) |
-| `docs/meetings/dagordning.md` | The next panel meeting's agenda, where the owner collects thoughts to discuss (template `docs/meetings/TEMPLATE.md`); each meeting's agenda and minutes in `docs/meetings/YYYY-MM-DD/` (`meeting` skill) |
+| `docs/meetings/` | Each panel meeting's agenda and minutes in `docs/meetings/YYYY-MM-DD/`, the agenda made from `docs/meetings/TEMPLATE.md`; the items come from the owner's Agendum project file (Thoughts ▸ Next meeting, `mix agendum.thoughts`; `meeting` skill) |
 | `docs/study/STUDY_PLAN.md` | The owner's study of the code: units the panel picks, with questions ticked off when understood (`study-plan` skill) |
 
 ## Where a change is written down
