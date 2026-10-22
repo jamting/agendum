@@ -205,6 +205,110 @@ defmodule Agendum.ArchitectureTest do
     """
   end
 
+  # --- The extras on a shelf of their own (ADR 0044) ----------------------
+
+  # The extras (ADR 0043: the blog and its site, Markdown, feeds, Zettel ids
+  # and links, calendar subscriptions) are modules of their own. Faithful
+  # code, Agenda's own, does not call them, so the line between the clone
+  # and the extras stays where it can be seen.
+  @shelf [
+    Agendum.Core.Blog,
+    Agendum.Core.Site,
+    Agendum.Core.Markdown,
+    Agendum.Core.Feed,
+    Agendum.Core.FeedParser,
+    Agendum.Core.FeedSync,
+    Agendum.Core.Xml,
+    Agendum.Core.ZettelId,
+    Agendum.Core.ZettelLinks,
+    Agendum.Core.Calendar,
+    Agendum.Core.CalendarSync,
+    Agendum.Core.ICal,
+    Agendum.Core.ICal.Event,
+    Agendum.Core.ICal.TimeZone,
+    # the facade's extras area, which Agendum.Core delegates to
+    Agendum.Core.Facade.Feeds,
+    Agendum.Core.Facade.Publishing,
+    Agendum.Core.Facade.Zettels,
+    Agendum.Core.Facade.Calendars
+  ]
+
+  # The extras' own homes outside the core: their boxes and the shell
+  # modules that fetch and publish for them. They may use the shelf.
+  @extras_homes [
+    Agendum.TUI.Boxes.FeedsBox,
+    Agendum.TUI.Boxes.PublishBox,
+    Agendum.TUI.Boxes.PublishPreviewBox,
+    Agendum.TUI.Boxes.CalendarsBox,
+    Agendum.FeedFetch,
+    Agendum.Publish,
+    Agendum.CalendarFetch
+  ]
+
+  # Faithful modules that must name the extras, because the extras' data are
+  # stored fields of the file (`next_zettel`, `feeds`, `blog`, `calendars`;
+  # ADR 0044's amendment): the file and its format, the golden file that
+  # sets every field, and the checks of a sound file.
+  @file_modules [
+    Agendum.Core.Database,
+    Agendum.Core.JSONFile,
+    Agendum.Store,
+    Agendum.Starters.Golden,
+    Agendum.Core.Invariants
+  ]
+
+  # Single faithful functions that reach the extras, each for a reason
+  # (owner, 2026-10-23):
+  @named_exceptions [
+    # a Zettel link ([[abcdefgh]]) in an item's text is blanked out before
+    # the text is matched to categories, so a link never assigns an item
+    {Agendum.Core.Assign, :levels, 2},
+    {Agendum.Core.Assign, :text_matches?, 3},
+    # the Zettel id column, a column format stored in a faithful view
+    {Agendum.Core.ViewModel, :standard_cell, 6}
+  ]
+
+  defp on_shelf?(module), do: module in @shelf
+
+  defp may_use_shelf?({module, f, a}) do
+    on_shelf?(module) or module in @extras_homes or module in @file_modules or
+      {module, f, a} in @named_exceptions
+  end
+
+  test "faithful code does not call the extras (ADR 0044)", %{calls: calls} do
+    violations =
+      for {{from, f, a} = caller, {to, name, arity}} <- calls,
+          on_shelf?(to),
+          # Agendum.Core delegates to the facade's extras area, and only there
+          not (from == Agendum.Core and Atom.to_string(to) =~ ~r/^Elixir\.Agendum\.Core\.Facade\./),
+          not may_use_shelf?(caller),
+          uniq: true,
+          do: "#{inspect(from)}.#{f}/#{a} calls #{inspect(to)}.#{name}/#{arity}"
+
+    assert violations == [], """
+    Faithful code calls the extras directly (reach them through the
+    facade's extras area; ADR 0044):
+
+      #{Enum.join(violations, "\n  ")}
+    """
+  end
+
+  test "the extras' list of allowed callers names real modules and functions" do
+    for module <- @shelf ++ @extras_homes ++ @file_modules do
+      assert Code.ensure_loaded?(module), "#{inspect(module)} is listed but does not exist"
+    end
+
+    for {module, f, a} <- @named_exceptions do
+      Code.ensure_loaded!(module)
+      # a private function is not exported, so look at the module's own list
+      {:ok, {^module, [{:locals, locals}]}} =
+        :beam_lib.chunks(:code.which(module), [:locals])
+
+      assert {f, a} in locals or function_exported?(module, f, a),
+             "#{inspect(module)}.#{f}/#{a} is a named exception but does not exist"
+    end
+  end
+
   # --- The core is pure ---------------------------------------------------
 
   # Modules and functions that reach the outside world: files, the

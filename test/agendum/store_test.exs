@@ -44,6 +44,36 @@ defmodule Agendum.StoreTest do
 
   defp old_names(term), do: term
 
+  # The extras' data are stored fields of the file (ADR 0043, ADR 0044):
+  # whatever the program shows, saving keeps them as they were. Written
+  # before the extras moved to a shelf of their own, to guard the move; the
+  # Extras preference (off by default) will run the same save with it off.
+  test "a saved file keeps the extras' fields: Zettel ids, blog, feeds, calendars",
+       %{tmp_dir: dir} do
+    db = Agendum.Starters.Golden.build()
+    path = Path.join(dir, "extras.agendum")
+
+    # the golden file sets every one of them away from its default
+    assert db.next_zettel > 1
+    assert Enum.any?(Map.values(db.items), & &1.zettel)
+    assert db.blog != %Agendum.Core.Database{}.blog
+    assert map_size(db.feeds) > 0
+    assert map_size(db.calendars) > 0
+
+    assert :ok = Store.save(db, path)
+    assert {:ok, loaded} = Store.load(path)
+
+    assert loaded.next_zettel == db.next_zettel
+
+    assert Map.new(loaded.items, fn {id, i} -> {id, i.zettel} end) ==
+             Map.new(db.items, fn {id, i} -> {id, i.zettel} end)
+
+    assert loaded.blog == db.blog
+    assert loaded.feeds == db.feeds
+    assert loaded.calendars == db.calendars
+    assert loaded == db
+  end
+
   test "rejects files that are not Agenda files", %{tmp_dir: dir} do
     path = Path.join(dir, "junk.agenda")
     File.write!(path, "not a term")

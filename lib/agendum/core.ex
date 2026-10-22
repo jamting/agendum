@@ -132,9 +132,9 @@ defmodule Agendum.Core do
   defdelegate item_by_zettel(db, word), to: Zettels
   defdelegate zettels(db), to: Zettels
   # links between zettels (R73b)
-  defdelegate zettel_links(text, used), to: Agendum.Core.ZettelLinks, as: :scan
-  defdelegate link_targets(db, id), to: Agendum.Core.ZettelLinks, as: :targets
-  defdelegate linked_from(db, id), to: Agendum.Core.ZettelLinks
+  defdelegate zettel_links(text, used), to: Zettels
+  defdelegate link_targets(db, id), to: Zettels
+  defdelegate linked_from(db, id), to: Zettels
 
   # the micro-blog (R74)
   defdelegate set_blog(db, changes), to: Publishing

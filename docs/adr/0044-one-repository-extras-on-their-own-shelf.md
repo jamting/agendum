@@ -27,3 +27,12 @@ The extras are not only modules: their data are stored fields of the file (`next
 - the facade's extras area (an area module under `lib/agendum/core/facade/`, delegated from `Agendum.Core`), which the TUI's extras commands call.
 
 The order of work: first the exceptions written into the architecture test, and a round-trip test (a file with the extras' fields, saved with Extras off, keeps them unchanged) written against today's code, where both pass; then the move; then the switch (ADR 0043). The tests guard the move instead of describing it afterwards.
+
+## Amendment: calendars on the shelf, two named exceptions, renamed structs (2026-10-23)
+
+Settled with the owner before the tests were written (2026-10-23):
+
+- **Calendar subscriptions are on the shelf** (`Calendar`, `CalendarSync`, `ICal` and `CalendarFetch`): AGENDA_PARITY.md tags them an extra (R45), so they move with the blog, the site, Markdown, the feeds and the Zettel ids.
+- **Two named exceptions**, listed by function in the architecture test with their reasons, and no others: `Assign` blanks out a Zettel link (`[[abcdefgh]]`) before an item's text is matched to categories, so a link never assigns an item (`Assign.levels/2`, `Assign.text_matches?/3`); `ViewModel` draws the Zettel id column, a column format stored in a faithful view (`ViewModel.standard_cell/6`). `Agendum.Starters.Golden`, which sets every stored field, is one of the file's modules.
+- **The stored structs move too** (`Feed`, `Blog`, `Calendar`). Loading maps their old names to the new ones, as ADR 0019 did for `Agenda.*`, so every file ever saved still opens; a new format version makes older programs refuse a file saved since, rather than misread it.
+- Until the Extras preference tags the commands, the test guards the core's shelf: the extras' boxes and shell modules may use it, and faithful TUI code may still open them. The commands tagged as extras close that side.

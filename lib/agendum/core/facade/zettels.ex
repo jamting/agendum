@@ -44,6 +44,12 @@ defmodule Agendum.Core.Facade.Zettels do
     end
   end
 
+  # Links between zettels (R73b), from `Agendum.Core.ZettelLinks`: the
+  # facade reaches the extras only through this area (ADR 0044).
+  defdelegate zettel_links(text, used), to: Agendum.Core.ZettelLinks, as: :scan
+  defdelegate link_targets(db, id), to: Agendum.Core.ZettelLinks, as: :targets
+  defdelegate linked_from(db, id), to: Agendum.Core.ZettelLinks
+
   @doc "An item's Zettel id as its word (`\"bonalaku\"`), or nil when it has none."
   @spec zettel(Agendum.Core.Item.t()) :: ZettelId.id() | nil
   def zettel(%{zettel: nil}), do: nil
