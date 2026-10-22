@@ -87,6 +87,23 @@ defmodule Agendum.TUI.SelectFileTest do
     assert rows(state) == ["..", "Garden", "notes.txt"]
   end
 
+  test "the Feeds box's OPML prompts list feed lists (meeting 2026-10-22-3, § 7)", %{
+    state: state,
+    dir: dir
+  } do
+    File.write!(Path.join(dir, "feeds.opml"), "")
+    File.write!(Path.join(dir, "subscriptions.xml"), "")
+
+    # I imports a feed list, E exports one: both prompts list the same kinds
+    for key <- ["i", "e"] do
+      state = press(state, [{:f, 10}, "f", "t", "f", key])
+      assert panel(state) =~ "F3 lists files"
+
+      state = state |> press({:f, 3}) |> serve()
+      assert rows(state) == ["..", "Garden", "feeds.opml", "subscriptions.xml"]
+    end
+  end
+
   test "F3 does nothing in a prompt that is not for a file", %{state: state} do
     state = press(state, [{:f, 10}, "v", "a", {:f, 3}])
     assert %{type: :prompt} = State.mode(state)

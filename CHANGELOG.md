@@ -1,8 +1,14 @@
 # Changelog
 
-What changed in each version of Wol's Agendum, for the person using it. Versions follow [semantic versioning](https://semver.org): before 1.0.0, the minor number (0.**3**.0) goes up with every major feature or change to the file format, the patch number (0.3.**1**) with fixes. Each version is tagged in git (`v0.2.0`). The roadmap's Done section ([`docs/ROADMAP.md`](docs/ROADMAP.md)) lists every finished item; git log has the detail.
+What changed in each version of Wol's Agendum, for the person using it. Versions follow [semantic versioning](https://semver.org): before 1.0.0, the minor number (0.**3**.0) goes up with every major feature or change to the file format, the patch number (0.3.**1**) with fixes. Each version is tagged in git (`v0.2.0`). The roadmap's record of finished work ([`docs/ROADMAP_DONE.md`](docs/ROADMAP_DONE.md)) lists every finished item; git log has the detail.
 
 ## Unreleased
+
+## 0.16.2 — 2026-10-23
+
+A fix in the feed reader.
+
+- F3 now lists files at the OPML prompts of File ▸ Transfer ▸ Feeds (I imports a feed list, E exports one), as at every other prompt for a file: the folder's `.opml` and `.xml` files.
 
 ## 0.16.1 — 2026-10-22
 

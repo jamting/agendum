@@ -6,7 +6,8 @@ defmodule Agendum.TUI.Boxes.SelectFile do
 
     * `../` goes up; a folder ends in `/`; files are those with the
       prompt's extensions (`.agendum` and `.agenda` for opening and saving
-      files, `.json` for import and export, `.txt` for printing)
+      files, `.json` for import and export, `.txt` for printing, `.txt`
+      and `.md` for a note, `.opml` and `.xml` for feed lists)
     * ↑ ↓ PGUP PGDN HOME END move; typing narrows the list to names
       containing what is typed (BACKSPACE takes a letter back)
     * ENTER opens a folder, or puts the file in the prompt
@@ -32,7 +33,10 @@ defmodule Agendum.TUI.Boxes.SelectFile do
     export_json: [".json"],
     export: [".txt"],
     note_import: [".txt", ".md"],
-    note_export: [".txt", ".md"]
+    note_export: [".txt", ".md"],
+    # feed lists (R75): OPML files, which some readers save as .xml
+    import_opml: [".opml", ".xml"],
+    export_opml: [".opml", ".xml"]
   }
 
   @doc "Whether a prompt asks for a file name (and so offers F3)."

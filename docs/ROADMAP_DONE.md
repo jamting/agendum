@@ -193,6 +193,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Dates in other languages: `--lang=swedish`, `--fallback=english`; Swedish (R14c)
 - [x] General negative links between any two categories, from the patent: Category Properties ▸ Excludes (R9)
 - [x] Fit column to contents (R22a): a command (View ▸ Column) that sets the highlighted column's width to fit its head and the entries of the items shown at that moment; a one-time adjustment, not kept in step as items change
+- [x] F3 lists `.opml` and `.xml` files at the Feeds box's OPML import and export prompts (meeting 2026-10-22-3, § 7; a bug fix, v0.16.2, 2026-10-23)
 
 ### Towards many users
 
