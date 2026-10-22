@@ -100,7 +100,6 @@ Then working together:
 
 ### Time management (Milestone 5)
 
-- [ ] Check in Agenda 2.0 (headless, `agenda_driver.py`) what it did with alarms that came due while the file was closed, and compare with "While you were away" (R70); move the answer into SPEC R70 and AGENDA_PARITY.md
 - [ ] Alarms sent to your phone with Signal, as well as on the screen: through the separate `signal-cli` program, linked to your Signal account; optional (nothing changes without it), set up in File ▸ Customize
 
 ### Housekeeping
@@ -293,6 +292,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Select File box (R51): pick a file from a list instead of typing its name, for File ▸ Retrieve (ALT-G, CTRL-O) and Write, and Transfer ▸ Import/Export: the folders and files of the current folder, ENTER opens a folder or chooses a file, `..` goes up, typing narrows the list; F7 shows dates, as Agenda's Select File box did (User's Guide 22-4 to 22-5)
 - [x] Typing in the view manager highlights a view (R53)
 - [x] "While you were away": after the splash screen (unchanged), only when alarms came due while the file was closed, a box lists them, the latest first, alarms with the same text grouped with a count, ENTER or ESC closes; they stay in Past Alarms. A rung alarm records when it was due, and ringing is not an edit. The grouping in the core (R70; meeting 2026-10-16, § 6)
+- [x] What Agenda 2.0 did with alarms that came due while the file was closed, checked headless (`agenda_driver.py`, 2026-10-22) and compared with "While you were away" (R70): no box; the alarms ring when the file is opened and show `@`, and sit in Utilities ▸ Show Alarm's Past Alarms. Recorded in SPEC R70 and AGENDA_PARITY.md; the change to Agenda's way is open (Towards parity, "Alarms as Agenda's")
 
 ### Housekeeping
 

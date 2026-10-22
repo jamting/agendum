@@ -13,8 +13,12 @@ erDiagram
     DATABASE ||--|{ VIEW : "views (by id)"
     DATABASE ||--|| LINKS : "links"
     DATABASE ||--o{ CALENDAR : "calendars (by id)"
+    DATABASE ||--o{ FEED : "feeds (by id, R75)"
+    DATABASE ||--|| BLOG : "blog (R74)"
     DATABASE ||--o{ MACRO : "macros (by id, in macro_order)"
     CALENDAR }o--|| CATEGORY : "files items in"
+    FEED }o--|| CATEGORY : "files items in"
+    BLOG }o--o| CATEGORY : "posts, drafts"
     CATEGORY ||--o{ CATEGORY : "children (ordered)"
     ITEM }o--o{ CATEGORY : "explicit assignment (LINKS)"
     CATEGORY }o--o{ CATEGORY : "also_assign"
@@ -135,6 +139,32 @@ erDiagram
         map events "uid => item id and what it last looked like"
         datetime refreshed_at
         string error
+    }
+    FEED {
+        int id PK
+        string name
+        string url "https (feed:// read as https)"
+        int category_id FK
+        int keep_days "entries fade after this, nil = never"
+        int refresh_minutes "nil = only on request"
+        map entries "entry id => item id (nil once faded) and what it last looked like"
+        datetime refreshed_at
+        string error
+    }
+    BLOG {
+        int posts FK "category, or nil"
+        int drafts FK "category, or nil"
+        string title
+        string description
+        string author
+        string language
+        string base_url
+        string me "rel=me links"
+        string folder "where the site is written"
+        atom upload "none, rsync or sftp"
+        string target
+        string user
+        string remote_dir
     }
     MACRO {
         int id PK
@@ -331,6 +361,26 @@ classDiagram
         +refreshed_at : NaiveDateTime or nil
         +error : String or nil
     }
+    class Feed {
+        +id : id
+        +name : String
+        +url : String
+        +category_id : id
+        +keep_days : pos_integer or nil
+        +refresh_minutes : nil, 60, 360 or 1440
+        +entries : Map~entry_id, snapshot~
+        +refreshed_at : NaiveDateTime or nil
+        +error : String or nil
+    }
+    class Blog {
+        +posts : id or nil
+        +drafts : id or nil
+        +title, description, author, language : String
+        +base_url, me : String
+        +folder : String
+        +upload : none, rsync or sftp
+        +target, user, remote_dir : String
+    }
     class Macro {
         +id : id
         +name : String
@@ -352,6 +402,8 @@ classDiagram
     Database *-- TextMatch
     Category *-- DateRule
     Database *-- Calendar
+    Database *-- Feed
+    Database *-- Blog
     Database *-- Macro
     View *-- Section
     Section *-- Column
@@ -376,6 +428,8 @@ classDiagram
 | `DateSettings`                        | `lib/agendum/core/date_settings.ex` | How the file reads typed dates: week, quarter and year boundaries, month alone, times of day (R14e). |
 | `NumberFormat`                        | `lib/agendum/core/number_format.ex` | How a numeric column shows numbers and which calculations it shows; also reads typed numbers (R29).  |
 | `Calendar`                            | `lib/agendum/core/calendar.ex`      | A calendar subscription: its address, its category, and the events it last read (R45).               |
+| `Feed`                                | `lib/agendum/core/feed.ex`          | A feed subscription: its address, its category, how long entries stay, and the entries it last read (R75). |
+| `Blog`                                | `lib/agendum/core/blog.ex`          | The micro-blog's settings: posts and drafts categories, the site's title and address, where it is written and uploaded (R74). |
 | `View.SortKey`                        | `lib/agendum/core/view.ex`          | One way to order items: by text, by a category's children, or by a note line (R36).                  |
 | `Search`                              | `lib/agendum/core/search.ex`        | A text search, kept in the Show View's `match` (R37).                                                |
 | `TextMatch`                           | `lib/agendum/core/text_match.ex`    | How the file matches item text to category names; a category may override settings (R16a, R16b).     |

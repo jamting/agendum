@@ -95,7 +95,7 @@ Kapor summed up why the idea persisted: Agenda "did things you still can't do on
 
 ## What this means for our clone
 
-Agendum now has the core that made Agenda distinctive, and the "magic" users praised most: dates and rules taken from plain text. Rule numbers refer to [`SPEC.md`](SPEC.md). The table was first written on 2026-10-08 and brought up to date on 2026-10-15; [`ROADMAP.md`](ROADMAP.md) has the current status, and [`plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) how close Agendum is to Agenda as a whole.
+Agendum now has the core that made Agenda distinctive, and the "magic" users praised most: dates and rules taken from plain text. Rule numbers refer to [`SPEC.md`](SPEC.md). The table was first written on 2026-10-08 and brought up to date on 2026-10-15 and 2026-10-22; [`ROADMAP.md`](ROADMAP.md) has the current status, and [`plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) how close Agendum is to Agenda as a whole.
 
 | Agenda feature                                   | In Agendum today                                                                 | Still open                                                   |
 | ------------------------------------------------ | -------------------------------------------------------------------------------- | ------------------------------------------------------------ |
@@ -108,8 +108,8 @@ Agendum now has the core that made Agenda distinctive, and the "magic" users pra
 | Conditions and actions                           | Done: conditions, date and numeric conditions, text conditions, actions, Execute (R15–R15e) | —                                                 |
 | Task dependencies                                | Done (R43)                                                                       | —                                                            |
 | Searching text                                   | Done: the view, the file, notes with replace (R37, R39)                          | —                                                            |
-| Importing                                        | JSON and web calendars (R44, R45)                                                | Agenda's own files (`.AG`, STF): the format is known (`AGENDA_FILE_FORMAT.md`), the importer is next |
-| The note editor                                  | Editing, marking, cut and paste, search and replace, word wrap (R39, R63, R64)   | Agenda's own control panel, menu and keys (`plans/NOTE_EDITOR.md`) |
+| Importing                                        | JSON, web calendars and Agenda's own `.AG` files (R44, R45, R72)                 | Structured `.STF` files; from a `.AG`, its note files and macros (ROADMAP, Data interchange) |
+| The note editor                                  | Editing, marking, cut and paste, search and replace, word wrap, and Agenda's own control panel, menu and keys (R39, R63, R64, R64a–R64f) | External note files, ALT-F1 COMPOSE (`plans/NOTE_EDITOR.md`) |
 
 The history also gives a design lesson. Agenda's power came with a learning curve that drove casual users away within a month. Keep the clone's first minutes simple: the demo file, the F1 help and sensible defaults matter as much as features.
 

@@ -66,7 +66,7 @@ mix agendum.starters --samples   # a copy full of sample data, for testing: tmp/
 
 ## Contributing
 
-[`CONTRIBUTING.md`](CONTRIBUTING.md) takes you from a fresh machine to a first change: installing Erlang and Elixir, running the checks, finding your way in the code and the documents, and the workflow for a change. The plan for putting the project on GitHub, with checks on every push and the documentation on GitHub Pages, is in [`docs/plans/GITHUB.md`](docs/plans/GITHUB.md).
+[`CONTRIBUTING.md`](CONTRIBUTING.md) takes you from a fresh machine to a first change: installing Erlang and Elixir, running the checks, finding your way in the code and the documents, and the workflow for a change. The code is in a private GitHub repository, with the checks run on every push and the long fuzz run every night; the documentation on GitHub Pages is still to come ([`docs/plans/GITHUB.md`](docs/plans/GITHUB.md)).
 
 ## Licence
 

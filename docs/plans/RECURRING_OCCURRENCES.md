@@ -1,6 +1,6 @@
 # Plan: recurring items in datebooks and date filters (2026-10-15)
 
-**Status:** researched (2026-10-15); nothing built yet. Habit changes 2–4 below to settle with the owner first (ROADMAP, Time management).
+**Status:** researched (2026-10-15); nothing built yet. Habit changes 2–4 below to settle with the owner first (ROADMAP, Towards parity with Agenda: "Recurring items on every date they recur", second of the parity steps, meeting 2026-10-22, § 5f).
 
 A recurring item ("Status meeting every Monday") should show on **every** date it recurs on, not only on its base date: in each datebook section those dates fall in, and in any view whose date filter covers one of them. It stays one item. Today Agendum stores the rule (`Item.recurrence`, R14a) but uses it only when the item is marked done; datebooks and filters see only the base date. SPEC R14a lists this as not done.
 

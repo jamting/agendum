@@ -29,7 +29,7 @@
 | Module                                                         | Responsibility                                                                                                                                          |
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Agendum.Core`                                                  | Facade with user-level operations (add item, assign by name, add section…): a table of contents of `defdelegate`s. The UI uses this.                    |
-| `Agendum.Core.Facade.*`                                         | Its areas: `Files`, `Items`, `Assignments`, `Dates`, `Alarms`, `Numbers`, `Dependencies`, `Rules`, `Categories`, `Views`, `Macros`, `Calendars`.        |
+| `Agendum.Core.Facade.*`                                         | Its areas: `Files`, `Items`, `Assignments`, `Dates`, `Alarms`, `Numbers`, `Dependencies`, `Rules`, `Categories`, `Views`, `Macros`, `Calendars`, `Feeds` (R75), `Publishing` (R74), `Zettels` (R73).        |
 | `Agendum.Core.Browse`                                           | Browsing dates (R47, R48): where it starts, a move, going to a date, the view as browsed, the command that keeps it. |
 | `Agendum.Core.Reasons`                                          | Why an item is in a category (R67), worked out with `Assign`'s rules.                                               |
 | `Agendum.Core.Command`                                          | The command layer (R66, ADR 0036): a user action as data (`{:mark_done, ids}`), run by `Agendum.Core.run/3` on ids; each command's name and summary. |
@@ -143,6 +143,11 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Splash`                           | ✔     | The splash screen at start, until a key or three seconds; the startup prompt waits under it (R52).                               |
 | `Agendum.Sample`                                | ✔     | The built-in files: `--demo` (the patent's example, used by the tests) and `--rabbit` (Rabbit's file from the manual).            |
 | `Agendum.TUI.Boxes.CalendarsBox`                     | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
+| `Agendum.TUI.Boxes.FeedsBox`                         | ✔     | File ▸ Transfer ▸ Feeds: subscribe to a feed, how often it is read, how long its entries stay (R75). |
+| `Agendum.TUI.Boxes.PublishBox`                       | ✔     | File ▸ Transfer ▸ Publish: the micro-blog's settings, kept in the file (R74). |
+| `Agendum.TUI.Boxes.PublishPreviewBox`                | ✔     | What publishing would write, change and remove, before anything is written (R74). |
+| `Agendum.TUI.Boxes.ImportReportBox`                  | ✔     | The report after a Lotus Agenda file was imported: what came over, what was left out, items filed differently (R72). |
+| `Agendum.TUI.Boxes.RunByName`                        | ✔     | CTRL-X: run a command by its name, the matches best first (R65d, ADR 0040). |
 | `Agendum.TUI.Typing.NoteSearch`                       | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
 | `Agendum.TUI.Boxes.AlarmList`                        | ✔     | The alarm list box: current and past alarms (R38).                                                                               |
 | `Agendum.TUI.Boxes.AwayBox`                          | ✔     | "While you were away": the alarms that came due while the file was closed, grouped (R70).                                        |
@@ -152,6 +157,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.Starters.Golden`                      | ✔     | The golden file of the format: the Planner with samples plus everything it leaves unused, so every stored field is set; `facts/1` (DATA_MODEL.md, "On disk"). |
 | `Mix.Tasks.Agendum.Golden`                    | ✘     | `mix agendum.golden`: writes the current format version's golden file and its facts to `test/fixtures/formats/`, never over an existing one. |
 | `Mix.Tasks.Agendum.Starters`                  | ✘     | `mix agendum.starters [--samples]`: writes the starter file (a build tool, not part of the program).                             |
+| `Agendum.Thoughts`, `Mix.Tasks.Agendum.Thoughts`     | ✘     | `mix agendum.thoughts [--next-meeting]`: the owner's thoughts from their project file as Markdown, for a session or the `meeting` skill; `--init PATH` makes the file (workshop tooling, not part of the program). |
 | `Agendum.TUI.Render`                           | ✔     | State → list of styled lines: the control panel, the body (the view or a full screen), the boxes over it, the key bar.           |
 | `Agendum.TUI.Render.*`                         | ✔     | Its parts: `ControlPanel`, `View`, `Managers`, `Note`, `Help` (F1 then a: all keys, from the keymaps), `Boxes`, `KeyBar`, `Text`, `Export`.   |
 | `Agendum.TUI.Terminal.Draw`, `Agendum.TUI.Terminal.Theme`         | ✔     | Line/box primitives; symbolic style → ANSI codes in the chosen theme (classic, mono and the terminal schemes, R40).                               |
@@ -188,6 +194,8 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 
 - `ESC ?` in the program: debugging info and a key tester (`Agendum.TUI.DevTools`).
 - `AGENDUM_LOG=1`: a debug log of each session in `~/.local/state/agendum/logs` (or `AGENDUM_LOG=FOLDER`), the last five kept; a crash writes its stack trace and the state (`Agendum.TUI.DebugLog`, ADR 0027).
+- `tools/smoke/smoke.py`: runs the real program in a pseudo-terminal, sends keys by name and prints the screen as text, sandboxed from the person's preferences (CLAUDE.md, "Testing the real terminal").
+- `tools/agformat/`: drives the real Lotus Agenda 2.0 headless in DOSBox Staging, and dumps and compares `.AG` files (`tools/agformat/DRIVING_AGENDA.md`, `AGENDA_FILE_FORMAT.md`).
 - `tools/screenshots/`: draws screens of the TUI as PNGs (macOS), to compare its look with Agenda 2.0 (ADR 0018): `MIX_ENV=test mix run tools/screenshots/screenshots.exs [--theme NAME]` writes them to `tmp/screenshots/`. `screenshots.exs` drives the TUI with keys like the tests; `render.swift` draws each screen.
 
 ## Architecture decision records
