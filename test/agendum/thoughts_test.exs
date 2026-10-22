@@ -98,4 +98,84 @@ defmodule Agendum.ThoughtsTest do
       assert Thoughts.to_markdown(empty, next_meeting: true) =~ "(none)"
     end
   end
+
+  describe "import_docs/3 (meeting 2026-10-22-2, § 5)" do
+    @docs [
+      %{
+        path: "docs/meetings/2026-10-21/protokoll.md",
+        text: "# Minutes of the panel meeting, 2026-10-21\n\nOwl opened the meeting."
+      },
+      %{
+        path: "docs/adr/0044-one-repository.md",
+        text:
+          "# ADR 0044 — One repository\n\n**Status:** accepted · 2026-10-21 (meeting)\n\nThe extras on a shelf."
+      },
+      %{path: "docs/ROADMAP.md", text: "# Roadmap\n\n- [ ] Next thing"},
+      %{
+        path: "docs/summaries/2026-10-22-2311.md",
+        text: "# Session summary, 2026-10-22 23:11\n\nA big evening."
+      }
+    ]
+
+    defp items_under(db, name) do
+      db |> Database.items_in(id(db, name)) |> Enum.map(& &1.text) |> Enum.sort()
+    end
+
+    test "one item per document under Disposable ▸ its kind, the title as text" do
+      {:ok, db, 4} = Thoughts.import_docs(Thoughts.new_file(), @docs, @today)
+
+      assert items_under(db, "Meetings") == ["Minutes of the panel meeting, 2026-10-21"]
+      assert items_under(db, "ADRs") == ["ADR 0044 — One repository"]
+      assert items_under(db, "Roadmap") == ["Roadmap"]
+      assert items_under(db, "Summaries") == ["Session summary, 2026-10-22 23:11"]
+      assert length(items_under(db, "Disposable")) == 4
+
+      for kind <- ~w(Meetings ADRs Roadmap Summaries),
+          do: assert(db.categories[id(db, kind)].parent_id == id(db, "Disposable"))
+    end
+
+    test "the whole document is the note; its own date the Entry date; no When from the title" do
+      {:ok, db, _} = Thoughts.import_docs(Thoughts.new_file(), @docs, @today)
+      by_text = Map.new(Database.items(db), &{&1.text, &1})
+
+      adr = by_text["ADR 0044 — One repository"]
+      assert adr.note =~ "The extras on a shelf."
+      assert adr.entry == ~D[2026-10-21]
+      assert by_text["Minutes of the panel meeting, 2026-10-21"].entry == ~D[2026-10-21]
+      assert by_text["Session summary, 2026-10-22 23:11"].entry == ~D[2026-10-22]
+      assert by_text["Roadmap"].entry == @today
+
+      when_id = db.special.when
+      refute Enum.any?(Database.items(db), &Database.member?(db, &1.id, when_id))
+    end
+
+    test "a Documents view: a section per kind, newest first" do
+      {:ok, db, _} = Thoughts.import_docs(Thoughts.new_file(), @docs, @today)
+      view = Enum.find(Database.views(db), &(&1.name == "Documents"))
+
+      assert Enum.map(view.sections, &db.categories[&1.category_id].name) ==
+               ~w(Meetings ADRs Roadmap Summaries)
+
+      assert [%{on: {:category, entry}, order: :desc}] = view.sort
+      assert entry == db.special.entry
+    end
+
+    test "importing again replaces the Disposable items and leaves every other item alone" do
+      {db, thought} = think(Thoughts.new_file(), "Ask Owl about the roadmap", "Next meeting")
+      {:ok, db, 4} = Thoughts.import_docs(db, @docs, @today)
+      {:ok, again, 3} = Thoughts.import_docs(db, Enum.drop(@docs, 1), @today)
+
+      assert length(items_under(again, "Disposable")) == 3
+      refute "Minutes of the panel meeting, 2026-10-21" in items_under(again, "Disposable")
+      assert again.items[thought] == db.items[thought]
+      assert length(Database.views(again)) == length(Database.views(db))
+      assert items_under(again, "Next meeting") == ["Ask Owl about the roadmap"]
+    end
+
+    test "the kinds do not catch the person's items by the words in them" do
+      {:ok, db, _} = Thoughts.import_docs(Thoughts.new_file(), @docs, @today)
+      {db, item} = think(db, "summaries of meetings and the roadmap", "Thoughts")
+      refute Database.member?(db, item, id(db, "Disposable"))
+    end
+  end
 end

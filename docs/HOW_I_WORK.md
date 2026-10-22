@@ -100,7 +100,7 @@ The panel advises; it never votes. I decide.
 | `mix docs --open`                                      | API docs, design documents, guide and manual in the browser             |
 | `mix agendum.starters`, `mix agendum.golden`           | rebuild the Planner starter; write the golden file of a new format version |
 | `FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs` | the long fuzz run                                                     |
-| `mix agendum.thoughts` (`--next-meeting`; `--init PATH` once) | my open thoughts from the project file in `$AGENDUM_PROJECT_FILE`, as Markdown; `--init` makes the file |
+| `mix agendum.thoughts` (`--next-meeting`; `--init PATH` once; `--import-docs`) | my open thoughts from the project file in `$AGENDUM_PROJECT_FILE`, as Markdown; `--init` makes the file; `--import-docs` puts the meetings, ADRs, roadmap and session summaries into it as Disposable items (Agendum closed first; the old file kept as `.bak`) |
 | `tools/agformat/agenda_driver.py`, `agdump.py`, `agdiff.py` | drive the real Agenda headless (also record its sounds: SDL's disk audio driver); read and compare `.AG` files (`tools/agformat/DRIVING_AGENDA.md`) |
 | `tools/smoke/smoke.py KEYS…` | the real program in a pseudo-terminal: send keys, see the screen as text (sandboxed; `--help`) |
 | `tools/screenshots/`                                   | draw a screen as a PNG, to compare with Agenda's                        |
