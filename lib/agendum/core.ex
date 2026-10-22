@@ -33,20 +33,18 @@ defmodule Agendum.Core do
   alias Agendum.Core.Facade.{
     Alarms,
     Assignments,
-    Calendars,
     Categories,
     Dates,
     Dependencies,
-    Feeds,
     Files,
     Items,
     Macros,
     Numbers,
     Rules,
-    Publishing,
-    Views,
-    Zettels
+    Views
   }
+
+  alias Agendum.Core.Facade.Extras.{Calendars, Feeds, Publishing, Zettels}
 
   # `@type` declares a public type (for `@spec`s and Dialyzer, the static
   # checker run by `mix check`); other modules refer to it as `Agendum.Core.db()`.

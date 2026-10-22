@@ -4,6 +4,13 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.17.0 — 2026-10-23
+
+The extras on a shelf of their own, inside the program. Nothing changes on the screen.
+
+- The micro-blog, the feeds, the Zettel ids and links, and the calendar subscriptions now live apart from Agenda's own features in the code (ADR 0044), ready for the Extras switch that will hide them.
+- The file format is now version 38. Every file you have still opens. A file saved by this version does not open in 0.16.2 or older: they refuse it rather than misread it.
+
 ## 0.16.2 — 2026-10-23
 
 A fix in the feed reader.

@@ -327,7 +327,7 @@ defmodule Agendum.TUI.CommandDocs do
         "Applies the conditions and actions now. They otherwise reach only the items added " <>
           "or changed after they were set up."
     },
-    Agendum.TUI.Boxes.CalendarsBox => %{
+    Agendum.TUI.Extras.CalendarsBox => %{
       subscribe:
         "Give the calendar's iCal address (Google, Fastmail and Outlook all have one): its " <>
           "events come in as items with When dates, beside the rest of the file.",

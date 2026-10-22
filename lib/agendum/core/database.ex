@@ -38,13 +38,13 @@ defmodule Agendum.Core.Database do
           confirm_assignments: :never | :always | :sometimes,
           match_settings: TextMatch.t(),
           suggestions: %{optional(id) => [id]},
-          calendars: %{optional(id) => Agendum.Core.Calendar.t()},
-          feeds: %{optional(id) => Agendum.Core.Feed.t()},
+          calendars: %{optional(id) => Agendum.Core.Extras.Calendar.t()},
+          feeds: %{optional(id) => Agendum.Core.Extras.Feed.t()},
           macros: %{optional(id) => Agendum.Core.Macro.t()},
           macro_order: [id],
           insert_columns: :all | :section,
           tab_size: pos_integer,
-          blog: Agendum.Core.Blog.t()
+          blog: Agendum.Core.Extras.Blog.t()
         }
 
   defstruct items: %{},
@@ -77,7 +77,7 @@ defmodule Agendum.Core.Database do
             # File Properties ▸ Tab size: the note editor's tab stops (R64e)
             tab_size: 5,
             # the micro-blog (R74)
-            blog: %Agendum.Core.Blog{}
+            blog: %Agendum.Core.Extras.Blog{}
 
   @date_fields %{entry: :entry, when: :when, done: :done}
 
@@ -708,14 +708,15 @@ defmodule Agendum.Core.Database do
   # ---------------------------------------------------------------------------
 
   @doc "Adds a calendar subscription, giving it a new id."
-  @spec add_calendar(t, Agendum.Core.Calendar.t()) :: {t, id}
+  @spec add_calendar(t, Agendum.Core.Extras.Calendar.t()) :: {t, id}
   def add_calendar(%__MODULE__{} = db, calendar) do
     {db, id} = take_id(db)
     {%{db | calendars: Map.put(db.calendars, id, %{calendar | id: id})}, id}
   end
 
   @doc "Changes a calendar subscription."
-  @spec update_calendar(t, id, (Agendum.Core.Calendar.t() -> Agendum.Core.Calendar.t())) :: t
+  @spec update_calendar(t, id, (Agendum.Core.Extras.Calendar.t() ->
+                                  Agendum.Core.Extras.Calendar.t())) :: t
   def update_calendar(%__MODULE__{} = db, id, fun),
     do: %{db | calendars: Map.update!(db.calendars, id, fun)}
 
@@ -724,7 +725,7 @@ defmodule Agendum.Core.Database do
   def delete_calendar(%__MODULE__{} = db, id), do: %{db | calendars: Map.delete(db.calendars, id)}
 
   @doc "The calendar subscriptions, in the order they were made."
-  @spec calendars(t) :: [Agendum.Core.Calendar.t()]
+  @spec calendars(t) :: [Agendum.Core.Extras.Calendar.t()]
   def calendars(%__MODULE__{} = db), do: db.calendars |> Map.values() |> Enum.sort_by(& &1.id)
 
   # ---------------------------------------------------------------------------
@@ -732,14 +733,14 @@ defmodule Agendum.Core.Database do
   # ---------------------------------------------------------------------------
 
   @doc "Adds a feed subscription, giving it a new id."
-  @spec add_feed(t, Agendum.Core.Feed.t()) :: {t, id}
+  @spec add_feed(t, Agendum.Core.Extras.Feed.t()) :: {t, id}
   def add_feed(%__MODULE__{} = db, feed) do
     {db, id} = take_id(db)
     {%{db | feeds: Map.put(db.feeds, id, %{feed | id: id})}, id}
   end
 
   @doc "Changes a feed subscription."
-  @spec update_feed(t, id, (Agendum.Core.Feed.t() -> Agendum.Core.Feed.t())) :: t
+  @spec update_feed(t, id, (Agendum.Core.Extras.Feed.t() -> Agendum.Core.Extras.Feed.t())) :: t
   def update_feed(%__MODULE__{} = db, id, fun), do: %{db | feeds: Map.update!(db.feeds, id, fun)}
 
   @doc "Removes a feed subscription (its items stay)."
@@ -747,7 +748,7 @@ defmodule Agendum.Core.Database do
   def delete_feed(%__MODULE__{} = db, id), do: %{db | feeds: Map.delete(db.feeds, id)}
 
   @doc "The feed subscriptions, in the order they were made."
-  @spec feeds(t) :: [Agendum.Core.Feed.t()]
+  @spec feeds(t) :: [Agendum.Core.Extras.Feed.t()]
   def feeds(%__MODULE__{} = db), do: db.feeds |> Map.values() |> Enum.sort_by(& &1.id)
 
   @doc "Adds a macro (R50) at the end of the list, giving it an id."

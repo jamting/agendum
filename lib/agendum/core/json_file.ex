@@ -18,8 +18,6 @@ defmodule Agendum.Core.JSONFile do
   """
 
   alias Agendum.Core.{
-    Blog,
-    Calendar,
     Category,
     Database,
     Datebook,
@@ -27,7 +25,6 @@ defmodule Agendum.Core.JSONFile do
     DateRule,
     Macro,
     DateSettings,
-    Feed,
     Item,
     Links,
     NumberFormat,
@@ -37,8 +34,10 @@ defmodule Agendum.Core.JSONFile do
     View
   }
 
+  alias Agendum.Core.Extras.{Blog, Calendar, Feed}
+
   alias Agendum.Core.View.{Column, ItemColumn, Section, SortKey}
-  alias Agendum.Core.Facade.Zettels
+  alias Agendum.Core.Facade.Extras.Zettels
 
   @format "agendum-json"
   # the name before the program was called Wol's Agendum (ADR 0019)
@@ -687,7 +686,7 @@ defmodule Agendum.Core.JSONFile do
         nil
 
       word ->
-        case Agendum.Core.ZettelId.decode(word) do
+        case Agendum.Core.Extras.ZettelId.decode(word) do
           {:ok, n} -> n
           {:error, :invalid_id} -> bad(path <> ".zettel", "not a Zettel id: #{inspect(word)}")
         end

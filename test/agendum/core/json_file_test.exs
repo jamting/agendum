@@ -147,7 +147,7 @@ defmodule Agendum.Core.JSONFileTest do
     {:ok, db, cal} = Core.subscribe_calendar(db, "Work Calendar", "webcal://example.com/w.ics")
 
     events = [
-      %Agendum.Core.ICal.Event{
+      %Agendum.Core.Extras.ICal.Event{
         uid: "m@x",
         summary: "Standup",
         start: {:local, ~N[2026-10-14 09:15:00]},
@@ -163,7 +163,7 @@ defmodule Agendum.Core.JSONFileTest do
           other: []
         }
       },
-      %Agendum.Core.ICal.Event{uid: "t@x", summary: "Tea", start: {:date, ~D[2026-10-13]}}
+      %Agendum.Core.Extras.ICal.Event{uid: "t@x", summary: "Tea", start: {:date, ~D[2026-10-13]}}
     ]
 
     {:ok, db, _} = Core.sync_calendar(db, cal, events, ~N[2026-10-12 10:00:00])

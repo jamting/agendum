@@ -4,7 +4,7 @@ defmodule Agendum.MixProject do
   def project do
     [
       app: :agendum,
-      version: "0.16.2",
+      version: "0.17.0",
       elixir: "~> 1.20",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -83,7 +83,7 @@ defmodule Agendum.MixProject do
           Agendum.CLI,
           Agendum.Store,
           Agendum.Preferences,
-          Agendum.CalendarFetch,
+          Agendum.Extras.CalendarFetch,
           Agendum.Sample
         ]
       ],

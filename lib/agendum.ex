@@ -9,7 +9,7 @@ defmodule Agendum do
     * `Agendum.TUI.*` – the terminal user interface: `Agendum.TUI.Update`
       handles keys, `Agendum.TUI.Render` draws, `Agendum.TUI.App` runs it
     * `Agendum.CLI`, `Agendum.Store`, `Agendum.Preferences`,
-      `Agendum.CalendarFetch` – the shell: the command line, files,
+      `Agendum.Extras.CalendarFetch` – the shell: the command line, files,
       preferences and downloads
 
   See the Architecture page for how they fit together.

@@ -40,7 +40,9 @@ defmodule Agendum.Store do
   (R58); 34 adds `Item.zettel` and `Database.next_zettel`, Zettel ids
   (R73); 35 adds `Database.blog`, the micro-blog (R74); 36 adds
   `Database.feeds`, feed subscriptions (R75); 37 adds `Database.tab_size`
-  (R64e).
+  (R64e); 38 moves the extras' stored structs, `Feed`, `Blog` and
+  `Calendar`, to `Agendum.Core.Extras.*` (ADR 0044), and loading maps their
+  old names to the new ones.
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
@@ -51,10 +53,20 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 37
+  @format_version 38
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
+
+  # The extras' stored structs moved to a namespace of their own (ADR 0044,
+  # format 38). A file saved before keeps the old names; loading maps them.
+  # Domain: the old names are written here as atoms, so they exist whenever
+  # this module is loaded, as `:safe` decoding needs.
+  @moved %{
+    Agendum.Core.Feed => Agendum.Core.Extras.Feed,
+    Agendum.Core.Blog => Agendum.Core.Extras.Blog,
+    Agendum.Core.Calendar => Agendum.Core.Extras.Calendar
+  }
 
   def extension, do: @extension
 
@@ -216,7 +228,7 @@ defmodule Agendum.Store do
     }
 
     db = %{db | date_format: struct(Agendum.Core.DateFormat, Map.from_struct(db.date_format))}
-    db = %{db | blog: struct(Agendum.Core.Blog, Map.from_struct(db.blog))}
+    db = %{db | blog: struct(Agendum.Core.Extras.Blog, Map.from_struct(db.blog))}
 
     db = %{
       db
@@ -236,10 +248,12 @@ defmodule Agendum.Store do
             {id, struct(Agendum.Core.Macro, Map.from_struct(m))}
           end),
         feeds:
-          Map.new(db.feeds, fn {id, f} -> {id, struct(Agendum.Core.Feed, Map.from_struct(f))} end),
+          Map.new(db.feeds, fn {id, f} ->
+            {id, struct(Agendum.Core.Extras.Feed, Map.from_struct(f))}
+          end),
         calendars:
           Map.new(db.calendars, fn {id, c} ->
-            c = struct(Agendum.Core.Calendar, Map.from_struct(c))
+            c = struct(Agendum.Core.Extras.Calendar, Map.from_struct(c))
             # events read before ends were (format 23 and earlier) have none
             {id,
              %{
@@ -359,7 +373,7 @@ defmodule Agendum.Store do
     Enum.each(modules, &Code.ensure_loaded/1)
     # the names they had before the rename, so `:safe` decoding accepts a
     # file saved then: only these, made from our own modules' names
-    Enum.each(modules, &old_name/1)
+    Enum.each(modules ++ Map.keys(@moved), &old_name/1)
   end
 
   # Agendum.Core.Database -> :"Elixir.Agenda.Core.Database"
@@ -377,14 +391,9 @@ defmodule Agendum.Store do
   # it), calling itself on what is inside: the usual way to walk a whole
   # nested term in Elixir.
   defp renamed(term) when is_atom(term) do
-    case Atom.to_string(term) do
-      # `"prefix" <> rest` in a pattern matches a string that starts with the
-      # prefix and binds the remainder. `to_existing_atom` cannot make new
-      # atoms either; the old names were made, from our own modules only,
-      # by `old_name/1` above.
-      "Elixir.Agenda." <> rest -> String.to_existing_atom("Elixir.Agendum." <> rest)
-      _ -> term
-    end
+    # `Agenda.*` becomes `Agendum.*`, then a struct that moved to the
+    # extras' shelf gets its new name (`Map.get/3` with itself as default)
+    term |> agendum_name() |> then(&Map.get(@moved, &1, &1))
   end
 
   # a struct is a map with a `__struct__` key; `Map.to_list/1` takes both
@@ -397,6 +406,17 @@ defmodule Agendum.Store do
     do: term |> Tuple.to_list() |> renamed() |> List.to_tuple()
 
   defp renamed(term), do: term
+
+  defp agendum_name(term) do
+    case Atom.to_string(term) do
+      # `"prefix" <> rest` in a pattern matches a string that starts with the
+      # prefix and binds the remainder. `to_existing_atom` cannot make new
+      # atoms either; the old names were made, from our own modules only,
+      # by `old_name/1` above.
+      "Elixir.Agenda." <> rest -> String.to_existing_atom("Elixir.Agendum." <> rest)
+      _ -> term
+    end
+  end
 
   @doc """
   A folder's contents for the Select File box: its folders, then its files,

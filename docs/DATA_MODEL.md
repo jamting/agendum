@@ -427,9 +427,9 @@ classDiagram
 | `DateFormat`                          | `lib/agendum/core/date_format.ex`   | How the file and date columns display dates and times (R41, R41a).                                   |
 | `DateSettings`                        | `lib/agendum/core/date_settings.ex` | How the file reads typed dates: week, quarter and year boundaries, month alone, times of day (R14e). |
 | `NumberFormat`                        | `lib/agendum/core/number_format.ex` | How a numeric column shows numbers and which calculations it shows; also reads typed numbers (R29).  |
-| `Calendar`                            | `lib/agendum/core/calendar.ex`      | A calendar subscription: its address, its category, and the events it last read (R45).               |
-| `Feed`                                | `lib/agendum/core/feed.ex`          | A feed subscription: its address, its category, how long entries stay, and the entries it last read (R75). |
-| `Blog`                                | `lib/agendum/core/blog.ex`          | The micro-blog's settings: posts and drafts categories, the site's title and address, where it is written and uploaded (R74). |
+| `Calendar`                            | `lib/agendum/core/extras/calendar.ex`      | A calendar subscription: its address, its category, and the events it last read (R45).               |
+| `Feed`                                | `lib/agendum/core/extras/feed.ex`          | A feed subscription: its address, its category, how long entries stay, and the entries it last read (R75). |
+| `Blog`                                | `lib/agendum/core/extras/blog.ex`          | The micro-blog's settings: posts and drafts categories, the site's title and address, where it is written and uploaded (R74). |
 | `View.SortKey`                        | `lib/agendum/core/view.ex`          | One way to order items: by text, by a category's children, or by a note line (R36).                  |
 | `Search`                              | `lib/agendum/core/search.ex`        | A text search, kept in the Show View's `match` (R37).                                                |
 | `TextMatch`                           | `lib/agendum/core/text_match.ex`    | How the file matches item text to category names; a category may override settings (R16a, R16b).     |
@@ -440,11 +440,11 @@ classDiagram
 
 Items, categories and views draw ids from **one counter**, `next_id`, just as the patent keeps all objects in one object file (`.AGA`). An id therefore says nothing about its type; look it up in the right map. Ids are never reused. Lower ids were created earlier, and the automatic-assignment tie-break relies on that ("prefer the category created first").
 
-**Feeds** (R75): `db.feeds` holds the feed subscriptions (`Agendum.Core.Feed`), each with what every entry looked like when last read and the item it made (nil once it faded), so a refresh changes only what the feed changed and never brings back what faded. The entries' items are ordinary items in Feeds ▸ the feed's name; their publish date is their Entry date.
+**Feeds** (R75): `db.feeds` holds the feed subscriptions (`Agendum.Core.Extras.Feed`), each with what every entry looked like when last read and the item it made (nil once it faded), so a refresh changes only what the feed changed and never brings back what faded. The entries' items are ordinary items in Feeds ▸ the feed's name; their publish date is their Entry date.
 
-**The blog** (R74): `db.blog` (`Agendum.Core.Blog`) holds the micro-blog's settings: its posts and drafts categories by id, its title, description, author, language, base address and `rel="me"` links, the folder the site is written to and how it is uploaded (none, rsync, SFTP, ADR 0041). No password is ever stored. The posts themselves are the items of the posts category, computed (`Blog.posts/1`), and the site is made from them each time (`Agendum.Core.Site`); nothing of the site is stored in the file.
+**The blog** (R74): `db.blog` (`Agendum.Core.Extras.Blog`) holds the micro-blog's settings: its posts and drafts categories by id, its title, description, author, language, base address and `rel="me"` links, the folder the site is written to and how it is uploaded (none, rsync, SFTP, ADR 0041). No password is ever stored. The posts themselves are the items of the posts category, computed (`Blog.posts/1`), and the site is made from them each time (`Agendum.Core.Extras.Site`); nothing of the site is stored in the file.
 
-**Zettel ids** (R73, ADR 0039) are a second, separate kind of id: the ids people say and link to, given only to the items made zettels. An item's `zettel` is a number, spelled as a word by `Agendum.Core.ZettelId` (`bonalaku` is 1); the file's own counter, `next_zettel`, starts at 1 and only goes up, skipping the reserved words, so a Zettel id is never given twice. The JSON writes the word.
+**Zettel ids** (R73, ADR 0039) are a second, separate kind of id: the ids people say and link to, given only to the items made zettels. An item's `zettel` is a number, spelled as a word by `Agendum.Core.Extras.ZettelId` (`bonalaku` is 1); the file's own counter, `next_zettel`, starts at 1 and only goes up, skipping the reserved words, so a Zettel id is never given twice. The JSON writes the word.
 
 ### Ordering
 
@@ -652,9 +652,10 @@ Format versions:
 | 32 | Added `View.hide_column_heads` (R57) |
 | 33 | Added `View.section_separators` (R58) |
 | 34 | Added `Item.zettel` and `Database.next_zettel`, Zettel ids (R73) |
-| 35 | Added `Database.blog`, the micro-blog's settings (`Agendum.Core.Blog`, R74) |
-| 36 | Added `Database.feeds`, feed subscriptions (`Agendum.Core.Feed`, R75) |
+| 35 | Added `Database.blog`, the micro-blog's settings (`Agendum.Core.Extras.Blog`, R74) |
+| 36 | Added `Database.feeds`, feed subscriptions (`Agendum.Core.Extras.Feed`, R75) |
 | 37 | Added `Database.tab_size`, File Properties ▸ Tab size (R64e) |
+| 38 | Moved the extras' stored structs, `Feed`, `Blog` and `Calendar`, to `Agendum.Core.Extras.*` (ADR 0044); loading maps the old names |
 
 ## UI state around the database
 

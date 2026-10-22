@@ -136,7 +136,7 @@ defmodule Agendum.TUI.Update.Prompts do
   # the SFTP server's password (R74): the publish is tried again with it;
   # the preview box is still under the prompt
   defp prompt_action(state, {:sftp_password}, text),
-    do: Agendum.TUI.Boxes.PublishPreviewBox.publish(state, State.mode(state), text)
+    do: Agendum.TUI.Extras.PublishPreviewBox.publish(state, State.mode(state), text)
 
   # Calendars (R45): the address, then a name for its category
   defp prompt_action(state, :calendar_url, text),

@@ -2,7 +2,7 @@
 
 **Scrambled four-syllable identifiers for Zettelkasten notes**
 
-Quadsyl-24 turns a number between 0 and 16,777,215 into an 8-letter, pronounceable ID such as `bonalaku`, and turns it back again. It is implemented by the Elixir module `Agendum.Core.ZettelId` (`lib/agendum/core/zettel_id.ex`), and Agendum gives its zettels these ids (ADR 0039).
+Quadsyl-24 turns a number between 0 and 16,777,215 into an 8-letter, pronounceable ID such as `bonalaku`, and turns it back again. It is implemented by the Elixir module `Agendum.Core.Extras.ZettelId` (`lib/agendum/core/extras/zettel_id.ex`), and Agendum gives its zettels these ids (ADR 0039).
 
 ## Contents
 
@@ -115,7 +115,7 @@ The smallest reserved number is 20,390 (`makulera`), so reservation has no effec
 Allocating a regular ID from the shared counter:
 
 ```elixir
-alias Agendum.Core.ZettelId
+alias Agendum.Core.Extras.ZettelId
 
 n = ZettelId.next_unreserved(counter)
 id = ZettelId.encode!(n)
@@ -347,7 +347,7 @@ It is not compatible with any of them.
 
 ## Appendix: all 267 reserved words
 
-The list's home is the code (`@reserved` in `lib/agendum/core/zettel_id.ex`, and `Agendum.Core.ZettelId.reserved/0`); this copy is for reading.
+The list's home is the code (`@reserved` in `lib/agendum/core/extras/zettel_id.ex`, and `Agendum.Core.Extras.ZettelId.reserved/0`); this copy is for reading.
 
 Sorted by number. Language: `en` = in the American English list, `sv` = in the Swedish list.
 

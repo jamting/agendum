@@ -104,7 +104,7 @@ defmodule Agendum.GoldenFilesTest do
       {Agendum.Core.NumberFormat, Enum.map(columns, & &1.number)},
       {Agendum.Core.DateSettings, [db.date_settings]},
       {Agendum.Core.TextMatch, [db.match_settings]},
-      {Agendum.Core.Calendar, Map.values(db.calendars)},
+      {Agendum.Core.Extras.Calendar, Map.values(db.calendars)},
       {Agendum.Core.Macro, Map.values(db.macros)}
     ]
   end

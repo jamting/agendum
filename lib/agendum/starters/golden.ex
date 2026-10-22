@@ -19,7 +19,8 @@ defmodule Agendum.Starters.Golden do
   """
 
   alias Agendum.Core
-  alias Agendum.Core.{Database, DateFormat, DateRule, DateSettings, Datebook, ICal}
+  alias Agendum.Core.{Database, DateFormat, DateRule, DateSettings, Datebook}
+  alias Agendum.Core.Extras.ICal
   alias Agendum.Core.{NumberFormat, Search, TextMatch}
   alias Agendum.Core.View.SortKey
   alias Agendum.Starters.Planner

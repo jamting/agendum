@@ -25,6 +25,40 @@ defmodule Agendum.StoreTest do
     assert {:ok, ^db} = Store.load(path)
   end
 
+  # The extras' stored structs moved to Agendum.Core.Extras.* in format 38
+  # (ADR 0044); a file saved before has the old names, or, older still, the
+  # Agenda.* ones.
+  test "a file saved before the extras moved to their shelf still loads", %{tmp_dir: dir} do
+    db = Agendum.Starters.Golden.build()
+    before_move = unmoved(db)
+    assert %{__struct__: Agendum.Core.Blog} = before_move.blog
+
+    for {name, old} <- [{"moved", before_move}, {"renamed", old_names(before_move)}] do
+      path = Path.join(dir, "#{name}.agendum")
+      File.write!(path, :erlang.term_to_binary({:agenda, 37, old}))
+      assert {:ok, ^db} = Store.load(path)
+    end
+  end
+
+  @unmoved %{
+    Agendum.Core.Extras.Feed => Agendum.Core.Feed,
+    Agendum.Core.Extras.Blog => Agendum.Core.Blog,
+    Agendum.Core.Extras.Calendar => Agendum.Core.Calendar
+  }
+
+  # every moved struct name in a term as the one it had before the move
+  defp unmoved(term) when is_atom(term), do: Map.get(@unmoved, term, term)
+
+  defp unmoved(term) when is_map(term),
+    do: term |> Map.to_list() |> Map.new(fn {k, v} -> {unmoved(k), unmoved(v)} end)
+
+  defp unmoved(term) when is_list(term), do: Enum.map(term, &unmoved/1)
+
+  defp unmoved(term) when is_tuple(term),
+    do: term |> Tuple.to_list() |> unmoved() |> List.to_tuple()
+
+  defp unmoved(term), do: term
+
   # every Agendum.* atom in a term as the Agenda.* it was before
   defp old_names(term) when is_atom(term) do
     case Atom.to_string(term) do
@@ -351,7 +385,13 @@ defmodule Agendum.StoreTest do
   test "calendar subscriptions are saved", %{tmp_dir: dir} do
     db = Agendum.Core.new_file()
     {:ok, db, cal} = Agendum.Core.subscribe_calendar(db, "Work", "https://example.com/w.ics")
-    event = %Agendum.Core.ICal.Event{uid: "a", summary: "Tea", start: {:date, ~D[2026-10-13]}}
+
+    event = %Agendum.Core.Extras.ICal.Event{
+      uid: "a",
+      summary: "Tea",
+      start: {:date, ~D[2026-10-13]}
+    }
+
     {:ok, db, _} = Agendum.Core.sync_calendar(db, cal, [event], ~N[2026-10-12 10:00:00])
     path = Path.join(dir, "cal.agenda")
     :ok = Store.save(db, path)

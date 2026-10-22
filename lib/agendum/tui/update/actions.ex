@@ -168,9 +168,9 @@ defmodule Agendum.TUI.Update.Actions do
 
   defp do_perform(state, :file_props, _), do: FileProperties.open(state)
   defp do_perform(state, :customize, _), do: Agendum.TUI.Boxes.CustomizeBox.open(state)
-  defp do_perform(state, :calendars, _), do: Agendum.TUI.Boxes.CalendarsBox.open(state)
-  defp do_perform(state, :publish, _), do: Agendum.TUI.Boxes.PublishBox.open(state)
-  defp do_perform(state, :feeds, _), do: Agendum.TUI.Boxes.FeedsBox.open(state)
+  defp do_perform(state, :calendars, _), do: Agendum.TUI.Extras.CalendarsBox.open(state)
+  defp do_perform(state, :publish, _), do: Agendum.TUI.Extras.PublishBox.open(state)
+  defp do_perform(state, :feeds, _), do: Agendum.TUI.Extras.FeedsBox.open(state)
 
   # R75: the first web address in the item's note (a feed entry's link),
   # else in its text, in the browser

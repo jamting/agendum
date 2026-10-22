@@ -4,7 +4,8 @@ defmodule Agendum.TUI.App do
   `Update`, performs the resulting effects, and draws `Render` output.
   """
 
-  alias Agendum.{CalendarFetch, FeedFetch, Preferences, Publish, Store}
+  alias Agendum.{Preferences, Store}
+  alias Agendum.Extras.{CalendarFetch, FeedFetch, Publish}
 
   alias Agendum.TUI.{
     DebugLog,

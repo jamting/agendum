@@ -22,7 +22,8 @@ defmodule Agendum.Core.Assign do
     explicit assignments always win over new automatic ones.
   """
 
-  alias Agendum.Core.{Database, RangeFilter, TextCondition, TextMatch, ZettelLinks}
+  alias Agendum.Core.{Database, RangeFilter, TextCondition, TextMatch}
+  alias Agendum.Core.Extras.ZettelLinks
 
   @type db :: Database.t()
   @type id :: Database.id()

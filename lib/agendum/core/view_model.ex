@@ -478,7 +478,7 @@ defmodule Agendum.Core.ViewModel do
   # A standard column in its Format (User's Guide 5-26 to 5-37).
   # Ours: a Zettel id column shows the item's id, whatever the head (R73a)
   defp standard_cell(db, item_id, _head, _width, :zettel, _line),
-    do: Agendum.Core.Facade.Zettels.zettel(db.items[item_id]) || ""
+    do: Agendum.Core.Facade.Extras.Zettels.zettel(db.items[item_id]) || ""
 
   defp standard_cell(db, item_id, head, _width, :star, _line),
     do: if(Database.member?(db, item_id, head.id), do: "*", else: "")

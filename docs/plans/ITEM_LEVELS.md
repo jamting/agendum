@@ -17,8 +17,8 @@ The volumes of levels 2 and 3 can be substantial: thousands of feed entries, and
 ## What it touches
 
 - **Zettelkasten IDs** (ROADMAP, "Beyond Agenda"): the ID and the `[[…]]` links become what makes an item a zettel. A promoted item gets its ID when it is promoted.
-- **Calendar subscriptions** (R45) are the first ingested items: `Agendum.Core.CalendarSync` already mirrors a calendar's events into items. They become level 2, and promoting one makes it the person's.
-- **RSS and other feeds**: new sources of level-2 items, fetched by the shell like `Agendum.CalendarFetch`; the first is the RSS reader, a roadmap item of its own (ROADMAP, "Beyond Agenda"; meeting 2026-10-16-2, § 7).
+- **Calendar subscriptions** (R45) are the first ingested items: `Agendum.Core.Extras.CalendarSync` already mirrors a calendar's events into items. They become level 2, and promoting one makes it the person's.
+- **RSS and other feeds**: new sources of level-2 items, fetched by the shell like `Agendum.Extras.CalendarFetch`; the first is the RSS reader, a roadmap item of its own (ROADMAP, "Beyond Agenda"; meeting 2026-10-16-2, § 7).
 - **Rules for ingested items**: what is kept, promoted or discarded. Agenda's own machinery may carry much of it: conditions and actions (R15, R15b) and the Discard special action already file and remove items by rule.
 - **Wol** (`WOL-IN-THE-MACHINE.md`): context items are where the agent keeps what it has learnt, inside the file, visible to the person, in line with its principle that the person decides; the person steers it by instruction, not by editing its notes.
 - **The JSON export** (R44, ADR 0034): the person chooses which levels to include, as Agenda's STF export chooses which items and assignments go in. An export without some levels is partial on purpose.
@@ -35,4 +35,4 @@ To settle with the owner before the work starts:
 - Where the rules for ingested items live: Agenda's conditions and actions, or rules of their own; how long discarded items are kept.
 - How context items refer to what they are about (items, categories) and what happens to them when those change or go.
 - Undo: ingestion and the model's context items are not the person's actions; should they be undo steps at all?
-- Whether ingested items are read-only (meeting 2026-10-22-3, § 6, referred here). Today a feed entry is an ordinary item: editing its text or note keeps it from fading (`Agendum.Core.FeedSync.kept?/3`). The panel's views: Mitch, entries stay ordinary, editable items, as Agenda's idea has it; Carsten, the feed's text stays as written and the person's words go in the note; Claude, Wol needs to tell the feed's words from the person's. Whatever is decided, keeping an item should be visible and deliberate (David), never a side effect of an edit.
+- Whether ingested items are read-only (meeting 2026-10-22-3, § 6, referred here). Today a feed entry is an ordinary item: editing its text or note keeps it from fading (`Agendum.Core.Extras.FeedSync.kept?/3`). The panel's views: Mitch, entries stay ordinary, editable items, as Agenda's idea has it; Carsten, the feed's text stays as written and the person's words go in the note; Claude, Wol needs to tell the feed's words from the person's. Whatever is decided, keeping an item should be visible and deliberate (David), never a side effect of an edit.

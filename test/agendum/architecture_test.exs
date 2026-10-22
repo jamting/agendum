@@ -208,42 +208,15 @@ defmodule Agendum.ArchitectureTest do
   # --- The extras on a shelf of their own (ADR 0044) ----------------------
 
   # The extras (ADR 0043: the blog and its site, Markdown, feeds, Zettel ids
-  # and links, calendar subscriptions) are modules of their own. Faithful
-  # code, Agenda's own, does not call them, so the line between the clone
-  # and the extras stays where it can be seen.
-  @shelf [
-    Agendum.Core.Blog,
-    Agendum.Core.Site,
-    Agendum.Core.Markdown,
-    Agendum.Core.Feed,
-    Agendum.Core.FeedParser,
-    Agendum.Core.FeedSync,
-    Agendum.Core.Xml,
-    Agendum.Core.ZettelId,
-    Agendum.Core.ZettelLinks,
-    Agendum.Core.Calendar,
-    Agendum.Core.CalendarSync,
-    Agendum.Core.ICal,
-    Agendum.Core.ICal.Event,
-    Agendum.Core.ICal.TimeZone,
-    # the facade's extras area, which Agendum.Core delegates to
-    Agendum.Core.Facade.Feeds,
-    Agendum.Core.Facade.Publishing,
-    Agendum.Core.Facade.Zettels,
-    Agendum.Core.Facade.Calendars
-  ]
+  # and links, calendar subscriptions) live in namespaces of their own.
+  # Faithful code, Agenda's own, does not call them, so the line between the
+  # clone and the extras stays where it can be seen. The shelf is the core's
+  # extras and the facade's extras area, which Agendum.Core delegates to.
+  @shelf ~w(Agendum.Core.Extras Agendum.Core.Facade.Extras)
 
   # The extras' own homes outside the core: their boxes and the shell
   # modules that fetch and publish for them. They may use the shelf.
-  @extras_homes [
-    Agendum.TUI.Boxes.FeedsBox,
-    Agendum.TUI.Boxes.PublishBox,
-    Agendum.TUI.Boxes.PublishPreviewBox,
-    Agendum.TUI.Boxes.CalendarsBox,
-    Agendum.FeedFetch,
-    Agendum.Publish,
-    Agendum.CalendarFetch
-  ]
+  @extras_homes ~w(Agendum.TUI.Extras Agendum.Extras)
 
   # Faithful modules that must name the extras, because the extras' data are
   # stored fields of the file (`next_zettel`, `feeds`, `blog`, `calendars`;
@@ -268,11 +241,11 @@ defmodule Agendum.ArchitectureTest do
     {Agendum.Core.ViewModel, :standard_cell, 6}
   ]
 
-  defp on_shelf?(module), do: module in @shelf
+  defp on_shelf?(module), do: Enum.any?(@shelf, &in?(module, &1))
 
   defp may_use_shelf?({module, f, a}) do
-    on_shelf?(module) or module in @extras_homes or module in @file_modules or
-      {module, f, a} in @named_exceptions
+    on_shelf?(module) or Enum.any?(@extras_homes, &in?(module, &1)) or
+      module in @file_modules or {module, f, a} in @named_exceptions
   end
 
   test "faithful code does not call the extras (ADR 0044)", %{calls: calls} do
@@ -280,7 +253,7 @@ defmodule Agendum.ArchitectureTest do
       for {{from, f, a} = caller, {to, name, arity}} <- calls,
           on_shelf?(to),
           # Agendum.Core delegates to the facade's extras area, and only there
-          not (from == Agendum.Core and Atom.to_string(to) =~ ~r/^Elixir\.Agendum\.Core\.Facade\./),
+          not (from == Agendum.Core and in?(to, "Agendum.Core.Facade.Extras")),
           not may_use_shelf?(caller),
           uniq: true,
           do: "#{inspect(from)}.#{f}/#{a} calls #{inspect(to)}.#{name}/#{arity}"
@@ -294,7 +267,13 @@ defmodule Agendum.ArchitectureTest do
   end
 
   test "the extras' list of allowed callers names real modules and functions" do
-    for module <- @shelf ++ @extras_homes ++ @file_modules do
+    {:ok, modules} = :application.get_key(:agendum, :modules)
+
+    for prefix <- @shelf ++ @extras_homes do
+      assert Enum.any?(modules, &in?(&1, prefix)), "no module under #{prefix}"
+    end
+
+    for module <- @file_modules do
       assert Code.ensure_loaded?(module), "#{inspect(module)} is listed but does not exist"
     end
 

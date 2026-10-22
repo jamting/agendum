@@ -744,9 +744,9 @@ defmodule Agendum.TUI.Update do
   def publish_scanned(state, folder, files, {:ok, scan}) do
     changes = Core.site_changes(files, scan.existing, scan.published)
 
-    if Agendum.TUI.Boxes.PublishPreviewBox.nothing?(changes) and state.db.blog.upload == :none,
+    if Agendum.TUI.Extras.PublishPreviewBox.nothing?(changes) and state.db.blog.upload == :none,
       do: State.info(state, "The folder already holds this site: nothing to publish"),
-      else: Agendum.TUI.Boxes.PublishPreviewBox.open(state, folder, files, changes)
+      else: Agendum.TUI.Extras.PublishPreviewBox.open(state, folder, files, changes)
   end
 
   def publish_scanned(state, _folder, _files, {:error, reason}),
@@ -757,7 +757,7 @@ defmodule Agendum.TUI.Update do
   refused the keys asks for a password, with the preview still open.
   """
   def published(state, changes, :ok) do
-    preview = Agendum.TUI.Boxes.PublishPreviewBox
+    preview = Agendum.TUI.Extras.PublishPreviewBox
     where = if state.db.blog.upload == :none, do: "", else: " and uploaded"
 
     state

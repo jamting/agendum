@@ -140,8 +140,8 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
       - **Input format** `:input_format` (Input format): the person's number order, date separator and clock, saved as preferences (R41b). `Agendum.TUI.Boxes.InputFormatBox`.
     - **Auto-assign settings** `:auto_assign` (Auto-assign settings): text matching for the file and Confirm assignments (R16, R16a). `Agendum.TUI.Boxes.AutoAssignBox`.
     - **File statistics** `:file_stats` (File statistics ...): the items, items with notes, categories and the average assignments, as Agenda's (screenshot 140); nothing to change. `Agendum.TUI.Boxes.FileStatsBox`.
-  - **Feeds** `:feeds` (File ▸ Transfer ▸ Feeds): RSS and Atom feed subscriptions; INS subscribes (two prompts), ENTER reads now, F how often, K how long entries stay, DEL unsubscribes, I and E import and export OPML (prompts for the file) (R75). `Agendum.TUI.Boxes.FeedsBox`.
-  - **Calendars** `:calendars` (File ▸ Transfer ▸ Calendars): calendar subscriptions; INS subscribes (two prompts), ENTER reads now, F and A change how often and how far ahead, DEL unsubscribes (R45). `Agendum.TUI.Boxes.CalendarsBox`.
+  - **Feeds** `:feeds` (File ▸ Transfer ▸ Feeds): RSS and Atom feed subscriptions; INS subscribes (two prompts), ENTER reads now, F how often, K how long entries stay, DEL unsubscribes, I and E import and export OPML (prompts for the file) (R75). `Agendum.TUI.Extras.FeedsBox`.
+  - **Calendars** `:calendars` (File ▸ Transfer ▸ Calendars): calendar subscriptions; INS subscribes (two prompts), ENTER reads now, F and A change how often and how far ahead, DEL unsubscribes (R45). `Agendum.TUI.Extras.CalendarsBox`.
   - **Customize** `:customize` (File ▸ Customize): the person's theme, date language and fallback language, saved as preferences (R40, R14c). `Agendum.TUI.Boxes.CustomizeBox`.
     - **Input format** `:input_format` (Input format).
   - **Column Properties** (View ▸ Column ▸ Properties, on a column entry): `:column_props`, one box for every column as in Agenda (screenshot 142): head, category type, width and Link with other sections (R55); a standard column's Format, with Line number and Column title for Category note (R56, screenshot 127); below them a numeric column's number format and calculations (R29) or a date column's own date format or the global defaults (R41a). `Agendum.TUI.Boxes.ColumnBox`.
@@ -168,8 +168,8 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
 
 - **Imported from Agenda** `:ag_import` (by itself, after File ▸ Transfer ▸ Import or `agendum OLD.AG` imported a Lotus Agenda file): what came over, what was left out, and the items filed differently from Agenda; CTRL-P writes it to a text file (R72). `Agendum.TUI.Boxes.ImportReportBox`. Before it, for a file with a password, a **Prompt** `:prompt` whose text shows as stars.
 
-- **Publish the blog** `:publish` (File ▸ Transfer ▸ Publish): the micro-blog's settings, its posts and drafts categories, title, address, folder and upload (R74). `Agendum.TUI.Boxes.PublishBox`. ENTER reads the folder, then:
-  - **Publish: what will change** `:publish_preview`: the files publishing adds, changes and removes, before anything is written; ENTER writes and uploads (R74). `Agendum.TUI.Boxes.PublishPreviewBox`. An SFTP server that wants a password asks in a **Prompt** `:prompt` whose text shows as stars.
+- **Publish the blog** `:publish` (File ▸ Transfer ▸ Publish): the micro-blog's settings, its posts and drafts categories, title, address, folder and upload (R74). `Agendum.TUI.Extras.PublishBox`. ENTER reads the folder, then:
+  - **Publish: what will change** `:publish_preview`: the files publishing adds, changes and removes, before anything is written; ENTER writes and uploads (R74). `Agendum.TUI.Extras.PublishPreviewBox`. An SFTP server that wants a password asks in a **Prompt** `:prompt` whose text shows as stars.
 
 - **Developer tools** `:devtools` (ESC ?, hidden, from anywhere but while typing): a full screen of debugging facts and a key tester; see `docs/KEYBOARD.md`. `Agendum.TUI.DevTools`.
 
@@ -213,8 +213,8 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:display_format`    | box           | `Agendum.TUI.Boxes.DisplayFormatBox`     | Global date settings ▸ Display format             | R41, R41a      |
 | `:input_format`      | box           | `Agendum.TUI.Boxes.InputFormatBox`       | Global date settings or Customize ▸ Input format  | R41b           |
 | `:customize`         | box           | `Agendum.TUI.Boxes.CustomizeBox`         | File ▸ Customize                                  | R40, R14c      |
-| `:calendars`         | box           | `Agendum.TUI.Boxes.CalendarsBox`         | File ▸ Transfer ▸ Calendars                       | R45            |
-| `:feeds`             | box           | `Agendum.TUI.Boxes.FeedsBox`             | File ▸ Transfer ▸ Feeds                           | R75            |
+| `:calendars`         | box           | `Agendum.TUI.Extras.CalendarsBox`         | File ▸ Transfer ▸ Calendars                       | R45            |
+| `:feeds`             | box           | `Agendum.TUI.Extras.FeedsBox`             | File ▸ Transfer ▸ Feeds                           | R75            |
 | `:auto_assign`       | box           | `Agendum.TUI.Boxes.AutoAssignBox`        | File Properties ▸ Auto-assign settings            | R16a           |
 | `:column_props`      | box           | `Agendum.TUI.Boxes.ColumnBox`            | View ▸ Column ▸ Properties                        | R55, R29, R41a |
 | `:column_add`        | box           | `Agendum.TUI.Boxes.ColumnAddBox`         | View ▸ Column ▸ Add                               | R55            |
@@ -224,8 +224,8 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:alarm_list`        | box           | `Agendum.TUI.Boxes.AlarmList`            | Search ▸ Alarms                                   | R38            |
 | `:away`              | box           | `Agendum.TUI.Boxes.AwayBox`              | Opening a file with alarms due while it was closed | R70           |
 | `:ag_import`         | box           | `Agendum.TUI.Boxes.ImportReportBox`      | Importing a Lotus Agenda file                     | R72            |
-| `:publish`           | box           | `Agendum.TUI.Boxes.PublishBox`           | File ▸ Transfer ▸ Publish                         | R74            |
-| `:publish_preview`   | box           | `Agendum.TUI.Boxes.PublishPreviewBox`    | ENTER in the Publish box                          | R74            |
+| `:publish`           | box           | `Agendum.TUI.Extras.PublishBox`           | File ▸ Transfer ▸ Publish                         | R74            |
+| `:publish_preview`   | box           | `Agendum.TUI.Extras.PublishPreviewBox`    | ENTER in the Publish box                          | R74            |
 | `:calendar`          | box           | `Agendum.TUI.Boxes.CalendarBox`          | F3 in a date column, ALT-C                        | R46            |
 | `:datebook_props`    | box           | `Agendum.TUI.Boxes.DatebookBox`          | View ▸ Properties of a datebook view              | R47            |
 | `:section_props`     | box           | `Agendum.TUI.Boxes.SectionBox`           | View ▸ Section ▸ Properties, F6 on a section head | R61            |

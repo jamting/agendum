@@ -22,6 +22,10 @@
                └───────────────────────────────────────────────────────────────┘
 ```
 
+## The extras' shelf
+
+The extras (ADR 0043: features that fail its test for the truthful clone, the micro-blog and its site, Markdown, feeds, Zettel ids and links, calendar subscriptions) live in namespaces of their own (ADR 0044): `Agendum.Core.Extras.*` (`lib/agendum/core/extras/`), the facade's extras area `Agendum.Core.Facade.Extras.*`, their boxes in `Agendum.TUI.Extras.*` and their shell modules in `Agendum.Extras.*`. Faithful code does not call the core's extras: `test/agendum/architecture_test.exs` reads the calls (`:xref`) and allows only the file's modules (`Database`, `JSONFile`, `Store`, `Starters.Golden`, `Invariants`), `Agendum.Core`'s delegations to the extras' facade area, the extras' own homes, and two named exceptions (Assign's link blanking, ViewModel's Zettel id column). Their stored structs (`Feed`, `Blog`, `Calendar`) moved in format 38; `Store` maps the old names on load.
+
 ## Modules
 
 ### Core (`lib/agendum/core*`) — pure
@@ -29,7 +33,7 @@
 | Module                                                         | Responsibility                                                                                                                                          |
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Agendum.Core`                                                  | Facade with user-level operations (add item, assign by name, add section…): a table of contents of `defdelegate`s. The UI uses this.                    |
-| `Agendum.Core.Facade.*`                                         | Its areas: `Files`, `Items`, `Assignments`, `Dates`, `Alarms`, `Numbers`, `Dependencies`, `Rules`, `Categories`, `Views`, `Macros`, `Calendars`, `Feeds` (R75), `Publishing` (R74), `Zettels` (R73).        |
+| `Agendum.Core.Facade.*`                                         | Its areas: `Files`, `Items`, `Assignments`, `Dates`, `Alarms`, `Numbers`, `Dependencies`, `Rules`, `Categories`, `Views`, `Macros`; and the extras' area, `Agendum.Core.Facade.Extras.*`: `Calendars` (R45), `Feeds` (R75), `Publishing` (R74), `Zettels` (R73).        |
 | `Agendum.Core.Browse`                                           | Browsing dates (R47, R48): where it starts, a move, going to a date, the view as browsed, the command that keeps it. |
 | `Agendum.Core.Reasons`                                          | Why an item is in a category (R67), worked out with `Assign`'s rules.                                               |
 | `Agendum.Core.Command`                                          | The command layer (R66, ADR 0036): a user action as data (`{:mark_done, ids}`), run by `Agendum.Core.run/3` on ids; each command's name and summary. |
@@ -44,12 +48,12 @@
 | `Agendum.Core.Datebook`                                         | Datebook views: their settings, the time slots of a period, which items a slot shows (R47).                                                             |
 | `Agendum.Core.MonthCalendar`                                    | The pop-up calendar's month as weeks, and the moves of its highlight (R46).                                                                             |
 | `Agendum.Core.Macro`                                            | A macro kept in the file: name, keystrokes in Agenda's notation, attached key, where it runs (R50).                                                     |
-| `Agendum.Core.Markdown`                                         | The micro-blog's own Markdown subset, with task boxes and Zettel links, as HTML; everything else escaped (R74).                                         |
-| `Agendum.Core.Xml`                                              | A small, forgiving XML reader that makes no atoms from what it reads, for feeds (R75).                                                                   |
-| `Agendum.Core.FeedParser`                                       | RSS 2.0, RSS 1.0 and Atom read into entries; feed dates; HTML as plain text (R75).                                                                      |
-| `Agendum.Core.Feed`, `Agendum.Core.FeedSync`                    | A feed subscription, and its entries mirrored into items: new ones added, changed ones updated, old ones fading unless kept (R75).                       |
-| `Agendum.Core.Blog`                                             | The micro-blog's settings, kept in the file, and its posts, newest first (R74).                                                                         |
-| `Agendum.Core.Site`                                             | The blog as a static site, `{path, content}` pairs: index, a page per post, RSS, JSON Feed, stylesheet; what publishing changes in a folder (R74).       |
+| `Agendum.Core.Extras.Markdown`                                         | The micro-blog's own Markdown subset, with task boxes and Zettel links, as HTML; everything else escaped (R74).                                         |
+| `Agendum.Core.Extras.Xml`                                              | A small, forgiving XML reader that makes no atoms from what it reads, for feeds (R75).                                                                   |
+| `Agendum.Core.Extras.FeedParser`                                       | RSS 2.0, RSS 1.0 and Atom read into entries; feed dates; HTML as plain text (R75).                                                                      |
+| `Agendum.Core.Extras.Feed`, `Agendum.Core.Extras.FeedSync`                    | A feed subscription, and its entries mirrored into items: new ones added, changed ones updated, old ones fading unless kept (R75).                       |
+| `Agendum.Core.Extras.Blog`                                             | The micro-blog's settings, kept in the file, and its posts, newest first (R74).                                                                         |
+| `Agendum.Core.Extras.Site`                                             | The blog as a static site, `{path, content}` pairs: index, a page per post, RSS, JSON Feed, stylesheet; what publishing changes in a folder (R74).       |
 | `Agendum.Core.DateParser`                                       | Date expressions relative to a given `today`.                                                                                                           |
 | `Agendum.Core.TextCondition`                                    | Agenda's "Also match" text conditions: `;` any, `,` all, `!`, `~`, `^`, wildcards (R15d).                                                               |
 | `Agendum.Core.TextMatch`                                        | How a file matches text to categories: on/off, match on, strength, enclosed text, suffixes, accents (R16a), proper names (R16c).                        |
@@ -58,9 +62,9 @@
 | `Agendum.Core.InputFormat`                                      | How one person types dates: number order, date separator, 12/24-hour clock; nil is the language's (R41b).                                               |
 | `Agendum.Core.JSONFile`                                         | A whole file as JSON and back, checked on import (R44; schema in `JSON_FORMAT.md`).                                                                     |
 | `Agendum.Core.AgFile` (`Reader`, `Convert`, `CP437`)           | A Lotus Agenda `.AG` file imported: its bytes read (`AGENDA_FILE_FORMAT.md`), made a JSON document, built and checked by `JSONFile` (R72).                 |
-| `Agendum.Core.ICal`                                             | Reads the events of an iCalendar (`.ics`) file: title, description, start, repeat rule, status (R45).                                                   |
-| `Agendum.Core.ICal.TimeZone`                                    | A calendar's own time zones (VTIMEZONE): a time in a named zone to UTC, without a time-zone database (R45).                                             |
-| `Agendum.Core.Calendar`, `Agendum.Core.CalendarSync`             | A calendar subscription; a refresh applied to the file, mirroring the calendar (R45).                                                                   |
+| `Agendum.Core.Extras.ICal`                                             | Reads the events of an iCalendar (`.ics`) file: title, description, start, repeat rule, status (R45).                                                   |
+| `Agendum.Core.Extras.ICal.TimeZone`                                    | A calendar's own time zones (VTIMEZONE): a time in a named zone to UTC, without a time-zone database (R45).                                             |
+| `Agendum.Core.Extras.Calendar`, `Agendum.Core.Extras.CalendarSync`             | A calendar subscription; a refresh applied to the file, mirroring the calendar (R45).                                                                   |
 | `Agendum.Core.DateLanguage` (+ `English`, `Swedish`)            | Language packs for reading dates: words, phrase patterns, day/month order, clock (R14c). `DateParser` does the arithmetic.                              |
 | `Agendum.Core.Search`                                           | Text search: whether an item's text or note matches (R37).                                                                                              |
 | `Agendum.Core.RangeFilter`                                      | Date and numeric filter ranges: checking, matching, the value a new item gets (R28a).                                                                   |
@@ -69,8 +73,8 @@
 | `Agendum.Core.DateRule`                                         | How a date category gets dates: Assign item date, Which one, Done and When keys (R6b).                                                                  |
 | `Agendum.Core.DateSettings`                                     | How a file reads dates: week, quarter and year boundaries, month alone, morning/afternoon/evening (R14e).                                               |
 | `Agendum.Core.TextSearch`                                       | Finding and replacing literal text in a note's lines (R39).                                                                                             |
-| `Agendum.Core.ZettelId`                                         | Quadsyl-24: a Zettel number to its pronounceable id (`bonalaku`) and back; the reserved words (`docs/QUADSYL.md`, ADR 0039).                              |
-| `Agendum.Core.ZettelLinks`                                      | Links between zettels: `[[bonalaku]]` and bare ids in a text, what an item links to, what links to it (R73b).                                          |
+| `Agendum.Core.Extras.ZettelId`                                         | Quadsyl-24: a Zettel number to its pronounceable id (`bonalaku`) and back; the reserved words (`docs/QUADSYL.md`, ADR 0039).                              |
+| `Agendum.Core.Extras.ZettelLinks`                                      | Links between zettels: `[[bonalaku]]` and bare ids in a text, what an item links to, what links to it (R73b).                                          |
 | `Agendum.Core.Item`, `Agendum.Core.Category`, `Agendum.Core.View` | Plain structs.                                                                                                                                          |
 
 ### TUI (`lib/agendum/tui/*`)
@@ -142,10 +146,10 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Boxes.SelectFile`                       | ✔     | The Select File box: F3 in a file-name prompt lists a folder (read by `Store.list_dir/1`) to pick from (R51).                    |
 | `Agendum.TUI.Splash`                           | ✔     | The splash screen at start, until a key or three seconds; the startup prompt waits under it (R52).                               |
 | `Agendum.Sample`                                | ✔     | The built-in files: `--demo` (the patent's example, used by the tests) and `--rabbit` (Rabbit's file from the manual).            |
-| `Agendum.TUI.Boxes.CalendarsBox`                     | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
-| `Agendum.TUI.Boxes.FeedsBox`                         | ✔     | File ▸ Transfer ▸ Feeds: subscribe to a feed, how often it is read, how long its entries stay (R75). |
-| `Agendum.TUI.Boxes.PublishBox`                       | ✔     | File ▸ Transfer ▸ Publish: the micro-blog's settings, kept in the file (R74). |
-| `Agendum.TUI.Boxes.PublishPreviewBox`                | ✔     | What publishing would write, change and remove, before anything is written (R74). |
+| `Agendum.TUI.Extras.CalendarsBox`                     | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
+| `Agendum.TUI.Extras.FeedsBox`                         | ✔     | File ▸ Transfer ▸ Feeds: subscribe to a feed, how often it is read, how long its entries stay (R75). |
+| `Agendum.TUI.Extras.PublishBox`                       | ✔     | File ▸ Transfer ▸ Publish: the micro-blog's settings, kept in the file (R74). |
+| `Agendum.TUI.Extras.PublishPreviewBox`                | ✔     | What publishing would write, change and remove, before anything is written (R74). |
 | `Agendum.TUI.Boxes.ImportReportBox`                  | ✔     | The report after a Lotus Agenda file was imported: what came over, what was left out, items filed differently (R72). |
 | `Agendum.TUI.Boxes.RunByName`                        | ✔     | CTRL-X: run a command by its name, the matches best first (R65d, ADR 0040). |
 | `Agendum.TUI.Typing.NoteSearch`                       | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
@@ -174,9 +178,9 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.DebugLog`                         | ✘     | The debug log when `AGENDUM_LOG` is set: build, input, timed effects, file fingerprints, slow answers with view and memory, crashes with the state; five kept (ADR 0027). |
 | `Agendum.Store`                                | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write); folder listings for the Select File box.                     |
 | `Agendum.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format (with the number separators), key map, confirm mode, auto-save, sound, name, company, last file, where each file was left (`Agendum.Preferences.Place`, R69) (`key = value`, ADR 0008).               |
-| `Agendum.CalendarFetch`                        | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
-| `Agendum.FeedFetch`                            | ✘     | Reads a feed from the web (the calendar's HTTPS download) and opens a link in the browser (R75).                                 |
-| `Agendum.Publish`                              | ✘     | The blog's folder read and written, and uploaded by rsync or SFTP (`:ssh_sftp`); `~/.netrc` passwords (R74, ADR 0041).           |
+| `Agendum.Extras.CalendarFetch`                        | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
+| `Agendum.Extras.FeedFetch`                            | ✘     | Reads a feed from the web (the calendar's HTTPS download) and opens a link in the browser (R75).                                 |
+| `Agendum.Extras.Publish`                              | ✘     | The blog's folder read and written, and uploaded by rsync or SFTP (`:ssh_sftp`); `~/.netrc` passwords (R74, ADR 0041).           |
 | `Agendum.CLI`                                  | ✘     | `main/1` for the escript.                                                                                                        |
 
 ## Key design decisions

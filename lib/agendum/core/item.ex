@@ -19,7 +19,7 @@ defmodule Agendum.Core.Item do
   the list of past alarms.
 
   `zettel` is the number of the item's Zettel id (R73, ADR 0039), spelled
-  as a word by `Agendum.Core.ZettelId` (`bonalaku`); nil until it is given
+  as a word by `Agendum.Core.Extras.ZettelId` (`bonalaku`); nil until it is given
   one. An item with an id is a zettel.
   """
 

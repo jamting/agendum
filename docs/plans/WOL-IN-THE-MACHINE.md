@@ -40,7 +40,7 @@ And Agenda was reaching for this from the start: its designers' 1990 CACM articl
 ## Principles
 
 1. **The agent proposes; the person decides.** No silent changes to the file: suggestions go through Questions or a confirmation, unless the person has said otherwise for a kind of change.
-2. **The core stays pure** (CLAUDE.md, rule 1). Calling a model is I/O, so it lives in the shell, like `Agendum.CalendarFetch`: an effect the TUI asks for, whose answer comes back as ordinary commands applied by the core. OTP's `:httpc` avoids a new runtime dependency (ADR 0021).
+2. **The core stays pure** (CLAUDE.md, rule 1). Calling a model is I/O, so it lives in the shell, like `Agendum.Extras.CalendarFetch`: an effect the TUI asks for, whose answer comes back as ordinary commands applied by the core. OTP's `:httpc` avoids a new runtime dependency (ADR 0021).
 3. **Private by default.** A file is someone's life. The agent is opt-in, says what it will send and to whom, sends no more than the task needs, and can use a local model. Nothing is sent without the person turning it on.
 4. **Tested without a model.** A fake model in tests, so they stay deterministic.
 5. **Agenda first.** The agent adds to Agenda's ideas, it does not replace them: categories stay the person's, text matching still works without a model.
