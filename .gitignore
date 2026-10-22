@@ -57,3 +57,4 @@ docs/summaries/
 # Python bytecode from the research tools in tools/
 __pycache__/
 /site
+/docs/.obsidian
