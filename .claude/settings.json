@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_response.filePath // .tool_input.file_path'); case \"$f\" in *.ex|*.exs) cd \"$(dirname \"$f\")\" && cd \"$(git rev-parse --show-toplevel)\" && mix format \"$f\" 2>/dev/null;; esac; true",
+            "timeout": 30,
+            "statusMessage": "mix format"
+          }
+        ]
+      }
+    ]
+  }
+}
