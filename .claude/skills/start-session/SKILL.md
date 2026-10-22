@@ -41,6 +41,6 @@ End with a plain question: which one? Then stop, and wait for the answer.
 
 ## 3. When the owner chooses
 
-Go on with the normal workflow for that kind of work (CLAUDE.md, "Workflow for a feature", or the skill it names: `study-plan`, `meeting` …). If the owner chooses something not on the list, that is fine: the list is an offer, not a plan.
+Go on with the normal workflow for that kind of work (the `feature` skill, or the skill the work names: `study-plan`, `meeting` …). If the owner chooses something not on the list, that is fine: the list is an offer, not a plan.
 
 Nothing is written or committed by this skill.

@@ -7,7 +7,7 @@ description: Hold a panel meeting in Owl's house on the owner's own agenda (the 
 
 The owner collects thoughts in their own Agendum project file whenever they come, as roughly as they like (meeting 2026-10-22, § 7b): a Thoughts category whose child Next meeting holds what they want brought up, read with `mix agendum.thoughts` (the file's path is in `$AGENDUM_PROJECT_FILE`). The Markdown file `docs/meetings/dagordning.md` they used before is retired (meeting 2026-10-22-2, § 3). Calling a meeting turns them into decisions: the panel discusses each item, the **owner decides**, the decisions are written into the documents they belong in, and the meeting leaves two files behind: the agenda, worded properly, and the minutes.
 
-This is not a review: nothing is scored, and the panel speaks only to the items on the agenda. It is also not a work session: **no code changes** during the meeting. A decision to build something becomes a roadmap item, built later in the usual way (CLAUDE.md, "Workflow for a feature").
+This is not a review: nothing is scored, and the panel speaks only to the items on the agenda. It is also not a work session: **no code changes** during the meeting. A decision to build something becomes a roadmap item, built later in the usual way (the `feature` skill).
 
 ## The people and the place
 
@@ -53,7 +53,7 @@ Go through it in order, one item at a time, in the conversation; do not run ahea
      - **Tabled** (bordlagt): to the next meeting; it is carried over to the next agenda with what was said.
      - **Referred**: to be investigated first (a plan document, an experiment in Agenda, a measurement), with where it goes.
      - **Noted** (lades till handlingarna): discussed, nothing to decide.
-  - A decision that changes what a key or behaviour does for someone already using Agendum: list those habit changes before the owner decides (CLAUDE.md, workflow step 0).
+  - A decision that changes what a key or behaviour does for someone already using Agendum: list those habit changes before the owner decides (the `feature` skill, step 1).
 - **Any other business**: ask whether the owner has anything more; new items get the same treatment, or are tabled to the next agenda.
 - **Next meeting**: when, if the owner says; otherwise "when the agenda has enough items".
 - **Closing**.

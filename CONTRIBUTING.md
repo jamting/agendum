@@ -56,7 +56,7 @@ The code in brief:
 
 ## 4. Make a change
 
-The workflow, in short (in full in [`CLAUDE.md`](CLAUDE.md), "Workflow for a feature"):
+The workflow, in short (in full in `.claude/skills/feature/SKILL.md`, the checklist Claude follows as the `/feature` skill):
 
 1. **Say what changes for the person using it.** If the change alters a key or a habit (what ENTER does, which key changes a value), agree on that first.
 2. **Find the behaviour** in Agenda's manuals (`docs/reference/*_djvu.txt`) and add or update its rule in `docs/SPEC.md`. Where we differ from Agenda on purpose, the rule says "Our choice".

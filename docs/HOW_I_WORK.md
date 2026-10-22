@@ -11,7 +11,7 @@ The owner's way of working on Wol's Agendum with Claude: the habits, the rituals
 | I want to…                                     | Say or type                              | What happens                                                            |
 | ---------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------- |
 | begin a session, or ask "where were we?"      | `/start-session`                         | where the last session stopped, what to try, three things to choose from |
-| build the next thing                           | "next" or name a roadmap item            | Claude lists the habit changes first, then builds it test-first         |
+| build the next thing                           | "next", a roadmap item, or `/feature`    | the `feature` skill: habit changes first, then test-first, step by step |
 | park a thought for later                       | an item in Thoughts in my project file (Agendum) | nothing, until a meeting                                                |
 | put a thought on the next meeting's agenda     | assign it to Next meeting (under Thoughts) | `/meeting` brings it up; afterwards I mark it done (F4)                 |
 | discuss my parked thoughts with the panel      | `/meeting`                               | a panel meeting on my agenda; I decide; minutes and roadmap updated     |
@@ -27,7 +27,7 @@ The owner's way of working on Wol's Agendum with Claude: the habits, the rituals
 
 ## The loop for a feature
 
-The full rules are in [`CLAUDE.md`](../CLAUDE.md) ("Workflow for a feature"); in short:
+The full steps are the `feature` skill (`.claude/skills/feature/SKILL.md`, meeting 2026-10-22-3, § 5); in short:
 
 1. **Habits first.** Before any code, Claude lists every key or behaviour the change would alter for someone already using Agendum. I settle them. A habit change found halfway is the most expensive kind.
 2. **As Agenda did.** The behaviour is checked in the manuals (`docs/reference/*_djvu.txt`), the Lotus Q&A, the F1 help, the `.AG` file format, and by running the real Agenda 2.0 headless in DOSBox (`tools/agformat/agenda_driver.py`). Results come as an evidence table: question, Agenda's answer, source.
@@ -47,6 +47,7 @@ All in `.claude/skills/`, each started with `/name` or by asking for it in words
 | `end-session`       | Close a session: what was done, what must not be lost (roadmap, plans, memory), a cheerful summary with learnings and next steps                                                                                | `docs/summaries/YYYY-MM-DD-HHMM.md` (not committed)     |
 | `start-session`     | Open a session: reads the last summary, the roadmap's Next, the study plan and anything uncommitted; lists what to try in the program, offers three things to do, and waits for a choice | nothing                                                 |
 | `expert-review`     | A dated review written as the minutes of a panel meeting in Owl's house: architecture, code, tests, docs, users, business, vision, methods, tidiness, agent readiness; scores, evidence, ranked recommendations | `docs/reviews/YYYY-MM-DD.md` (`-2`, `-3` the same day)  |
+| `feature`           | Build one feature or fix the agreed way: habits first, Agenda's evidence, the rule, a failing test, core then TUI, the documents, the gate and fuzz, the commit, a version, the owner trying it (meeting 2026-10-22-3, § 5) | the code, its tests and documents; a commit |
 | `meeting`           | A panel meeting on my own agenda (the thoughts under Next meeting in my project file): the experts the items call for discuss them, I decide, decisions go into the roadmap, plans and ADRs                                                          | `docs/meetings/YYYY-MM-DD/` (agenda and minutes)        |
 | `study-plan`        | The panel picks the next part of the code for me to study, gives it learning comments, and writes a unit of questions and exercises; also helps with a question                                                 | `docs/study/STUDY_PLAN.md`                              |
 | `learning-comments` | Comments in the code on Elixir idioms (for an experienced programmer new to Elixir) and on the domain logic; comments only                                                                                     | the files I name                                        |

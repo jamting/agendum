@@ -66,6 +66,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Follow the item's Zettel links / show the items linking to it (ours, R73b)                     | —                             | **CTRL-G** / **CTRL-R**, or Item ▸ Zettel ▸ Follow / Linked |
 | In a note: type a link to each marked item, `[[bonalaku]]` (ours, R73b)                         | —                             | **CTRL-L**                                                  |
 | Open the item's web link in the browser: a feed entry's article (ours, R75)                    | —                             | **CTRL-V**, or menu Item ▸ Open link                       |
+| Category manager: the category above / below                                                   | ↑ or BACKSPACE / ↓ or ENTER    | ↑ or ⌫ / ↓ or ENTER                   |
 | Category manager: add a sibling below / above                                                   | ALT-D (or ALT-I, INS) / ALT-U | ⌥d / ⌥u, or **CTRL-N**                                     |
 | Category manager: add a child / a new family after the parent                                   | ALT-R / ALT-L                 | ⌥r / ⌥l                                                    |
 | Remove from section / column                                                                    | DEL                           | fn-⌫ (forward delete)                                                 |
@@ -76,7 +77,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | A count for the next command in a view (R65): ALT-1 ALT-0 ↓ moves ten rows down. Counts work with ↑ ↓ PGUP PGDN ← → TAB, previous / next section, ALT-J, ALT-H, ALT-N / ALT-P; other commands run once; ESC drops the count | ALT-0 … ALT-9 (ours) | ⌥0 … ⌥9 (Option as Meta) |
 | Menu (in a note: the note's own menu, Import, Export, Clear, Return, Quit; R64b)               | F10                           | `/` (not in a note, where it is typed)                                |
 | Help about where you are; then `c` the command list (typing narrows it, ENTER runs one, ← → page through the highlighted command's text in the pane), `d` describe the next key pressed, `a` all keys (R65) | F1; then `c` / `d` / `a` | ⌘/ mapped to F1 |
-| In the menu: back up a level; in a box, prompt or question opened from it: back to the menu       | ESC                           | ESC                                                                   |
+| In the menu: back up a level; in a box, prompt or question opened from it: back to the menu       | ESC (BACKSPACE in the menu)   | ESC; ⌫                                                                 |
 | In a box: move between settings (→ ← along a row, on to the next or previous; ↓ ↑ keep to the side); first / last setting | ↑ ↓ ← →, TAB / SHIFT-TAB; HOME / END | fn-← / fn-→ for HOME / END                                            |
 | In a box: change or open a setting; type a number (width, decimal places, line); edit a text field; pick from a list; done; cancel the box's changes | SPACE; digits; F2; F3; ENTER; ESC | SPACE; digits; **CTRL-E**; —; ENTER; ESC                 |
 | In a box, on a setting with choices: the next choice starting with a letter; list the choices | the letter; F3 | the letter; —                                              |
@@ -92,9 +93,10 @@ While typing text (on one line; in a note, the first two rows and CTRL-D; the ke
 | CTRL-K                                      | Delete to the end of the line         |
 | CTRL-W or ⌥⌫ (ALT-BACKSPACE)                | Delete the previous word              |
 | CTRL-U                                      | Clear the line                        |
+| BACKSPACE                                   | Delete the character before the cursor |
 | CTRL-D                                      | Delete the character under the cursor |
 
-The F1 help lists every key from the keymaps (F1 then `a`); a test checks that every F-, ALT- and CTRL-key in them is in this guide.
+The F1 help lists every key from the keymaps (F1 then `a`); a test checks that every key in them with a name (F-, ALT-, CTRL- and SHIFT-keys, ENTER, BACKSPACE, PGUP …) is in this guide.
 
 ALT is ⌥ (Option) on a Mac: ALT-D (add section) is ⌥D, ALT-← is ⌥←. These keys need "Use Option as Meta key" (Terminal.app: Settings ▸ Profiles ▸ Keyboard) or "Esc+" for the left Option key (iTerm2: Settings ▸ Profiles ▸ Keys); the terminal then sends ESC and the key together, which Agendum reads as ALT. Without it, a few still work in Terminal.app with a US keyboard layout: Agendum recognises the characters Option produces for ⌥D, ⌥R, ⌥L, ⌥T, ⌥W, ⌥J, ⌥M, ⌥− and ⌥= (`∂`, `®`, `¬` …). Pressing ESC and then the letter by hand does not work: a lone ESC is ESC (it cancels), and the letter then counts on its own (ADR 0032).
 

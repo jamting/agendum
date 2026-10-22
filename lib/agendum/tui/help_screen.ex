@@ -47,6 +47,10 @@ defmodule Agendum.TUI.HelpScreen do
     section_move: {Agendum.TUI.Moves.SectionMove, :run, :about, nil}
   }
 
+  @doc "The places with a keymap and an F1 text of their own, by mode type."
+  @spec places() :: [atom]
+  def places, do: Map.keys(@places)
+
   @doc "Opens the help screen on its keys page."
   @spec open(State.t()) :: State.t()
   def open(state) do

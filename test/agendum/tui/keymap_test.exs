@@ -135,18 +135,28 @@ defmodule Agendum.TUI.KeymapTest do
     end
   end
 
-  test "docs/KEYBOARD.md names every F-, ALT- and CTRL-key in the keymaps" do
+  # Every key with a name of more than one character: F-, ALT-, CTRL- and
+  # SHIFT-keys, and the named ones (ENTER, BACKSPACE, PGUP …); a letter or
+  # an arrow is one character, which any text contains (meeting
+  # 2026-10-22-3, § 5: what a test can check is not left to a checklist).
+  test "docs/KEYBOARD.md names every named key in the keymaps" do
     doc = File.read!("docs/KEYBOARD.md")
 
     missing =
       for place <- @places,
           {key, id} <- Keymap.bindings(place),
-          match?({k, _} when k in [:f, :alt_f, :alt, :ctrl], key),
-          not String.contains?(doc, Keymap.name(key)),
+          String.length(Keymap.name(key)) > 1,
+          not named?(doc, Keymap.name(key)),
           do: "#{place}: #{Keymap.name(key)} (#{id})"
 
     assert missing == [], "Not in KEYBOARD.md:\n" <> Enum.join(missing, "\n")
   end
+
+  # The name on its own, not inside a longer one: BACKSPACE is not named by
+  # ALT-BACKSPACE, nor F1 by F10. `(?<!…)` and `(?!…)` look at the
+  # character before and after without taking it into the match.
+  defp named?(doc, name),
+    do: Regex.match?(~r/(?<![A-Z0-9-])#{Regex.escape(name)}(?![A-Za-z0-9])/u, doc)
 
   test "key names read back as keys; a dash is no key" do
     for key <- [{:f, 4}, {:alt_f, 10}, {:ctrl, "d"}, {:alt, "m"}, :pgdn, :ctrl_home, {:alt, :up}] do

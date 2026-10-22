@@ -63,7 +63,7 @@ Keep these in place, and repair them when they drift:
 
 When moving many lines (the roadmap), do it with a script that takes each line by its text and asserts it was placed exactly once; then compare the counts of `- [x]` and `- [ ]` before and after, and explain any difference (a merged duplicate).
 
-If the structure changes (a new index, a new roadmap layout), update the instructions that describe it: CLAUDE.md (workflow step 4), the `end-session` skill, and `docs/INDEX.md`'s "Where a change is written down".
+If the structure changes (a new index, a new roadmap layout), update the instructions that describe it: the `feature` skill (its documents step), the `end-session` skill, and `docs/INDEX.md`'s "Where a change is written down".
 
 ## 4. Check and commit
 
