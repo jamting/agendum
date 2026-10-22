@@ -2,7 +2,7 @@
 
 2026-10-14/15 · reverse engineered by Claude for Mattias Jämting
 
-What a Lotus Agenda 2.0 data file (`.AG`, backup `.BG`) contains and how to read it, so that Agendum can import old Agenda files. Nothing here was published by Lotus; it was worked out from the four starter files shipped with Agenda 2.0 and from files made by running Agenda headlessly in DOSBox, changing one thing and comparing the bytes (about 150 such experiments). How that was done, and what is still open, is in [the research log](plans/AGENDA_FILE_FORMAT_LOG.md). A reference reader that implements this document is `tools/agformat/agdump.py` (`.AG` → JSON); how to drive Agenda for more experiments is in `tools/agformat/DRIVING_AGENDA.md`.
+What a Lotus Agenda 2.0 data file (`.AG`, backup `.BG`) contains and how to read it, so that Agendum can import old Agenda files. Nothing here was published by Lotus; it was worked out from the four starter files shipped with Agenda 2.0 and from files made by running Agenda headlessly in DOSBox, changing one thing and comparing the bytes (about 150 such experiments). How that was done, and what is still open, is in [the research log](plans/archive/AGENDA_FILE_FORMAT_LOG.md). A reference reader that implements this document is `tools/agformat/agdump.py` (`.AG` → JSON); how to drive Agenda for more experiments is in `tools/agformat/DRIVING_AGENDA.md`.
 
 Confidence marks used below: **✔** confirmed by an experiment (Agenda made the change, the bytes moved as described); **~** inferred from consistent patterns in all files but not tested one at a time; **?** unknown.
 

@@ -1,5 +1,7 @@
 # Lotus Agenda 2.0's menus
 
+**To be replaced:** this table was made by hand. The DOSBox capture tool (ROADMAP, "Towards parity", meeting 2026-10-21, § 8) will write Agenda's menus to a committed JSON reference that replaces or generates it; until then, do not extend it (meeting 2026-10-22, § 5i).
+
 For reference: the F10 menus of the real Agenda 2.0, as it shows them. The
 view's menu was walked level by level in Agenda 2.0 run headless in
 DOSBox Staging (`tools/agformat/agenda_driver.py`, on a copy of the

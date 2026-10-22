@@ -1,6 +1,6 @@
 # Driving Lotus Agenda remotely (DOSBox Staging)
 
-Practical notes for running the real Agenda 2.0 unattended, to check how it behaves or to make test files for the `.AG` format research (`docs/AGENDA_FILE_FORMAT.md`, log in `docs/plans/AGENDA_FILE_FORMAT_LOG.md`). The driver is `agenda_driver.py` in this directory.
+Practical notes for running the real Agenda 2.0 unattended, to check how it behaves or to make test files for the `.AG` format research (`docs/AGENDA_FILE_FORMAT.md`, log in `docs/plans/archive/AGENDA_FILE_FORMAT_LOG.md`). The driver is `agenda_driver.py` in this directory.
 
 ## Setup
 

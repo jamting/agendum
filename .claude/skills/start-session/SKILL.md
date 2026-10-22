@@ -21,7 +21,7 @@ git remote -v                                    # is there a backup off this Ma
 
 - **The newest summary** in `docs/summaries/`: its "Recommended next steps", its "Not done or skipped", and its "What you'll notice when using Agendum" (things the owner has not tried yet).
 - **`docs/ROADMAP.md`**: the **Next:** line, and any open bug.
-- **`docs/study/STUDY_PLAN.md`**: the current unit, ticked / total, and the first unticked question.
+- **`docs/study/STUDY_PLAN.md`**: the current unit and the first unticked question, to offer a study dose only if it helps. Never report its pace or a lack of progress (the owner learns Elixir outside the project too; meeting 2026-10-22, § 5j).
 - **Memory**: paused work ("resume from …") and decisions waiting for the owner.
 - **The newest review** (`docs/reviews/`) only for resolutions the newest summary says are still waiting for a decision.
 - **Uncommitted changes**: say what they are, except `docs/meetings/dagordning.md`, which is the owner's running notes and is never mentioned (memory: ignore dagordning).

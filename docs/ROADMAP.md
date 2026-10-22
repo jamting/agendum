@@ -4,18 +4,25 @@ Small, testable increments. Open work comes first, by area; done work is below, 
 
 ## Open
 
-**Next action:** a panel meeting (`/meeting`) that goes through the eleven recommendations of the expert review of 2026-10-21 one by one (`docs/reviews/2026-10-21.md`, § 18), the owner deciding each; on the agenda (`docs/meetings/dagordning.md`). Nothing else is started before it.
+**Frozen until the truthful clone is declared done:** Beyond Agenda, Ideas and Towards many users wait (bug fixes only). Not frozen: the clone's safety work and tests (Towards parity, meeting 2026-10-22, § 5c) and Sharpen the saw (meeting 2026-10-22, § 5i).
 
-**Next:** a truthful clone of Lotus Agenda first (meeting 2026-10-21, § 5; `VISION.md`, ADR 0043): parity before everything else, "Beyond Agenda" frozen to bug fixes until the clone is declared done. First the clone's own groundwork, in "Towards parity" below: tag each entry on AGENDA_PARITY.md's two lists by ADR 0043's test, with the owner confirming each; then the extras on their own shelf (ADR 0044) and the Extras preference; then Agenda's menus captured in DOSBox and compared by a test. After that the parity steps, the habit changes settled first: F6 on a view opening View Properties, or DEL putting items in a trash; and the note editor's open questions (should GETITMS ask Agenda's "discard the copied items?"; external note files, step 7, or left out on purpose). Approved and tagged up to v0.16.0 (2026-10-19). The repository is on GitHub (private, `jamting/agendum`) with CI, 2026-10-17; a public repository is made from it when the clone is done (Housekeeping). The view cache waits for slow answers in real use.
+**Next action:** the tagging of AGENDA_PARITY.md's 31 entries, in one sitting of its own: Claude proposes a tag for each row, the owner confirms it, the date format's default first (meeting 2026-10-22, § 5b).
+
+**Next:** a truthful clone of Lotus Agenda first (meeting 2026-10-21, § 5; `VISION.md`, ADR 0043): parity before everything else, "Beyond Agenda" frozen to bug fixes until the clone is declared done. First the clone's own groundwork, in "Towards parity" below: tag each entry on AGENDA_PARITY.md's two lists by ADR 0043's test, with the owner confirming each; then the extras on their own shelf (ADR 0044, its allowed callers and a round-trip test with Extras off written first) and the Extras preference; then Agenda's menus captured in DOSBox and compared by a test. Beside it, the clone's safety work. After that the parity steps, View Properties first and recurring items on every date second (meeting 2026-10-22, § 5f), the habit changes settled first: F6 on a view opening View Properties, or DEL putting items in a trash; and the note editor's open questions (should GETITMS ask Agenda's "discard the copied items?"; external note files, step 7, or left out on purpose). Approved and tagged up to v0.16.0 (2026-10-19). The repository is on GitHub (private, `jamting/agendum`) with CI, 2026-10-17; a public repository is made from it when the clone is done (Housekeeping). The view cache waits for slow answers in real use.
 
 ### Sharpen the saw
 
 Tools and checks that make every later change faster and safer. Each is small; the command layer they made safer is done (R66, ADR 0036, under Done). From the expert review of 2026-10-16 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
+- [ ] Agendum for Agendum, the owner's own use (meeting 2026-10-22, § 7b), the thoughts first:
+  - [ ] The owner's thoughts in Agendum: a Thoughts category and view in the owner's own file (outside git), the inbox for ideas that today sit below the line of `docs/meetings/dagordning.md`; items assigned to a "Next meeting" category are what the meeting skill brings up. A small read-only tool (a Mix task) prints them for a session; the `meeting` skill reads them through it, and the dagordning's tail retires once it works
+  - [ ] The project in Agendum, one way: a Mix task reads `docs/ROADMAP.md`, `docs/summaries/` and `docs/meetings/` and writes an Agendum file of them (roadmap boxes, summaries and decisions as items; views such as open by area, decided at meetings, done this week), rebuilt on demand. The Markdown documents stay the original; edits in the copy are not carried back
 - [ ] The long fuzz run (`FUZZ_RUNS=3000`) in CI, nightly: today it is run by hand before every version is tagged (docs/INDEX.md, "Where a change is written down")
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key. Measured 2026-10-16, a cursor move: 300 items 6 ms in `Update` + 11 ms in `Render`; 3,000 items 61 + 45 ms; 10,000 items 205 + 231 ms. First build it once per key and share it; then keep it in the session's state between keys as a value with a key that says when it is stale (ADR 0035): the database, the view, the date and time, the screen width, collapsed families, the search. Needs an ADR. **Wait until the debug log shows `slow answer` lines (over 100 ms) in real use** (owner's decision, 2026-10-16); ingested items (`plans/ITEM_LEVELS.md`) will likely be what brings them. The command layer, which reshaped the state it would live in, is done; the TUI state's split into file and session (Towards many users) reshapes it again
 
 ### Towards many users
+
+**Waits until the truthful clone is declared done** (meeting 2026-10-21, § 5; meeting 2026-10-22, § 5i).
 
 A web application with accounts and shared files, on the same core (plan: [MULTIUSER.md](plans/MULTIUSER.md), ADR 0020). Its first step, the command layer, is done (R66, ADR 0036, below under Done): every change to a file is a command the core runs; so are typed UI modes (ADR 0037).
 
@@ -32,25 +39,30 @@ Then working together:
 **The ambition:** Agendum as close to Agenda 2.0 as makes sense: the same screen, keys, menus and behaviour, apart from a list of accepted enhancements (beyond Agenda) and accepted modifications (done differently, on purpose). Everything else that differs is a gap, to close or to move onto one of the lists. Today about 80% overall (control panel and F10 menu about 75%, the note editor about 50%, the data model and views about 90%). The overview, checked in Agenda 2.0 run headless, with the two lists and the steps: [`docs/plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md)
 
 - [ ] The truthful clone's groundwork (meeting 2026-10-21, § 5–9), in this order:
-  - [ ] Tag every entry on AGENDA_PARITY.md's two lists (20 enhancements, 11 modifications) by ADR 0043's test: *machine*, *work*, *quiet*, *extra* (hidden) or *change back*; the owner confirms each. Each change back that alters a habit becomes its own item here, settled with the owner first; candidates: the date format's default (Agenda's MM/DD/YY, ISO one setting away), the always-shown mode word (READY), entries added to Agenda's menus (File ▸ New, View ▸ Rename and Last …), the view manager's ► and F5, the descriptive key bar on a wide screen (§ 6)
-  - [ ] The extras on a shelf of their own (ADR 0044): the extras' core modules (blog, site, Markdown, feeds, Zettel ids and links) under `Agendum.Core.Extras.*`, a matching home on the TUI side, and an architecture test (`:xref`) that faithful code calls them only through commands tagged as extras. No change in behaviour (§ 9)
-  - [ ] The Extras preference (ADR 0043): commands tagged as extras; one preference, off by default, hides them from the menus, keymaps, F1 and CTRL-X in one place; the code and the stored fields stay, and a file saved with Extras off keeps the extras' fields (a round-trip test). The habit change: the owner turns Extras on once to keep the blog, the feeds and the Zettel commands (§ 7)
+  - [ ] Tag every entry on AGENDA_PARITY.md's two lists (20 enhancements, 11 modifications) by ADR 0043's test: *machine*, *work*, *quiet*, *extra* (hidden) or *change back*; the owner confirms each, in one sitting of its own, Claude proposing a tag per row and the date format first (meeting 2026-10-22, § 5b). Each change back that alters a habit becomes its own item here, settled with the owner first; candidates: the date format's default (Agenda's MM/DD/YY, ISO one setting away), the always-shown mode word (READY), entries added to Agenda's menus (File ▸ New, View ▸ Rename and Last …), the view manager's ► and F5, the descriptive key bar on a wide screen (§ 6)
+  - [ ] The extras on a shelf of their own (ADR 0044): the extras' core modules (blog, site, Markdown, feeds, Zettel ids and links) under `Agendum.Core.Extras.*`, a matching home on the TUI side, and an architecture test (`:xref`) that faithful code calls them only through commands tagged as extras. No change in behaviour (§ 9). First, against today's code: the test with its allowed callers (the file format's modules, `Invariants`, the facade's extras area; ADR 0044's amendment) and a round-trip test that a file saved with Extras off keeps the extras' fields (meeting 2026-10-22, § 5d)
+  - [ ] The Extras preference (ADR 0043): commands tagged as extras; one preference, off by default, hides them from the menus, keymaps, F1 and CTRL-X in one place; the code and the stored fields stay, and a file saved with Extras off keeps the extras' fields (a round-trip test). The habit change: the owner turns Extras on once to keep the blog, the feeds and the Zettel commands (§ 7). How: a field `extra: false` on `Agendum.TUI.Command` (`lib/agendum/tui/command.ex:16`) that the menus, keymaps, F1 and CTRL-X filter on, and the fuzz walks run with Extras off and on (meeting 2026-10-22, § 5g)
   - [ ] Agenda in DOSBox as the reference for texts and menus (§ 8): a capture tool run by hand (`tools/agformat/agenda_driver.py`) walks Agenda's F10 menus (the view's, the note editor's, the category manager's) and writes their entries and help lines to a committed JSON reference, which replaces or generates the hand-made table in `docs/reference/AGENDA_MENUS.md`; a test, without DOSBox, compares `Agendum.TUI.Menu.tree/0` with it and fails on any difference not tagged as accepted (the tags above). Differences are found automatically and fixed by hand. Then the labels in settings boxes, the key bar and messages, step by step. Long help lines are Lotus's text: mind them before going public (GITHUB.md § 7)
-- [ ] Towards parity (AGENDA_PARITY.md, "The steps"):
-  - [ ] The note editor as Agenda's (its own item, below; `NOTE_EDITOR.md`)
+- [ ] The clone's safety, clone work and not frozen (meeting 2026-10-22, § 5c; expert review 2026-10-21, § 8 and § 14):
+  - [ ] A closed effect type, with a last clause in `App.run_effects/2` (`lib/agendum/tui/app.ex:209-309`) for an effect it does not know, so an unknown effect is logged rather than a crash (the crash of 2026-10-17, `a0612f9`)
+  - [ ] A recovery file on a crash: the unsaved file written beside it, and offered when it is next opened
+  - [ ] Hostile-text tests: a `.AG` file (and a feed) whose item text asks for changes imports as plain items, and only its own
+- [ ] Towards parity (AGENDA_PARITY.md, "The steps"; View Properties first, recurring items second, meeting 2026-10-22, § 5f):
   - [ ] The View Properties box for every view (screenshot 143), F6 on the view
+  - [ ] Recurring items on every date they recur: in each datebook section and in any date filter that covers an occurrence, counted from the base date, still one item (as Agenda does; checked in Agenda 2.0, User's Guide 7-11). Plan with the evidence, the habit changes to settle first and the steps: `docs/plans/RECURRING_OCCURRENCES.md` (R14a). A parity step since meeting 2026-10-22, § 5a
+  - [ ] The note editor as Agenda's (its own item, below; `NOTE_EDITOR.md`)
   - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash
   - [ ] File ▸ Abandon, File Maintenance Erase, File Transfer Template
   - [ ] Show ItemsDone, Show Every, Show Circular (with the `o` indicator)
   - [ ] Control panel symbols and indicators: `*` on a date category or value, `WAIT` while a calendar is fetched, `D` with unindexed categories (and unindexed categories themselves)
   - [ ] Compare the category, view and macro managers' menus with Agenda's, and add them to the overview
   - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash; screenshot 130) where Agendum has them (Tab size done, R64e)
+  - [ ] Agenda's help, in our own words (meeting 2026-10-22, § 7; AGENDA_PARITY.md, step 10): Agenda's F1 keys and structure exactly (the topic for where you are, bold links, F3 Index, F5 Find, F6 Keys, F8 or BACKSPACE Review; PURPOSE, STEPS, PRESS / TO DO THIS), the texts new since Agenda's are Lotus's: terse, a Hundred Acre Wood flavour in an opening line and the examples, no Milne quoted, no Disney or Shepard pictures. Today's F1 texts and command descriptions become its topics; F1's `c`, `d`, `a` (R65) stay reachable from it
   - [ ] Optional: Utilities Launch (a shell without quitting)
 - [ ] Category properties of a date or numeric category as Agenda's: the box shows only Category name, Type, Parent, Note, Note file, Special actions, Assignment actions, Statistics and Advanced settings; Short name, Match category name, Match short name, Also match, Exclusive children and Assignment conditions go (checked in Agenda 2.0, 2026-10-16, converting a category in its box: the fields vanish as Type changes). A habit change for the box: settle with the owner first; Agendum's Excludes (ours) to decide too
 - [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
 - [ ] Boxes: F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) every setting in the box, CTRL-ENTER clears a setting (User's Guide 2-17)
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names (the note editor's header: in the note editor plan above)
-- [ ] Hypertext help: topics with links (TAB, ENTER), Index, Find, Review (Agenda's F1)
 
 ### The note editor (Milestone 2)
 
@@ -70,7 +82,7 @@ Then working together:
 ### Data interchange (Milestone 4)
 
 - [ ] Repeating events in a calendar from another time zone: each occurrence converted in its own zone, so the weeks between the two zones' summer-time changes are not an hour off (SPEC R45)
-- [ ] Optional: read original `.AG` files directly. The format is now largely known (`docs/AGENDA_FILE_FORMAT.md`; research log `docs/plans/AGENDA_FILE_FORMAT_LOG.md`; reference reader `tools/agformat/agdump.py`): items, notes and note files, categories with all their settings, conditions and actions, assignments with values, relative and recurring dates, alarms, views with sorting and filters, datebooks, sections, columns with formats, file settings
+- [ ] Optional: read original `.AG` files directly. The format is now largely known (`docs/AGENDA_FILE_FORMAT.md`; research log `docs/plans/archive/AGENDA_FILE_FORMAT_LOG.md`; reference reader `tools/agformat/agdump.py`): items, notes and note files, categories with all their settings, conditions and actions, assignments with values, relative and recurring dates, alarms, views with sorting and filters, datebooks, sections, columns with formats, file settings
   - [x] Reverse engineer the format: container, items, categories, values, views (2026-10-14)
   - [x] Settle the open parts: view/section sort and filter words, relative-date encoding, actions, settings (2026-10-15, second round; how to drive Agenda: `tools/agformat/DRIVING_AGENDA.md`)
   - [x] An Elixir reader and conversion (pure, `Agendum.Core.AgFile`, through the JSON format's checks); File ▸ Transfer ▸ Import of a `.AG` and `agendum OLD.AG`, with a password and a report of what came over (R72, 2026-10-16)
@@ -82,18 +94,18 @@ Then working together:
 
 ### Time management (Milestone 5)
 
-- [ ] Recurring items on every date they recur: in each datebook section and in any date filter that covers an occurrence, counted from the base date, still one item (as Agenda does; checked in Agenda 2.0, User's Guide 7-11). Plan with the evidence, the habit changes to settle first and the steps: `docs/plans/RECURRING_OCCURRENCES.md` (R14a)
 - [ ] Check in Agenda 2.0 (headless, `agenda_driver.py`) what it did with alarms that came due while the file was closed, and compare with "While you were away" (R70); move the answer into SPEC R70 and AGENDA_PARITY.md
 - [ ] Alarms sent to your phone with Signal, as well as on the screen: through the separate `signal-cli` program, linked to your Signal account; optional (nothing changes without it), set up in File ▸ Customize
 
 ### Housekeeping
 
+- [ ] The session summaries into git: `docs/summaries/` no longer ignored (`.gitignore:55`), committed to this private repository, so they are not on one disk only; left out of the public copy with the business files (`GITHUB.md` § 7) (meeting 2026-10-22, § 5h)
 - [ ] Rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it ([`docs/plans/RENAME_REPO.md`](plans/RENAME_REPO.md))
 *[A page here was soaked in the creek. — Rabbit]*
 
 ### Users and direction
 
-- [ ] Five real users before Milestone 2 is closed: old Agenda users and people who love keyboard tools, with the debug log on (`AGENDUM_LOG`) and a short talk with each; what they stumble on goes here (expert review 2026-10-16); with a date set (second meeting)
+- [ ] Real users, when there are any: old Agenda users and people who love keyboard tools, with the debug log on (`AGENDUM_LOG`) and a short talk with each; what they stumble on goes here (expert review 2026-10-16). Not a condition for declaring the clone done, and no search for old Agenda users now: the owner knows none (meeting 2026-10-22, § 5a and § 5e)
 
 ### Beyond Agenda
 
@@ -117,13 +129,16 @@ Each item names the group in `VISION.md` it serves, group 1 first; items for gro
 
 ### Ideas
 
+**Frozen until the truthful clone is declared done** (meeting 2026-10-21, § 5; meeting 2026-10-22, § 5i): ideas wait here; none moves up before then.
+
 Each names the group in `VISION.md` it serves; an idea moves up to "Beyond Agenda" when it serves group 1 or 2 now (meeting 2026-10-16-2, § 6).
 
 - *Groups 1 and 2.* Multiple files open; a launcher listing recent files
 - *Groups 2 and 3.* In-line help in boxes: the hint inside a box (made from its keys, `Box.hint/2`) as the start of a fuller help, with longer texts in a help box of their own (the owner's idea, 2026-10-14)
 - *Group 1.* Wol in the machine (its memory: the context items of `plans/ITEM_LEVELS.md`): a personal agent (a language model) inside the file, using its items, categories, views and rules as the person's own meaning; it files, finds and plans by proposing, never silently changing; the core stays pure and privacy comes first. Builds on the command layer (Towards many users). Thoughts in [`docs/plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)
 - *Group 1.* Before Wol, without a model: golden tasks (a few small files, a request each, and the commands a good answer proposes), which also test the command layer's design (expert review 2026-10-16, second meeting, `docs/reviews/2026-10-16-2.md`). The sixth principle it asked for, item text is data and never instructions, is in the Wol plan
-- *Group 3.* Modern by default: today's names and standard keys out of the box (Open not Retrieve, Delete not Discard, CTRL-O/S/Z/F/N…), with Agenda's names and keys one setting away ("Agenda mode"). Agenda's steep learning curve limited its audience (AGENDA_HISTORY.md); the power should stay, the strangeness should not be the first thing people meet. Builds on the keymaps, self-describing commands and own key bindings (Towards many users); departs from ADR 0006 and 0007, so it needs an ADR of its own. Since ADR 0038 (2026-10-16) this is for the web's modern interface: the terminal program keeps Agenda's names and keys
+- *Group 3.* Modern by default: today's names and standard keys out of the box (Open not Retrieve, Delete not Discard, CTRL-O/S/Z/F/N…), with Agenda's names and keys one setting away ("Agenda mode"). Agenda's steep learning curve limited its audience (AGENDA_HISTORY.md); the power should stay, the strangeness should not be the first thing people meet. Builds on the keymaps, self-describing commands and own key bindings (Towards many users); departs from ADR 0006 and 0007, so it needs an ADR of its own. Since ADR 0038 (2026-10-16) this is for the web's modern interface: the terminal program keeps Agenda's names and keys. In the terminal, later and as an extra: a modern key set as a setting in the same program, File ▸ Customize ▸ Keys: Agenda (default) or Modern, not a second program (meeting 2026-10-22, § 6; ADR 0038)
+- *Group 3.* A starter for the easily overwhelmed, with a gentler "Overdue" (fewer at a time, kinder words) than the Planner's (`lib/agendum/starters/planner/views.ex:73`), which stays as Agenda's PLANNER (expert review 2026-10-21, § 17; meeting 2026-10-22, § 5k)
 - *Group 3.* More date languages (one `Agendum.Core.DateLanguage` pack each); English and Swedish exist (R14c)
 - *No group yet.* Flashcards with active recall and spaced repetition: an item is the question, its note the answer; a deck is any category. The schedule is kept in ordinary categories made the first time (date category Due; numeric Interval, Ease and Reviews), so filters, datebooks, sorting and JSON work on cards as they are, with no new stored fields. A review mode on the due items: the question, SPACE shows the note, then Again / Hard / Good / Easy sets the next Due date (one undo step per card). Scheduling is SM-2 to begin with, in a pure core module with the clock passed in, behind an interface that FSRS could replace
 

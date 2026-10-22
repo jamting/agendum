@@ -16,7 +16,7 @@ APPS/AGENDA (it is mounted as C:). Example:
     d.keys("F10", "q"); d.stop()    # quit; TEST.AG is now in its saved layout
 
 See DRIVING_AGENDA.md (this directory) for what works and what to watch out for,
-and docs/plans/AGENDA_FILE_FORMAT_LOG.md for how it was used.
+and docs/plans/archive/AGENDA_FILE_FORMAT_LOG.md for how it was used.
 """
 import urllib.request, json, time, subprocess, os, re, base64
 S=os.environ.get("AGENDA_DOS_ROOT", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dos"))

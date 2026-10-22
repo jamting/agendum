@@ -170,16 +170,20 @@ These are rough: a count of commands and rules, not of how much each matters. By
 
 ## The steps
 
-To close the gaps or move them onto the lists above on purpose; each one small and test-first, in about this order (the most used first):
+To close the gaps or move them onto the lists above on purpose; each one small and test-first. After the truthful clone's groundwork (ROADMAP, "Towards parity"), View Properties comes first and recurring items second, as the owner met both in daily use (meeting 2026-10-22, § 5f); the rest in about this order (the most used first):
 
-1. The note editor plan (`NOTE_EDITOR.md`), from its control panel on.
-2. The View Properties box for every view (screenshot 143), so that F6 on the view and View ▸ Properties work as in Agenda; the Hide, Filter and Order entries stay as shortcuts.
-3. The trash: Item ▸ Undisc and Utilities ▸ Trash, with File Properties ▸ Empty trash (roadmap: smaller fidelity items).
-4. File ▸ Abandon (back to the saved file), File Maintenance Erase, File Transfer Template.
-5. Show ItemsDone and Show Every (Show View lists), Show Circular with the `o` indicator.
-6. The control panel's `*` (date) symbol, and `WAIT` while a calendar is fetched; `D` with unindexed categories (roadmap).
-7. File Properties' other settings (roadmap item), as far as Agendum has them.
-8. The category manager's, view manager's and macro manager's menus: compare them with Agenda's in the same way, and add their tables here.
-9. Optional: Utilities Launch (a shell without quitting).
+1. The View Properties box for every view (screenshot 143), so that F6 on the view and View ▸ Properties work as in Agenda; the Hide, Filter and Order entries stay as shortcuts.
+2. Recurring items on every date they recur, in datebooks and date filters, still one item (R14a; plan and habit changes: `RECURRING_OCCURRENCES.md`; meeting 2026-10-22, § 5a).
+3. The note editor plan (`NOTE_EDITOR.md`): its remaining parts (external note files).
+4. The trash: Item ▸ Undisc and Utilities ▸ Trash, with File Properties ▸ Empty trash (roadmap: smaller fidelity items).
+5. File ▸ Abandon (back to the saved file), File Maintenance Erase, File Transfer Template.
+6. Show ItemsDone and Show Every (Show View lists), Show Circular with the `o` indicator.
+7. The control panel's `*` (date) symbol, and `WAIT` while a calendar is fetched; `D` with unindexed categories (roadmap).
+8. File Properties' other settings (roadmap item), as far as Agendum has them.
+9. The category manager's, view manager's and macro manager's menus: compare them with Agenda's in the same way, and add their tables here.
+10. Agenda's help, in our own words (meeting 2026-10-22, § 7): F1 shows the topic for where you are, bold words link to other topics (arrows, ENTER), F3 Index, F5 Find, F6 Keys, F8 or BACKSPACE Review, ESC leaves; each topic in Agenda's layout (PURPOSE, STEPS, PRESS / TO DO THIS). The keys and the structure are Agenda's; the texts are new, since Agenda's are Lotus's: terse, with a Hundred Acre Wood flavour in an opening line and the examples, quoting no Milne and using no Disney or Shepard pictures. Today's per-place F1 texts and the commands' descriptions become topics (one source, the keys topics made from the keymaps), and F1's `c`, `d` and `a` (R65) stay reachable from it.
+11. Optional: Utilities Launch (a shell without quitting).
+
+**Declared done** means: every step above built, and every entry on the two lists tagged by ADR 0043's test and confirmed by the owner. It does not wait for outside users' findings (meeting 2026-10-22, § 5a). Each missing thing in "How close" above is either a step here or on the modifications list on purpose.
 
 When a difference is kept, it goes in the enhancements or modifications list above, so that the lists stay the whole truth.
