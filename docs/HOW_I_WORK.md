@@ -76,6 +76,7 @@ The panel advises; it never votes. I decide.
 | What                                   | Where                                                                                          |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | What comes next                        | [`ROADMAP.md`](ROADMAP.md), the **Next:** line at the top                                      |
+| What is done                           | [`ROADMAP_DONE.md`](ROADMAP_DONE.md), by milestone                                             |
 | Every document and what it is for      | [`INDEX.md`](INDEX.md)                                                                         |
 | Thoughts waiting for a meeting         | Thoughts ▸ Next meeting in my project file (`$AGENDUM_PROJECT_FILE`), read by `mix agendum.thoughts` |
 | Reviews, meetings, study               | `docs/reviews/`, `docs/meetings/YYYY-MM-DD/`, `docs/study/STUDY_PLAN.md`                       |

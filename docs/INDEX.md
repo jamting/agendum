@@ -11,7 +11,8 @@ What each document is for, and when to read it. `docs/` describes Agendum as it 
 | [`../CONTRIBUTING.md`](../CONTRIBUTING.md)   | Setting up a machine, and a first change, for a person                                            |
 | [`HOW_I_WORK.md`](HOW_I_WORK.md)             | The owner's way of working: the loop, the skills, the panel, the tools, and what could work better |
 | [`VISION.md`](VISION.md)                     | Where Agendum is going: Agenda's idea, a knowledge system with a model inside, many users     |
-| [`ROADMAP.md`](ROADMAP.md)                   | What is open (first) and what is done, with rule numbers                                          |
+| [`ROADMAP.md`](ROADMAP.md)                   | What is open, with what comes next first and rule numbers                                         |
+| [`ROADMAP_DONE.md`](ROADMAP_DONE.md)         | What is done, by milestone: the record of finished roadmap items                                  |
 | [`../CHANGELOG.md`](../CHANGELOG.md)         | What changed in each version (semantic versioning, tagged `vX.Y.Z`)                               |
 
 ## What Agendum does
@@ -85,7 +86,7 @@ Finished or dropped plans, kept as records of how something was done or why it w
 
 | When you…                              | Update                                                                                         |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| add or change a behaviour              | its rule in `SPEC.md` (and the rule index); the item in `ROADMAP.md`, ticked and moved to Done |
+| add or change a behaviour              | its rule in `SPEC.md` (and the rule index); the item in `ROADMAP.md`, ticked and moved to `ROADMAP_DONE.md` |
 | add or change a key                    | `KEYBOARD.md`; the key's keymap and command (the F1 help is made from them)                     |
 | add a screen or box                    | `SCREENS.md` (a test checks); `ARCHITECTURE.md` if it is a new module                          |
 | add a stored field                     | `DATA_MODEL.md` (and a row in its format versions), `DATA_ACCESS.md` if queried, `JSON_FORMAT.md` and `Agendum.Core.JSONFile`; set it in `Agendum.Starters.Golden`, and with the new format version run `mix agendum.golden` and commit its two files |
