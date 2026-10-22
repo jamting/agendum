@@ -2,7 +2,7 @@
 
 **Status:** under way: about 80% overall on 2026-10-15. Since the meeting of 2026-10-21 (§ 5) this is the work that comes first: a truthful clone, declared done when the steps below are done and every entry on the two lists is tagged and confirmed; "Beyond Agenda" gets bug fixes only until then. The steps are tracked in ROADMAP ("Towards parity with Agenda"); keep the two lists below complete.
 
-**The test for a difference** (ADR 0043, meeting 2026-10-21, § 6): a difference from Agenda 2.0 stays only if **the machine** forces it (keyboards, terminals, sound, files), it protects **the person's work** (undo, asking before changes are lost), or it is **quiet** (an Agenda user who never asks for it never meets it: nothing changed on Agenda's screens, no Agenda key taken, no entry added to Agenda's menus). Anything else is an *extra*, hidden behind the Extras preference (off by default), or is changed back. Each entry on the two lists below is to get its tag (*machine*, *work*, *quiet*, *extra* or *change back*), confirmed by the owner entry by entry; a change back that alters a habit is a roadmap item of its own, settled first. The comparison with Agenda's captured menus (meeting 2026-10-21, § 8) reads these tags as the accepted differences.
+**The test for a difference** (ADR 0043, meeting 2026-10-21, § 6): a difference from Agenda 2.0 stays only if **the machine** forces it (keyboards, terminals, sound, files), it protects **the person's work** (undo, asking before changes are lost), or it is **quiet** (an Agenda user who never asks for it never meets it: nothing changed on Agenda's screens, no Agenda key taken, no entry added to Agenda's menus). Anything else is an *extra*, hidden behind the Extras preference (off by default), or is changed back. Each entry on the two lists below has its tag (*machine*, *work*, *quiet*, *extra* or *change back*), confirmed by the owner entry by entry on 2026-10-22; a change back that alters a habit is a roadmap item of its own, settled first. The comparison with Agenda's captured menus (meeting 2026-10-21, § 8) reads these tags as the accepted differences.
 
 The ambition: someone who knew Lotus Agenda 2.0 sits down at Agendum and finds the same screen, the same keys, the same menus and the same behaviour, apart from a list of **accepted enhancements** (things Agenda did not have) and **accepted modifications** (things Agenda had that Agendum does differently, for a reason). Everything else that differs is a gap, to be closed or moved onto one of the two lists on purpose.
 
@@ -112,47 +112,49 @@ Not yet compared: the menus of the category manager (Agenda: Category, Print, Re
 
 ## Beyond Agenda: accepted enhancements
 
-What Agendum has that Agenda did not:
+What Agendum has that Agenda did not. Each entry carries its tag by ADR 0043's test, proposed by Claude and confirmed by the owner entry by entry in the tagging sitting of 2026-10-22 (meeting 2026-10-22, § 5b): **machine**, **work** or **quiet** stay; **extra** is hidden behind the Extras preference; **change back** is a roadmap item of its own (ROADMAP, Towards parity).
 
-- Undo and redo of every change (CTRL-Z, CTRL-Y; R30), on the menu too.
-- JSON export and import (R44), a readable file format.
-- Calendar subscriptions (iCal, R45) and time zones.
-- Date languages, Swedish among them, and the file's date format (ISO 8601 by default; R41).
-- Colour themes beyond Agenda's (R40).
-- Word wrap in the note editor (R64).
-- A count before a command in a view, as Emacs's numeric prefix: ALT-1 ALT-0 ↓ moves ten rows (R65). In Agenda ALT-digits typed DOS character codes.
-- Help made from the commands and keymaps (R65): from F1, `c` lists the commands that work there (those that cannot run now greyed, with the reason, R65a; each with a longer text saying why one would use it, R65b), `d` describes a key, `a` lists every key. Agenda's F1 help was a fixed text per screen.
-- File ▸ New, File ▸ Dating (When dates from text on or off, shown as `[No Auto Dates]`), Category ▸ Recalc, View ▸ Rename, View ▸ Last, Item ▸ Note / When / Show / Finished / Mark / Unmark on the menu.
-- Search this view (ALT-F6 in a view, ALT-N / ALT-P), and the Show View for results.
-- Hide column heads (R57) as a view setting.
-- The debug log and the developer tools (ALT-?).
-- Descriptive key bar labels on a wide screen.
-- The `--clinic` Easter egg.
-- ► before the current view in the view manager, and F5 to list the views by recently used (R68).
-- A "While you were away" box for alarms that came due while the file was closed (R70).
-- Zettel ids (Quadsyl-24, R73, ADR 0039), a Zettel id column (R73a) and links between items (R73b).
-- A micro-blog published from the file (File ▸ Transfer ▸ Publish, R74).
-- Feeds: a plain RSS and Atom reader, the News view, OPML, CTRL-V to open a link (R75).
-- CTRL-X runs a command by name, found by part of it or its initials, in a small box (R65d, ADR 0040); F1 `c` narrows the same way.
+- **work** · Undo and redo of every change (CTRL-Z, CTRL-Y; R30). Being on the menu goes with the menu's shape (modifications, below).
+- **machine** · JSON export and import (R44), a readable file format.
+- **extra** · Calendar subscriptions (iCal, R45) and time zones.
+- **quiet** · Date languages, Swedish among them (R41): English is the default.
+- **change back** · The file's date format defaults to ISO 8601 (R41). New files get Agenda's MM/DD/YY; ISO stays one of Agenda's own choices (YYYYMMDD with "-"), and files keep the format they have.
+- **quiet** · Colour themes beyond Agenda's (R40): Agenda's colours are the default.
+- **machine** · Word wrap in the note editor (R64). Agenda wrapped notes too, at 79 characters (User's Guide, importing a note); Agendum wraps at the window's width, the same on an 80-column screen.
+- **machine** · A count before a command in a view, as Emacs's numeric prefix: ALT-1 ALT-0 ↓ moves ten rows (R65). In Agenda ALT-digits typed DOS character codes, which a terminal cannot.
+- **quiet, once Agenda's help is built** · Help made from the commands and keymaps (R65): from F1, `c` lists the commands that work there (those that cannot run now greyed, with the reason, R65a; each with a longer text saying why one would use it, R65b), `d` describes a key, `a` lists every key. Agenda's F1 help was a fixed text per screen; step 10 makes Agenda's help the front, with `c`, `d` and `a` reached from it.
+- **change back** · File ▸ New, File ▸ Dating (When dates from text on or off, shown as `[No Auto Dates]`), Category ▸ Recalc, View ▸ Rename, View ▸ Last, Item ▸ Note / When / Show / Finished / Mark / Unmark on the menu: they leave Agenda's menus; the commands stay on their keys and in CTRL-X.
+- **quiet** · The debug log and the developer tools (ALT-?).
+- **extra** · Descriptive key bar labels on a wide screen.
+- **quiet** · The `--clinic` Easter egg (reached only by a command-line flag).
+- **extra** · ► before the current view in the view manager, and F5 to list the views by recently used (R68).
+- **extra** · A "While you were away" box for alarms that came due while the file was closed (R70). Agenda rings such alarms when the file is opened and shows `@`, with no box (checked in Agenda 2.0, 2026-10-22: an alarm due at 10:04pm, the file closed, opened at 10:05pm); the items are in Utilities ▸ Show Alarm's Past Alarms, which Agendum is to get (ROADMAP).
+- **extra** · Zettel ids (Quadsyl-24, R73, ADR 0039), a Zettel id column (R73a) and links between items (R73b).
+- **extra** · A micro-blog published from the file (File ▸ Transfer ▸ Publish, R74).
+- **extra** · Feeds: a plain RSS and Atom reader, the News view, OPML, CTRL-V to open a link (R75).
+- **quiet** · CTRL-X runs a command by name, found by part of it or its initials, in a small box (R65d, ADR 0040), a key Agenda left unused; F1 `c` narrows the same way.
+
+Off the list since the tagging sitting, as no difference from Agenda: **search** (ALT-F6, ALT-N / ALT-P and the Show View for results) is Agenda's own ALT-F6 SEARCH in views and notes, with its Match show view (Agenda's F1 help); comparing it with Agenda's Search box is parity work (ROADMAP). **Hide column heads** (R57) is a setting of Agenda's own View Properties box (checked in Agenda 2.0, 2026-10-22).
 
 ## Done differently: accepted modifications
 
-What Agenda had that Agendum does another way, on purpose:
+What Agenda had that Agendum does another way, on purpose. Tagged as the enhancements above, 2026-10-22.
 
-- **Saving.** Agenda saves automatically (Quit, Retrieve). Agendum keeps changes until you save and asks before they are lost; ` *` on the File line shows unsaved changes.
-- **The menu's shape.** The same commands, regrouped: Agenda's Utilities are spread over File (Customize), Category (Execute, Questions) and a Search menu (the Show commands); Undo and Redo are on the top level; Print writes a text file.
-- **Sounds** (R76). Agenda's own tones, through the computer's audio player rather than the PC speaker (the terminal's bell where there is none); every error message beeps with the one error beep, where Agenda also had a shorter one; Sound in File ▸ Customize silences them all.
-- **Mode words.** Agendum always shows one (READY, MENU, NOTE, PROPS …); Agenda showed none when ready and had fewer.
-- **The marked-items symbol** is ♦ (Agenda's ▸ is hard to tell from the cursor in a terminal).
-- **The key bar** is one line, names and labels side by side.
-- **Boxes**: ENTER keeps and ESC cancels in every settings box (ADR 0030), where Agenda's boxes varied.
-- **Retrieve** asks about unsaved changes; **Write** (Save As) takes MakeCopy's place.
-- **CTRL keys** for INS, HOME, END and the most used commands (CTRL-N new, CTRL-E edit, CTRL-K done, CTRL-D discard, CTRL-S/O/P/Q save, open, print, quit; R31, KEYBOARD.md), as Mac keyboards lack those keys and terminals can map ⌘ shortcuts onto them. Function keys are required, as in Agenda: there is no ESC + digit stand-in (ADR 0032).
-- **Where you left off** (R69, meeting 2026-10-16, § 5): Agenda stored the current view and item in the file; Agendum keeps them in the preferences per file, so moving does not change the file and each person (later, each user) has their own place.
-- **No ALT and CTRL key bars** while the key is held (the owner, 2026-10-16): F1's help does it better (R65: `c` lists the commands where you are, greyed with the reason when they cannot run, `d` describes a key, `a` lists every key), and a terminal sees ALT or CTRL held alone only with the kitty keyboard protocol. The research: `archive/KITTY.md`.
-- **Export / Import** are JSON, not structured `.STF` files; Import also reads Agenda's own `.AG` files (R72); STF is planned.
-
-Each of these is a candidate for "Agenda mode" (roadmap, Beyond Agenda: Agenda's names and keys one setting away).
+- **work** · **Saving.** Agenda saves automatically (Quit, Retrieve). Agendum keeps changes until you save and asks before they are lost; ` *` on the File line shows unsaved changes.
+- **change back** · **The menu's shape.** The same commands, regrouped: Agenda's Utilities are spread over File (Customize), Category (Execute, Questions) and a Search menu (the Show commands); Undo and Redo are on the top level. Agenda's shape comes back; Undo and Redo keep their keys. **machine**: Print writes a text file.
+- **machine** · **Sounds** (R76). Agenda's own tones, through the computer's audio player rather than the PC speaker (the terminal's bell where there is none); every error message beeps with the one error beep, where Agenda also had a shorter one; Sound in File ▸ Customize silences them all.
+- **change back** · **Mode words.** Agendum always shows one (READY, MENU, NOTE, PROPS …); Agenda showed none when ready and had fewer.
+- **machine** · **The marked-items symbol** is ♦ (Agenda's ▸ is hard to tell from the cursor in a terminal).
+- **change back** · **The key bar** is one line, names and labels side by side; Agenda's is two lines, the keys above their labels.
+- **Boxes** (ADR 0030): ENTER keeps and ESC cancels in every settings box, as Agenda's frame says, so that part is no difference. Checked in Agenda 2.0, 2026-10-22, three differences remain:
+  - **change back** · Agendum shows a box's changes behind it at once; Agenda shows them only after ENTER.
+  - **change back** · Agenda's category lists opened from a box (a view's Filter, the Assignment Profile, conditions, Excludes) say "Press ENTER to accept", SPACE switches a category, and ENTER and ESC both close the list keeping the change; Agendum's say "Press ESC when done", and in some ENTER switches a category.
+  - **work** · ESC in a box puts back everything done since it opened, changes made in its category lists included; Agenda's ESC kept those.
+- **work** · **Retrieve** asks about unsaved changes. **change back**: **Write** (Save As) gives way to Agenda's File ▸ Maintenance ▸ MakeCopy, a copy under another name.
+- **machine** · **CTRL keys** for INS, HOME, END and the most used commands (CTRL-N new, CTRL-E edit, CTRL-K done, CTRL-D discard, CTRL-S/O/P/Q save, open, print, quit; R31, KEYBOARD.md), as Mac keyboards lack those keys and terminals can map ⌘ shortcuts onto them. Function keys are required, as in Agenda: there is no ESC + digit stand-in (ADR 0032).
+- **quiet** · **Where you left off** (R69, meeting 2026-10-16, § 5): Agenda stored the current view and item in the file; Agendum keeps them in the preferences per file, so moving does not change the file and each person (later, each user) has their own place.
+- **machine** · **No ALT and CTRL key bars** while the key is held (the owner, 2026-10-16): a terminal sees ALT or CTRL held alone only with the kitty keyboard protocol (`archive/KITTY.md`); F1's help covers it (R65).
+- **machine** · **Export / Import** are JSON, not structured `.STF` files; Import also reads Agenda's own `.AG` files (R72); STF is still to come (ROADMAP, Data interchange).
 
 ## How close: a guesstimate
 

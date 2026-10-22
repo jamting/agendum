@@ -1,6 +1,6 @@
 # ADR 0030 — In a settings box, ENTER is done and ESC cancels
 
-**Status:** accepted · 2026-10-14
+**Status:** accepted · 2026-10-14; amended 2026-10-22 (below)
 
 ## Context
 
@@ -22,3 +22,18 @@ Our settings boxes apply each change at once, so the screen behind a box shows i
 - People used to ENTER on a field in the six boxes press SPACE (or F2) instead; the help in the control panel (`Agendum.TUI.Boxes.FieldHelp`) and the key bar say so.
 - Cancelling restores whole snapshots, so it is simple and covers every setting, present and future, without per-box code.
 - A box must keep its mode map when it changes it (`%{mode | …}`), or it loses its snapshot; none replaces it.
+
+## Amendment, 2026-10-22: two points changed back to Agenda's
+
+The tagging sitting of 2026-10-22 (ADR 0043; meeting 2026-10-22, § 5b) checked boxes in Agenda 2.0 run headless, on a copy of PLANNER:
+
+- With Hide empty sections set to Yes in View Properties, the empty section stayed behind the box until ENTER; then it went and `[Hide empty]` appeared on the view line. **Agenda applies a box's changes on ENTER.**
+- A category list opened from a box (a view's Filter, an item's Assignment Profile) says "Press ENTER to accept"; SPACE switches a category; ESC closes it **keeping** the change, as ENTER does.
+- ESC in the outer box did not undo what was changed in such a list (the filter stayed `[-Contact List,Type,Lodging]`; an assignment made in the profile stayed).
+
+Decided by the owner:
+
+- **Changed back:** a settings box applies its changes when ENTER closes it, not while it is open. Category lists take Agenda's frame text and keys: "Press ENTER to accept", SPACE switches, ENTER and ESC both close keeping the change. The "Press ESC when done" lists and ENTER switching a category go.
+- **Kept, tagged *work*:** ESC in a box puts back everything done since the box opened, the changes made in its category lists included. Agenda kept those, a surprise ESC should not hold.
+
+Both changes back are roadmap items (Towards parity), settled with the owner before they are built.
