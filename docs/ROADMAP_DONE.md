@@ -125,7 +125,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] Reverse engineer the format: container, items, categories, values, views (2026-10-14)
   - [x] Settle the open parts: view/section sort and filter words, relative-date encoding, actions, settings (2026-10-15, second round; how to drive Agenda: `tools/agformat/DRIVING_AGENDA.md`)
   - [x] An Elixir reader and conversion (pure, `Agendum.Core.AgFile`, through the JSON format's checks); File ▸ Transfer ▸ Import of a `.AG` and `agendum OLD.AG`, with a password and a report of what came over (R72, 2026-10-16)
-- [x] Time zones in calendar subscriptions: a time with a TZID is converted by the calendar's own `VTIMEZONE` definitions (offsets and yearly daylight-saving rules or RDATEs, `Agendum.Core.ICal.TimeZone`) to UTC, then to local time; a zone the calendar does not define stays local time; no package (ADR 0021) (R45)
+- [x] Time zones in calendar subscriptions: a time with a TZID is converted by the calendar's own `VTIMEZONE` definitions (offsets and yearly daylight-saving rules or RDATEs, `Agendum.Core.Extras.ICal.TimeZone`, `Agendum.Core.ICal.TimeZone` before the extras' shelf) to UTC, then to local time; a zone the calendar does not define stays local time; no package (ADR 0021) (R45)
 
 ### Milestone 5 — Time management and automation
 

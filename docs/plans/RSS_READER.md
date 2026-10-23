@@ -1,6 +1,6 @@
 # A plain RSS reader
 
-**Status:** built 2026-10-17 (R75, v0.13.0), approved by the owner the same day (tagged). Not finished (meeting 2026-10-22-3, § 6–7): F3 at the OPML prompts is a bug to fix; OPML through File ▸ Transfer ▸ Import waits until the extras thaw; whether entries are read-only was referred to `ITEM_LEVELS.md` (ROADMAP, Beyond Agenda). Step 1 of "An RSS reader, with Wol later" (ROADMAP, Beyond Agenda; meeting 2026-10-16-2, § 7). Wol's part (summaries, sifting, suggestions) is step 2, after principle 6 of `WOL-IN-THE-MACHINE.md`.
+**Status:** built 2026-10-17 (R75, v0.13.0), approved by the owner the same day (tagged). Not finished (meeting 2026-10-22-3, § 6–7): F3 at the OPML prompts was a bug, fixed in v0.16.2 (2026-10-23); OPML through File ▸ Transfer ▸ Import waits until the extras thaw; whether entries are read-only was referred to `ITEM_LEVELS.md` (ROADMAP, Beyond Agenda). Step 1 of "An RSS reader, with Wol later" (ROADMAP, Beyond Agenda; meeting 2026-10-16-2, § 7). Wol's part (summaries, sifting, suggestions) is step 2, after principle 6 of `WOL-IN-THE-MACHINE.md`.
 
 ## The idea
 
