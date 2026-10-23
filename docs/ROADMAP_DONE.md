@@ -152,6 +152,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Housekeeping
 
+- [x] On GitHub (2026-10-17): a private repository (`jamting/agendum`), the README and a guide for setting up and contributing (`CONTRIBUTING.md`), CI running `mix check` on every push. GitHub Pages (a product page, the user guide) moved to the public repository item, as Pages needs a paid plan for a private one (owner, 2026-10-23)
 - [x] The session summaries into git (meeting 2026-10-22, § 5h; 2026-10-23): `docs/summaries/` no longer ignored, its 50 summaries committed to this private repository, so they are not on one disk only; left out of the public copy (`GITHUB.md` § 7); the end-session skill commits each new one
 - [x] Move the TUI's direct `Database` writes into `Agendum.Core` operations (enforced by `architecture_test.exs`)
 - [x] Resolve existing conflicts when making children exclusive, as Agenda 2.0 does (R7a)
