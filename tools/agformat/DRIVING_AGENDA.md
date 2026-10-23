@@ -16,6 +16,7 @@ Practical notes for running the real Agenda 2.0 unattended, to check how it beha
 - Line 0 is Agenda's prompt/help line (it says what the current field is for); line 1 is `View: <name>` in a view: **a reliable "no box is open" test**. While a menu is open, lines 0–1 are the menu.
 - Attributes tell what is selected. In settings boxes the **label of the current field is drawn with attribute `0x3F`** (bright white on cyan); everything else in the box is `0x31`/`0x30`. Reading the characters with that attribute gives the current field's label, which is how `goto(label)` finds a field without counting ↓ presses.
 - In lists (category manager, filter picker) the highlighted row has an attribute different from all other rows in that column; `select(text)` uses this. Skip rows 0–1 and the column-head row: a column head with the same text (e.g. "When") otherwise matches first.
+- **`select(text)` can be fooled in a view** (2026-10-23): in a datebook the slot heads are `0x71` and item rows `0x70`, so a lone item row "differs from the others" without being highlighted, and F4 then went to the slot head. In views, check the highlight itself: the highlighted item row has `0x4F` (`attr_at(row, col) == 0x4F`), pressing ↓ until it does; read the result from a saved file (`agdump.py`) rather than the screen when a symbol (√, ♪) is not plain ASCII.
 
 ## Typing keys
 
