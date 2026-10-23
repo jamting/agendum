@@ -115,7 +115,79 @@ defmodule Agendum.Core.RecurringDatesTest do
     test "years, including the 29th of February" do
       assert Recurrence.next(%Recurrence{unit: :year}, ~D[2028-02-29]) == ~D[2029-02-28]
     end
+  end
 
+  # Where a recurring item shows (R14a; checked in Agenda 2.0, 2026-10-15
+  # and 2026-10-23): on every date it recurs on within a range, counted
+  # from the base date, never before it
+  describe "occurrences in a range" do
+    test "every day from a Friday: the Friday and every day after, nothing before" do
+      rule = %Recurrence{unit: :day}
+
+      assert Recurrence.occurrences(rule, ~D[2026-10-16], ~D[2026-10-13], ~D[2026-10-18]) ==
+               [~D[2026-10-16], ~D[2026-10-17], ~D[2026-10-18]]
+    end
+
+    test "intervals are kept from the base date" do
+      other_day = %Recurrence{every: 2, unit: :day}
+
+      assert Recurrence.occurrences(other_day, ~D[2026-10-17], ~D[2026-10-26], ~D[2026-11-04]) ==
+               [~D[2026-10-27], ~D[2026-10-29], ~D[2026-10-31], ~D[2026-11-02], ~D[2026-11-04]]
+
+      # every 2nd Tuesday from 10/20: 11/3, not 10/27
+      second_tuesday = %Recurrence{every: 2, unit: :week, weekday: 2}
+
+      assert Recurrence.occurrences(
+               second_tuesday,
+               ~D[2026-10-20],
+               ~D[2026-10-26],
+               ~D[2026-11-08]
+             ) ==
+               [~D[2026-11-03]]
+    end
+
+    test "months keep their day across February, far from the base date" do
+      rule = %Recurrence{unit: :month, day: 30}
+
+      assert Recurrence.occurrences(rule, ~D[2026-01-30], ~D[2031-02-01], ~D[2031-03-31]) ==
+               [~D[2031-02-28], ~D[2031-03-30]]
+    end
+
+    test "every quarter, and every year on the 29th of February" do
+      quarter = %Recurrence{every: 3, unit: :month, day: 1}
+
+      assert Recurrence.occurrences(quarter, ~D[2026-10-01], ~D[2027-01-01], ~D[2027-12-31]) ==
+               [~D[2027-01-01], ~D[2027-04-01], ~D[2027-07-01], ~D[2027-10-01]]
+
+      year = %Recurrence{unit: :year}
+
+      assert Recurrence.occurrences(year, ~D[2028-02-29], ~D[2029-01-01], ~D[2032-12-31]) ==
+               [~D[2029-02-28], ~D[2030-02-28], ~D[2031-02-28], ~D[2032-02-29]]
+    end
+
+    test "an empty range, or one before the base date, has none" do
+      rule = %Recurrence{unit: :week, weekday: 1}
+      assert Recurrence.occurrences(rule, ~D[2026-10-19], ~D[2026-10-20], ~D[2026-10-25]) == []
+      assert Recurrence.occurrences(rule, ~D[2026-10-19], ~D[2026-10-01], ~D[2026-10-18]) == []
+      assert Recurrence.occurrences(rule, ~D[2026-10-19], ~D[2026-10-27], ~D[2026-10-26]) == []
+    end
+
+    test "occurs?/4 with open ends, as date filters have them" do
+      rule = %Recurrence{unit: :week, weekday: 1}
+      assert Recurrence.occurs?(rule, ~D[2026-10-19], ~D[2027-06-01], nil)
+      assert Recurrence.occurs?(rule, ~D[2026-10-19], nil, ~D[2026-10-19])
+      refute Recurrence.occurs?(rule, ~D[2026-10-19], nil, ~D[2026-10-18])
+      refute Recurrence.occurs?(rule, ~D[2026-10-19], ~D[2026-10-20], ~D[2026-10-25])
+    end
+
+    test "first/3: the first occurrence on or after a date" do
+      rule = %Recurrence{unit: :week, weekday: 1}
+      assert Recurrence.first(rule, ~D[2026-10-19], ~D[2026-11-01]) == ~D[2026-11-02]
+      assert Recurrence.first(rule, ~D[2026-10-19], ~D[2026-10-01]) == ~D[2026-10-19]
+    end
+  end
+
+  describe "describing" do
     test "descriptions, as Item Properties shows them" do
       assert Recurrence.describe(%Recurrence{unit: :week, weekday: 1}) == "every Monday"
 
