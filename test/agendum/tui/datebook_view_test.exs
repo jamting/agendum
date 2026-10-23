@@ -184,4 +184,34 @@ defmodule Agendum.TUI.DatebookViewTest do
                "Browse needs a date filter (View Properties ▸ Filter) or a datebook view"
     end
   end
+
+  # R14a: a recurring item on every date it recurs (checked in Agenda 2.0,
+  # 2026-10-15 and 2026-10-23)
+  describe "a recurring item" do
+    setup %{state: state} do
+      {db, id} = Core.add_item(state.db, "Swim every Monday", ~D[2026-10-12])
+      %{state: Layout.settle(%{state | db: db}), swim: id}
+    end
+
+    test "browsing to next week shows it on that Monday", %{state: state} do
+      state = press(state, [{:alt, "b"}, :right, :enter])
+      assert screen(state) =~ ~r/── Mon 2026-10-19 ─+\n • Swim every Monday/u
+    end
+
+    test "F4 on a later occurrence marks it done and adds the next, as on its base date",
+         %{state: state, swim: swim} do
+      state = press(state, [{:alt, "b"}, :right, :enter])
+
+      row =
+        Enum.find_index(Layout.rows(state), &(&1[:item] && &1.item.text == "Swim every Monday"))
+
+      state = state |> Layout.move_to(row) |> press({:f, 4})
+      assert state.db.items[swim].done == ~D[2026-10-12]
+
+      [copy] =
+        for i <- Map.values(state.db.items), i.text == "Swim every Monday", i.done == nil, do: i
+
+      assert copy.when == ~D[2026-10-19]
+    end
+  end
 end

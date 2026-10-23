@@ -212,6 +212,13 @@ defmodule Agendum.Core.Datebook do
     if NaiveDateTime.compare(finish, start) == :lt, do: start, else: finish
   end
 
+  @doc "The first and the last day a slot covers (a time slot's day, twice)."
+  @spec days(Slot.t()) :: {Date.t(), Date.t()}
+  def days(%Slot{kind: :time, from: from, to: to}),
+    do: {NaiveDateTime.to_date(from), NaiveDateTime.to_date(to)}
+
+  def days(%Slot{from: from, to: to}), do: {from, to}
+
   @doc """
   The options for `Agendum.Core.add_item/4` that file an item typed into a
   slot: under the Section category, dated at the slot's start (with its

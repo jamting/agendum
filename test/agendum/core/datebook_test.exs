@@ -190,4 +190,62 @@ defmodule Agendum.Core.DatebookTest do
       assert db.views[view].datebook.section_category == db.special.when
     end
   end
+
+  # A recurring item shows in every slot one of its occurrences falls in,
+  # counted from its base date and never before it (R14a; checked in
+  # Agenda 2.0, 2026-10-15: "every day" from a Friday shows Friday and every
+  # later day, not the days before), its row carrying that occurrence
+  describe "recurring items in a datebook" do
+    setup do
+      db = Core.new_file()
+      {:ok, db, view} = Core.add_datebook_view(db, "This week", %Datebook{period: :week})
+      # typed on Wednesday 14 October: its base date is that day
+      {db, swim} = Core.add_item(db, "Swim every day", ~N[2026-10-14 08:00:00])
+      %{db: db, view: view, swim: swim}
+    end
+
+    defp rows_by_day(db, view) do
+      for section <- ViewModel.build(db, db.views[view], @now),
+          do: {section.slot.from, Enum.map(section.rows, &{&1.item.text, &1.occurrence})}
+    end
+
+    test "from its base date on, in each day of the week", %{db: db, view: view} do
+      assert rows_by_day(db, view) == [
+               {~D[2026-10-12], []},
+               {~D[2026-10-13], []},
+               {~D[2026-10-14], [{"Swim every day", ~D[2026-10-14]}]},
+               {~D[2026-10-15], [{"Swim every day", ~D[2026-10-15]}]},
+               {~D[2026-10-16], [{"Swim every day", ~D[2026-10-16]}]}
+             ]
+    end
+
+    test "in a later week, every day", %{db: db, view: view} do
+      db = Core.set_datebook(db, view, %{db.views[view].datebook | base: "next week"}) |> elem(1)
+      assert db |> rows_by_day(view) |> Enum.all?(fn {_day, rows} -> length(rows) == 1 end)
+    end
+
+    test "a timed one in the slot of its time, on a later Monday", %{db: db, view: view} do
+      {db, _} = Core.add_item(db, "Stand-up every Monday at 9am", @now)
+      {:ok, db} = Core.set_datebook(db, view, %Datebook{period: :day, base: "2026-10-26"})
+      sections = ViewModel.build(db, db.views[view], @now)
+      nine = Enum.find(sections, &(&1.slot.from == ~N[2026-10-26 09:00:00]))
+
+      assert [%{item: %{text: "Stand-up every Monday at 9am"}, occurrence: ~D[2026-10-26]}] =
+               nine.rows
+    end
+
+    test "a week slot shows it once", %{db: db, view: view} do
+      {:ok, db} = Core.set_datebook(db, view, %Datebook{period: :month})
+      sections = ViewModel.build(db, db.views[view], @now)
+      week = Enum.find(sections, &(&1.slot.from == ~D[2026-10-19]))
+      assert [%{occurrence: ~D[2026-10-19]}] = week.rows
+    end
+
+    test "a done one only on its own date", %{db: db, view: view, swim: swim} do
+      db = Core.toggle_done(db, swim, ~D[2026-10-14])
+      rows = db |> rows_by_day(view) |> Enum.flat_map(&elem(&1, 1))
+      # the done one on Wednesday; the copy F4 made from Thursday on
+      assert length(rows) == 3
+    end
+  end
 end

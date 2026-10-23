@@ -5,7 +5,8 @@ defmodule Agendum.Core.ViewModel do
   TUI renders it, and tests can assert on it without a terminal.
   """
 
-  alias Agendum.Core.{Assign, Context, Database, Datebook, DateFormat, NumberFormat, View}
+  alias Agendum.Core.{Assign, Context, Database, Datebook, DateFormat, Item, NumberFormat}
+  alias Agendum.Core.{Recurrence, View}
   alias Agendum.Core.View.SortKey
 
   defmodule Row do
@@ -16,7 +17,10 @@ defmodule Agendum.Core.ViewModel do
     data, for a front end that formats or sorts it itself (a web page):
     see `Agendum.Core.ViewModel.value/3`. `number` is the item's place
     among the items its section shows, from 1, when the view numbers its
-    items (Number items, R79); nil when it does not.
+    items (Number items, R79); nil when it does not. `occurrence` is the
+    date of a recurring item's occurrence the row is there for (in a
+    datebook slot, its base date too; R14a), nil for an item that does not
+    recur.
     """
     @type t :: %__MODULE__{
             item: Agendum.Core.Item.t(),
@@ -24,9 +28,10 @@ defmodule Agendum.Core.ViewModel do
             values: [Agendum.Core.ViewModel.value()],
             percents: [String.t() | nil],
             inherited: boolean,
-            number: pos_integer | nil
+            number: pos_integer | nil,
+            occurrence: Date.t() | nil
           }
-    defstruct [:item, :number, cells: [], values: [], percents: [], inherited: false]
+    defstruct [:item, :number, :occurrence, cells: [], values: [], percents: [], inherited: false]
   end
 
   defmodule SectionModel do
@@ -93,15 +98,20 @@ defmodule Agendum.Core.ViewModel do
     d
     |> Datebook.slots(db.date_settings, today)
     |> Enum.map(fn slot ->
+      # `for` with a generator over what `placed/5` returns: none, or the
+      # item once with the date and time it shows at in this slot
       shown =
-        for {item, start, stop} <- items, Datebook.in_slot?(slot, start, stop), do: {item, start}
+        for {item, start, stop} <- items,
+            placed <- placed(db, d, slot, item, {start, stop}),
+            do: placed
 
       rows =
         shown
         |> order(db, view.sort)
-        |> Enum.map(fn item ->
+        |> Enum.map(fn {item, occurrence} ->
           %Row{
             item: item,
+            occurrence: occurrence,
             cells:
               Enum.map(
                 view.columns,
@@ -170,6 +180,39 @@ defmodule Agendum.Core.ViewModel do
     |> Enum.reject(&(view.hide_empty and &1.rows == []))
   end
 
+  # Where an item shows in a datebook slot: `[{item, {date, time},
+  # occurrence}]` or `[]`. A recurring item dated on When (R14a) shows on
+  # the first of its occurrences the slot holds, its end category's span
+  # moved with it; any other item on its own dates (occurrence nil).
+  defp placed(db, d, slot, item, {start, stop}) do
+    case d.date_category == db.special.when && Item.recurring(item) do
+      {rule, base} ->
+        {first_day, last_day} = Datebook.days(slot)
+        # an occurrence that starts before the slot may still last into it
+        span = span_days(start, stop)
+
+        rule
+        |> Recurrence.occurrences(base, Date.add(first_day, -span), last_day)
+        |> Enum.find_value([], fn day ->
+          {start, stop} = moved({start, stop}, Date.diff(day, base))
+          if Datebook.in_slot?(slot, start, stop), do: [{item, start, day}]
+        end)
+
+      _ ->
+        if Datebook.in_slot?(slot, start, stop), do: [{item, start, nil}], else: []
+    end
+  end
+
+  defp span_days(_start, nil), do: 0
+  defp span_days({date, _}, {stop, _}), do: max(Date.diff(stop, date), 0)
+
+  # a date and its end moved by `days`
+  defp moved({{date, time}, stop}, days),
+    do: {{Date.add(date, days), time}, moved_end(stop, days)}
+
+  defp moved_end(nil, _days), do: nil
+  defp moved_end({date, time}, days), do: {Date.add(date, days), time}
+
   # an item's date and time in a date category, or nil
   defp dated(_db, _item_id, nil), do: nil
 
@@ -180,14 +223,26 @@ defmodule Agendum.Core.ViewModel do
     end
   end
 
-  # by date and time (untimed first), then entry order; or by the view's sort
+  # by date and time (untimed first), then entry order; or by the view's
+  # sort. Each comes back with the occurrence it is shown for.
   defp order(shown, _db, []) do
     shown
-    |> Enum.sort_by(fn {_item, {date, time}} -> {Date.to_gregorian_days(date), seconds(time)} end)
-    |> Enum.map(&elem(&1, 0))
+    |> Enum.sort_by(fn {_item, {date, time}, _occurrence} ->
+      {Date.to_gregorian_days(date), seconds(time)}
+    end)
+    |> Enum.map(fn {item, _start, occurrence} -> {item, occurrence} end)
   end
 
-  defp order(shown, db, keys), do: shown |> Enum.map(&elem(&1, 0)) |> sort(db, keys)
+  # an item shows once in a slot, so its id finds its occurrence again
+  # after the sort
+  defp order(shown, db, keys) do
+    occurrences = Map.new(shown, fn {item, _start, occurrence} -> {item.id, occurrence} end)
+
+    shown
+    |> Enum.map(&elem(&1, 0))
+    |> sort(db, keys)
+    |> Enum.map(&{&1, occurrences[&1.id]})
+  end
 
   defp seconds(nil), do: -1
   defp seconds(time), do: time |> Time.to_seconds_after_midnight() |> elem(0)
