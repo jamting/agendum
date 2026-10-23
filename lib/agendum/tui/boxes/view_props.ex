@@ -13,7 +13,8 @@ defmodule Agendum.TUI.Boxes.ViewProps do
     * Section sorting: None, Category order, Alphabetic or Numeric, and
       under it Order (Ascending, Descending) while it is not None
     * Hide empty sections, Hide done items, Hide dependent items, Hide
-      inherited items, Hide column heads, Section separators: Yes or No
+      inherited items, Hide column heads, Section separators, Number
+      items (R79): Yes or No
     * View statistics ...: the marked items, sections and items, in a box
       of their own (`Agendum.TUI.Boxes.ViewStatsBox`)
 
@@ -28,8 +29,7 @@ defmodule Agendum.TUI.Boxes.ViewProps do
 
   Every change applies at once and is one undo step; ENTER closes the box,
   ESC closes it and puts back what changed (`Agendum.TUI.Boxes.BoxCancel`).
-  Agenda's Number items comes in a step of its own; Named print set and
-  View protection are not in Agendum (SPEC § 6).
+  Named print set and View protection are not in Agendum (SPEC § 6).
 
   Opened from the view manager on another view, the box shows that view
   beneath it while it is open (its settings boxes work on the view shown),
@@ -59,7 +59,7 @@ defmodule Agendum.TUI.Boxes.ViewProps do
    Hide inherited items:  [inherited]  [s6                         ]
    Hide column heads:     [col_heads]  [s7                         ]
    Section separators:    [lines    ]  [s8                         ]
-                                     Filter: [filter               ]
+   Number items:          [number   ]  Filter: [filter               ]
 
    View statistics:       [statistics]
   """
@@ -80,6 +80,7 @@ defmodule Agendum.TUI.Boxes.ViewProps do
     inherited: 7,
     col_heads: 8,
     lines: 9,
+    number: 10,
     statistics: 12
   ]
 
@@ -90,7 +91,8 @@ defmodule Agendum.TUI.Boxes.ViewProps do
     dependent: :hide_dependent,
     inherited: :hide_inherited,
     col_heads: :hide_column_heads,
-    lines: :section_separators
+    lines: :section_separators,
+    number: :number_items
   }
 
   # Agenda's choices for Section sorting, in its order (Help)
@@ -114,6 +116,7 @@ defmodule Agendum.TUI.Boxes.ViewProps do
       "Choose whether to display items assigned to a descendant of the section head only.",
     col_heads: "Choose whether to display column heads for all sections or just the first one.",
     lines: "Display a line between each section.",
+    number: "Display a number next to the item tag in front of every item.",
     statistics: "Press SPACE BAR to display current statistics for the view.",
     sections: "Type category(s) for section head(s) or press F3 to pick existing category(s).",
     moving: "Use Up and Down arrow keys to reposition the section. Press ENTER to accept.",
@@ -562,7 +565,8 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   def about(_state, _mode) do
     """
     View Properties holds the view's own settings: its name, how its items
-    and sections are sorted, what it hides, and its filter. SPACE changes
+    and sections are sorted, what it hides, whether it numbers its items,
+    and its filter. SPACE changes
     the highlighted setting; a letter or F3 picks a choice.
 
     Sections, on the right, lists the view's sections: ↓ and ↑ walk them.

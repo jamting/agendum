@@ -17,6 +17,8 @@ defmodule Agendum.Core.View do
   on the screen (R57); how a front end draws it is its own.
   `section_separators` draws each section head as a line across, in place
   of the blank line between sections (R58).
+  `number_items` numbers the items each section shows, 1, 2, 3 … (R79;
+  `Agendum.Core.ViewModel.Row.number`).
   `datebook` makes it a datebook view (R47, `Agendum.Core.Datebook`), whose
   sections are time slots worked out from its settings; its stored
   `sections` are not used. `section_sort` shows the sections in category
@@ -188,6 +190,7 @@ defmodule Agendum.Core.View do
           hide_dependent: boolean,
           hide_column_heads: boolean,
           section_separators: boolean,
+          number_items: boolean,
           section_sort: :none | :category | :alpha | :numeric,
           section_order: :asc | :desc,
           datebook: Agendum.Core.Datebook.t() | nil
@@ -207,6 +210,7 @@ defmodule Agendum.Core.View do
     hide_dependent: false,
     hide_column_heads: false,
     section_separators: false,
+    number_items: false,
     section_sort: :none,
     section_order: :asc,
     datebook: nil

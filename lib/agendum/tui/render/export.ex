@@ -42,7 +42,11 @@ defmodule Agendum.TUI.Render.Export do
               do: " (done #{DateFormat.date(row.item.done, state.db.date_format)})",
               else: ""
 
-          "  • " <> row.item.text <> done <> if(extra == "", do: "", else: "  [#{extra}]")
+          # Number items (R79): printed too, as Agenda printed them
+          number = if row.number, do: "#{row.number} ", else: ""
+
+          "  • " <>
+            number <> row.item.text <> done <> if(extra == "", do: "", else: "  [#{extra}]")
         end)
 
       calcs =

@@ -853,6 +853,7 @@ defmodule Agendum.Core.Facade.Views do
           | :hide_dependent
           | :hide_column_heads
           | :section_separators
+          | :number_items
         ) :: db
   def toggle_view_option(db, view_id, option) do
     # `Map.update!/3` applies a function to the current value of one key

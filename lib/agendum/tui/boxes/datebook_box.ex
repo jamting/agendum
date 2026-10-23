@@ -4,8 +4,8 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
   after View ▸ Add with Type Datebook; SPEC R47; User's Guide 10-6 to
   10-10, Help "View Add box"): Date category, End category, Section,
   Period, Interval, Start at, End at, Base date on, then the view's Hide
-  column heads (R57) and Section separators (R58), as Agenda's View
-  Properties of a datebook has them (screenshot 55).
+  column heads (R57), Section separators (R58) and Number items (R79), as
+  Agenda's View Properties of a datebook has them (screenshot 55).
 
   The box is drawn from `@layout` (`Agendum.TUI.Boxes.Template`): the rows and
   their order, for the cursor too, are the fields there.
@@ -16,7 +16,8 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
       week (a day of the week)
     * SPACE on Start at / End at of a day, or Base date on, asks for it
       (a time; a date such as "today", "next week" or "2026-11-05")
-    * SPACE switches Hide column heads and Section separators
+    * SPACE switches Hide column heads, Section separators and Number
+      items (R79)
     * ENTER closes the box; ESC closes it and cancels its changes
       (`Agendum.TUI.Boxes.BoxCancel`)
 
@@ -45,10 +46,11 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
 
    Hide column heads  : [hide_column_heads     ]
    Section separators : [section_separators    ]
+   Number items       : [number_items          ]
   """
   @rows Template.fields(@layout)
   # the view's own settings, switched on or off (not the datebook's)
-  @options [:hide_column_heads, :section_separators]
+  @options [:hide_column_heads, :section_separators, :number_items]
   @days ~w(Mon Tue Wed Thu Fri Sat Sun)
 
   @help %{
@@ -65,7 +67,8 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
       "The date the period is taken from, such as \"today\" or \"next week\", " <>
         "read each time the view is shown. SPACE types it.",
     hide_column_heads: "Whether the column heads show above each section. SPACE switches.",
-    section_separators: "Whether a line separates the sections. SPACE switches."
+    section_separators: "Whether a line separates the sections. SPACE switches.",
+    number_items: "Display a number next to the item tag in front of every item."
   }
 
   def open(state, view_id),
@@ -224,7 +227,8 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
       end: stop,
       base: "#{d.base} (#{DateFormat.date(base, db.date_format)})",
       hide_column_heads: yes_no.(view.hide_column_heads),
-      section_separators: yes_no.(view.section_separators)
+      section_separators: yes_no.(view.section_separators),
+      number_items: yes_no.(view.number_items)
     }
 
     Template.render(@layout, values, selected: field(state, mode)) ++

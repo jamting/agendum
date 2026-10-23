@@ -482,6 +482,7 @@ defmodule Agendum.Core.AgFile.Convert do
       "hide_dependent" => v.hide_dependent,
       "hide_column_heads" => v.hide_column_heads,
       "section_separators" => v.section_separators,
+      "number_items" => v.number_items,
       "filter" => filter,
       "sort" => sort_keys(v.sort, ctx),
       "section_sort" =>

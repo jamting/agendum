@@ -14,16 +14,19 @@ defmodule Agendum.Core.ViewModel do
     "% tot" ("12%", "" without a number) or nil when the column shows none
     (Display % of total, R29). `values` holds what each cell shows as
     data, for a front end that formats or sorts it itself (a web page):
-    see `Agendum.Core.ViewModel.value/3`.
+    see `Agendum.Core.ViewModel.value/3`. `number` is the item's place
+    among the items its section shows, from 1, when the view numbers its
+    items (Number items, R79); nil when it does not.
     """
     @type t :: %__MODULE__{
             item: Agendum.Core.Item.t(),
             cells: [String.t()],
             values: [Agendum.Core.ViewModel.value()],
             percents: [String.t() | nil],
-            inherited: boolean
+            inherited: boolean,
+            number: pos_integer | nil
           }
-    defstruct [:item, cells: [], values: [], percents: [], inherited: false]
+    defstruct [:item, :number, cells: [], values: [], percents: [], inherited: false]
   end
 
   defmodule SectionModel do
@@ -110,7 +113,7 @@ defmodule Agendum.Core.ViewModel do
 
       %SectionModel{
         category: category,
-        rows: percents(rows, db, view.columns),
+        rows: rows |> percents(db, view.columns) |> numbered(view),
         slot: slot,
         columns: view.columns,
         calcs: calcs(db, view.columns, rows, Context.number_opts(today))
@@ -157,7 +160,7 @@ defmodule Agendum.Core.ViewModel do
       %SectionModel{
         category: category,
         index: index,
-        rows: percents(rows, db, section.columns),
+        rows: rows |> percents(db, section.columns) |> numbered(view),
         collapsed: section.collapsed,
         columns: section.columns,
         item_column: section.item_column,
@@ -194,6 +197,14 @@ defmodule Agendum.Core.ViewModel do
   # what `cell/6` needs from a column besides its head, width and numbers
   defp cell_opts(column, today),
     do: [today: today, date: column.date, format: column.format, note_line: column.note_line]
+
+  # Number items (R79): each row's place in its section, counting only the
+  # rows shown (a hidden done item leaves no gap, as in Agenda).
+  # `Enum.with_index/3` with a start of 1 hands each row its number.
+  defp numbered(rows, %View{number_items: true}),
+    do: rows |> Enum.with_index(1) |> Enum.map(fn {row, n} -> %{row | number: n} end)
+
+  defp numbered(rows, _view), do: rows
 
   # Each row's "% tot" per column: its number's share of the section's
   # total in a column that shows % of total, nil in the others.

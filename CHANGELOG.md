@@ -4,6 +4,16 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.20.0 — 2026-10-23
+
+Number items, the last row of Agenda's View Properties box.
+
+- **View Properties ▸ Number items** (on the row of Filter): Yes numbers the items in every section, 1, 2, 3 …, as Agenda does. Each section starts again at 1, and only the items shown are counted, so a hidden done item leaves no gap. The number comes before the item's text, and the text moves four columns to the right.
+- A datebook view has the same setting in its settings box.
+- File ▸ Print puts the numbers before the items too.
+- Number items in a Lotus Agenda `.AG` file is now brought over when you import it.
+- The file format changes (version 39): files saved by this version do not open in older ones.
+
 ## 0.19.0 — 2026-10-23
 
 View Properties, as in Lotus Agenda: a view's settings in one box.

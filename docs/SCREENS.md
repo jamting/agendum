@@ -87,7 +87,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
   - **Datebook settings** `:datebook_props` (View ▸ Properties of a datebook view; after View ▸ Add with Type Datebook): its categories, period, interval, start and end, base date (R47), Hide column heads (R57) and Section separators (R58). `Agendum.TUI.Boxes.DatebookBox`.
     - **Picker** `:picker` for the Date category, End category and Section.
     - **Prompt** `:prompt` for a time (Start at / End at of a day) or the base date.
-  - **View Properties** `:view_props` (View ▸ Properties of a standard view, F6 on a view in the view manager): the view's name, Item sorting, Section sorting and Order, the Hide settings, Section separators, View statistics, and on the right its Sections (add, remove, move) and Filter, laid out as Agenda's (R78). `Agendum.TUI.Boxes.ViewProps`.
+  - **View Properties** `:view_props` (View ▸ Properties of a standard view, F6 on a view in the view manager): the view's name, Item sorting, Section sorting and Order, the Hide settings, Section separators, Number items (R79), View statistics, and on the right its Sections (add, remove, move) and Filter, laid out as Agenda's (R78). `Agendum.TUI.Boxes.ViewProps`.
     - **Sort** `:sort` for Item sorting; **Picker** `:picker` for the filter or a new section's category (F3).
     - **Section Properties** `:section_props` for F6 on a section.
     - **View Statistics** `:view_stats` (View statistics ...): the marked items, sections and items in the view, as Agenda's; any key returns. `Agendum.TUI.Boxes.ViewStatsBox`.

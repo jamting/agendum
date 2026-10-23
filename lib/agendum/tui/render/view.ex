@@ -248,11 +248,17 @@ defmodule Agendum.TUI.Render.View do
 
     cells = item_cells(state, row, selected, editing)
 
+    # Number items (R79): the item's number between its marks and its text
+    number = Layout.number_label(row)
+    marks = [{:symbol, " " <> symbol}, {:symbol, note}, {:normal, number}]
+
     [first | rest] = text_lines
-    first_line = around_items(cells, row, [{:symbol, " " <> symbol}, {:symbol, note}] ++ first)
-    # a wrapped line keeps its text under the first, past the columns left of it
+    first_line = around_items(cells, row, marks ++ first)
+    # a wrapped line keeps its text under the first, past the columns left
+    # of it, the marks and the number
     blank = columns |> Enum.take(Layout.items_at(row)) |> blank_cells()
-    [first_line | Enum.map(rest, &(blank ++ [{:normal, "   "}] ++ &1))]
+    indent = [{:normal, Draw.spaces(3 + String.length(number))}]
+    [first_line | Enum.map(rest, &(blank ++ indent ++ &1))]
   end
 
   # An item's cells, one list of segments per column: its entry (or the

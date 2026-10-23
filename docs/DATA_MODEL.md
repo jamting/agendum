@@ -103,6 +103,7 @@ erDiagram
         bool hide_dependent "hide items waiting for prerequisites"
         bool hide_column_heads "column heads on the first section only"
         bool section_separators "section heads drawn as lines"
+        bool number_items "items numbered in each section"
         atom section_sort "none, category, alpha or numeric"
         atom section_order "asc or desc"
         map datebook "Datebook settings, or nil for a standard view"
@@ -291,6 +292,7 @@ classDiagram
         +hide_dependent : boolean
         +hide_column_heads : boolean
         +section_separators : boolean
+        +number_items : boolean
         +section_sort : none, category, alpha, numeric
         +section_order : asc or desc
         +datebook : Datebook or nil
@@ -656,6 +658,7 @@ Format versions:
 | 36 | Added `Database.feeds`, feed subscriptions (`Agendum.Core.Extras.Feed`, R75) |
 | 37 | Added `Database.tab_size`, File Properties ▸ Tab size (R64e) |
 | 38 | Moved the extras' stored structs, `Feed`, `Blog` and `Calendar`, to `Agendum.Core.Extras.*` (ADR 0044); loading maps the old names |
+| 39 | Added `View.number_items`, View Properties ▸ Number items (R79) |
 
 ## UI state around the database
 

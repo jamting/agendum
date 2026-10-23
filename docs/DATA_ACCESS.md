@@ -183,7 +183,7 @@ Every change goes through `Core.run(db, command, clock)`. The commands are liste
 | `Core.item_column_fit(db, view, sidx, clock, screen)`                                                                                                 | read         | SHIFT-? in View ▸ Column ▸ Width on the item text: the longest item text or section name of the linked sections, within the room.                                                             |
 | `View.ItemColumn.text_width(item_column, columns, screen)`                                                                                            | read         | How wide a section's item text is: set by hand, or what its columns leave (at least the minimum).                                                                                             |
 | `View.columns(view, section)`, `View.in_other_sections?(view, at)`                                                                                    | read         | A section's columns (a datebook's shared ones); whether removing a column asks "All sections" or "Current section" (R55).                                                                      |
-| `Core.toggle_view_option(db, view, :hide_done \| :hide_empty \| :hide_inherited)`                                                                     | write        | View filters.                                                                                                                                                                                 |
+| `Core.toggle_view_option(db, view, :hide_done \| :hide_empty \| :hide_inherited \| … \| :number_items)`                                              | write        | View options (R27, R57, R58, R79).                                                                                                                                                                               |
 | `Core.cycle_filter(db, view, :view \| {:section, i}, cat)`                                                                                            | write        | Filter by category (R28): none → assigned → not assigned → none.                                                                                                                              |
 | `Search.matches?(item, search)`                                                                                                                       | read         | Text search over item text and/or note (R37).                                                                                                                                                 |
 | `Core.show_match(db, search)`                                                                                                                         | write        | Fill the "Show View" with every matching item (created once; each use starts it afresh).                                                                                                      |
@@ -355,7 +355,8 @@ sequenceDiagram
         VM->>VM: drop inherited rows if hide_inherited
     end
     VM->>VM: drop empty sections if hide_empty
-    VM-->>R: [%SectionModel{category, rows: [%Row{item, cells, values, inherited}]}]
+    VM->>VM: number the rows shown, from 1, if number_items (R79)
+    VM-->>R: [%SectionModel{category, rows: [%Row{item, cells, values, inherited, number}]}]
 ```
 
 ## Cost

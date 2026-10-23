@@ -60,6 +60,7 @@ defmodule Agendum.TUI.Layout do
                 cells: r.cells,
                 percents: r.percents,
                 inherited: r.inherited,
+                number: r.number,
                 category: section.category,
                 slot: section.slot,
                 columns: section.columns,
@@ -85,7 +86,22 @@ defmodule Agendum.TUI.Layout do
   """
   @spec text_width(State.t(), row) :: pos_integer
   def text_width(%State{width: w}, row),
-    do: ItemColumn.text_width(row.item_column, row.columns, w)
+    do: max(ItemColumn.text_width(row.item_column, row.columns, w) - number_width(row), 1)
+
+  @doc """
+  An item's number as it is drawn before its text (Number items, R79):
+  left-aligned in four columns, as Agenda's ("1   ", "10  "), wider only
+  past 999; "" for a row without a number.
+  """
+  @spec number_label(row) :: String.t()
+  def number_label(%{number: n}) when is_integer(n),
+    do: String.pad_trailing(Integer.to_string(n), 3) <> " "
+
+  def number_label(_row), do: ""
+
+  # the item text gives up the number's columns (Agenda's item column
+  # stays as wide, its text starting further right)
+  defp number_width(row), do: String.length(number_label(row))
 
   @doc """
   The row's columns in the order they are shown, as `state.col` counts

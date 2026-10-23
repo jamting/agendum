@@ -120,10 +120,10 @@ defmodule Agendum.Starters.Golden do
   end
 
   # Views: sorting and filters in a view and a section, sections sorted,
-  # a section collapsed, the hide options, a date column with its own
-  # format and a title, a numeric column with its format, the item column
-  # set by hand and moved, a datebook, the Show View of a search, and a
-  # macro attached to a key.
+  # a section collapsed, the hide options and Number items, a date column
+  # with its own format and a title, a numeric column with its format, the
+  # item column set by hand and moved, a datebook, the Show View of a
+  # search, and a macro attached to a key.
   defp views(db) do
     view = hd(db.view_order)
     when_id = db.special.when
@@ -158,7 +158,8 @@ defmodule Agendum.Starters.Golden do
     db = Core.set_section_collapsed(db, view, 0, true)
 
     db =
-      Enum.reduce([:hide_empty, :hide_inherited, :hide_dependent], db, fn option, db ->
+      Enum.reduce([:hide_empty, :hide_inherited, :hide_dependent, :number_items], db, fn option,
+                                                                                         db ->
         Core.toggle_view_option(db, view, option)
       end)
 
