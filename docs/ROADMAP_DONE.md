@@ -152,6 +152,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Housekeeping
 
+- [x] The session summaries into git (meeting 2026-10-22, § 5h; 2026-10-23): `docs/summaries/` no longer ignored, its 50 summaries committed to this private repository, so they are not on one disk only; left out of the public copy (`GITHUB.md` § 7); the end-session skill commits each new one
 - [x] Move the TUI's direct `Database` writes into `Agendum.Core` operations (enforced by `architecture_test.exs`)
 - [x] Resolve existing conflicts when making children exclusive, as Agenda 2.0 does (R7a)
 - [x] Resolve conflicts when moving categories into exclusive families, as Agenda 2.0 does (R7b)

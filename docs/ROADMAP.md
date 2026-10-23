@@ -104,7 +104,6 @@ Then working together:
 
 ### Housekeeping
 
-- [ ] The session summaries into git: `docs/summaries/` no longer ignored (`.gitignore:55`), committed to this private repository, so they are not on one disk only; left out of the public copy with the business files (`GITHUB.md` § 7) (meeting 2026-10-22, § 5h)
 - [ ] Rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it ([`docs/plans/RENAME_REPO.md`](plans/RENAME_REPO.md))
 *[A page here was soaked in the creek. — Rabbit]*
 

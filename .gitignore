@@ -51,9 +51,6 @@ docs/reference/screens/
 # Claude Code settings that are personal (shared skills stay in .claude/skills/)
 .claude/settings.local.json
 
-# session summaries from the end-session skill: the owner's own notes, for now
-docs/summaries/
-
 # Python bytecode from the research tools in tools/
 __pycache__/
 /site

@@ -81,7 +81,7 @@ The panel advises; it never votes. I decide.
 | Every document and what it is for      | [`INDEX.md`](INDEX.md)                                                                         |
 | Thoughts waiting for a meeting         | Thoughts ▸ Next meeting in my project file (`$AGENDUM_PROJECT_FILE`), read by `mix agendum.thoughts` |
 | Reviews, meetings, study               | `docs/reviews/`, `docs/meetings/YYYY-MM-DD/`, `docs/study/STUDY_PLAN.md`                       |
-| A record of every session              | `docs/summaries/` (git ignored; kept complete, alike in shape, to import into Agendum one day with STF) |
+| A record of every session              | `docs/summaries/` (committed since 2026-10-23, private: left out of the public copy; kept complete, alike in shape, to import into Agendum one day with STF) |
 | What changed per version               | [`../CHANGELOG.md`](../CHANGELOG.md), and the `vX.Y.Z` tags                                    |
 | Why things are as they are             | `docs/adr/`, listed in [`ARCHITECTURE.md`](ARCHITECTURE.md)                                    |
 | Finished or dropped plans              | `docs/plans/archive/`                                                                          |
@@ -119,7 +119,7 @@ The panel advises; it never votes. I decide.
 - **All the questions up front, then a break**: the owner answered seven questions on the `.AG` import in two rounds and rested while it was built in three tested commits; nothing had to wait for them (2026-10-16).
 - **A meeting sorts a review's advice**: the eleven recommendations of 2026-10-21 decided one by one in one sitting, each into its home or dropped, so the roadmap's **Next action** says one thing again (2026-10-22).
 - **Use Agendum for Agendum** (adopted 2026-10-22, meeting § 7b): my thoughts live in a Thoughts view in my own file, and the dagordning file is retired (meeting 2026-10-22-2); the project's documents are to be imported into the same file as Disposable items, deleted and read afresh on each import (ROADMAP, Sharpen the saw).
-- **Off this Mac** (adopted 2026-10-22, meeting § 5h): the code is on GitHub since 2026-10-17; the session summaries are to be committed too (ROADMAP, Housekeeping).
+- **Off this Mac** (adopted 2026-10-22, meeting § 5h): the code is on GitHub since 2026-10-17; the session summaries are committed too, since 2026-10-23.
 - **Formatting needs no gate run**: a Claude Code hook (`.claude/settings.json`) runs `mix format` on every `.ex`/`.exs` file Claude writes, so a format failure no longer costs a `mix check` round (2026-10-22). The same file allows `mix test`, `mix check` and `tools/smoke/smoke.py` without a permission prompt.
 - **Questions first, then a row of builds**: three items (a bug fix release, the `feature` skill, the document import) settled in one round of four questions, then built and committed one after another while the owner went to bed (2026-10-23).
 - **Smoke tests in a sandbox**: a pty test sets `XDG_CONFIG_HOME` to a scratch folder and unsets `AGENDUM_LOG`, after one test wrote into the owner's real preferences (2026-10-16; CLAUDE.md, Testing the real terminal).
