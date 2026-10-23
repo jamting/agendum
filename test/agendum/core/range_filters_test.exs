@@ -251,4 +251,53 @@ defmodule Agendum.Core.RangeFiltersTest do
       refute Agendum.Core.date_filters?(db, [{when_id, :assigned}])
     end
   end
+
+  # A date filter on When matches a recurring item on any occurrence in the
+  # range (R14a; checked in Agenda 2.0, 2026-10-15 and 2026-10-23: a view
+  # filtered on a week lists every Monday and every day, not every other
+  # Monday in its off week, nor each month)
+  describe "recurring items" do
+    setup %{db: db} do
+      section = hd(db.views[hd(db.view_order)].sections).category_id
+
+      # today is Thursday 2026-10-08: base dates 10/12, 10/12, 10/08, 11/01
+      db =
+        Enum.reduce(
+          ["Gym every Monday", "Report every other Monday", "Walk every day"] ++
+            ["Rent the 1st of every month"],
+          db,
+          fn text, db -> db |> Core.add_item(text, @today, section: section) |> elem(0) end
+        )
+
+      %{db: db}
+    end
+
+    test "a range shows each item with an occurrence inside it", %{db: db, view: v, when: w} do
+      db = filter(db, v, w, :assigned, "2026-11-02", "2026-11-06")
+      assert shown(db, v) == ["Gym every Monday", "Walk every day"]
+    end
+
+    test "outside a range: only those with no occurrence inside it", %{db: db, view: v, when: w} do
+      db = filter(db, v, w, :assigned, "2026-11-02", "2026-11-06", :outside)
+      assert "Report every other Monday" in shown(db, v)
+      assert "Rent the 1st of every month" in shown(db, v)
+      refute "Gym every Monday" in shown(db, v)
+    end
+
+    test "never before the base date", %{db: db, view: v, when: w} do
+      db = filter(db, v, w, :assigned, "2026-10-01", "2026-10-07")
+      assert shown(db, v) == ["a"]
+    end
+
+    test "a done one counts only on its own date", %{db: db, view: v, when: w} do
+      gym = Enum.find(Database.items(db), &(&1.text == "Gym every Monday"))
+      db = Core.toggle_done(db, gym.id, @today)
+      db = filter(db, v, w, :assigned, "2026-11-02", "2026-11-06")
+
+      # the copy F4 made, from the next Monday on, is there; the done one not
+      assert Enum.count(shown(db, v), &(&1 == "Gym every Monday")) == 1
+      [copy] = for i <- Database.items(db), i.text == "Gym every Monday", i.done == nil, do: i
+      assert copy.when == ~D[2026-10-19]
+    end
+  end
 end

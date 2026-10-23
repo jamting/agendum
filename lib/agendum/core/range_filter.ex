@@ -11,10 +11,11 @@ defmodule Agendum.Core.RangeFilter do
   ("$monday") reads it once, when the range is set, and keeps that date
   (R14f). For a numeric
   category they are numbers. Either end may be nil (open). An item without
-  a date or number is never in a range. Pure.
+  a date or number is never in a range. A recurring item is in a When range
+  when one of its occurrences is (R14a). Pure.
   """
 
-  alias Agendum.Core.{Context, Database, DateParser, NumberFormat}
+  alias Agendum.Core.{Context, Database, DateParser, Item, NumberFormat, Recurrence}
 
   @type bound :: String.t() | float | Date.t() | nil
   @type term_ :: {:range, bound, bound, :inside | :outside}
@@ -90,10 +91,18 @@ defmodule Agendum.Core.RangeFilter do
 
       value ->
         inside =
-          after_start?(value, resolve(db, from, today)) and
-            before_end?(value, resolve(db, to, today))
+          inside?(db, item_id, cat_id, value, resolve(db, from, today), resolve(db, to, today))
 
         if where == :inside, do: inside, else: not inside
+    end
+  end
+
+  # A recurring item is in a When range when any occurrence is (R14a), so
+  # outside it means none is; other dates and numbers by their value
+  defp inside?(db, item_id, cat_id, value, from, to) do
+    case cat_id == db.special.when && Item.recurring(db.items[item_id]) do
+      {rule, base} -> Recurrence.occurs?(rule, base, from, to)
+      _ -> after_start?(value, from) and before_end?(value, to)
     end
   end
 

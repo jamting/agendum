@@ -55,4 +55,21 @@ defmodule Agendum.Core.Item do
     done: nil,
     marked: false
   ]
+
+  @doc """
+  The rule and base date of an item that recurs, nil for one that does
+  not: no rule, no When date, or done (R14a). A done item counts only on
+  its own date, as in Agenda, whose F4 leaves the done one a plain date and
+  gives the copy the rule; ours keeps the rule stored, so marking it not
+  done again brings it back.
+  """
+  @spec recurring(t) :: {Agendum.Core.Recurrence.t(), Date.t()} | nil
+  def recurring(%__MODULE__{
+        recurrence: %Agendum.Core.Recurrence{} = rule,
+        when: %Date{} = base,
+        done: nil
+      }),
+      do: {rule, base}
+
+  def recurring(%__MODULE__{}), do: nil
 end
