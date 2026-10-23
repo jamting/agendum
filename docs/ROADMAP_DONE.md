@@ -157,7 +157,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Housekeeping
 
-- [x] The repository folder moved from `~/Code/Lotus Agenda` to `~/ailab/agendum` (2026-10-23), with Claude Code's memory, sessions and trust settings (`~/ailab/mv-to-ailab --name agendum`); `_build/` and `tmp/` rebuilt, `mix check` green in the new folder ([`plans/RENAME_REPO.md`](plans/RENAME_REPO.md))
+- [x] The repository folder moved from `~/Code/Lotus Agenda` to `~/ailab/agendum` (2026-10-23), with Claude Code's memory, sessions and trust settings (`~/ailab/mv-to-ailab --name agendum`); `_build/` and `tmp/` rebuilt, `mix check` green in the new folder ([`plans/archive/RENAME_REPO.md`](plans/archive/RENAME_REPO.md))
 - [x] On GitHub (2026-10-17): a private repository (`jamting/agendum`), the README and a guide for setting up and contributing (`CONTRIBUTING.md`), CI running `mix check` on every push. GitHub Pages (a product page, the user guide) moved to the public repository item, as Pages needs a paid plan for a private one (owner, 2026-10-23)
 - [x] The session summaries into git (meeting 2026-10-22, § 5h; 2026-10-23): `docs/summaries/` no longer ignored, its 50 summaries committed to this private repository, so they are not on one disk only; left out of the public copy (`GITHUB.md` § 7); the end-session skill commits each new one
 - [x] Move the TUI's direct `Database` writes into `Agendum.Core` operations (enforced by `architecture_test.exs`)

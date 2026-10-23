@@ -85,7 +85,7 @@ The panel advises; it never votes. I decide.
 | What changed per version               | [`../CHANGELOG.md`](../CHANGELOG.md), and the `vX.Y.Z` tags                                    |
 | Why things are as they are             | `docs/adr/`, listed in [`ARCHITECTURE.md`](ARCHITECTURE.md)                                    |
 | Finished or dropped plans              | `docs/plans/archive/`                                                                          |
-| Claude's memory of how I work          | Claude Code's project memory (outside the repository, moves with the folder: `docs/plans/RENAME_REPO.md`) |
+| Claude's memory of how I work          | Claude Code's project memory (outside the repository, moves with the folder: `docs/plans/archive/RENAME_REPO.md`) |
 
 ## Tools I can run
 
