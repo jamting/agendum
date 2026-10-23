@@ -348,15 +348,16 @@ sequenceDiagram
         VM->>VM: drop done items if hide_done
         loop each item
             VM->>D: explicit?(item, section cat) → inherited flag
+            VM->>VM: a recurring item's occurrence in the When range filter (R14a)
             loop each column
-                VM->>VM: cell(db, item, head): date / "*" / names of linked descendants
+                VM->>VM: cell(db, item, head): date (on When the occurrence) / "*" / names of linked descendants
             end
         end
         VM->>VM: drop inherited rows if hide_inherited
     end
     VM->>VM: drop empty sections if hide_empty
     VM->>VM: number the rows shown, from 1, if number_items (R79)
-    VM-->>R: [%SectionModel{category, rows: [%Row{item, cells, values, inherited, number}]}]
+    VM-->>R: [%SectionModel{category, rows: [%Row{item, cells, values, inherited, number, occurrence}]}]
 ```
 
 ## Cost

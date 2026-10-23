@@ -6,7 +6,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
-1. Recurring items on every date they recur (parity; `RECURRING_OCCURRENCES.md`)
+1. Editing a recurring item's date shows its rule (parity; `RECURRING_OCCURRENCES.md`, step 5)
 2. A closed effect type in `App` (The clone's safety, below)
 3. Then the parity steps in their order ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the rest of the clone's safety between them
 

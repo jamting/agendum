@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.22.0 — 2026-10-23
+
+Recurring items show on every date they recur, as in Lotus Agenda.
+
+- In a **datebook**, "Swim every day" now shows on each day of the week from its first date on, and "Stand-up every Monday at 9am" in the 9:00 slot of every Monday, not only on the first one. A week or month slot shows it once.
+- A view **filtered on a date range** (View Properties ▸ Filter ▸ When) lists the recurring items that fall in it on any of their dates, and their **When column shows that date** (the first one in the range). Without a filter, the When column shows the first date, as before.
+- It is still one item: F4 on any of its rows marks it done and adds the next one, as before; discarding it removes it from every date.
+- Editing the date of a recurring item still offers the date alone (accepting it ends the repeating); showing the rule there, as Agenda does, is the next change.
+
 ## 0.21.0 — 2026-10-23
 
 The menus lose the shortcut entries that Lotus Agenda's menus never had. Everything they did is still there, where Agenda put it:

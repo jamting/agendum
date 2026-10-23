@@ -1,6 +1,6 @@
 # Plan: recurring items in datebooks and date filters (2026-10-15)
 
-**Status:** researched (2026-10-15); nothing built yet. Habit changes 2–4 below to settle with the owner first (AGENDA_PARITY.md, The steps: "Recurring items on every date they recur", after View Properties, meeting 2026-10-22, § 5f).
+**Status:** steps 1–4 built (2026-10-23, v0.22.0); step 5 (editing shows the rule) is the next parity step of its own (owner, 2026-10-23).
 
 A recurring item ("Status meeting every Monday") should show on **every** date it recurs on, not only on its base date: in each datebook section those dates fall in, and in any view whose date filter covers one of them. It stays one item. Today Agendum stores the rule (`Item.recurrence`, R14a) but uses it only when the item is marked done; datebooks and filters see only the base date. SPEC R14a lists this as not done.
 
@@ -89,3 +89,4 @@ With `tools/agformat/DRIVING_AGENDA.md`: open a copy of a file with "T42 every d
 ## Progress
 
 - 2026-10-15: research done (this document). Nothing built yet; habit changes 2–4 to settle with the owner.
+- 2026-10-23: habit changes 2 and 3 checked in Agenda 2.0 (headless, RICH.AG): F4 on a later occurrence (Gym, base 10/19, on Mon 10/26) marks the item done today, keeps its base date, drops its rule, and a copy gets 10/26 with the rule, as F4 on the base date; a view filtered on 11/01–11/07 shows the occurrence, 11/02/26, in its When column, and on 11/01–11/14 still one row with 11/02; unfiltered the base date; a datebook's When column shows only the time. The owner chose step 5 as its own next step. Steps 1–4 built (b3ba6b3, d8e65cb, aeb1621, 60d4c94). Our choice: a done item keeps its rule stored but counts only on its own date (`Item.recurring/1`).
