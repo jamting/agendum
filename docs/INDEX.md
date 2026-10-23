@@ -59,7 +59,7 @@ Each plan starts with its status.
 | [`plans/RECURRING_OCCURRENCES.md`](plans/RECURRING_OCCURRENCES.md)     | Recurring items on every date they recur, in datebooks and date filters        |
 | [`plans/MULTIUSER.md`](plans/MULTIUSER.md)                             | A web application with accounts and shared files, on the same core (ADR 0020)  |
 | [`plans/GITHUB.md`](plans/GITHUB.md)                                   | Putting the repository on GitHub; public or paid later                         |
-| [`plans/RENAME_REPO.md`](plans/RENAME_REPO.md)                         | Renaming the repository folder, with Claude Code's memory                      |
+| [`plans/RENAME_REPO.md`](plans/RENAME_REPO.md)                         | Moving the repository folder to `~/ailab/agendum`, with Claude Code's memory   |
 | [`plans/ITEM_LEVELS.md`](plans/ITEM_LEVELS.md)                         | Three levels of items: zettels, ingested items, the model's context items (vision) |
 | [`plans/RSS_READER.md`](plans/RSS_READER.md)                           | A plain RSS reader, like calendar subscriptions: the owner's decisions and the steps (R75) |
 | [`plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)           | An idea: a personal agent inside the file                                      |

@@ -104,7 +104,7 @@ Then working together:
 
 ### Housekeeping
 
-- [ ] Rename the repository folder (`Lotus Agenda`) to match, moving Claude Code's project memory with it ([`docs/plans/RENAME_REPO.md`](plans/RENAME_REPO.md))
+- [ ] Move the repository folder from `~/Code/Lotus Agenda` to `~/ailab/agendum` with `~/ailab/mv-to-ailab --name agendum`, which moves Claude Code's memory, sessions and trust settings with it; prepared 2026-10-23, the owner runs it with every Claude Code session closed ([`docs/plans/RENAME_REPO.md`](plans/RENAME_REPO.md))
 *[A page here was soaked in the creek. — Rabbit]*
 
 ### Users and direction
