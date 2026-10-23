@@ -55,10 +55,10 @@ defmodule Agendum.TUI.DependenciesTest do
     assert screen(state) =~ "would depend on itself"
   end
 
-  test "View ▸ Hide ▸ Pending hides waiting items until their prerequisites are done",
+  test "View Properties ▸ Hide dependent items hides waiting items until their prerequisites are done",
        %{state: state} do
     state = make_dependent(state) |> press(["y", {:alt_f, 7}])
-    state = press(state, [{:f, 10}, "v", "h", "p"])
+    state = switch_view_setting(state, "Hide dependent items")
     assert State.view(state).hide_dependent
     assert screen(state) =~ "[Hide Dependent]"
     refute screen(state) =~ "Contact Daniel"

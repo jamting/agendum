@@ -21,7 +21,6 @@ defmodule Agendum.TUI.Update.Actions do
     Layout,
     Menu,
     Boxes.SearchBox,
-    Boxes.SortBox,
     State,
     Boxes.ViewManager
   }
@@ -37,9 +36,6 @@ defmodule Agendum.TUI.Update.Actions do
     :section_below,
     :section_above,
     :remove_section,
-    :collapse_section,
-    :filter_section,
-    :sort_section,
     :section_props,
     :section_move
   ]
@@ -298,16 +294,6 @@ defmodule Agendum.TUI.Update.Actions do
       else: State.error(state, "No previous view")
   end
 
-  defp do_perform(state, :filter_view, _),
-    do: CategoryScreens.open_picker(state, {:filter, :view}, nil)
-
-  defp do_perform(state, :sort_view, _), do: SortBox.open(state, :view)
-
-  defp do_perform(state, :filter_section, %{sidx: sidx}),
-    do: CategoryScreens.open_picker(state, {:filter, {:section, sidx}}, nil)
-
-  defp do_perform(state, :sort_section, %{sidx: sidx}), do: SortBox.open(state, {:section, sidx})
-
   defp do_perform(state, :section_props, %{sidx: sidx}),
     do: Agendum.TUI.Boxes.SectionBox.open(state, sidx)
 
@@ -365,13 +351,6 @@ defmodule Agendum.TUI.Update.Actions do
 
   defp do_perform(state, :remove_section, %{sidx: sidx}) do
     State.run(state, {:remove_section, state.view_id, sidx})
-  end
-
-  defp do_perform(state, :collapse_section, %{sidx: sidx}) do
-    %{
-      State.run(state, {:toggle_section_collapsed, state.view_id, sidx})
-      | cursor_key: {:section, sidx}
-    }
   end
 
   # a new column goes into the section the cursor is in, and into the

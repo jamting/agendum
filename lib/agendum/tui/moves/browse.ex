@@ -42,7 +42,10 @@ defmodule Agendum.TUI.Moves.Browse do
 
     case Core.browse_start(state.db, view, sidx, State.context(state)) do
       nil ->
-        State.error(state, "Browse needs a date filter (View ▸ Filter) or a datebook view")
+        State.error(
+          state,
+          "Browse needs a date filter (View Properties ▸ Filter) or a datebook view"
+        )
 
       place ->
         State.push(state, Map.merge(%Agendum.TUI.Modes.Browse{view_id: view.id}, place))

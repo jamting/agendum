@@ -87,7 +87,6 @@ defmodule Agendum.TUI.Menu do
        ]},
       {"Category", "Work with categories",
        [
-         {"Manager", "Open the category manager (F9)", :category_manager},
          {"Add", "Add a category under MAIN", :add_category},
          {"Recalc", "Re-run automatic assignment for every item", :recalc},
          {"Execute", "Apply conditions and actions to existing items (ALT-X all, ALT-E one)",
@@ -96,7 +95,6 @@ defmodule Agendum.TUI.Menu do
        ]},
       {"View", "Change the current view or create new ones",
        [
-         {"Manager", "Switch, add, rename or discard views (F8)", :view_manager},
          {"Add", "Create a new view", :add_view},
          {"Rename", "Rename the current view", :rename_view},
          {"Discard", "Delete the current view (items are kept)", :discard_view},
@@ -104,21 +102,15 @@ defmodule Agendum.TUI.Menu do
           "The view's name, sections, sorting, filter and hiding (F6 in the manager)",
           :view_props},
          {"Browse", "Move a datebook view or a date filter to other dates (ALT-B)", :browse},
-         {"Section", "Add, remove or collapse sections",
+         {"Section", "Add, remove or move sections, or set their properties",
           [
             {"Below", "Add a section below the current one (ALT-D)", :section_below},
             {"Above", "Add a section above the current one (ALT-U)", :section_above},
             {"Remove", "Remove the current section from the view (DEL on head)", :remove_section},
-            {"Collapse", "Collapse or expand the current section", :collapse_section},
-            {"Filter", "Show only items in (or not in) chosen categories, in this section",
-             :filter_section},
-            {"Sort", "How this section's items are ordered", :sort_section},
             {"Properties", "The section's head, sorting, filter and columns (F6 on its head)",
              :section_props},
             {"Move", "Move the section up or down in this view (ALT-F10 on its head)",
-             :section_move},
-            {"Lines", "Lines between the sections (section separators)",
-             {:toggle_view, :section_separators}}
+             :section_move}
           ]},
          {"Column", "Add, remove or resize columns",
           [
@@ -132,20 +124,7 @@ defmodule Agendum.TUI.Menu do
             {"Width", "The highlighted column's width: ← →, a number, or ? to fit it",
              :column_width}
           ]},
-         {"Filter", "Show only items in (or not in) chosen categories", :filter_view},
-         {"Order", "Sort the items in every section (the view's sort settings)", :sort_view},
-         {"Last", "Return to the view shown before this one (ALT-F8)", :last_view},
-         {"Hide", "Choose which items the view hides",
-          [
-            {"Done", "Hide or show done items", {:toggle_view, :hide_done}},
-            {"Empty", "Hide or show empty sections", {:toggle_view, :hide_empty}},
-            {"Inherited", "Hide or show items only in subcategories",
-             {:toggle_view, :hide_inherited}},
-            {"Pending", "Hide or show items waiting for others to be done (ALT-O)",
-             {:toggle_view, :hide_dependent}},
-            {"Column heads", "Show column heads only in the first section on the screen",
-             {:toggle_view, :hide_column_heads}}
-          ]}
+         {"Last", "Return to the view shown before this one (ALT-F8)", :last_view}
        ]},
       {"Search", "Find items by their text",
        [

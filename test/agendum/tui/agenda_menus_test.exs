@@ -99,9 +99,6 @@ defmodule Agendum.TUI.AgendaMenusTest do
     "View menu ▸ Category ▸ Discard: missing" =>
       {:not_built,
        "ALT-F4 in the category manager: Agendum has the key only; the entry comes, keys unchanged (owner, 2026-10-23)"},
-    "View menu ▸ Category ▸ Manager: added" =>
-      {:change_back,
-       "a shortcut Agenda reaches by a Properties box or F8/F9: leaves the menu once View Properties is built (owner, 2026-10-23)"},
     "View menu ▸ Category ▸ Recalc: added" =>
       {:change_back,
        "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
@@ -109,24 +106,12 @@ defmodule Agendum.TUI.AgendaMenusTest do
       {:change_back, "the menu's shape (AGENDA_PARITY, tagged 2026-10-22): back to Utilities"},
     "View menu ▸ Category ▸ Questions: added" =>
       {:change_back, "the menu's shape (AGENDA_PARITY, tagged 2026-10-22): back to Utilities"},
-    "View menu ▸ View ▸ Manager: added" =>
-      {:change_back,
-       "a shortcut Agenda reaches by a Properties box or F8/F9: leaves the menu once View Properties is built (owner, 2026-10-23)"},
     "View menu ▸ View ▸ Rename: added" =>
       {:change_back,
        "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
-    "View menu ▸ View ▸ Filter: added" =>
-      {:change_back,
-       "a shortcut Agenda reaches by a Properties box or F8/F9: leaves the menu once View Properties is built (owner, 2026-10-23)"},
-    "View menu ▸ View ▸ Order: added" =>
-      {:change_back,
-       "a shortcut Agenda reaches by a Properties box or F8/F9: leaves the menu once View Properties is built (owner, 2026-10-23)"},
     "View menu ▸ View ▸ Last: added" =>
       {:change_back,
        "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
-    "View menu ▸ View ▸ Hide: added" =>
-      {:change_back,
-       "a shortcut Agenda reaches by a Properties box or F8/F9: leaves the menu once View Properties is built (owner, 2026-10-23)"},
     "View menu ▸ View: order" => {:change_back, "follows from the entries above leaving"},
     "View menu ▸ View ▸ Section ▸ Add: missing" =>
       {:change_back,
@@ -137,18 +122,6 @@ defmodule Agendum.TUI.AgendaMenusTest do
     "View menu ▸ View ▸ Section ▸ Above: added" =>
       {:change_back,
        "Agenda's name and order come back, keys unchanged (owner, 2026-10-23): Below and Above are Add (ALT-D, ALT-U)"},
-    "View menu ▸ View ▸ Section ▸ Collapse: added" =>
-      {:change_back,
-       "a shortcut Agenda reaches by a Properties box or F8/F9: leaves the menu once View Properties is built (owner, 2026-10-23)"},
-    "View menu ▸ View ▸ Section ▸ Filter: added" =>
-      {:change_back,
-       "a shortcut Agenda reaches by a Properties box or F8/F9: leaves the menu once View Properties is built (owner, 2026-10-23)"},
-    "View menu ▸ View ▸ Section ▸ Sort: added" =>
-      {:change_back,
-       "a shortcut Agenda reaches by a Properties box or F8/F9: leaves the menu once View Properties is built (owner, 2026-10-23)"},
-    "View menu ▸ View ▸ Section ▸ Lines: added" =>
-      {:change_back,
-       "a shortcut Agenda reaches by a Properties box or F8/F9: leaves the menu once View Properties is built (owner, 2026-10-23)"},
     "View menu ▸ View ▸ Section: order" =>
       {:change_back, "follows from the entries above leaving and coming"},
     "View menu ▸ Print: a command in Agendum, a menu in Agenda" =>

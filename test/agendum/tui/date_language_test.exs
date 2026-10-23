@@ -32,7 +32,9 @@ defmodule Agendum.TUI.DateLanguageTest do
     assert Agendum.TUI.Layout.current_row(state).item.when == ~D[2026-10-10]
 
     # a date filter from "måndag" (12th) on
-    state = press(state, [{:f, 10}, "v", "f", "When", :enter, :down, "måndag", :enter])
+    state =
+      state |> filter_picker(:view) |> press(["When", :enter, :down, "måndag", :enter])
+
     assert State.view(state).filter != []
     refute screen(state) =~ "Not a date"
   end

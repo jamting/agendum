@@ -181,7 +181,7 @@ defmodule Agendum.TUI.DatebookViewTest do
         state |> press(:esc) |> State.switch_view(hd(state.db.view_order)) |> Layout.settle()
 
       assert panel(press(plain, {:alt, "b"})) =~
-               "Browse needs a date filter (View ▸ Filter) or a datebook view"
+               "Browse needs a date filter (View Properties ▸ Filter) or a datebook view"
     end
   end
 end

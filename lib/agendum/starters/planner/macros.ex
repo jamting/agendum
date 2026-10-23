@@ -7,7 +7,9 @@ defmodule Agendum.Starters.Planner.Macros do
 
     * Customize date settings: File ▸ Properties, the file's date
       settings (Agenda: File Properties at Global date settings)
-    * Hide/Display done items: View ▸ Hide ▸ Done, which switches
+    * Hide/Display done items: View ▸ Properties, Hide done items (END
+      goes to View statistics, six ↑ from there reach it, whether or not
+      the Order row shows), SPACE switches it, ENTER closes the box
     * Print current view: Print, which asks for the file to print to
       (Agenda asked what to print and opened its Final Print box)
 
@@ -22,7 +24,7 @@ defmodule Agendum.Starters.Planner.Macros do
   # {name, keys in Agenda's notation (`Agendum.TUI.MacroKeys`)}
   @macros [
     {"Customize date settings", "{F10}fp"},
-    {"Hide/Display done items", "{F10}vhd"},
+    {"Hide/Display done items", "{F10}vp{END}{UP}{UP}{UP}{UP}{UP}{UP} {ENTER}"},
     {"Print current view", "{F10}p"}
   ]
 

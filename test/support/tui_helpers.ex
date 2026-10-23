@@ -103,6 +103,44 @@ defmodule Agendum.TUIHelpers do
       String.starts_with?(String.slice(above, column..-1//1), label)
   end
 
+  @doc """
+  Opens the filter picker of the view (`:view`) or of the highlighted
+  row's section (`:section`) the way Agenda does, through View Properties
+  or Section Properties ▸ Filter; `close_props/1` leaves the box after.
+  """
+  def filter_picker(state, :view), do: state |> props(:view) |> to_setting("Filter") |> press(" ")
+
+  def filter_picker(state, :section),
+    do: state |> props(:section) |> to_setting("Filter") |> press(" ")
+
+  @doc """
+  Switches the View Properties setting labelled `label` ("Hide done items")
+  and closes the box: one change, one undo step.
+  """
+  def switch_view_setting(state, label),
+    do: state |> props(:view) |> to_setting(label) |> press([" ", :enter])
+
+  @doc "Opens the Sort box of the view or the section, through its Properties ▸ Item sorting."
+  def sort_box(state, scope),
+    do: state |> props(scope) |> to_setting("Item sorting") |> press(" ")
+
+  @doc "Opens View Properties (`:view`) or the section's Section Properties (`:section`)."
+  def props(state, :view), do: press(state, [{:f, 10}, "v", "p"])
+  def props(state, :section), do: press(state, [{:f, 10}, "v", "s", "p"])
+
+  @doc """
+  Back down to the View or Section Properties box with ESC (the boxes and
+  pickers over it keep their changes, as Agenda's), then closes it with
+  ENTER: ESC there would put back every change made in it.
+  """
+  def close_props(state) do
+    case State.mode(state) do
+      nil -> state
+      %{type: type} when type in [:view_props, :section_props] -> press(state, :enter)
+      _other -> state |> press(:esc) |> close_props()
+    end
+  end
+
   def effects, do: Process.get(:effects_seen) || []
 
   def screen(state), do: state |> Render.render() |> Draw.to_text()

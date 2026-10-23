@@ -140,9 +140,8 @@ defmodule Agendum.TUI.ViewTest do
     assert screen(state) =~
              ~r/File\s+Item\s+Category\s+View\s+Search\s+Undo\s+Redo\s+Print\s+Quit/
 
-    state = press(state, ["v", "h", "d"])
-    assert Agendum.TUI.State.view(state).hide_done
-    assert state.modes == []
+    state = press(state, ["v", "p"])
+    assert %{type: :view_props} = Agendum.TUI.State.mode(state)
   end
 
   test "saving without a path prompts for one", %{state: state} do

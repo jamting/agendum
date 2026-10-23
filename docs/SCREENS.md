@@ -25,7 +25,7 @@ flowchart LR
     View -- F8 --> ViewMgr["View manager"]
     View -- F5 --> Note["Note editor"]
     View -- "F6 on an item" --> ItemProps["Item Properties"]
-    View -- "F6 on a section head" --> CatProps["Category Properties"]
+    View -- "F6 on a section head" --> SectProps["Section Properties"]
     View -- "F3 on an item" --> Profile["Assignment profile"]
     View -- "F3 in a column" --> Picker["Category picker"]
     View -- ALT-F5 --> GoTo["Go to section"]
@@ -39,7 +39,9 @@ flowchart LR
     Menu -- "View ▸ Column ▸ Properties" --> ColProps["Column Properties"]
     Menu -- "View ▸ Column ▸ Add" --> ColAdd["Column Add"]
     Menu -- "View ▸ Column ▸ Properties on the item text" --> ItemCol["Item Column Properties"]
-    Menu -- "View ▸ Order / Section ▸ Sort" --> Sort["Sort box"]
+    Menu -- "View ▸ Properties" --> ViewProps["View Properties"]
+    ViewProps -- "Item sorting" --> Sort["Sort box"]
+    SectProps -- "Item sorting" --> Sort
     Menu -- "Search ▸ Alarms" --> Alarms["Alarm list"]
     CatMgr -- F6 --> CatProps
     ItemProps -- F3 --> Profile
@@ -117,7 +119,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
   - **Group profile** `:group_profile` (F3 with items marked, "all marked"): the same for several items (R35). `Agendum.TUI.CategoryScreens.Profile`.
   - **Category picker** `:picker`: choose a category from the hierarchy, with search. `Agendum.TUI.CategoryScreens.Picker`. Its `purpose` says what the choice does:
     - a column entry (F3 in a column), assigning items (ALT-M, Item ▸ Categorize), a section's category (F3 on a head), a new section (ALT-D, ALT-U) or column (ALT-R, ALT-L), a new view's first section
-    - filters (View ▸ Filter, Section ▸ Filter, R28); a date or numeric category opens the **Range filter** box `:range_filter` (`Agendum.TUI.Boxes.RangeFilterBox`, R28a)
+    - filters (View Properties ▸ Filter, Section Properties ▸ Filter, R28); a date or numeric category opens the **Range filter** box `:range_filter` (`Agendum.TUI.Boxes.RangeFilterBox`, R28a)
     - sort keys from the Sort box, the Execute box's root, moving a category (ALT-F10 in the category manager), conditions, actions and negative links (from Category Properties)
   - **Category Properties** `:props` (F6 on a section head; F6 in the category manager), in Agenda's two columns (screenshot 74): name, parent (shown), short name, Also match, note, exclusive children and special actions on the left; type, name matching, conditions, actions and negative links on the right; advanced settings across the bottom. `Agendum.TUI.CategoryScreens.Properties`. Note, Statistics and Advanced settings show "..." and open boxes of their own with SPACE.
     - **Category statistics** `:category_stats` (Statistics ...): the items in the category, its children, the sections it heads, and the view filters, conditions and actions that name it; nothing to change.
@@ -128,15 +130,15 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
     - **Date settings** `:date_rule` (Advanced settings of a date category, R6b). `Agendum.TUI.Boxes.DateRuleBox`.
     - **Text matching** `:category_match` (Advanced settings of a standard category, R16b). `Agendum.TUI.Boxes.CategoryMatchBox`.
     - **Note editor** `:note`.
-  - **Category manager** `:catmgr` (F9, Category ▸ Manager): full screen of the hierarchy; add, rename, promote, demote, move, sort, discard (R2–R8). `Agendum.TUI.CategoryScreens.Manager`.
+  - **Category manager** `:catmgr` (F9): full screen of the hierarchy; add, rename, promote, demote, move, sort, discard (R2–R8). `Agendum.TUI.CategoryScreens.Manager`.
     - **Category Properties** `:props` (F6), **Note editor** `:note` (F5), **Help** `:help` (F1), **Picker** `:picker` (ALT-F10, where to move), **Choice** `:choice` (conflicts of a move).
-  - **View manager** `:viewmgr` (F8, View ▸ Manager): a box over the view, as Agenda's (screenshot 40): the views' names, * before a datebook view, ► before the view shown (R68); switch, add, rename, reorder, discard (DEL or F4), list by recently used (F5), and F6 for the highlighted view's View Properties (R78). `Agendum.TUI.Boxes.ViewManager`.
+  - **View manager** `:viewmgr` (F8): a box over the view, as Agenda's (screenshot 40): the views' names, * before a datebook view, ► before the view shown (R68); switch, add, rename, reorder, discard (DEL or F4), list by recently used (F5), and F6 for the highlighted view's View Properties (R78). `Agendum.TUI.Boxes.ViewManager`.
   - **Go to** `:goto` (ALT-F5): jump to a section (R42). `Agendum.TUI.Boxes.GoTo`.
   - **Run a command** `:run_by_name` (CTRL-X, almost anywhere): the commands that can run there, found by name or initials, each with its key; ENTER runs the highlighted one where CTRL-X was pressed (R65d). `Agendum.TUI.Boxes.RunByName`.
   - **Choices** `:choice_list` (F3 on a setting in a box that has a list of choices): its choices, the current one first; ENTER takes the highlighted one (§5). `Agendum.TUI.Boxes.ChoiceListBox`.
   - **Search box** `:search_box` (ALT-F6, Search ▸ View or File): what to find, in item text, note or both, the direction, ignoring case (R37). `Agendum.TUI.Boxes.SearchBox`.
     - **Searching** `:searching`: ALT-N / ALT-P step through matches, F7 marks. A file search shows the Show View instead.
-  - **Sort box** `:sort` (View ▸ Order, View ▸ Section ▸ Sort): the sort keys of a view or a section (R36). `Agendum.TUI.Boxes.SortBox`.
+  - **Sort box** `:sort` (Item sorting in View Properties or Section Properties): the sort keys of a view or a section (R36). `Agendum.TUI.Boxes.SortBox`.
     - **Picker** `:picker` for a key's category or note category.
   - **File Properties** `:file_props` (File ▸ Properties): Insert new columns in (R55), and two "..." rows opening Agenda's boxes, nested as in Agenda 2.0; drawn from a layout like Agenda's (screenshot 130). `Agendum.TUI.Boxes.FileProperties`.
     - **Global date settings** `:date_settings` (Global date settings): the week, quarter, year and times of day (R14e). `Agendum.TUI.Boxes.DateSettingsBox`.
@@ -192,8 +194,8 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:searching`         | control panel | `Agendum.TUI.Boxes.SearchBox`            | the Search box                                    | R37            |
 | `:help`              | full screen   | `Agendum.TUI.HelpScreen`                 | F1 (then `c` commands, `d` describe, `a` all keys) | §5, R65, R65c  |
 | `:note`              | full screen   | `Agendum.TUI.Update.Notes`               | F5, Item Properties, Category Properties          | §5             |
-| `:catmgr`            | full screen   | `Agendum.TUI.CategoryScreens.Manager`    | F9, Category ▸ Manager                            | R2–R8          |
-| `:viewmgr`           | box           | `Agendum.TUI.Boxes.ViewManager`          | F8, View ▸ Manager                                | §5             |
+| `:catmgr`            | full screen   | `Agendum.TUI.CategoryScreens.Manager`    | F9                                                | R2–R8          |
+| `:viewmgr`           | box           | `Agendum.TUI.Boxes.ViewManager`          | F8                                                | §5             |
 | `:picker`            | box           | `Agendum.TUI.CategoryScreens.Picker`     | many (see above)                                  | §5             |
 | `:profile`           | box           | `Agendum.TUI.CategoryScreens.Profile`    | F3 on an item, Item ▸ Show, Item Properties       | §5             |
 | `:group_profile`     | box           | `Agendum.TUI.CategoryScreens.Profile`    | F3 with items marked                              | R35            |
@@ -205,7 +207,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:goto`              | box           | `Agendum.TUI.Boxes.GoTo`                 | ALT-F5                                            | R42            |
 | `:search_box`        | box           | `Agendum.TUI.Boxes.SearchBox`            | ALT-F6, Search ▸ View / File                      | R37            |
 | `:note_search`       | box           | `Agendum.TUI.Typing.NoteSearch`          | ALT-F6 in a note                                  | R39            |
-| `:sort`              | box           | `Agendum.TUI.Boxes.SortBox`              | View ▸ Order, View ▸ Section ▸ Sort               | R36            |
+| `:sort`              | box           | `Agendum.TUI.Boxes.SortBox`              | Item sorting in View or Section Properties        | R36            |
 | `:range_filter`      | box           | `Agendum.TUI.Boxes.RangeFilterBox`       | a filter or condition on a date/numeric category  | R28a, R15a     |
 | `:run_by_name`       | box           | `Agendum.TUI.Boxes.RunByName`            | CTRL-X                                            | R65d           |
 | `:action_box`        | box           | `Agendum.TUI.Boxes.ActionBox`            | Also assign on a date/numeric category            | R15b           |

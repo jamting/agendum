@@ -93,7 +93,7 @@ defmodule Agendum.TUI.CommandDocs do
         "refers to it.",
     dependency:
       "Makes the highlighted item wait for the marked ones: it is shown with & until they " <>
-        "are done, and View ▸ Hide can hide it until then. With nothing marked it offers to " <>
+        "are done, and View Properties can hide it until then. With nothing marked it offers to " <>
         "clear its dependencies.",
     section_below:
       "A view is a list of sections, each one showing a category's items: this is how a " <>
@@ -386,25 +386,6 @@ defmodule Agendum.TUI.CommandDocs do
     ~w(View Properties) =>
       "A datebook view's sections are dates (a day, a week …): how long a period is, the " <>
         "date it starts from, and which date it goes by.",
-    ~w(View Section Filter) =>
-      "Shows only those of the section's items that are in (or not in) chosen categories: " <>
-        "only the urgent ones under Calls, say.",
-    ~w(View Section Sort) => "This section's own order for its items, instead of the view's.",
-    ~w(View Section Lines) => "Lines between the sections make a long view easier to read.",
-    ~w(View Filter) =>
-      "Shows only the items in (or not in) chosen categories, in every section: one " <>
-        "person's items, say, without making a view for it.",
-    ~w(View Order) =>
-      "How the items of every section are sorted: by a date, by a category, by their text …",
-    ~w(View Hide Done) => "Hides the items that are done, so the view shows what is left to do.",
-    ~w(View Hide Inherited) =>
-      "An item in Anna is in People too. Hiding these shows under People only the items " <>
-        "filed there directly, not those of its children.",
-    ~w(View Hide Pending) =>
-      "Hides the items that wait for others to be done, so the view shows what can be done now.",
-    ["View", "Hide", "Column heads"] =>
-      "Column heads repeat in every section; shown only once on the screen, they leave " <>
-        "more room for items.",
     ~w(Search File) =>
       "Finds the text in every item of the file, not only those this view shows, and lists " <>
         "them in the Show View. ALT-F8 goes back.",
@@ -499,8 +480,8 @@ defmodule Agendum.TUI.CommandDocs do
   }
 
   @doc """
-  A menu entry's text, by its labels from the top (`["View", "Hide",
-  "Inherited"]`), or the text of the command it runs (`action`), or nil.
+  A menu entry's text, by its labels from the top (`["Category",
+  "Recalc"]`), or the text of the command it runs (`action`), or nil.
   """
   @spec menu([String.t()], term) :: String.t() | nil
   def menu(labels, action) do

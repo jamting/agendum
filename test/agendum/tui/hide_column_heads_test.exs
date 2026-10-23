@@ -34,14 +34,14 @@ defmodule Agendum.TUI.HideColumnHeadsTest do
 
   defp heads(state), do: Regex.scan(~r/People/, screen(state)) |> length()
 
-  defp hide(state), do: press(state, [{:f, 10}, "v", "h", "c"])
+  defp hide(state), do: switch_view_setting(state, "Hide column heads")
 
   test "off by default: every section shows its column heads", %{state: state, view_id: v} do
     refute state.db.views[v].hide_column_heads
     assert heads(state) == 3
   end
 
-  test "View ▸ Hide ▸ Column heads: only the first section shows them; again shows them all",
+  test "View Properties ▸ Hide column heads: only the first section shows them; again all",
        %{state: state, view_id: v} do
     state = hide(state)
     assert state.db.views[v].hide_column_heads
@@ -61,7 +61,8 @@ defmodule Agendum.TUI.HideColumnHeadsTest do
   test "the first section on the screen shows them when the view is scrolled",
        %{view_id: v} = context do
     # 5 lines of view: Calls is scrolled off once the cursor is on Errands
-    state = %{context.state | height: 9} |> hide()
+    # (set on a full screen: the box does not fit 9 lines)
+    state = %{hide(context.state) | height: 9}
     state = press(state, [:down, :down, :down, :down, :down])
     assert State.view(state).id == v
     refute screen(state) =~ "Calls"

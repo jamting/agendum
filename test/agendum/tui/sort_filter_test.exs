@@ -1,5 +1,8 @@
 defmodule Agendum.TUI.SortFilterTest do
-  @moduledoc "Filters (R28) and sorting (R36) from the menu, ALT-F5 and the Sort box."
+  @moduledoc """
+  Filters (R28) and sorting (R36) from View and Section Properties, ALT-F5
+  and the Sort box.
+  """
   use ExUnit.Case, async: true
 
   import Agendum.TUIHelpers
@@ -22,47 +25,43 @@ defmodule Agendum.TUI.SortFilterTest do
     |> Enum.map(& &1.item.text)
   end
 
-  test "View > Filter: ENTER cycles a category's filter; the view shows it in brackets", %{
-    state: state
-  } do
-    state = press(state, [{:f, 10}, "v", "f", "High", :enter])
+  test "View Properties ▸ Filter: ENTER cycles a category's filter; the view shows it in brackets",
+       %{
+         state: state
+       } do
+    state = state |> filter_picker(:view) |> press(["High", :enter])
     assert %{type: :picker} = State.mode(state)
     assert State.view(state).filter == [{cat(state, "High"), :assigned}]
-    state = press(state, [:esc, :esc, :esc, :esc])
+    state = close_props(state)
     assert state.modes == []
     assert screen(state) =~ "View: Activities [High]"
     assert length(texts(state)) == 1
   end
 
   test "a section filter shows after the section head", %{state: state} do
-    state = press(state, [{:f, 10}, "v", "s", "f", "Abigail", :enter, :enter, :esc, :esc])
+    state =
+      state |> filter_picker(:section) |> press(["Abigail", :enter, :enter]) |> close_props()
+
     assert screen(state) =~ "Calls [-Abigail Scheer]"
     assert length(texts(state)) == 3
   end
 
   test "typing into a filtered view assigns the new item to the filter", %{state: state} do
     state =
-      press(state, [
-        {:f, 10},
-        "v",
-        "f",
-        "High",
-        :enter,
-        :esc,
-        :esc,
-        :esc,
-        :esc,
-        "Call the bank",
-        :enter
-      ])
+      state
+      |> filter_picker(:view)
+      |> press(["High", :enter])
+      |> close_props()
+      |> press(["Call the bank", :enter])
 
     item = Enum.find(Database.items(state.db), &(&1.text == "Call the bank"))
     assert Database.member?(state.db, item.id, cat(state, "High"))
     assert "Call the bank" in texts(state)
   end
 
-  test "View > Order: sort on item text, then reverse the order", %{state: state} do
-    state = press(state, [{:f, 10}, "v", "o"])
+  test "View Properties ▸ Item sorting: sort on item text, then reverse the order",
+       %{state: state} do
+    state = sort_box(state, :view)
     assert %{type: :sort} = State.mode(state)
     assert screen(state) =~ "Sort items in all sections"
 
@@ -87,7 +86,7 @@ defmodule Agendum.TUI.SortFilterTest do
     state = %{state | db: db}
 
     # None -> Item text -> Category (Contact) -> Category note (Contact)
-    state = press(state, [{:f, 10}, "v", "o", " ", " ", "Contact", :enter, " "])
+    state = state |> sort_box(:view) |> press([" ", " ", "Contact", :enter, " "])
     assert screen(state) =~ "Choose the category whose notes to sort by"
     state = press(state, ["Contact", :enter])
     assert State.view(state).sort == [%SortKey{on: {:note, cat(state, "Contact")}}]
@@ -117,7 +116,7 @@ defmodule Agendum.TUI.SortFilterTest do
 
     test "the view's Sort box sorts the section heads", %{state: state} do
       assert heads(state) == ["Calls", "Contact", "Priority"]
-      state = state |> press([{:f, 10}, "v", "o"]) |> to_setting("Section sorting")
+      state = state |> sort_box(:view) |> to_setting("Section sorting")
       assert screen(state) =~ ~r/Section sorting\s+: None/
 
       # None -> Category order -> Alphabetic
@@ -133,7 +132,7 @@ defmodule Agendum.TUI.SortFilterTest do
     end
 
     test "a section's Sort box has no section rows", %{state: state} do
-      refute screen(press(state, [{:f, 10}, "v", "s", "s"])) =~ "Section sorting"
+      refute state |> sort_box(:section) |> screen() =~ "Section sorting"
     end
 
     test "GO TO lists the sections in the order shown", %{state: state} do
@@ -146,16 +145,16 @@ defmodule Agendum.TUI.SortFilterTest do
   end
 
   test "sorting on a category uses the category box", %{state: state} do
-    state = press(state, [{:f, 10}, "v", "o", " ", " ", "Prio", :enter])
+    state = state |> sort_box(:view) |> press([" ", " ", "Prio", :enter])
     assert State.view(state).sort == [%SortKey{on: {:category, cat(state, "Priority")}}]
     assert screen(state) =~ "Category: Priority"
     # High first: the Anna Lasky item
     assert hd(texts(state)) =~ "Anna Lasky"
   end
 
-  test "View ▸ Section ▸ Sort opens the section's Sort box, which can use the view's settings",
+  test "Section Properties ▸ Item sorting: the section's Sort box can use the view's settings",
        %{state: state} do
-    state = press(state, [{:f, 10}, "v", "s", "s"])
+    state = sort_box(state, :section)
     assert screen(state) =~ "Sort items in Calls"
     assert screen(state) =~ "As the view (None)"
 

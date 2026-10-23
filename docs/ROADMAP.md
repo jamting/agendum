@@ -6,10 +6,9 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
-1. The shortcut entries leave the menus (parity; a habit change, settled first)
-2. Recurring items on every date they recur (parity; `RECURRING_OCCURRENCES.md`)
-3. A closed effect type in `App` (The clone's safety, below)
-4. Then the parity steps in their order ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the rest of the clone's safety between them
+1. Recurring items on every date they recur (parity; `RECURRING_OCCURRENCES.md`)
+2. A closed effect type in `App` (The clone's safety, below)
+3. Then the parity steps in their order ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the rest of the clone's safety between them
 
 **Frozen until the truthful clone is declared done** (meeting 2026-10-21, § 5; `VISION.md`, ADR 0043): Beyond Agenda, Ideas and Towards many users wait (bug fixes only). Not frozen: the parity steps, the clone's safety work and tests (meeting 2026-10-22, § 5c) and Sharpen the saw (§ 5i). The view cache waits for slow answers in real use.
 

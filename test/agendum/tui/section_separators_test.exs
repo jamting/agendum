@@ -36,7 +36,7 @@ defmodule Agendum.TUI.SectionSeparatorsTest do
 
   defp line_with(state, text), do: Enum.find(lines(state), &String.contains?(&1, text))
 
-  defp separators(state), do: press(state, [{:f, 10}, "v", "s", "l"])
+  defp separators(state), do: switch_view_setting(state, "Section separators")
 
   test "off by default: a blank line between sections, no rule", %{state: state, view_id: v} do
     refute state.db.views[v].section_separators
@@ -44,7 +44,7 @@ defmodule Agendum.TUI.SectionSeparatorsTest do
     assert screen(state) =~ ~r/In Calls *\n *\n Follow up/
   end
 
-  test "View ▸ Section ▸ Lines: each section head is a line across, without the blank line",
+  test "View Properties ▸ Section separators: each section head is a line across, without the blank line",
        %{state: state, view_id: v} do
     state = separators(state)
     assert state.db.views[v].section_separators
@@ -65,7 +65,7 @@ defmodule Agendum.TUI.SectionSeparatorsTest do
   end
 
   test "with Hide column heads the other section heads are rules", %{state: state} do
-    state = state |> separators() |> press([{:f, 10}, "v", "h", "c"])
+    state = state |> separators() |> switch_view_setting("Hide column heads")
     assert line_with(state, "Calls") =~ ~r/^─Calls─+People─+When─+$/u
     assert line_with(state, "Follow up") =~ ~r/^─Follow up─+$/u
   end

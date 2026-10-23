@@ -77,7 +77,7 @@ defmodule Agendum.TUI.FieldHelpTest do
       press(state, [:down, {:f, 10}, "v", "s", "p"]),
       press(state, [:down, :right, {:f, 10}, "v", "c", "p"]),
       press(state, [:down, :right, {:f, 10}, "v", "c", "a"]),
-      press(state, [:down, {:f, 10}, "v", "s", "s"]),
+      state |> press(:down) |> sort_box(:section),
       press(state, [{:f, 10}, "s", "s"]),
       press(state, {:alt_f, 6}),
       press(state, [{:f, 10}, "c", "e"])

@@ -69,8 +69,8 @@ defmodule Agendum.TUI.CommandDocsTest do
     end
 
     test "F1 c in the menu shows the highlighted entry's text", %{state: state} do
-      text = state |> press([{:f, 10}, "v", "h", {:f, 1}, "c", "inherited"]) |> screen()
-      assert text =~ "An item in Anna is in People too."
+      text = state |> press([{:f, 10}, "c", {:f, 1}, "c", "recalc"]) |> screen()
+      assert text =~ "Assigns and dates every item again from its text"
     end
 
     test "an entry that runs a view's command has that command's text", %{state: state} do

@@ -194,8 +194,9 @@ defmodule Agendum.Starters.Clinic do
 
   # --- macros ---
 
-  # {name, keys in Agenda's notation}: one, from views only
-  @macros [{"Hide/Display done items", "{F10}vhd"}]
+  # {name, keys in Agenda's notation}: one, from views only; View
+  # Properties' Hide done items is six ↑ from View statistics (END)
+  @macros [{"Hide/Display done items", "{F10}vp{END}{UP}{UP}{UP}{UP}{UP}{UP} {ENTER}"}]
 
   defp macros(db) do
     Enum.reduce(@macros, db, fn {name, keys}, db ->
