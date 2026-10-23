@@ -115,9 +115,16 @@ defmodule Agendum.Core.ViewModel do
             cells:
               Enum.map(
                 view.columns,
-                &cell(db, item, &1.category_id, &1.width, &1.number, cell_opts(&1, today))
+                &cell(
+                  db,
+                  item,
+                  &1.category_id,
+                  &1.width,
+                  &1.number,
+                  cell_opts(&1, today, occurrence)
+                )
               ),
-            values: Enum.map(view.columns, &value(db, item, &1.category_id))
+            values: Enum.map(view.columns, &value(db, item, &1.category_id, occurrence))
           }
         end)
 
@@ -153,16 +160,25 @@ defmodule Agendum.Core.ViewModel do
         |> sort(db, section.sort || view.sort)
         |> Enum.map(fn item ->
           inherited = inherited?(db, item.id, category.id)
+          occurrence = filtered_occurrence(db, item, filter)
 
           %Row{
             item: item,
             inherited: inherited,
+            occurrence: occurrence,
             cells:
               Enum.map(
                 section.columns,
-                &cell(db, item, &1.category_id, &1.width, &1.number, cell_opts(&1, today))
+                &cell(
+                  db,
+                  item,
+                  &1.category_id,
+                  &1.width,
+                  &1.number,
+                  cell_opts(&1, today, occurrence)
+                )
               ),
-            values: Enum.map(section.columns, &value(db, item, &1.category_id))
+            values: Enum.map(section.columns, &value(db, item, &1.category_id, occurrence))
           }
         end)
         |> Enum.reject(&(view.hide_inherited and &1.inherited))
@@ -250,8 +266,33 @@ defmodule Agendum.Core.ViewModel do
   # The calculation lines of a section: every calculation some numeric
   # column asks for, in Agenda's order.
   # what `cell/6` needs from a column besides its head, width and numbers
-  defp cell_opts(column, today),
-    do: [today: today, date: column.date, format: column.format, note_line: column.note_line]
+  defp cell_opts(column, today, occurrence),
+    do: [
+      today: today,
+      date: column.date,
+      format: column.format,
+      note_line: column.note_line,
+      occurrence: occurrence
+    ]
+
+  # The occurrence a view's or section's When range shows a recurring item
+  # for (R14a): the first on or after the range's start, as Agenda's When
+  # column shows it (checked in Agenda 2.0, 2026-10-23); nil without a
+  # range that starts somewhere. `with` runs while each step matches; nil
+  # (not recurring) or [] (no such range) falls to `else`.
+  defp filtered_occurrence(db, item, filter) do
+    with {rule, base} <- Item.recurring(item),
+         [_ | _] = starts <-
+           for(
+             {cat, {:range, %Date{} = from, _to, :inside}} <- filter,
+             cat == db.special.when,
+             do: from
+           ) do
+      Recurrence.first(rule, base, Enum.max(starts, Date))
+    else
+      _ -> nil
+    end
+  end
 
   # Number items (R79): each row's place in its section, counting only the
   # rows shown (a hidden done item leaves no gap, as in Agenda).
@@ -467,10 +508,11 @@ defmodule Agendum.Core.ViewModel do
   @doc """
   What `cell/6` shows for an item in the column headed by `head_id`, as
   data rather than text (`t:value/0`): the same for every format, so a
-  front end can format, sort or edit it itself.
+  front end can format, sort or edit it itself. `occurrence` is the row's
+  (`Row.occurrence`), which a When column shows.
   """
-  @spec value(Database.t(), Agendum.Core.Item.t(), Database.id()) :: value
-  def value(db, item, head_id) do
+  @spec value(Database.t(), Agendum.Core.Item.t(), Database.id(), Date.t() | nil) :: value
+  def value(db, item, head_id, occurrence \\ nil) do
     head = db.categories[head_id]
 
     cond do
@@ -478,7 +520,7 @@ defmodule Agendum.Core.ViewModel do
         Database.number(db, item.id, head_id)
 
       Database.date_category?(db, head_id) ->
-        case Database.item_date(db, item.id, head_id) do
+        case shown_date(db, item, head_id, occurrence) do
           nil -> nil
           date -> {date, Database.item_time(db, item.id, head_id)}
         end
@@ -492,7 +534,8 @@ defmodule Agendum.Core.ViewModel do
   end
 
   @doc """
-  The text a column shows for an item: the item's date for a date column,
+  The text a column shows for an item: the item's date for a date column
+  (on When, the recurring item's `occurrence:` the row is there for, R14a),
   in the column's own format (`date:`) or the file's, relative dates
   counted from `today:` (R41a);
   its number in `number`'s format for a numeric column (R29); for a
@@ -529,7 +572,7 @@ defmodule Agendum.Core.ViewModel do
 
       Database.date_category?(db, head_id) ->
         DateFormat.date_time(
-          Database.item_date(db, item.id, head_id),
+          shown_date(db, item, head_id, opts[:occurrence]),
           Database.item_time(db, item.id, head_id),
           opts[:date] || db.date_format,
           today: opts[:today] && Agendum.Core.Context.today(opts[:today]),
@@ -539,6 +582,14 @@ defmodule Agendum.Core.ViewModel do
       true ->
         standard_cell(db, item.id, head, width, opts[:format] || :name, opts[:note_line] || 1)
     end
+  end
+
+  # the date a date column shows: on When, the occurrence the row is there
+  # for (R14a), else the stored one
+  defp shown_date(db, item, head_id, occurrence) do
+    if occurrence != nil and head_id == db.special.when,
+      do: occurrence,
+      else: Database.item_date(db, item.id, head_id)
   end
 
   # A standard column in its Format (User's Guide 5-26 to 5-37).

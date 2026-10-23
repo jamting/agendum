@@ -42,6 +42,16 @@ defmodule Agendum.Core.RangeFiltersTest do
     |> Enum.map(& &1.item.text)
   end
 
+  defp when_cell(db, view, text) do
+    db
+    |> ViewModel.build(db.views[view], @today)
+    |> hd()
+    |> Map.fetch!(:rows)
+    |> Enum.find(&(&1.item.text == text))
+    |> Map.fetch!(:cells)
+    |> hd()
+  end
+
   defp filter(db, view, cat, show, from, to, where \\ :inside, scope \\ :view) do
     {:ok, db} = Core.set_range_filter(db, view, scope, cat, {show, from, to, where}, @today)
     db
@@ -282,6 +292,17 @@ defmodule Agendum.Core.RangeFiltersTest do
       assert "Report every other Monday" in shown(db, v)
       assert "Rent the 1st of every month" in shown(db, v)
       refute "Gym every Monday" in shown(db, v)
+    end
+
+    # As Agenda's (checked 2026-10-23): filtered on 11/01-11/07, "every
+    # Monday" shows 11/02/26 in its When column; unfiltered, its base date
+    test "its When column shows the first occurrence in the range", %{db: db, view: v, when: w} do
+      db = Core.add_column(db, v, w, {0, 0}, 12)
+      assert when_cell(db, v, "Gym every Monday") == "2026-10-12"
+
+      db = filter(db, v, w, :assigned, "2026-11-01", "2026-11-14")
+      assert when_cell(db, v, "Gym every Monday") == "2026-11-02"
+      assert when_cell(db, v, "Walk every day") == "2026-11-01"
     end
 
     test "never before the base date", %{db: db, view: v, when: w} do
