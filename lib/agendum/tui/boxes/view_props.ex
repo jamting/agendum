@@ -14,7 +14,8 @@ defmodule Agendum.TUI.Boxes.ViewProps do
       under it Order (Ascending, Descending) while it is not None
     * Hide empty sections, Hide done items, Hide dependent items, Hide
       inherited items, Hide column heads, Section separators: Yes or No
-    * View statistics ...: the marked items, sections and items
+    * View statistics ...: the marked items, sections and items, in a box
+      of their own (`Agendum.TUI.Boxes.ViewStatsBox`)
 
   On the right, Sections: the view's sections in their order. ↓ and ↑ walk
   them (↓ from the last goes on to Filter, ↑ from Filter comes back to the
@@ -38,11 +39,9 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   # the box stays open on ENTER of a typed field; ENTER on a setting is done
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  alias Agendum.Core
-  alias Agendum.TUI.Boxes.{Box, FieldTyping, SectionBox, SortBox, Template}
+  alias Agendum.TUI.Boxes.{Box, FieldTyping, SectionBox, SortBox, Template, ViewStatsBox}
   alias Agendum.TUI.{CategoryScreens, State}
   alias Agendum.TUI.Render.Text
-  alias Agendum.TUI.Terminal.Draw
   alias Agendum.TUI.Typing.LineEdit
 
   # Agenda's layout: the settings on the left, the Sections list on the
@@ -189,8 +188,9 @@ defmodule Agendum.TUI.Boxes.ViewProps do
       side when side in [:left, :right] -> nearest(state, mode, other, row(state, mode, here))
       :tab -> next(all(state, mode), here, 1)
       :shift_tab -> next(all(state, mode), here, -1)
-      :home -> hd(all(state, mode))
-      :end -> List.last(all(state, mode))
+      # the first and the last setting on the screen
+      :home -> :name
+      :end -> :statistics
     end
   end
 
@@ -353,21 +353,7 @@ defmodule Agendum.TUI.Boxes.ViewProps do
     State.run(state, {:set_section_sort, mode.view_id, view.section_sort, order})
   end
 
-  defp change(state, mode, :statistics) do
-    stats = Core.view_statistics(state.db, mode.view_id, State.context(state))
-
-    State.info(
-      state,
-      Enum.join(
-        [
-          Draw.count(stats.marked, "marked item"),
-          Draw.count(stats.sections, "section"),
-          Draw.count(stats.items, "item")
-        ],
-        " · "
-      )
-    )
-  end
+  defp change(state, mode, :statistics), do: ViewStatsBox.open(state, mode.view_id)
 
   defp change(state, _mode, :filter),
     do: CategoryScreens.open_picker(state, {:filter, :view}, nil)

@@ -97,6 +97,7 @@ defmodule Agendum.TUI.Modes do
     sort: [:cursor, :opened, :scope],
     splash: [:until],
     view_props: [:back, :cursor, :moving, :opened, :typing, :view_id],
+    view_stats: [:view_id],
     viewmgr: [:cursor, :from, :typed]
   ]
 

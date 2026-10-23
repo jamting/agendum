@@ -149,6 +149,7 @@ defmodule Agendum.TUI.Boxes.Box do
     select_file: Agendum.TUI.Boxes.SelectFile,
     sort: Agendum.TUI.Boxes.SortBox,
     view_props: Agendum.TUI.Boxes.ViewProps,
+    view_stats: Agendum.TUI.Boxes.ViewStatsBox,
     viewmgr: Agendum.TUI.Boxes.ViewManager
   }
 

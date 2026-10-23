@@ -108,9 +108,23 @@ defmodule Agendum.TUI.ViewPropsTest do
              state |> to_setting("Filter") |> press(" ") |> State.mode()
   end
 
-  test "View statistics: the marked items, sections and items", %{state: state} do
-    text = state |> props() |> to_setting("View statistics") |> press(" ") |> panel()
-    assert text =~ ~r/0 marked items · 4 sections · \d+ items/
+  test "View statistics: a box of the marked items, sections and items, as Agenda's",
+       %{state: state} do
+    state = state |> props() |> to_setting("View statistics") |> press(" ")
+    assert %{type: :view_stats} = State.mode(state)
+    text = screen(state)
+    assert text =~ "View Statistics"
+    assert text =~ ~r/Marked items: +0/
+    assert text =~ ~r/Sections in view: +4/
+    assert text =~ ~r/Items in view: +\d+/
+    # any key goes back to View Properties, as Agenda's "Press any key"
+    assert %{type: :view_props} = state |> press("x") |> State.mode()
+  end
+
+  test "HOME and END go to the first and the last setting on the screen", %{state: state} do
+    state = state |> props() |> press(:end)
+    assert Boxes.selected_name(state) == "View statistics"
+    assert state |> press(:home) |> Boxes.selected_name() == "View name"
   end
 
   test "ESC puts back every change made in the box", %{state: state, view: v} do

@@ -42,6 +42,7 @@ defmodule Agendum.TUI.HelpCoverageTest do
     Agendum.TUI.Boxes.SectionBox,
     Agendum.TUI.Boxes.SortBox,
     Agendum.TUI.Boxes.ViewManager,
+    Agendum.TUI.Boxes.ViewStatsBox,
     Agendum.TUI.CategoryScreens.Choices,
     Agendum.TUI.CategoryScreens.Properties,
     Agendum.TUI.Typing.NoteSearch

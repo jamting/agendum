@@ -90,6 +90,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
   - **View Properties** `:view_props` (View ▸ Properties of a standard view, F6 on a view in the view manager): the view's name, Item sorting, Section sorting and Order, the Hide settings, Section separators, View statistics, and on the right its Sections (add, remove, move) and Filter, laid out as Agenda's (R78). `Agendum.TUI.Boxes.ViewProps`.
     - **Sort** `:sort` for Item sorting; **Picker** `:picker` for the filter or a new section's category (F3).
     - **Section Properties** `:section_props` for F6 on a section.
+    - **View Statistics** `:view_stats` (View statistics ...): the marked items, sections and items in the view, as Agenda's; any key returns. `Agendum.TUI.Boxes.ViewStatsBox`.
   - **Section Properties** `:section_props` (View ▸ Section ▸ Properties, F6 on a section head): the section's head, Item sorting, Section statistics, Filter and its columns (R61). `Agendum.TUI.Boxes.SectionBox`.
     - **Picker** `:picker` for the section head or the filter.
     - **Sort** `:sort` for Item sorting; **Column Add** `:column_add` for INS.
@@ -232,6 +233,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:calendar`          | box           | `Agendum.TUI.Boxes.CalendarBox`          | F3 in a date column, ALT-C                        | R46            |
 | `:datebook_props`    | box           | `Agendum.TUI.Boxes.DatebookBox`          | View ▸ Properties of a datebook view              | R47            |
 | `:view_props`        | box           | `Agendum.TUI.Boxes.ViewProps`            | View ▸ Properties, F6 in the view manager         | R78            |
+| `:view_stats`        | box           | `Agendum.TUI.Boxes.ViewStatsBox`         | View Properties ▸ View statistics                 | R78            |
 | `:section_props`     | box           | `Agendum.TUI.Boxes.SectionBox`           | View ▸ Section ▸ Properties, F6 on a section head | R61            |
 | `:numeric_functions` | box           | `Agendum.TUI.Boxes.NumericFunctionsBox`  | Section Properties ▸ Select numeric functions     | R61, R29       |
 | `:browse`            | control panel | `Agendum.TUI.Moves.Browse`               | View ▸ Browse, ALT-B                              | R47, R48       |
