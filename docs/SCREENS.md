@@ -87,6 +87,9 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
   - **Datebook settings** `:datebook_props` (View ▸ Properties of a datebook view; after View ▸ Add with Type Datebook): its categories, period, interval, start and end, base date (R47), Hide column heads (R57) and Section separators (R58). `Agendum.TUI.Boxes.DatebookBox`.
     - **Picker** `:picker` for the Date category, End category and Section.
     - **Prompt** `:prompt` for a time (Start at / End at of a day) or the base date.
+  - **View Properties** `:view_props` (View ▸ Properties of a standard view, F6 on a view in the view manager): the view's name, Item sorting, Section sorting and Order, the Hide settings, Section separators, View statistics, and on the right its Sections (add, remove, move) and Filter, laid out as Agenda's (R78). `Agendum.TUI.Boxes.ViewProps`.
+    - **Sort** `:sort` for Item sorting; **Picker** `:picker` for the filter or a new section's category (F3).
+    - **Section Properties** `:section_props` for F6 on a section.
   - **Section Properties** `:section_props` (View ▸ Section ▸ Properties, F6 on a section head): the section's head, Item sorting, Section statistics, Filter and its columns (R61). `Agendum.TUI.Boxes.SectionBox`.
     - **Picker** `:picker` for the section head or the filter.
     - **Sort** `:sort` for Item sorting; **Column Add** `:column_add` for INS.
@@ -126,7 +129,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
     - **Note editor** `:note`.
   - **Category manager** `:catmgr` (F9, Category ▸ Manager): full screen of the hierarchy; add, rename, promote, demote, move, sort, discard (R2–R8). `Agendum.TUI.CategoryScreens.Manager`.
     - **Category Properties** `:props` (F6), **Note editor** `:note` (F5), **Help** `:help` (F1), **Picker** `:picker` (ALT-F10, where to move), **Choice** `:choice` (conflicts of a move).
-  - **View manager** `:viewmgr` (F8, View ▸ Manager): a box over the view, as Agenda's (screenshot 40): the views' names, * before a datebook view, ► before the view shown (R68); switch, add, rename, reorder, discard (DEL or F4), list by recently used (F5). `Agendum.TUI.Boxes.ViewManager`.
+  - **View manager** `:viewmgr` (F8, View ▸ Manager): a box over the view, as Agenda's (screenshot 40): the views' names, * before a datebook view, ► before the view shown (R68); switch, add, rename, reorder, discard (DEL or F4), list by recently used (F5), and F6 for the highlighted view's View Properties (R78). `Agendum.TUI.Boxes.ViewManager`.
   - **Go to** `:goto` (ALT-F5): jump to a section (R42). `Agendum.TUI.Boxes.GoTo`.
   - **Run a command** `:run_by_name` (CTRL-X, almost anywhere): the commands that can run there, found by name or initials, each with its key; ENTER runs the highlighted one where CTRL-X was pressed (R65d). `Agendum.TUI.Boxes.RunByName`.
   - **Choices** `:choice_list` (F3 on a setting in a box that has a list of choices): its choices, the current one first; ENTER takes the highlighted one (§5). `Agendum.TUI.Boxes.ChoiceListBox`.
@@ -228,6 +231,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:publish_preview`   | box           | `Agendum.TUI.Extras.PublishPreviewBox`    | ENTER in the Publish box                          | R74            |
 | `:calendar`          | box           | `Agendum.TUI.Boxes.CalendarBox`          | F3 in a date column, ALT-C                        | R46            |
 | `:datebook_props`    | box           | `Agendum.TUI.Boxes.DatebookBox`          | View ▸ Properties of a datebook view              | R47            |
+| `:view_props`        | box           | `Agendum.TUI.Boxes.ViewProps`            | View ▸ Properties, F6 in the view manager         | R78            |
 | `:section_props`     | box           | `Agendum.TUI.Boxes.SectionBox`           | View ▸ Section ▸ Properties, F6 on a section head | R61            |
 | `:numeric_functions` | box           | `Agendum.TUI.Boxes.NumericFunctionsBox`  | Section Properties ▸ Select numeric functions     | R61, R29       |
 | `:browse`            | control panel | `Agendum.TUI.Moves.Browse`               | View ▸ Browse, ALT-B                              | R47, R48       |

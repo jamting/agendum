@@ -115,6 +115,7 @@ defmodule Agendum.TUI.Commands do
     {:show, "Show", "Show the highlighted view", :none},
     {:add, "Add", "Add a view", :none},
     {:rename, "Rename", "Rename the view", :none},
+    {:properties, "Properties", "The view's settings and sections", :none},
     {:move_up, "Move up", "Move the view up the list", :none},
     {:move_down, "Move down", "Move the view down the list", :none},
     {:sort, "Sort", "Sort the views by name", :none},

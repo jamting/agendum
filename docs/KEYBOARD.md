@@ -12,6 +12,8 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | On a column head (→ / TAB on a section head): remove the column; replace the head; its properties; rename it; move it (← →, ENTER) | DEL; F3; F6; F2; ALT-F10 | fn-⌫; —; **CTRL-E**; menu View ▸ Column ▸ Move |
 | On a section head: Section Properties; in it: remove a column from the section; move it; add one; the head's category properties | F6; DEL; ALT-↑ / ALT-↓; INS; F6 on Section head | —; fn-⌫; ⌥↑ / ⌥↓; **CTRL-N** |
 | On a section head: move the section up or down in the view (↑ ↓, ENTER keeps, ESC puts back) | ALT-F10 | menu View ▸ Section ▸ Move |
+| In the view manager: the highlighted view's View Properties (R78) | F6 | — |
+| In View Properties' Sections (R78): add a section below the highlighted one (or type its name); pick its category instead; remove it; its Section Properties; pick it up and carry it (↑ ↓, ENTER or ESC puts it down, as Agenda's); move it a place at once (ours) | INS; F3; DEL; F6; ALT-F10; ALT-↑ / ALT-↓ | **CTRL-N**; —; fn-⌫; —; ⌥ with F10; ⌥↑ / ⌥↓ |
 | Copy the item (or the marked items) to another section of the view as well: the Copy box | ALT-F9 | — |
 | Yank back the item DEL last removed from a section: into the current section, below the highlighted item | ALT-Y | ⌥y |
 | Hop to the highlighted item's next occurrence: further down this view, else in the next view that shows it (ALT-F8 goes back) | ALT-H | ⌥h |

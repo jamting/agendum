@@ -474,6 +474,25 @@ defmodule Agendum.Core.Facade.Views do
   end
 
   @doc """
+  View Properties ▸ View statistics (R78; Help "View Statistics Box"): how
+  many marked items the view shows, how many sections it has (empty ones
+  too) and how many items its sections show, an item in two sections
+  counted in each, as the view shows it twice.
+  """
+  @spec view_statistics(db, id, clock) :: %{
+          marked: non_neg_integer,
+          sections: non_neg_integer,
+          items: non_neg_integer
+        }
+  def view_statistics(db, view_id, clock) do
+    view = db.views[view_id]
+    # every row the view shows, section after section
+    rows = db |> ViewModel.build(view, clock) |> Enum.flat_map(& &1.rows)
+    marked = rows |> Enum.filter(& &1.item.marked) |> Enum.uniq_by(& &1.item.id)
+    %{marked: length(marked), sections: length(view.sections), items: length(rows)}
+  end
+
+  @doc """
   The calculations section `sidx` shows for all its numeric columns: those
   every one of them has; nil when it has no numeric column.
   """

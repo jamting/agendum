@@ -13,14 +13,17 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
   Work done in a full screen opened from a box (a note, the macro edit
   screen) is kept: coming back from it starts the box's snapshot again.
 
-  ESC while a field is being typed in only stops the typing; the box
-  handles that itself. Pure.
+  ESC while a field is being typed in only stops the typing, and ESC while
+  something is being moved in a box (`moving`, View Properties' Sections)
+  only puts it down; the box handles those itself. Pure.
   """
 
   alias Agendum.TUI.State
 
   # full screens a box can open, whose work stays
   @screens [:note, :catmgr, :viewmgr, :help]
+  # the view shown and the highlight's place in it
+  @place [:view_id, :cursor, :cursor_key, :col, :scroll]
 
   @doc """
   Whether ESC cancels the changes made in a box of this type: those whose
@@ -43,6 +46,7 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
         cond do
           not cancels?(type) -> :pass
           Map.get(mode, :typing) -> :pass
+          Map.get(mode, :moving) -> :pass
           true -> state |> State.pop() |> restore(opened)
         end
 
@@ -74,21 +78,36 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
     end
   end
 
-  # the file, the view shown and the person's own settings, which a box can
-  # change (View ▸ Add makes a view and opens its settings with one key)
+  # the file, the view shown and where in it, and the person's own settings,
+  # which a box can change (View ▸ Add makes a view and opens its settings
+  # with one key; F6 in the view manager shows the view whose properties
+  # it opens)
   defp snapshot(state),
-    do: Map.take(state, [:db, :view_id, :theme, :reader, :key_map, :prefs])
+    do:
+      Map.take(state, [
+        :db,
+        :view_id,
+        :cursor,
+        :cursor_key,
+        :col,
+        :scroll,
+        :theme,
+        :reader,
+        :key_map,
+        :prefs
+      ])
 
   defp restore(state, opened) do
     state = if state.db == opened.db, do: state, else: State.change_db(state, opened.db)
 
-    # a view the cancelled change made is gone: show the one shown before
+    # a view the cancelled change made is gone, or the box showed another
+    # view (F6 in the view manager): the view shown before, where it was
     state =
-      if Map.has_key?(state.db.views, state.view_id),
+      if Map.has_key?(state.db.views, state.view_id) and state.view_id == opened.view_id,
         do: state,
-        else: %{state | view_id: opened.view_id}
+        else: Map.merge(state, Map.take(opened, @place))
 
-    prefs = Map.drop(opened, [:db, :view_id])
+    prefs = Map.drop(opened, [:db | @place])
 
     if Map.take(state, Map.keys(prefs)) == prefs,
       do: state,

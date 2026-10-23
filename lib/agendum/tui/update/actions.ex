@@ -338,7 +338,7 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :view_props, _) do
     if State.view(state).datebook,
       do: Agendum.TUI.Boxes.DatebookBox.open(state, state.view_id),
-      else: State.error(state, "A standard view's settings are in View ▸ Hide, Filter and Order")
+      else: Agendum.TUI.Boxes.ViewProps.open(state, state.view_id)
   end
 
   defp do_perform(state, :rename_view, _),

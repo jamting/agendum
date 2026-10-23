@@ -4,6 +4,16 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.19.0 — 2026-10-23
+
+View Properties, as in Lotus Agenda: a view's settings in one box.
+
+- **View ▸ Properties** on a standard view opens the View Properties box, laid out as Agenda's: View name, Item sorting, Section sorting and its Order, Hide empty sections, Hide done items, Hide dependent items, Hide inherited items, Hide column heads, Section separators and View statistics on the left; the view's **Sections** and its **Filter** on the right. A datebook view's View ▸ Properties still opens its datebook settings.
+- **F6 in the view manager** (F8) opens the highlighted view's properties. ENTER takes you back to the view manager, in the view you were in.
+- In Sections, ↓ and ↑ walk the sections. Type a name (or press INS) to add a section below the highlighted one, or F3 to pick its category; DEL removes a section, F6 shows its Section Properties. **ALT-F10** picks a section up: ↑ ↓ carry it, ENTER puts it down. ALT-↑ and ALT-↓ move it a place at once.
+- Every change shows at once and is one undo step; ESC puts back everything changed in the box.
+- View ▸ Hide, Filter, Order and Section ▸ Lines are still in the menus for now.
+
 ## 0.18.0 — 2026-10-23
 
 The Extras switch: Agendum behaves like Lotus Agenda unless you ask for more.

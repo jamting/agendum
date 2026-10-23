@@ -96,6 +96,7 @@ defmodule Agendum.TUI.Modes do
     select_file: [:cursor, :dates, :dir, :entries, :extensions, :filter, :line],
     sort: [:cursor, :opened, :scope],
     splash: [:until],
+    view_props: [:back, :cursor, :moving, :opened, :typing, :view_id],
     viewmgr: [:cursor, :from, :typed]
   ]
 

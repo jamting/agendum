@@ -71,8 +71,8 @@ defmodule Agendum.TUI.Boxes.ViewManager do
     The view manager lists the file's views; ► marks the one shown. ENTER
     shows the highlighted one; type the start of a name to find it.
 
-    INS adds a view, F2 renames one, DEL (or F4) discards one: its items
-    stay in the file. ALT-↑ and ALT-↓ move a view in the list, ALT-F5 sorts
+    INS adds a view, F2 renames one, F6 shows its properties, DEL (or F4)
+    discards one: its items stay in the file. ALT-↑ and ALT-↓ move a view in the list, ALT-F5 sorts
     them by name. F5 lists them by when you last used them, and back: the
     order of the file stays as it is.
 
@@ -154,6 +154,14 @@ defmodule Agendum.TUI.Boxes.ViewManager do
     do: state |> State.pop() |> State.switch_view(view_id)
 
   defp command(state, _mode, :add, _), do: Prompts.prompt(state, "Name of new view:", :add_view)
+
+  # Agenda's PROPS (User's Guide 9-9): the highlighted view's View
+  # Properties, or a datebook's settings; the manager stays beneath
+  defp command(state, _mode, :properties, view_id) do
+    if state.db.views[view_id].datebook,
+      do: Agendum.TUI.Boxes.DatebookBox.open(state, view_id),
+      else: Agendum.TUI.Boxes.ViewProps.open(state, view_id)
+  end
 
   defp command(state, _mode, :rename, view_id),
     do: %{state | edit: %{target: view_id, line: LineEdit.new(state.db.views[view_id].name)}}

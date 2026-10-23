@@ -138,6 +138,7 @@ defmodule Agendum.TUI.Keymap do
     {:f, 1} => :help,
     :insert => :add,
     {:f, 2} => :rename,
+    {:f, 6} => :properties,
     {:alt_f, 5} => :sort,
     {:f, 5} => :order,
     {:alt, :up} => :move_up,

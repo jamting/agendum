@@ -118,9 +118,9 @@ defmodule Agendum.TUI.DatebookViewTest do
       refute Agendum.TUI.History.undo(state) |> State.view() |> Map.get(:section_separators)
     end
 
-    test "a standard view has no datebook settings", %{plain: state} do
-      assert panel(settings(state)) =~
-               "A standard view's settings are in View ▸ Hide, Filter and Order"
+    test "a standard view has no datebook settings: its View Properties (R78)",
+         %{plain: state} do
+      assert %{type: :view_props} = State.mode(settings(state))
     end
 
     test "the control panel names the Section; the view manager marks it with *", %{state: state} do

@@ -100,7 +100,9 @@ defmodule Agendum.TUI.Menu do
          {"Add", "Create a new view", :add_view},
          {"Rename", "Rename the current view", :rename_view},
          {"Discard", "Delete the current view (items are kept)", :discard_view},
-         {"Properties", "A datebook view's settings: period, base date, categories", :view_props},
+         {"Properties",
+          "The view's name, sections, sorting, filter and hiding (F6 in the manager)",
+          :view_props},
          {"Browse", "Move a datebook view or a date filter to other dates (ALT-B)", :browse},
          {"Section", "Add, remove or collapse sections",
           [
