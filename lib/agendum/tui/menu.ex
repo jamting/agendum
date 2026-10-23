@@ -192,15 +192,20 @@ defmodule Agendum.TUI.Menu do
 
   # the tree a menu mode shows (a menu made before `tree` was a field: the
   # view's), the extras left out unless the menu was opened with them
-  defp tree_of(mode) do
-    tree = tree(Map.get(mode, :tree) || :main)
-    shown(tree, Map.get(mode, :extras) == true)
-  end
+  defp tree_of(mode), do: shown(Map.get(mode, :tree) || :main, Map.get(mode, :extras) == true)
+
+  @doc """
+  The tree as the person sees it (R77): without the extras unless
+  `extras?`, each description picked for it. The comparison with Agenda's
+  own menus reads it with the extras off.
+  """
+  @spec shown(:main | :note | [tuple], boolean) :: [tuple]
+  def shown(which, extras?) when is_atom(which), do: shown(tree(which), extras?)
 
   # A level's entries as shown (R77): with the extras off, an entry that
   # runs an extra goes, and so does a level left empty by it (Item ▸
   # Zettel); a description `{without, with}` the extras is picked.
-  defp shown(level, extras?) do
+  def shown(level, extras?) do
     # a generator over a one-element list binds `action` anew for the
     # filter after it: a sub-level is first cut down itself
     for {label, description, action} <- level,

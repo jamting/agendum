@@ -1,0 +1,460 @@
+{
+  "source": "Lotus Agenda 2.0 in DOSBox Staging, tools/agformat/capture_menus.py",
+  "captured": "2026-10-23",
+  "menus": {
+    "view": [
+      {
+        "label": "File",
+        "help": "Retrieve, Save, Abandon, Properties, Transfer, Maintenance",
+        "children": [
+          {
+            "label": "Retrieve",
+            "help": "Switch to another file (old or new), saving current file [ALT-G]."
+          },
+          {
+            "label": "Save",
+            "help": "Save the current file to disk [ALT-W]."
+          },
+          {
+            "label": "Abandon",
+            "help": "Discard current changes to the file."
+          },
+          {
+            "label": "Properties",
+            "help": "Set properties for the current file."
+          },
+          {
+            "label": "Transfer",
+            "help": "Import, Export, Template",
+            "children": [
+              {
+                "label": "Import",
+                "help": "Import a structured file into the current file."
+              },
+              {
+                "label": "Export",
+                "help": "Export the current file to a structured file."
+              },
+              {
+                "label": "Template",
+                "help": "Copy the current file structure."
+              }
+            ]
+          },
+          {
+            "label": "Maintenance",
+            "help": "MakeCopy, Erase, Compress, Reservation",
+            "children": [
+              {
+                "label": "MakeCopy",
+                "help": "Make a copy of the current file with another name."
+              },
+              {
+                "label": "Erase",
+                "help": "Discard an Agenda file from disk."
+              },
+              {
+                "label": "Compress",
+                "help": "Remove unused space from current file."
+              },
+              {
+                "label": "Reservation",
+                "help": "Get or release the reservation for the current file."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "Item",
+        "help": "Properties, MakeAssign, Discard, Undisc, BrkAssign, Reposition, Alarm",
+        "children": [
+          {
+            "label": "Properties",
+            "help": "Set properties for the current item [F6]."
+          },
+          {
+            "label": "MakeAssign",
+            "help": "Assign the current item to a category [ALT-M]."
+          },
+          {
+            "label": "Discard",
+            "help": "Discard the current item from the file [ALT-F4]."
+          },
+          {
+            "label": "Undisc",
+            "help": "Recover item(s) from the trash [ALT-Y]."
+          },
+          {
+            "label": "BrkAssign",
+            "help": "Remove the assignment for the current item [DEL]."
+          },
+          {
+            "label": "Reposition",
+            "help": "Reposition the current item within this section."
+          },
+          {
+            "label": "Alarm",
+            "help": "Set an alarm for the current item [ALT-A]."
+          }
+        ]
+      },
+      {
+        "label": "Category",
+        "help": "Properties, Add, Discard",
+        "children": [
+          {
+            "label": "Properties",
+            "help": "Set properties for the current category [F6]."
+          },
+          {
+            "label": "Add",
+            "help": "Add a new category."
+          },
+          {
+            "label": "Discard",
+            "help": "Discard the current category from the file [ALT-F4]."
+          }
+        ]
+      },
+      {
+        "label": "View",
+        "help": "Properties, Add, Browse, Discard, Column, Section",
+        "children": [
+          {
+            "label": "Properties",
+            "help": "Set properties for the current view [F6]."
+          },
+          {
+            "label": "Add",
+            "help": "Add a new view."
+          },
+          {
+            "label": "Browse",
+            "help": "Press left or right arrow key to look through other dates [ALT-B]."
+          },
+          {
+            "label": "Discard",
+            "help": "Discard the current view from the file."
+          },
+          {
+            "label": "Column",
+            "help": "Properties, Add, Remove, Move, Width",
+            "children": [
+              {
+                "label": "Properties",
+                "help": "Set properties for the current column [F6]."
+              },
+              {
+                "label": "Add",
+                "help": "Add a new column [ALT-R, ALT-L]."
+              },
+              {
+                "label": "Remove",
+                "help": "Remove the current column from the view [DEL]."
+              },
+              {
+                "label": "Move",
+                "help": "Reposition the current column within this section."
+              },
+              {
+                "label": "Width",
+                "help": "Set the width of the current column."
+              }
+            ]
+          },
+          {
+            "label": "Section",
+            "help": "Properties, Add, Remove, Move",
+            "children": [
+              {
+                "label": "Properties",
+                "help": "Set properties for the current section [F6]."
+              },
+              {
+                "label": "Add",
+                "help": "Add a new section [ALT-D, ALT-U]."
+              },
+              {
+                "label": "Remove",
+                "help": "Remove the current section from the view [DEL]."
+              },
+              {
+                "label": "Move",
+                "help": "Reposition the current section."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "Print",
+        "help": "Final, Preview, Layout, Setup, Named",
+        "children": [
+          {
+            "label": "Final",
+            "help": "Print all or part of your file."
+          },
+          {
+            "label": "Preview",
+            "help": "Preview all or part of your file."
+          },
+          {
+            "label": "Layout",
+            "help": "Set margins, attributes, spacing, paper size, and other options."
+          },
+          {
+            "label": "Setup",
+            "help": "Select printers and set up global font list."
+          },
+          {
+            "label": "Named",
+            "help": "Retrieve, Save, Erase, Attach, Detach",
+            "children": [
+              {
+                "label": "Retrieve",
+                "help": "Retrieve print settings from Named print set file."
+              },
+              {
+                "label": "Save",
+                "help": "Save current print settings to Named print set file."
+              },
+              {
+                "label": "Erase",
+                "help": "Erase a Named print set file."
+              },
+              {
+                "label": "Attach",
+                "help": "Attach a Named print set file to the current view."
+              },
+              {
+                "label": "Detach",
+                "help": "Detach a Named print set file from the current view."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "Utilities",
+        "help": "Customize, Execute, Show, Questions, Trash, Launch",
+        "children": [
+          {
+            "label": "Customize",
+            "help": "Customize your screen display and work environment."
+          },
+          {
+            "label": "Execute",
+            "help": "Evaluate conditions/actions [ALT-X]."
+          },
+          {
+            "label": "Show",
+            "help": "Match, Prerequisites, Dependents, ItemsDone, Circular, Alarm, Schedule, Every",
+            "children": [
+              {
+                "label": "Match",
+                "help": "Show all items containing a specific word or phrase."
+              },
+              {
+                "label": "Prereqs",
+                "help": "Show all items on which current item depends."
+              },
+              {
+                "label": "Depends",
+                "help": "Show all items that depend on the current item."
+              },
+              {
+                "label": "ItemsDone",
+                "help": "Show all Done items."
+              },
+              {
+                "label": "Circular",
+                "help": "Show all items caught in circular references."
+              },
+              {
+                "label": "Alarm",
+                "help": "Show all items with pending and triggered alarms."
+              },
+              {
+                "label": "Sched",
+                "help": "Show items for a specific date."
+              },
+              {
+                "label": "Every",
+                "help": "Show every item in the file."
+              }
+            ]
+          },
+          {
+            "label": "Questions",
+            "help": "Confirm suggested assignments."
+          },
+          {
+            "label": "Trash",
+            "help": "Clear all discarded items from the trash."
+          },
+          {
+            "label": "Launch",
+            "help": "Run a program without quitting Agenda."
+          }
+        ]
+      },
+      {
+        "label": "System",
+        "help": "Exit to DOS.  (Type EXIT to leave DOS and return to Agenda.)"
+      },
+      {
+        "label": "Quit",
+        "help": "End this Agenda session [ALT-Q].  Your file is saved automatically."
+      }
+    ],
+    "note": [
+      {
+        "label": "File",
+        "help": "Attach, Detach, Erase",
+        "children": [
+          {
+            "label": "Attach",
+            "help": "Attach an external file to this note."
+          },
+          {
+            "label": "Detach",
+            "help": "Remove the attachment to the external file."
+          },
+          {
+            "label": "Erase",
+            "help": "Erase the file attached to this note from the disk."
+          }
+        ]
+      },
+      {
+        "label": "Print",
+        "help": "Final, Preview, Layout, Setup, Named",
+        "children": [
+          {
+            "label": "Final",
+            "help": "Print all or part of your file."
+          },
+          {
+            "label": "Preview",
+            "help": "Preview all or part of your file."
+          },
+          {
+            "label": "Layout",
+            "help": "Set margins, attributes, spacing, paper size, and other options."
+          },
+          {
+            "label": "Setup",
+            "help": "Select printers, preview display driver, and font lists."
+          },
+          {
+            "label": "Named",
+            "help": "Retrieve, Save, Erase",
+            "children": [
+              {
+                "label": "Retrieve",
+                "help": "Retrieve print settings from Named print set file."
+              },
+              {
+                "label": "Save",
+                "help": "Save current print settings to Named print set file."
+              },
+              {
+                "label": "Erase",
+                "help": "Erase a Named print set file."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "Import",
+        "help": "Import a text file into the current note."
+      },
+      {
+        "label": "Export",
+        "help": "Export the current note to a text file."
+      },
+      {
+        "label": "Clear",
+        "help": "Delete all text in the current note."
+      },
+      {
+        "label": "Return",
+        "help": "Return to the previous activity [F5]."
+      },
+      {
+        "label": "Quit",
+        "help": "End this Agenda session [ALT-Q].  Your file is saved automatically."
+      }
+    ],
+    "catmgr": [
+      {
+        "label": "Category",
+        "help": "Properties, Add, Discard",
+        "children": [
+          {
+            "label": "Properties",
+            "help": "Set properties for the current category [F6]."
+          },
+          {
+            "label": "Add",
+            "help": "Add a new category [INS]."
+          },
+          {
+            "label": "Discard",
+            "help": "Discard the current category from the file [ALT-F4]."
+          }
+        ]
+      },
+      {
+        "label": "Print",
+        "help": "Final, Preview, Layout, Setup, Named",
+        "children": [
+          {
+            "label": "Final",
+            "help": "Print all or part of your file."
+          },
+          {
+            "label": "Preview",
+            "help": "Preview all or part of your file."
+          },
+          {
+            "label": "Layout",
+            "help": "Set margins, attributes, spacing, paper size, and other options."
+          },
+          {
+            "label": "Setup",
+            "help": "Select printers, preview display driver, and font lists."
+          },
+          {
+            "label": "Named",
+            "help": "Retrieve, Save, Erase",
+            "children": [
+              {
+                "label": "Retrieve",
+                "help": "Retrieve print settings from Named print set file."
+              },
+              {
+                "label": "Save",
+                "help": "Save current print settings to Named print set file."
+              },
+              {
+                "label": "Erase",
+                "help": "Erase a Named print set file."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "Return",
+        "help": "Return to the view [F9]."
+      },
+      {
+        "label": "Quit",
+        "help": "End this Agenda session [ALT-Q].  Your file is saved automatically."
+      }
+    ]
+  }
+}

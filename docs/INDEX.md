@@ -45,6 +45,7 @@ What each document is for, and when to read it. `docs/` describes Agendum as it 
 | [`AGENDA_FILE_FORMAT.md`](AGENDA_FILE_FORMAT.md)               | Agenda's `.AG` file format, reverse engineered (stored vs computed, exact numbers)  |
 | `docs/reference/README.md`                   | The manuals as text, the F1 help, the support Q&A, the patent, essays: grep them   |
 | `docs/reference/AGENDA_MENUS.md`       | Agenda 2.0's menus as they are (view, note editor, category manager)               |
+| `docs/reference/agenda_menus.json`     | The same menus as captured from Agenda 2.0 (`tools/agformat/capture_menus.py`); `test/agendum/tui/agenda_menus_test.exs` compares Agendum's with it, each difference tagged |
 | `tools/agformat/DRIVING_AGENDA.md` | Running the real Agenda headless to check a behaviour (`agenda_driver.py`) |
 
 ## Plans
