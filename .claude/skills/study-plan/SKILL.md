@@ -19,10 +19,10 @@ The owner is an experienced programmer, new to Elixir (see the `learning-comment
 
 ## 1. The panel picks the part
 
-Read `docs/study/STUDY_PLAN.md` (what was studied), the newest review in `docs/reviews/`, `docs/ROADMAP.md` (the **Next:** line) and `docs/ARCHITECTURE.md`. Then let the lenses with a stake in the code (as in `expert-review`, "Who attends"; José and Joe nearly always) name one candidate each in a sentence, and choose one. Marie may argue against a candidate the project is about to let go (no point studying code on its way out):
+Read `docs/study/STUDY_PLAN.md` (what was studied), the newest review in `docs/reviews/`, `docs/ROADMAP.md` (the **In order** list) and `docs/ARCHITECTURE.md`. Then let the lenses with a stake in the code (as in `expert-review`, "Who attends"; José and Joe nearly always) name one candidate each in a sentence, and choose one. Marie may argue against a candidate the project is about to let go (no point studying code on its way out):
 
 - **Central**: code everything else leans on (`Core.Assign`, `Database`, `Update.handle/2` and its effects, `Store`), before the edges.
-- **Next in line**: code the coming work will change (the roadmap's Next). Understanding it first makes the owner a better reviewer of that work.
+- **Next in line**: code the coming work will change (the roadmap's In order list). Understanding it first makes the owner a better reviewer of that work.
 - **Risky**: where a mistake loses data or trust (saving, undo, format upgrades, assignment conflicts).
 - **Changing fast**: `git log --since=<last unit> --format= --name-only lib | sort | uniq -c | sort -rn | head` shows where the owner has seen the least of the code stay still.
 - **Not yet studied**, and a sensible next step from what was.

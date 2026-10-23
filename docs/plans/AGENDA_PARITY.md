@@ -1,6 +1,6 @@
 # Plan: Agendum as close to Agenda as it makes sense (2026-10-15)
 
-**Status:** under way: about 80% overall on 2026-10-15, still about 80% on 2026-10-22 with the note editor's steps done ("How close"). Since the meeting of 2026-10-21 (§ 5) this is the work that comes first: a truthful clone, declared done when the steps below are done and every entry on the two lists is tagged and confirmed; "Beyond Agenda" gets bug fixes only until then. The steps are tracked in ROADMAP ("Towards parity with Agenda"); keep the two lists below complete.
+**Status:** under way: about 80% overall on 2026-10-15, still about 80% on 2026-10-22 with the note editor's steps done ("How close"). Since the meeting of 2026-10-21 (§ 5) this is the work that comes first: a truthful clone, declared done when the steps below are done and every entry on the two lists is tagged and confirmed; "Beyond Agenda" gets bug fixes only until then. The steps are the checklist at the end ("The steps"), the only list of the parity work, which ROADMAP points to; keep the two lists below complete.
 
 **The test for a difference** (ADR 0043, meeting 2026-10-21, § 6): a difference from Agenda 2.0 stays only if **the machine** forces it (keyboards, terminals, sound, files), it protects **the person's work** (undo, asking before changes are lost), or it is **quiet** (an Agenda user who never asks for it never meets it: nothing changed on Agenda's screens, no Agenda key taken, no entry added to Agenda's menus). Anything else is an *extra*, hidden behind the Extras preference (off by default), or is changed back. Each entry on the two lists below has its tag (*machine*, *work*, *quiet*, *extra* or *change back*), confirmed by the owner entry by entry on 2026-10-22; a change back that alters a habit is a roadmap item of its own, settled first. The comparison with Agenda's captured menus (meeting 2026-10-21, § 8) reads these tags as the accepted differences.
 
@@ -122,7 +122,7 @@ What Agendum has that Agenda did not. The entries tagged **extra** are hidden wh
 - **quiet** · Colour themes beyond Agenda's (R40): Agenda's colours are the default.
 - **machine** · Word wrap in the note editor (R64). Agenda wrapped notes too, at 79 characters (User's Guide, importing a note); Agendum wraps at the window's width, the same on an 80-column screen.
 - **machine** · A count before a command in a view, as Emacs's numeric prefix: ALT-1 ALT-0 ↓ moves ten rows (R65). In Agenda ALT-digits typed DOS character codes, which a terminal cannot.
-- **quiet, once Agenda's help is built** · Help made from the commands and keymaps (R65): from F1, `c` lists the commands that work there (those that cannot run now greyed, with the reason, R65a; each with a longer text saying why one would use it, R65b), `d` describes a key, `a` lists every key. Agenda's F1 help was a fixed text per screen; step 10 makes Agenda's help the front, with `c`, `d` and `a` reached from it.
+- **quiet, once Agenda's help is built** · Help made from the commands and keymaps (R65): from F1, `c` lists the commands that work there (those that cannot run now greyed, with the reason, R65a; each with a longer text saying why one would use it, R65b), `d` describes a key, `a` lists every key. Agenda's F1 help was a fixed text per screen; the step "Agenda's help, in our own words" (The steps, Help) makes Agenda's help the front, with `c`, `d` and `a` reached from it.
 - **change back** · File ▸ New, File ▸ Dating (When dates from text on or off, shown as `[No Auto Dates]`), Category ▸ Recalc, View ▸ Rename, View ▸ Last, Item ▸ Note / When / Show / Finished / Mark / Unmark on the menu: they leave Agenda's menus; the commands stay on their keys and in CTRL-X.
 - **quiet** · The debug log and the developer tools (ALT-?).
 - **extra** · Descriptive key bar labels on a wide screen.
@@ -177,19 +177,66 @@ These are rough: a count of commands and rules, not of how much each matters. By
 
 ## The steps
 
-To close the gaps or move them onto the lists above on purpose; each one small and test-first. After the truthful clone's groundwork (ROADMAP, "Towards parity"), View Properties comes first and recurring items second, as the owner met both in daily use (meeting 2026-10-22, § 5f); the rest in about this order (the most used first):
+The parity work, in the order it is planned (the owner reorders it): each item small and test-first, built with the `feature` skill. This is the only list of it; `ROADMAP.md` points here, and its "In order" list names the next few. A finished item is ticked and moved to `ROADMAP_DONE.md` (Milestone 2), as every roadmap item is. Done so far: the groundwork of the truthful clone (the extras' shelf, ADR 0044; the Extras preference, R77; Agenda's menus captured and compared by a test), the tagging of the two lists above (2026-10-22), and View Properties (R78, 2026-10-23). The order: View Properties first and recurring items second, as the owner met both in daily use (meeting 2026-10-22, § 5f), the shortcut entries leaving the menus once View Properties was built (owner, 2026-10-23); the rest grouped by kind, the most used first.
 
-1. ✅ The View Properties box for every view (screenshot 143), so that View ▸ Properties and F6 in the view manager work as in Agenda (R78, 2026-10-23); the Hide, Filter and Order entries stay as shortcuts until the menus change back. Its Number items next, a step of its own (a stored setting, so a format version).
-2. Recurring items on every date they recur, in datebooks and date filters, still one item (R14a; plan and habit changes: `RECURRING_OCCURRENCES.md`; meeting 2026-10-22, § 5a).
-3. The note editor plan (`NOTE_EDITOR.md`): its remaining parts (external note files).
-4. The trash: Item ▸ Undisc and Utilities ▸ Trash, with File Properties ▸ Empty trash (roadmap: smaller fidelity items).
-5. File ▸ Abandon (back to the saved file), File Maintenance Erase, File Transfer Template.
-6. Show ItemsDone and Show Every (Show View lists), Show Circular with the `o` indicator.
-7. The control panel's `*` (date) symbol, and `WAIT` while a calendar is fetched; `D` with unindexed categories (roadmap).
-8. File Properties' other settings (roadmap item), as far as Agendum has them.
-9. The category manager's menu (captured 2026-10-23, F10 in the manager: Category, Print, Return, Quit); the view manager's and macro manager's menus still to compare.
-10. Agenda's help, in our own words (meeting 2026-10-22, § 7): F1 shows the topic for where you are, bold words link to other topics (arrows, ENTER), F3 Index, F5 Find, F6 Keys, F8 or BACKSPACE Review, ESC leaves; each topic in Agenda's layout (PURPOSE, STEPS, PRESS / TO DO THIS). The keys and the structure are Agenda's; the texts are new, since Agenda's are Lotus's: terse, with a Hundred Acre Wood flavour in an opening line and the examples, quoting no Milne and using no Disney or Shepard pictures. Today's per-place F1 texts and the commands' descriptions become topics (one source, the keys topics made from the keymaps), and F1's `c`, `d` and `a` (R65) stay reachable from it.
-11. Optional: Utilities Launch (a shell without quitting).
+#### Next
+
+- [ ] View Properties ▸ Number items (User's Guide 9-11; checked in Agenda 2.0, 2026-10-23: Yes puts 1, 2, 3 … before each item in every section): a stored view setting, so a format version; the box's row beside Filter, as Agenda's (R78 left it for a step of its own, owner 2026-10-23)
+- [ ] The shortcut entries leave the menus once the View Properties box is built (owner, 2026-10-23): View ▸ Filter, Order and Hide, View ▸ Section ▸ Collapse, Filter, Sort and Lines, View ▸ Manager and Category ▸ Manager; their keys and CTRL-X stay (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+- [ ] Recurring items on every date they recur: in each datebook section and in any date filter that covers an occurrence, counted from the base date, still one item (as Agenda does; checked in Agenda 2.0, User's Guide 7-11). Plan with the evidence, the habit changes to settle first and the steps: `docs/plans/RECURRING_OCCURRENCES.md` (R14a). A parity step since meeting 2026-10-22, § 5a
+
+#### Menus as Agenda's
+
+- [ ] Menu entries Agendum has only as keys (found by the menu test; owner, 2026-10-23): Item ▸ BrkAssign (DEL), Category ▸ Properties (F6) and Category ▸ Discard (ALT-F4), under Agenda's names, the keys unchanged; and the category manager's own F10 menu (Category, Print, Return, Quit; Agendum's F10 there returns to the view)
+- [ ] Agenda's menu shape: Utilities back, no Search menu, Undo and Redo off the top level (their keys stay); File ▸ New, File ▸ Dating, Category ▸ Recalc, View ▸ Rename, View ▸ Last and Item ▸ Note / When / Show / Finished / Mark / Unmark leave the menus, their keys and CTRL-X stay. The menu test (`test/agendum/tui/agenda_menus_test.exs`) lists each of these as a difference to change back (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+- [ ] Agenda's names and order in the menus (found by the menu test; owner, 2026-10-23): Item ▸ Categorize becomes MakeAssign, View ▸ Section ▸ Below and Above become one Add (ALT-D, ALT-U stay), File ▸ Transfer lists Import first. The keys stay; the letters typed in the menu change (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+
+#### Boxes and lists
+
+- [ ] Settings boxes apply their changes on ENTER, not while open (ADR 0030, amended 2026-10-22); ESC still puts back everything since the box opened (tagged *work*) (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+- [ ] Category lists opened from a box (filters, Assignment Profile, conditions, Excludes): "Press ENTER to accept", SPACE switches a category, ENTER and ESC both close the list keeping the change (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+- [ ] Boxes: F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) every setting in the box, CTRL-ENTER clears a setting (User's Guide 2-17)
+- [ ] Category properties of a date or numeric category as Agenda's: the box shows only Category name, Type, Parent, Note, Note file, Special actions, Assignment actions, Statistics and Advanced settings; Short name, Match category name, Match short name, Also match, Exclusive children and Assignment conditions go (checked in Agenda 2.0, 2026-10-16, converting a category in its box: the fields vanish as Type changes). A habit change for the box: settle with the owner first; Agendum's Excludes (ours) to decide too
+
+#### Screens and texts
+
+- [ ] The rest of Agenda as the reference for texts (§ 8), after the menus (done 2026-10-23, `capture_menus.py` and the menu test): the labels in settings boxes, the key bar and messages, captured and compared step by step, each difference tagged. Long help lines are Lotus's text: mind them before going public (GITHUB.md § 7)
+- [ ] The key bar on two lines, the keys above their labels, as Agenda's (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+- [ ] No mode word when ready, and only Agenda's mode words elsewhere (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+- [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
+- [ ] Control panel symbols and indicators: `*` on a date category or value, `WAIT` while a calendar is fetched, `D` with unindexed categories (and unindexed categories themselves)
+- [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names (the note editor's header: in the note editor plan above)
+
+#### Commands and behaviour still missing
+
+- [ ] New files get Agenda's date format, MM/DD/YY; ISO stays a choice (YYYYMMDD with "-"), and a file keeps the format it has (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+- [ ] Alarms as Agenda's (the tagging sitting, 2026-10-22): an alarm that came due while the file was closed rings when it is opened and shows `@`, without a box (checked in Agenda 2.0); Utilities ▸ Show Alarm, a Show View with !Current Alarms! and !Past Alarms! (DEL removes an item from the list; Past Alarms emptied at the end of the day; User's Guide 10-18 to 10-20). The "While you were away" box (R70) is an extra since R77 (2026-10-23): with Extras off, missed alarms already ring on open, without the box
+- [ ] Search compared with Agenda's (ALT-F6 SEARCH in a view and a note, its Search box, the Match show view): the differences become parity work (the tagging sitting, 2026-10-22: no longer an enhancement)
+- [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)
+- [ ] File ▸ Abandon, File Maintenance Erase, File Transfer Template
+- [ ] File ▸ Maintenance ▸ MakeCopy in Write's place (check in Agenda first which file you are in afterwards) (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+- [ ] Show ItemsDone, Show Every, Show Circular (with the `o` indicator)
+- [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash; screenshot 130) where Agendum has them (Tab size done, R64e)
+- [ ] Compare the category, view and macro managers' menus with Agenda's, and add them to the overview
+
+#### The note editor
+
+- [ ] The note editor as Agenda's (checked in Agenda 2.0, 2026-10-15; printing and typesetting, F10 Print and F6 MARKER, out of scope). Evidence, the habit changes to settle first (ESC, INS, TAB, the control panel's first line) and the steps: [`docs/plans/NOTE_EDITOR.md`](plans/NOTE_EDITOR.md)
+  - [x] Its control panel and key bar (R64a, 2026-10-17): line 1 "Note for:   …" (the macro editor's "Edit macro:  …") with "Line N INS EDIT" on the right, a message over it until the next key, hints on line 2; the key bar in Agenda's order, F1 Help … F5 Return, F7 Mark. "Note file: …" comes with external note files, F10 Menu with the menu
+  - [x] Its F10 menu (R64b, 2026-10-17): Clear (asks; one undo step), Return, Quit, with Agenda's help lines; Import and Export come with the next item, File with external note files
+  - [x] Import a text file at the cursor; Export the note to a text file (R64c, 2026-10-17): prompts with F3 listing `.txt` and `.md`, CR LF read as LF
+  - [x] ESC asks "Discard changes?" (R64d, 2026-10-17): only when the note changed; No (first) saves, Yes restores the note as opened, saved replacements and Clear included; ESC on it goes back to the note; F5, ALT-N/P save without asking
+  - [x] Editing keys, part 1 (R64e, 2026-10-17): ALT-M, word moves (CTRL-←/→, ⌥←/→), word delete (⌥⌫, CTRL-W, ALT-W), CTRL-K to the line end, PGUP/PGDN, CTRL-HOME/END (⌥< ⌥>)
+  - [x] Editing keys, part 2 (R64e, 2026-10-17, v0.15.0, format 37): INS/OVR (INS, CTRL-N) shown in the header; TAB to the next tab stop, File Properties ▸ Tab size (stored, 5 by default)
+  - [x] ALT-F9 APPEND, ALT-F8 GETITMS and ALT-C (calendar) in a note (R64f, 2026-10-17); GETITMS copies only: whether to add Agenda's "discard the copied items?" question is the owner's to decide
+  - [x] Bug: in a note longer than the screen, ↑ from the bottom kept the cursor on the bottom row and scrolled the note under it (found by the owner, 2026-10-18). The note now keeps the row it shows first and scrolls only when the cursor would leave the screen, as an editor does
+  - [ ] External note files: File Attach, Detach, Erase (a stored field and an ADR), or left out on purpose: the owner's to decide (NOTE_EDITOR.md, step 7)
+  - [ ] Optional: ALT-F1 COMPOSE
+
+#### Help
+
+- [ ] Agenda's help, in our own words (meeting 2026-10-22, § 7): Agenda's F1 keys and structure exactly (the topic for where you are, bold links, F3 Index, F5 Find, F6 Keys, F8 or BACKSPACE Review; PURPOSE, STEPS, PRESS / TO DO THIS), the texts new since Agenda's are Lotus's: terse, a Hundred Acre Wood flavour in an opening line and the examples, no Milne quoted, no Disney or Shepard pictures. Today's F1 texts and command descriptions become its topics; F1's `c`, `d`, `a` (R65) stay reachable from it
+- [ ] Optional: Utilities Launch (a shell without quitting)
 
 **Declared done** means: every step above built, and every entry on the two lists tagged by ADR 0043's test and confirmed by the owner. It does not wait for outside users' findings (meeting 2026-10-22, § 5a). Each missing thing in "How close" above is either a step here or on the modifications list on purpose.
 

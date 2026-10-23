@@ -47,7 +47,7 @@ Run it and see it fail for the right reason before writing the code.
 
 Tick each that applies; the ones marked *test* fail `mix check` when forgotten.
 
-- [ ] `docs/ROADMAP.md`: the item ticked and moved to `docs/ROADMAP_DONE.md`, under its milestone or area
+- [ ] `docs/ROADMAP.md`, or for parity work `docs/plans/AGENDA_PARITY.md` § The steps: the item ticked and moved to `docs/ROADMAP_DONE.md`, under its milestone or area; the **In order** list at the top of the roadmap kept true
 - [ ] `docs/SPEC.md`: the rule, and its line in the rule index (*test*)
 - [ ] `docs/SCREENS.md`: a new box or screen (*test*)
 - [ ] `docs/KEYBOARD.md`: every named key in a keymap (*test*), and a line for what a new key does

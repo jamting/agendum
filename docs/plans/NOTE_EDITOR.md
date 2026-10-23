@@ -1,6 +1,6 @@
 # Plan: the note editor as Agenda's (2026-10-15)
 
-**Status:** researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 to 6 done (R64a–R64f, 2026-10-17); v0.15.0 approved by the owner (2026-10-19) and tagged; open: GETITMS's discard question, and whether to build step 7 at all (needs an ADR) (ROADMAP, The note editor).
+**Status:** researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 to 6 done (R64a–R64f, 2026-10-17); v0.15.0 approved by the owner (2026-10-19) and tagged; open: GETITMS's discard question, and whether to build step 7 at all (needs an ADR) (AGENDA_PARITY.md, The steps: The note editor).
 
 Agenda's note editor (F5) is a screen of its own: its own control panel, its own key bar and its own F10 menu. Agendum's note editor has the text editing, marking and Search/Replace, but keeps the view's control panel and has no menu. This plan maps what Agenda's editor does, sets printing and typesetting out of scope, and lists the steps for the rest: some new, some only a connection to a feature Agendum already has.
 

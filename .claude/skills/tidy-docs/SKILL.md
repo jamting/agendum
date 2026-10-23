@@ -55,7 +55,7 @@ Keep these in place, and repair them when they drift:
 | Structure | Rule |
 | --- | --- |
 | `docs/INDEX.md` | Every document in `docs/`, `docs/plans/` and `docs/plans/archive/` with what it is for; "Where a change is written down" (a test checks the list is complete) |
-| `docs/ROADMAP.md` | `## Open` first: a **Next:** line saying what comes next, then "Sharpen the saw" (tools, checks, ways of working), then by area (`###`). Done work lives in `docs/ROADMAP_DONE.md`, by milestone. One open item per piece of work: if a plan's steps are listed, nest them under one item and fold repeats into it |
+| `docs/ROADMAP.md` | `## Open` first: the **In order** list (the next few things across every area, each pointing to its details), then the areas (`###`) in the order they are worked on, the frozen ones last; "Sharpen the saw" holds tools, checks and ways of working. The parity work is not here but in `docs/plans/AGENDA_PARITY.md` § The steps, an ordered checklist the roadmap points to (owner, 2026-10-23). Done work lives in `docs/ROADMAP_DONE.md`, by milestone. One open item per piece of work: if a plan's steps are listed, nest them under one item and fold repeats into it |
 | `docs/SPEC.md` | The rule index at the top: every rule, its title and its `## N.` section (a test checks); long paragraphs split under `###` headings without changing the wording |
 | `docs/plans/*.md` | A `**Status:**` line right under the title: what is done, what is next, where it is tracked. A finished plan moves to `docs/plans/archive/` (the owner's decision), a record like an ADR |
 | Tables over walls | A long list run into one paragraph (a version history, a set of conventions) becomes a table or a list |

@@ -62,7 +62,7 @@ Go through it in order, one item at a time, in the conversation; do not run ahea
 
 After the closing, before the minutes, put every decision in its home, each citing the meeting (`meeting 2026-10-20, § 6`):
 
-- **Work to do**: a roadmap item in its area (`docs/ROADMAP.md`; tools and ways of working under "Sharpen the saw"); keep the **Next:** line true if the order of work changed.
+- **Work to do**: a roadmap item in its area (`docs/ROADMAP.md`; tools and ways of working under "Sharpen the saw"), or for parity work an item in `docs/plans/AGENDA_PARITY.md` § The steps, in its place in the order; keep the roadmap's **In order** list true if the order of work changed.
 - **A plan's question answered, or a new plan**: the plan document in `docs/plans/` (its status line too); a new plan gets a row in `docs/INDEX.md`.
 - **A lasting decision** (how something is built, a principle): an ADR in `docs/adr/` with the next number, if the owner agrees it is one; listed where ADRs are listed (`docs/ARCHITECTURE.md`).
 - **Direction**: `docs/VISION.md`.

@@ -25,8 +25,8 @@ defmodule Agendum.TUI.AgendaMenusTest do
   # Every difference, by what it says, with its tag:
   #
   #   :machine, :work, :quiet  stays (ADR 0043's test)
-  #   :change_back             a difference to undo, a roadmap item of its
-  #                            own (ROADMAP, "Towards parity")
+  #   :change_back             a difference to undo, a parity step of its
+  #                            own (AGENDA_PARITY.md, "The steps")
   #   :not_built               Agenda has it, Agendum not yet: parity work
   #   :out_of_scope            left out on purpose (SPEC § 6): printing, DOS
   @differences %{

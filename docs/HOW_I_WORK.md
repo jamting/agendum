@@ -76,7 +76,7 @@ The panel advises; it never votes. I decide.
 
 | What                                   | Where                                                                                          |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| What comes next                        | [`ROADMAP.md`](ROADMAP.md), the **Next:** line at the top                                      |
+| What comes next                        | [`ROADMAP.md`](ROADMAP.md), the **In order** list at the top; the parity work in order: [`plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps |
 | What is done                           | [`ROADMAP_DONE.md`](ROADMAP_DONE.md), by milestone                                             |
 | Every document and what it is for      | [`INDEX.md`](INDEX.md)                                                                         |
 | Thoughts waiting for a meeting         | Thoughts ▸ Next meeting in my project file (`$AGENDUM_PROJECT_FILE`), read by `mix agendum.thoughts` |
