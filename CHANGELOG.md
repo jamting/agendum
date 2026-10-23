@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.23.0 — 2026-10-23
+
+Editing a recurring date keeps it recurring, as in Lotus Agenda.
+
+- **ALT-F2** and **F2 in the When column** on a recurring item now offer its rule with its first date, e.g. `every Monday (starting 2026-10-19)`, and `at 9:00am` after it when it has a time. Before, they offered the date alone, and ENTER turned the item into a plain date.
+- Press ENTER to keep it as it is, or change the words: `every Wednesday (starting 2026-11-04)` changes both the rule and the first date. A first date that is not on the rule's day moves on to the next one.
+- In Swedish: `varje måndag (från 2026-10-19) kl 09:00`.
+- Agenda's own wording, `every Mon (strtng 10/19/2026)`, is read too.
+
 ## 0.22.0 — 2026-10-23
 
 Recurring items show on every date they recur, as in Lotus Agenda.

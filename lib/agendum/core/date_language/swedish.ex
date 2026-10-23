@@ -17,6 +17,7 @@ defmodule Agendum.Core.DateLanguage.Swedish do
   """
 
   @behaviour Agendum.Core.DateLanguage
+  alias Agendum.Core.Recurrence
   import Agendum.Core.DateLanguage, only: [alt: 1, alt: 2]
 
   @full_weekdays %{
@@ -257,4 +258,43 @@ defmodule Agendum.Core.DateLanguage.Swedish do
       {:in_time, "om\\s+(#{n})\\s+(#{alt(__MODULE__, :time_units)})"}
     ]
   end
+
+  # --- a recurring date offered for editing (R14a) ---------------------------
+
+  @weekday_names ~w(måndag tisdag onsdag torsdag fredag lördag söndag)
+
+  # Only what `rules/0` reads back: the interval words go up to "var
+  # fjärde"; "år" is neuter, so "vartannat år" but "varannan månad"
+  @impl true
+  def recurrence_phrase(%Recurrence{every: n}) when n > 4, do: nil
+
+  def recurrence_phrase(%Recurrence{unit: :week, weekday: day, every: n}) when day != nil,
+    do: interval(n, :common) <> " " <> Enum.at(@weekday_names, day - 1)
+
+  def recurrence_phrase(%Recurrence{unit: :month, every: 1, day: day}) when day != nil,
+    do: "den #{day}:#{suffix(day)} varje månad"
+
+  def recurrence_phrase(%Recurrence{unit: :year, every: n}), do: interval(n, :neuter) <> " år"
+
+  def recurrence_phrase(%Recurrence{unit: unit, every: n}),
+    do: interval(n, :common) <> " " <> %{day: "dag", week: "vecka", month: "månad"}[unit]
+
+  defp interval(1, _gender), do: "varje"
+  defp interval(2, :common), do: "varannan"
+  defp interval(2, :neuter), do: "vartannat"
+  defp interval(3, :common), do: "var tredje"
+  defp interval(3, :neuter), do: "vart tredje"
+  defp interval(4, :common), do: "var fjärde"
+  defp interval(4, :neuter), do: "vart fjärde"
+
+  # 1:a, 2:a, 21:a, 22:a, 31:a; the rest :e (11:e, 12:e)
+  defp suffix(day) when rem(day, 10) in [1, 2] and day not in [11, 12], do: "a"
+  defp suffix(_day), do: "e"
+
+  @impl true
+  def starting, do: ["från"]
+
+  @impl true
+  def time_phrase(%Time{hour: hour, minute: minute}),
+    do: "kl " <> Calendar.strftime(%Time{hour: hour, minute: minute, second: 0}, "%H:%M")
 end

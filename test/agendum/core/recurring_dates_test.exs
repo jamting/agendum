@@ -265,4 +265,114 @@ defmodule Agendum.Core.RecurringDatesTest do
       assert db.items[id].when == ~D[2026-10-12]
     end
   end
+
+  # Editing a recurring date offers its rule and base date, so accepting it
+  # keeps them (R14a; Agenda 2.0, checked 2026-10-23: ALT-F2 on "every
+  # Monday" offers `every Mon (strtng 10/19/2026)`, with a time `… at
+  # 9:00am`, and reads it back; ours writes the words out and the date as
+  # ISO 8601, in the reader's language)
+  describe "the rule offered for editing" do
+    defp offered(rule, base, time \\ nil, pack \\ English),
+      do: DateParser.format_recurring(rule, base, time, pack)
+
+    test "in English" do
+      monday = %Recurrence{unit: :week, weekday: 1}
+      assert offered(monday, ~D[2026-10-19]) == "every Monday (starting 2026-10-19)"
+
+      assert offered(%{monday | every: 2}, ~D[2026-10-19]) ==
+               "every other Monday (starting 2026-10-19)"
+
+      assert offered(%Recurrence{unit: :week}, ~D[2026-10-19]) ==
+               "every week (starting 2026-10-19)"
+
+      assert offered(%Recurrence{unit: :week, every: 2}, ~D[2026-10-19]) ==
+               "every 2 weeks (starting 2026-10-19)"
+
+      assert offered(%Recurrence{unit: :day, every: 3}, ~D[2026-10-19]) ==
+               "every 3 days (starting 2026-10-19)"
+
+      assert offered(%Recurrence{unit: :month, day: 30}, ~D[2026-10-30]) ==
+               "the 30th of every month (starting 2026-10-30)"
+
+      assert offered(%Recurrence{unit: :month, every: 3, day: 1}, ~D[2027-01-01]) ==
+               "every 3 months (starting 2027-01-01)"
+
+      assert offered(%Recurrence{unit: :year}, ~D[2027-03-01]) ==
+               "every year (starting 2027-03-01)"
+
+      assert offered(monday, ~D[2026-10-19], ~T[09:00:00]) ==
+               "every Monday (starting 2026-10-19) at 9:00am"
+
+      assert offered(monday, ~D[2026-10-19], ~T[14:30:00]) ==
+               "every Monday (starting 2026-10-19) at 2:30pm"
+    end
+
+    test "in Swedish" do
+      assert offered(%Recurrence{unit: :week, weekday: 1}, ~D[2026-10-19], nil, Swedish) ==
+               "varje måndag (från 2026-10-19)"
+
+      assert offered(%Recurrence{unit: :week, weekday: 5, every: 2}, ~D[2026-10-23], nil, Swedish) ==
+               "varannan fredag (från 2026-10-23)"
+
+      assert offered(%Recurrence{unit: :month, every: 3, day: 1}, ~D[2027-01-01], nil, Swedish) ==
+               "var tredje månad (från 2027-01-01)"
+
+      assert offered(%Recurrence{unit: :month, day: 30}, ~D[2026-10-30], nil, Swedish) ==
+               "den 30:e varje månad (från 2026-10-30)"
+
+      assert offered(%Recurrence{unit: :month, day: 1}, ~D[2026-11-01], nil, Swedish) ==
+               "den 1:a varje månad (från 2026-11-01)"
+
+      assert offered(%Recurrence{unit: :year, every: 2}, ~D[2027-03-01], nil, Swedish) ==
+               "vartannat år (från 2027-03-01)"
+
+      assert offered(%Recurrence{unit: :day}, ~D[2026-10-19], ~T[09:00:00], Swedish) ==
+               "varje dag (från 2026-10-19) kl 09:00"
+    end
+
+    test "each pack reads its own phrase back as the same rule, base date and time" do
+      cases = [
+        {%Recurrence{unit: :week, weekday: 1}, ~D[2026-10-19], nil},
+        {%Recurrence{unit: :week, weekday: 3, every: 2}, ~D[2026-11-04], ~T[07:15:00]},
+        {%Recurrence{unit: :week, every: 2}, ~D[2026-10-20], nil},
+        {%Recurrence{unit: :day}, ~D[2026-10-16], ~T[17:30:00]},
+        {%Recurrence{unit: :day, every: 3}, ~D[2026-10-16], nil},
+        {%Recurrence{unit: :month, day: 30}, ~D[2026-10-30], nil},
+        {%Recurrence{unit: :month, day: 1, every: 3}, ~D[2027-01-01], nil},
+        {%Recurrence{unit: :year}, ~D[2028-02-29], nil},
+        {%Recurrence{unit: :year, every: 2}, ~D[2027-03-01], ~T[12:00:00]}
+      ]
+
+      for pack <- [English, Swedish], {rule, base, time} <- cases do
+        text = offered(rule, base, time, pack)
+
+        assert DateParser.parse_recurring(text, @now, languages: [pack]) ==
+                 {:ok, base, time, rule},
+               "#{inspect(pack)}: #{text}"
+      end
+    end
+
+    test "Agenda's own phrase is read too" do
+      assert read("every Mon (strtng 10/19/2026)") ==
+               {~D[2026-10-19], %Recurrence{unit: :week, weekday: 1}}
+
+      assert DateParser.parse_recurring("every Mon (strtng 10/26/2026) at 9:00am", @now) ==
+               {:ok, ~D[2026-10-26], ~T[09:00:00], %Recurrence{unit: :week, weekday: 1}}
+    end
+
+    test "a start that is not on the rule's day moves to its next one" do
+      assert read("every Monday (starting 2026-10-20)") ==
+               {~D[2026-10-26], %Recurrence{unit: :week, weekday: 1}}
+
+      assert read("the 15th of every month (starting 2026-10-20)") ==
+               {~D[2026-11-15], %Recurrence{unit: :month, day: 15}}
+    end
+
+    test "a rule a pack cannot say, and a date that does not recur, are not offered or read" do
+      # "var tredje måndag" has no English words
+      assert offered(%Recurrence{unit: :week, weekday: 1, every: 3}, ~D[2026-10-19]) == nil
+      assert offered(%Recurrence{unit: :day, every: 6}, ~D[2026-10-19], nil, Swedish) == nil
+      assert read("tomorrow (starting 2026-10-19)") == :error
+    end
+  end
 end

@@ -14,6 +14,7 @@ defmodule Agendum.Core.DateLanguage.English do
   """
 
   @behaviour Agendum.Core.DateLanguage
+  alias Agendum.Core.Recurrence
   import Agendum.Core.DateLanguage, only: [alt: 1, alt: 2]
 
   @weekdays %{
@@ -227,5 +228,42 @@ defmodule Agendum.Core.DateLanguage.English do
       {:in_time, "(#{n})\\s+(#{time_unit})\\s+from\\s+now"},
       {:now, "(now)"}
     ]
+  end
+
+  # --- a recurring date offered for editing (R14a) ---------------------------
+
+  @weekday_names ~w(Monday Tuesday Wednesday Thursday Friday Saturday Sunday)
+
+  # Only what `rules/0` reads back: "every other" is its one interval word
+  # past "every", so "every 3rd Monday" has no English words (nil)
+  @impl true
+  def recurrence_phrase(%Recurrence{unit: :week, weekday: day, every: n}) when day != nil,
+    do: if(n in [1, 2], do: interval(n) <> " " <> Enum.at(@weekday_names, day - 1))
+
+  def recurrence_phrase(%Recurrence{unit: :month, every: 1, day: day}) when day != nil,
+    do: "the #{ordinal(day)} of every month"
+
+  def recurrence_phrase(%Recurrence{unit: unit, every: 1}), do: "every #{unit}"
+  def recurrence_phrase(%Recurrence{unit: unit, every: n}), do: "every #{n} #{unit}s"
+
+  defp interval(1), do: "every"
+  defp interval(2), do: "every other"
+
+  defp ordinal(n) when rem(n, 100) in 11..13, do: "#{n}th"
+  defp ordinal(n) when rem(n, 10) == 1, do: "#{n}st"
+  defp ordinal(n) when rem(n, 10) == 2, do: "#{n}nd"
+  defp ordinal(n) when rem(n, 10) == 3, do: "#{n}rd"
+  defp ordinal(n), do: "#{n}th"
+
+  # "strtng" is Agenda's own, as its ALT-F2 offers it (checked 2026-10-23)
+  @impl true
+  def starting, do: ["starting", "strtng"]
+
+  # with am or pm, so an hour from 1 to 7 is not read as afternoon
+  @impl true
+  def time_phrase(%Time{hour: hour, minute: minute}) do
+    clock = rem(hour + 11, 12) + 1
+    half = if hour < 12, do: "am", else: "pm"
+    "at #{clock}:#{String.pad_leading(Integer.to_string(minute), 2, "0")}#{half}"
   end
 end

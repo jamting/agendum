@@ -515,7 +515,11 @@ defmodule Agendum.TUI.Update.ViewKeys do
         end
 
       true ->
-        text = Agendum.Core.DateParser.format(Database.item_date(state.db, item_id, head))
+        # When offers a recurring date's rule, so ENTER keeps it (R14a)
+        text =
+          if head == state.db.special.when,
+            do: Agendum.Core.when_text(state.db, item_id, State.context(state)),
+            else: Agendum.Core.DateParser.format(Database.item_date(state.db, item_id, head))
 
         %{
           state

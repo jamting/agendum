@@ -176,11 +176,10 @@ These are rough: a count of commands and rules, not of how much each matters. By
 
 ## The steps
 
-The parity work, in the order it is planned (the owner reorders it): each item small and test-first, built with the `feature` skill. This is the only list of it; `ROADMAP.md` points here, and its "In order" list names the next few. A finished item is ticked and moved to `ROADMAP_DONE.md` (Milestone 2), as every roadmap item is. Done so far: the groundwork of the truthful clone (the extras' shelf, ADR 0044; the Extras preference, R77; Agenda's menus captured and compared by a test), the tagging of the two lists above (2026-10-22), View Properties (R78) with Number items (R79), the shortcut entries out of the menus, and recurring items on every date they recur (R14a) (2026-10-23). The order: View Properties first and recurring items second, as the owner met both in daily use (meeting 2026-10-22, § 5f), the shortcut entries leaving the menus once View Properties was built (owner, 2026-10-23); the rest grouped by kind, the most used first.
+The parity work, in the order it is planned (the owner reorders it): each item small and test-first, built with the `feature` skill. This is the only list of it; `ROADMAP.md` points here, and its "In order" list names the next few. A finished item is ticked and moved to `ROADMAP_DONE.md` (Milestone 2), as every roadmap item is. Done so far: the groundwork of the truthful clone (the extras' shelf, ADR 0044; the Extras preference, R77; Agenda's menus captured and compared by a test), the tagging of the two lists above (2026-10-22), View Properties (R78) with Number items (R79), the shortcut entries out of the menus, recurring items on every date they recur, and editing one shows its rule (R14a) (2026-10-23). The order: View Properties first and recurring items second, as the owner met both in daily use (meeting 2026-10-22, § 5f), the shortcut entries leaving the menus once View Properties was built (owner, 2026-10-23); the rest grouped by kind, the most used first.
 
 #### Next
 
-- [ ] Editing a recurring item's date shows its rule (owner, 2026-10-23): ALT-F2 and the When column offer `every day (starting 2026-10-16)` as Agenda's `every day (strtng 10/16/2026)`, in the date language packs (Swedish `varje dag (från 2026-10-16)`), and reading it back keeps the rule and base date; today the date alone is offered, and accepting it ends the rule (`RECURRING_OCCURRENCES.md`, step 5)
 
 #### Menus as Agenda's
 

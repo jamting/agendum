@@ -24,6 +24,12 @@ defmodule Agendum.Core.DateLanguage do
       `:day_month` ("5/11" is 5 November).
     * `clock/0`: `:agenda` (hours 1–7 without am/pm are afternoon, User's
       Guide 6-12) or `:twenty_four`.
+    * `recurrence_phrase/1`, `starting/0` and `time_phrase/1`: how a
+      recurring date is offered for editing (R14a), `every Monday (starting
+      2026-10-19) at 9:00am`: the rule in the pack's words (nil when it has
+      none for it), the words that start the base date in brackets (the
+      first is written, all are read: Agenda's "strtng" too) and a time
+      (`Agendum.Core.DateParser.format_recurring/4`).
   """
 
   @type pack :: module
@@ -35,6 +41,9 @@ defmodule Agendum.Core.DateLanguage do
   @callback words() :: %{atom => %{String.t() => term}}
   @callback numeric_order() :: :month_day | :day_month
   @callback clock() :: :agenda | :twenty_four
+  @callback recurrence_phrase(Agendum.Core.Recurrence.t()) :: String.t() | nil
+  @callback starting() :: [String.t()]
+  @callback time_phrase(Time.t()) :: String.t()
 
   @doc "Every language pack, the default (English) first."
   @spec packs() :: [pack]

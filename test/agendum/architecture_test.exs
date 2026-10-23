@@ -152,7 +152,7 @@ defmodule Agendum.ArchitectureTest do
     item_column_fit marked_items match_settings move_conflicts new_file
     numeric_conversion prerequisites promote_conflicts questions read_when
     related_items relocation_conflicts section_calcs shift_filters view_statistics waiting?
-    when_at
+    when_at when_text
     zettel zettels item_by_zettel zettel_links link_targets linked_from
     blog_posts site site_changes feeds_due parse_feed export_opml
   )a

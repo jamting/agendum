@@ -164,7 +164,8 @@ defmodule Agendum.TUI.Update.Actions do
     do: State.error(state, "Highlight an item first")
 
   defp do_perform(state, :when, %{kind: :item, item: item}) do
-    current = if item.when, do: Agendum.Core.DateParser.format(item.when), else: ""
+    # a recurring date offers its rule, so ENTER keeps it (R14a)
+    current = Agendum.Core.when_text(state.db, item.id, State.context(state))
     Prompts.prompt(state, "When date (overrides dates in the text):", {:when, item.id}, current)
   end
 

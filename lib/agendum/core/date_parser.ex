@@ -200,6 +200,40 @@ defmodule Agendum.Core.DateParser do
   def parse_recurring(text, %NaiveDateTime{} = now, opts \\ []) do
     text = String.trim(text)
 
+    case split_starting(text, languages(opts)) do
+      nil -> recurring_phrase(text, now, opts)
+      {rest, start} -> recurring_from(rest, start, now, opts)
+    end
+  end
+
+  # "every Monday (starting 2026-10-19) at 9am" (R14a): the bracket's date
+  # is read first, then the rest as if typed on that day, so its first
+  # occurrence on or after it is the base date ("every Monday" from a
+  # Tuesday is the Monday after). The rest must recur.
+  defp recurring_from(rest, start, now, opts) do
+    with {:ok, day} <- parse(start, NaiveDateTime.to_date(now), opts),
+         {:ok, date, time, %Recurrence{} = rule} <-
+           recurring_phrase(rest, NaiveDateTime.new!(day, ~T[00:00:00]), opts) do
+      {:ok, date, time, rule}
+    else
+      _ -> :error
+    end
+  end
+
+  # the text without a bracket that starts with a pack's `starting/0` word,
+  # and the words inside it; nil without one
+  defp split_starting(text, languages) do
+    Enum.find_value(languages, fn pack ->
+      regex = ~r/\(\s*(?:#{DateLanguage.alt(pack.starting())})\s+([^()]*?)\s*\)/iu
+
+      case Regex.run(regex, text) do
+        [whole, inside] -> {String.replace(text, whole, " ", global: false), inside}
+        nil -> nil
+      end
+    end)
+  end
+
+  defp recurring_phrase(text, now, opts) do
     with {:ok, date, time, rule, spans} <- find_when(text, now, opts, false),
          rest = remove_spans(text, spans),
          true <- Regex.match?(~r/^[\s,.@]*(at)?[\s,.@]*$/iu, rest) do
@@ -791,4 +825,31 @@ defmodule Agendum.Core.DateParser do
   @spec format(Date.t() | nil) :: String.t()
   def format(nil), do: ""
   def format(%Date{} = date), do: Date.to_iso8601(date)
+
+  @doc """
+  A recurring date as offered for editing, in `pack`'s words (R14a): the
+  rule, its base date in brackets (ISO 8601, as dates offered for editing
+  are) and its time, `every Monday (starting 2026-10-19) at 9:00am`, as
+  Agenda's ALT-F2 offers `every Mon (strtng 10/19/2026)`. Nil when the
+  pack has no words for the rule, or would read its phrase back as another
+  date: the date alone is offered then.
+  """
+  @spec format_recurring(Recurrence.t(), Date.t(), Time.t() | nil, DateLanguage.pack()) ::
+          String.t() | nil
+  def format_recurring(%Recurrence{} = rule, %Date{} = base, time, pack) do
+    with phrase when is_binary(phrase) <- pack.recurrence_phrase(rule),
+         text =
+           Enum.join(
+             [phrase, "(#{hd(pack.starting())} #{format(base)})"] ++
+               if(time, do: [pack.time_phrase(time)], else: []),
+             " "
+           ),
+         # read back as typed on the base date: the same rule, date and time
+         {:ok, ^base, ^time, ^rule} <-
+           parse_recurring(text, NaiveDateTime.new!(base, ~T[00:00:00]), languages: [pack]) do
+      text
+    else
+      _ -> nil
+    end
+  end
 end

@@ -60,6 +60,32 @@ defmodule Agendum.Core.Facade.Dates do
     do: %{db | date_settings: settings}
 
   @doc """
+  The text ALT-F2 and the When column offer for editing an item's When
+  date (R14a): a recurring one's rule, base date and time in the reader's
+  main language, `every Monday (starting 2026-10-19) at 9:00am`, as Agenda
+  offers `every Mon (strtng 10/19/2026)`, so accepting it keeps the rule;
+  else (or when that language has no words for the rule) the date, ISO
+  8601, "" without one.
+  """
+  @spec when_text(db, id, clock) :: String.t()
+  def when_text(db, item_id, clock) do
+    item = db.items[item_id]
+
+    # `&&` gives its right side only when the left is truthy (not nil or
+    # false), so `phrase` is nil for an item without a rule or a date
+    phrase =
+      item.recurrence && item.when &&
+        DateParser.format_recurring(
+          item.recurrence,
+          item.when,
+          item.when_time,
+          hd(Context.languages(clock))
+        )
+
+    phrase || DateParser.format(item.when)
+  end
+
+  @doc """
   ALT-F2 (WHEN): sets the When date from typed text, and the same date in
   every date category set from the When key (R6b).
   """

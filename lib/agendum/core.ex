@@ -118,6 +118,7 @@ defmodule Agendum.Core do
   defdelegate set_date_format(db, format), to: Dates
   defdelegate set_date_settings(db, settings), to: Dates
   defdelegate when_key(db, item_id, text, clock), to: Dates
+  defdelegate when_text(db, item_id, clock), to: Dates
   defdelegate set_date(db, item_id, cat_id, date, clock \\ nil), to: Dates
   defdelegate set_date_time(db, item_id, cat_id, date, time, clock \\ nil), to: Dates
   defdelegate read_when(db, text, clock), to: Dates
