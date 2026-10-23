@@ -132,7 +132,7 @@ What Agendum has that Agenda did not. The entries tagged **extra** are hidden wh
 - **extra** · Zettel ids (Quadsyl-24, R73, ADR 0039), a Zettel id column (R73a) and links between items (R73b).
 - **extra** · A micro-blog published from the file (File ▸ Transfer ▸ Publish, R74).
 - **extra** · Feeds: a plain RSS and Atom reader, the News view, OPML, CTRL-V to open a link (R75).
-- **tag to confirm** · The Extras row in File ▸ Customize (R77): the switch that hides every entry tagged *extra* above, off by default (the owner chose the Customize box, 2026-10-23). A row Agenda's Customize box did not have; the tag is the owner's to give.
+- **quiet** · The Extras row in File ▸ Customize (R77): the switch that hides every entry tagged *extra* above, off by default (the owner chose the Customize box and confirmed the tag, 2026-10-23). A row Agenda's Customize box did not have, met only by someone who opens Customize and looks for it.
 - **quiet** · CTRL-X runs a command by name, found by part of it or its initials, in a small box (R65d, ADR 0040), a key Agenda left unused; F1 `c` narrows the same way.
 
 Off the list since the tagging sitting, as no difference from Agenda: **search** (ALT-F6, ALT-N / ALT-P and the Show View for results) is Agenda's own ALT-F6 SEARCH in views and notes, with its Match show view (Agenda's F1 help); comparing it with Agenda's Search box is parity work (ROADMAP). **Hide column heads** (R57) is a setting of Agenda's own View Properties box (checked in Agenda 2.0, 2026-10-22).
