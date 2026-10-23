@@ -1,6 +1,6 @@
 # Moving the repository folder
 
-**Status:** prepared 2026-10-23, to do by the owner (Roadmap, Housekeeping): from `~/Code/Lotus Agenda` to `~/ailab/agendum`, with the owner's `~/ailab/mv-to-ailab` (its `--name` option added 2026-10-23). Written 2026-10-14.
+**Status:** done 2026-10-23: the folder moved from `~/Code/Lotus Agenda` to `~/ailab/agendum` with the owner's `~/ailab/mv-to-ailab --name agendum`; Claude Code kept its memory, `_build/` and `tmp/` were rebuilt and `mix check` passed. Its warnings about the old path, all expected, were this plan, the roadmap item, and `_build/` and `tmp/`. Kept as the record of what depends on the folder's path. Written 2026-10-14.
 
 The code is called Agendum (ADR 0019), but the folder still has the old name and sits outside `~/ailab`, where the owner's other projects are. Moving it is a plain `mv`, with one catch: **Claude Code keys its memory of a project, its session history and the folder's trust settings by the folder's path**, so after a bare `mv` it would start without them. `mv-to-ailab` moves those too.
 
