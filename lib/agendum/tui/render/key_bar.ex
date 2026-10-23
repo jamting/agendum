@@ -1,6 +1,8 @@
 defmodule Agendum.TUI.Render.KeyBar do
   @moduledoc """
-  The function key bar on the last line: the keys of what is on top. Pure.
+  The function key bar on the last line: the keys of what is on top. What
+  does not fit the screen is left out whole, never cut mid-word (SPEC § The
+  key bar). Pure.
   """
 
   alias Agendum.TUI.{Typing.Completion, Terminal.Draw, State}
@@ -15,6 +17,9 @@ defmodule Agendum.TUI.Render.KeyBar do
   # {key, label, full key, full label}.
   @doc "The key bar line."
   def line(state) do
+    # a box on top names ENTER and ESC in its bottom edge too
+    box? = state.edit == nil and not Completion.active?(state) and box_on_top?(state)
+
     keys =
       cond do
         Completion.active?(state) ->
@@ -45,13 +50,42 @@ defmodule Agendum.TUI.Render.KeyBar do
 
     keys = Enum.map(keys, &attached_label(state, &1))
     full = keybar_segments(keys, fn {_, _, key, label} -> {key, label} end, " ")
-    short = keybar_segments(keys, fn {key, label, _, _} -> {key, label} end, "")
     # the fuller labels are an extra (R77): Agenda's short ones otherwise
     segments =
-      if state.prefs.extras and Draw.width(full) <= state.width, do: full, else: short
+      if state.prefs.extras and Draw.width(full) <= state.width,
+        do: full,
+        else: short_fitting(keys, state.width, box?)
 
     Draw.line(segments, state.width, :keybar)
   end
+
+  defp box_on_top?(state) do
+    case State.mode(state) do
+      nil -> false
+      mode -> is_map_key(@boxes, mode.type)
+    end
+  end
+
+  # The short bar with as many whole entries as fit `width`, never a label
+  # cut mid-word: all of them; in a box, without ENTER and ESC (its bottom
+  # edge names them); then one fewer from the end at a time.
+  # `Stream.iterate/2` makes the ever shorter lists lazily, `Enum.find/2`
+  # stops at the first that fits; an empty bar always does.
+  defp short_fitting(keys, width, box?) do
+    keys = if box? and not fits?(keys, width), do: Enum.reject(keys, &closing?/1), else: keys
+
+    keys
+    |> Stream.iterate(&Enum.drop(&1, -1))
+    |> Enum.find(&fits?(&1, width))
+    |> short_segments()
+  end
+
+  defp fits?(keys, width), do: Draw.width(short_segments(keys)) <= width
+
+  defp short_segments(keys),
+    do: keybar_segments(keys, fn {key, label, _, _} -> {key, label} end, "")
+
+  defp closing?({key, _, _, _}), do: key in ["ENTER", "ESC"]
 
   # a function key attached to a macro shows the macro's name, as in
   # Agenda (its first seven letters in the short bar, R50)

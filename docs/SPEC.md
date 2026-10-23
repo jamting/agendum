@@ -324,7 +324,7 @@ In Category Properties, as Agenda (screenshot 74), Note, Statistics and Advanced
 
 ### The key bar
 
-Our choices: the function-key bar stays one line with the keys' names and labels side by side (Agenda had two lines of ten fixed slots). When the screen is wide enough for all of them, it shows fuller labels ("F8 View manager", "INS/CTRL-N Add a category"); otherwise Agenda's short ones ("F8 VwMgr").
+Our choices: the function-key bar stays one line with the keys' names and labels side by side (Agenda had two lines of ten fixed slots). When the screen is wide enough for all of them, it shows fuller labels ("F8 View manager", "INS/CTRL-N Add a category"); otherwise Agenda's short ones ("F8 VwMgr"). When even the short ones do not all fit, whole entries are left out, never a label cut mid-word: in a box ENTER and ESC go first (its bottom edge names them), then the last entries, one at a time; outside a box only the last entries go.
 
 ### Keys in views and the category manager
 

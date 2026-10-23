@@ -6,11 +6,10 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
-1. The key bar at 80 columns (Fixes and polish, below)
-2. The shortcut entries leave the menus (parity; a habit change, settled first)
-3. Recurring items on every date they recur (parity; `RECURRING_OCCURRENCES.md`)
-4. A closed effect type in `App` (The clone's safety, below)
-5. Then the parity steps in their order ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the rest of the clone's safety between them
+1. The shortcut entries leave the menus (parity; a habit change, settled first)
+2. Recurring items on every date they recur (parity; `RECURRING_OCCURRENCES.md`)
+3. A closed effect type in `App` (The clone's safety, below)
+4. Then the parity steps in their order ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the rest of the clone's safety between them
 
 **Frozen until the truthful clone is declared done** (meeting 2026-10-21, § 5; `VISION.md`, ADR 0043): Beyond Agenda, Ideas and Towards many users wait (bug fixes only). Not frozen: the parity steps, the clone's safety work and tests (meeting 2026-10-22, § 5c) and Sharpen the saw (§ 5i). The view cache waits for slow answers in real use.
 
@@ -20,7 +19,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 ### Fixes and polish
 
-- [ ] The key bar at 80 columns: boxes with many keys (Section Properties, View Properties) run past the screen's width and are cut mid-word ("ENTER Do"); drop whole entries that do not fit, ENTER and ESC first (the box's bottom edge names them), as the hint inside the box already does (found 2026-10-23)
+- [ ] F10 Menu missing from the view's key bar at 80 columns: the ten short entries need 88 columns, so the last one is left out (found 2026-10-23, while fixing the key bar). Agenda drew ten 8-column slots on two lines (key names above, labels below); to settle with the owner: two lines as Agenda's, or a tighter one-line bar
 
 ### The clone's safety
 

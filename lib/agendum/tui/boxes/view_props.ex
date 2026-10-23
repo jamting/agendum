@@ -544,8 +544,9 @@ defmodule Agendum.TUI.Boxes.ViewProps do
     do: [{"↑↓", "Move", "Carry the section"}, {"ENTER", "Accept"}]
 
   def keys(_state, _mode),
-    # as many as fit 80 columns, ENTER and ESC last (the box's bottom edge
-    # names them too); Agenda's key bar had no arrows either
+    # at 80 columns the bar leaves out ENTER and ESC (the box's bottom edge
+    # names them too, `Agendum.TUI.Render.KeyBar`); Agenda's key bar had no
+    # arrows either
     do: [
       {"SPACE", "Change", "Change the setting"},
       {"F2", "Edit", "Edit the view's name"},

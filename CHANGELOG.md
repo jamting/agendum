@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.20.1 — 2026-10-23
+
+- On a narrow screen (80 columns) the key bar no longer cuts a label mid-word ("ENTER Do"). Keys that do not fit are left out whole. In a box ENTER and ESC go first, since the box's bottom edge already says "Press ENTER when done, ESC to cancel".
+
 ## 0.20.0 — 2026-10-23
 
 Number items, the last row of Agenda's View Properties box.
