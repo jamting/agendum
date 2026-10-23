@@ -121,6 +121,10 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 - [x] JSON export/import: the modern, human-readable format; round-trips everything in a file (R44, `docs/JSON_FORMAT.md`)
 - [x] iCal import: subscribe to calendars on the web, read on a schedule or on request, mirrored into items (R45)
+- [x] Read original `.AG` files directly (R72, v0.10.0, 2026-10-16). The format is now largely known (`docs/AGENDA_FILE_FORMAT.md`; research log `docs/plans/archive/AGENDA_FILE_FORMAT_LOG.md`; reference reader `tools/agformat/agdump.py`): items, notes and note files, categories with all their settings, conditions and actions, assignments with values, relative and recurring dates, alarms, views with sorting and filters, datebooks, sections, columns with formats, file settings
+  - [x] Reverse engineer the format: container, items, categories, values, views (2026-10-14)
+  - [x] Settle the open parts: view/section sort and filter words, relative-date encoding, actions, settings (2026-10-15, second round; how to drive Agenda: `tools/agformat/DRIVING_AGENDA.md`)
+  - [x] An Elixir reader and conversion (pure, `Agendum.Core.AgFile`, through the JSON format's checks); File ▸ Transfer ▸ Import of a `.AG` and `agendum OLD.AG`, with a password and a report of what came over (R72, 2026-10-16)
 - [x] Time zones in calendar subscriptions: a time with a TZID is converted by the calendar's own `VTIMEZONE` definitions (offsets and yearly daylight-saving rules or RDATEs, `Agendum.Core.ICal.TimeZone`) to UTC, then to local time; a zone the calendar does not define stays local time; no package (ADR 0021) (R45)
 
 ### Milestone 5 — Time management and automation

@@ -46,11 +46,7 @@ Agenda's note editor is parity work (AGENDA_PARITY.md § The steps); this one is
 ### Data interchange (Milestone 4)
 
 - [ ] Repeating events in a calendar from another time zone: each occurrence converted in its own zone, so the weeks between the two zones' summer-time changes are not an hour off (SPEC R45)
-- [ ] Optional: read original `.AG` files directly. The format is now largely known (`docs/AGENDA_FILE_FORMAT.md`; research log `docs/plans/archive/AGENDA_FILE_FORMAT_LOG.md`; reference reader `tools/agformat/agdump.py`): items, notes and note files, categories with all their settings, conditions and actions, assignments with values, relative and recurring dates, alarms, views with sorting and filters, datebooks, sections, columns with formats, file settings
-  - [x] Reverse engineer the format: container, items, categories, values, views (2026-10-14)
-  - [x] Settle the open parts: view/section sort and filter words, relative-date encoding, actions, settings (2026-10-15, second round; how to drive Agenda: `tools/agformat/DRIVING_AGENDA.md`)
-  - [x] An Elixir reader and conversion (pure, `Agendum.Core.AgFile`, through the JSON format's checks); File ▸ Transfer ▸ Import of a `.AG` and `agendum OLD.AG`, with a password and a report of what came over (R72, 2026-10-16)
-  - [ ] Still to bring over: note files (read by the shell beside the `.AG`), the global date format, a datebook's base date
+- [ ] The `.AG` import (R72), still to bring over: note files (read by the shell beside the `.AG`), the global date format, a datebook's base date
   - [ ] Macros. Every macro in the files at hand is a starter's helper program in Agenda's macro command language (`{INPUTTEXT;…}`, `{DEFSTR;%var}`, `{LABEL}`, `{WINDOWSON}`), not recorded keystrokes, so R50 cannot run them; the owner's own Planner has only Planner's 10 (contact list, date settings, hide done, print, four sorts), none of the owner's. Planner, Account Manager, People Manager and Information Sifter have 10, 14, 10 and 6 (checked 2026-10-16). Options when picked up: import plain keystroke macros as R50 macros, and keep each other macro's text in a note so it can still be read; the command language itself stays out of scope (SPEC § 6)
 
 ### Time management (Milestone 5)
