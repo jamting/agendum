@@ -218,6 +218,7 @@ The parity work, in the order it is planned (the owner reorders it): each item s
 - [ ] Show ItemsDone, Show Every, Show Circular (with the `o` indicator)
 - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash; screenshot 130) where Agendum has them (Tab size done, R64e)
 - [ ] Compare the category, view and macro managers' menus with Agenda's, and add them to the overview
+- [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated") (moved from the roadmap's Data interchange, owner 2026-10-23; stays optional)
 
 #### The note editor
 
