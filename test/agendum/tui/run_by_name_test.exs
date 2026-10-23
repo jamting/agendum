@@ -15,7 +15,7 @@ defmodule Agendum.TUI.RunByNameTest do
 
   setup do
     db = Planner.build() |> Planner.with_samples(@today)
-    %{state: start(db, today: @today, height: 40, width: 100)}
+    %{state: start(db, today: @today, height: 40, width: 100, extras: true)}
   end
 
   # the highlighted item, after ↓ from a section head

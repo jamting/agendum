@@ -350,13 +350,54 @@ defmodule Agendum.TUI.Commands do
   # each command's longer text (R65b), from `Agendum.TUI.CommandDocs`
   @docs Agendum.TUI.CommandDocs.all()
 
+  # The extras (ADR 0043, R77), by place: Agendum's own commands that
+  # Agenda did not have and that fail the test of a truthful clone. While
+  # the Extras preference is off they are hidden and their keys do nothing.
+  @extras %{
+    # Zettel ids and links between items (R73, R73b); a feed entry's link (R75)
+    view: [:attach_zettel, :follow_link, :linked_from, :open_link],
+    # the views by recently used (R68)
+    viewmgr: [:order],
+    # a link to the marked items typed into a note (R73b)
+    note: [:insert_link]
+  }
+
   @commands Map.new(@commands, fn {place, list} ->
-              {place, Enum.map(list, &%{&1 | doc: get_in(@docs, [place, &1.id])})}
+              extras = Map.get(@extras, place, [])
+
+              {place,
+               Enum.map(
+                 list,
+                 &%{&1 | doc: get_in(@docs, [place, &1.id]), extra: &1.id in extras}
+               )}
             end)
 
-  @doc "The commands of a place, in the command list's order."
+  @doc """
+  The commands of a place, in the command list's order, the extras
+  included (the keyboard's documents list them all).
+  """
   @spec all(atom) :: [Command.t()]
   def all(place), do: Map.get(@commands, place, [])
+
+  @doc """
+  The commands of a place the person can use: all of them with the Extras
+  preference on (`extras?` true), else all but the extras (R77). The
+  menus, F1, CTRL-X and the keys all ask here, so the switch is in one place.
+  """
+  @spec shown(atom, boolean) :: [Command.t()]
+  def shown(place, true), do: all(place)
+  def shown(place, false), do: Enum.reject(all(place), & &1.extra)
+
+  @doc "Whether the command `id` of `place` is an extra (R77)."
+  @spec extra?(atom, atom) :: boolean
+  def extra?(place, id), do: id in Map.get(@extras, place, [])
+
+  @doc """
+  The command ids the menu's entries name that are extras: the view's
+  extras, and the boxes only the extras have (calendars, the blog, feeds).
+  """
+  @spec extra_actions() :: [atom]
+  def extra_actions, do: @extras.view ++ [:calendars, :publish, :feeds]
 
   @doc "A place's command by id, or nil."
   @spec get(atom, atom) :: Command.t() | nil

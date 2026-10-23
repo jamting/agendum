@@ -7,7 +7,7 @@ defmodule Agendum.TUI.Extras.ZettelsTest do
   alias Agendum.TUI.Layout
 
   setup do
-    %{state: start(quiet_meetings(Agendum.Sample.build(~D[2026-10-08])))}
+    %{state: start(quiet_meetings(Agendum.Sample.build(~D[2026-10-08])), extras: true)}
   end
 
   # the menu: F10, Item, Zettel, Attach (first letters, as in Agenda)

@@ -20,7 +20,7 @@ defmodule Agendum.TUI.Extras.ZettelLinksTest do
       )
 
     {:ok, db, _} = Core.attach_zettels(db, [owl, party])
-    %{state: start(db), owl: owl, party: party, plan: plan}
+    %{state: start(db, extras: true), owl: owl, party: party, plan: plan}
   end
 
   defp section(db), do: hd(Database.find_categories(db, "Initial Section"))

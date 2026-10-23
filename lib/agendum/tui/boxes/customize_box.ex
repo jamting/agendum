@@ -5,7 +5,7 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
   language and Fallback language (R14c), Input format, which opens
   `Agendum.TUI.Boxes.InputFormatBox` (R41b), Display key map, Confirm mode,
   Auto-save interval and the Decimal and Thousands separators (R54), Sound
-  and Beep on auto-completion (R76). A
+  and Beep on auto-completion (R76), and Extras (R77). A
   change applies at once, is not part of undo, and is saved to the
   preferences file (`State.change_preference/3`).
 
@@ -36,6 +36,7 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
    Thousands separator     : [thousands            ]
    Sound                   : [sound                ]
    Beep on auto-completion : [beep_completion      ]
+   Extras                  : [extras               ]
 
    Saved in your preferences, not in this file.
   """
@@ -65,7 +66,10 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
         "SPACE switches.",
     beep_completion:
       "Whether typing a category beeps: high when one matches, low when none does. " <>
-        "SPACE switches."
+        "SPACE switches.",
+    extras:
+      "Whether Agendum's extras show, things Agenda did not have: the blog, feeds, " <>
+        "Zettel ids, calendars and more. SPACE switches."
   }
   # Agenda took any number of minutes from 1 to 60; these are the steps
   @auto_save [0, 1, 2, 5, 10, 15, 20, 30, 45, 60]
@@ -118,6 +122,12 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
   defp change(state, :beep_completion, _step) do
     on = not state.prefs.beep_completion
     State.change_preference(state, & &1, &%{&1 | beep_completion: on})
+  end
+
+  # the extras (R77, ADR 0043): shown or hidden at once, everywhere
+  defp change(state, :extras, _step) do
+    on = not state.prefs.extras
+    State.change_preference(state, & &1, &%{&1 | extras: on})
   end
 
   defp change(state, :theme, step) do
@@ -194,7 +204,8 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
       decimal: separator(numbers[:decimal]),
       thousands: separator(numbers[:thousands]),
       sound: yes_no(state.prefs.sound),
-      beep_completion: yes_no(state.prefs.beep_completion)
+      beep_completion: yes_no(state.prefs.beep_completion),
+      extras: yes_no(state.prefs.extras)
     }
   end
 

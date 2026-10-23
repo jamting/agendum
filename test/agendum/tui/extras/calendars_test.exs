@@ -13,7 +13,7 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
   @url "https://example.com/work.ics"
 
   setup do
-    state = start(Agendum.Sample.build(~D[2026-10-12]))
+    state = start(Agendum.Sample.build(~D[2026-10-12]), extras: true)
     %{state: %{state | now: ~N[2026-10-12 10:00:00], today: ~D[2026-10-12]}}
   end
 

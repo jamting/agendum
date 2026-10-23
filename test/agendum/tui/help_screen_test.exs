@@ -19,7 +19,7 @@ defmodule Agendum.TUI.HelpScreenTest do
   end
 
   defp to_command(state, name) do
-    index = Enum.find_index(HelpScreen.commands(:view), fn {c, _, _} -> c.name == name end)
+    index = Enum.find_index(HelpScreen.commands(:view, false), fn {c, _, _} -> c.name == name end)
     press(state, List.duplicate(:down, index))
   end
 
@@ -81,7 +81,7 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert text =~ ~r/Down +↓ ENTER +Highlight the row below/
       assert text =~ ~r/Insert +INS ALT-I CTRL-N/
 
-      names = for {c, _, _} <- HelpScreen.commands(:view), do: c.name
+      names = for {c, _, _} <- HelpScreen.commands(:view, false), do: c.name
       assert "Undo" in names
       assert Enum.find_index(names, &(&1 == "Undo")) > Enum.find_index(names, &(&1 == "Down"))
       # Save is the view's ALT-W and the global CTRL-S: listed once
@@ -157,7 +157,9 @@ defmodule Agendum.TUI.HelpScreenTest do
       in_note = press(state, [:down, {:f, 5}, "hello"])
 
       index =
-        Enum.find_index(HelpScreen.commands(:note), fn {c, _, _} -> c.id == :insert_date end)
+        Enum.find_index(HelpScreen.commands(:note, false), fn {c, _, _} ->
+          c.id == :insert_date
+        end)
 
       ran = press(in_note, [{:f, 1}, "c"] ++ List.duplicate(:down, index) ++ [:enter])
       assert Enum.map(ran.modes, & &1.type) == [:note]
@@ -166,7 +168,10 @@ defmodule Agendum.TUI.HelpScreenTest do
 
     test "ENTER runs a category manager command there", %{state: state} do
       in_catmgr = press(state, [{:f, 9}, :down, :down])
-      index = Enum.find_index(HelpScreen.commands(:catmgr), fn {c, _, _} -> c.id == :parent end)
+
+      index =
+        Enum.find_index(HelpScreen.commands(:catmgr, false), fn {c, _, _} -> c.id == :parent end)
+
       ran = press(in_catmgr, [{:f, 1}, "c"] ++ List.duplicate(:down, index) ++ [:enter])
       # the same as HOME, but for the key last pressed and the command
       # remembered as run by name (R65d)

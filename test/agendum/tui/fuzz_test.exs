@@ -51,6 +51,13 @@ defmodule Agendum.TUI.Fuzz do
     {:ctrl, "k"},
     {:ctrl, "a"},
     {:ctrl, "w"},
+    # the extras' keys (Zettel ids and links, a feed entry's link), which
+    # do nothing while the extras are off (R77)
+    {:ctrl, "t"},
+    {:ctrl, "g"},
+    {:ctrl, "r"},
+    {:ctrl, "v"},
+    {:ctrl, "l"},
     # run by name (R65d): letters then ENTER run whatever matches
     {:ctrl, "x"},
     {:alt, "b"},
@@ -194,13 +201,15 @@ defmodule Agendum.TUI.Fuzz do
             numeric <- boolean(),
             datebook <- member_of([nil, nil, :day, :week, :month, :quarter]),
             filtered <- boolean(),
+            # the Extras preference (R77), off as Agendum starts, or on
+            extras <- boolean(),
             max_runs: div(@runs + @parts - 1, @parts),
             initial_seed: ExUnit.configuration()[:seed] + part
           ) do
       db =
         numeric |> sample() |> with_filter(filtered) |> with_datebook(datebook) |> with_macros()
 
-      state = start(db, width: width, height: height)
+      state = start(db, width: width, height: height, extras: extras)
 
       Enum.reduce(keys, state, fn key, state ->
         # :tick advances the clock ten minutes, as the shell's loop would;

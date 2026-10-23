@@ -105,6 +105,14 @@ defmodule Agendum.PreferencesTest do
     refute prefs.sound or prefs.beep_completion
   end
 
+  test "Extras is off unless the person says yes (R77)" do
+    refute Preferences.parse("").extras
+    refute Preferences.format(%Preferences{}) =~ "extras ="
+    text = Preferences.format(%Preferences{extras: true})
+    assert text =~ "extras = yes\n"
+    assert Preferences.parse(text).extras
+  end
+
   test "the auto-save interval, 0 (off) to 60 minutes" do
     assert Preferences.parse("").auto_save == 0
     text = Preferences.format(%Preferences{auto_save: 10})

@@ -25,7 +25,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Assign the item or marked items to a category (MakeAssign)                                      | ALT-M                         | ⌥m, or menu Item ▸ Categorize                    |
 | Go to a section (GO TO, in a view); sort a family (category manager); sort views (view manager) | ALT-F5                        | —                                                          |
 | Highlight a view by typing the start of its name (view manager)                                 | letters                       | —                                                                     |
-| List the views by recently used, or your order (view manager)                                    | F5                            | —                                                                     |
+| List the views by recently used, or your order (view manager; an extra, R77)                     | F5                            | —                                                                     |
 | Next / previous view (in a view)                                                                | ALT-N / ALT-P                 | ⌥n / ⌥p                                                    |
 | Show / hide empty sections (in a view)                                                          | ALT-V                         | ⌥v                                                          |
 | Insert an item (in a view)                                                                      | ALT-I                         | ⌥i, or INS / **CTRL-N**                                     |
@@ -62,10 +62,10 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Column width (View ▸ Column ▸ Width): narrower / wider; a width; fit to contents; keep; go back | ← →; type it; SHIFT-?; ENTER; ESC               | `?` (no SHIFT needed); opened from menu View ▸ Column ▸ Width         |
 | Make the item depend on the marked items, or clear its dependencies                             | ALT-O                         | ⌥o                                                          |
 | Execute all conditions and actions on all items / those of the highlighted category             | ALT-X / ALT-E                 | ⌥x / ⌥e, or menu Category ▸ Execute                        |
-| Give the item, or the marked items, a Zettel id (ours, R73)                                    | —                             | **CTRL-T**, or menu Item ▸ Zettel ▸ Attach                 |
-| Follow the item's Zettel links / show the items linking to it (ours, R73b)                     | —                             | **CTRL-G** / **CTRL-R**, or Item ▸ Zettel ▸ Follow / Linked |
-| In a note: type a link to each marked item, `[[bonalaku]]` (ours, R73b)                         | —                             | **CTRL-L**                                                  |
-| Open the item's web link in the browser: a feed entry's article (ours, R75)                    | —                             | **CTRL-V**, or menu Item ▸ Open link                       |
+| Give the item, or the marked items, a Zettel id (ours, R73; an extra, R77)                     | —                             | **CTRL-T**, or menu Item ▸ Zettel ▸ Attach                 |
+| Follow the item's Zettel links / show the items linking to it (ours, R73b; an extra, R77)      | —                             | **CTRL-G** / **CTRL-R**, or Item ▸ Zettel ▸ Follow / Linked |
+| In a note: type a link to each marked item, `[[bonalaku]]` (ours, R73b; an extra, R77)          | —                             | **CTRL-L**                                                  |
+| Open the item's web link in the browser: a feed entry's article (ours, R75; an extra, R77)     | —                             | **CTRL-V**, or menu Item ▸ Open link                       |
 | Category manager: the category above / below                                                   | ↑ or BACKSPACE / ↓ or ENTER    | ↑ or ⌫ / ↓ or ENTER                   |
 | Category manager: add a sibling below / above                                                   | ALT-D (or ALT-I, INS) / ALT-U | ⌥d / ⌥u, or **CTRL-N**                                     |
 | Category manager: add a child / a new family after the parent                                   | ALT-R / ALT-L                 | ⌥r / ⌥l                                                    |

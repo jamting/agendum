@@ -70,7 +70,9 @@ defmodule Agendum.TUI.ViewManagerBoxTest do
 
   # R68: the current view keeps a marker of its own, wherever the highlight is
   test "► marks the current view, apart from the datebook *", %{state: state} do
-    state = press(state, {:f, 8})
+    # the marker is an extra (R77)
+    refute state |> press({:f, 8}) |> screen() =~ "►"
+    state = put_in(state.prefs.extras, true) |> press({:f, 8})
     assert screen(state) =~ ~r/► +Activities/
     state = press(state, [:down, :down])
     # the highlight moved; the marker stayed on the view shown
@@ -84,6 +86,9 @@ defmodule Agendum.TUI.ViewManagerBoxTest do
   end
 
   describe "listed by recently used (F5, R68)" do
+    # an extra (R77)
+    setup %{state: state}, do: %{state: put_in(state.prefs.extras, true)}
+
     # the views by name, in the order the list shows them
     defp listed(state) do
       for line <- String.split(screen(state), "\n"),
@@ -130,7 +135,7 @@ defmodule Agendum.TUI.ViewManagerBoxTest do
     end
 
     test "the order is kept with where you left the file, and saved at once", %{state: state} do
-      prefs = %Agendum.Preferences{path: "/p/preferences"}
+      prefs = %Agendum.Preferences{path: "/p/preferences", extras: true}
       state = %{state | path: "/p/x.agendum", prefs: prefs}
       {state, effects} = Agendum.TUI.Update.handle(press(state, {:f, 8}), {:f, 5})
       assert [{:save_preferences, "/p/preferences", saved}] = effects

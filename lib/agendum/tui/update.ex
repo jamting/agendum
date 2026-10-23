@@ -54,11 +54,13 @@ defmodule Agendum.TUI.Update do
     # first step that returns anything else (a new state) stops the chain,
     # and with no `else`, that value is the result. The order is the
     # priority: the splash screen, a macro key, the keys that work
-    # everywhere, the keys every box shares, then the screen on top.
+    # everywhere, an extra's key while the extras are off, the keys every
+    # box shares, then the screen on top.
     next =
       with :pass <- splash_key(state, key),
            :pass <- Agendum.TUI.Macros.key(state, key),
            :pass <- global_key(state, key),
+           :pass <- extras_key(state, key),
            :pass <- box_command(state, key),
            do: dispatch(state, State.mode(state), key)
 
@@ -203,6 +205,21 @@ defmodule Agendum.TUI.Update do
     end
   end
 
+  # An extra's key (R77, ADR 0043) does nothing while the Extras preference
+  # is off, as an unbound key does: the key is taken here, before the
+  # screen on top could run its command. The place is the one F1 would
+  # list commands for (`HelpScreen.place/1`).
+  defp extras_key(%State{prefs: %{extras: true}}, _key), do: :pass
+
+  defp extras_key(state, key) do
+    place = HelpScreen.place(state)
+
+    case Keymap.lookup(place, key) do
+      nil -> :pass
+      id -> if Agendum.TUI.Commands.extra?(place, id), do: state, else: :pass
+    end
+  end
+
   @doc """
   Runs a global command (`Agendum.TUI.Commands`, `:global`); `:pass`
   where it does not apply (undo over a box, print outside a view).
@@ -312,14 +329,19 @@ defmodule Agendum.TUI.Update do
     state = %{state | dirty: state.db != state.saved.db}
     {state, save} = auto_save(state, now)
 
-    # calendars due to be read again (R45), one read at a time each
-    state =
-      state.db
-      |> Core.calendars_due(now)
-      |> Enum.reduce(%{state | effects: []}, &fetch_calendar(&2, &1.id, :auto))
+    # calendars due to be read again (R45), one read at a time each, and
+    # feeds (R75): extras, read only while the extras are on (R77)
+    state = %{state | effects: []}
 
-    # and feeds (R75)
-    state = state.db |> Core.feeds_due(now) |> Enum.reduce(state, &fetch_feed(&2, &1.id, :auto))
+    state =
+      if state.prefs.extras do
+        state =
+          Enum.reduce(Core.calendars_due(state.db, now), state, &fetch_calendar(&2, &1.id, :auto))
+
+        Enum.reduce(Core.feeds_due(state.db, now), state, &fetch_feed(&2, &1.id, :auto))
+      else
+        state
+      end
 
     {state, fetches} = {%{state | effects: []}, save ++ state.effects}
 
@@ -328,10 +350,8 @@ defmodule Agendum.TUI.Update do
         {state, fetches}
 
       ids ->
-        texts = Enum.map_join(ids, " · ", &state.db.items[&1].text)
-
-        {%{state | alarm_rang: true} |> State.info("Alarm: " <> texts),
-         Agendum.TUI.Update.Sounds.quiet(state, [{:sound, :alarm} | fetches])}
+        state = ring(state, ids)
+        {%{state | effects: []}, state.effects ++ fetches}
     end
   end
 
@@ -364,15 +384,33 @@ defmodule Agendum.TUI.Update do
   @doc """
   A file just opened (at startup, Retrieve, Import): forgets past alarms
   from before today, and rings the alarms that came due while it was
-  closed, quietly; when there are any, the "While you were away" box
-  lists them (R70), under the splash screen at startup.
+  closed. With the extras on they ring quietly, and the "While you were
+  away" box lists them (R70), under the splash screen at startup; with
+  them off they ring as Agenda's do, a message and the alarm's sound, and
+  show `@` (R77).
   """
   @spec arrive(State.t()) :: State.t()
   def arrive(%State{} = state) do
     {state, rung} = run_clock(state, [:clear_old_alarms, :ring_alarms], State.context(state))
     state = %{state | dirty: state.db != state.saved.db}
 
-    if rung == [], do: state, else: Agendum.TUI.Boxes.AwayBox.open(state, rung)
+    cond do
+      rung == [] -> state
+      state.prefs.extras -> Agendum.TUI.Boxes.AwayBox.open(state, rung)
+      true -> ring(state, rung)
+    end
+  end
+
+  # alarms ringing: the message, the alarm's sound (unless the person
+  # turned sounds off), and `@` in the title until the alarm list is shown
+  defp ring(state, ids) do
+    texts = Enum.map_join(ids, " · ", &state.db.items[&1].text)
+    state = %{state | alarm_rang: true} |> State.info("Alarm: " <> texts)
+
+    %{
+      state
+      | effects: Agendum.TUI.Update.Sounds.quiet(state, state.effects ++ [{:sound, :alarm}])
+    }
   end
 
   # Auto-save (R54): a named file with unsaved changes is saved once no key

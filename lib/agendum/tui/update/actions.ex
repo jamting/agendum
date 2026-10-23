@@ -12,6 +12,7 @@ defmodule Agendum.TUI.Update.Actions do
     CategoryScreens,
     Boxes.ColumnAddBox,
     Boxes.ColumnBox,
+    Commands,
     Moves.ColumnWidth,
     Terminal.Draw,
     Boxes.FileProperties,
@@ -43,10 +44,15 @@ defmodule Agendum.TUI.Update.Actions do
     :section_move
   ]
 
+  # `cond` tries each condition in turn and runs the first that is true:
+  # an extra (R77) does nothing while the Extras preference is off, whoever
+  # asks for it (a key, the menu, CTRL-X or a macro)
   def perform(state, action) do
-    if action in @section_commands and State.view(state).datebook,
-      do: datebook_sections(state),
-      else: do_perform(state, action, Layout.current_row(state))
+    cond do
+      not state.prefs.extras and action in Commands.extra_actions() -> state
+      action in @section_commands and State.view(state).datebook -> datebook_sections(state)
+      true -> do_perform(state, action, Layout.current_row(state))
+    end
   end
 
   @doc "Section commands in a datebook view say why they do nothing (R47)."

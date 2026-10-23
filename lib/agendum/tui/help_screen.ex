@@ -83,15 +83,16 @@ defmodule Agendum.TUI.HelpScreen do
 
   @doc """
   The commands the list shows for a place: its own, then the global ones
-  it does not have, each `{command, place, keys}`.
+  it does not have, each `{command, place, keys}`; the extras only when
+  `extras?` (the Extras preference, R77).
   """
-  @spec commands(atom) :: [{Command.t(), atom, [term]}]
-  def commands(from) do
-    local = for c <- Commands.all(from), do: {c, from, Keymap.keys_for(from, c.id)}
+  @spec commands(atom, boolean) :: [{Command.t(), atom, [term]}]
+  def commands(from, extras?) do
+    local = for c <- Commands.shown(from, extras?), do: {c, from, Keymap.keys_for(from, c.id)}
     ids = for {c, _, _} <- local, do: c.id
 
     global =
-      for c <- Commands.all(:global),
+      for c <- Commands.shown(:global, extras?),
           c.id not in ids,
           not typing?(from),
           do: {c, :global, Keymap.keys_for(:global, c.id)}
@@ -174,11 +175,11 @@ defmodule Agendum.TUI.HelpScreen do
     bound = for {_, :own, keys} <- own, key <- keys, do: key
 
     shared =
-      for {_c, :box, keys} = entry <- commands(:box),
+      for {_c, :box, keys} = entry <- commands(:box, state.prefs.extras),
           not Enum.any?(keys, &(&1 in bound)),
           do: entry
 
-    global = for {_, :global, _} = entry <- commands(:box), do: entry
+    global = for {_, :global, _} = entry <- commands(:box, state.prefs.extras), do: entry
     own ++ shared ++ global
   end
 
@@ -194,10 +195,10 @@ defmodule Agendum.TUI.HelpScreen do
         {command, :menu_entry, [{:char, String.first(label)}]}
       end
 
-    entries ++ commands(:menu)
+    entries ++ commands(:menu, state.prefs.extras)
   end
 
-  def entries(_state, from), do: commands(from)
+  def entries(state, from), do: commands(from, state.prefs.extras)
 
   # a box's own commands, from its keymap (R65), each with its keys
   defp own_keys(state) do
@@ -386,7 +387,7 @@ defmodule Agendum.TUI.HelpScreen do
     cond do
       macro != nil ->
         ["#{name} runs the macro #{macro.name}, attached to it in this file."] ++
-          hidden(from, key)
+          hidden(state, from, key)
 
       command = not typing?(from) && global_command(key) ->
         [via <> "#{name} runs #{command.name}, everywhere but while typing.", command.summary] ++
@@ -395,7 +396,7 @@ defmodule Agendum.TUI.HelpScreen do
       command = from == :box && own_key(state, key) ->
         [via <> "#{name} runs #{command.name} in this box.", command.summary]
 
-      command = local_command(from, key) ->
+      command = local_command(state, from, key) ->
         [via <> "#{name} runs #{command.name} #{here}.", command.summary] ++
           doc_lines(state, command) ++
           count_line(command) ++ not_now(state, from, {from, command.id})
@@ -461,8 +462,8 @@ defmodule Agendum.TUI.HelpScreen do
     end
   end
 
-  defp hidden(from, key) do
-    case global_command(key) || local_command(from, key) do
+  defp hidden(state, from, key) do
+    case global_command(key) || local_command(state, from, key) do
       %Command{name: name} -> ["Without the macro it would run #{name}."]
       _ -> []
     end
@@ -490,7 +491,13 @@ defmodule Agendum.TUI.HelpScreen do
   end
 
   defp global_command(key), do: Commands.get(:global, Keymap.lookup(:global, key))
-  defp local_command(from, key), do: Commands.get(from, Keymap.lookup(from, key))
+  # an extra's key is unbound while the extras are off (R77)
+  defp local_command(state, from, key) do
+    case Commands.get(from, Keymap.lookup(from, key)) do
+      %Command{extra: true} when not state.prefs.extras -> nil
+      command -> command
+    end
+  end
 
   defp place_name(:view), do: "in a view"
   defp place_name(:catmgr), do: "in the category manager"

@@ -115,7 +115,7 @@ defmodule Agendum.TUI.MenuTest do
     refute first.(state) =~ "Discard"
 
     state = Agendum.TUIHelpers.press(state, :end)
-    assert first.(state) =~ ~r/^◄ .*Zettel   Discard/
+    assert first.(state) =~ ~r/^◄ .*Reposition   Discard/
     assert String.length(first.(state)) <= 80
   end
 end

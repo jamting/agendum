@@ -266,6 +266,42 @@ defmodule Agendum.ArchitectureTest do
     """
   end
 
+  # Faithful code reaches the extras' boxes and shell modules only through
+  # these doors, each for a reason; every one of them is behind the Extras
+  # preference (R77, ADR 0043), so with it off the extras cannot be reached.
+  @extras_doors [
+    # the menu's extras actions (File ▸ Transfer ▸ Calendars, Publish,
+    # Feeds), which `Actions.perform/2` refuses while the extras are off
+    {Agendum.TUI.Update.Actions, :do_perform, 3},
+    # the shell runs the effects only the extras ask for: reading a feed
+    # or a calendar, opening a link, writing and uploading the blog
+    {Agendum.TUI.App, :run_effects, 2},
+    # the blog's folder, read for the Publish box, shown in its preview
+    {Agendum.TUI.Update, :publish_scanned, 4},
+    # the SFTP password, asked for by the preview, sent back to it
+    {Agendum.TUI.Update.Prompts, :prompt_action, 3}
+  ]
+
+  test "faithful code reaches the extras' boxes only through their doors (R77)", %{
+    calls: calls
+  } do
+    violations =
+      for {{from, f, a} = caller, {to, name, arity}} <- calls,
+          Enum.any?(@extras_homes, &in?(to, &1)),
+          not on_shelf?(from),
+          not Enum.any?(@extras_homes, &in?(from, &1)),
+          caller not in @extras_doors,
+          uniq: true,
+          do: "#{inspect(from)}.#{f}/#{a} calls #{inspect(to)}.#{name}/#{arity}"
+
+    assert violations == [], """
+    Faithful code opens the extras directly (go through an extras command,
+    or list the door with its reason; R77):
+
+      #{Enum.join(violations, "\n  ")}
+    """
+  end
+
   test "the extras' list of allowed callers names real modules and functions" do
     {:ok, modules} = :application.get_key(:agendum, :modules)
 
@@ -277,7 +313,7 @@ defmodule Agendum.ArchitectureTest do
       assert Code.ensure_loaded?(module), "#{inspect(module)} is listed but does not exist"
     end
 
-    for {module, f, a} <- @named_exceptions do
+    for {module, f, a} <- @named_exceptions ++ @extras_doors do
       Code.ensure_loaded!(module)
       # a private function is not exported, so look at the module's own list
       {:ok, {^module, [{:locals, locals}]}} =

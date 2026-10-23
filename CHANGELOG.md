@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.18.0 — 2026-10-23
+
+The Extras switch: Agendum behaves like Lotus Agenda unless you ask for more.
+
+- A new row in File ▸ Customize, **Extras**, is off at first. While it is off, Agendum's own additions are hidden: the blog (Publish), the feeds, the calendar subscriptions, the Zettel ids and links, CTRL-V to open a link, the view manager's ► and F5, and the longer key bar labels on a wide screen. Their keys do nothing, and the menus, F1 and CTRL-X leave them out.
+- While it is off, feeds and calendars are not read in the background.
+- While it is off, alarms that came due while the file was closed ring when it opens, as in Agenda, without the "While you were away" box.
+- Your data stay as they are: Zettel ids, feed entries, the News view and the blog's settings are kept and shown. **To keep using the blog, the feeds and Zettel ids, turn Extras on once** (File ▸ Customize ▸ Extras, SPACE). It is kept in your preferences (`extras = yes`).
+
 ## 0.17.0 — 2026-10-23
 
 The extras on a shelf of their own, inside the program. Nothing changes on the screen.

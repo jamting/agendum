@@ -8,7 +8,7 @@ defmodule Agendum.TUI.Extras.FeedsTest do
 
   setup do
     Process.delete(:effects_seen)
-    %{state: start(Core.new_file())}
+    %{state: start(Core.new_file(), extras: true)}
   end
 
   defp open(state), do: press(state, [{:f, 10}, "f", "t", "f"])
@@ -96,7 +96,11 @@ defmodule Agendum.TUI.Extras.FeedsTest do
     {:ok, db, feed} = Core.subscribe_feed(state.db, "Owl's Gazette", "https://owl.example/rss")
     {:ok, db, _} = Core.sync_feed(db, feed, @entries, ~D[2026-10-08])
     news = Enum.find(Core.Database.views(db), &(&1.name == "News"))
-    state = %{start(db) | view_id: news.id} |> Layout.settle() |> press([:down, {:ctrl, "v"}])
+
+    state =
+      %{start(db, extras: true) | view_id: news.id}
+      |> Layout.settle()
+      |> press([:down, {:ctrl, "v"}])
 
     assert {:open_url, "https://owl.example/heffalump"} = effect(:open_url)
     assert screen(Update.url_opened(state, "https://owl.example/heffalump", :ok)) =~ "Opened"

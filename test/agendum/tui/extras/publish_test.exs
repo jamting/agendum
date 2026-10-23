@@ -15,7 +15,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
     db = Core.set_note(db, hello, "First *post*.", ~D[2026-10-01])
     {db, _} = Core.add_item(db, "Party", ~D[2026-10-03], section: posts)
     Process.delete(:effects_seen)
-    %{state: start(db), hello: hello}
+    %{state: start(db, extras: true), hello: hello}
   end
 
   defp open(state), do: press(state, [{:f, 10}, "f", "t", "p"])

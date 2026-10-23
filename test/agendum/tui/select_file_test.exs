@@ -91,6 +91,8 @@ defmodule Agendum.TUI.SelectFileTest do
     state: state,
     dir: dir
   } do
+    # the feeds are an extra (R77)
+    state = put_in(state.prefs.extras, true)
     File.write!(Path.join(dir, "feeds.opml"), "")
     File.write!(Path.join(dir, "subscriptions.xml"), "")
 

@@ -3,9 +3,19 @@ defmodule Agendum.TUIHelpers do
 
   alias Agendum.TUI.{Terminal.Draw, Layout, Render, State, Update}
 
+  @doc """
+  A session on `db`, as the person starts it: the Extras preference off
+  (R77) unless `extras: true` is given (or the `prefs:` given say so).
+  """
   def start(db, opts \\ []) do
+    {extras, opts} = Keyword.pop(opts, :extras)
+    prefs = Keyword.get(opts, :prefs, %Agendum.Preferences{})
+    prefs = if extras == nil, do: prefs, else: %{prefs | extras: extras}
+
     db
-    |> State.new(Keyword.merge([today: ~D[2026-10-08], width: 100, height: 24], opts))
+    |> State.new(
+      Keyword.merge([today: ~D[2026-10-08], width: 100, height: 24], opts) ++ [prefs: prefs]
+    )
     |> Layout.settle()
   end
 

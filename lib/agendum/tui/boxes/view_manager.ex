@@ -91,17 +91,18 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   @doc """
   The views as the view manager lists them: the file's order, or, with
   `state.views.by_recent`, the views last shown first (the one shown now at the
-  top), then the others in the file's order (R68).
+  top), then the others in the file's order (R68). Listing by recently used
+  is an extra (R77): with the extras off, the file's order always.
   """
   @spec order(State.t()) :: [Database.id()]
-  def order(%State{views: %{by_recent: false}} = state), do: state.db.view_order
-
-  def order(state) do
+  def order(%State{views: %{by_recent: true}, prefs: %{extras: true}} = state) do
     # a view used once but discarded since is left out (`--` takes away)
     used = Enum.uniq([state.view_id | state.views.recent])
     recent = Enum.filter(used, &Map.has_key?(state.db.views, &1))
     recent ++ (state.db.view_order -- recent)
   end
+
+  def order(state), do: state.db.view_order
 
   @recent_order "Listed by recently used: F5 shows your order"
 
@@ -113,7 +114,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   def unavailable(state) do
     cursor = State.mode(clamp(state)).cursor
     last = length(state.db.view_order) - 1
-    recent = state.views.by_recent && @recent_order
+    recent = state.views.by_recent and state.prefs.extras and @recent_order
 
     [
       move_up: recent || (cursor == 0 && "Already the first view"),
@@ -159,7 +160,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
 
   # the order of the file is the person's to change, so not while the
   # list shows another one
-  defp command(%State{views: %{by_recent: true}} = state, _mode, id, _)
+  defp command(%State{views: %{by_recent: true}, prefs: %{extras: true}} = state, _mode, id, _)
        when id in [:sort, :move_up, :move_down],
        do: State.error(state, @recent_order)
 
@@ -233,7 +234,9 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   end
 
   @impl Box
-  def title(%State{views: %{by_recent: true}}, _mode), do: "View Manager: recently used"
+  def title(%State{views: %{by_recent: true}, prefs: %{extras: true}}, _mode),
+    do: "View Manager: recently used"
+
   def title(_state, _mode), do: "View Manager"
 
   @impl Box
@@ -261,8 +264,9 @@ defmodule Agendum.TUI.Boxes.ViewManager do
             true -> " "
           end
 
-        # the view shown keeps its marker wherever the highlight goes (R68)
-        current = if v.id == state.view_id, do: "►", else: " "
+        # the view shown keeps its marker wherever the highlight goes (R68),
+        # an extra (R77)
+        current = if v.id == state.view_id and state.prefs.extras, do: "►", else: " "
         star = if v.datebook, do: "*", else: " "
 
         name =
@@ -278,16 +282,28 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   end
 
   @impl Box
-  def keys(state, _mode),
-    do: [
-      {"ENTER", "Select", "Show the view"},
-      {"INS", "Add", "Add a view"},
-      {"F2", "Rename"},
-      {"DEL/F4", "Discard"},
-      if(state.views.by_recent, do: {"F5", "Your order"}, else: {"F5", "Recent"}),
-      {"A-↑↓", "Reorder", "ALT-↑↓", "Reorder"},
-      {"ESC", "Return", "Back to the view"}
-    ]
+  def keys(state, _mode) do
+    # F5 is an extra (R77): `Enum.reject/2` drops the nil when it is off
+    order =
+      cond do
+        not state.prefs.extras -> nil
+        state.views.by_recent -> {"F5", "Your order"}
+        true -> {"F5", "Recent"}
+      end
+
+    Enum.reject(
+      [
+        {"ENTER", "Select", "Show the view"},
+        {"INS", "Add", "Add a view"},
+        {"F2", "Rename"},
+        {"DEL/F4", "Discard"},
+        order,
+        {"A-↑↓", "Reorder", "ALT-↑↓", "Reorder"},
+        {"ESC", "Return", "Back to the view"}
+      ],
+      &is_nil/1
+    )
+  end
 
   @impl Box
   def help,

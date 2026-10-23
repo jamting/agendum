@@ -20,7 +20,9 @@ defmodule Agendum.TUI.Menu do
   @doc """
   A menu tree: `{label, description, children_or_action}`. The view's
   (`:main`, the default) or the note editor's (`:note`, R64b), whose
-  actions are a note's commands, `{:note, id}`.
+  actions are a note's commands, `{:note, id}`. The whole tree, extras
+  included (R77): `entries/1` leaves them out while they are off, and a
+  description that names them is `{without, with}` the extras.
   """
   @spec tree(:main | :note) :: [tuple]
   def tree(which \\ :main)
@@ -49,7 +51,9 @@ defmodule Agendum.TUI.Menu do
          {"Dating", "Turn When dates read from text on or off", :toggle_auto_date},
          {"Properties", "How the file displays dates and times", :file_props},
          {"Customize", "Your theme, date languages and input format, for every file", :customize},
-         {"Transfer", "Export or import the file, calendars, feeds, publish the blog",
+         {"Transfer",
+          {"Export or import the file",
+           "Export or import the file, calendars, feeds, publish the blog"},
           [
             {"Export", "Write the whole file as a JSON file", :export_json},
             {"Import", "Open a JSON file as a new, untitled file", :import_json},
@@ -173,12 +177,44 @@ defmodule Agendum.TUI.Menu do
     ]
   end
 
-  @doc "Opens the menu: the view's, or the note editor's (`:note`)."
-  def open(state, which \\ :main),
-    do: State.push(state, %Agendum.TUI.Modes.Menu{path: [], selected: 0, tree: which})
+  @doc """
+  Opens the menu: the view's, or the note editor's (`:note`); with the
+  extras while the Extras preference is on (R77).
+  """
+  def open(state, which \\ :main) do
+    State.push(state, %Agendum.TUI.Modes.Menu{
+      path: [],
+      selected: 0,
+      tree: which,
+      extras: state.prefs.extras
+    })
+  end
 
-  # the tree a menu mode shows (a menu made before `tree` was a field: the view's)
-  defp tree_of(mode), do: tree(Map.get(mode, :tree) || :main)
+  # the tree a menu mode shows (a menu made before `tree` was a field: the
+  # view's), the extras left out unless the menu was opened with them
+  defp tree_of(mode) do
+    tree = tree(Map.get(mode, :tree) || :main)
+    shown(tree, Map.get(mode, :extras) == true)
+  end
+
+  # A level's entries as shown (R77): with the extras off, an entry that
+  # runs an extra goes, and so does a level left empty by it (Item ▸
+  # Zettel); a description `{without, with}` the extras is picked.
+  defp shown(level, extras?) do
+    # a generator over a one-element list binds `action` anew for the
+    # filter after it: a sub-level is first cut down itself
+    for {label, description, action} <- level,
+        action <- [if(is_list(action), do: shown(action, extras?), else: action)],
+        extras? or not extra?(action),
+        do: {label, description(description, extras?), action}
+  end
+
+  defp extra?([]), do: true
+  defp extra?(action), do: action in Agendum.TUI.Commands.extra_actions()
+
+  defp description({without, _with}, false), do: without
+  defp description({_without, with}, true), do: with
+  defp description(text, _extras?), do: text
 
   @doc "The entries at the menu's current level."
   def entries(%{path: path} = mode) do

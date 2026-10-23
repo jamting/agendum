@@ -27,7 +27,7 @@ defmodule Agendum.TUI.AwayTest do
         db
       end)
 
-    state = start(db, today: ~D[2026-10-08], now: ~N[2026-10-08 09:00:00])
+    state = start(db, today: ~D[2026-10-08], now: ~N[2026-10-08 09:00:00], extras: true)
     %{state: state, meeting: meeting, later: later}
   end
 

@@ -7,13 +7,15 @@ defmodule Agendum.TUI.Command do
   the command where that is not obvious (nil: the summary says it all).
   `count` says what a count (ALT-digits) does to it: `:none`
   runs it once, `:repeat` runs it up to n times, `:own` hands the count
-  to the command (↓ moves n rows at once).
+  to the command (↓ moves n rows at once). `extra`: one of Agendum's
+  extras, which Agenda did not have (ADR 0043): hidden, its keys doing
+  nothing, while the Extras preference is off (R77).
 
   Pure.
   """
 
   @enforce_keys [:id, :name, :summary]
-  defstruct [:id, :name, :summary, doc: nil, count: :none]
+  defstruct [:id, :name, :summary, doc: nil, count: :none, extra: false]
 
   @type count :: :none | :repeat | :own
   @type t :: %__MODULE__{
@@ -21,6 +23,7 @@ defmodule Agendum.TUI.Command do
           name: String.t(),
           summary: String.t(),
           doc: String.t() | nil,
-          count: count
+          count: count,
+          extra: boolean
         }
 end

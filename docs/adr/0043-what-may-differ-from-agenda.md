@@ -26,3 +26,7 @@ Anything else is hidden in the clone (below), or changed back to Agenda's way.
 - The accepted differences have one home, the tags, which the comparison with Agenda's captured menus reads (meeting 2026-10-21, § 8).
 - `--clinic` passes as quiet (it is reached only by a command-line flag).
 - Where the extras' code lives is ADR 0044.
+
+## Amendment: the switch as built (2026-10-23)
+
+Settled with the owner before it was built (R77, v0.18.0): the switch is a row of its own, **Extras**, in File ▸ Customize, beside Sound. With it off, the file's data show as they are (a Zettel id column still shows its ids; only the commands are hidden); feeds and calendars are not read on schedule, so nothing reaches the network unasked; and alarms that came due while the file was closed ring as Agenda's do, without the "While you were away" box, although Utilities ▸ Show Alarm is not built yet. The commands carry the tag (`extra` on `Agendum.TUI.Command`), the menu's extras entries are named by their actions, and one gate in `Agendum.TUI.Update` leaves an extra's key unbound.

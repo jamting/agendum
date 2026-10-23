@@ -10,8 +10,8 @@ defmodule Agendum.TUI.Render.KeyBar do
 
   # Each key has a short label, as in Agenda's 8-character slots, and may
   # have a fuller one (and a fuller name, "CTRL-N" for "^N"). The bar shows
-  # the fuller ones when they all fit the screen's width, the short ones
-  # otherwise: {key, label} | {key, label, full label} |
+  # the fuller ones when the extras are on (R77) and they all fit the
+  # screen's width, the short ones otherwise: {key, label} | {key, label, full label} |
   # {key, label, full key, full label}.
   @doc "The key bar line."
   def line(state) do
@@ -46,7 +46,10 @@ defmodule Agendum.TUI.Render.KeyBar do
     keys = Enum.map(keys, &attached_label(state, &1))
     full = keybar_segments(keys, fn {_, _, key, label} -> {key, label} end, " ")
     short = keybar_segments(keys, fn {key, label, _, _} -> {key, label} end, "")
-    segments = if Draw.width(full) <= state.width, do: full, else: short
+    # the fuller labels are an extra (R77): Agenda's short ones otherwise
+    segments =
+      if state.prefs.extras and Draw.width(full) <= state.width, do: full, else: short
+
     Draw.line(segments, state.width, :keybar)
   end
 
