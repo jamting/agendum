@@ -57,7 +57,6 @@ Each plan starts with its status.
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | [`plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md)                     | How close Agendum is to Agenda; accepted enhancements and modifications; The steps, the ordered checklist of all parity work |
 | [`plans/NOTE_EDITOR.md`](plans/NOTE_EDITOR.md)                         | The note editor as Agenda's: evidence, habit changes to settle, steps          |
-| [`plans/RECURRING_OCCURRENCES.md`](plans/RECURRING_OCCURRENCES.md)     | Recurring items on every date they recur, in datebooks and date filters        |
 | [`plans/MULTIUSER.md`](plans/MULTIUSER.md)                             | A web application with accounts and shared files, on the same core (ADR 0020)  |
 | [`plans/GITHUB.md`](plans/GITHUB.md)                                   | Putting the repository on GitHub; public or paid later                         |
 | [`plans/ITEM_LEVELS.md`](plans/ITEM_LEVELS.md)                         | Three levels of items: zettels, ingested items, the model's context items (vision) |
@@ -75,6 +74,7 @@ Finished or dropped plans, kept as records of how something was done or why it w
 | [`plans/archive/KITTY.md`](plans/archive/KITTY.md)                     | The ALT and CTRL key bars while the key is held (dropped: the F1 help does better) |
 | [`plans/archive/AGENDA_FILE_FORMAT_LOG.md`](plans/archive/AGENDA_FILE_FORMAT_LOG.md) | The research log behind the `.AG` format (done: the importer, R72) |
 | [`plans/archive/RENAME_REPO.md`](plans/archive/RENAME_REPO.md)         | Moving the repository folder to `~/ailab/agendum`, with Claude Code's memory (done 2026-10-23) |
+| [`plans/archive/RECURRING_OCCURRENCES.md`](plans/archive/RECURRING_OCCURRENCES.md) | Recurring items on every date they recur, in datebooks and date filters (done 2026-10-23, R14a) |
 
 ## Reviews, meetings and study
 
