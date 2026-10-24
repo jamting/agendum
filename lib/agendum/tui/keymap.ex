@@ -469,7 +469,7 @@ defmodule Agendum.TUI.Keymap do
 
   # every key `parse/1` can read back from its name
   @parsable Map.keys(@names) ++
-              for(n <- 1..10, k <- [{:f, n}, {:alt_f, n}, {:shift_f, n}], do: k) ++
+              for(n <- 1..10, k <- [{:f, n}, {:alt_f, n}, {:shift_f, n}, {:ctrl_f, n}], do: k) ++
               for(c <- ?a..?z, k <- [{:ctrl, <<c>>}, {:alt, <<c>>}], do: k) ++
               for(k <- [:up, :down, :left, :right, :enter, :backspace], do: {:alt, k})
 
@@ -492,6 +492,7 @@ defmodule Agendum.TUI.Keymap do
   def name({:f, n}), do: "F#{n}"
   def name({:alt_f, n}), do: "ALT-F#{n}"
   def name({:shift_f, n}), do: "SHIFT-F#{n}"
+  def name({:ctrl_f, n}), do: "CTRL-F#{n}"
   def name({:ctrl, c}), do: "CTRL-" <> String.upcase(c)
   def name({:alt, key}) when is_atom(key), do: "ALT-" <> name(key)
   def name({:alt, "-"}), do: "ALT-−"

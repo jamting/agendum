@@ -25,6 +25,7 @@ defmodule Agendum.TUI.MacroKeysTest do
       {:ctrl_pgup, "{CtlPGUP}"},
       {:ctrl_home, "{CtlHome}"},
       {{:shift_f, 4}, "{ShfF4}"},
+      {{:ctrl_f, 4}, "{CtlF4}"},
       {{:alt, "d"}, "{AltD}"},
       {{:alt, "-"}, "{Alt-}"},
       {{:ctrl, "n"}, "{CtlN}"},
@@ -65,6 +66,7 @@ defmodule Agendum.TUI.MacroKeysTest do
 
   test "a single key: what an attached key is" do
     assert MacroKeys.key("{shff4}") == {:ok, "{ShfF4}", {:shift_f, 4}}
+    assert MacroKeys.key("{ctlf4}") == {:ok, "{CtlF4}", {:ctrl_f, 4}}
     assert MacroKeys.key("x") == {:ok, "x", {:char, "x"}}
     assert MacroKeys.key("{F4}{F5}") == :error
     assert MacroKeys.key("") == :error
@@ -79,6 +81,7 @@ defmodule Agendum.TUI.MacroKeysTest do
       map(integer(1..12), &{:f, &1}),
       map(integer(1..10), &{:alt_f, &1}),
       map(integer(1..10), &{:shift_f, &1}),
+      map(integer(1..10), &{:ctrl_f, &1}),
       map(member_of(Enum.map(?a..?z, &<<&1>>) ++ ["-", "=", "?", "D"]), &{:alt, &1}),
       map(member_of(Enum.map(?a..?z, &<<&1>>)), &{:ctrl, &1}),
       member_of([{:alt, :backspace}, {:alt, :left}])

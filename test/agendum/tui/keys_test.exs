@@ -20,6 +20,13 @@ defmodule Agendum.TUI.KeysTest do
              {[{:alt_f, 4}, {:alt_f, 10}, :ctrl_left, :ctrl_pgup, {:alt, :up}], ""}
   end
 
+  # CTRL-F1 … F4 come as `ESC [1;5P` … `S`, F5 and up as `ESC [15;5~` …;
+  # Agenda's CtlF keys, for macros (Working with Macros, 1-12)
+  test "CTRL and a function key is a key of its own, not the plain F-key" do
+    assert Keys.decode("\e[1;5P\e[1;5S\e[15;5~\e[21;5~") ==
+             {[{:ctrl_f, 1}, {:ctrl_f, 4}, {:ctrl_f, 5}, {:ctrl_f, 10}], ""}
+  end
+
   test "decodes navigation keys" do
     assert Keys.decode("\e[A\e[B\e[H\e[F\e[2~\e[3~\e[6~\e[Z") ==
              {[:up, :down, :home, :end, :insert, :delete, :pgdn, :shift_tab], ""}

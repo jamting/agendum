@@ -2,7 +2,7 @@ defmodule Agendum.TUI.MacroKeys do
   @moduledoc """
   Keystrokes as macro text, in Agenda's notation, and back (SPEC R50;
   Working with Macros 1-12 to 1-14): text is itself (`Hello`); other keys
-  are names in braces: `{ENTER}`, `{F10}`, `{AltF2}`, `{ShfF4}`, `{AltD}`,
+  are names in braces: `{ENTER}`, `{F10}`, `{AltF2}`, `{ShfF4}`, `{CtlF4}`, `{AltD}`,
   `{CtlN}`, `{CtlLeft}`, `{PGDN}` … Names are read in any case. As in
   Agenda, a misspelt name is typed as written, line breaks are not keys,
   and the spaces that start a continuation line are left out (the end of a
@@ -52,6 +52,7 @@ defmodule Agendum.TUI.MacroKeys do
   defp name({:f, n}), do: "{F#{n}}"
   defp name({:alt_f, n}), do: "{AltF#{n}}"
   defp name({:shift_f, n}), do: "{ShfF#{n}}"
+  defp name({:ctrl_f, n}), do: "{CtlF#{n}}"
   defp name({:ctrl, c}), do: "{Ctl#{String.upcase(c)}}"
   defp name({:alt, key}) when is_atom(key) and is_map_key(@names, key), do: "{Alt#{@names[key]}}"
 
@@ -111,10 +112,11 @@ defmodule Agendum.TUI.MacroKeys do
   end
 
   defp numbered(lower) do
-    case Regex.run(~r/^(f|altf|shff)(\d{1,2})$/, lower) do
+    case Regex.run(~r/^(f|altf|shff|ctlf)(\d{1,2})$/, lower) do
       [_, "f", n] -> {:f, String.to_integer(n)}
       [_, "altf", n] -> {:alt_f, String.to_integer(n)}
       [_, "shff", n] -> {:shift_f, String.to_integer(n)}
+      [_, "ctlf", n] -> {:ctrl_f, String.to_integer(n)}
       nil -> nil
     end
   end

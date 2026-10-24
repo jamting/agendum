@@ -7,7 +7,7 @@ defmodule Agendum.TUI.Terminal.Keys do
     * `:enter`, `:tab`, `:shift_tab`, `:backspace`, `:delete`, `:insert`, `:esc`
     * `:up`, `:down`, `:left`, `:right`, `:home`, `:end`, `:pgup`, `:pgdn`
     * `:ctrl_left`, `:ctrl_right`, `:ctrl_up`, `:ctrl_down`, `:ctrl_pgup`, `:ctrl_pgdn`, `:ctrl_home`, `:ctrl_end`
-    * `{:f, n}`, `{:alt_f, n}`, `{:shift_f, n}` – function keys
+    * `{:f, n}`, `{:alt_f, n}`, `{:shift_f, n}`, `{:ctrl_f, n}` – function keys
     * `{:alt, "d"}`, `{:ctrl, "a"}`
 
   Function keys come only from the terminal's own F-key sequences (ADR
@@ -236,6 +236,9 @@ defmodule Agendum.TUI.Terminal.Keys do
 
   defp ctrlify(key) when key in [:left, :right, :up, :down, :pgup, :pgdn, :home, :end],
     do: String.to_atom("ctrl_#{key}")
+
+  # Agenda's CtlF keys, free for macros: before, CTRL-F4 acted as F4
+  defp ctrlify({:f, n}), do: {:ctrl_f, n}
 
   defp ctrlify(key), do: key
 end

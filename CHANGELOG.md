@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.24.1 — 2026-10-24
+
+- **CTRL-F1 to CTRL-F10** are keys of their own, as in Lotus Agenda: a macro can be attached to one (`{CtlF4}`). Before, CTRL-F4 acted as plain F4 and marked the item done. With nothing attached, they do nothing.
+
 ## 0.24.0 — 2026-10-24
 
 The key bar is Lotus Agenda's: two lines, ten fixed slots.

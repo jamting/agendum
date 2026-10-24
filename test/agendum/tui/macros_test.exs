@@ -167,6 +167,19 @@ defmodule Agendum.TUI.MacrosTest do
       %{state: learned(state)}
     end
 
+    test "a macro attached to CTRL-F4 runs on it, and plain F4 stays Done", %{state: state} do
+      state = press(state, [{:alt_f, 3}, {:f, 6}, :down, :down, " ", "{CtlF4}", :enter])
+      assert macro(state, "Water").key == "{CtlF4}"
+      state = press(state, [:enter, :esc, {:ctrl_f, 4}])
+      assert count(state, "Water the lettuces") == 2
+    end
+
+    test "CTRL-F4 with nothing attached does nothing; before, it was F4", %{state: state} do
+      before = state
+      state = press(state, {:ctrl_f, 4})
+      assert state.db == before.db
+    end
+
     test "F2 edits the keystrokes as text, a line after each {ENTER}", %{state: state} do
       state = press(state, [{:alt_f, 3}, {:f, 2}])
       assert screen(state) =~ ~r/^ Edit macro:  Water +Line +2 INS EDIT/

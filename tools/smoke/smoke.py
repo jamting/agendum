@@ -16,7 +16,7 @@ Usage:
     tools/smoke/smoke.py [options] [KEY ...]
 
 Keys (case does not matter for names):
-    F1 … F12, ALT-F1 … ALT-F10, SHIFT-F1 … SHIFT-F10
+    F1 … F12, ALT-F1 … ALT-F10, SHIFT-F1 … SHIFT-F10, CTRL-F1 … CTRL-F10
     ESC ENTER TAB SHIFT-TAB BS DEL INS UP DOWN LEFT RIGHT HOME END
     PGUP PGDN SPACE, CTRL-UP and the other CTRL-arrows
     CTRL-x, ALT-x          a control or ALT letter (ALT is ESC + letter)
@@ -86,10 +86,10 @@ def key_bytes(token):
     name = token.upper()
     if name in NAMED:
         return NAMED[name]
-    m = re.fullmatch(r"(ALT-|SHIFT-)?F(\d+)", name)
+    m = re.fullmatch(r"(ALT-|SHIFT-|CTRL-)?F(\d+)", name)
     if m and int(m.group(2)) in F_CODES:
         code = F_CODES[int(m.group(2))]
-        mod = {"ALT-": ";3", "SHIFT-": ";2"}.get(m.group(1) or "", "")
+        mod = {"ALT-": ";3", "SHIFT-": ";2", "CTRL-": ";5"}.get(m.group(1) or "", "")
         return f"\x1b[{code}{mod}~"
     m = re.fullmatch(r"CTRL-(UP|DOWN|RIGHT|LEFT|HOME|END)", name)
     if m:
