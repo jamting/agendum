@@ -1,0 +1,25 @@
+ Note for:   Weed the carrot bed tomorrow morning            Line    2 INS EDIT
+
+ Carrots in the first row, lettuces in the second.
+ Keep Tigger out of both.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Paste │ Copy  │  Cut  │Return │       │ Mark  │       │       │ Menu

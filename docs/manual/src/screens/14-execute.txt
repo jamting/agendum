@@ -22,4 +22,4 @@
 
 
 
- ↑↓←→ Move between settings  SPACE Change the setting  ENTER Run  ESC Cancel
+ ↑↓←→ Setting SPACE Change ENTER Run ESC Cancel

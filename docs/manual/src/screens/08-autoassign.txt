@@ -8,9 +8,9 @@
  No│ │ Required match strength : Exact match - 100%               │         │
  • │ │ Confirm assignments     : Never                            │         │
    │ │ Ignore text enclosed by : " "                              │         │
-   └─│ Ignore suffixes         : Yes                              │  ───────┘
- Frie│ Ignore accents          : No                               │ Friends
- • Co│                                                            │ Tigger
+   │ │ Ignore suffixes         : Yes                              │         │
+ Fr│ │ Ignore accents          : No                               │         │
+ • └─│                                                            │  ───────┘
    bo│ SPACE next choice                                          │
  • As└─────────── Press ENTER when done, ESC to cancel ───────────┘ Owl
  • Find Small, who is lost again                           High     Small
@@ -22,4 +22,4 @@
 
 
 
- ↑↓←→ Move between settings  SPACE Next choice  ENTER Done  ESC Cancel
+ ↑↓←→ Setting SPACE Next ENTER Done ESC Cancel

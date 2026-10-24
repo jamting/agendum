@@ -22,4 +22,4 @@
 
 
 
- ENTER Run INS/^N New F7 Learn F2 Edit F6 Props DEL Delete A-F5 Sort A-↑↓ Move E
+ INS/^N New F7 Learn F2 Edit F6 Props DEL Delete A-F5 Sort A-↑↓ Move

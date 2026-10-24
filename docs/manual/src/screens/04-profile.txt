@@ -17,9 +17,9 @@
  • Visit │       Tigger                                               │ga, Roo
          │                                                            │
          │ * assigned  c by a condition  + via subcategory  SPACE     │
-         └────────────────────────────────────────────────────────────┘
+         └────────────────── Press ENTER to accept ───────────────────┘
 
 
 
 
- SPACE Assign or unassign  ESC Done
+ SPACE Assign/Unassign ESC Return

@@ -1,0 +1,25 @@
+ Type a new or existing category name, or press F3 to   PROPS  2026-10-12 10:15
+ pick one. F6 shows the category's properties.
+ Garden                                   When             Priority Friends
+ • Weed t┌─────────────────────── Section Add ────────────────────────┐
+ • Count │ Section head             :                                 │ger
+   bounce│ Insert                   : Below current section           │
+         │                                                            │
+ Notices │ Columns:                                                   │ends
+ • Put up│                                                            │
+   Meetin│ SPACE open · DEL remove · ALT-↑↓ move · INS add            │
+         └─────────── Press ENTER when done, ESC to cancel ───────────┘
+ Friends and Relations                    When             Priority Friends
+ • Count the lettuces before Tigger                        Medium   Tigger
+   bounces on them
+ • Ask Owl how to spell Organising                         Low      Owl
+ • Find Small, who is lost again                           High     Small
+ • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+
+
+
+
+
+
+
+ ↑↓←→ Setting SPACE Open DEL Remove ALT-↑↓ Move INS Add F3 Choices F6 Props

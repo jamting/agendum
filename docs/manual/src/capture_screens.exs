@@ -58,9 +58,11 @@ defmodule ManualScreens do
   defp boxes(state) do
     auto = state |> press([{:f, 10}, "f", "p"]) |> to_setting("Auto-assign settings")
     shot("08-autoassign", press(auto, " "), :auto_assign)
-    shot("10-sort", press(state, [{:f, 10}, "v", "o"]), :sort)
-    shot("14-execute", press(state, [{:f, 10}, "c", "e"]), :execute)
-    shot("15-customize", press(state, [{:f, 10}, "f", "c"]), :customize)
+    view_props = press(state, [{:f, 10}, "v", "p"])
+    shot("54-viewprops", view_props, :view_props)
+    shot("10-sort", view_props |> to_setting("Item sorting") |> press(" "), :sort)
+    shot("14-execute", press(state, [{:f, 10}, "u", "e"]), :execute)
+    shot("15-customize", press(state, [{:f, 10}, "u", "c"]), :customize)
   end
 
   defp typing(state) do
@@ -90,11 +92,10 @@ defmodule ManualScreens do
   defp filters_and_questions(state) do
     range = [:down | String.graphemes("today")] ++ [:down | String.graphemes("end of this week")]
 
-    shot(
-      "33-datefilter",
-      press(state, [{:f, 10}, "v", "f", :down, :enter] ++ range),
-      :range_filter
-    )
+    # View Properties ▸ Filter lists the categories; SPACE on When (a date
+    # category) opens its range
+    filter = state |> press([{:f, 10}, "v", "p"]) |> to_setting("Filter") |> press(" ")
+    shot("33-datefilter", press(filter, [:down, " "] ++ range), :range_filter)
 
     item = [:down, :down] ++ String.graphemes("Ask Piglet and Pooh to help dig") ++ [:enter]
     # Auto-assign settings ▸ Confirm assignments: Always; ENTER keeps it (ESC would cancel)
@@ -106,7 +107,7 @@ defmodule ManualScreens do
       |> to_setting("Confirm assignments")
       |> press([" ", :enter, :enter])
 
-    shot("36-questions", press(confirm, item ++ [{:f, 10}, "c", "q"]), :questions)
+    shot("36-questions", press(confirm, item ++ [{:f, 10}, "u", "q"]), :questions)
     shot("38-alarm", press(state, [:ctrl_end, {:alt, "a"}, :enter]), nil)
   end
 
@@ -128,8 +129,9 @@ defmodule ManualScreens do
   end
 
   # A calendar on the web: the shell would download it; here its events are
-  # given to the TUI as if read.
+  # given to the TUI as if read. Calendars are an extra (R77): on for this.
   defp calendars(state) do
+    state = put_in(state.prefs.extras, true)
     address = String.graphemes("webcal://example.org/expotitions.ics")
     s = press(state, [{:f, 10}, "f", "t", "c", :insert] ++ address ++ [:enter])
     s = press(s, String.graphemes("Expotitions") ++ [:enter])
@@ -146,12 +148,12 @@ defmodule ManualScreens do
     }
 
     events = [
-      %Agendum.Core.ICal.Event{
+      %Agendum.Core.Extras.ICal.Event{
         uid: "north-pole",
         summary: "Expotition to the North Pole",
         start: {:local, ~N[2026-10-16 10:00:00]}
       },
-      %Agendum.Core.ICal.Event{
+      %Agendum.Core.Extras.ICal.Event{
         uid: "poohsticks",
         summary: "Poohsticks at the bridge",
         start: {:local, ~N[2026-10-14 16:00:00]},
@@ -190,17 +192,26 @@ defmodule ManualScreens do
     shot("50-column-props", press(state, friends), :column_props)
   end
 
-  # F1 then c: the commands of a view; the view manager with ► on the view
-  # shown.
+  # F1 then c: the commands of a view; the view manager; the Section Add
+  # box; the ALT key bar (ALT-K once); a note in the note editor.
   defp help_and_views(state) do
     shot("51-help-commands", press(state, [{:f, 1}, "c"]), :help)
     shot("52-viewmgr", press(state, {:f, 8}), :viewmgr)
+    shot("56-section-add", press(state, [{:f, 10}, "v", "s", "a"]), :section_props)
+    shot("57-alt-keys", press(state, {:alt, "k"}), nil)
+    note =
+      String.graphemes("Carrots in the first row, lettuces in the second.") ++
+        [:enter] ++ String.graphemes("Keep Tigger out of both.")
+
+    shot("58-note", press(state, [:down, {:f, 5}] ++ note), :note)
   end
 
   # "While you were away": Rabbit set two alarms at 8 o'clock, left the
   # file, and opens it again at 10:15, when both have come due. Opening a
   # file is `Update.arrive/1`; the file as saved is the one with the alarms.
+  # The box is an extra (R77): on for this.
   defp away(state) do
+    state = put_in(state.prefs.extras, true)
     early = %{state | now: ~N[2026-10-12 08:00:00]}
 
     alarm = fn s, text ->

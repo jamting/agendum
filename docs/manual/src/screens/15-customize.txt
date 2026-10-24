@@ -2,24 +2,24 @@
  for the next theme.
  Garden                                   When             Priority Friends
  • Weed t┌──────────── Customize (yours, for every file) ─────────────┐
- • Count │ Theme               : Classic                              │ger
-   bounce│ Date language       : English                              │
-         │ Fallback language   : None                                 │
- Notices │ Input format        : (SPACE)                              │ends
- • Put up│ Display key map     : Yes                                  │
-   Meetin│ Confirm mode        : Yes                                  │
-         │ Auto-save interval  : Off                                  │
- Friends │ Decimal separator   : . (Dot)                              │ends
- • Count │ Thousands separator : , (Comma)                            │ger
-   bounce│                                                            │
- • Ask Ow│ Saved in your preferences, not in this file.               │
- • Find S│ SPACE next choice                                          │ll
- • Visit └─────────── Press ENTER when done, ESC to cancel ───────────┘ga, Roo
+ • Count │ Theme                   : Classic                          │ger
+   bounce│ Date language           : English                          │
+         │ Fallback language       : None                             │
+ Notices │ Input format            : (SPACE)                          │ends
+ • Put up│ Display key map         : Yes                              │
+   Meetin│ Confirm mode            : Yes                              │
+         │ Auto-save interval      : Off                              │
+ Friends │ Decimal separator       : . (Dot)                          │ends
+ • Count │ Thousands separator     : , (Comma)                        │ger
+   bounce│ Sound                   : Yes                              │
+ • Ask Ow│ Beep on auto-completion : Yes                              │
+ • Find S│ Extras                  : No                               │ll
+ • Visit │                                                            │ga, Roo
+         │ Saved in your preferences, not in this file.               │
+         │ SPACE next choice                                          │
+         └─────────── Press ENTER when done, ESC to cancel ───────────┘
 
 
 
 
-
-
-
- ↑↓←→ Move between settings  SPACE Next choice  ENTER Done  ESC Cancel
+ ↑↓←→ Setting SPACE Next ENTER Done ESC Cancel

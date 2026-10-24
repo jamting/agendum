@@ -2,7 +2,7 @@
  press ENTER. Press INS to create a new view.
  Garden                                   When             Priority Friends
  • Weed the ca┌────────────────── View Manager ──────────────────┐
- • Count the l│   ►  Rabbit's Week                               │  Tigger
+ • Count the l│      Rabbit's Week                               │  Tigger
    bounces on └────── Press ENTER when done, ESC to cancel ──────┘
 
  Notices                                  When             Priority Friends
@@ -21,5 +21,5 @@
 
 
 
-
- ENTER Select INS Add F2 Rename DEL/F4 Discard F5 Recent A-↑↓ Reorder ESC Return
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │       │Delete │       │ Props │       │       │       │

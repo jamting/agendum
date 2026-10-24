@@ -1,24 +1,24 @@
  Type the end of the range: a date or a number. Leave   PROPS  2026-10-12 10:15
  it blank for no end.
  Garden                                   When             Priority Friends
- • Weed t┌───────────────────── Filter the view ──────────────────────┐
- • Count │ ┌──────────────────── Date filter: When ─────────────────────┐r
-   bounce│ │ Show items       : Assigned                                │
-         │ │ Start date       : today                                   │
- Notices │ │ End date         : end of this week                        │ds
- • Put up│ │ Items should be  : Inside range                            │
-   Meetin│ │                                                            │
-         │ │ SPACE change the setting · ENTER apply · DEL remove        │
- Friends │ └─────────── Press ENTER when done, ESC to cancel ───────────┘ds
- • Count │       Owl                                                   ger
-   bounce│       Eeyore                                               │
- • Ask Ow│       Kanga                                                │
- • Find S│       Roo                                                  │ll
- • Visit │       Tigger                                               │ga, Roo
-         │                                                            │
-         │ ENTER cycles: + assigned · - not assigned · none           │
-         └─────────────────── Press ESC when done ────────────────────┘
-
+ • We┌───────────────────────── View Properties ──────────────────────────┐
+ • Co│ ┌───────────────────── Filter the view ──────────────────────┐     │
+   bo│ │ ┌──────────────────── Date filter: When ─────────────────────┐   │
+     │ │ │ Show items       : Assigned                                │   │
+ Noti│ │ │ Start date       : today                                   │   │
+ • Pu│ │ │ End date         : end of this week                        │   │
+   Me│ │ │ Items should be  : Inside range                            │   │
+     │ │ │                                                            │   │
+ Frie│ │ │ SPACE change the setting · ENTER apply · DEL remove        │   │
+ • Co│ │ └─────────── Press ENTER when done, ESC to cancel ───────────┘   │
+   bo│ │       Owl                                                        │
+ • As│ │       Eeyore                                               │     │
+ • Fi│ │       Kanga                                                │     │
+ • Vi│ │       Roo                                                  │     │Roo
+     │ │       Tigger                                               │     │
+     │ │                                                            │     │
+     └─│ SPACE switches: + assigned · - not assigned · none         │  ───┘
+       └────────────────── Press ENTER to accept ───────────────────┘
 
 
 

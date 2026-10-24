@@ -22,4 +22,4 @@
        Low   1
     Harvest   0
 
- ↑↓ Highlight a choice  ENTER Select  ESC Cancel
+ ↑↓ Highlight ENTER Select ESC Cancel

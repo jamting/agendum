@@ -22,4 +22,4 @@
        Low   1
 
 
- SPACE Change the setting  F2 Edit the name  ENTER Done  ESC Cancel
+ SPACE Change F2 Edit ENTER Done ESC Cancel

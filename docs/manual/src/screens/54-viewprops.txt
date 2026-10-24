@@ -1,0 +1,25 @@
+ Type a name for the view. F2 edits the name it has.    PROPS  2026-10-12 10:15
+ View: Rabbit's Week
+ Garden                                   When             Priority Friends
+ • We┌───────────────────────── View Properties ──────────────────────────┐
+ • Co│ View name:  Rabbit's Week                                          │
+   bo│ Item sorting:    ...              Sections:                        │
+     │ Section sorting: None               Garden                         │
+ Noti│                                     Notices                        │
+ • Pu│ Hide empty sections:   No           Friends and Relations          │
+   Me│ Hide done items:       No                                          │
+     │ Hide dependent items:  No                                          │
+ Frie│ Hide inherited items:  No                                          │
+ • Co│ Hide column heads:     No                                          │
+   bo│ Section separators:    No                                          │
+ • As│ Number items:          No           Filter: (none)                 │
+ • Fi│                                                                    │
+ • Vi│ View statistics:       ...                                         │Roo
+     │                                                                    │
+     │ SPACE change · F2 edit · F3 choices · F6 props · INS add           │
+     └─────────────── Press ENTER when done, ESC to cancel ───────────────┘
+
+
+
+
+ SPACE Change F2 Edit F3 Choices F6 Props INS Add DEL Remove A-F10 Move

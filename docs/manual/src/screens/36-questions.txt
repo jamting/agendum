@@ -22,4 +22,4 @@
 
 
 
- SPACE Pick a suggestion  TAB Pick all  ENTER Assign the picked  ESC Stop
+ SPACE Pick TAB All ENTER Assign ESC Stop

@@ -1,5 +1,5 @@
  Alarms that came due while the file was closed.        READY  2026-10-12 10:15
- Search ▸ Alarms lists them all.
+ Utilities ▸ Show ▸ Alarm lists them all.
  Garden                                   When             Priority Friends
  • Weed┌───────────────────── While you were away ──────────────────────┐
  • Coun│ 2 alarms came due:                                             │r

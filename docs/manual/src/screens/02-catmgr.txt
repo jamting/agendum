@@ -21,5 +21,5 @@
        Medium   2
        Low   1
 
-
- F2 Edit F5 Note F6 Props F7 Promote F8 Demote INS/^N Add DEL Discard A-F10 Move
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │       │       │ Note  │ Props │Promote│Demote │To View│ Menu

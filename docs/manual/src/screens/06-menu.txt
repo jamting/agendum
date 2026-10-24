@@ -1,5 +1,5 @@
-  File   Item   Category   View   Search   Undo   Redo   Print   Quit
- Retrieve  Save  Write  New  Dating  Properties  Customize  Transfer
+  File   Item   Category   View   Print   Utilities   Quit
+ Retrieve  Save  Write  Properties  Transfer
  Garden                                   When             Priority Friends
  • Weed the carrot bed tomorrow morning   2026-10-13 08:00 High
  • Count the lettuces before Tigger                        Medium   Tigger
@@ -22,4 +22,4 @@
 
 
 
- ←→ Highlight a command  ENTER Select  first letter Select  ESC Back a level
+ ←→ Highlight ENTER Select letter Select ESC Back

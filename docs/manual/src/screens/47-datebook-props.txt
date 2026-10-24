@@ -13,10 +13,10 @@
          │                                                            │
          │ Hide column heads  : No                                    │
          │ Section separators : No                                    │
+         │ Number items       : No                                    │
          │                                                            │
          │ SPACE change · DEL clear                                   │
          └─────────── Press ENTER when done, ESC to cancel ───────────┘
-
 
 
 

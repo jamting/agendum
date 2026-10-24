@@ -1,25 +1,25 @@
  What to sort the items on: item text, a category, or    SORT  2026-10-12 10:15
  a category note. SPACE.
  Garden                                   When             Priority Friends
- • Weed t┌──────────────── Sort items in all sections ────────────────┐
- • Count │ Sort on         : None                                     │ger
-   bounce│ Order           : -                                        │
-         │ Sort n/a's      : -                                        │
- Notices │ Sequence        : -                                        │ends
- • Put up│ Line number     : -                                        │
-   Meetin│ Then by         : None                                     │
-         │ Then order      : -                                        │
- Friends │ Section sorting : None                                     │ends
- • Count │ Section order   : -                                        │ger
-   bounce│                                                            │
- • Ask Ow│ SPACE change the setting                                   │
- • Find S└─────────── Press ENTER when done, ESC to cancel ───────────┘ll
- • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+ • We┌───────────────────────── View Properties ──────────────────────────┐
+ • Co│ ┌──────────────── Sort items in all sections ────────────────┐     │
+   bo│ │ Sort on         : None                                     │     │
+     │ │ Order           : -                                        │     │
+ Noti│ │ Sort n/a's      : -                                        │     │
+ • Pu│ │ Sequence        : -                                        │     │
+   Me│ │ Line number     : -                                        │     │
+     │ │ Then by         : None                                     │     │
+ Frie│ │ Then order      : -                                        │     │
+ • Co│ │ Section sorting : None                                     │     │
+   bo│ │ Section order   : -                                        │     │
+ • As│ │                                                            │     │
+ • Fi│ │ SPACE change the setting                                   │     │
+ • Vi│ └─────────── Press ENTER when done, ESC to cancel ───────────┘     │Roo
+     │                                                                    │
+     │ SPACE change · F2 edit · F3 choices · F6 props · INS add           │
+     └─────────────── Press ENTER when done, ESC to cancel ───────────────┘
 
 
 
 
-
-
-
- ↑↓←→ Move between settings  SPACE Change the setting  ENTER Done  ESC Cancel
+ ↑↓←→ Setting SPACE Change ENTER Done ESC Cancel

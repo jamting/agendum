@@ -8,7 +8,8 @@ In the template, {{name}} is replaced by screens/name*.txt as a
 styled, section heads highlighted, runs of blank lines shortened. {{name|box}}
 keeps the screen down to the bottom of its box; {{name|rows:3-6,17-19}} keeps
 those lines of the body (counted from the control panel's first line as line 1,
-so the body starts at line 3); the control panel and key bar always show.
+so the body starts at line 3); the control panel and the key bar (the last
+two lines) always show.
 """
 
 import html
@@ -30,7 +31,8 @@ def lines_of(name):
 
 def screen(name, rows=None):
     lines = lines_of(name)
-    panel, body, keys = lines[0:2], lines[2:-1], lines[-1]
+    # the key bar is the last two lines, as Agenda's (its slots and labels)
+    panel, body, keys = lines[0:2], lines[2:-2], lines[-2:]
     if rows:
         body = [body[i - 3] for a, b in rows for i in range(a, b + 1) if 0 <= i - 3 < len(body)]
     out = []
@@ -48,7 +50,7 @@ def screen(name, rows=None):
         return text
 
     bar = lambda s: '<span class="t">' + html.escape(s.ljust(80)[:80], quote=False) + "</span>"
-    body = "\n".join([bar(l) for l in panel] + [fmt(l) for l in out] + [bar(keys)])
+    body = "\n".join([bar(l) for l in panel] + [fmt(l) for l in out] + [bar(l) for l in keys])
     return f'<!-- screen: {name} -->\n<pre class="screen">{body}</pre>'
 
 

@@ -13,13 +13,13 @@
  • │ Bottom            END CTRL-END           Highlight the last row of the…│
    │ Previous section  CTRL-PGUP ALT-↑        Highlight the section head ab…│
  • │ Next section      CTRL-PGDN ALT-↓        Highlight the section head be…│
- • │ Next column       → TAB                  Highlight the column to the r…│
- • │ ─────────────────────────────────────────────────────────── ↓ 47 more ─│o
-   │ Up · ↑                                                                 │
+ • │ ─────────────────────────────────────────────────────────── ↓ 51 more ─│
+ • │ Up · ↑                                                                 │o
    │ Highlight the row above                                                │
    │                                                                        │
    │                                                                        │
    │                                                                        │
    └────────────────────────────────────────────────────────────────────────┘
 
- ↑↓ Move  ← → More  ENTER Run  ESC Return
+
+ ↑↓ Move ← → More ENTER Run ESC Return
