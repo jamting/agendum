@@ -38,6 +38,7 @@ defmodule Agendum.TUI.Update.Actions do
   @spec perform(State.t(), atom | tuple) :: State.t()
   # a datebook view's sections are its time slots (R47)
   @section_commands [
+    :section_add,
     :section_below,
     :section_above,
     :remove_section,
@@ -352,6 +353,10 @@ defmodule Agendum.TUI.Update.Actions do
     from = section_index(state, row)
     CategoryScreens.open_picker(state, {:add_section, from + 1, max(from, 0)}, nil)
   end
+
+  # View ▸ Section ▸ Add (Agenda's): below the current section, for now as
+  # ALT-D does
+  defp do_perform(state, :section_add, row), do: do_perform(state, :section_below, row)
 
   defp do_perform(state, :section_above, row) do
     from = max(section_index(state, row), 0)

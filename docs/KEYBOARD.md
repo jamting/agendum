@@ -24,7 +24,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Collapse / expand a family or section (twice: all)                                              | ALT-− / ALT-=                 | ⌥− / ⌥=                    |
 | Unmark all items                                                                                | ALT-F7                        | —                                                    |
 | Jump to the next marked item                                                                    | ALT-J                         | ⌥j                                               |
-| Assign the item or marked items to a category (MakeAssign)                                      | ALT-M                         | ⌥m, or menu Item ▸ Categorize                    |
+| Assign the item or marked items to a category (MakeAssign)                                      | ALT-M                         | ⌥m, or menu Item ▸ MakeAssign                    |
 | Go to a section (GO TO, in a view); sort a family (category manager); sort views (view manager) | ALT-F5                        | —                                                          |
 | Highlight a view by typing the start of its name (view manager)                                 | letters                       | —                                                                     |
 | List the views by recently used, or your order (view manager; an extra, R77)                     | F5                            | —                                                                     |

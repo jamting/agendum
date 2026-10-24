@@ -112,10 +112,10 @@ defmodule Agendum.TUI.MenuTest do
 
     state = Agendum.TUIHelpers.press(state, [{:f, 10}, "i"])
     assert first.(state) =~ ~r/^  Properties .* ►$/
-    refute first.(state) =~ "Discard"
+    refute first.(state) =~ "Alarm"
 
     state = Agendum.TUIHelpers.press(state, :end)
-    assert first.(state) =~ ~r/^◄ .*Reposition   Discard/
+    assert first.(state) =~ ~r/^◄ .*Reposition   Alarm/
     assert String.length(first.(state)) <= 50
   end
 end

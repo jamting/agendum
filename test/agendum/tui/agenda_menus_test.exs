@@ -59,30 +59,7 @@ defmodule Agendum.TUI.AgendaMenusTest do
        "gives way to File ▸ Maintenance ▸ MakeCopy (AGENDA_PARITY, tagged 2026-10-22)"},
     "View menu ▸ File ▸ Transfer ▸ Template: missing" =>
       {:not_built, "the file's structure without its items (AGENDA_PARITY step 5)"},
-    "View menu ▸ File ▸ Transfer: order" =>
-      {:change_back,
-       "Agenda's name and order come back, keys unchanged (owner, 2026-10-23): Import before Export"},
-    "View menu ▸ Item ▸ MakeAssign: missing" =>
-      {:change_back,
-       "Agenda's name and order come back, keys unchanged (owner, 2026-10-23): Categorize is MakeAssign"},
-    "View menu ▸ Item ▸ Categorize: added" =>
-      {:change_back,
-       "Agenda's name and order come back, keys unchanged (owner, 2026-10-23): Categorize is MakeAssign"},
     "View menu ▸ Item ▸ Undisc: missing" => {:not_built, "the trash (AGENDA_PARITY step 4)"},
-    "View menu ▸ Item: order" =>
-      {:change_back, "follows from the entries above leaving and coming"},
-    "View menu ▸ View: order" => {:change_back, "follows from the entries above leaving"},
-    "View menu ▸ View ▸ Section ▸ Add: missing" =>
-      {:change_back,
-       "Agenda's name and order come back, keys unchanged (owner, 2026-10-23): Below and Above are Add (ALT-D, ALT-U)"},
-    "View menu ▸ View ▸ Section ▸ Below: added" =>
-      {:change_back,
-       "Agenda's name and order come back, keys unchanged (owner, 2026-10-23): Below and Above are Add (ALT-D, ALT-U)"},
-    "View menu ▸ View ▸ Section ▸ Above: added" =>
-      {:change_back,
-       "Agenda's name and order come back, keys unchanged (owner, 2026-10-23): Below and Above are Add (ALT-D, ALT-U)"},
-    "View menu ▸ View ▸ Section: order" =>
-      {:change_back, "follows from the entries above leaving and coming"},
     "View menu ▸ Print: a command in Agendum, a menu in Agenda" =>
       {:machine,
        "Print writes the view to a text file; printing on paper is out of scope (AGENDA_PARITY)"},

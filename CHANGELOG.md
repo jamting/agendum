@@ -4,6 +4,14 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.28.0 — 2026-10-24
+
+The menus' names and order as in Lotus Agenda. Keys are unchanged; two letters typed in the menu change.
+
+- **Item ▸ MakeAssign** (was Categorize): F10 `i` `m` (was `c`). The Item menu in Agenda's order: Properties, MakeAssign, Discard, BrkAssign, Reposition, Alarm.
+- **View ▸ Section ▸ Add** replaces Below and Above (`a`; `b` is gone). It adds below the current section; ALT-D and ALT-U still add below and above.
+- The View menu in Agenda's order (Properties, Add, Browse, Discard, Column, Section), and File ▸ Transfer lists Import before Export.
+
 ## 0.27.0 — 2026-10-24
 
 The F10 menu in Lotus Agenda's shape: `File  Item  Category  View  Print  Utilities  Quit`.

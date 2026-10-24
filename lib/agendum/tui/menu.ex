@@ -69,8 +69,8 @@ defmodule Agendum.TUI.Menu do
           {"Export or import the file",
            "Export or import the file, calendars, feeds, publish the blog"},
           [
-            {"Export", "Write the whole file as a JSON file", :export_json},
             {"Import", "Open a JSON file as a new, untitled file", :import_json},
+            {"Export", "Write the whole file as a JSON file", :export_json},
             {"Calendars", "Subscribe to calendars on the web (iCal); read them now", :calendars},
             {"Publish", "Write the blog from the posts category as a website, and upload it",
              :publish},
@@ -80,19 +80,19 @@ defmodule Agendum.TUI.Menu do
       {"Item", "Work with the highlighted item",
        [
          {"Properties", "Text, note and every assignment of the item (F6)", :item_props},
-         {"Alarm", "Set or cancel an alarm before the When time (ALT-A)", :alarm},
-         {"Categorize", "Assign the item, or all marked items, to a category (ALT-M)",
+         {"MakeAssign", "Assign the item, or all marked items, to a category (ALT-M)",
           :make_assign},
+         {"Discard", "Delete the item from the file (ALT-F4)", :discard},
          {"BrkAssign", "Remove the assignment for the current item (DEL)", :break_assign},
          {"Reposition", "Move the item to another section or position (ALT-F10)", :move_item},
+         {"Alarm", "Set or cancel an alarm before the When time (ALT-A)", :alarm},
          {"Open link", "Open the item's web link in the browser (CTRL-V)", :open_link},
          {"Zettel", "Zettel ids: give the item one, follow its links",
           [
             {"Attach", "Give the item, or the marked items, the next Zettel id", :attach_zettel},
             {"Follow", "Show the items the item's links point at", :follow_link},
             {"Linked", "Show the items that link to the item (Linked from)", :linked_from}
-          ]},
-         {"Discard", "Delete the item from the file (ALT-F4)", :discard}
+          ]}
        ]},
       {"Category", "Work with categories",
        [
@@ -104,22 +104,12 @@ defmodule Agendum.TUI.Menu do
        ]},
       {"View", "Change the current view or create new ones",
        [
-         {"Add", "Create a new view", :add_view},
-         {"Discard", "Delete the current view (items are kept)", :discard_view},
          {"Properties",
           "The view's name, sections, sorting, filter and hiding (F6 in the manager)",
           :view_props},
+         {"Add", "Create a new view", :add_view},
          {"Browse", "Move a datebook view or a date filter to other dates (ALT-B)", :browse},
-         {"Section", "Add, remove or move sections, or set their properties",
-          [
-            {"Below", "Add a section below the current one (ALT-D)", :section_below},
-            {"Above", "Add a section above the current one (ALT-U)", :section_above},
-            {"Remove", "Remove the current section from the view (DEL on head)", :remove_section},
-            {"Properties", "The section's head, sorting, filter and columns (F6 on its head)",
-             :section_props},
-            {"Move", "Move the section up or down in this view (ALT-F10 on its head)",
-             :section_move}
-          ]},
+         {"Discard", "Delete the current view (items are kept)", :discard_view},
          {"Column", "Add, remove or resize columns",
           [
             {"Properties",
@@ -131,6 +121,15 @@ defmodule Agendum.TUI.Menu do
              :column_move},
             {"Width", "The highlighted column's width: ← →, a number, or ? to fit it",
              :column_width}
+          ]},
+         {"Section", "Set properties of, add, remove or move sections",
+          [
+            {"Properties", "The section's head, sorting, filter and columns (F6 on its head)",
+             :section_props},
+            {"Add", "Add a new section (ALT-D below, ALT-U above)", :section_add},
+            {"Remove", "Remove the current section from the view (DEL on head)", :remove_section},
+            {"Move", "Move the section up or down in this view (ALT-F10 on its head)",
+             :section_move}
           ]}
        ]},
       {"Print", "Print the current view to a text file (CTRL-P)", :export},
