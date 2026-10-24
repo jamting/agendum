@@ -162,8 +162,8 @@ defmodule Agendum.TUI.CommandDocs do
         "does not drive a printer itself.",
     key_map:
       "The key bar at the foot of the screen names what the function keys do there. " <>
-        "Press it again and again to see what they do with ALT, CTRL and SHIFT (A, C or " <>
-        "S at the end of the bar, macros by their names), then to hide the bar, which " <>
+        "Press it again and again to see what they do with ALT, CTRL and SHIFT (macros " <>
+        "by their names), then to hide the bar, which " <>
         "leaves two more rows for items.",
     run_by_name:
       "Finds a command by part of its name or its initials (\"azi\" is Attach Zettel id) " <>

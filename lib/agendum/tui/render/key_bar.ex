@@ -24,25 +24,10 @@ defmodule Agendum.TUI.Render.KeyBar do
   @doc "The key bar's two lines."
   @spec lines(State.t()) :: [Draw.line()]
   def lines(state) do
-    [top, bottom] =
-      case slotted(state) do
-        nil -> [Draw.line([], state.width, :keybar), hint_line(state)]
-        place -> slot_lines(state, place)
-      end
-
-    [top, with_letter(bottom, state)]
-  end
-
-  # Which keys the bar shows, as a letter in the bottom line's last column
-  # (ALT-K): A, C or S, nothing for the plain keys. Agenda's slots leave
-  # that column empty; a line of hints gives it up.
-  defp with_letter(line, %{key_map: :none}), do: line
-
-  defp with_letter(line, state) do
-    letter = %{alt: "A", ctrl: "C", shift: "S"}[state.key_map]
-    # the line's segments cut to one column fewer (`Draw.line/3` cuts and
-    # pads), then the letter after them
-    Draw.line(line, state.width - 1, :keybar) ++ [{:keybar_key, letter}]
+    case slotted(state) do
+      nil -> [Draw.line([], state.width, :keybar), hint_line(state)]
+      place -> slot_lines(state, place)
+    end
   end
 
   # The place whose bar has Agenda's slots, or nil for a bar of hints.

@@ -8,7 +8,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 What the function keys do with ALT, CTRL and SHIFT, on the key bar, as Lotus Agenda showed it while the key was held.
 
-- **ALT-K** now shows, in turn: the **ALT keys** (`AltF2 When`, `AltF4 Discard`, `AltF10 Move` …, an `A` at the end of the bar), the **CTRL keys** (`C`), the **SHIFT keys** (`S`), then **hides** the bar, then the plain keys again. Before, ALT-K only showed or hid it.
+- **ALT-K** now shows, in turn: the **ALT keys** (`AltF2 When`, `AltF4 Discard`, `AltF10 Move` …), the **CTRL keys**, the **SHIFT keys**, then **hides** the bar, then the plain keys again. Before, ALT-K only showed or hid it.
 - The CTRL and SHIFT keys are where macros are attached: a macro on SHIFT-F10 shows there by its name.
 - Hiding the bar now takes four presses of ALT-K (or File ▸ Customize ▸ Display key map). Hidden or shown is kept for next time, as before; Agendum always starts on the plain keys.
 

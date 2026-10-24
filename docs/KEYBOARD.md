@@ -102,6 +102,8 @@ The F1 help lists every key from the keymaps (F1 then `a`); a test checks that e
 
 ALT is ⌥ (Option) on a Mac: ALT-D (add section) is ⌥D, ALT-← is ⌥←. These keys need "Use Option as Meta key" (Terminal.app: Settings ▸ Profiles ▸ Keyboard) or "Esc+" for the left Option key (iTerm2: Settings ▸ Profiles ▸ Keys); the terminal then sends ESC and the key together, which Agendum reads as ALT. Without it, a few still work in Terminal.app with a US keyboard layout: Agendum recognises the characters Option produces for ⌥D, ⌥R, ⌥L, ⌥T, ⌥W, ⌥J, ⌥M, ⌥− and ⌥= (`∂`, `®`, `¬` …). Pressing ESC and then the letter by hand does not work: a lone ESC is ESC (it cancels), and the letter then counts on its own (ADR 0032).
 
+CTRL-F keys (for macros, `{CtlF4}`): macOS keeps several for its own shortcuts (System Settings ▸ Keyboard ▸ Keyboard Shortcuts ▸ Keyboard navigation, and Mission Control), so only some reach the terminal; which ones depends on the setup (on one Mac with iTerm2, only CTRL-F4, F9 and F10). The key tester (ALT-?) shows whether a key gets through.
+
 Function keys: on a Mac, hold **fn** to send F1…F12, or enable "Use F1, F2, etc. keys as standard function keys" in System Settings ▸ Keyboard. ALT-F1… ALT-F10 are ⌥ with the function key; Terminal.app needs "Use Option as Meta key" for them.
 
 ## ⌘ shortcuts

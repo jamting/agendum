@@ -131,22 +131,20 @@ defmodule Agendum.TUI.KeyBarTest do
   end
 
   describe "ALT-K shows the ALT, CTRL and SHIFT keys in turn (meeting 2026-10-24, § 5)" do
-    test "normal, ALT, CTRL, SHIFT, hidden, normal: Agenda's bars, the letter in the last column" do
+    test "normal, ALT, CTRL, SHIFT, hidden, normal: Agenda's bars" do
       state = planner(80)
       alt = press(state, {:alt, "k"})
 
       assert texts(alt) == [
                " AltF1 │ AltF2 │ AltF3 │ AltF4 │ AltF5 │ AltF6 │ AltF7 │ AltF8 │ AltF9 │AltF10  ",
-               "       │ When  │ Macro │Discard│ Go To │Search │UnmkAll│Last Vw│ Copy  │ Move  A"
+               "       │ When  │ Macro │Discard│ Go To │Search │UnmkAll│Last Vw│ Copy  │ Move   "
              ]
 
       ctrl = press(alt, {:alt, "k"})
-      assert [" CtlF1 │" <> _, labels] = texts(ctrl)
-      assert String.ends_with?(labels, "C")
+      assert [" CtlF1 │" <> _, _] = texts(ctrl)
 
       shift = press(ctrl, {:alt, "k"})
-      assert [" ShfF1 │" <> _, labels] = texts(shift)
-      assert String.ends_with?(labels, "S")
+      assert [" ShfF1 │" <> _, _] = texts(shift)
 
       hidden = press(shift, {:alt, "k"})
       refute hidden.key_map
@@ -161,7 +159,7 @@ defmodule Agendum.TUI.KeyBarTest do
       db = db |> Agendum.Core.set_macro_keys(id, "x") |> Agendum.Core.attach_macro(id, "{ShfF10}")
       state = start(db, width: 80, height: 25)
       [_, labels] = state |> press(List.duplicate({:alt, "k"}, 3)) |> texts()
-      assert labels =~ "│Weekly S"
+      assert labels =~ "│Weekly  "
     end
 
     test "only shown or hidden is kept: the preference saves only when the bar hides or shows" do
@@ -179,12 +177,6 @@ defmodule Agendum.TUI.KeyBarTest do
 
       assert [{:save_preferences, _, %{key_map: false}}] =
                Enum.filter(effects, &match?({:save_preferences, _, _}, &1))
-    end
-
-    test "a box keeps its hints, with the letter at the end" do
-      state = planner(80) |> press([{:alt, "k"}, {:f, 6}])
-      [_, bottom] = texts(state)
-      assert String.ends_with?(bottom, "A")
     end
   end
 end
