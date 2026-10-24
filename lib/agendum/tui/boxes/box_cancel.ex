@@ -3,12 +3,16 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
   ESC cancels a settings box, as in Agenda, whose boxes said "Press ENTER
   when done, ESC to cancel" (SPEC §5).
 
-  The settings boxes apply each change at once, so the screen behind them
-  shows it. When such a box opens, the file and the person's preferences
-  are kept with its mode (`:opened`); ESC closes the box and puts them
-  back as they were, as one change (so one undo step brings the changes
-  back). ENTER closes it and keeps them. A box opened from a box keeps its
-  own snapshot, so ESC there cancels only its own changes.
+  The settings boxes apply each change at once inside, but the screen
+  behind them is drawn as it was when the outermost one opened (`behind/2`),
+  so the changes show there on ENTER, as Agenda's (checked in Agenda 2.0,
+  2026-10-22; ADR 0030, amended). When such a box opens, the file, the
+  person's preferences and the undo steps so far are kept with its mode
+  (`:opened`); ESC closes the box and puts them back as they were. When
+  the outermost box closes (`settle/2`), the steps recorded while it was
+  open become one, the whole box, after ENTER, and none after ESC. A box
+  opened from a box keeps its own snapshot, so ESC there cancels only its
+  own changes.
 
   Work done in a full screen opened from a box (a note, the macro edit
   screen) is kept: coming back from it starts the box's snapshot again.
@@ -68,15 +72,64 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
 
     case {State.mode(before), top && cancels?(top.type)} do
       {_, true} when top.opened == nil ->
-        State.put_mode(state, Map.put(top, :opened, snapshot(before)))
+        State.put_mode(state, Map.put(top, :opened, opened(before)))
 
       {%{type: screen}, true} when screen in @screens ->
-        State.put_mode(state, %{top | opened: snapshot(state)})
+        State.put_mode(state, %{top | opened: opened(state)})
 
       _ ->
         state
     end
   end
+
+  # the snapshot, and the undo steps there were (`settle/2` comes back to
+  # them)
+  defp opened(state), do: Map.put(snapshot(state), :undo, state.history.undo)
+
+  @doc """
+  The state to draw the screen behind the boxes with: the file (and, in the
+  same view, the place in it) as when the lowest settings box among
+  `boxes` opened, so its changes show there only once it closes with ENTER.
+  """
+  @spec behind(State.t(), [map]) :: State.t()
+  def behind(state, boxes) do
+    case Enum.find(boxes, &opened?/1) do
+      nil ->
+        state
+
+      # a view the box's own key made (View ▸ Add) is not in the snapshot:
+      # it is drawn as it is now
+      %{opened: opened} when not is_map_key(opened.db.views, state.view_id) ->
+        state
+
+      %{opened: opened} ->
+        place = if opened.view_id == state.view_id, do: Map.take(opened, @place), else: %{}
+        Map.merge(%{state | db: opened.db}, place)
+    end
+  end
+
+  @doc """
+  After a key (`before` the state it found): when the outermost settings
+  box open then has closed, the undo steps recorded while it was open
+  become one, from how things were when it opened, or none when nothing
+  changed (ESC, or ENTER with no change). A macro run is one step already
+  (`Agendum.TUI.History.begin_run/1`), so within one nothing is added.
+  """
+  @spec settle(State.t(), State.t()) :: State.t()
+  def settle(before, state) do
+    # `List.last/1` of the boxes with a snapshot: the outermost, opened first
+    case before.modes |> Enum.filter(&opened?/1) |> List.last() do
+      nil ->
+        state
+
+      %{opened: opened} ->
+        if Enum.any?(state.modes, &(Map.get(&1, :opened) == opened)),
+          do: state,
+          else: Agendum.TUI.History.squash(state, opened, state.macro.playing > 0)
+    end
+  end
+
+  defp opened?(mode), do: cancels?(mode.type) and Map.get(mode, :opened) != nil
 
   # the file, the view shown and where in it, and the person's own settings,
   # which a box can change (View ▸ Add makes a view and opens its settings
@@ -107,7 +160,7 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
         do: state,
         else: Map.merge(state, Map.take(opened, @place))
 
-    prefs = Map.drop(opened, [:db | @place])
+    prefs = Map.drop(opened, [:db, :undo | @place])
 
     if Map.take(state, Map.keys(prefs)) == prefs,
       do: state,

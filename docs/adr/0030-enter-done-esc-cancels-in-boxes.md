@@ -1,6 +1,6 @@
 # ADR 0030 — In a settings box, ENTER is done and ESC cancels
 
-**Status:** accepted · 2026-10-14; amended 2026-10-22 (below)
+**Status:** accepted · 2026-10-14; amended 2026-10-22 (below); applying on ENTER built 2026-10-24 (below)
 
 ## Context
 
@@ -37,3 +37,12 @@ Decided by the owner:
 - **Kept, tagged *work*:** ESC in a box puts back everything done since the box opened, the changes made in its category lists included. Agenda kept those, a surprise ESC should not hold.
 
 Both changes back are roadmap items (Towards parity), settled with the owner before they are built.
+
+## Built, 2026-10-24: applying on ENTER
+
+Settled with the owner before it was built:
+
+- **The screen behind a box is drawn as it was when the outermost settings box opened** (`BoxCancel.behind/2`, from the snapshot the box already kept for ESC; the place in the view too while it is the same view, and the view as it is now when the box's own key made it, View ▸ Add). The boxes themselves still apply each change at once and show the new values, so none of their code changed, and every box present and future behaves the same.
+- **One undo step per box:** the steps recorded while it is open are folded into one when the outermost box closes with ENTER (`BoxCancel.settle/2`, `History.squash/3`), and dropped when it closes with ESC, which now leaves no step: a cancelled box changed nothing (the earlier "one undo brings the cancelled changes back" goes). Within a macro run the run is the step already.
+- **No auto-save while a settings box is open:** its changes reach the file on ENTER; a save that came due waits until the box has closed.
+

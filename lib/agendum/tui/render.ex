@@ -44,7 +44,9 @@ defmodule Agendum.TUI.Render do
   # the body: the full screen (or the view), and the boxes over it
   defp screen_body(state) do
     {base, overlays} = split_modes(state.modes)
-    body = painted_body(state, base)
+    # behind a settings box, the screen as it was when it opened: its
+    # changes show there on ENTER, as Agenda's (ADR 0030)
+    body = painted_body(Agendum.TUI.Boxes.BoxCancel.behind(state, overlays), base)
     # behind a box, the screen fades (Agenda greys it out)
     body = if overlays == [], do: body, else: Enum.map(body, &fade/1)
 

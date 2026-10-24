@@ -147,7 +147,6 @@ What Agenda had that Agendum does another way, on purpose. Tagged as the enhance
 - **change back** · **Mode words.** Agendum always shows one (READY, MENU, NOTE, PROPS …); Agenda showed none when ready and had fewer.
 - **machine** · **The marked-items symbol** is ♦ (Agenda's ▸ is hard to tell from the cursor in a terminal).
 - **Boxes** (ADR 0030): ENTER keeps and ESC cancels in every settings box, as Agenda's frame says, so that part is no difference. Checked in Agenda 2.0, 2026-10-22, three differences remain:
-  - **change back** · Agendum shows a box's changes behind it at once; Agenda shows them only after ENTER.
   - **change back** · Agenda's category lists opened from a box (a view's Filter, the Assignment Profile, conditions, Excludes) say "Press ENTER to accept", SPACE switches a category, and ENTER and ESC both close the list keeping the change; Agendum's say "Press ESC when done", and in some ENTER switches a category.
   - **work** · ESC in a box puts back everything done since it opened, changes made in its category lists included; Agenda's ESC kept those.
 - **work** · **Retrieve** asks about unsaved changes. **change back**: **Write** (Save As) gives way to Agenda's File ▸ Maintenance ▸ MakeCopy, a copy under another name.
@@ -187,7 +186,7 @@ The parity work, in the order it is planned (the owner reorders it): each item s
 
 #### Boxes and lists
 
-- [ ] Settings boxes apply their changes on ENTER, not while open (ADR 0030, amended 2026-10-22); ESC still puts back everything since the box opened (tagged *work*) (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+- [x] Settings boxes apply their changes on ENTER, not while open (ADR 0030, amended 2026-10-22; built 2026-10-24, v0.29.0, settled with the owner: the screen behind stays as it was until ENTER, the whole box one undo step, ESC leaves none, no auto-save while open); ESC still puts back everything since the box opened (tagged *work*) (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
 - [ ] Category lists opened from a box (filters, Assignment Profile, conditions, Excludes): "Press ENTER to accept", SPACE switches a category, ENTER and ESC both close the list keeping the change (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
 - [ ] Boxes: F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) every setting in the box, CTRL-ENTER clears a setting (User's Guide 2-17)
 - [ ] Category properties of a date or numeric category as Agenda's: the box shows only Category name, Type, Parent, Note, Note file, Special actions, Assignment actions, Statistics and Advanced settings; Short name, Match category name, Match short name, Also match, Exclusive children and Assignment conditions go (checked in Agenda 2.0, 2026-10-16, converting a category in its box: the fields vanish as Type changes). A habit change for the box: settle with the owner first; Agendum's Excludes (ours) to decide too

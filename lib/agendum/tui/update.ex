@@ -74,6 +74,8 @@ defmodule Agendum.TUI.Update do
     # state before the key with the state after it. No key handler records
     # history itself (CLAUDE.md, Undo), so one key is one undo step.
     state = History.record(state, next)
+    # a settings box that just closed is one undo step, or none (ADR 0030)
+    state = BoxCancel.settle(before, state)
     state = %{state | dirty: state.db != state.saved.db}
 
     state =
@@ -422,7 +424,11 @@ defmodule Agendum.TUI.Update do
        when minutes > 0 and path != nil do
     idle_since = state.last_key.at || now
 
-    if NaiveDateTime.diff(now, idle_since) >= minutes * 60 do
+    # not while a settings box is open: its changes reach the file on
+    # ENTER (ADR 0030); the save comes once it has closed
+    box_open? = Enum.any?(state.modes, &(Map.get(&1, :opened) != nil))
+
+    if NaiveDateTime.diff(now, idle_since) >= minutes * 60 and not box_open? do
       state = %{state | last_key: %{state.last_key | at: now}, effects: []}
       saving = State.save(state, path, auto: true)
       {%{saving | effects: []}, saving.effects}

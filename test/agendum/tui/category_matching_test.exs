@@ -26,7 +26,7 @@ defmodule Agendum.TUI.CategoryMatchingTest do
     assert text =~ ~r/Ignore suffixes\s+: Global \(Yes\)/
   end
 
-  test "a setting of its own; T= in the category manager; one undo step each",
+  test "a setting of its own; T= in the category manager; the box one undo step",
        %{state: state, meetings: meetings} do
     state = press(state, [:down, " ", " "])
     assert state.db.categories[meetings].match_overrides == %{match_on: :note}
@@ -38,7 +38,8 @@ defmodule Agendum.TUI.CategoryMatchingTest do
     state = press(state, [:enter, {:f, 9}])
     assert screen(state) =~ "T= Note"
 
+    # the Category Properties box and the box opened from it: one step
     state = History.undo(state)
-    assert state.db.categories[meetings].match_overrides == %{match_on: :item}
+    assert state.db.categories[meetings].match_overrides == %{}
   end
 end

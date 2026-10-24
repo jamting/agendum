@@ -8,7 +8,7 @@ defmodule Agendum.TUI.BoxCancelTest do
 
   import Agendum.TUIHelpers
   alias Agendum.Preferences
-  alias Agendum.TUI.{History, State, Update}
+  alias Agendum.TUI.{State, Update}
 
   setup do
     %{state: start(Agendum.Sample.build(~D[2026-10-08]), width: 80, height: 25)}
@@ -38,10 +38,11 @@ defmodule Agendum.TUI.BoxCancelTest do
     assert done.modes == []
   end
 
-  test "cancelling is one undo step, so undo brings the changes back", %{state: state} do
+  # a cancelled box changed nothing, so it leaves no undo step (ADR 0030)
+  test "cancelling leaves no undo step", %{state: state} do
     cancelled = press(file_props(state), [" ", :esc, :esc, :esc])
     assert cancelled.db.insert_columns == :all
-    assert History.undo(cancelled).db.insert_columns == :section
+    assert cancelled.history.undo == state.history.undo
   end
 
   test "a box opened from a box cancels only its own changes", %{state: state} do

@@ -4,6 +4,14 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.29.0 — 2026-10-24
+
+Settings boxes apply their changes on ENTER, as in Lotus Agenda.
+
+- While a settings box is open (View Properties, Section Properties, Item or Category Properties, Customize …), the view **behind** it stays as it was; the box shows your new values. **ENTER** applies them, and the view changes then. ESC still puts everything back.
+- After ENTER, **one CTRL-Z undoes the whole box**, not one setting at a time. A box closed with ESC leaves nothing to undo.
+- An auto-save waits until the box is closed.
+
 ## 0.28.0 — 2026-10-24
 
 The menus' names and order as in Lotus Agenda. Keys are unchanged; two letters typed in the menu change.

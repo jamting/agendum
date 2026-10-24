@@ -70,11 +70,13 @@ defmodule Agendum.TUI.DateColumnsTest do
     assert screen(press(state, :esc)) =~ "2026-10-09 14:00"
   end
 
-  test "each change is one undo step", %{state: state, view: view} do
+  # the box applies on ENTER, as Agenda's (ADR 0030): one step for it all
+  test "the whole box is one undo step", %{state: state, view: view} do
+    before = column(state, view)
     state = state |> to_show() |> press([" ", " ", :enter])
     assert column(state, view).date.show == :time_date
     state = History.undo(state)
-    assert column(state, view).date.show == :date
+    assert column(state, view) == before
   end
 
   test "the file's format still changes columns using the global defaults", %{state: state} do
