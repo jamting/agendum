@@ -24,8 +24,25 @@ defmodule Agendum.TUI.Menu do
   included (R77): `entries/1` leaves them out while they are off, and a
   description that names them is `{without, with}` the extras.
   """
-  @spec tree(:main | :note) :: [tuple]
+  @spec tree(:main | :note | :catmgr) :: [tuple]
   def tree(which \\ :main)
+
+  # Agenda's category manager menu (checked in Agenda 2.0, 2026-10-24):
+  # Category, Print, Return, Quit; printing is out of scope (SPEC § 6). Its
+  # actions are the manager's commands, `{:catmgr, id}`, run on the
+  # highlighted category
+  def tree(:catmgr) do
+    [
+      {"Category", "Properties, Add, Discard",
+       [
+         {"Properties", "Set properties for the current category (F6)", {:catmgr, :properties}},
+         {"Add", "Add a new category (INS)", {:catmgr, :add_below}},
+         {"Discard", "Discard the current category from the file (ALT-F4)", {:catmgr, :discard}}
+       ]},
+      {"Return", "Return to the view (F9)", {:catmgr, :close}},
+      {"Quit", "End this Agendum session (ALT-Q); the file is saved", :quit}
+    ]
+  end
 
   # Agenda's note menu (R64b): File, Print, Import, Export, Clear, Return,
   # Quit; printing is out of scope, File comes with external note files
@@ -75,6 +92,7 @@ defmodule Agendum.TUI.Menu do
          {"Unmark", "Unmark all marked items in the file (ALT-F7)", :unmark_all},
          {"Categorize", "Assign the item, or all marked items, to a category (ALT-M)",
           :make_assign},
+         {"BrkAssign", "Remove the assignment for the current item (DEL)", :break_assign},
          {"Reposition", "Move the item to another section or position (ALT-F10)", :move_item},
          {"Open link", "Open the item's web link in the browser (CTRL-V)", :open_link},
          {"Zettel", "Zettel ids: give the item one, follow its links",
@@ -87,7 +105,11 @@ defmodule Agendum.TUI.Menu do
        ]},
       {"Category", "Work with categories",
        [
+         {"Properties", "Set properties for the current category (F6 on a section head)",
+          :category_props},
          {"Add", "Add a category under MAIN", :add_category},
+         {"Discard", "Discard the current category from the file (ALT-F4 on a section head)",
+          :discard_category},
          {"Recalc", "Re-run automatic assignment for every item", :recalc},
          {"Execute", "Apply conditions and actions to existing items (ALT-X all, ALT-E one)",
           :execute},
@@ -180,7 +202,7 @@ defmodule Agendum.TUI.Menu do
   `extras?`, each description picked for it. The comparison with Agenda's
   own menus reads it with the extras off.
   """
-  @spec shown(:main | :note | [tuple], boolean) :: [tuple]
+  @spec shown(:main | :note | :catmgr | [tuple], boolean) :: [tuple]
   def shown(which, extras?) when is_atom(which), do: shown(tree(which), extras?)
 
   # A level's entries as shown (R77): with the extras off, an entry that
@@ -300,6 +322,14 @@ defmodule Agendum.TUI.Menu do
     case Enum.at(entries(mode), index) do
       {_, _, children} when is_list(children) ->
         State.put_mode(state, %{mode | path: mode.path ++ [index], selected: 0})
+
+      # the category manager's command, on its highlighted category
+      {_, _, {:catmgr, id}} ->
+        below = State.pop(state)
+
+        below
+        |> Agendum.TUI.CategoryScreens.Manager.run(id)
+        |> keep_beneath(below, %{mode | selected: index})
 
       # a note's command runs in the note beneath the menu (R64b)
       {_, _, {:note, id}} ->

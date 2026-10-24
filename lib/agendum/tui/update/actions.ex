@@ -29,6 +29,11 @@ defmodule Agendum.TUI.Update.Actions do
 
   # --- actions (shared by keys and menus) --------------------------------------
 
+  # Agenda's words when a category command finds no category (checked in
+  # Agenda 2.0); the item's, ours in its style
+  @not_a_category "The highlight isn't on a category. Highlight the category you want and repeat the command."
+  @not_an_item "The highlight isn't on an item. Highlight the item you want and repeat the command."
+
   @doc "Performs a named action. Used by key handlers and the menu."
   @spec perform(State.t(), atom | tuple) :: State.t()
   # a datebook view's sections are its time slots (R47)
@@ -114,6 +119,23 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :note, %{kind: :section, category: cat}) do
     Agendum.TUI.Update.Notes.open(state, {:category, cat.id}, cat.name, cat.note)
   end
+
+  # Item ▸ BrkAssign (Agenda's name for DEL on an item): the item leaves
+  # the section's category, as DEL does there
+  defp do_perform(state, :break_assign, %{kind: :item}), do: ViewKeys.run(state, :remove)
+  defp do_perform(state, :break_assign, _row), do: State.error(state, @not_an_item)
+
+  # Category ▸ Properties and Discard act on the category of the section
+  # head the highlight is on; elsewhere Agenda says so (checked in Agenda
+  # 2.0, 2026-10-24)
+  defp do_perform(state, :category_props, %{kind: :section, category: cat}),
+    do: CategoryScreens.open_props(state, cat.id)
+
+  defp do_perform(state, :discard_category, %{kind: :section} = row),
+    do: do_perform(state, :discard, row)
+
+  defp do_perform(state, action, _row) when action in [:category_props, :discard_category],
+    do: State.error(state, @not_a_category)
 
   defp do_perform(state, :discard, %{kind: :item, item: item}) do
     Prompts.confirm(

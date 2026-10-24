@@ -103,6 +103,7 @@ defmodule Agendum.TUI.Commands do
     {:collapse, "Collapse", "Collapse the family (twice: all)", :none},
     {:expand, "Expand", "Expand the family (twice: all)", :none},
     {:help, "Help", "Help about where you are", :none},
+    {:menu, "Menu", "The category manager's menu", :none},
     {:close, "Return", "Back to the view", :none}
   ]
 
@@ -413,6 +414,7 @@ defmodule Agendum.TUI.Commands do
       promote: "Promote",
       demote: "Demote",
       close: "To View",
+      menu: "Menu",
       discard: "Discard",
       sort: "Sort",
       move: "Move"

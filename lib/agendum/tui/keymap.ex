@@ -100,7 +100,8 @@ defmodule Agendum.TUI.Keymap do
     :ctrl_pgdn => :next_sibling,
     :esc => :close,
     {:f, 9} => :close,
-    {:f, 10} => :close,
+    # the category manager's own menu, as Agenda's (2026-10-24)
+    {:f, 10} => :menu,
     {:f, 1} => :help,
     :insert => :add_below,
     {:alt, "d"} => :add_below,

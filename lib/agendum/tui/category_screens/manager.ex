@@ -31,7 +31,8 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
     discards it with its children. ALT-− and ALT-= collapse and expand
     families.
 
-    ESC or F9 goes back to the view.
+    ESC or F9 goes back to the view; F10 opens the category manager's menu
+    (Category, Return, Quit).
     """
   end
 
@@ -82,6 +83,7 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
 
   defp command(state, :close, _id), do: State.pop(state)
   defp command(state, :help, _id), do: Agendum.TUI.HelpScreen.open(state)
+  defp command(state, :menu, _id), do: Agendum.TUI.Menu.open(state, :catmgr)
   defp command(state, :add_below, id), do: new_category(state, id, "")
   defp command(state, :add_above, id), do: insert_category(state, id, :above)
   defp command(state, :add_family, id), do: insert_category(state, id, :uncle)

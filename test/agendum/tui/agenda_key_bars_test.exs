@@ -47,8 +47,6 @@ defmodule Agendum.TUI.AgendaKeyBarsTest do
     "catmgr F8: Agenda Dem ( ), ours Demote" =>
       {:change_back,
        "Agenda's label; what its brackets hold is unchecked (AGENDA_PARITY, the texts step)"},
-    "catmgr F10: Agenda Menu, ours To View" =>
-      {:not_built, "the category manager's own menu; F10 goes back to the view meanwhile"},
     "catmgr ALT-F6: Agenda Search, ours none" => {:not_built, "searching the category manager"},
     "catmgr ALT-F7: Agenda ShowC/A, ours none" =>
       {:not_built, "show the categories' conditions and actions"},

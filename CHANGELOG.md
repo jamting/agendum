@@ -4,6 +4,13 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.26.0 — 2026-10-24
+
+Menu entries Lotus Agenda had for commands Agendum had only on keys, and the category manager's own menu.
+
+- **F10 in the category manager** opens its menu, as in Agenda: Category ▸ Properties, Add, Discard (on the highlighted category), Return and Quit. Before, F10 went back to the view; F9 and ESC still do.
+- In a view's menu: **Item ▸ BrkAssign** (as DEL on an item: the item leaves the section), **Category ▸ Properties** and **Category ▸ Discard** (the category of the section head you are on). Elsewhere they say, as Agenda does, "The highlight isn't on a category."
+
 ## 0.25.0 — 2026-10-24
 
 What the function keys do with ALT, CTRL and SHIFT, on the key bar, as Lotus Agenda showed it while the key was held.

@@ -20,7 +20,7 @@ defmodule Agendum.TUI.AgendaMenusTest do
   @reference "docs/reference/agenda_menus.json"
 
   # Agenda's places and the menu Agendum has in each (nil: none)
-  @places [view: :main, note: :note, catmgr: nil]
+  @places [view: :main, note: :note, catmgr: :catmgr]
 
   # Every difference, by what it says, with its tag:
   #
@@ -33,6 +33,8 @@ defmodule Agendum.TUI.AgendaMenusTest do
     "View menu ▸ Utilities: missing" =>
       {:change_back, "the menu's shape (AGENDA_PARITY, tagged 2026-10-22): Utilities back"},
     "View menu ▸ System: missing" => {:out_of_scope, "exit to DOS (SPEC § 6)"},
+    "Category manager menu ▸ Print: missing" =>
+      {:out_of_scope, "printing the category hierarchy (SPEC § 6)"},
     "View menu ▸ Search: added" =>
       {:change_back,
        "the menu's shape (AGENDA_PARITY, tagged 2026-10-22): its commands go back to Utilities ▸ Show"},
@@ -70,9 +72,6 @@ defmodule Agendum.TUI.AgendaMenusTest do
       {:change_back,
        "Agenda's name and order come back, keys unchanged (owner, 2026-10-23): Categorize is MakeAssign"},
     "View menu ▸ Item ▸ Undisc: missing" => {:not_built, "the trash (AGENDA_PARITY step 4)"},
-    "View menu ▸ Item ▸ BrkAssign: missing" =>
-      {:not_built,
-       "DEL: Agendum has the key only; the entry comes, keys unchanged (owner, 2026-10-23)"},
     "View menu ▸ Item ▸ Note: added" =>
       {:change_back,
        "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
@@ -93,12 +92,6 @@ defmodule Agendum.TUI.AgendaMenusTest do
        "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
     "View menu ▸ Item: order" =>
       {:change_back, "follows from the entries above leaving and coming"},
-    "View menu ▸ Category ▸ Properties: missing" =>
-      {:not_built,
-       "F6: Agendum has the key only; the entry comes, keys unchanged (owner, 2026-10-23)"},
-    "View menu ▸ Category ▸ Discard: missing" =>
-      {:not_built,
-       "ALT-F4 in the category manager: Agendum has the key only; the entry comes, keys unchanged (owner, 2026-10-23)"},
     "View menu ▸ Category ▸ Recalc: added" =>
       {:change_back,
        "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
@@ -129,9 +122,7 @@ defmodule Agendum.TUI.AgendaMenusTest do
        "Print writes the view to a text file; printing on paper is out of scope (AGENDA_PARITY)"},
     "Note menu ▸ File: missing" =>
       {:not_built, "external note files, NOTE_EDITOR.md step 7, still to be decided"},
-    "Note menu ▸ Print: missing" => {:out_of_scope, "printing on paper (SPEC § 6)"},
-    "Category manager menu: missing" =>
-      {:not_built, "F10 in the category manager (AGENDA_PARITY step 9)"}
+    "Note menu ▸ Print: missing" => {:out_of_scope, "printing on paper (SPEC § 6)"}
   }
 
   setup_all do

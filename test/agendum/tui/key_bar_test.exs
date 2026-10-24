@@ -97,7 +97,7 @@ defmodule Agendum.TUI.KeyBarTest do
     assert keys == Enum.at(@agenda_view, 0)
 
     assert labels ==
-             " Help  │ Edit  │       │       │ Note  │ Props │Promote│Demote │To View│To View "
+             " Help  │ Edit  │       │       │ Note  │ Props │Promote│Demote │To View│ Menu   "
   end
 
   test "a note names Agenda's keys in their slots, not the ALT keys" do
