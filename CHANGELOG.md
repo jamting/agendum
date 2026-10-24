@@ -4,6 +4,16 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.30.0 — 2026-10-24
+
+Category lists opened from a box, as in Lotus Agenda.
+
+- In a **filter** list (View or Section Properties ▸ Filter), the **conditions**, **actions** and **Excludes** lists and the Schedule's filter, **SPACE** switches the highlighted category (once included, twice not included, then off). Before, ENTER did.
+- **ENTER** (or ESC) closes the list and keeps what you switched; the bottom edge says "Press ENTER to accept".
+- Typing a name still jumps to it; while you type, SPACE goes on typing the name ("Sample Person") and ENTER ends the typing, staying in the list.
+- In the **Assignment Profile** (F3 on an item), SPACE assigns or unassigns, and ENTER now closes it.
+- Fixed (from 0.29.0): a macro that closed an open settings box and then changed the file could not be undone.
+
 ## 0.29.0 — 2026-10-24
 
 Settings boxes apply their changes on ENTER, as in Lotus Agenda.

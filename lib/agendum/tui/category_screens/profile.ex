@@ -5,7 +5,7 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
   boxes (`:profile` and `:group_profile`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :none, indicator: "ASSIGN"
+  use Agendum.TUI.Boxes.Box, finish: :enter_accept, indicator: "ASSIGN"
 
   alias Agendum.Core
   alias Agendum.Core.{Database, DateFormat}
@@ -59,12 +59,12 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
     The assignments of the marked items: every category, with how many of
     the marked items are in it.
 
-    SPACE or ENTER on a category assigns all the marked items to it, or,
+    SPACE on a category assigns all the marked items to it, or,
     when some are in it, takes them out. Dates and numbers are set
     elsewhere: ALT-F2 or F4 for dates, the item's column for a number.
 
     ↑ ↓ move, HOME goes to the parent, CTRL-PGUP CTRL-PGDN to the siblings;
-    ALT-− and ALT-= collapse and expand families. ESC closes the box.
+    ALT-− and ALT-= collapse and expand families. ENTER or ESC closes the box.
     """
   end
 
@@ -76,17 +76,18 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
     item is in the highlighted category: its text, a condition, an action,
     a category below it, or you.
 
-    SPACE or ENTER on a category assigns the item to it, or takes it out.
+    SPACE on a category assigns the item to it, or takes it out.
     A numeric category asks for the number; dates are typed in a date
     column. Done marks the item done.
 
     ↑ ↓ move, HOME goes to the parent, CTRL-PGUP CTRL-PGDN to the siblings;
-    ALT-− and ALT-= collapse and expand families. ESC, F3 or F6 closes it.
+    ALT-− and ALT-= collapse and expand families. ENTER, ESC, F3 or F6 closes it.
     """
   end
 
-  # R65: the hierarchy's moves; SPACE or ENTER assigns or unassigns (F7
-  # too for marked items); ESC, F3 and F6 close (F4 too for one item)
+  # R65: the hierarchy's moves; SPACE assigns or unassigns (F7 too for
+  # marked items); ENTER, ESC, F3 and F6 close, keeping it, as Agenda's
+  # (F4 too for one item)
   @impl Box
   def keymap(mode) do
     own =
@@ -98,7 +99,7 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
     CategoryScreens.list_keymap()
     |> Map.merge(%{
       {:char, " "} => :toggle,
-      :enter => :toggle,
+      :enter => :close,
       :esc => :close,
       {:f, 3} => :close,
       {:f, 6} => :close
@@ -194,7 +195,7 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
       k when k in [:esc, {:f, 3}, {:f, 6}] ->
         State.pop(state)
 
-      k when k in [{:char, " "}, :enter, {:f, 7}] ->
+      k when k in [{:char, " "}, {:f, 7}] ->
         cond do
           Database.date_category?(db, id) ->
             State.error(state, "Set dates for marked items with ALT-F2 (When) or F4 (Done)")
@@ -224,7 +225,7 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
       k when k in [:esc, {:f, 6}, {:f, 3}, {:f, 4}] ->
         State.pop(state)
 
-      k when k in [{:char, " "}, :enter] ->
+      {:char, " "} ->
         cond do
           id == db.special.done ->
             State.run(state, {:toggle_done, item_id})

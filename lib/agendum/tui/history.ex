@@ -72,12 +72,15 @@ defmodule Agendum.TUI.History do
   @doc """
   A settings box closed (`Agendum.TUI.Boxes.BoxCancel.settle/2`): the steps
   recorded since it opened (`opened`, with the undo steps of then) become
-  one, back to the file as it was then, or none when it is unchanged or a
-  macro run already holds the step (`in_run`).
+  one, back to the file as it was then, or none when it is unchanged. A
+  macro run (`in_run`) is one step already, recorded as it began, perhaps
+  after the box opened: the steps stay as they are.
   """
   @spec squash(State.t(), map, boolean) :: State.t()
-  def squash(state, opened, in_run) do
-    if state.db == opened.db or in_run do
+  def squash(state, _opened, true), do: state
+
+  def squash(state, opened, false) do
+    if state.db == opened.db do
       put_stacks(state, opened.undo, state.history.redo)
     else
       # the snapshot of how things were when the box opened

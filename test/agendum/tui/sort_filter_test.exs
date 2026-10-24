@@ -25,11 +25,11 @@ defmodule Agendum.TUI.SortFilterTest do
     |> Enum.map(& &1.item.text)
   end
 
-  test "View Properties ▸ Filter: ENTER cycles a category's filter; the view shows it in brackets",
+  test "View Properties ▸ Filter: SPACE cycles a category's filter; the view shows it in brackets",
        %{
          state: state
        } do
-    state = state |> filter_picker(:view) |> press(["High", :enter])
+    state = state |> filter_picker(:view) |> press(["High", :enter, " "])
     assert %{type: :picker} = State.mode(state)
     assert State.view(state).filter == [{cat(state, "High"), :assigned}]
     state = close_props(state)
@@ -40,7 +40,7 @@ defmodule Agendum.TUI.SortFilterTest do
 
   test "a section filter shows after the section head", %{state: state} do
     state =
-      state |> filter_picker(:section) |> press(["Abigail", :enter, :enter]) |> close_props()
+      state |> filter_picker(:section) |> press(["Abigail", :enter, " ", " "]) |> close_props()
 
     assert screen(state) =~ "Calls [-Abigail Scheer]"
     assert length(texts(state)) == 3
@@ -50,7 +50,7 @@ defmodule Agendum.TUI.SortFilterTest do
     state =
       state
       |> filter_picker(:view)
-      |> press(["High", :enter])
+      |> press(["High", :enter, " "])
       |> close_props()
       |> press(["Call the bank", :enter])
 

@@ -17,15 +17,15 @@ defmodule Agendum.TUI.NegativeLinksTest do
     state |> press([{:f, 9}, :ctrl_end, {:f, 6}]) |> to_setting("Excludes") |> press(" ")
   end
 
-  test "ENTER on a category toggles the negative link; the row lists it", %{state: state} do
-    state = state |> open_excludes() |> press(["Calls", :enter])
+  test "SPACE on a category toggles the negative link; the row lists it", %{state: state} do
+    state = state |> open_excludes() |> press(["Calls", :enter, " "])
     {meetings, calls} = {cat(state, "Meetings"), cat(state, "Calls")}
     assert state.db.categories[meetings].excludes == [calls]
     assert state.db.categories[calls].excludes == [meetings]
     assert screen(state) =~ "Categories that may not share items with Meetings"
 
-    # ESC clears the search, ESC closes the picker
-    state = press(state, [:esc, :esc])
+    # ENTER ended the search; ESC closes the picker, keeping it
+    state = press(state, :esc)
     assert screen(state) =~ ~r/Excludes:.*\n.*Calls/
 
     # ENTER keeps what was set (ESC would cancel it)
@@ -34,7 +34,7 @@ defmodule Agendum.TUI.NegativeLinksTest do
   end
 
   test "ENTER again removes it", %{state: state} do
-    state = state |> open_excludes() |> press(["Calls", :enter, :enter])
+    state = state |> open_excludes() |> press(["Calls", :enter, " ", " "])
     assert state.db.categories[cat(state, "Meetings")].excludes == []
   end
 
@@ -42,13 +42,13 @@ defmodule Agendum.TUI.NegativeLinksTest do
     {meetings, calls} = {cat(state, "Meetings"), cat(state, "Calls")}
     item = hd(state.db.item_order)
     db = state.db |> Core.assign(item, meetings) |> Core.assign(item, calls)
-    state = %{state | db: db} |> open_excludes() |> press(["Calls", :enter])
+    state = %{state | db: db} |> open_excludes() |> press(["Calls", :enter, " "])
     assert state.db.categories[meetings].excludes == []
     assert screen(state) =~ "1 item is in both Meetings and Calls; move it first"
   end
 
   test "date categories cannot be excluded", %{state: state} do
-    state = state |> open_excludes() |> press(["When", :enter])
+    state = state |> open_excludes() |> press(["When", :enter, " "])
     assert screen(state) =~ "Only standard categories can exclude each other"
   end
 end

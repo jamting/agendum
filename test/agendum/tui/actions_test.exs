@@ -21,27 +21,27 @@ defmodule Agendum.TUI.ActionsTest do
       |> to_setting("Assignment actions")
       |> press(" ")
 
-  test "ENTER on a category cycles: assign, remove, none", %{state: state} do
-    state = open_actions(state) |> press(["Calls", :enter])
+  test "SPACE on a category cycles: assign, remove, none", %{state: state} do
+    state = open_actions(state) |> press(["Calls", :enter, " "])
     meetings = state.db.categories[cat(state, "Meetings")]
     assert meetings.also_assign == [cat(state, "Calls")]
 
-    state = press(state, :enter)
+    state = press(state, " ")
     meetings = state.db.categories[cat(state, "Meetings")]
     assert meetings.also_assign == []
     assert meetings.actions == [{cat(state, "Calls"), :remove}]
 
-    state = press(state, :enter)
+    state = press(state, " ")
     assert state.db.categories[cat(state, "Meetings")].actions == []
   end
 
   test "the row lists the actions", %{state: state} do
-    state = open_actions(state) |> press(["Calls", :enter, :enter, :esc, :esc])
+    state = open_actions(state) |> press(["Calls", :enter, " ", " ", :esc])
     assert screen(state) =~ ~r/Assignment actions:.*\n.*-Calls/
   end
 
   test "a date category opens the Date Action box", %{state: state} do
-    state = open_actions(state) |> press(["When", :enter])
+    state = open_actions(state) |> press(["When", :enter, " "])
     assert %{type: :action_box} = State.mode(state)
     assert screen(state) =~ "Date action: When"
 
@@ -60,18 +60,18 @@ defmodule Agendum.TUI.ActionsTest do
 
   test "the Date Action box can clear the date instead, and DEL removes the action",
        %{state: state} do
-    state = open_actions(state) |> press(["When", :enter, " ", :enter])
+    state = open_actions(state) |> press(["When", :enter, " ", " ", :enter])
 
     assert state.db.categories[cat(state, "Meetings")].actions == [
              {state.db.special.when, :clear}
            ]
 
-    state = press(state, ["When", :enter, :delete])
+    state = press(state, ["When", :enter, " ", :delete])
     assert state.db.categories[cat(state, "Meetings")].actions == []
   end
 
   test "a bad date keeps the box open", %{state: state} do
-    state = open_actions(state) |> press(["When", :enter, :down, "someday", :enter])
+    state = open_actions(state) |> press(["When", :enter, " ", :down, "someday", :enter])
     assert %{type: :action_box} = State.mode(state)
     assert screen(state) =~ "Not a date: someday"
   end

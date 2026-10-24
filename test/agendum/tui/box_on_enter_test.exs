@@ -85,4 +85,18 @@ defmodule Agendum.TUI.BoxOnEnterTest do
     {_, effects} = open |> press(:enter) |> Update.tick(NaiveDateTime.add(now, 7200))
     assert [_] = for({:save, _, _} <- effects, do: 1)
   end
+
+  # found by the fuzz walk (seed 112): a macro run that closes the open box
+  # and then changes the file is one undo step, as every run
+  test "a macro run that closes a box is still one undo step", %{state: state} do
+    {:ok, db, id} = Agendum.Core.add_macro(state.db, "Close and add")
+    db = Agendum.Core.set_macro_keys(db, id, "{ENTER}Water the lettuces{ENTER}")
+    open = %{state | db: db} |> props() |> hide_done()
+    open = %{open | macro: %{open.macro | last: id}}
+
+    run = press(open, {:alt, "z"})
+    assert State.mode(run) == nil
+    refute run.db == open.db
+    assert History.undo(run).db == open.db
+  end
 end

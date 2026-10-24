@@ -52,13 +52,13 @@ defmodule Agendum.TUI.ScheduleBoxTest do
   test "a filter narrows it; the date category must be a date category", %{state: start} do
     tuesday = start |> open_box() |> press([:down, :down, " ", {:ctrl, "u"}, "tuesday", :enter])
 
-    # Filter: Low (Call Marketing is Low), then not Low; in the list the
-    # first ESC clears the search typed there, the second closes it
-    low = press(tuesday, [:down, " ", "Low", :enter, :esc, :esc])
+    # Filter: Low (Call Marketing is Low), then not Low; in the list ENTER
+    # ends the search typed there, SPACE switches, ESC closes it
+    low = press(tuesday, [:down, " ", "Low", :enter, " ", :esc])
     assert screen(low) =~ ~r/Filter +: Low/
     assert low |> press(:enter) |> items() |> length() == 1
 
-    not_low = press(tuesday, [:down, " ", "Low", :enter, :enter, :esc, :esc])
+    not_low = press(tuesday, [:down, " ", "Low", :enter, " ", " ", :esc])
     assert screen(not_low) =~ ~r/Filter +: -Low/
     assert not_low |> press(:enter) |> items() == []
 

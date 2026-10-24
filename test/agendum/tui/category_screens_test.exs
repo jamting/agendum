@@ -329,7 +329,7 @@ defmodule Agendum.TUI.CategoryScreensTest do
     state = press(state, [{:f, 9}, :ctrl_end, {:f, 6}])
     assert screen(state) =~ ~r/Assignment conditions:.*\n.*\(none\)/
 
-    state = state |> to_setting("Assignment conditions") |> press([" ", "Calls", :enter])
+    state = state |> to_setting("Assignment conditions") |> press([" ", "Calls", :enter, " "])
     meetings = state.db.categories[cat(state, "Meetings")]
     assert meetings.conditions == [{cat(state, "Calls"), :assigned}]
     assert screen(state) =~ "Meetings now assigns items in Calls"

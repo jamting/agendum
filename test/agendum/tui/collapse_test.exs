@@ -119,13 +119,13 @@ defmodule Agendum.TUI.CollapseTest do
       assert length(visible(state)) == length(Database.hierarchy(state.db)) - 1
     end
 
-    test "and ENTER in a group profile no longer crashes", %{state: state} do
+    test "and SPACE in a group profile no longer crashes", %{state: state} do
       # mark a section's items, collapse MAIN, then F3 for all marked items
       state = press(state, {:f, 7}) |> collapse_main()
       state = press(state, [:enter, {:char, "/"}, {:f, 10}, {:f, 3}, :enter])
       assert %{type: :group_profile} = State.mode(state)
       assert visible(state) != []
-      state = press(state, :enter)
+      state = press(state, " ")
       assert %{type: :group_profile} = State.mode(state)
     end
   end

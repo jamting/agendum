@@ -15,7 +15,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
     do: for(%{kind: :item, item: item} <- Layout.rows(state), do: item.text)
 
   test "choosing a date category in the filter box asks for a date range", %{state: state} do
-    state = state |> filter_picker(:view) |> press(["When", :enter])
+    state = state |> filter_picker(:view) |> press(["When", :enter, " "])
     assert %{type: :range_filter} = State.mode(state)
     text = screen(state)
     assert text =~ "Date filter: When"
@@ -29,7 +29,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
     state =
       state
       |> filter_picker(:view)
-      |> press(["When", :enter, :down, "2026-10-01", :down, "2026-10-07", :enter])
+      |> press(["When", :enter, " ", :down, "2026-10-01", :down, "2026-10-07", :enter])
       |> close_props()
 
     assert state.modes == []
@@ -42,7 +42,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
     state =
       state
       |> filter_picker(:view)
-      |> press(["When", :enter, :down, "2026-10-01", :enter])
+      |> press(["When", :enter, " ", :down, "2026-10-01", :enter])
       |> close_props()
       |> press(["Plan the offsite", :enter])
 
@@ -55,7 +55,18 @@ defmodule Agendum.TUI.RangeFiltersTest do
     state =
       state
       |> filter_picker(:view)
-      |> press(["When", :enter, :down, "2026-10-01", :down, "2026-10-07", :down, " ", :enter])
+      |> press([
+        "When",
+        :enter,
+        " ",
+        :down,
+        "2026-10-01",
+        :down,
+        "2026-10-07",
+        :down,
+        " ",
+        :enter
+      ])
       |> close_props()
 
     assert screen(state) =~ "[When not 2026-10-01..2026-10-07]"
@@ -63,7 +74,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
     assert only =~ "Terracotta"
 
     state =
-      state |> filter_picker(:view) |> press(["When", :enter, " ", :enter]) |> close_props()
+      state |> filter_picker(:view) |> press(["When", :enter, " ", " ", :enter]) |> close_props()
 
     assert screen(state) =~ "[-When]"
     assert length(texts(state)) == 3
@@ -71,7 +82,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
 
   test "a date that cannot be read is refused and the box stays open", %{state: state} do
     state =
-      state |> filter_picker(:view) |> press(["When", :enter, :down, "someday", :enter])
+      state |> filter_picker(:view) |> press(["When", :enter, " ", :down, "someday", :enter])
 
     assert %{type: :range_filter} = State.mode(state)
     assert screen(state) =~ "Not a date: someday"
@@ -81,7 +92,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
     state =
       state
       |> filter_picker(:view)
-      |> press(["When", :enter, :down, "2026-10-01", :enter, "When", :enter, :delete])
+      |> press(["When", :enter, " ", :down, "2026-10-01", :enter, "When", :enter, " ", :delete])
 
     assert State.view(state).filter == []
   end
@@ -90,7 +101,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
     state =
       state
       |> filter_picker(:section)
-      |> press(["When", :enter, :down, "2026-10-20", :enter])
+      |> press(["When", :enter, " ", :down, "2026-10-20", :enter])
       |> close_props()
 
     assert screen(state) =~ "Calls [When 2026-10-20..]"
@@ -105,7 +116,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
     {:ok, db} = Core.set_number(db, hd(db.item_order), cost, 1500)
     state = %{state | db: db}
 
-    state = state |> filter_picker(:view) |> press(["Cost", :enter])
+    state = state |> filter_picker(:view) |> press(["Cost", :enter, " "])
     text = screen(state)
     assert text =~ "Numeric filter: Cost"
     assert text =~ "Minimum value"
@@ -118,7 +129,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
     state =
       state
       |> filter_picker(:view)
-      |> press(["Cost", :enter, :down, {:ctrl, "u"}, "lots", :enter])
+      |> press(["Cost", :enter, " ", :down, {:ctrl, "u"}, "lots", :enter])
 
     assert screen(state) =~ "Not a number: lots"
   end

@@ -11,7 +11,8 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   alias Agendum.TUI.{Boxes.Box, CategoryScreens, Terminal.Draw, Typing.LineEdit, State}
   alias Agendum.TUI.CategoryScreens.Choices
 
-  # purposes where ENTER cycles a category's choice and ESC finishes
+  # purposes where SPACE switches a category's choice, several at a time,
+  # and ENTER or ESC finishes keeping them, as Agenda's lists (ADR 0030)
   @esc_pickers [:filter, :condition, :also_assign, :excludes, :schedule_filter]
 
   # --- the box (`Agendum.TUI.Boxes.Box`) ---------------------------------------------------
@@ -20,6 +21,17 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   def handle(state, mode, key), do: CategoryScreens.handle(state, mode, key)
 
   @impl Box
+  def about(state, %{purpose: purpose} = mode)
+      when is_tuple(purpose) and elem(purpose, 0) in @esc_pickers do
+    """
+    #{title(state, mode)}: set several categories at a time.
+    Move to one with ↑ ↓ (HOME the parent, CTRL-PGUP CTRL-PGDN the siblings),
+    or type the start of its name to jump there (ENTER ends the typing).
+    SPACE switches the highlighted category, as the line under the list
+    says. ENTER or ESC closes the list, keeping what you switched.
+    """
+  end
+
   def about(state, mode) do
     """
     #{title(state, mode)}: choose a category from the hierarchy.
@@ -61,7 +73,7 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   # several categories are set at a time in some pickers: ESC ends them
   @impl Box
   def finish(%{purpose: purpose}) when is_tuple(purpose) and elem(purpose, 0) in @esc_pickers,
-    do: :esc_done
+    do: :enter_accept
 
   def finish(_mode), do: :accept
 
@@ -161,13 +173,13 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
         [{:box, " Search: " <> mode.search}]
 
       _ when elem(mode.purpose, 0) == :also_assign ->
-        [{:box, " ENTER cycles: + assign · - remove · none (dates, numbers: a box)"}]
+        [{:box, " SPACE switches: + assign · - remove · none (dates, numbers: a box)"}]
 
       _ when elem(mode.purpose, 0) == :excludes ->
-        [{:box, " ENTER toggles: x may not share items"}]
+        [{:box, " SPACE switches: x may not share items"}]
 
       _ when elem(mode.purpose, 0) in [:condition, :filter, :schedule_filter] ->
-        [{:box, " ENTER cycles: + assigned · - not assigned · none"}]
+        [{:box, " SPACE switches: + assigned · - not assigned · none"}]
 
       _ ->
         [{:box, " ENTER selects · INS creates · type to search"}]
@@ -238,15 +250,16 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
       :esc ->
         State.pop(state)
 
-      # filters, conditions and actions are set several at a time: the box stays open
-      :enter
-      when elem(mode.purpose, 0) in [
-             :filter,
-             :condition,
-             :also_assign,
-             :excludes,
-             :schedule_filter
-           ] ->
+      # filters, conditions and actions are set several at a time (SPACE),
+      # as in Agenda: ENTER first ends a name being typed to find one,
+      # then closes the list keeping them
+      :enter when mode.search != "" and elem(mode.purpose, 0) in @esc_pickers ->
+        State.put_mode(state, %{mode | search: ""})
+
+      :enter when elem(mode.purpose, 0) in @esc_pickers ->
+        State.pop(state)
+
+      {:char, " "} when mode.search == "" and elem(mode.purpose, 0) in @esc_pickers ->
         pick(state, mode.purpose, CategoryScreens.current_id(rows, mode))
 
       :enter ->
@@ -407,7 +420,7 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
     end
   end
 
-  # Negative links (R9): ENTER toggles one between the two categories.
+  # Negative links (R9): SPACE toggles one between the two categories.
   def pick(state, {:excludes, cat_id}, target) do
     names = fn -> {state.db.categories[cat_id].name, state.db.categories[target].name} end
 

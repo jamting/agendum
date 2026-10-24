@@ -18,7 +18,7 @@ defmodule Agendum.TUI.RangeConditionsTest do
 
   test "choosing a date category in the conditions box asks for a date range",
        %{state: state, meetings: meetings} do
-    state = open_conditions(state) |> press(["When", :enter])
+    state = open_conditions(state) |> press(["When", :enter, " "])
     assert %{type: :range_filter} = State.mode(state)
     assert screen(state) =~ "Date condition: When"
 
@@ -27,8 +27,8 @@ defmodule Agendum.TUI.RangeConditionsTest do
     assert [{_, {:range, "beginning of this week", "end of this week", :inside}}] =
              state.db.categories[meetings].conditions
 
-    # ESC clears the picker's search, then closes it
-    state = press(state, [:esc, :esc])
+    # ENTER ended the picker's search; ESC closes it, keeping the condition
+    state = press(state, :esc)
     assert screen(state) =~ ~r/Assignment conditions:.*\n.*When 2026-10-05\.\.2026-10-09/
   end
 
@@ -60,17 +60,17 @@ defmodule Agendum.TUI.RangeConditionsTest do
     # Cost is now the last category; Meetings is the one above it
     state = open_conditions(state, [{:f, 9}, :ctrl_end, :up])
 
-    state = press(state, ["Cost", :enter])
+    state = press(state, ["Cost", :enter, " "])
     assert screen(state) =~ "Numeric condition: Cost"
     state = press(state, [:down, "1000", :enter])
     assert [{^cost, {:range, 1000.0, nil, :inside}}] = state.db.categories[meetings].conditions
 
-    state = press(state, ["Cost", :enter, :delete])
+    state = press(state, ["Cost", :enter, " ", :delete])
     assert state.db.categories[meetings].conditions == []
   end
 
   test "a bad date keeps the box open", %{state: state} do
-    state = open_conditions(state) |> press(["When", :enter, :down, "someday", :enter])
+    state = open_conditions(state) |> press(["When", :enter, " ", :down, "someday", :enter])
     assert %{type: :range_filter} = State.mode(state)
     assert screen(state) =~ "Not a date: someday"
   end

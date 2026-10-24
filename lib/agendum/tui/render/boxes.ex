@@ -112,12 +112,20 @@ defmodule Agendum.TUI.Render.Boxes do
   # finish the box. A short form when the long one does not fit.
   @done {"Press ENTER when done, ESC to cancel", "ENTER done · ESC cancel"}
   @accept {"Press ENTER to accept, ESC to cancel", "ENTER accept · ESC cancel"}
-  @esc_done {"Press ESC when done", "ESC when done"}
+  # a category list opened from a box, where ESC keeps what was switched
+  # too (Agenda's, checked 2026-10-22)
+  @enter_accept {"Press ENTER to accept", "ENTER accept"}
 
   # boxes that only show something
   @return {"Press ENTER or ESC to return", "ENTER/ESC return"}
 
-  @finish %{done: @done, accept: @accept, esc_done: @esc_done, return: @return, none: {"", ""}}
+  @finish %{
+    done: @done,
+    accept: @accept,
+    enter_accept: @enter_accept,
+    return: @return,
+    none: {"", ""}
+  }
 
   defp footer(mode, inner) do
     {long, short} = @finish[Box.module!(mode).finish(mode)]
