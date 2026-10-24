@@ -144,4 +144,23 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
 
   @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
+
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): a new file's date
+  # settings; Display and Input format are boxes of their own
+  @impl Box
+  def defaults(_state, _mode) do
+    new = Core.new_file().date_settings
+
+    Map.new(Template.fields(@layout) -- [:display_format, :input_format], fn row ->
+      {row, &setting_back(&1, row, Map.fetch!(new, row))}
+    end)
+  end
+
+  defp setting_back(state, row, default) do
+    settings = state.db.date_settings
+
+    if Map.fetch!(settings, row) == default,
+      do: state,
+      else: State.run(state, {:set_date_settings, Map.put(settings, row, default)})
+  end
 end

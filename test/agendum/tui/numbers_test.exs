@@ -147,6 +147,21 @@ defmodule Agendum.TUI.NumbersTest do
     assert number.(press(changed, {:alt_f, 8})) == %Agendum.Core.NumberFormat{}
   end
 
+  test "Select numeric functions: ALT-F8 gives back a new column's (Total)",
+       %{state: state, view: view} do
+    box =
+      state
+      |> press(["1234.5", :enter, {:f, 10}, "v", "s", "p"])
+      |> to_setting("Select numeric functions")
+      |> press(" ")
+      |> to_setting("Average")
+      |> press(" ")
+
+    calcs = fn s -> Agendum.Core.section_calcs(s.db, view, 0) end
+    assert :average in calcs.(box)
+    assert calcs.(press(box, {:alt_f, 8})) == [:total]
+  end
+
   test "decimal places are typed", %{state: state, view: view} do
     # ↓ from Column head: Width, Symbol, Decimal places; ENTER keeps it, ENTER the box
     keys = [{:f, 10}, "v", "c", "p", :down, :down, :down, "3", :enter, :enter]

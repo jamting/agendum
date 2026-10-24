@@ -169,4 +169,116 @@ defmodule Agendum.TUI.BoxDefaultsTest do
       assert State.view(press(sorted, {:alt_f, 8})).sort == []
     end
   end
+
+  describe "the other settings boxes" do
+    defp file_box(state, label),
+      do: state |> press([{:f, 10}, "f", "p"]) |> to_setting(label) |> press(" ")
+
+    test "Global Date Settings and Display Format: a new file's", %{state: state} do
+      new = Agendum.Core.new_file()
+
+      dates =
+        file_box(state, "Global date settings") |> to_setting("Beginning of week") |> press(" ")
+
+      refute dates.db.date_settings == new.date_settings
+      assert press(dates, {:alt_f, 8}).db.date_settings == new.date_settings
+
+      display =
+        dates
+        |> to_setting("Display format")
+        |> press(" ")
+        |> to_setting("Date separator")
+        |> press(" ")
+
+      refute display.db.date_format == new.date_format
+      assert press(display, {:alt_f, 8}).db.date_format == new.date_format
+    end
+
+    test "Auto-assign settings: a new file's", %{state: state} do
+      new = Agendum.Core.new_file()
+      auto = file_box(state, "Auto-assign settings") |> to_setting("Ignore accents") |> press(" ")
+      refute auto.db.match_settings == new.match_settings
+      assert press(auto, {:alt_f, 8}).db.match_settings == new.match_settings
+    end
+
+    test "a category's text matching: Global again", %{state: state} do
+      box =
+        state
+        |> press([{:f, 9}, :down, :down, :down, :down, {:f, 6}])
+        |> to_setting("Advanced settings")
+        |> press(" ")
+        |> to_setting("Match on")
+        |> press(" ")
+
+      id = State.mode(box).cat_id
+      assert box.db.categories[id].match_overrides != %{}
+      assert press(box, {:alt_f, 8}).db.categories[id].match_overrides == %{}
+    end
+
+    test "a date category's date settings: When's as a new file has them", %{state: state} do
+      box =
+        state
+        |> press([{:f, 9}, :down, :down, {:f, 6}])
+        |> to_setting("Advanced settings")
+        |> press(" ")
+
+      id = State.mode(box).cat_id
+      assert id == box.db.special.when
+      changed = box |> to_setting("Assign item date") |> press(" ")
+      refute changed.db.categories[id].date_rule == box.db.categories[id].date_rule
+      new = Agendum.Core.new_file()
+
+      assert press(changed, {:alt_f, 8}).db.categories[id].date_rule ==
+               new.categories[new.special.when].date_rule
+    end
+
+    test "the input format: a fresh start's", %{state: state} do
+      box =
+        state
+        |> press([{:f, 10}, "u", "c"])
+        |> to_setting("Input format")
+        |> press(" ")
+        |> to_setting("Input clock")
+        |> press(" ")
+
+      refute State.input(box) == %Agendum.Core.InputFormat{}
+      assert State.input(press(box, {:alt_f, 8})) == %Agendum.Core.InputFormat{}
+    end
+
+    test "Macro Properties: a new macro's run-from places, no key", %{state: state} do
+      {:ok, db, id} = Agendum.Core.add_macro(state.db, "Weed")
+      db = db |> Agendum.Core.set_macro_keys(id, "x") |> Agendum.Core.attach_macro(id, "{F4}")
+      box = Agendum.TUI.Boxes.MacroProps.open(%{state | db: db}, id)
+      assert State.mode(box).macro_id == id
+      changed = box |> to_setting("Run from Note") |> press(" ")
+      refute changed.db.macros[id].run_from.note
+      back = press(changed, {:alt_f, 8}).db.macros[id]
+      assert back.run_from == %Agendum.Core.Macro{}.run_from
+      assert back.key == nil
+    end
+
+    test "Datebook settings: a new datebook's", %{state: state} do
+      book = Enum.find(Database.views(state.db), & &1.datebook)
+
+      box =
+        state
+        |> State.switch_view(book.id)
+        |> press([{:f, 10}, "v", "p"])
+        |> to_setting("Period")
+        |> press(" ")
+
+      refute box.db.views[book.id].datebook.period == :week
+      back = press(box, {:alt_f, 8}).db.views[book.id].datebook
+      assert back.period == :week and back.base == "today"
+    end
+
+    test "Item Column Properties: a new item column's", %{state: state} do
+      box = state |> press([:down, {:f, 10}, "v", "c", "p"])
+      assert %{type: :item_column} = State.mode(box)
+      changed = box |> to_setting("Set width") |> press(" ")
+      item_column = fn s -> hd(State.view(s).sections).item_column end
+      assert item_column.(changed).set == :manual
+      assert item_column.(press(changed, {:alt_f, 8})) == %Agendum.Core.View.ItemColumn{}
+    end
+  end
 end

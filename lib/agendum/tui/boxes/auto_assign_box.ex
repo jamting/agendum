@@ -111,4 +111,30 @@ defmodule Agendum.TUI.Boxes.AutoAssignBox do
 
   @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
+
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): a new file's text
+  # matching
+  @impl Box
+  def defaults(_state, _mode) do
+    new = Agendum.Core.new_file()
+
+    matching =
+      Map.new(@rows -- [:confirm], fn row ->
+        {row,
+         fn state ->
+           settings = state.db.match_settings
+           default = Map.fetch!(new.match_settings, row)
+
+           if Map.fetch!(settings, row) == default,
+             do: state,
+             else: State.run(state, {:set_match_settings, Map.put(settings, row, default)})
+         end}
+      end)
+
+    Map.put(matching, :confirm, fn state ->
+      if state.db.confirm_assignments == new.confirm_assignments,
+        do: state,
+        else: State.run(state, {:set_confirm_assignments, new.confirm_assignments})
+    end)
+  end
 end

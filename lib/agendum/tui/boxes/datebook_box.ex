@@ -272,4 +272,46 @@ defmodule Agendum.TUI.Boxes.DatebookBox do
 
   @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
+
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): a new datebook view's
+  # settings (View ▸ Add ▸ Datebook, `Datebook`): a week from today, its
+  # days as the date settings say; the date, end and section categories as
+  # it makes them; the view's options off
+  @impl Box
+  def defaults(_state, mode) do
+    new = %Datebook{}
+
+    fields = %{
+      date_category: [:date_category],
+      end_category: [:end_category],
+      section_category: [:section_category],
+      period: [:period, :interval],
+      interval: [:interval],
+      start: [:start_day, :start_time],
+      end: [:end_day, :end_time],
+      base: [:base]
+    }
+
+    datebook =
+      Map.new(fields, fn {row, keys} ->
+        {row,
+         fn state ->
+           d = state.db.views[mode.view_id].datebook
+           back = Map.merge(d, Map.take(new, keys))
+           if back == d, do: state, else: set(state, mode, back)
+         end}
+      end)
+
+    options =
+      Map.new(@options, fn option ->
+        {option,
+         fn state ->
+           if Map.fetch!(state.db.views[mode.view_id], option),
+             do: State.run(state, {:toggle_view_option, mode.view_id, option}),
+             else: state
+         end}
+      end)
+
+    Map.merge(datebook, options)
+  end
 end

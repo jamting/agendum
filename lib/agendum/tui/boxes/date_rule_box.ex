@@ -96,4 +96,35 @@ defmodule Agendum.TUI.Boxes.DateRuleBox do
 
   @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
+
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): Entry, When and Done
+  # their own rules as a new file has them, another date category a new
+  # one's (`DateRule`); a key Done or When always takes stays
+  @impl Box
+  def defaults(state, mode) do
+    new = default_rule(state.db, mode.cat_id)
+
+    Map.new(@rows, fn row ->
+      {row,
+       fn state ->
+         rule = state.db.categories[mode.cat_id].date_rule
+         default = Map.fetch!(new, row)
+
+         if fixed?(state.db, mode.cat_id, row) or Map.fetch!(rule, row) == default,
+           do: state,
+           else: State.run(state, {:set_date_rule, mode.cat_id, Map.put(rule, row, default)})
+       end}
+    end)
+  end
+
+  defp default_rule(db, cat_id) do
+    case Enum.find(db.special, fn {_role, id} -> id == cat_id end) do
+      {role, _id} ->
+        new = Agendum.Core.new_file()
+        new.categories[new.special[role]].date_rule
+
+      nil ->
+        %DateRule{}
+    end
+  end
 end

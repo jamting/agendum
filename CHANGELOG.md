@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.31.1 — 2026-10-24
+
+- **F8** and **ALT-F8** also work in the other settings boxes: Global Date Settings, Display Format, Auto-assign settings, a category's text matching and a date category's date settings, Datebook settings, Item Column Properties, Select Numeric Functions, Macro Properties and the input format. Each goes back to what something new gets: a new file's, a new datebook's, a new macro's, "Global" for a category's text matching.
+
 ## 0.31.0 — 2026-10-24
 
 F8 (DEFAULT) and ALT-F8 (DFLTALL) in settings boxes, as in Lotus Agenda.

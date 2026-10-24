@@ -92,4 +92,18 @@ defmodule Agendum.TUI.Boxes.NumericFunctionsBox do
 
   @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
+
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): what a new numeric
+  # column calculates (Total)
+  @impl Box
+  def defaults(_state, mode) do
+    new = %Agendum.Core.NumberFormat{}.calcs
+
+    Map.new(@rows, fn calc ->
+      {calc,
+       fn state ->
+         if calc in calcs(state, mode) == calc in new, do: state, else: switch(state, mode, calc)
+       end}
+    end)
+  end
 end

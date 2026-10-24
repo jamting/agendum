@@ -166,4 +166,29 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
 
   @impl Box
   def help, do: @help
+
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): a new section's item
+  # column (`ItemColumn`); the section head has none
+  @impl Box
+  def defaults(_state, mode) do
+    new = %ItemColumn{}
+
+    sizes =
+      Map.new([:set, :width, :minimum], fn field ->
+        {field,
+         fn state ->
+           default = Map.fetch!(new, field)
+
+           if Map.fetch!(item_column(state, mode), field) == default,
+             do: state,
+             else: set(state, mode, [{field, default}])
+         end}
+      end)
+
+    Map.put(sizes, :linked, fn state ->
+      if item_column(state, mode).linked == new.linked,
+        do: state,
+        else: State.run(state, {:set_item_column_linked, state.view_id, mode.sidx, new.linked})
+    end)
+  end
 end

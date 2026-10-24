@@ -77,4 +77,23 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
 
   @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
+
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): a new file's display
+  # format
+  @impl Box
+  def defaults(_state, _mode) do
+    new = Agendum.Core.new_file().date_format
+
+    Map.new(@rows, fn row ->
+      {row,
+       fn state ->
+         format = state.db.date_format
+         default = Map.fetch!(new, row)
+
+         if Map.fetch!(format, row) == default,
+           do: state,
+           else: State.run(state, {:set_date_format, Map.put(format, row, default)})
+       end}
+    end)
+  end
 end

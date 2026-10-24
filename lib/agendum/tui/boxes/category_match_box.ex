@@ -125,4 +125,19 @@ defmodule Agendum.TUI.Boxes.CategoryMatchBox do
 
   @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
+
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): Global, as the file's
+  # Auto-assign settings say (User's Guide 2-17: File Properties sets these
+  # defaults)
+  @impl Box
+  def defaults(_state, mode) do
+    Map.new(@rows, fn field ->
+      {field,
+       fn state ->
+         if Map.has_key?(state.db.categories[mode.cat_id].match_overrides, field),
+           do: State.run(state, {:set_match_override, mode.cat_id, field, :global}),
+           else: state
+       end}
+    end)
+  end
 end

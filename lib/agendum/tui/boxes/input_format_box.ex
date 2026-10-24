@@ -86,4 +86,28 @@ defmodule Agendum.TUI.Boxes.InputFormatBox do
 
   @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
+
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): a fresh start's input
+  # format, read from the date languages
+  @impl Box
+  def defaults(_state, _mode) do
+    new = %InputFormat{}
+
+    Map.new(@rows, fn row ->
+      {row,
+       fn state ->
+         default = Map.fetch!(new, row)
+
+         if Map.fetch!(State.input(state), row) == default do
+           state
+         else
+           State.change_preference(
+             state,
+             &State.put_reader(&1, input: Map.put(State.input(&1), row, default)),
+             &%{&1 | input: Map.put(&1.input, row, default)}
+           )
+         end
+       end}
+    end)
+  end
 end

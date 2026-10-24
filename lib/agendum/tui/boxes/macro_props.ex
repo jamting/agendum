@@ -172,4 +172,29 @@ defmodule Agendum.TUI.Boxes.MacroProps do
 
   @impl Box
   def field(_state, mode), do: Enum.at(@rows, mode.cursor)
+
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): a new macro's: no key
+  # attached, run from a view, a note and the category manager; the name and
+  # the keystrokes have none
+  @impl Box
+  def defaults(_state, mode) do
+    id = mode.macro_id
+    places = %Agendum.Core.Macro{}.run_from
+
+    run_from =
+      Map.new(places, fn {place, default} ->
+        {place,
+         fn state ->
+           if state.db.macros[id].run_from[place] == default,
+             do: state,
+             else: State.run(state, {:set_macro_run_from, id, place, default})
+         end}
+      end)
+
+    Map.put(run_from, :key, fn state ->
+      if state.db.macros[id].key == nil,
+        do: state,
+        else: State.run(state, {:attach_macro, id, nil})
+    end)
+  end
 end
