@@ -140,6 +140,9 @@ defmodule Agendum.Core.ViewModel do
   end
 
   def build(%Database{} = db, %View{} = view, today) do
+    # read once for all sections, not once per section (a section per feed)
+    positions = Database.item_positions(db)
+
     view.sections
     # each section with its index, kept through the sorting
     |> Enum.with_index()
@@ -151,7 +154,7 @@ defmodule Agendum.Core.ViewModel do
 
       rows =
         db
-        |> Database.items_in(category.id)
+        |> Database.items_in(category.id, positions)
         |> Enum.reject(&(view.hide_done and &1.done != nil))
         |> Enum.filter(
           &(Assign.criteria_met?(db, &1.id, filter, today) and shown?(&1, view.match))

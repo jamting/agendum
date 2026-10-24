@@ -9,16 +9,22 @@ defmodule Agendum.TUI.Render.View do
   alias Agendum.TUI.{Typing.Completion, Terminal.Draw, Layout, State}
   alias Agendum.TUI.Render.Text
 
-  @doc "The view's lines, scrolled."
+  @doc "The view's lines, scrolled: at most a screenful (the body's height)."
   def lines(state) do
     rows = Layout.rows(state)
     editing = state.modes == [] && state.edit
     # the Zettel ids in use, once for the whole screen, to find links (R73b)
     used = Agendum.Core.zettels(state.db)
 
+    {skipped_rows, skipped_lines} = above_screen(rows, state)
+
+    # A `Stream` is lazy: rows are drawn only until the screen is full
+    # (`Enum.take/2` below), and the rows wholly above it not at all, not
+    # every row of a long view (the News view).
     rows
-    |> Enum.with_index()
-    |> Enum.flat_map(fn {row, index} ->
+    |> Stream.with_index()
+    |> Stream.drop(skipped_rows)
+    |> Stream.flat_map(fn {row, index} ->
       # each section has its own columns, and its item text the rest (R55)
       columns = row.columns
       tw = Layout.text_width(state, row)
@@ -43,8 +49,24 @@ defmodule Agendum.TUI.Render.View do
 
       lines ++ calc_lines(Map.get(row, :calcs, []), tw, row)
     end)
-    |> Enum.drop(state.scroll)
+    |> Stream.drop(state.scroll - skipped_lines)
+    |> Enum.take(State.body_height(state))
     |> first_heads_only()
+  end
+
+  # How many rows lie wholly above the screen, and their lines: their
+  # heights are the ones scrolling goes by (`Layout.heights/2`). Only rows
+  # before the cursor's are counted, as the cursor's row may be edited and
+  # take other lines than its height.
+  defp above_screen(rows, state) do
+    rows
+    |> Enum.take(state.cursor)
+    |> Layout.heights(state)
+    |> Enum.reduce_while({0, 0}, fn height, {count, lines} ->
+      if lines + height <= state.scroll,
+        do: {:cont, {count + 1, lines + height}},
+        else: {:halt, {count, lines}}
+    end)
   end
 
   # Hide column heads (R57): a section head line comes as

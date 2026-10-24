@@ -77,15 +77,23 @@ defmodule Agendum.TUI.Terminal.Draw do
     text
     |> String.split(~r/\s+/u, trim: true)
     |> Enum.flat_map(&chunk_word(&1, width))
-    |> Enum.reduce([], fn
-      word, [] ->
-        [word]
+    # the accumulator carries the current line's length, so each word is
+    # measured once rather than the growing line at every word
+    |> Enum.reduce({[], 0}, fn word, {lines, used} ->
+      size = String.length(word)
 
-      word, [current | done] ->
-        if String.length(current) + 1 + String.length(word) <= width,
-          do: [current <> " " <> word | done],
-          else: [word, current | done]
+      case lines do
+        [] ->
+          {[word], size}
+
+        [current | done] when used + 1 + size <= width ->
+          {[current <> " " <> word | done], used + 1 + size}
+
+        _ ->
+          {[word | lines], size}
+      end
     end)
+    |> elem(0)
     |> Enum.reverse()
     |> case do
       [] -> [""]

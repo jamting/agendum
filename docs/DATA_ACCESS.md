@@ -152,6 +152,7 @@ Every change goes through `Core.run(db, command, clock)`. The commands are liste
 | `Core.reassign_all(db, today)`                                                                                           | write        | Run auto-assignment again for every item, and date items whose text has a date but that have no When date.                                                                 |
 | `Database.member?(db, item, cat)`                                                                                        | read         | **Membership including subsumption.**                                                                                                                                      |
 | `Database.items_in(db, cat)`                                                                                             | read         | All member items, in item order.                                                                                                                                           |
+| `Database.items_in(db, cat, positions)`, `item_positions/1` | read | The same, sorted by positions read once (`item_positions/1`) rather than by walking the item order: for a view of many sections (one per feed). |
 | `Database.explicit_categories(db, item)`, `explicit?/3`                                                                  | read         | Stored links only.                                                                                                                                                         |
 | `Database.date_field(db, cat)`                                                                                           | read         | `:entry \| :when \| :done \| nil`: the item field of a built-in date category only.                                                                                       |
 | `Database.date_category?(db, cat)`, `item_date(db, item, cat)`, `item_time(db, item, cat)`                               | read         | Any date category, built in or made by the user (R6a): whether it is one, an item's date and time in it.                                                                  |
@@ -242,7 +243,7 @@ flowchart TD
     F -- no --> N["false"]
 ```
 
-`items_in(db, cat)` works the other way round. It unions `links.by_right[c]` for every `c` in `subtree(cat)`, then filters `item_order` so the result keeps display order.
+`items_in(db, cat)` works the other way round. It unions `links.by_right[c]` for every `c` in `subtree(cat)`, then filters `item_order` so the result keeps display order. `items_in(db, cat, positions)` sorts the same ids by each item's place in `item_order`, read once with `item_positions/1`: `ViewModel.build/3` does so for its sections, as walking the whole item order once per section was what made the News view slow (a section per feed, 243 in the owner's file; 2026-10-25).
 
 Because subsumption is never stored, there is no need to cascade on deletion. Dropping a category's links removes inherited memberships automatically (the patent's "deleting C5" example).
 
@@ -344,8 +345,9 @@ sequenceDiagram
     participant VM as Core.ViewModel
     participant D as Core.Database
     R->>VM: build(db, view)
+    VM->>D: item_positions(db), once
     loop each section
-        VM->>D: items_in(db, section.category_id)
+        VM->>D: items_in(db, section.category_id, positions)
         VM->>VM: drop done items if hide_done
         loop each item
             VM->>D: explicit?(item, section cat) → inherited flag
@@ -372,10 +374,11 @@ The data lives in memory and is small (a personal database, thousands of items),
 | `subtree/2`, `descendants/2`                    | O(size of subtree)                                            |
 | `member?/3`                                     | O(size of subtree)                                            |
 | `items_in/2`                                    | O(subtree links + total items)                                |
-| `ViewModel.build/3`                             | O(sections × items × columns × subtree); runs on every render |
+| `items_in/3`                                    | O(subtree links × log), after `item_positions/1` (O(items)) once |
+| `ViewModel.build/3`                             | O(items + sections × members × columns × subtree); every render, and a few times per key |
 | Any write                                       | O(log n) for the change itself; old versions share structure  |
 
-If large files ever become slow, the first candidates are caching `ViewModel.build/3` per database value and keeping a descendants index.
+If large files ever become slow, the first candidates are caching `ViewModel.build/3` per database value and keeping a descendants index. The screen does its share too: drawing a view makes only the lines that show (`Render.View.lines/1`, from the rows wholly above the screen on), and scrolling wraps only the rows down to the highlight, never wrapping a text that fits (`Layout.heights/2`; 2026-10-25, the News view).
 
 ## Adding to the data layer
 

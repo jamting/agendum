@@ -64,9 +64,10 @@ defmodule Agendum.TUI.Update.ViewKeys do
   def view_key(%State{edit: edit} = state, key) when edit != nil,
     do: Editing.view_edit_key(state, key)
 
-  # view commands that take a count themselves (`step/4`)
-  @own [:up, :down, :page_up, :page_down, :previous_section, :next_section] ++
-         [:next_column, :previous_column]
+  # view commands that take a count themselves (`step/4`); the moves up
+  # and down need no highlighted row, which takes a pass over the view
+  @moves [:up, :down, :page_up, :page_down, :previous_section, :next_section]
+  @own @moves ++ [:next_column, :previous_column]
 
   # view commands that are the menu's named actions as they are
   @actions [
@@ -138,6 +139,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
     end
   end
 
+  def run(state, id, _n) when id in @moves, do: step(state, id, nil, 1)
   def run(state, id, _n), do: command(state, id, Layout.current_row(state))
 
   # the commands that can be unable to run (`unavailable/1`)

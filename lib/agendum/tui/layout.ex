@@ -151,11 +151,21 @@ defmodule Agendum.TUI.Layout do
             if separators, do: 1, else: 2
 
           %{kind: :item, item: item} ->
-            length(Draw.wrap(item.text, text_width(state, row)))
+            line_count(item.text, text_width(state, row))
         end
 
       own + length(Map.get(row, :calcs, []))
     end)
+  end
+
+  # The lines `Draw.wrap/2` makes of a text, without wrapping one that fits:
+  # wrapping only joins words with single spaces, so a text no longer than
+  # the width stays one line. `byte_size/1` is instant and never less than
+  # the length in characters, so most texts need no counting at all.
+  defp line_count(text, width) do
+    if byte_size(text) <= width or String.length(text) <= width,
+      do: 1,
+      else: length(Draw.wrap(text, width))
   end
 
   @doc """
@@ -163,9 +173,11 @@ defmodule Agendum.TUI.Layout do
   section/item if it still exists, otherwise clamps the index. Then scrolls
   so the cursor is visible.
   """
-  @spec settle(State.t()) :: State.t()
-  def settle(%State{} = state) do
-    rows = rows(state)
+  @spec settle(State.t(), [row] | nil) :: State.t()
+  def settle(%State{} = state, rows \\ nil) do
+    # the caller's rows when it has them (`move_to/2`), as a view of many
+    # rows takes a while to make
+    rows = rows || rows(state)
     count = length(rows)
 
     index =
@@ -182,7 +194,9 @@ defmodule Agendum.TUI.Layout do
   end
 
   defp scroll_to_cursor(state, rows) do
-    heights = heights(rows, state)
+    # only the rows down to the cursor matter: wrapping every row's text
+    # was the slow part of a key in a long view (the News view)
+    heights = rows |> Enum.take(state.cursor + 1) |> heights(state)
     start = heights |> Enum.take(state.cursor) |> Enum.sum()
     height = Enum.at(heights, state.cursor, 1)
     body = State.body_height(state)
@@ -202,7 +216,7 @@ defmodule Agendum.TUI.Layout do
   def move_to(state, index) do
     rows = rows(state)
     index = index |> min(length(rows) - 1) |> max(0)
-    settle(%{state | cursor: index, cursor_key: Enum.at(rows, index)[:key]})
+    settle(%{state | cursor: index, cursor_key: Enum.at(rows, index)[:key]}, rows)
   end
 
   @spec current_row(State.t()) :: row | nil

@@ -95,6 +95,25 @@ defmodule Agendum.Core.DatabaseTest do
       assert Database.items_in(db, c2) == []
     end
 
+    test "items_in/3 with the item positions gives what items_in/2 gives" do
+      # a view of many sections reads the positions once (the News view)
+      db = with_categories(Database.new(), [{"C2", [], ["C5"]}, "C7"])
+      {db, a} = Core.add_item(db, "A", today(), section: cat(db, "C5"))
+      {db, b} = Core.add_item(db, "B", today(), section: cat(db, "C2"))
+      {db, _} = Core.add_item(db, "C", today(), section: cat(db, "C7"))
+      {db, d} = Core.add_item(db, "D", today(), section: cat(db, "C5"))
+      db = db |> Database.reorder_item(d, :first) |> Database.reorder_item(a, b)
+      positions = Database.item_positions(db)
+
+      for name <- ["MAIN", "C2", "C5", "C7", "Entry"] do
+        id = cat(db, name)
+        assert Database.items_in(db, id, positions) == Database.items_in(db, id)
+      end
+
+      assert db |> Database.items_in(cat(db, "C2"), positions) |> Enum.map(& &1.text) ==
+               ["D", "B", "A"]
+    end
+
     test "deleting a category removes it from view sections and columns" do
       db = with_categories(Database.new(), ["Doomed"])
       [view] = Database.views(db)

@@ -162,8 +162,8 @@ defmodule Agendum.Core.Database do
     }
   end
 
-  @doc "Moves an item to directly after `after_id` (or first, if nil)."
-  @spec reorder_item(t, id, id | nil) :: t
+  @doc "Moves an item to directly after `after_id` (first with `:first`, last with nil)."
+  @spec reorder_item(t, id, id | :first | nil) :: t
   def reorder_item(%__MODULE__{} = db, id, after_id) do
     order = db.item_order |> List.delete(id) |> insert_after(id, after_id)
     %{db | item_order: order}
@@ -584,13 +584,44 @@ defmodule Agendum.Core.Database do
         db |> items() |> Enum.filter(&(item_date(db, &1.id, cat_id) != nil))
 
       true ->
-        ids =
-          db
-          |> subtree(cat_id)
-          |> Enum.reduce(MapSet.new(), &MapSet.union(&2, Links.lefts(db.links, &1)))
-
+        ids = linked_ids(db, cat_id)
         db.item_order |> Enum.filter(&MapSet.member?(ids, &1)) |> Enum.map(&db.items[&1])
     end
+  end
+
+  @doc """
+  Each item's place in item order, from 0: read once by a caller that asks
+  `items_in/3` for many categories (a view with a section per feed).
+  """
+  @spec item_positions(t) :: %{id => non_neg_integer}
+  def item_positions(%__MODULE__{} = db),
+    do: db.item_order |> Enum.with_index() |> Map.new()
+
+  @doc """
+  `items_in/2`, faster for a category with few items: its members are put
+  in item order by their `positions` (`item_positions/1`), rather than by
+  walking the whole item order once per category.
+  """
+  @spec items_in(t, id, %{id => non_neg_integer}) :: [Item.t()]
+  def items_in(%__MODULE__{} = db, cat_id, positions) do
+    if cat_id == db.main_id or date_category?(db, cat_id) do
+      items_in(db, cat_id)
+    else
+      # `Map.has_key?/2` keeps out a link to an item no longer in the file,
+      # as the walk through the item order did
+      db
+      |> linked_ids(cat_id)
+      |> Enum.filter(&Map.has_key?(positions, &1))
+      |> Enum.sort_by(&Map.fetch!(positions, &1))
+      |> Enum.map(&db.items[&1])
+    end
+  end
+
+  # The items linked to a category or to any category below it.
+  defp linked_ids(db, cat_id) do
+    db
+    |> subtree(cat_id)
+    |> Enum.reduce(MapSet.new(), &MapSet.union(&2, Links.lefts(db.links, &1)))
   end
 
   # ---------------------------------------------------------------------------
