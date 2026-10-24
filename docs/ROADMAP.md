@@ -16,7 +16,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 ### Fixes and polish
 
-- [ ] F10 Menu missing from the view's key bar at 80 columns: the ten short entries need 88 columns, so the last one is left out (found 2026-10-23, while fixing the key bar). Agenda drew ten 8-column slots on two lines (key names above, labels below); to settle with the owner: two lines as Agenda's, or a tighter one-line bar
+None open.
 
 ### The clone's safety
 

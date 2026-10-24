@@ -225,17 +225,14 @@ defmodule Agendum.TUI.LookTest do
   end
 
   test "the key bar says more when the screen is wide enough", %{state: state} do
-    keybar = fn state -> state |> screen() |> String.split("\n") |> List.last() end
-
     # the longer labels are an extra (R77): Agenda's short ones without
     wide = %{state | width: 140}
-    assert keybar.(wide) =~ "F6 Props F7 Mark F8 VwMgr F9 CatMgr"
+    assert slots(wide) =~ "F6 Props F7 Mark F8 Vw Mgr F9 Cat Mgr"
     wide = put_in(wide.prefs.extras, true)
-    assert keybar.(wide) =~ "F6 Properties  F7 Mark  F8 View manager  F9 Category manager"
-    assert keybar.(press(wide, {:f, 9})) =~ "INS/CTRL-N Add a category"
+    assert slots(wide) =~ "F6 Properties F7 Mark F8 View manager F9 Category mgr"
 
     # 80 columns: Agenda's short labels
-    assert keybar.(state) =~ "F6 Props F7 Mark F8 VwMgr F9 CatMgr"
+    assert slots(state) =~ "F6 Props F7 Mark F8 Vw Mgr F9 Cat Mgr"
   end
 
   test "a box opened from a box sits a line lower and two columns right", %{state: state} do

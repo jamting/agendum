@@ -54,14 +54,14 @@ defmodule Agendum.TUI.ExtrasSwitchTest do
     test "the view manager has no ► and no F5", %{db: db} do
       state = db |> start() |> press({:f, 8})
       refute screen(state) =~ "►"
-      refute screen(state) =~ "F5"
+      refute slots(state) =~ "F5"
       state = press(state, {:f, 5})
       refute screen(state) =~ "recently used"
     end
 
     test "the key bar keeps Agenda's short labels on a wide screen", %{db: db} do
-      bar = db |> start(width: 160) |> screen()
-      assert bar =~ "F8 VwMgr"
+      bar = db |> start(width: 160) |> slots()
+      assert bar =~ "F8 Vw Mgr"
       refute bar =~ "View manager"
     end
 

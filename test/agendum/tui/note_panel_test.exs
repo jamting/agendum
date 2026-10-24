@@ -45,9 +45,7 @@ defmodule Agendum.TUI.NotePanelTest do
 
   test "the key bar is Agenda's: F1 Help, F2 Paste, F3 Copy, F4 Cut, F5 Return, F7 Mark",
        %{note: note} do
-    bar = line(note, 24)
-    assert bar =~ ~r/F1 Help.*F2 Paste.*F3 Copy.*F4 Cut.*F5 Return.*F7 Mark/
-    refute bar =~ "ESC"
+    assert slots(note) == "F1 Help F2 Paste F3 Copy F4 Cut F5 Return F7 Mark F10 Menu"
   end
 
   test "a box over the note shows its own indicator, not the note's", %{note: note} do

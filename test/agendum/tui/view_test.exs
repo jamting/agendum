@@ -15,7 +15,7 @@ defmodule Agendum.TUI.ViewTest do
     assert screen =~ "View: Activities"
     assert screen =~ ~r/Calls\s+When\s+Priority\s+Contact/
     assert screen =~ ~r/Don't forget to call Anna Lasky.*High\s+Anna Lasky/
-    assert screen =~ "F9 CatMgr F10 Menu"
+    assert slots(state) =~ "F9 Cat Mgr F10 Menu"
   end
 
   test "a column head starts where its entries do, as in Agenda (screenshot 9)",

@@ -45,6 +45,22 @@ defmodule Agendum.TUIHelpers do
   end
 
   @doc """
+  The key bar's slots (R80) read back as one text, each key before its label
+  and the empty slots left out: "F1 Help F2 Edit … F10 Menu". The bar is the
+  screen's last two lines; `String.split/2` on `│` cuts them into slots, and
+  `Enum.zip/2` pairs each key with the label under it.
+  """
+  def slots(state) do
+    [keys, labels] =
+      state |> screen() |> String.split("\n") |> Enum.take(-2) |> Enum.map(&String.split(&1, "│"))
+
+    Enum.zip(keys, labels)
+    |> Enum.map(fn {key, label} -> {String.trim(key), String.trim(label)} end)
+    |> Enum.reject(fn {_, label} -> label == "" end)
+    |> Enum.map_join(" ", fn {key, label} -> key <> " " <> label end)
+  end
+
+  @doc """
   Fails when a key asked for an effect that is not on the closed list
   (`Agendum.TUI.Effect`): the shell would skip it, so the key would seem
   to do nothing.

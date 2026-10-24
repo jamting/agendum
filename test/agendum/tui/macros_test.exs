@@ -186,7 +186,7 @@ defmodule Agendum.TUI.MacrosTest do
       # ENTER keeps it (ESC would cancel), ESC closes the manager
       state = press(state, [:enter, :esc])
       # the key bar shows the macro's name on F4
-      assert screen(state) =~ "F4 Water"
+      assert slots(state) =~ "F4 Water"
       state = press(state, {:f, 4})
       assert count(state, "Water the lettuces") == 2
 

@@ -1,8 +1,14 @@
 defmodule Agendum.TUI.Render.KeyBar do
   @moduledoc """
-  The function key bar on the last line: the keys of what is on top. What
-  does not fit the screen is left out whole, never cut mid-word (SPEC § The
-  key bar). Pure.
+  The function key bar on the last two lines: the keys of what is on top
+  (SPEC § The key bar). Pure.
+
+  In a view, a note and the category and view managers it is Agenda's: ten
+  fixed slots, one per function key, the key above its label, `│` between
+  them; a key that does nothing there leaves its slot empty, so F8 is always
+  in the same place. Elsewhere (boxes, the menu, typing, moves) the bottom
+  line names the keys side by side, until each place is compared with
+  Agenda's; what does not fit is left out whole, never cut mid-word.
   """
 
   alias Agendum.TUI.{Typing.Completion, Terminal.Draw, State}
@@ -15,8 +21,84 @@ defmodule Agendum.TUI.Render.KeyBar do
   # the fuller ones when the extras are on (R77) and they all fit the
   # screen's width, the short ones otherwise: {key, label} | {key, label, full label} |
   # {key, label, full key, full label}.
-  @doc "The key bar line."
-  def line(state) do
+  @doc "The key bar's two lines."
+  @spec lines(State.t()) :: [Draw.line()]
+  def lines(state) do
+    case slotted(state) do
+      nil -> [Draw.line([], state.width, :keybar), hint_line(state)]
+      keys -> slot_lines(state, keys)
+    end
+  end
+
+  # The places with Agenda's slots, and the keys they name; nil elsewhere.
+  # Only plain function keys go in a slot ("F4", or "DEL/F4": the F-key is
+  # what the slot names); "ALT-F6" and the other keys are left out.
+  defp slotted(state) do
+    keys =
+      cond do
+        state.edit != nil or Completion.active?(state) -> nil
+        State.mode(state) == nil -> mode_keys(nil)
+        State.mode(state).type in [:note, :catmgr] -> mode_keys(State.mode(state))
+        State.mode(state).type == :viewmgr -> @boxes.viewmgr.keys(state, State.mode(state))
+        true -> nil
+      end
+
+    keys && Enum.map(keys, &attached_label(state, full_entry(&1)))
+  end
+
+  # Domain: Agenda's slots are 8 columns at 80 (7 for the text, 1 for the
+  # `│`); a wider screen widens them evenly. `for n <- 1..10` makes the ten
+  # slots; `Map.new/2` keys the entries by their F-key's number, so a slot
+  # finds its entry, or nil when the key does nothing here. F1 is Help
+  # everywhere.
+  defp slot_lines(state, keys) do
+    text = div(state.width, 10) - 1
+
+    by_number =
+      keys
+      |> Enum.flat_map(fn {key, short, _, full} ->
+        case Regex.run(~r{(?:^|/)F(\d+)$}, key) do
+          [_, n] -> [{String.to_integer(n), {short, full}}]
+          nil -> []
+        end
+      end)
+      |> Map.new()
+      |> Map.put_new(1, {"Help", "Help"})
+
+    # the fuller labels are an extra (R77), and only when they all fit
+    full? =
+      state.prefs.extras and
+        Enum.all?(by_number, fn {_, {_, full}} -> String.length(full) <= text end)
+
+    labels =
+      for n <- 1..10 do
+        case by_number[n] do
+          nil -> ""
+          {short, full} -> if full?, do: full, else: short
+        end
+      end
+
+    [
+      slot_line(Enum.map(1..10, &"F#{&1}"), text, :keybar_key, state.width),
+      slot_line(labels, text, :keybar, state.width)
+    ]
+  end
+
+  # the texts centred in their slots (a spare column goes on the right, as
+  # Agenda's " Help  "), cut to the slot on a narrow screen
+  defp slot_line(texts, width, style, screen_width) do
+    texts
+    |> Enum.map(fn text ->
+      text = String.slice(text, 0, width)
+      left = div(width - String.length(text), 2)
+      {style, Draw.pad(String.duplicate(" ", left) <> text, width)}
+    end)
+    |> Enum.intersperse({:keybar, "│"})
+    |> Draw.line(screen_width, :keybar)
+  end
+
+  # The one-line bar of the places without slots.
+  defp hint_line(state) do
     # a box on top names ENTER and ESC in its bottom edge too
     box? = state.edit == nil and not Completion.active?(state) and box_on_top?(state)
 
@@ -126,22 +208,21 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"F5", "Note"},
       {"F6", "Props", "Properties"},
       {"F7", "Mark"},
-      {"F8", "VwMgr", "View manager"},
-      {"F9", "CatMgr", "Category manager"},
+      {"F8", "Vw Mgr", "View manager"},
+      {"F9", "Cat Mgr", "Category mgr"},
       {"F10", "Menu"}
     ]
 
+  # Agenda's F9 is To View; its F10 menu is not built (F10 returns too)
   defp mode_keys(%{type: :catmgr}),
     do: [
+      {"F1", "Help"},
       {"F2", "Edit", "Rename"},
       {"F5", "Note"},
       {"F6", "Props", "Properties"},
       {"F7", "Promote"},
       {"F8", "Demote"},
-      {"INS/^N", "Add", "INS/CTRL-N", "Add a category"},
-      {"DEL", "Discard"},
-      {"A-F10", "Move", "ALT-F10", "Move"},
-      {"ESC", "Return"}
+      {"F9", "To View", "To the view"}
     ]
 
   defp mode_keys(%{type: :browse, shift: %{}}),
@@ -171,19 +252,16 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ENTER/ESC", "End search"}
     ]
 
-  # Agenda's order (R64a); its F6 Marker (fonts) is out of scope
+  # Agenda's slots (R64a); its F6 Marker (fonts) is out of scope
   defp mode_keys(%{type: :note}),
     do: [
       {"F1", "Help"},
-      {"F2", "Paste", "Paste the text kept"},
-      {"F3", "Copy", "Copy the marked text (or a word, line, all)"},
-      {"F4", "Cut", "Cut the marked text (or a word, line, all)"},
-      {"F5", "Return", "Save and return"},
-      {"F7", "Mark", "Mark text: F7, then move the cursor"},
-      {"F10", "Menu"},
-      {"ALT-F6", "Search", "Search and replace"},
-      {"ALT-F7", "MakeItm", "Make text into an item"},
-      {"ALT-F2", "MakeCat", "Make the text a category"}
+      {"F2", "Paste"},
+      {"F3", "Copy"},
+      {"F4", "Cut"},
+      {"F5", "Return"},
+      {"F7", "Mark"},
+      {"F10", "Menu"}
     ]
 
   defp mode_keys(%{type: :menu}),

@@ -71,7 +71,7 @@ defmodule Agendum.TUI.NoteMenuTest do
   end
 
   test "the key bar names F10 Menu", %{note: note} do
-    assert line(note, 24) =~ "F10 Menu"
+    assert slots(note) =~ "F10 Menu"
   end
 
   describe "Import and Export (R64c)" do

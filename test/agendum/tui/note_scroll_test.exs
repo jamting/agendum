@@ -16,7 +16,7 @@ defmodule Agendum.TUI.NoteScrollTest do
   @note Enum.map_join(1..40, "\n", &"line #{String.pad_leading(Integer.to_string(&1), 2, "0")}")
 
   setup do
-    state = start(Agendum.Sample.build(~D[2026-10-08]), height: 24) |> press(:down)
+    state = start(Agendum.Sample.build(~D[2026-10-08]), height: 25) |> press(:down)
     item = Layout.current_row(state).item
     state = %{state | db: Core.set_note(state.db, item.id, @note, state.today)}
     %{state: press(state, {:f, 5})}

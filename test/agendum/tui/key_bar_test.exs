@@ -1,8 +1,10 @@
 defmodule Agendum.TUI.KeyBarTest do
   @moduledoc """
-  The key bar on a narrow screen (R65): entries that do not fit are left
-  out whole, never cut mid-word. A box drops ENTER and ESC first, as its
-  bottom edge names them; elsewhere the last entries go.
+  The key bar (SPEC § The key bar): in a view, a note and the category and
+  view managers Agenda's two lines of ten slots (R80); elsewhere one line of
+  hints, whose entries that do not fit are left out whole, never cut
+  mid-word. A box drops ENTER and ESC first, as its bottom edge names them;
+  elsewhere the last entries go.
   """
   use ExUnit.Case, async: true
 
@@ -19,7 +21,16 @@ defmodule Agendum.TUI.KeyBarTest do
     |> start(today: @today, width: width, height: 25)
   end
 
-  defp bar(state), do: state |> KeyBar.line() |> Enum.map_join(&elem(&1, 1)) |> String.trim()
+  # the bar's lines as text
+  defp texts(state),
+    do: state |> KeyBar.lines() |> Enum.map(fn line -> Enum.map_join(line, &elem(&1, 1)) end)
+
+  # the hint line of a place without slots (the bottom one; the top is empty)
+  defp bar(state) do
+    [top, bottom] = texts(state)
+    assert String.trim(top) == ""
+    String.trim(bottom)
+  end
 
   # the box's keys as the short bar writes them, "F2 Edit"
   defp entries(state) do
@@ -64,5 +75,54 @@ defmodule Agendum.TUI.KeyBarTest do
     assert state.edit != nil
     # "^A/^E Start/End" and "^U Clear" do not fit 33 columns
     assert bar(state) == "ENTER Done ESC Cancel ←→ Move"
+  end
+
+  # Agenda's own bar in a view, read in DOSBox (PLANNER, 2026-10-24)
+  @agenda_view [
+    "  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   ",
+    " Help  │ Edit  │Choices│ Done  │ Note  │ Props │ Mark  │Vw Mgr │Cat Mgr│ Menu   "
+  ]
+
+  test "a view at 80 columns has Agenda's two lines, F10 Menu included (R80)" do
+    state = planner(80)
+    assert texts(state) == @agenda_view
+    # the bar is the screen's last two lines
+    assert state |> screen() |> String.split("\n") |> Enum.take(-2) ==
+             Enum.map(@agenda_view, &String.trim_trailing/1)
+  end
+
+  test "a key that does nothing there leaves its slot empty, so the keys stay in place" do
+    state = 80 |> planner() |> press({:f, 9})
+    [keys, labels] = texts(state)
+    assert keys == Enum.at(@agenda_view, 0)
+
+    assert labels ==
+             " Help  │ Edit  │       │       │ Note  │ Props │Promote│Demote │To View│        "
+  end
+
+  test "a note names Agenda's keys in their slots, not the ALT keys" do
+    state = 80 |> planner() |> press({:f, 5})
+    assert %{type: :note} = State.mode(state)
+    [_, labels] = texts(state)
+
+    assert labels ==
+             " Help  │ Paste │ Copy  │  Cut  │Return │       │ Mark  │       │       │ Menu   "
+  end
+
+  test "a wider screen widens the slots evenly, with the fuller labels when the extras are on" do
+    [keys, labels] = 130 |> planner() |> texts()
+    assert String.length(keys) == 130
+    assert labels =~ "│   Vw Mgr   │"
+
+    [_, labels] = 130 |> planner() |> Map.update!(:prefs, &%{&1 | extras: true}) |> texts()
+    assert labels =~ "│View manager│"
+  end
+
+  test "the view shows one row fewer, and ALT-K hides both lines" do
+    state = planner(80)
+    assert State.body_height(state) == 21
+    state = press(state, {:alt, "k"})
+    assert State.body_height(state) == 23
+    assert state |> screen() |> String.split("\n") |> length() == 25
   end
 end

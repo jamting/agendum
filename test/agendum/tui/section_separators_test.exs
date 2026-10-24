@@ -75,7 +75,7 @@ defmodule Agendum.TUI.SectionSeparatorsTest do
     state = separators(state)
     assert Layout.heights(Layout.rows(state), state) == [1, 1, 1, 1, 1, 1]
     # 4 lines of view: the last item is still in sight at the bottom
-    state = %{state | height: 8} |> press(List.duplicate(:down, 5))
-    assert List.last(Enum.reject(lines(state), &(&1 =~ ~r/^ *$|F1|File|View/))) =~ "In Errands"
+    state = %{state | height: 9} |> press(List.duplicate(:down, 5))
+    assert List.last(Enum.reject(lines(state), &(&1 =~ ~r/^ *$|│|File|View/u))) =~ "In Errands"
   end
 end

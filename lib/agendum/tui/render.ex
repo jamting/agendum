@@ -8,7 +8,7 @@ defmodule Agendum.TUI.Render do
                   view (or the manager, note, help) shown; the menu,
                   prompts, questions and messages take it over
       lines 2..   body: the view, or a full-screen manager
-      last line   function key bar
+      last two    function key bar (R80)
 
   Each part is drawn by a module of its own under `Agendum.TUI.Render`:
   `ControlPanel`, `View`, `Managers`, `Note`, `Boxes`, `KeyBar` (the help
@@ -38,7 +38,7 @@ defmodule Agendum.TUI.Render do
 
     ControlPanel.lines(state, base) ++
       Enum.map(screen_body(state), &Draw.line(&1, w)) ++
-      if(state.key_map, do: [KeyBar.line(state)], else: [])
+      if(state.key_map, do: KeyBar.lines(state), else: [])
   end
 
   # the body: the full screen (or the view), and the boxes over it

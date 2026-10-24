@@ -65,6 +65,7 @@ The record of finished work, by milestone, moved here from [`ROADMAP.md`](ROADMA
 - [x] Reopen a file where you left it: the view and the highlighted item (else its section, else the top of the view), as Agenda's file stored them; ours kept in the preferences per file path, never in the file (R69; meeting 2026-10-16, § 5)
 - [x] View manager: ► in a column of its own before the current view's name, apart from the datebook `*`, wherever the highlight is (R68; meeting 2026-10-16, § 7)
 - [x] View manager: F5 toggles between your order and recently used, for showing the list only (ALT-N, ALT-P and hop keep the file's order); the toggle and the history in the preferences per file, off at first (R68; meeting 2026-10-16, § 8; the key chosen by the owner)
+- [x] The key bar on two lines, as Agenda's (R80, 2026-10-24; found 2026-10-23: F10 Menu did not fit one line at 80 columns). Checked in Agenda 2.0 (PLANNER): ten fixed 8-column slots, the key above its label, `│` between them, an unused key's slot left empty. Settled with the owner: Agenda's slots in a view, a note and the category and view managers; boxes and the other places keep their one-line hints on the bottom line until the texts step; on a wide screen the slots widen evenly, with the fuller labels when the extras are on. A view shows one row fewer
 
 ### Look and feel — after screenshots of Agenda 2.0 (ADR 0018)
 

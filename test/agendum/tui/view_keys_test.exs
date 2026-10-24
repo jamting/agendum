@@ -78,13 +78,13 @@ defmodule Agendum.TUI.ViewKeysTest do
     refute State.view(state).hide_empty
   end
 
-  test "ALT-K hides the key map and gives its line to the view", %{state: state} do
-    assert screen(state) =~ "F1 Help"
+  test "ALT-K hides the key map and gives its two lines to the view", %{state: state} do
+    assert slots(state) =~ "F1 Help"
     hidden = press(state, {:alt, "k"})
-    refute screen(hidden) =~ "F1 Help"
+    refute screen(hidden) =~ "Help  │"
     assert length(Render.render(hidden)) == state.height
-    assert State.body_height(hidden) == State.body_height(state) + 1
-    assert screen(press(hidden, {:alt, "k"})) =~ "F1 Help"
+    assert State.body_height(hidden) == State.body_height(state) + 2
+    assert slots(press(hidden, {:alt, "k"})) =~ "F1 Help"
   end
 
   test "ALT-I inserts an item, like INS", %{state: state} do

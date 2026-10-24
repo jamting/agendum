@@ -14,7 +14,8 @@ You type free-form items. Agendum files them into categories: the one you typed 
    CopyCat before the end of the month.
  • Don't forget to call Anna Lasky with the info…               High     Anna Lasky
  • Check with Abigail Scheer on meeting times.                  Medium   Abigail Scheer
- F1 Help F2 Edit F3 Choices F4 Done F5 Note F6 Props F7 Mark F8 VwMgr F9 CatMgr F10 Menu
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │Choices│ Done  │ Note  │ Props │ Mark  │Vw Mgr │Cat Mgr│ Menu
 ```
 
 ## Running

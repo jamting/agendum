@@ -147,7 +147,7 @@ defmodule Agendum.TUI.ViewManagerBoxTest do
 
     test "starts off", %{state: state} do
       refute state.views.by_recent
-      assert screen(press(state, {:f, 8})) =~ "F5 Recent"
+      assert slots(press(state, {:f, 8})) =~ "F5 Recent"
     end
   end
 end

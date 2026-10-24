@@ -79,7 +79,7 @@ defmodule Agendum.TUI.HelpBoxTest do
     small = %{state | width: 30, height: 10}
     help = press(small, [{:f, 1}, "c"])
     {width, height} = HelpScreen.size(help)
-    assert width == 28 and height == 5
+    assert width == 28 and height == 4
     assert Enum.all?(Render.render(help), &(String.length(text(&1)) <= 30))
   end
 end

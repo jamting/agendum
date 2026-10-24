@@ -55,8 +55,8 @@ Out of scope, as SPEC §6 says: printing on paper and print preview (F10 Print a
 
 |                     | Agenda                                                                                             | Agendum                                                                             |
 | ------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| In a view           | F1 Help, F2 Edit, F3 Choices, F4 Done, F5 Note, F6 Props, F7 Mark, F8 Vw Mgr, F9 Cat Mgr, F10 Menu | the same keys and labels; longer labels when the screen is wide ("F8 View manager") |
-| Layout              | two lines, ten fixed slots                                                                         | one line (modified, ours)                                                           |
+| In a view           | F1 Help, F2 Edit, F3 Choices, F4 Done, F5 Note, F6 Props, F7 Mark, F8 Vw Mgr, F9 Cat Mgr, F10 Menu | ✅ the same; with the extras, longer labels when the screen is wide ("View manager") |
+| Layout              | two lines, ten fixed slots                                                                         | ✅ in a view, a note and the managers (R80); boxes and the rest one line for now     |
 | Holding ALT or CTRL | the ALT and CTRL key bars                                                                          | none: F1's help lists the commands and keys instead (modified, ours)               |
 | ALT-K               | hide / show the key map                                                                            | ✅                                                                                  |
 
@@ -147,9 +147,9 @@ What Agenda had that Agendum does another way, on purpose. Tagged as the enhance
 - **machine** · **Sounds** (R76). Agenda's own tones, through the computer's audio player rather than the PC speaker (the terminal's bell where there is none); every error message beeps with the one error beep, where Agenda also had a shorter one; Sound in File ▸ Customize silences them all.
 - **change back** · **Names and order in the menus** (found by the menu test, tagged by the owner 2026-10-23): Item ▸ Categorize is Agenda's MakeAssign; View ▸ Section ▸ Below and Above are Agenda's one Add (ALT-D, ALT-U stay); File ▸ Transfer lists Import before Export. The keys stay; the letters typed in the menu change.
 - **not built** · **Menu entries Agendum has only as keys** (the menu test, owner 2026-10-23): Item ▸ BrkAssign (DEL), Category ▸ Properties (F6) and Category ▸ Discard (ALT-F4): the entries come under Agenda's names, the keys unchanged.
+- **change back** · **The key bar outside a view, a note and the managers** (boxes, the menu, typing a line, moves, prompts) is one line of hints naming any key (`↑↓←→ Setting SPACE Open … F3 Choices`); Agenda's has its ten F-key slots there too (Item Properties: Help, Edit, Choices, Props, Default). Comes back with the texts step (The steps); the view's, the note's and the managers' are Agenda's since R80.
 - **change back** · **Mode words.** Agendum always shows one (READY, MENU, NOTE, PROPS …); Agenda showed none when ready and had fewer.
 - **machine** · **The marked-items symbol** is ♦ (Agenda's ▸ is hard to tell from the cursor in a terminal).
-- **change back** · **The key bar** is one line, names and labels side by side; Agenda's is two lines, the keys above their labels.
 - **Boxes** (ADR 0030): ENTER keeps and ESC cancels in every settings box, as Agenda's frame says, so that part is no difference. Checked in Agenda 2.0, 2026-10-22, three differences remain:
   - **change back** · Agendum shows a box's changes behind it at once; Agenda shows them only after ENTER.
   - **change back** · Agenda's category lists opened from a box (a view's Filter, the Assignment Profile, conditions, Excludes) say "Press ENTER to accept", SPACE switches a category, and ENTER and ESC both close the list keeping the change; Agendum's say "Press ESC when done", and in some ENTER switches a category.
@@ -197,7 +197,7 @@ The parity work, in the order it is planned (the owner reorders it): each item s
 #### Screens and texts
 
 - [ ] The rest of Agenda as the reference for texts (§ 8), after the menus (done 2026-10-23, `capture_menus.py` and the menu test): the labels in settings boxes, the key bar and messages, captured and compared step by step, each difference tagged. Long help lines are Lotus's text: mind them before going public (GITHUB.md § 7)
-- [ ] The key bar on two lines, the keys above their labels, as Agenda's (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+- [x] The key bar on two lines, the keys above their labels, as Agenda's (R80, 2026-10-24; settled with the owner: Agenda's slots in a view, a note and the managers now; boxes and the other places keep their one-line hints until the texts step compares them; slots widen evenly on a wide screen). The owner tries it before the next is built on it
 - [ ] No mode word when ready, and only Agenda's mode words elsewhere (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
 - [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
 - [ ] Control panel symbols and indicators: `*` on a date category or value, `WAIT` while a calendar is fetched, `D` with unindexed categories (and unindexed categories themselves)

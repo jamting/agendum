@@ -4,6 +4,16 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.24.0 — 2026-10-24
+
+The key bar is Lotus Agenda's: two lines, ten fixed slots.
+
+- In a **view**, a **note** and the **category and view managers**, the bar at the foot of the screen now has a slot for each function key, F1 to F10, the key above its label, as in Agenda. **F10 Menu** is always there, even at 80 columns (before, it did not fit).
+- A key that does nothing in a place leaves its slot empty, so every key stays in the same place.
+- Agenda's labels: `Vw Mgr`, `Cat Mgr`. With the extras on and a wide screen, fuller ones (`View manager`).
+- The bar takes two lines, so a view shows one row fewer. ALT-K still hides it.
+- Boxes, the menu and moves keep their one-line hints for now, on the bottom line.
+
 ## 0.23.1 — 2026-10-24
 
 A safety net: a mistake inside Agendum can no longer crash it and lose unsaved work in that particular way.
