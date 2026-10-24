@@ -75,6 +75,8 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   defp title_for(_state, {:change_section, _}),
     do: "Change section head"
 
+  defp title_for(_state, :section_add_head), do: "Section head"
+
   defp title_for(_state, {:column_head, _}), do: "Column Head: select a category"
   defp title_for(_state, {:make_category, name}), do: "Parent of the new category #{name}"
   defp title_for(_state, :column_add), do: "Column Head: select a category"
@@ -303,6 +305,10 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
       | cursor_key: {:section, index}
     }
   end
+
+  # Section Add's head (F3 in the box): the box adds the section
+  def pick(state, :section_add_head, id),
+    do: Agendum.TUI.Boxes.SectionBox.set_new_head(state, id)
 
   def pick(state, {:change_section, sidx}, id) do
     %{

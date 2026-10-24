@@ -93,7 +93,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
     - **Sort** `:sort` for Item sorting; **Picker** `:picker` for the filter or a new section's category (F3).
     - **Section Properties** `:section_props` for F6 on a section.
     - **View Statistics** `:view_stats` (View statistics ...): the marked items, sections and items in the view, as Agenda's; any key returns. `Agendum.TUI.Boxes.ViewStatsBox`.
-  - **Section Properties** `:section_props` (View ▸ Section ▸ Properties, F6 on a section head): the section's head, Item sorting, Section statistics, Filter and its columns (R61). `Agendum.TUI.Boxes.SectionBox`.
+  - **Section Properties** `:section_props` (View ▸ Section ▸ Properties, F6 on a section head): the section's head, Item sorting, Section statistics, Filter and its columns (R61). As **Section Add** (View ▸ Section ▸ Add, `adding` set): blank, with Insert, Below or Above the current section; the section is added once its head is chosen. `Agendum.TUI.Boxes.SectionBox`.
     - **Picker** `:picker` for the section head or the filter.
     - **Sort** `:sort` for Item sorting; **Column Add** `:column_add` for INS.
     - **Select Numeric Functions** `:numeric_functions`: Count, Total, Average, Minimum, Maximum for the section's numeric columns. `Agendum.TUI.Boxes.NumericFunctionsBox`.

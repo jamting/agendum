@@ -18,6 +18,12 @@ defmodule Agendum.TUI.Boxes.SectionBox do
       (Column Add). Agenda's ALT-F10 moved them; ours are the macro
       manager's keys.
 
+  Opened by View ▸ Section ▸ Add (`open_add/2`) it is Agenda's Section
+  Add box: blank, with Insert (Below or Above the current section) under
+  the head. The section is added once its head is typed or picked, and the
+  box goes on as that section's settings; switching Insert then moves it to
+  the other side. ESC takes it all back, the new section included.
+
   SPACE on a setting opens it; ENTER closes the box, ESC closes it and
   cancels its changes (`Agendum.TUI.Boxes.BoxCancel`). Each change is one undo
   step. The settings are drawn from
@@ -44,9 +50,10 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   alias Agendum.TUI.Render.Text
 
   # Select numeric functions shows only for a section with a numeric
-  # column (its value nil leaves the row out)
+  # column, Insert only in Section Add (a value nil leaves the row out)
   @layout """
    Section head             : [head                        ]
+   Insert                   : [insert                      ]
    Item sorting             : [sorting                     ]
    Section statistics       : [statistics                  ]
    Select numeric functions : [numeric                     ]
@@ -59,6 +66,9 @@ defmodule Agendum.TUI.Boxes.SectionBox do
     head:
       "Type a new or existing category name, or press F3 to pick one. " <>
         "F6 shows the category's properties.",
+    insert:
+      "Choose where the new section goes: below the current section or above it. " <>
+        "SPACE switches.",
     sorting: "Press SPACE BAR to choose how the items in this section are sorted.",
     statistics: "Press SPACE BAR to see how many items the section shows.",
     numeric:
@@ -74,16 +84,74 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   def open(state, sidx),
     do: State.push(state, %Agendum.TUI.Modes.SectionProps{sidx: sidx, cursor: 0})
 
+  @doc """
+  Opens it as Agenda's Section Add box (View ▸ Section ▸ Add), blank, for a
+  section below (or, with Insert, above) section `from` of the current view.
+  """
+  def open_add(state, from) do
+    State.push(state, %Agendum.TUI.Modes.SectionProps{
+      sidx: nil,
+      cursor: 0,
+      adding: %{from: from, insert: :below}
+    })
+  end
+
+  # Domain: `sidx` is nil in Section Add until the head is chosen, when the
+  # section exists
+  defp section(_state, %{sidx: nil}), do: nil
   defp section(state, mode), do: Enum.at(State.view(state).sections, mode.sidx)
+  defp slots(_state, %{sidx: nil}), do: []
   defp slots(state, mode), do: ViewColumns.slots(State.view(state), mode.sidx)
 
-  # the settings shown, in the cursor's order
+  # the settings shown, in the cursor's order: before Section Add has its
+  # head, only the head and Insert
+  defp fields(_state, %{sidx: nil}), do: [:head, :insert]
+
   defp fields(state, mode) do
     fields = Template.fields(@layout)
-    if numeric?(state, mode), do: fields, else: List.delete(fields, :numeric)
+    fields = if numeric?(state, mode), do: fields, else: List.delete(fields, :numeric)
+    if mode.adding, do: fields, else: List.delete(fields, :insert)
   end
 
   defp numeric?(state, mode), do: Core.section_calcs(state.db, state.view_id, mode.sidx) != nil
+
+  # where the new section goes: right below the current one, or in its
+  # place, the current one moving down
+  defp insert_at(%{from: from, insert: :below}), do: from + 1
+  defp insert_at(%{from: from, insert: :above}), do: max(from, 0)
+
+  @doc "Section Add's head, typed or picked: the section is added, or its head changed."
+  @spec set_new_head(State.t(), Agendum.Core.Database.id()) :: State.t()
+  def set_new_head(state, id) do
+    case State.mode(state) do
+      %{sidx: nil, adding: adding} = mode ->
+        at = min(insert_at(adding), length(State.view(state).sections))
+        # `from` (the current section, or 0) gives it its linked columns (R55)
+        state = State.run(state, {:add_section, state.view_id, id, at, max(adding.from, 0)})
+        State.put_mode(state, %{mode | sidx: at})
+
+      mode ->
+        State.run(state, {:set_section_category, state.view_id, mode.sidx, id})
+    end
+  end
+
+  # Insert switched: before the head only the setting; after it, the new
+  # section moves to the other side of the current one
+  defp switch_insert(state, %{adding: adding} = mode) do
+    adding = %{adding | insert: if(adding.insert == :below, do: :above, else: :below)}
+
+    case mode.sidx do
+      nil ->
+        State.put_mode(state, %{mode | adding: adding})
+
+      sidx ->
+        to = min(insert_at(adding), length(State.view(state).sections) - 1)
+
+        state
+        |> State.run({:move_section, state.view_id, sidx, to})
+        |> State.put_mode(%{mode | adding: adding, sidx: to})
+    end
+  end
 
   # the rows: the settings, then `{:slot, n}` for the nth column listed
   defp rows(state, mode),
@@ -141,11 +209,18 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   @impl Box
   def run(state, mode, id), do: command(state, mode, id, row(state, mode))
 
-  defp command(state, mode, :pick, :head),
-    do: CategoryScreens.open_picker(state, {:change_section, mode.sidx}, nil)
+  # ENTER in Section Add before a head: Agenda's box does not close
+  defp command(state, %{sidx: nil}, :done, _row),
+    do: State.error(state, "Type the section head's name, or press F3 to pick it")
+
+  defp command(state, mode, :pick, :head), do: open_setting(state, mode, :head)
+
+  defp command(state, %{sidx: nil}, :properties, :head), do: state
 
   defp command(state, mode, :properties, :head),
     do: CategoryScreens.open_props(state, section(state, mode).category_id)
+
+  defp command(state, mode, :change, :insert), do: switch_insert(state, mode)
 
   defp command(state, mode, :change, row) when is_atom(row), do: open_setting(state, mode, row)
   defp command(state, mode, :add, row), do: add(state, mode, row)
@@ -164,9 +239,15 @@ defmodule Agendum.TUI.Boxes.SectionBox do
     mode = State.mode(state)
 
     FieldTyping.head_named(state, name, fn state, id ->
-      State.run(state, {:set_section_category, state.view_id, mode.sidx, id})
+      case mode.sidx do
+        nil -> set_new_head(state, id)
+        sidx -> State.run(state, {:set_section_category, state.view_id, sidx, id})
+      end
     end)
   end
+
+  defp open_setting(state, %{sidx: nil}, :head),
+    do: CategoryScreens.open_picker(state, :section_add_head, nil)
 
   defp open_setting(state, mode, :head),
     do: CategoryScreens.open_picker(state, {:change_section, mode.sidx}, nil)
@@ -240,22 +321,16 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   # --- drawing ---
 
   @impl Box
+  def title(_state, %{adding: %{}}), do: "Section Add"
+
   def title(state, mode),
     do: "Section Properties: #{state.db.categories[section(state, mode).category_id].name}"
 
   @impl Box
   def content(state, mode, inner, _max_rows) do
-    section = section(state, mode)
     view = State.view(state)
     row = row(state, mode)
-
-    values = %{
-      head: state.db.categories[section.category_id].name,
-      sorting: if(section.sort == nil, do: "As the view ...", else: "Its own ..."),
-      statistics: "...",
-      numeric: if(numeric?(state, mode), do: "..."),
-      filter: filter(state, section.filter)
-    }
+    values = Map.put(values(state, mode, section(state, mode)), :insert, insert_text(mode))
 
     opts = [selected: row] ++ FieldTyping.editing(mode)
 
@@ -263,8 +338,28 @@ defmodule Agendum.TUI.Boxes.SectionBox do
       columns(state, view, mode, row) ++ [[], Box.hint(keys(state, mode), inner)]
   end
 
+  # Section Add before its head: the head empty, the other settings left out
+  defp values(_state, _mode, nil),
+    do: %{head: "", sorting: nil, statistics: nil, numeric: nil, filter: nil}
+
+  defp values(state, mode, section) do
+    %{
+      head: state.db.categories[section.category_id].name,
+      sorting: if(section.sort == nil, do: "As the view ...", else: "Its own ..."),
+      statistics: "...",
+      numeric: if(numeric?(state, mode), do: "..."),
+      filter: filter(state, section.filter)
+    }
+  end
+
+  defp insert_text(%{adding: %{insert: :below}}), do: "Below current section"
+  defp insert_text(%{adding: %{insert: :above}}), do: "Above current section"
+  defp insert_text(_mode), do: nil
+
   defp filter(_state, []), do: "(none)"
   defp filter(state, filter), do: Text.filter_text(state, filter)
+
+  defp columns(_state, _view, %{sidx: nil}, _row), do: []
 
   defp columns(state, view, mode, row) do
     columns = View.columns(view, mode.sidx)

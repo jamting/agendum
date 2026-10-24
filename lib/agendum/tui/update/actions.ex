@@ -354,9 +354,10 @@ defmodule Agendum.TUI.Update.Actions do
     CategoryScreens.open_picker(state, {:add_section, from + 1, max(from, 0)}, nil)
   end
 
-  # View ▸ Section ▸ Add (Agenda's): below the current section, for now as
-  # ALT-D does
-  defp do_perform(state, :section_add, row), do: do_perform(state, :section_below, row)
+  # View ▸ Section ▸ Add: Agenda's Section Add box, below the current
+  # section unless its Insert says above
+  defp do_perform(state, :section_add, row),
+    do: Agendum.TUI.Boxes.SectionBox.open_add(state, section_index(state, row))
 
   defp do_perform(state, :section_above, row) do
     from = max(section_index(state, row), 0)
