@@ -276,7 +276,7 @@ defmodule Agendum.ArchitectureTest do
     {Agendum.TUI.Update.Actions, :do_perform, 3},
     # the shell runs the effects only the extras ask for: reading a feed
     # or a calendar, opening a link, writing and uploading the blog
-    {Agendum.TUI.App, :run_effects, 2},
+    {Agendum.TUI.App, :perform, 2},
     # the blog's folder, read for the Publish box, shown in its preview
     {Agendum.TUI.Update, :publish_scanned, 4},
     # the SFTP password, asked for by the preview, sent back to it

@@ -6,8 +6,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
-1. A closed effect type in `App` (The clone's safety, below)
-2. Then the parity steps in their order ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the rest of the clone's safety between them
+1. The parity steps in their order ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the rest of the clone's safety between them
 
 **Frozen until the truthful clone is declared done** (meeting 2026-10-21, § 5; `VISION.md`, ADR 0043): Beyond Agenda, Ideas and Towards many users wait (bug fixes only). Not frozen: the parity steps, the clone's safety work and tests (meeting 2026-10-22, § 5c) and Sharpen the saw (§ 5i). The view cache waits for slow answers in real use.
 
@@ -23,7 +22,6 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 Clone work, not frozen (meeting 2026-10-22, § 5c; expert review 2026-10-21, § 8 and § 14):
 
-- [ ] A closed effect type, with a last clause in `App.run_effects/2` (`lib/agendum/tui/app.ex:209-309`) for an effect it does not know, so an unknown effect is logged rather than a crash (the crash of 2026-10-17, `a0612f9`)
 - [ ] A recovery file on a crash: the unsaved file written beside it, and offered when it is next opened
 - [ ] Hostile-text tests: a `.AG` file (and a feed) whose item text asks for changes imports as plain items, and only its own
 

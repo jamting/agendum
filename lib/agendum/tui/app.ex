@@ -9,6 +9,7 @@ defmodule Agendum.TUI.App do
 
   alias Agendum.TUI.{
     DebugLog,
+    Effect,
     Terminal.Keys,
     Layout,
     Render,
@@ -202,96 +203,21 @@ defmodule Agendum.TUI.App do
 
   # Each effect is done, and its result handed back to a pure function of
   # `Update` (`saved/3`, `loaded/3` …), which decides what the person sees:
-  # `Update` never touches a file, and `App` never decides anything. A
-  # `case` on the effect's shape is the dispatch.
-  defp run_effects(state, []), do: {:ok, state}
-  defp run_effects(state, [:quit | _]), do: {:quit, state}
+  # `Update` never touches a file, and `App` never decides anything.
+  # `perform/2`'s clauses, one per shape of effect, are the dispatch; the
+  # shapes are listed in `Agendum.TUI.Effect`. Public only for its test
+  # (`@doc false` keeps it out of the API docs).
+  @doc false
+  @spec run_effects(State.t(), [Effect.t()]) :: {:ok | :quit, State.t()}
+  def run_effects(state, []), do: {:ok, state}
+  def run_effects(state, [:quit | _]), do: {:quit, state}
 
-  defp run_effects(state, [effect | rest]) do
+  def run_effects(state, [effect | rest]) do
     started = now_ms()
     before = state.prefs
     before_path = state.path
 
-    state =
-      case effect do
-        # one of Agenda's sounds (R76)
-        {:sound, name} ->
-          Speaker.play(name)
-          state
-
-        {:save, path, opts} ->
-          Update.saved(state, path, Store.save(state.db, path, opts.expect), opts)
-
-        {:load, path} ->
-          Update.loaded(state, path, Store.load_with_stamp(path))
-
-        {:open_or_create, path} ->
-          Update.opened(state, path, Store.load_with_stamp(path))
-
-        {:write_text, path, text} ->
-          Update.written(state, path, File.write(path, text))
-
-        {:import_json, path} ->
-          Update.imported(state, path, File.read(path))
-
-        # a note's Import (R64c)
-        {:read_note_text, path} ->
-          Update.note_text_read(state, path, File.read(path))
-
-        {:list_dir, dir} ->
-          Update.dir_listed(state, dir, Store.list_dir(dir))
-
-        # a feed read in the background, as a calendar is (R75)
-        {:fetch_feed, id, url} ->
-          loop = self()
-
-          Task.start(fn ->
-            started = now_ms()
-            result = FeedFetch.read(url)
-            send(loop, {:feed_read, id, result, now_ms() - started})
-          end)
-
-          state
-
-        # an entry's link in the browser (R75), and a feed list (OPML)
-        {:open_url, url} ->
-          Update.url_opened(state, url, FeedFetch.open_url(url))
-
-        {:read_opml, path} ->
-          Update.opml_read(state, path, File.read(Path.expand(path)))
-
-        # the micro-blog (R74): what the folder holds, then writing and
-        # uploading it
-        {:publish_scan, folder, files} ->
-          Update.publish_scanned(state, folder, files, Publish.scan(Path.expand(folder), files))
-
-        {:publish, folder, files, changes, password} ->
-          dir = Path.expand(folder)
-
-          result =
-            with :ok <- Publish.write(dir, files, changes),
-                 do: Publish.upload(state.db.blog, dir, files, changes, password)
-
-          Update.published(state, changes, result)
-
-        {:save_preferences, path, prefs} ->
-          Update.preferences_saved(state, Preferences.save(prefs, path))
-
-        {:fetch_calendar, id, url} ->
-          # `self()` is read here, in the loop's process: inside the `fn`
-          # below it would be the task's own pid. The task reads the
-          # calendar in the background and mails the result back, which
-          # `wait/5` receives as `{:calendar_read, …}`.
-          loop = self()
-
-          Task.start(fn ->
-            started = now_ms()
-            result = CalendarFetch.read(url)
-            send(loop, {:calendar_read, id, result, now_ms() - started})
-          end)
-
-          state
-      end
+    state = perform(state, effect)
 
     DebugLog.effect(effect, now_ms() - started)
 
@@ -307,6 +233,97 @@ defmodule Agendum.TUI.App do
     # what the result asked for next, such as quitting once the file is
     # saved (R71), comes before the effects still waiting
     run_effects(%{state | effects: []}, state.effects ++ rest)
+  end
+
+  # One clause per kind of effect (`Agendum.TUI.Effect`), each giving the
+  # new state; the last takes whatever is left. (Function clauses are tried
+  # top to bottom, as the clauses of a `case` are.)
+  # one of Agenda's sounds (R76)
+  defp perform(state, {:sound, name}) do
+    Speaker.play(name)
+    state
+  end
+
+  defp perform(state, {:save, path, opts}),
+    do: Update.saved(state, path, Store.save(state.db, path, opts.expect), opts)
+
+  defp perform(state, {:load, path}), do: Update.loaded(state, path, Store.load_with_stamp(path))
+
+  defp perform(state, {:open_or_create, path}),
+    do: Update.opened(state, path, Store.load_with_stamp(path))
+
+  defp perform(state, {:write_text, path, text}),
+    do: Update.written(state, path, File.write(path, text))
+
+  defp perform(state, {:import_json, path}), do: Update.imported(state, path, File.read(path))
+
+  # a note's Import (R64c)
+  defp perform(state, {:read_note_text, path}),
+    do: Update.note_text_read(state, path, File.read(path))
+
+  defp perform(state, {:list_dir, dir}), do: Update.dir_listed(state, dir, Store.list_dir(dir))
+
+  # a feed read in the background, as a calendar is (R75)
+  defp perform(state, {:fetch_feed, id, url}) do
+    loop = self()
+
+    Task.start(fn ->
+      started = now_ms()
+      result = FeedFetch.read(url)
+      send(loop, {:feed_read, id, result, now_ms() - started})
+    end)
+
+    state
+  end
+
+  # an entry's link in the browser (R75), and a feed list (OPML)
+  defp perform(state, {:open_url, url}),
+    do: Update.url_opened(state, url, FeedFetch.open_url(url))
+
+  defp perform(state, {:read_opml, path}),
+    do: Update.opml_read(state, path, File.read(Path.expand(path)))
+
+  # the micro-blog (R74): what the folder holds, then writing and
+  # uploading it
+  defp perform(state, {:publish_scan, folder, files}),
+    do: Update.publish_scanned(state, folder, files, Publish.scan(Path.expand(folder), files))
+
+  defp perform(state, {:publish, folder, files, changes, password}) do
+    dir = Path.expand(folder)
+
+    result =
+      with :ok <- Publish.write(dir, files, changes),
+           do: Publish.upload(state.db.blog, dir, files, changes, password)
+
+    Update.published(state, changes, result)
+  end
+
+  defp perform(state, {:save_preferences, path, prefs}),
+    do: Update.preferences_saved(state, Preferences.save(prefs, path))
+
+  defp perform(state, {:fetch_calendar, id, url}) do
+    # `self()` is read here, in the loop's process: inside the `fn`
+    # below it would be the task's own pid. The task reads the
+    # calendar in the background and mails the result back, which
+    # `wait/5` receives as `{:calendar_read, …}`.
+    loop = self()
+
+    Task.start(fn ->
+      started = now_ms()
+      result = CalendarFetch.read(url)
+      send(loop, {:calendar_read, id, result, now_ms() - started})
+    end)
+
+    state
+  end
+
+  # an effect not on the closed list (`Effect.known?/1` is false): a bug in
+  # the TUI. It goes to the debug log and is skipped, so the person keeps
+  # their unsaved work rather than losing it to a crash (a `:bell` did that
+  # on 2026-10-17).
+  defp perform(state, unknown) do
+    DebugLog.write("unknown effect skipped: #{inspect(unknown)}")
+    state
   end
 
   # 24-bit colour when the terminal says it takes it (Theme.depth/1)

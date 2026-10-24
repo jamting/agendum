@@ -81,7 +81,7 @@ defmodule Agendum.TUI.State do
             stamp: Agendum.Store.stamp() | nil,
             conflict: boolean
           },
-          effects: [term]
+          effects: [Agendum.TUI.Effect.t()]
         }
 
   defstruct db: nil,
@@ -432,7 +432,7 @@ defmodule Agendum.TUI.State do
   # nothing yet; `Update.handle/2` returns the list and `App` performs it.
   # (`++` copies the left list; effects come one or two per key, so the
   # order is worth more than the cost.)
-  @spec effect(t, term) :: t
+  @spec effect(t, Agendum.TUI.Effect.t()) :: t
   def effect(state, effect), do: %{state | effects: state.effects ++ [effect]}
 
   @doc """

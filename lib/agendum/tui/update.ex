@@ -12,14 +12,9 @@ defmodule Agendum.TUI.Update do
   Y/N questions), `Notes` and `Actions` (`perform/2`, the named actions
   shared with the menu).
 
-  Effects:
-    * `{:save, path, opts}` – write `state.db` to `path` if the file there
-      is as `opts.expect` says (R71), then call `saved/4`
-    * `{:load, path}` – read a file, then call `loaded/3`
-    * `{:write_text, path, text}` – export text, then call `written/3`
-    * `{:read_note_text, path}` – read a text file for a note's Import,
-      then call `note_text_read/3`
-    * `:quit`
+  Effects are plain data for the shell (`{:save, path, opts}`, `:quit` …);
+  the closed list is `Agendum.TUI.Effect`. The shell hands each result back
+  to a function here (`saved/4`, `loaded/3`, `written/3` …).
   """
 
   alias Agendum.Core
@@ -41,7 +36,7 @@ defmodule Agendum.TUI.Update do
   # `%State{} = state` in the head both checks that the argument is a
   # `State` struct (anything else fails to match and crashes here, at the
   # border, instead of deep inside) and names it `state`.
-  @spec handle(State.t(), term) :: {State.t(), [term]}
+  @spec handle(State.t(), term) :: {State.t(), [Agendum.TUI.Effect.t()]}
   def handle(%State{} = state, key) do
     # the end of a macro run is not a keypress: what the run said stays
     message = if key == :macro_done, do: state.message
@@ -300,7 +295,7 @@ defmodule Agendum.TUI.Update do
   the alarm symbol in the title until the alarm list is shown). Ringing
   is not an undo step, nor an edit (R70).
   """
-  @spec tick(State.t(), NaiveDateTime.t()) :: {State.t(), [term]}
+  @spec tick(State.t(), NaiveDateTime.t()) :: {State.t(), [Agendum.TUI.Effect.t()]}
   def tick(%State{} = state, %NaiveDateTime{} = now) do
     today = NaiveDateTime.to_date(now)
 

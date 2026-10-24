@@ -4,6 +4,12 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.23.1 — 2026-10-24
+
+A safety net: a mistake inside Agendum can no longer crash it and lose unsaved work in that particular way.
+
+- Nothing you see changes. When a key asks for something Agendum does not know how to do (as ALT-N on the last note once did, 2026-10-17), the key now does nothing and the debug log (`AGENDUM_LOG`) says `unknown effect skipped`, instead of the program stopping.
+
 ## 0.23.0 — 2026-10-23
 
 Editing a recurring date keeps it recurring, as in Lotus Agenda.

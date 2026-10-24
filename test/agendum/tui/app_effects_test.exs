@@ -5,7 +5,9 @@ defmodule Agendum.TUI.AppEffectsTest do
   `CaseClauseError` the moment it is asked (ALT-N on the last note rang a
   `:bell` that only the alarm path knew, 2026-10-17). `App` touches the
   terminal and is not unit-tested, so the sources are read: the effect's
-  tag (`:quit`, `{:list_dir, …}`) must appear in `app.ex`.
+  tag (`:quit`, `{:list_dir, …}`) must appear in `app.ex`, and on the closed
+  list (`Agendum.TUI.Effect`). An effect `App` still does not know is logged
+  and skipped, not a crash.
   """
   use ExUnit.Case, async: true
 
@@ -27,6 +29,16 @@ defmodule Agendum.TUI.AppEffectsTest do
 
     missing = Enum.reject(tags, &handled?(app, &1))
     assert missing == [], "effects with no case in App: #{inspect(missing)}"
+
+    effect = File.read!(Path.join(@tui, "effect.ex"))
+    unlisted = Enum.reject(tags, &String.contains?(effect, ":#{&1}"))
+    assert unlisted == [], "effects not in Agendum.TUI.Effect: #{inspect(unlisted)}"
+  end
+
+  test "an effect App does not know is skipped, and the effects after it still run" do
+    state = Agendum.TUIHelpers.start(Agendum.Core.new_file())
+
+    assert {:quit, ^state} = Agendum.TUI.App.run_effects(state, [{:no_such_effect, 1}, :quit])
   end
 
   # a case clause (`:quit ->`, `{:list_dir, dir} ->`), or the effects

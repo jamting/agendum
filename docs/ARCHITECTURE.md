@@ -92,6 +92,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | Module                                        | Pure? | Responsibility                                                                                                                   |
 | --------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `Agendum.TUI.State`                            | ✔     | UI state: db, path, cursor, scroll, **mode stack**, inline edit, message, queued effects.                                        |
+| `Agendum.TUI.Effect`                           | ✔     | The closed list of effects the TUI asks the shell for (`t/0`, `known?/1`); `App` logs and skips any other, rather than crash.    |
 | `Agendum.TUI.Modes`                            | ✔     | A struct for each kind of mode on the stack (ADR 0037), from one table; `new/1` makes a map one.                               |
 | `Agendum.TUI.Update`                           | ✔     | Key → state transitions: keys for every screen, the clock (`tick/2`), effect results, dispatch to the screen on top.             |
 | `Agendum.TUI.Update.*`                         | ✔     | Its parts: `ViewKeys` (the view's keymap lookup and `run`), `Editing` (inline), `Marked` (and moves), `Prompts` (and Y/N), `Notes`, `Actions` (`perform/2`).          |
@@ -176,7 +177,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Sound`, `Agendum.TUI.Update.Sounds` | ✔     | Agenda's sounds: the tones and their WAV bytes; which key makes which, from the state before and after it (R76, ADR 0042).      |
 | `Agendum.TUI.Speaker`                          | ✘     | Plays a sound with `afplay`, `paplay` or `aplay`, or rings the terminal's bell (R76, ADR 0042).                                  |
 | `Agendum.TUI.Terminal`                         | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
-| `Agendum.TUI.App`                              | ✘     | Main loop: read → decode → update → run effects → render.                                                                        |
+| `Agendum.TUI.App`                              | ✘     | Main loop: read → decode → update → run effects (an unknown one logged and skipped) → render.                                    |
 | `Agendum.TUI.DebugLog`                         | ✘     | The debug log when `AGENDUM_LOG` is set: build, input, timed effects, file fingerprints, slow answers with view and memory, crashes with the state; five kept (ADR 0027). |
 | `Agendum.Store`                                | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write); folder listings for the Select File box.                     |
 | `Agendum.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format (with the number separators), key map, confirm mode, auto-save, sound, name, company, last file, where each file was left (`Agendum.Preferences.Place`, R69) (`key = value`, ADR 0008).               |

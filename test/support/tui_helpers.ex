@@ -38,9 +38,23 @@ defmodule Agendum.TUIHelpers do
 
   defp play([key | keys], state) do
     {state, effects} = Update.handle(state, key)
+    assert_known_effects(effects, key)
     Process.put(:effects_seen, (Process.get(:effects_seen) || []) ++ effects)
     played = for {:play, played} <- effects, k <- played ++ [:macro_done], do: k
     play(played ++ keys, state)
+  end
+
+  @doc """
+  Fails when a key asked for an effect that is not on the closed list
+  (`Agendum.TUI.Effect`): the shell would skip it, so the key would seem
+  to do nothing.
+  """
+  def assert_known_effects(effects, key) do
+    unknown = Enum.reject(effects, &Agendum.TUI.Effect.known?/1)
+
+    # a plain `raise`, as `seek/3` below: it fails the test, naming the key
+    if unknown != [],
+      do: raise("#{inspect(key)} asked for unknown effects #{inspect(unknown)}")
   end
 
   @doc """

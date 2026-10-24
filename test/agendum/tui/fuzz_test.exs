@@ -11,7 +11,7 @@ defmodule Agendum.TUI.Fuzz do
 
   alias Agendum.Core.Invariants
   alias Agendum.TUI.{History, Terminal.Draw, Render, Update}
-  import Agendum.TUIHelpers, only: [start: 2]
+  import Agendum.TUIHelpers, only: [start: 2, assert_known_effects: 2]
 
   @keys [
     :up,
@@ -159,10 +159,17 @@ defmodule Agendum.TUI.Fuzz do
     end
   end
 
+  defp tick(state, now) do
+    {state, effects} = Update.tick(state, now)
+    assert_known_effects(effects, :tick)
+    state
+  end
+
   defp handle(state, []), do: state
 
   defp handle(state, [key | keys]) do
     {state, effects} = Update.handle(state, key)
+    assert_known_effects(effects, key)
     played = for {:play, played} <- effects, k <- played ++ [:macro_done], do: k
     handle(state, played ++ keys)
   end
@@ -218,7 +225,7 @@ defmodule Agendum.TUI.Fuzz do
 
         state =
           if key == :tick,
-            do: state |> Update.tick(NaiveDateTime.add(state.now, 600)) |> elem(0),
+            do: tick(state, NaiveDateTime.add(state.now, 600)),
             else: handle(state, [key])
 
         assert state.macro.playing == 0
