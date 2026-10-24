@@ -67,7 +67,7 @@ defmodule Agendum.TUI.State do
             note: Agendum.TUI.Typing.NoteSearch.settings() | nil
           },
           macro: %{learning: map | nil, last: Database.id() | nil, playing: non_neg_integer},
-          key_map: boolean,
+          key_map: false | :none | :alt | :ctrl | :shift,
           reader: Agendum.Core.Context.t(),
           prefs: Agendum.Preferences.t(),
           fetching: %{optional(pos_integer) => :manual | :auto},
@@ -111,7 +111,10 @@ defmodule Agendum.TUI.State do
             # macros (R50): what Learn mode is recording, the last macro
             # run (ALT-Z), and how many runs are playing, one inside another
             macro: %{learning: nil, last: nil, playing: 0},
-            key_map: true,
+            # the key bar: hidden (false), or which keys it shows, the plain
+            # function keys (:none) or those with ALT, CTRL or SHIFT (ALT-K,
+            # meeting 2026-10-24, § 5); only hidden or shown is kept
+            key_map: :none,
             # the person who reads and types dates: their date languages
             # (R14c), input format (R41b) and the date rules compiled for
             # them (`Agendum.Core.Context.prepare/1`); a context without
@@ -171,7 +174,7 @@ defmodule Agendum.TUI.State do
           input: Keyword.get(opts, :input, %Agendum.Core.InputFormat{})
         },
         prefs: Keyword.get(opts, :prefs, %Agendum.Preferences{}),
-        key_map: Keyword.get(opts, :prefs, %Agendum.Preferences{}).key_map,
+        key_map: Keyword.get(opts, :prefs, %Agendum.Preferences{}).key_map && :none,
         theme: Keyword.get(opts, :theme, :classic),
         view_id: hd(db.view_order),
         saved: %{db: db, stamp: opts[:stamp], conflict: false}
@@ -234,12 +237,25 @@ defmodule Agendum.TUI.State do
       else: state
   end
 
-  @doc "Shows or hides the key bar (ALT-K, File ▸ Customize; R54), and keeps it so."
+  @doc "Shows or hides the key bar (File ▸ Customize; R54), and keeps it so."
   @spec toggle_key_map(t) :: t
   def toggle_key_map(state) do
-    shown = not state.key_map
-    change_preference(state, &%{&1 | key_map: shown}, &%{&1 | key_map: shown})
+    shown = state.key_map == false
+    change_preference(state, &%{&1 | key_map: shown && :none}, &%{&1 | key_map: shown})
   end
+
+  @doc """
+  ALT-K (R80): the key bar's next state, in turn the plain keys, the ALT,
+  CTRL and SHIFT keys, then hidden. Only hiding and showing it again are
+  kept for next time (`toggle_key_map/1`); which keys it shows is not.
+  """
+  @spec cycle_key_bar(t) :: t
+  def cycle_key_bar(%__MODULE__{key_map: held} = state) when held in [false, :shift],
+    do: toggle_key_map(state)
+
+  def cycle_key_bar(%__MODULE__{key_map: :none} = state), do: %{state | key_map: :alt}
+  def cycle_key_bar(%__MODULE__{key_map: :alt} = state), do: %{state | key_map: :ctrl}
+  def cycle_key_bar(%__MODULE__{key_map: :ctrl} = state), do: %{state | key_map: :shift}
 
   @doc """
   The state for another file (Retrieve, New, Import): a fresh start for
@@ -462,6 +478,6 @@ defmodule Agendum.TUI.State do
   def error(state, text), do: %{state | message: {:error, text}}
 
   @doc "Number of screen lines available for the view body."
-  def body_height(%__MODULE__{height: h, key_map: true}), do: max(h - 4, 1)
   def body_height(%__MODULE__{height: h, key_map: false}), do: max(h - 2, 1)
+  def body_height(%__MODULE__{height: h}), do: max(h - 4, 1)
 end

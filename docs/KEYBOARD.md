@@ -33,7 +33,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Insert an item (in a view)                                                                      | ALT-I                         | ⌥i, or INS / **CTRL-N**                                     |
 | Save / retrieve a file (in a view)                                                              | ALT-W / ALT-G                 | ⌥w / ⌥g, or **CTRL-S** / **CTRL-O**                        |
 | Quit                                                                                            | ALT-Q                         | ⌥q, or **CTRL-Q**                                           |
-| Show / hide the function key map (kept for next time)                                           | ALT-K                         | ⌥k                                                          |
+| The key bar in turn: the ALT, CTRL and SHIFT keys, hidden, the plain keys (hidden kept for next time) | ALT-K                         | ⌥k                                                          |
 | Search this view; then next / previous match                                                    | ALT-F6; ALT-N / ALT-P         | —; ⌥n / ⌥p                                      |
 | In a note: search / replace; find the next occurrence (after a single replacement: replace it)  | ALT-F6; ALT-S                 | —; ⌥s                                            |
 | In a note: move by the rows shown (long lines wrap, R64); start / end of the row, again: of the line| ↑ ↓; HOME / END               | CTRL-A / CTRL-E                                                       |

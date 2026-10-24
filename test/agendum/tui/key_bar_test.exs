@@ -121,11 +121,70 @@ defmodule Agendum.TUI.KeyBarTest do
     assert labels =~ "│  View manager  │Category manager│"
   end
 
-  test "the view shows one row fewer, and ALT-K hides both lines" do
+  test "the view shows one row fewer, and hiding the bar gives both lines back" do
     state = planner(80)
     assert State.body_height(state) == 21
-    state = press(state, {:alt, "k"})
+    # ALT-K shows the ALT, CTRL and SHIFT keys first, then hides the bar
+    state = press(state, List.duplicate({:alt, "k"}, 4))
     assert State.body_height(state) == 23
     assert state |> screen() |> String.split("\n") |> length() == 25
+  end
+
+  describe "ALT-K shows the ALT, CTRL and SHIFT keys in turn (meeting 2026-10-24, § 5)" do
+    test "normal, ALT, CTRL, SHIFT, hidden, normal: Agenda's bars, the letter in the last column" do
+      state = planner(80)
+      alt = press(state, {:alt, "k"})
+
+      assert texts(alt) == [
+               " AltF1 │ AltF2 │ AltF3 │ AltF4 │ AltF5 │ AltF6 │ AltF7 │ AltF8 │ AltF9 │AltF10  ",
+               "       │ When  │ Macro │Discard│ Go To │Search │UnmkAll│Last Vw│ Copy  │ Move  A"
+             ]
+
+      ctrl = press(alt, {:alt, "k"})
+      assert [" CtlF1 │" <> _, labels] = texts(ctrl)
+      assert String.ends_with?(labels, "C")
+
+      shift = press(ctrl, {:alt, "k"})
+      assert [" ShfF1 │" <> _, labels] = texts(shift)
+      assert String.ends_with?(labels, "S")
+
+      hidden = press(shift, {:alt, "k"})
+      refute hidden.key_map
+      assert State.body_height(hidden) == State.body_height(state) + 2
+
+      back = press(hidden, {:alt, "k"})
+      assert texts(back) == texts(state)
+    end
+
+    test "a macro on a SHIFT-F key shows by its name on the SHIFT bar" do
+      {:ok, db, id} = Agendum.Core.add_macro(Planner.build(), "Weekly review")
+      db = db |> Agendum.Core.set_macro_keys(id, "x") |> Agendum.Core.attach_macro(id, "{ShfF10}")
+      state = start(db, width: 80, height: 25)
+      [_, labels] = state |> press(List.duplicate({:alt, "k"}, 3)) |> texts()
+      assert labels =~ "│Weekly S"
+    end
+
+    test "only shown or hidden is kept: the preference saves only when the bar hides or shows" do
+      state = planner(80) |> Map.update!(:prefs, &%{&1 | path: "/tmp/prefs"})
+      saves = fn s -> Enum.filter(s.effects, &match?({:save_preferences, _, _}, &1)) end
+      {alt, effects} = Agendum.TUI.Update.handle(state, {:alt, "k"})
+      assert alt.key_map == :alt
+      refute Enum.any?(effects, &match?({:save_preferences, _, _}, &1))
+      assert saves.(alt) == []
+
+      {hidden, effects} =
+        Enum.reduce(1..3, {alt, []}, fn _, {s, _} -> Agendum.TUI.Update.handle(s, {:alt, "k"}) end)
+
+      refute hidden.key_map
+
+      assert [{:save_preferences, _, %{key_map: false}}] =
+               Enum.filter(effects, &match?({:save_preferences, _, _}, &1))
+    end
+
+    test "a box keeps its hints, with the letter at the end" do
+      state = planner(80) |> press([{:alt, "k"}, {:f, 6}])
+      [_, bottom] = texts(state)
+      assert String.ends_with?(bottom, "A")
+    end
   end
 end

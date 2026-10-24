@@ -226,7 +226,7 @@ defmodule Agendum.TUI.Update do
     case id do
       :undo -> if undoable?(top), do: History.undo(state), else: :pass
       :redo -> if undoable?(top), do: History.redo(state), else: :pass
-      :key_map -> State.toggle_key_map(state)
+      :key_map -> State.cycle_key_bar(state)
       :run_by_name -> Agendum.TUI.Boxes.RunByName.open(state)
       :macros -> Agendum.TUI.Macros.open(state)
       :export -> if top == nil, do: Actions.perform(state, :export), else: :pass

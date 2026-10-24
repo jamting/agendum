@@ -24,10 +24,25 @@ defmodule Agendum.TUI.Render.KeyBar do
   @doc "The key bar's two lines."
   @spec lines(State.t()) :: [Draw.line()]
   def lines(state) do
-    case slotted(state) do
-      nil -> [Draw.line([], state.width, :keybar), hint_line(state)]
-      place -> slot_lines(state, place)
-    end
+    [top, bottom] =
+      case slotted(state) do
+        nil -> [Draw.line([], state.width, :keybar), hint_line(state)]
+        place -> slot_lines(state, place)
+      end
+
+    [top, with_letter(bottom, state)]
+  end
+
+  # Which keys the bar shows, as a letter in the bottom line's last column
+  # (ALT-K): A, C or S, nothing for the plain keys. Agenda's slots leave
+  # that column empty; a line of hints gives it up.
+  defp with_letter(line, %{key_map: :none}), do: line
+
+  defp with_letter(line, state) do
+    letter = %{alt: "A", ctrl: "C", shift: "S"}[state.key_map]
+    # the line's segments cut to one column fewer (`Draw.line/3` cuts and
+    # pads), then the letter after them
+    Draw.line(line, state.width - 1, :keybar) ++ [{:keybar_key, letter}]
   end
 
   # The place whose bar has Agenda's slots, or nil for a bar of hints.
@@ -59,6 +74,12 @@ defmodule Agendum.TUI.Render.KeyBar do
     end
   end
 
+  # the slot's key as Agenda's bar names it: F4, AltF4, CtlF4, ShfF4
+  defp key_name(:none, n), do: "F#{n}"
+  defp key_name(:alt, n), do: "AltF#{n}"
+  defp key_name(:ctrl, n), do: "CtlF#{n}"
+  defp key_name(:shift, n), do: "ShfF#{n}"
+
   defp slot_key(:none, n), do: {:f, n}
   defp slot_key(:alt, n), do: {:alt_f, n}
   defp slot_key(:ctrl, n), do: {:ctrl_f, n}
@@ -82,7 +103,7 @@ defmodule Agendum.TUI.Render.KeyBar do
   # (R77), and show only when every one fits its slot.
   defp slot_lines(state, place) do
     text = div(state.width, 10) - 1
-    slots = slots(state, place, :none)
+    slots = slots(state, place, state.key_map)
 
     full? =
       state.prefs.extras and Enum.all?(slots, fn {_, full} -> String.length(full) <= text end)
@@ -90,7 +111,7 @@ defmodule Agendum.TUI.Render.KeyBar do
     labels = Enum.map(slots, fn {short, full} -> if full?, do: full, else: short end)
 
     [
-      slot_line(Enum.map(1..10, &"F#{&1}"), text, :keybar_key, state.width),
+      slot_line(Enum.map(1..10, &key_name(state.key_map, &1)), text, :keybar_key, state.width),
       slot_line(labels, text, :keybar, state.width)
     ]
   end

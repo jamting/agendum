@@ -161,8 +161,10 @@ defmodule Agendum.TUI.CommandDocs do
       "Writes the view as text to a file, to print it, send it or keep a copy: Agendum " <>
         "does not drive a printer itself.",
     key_map:
-      "The key bar at the foot of the screen names what the function keys do there; " <>
-        "hidden, it leaves two more rows for items.",
+      "The key bar at the foot of the screen names what the function keys do there. " <>
+        "Press it again and again to see what they do with ALT, CTRL and SHIFT (A, C or " <>
+        "S at the end of the bar, macros by their names), then to hide the bar, which " <>
+        "leaves two more rows for items.",
     run_by_name:
       "Finds a command by part of its name or its initials (\"azi\" is Attach Zettel id) " <>
         "and runs it, so a command without a key can be run too, and its key learnt.",

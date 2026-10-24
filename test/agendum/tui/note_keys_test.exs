@@ -86,8 +86,10 @@ defmodule Agendum.TUI.NoteKeysTest do
     assert screen(state) =~ "Save changes before quitting?"
   end
 
-  test "ALT-K hides the key map in a note too", %{state: state} do
+  test "ALT-K shows the ALT keys in a note too, and in turn hides the key map", %{state: state} do
     state = press(state, [{:f, 5}, {:alt, "k"}])
+    assert state.key_map == :alt
+    state = press(state, List.duplicate({:alt, "k"}, 3))
     refute state.key_map
   end
 end

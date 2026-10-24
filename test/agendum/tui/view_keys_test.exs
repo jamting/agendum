@@ -80,7 +80,8 @@ defmodule Agendum.TUI.ViewKeysTest do
 
   test "ALT-K hides the key map and gives its two lines to the view", %{state: state} do
     assert slots(state) =~ "F1 Help"
-    hidden = press(state, {:alt, "k"})
+    # the ALT, CTRL and SHIFT keys first, then hidden
+    hidden = press(state, List.duplicate({:alt, "k"}, 4))
     refute screen(hidden) =~ "Help  │"
     assert length(Render.render(hidden)) == state.height
     assert State.body_height(hidden) == State.body_height(state) + 2

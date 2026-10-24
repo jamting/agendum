@@ -198,7 +198,7 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
           [] -> "None"
         end,
       input_format: "(SPACE)",
-      key_map: yes_no(state.key_map),
+      key_map: yes_no(state.key_map != false),
       confirm: yes_no(state.prefs.confirm),
       auto_save: minutes(state.prefs.auto_save),
       decimal: separator(numbers[:decimal]),

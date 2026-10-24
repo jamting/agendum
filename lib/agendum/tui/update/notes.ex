@@ -167,7 +167,7 @@ defmodule Agendum.TUI.Update.Notes do
   defp command(state, mode, :next_note), do: step_note(state, mode, 1)
   defp command(state, mode, :previous_note), do: step_note(state, mode, -1)
   defp command(state, mode, :quit), do: state |> close_note(mode) |> Actions.perform(:quit)
-  defp command(state, _mode, :key_map), do: State.toggle_key_map(state)
+  defp command(state, _mode, :key_map), do: State.cycle_key_bar(state)
   defp command(state, _mode, :menu), do: Agendum.TUI.Menu.open(state, :note)
 
   # INS (R64e): typing over, or not; TAB: spaces to the next tab stop,

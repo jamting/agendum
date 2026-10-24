@@ -144,7 +144,7 @@ defmodule Agendum.TUI.Commands do
     {:append, "Append", "Move text onto the item's text", :none},
     {:get_items, "Get items", "Copy the marked items in here", :none},
     {:calendar, "Calendar", "Type a date chosen in the calendar", :none},
-    {:key_map, "Key map", "Show or hide the function key map", :none},
+    {:key_map, "Key map", "Key bar: ALT, CTRL, SHIFT keys, hidden", :none},
     {:run_by_name, "Run by name", "Run a command chosen by its name", :none},
     {:menu, "Menu", "The note's menu: Import, Export …", :none},
     {:overwrite, "Insert/Overwrite", "Insert, or type over (OVR)", :none},
@@ -256,7 +256,7 @@ defmodule Agendum.TUI.Commands do
     {:save, "Save", "Save the file", :none},
     {:retrieve, "Retrieve", "Open another file", :none},
     {:export, "Print", "Print the view to a file (in a view)", :none},
-    {:key_map, "Key map", "Show or hide the function key map", :none},
+    {:key_map, "Key map", "Key bar: ALT, CTRL, SHIFT keys, hidden", :none},
     {:macros, "Macros", "The macro manager; in Learn mode, stop", :none},
     {:run_by_name, "Run by name", "Run a command chosen by its name", :none},
     {:quit, "Quit", "Quit Agendum", :none}
