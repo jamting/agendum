@@ -9,13 +9,15 @@ defmodule Agendum.TUI.Command do
   runs it once, `:repeat` runs it up to n times, `:own` hands the count
   to the command (↓ moves n rows at once). `extra`: one of Agendum's
   extras, which Agenda did not have (ADR 0043): hidden, its keys doing
-  nothing, while the Extras preference is off (R77).
+  nothing, while the Extras preference is off (R77). `label`: the short
+  label (at most seven characters, Agenda's) the key bar shows in the slot
+  of the key bound to it (ADR 0045), or nil when no bar names it.
 
   Pure.
   """
 
   @enforce_keys [:id, :name, :summary]
-  defstruct [:id, :name, :summary, doc: nil, count: :none, extra: false]
+  defstruct [:id, :name, :summary, doc: nil, count: :none, extra: false, label: nil]
 
   @type count :: :none | :repeat | :own
   @type t :: %__MODULE__{
@@ -24,6 +26,7 @@ defmodule Agendum.TUI.Command do
           summary: String.t(),
           doc: String.t() | nil,
           count: count,
-          extra: boolean
+          extra: boolean,
+          label: String.t() | nil
         }
 end

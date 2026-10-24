@@ -11,7 +11,7 @@ defmodule Agendum.TUI.Render.KeyBar do
   Agenda's; what does not fit is left out whole, never cut mid-word.
   """
 
-  alias Agendum.TUI.{Typing.Completion, Terminal.Draw, State}
+  alias Agendum.TUI.{Commands, Keymap, Typing.Completion, Terminal.Draw, State}
 
   # boxes with a module of their own (`Agendum.TUI.Boxes.Box`) list their keys
   @boxes Agendum.TUI.Boxes.Box.registry()
@@ -26,57 +26,68 @@ defmodule Agendum.TUI.Render.KeyBar do
   def lines(state) do
     case slotted(state) do
       nil -> [Draw.line([], state.width, :keybar), hint_line(state)]
-      keys -> slot_lines(state, keys)
+      place -> slot_lines(state, place)
     end
   end
 
-  # The places with Agenda's slots, and the keys they name; nil elsewhere.
-  # Only plain function keys go in a slot ("F4", or "DEL/F4": the F-key is
-  # what the slot names); "ALT-F6" and the other keys are left out.
+  # The place whose bar has Agenda's slots, or nil for a bar of hints.
   defp slotted(state) do
-    keys =
-      cond do
-        state.edit != nil or Completion.active?(state) -> nil
-        State.mode(state) == nil -> mode_keys(nil)
-        State.mode(state).type in [:note, :catmgr] -> mode_keys(State.mode(state))
-        State.mode(state).type == :viewmgr -> @boxes.viewmgr.keys(state, State.mode(state))
-        true -> nil
-      end
+    if state.edit == nil and not Completion.active?(state), do: place(State.mode(state))
+  end
 
-    keys && Enum.map(keys, &attached_label(state, full_entry(&1)))
+  defp place(nil), do: :view
+  defp place(%{type: type}) when type in [:note, :catmgr, :viewmgr], do: type
+  defp place(_mode), do: nil
+
+  @doc """
+  The ten slots of `place`'s bar (`:view`, `:note`, `:catmgr`, `:viewmgr`)
+  with `held` (`:none`, `:alt`, `:ctrl` or `:shift`), each `{label, fuller
+  label}`, `{"", ""}` when its key does nothing there. Made from the keymaps
+  (ADR 0045): the command the place binds the key to (or every screen
+  does), with its short label; a macro attached to the key, by its name
+  (R50). An extra's command is left out while the extras are off (R77).
+  """
+  @spec slots(State.t(), atom, :none | :alt | :ctrl | :shift) :: [{String.t(), String.t()}]
+  def slots(state, place, held) do
+    for n <- 1..10 do
+      key = slot_key(held, n)
+
+      case Agendum.TUI.Macros.attached(state, key) do
+        nil -> command_slot(state, place, key)
+        macro -> {String.slice(macro.name, 0, 7), macro.name}
+      end
+    end
+  end
+
+  defp slot_key(:none, n), do: {:f, n}
+  defp slot_key(:alt, n), do: {:alt_f, n}
+  defp slot_key(:ctrl, n), do: {:ctrl_f, n}
+  defp slot_key(:shift, n), do: {:shift_f, n}
+
+  # the place's own binding first, then the keys of every screen; `with`
+  # stops at the first step that does not match, giving the empty slot
+  defp command_slot(state, place, key) do
+    with id when id != nil <- Keymap.lookup(place, key) || Keymap.lookup(:global, key),
+         %{label: label} = command when label != nil <-
+           Commands.get(place, id) || Commands.get(:global, id),
+         false <- command.extra and not state.prefs.extras do
+      {label, command.name}
+    else
+      _ -> {"", ""}
+    end
   end
 
   # Domain: Agenda's slots are 8 columns at 80 (7 for the text, 1 for the
-  # `│`); a wider screen widens them evenly. `for n <- 1..10` makes the ten
-  # slots; `Map.new/2` keys the entries by their F-key's number, so a slot
-  # finds its entry, or nil when the key does nothing here. F1 is Help
-  # everywhere.
-  defp slot_lines(state, keys) do
+  # `│`); a wider screen widens them evenly. The fuller labels are an extra
+  # (R77), and show only when every one fits its slot.
+  defp slot_lines(state, place) do
     text = div(state.width, 10) - 1
+    slots = slots(state, place, :none)
 
-    by_number =
-      keys
-      |> Enum.flat_map(fn {key, short, _, full} ->
-        case Regex.run(~r{(?:^|/)F(\d+)$}, key) do
-          [_, n] -> [{String.to_integer(n), {short, full}}]
-          nil -> []
-        end
-      end)
-      |> Map.new()
-      |> Map.put_new(1, {"Help", "Help"})
-
-    # the fuller labels are an extra (R77), and only when they all fit
     full? =
-      state.prefs.extras and
-        Enum.all?(by_number, fn {_, {_, full}} -> String.length(full) <= text end)
+      state.prefs.extras and Enum.all?(slots, fn {_, full} -> String.length(full) <= text end)
 
-    labels =
-      for n <- 1..10 do
-        case by_number[n] do
-          nil -> ""
-          {short, full} -> if full?, do: full, else: short
-        end
-      end
+    labels = Enum.map(slots, fn {short, full} -> if full?, do: full, else: short end)
 
     [
       slot_line(Enum.map(1..10, &"F#{&1}"), text, :keybar_key, state.width),
@@ -199,32 +210,6 @@ defmodule Agendum.TUI.Render.KeyBar do
     |> List.flatten()
   end
 
-  defp mode_keys(nil),
-    do: [
-      {"F1", "Help"},
-      {"F2", "Edit"},
-      {"F3", "Choices"},
-      {"F4", "Done"},
-      {"F5", "Note"},
-      {"F6", "Props", "Properties"},
-      {"F7", "Mark"},
-      {"F8", "Vw Mgr", "View manager"},
-      {"F9", "Cat Mgr", "Category mgr"},
-      {"F10", "Menu"}
-    ]
-
-  # Agenda's F9 is To View; its F10 menu is not built (F10 returns too)
-  defp mode_keys(%{type: :catmgr}),
-    do: [
-      {"F1", "Help"},
-      {"F2", "Edit", "Rename"},
-      {"F5", "Note"},
-      {"F6", "Props", "Properties"},
-      {"F7", "Promote"},
-      {"F8", "Demote"},
-      {"F9", "To View", "To the view"}
-    ]
-
   defp mode_keys(%{type: :browse, shift: %{}}),
     do: [
       {"←→", "Day", "← →", "A day"},
@@ -250,18 +235,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"ALT-P", "Previous", "Previous match"},
       {"F7", "Mark", "Mark the item"},
       {"ENTER/ESC", "End search"}
-    ]
-
-  # Agenda's slots (R64a); its F6 Marker (fonts) is out of scope
-  defp mode_keys(%{type: :note}),
-    do: [
-      {"F1", "Help"},
-      {"F2", "Paste"},
-      {"F3", "Copy"},
-      {"F4", "Cut"},
-      {"F5", "Return"},
-      {"F7", "Mark"},
-      {"F10", "Menu"}
     ]
 
   defp mode_keys(%{type: :menu}),

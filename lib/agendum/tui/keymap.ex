@@ -347,6 +347,9 @@ defmodule Agendum.TUI.Keymap do
     {:ctrl, "o"} => :retrieve,
     {:ctrl, "p"} => :export,
     {:alt, "k"} => :key_map,
+    # `Agendum.TUI.Macros` takes ALT-F3 before any keymap (in Learn mode
+    # too); bound here so the key bar and the help can name it
+    {:alt_f, 3} => :macros,
     # ours (R65d, ADR 0040): Agenda left CTRL-X free
     {:ctrl, "x"} => :run_by_name,
     {:alt, "q"} => :quit,

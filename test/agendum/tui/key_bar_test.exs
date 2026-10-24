@@ -97,7 +97,7 @@ defmodule Agendum.TUI.KeyBarTest do
     assert keys == Enum.at(@agenda_view, 0)
 
     assert labels ==
-             " Help  │ Edit  │       │       │ Note  │ Props │Promote│Demote │To View│        "
+             " Help  │ Edit  │       │       │ Note  │ Props │Promote│Demote │To View│To View "
   end
 
   test "a note names Agenda's keys in their slots, not the ALT keys" do
@@ -114,8 +114,11 @@ defmodule Agendum.TUI.KeyBarTest do
     assert String.length(keys) == 130
     assert labels =~ "│   Vw Mgr   │"
 
-    [_, labels] = 130 |> planner() |> Map.update!(:prefs, &%{&1 | extras: true}) |> texts()
-    assert labels =~ "│View manager│"
+    # the commands' own names, when every one fits its slot
+    extras = &(&1 |> planner() |> Map.update!(:prefs, fn p -> %{p | extras: true} end) |> texts())
+    assert [_, "    Help    │" <> _] = extras.(130)
+    [_, labels] = extras.(170)
+    assert labels =~ "│  View manager  │Category manager│"
   end
 
   test "the view shows one row fewer, and ALT-K hides both lines" do

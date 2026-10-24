@@ -1,0 +1,205 @@
+{
+  "source": "Lotus Agenda 2.0, PLANNER.AG, read by capture_key_bars.py",
+  "bars": {
+    "view": {
+      "none": [
+        "Help",
+        "Edit",
+        "Choices",
+        "Done",
+        "Note",
+        "Props",
+        "Mark",
+        "Vw Mgr",
+        "Cat Mgr",
+        "Menu"
+      ],
+      "alt": [
+        "Compose",
+        "When",
+        "Macro",
+        "Discard",
+        "Go To",
+        "Search",
+        "UnmkAll",
+        "Last Vw",
+        "Copy",
+        "Move"
+      ],
+      "ctrl": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "shift": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "note": {
+      "none": [
+        "Help",
+        "Paste",
+        "Copy",
+        "Cut",
+        "Return",
+        "Marker",
+        "Mark",
+        "",
+        "",
+        "Menu"
+      ],
+      "alt": [
+        "Compose",
+        "MakeCat",
+        "Macro",
+        "Delete",
+        "",
+        "Search",
+        "MakeItm",
+        "GetItms",
+        "Append",
+        ""
+      ],
+      "ctrl": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "shift": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "catmgr": {
+      "none": [
+        "Help",
+        "Edit",
+        "",
+        "",
+        "Note",
+        "Props",
+        "Prm ( )",
+        "Dem ( )",
+        "To View",
+        "Menu"
+      ],
+      "alt": [
+        "Compose",
+        "",
+        "Macro",
+        "Discard",
+        "Sort",
+        "Search",
+        "ShowC/A",
+        "Clr C/A",
+        "Cpy C/A",
+        "Move"
+      ],
+      "ctrl": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "shift": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "viewmgr": {
+      "none": [
+        "Help",
+        "Edit",
+        "",
+        "Delete",
+        "",
+        "Props",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "alt": [
+        "Compose",
+        "",
+        "",
+        "Delete",
+        "Sort",
+        "",
+        "",
+        "",
+        "Copy",
+        "Move"
+      ],
+      "ctrl": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "shift": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    }
+  }
+}

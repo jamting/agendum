@@ -257,6 +257,7 @@ defmodule Agendum.TUI.Commands do
     {:retrieve, "Retrieve", "Open another file", :none},
     {:export, "Print", "Print the view to a file (in a view)", :none},
     {:key_map, "Key map", "Show or hide the function key map", :none},
+    {:macros, "Macros", "The macro manager; in Learn mode, stop", :none},
     {:run_by_name, "Run by name", "Run a command chosen by its name", :none},
     {:quit, "Quit", "Quit Agendum", :none}
   ]
@@ -363,13 +364,83 @@ defmodule Agendum.TUI.Commands do
     note: [:insert_link]
   }
 
+  # The key bar's labels (ADR 0045), by place: Agenda's own, as captured
+  # from it (`docs/reference/agenda_key_bars.json`), seven characters at
+  # most. A command without one leaves its key's slot empty.
+  @labels %{
+    view: %{
+      help: "Help",
+      edit: "Edit",
+      choices: "Choices",
+      done: "Done",
+      note: "Note",
+      properties: "Props",
+      mark: "Mark",
+      view_manager: "Vw Mgr",
+      category_manager: "Cat Mgr",
+      menu: "Menu",
+      when: "When",
+      discard: "Discard",
+      go_to: "Go To",
+      search: "Search",
+      unmark_all: "UnmkAll",
+      last_view: "Last Vw",
+      copy: "Copy",
+      move: "Move"
+    },
+    note: %{
+      help: "Help",
+      paste: "Paste",
+      copy: "Copy",
+      cut: "Cut",
+      close: "Return",
+      mark: "Mark",
+      menu: "Menu",
+      make_category: "MakeCat",
+      delete: "Delete",
+      search: "Search",
+      make_item: "MakeItm",
+      get_items: "GetItms",
+      append: "Append"
+    },
+    # Agenda's F7 and F8 read "Prm ( )" and "Dem ( )"; what the brackets
+    # hold is unchecked, so ours say the whole word
+    catmgr: %{
+      help: "Help",
+      rename: "Edit",
+      note: "Note",
+      properties: "Props",
+      promote: "Promote",
+      demote: "Demote",
+      close: "To View",
+      discard: "Discard",
+      sort: "Sort",
+      move: "Move"
+    },
+    # Agenda's view manager names no key for leaving it (F8 here)
+    viewmgr: %{
+      help: "Help",
+      rename: "Edit",
+      discard: "Delete",
+      order: "Recent",
+      properties: "Props",
+      sort: "Sort"
+    },
+    global: %{macros: "Macro"}
+  }
+
   @commands Map.new(@commands, fn {place, list} ->
               extras = Map.get(@extras, place, [])
 
               {place,
                Enum.map(
                  list,
-                 &%{&1 | doc: get_in(@docs, [place, &1.id]), extra: &1.id in extras}
+                 &%{
+                   &1
+                   | doc: get_in(@docs, [place, &1.id]),
+                     extra: &1.id in extras,
+                     label: get_in(@labels, [place, &1.id])
+                 }
                )}
             end)
 

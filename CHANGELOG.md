@@ -4,6 +4,11 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.24.2 — 2026-10-24
+
+- The key bar is now made from the keys themselves, so it always says what a key does. You'll notice it in two places: in the category manager **F10** reads `To View` (it goes back to the view, as F9 does), and with the extras on, a very wide screen (about 170 columns) shows the commands' full names, `Category manager` included.
+- **ALT-F3** (the macro manager) is now listed in F1's help with the keys that work everywhere, and can be run from there.
+
 ## 0.24.1 — 2026-10-24
 
 - **CTRL-F1 to CTRL-F10** are keys of their own, as in Lotus Agenda: a macro can be attached to one (`{CtlF4}`). Before, CTRL-F4 acted as plain F4 and marked the item done. With nothing attached, they do nothing.
