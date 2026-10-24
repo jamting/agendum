@@ -18,11 +18,11 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Yank back the item DEL last removed from a section: into the current section, below the highlighted item | ALT-Y | ⌥y |
 | Hop to the highlighted item's next occurrence: further down this view, else in the next view that shows it (ALT-F8 goes back) | ALT-H | ⌥h |
 | Discard                                                                                         | ALT-F4                        | **CTRL-D**                                                            |
-| Set the When date                                                                               | ALT-F2                        | menu Item ▸ When                                     |
+| Set the When date                                                                               | ALT-F2                        | —                                                    |
 | Next / previous completion while typing a column entry                                          | F8 / F7                       | ALT-N / ALT-P (⌥n / ⌥p)                                    |
 | New category instead of the completion                                                          | F5 or INS                     | **CTRL-N**                                                            |
 | Collapse / expand a family or section (twice: all)                                              | ALT-− / ALT-=                 | ⌥− / ⌥=                    |
-| Unmark all items                                                                                | ALT-F7                        | menu Item ▸ Unmark                                   |
+| Unmark all items                                                                                | ALT-F7                        | —                                                    |
 | Jump to the next marked item                                                                    | ALT-J                         | ⌥j                                               |
 | Assign the item or marked items to a category (MakeAssign)                                      | ALT-M                         | ⌥m, or menu Item ▸ Categorize                    |
 | Go to a section (GO TO, in a view); sort a family (category manager); sort views (view manager) | ALT-F5                        | —                                                          |
@@ -47,7 +47,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | In a note: a page of rows up / down; the start / end of the note (R64e)                          | PGUP / PGDN; CTRL-HOME / CTRL-END | fn-↑ / fn-↓; ALT-< / ALT-> (⌥< / ⌥>)                    |
 | In a note: make the marked text (or the word, line or all text) into a new item (it leaves the note; MAKEITM) / the marked text or the word into a new category under a parent you pick (MAKECAT) | ALT-F7 / ALT-F2 | — |
 | In a note: mark text (then move the cursor; again to unmark); copy / cut the marked text, or a word, line or all text; delete it (not kept); paste what was last copied or cut | F7; F3 / F4; ALT-F4; F2 | — |
-| Back to the previous view (LAST VW)                                                             | ALT-F8                        | menu View ▸ Last                                     |
+| Back to the previous view (LAST VW)                                                             | ALT-F8                        | —                                                    |
 | Set or cancel an alarm (Item Alarm)                                                             | ALT-A                         | ⌥a, or menu Item ▸ Alarm                                    |
 | Macros: the macro manager; in Learn mode, stop recording / run the last macro again             | ALT-F3 / ALT-Z                | — / ⌥z                                           |
 | In the macro manager: new macro; learn its keystrokes; run it                                   | INS; F7; ENTER                | **CTRL-N** or type its name; —                             |
@@ -63,7 +63,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Browse a date filter (standard view): a day; a week; a month; a year                            | ALT-B: ← →; CTRL-← →; PGUP/PGDN; CTRL-PGUP/PGDN | ⌥b; ↑ ↓ for a week; ⌥↑ / ⌥↓ for a year                      |
 | Column width (View ▸ Column ▸ Width): narrower / wider; a width; fit to contents; keep; go back | ← →; type it; SHIFT-?; ENTER; ESC               | `?` (no SHIFT needed); opened from menu View ▸ Column ▸ Width         |
 | Make the item depend on the marked items, or clear its dependencies                             | ALT-O                         | ⌥o                                                          |
-| Execute all conditions and actions on all items / those of the highlighted category             | ALT-X / ALT-E                 | ⌥x / ⌥e, or menu Category ▸ Execute                        |
+| Execute all conditions and actions on all items / those of the highlighted category             | ALT-X / ALT-E                 | ⌥x / ⌥e, or menu Utilities ▸ Execute                        |
 | Give the item, or the marked items, a Zettel id (ours, R73; an extra, R77)                     | —                             | **CTRL-T**, or menu Item ▸ Zettel ▸ Attach                 |
 | Follow the item's Zettel links / show the items linking to it (ours, R73b; an extra, R77)      | —                             | **CTRL-G** / **CTRL-R**, or Item ▸ Zettel ▸ Follow / Linked |
 | In a note: type a link to each marked item, `[[bonalaku]]` (ours, R73b; an extra, R77)          | —                             | **CTRL-L**                                                  |

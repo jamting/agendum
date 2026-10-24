@@ -122,10 +122,12 @@ defmodule Agendum.TUI.HistoryTest do
     assert "one" in texts(state)
   end
 
-  test "the menu offers Undo and Redo", %{state: state} do
-    state = press(state, ["one", :enter, {:f, 10}, "u"])
+  # Agenda's menus have no Undo or Redo: the keys do it (AGENDA_PARITY, the
+  # menu's shape)
+  test "CTRL-Z undoes and CTRL-Y redoes", %{state: state} do
+    state = press(state, ["one", :enter, {:ctrl, "z"}])
     refute "one" in texts(state)
-    state = press(state, [{:f, 10}, "r"])
+    state = press(state, {:ctrl, "y"})
     assert "one" in texts(state)
   end
 

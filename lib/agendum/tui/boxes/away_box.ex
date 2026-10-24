@@ -5,7 +5,7 @@ defmodule Agendum.TUI.Boxes.AwayBox do
   lost silently. Shown after the splash screen, only when there are any:
   the latest first, alarms with the same text in one line with a count
   (`Agendum.Core.group_alarms/2`), each at the time it was due. ENTER or
-  ESC closes it; the alarms stay in Search ▸ Alarms with the other past
+  ESC closes it; the alarms stay in Utilities ▸ Show ▸ Alarm with the other past
   alarms. Not in Agenda, which is not known to have shown them. Pure.
   """
 
@@ -27,7 +27,7 @@ defmodule Agendum.TUI.Boxes.AwayBox do
     """
     The alarms that came due while the file was closed, the latest first;
     alarms with the same text are counted on one line. ENTER or ESC closes
-    the box. Search ▸ Alarms lists them with the other past alarms.
+    the box. Utilities ▸ Show ▸ Alarm lists them with the other past alarms.
     """
   end
 
@@ -69,7 +69,7 @@ defmodule Agendum.TUI.Boxes.AwayBox do
     more =
       case more do
         [] -> []
-        more -> [[{:dim, " … #{length(more)} more: Search ▸ Alarms lists them all"}]]
+        more -> [[{:dim, " … #{length(more)} more: Utilities ▸ Show ▸ Alarm lists them all"}]]
       end
 
     [[{:box, heading}], []] ++ lines ++ more
@@ -88,5 +88,5 @@ defmodule Agendum.TUI.Boxes.AwayBox do
 
   @impl Box
   def help,
-    do: "Alarms that came due while the file was closed. Search ▸ Alarms lists them all."
+    do: "Alarms that came due while the file was closed. Utilities ▸ Show ▸ Alarm lists them all."
 end

@@ -237,7 +237,7 @@ defmodule Agendum.TUI.State do
       else: state
   end
 
-  @doc "Shows or hides the key bar (File ▸ Customize; R54), and keeps it so."
+  @doc "Shows or hides the key bar (Utilities ▸ Customize; R54), and keeps it so."
   @spec toggle_key_map(t) :: t
   def toggle_key_map(state) do
     shown = state.key_map == false
@@ -454,7 +454,7 @@ defmodule Agendum.TUI.State do
   @doc """
   Asks the shell to save the file to `path` (`{:save, path, opts}`), then
   to do `then` once the save succeeded (R71): nothing (nil), `:quit`, or
-  `{:replace_file, command}` (the prompt for Retrieve, New or Import).
+  `{:replace_file, command}` (the prompt for Retrieve or Import).
   Saved where it was read, the save expects the file as it was then;
   saved under another name, whatever is there (`:any`). `expect:` and
   `auto:` (an auto-save, R54) in `opts` say otherwise.

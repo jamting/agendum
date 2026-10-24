@@ -16,7 +16,7 @@ defmodule Agendum.TUI.CustomizeBoxTest do
     %{state: %{state | prefs: %Agendum.Preferences{path: "/prefs"}}}
   end
 
-  defp open_box(state), do: press(state, [{:f, 10}, "f", "c"])
+  defp open_box(state), do: press(state, [{:f, 10}, "u", "c"])
 
   defp key(state, key) do
     {state, effects} = Update.handle(state, key)

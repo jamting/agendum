@@ -41,9 +41,9 @@ defmodule Agendum.TUI.MenuTest do
       assert screen(press(state, [{:f, 10}, "i", "d"])) =~ "Discard this item"
     end
 
-    test "Item > Finished marks the item done", %{state: state} do
-      state = press(state, [{:f, 10}, "i", "f"])
-      assert Agendum.TUI.Layout.current_row(state).item.done
+    test "Item > Discard asks before discarding the item", %{state: state} do
+      state = press(state, [{:f, 10}, "i", "d"])
+      assert screen(state) =~ "Discard this item from the whole file?"
     end
 
     test "File > Write asks for a new file name", %{state: state} do
@@ -88,7 +88,7 @@ defmodule Agendum.TUI.MenuTest do
     end
 
     test "a box closed with ENTER goes back to the view", %{state: state} do
-      state = press(state, [{:f, 10}, "f", "c", :enter])
+      state = press(state, [{:f, 10}, "u", "c", :enter])
       assert State.mode(state) == nil
     end
 
@@ -107,7 +107,7 @@ defmodule Agendum.TUI.MenuTest do
   end
 
   test "a menu wider than the screen scrolls to the highlighted entry, ◄ ► marking more" do
-    state = Agendum.TUIHelpers.start(Agendum.Sample.build(~D[2026-10-08]), width: 80)
+    state = Agendum.TUIHelpers.start(Agendum.Sample.build(~D[2026-10-08]), width: 50)
     first = fn state -> state |> Agendum.TUIHelpers.screen() |> String.split("\n") |> hd() end
 
     state = Agendum.TUIHelpers.press(state, [{:f, 10}, "i"])
@@ -116,6 +116,6 @@ defmodule Agendum.TUI.MenuTest do
 
     state = Agendum.TUIHelpers.press(state, :end)
     assert first.(state) =~ ~r/^◄ .*Reposition   Discard/
-    assert String.length(first.(state)) <= 80
+    assert String.length(first.(state)) <= 50
   end
 end

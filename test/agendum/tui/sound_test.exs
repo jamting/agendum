@@ -75,7 +75,7 @@ defmodule Agendum.TUI.SoundTest do
   end
 
   test "the Customize box switches both settings", %{state: state} do
-    state = state |> press([{:f, 10}, "f", "c"]) |> to_setting("Sound")
+    state = state |> press([{:f, 10}, "u", "c"]) |> to_setting("Sound")
     assert screen(state) =~ ~r/Sound +: Yes/
     state = press(state, " ")
     refute state.prefs.sound

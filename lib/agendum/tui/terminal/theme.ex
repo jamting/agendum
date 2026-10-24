@@ -24,7 +24,7 @@ defmodule Agendum.TUI.Terminal.Theme do
   depend on the terminal.
 
   Like Agenda, where Utilities Customize chose colour or monochrome for all
-  files, the theme is the person's: File ▸ Customize, saved in their
+  files, the theme is the person's: Utilities ▸ Customize, saved in their
   preferences (`Agendum.Preferences`), or `--theme` for a session; never
   in the file.
   """

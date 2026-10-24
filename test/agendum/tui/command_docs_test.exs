@@ -69,19 +69,19 @@ defmodule Agendum.TUI.CommandDocsTest do
     end
 
     test "F1 c in the menu shows the highlighted entry's text", %{state: state} do
-      text = state |> press([{:f, 10}, "c", {:f, 1}, "c", "recalc"]) |> screen()
-      assert text =~ "Assigns and dates every item again from its text"
+      text = state |> press([{:f, 10}, "u", {:f, 1}, "c", "execute"]) |> screen()
+      assert text =~ "Chooses whose conditions and actions to apply now"
     end
 
     test "an entry that runs a view's command has that command's text", %{state: state} do
-      text = state |> press([{:f, 10}, "i", {:f, 1}, "c", "finished"]) |> screen()
-      assert text =~ "Gives the item today's Done date"
+      text = state |> press([{:f, 10}, "i", {:f, 1}, "c", "alarm"]) |> screen()
+      assert text =~ "Rings at the item's When time"
     end
 
     test "F1 d on a letter shows it too", %{state: state} do
-      text = state |> press([{:f, 10}, "f", {:f, 1}, "d", "d"]) |> screen()
-      assert text =~ "d chooses Dating."
-      assert text =~ "a reading list"
+      text = state |> press([{:f, 10}, "f", {:f, 1}, "d", "r"]) |> screen()
+      assert text =~ "r chooses Retrieve."
+      assert text =~ "Agenda's way to start a file"
     end
   end
 

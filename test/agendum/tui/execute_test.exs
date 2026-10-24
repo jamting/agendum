@@ -23,7 +23,7 @@ defmodule Agendum.TUI.ExecuteTest do
 
   test "Category ▸ Execute shows the Execute box; ENTER applies everything to all items",
        %{state: state, meetings: meetings} do
-    state = press(state, [{:f, 10}, "c", "e"])
+    state = press(state, [{:f, 10}, "u", "e"])
     assert %{type: :execute} = State.mode(state)
     text = screen(state)
     assert text =~ "Execute conditions and actions"
@@ -40,19 +40,19 @@ defmodule Agendum.TUI.ExecuteTest do
   end
 
   test "Old & new assignments runs the actions on items already there", %{state: state} do
-    state = press(state, [{:f, 10}, "c", "e", :down, :down, " ", :enter])
+    state = press(state, [{:f, 10}, "u", "e", :down, :down, " ", :enter])
     assert Enum.all?(Database.items(state.db), & &1.done)
   end
 
   test "Against: the current item only", %{state: state, meetings: meetings} do
     # the first item: "Set up meeting at Terracotta…"
-    state = press(state, [:down, {:f, 10}, "c", "e", :down, " ", :enter])
+    state = press(state, [:down, {:f, 10}, "u", "e", :down, " ", :enter])
     assert in_meetings(state, meetings) == 1
   end
 
   test "Apply conditions of: a chosen family", %{state: state, meetings: meetings} do
     # Contact's family has no conditions: nothing changes
-    state = press(state, [{:f, 10}, "c", "e", " ", "Contact", :enter, :down, :down, :enter])
+    state = press(state, [{:f, 10}, "u", "e", " ", "Contact", :enter, :down, :down, :enter])
     assert in_meetings(state, meetings) == 0
   end
 

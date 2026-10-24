@@ -4,6 +4,16 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.27.0 — 2026-10-24
+
+The F10 menu in Lotus Agenda's shape: `File  Item  Category  View  Print  Utilities  Quit`.
+
+- **Utilities** is back, as in Agenda: Customize (was in File), Execute and Questions (were in Category), and **Show**: Match, Prereqs, Depends, Alarm and Sched (were the Search menu: File, Prereqs, Depends, Alarms, Schedule).
+- **Undo** and **Redo** left the top line; CTRL-Z and CTRL-Y do them, as before.
+- Entries for keys left the menus, their keys unchanged: Item ▸ Note (F5), When (ALT-F2), Show (F3), Finished (F4), Mark (F7), Unmark (ALT-F7); View ▸ Last (ALT-F8); Search ▸ View (ALT-F6).
+- **A new file**: File ▸ Retrieve and a name that is not a file yet asks "Create the new file …?" and makes it. File ▸ New is gone.
+- File ▸ Dating is gone: turn off dates read from text in the When category's properties (Date settings ▸ Assign item date ▸ Never). View ▸ Rename is gone: F2 in the view manager. Category ▸ Recalc is gone from the menu: CTRL-X, Recalc.
+
 ## 0.26.0 — 2026-10-24
 
 Menu entries Lotus Agenda had for commands Agendum had only on keys, and the category manager's own menu.

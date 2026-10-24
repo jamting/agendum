@@ -139,10 +139,10 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Boxes.DateSettingsBox`                  | ✔     | Global Date Settings: the file's week, quarter, year and times of day (R14e).                                                     |
 | `Agendum.TUI.Boxes.DisplayFormatBox`                 | ✔     | Display Format: how the file shows dates and times, with a sample (R41).                                                          |
 | `Agendum.TUI.Boxes.InputFormatBox`                   | ✔     | The Input Format box: the person's number order, separator and clock, saved as preferences (R41b).                               |
-| `Agendum.TUI.Boxes.CustomizeBox`                     | ✔     | File ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
+| `Agendum.TUI.Boxes.CustomizeBox`                     | ✔     | Utilities ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
 | `Agendum.TUI.Boxes.CalendarBox`                      | ✔     | The pop-up calendar: F3 in a date column, ALT-C anywhere (R46).                                                                  |
 | `Agendum.TUI.Boxes.DatebookBox`, `Agendum.TUI.Moves.Browse` | ✔     | A datebook view's settings box; browsing it to other periods (R47).                                                              |
-| `Agendum.TUI.Boxes.ScheduleBox`                      | ✔     | Search ▸ Schedule: one date's items in the Show View (R49).                                                                      |
+| `Agendum.TUI.Boxes.ScheduleBox`                      | ✔     | Utilities ▸ Show ▸ Sched: one date's items in the Show View (R49).                                                                      |
 | `Agendum.TUI.MacroKeys`                        | ✔     | Key events as macro text in Agenda's notation (`{F10}vc{ENTER}`), and back (R50).                                                |
 | `Agendum.TUI.Macros`                           | ✔     | The macro manager (ALT-F3), Learn mode and running macros (ALT-Z), one undo step a run (R50).                                    |
 | `Agendum.TUI.Boxes.MacroProps`                       | ✔     | The Macro Properties box: name, keystrokes, attached key, where it runs (R50).                                                   |

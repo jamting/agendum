@@ -138,7 +138,7 @@ defmodule Agendum.TUI.ViewTest do
     state = press(state, [{:f, 10}])
 
     assert screen(state) =~
-             ~r/File\s+Item\s+Category\s+View\s+Search\s+Undo\s+Redo\s+Print\s+Quit/
+             ~r/File\s+Item\s+Category\s+View\s+Print\s+Utilities\s+Quit/
 
     state = press(state, ["v", "p"])
     assert %{type: :view_props} = Agendum.TUI.State.mode(state)
@@ -203,8 +203,9 @@ defmodule Agendum.TUI.ViewTest do
       assert screen(state) =~ "Not a date: someday"
     end
 
-    test "File Dating turns automatic dating off, shown in the title bar", %{state: state} do
-      state = press(state, [{:f, 10}, "f", "d"])
+    # turned off Agenda's way, in the When category's date settings (R6b)
+    test "with automatic dating off, the title bar says so", %{state: state} do
+      state = Agendum.TUI.State.run(state, :toggle_auto_date)
       refute Agendum.Core.auto_dating?(state.db)
       assert screen(state) =~ "[No Auto Dates]"
 

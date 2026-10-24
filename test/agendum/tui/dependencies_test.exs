@@ -79,7 +79,7 @@ defmodule Agendum.TUI.DependenciesTest do
       do: for(%{kind: :item, item: item} <- Layout.rows(state), do: item.text)
 
     test "Prereqs ▸ One level lists the item's prerequisites in the Show View", %{state: state} do
-      state = press(state, [{:f, 10}, "s", "p", "o"])
+      state = press(state, [{:f, 10}, "u", "s", "p", "o"])
       assert State.view(state).name == "Show View"
       assert [first, second] = shown_texts(state)
       assert first =~ "Set up meeting"
@@ -88,19 +88,19 @@ defmodule Agendum.TUI.DependenciesTest do
     end
 
     test "Depends ▸ One level from a prerequisite", %{state: state} do
-      state = press(state, [:ctrl_home, :down, {:f, 10}, "s", "d", "o"])
+      state = press(state, [:ctrl_home, :down, {:f, 10}, "u", "s", "d", "o"])
       assert [only] = shown_texts(state)
       assert only =~ "Contact Daniel"
     end
 
     test "Every item lists all items that have prerequisites", %{state: state} do
-      state = press(state, [:ctrl_home, {:f, 10}, "s", "p", "e"])
+      state = press(state, [:ctrl_home, {:f, 10}, "u", "s", "p", "e"])
       assert [only] = shown_texts(state)
       assert only =~ "Contact Daniel"
     end
 
     test "nothing to show is reported", %{state: state} do
-      state = press(state, [{:f, 10}, "s", "d", "a"])
+      state = press(state, [{:f, 10}, "u", "s", "d", "a"])
       assert screen(state) =~ "No items depend on this one"
       assert State.view(state).name == "Activities"
     end

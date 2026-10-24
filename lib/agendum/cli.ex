@@ -20,7 +20,7 @@ defmodule Agendum.CLI do
       agendum --date-separator S  / - . , or : between a date's numbers
       agendum --clock 12|24     how you type times (default: the language's)
 
-  Your preferences (File ▸ Customize, saved in
+  Your preferences (Utilities ▸ Customize, saved in
   ~/.config/agendum/preferences) give the theme, languages and input
   format; these flags override them for this session. Setting the
   NO_COLOR environment variable selects mono unless --theme or your

@@ -11,7 +11,6 @@ defmodule Agendum.TUI.UnsavedChangesTest do
   @question "Save changes first?"
   @commands [
     {"Retrieve", [{:f, 10}, "f", "r"], "File to retrieve:"},
-    {"New", [{:f, 10}, "f", "n"], "Name of new file:"},
     {"Import", [{:f, 10}, "f", "t", "i"], "file to import"}
   ]
 

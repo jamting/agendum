@@ -44,7 +44,7 @@ defmodule Agendum.TUI.ConfirmModeTest do
 
   test "Confirm mode is in File ▸ Customize, and saved" do
     state = %{started(true) | prefs: %Preferences{path: "/prefs"}}
-    state = state |> press([{:f, 10}, "f", "c"]) |> to_setting("Confirm mode")
+    state = state |> press([{:f, 10}, "u", "c"]) |> to_setting("Confirm mode")
     assert screen(state) =~ ~r/Confirm mode +: Yes/
     {state, effects} = Agendum.TUI.Update.handle(state, {:char, " "})
     refute state.prefs.confirm

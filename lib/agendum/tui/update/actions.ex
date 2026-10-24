@@ -84,10 +84,10 @@ defmodule Agendum.TUI.Update.Actions do
   # Clause order matters: this one, for a dirty file, must come before the
   # one below, which would match any state.
   defp do_perform(%State{dirty: true} = state, command, _)
-       when command in [:retrieve, :new_file, :import_json],
+       when command in [:retrieve, :import_json],
        do: Prompts.ask(state, "Save changes first?", {:leave_for, command})
 
-  defp do_perform(state, command, _) when command in [:retrieve, :new_file, :import_json],
+  defp do_perform(state, command, _) when command in [:retrieve, :import_json],
     do: Prompts.replace_file(state, command)
 
   defp do_perform(state, :export_json, _) do
@@ -226,17 +226,6 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :column_props, _),
     do: State.error(state, "Highlight a column head or entry first")
 
-  defp do_perform(state, :toggle_auto_date, _) do
-    state = State.run(state, :toggle_auto_date)
-
-    message =
-      if Core.auto_dating?(state.db),
-        do: "Dates in item text set When dates",
-        else: "Dates in item text are ignored"
-
-    State.info(state, message)
-  end
-
   defp do_perform(state, :item_props, %{kind: :item, item: item}),
     do: ItemProperties.open(state, item.id)
 
@@ -349,9 +338,6 @@ defmodule Agendum.TUI.Update.Actions do
       do: Agendum.TUI.Boxes.DatebookBox.open(state, state.view_id),
       else: Agendum.TUI.Boxes.ViewProps.open(state, state.view_id)
   end
-
-  defp do_perform(state, :rename_view, _),
-    do: Prompts.prompt(state, "Rename view to:", :rename_view, State.view(state).name)
 
   defp do_perform(state, :discard_view, _) do
     Prompts.confirm(

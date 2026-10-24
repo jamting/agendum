@@ -33,7 +33,7 @@ mix docs --open                                 # API and design docs, guide and
                                                 #   modus-operandi, modus-vivendi, alabaster, zenburn, ayu, borland
 ./agendum --lang=swedish --fallback=english f   # read dates typed in Swedish (and English)
 ./agendum --number-order=dmy --date-separator=. f  # type dates as 12.11.26 for this session
-# File ▸ Customize saves your theme, date languages and input format in ~/.config/agendum/preferences
+# Utilities ▸ Customize saves your theme, date languages and input format in ~/.config/agendum/preferences
 ```
 
 To start from Agenda's Activities Planner (tasks, people, projects, priorities, expenses, sixteen views and a few macros, no items), copy the starter file and open the copy:
@@ -47,7 +47,7 @@ cp starters/planner.agendum ~/planner.agendum && ./agendum ~/planner.agendum
 The [user guide](docs/guide/index.html) is the short version, with a worked example; the [manual](docs/manual/index.html) is the long one, as Owl explains it to Rabbit. Open them in a browser; `mix docs` also puts them beside the API documentation.
 
 - **Type** under a section to add an item. It is assigned to that section's category, and automatically to any category it mentions.
-- Dates in the text count: "Call Bob next Friday" gets a When date. **ALT-F2** (or Item ▸ When) sets one explicitly.
+- Dates in the text count: "Call Bob next Friday" gets a When date. **ALT-F2** sets one explicitly.
 - **→ / TAB** moves into columns. Type a name to assign (new names create subcategories) or a date (`tomorrow`, `friday`, `2026-12-24`) in the When column.
 - **F9** opens the category manager: type to add, F7/F8 promote/demote, F6 properties (mutually exclusive children, short names, category links).
 - **ALT-D / ALT-R** add sections and columns. **F8** manages views (F6 there: a view's properties, as View ▸ Properties). **F10** or **/** opens the menu.

@@ -106,7 +106,7 @@ defmodule Agendum.TUI.ExtrasSwitchTest do
   end
 
   test "Customize turns it on, in the person's preferences", %{db: db} do
-    state = db |> start() |> press([{:f, 10}, "f", "c"]) |> to_setting("Extras")
+    state = db |> start() |> press([{:f, 10}, "u", "c"]) |> to_setting("Extras")
     assert screen(state) =~ ~r/Extras +: No/
     state = press(state, " ")
     assert state.prefs.extras
@@ -121,7 +121,7 @@ defmodule Agendum.TUI.ExtrasSwitchTest do
 
     state =
       state
-      |> press([:esc, {:f, 10}, "f", "c"])
+      |> press([:esc, {:f, 10}, "u", "c"])
       |> to_setting("Extras")
       |> press([" ", :enter, {:f, 8}])
 

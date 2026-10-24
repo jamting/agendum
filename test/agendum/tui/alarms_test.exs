@@ -67,7 +67,7 @@ defmodule Agendum.TUI.AlarmsTest do
     state = press(state, ["Review at 4pm", :enter, {:alt, "a"}, {:ctrl, "u"}, "10", :enter])
     {state, _} = Update.tick(state, ~N[2026-10-08 14:00:00])
 
-    state = press(state, [{:f, 10}, "s", "a"])
+    state = press(state, [{:f, 10}, "u", "s", "a"])
     refute state.alarm_rang
     screen = screen(state)
     assert screen =~ "Alarm list"

@@ -146,6 +146,10 @@ defmodule Agendum.TUI.CommandDocs do
     menu:
       "Every command by area (File, View, Item, Category …): for what has no key, or when " <>
         "the key is forgotten.",
+    recalc:
+      "Assigns and dates every item again from its text, as when it was typed: after " <>
+        "categories were renamed or matching changed, so that older items are filed as new " <>
+        "ones would be. Agenda had no such command, so it has no key: CTRL-X, Recalc.",
     retrieve: "Opens another file. It asks first when this one has unsaved changes."
   }
 
@@ -155,7 +159,7 @@ defmodule Agendum.TUI.CommandDocs do
         "the file was opened.",
     redo: "Brings back what Undo took back, until something else is changed.",
     save:
-      "Writes the file. File ▸ Customize can have Agendum save it on its own, after a " <>
+      "Writes the file. Utilities ▸ Customize can have Agendum save it on its own, after a " <>
         "few minutes without a key pressed.",
     export:
       "Writes the view as text to a file, to print it, send it or keep a copy: Agendum " <>
@@ -350,15 +354,13 @@ defmodule Agendum.TUI.CommandDocs do
     ~w(File Write) =>
       "Saves the file under a new name and goes on in it: for a version to keep, or a " <>
         "file to start another from.",
-    ~w(File New) => "Starts an empty file. It asks first when this one has unsaved changes.",
-    ~w(File Dating) =>
-      "Agendum reads dates in an item's text (\"call Bob friday\") as its When date. Turn " <>
-        "this off in a file whose text names dates that are not when things happen, such " <>
-        "as a reading list.",
+    ~w(File Retrieve) =>
+      "Opens another file. A name that is not a file yet makes a new, empty one, after " <>
+        "asking: Agenda's way to start a file.",
     ~w(File Properties) =>
       "How this file shows dates and times, and its other settings. They are kept in the " <>
         "file, so it looks the same to everyone who opens it.",
-    ~w(File Customize) =>
+    ~w(Utilities Customize) =>
       "Settings that are yours, not the file's: the theme, date languages, how numbers and " <>
         "dates are typed. They hold for every file you open.",
     ~w(File Transfer) =>
@@ -369,34 +371,27 @@ defmodule Agendum.TUI.CommandDocs do
     ~w(File Transfer Calendars) =>
       "Subscribed calendars (iCal addresses) come in as items with When dates and are " <>
         "read again by themselves: appointments beside the things to do.",
-    ~w(Item Show) =>
-      "Every category, those the item is in marked: to see why it shows where it does, and " <>
-        "change it.",
     ~w(Category Add) =>
       "Adds a category at the top, under MAIN. To put one elsewhere in the hierarchy, use " <>
         "the category manager.",
-    ~w(Category Recalc) =>
-      "Assigns and dates every item again from its text, as when it was typed: after " <>
-        "categories were renamed or matching changed, so that older items are filed as new " <>
-        "ones would be.",
-    ~w(Category Execute) =>
+    ~w(Utilities Execute) =>
       "Chooses whose conditions and actions to apply now, and to which items. They " <>
         "otherwise reach only the items added or changed after they were set up.",
-    ~w(Category Questions) =>
+    ~w(Utilities Questions) =>
       "When File Properties says to confirm assignments, a text that matches a category is " <>
         "a suggestion rather than an assignment: here the suggestions are answered.",
     ~w(View Properties) =>
       "A datebook view's sections are dates (a day, a week …): how long a period is, the " <>
         "date it starts from, and which date it goes by.",
-    ~w(Search File) =>
+    ~w(Utilities Show Match) =>
       "Finds the text in every item of the file, not only those this view shows, and lists " <>
         "them in the Show View. ALT-F8 goes back.",
-    ~w(Search Alarms) =>
+    ~w(Utilities Show Alarm) =>
       "The alarms set, and today's that have rung: to cancel one, or see what was missed.",
-    ~w(Search Schedule) =>
+    ~w(Utilities Show Sched) =>
       "One date's items, from every category, in the Show View: what a day holds.",
-    ~w(Search Depends) => "The items that wait for this one: what it holds up.",
-    ~w(Search Prereqs) => "The items this one waits for: what must be done first."
+    ~w(Utilities Show Depends) => "The items that wait for this one: what it holds up.",
+    ~w(Utilities Show Prereqs) => "The items this one waits for: what must be done first."
   }
 
   # the modes that move something, browsing and searching (R65b)

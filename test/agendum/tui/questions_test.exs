@@ -41,7 +41,7 @@ defmodule Agendum.TUI.QuestionsTest do
     refute Database.member?(state.db, new.id, cat(state, "Meetings"))
     assert screen(state) =~ "? READY"
 
-    state = press(state, [{:f, 10}, "c", "q"])
+    state = press(state, [{:f, 10}, "u", "q"])
     assert %{type: :questions} = State.mode(state)
     text = screen(state)
     assert text =~ "Ring Anna about Meetings"
@@ -60,7 +60,7 @@ defmodule Agendum.TUI.QuestionsTest do
 
   test "TAB picks every suggestion; questions go one item after another", %{state: state} do
     state = state |> confirm_always() |> press(["Ask Anna", :enter, "Plan Meetings", :enter])
-    state = press(state, [{:f, 10}, "c", "q", :tab, :enter])
+    state = press(state, [{:f, 10}, "u", "q", :tab, :enter])
     assert %{type: :questions} = State.mode(state)
     state = press(state, [:tab, :enter])
     assert state.modes == []
@@ -69,7 +69,7 @@ defmodule Agendum.TUI.QuestionsTest do
   end
 
   test "with no questions, Questions says so", %{state: state} do
-    state = press(state, [{:f, 10}, "c", "q"])
+    state = press(state, [{:f, 10}, "u", "q"])
     assert screen(state) =~ "No suggested assignments"
   end
 end

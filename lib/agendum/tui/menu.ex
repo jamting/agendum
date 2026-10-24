@@ -61,13 +61,10 @@ defmodule Agendum.TUI.Menu do
     [
       {"File", "Retrieve, save or create files",
        [
-         {"Retrieve", "Open an existing Agendum file (CTRL-O)", :retrieve},
+         {"Retrieve", "Open an Agendum file, or name a new one to create it (CTRL-O)", :retrieve},
          {"Save", "Save the current file (CTRL-S)", :save},
          {"Write", "Write the file under a new name (Save As)", :save_as},
-         {"New", "Create a new, empty file", :new_file},
-         {"Dating", "Turn When dates read from text on or off", :toggle_auto_date},
          {"Properties", "How the file displays dates and times", :file_props},
-         {"Customize", "Your theme, date languages and input format, for every file", :customize},
          {"Transfer",
           {"Export or import the file",
            "Export or import the file, calendars, feeds, publish the blog"},
@@ -83,13 +80,7 @@ defmodule Agendum.TUI.Menu do
       {"Item", "Work with the highlighted item",
        [
          {"Properties", "Text, note and every assignment of the item (F6)", :item_props},
-         {"Note", "Edit the item's note (F5)", :note},
-         {"When", "Set the item's When date; overrides dates in the text (ALT-F2)", :when},
-         {"Show", "Show the item's assignment profile (F3)", :assign},
          {"Alarm", "Set or cancel an alarm before the When time (ALT-A)", :alarm},
-         {"Finished", "Mark the item done / not done (F4)", :done},
-         {"Mark", "Mark or unmark the item; on a section head, all its items (F7)", :mark},
-         {"Unmark", "Unmark all marked items in the file (ALT-F7)", :unmark_all},
          {"Categorize", "Assign the item, or all marked items, to a category (ALT-M)",
           :make_assign},
          {"BrkAssign", "Remove the assignment for the current item (DEL)", :break_assign},
@@ -109,16 +100,11 @@ defmodule Agendum.TUI.Menu do
           :category_props},
          {"Add", "Add a category under MAIN", :add_category},
          {"Discard", "Discard the current category from the file (ALT-F4 on a section head)",
-          :discard_category},
-         {"Recalc", "Re-run automatic assignment for every item", :recalc},
-         {"Execute", "Apply conditions and actions to existing items (ALT-X all, ALT-E one)",
-          :execute},
-         {"Questions", "Confirm suggested assignments (Utilities Questions)", :questions}
+          :discard_category}
        ]},
       {"View", "Change the current view or create new ones",
        [
          {"Add", "Create a new view", :add_view},
-         {"Rename", "Rename the current view", :rename_view},
          {"Discard", "Delete the current view (items are kept)", :discard_view},
          {"Properties",
           "The view's name, sections, sorting, filter and hiding (F6 in the manager)",
@@ -145,37 +131,42 @@ defmodule Agendum.TUI.Menu do
              :column_move},
             {"Width", "The highlighted column's width: ← →, a number, or ? to fit it",
              :column_width}
-          ]},
-         {"Last", "Return to the view shown before this one (ALT-F8)", :last_view}
-       ]},
-      {"Search", "Find items by their text",
-       [
-         {"View", "Search this view: ALT-N next, ALT-P previous, F7 mark (ALT-F6)", :search_view},
-         {"File", "Show every matching item in the file in the Show View", :search_file},
-         {"Alarms", "Current alarms and today's past alarms", :alarm_list},
-         {"Schedule", "One date's items in the Show View (Utilities Show Sched)", :show_schedule},
-         {"Depends", "Show the items that depend on this one (Utilities Show Depends)",
-          [
-            {"One level", "Items directly depending on this one",
-             {:show_related, :dependents, :one}},
-            {"All levels", "The whole chain of items depending on this one",
-             {:show_related, :dependents, :all}},
-            {"Every item", "Every item in the file that others depend on",
-             {:show_related, :dependents, :every}}
-          ]},
-         {"Prereqs", "Show the items this one depends on (Utilities Show Prereqs)",
-          [
-            {"One level", "Items directly this one depends on",
-             {:show_related, :prerequisites, :one}},
-            {"All levels", "The whole chain of items this one depends on",
-             {:show_related, :prerequisites, :all}},
-            {"Every item", "Every item in the file that depends on others",
-             {:show_related, :prerequisites, :every}}
           ]}
        ]},
-      {"Undo", "Undo the last change (CTRL-Z)", :undo},
-      {"Redo", "Redo the last undone change (CTRL-Y)", :redo},
       {"Print", "Print the current view to a text file (CTRL-P)", :export},
+      # Agenda's Utilities (checked in Agenda 2.0): Trash and Show ItemsDone,
+      # Circular and Every are not built yet, Launch is out of scope
+      {"Utilities", "Customize, Execute, Show, Questions",
+       [
+         {"Customize", "Your theme, date languages and input format, for every file", :customize},
+         {"Execute", "Apply conditions and actions to existing items (ALT-X all, ALT-E one)",
+          :execute},
+         {"Show", "Match, Prereqs, Depends, Alarm, Sched",
+          [
+            {"Match", "Show every matching item in the file in the Show View", :search_file},
+            {"Prereqs", "Show the items this one depends on",
+             [
+               {"One level", "Items directly this one depends on",
+                {:show_related, :prerequisites, :one}},
+               {"All levels", "The whole chain of items this one depends on",
+                {:show_related, :prerequisites, :all}},
+               {"Every item", "Every item in the file that depends on others",
+                {:show_related, :prerequisites, :every}}
+             ]},
+            {"Depends", "Show the items that depend on this one",
+             [
+               {"One level", "Items directly depending on this one",
+                {:show_related, :dependents, :one}},
+               {"All levels", "The whole chain of items depending on this one",
+                {:show_related, :dependents, :all}},
+               {"Every item", "Every item in the file that others depend on",
+                {:show_related, :dependents, :every}}
+             ]},
+            {"Alarm", "Current alarms and today's past alarms", :alarm_list},
+            {"Sched", "One date's items in the Show View", :show_schedule}
+          ]},
+         {"Questions", "Confirm suggested assignments", :questions}
+       ]},
       {"Quit", "Leave Agendum (CTRL-Q)", :quit}
     ]
   end

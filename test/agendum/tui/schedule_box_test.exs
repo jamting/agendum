@@ -11,7 +11,7 @@ defmodule Agendum.TUI.ScheduleBoxTest do
     %{state: %{state | now: ~N[2026-10-12 10:00:00]}}
   end
 
-  defp open_box(state), do: press(state, [{:f, 10}, "s", "s"])
+  defp open_box(state), do: press(state, [{:f, 10}, "u", "s", "s"])
 
   defp items(state),
     do: state |> screen() |> String.split("\n") |> Enum.filter(&String.starts_with?(&1, " • "))

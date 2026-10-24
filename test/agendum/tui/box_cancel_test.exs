@@ -69,7 +69,7 @@ defmodule Agendum.TUI.BoxCancelTest do
 
   test "your preferences go back too, and are saved as they were", %{state: state} do
     state = %{state | prefs: %Preferences{path: "/prefs"}}
-    state = press(state, [{:f, 10}, "f", "c", " "])
+    state = press(state, [{:f, 10}, "u", "c", " "])
     assert state.theme == :mono
 
     {state, effects} = Update.handle(state, :esc)

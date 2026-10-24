@@ -336,7 +336,8 @@ defmodule Agendum.TUI.CategoryScreensTest do
 
     # existing items join after Recalc; the profile marks them as conditional
     # ESC clears the search, closes the box (it stays open for more), then properties, then the manager
-    state = press(state, [:esc, :esc, :esc, :esc, {:f, 10}, "c", "r", :down, {:f, 3}])
+    recalc = [{:ctrl, "x"} | String.graphemes("recalc")] ++ [:enter]
+    state = press(state, [:esc, :esc, :esc, :esc | recalc] ++ [:down, {:f, 3}])
     assert screen(state) =~ ~r/c\s+Meetings/
   end
 

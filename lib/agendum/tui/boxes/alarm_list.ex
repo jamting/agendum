@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.Boxes.AlarmList do
   @moduledoc """
-  The alarm list (Search ▸ Alarms; Agenda's Utilities Show Alarm, User's
+  The alarm list (Utilities ▸ Show ▸ Alarm; Agenda's Utilities Show Alarm, User's
   Guide 10-18 to 10-20): items with alarms set, and the alarms that have
   gone off since the date changed, each at the time it was due (R70). DEL on a past alarm removes it from the list, ALT-A on a
   current one cancels it. Opening the list clears the alarm symbol in the

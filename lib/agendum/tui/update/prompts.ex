@@ -192,17 +192,6 @@ defmodule Agendum.TUI.Update.Prompts do
   defp prompt_action(state, :retrieve, text),
     do: State.effect(state, {:load, Agendum.Store.normalize_path(text)})
 
-  defp prompt_action(state, :new_file, text) do
-    path = Agendum.Store.normalize_path(text)
-
-    %{
-      State.reopen(state, Core.new_file(), path)
-      | dirty: true,
-        saved: %{db: nil, stamp: nil, conflict: false}
-    }
-    |> State.info("New file #{Path.basename(path)} (not saved yet)")
-  end
-
   defp prompt_action(state, :add_category, text) do
     case State.command(state, {:add_category, state.db.main_id, text, []}) do
       {:ok, state, _} -> State.info(state, "Added #{text} under MAIN")
@@ -253,10 +242,6 @@ defmodule Agendum.TUI.Update.Prompts do
       {:error, :invalid_date} ->
         State.error(state, "Not a date: #{text} (try friday, next week, 12/24, December 24)")
     end
-  end
-
-  defp prompt_action(state, :rename_view, text) do
-    State.run(state, {:rename_view, state.view_id, text})
   end
 
   defp prompt_action(state, {:move_new_category, id, relocation}, text) do
@@ -517,6 +502,7 @@ defmodule Agendum.TUI.Update.Prompts do
   defp confirmed(state, {:overwrite, _path, _then}, false),
     do: State.error(state, "Not saved. File ▸ Write saves it under another name, keeping both")
 
+  defp confirmed(state, {:create_file, path}, true), do: new_file(state, path)
   defp confirmed(state, :quit, true), do: Actions.perform(state, :save_and_quit)
   defp confirmed(state, :quit, false), do: State.effect(state, :quit)
   defp confirmed(state, _action, false), do: state
@@ -528,9 +514,23 @@ defmodule Agendum.TUI.Update.Prompts do
 
   defp cancelled(state, _action), do: state
 
+  @doc """
+  A new, empty file named `path`, not saved yet: Retrieve with a name that
+  is not a file yet, after asking (Agenda's way to make a file, User's
+  Guide 22-3).
+  """
+  @spec new_file(State.t(), String.t()) :: State.t()
+  def new_file(state, path) do
+    %{
+      State.reopen(state, Core.new_file(), path)
+      | dirty: true,
+        saved: %{db: nil, stamp: nil, conflict: false}
+    }
+    |> State.info("New file #{Path.basename(path)} (not saved yet)")
+  end
+
   @doc "Asks which file replaces the open one (after any question about saving)."
   def replace_file(state, :retrieve), do: prompt(state, "File to retrieve:", :retrieve)
-  def replace_file(state, :new_file), do: prompt(state, "Name of new file:", :new_file)
 
   def replace_file(state, :import_json),
     do: prompt(state, "JSON or Agenda (.AG) file to import (opens as a new file):", :import_json)

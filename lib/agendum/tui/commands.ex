@@ -38,6 +38,7 @@ defmodule Agendum.TUI.Commands do
     {:remove, "Remove", "Remove from the section or column", :none},
     {:discard, "Discard", "Discard the item(s) from the file", :none},
     {:make_assign, "MakeAssign", "Assign the item(s) to a category", :none},
+    {:recalc, "Recalc", "Assign and date every item again", :none},
     {:when, "When", "Set the item's When date", :none},
     {:move, "Move", "Move the item(s), section or column", :none},
     {:copy, "Copy", "Copy the item to another section", :none},

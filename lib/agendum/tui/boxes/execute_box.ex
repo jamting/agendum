@@ -4,7 +4,7 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
   applies conditions, text conditions and actions to items that were in
   the file before those were set.
 
-  The Execute box (Category ▸ Execute) has three settings: Apply conditions
+  The Execute box (Utilities ▸ Execute) has three settings: Apply conditions
   of (a category and its children; MAIN for all, ENTER opens the category
   box), Against (all items, the current item, the marked items, the items
   in the section or in the view) and Apply actions to (new assignments

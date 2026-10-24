@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.Boxes.ScheduleBox do
   @moduledoc """
-  The Show Schedule box (Search ▸ Schedule; Agenda's Utilities Show Sched;
+  The Show Schedule box (Utilities ▸ Show ▸ Sched; Agenda's Utilities Show Sched;
   SPEC R49; User's Guide 10-14 to 10-16): the items of one date, in the
   Show View.
 

@@ -61,7 +61,7 @@ defmodule Agendum.TUI.AwayTest do
       closed = press(Update.arrive(state), key)
       assert closed.modes == []
 
-      assert screen(press(closed, [{:f, 10}, "s", "a"])) =~
+      assert screen(press(closed, [{:f, 10}, "u", "s", "a"])) =~
                ~r/Personnel meeting.*rang 2026-10-07 13:55/
     end
   end

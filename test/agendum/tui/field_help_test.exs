@@ -47,14 +47,14 @@ defmodule Agendum.TUI.FieldHelpTest do
   end
 
   test "a long help goes on into the second line", %{state: state} do
-    state = press(state, [{:f, 10}, "f", "c", :down])
+    state = press(state, [{:f, 10}, "u", "c", :down])
     [first, second] = panel_lines(state)
     assert first =~ "The language you type dates in"
     assert second =~ "SPACE for the next"
   end
 
   test "a message comes before the help", %{state: state} do
-    state = press(state, [{:f, 10}, "f", "c"])
+    state = press(state, [{:f, 10}, "u", "c"])
     state = %{state | message: {:error, "Something went wrong"}}
     assert panel(state) =~ "Something went wrong"
     refute panel(state) =~ "The colours Agendum draws with"
@@ -67,7 +67,7 @@ defmodule Agendum.TUI.FieldHelpTest do
 
   test "every field of the settings boxes has help", %{state: state} do
     boxes = [
-      press(state, [{:f, 10}, "f", "c"]),
+      press(state, [{:f, 10}, "u", "c"]),
       press(state, [{:f, 10}, "f", "p"]),
       press(state, [{:f, 10}, "f", "p", :down, :down, " "]),
       press(state, [{:f, 10}, "f", "p", :down, :down, " ", " "]),
@@ -78,9 +78,9 @@ defmodule Agendum.TUI.FieldHelpTest do
       press(state, [:down, :right, {:f, 10}, "v", "c", "p"]),
       press(state, [:down, :right, {:f, 10}, "v", "c", "a"]),
       state |> press(:down) |> sort_box(:section),
-      press(state, [{:f, 10}, "s", "s"]),
+      press(state, [{:f, 10}, "u", "s", "s"]),
       press(state, {:alt_f, 6}),
-      press(state, [{:f, 10}, "c", "e"])
+      press(state, [{:f, 10}, "u", "e"])
     ]
 
     for box <- boxes do

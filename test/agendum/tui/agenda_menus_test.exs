@@ -30,20 +30,25 @@ defmodule Agendum.TUI.AgendaMenusTest do
   #   :not_built               Agenda has it, Agendum not yet: parity work
   #   :out_of_scope            left out on purpose (SPEC § 6): printing, DOS
   @differences %{
-    "View menu ▸ Utilities: missing" =>
-      {:change_back, "the menu's shape (AGENDA_PARITY, tagged 2026-10-22): Utilities back"},
     "View menu ▸ System: missing" => {:out_of_scope, "exit to DOS (SPEC § 6)"},
+    "View menu ▸ Utilities ▸ Launch: missing" =>
+      {:out_of_scope, "running another DOS program (SPEC § 6)"},
+    "View menu ▸ Utilities ▸ Trash: missing" =>
+      {:not_built, "the trash (AGENDA_PARITY § The steps)"},
+    "View menu ▸ Utilities ▸ Show ▸ ItemsDone: missing" =>
+      {:not_built, "Show ItemsDone (AGENDA_PARITY § The steps)"},
+    "View menu ▸ Utilities ▸ Show ▸ Circular: missing" =>
+      {:not_built, "Show Circular (AGENDA_PARITY § The steps)"},
+    "View menu ▸ Utilities ▸ Show ▸ Every: missing" =>
+      {:not_built, "Show Every (AGENDA_PARITY § The steps)"},
+    "View menu ▸ Utilities ▸ Show ▸ Prereqs: a menu in Agendum, a command in Agenda" =>
+      {:change_back,
+       "ours asks One level, All levels or Every item in a submenu; how Agenda chooses is unchecked (AGENDA_PARITY, the Show step)"},
+    "View menu ▸ Utilities ▸ Show ▸ Depends: a menu in Agendum, a command in Agenda" =>
+      {:change_back,
+       "ours asks One level, All levels or Every item in a submenu; how Agenda chooses is unchecked (AGENDA_PARITY, the Show step)"},
     "Category manager menu ▸ Print: missing" =>
       {:out_of_scope, "printing the category hierarchy (SPEC § 6)"},
-    "View menu ▸ Search: added" =>
-      {:change_back,
-       "the menu's shape (AGENDA_PARITY, tagged 2026-10-22): its commands go back to Utilities ▸ Show"},
-    "View menu ▸ Undo: added" =>
-      {:change_back,
-       "the menu's shape (AGENDA_PARITY, tagged 2026-10-22): off the top level, CTRL-Z stays"},
-    "View menu ▸ Redo: added" =>
-      {:change_back,
-       "the menu's shape (AGENDA_PARITY, tagged 2026-10-22): off the top level, CTRL-Y stays"},
     "View menu ▸ File ▸ Abandon: missing" =>
       {:not_built, "back to the file as last saved (AGENDA_PARITY step 5)"},
     "View menu ▸ File ▸ Maintenance: missing" =>
@@ -52,14 +57,6 @@ defmodule Agendum.TUI.AgendaMenusTest do
     "View menu ▸ File ▸ Write: added" =>
       {:change_back,
        "gives way to File ▸ Maintenance ▸ MakeCopy (AGENDA_PARITY, tagged 2026-10-22)"},
-    "View menu ▸ File ▸ New: added" =>
-      {:change_back,
-       "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
-    "View menu ▸ File ▸ Dating: added" =>
-      {:change_back,
-       "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
-    "View menu ▸ File ▸ Customize: added" =>
-      {:change_back, "the menu's shape (AGENDA_PARITY, tagged 2026-10-22): back to Utilities"},
     "View menu ▸ File ▸ Transfer ▸ Template: missing" =>
       {:not_built, "the file's structure without its items (AGENDA_PARITY step 5)"},
     "View menu ▸ File ▸ Transfer: order" =>
@@ -72,39 +69,8 @@ defmodule Agendum.TUI.AgendaMenusTest do
       {:change_back,
        "Agenda's name and order come back, keys unchanged (owner, 2026-10-23): Categorize is MakeAssign"},
     "View menu ▸ Item ▸ Undisc: missing" => {:not_built, "the trash (AGENDA_PARITY step 4)"},
-    "View menu ▸ Item ▸ Note: added" =>
-      {:change_back,
-       "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
-    "View menu ▸ Item ▸ When: added" =>
-      {:change_back,
-       "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
-    "View menu ▸ Item ▸ Show: added" =>
-      {:change_back,
-       "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
-    "View menu ▸ Item ▸ Finished: added" =>
-      {:change_back,
-       "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
-    "View menu ▸ Item ▸ Mark: added" =>
-      {:change_back,
-       "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
-    "View menu ▸ Item ▸ Unmark: added" =>
-      {:change_back,
-       "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
     "View menu ▸ Item: order" =>
       {:change_back, "follows from the entries above leaving and coming"},
-    "View menu ▸ Category ▸ Recalc: added" =>
-      {:change_back,
-       "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
-    "View menu ▸ Category ▸ Execute: added" =>
-      {:change_back, "the menu's shape (AGENDA_PARITY, tagged 2026-10-22): back to Utilities"},
-    "View menu ▸ Category ▸ Questions: added" =>
-      {:change_back, "the menu's shape (AGENDA_PARITY, tagged 2026-10-22): back to Utilities"},
-    "View menu ▸ View ▸ Rename: added" =>
-      {:change_back,
-       "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
-    "View menu ▸ View ▸ Last: added" =>
-      {:change_back,
-       "leaves the menus, keeps its key and CTRL-X (AGENDA_PARITY, tagged 2026-10-22)"},
     "View menu ▸ View: order" => {:change_back, "follows from the entries above leaving"},
     "View menu ▸ View ▸ Section ▸ Add: missing" =>
       {:change_back,

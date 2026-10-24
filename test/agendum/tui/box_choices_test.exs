@@ -92,7 +92,7 @@ defmodule Agendum.TUI.BoxChoicesTest do
 
   test "in Customize, a letter picks a theme and saves it", %{state: state} do
     state = %{state | prefs: %Agendum.Preferences{path: "/prefs"}}
-    state = press(state, [{:f, 10}, "f", "c"])
+    state = press(state, [{:f, 10}, "u", "c"])
     {state, effects} = Agendum.TUI.Update.handle(state, {:char, "z"})
     assert state.theme == :zenburn
     # saved once, as it is now

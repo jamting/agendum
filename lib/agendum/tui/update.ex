@@ -665,7 +665,10 @@ defmodule Agendum.TUI.Update do
     |> arrive()
   end
 
-  def loaded(state, _path, {:error, :enoent}), do: State.error(state, "File not found")
+  # Retrieve with a name that is not a file yet makes it, after asking
+  # (Agenda's way to make a new file; its New File box let one ESC out)
+  def loaded(state, path, {:error, :enoent}),
+    do: Prompts.ask(state, "Create the new file #{Path.basename(path)}?", {:create_file, path})
 
   def loaded(state, _path, {:error, reason}),
     do: State.error(state, "Could not open: #{inspect(reason)}")

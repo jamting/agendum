@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.Boxes.CustomizeBox do
   @moduledoc """
-  The Customize box (File ▸ Customize; Agenda's Utilities Customize,
+  The Customize box (Utilities ▸ Customize; Agenda's Utilities Customize,
   ADR 0008): the person's own settings, for every file: Theme (R40), Date
   language and Fallback language (R14c), Input format, which opens
   `Agendum.TUI.Boxes.InputFormatBox` (R41b), Display key map, Confirm mode,

@@ -71,6 +71,8 @@ defmodule Agendum.TUI.Update.ViewKeys do
   # view commands that are the menu's named actions as they are
   @actions [
     :unmark_all,
+    # no key and, since Agenda's menus came back, no menu entry: CTRL-X
+    :recalc,
     :section_below,
     :section_above,
     :column_right,
