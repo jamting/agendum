@@ -44,7 +44,7 @@ Supported by kitty, Ghostty, WezTerm (with `enable_kitty_keyboard = true`), foot
 ### 2. The bars (pure) and the ESC prefix
 
 - `State` gets `held` (`nil | :alt | :ctrl`) and `prefix` (`nil | :esc`).
-- `Agendum.TUI.Render.KeyBar.line/1` gets `alt_keys(mode)` and `ctrl_keys(mode)`, with Agenda's short labels and our fuller ones when they fit.
+- `Agendum.TUI.Render.KeyBar`'s `line/1` (now `lines/1`) gets `alt_keys(mode)` and `ctrl_keys(mode)`, with Agenda's short labels and our fuller ones when they fit.
 - Attached macros' names also show on ALT-F and CTRL-F keys (`attached_label/2` generalised beyond the plain F keys).
 - Modifier events (`{:modifier, :alt | :ctrl, :press | :release}`) only set `held`: no undo step, not recorded by macro Learn, nothing interrupted.
 - **ESC prefix in a view:** where ESC now does nothing (a plain view, no line being typed), ESC arms `prefix: :esc`, shows the ALT bar and a hint in the control panel. The next key becomes ALT-letter (not F-n: function keys are required, ADR 0032); ESC again cancels. It is resolved in `Update.handle/2` before macro Learn and attached-key lookup, so Learn records `{AltM}`, not ESC plus a key. Everywhere else ESC keeps its meaning (cancel, return).
