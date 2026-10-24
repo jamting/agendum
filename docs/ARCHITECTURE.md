@@ -253,3 +253,4 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 | [0042](adr/0042-agendas-sounds-through-the-audio-player.md) | Agenda's sounds, played through the computer's audio player      |
 | [0043](adr/0043-what-may-differ-from-agenda.md)         | A truthful clone: what may differ from Agenda; extras behind one switch, amending 0006 |
 | [0044](adr/0044-one-repository-extras-on-their-own-shelf.md) | One repository and one program; the extras on a shelf of their own |
+| [0045](adr/0045-key-bars-made-from-the-keymaps.md) | Every key bar is made from the keymaps |
