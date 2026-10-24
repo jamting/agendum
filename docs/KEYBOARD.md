@@ -83,6 +83,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | In a box: move between settings (→ ← along a row, on to the next or previous; ↓ ↑ keep to the side); first / last setting | ↑ ↓ ← →, TAB / SHIFT-TAB; HOME / END | fn-← / fn-→ for HOME / END                                            |
 | In a box: change or open a setting; type a number (width, decimal places, line); edit a text field; pick from a list; done; cancel the box's changes | SPACE; digits; F2; F3; ENTER; ESC | SPACE; digits; **CTRL-E**; —; ENTER; ESC                 |
 | In a box, on a setting with choices: the next choice starting with a letter; list the choices | the letter; F3 | the letter; —                                              |
+| In a settings box: put the highlighted setting back to its default; every setting of the box (R81c) | F8; ALT-F8 | —; ⌥ with F8 |
 | A Yes/No question: answer at once; switch the answer shown; accept it; cancel                   | Y / N; SPACE; ENTER; ESC      | Y / N; SPACE; ENTER; ESC                                              |
 
 While typing text (on one line; in a note, the first two rows and CTRL-D; the keymaps `:line` and `:text`, R65):

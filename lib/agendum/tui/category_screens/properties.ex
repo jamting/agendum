@@ -181,6 +181,36 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   def commands(_mode), do: Box.settings_commands()
 
   # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): what a new category has
+  # (`Agendum.Core.Category`); the name, the type, the note and the lists
+  # (conditions, actions, excludes) have no default. Each reads the
+  # category as it is when it runs
+  @impl Box
+  def defaults(_state, mode) do
+    id = mode.cat_id
+    cat = fn state -> state.db.categories[id] end
+
+    %{
+      short_name:
+        &if(cat.(&1).short_name in [nil, ""],
+          do: &1,
+          else: State.run(&1, {:set_short_name, id, ""})
+        ),
+      also_match:
+        &if(cat.(&1).also_match == "", do: &1, else: State.run(&1, {:set_also_match, id, ""})),
+      # only a standard category matches its name by default (a date or
+      # numeric one never does)
+      match_name:
+        &if(cat.(&1).match_name or cat.(&1).kind != :standard,
+          do: &1,
+          else: State.run(&1, {:toggle_match_name, id})
+        ),
+      exclusive: &if(cat.(&1).exclusive, do: State.run(&1, {:make_unexclusive, id}), else: &1),
+      special:
+        &if(cat.(&1).special == nil, do: &1, else: State.run(&1, {:set_special_action, id, nil}))
+    }
+  end
+
   @impl Box
   def run(state, mode, :change),
     do: open_prop(state, state.db.categories[mode.cat_id], Enum.at(@props, mode.cursor))

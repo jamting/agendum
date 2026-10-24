@@ -191,6 +191,62 @@ defmodule Agendum.TUI.Boxes.SortBox do
   defp toggle(:sequence, :hierarchy), do: :alpha
   defp toggle(:sequence, :alpha), do: :hierarchy
 
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): Sort on back to no sort
+  # of the box's own (a section's: the view's, Agenda's "View default",
+  # User's Guide 15-20), Then by gone, a key's settings a new key's
+  # (`SortKey`), the view's sections unsorted. Each reads the sort as it
+  # is when it runs, and touches only a sort the box has of its own
+  @impl Box
+  def defaults(_state, mode) do
+    blank = %SortKey{}
+    none = if mode.scope == :view, do: [], else: nil
+
+    keys =
+      Map.new(
+        [
+          order: {0, :order},
+          na: {0, :na},
+          sequence: {0, :sequence},
+          line: {0, :line},
+          then_order: {1, :order}
+        ],
+        fn {row, {index, field}} ->
+          {row, &key_back(&1, mode, index, field, Map.fetch!(blank, field))}
+        end
+      )
+
+    sections = %{
+      sections:
+        &State.run(&1, {:set_section_sort, &1.view_id, :none, State.view(&1).section_order}),
+      section_order:
+        &State.run(&1, {:set_section_sort, &1.view_id, State.view(&1).section_sort, :asc})
+    }
+
+    keys
+    |> Map.merge(%{
+      on: &if(sort_keys(&1, mode) in [nil, []], do: &1, else: put(&1, mode, none)),
+      then_on: &then_back(&1, mode)
+    })
+    |> Map.merge(if mode.scope == :view, do: sections, else: %{})
+  end
+
+  defp then_back(state, mode) do
+    case sort_keys(state, mode) do
+      [first, _ | _] -> put(state, mode, [first])
+      _ -> state
+    end
+  end
+
+  defp key_back(state, mode, index, field, default) do
+    keys = sort_keys(state, mode) || []
+
+    key = Enum.at(keys, index)
+
+    if key == nil or Map.fetch!(key, field) == default,
+      do: state,
+      else: put(state, mode, List.replace_at(keys, index, Map.put(key, field, default)))
+  end
+
   @doc "Sets key `index` to sort on a category's notes (from the category box)."
   def set_note(state, scope, index, cat_id) do
     mode = %{scope: scope}

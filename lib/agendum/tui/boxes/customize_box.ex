@@ -182,6 +182,45 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
   @impl Box
   def keys(_state, _mode), do: Box.settings_keys()
 
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): what a fresh start has,
+  # the preferences file's defaults (`Agendum.Preferences`), Agenda's
+  # colours and English with no fallback
+  @impl Box
+  def defaults(_state, _mode) do
+    fresh = %Agendum.Preferences{}
+    input = fresh.input
+
+    prefs =
+      Map.new([:confirm, :auto_save, :sound, :beep_completion, :extras], fn key ->
+        {key, &pref_back(&1, key, Map.fetch!(fresh, key))}
+      end)
+
+    Map.merge(prefs, %{
+      theme: &theme_back/1,
+      lang: &set_languages(&1, Enum.uniq([DateLanguage.English | tl(State.languages(&1))])),
+      fallback: &set_languages(&1, [hd(State.languages(&1))]),
+      input_format:
+        &State.change_preference(&1, fn s -> State.put_reader(s, input: input) end, fn p ->
+          %{p | input: input}
+        end),
+      decimal: &set_input(&1, :decimal, input.decimal),
+      thousands: &set_input(&1, :thousands, input.thousands),
+      key_map: &if(&1.key_map == false, do: State.toggle_key_map(&1), else: &1)
+    })
+  end
+
+  # Agenda's own colours, the theme a new person starts with
+  defp theme_back(%{theme: :classic} = state), do: state
+
+  defp theme_back(state),
+    do: State.change_preference(state, &%{&1 | theme: :classic}, &%{&1 | theme: :classic})
+
+  defp pref_back(state, key, default) do
+    if Map.fetch!(state.prefs, key) == default,
+      do: state,
+      else: State.change_preference(state, & &1, &Map.put(&1, key, default))
+  end
+
   @impl Box
   def help, do: @help
 

@@ -88,6 +88,26 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   def run(state, mode, :change), do: change(state, field(state, mode))
   def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): what a new file has;
+  # the "..." boxes have their own settings
+  @impl Box
+  def defaults(_state, _mode) do
+    new = Agendum.Core.new_file()
+
+    %{
+      insert_columns:
+        &if(&1.db.insert_columns == new.insert_columns,
+          do: &1,
+          else: State.run(&1, {:set_insert_columns, new.insert_columns})
+        ),
+      tab_size:
+        &if(&1.db.tab_size == new.tab_size,
+          do: &1,
+          else: State.run(&1, {:set_tab_size, new.tab_size})
+        )
+    }
+  end
+
   defp change(state, :dates), do: DateSettingsBox.open(state)
   defp change(state, :auto), do: AutoAssignBox.open(state)
   defp change(state, :stats), do: FileStatsBox.open(state)

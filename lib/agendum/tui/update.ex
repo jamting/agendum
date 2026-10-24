@@ -30,7 +30,7 @@ defmodule Agendum.TUI.Update do
     State
   }
 
-  alias Agendum.TUI.{Boxes.BoxCancel, Boxes.BoxChoices}
+  alias Agendum.TUI.{Boxes.BoxCancel, Boxes.BoxChoices, Boxes.BoxDefaults}
   alias Agendum.TUI.Update.{Actions, Marked, Notes, Prompts, ViewKeys}
 
   # `%State{} = state` in the head both checks that the argument is a
@@ -283,6 +283,7 @@ defmodule Agendum.TUI.Update do
 
   def run_box(state, :cancel, _key), do: BoxCancel.cancel(state, :esc)
   def run_box(state, :choices, _key), do: BoxChoices.key(state, {:f, 3})
+  def run_box(state, id, _key) when id in [:default, :default_all], do: BoxDefaults.key(state, id)
   def run_box(state, nil, key), do: BoxChoices.key(state, key)
 
   # Undo is offered where the screen does not depend on one particular item.

@@ -337,6 +337,9 @@ defmodule Agendum.TUI.Keymap do
   @box %{
     {:f, 1} => :help,
     {:f, 3} => :choices,
+    # Agenda's DEFAULT and DFLTALL (User's Guide 2-17)
+    {:f, 8} => :default,
+    {:alt_f, 8} => :default_all,
     :esc => :cancel
   }
 

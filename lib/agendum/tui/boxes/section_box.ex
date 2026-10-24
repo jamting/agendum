@@ -395,6 +395,22 @@ defmodule Agendum.TUI.Boxes.SectionBox do
       {"ESC", "Cancel"}
     ]
 
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): the section's sort back
+  # to the view's ("View default", User's Guide 15-20) and no filter; the
+  # head, the statistics and the columns have none. Section Add before its
+  # head has nothing to put back
+  @impl Box
+  def defaults(_state, %{sidx: nil}), do: %{}
+
+  def defaults(_state, mode) do
+    scope = {:section, mode.sidx}
+
+    %{
+      sorting: &State.run(&1, {:set_sort, &1.view_id, scope, nil}),
+      filter: &State.run(&1, {:set_filters, &1.view_id, scope, []})
+    }
+  end
+
   @impl Box
   def help, do: @help
 

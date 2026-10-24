@@ -121,6 +121,32 @@ defmodule Agendum.TUI.NumbersTest do
   defp at_end(line, text),
     do: (line |> String.split(text) |> hd() |> String.length()) + String.length(text)
 
+  # F8 and ALT-F8 (User's Guide 2-17): a new column's number format
+  test "ALT-F8 puts a numeric column's format back", %{state: state, view: view} do
+    number = fn s -> hd(tl(Agendum.Core.View.columns(s.db.views[view], 0))).number end
+
+    keys = [
+      "1234.5",
+      :enter,
+      {:f, 10},
+      "v",
+      "c",
+      "p",
+      :down,
+      :down,
+      " ",
+      :down,
+      :down,
+      " ",
+      :right,
+      " "
+    ]
+
+    changed = press(state, keys)
+    refute number.(changed) == %Agendum.Core.NumberFormat{}
+    assert number.(press(changed, {:alt_f, 8})) == %Agendum.Core.NumberFormat{}
+  end
+
   test "decimal places are typed", %{state: state, view: view} do
     # ↓ from Column head: Width, Symbol, Decimal places; ENTER keeps it, ENTER the box
     keys = [{:f, 10}, "v", "c", "p", :down, :down, :down, "3", :enter, :enter]

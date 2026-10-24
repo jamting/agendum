@@ -110,6 +110,96 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
     end
   end
 
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`), by the column's kind: a
+  # date column back to the file's date format (Agenda's "Global defaults":
+  # File Properties sets them, User's Guide 2-17), a numeric column to a new
+  # column's number format, a standard one to the name and the first line;
+  # the head, the type, the width and the link have none. Each reads the
+  # column as it is when it runs
+  @impl Box
+  def defaults(state, mode), do: defaults_for(kind(state, mode), mode)
+
+  defp defaults_for(:date, mode) do
+    rows =
+      Map.new(@date_rows, fn row ->
+        {row, &date_back(&1, mode, row)}
+      end)
+
+    Map.put(
+      rows,
+      :settings,
+      &if(column(&1, mode).date == nil, do: &1, else: set_date(&1, mode, nil))
+    )
+    |> Map.put(:time_sep, &date_back(&1, mode, :time_separator))
+  end
+
+  defp defaults_for(:numeric, mode) do
+    new = %NumberFormat{}
+
+    plain =
+      Map.new([:symbol, :decimals, :thousands, :negative, :percent], fn field ->
+        {field, &number_back(&1, mode, field, Map.fetch!(new, field))}
+      end)
+
+    # Count, Total, Average …: on or off as in a new column (Total on)
+    calcs =
+      Map.new(NumberFormat.calcs(), fn calc ->
+        {calc, &calc_back(&1, mode, calc, calc in new.calcs)}
+      end)
+
+    Map.merge(plain, calcs)
+  end
+
+  defp defaults_for(_standard, mode) do
+    new = %View.Column{}
+
+    %{
+      format:
+        &if(column(&1, mode).format == new.format,
+          do: &1,
+          else: display(&1, mode, format: new.format)
+        ),
+      note_line:
+        &if(column(&1, mode).note_line == new.note_line,
+          do: &1,
+          else: display(&1, mode, note_line: new.note_line)
+        ),
+      title:
+        &if(column(&1, mode).title == new.title,
+          do: &1,
+          else: display(&1, mode, title: new.title)
+        )
+    }
+  end
+
+  defp date_back(state, mode, row) do
+    case column(state, mode).date do
+      nil -> state
+      own -> set_date(state, mode, Map.put(own, row, Map.fetch!(state.db.date_format, row)))
+    end
+  end
+
+  defp number_back(state, mode, field, default) do
+    number = column(state, mode).number
+
+    if Map.fetch!(number, field) == default,
+      do: state,
+      else:
+        State.run(
+          state,
+          {:set_column_format, state.view_id, mode.column, Map.put(number, field, default)}
+        )
+  end
+
+  defp calc_back(state, mode, calc, on) do
+    number = column(state, mode).number
+
+    if calc in number.calcs == on,
+      do: state,
+      else:
+        State.run(state, {:set_column_format, state.view_id, mode.column, step(number, calc, 1)})
+  end
+
   # The highlighted field. After the head changes the column may be of
   # another kind, with fewer fields, so the cursor is kept within them.
   @impl Box

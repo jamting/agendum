@@ -246,6 +246,8 @@ defmodule Agendum.TUI.Commands do
   # (`Agendum.TUI.Boxes.Box`'s `keymap/1`, `commands/1`)
   @box [
     {:choices, "Choices", "List the setting's choices", :none},
+    {:default, "Default", "Put the setting back to its default", :none},
+    {:default_all, "Default all", "Put every setting back to its default", :none},
     {:cancel, "Cancel", "Close; put back the box's changes", :none},
     {:help, "Help", "Help about where you are", :none}
   ]
@@ -429,6 +431,7 @@ defmodule Agendum.TUI.Commands do
       properties: "Props",
       sort: "Sort"
     },
+    box: %{default: "Default", default_all: "DfltAll"},
     global: %{macros: "Macro"}
   }
 

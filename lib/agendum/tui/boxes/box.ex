@@ -97,6 +97,14 @@ defmodule Agendum.TUI.Boxes.Box do
   """
   @callback typing?(State.t(), mode) :: boolean
 
+  @doc """
+  The settings' defaults (F8 DEFAULT, ALT-F8 DFLTALL; User's Guide 2-17):
+  each field that has one, with how to put it back, a function of the
+  state. A field without one (a name, a list) is left out; by default a
+  box has none (`Agendum.TUI.Boxes.BoxDefaults`).
+  """
+  @callback defaults(State.t(), mode) :: %{atom => (State.t() -> State.t())}
+
   # The boxes, by their mode's type. A module holds a box's
   # name only (no call at compile time), so the boxes and this module can
   # refer to each other.
@@ -402,6 +410,8 @@ defmodule Agendum.TUI.Boxes.Box do
       def typing?(state, mode), do: state.edit != nil or Map.get(mode, :typing) != nil
       @impl true
       def about(_state, _mode), do: nil
+      @impl true
+      def defaults(_state, _mode), do: %{}
 
       defoverridable width: 2,
                      field: 2,
@@ -410,7 +420,8 @@ defmodule Agendum.TUI.Boxes.Box do
                      commands: 1,
                      run: 3,
                      typing?: 2,
-                     about: 2
+                     about: 2,
+                     defaults: 2
     end
   end
 end

@@ -79,6 +79,16 @@ defmodule Agendum.TUI.DateColumnsTest do
     assert column(state, view) == before
   end
 
+  # F8 and ALT-F8 (User's Guide 2-17): a date column's defaults are the
+  # file's, set in File Properties
+  test "F8 puts a date setting back to the file's; ALT-F8 to the global defaults",
+       %{state: state, view: view} do
+    own = state |> to_show() |> press([" ", " "])
+    assert column(own, view).date.show == :time_date
+    assert column(press(own, {:f, 8}), view).date.show == own.db.date_format.show
+    assert column(press(own, {:alt_f, 8}), view).date == nil
+  end
+
   test "the file's format still changes columns using the global defaults", %{state: state} do
     state =
       press(state, [

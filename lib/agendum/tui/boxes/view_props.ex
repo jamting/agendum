@@ -580,6 +580,36 @@ defmodule Agendum.TUI.Boxes.ViewProps do
     """
   end
 
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): a new view's settings;
+  # the name, the sections and the statistics have no default. Each reads
+  # the view as it is when it runs, so ALT-F8 can run them one after another
+  @impl Box
+  def defaults(_state, mode) do
+    id = mode.view_id
+    new = %Agendum.Core.View{}
+
+    options =
+      Map.new(@options, fn {field, option} ->
+        {field, &option_back(&1, id, option, Map.fetch!(new, option))}
+      end)
+
+    Map.merge(options, %{
+      sorting: &State.run(&1, {:set_sort, id, :view, new.sort}),
+      section_sort:
+        &State.run(&1, {:set_section_sort, id, new.section_sort, &1.db.views[id].section_order}),
+      order:
+        &State.run(&1, {:set_section_sort, id, &1.db.views[id].section_sort, new.section_order}),
+      filter: &State.run(&1, {:set_filters, id, :view, new.filter})
+    })
+  end
+
+  # a Yes/No setting is switched only when it is not its default already
+  defp option_back(state, id, option, default) do
+    if Map.fetch!(state.db.views[id], option) == default,
+      do: state,
+      else: State.run(state, {:toggle_view_option, id, option})
+  end
+
   @impl Box
   def field(_state, %{moving: moving}) when moving != nil, do: :moving
 

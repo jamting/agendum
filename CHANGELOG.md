@@ -4,6 +4,14 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.31.0 — 2026-10-24
+
+F8 (DEFAULT) and ALT-F8 (DFLTALL) in settings boxes, as in Lotus Agenda.
+
+- **F8** puts the highlighted setting back to its default; **ALT-F8** puts back every setting of the box. The default is what something new gets: a new view's settings, a new category's, a fresh start's preferences; a date column goes back to the file's date format (File Properties).
+- In View, Section, Category, Column and File Properties, Utilities ▸ Customize and the Sort box. A name, or a setting with no default, stays as it is ("This setting has no default").
+- Like every change in a box, it applies on ENTER; ESC puts it all back.
+
 ## 0.30.0 — 2026-10-24
 
 Category lists opened from a box, as in Lotus Agenda.
