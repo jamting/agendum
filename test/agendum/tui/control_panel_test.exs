@@ -101,6 +101,23 @@ defmodule Agendum.TUI.ControlPanelTest do
     refute line(state, 1) =~ "@"
   end
 
+  # Agenda's o (Help, View Indicators: the file has a circular reference;
+  # its column unchecked): worked out when a key changes the file, as the
+  # owner chose
+  test "o on the View line while an item is caught in a circular reference", %{state: state} do
+    refute String.at(line(state, 1), 74) == "o"
+    db = state.db
+    {:ok, db, folk} = Core.add_category(db, db.main_id, "Folk")
+    {:ok, db, ed} = Core.add_category(db, folk, "Ed")
+    {:ok, db} = Core.add_condition(db, ed, folk, :not_assigned)
+    state = %{state | db: db}
+
+    # a key that changes the file (a new item) works it out
+    state = press(state, [:down, "Lunch", :enter])
+    assert MapSet.size(state.circular) == 1
+    assert String.at(line(state, 1), 74) == "o"
+  end
+
   describe "while an item is typed" do
     # Agenda's: the File line, the date and EDIT where the time was
     # (checked in Agenda 2.0, 2026-10-25: "File: C:\\APPS\\AGENDA\\SS  10/25/26 EDIT")

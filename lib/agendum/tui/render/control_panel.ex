@@ -369,11 +369,15 @@ defmodule Agendum.TUI.Render.ControlPanel do
     rang = if Agendum.Core.alarm_list(state.db).past == [], do: " ", else: "@"
     marked = if Enum.any?(Database.items(state.db), & &1.marked), do: "♦", else: " "
 
-    # (columns 73, 74, 76 and 78 of 80, as Agenda's)
+    # o while an item is caught in a circular reference (Help, View
+    # Indicators; its column unchecked: the free one before @)
+    circular = if MapSet.size(state.circular) > 0, do: "o", else: " "
+
+    # (columns 73, 74, 75, 76 and 78 of 80, as Agenda's)
     marks =
-      if value_marker(state) <> note <> rang <> marked == "    ",
+      if value_marker(state) <> note <> circular <> rang <> marked == "     ",
         do: "",
-        else: value_marker(state) <> note <> " " <> rang <> " " <> marked <> "  "
+        else: value_marker(state) <> note <> circular <> rang <> " " <> marked <> "  "
 
     right = auto <> marks
     # at least two spaces between the view's name and filter and the rest

@@ -79,7 +79,10 @@ defmodule Agendum.TUI.Update do
     state = BoxCancel.track(before, state)
     # a settings box that just closed is one undo step, or none (ADR 0030)
     state = BoxCancel.settle(before, state)
+    changed? = state.db != before.db
     state = %{state | dirty: state.db != state.saved.db}
+    # Agenda's o, worked out only when the key changed the file (R37)
+    state = if changed?, do: State.refresh_circular(before, state), else: state
 
     state =
       if state.modes == [] or
@@ -314,8 +317,12 @@ defmodule Agendum.TUI.Update do
     clock = State.context(%{state | now: now})
     new_day = if today != state.today, do: [:clear_old_alarms, :recheck_conditions], else: []
 
-    {state, rung} = run_clock(state, new_day ++ [:ring_alarms], clock)
-    state = %{state | now: now, today: today}
+    {ticked, rung} = run_clock(state, new_day ++ [:ring_alarms], clock)
+    ticked = %{ticked | now: now, today: today}
+
+    # a new day re-checks conditions, which may settle or not (R37's o)
+    state =
+      if ticked.db != state.db, do: State.refresh_circular(state, ticked), else: ticked
 
     # the splash screen's three seconds (R52)
     state =

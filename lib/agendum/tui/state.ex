@@ -42,6 +42,7 @@ defmodule Agendum.TUI.State do
           db: Database.t(),
           path: String.t() | nil,
           dirty: boolean,
+          circular: MapSet.t(Database.id()),
           today: Date.t(),
           now: NaiveDateTime.t(),
           width: pos_integer,
@@ -86,6 +87,8 @@ defmodule Agendum.TUI.State do
   defstruct db: nil,
             path: nil,
             dirty: false,
+            # an item caught in a circular reference: Agenda's o (R37)
+            circular: MapSet.new(),
             today: nil,
             now: nil,
             width: 80,
@@ -181,8 +184,47 @@ defmodule Agendum.TUI.State do
 
     # back where the person left this file, if they have been in it (R69);
     # the match tells the compiler's type checker it is still a `State`
-    %__MODULE__{} = Agendum.TUI.Places.restore(state)
+    %__MODULE__{} = state |> Agendum.TUI.Places.restore() |> refresh_circular()
   end
+
+  @doc """
+  Works out which items are caught in a circular reference (Agenda's o,
+  R37): every item when a file is opened, and after a key that changed it
+  (the owner's choice, 2026-10-26: not on every key or redraw) only the
+  items the key changed, unless it changed the categories (their
+  conditions), when every item again. Each item's conditions settle on
+  their own, so the others stay as they were.
+  """
+  @spec refresh_circular(t) :: t
+  def refresh_circular(%__MODULE__{} = state),
+    do: %{state | circular: MapSet.new(Agendum.Core.circular_items(state.db, context(state)))}
+
+  @spec refresh_circular(t, t) :: t
+  def refresh_circular(%__MODULE__{} = before, %__MODULE__{} = state) do
+    if before.db.categories != state.db.categories do
+      refresh_circular(state)
+    else
+      changed = changed_items(before.db, state.db)
+      caught = Agendum.Core.circular_items(state.db, context(state), changed)
+      kept = state.circular |> MapSet.difference(MapSet.new(changed))
+
+      %{
+        state
+        | circular:
+            kept |> MapSet.intersection(live(state.db)) |> MapSet.union(MapSet.new(caught))
+      }
+    end
+  end
+
+  # the items whose text, fields or assignments differ, new ones included
+  defp changed_items(old, new) do
+    for {id, item} <- new.items,
+        Map.get(old.items, id) != item or
+          Map.get(old.links.by_left, id) != Map.get(new.links.by_left, id),
+        do: id
+  end
+
+  defp live(db), do: db.items |> Map.keys() |> MapSet.new()
 
   # Compiles the date rules for the reader's languages and input format,
   # once rather than at every date read (they are kept by both, so rules

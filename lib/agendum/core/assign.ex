@@ -96,21 +96,23 @@ defmodule Agendum.Core.Assign do
   end
 
   @doc """
-  The items whose conditions have not settled, in item order: one more
+  The items whose conditions have not settled (of `ids`, or of every item,
+  in item order): one more
   round of them would change something. Such an item is caught in a
   circular reference (User's Guide 20-21: conditions that keep assigning
   it and taking it out again, which `apply_conditions/4` stops after a
   bounded number of rounds).
   """
-  @spec unsettled(db, Agendum.Core.Context.clock() | nil) :: [id]
-  def unsettled(db, clock \\ nil) do
+  @spec unsettled(db, Agendum.Core.Context.clock() | nil, [id] | nil) :: [id]
+  def unsettled(db, clock \\ nil, ids \\ nil) do
     case condition_set(db, clock, nil) do
       # no conditions, nothing to keep flipping
       {[], _} ->
         []
 
       {with_conditions, conditions} ->
-        for id <- db.item_order,
+        for id <- ids || db.item_order,
+            Map.has_key?(db.items, id),
             settle_conditions(db, id, with_conditions, 1, {conditions, clock}) != db,
             do: id
     end

@@ -813,9 +813,11 @@ defmodule Agendum.Core.Facade.Views do
   @doc """
   The items caught in a circular reference (User's Guide 20-21): their
   conditions keep assigning them to a category and taking them out again.
+  `ids` checks only those items (a front end keeping the set up to date
+  as items change); nil checks every item.
   """
-  @spec circular_items(db, clock) :: [id]
-  def circular_items(db, clock), do: Agendum.Core.Assign.unsettled(db, clock)
+  @spec circular_items(db, clock, [id] | nil) :: [id]
+  def circular_items(db, clock, ids \\ nil), do: Agendum.Core.Assign.unsettled(db, clock, ids)
 
   @doc """
   The items caught in a circular reference in the Show View, under a

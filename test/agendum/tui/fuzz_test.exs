@@ -133,6 +133,15 @@ defmodule Agendum.TUI.Fuzz do
     db
   end
 
+  defp with_circular(db, false), do: db
+
+  defp with_circular(db, true) do
+    {:ok, db, folk} = Agendum.Core.add_category(db, db.main_id, "Folk")
+    {:ok, db, ed} = Agendum.Core.add_category(db, folk, "Ed")
+    {:ok, db} = Agendum.Core.add_condition(db, ed, folk, :not_assigned)
+    db
+  end
+
   # With the alarm list (R38) shown first: one alarm rung, one waiting on an
   # item without a date.
   defp with_alarms(db, false), do: db
@@ -224,6 +233,9 @@ defmodule Agendum.TUI.Fuzz do
             filtered <- boolean(),
             # the alarm list (R38) shown first, with a past and a current alarm
             alarms <- boolean(),
+            # a contradictory condition (Ed, under Folk, if not in Folk), so
+            # that items are caught in a circular reference (R37's o)
+            circular <- boolean(),
             # the Extras preference (R77), off as Agendum starts, or on
             extras <- boolean(),
             max_runs: div(@runs + @parts - 1, @parts),
@@ -236,6 +248,7 @@ defmodule Agendum.TUI.Fuzz do
         |> with_datebook(datebook)
         |> with_macros()
         |> with_alarms(alarms)
+        |> with_circular(circular)
 
       state = start(db, width: width, height: height, extras: extras)
 
@@ -253,6 +266,14 @@ defmodule Agendum.TUI.Fuzz do
 
         # the file stays sound (docs/DATA_MODEL.md, "Invariants")
         assert Invariants.violations(state.db) == [], "after #{inspect(key)}"
+        # the circular items kept up to date as keys change the file are
+        # those worked out afresh (R37's o)
+        assert state.circular ==
+                 MapSet.new(
+                   Agendum.Core.circular_items(state.db, Agendum.TUI.State.context(state))
+                 ),
+               "circular items after #{inspect(key)}"
+
         # every mode on the stack is its struct, none a bare map (Agendum.TUI.Modes)
         assert Enum.all?(state.modes, &is_struct/1), "a bare map mode after #{inspect(key)}"
 
