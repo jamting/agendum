@@ -225,13 +225,19 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
 - [x] (2026-10-25) F8 DESCRP in the Select File box: each file's description (R82)
 - [x] (2026-10-25, overnight) The managers' menus compared (checked in Agenda 2.0): the category manager's was already in the menu test; Agenda's view manager and macro manager have no F10 menu, as ours. The macro manager now has Agenda's help line, title (Macro Manager) and key bar (F2 EditMac, F4 Delete, F6 Props, F7 Learn; F4 deletes as DEL); the view manager's was already Agenda's
 - [x] (2026-10-26, overnight) The `.AG` import keeps the file's own global date format (header word `0x182`, decoded by experiment in Agenda 2.0; DATES.AG made for the test), and its description, Make backup on open and tab size; date columns' formats now read all six separators, all twenty formats and the time separator (`agdump.py` and the Elixir reader alike)
+- [x] (2026-10-26, overnight) The Search and Show Match boxes drawn as Agenda's (Show Match keeps a blank row for Direction; no hint rows), with Agenda's help lines; the rest of Search's differences are listed above for the owner
   - Unchecked: what Agenda does with an alarm when its date category is deleted (ours: back on When)
 
 #### Commands and behaviour still missing
 
 The order (meeting 2026-10-25, § 7): the small steps below in one or two batches, then Search compared with Agenda's, then Agenda's help (under Help) last; the Optional ones wait for the roadmap.
 
-- [ ] Search compared with Agenda's (ALT-F6 SEARCH in a view and a note, its Search box, the Match show view): the differences become parity work (the tagging sitting, 2026-10-22: no longer an enhancement)
+- [ ] Search as Agenda's: the differences found (overnight 2026-10-26, checked in Agenda 2.0 on RICH.AG), each a habit change for the owner to settle:
+  - [ ] ENTER on Search for takes the typed text and stays in the box, as in every Agenda box; a second ENTER searches (ours searches on the first ENTER)
+  - [ ] A forward search starts after the highlighted item, which is not a match itself (from "Call Bob about the budget", searching "the" went to "Write to the bank"); ours starts on it
+  - [ ] Search mode as Agenda shows it: the File line with the date and no time, the key bar with F1 Help only, and no message ("Match 1 of 2 · ALT-N next …", "Search ended" are ours)
+  - [ ] ALT-N past the last match stays there without a message (Agenda may beep; unheard); ours says there are no more
+  - [ ] No match: Agenda's Error box, "Agenda couldn't find any matches for the text you entered." (Press any key to continue); ours says it on the control panel
 - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)
 - [ ] Show Circular (with the `o` indicator): needs circular references found first (User's Guide 20-21)
 - [ ] File Properties' Set file password, with Agenda's New File box asking for a description and password when a file is made (real encryption: an ADR first; meeting 2026-10-25, § 7: required; the owner, 2026-10-25: a step of its own)

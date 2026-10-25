@@ -12,7 +12,8 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   ALT-N / ALT-P go to the next / previous match, F7 marks the highlighted
   item, ENTER or ESC ends. Searching the file fills the Show View.
   The matching rules are `Agendum.Core.Search`. The box is drawn from
-  `@layout` (`Agendum.TUI.Boxes.Template`). Pure.
+  `@layouts` (`Agendum.TUI.Boxes.Template`), one for each scope, as
+  Agenda's Search and Show Match boxes. Pure.
   """
 
   use Agendum.TUI.Boxes.Box, finish: :done, choices: true
@@ -21,21 +22,35 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   alias Agendum.TUI.Boxes.{Box, Template}
   alias Agendum.TUI.{Keymap, Layout, Typing.LineEdit, State, Update.Prompts}
 
-  # Direction only when searching the view
-  @layout """
-   Search for  : [text                                        ]
-   Match on    : [on                                          ]
-   Direction   : [direction                                   ]
-   Ignore case : [ignore_case                                 ]
+  # Agenda's Search and Show Match boxes (checked in Agenda 2.0,
+  # 2026-10-26): Show Match has no Direction, its row left blank
+  @layouts %{
+    view: """
 
-   Pat* finds Pat, Patty… · (a phrase)
-  """
+       Search for:    [text                                        ]
+       Match on:      [on                                          ]
+       Direction:     [direction                                   ]
+       Ignore case:   [ignore_case                                 ]
 
+    """,
+    file: """
+
+       Search for:    [text                                        ]
+       Match on:      [on                                          ]
+
+       Ignore case:   [ignore_case                                 ]
+
+    """
+  }
+
+  # Agenda's help lines, field by field
   @help %{
-    text: "Type the text to search for. Pat* finds Pat and Patty. ENTER searches.",
-    on: "Choose whether to search the item text, the note, or both. SPACE changes it.",
-    direction: "Search forward, backward, or from the beginning of the view. SPACE changes it.",
-    ignore_case: "Whether capital and small letters match alike. SPACE switches."
+    text: "Enter the text to search for.",
+    on: "Press F3 to choose which text to search.",
+    direction: "Choose the direction of the search from the position of the cursor.",
+    ignore_case:
+      "Choose whether to include matches if the use of upper/lowercase letters " <>
+        "isn't the same as you typed in SEARCH FOR."
   }
 
   @directions [:forward, :backward, :beginning]
@@ -92,7 +107,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   end
 
   def run(state, mode, id),
-    do: Box.run_settings(state, mode, Template.grid(@layout, rows(mode)), id)
+    do: Box.run_settings(state, mode, Template.grid(@layouts[mode.scope], rows(mode)), id)
 
   defp edit_text(state, mode, key) do
     case LineEdit.handle(mode.line, key) do
@@ -234,27 +249,26 @@ defmodule Agendum.TUI.Boxes.SearchBox do
 
   @impl Box
   def title(_state, %{scope: :view}), do: "Search"
-  def title(_state, %{scope: :file}), do: "Search the whole file (Show View)"
+  def title(_state, %{scope: :file}), do: "Show Match"
 
   @impl Box
-  def content(state, mode, inner, _max_rows) do
+  def content(state, mode, _inner, _max_rows) do
     values = %{
       # the text is always typed in, so it is drawn as the input line
       text: "",
       on: %{item: "Item text", note: "Note text", both: "Both item & note"}[mode.search.on],
       # nil leaves the row out: searching the file has no direction
       direction:
-        if(mode.scope == :view,
-          do:
-            %{forward: "Forward", backward: "Backward", beginning: "Search from beginning"}[
-              mode.direction
-            ]
-        ),
+        %{forward: "Forward", backward: "Backward", beginning: "Search from beginning"}[
+          mode.direction
+        ],
       ignore_case: if(mode.search.ignore_case, do: "Yes", else: "No")
     }
 
-    Template.render(@layout, values, selected: field(state, mode), editing: {:text, mode.line}) ++
-      [Box.hint(keys(state, mode), inner)]
+    Template.render(@layouts[mode.scope], values,
+      selected: field(state, mode),
+      editing: {:text, mode.line}
+    )
   end
 
   @impl Box
