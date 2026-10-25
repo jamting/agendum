@@ -61,11 +61,13 @@ defmodule Agendum.TUI.BoxChoicesTest do
     state = press(date_format(state), {:f, 3})
     assert %{type: :choice_list} = State.mode(state)
     text = screen(state)
-    assert text =~ "Choices: Date format"
+    # Agenda's Choices box (checked in Agenda 2.0, 2026-10-25): titled
+    # Choices, nothing in its bottom edge
+    assert text =~ ~r/─ Choices ─/
+    refute text =~ "Choices: Date format"
     assert text =~ "YYYYMMDD"
     assert text =~ "Relative"
-    # a narrow box: Agenda's words, shortened
-    assert text =~ "ENTER accept · ESC cancel"
+    refute text =~ "ENTER accept · ESC cancel"
 
     state = press(state, [:down, :down, :enter])
     assert state.db.date_format.order == :yyyyddmm

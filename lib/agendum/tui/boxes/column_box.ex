@@ -326,7 +326,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   # --- a standard column's Format (R56) ---
 
   defp change(state, mode, :format, step) do
-    formats = View.Column.formats()
+    formats = formats(state, column(state, mode).format)
     index = Enum.find_index(formats, &(&1 == column(state, mode).format))
     format = Enum.at(formats, Integer.mod(index + step, length(formats)))
     display(state, mode, format: format)
@@ -357,6 +357,17 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
 
   defp set_date(state, mode, format),
     do: State.run(state, {:set_column_date_format, state.view_id, mode.column, format})
+
+  @doc """
+  A standard column's formats to choose from: Agenda's, and the Zettel id
+  (ours, R73a) only with Extras on (R77), or when the column has it already.
+  """
+  @spec formats(State.t(), View.Column.format()) :: [View.Column.format()]
+  def formats(state, current) do
+    if state.prefs.extras or current == :zettel,
+      do: View.Column.formats(),
+      else: List.delete(View.Column.formats(), :zettel)
+  end
 
   @doc "The date format the column shows: its own or the file's."
   def date_format(state, mode), do: column(state, mode).date || state.db.date_format

@@ -4,10 +4,11 @@ defmodule Agendum.TUI.Boxes.ChoiceListBox do
   `Agendum.TUI.Boxes.BoxChoices`): its choices, one a line, the current one
   first. ↑↓ (or ← →) choose, HOME / END the first / last; ENTER takes the
   highlighted one (as that many presses of SPACE, one change), ESC leaves
-  the setting as it was. Pure.
+  the setting as it was. Titled "Choices", with nothing in its bottom edge,
+  as Agenda's (checked in Agenda 2.0, 2026-10-25). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
+  use Agendum.TUI.Boxes.Box, finish: :none, indicator: "CHOICES"
 
   alias Agendum.TUI.Boxes.{Box, BoxChoices}
   alias Agendum.TUI.State
@@ -46,8 +47,7 @@ defmodule Agendum.TUI.Boxes.ChoiceListBox do
   def run(state, mode, id), do: Box.list_move(state, mode, length(mode.labels), id)
 
   @impl Box
-  def title(_state, %{title: ""}), do: "Choices"
-  def title(_state, %{title: title}), do: "Choices: " <> title
+  def title(_state, _mode), do: "Choices"
 
   # a small box, as Agenda's
   @impl Box

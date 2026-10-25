@@ -4,6 +4,9 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **F3 choice lists** are titled "Choices", with nothing in the bottom edge, as in Agenda.
+- Column Add's **Category type** goes Standard → Numeric → Date, Agenda's order.
+- Fixed: a column's Format offered Zettel id while Extras was off.
 ## 0.36.0 — 2026-10-25
 
 Messages in Lotus Agenda's words.

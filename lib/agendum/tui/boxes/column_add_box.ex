@@ -7,7 +7,7 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
       new one (`Agendum.TUI.Boxes.FieldTyping`); F3 or SPACE opens the picker
       (the whole hierarchy, where INS makes a new category); ENTER without
       a head does too.
-    * Category type (User's Guide 3-17): Standard, Date or Numeric. A
+    * Category type (User's Guide 3-17): Standard, Numeric or Date. A
       standard head (or none yet) can be given another type, which it gets
       when the column is added, after the same question Category
       Properties asks when children or items would change; a date or
@@ -32,7 +32,6 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
   alias Agendum.TUI.Boxes.{Box}
 
   alias Agendum.Core
-  alias Agendum.Core.View
   alias Agendum.TUI.{CategoryScreens, Boxes.ColumnBox, Boxes.FieldTyping, State, Boxes.Template}
   alias Agendum.TUI.CategoryScreens.Properties
   alias Agendum.TUI.Update.Prompts
@@ -187,7 +186,8 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
 
   defp change(state, _mode, :head, _step), do: pick_head(state)
 
-  @kinds [:standard, :date, :numeric]
+  # Agenda's order (checked in Agenda 2.0, 2026-10-25)
+  @kinds [:standard, :numeric, :date]
 
   defp change(state, mode, :type, step) do
     if mode.head && state.db.categories[mode.head].kind != :standard do
@@ -203,7 +203,7 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
 
   # Agenda's formats, in its order (R56)
   defp change(state, mode, :format, step) do
-    formats = View.Column.formats()
+    formats = Agendum.TUI.Boxes.ColumnBox.formats(state, mode.format)
     index = Enum.find_index(formats, &(&1 == mode.format))
 
     State.put_mode(state, %{

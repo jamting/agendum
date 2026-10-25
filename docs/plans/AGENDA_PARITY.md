@@ -172,11 +172,11 @@ These are rough: a count of commands and rules, not of how much each matters. By
 
 ## The steps
 
-The parity work, in the order it is planned (the owner reorders it): each item small and test-first, built with the `feature` skill. This is the only list of it; `ROADMAP.md` points here, and its "In order" list names the next few. A finished item is ticked and moved to `ROADMAP_DONE.md` (Milestone 2), as every roadmap item is. Done so far: the groundwork of the truthful clone (the extras' shelf, ADR 0044; the Extras preference, R77; Agenda's menus captured and compared by a test), the tagging of the two lists above (2026-10-22), View Properties (R78) with Number items (R79), the shortcut entries out of the menus, recurring items on every date they recur, and editing one shows its rule (R14a) (2026-10-23); the key bar on two lines and ALT-K's bars (R80, ADR 0045), Agenda's menus (R81, R81a, with the Section Add box, R61), settings boxes applying on ENTER (ADR 0030), category lists from a box (R81b), and F8 / ALT-F8 in boxes (R81c) (2026-10-24); a date or numeric category's properties (R6a, 2026-10-25). The order: View Properties first and recurring items second, as the owner met both in daily use (meeting 2026-10-22, § 5f), the shortcut entries leaving the menus once View Properties was built (owner, 2026-10-23); the rest grouped by kind, the most used first.
+The parity work, in the order it is planned (the owner reorders it): each item small and test-first, built with the `feature` skill. This is the only list of it; `ROADMAP.md` points here, and its "In order" list names the next few. A finished item is ticked and moved to `ROADMAP_DONE.md` (Milestone 2), as every roadmap item is. Done so far: the groundwork of the truthful clone (the extras' shelf, ADR 0044; the Extras preference, R77; Agenda's menus captured and compared by a test), the tagging of the two lists above (2026-10-22), View Properties (R78) with Number items (R79), the shortcut entries out of the menus, recurring items on every date they recur, and editing one shows its rule (R14a) (2026-10-23); the key bar on two lines and ALT-K's bars (R80, ADR 0045), Agenda's menus (R81, R81a, with the Section Add box, R61), settings boxes applying on ENTER (ADR 0030), category lists from a box (R81b), and F8 / ALT-F8 in boxes (R81c) (2026-10-24); a date or numeric category's properties (R6a), and the texts as Agenda's: box titles and labels, the sort box, the Questions box, datebook views' properties, choice lists and messages (2026-10-25). The order: View Properties first and recurring items second, as the owner met both in daily use (meeting 2026-10-22, § 5f), the shortcut entries leaving the menus once View Properties was built (owner, 2026-10-23); the rest grouped by kind, the most used first.
 
 #### Next
 
-The rest of Agenda as the reference for texts (Screens and texts, below).
+No mode word when ready, and only Agenda's mode words elsewhere (Screens and texts, below; settle it with the owner first).
 
 #### Menus as Agenda's
 
@@ -188,12 +188,8 @@ Done: Category properties of a date or numeric category as Agenda's (R6a, 2026-1
 
 #### Screens and texts
 
-- [ ] The rest of Agenda as the reference for texts (§ 8), after the menus (done 2026-10-23, `capture_menus.py` and the menu test): the labels in settings boxes, the key bar and messages, captured and compared step by step, each difference tagged. Long help lines are Lotus's text: mind them before going public (GITHUB.md § 7)
-  - [x] The settings boxes captured and compared (2026-10-25, `capture_boxes.py`, `agenda_boxes_test.exs`): 96 differences in 25 boxes, each tagged; the owner chose Agenda's way for the four groups below
-  - [x] Six more boxes captured and compared (2026-10-25): Display Format, Input Format, Item Column Properties, Search, Show Schedule (as Agenda's already), Macro Properties; 21 differences tagged, the owner choosing Agenda's way for the titles, Display Format, Macro Properties and Item Column Properties' Width
-  - [x] Datebook views and Questions captured and compared (2026-10-25)
-  - [ ] Still to capture: Column Add's choices
-  - [x] Messages compared with Agenda's (2026-10-25): Agenda's texts read from AGENDA.RI (`extract_messages.py`), each of our 174 messages paired with Agenda's (`docs/reference/agenda_message_pairs.md`); where Agenda had one for the same situation, its words, adapted (owner's choice), in `Agendum.TUI.Messages`, checked by `agenda_messages_test.exs`
+Done: the rest of Agenda as the reference for texts (2026-10-25: the settings boxes, the choice lists and the messages captured from Agenda 2.0 and compared by tests; `ROADMAP_DONE.md`, Milestone 2).
+
 - [ ] No mode word when ready, and only Agenda's mode words elsewhere (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
 - [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
   - [ ] Rows under a section indented four spaces, and ♪ on a section head (the owner's note, 2026-10-24; checked in Agenda 2.0, PLANNER's People view): an item's tag in column 5 and its text from column 7 (`    • Call Mattias`), its columns staying under their heads; a head's first column kept for ♪ when its category has a note (`♪Göran`), a space otherwise (` Unassigned`). Agenda draws an item's note as ♪ in the tag's place (`    ♪ Call Göran`), not `•♪` as ours (the ♪ above)

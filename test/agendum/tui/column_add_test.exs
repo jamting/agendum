@@ -138,13 +138,15 @@ defmodule Agendum.TUI.ColumnAddTest do
   describe "Category type (User's Guide 3-17)" do
     defp kind(state, name), do: state.db.categories[cat(state.db, name)].kind
 
-    test "a standard head can be made Date or Numeric; ENTER does both, one undo step",
+    # SPACE goes Standard → Numeric → Date, Agenda's order (checked in
+    # Agenda 2.0, 2026-10-25)
+    test "a standard head can be made Numeric or Date; ENTER does both, one undo step",
          %{state: state, view_id: v} do
-      state = state |> pick_priority() |> press([:right, " "])
+      state = state |> pick_priority() |> press([:right, " ", " "])
       assert screen(state) =~ ~r/Category type: +Date/
       # the width follows the type until it is changed
       assert screen(state) =~ ~r/Width: +16/
-      state = press(state, " ")
+      state = press(state, [" ", " "])
       assert screen(state) =~ ~r/Category type: +Numeric/
       assert screen(state) =~ ~r/Width: +12/
       state = press(state, :enter)
@@ -156,13 +158,13 @@ defmodule Agendum.TUI.ColumnAddTest do
 
     test "chosen before the head, it stays for a standard head", %{state: state} do
       state = state |> press([:right, " ", :left]) |> pick_priority()
-      assert screen(state) =~ ~r/Category type: +Date/
+      assert screen(state) =~ ~r/Category type: +Numeric/
     end
 
     test "when children or items would change, it asks first, as Category Properties does",
          %{state: state} do
       {:ok, db, _} = Core.add_category(state.db, cat(state.db, "Priority"), "High")
-      state = %{state | db: db} |> pick_priority() |> press([:right, " ", " ", :enter])
+      state = %{state | db: db} |> pick_priority() |> press([:right, " ", :enter])
       assert screen(state) =~ "Convert Priority to numeric?"
       state = press(state, "n")
       # nothing changed, and the box is still open
@@ -177,6 +179,13 @@ defmodule Agendum.TUI.ColumnAddTest do
       assert panel(state) =~ "stays a date category"
       assert screen(state) =~ ~r/Category type: +Date/
     end
+  end
+
+  # Zettel ids are an extra (R73a): their format shows only with Extras on
+  test "Format's choices are Agenda's while Extras is off", %{state: state} do
+    text = state |> to_setting("Format") |> press({:f, 3}) |> screen()
+    assert text =~ "Category note"
+    refute text =~ "Zettel id"
   end
 
   test "the box starts with the file's Insert new columns in", %{state: state} do
