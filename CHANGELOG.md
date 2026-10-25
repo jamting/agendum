@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- A filled **column entry** has a small **·** before it, as in Lotus Agenda (the item is in that column's category); numbers have none.
 ## 0.39.0 — 2026-10-25
 
 Views drawn as in Lotus Agenda: indented rows, ♪ and ♦ in their places, and » on the highlighted row.

@@ -74,7 +74,7 @@ defmodule Agendum.TUI.ColumnMoveTest do
       # When and Priority, then the item text, then Contact
       assert [head, item | _] = lines(state)
       assert head =~ ~r/^ When +Priority +Calls +Contact/
-      assert item =~ ~r/^ 2026-10-31 +Medium +• Set up meeting/
+      assert item =~ ~r/^·2026-10-31 +·Medium +• Set up meeting/
       assert position(state) == 2
       # the highlight stays on the item text
       assert state.col == 0

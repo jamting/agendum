@@ -41,7 +41,7 @@ defmodule Agendum.TUI.ColumnFormatsTest do
     refute Database.member?(state.db, tom, staff(state))
     state = press(state, [:down, " "])
     assert Database.explicit?(state.db, other, staff(state))
-    assert screen(state) =~ ~r/Order paper +\*/
+    assert screen(state) =~ ~r/Order paper +·\*/
     # one undo step each
     assert History.undo(state).db |> Database.member?(other, staff(state)) == false
   end
@@ -50,7 +50,7 @@ defmodule Agendum.TUI.ColumnFormatsTest do
        %{state: state, view_id: v, tom_item: tom, other: other} do
     state = state |> with_format(v, format: :yes_no) |> press("n")
     refute Database.member?(state.db, tom, staff(state))
-    assert screen(state) =~ ~r/Call Tom +N/
+    assert screen(state) =~ ~r/Call Tom +·N/
     state = press(state, [:down, "Y"])
     assert Database.member?(state.db, other, staff(state))
     state = press(state, ["t", "o", "m", :enter])
@@ -62,7 +62,7 @@ defmodule Agendum.TUI.ColumnFormatsTest do
     state = with_format(state, v, format: :note, title: "Phone")
     state = press(state, ["5", "5", "5", "-", "9", "9", "9", "9", :enter])
     assert state.db.categories[cat(state.db, "Tom")].note == "Telephone: 555-9999"
-    assert screen(state) =~ ~r/Call Tom +555-9999/
+    assert screen(state) =~ ~r/Call Tom +·555-9999/
     # F2 edits what is there; DEL empties the line
     assert state |> press({:f, 2}) |> Map.fetch!(:edit) |> Map.fetch!(:line) |> Map.fetch!(:text) ==
              "555-9999"
@@ -95,7 +95,7 @@ defmodule Agendum.TUI.ColumnFormatsTest do
        %{state: state, view_id: v, tom_item: tom} do
     {:ok, db, _} = Core.attach_zettels(state.db, [tom])
     state = with_format(%{state | db: db}, v, format: :zettel)
-    assert screen(state) =~ ~r/Call Tom +bonalaku/
+    assert screen(state) =~ ~r/Call Tom +·bonalaku/
     assert screen(state) =~ "Zettel id"
 
     typed = press(state, "x")

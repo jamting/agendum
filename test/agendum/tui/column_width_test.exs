@@ -48,7 +48,7 @@ defmodule Agendum.TUI.ColumnWidthTest do
     state = press(state, @width ++ ["1", "0"])
     assert panel(state) =~ "Column width: 10"
     # the column ends right after the short names (User's Guide 19-2)
-    assert screen(state) =~ ~r/Low\s+Abigail\n/
+    assert screen(state) =~ ~r/Low\s+·Abigail\n/
     state = press(state, [:backspace, :backspace, "2", "0", :enter])
     assert contact_width(state) == 20
   end

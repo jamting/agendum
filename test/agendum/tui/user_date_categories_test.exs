@@ -113,6 +113,6 @@ defmodule Agendum.TUI.UserDateCategoriesTest do
 
     heat = Enum.find(Map.values(state.db.items), &(&1.text == "heat")).id
     assert Database.item_date(state.db, heat, due) == ~D[2026-10-16]
-    assert screen(state) =~ ~r/heat\s+2026-10-16 15:00/
+    assert screen(state) =~ ~r/heat\s+·2026-10-16 15:00/
   end
 end

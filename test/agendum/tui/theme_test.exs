@@ -166,7 +166,10 @@ defmodule Agendum.TUI.LookTest do
 
   defp styles_at(state, row, text) do
     line = Enum.at(Render.render(state), row)
-    col = line |> Enum.map_join(&elem(&1, 1)) |> :binary.match(text) |> elem(0)
+    joined = Enum.map_join(line, &elem(&1, 1))
+    # :binary.match/2 counts bytes; the screen's columns are characters (· ♪)
+    {bytes, _} = :binary.match(joined, text)
+    col = joined |> binary_part(0, bytes) |> String.length()
     styles_of(line, col, String.length(text))
   end
 

@@ -14,7 +14,7 @@ defmodule Agendum.TUI.ViewTest do
     screen = screen(state)
     assert screen =~ "View: Activities"
     assert screen =~ ~r/Calls\s+When\s+Priority\s+Contact/
-    assert screen =~ ~r/Don't forget to call Anna Lasky.*High\s+Anna Lasky/
+    assert screen =~ ~r/Don't forget to call Anna Lasky.*High\s+·Anna Lasky/
     assert slots(state) =~ "F9 Cat Mgr F10 Menu"
   end
 
@@ -40,6 +40,17 @@ defmodule Agendum.TUI.ViewTest do
     marked = state |> press({:f, 7}) |> screen() |> String.split("\n")
     assert Enum.find(marked, &(&1 =~ "Set up meeting")) =~ ~r/^    ♪♦Set up meeting/
     assert Enum.find(marked, &(&1 =~ "Don't forget")) =~ ~r/^    • Don't forget/
+  end
+
+  # Agenda's · (checked in Agenda 2.0, 2026-10-25; Help "View
+  # Indicators": the item is assigned to the column's head): before every
+  # filled entry, dates and note lines too, but not before a number
+  test "a filled column entry has · before it, as Agenda's", %{state: state} do
+    state = %{state | width: 80}
+    line = fn text -> state |> screen() |> String.split("\n") |> Enum.find(&(&1 =~ text)) end
+    assert line.("Call Marketing") =~ ~r/·\d{4}-\d\d-\d\d +·Low +·Abigail Scheer/
+    # an empty entry has none
+    refute line.("Check with Abigail") =~ ~r/ ·  /
   end
 
   # Agenda's » (checked in Agenda 2.0, 2026-10-25): on the item text, the
@@ -350,7 +361,7 @@ defmodule Agendum.TUI.ViewTest do
     state = press(state, [:down, :right, :right, :right] ++ width)
     screen = screen(state)
     # the column ends right after the short names
-    assert screen =~ ~r/Low\s+Abigail\n/
-    assert screen =~ ~r/Medium\s+Daniel\n/
+    assert screen =~ ~r/Low\s+·Abigail\n/
+    assert screen =~ ~r/Medium\s+·Daniel\n/
   end
 end

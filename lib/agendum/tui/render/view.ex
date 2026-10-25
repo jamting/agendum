@@ -362,7 +362,15 @@ defmodule Agendum.TUI.Render.View do
             [{if(selected and state.col == i, do: :cursor_cell, else: :cell), text}]
         end
 
-      [{:normal, " "} | cell_part] ++ percent_part(column, {:cell, percent || ""})
+      # Agenda's · before a filled entry (Help "View Indicators": the item
+      # is assigned to the column's head; checked in Agenda 2.0,
+      # 2026-10-25), not before a number
+      dot =
+        if String.trim(cell) != "" and not Text.numeric?(state, column),
+          do: {:symbol, "·"},
+          else: {:normal, " "}
+
+      [dot | cell_part] ++ percent_part(column, {:cell, percent || ""})
     end)
   end
 
@@ -372,8 +380,11 @@ defmodule Agendum.TUI.Render.View do
     at = Layout.items_at(row)
 
     case Enum.at(cells, at) do
-      [{:normal, " "} | rest] -> List.replace_at(cells, at, [{:symbol, "»"} | rest])
-      _ -> cells
+      [{_, mark} | rest] when mark in [" ", "·"] ->
+        List.replace_at(cells, at, [{:symbol, "»"} | rest])
+
+      _ ->
+        cells
     end
   end
 
