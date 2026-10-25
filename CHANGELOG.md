@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **F2** in the **assignment profile** (F3 on an item) renames the highlighted category, typed in the control panel, as in Agenda.
 - A box's **category field** (a column's or a section's head, a new section) **completes as you type**, as in Agenda: AUTOC, `1 of 2 matching categories. Current choice: …`, and ENTER takes the match shown. F5 or INS take exactly what you typed; F2 edits the name as it is.
 ## 0.45.0 — 2026-10-25
 

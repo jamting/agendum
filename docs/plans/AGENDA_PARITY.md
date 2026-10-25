@@ -204,7 +204,7 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
 - [x] (2026-10-25; the owner's choices: category names in the control panel, the File line while typing an item, Agenda's AUTOC keys with ours kept quietly) Editing: Agenda's editing keys and bar wherever a line is typed (F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, F5 Note, F1 Help; `Typing.LineClip`); typing an item under the File line with EDIT in the time's place; category names, column entries and dates typed on the control panel's second line under Agenda's words ("Category name:", "Date:", "1 of 2 matching categories. Current choice: …"), AUTOC's bar Help Choices NewCat PrevSel NextSel
 - [ ] What the Editing step left (2026-10-25), in steps:
   - [x] (2026-10-25; the owner's choice) Completion (AUTOC) in a box's typed category fields (a column's or section's head, a new section): every category matches, ENTER takes the match shown, F5 / INS exactly what was typed, F2 edits without completion; a numeric column's word "Number:" checked in Agenda. Not done: Execute's and Show Schedule's category fields, which ours pick with SPACE rather than by typing
-  - [ ] F2 in the assignment profile renames the highlighted category in the control panel (Agenda's)
+  - [x] (2026-10-25) F2 in the assignment profile renames the highlighted category in the control panel (Agenda's)
   - [ ] Agenda's "What to copy" box (one field, Word / Line / All text, SPACE and F3, ENTER accepts) in a note and while typing a line (the owner's choice; ours: a list)
 
 #### Commands and behaviour still missing

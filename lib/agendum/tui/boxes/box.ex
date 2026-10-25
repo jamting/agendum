@@ -284,6 +284,7 @@ defmodule Agendum.TUI.Boxes.Box do
     default: "Default",
     default_all: "DfltAll",
     # Agenda's category lists (F3 from a box, the assignment profile)
+    rename: "Edit",
     toggle: "InclCat",
     clear_all: "ClrCats"
   }

@@ -101,6 +101,8 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
     |> Map.merge(%{
       {:char, " "} => :toggle,
       {:f, 7} => :toggle,
+      # EDIT: the highlighted category's name, typed in the control panel
+      {:f, 2} => :rename,
       {:f, 6} => :category_props,
       :enter => :close,
       :esc => :close,
@@ -113,6 +115,7 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
   def commands(_mode) do
     [
       {:toggle, "Assign", "Assign or unassign the category"},
+      {:rename, "Edit", "Rename the highlighted category"},
       {:category_props, "Props", "The highlighted category's properties"}
     ] ++
       CategoryScreens.list_commands() ++ [{:close, "Return", "Close the profile"}]
@@ -124,6 +127,26 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
     mode = CategoryScreens.clamp(mode, rows)
     key = if id == :toggle, do: {:char, " "}, else: :esc
     screen_key(State.put_mode(state, mode), mode, rows, key)
+  end
+
+  # F2, as Agenda's (checked in Agenda 2.0, 2026-10-25): the name typed on
+  # the control panel's second line (`Render.ControlPanel.entry/1`);
+  # ENTER renames it (`CategoryScreens.commit/4`), ESC leaves it
+  def run(state, mode, :rename) do
+    rows = CategoryScreens.rows(state, mode)
+    id = CategoryScreens.current_id(rows, CategoryScreens.clamp(mode, rows))
+    cat = state.db.categories[id]
+
+    cond do
+      cat == nil ->
+        state
+
+      Database.protected?(state.db, id) ->
+        State.error(state, "#{cat.name} cannot be renamed")
+
+      true ->
+        %{state | edit: %{target: {:rename, id}, line: Agendum.TUI.Typing.LineEdit.new(cat.name)}}
+    end
   end
 
   def run(state, mode, :category_props) do

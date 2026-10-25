@@ -123,6 +123,8 @@ defmodule Agendum.TUI.Render.ControlPanel do
       {{:column_entry, _, head, _}, _} -> {column_label(state, head), line}
       {{:note_line, _, _, n}, _} -> {"Line #{n} of the category's note:", line}
       {{:rename_category, _}, _} -> {"Category name:", line}
+      # a rename from the category manager or the assignment profile
+      {{:rename, _}, _} -> {"Category name:", line}
       # every line typed in the category manager is a category's name
       {_, %{type: :catmgr}} -> {"Category name:", line}
       _ -> nil

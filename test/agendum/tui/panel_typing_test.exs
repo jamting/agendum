@@ -108,6 +108,33 @@ defmodule Agendum.TUI.PanelTypingTest do
     assert line(typing, 1) =~ ~r/^ Anna Berg/
   end
 
+  describe "F2 in the assignment profile (Agenda's EDIT)" do
+    setup %{state: state} do
+      profile = press(state, [:down, {:f, 3}])
+      mode = State.mode(profile)
+      rows = Agendum.TUI.CategoryScreens.rows(profile, mode)
+      at = Enum.find_index(rows, fn {id, _} -> profile.db.categories[id].name == "People" end)
+      %{profile: press(profile, List.duplicate(:down, at - mode.cursor))}
+    end
+
+    test "renames the highlighted category, typed in the control panel", %{profile: profile} do
+      typing = press(profile, {:f, 2})
+      assert line(typing, 0) =~ ~r/^ Category name: +EDIT/
+      assert String.trim(line(typing, 1)) == "People"
+      renamed = press(typing, [" and pets", :enter])
+      assert Enum.any?(Map.values(renamed.db.categories), &(&1.name == "People and pets"))
+      assert %{type: :profile} = State.mode(renamed)
+    end
+
+    test "a category Agenda keeps (Entry) cannot be renamed", %{profile: profile} do
+      mode = State.mode(profile)
+      rows = Agendum.TUI.CategoryScreens.rows(profile, mode)
+      at = Enum.find_index(rows, fn {id, _} -> profile.db.categories[id].name == "Entry" end)
+      entry = press(profile, List.duplicate(:up, mode.cursor - at))
+      assert {:error, _} = press(entry, {:f, 2}).message
+    end
+  end
+
   describe "automatic completion in a box's category field (checked in Agenda 2.0, 2026-10-25)" do
     setup %{state: state} do
       %{column: press(state, [:down, :right, {:f, 10}, "v", "c", "p"])}

@@ -87,6 +87,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | In a settings box: edit the setting's text (a name, a number, a category; a "..." setting opens; a list of choices: nothing) | F2 | **CTRL-E** |
 | In a box, on a field that holds a category (a column head, a schedule's date category, a sort key's category, a suggested category): its Category Properties (PROPS) | F6 | — |
 | In the assignment profile and a category list from a box: switch the highlighted category, as SPACE (INCLCAT); its Category Properties (PROPS) | F7; F6 | —; — |
+| In the assignment profile: rename the highlighted category, typed in the control panel (EDIT) | F2 | **CTRL-E** |
 | In a list of several categories (a filter, conditions, actions, excludes): take them all out (CLRCATS) | F4 | — |
 | A Yes/No question: answer at once; switch the answer shown; accept it; cancel                   | Y / N; SPACE; ENTER; ESC      | Y / N; SPACE; ENTER; ESC                                              |
 
