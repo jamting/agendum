@@ -191,7 +191,6 @@ Done: Category properties of a date or numeric category as Agenda's (R6a, 2026-1
 - [ ] The rest of Agenda as the reference for texts (§ 8), after the menus (done 2026-10-23, `capture_menus.py` and the menu test): the labels in settings boxes, the key bar and messages, captured and compared step by step, each difference tagged. Long help lines are Lotus's text: mind them before going public (GITHUB.md § 7)
   - [x] The settings boxes captured and compared (2026-10-25, `capture_boxes.py`, `agenda_boxes_test.exs`): 96 differences in 25 boxes, each tagged; the owner chose Agenda's way for the four groups below
   - [x] Six more boxes captured and compared (2026-10-25): Display Format, Input Format, Item Column Properties, Search, Show Schedule (as Agenda's already), Macro Properties; 21 differences tagged, the owner choosing Agenda's way for the titles, Display Format, Macro Properties and Item Column Properties' Width
-  - [ ] Display Format drawn as Agenda's, like a date column's part (change back, owner 2026-10-25)
   - [ ] Macro Properties laid out as Agenda's: Contents ..., "Macro can be run from:" with View, Note, Category manager (change back, owner 2026-10-25)
   - [ ] Item Column Properties: Agenda's Width row (change back, owner 2026-10-25)
   - [ ] Still to capture: Datebook settings (a datebook view), Questions with suggestions waiting, Column Add's choices

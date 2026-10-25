@@ -69,34 +69,12 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
 
   # A date column's part, as Agenda's (checked in Agenda 2.0, 2026-10-25):
   # under its title a line, not a setting, says whose settings these are;
-  # then the settings for what the column displays. Agenda hides the time
-  # settings for Date only and the date format for Time only, leaving the
-  # rows where they stand
+  # then the settings for what the column displays
+  # (`Agendum.TUI.Boxes.DateFormatRows.layout/1`)
   @date_head """
                           Date Column Properties
                             [settings          ]
 
-  """
-
-  @date_both """
-   Display date and/or time: [show       ]
-   Show day of week:         [day_of_week]  Clock:          [clock   ]
-   Date format:              [order      ]  Show am/pm:     [am_pm   ]
-   Date separator:           [separator  ]  Time separator: [time_sep]
-  """
-
-  @date_only """
-   Display date and/or time: [show       ]
-   Show day of week:         [day_of_week]
-   Date format:              [order      ]
-   Date separator:           [separator  ]
-  """
-
-  @time_only """
-   Display date and/or time: [show       ]
-   Show day of week:         [day_of_week]  Clock:          [clock   ]
-                                            Show am/pm:     [am_pm   ]
-                                            Time separator: [time_sep]
   """
 
   @max_decimals 6
@@ -116,19 +94,22 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
 
   defp layout(state, mode) do
     case kind(state, mode) do
-      :standard -> @top <> @standard
-      :note -> @top <> @note
-      :numeric -> @top <> rule() <> @numeric
-      :date -> @top <> rule() <> @date_head <> date_part(date_format(state, mode).show)
+      :standard ->
+        @top <> @standard
+
+      :note ->
+        @top <> @note
+
+      :numeric ->
+        @top <> rule() <> @numeric
+
+      :date ->
+        @top <> rule() <> @date_head <> DateFormatRows.layout(date_format(state, mode).show)
     end
   end
 
-  defp date_part(:date), do: @date_only
-  defp date_part(:time), do: @time_only
-  defp date_part(_date_and_time), do: @date_both
-
   # a line across the box, as Agenda draws between the two parts
-  defp rule, do: " " <> String.duplicate("─", 70) <> "\n"
+  defp rule, do: DateFormatRows.rule()
 
   defp kind(state, mode) do
     cat_id = column(state, mode).category_id
@@ -516,8 +497,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
     [[], centred("Formatted Samples"), centred(shown)]
   end
 
-  defp samples(state, mode, :date),
-    do: [[], centred("Formatted Sample"), centred(DateFormat.sample(date_format(state, mode)))]
+  defp samples(state, mode, :date), do: DateFormatRows.sample(date_format(state, mode))
 
   # centred in the box, as Agenda's headings are
   defp centred(text),

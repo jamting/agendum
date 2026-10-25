@@ -31,12 +31,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
   #   :not_built               Agenda has it, Agendum not yet: parity work
   #   :out_of_scope            left out on purpose (SPEC § 6)
   @differences %{
-    "display_format: Agenda's Display date and/or time, not ours" =>
-      {:change_back, "drawn as Agenda's, like a date column's part (owner, 2026-10-25)"},
-    "display_format: ours Display date/time, not Agenda's" =>
-      {:change_back, "drawn as Agenda's, like a date column's part (owner, 2026-10-25)"},
-    "display_format: ours Sample, not Agenda's" =>
-      {:change_back, "drawn as Agenda's, like a date column's part (owner, 2026-10-25)"},
     "item_column_properties: Agenda's Width, not ours" =>
       {:change_back, "Agenda's Width row, the column's width now (owner, 2026-10-25)"},
     "macro_properties: Agenda's Contents, not ours" =>

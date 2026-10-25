@@ -120,27 +120,35 @@ defmodule Agendum.TUI.FilePropertiesTest do
     end
   end
 
+  # drawn as Agenda's, like a date column's part (checked in Agenda 2.0,
+  # 2026-10-25): two columns, the sample centred below
   test "Display format shows the settings with a formatted sample", %{state: state} do
     state = press(state, @display)
     assert %{type: :display_format} = State.mode(state)
     text = screen(state)
     assert text =~ "Display Format"
-    assert text =~ ~r/Date format +: YYYYMMDD/
-    assert text =~ ~r/Date separator +: -/
-    assert text =~ ~r/Clock +: 24 hr/
-    assert text =~ ~r/Show day of week +: No/
-    assert text =~ ~r/Display date\/time +: Date time/
-    assert text =~ ~r/Show am\/pm +: Yes/
-    assert text =~ ~r/Time separator +: :/
-    assert text =~ ~r/Sample +: 1990-11-13 15:25/
+    assert text =~ "Date Column Properties"
+    assert text =~ ~r/Display date and\/or time: +Date time/
+    assert text =~ ~r/Show day of week: +No +Clock: +24 hr/
+    assert text =~ ~r/Date format: +YYYYMMDD +Show am\/pm: +Yes/
+    assert text =~ ~r/Date separator: +- +Time separator: +:/
+    assert text =~ "Formatted Sample"
+    assert text =~ "1990-11-13 15:25"
   end
 
   test "changing a setting changes every date on the screen at once", %{state: state} do
     # Date format: YYYYMMDD -> YYMMDD; then the separator - -> .
-    state = press(state, @display ++ [:down, :down, " ", :down, " "])
+    state =
+      state
+      |> press(@display)
+      |> to_setting("Date format")
+      |> press(" ")
+      |> to_setting("Date separator")
+      |> press(" ")
+
     assert state.db.date_format.order == :yymmdd
     assert state.db.date_format.separator == "."
-    assert screen(state) =~ ~r/Sample +: 90\.11\.13 15:25/
+    assert screen(state) =~ "90.11.13 15:25"
 
     state = press(state, [:enter, :enter, :enter])
     assert state.modes == []
@@ -151,25 +159,43 @@ defmodule Agendum.TUI.FilePropertiesTest do
 
   test "SPACE goes on through the choices; the clock and day of week toggle", %{state: state} do
     # Show day of week; Date format on to DDMMMYYYY; Clock
-    keys = [:down, " ", :down] ++ List.duplicate(" ", 13) ++ [:down, :down, " "]
+    state =
+      state
+      |> press(@display)
+      |> to_setting("Show day of week")
+      |> press(" ")
+      |> to_setting("Date format")
+      |> press(List.duplicate(" ", 13))
+      |> to_setting("Clock")
+      |> press(" ")
 
-    state = press(state, @display ++ keys)
     f = state.db.date_format
     assert f.order == :ddmmmyyyy
     assert f.clock == 12
     assert f.day_of_week
-    assert screen(state) =~ ~r/Sample +: Tue 13 Nov 1990 3:25pm/
+    assert screen(state) =~ "Tue 13 Nov 1990 3:25pm"
   end
 
   test "Agenda's other display settings and formats", %{state: state} do
-    # Display date/time -> Date only; Date format back to Relative; am/pm off
-    state = press(state, @display ++ [" ", :down, :down] ++ List.duplicate(" ", 18))
+    # Display date/time -> Date only (no clock settings then); Date format
+    # on to Relative
+    state = press(state, @display ++ [" "])
     assert state.db.date_format.show == :date
+    refute screen(state) =~ "Clock:"
+    state = state |> to_setting("Date format") |> press(List.duplicate(" ", 18))
     assert state.db.date_format.order == :relative
-    assert screen(state) =~ ~r/Date format +: Relative/
-    assert screen(state) =~ ~r/Sample +: Tomorrow/
+    assert screen(state) =~ ~r/Date format: +Relative/
+    assert screen(state) =~ "Tomorrow"
 
-    state = press(state, [:down, :down, " ", :down, " ", :down, " "])
+    # back to Date time (Time date, Time only, Date time); the clock settings
+    state = state |> to_setting("Display date and/or time") |> press([" ", " ", " "])
+    assert state.db.date_format.show == :date_time
+
+    state =
+      Enum.reduce(["Clock", "Show am/pm", "Time separator"], state, fn label, state ->
+        state |> to_setting(label) |> press(" ")
+      end)
+
     f = state.db.date_format
     assert {f.clock, f.am_pm, f.time_separator} == {12, false, "hm"}
   end

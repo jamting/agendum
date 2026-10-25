@@ -24,7 +24,7 @@ defmodule Agendum.TUI.BoxChoicesTest do
 
     state = press(state, "r")
     assert state.db.date_format.order == :relative
-    assert screen(state) =~ ~r/Date format +: Relative/
+    assert screen(state) =~ ~r/Date format: +Relative/
 
     # again: the next one starting with R
     assert press(state, "r").db.date_format.order == :relative_number

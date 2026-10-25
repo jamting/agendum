@@ -2,13 +2,16 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
   @moduledoc """
   The Display Format box (File ▸ Properties ▸ Global date settings ▸
   Display format; User's Guide 7-13 to 7-17, SPEC R41): how the file shows
-  dates and times, the rows of Agenda's Date Column Properties
-  (`Agendum.TUI.Boxes.DateFormatRows`), with a formatted sample below.
+  dates and times. Agenda draws it as the Column Properties box with its
+  top part blank: a rule, "Date Column Properties", the settings for what
+  the dates display (`Agendum.TUI.Boxes.DateFormatRows.layout/1`: no clock
+  for Date only, no date format for Time only) and a formatted sample
+  (checked in Agenda 2.0, 2026-10-25).
 
   SPACE shows the next choice; every change applies at once and is one
   undo step. ENTER closes the box, ESC closes it and cancels its changes
   (`Agendum.TUI.Boxes.BoxCancel`); either goes back to Global Date Settings.
-  Drawn from `@layout` (`Agendum.TUI.Boxes.Template`). Pure.
+  Drawn from a layout (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
@@ -17,21 +20,18 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
   alias Agendum.TUI.Boxes.{Box, DateFormatRows, Template}
   alias Agendum.TUI.State
 
-  @layout """
-   Display date/time    : [show                              ]
-   Show day of week     : [day_of_week                       ]
-   Date format          : [order                             ]
-   Date separator       : [separator                         ]
-   Clock                : [clock                             ]
-   Show am/pm           : [am_pm                             ]
-   Time separator       : [time_separator                    ]
+  # the blank rows stand where Column Properties has its column's settings
+  @head " \n \n" <>
+          DateFormatRows.rule() <> "                          Date Column Properties\n \n \n"
 
-   Sample               : [sample                            ]
-  """
+  defp layout(state), do: @head <> DateFormatRows.layout(state.db.date_format.show)
 
-  # the sample is shown, not a setting
-  @rows Template.fields(@layout) -- [:sample]
-  @grid Template.grid(@layout, @rows)
+  # the settings in the cursor's order, for the dates as they are shown now
+  defp rows(state), do: Template.fields(layout(state))
+
+  # `time_sep` is the format's `time_separator`
+  defp attribute(:time_sep), do: :time_separator
+  defp attribute(row), do: row
 
   def open(state), do: State.push(state, %Agendum.TUI.Modes.DisplayFormat{cursor: 0})
 
@@ -50,33 +50,39 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
     do:
       State.run(
         state,
-        {:set_date_format, DateFormat.cycle(state.db.date_format, field(state, mode), 1)}
+        {:set_date_format,
+         DateFormat.cycle(state.db.date_format, attribute(field(state, mode)), 1)}
       )
 
-  def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
+  def run(state, mode, id),
+    do: Box.run_settings(state, mode, Template.grid(layout(state), rows(state)), id)
+
+  # as wide as Column Properties, whose box Agenda draws it in
+  @impl Box
+  def width(state, _mode), do: min(state.width - 8, 72)
 
   @impl Box
   def title(_state, _mode), do: "Display Format"
 
   @impl Box
   def content(state, mode, inner, _max_rows) do
-    values =
-      state.db.date_format
-      |> DateFormatRows.values()
-      |> Map.put(:sample, DateFormat.sample(state.db.date_format))
+    format = state.db.date_format
 
-    Template.render(@layout, values, selected: field(state, mode)) ++
-      [[], Box.hint(keys(state, mode), inner)]
+    Template.render(layout(state), DateFormatRows.values(format), selected: field(state, mode)) ++
+      DateFormatRows.sample(format) ++ [[], Box.hint(keys(state, mode), inner)]
   end
 
   @impl Box
   def keys(_state, _mode), do: Box.settings_keys()
 
   @impl Box
-  def help, do: Map.take(DateFormatRows.help(), @rows)
+  def help, do: DateFormatRows.help()
 
   @impl Box
-  def field(_state, mode), do: Enum.at(@rows, mode.cursor)
+  def field(state, mode) do
+    rows = rows(state)
+    Enum.at(rows, min(mode.cursor, length(rows) - 1))
+  end
 
   # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): a new file's display
   # format
@@ -84,15 +90,15 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
   def defaults(_state, _mode) do
     new = Agendum.Core.new_file().date_format
 
-    Map.new(@rows, fn row ->
+    Map.new(DateFormatRows.rows() ++ [:time_sep], fn row ->
       {row,
        fn state ->
          format = state.db.date_format
-         default = Map.fetch!(new, row)
+         default = Map.fetch!(new, attribute(row))
 
-         if Map.fetch!(format, row) == default,
+         if Map.fetch!(format, attribute(row)) == default,
            do: state,
-           else: State.run(state, {:set_date_format, Map.put(format, row, default)})
+           else: State.run(state, {:set_date_format, Map.put(format, attribute(row), default)})
        end}
     end)
   end

@@ -21,6 +21,52 @@ defmodule Agendum.TUI.Boxes.DateFormatRows do
     time_sep: "Choose the character between hours and minutes. SPACE for the next."
   }
 
+  # Agenda hides the time settings for Date only and the date format for
+  # Time only, leaving the rows where they stand (checked in Agenda 2.0,
+  # 2026-10-25). `time_sep` is `time_separator`, too long for its field
+  @date_both """
+   Display date and/or time: [show       ]
+   Show day of week:         [day_of_week]  Clock:          [clock   ]
+   Date format:              [order      ]  Show am/pm:     [am_pm   ]
+   Date separator:           [separator  ]  Time separator: [time_sep]
+  """
+
+  @date_only """
+   Display date and/or time: [show       ]
+   Show day of week:         [day_of_week]
+   Date format:              [order      ]
+   Date separator:           [separator  ]
+  """
+
+  @time_only """
+   Display date and/or time: [show       ]
+   Show day of week:         [day_of_week]  Clock:          [clock   ]
+                                            Show am/pm:     [am_pm   ]
+                                            Time separator: [time_sep]
+  """
+
+  @doc """
+  The settings as Agenda lays them out in a date column's Column
+  Properties and in Display Format (`Agendum.TUI.Boxes.Template`): only
+  those for what `show` displays.
+  """
+  @spec layout(DateFormat.show()) :: String.t()
+  def layout(:date), do: @date_only
+  def layout(:time), do: @time_only
+  def layout(_date_and_time), do: @date_both
+
+  @doc "A line across the box, as Agenda draws above the date settings."
+  def rule, do: " " <> String.duplicate("─", 70) <> "\n"
+
+  @doc "The formatted sample below the settings, centred as Agenda's."
+  def sample(%DateFormat{} = f),
+    do: [[], centred("Formatted Sample"), centred(DateFormat.sample(f))]
+
+  defp centred(text) do
+    left = String.duplicate(" ", div(70 - String.length(text), 2))
+    [{:box, String.pad_trailing(left <> text, 70)}]
+  end
+
   @doc "The settings, top to bottom."
   def rows, do: @rows
 
@@ -28,8 +74,10 @@ defmodule Agendum.TUI.Boxes.DateFormatRows do
   def help, do: @help
 
   @doc "The value shown for each setting, by its row."
-  def values(%DateFormat{} = f),
-    do: @rows |> Enum.zip(lines(f)) |> Map.new(fn {row, {_, v}} -> {row, v} end)
+  def values(%DateFormat{} = f) do
+    values = @rows |> Enum.zip(lines(f)) |> Map.new(fn {row, {_, v}} -> {row, v} end)
+    Map.put(values, :time_sep, values.time_separator)
+  end
 
   # `{label, value}` for each row, in the rows' order
   defp lines(%DateFormat{} = f) do
