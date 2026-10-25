@@ -64,9 +64,6 @@ defmodule Agendum.TUI.Update do
     # a count (ALT-digits, R65) lasts until the next key has used it
     next = if count_key?(key), do: next, else: %{next | count: nil}
 
-    # a settings box keeps how things were when it opened, for ESC
-    next = BoxCancel.track(state, next)
-
     # a box opened from the menu goes back to it on ESC (Agenda's menus)
     next = Menu.resumed(next, key)
 
@@ -76,6 +73,10 @@ defmodule Agendum.TUI.Update do
     # state before the key with the state after it. No key handler records
     # history itself (CLAUDE.md, Undo), so one key is one undo step.
     state = History.record(state, next)
+    # a settings box keeps how things were when it opened, for ESC; after
+    # the undo step is recorded, so a box shown again after a full screen
+    # (a macro's keys edited from Macro Properties) keeps that step too
+    state = BoxCancel.track(before, state)
     # a settings box that just closed is one undo step, or none (ADR 0030)
     state = BoxCancel.settle(before, state)
     state = %{state | dirty: state.db != state.saved.db}

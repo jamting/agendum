@@ -110,4 +110,24 @@ defmodule Agendum.TUI.BoxCancelTest do
     assert %{type: :menu} = State.mode(state)
     assert screen(state) =~ "Set up meeting"
   end
+
+  # Found by the long fuzz run (2026-10-25): a macro's keys edited from
+  # Macro Properties (SPACE opens the macro editor, F5 closes it) are a
+  # full screen over the box; the box then keeps how things are, and each
+  # change made in the editor stays an undo step of its own
+  test "each edit of a macro's keys from Macro Properties is an undo step", %{state: state} do
+    {:ok, db, macro} = Agendum.Core.add_macro(state.db, "Water")
+    db = Agendum.Core.set_macro_keys(db, macro, "Water{ENTER}{DOWN}")
+    state = press(%{state | db: db}, [{:alt_f, 3}, {:f, 6}, :tab])
+
+    Enum.reduce(1..2, state, fn _, state ->
+      before = state
+      state = press(state, [" ", :end, "x", {:f, 5}])
+      assert state.db != before.db
+      assert length(state.history.undo) == length(before.history.undo) + 1
+      undone = Agendum.TUI.History.undo(state)
+      assert undone.db.macros == before.db.macros
+      state
+    end)
+  end
 end
