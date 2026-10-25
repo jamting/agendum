@@ -269,6 +269,8 @@ defmodule Agendum.Core do
   defdelegate show_items(db, ids), to: Views
   defdelegate show_alarms(db), to: Views
   defdelegate show_done(db), to: Views
+  defdelegate circular_items(db, clock), to: Views
+  defdelegate show_circular(db, clock), to: Views
   defdelegate show_every(db), to: Views
   defdelegate show_view(db), to: Views
   defdelegate set_section_sort(db, view_id, sort, order), to: Views

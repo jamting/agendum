@@ -90,6 +90,35 @@ defmodule Agendum.Core.Assign do
   """
   @spec apply_conditions(db, id, Agendum.Core.Context.clock() | nil, MapSet.t(id) | nil) :: db
   def apply_conditions(db, item_id, clock \\ nil, only \\ nil) do
+    {with_conditions, conditions} = condition_set(db, clock, only)
+    rounds = length(with_conditions) + 2
+    settle_conditions(db, item_id, with_conditions, rounds, {conditions, clock})
+  end
+
+  @doc """
+  The items whose conditions have not settled, in item order: one more
+  round of them would change something. Such an item is caught in a
+  circular reference (User's Guide 20-21: conditions that keep assigning
+  it and taking it out again, which `apply_conditions/4` stops after a
+  bounded number of rounds).
+  """
+  @spec unsettled(db, Agendum.Core.Context.clock() | nil) :: [id]
+  def unsettled(db, clock \\ nil) do
+    case condition_set(db, clock, nil) do
+      # no conditions, nothing to keep flipping
+      {[], _} ->
+        []
+
+      {with_conditions, conditions} ->
+        for id <- db.item_order,
+            settle_conditions(db, id, with_conditions, 1, {conditions, clock}) != db,
+            do: id
+    end
+  end
+
+  # the categories whose conditions assign, sorted, and every category's
+  # conditions with their date words read
+  defp condition_set(db, clock, only) do
     # Only a standard category's conditions assign. A category made a date
     # or numeric category keeps its conditions, but they do nothing, as in
     # Agenda (its box shows them "Only if Type is Standard"; checked in
@@ -108,8 +137,7 @@ defmodule Agendum.Core.Assign do
           into: %{},
           do: {id, resolve_ranges(db, own_conditions(db, id), clock)}
 
-    rounds = length(with_conditions) + 2
-    settle_conditions(db, item_id, Enum.sort(with_conditions), rounds, {conditions, clock})
+    {Enum.sort(with_conditions), conditions}
   end
 
   defp settle_conditions(db, _item_id, _cats, 0, _conditions), do: db

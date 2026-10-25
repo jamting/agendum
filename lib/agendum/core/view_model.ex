@@ -406,12 +406,14 @@ defmodule Agendum.Core.ViewModel do
 
   # Show ItemsDone's section is called *Show*, as Agenda's (User's Guide 13-9)
   defp show_section(category, :done), do: %{category | name: "*Show*"}
+  defp show_section(category, {:circular, _}), do: %{category | name: "!Circular Reference!"}
   defp show_section(category, _match), do: category
 
   defp shown?(_item, nil), do: true
   # the alarm list made a datebook: every item, as without a match
   defp shown?(_item, :alarms), do: true
   defp shown?(item, :done), do: item.done != nil
+  defp shown?(item, {:circular, ids}), do: item.id in ids
   defp shown?(item, {:items, ids}), do: item.id in ids
   defp shown?(item, search), do: Agendum.Core.Search.matches?(item, search)
 

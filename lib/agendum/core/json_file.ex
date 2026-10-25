@@ -425,6 +425,7 @@ defmodule Agendum.Core.JSONFile do
   defp match({:items, ids}), do: obj(items: ids)
   defp match(:alarms), do: obj(alarms: true)
   defp match(:done), do: obj(done: true)
+  defp match({:circular, ids}), do: obj(circular: ids)
   defp match(%Search{} = s), do: obj(search: struct_obj(s))
 
   defp struct_obj(%module{} = s),
@@ -911,6 +912,9 @@ defmodule Agendum.Core.JSONFile do
   defp read_match(%{"alarms" => true}, _path), do: :alarms
   defp read_match(%{"done" => true}, _path), do: :done
 
+  defp read_match(%{"circular" => ids} = m, path) when is_list(ids),
+    do: {:circular, req(m, "circular", {:list, :int}, path)}
+
   defp read_match(%{"search" => _} = m, path),
     do: read_struct(m, "search", Search, path <> ".search")
 
@@ -1128,7 +1132,7 @@ defmodule Agendum.Core.JSONFile do
 
     matched =
       case v.match do
-        {:items, ids} -> Enum.all?(ids, &Map.has_key?(items, &1))
+        {kind, ids} when kind in [:items, :circular] -> Enum.all?(ids, &Map.has_key?(items, &1))
         _ -> true
       end
 

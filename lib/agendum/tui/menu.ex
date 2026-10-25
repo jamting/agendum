@@ -146,7 +146,7 @@ defmodule Agendum.TUI.Menu do
          {"Customize", "Your theme, date languages and input format, for every file", :customize},
          {"Execute", "Apply conditions and actions to existing items (ALT-X all, ALT-E one)",
           :execute},
-         {"Show", "Match, Prereqs, Depends, ItemsDone, Alarm, Sched, Every",
+         {"Show", "Match, Prereqs, Depends, ItemsDone, Circular, Alarm, Sched, Every",
           [
             {"Match", "Show every matching item in the file in the Show View", :search_file},
             {"Prereqs", "Show the items this one depends on",
@@ -168,6 +168,7 @@ defmodule Agendum.TUI.Menu do
                 {:show_related, :dependents, :every}}
              ]},
             {"ItemsDone", "Show all Done items.", :show_done},
+            {"Circular", "Show all items caught in circular references.", :show_circular},
             {"Alarm", "Show all items with pending and triggered alarms.", :alarm_list},
             {"Sched", "One date's items in the Show View", :show_schedule},
             {"Every", "Show every item in the file.", :show_every}

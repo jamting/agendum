@@ -276,6 +276,9 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :show_done, _),
     do: Prompts.replace_show_view(state, {__MODULE__, :show, [:show_done]})
 
+  defp do_perform(state, :show_circular, _),
+    do: Prompts.replace_show_view(state, {__MODULE__, :show, [:show_circular]})
+
   defp do_perform(state, :show_every, _),
     do: Prompts.replace_show_view(state, {__MODULE__, :show, [:show_every]})
 

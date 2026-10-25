@@ -14,7 +14,9 @@ defmodule Agendum.Core.View do
   the Show View (R37), or to a list of items (`{:items, ids}`, R43);
   `:alarms` makes it Utilities Show Alarm's list (R38): its two sections
   show the current and the past alarms, whatever their heads; `:done`
-  shows only done items, under a section named *Show* (Show ItemsDone).
+  shows only done items, under a section named *Show* (Show ItemsDone);
+  `{:circular, ids}` lists items under !Circular Reference! (Show
+  Circular).
   `hide_dependent` hides items still waiting for a prerequisite (R43).
   `hide_column_heads` shows column heads only on the first section head
   on the screen (R57); how a front end draws it is its own.
@@ -194,7 +196,11 @@ defmodule Agendum.Core.View do
           filter: [{Agendum.Core.Category.id(), Agendum.Core.View.filter_term()}],
           sort: [SortKey.t()],
           match:
-            Agendum.Core.Search.t() | {:items, [Agendum.Core.Item.id()]} | :alarms | :done | nil,
+            Agendum.Core.Search.t()
+            | {:items | :circular, [Agendum.Core.Item.id()]}
+            | :alarms
+            | :done
+            | nil,
           hide_dependent: boolean,
           hide_column_heads: boolean,
           section_separators: boolean,

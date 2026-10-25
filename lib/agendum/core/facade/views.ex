@@ -811,6 +811,24 @@ defmodule Agendum.Core.Facade.Views do
   end
 
   @doc """
+  The items caught in a circular reference (User's Guide 20-21): their
+  conditions keep assigning them to a category and taking them out again.
+  """
+  @spec circular_items(db, clock) :: [id]
+  def circular_items(db, clock), do: Agendum.Core.Assign.unsettled(db, clock)
+
+  @doc """
+  The items caught in a circular reference in the Show View, under a
+  section called !Circular Reference! (Agenda's Utilities Show Circular;
+  User's Guide 20-21 to 20-22). Returns the view.
+  """
+  @spec show_circular(db, clock) :: {db, id}
+  def show_circular(db, clock) do
+    {db, view_id} = show(db, {:circular, circular_items(db, clock)})
+    {Database.update_view(db, view_id, &%{&1 | hide_done: false}), view_id}
+  end
+
+  @doc """
   Every done item in the Show View, under a section called *Show* (Agenda's
   Utilities Show ItemsDone; User's Guide 13-9). Returns the view.
   """

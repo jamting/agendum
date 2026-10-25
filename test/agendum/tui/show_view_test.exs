@@ -35,4 +35,13 @@ defmodule Agendum.TUI.ShowViewTest do
     assert screen(state) =~ ~r/^ MAIN/m
     assert length(items(state)) == length(Database.items(state.db))
   end
+
+  # Show Circular (User's Guide 20-21; checked in Agenda 2.0, 2026-10-26):
+  # !Circular Reference!, empty when nothing is caught
+  test "Circular shows the items caught in a circular reference", %{state: state} do
+    state = press(state, [{:f, 10}, "u", "s", "c"])
+    assert screen(state) =~ "View: *Show View*"
+    assert screen(state) =~ ~r/^ !Circular Reference!/m
+    assert items(state) == []
+  end
 end

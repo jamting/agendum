@@ -35,8 +35,6 @@ defmodule Agendum.TUI.AgendaMenusTest do
       {:out_of_scope, "running another DOS program (SPEC § 6)"},
     "View menu ▸ Utilities ▸ Trash: missing" =>
       {:not_built, "the trash (AGENDA_PARITY § The steps)"},
-    "View menu ▸ Utilities ▸ Show ▸ Circular: missing" =>
-      {:not_built, "Show Circular (AGENDA_PARITY § The steps)"},
     "Category manager menu ▸ Print: missing" =>
       {:out_of_scope, "printing the category hierarchy (SPEC § 6)"},
     "View menu ▸ File ▸ Maintenance ▸ Compress: missing" =>

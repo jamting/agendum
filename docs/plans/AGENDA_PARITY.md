@@ -226,6 +226,7 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
 - [x] (2026-10-25, overnight) The managers' menus compared (checked in Agenda 2.0): the category manager's was already in the menu test; Agenda's view manager and macro manager have no F10 menu, as ours. The macro manager now has Agenda's help line, title (Macro Manager) and key bar (F2 EditMac, F4 Delete, F6 Props, F7 Learn; F4 deletes as DEL); the view manager's was already Agenda's
 - [x] (2026-10-26, overnight) The `.AG` import keeps the file's own global date format (header word `0x182`, decoded by experiment in Agenda 2.0; DATES.AG made for the test), and its description, Make backup on open and tab size; date columns' formats now read all six separators, all twenty formats and the time separator (`agdump.py` and the Elixir reader alike)
 - [x] (2026-10-26, overnight) The Search and Show Match boxes drawn as Agenda's (Show Match keeps a blank row for Direction; no hint rows), with Agenda's help lines; the rest of Search's differences are listed above for the owner
+- [x] (2026-10-26, overnight) Utilities ▸ Show ▸ Circular: the items caught in a circular reference under !Circular Reference! (checked in Agenda 2.0; worked out when asked for)
   - Unchecked: what Agenda does with an alarm when its date category is deleted (ours: back on When)
 
 #### Commands and behaviour still missing
@@ -239,7 +240,7 @@ The order (meeting 2026-10-25, § 7): the small steps below in one or two batche
   - [ ] ALT-N past the last match stays there without a message (Agenda may beep; unheard); ours says there are no more
   - [ ] No match: Agenda's Error box, "Agenda couldn't find any matches for the text you entered." (Press any key to continue); ours says it on the control panel
 - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)
-- [ ] Show Circular (with the `o` indicator): needs circular references found first (User's Guide 20-21)
+- [ ] The `o` indicator at the top right while the file has a circular reference (User's Guide 20-21): working out the circular items is a round of conditions for every item, so whether to do it on every screen or keep the result (a stored mark, as Agenda's !Circular Reference! category) is the owner's to settle
 - [ ] File Properties' Set file password, with Agenda's New File box asking for a description and password when a file is made (real encryption: an ADR first; meeting 2026-10-25, § 7: required; the owner, 2026-10-25: a step of its own)
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated") (moved from the roadmap's Data interchange, owner 2026-10-23; stays optional)
 - [ ] Optional: Import of structured text files (one item per line, with categories) (moved from the roadmap's Data interchange, owner 2026-10-23; stays optional)
