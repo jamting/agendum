@@ -225,7 +225,7 @@ defmodule Agendum.TUI.Render.View do
        ) do
     # Agenda's row (checked in Agenda 2.0, 2026-10-25): four spaces, the
     # item's tag (♪ in the bullet's place when it has a note), its mark (♦
-    # when marked), then the text from the seventh column
+    # when marked, below), then the text from the seventh column
     tag =
       cond do
         item.done -> "‼"
@@ -235,7 +235,14 @@ defmodule Agendum.TUI.Render.View do
         true -> "•"
       end
 
-    mark = if item.marked, do: "♦", else: " "
+    # a marked item's ♦ stands after another tag, or in the bullet's place
+    # (Agenda 2.0, 2026-10-25: "    ♦ Owl", "    ♪♦Owl")
+    {tag, mark} =
+      cond do
+        not item.marked -> {tag, " "}
+        tag == "•" -> {"♦", " "}
+        true -> {tag, "♦"}
+      end
 
     # Agenda's » on the highlighted row (checked in Agenda 2.0, 2026-10-25):
     # on a column entry it takes the bullet's place (another tag stays)

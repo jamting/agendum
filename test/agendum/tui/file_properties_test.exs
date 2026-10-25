@@ -154,7 +154,7 @@ defmodule Agendum.TUI.FilePropertiesTest do
     assert state.modes == []
     text = screen(state)
     assert text =~ "10-31-2026"
-    assert text =~ "10-08-2026 9:00am"
+    assert text =~ "10-08-2026   9:00am"
   end
 
   test "SPACE goes on through the choices; the clock and day of week toggle", %{state: state} do

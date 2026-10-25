@@ -62,6 +62,30 @@ defmodule Agendum.TUI.ControlPanelTest do
     end
   end
 
+  describe "in a view" do
+    # Agenda's clock (checked in Agenda 2.0, 2026-10-25, its DOS clock set
+    # by hand): the date, two spaces, the time right-aligned in seven
+    # columns ("10/25/26   9:18pm", "10/25/26  10:30am"; "10/25/26    09:05"
+    # on a 24-hour clock), at the end of the line
+    test "the File line ends with the date and the time in a field of seven", %{state: state} do
+      assert line(state, 0) =~ ~r/ 10\/12\/26   9:00am$/
+      at_ten = %{state | now: ~N[2026-10-12 10:30:00]}
+      assert line(at_ten, 0) =~ ~r/ 10\/12\/26  10:30am$/
+      iso = %Core.DateFormat{}
+      assert line(%{state | db: %{state.db | date_format: iso}}, 0) =~ ~r/ 2026-10-12    09:00$/
+    end
+
+    # Agenda's mark for marked items (checked in Agenda 2.0, 2026-10-25):
+    # ♦ (CP437 0x04) in column 78 of the View line, after the # and ♪
+    # marks; nothing beside the clock
+    test "♦ on the View line while items are marked", %{state: state} do
+      marked = press(state, [:down, {:f, 7}])
+      assert String.at(line(marked, 1), 77) == "♦"
+      refute line(marked, 0) =~ "♦"
+      refute line(state, 1) =~ "♦"
+    end
+  end
+
   describe "while an item is typed" do
     # Agenda's: the File line, the date and EDIT where the time was
     # (checked in Agenda 2.0, 2026-10-25: "File: C:\\APPS\\AGENDA\\SS  10/25/26 EDIT")

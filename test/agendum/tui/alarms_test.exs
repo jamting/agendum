@@ -12,9 +12,9 @@ defmodule Agendum.TUI.AlarmsTest do
   defp current(state), do: Layout.current_row(state).item
 
   test "the title bar shows the date and time", %{state: state} do
-    assert screen(state) =~ "10/08/26 10:00am"
+    assert screen(state) =~ "10/08/26  10:00am"
     {state, []} = Update.tick(state, ~N[2026-10-08 10:01:30])
-    assert screen(state) =~ "10/08/26 10:01am"
+    assert screen(state) =~ "10/08/26  10:01am"
   end
 
   test "a time in the text shows in the When column", %{state: state} do

@@ -35,7 +35,7 @@ defmodule Agendum.TUI.WordingTest do
   # EDIT while typing; the category manager has no time either
   test "the top right shows Agenda's mode words only", %{state: state} do
     top = fn state -> state |> screen() |> String.split("\n") |> hd() end
-    assert top.(state) =~ ~r/\s{2,}10\/08\/26 9:00am *$/
+    assert top.(state) =~ ~r/\s{2,}10\/08\/26   9:00am *$/
 
     for keys <- [[{:f, 10}], [{:f, 10}, "v", "v", "p"], [{:f, 8}], [{:alt_f, 6}]] do
       refute top.(press(state, keys)) =~ ~r/READY|PROPS|MENU|VW MGR|SEARCH|CHOICES/
@@ -60,7 +60,7 @@ defmodule Agendum.TUI.WordingTest do
 
     top = fn state -> state |> screen() |> String.split("\n") |> hd() end
     refute top.(state) =~ "WRKG"
-    assert top.(%{state | fetching: %{1 => :auto}}) =~ ~r/WRKG +10\/08\/26 9:00am/
+    assert top.(%{state | fetching: %{1 => :auto}}) =~ ~r/WRKG +10\/08\/26   9:00am/
   end
 
   test "a long filter never runs the control panel's parts together", %{state: state} do
@@ -76,7 +76,7 @@ defmodule Agendum.TUI.WordingTest do
 
     state = %{state | db: db, path: "/home/rabbit/rabbit.agenda", dirty: true, width: 80}
     [file, view | _] = String.split(screen(state), "\n")
-    assert file =~ ~r/File: \/home\/rabbit\/rabbit\.agenda \*\s{2,}10\/08\/26 9:00am/
+    assert file =~ ~r/File: \/home\/rabbit\/rabbit\.agenda \*\s{2,}10\/08\/26   9:00am/
     assert view =~ "View: Activities [When 10/08/26..11/30/26]"
 
     assert state |> Agendum.TUI.Render.render() |> hd() |> Agendum.TUI.Terminal.Draw.width() ==
@@ -86,7 +86,7 @@ defmodule Agendum.TUI.WordingTest do
     [file, view | _] = String.split(screen(%{state | width: 40}), "\n")
     assert file =~ ~r/File: …\S+ \*\s{2,}10\/08\/26/
     assert view =~ ~r/View: Activities \[When 10\/08\/26\.\.11\/…$/
-    assert file =~ ~r/10\/08\/26 9:00am$/
+    assert file =~ ~r/10\/08\/26   9:00am$/
     assert %{} = State.view(state)
   end
 end

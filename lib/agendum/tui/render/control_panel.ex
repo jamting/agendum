@@ -289,8 +289,7 @@ defmodule Agendum.TUI.Render.ControlPanel do
   # in a note (on top), as Agenda: the line the cursor is on, INS and EDIT,
   # without the time (R64a)
   defp indicators(state, base) do
-    marked = if Enum.any?(Database.items(state.db), & &1.marked), do: "♦ ", else: ""
-    marks = "  #{marked}#{if state.alarm_rang, do: "@ ", else: ""}#{questions_marker(state)}"
+    marks = "  #{if state.alarm_rang, do: "@ ", else: ""}#{questions_marker(state)}"
 
     case State.mode(state) do
       %{type: :note, edit: edit} when state.edit == nil and state.macro.learning == nil ->
@@ -313,8 +312,18 @@ defmodule Agendum.TUI.Render.ControlPanel do
       _ ->
         word = if word = indicator(state), do: word <> "  ", else: ""
 
-        marks <> word <> DateFormat.datetime(state.now, state.db.date_format) <> " "
+        marks <> word <> clock(state) <> " "
     end
+  end
+
+  # Agenda's clock (checked in Agenda 2.0, 2026-10-25): the date, two
+  # spaces, and the time right-aligned in seven columns, so that "9:18pm"
+  # and "10:30am" end in the same place ("10/25/26   9:18pm")
+  defp clock(state) do
+    format = state.db.date_format
+    date = DateFormat.date(NaiveDateTime.to_date(state.now), format)
+    time = DateFormat.time(NaiveDateTime.to_time(state.now), format)
+    date <> "  " <> String.pad_leading(time, 7)
   end
 
   # a note's line 1 (R64a): "Note for:" and what the note is of, padded as
@@ -348,11 +357,14 @@ defmodule Agendum.TUI.Render.ControlPanel do
     # has a note (User's Guide 12-2)
     note = if Agendum.TUI.Layout.note_here?(state), do: "♪", else: " "
 
-    # (columns 72 and 73 of 80, six blank after them, as Agenda's)
+    # ♦ while any item is marked, four columns further on (Agenda's)
+    marked = if Enum.any?(Database.items(state.db), & &1.marked), do: "♦", else: " "
+
+    # (columns 73, 74 and 78 of 80, as Agenda's)
     marks =
-      if value_marker(state) <> note == "  ",
+      if value_marker(state) <> note <> marked == "   ",
         do: "",
-        else: value_marker(state) <> note <> String.duplicate(" ", 6)
+        else: value_marker(state) <> note <> "   " <> marked <> "  "
 
     right = auto <> marks
     # at least two spaces between the view's name and filter and the rest

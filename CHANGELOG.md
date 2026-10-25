@@ -9,6 +9,8 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 Dates as Lotus Agenda showed them.
 
 - A **new file shows dates as Agenda's**: `10/25/26 9:10pm` (MMDDYY with "/", a 12-hour clock with am/pm). Your files keep the format they have; ISO 8601 is one choice away in File ▸ Properties ▸ Global date settings ▸ Display format (Date format YYYYMMDD, separator "-", Clock 24 hr), and F8 Default there gives Agenda's back. The Planner starter, the demo and imported Agenda files show Agenda's format too.
+- A **marked item** shows ♦ in the bullet's place (`♦ Call Bob`), and the control panel's ♦ moved to the right end of the **View line**, as in Agenda.
+- The **clock** in the title bar is laid out as Agenda's: two spaces after the date, the time right-aligned (`10/25/26   9:18pm`).
 ## 0.48.0 — 2026-10-25
 
 Agenda's Section Select.

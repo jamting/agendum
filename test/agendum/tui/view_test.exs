@@ -37,9 +37,14 @@ defmodule Agendum.TUI.ViewTest do
     i = Enum.find_index(lines, &(&1 =~ "Set up meeting"))
     assert Enum.at(lines, i + 1) =~ ~r/^      \S/
 
+    # a marked item: ♦ after ♪, or in the bullet's place without a note
+    # (Agenda 2.0, 2026-10-25: "    ♦ Owl two", "    ♪♦Owl two")
     marked = state |> press({:f, 7}) |> screen() |> String.split("\n")
     assert Enum.find(marked, &(&1 =~ "Set up meeting")) =~ ~r/^    ♪♦Set up meeting/
     assert Enum.find(marked, &(&1 =~ "Don't forget")) =~ ~r/^    • Don't forget/
+
+    two = state |> press([{:f, 7}, :up, {:f, 7}]) |> screen() |> String.split("\n")
+    assert Enum.find(two, &(&1 =~ "Don't forget")) =~ ~r/^    ♦ Don't forget/
   end
 
   # Agenda's done tag (Help "View Indicators": !! left of the item; the
