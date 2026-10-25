@@ -52,12 +52,12 @@ defmodule Agendum.TUI.Splash do
 
       Copyright 2026 WOL and JW&D - All rights reversed
 
-  Name:              [name                         ]
-  Company:           [company                      ]
+              Name:  [name                         ]
+           Company:  [company                      ]
   """
 
-  @sharing "Use, duplication & sharing of this program are welcome. " <>
-             "Violators may be offered a small something."
+  @sharing "PLES HELP. WE ARE TRYING THINGS OWT RIGHT NOW. " <>
+             "STAY IN TUCH. - WOL"
 
   defp content(state, inner) do
     prefs = state.prefs
