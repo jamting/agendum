@@ -56,7 +56,7 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
   def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
   @impl Box
-  def title(_state, _mode), do: "Display format"
+  def title(_state, _mode), do: "Display Format"
 
   @impl Box
   def content(state, mode, inner, _max_rows) do

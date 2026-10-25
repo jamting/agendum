@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- Four more box titles as Agenda's: **Display Format**, **Input Format**, **Macro Properties** and **Search**.
 - The **splash screen**: the owl and "W O L" stand on the box itself, with no dark block around them.
 
 ## 0.33.0 — 2026-10-25

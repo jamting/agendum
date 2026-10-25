@@ -66,8 +66,8 @@ flowchart LR
     CatProps -- "Note" --> Note["Note editor"]
     FileProps["File Properties"]
     FileProps -- "Global date settings" --> DateSettings["Global date settings"]
-    DateSettings -- "Display format" --> DisplayFormat["Display format"]
-    DateSettings -- "Input format" --> InputFormat["Input format (yours)"]
+    DateSettings -- "Display format" --> DisplayFormat["Display Format"]
+    DateSettings -- "Input format" --> InputFormat["Input Format"]
     FileProps -- "Auto-assign settings" --> AutoAssign["Auto-assign settings"]
     FileProps -- "File statistics" --> FileStats["File statistics"]
     Customize["Utilities Customize"] -- "Input format" --> InputFormat

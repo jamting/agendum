@@ -31,20 +31,14 @@ defmodule Agendum.TUI.AgendaBoxesTest do
   #   :not_built               Agenda has it, Agendum not yet: parity work
   #   :out_of_scope            left out on purpose (SPEC § 6)
   @differences %{
-    "display_format title: Agenda Display Format, ours Display format" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "display_format: Agenda's Display date and/or time, not ours" =>
       {:change_back, "drawn as Agenda's, like a date column's part (owner, 2026-10-25)"},
     "display_format: ours Display date/time, not Agenda's" =>
       {:change_back, "drawn as Agenda's, like a date column's part (owner, 2026-10-25)"},
     "display_format: ours Sample, not Agenda's" =>
       {:change_back, "drawn as Agenda's, like a date column's part (owner, 2026-10-25)"},
-    "input_format title: Agenda Input Format, ours Input format (yours, for every file)" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "item_column_properties: Agenda's Width, not ours" =>
       {:change_back, "Agenda's Width row, the column's width now (owner, 2026-10-25)"},
-    "macro_properties title: Agenda Macro Properties, ours Macro properties: Customize date settings" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "macro_properties: Agenda's Contents, not ours" =>
       {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
     "macro_properties: Agenda's Macro file, not ours" =>
@@ -71,8 +65,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
       {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
     "macro_properties: ours Run from Everywhere else, not Agenda's" =>
       {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
-    "search title: Agenda Search, ours Search this view" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "category_text_matching_long: Agenda's Assignment conditions, not ours" =>
       {:not_built,
        "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},

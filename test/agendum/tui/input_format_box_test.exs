@@ -25,7 +25,7 @@ defmodule Agendum.TUI.InputFormatBoxTest do
     state = open_box(state)
     assert %{type: :input_format} = State.mode(state)
     text = screen(state)
-    assert text =~ "Input format (yours, for every file)"
+    assert text =~ "Input Format"
     assert text =~ ~r/Number order +: Language \(MDY\)/
     assert text =~ ~r/Input date separator *: Language \(\/\)/
     assert text =~ ~r/Input clock +: Language \(12 hr\)/

@@ -14,7 +14,7 @@ defmodule Agendum.TUI.SearchTest do
 
   test "ALT-F6 finds the first match and enters search mode", %{state: state} do
     state = press(state, [{:alt_f, 6}])
-    assert screen(state) =~ "Search this view"
+    assert screen(state) =~ "Search"
 
     state = press(state, ["abigail", :enter])
     assert %{type: :searching} = State.mode(state)

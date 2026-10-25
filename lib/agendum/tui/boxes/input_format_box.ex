@@ -67,7 +67,7 @@ defmodule Agendum.TUI.Boxes.InputFormatBox do
   end
 
   @impl Box
-  def title(_state, _mode), do: "Input format (yours, for every file)"
+  def title(_state, _mode), do: "Input Format"
 
   @impl Box
   def content(state, mode, inner, _max_rows) do

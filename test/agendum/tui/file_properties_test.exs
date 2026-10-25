@@ -124,7 +124,7 @@ defmodule Agendum.TUI.FilePropertiesTest do
     state = press(state, @display)
     assert %{type: :display_format} = State.mode(state)
     text = screen(state)
-    assert text =~ "Display format"
+    assert text =~ "Display Format"
     assert text =~ ~r/Date format +: YYYYMMDD/
     assert text =~ ~r/Date separator +: -/
     assert text =~ ~r/Clock +: 24 hr/

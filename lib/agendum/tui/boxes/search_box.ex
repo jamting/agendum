@@ -232,7 +232,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   # --- the box -------------------------------------------------------------------
 
   @impl Box
-  def title(_state, %{scope: :view}), do: "Search this view"
+  def title(_state, %{scope: :view}), do: "Search"
   def title(_state, %{scope: :file}), do: "Search the whole file (Show View)"
 
   @impl Box

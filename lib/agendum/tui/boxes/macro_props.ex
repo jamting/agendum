@@ -134,7 +134,7 @@ defmodule Agendum.TUI.Boxes.MacroProps do
   end
 
   @impl Box
-  def title(state, mode), do: "Macro properties: #{state.db.macros[mode.macro_id].name}"
+  def title(_state, _mode), do: "Macro Properties"
 
   @impl Box
   def content(state, mode, inner, _max_rows) do
