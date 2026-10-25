@@ -1,0 +1,460 @@
+{
+  "source": "Lotus Agenda 2.0, PLANNER.AG, read by capture_boxes.py",
+  "boxes": {
+    "alarm": {
+      "title": "Set Alarm",
+      "rows": [
+        "",
+        "  Date category:    When",
+        "  Minutes before:   5",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "auto_assign_settings": {
+      "title": "Auto-assign Global Settings",
+      "rows": [
+        "",
+        "  Text matching:           On",
+        "    Match on:                     Item text",
+        "    Required match strength:      Exact (100%)",
+        "    Confirm assignments:          Never",
+        "    Ignore item text enclosed by: \" \"",
+        "    Ignore suffixes:              Yes",
+        "    Ignore accents:               No",
+        "  Assignment conditions:   On",
+        "  Assignment actions:      On",
+        "  Apply conditions:        Automatically",
+        "  If an assignment conflicts with another:  Override the old",
+        "  Relationship of text and assignment conditions:  OR (|)",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "category_add": {
+      "title": "Category Add",
+      "rows": [
+        "",
+        "  Category name:                             Type: Standard",
+        "  Make child of: MAIN                        Match category name: Yes",
+        "  Short name:                                Match short name:    Yes",
+        "  Also match:",
+        "  Note:          ...",
+        "  Note file:",
+        "  Exclusive children: No                     Assignment conditions:",
+        "  Special actions:    No action",
+        "",
+        "                                             Assignment actions:",
+        "  Statistics:         ...",
+        "  Advanced settings:  ...",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "category_date_settings": {
+      "title": "Advanced Settings for When",
+      "rows": [
+        "",
+        "  If an assignment conflicts with another: Global (Override)",
+        "  Assign item date:                 From the item text",
+        "                        Which one:  1",
+        "  Set the item date from Done key:  No",
+        "  Set the item date from When key:  Yes",
+        "  Category can use recurring dates: Yes",
+        "  Category is protected:            Global (No)",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "category_properties": {
+      "title": "Category Properties",
+      "rows": [
+        "",
+        "  Category name: Calls                       Type: Standard",
+        "  Parent is  Activity                        Match category name: Yes",
+        "  Short name:    Phone                       Match short name:    Yes",
+        "  Also match:    Telephone",
+        "  Note:          sdf: sdf",
+        "  Note file:",
+        "  Exclusive children: No                     Assignment conditions:",
+        "  Special actions:    No action",
+        "",
+        "                                             Assignment actions:",
+        "  Statistics:         ...",
+        "  Advanced settings:  ...",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "category_properties_date": {
+      "title": "Category Properties",
+      "rows": [
+        "",
+        "  Category name: When                        Type: Date",
+        "  Parent is  MAIN",
+        "",
+        "",
+        "  Note:          ...",
+        "  Note file:",
+        "",
+        "  Special actions:    No action",
+        "",
+        "                                             Assignment actions:",
+        "  Statistics:         ...",
+        "  Advanced settings:  ...",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "category_properties_numeric": {
+      "title": "Category Properties",
+      "rows": [
+        "",
+        "  Category name: Amount                      Type: Numeric",
+        "  Parent is  MAIN",
+        "",
+        "",
+        "  Note:          ...",
+        "  Note file:",
+        "",
+        "  Special actions:    No action",
+        "",
+        "                                             Assignment actions:",
+        "  Statistics:         ...                      Expenses",
+        "  Advanced settings:  ...",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "category_statistics": {
+      "title": "Category Statistics",
+      "rows": [
+        "",
+        "  Items in category:          2",
+        "  Child categories:           0",
+        "  Used as section heads:      2",
+        "  Included in view filters:   0",
+        "  Included in conditions:     0",
+        "  Included in actions:        0",
+        ""
+      ],
+      "bottom": "Press any key to continue"
+    },
+    "category_text_matching": {
+      "title": "Advanced Settings for Calls;Phone;Telephon...",
+      "rows": [
+        "",
+        "  Text matching:           Global (On)",
+        "    Match on:                     Global (Item text)",
+        "    Required match strength:      Global (Exact - 100%)",
+        "    Confirm assignments:          Global (Never)",
+        "    Ignore suffixes:              Global (Yes)",
+        "    Ignore accents:               Global (No)",
+        "  Assignment conditions:   Global (On)",
+        "  Assignment actions:      Global (On)",
+        "  Apply conditions:        Automatically",
+        "  If an assignment conflicts with another:    Global (Override the old)",
+        "  Allow explicit assignments:                 Yes",
+        "",
+        "  Relationship of text/assignment conditions: Global (OR)",
+        "  Category is protected:                      Global (No)",
+        "  Category can have new children:             Global (Yes)",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "column_add": {
+      "title": "Column Add",
+      "rows": [
+        "",
+        "  Column head:                          Category type: Standard",
+        "  Width:       12                       Insert in:     Current section",
+        "  Position:    Right of current column",
+        "  Format:      Name only",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "column_properties": {
+      "title": "Column Properties",
+      "rows": [
+        "",
+        "  Column head: Priority                 Category type: Standard",
+        "  Width:       8             Link with other sections: Yes",
+        "",
+        "  Format:      Name only",
+        "",
+        "",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "column_properties_date": {
+      "title": "Column Properties",
+      "rows": [
+        "",
+        "  Column head: When                     Category type: Date",
+        "  Width:       9             Link with other sections: Yes",
+        "  #############################################################",
+        "                       Date Column Properties",
+        "                          (Local settings)",
+        "",
+        "  Display date and/or time:  Date only",
+        "  Show day of week:          No",
+        "  Date format:               MMDDYY",
+        "  Date separator:            /",
+        "",
+        "                          Formatted Sample",
+        "                          10/25/26",
+        "                         ###########"
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "customize": {
+      "title": "Utilities Customize",
+      "rows": [
+        "",
+        "  Color:                    Color",
+        "",
+        "  Display key map:          Yes         Display cond/act info: No",
+        "  Display carriage returns: No          Item tag character:",
+        "  Beep on auto-completion:  Yes         Suppress snow:         No",
+        "  Decimal separator:        , (Comma)   Thousands separator:     (Space)",
+        "",
+        "  Text marker display:      Diamond ( )",
+        "  Character set:            Use Agenda default (CP 850)",
+        "  Auto-save interval:       0 min.",
+        "",
+        "  Memory usage:             ...",
+        "  Confirm mode:             Yes",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "execute": {
+      "title": "Execute",
+      "rows": [
+        "",
+        "  Apply conditions attached to",
+        "    category and children of: MAIN  (All categories)",
+        "  Against:                    All items",
+        "",
+        "  Apply actions to:    New assignments only",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "file_properties": {
+      "title": "File Properties",
+      "rows": [
+        "",
+        "  File description:       Activities Planner",
+        "  Set file password:      ...",
+        "  Make backup on open:    No",
+        "  Get reservation:        Automatically",
+        "  Auto-import file:",
+        "",
+        "  Insert new columns in:  Current section",
+        "  Empty trash:            End of day",
+        "",
+        "  Tab size:               5",
+        "",
+        "  Global date settings:   ...   Auto-assign settings:  ...",
+        "  Global protection:      ...   File statistics:       ...",
+        "  Update defaults:        ...",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "file_statistics": {
+      "title": "File Statistics",
+      "rows": [
+        "",
+        "   Unused space:                   1%",
+        "   Items:                          10",
+        "   Items in trash:                 0",
+        "   Items with notes:               1",
+        "   Categories:                     43",
+        "   Average items/category:         1",
+        "   Average categories/item:        5",
+        ""
+      ],
+      "bottom": "Press any key to continue"
+    },
+    "global_date_settings": {
+      "title": "Global Date Settings",
+      "rows": [
+        "",
+        "  Display format:     ...        Input format:   ...",
+        "",
+        "  Morning:            8:00am     Afternoon:      2:00pm",
+        "  Evening:            5:00pm",
+        "",
+        "  Beginning of week:  Sun        End of week:    Sat",
+        "  First quarter:      Jan  1",
+        "  Beginning of year:  Jan  1     End of year:    Dec  31",
+        "  Month alone means:  First day",
+        "",
+        "",
+        "  Process Done items: No action",
+        "",
+        "",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "global_protection": {
+      "title": "Global Protection Settings",
+      "rows": [
+        "",
+        "  Default view protection:                 No protection",
+        "  User can add new views:                  Yes",
+        "",
+        "  Default category protection:             No",
+        "  Default category can have new children:  Yes",
+        "",
+        "  Seal the file:                           ...",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "item_properties": {
+      "title": "Item Properties",
+      "rows": [
+        "",
+        "  Item text:        F#lj upp en artikel som jag l#st",
+        "  Note:             ...",
+        "  Note file:",
+        "  Item statistics:  ...",
+        "  Assigned to:",
+        "    Entry(10/12/26 7:50pm)",
+        "    Follow up",
+        "    Tasks",
+        "    No Priority Assigned",
+        "    Unassigned",
+        "    Miscellaneous Project",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "section_add": {
+      "title": "Section Add",
+      "rows": [
+        "",
+        "  Section head:",
+        "  Insert: Below current section    Columns:",
+        "  Item sorting:             ...      <Items>",
+        "  Section statistics:       ...      Priority",
+        "                                     When",
+        "  Filter:",
+        "",
+        "",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "section_properties": {
+      "title": "Section Properties",
+      "rows": [
+        "",
+        "  Section head: Unassigned",
+        "                                   Columns:",
+        "  Item sorting:             ...      <Items>",
+        "  Section statistics:       ...      Priority",
+        "                                     When",
+        "  Filter:",
+        "",
+        "",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "sort": {
+      "title": "Item Sorting in All Sections",
+      "rows": [
+        "",
+        "  Sort new items:   When item is entered",
+        "",
+        "  Primary sort key",
+        "    Sort on:    Category",
+        "    Order:      Ascending       Sort n/a's: Bottom of section",
+        "    Category:   When",
+        "",
+        "",
+        "  Secondary sort key",
+        "    Sort on:    None",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "view_add": {
+      "title": "View Add",
+      "rows": [
+        "",
+        "  View name:                       Type:          Standard",
+        "  Item sorting:    ...             Sections:",
+        "  Section sorting: None",
+        "",
+        "  Hide empty sections:   No",
+        "  Hide done items:       No",
+        "  Hide dependent items:  No",
+        "  Hide inherited items:  No",
+        "  Hide column heads:     No",
+        "  Section separators:    No",
+        "  Number items:          No        Filter:",
+        "",
+        "  View statistics:       ...",
+        "  Named print set:",
+        "  View protection:       Global (No protection)",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "view_properties": {
+      "title": "View Properties",
+      "rows": [
+        "",
+        "  View name:  People",
+        "  Item sorting:    ...             Sections:",
+        "  Section sorting: Alphabetic        G#ran",
+        "    Order:         Ascending         Mattias",
+        "  Hide empty sections:   No          Sample Person",
+        "  Hide done items:       No          Unassigned",
+        "  Hide dependent items:  No",
+        "  Hide inherited items:  No",
+        "  Hide column heads:     No",
+        "  Section separators:    No",
+        "  Number items:          No        Filter:",
+        "                                     -Contact List",
+        "  View statistics:       ...",
+        "  Named print set:",
+        "  View protection:       Global (No protection)",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "view_statistics": {
+      "title": "View Statistics",
+      "rows": [
+        "",
+        "   Marked items:              0",
+        "   Sections in view:          4",
+        "   Items in view:             4"
+      ],
+      "bottom": "Press any key to continue"
+    }
+  }
+}

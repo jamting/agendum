@@ -93,3 +93,9 @@ The second round (2026-10-15) ran about 150 experiments this way, in batches of 
 - **One experiment per fresh start.** Long chains of keys in the note editor go out of step: an extra ESC leaves the note, and an ESC in a changed note opens "Discard changes? No". Copy the file again and restart Agenda for each experiment (about ten seconds each), and print the screen after every step.
 - **Boxes with a file name** (note Import, Export, File Attach) need two ENTERs: the first finishes typing the field, the second the box.
 - **ALT-letter keys sent after typed text** were not reliable in the note editor (ALT-C and ALT-N showed other boxes). Pause before them, or check the key in the F1 help instead ("Notes: Accelerator Keys").
+
+## Settings boxes as text (2026-10-25)
+
+- **`capture_boxes.py`** opens each box in its table from PLANNER's People view (menu keys, `goto(label)` + F3 for a box opened from a box, `select(name)` in the category manager) and writes its title, rows and bottom edge to `docs/reference/agenda_boxes.json`. About four minutes for 25 boxes; naming boxes on the command line recaptures only those, merged into the file.
+- **Finding the box on top.** A box is found from its bottom edge ("Press ENTER when done…", "Press any key to continue") and followed up its side edges. A box opened from a box can share its edges with the one beneath (Advanced Settings sits one column inside Category Properties' right edge), and Agenda draws a statistics box on the top edge of the box beneath it, its title replacing that box's: the side edge is the `#` with a blank inside it, and the top is the first row of the box's width that is all edge.
+- `goto()` does not reach a right-hand field such as File Properties' Auto-assign settings: go to the field beside it and press →.

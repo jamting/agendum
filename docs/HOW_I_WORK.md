@@ -104,6 +104,7 @@ The panel advises; it never votes. I decide.
 | `tools/agformat/agenda_driver.py`, `agdump.py`, `agdiff.py` | drive the real Agenda headless (also record its sounds: SDL's disk audio driver); read and compare `.AG` files (`tools/agformat/DRIVING_AGENDA.md`) |
 | `tools/agformat/capture_menus.py` | walks Agenda's F10 menus (view, note, category manager) in DOSBox into `docs/reference/agenda_menus.json` and AGENDA_MENUS.md; the menu test compares Agendum's menus with it, every difference tagged (meeting 2026-10-21, § 8) |
 | `tools/agformat/capture_key_bars.py` | reads Agenda's key bars in DOSBox (view, note, both managers; nothing, ALT, CTRL or SHIFT held through the BIOS shift flags) into `docs/reference/agenda_key_bars.json`; `agenda_key_bars_test.exs` compares Agendum's bars with it, each difference tagged |
+| `tools/agformat/capture_boxes.py` | reads Agenda's settings boxes in DOSBox (title, rows, bottom edge; 25 boxes reached from PLANNER's People view, sub-boxes with F3) into `docs/reference/agenda_boxes.json`; `agenda_boxes_test.exs` compares Agendum's boxes' titles, bottom edges and labels with it, every difference tagged |
 | `tools/smoke/smoke.py KEYS…` | the real program in a pseudo-terminal: send keys, see the screen as text (sandboxed; `--help`) |
 | `tools/screenshots/`                                   | draw a screen as a PNG, to compare with Agenda's                        |
 
