@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.35.0 — 2026-10-25
+
+The Questions box and datebook views' properties as in Lotus Agenda.
+
 - A **datebook view's View Properties** is the whole box, as in Agenda: name, item sorting, the Hide settings, filter and statistics, with the datebook's own settings (Date category, End category, Section, Period, Interval, Start at, End at, Base date on) in the right column instead of Sections. The separate "Datebook settings" box is gone.
 - **Utilities ▸ Questions** looks like Agenda's: "Suggested categories for" the item, each category as Parent:Child with **?** before it (**\*** once picked), "Press ENTER to accept". With none waiting, a box says so, and any key closes it.
 ## 0.34.0 — 2026-10-25
