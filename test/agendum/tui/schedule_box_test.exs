@@ -14,7 +14,7 @@ defmodule Agendum.TUI.ScheduleBoxTest do
   defp open_box(state), do: press(state, [{:f, 10}, "u", "s", "s"])
 
   defp items(state),
-    do: state |> screen() |> String.split("\n") |> Enum.filter(&String.starts_with?(&1, " • "))
+    do: state |> screen() |> String.split("\n") |> Enum.filter(&String.starts_with?(&1, "    • "))
 
   test "the box shows Agenda's defaults: When, today, no filter", %{state: state} do
     state = open_box(state)

@@ -18,6 +18,30 @@ defmodule Agendum.TUI.ViewTest do
     assert slots(state) =~ "F9 Cat Mgr F10 Menu"
   end
 
+  # Agenda's rows (checked in Agenda 2.0, 2026-10-25, PLANNER's People
+  # view): a head's first column holds ♪ when its category has a note; an
+  # item's tag stands in the fifth column (♪ for an item with a note), its
+  # mark (♦) in the sixth, its text from the seventh, wrapped lines too
+  test "rows are indented as Agenda's, with ♪ and ♦ in their places", %{state: state} do
+    calls = hd(Database.find_categories(state.db, "Calls"))
+    db = Core.set_category_note(state.db, calls, "Who to ring")
+    [first | _] = Database.items_in(db, calls)
+    db = Core.set_note(db, first.id, "Ask about the price", ~D[2026-10-08])
+    state = %{state | db: db, width: 80} |> press(:down)
+    lines = state |> screen() |> String.split("\n")
+
+    assert Enum.find(lines, &(&1 =~ "Calls")) =~ ~r/^♪Calls/
+    assert Enum.find(lines, &(&1 =~ "Set up meeting")) =~ ~r/^    ♪ Set up meeting/
+
+    # a wrapped line goes on under the text
+    i = Enum.find_index(lines, &(&1 =~ "Set up meeting"))
+    assert Enum.at(lines, i + 1) =~ ~r/^      \S/
+
+    marked = state |> press({:f, 7}) |> screen() |> String.split("\n")
+    assert Enum.find(marked, &(&1 =~ "Set up meeting")) =~ ~r/^    ♪♦Set up meeting/
+    assert Enum.find(marked, &(&1 =~ "Don't forget")) =~ ~r/^    • Don't forget/
+  end
+
   test "a column head starts where its entries do, as in Agenda (screenshot 9)",
        %{state: state} do
     [head, item] =

@@ -75,17 +75,21 @@ defmodule Agendum.Core.View do
           }
     defstruct set: :auto, width: 40, minimum: 10, linked: true, position: 0
 
+    # the columns before an item's text: four spaces, its tag, its mark
+    @before_text 6
+
     @doc """
     How wide the item text is in a screen `screen` wide, beside `columns`:
-    3 go to the bullet and the margin, and each column takes its width
-    and a space.
+    6 go before the text, as in Agenda (four spaces, the item's tag and
+    its mark; checked in Agenda 2.0, 2026-10-25), and each column takes
+    its width and a space.
     """
     @spec text_width(t, [Agendum.Core.View.Column.t()], pos_integer) :: pos_integer
     def text_width(%__MODULE__{set: :manual, width: width}, _columns, _screen), do: width
 
     def text_width(%__MODULE__{minimum: minimum}, columns, screen) do
       used = columns |> Enum.map(&(Agendum.Core.View.Column.shown_width(&1) + 1)) |> Enum.sum()
-      max(screen - 3 - used, minimum)
+      max(screen - @before_text - used, minimum)
     end
   end
 

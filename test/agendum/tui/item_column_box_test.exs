@@ -37,8 +37,8 @@ defmodule Agendum.TUI.ItemColumnBoxTest do
     text = screen(state)
     assert text =~ "Item Column Properties"
     assert text =~ ~r/Section head: +Calls/
-    # the screen is 100 wide: 3 for the bullet and margin, 17 for When
-    assert text =~ ~r/Width: +80[^\n]*\n[^\n]*Set width: +Automatically/
+    # the screen is 100 wide: 6 before the text, 17 for When
+    assert text =~ ~r/Width: +77[^\n]*\n[^\n]*Set width: +Automatically/
     assert text =~ ~r/Minimum width: +10/
     assert text =~ ~r/Link with other sections: +Yes/
   end
@@ -57,18 +57,18 @@ defmodule Agendum.TUI.ItemColumnBoxTest do
   test "Manually keeps the width it has", %{state: state, view_id: v} do
     state = state |> to_setting("Set width") |> press(" ")
     assert items(state, v, 0).set == :manual
-    assert items(state, v, 0).width == 80
-    assert screen(state) =~ ~r/Width: +80/
+    assert items(state, v, 0).width == 77
+    assert screen(state) =~ ~r/Width: +77/
   end
 
   test "a narrow item column: the columns follow it, not the screen's edge",
        %{state: state} do
     # 40 wide (typed; ENTER keeps the width, ENTER again the box)
     state = state |> to_setting("Width") |> press(["4", "0", :enter, :enter])
-    # " • ", 40 for the text, a space: When starts at 44, as its entries
+    # "    •♦", 40 for the text, a space: When starts at 47, as its entries
     # do (not at the screen's right edge, where an automatic one puts it)
     head = state |> screen() |> String.split("\n") |> Enum.find(&(&1 =~ "Calls"))
-    assert :binary.match(head, "When") == {44, 4}
+    assert :binary.match(head, "When") == {47, 4}
   end
 
   test "Minimum width, and unlinking: the section changes alone", %{state: state, view_id: v} do

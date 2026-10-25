@@ -170,7 +170,7 @@ defmodule Agendum.Starters.PlannerViewsTest do
     test "Contacts shows each person's phone number and company", %{samples: db} do
       text = show(db, "Contacts")
       # near the left margin, as a list: People, Phone #, Company
-      assert text =~ ~r/\n • {1,9}Anna Berg +555-0101 +Nordvik/
+      assert text =~ ~r/\n    • {1,9}Anna Berg +555-0101 +Nordvik/
       assert text =~ ~r/Sarah Miller +555-0105/
     end
 

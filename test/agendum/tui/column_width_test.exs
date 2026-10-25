@@ -79,20 +79,20 @@ defmodule Agendum.TUI.ColumnWidthTest do
     test "starts at the width the text has; ENTER sets it by hand, one undo step",
          %{state: state} do
       state = press(state, @width)
-      # 100 wide: 3 for the bullet, 17 + 9 + 17 for When, Priority, Contact
-      assert panel(state) =~ "Item column width: 54"
+      # 100 wide: 6 before the text, 17 + 9 + 17 for When, Priority, Contact
+      assert panel(state) =~ "Item column width: 51"
       state = press(state, [:left, :left])
-      assert {shown_items(state).set, shown_items(state).width} == {:manual, 52}
+      assert {shown_items(state).set, shown_items(state).width} == {:manual, 49}
       assert items(state).set == :auto
       state = press(state, :enter)
-      assert {items(state).set, items(state).width} == {:manual, 52}
+      assert {items(state).set, items(state).width} == {:manual, 49}
       assert state |> History.undo() |> items() |> Map.fetch!(:set) == :auto
     end
 
     test "SHIFT-? fits it to the longest item text, within the room", %{state: state} do
       state = press(state, @width ++ ["?"])
-      # the sample's items are longer than the 54 the columns leave
-      assert panel(state) =~ "Item column width: 54"
+      # the sample's items are longer than the 51 the columns leave
+      assert panel(state) =~ "Item column width: 51"
       state = press(state, ["3", "0", :enter])
       assert items(state).width == 30
     end

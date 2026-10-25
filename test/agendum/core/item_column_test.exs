@@ -87,8 +87,8 @@ defmodule Agendum.Core.ItemColumnTest do
     # an unlinked one looks at its own section: "Follow up" (9) and no items
     db = Core.set_item_column_linked(db, v, 1, false)
     assert Core.item_column_fit(db, v, 1, ~D[2026-10-13], 100) == 9
-    # at most what the section's columns leave: 40 - 3 - 17 for When
-    assert Core.item_column_fit(db, v, 0, ~D[2026-10-13], 40) == 20
+    # at most what the section's columns leave: 40 - 6 - 17 for When
+    assert Core.item_column_fit(db, v, 0, ~D[2026-10-13], 40) == 17
   end
 
   describe "the item column's place among the columns (User's Guide 5-20)" do
@@ -147,8 +147,8 @@ defmodule Agendum.Core.ItemColumnTest do
 
   test "the item column's text width: by hand, or what the columns leave" do
     columns = [%Core.View.Column{category_id: 1, width: 12}]
-    # 80 wide: 3 for the bullet and margin, 13 for the column
-    assert ItemColumn.text_width(%ItemColumn{}, columns, 80) == 64
+    # 80 wide: 6 before the text (four spaces, the tag, the mark), 13 for the column
+    assert ItemColumn.text_width(%ItemColumn{}, columns, 80) == 61
     assert ItemColumn.text_width(%ItemColumn{minimum: 70}, columns, 80) == 70
     assert ItemColumn.text_width(%ItemColumn{set: :manual, width: 30}, columns, 80) == 30
   end

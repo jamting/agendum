@@ -32,7 +32,7 @@ defmodule Agendum.TUI.DatebookViewTest do
 
     item = state.db.items |> Map.values() |> Enum.find(&(&1.text == "Picnic with Pooh"))
     assert item.when == ~D[2026-10-14]
-    assert screen(state) =~ ~r/── Wed 2026-10-14 ─+\n • Picnic with Pooh/u
+    assert screen(state) =~ ~r/── Wed 2026-10-14 ─+\n    • Picnic with Pooh/u
   end
 
   test "its sections cannot be added, removed, changed or collapsed", %{state: state} do
@@ -205,7 +205,7 @@ defmodule Agendum.TUI.DatebookViewTest do
 
     test "browsing to next week shows it on that Monday", %{state: state} do
       state = press(state, [{:alt, "b"}, :right, :enter])
-      assert screen(state) =~ ~r/── Mon 2026-10-19 ─+\n • Swim every Monday/u
+      assert screen(state) =~ ~r/── Mon 2026-10-19 ─+\n    • Swim every Monday/u
     end
 
     test "F4 on a later occurrence marks it done and adds the next, as on its base date",

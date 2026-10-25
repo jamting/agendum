@@ -40,7 +40,8 @@ defmodule Agendum.TUI.Render.View do
             lines ++
               [
                 blank_cells(left) ++
-                  [{:symbol, " • "}] ++ Draw.input(editing.line, tw, :edit) ++ blank_cells(right)
+                  [{:symbol, "    • "}] ++
+                  Draw.input(editing.line, tw, :edit) ++ blank_cells(right)
               ]
 
           _ ->
@@ -160,7 +161,7 @@ defmodule Agendum.TUI.Render.View do
       |> Enum.map(fn {column, cell} ->
         [{:normal, " "}, {:calc, right(cell, column.width)}] ++ percent_part(column, {:calc, ""})
       end)
-      |> around_items(row, [{:normal, "   "}, {:calc, String.pad_leading(label <> " ", tw)}])
+      |> around_items(row, [{:normal, "      "}, {:calc, String.pad_leading(label <> " ", tw)}])
     end)
   end
 
@@ -175,28 +176,9 @@ defmodule Agendum.TUI.Render.View do
   defp right(text, width), do: text |> String.pad_leading(width) |> Draw.pad(width)
 
   defp row_lines(state, %{kind: :section} = row, index, selected, editing, {tw, _used}, columns) do
-    cat = row.category
     style = if selected and state.col == 0, do: :cursor, else: :section
 
-    # The name part is as wide as an item line's " •♪" and text (tw + 3),
-    # so each column head starts where its entries do, as in Agenda.
-    name_part =
-      case editing do
-        %{target: {:rename_category, id}} when selected and id == cat.id ->
-          [{:normal, " "}] ++ Draw.input(editing.line, tw + 2, :edit)
-
-        _ when row.slot != nil ->
-          slot_rule(slot_label(state, row.slot), style, tw + 3)
-
-        _ ->
-          section = Enum.at(State.view(state).sections, row.sidx)
-
-          suffix =
-            if(row.collapsed, do: " §#{row.count}", else: "") <>
-              Text.filter_text(state, section.filter)
-
-          [{:normal, " "}, {style, Draw.pad(cat.name <> suffix, tw + 2)}]
-      end
+    name_part = name_part(state, row, style, selected, editing, tw)
 
     heads =
       columns
@@ -241,16 +223,19 @@ defmodule Agendum.TUI.Render.View do
          {tw, used},
          columns
        ) do
-    symbol =
+    # Agenda's row (checked in Agenda 2.0, 2026-10-25): four spaces, the
+    # item's tag (♪ in the bullet's place when it has a note), its mark (♦
+    # when marked), then the text from the seventh column
+    tag =
       cond do
         item.done -> "√"
-        item.marked -> "♦"
         Agendum.Core.waiting?(state.db, item.id) -> "&"
         item.alarm_minutes != nil -> "@"
+        item.note != "" -> "♪"
         true -> "•"
       end
 
-    note = if item.note != "", do: "♪", else: " "
+    mark = if item.marked, do: "♦", else: " "
     text_style = if item.done, do: :item_done, else: :item
 
     text_lines =
@@ -272,15 +257,41 @@ defmodule Agendum.TUI.Render.View do
 
     # Number items (R79): the item's number between its marks and its text
     number = Layout.number_label(row)
-    marks = [{:symbol, " " <> symbol}, {:symbol, note}, {:normal, number}]
+    marks = [{:normal, "    "}, {:symbol, tag}, {:symbol, mark}, {:normal, number}]
 
     [first | rest] = text_lines
     first_line = around_items(cells, row, marks ++ first)
     # a wrapped line keeps its text under the first, past the columns left
     # of it, the marks and the number
     blank = columns |> Enum.take(Layout.items_at(row)) |> blank_cells()
-    indent = [{:normal, Draw.spaces(3 + String.length(number))}]
+    indent = [{:normal, Draw.spaces(6 + String.length(number))}]
     [first_line | Enum.map(rest, &(blank ++ indent ++ &1))]
+  end
+
+  defp name_part(state, row, style, selected, editing, tw) do
+    cat = row.category
+    # The name part is as wide as an item line's start ("    •♦", 6) and
+    # text, so each column head starts where its entries do, as in Agenda.
+    # Its first column holds ♪ when the category has a note, as Agenda's
+    # (checked in Agenda 2.0, 2026-10-25: "♪Göran", " Unassigned").
+    note = if cat.note != "", do: {:symbol, "♪"}, else: {:normal, " "}
+
+    case editing do
+      %{target: {:rename_category, id}} when selected and id == cat.id ->
+        [note] ++ Draw.input(editing.line, tw + 5, :edit)
+
+      _ when row.slot != nil ->
+        slot_rule(slot_label(state, row.slot), style, tw + 6)
+
+      _ ->
+        section = Enum.at(State.view(state).sections, row.sidx)
+
+        suffix =
+          if(row.collapsed, do: " §#{row.count}", else: "") <>
+            Text.filter_text(state, section.filter)
+
+        [note, {style, Draw.pad(cat.name <> suffix, tw + 5)}]
+    end
   end
 
   # An item's cells, one list of segments per column: its entry (or the
