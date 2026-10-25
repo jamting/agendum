@@ -207,6 +207,12 @@ defmodule Agendum.Core.JSONFileTest do
       db = Core.show_items(db, Enum.take(db.item_order, 2)) |> elem(0)
       assert round_trip(db) == {:ok, db}
     end
+
+    test "the Show View as the alarm list (R38)" do
+      db = Agendum.Sample.build(@today)
+      {db, _view} = Core.show_alarms(db)
+      assert round_trip(db) == {:ok, db}
+    end
   end
 
   describe "the text is readable" do

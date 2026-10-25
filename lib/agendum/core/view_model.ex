@@ -405,6 +405,8 @@ defmodule Agendum.Core.ViewModel do
   end
 
   defp shown?(_item, nil), do: true
+  # the alarm list made a datebook: every item, as without a match
+  defp shown?(_item, :alarms), do: true
   defp shown?(item, {:items, ids}), do: item.id in ids
   defp shown?(item, search), do: Agendum.Core.Search.matches?(item, search)
 
