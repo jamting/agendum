@@ -706,7 +706,20 @@ defmodule Agendum.TUI.Update do
   # Retrieve with a name that is not a file yet makes it, after asking
   # (Agenda's way to make a new file; its New File box let one ESC out)
   def loaded(state, path, {:error, :enoent}),
-    do: Prompts.ask(state, "Create the new file #{Path.basename(path)}?", {:create_file, path})
+    do: Agendum.TUI.Boxes.NewFileBox.open(state, path)
+
+  # a file with a password (ADR 0046): asked for, and again when wrong, as
+  # Agenda said it
+  def loaded(state, path, {:error, :password_required}),
+    do: Prompts.password(state, "Password of #{Path.basename(path)}:", {:file_password, path})
+
+  def loaded(state, path, {:error, :wrong_password}),
+    do:
+      Prompts.password(
+        state,
+        "The password you typed is incorrect. Retype the password of #{Path.basename(path)}:",
+        {:file_password, path}
+      )
 
   def loaded(state, _path, {:error, _reason}),
     do: State.error(state, Agendum.TUI.Messages.text(:cannot_open))
@@ -846,6 +859,11 @@ defmodule Agendum.TUI.Update do
 
   def copied(state, _path, {:error, reason}),
     do: State.error(state, "Could not write the copy: #{inspect(reason)}")
+
+  # a file with a password exported as JSON: the JSON is not encrypted
+  # (ADR 0046), so the message says so
+  def written(%{db: %{password: pw}} = state, path, :ok) when is_binary(pw),
+    do: State.info(state, "Wrote #{path} (plain text: the file's password does not protect it)")
 
   def written(state, path, :ok), do: State.info(state, "Wrote #{path}")
 

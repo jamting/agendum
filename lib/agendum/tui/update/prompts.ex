@@ -29,14 +29,28 @@ defmodule Agendum.TUI.Update.Prompts do
   """
   def password(state, label, action), do: prompt(state, label, action)
 
-  @doc "Whether the prompt on top is for a password, whose keys are not shown or logged."
+  @doc """
+  Whether a password is being typed (a prompt for one, or a password box,
+  ADR 0046), whose keys are not shown or logged.
+  """
   @spec password_prompt?(State.t()) :: boolean
-  def password_prompt?(state),
-    do:
-      match?(
-        %{type: :prompt, action: action} when elem(action, 0) in [:ag_password, :sftp_password],
-        State.mode(state)
-      )
+  def password_prompt?(state) do
+    case State.mode(state) do
+      %{type: :password_box} ->
+        true
+
+      # the New File box's password, while it is typed (ADR 0046)
+      %{type: :new_file, typing: {:password, _}} ->
+        true
+
+      # an action is an atom or a tuple; a password prompt's is a tuple
+      %{type: :prompt, action: action} when is_tuple(action) ->
+        elem(action, 0) in [:ag_password, :sftp_password, :file_password]
+
+      _ ->
+        false
+    end
+  end
 
   @doc "Converts a category to numeric (R29), reporting the result."
   def make_numeric(state, cat_id) do
@@ -214,6 +228,10 @@ defmodule Agendum.TUI.Update.Prompts do
     do: State.save(state, Agendum.Store.normalize_path(text), then: {:replace_file, command})
 
   defp prompt_action(state, :calendar_jump, text), do: CalendarBox.jump(state, text)
+
+  # an Agendum file's password (ADR 0046): it is opened again with it
+  defp prompt_action(state, {:file_password, path}, text),
+    do: State.effect(state, {:load_password, path, text})
 
   # an Agenda file's password (R72): the import is tried again with it
   defp prompt_action(state, {:ag_password, path, bytes}, text),
@@ -610,7 +628,6 @@ defmodule Agendum.TUI.Update.Prompts do
         "Not saved. File ▸ Maintenance ▸ MakeCopy writes it to another file, keeping both"
       )
 
-  defp confirmed(state, {:create_file, path}, true), do: new_file(state, path)
   defp confirmed(state, :quit, true), do: Actions.perform(state, :save_and_quit)
   defp confirmed(state, :quit, false), do: State.effect(state, :quit)
   defp confirmed(state, _action, false), do: state
@@ -628,9 +645,9 @@ defmodule Agendum.TUI.Update.Prompts do
   Guide 22-3).
   """
   @spec new_file(State.t(), String.t()) :: State.t()
-  def new_file(state, path) do
+  def new_file(state, path, db \\ Core.new_file()) do
     %{
-      State.reopen(state, Core.new_file(), path)
+      State.reopen(state, db, path)
       | dirty: true,
         saved: %{db: nil, stamp: nil, conflict: false}
     }

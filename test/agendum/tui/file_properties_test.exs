@@ -14,7 +14,7 @@ defmodule Agendum.TUI.FilePropertiesTest do
 
   # File Properties ▸ Global date settings (below Insert new columns in) ▸
   # Display format, as in Agenda
-  @dates [{:f, 10}, "f", "p", :down, :down, :down, :down, " "]
+  @dates [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, " "]
   @display @dates ++ [" "]
 
   test "File Properties opens Agenda's boxes, one inside the other", %{state: state} do
@@ -67,8 +67,8 @@ defmodule Agendum.TUI.FilePropertiesTest do
     # each box's last row, and the bottom of its frame below it
     for {keys, last} <- [
           {[], "Auto-assign"},
-          {[:down, :down, :down, :down, " "], "Evening"},
-          {[:down, :down, :down, :down, " ", " "], "Sample"}
+          {[:down, :down, :down, :down, :down, " "], "Evening"},
+          {[:down, :down, :down, :down, :down, " ", " "], "Sample"}
         ] do
       lines = state |> press([{:f, 10}, "f", "p"] ++ keys) |> screen() |> String.split("\n")
       row = Enum.find_index(lines, &String.contains?(&1, last))
@@ -84,7 +84,7 @@ defmodule Agendum.TUI.FilePropertiesTest do
     end
 
     test "SPACE makes it Current section, as one undo step", %{state: state} do
-      state = press(state, [{:f, 10}, "f", "p", :down, :down, " "])
+      state = press(state, [{:f, 10}, "f", "p", :down, :down, :down, " "])
       assert state.db.insert_columns == :section
       assert screen(state) =~ ~r/Insert new columns in: +Current section/
       assert History.undo(state).db.insert_columns == :all
@@ -101,6 +101,7 @@ defmodule Agendum.TUI.FilePropertiesTest do
           {:f, 10},
           "f",
           "p",
+          :down,
           :down,
           :down,
           " ",

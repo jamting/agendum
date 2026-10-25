@@ -144,6 +144,15 @@ defmodule Agendum.TUI.DebugLogTest do
              "effect write_text /h/out.txt (3 bytes) in 0 ms"
   end
 
+  # ADR 0046, R82: a file's password and a copied database stay out
+  test "a password and a copied file are not written to the log" do
+    assert DebugLog.effect_text({:load_password, "/h/owl.agendum", "Hoot"}, 60) ==
+             "effect load_password /h/owl.agendum (password hidden) in 60 ms"
+
+    text = DebugLog.effect_text({:save_copy, "/h/copy.agendum", Core.new_file()}, 3)
+    assert text == "effect save_copy /h/copy.agendum in 3 ms"
+  end
+
   test "the view on screen: its sections and filters" do
     state = Core.new_file() |> start()
 

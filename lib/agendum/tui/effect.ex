@@ -19,6 +19,7 @@ defmodule Agendum.TUI.Effect do
   #   {:play, keys}             a macro's keys, played before the next key
   #   {:sound, name}            one of Agenda's sounds (R76)
   #   {:save, …} {:load, …} {:open_or_create, …}   the file itself
+  #   {:load_password, path, password}  a file with a password (ADR 0046)
   #   {:save_copy, path, db}    a copy or template of it (R82)
   #   {:trash_file, path}       another file to the system's Trash (R82)
   #   {:backup_file, path}      the file opened, copied to NAME.agendum.bak (R82)
@@ -39,6 +40,7 @@ defmodule Agendum.TUI.Effect do
           | {:backup_file, String.t()}
           | {:read_descriptions, String.t(), [String.t()]}
           | {:load, String.t()}
+          | {:load_password, String.t(), String.t()}
           | {:open_or_create, String.t()}
           | {:write_text, String.t(), String.t()}
           | {:import_json, String.t()}
@@ -86,6 +88,10 @@ defmodule Agendum.TUI.Effect do
       do: true
 
   def known?({:write_text, path, _text}) when is_binary(path), do: true
+
+  def known?({:load_password, path, password}) when is_binary(path),
+    do: is_binary(password)
+
   def known?({:read_descriptions, dir, names}) when is_list(names), do: is_binary(dir)
   def known?({:save_preferences, path, _prefs}) when is_binary(path), do: true
 

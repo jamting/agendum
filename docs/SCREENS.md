@@ -113,6 +113,8 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
     - **Note search** `:note_search` (ALT-F6 in a note): search and replace, then Y/N per match (R39). `Agendum.TUI.Typing.NoteSearch`.
   - **Item Properties** `:item_props` (F6 on an item, Item ▸ Properties): text, note, statistics, dependencies, every assignment (R34, R43). `Agendum.TUI.Boxes.ItemProperties`.
   - **Error** `:error_box`: an error in a box titled Error, "Press any key to continue", as Agenda's (a search that finds nothing, R37). `Agendum.TUI.Boxes.ErrorBox`.
+  - **Password** `:password_box` (File Properties ▸ Set file password): Agenda's small boxes, "Enter the current password", "Enter the new password", "Please type the new password again", the password typed hidden (ADR 0046). `Agendum.TUI.Boxes.PasswordBox`.
+  - **New File** `:new_file` (File ▸ Retrieve with a name that is not a file yet): Description and Password, as Agenda's; ENTER makes the file (R82, ADR 0046). `Agendum.TUI.Boxes.NewFileBox`.
   - **Abandon File** `:abandon` (File ▸ Abandon): "Revert to last saved version: No", as Agenda's; Yes puts the file back as last saved (R82). `Agendum.TUI.Boxes.AbandonBox`.
   - **Set Alarm** `:set_alarm` (ALT-A, Item ▸ Alarm): Date category and Minutes before, as Agenda's; ENTER sets the alarm (R38). `Agendum.TUI.Boxes.SetAlarmBox`.
     - **Assignment profile** `:profile` (F3).
@@ -207,6 +209,8 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:category_stats`    | box           | `Agendum.TUI.Boxes.CategoryStatsBox`     | Category Properties ▸ Statistics                  | §5             |
 | `:item_props`        | box           | `Agendum.TUI.Boxes.ItemProperties`       | F6 on an item, Item ▸ Properties                  | R34, R43       |
 | `:error_box`         | box           | `Agendum.TUI.Boxes.ErrorBox`             | a search that finds nothing                       | R37            |
+| `:password_box`      | box           | `Agendum.TUI.Boxes.PasswordBox`          | File Properties ▸ Set file password               | R82            |
+| `:new_file`          | box           | `Agendum.TUI.Boxes.NewFileBox`           | File ▸ Retrieve with a new name                   | R82            |
 | `:abandon`           | box           | `Agendum.TUI.Boxes.AbandonBox`           | File ▸ Abandon                                    | R82            |
 | `:set_alarm`         | box           | `Agendum.TUI.Boxes.SetAlarmBox`          | ALT-A, Item ▸ Alarm                               | R38            |
 | `:goto`              | box           | `Agendum.TUI.Boxes.GoTo`                 | ALT-F5                                            | R42            |

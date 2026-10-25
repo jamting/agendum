@@ -268,6 +268,9 @@ defmodule Agendum.TUI.App do
   # File ▸ Maintenance ▸ Erase (R82): to the system's Trash
   defp perform(state, {:trash_file, path}), do: Update.trashed(state, path, Store.trash(path))
 
+  defp perform(state, {:load_password, path, password}),
+    do: Update.loaded(state, path, Store.load_with_stamp(path, password))
+
   defp perform(state, {:load, path}), do: Update.loaded(state, path, Store.load_with_stamp(path))
 
   defp perform(state, {:open_or_create, path}),

@@ -214,6 +214,16 @@ defmodule Agendum.CLI do
         |> Update.start(false)
         |> run_session(log)
 
+      # Domain: a file with a password (ADR 0046) opens as Retrieve opens
+      # one: an untitled file first, the password asked under the splash
+      {:password, path} ->
+        Core.new_file()
+        |> State.new(session(options, prefs, today))
+        |> Layout.settle()
+        |> Update.loaded(path, {:error, :password_required})
+        |> Update.start(false)
+        |> run_session(log)
+
       {:ok, db, path, stamp} ->
         # Domain: `State.new/2` sets `saved.db` to the database just read, so
         # the file starts clean; `Update.arrive/1` then rings alarms due while
@@ -288,6 +298,8 @@ defmodule Agendum.CLI do
   defp open_existing(path) do
     case Store.load_with_stamp(path) do
       {:ok, db, stamp} -> {:ok, db, path, stamp}
+      # a file with a password (ADR 0046): asked for once the program runs
+      {:error, :password_required} -> {:password, path}
       {:error, reason} -> {:error, "Could not open #{path}: #{inspect(reason)}"}
     end
   end

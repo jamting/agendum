@@ -47,10 +47,17 @@ defmodule Agendum.TUI.MenuShapeTest do
     assert State.mode(ran) == nil
   end
 
+  # Agenda's New File box (checked in Agenda 2.0, 2026-10-25): a
+  # description and a password, both optional; ENTER makes the file, ESC
+  # keeps the one that is open (ADR 0046 for the password)
   describe "File ▸ Retrieve with a name that is not a file yet" do
-    test "asks, and Yes makes the new file, not saved yet", %{state: state} do
+    test "the New File box; ENTER makes the file, not saved yet", %{state: state} do
       asked = Update.loaded(state, "/tmp/nowhere/notes.agendum", {:error, :enoent})
-      assert screen(asked) =~ "Create the new file notes.agendum?"
+      screen = screen(asked)
+      assert screen =~ "New File"
+      assert screen =~ ~r/Description:/
+      assert screen =~ ~r/Password:/
+      assert screen =~ "Enter a short description of the contents of the file you are"
 
       made = press(asked, :enter)
       assert made.path == "/tmp/nowhere/notes.agendum"
@@ -59,9 +66,18 @@ defmodule Agendum.TUI.MenuShapeTest do
       assert screen(made) =~ "New file notes.agendum (not saved yet)"
     end
 
-    test "No keeps the file that is open", %{state: state} do
+    test "its description and password go with the new file", %{state: state} do
       asked = Update.loaded(state, "/tmp/nowhere/notes.agendum", {:error, :enoent})
-      kept = press(asked, "n")
+      typed = press(asked, ["Notes", :enter, :down, "H", "o", "o", "t", :enter])
+      refute screen(typed) =~ "Hoot"
+
+      made = press(typed, :enter)
+      assert {made.db.description, made.db.password} == {"Notes", "Hoot"}
+    end
+
+    test "ESC keeps the file that is open", %{state: state} do
+      asked = Update.loaded(state, "/tmp/nowhere/notes.agendum", {:error, :enoent})
+      kept = press(asked, :esc)
       assert kept.db == state.db
       assert kept.path == state.path
     end

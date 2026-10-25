@@ -173,6 +173,12 @@ defmodule Agendum.TUI.DebugLog do
         "changed, #{length(changes.removed)} removed#{if password, do: ", with a password"}) " <>
         "in #{ms} ms"
 
+  # a file's password never (ADR 0046), nor a whole database copied (R82)
+  def effect_text({:load_password, path, _password}, ms),
+    do: "effect load_password #{path} (password hidden) in #{ms} ms"
+
+  def effect_text({:save_copy, path, _db}, ms), do: "effect save_copy #{path} in #{ms} ms"
+
   def effect_text(effect, ms), do: "effect #{inspect(effect)} in #{ms} ms"
 
   @doc "The file in use, with its size, time and fingerprint on disk (`file_text/2`)."

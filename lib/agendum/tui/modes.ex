@@ -72,6 +72,8 @@ defmodule Agendum.TUI.Modes do
     devtools: [:key, :top],
     display_format: [:cursor, :opened],
     error_box: [:text],
+    password_box: [:first, :line, :step],
+    new_file: [:cursor, :description, :password, :path, :typing],
     execute: [:against, :cursor, :old, :root],
     file_props: [:cursor, :opened, :typing],
     feeds: [:cursor],

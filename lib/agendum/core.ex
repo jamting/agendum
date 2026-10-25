@@ -80,6 +80,7 @@ defmodule Agendum.Core do
   # files: new, as JSON (R44), and Lotus Agenda files imported (R72)
   defdelegate new_file(opts \\ []), to: Files
   defdelegate template(db), to: Files
+  defdelegate new_file_with(description, password), to: Files
   defdelegate set_description(db, text), to: Files
   defdelegate set_backup_on_open(db, on?), to: Files
   defdelegate set_password(db, password), to: Files

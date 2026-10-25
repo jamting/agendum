@@ -32,6 +32,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   # until Agendum has them
   @layout """
    File description:       [description                             ]
+   Set file password:      [password]
    Make backup on open:    [backup ]
 
    Insert new columns in:  [insert_columns ]
@@ -48,6 +49,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
 
   @help %{
     description: "Enter a short description of the file. Press F2 to edit.",
+    password: "Press SPACE BAR to create or change a password that protects access to the file.",
     backup: "Choose whether to back up the file automatically each time you open it.",
     insert_columns:
       "Choose to insert new columns in one or all sections in the view. " <>
@@ -133,6 +135,9 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   # SPACE on the description: nothing (typing starts it); on backup: flips
   defp change(state, :description), do: state
 
+  # Agenda's boxes, one after another (ADR 0046)
+  defp change(state, :password), do: Agendum.TUI.Boxes.PasswordBox.open(state)
+
   defp change(state, :backup),
     do: State.run(state, {:set_backup_on_open, not state.db.backup_on_open})
 
@@ -160,6 +165,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   def content(state, mode, inner, _max_rows) do
     values = %{
       description: state.db.description,
+      password: "...",
       backup: if(state.db.backup_on_open, do: "Yes", else: "No"),
       insert_columns:
         if(state.db.insert_columns == :all, do: "All sections", else: "Current section"),

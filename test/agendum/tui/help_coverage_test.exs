@@ -19,6 +19,8 @@ defmodule Agendum.TUI.HelpCoverageTest do
   @default_about_enough [
     Agendum.TUI.Boxes.AbandonBox,
     Agendum.TUI.Boxes.ErrorBox,
+    Agendum.TUI.Boxes.NewFileBox,
+    Agendum.TUI.Boxes.PasswordBox,
     Agendum.TUI.Boxes.ActionBox,
     Agendum.TUI.Boxes.AutoAssignBox,
     Agendum.TUI.Boxes.CategoryMatchBox,

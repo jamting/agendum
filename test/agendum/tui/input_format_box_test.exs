@@ -17,10 +17,10 @@ defmodule Agendum.TUI.InputFormatBoxTest do
 
   # File Properties ▸ Global date settings ▸ Input format
   defp open_box(state),
-    do: press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, " ", :down, " "])
+    do: press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, " ", :down, " "])
 
   test "Global date settings has an Input format row that opens the box", %{state: state} do
-    assert screen(press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, " "])) =~
+    assert screen(press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, " "])) =~
              ~r/Input format +: \.\.\. \(yours\)/
 
     state = open_box(state)

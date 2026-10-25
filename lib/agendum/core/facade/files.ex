@@ -46,6 +46,17 @@ defmodule Agendum.Core.Facade.Files do
     }
   end
 
+  @doc """
+  A new file with Agenda's New File box's description and password (R82,
+  ADR 0046), both optional; refused as `set_description/2` and
+  `set_password/2` refuse them.
+  """
+  @spec new_file_with(String.t(), String.t()) :: {:ok, db} | {:error, :too_long}
+  def new_file_with(description, password) do
+    with {:ok, db} <- set_description(Database.new(), description),
+         do: set_password(db, password)
+  end
+
   # --- settings -------------------------------------------------------------------
 
   @doc """
