@@ -39,12 +39,12 @@ defmodule Agendum.TUI.AgendaMenusTest do
       {:not_built, "Show Circular (AGENDA_PARITY § The steps)"},
     "Category manager menu ▸ Print: missing" =>
       {:out_of_scope, "printing the category hierarchy (SPEC § 6)"},
-    "View menu ▸ File ▸ Maintenance: missing" =>
-      {:change_back,
-       "MakeCopy in Write's place (roadmap); Erase not built; Compress and Reservation out of scope"},
-    "View menu ▸ File ▸ Write: added" =>
-      {:change_back,
-       "gives way to File ▸ Maintenance ▸ MakeCopy (AGENDA_PARITY, tagged 2026-10-22)"},
+    "View menu ▸ File ▸ Maintenance ▸ Erase: missing" =>
+      {:not_built, "File ▸ Maintenance ▸ Erase (AGENDA_PARITY § The steps)"},
+    "View menu ▸ File ▸ Maintenance ▸ Compress: missing" =>
+      {:out_of_scope, "Agendum's files need no compressing"},
+    "View menu ▸ File ▸ Maintenance ▸ Reservation: missing" =>
+      {:out_of_scope, "networks (SPEC § 6)"},
     "View menu ▸ File ▸ Transfer ▸ Template: missing" =>
       {:not_built, "the file's structure without its items (AGENDA_PARITY step 5)"},
     "View menu ▸ Item ▸ Undisc: missing" => {:not_built, "the trash (AGENDA_PARITY step 4)"},

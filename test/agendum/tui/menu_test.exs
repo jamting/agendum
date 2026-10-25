@@ -46,8 +46,8 @@ defmodule Agendum.TUI.MenuTest do
       assert screen(state) =~ "Discard this item from the whole file?"
     end
 
-    test "File > Write asks for a new file name", %{state: state} do
-      assert screen(press(state, [{:f, 10}, "f", "w"])) =~ "Save file as:"
+    test "File > Maintenance > MakeCopy asks for the copy's name", %{state: state} do
+      assert screen(press(state, [{:f, 10}, "f", "m", "m"])) =~ "Make a copy as:"
     end
 
     test "View > Column > Add opens the Column Add box", %{state: state} do

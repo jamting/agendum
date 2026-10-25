@@ -247,6 +247,11 @@ defmodule Agendum.TUI.App do
   defp perform(state, {:save, path, opts}),
     do: Update.saved(state, path, Store.save(state.db, path, opts.expect), opts)
 
+  # File ▸ Maintenance ▸ MakeCopy and Transfer ▸ Template (R82): another
+  # file written, whatever is there (Agenda's caution), this one unchanged
+  defp perform(state, {:save_copy, path, db}),
+    do: Update.copied(state, path, Store.save(db, path, :any))
+
   defp perform(state, {:load, path}), do: Update.loaded(state, path, Store.load_with_stamp(path))
 
   defp perform(state, {:open_or_create, path}),

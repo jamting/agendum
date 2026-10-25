@@ -72,7 +72,7 @@ Out of scope, as SPEC §6 says: printing on paper and print preview (F10 Print a
 | File Properties                                   | File ▸ Properties: Insert new columns in, Global date settings, Auto-assign settings, File statistics; not File description, password, backup on open, empty trash, global protection, update defaults; Tab size (R64e) | ½ (The steps)                                         |
 | File Transfer Import / Export (structured `.STF`) | File ▸ Transfer ▸ Import / Export (JSON)                                                                                                                                                                         | ½ modified (`.AG` import done, R72; STF optional, The steps) |
 | File Transfer Template                            | – (copy the structure without the items)                                                                                                                                                                         | ⬜                                                      |
-| File Maintenance MakeCopy                         | File ▸ Write (save under a new name, and go on in it)                                                                                                                                                            | ½ modified                                              |
+| File Maintenance MakeCopy                         | File ▸ Maintenance ▸ MakeCopy (2026-10-25, R82)                                                                                                                                                                  | ✅                                                       |
 | File Maintenance Erase                            | –                                                                                                                                                                                                                | ⬜                                                      |
 | File Maintenance Compress                         | –                                                                                                                                                                                                                | – no counterpart                                        |
 | File Maintenance Reservation                      | –                                                                                                                                                                                                                | – out of scope                                          |
@@ -216,6 +216,8 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
   - [x] (2026-10-25, the next batch) The questions' help lines and DEL's second line as Agenda's, and the F3 list titled "Select Date Category"
 - [x] (2026-10-25; the owner's choice) DEL on an item in any view asks Agenda's "Remove this item from the section?  Yes (Use ALT-F4 to discard the item completely.)" (R24); with Confirm off it removes at once
 - [x] (2026-10-25) Show ItemsDone (the done items under *Show*) and Show Every (every item under MAIN), as Agenda's; Show Prereqs and Depends checked: Agenda's is the same submenu (One Level, All Levels, Every Item), now with its words, and the captured menus hold it (the capture had not opened it)
+- [x] (2026-10-25) File ▸ Abandon, Agenda's Abandon File box (R82)
+- [x] (2026-10-25; the owner's choice) File ▸ Maintenance ▸ MakeCopy in Write's place: you stay in the file (checked in Agenda 2.0); ours writes the copy before saving (R71, R82)
   - Unchecked: what Agenda does with an alarm when its date category is deleted (ours: back on When)
 
 #### Commands and behaviour still missing
@@ -225,8 +227,7 @@ The order (meeting 2026-10-25, § 7): the small steps below in one or two batche
 - [ ] The `.AG` import reads the file's own global date format (header words `0x182`/`0x184`, `AGENDA_FILE_FORMAT.md`; only partly decoded): an imported file gets Agenda's default today (the owner's choice, 2026-10-25)
 - [ ] Search compared with Agenda's (ALT-F6 SEARCH in a view and a note, its Search box, the Match show view): the differences become parity work (the tagging sitting, 2026-10-22: no longer an enhancement)
 - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)
-- [ ] File ▸ Abandon, File Maintenance Erase, File Transfer Template
-- [ ] File ▸ Maintenance ▸ MakeCopy in Write's place (check in Agenda first which file you are in afterwards) (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+- [ ] File Maintenance Erase (to the system Trash, the owner's choice), File Transfer Template
 - [ ] Show Circular (with the `o` indicator): needs circular references found first (User's Guide 20-21)
 - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash; screenshot 130) where Agendum has them (Tab size done, R64e)
 - [ ] Compare the category, view and macro managers' menus with Agenda's, and add them to the overview

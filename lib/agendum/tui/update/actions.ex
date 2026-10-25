@@ -78,6 +78,8 @@ defmodule Agendum.TUI.Update.Actions do
 
   defp do_perform(state, :abandon, _), do: Agendum.TUI.Boxes.AbandonBox.open(state)
 
+  defp do_perform(state, :make_copy, _), do: Prompts.prompt(state, "Make a copy as:", :make_copy)
+
   defp do_perform(state, :save_as, _),
     do: Prompts.prompt(state, "Save file as:", :save_as, state.path || "")
 

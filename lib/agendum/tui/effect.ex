@@ -19,6 +19,7 @@ defmodule Agendum.TUI.Effect do
   #   {:play, keys}             a macro's keys, played before the next key
   #   {:sound, name}            one of Agenda's sounds (R76)
   #   {:save, …} {:load, …} {:open_or_create, …}   the file itself
+  #   {:save_copy, path, db}    a copy or template of it (R82)
   #   {:write_text, …} {:import_json, …} {:read_note_text, …} {:read_opml, …}
   #   {:list_dir, dir}          a folder for the file list
   #   {:save_preferences, …}    the preferences file (R52)
@@ -30,6 +31,7 @@ defmodule Agendum.TUI.Effect do
           | {:play, [term]}
           | {:sound, Agendum.TUI.Sound.name()}
           | {:save, String.t(), save_opts}
+          | {:save_copy, String.t(), Database.t()}
           | {:load, String.t()}
           | {:open_or_create, String.t()}
           | {:write_text, String.t(), String.t()}
@@ -61,6 +63,7 @@ defmodule Agendum.TUI.Effect do
   def known?({:play, keys}) when is_list(keys), do: true
   def known?({:sound, name}) when is_atom(name), do: true
   def known?({:save, path, %{expect: _, then: _, auto: _}}) when is_binary(path), do: true
+  def known?({:save_copy, path, %Database{}}) when is_binary(path), do: true
 
   def known?({tag, path})
       when tag in [:load, :open_or_create, :import_json, :read_note_text, :read_opml, :list_dir] and

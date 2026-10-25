@@ -347,9 +347,9 @@ defmodule Agendum.TUI.CommandDocs do
     ~w(Item Zettel) =>
       "Zettel ids name items for good, so that items can link to each other: [[bonalaku]] " <>
         "in a text or note, or the id on its own, is a link.",
-    ~w(File Write) =>
-      "Saves the file under a new name and goes on in it: for a version to keep, or a " <>
-        "file to start another from.",
+    ~w(File Maintenance MakeCopy) =>
+      "Saves the file, then writes a copy of it under another name, and goes on in this " <>
+        "one: for a version to keep. Retrieve the copy to work in it.",
     ~w(File Retrieve) =>
       "Opens another file. A name that is not a file yet makes a new, empty one, after " <>
         "asking: Agenda's way to start a file.",

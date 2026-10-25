@@ -64,7 +64,6 @@ defmodule Agendum.TUI.Menu do
          {"Retrieve", "Open an Agendum file, or name a new one to create it (CTRL-O)", :retrieve},
          {"Save", "Save the current file (CTRL-S)", :save},
          {"Abandon", "Discard current changes to the file.", :abandon},
-         {"Write", "Write the file under a new name (Save As)", :save_as},
          {"Properties", "How the file displays dates and times", :file_props},
          {"Transfer",
           {"Export or import the file",
@@ -76,6 +75,10 @@ defmodule Agendum.TUI.Menu do
             {"Publish", "Write the blog from the posts category as a website, and upload it",
              :publish},
             {"Feeds", "Subscribe to RSS and Atom feeds; read them now; OPML", :feeds}
+          ]},
+         {"Maintenance", "MakeCopy",
+          [
+            {"MakeCopy", "Make a copy of the current file with another name.", :make_copy}
           ]}
        ]},
       {"Item", "Work with the highlighted item",

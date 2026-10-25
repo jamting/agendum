@@ -72,7 +72,7 @@ defmodule Agendum.TUI.DiskGuardTest do
     assert effects == [{:sound, :error}]
     assert state.dirty
     assert screen(state) =~ "Not saved"
-    assert screen(state) =~ "Write"
+    assert screen(state) =~ "MakeCopy"
   end
 
   test "a new file not yet saved finds one there: it asks too, in its own words" do
@@ -87,15 +87,19 @@ defmodule Agendum.TUI.DiskGuardTest do
     assert screen(state) =~ "rabbit.agendum already exists"
   end
 
-  test "Save As under another name expects nothing in particular there" do
-    {state, _} = keys(changed(), [{:f, 10}, "f", "w"])
-    {state, _} = keys(state, List.duplicate(:backspace, 40))
+  # MakeCopy (R82) writes the copy whatever is at its name, then saves the
+  # open file as any save does, the file on disk checked first: when that
+  # file changed, the changes are kept in the copy
+  test "MakeCopy writes the copy, then saves the file with its check" do
+    {state, _} = keys(changed(), [{:f, 10}, "f", "m", "m"])
     {state, effects} = keys(state, String.graphemes("/tmp/other") ++ [:enter])
-    assert effects == [{:save, "/tmp/other.agendum", %{expect: :any, then: nil, auto: false}}]
-    # the file's name changes once it is saved there, not before
+
+    assert [{:save_copy, "/tmp/other.agendum", _db}, {:save, @path, %{expect: "s1"} = opts}] =
+             effects
+
+    assert opts.then == {:copied, "/tmp/other.agendum"}
+    # the open file keeps its name
     assert state.path == @path
-    {state, []} = saved(state, hd(effects), {:ok, "s9"})
-    assert state.path == "/tmp/other.agendum"
   end
 
   describe "quitting" do

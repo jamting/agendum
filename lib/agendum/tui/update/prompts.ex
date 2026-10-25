@@ -160,6 +160,28 @@ defmodule Agendum.TUI.Update.Prompts do
   defp prompt_action(state, :save_as, text),
     do: State.save(state, Agendum.Store.normalize_path(text))
 
+  # File ▸ Maintenance ▸ MakeCopy (R82): the copy, then the file saved, as
+  # Agenda saves it too. Agenda saved first; writing the copy first gives
+  # the same two files, and when the file changed on disk (R71) and is not
+  # saved over, the changes are kept in the copy. An untitled file has
+  # nothing to save.
+  defp prompt_action(state, :make_copy, text) do
+    path = Agendum.Store.normalize_path(text)
+
+    cond do
+      path == state.path ->
+        State.error(state, "That is the file you are in")
+
+      state.path == nil ->
+        State.effect(state, {:save_copy, path, state.db})
+
+      true ->
+        state
+        |> State.effect({:save_copy, path, state.db})
+        |> State.save(state.path, then: {:copied, path})
+    end
+  end
+
   defp prompt_action(state, :save_as_then_quit, text),
     do: State.save(state, Agendum.Store.normalize_path(text), then: :quit)
 
@@ -556,7 +578,11 @@ defmodule Agendum.TUI.Update.Prompts do
     do: State.save(state, path, expect: :any, then: then)
 
   defp confirmed(state, {:overwrite, _path, _then}, false),
-    do: State.error(state, "Not saved. File ▸ Write saves it under another name, keeping both")
+    do:
+      State.error(
+        state,
+        "Not saved. File ▸ Maintenance ▸ MakeCopy writes it to another file, keeping both"
+      )
 
   defp confirmed(state, {:create_file, path}, true), do: new_file(state, path)
   defp confirmed(state, :quit, true), do: Actions.perform(state, :save_and_quit)

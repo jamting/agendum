@@ -603,6 +603,13 @@ defmodule Agendum.TUI.Update do
   """
   @spec saved(State.t(), String.t(), {:ok, Agendum.Store.stamp()} | {:error, term}, map) ::
           State.t()
+  # a MakeCopy whose copy could not be written keeps saying so (R82)
+  def saved(%{message: {:error, _} = failed} = state, path, {:ok, _} = result, %{
+        then: {:copied, _}
+      }) do
+    %{saved(state, path, result, %{expect: :any, then: nil, auto: false}) | message: failed}
+  end
+
   def saved(state, path, {:ok, stamp}, opts) do
     %{
       state
@@ -646,6 +653,11 @@ defmodule Agendum.TUI.Update do
     do: state |> Agendum.TUI.Places.remember() |> State.effect(:quit)
 
   defp after_save(state, {:replace_file, command}), do: Prompts.replace_file(state, command)
+
+  # MakeCopy (R82): the copy was written just before; its message is the
+  # one to see
+  defp after_save(state, {:copied, path}),
+    do: State.info(state, "Copied to #{Path.basename(path)}; saved")
 
   # the file offered when Agendum next starts without one (R52); the shell
   # saves the preferences when this changed them
@@ -783,6 +795,14 @@ defmodule Agendum.TUI.Update do
 
   def note_text_read(state, _path, {:error, _reason}),
     do: State.error(state, Agendum.TUI.Messages.text(:cannot_open))
+
+  @doc "After the shell wrote a copy or a template (`{:save_copy, path, db}`, R82)."
+  @spec copied(State.t(), String.t(), {:ok, term} | {:error, term}) :: State.t()
+  def copied(state, path, {:ok, _stamp}),
+    do: State.info(state, "Copied to #{Path.basename(path)}")
+
+  def copied(state, _path, {:error, reason}),
+    do: State.error(state, "Could not write the copy: #{inspect(reason)}")
 
   def written(state, path, :ok), do: State.info(state, "Wrote #{path}")
 
