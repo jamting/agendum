@@ -84,6 +84,8 @@ The record of finished work, by milestone, moved here from [`ROADMAP.md`](ROADMA
   - [x] Macro Properties laid out as Agenda's: Name, Contents "...", Attach to key, "Macro can be run from:" with View, Note, Category manager and our Everywhere else (2026-10-25)
   - [x] Item Column Properties: Agenda's Width row, the width now; typing one sets it by hand (2026-10-25)
   - [x] The Questions box drawn as Agenda's: "Questions", 'Suggested categories for "..."', ? and * marks, Parent:Child names, "Press ENTER to accept"; a box any key closes when none wait (2026-10-25)
+  - [x] The control panel while a box is open as Agenda's: the field's help alone on both lines, no file, time or view; EDIT (or AUTOC) alone while a field is typed in (2026-10-25)
+  - [x] The view's hide settings as Agenda's: one bracket after the view's name and filter, `[Hide empty, done, inherited, dependent]`, cut with ".." before a datebook's `Datebook For:` at column 40; our `[No Auto Dates]` stays at the right (2026-10-25)
   - [x] Control panel symbols as Agenda's: # and ☼ (a numeric or date value) beside ♪ at the right of the View line; WRKG while a calendar or feed is fetched (2026-10-25)
   - [x] The category manager as Agenda's: names indented two a level, ♪ / ☼ / # two left of the name, ┌ ├ └ for exclusive families, no counts, "aka" names or tags, no count on its second line (2026-10-25)
   - [x] ‼ for a done item, Agenda's tag (Help "View Indicators"), in views and Item Properties' dependencies (2026-10-25, R59)

@@ -50,7 +50,8 @@ defmodule Agendum.TUI.FieldHelpTest do
     state = press(state, [{:f, 10}, "u", "c", :down])
     [first, second] = panel_lines(state)
     assert first =~ "The language you type dates in"
-    assert second =~ "SPACE for the next"
+    # where it breaks depends on the room; the time no longer takes any
+    assert second =~ "next."
   end
 
   test "a message comes before the help", %{state: state} do

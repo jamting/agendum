@@ -9,8 +9,8 @@ defmodule Agendum.TUI.Boxes.FieldHelp do
   is highlighted (`help/0`, `field/2`); the tests check every text here
   together: each fits the control panel's two lines at 80 columns. The
   texts follow Agenda's help (its F1 help's SETTING/DESCRIPTION tables),
-  with Agendum's keys. A box without help leaves the control panel as it
-  was. Pure.
+  with Agendum's keys. A box without help leaves the control panel's two
+  lines blank, as the box has them to itself. Pure.
   """
 
   alias Agendum.TUI.Boxes.Box

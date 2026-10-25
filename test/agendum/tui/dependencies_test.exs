@@ -60,7 +60,7 @@ defmodule Agendum.TUI.DependenciesTest do
     state = make_dependent(state) |> press(["y", {:alt_f, 7}])
     state = switch_view_setting(state, "Hide dependent items")
     assert State.view(state).hide_dependent
-    assert screen(state) =~ "[Hide Dependent]"
+    assert screen(state) =~ "[Hide dependent]"
     refute screen(state) =~ "Contact Daniel"
 
     # finish both prerequisites (the first two items)

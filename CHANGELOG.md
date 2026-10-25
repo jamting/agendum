@@ -4,6 +4,14 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.42.0 — 2026-10-25
+
+The control panel as in Lotus Agenda while a box is open, and the view's hide settings in Agenda's bracket.
+
+- While a **box** is open (and in the view manager, the assignment profile and a question), the two top lines are the box's alone: the field's help, on two lines when long, with no file, time or view.
+- While you **type in a box's field**, the top line is blank but for **EDIT** (or AUTOC) at the right; the help comes back when you finish.
+- The view's **hide settings** follow its name in one bracket, as Agenda's: `View: Projects [Hide empty, done]`, right after a filter (`[-Contact List][Hide done]`). A datebook's **Datebook For:** starts at column 40, the bracket cut short before it with "..". **[No Auto Dates]** stays at the right.
+
 ## 0.41.1 — 2026-10-25
 
 - The view manager's **►** (with Extras on) stands a column further left, apart from a datebook view's *.

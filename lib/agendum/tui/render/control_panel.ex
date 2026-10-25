@@ -2,9 +2,10 @@ defmodule Agendum.TUI.Render.ControlPanel do
   @moduledoc """
   The control panel: Agenda's two top lines. Normally the file, with the
   indicators (marks, mode, time) on the right, then what is shown; the menu,
-  a prompt, a question, a message or a hint take them over while they last,
-  and in a box the help for its highlighted field (`Agendum.TUI.Boxes.FieldHelp`).
-  Pure.
+  a prompt, a question, a message or a hint take them over while they last.
+  While a box is open they are the box's alone, as Agenda's: the help for
+  its highlighted field (`Agendum.TUI.Boxes.FieldHelp`), or EDIT while a
+  field is typed in. Pure.
   """
 
   alias Agendum.Core.{Database, DateFormat}
@@ -13,6 +14,9 @@ defmodule Agendum.TUI.Render.ControlPanel do
 
   # white and yellow on blue
   @panel %{normal: :panel, dim: :panel_hint, box: :panel}
+
+  # the modes that are boxes: while one is on top the two lines are its own
+  @boxes Agendum.TUI.Boxes.Box.registry()
 
   @doc "The two lines, for the base screen `base` (nil for the view)."
   # Agenda's two top lines. Normally the file, with the indicators and the
@@ -64,6 +68,9 @@ defmodule Agendum.TUI.Render.ControlPanel do
 
           text_lines(state, base, :panel_hint, hint)
 
+        mode when is_map_key(@boxes, mode.type) ->
+          box_lines(state, mode)
+
         _ ->
           # a message first; else the help for a box's highlighted field, or
           # on an item's profile why it is in the highlighted category (R67)
@@ -89,6 +96,56 @@ defmodule Agendum.TUI.Render.ControlPanel do
       end
 
     Enum.map([l1, l2], &(&1 |> Draw.paint(@panel) |> Draw.line(w, :panel)))
+  end
+
+  # A box on top has the two lines to itself, as Agenda's (checked in Agenda
+  # 2.0, 2026-10-25, in View and Item Properties, the view manager and the
+  # assignment profile): no file, time or view. A message first; else,
+  # while a field is typed in, line 1 is blank but for EDIT at the right;
+  # else the highlighted field's help, going on into line 2 when long.
+  defp box_lines(state, mode) do
+    typed = typed_in?(state, mode)
+
+    # the mode word as anywhere (LEARN, AUTOC …), and EDIT while a field
+    # of the box's own is typed in; never the time
+    word =
+      case {indicator(state), typed} do
+        {nil, true} -> "EDIT "
+        {nil, false} -> ""
+        {word, _} -> word <> " "
+      end
+
+    case message_line(state) do
+      [{style, text} | _] ->
+        box_text(state, style, String.trim(text), word)
+
+      [] when typed ->
+        box_text(state, :panel_hint, "", word)
+
+      [] ->
+        help =
+          Agendum.TUI.Boxes.FieldHelp.text(state) ||
+            Agendum.TUI.CategoryScreens.Profile.reason(state) || ""
+
+        box_text(state, :panel_hint, help, word)
+    end
+  end
+
+  # A field being typed in (F2, or a first key typed in it); a box whose
+  # row is always a typing line (Search) is not, so its help stays
+  defp typed_in?(state, mode), do: state.edit != nil or Map.get(mode, :typing) != nil
+
+  defp box_text(state, style, text, word) do
+    room = max(state.width - String.length(word) - 2, 10)
+    # Draw.wrap/2 gives one line or more; the rest goes on line 2
+    [first | rest] = Draw.wrap(text, room) ++ [""]
+    rest = Enum.reject(rest, &(&1 == ""))
+
+    l1 =
+      Draw.line([{style, " " <> first}], state.width - String.length(word), :panel) ++
+        [{:indicator, word}]
+
+    {l1, if(rest == [], do: [], else: [{style, " " <> Enum.join(rest, " ")}])}
   end
 
   # A question, message or hint, left of the indicators; a long one goes
@@ -157,24 +214,8 @@ defmodule Agendum.TUI.Render.ControlPanel do
 
   defp where_line(state, nil) do
     view = State.view(state)
-
-    hides =
-      [
-        {view.hide_done, "[Hide Done]"},
-        {view.hide_empty, "[Hide Empty]"},
-        {view.hide_inherited, "[Hide Inherited]"},
-        {view.hide_dependent, "[Hide Dependent]"},
-        {not Agendum.Core.auto_dating?(state.db), "[No Auto Dates]"}
-      ]
-      |> Enum.filter(&elem(&1, 0))
-      |> Enum.map_join(" ", &elem(&1, 1))
-
-    # a datebook view names its Section at the top right, as Agenda did (R47)
-    datebook =
-      case view.datebook do
-        nil -> ""
-        d -> "Datebook for: #{state.db.categories[d.section_category].name}  "
-      end
+    # ours, not Agenda's: a warning that new items get no dates (R6b)
+    auto = if Agendum.Core.auto_dating?(state.db), do: "", else: "[No Auto Dates] "
 
     # Agenda's two marks at the right (checked in Agenda 2.0, 2026-10-25):
     # # on a numeric value or ☼ on a date, then ♪ when what is highlighted
@@ -187,10 +228,24 @@ defmodule Agendum.TUI.Render.ControlPanel do
         do: "",
         else: value_marker(state) <> note <> String.duplicate(" ", 6)
 
-    right = if hides == "", do: datebook <> marks, else: datebook <> hides <> " " <> marks
+    right = auto <> marks
     # at least two spaces between the view's name and filter and the rest
     room = max(state.width - String.length(right) - 2, 0)
-    left = Draw.truncate(" View: " <> view.name <> Text.filter_text(state, view.filter), room)
+
+    left =
+      case view.datebook do
+        nil ->
+          view_name(state, view, room)
+
+        # a datebook view names its Section from column 40, as Agenda's
+        # (R47; "Datebook For: Task"), the name and hides cut to fit before
+        d ->
+          section = state.db.categories[d.section_category].name
+          name = view_name(state, view, min(39, room))
+          String.pad_trailing(name, 40) <> "Datebook For: " <> section
+      end
+
+    left = Draw.truncate(left, room)
     Draw.line([{:title, left}], state.width - String.length(right), :title) ++ [{:title, right}]
   end
 
@@ -203,6 +258,39 @@ defmodule Agendum.TUI.Render.ControlPanel do
   defp where_line(_state, %{type: :note}), do: []
   defp where_line(_state, %{type: :help}), do: [{:title, " Help"}]
   defp where_line(_state, %{type: :devtools}), do: [{:title, " Developer tools"}]
+
+  # " View: Projects [Hide empty, done]": the view's name, its filter, then
+  # its hide settings in one bracket, as Agenda's (checked in Agenda 2.0,
+  # 2026-10-25): Hide written once, the settings in Agenda's order, right
+  # after a filter ("[-Contact List][Hide done]"). When the bracket does
+  # not fit in `room` it loses its space and is cut short with "..", as
+  # Agenda's ("View: Tomorrow[Hide empty, done, in..]").
+  defp view_name(state, view, room) do
+    name = " View: " <> view.name <> Text.filter_text(state, view.filter)
+
+    hides =
+      [
+        {view.hide_empty, "empty"},
+        {view.hide_done, "done"},
+        {view.hide_inherited, "inherited"},
+        {view.hide_dependent, "dependent"}
+      ]
+      |> Enum.filter(&elem(&1, 0))
+      |> Enum.map(&elem(&1, 1))
+
+    # a space after the name, none after a filter's "]"
+    gap = if view.filter == [], do: " ", else: ""
+    bracket = if hides == [], do: "", else: "[Hide " <> Enum.join(hides, ", ") <> "]"
+    left = room - String.length(name)
+
+    cond do
+      bracket == "" -> Draw.truncate(name, room)
+      String.length(gap <> bracket) <= left -> name <> gap <> bracket
+      # room for "[Hide" and the ".." at least
+      left >= 8 -> name <> String.slice(bracket, 0, left - 3) <> "..]"
+      true -> Draw.truncate(name, room)
+    end
+  end
 
   # "?" while there are suggested assignments to confirm (User's Guide 19-9).
   defp questions_marker(state),

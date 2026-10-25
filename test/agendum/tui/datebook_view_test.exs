@@ -134,7 +134,7 @@ defmodule Agendum.TUI.DatebookViewTest do
     end
 
     test "the control panel names the Section; the view manager marks it with *", %{state: state} do
-      assert screen(state) =~ ~r/View: This week +Datebook for: When/
+      assert screen(state) =~ ~r/View: This week +Datebook For: When/
       assert screen(press(state, {:f, 8})) =~ ~r/\* This week/
     end
   end
