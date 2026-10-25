@@ -207,11 +207,17 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
   - [x] (2026-10-25; the owner's choice) Completion (AUTOC) in a box's typed category fields (a column's or section's head, a new section): every category matches, ENTER takes the match shown, F5 / INS exactly what was typed, F2 edits without completion; a numeric column's word "Number:" checked in Agenda. Not done: Execute's and Show Schedule's category fields, which ours pick with SPACE rather than by typing
   - [x] (2026-10-25) F2 in the assignment profile renames the highlighted category in the control panel (Agenda's)
   - [x] (2026-10-25; the owner's choice) Agenda's "What to copy" box (one field, Word / Line / All text, SPACE and F3, ENTER accepts) in a note and while typing a line. Unchecked: Agenda's words for cut and delete (ours "What to cut:", "What to delete:"); ALT-F7 MAKEITM and ALT-F9 APPEND still ask in our list
+- [x] (2026-10-25; the owner's choices, all Agenda's, checked in Agenda 2.0) Alarms as Agenda's, in steps:
+  - [x] ALT-A opens the Set Alarm box: Date category (any date category; F3 lists them) and Minutes before; an item without a date takes an alarm too and waits; format 41 (`Item.alarm_category`); the `.AG` import keeps alarms on other date categories
+  - [x] `@` in column 76 of the View line while past alarms are listed (opening the list leaves it)
+  - [x] Utilities ▸ Show ▸ Alarm: the Show View with !Current Alarms! and !Past Alarms!; DEL asks "Remove this item from the section?", then cancels a current alarm or takes a past one off
+  - [x] The Show view named *Show View*, and "Delete the existing Show view?" before Show Match, Sched, Alarm, Prereqs or Depends replace it
+  - Unchecked or left: the help lines of those two questions (Agenda's "Press ENTER to remove this item from the section." and "You can have only one Show view …"), the second line of DEL's question ("(Use ALT-F4 to discard the item completely.)"), the F3 list's title (Agenda's "Select Date Category", ours "Choices"); what Agenda does with an alarm when its date category is deleted (ours: back on When)
 
 #### Commands and behaviour still missing
 
+- [ ] DEL on an item in a view asks Agenda's "Remove this item from the section? Yes (Use ALT-F4 to discard the item completely.)" (seen in Agenda 2.0, 2026-10-25, in the Show view; ours removes at once, except in the alarm list): a habit change, to settle with the owner first
 - [ ] The `.AG` import reads the file's own global date format (header words `0x182`/`0x184`, `AGENDA_FILE_FORMAT.md`; only partly decoded): an imported file gets Agenda's default today (the owner's choice, 2026-10-25)
-- [ ] Alarms as Agenda's (the tagging sitting, 2026-10-22): an alarm that came due while the file was closed rings when it is opened and shows `@`, without a box (checked in Agenda 2.0); Utilities ▸ Show Alarm, a Show View with !Current Alarms! and !Past Alarms! (DEL removes an item from the list; Past Alarms emptied at the end of the day; User's Guide 10-18 to 10-20). The "While you were away" box (R70) is an extra since R77 (2026-10-23): with Extras off, missed alarms already ring on open, without the box
 - [ ] Search compared with Agenda's (ALT-F6 SEARCH in a view and a note, its Search box, the Match show view): the differences become parity work (the tagging sitting, 2026-10-22: no longer an enhancement)
 - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)
 - [ ] File ▸ Abandon, File Maintenance Erase, File Transfer Template

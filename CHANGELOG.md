@@ -4,6 +4,14 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.50.0 — 2026-10-25
+
+Alarms as in Lotus Agenda.
+
+- **ALT-A** opens Agenda's **Set Alarm** box: the **Date category** the alarm rings before (When, or another date category; F3 lists them) and the **Minutes before** (5). An item without a date can have an alarm too; it waits until the item has one. Files are saved in format 41.
+- **Utilities ▸ Show ▸ Alarm** shows Agenda's alarm list: the Show view with **!Current Alarms!** and **!Past Alarms!**. DEL asks "Remove this item from the section?", then cancels a current alarm or takes a past one off the list; the item stays.
+- **`@`** stands at the right of the View line while there are past alarms, until you remove them (opening the list no longer clears it).
+- The Show view is named **\*Show View\***, as in Agenda, and Show Match, Sched, Alarm, Prereqs and Depends ask **"Delete the existing Show view?"** when there is one; ESC keeps it.
 ## 0.49.0 — 2026-10-25
 
 Dates as Lotus Agenda showed them.
