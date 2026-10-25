@@ -192,14 +192,18 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
   defp change(state, _mode, :head, _step), do: pick_head(state)
 
   # Agenda's order (checked in Agenda 2.0, 2026-10-25)
-  @kinds [:standard, :numeric, :date]
+  @kinds [:standard, :numeric, :date, :unindexed]
 
   defp change(state, mode, :type, step) do
     if mode.head && state.db.categories[mode.head].kind != :standard do
       State.error(state, "#{name(state, mode.head)} stays a #{kind_name(mode.kind)} category")
     else
       index = Enum.find_index(@kinds, &(&1 == mode.kind))
-      State.put_mode(state, %{mode | kind: Enum.at(@kinds, Integer.mod(index + step, 3))})
+
+      State.put_mode(state, %{
+        mode
+        | kind: Enum.at(@kinds, Integer.mod(index + step, length(@kinds)))
+      })
     end
   end
 
@@ -253,6 +257,11 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
 
       {:standard, :numeric} ->
         Properties.numeric_question(cat, Core.numeric_conversion(state.db, head, clock))
+
+      # Agenda asks only when Category Properties converts; here only when
+      # children would become texts
+      {:standard, :unindexed} when cat.children != [] ->
+        Properties.unindexed_question(cat)
 
       _ ->
         nil

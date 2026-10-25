@@ -144,6 +144,9 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
 
   def choice_options(%{kind: :type}),
     do: [
+      # Agenda's order (checked in Agenda 2.0, 2026-10-25)
+      {"Unindexed", "A text for each item, such as a phone number; children become texts",
+       :unindexed},
       {"Numeric", "A number for each item: totals and averages; children become numbers",
        :numeric},
       {"Date", "A date and time for each item; children become dates; cannot change back", :date}
@@ -313,6 +316,9 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
     |> State.switch_view(view_id)
     |> Agendum.TUI.Boxes.ViewProps.open(view_id)
   end
+
+  defp resolve_choice(state, %{kind: :type} = mode, :unindexed),
+    do: Properties.to_unindexed(state, state.db.categories[mode.cat_id])
 
   defp resolve_choice(state, %{kind: :type} = mode, :numeric),
     do: Properties.to_numeric(state, state.db.categories[mode.cat_id])

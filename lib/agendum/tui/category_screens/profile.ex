@@ -269,6 +269,10 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
           CategoryScreens.numeric?(db, id) and not Database.explicit?(db, item_id, id) ->
             Prompts.prompt(state, "#{db.categories[id].name}:", {:item_number, item_id, id})
 
+          # an unindexed category asks for the text (User's Guide 4-16)
+          db.categories[id].kind == :unindexed and not Database.explicit?(db, item_id, id) ->
+            Prompts.prompt(state, "#{db.categories[id].name}:", {:item_text, item_id, id})
+
           true ->
             State.run(state, {:toggle_assignment, item_id, id})
         end

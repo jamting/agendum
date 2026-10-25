@@ -173,6 +173,16 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   defp command(state, mode, :set_value, {:assigned, %{kind: :numeric} = a}),
     do: ask_number(state, mode, a)
 
+  # F4 VALUES on an unindexed assignment: its text (R29b)
+  defp command(state, mode, :set_value, {:assigned, %{kind: :text} = a}),
+    do:
+      Prompts.prompt(
+        state,
+        "#{state.db.categories[a.category].name}:",
+        {:item_text, mode.item_id, a.category},
+        a.text
+      )
+
   defp command(state, mode, :remove, {:assigned, a}), do: remove(state, mode, a)
 
   defp command(state, _mode, :assign, row) when row not in [:text, :note],
@@ -430,6 +440,9 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
 
   defp alarm_note(%{alarm_minutes: nil}), do: ""
   defp alarm_note(%{alarm_minutes: m}), do: " · alarm #{m} min before"
+
+  defp assignment_text(state, %{category: id, kind: :text, text: text}),
+    do: "#{state.db.categories[id].name} (#{text})"
 
   defp assignment_text(state, %{category: id, kind: :numeric, number: number}) do
     number =

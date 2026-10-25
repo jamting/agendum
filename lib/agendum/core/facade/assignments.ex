@@ -123,16 +123,18 @@ defmodule Agendum.Core.Facade.Assignments do
   @doc """
   Everything an item is assigned to, in hierarchy order, as the Item
   Properties box lists it: date categories with the item's date (`:date`),
-  numeric categories with its number (`:numeric`, R29), and links the
+  numeric categories with its number (`:numeric`, R29), unindexed ones
+  with its text (`:text`, R29b), and links the
   user made (`:explicit`) or a condition made
   (`:conditional`). Membership through subcategories is not listed.
   """
   @spec item_assignments(db, id) :: [
           %{
             required(:category) => id,
-            required(:kind) => :date | :numeric | :explicit | :conditional,
+            required(:kind) => :date | :numeric | :text | :explicit | :conditional,
             required(:date) => Date.t() | nil,
-            optional(:number) => float
+            optional(:number) => float,
+            optional(:text) => String.t()
           }
         ]
   def item_assignments(db, item_id) do
@@ -154,6 +156,9 @@ defmodule Agendum.Core.Facade.Assignments do
         # truthy (not nil or false) and can use it
         number = Database.number(db, item_id, id) ->
           [%{category: id, kind: :numeric, date: nil, number: number}]
+
+        text = Database.text(db, item_id, id) ->
+          [%{category: id, kind: :text, date: nil, text: text}]
 
         Database.explicit?(db, item_id, id) ->
           kind = if Database.conditional?(db, item_id, id), do: :conditional, else: :explicit

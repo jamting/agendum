@@ -153,6 +153,8 @@ defmodule Agendum.TUI.Render.ControlPanel do
     case state.db.categories[head].kind do
       :date -> "Date:"
       :numeric -> "Number:"
+      # Agenda's word (checked in Agenda 2.0, 2026-10-25; R29b)
+      :unindexed -> "Text value:"
       _ -> :completion
     end
   end
@@ -431,6 +433,8 @@ defmodule Agendum.TUI.Render.ControlPanel do
         cond do
           Text.numeric?(state, column) -> "#"
           Database.date_category?(state.db, column.category_id) -> "☼"
+          # an unindexed column: Agenda's ⌂ (CP437 0x7F; its help writes D)
+          state.db.categories[column.category_id].kind == :unindexed -> "⌂"
           true -> " "
         end
     end

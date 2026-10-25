@@ -148,7 +148,8 @@ defmodule Agendum.TUI.ColumnAddTest do
       assert screen(state) =~ ~r/Category type: +Date/
       # the width follows the type until it is changed
       assert screen(state) =~ ~r/Width: +16/
-      state = press(state, [" ", " "])
+      # Date, Unindexed, Standard, then Numeric again (Agenda's four types)
+      state = press(state, [" ", " ", " "])
       assert screen(state) =~ ~r/Category type: +Numeric/
       assert screen(state) =~ ~r/Width: +12/
       state = press(state, :enter)

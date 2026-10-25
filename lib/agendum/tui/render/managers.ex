@@ -53,10 +53,12 @@ defmodule Agendum.TUI.Render.Managers do
   end
 
   # Agenda's mark two left of the name: ♪ a note, ☼ a date category, # a
-  # numeric one (the screen shows ☼ where Agenda's help writes *)
+  # numeric one (the screen shows ☼ where Agenda's help writes *), ⌂ an
+  # unindexed one (R29b; Agenda's mark on the View line, unchecked here)
   defp mark(%{note: note}) when note != "", do: "♪"
   defp mark(%{kind: :date}), do: "☼"
   defp mark(%{kind: :numeric}), do: "#"
+  defp mark(%{kind: :unindexed}), do: "⌂"
   defp mark(_cat), do: " "
 
   # ┌ ├ └ just before the children of an exclusive family, [ for a lone

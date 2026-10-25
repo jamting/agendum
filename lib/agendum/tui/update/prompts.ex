@@ -49,6 +49,14 @@ defmodule Agendum.TUI.Update.Prompts do
     end
   end
 
+  @doc "Makes a category unindexed (R29b), saying why not when it cannot be."
+  def make_unindexed(state, cat_id) do
+    case State.command(state, {:make_unindexed, cat_id}) do
+      {:ok, state, _} -> state
+      {:error, _} -> State.error(state, Agendum.TUI.Messages.text(:cannot_convert))
+    end
+  end
+
   @doc "Converts a category to a date category (R6a), reporting the result."
   def make_date(state, cat_id) do
     case State.command(state, {:make_date, cat_id}) do
@@ -281,6 +289,10 @@ defmodule Agendum.TUI.Update.Prompts do
     end
   end
 
+  # an item's text in an unindexed category (R29b): empty takes it out
+  defp prompt_action(state, {:item_text, item_id, cat_id}, text),
+    do: State.run(state, {:set_text, item_id, cat_id, text})
+
   defp prompt_action(state, {:exclusive_new_child, cat_id}, text) do
     Choices.apply_exclusive(state, cat_id, {:new_child, text})
   end
@@ -396,6 +408,7 @@ defmodule Agendum.TUI.Update.Prompts do
   def help, do: "Y or N answers. SPACE switches the answer; ENTER accepts the one shown."
 
   defp confirmed(state, {:make_numeric, id}, true), do: make_numeric(state, id)
+  defp confirmed(state, {:make_unindexed, id}, true), do: make_unindexed(state, id)
 
   # Search/Replace in a note: Y replaces this occurrence, N skips it
   defp confirmed(state, {:note_replace, asked}, answer),

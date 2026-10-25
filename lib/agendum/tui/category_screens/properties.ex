@@ -361,6 +361,21 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
     end
   end
 
+  @doc """
+  Makes a category unindexed (R29b), after Agenda's question (checked in
+  Agenda 2.0, 2026-10-25): "Convert to unindexed category (can't be
+  changed back)?", with what becomes of its children and items.
+  """
+  def to_unindexed(state, cat),
+    do: Prompts.confirm(state, unindexed_question(cat), {:make_unindexed, cat.id})
+
+  @doc "The question to ask before `cat` becomes unindexed; Column Add asks it too."
+  def unindexed_question(cat) do
+    children = length(cat.children)
+    note = if children > 0, do: " Its #{children} children become texts.", else: ""
+    "Convert to unindexed category (can't be changed back)?" <> note
+  end
+
   @doc "Makes a category a date category, asking first when items or children change."
   def to_date(state, cat) do
     case date_question(cat, Core.date_conversion(state.db, cat.id, State.context(state))) do

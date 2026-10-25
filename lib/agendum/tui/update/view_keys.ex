@@ -489,8 +489,18 @@ defmodule Agendum.TUI.Update.ViewKeys do
   defp edit_entry(state, row) do
     {:column_entry, item_id, head, _} = column_target(state, row, :replace)
     numeric = state.db.categories[head].kind == :numeric
+    unindexed = state.db.categories[head].kind == :unindexed
 
     case Database.date_category?(state.db, head) do
+      # an unindexed entry's text, to edit (R29b)
+      false when unindexed ->
+        text = Database.text(state.db, item_id, head) || ""
+
+        %{
+          state
+          | edit: %{target: {:column_entry, item_id, head, :replace}, line: LineEdit.new(text)}
+        }
+
       false when numeric ->
         text =
           Editing.number_text(Database.number(state.db, item_id, head), State.number_opts(state))
@@ -671,6 +681,10 @@ defmodule Agendum.TUI.Update.ViewKeys do
 
       state.db.categories[head].kind == :numeric ->
         State.error(state, Agendum.TUI.Messages.text(:bad_number))
+
+      # a text has no choices: F3 does nothing there, as Agenda's
+      state.db.categories[head].kind == :unindexed ->
+        state
 
       true ->
         CategoryScreens.open_picker(state, {:assign_column, item_id, head}, head)

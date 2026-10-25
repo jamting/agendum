@@ -60,7 +60,7 @@ defmodule Agendum.TUI.Typing.Completion do
 
   # The category whose subcategories are searched.
   defp head(%State{edit: %{target: {:column_entry, _item, head, _}}, db: db}) do
-    if db.categories[head].kind in [:date, :numeric],
+    if db.categories[head].kind in [:date, :numeric, :unindexed],
       do: nil,
       else: head
   end
