@@ -98,6 +98,7 @@ defmodule Agendum.TUI.Modes do
     range_filter: [:cat_id, :cursor, :from, :purpose, :show, :to, :where],
     run_by_name: [:cursor, :filter, :from],
     schedule: [:cursor, :date, :date_category, :filter, :section],
+    set_alarm: [:cursor, :date_category, :item_id, :minutes, :typing],
     scope: [:action, :cursor, :marked, :row],
     search_box: [:cursor, :direction, :line, :scope, :search],
     searching: [:search],

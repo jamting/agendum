@@ -38,6 +38,7 @@ defmodule Agendum.TUI.HelpCoverageTest do
     Agendum.TUI.Boxes.RangeFilterBox,
     Agendum.TUI.Boxes.ScheduleBox,
     Agendum.TUI.Boxes.SearchBox,
+    Agendum.TUI.Boxes.SetAlarmBox,
     Agendum.TUI.Boxes.SectionBox,
     Agendum.TUI.Boxes.SortBox,
     Agendum.TUI.Boxes.ViewManager,

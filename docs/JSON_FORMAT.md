@@ -93,7 +93,7 @@ A **criterion** (conditions, filters) is `{"category": id, "is": "assigned"}`, `
 | `when_time`             | The When time or `null` (R14b).                                                                  |
 | `when_explicit`         | The When date was set by hand, not read from the text (R14).                                     |
 | `recurrence`            | `{"every": 1, "unit": "week", "weekday": 5, "day": null}` or `null` (R14a).                      |
-| `alarm_minutes`         | Minutes before the When time, or `null` (R38); `alarm_rung_at` the moment it was due when it rang (R70), or `null`.    |
+| `alarm_minutes`         | Minutes before the When time, or `null` (R38); `alarm_category` the id of the date category whose date it rings before, `null` for When; `alarm_rung_at` the moment it was due when it rang (R70), or `null`. |
 | `zettel`                | The item's Zettel id as its word (`"bonalaku"`, R73), or `null`. The word is the Quadsyl-24 spelling of a number (`docs/QUADSYL.md`), so other tools can decode it; no two items may share one. |
 | `marked`                | Marked with F7.                                                                                  |
 | `categories`            | The categories it is explicitly assigned to (membership in their ancestors is computed, R3).     |

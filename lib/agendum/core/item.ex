@@ -14,9 +14,11 @@ defmodule Agendum.Core.Item do
   `recurrence` is the rule of a recurring When date ("every Monday",
   `Agendum.Core.Recurrence`, R14a); the When date is then its base date.
 
-  An alarm rings `alarm_minutes` before the When date and time (R38);
-  once it has rung, `alarm_rung_at` records when it was due (R70), for
-  the list of past alarms.
+  An alarm rings `alarm_minutes` before the date and time the item has in
+  `alarm_category` (R38; nil means When, as in files from before format
+  41); an item without that date keeps its alarm until it has one. Once
+  it has rung, `alarm_rung_at` records when it was due (R70), for the list
+  of past alarms.
 
   `zettel` is the number of the item's Zettel id (R73, ADR 0039), spelled
   as a word by `Agendum.Core.Extras.ZettelId` (`bonalaku`); nil until it is given
@@ -35,6 +37,7 @@ defmodule Agendum.Core.Item do
           when_explicit: boolean,
           recurrence: Agendum.Core.Recurrence.t() | nil,
           alarm_minutes: 0..60 | nil,
+          alarm_category: pos_integer | nil,
           alarm_rung_at: NaiveDateTime.t() | nil,
           zettel: non_neg_integer | nil,
           marked: boolean
@@ -50,6 +53,7 @@ defmodule Agendum.Core.Item do
     when_explicit: false,
     recurrence: nil,
     alarm_minutes: nil,
+    alarm_category: nil,
     alarm_rung_at: nil,
     zettel: nil,
     done: nil,

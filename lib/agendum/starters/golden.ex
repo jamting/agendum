@@ -110,6 +110,8 @@ defmodule Agendum.Starters.Golden do
 
     item = hd(db.item_order)
     db = ok(Core.set_date(db, item, visit, ~D[2026-11-01], @now))
+    # an alarm on the Visit date rather than When (R38)
+    db = ok(Core.set_alarm(db, item, 30, visit))
     db = ok(Core.make_numeric(db, pots, @now))
     db = ok(Core.set_number(db, item, pots, 12.5, @now))
 

@@ -81,9 +81,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
                    {:out_of_scope, "application protection (SPEC § 6)"},
                  "category_text_matching_long: Agenda's Category can have new children, not ours" =>
                    {:out_of_scope, "application protection (SPEC § 6)"},
-                 "alarm: no box opens in Agendum" =>
-                   {:not_built,
-                    "Agenda's Set Alarm box (date category, minutes before); ours asks on the top line"},
                  "auto_assign_settings: Agenda's Assignment conditions, not ours" =>
                    {:not_built,
                     "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},

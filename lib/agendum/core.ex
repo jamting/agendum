@@ -145,7 +145,8 @@ defmodule Agendum.Core do
 
   # times and alarms (R14b, R38)
   defdelegate when_at(item), to: Alarms
-  defdelegate set_alarm(db, id, minutes), to: Alarms
+  defdelegate alarm_at(db, item), to: Alarms
+  defdelegate set_alarm(db, id, minutes, category \\ nil), to: Alarms
   defdelegate cancel_alarm(db, id), to: Alarms
   defdelegate ring_alarms(db, now), to: Alarms
   defdelegate alarm_list(db), to: Alarms

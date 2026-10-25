@@ -20,24 +20,57 @@ defmodule Agendum.Core.Facade.Alarms do
   def when_at(%{when: date, when_time: time}), do: NaiveDateTime.new!(date, time || ~T[00:00:00])
 
   @doc """
-  Sets an alarm to ring `minutes` (0 to 60) before the item's When date and
-  time (Item Alarm, ALT-A; User's Guide 10-17).
+  The date and time an item's alarm rings before: its date in the alarm's
+  date category (When unless another was chosen; midnight when it has no
+  time), or nil while it has none.
   """
-  @spec set_alarm(db, id, integer) :: {:ok, db} | {:error, :no_when | :minutes}
-  def set_alarm(db, id, minutes) do
+  @spec alarm_at(db, Agendum.Core.Item.t()) :: NaiveDateTime.t() | nil
+  def alarm_at(db, item) do
+    category = alarm_category(db, item)
+
+    case Database.item_date(db, item.id, category) do
+      nil -> nil
+      date -> NaiveDateTime.new!(date, Database.item_time(db, item.id, category) || ~T[00:00:00])
+    end
+  end
+
+  # the alarm's date category: When unless the item names another, which
+  # is still a date category
+  defp alarm_category(db, %{alarm_category: id}) when is_integer(id) do
+    if Database.date_category?(db, id), do: id, else: db.special.when
+  end
+
+  defp alarm_category(db, _item), do: db.special.when
+
+  @doc """
+  Sets an alarm to ring `minutes` (0 to 60) before the item's date in
+  `category`, a date category (When when nil): Agenda's Set Alarm box
+  (Item Alarm, ALT-A; User's Guide 10-17, 10-18). An item without that
+  date keeps the alarm until it has one, as in Agenda.
+  """
+  @spec set_alarm(db, id, integer, id | nil) ::
+          {:ok, db} | {:error, :minutes | :not_a_date_category}
+  def set_alarm(db, id, minutes, category \\ nil) do
     # `cond` runs the first branch whose condition is truthy; `true` is the
     # else. Returning `{:ok, value} | {:error, reason}` instead of raising is
     # the convention for failures the caller should handle (here the UI
     # turns the atom into a message).
     cond do
-      minutes not in 0..60 -> {:error, :minutes}
-      db.items[id].when == nil -> {:error, :no_when}
-      true -> {:ok, Database.update_item(db, id, &%{&1 | alarm_minutes: minutes})}
+      minutes not in 0..60 ->
+        {:error, :minutes}
+
+      category != nil and not Database.date_category?(db, category) ->
+        {:error, :not_a_date_category}
+
+      true ->
+        {:ok,
+         Database.update_item(db, id, &%{&1 | alarm_minutes: minutes, alarm_category: category})}
     end
   end
 
   @spec cancel_alarm(db, id) :: db
-  def cancel_alarm(db, id), do: Database.update_item(db, id, &%{&1 | alarm_minutes: nil})
+  def cancel_alarm(db, id),
+    do: Database.update_item(db, id, &%{&1 | alarm_minutes: nil, alarm_category: nil})
 
   @doc """
   Rings the alarms whose time has come: they leave the current alarms and
@@ -49,29 +82,39 @@ defmodule Agendum.Core.Facade.Alarms do
   def ring_alarms(db, %NaiveDateTime{} = now) do
     # `%NaiveDateTime{} = now` in the head only accepts that struct: calling
     # with a `Date` fails at once with a FunctionClauseError instead of
-    # somewhere deeper. In the `for`, `at = when_at(item)` binds a value
-    # for the filters after it.
+    # somewhere deeper. In the `for`, `at = due_at(db, item)` binds a value
+    # for the filter after it; an item still without a date gives nil and
+    # is left out (it keeps waiting).
     due =
       for item <- Database.items(db),
           item.alarm_minutes != nil,
-          at = when_at(item),
-          at != nil,
-          NaiveDateTime.compare(NaiveDateTime.add(at, -item.alarm_minutes * 60), now) != :gt,
-          do: item.id
+          at = due_at(db, item),
+          at != nil and NaiveDateTime.compare(at, now) != :gt,
+          do: {item.id, at}
 
     db =
-      Enum.reduce(due, db, fn id, db ->
-        Database.update_item(db, id, &%{&1 | alarm_minutes: nil, alarm_rung_at: due_at(&1)})
+      Enum.reduce(due, db, fn {id, at}, db ->
+        Database.update_item(
+          db,
+          id,
+          &%{&1 | alarm_minutes: nil, alarm_category: nil, alarm_rung_at: at}
+        )
       end)
 
-    {db, due}
+    {db, Enum.map(due, &elem(&1, 0))}
   end
 
-  # when an item's alarm is due: its minutes before the When moment
-  defp due_at(item), do: NaiveDateTime.add(when_at(item), -item.alarm_minutes * 60)
+  # when an item's alarm is due: its minutes before the alarm's moment
+  defp due_at(db, item) do
+    case alarm_at(db, item) do
+      nil -> nil
+      at -> NaiveDateTime.add(at, -item.alarm_minutes * 60)
+    end
+  end
 
   @doc """
-  Current alarms (in When order) and past alarms (latest first): those
+  Current alarms (in the order they ring, those without a date last) and
+  past alarms (latest first): those
   rung since the date last changed (`clear_old_alarms/2` forgets older
   ones as the date changes and as the file is opened), which may have
   been due before today when they came due while the file was closed.
@@ -83,10 +126,14 @@ defmodule Agendum.Core.Facade.Alarms do
     current =
       items
       |> Enum.filter(&(&1.alarm_minutes != nil))
-      # `&when_at/1` captures a named function as a value. Passing the module
-      # `NaiveDateTime` as the sorter makes `sort_by` use its `compare/2`:
-      # `<` on structs would compare their fields, not the moment.
-      |> Enum.sort_by(&when_at/1, NaiveDateTime)
+      # by the moment each rings before, those still without a date last:
+      # a tuple sorts by its first element, then the next; `false` comes
+      # before `true`. `NaiveDateTime.to_erl/1` gives a tuple that sorts
+      # as the moment does (`<` on the structs would compare their fields)
+      |> Enum.sort_by(fn item ->
+        at = alarm_at(db, item)
+        {at == nil, at && NaiveDateTime.to_erl(at)}
+      end)
       |> Enum.map(& &1.id)
 
     past =

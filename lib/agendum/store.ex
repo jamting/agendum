@@ -44,7 +44,8 @@ defmodule Agendum.Store do
   `Calendar`, to `Agendum.Core.Extras.*` (ADR 0044), and loading maps their
   old names to the new ones; 39 adds `View.number_items` (R79); 40 adds
   `Database.texts` and the `:unindexed` kind of `Category`, unindexed
-  categories (R29b).
+  categories (R29b); 41 adds `Item.alarm_category`, an alarm's date
+  category (R38).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
@@ -55,7 +56,7 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 40
+  @format_version 41
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"

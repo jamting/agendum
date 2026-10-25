@@ -68,6 +68,7 @@ erDiagram
         bool when_explicit "When set by the user, not the text"
         time when_time "time of day on the When date, or nil"
         int alarm_minutes "0-60 before When, or nil"
+        int alarm_category "the date category it rings before; nil = When"
         datetime alarm_rung_at "when the rung alarm was due"
         int zettel "Zettel id number, or nil (R73)"
         bool marked
@@ -244,6 +245,7 @@ classDiagram
         +when_explicit : boolean
         +when_time : Time or nil
         +alarm_minutes : 0..60 or nil
+        +alarm_category : id or nil
         +alarm_rung_at : NaiveDateTime or nil
         +zettel : non_neg_integer or nil
         +marked : boolean
@@ -662,6 +664,7 @@ Format versions:
 | 38 | Moved the extras' stored structs, `Feed`, `Blog` and `Calendar`, to `Agendum.Core.Extras.*` (ADR 0044); loading maps the old names |
 | 39 | Added `View.number_items`, View Properties ▸ Number items (R79) |
 | 40 | Added `Database.texts` and the `:unindexed` kind of `Category`, unindexed categories (R29b) |
+| 41 | Added `Item.alarm_category`, the date category an alarm rings before (R38) |
 
 ## UI state around the database
 

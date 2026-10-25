@@ -256,16 +256,6 @@ defmodule Agendum.TUI.Update.Prompts do
     Choices.apply_move(state, id, relocation, {:new_category, text})
   end
 
-  defp prompt_action(state, {:alarm, item_id}, text) do
-    with {minutes, ""} <- Integer.parse(String.trim(text)),
-         {:ok, %{db: db} = state, _} <- State.command(state, {:set_alarm, item_id, minutes}) do
-      at = Core.when_at(db.items[item_id]) |> NaiveDateTime.add(-minutes * 60)
-      State.info(state, "Alarm set for " <> DateFormat.datetime(at, db.date_format))
-    else
-      _ -> State.error(state, Agendum.TUI.Messages.text(:bad_number))
-    end
-  end
-
   defp prompt_action(state, {:item_date, item_id, cat_id}, text) do
     case State.command(state, {:assign_by_name, item_id, cat_id, text}) do
       {:ok, state, %{result: :date}} ->

@@ -287,7 +287,7 @@ defmodule Agendum.Core.AgFile.Convert do
     when_a = by_cat[sp.when]
 
     {recurrence, ctx} = recurrence(when_a, item, ctx)
-    {alarm, ctx} = alarm(item, ctx)
+    {{alarm, alarm_category}, ctx} = alarm(item, ctx)
 
     ctx =
       if match?(%{file: _}, item.note),
@@ -319,6 +319,7 @@ defmodule Agendum.Core.AgFile.Convert do
       "done" => date_of(by_cat[sp.done]),
       "recurrence" => recurrence,
       "alarm_minutes" => alarm,
+      "alarm_category" => alarm_category,
       "dates" =>
         for(
           a <- item.assignments,
@@ -402,16 +403,14 @@ defmodule Agendum.Core.AgFile.Convert do
 
   defp recurrence(_when, _item, ctx), do: {nil, ctx}
 
-  # Agendum's alarms go off before the When time (R38).
-  defp alarm(%{alarm: %{date_category: cat, minutes_before: minutes}} = item, ctx) do
-    if cat == ctx.special.when,
-      do: {min(max(minutes, 0), 60), ctx},
-      else:
-        {nil,
-         note(ctx, "\"#{item.text}\": its alarm was on another date than When, not imported")}
+  # An alarm rings before its date category's date, When by default (R38):
+  # the minutes, and the category when it is another than When.
+  defp alarm(%{alarm: %{date_category: cat, minutes_before: minutes}}, ctx) do
+    category = if cat == ctx.special.when, do: nil, else: cat
+    {{min(max(minutes, 0), 60), category}, ctx}
   end
 
-  defp alarm(_item, ctx), do: {nil, ctx}
+  defp alarm(_item, ctx), do: {{nil, nil}, ctx}
 
   # --- views -------------------------------------------------------------------
 

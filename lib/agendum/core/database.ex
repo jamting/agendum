@@ -269,6 +269,16 @@ defmodule Agendum.Core.Database do
            }}
         end)
 
+      # an alarm on a date category that is gone rings before When again
+      items =
+        Map.new(db.items, fn
+          {iid, %{alarm_category: cat} = item} when cat != nil ->
+            {iid, if(cat in doomed_set, do: %{item | alarm_category: nil}, else: item)}
+
+          pair ->
+            pair
+        end)
+
       numbers = Map.reject(db.numbers, fn {{_, cat}, _} -> cat in doomed_set end)
       texts = Map.reject(db.texts, fn {{_, cat}, _} -> cat in doomed_set end)
       dates = Map.reject(db.dates, fn {{_, cat}, _} -> cat in doomed_set end)
@@ -284,6 +294,7 @@ defmodule Agendum.Core.Database do
          | links: links,
            conditional: conditional,
            categories: categories,
+           items: items,
            views: views,
            numbers: numbers,
            texts: texts,

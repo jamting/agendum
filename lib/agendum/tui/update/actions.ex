@@ -245,23 +245,12 @@ defmodule Agendum.TUI.Update.Actions do
     Marked.start_move(state, [{item.id, cat.id}])
   end
 
-  # ALT-A (Item Alarm): set an alarm, or cancel the one already set
+  # ALT-A (Item Alarm): Agenda's Set Alarm box, or the alarm already set
+  # cancelled at once, as Agenda's (checked in Agenda 2.0, 2026-10-25)
   defp do_perform(state, :alarm, %{kind: :item, item: item}) do
-    cond do
-      item.alarm_minutes != nil ->
-        State.run(state, {:cancel_alarm, item.id}, "Alarm cancelled")
-
-      item.when == nil ->
-        State.error(state, Agendum.TUI.Messages.text(:needs_date))
-
-      true ->
-        Prompts.prompt(
-          state,
-          "Alarm: minutes before the When time (0-60):",
-          {:alarm, item.id},
-          "5"
-        )
-    end
+    if item.alarm_minutes != nil,
+      do: State.run(state, {:cancel_alarm, item.id}),
+      else: Agendum.TUI.Boxes.SetAlarmBox.open(state, item.id)
   end
 
   defp do_perform(state, :alarm_list, _), do: AlarmList.open(state)

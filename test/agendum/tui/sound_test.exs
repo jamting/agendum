@@ -48,10 +48,10 @@ defmodule Agendum.TUI.SoundTest do
   end
 
   test "an error beeps", %{state: state} do
-    # an item with no When date cannot get an alarm
-    {state, _} = sounds(state, ["Buy milk", :enter])
-    {state, [:error]} = sounds(state, {:alt, "a"})
-    assert panel(state) =~ message(:needs_date)
+    # an alarm more than 60 minutes before cannot be set
+    {state, _} = sounds(state, ["Buy milk", :enter, {:alt, "a"}, :down, "9", "0"])
+    {state, [:error]} = sounds(state, :enter)
+    assert panel(state) =~ message(:bad_number)
   end
 
   test "each key recorded in Learn mode clicks", %{state: state} do

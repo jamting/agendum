@@ -58,9 +58,37 @@ defmodule Agendum.Core.AlarmsTest do
       assert Core.set_alarm(db, id, 61) == {:error, :minutes}
     end
 
-    test "an item needs a When date for an alarm", %{db: db} do
+    # Agenda 2.0 (checked 2026-10-25): an item without a date takes an
+    # alarm too; it shows @ and waits among the current alarms
+    test "an item without a date takes an alarm, which waits", %{db: db} do
       {db, plain} = Core.add_item(db, "no date here", @now)
-      assert Core.set_alarm(db, plain, 5) == {:error, :no_when}
+      assert {:ok, db} = Core.set_alarm(db, plain, 5)
+      assert Core.alarm_list(db).current == [plain]
+      assert {^db, []} = Core.ring_alarms(db, ~N[2030-01-01 00:00:00])
+    end
+
+    # Set Alarm's Date category (User's Guide 10-18): When by default, or
+    # another date category, whose date and time the alarm rings before
+    test "an alarm can ring before the date of another date category", %{db: db} do
+      {:ok, db, due} = Core.add_category(db, db.main_id, "Due")
+      {:ok, db} = Core.make_date(db, due, ~D[2026-10-08])
+      {db, bill} = Core.add_item(db, "Pay the bill", @now)
+      db = Core.set_date_time(db, bill, due, ~D[2026-10-09], ~T[12:00:00], @now)
+
+      assert {:ok, db} = Core.set_alarm(db, bill, 10, due)
+      assert db.items[bill].alarm_category == due
+      assert Core.alarm_at(db, db.items[bill]) == ~N[2026-10-09 12:00:00]
+      assert {_, []} = Core.ring_alarms(db, ~N[2026-10-09 11:49:00])
+      assert {_, [^bill]} = Core.ring_alarms(db, ~N[2026-10-09 11:50:00])
+
+      {:ok, db, entry} = {:ok, db, db.special.entry}
+      assert Core.set_alarm(db, bill, 5, db.main_id) == {:error, :not_a_date_category}
+      assert {:ok, _} = Core.set_alarm(db, bill, 5, entry)
+
+      # its category deleted, the alarm goes back to When
+      {:ok, db} = Core.discard_category(db, due)
+      assert db.items[bill].alarm_category == nil
+      assert db.items[bill].alarm_minutes == 10
     end
 
     test "the alarm rings when its time comes, and moves to the past alarms", %{db: db, id: id} do

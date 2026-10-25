@@ -335,6 +335,7 @@ defmodule Agendum.Core.JSONFile do
       done: date(i.done),
       recurrence: i.recurrence && struct_obj(i.recurrence),
       alarm_minutes: i.alarm_minutes,
+      alarm_category: i.alarm_category,
       alarm_rung_at: i.alarm_rung_at && NaiveDateTime.to_iso8601(i.alarm_rung_at),
       # the Zettel id as its word, so it can be read without Agendum (R73)
       zettel: Zettels.zettel(i),
@@ -659,6 +660,7 @@ defmodule Agendum.Core.JSONFile do
           _ -> read_struct(i, "recurrence", Recurrence, path <> ".recurrence")
         end,
       alarm_minutes: opt(i, "alarm_minutes", {:nullable, :int}, nil, path),
+      alarm_category: opt(i, "alarm_category", {:nullable, :int}, nil, path),
       alarm_rung_at: opt(i, "alarm_rung_at", {:nullable, :datetime}, nil, path),
       zettel: read_zettel(i, path),
       marked: opt(i, "marked", :bool, false, path)

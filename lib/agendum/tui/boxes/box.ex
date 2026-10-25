@@ -164,6 +164,7 @@ defmodule Agendum.TUI.Boxes.Box do
     range_filter: Agendum.TUI.Boxes.RangeFilterBox,
     run_by_name: Agendum.TUI.Boxes.RunByName,
     schedule: Agendum.TUI.Boxes.ScheduleBox,
+    set_alarm: Agendum.TUI.Boxes.SetAlarmBox,
     scope: Agendum.TUI.Update.Marked,
     search_box: Agendum.TUI.Boxes.SearchBox,
     section_props: Agendum.TUI.Boxes.SectionBox,
