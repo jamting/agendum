@@ -6,7 +6,8 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
-1. The parity steps in their order ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the rest of the clone's safety between them
+1. The parity steps in their order ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the rest of the clone's safety between them: the small steps in batches, then Search compared, then Agenda's help last (meeting 2026-10-25, § 7)
+2. The clone declared done (the definition: AGENDA_PARITY.md, end of The steps): the public repository made, the freezes below lifted, and the parity plan's *Optional* steps put back on the roadmap in their areas (meeting 2026-10-25, § 7)
 
 **Frozen until the truthful clone is declared done** (meeting 2026-10-21, § 5; `VISION.md`, ADR 0043): Beyond Agenda, Ideas and Towards many users wait (bug fixes only). Not frozen: the parity steps, the clone's safety work and tests (meeting 2026-10-22, § 5c) and Sharpen the saw (§ 5i). The view cache waits for slow answers in real use.
 
@@ -99,6 +100,7 @@ Each item names the group in `VISION.md` it serves, group 1 first; items for gro
 
 Each names the group in `VISION.md` it serves; an idea moves up to "Beyond Agenda" when it serves group 1 or 2 now (meeting 2026-10-16-2, § 6).
 
+- _Groups 1 and 2._ Attachments (meeting 2026-10-25, § 5): files of any kind on an item or a category (an image that belongs to a note, the CV a note is about), copied into a folder beside the Agendum file as org-mode's attachments are, listed in the note, opened with the system's viewer (an effect, as CTRL-V opens a link); uploads kept by the server on the web; an attached file's text, read by an agent, is data and never instructions. Agenda's external note files (left out of the clone) could be one case of it
 - _Groups 1 and 2._ Multiple files open; a launcher listing recent files
 - _Groups 2 and 3._ In-line help in boxes: the hint inside a box (made from its keys, `Box.hint/2`) as the start of a fuller help, with longer texts in a help box of their own (the owner's idea, 2026-10-14)
 - _Group 1._ Wol in the machine (its memory: the context items of `plans/ITEM_LEVELS.md`): a personal agent (a language model) inside the file, using its items, categories, views and rules as the person's own meaning; it files, finds and plans by proposing, never silently changing; the core stays pure and privacy comes first. Builds on the command layer (Towards many users). Thoughts in [`docs/plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)

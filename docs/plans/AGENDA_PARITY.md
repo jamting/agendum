@@ -141,6 +141,7 @@ Off the list since the tagging sitting, as no difference from Agenda: **search**
 What Agenda had that Agendum does another way, on purpose. Tagged as the enhancements above, 2026-10-22.
 
 - **work** · **Saving.** Agenda saves automatically (Quit, Retrieve). Agendum keeps changes until you save and asks before they are lost; ` *` on the File line shows unsaved changes.
+- **machine** · **External note files** (Agenda's note editor ▸ File ▸ Attach, Detach, Erase, and ♫; left out on purpose, meeting 2026-10-25, § 5). Notes live in the Agendum file. Agenda's reasons were DOS-era limits (file size, notes over 10,000 characters, memory); a note kept in a local file could not be reached by the planned web version. Attaching files of any kind (images, a CV) is an idea for after the clone (ROADMAP, Ideas).
 - **machine** · **Sounds** (R76). Agenda's own tones, through the computer's audio player rather than the PC speaker (the terminal's bell where there is none); every error message beeps with the one error beep, where Agenda also had a shorter one; Sound in File ▸ Customize silences them all.
 - **change back** · **The key bar while typing, in moves and prompts** is one line of hints naming any key (`ENTER Done ESC Cancel ←→ Move`); Agenda's has its ten F-key slots there too (typing: Help, Paste, Copy, Cut, Note, Marker, Mark; the Save prompt: Help, Edit, Choices). Comes back with the Editing step (The steps); the view's, the note's, the managers', the boxes' and the menu's are Agenda's (R80; boxes and the menu 2026-10-25).
 - **Boxes** (ADR 0030): ENTER keeps and ESC cancels in every settings box, as Agenda's frame says, so that part is no difference. Checked in Agenda 2.0, 2026-10-22, three differences remain:
@@ -161,8 +162,8 @@ Counting what is in scope (not printing, networks, protection, the macro languag
 | ---------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | The control panel (lines, indicators, key bar) | about 80%                                                                 | WAIT, the * D o ♫ symbols                                                                                            |
 | The F10 menu                                   | about 75% (35 of 46 in-scope commands, counting the partial ones as half; View Properties whole since 2026-10-23) | Abandon, Template, Erase, Undisc and Trash, Show ItemsDone / Circular / Every, Launch, the rest of File Properties |
-| The note editor                                | about 85% (NOTE_EDITOR.md; was 50% before steps 1–6, R64a–R64f, 2026-10-17) | external note files (File Attach, Detach, Erase), ALT-F1 COMPOSE                                                                           |
-| Data model, assignment, views (SPEC R1–R64)    | about 90%                                                                 | the trash, external note files                                                         |
+| The note editor                                | about 85% (NOTE_EDITOR.md; was 50% before steps 1–6, R64a–R64f, 2026-10-17) | ALT-F1 COMPOSE (optional); external note files left out on purpose (2026-10-25)                                                                           |
+| Data model, assignment, views (SPEC R1–R64)    | about 90%                                                                 | the trash                                                         |
 | **Overall**                                    | **about 80%**                                                             |                                                                                                                                             |
 
 These are rough: a count of commands and rules, not of how much each matters. By what people used Agenda for (`docs/AGENDA_HISTORY.md`: free text, automatic assignment, views), Agendum is closer than the menu count says; the gaps are mostly in housekeeping and the editor.
@@ -216,6 +217,8 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
 
 #### Commands and behaviour still missing
 
+The order (meeting 2026-10-25, § 7): the small steps below in one or two batches, then Search compared with Agenda's, then Agenda's help (under Help) last; the Optional ones wait for the roadmap.
+
 - [ ] DEL on an item in a view asks Agenda's "Remove this item from the section? Yes (Use ALT-F4 to discard the item completely.)" (seen in Agenda 2.0, 2026-10-25, in the Show view; ours removes at once, except in the alarm list): a habit change, to settle with the owner first
 - [ ] The `.AG` import reads the file's own global date format (header words `0x182`/`0x184`, `AGENDA_FILE_FORMAT.md`; only partly decoded): an imported file gets Agenda's default today (the owner's choice, 2026-10-25)
 - [ ] Search compared with Agenda's (ALT-F6 SEARCH in a view and a note, its Search box, the Match show view): the differences become parity work (the tagging sitting, 2026-10-22: no longer an enhancement)
@@ -240,7 +243,7 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
   - [x] Editing keys, part 2 (R64e, 2026-10-17, v0.15.0, format 37): INS/OVR (INS, CTRL-N) shown in the header; TAB to the next tab stop, File Properties ▸ Tab size (stored, 5 by default)
   - [x] ALT-F9 APPEND, ALT-F8 GETITMS and ALT-C (calendar) in a note (R64f, 2026-10-17); GETITMS copies only: whether to add Agenda's "discard the copied items?" question is the owner's to decide
   - [x] Bug: in a note longer than the screen, ↑ from the bottom kept the cursor on the bottom row and scrolled the note under it (found by the owner, 2026-10-18). The note now keeps the row it shows first and scrolls only when the cursor would leave the screen, as an editor does
-  - [ ] External note files: File Attach, Detach, Erase (a stored field and an ADR), or left out on purpose: the owner's to decide (NOTE_EDITOR.md, step 7)
+  - [x] External note files: File Attach, Detach, Erase: left out on purpose (meeting 2026-10-25, § 5), on the "done differently" list; attachments of any kind are an idea for after the clone (ROADMAP, Ideas)
   - [ ] Optional: ALT-F1 COMPOSE
 
 #### Help
@@ -248,6 +251,6 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
 - [ ] Agenda's help, in our own words (meeting 2026-10-22, § 7): Agenda's F1 keys and structure exactly (the topic for where you are, bold links, F3 Index, F5 Find, F6 Keys, F8 or BACKSPACE Review; PURPOSE, STEPS, PRESS / TO DO THIS), the texts new since Agenda's are Lotus's: terse, a Hundred Acre Wood flavour in an opening line and the examples, no Milne quoted, no Disney or Shepard pictures. Today's F1 texts and command descriptions become its topics; F1's `c`, `d`, `a` (R65) stay reachable from it
 - [ ] Optional: Utilities Launch (a shell without quitting)
 
-**Declared done** means: every step above built, and every entry on the two lists tagged by ADR 0043's test and confirmed by the owner. It does not wait for outside users' findings (meeting 2026-10-22, § 5a). Each missing thing in "How close" above is either a step here or on the modifications list on purpose.
+**Declared done** means: every step above built, except those marked *Optional*, and every entry on the two lists tagged by ADR 0043's test and confirmed by the owner. Optional steps do not block it: the day the clone is declared done they go back on the roadmap, each in its area (meeting 2026-10-25, § 7). Nothing else is cut: the trash, File Properties' password and backup, the `.AG` date format and Abandon, Erase and Template are all required (the owner, same §). It does not wait for outside users' findings (meeting 2026-10-22, § 5a). Each missing thing in "How close" above is either a step here or on the modifications list on purpose.
 
 When a difference is kept, it goes in the enhancements or modifications list above, so that the lists stay the whole truth.
