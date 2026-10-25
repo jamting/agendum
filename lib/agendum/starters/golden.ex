@@ -232,6 +232,8 @@ defmodule Agendum.Starters.Golden do
     })
     |> Core.set_insert_columns(:section)
     |> Core.set_tab_size(8)
+    |> then(&elem(Core.set_description(&1, "Owl's house, and all the Wood"), 1))
+    |> Core.set_backup_on_open(true)
     |> blog()
     |> feed()
   end

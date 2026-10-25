@@ -185,7 +185,9 @@ defmodule Agendum.Core.JSONFile do
           match_settings: struct_obj(db.match_settings),
           confirm_assignments: Atom.to_string(db.confirm_assignments),
           insert_columns: Atom.to_string(db.insert_columns),
-          tab_size: db.tab_size
+          tab_size: db.tab_size,
+          description: db.description,
+          backup_on_open: db.backup_on_open
         ),
       categories: Enum.map(category_order(db), &category(db.categories[&1])),
       items: Enum.map(db.item_order, &item(db, rel, db.items[&1])),
@@ -549,6 +551,8 @@ defmodule Agendum.Core.JSONFile do
       insert_columns:
         opt(settings, "insert_columns", {:enum, [:all, :section]}, :all, "settings"),
       tab_size: tab_size(opt(settings, "tab_size", :int, 5, "settings")),
+      description: opt(settings, "description", :string, "", "settings"),
+      backup_on_open: opt(settings, "backup_on_open", :bool, false, "settings"),
       categories: Map.new(categories, &{&1.id, &1}),
       items: Map.new(items, fn {item, _} -> {item.id, item} end),
       item_order: Enum.map(items, fn {item, _} -> item.id end),

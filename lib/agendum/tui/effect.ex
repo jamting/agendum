@@ -21,6 +21,7 @@ defmodule Agendum.TUI.Effect do
   #   {:save, …} {:load, …} {:open_or_create, …}   the file itself
   #   {:save_copy, path, db}    a copy or template of it (R82)
   #   {:trash_file, path}       another file to the system's Trash (R82)
+  #   {:backup_file, path}      the file opened, copied to NAME.agendum.bak (R82)
   #   {:write_text, …} {:import_json, …} {:read_note_text, …} {:read_opml, …}
   #   {:list_dir, dir}          a folder for the file list
   #   {:save_preferences, …}    the preferences file (R52)
@@ -34,6 +35,7 @@ defmodule Agendum.TUI.Effect do
           | {:save, String.t(), save_opts}
           | {:save_copy, String.t(), Database.t()}
           | {:trash_file, String.t()}
+          | {:backup_file, String.t()}
           | {:load, String.t()}
           | {:open_or_create, String.t()}
           | {:write_text, String.t(), String.t()}
@@ -75,7 +77,8 @@ defmodule Agendum.TUI.Effect do
              :read_note_text,
              :read_opml,
              :list_dir,
-             :trash_file
+             :trash_file,
+             :backup_file
            ] and
              is_binary(path),
       do: true

@@ -394,6 +394,12 @@ defmodule Agendum.TUI.Update do
   """
   @spec arrive(State.t()) :: State.t()
   def arrive(%State{} = state) do
+    # File Properties ▸ Make backup on open (R82): the file as it is on disk
+    state =
+      if state.path && state.db.backup_on_open,
+        do: State.effect(state, {:backup_file, state.path}),
+        else: state
+
     {state, rung} = run_clock(state, [:clear_old_alarms, :ring_alarms], State.context(state))
     state = %{state | dirty: state.db != state.saved.db}
 
@@ -795,6 +801,17 @@ defmodule Agendum.TUI.Update do
 
   def note_text_read(state, _path, {:error, _reason}),
     do: State.error(state, Agendum.TUI.Messages.text(:cannot_open))
+
+  @doc "After the shell backed up the file opened (`{:backup_file, path}`, R82): silent."
+  @spec backed_up(State.t(), String.t(), :ok | {:error, term}) :: State.t()
+  def backed_up(state, _path, :ok), do: state
+
+  def backed_up(state, path, {:error, reason}),
+    do:
+      State.error(
+        state,
+        "Could not back up #{Path.basename(path)}: #{:file.format_error(reason)}"
+      )
 
   @doc "After the shell moved a file to the Trash (`{:trash_file, path}`, R82)."
   @spec trashed(State.t(), String.t(), :ok | {:error, term}) :: State.t()

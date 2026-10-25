@@ -169,13 +169,7 @@ defmodule Agendum.TUI.AgendaBoxesTest do
                     "sounds through the computer's audio player, which can be off (R76)"},
                  "customize: ours Extras, not Agenda's" =>
                    {:quiet, "the Extras switch (R77; tag confirmed by the owner, 2026-10-23)"},
-                 "file_properties: Agenda's File description, not ours" =>
-                   {:not_built,
-                    "File Properties' other settings (AGENDA_PARITY, Boxes and lists)"},
                  "file_properties: Agenda's Set file password, not ours" =>
-                   {:not_built,
-                    "File Properties' other settings (AGENDA_PARITY, Boxes and lists)"},
-                 "file_properties: Agenda's Make backup on open, not ours" =>
                    {:not_built,
                     "File Properties' other settings (AGENDA_PARITY, Boxes and lists)"},
                  "file_properties: Agenda's Get reservation, not ours" =>

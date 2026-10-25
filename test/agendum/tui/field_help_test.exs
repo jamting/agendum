@@ -25,9 +25,12 @@ defmodule Agendum.TUI.FieldHelpTest do
 
   test "File Properties says what its highlighted setting does", %{state: state} do
     state = press(state, [{:f, 10}, "f", "p"])
-    assert panel(state) =~ "Choose to insert new columns in one or all sections"
+    assert panel(state) =~ "Enter a short description of the file."
     # the file's name gives way to the help
     refute panel(state) =~ "File:"
+
+    state = state |> to_setting("Insert new columns in")
+    assert panel(state) =~ "Choose to insert new columns in one or all sections"
 
     state = press(state, :down)
     assert panel(state) =~ "characters between tab stops"
@@ -36,7 +39,7 @@ defmodule Agendum.TUI.FieldHelpTest do
   end
 
   test "the help follows the box on top, and goes when the box closes", %{state: state} do
-    state = press(state, [{:f, 10}, "f", "p", :down, :down, " "])
+    state = press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, " "])
     assert %{type: :date_settings} = State.mode(state)
     assert panel(state) =~ "how dates and times are displayed"
 
@@ -70,9 +73,9 @@ defmodule Agendum.TUI.FieldHelpTest do
     boxes = [
       press(state, [{:f, 10}, "u", "c"]),
       press(state, [{:f, 10}, "f", "p"]),
-      press(state, [{:f, 10}, "f", "p", :down, :down, " "]),
-      press(state, [{:f, 10}, "f", "p", :down, :down, " ", " "]),
-      press(state, [{:f, 10}, "f", "p", :down, :down, :right, " "]),
+      press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, " "]),
+      press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, " ", " "]),
+      press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :right, " "]),
       press(state, [{:f, 9}, :down, :down, {:f, 6}]),
       press(state, [:down, {:f, 6}]),
       press(state, [:down, {:f, 10}, "v", "s", "p"]),

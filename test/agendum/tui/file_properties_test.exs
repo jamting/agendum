@@ -14,7 +14,7 @@ defmodule Agendum.TUI.FilePropertiesTest do
 
   # File Properties ▸ Global date settings (below Insert new columns in) ▸
   # Display format, as in Agenda
-  @dates [{:f, 10}, "f", "p", :down, :down, " "]
+  @dates [{:f, 10}, "f", "p", :down, :down, :down, :down, " "]
   @display @dates ++ [" "]
 
   test "File Properties opens Agenda's boxes, one inside the other", %{state: state} do
@@ -67,8 +67,8 @@ defmodule Agendum.TUI.FilePropertiesTest do
     # each box's last row, and the bottom of its frame below it
     for {keys, last} <- [
           {[], "Auto-assign"},
-          {[:down, :down, " "], "Evening"},
-          {[:down, :down, " ", " "], "Sample"}
+          {[:down, :down, :down, :down, " "], "Evening"},
+          {[:down, :down, :down, :down, " ", " "], "Sample"}
         ] do
       lines = state |> press([{:f, 10}, "f", "p"] ++ keys) |> screen() |> String.split("\n")
       row = Enum.find_index(lines, &String.contains?(&1, last))
@@ -78,13 +78,13 @@ defmodule Agendum.TUI.FilePropertiesTest do
   end
 
   describe "Insert new columns in (R55)" do
-    test "is the first row, All sections in a new file", %{state: state} do
+    test "is a row of its own, All sections in a new file", %{state: state} do
       state = press(state, [{:f, 10}, "f", "p"])
       assert screen(state) =~ ~r/Insert new columns in: +All sections/
     end
 
     test "SPACE makes it Current section, as one undo step", %{state: state} do
-      state = press(state, [{:f, 10}, "f", "p", " "])
+      state = press(state, [{:f, 10}, "f", "p", :down, :down, " "])
       assert state.db.insert_columns == :section
       assert screen(state) =~ ~r/Insert new columns in: +Current section/
       assert History.undo(state).db.insert_columns == :all
@@ -101,6 +101,8 @@ defmodule Agendum.TUI.FilePropertiesTest do
           {:f, 10},
           "f",
           "p",
+          :down,
+          :down,
           " ",
           :enter,
           :down,
@@ -232,5 +234,37 @@ defmodule Agendum.TUI.FilePropertiesTest do
 
     state = History.undo(state)
     assert state.db.date_settings.morning == ~T[08:00:00]
+  end
+
+  # Agenda's File description and Make backup on open (checked in Agenda
+  # 2.0, 2026-10-25), with Agenda's help lines
+  describe "File description and Make backup on open (R82)" do
+    test "the description is typed; backup on open goes Yes and No", %{state: state} do
+      state = press(state, [{:f, 10}, "f", "p"])
+      assert screen(state) =~ ~r/File description: /
+      assert screen(state) =~ "Enter a short description of the file."
+
+      state = press(state, ["O", "w", "l", :enter])
+      assert state.db.description == "Owl"
+      assert screen(state) =~ ~r/File description: +Owl/
+
+      state = to_setting(state, "Make backup on open")
+      assert screen(state) =~ "Choose whether to back up the file automatically each"
+      assert screen(state) =~ ~r/Make backup on open: +No/
+      state = press(state, " ")
+      assert state.db.backup_on_open
+    end
+  end
+
+  describe "Make backup on open (R82)" do
+    test "a file with it on is backed up as it is opened", %{state: state} do
+      db = Agendum.Core.set_backup_on_open(state.db, true)
+      state = Agendum.TUI.Update.arrive(%{state | db: db, path: "/wood/owl.agendum"})
+      assert {:backup_file, "/wood/owl.agendum"} in state.effects
+
+      # without it, or untitled, nothing
+      untitled = Agendum.TUI.Update.arrive(%{state | db: db, path: nil, effects: []})
+      refute Enum.any?(untitled.effects, &match?({:backup_file, _}, &1))
+    end
   end
 end

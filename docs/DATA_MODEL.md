@@ -55,6 +55,8 @@ erDiagram
         list macro_order "macro ids in the macro manager's order"
         atom insert_columns "all or section: where new columns go (R55)"
         int tab_size "1 to 16: the note editor's tab stops (R64e)"
+        string description "File Properties: up to 40 characters (R82)"
+        bool backup_on_open "File Properties: back up when opened (R82)"
         Blog blog "the micro-blog's settings (R74)"
         map feeds "id => Feed subscription (R75)"
     }
@@ -209,6 +211,8 @@ classDiagram
         +macro_order : [id]
         +insert_columns : all or section
         +tab_size : 1..16
+        +description : String
+        +backup_on_open : boolean
         +blog : Blog
         +feeds : Map~id, Feed~
     }
@@ -665,6 +669,7 @@ Format versions:
 | 39 | Added `View.number_items`, View Properties ▸ Number items (R79) |
 | 40 | Added `Database.texts` and the `:unindexed` kind of `Category`, unindexed categories (R29b) |
 | 41 | Added `Item.alarm_category`, the date category an alarm rings before (R38) |
+| 42 | Added `Database.description` and `backup_on_open`, File Properties' File description and Make backup on open (R82) |
 
 ## UI state around the database
 

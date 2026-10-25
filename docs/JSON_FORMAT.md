@@ -57,6 +57,8 @@ The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs` and 
 | `date_settings`       | How dates are read (R14e): `week_start`, `week_end` (1 = Monday … 7), `quarter_start`, `year_start` (1–12), `month_alone` (`"first"`, `"last"` or a day), `morning`, `afternoon`, `evening` (times).                                                 |
 | `match_settings`      | Text matching (R16a): `enabled`, `match_on` (`"item"`, `"note"`, `"both"`), `strength` (`"exact"`, `"partial"`, `"minimal"`), `enclosed_by` (`"quotes"`, `"brackets"`, …), `ignore_suffixes`, `ignore_accents`.                                      |
 | `insert_columns`      | Where a new column goes: `"all"` sections (the default) or the current `"section"` (R55).                                                                                                                                                             |
+| `description`         | File Properties ▸ File description, up to 40 characters (`""` by default, R82). |
+| `backup_on_open`      | File Properties ▸ Make backup on open: `true` copies the file to `NAME.agendum.bak` each time it is opened (`false` by default, R82). |
 | `tab_size`            | How far apart a note's tab stops are, 1 to 16 (5 by default; File Properties ▸ Tab size, R64e).                                                                                                                                                       |
 | `confirm_assignments` | `"never"`, `"always"` or `"sometimes"` (R16).                                                                                                                                                                                                        |
 

@@ -45,7 +45,8 @@ defmodule Agendum.Store do
   old names to the new ones; 39 adds `View.number_items` (R79); 40 adds
   `Database.texts` and the `:unindexed` kind of `Category`, unindexed
   categories (R29b); 41 adds `Item.alarm_category`, an alarm's date
-  category (R38).
+  category (R38); 42 adds `Database.description` and `backup_on_open`
+  (File Properties, R82).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
@@ -56,7 +57,7 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 41
+  @format_version 42
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
@@ -453,6 +454,15 @@ defmodule Agendum.Store do
         {:error, :file.format_error(reason) |> to_string()}
     end
   end
+
+  @doc """
+  Copies a file to its backup beside it, `NAME.agendum.bak`, replacing the
+  last one (File Properties ▸ Make backup on open, R82; Agenda's `.BG`).
+  The backup is not listed among the files to open; renamed to
+  `.agendum`, it opens as any file.
+  """
+  @spec backup(Path.t()) :: :ok | {:error, term}
+  def backup(path), do: File.cp(path, path <> ".bak")
 
   @doc """
   Moves a file to the system's Trash, where it can be got back (File ▸

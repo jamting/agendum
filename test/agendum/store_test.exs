@@ -521,4 +521,13 @@ defmodule Agendum.StoreTest do
       assert File.exists?(path)
     end
   end
+
+  # File Properties ▸ Make backup on open (R82): my.agendum.bak beside it
+  test "a backup is the file copied beside it, replacing the last one", %{tmp_dir: dir} do
+    path = Path.join(dir, "owl.agendum")
+    File.write!(path, "today")
+    File.write!(path <> ".bak", "yesterday")
+    assert Agendum.Store.backup(path) == :ok
+    assert File.read!(path <> ".bak") == "today"
+  end
 end

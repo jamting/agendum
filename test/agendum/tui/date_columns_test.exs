@@ -133,6 +133,8 @@ defmodule Agendum.TUI.DateColumnsTest do
         "p",
         :down,
         :down,
+        :down,
+        :down,
         " ",
         " ",
         :down,

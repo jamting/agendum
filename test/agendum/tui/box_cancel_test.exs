@@ -14,7 +14,9 @@ defmodule Agendum.TUI.BoxCancelTest do
     %{state: start(Agendum.Sample.build(~D[2026-10-08]), width: 80, height: 25)}
   end
 
-  defp file_props(state), do: press(state, [{:f, 10}, "f", "p"])
+  # File Properties on its Insert new columns in setting, which SPACE flips
+  defp file_props(state),
+    do: state |> press([{:f, 10}, "f", "p"]) |> to_setting("Insert new columns in")
 
   test "the frame says how to finish", %{state: state} do
     assert screen(file_props(state)) =~ "Press ENTER when done, ESC to cancel"

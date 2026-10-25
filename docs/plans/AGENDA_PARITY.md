@@ -221,6 +221,7 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
 - [x] (2026-10-25; the owner's choice) File ▸ Maintenance ▸ MakeCopy in Write's place: you stay in the file (checked in Agenda 2.0); ours writes the copy before saving (R71, R82)
 - [x] (2026-10-25; the owner's choice) File ▸ Maintenance ▸ Erase: Agenda's question, No first; the file to the system's Trash rather than deleted (R82)
 - [x] (2026-10-25) File ▸ Transfer ▸ Template: the structure without the items to another file (R82)
+- [x] (2026-10-25; the owner's choices) File Properties' File description and Make backup on open (`NAME.agendum.bak`), format 42 (R82)
   - Unchecked: what Agenda does with an alarm when its date category is deleted (ours: back on When)
 
 #### Commands and behaviour still missing
@@ -231,7 +232,8 @@ The order (meeting 2026-10-25, § 7): the small steps below in one or two batche
 - [ ] Search compared with Agenda's (ALT-F6 SEARCH in a view and a note, its Search box, the Match show view): the differences become parity work (the tagging sitting, 2026-10-22: no longer an enhancement)
 - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)
 - [ ] Show Circular (with the `o` indicator): needs circular references found first (User's Guide 20-21)
-- [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash; screenshot 130) where Agendum has them (Tab size done, R64e)
+- [ ] File Properties' Set file password, with Agenda's New File box asking for a description and password when a file is made (real encryption: an ADR first; meeting 2026-10-25, § 7: required; the owner, 2026-10-25: a step of its own)
+- [ ] F8 DESCRP in the Select File box: each file's description (R82)
 - [ ] Compare the category, view and macro managers' menus with Agenda's, and add them to the overview
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated") (moved from the roadmap's Data interchange, owner 2026-10-23; stays optional)
 - [ ] Optional: Import of structured text files (one item per line, with categories) (moved from the roadmap's Data interchange, owner 2026-10-23; stays optional)

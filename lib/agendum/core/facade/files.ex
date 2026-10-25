@@ -55,6 +55,23 @@ defmodule Agendum.Core.Facade.Files do
   @spec set_tab_size(db, 1..16) :: db
   def set_tab_size(db, size) when is_integer(size) and size in 1..16, do: %{db | tab_size: size}
 
+  @doc """
+  File Properties ▸ File description (R82): a short description of the
+  file, up to 40 characters as Agenda's, shown in the Select File box.
+  """
+  @spec set_description(db, String.t()) :: {:ok, db} | {:error, :too_long}
+  def set_description(db, text) when is_binary(text) do
+    text = String.trim(text)
+    if String.length(text) > 40, do: {:error, :too_long}, else: {:ok, %{db | description: text}}
+  end
+
+  @doc """
+  File Properties ▸ Make backup on open (R82): when on, opening the file
+  first copies it to a backup beside it (`my.agendum.bak`).
+  """
+  @spec set_backup_on_open(db, boolean) :: db
+  def set_backup_on_open(db, on?) when is_boolean(on?), do: %{db | backup_on_open: on?}
+
   # --- JSON (R44) -----------------------------------------------------------------
 
   @doc "The whole file as readable JSON (`Agendum.Core.JSONFile`)."

@@ -31,6 +31,9 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   # Agenda's File Properties (screenshot 130), its other settings left out
   # until Agendum has them
   @layout """
+   File description:       [description                             ]
+   Make backup on open:    [backup ]
+
    Insert new columns in:  [insert_columns ]
 
    Tab size:               [tab_size]
@@ -44,6 +47,8 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   @grid Template.grid(@layout, @rows)
 
   @help %{
+    description: "Enter a short description of the file. Press F2 to edit.",
+    backup: "Choose whether to back up the file automatically each time you open it.",
     insert_columns:
       "Choose to insert new columns in one or all sections in the view. " <>
         "You can override when you add individual columns.",
@@ -64,12 +69,27 @@ defmodule Agendum.TUI.Boxes.FileProperties do
     do: FieldTyping.key(state, mode, key, &typed/3)
 
   def handle(state, mode, {:char, c}) do
-    if field(state, mode) == :tab_size and FieldTyping.digit?(c),
-      do: FieldTyping.start(state, mode, :tab_size, c),
-      else: state
+    case field(state, mode) do
+      :tab_size ->
+        if FieldTyping.digit?(c), do: FieldTyping.start(state, mode, :tab_size, c), else: state
+
+      # any character starts typing a description (R82), as in Agenda
+      :description ->
+        FieldTyping.start(state, mode, :description, c)
+
+      _ ->
+        state
+    end
   end
 
   def handle(state, _mode, _key), do: state
+
+  defp typed(state, :description, text) do
+    case State.command(state, {:set_description, text}) do
+      {:ok, state, _} -> state
+      {:error, :too_long} -> State.error(state, "A description has at most 40 characters")
+    end
+  end
 
   defp typed(state, :tab_size, text) do
     case FieldTyping.number(text, 1, 16) do
@@ -109,6 +129,13 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   end
 
   defp change(state, :dates), do: DateSettingsBox.open(state)
+
+  # SPACE on the description: nothing (typing starts it); on backup: flips
+  defp change(state, :description), do: state
+
+  defp change(state, :backup),
+    do: State.run(state, {:set_backup_on_open, not state.db.backup_on_open})
+
   defp change(state, :auto), do: AutoAssignBox.open(state)
   defp change(state, :stats), do: FileStatsBox.open(state)
 
@@ -132,6 +159,8 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   @impl Box
   def content(state, mode, inner, _max_rows) do
     values = %{
+      description: state.db.description,
+      backup: if(state.db.backup_on_open, do: "Yes", else: "No"),
       insert_columns:
         if(state.db.insert_columns == :all, do: "All sections", else: "Current section"),
       tab_size: Integer.to_string(state.db.tab_size),

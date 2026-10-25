@@ -45,6 +45,8 @@ defmodule Agendum.Core.Database do
           macro_order: [id],
           insert_columns: :all | :section,
           tab_size: pos_integer,
+          description: String.t(),
+          backup_on_open: boolean,
           blog: Agendum.Core.Extras.Blog.t()
         }
 
@@ -79,6 +81,9 @@ defmodule Agendum.Core.Database do
             insert_columns: :all,
             # File Properties ▸ Tab size: the note editor's tab stops (R64e)
             tab_size: 5,
+            # File Properties ▸ File description and Make backup on open (R82)
+            description: "",
+            backup_on_open: false,
             # the micro-blog (R74)
             blog: %Agendum.Core.Extras.Blog{}
 

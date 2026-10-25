@@ -38,6 +38,12 @@ defmodule Agendum.TUI.App do
         Terminal.start_reader(self())
         DebugLog.file(state)
 
+        # the file opened at startup is backed up first, when it asks for it
+        # (R82); its other effects stay as they were left (the alarms rung
+        # while it was closed ring quietly, R70)
+        {backups, others} = Enum.split_with(state.effects, &match?({:backup_file, _}, &1))
+        {:ok, state} = run_effects(%{state | effects: others}, backups)
+
         # `try … after` runs `after` however `loop` ends, by returning or
         # by a crash, so the terminal is always given back in a usable
         # state (cursor shown, normal mode).
@@ -251,6 +257,9 @@ defmodule Agendum.TUI.App do
   # file written, whatever is there (Agenda's caution), this one unchanged
   defp perform(state, {:save_copy, path, db}),
     do: Update.copied(state, path, Store.save(db, path, :any))
+
+  # File Properties ▸ Make backup on open (R82)
+  defp perform(state, {:backup_file, path}), do: Update.backed_up(state, path, Store.backup(path))
 
   # File ▸ Maintenance ▸ Erase (R82): to the system's Trash
   defp perform(state, {:trash_file, path}), do: Update.trashed(state, path, Store.trash(path))
