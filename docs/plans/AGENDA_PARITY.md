@@ -29,7 +29,7 @@ Out of scope, as SPEC §6 says: printing on paper and print preview (F10 Print a
 | EDIT                 | editing text                              | ✅                                                                                        |
 | LEARN                | Learn mode                                | ✅                                                                                        |
 | INS / OVR            | insert / overwrite in a note              | ✅ (R64e; INS or CTRL-N)                                                                  |
-| WAIT / WRKG          | busy / working in the background          | ⬜ (could show while a calendar is fetched)                                               |
+| WAIT / WRKG          | busy / working in the background          | ✅ WRKG while a calendar or feed is read in the background (2026-10-25); no WAIT: nothing makes you wait |
 | READONLY             | no reservation on a network file          | – out of scope                                                                            |
 | DEBUG                | debugging a macro                         | – out of scope (macro language)                                                           |
 | DISK!, DMGD!, LIMIT! | disk full, file damaged, file near 5.5 MB | – no counterpart (no size limit; damage shows as a load error)                            |
@@ -43,8 +43,8 @@ Out of scope, as SPEC §6 says: printing on paper and print preview (F10 Print a
 | ♪ (j)                                                                 | the highlighted item or category has a note  | ✅                                           |
 | ♫ (jj)                                                                | … has an external note file                  | ⬜ (note editor plan, step 7)                |
 | @                                                                     | an alarm has sounded                         | ✅                                           |
-| *                                                                     | the highlight is on a date category or value | ⬜                                           |
-| #                                                                     | … on a numeric category or value             | ✅ (numeric columns)                         |
+| *                                                                     | the highlight is on a date category or value | ✅ as ☼, which Agenda 2.0's screen shows (2026-10-25), at the right of the View line beside ♪ |
+| #                                                                     | … on a numeric category or value             | ✅ (numeric columns), at the right of the View line as Agenda's (2026-10-25) |
 | D                                                                     | … on an unindexed category or value          | ⬜ (unindexed categories are on the roadmap) |
 | ?                                                                     | unconfirmed text assignments                 | ✅                                           |
 | o                                                                     | circular conditions or actions               | ⬜ (with Show Circular)                      |
@@ -175,7 +175,7 @@ The parity work, in the order it is planned (the owner reorders it): each item s
 
 #### Next
 
-Control panel symbols and indicators (Screens and texts, below): `*` on a date category or value, `WAIT` while a calendar is fetched.
+Editing (Screens and texts, below): the prompt and input field in the control panel, and the editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark).
 
 #### Menus as Agenda's
 
@@ -194,7 +194,8 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
   - [x] (2026-10-25, R59) `»` on the current row (the owner's note, 2026-10-24; checked in Agenda 2.0): with the item text highlighted, `»` stands just before the row's first column; with a column entry highlighted (→), `»` takes the tag's place before the item text, so the row the highlight is on shows in both. Agenda's character (CP437 0xAF), the owner's choice; `>` only where a theme has no »
   - [x] (2026-10-25, R59; the owner's choice) `·` (CP437 0xFA) before a filled column entry (seen 2026-10-25 in PLANNER's Tasks view: `·Calls`, `·Mattia`; the highlighted row's first one becomes »); Help "View Indicators": the item is assigned to (or inherits) the column's head; not before numbers (seen in Expense Entry)
   - [ ] Check the *machine* entry "The marked-items symbol is ♦ (Agenda's ▸ …)": in a view Agenda 2.0 marks with CP437 0x04, which is ♦ (seen 2026-10-25), so it may be no difference
-- [ ] Control panel symbols and indicators: `*` on a date category or value, `WAIT` while a calendar is fetched, `D` with unindexed categories (and unindexed categories themselves)
+- [x] (2026-10-25) Control panel symbols and indicators: ☼ on a date value (Agenda's screen; its help writes *) and # beside ♪ at the right of the View line, WRKG while a calendar or feed is fetched
+- [ ] `D` with unindexed categories (and unindexed categories themselves)
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names (the note editor's header: in the note editor plan above)
 
 #### Commands and behaviour still missing

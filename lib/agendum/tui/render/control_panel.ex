@@ -130,9 +130,7 @@ defmodule Agendum.TUI.Render.ControlPanel do
       _ ->
         word = if word = indicator(state), do: word <> "  ", else: ""
 
-        marks <>
-          numeric_marker(state) <>
-          word <> DateFormat.datetime(state.now, state.db.date_format) <> " "
+        marks <> word <> DateFormat.datetime(state.now, state.db.date_format) <> " "
     end
   end
 
@@ -178,9 +176,18 @@ defmodule Agendum.TUI.Render.ControlPanel do
         d -> "Datebook for: #{state.db.categories[d.section_category].name}  "
       end
 
-    # ♪ when what is highlighted has a note (User's Guide 12-2)
-    note = if Agendum.TUI.Layout.note_here?(state), do: "♪ ", else: ""
-    right = if hides == "", do: datebook <> note, else: datebook <> hides <> " " <> note
+    # Agenda's two marks at the right (checked in Agenda 2.0, 2026-10-25):
+    # # on a numeric value or ☼ on a date, then ♪ when what is highlighted
+    # has a note (User's Guide 12-2)
+    note = if Agendum.TUI.Layout.note_here?(state), do: "♪", else: " "
+
+    # (columns 72 and 73 of 80, six blank after them, as Agenda's)
+    marks =
+      if value_marker(state) <> note == "  ",
+        do: "",
+        else: value_marker(state) <> note <> String.duplicate(" ", 6)
+
+    right = if hides == "", do: datebook <> marks, else: datebook <> hides <> " " <> marks
     # at least two spaces between the view's name and filter and the rest
     room = max(state.width - String.length(right) - 2, 0)
     left = Draw.truncate(" View: " <> view.name <> Text.filter_text(state, view.filter), room)
@@ -201,15 +208,23 @@ defmodule Agendum.TUI.Render.ControlPanel do
   defp questions_marker(state),
     do: if(Agendum.Core.questions(state.db) == [], do: "", else: "? ")
 
-  # "#" while the highlight is in a numeric column (User's Guide 8-3).
-  defp numeric_marker(%State{modes: [], col: col} = state) when col > 0 do
+  # "#" while the highlight is in a numeric column (User's Guide 8-3), "☼"
+  # in a date column (Agenda's, its help writing it *), else a space
+  defp value_marker(%State{modes: [], col: col} = state) when col > 0 do
     case Agendum.TUI.Layout.current_column(state) do
-      nil -> ""
-      {column, _at} -> if Text.numeric?(state, column), do: "# ", else: ""
+      nil ->
+        " "
+
+      {column, _at} ->
+        cond do
+          Text.numeric?(state, column) -> "#"
+          Database.date_category?(state.db, column.category_id) -> "☼"
+          true -> " "
+        end
     end
   end
 
-  defp numeric_marker(_state), do: ""
+  defp value_marker(_state), do: " "
 
   # Agenda's mode words, and only those (checked in Agenda 2.0, 2026-10-25;
   # the owner's choice): none when ready, in boxes, menus and managers
@@ -219,6 +234,8 @@ defmodule Agendum.TUI.Render.ControlPanel do
       Completion.matches(state) != [] -> "AUTOC"
       state.edit != nil -> "EDIT"
       match?(%{type: :browse}, State.mode(state)) -> "BROWSE"
+      # a calendar or feed read in the background: Agenda's WRKG
+      state.fetching != %{} -> "WRKG"
       true -> nil
     end
   end

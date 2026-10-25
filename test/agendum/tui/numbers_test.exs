@@ -71,9 +71,13 @@ defmodule Agendum.TUI.NumbersTest do
     assert Database.number(state.db, heat(state), amount) == nil
   end
 
-  test "the title bar shows # on a numeric column", %{state: state} do
-    assert screen(state) =~ "# 2026-10-08"
-    refute screen(press(state, :left)) =~ "# 2026-10-08"
+  # Agenda shows # at the right of the View line, beside ♪'s place
+  # (checked in Agenda 2.0, 2026-10-25)
+  test "the control panel shows # on a numeric column", %{state: state} do
+    second = fn state -> state |> screen() |> String.split("\n") |> Enum.at(1) end
+    assert second.(state) =~ ~r/# *$/
+    refute second.(press(state, :left)) =~ "#"
+    refute screen(state) =~ "# 2026-10-08"
   end
 
   test "View ▸ Column ▸ Properties sets the format and the calculations",

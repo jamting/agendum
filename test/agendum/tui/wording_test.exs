@@ -48,6 +48,20 @@ defmodule Agendum.TUI.WordingTest do
     refute catmgr =~ "2026-10-08"
   end
 
+  # Agenda's marks at the right of the View line (checked in Agenda 2.0,
+  # 2026-10-25): ☼ on a date value or a date column's head; WRKG at the
+  # top right while a calendar or feed is read in the background
+  test "☼ on a date column; WRKG while something is fetched", %{state: state} do
+    second = fn state -> state |> screen() |> String.split("\n") |> Enum.at(1) end
+    on_date = press(state, [:down, :right])
+    assert second.(on_date) =~ ~r/☼ *$/
+    refute second.(state) =~ "☼"
+
+    top = fn state -> state |> screen() |> String.split("\n") |> hd() end
+    refute top.(state) =~ "WRKG"
+    assert top.(%{state | fetching: %{1 => :auto}}) =~ ~r/WRKG +2026-10-08 09:00/
+  end
+
   test "a long filter never runs the control panel's parts together", %{state: state} do
     view = hd(state.db.view_order)
     when_id = state.db.special.when
