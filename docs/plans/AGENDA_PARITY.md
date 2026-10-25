@@ -192,7 +192,6 @@ Done: Category properties of a date or numeric category as Agenda's (R6a, 2026-1
   - [x] The settings boxes captured and compared (2026-10-25, `capture_boxes.py`, `agenda_boxes_test.exs`): 96 differences in 25 boxes, each tagged; the owner chose Agenda's way for the four groups below
   - [x] Six more boxes captured and compared (2026-10-25): Display Format, Input Format, Item Column Properties, Search, Show Schedule (as Agenda's already), Macro Properties; 21 differences tagged, the owner choosing Agenda's way for the titles, Display Format, Macro Properties and Item Column Properties' Width
   - [x] Datebook views and Questions captured and compared (2026-10-25)
-  - [ ] The Questions box drawn as Agenda's: "Questions", "Suggested categories for ...", ? / * marks, Parent:Child names, "Press ENTER to accept"; a box when none wait (change back, owner 2026-10-25)
   - [ ] A datebook view's settings in its View Properties, the datebook settings in the right column, as Agenda's (change back, owner 2026-10-25; check first what datebooks do with item sorting, filters and the Hide settings)
   - [ ] Still to capture: Column Add's choices
   - [ ] Messages compared with Agenda's

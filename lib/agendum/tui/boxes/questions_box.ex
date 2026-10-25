@@ -4,10 +4,16 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
   assignments set to Always, items that matched categories by their text
   wait here, one at a time, with the suggested categories. ↑↓ move, SPACE
   picks a category, TAB picks them all, ENTER assigns the picked ones and
-  shows the next item, ESC stops (the rest stay suggested). Pure.
+  shows the next item, ESC stops (the rest stay suggested).
+
+  Drawn as Agenda's Questions box (checked in Agenda 2.0, 2026-10-25):
+  'Suggested categories for "the item"', then each category as
+  Parent:Child, ? before it until it is picked (*); "Press ENTER to
+  accept" in the bottom edge. With none waiting, the box says so and any
+  key closes it. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :none, indicator: nil
+  use Agendum.TUI.Boxes.Box, finish: :enter_accept, indicator: nil
 
   alias Agendum.Core
   alias Agendum.TUI.Boxes.Box
@@ -15,8 +21,9 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
 
   def open(state) do
     case Core.questions(state.db) do
+      # Agenda's box saying there are none (`item: nil`)
       [] ->
-        State.info(state, "No suggested assignments")
+        State.push(state, %Agendum.TUI.Modes.Questions{item: nil, picked: [], cursor: 0})
 
       [{item, _} | _] ->
         State.push(state, %Agendum.TUI.Modes.Questions{item: item, picked: [], cursor: 0})
@@ -26,8 +33,14 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
   @doc "The suggested categories of the item shown."
   def suggestions(state, mode), do: Map.get(state.db.suggestions, mode.item, [])
 
+  # with none waiting, any key closes the box
   @impl Box
+  def handle(state, %{item: nil}, _key), do: State.pop(state)
   def handle(state, _mode, _key), do: state
+
+  @impl Box
+  def finish(%{item: nil}), do: :any_key
+  def finish(_mode), do: :enter_accept
 
   @impl Box
   def about(_state, _mode) do
@@ -40,8 +53,10 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
     """
   end
 
-  # R65
+  # R65; with none waiting, every key goes to `handle/3`
   @impl Box
+  def keymap(%{item: nil}), do: %{}
+
   def keymap(_mode) do
     %{
       :up => :up,
@@ -81,28 +96,42 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
   def run(state, mode, id), do: Box.list_move(state, mode, length(suggestions(state, mode)), id)
 
   @impl Box
-  def title(_state, _mode), do: "Suggested assignments"
+  def title(_state, _mode), do: "Questions"
 
-  # the item, then its suggested categories, * before the picked ones
   @impl Box
+  def content(_state, %{item: nil}, _inner, _max_rows),
+    do: [[], [{:box, " There are no assignments to be confirmed."}], []]
+
+  # the item, then its suggested categories: ? before each, * once picked
   def content(state, mode, inner, _max_rows) do
     item = state.db.items[mode.item]
+    head = ~s(Suggested categories for "#{item.text}")
 
     cats =
       state
       |> suggestions(mode)
       |> Enum.with_index()
       |> Enum.map(fn {cat, i} ->
-        mark = if cat in mode.picked, do: "*", else: " "
+        mark = if cat in mode.picked, do: " * ", else: "  ?"
 
         [
-          {:box, " #{mark} "},
-          {if(i == mode.cursor, do: :box_selected, else: :box), state.db.categories[cat].name}
+          {:box, mark <> "│  "},
+          {if(i == mode.cursor, do: :box_selected, else: :box), qualified(state.db, cat)}
         ]
       end)
 
-    [[{:box, " " <> String.slice(item.text, 0, inner - 2)}], [], [{:box, " Assign to:"}]] ++
-      cats ++ [[], Box.hint(keys(state, mode), inner)]
+    [[{:box, String.slice(head, 0, inner)}]] ++ cats ++ [[{:box, "   │"}]]
+  end
+
+  # "Contact:Anna Lasky", as Agenda names a suggestion; a category right
+  # under MAIN goes by its name alone (Agenda's form for it is unchecked)
+  defp qualified(db, id) do
+    cat = db.categories[id]
+
+    case cat.parent_id do
+      parent when parent in [nil, db.main_id] -> cat.name
+      parent -> db.categories[parent].name <> ":" <> cat.name
+    end
   end
 
   @impl Box

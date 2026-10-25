@@ -31,12 +31,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
   #   :not_built               Agenda has it, Agendum not yet: parity work
   #   :out_of_scope            left out on purpose (SPEC § 6)
   @differences %{
-    "questions title: Agenda Questions, ours Suggested assignments" =>
-      {:change_back, "the Questions box drawn as Agenda's (owner, 2026-10-25)"},
-    "questions bottom: Agenda Press ENTER to accept, ours none" =>
-      {:change_back, "the Questions box drawn as Agenda's (owner, 2026-10-25)"},
-    "questions: ours Assign to, not Agenda's" =>
-      {:change_back, "the Questions box drawn as Agenda's (owner, 2026-10-25)"},
     "view_properties_datebook title: Agenda View Properties, ours Datebook settings: This Week" =>
       {:change_back,
        "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},

@@ -43,15 +43,21 @@ defmodule Agendum.TUI.QuestionsTest do
 
     state = press(state, [{:f, 10}, "u", "q"])
     assert %{type: :questions} = State.mode(state)
+    # drawn as Agenda's (checked in Agenda 2.0, 2026-10-25): each suggestion
+    # as Parent:Child with ? before it until SPACE marks it *
     text = screen(state)
-    assert text =~ "Ring Anna about Meetings"
-    assert text =~ "Anna Lasky"
-    assert text =~ "Meetings"
+    assert text =~ "Questions"
+    assert text =~ ~s(Suggested categories for "Ring Anna about Meetings")
+    assert text =~ ~r/\?│ +Contact:Anna Lasky/
+    assert text =~ ~r/\?│ +Meetings/
+    assert text =~ "Press ENTER to accept"
 
     # pick Meetings only, then ENTER (suggestions come in preference order)
     [{_, suggested}] = Agendum.Core.questions(state.db)
     downs = Enum.find_index(suggested, &(&1 == cat(state, "Meetings")))
-    state = press(state, List.duplicate(:down, downs) ++ [" ", :enter])
+    state = press(state, List.duplicate(:down, downs) ++ [" "])
+    assert screen(state) =~ ~r/\* │ +Meetings/
+    state = press(state, :enter)
     assert state.modes == []
     assert Database.member?(state.db, new.id, cat(state, "Meetings"))
     refute Database.member?(state.db, new.id, cat(state, "Anna Lasky"))
@@ -68,8 +74,12 @@ defmodule Agendum.TUI.QuestionsTest do
     assert Database.member?(state.db, item(state, "Plan Meetings").id, cat(state, "Meetings"))
   end
 
-  test "with no questions, Questions says so", %{state: state} do
+  # Agenda's box (checked 2026-10-25), which any key closes
+  test "with no questions, Questions says so in a box", %{state: state} do
     state = press(state, [{:f, 10}, "u", "q"])
-    assert screen(state) =~ "No suggested assignments"
+    assert %{type: :questions} = State.mode(state)
+    assert screen(state) =~ "There are no assignments to be confirmed."
+    assert screen(state) =~ "Press any key to continue"
+    assert press(state, "x").modes == []
   end
 end

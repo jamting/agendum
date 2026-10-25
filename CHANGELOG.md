@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **Utilities ▸ Questions** looks like Agenda's: "Suggested categories for" the item, each category as Parent:Child with **?** before it (**\*** once picked), "Press ENTER to accept". With none waiting, a box says so, and any key closes it.
 ## 0.34.0 — 2026-10-25
 
 More boxes as in Lotus Agenda, and the splash screen tidied.
