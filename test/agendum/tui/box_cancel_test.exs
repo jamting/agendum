@@ -132,4 +132,22 @@ defmodule Agendum.TUI.BoxCancelTest do
       state
     end)
   end
+
+  # Found by the fuzz walks (2026-10-26): a change in Macro Properties,
+  # then its keys edited in the macro editor; the editor's change folded
+  # the one before it into one step
+  test "a change in a box, then a full screen from it: each is its own undo step",
+       %{state: state} do
+    {:ok, db, macro} = Agendum.Core.add_macro(state.db, "Water")
+    db = Agendum.Core.set_macro_keys(db, macro, "Water{ENTER}{DOWN}")
+    # View: Yes -> No, a change in the box
+    state = press(%{state | db: db}, [{:alt_f, 3}, {:f, 6}]) |> to_setting("View") |> press(" ")
+    changed = state
+    assert changed.db.macros[macro].run_from.view == false
+
+    state = state |> to_setting("Contents") |> press([" ", :end, "x", {:f, 5}])
+    assert state.db != changed.db
+    assert length(state.history.undo) == length(changed.history.undo) + 1
+    assert Agendum.TUI.History.undo(state).db == changed.db
+  end
 end

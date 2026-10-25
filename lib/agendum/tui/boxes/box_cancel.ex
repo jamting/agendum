@@ -122,11 +122,22 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
       nil ->
         state
 
-      %{opened: opened} ->
-        if Enum.any?(state.modes, &(Map.get(&1, :opened) == opened)),
+      %{opened: opened} = box ->
+        if still_open?(before, state, box),
           do: state,
           else: Agendum.TUI.History.squash(state, opened, state.macro.playing > 0)
     end
+  end
+
+  # The box is still there: at the same depth of the stack, the same kind of
+  # box. Not its snapshot: a box shown again after a full screen (a macro's
+  # keys edited from Macro Properties) takes a new one (`track/2`), and is
+  # still the same box (found by the fuzz walks, 2026-10-26: the steps made
+  # in it before were folded into one).
+  defp still_open?(before, state, box) do
+    depth = length(before.modes) - Enum.find_index(before.modes, &(&1 == box))
+    now = Enum.at(state.modes, length(state.modes) - depth)
+    match?(%{type: type} when type == box.type, now) and opened?(now)
   end
 
   defp opened?(mode), do: cancels?(mode.type) and Map.get(mode, :opened) != nil
