@@ -437,6 +437,17 @@
       ],
       "bottom": "Press ENTER when done, ESC to cancel"
     },
+    "questions": {
+      "title": "Questions",
+      "rows": [
+        "Suggested categories for \"Telephone Mattias\"",
+        "  ?#  Type:Miscellaneous",
+        "  ?#  Activity:Calls",
+        "  ?#  People:Mattias",
+        "   #"
+      ],
+      "bottom": "Press ENTER to accept"
+    },
     "search": {
       "title": "Search",
       "rows": [
@@ -576,6 +587,29 @@
         "  Section separators:    No",
         "  Number items:          No        Filter:",
         "                                     -Contact List",
+        "  View statistics:       ...",
+        "  Named print set:",
+        "  View protection:       Global (No protection)",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "view_properties_datebook": {
+      "title": "View Properties",
+      "rows": [
+        "",
+        "  View name:  This Week",
+        "  Item sorting:    ...             Date category: When",
+        "                                   End category:",
+        "                                   Section:       Tasks",
+        "  Hide empty sections:   No        Period:        Week",
+        "  Hide done items:       No        Start at:      Sun",
+        "  Hide dependent items:  No        End at:        Sat",
+        "  Hide inherited items:  No",
+        "  Hide column heads:     Yes       Base date on:  Beg of thi",
+        "  Section separators:    Yes",
+        "  Number items:          No        Filter:",
+        "",
         "  View statistics:       ...",
         "  Named print set:",
         "  View protection:       Global (No protection)",

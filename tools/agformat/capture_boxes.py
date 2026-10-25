@@ -81,6 +81,18 @@ BOXES = {
     # PLANNER already has a Show view: Agenda asks to replace it first
     "show_schedule": (["F10", "u", "s", "s", "ENTER"], None),
     "macro_properties": (["AF3", "F6"], None),
+    # Confirm assignments Always, then an item whose text matches three
+    # categories: Questions lists them
+    "questions": (
+        FILE
+        + [("goto", "Global date settings"), "RIGHT", "F3", ("goto", "Confirm assignments")]
+        + ["SPACE", "ENTER", "ENTER", "HOME"]
+        + list("Telephone Mattias")
+        + ["ENTER", "F10", "u", "q"],
+        None,
+    ),
+    # a datebook view's settings are in its View Properties, Type Datebook
+    "view_properties_datebook": (["F8", ("select", "This Week"), "ENTER"] + VIEW, None),
 }
 
 BOTTOM = re.compile(r"#{2,} ?(Press [^#]*?) ?#{2,}")

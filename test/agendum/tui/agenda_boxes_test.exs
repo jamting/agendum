@@ -31,6 +31,46 @@ defmodule Agendum.TUI.AgendaBoxesTest do
   #   :not_built               Agenda has it, Agendum not yet: parity work
   #   :out_of_scope            left out on purpose (SPEC § 6)
   @differences %{
+    "questions title: Agenda Questions, ours Suggested assignments" =>
+      {:change_back, "the Questions box drawn as Agenda's (owner, 2026-10-25)"},
+    "questions bottom: Agenda Press ENTER to accept, ours none" =>
+      {:change_back, "the Questions box drawn as Agenda's (owner, 2026-10-25)"},
+    "questions: ours Assign to, not Agenda's" =>
+      {:change_back, "the Questions box drawn as Agenda's (owner, 2026-10-25)"},
+    "view_properties_datebook title: Agenda View Properties, ours Datebook settings: This Week" =>
+      {:change_back,
+       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
+    "view_properties_datebook: Agenda's View name, not ours" =>
+      {:change_back,
+       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
+    "view_properties_datebook: Agenda's Item sorting, not ours" =>
+      {:change_back,
+       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
+    "view_properties_datebook: Agenda's Hide empty sections, not ours" =>
+      {:change_back,
+       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
+    "view_properties_datebook: Agenda's Hide done items, not ours" =>
+      {:change_back,
+       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
+    "view_properties_datebook: Agenda's Hide dependent items, not ours" =>
+      {:change_back,
+       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
+    "view_properties_datebook: Agenda's Hide inherited items, not ours" =>
+      {:change_back,
+       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
+    "view_properties_datebook: Agenda's Filter, not ours" =>
+      {:change_back,
+       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
+    "view_properties_datebook: Agenda's View statistics, not ours" =>
+      {:change_back,
+       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
+    "view_properties_datebook: Agenda's Named print set, not ours" =>
+      {:out_of_scope, "printing (SPEC § 6)"},
+    "view_properties_datebook: Agenda's View protection, not ours" =>
+      {:out_of_scope, "application protection (SPEC § 6)"},
+    "view_properties_datebook: ours Interval, not Agenda's" =>
+      {:change_back,
+       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
     "macro_properties: ours Everywhere else, not Agenda's" =>
       {:quiet,
        "ours: a macro's key runs it in boxes and everywhere else too (R50); kept under Agenda's rows (owner, 2026-10-25)"},
@@ -254,7 +294,16 @@ defmodule Agendum.TUI.AgendaBoxesTest do
       "item_column_properties" => fn state -> state |> press(:down) |> menu("vvcp") end,
       "search" => fn state -> press(state, {:alt_f, 6}) end,
       "show_schedule" => fn state -> menu(state, "uss") end,
-      "macro_properties" => fn state -> press(state, [{:alt_f, 3}, {:f, 6}]) end
+      "macro_properties" => fn state -> press(state, [{:alt_f, 3}, {:f, 6}]) end,
+      # an item whose text matches categories, with Confirm assignments on
+      "questions" => fn state ->
+        db = Agendum.Core.set_confirm_assignments(state.db, :always)
+        %{state | db: db} |> press(["Telephone Anna Berg", :enter]) |> menu("uq")
+      end,
+      "view_properties_datebook" => fn state ->
+        {week, _} = Enum.find(state.db.views, fn {_, v} -> v.name == "This Week" end)
+        state |> State.switch_view(week) |> menu("vvp")
+      end
     }
   end
 
@@ -318,7 +367,7 @@ defmodule Agendum.TUI.AgendaBoxesTest do
     bottom =
       if theirs["bottom"] == ours.bottom,
         do: [],
-        else: ["#{name} bottom: Agenda #{theirs["bottom"]}, ours #{ours.bottom}"]
+        else: ["#{name} bottom: Agenda #{theirs["bottom"]}, ours #{ours.bottom || "none"}"]
 
     agenda_labels = labels(theirs["rows"])
     our_labels = labels(ours.rows)
