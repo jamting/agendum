@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.33.0 — 2026-10-25
+
+The sort box as in Lotus Agenda.
+
 - The **sort box** (View or Section Properties ▸ Item sorting) is laid out as Lotus Agenda's: **Primary sort key** and **Secondary sort key**, each showing only the settings that apply (Order and Sort n/a's for Item text; Category, Sequence and Line number when they apply). The second key now has all the settings the first has.
 - **SPACE on Sort on** goes None → Item text → Category → Category note and keeps the category; **Category** is a row of its own, where SPACE or F3 picks another.
 - **Section sorting** is set in View Properties only (it was in the sort box too).
