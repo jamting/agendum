@@ -37,9 +37,11 @@ defmodule Agendum.TUI.Messages do
        {:adapted,
         "The name of the category must contain at least one character (other than a space) and can't begin with a semicolon.  Type a valid category name."}},
     cannot_convert:
-      {"You can't convert the MAIN category or a category with grandchildren to numeric or date.",
-       {:adapted,
-        "You can't convert the MAIN category or a category with grandchildren to numeric, date, or unindexed."}},
+      {"You can't convert the MAIN category or a category with grandchildren to numeric, date, or unindexed.",
+       :agenda},
+    no_sections:
+      {"Every view must have at least one section.  Type a category name or press F3 to pick an existing category for the section head.",
+       :agenda},
     cannot_change_type:
       {"You can't change the category type of date and numeric categories.",
        {:adapted,

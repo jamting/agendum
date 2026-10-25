@@ -414,9 +414,15 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   defp command(state, mode, id, here) when is_map_key(@moves, id),
     do: move_to(state, mode, step(state, %{mode | cursor: here}, @moves[id]))
 
-  # ENTER: closed, and the view that was shown shown again
-  defp command(state, mode, id, _here) when id in [:done, :close],
-    do: state |> State.pop() |> Map.merge(mode.back || %{})
+  # ENTER: closed, and the view that was shown shown again; refused with no
+  # section left (Section Select's F4), as Agenda's
+  defp command(state, mode, id, _here) when id in [:done, :close] do
+    view = state.db.views[mode.view_id]
+
+    if id == :done and view.datebook == nil and view.sections == [],
+      do: State.error(state, Agendum.TUI.Messages.text(:no_sections)),
+      else: state |> State.pop() |> Map.merge(mode.back || %{})
+  end
 
   defp command(state, mode, :change, here), do: change(state, mode, here)
 
@@ -429,8 +435,10 @@ defmodule Agendum.TUI.Boxes.ViewProps do
       else: state
   end
 
-  defp command(state, _mode, :pick, {:section, n}),
-    do: CategoryScreens.open_picker(state, {:add_section, n + 1, n}, nil)
+  # F3 on Sections: Agenda's Section Select, every section head starred
+  # (checked in Agenda 2.0, 2026-10-25; the owner's choice)
+  defp command(state, mode, :pick, {:section, _n}),
+    do: CategoryScreens.open_picker(state, {:sections, mode.view_id}, nil)
 
   defp command(state, mode, :add, {:section, n}),
     do: State.put_mode(state, %{mode | typing: {{:new_section, n}, LineEdit.new("")}})

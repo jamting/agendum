@@ -88,7 +88,8 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | In a box, on a field that holds a category (a column head, a schedule's date category, a sort key's category, a suggested category): its Category Properties (PROPS) | F6 | — |
 | In the assignment profile and a category list from a box: switch the highlighted category, as SPACE (INCLCAT); its Category Properties (PROPS) | F7; F6 | —; — |
 | In the assignment profile: rename the highlighted category, typed in the control panel (EDIT) | F2 | **CTRL-E** |
-| In a list of several categories (a filter, conditions, actions, excludes): take them all out (CLRCATS) | F4 | — |
+| In a list of several categories (a filter, conditions, actions, excludes, Section Select): take them all out (CLRCATS) | F4 | — |
+| In Section Select (F3 on View Properties' Sections): a parent's children as sections instead of the parent (CHLDRN) | F5 | — |
 | A Yes/No question: answer at once; switch the answer shown; accept it; cancel                   | Y / N; SPACE; ENTER; ESC      | Y / N; SPACE; ENTER; ESC                                              |
 
 While typing text (on one line; in a note, the first two rows and CTRL-D; the keymaps `:line` and `:text`, R65):

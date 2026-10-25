@@ -84,6 +84,7 @@ The record of finished work, by milestone, moved here from [`ROADMAP.md`](ROADMA
   - [x] Macro Properties laid out as Agenda's: Name, Contents "...", Attach to key, "Macro can be run from:" with View, Note, Category manager and our Everywhere else (2026-10-25)
   - [x] Item Column Properties: Agenda's Width row, the width now; typing one sets it by hand (2026-10-25)
   - [x] The Questions box drawn as Agenda's: "Questions", 'Suggested categories for "..."', ? and * marks, Parent:Child names, "Press ENTER to accept"; a box any key closes when none wait (2026-10-25)
+  - [x] Section Select as Agenda's: F3 on View Properties' Sections stars the section heads, SPACE/F7 switches one, F5 a parent's children, F4 none; no view left without a section (2026-10-25)
   - [x] Unindexed categories (R29b): one text per item, Column Add's and Category Properties' type, "Text value:", ⌂, Item Properties, the profile, `.AG` import as they are; format 40 (2026-10-25)
   - [x] Editing's leftovers as Agenda's: completion in a box's category fields, F2 in the assignment profile, the What to copy box (2026-10-25)
   - [x] Editing as Agenda's: the editing keys and bar wherever a line is typed (F7 Mark, F3 Copy, F4 Cut, ALT-F4 Delete, F2 Paste, F5 Note, F1 Help), the File line with EDIT while typing an item, category names, column entries and dates typed on the control panel's second line under Agenda's words, AUTOC's bar (2026-10-25)

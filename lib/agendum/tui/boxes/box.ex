@@ -287,7 +287,8 @@ defmodule Agendum.TUI.Boxes.Box do
     # Agenda's category lists (F3 from a box, the assignment profile)
     rename: "Edit",
     toggle: "InclCat",
-    clear_all: "ClrCats"
+    clear_all: "ClrCats",
+    children: "Chldrn"
   }
 
   @doc """

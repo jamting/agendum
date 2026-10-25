@@ -99,10 +99,10 @@ defmodule Agendum.TUI.FieldHelpTest do
   end
 
   test "every help fits the control panel's two lines at 80 columns" do
-    # line 1 shares its room with the indicators ("  ♦ ? PROPS  2026-10-08 13:02 ")
+    # a box has both lines to itself, but for LEARN at the right (v0.42.0)
     for text <- FieldHelp.all() do
-      [first | rest] = Draw.wrap(text, 48)
-      assert String.length(first) <= 48
+      [first | rest] = Draw.wrap(text, 72)
+      assert String.length(first) <= 72
       assert String.length(" " <> Enum.join(rest, " ")) <= 80, "too long: #{text}"
     end
   end

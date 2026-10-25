@@ -4,6 +4,11 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.48.0 — 2026-10-25
+
+Agenda's Section Select.
+
+- **F3 on View Properties' Sections** opens Agenda's **Section Select**: the whole hierarchy with **\*** on the view's sections. SPACE (or F7) makes a category a section or takes it away, **F5** uses a parent's children instead of the parent, **F4** takes them all away. ENTER or ESC go back keeping it. A view left without a section is refused, as in Agenda.
 ## 0.47.0 — 2026-10-25
 
 Unindexed categories, as in Lotus Agenda.

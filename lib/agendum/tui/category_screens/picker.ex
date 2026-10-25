@@ -13,7 +13,7 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
 
   # purposes where SPACE switches a category's choice, several at a time,
   # and ENTER or ESC finishes keeping them, as Agenda's lists (ADR 0030)
-  @esc_pickers [:filter, :condition, :also_assign, :excludes, :schedule_filter]
+  @esc_pickers [:filter, :condition, :also_assign, :excludes, :schedule_filter, :sections]
 
   # --- the box (`Agendum.TUI.Boxes.Box`) ---------------------------------------------------
 
@@ -55,6 +55,12 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
     several =
       if several?(mode), do: %{{:f, 7} => :toggle, {:f, 4} => :clear_all}, else: %{}
 
+    # Section Select's F5 (CHLDRN): a parent's children instead of it
+    several =
+      if match?(%{purpose: {:sections, _}}, mode),
+        do: Map.put(several, {:f, 5}, :children),
+        else: several
+
     CategoryScreens.list_keymap()
     |> Map.merge(%{
       :enter => :pick,
@@ -74,6 +80,11 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
           {:clear_all, "Clear all", "Take every category out of the list"}
         ],
         else: []
+
+    several =
+      if match?(%{purpose: {:sections, _}}, mode),
+        do: several ++ [{:children, "Children", "The parent's children as sections"}],
+        else: several
 
     [{:pick, "Pick", "Pick the highlighted category"}, {:new, "New", "Make a new category"}] ++
       several ++
@@ -109,9 +120,37 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
 
   def run(state, mode, :clear_all), do: clear(state, mode.purpose)
 
+  # F5 (CHLDRN) in Section Select: each child of the highlighted category a
+  # section, the category itself no longer one (User's Guide 9-8)
+  def run(state, %{purpose: {:sections, view_id}} = mode, :children) do
+    rows = CategoryScreens.rows(state, mode)
+    mode = if rows == [], do: mode, else: CategoryScreens.clamp(mode, rows)
+    parent = CategoryScreens.current_id(rows, mode)
+    heads = section_heads(state, view_id)
+
+    case parent && state.db.categories[parent].children do
+      [_ | _] = children ->
+        add = for c <- children, c not in heads, do: c
+        state = add_sections(state, view_id, add)
+
+        if parent in heads,
+          do: remove_section(state, view_id, parent),
+          else: state
+
+      _ ->
+        state
+    end
+  end
+
   def run(state, mode, id), do: CategoryScreens.run_list(state, mode, id)
 
   # F4 CLRCATS: every category taken out of what the list sets, one change
+  defp clear(state, {:sections, view_id}) do
+    count = length(state.db.views[view_id].sections)
+    remove = for i <- (count - 1)..0//-1, do: {:remove_section, view_id, i}
+    if remove == [], do: state, else: State.run(state, {:batch, remove})
+  end
+
   defp clear(state, {:filter, scope}),
     do: State.run(state, {:set_filters, state.view_id, scope, []})
 
@@ -204,6 +243,8 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   defp title_for(state, {:condition, id}),
     do: "Conditions for #{state.db.categories[id].name}"
 
+  defp title_for(_state, {:sections, _}), do: "Section Select"
+
   defp title_for(_state, {:filter, :view}),
     do: "Filter the view"
 
@@ -225,6 +266,13 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   end
 
   @impl Box
+  # Section Select names the view first, as Agenda's ("Current View:
+  # People")
+  def content(state, %{purpose: {:sections, view_id}} = mode, inner, max_rows) do
+    [[{:box, "   Current View: " <> state.db.views[view_id].name}]] ++
+      CategoryScreens.list_lines(state, mode, inner, max_rows - 1, &marker/3)
+  end
+
   def content(state, mode, inner, max_rows),
     do:
       CategoryScreens.list_lines(state, mode, inner, max_rows, &marker/3) ++
@@ -291,6 +339,10 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   defp marker(state, %{purpose: {:excludes, cat_id}}, id),
     do: if(id in state.db.categories[cat_id].excludes, do: "x", else: " ")
 
+  # * on a section head of the view (Agenda's Section Select)
+  defp marker(state, %{purpose: {:sections, view_id}}, id),
+    do: if(id in section_heads(state, view_id), do: "*", else: " ")
+
   defp marker(_state, _mode, _id), do: " "
 
   @impl Box
@@ -303,7 +355,19 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
     ]
 
   @impl Box
-  def help, do: nil
+  # Agenda's words for Section Select (checked in Agenda 2.0, 2026-10-25);
+  # the other pickers have none
+  def help do
+    %{
+      sections:
+        "Highlight each category for the section head(s) and press SPACE BAR. " <>
+          "Press F5 to use the child categories instead of the parent."
+    }
+  end
+
+  @impl Box
+  def field(_state, %{purpose: {:sections, _}}), do: :sections
+  def field(_state, _mode), do: nil
 
   # --- category picker ------------------------------------------------------------------
 
@@ -383,6 +447,14 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
       State.run(state, {:add_section, state.view_id, id, index, from})
       | cursor_key: {:section, index}
     }
+  end
+
+  # Section Select: SPACE makes a category a section of the view (at the
+  # end, with the last section's linked columns, R55), or no longer one
+  def pick(state, {:sections, view_id}, id) do
+    if id in section_heads(state, view_id),
+      do: remove_section(state, view_id, id),
+      else: add_sections(state, view_id, [id])
   end
 
   # Section Add's head (F3 in the box): the box adds the section
@@ -539,6 +611,31 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
 
       nil ->
         "Condition on #{other} removed"
+    end
+  end
+
+  # --- Section Select (`{:sections, view}`) -----------------------------------
+
+  defp section_heads(state, view_id),
+    do: Enum.map(state.db.views[view_id].sections, & &1.category_id)
+
+  defp add_sections(state, _view_id, []), do: state
+
+  defp add_sections(state, view_id, ids) do
+    count = length(state.db.views[view_id].sections)
+
+    adds =
+      ids
+      |> Enum.with_index(count)
+      |> Enum.map(fn {id, at} -> {:add_section, view_id, id, at, max(at - 1, 0)} end)
+
+    State.run(state, {:batch, adds})
+  end
+
+  defp remove_section(state, view_id, id) do
+    case Enum.find_index(section_heads(state, view_id), &(&1 == id)) do
+      nil -> state
+      at -> State.run(state, {:remove_section, view_id, at})
     end
   end
 end
