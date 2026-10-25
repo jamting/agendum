@@ -20,7 +20,7 @@ defmodule Agendum.TUI.RecurringTest do
     assert [done, next] = meetings(state)
     assert done.done == ~D[2026-10-08]
     assert next.when == ~D[2026-10-19]
-    assert screen(state) =~ "Done · the next one is on 2026-10-19"
+    assert screen(state) =~ "Done · the next one is on 10/19/26"
     # one undo takes back both
     state = press(state, {:ctrl, "z"})
     assert [only] = meetings(state)
@@ -29,6 +29,6 @@ defmodule Agendum.TUI.RecurringTest do
 
   test "Item Properties shows the rule beside the When date", %{state: state} do
     assert Layout.current_row(state).item.text == "Status meeting every Monday"
-    assert screen(press(state, {:f, 6})) =~ "When (2026-10-12) · every Monday"
+    assert screen(press(state, {:f, 6})) =~ "When (10/12/26) · every Monday"
   end
 end

@@ -40,7 +40,7 @@ defmodule Agendum.TUI.FilterBrowseTest do
     state = press(state, [{:alt, "b"}, :right, :right])
     assert screen(state) =~ "BROWSE"
     assert range(state, w) == {:range, "2026-10-14", "2026-10-14", :inside}
-    assert screen(state) =~ "2026-10-14..2026-10-14"
+    assert screen(state) =~ "10/14/26..10/14/26"
     assert state.db == db
 
     state = press(state, :esc)
@@ -95,7 +95,7 @@ defmodule Agendum.TUI.FilterBrowseTest do
   test "at 80 columns the view's line, with its dates, stays in sight", %{state: state, when: w} do
     state = %{filter_view(state, w, "today", "today") | width: 80}
     [_, view_line | _] = state |> press([{:alt, "b"}, :right]) |> screen() |> String.split("\n")
-    assert view_line =~ "View: Activities [When 2026-10-13..2026-10-13]"
+    assert view_line =~ "View: Activities [When 10/13/26..10/13/26]"
 
     {:ok, db, v} =
       Core.add_datebook_view(state.db, "Quarter", %Agendum.Core.Datebook{period: :quarter})

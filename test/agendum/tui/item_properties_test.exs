@@ -32,8 +32,8 @@ defmodule Agendum.TUI.ItemPropertiesTest do
     assert screen =~ "Item Properties"
     assert screen =~ "Don't forget to call"
     assert screen =~ ~r/Note:\s+\(none\)/
-    assert screen =~ ~r/Item statistics:\s+4 categories · entered 2026-10-08/
-    assert screen =~ ~r/Assigned to:\s+Entry \(2026-10-08\)/
+    assert screen =~ ~r/Item statistics:\s+4 categories · entered 10\/08\/26/
+    assert screen =~ ~r/Assigned to:\s+Entry \(10\/08\/26\)/
     assert screen =~ "Calls"
     assert screen =~ "High"
     assert screen =~ "Anna Lasky"

@@ -53,10 +53,10 @@ defmodule Agendum.CoreTest do
 
       assert Enum.map(section.rows, & &1.cells) == [
                # "...before the end of the month."
-               ["2026-10-31", "Medium", ""],
+               ["10/31/26", "Medium", ""],
                ["", "High", "Anna Lasky"],
                # "...this Tuesday." (this week's Tuesday, R14)
-               ["2026-10-06", "Low", "Abigail Scheer"],
+               ["10/06/26", "Low", "Abigail Scheer"],
                ["", "Medium", "Abigail Scheer"],
                ["", "Medium", "Daniel Fiske"]
              ]

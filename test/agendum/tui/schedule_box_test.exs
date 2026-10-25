@@ -23,19 +23,19 @@ defmodule Agendum.TUI.ScheduleBoxTest do
     assert text =~ "Show Schedule"
     assert text =~ ~r/Date category +: When/
     assert text =~ ~r/Section head +: When/
-    assert text =~ ~r/Date +: Mon 2026-10-12/
+    assert text =~ ~r/Date +: Mon 10\/12\/26/
     assert text =~ ~r/Filter +: \(none\)/
   end
 
   test "ENTER shows the date's items in the Show View", %{state: state} do
     state = state |> open_box() |> press([:down, :down, " ", {:ctrl, "u"}, "tuesday", :enter])
-    assert screen(state) =~ ~r/Date +: Tue 2026-10-13/
+    assert screen(state) =~ ~r/Date +: Tue 10\/13\/26/
 
     state = press(state, :enter)
     assert State.view(state).name == "Show View"
     assert [item] = items(state)
     assert item =~ "Call Marketing"
-    assert panel(state) =~ "Schedule for Tue 2026-10-13"
+    assert panel(state) =~ "Schedule for Tue 10/13/26"
 
     # at 80 columns the message leaves the view's line in sight
     [_, view_line | _] = %{state | width: 80} |> screen() |> String.split("\n")

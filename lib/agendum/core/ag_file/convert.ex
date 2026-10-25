@@ -643,8 +643,17 @@ defmodule Agendum.Core.AgFile.Convert do
   defp settings(s) do
     [first, last] = s.week
 
+    # The file's own global date format (header word 0x182) is not decoded
+    # yet: the file gets Agenda's default, which most files kept (R41).
+    format = Agendum.Core.DateFormat.agenda()
+
     %{
       "match_settings" => %{"enabled" => s.text_matching},
+      "date_format" => %{
+        "order" => Atom.to_string(format.order),
+        "separator" => format.separator,
+        "clock" => format.clock
+      },
       "date_settings" => %{
         "week_start" => @weekday_numbers[first] || 7,
         "week_end" => @weekday_numbers[last] || 6,

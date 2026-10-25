@@ -135,7 +135,7 @@ defmodule Agendum.Core.DateDisplayOptionsTest do
     end
 
     test "uses the global defaults until given its own", %{db: db, view: view} do
-      assert cells(db, view, @today) == "1990-12-14 13:00"
+      assert cells(db, view, @today) == "12/14/90 1:00pm"
       db = Core.set_date_format(db, fmt(order: :ddmmyy, separator: "."))
       assert cells(db, view, @today) == "14.12.90 13:00"
     end
@@ -144,10 +144,10 @@ defmodule Agendum.Core.DateDisplayOptionsTest do
       db = Core.set_column_date_format(db, view, {0, 0}, fmt(order: :relative, show: :date))
       assert cells(db, view, @today) == "Tomorrow"
       assert cells(db, view, ~D[1990-12-14]) == "Today"
-      assert cells(db, view, ~D[1991-01-14]) == "1990-12-14"
+      assert cells(db, view, ~D[1991-01-14]) == "12/14/90"
 
       db = Core.set_column_date_format(db, view, {0, 0}, nil)
-      assert cells(db, view, @today) == "1990-12-14 13:00"
+      assert cells(db, view, @today) == "12/14/90 1:00pm"
     end
 
     test "falls back on the global format outside the relative week", %{db: db, view: view} do

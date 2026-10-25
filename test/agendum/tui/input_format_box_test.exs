@@ -61,7 +61,7 @@ defmodule Agendum.TUI.InputFormatBoxTest do
         [:down, {:alt_f, 2}, {:ctrl, "u"}] ++ String.graphemes("12.11.2026") ++ [:enter]
       )
 
-    assert screen(state) =~ "2026-11-12"
+    assert screen(state) =~ "11/12/26"
   end
 
   test "without a preferences file the change lasts the session", %{state: state} do

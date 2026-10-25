@@ -20,7 +20,7 @@ defmodule Agendum.TUI.BoxChoicesTest do
 
   test "a letter picks the next choice that starts with it", %{state: state} do
     state = date_format(state)
-    assert state.db.date_format.order == :yyyymmdd
+    assert state.db.date_format.order == :mmddyy
 
     state = press(state, "r")
     assert state.db.date_format.order == :relative
@@ -35,7 +35,7 @@ defmodule Agendum.TUI.BoxChoicesTest do
   test "picking by letter is one change, one undo step", %{state: state} do
     state = date_format(state)
     picked = press(state, "r")
-    assert History.undo(picked).db.date_format.order == :yyyymmdd
+    assert History.undo(picked).db.date_format.order == :mmddyy
   end
 
   test "a letter no choice starts with says so and changes nothing", %{state: state} do
@@ -54,7 +54,7 @@ defmodule Agendum.TUI.BoxChoicesTest do
   test "F3, then ENTER on the choice already set, changes nothing", %{state: state} do
     state = date_format(state)
     chosen = press(state, [{:f, 3}, :enter])
-    assert chosen.db.date_format.order == :yyyymmdd
+    assert chosen.db.date_format.order == :mmddyy
   end
 
   test "F3 lists the choices; ENTER takes the highlighted one", %{state: state} do
@@ -70,7 +70,7 @@ defmodule Agendum.TUI.BoxChoicesTest do
     refute text =~ "ENTER accept · ESC cancel"
 
     state = press(state, [:down, :down, :enter])
-    assert state.db.date_format.order == :yyyyddmm
+    assert state.db.date_format.order == :ddmmyy
     assert %{type: :display_format} = State.mode(state)
   end
 

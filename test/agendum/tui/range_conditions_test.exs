@@ -29,7 +29,7 @@ defmodule Agendum.TUI.RangeConditionsTest do
 
     # ENTER ended the picker's search; ESC closes it, keeping the condition
     state = press(state, :esc)
-    assert screen(state) =~ ~r/Assignment conditions:.*\n.*When 2026-10-05\.\.2026-10-09/
+    assert screen(state) =~ ~r/Assignment conditions:.*\n.*When 10\/05\/26\.\.10\/09\/26/
   end
 
   test "items are pulled in by the date condition when their date changes",

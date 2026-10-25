@@ -9,11 +9,20 @@ defmodule Agendum.Core.DateFormatTest do
 
   defp fmt(fields), do: struct(DateFormat, fields)
 
-  test "the default is ISO 8601 with a 24-hour clock, as before" do
+  test "the struct's default is ISO 8601 with a 24-hour clock (files from before format 7)" do
     assert DateFormat.date(@date, %DateFormat{}) == "1990-11-13"
     assert DateFormat.date_time(@date, ~T[15:25:00], %DateFormat{}) == "1990-11-13 15:25"
     assert DateFormat.date_time(@date, nil, %DateFormat{}) == "1990-11-13"
     assert DateFormat.date_time(nil, nil, %DateFormat{}) == ""
+  end
+
+  test "a new file gets Agenda's default: MMDDYY with / and a 12-hour clock (R41)" do
+    # Agenda 2.0's Display Format box on a new file (DOSBox, 2026-10-25):
+    # Date time, no day of week, MMDDYY, "/", 12 hr, am/pm, ":".
+    format = Core.new_file().date_format
+    assert format == DateFormat.agenda()
+    assert {format.order, format.separator, format.clock} == {:mmddyy, "/", 12}
+    assert DateFormat.date_time(@date, ~T[21:10:00], format) == "11/13/90 9:10pm"
   end
 
   test "every date order in Agenda's table" do

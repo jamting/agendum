@@ -56,7 +56,7 @@ defmodule Agendum.TUI.ViewTest do
   test "a filled column entry has · before it, as Agenda's", %{state: state} do
     state = %{state | width: 80}
     line = fn text -> state |> screen() |> String.split("\n") |> Enum.find(&(&1 =~ text)) end
-    assert line.("Call Marketing") =~ ~r/·\d{4}-\d\d-\d\d +·Low +·Abigail Scheer/
+    assert line.("Call Marketing") =~ ~r/·\d\d\/\d\d\/\d\d +·Low +·Abigail Scheer/
     # an empty entry has none
     refute line.("Check with Abigail") =~ ~r/ ·  /
   end
@@ -71,7 +71,7 @@ defmodule Agendum.TUI.ViewTest do
       state |> screen() |> String.split("\n") |> Enum.find(&(&1 =~ text))
     end
 
-    assert line.(state, "Set up meeting") =~ ~r/^    • Set up meeting at Terracotta +»2026-10-31/
+    assert line.(state, "Set up meeting") =~ ~r/^    • Set up meeting at Terracotta +»10\/31\/26/
 
     # the highlight is as wide as the text's longest line ("Corp to discuss
     # CopyCat before", 30), not the column
@@ -174,7 +174,7 @@ defmodule Agendum.TUI.ViewTest do
   test "typing in the When column parses dates", %{state: state} do
     state = press(state, [:down, :right, "tomorrow", :enter])
     assert Agendum.TUI.Layout.current_row(state).item.when == ~D[2026-10-09]
-    assert screen(state) =~ "2026-10-09"
+    assert screen(state) =~ "10/09/26"
   end
 
   test "F2 edits an item's text", %{state: state} do
@@ -252,8 +252,8 @@ defmodule Agendum.TUI.ViewTest do
     test "typing an item with a date fills the When column and says so", %{state: state} do
       state = press(state, ["Call Bob next Tuesday", :enter])
       screen = screen(state)
-      assert screen =~ "When: 2026-10-13"
-      assert screen =~ ~r/Call Bob next Tuesday[\s»]+2026-10-13/
+      assert screen =~ "When: 10/13/26"
+      assert screen =~ ~r/Call Bob next Tuesday[\s»]+10\/13\/26/
     end
 
     test "editing the date words updates the When date", %{state: state} do

@@ -33,7 +33,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
       |> close_props()
 
     assert state.modes == []
-    assert screen(state) =~ "[When 2026-10-01..2026-10-07]"
+    assert screen(state) =~ "[When 10/01/26..10/07/26]"
     assert [only] = texts(state)
     assert only =~ "Call Marketing"
   end
@@ -69,7 +69,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
       ])
       |> close_props()
 
-    assert screen(state) =~ "[When not 2026-10-01..2026-10-07]"
+    assert screen(state) =~ "[When not 10/01/26..10/07/26]"
     assert [only] = texts(state)
     assert only =~ "Terracotta"
 
@@ -104,7 +104,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
       |> press(["When", :enter, " ", :down, "2026-10-20", :enter])
       |> close_props()
 
-    assert screen(state) =~ "Calls [When 2026-10-20..]"
+    assert screen(state) =~ "Calls [When 10/20/26..]"
     assert [only] = texts(state)
     assert only =~ "Terracotta"
   end

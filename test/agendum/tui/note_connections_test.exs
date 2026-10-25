@@ -100,7 +100,7 @@ defmodule Agendum.TUI.NoteConnectionsTest do
       assert State.mode(calendar).type == :calendar
       typed = press(calendar, [:right, :enter])
       assert types(typed) == [:note]
-      assert List.last(edit(typed).lines) == "Ask Anna about the hosting costs.2026-10-13"
+      assert List.last(edit(typed).lines) == "Ask Anna about the hosting costs.10/13/26"
     end
 
     test "ESC types nothing", %{note: note} do

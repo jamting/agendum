@@ -91,14 +91,17 @@ defmodule Agendum.Core.Database do
   @doc """
   Creates a new, empty file: the MAIN category with the Entry, When and Done
   date categories, an "Initial Section" category, and an "Initial View" that
-  shows it with a When column.
+  shows it with a When column; dates in Agenda's default format (R41).
   """
   @spec new(keyword) :: t
   def new(opts \\ []) do
     view_name = Keyword.get(opts, :view_name, "Initial View")
     section_name = Keyword.get(opts, :section_name, "Initial Section")
 
-    db = %__MODULE__{}
+    # A new file shows dates as Agenda's did (R41). The struct's own default
+    # stays ISO 8601: an old file saved before dates had a format (format 7)
+    # gets it when loaded, so it shows its dates as it always did.
+    db = %__MODULE__{date_format: DateFormat.agenda()}
     {db, main} = put_new_category(db, %Category{name: "MAIN", match_name: false})
     db = %{db | main_id: main}
 

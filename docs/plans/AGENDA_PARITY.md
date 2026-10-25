@@ -118,7 +118,6 @@ What Agendum has that Agenda did not. The entries tagged **extra** are hidden wh
 - **machine** · JSON export and import (R44), a readable file format.
 - **extra** · Calendar subscriptions (iCal, R45) and time zones.
 - **quiet** · Date languages, Swedish among them (R41): English is the default.
-- **change back** · The file's date format defaults to ISO 8601 (R41). New files get Agenda's MM/DD/YY; ISO stays one of Agenda's own choices (YYYYMMDD with "-"), and files keep the format they have.
 - **quiet** · Colour themes beyond Agenda's (R40): Agenda's colours are the default.
 - **machine** · Word wrap in the note editor (R64). Agenda wrapped notes too, at 79 characters (User's Guide, importing a note); Agendum wraps at the window's width, the same on an 80-column screen.
 - **machine** · A count before a command in a view, as Emacs's numeric prefix: ALT-1 ALT-0 ↓ moves ten rows (R65). In Agenda ALT-digits typed DOS character codes, which a terminal cannot.
@@ -212,7 +211,7 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
 
 #### Commands and behaviour still missing
 
-- [ ] New files get Agenda's date format, MM/DD/YY; ISO stays a choice (YYYYMMDD with "-"), and a file keeps the format it has (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
+- [ ] The `.AG` import reads the file's own global date format (header words `0x182`/`0x184`, `AGENDA_FILE_FORMAT.md`; only partly decoded): an imported file gets Agenda's default today (the owner's choice, 2026-10-25)
 - [ ] Alarms as Agenda's (the tagging sitting, 2026-10-22): an alarm that came due while the file was closed rings when it is opened and shows `@`, without a box (checked in Agenda 2.0); Utilities ▸ Show Alarm, a Show View with !Current Alarms! and !Past Alarms! (DEL removes an item from the list; Past Alarms emptied at the end of the day; User's Guide 10-18 to 10-20). The "While you were away" box (R70) is an extra since R77 (2026-10-23): with Extras off, missed alarms already ring on open, without the box
 - [ ] Search compared with Agenda's (ALT-F6 SEARCH in a view and a note, its Search box, the Match show view): the differences become parity work (the tagging sitting, 2026-10-22: no longer an enhancement)
 - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)

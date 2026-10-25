@@ -42,9 +42,9 @@ defmodule Agendum.TUI.DateColumnsTest do
     assert text =~ ~r/Date Column Properties *│?\n.*\(Global defaults\)/
     refute text =~ "Settings:"
     assert text =~ ~r/Display date and\/or time: +Date time/
-    assert text =~ ~r/Date format: +YYYYMMDD/
+    assert text =~ ~r/Date format: +MMDDYY/
     assert text =~ "Formatted Sample"
-    assert text =~ "1990-11-13 15:25"
+    assert text =~ "11/13/90 3:25pm"
   end
 
   test "changing a setting makes them the column's own", %{state: state, view: view} do
@@ -54,7 +54,7 @@ defmodule Agendum.TUI.DateColumnsTest do
       |> to_show()
       |> press(" ")
       |> to_setting("Date format")
-      |> press(List.duplicate(" ", 18))
+      |> press(List.duplicate(" ", 14))
 
     assert column(state, view).date.show == :date
     assert column(state, view).date.order == :relative
@@ -63,7 +63,7 @@ defmodule Agendum.TUI.DateColumnsTest do
     state = press(state, :enter)
     assert state.modes == []
     assert screen(state) =~ ~r/Tomorrow/
-    assert state.db.date_format == %Core.DateFormat{}
+    assert state.db.date_format == Core.DateFormat.agenda()
   end
 
   # Agenda shows only the settings for what the column displays: no clock
@@ -103,7 +103,7 @@ defmodule Agendum.TUI.DateColumnsTest do
     state = state |> to_show() |> press([" ", {:alt_f, 8}])
     assert column(state, view).date == nil
     assert screen(state) =~ "(Global defaults)"
-    assert screen(press(state, :esc)) =~ "2026-10-09 14:00"
+    assert screen(press(state, :esc)) =~ "10/09/26 2:00pm"
   end
 
   # the box applies on ENTER, as Agenda's (ADR 0030): one step for it all
@@ -137,13 +137,14 @@ defmodule Agendum.TUI.DateColumnsTest do
         " ",
         :down,
         :down,
+        :down,
         " ",
-        :esc,
-        :esc,
-        :esc
+        :enter,
+        :enter,
+        :enter
       ])
 
-    assert screen(state) =~ "26-10-09 14:00"
+    assert screen(state) =~ "10-09-26 2:00pm"
   end
 
   test "Column Properties on a standard column has no date part (R55)", %{state: state} do

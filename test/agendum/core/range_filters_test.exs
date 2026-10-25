@@ -298,11 +298,11 @@ defmodule Agendum.Core.RangeFiltersTest do
     # Monday" shows 11/02/26 in its When column; unfiltered, its base date
     test "its When column shows the first occurrence in the range", %{db: db, view: v, when: w} do
       db = Core.add_column(db, v, w, {0, 0}, 12)
-      assert when_cell(db, v, "Gym every Monday") == "2026-10-12"
+      assert when_cell(db, v, "Gym every Monday") == "10/12/26"
 
       db = filter(db, v, w, :assigned, "2026-11-01", "2026-11-14")
-      assert when_cell(db, v, "Gym every Monday") == "2026-11-02"
-      assert when_cell(db, v, "Walk every day") == "2026-11-01"
+      assert when_cell(db, v, "Gym every Monday") == "11/02/26"
+      assert when_cell(db, v, "Walk every day") == "11/01/26"
     end
 
     test "never before the base date", %{db: db, view: v, when: w} do

@@ -43,7 +43,7 @@ defmodule Agendum.TUI.AssignmentReasonsTest do
   end
 
   test "a date category: the date it holds", %{state: state} do
-    assert panel(on(state, "Entry")) =~ "In Entry: dated 2026-10-08"
+    assert panel(on(state, "Entry")) =~ "In Entry: dated 10/08/26"
   end
 
   test "a category the item is not in says nothing more", %{state: state} do

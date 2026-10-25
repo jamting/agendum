@@ -44,7 +44,7 @@ defmodule Agendum.Core.UserDateCategoriesTest do
     {:ok, db, :date} = Core.assign_by_name(db, item, due, "next friday at 3pm", @now)
     assert Database.item_date(db, item, due) == ~D[2026-10-16]
     assert Database.item_time(db, item, due) == ~T[15:00:00]
-    assert ViewModel.cell(db, db.items[item], due) == "2026-10-16 15:00"
+    assert ViewModel.cell(db, db.items[item], due) == "10/16/26 3:00pm"
 
     assert Core.assign_by_name(db, item, due, "someday", @now) == {:error, :invalid_date}
   end

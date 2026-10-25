@@ -4,7 +4,8 @@ defmodule Agendum.Core.DateFormat do
   format, User's Guide 6-20 to 6-22 and 7-13 to 7-15).
 
     * `order`: the order and length of day, month and year (Agenda's
-      MMDDYY … DDMMMYYYY); the default `:yyyymmdd` with "-" is ISO 8601
+      MMDDYY … DDMMMYYYY); the struct's default `:yyyymmdd` with "-" is
+      ISO 8601
     * `separator`: between the numbers of a date; dates with a month name
       ("Nov 13 90") always use spaces
     * `clock`: 24 or 12 (12 shows am/pm: "3:25pm")
@@ -23,7 +24,10 @@ defmodule Agendum.Core.DateFormat do
   ISO 8601 when that is relative too).
 
   The file's format is the global default; a date column may have its
-  own (`View.Column.date`).
+  own (`View.Column.date`). A new file starts with Agenda's default,
+  `agenda/0` (MMDDYY, "/", 12 hours); the struct's own defaults, ISO 8601
+  on a 24-hour clock, are what files from before format 7 show, and the
+  fallback where a format is needed but none is given.
 
   Only display: what the user types is read by `Agendum.Core.DateParser`,
   and dates offered for editing stay ISO 8601 (`DateParser.format/1`).
@@ -100,6 +104,15 @@ defmodule Agendum.Core.DateFormat do
   @days ~w(Mon Tue Wed Thu Fri Sat Sun)
   # as Agenda wrote them in relative dates (Lotus Q&A, 1990)
   @relative_days ~w(Mon Tues Wed Thurs Fri Sat Sun)
+
+  @doc """
+  Agenda's default, which a new file starts with: "11/13/90 9:10pm"
+  (Agenda 2.0's Display Format box on a new file, checked 2026-10-25).
+  """
+  @spec agenda() :: t
+  # A struct literal with some fields named: the fields left out keep the
+  # defaults from `defstruct` above.
+  def agenda, do: %__MODULE__{order: :mmddyy, separator: "/", clock: 12}
 
   @doc "Every date order, in the order the settings offer them."
   @spec orders() :: [order]

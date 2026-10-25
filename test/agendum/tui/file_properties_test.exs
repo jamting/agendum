@@ -129,15 +129,15 @@ defmodule Agendum.TUI.FilePropertiesTest do
     assert text =~ "Display Format"
     assert text =~ "Date Column Properties"
     assert text =~ ~r/Display date and\/or time: +Date time/
-    assert text =~ ~r/Show day of week: +No +Clock: +24 hr/
-    assert text =~ ~r/Date format: +YYYYMMDD +Show am\/pm: +Yes/
-    assert text =~ ~r/Date separator: +- +Time separator: +:/
+    assert text =~ ~r/Show day of week: +No +Clock: +12 hr/
+    assert text =~ ~r/Date format: +MMDDYY +Show am\/pm: +Yes/
+    assert text =~ ~r/Date separator: +\/ +Time separator: +:/
     assert text =~ "Formatted Sample"
-    assert text =~ "1990-11-13 15:25"
+    assert text =~ "11/13/90 3:25pm"
   end
 
   test "changing a setting changes every date on the screen at once", %{state: state} do
-    # Date format: YYYYMMDD -> YYMMDD; then the separator - -> .
+    # Date format: MMDDYY -> MMDDYYYY; then the separator / -> -
     state =
       state
       |> press(@display)
@@ -146,15 +146,15 @@ defmodule Agendum.TUI.FilePropertiesTest do
       |> to_setting("Date separator")
       |> press(" ")
 
-    assert state.db.date_format.order == :yymmdd
-    assert state.db.date_format.separator == "."
-    assert screen(state) =~ "90.11.13 15:25"
+    assert state.db.date_format.order == :mmddyyyy
+    assert state.db.date_format.separator == "-"
+    assert screen(state) =~ "11-13-1990 3:25pm"
 
     state = press(state, [:enter, :enter, :enter])
     assert state.modes == []
     text = screen(state)
-    assert text =~ "26.10.31"
-    assert text =~ "26.10.08 09:00"
+    assert text =~ "10-31-2026"
+    assert text =~ "10-08-2026 9:00am"
   end
 
   test "SPACE goes on through the choices; the clock and day of week toggle", %{state: state} do
@@ -165,15 +165,15 @@ defmodule Agendum.TUI.FilePropertiesTest do
       |> to_setting("Show day of week")
       |> press(" ")
       |> to_setting("Date format")
-      |> press(List.duplicate(" ", 13))
+      |> press(List.duplicate(" ", 9))
       |> to_setting("Clock")
       |> press(" ")
 
     f = state.db.date_format
     assert f.order == :ddmmmyyyy
-    assert f.clock == 12
+    assert f.clock == 24
     assert f.day_of_week
-    assert screen(state) =~ "Tue 13 Nov 1990 3:25pm"
+    assert screen(state) =~ "Tue 13 Nov 1990 15:25"
   end
 
   test "Agenda's other display settings and formats", %{state: state} do
@@ -182,7 +182,7 @@ defmodule Agendum.TUI.FilePropertiesTest do
     state = press(state, @display ++ [" "])
     assert state.db.date_format.show == :date
     refute screen(state) =~ "Clock:"
-    state = state |> to_setting("Date format") |> press(List.duplicate(" ", 18))
+    state = state |> to_setting("Date format") |> press(List.duplicate(" ", 14))
     assert state.db.date_format.order == :relative
     assert screen(state) =~ ~r/Date format: +Relative/
     assert screen(state) =~ "Tomorrow"
@@ -197,14 +197,14 @@ defmodule Agendum.TUI.FilePropertiesTest do
       end)
 
     f = state.db.date_format
-    assert {f.clock, f.am_pm, f.time_separator} == {12, false, "hm"}
+    assert {f.clock, f.am_pm, f.time_separator} == {24, false, "hm"}
   end
 
   test "each change is one undo step", %{state: state} do
     state = press(state, @display ++ [:down, :down, " ", " ", :enter])
-    assert state.db.date_format.order == :yyyyddmm
+    assert state.db.date_format.order == :ddmmyy
     state = History.undo(state)
-    assert state.db.date_format.order == :yymmdd
+    assert state.db.date_format.order == :mmddyyyy
   end
 
   test "the date settings are rows of Global date settings", %{state: state} do
@@ -215,9 +215,9 @@ defmodule Agendum.TUI.FilePropertiesTest do
     assert text =~ ~r/First quarter +: Jan 1/
     assert text =~ ~r/Beginning of year +: Jan 1/
     assert text =~ ~r/Month alone means +: First day/
-    assert text =~ ~r/Morning +: 08:00/
-    assert text =~ ~r/Afternoon +: 14:00/
-    assert text =~ ~r/Evening +: 17:00/
+    assert text =~ ~r/Morning +: 8:00am/
+    assert text =~ ~r/Afternoon +: 2:00pm/
+    assert text =~ ~r/Evening +: 5:00pm/
   end
 
   test "changing a date setting changes how dates are read", %{state: state} do

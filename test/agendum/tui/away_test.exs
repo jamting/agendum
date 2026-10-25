@@ -41,8 +41,8 @@ defmodule Agendum.TUI.AwayTest do
     assert text =~ "While you were away"
     assert text =~ "3 alarms came due:"
     # the latest first; the two stand-ups on one line, counted
-    assert text =~ ~r/2026-10-07 13:55  Personnel meeting at 2:00/
-    assert text =~ ~r/2026-10-07 08:55  Stand-up at 9:00 ×2/
+    assert text =~ ~r/10\/07\/26 1:55pm  Personnel meeting at 2:00/
+    assert text =~ ~r/10\/07\/26 8:55am  Stand-up at 9:00 ×2/
     assert :binary.match(text, "Personnel") < :binary.match(text, "Stand-up")
     refute text =~ "Review tomorrow"
 
@@ -62,7 +62,7 @@ defmodule Agendum.TUI.AwayTest do
       assert closed.modes == []
 
       assert screen(press(closed, [{:f, 10}, "u", "s", "a"])) =~
-               ~r/Personnel meeting.*rang 2026-10-07 13:55/
+               ~r/Personnel meeting.*rang 10\/07\/26 1:55pm/
     end
   end
 

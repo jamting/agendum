@@ -163,7 +163,7 @@ defmodule Agendum.TUI.HelpScreenTest do
 
       ran = press(in_note, [{:f, 1}, "c"] ++ List.duplicate(:down, index) ++ [:enter])
       assert Enum.map(ran.modes, & &1.type) == [:note]
-      assert screen(ran) =~ "hello2026-10-12"
+      assert screen(ran) =~ "hello10/12/26"
     end
 
     test "ENTER runs a category manager command there", %{state: state} do

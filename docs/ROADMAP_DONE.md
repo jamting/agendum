@@ -110,6 +110,7 @@ The record of finished work, by milestone, moved here from [`ROADMAP.md`](ROADMA
   - [x] Which CTRL-F keys a Mac lets through (the owner, 2026-10-24, iTerm2, in the key tester): only CTRL-F4, CTRL-F9 and CTRL-F10 on the owner's Mac; the others are taken by macOS's own shortcuts, which depend on the setup (KEYBOARD.md, Mac notes)
   - [x] Every bar made from the keymaps (2026-10-24, v0.24.2; ADR 0045): a short label per command (Agenda's), the hand-written lists in `KeyBar` replaced, macros' names on any bar; ALT-F3 Macro bound in the global keymap so the bars and the help name it; `test/agendum/tui/agenda_key_bars_test.exs` against the bars captured in DOSBox (`capture_key_bars.py`): the view's bars match Agenda's but for ALT-F1 Compose; 15 differences tagged, most of them keys of the managers not built yet
   - [x] ALT-K's five states (2026-10-24, v0.25.0, R80); tried by the owner, who dropped the letter in the last column as redundant
+- [x] New files show dates as Agenda's (2026-10-25, v0.49.0, R41; a change back, settled with the owner): Date time, MMDDYY with "/", a 12-hour clock with am/pm ("10/25/26 9:10pm"), as Agenda 2.0 showed on a new file (DOSBox, 2026-10-25). ISO 8601 stays a choice, files keep the format they have (files from before format 7 show ISO), F8 Default gives Agenda's, the Planner starter and the demo were rebuilt in it, and an imported `.AG` file gets it too (its own setting, header word `0x182`, is not read yet)
 
 ### Look and feel — after screenshots of Agenda 2.0 (ADR 0018)
 

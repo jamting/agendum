@@ -148,14 +148,14 @@ defmodule Agendum.StoreTest do
     assert loaded == db
   end
 
-  test "files in format version 6 get the default date format", %{tmp_dir: dir} do
+  test "files in format version 6 get ISO 8601, as they showed before", %{tmp_dir: dir} do
     db = Agendum.Sample.build(~D[2026-10-08])
     path = Path.join(dir, "v6.agenda")
     File.write!(path, :erlang.term_to_binary({:agenda, 6, Map.delete(db, :date_format)}))
 
     assert {:ok, loaded} = Store.load(path)
     assert loaded.date_format == %Agendum.Core.DateFormat{}
-    assert loaded == db
+    assert loaded == %{db | date_format: %Agendum.Core.DateFormat{}}
   end
 
   test "files before format version 15 that did not read dates read them never",
@@ -319,7 +319,7 @@ defmodule Agendum.StoreTest do
     File.write!(path, :erlang.term_to_binary({:agenda, 20, v20}))
 
     assert {:ok, loaded} = Store.load(path)
-    assert loaded.date_format == %Agendum.Core.DateFormat{}
+    assert loaded.date_format == Agendum.Core.DateFormat.agenda()
     assert loaded == db
   end
 

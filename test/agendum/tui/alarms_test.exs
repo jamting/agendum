@@ -12,14 +12,14 @@ defmodule Agendum.TUI.AlarmsTest do
   defp current(state), do: Layout.current_row(state).item
 
   test "the title bar shows the date and time", %{state: state} do
-    assert screen(state) =~ "2026-10-08 10:00"
+    assert screen(state) =~ "10/08/26 10:00am"
     {state, []} = Update.tick(state, ~N[2026-10-08 10:01:30])
-    assert screen(state) =~ "2026-10-08 10:01"
+    assert screen(state) =~ "10/08/26 10:01am"
   end
 
   test "a time in the text shows in the When column", %{state: state} do
     state = press(state, ["Call Bob Tuesday at 3:00", :enter])
-    assert screen(state) =~ ~r/Call Bob Tuesday at 3:00[\s»]+2026-10-13 15:00/
+    assert screen(state) =~ ~r/Call Bob Tuesday at 3:00[\s»]+10\/13\/26 3:00pm/
   end
 
   test "ALT-A sets an alarm (default 5 minutes before) and the item shows @", %{state: state} do
@@ -28,7 +28,7 @@ defmodule Agendum.TUI.AlarmsTest do
 
     state = press(state, :enter)
     assert current(state).alarm_minutes == 5
-    assert screen(state) =~ "Alarm set for 2026-10-08 13:55"
+    assert screen(state) =~ "Alarm set for 10/08/26 1:55pm"
     assert screen(state) =~ "@ Personnel meeting"
   end
 
@@ -71,8 +71,8 @@ defmodule Agendum.TUI.AlarmsTest do
     refute state.alarm_rang
     screen = screen(state)
     assert screen =~ "Alarm list"
-    assert screen =~ ~r/Review at 4pm.*rings 2026-10-08 15:50/
-    assert screen =~ ~r/Personnel meeting at 2:00.*rang 13:55/
+    assert screen =~ ~r/Review at 4pm.*rings 10\/08\/26 3:50pm/
+    assert screen =~ ~r/Personnel meeting at 2:00.*rang 1:55pm/
 
     state = press(state, [:down, :delete])
     assert Agendum.Core.alarm_list(state.db).past == []

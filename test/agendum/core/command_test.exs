@@ -162,7 +162,7 @@ defmodule Agendum.Core.CommandTest do
       assert changes = Command.Changes.between(db, after_)
       assert changes.categories.added == [cat(after_, "Work")]
 
-      format = %{db.date_format | clock: 12}
+      format = %{db.date_format | clock: 24}
       changes = Command.Changes.between(db, Core.set_date_format(db, format))
       assert changes.file == [:date_format]
     end

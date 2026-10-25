@@ -45,6 +45,11 @@ defmodule Agendum.Core.AgFile.ConvertTest do
     end
   end
 
+  test "an imported file shows dates in Agenda's default format (R41)" do
+    {db, _} = import!("PLANNER")
+    assert db.date_format == Agendum.Core.DateFormat.agenda()
+  end
+
   test "the categories come over with their tree and settings" do
     {db, _} = import!("PLANNER")
     by_name = Map.new(db.categories, fn {_id, c} -> {c.name, c} end)

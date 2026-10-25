@@ -39,7 +39,7 @@ defmodule Agendum.Core.AlarmsTest do
       [%{category_id: section}] = view.sections
       db = Core.assign(db, id, section)
       [%{rows: [row]}] = ViewModel.build(db, view)
-      assert hd(row.cells) == "2026-10-09 09:30"
+      assert hd(row.cells) == "10/09/26 9:30am"
 
       db = Core.remove_from_category(db, id, db.special.when)
       assert {db.items[id].when, db.items[id].when_time} == {nil, nil}

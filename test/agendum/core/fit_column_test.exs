@@ -45,8 +45,8 @@ defmodule Agendum.Core.FitColumnTest do
   end
 
   test "a date column fits its dates", %{db: db, view: view} do
-    # When shows dates as 2026-10-08 (no times in the sample)
-    assert Core.fit_column(db, view.id, {0, 0}, @today) |> width(view, 0) == 10
+    # When shows dates as 10/08/26 (no times in the sample)
+    assert Core.fit_column(db, view.id, {0, 0}, @today) |> width(view, 0) == 8
   end
 
   test "an empty column fits its head, and never less than 3", %{db: db, view: view} do

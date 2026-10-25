@@ -18,9 +18,9 @@ defmodule Agendum.TUI.DatebookViewTest do
 
   test "each slot is a section, named by its date", %{state: state} do
     text = screen(state)
-    for day <- ~w(Mon Tue Wed Thu Fri), do: assert(text =~ day <> " 2026-10-")
-    assert text =~ "Mon 2026-10-12"
-    assert text =~ "Fri 2026-10-16"
+    for day <- ~w(Mon Tue Wed Thu Fri), do: assert(text =~ day <> " 10/")
+    assert text =~ "Mon 10/12/26"
+    assert text =~ "Fri 10/16/26"
   end
 
   test "an item typed into a slot gets the slot's date", %{state: state} do
@@ -32,7 +32,7 @@ defmodule Agendum.TUI.DatebookViewTest do
 
     item = state.db.items |> Map.values() |> Enum.find(&(&1.text == "Picnic with Pooh"))
     assert item.when == ~D[2026-10-14]
-    assert screen(state) =~ ~r/── Wed 2026-10-14 ─+\n    • Picnic with Pooh/u
+    assert screen(state) =~ ~r/── Wed 10\/14\/26 ─+\n    • Picnic with Pooh/u
   end
 
   test "its sections cannot be added, removed, changed or collapsed", %{state: state} do
@@ -76,7 +76,7 @@ defmodule Agendum.TUI.DatebookViewTest do
       state = state |> settings() |> to_setting("Period") |> press([" ", " ", " "])
       assert datebook(state).period == :day
       assert screen(state) =~ ~r/Interval: +Hourly/
-      assert screen(state) =~ ~r/Start at: +08:00/
+      assert screen(state) =~ ~r/Start at: +8:00am/
 
       state = state |> to_setting("Interval") |> press(" ")
       assert datebook(state).interval == 15
@@ -150,7 +150,7 @@ defmodule Agendum.TUI.DatebookViewTest do
 
       state = press(state, [:right, :right])
       assert first_slot(state) == ~D[2026-10-26]
-      assert screen(state) =~ "Mon 2026-10-26"
+      assert screen(state) =~ "Mon 10/26/26"
       assert state.db == db
 
       state = press(state, :esc)
@@ -184,8 +184,8 @@ defmodule Agendum.TUI.DatebookViewTest do
       state = state |> press([{:f, 10}, "v", "p"]) |> to_setting("Period") |> press([" ", :enter])
       state = press(state, [{:alt, "b"}, :right])
       assert State.view(state).datebook.period == :month
-      assert screen(state) =~ "Mon 2026-10-26 → Fri 2026-10-30"
-      assert screen(state) =~ "Mon 2026-11-02"
+      assert screen(state) =~ "Mon 10/26/26 → Fri 10/30/26"
+      assert screen(state) =~ "Mon 11/02/26"
 
       plain =
         state |> press(:esc) |> State.switch_view(hd(state.db.view_order)) |> Layout.settle()
@@ -205,7 +205,7 @@ defmodule Agendum.TUI.DatebookViewTest do
 
     test "browsing to next week shows it on that Monday", %{state: state} do
       state = press(state, [{:alt, "b"}, :right, :enter])
-      assert screen(state) =~ ~r/── Mon 2026-10-19 ─+\n    • Swim every Monday/u
+      assert screen(state) =~ ~r/── Mon 10\/19\/26 ─+\n    • Swim every Monday/u
     end
 
     test "F4 on a later occurrence marks it done and adds the next, as on its base date",

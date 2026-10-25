@@ -53,7 +53,7 @@ defmodule Agendum.TUI.CalendarBoxTest do
     state = press(state, [{:f, 3}, :left, :left, :enter])
     assert state.modes == []
     assert item(state).when == ~D[2026-10-29]
-    assert screen(state) =~ "2026-10-29"
+    assert screen(state) =~ "10/29/26"
     assert History.undo(state) |> item() |> Map.get(:when) == ~D[2026-10-31]
   end
 

@@ -20,7 +20,7 @@ defmodule Agendum.TUI.NoteKeysTest do
   test "ALT-D and ALT-T insert today's date and the time, in the file's format",
        %{state: state} do
     state = press(state, [{:f, 5}, "Called ", {:alt, "d"}, " at ", {:alt, "t"}])
-    assert text(state) == "Called 2026-10-08 at 14:05"
+    assert text(state) == "Called 10/08/26 at 2:05pm"
 
     format = %Agendum.Core.DateFormat{order: :ddmmmyy, clock: 12}
     state = %{state | db: Core.set_date_format(state.db, format)}

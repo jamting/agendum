@@ -70,7 +70,7 @@ defmodule Agendum.TUI.SelectFileTest do
     assert screen(state) =~ "Narrowed to: rab"
 
     state = press(state, [:backspace, :backspace, :backspace, {:f, 7}])
-    assert screen(state) =~ ~r/rabbit\.agendum +\d{4}-\d\d-\d\d \d\d:\d\d/
+    assert screen(state) =~ ~r/rabbit\.agendum +\d\d\/\d\d\/\d\d +\d{1,2}:\d\d[ap]m/
 
     state = press(state, :esc)
     assert %{type: :prompt} = State.mode(state)

@@ -70,7 +70,7 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
     texts = state.db.items |> Map.values() |> Enum.map(& &1.text)
     assert "Organising Meeting" in texts
     assert screen(state) =~ "Work: 2 new"
-    assert screen(state) =~ ~r/Work +read 2026-10-12 10:00/
+    assert screen(state) =~ ~r/Work +read 10\/12\/26 10:00am/
 
     state = History.undo(state)
     refute "Organising Meeting" in (state.db.items |> Map.values() |> Enum.map(& &1.text))
