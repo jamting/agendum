@@ -33,6 +33,19 @@ defmodule Agendum.TUI.StartupTest do
              ~r/Name: +Rabbit/
   end
 
+  # the owner's wish (2026-10-25): the owl stands on the box itself, with no
+  # block of its own colour around it
+  test "the owl is drawn in the box's colours, with no block around it" do
+    segments = started(false) |> Agendum.TUI.Render.render() |> List.flatten()
+    refute Enum.any?(segments, &match?({:splash_logo, _}, &1))
+
+    owl = Enum.find(segments, fn {_, text} -> String.contains?(text, "('v')") end)
+    assert {:box, _} = owl
+    assert elem(owl, 1) =~ "___('v')___"
+    # without a company, its row is left out
+    refute screen(started(false, %Preferences{user: "rabbit"})) =~ "Company:"
+  end
+
   test "any key ends the splash and does nothing else" do
     state = press(started(false), "x")
     assert state.modes == []

@@ -1,18 +1,18 @@
 defmodule Agendum.TUI.Splash do
   @moduledoc """
   The splash screen (SPEC R52), laid out as Agenda 2.0's: a box over an
-  empty screen with the WOL block, the title spaced out, the tagline, the
+  empty screen with the owl and WOL, the title spaced out, the tagline, the
   release, the copyright, the person's name and company, and a word on
-  sharing. Any key, or three seconds, lets the program start (`Update`
+  sharing. Any key, or five seconds, lets the program start (`Update`
   and `Update.tick/2`). Pure.
   """
 
-  alias Agendum.TUI.{Terminal.Draw, State}
+  alias Agendum.TUI.{Boxes.Template, Terminal.Draw, State}
 
   @version Mix.Project.config()[:version]
   @seconds 5
 
-  @doc "Puts the splash screen over the program, until a key or three seconds."
+  @doc "Puts the splash screen over the program, until a key or five seconds."
   def open(state) do
     until = NaiveDateTime.add(state.now, @seconds)
     %{state | modes: [%Agendum.TUI.Modes.Splash{until: until} | state.modes]}
@@ -38,44 +38,47 @@ defmodule Agendum.TUI.Splash do
     |> Draw.shadow(top, left, length(box), inner + 2)
   end
 
+  # Agenda's splash, written as it looks (`Agendum.TUI.Boxes.Template`): the
+  # owl and the WOL letters stand on the box itself (the owner's wish,
+  # 2026-10-25: no block around the logo); a row whose value is missing,
+  # such as Company, is left out. `~S` keeps the owl's backslash as it is
+  @layout ~S"""
+
+        .___,        [title                        ]
+     ___('v')___
+     `"-\._./-"'     [tagline                      ]
+         ^ ^
+        W O L        [release                      ]
+
+      Copyright 2026 WOL and JW&D - All rights reversed
+
+  Name:              [name                         ]
+  Company:           [company                      ]
+  """
+
+  @sharing "Use, duplication & sharing of this program are welcome. " <>
+             "Violators may be offered a small something."
+
   defp content(state, inner) do
     prefs = state.prefs
-    logo = &{:splash_logo, Draw.pad(&1, 13)}
-    text = fn indent, segments -> [{:box, Draw.spaces(indent)} | segments] end
 
-    name = prefs.name || prefs.user
-
-    people =
-      [{"Name", name}, {"Company", prefs.company}]
-      |> Enum.reject(&(elem(&1, 1) in [nil, ""]))
-      |> Enum.map(fn {label, value} ->
-        [{:box, Draw.rpad(label <> ": ", 19)}, {:splash_value, value}]
-      end)
+    values = %{
+      title: [{:splash_title, "W O L ' S   A G E N D U M"}],
+      tagline: [{:splash_title, "Hoo's in control? You are."}],
+      release: [{:splash_value, "Release #{@version}"}],
+      name: value(prefs.name || prefs.user),
+      company: value(prefs.company)
+    }
 
     sharing =
-      "Use, duplication & sharing of this program are welcome. Violators may be offered a small something."
+      @sharing
       |> Draw.wrap(inner - 8)
-      |> Enum.map(&text.(4, [{:box, &1}]))
+      |> Enum.map(&[{:box, "    " <> &1}])
 
-    [
-      [],
-      text.(2, [logo.("    .___,"), {:box, "    "}, {:splash_title, "W O L ' S   A G E N D U M"}]),
-      text.(2, [logo.(" ___('v')___"), {:box, "    "}]),
-      text.(2, [
-        logo.(" `\"-\\._./-\"'"),
-        {:box, "    "},
-        {:splash_title, "Hoo's in control? You are."}
-      ]),
-      text.(2, [logo.("     ^ ^"), {:box, "    "}]),
-      text.(2, [logo.("    W O L"), {:box, "    "}, {:splash_value, "Release #{@version}"}]),
-      [],
-      text.(4, [{:box, "Copyright 2026 WOL and JW&D - All rights reversed"}]),
-      []
-    ] ++ people ++ [[]] ++ sharing ++ [[]]
-
-    #    .___,
-    # ___('v')___
-    # `"-\._./-"'
-    #     ^ ^
+    Template.render(@layout, values) ++ [[]] ++ sharing ++ [[]]
   end
+
+  # nil leaves the row out
+  defp value(text) when text in [nil, ""], do: nil
+  defp value(text), do: [{:splash_value, text}]
 end
