@@ -106,7 +106,7 @@ The panel advises; it never votes. I decide.
 | `tools/agformat/capture_key_bars.py` | reads Agenda's key bars in DOSBox (view, note, both managers; nothing, ALT, CTRL or SHIFT held through the BIOS shift flags) into `docs/reference/agenda_key_bars.json`; `agenda_key_bars_test.exs` compares Agendum's bars with it, each difference tagged |
 | `tools/agformat/capture_boxes.py` | reads Agenda's settings boxes in DOSBox (title, rows, bottom edge; 25 boxes reached from PLANNER's People view, sub-boxes with F3) into `docs/reference/agenda_boxes.json`; `agenda_boxes_test.exs` compares Agendum's boxes' titles, bottom edges and labels with it, every difference tagged |
 | `tools/agformat/extract_messages.py` | reads Agenda's messages, questions, prompts and help lines (the strings of `AGENDA.RI`; no DOSBox) into `docs/reference/agenda_messages.json`, for comparing Agendum's messages with Agenda's (AGENDA_PARITY, the texts step) |
-| `tools/smoke/smoke.py KEYS…` | the real program in a pseudo-terminal: send keys, see the screen as text (sandboxed; `--help`) |
+| `tools/smoke/smoke.py KEYS…` | the real program in a pseudo-terminal: send keys, see the screen as text (sandboxed; each key waits for its effect, the splash goes by itself; `--help`) |
 | `tools/screenshots/`                                   | draw a screen as a PNG, to compare with Agenda's                        |
 
 ## Ways of working that proved themselves
