@@ -31,40 +31,10 @@ defmodule Agendum.TUI.AgendaBoxesTest do
   #   :not_built               Agenda has it, Agendum not yet: parity work
   #   :out_of_scope            left out on purpose (SPEC § 6)
   @differences %{
-    "view_properties_datebook title: Agenda View Properties, ours Datebook settings: This Week" =>
-      {:change_back,
-       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
-    "view_properties_datebook: Agenda's View name, not ours" =>
-      {:change_back,
-       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
-    "view_properties_datebook: Agenda's Item sorting, not ours" =>
-      {:change_back,
-       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
-    "view_properties_datebook: Agenda's Hide empty sections, not ours" =>
-      {:change_back,
-       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
-    "view_properties_datebook: Agenda's Hide done items, not ours" =>
-      {:change_back,
-       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
-    "view_properties_datebook: Agenda's Hide dependent items, not ours" =>
-      {:change_back,
-       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
-    "view_properties_datebook: Agenda's Hide inherited items, not ours" =>
-      {:change_back,
-       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
-    "view_properties_datebook: Agenda's Filter, not ours" =>
-      {:change_back,
-       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
-    "view_properties_datebook: Agenda's View statistics, not ours" =>
-      {:change_back,
-       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
     "view_properties_datebook: Agenda's Named print set, not ours" =>
       {:out_of_scope, "printing (SPEC § 6)"},
     "view_properties_datebook: Agenda's View protection, not ours" =>
       {:out_of_scope, "application protection (SPEC § 6)"},
-    "view_properties_datebook: ours Interval, not Agenda's" =>
-      {:change_back,
-       "a datebook view's settings in its View Properties, as Agenda's (its own step) (owner, 2026-10-25)"},
     "macro_properties: ours Everywhere else, not Agenda's" =>
       {:quiet,
        "ours: a macro's key runs it in boxes and everywhere else too (R50); kept under Agenda's rows (owner, 2026-10-25)"},

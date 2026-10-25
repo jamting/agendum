@@ -1,10 +1,11 @@
 defmodule Agendum.TUI.Boxes.ViewProps do
   @moduledoc """
-  The View Properties box of a standard view (View ▸ Properties, or F6 on
-  a view in the view manager; R78; User's Guide 9-9 to 9-11, Help "View
-  Properties/Add/Copy Box"), laid out as Agenda 2.0's (checked headless,
-  2026-10-23). A datebook view has its own settings box instead
-  (`Agendum.TUI.Boxes.DatebookBox`).
+  The View Properties box (View ▸ Properties, or F6 on a view in the view
+  manager; R78; User's Guide 9-9 to 9-11, Help "View Properties/Add/Copy
+  Box"), laid out as Agenda 2.0's (checked headless, 2026-10-23). A
+  datebook view's box has no Section sorting, and its right column holds
+  the datebook's settings instead of Sections, as Agenda's (checked
+  2026-10-25; `Agendum.TUI.Boxes.DatebookSettings`).
 
   On the left, one under the other:
 
@@ -39,7 +40,16 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   # the box stays open on ENTER of a typed field; ENTER on a setting is done
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
 
-  alias Agendum.TUI.Boxes.{Box, FieldTyping, SectionBox, SortBox, Template, ViewStatsBox}
+  alias Agendum.TUI.Boxes.{
+    Box,
+    DatebookSettings,
+    FieldTyping,
+    SectionBox,
+    SortBox,
+    Template,
+    ViewStatsBox
+  }
+
   alias Agendum.TUI.{CategoryScreens, State}
   alias Agendum.TUI.Render.Text
   alias Agendum.TUI.Typing.LineEdit
@@ -63,6 +73,50 @@ defmodule Agendum.TUI.Boxes.ViewProps do
 
    View statistics:       [statistics]
   """
+
+  # A datebook view's box (R47): the datebook's settings on the right, the
+  # rows below Period as its period has them (`datebook_layout/1`)
+  @datebook_top """
+   View name:  [name                                               ]
+   Item sorting:    [sorting       ] Date category: [dcat          ]
+                                     End category:  [ecat          ]
+                                     Section:       [scat          ]
+   Hide empty sections:   [empty    ]Period:        [period        ]
+  """
+
+  @datebook_bottom """
+   Hide column heads:     [col_heads]Base date on:  [base          ]
+   Section separators:    [lines    ]
+   Number items:          [number   ]  Filter: [filter               ]
+
+   View statistics:       [statistics]
+  """
+
+  @datebook_middle [
+    " Hide done items:       [done     ]",
+    " Hide dependent items:  [dependent]",
+    " Hide inherited items:  [inherited]"
+  ]
+
+  @period_labels %{
+    ival: "Interval:      [ival          ]",
+    start: "Start at:      [start         ]",
+    end: "End at:        [end           ]"
+  }
+
+  # the layout's short names for the datebook's settings, which must fit
+  # their fields' width
+  @aliases %{
+    dcat: :date_category,
+    ecat: :end_category,
+    scat: :section_category,
+    period: :period,
+    ival: :interval,
+    start: :start,
+    end: :end,
+    base: :base
+  }
+  @short Map.new(@aliases, fn {short, row} -> {row, short} end)
 
   # the rows of the Sections list, and the screen row (in the layout) of
   # the first; the left column's settings with their rows
@@ -147,6 +201,33 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   defp view(state, mode), do: state.db.views[mode.view_id]
   defp sections(state, mode), do: view(state, mode).sections
   defp sorted?(state, mode), do: view(state, mode).section_sort != :none
+  defp datebook(state, mode), do: view(state, mode).datebook
+
+  # the datebook's settings shown, by their short names, top to bottom
+  defp datebook_fields(d),
+    do: Enum.map(DatebookSettings.rows(d.period), &Map.fetch!(@short, &1))
+
+  defp datebook_layout(d) do
+    middle =
+      d.period
+      |> DatebookSettings.period_rows()
+      |> Enum.map(&Map.fetch!(@period_labels, Map.fetch!(@short, &1)))
+
+    # Hide done … Hide inherited, with the period's rows beside them
+    rows =
+      @datebook_middle
+      |> Enum.with_index()
+      |> Enum.map_join("\n", fn {left, i} -> left <> (Enum.at(middle, i) || "") end)
+
+    @datebook_top <> rows <> "\n" <> @datebook_bottom
+  end
+
+  defp layout(state, mode) do
+    case datebook(state, mode) do
+      nil -> @layout
+      d -> datebook_layout(d)
+    end
+  end
 
   # --- moving between the settings ---------------------------------------------
 
@@ -154,12 +235,23 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   # sections and Filter. Order is there only while Section sorting is on.
   defp left(state, mode) do
     fields = Keyword.keys(@left)
-    if sorted?(state, mode), do: fields, else: List.delete(fields, :order)
+
+    cond do
+      datebook(state, mode) -> fields -- [:section_sort, :order]
+      sorted?(state, mode) -> fields
+      true -> List.delete(fields, :order)
+    end
   end
 
   defp right(state, mode) do
-    count = length(sections(state, mode))
-    Enum.map(0..(count - 1)//1, &{:section, &1}) ++ [:filter]
+    case datebook(state, mode) do
+      nil ->
+        count = length(sections(state, mode))
+        Enum.map(0..(count - 1)//1, &{:section, &1}) ++ [:filter]
+
+      d ->
+        datebook_fields(d) ++ [:filter]
+    end
   end
 
   defp all(state, mode), do: left(state, mode) ++ right(state, mode)
@@ -170,8 +262,14 @@ defmodule Agendum.TUI.Boxes.ViewProps do
     case mode.cursor do
       {:section, n} -> {:section, min(n, length(sections(state, mode)) - 1)}
       :order -> if sorted?(state, mode), do: :order, else: :section_sort
+      # a datebook's setting its period no longer has: Period, above it
+      field when is_map_key(@aliases, field) -> datebook_field(state, mode, field)
       field -> field
     end
+  end
+
+  defp datebook_field(state, mode, field) do
+    if field in datebook_fields(datebook(state, mode)), do: field, else: :period
   end
 
   defp move_to(state, mode, field), do: State.put_mode(state, %{mode | cursor: field})
@@ -217,6 +315,12 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   # it is scrolled now
   defp row(_state, _mode, :filter), do: @filter_row
   defp row(state, mode, {:section, n}), do: @first_slot + n - top(state, mode)
+  defp row(_state, _mode, :base), do: 8
+
+  # Date category on the Item sorting row, the others one under the other
+  defp row(state, mode, field) when is_map_key(@aliases, field),
+    do: Enum.find_index(datebook_fields(datebook(state, mode)), &(&1 == field)) + 1
+
   defp row(_state, _mode, field), do: Keyword.fetch!(@left, field)
 
   # the first section the list shows: it scrolls to keep the highlighted
@@ -326,6 +430,11 @@ defmodule Agendum.TUI.Boxes.ViewProps do
 
   defp command(state, _mode, :properties, {:section, n}), do: SectionBox.open(state, n)
   defp command(state, mode, :remove, {:section, n}), do: remove(state, mode, n)
+
+  # DEL on a datebook's End category empties it
+  defp command(state, mode, :remove, field) when is_map_key(@aliases, field),
+    do: DatebookSettings.clear(state, mode.view_id, @aliases[field])
+
   defp command(state, mode, :move, {:section, n}), do: pick_up(state, mode, n)
   defp command(state, mode, :move_up, {:section, n}), do: move(state, mode, n, n - 1)
   defp command(state, mode, :move_down, {:section, n}), do: move(state, mode, n, n + 1)
@@ -340,6 +449,10 @@ defmodule Agendum.TUI.Boxes.ViewProps do
     do: State.run(state, {:toggle_view_option, mode.view_id, @options[field]})
 
   defp change(state, mode, :name), do: edit_name(state, mode)
+
+  defp change(state, mode, field) when is_map_key(@aliases, field),
+    do: DatebookSettings.change(state, mode.view_id, @aliases[field])
+
   defp change(state, _mode, :sorting), do: SortBox.open(state, :view)
 
   defp change(state, mode, :section_sort) do
@@ -450,7 +563,7 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   def content(state, mode, inner, _max_rows) do
     here = current(state, mode)
     view = view(state, mode)
-    selected = if here in Keyword.keys(@left) or here == :filter, do: here
+    selected = if is_atom(here), do: here
 
     values =
       Map.merge(
@@ -465,9 +578,17 @@ defmodule Agendum.TUI.Boxes.ViewProps do
         Map.new(@options, fn {field, option} -> {field, yes_no(Map.fetch!(view, option))} end)
       )
       |> Map.merge(slots(state, mode, here))
+      |> Map.merge(datebook_values(state, view))
 
-    Template.render(@layout, values, [selected: selected] ++ editing(state, mode)) ++
+    Template.render(layout(state, mode), values, [selected: selected] ++ editing(state, mode)) ++
       [[], Box.hint(keys(state, mode), inner)]
+  end
+
+  defp datebook_values(_state, %{datebook: nil}), do: %{}
+
+  defp datebook_values(state, %{datebook: d}) do
+    values = DatebookSettings.values(state, d)
+    Map.new(@aliases, fn {short, row} -> {short, Map.fetch!(values, row)} end)
   end
 
   # Order's row: its label and value while Section sorting is on, else blank
@@ -560,7 +681,10 @@ defmodule Agendum.TUI.Boxes.ViewProps do
     ]
 
   @impl Box
-  def help, do: @help
+  def help do
+    datebook = DatebookSettings.help()
+    Map.merge(@help, Map.new(@aliases, fn {short, row} -> {short, Map.fetch!(datebook, row)} end))
+  end
 
   @impl Box
   def about(_state, _mode) do
@@ -584,7 +708,7 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   # the name, the sections and the statistics have no default. Each reads
   # the view as it is when it runs, so ALT-F8 can run them one after another
   @impl Box
-  def defaults(_state, mode) do
+  def defaults(state, mode) do
     id = mode.view_id
     new = %Agendum.Core.View{}
 
@@ -593,7 +717,15 @@ defmodule Agendum.TUI.Boxes.ViewProps do
         {field, &option_back(&1, id, option, Map.fetch!(new, option))}
       end)
 
-    Map.merge(options, %{
+    # a datebook view's settings go back to a new datebook's
+    datebook =
+      if state.db.views[id].datebook,
+        do: Map.new(DatebookSettings.defaults(id), fn {row, back} -> {@short[row], back} end),
+        else: %{}
+
+    options
+    |> Map.merge(datebook)
+    |> Map.merge(%{
       sorting: &State.run(&1, {:set_sort, id, :view, new.sort}),
       section_sort:
         &State.run(&1, {:set_section_sort, id, new.section_sort, &1.db.views[id].section_order}),

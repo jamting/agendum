@@ -204,7 +204,7 @@ defmodule Agendum.TUI.Update.Prompts do
     do: State.push(state, %Agendum.TUI.Modes.Choice{kind: :view_type, name: text, cursor: 0})
 
   defp prompt_action(state, {:datebook_time, view_id, row}, text),
-    do: Agendum.TUI.Boxes.DatebookBox.set_time(state, view_id, row, text)
+    do: Agendum.TUI.Boxes.DatebookSettings.set_time(state, view_id, row, text)
 
   defp prompt_action(state, {:date_setting_time, row}, text),
     do: Agendum.TUI.Boxes.DateSettingsBox.set_time(state, row, text)
@@ -222,7 +222,7 @@ defmodule Agendum.TUI.Update.Prompts do
     do: Agendum.TUI.Boxes.ScheduleBox.set_date(state, text)
 
   defp prompt_action(state, {:datebook_base, view_id}, text),
-    do: Agendum.TUI.Boxes.DatebookBox.set_base(state, view_id, text)
+    do: Agendum.TUI.Boxes.DatebookSettings.set_base(state, view_id, text)
 
   defp prompt_action(state, {:when_items, ids}, text) do
     case State.command(state, {:batch, Enum.map(ids, &{:when_key, &1, text})}) do

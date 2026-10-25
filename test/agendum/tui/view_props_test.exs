@@ -226,15 +226,26 @@ defmodule Agendum.TUI.ViewPropsTest do
       assert projects.hide_done
     end
 
-    test "on a datebook view, its datebook settings", %{state: state} do
+    test "on a datebook view, its View Properties with the datebook's settings",
+         %{state: state} do
       state = press(state, [{:f, 8}, "Today", {:f, 6}])
-      assert %{type: :datebook_props} = State.mode(state)
+      assert %{type: :view_props} = State.mode(state)
+      assert screen(state) =~ ~r/Date category: +When/
     end
   end
 
-  test "a datebook view's View ▸ Properties is still its datebook settings", %{state: state} do
+  # Agenda's (checked in Agenda 2.0, 2026-10-25): a day has Interval, Start
+  # at and End at below Period, and no Section sorting
+  test "a datebook view's View ▸ Properties holds its datebook settings", %{state: state} do
     today = Enum.find(Database.views(state.db), &(&1.name == "Today"))
     state = state |> State.switch_view(today.id) |> props()
-    assert %{type: :datebook_props} = State.mode(state)
+    assert %{type: :view_props} = State.mode(state)
+    text = screen(state)
+    assert text =~ ~r/Period: +Day/
+    assert text =~ ~r/Interval: +Hourly/
+    assert text =~ "Start at:"
+    assert text =~ "End at:"
+    refute text =~ "Section sorting"
+    refute text =~ "Sections:"
   end
 end

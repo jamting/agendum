@@ -156,12 +156,9 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   defp command(state, _mode, :add, _), do: Prompts.prompt(state, "Name of new view:", :add_view)
 
   # Agenda's PROPS (User's Guide 9-9): the highlighted view's View
-  # Properties, or a datebook's settings; the manager stays beneath
-  defp command(state, _mode, :properties, view_id) do
-    if state.db.views[view_id].datebook,
-      do: Agendum.TUI.Boxes.DatebookBox.open(state, view_id),
-      else: Agendum.TUI.Boxes.ViewProps.open(state, view_id)
-  end
+  # Properties, a datebook's too; the manager stays beneath
+  defp command(state, _mode, :properties, view_id),
+    do: Agendum.TUI.Boxes.ViewProps.open(state, view_id)
 
   defp command(state, _mode, :rename, view_id),
     do: %{state | edit: %{target: view_id, line: LineEdit.new(state.db.views[view_id].name)}}

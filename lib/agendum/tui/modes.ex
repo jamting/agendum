@@ -58,7 +58,6 @@ defmodule Agendum.TUI.Modes do
     customize: [:cursor, :opened],
     date_rule: [:cat_id, :cursor, :opened],
     date_settings: [:cursor, :opened],
-    datebook_props: [:cursor, :opened, :view_id],
     devtools: [:key, :top],
     display_format: [:cursor, :opened],
     execute: [:against, :cursor, :old, :root],

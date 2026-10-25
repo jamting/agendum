@@ -334,11 +334,9 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :browse, _), do: Agendum.TUI.Moves.Browse.open(state)
   defp do_perform(state, :show_schedule, _), do: Agendum.TUI.Boxes.ScheduleBox.open(state)
 
-  defp do_perform(state, :view_props, _) do
-    if State.view(state).datebook,
-      do: Agendum.TUI.Boxes.DatebookBox.open(state, state.view_id),
-      else: Agendum.TUI.Boxes.ViewProps.open(state, state.view_id)
-  end
+  # a datebook view's too, with its settings in the right column (R47)
+  defp do_perform(state, :view_props, _),
+    do: Agendum.TUI.Boxes.ViewProps.open(state, state.view_id)
 
   defp do_perform(state, :discard_view, _) do
     Prompts.confirm(

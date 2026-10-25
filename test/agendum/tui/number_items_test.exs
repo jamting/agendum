@@ -74,7 +74,7 @@ defmodule Agendum.TUI.NumberItemsTest do
     assert Agendum.TUI.Render.Export.text(state) =~ "  • 2 Write to the bank"
   end
 
-  test "a datebook view's settings box has Number items too", %{state: state} do
+  test "a datebook view's View Properties has Number items too", %{state: state} do
     datebook = %Core.Datebook{
       date_category: cat(state.db, "Entry"),
       section_category: cat(state.db, "Tasks")
@@ -82,7 +82,7 @@ defmodule Agendum.TUI.NumberItemsTest do
 
     {:ok, db, id} = Core.add_datebook_view(state.db, "Week", datebook)
     state = %{state | db: db} |> State.switch_view(id) |> props()
-    assert %{type: :datebook_props} = State.mode(state)
+    assert %{type: :view_props} = State.mode(state)
     state = state |> to_setting("Number items") |> press(" ")
     assert state.db.views[id].number_items
     assert state |> press(:enter) |> screen() =~ ~r/ 2   Write to the bank/

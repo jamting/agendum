@@ -51,35 +51,45 @@ defmodule Agendum.TUI.DatebookViewTest do
     defp datebook(state), do: State.view(state).datebook
     defp settings(state), do: press(state, [{:f, 10}, "v", "p"])
 
-    test "View ▸ Add asks the type; Datebook makes one and opens its settings", %{plain: state} do
+    # its View Properties, with the datebook's settings in the right column,
+    # as Agenda's (checked in Agenda 2.0, 2026-10-25)
+    test "View ▸ Add asks the type; Datebook makes one and opens its View Properties",
+         %{plain: state} do
       state = press(state, [{:f, 10}, "v", "a", "Mornings", :enter])
       assert screen(state) =~ "Type of view:"
 
       state = press(state, "d")
       assert State.view(state).name == "Mornings"
       assert %Datebook{period: :week} = datebook(state)
-      assert %{type: :datebook_props} = State.mode(state)
-      assert screen(state) =~ ~r/Period +: Week/
-      assert screen(state) =~ ~r/Base date on +: today \(2026-10-12\)/
+      assert %{type: :view_props} = State.mode(state)
+      text = screen(state)
+      assert text =~ ~r/Item sorting: +\.\.\. +Date category: +When/
+      assert text =~ ~r/Period: +Week/
+      assert text =~ ~r/Start at: +Mon/
+      assert text =~ ~r/Base date on: +today/
+      refute text =~ "Section sorting"
+      refute text =~ "Interval"
     end
 
     test "the settings change the slots at once, one undo step each", %{state: state} do
       # Period: Week -> Month -> Quarter -> Day
-      state = settings(state) |> press([:down, :down, :down, " ", " ", " "])
+      state = state |> settings() |> to_setting("Period") |> press([" ", " ", " "])
       assert datebook(state).period == :day
-      assert screen(state) =~ ~r/Interval +: Hourly/
-      assert screen(state) =~ ~r/Start at +: 08:00/
+      assert screen(state) =~ ~r/Interval: +Hourly/
+      assert screen(state) =~ ~r/Start at: +08:00/
 
-      state = press(state, [:down, " "])
+      state = state |> to_setting("Interval") |> press(" ")
       assert datebook(state).interval == 15
 
       # a time without am/pm falls between 8:00 and 19:59, as everywhere (R14b)
-      state = press(state, [:down, " ", {:ctrl, "u"}, "7:30am", :enter])
+      state = state |> to_setting("Start at") |> press([" ", {:ctrl, "u"}, "7:30am", :enter])
       assert datebook(state).start_time == ~T[07:30:00]
 
-      state = press(state, [:down, :down, " ", {:ctrl, "u"}, "next week", :enter])
+      state =
+        state |> to_setting("Base date on") |> press([" ", {:ctrl, "u"}, "next week", :enter])
+
       assert datebook(state).base == "next week"
-      assert screen(state) =~ "(2026-10-19)"
+      assert screen(state) =~ ~r/Base date on: +next week/
 
       state = press(state, [" ", {:ctrl, "u"}, "zebra", :enter])
       assert screen(state) =~ "Not a date: zebra"
@@ -89,11 +99,11 @@ defmodule Agendum.TUI.DatebookViewTest do
     end
 
     test "a week's days cycle; categories are picked, End cleared with DEL", %{state: state} do
-      state = settings(state) |> press([:down, :down, :down, :down, :down, " "])
+      state = state |> settings() |> to_setting("Start at") |> press(" ")
       assert datebook(state).start_day == 2
 
       # End category: a standard category is refused
-      state = press(state, [:up, :up, :up, :up, " ", "Calls", :enter])
+      state = state |> to_setting("End category") |> press([" ", "Calls", :enter])
       assert screen(state) =~ "Pick a date category"
       assert datebook(state).end_category == nil
 
@@ -103,17 +113,17 @@ defmodule Agendum.TUI.DatebookViewTest do
       assert datebook(state).end_category == nil
     end
 
-    test "Hide column heads and Section separators, after Base date on (R57, R58; shot 55)",
+    test "Hide column heads and Section separators, as in any view (R57, R58; shot 55)",
          %{state: state} do
       state = settings(state)
-      assert screen(state) =~ ~r/Hide column heads +: No/
-      assert screen(state) =~ ~r/Section separators +: No/
+      assert screen(state) =~ ~r/Hide column heads: +No/
+      assert screen(state) =~ ~r/Section separators: +No/
 
       # SPACE switches each, one undo step
       state = state |> to_setting("Hide column heads") |> press(" ")
       assert State.view(state).hide_column_heads
-      assert screen(state) =~ ~r/Hide column heads +: Yes/
-      state = press(state, [:down, " "])
+      assert screen(state) =~ ~r/Hide column heads: +Yes/
+      state = state |> to_setting("Section separators") |> press(" ")
       assert State.view(state).section_separators
       refute Agendum.TUI.History.undo(state) |> State.view() |> Map.get(:section_separators)
     end
@@ -171,7 +181,7 @@ defmodule Agendum.TUI.DatebookViewTest do
     end
 
     test "a month view moves by months; a standard view cannot be browsed", %{state: state} do
-      state = press(state, [{:f, 10}, "v", "p", :down, :down, :down, " ", :enter])
+      state = state |> press([{:f, 10}, "v", "p"]) |> to_setting("Period") |> press([" ", :enter])
       state = press(state, [{:alt, "b"}, :right])
       assert State.view(state).datebook.period == :month
       assert screen(state) =~ "Mon 2026-10-26 → Fri 2026-10-30"

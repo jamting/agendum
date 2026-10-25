@@ -306,7 +306,7 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
     do: Agendum.TUI.Update.Notes.add_category(state, name, id)
 
   def pick(state, {:datebook, view_id, row}, id),
-    do: Agendum.TUI.Boxes.DatebookBox.set_category(state, view_id, row, id)
+    do: Agendum.TUI.Boxes.DatebookSettings.set_category(state, view_id, row, id)
 
   # `from`: the section the cursor was in, whose linked columns the new
   # one gets (R55)

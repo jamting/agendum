@@ -86,7 +86,6 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
   - **Prompt** `:prompt`: one line of text in the control panel (a file name, a new view's name, a category name). `Agendum.TUI.Update.Prompts`.
     - **Select File** `:select_file` (F3 in a prompt for a file name): the folder's subfolders and the files that fit, to pick one (R51). `Agendum.TUI.Boxes.SelectFile`.
   - **Question** `:confirm`: a Y/N question (discard, save changes, make a date category) in a small untitled box, as Agenda's (screenshots 36, 141): the question with its answer highlighted, Yes at first. `Agendum.TUI.Update.Prompts`.
-  - **Datebook settings** `:datebook_props` (View ▸ Properties of a datebook view; after View ▸ Add with Type Datebook): its categories, period, interval, start and end, base date (R47), Hide column heads (R57) and Section separators (R58). `Agendum.TUI.Boxes.DatebookBox`.
     - **Picker** `:picker` for the Date category, End category and Section.
     - **Prompt** `:prompt` for a time (Start at / End at of a day) or the base date.
   - **View Properties** `:view_props` (View ▸ Properties of a standard view, F6 on a view in the view manager): the view's name, Item sorting, Section sorting and Order, the Hide settings, Section separators, Number items (R79), View statistics, and on the right its Sections (add, remove, move) and Filter, laid out as Agenda's (R78). `Agendum.TUI.Boxes.ViewProps`.
@@ -233,7 +232,6 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:publish`           | box           | `Agendum.TUI.Extras.PublishBox`           | File ▸ Transfer ▸ Publish                         | R74            |
 | `:publish_preview`   | box           | `Agendum.TUI.Extras.PublishPreviewBox`    | ENTER in the Publish box                          | R74            |
 | `:calendar`          | box           | `Agendum.TUI.Boxes.CalendarBox`          | F3 in a date column, ALT-C                        | R46            |
-| `:datebook_props`    | box           | `Agendum.TUI.Boxes.DatebookBox`          | View ▸ Properties of a datebook view              | R47            |
 | `:view_props`        | box           | `Agendum.TUI.Boxes.ViewProps`            | View ▸ Properties, F6 in the view manager         | R78            |
 | `:view_stats`        | box           | `Agendum.TUI.Boxes.ViewStatsBox`         | View Properties ▸ View statistics                 | R78            |
 | `:section_props`     | box           | `Agendum.TUI.Boxes.SectionBox`           | View ▸ Section ▸ Properties, F6 on a section head | R61            |

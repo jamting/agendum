@@ -101,7 +101,7 @@ defmodule Agendum.TUI.BoxCancelTest do
     shown = state.view_id
     views = map_size(state.db.views)
     state = press(state, [{:f, 10}, "v", "a", "This Week", :enter, "d"])
-    assert %{type: :datebook_props} = State.mode(state)
+    assert %{type: :view_props} = State.mode(state)
 
     state = press(state, :esc)
     assert map_size(state.db.views) == views

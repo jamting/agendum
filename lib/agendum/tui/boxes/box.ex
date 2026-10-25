@@ -128,7 +128,6 @@ defmodule Agendum.TUI.Boxes.Box do
     confirm: Agendum.TUI.Update.Prompts,
     copy_items: Agendum.TUI.Boxes.CopyBox,
     customize: Agendum.TUI.Boxes.CustomizeBox,
-    datebook_props: Agendum.TUI.Boxes.DatebookBox,
     date_rule: Agendum.TUI.Boxes.DateRuleBox,
     date_settings: Agendum.TUI.Boxes.DateSettingsBox,
     display_format: Agendum.TUI.Boxes.DisplayFormatBox,
