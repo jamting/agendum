@@ -194,7 +194,7 @@ defmodule Agendum.TUI.MacrosTest do
     test "a key attached in Properties runs the macro, in views by default", %{state: state} do
       state = press(state, [{:alt_f, 3}, {:f, 6}, :down, :down, " ", "{F4}", :enter])
       assert macro(state, "Water").key == "{F4}"
-      assert screen(state) =~ ~r/Attach to key +: \{F4\}/
+      assert screen(state) =~ ~r/Attach to key: +\{F4\}/
 
       # ENTER keeps it (ESC would cancel), ESC closes the manager
       state = press(state, [:enter, :esc])
@@ -215,7 +215,7 @@ defmodule Agendum.TUI.MacrosTest do
       state =
         state
         |> press([{:alt_f, 3}, {:f, 6}])
-        |> to_setting("Run from Everywhere else")
+        |> to_setting("Everywhere else")
         |> press(" ")
 
       assert panel(state) =~ "Only a macro attached to a key runs everywhere else"

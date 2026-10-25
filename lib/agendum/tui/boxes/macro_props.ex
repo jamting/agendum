@@ -1,12 +1,14 @@
 defmodule Agendum.TUI.Boxes.MacroProps do
   @moduledoc """
   The Macro Properties box (F6 in the macro manager; SPEC R50; Working with
-  Macros 1-15 to 1-18): Name, Keystrokes, Attach to key, and where the
-  macro can be run from.
+  Macros 1-15 to 1-18), laid out as Agenda's (checked in Agenda 2.0,
+  2026-10-25): Name, Contents, Attach to key, and under "Macro can be run
+  from:" View, Note, Category manager and, ours, Everywhere else. Agenda's
+  Macro file and protection are left out.
 
-    * F2 or SPACE on Name renames it; on Keystrokes edits them in the
-      macro edit screen; SPACE on Attach to key asks for the key (DEL
-      detaches)
+    * F2 or SPACE on Name renames it; on Contents ("...", as Agenda's)
+      edits the keystrokes in the macro edit screen; SPACE on Attach to
+      key asks for the key (DEL detaches)
     * SPACE (or → ←) switches View, Note, Category manager and
       Everywhere else between Yes and No; Everywhere else only for a macro
       attached to a key, as in Agenda
@@ -25,13 +27,17 @@ defmodule Agendum.TUI.Boxes.MacroProps do
   alias Agendum.TUI.Update.Prompts
 
   @layout """
-   Name                      : [name                        ]
-   Keystrokes                : [keys                        ]
-   Attach to key             : [key                         ]
-   Run from View             : [view                        ]
-   Run from Note             : [note                        ]
-   Run from Category manager : [catmgr                      ]
-   Run from Everywhere else  : [elsewhere                   ]
+
+   Name:        [name                              ]
+   Contents:    [keys                              ]
+
+   Attach to key:  [key                    ]
+
+   Macro can be run from:
+        View:                      [view     ]
+        Note:                      [note     ]
+        Category manager:          [catmgr   ]
+        Everywhere else:           [elsewhere]
   """
 
   @rows Template.fields(@layout)
@@ -39,7 +45,7 @@ defmodule Agendum.TUI.Boxes.MacroProps do
 
   @help %{
     name: "The macro's name. F2 (or SPACE) renames it.",
-    keys: "The keystrokes the macro plays. SPACE (or F2) edits them.",
+    keys: "The keystrokes the macro plays. SPACE (or F2) opens them to edit.",
     key: "The key that runs the macro. SPACE attaches a key, DEL detaches it.",
     view: "Whether the macro can run from views. SPACE switches.",
     note: "Whether the macro can run in notes. SPACE switches.",
@@ -144,7 +150,6 @@ defmodule Agendum.TUI.Boxes.MacroProps do
 
   defp values(macro) do
     yes = &if(&1, do: "Yes", else: "No")
-    keys = if macro.keys == "", do: "(none) ...", else: "#{String.slice(macro.keys, 0, 23)} ..."
     # a macro runs everywhere else only from a key of its own (`Map.new/2`
     # makes the four "Run from" values from the macro's places)
     run_from =
@@ -153,7 +158,8 @@ defmodule Agendum.TUI.Boxes.MacroProps do
         {place, yes?} -> {place, yes.(yes?)}
       end)
 
-    Map.merge(%{name: macro.name, keys: keys, key: macro.key || "(none)"}, run_from)
+    # Contents shows "...", as Agenda's: SPACE opens them; no key is blank
+    Map.merge(%{name: macro.name, keys: "...", key: macro.key || ""}, run_from)
   end
 
   @impl Box

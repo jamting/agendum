@@ -250,7 +250,7 @@ defmodule Agendum.TUI.BoxDefaultsTest do
       db = db |> Agendum.Core.set_macro_keys(id, "x") |> Agendum.Core.attach_macro(id, "{F4}")
       box = Agendum.TUI.Boxes.MacroProps.open(%{state | db: db}, id)
       assert State.mode(box).macro_id == id
-      changed = box |> to_setting("Run from Note") |> press(" ")
+      changed = box |> to_setting("Note") |> press(" ")
       refute changed.db.macros[id].run_from.note
       back = press(changed, {:alt_f, 8}).db.macros[id]
       assert back.run_from == %Agendum.Core.Macro{}.run_from

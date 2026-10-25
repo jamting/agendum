@@ -31,34 +31,17 @@ defmodule Agendum.TUI.AgendaBoxesTest do
   #   :not_built               Agenda has it, Agendum not yet: parity work
   #   :out_of_scope            left out on purpose (SPEC § 6)
   @differences %{
+    "macro_properties: ours Everywhere else, not Agenda's" =>
+      {:quiet,
+       "ours: a macro's key runs it in boxes and everywhere else too (R50); kept under Agenda's rows (owner, 2026-10-25)"},
     "item_column_properties: Agenda's Width, not ours" =>
       {:change_back, "Agenda's Width row, the column's width now (owner, 2026-10-25)"},
-    "macro_properties: Agenda's Contents, not ours" =>
-      {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
     "macro_properties: Agenda's Macro file, not ours" =>
       {:not_built, "a macro kept in a file of its own (Agenda's Macro file)"},
-    "macro_properties: Agenda's Macro can be run from, not ours" =>
-      {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
-    "macro_properties: Agenda's View, not ours" =>
-      {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
-    "macro_properties: Agenda's Note, not ours" =>
-      {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
-    "macro_properties: Agenda's Category manager, not ours" =>
-      {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
     "macro_properties: Agenda's Macro is protected, not ours" =>
       {:out_of_scope, "application protection (SPEC § 6)"},
     "macro_properties: Agenda's Macro can override protection, not ours" =>
       {:out_of_scope, "application protection (SPEC § 6)"},
-    "macro_properties: ours Keystrokes, not Agenda's" =>
-      {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
-    "macro_properties: ours Run from View, not Agenda's" =>
-      {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
-    "macro_properties: ours Run from Note, not Agenda's" =>
-      {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
-    "macro_properties: ours Run from Category manager, not Agenda's" =>
-      {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
-    "macro_properties: ours Run from Everywhere else, not Agenda's" =>
-      {:change_back, "Macro Properties laid out as Agenda's (owner, 2026-10-25)"},
     "category_text_matching_long: Agenda's Assignment conditions, not ours" =>
       {:not_built,
        "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},
