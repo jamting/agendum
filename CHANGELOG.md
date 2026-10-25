@@ -4,6 +4,14 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.51.0 — 2026-10-25
+
+More of Lotus Agenda's small things.
+
+- **DEL on an item asks first**, as in Agenda: "Remove this item from the section?" with "(Use ALT-F4 to discard the item completely.)" under it. ENTER removes, ESC keeps. With Confirm off in your preferences it removes at once, as before.
+- **Utilities ▸ Show ▸ ItemsDone** shows every done item in the Show view, under *Show*; **Show ▸ Every** shows every item, under MAIN.
+- Show ▸ Prereqs and Depends use Agenda's words: One Level, All Levels, Every Item.
+- The questions before replacing the Show view and in the alarm list say Agenda's help on the control panel; F3 on Set Alarm's Date category is titled "Select Date Category".
 ## 0.50.0 — 2026-10-25
 
 Alarms as in Lotus Agenda.

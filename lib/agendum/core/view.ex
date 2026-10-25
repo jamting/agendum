@@ -13,7 +13,8 @@ defmodule Agendum.Core.View do
   (R36). `match` limits it to items whose text matches a search, as in
   the Show View (R37), or to a list of items (`{:items, ids}`, R43);
   `:alarms` makes it Utilities Show Alarm's list (R38): its two sections
-  show the current and the past alarms, whatever their heads.
+  show the current and the past alarms, whatever their heads; `:done`
+  shows only done items, under a section named *Show* (Show ItemsDone).
   `hide_dependent` hides items still waiting for a prerequisite (R43).
   `hide_column_heads` shows column heads only on the first section head
   on the screen (R57); how a front end draws it is its own.
@@ -192,7 +193,8 @@ defmodule Agendum.Core.View do
           hide_inherited: boolean,
           filter: [{Agendum.Core.Category.id(), Agendum.Core.View.filter_term()}],
           sort: [SortKey.t()],
-          match: Agendum.Core.Search.t() | {:items, [Agendum.Core.Item.id()]} | :alarms | nil,
+          match:
+            Agendum.Core.Search.t() | {:items, [Agendum.Core.Item.id()]} | :alarms | :done | nil,
           hide_dependent: boolean,
           hide_column_heads: boolean,
           section_separators: boolean,

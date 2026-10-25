@@ -262,6 +262,13 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :alarm_list, _),
     do: Prompts.replace_show_view(state, {__MODULE__, :show_alarms, []})
 
+  # Utilities Show ItemsDone and Every (User's Guide 13-9, 13-21)
+  defp do_perform(state, :show_done, _),
+    do: Prompts.replace_show_view(state, {__MODULE__, :show, [:show_done]})
+
+  defp do_perform(state, :show_every, _),
+    do: Prompts.replace_show_view(state, {__MODULE__, :show, [:show_every]})
+
   defp do_perform(state, :search_view, _), do: SearchBox.open(state, :view)
   defp do_perform(state, :search_file, _), do: SearchBox.open(state, :file)
 
@@ -443,6 +450,12 @@ defmodule Agendum.TUI.Update.Actions do
       nil -> State.error(state, "Highlight a column first (use → or TAB)")
       {_column, at} -> fun.(at)
     end
+  end
+
+  @doc "Runs a Show command without arguments and shows its Show View (`Prompts.replace_show_view/2`)."
+  def show(state, command) do
+    {:ok, state, %{new: view_id}} = State.command(state, {command})
+    State.switch_view(state, view_id)
   end
 
   @doc "Shows the alarm list in the Show View (`Prompts.replace_show_view/2`)."

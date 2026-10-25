@@ -257,11 +257,39 @@
               },
               {
                 "label": "Prereqs",
-                "help": "Show all items on which current item depends."
+                "help": "Show all items on which current item depends.",
+                "children": [
+                  {
+                    "label": "One Level",
+                    "help": "Display items immediately prerequisite to the current item."
+                  },
+                  {
+                    "label": "All Levels",
+                    "help": "Display all items prerequisite to the current item."
+                  },
+                  {
+                    "label": "Every Item",
+                    "help": "Display all items prerequisite to any item in the file."
+                  }
+                ]
               },
               {
                 "label": "Depends",
-                "help": "Show all items that depend on the current item."
+                "help": "Show all items that depend on the current item.",
+                "children": [
+                  {
+                    "label": "One Level",
+                    "help": "Display items immediately dependent on the current item."
+                  },
+                  {
+                    "label": "All Levels",
+                    "help": "Display all items dependent on the current item."
+                  },
+                  {
+                    "label": "Every Item",
+                    "help": "Display all items dependent on any item in the file."
+                  }
+                ]
               },
               {
                 "label": "ItemsDone",

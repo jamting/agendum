@@ -161,7 +161,7 @@ Counting what is in scope (not printing, networks, protection, the macro languag
 | Area                                           | Parity                                                                    | What is missing                                                                                                                             |
 | ---------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | The control panel (lines, indicators, key bar) | about 80%                                                                 | WAIT, the * D o ♫ symbols                                                                                            |
-| The F10 menu                                   | about 75% (35 of 46 in-scope commands, counting the partial ones as half; View Properties whole since 2026-10-23) | Abandon, Template, Erase, Undisc and Trash, Show ItemsDone / Circular / Every, Launch, the rest of File Properties |
+| The F10 menu                                   | about 80% (37 of 46 in-scope commands, counting the partial ones as half; View Properties whole since 2026-10-23) | Abandon, Template, Erase, Undisc and Trash, Show Circular, Launch, the rest of File Properties |
 | The note editor                                | about 85% (NOTE_EDITOR.md; was 50% before steps 1–6, R64a–R64f, 2026-10-17) | ALT-F1 COMPOSE (optional); external note files left out on purpose (2026-10-25)                                                                           |
 | Data model, assignment, views (SPEC R1–R64)    | about 90%                                                                 | the trash                                                         |
 | **Overall**                                    | **about 80%**                                                             |                                                                                                                                             |
@@ -215,6 +215,7 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
   - [x] The Show view named *Show View*, and "Delete the existing Show view?" before Show Match, Sched, Alarm, Prereqs or Depends replace it
   - [x] (2026-10-25, the next batch) The questions' help lines and DEL's second line as Agenda's, and the F3 list titled "Select Date Category"
 - [x] (2026-10-25; the owner's choice) DEL on an item in any view asks Agenda's "Remove this item from the section?  Yes (Use ALT-F4 to discard the item completely.)" (R24); with Confirm off it removes at once
+- [x] (2026-10-25) Show ItemsDone (the done items under *Show*) and Show Every (every item under MAIN), as Agenda's; Show Prereqs and Depends checked: Agenda's is the same submenu (One Level, All Levels, Every Item), now with its words, and the captured menus hold it (the capture had not opened it)
   - Unchecked: what Agenda does with an alarm when its date category is deleted (ours: back on When)
 
 #### Commands and behaviour still missing
@@ -226,7 +227,7 @@ The order (meeting 2026-10-25, § 7): the small steps below in one or two batche
 - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)
 - [ ] File ▸ Abandon, File Maintenance Erase, File Transfer Template
 - [ ] File ▸ Maintenance ▸ MakeCopy in Write's place (check in Agenda first which file you are in afterwards) (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
-- [ ] Show ItemsDone, Show Every, Show Circular (with the `o` indicator); and Show Prereqs and Depends as Agenda's, one command each (ours ask One level, All levels or Every item in a submenu; how Agenda chooses is unchecked)
+- [ ] Show Circular (with the `o` indicator): needs circular references found first (User's Guide 20-21)
 - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash; screenshot 130) where Agendum has them (Tab size done, R64e)
 - [ ] Compare the category, view and macro managers' menus with Agenda's, and add them to the overview
 - [ ] Optional: Agenda structured files (`.STF`): import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), so legacy users can bring old files over via DOS Agenda's export. Read both 2.0 dates (`{C}\When@|10%/31%/1990`) and 1.x dates (`{W}10/31/90`) into the same When/Entry/Done categories (Lotus Q&A "Date Categories are Duplicated") (moved from the roadmap's Data interchange, owner 2026-10-23; stays optional)

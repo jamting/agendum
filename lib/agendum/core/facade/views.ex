@@ -811,6 +811,26 @@ defmodule Agendum.Core.Facade.Views do
   end
 
   @doc """
+  Every done item in the Show View, under a section called *Show* (Agenda's
+  Utilities Show ItemsDone; User's Guide 13-9). Returns the view.
+  """
+  @spec show_done(db) :: {db, id}
+  def show_done(db) do
+    {db, view_id} = show(db, :done)
+    {Database.update_view(db, view_id, &%{&1 | hide_done: false}), view_id}
+  end
+
+  @doc """
+  Every item in the Show View, under MAIN (Agenda's Utilities Show Every;
+  User's Guide 13-21). Returns the view.
+  """
+  @spec show_every(db) :: {db, id}
+  def show_every(db) do
+    {db, view_id} = show(db, nil)
+    {Database.update_view(db, view_id, &%{&1 | hide_done: false}), view_id}
+  end
+
+  @doc """
   Lists items in the Show View (User's Guide 13-15, R43), as `show_match/2`
   does for a search. Returns the view.
   """

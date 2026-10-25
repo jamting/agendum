@@ -422,6 +422,7 @@ defmodule Agendum.Core.JSONFile do
   defp match(nil), do: nil
   defp match({:items, ids}), do: obj(items: ids)
   defp match(:alarms), do: obj(alarms: true)
+  defp match(:done), do: obj(done: true)
   defp match(%Search{} = s), do: obj(search: struct_obj(s))
 
   defp struct_obj(%module{} = s),
@@ -904,6 +905,7 @@ defmodule Agendum.Core.JSONFile do
     do: {:items, req(m, "items", {:list, :int}, path)}
 
   defp read_match(%{"alarms" => true}, _path), do: :alarms
+  defp read_match(%{"done" => true}, _path), do: :done
 
   defp read_match(%{"search" => _} = m, path),
     do: read_struct(m, "search", Search, path <> ".search")

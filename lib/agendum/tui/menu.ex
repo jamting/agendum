@@ -140,29 +140,31 @@ defmodule Agendum.TUI.Menu do
          {"Customize", "Your theme, date languages and input format, for every file", :customize},
          {"Execute", "Apply conditions and actions to existing items (ALT-X all, ALT-E one)",
           :execute},
-         {"Show", "Match, Prereqs, Depends, Alarm, Sched",
+         {"Show", "Match, Prereqs, Depends, ItemsDone, Alarm, Sched, Every",
           [
             {"Match", "Show every matching item in the file in the Show View", :search_file},
             {"Prereqs", "Show the items this one depends on",
              [
-               {"One level", "Items directly this one depends on",
+               {"One Level", "Display items immediately prerequisite to the current item.",
                 {:show_related, :prerequisites, :one}},
-               {"All levels", "The whole chain of items this one depends on",
+               {"All Levels", "Display all items prerequisite to the current item.",
                 {:show_related, :prerequisites, :all}},
-               {"Every item", "Every item in the file that depends on others",
+               {"Every Item", "Display all items prerequisite to any item in the file.",
                 {:show_related, :prerequisites, :every}}
              ]},
             {"Depends", "Show the items that depend on this one",
              [
-               {"One level", "Items directly depending on this one",
+               {"One Level", "Display items immediately dependent on the current item.",
                 {:show_related, :dependents, :one}},
-               {"All levels", "The whole chain of items depending on this one",
+               {"All Levels", "Display all items dependent on the current item.",
                 {:show_related, :dependents, :all}},
-               {"Every item", "Every item in the file that others depend on",
+               {"Every Item", "Display all items dependent on any item in the file.",
                 {:show_related, :dependents, :every}}
              ]},
+            {"ItemsDone", "Show all Done items.", :show_done},
             {"Alarm", "Show all items with pending and triggered alarms.", :alarm_list},
-            {"Sched", "One date's items in the Show View", :show_schedule}
+            {"Sched", "One date's items in the Show View", :show_schedule},
+            {"Every", "Show every item in the file.", :show_every}
           ]},
          {"Questions", "Confirm suggested assignments", :questions}
        ]},

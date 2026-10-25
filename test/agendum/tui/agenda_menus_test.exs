@@ -35,18 +35,8 @@ defmodule Agendum.TUI.AgendaMenusTest do
       {:out_of_scope, "running another DOS program (SPEC § 6)"},
     "View menu ▸ Utilities ▸ Trash: missing" =>
       {:not_built, "the trash (AGENDA_PARITY § The steps)"},
-    "View menu ▸ Utilities ▸ Show ▸ ItemsDone: missing" =>
-      {:not_built, "Show ItemsDone (AGENDA_PARITY § The steps)"},
     "View menu ▸ Utilities ▸ Show ▸ Circular: missing" =>
       {:not_built, "Show Circular (AGENDA_PARITY § The steps)"},
-    "View menu ▸ Utilities ▸ Show ▸ Every: missing" =>
-      {:not_built, "Show Every (AGENDA_PARITY § The steps)"},
-    "View menu ▸ Utilities ▸ Show ▸ Prereqs: a menu in Agendum, a command in Agenda" =>
-      {:change_back,
-       "ours asks One level, All levels or Every item in a submenu; how Agenda chooses is unchecked (AGENDA_PARITY, the Show step)"},
-    "View menu ▸ Utilities ▸ Show ▸ Depends: a menu in Agendum, a command in Agenda" =>
-      {:change_back,
-       "ours asks One level, All levels or Every item in a submenu; how Agenda chooses is unchecked (AGENDA_PARITY, the Show step)"},
     "Category manager menu ▸ Print: missing" =>
       {:out_of_scope, "printing the category hierarchy (SPEC § 6)"},
     "View menu ▸ File ▸ Abandon: missing" =>
