@@ -412,7 +412,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
 
   defp dependency_text(db, id) do
     item = db.items[id]
-    if item.done, do: "√ " <> item.text, else: item.text
+    if item.done, do: "‼ " <> item.text, else: item.text
   end
 
   defp recurrence_note(%{recurrence: nil}), do: ""

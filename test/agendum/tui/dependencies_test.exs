@@ -140,7 +140,7 @@ defmodule Agendum.TUI.DependenciesTest do
 
       state = press(state, :esc)
       state = Agendum.TUI.Boxes.ItemProperties.open(state, id_of(state, "Contact Daniel"))
-      assert screen(state) =~ ~r/Depends on:\s*√ Set up meeting/
+      assert screen(state) =~ ~r/Depends on:\s*‼ Set up meeting/
     end
 
     test "SPACE opens that item's properties; ESC comes back", %{state: state} do

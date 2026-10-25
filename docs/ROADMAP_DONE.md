@@ -84,6 +84,7 @@ The record of finished work, by milestone, moved here from [`ROADMAP.md`](ROADMA
   - [x] Macro Properties laid out as Agenda's: Name, Contents "...", Attach to key, "Macro can be run from:" with View, Note, Category manager and our Everywhere else (2026-10-25)
   - [x] Item Column Properties: Agenda's Width row, the width now; typing one sets it by hand (2026-10-25)
   - [x] The Questions box drawn as Agenda's: "Questions", 'Suggested categories for "..."', ? and * marks, Parent:Child names, "Press ENTER to accept"; a box any key closes when none wait (2026-10-25)
+  - [x] ‼ for a done item, Agenda's tag (Help "View Indicators"), in views and Item Properties' dependencies (2026-10-25, R59)
   - [x] · before a filled column entry (not numbers), as Agenda's (2026-10-25, R59)
   - [x] » on the highlighted row, as Agenda's: before the first column when the item text is highlighted (the highlight as wide as the text), in the bullet's place on a column entry (2026-10-25, R59)
   - [x] Rows as Agenda's: an item's tag in the fifth column (♪ in the bullet's place for an item with a note), its mark ♦ in the sixth, its text from the seventh; ♪ in a section head's first column when its category has a note (2026-10-25, R59)

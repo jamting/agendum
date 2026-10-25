@@ -228,7 +228,7 @@ defmodule Agendum.TUI.Render.View do
     # when marked), then the text from the seventh column
     tag =
       cond do
-        item.done -> "√"
+        item.done -> "‼"
         Agendum.Core.waiting?(state.db, item.id) -> "&"
         item.alarm_minutes != nil -> "@"
         item.note != "" -> "♪"

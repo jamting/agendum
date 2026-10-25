@@ -42,6 +42,14 @@ defmodule Agendum.TUI.ViewTest do
     assert Enum.find(marked, &(&1 =~ "Don't forget")) =~ ~r/^    • Don't forget/
   end
 
+  # Agenda's done tag (Help "View Indicators": !! left of the item; the
+  # owner's choice, 2026-10-25)
+  test "a done item has ‼ in the tag's place", %{state: state} do
+    state = press(state, [:down, {:f, 4}])
+    line = state |> screen() |> String.split("\n") |> Enum.find(&(&1 =~ "Set up meeting"))
+    assert line =~ ~r/^    ‼ Set up meeting/
+  end
+
   # Agenda's · (checked in Agenda 2.0, 2026-10-25; Help "View
   # Indicators": the item is assigned to the column's head): before every
   # filled entry, dates and note lines too, but not before a number

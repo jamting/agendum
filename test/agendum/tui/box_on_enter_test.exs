@@ -18,7 +18,7 @@ defmodule Agendum.TUI.BoxOnEnterTest do
 
   @today ~D[2026-10-12]
 
-  # the Planner's Tasks view with the sample data: it shows done items (√)
+  # the Planner's Tasks view with the sample data: it shows done items (‼)
   setup do
     db = Planner.build() |> Planner.with_samples(@today)
     view = Enum.find(Database.views(db), &(&1.name == "Tasks"))
@@ -32,14 +32,14 @@ defmodule Agendum.TUI.BoxOnEnterTest do
   defp behind(state), do: state |> screen() |> String.split("\n") |> Enum.reject(&(&1 =~ "│"))
 
   test "the view behind the box stays as it was until ENTER", %{state: state, view: v} do
-    assert Enum.any?(behind(state), &(&1 =~ "√"))
+    assert Enum.any?(behind(state), &(&1 =~ "‼"))
     open = state |> props() |> hide_done()
     assert open.db.views[v].hide_done
     assert screen(open) =~ ~r/Hide done items: +Yes/
-    assert Enum.any?(behind(open), &(&1 =~ "√"))
+    assert Enum.any?(behind(open), &(&1 =~ "‼"))
 
     closed = press(open, :enter)
-    refute Enum.any?(behind(closed), &(&1 =~ "√"))
+    refute Enum.any?(behind(closed), &(&1 =~ "‼"))
   end
 
   test "after ENTER one undo takes back everything set in the box", %{state: state, view: v} do
