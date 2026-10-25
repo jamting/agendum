@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.31.3 — 2026-10-25
+
+- **Category Properties** of a date or numeric category shows only the settings it has, as in Lotus Agenda: name, type, note, special actions, assignment actions, statistics and advanced settings. Short name, Also match, Match category name, Exclusive children, Assignment conditions and Excludes are left out, as blank rows, and the cursor skips them. What a category had there before it changed type is kept, not shown.
+
 ## 0.31.2 — 2026-10-25
 
 - Fixed: moving in a long view was sluggish, as in a News view with many feeds. A key there now takes about a third of the time it did.

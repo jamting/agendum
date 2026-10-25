@@ -172,11 +172,11 @@ These are rough: a count of commands and rules, not of how much each matters. By
 
 ## The steps
 
-The parity work, in the order it is planned (the owner reorders it): each item small and test-first, built with the `feature` skill. This is the only list of it; `ROADMAP.md` points here, and its "In order" list names the next few. A finished item is ticked and moved to `ROADMAP_DONE.md` (Milestone 2), as every roadmap item is. Done so far: the groundwork of the truthful clone (the extras' shelf, ADR 0044; the Extras preference, R77; Agenda's menus captured and compared by a test), the tagging of the two lists above (2026-10-22), View Properties (R78) with Number items (R79), the shortcut entries out of the menus, recurring items on every date they recur, and editing one shows its rule (R14a) (2026-10-23); the key bar on two lines and ALT-K's bars (R80, ADR 0045), Agenda's menus (R81, R81a, with the Section Add box, R61), settings boxes applying on ENTER (ADR 0030), category lists from a box (R81b), and F8 / ALT-F8 in boxes (R81c) (2026-10-24). The order: View Properties first and recurring items second, as the owner met both in daily use (meeting 2026-10-22, § 5f), the shortcut entries leaving the menus once View Properties was built (owner, 2026-10-23); the rest grouped by kind, the most used first.
+The parity work, in the order it is planned (the owner reorders it): each item small and test-first, built with the `feature` skill. This is the only list of it; `ROADMAP.md` points here, and its "In order" list names the next few. A finished item is ticked and moved to `ROADMAP_DONE.md` (Milestone 2), as every roadmap item is. Done so far: the groundwork of the truthful clone (the extras' shelf, ADR 0044; the Extras preference, R77; Agenda's menus captured and compared by a test), the tagging of the two lists above (2026-10-22), View Properties (R78) with Number items (R79), the shortcut entries out of the menus, recurring items on every date they recur, and editing one shows its rule (R14a) (2026-10-23); the key bar on two lines and ALT-K's bars (R80, ADR 0045), Agenda's menus (R81, R81a, with the Section Add box, R61), settings boxes applying on ENTER (ADR 0030), category lists from a box (R81b), and F8 / ALT-F8 in boxes (R81c) (2026-10-24); a date or numeric category's properties (R6a, 2026-10-25). The order: View Properties first and recurring items second, as the owner met both in daily use (meeting 2026-10-22, § 5f), the shortcut entries leaving the menus once View Properties was built (owner, 2026-10-23); the rest grouped by kind, the most used first.
 
 #### Next
 
-Category properties of a date or numeric category (Boxes and lists, below), to settle with the owner first.
+The rest of Agenda as the reference for texts (Screens and texts, below).
 
 #### Menus as Agenda's
 
@@ -184,7 +184,7 @@ Done (R81, R81a, 2026-10-24; `ROADMAP_DONE.md`, Milestone 2). Left: comparing th
 
 #### Boxes and lists
 
-- [ ] Category properties of a date or numeric category as Agenda's: the box shows only Category name, Type, Parent, Note, Note file, Special actions, Assignment actions, Statistics and Advanced settings; Short name, Match category name, Match short name, Also match, Exclusive children and Assignment conditions go (checked in Agenda 2.0, 2026-10-16, converting a category in its box: the fields vanish as Type changes). A habit change for the box: settle with the owner first; Agendum's Excludes (ours) to decide too
+Done: Category properties of a date or numeric category as Agenda's (R6a, 2026-10-25; `ROADMAP_DONE.md`, Milestone 2).
 
 #### Screens and texts
 

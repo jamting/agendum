@@ -44,6 +44,56 @@ defmodule Agendum.TUI.UserDateCategoriesTest do
     assert screen(state) =~ ~r/Type: +Date/
   end
 
+  # the settings TAB reaches from the first, in order
+  defp settings(state) do
+    box = CategoryScreens.Properties
+    state = press(state, :home)
+
+    # TAB stays on the last setting, so 20 presses reach every one
+    Stream.iterate(state, &press(&1, :tab))
+    |> Enum.take(20)
+    |> Enum.map(&box.field(&1, Agendum.TUI.State.mode(&1)))
+    |> Enum.uniq()
+  end
+
+  # Checked in Agenda 2.0 (2026-10-25, PLANNER's When and Amount, and Calls
+  # converted): a date or numeric category's box keeps its size, with blank
+  # rows where the other settings were, and the hidden values stay stored
+  test "a date or numeric category's box shows only Agenda's settings",
+       %{state: state, due: due} do
+    db = Core.set_short_name(state.db, due, "D")
+    {:ok, db} = Core.set_also_match(db, due, "deadline")
+    {:ok, db, amount} = Core.add_category(db, db.main_id, "Amount")
+    state = %{state | db: db}
+
+    standard = CategoryScreens.open_props(state, due)
+    assert screen(standard) =~ "Short name:"
+    assert :excludes in settings(standard)
+
+    for {cat, key, type} <- [{due, "d", "Date"}, {amount, "n", "Numeric"}] do
+      state = state |> CategoryScreens.open_props(cat) |> choose_type() |> press(key)
+      text = screen(state)
+      assert text =~ ~r/Type: +#{type}/
+
+      gone = ["Short name", "Also match", "Match category", "Exclusive", "conditions", "Excludes"]
+      for label <- gone, do: refute(text =~ label, "#{type}: #{label} still shown")
+
+      assert text =~ "Assignment actions:"
+      assert text =~ "Advanced settings:"
+
+      assert settings(state) ==
+               [:name, :type, :note, :special, :statistics, :also_assign, :advanced]
+
+      # the box keeps its height: blank rows where the settings were
+      assert length(String.split(text, "\n")) == length(String.split(screen(standard), "\n"))
+    end
+
+    # the short name and Also match stay stored, hidden, as Agenda keeps them
+    state = state |> CategoryScreens.open_props(due) |> choose_type() |> press("d")
+    assert state.db.categories[due].short_name == "D"
+    assert state.db.categories[due].also_match == "deadline"
+  end
+
   test "with children, it asks first and says what is dropped", %{state: state, due: due} do
     {:ok, db, _} = Core.add_category(state.db, due, "after the meeting")
     state = %{state | db: db} |> CategoryScreens.open_props(due) |> choose_type() |> press("d")

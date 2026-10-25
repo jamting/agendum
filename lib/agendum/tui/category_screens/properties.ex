@@ -8,7 +8,9 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   note on the left with the children, special actions, Statistics and
   Advanced settings; the type and name matching on the right, with the
   conditions, actions and excludes (ours) below them. "Parent is" is
-  shown, not a setting. Note, Statistics and Advanced settings show
+  shown, not a setting. A date or numeric category has Agenda's shorter
+  set (`@other_layout`): the same box with blank rows where the settings
+  that only a standard category has were; their values stay stored. Note, Statistics and Advanced settings show
   "...": SPACE opens each one's box, as in Agenda. Agenda's Note file is
   left out.
 
@@ -47,12 +49,46 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
    Advanced settings:  [advanced      ]  Excludes:
                                          [excludes                       ]
   """
+  # A date or numeric category's box, as Agenda's (checked in Agenda 2.0,
+  # 2026-10-25, PLANNER's When and Amount): no short name, text matching,
+  # exclusive children or conditions, and no excludes (ours), as none of
+  # them apply to it; the rows stay, blank, so the box keeps its size
+  @other_layout """
+   Category name:      [name          ]  Type:                [type      ]
+   Parent is [parent                  ]
+
+
+   Note:               [note          ]
+
+   Special actions:    [special       ]
+                                         Assignment actions:
+   Statistics:         [statistics    ]  [also_assign                    ]
+   Advanced settings:  [advanced      ]
+   
+  """
+
   # the settings in reading order, for the cursor: the parent is only shown
   @props Template.fields(@layout) -- [:parent]
-  @grid Template.grid(@layout, @props)
+  @other_props Template.fields(@other_layout) -- [:parent]
 
-  @doc "The settings, in the cursor's order (reading order)."
+  # Module attributes are computed once, at compile time, so each layout's
+  # grid of fields is worked out only once
+  @grid Template.grid(@layout, @props)
+  @other_grid Template.grid(@other_layout, @other_props)
+
+  @doc "The settings of a standard category's box, in the cursor's order (reading order)."
   def props_fields, do: @props
+
+  # the layout, its settings and its grid for the category on show: a
+  # standard category's, or the shorter date and numeric one. The type
+  # (always the second setting) can change while the box is open, and the
+  # cursor stays on it
+  defp form(state, mode) do
+    case state.db.categories[mode.cat_id].kind do
+      :standard -> {@layout, @props, @grid}
+      _ -> {@other_layout, @other_props, @other_grid}
+    end
+  end
 
   @help %{
     name: "The category's name. F2 (or SPACE) edits it.",
@@ -77,7 +113,10 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   }
 
   @impl Box
-  def field(_state, mode), do: Enum.at(@props, mode.cursor)
+  def field(state, mode) do
+    {_layout, props, _grid} = form(state, mode)
+    Enum.at(props, mode.cursor)
+  end
 
   @impl Box
   def title(state, mode), do: "Category properties: " <> state.db.categories[mode.cat_id].name
@@ -135,7 +174,8 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
         _ -> []
       end
 
-    Template.render(@layout, values, [selected: Enum.at(@props, mode.cursor)] ++ editing)
+    {layout, props, _grid} = form(state, mode)
+    Template.render(layout, values, [selected: Enum.at(props, mode.cursor)] ++ editing)
   end
 
   # --- category properties -----------------------------------------------------------------------
@@ -213,9 +253,12 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
 
   @impl Box
   def run(state, mode, :change),
-    do: open_prop(state, state.db.categories[mode.cat_id], Enum.at(@props, mode.cursor))
+    do: open_prop(state, state.db.categories[mode.cat_id], field(state, mode))
 
-  def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
+  def run(state, mode, id) do
+    {_layout, _props, grid} = form(state, mode)
+    Box.run_settings(state, mode, grid, id)
+  end
 
   # SPACE (or F2, F3) on a row of Category Properties
   defp open_prop(state, cat, :name) do

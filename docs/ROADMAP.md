@@ -16,7 +16,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 ### Fixes and polish
 
-None open.
+- [ ] Hidden values of a date or numeric category (owner, 2026-10-25): a category made date or numeric keeps its short name, Also match words and conditions, as Agenda does, but its box no longer shows them (R6a). Decide what to do with them: show them somewhere (Statistics, the manager), clear them on conversion, or leave them; check first whether any still has an effect (a short name in a narrow column head, a condition)
 
 ### The clone's safety
 
