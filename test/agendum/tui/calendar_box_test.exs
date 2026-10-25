@@ -75,7 +75,7 @@ defmodule Agendum.TUI.CalendarBoxTest do
   test "typing a date jumps there", %{state: state} do
     state = press(state, [{:f, 3}, "zebra", :enter])
     assert State.mode(state).type == :calendar
-    assert screen(state) =~ "Not a date: zebra"
+    assert panel(state) =~ message(:bad_date)
 
     state = press(state, ["2027-03-15", :enter])
     assert %{type: :calendar, date: ~D[2027-03-15]} = mode(state)

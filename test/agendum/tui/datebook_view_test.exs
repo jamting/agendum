@@ -39,7 +39,7 @@ defmodule Agendum.TUI.DatebookViewTest do
     for keys <- [{:alt, "d"}, {:alt, "u"}, :delete, {:f, 3}, {:alt, "-"}] do
       after_ = press(state, keys)
       assert after_.db == state.db
-      assert screen(after_) =~ "A datebook view's sections are its dates"
+      assert panel(after_) =~ message(:datebook_change)
     end
   end
 
@@ -92,7 +92,7 @@ defmodule Agendum.TUI.DatebookViewTest do
       assert screen(state) =~ ~r/Base date on: +next week/
 
       state = press(state, [" ", {:ctrl, "u"}, "zebra", :enter])
-      assert screen(state) =~ "Not a date: zebra"
+      assert panel(state) =~ message(:bad_date)
       assert datebook(state).base == "next week"
 
       assert Agendum.TUI.History.undo(state) |> datebook() |> Map.get(:base) == "today"
@@ -104,7 +104,7 @@ defmodule Agendum.TUI.DatebookViewTest do
 
       # End category: a standard category is refused
       state = state |> to_setting("End category") |> press([" ", "Calls", :enter])
-      assert screen(state) =~ "Pick a date category"
+      assert panel(state) =~ message(:select_date_category)
       assert datebook(state).end_category == nil
 
       state = press(state, [" ", "Done", :enter])

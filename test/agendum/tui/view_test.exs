@@ -200,7 +200,7 @@ defmodule Agendum.TUI.ViewTest do
 
     test "an invalid When date is reported", %{state: state} do
       state = press(state, [:down, {:alt_f, 2}, {:ctrl, "u"}, "someday", :enter])
-      assert screen(state) =~ "Not a date: someday"
+      assert panel(state) =~ message(:bad_date)
     end
 
     # turned off Agenda's way, in the When category's date settings (R6b)

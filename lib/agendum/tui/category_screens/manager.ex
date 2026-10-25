@@ -123,7 +123,7 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
     name = state.db.categories[id].name
 
     if Database.protected?(state.db, id),
-      do: State.error(state, "#{name} cannot be discarded"),
+      do: State.error(state, Agendum.TUI.Messages.cannot_discard(state.db, id)),
       else:
         Prompts.confirm(state, "Discard #{name} and all its children?", {:discard_category, id})
   end

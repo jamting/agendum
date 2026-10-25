@@ -72,6 +72,6 @@ defmodule Agendum.TUI.RangeConditionsTest do
   test "a bad date keeps the box open", %{state: state} do
     state = open_conditions(state) |> press(["When", :enter, " ", :down, "someday", :enter])
     assert %{type: :range_filter} = State.mode(state)
-    assert screen(state) =~ "Not a date: someday"
+    assert panel(state) =~ message(:bad_date)
   end
 end

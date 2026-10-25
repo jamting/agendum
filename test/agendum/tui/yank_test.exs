@@ -84,6 +84,6 @@ defmodule Agendum.TUI.YankTest do
       |> State.switch_view(week.id)
       |> press([:down, {:alt, "y"}])
 
-    assert panel(state) =~ "A datebook view's sections are its dates"
+    assert panel(state) =~ message(:datebook_change)
   end
 end

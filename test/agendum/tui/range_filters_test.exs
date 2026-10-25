@@ -85,7 +85,7 @@ defmodule Agendum.TUI.RangeFiltersTest do
       state |> filter_picker(:view) |> press(["When", :enter, " ", :down, "someday", :enter])
 
     assert %{type: :range_filter} = State.mode(state)
-    assert screen(state) =~ "Not a date: someday"
+    assert panel(state) =~ message(:bad_date)
   end
 
   test "DEL in the box removes the filter", %{state: state} do
@@ -131,6 +131,6 @@ defmodule Agendum.TUI.RangeFiltersTest do
       |> filter_picker(:view)
       |> press(["Cost", :enter, " ", :down, {:ctrl, "u"}, "lots", :enter])
 
-    assert screen(state) =~ "Not a number: lots"
+    assert panel(state) =~ message(:bad_number)
   end
 end

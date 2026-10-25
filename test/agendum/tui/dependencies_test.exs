@@ -45,14 +45,14 @@ defmodule Agendum.TUI.DependenciesTest do
 
   test "ALT-O with nothing marked on an independent item explains", %{state: state} do
     state = press(state, [:down, {:alt, "o"}])
-    assert screen(state) =~ "Mark the items it depends on with F7, then ALT-O"
+    assert panel(state) =~ message(:make_dependent)
   end
 
   test "an item cannot depend on an item that depends on it", %{state: state} do
     state = make_dependent(state) |> press(["y", {:alt_f, 7}])
     # mark Daniel (the dependent), then ALT-O on the first item (its prerequisite)
     state = press(state, [{:f, 7}, :up, :up, :up, :up, {:alt, "o"}, "y"])
-    assert screen(state) =~ "would depend on itself"
+    assert panel(state) =~ message(:depends_on_itself)
   end
 
   test "View Properties ▸ Hide dependent items hides waiting items until their prerequisites are done",

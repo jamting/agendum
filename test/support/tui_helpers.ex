@@ -192,6 +192,12 @@ defmodule Agendum.TUIHelpers do
   end
 
   @doc """
+  One of Agenda's messages (`Agendum.TUI.Messages`) as `panel/1` shows it:
+  its words joined by single spaces.
+  """
+  def message(name), do: name |> Agendum.TUI.Messages.text() |> String.split() |> Enum.join(" ")
+
+  @doc """
   The sample file with an empty Meetings that matches no text: with
   Agenda's Ignore suffixes (R16a) its name pulls in the items about a
   "meeting", which tests that use Meetings as an empty category do not want.

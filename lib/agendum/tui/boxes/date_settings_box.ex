@@ -100,7 +100,7 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
         State.run(state, {:set_date_settings, settings})
 
       _ ->
-        State.error(state, "Not a time: #{text}")
+        State.error(state, Agendum.TUI.Messages.text(:bad_time))
     end
   end
 

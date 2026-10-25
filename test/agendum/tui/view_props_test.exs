@@ -169,7 +169,7 @@ defmodule Agendum.TUI.ViewPropsTest do
       assert highlighted(state) == "Low"
       state = press(state, [:delete, :delete, :delete])
       assert heads(state, v) == ["High"]
-      assert panel(state) =~ "A view needs at least one section"
+      assert panel(state) =~ message(:view_needs_section)
     end
 
     test "F6 opens the highlighted section's Section Properties", %{state: state} do

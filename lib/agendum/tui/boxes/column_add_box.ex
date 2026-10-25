@@ -121,7 +121,7 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
   defp typed(state, field, text) when field in [:width, :note_line] do
     case FieldTyping.number(text, 1, 999) do
       {:ok, n} -> update(state, &Map.put(&1, field, n))
-      :error -> State.error(state, "Type a number")
+      :error -> State.error(state, Agendum.TUI.Messages.text(:bad_number))
     end
   end
 
@@ -279,7 +279,7 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
            {:add_column_as, state.view_id, mode.head, mode.kind, {mode.sidx, place}, opts}
          ) do
       {:ok, state, _} -> %{State.pop(state) | col: index + 1}
-      {:error, _} -> State.error(state, "#{name(state, mode.head)} cannot change type")
+      {:error, _} -> State.error(state, Agendum.TUI.Messages.text(:cannot_change_type))
     end
   end
 

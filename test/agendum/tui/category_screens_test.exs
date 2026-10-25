@@ -79,7 +79,7 @@ defmodule Agendum.TUI.CategoryScreensTest do
 
   test "protected categories cannot be discarded", %{state: state} do
     state = press(state, [{:f, 9}, :delete])
-    assert screen(state) =~ "MAIN cannot be discarded"
+    assert panel(state) =~ message(:discard_main)
   end
 
   test "F3 on an item opens the assignment profile; SPACE toggles", %{state: state} do

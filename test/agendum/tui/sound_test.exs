@@ -51,7 +51,7 @@ defmodule Agendum.TUI.SoundTest do
     # an item with no When date cannot get an alarm
     {state, _} = sounds(state, ["Buy milk", :enter])
     {state, [:error]} = sounds(state, {:alt, "a"})
-    assert screen(state) =~ "Give the item a When date and time first"
+    assert panel(state) =~ message(:needs_date)
   end
 
   test "each key recorded in Learn mode clicks", %{state: state} do

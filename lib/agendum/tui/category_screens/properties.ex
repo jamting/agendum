@@ -330,13 +330,13 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
 
     cond do
       cat.kind != :standard ->
-        State.error(state, "Only standard categories can change type")
+        State.error(state, Agendum.TUI.Messages.text(:cannot_change_type))
 
       Database.protected?(db, cat.id) ->
-        State.error(state, "#{cat.name} cannot change type")
+        State.error(state, Agendum.TUI.Messages.text(:cannot_convert))
 
       Enum.any?(cat.children, &(db.categories[&1].children != [])) ->
-        State.error(state, "A category with grandchildren cannot change type")
+        State.error(state, Agendum.TUI.Messages.text(:cannot_convert))
 
       true ->
         State.push(state, %Agendum.TUI.Modes.Choice{kind: :type, cat_id: cat.id, cursor: 0})

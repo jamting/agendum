@@ -45,7 +45,7 @@ defmodule Agendum.TUI.Update.Prompts do
         State.info(state, "#{state.db.categories[cat_id].name} is now numeric")
 
       {:error, _} ->
-        State.error(state, "#{state.db.categories[cat_id].name} cannot become numeric")
+        State.error(state, Agendum.TUI.Messages.text(:cannot_convert))
     end
   end
 
@@ -56,7 +56,7 @@ defmodule Agendum.TUI.Update.Prompts do
         State.info(state, "#{state.db.categories[cat_id].name} is now a date category")
 
       {:error, _} ->
-        State.error(state, "#{state.db.categories[cat_id].name} cannot become a date category")
+        State.error(state, Agendum.TUI.Messages.text(:cannot_convert))
     end
   end
 
@@ -230,7 +230,7 @@ defmodule Agendum.TUI.Update.Prompts do
         State.info(state, "When date set for #{Draw.count(length(ids), "item")}")
 
       {:error, _} ->
-        State.error(state, "Not a date: #{text} (try friday, next week, 12/24, December 24)")
+        State.error(state, Agendum.TUI.Messages.text(:bad_date))
     end
   end
 
@@ -240,7 +240,7 @@ defmodule Agendum.TUI.Update.Prompts do
         State.info(state, "When: " <> DateFormat.date(db.items[item_id].when, db.date_format))
 
       {:error, :invalid_date} ->
-        State.error(state, "Not a date: #{text} (try friday, next week, 12/24, December 24)")
+        State.error(state, Agendum.TUI.Messages.text(:bad_date))
     end
   end
 
@@ -254,7 +254,7 @@ defmodule Agendum.TUI.Update.Prompts do
       at = Core.when_at(db.items[item_id]) |> NaiveDateTime.add(-minutes * 60)
       State.info(state, "Alarm set for " <> DateFormat.datetime(at, db.date_format))
     else
-      _ -> State.error(state, "Type a number of minutes from 0 to 60")
+      _ -> State.error(state, Agendum.TUI.Messages.text(:bad_number))
     end
   end
 
@@ -264,7 +264,7 @@ defmodule Agendum.TUI.Update.Prompts do
         state
 
       {:error, :invalid_date} ->
-        State.error(state, "Not a date: #{text} (try friday, next week, 12/24)")
+        State.error(state, Agendum.TUI.Messages.text(:bad_date))
     end
   end
 
@@ -277,7 +277,7 @@ defmodule Agendum.TUI.Update.Prompts do
         State.run(state, {:clear_number, item_id, cat_id})
 
       {:error, :not_a_number} ->
-        State.error(state, "Not a number: #{String.trim(text)}")
+        State.error(state, Agendum.TUI.Messages.text(:bad_number))
     end
   end
 
@@ -433,7 +433,7 @@ defmodule Agendum.TUI.Update.Prompts do
         State.info(state, "Depends on #{Draw.count(count, "item")}")
 
       {:error, :cycle} ->
-        State.error(state, "Not done: the item would depend on itself (through the marked items)")
+        State.error(state, Agendum.TUI.Messages.text(:depends_on_itself))
     end
   end
 
@@ -455,8 +455,11 @@ defmodule Agendum.TUI.Update.Prompts do
 
   defp confirmed(state, {:discard_category, id}, true) do
     case State.command(state, {:discard_category, id}) do
-      {:ok, state, _} -> State.info(state, "Category discarded")
-      {:error, :protected} -> State.error(state, "This category cannot be discarded")
+      {:ok, state, _} ->
+        State.info(state, "Category discarded")
+
+      {:error, :protected} ->
+        State.error(state, Agendum.TUI.Messages.cannot_discard(state.db, id))
     end
   end
 

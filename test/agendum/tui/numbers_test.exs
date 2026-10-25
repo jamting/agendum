@@ -59,7 +59,7 @@ defmodule Agendum.TUI.NumbersTest do
 
   test "text that is not a number is refused", %{state: state} do
     state = press(state, ["lots", :enter])
-    assert screen(state) =~ "Not a number: lots"
+    assert panel(state) =~ message(:bad_number)
     assert state.db.numbers == %{}
   end
 
@@ -248,7 +248,7 @@ defmodule Agendum.TUI.NumbersTest do
       state =
         state |> CategoryHelpers.props(state.db.special.when) |> CategoryHelpers.choose("Type")
 
-      assert screen(state) =~ "Only standard categories can change type"
+      assert panel(state) =~ message(:cannot_change_type)
     end
   end
 end

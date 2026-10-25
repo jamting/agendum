@@ -143,6 +143,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Boxes.CustomizeBox`                     | ✔     | Utilities ▸ Customize: the person's theme and date languages, saved as preferences (R40, R14c).                                       |
 | `Agendum.TUI.Boxes.CalendarBox`                      | ✔     | The pop-up calendar: F3 in a date column, ALT-C anywhere (R46).                                                                  |
 | `Agendum.TUI.Boxes.DatebookSettings`, `Agendum.TUI.Moves.Browse` | ✔     | A datebook view's settings, in its View Properties; browsing it to other periods (R47).                                                              |
+| `Agendum.TUI.Messages` | ✔     | Lotus Agenda's own messages, adapted, for the situations Agendum meets too (the texts step; checked against `AGENDA.RI` by `agenda_messages_test.exs`). |
 | `Agendum.TUI.Boxes.ScheduleBox`                      | ✔     | Utilities ▸ Show ▸ Sched: one date's items in the Show View (R49).                                                                      |
 | `Agendum.TUI.MacroKeys`                        | ✔     | Key events as macro text in Agenda's notation (`{F10}vc{ENTER}`), and back (R50).                                                |
 | `Agendum.TUI.Macros`                           | ✔     | The macro manager (ALT-F3), Learn mode and running macros (ALT-Z), one undo step a run (R50).                                    |

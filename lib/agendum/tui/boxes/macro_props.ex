@@ -112,13 +112,13 @@ defmodule Agendum.TUI.Boxes.MacroProps do
   def attach(state, id, text) do
     case MacroKeys.key(text) do
       {:ok, _text, key} when key in @reserved ->
-        State.error(state, "ALT-F1, ALT-F3 and ALT-Z cannot run a macro")
+        State.error(state, Agendum.TUI.Messages.text(:macro_key_reserved))
 
       {:ok, notation, _key} ->
         State.run(state, {:attach_macro, id, notation})
 
       :error ->
-        State.error(state, "Type one key, as {F4}, {ShfF4}, {AltD} or {CtlE}")
+        State.error(state, Agendum.TUI.Messages.text(:macro_one_key))
     end
   end
 

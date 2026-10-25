@@ -59,7 +59,7 @@ defmodule Agendum.TUI.Update.Actions do
 
   @doc "Section commands in a datebook view say why they do nothing (R47)."
   def datebook_sections(state),
-    do: State.error(state, "A datebook view's sections are its dates; they follow its settings")
+    do: State.error(state, Agendum.TUI.Messages.text(:datebook_change))
 
   defp do_perform(state, :menu, _row), do: Menu.open(state)
   defp do_perform(state, :view_manager, _), do: ViewManager.open(state)
@@ -148,7 +148,7 @@ defmodule Agendum.TUI.Update.Actions do
 
   defp do_perform(state, :discard, %{kind: :section, category: cat}) do
     if Database.protected?(state.db, cat.id),
-      do: State.error(state, "#{cat.name} cannot be discarded"),
+      do: State.error(state, Agendum.TUI.Messages.cannot_discard(state.db, cat.id)),
       else:
         Prompts.confirm(
           state,
@@ -184,7 +184,7 @@ defmodule Agendum.TUI.Update.Actions do
   end
 
   defp do_perform(state, action, _row) when action in [:follow_link, :linked_from],
-    do: State.error(state, "Highlight an item first")
+    do: State.error(state, Agendum.TUI.Messages.text(:not_on_item))
 
   defp do_perform(state, :when, %{kind: :item, item: item}) do
     # a recurring date offers its rule, so ENTER keeps it (R14a)
@@ -207,7 +207,9 @@ defmodule Agendum.TUI.Update.Actions do
     end
   end
 
-  defp do_perform(state, :open_link, _row), do: State.error(state, "Highlight an item first")
+  defp do_perform(state, :open_link, _row),
+    do: State.error(state, Agendum.TUI.Messages.text(:not_on_item))
+
   defp do_perform(state, :execute, _), do: Agendum.TUI.Boxes.ExecuteBox.open(state)
   defp do_perform(state, :questions, _), do: Agendum.TUI.Boxes.QuestionsBox.open(state)
 
@@ -220,7 +222,7 @@ defmodule Agendum.TUI.Update.Actions do
   # on the item text: the section's item column (R55)
   defp do_perform(state, :column_props, row) when row != nil do
     if State.view(state).datebook,
-      do: State.error(state, "A datebook view's item text fills the width its columns leave"),
+      do: State.error(state, Agendum.TUI.Messages.text(:datebook_change)),
       else: Agendum.TUI.Boxes.ItemColumnBox.open(state, row.sidx)
   end
 
@@ -236,7 +238,8 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :copy_item, %{kind: :item, item: item}),
     do: Agendum.TUI.Boxes.CopyBox.open(state, [item.id])
 
-  defp do_perform(state, :copy_item, _row), do: State.error(state, "Highlight an item to copy")
+  defp do_perform(state, :copy_item, _row),
+    do: State.error(state, Agendum.TUI.Messages.text(:not_on_item))
 
   defp do_perform(state, :move_item, %{kind: :item, item: item, category: cat}) do
     Marked.start_move(state, [{item.id, cat.id}])
@@ -249,7 +252,7 @@ defmodule Agendum.TUI.Update.Actions do
         State.run(state, {:cancel_alarm, item.id}, "Alarm cancelled")
 
       item.when == nil ->
-        State.error(state, "Give the item a When date and time first (ALT-F2)")
+        State.error(state, Agendum.TUI.Messages.text(:needs_date))
 
       true ->
         Prompts.prompt(
@@ -275,7 +278,7 @@ defmodule Agendum.TUI.Update.Actions do
       end
 
     if item_id == nil and level != :every do
-      State.error(state, "Highlight an item first")
+      State.error(state, Agendum.TUI.Messages.text(:not_on_item))
     else
       case Core.related_items(state.db, item_id, direction, level) do
         [] ->
@@ -395,7 +398,7 @@ defmodule Agendum.TUI.Update.Actions do
   # on the item text (a section head or an item): the item column's (R55)
   defp do_perform(state, :column_width, row) when row != nil and state.col == 0 do
     if State.view(state).datebook,
-      do: State.error(state, "A datebook view's item text fills the width its columns leave"),
+      do: State.error(state, Agendum.TUI.Messages.text(:datebook_change)),
       else: ColumnWidth.open(state, {:items, row.sidx})
   end
 
@@ -405,7 +408,7 @@ defmodule Agendum.TUI.Update.Actions do
   # on the item text: the item column among the columns (R55)
   defp do_perform(state, :column_move, row) when row != nil and state.col == 0 do
     if State.view(state).datebook,
-      do: State.error(state, "A datebook view's item text stays first"),
+      do: State.error(state, Agendum.TUI.Messages.text(:datebook_change)),
       else: Agendum.TUI.Moves.ColumnMove.open(state, row.sidx, :items)
   end
 
@@ -418,7 +421,8 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, {:toggle_view, option}, _),
     do: State.run(state, {:toggle_view_option, state.view_id, option})
 
-  defp do_perform(state, _action, _row), do: State.error(state, "Highlight an item first")
+  defp do_perform(state, _action, _row),
+    do: State.error(state, Agendum.TUI.Messages.text(:not_on_item))
 
   defp section_index(state, nil), do: length(State.view(state).sections) - 1
   defp section_index(_state, row), do: row.sidx

@@ -404,7 +404,7 @@ defmodule Agendum.TUI.CategoryScreens do
   def commit(state, _mode, {:rename, id}, text) do
     case State.command(state, {:rename_category, id, text}) do
       {:ok, state, _} -> state
-      {:error, _} -> State.error(state, "A category needs a name")
+      {:error, _} -> State.error(state, Agendum.TUI.Messages.text(:category_name))
     end
   end
 

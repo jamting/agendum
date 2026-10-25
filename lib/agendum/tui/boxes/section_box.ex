@@ -211,7 +211,7 @@ defmodule Agendum.TUI.Boxes.SectionBox do
 
   # ENTER in Section Add before a head: Agenda's box does not close
   defp command(state, %{sidx: nil}, :done, _row),
-    do: State.error(state, "Type the section head's name, or press F3 to pick it")
+    do: State.error(state, Agendum.TUI.Messages.text(:section_head_name))
 
   defp command(state, mode, :pick, :head), do: open_setting(state, mode, :head)
 
@@ -280,7 +280,7 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   defp remove(state, mode, {:slot, n}) do
     case Enum.at(slots(state, mode), n) do
       :items ->
-        State.error(state, "The item column stays; remove the other columns")
+        State.error(state, Agendum.TUI.Messages.text(:item_column_stays))
 
       index ->
         # the highlight stays on the row, which is now the next column

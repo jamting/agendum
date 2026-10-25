@@ -93,7 +93,7 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
       # a width typed sets it by hand, as Agenda's
       {:ok, n} when field == :width -> set(state, mode, set: :manual, width: n)
       {:ok, n} -> set(state, mode, [{field, n}])
-      :error -> State.error(state, "Type a width, a number")
+      :error -> State.error(state, Agendum.TUI.Messages.text(:bad_number))
     end
   end
 

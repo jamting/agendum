@@ -26,7 +26,7 @@ defmodule Agendum.TUI.SearchTest do
   test "ALT-N and ALT-P move between matches; the ends are reported", %{state: state} do
     state = press(state, [{:alt_f, 6}, "abigail", :enter, {:alt, "n"}])
     assert current(state) =~ "Check with Abigail"
-    assert screen(press(state, {:alt, "n"})) =~ "No more matches after this one"
+    assert panel(press(state, {:alt, "n"})) =~ message(:no_more_matches)
 
     state = press(state, {:alt, "p"})
     assert current(state) =~ "Call Marketing"
@@ -40,7 +40,7 @@ defmodule Agendum.TUI.SearchTest do
 
   test "no match is reported", %{state: state} do
     state = press(state, [{:alt_f, 6}, "zebra", :enter])
-    assert screen(state) =~ ~s(No item in this view contains "zebra")
+    assert panel(state) =~ message(:no_matches)
     assert state.modes == []
   end
 
@@ -56,7 +56,7 @@ defmodule Agendum.TUI.SearchTest do
     state =
       press(state, [:esc, {:alt_f, 6}, {:ctrl, "u"}, "budget", :down, :down, :down, " ", :enter])
 
-    assert screen(state) =~ "No item in this view contains"
+    assert panel(state) =~ message(:no_matches)
   end
 
   test "the last search is offered again", %{state: state} do

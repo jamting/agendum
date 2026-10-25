@@ -83,6 +83,6 @@ defmodule Agendum.TUI.SectionMoveTest do
 
     today = Enum.find(Database.views(db), &(&1.name == "Today"))
     state = db |> start() |> State.switch_view(today.id) |> press([{:f, 10}, "v", "s", "m"])
-    assert panel(state) =~ "A datebook view's sections are its dates"
+    assert panel(state) =~ message(:datebook_change)
   end
 end

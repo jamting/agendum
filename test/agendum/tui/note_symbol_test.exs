@@ -78,6 +78,6 @@ defmodule Agendum.TUI.NoteSymbolTest do
   test "F5 on a date tells there is no category there", %{state: state} do
     state = press(state, [:down, :right, :right, {:f, 5}])
     assert State.mode(state) == nil
-    assert screen(state) =~ "No category here to have a note"
+    assert panel(state) =~ message(:not_on_category)
   end
 end

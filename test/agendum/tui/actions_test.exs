@@ -73,7 +73,7 @@ defmodule Agendum.TUI.ActionsTest do
   test "a bad date keeps the box open", %{state: state} do
     state = open_actions(state) |> press(["When", :enter, " ", :down, "someday", :enter])
     assert %{type: :action_box} = State.mode(state)
-    assert screen(state) =~ "Not a date: someday"
+    assert panel(state) =~ message(:bad_date)
   end
 
   test "Special action cycles none, done, discard", %{state: state} do

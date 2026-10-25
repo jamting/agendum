@@ -110,7 +110,7 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
         |> State.info("Schedule for #{day} (ALT-B: other days)")
 
       {:error, :not_a_date_category} ->
-        State.error(state, "The date category must be a date category")
+        State.error(state, Agendum.TUI.Messages.text(:select_date_category))
     end
   end
 
@@ -131,7 +131,7 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
         %{m | date_category: id, section: section}
       end)
     else
-      State.error(state, "Pick a date category")
+      State.error(state, Agendum.TUI.Messages.text(:select_date_category))
     end
   end
 
@@ -172,7 +172,7 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
   def set_date(state, text) do
     case Core.read_when(state.db, text, State.context(state)) do
       {:ok, date, _time} -> set_date(state, date)
-      :error -> State.error(state, "Not a date: #{text}")
+      :error -> State.error(state, Agendum.TUI.Messages.text(:bad_date))
     end
   end
 

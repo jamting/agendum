@@ -505,7 +505,7 @@ defmodule Agendum.TUI.Boxes.ViewProps do
 
   defp remove(state, mode, n) do
     if length(sections(state, mode)) == 1,
-      do: State.error(state, "A view needs at least one section"),
+      do: State.error(state, Agendum.TUI.Messages.text(:view_needs_section)),
       else: State.run(state, {:remove_section, mode.view_id, n})
   end
 

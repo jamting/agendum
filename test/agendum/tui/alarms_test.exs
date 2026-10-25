@@ -48,7 +48,7 @@ defmodule Agendum.TUI.AlarmsTest do
     state = press(state, [:home, :down, :down, :down, {:alt, "a"}])
     assert current(state).text =~ "Anna Lasky"
     assert current(state).when == nil
-    assert screen(state) =~ "Give the item a When date and time first"
+    assert panel(state) =~ message(:needs_date)
   end
 
   test "an alarm rings on the tick when its time comes", %{state: state} do

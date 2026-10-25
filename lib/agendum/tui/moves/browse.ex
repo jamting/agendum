@@ -101,7 +101,7 @@ defmodule Agendum.TUI.Moves.Browse do
       view = state.db.views[mode.view_id]
       State.put_mode(state, Core.browse_to(state.db, view, mode, date, State.context(state)))
     else
-      _ -> State.error(state, "Not a date: #{text}")
+      _ -> State.error(state, Agendum.TUI.Messages.text(:bad_date))
     end
   end
 

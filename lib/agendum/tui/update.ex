@@ -568,10 +568,11 @@ defmodule Agendum.TUI.Update do
     end
   end
 
-  def opml_read(state, _path, {:error, :enoent}), do: State.error(state, "File not found")
+  def opml_read(state, _path, {:error, :enoent}),
+    do: State.error(state, Agendum.TUI.Messages.text(:file_not_found))
 
-  def opml_read(state, _path, {:error, reason}),
-    do: State.error(state, "Could not read: #{inspect(reason)}")
+  def opml_read(state, _path, {:error, _reason}),
+    do: State.error(state, Agendum.TUI.Messages.text(:cannot_open))
 
   # --- results of effects -----------------------------------------------------
   #
@@ -677,8 +678,8 @@ defmodule Agendum.TUI.Update do
   def loaded(state, path, {:error, :enoent}),
     do: Prompts.ask(state, "Create the new file #{Path.basename(path)}?", {:create_file, path})
 
-  def loaded(state, _path, {:error, reason}),
-    do: State.error(state, "Could not open: #{inspect(reason)}")
+  def loaded(state, _path, {:error, _reason}),
+    do: State.error(state, Agendum.TUI.Messages.text(:cannot_open))
 
   @doc """
   After the shell read a JSON file to import (R44): the file opens as a
@@ -693,10 +694,11 @@ defmodule Agendum.TUI.Update do
       else: import_json(state, path, text)
   end
 
-  def imported(state, _path, {:error, :enoent}), do: State.error(state, "File not found")
+  def imported(state, _path, {:error, :enoent}),
+    do: State.error(state, Agendum.TUI.Messages.text(:file_not_found))
 
-  def imported(state, _path, {:error, reason}),
-    do: State.error(state, "Could not read: #{inspect(reason)}")
+  def imported(state, _path, {:error, _reason}),
+    do: State.error(state, Agendum.TUI.Messages.text(:cannot_open))
 
   defp import_json(state, path, text) do
     case Core.import_json(text) do
@@ -710,8 +712,8 @@ defmodule Agendum.TUI.Update do
         |> Layout.settle()
         |> arrive()
 
-      {:error, reason} ->
-        State.error(state, "Could not import #{Path.basename(path)}: #{reason}")
+      {:error, _reason} ->
+        State.error(state, Agendum.TUI.Messages.text(:cannot_import))
     end
   end
 
@@ -752,10 +754,10 @@ defmodule Agendum.TUI.Update do
         )
 
       {:error, :not_an_agenda_file} ->
-        State.error(state, "#{name} is not an Agenda file Agendum can read")
+        State.error(state, Agendum.TUI.Messages.text(:not_agenda_file))
 
-      {:error, message} ->
-        State.error(state, "Could not import #{name}: #{message}")
+      {:error, _message} ->
+        State.error(state, Agendum.TUI.Messages.text(:cannot_import))
     end
   end
 
@@ -768,13 +770,14 @@ defmodule Agendum.TUI.Update do
   def note_text_read(state, path, {:ok, text}) do
     if String.valid?(text),
       do: state |> Notes.import_text(text) |> State.info("Imported #{path}"),
-      else: State.error(state, "Not a text file: #{path}")
+      else: State.error(state, Agendum.TUI.Messages.text(:cannot_import))
   end
 
-  def note_text_read(state, _path, {:error, :enoent}), do: State.error(state, "File not found")
+  def note_text_read(state, _path, {:error, :enoent}),
+    do: State.error(state, Agendum.TUI.Messages.text(:file_not_found))
 
-  def note_text_read(state, _path, {:error, reason}),
-    do: State.error(state, "Could not read: #{inspect(reason)}")
+  def note_text_read(state, _path, {:error, _reason}),
+    do: State.error(state, Agendum.TUI.Messages.text(:cannot_open))
 
   def written(state, path, :ok), do: State.info(state, "Wrote #{path}")
 

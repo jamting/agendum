@@ -254,7 +254,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
         State.run(state, {:set_column_display, state.view_id, at, note_line: n})
 
       :error ->
-        State.error(state, "Type a line number")
+        State.error(state, Agendum.TUI.Messages.text(:bad_number))
     end
   end
 
@@ -265,7 +265,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
         State.run(state, {:set_column_format, state.view_id, at, format})
 
       :error ->
-        State.error(state, "Type 0 to #{@max_decimals} decimal places")
+        State.error(state, Agendum.TUI.Messages.text(:bad_number))
     end
   end
 

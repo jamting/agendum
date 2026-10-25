@@ -175,7 +175,8 @@ defmodule Agendum.TUI.Update.Marked do
   defp single(state, :make_assign, %{kind: :item, item: item}),
     do: CategoryScreens.open_picker(state, {:assign_items, [item.id]}, nil)
 
-  defp single(state, :make_assign, _row), do: State.error(state, "Highlight an item first")
+  defp single(state, :make_assign, _row),
+    do: State.error(state, Agendum.TUI.Messages.text(:not_on_item))
 
   defp single(state, :attach_zettel, %{kind: :item, item: item}),
     do: attach_zettels(state, [item.id])
@@ -320,7 +321,7 @@ defmodule Agendum.TUI.Update.Marked do
   # Moves the item(s) to the highlighted position, one after another so
   # marked items keep their order.
   defp drop_item(state, _move, %{slot: %{}}),
-    do: State.error(state, "In a datebook view, change the item's date instead")
+    do: State.error(state, Agendum.TUI.Messages.text(:datebook_change))
 
   defp drop_item(state, %{moves: moves}, row) do
     to = Enum.at(State.view(state).sections, row.sidx).category_id

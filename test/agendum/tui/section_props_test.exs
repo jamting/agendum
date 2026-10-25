@@ -85,7 +85,9 @@ defmodule Agendum.TUI.SectionPropsTest do
       assert heads(state, v) == ["People", "When"]
       # When is still in the other sections
       assert Enum.at(state.db.views[v].sections, 1).columns |> length() == 1
-      assert state |> to_column(0) |> press(:delete) |> panel() =~ "The item column stays"
+
+      assert state |> to_column(0) |> press(:delete) |> panel() =~
+               Agendum.TUI.Messages.text(:item_column_stays)
     end
 
     test "ALT-↑ ↓ move the highlighted column, the highlight with it", %{state: state, view: v} do
@@ -139,6 +141,6 @@ defmodule Agendum.TUI.SectionPropsTest do
   test "a datebook view has no sections to set", %{state: state} do
     view = Enum.find(Database.views(state.db), &(&1.name == "Today"))
     state = state |> State.switch_view(view.id) |> props()
-    assert panel(state) =~ "A datebook view's sections are its dates"
+    assert panel(state) =~ message(:datebook_change)
   end
 end

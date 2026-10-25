@@ -112,10 +112,10 @@ defmodule Agendum.TUI.Boxes.ActionBox do
         State.pop(state)
 
       {:error, :invalid_date} ->
-        State.error(state, "Not a date: #{String.trim(mode.line.text)}")
+        State.error(state, Agendum.TUI.Messages.text(:bad_date))
 
       {:error, :not_a_number} ->
-        State.error(state, "Not a number: #{String.trim(mode.line.text)}")
+        State.error(state, Agendum.TUI.Messages.text(:bad_number))
 
       {:error, :self} ->
         State.error(state, "A category cannot act on itself")

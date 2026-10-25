@@ -73,7 +73,8 @@ defmodule Agendum.TUI.NoteInsertTabTest do
       props = state |> press([{:f, 10}, "f", "p"]) |> to_setting("Tab size")
       refused = press(props, ["0", :enter])
       assert refused.db.tab_size == 5
-      assert {:error, "Type a tab size from 1 to 16"} = refused.message
+      assert {:error, message} = refused.message
+      assert message == Agendum.TUI.Messages.text(:bad_number)
     end
   end
 end

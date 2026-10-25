@@ -153,7 +153,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
       |> Layout.move_to(index)
       |> report(found, index)
     else
-      State.error(state, "No item in this view contains \"#{String.trim(search.text)}\"")
+      State.error(state, Agendum.TUI.Messages.text(:no_matches))
     end
   end
 
@@ -199,8 +199,8 @@ defmodule Agendum.TUI.Boxes.SearchBox do
 
     case candidates do
       [index | _] -> state |> Layout.move_to(index) |> report(found, index)
-      [] when direction > 0 -> State.error(state, "No more matches after this one")
-      [] -> State.error(state, "No more matches before this one")
+      [] when direction > 0 -> State.error(state, Agendum.TUI.Messages.text(:no_more_matches))
+      [] -> State.error(state, Agendum.TUI.Messages.text(:no_more_matches))
     end
   end
 

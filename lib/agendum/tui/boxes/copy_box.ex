@@ -22,7 +22,7 @@ defmodule Agendum.TUI.Boxes.CopyBox do
   @doc "Opens the box for the items `ids`."
   def open(state, ids) do
     if State.view(state).datebook do
-      State.error(state, "In a datebook view, give the item another date instead")
+      State.error(state, Agendum.TUI.Messages.text(:datebook_change))
     else
       current = (Layout.current_row(state) || %{sidx: 0}).sidx
       State.push(state, %Agendum.TUI.Modes.CopyItems{ids: ids, cursor: current})

@@ -92,6 +92,6 @@ defmodule Agendum.TUI.AgImportTest do
 
   test "a file that is neither says so" do
     state = import(started(), "/home/rabbit/x.json", "hello")
-    assert screen(state) =~ "Could not import x.json"
+    assert panel(state) =~ message(:cannot_import)
   end
 end

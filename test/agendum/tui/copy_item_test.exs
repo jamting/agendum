@@ -53,7 +53,7 @@ defmodule Agendum.TUI.CopyItemTest do
   end
 
   test "on a section head there is no item to copy", %{state: state} do
-    assert state |> press([:up, {:alt_f, 9}]) |> panel() =~ "Highlight an item to copy"
+    assert state |> press([:up, {:alt_f, 9}]) |> panel() =~ message(:not_on_item)
   end
 
   test "a datebook view's sections are its dates" do
@@ -66,6 +66,6 @@ defmodule Agendum.TUI.CopyItemTest do
       |> State.switch_view(today.id)
       |> press([:down, {:alt_f, 9}])
 
-    assert panel(state) =~ "In a datebook view, give the item another date instead"
+    assert panel(state) =~ message(:datebook_change)
   end
 end

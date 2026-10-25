@@ -74,7 +74,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   defp typed(state, :tab_size, text) do
     case FieldTyping.number(text, 1, 16) do
       {:ok, size} -> State.run(state, {:set_tab_size, size})
-      :error -> State.error(state, "Type a tab size from 1 to 16")
+      :error -> State.error(state, Agendum.TUI.Messages.text(:bad_number))
     end
   end
 

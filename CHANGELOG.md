@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **Messages in Agenda's words**: where Lotus Agenda had a message for the same situation, Agendum now says what Agenda said, e.g. "The highlight isn't on an item.  Highlight the item you want and repeat the command." and "The date you entered isn't valid.  Type a valid date." About 60 messages; those for Agendum's own features stay as they were.
 ## 0.35.0 — 2026-10-25
 
 The Questions box and datebook views' properties as in Lotus Agenda.

@@ -55,10 +55,10 @@ defmodule Agendum.TUI.TransferTest do
       Update.imported(state, "/tmp/x.json", {:ok, ~s({"format": "agenda-json", "version": 7})})
 
     assert state.db == db
-    assert screen(state) =~ "Could not import x.json: unsupported version 7"
+    assert panel(state) =~ message(:cannot_import)
 
     state = Update.imported(state, "/tmp/x.json", {:error, :enoent})
-    assert screen(state) =~ "File not found"
+    assert panel(state) =~ message(:file_not_found)
   end
 
   test "opening another file keeps the person's session settings", %{state: state} do

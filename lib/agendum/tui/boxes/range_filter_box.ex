@@ -19,7 +19,6 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
 
   use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
 
-  alias Agendum.Core
   alias Agendum.TUI.Boxes.{Box, Template}
   alias Agendum.TUI.{Typing.LineEdit, State}
   alias Agendum.TUI.Update.Editing
@@ -152,24 +151,15 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
         State.pop(state)
 
       {:error, :invalid_date} ->
-        State.error(state, "Not a date: #{bad(mode, &parse_date(&1, state))}")
+        State.error(state, Agendum.TUI.Messages.text(:bad_date))
 
       {:error, :not_a_number} ->
-        opts = State.number_opts(state)
-        State.error(state, "Not a number: #{bad(mode, &Core.NumberFormat.parse(&1, opts))}")
+        State.error(state, Agendum.TUI.Messages.text(:bad_number))
 
       {:error, :self} ->
         State.error(state, "A category cannot depend on itself")
     end
   end
-
-  defp parse_date(text, state),
-    do:
-      Core.DateParser.parse(
-        text,
-        state.today,
-        Core.Context.parser_opts(State.context(state), state.db.date_settings)
-      )
 
   defp set(state, %{purpose: {:filter, scope}} = mode) do
     settings = {mode.show, mode.from.text, mode.to.text, mode.where}
@@ -183,13 +173,6 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
   defp set(_state, %{purpose: {:condition, owner}} = mode) do
     range = {mode.from.text, mode.to.text, mode.where}
     {:set_range_condition, owner, mode.cat_id, range}
-  end
-
-  # The first non-blank bound that does not read.
-  defp bad(mode, parse) do
-    [mode.from.text, mode.to.text]
-    |> Enum.map(&String.trim/1)
-    |> Enum.find(&(&1 != "" and parse.(&1) == :error))
   end
 
   @doc "`{label, value}` for each row; text rows give their `LineEdit`."

@@ -99,11 +99,12 @@ defmodule Agendum.TUI.NoteMenuTest do
     test "a file that cannot be read says why, and the note is unchanged", %{note: note} do
       read = press(note, [{:f, 10}, "i", "/tmp/nope.txt", :enter])
       done = Agendum.TUI.Update.note_text_read(read, "/tmp/nope.txt", {:error, :enoent})
-      assert {:error, "File not found"} = done.message
+      assert {:error, message} = done.message
+      assert message == Agendum.TUI.Messages.text(:file_not_found)
       assert State.mode(done).edit == State.mode(note).edit
 
       binary = Agendum.TUI.Update.note_text_read(read, "/tmp/x.bin", {:ok, <<255, 0, 1>>})
-      assert {:error, "Not a text file: /tmp/x.bin"} = binary.message
+      assert {:error, Agendum.TUI.Messages.text(:cannot_import)} == binary.message
     end
 
     test "Export writes the note as a text file", %{note: note} do

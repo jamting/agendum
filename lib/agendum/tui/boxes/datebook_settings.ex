@@ -121,8 +121,11 @@ defmodule Agendum.TUI.Boxes.DatebookSettings do
 
   defp set(state, view_id, d) do
     case State.command(state, {:set_datebook, view_id, d}) do
-      {:ok, state, _} -> state
-      {:error, :not_a_date_category} -> State.error(state, "Pick a date category")
+      {:ok, state, _} ->
+        state
+
+      {:error, :not_a_date_category} ->
+        State.error(state, Agendum.TUI.Messages.text(:select_date_category))
     end
   end
 
@@ -153,7 +156,7 @@ defmodule Agendum.TUI.Boxes.DatebookSettings do
         set(state, view_id, Map.put(d, field, time))
 
       _ ->
-        State.error(state, "Not a time: #{text}")
+        State.error(state, Agendum.TUI.Messages.text(:bad_time))
     end
   end
 
@@ -163,7 +166,7 @@ defmodule Agendum.TUI.Boxes.DatebookSettings do
 
     case Core.read_when(state.db, text, State.context(state)) do
       {:ok, _date, _time} -> set(state, view_id, %{d | base: text})
-      :error -> State.error(state, "Not a date: #{text}")
+      :error -> State.error(state, Agendum.TUI.Messages.text(:bad_date))
     end
   end
 

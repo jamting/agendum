@@ -444,7 +444,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
   defp column_note(state) do
     case Layout.note_target(state) do
       {:category, id} -> CategoryScreens.open_note(state, id)
-      _ -> State.error(state, "No category here to have a note")
+      _ -> State.error(state, Agendum.TUI.Messages.text(:not_on_category))
     end
   end
 
@@ -670,7 +670,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
         CalendarBox.open(state, {item_id, head})
 
       state.db.categories[head].kind == :numeric ->
-        State.error(state, "Type a number, e.g. 120 or 1,234.50")
+        State.error(state, Agendum.TUI.Messages.text(:bad_number))
 
       true ->
         CategoryScreens.open_picker(state, {:assign_column, item_id, head}, head)
@@ -731,11 +731,11 @@ defmodule Agendum.TUI.Update.ViewKeys do
         )
 
       true ->
-        State.error(state, "Mark the items it depends on with F7, then ALT-O")
+        State.error(state, Agendum.TUI.Messages.text(:make_dependent))
     end
   end
 
-  defp dependency(state, _row), do: State.error(state, "Highlight an item first")
+  defp dependency(state, _row), do: State.error(state, Agendum.TUI.Messages.text(:not_on_item))
 
   @doc "F4 DONE; for a recurring item, says when its next occurrence is (R14a)."
   def toggle_done(state, %{kind: :item, item: item}) do

@@ -49,6 +49,7 @@ What each document is for, and when to read it. `docs/` describes Agendum as it 
 | `docs/reference/agenda_key_bars.json` | Agenda 2.0's key bars, with no key held and with ALT, CTRL or SHIFT held, in a view, a note and the two managers (`tools/agformat/capture_key_bars.py`); `test/agendum/tui/agenda_key_bars_test.exs` compares Agendum's with it, each difference tagged |
 | `docs/reference/agenda_boxes.json` | Agenda 2.0's settings boxes as drawn on PLANNER: each box's title, rows and bottom edge (`tools/agformat/capture_boxes.py`); `test/agendum/tui/agenda_boxes_test.exs` compares Agendum's boxes with it |
 | `docs/reference/agenda_messages.json` | Agenda 2.0's texts from `AGENDA.RI`: messages, questions, prompts and the help line of every setting, `|` a line break (`tools/agformat/extract_messages.py`); Lotus's text, mind it before going public |
+| `docs/reference/agenda_message_pairs.md` | Each of Agendum's messages (2026-10-25) paired with Agenda's for the same situation, or none: the table behind `Agendum.TUI.Messages` |
 | `tools/agformat/DRIVING_AGENDA.md` | Running the real Agenda headless to check a behaviour (`agenda_driver.py`) |
 
 ## Plans

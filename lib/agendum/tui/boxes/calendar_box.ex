@@ -153,7 +153,7 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
   def set_time(state, text) do
     case Core.read_when(state.db, text, State.context(state)) do
       {:ok, _date, %Time{} = time} -> update(state, &%{&1 | time: time})
-      _ -> State.error(state, "Not a time: #{text}")
+      _ -> State.error(state, Agendum.TUI.Messages.text(:bad_time))
     end
   end
 
@@ -161,7 +161,7 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
   def jump(state, text) do
     case Core.read_when(state.db, text, State.context(state)) do
       {:ok, date, _time} -> update(state, &%{&1 | date: date})
-      :error -> State.error(state, "Not a date: #{text}")
+      :error -> State.error(state, Agendum.TUI.Messages.text(:bad_date))
     end
   end
 

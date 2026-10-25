@@ -128,10 +128,10 @@ defmodule Agendum.TUI.Update.Editing do
         state
 
       {:error, :invalid_date} ->
-        State.error(state, "Not a date: #{text}")
+        State.error(state, Agendum.TUI.Messages.text(:bad_date))
 
       {:error, :not_a_number} ->
-        State.error(state, "Not a number: #{String.trim(text)}")
+        State.error(state, Agendum.TUI.Messages.text(:bad_number))
 
       {:error, :ambiguous} ->
         State.error(state, "\"#{text}\" matches several categories; type more or press F3")
@@ -210,7 +210,7 @@ defmodule Agendum.TUI.Update.Editing do
   # A special action (R15b) may have discarded the item at once.
   defp report_auto_assignments(state, item_id, _already, _old_when)
        when not is_map_key(state.db.items, item_id),
-       do: State.info(state, "The item was discarded by a special action")
+       do: State.info(state, Agendum.TUI.Messages.text(:discarded_by_action))
 
   defp report_auto_assignments(state, item_id, already, old_when) do
     added =

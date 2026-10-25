@@ -119,7 +119,7 @@ defmodule Agendum.TUI.MacrosTest do
   end
 
   test "a macro without keystrokes says so; ALT-Z before any run says so", %{state: state} do
-    assert panel(press(state, {:alt, "z"})) =~ "No macro run yet"
+    assert panel(press(state, {:alt, "z"})) =~ message(:no_macro_to_restart)
     state = press(state, [{:alt_f, 3}, :insert, "Empty", :enter, :enter])
     assert panel(state) =~ "Empty has no keystrokes yet"
   end
@@ -221,10 +221,10 @@ defmodule Agendum.TUI.MacrosTest do
       assert panel(state) =~ "Only a macro attached to a key runs everywhere else"
 
       state = state |> to_setting("Attach to key") |> press([" ", "{AltF3}", :enter])
-      assert panel(state) =~ "ALT-F1, ALT-F3 and ALT-Z cannot run a macro"
+      assert panel(state) =~ message(:macro_key_reserved)
 
       state = press(state, [" ", "{F4}{F5}", :enter])
-      assert panel(state) =~ "Type one key"
+      assert panel(state) =~ message(:macro_one_key)
     end
 
     test "inside a run, an attached key does its own work", %{state: state} do

@@ -320,7 +320,7 @@ defmodule Agendum.TUI.Macros do
 
   defp run_last(state) do
     case state.macro.last && state.db.macros[state.macro.last] do
-      nil -> State.error(state, "No macro run yet (ALT-F3 shows them)")
+      nil -> State.error(state, Agendum.TUI.Messages.text(:no_macro_to_restart))
       macro -> run(state, macro)
     end
   end

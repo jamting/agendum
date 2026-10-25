@@ -36,7 +36,7 @@ defmodule Agendum.TUI.DateLanguageTest do
       state |> filter_picker(:view) |> press(["When", :enter, " ", :down, "måndag", :enter])
 
     assert State.view(state).filter != []
-    refute screen(state) =~ "Not a date"
+    refute panel(state) =~ message(:bad_date)
   end
 
   test "English is not read unless it is the fallback" do

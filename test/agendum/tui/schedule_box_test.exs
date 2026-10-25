@@ -63,7 +63,7 @@ defmodule Agendum.TUI.ScheduleBoxTest do
     assert not_low |> press(:enter) |> items() == []
 
     picked = start |> open_box() |> press([" ", "Calls", :enter])
-    assert screen(picked) =~ "Pick a date category"
+    assert panel(picked) =~ message(:select_date_category)
   end
 
   test "the Show View can then be browsed to other days", %{state: state} do
