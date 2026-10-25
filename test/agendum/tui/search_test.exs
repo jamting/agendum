@@ -65,12 +65,12 @@ defmodule Agendum.TUI.SearchTest do
 
   test "Search > File shows every match in the Show View; ALT-F8 returns", %{state: state} do
     state = press(state, [{:f, 10}, "u", "s", "m", "Abigail", :enter])
-    assert State.view(state).name == "Show View"
+    assert State.view(state).name == "*Show View*"
     assert screen(state) =~ "2 item(s) contain"
     assert Enum.count(Layout.rows(state), &(&1.kind == :item)) == 2
 
     state = press(state, {:alt_f, 8})
     assert State.view(state).name == "Activities"
-    assert State.view(press(state, {:alt_f, 8})).name == "Show View"
+    assert State.view(press(state, {:alt_f, 8})).name == "*Show View*"
   end
 end

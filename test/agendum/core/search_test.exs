@@ -59,7 +59,7 @@ defmodule Agendum.Core.SearchTest do
 
     {db, view_id} = Core.show_match(db, q("budget"))
     view = Database.view(db, view_id)
-    assert view.name == "Show View"
+    assert view.name == "*Show View*"
     [section] = ViewModel.build(db, view)
     assert Enum.map(section.rows, & &1.item.text) == ["check the budget", "budget meeting"]
 

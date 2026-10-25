@@ -169,5 +169,20 @@ defmodule Agendum.Core.AlarmsTest do
       assert Enum.map(current.rows, & &1.item.id) == [later]
       assert Enum.map(past.rows, & &1.item.id) == [id]
     end
+
+    # Agenda's Show view is named *Show View* (checked in Agenda 2.0,
+    # 2026-10-25); one saved by an older Agendum as "Show View" is the
+    # same view, and gets the name when it is next filled
+    test "the Show View is *Show View*; an old Show View is found by its old name", %{db: db} do
+      assert Core.show_view(db) == nil
+      {db, view_id} = Core.show_alarms(db)
+      assert db.views[view_id].name == "*Show View*"
+      assert Core.show_view(db) == view_id
+
+      old = Database.update_view(db, view_id, &%{&1 | name: "Show View"})
+      assert Core.show_view(old) == view_id
+      {old, ^view_id} = Core.show_alarms(old)
+      assert old.views[view_id].name == "*Show View*"
+    end
   end
 end

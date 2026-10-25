@@ -78,7 +78,8 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
       ])
 
   @impl Box
-  def run(state, mode, :done), do: show(State.pop(state), mode)
+  def run(state, mode, :done),
+    do: Prompts.replace_show_view(State.pop(state), {__MODULE__, :show, [mode]})
 
   # F6 on the Date category or the Section head: its Category Properties
   def run(state, mode, :category_props) do
@@ -114,7 +115,8 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
   defp change(state, _mode, :filter),
     do: CategoryScreens.open_picker(state, {:schedule_filter, nil}, nil)
 
-  defp show(state, mode) do
+  @doc "Shows the schedule in the Show View (`Prompts.replace_show_view/2`)."
+  def show(state, mode) do
     command = {:show_schedule, mode.date_category, mode.section, mode.date, mode.filter}
 
     case State.command(state, command) do

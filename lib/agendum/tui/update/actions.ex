@@ -13,7 +13,6 @@ defmodule Agendum.TUI.Update.Actions do
     Boxes.ColumnBox,
     Commands,
     Moves.ColumnWidth,
-    Terminal.Draw,
     Boxes.FileProperties,
     History,
     Boxes.ItemProperties,
@@ -168,7 +167,7 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :follow_link, %{kind: :item, item: item}) do
     case Core.link_targets(state.db, item.id) do
       [] -> State.error(state, "This item has no links to other items")
-      ids -> show_linked(state, ids, "linked item")
+      ids -> Prompts.replace_show_view(state, {__MODULE__, :show_linked, [ids, "linked item"]})
     end
   end
 
@@ -177,8 +176,14 @@ defmodule Agendum.TUI.Update.Actions do
 
   defp do_perform(state, :linked_from, %{kind: :item, item: item}) do
     case Core.linked_from(state.db, item.id) do
-      [] -> State.info(state, "No item links to this one")
-      ids -> show_linked(state, ids, "item linking here", "items linking here")
+      [] ->
+        State.info(state, "No item links to this one")
+
+      ids ->
+        Prompts.replace_show_view(
+          state,
+          {__MODULE__, :show_linked, [ids, "item linking here", "items linking here"]}
+        )
     end
   end
 
@@ -254,10 +259,8 @@ defmodule Agendum.TUI.Update.Actions do
 
   # Utilities Show Alarm: the Show View with !Current Alarms! and !Past
   # Alarms! (R38), as Agenda's
-  defp do_perform(state, :alarm_list, _) do
-    {:ok, state, %{new: view_id}} = State.command(state, {:show_alarms})
-    State.switch_view(state, view_id)
-  end
+  defp do_perform(state, :alarm_list, _),
+    do: Prompts.replace_show_view(state, {__MODULE__, :show_alarms, []})
 
   defp do_perform(state, :search_view, _), do: SearchBox.open(state, :view)
   defp do_perform(state, :search_file, _), do: SearchBox.open(state, :file)
@@ -284,14 +287,8 @@ defmodule Agendum.TUI.Update.Actions do
           )
 
         ids ->
-          {:ok, state, %{new: view_id}} = State.command(state, {:show_items, ids})
-          noun = if direction == :dependents, do: "dependent", else: "prerequisite"
-
-          state
-          |> State.switch_view(view_id)
-          |> State.info(
-            "#{Draw.count(length(ids), noun <> " item")} · ALT-F8 returns to the last view"
-          )
+          noun = if direction == :dependents, do: "dependent item", else: "prerequisite item"
+          Prompts.replace_show_view(state, {__MODULE__, :show_linked, [ids, noun]})
       end
     end
   end
@@ -448,7 +445,14 @@ defmodule Agendum.TUI.Update.Actions do
     end
   end
 
-  defp show_linked(state, ids, noun, plural \\ nil) do
+  @doc "Shows the alarm list in the Show View (`Prompts.replace_show_view/2`)."
+  def show_alarms(state) do
+    {:ok, state, %{new: view_id}} = State.command(state, {:show_alarms})
+    State.switch_view(state, view_id)
+  end
+
+  @doc "Shows items in the Show View, saying how many (`Prompts.replace_show_view/2`)."
+  def show_linked(state, ids, noun, plural \\ nil) do
     {:ok, state, %{new: view_id}} = State.command(state, {:show_items, ids})
     what = if length(ids) == 1, do: "1 #{noun}", else: "#{length(ids)} #{plural || noun <> "s"}"
 

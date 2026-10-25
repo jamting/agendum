@@ -19,7 +19,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
 
   alias Agendum.Core.Search
   alias Agendum.TUI.Boxes.{Box, Template}
-  alias Agendum.TUI.{Keymap, Layout, Typing.LineEdit, State}
+  alias Agendum.TUI.{Keymap, Layout, Typing.LineEdit, State, Update.Prompts}
 
   # Direction only when searching the view
   @layout """
@@ -121,12 +121,13 @@ defmodule Agendum.TUI.Boxes.SearchBox do
 
     cond do
       String.trim(search.text) == "" -> State.error(state, "Type what to search for")
-      mode.scope == :file -> show_match(state, search)
+      mode.scope == :file -> Prompts.replace_show_view(state, {__MODULE__, :show_match, [search]})
       true -> first_match(state, search, mode.direction)
     end
   end
 
-  defp show_match(state, search) do
+  @doc "Fills the Show View with a search's matches (`Prompts.replace_show_view/2`)."
+  def show_match(state, search) do
     {:ok, state, %{new: view_id}} = State.command(state, {:show_match, search})
     state = State.switch_view(state, view_id)
     count = state |> Layout.rows() |> Enum.count(&(&1.kind == :item))

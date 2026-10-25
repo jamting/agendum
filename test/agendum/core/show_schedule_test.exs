@@ -26,7 +26,7 @@ defmodule Agendum.Core.ShowScheduleTest do
   test "shows the items of one date, under the section head", %{db: db, when: w} do
     {:ok, db, view} = Core.show_schedule(db, w, w, ~D[2026-10-14], [])
     view_struct = db.views[view]
-    assert view_struct.name == "Show View"
+    assert view_struct.name == "*Show View*"
     assert Enum.map(view_struct.sections, & &1.category_id) == [w]
     assert texts(db, view) == ["Call Pooh on Wednesday", "Tea on Wednesday"]
   end

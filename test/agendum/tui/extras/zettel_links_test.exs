@@ -42,7 +42,7 @@ defmodule Agendum.TUI.Extras.ZettelLinksTest do
   test "Follow shows the items an item links to in the Show View; ALT-F8 back",
        %{state: state, party: party} do
     state = state |> press([:down, :down, :down]) |> press([{:f, 10}, "i", "z", "f"])
-    assert State.view(state).name == "Show View"
+    assert State.view(state).name == "*Show View*"
     assert screen(state) =~ "1 linked item · ALT-F8 returns to the last view"
     assert screen(state) =~ "The party"
     refute screen(state) =~ "Owl's birthday"

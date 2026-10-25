@@ -32,14 +32,14 @@ defmodule Agendum.TUI.ScheduleBoxTest do
     assert screen(state) =~ ~r/Date +: Tue 10\/13\/26/
 
     state = press(state, :enter)
-    assert State.view(state).name == "Show View"
+    assert State.view(state).name == "*Show View*"
     assert [item] = items(state)
     assert item =~ "Call Marketing"
     assert panel(state) =~ "Schedule for Tue 10/13/26"
 
     # at 80 columns the message leaves the view's line in sight
     [_, view_line | _] = %{state | width: 80} |> screen() |> String.split("\n")
-    assert view_line =~ "View: Show View"
+    assert view_line =~ "View: *Show View*"
   end
 
   test "F3 picks the date from the pop-up calendar", %{state: state} do

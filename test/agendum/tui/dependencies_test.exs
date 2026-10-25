@@ -80,7 +80,7 @@ defmodule Agendum.TUI.DependenciesTest do
 
     test "Prereqs ▸ One level lists the item's prerequisites in the Show View", %{state: state} do
       state = press(state, [{:f, 10}, "u", "s", "p", "o"])
-      assert State.view(state).name == "Show View"
+      assert State.view(state).name == "*Show View*"
       assert [first, second] = shown_texts(state)
       assert first =~ "Set up meeting"
       assert second =~ "Don't forget"

@@ -121,4 +121,22 @@ defmodule Agendum.TUI.AlarmsTest do
     assert Agendum.Core.alarm_list(state.db).past == []
     assert state.today == ~D[2026-10-09]
   end
+
+  # Agenda's one Show view (checked in Agenda 2.0, 2026-10-25): Show Match,
+  # Sched or Alarm with one already there ask "Delete the existing Show
+  # view?"; ESC keeps it as it is
+  test "a second Show asks before replacing the Show view", %{state: state} do
+    state = press(state, [{:f, 10}, "u", "s", "a"])
+    assert screen(state) =~ "View: *Show View*"
+    refute screen(state) =~ "Delete the existing Show view?"
+
+    state = press(state, [{:f, 10}, "u", "s", "s", :enter])
+    assert screen(state) =~ "Delete the existing Show view?"
+    kept = press(state, :esc)
+    assert screen(kept) =~ "!Current Alarms!"
+
+    replaced = press(state, :enter)
+    refute screen(replaced) =~ "!Current Alarms!"
+    assert replaced.db.views[replaced.view_id].name == "*Show View*"
+  end
 end

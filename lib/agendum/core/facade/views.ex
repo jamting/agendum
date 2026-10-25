@@ -18,7 +18,9 @@ defmodule Agendum.Core.Facade.Views do
   @typep id :: Agendum.Core.id()
   @typep clock :: Agendum.Core.clock()
 
-  @show_view "Show View"
+  # Agenda's name for its Show view; files from before 0.50 have the old one
+  @show_view "*Show View*"
+  @old_show_view "Show View"
   # the widest a fitted column gets (R22a)
   @fit_room 80
   # the widest item column: Agenda's 77 was the screen; terminals are wider
@@ -728,15 +730,30 @@ defmodule Agendum.Core.Facade.Views do
   @spec show_match(db, Agendum.Core.Search.t()) :: {db, id}
   def show_match(db, %Agendum.Core.Search{} = search), do: show(db, search)
 
+  @doc """
+  The Show View (Show Match, Sched, Alarm …), or nil when the file has
+  none: Agenda keeps only one, and asks before it is replaced. One named
+  "Show View" by an older Agendum is it too.
+  """
+  @spec show_view(db) :: id | nil
+  def show_view(db) do
+    views = Database.views(db)
+
+    found =
+      Enum.find(views, &(&1.name == @show_view)) || Enum.find(views, &(&1.name == @old_show_view))
+
+    found && found.id
+  end
+
   # The Show View, made the first time; each use starts it afresh, so one
   # use's section and filter do not linger into the next.
   # private functions take defaults too: this defines `show/2`, `show/3`
   # and `show/4`
   defp show(db, match, section \\ nil, filter \\ []) do
     {db, view_id} =
-      case Enum.find(Database.views(db), &(&1.name == @show_view)) do
+      case show_view(db) do
         nil -> Database.insert_view(db, @show_view)
-        view -> {db, view.id}
+        id -> {db, id}
       end
 
     section = %Section{category_id: section || db.main_id}
@@ -745,7 +762,14 @@ defmodule Agendum.Core.Facade.Views do
       Database.update_view(
         db,
         view_id,
-        &%{&1 | match: match, sections: [section], filter: filter, datebook: nil}
+        &%{
+          &1
+          | name: @show_view,
+            match: match,
+            sections: [section],
+            filter: filter,
+            datebook: nil
+        }
       )
 
     {db, view_id}

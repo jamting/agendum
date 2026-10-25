@@ -119,7 +119,7 @@ defmodule Agendum.Core.DependenciesTest do
 
     test "the Show View lists them", %{db: db, find: find, write: write, sign: sign} do
       {db, view} = Core.show_items(db, Core.related_items(db, find, :dependents, :all))
-      assert db.views[view].name == "Show View"
+      assert db.views[view].name == "*Show View*"
 
       texts =
         db |> ViewModel.build(db.views[view]) |> hd() |> Map.get(:rows) |> Enum.map(& &1.item.id)

@@ -91,6 +91,25 @@ defmodule Agendum.TUI.Update.Prompts do
         answer: true
       })
 
+  @doc """
+  Shows something in the Show View (Show Match, Sched, Alarm, Prereqs …):
+  `then` is `{module, function, args}`, called with the state first. With a
+  Show View already there, Agenda's question comes first ("Delete the
+  existing Show view?", checked in Agenda 2.0, 2026-10-25): Agenda keeps
+  one Show view, and ESC leaves it as it is.
+  """
+  @spec replace_show_view(State.t(), {module, atom, list}) :: State.t()
+  def replace_show_view(state, then) do
+    if Agendum.Core.show_view(state.db),
+      do: confirm(state, "Delete the existing Show view?", {:replace_show_view, then}),
+      else: show(state, then)
+  end
+
+  # `apply/3` calls a function named by data: the module, its name and the
+  # arguments, here with the state put first. The question's action stays
+  # plain data this way, not a function kept in the state.
+  defp show(state, {module, function, args}), do: apply(module, function, [state | args])
+
   @doc "A key in a one-line prompt; ENTER does its action, ESC cancels."
   def prompt_key(state, mode, key) do
     case key do
@@ -398,6 +417,8 @@ defmodule Agendum.TUI.Update.Prompts do
   def help, do: "Y or N answers. SPACE switches the answer; ENTER accepts the one shown."
 
   defp confirmed(state, {:make_numeric, id}, true), do: make_numeric(state, id)
+
+  defp confirmed(state, {:replace_show_view, then}, true), do: show(state, then)
 
   # DEL in the alarm list (R38)
   defp confirmed(state, {:remove_alarm, :current, id}, true),
