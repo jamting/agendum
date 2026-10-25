@@ -4,6 +4,11 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.47.0 — 2026-10-25
+
+Unindexed categories, as in Lotus Agenda.
+
+- Importing an Agenda file keeps an **unindexed category** unindexed, each item's value its text (it used to become a child category per value).
 - **Unindexed categories**, Agenda's fourth type: one **text** per item, such as a phone number or an address. Make one with Column Add ▸ Category type ▸ Unindexed, or Category Properties ▸ Type. Typing in its column puts the text under `Text value:`; **⌂** shows at the top right. Item Properties shows the text, and F4 changes it. Files are saved in format 40.
 ## 0.46.0 — 2026-10-25
 

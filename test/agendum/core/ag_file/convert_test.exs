@@ -135,19 +135,20 @@ defmodule Agendum.Core.AgFile.ConvertTest do
     assert {:ok, _db, _report} = AgFile.import(bytes("RICH"), password: "anything")
   end
 
-  test "an unindexed category's values become its children; a date category's dates stay" do
+  # unindexed categories are Agendum's too since R29b (2026-10-25)
+  test "an unindexed category stays unindexed, its values texts; a date category's dates stay" do
     {db, report} = import!("UX")
     owls = item(db, "Owls in winter")
     page = db.categories |> Map.values() |> Enum.find(&(&1.name == "Page"))
-    assert page.kind == :standard
-    assert [value] = page.children
-    assert db.categories[value].name == "Barn owls at dusk42"
-    assert Database.member?(db, owls.id, value)
+    assert page.kind == :unindexed
+    assert page.children == []
+    assert Database.text(db, owls.id, page.id) == "Barn owls at dusk42"
+    assert Database.member?(db, owls.id, page.id)
     assert in?(db, owls, "Sample Company")
 
     issue = db.categories |> Map.values() |> Enum.find(&(&1.name == "Issue"))
     assert {~D[2090-10-01], nil, true} = db.dates[{owls.id, issue.id}]
-    assert Enum.any?(report.notes, &(&1 =~ "Page was unindexed"))
+    refute Enum.any?(report.notes, &(&1 =~ "was unindexed"))
   end
 
   # Agenda showed no done item or number in these files (F4 did not take

@@ -6,8 +6,7 @@ defmodule Agendum.Core.AgFile.Convert do
 
   Agenda numbers its items, categories and views from one counter, as
   Agendum does, so they keep their numbers as ids; what Agendum makes
-  anew (the categories of an unindexed category's values) gets ids above
-  them.
+  anew gets ids above them.
 
   What goes in, and how:
 
@@ -17,7 +16,8 @@ defmodule Agendum.Core.AgFile.Convert do
       text matching settings of their own, and date rules
     * items (not those in the trash): text, note (Agenda ended lines with
       CR), Entry, When (with its time and a recurring rule) and Done
-      dates, dates in other date categories, numbers, alarms; only the
+      dates, dates in other date categories, numbers, unindexed
+      categories' texts (R29b), alarms; only the
       assignments made by hand are kept (`:assign` in the result), the
       others Agendum works out again by its own rules
     * views: sections, columns (width, number format), sorting, filters
@@ -76,14 +76,12 @@ defmodule Agendum.Core.AgFile.Convert do
     {special, ctx} = special(ctx)
     ctx = Map.put(ctx, :special, special)
 
-    # unindexed categories become standard ones with a child per value
-    {values, ctx} = unindexed_values(file.items, ctx)
-
+    # unindexed categories stay unindexed, their values texts (R29b)
     live = Enum.reject(file.items, & &1.trashed)
-    {items, assign, agenda, ctx} = items(live, values, ctx)
+    {items, assign, agenda, ctx} = items(live, ctx)
     {views, ctx} = views(file.views, ctx)
     {views, ctx} = if views == [], do: fallback_view(ctx), else: {views, ctx}
-    categories = categories(cats, values, ctx)
+    categories = categories(cats, ctx)
 
     ctx =
       note_once(ctx, file.macros != [], "#{length(file.macros)} macros were not imported (later)")
@@ -156,21 +154,14 @@ defmodule Agendum.Core.AgFile.Convert do
     end)
   end
 
-  defp categories(_cats, values, ctx) do
+  defp categories(_cats, ctx) do
     # the order: MAIN, then depth first, as the JSON format wants it
-    ordered = order(ctx.by_id, ctx.main)
-
-    Enum.flat_map(ordered, fn id ->
-      cat = ctx.by_id[id]
-      children = Map.get(values, id, [])
-      own = category(cat, ctx, Enum.map(children, &elem(&1, 1)))
-      [own | for({value, child_id} <- children, do: value_category(value, child_id, id))]
-    end)
+    ctx.by_id |> order(ctx.main) |> Enum.map(&category(ctx.by_id[&1], ctx))
   end
 
   defp order(by_id, id), do: [id | Enum.flat_map(by_id[id].children, &order(by_id, &1))]
 
-  defp category(cat, ctx, value_children) do
+  defp category(cat, ctx) do
     settings = Map.get(cat, :settings, %{})
     set = Map.get(cat, :conditions) || %{conditions: [], actions: []}
     kind = kind(cat.type)
@@ -180,7 +171,7 @@ defmodule Agendum.Core.AgFile.Convert do
       "name" => cat.name,
       "short_name" => Map.get(cat, :short_name),
       "parent" => cat.parent,
-      "children" => cat.children ++ value_children,
+      "children" => cat.children,
       "kind" => kind,
       "exclusive" => kind == "standard" and Map.get(settings, :exclusive_children, false),
       "match_name" => Map.get(settings, :match_name, true),
@@ -202,13 +193,10 @@ defmodule Agendum.Core.AgFile.Convert do
     }
   end
 
-  defp value_category(value, id, parent) do
-    %{"id" => id, "name" => value, "parent" => parent, "children" => [], "match_name" => false}
-  end
-
   defp kind("numeric"), do: "numeric"
   defp kind("date"), do: "date"
-  defp kind(_standard_or_unindexed), do: "standard"
+  defp kind("unindexed"), do: "unindexed"
+  defp kind(_standard), do: "standard"
 
   defp known?(ctx, id, type \\ nil) do
     case ctx.by_id[id] do
@@ -271,44 +259,11 @@ defmodule Agendum.Core.AgFile.Convert do
   defp note_text(%{file: _}), do: ""
   defp note_text(text), do: text |> String.replace("\r\n", "\n") |> String.replace("\r", "\n")
 
-  # --- unindexed categories ----------------------------------------------------
-
-  # Each value of an unindexed category becomes a child of it, as Agenda
-  # makes them when such a category is changed to standard: value => id.
-  defp unindexed_values(items, ctx) do
-    pairs =
-      for item <- items,
-          not item.trashed,
-          a <- item.assignments,
-          is_binary(Map.get(a, :value)),
-          match?(%{type: "unindexed"}, ctx.by_id[a.category]),
-          a.value != "",
-          uniq: true,
-          do: {a.category, a.value}
-
-    {values, next_id} =
-      Enum.reduce(pairs, {%{}, ctx.next_id}, fn {cat, value}, {acc, id} ->
-        {Map.update(acc, cat, [{value, id}], &(&1 ++ [{value, id}])), id + 1}
-      end)
-
-    ctx = %{ctx | next_id: next_id}
-
-    ctx =
-      Enum.reduce(values, ctx, fn {cat, children}, ctx ->
-        note(
-          ctx,
-          "#{ctx.by_id[cat].name} was unindexed: its #{length(children)} values are now its children"
-        )
-      end)
-
-    {values, ctx}
-  end
-
   # --- items -------------------------------------------------------------------
 
-  defp items(items, values, ctx) do
+  defp items(items, ctx) do
     Enum.reduce(items, {[], %{}, %{}, ctx}, fn item, {out, assign, agenda, ctx} ->
-      {json, by_hand, ctx} = item(item, values, ctx)
+      {json, by_hand, ctx} = item(item, ctx)
 
       agenda_cats =
         for a <- item.assignments, standard?(ctx, a.category), uniq: true, do: a.category
@@ -326,7 +281,7 @@ defmodule Agendum.Core.AgFile.Convert do
     end
   end
 
-  defp item(item, values, ctx) do
+  defp item(item, ctx) do
     sp = ctx.special
     by_cat = Map.new(item.assignments, &{&1.category, &1})
     when_a = by_cat[sp.when]
@@ -340,17 +295,18 @@ defmodule Agendum.Core.AgFile.Convert do
           note(ctx, "\"#{item.text}\": its note is in the file #{item.note.file}, not imported"),
         else: ctx
 
-    # by hand: explicit assignments to standard categories; an unindexed
-    # value is by hand too, to the child made for it
+    # by hand: explicit assignments to standard categories; a text in an
+    # unindexed category is by hand too (R29b)
     by_hand =
       for a <- item.assignments, a.how == "explicit", standard?(ctx, a.category), do: a.category
 
-    unindexed =
+    texts =
       for a <- item.assignments,
+          match?(%{type: "unindexed"}, ctx.by_id[a.category]),
           is_binary(Map.get(a, :value)),
-          {value, id} <- Map.get(values, a.category, []),
-          value == a.value,
-          do: id
+          do: %{"category" => a.category, "value" => a.value}
+
+    unindexed = for t <- texts, do: t["category"]
 
     json = %{
       "id" => item.id,
@@ -382,7 +338,8 @@ defmodule Agendum.Core.AgFile.Convert do
           match?(%{type: "numeric"}, ctx.by_id[a.category]),
           is_float(Map.get(a, :value)),
           do: %{"category" => a.category, "value" => a.value}
-        )
+        ),
+      "texts" => texts
     }
 
     {json, by_hand ++ unindexed, ctx}
