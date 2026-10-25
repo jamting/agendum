@@ -233,12 +233,7 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
 
 The order (meeting 2026-10-25, § 7): the small steps below in one or two batches, then Search compared with Agenda's, then Agenda's help (under Help) last; the Optional ones wait for the roadmap.
 
-- [ ] Search as Agenda's: the differences found (overnight 2026-10-26, checked in Agenda 2.0 on RICH.AG), each a habit change for the owner to settle:
-  - [ ] ENTER on Search for takes the typed text and stays in the box, as in every Agenda box; a second ENTER searches (ours searches on the first ENTER)
-  - [ ] A forward search starts after the highlighted item, which is not a match itself (from "Call Bob about the budget", searching "the" went to "Write to the bank"); ours starts on it
-  - [ ] Search mode as Agenda shows it: the File line with the date and no time, the key bar with F1 Help only, and no message ("Match 1 of 2 · ALT-N next …", "Search ended" are ours)
-  - [ ] ALT-N past the last match stays there without a message (Agenda may beep; unheard); ours says there are no more
-  - [ ] No match: Agenda's Error box, "Agenda couldn't find any matches for the text you entered." (Press any key to continue); ours says it on the control panel
+- [x] (2026-10-26; the owner's choice: all as Agenda's) Search as Agenda's: ENTER on Search for takes the text and a second ENTER searches; a forward search starts after the highlighted item; search mode quiet (no message, the date without the time, F1 Help alone); past the last match only a beep; no match is Agenda's Error box (R37)
 - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)
 - [ ] The `o` indicator at the top right while the file has a circular reference (User's Guide 20-21): working out the circular items is a round of conditions for every item, so whether to do it on every screen or keep the result (a stored mark, as Agenda's !Circular Reference! category) is the owner's to settle
 - [ ] File Properties' Set file password, with Agenda's New File box asking for a description and password when a file is made (real encryption: an ADR first; meeting 2026-10-25, § 7: required; the owner, 2026-10-25: a step of its own)

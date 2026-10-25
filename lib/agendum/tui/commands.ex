@@ -439,6 +439,9 @@ defmodule Agendum.TUI.Commands do
       properties: "Props",
       sort: "Sort"
     },
+    # searching a view: Agenda's bar names F1 Help alone (checked in Agenda
+    # 2.0, 2026-10-26); ALT-N, ALT-P and F7 still work
+    searching: %{help: "Help"},
     box: %{default: "Default", default_all: "DfltAll"},
     # typing a line, as Agenda's bar while editing (2026-10-25)
     line: %{

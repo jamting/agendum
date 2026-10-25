@@ -66,7 +66,9 @@ defmodule Agendum.TUI.Render.KeyBar do
   end
 
   defp place(_state, nil), do: :view
-  defp place(_state, %{type: type}) when type in [:note, :catmgr, :viewmgr, :menu], do: type
+
+  defp place(_state, %{type: type}) when type in [:note, :catmgr, :viewmgr, :menu, :searching],
+    do: type
 
   defp place(_state, %{type: type} = mode) when is_map_key(@boxes, type) do
     box = @boxes[type]

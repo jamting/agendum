@@ -300,6 +300,13 @@ defmodule Agendum.TUI.Render.ControlPanel do
       %{type: :catmgr} when base.type == :catmgr ->
         marks
 
+      # searching the view: the date, the time's place blank, as Agenda's
+      # (checked in Agenda 2.0, 2026-10-26)
+      %{type: :searching} ->
+        marks <>
+          DateFormat.date(NaiveDateTime.to_date(state.now), state.db.date_format) <>
+          String.duplicate(" ", 9) <> " "
+
       # typing an item's text: the date, and EDIT in the time's place, as
       # Agenda's ("10/25/26 EDIT")
       _ when base == nil and state.modes == [] and state.edit != nil ->

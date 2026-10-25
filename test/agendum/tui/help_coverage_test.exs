@@ -18,6 +18,7 @@ defmodule Agendum.TUI.HelpCoverageTest do
   # far. A new box writes its own `about/2` or joins this list on purpose.
   @default_about_enough [
     Agendum.TUI.Boxes.AbandonBox,
+    Agendum.TUI.Boxes.ErrorBox,
     Agendum.TUI.Boxes.ActionBox,
     Agendum.TUI.Boxes.AutoAssignBox,
     Agendum.TUI.Boxes.CategoryMatchBox,

@@ -19,7 +19,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   use Agendum.TUI.Boxes.Box, finish: :done, choices: true
 
   alias Agendum.Core.Search
-  alias Agendum.TUI.Boxes.{Box, Template}
+  alias Agendum.TUI.Boxes.{Box, ErrorBox, FieldTyping, Template}
   alias Agendum.TUI.{Keymap, Layout, Typing.LineEdit, State, Update.Prompts}
 
   # Agenda's Search and Show Match boxes (checked in Agenda 2.0,
@@ -73,15 +73,25 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   def rows(%{scope: :file}), do: [:text, :on, :ignore_case]
 
   @impl Box
-  # On the text the person types: ← → HOME END move in it, other keys
-  # edit it; ↑ ↓ TAB still move between settings, ENTER and ESC end.
-  def handle(state, mode, key) when key in [:up, :down, :tab, :shift_tab, :enter, :esc],
-    do: run(state, mode, Map.fetch!(keymap(mode), key))
+  # Search for is typed as Agenda's fields are (checked in Agenda 2.0,
+  # 2026-10-26): a character starts typing over the text, F2 edits it, and
+  # ENTER takes it and stays in the box; a second ENTER searches
+  def handle(state, %{typing: {_, _}} = mode, key),
+    do: FieldTyping.key(state, mode, key, &typed/3)
 
-  def handle(state, mode, key), do: edit_text(state, mode, key)
+  def handle(state, mode, {:char, c}) do
+    if field(state, mode) == :text,
+      do: FieldTyping.start(state, mode, :text, c),
+      else: state
+  end
+
+  def handle(state, _mode, _key), do: state
+
+  defp typed(state, :text, text),
+    do: State.put_mode(state, %{State.mode(state) | line: LineEdit.new(text)})
 
   @impl Box
-  def typing?(_state, mode), do: Enum.at(rows(mode), mode.cursor) == :text
+  def typing?(_state, mode), do: FieldTyping.typing?(mode)
 
   # the settings box's keys; ENTER searches (R65)
   @impl Box
@@ -108,13 +118,6 @@ defmodule Agendum.TUI.Boxes.SearchBox do
 
   def run(state, mode, id),
     do: Box.run_settings(state, mode, Template.grid(@layouts[mode.scope], rows(mode)), id)
-
-  defp edit_text(state, mode, key) do
-    case LineEdit.handle(mode.line, key) do
-      {:ok, line} -> State.put_mode(state, %{mode | line: line})
-      :unhandled -> state
-    end
-  end
 
   defp change(mode, :on, step), do: put_in(mode.search.on, cycle(@ons, mode.search.on, step))
 
@@ -144,32 +147,28 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   @doc "Fills the Show View with a search's matches (`Prompts.replace_show_view/2`)."
   def show_match(state, search) do
     {:ok, state, %{new: view_id}} = State.command(state, {:show_match, search})
-    state = State.switch_view(state, view_id)
-    count = state |> Layout.rows() |> Enum.count(&(&1.kind == :item))
-
-    State.info(
-      state,
-      "#{count} item(s) contain \"#{String.trim(search.text)}\" · ALT-F8 returns to the last view"
-    )
+    State.switch_view(state, view_id)
   end
 
   defp first_match(state, search, direction) do
     found = matches(state, search)
 
+    # Agenda's searches start after (before) the highlighted item, not on
+    # it (checked in Agenda 2.0, 2026-10-26)
     index =
       case direction do
-        :forward -> Enum.find(found, &(&1 >= state.cursor))
-        :backward -> found |> Enum.reverse() |> Enum.find(&(&1 <= state.cursor))
+        :forward -> Enum.find(found, &(&1 > state.cursor))
+        :backward -> found |> Enum.reverse() |> Enum.find(&(&1 < state.cursor))
         :beginning -> List.first(found)
       end
 
+    # quiet, as Agenda's: no message while searching
     if index do
       state
       |> State.push(%Agendum.TUI.Modes.Searching{search: search})
       |> Layout.move_to(index)
-      |> report(found, index)
     else
-      State.error(state, Agendum.TUI.Messages.text(:no_matches))
+      ErrorBox.open(state, Agendum.TUI.Messages.text(:no_matches))
     end
   end
 
@@ -200,7 +199,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   defp searching(state, mode, :next_match), do: step(state, mode.search, 1)
   defp searching(state, mode, :previous_match), do: step(state, mode.search, -1)
   defp searching(state, _mode, :mark), do: mark_current(state)
-  defp searching(state, _mode, :close), do: state |> State.pop() |> State.info("Search ended")
+  defp searching(state, _mode, :close), do: State.pop(state)
   defp searching(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
   # the highlight moves as in the view
   defp searching(state, _mode, id), do: Agendum.TUI.Update.ViewKeys.run(state, id)
@@ -213,10 +212,10 @@ defmodule Agendum.TUI.Boxes.SearchBox do
         do: Enum.filter(found, &(&1 > state.cursor)),
         else: found |> Enum.filter(&(&1 < state.cursor)) |> Enum.reverse()
 
+    # past the last match: Agenda's error beep and nothing else
     case candidates do
-      [index | _] -> state |> Layout.move_to(index) |> report(found, index)
-      [] when direction > 0 -> State.error(state, Agendum.TUI.Messages.text(:no_more_matches))
-      [] -> State.error(state, Agendum.TUI.Messages.text(:no_more_matches))
+      [index | _] -> Layout.move_to(state, index)
+      [] -> State.effect(state, {:sound, :error})
     end
   end
 
@@ -236,15 +235,6 @@ defmodule Agendum.TUI.Boxes.SearchBox do
     |> Enum.map(&elem(&1, 1))
   end
 
-  defp report(state, found, index) do
-    position = Enum.find_index(found, &(&1 == index)) + 1
-
-    State.info(
-      state,
-      "Match #{position} of #{length(found)} · ALT-N next · ALT-P previous · F7 mark · ENTER ends"
-    )
-  end
-
   # --- the box -------------------------------------------------------------------
 
   @impl Box
@@ -254,8 +244,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   @impl Box
   def content(state, mode, _inner, _max_rows) do
     values = %{
-      # the text is always typed in, so it is drawn as the input line
-      text: "",
+      text: mode.line.text,
       on: %{item: "Item text", note: "Note text", both: "Both item & note"}[mode.search.on],
       # nil leaves the row out: searching the file has no direction
       direction:
@@ -265,9 +254,10 @@ defmodule Agendum.TUI.Boxes.SearchBox do
       ignore_case: if(mode.search.ignore_case, do: "Yes", else: "No")
     }
 
-    Template.render(@layouts[mode.scope], values,
-      selected: field(state, mode),
-      editing: {:text, mode.line}
+    Template.render(
+      @layouts[mode.scope],
+      values,
+      [selected: field(state, mode)] ++ FieldTyping.editing(mode)
     )
   end
 
