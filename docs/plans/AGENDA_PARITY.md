@@ -175,7 +175,7 @@ The parity work, in the order it is planned (the owner reorders it): each item s
 
 #### Next
 
-The rest of View layout and symbols (Screens and texts, below): rows, ♪, ♦ and » done (v0.39.0); next the · before column entries, ‼ done, the bracketed exclusive families, * on date categories, and the category manager without counts and tags.
+Control panel symbols and indicators (Screens and texts, below): `*` on a date category or value, `WAIT` while a calendar is fetched.
 
 #### Menus as Agenda's
 
@@ -189,7 +189,7 @@ Done: Category properties of a date or numeric category as Agenda's (R6a, 2026-1
 
 Done: the rest of Agenda as the reference for texts (2026-10-25: the settings boxes, the choice lists and the messages captured from Agenda 2.0 and compared by tests; `ROADMAP_DONE.md`, Milestone 2).
 
-- [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
+- [x] (2026-10-25; ‼, ·, the category manager's marks, brackets and no counts or tags, the owner's choices) View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags
   - [x] (2026-10-25, R59) Rows under a section indented four spaces, and ♪ on a section head (the owner's note, 2026-10-24; checked in Agenda 2.0, PLANNER's People view): an item's tag in column 5 and its text from column 7 (`    • Call Mattias`), its columns staying under their heads; a head's first column kept for ♪ when its category has a note (`♪Göran`), a space otherwise (` Unassigned`). Agenda draws an item's note as ♪ in the tag's place (`    ♪ Call Göran`), not `•♪` as ours (the ♪ above)
   - [x] (2026-10-25, R59) `»` on the current row (the owner's note, 2026-10-24; checked in Agenda 2.0): with the item text highlighted, `»` stands just before the row's first column; with a column entry highlighted (→), `»` takes the tag's place before the item text, so the row the highlight is on shows in both. Agenda's character (CP437 0xAF), the owner's choice; `>` only where a theme has no »
   - [x] (2026-10-25, R59; the owner's choice) `·` (CP437 0xFA) before a filled column entry (seen 2026-10-25 in PLANNER's Tasks view: `·Calls`, `·Mattia`; the highlighted row's first one becomes »); Help "View Indicators": the item is assigned to (or inherits) the column's head; not before numbers (seen in Expense Entry)

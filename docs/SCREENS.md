@@ -129,7 +129,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
     - **Date settings** `:date_rule` (Advanced settings of a date category, R6b). `Agendum.TUI.Boxes.DateRuleBox`.
     - **Text matching** `:category_match` (Advanced settings of a standard category, R16b). `Agendum.TUI.Boxes.CategoryMatchBox`.
     - **Note editor** `:note`.
-  - **Category manager** `:catmgr` (F9): full screen of the hierarchy; add, rename, promote, demote, move, sort, discard (R2–R8). `Agendum.TUI.CategoryScreens.Manager`.
+  - **Category manager** `:catmgr` (F9): full screen of the hierarchy, drawn as Agenda's (2026-10-25): the names, two columns a level, a mark two left of the name (♪ a note, ☼ a date category, # a numeric one), ┌ ├ └ before the children of an exclusive family ([ for a lone child), no counts or tags, no time at the top; add, rename, promote, demote, move, sort, discard (R2–R8). `Agendum.TUI.CategoryScreens.Manager`.
     - **Category Properties** `:props` (F6), **Note editor** `:note` (F5), **Help** `:help` (F1), **Picker** `:picker` (ALT-F10, where to move), **Choice** `:choice` (conflicts of a move).
   - **View manager** `:viewmgr` (F8): a box over the view, as Agenda's (screenshot 40): the views' names, * before a datebook view, ► before the view shown (R68); switch, add, rename, reorder, discard (DEL or F4), list by recently used (F5), and F6 for the highlighted view's View Properties (R78). `Agendum.TUI.Boxes.ViewManager`.
   - **Go to** `:goto` (ALT-F5): jump to a section (R42). `Agendum.TUI.Boxes.GoTo`.

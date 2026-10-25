@@ -28,9 +28,11 @@ defmodule Agendum.TUI.NegativeLinksTest do
     state = press(state, :esc)
     assert screen(state) =~ ~r/Excludes:.*\n.*Calls/
 
-    # ENTER keeps what was set (ESC would cancel it)
+    # ENTER keeps what was set (ESC would cancel it); the category manager
+    # shows names only, as Agenda's
     state = press(state, :enter)
-    assert screen(state) =~ "Meetings   not with Calls"
+    assert state.db.categories[meetings].excludes == [calls]
+    refute screen(state) =~ "not with Calls"
   end
 
   test "ENTER again removes it", %{state: state} do

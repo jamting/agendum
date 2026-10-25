@@ -55,8 +55,9 @@ defmodule Agendum.TUI.CategoryScreensTest do
   test "F9 shows the hierarchy", %{state: state} do
     screen = state |> press({:f, 9}) |> screen()
     assert screen =~ "Category Manager"
-    assert screen =~ ~r/Priority\s+exclusive/
-    assert screen =~ ~r/\n\s{7}High/
+    # an exclusive family's children bracketed, as Agenda's
+    assert screen =~ ~r/\n    Priority/
+    assert screen =~ ~r/\n     ┌High/
   end
 
   test "typing adds a sibling, F8 demotes it, F7 promotes it", %{state: state} do

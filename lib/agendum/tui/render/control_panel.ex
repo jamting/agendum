@@ -187,11 +187,9 @@ defmodule Agendum.TUI.Render.ControlPanel do
     Draw.line([{:title, left}], state.width - String.length(right), :title) ++ [{:title, right}]
   end
 
-  defp where_line(state, %{type: :catmgr}) do
-    count = " #{map_size(state.db.categories)} categories "
-    width = state.width - String.length(count)
-    Draw.line([{:title, " Category Manager"}], width, :title) ++ [{:title, count}]
-  end
+  # Agenda's second line in the manager: its name only
+  defp where_line(state, %{type: :catmgr}),
+    do: Draw.line([{:title, " Category Manager"}], state.width, :title)
 
   # Agenda's second line in a note is its font, which Agendum has not; the
   # note's own file goes here (NOTE_EDITOR.md, step 7)

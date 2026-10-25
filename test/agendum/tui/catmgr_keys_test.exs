@@ -18,6 +18,29 @@ defmodule Agendum.TUI.CatmgrKeysTest do
   defp names(state, ids), do: Enum.map(ids, &state.db.categories[&1].name)
   defp children(state, name), do: names(state, state.db.categories[id(state, name)].children)
 
+  # Agenda's category manager (checked in Agenda 2.0, 2026-10-25, PLANNER):
+  # MAIN in the third column, each level two further; a mark two left of
+  # the name (♪ a note, ☼ a date category, # a numeric one); ┌ ├ └ just
+  # before the children of an exclusive family ([ for a lone child); no
+  # counts or tags. The owner's choice, 2026-10-25
+  test "the category manager is drawn as Agenda's", %{state: state} do
+    calls = id(state, "Calls")
+    state = %{state | db: Agendum.Core.set_category_note(state.db, calls, "Who to ring")}
+    lines = state |> press({:f, 9}) |> screen() |> String.split("\n")
+    line = fn name -> Enum.find(lines, &(&1 =~ ~r/[ ┌├└\[]#{name}\s*$/)) end
+
+    assert line.("MAIN") == "  MAIN"
+    assert line.("When") == "  ☼ When"
+    assert line.("Calls") == "  ♪ Calls"
+    assert line.("Priority") == "    Priority"
+    assert line.("High") == "     ┌High"
+    assert line.("Medium") == "     ├Medium"
+    assert line.("Low") == "     └Low"
+    # no counts, tags or "aka" names; the second line has no count either
+    refute Enum.any?(lines, &(&1 =~ ~r/aka |exclusive|  \d+$/))
+    assert Enum.at(lines, 1) =~ ~r/^ Category Manager\s*$/
+  end
+
   test "ALT-R inserts a child of the highlighted category, as its first child", %{state: state} do
     state = state |> at(5) |> press([{:alt, "r"}, "Urgent", :enter])
     assert children(state, "Priority") == ["Urgent", "High", "Medium", "Low"]
