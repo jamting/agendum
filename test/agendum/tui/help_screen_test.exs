@@ -299,10 +299,15 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert screen(over) =~ "Macros"
     end
 
-    test "F1 while typing in the box does not open the help", %{box: box} do
+    # Agenda's bar names F1 Help while typing too (2026-10-25)
+    test "F1 while typing in the box opens the help; ESC goes back to the typing", %{box: box} do
       typing = press(box, {:f, 2})
       assert typing.edit != nil
-      assert State.mode(press(typing, {:f, 1})).type == :item_props
+      help = press(typing, {:f, 1})
+      assert State.mode(help).type == :help
+      back = press(help, :esc)
+      assert State.mode(back).type == :item_props
+      assert back.edit == typing.edit
     end
   end
 

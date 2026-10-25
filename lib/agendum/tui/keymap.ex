@@ -300,7 +300,17 @@ defmodule Agendum.TUI.Keymap do
     {:ctrl, "k"} => :delete_to_end,
     {:ctrl, "w"} => :delete_word,
     {:alt, :backspace} => :delete_word,
-    {:ctrl, "u"} => :clear
+    {:ctrl, "u"} => :clear,
+    # Agenda's editing keys (User's Guide 3-4; `Typing.LineClip`): F7
+    # marks, F3 copies, F4 cuts, ALT-F4 deletes, F2 pastes; F5 opens an
+    # item's note, F1 the help
+    {:f, 1} => :help,
+    {:f, 2} => :paste,
+    {:f, 3} => :copy,
+    {:f, 4} => :cut,
+    {:alt_f, 4} => :delete_marked,
+    {:f, 5} => :note,
+    {:f, 7} => :mark
   }
 
   # typing in a note (`Typing.TextEdit`); the note's own commands are `@note`

@@ -33,9 +33,34 @@ defmodule Agendum.TUI.Render.KeyBar do
   end
 
   # The place whose bar has Agenda's slots, or nil for a bar of hints:
-  # typing in a box's field keeps its hints (the Editing step)
+  # typing a line has Agenda's editing bar (`{:line, kind}`); automatic
+  # completion keeps its hints for now
   defp slotted(state) do
-    if state.edit == nil and not Completion.active?(state), do: place(state, State.mode(state))
+    cond do
+      Completion.active?(state) -> nil
+      typing_line?(state) -> {:line, line_kind(state)}
+      state.edit == nil -> place(state, State.mode(state))
+      true -> nil
+    end
+  end
+
+  # a line typed in the view, a manager or a prompt (`state.edit`), or in
+  # a box's field (`Boxes.FieldTyping`)
+  defp typing_line?(%State{edit: %{line: %Agendum.TUI.Typing.LineEdit{}}}), do: true
+  defp typing_line?(state), do: match?(%{typing: {_, _}}, State.mode(state))
+
+  # F5 NOTE is for an item's text; a file name's prompt keeps F3 CHOICES
+  defp line_kind(%State{edit: %{target: {:new_item, _, _}}}), do: :item
+  defp line_kind(%State{edit: %{target: {:edit_item, _}}}), do: :item
+
+  defp line_kind(state) do
+    case State.mode(state) do
+      %{type: :prompt, action: action} ->
+        if Agendum.TUI.Boxes.SelectFile.file_prompt?(action), do: :file_prompt, else: :other
+
+      _ ->
+        :other
+    end
   end
 
   defp place(_state, nil), do: :view
@@ -66,11 +91,26 @@ defmodule Agendum.TUI.Render.KeyBar do
       case {place, Agendum.TUI.Macros.attached(state, key)} do
         # a box's slot is what the key does on its highlighted field
         {{:box, box, mode}, _} -> Agendum.TUI.Boxes.Box.slot(box, state, mode, key)
+        {{:line, kind}, _} -> line_slot(kind, key)
         {_, nil} -> command_slot(state, place, key)
         {_, macro} -> {String.slice(macro.name, 0, 7), macro.name}
       end
     end
   end
+
+  # typing a line: the `:line` keymap's editing keys, as Agenda's bar
+  # (Help Paste Copy Cut Note · Mark; checked in Agenda 2.0, 2026-10-25)
+  defp line_slot(kind, key) do
+    case {kind, Keymap.lookup(:line, key)} do
+      {:file_prompt, :copy} -> {"Choices", "Choices"}
+      {kind, :note} when kind != :item -> {"", ""}
+      {_, nil} -> {"", ""}
+      {_, id} -> line_label(Commands.get(:line, id))
+    end
+  end
+
+  defp line_label(%{label: label, name: name}) when label != nil, do: {label, name}
+  defp line_label(_command), do: {"", ""}
 
   # the slot's key as Agenda's bar names it: F4, AltF4, CtlF4, ShfF4
   defp key_name(:none, n), do: "F#{n}"

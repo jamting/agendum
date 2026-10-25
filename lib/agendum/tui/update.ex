@@ -49,13 +49,15 @@ defmodule Agendum.TUI.Update do
     # first step that returns anything else (a new state) stops the chain,
     # and with no `else`, that value is the result. The order is the
     # priority: the splash screen, a macro key, the keys that work
-    # everywhere, an extra's key while the extras are off, the keys every
-    # box shares, then the screen on top.
+    # everywhere, an extra's key while the extras are off, the editing keys
+    # of a line being typed, the keys every box shares, then the screen on
+    # top.
     next =
       with :pass <- splash_key(state, key),
            :pass <- Agendum.TUI.Macros.key(state, key),
            :pass <- global_key(state, key),
            :pass <- extras_key(state, key),
+           :pass <- Agendum.TUI.Typing.LineClip.key(state, key),
            :pass <- box_command(state, key),
            do: dispatch(state, State.mode(state), key)
 

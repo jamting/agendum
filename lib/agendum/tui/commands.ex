@@ -311,7 +311,14 @@ defmodule Agendum.TUI.Commands do
     {:delete, "Delete", "Delete the character under the cursor", :none},
     {:delete_word, "Delete word", "Delete the word before", :none},
     {:delete_to_end, "Delete to end", "Delete to the end of the line", :none},
-    {:clear, "Clear", "Clear the line", :none}
+    {:clear, "Clear", "Clear the line", :none},
+    {:mark, "Mark", "Start or stop marking text", :none},
+    {:copy, "Copy", "Copy the marked text (or ask what)", :none},
+    {:cut, "Cut", "Cut the marked text (or ask what)", :none},
+    {:delete_marked, "Delete marked", "Delete the marked text, not kept", :none},
+    {:paste, "Paste", "Put in the text last copied or cut", :none},
+    {:note, "Note", "The item's note, keeping the text", :none},
+    {:help, "Help", "Help about where you are", :none}
   ]
 
   @text [
@@ -433,6 +440,16 @@ defmodule Agendum.TUI.Commands do
       sort: "Sort"
     },
     box: %{default: "Default", default_all: "DfltAll"},
+    # typing a line, as Agenda's bar while editing (2026-10-25)
+    line: %{
+      help: "Help",
+      paste: "Paste",
+      copy: "Copy",
+      cut: "Cut",
+      note: "Note",
+      mark: "Mark",
+      delete_marked: "Delete"
+    },
     # Agenda's menu bar has Help alone (checked in Agenda 2.0, 2026-10-25)
     menu: %{help: "Help"},
     global: %{macros: "Macro"}

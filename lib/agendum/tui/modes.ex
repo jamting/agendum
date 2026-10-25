@@ -34,7 +34,18 @@ defmodule Agendum.TUI.Modes do
     category_match: [:cat_id, :cursor, :opened],
     category_stats: [:cat_id],
     catmgr: [:cursor],
-    choice: [:action, :at, :cat_id, :conflicts, :cursor, :kind, :macro_id, :name, :relocation],
+    choice: [
+      :action,
+      :at,
+      :cat_id,
+      :conflicts,
+      :cursor,
+      :edit,
+      :kind,
+      :macro_id,
+      :name,
+      :relocation
+    ],
     choice_list: [:cursor, :labels, :title],
     column_add: [
       :col,
@@ -66,7 +77,7 @@ defmodule Agendum.TUI.Modes do
     file_stats: [],
     goto: [:cursor],
     group_profile: [:cursor, :item_ids],
-    help: [:cursor, :described, :filter, :from, :page, :pane, :top],
+    help: [:cursor, :described, :edit, :filter, :from, :page, :pane, :top],
     input_format: [:cursor, :opened],
     item_column: [:cursor, :opened, :sidx, :typing],
     item_props: [:cursor, :item_id, :opened],

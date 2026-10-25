@@ -106,9 +106,10 @@ defmodule Agendum.TUI.SelectFileTest do
     end
   end
 
-  test "F3 does nothing in a prompt that is not for a file", %{state: state} do
+  # there F3 is Agenda's COPY, as anywhere a line is typed (2026-10-25)
+  test "F3 in a prompt that is not for a file copies, not lists files", %{state: state} do
     state = press(state, [{:f, 10}, "v", "a", {:f, 3}])
-    assert %{type: :prompt} = State.mode(state)
+    assert %{type: :choice, kind: :line_clip} = State.mode(state)
   end
 
   test "a folder that cannot be read says so", %{state: state} do

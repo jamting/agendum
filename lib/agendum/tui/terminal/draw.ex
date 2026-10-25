@@ -121,12 +121,24 @@ defmodule Agendum.TUI.Terminal.Draw do
   wide, scrolled so that the cursor shows.
   """
   @spec input(%{text: String.t(), pos: non_neg_integer}, non_neg_integer, atom) :: line
-  def input(%{text: text, pos: pos}, width, style) do
+  def input(%{text: text, pos: pos} = edit, width, style) do
     width = max(width, 1)
     offset = max(pos - width + 1, 0)
     visible = String.slice(text, offset, width)
-    text_field = field(visible, pos - offset, style)
-    line(text_field, width, style)
+
+    case Map.get(edit, :mark) do
+      # nothing marked, or just started: the cursor alone
+      mark when mark in [nil, pos] ->
+        line(field(visible, pos - offset, style), width, style)
+
+      # the text F7 marked (`Typing.LineEdit`), highlighted as the cursor is
+      mark ->
+        from = (min(mark, pos) - offset) |> max(0) |> min(String.length(visible))
+        to = (max(mark, pos) - offset) |> max(0) |> min(String.length(visible))
+        {before, rest} = String.split_at(visible, from)
+        {marked, after_} = String.split_at(rest, to - from)
+        line([{style, before}, {:edit_cursor, marked}, {style, after_}], width, style)
+    end
   end
 
   @doc "Overlays `box` lines onto `screen` starting at row `top`, column `left`."

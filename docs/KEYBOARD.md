@@ -102,6 +102,12 @@ While typing text (on one line; in a note, the first two rows and CTRL-D; the ke
 | CTRL-U                                      | Clear the line                        |
 | BACKSPACE                                   | Delete the character before the cursor |
 | CTRL-D                                      | Delete the character under the cursor |
+| F7                                          | Start (or stop) marking text, from the cursor (MARK) |
+| F3 / F4                                     | Copy / cut the marked text; with nothing marked, ask: the word or all the text (COPY, CUT; F3 lists files in a file name's prompt) |
+| ALT-F4                                      | Delete the marked text, not kept (DELETE) |
+| F2                                          | Put in the text last copied or cut, a note's too (PASTE) |
+| F5                                          | On an item's text: keep it and open the item's note (NOTE) |
+| F1                                          | The help; ESC comes back to the typing |
 
 The F1 help lists every key from the keymaps (F1 then `a`); a test checks that every key in them with a name (F-, ALT-, CTRL- and SHIFT-keys, ENTER, BACKSPACE, PGUP …) is in this guide.
 

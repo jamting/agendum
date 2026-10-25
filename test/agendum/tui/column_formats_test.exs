@@ -76,7 +76,7 @@ defmodule Agendum.TUI.ColumnFormatsTest do
     state = state |> with_format(v, format: :note, note_line: 2) |> press("5")
     assert panel(state) =~ "Type line 2 of the category's note"
     # an empty line edited with F2 draws too
-    assert state |> press(:escape) |> press({:f, 2}) |> panel() =~ "line 2"
+    assert state |> press(:esc) |> press({:f, 2}) |> panel() =~ "line 2"
   end
 
   test "Category note: an item with no category there has no note to write",

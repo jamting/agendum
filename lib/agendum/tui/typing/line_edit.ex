@@ -1,10 +1,18 @@
 defmodule Agendum.TUI.Typing.LineEdit do
-  @moduledoc "A pure single-line text editing buffer (EDIT mode)."
+  @moduledoc """
+  A pure single-line text editing buffer (EDIT mode). `mark` is where F7
+  (MARK) started marking, or nil: the marked text runs from it to the
+  cursor, as in a note (R63); a move keeps it, a change drops it.
+  """
 
   alias Agendum.TUI.Keymap
 
-  @type t :: %__MODULE__{text: String.t(), pos: non_neg_integer}
-  defstruct text: "", pos: 0
+  @type t :: %__MODULE__{text: String.t(), pos: non_neg_integer, mark: non_neg_integer | nil}
+  defstruct text: "", pos: 0, mark: nil
+
+  # moves keep the mark; every other command changes the text and drops it
+  @moves [:left, :right, :line_start, :line_end, :word_left, :word_right]
+  @clipboard [:copy, :cut, :delete_marked, :paste, :note, :help]
 
   @spec new(String.t()) :: t
   def new(text \\ ""), do: %__MODULE__{text: text, pos: String.length(text)}
@@ -22,39 +30,83 @@ defmodule Agendum.TUI.Typing.LineEdit do
   def handle(%__MODULE__{} = e, key) do
     case Keymap.lookup(:line, key) do
       nil -> :unhandled
+      # the clipboard's keys need the session (`Typing.LineClip`)
+      id when id in @clipboard -> :unhandled
       id -> {:ok, run(e, id)}
     end
   end
 
   @doc "Runs a line-editing command (`Agendum.TUI.Commands`, `:line`)."
   @spec run(t, atom) :: t
-  def run(e, :delete_to_end), do: %{e | text: String.slice(e.text, 0, e.pos)}
+  # F7: marking starts at the cursor; again, it stops (Agenda's MARK)
+  def run(%{mark: nil} = e, :mark), do: %{e | mark: e.pos}
+  def run(e, :mark), do: %{e | mark: nil}
+  def run(e, id) when id in @moves, do: move(e, id)
+  def run(e, id), do: e |> change(id) |> Map.put(:mark, nil)
 
-  def run(e, :delete_word) do
+  defp change(e, :delete_to_end), do: %{e | text: String.slice(e.text, 0, e.pos)}
+
+  defp change(e, :delete_word) do
     start = word_left(e)
     {before, _} = String.split_at(e.text, start)
     {_, rest} = String.split_at(e.text, e.pos)
     %{e | text: before <> rest, pos: start}
   end
 
-  def run(%{pos: 0} = e, :delete_back), do: e
+  defp change(%{pos: 0} = e, :delete_back), do: e
 
-  def run(e, :delete_back),
+  defp change(e, :delete_back),
     do: %{e | text: delete_at(e.text, e.pos - 1), pos: e.pos - 1}
 
-  def run(e, :delete), do: %{e | text: delete_at(e.text, e.pos)}
-  def run(e, :left), do: %{e | pos: max(e.pos - 1, 0)}
-  def run(e, :right), do: %{e | pos: min(e.pos + 1, String.length(e.text))}
-  def run(e, :line_start), do: %{e | pos: 0}
-  def run(e, :line_end), do: %{e | pos: String.length(e.text)}
-  def run(e, :word_left), do: %{e | pos: word_left(e)}
-  def run(e, :word_right), do: %{e | pos: word_right(e)}
-  def run(_e, :clear), do: new("")
+  defp change(e, :delete), do: %{e | text: delete_at(e.text, e.pos)}
+  defp change(_e, :clear), do: new("")
+
+  defp move(e, :left), do: %{e | pos: max(e.pos - 1, 0)}
+  defp move(e, :right), do: %{e | pos: min(e.pos + 1, String.length(e.text))}
+  defp move(e, :line_start), do: %{e | pos: 0}
+  defp move(e, :line_end), do: %{e | pos: String.length(e.text)}
+  defp move(e, :word_left), do: %{e | pos: word_left(e)}
+  defp move(e, :word_right), do: %{e | pos: word_right(e)}
 
   @spec insert(t, String.t()) :: t
   def insert(%__MODULE__{} = e, str) do
     {before, rest} = String.split_at(e.text, e.pos)
-    %{e | text: before <> str <> rest, pos: e.pos + String.length(str)}
+    %{e | text: before <> str <> rest, pos: e.pos + String.length(str), mark: nil}
+  end
+
+  @doc "The marked part, `{from, to}` (from before to), or nil when nothing is marked."
+  @spec region(t) :: {non_neg_integer, non_neg_integer} | nil
+  def region(%{mark: nil}), do: nil
+  def region(%{mark: same, pos: same}), do: nil
+  def region(%{mark: mark, pos: pos}), do: {min(mark, pos), max(mark, pos)}
+
+  @doc """
+  Takes text out of the line for F3, F4 and ALT-F4: the marked text, the
+  word at the cursor (`:word`) or all of it (`:all`). `{text, line
+  without it}`, or nil when there is nothing there.
+  """
+  @spec take(t, :mark | :word | :all) :: {String.t(), t} | nil
+  def take(e, :mark) do
+    case region(e) do
+      nil -> nil
+      {from, to} -> cut(e, from, to)
+    end
+  end
+
+  def take(%{text: ""}, :all), do: nil
+  def take(e, :all), do: {e.text, new("")}
+
+  def take(e, :word) do
+    # the word the cursor is in or just after
+    from = word_left(%{e | pos: min(e.pos + 1, String.length(e.text))})
+    to = word_right(%{e | pos: from})
+    if String.trim(String.slice(e.text, from, to - from)) == "", do: nil, else: cut(e, from, to)
+  end
+
+  defp cut(e, from, to) do
+    {before, rest} = String.split_at(e.text, from)
+    {taken, after_} = String.split_at(rest, to - from)
+    {taken, %{e | text: before <> after_, pos: from, mark: nil}}
   end
 
   defp delete_at(text, pos) do

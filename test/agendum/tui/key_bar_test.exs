@@ -24,13 +24,6 @@ defmodule Agendum.TUI.KeyBarTest do
   defp texts(state),
     do: state |> KeyBar.lines() |> Enum.map(fn line -> Enum.map_join(line, &elem(&1, 1)) end)
 
-  # the hint line of a place without slots (the bottom one; the top is empty)
-  defp bar(state) do
-    [top, bottom] = texts(state)
-    assert String.trim(top) == ""
-    String.trim(bottom)
-  end
-
   for width <- [80, 64] do
     test "a box at #{width} columns has Agenda's slots, not a line of hints" do
       state = unquote(width) |> planner() |> press([{:f, 10}, "v", "p"])
@@ -42,18 +35,15 @@ defmodule Agendum.TUI.KeyBarTest do
     end
   end
 
-  test "typing in a box's field keeps a line of hints, ENTER and ESC last to go" do
-    state = 80 |> planner() |> press([{:f, 10}, "v", "p"]) |> to_setting("Item sorting")
-    state = state |> press(:right) |> press("Calls")
-    assert Map.get(State.mode(state), :typing) != nil or state.edit != nil
-    assert String.trim(hd(texts(state))) == ""
-  end
-
-  test "outside a box, the last entries go first: ENTER and ESC stay" do
-    state = 33 |> planner() |> press({:f, 2})
-    assert state.edit != nil
-    # "^A/^E Start/End" and "^U Clear" do not fit 33 columns
-    assert bar(state) == "ENTER Done ESC Cancel ←→ Move"
+  test "typing a line has Agenda's editing slots, in a box's field too" do
+    for state <- [
+          80 |> planner() |> press({:f, 2}),
+          80 |> planner() |> press([{:f, 10}, "v", "p", {:f, 2}])
+        ] do
+      [keys, labels] = texts(state)
+      assert keys =~ ~r/^ +F1 +│ +F2 +│/
+      assert labels =~ ~r/^ Help +│ Paste +│ Copy +│  Cut +│/
+    end
   end
 
   # Agenda's own bar in a view, read in DOSBox (PLANNER, 2026-10-24)

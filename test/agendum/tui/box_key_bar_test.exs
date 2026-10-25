@@ -58,8 +58,9 @@ defmodule Agendum.TUI.BoxKeyBarTest do
     assert bar(menu) == ["Help", "", "", "", "", "", "", "", "", ""]
   end
 
-  test "typing in a field keeps its own bar (the Editing step)", %{state: state} do
+  test "typing in a field: Agenda's editing bar", %{state: state} do
     typing = state |> props(:view) |> press({:f, 2})
-    refute keys_line(typing) =~ "F1"
+    assert keys_line(typing) =~ ~r/^ +F1 +│/
+    assert Enum.at(bar(typing), 1) == "Paste"
   end
 end
