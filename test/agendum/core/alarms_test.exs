@@ -152,5 +152,22 @@ defmodule Agendum.Core.AlarmsTest do
       {db, _} = Core.ring_alarms(db, ~N[2026-10-08 14:00:00])
       assert Core.alarm_list(Core.remove_past_alarm(db, id)).past == []
     end
+
+    # Utilities Show Alarm (User's Guide 10-18 to 10-20; checked in Agenda
+    # 2.0, 2026-10-25): the Show View with two sections, !Current Alarms!
+    # and !Past Alarms!, the latest first
+    test "the alarm list is the Show View's two sections", %{db: db, id: id} do
+      {db, later} = Core.add_item(db, "Review at 4pm", @now)
+      {:ok, db} = Core.set_alarm(db, id, 5)
+      {:ok, db} = Core.set_alarm(db, later, 10)
+      {db, [^id]} = Core.ring_alarms(db, ~N[2026-10-08 14:00:00])
+
+      {db, view_id} = Core.show_alarms(db)
+      [current, past] = ViewModel.build(db, db.views[view_id])
+      assert {current.category.name, past.category.name} == {"!Current Alarms!", "!Past Alarms!"}
+      assert {current.alarms, past.alarms} == {:current, :past}
+      assert Enum.map(current.rows, & &1.item.id) == [later]
+      assert Enum.map(past.rows, & &1.item.id) == [id]
+    end
   end
 end

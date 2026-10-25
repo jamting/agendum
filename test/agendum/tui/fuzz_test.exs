@@ -133,6 +133,20 @@ defmodule Agendum.TUI.Fuzz do
     db
   end
 
+  # With the alarm list (R38) shown first: one alarm rung, one waiting on an
+  # item without a date.
+  defp with_alarms(db, false), do: db
+
+  defp with_alarms(db, true) do
+    [first, second | _] = db.item_order
+    {:ok, db} = Agendum.Core.set_alarm(db, first, 0)
+    db = Agendum.Core.Database.update_item(db, first, &%{&1 | when: ~D[2026-10-07]})
+    {db, _} = Agendum.Core.ring_alarms(db, ~N[2026-10-08 09:00:00])
+    {:ok, db} = Agendum.Core.set_alarm(db, second, 5)
+    {db, view} = Agendum.Core.show_alarms(db)
+    Agendum.Core.move_view(db, view, 0)
+  end
+
   # With a datebook view of that period (R47), shown first.
   defp with_datebook(db, nil), do: db
 
@@ -208,13 +222,20 @@ defmodule Agendum.TUI.Fuzz do
             numeric <- boolean(),
             datebook <- member_of([nil, nil, :day, :week, :month, :quarter]),
             filtered <- boolean(),
+            # the alarm list (R38) shown first, with a past and a current alarm
+            alarms <- boolean(),
             # the Extras preference (R77), off as Agendum starts, or on
             extras <- boolean(),
             max_runs: div(@runs + @parts - 1, @parts),
             initial_seed: ExUnit.configuration()[:seed] + part
           ) do
       db =
-        numeric |> sample() |> with_filter(filtered) |> with_datebook(datebook) |> with_macros()
+        numeric
+        |> sample()
+        |> with_filter(filtered)
+        |> with_datebook(datebook)
+        |> with_macros()
+        |> with_alarms(alarms)
 
       state = start(db, width: width, height: height, extras: extras)
 

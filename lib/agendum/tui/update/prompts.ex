@@ -398,6 +398,14 @@ defmodule Agendum.TUI.Update.Prompts do
   def help, do: "Y or N answers. SPACE switches the answer; ENTER accepts the one shown."
 
   defp confirmed(state, {:make_numeric, id}, true), do: make_numeric(state, id)
+
+  # DEL in the alarm list (R38)
+  defp confirmed(state, {:remove_alarm, :current, id}, true),
+    do: State.run(state, {:cancel_alarm, id})
+
+  defp confirmed(state, {:remove_alarm, :past, id}, true),
+    do: State.run(state, {:remove_past_alarm, id})
+
   defp confirmed(state, {:make_unindexed, id}, true), do: make_unindexed(state, id)
 
   # Search/Replace in a note: Y replaces this occurrence, N skips it

@@ -3,7 +3,7 @@ defmodule Agendum.TUI.AlarmsTest do
   use ExUnit.Case, async: true
 
   import Agendum.TUIHelpers
-  alias Agendum.TUI.{Layout, State, Update}
+  alias Agendum.TUI.{Layout, Update}
 
   setup do
     %{state: start(Agendum.Sample.build(~D[2026-10-08]), now: ~N[2026-10-08 10:00:00])}
@@ -82,22 +82,36 @@ defmodule Agendum.TUI.AlarmsTest do
     assert current(state).alarm_minutes == nil
   end
 
-  test "the alarm list shows current and past alarms; DEL removes a past one", %{state: state} do
+  # Agenda's Utilities Show Alarm (checked in Agenda 2.0, 2026-10-25): the
+  # Show View, !Current Alarms! then !Past Alarms!; DEL asks Agenda's
+  # question, and cancels a current alarm or takes a past one off the list
+  test "Show Alarm is the Show View with the two sections; DEL takes an item off",
+       %{state: state} do
     state = press(state, ["Personnel meeting at 2:00", :enter, {:alt, "a"}, :enter])
     state = press(state, ["Review at 4pm", :enter, {:alt, "a"}, :down, "1", "0", :enter, :enter])
     {state, _} = Update.tick(state, ~N[2026-10-08 14:00:00])
 
     state = press(state, [{:f, 10}, "u", "s", "a"])
-    # opening the list leaves @: it goes when the past alarms are removed
-    assert line(press(state, List.duplicate(:esc, 4)), 1) =~ "@"
     screen = screen(state)
-    assert screen =~ "Alarm list"
-    assert screen =~ ~r/Review at 4pm.*rings 10\/08\/26 3:50pm/
-    assert screen =~ ~r/Personnel meeting at 2:00.*rang 1:55pm/
+    assert screen =~ ~r/View: \*?Show View/
+    assert screen =~ ~r/!Current Alarms!\n +@ Review at 4pm/
+    assert screen =~ ~r/!Past Alarms!\n +• Personnel meeting at 2:00/
+    assert line(state, 1) =~ "@"
 
-    state = press(state, [:down, :delete])
+    # the past alarm: DEL, Agenda's question, ENTER
+    state = press(state, [:home, :down, :down, :down])
+    assert current(state).text == "Personnel meeting at 2:00"
+    state = press(state, :delete)
+    assert screen(state) =~ "Remove this item from the section?"
+    state = press(state, :enter)
     assert Agendum.Core.alarm_list(state.db).past == []
-    assert %{type: :alarm_list} = State.mode(state)
+    refute line(state, 1) =~ "@"
+    # the item itself stays
+    assert Enum.any?(Map.values(state.db.items), &(&1.text == "Personnel meeting at 2:00"))
+
+    # the current one: its alarm is cancelled
+    state = press(state, [:home, :down, :delete, :enter])
+    assert Agendum.Core.alarm_list(state.db).current == []
   end
 
   test "the day's past alarms are forgotten when the date changes", %{state: state} do

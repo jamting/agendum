@@ -56,13 +56,13 @@ defmodule Agendum.TUI.AwayTest do
     assert effects == [:quit]
   end
 
-  test "ENTER or ESC closes the box; Search ▸ Alarms still lists them", %{state: state} do
+  test "ENTER or ESC closes the box; Show Alarm still lists them", %{state: state} do
     for key <- [:enter, :esc] do
       closed = press(Update.arrive(state), key)
       assert closed.modes == []
 
       assert screen(press(closed, [{:f, 10}, "u", "s", "a"])) =~
-               ~r/Personnel meeting.*rang 10\/07\/26 1:55pm/
+               ~r/!Past Alarms!\n.*Personnel meeting/
     end
   end
 

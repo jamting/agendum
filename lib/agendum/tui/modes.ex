@@ -25,7 +25,6 @@ defmodule Agendum.TUI.Modes do
   @modes [
     action_box: [:clear, :cursor, :line, :owner, :target],
     ag_import: [:report, :source, :top],
-    alarm_list: [:cursor],
     auto_assign: [:cursor, :opened],
     away: [:groups],
     browse: [:date, :scope, :shift, :view_id],

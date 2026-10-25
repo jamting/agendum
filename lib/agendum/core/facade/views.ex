@@ -774,6 +774,19 @@ defmodule Agendum.Core.Facade.Views do
   end
 
   @doc """
+  The alarm list in the Show View (Agenda's Utilities Show Alarm, R38;
+  User's Guide 10-18 to 10-20): two sections, !Current Alarms! and !Past
+  Alarms! (`Agendum.Core.ViewModel`), stored as two MAIN sections so that
+  each has its own columns, as any section. Returns the view.
+  """
+  @spec show_alarms(db) :: {db, id}
+  def show_alarms(db) do
+    {db, view_id} = show(db, :alarms)
+    main = %Section{category_id: db.main_id}
+    {Database.update_view(db, view_id, &%{&1 | sections: [main, main]}), view_id}
+  end
+
+  @doc """
   Lists items in the Show View (User's Guide 13-15, R43), as `show_match/2`
   does for a search. Returns the view.
   """

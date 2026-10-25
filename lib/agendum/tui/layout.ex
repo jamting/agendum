@@ -40,6 +40,7 @@ defmodule Agendum.TUI.Layout do
         sidx: sidx,
         key: {:section, sidx},
         category: section.category,
+        alarms: section.alarms,
         collapsed: section.collapsed,
         count: length(section.rows),
         slot: section.slot,
@@ -62,6 +63,7 @@ defmodule Agendum.TUI.Layout do
                 inherited: r.inherited,
                 number: r.number,
                 category: section.category,
+                alarms: section.alarms,
                 slot: section.slot,
                 columns: section.columns,
                 item_column: section.item_column

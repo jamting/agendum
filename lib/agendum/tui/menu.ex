@@ -161,7 +161,7 @@ defmodule Agendum.TUI.Menu do
                {"Every item", "Every item in the file that others depend on",
                 {:show_related, :dependents, :every}}
              ]},
-            {"Alarm", "Current alarms and today's past alarms", :alarm_list},
+            {"Alarm", "Show all items with pending and triggered alarms.", :alarm_list},
             {"Sched", "One date's items in the Show View", :show_schedule}
           ]},
          {"Questions", "Confirm suggested assignments", :questions}

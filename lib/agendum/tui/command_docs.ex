@@ -309,10 +309,6 @@ defmodule Agendum.TUI.CommandDocs do
     Agendum.TUI.Boxes.ColumnAddBox => %{pick_head: @column_head},
     Agendum.TUI.Boxes.ItemColumnBox => %{pick_head: @column_head},
     Agendum.TUI.Boxes.ColumnBox => %{pick_head: @column_head},
-    Agendum.TUI.Boxes.AlarmList => %{
-      cancel_alarm: "The alarm will not ring; the item and its When date stay.",
-      remove: "Takes an alarm that has rung off the list; the item stays."
-    },
     Agendum.TUI.Boxes.ItemProperties => %{
       profile: "Every category, those the item is in marked: to see why it shows where it does.",
       set_value:

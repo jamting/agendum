@@ -43,7 +43,9 @@ defmodule Agendum.Core.ViewModel do
     are the columns it shows (R55), `item_column` how wide its item text
     is (a datebook slot's is the default), `index` its place among the view's
     stored sections (it may be shown elsewhere when sections are sorted;
-    nil for a datebook slot).
+    nil for a datebook slot). In the alarm list (`match: :alarms`, R38)
+    `alarms` says which of its two sections it is, and `category` is MAIN
+    under the section's name, !Current Alarms! or !Past Alarms!.
     """
     @type t :: %__MODULE__{
             category: Agendum.Core.Category.t(),
@@ -53,11 +55,13 @@ defmodule Agendum.Core.ViewModel do
             slot: Datebook.Slot.t() | nil,
             columns: [View.Column.t()],
             item_column: View.ItemColumn.t(),
-            index: non_neg_integer | nil
+            index: non_neg_integer | nil,
+            alarms: :current | :past | nil
           }
     defstruct [
       :category,
       :index,
+      :alarms,
       rows: [],
       collapsed: false,
       calcs: [],
@@ -137,6 +141,43 @@ defmodule Agendum.Core.ViewModel do
       }
     end)
     |> Enum.reject(&(view.hide_empty and &1.rows == []))
+  end
+
+  # Utilities Show Alarm (R38): the stored sections, in turn, show the
+  # current and the past alarms, in the order `Alarms.alarm_list/1` gives
+  def build(%Database{} = db, %View{match: :alarms} = view, today) do
+    list = Agendum.Core.Facade.Alarms.alarm_list(db)
+    main = db.categories[db.main_id]
+
+    [{:current, "!Current Alarms!"}, {:past, "!Past Alarms!"}]
+    |> Enum.zip(Enum.with_index(view.sections))
+    |> Enum.map(fn {{which, name}, {section, index}} ->
+      rows =
+        for id <- Map.fetch!(list, which) do
+          item = db.items[id]
+
+          %Row{
+            item: item,
+            cells:
+              Enum.map(
+                section.columns,
+                &cell(db, item, &1.category_id, &1.width, &1.number, cell_opts(&1, today, nil))
+              ),
+            values: Enum.map(section.columns, &value(db, item, &1.category_id))
+          }
+        end
+
+      %SectionModel{
+        category: %{main | name: name},
+        alarms: which,
+        index: index,
+        rows: rows |> percents(db, section.columns) |> numbered(view),
+        collapsed: section.collapsed,
+        columns: section.columns,
+        item_column: section.item_column,
+        calcs: calcs(db, section.columns, rows, Context.number_opts(today))
+      }
+    end)
   end
 
   def build(%Database{} = db, %View{} = view, today) do

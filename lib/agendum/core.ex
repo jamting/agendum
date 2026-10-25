@@ -264,6 +264,7 @@ defmodule Agendum.Core do
   defdelegate show_match(db, search), to: Views
   defdelegate show_schedule(db, date_category, section, date, filter), to: Views
   defdelegate show_items(db, ids), to: Views
+  defdelegate show_alarms(db), to: Views
   defdelegate set_section_sort(db, view_id, sort, order), to: Views
   defdelegate sort_views(db), to: Views
   defdelegate date_filters?(db, filters), to: Views

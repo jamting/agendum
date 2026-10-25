@@ -8,7 +8,6 @@ defmodule Agendum.TUI.Update.Actions do
   alias Agendum.Core.{Database, View}
 
   alias Agendum.TUI.{
-    Boxes.AlarmList,
     CategoryScreens,
     Boxes.ColumnAddBox,
     Boxes.ColumnBox,
@@ -253,7 +252,12 @@ defmodule Agendum.TUI.Update.Actions do
       else: Agendum.TUI.Boxes.SetAlarmBox.open(state, item.id)
   end
 
-  defp do_perform(state, :alarm_list, _), do: AlarmList.open(state)
+  # Utilities Show Alarm: the Show View with !Current Alarms! and !Past
+  # Alarms! (R38), as Agenda's
+  defp do_perform(state, :alarm_list, _) do
+    {:ok, state, %{new: view_id}} = State.command(state, {:show_alarms})
+    State.switch_view(state, view_id)
+  end
 
   defp do_perform(state, :search_view, _), do: SearchBox.open(state, :view)
   defp do_perform(state, :search_file, _), do: SearchBox.open(state, :file)

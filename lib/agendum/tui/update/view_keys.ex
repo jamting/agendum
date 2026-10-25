@@ -565,6 +565,14 @@ defmodule Agendum.TUI.Update.ViewKeys do
     )
   end
 
+  # in the alarm list (R38), Agenda's question; then a current alarm is
+  # cancelled, a past one taken off the list (checked in Agenda 2.0,
+  # 2026-10-25); the item itself stays
+  def delete(state, %{kind: :item, item: item, alarms: which})
+      when state.col == 0 and which != nil,
+      do:
+        Prompts.ask(state, "Remove this item from the section?", {:remove_alarm, which, item.id})
+
   def delete(state, %{kind: :item, item: item, category: cat}) when state.col == 0 do
     if cat.id == state.db.main_id do
       State.error(state, "Items cannot be removed from MAIN; use ALT-F4 to discard")

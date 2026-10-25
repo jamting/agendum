@@ -284,6 +284,8 @@ defmodule Agendum.Core.Command do
     {:set_sort, "Sort", "How a view or section sorts its items (R36)", [:view, :value, :value],
      :core},
     {:show_items, "Show items", "Shows these items in the Show View", [:items], :core},
+    {:show_alarms, "Show alarms",
+     "Shows the current and past alarms in the Show View (Utilities Show Alarm, R38)", [], :core},
     {:show_match, "Show matches", "Shows the items a search matches in the Show View (R37)",
      [:value], :core},
     {:show_schedule, "Show schedule", "Shows one day's items in the Show View (R49)",

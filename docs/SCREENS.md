@@ -169,7 +169,6 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
     - **Note editor** `:note` (F2): the macro edit screen, its keystrokes as text.
     - **Macro Properties** `:macro_props` (F6): name, keystrokes, attached key, where it can run (R50). `Agendum.TUI.Boxes.MacroProps`.
       - **Prompt** `:prompt` for the name or the key.
-  - **Alarm list** `:alarm_list` (Utilities ▸ Show ▸ Alarm): current and past alarms (R38). `Agendum.TUI.Boxes.AlarmList`.
 
 - **While you were away** `:away` (by itself, after the splash screen or as a file is retrieved, only when alarms came due while the file was closed): those alarms, grouped by text (R70). `Agendum.TUI.Boxes.AwayBox`.
 
@@ -229,7 +228,6 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:item_column`       | box           | `Agendum.TUI.Boxes.ItemColumnBox`        | View ▸ Column ▸ Properties on the item text       | R55            |
 | `:execute`           | box           | `Agendum.TUI.Boxes.ExecuteBox`           | Utilities ▸ Execute                                | R15e           |
 | `:questions`         | box           | `Agendum.TUI.Boxes.QuestionsBox`         | Utilities ▸ Questions                              | R16            |
-| `:alarm_list`        | box           | `Agendum.TUI.Boxes.AlarmList`            | Utilities ▸ Show ▸ Alarm                                   | R38            |
 | `:away`              | box           | `Agendum.TUI.Boxes.AwayBox`              | Opening a file with alarms due while it was closed | R70           |
 | `:ag_import`         | box           | `Agendum.TUI.Boxes.ImportReportBox`      | Importing a Lotus Agenda file                     | R72            |
 | `:publish`           | box           | `Agendum.TUI.Extras.PublishBox`           | File ▸ Transfer ▸ Publish                         | R74            |
