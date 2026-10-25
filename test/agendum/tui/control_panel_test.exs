@@ -62,6 +62,23 @@ defmodule Agendum.TUI.ControlPanelTest do
     end
   end
 
+  describe "while an item is typed" do
+    # Agenda's: the File line, the date and EDIT where the time was
+    # (checked in Agenda 2.0, 2026-10-25: "File: C:\\APPS\\AGENDA\\SS  10/25/26 EDIT")
+    test "a new item: the File line with EDIT in the time's place", %{state: state} do
+      typing = press(state, [:down, "Call Bob"])
+      assert line(typing, 0) =~ ~r/^ File: .* 2026-10-12 EDIT *$/
+      refute line(typing, 0) =~ "09:00"
+      refute line(typing, 0) =~ "Type the new item"
+      assert line(typing, 1) =~ ~r/^ View: /
+    end
+
+    test "editing an item's text (F2): the same", %{state: state} do
+      typing = press(state, [:down, {:f, 2}])
+      assert line(typing, 0) =~ ~r/^ File: .* 2026-10-12 EDIT *$/
+    end
+  end
+
   describe "the view's hide settings" do
     test "one bracket after the view's name, Hide written once, in Agenda's order",
          %{state: state} do

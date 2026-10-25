@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- While you **type an item**, the top line stays the **File line**, as in Agenda, with the date and **EDIT** where the time was (no more "Type the new item; ENTER to finish").
 - While you **type a line** (an item, a category name, a column entry, a prompt, a box's field), the key bar shows Agenda's editing keys in their slots: **F7 Mark**, **F3 Copy**, **F4 Cut**, **F2 Paste**, and **ALT-F4** deletes the marked text. With nothing marked, F3 and F4 ask whether to take the word or all the text. What you copy in a note pastes into a line too.
 - **F5** while typing an item keeps the text and opens the item's note; **F1** opens the help, and ESC comes back to the typing.
 

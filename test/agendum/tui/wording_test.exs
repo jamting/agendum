@@ -41,7 +41,8 @@ defmodule Agendum.TUI.WordingTest do
       refute top.(press(state, keys)) =~ ~r/READY|PROPS|MENU|VW MGR|SEARCH|CHOICES/
     end
 
-    assert top.(press(state, [:down, {:f, 2}])) =~ ~r/EDIT +2026-10-08 09:00/
+    # typing an item: the date, then EDIT in the time's place, as Agenda's
+    assert top.(press(state, [:down, {:f, 2}])) =~ ~r/2026-10-08 EDIT *$/
 
     catmgr = top.(press(state, {:f, 9}))
     refute catmgr =~ "CAT MGR"

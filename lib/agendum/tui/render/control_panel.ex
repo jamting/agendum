@@ -184,6 +184,15 @@ defmodule Agendum.TUI.Render.ControlPanel do
       %{type: :catmgr} when base.type == :catmgr ->
         marks
 
+      # typing an item's text: the date, and EDIT in the time's place, as
+      # Agenda's ("10/25/26 EDIT")
+      _ when base == nil and state.modes == [] and state.edit != nil ->
+        word = indicator(state) || "EDIT"
+
+        marks <>
+          DateFormat.date(NaiveDateTime.to_date(state.now), state.db.date_format) <>
+          " " <> word <> " "
+
       _ ->
         word = if word = indicator(state), do: word <> "  ", else: ""
 
@@ -344,11 +353,14 @@ defmodule Agendum.TUI.Render.ControlPanel do
     end
   end
 
+  # an item's text is typed in place, under Agenda's File and View lines
+  # (checked in Agenda 2.0, 2026-10-25; the owner's choice): no hint
+  defp message_line(%State{edit: %{target: {:new_item, _, _}}, modes: []}), do: []
+  defp message_line(%State{edit: %{target: {:edit_item, _}}, modes: []}), do: []
+
   defp message_line(%State{edit: %{target: target}, modes: []}) do
     hint =
       case target do
-        {:new_item, _, _} -> "Type the new item; ENTER to finish, ESC to cancel"
-        {:edit_item, _} -> "Edit the item; ENTER to finish, ESC to cancel"
         {:rename_category, _} -> "Edit the category name; ENTER to finish"
         # a Category note column's cell (R56): the line written into
         {:note_line, _, _, n} -> "Type line #{n} of the category's note; ENTER to set"
