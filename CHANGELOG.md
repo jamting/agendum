@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.52.0 — 2026-10-25
+
+Lotus Agenda's File commands.
+
+- **File ▸ Abandon** goes back to the file as you last saved it, after Agenda's "Revert to last saved version: No". It is one undo step, so CTRL-Z brings your changes back.
+- **File ▸ Maintenance ▸ MakeCopy** takes the place of File ▸ Write: it writes a copy of the file under another name and saves the file, and you stay in it, as in Agenda. Retrieve the copy to work in it.
+- **File ▸ Maintenance ▸ Erase** asks "Discard owl.agendum?  No" and then moves the file to your system's **Trash**, where you can get it back (Agenda deleted it). The open file cannot be discarded.
+- **File ▸ Transfer ▸ Template** writes the file's structure (categories, views, macros, conditions and actions, settings) to another file, without the items.
+- **File Properties** has Agenda's **File description** (up to 40 characters) and **Make backup on open**: with Yes, opening the file first copies it to `NAME.agendum.bak` beside it. **F8** in the Select File box shows each file's description. Files are saved in format 42.
 ## 0.51.0 — 2026-10-25
 
 More of Lotus Agenda's small things.
