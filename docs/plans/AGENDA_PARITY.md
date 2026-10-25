@@ -175,7 +175,7 @@ The parity work, in the order it is planned (the owner reorders it): each item s
 
 #### Next
 
-View layout and symbols (Screens and texts, below): rows under a section indented four spaces and ♪ on a section head first (the owner's note, 2026-10-24).
+The rest of View layout and symbols (Screens and texts, below): rows, ♪, ♦ and » done (v0.39.0); next the · before column entries, ‼ done, the bracketed exclusive families, * on date categories, and the category manager without counts and tags.
 
 #### Menus as Agenda's
 
