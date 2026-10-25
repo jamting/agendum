@@ -196,6 +196,7 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
   - [ ] Check the *machine* entry "The marked-items symbol is ♦ (Agenda's ▸ …)": in a view Agenda 2.0 marks with CP437 0x04, which is ♦ (seen 2026-10-25), so it may be no difference
 - [x] (2026-10-25) Control panel symbols and indicators: ☼ on a date value (Agenda's screen; its help writes *) and # beside ♪ at the right of the View line, WRKG while a calendar or feed is fetched
 - [ ] `D` with unindexed categories (and unindexed categories themselves)
+- [ ] The control panel while a box is open, as Agenda's (the owner's note, 2026-10-25; checked in Agenda 2.0, PLANNER, View Properties from the menu and F6 Item Properties): line 1 holds only the current field's help (`Type a name for the view.`), with no date and time, and line 2 is blank (no `View: …`); the column heads stay on line 3. Agendum keeps the date and time on line 1 and `View: …` on line 2, and its longer help texts (`… F2 edits the name it has.`) wrap onto line 2. A habit change: settle with the owner first, the help texts' length most of all (cut to Agenda's one line, or keep ours on two lines)
 - [ ] Editing: the prompt and input field in the control panel (EDIT), editing key bars (F2 Paste, F3 Copy, F4 Cut, F7 Mark) in item text and category names (the note editor's header: in the note editor plan above)
 
 #### Commands and behaviour still missing
