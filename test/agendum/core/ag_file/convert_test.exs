@@ -19,7 +19,7 @@ defmodule Agendum.Core.AgFile.ConvertTest do
   alias Agendum.Core.AgFile.{Convert, Reader}
 
   @dir "test/fixtures/ag"
-  @files ~w(ACCOUNT INFOSIFT PEOPLE PLANNER RICH UX)
+  @files ~w(ACCOUNT DATES INFOSIFT PEOPLE PLANNER RICH UX)
   @today ~D[2026-10-16]
 
   defp bytes(name), do: File.read!(Path.join(@dir, name <> ".AG"))
@@ -48,6 +48,27 @@ defmodule Agendum.Core.AgFile.ConvertTest do
   test "an imported file shows dates in Agenda's default format (R41)" do
     {db, _} = import!("PLANNER")
     assert db.date_format == Agendum.Core.DateFormat.agenda()
+  end
+
+  # DATES.AG is RICH.AG with its global Display format set in Agenda 2.0
+  # (2026-10-26): DDMMYY, "-", 24 hr, day of week shown (header word 0x182)
+  test "an imported file keeps its description and File Properties (R82)" do
+    {db, _} = import!("UX")
+    assert {db.description, db.tab_size, db.backup_on_open} == {"Information Sifter", 5, false}
+  end
+
+  test "an imported file keeps its own global date format (R41, R72)" do
+    {db, _} = import!("DATES")
+
+    assert db.date_format == %Agendum.Core.DateFormat{
+             order: :ddmmyy,
+             separator: "-",
+             clock: 24,
+             day_of_week: true,
+             show: :date_time,
+             am_pm: true,
+             time_separator: ":"
+           }
   end
 
   test "the categories come over with their tree and settings" do

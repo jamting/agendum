@@ -19,7 +19,16 @@
   "morning": "8:00",
   "afternoon": "14:00",
   "evening": "17:00",
-  "month_alone_means": "first day"
+  "month_alone_means": "first day",
+  "date_format": {
+   "display": "date time",
+   "format": 1,
+   "separator": "/",
+   "time_separator": ":",
+   "day_of_week": false,
+   "clock_12h": true,
+   "am_pm": true
+  }
  },
  "categories": {
   "id": 9,
@@ -954,6 +963,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -971,6 +981,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -988,6 +999,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1005,6 +1017,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1022,6 +1035,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1039,6 +1053,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1056,6 +1071,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1073,6 +1089,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1123,6 +1140,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1189,6 +1207,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1251,6 +1270,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1283,6 +1303,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1315,6 +1336,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1347,6 +1369,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1379,6 +1402,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1411,6 +1435,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1443,6 +1468,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1475,6 +1501,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1507,6 +1534,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1560,6 +1588,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1622,6 +1651,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1654,6 +1684,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1696,6 +1727,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1736,6 +1768,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1778,6 +1811,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1820,6 +1854,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1862,6 +1897,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1904,6 +1940,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -1946,6 +1983,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2041,6 +2079,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2092,6 +2131,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2113,6 +2153,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2134,6 +2175,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2176,6 +2218,7 @@
         "display": "date time",
         "format": "global",
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2193,6 +2236,7 @@
         "display": "date time",
         "format": "global",
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2210,6 +2254,7 @@
         "display": "date time",
         "format": "global",
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2231,6 +2276,7 @@
         "display": "date time",
         "format": "global",
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2273,6 +2319,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2285,6 +2332,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2302,6 +2350,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2314,6 +2363,7 @@
         "display": "date",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2360,6 +2410,7 @@
         "display": "date time",
         "format": "global",
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2402,6 +2453,7 @@
         "display": "date time",
         "format": "global",
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2442,6 +2494,7 @@
         "display": "date time",
         "format": "global",
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2482,6 +2535,7 @@
         "display": "date time",
         "format": "global",
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2522,6 +2576,7 @@
         "display": "date time",
         "format": "global",
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2562,6 +2617,7 @@
         "display": "date time",
         "format": "global",
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2632,6 +2688,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2672,6 +2729,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2714,6 +2772,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2756,6 +2815,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2798,6 +2858,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2840,6 +2901,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2882,6 +2944,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2954,6 +3017,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -2996,6 +3060,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3038,6 +3103,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3080,6 +3146,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3122,6 +3189,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3164,6 +3232,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3206,6 +3275,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3248,6 +3318,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3290,6 +3361,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3332,6 +3404,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3374,6 +3447,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3416,6 +3490,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3488,6 +3563,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3530,6 +3606,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3572,6 +3649,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3614,6 +3692,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3656,6 +3735,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3698,6 +3778,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3740,6 +3821,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3782,6 +3864,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3824,6 +3907,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3866,6 +3950,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3908,6 +3993,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true
@@ -3950,6 +4036,7 @@
         "display": "time",
         "format": 1,
         "separator": "/",
+        "time_separator": ":",
         "day_of_week": false,
         "clock_12h": true,
         "am_pm": true

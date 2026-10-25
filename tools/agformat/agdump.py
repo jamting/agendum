@@ -55,6 +55,21 @@ def lotus_date(days):
     return (datetime.datetime(1899, 12, 30) + datetime.timedelta(days=days)).isoformat(timespec="minutes")
 
 
+def date_format(f):
+    """A date format word: a date column's w10, or the file's global one at
+    header 0x182 (decoded 2026-10-26 by changing each field of Agenda's
+    Display Format box): bits 0-4 the date format, 1 MMDDYY ... 20
+    Relative # in the box's order, 0 the global default (columns); 5-7 the
+    separator; 0x100 the time separator hm; 0x400 a 12-hour clock; 0x800
+    am/pm; 0x1000 the day of week; 13-14 what is displayed."""
+    return {"display": ["date", "date time", "time date", "time"][(f >> 13) & 3],
+            "format": f & 0x1F or "global",
+            "separator": ["/", "-", ".", ",", " ", ":", "?", "?"][(f >> 5) & 7],
+            "time_separator": "hm" if f & 0x100 else ":",
+            "day_of_week": bool(f & 0x1000), "clock_12h": bool(f & 0x400),
+            "am_pm": bool(f & 0x800)}
+
+
 def time_word(w):
     """hour | minute << 5; hour 24 means no time."""
     hour, minute = w & 0x1F, (w >> 5) & 0x3F
@@ -327,11 +342,7 @@ class AgendaFile:
         col = {"category": lw[2], "width": lw[8] - 1}
         ctype = (self.bw(lw[2])[26] >> 2) & 3
         if ctype == 3:                              # date: format inline in w10
-            f = lw[10]
-            col["date_format"] = {"display": ["date", "date time", "time date", "time"][(f >> 13) & 3],
-                                  "format": f & 15 or "global", "separator": "/-."[(f >> 5) & 3],
-                                  "day_of_week": bool(f & 0x1000), "clock_12h": bool(f & 0x400),
-                                  "am_pm": bool(f & 0x800)}
+            col["date_format"] = date_format(lw[10])
         elif ctype == 2:                            # numeric: format in w11
             f = lw[11]
             col["number_format"] = {"decimals": (f >> 4) & 31, "label": [None, "%", "$", "?"][f & 3],
@@ -392,7 +403,8 @@ class AgendaFile:
                 "week": [WEEKDAYS[w(0x18E)] if w(0x18E) else "Sunday", WEEKDAYS[w(0x190)]],
                 "morning": f"{w(0x186) & 0xFF}:00", "afternoon": f"{w(0x18A) & 0xFF}:00",
                 "evening": f"{w(0x188) & 0xFF}:00",
-                "month_alone_means": "last day" if w(0x192) & 1 else "first day"}
+                "month_alone_means": "last day" if w(0x192) & 1 else "first day",
+                "date_format": date_format(w(0x182))}
 
     def to_json(self):
         return {"description": self.description, "password": self.password or None,

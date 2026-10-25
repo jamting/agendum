@@ -224,13 +224,13 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
 - [x] (2026-10-25; the owner's choices) File Properties' File description and Make backup on open (`NAME.agendum.bak`), format 42 (R82)
 - [x] (2026-10-25) F8 DESCRP in the Select File box: each file's description (R82)
 - [x] (2026-10-25, overnight) The managers' menus compared (checked in Agenda 2.0): the category manager's was already in the menu test; Agenda's view manager and macro manager have no F10 menu, as ours. The macro manager now has Agenda's help line, title (Macro Manager) and key bar (F2 EditMac, F4 Delete, F6 Props, F7 Learn; F4 deletes as DEL); the view manager's was already Agenda's
+- [x] (2026-10-26, overnight) The `.AG` import keeps the file's own global date format (header word `0x182`, decoded by experiment in Agenda 2.0; DATES.AG made for the test), and its description, Make backup on open and tab size; date columns' formats now read all six separators, all twenty formats and the time separator (`agdump.py` and the Elixir reader alike)
   - Unchecked: what Agenda does with an alarm when its date category is deleted (ours: back on When)
 
 #### Commands and behaviour still missing
 
 The order (meeting 2026-10-25, § 7): the small steps below in one or two batches, then Search compared with Agenda's, then Agenda's help (under Help) last; the Optional ones wait for the roadmap.
 
-- [ ] The `.AG` import reads the file's own global date format (header words `0x182`/`0x184`, `AGENDA_FILE_FORMAT.md`; only partly decoded): an imported file gets Agenda's default today (the owner's choice, 2026-10-25)
 - [ ] Search compared with Agenda's (ALT-F6 SEARCH in a view and a note, its Search box, the Match show view): the differences become parity work (the tagging sitting, 2026-10-22: no longer an enhancement)
 - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)
 - [ ] Show Circular (with the `o` indicator): needs circular references found first (User's Guide 20-21)

@@ -9,7 +9,7 @@ defmodule Agendum.Core.AgFile.ReaderTest do
   alias Agendum.Core.AgFile.Reader
 
   @dir "test/fixtures/ag"
-  @files ~w(ACCOUNT INFOSIFT PEOPLE PLANNER RICH UX)
+  @files ~w(ACCOUNT DATES INFOSIFT PEOPLE PLANNER RICH UX)
   # the owner's own Planner, used for years: on this machine only
   @owners Path.expand("~/Dosbox/APPS/AGENDA/PLANNER.AG")
 

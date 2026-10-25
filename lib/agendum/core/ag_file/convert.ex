@@ -93,7 +93,7 @@ defmodule Agendum.Core.AgFile.Convert do
         "next_id" => ctx.next_id,
         "main" => ctx.main,
         "special" => %{"entry" => special.entry, "when" => special.when, "done" => special.done},
-        "settings" => settings(file.settings),
+        "settings" => settings(file.settings, file.description),
         "categories" => categories,
         "items" => items,
         "views" => views
@@ -639,20 +639,18 @@ defmodule Agendum.Core.AgFile.Convert do
 
   # --- settings ----------------------------------------------------------------
 
-  defp settings(s) do
+  # The file's settings that Agendum has: its global date format (R41),
+  # File Properties' description, backup on open and tab size (R82, R64e),
+  # text matching and the date settings
+  defp settings(s, description) do
     [first, last] = s.week
-
-    # The file's own global date format (header word 0x182) is not decoded
-    # yet: the file gets Agenda's default, which most files kept (R41).
-    format = Agendum.Core.DateFormat.agenda()
 
     %{
       "match_settings" => %{"enabled" => s.text_matching},
-      "date_format" => %{
-        "order" => Atom.to_string(format.order),
-        "separator" => format.separator,
-        "clock" => format.clock
-      },
+      "date_format" => date_format(s.date_format),
+      "description" => String.slice(String.trim(description || ""), 0, 40),
+      "backup_on_open" => s.backup_on_open,
+      "tab_size" => min(max(s.tab_size, 1), 16),
       "date_settings" => %{
         "week_start" => @weekday_numbers[first] || 7,
         "week_end" => @weekday_numbers[last] || 6,
@@ -661,6 +659,33 @@ defmodule Agendum.Core.AgFile.Convert do
         "afternoon" => hour(s.afternoon),
         "evening" => hour(s.evening)
       }
+    }
+  end
+
+  # Agenda's Date format choices, in its box's order (1 MMDDYY … 20
+  # Relative #); 0 ("global") and anything unknown give Agenda's default
+  @orders ~w(mmddyy mmddyyyy ddmmyy ddmmyyyy yymmdd yyyymmdd yyddmm yyyyddmm mmmdd mmmddyy
+             mmmddyyyy ddmmm ddmmmyy ddmmmyyyy day_number day week_number week relative
+             relative_number)
+  @shows %{
+    "date" => "date",
+    "date time" => "date_time",
+    "time date" => "time_date",
+    "time" => "time"
+  }
+
+  defp date_format(f) do
+    default = Agendum.Core.DateFormat.agenda()
+    order = if is_integer(f.format), do: Enum.at(@orders, f.format - 1), else: nil
+
+    %{
+      "order" => order || Atom.to_string(default.order),
+      "separator" => if(f.separator == "?", do: default.separator, else: f.separator),
+      "clock" => if(f.clock_12h, do: 12, else: 24),
+      "am_pm" => f.am_pm,
+      "day_of_week" => f.day_of_week,
+      "show" => Map.get(@shows, f.display, "date_time"),
+      "time_separator" => f.time_separator
     }
   end
 

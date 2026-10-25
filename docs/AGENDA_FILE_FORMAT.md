@@ -93,7 +93,7 @@ Free blocks keep their own number in word 0 and have type 0 (word 1); words 2 an
 | `0x170` | 8    | Date created (double)                                                                                   | ~   |
 | `0x178` | 2×3  | Blocks of the date categories Entry, When, Done (20, 18, 16)                                            | ✔   |
 | `0x17E` | 2    | Last date category; `0x180` first (date categories form a list, see Category)                           | ✔   |
-| `0x182` | 2×2  | Global date column format (same encoding as a date column's w10, w11)                                   | ~   |
+| `0x182` | 2×2  | Global date format (Display Format box): the first word in a date column's w10 encoding (below; decoded 2026-10-26), the second `0x0400` in every file seen | ✔   |
 | `0x186` | 2    | Morning (`0xC8hh`, hh = hour); `0x188` evening; `0x18A` afternoon                                       | ✔   |
 | `0x18C` | 2    | An hour (`0xC8hh`) following the evening setting                                                        | ?   |
 | `0x18E` | 2    | Beginning of week (0 Sunday, 1 Monday …); `0x190` end of week                                           | ✔   |
@@ -459,12 +459,13 @@ Agenda itself drops what it cannot parse: "every weekday" and "the 15th" give no
 | w11    | Numeric: format. Date: time format (`0x0A00` …)            |
 | w12, w13 | Copies of w3/w4 when the column is linked with other sections (~) |
 
-Date column format (w10), Column Properties:
+Date column format (w10), Column Properties; the global format at header `0x182` is the same word (decoded 2026-10-26 by changing each field of Agenda 2.0's Display Format box, saving and reading the word back):
 
 | Bits     | Meaning                                                              |
 | -------- | -------------------------------------------------------------------- |
-| `0x000F` | Date format: 0 global default, 1 MMDDYY … 5 YYMMDD                   |
-| `0x0060` | Date separator: 0 `/`, `0x20` `-`, `0x40` `.`                        |
+| `0x001F` | Date format: 0 global default (a column), 1 MMDDYY, 2 MMDDYYYY, 3 DDMMYY, 4 DDMMYYYY, 5 YYMMDD, 6 YYYYMMDD, 7 YYDDMM, 8 YYYYDDMM, 9 MMMDD, 10 MMMDDYY, 11 MMMDDYYYY, 12 DDMMM, 13 DDMMMYY, 14 DDMMMYYYY, 15 <Day> #, 16 Day #, 17 <Week> #, 18 Week #, 19 Relative, 20 Relative # |
+| `0x00E0` | Date separator: 0 `/`, `0x20` `-`, `0x40` `.`, `0x60` `,`, `0x80` space, `0xA0` `:` |
+| `0x0100` | Time separator hm (else `:`)                                         |
 | `0x0400` | 12-hour clock                                                        |
 | `0x0800` | Show am/pm                                                           |
 | `0x1000` | Show day of week                                                     |
@@ -575,5 +576,5 @@ Nothing an import needs. Left open:
 - Header `0x18C`, the 8 bytes at `0x198`, the string at `0x1C4`.
 - Macro variables (type 12): the name is clear, the value encoding is not.
 - Some display-state bits (view w13, w18; section w12, w19).
-- The time-format word of date columns (w11) and the global date format words `0x182`/`0x184` in detail.
+- The time-format word of date columns (w11), and the second global word at `0x184` (`0x0400` in every file seen).
 - Agenda 1.0 files and the files the owner remembers as encrypted: every 2.0 file seen is unencrypted, password or not. Agenda compares passwords without regard to case ("hoot" opened a file whose password is "Hoot"; checked 2026-10-16).

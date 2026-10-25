@@ -562,22 +562,34 @@ defmodule Agendum.Core.AgFile.Reader do
 
   @date_display ["date", "date time", "time date", "time"]
 
+  # A date format word: a date column's w10, or the file's global one at
+  # header 0x182 (decoded 2026-10-26 by changing each field of Agenda's
+  # Display Format box, as agdump.py's `date_format`): bits 0-4 the date
+  # format, 1 MMDDYY … 20 Relative # in the box's order, 0 the global
+  # default (columns); 5-7 the separator; 0x100 the time separator hm;
+  # 0x400 a 12-hour clock; 0x800 am/pm; 0x1000 the day of week; 13-14 what
+  # is displayed.
+  @separators ["/", "-", ".", ",", " ", ":", "?", "?"]
+
+  defp date_format(d) do
+    %{
+      display: Enum.at(@date_display, d >>> 13 &&& 3),
+      format: if((d &&& 0x1F) == 0, do: "global", else: d &&& 0x1F),
+      separator: Enum.at(@separators, d >>> 5 &&& 7),
+      time_separator: if((d &&& 0x100) != 0, do: "hm", else: ":"),
+      day_of_week: (d &&& 0x1000) != 0,
+      clock_12h: (d &&& 0x400) != 0,
+      am_pm: (d &&& 0x800) != 0
+    }
+  end
+
   defp column(f, l) do
     w = lw(f, l)
     col = %{category: elem(w, 2), width: elem(w, 8) - 1}
 
     case (f |> bw(elem(w, 2)) |> elem(26)) >>> 2 &&& 3 do
       3 ->
-        d = elem(w, 10)
-
-        Map.put(col, :date_format, %{
-          display: Enum.at(@date_display, d >>> 13 &&& 3),
-          format: if((d &&& 15) == 0, do: "global", else: d &&& 15),
-          separator: String.at("/-.", d >>> 5 &&& 3) || "/",
-          day_of_week: (d &&& 0x1000) != 0,
-          clock_12h: (d &&& 0x400) != 0,
-          am_pm: (d &&& 0x800) != 0
-        })
+        Map.put(col, :date_format, date_format(elem(w, 10)))
 
       2 ->
         n = elem(w, 11)
@@ -691,7 +703,8 @@ defmodule Agendum.Core.AgFile.Reader do
       morning: "#{w.(0x186) &&& 0xFF}:00",
       afternoon: "#{w.(0x18A) &&& 0xFF}:00",
       evening: "#{w.(0x188) &&& 0xFF}:00",
-      month_alone_means: if((w.(0x192) &&& 1) != 0, do: "last day", else: "first day")
+      month_alone_means: if((w.(0x192) &&& 1) != 0, do: "last day", else: "first day"),
+      date_format: date_format(w.(0x182))
     }
   end
 end
