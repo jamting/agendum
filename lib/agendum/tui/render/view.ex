@@ -236,6 +236,10 @@ defmodule Agendum.TUI.Render.View do
       end
 
     mark = if item.marked, do: "♦", else: " "
+
+    # Agenda's » on the highlighted row (checked in Agenda 2.0, 2026-10-25):
+    # on a column entry it takes the bullet's place (another tag stays)
+    tag = if selected and state.col > 0 and tag == "•", do: "»", else: tag
     text_style = if item.done, do: :item_done, else: :item
 
     text_lines =
@@ -244,16 +248,24 @@ defmodule Agendum.TUI.Render.View do
           [Draw.input(editing.line, tw, :edit)]
 
         _ ->
-          item.text
-          |> Draw.wrap(tw)
-          |> Enum.map(fn line ->
+          wrapped = Draw.wrap(item.text, tw)
+          # the highlight is as wide as the text's longest line, as Agenda's
+          lit = wrapped |> Enum.map(&String.length/1) |> Enum.max(fn -> 0 end) |> max(1)
+
+          Enum.map(wrapped, fn line ->
             if selected and state.col == 0,
-              do: [{:cursor, Draw.pad(line, tw)}],
+              do: [{:cursor, Draw.pad(line, lit)}, {:normal, Draw.spaces(tw - lit)}],
               else: line |> Draw.pad(tw) |> Text.with_links(used, text_style)
           end)
       end
 
-    cells = item_cells(state, row, selected, editing)
+    cells =
+      state
+      |> item_cells(row, selected, editing)
+      |> pointed(
+        row,
+        selected and state.col == 0 and not match?(%{target: {:edit_item, _}}, editing)
+      )
 
     # Number items (R79): the item's number between its marks and its text
     number = Layout.number_label(row)
@@ -353,6 +365,19 @@ defmodule Agendum.TUI.Render.View do
       [{:normal, " "} | cell_part] ++ percent_part(column, {:cell, percent || ""})
     end)
   end
+
+  # On the item text, Agenda's » stands in the space before the first
+  # column right of the text (checked in Agenda 2.0, 2026-10-25)
+  defp pointed(cells, row, true) do
+    at = Layout.items_at(row)
+
+    case Enum.at(cells, at) do
+      [{:normal, " "} | rest] -> List.replace_at(cells, at, [{:symbol, "»"} | rest])
+      _ -> cells
+    end
+  end
+
+  defp pointed(cells, _row, false), do: cells
 
   defp blank_cells(columns),
     do: Enum.flat_map(columns, &[{:normal, " "}, {:normal, Draw.spaces(Column.shown_width(&1))}])

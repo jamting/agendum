@@ -19,7 +19,7 @@ defmodule Agendum.TUI.AlarmsTest do
 
   test "a time in the text shows in the When column", %{state: state} do
     state = press(state, ["Call Bob Tuesday at 3:00", :enter])
-    assert screen(state) =~ ~r/Call Bob Tuesday at 3:00\s+2026-10-13 15:00/
+    assert screen(state) =~ ~r/Call Bob Tuesday at 3:00[\s»]+2026-10-13 15:00/
   end
 
   test "ALT-A sets an alarm (default 5 minutes before) and the item shows @", %{state: state} do

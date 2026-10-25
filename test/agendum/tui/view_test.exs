@@ -42,6 +42,40 @@ defmodule Agendum.TUI.ViewTest do
     assert Enum.find(marked, &(&1 =~ "Don't forget")) =~ ~r/^    • Don't forget/
   end
 
+  # Agenda's » (checked in Agenda 2.0, 2026-10-25): on the item text, the
+  # highlight covers the text and » stands just before the first column; on
+  # a column entry, » takes the bullet's place (an item with a note keeps ♪)
+  test "» shows the highlighted row, as Agenda's", %{state: state} do
+    state = %{state | width: 80} |> press(:down)
+
+    line = fn state, text ->
+      state |> screen() |> String.split("\n") |> Enum.find(&(&1 =~ text))
+    end
+
+    assert line.(state, "Set up meeting") =~ ~r/^    • Set up meeting at Terracotta +»2026-10-31/
+
+    # the highlight is as wide as the text's longest line ("Corp to discuss
+    # CopyCat before", 30), not the column
+    [cursor] =
+      state
+      |> Agendum.TUI.Render.render()
+      |> List.flatten()
+      |> Enum.filter(&match?({:cursor, _}, &1))
+      |> Enum.take(1)
+
+    assert elem(cursor, 1) == String.pad_trailing("Set up meeting at Terracotta", 30)
+
+    on_column = press(state, :right)
+    assert line.(on_column, "Set up meeting") =~ ~r/^    » Set up meeting/
+    refute line.(on_column, "Set up meeting") =~ "»2026"
+
+    # an item with a note keeps its ♪
+    calls = hd(Database.find_categories(state.db, "Calls"))
+    [first | _] = Database.items_in(state.db, calls)
+    noted = %{state | db: Core.set_note(state.db, first.id, "Price?", ~D[2026-10-08])}
+    assert line.(press(noted, :right), "Set up meeting") =~ ~r/^    ♪ Set up meeting/
+  end
+
   test "a column head starts where its entries do, as in Agenda (screenshot 9)",
        %{state: state} do
     [head, item] =
@@ -200,7 +234,7 @@ defmodule Agendum.TUI.ViewTest do
       state = press(state, ["Call Bob next Tuesday", :enter])
       screen = screen(state)
       assert screen =~ "When: 2026-10-13"
-      assert screen =~ ~r/Call Bob next Tuesday\s+2026-10-13/
+      assert screen =~ ~r/Call Bob next Tuesday[\s»]+2026-10-13/
     end
 
     test "editing the date words updates the When date", %{state: state} do

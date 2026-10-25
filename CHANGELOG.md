@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **» on the highlighted row**, as in Lotus Agenda: with the item text highlighted, » stands just before the first column, and the highlight is only as wide as the text; with a column entry highlighted, » takes the bullet's place.
 - **Rows as in Lotus Agenda**: items are indented four spaces; an item with a note shows **♪** in the bullet's place, a marked item **♦** right after it, and the text starts in the seventh column (wrapped lines too). A section head whose category has a note shows **♪** in front of its name. Item text is three columns narrower.
 ## 0.38.0 — 2026-10-25
 
