@@ -437,6 +437,10 @@ defmodule Agendum.TUI.Update.Prompts do
 
   defp confirmed(state, {:replace_show_view, then}, true), do: show(state, then)
 
+  # DEL on an item in a view
+  defp confirmed(state, {:remove_item, item_id, cat_id}, true),
+    do: Agendum.TUI.Update.ViewKeys.remove_item(state, item_id, cat_id)
+
   # DEL in the alarm list (R38)
   defp confirmed(state, {:remove_alarm, :current, id}, true),
     do: State.run(state, {:cancel_alarm, id})

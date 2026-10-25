@@ -197,12 +197,33 @@ defmodule Agendum.TUI.ViewTest do
     assert Agendum.TUI.Layout.current_row(state).item.done == ~D[2026-10-08]
 
     count = length(Database.items(state.db))
-    state = press(state, [:delete])
+    state = press(state, [:delete, :enter])
     assert length(Database.items(state.db)) == count
     assert length(Agendum.TUI.Layout.rows(state)) == count
 
     state = press(state, [:down, {:alt_f, 4}, "y"])
     assert length(Database.items(state.db)) == count - 1
+  end
+
+  # Agenda's question (checked in Agenda 2.0, 2026-10-25; the owner's
+  # choice): DEL asks first, ENTER removes the item from the section's
+  # category, ESC keeps it; with Confirm off it removes at once
+  test "DEL asks before it takes an item out of the section", %{state: state} do
+    state = press(state, :down)
+    item = Agendum.TUI.Layout.current_row(state).item
+    calls = hd(Database.find_categories(state.db, "Calls"))
+
+    asked = press(state, :delete)
+    assert screen(asked) =~ "Remove this item from the section?"
+    assert screen(asked) =~ "(Use ALT-F4 to discard the item completely.)"
+    assert Database.member?(press(asked, :esc).db, item.id, calls)
+
+    removed = press(asked, :enter)
+    refute Database.member?(removed.db, item.id, calls)
+    assert Database.member?(Agendum.TUI.History.undo(removed).db, item.id, calls)
+
+    quick = %{state | prefs: %{state.prefs | confirm: false}}
+    refute Database.member?(press(quick, :delete).db, item.id, calls)
   end
 
   test "ALT-D adds a section via the category picker", %{state: state} do

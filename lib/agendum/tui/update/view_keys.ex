@@ -579,13 +579,17 @@ defmodule Agendum.TUI.Update.ViewKeys do
         )
 
   def delete(state, %{kind: :item, item: item, category: cat}) when state.col == 0 do
-    if cat.id == state.db.main_id do
-      State.error(state, "Items cannot be removed from MAIN; use ALT-F4 to discard")
-    else
-      state
-      |> State.run({:remove_from_category, item.id, cat.id}, "Removed from #{cat.name}")
-      |> then(&%{&1 | last: %{&1.last | removed: item.id}})
-    end
+    # Agenda's question first (checked in Agenda 2.0, 2026-10-25); with
+    # Confirm off it is taken at once (`Prompts.confirm/4`)
+    if cat.id == state.db.main_id,
+      do: State.error(state, "Items cannot be removed from MAIN; use ALT-F4 to discard"),
+      else:
+        Prompts.confirm(
+          state,
+          "Remove this item from the section?",
+          {:remove_item, item.id, cat.id},
+          remove_item_question()
+        )
   end
 
   # DEL in a column: a Category note line is emptied, a Star or Yes/No
@@ -609,6 +613,16 @@ defmodule Agendum.TUI.Update.ViewKeys do
   end
 
   def delete(state, nil), do: state
+
+  @doc "Takes an item out of a section's category, once DEL's question is answered yes."
+  def remove_item(state, item_id, cat_id) do
+    state
+    |> State.run(
+      {:remove_from_category, item_id, cat_id},
+      "Removed from #{state.db.categories[cat_id].name}"
+    )
+    |> then(&%{&1 | last: %{&1.last | removed: item_id}})
+  end
 
   # Agenda's words with its question (checked in Agenda 2.0, 2026-10-25)
   defp remove_item_question,

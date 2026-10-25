@@ -30,8 +30,8 @@ defmodule Agendum.TUI.MenuKeysEntriesTest do
     test "Item ▸ BrkAssign removes the item from the section, as DEL", %{state: state} do
       state = press(state, :down)
       item = Layout.current_row(state).item
-      by_menu = press(state, [{:f, 10}, "i", "b"])
-      assert by_menu.db == press(state, :delete).db
+      by_menu = press(state, [{:f, 10}, "i", "b", :enter])
+      assert by_menu.db == press(state, [:delete, :enter]).db
       refute by_menu.db == state.db
       assert Layout.current_row(by_menu).item != item
     end

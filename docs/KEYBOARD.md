@@ -71,7 +71,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Category manager: the category above / below                                                   | ↑ or BACKSPACE / ↓ or ENTER    | ↑ or ⌫ / ↓ or ENTER                   |
 | Category manager: add a sibling below / above                                                   | ALT-D (or ALT-I, INS) / ALT-U | ⌥d / ⌥u, or **CTRL-N**                                     |
 | Category manager: add a child / a new family after the parent                                   | ALT-R / ALT-L                 | ⌥r / ⌥l                                                    |
-| Remove from section / column                                                                    | DEL                           | fn-⌫ (forward delete)                                                 |
+| Remove from section (asks first) / column                                                       | DEL                           | fn-⌫ (forward delete)                                                 |
 | Undo / redo                                                                                     | —                             | **CTRL-Z** / **CTRL-Y** (also in the menu)                            |
 | Run a command by its name: type part of it or its initials, ENTER runs it (ours, R65d)          | —                             | **CTRL-X** (also in a note)                                           |
 | Save / open / print to file / quit                                                              | menu                          | **CTRL-S** / **CTRL-O** / **CTRL-P** / **CTRL-Q** (CTRL-C also quits) |

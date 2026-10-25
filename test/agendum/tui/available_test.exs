@@ -70,7 +70,7 @@ defmodule Agendum.TUI.AvailableTest do
     end
 
     test "after DEL removes an item, Yank can put it back", %{state: state} do
-      removed = state |> on_item() |> press(:delete)
+      removed = state |> on_item() |> press([:delete, :enter])
       refute Map.has_key?(why(removed, :view), :yank)
     end
 

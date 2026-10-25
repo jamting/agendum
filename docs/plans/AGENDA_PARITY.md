@@ -214,13 +214,13 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
   - [x] Utilities ▸ Show ▸ Alarm: the Show View with !Current Alarms! and !Past Alarms!; DEL asks "Remove this item from the section?", then cancels a current alarm or takes a past one off
   - [x] The Show view named *Show View*, and "Delete the existing Show view?" before Show Match, Sched, Alarm, Prereqs or Depends replace it
   - [x] (2026-10-25, the next batch) The questions' help lines and DEL's second line as Agenda's, and the F3 list titled "Select Date Category"
+- [x] (2026-10-25; the owner's choice) DEL on an item in any view asks Agenda's "Remove this item from the section?  Yes (Use ALT-F4 to discard the item completely.)" (R24); with Confirm off it removes at once
   - Unchecked: what Agenda does with an alarm when its date category is deleted (ours: back on When)
 
 #### Commands and behaviour still missing
 
 The order (meeting 2026-10-25, § 7): the small steps below in one or two batches, then Search compared with Agenda's, then Agenda's help (under Help) last; the Optional ones wait for the roadmap.
 
-- [ ] DEL on an item in a view asks Agenda's "Remove this item from the section? Yes (Use ALT-F4 to discard the item completely.)" (seen in Agenda 2.0, 2026-10-25, in the Show view; ours removes at once, except in the alarm list): a habit change, to settle with the owner first
 - [ ] The `.AG` import reads the file's own global date format (header words `0x182`/`0x184`, `AGENDA_FILE_FORMAT.md`; only partly decoded): an imported file gets Agenda's default today (the owner's choice, 2026-10-25)
 - [ ] Search compared with Agenda's (ALT-F6 SEARCH in a view and a note, its Search box, the Match show view): the differences become parity work (the tagging sitting, 2026-10-22: no longer an enhancement)
 - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)

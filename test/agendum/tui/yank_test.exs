@@ -31,7 +31,7 @@ defmodule Agendum.TUI.YankTest do
   end
 
   test "DEL then ALT-Y puts the item below the highlighted one, one undo step", %{state: state} do
-    state = press(state, :delete)
+    state = press(state, [:delete, :enter])
     refute in?(state, @weed, "Garden")
 
     state = state |> to_item(@notice) |> press({:alt, "y"})
@@ -49,12 +49,12 @@ defmodule Agendum.TUI.YankTest do
   end
 
   test "it can go back where it was", %{state: state} do
-    state = press(state, [:delete, :up, {:alt, "y"}])
+    state = press(state, [:delete, :enter, :up, {:alt, "y"}])
     assert in?(state, @weed, "Garden")
   end
 
   test "one at a time: after a yank there is nothing left to yank", %{state: state} do
-    state = press(state, [:delete, {:alt, "y"}, {:alt, "y"}])
+    state = press(state, [:delete, :enter, {:alt, "y"}, {:alt, "y"}])
     assert panel(state) =~ "No removed item to yank back"
   end
 
@@ -65,7 +65,7 @@ defmodule Agendum.TUI.YankTest do
   end
 
   test "an item already in the section stays as it is", %{state: state} do
-    state = state |> press(:delete) |> press(:up)
+    state = state |> press([:delete, :enter]) |> press(:up)
     # put it back by hand first, then yank
     state = press(state, [{:alt, "y"}])
     state = %{state | last: %{state.last | removed: item_id(state.db, @weed)}}
@@ -80,7 +80,7 @@ defmodule Agendum.TUI.YankTest do
 
     state =
       state
-      |> press([:down, :delete])
+      |> press([:down, :delete, :enter])
       |> State.switch_view(week.id)
       |> press([:down, {:alt, "y"}])
 
