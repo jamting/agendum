@@ -131,18 +131,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
       {:out_of_scope, "application protection (SPEC § 6)"},
     "category_text_matching: Agenda's Category can have new children, not ours" =>
       {:out_of_scope, "application protection (SPEC § 6)"},
-    "column_properties_date: ours Settings, not Agenda's" =>
-      {:change_back,
-       "Agenda shows \"(Global defaults)\" or \"(Local settings)\" as a line; F8 goes back to the defaults (owner, 2026-10-25)"},
-    "column_properties_date: ours Clock, not Agenda's" =>
-      {:change_back,
-       "Agenda hides the time settings while a column shows the date only (checked in Agenda 2.0, 2026-10-25; owner, 2026-10-25)"},
-    "column_properties_date: ours Show am/pm, not Agenda's" =>
-      {:change_back,
-       "Agenda hides the time settings while a column shows the date only (checked in Agenda 2.0, 2026-10-25; owner, 2026-10-25)"},
-    "column_properties_date: ours Time separator, not Agenda's" =>
-      {:change_back,
-       "Agenda hides the time settings while a column shows the date only (checked in Agenda 2.0, 2026-10-25; owner, 2026-10-25)"},
     "customize: Agenda's Color, not ours" =>
       {:machine,
        "Agenda chose colours for the monitor; ours, Theme, chooses the terminal's colours (R40)"},
@@ -300,6 +288,10 @@ defmodule Agendum.TUI.AgendaBoxesTest do
     {people, _} = Enum.find(db.views, fn {_, v} -> v.name == "People" end)
     when_key = %Agendum.Core.View.SortKey{on: {:category, cat_id(db, "When")}}
     db = Agendum.Core.set_sort(db, people, :view, [when_key])
+
+    # and its When column shows the date only, in settings of its own
+    date_only = %{db.date_format | show: :date}
+    db = Agendum.Core.set_column_date_format(db, people, {0, 1}, date_only)
 
     state = db |> start(width: 80, height: 25) |> State.switch_view(people)
     %{agenda: boxes, state: state}

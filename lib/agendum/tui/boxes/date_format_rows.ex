@@ -9,12 +9,8 @@ defmodule Agendum.TUI.Boxes.DateFormatRows do
 
   @rows [:show, :day_of_week, :order, :separator, :clock, :am_pm, :time_separator]
 
-  # the same in File Properties and in a date column's Column Properties,
-  # whose Settings switches between the global defaults and its own
+  # the same in File Properties and in a date column's Column Properties
   @help %{
-    settings:
-      "Global defaults uses the file's date format; any change gives the column its own. " <>
-        "SPACE goes back to the global defaults.",
     show: "Choose whether to display date, time, or both. SPACE for the next choice.",
     day_of_week: "Choose whether to show the day of the week with the date. SPACE switches.",
     order: "Choose the order of month, day and year in dates. SPACE for the next choice.",

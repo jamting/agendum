@@ -37,7 +37,10 @@ defmodule Agendum.TUI.DateColumnsTest do
     text = screen(state)
     assert text =~ ~r/Column head: +When +Category type: +Date/
     assert text =~ "Date Column Properties"
-    assert text =~ ~r/Settings: +Global defaults/
+    # Agenda's line under the part's title, not a setting (checked in
+    # Agenda 2.0, 2026-10-25)
+    assert text =~ ~r/Date Column Properties *│?\n.*\(Global defaults\)/
+    refute text =~ "Settings:"
     assert text =~ ~r/Display date and\/or time: +Date time/
     assert text =~ ~r/Date format: +YYYYMMDD/
     assert text =~ "Formatted Sample"
@@ -55,7 +58,7 @@ defmodule Agendum.TUI.DateColumnsTest do
 
     assert column(state, view).date.show == :date
     assert column(state, view).date.order == :relative
-    assert screen(state) =~ ~r/Settings: +Local settings/
+    assert screen(state) =~ "(Local settings)"
 
     state = press(state, :enter)
     assert state.modes == []
@@ -63,10 +66,43 @@ defmodule Agendum.TUI.DateColumnsTest do
     assert state.db.date_format == %Core.DateFormat{}
   end
 
-  test "Settings goes back to the global defaults", %{state: state, view: view} do
-    state = state |> to_show() |> press(" ") |> to_setting("Settings") |> press(" ")
+  # Agenda shows only the settings for what the column displays: no clock
+  # for Date only, no date format for Time only (checked in Agenda 2.0,
+  # 2026-10-25)
+  test "the settings shown follow Display date and/or time", %{state: state} do
+    both = to_show(state)
+
+    for label <- ["Date format:", "Date separator:", "Clock:", "Show am/pm:", "Time separator:"],
+        do: assert(screen(both) =~ label)
+
+    # Date time -> Date only: the time settings go
+    date_only = press(both, " ")
+    assert screen(date_only) =~ "Date only"
+
+    for label <- ["Clock:", "Show am/pm:", "Time separator:"],
+        do: refute(screen(date_only) =~ label)
+
+    assert screen(date_only) =~ "Date separator:"
+
+    # Time date -> Time only: the date format and separator go; the day of
+    # week stays, as Agenda's
+    time_only = press(date_only, [" ", " "])
+    assert screen(time_only) =~ "Time only"
+    for label <- ["Date format:", "Date separator:"], do: refute(screen(time_only) =~ label)
+
+    for label <- ["Show day of week:", "Clock:", "Time separator:"],
+        do: assert(screen(time_only) =~ label)
+
+    # the cursor reaches only the settings shown
+    refute_raise = fn st, label -> assert_raise RuntimeError, fn -> to_setting(st, label) end end
+    refute_raise.(date_only, "Clock")
+    refute_raise.(time_only, "Date format")
+  end
+
+  test "ALT-F8 goes back to the global defaults", %{state: state, view: view} do
+    state = state |> to_show() |> press([" ", {:alt_f, 8}])
     assert column(state, view).date == nil
-    assert screen(state) =~ ~r/Settings: +Global defaults/
+    assert screen(state) =~ "(Global defaults)"
     assert screen(press(state, :esc)) =~ "2026-10-09 14:00"
   end
 

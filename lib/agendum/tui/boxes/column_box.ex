@@ -13,11 +13,12 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
       (R29): currency symbol, decimal places, thousands separator, negative
       indicator, Display % of total (a "% tot" column beside it) and the
       calculations, with formatted samples.
-    * A date column has its Date Column Properties (R41a): Settings says
-      "Global defaults" while it uses the file's format and "Local
-      settings" once it has its own (any change makes them its own; SPACE
-      on Settings goes back), then `Agendum.TUI.Boxes.DateFormatRows`, with a
-      formatted sample.
+    * A date column has its Date Column Properties (R41a): a line under
+      the part's title says "(Global defaults)" while it uses the file's
+      format and "(Local settings)" once it has its own (any change makes
+      them its own; ALT-F8 goes back), then `Agendum.TUI.Boxes.DateFormatRows`,
+      only those for what it displays, as Agenda's (no clock for Date
+      only, no date format for Time only), with a formatted sample.
 
   Each part is a layout (`Agendum.TUI.Boxes.Template`); the cursor goes through the
   fields in reading order. Every change applies at once to the column and
@@ -66,14 +67,36 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
    Display % of total:       [percent   ]  Maximum: [maximum]
   """
 
-  @date """
+  # A date column's part, as Agenda's (checked in Agenda 2.0, 2026-10-25):
+  # under its title a line, not a setting, says whose settings these are;
+  # then the settings for what the column displays. Agenda hides the time
+  # settings for Date only and the date format for Time only, leaving the
+  # rows where they stand
+  @date_head """
                           Date Column Properties
+                            [settings          ]
 
-   Settings:                 [settings       ]
-   Display date and/or time: [show       ]  Clock:          [clock   ]
-   Show day of week:         [day_of_week]  Show am/pm:     [am_pm   ]
-   Date format:              [order      ]
+  """
+
+  @date_both """
+   Display date and/or time: [show       ]
+   Show day of week:         [day_of_week]  Clock:          [clock   ]
+   Date format:              [order      ]  Show am/pm:     [am_pm   ]
    Date separator:           [separator  ]  Time separator: [time_sep]
+  """
+
+  @date_only """
+   Display date and/or time: [show       ]
+   Show day of week:         [day_of_week]
+   Date format:              [order      ]
+   Date separator:           [separator  ]
+  """
+
+  @time_only """
+   Display date and/or time: [show       ]
+   Show day of week:         [day_of_week]  Clock:          [clock   ]
+                                            Show am/pm:     [am_pm   ]
+                                            Time separator: [time_sep]
   """
 
   @max_decimals 6
@@ -87,14 +110,22 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   def column(state, %{column: {sidx, index}}),
     do: state |> State.view() |> View.columns(sidx) |> Enum.at(index)
 
-  @doc "The box's fields for a column of this kind, in the cursor's order."
-  @spec fields(:standard | :note | :numeric | :date) :: [atom]
-  def fields(kind), do: kind |> layout() |> Template.fields()
+  # the box's fields, in the cursor's order: the line saying whose date
+  # settings these are is only shown
+  defp fields(state, mode), do: Template.fields(layout(state, mode)) -- [:settings]
 
-  defp layout(:standard), do: @top <> @standard
-  defp layout(:note), do: @top <> @note
-  defp layout(:numeric), do: @top <> rule() <> @numeric
-  defp layout(:date), do: @top <> rule() <> @date
+  defp layout(state, mode) do
+    case kind(state, mode) do
+      :standard -> @top <> @standard
+      :note -> @top <> @note
+      :numeric -> @top <> rule() <> @numeric
+      :date -> @top <> rule() <> @date_head <> date_part(date_format(state, mode).show)
+    end
+  end
+
+  defp date_part(:date), do: @date_only
+  defp date_part(:time), do: @time_only
+  defp date_part(_date_and_time), do: @date_both
 
   # a line across the box, as Agenda draws between the two parts
   defp rule, do: " " <> String.duplicate("─", 70) <> "\n"
@@ -204,7 +235,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   # another kind, with fewer fields, so the cursor is kept within them.
   @impl Box
   def field(state, mode) do
-    fields = fields(kind(state, mode))
+    fields = fields(state, mode)
     Enum.at(fields, min(mode.cursor, length(fields) - 1))
   end
 
@@ -289,10 +320,8 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   def run(state, mode, :pick_head),
     do: if(field(state, mode) == :head, do: pick_head(state, mode), else: state)
 
-  def run(state, mode, id) do
-    kind = kind(state, mode)
-    Box.run_settings(state, mode, Template.grid(layout(kind), fields(kind)), id)
-  end
+  def run(state, mode, id),
+    do: Box.run_settings(state, mode, Template.grid(layout(state, mode), fields(state, mode)), id)
 
   # the whole hierarchy, as Agenda's Column Head box (screenshot 144)
   defp pick_head(state, mode),
@@ -328,11 +357,6 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   defp change(state, _mode, :title, _step), do: State.error(state, "Type the column's title")
 
   # --- a date column ---
-
-  defp change(state, mode, :settings, _step) do
-    own = if column(state, mode).date, do: nil, else: state.db.date_format
-    set_date(state, mode, own)
-  end
 
   # (the layout's field is `time_sep`: `time_separator` is too long for it)
   defp change(state, mode, :time_sep, step), do: change(state, mode, :time_separator, step)
@@ -408,7 +432,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
 
     values = Map.merge(top, values(state, mode, kind))
     opts = [selected: field(state, mode)] ++ FieldTyping.editing(mode)
-    lines = Template.render(layout(kind), values, opts)
+    lines = Template.render(layout(state, mode), values, opts)
     lines ++ samples(state, mode, kind) ++ [[], Box.hint(keys(state, mode), inner)]
   end
 
@@ -476,7 +500,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
     |> Map.put(:time_sep, dates.time_separator)
     |> Map.put(
       :settings,
-      if(column(state, mode).date, do: "Local settings", else: "Global defaults")
+      if(column(state, mode).date, do: "(Local settings)", else: "(Global defaults)")
     )
   end
 
