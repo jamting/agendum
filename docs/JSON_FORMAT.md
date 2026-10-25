@@ -59,6 +59,7 @@ The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs` and 
 | `insert_columns`      | Where a new column goes: `"all"` sections (the default) or the current `"section"` (R55).                                                                                                                                                             |
 | `description`         | File Properties ▸ File description, up to 40 characters (`""` by default, R82). |
 | `backup_on_open`      | File Properties ▸ Make backup on open: `true` copies the file to `NAME.agendum.bak` each time it is opened (`false` by default, R82). |
+| (password)            | Never exported: a file's password (ADR 0046) is not in its JSON, which is plain text; an imported JSON file has none. |
 | `tab_size`            | How far apart a note's tab stops are, 1 to 16 (5 by default; File Properties ▸ Tab size, R64e).                                                                                                                                                       |
 | `confirm_assignments` | `"never"`, `"always"` or `"sometimes"` (R16).                                                                                                                                                                                                        |
 

@@ -20,4 +20,15 @@ defmodule Agendum.Core.FileSettingsTest do
     refute db.backup_on_open
     assert Core.set_backup_on_open(db, true).backup_on_open
   end
+
+  # Set file password (ADR 0046): up to 12 characters, as Agenda's; an
+  # empty one removes it
+  test "a password of up to 12 characters, removed by an empty one" do
+    db = Core.new_file()
+    assert db.password == nil
+    assert {:ok, db} = Core.set_password(db, "Hoot")
+    assert db.password == "Hoot"
+    assert Core.set_password(db, String.duplicate("x", 13)) == {:error, :too_long}
+    assert {:ok, %{password: nil}} = Core.set_password(db, "")
+  end
 end

@@ -82,6 +82,7 @@ defmodule Agendum.Core do
   defdelegate template(db), to: Files
   defdelegate set_description(db, text), to: Files
   defdelegate set_backup_on_open(db, on?), to: Files
+  defdelegate set_password(db, password), to: Files
   defdelegate export_json(db), to: Files
   defdelegate import_json(text), to: Files
   defdelegate agenda_file?(bytes), to: Files

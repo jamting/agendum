@@ -66,6 +66,20 @@ defmodule Agendum.Core.Facade.Files do
   end
 
   @doc """
+  File Properties ▸ Set file password (R82, ADR 0046): up to 12 characters,
+  as Agenda's; an empty one removes it. The file is encrypted with it when
+  saved (`Agendum.Store`), and cannot be opened without it.
+  """
+  @spec set_password(db, String.t()) :: {:ok, db} | {:error, :too_long}
+  def set_password(db, ""), do: {:ok, %{db | password: nil}}
+
+  def set_password(db, password) when is_binary(password) do
+    if String.length(password) > 12,
+      do: {:error, :too_long},
+      else: {:ok, %{db | password: password}}
+  end
+
+  @doc """
   File Properties ▸ Make backup on open (R82): when on, opening the file
   first copies it to a backup beside it (`my.agendum.bak`).
   """

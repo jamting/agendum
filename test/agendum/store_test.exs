@@ -530,4 +530,38 @@ defmodule Agendum.StoreTest do
     assert Agendum.Store.backup(path) == :ok
     assert File.read!(path <> ".bak") == "today"
   end
+
+  # ADR 0046: a file with a password is encrypted; its description stays
+  # readable, for the Select File box
+  describe "a file with a password" do
+    setup %{tmp_dir: dir} do
+      {:ok, db} = Agendum.Core.set_description(Agendum.Core.new_file(), "Owl's secrets")
+      {:ok, db} = Agendum.Core.set_password(db, "Hoot")
+      path = Path.join(dir, "owl.agendum")
+      :ok = Agendum.Store.save(db, path)
+      %{db: db, path: path}
+    end
+
+    test "is encrypted, and opens only with its password", %{db: db, path: path} do
+      bytes = File.read!(path)
+      assert String.starts_with?(bytes, "AGENDUM-ENC1")
+      refute bytes =~ "Initial Section"
+
+      assert Agendum.Store.load(path) == {:error, :password_required}
+      assert Agendum.Store.load(path, "owl") == {:error, :wrong_password}
+      assert Agendum.Store.load(path, "Hoot") == {:ok, db}
+    end
+
+    test "keeps its description readable", %{tmp_dir: dir} do
+      assert Agendum.Store.descriptions(dir, ["owl.agendum"]) == %{
+               "owl.agendum" => "Owl's secrets"
+             }
+    end
+
+    test "is plain again once the password is removed", %{db: db, path: path} do
+      {:ok, db} = Agendum.Core.set_password(db, "")
+      :ok = Agendum.Store.save(db, path)
+      assert Agendum.Store.load(path) == {:ok, db}
+    end
+  end
 end

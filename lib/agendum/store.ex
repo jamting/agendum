@@ -46,7 +46,8 @@ defmodule Agendum.Store do
   `Database.texts` and the `:unindexed` kind of `Category`, unindexed
   categories (R29b); 41 adds `Item.alarm_category`, an alarm's date
   category (R38); 42 adds `Database.description` and `backup_on_open`
-  (File Properties, R82).
+  (File Properties, R82); 43 adds `Database.password`, never written: a
+  file with a password is encrypted with it (ADR 0046).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
@@ -57,7 +58,7 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 42
+  @format_version 43
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
@@ -101,7 +102,12 @@ defmodule Agendum.Store do
     # Any Elixir value can be turned into bytes by the Erlang runtime
     # (`:erlang` is an Erlang module, called directly). The tuple is the
     # envelope: a tag, the format version, then the database itself.
-    binary = :erlang.term_to_binary({:agenda, @format_version, db}, [:compressed])
+    # a password is never written: the file is encrypted with it (ADR 0046)
+    binary =
+      {:agenda, @format_version, %{db | password: nil}}
+      |> :erlang.term_to_binary([:compressed])
+      |> encrypt(db.password, db.description)
+
     # Domain: write to a temporary file, then rename it over the real one. A
     # rename within one folder is atomic, so a crash or a full disk mid-write
     # leaves the old file whole instead of half a new one.
@@ -147,22 +153,71 @@ defmodule Agendum.Store do
   # no guard against tampering, nor needs to be, only against change.
   defp stamp_of(binary), do: binary |> :erlang.md5() |> Base.encode16(case: :lower)
 
-  @spec load(Path.t()) :: {:ok, Database.t()} | {:error, term}
-  def load(path) do
-    with {:ok, db, _stamp} <- load_with_stamp(path), do: {:ok, db}
+  @spec load(Path.t(), String.t() | nil) :: {:ok, Database.t()} | {:error, term}
+  def load(path, password \\ nil) do
+    with {:ok, db, _stamp} <- load_with_stamp(path, password), do: {:ok, db}
   end
 
   @doc """
   Loads a file, with the stamp of the bytes read, so a later save can tell
   whether another writer changed it since (R71).
   """
-  @spec load_with_stamp(Path.t()) :: {:ok, Database.t(), stamp} | {:error, term}
-  def load_with_stamp(path) do
+  @spec load_with_stamp(Path.t(), String.t() | nil) ::
+          {:ok, Database.t(), stamp} | {:error, term}
+  def load_with_stamp(path, password \\ nil) do
     with {:ok, binary} <- File.read(path),
-         {:ok, db} <- decode(binary) do
-      {:ok, db, stamp_of(binary)}
+         {:ok, plain} <- decrypt(binary, password),
+         {:ok, db} <- decode(plain) do
+      {:ok, %{db | password: if(plain == binary, do: nil, else: password)}, stamp_of(binary)}
     end
   end
+
+  # --- a file with a password (ADR 0046) ----------------------------------------
+
+  @magic "AGENDUM-ENC1"
+  @rounds 600_000
+
+  # Domain: AES-256-GCM, its key made from the password by PBKDF2 with a
+  # fresh salt, a fresh nonce each save; the magic is authenticated with
+  # the text, and the description stays readable before the salt.
+  # `<<…>>` builds a binary from its parts; `::16` a two-byte number.
+  defp encrypt(binary, nil, _description), do: binary
+
+  defp encrypt(binary, password, description) do
+    salt = :crypto.strong_rand_bytes(16)
+    nonce = :crypto.strong_rand_bytes(12)
+    key = :crypto.pbkdf2_hmac(:sha256, password, salt, @rounds, 32)
+    {cipher, tag} = :crypto.crypto_one_time_aead(:aes_256_gcm, key, nonce, binary, @magic, true)
+
+    <<@magic, byte_size(description)::16, description::binary, salt::binary-16, nonce::binary-12,
+      tag::binary-16, cipher::binary>>
+  end
+
+  # A binary pattern takes a file apart the same way; one without the
+  # magic is an ordinary file, returned as it is.
+  defp decrypt(<<@magic, _::binary>>, nil), do: {:error, :password_required}
+
+  defp decrypt(
+         <<@magic, len::16, _description::binary-size(len), salt::binary-16, nonce::binary-12,
+           tag::binary-16, cipher::binary>>,
+         password
+       ) do
+    key = :crypto.pbkdf2_hmac(:sha256, password, salt, @rounds, 32)
+
+    case :crypto.crypto_one_time_aead(:aes_256_gcm, key, nonce, cipher, @magic, tag, false) do
+      plain when is_binary(plain) -> {:ok, plain}
+      :error -> {:error, :wrong_password}
+    end
+  end
+
+  defp decrypt(<<@magic, _::binary>>, _password), do: {:error, :not_an_agenda_file}
+  defp decrypt(binary, _password), do: {:ok, binary}
+
+  # an encrypted file's description, read without the password
+  defp clear_description(<<@magic, len::16, description::binary-size(len), _::binary>>),
+    do: description
+
+  defp clear_description(_binary), do: nil
 
   defp decode(binary) do
     # `:safe` decoding refuses unknown atoms, and struct field names only
@@ -463,9 +518,17 @@ defmodule Agendum.Store do
   @spec descriptions(Path.t(), [String.t()]) :: %{String.t() => String.t()}
   def descriptions(dir, names) do
     Map.new(names, fn name ->
-      case load(Path.join(dir, name)) do
-        {:ok, db} -> {name, db.description}
-        _ -> {name, ""}
+      path = Path.join(dir, name)
+
+      with {:ok, binary} <- File.read(path),
+           described when is_binary(described) <- clear_description(binary) do
+        {name, described}
+      else
+        _ ->
+          case load(path) do
+            {:ok, db} -> {name, db.description}
+            _ -> {name, ""}
+          end
       end
     end)
   end

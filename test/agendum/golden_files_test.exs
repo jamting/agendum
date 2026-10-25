@@ -61,11 +61,16 @@ defmodule Agendum.GoldenFilesTest do
 
   @moduletag :tmp_dir
 
+  # fields a database has while open but that are never written: the
+  # password, with which the file is encrypted instead (ADR 0046)
+  @never_written [{Agendum.Core.Database, :password}]
+
   test "the golden file uses every field of every stored struct" do
     unused =
       for {module, instances} <- instances(Golden.build()),
           default = struct(module),
           field <- Map.keys(default) -- [:__struct__],
+          {module, field} not in @never_written,
           Enum.all?(instances, &(Map.get(&1, field) == Map.get(default, field))),
           do: "#{inspect(module)}.#{field}"
 

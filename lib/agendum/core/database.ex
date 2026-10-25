@@ -47,6 +47,7 @@ defmodule Agendum.Core.Database do
           tab_size: pos_integer,
           description: String.t(),
           backup_on_open: boolean,
+          password: String.t() | nil,
           blog: Agendum.Core.Extras.Blog.t()
         }
 
@@ -84,6 +85,9 @@ defmodule Agendum.Core.Database do
             # File Properties ▸ File description and Make backup on open (R82)
             description: "",
             backup_on_open: false,
+            # the file's password while it is open (ADR 0046): never written,
+            # the file is encrypted with it instead
+            password: nil,
             # the micro-blog (R74)
             blog: %Agendum.Core.Extras.Blog{}
 
