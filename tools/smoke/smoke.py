@@ -12,6 +12,12 @@ SSH_CONNECTION set so sounds ring the bell instead of playing aloud. A FILE
 given with --file is copied into the scratch folder first, so a save in the
 smoke test never touches the original.
 
+Each key waits for its effect: the screen to change (up to --key-wait
+seconds; a key that changes nothing costs that wait), then to stay the same
+for --settle seconds, so keys sent back to back read the same every run. At
+the start it waits for the splash screen to go by itself, so the first key
+is not spent on it.
+
 Usage:
     tools/smoke/smoke.py [options] [KEY ...]
 
@@ -262,6 +268,43 @@ def read_until_quiet(fd, screen, quiet, limit):
     return True
 
 
+def wait_for_change(fd, screen, before, limit):
+    """Feeds output until the screen's text differs from `before`, or
+    `limit` seconds pass (a key that changes nothing on screen). Returns
+    False if the program has exited."""
+    deadline = time.time() + limit
+    while time.time() < deadline:
+        if screen.text() != before:
+            return True
+        if not read_until_quiet(fd, screen, 0.05, 0.1):
+            return False
+    return True
+
+
+def settle(fd, screen, quiet, limit):
+    """Waits until the screen's text has stayed the same for `quiet`
+    seconds, as agenda_driver.idle() does for Agenda: output that only
+    repaints the same text (a cursor move) does not count as a change.
+    Returns False if the program has exited."""
+    deadline = time.time() + limit
+    last_text = screen.text()
+    last_change = time.time()
+    while time.time() < deadline:
+        if not read_until_quiet(fd, screen, 0.05, 0.1):
+            return False
+        text = screen.text()
+        if text != last_text:
+            last_text, last_change = text, time.time()
+        elif time.time() - last_change >= quiet:
+            return True
+    return True
+
+
+# The splash screen (R52) takes the first key to go away, and goes by
+# itself after five seconds; keys sent while it shows would be lost.
+SPLASH = "W O L ' S   A G E N D U M"
+
+
 def main():
     parser = argparse.ArgumentParser(
         description=__doc__.split("\n\n")[0],
@@ -272,7 +315,8 @@ def main():
     parser.add_argument("--file", help="open a copy of this .agendum or .AG file")
     parser.add_argument("--args", default=None, help='Agendum flags, e.g. "--rabbit --theme mono" (instead of --demo)')
     parser.add_argument("--escript", action="store_true", help="run ./agendum, not mix run")
-    parser.add_argument("--settle", type=float, default=0.4, help="quiet seconds after a key")
+    parser.add_argument("--settle", type=float, default=0.4, help="seconds the screen must stay the same after a key")
+    parser.add_argument("--key-wait", type=float, default=1.5, help="seconds to wait for a key to change the screen")
     parser.add_argument("--highlight", action="store_true", help="list highlighted text")
     parser.add_argument("--each", action="store_true", help="print the screen after every key")
     opts = parser.parse_args()
@@ -318,7 +362,12 @@ def main():
         start = time.time()
         while alive and not screen.text().strip() and time.time() - start < 60:
             alive = read_until_quiet(fd, screen, opts.settle, 60)
-        alive = alive and read_until_quiet(fd, screen, 1.0, 10)
+        alive = alive and settle(fd, screen, 1.0, 10)
+        # wait for the splash to go by itself rather than spend a key on it
+        start = time.time()
+        while alive and SPLASH in screen.text() and time.time() - start < 10:
+            alive = read_until_quiet(fd, screen, 0.1, 0.5)
+        alive = alive and settle(fd, screen, opts.settle, 10)
         if opts.each:
             print_screen(screen, "start", opts.highlight)
 
@@ -327,13 +376,18 @@ def main():
                 break
             if token.lower().startswith("wait:"):
                 time.sleep(float(token[5:]))
-                alive = read_until_quiet(fd, screen, opts.settle, 30)
+                alive = settle(fd, screen, opts.settle, 30)
                 continue
             if token.lower() == "snap":
                 print_screen(screen, "snap", opts.highlight)
                 continue
+            # Each key waits for its effect: first for the screen to change
+            # (a slow key may print nothing for a while), then for it to
+            # settle, so the next key never lands on a half-drawn screen.
+            before = screen.text()
             os.write(fd, key_bytes(token).encode())
-            alive = read_until_quiet(fd, screen, opts.settle, 30)
+            alive = wait_for_change(fd, screen, before, opts.key_wait)
+            alive = alive and settle(fd, screen, opts.settle, 30)
             if opts.each:
                 print_screen(screen, f"after {token}", opts.highlight)
 

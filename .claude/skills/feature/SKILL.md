@@ -65,7 +65,7 @@ Not the user guide (`docs/guide/index.html`) or the manual (`docs/manual/`): the
 - `mix check` until it passes, with no warnings; fix what Credo and Dialyzer report rather than silencing it. A gate fixed after one failing run may be flaky: run it again.
 - After a large TUI change, or for a release: the long fuzz run, in the background while the documents are written: `FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs`. Never beside `mix check` or another compile: both use `_build/test`, and a recompile under a running fuzz fails it with modules "not available" (2026-10-23).
 - A box or screen with an Agenda screenshot: draw ours as a PNG (`tools/screenshots/`) and compare it side by side, for spacing the text tests cannot see.
-- Keys, ESC or drawing changed: smoke-test the real terminal with `tools/smoke/smoke.py` (sandboxed; `wait:3.5` first when a file opens with the splash screen) and say in the summary what was seen.
+- Keys, ESC or drawing changed: smoke-test the real terminal with `tools/smoke/smoke.py` (sandboxed; it waits for the splash screen to go and for each key's effect to settle) and say in the summary what was seen.
 
 ## 8. Commit, and a version when due
 
