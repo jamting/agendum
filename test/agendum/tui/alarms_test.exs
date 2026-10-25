@@ -45,8 +45,10 @@ defmodule Agendum.TUI.AlarmsTest do
        %{state: state} do
     state = press(state, ["Personnel meeting at 2:00", :enter, {:alt, "a"}, :down, "1", "0"])
     state = press(state, [:enter, :up, {:f, 3}])
-    # the list starts at the choice set, When, as every box's F3 list
+    # the list starts at the choice set, When, as every box's F3 list;
+    # titled as Agenda's
     assert screen(state) =~ ~r/When.*\n.*Done.*\n.*Entry/s
+    assert screen(state) =~ "Select Date Category"
 
     # Done, picked from the list, then ENTER sets the alarm
     state = press(state, [:down, :enter, :enter])
@@ -103,6 +105,9 @@ defmodule Agendum.TUI.AlarmsTest do
     assert current(state).text == "Personnel meeting at 2:00"
     state = press(state, :delete)
     assert screen(state) =~ "Remove this item from the section?"
+    # Agenda's second line, and its help on the control panel
+    assert screen(state) =~ "(Use ALT-F4 to discard the item completely.)"
+    assert line(state, 0) =~ "Press ENTER to remove this item from the section."
     state = press(state, :enter)
     assert Agendum.Core.alarm_list(state.db).past == []
     refute line(state, 1) =~ "@"
@@ -132,6 +137,7 @@ defmodule Agendum.TUI.AlarmsTest do
 
     state = press(state, [{:f, 10}, "u", "s", "s", :enter])
     assert screen(state) =~ "Delete the existing Show view?"
+    assert line(state, 0) =~ "You can have only one Show view. Press ENTER to create the new"
     kept = press(state, :esc)
     assert screen(kept) =~ "!Current Alarms!"
 

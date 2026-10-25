@@ -213,7 +213,8 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
   - [x] `@` in column 76 of the View line while past alarms are listed (opening the list leaves it)
   - [x] Utilities ▸ Show ▸ Alarm: the Show View with !Current Alarms! and !Past Alarms!; DEL asks "Remove this item from the section?", then cancels a current alarm or takes a past one off
   - [x] The Show view named *Show View*, and "Delete the existing Show view?" before Show Match, Sched, Alarm, Prereqs or Depends replace it
-  - Unchecked or left: the help lines of those two questions (Agenda's "Press ENTER to remove this item from the section." and "You can have only one Show view …"), the second line of DEL's question ("(Use ALT-F4 to discard the item completely.)"), the F3 list's title (Agenda's "Select Date Category", ours "Choices"); what Agenda does with an alarm when its date category is deleted (ours: back on When)
+  - [x] (2026-10-25, the next batch) The questions' help lines and DEL's second line as Agenda's, and the F3 list titled "Select Date Category"
+  - Unchecked: what Agenda does with an alarm when its date category is deleted (ours: back on When)
 
 #### Commands and behaviour still missing
 

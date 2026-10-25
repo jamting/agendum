@@ -119,6 +119,13 @@ defmodule Agendum.TUI.Boxes.Box do
   """
   @callback idle_keys(State.t(), mode) :: [term]
 
+  @doc """
+  The frame title of F3's list of choices for the highlighted setting
+  (`Agendum.TUI.Boxes.BoxChoices`), when Agenda named it (Set Alarm's
+  "Select Date Category"); by default nil, and the list is "Choices".
+  """
+  @callback choices_frame(State.t(), mode) :: String.t() | nil
+
   # The boxes, by their mode's type. A module holds a box's
   # name only (no call at compile time), so the boxes and this module can
   # refer to each other.
@@ -193,6 +200,9 @@ defmodule Agendum.TUI.Boxes.Box do
   `c:help/0` looked up with `c:field/2`.
   """
   @spec help_text(module, State.t(), mode) :: String.t() | nil
+  # a question with its own help line (`Prompts.ask/4`)
+  def help_text(_box, _state, %{type: :confirm, help: help}) when is_binary(help), do: help
+
   def help_text(box, state, mode) do
     case box.help() do
       texts when is_map(texts) -> Map.get(texts, box.field(state, mode))
@@ -507,6 +517,8 @@ defmodule Agendum.TUI.Boxes.Box do
       def labels(_mode), do: %{}
       @impl true
       def idle_keys(_state, _mode), do: []
+      @impl true
+      def choices_frame(_state, _mode), do: nil
 
       defoverridable width: 2,
                      field: 2,
@@ -518,7 +530,8 @@ defmodule Agendum.TUI.Boxes.Box do
                      about: 2,
                      defaults: 2,
                      labels: 1,
-                     idle_keys: 2
+                     idle_keys: 2,
+                     choices_frame: 2
     end
   end
 end

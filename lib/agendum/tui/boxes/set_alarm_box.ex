@@ -113,6 +113,11 @@ defmodule Agendum.TUI.Boxes.SetAlarmBox do
   @impl Box
   def title(_state, _mode), do: "Set Alarm"
 
+  # F3's list on Date category is titled as Agenda's (`BoxChoices`)
+  @impl Box
+  def choices_frame(state, mode),
+    do: if(field(state, mode) == :date_category, do: "Select Date Category")
+
   # as narrow as Agenda's
   @impl Box
   def width(state, _mode), do: min(state.width - 8, 44)

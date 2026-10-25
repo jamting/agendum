@@ -73,22 +73,29 @@ defmodule Agendum.TUI.Update.Prompts do
   the action is done at once, as if Y. Questions whose answers lead to
   different things are `ask/3`.
   """
-  def confirm(%State{prefs: %{confirm: false}} = state, _question, action),
+  def confirm(state, question, action, opts \\ [])
+
+  def confirm(%State{prefs: %{confirm: false}} = state, _question, action, _opts),
     do: confirmed(state, action, true)
 
-  def confirm(state, question, action), do: ask(state, question, action)
+  def confirm(state, question, action, opts), do: ask(state, question, action, opts)
 
   @doc """
   Asks a Y/N question, whatever Confirm mode says: Y and N do different
   things. It is a box, as Agenda's (screenshots 36, 141): the question with
   its answer, Yes at first, "Press ENTER to accept, ESC to cancel".
+  `opts`: `help:`, Agenda's line for the question on the control panel in
+  place of the usual "Y or N answers …"; `note:`, a second line under the
+  question, as Agenda's "(Use ALT-F4 to discard the item completely.)".
   """
-  def ask(state, question, action),
+  def ask(state, question, action, opts \\ []),
     do:
       State.push(state, %Agendum.TUI.Modes.Confirm{
         question: question,
         action: action,
-        answer: true
+        answer: true,
+        help: opts[:help],
+        note: opts[:note]
       })
 
   @doc """
@@ -101,7 +108,12 @@ defmodule Agendum.TUI.Update.Prompts do
   @spec replace_show_view(State.t(), {module, atom, list}) :: State.t()
   def replace_show_view(state, then) do
     if Agendum.Core.show_view(state.db),
-      do: confirm(state, "Delete the existing Show view?", {:replace_show_view, then}),
+      do:
+        confirm(state, "Delete the existing Show view?", {:replace_show_view, then},
+          help:
+            "You can have only one Show view.  Press ENTER to create the new " <>
+              "Show view and delete the existing one."
+        ),
       else: show(state, then)
   end
 
@@ -395,13 +407,18 @@ defmodule Agendum.TUI.Update.Prompts do
     {first, [last]} = Enum.split(lines, -1)
 
     Enum.map(first, &[{:box, " " <> &1}]) ++
-      [[{:box, " " <> last <> "  "}, {:box_selected, answer}]]
+      [[{:box, " " <> last <> "  "}, {:box_selected, answer}]] ++
+      if(mode.note, do: [[{:box, "   " <> mode.note}]], else: [])
   end
 
   # as wide as the question and its answer need, as Agenda's (and wide
   # enough for the words in its frame)
   @impl Box
-  def width(state, %{question: q}), do: (String.length(q) + 7) |> max(40) |> min(state.width - 8)
+  def width(state, %{question: q, note: note}),
+    do:
+      max(String.length(q) + 7, String.length(note || "") + 4)
+      |> max(40)
+      |> min(state.width - 8)
 
   @impl Box
   def keys(_state, _mode),

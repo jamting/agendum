@@ -13,9 +13,18 @@ defmodule Agendum.TUI.Boxes.ChoiceListBox do
   alias Agendum.TUI.Boxes.{Box, BoxChoices}
   alias Agendum.TUI.State
 
-  @doc "Opens the list of `labels`, for the setting called `title`."
-  def open(state, labels, title),
-    do: State.push(state, %Agendum.TUI.Modes.ChoiceList{labels: labels, title: title, cursor: 0})
+  @doc """
+  Opens the list of `labels`, for the setting called `title`; `frame` is
+  its frame's title when the box names it, "Choices" otherwise.
+  """
+  def open(state, labels, title, frame \\ nil),
+    do:
+      State.push(state, %Agendum.TUI.Modes.ChoiceList{
+        labels: labels,
+        title: title,
+        frame: frame,
+        cursor: 0
+      })
 
   @impl Box
   def handle(state, _mode, _key), do: state
@@ -47,7 +56,7 @@ defmodule Agendum.TUI.Boxes.ChoiceListBox do
   def run(state, mode, id), do: Box.list_move(state, mode, length(mode.labels), id)
 
   @impl Box
-  def title(_state, _mode), do: "Choices"
+  def title(_state, mode), do: mode.frame || "Choices"
 
   # a small box, as Agenda's
   @impl Box

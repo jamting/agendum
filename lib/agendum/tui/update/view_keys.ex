@@ -571,7 +571,12 @@ defmodule Agendum.TUI.Update.ViewKeys do
   def delete(state, %{kind: :item, item: item, alarms: which})
       when state.col == 0 and which != nil,
       do:
-        Prompts.ask(state, "Remove this item from the section?", {:remove_alarm, which, item.id})
+        Prompts.confirm(
+          state,
+          "Remove this item from the section?",
+          {:remove_alarm, which, item.id},
+          remove_item_question()
+        )
 
   def delete(state, %{kind: :item, item: item, category: cat}) when state.col == 0 do
     if cat.id == state.db.main_id do
@@ -604,6 +609,13 @@ defmodule Agendum.TUI.Update.ViewKeys do
   end
 
   def delete(state, nil), do: state
+
+  # Agenda's words with its question (checked in Agenda 2.0, 2026-10-25)
+  defp remove_item_question,
+    do: [
+      help: "Press ENTER to remove this item from the section.  Press ESC to cancel.",
+      note: "(Use ALT-F4 to discard the item completely.)"
+    ]
 
   # a Zettel id is given, never typed or taken away (R73a)
   defp zettel_column(state),

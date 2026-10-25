@@ -44,7 +44,7 @@ defmodule Agendum.TUI.Modes do
       :name,
       :relocation
     ],
-    choice_list: [:cursor, :labels, :title],
+    choice_list: [:cursor, :frame, :labels, :title],
     column_add: [
       :choice,
       :col,
@@ -63,7 +63,7 @@ defmodule Agendum.TUI.Modes do
     column_move: [:col, :from, :sidx, :to, :view_id, :what],
     column_props: [:choice, :column, :cursor, :opened, :typing],
     column_width: [:target, :typed, :view_id, :width],
-    confirm: [:action, :answer, :question],
+    confirm: [:action, :answer, :help, :note, :question],
     copy_items: [:cursor, :ids],
     customize: [:cursor, :opened],
     date_rule: [:cat_id, :cursor, :opened],

@@ -41,7 +41,7 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
       [_ | _] = choices ->
         labels = Enum.map(choices, &elem(&1, 0))
         title = Boxes.selected_name(state)
-        Agendum.TUI.Boxes.ChoiceListBox.open(state, labels, title)
+        Agendum.TUI.Boxes.ChoiceListBox.open(state, labels, title, frame(state))
 
       _ ->
         :pass
@@ -49,6 +49,13 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
   end
 
   def key(_state, _key), do: :pass
+
+  # the list's frame title: "Choices", or the box's own for the setting
+  # (`choices_frame/2`, as Set Alarm's "Select Date Category")
+  defp frame(state) do
+    mode = State.mode(state)
+    Agendum.TUI.Boxes.Box.module!(mode).choices_frame(state, mode)
+  end
 
   # a letter, in any alphabet (a digit is typed into a number instead)
   defp letter?(c), do: String.match?(c, ~r/^\p{L}$/u)
