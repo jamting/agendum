@@ -53,23 +53,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
       {:out_of_scope, "application protection (SPEC § 6)"},
     "category_text_matching_long: Agenda's Category can have new children, not ours" =>
       {:out_of_scope, "application protection (SPEC § 6)"},
-    "section_sort: Agenda's Sort new items, not ours" =>
-      {:not_built, "sorting new items when entered or on demand (Agenda's Sort new items)"},
-    "section_sort: Agenda's Category, not ours" =>
-      {:change_back,
-       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
-    "section_sort: ours Sequence, not Agenda's" =>
-      {:change_back,
-       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
-    "section_sort: ours Line number, not Agenda's" =>
-      {:change_back,
-       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
-    "section_sort: ours Then by, not Agenda's" =>
-      {:change_back,
-       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
-    "section_sort: ours Then order, not Agenda's" =>
-      {:change_back,
-       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
     "alarm: no box opens in Agendum" =>
       {:not_built,
        "Agenda's Set Alarm box (date category, minutes before); ours asks on the top line"},
@@ -196,29 +179,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
     "section_add: Agenda's Filter, not ours" =>
       {:not_built,
        "the Section Add box's Item sorting, Section statistics and Filter (as Section Properties has)"},
-    "sort: Agenda's Sort new items, not ours" =>
-      {:not_built, "sorting new items when entered or on demand (Agenda's Sort new items)"},
-    "sort: Agenda's Category, not ours" =>
-      {:change_back,
-       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
-    "sort: ours Sequence, not Agenda's" =>
-      {:change_back,
-       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
-    "sort: ours Line number, not Agenda's" =>
-      {:change_back,
-       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
-    "sort: ours Then by, not Agenda's" =>
-      {:change_back,
-       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
-    "sort: ours Then order, not Agenda's" =>
-      {:change_back,
-       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
-    "sort: ours Section sorting, not Agenda's" =>
-      {:change_back,
-       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
-    "sort: ours Section order, not Agenda's" =>
-      {:change_back,
-       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
     "view_add: no box opens in Agendum" =>
       {:not_built,
        "Agenda's View Add box (View Properties with a Type); ours asks for the name on the top line"},
