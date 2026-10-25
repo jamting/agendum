@@ -16,6 +16,36 @@ defmodule Agendum.Core.Facade.Files do
   # calls `Database.new/1`.
   defdelegate new_file(opts \\ []), to: Database, as: :new
 
+  @doc """
+  The file's structure without its items (File ▸ Transfer ▸ Template, R82;
+  User's Guide 23-26): its categories, views, macros, conditions and
+  actions and settings are kept; its items go, and with them every
+  assignment, value, dependency and suggestion. A Show View listing items
+  lists none. Ids keep counting on, as in the file it came from.
+  """
+  @spec template(db) :: db
+  def template(db) do
+    views =
+      Map.new(db.views, fn
+        {id, %{match: {:items, _}} = view} -> {id, %{view | match: nil}}
+        pair -> pair
+      end)
+
+    %{
+      db
+      | items: %{},
+        item_order: [],
+        links: Agendum.Core.Links.new(),
+        conditional: MapSet.new(),
+        numbers: %{},
+        texts: %{},
+        dates: %{},
+        dependencies: Agendum.Core.Links.new(),
+        suggestions: %{},
+        views: views
+    }
+  end
+
   # --- settings -------------------------------------------------------------------
 
   @doc """

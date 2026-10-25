@@ -43,8 +43,6 @@ defmodule Agendum.TUI.AgendaMenusTest do
       {:out_of_scope, "Agendum's files need no compressing"},
     "View menu ▸ File ▸ Maintenance ▸ Reservation: missing" =>
       {:out_of_scope, "networks (SPEC § 6)"},
-    "View menu ▸ File ▸ Transfer ▸ Template: missing" =>
-      {:not_built, "the file's structure without its items (AGENDA_PARITY step 5)"},
     "View menu ▸ Item ▸ Undisc: missing" => {:not_built, "the trash (AGENDA_PARITY step 4)"},
     "View menu ▸ Print: a command in Agendum, a menu in Agenda" =>
       {:machine,

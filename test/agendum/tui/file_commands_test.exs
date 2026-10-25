@@ -106,4 +106,17 @@ defmodule Agendum.TUI.FileCommandsTest do
       assert panel(state) =~ "You can't discard a file while it is open."
     end
   end
+
+  describe "File ▸ Transfer ▸ Template" do
+    # the file's structure written to another file (User's Guide 23-26)
+    test "writes the structure without the items to the file named", %{state: state} do
+      state = press(state, [{:f, 10}, "f", "t", "t"])
+      assert screen(state) =~ "Copy the structure to:"
+
+      state = press(state, "/wood/plan")
+      {_state, [{:save_copy, "/wood/plan.agendum", template}]} = Update.handle(state, :enter)
+      assert template == Agendum.Core.template(state.db)
+      assert Database.items(template) == []
+    end
+  end
 end

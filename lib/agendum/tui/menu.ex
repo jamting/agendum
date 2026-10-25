@@ -71,6 +71,7 @@ defmodule Agendum.TUI.Menu do
           [
             {"Import", "Open a JSON file as a new, untitled file", :import_json},
             {"Export", "Write the whole file as a JSON file", :export_json},
+            {"Template", "Copy the current file structure.", :template},
             {"Calendars", "Subscribe to calendars on the web (iCal); read them now", :calendars},
             {"Publish", "Write the blog from the posts category as a website, and upload it",
              :publish},

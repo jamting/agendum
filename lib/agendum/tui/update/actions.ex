@@ -80,6 +80,9 @@ defmodule Agendum.TUI.Update.Actions do
 
   defp do_perform(state, :make_copy, _), do: Prompts.prompt(state, "Make a copy as:", :make_copy)
 
+  defp do_perform(state, :template, _),
+    do: Prompts.prompt(state, "Copy the structure to:", :template)
+
   defp do_perform(state, :erase_file, _),
     do: Prompts.prompt(state, "Discard which file (F3 lists them):", :erase_file)
 

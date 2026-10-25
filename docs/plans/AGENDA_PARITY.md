@@ -220,6 +220,7 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
 - [x] (2026-10-25) File ▸ Abandon, Agenda's Abandon File box (R82)
 - [x] (2026-10-25; the owner's choice) File ▸ Maintenance ▸ MakeCopy in Write's place: you stay in the file (checked in Agenda 2.0); ours writes the copy before saving (R71, R82)
 - [x] (2026-10-25; the owner's choice) File ▸ Maintenance ▸ Erase: Agenda's question, No first; the file to the system's Trash rather than deleted (R82)
+- [x] (2026-10-25) File ▸ Transfer ▸ Template: the structure without the items to another file (R82)
   - Unchecked: what Agenda does with an alarm when its date category is deleted (ours: back on When)
 
 #### Commands and behaviour still missing
@@ -229,7 +230,6 @@ The order (meeting 2026-10-25, § 7): the small steps below in one or two batche
 - [ ] The `.AG` import reads the file's own global date format (header words `0x182`/`0x184`, `AGENDA_FILE_FORMAT.md`; only partly decoded): an imported file gets Agenda's default today (the owner's choice, 2026-10-25)
 - [ ] Search compared with Agenda's (ALT-F6 SEARCH in a view and a note, its Search box, the Match show view): the differences become parity work (the tagging sitting, 2026-10-22: no longer an enhancement)
 - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)
-- [ ] File Transfer Template
 - [ ] Show Circular (with the `o` indicator): needs circular references found first (User's Guide 20-21)
 - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash; screenshot 130) where Agendum has them (Tab size done, R64e)
 - [ ] Compare the category, view and macro managers' menus with Agenda's, and add them to the overview

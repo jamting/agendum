@@ -197,6 +197,16 @@ defmodule Agendum.TUI.Update.Prompts do
         )
   end
 
+  # File ▸ Transfer ▸ Template (R82): the structure, without items, to
+  # another file, whatever is there (Agenda's caution)
+  defp prompt_action(state, :template, text) do
+    path = Agendum.Store.normalize_path(text)
+
+    if path == state.path,
+      do: State.error(state, "That is the file you are in"),
+      else: State.effect(state, {:save_copy, path, Agendum.Core.template(state.db)})
+  end
+
   defp prompt_action(state, :save_as_then_quit, text),
     do: State.save(state, Agendum.Store.normalize_path(text), then: :quit)
 

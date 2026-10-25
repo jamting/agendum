@@ -79,6 +79,7 @@ defmodule Agendum.Core do
 
   # files: new, as JSON (R44), and Lotus Agenda files imported (R72)
   defdelegate new_file(opts \\ []), to: Files
+  defdelegate template(db), to: Files
   defdelegate export_json(db), to: Files
   defdelegate import_json(text), to: Files
   defdelegate agenda_file?(bytes), to: Files

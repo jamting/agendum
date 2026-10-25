@@ -29,6 +29,7 @@ defmodule Agendum.TUI.Boxes.SelectFile do
     save_as: [".agendum", ".agenda"],
     make_copy: [".agendum", ".agenda"],
     erase_file: [".agendum", ".agenda"],
+    template: [".agendum", ".agenda"],
     save_as_then_quit: [".agendum", ".agenda"],
     import_json: [".json"],
     export_json: [".json"],
