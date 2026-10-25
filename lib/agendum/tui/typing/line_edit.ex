@@ -85,7 +85,7 @@ defmodule Agendum.TUI.Typing.LineEdit do
   word at the cursor (`:word`) or all of it (`:all`). `{text, line
   without it}`, or nil when there is nothing there.
   """
-  @spec take(t, :mark | :word | :all) :: {String.t(), t} | nil
+  @spec take(t, :mark | :word | :line | :all) :: {String.t(), t} | nil
   def take(e, :mark) do
     case region(e) do
       nil -> nil
@@ -93,6 +93,8 @@ defmodule Agendum.TUI.Typing.LineEdit do
     end
   end
 
+  # a line is one line: Line is All text
+  def take(e, :line), do: take(e, :all)
   def take(%{text: ""}, :all), do: nil
   def take(e, :all), do: {e.text, new("")}
 

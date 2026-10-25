@@ -46,15 +46,6 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
 
   def title(_state, %{kind: :append}), do: "Append (ALT-F9)"
 
-  def title(_state, %{kind: :line_clip, action: :copy}), do: "Copy (F3)"
-  def title(_state, %{kind: :line_clip, action: :cut}), do: "Cut (F4)"
-  def title(_state, %{kind: :line_clip, action: :delete}), do: "Delete (ALT-F4)"
-  def title(_state, %{kind: :clip, action: :copy}), do: "Copy (F3)"
-
-  def title(_state, %{kind: :clip, action: :cut}), do: "Cut (F4)"
-
-  def title(_state, %{kind: :clip, action: :delete}), do: "Delete (ALT-F4)"
-
   def title(state, %{kind: :remove_column, at: {sidx, index}}) do
     column = state |> State.view() |> Agendum.Core.View.columns(sidx) |> Enum.at(index)
     "Remove column: #{state.db.categories[column.category_id].name}"
@@ -171,12 +162,6 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
        :section}
     ]
 
-  def choice_options(%{kind: :clip}), do: choice_options(%{kind: :make_item})
-
-  # a line has one line: the word, or all of it (Agenda's "What to copy")
-  def choice_options(%{kind: :line_clip}),
-    do: [{"Word", "The word at the cursor", :word}, {"All text", "The whole line", :all}]
-
   def choice_options(%{kind: :append}), do: choice_options(%{kind: :make_item})
 
   def choice_options(%{kind: :make_item}),
@@ -197,21 +182,6 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
 
   def choice_lines(%{kind: :remove_column}),
     do: ["The column is in more than one section.", "Remove it from:"]
-
-  def choice_lines(%{kind: :line_clip, action: :copy}),
-    do: ["Nothing is marked (F7).", "What to copy:"]
-
-  def choice_lines(%{kind: :line_clip, action: :cut}),
-    do: ["Nothing is marked (F7).", "What to cut:"]
-
-  def choice_lines(%{kind: :line_clip, action: :delete}),
-    do: ["Nothing is marked (F7). Deleted text is not kept.", "What to delete:"]
-
-  def choice_lines(%{kind: :clip, action: :copy}), do: ["Nothing is marked (F7).", "Copy:"]
-  def choice_lines(%{kind: :clip, action: :cut}), do: ["Nothing is marked (F7).", "Cut:"]
-
-  def choice_lines(%{kind: :clip, action: :delete}),
-    do: ["Nothing is marked (F7). Deleted text is not kept.", "Delete:"]
 
   def choice_lines(%{kind: :append}),
     do: ["Nothing is marked (F7). The text leaves the note.", "Append to the item or category:"]
@@ -323,12 +293,6 @@ defmodule Agendum.TUI.CategoryScreens.Choices do
 
   defp resolve_choice(state, %{kind: :remove_column, at: at}, from),
     do: Agendum.TUI.Update.Actions.remove_column(state, at, from)
-
-  defp resolve_choice(state, %{kind: :line_clip, action: action}, what),
-    do: Agendum.TUI.Typing.LineClip.clip(state, action, what)
-
-  defp resolve_choice(state, %{kind: :clip, action: action}, what),
-    do: Agendum.TUI.Update.Notes.clip(state, action, what)
 
   defp resolve_choice(state, %{kind: :append}, what),
     do: Agendum.TUI.Update.Notes.append(state, what)

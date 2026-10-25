@@ -87,9 +87,10 @@ defmodule Agendum.TUI.NoteClipboardTest do
 
   test "without a mark, copy, cut and delete ask Word, Line or All text", %{state: state} do
     state = press(state, {:f, 4})
-    assert %{type: :choice, kind: :clip, action: :cut} = State.mode(state)
-    assert screen(state) =~ "Cut:"
-    state = press(state, "l")
+    # Agenda's box (checked in Agenda 2.0, 2026-10-25)
+    assert %{type: :what_to_copy, action: :cut} = State.mode(state)
+    assert screen(state) =~ ~r/What to cut: +Word/
+    state = press(state, ["l", :enter])
     assert note(state) == "Ask Lisa Jones"
     assert state.last.copied == "about the budget"
   end
@@ -129,7 +130,8 @@ defmodule Agendum.TUI.NoteClipboardTest do
       state = press(state, [{:alt_f, 3}, {:f, 2}])
       assert %{type: :note, target: {:macro, _}} = State.mode(state)
 
-      state = press(state, [{:f, 3}, "a"])
+      # Agenda's What to copy box: a letter picks the choice, ENTER takes it
+      state = press(state, [{:f, 3}, "a", :enter])
       assert state.last.copied =~ "Water the lettuces"
       state = press(state, {:f, 2})
       assert %{type: :note} = State.mode(state)

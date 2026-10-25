@@ -324,7 +324,7 @@ defmodule Agendum.TUI.State do
   # `Typing.LineClip`) keeps it in its `edit`, and gives it back here
   # (a note's `edit` is its text, not a line: it is not given back)
   def pop(%__MODULE__{modes: [%{type: type, edit: %{line: _} = edit} | rest]} = state)
-      when type in [:help, :choice],
+      when type in [:help, :what_to_copy],
       do: %{state | modes: rest, edit: edit}
 
   def pop(%__MODULE__{modes: [_ | rest]} = state), do: %{state | modes: rest, edit: nil}

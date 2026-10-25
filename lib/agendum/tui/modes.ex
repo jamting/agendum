@@ -40,7 +40,6 @@ defmodule Agendum.TUI.Modes do
       :cat_id,
       :conflicts,
       :cursor,
-      :edit,
       :kind,
       :macro_id,
       :name,
@@ -109,6 +108,7 @@ defmodule Agendum.TUI.Modes do
     splash: [:until],
     view_props: [:back, :choice, :cursor, :moving, :opened, :typing, :view_id],
     view_stats: [:view_id],
+    what_to_copy: [:action, :choice, :cursor, :edit, :on],
     viewmgr: [:cursor, :from, :typed]
   ]
 

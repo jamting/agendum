@@ -4,6 +4,11 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.46.0 — 2026-10-25
+
+The rest of Lotus Agenda's editing.
+
+- With nothing marked, **F3, F4 or ALT-F4** (in a note or while typing a line) open Agenda's **What to copy** box: one field, `What to copy: Word`. SPACE (or a first letter) goes Word, Line, All text, F3 lists them, ENTER takes it.
 - **F2** in the **assignment profile** (F3 on an item) renames the highlighted category, typed in the control panel, as in Agenda.
 - A box's **category field** (a column's or a section's head, a new section) **completes as you type**, as in Agenda: AUTOC, `1 of 2 matching categories. Current choice: …`, and ENTER takes the match shown. F5 or INS take exactly what you typed; F2 edits the name as it is.
 ## 0.45.0 — 2026-10-25

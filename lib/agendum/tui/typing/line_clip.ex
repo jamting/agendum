@@ -62,11 +62,7 @@ defmodule Agendum.TUI.Typing.LineClip do
 
     if LineEdit.region(line),
       do: clip(state, where, line, action, :mark),
-      else:
-        over(
-          state,
-          State.push(state, %Agendum.TUI.Modes.Choice{kind: :line_clip, action: action, cursor: 0})
-        )
+      else: Agendum.TUI.Boxes.WhatToCopyBox.open(state, action, :line)
   end
 
   # the help or the question opened over a line being typed keeps it in its
@@ -82,7 +78,7 @@ defmodule Agendum.TUI.Typing.LineClip do
   F3, F4 or ALT-F4 once what to take is known (`:mark`, `:word`, `:all`),
   on the line being typed: kept for F2, but for ALT-F4.
   """
-  @spec clip(State.t(), :copy | :cut | :delete, :mark | :word | :all) :: State.t()
+  @spec clip(State.t(), :copy | :cut | :delete, :mark | :word | :line | :all) :: State.t()
   def clip(state, action, what) do
     case typed(state) do
       {where, line} -> clip(state, where, line, action, what)

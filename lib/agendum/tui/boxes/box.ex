@@ -171,6 +171,7 @@ defmodule Agendum.TUI.Boxes.Box do
     sort: Agendum.TUI.Boxes.SortBox,
     view_props: Agendum.TUI.Boxes.ViewProps,
     view_stats: Agendum.TUI.Boxes.ViewStatsBox,
+    what_to_copy: Agendum.TUI.Boxes.WhatToCopyBox,
     viewmgr: Agendum.TUI.Boxes.ViewManager
   }
 

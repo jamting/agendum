@@ -104,7 +104,7 @@ While typing text (on one line; in a note, the first two rows and CTRL-D; the ke
 | BACKSPACE                                   | Delete the character before the cursor |
 | CTRL-D                                      | Delete the character under the cursor |
 | F7                                          | Start (or stop) marking text, from the cursor (MARK) |
-| F3 / F4                                     | Copy / cut the marked text; with nothing marked, ask: the word or all the text (COPY, CUT; F3 lists files in a file name's prompt) |
+| F3 / F4                                     | Copy / cut the marked text; with nothing marked, the What to copy box: Word, Line or All text (COPY, CUT; F3 lists files in a file name's prompt) |
 | ALT-F4                                      | Delete the marked text, not kept (DELETE) |
 | F2                                          | Put in the text last copied or cut, a note's too (PASTE) |
 | F5                                          | On an item's text: keep it and open the item's note (NOTE) |

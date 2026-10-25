@@ -52,11 +52,49 @@ defmodule Agendum.TUI.LineEditingTest do
     assert item_named(state, "ac")
   end
 
-  test "with nothing marked, F3 asks what to copy: the word", %{state: state} do
-    state = press(state, [:down, "one two", {:f, 3}])
-    assert %{type: :choice} = State.mode(state)
-    state = press(state, [:enter, " ", {:f, 2}, :enter])
-    assert item_named(state, "one two two")
+  describe "with nothing marked, Agenda's What to copy box (checked in Agenda 2.0, 2026-10-25)" do
+    setup %{state: state}, do: %{asked: press(state, [:down, "one two", {:f, 3}])}
+
+    test "one field, untitled; the help on top", %{asked: asked} do
+      assert %{type: :what_to_copy} = State.mode(asked)
+      text = screen(asked)
+      assert text =~ ~r/What to copy: +Word/
+      assert text =~ "Press ENTER to accept, ESC to cancel"
+      assert text =~ "Choose how much text to copy. Press ESC to cancel."
+    end
+
+    test "ENTER takes the word", %{asked: asked} do
+      state = press(asked, [:enter, " ", {:f, 2}, :enter])
+      assert item_named(state, "one two two")
+    end
+
+    test "SPACE goes Word, Line, All text", %{asked: asked} do
+      assert screen(press(asked, " ")) =~ ~r/What to copy: +Line/
+      assert screen(press(asked, [" ", " "])) =~ ~r/What to copy: +All text/
+      assert screen(press(asked, [" ", " ", " "])) =~ ~r/What to copy: +Word/
+    end
+
+    test "F3 lists the choices", %{asked: asked} do
+      assert %{type: :choice_list} = State.mode(press(asked, {:f, 3}))
+    end
+
+    test "the line, cut, leaves nothing", %{state: state} do
+      state = press(state, [:down, "one two", {:f, 4}, " ", :enter])
+      assert state.edit.line.text == ""
+      assert state.last.copied == "one two"
+    end
+
+    test "ESC goes back to the typing, nothing taken", %{asked: asked} do
+      back = press(asked, :esc)
+      assert back.edit.line.text == "one two"
+      assert back.last.copied == nil
+    end
+  end
+
+  test "in a note too: the same box", %{state: state} do
+    note = press(state, [:down, {:f, 5}, {:f, 3}])
+    assert %{type: :what_to_copy} = State.mode(note)
+    assert screen(note) =~ ~r/What to copy: +Word/
   end
 
   test "the note editor's copied text pastes into a line", %{state: state} do
