@@ -11,7 +11,7 @@ defmodule Agendum.TUI.Boxes.FieldTyping do
   ESC drops it and stays in the box. Pure.
   """
 
-  alias Agendum.TUI.{Typing.LineEdit, State}
+  alias Agendum.TUI.{Typing.Completion, Typing.LineEdit, State}
 
   @doc "Whether the box's mode is typing into a field."
   def typing?(mode), do: Map.get(mode, :typing) != nil
@@ -25,20 +25,53 @@ defmodule Agendum.TUI.Boxes.FieldTyping do
   no longer typing), the field and the text.
   """
   def key(state, %{typing: {field, line}} = mode, key, entered) do
+    completing = Completion.box_field?(state)
+
     case key do
       :esc ->
-        State.put_mode(state, %{mode | typing: nil})
+        State.put_mode(state, done(mode))
+
+      # a category's field takes the match completion shows (R32), as
+      # Agenda's; `{:category, id}` is it, for `head_named/3`
+      :enter when completing ->
+        shown = Completion.shown(state)
+        typed = if shown, do: {:category, shown}, else: line.text
+        state |> State.put_mode(done(mode)) |> entered.(field, typed)
 
       :enter ->
-        state |> State.put_mode(%{mode | typing: nil}) |> entered.(field, line.text)
+        state |> State.put_mode(done(mode)) |> entered.(field, line.text)
+
+      # NEXTSEL and PREVSEL, and NEWCAT: exactly what was typed
+      k when completing and k in [{:f, 8}, {:alt, "n"}] ->
+        Completion.cycle(state, 1)
+
+      k when completing and k in [{:f, 7}, {:alt, "p"}] ->
+        Completion.cycle(state, -1)
+
+      k when completing and k in [{:f, 5}, :insert] ->
+        state |> State.put_mode(done(mode)) |> entered.(field, line.text)
+
+      # CHOICES: the field's own list, the typing dropped
+      {:f, 3} when completing ->
+        state |> State.put_mode(done(mode)) |> Agendum.TUI.Update.box_key({:f, 3})
 
       _ ->
         case LineEdit.handle(line, key) do
-          {:ok, line} -> State.put_mode(state, %{mode | typing: {field, line}})
+          # typing starts the completion over at the first match
+          {:ok, line} -> State.put_mode(state, restart(%{mode | typing: {field, line}}))
           :unhandled -> state
         end
     end
   end
+
+  # (F2's editing stays without completion: `choice: :off`, `Boxes.BoxEdit`)
+  defp restart(%{choice: :off} = mode), do: mode
+  defp restart(%{choice: _} = mode), do: %{mode | choice: 0}
+  defp restart(mode), do: mode
+
+  # the typing ended: no field typed in, completion as it starts
+  defp done(%{choice: _} = mode), do: %{mode | typing: nil, choice: nil}
+  defp done(mode), do: %{mode | typing: nil}
 
   @doc """
   A typed column head: `chosen` gets the state, with the category of that
@@ -47,6 +80,8 @@ defmodule Agendum.TUI.Boxes.FieldTyping do
   the same change, one undo step. A name several
   categories have is left to the picker (F3).
   """
+  def head_named(state, {:category, id}, chosen), do: chosen.(state, id)
+
   def head_named(state, name, chosen) do
     case State.command(state, {:find_or_add_category, name}) do
       {:ok, state, %{new: id}} ->

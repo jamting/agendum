@@ -85,7 +85,7 @@ defmodule Agendum.TUI.ColumnAddTest do
     test "the name of an existing category makes it the head", %{state: state, view_id: v} do
       state = press(state, ["p", "r", "i"])
       # typed in the control panel, as Agenda's (2026-10-25)
-      assert screen(state) =~ ~r/^ Category name: .*\n pri/m
+      assert screen(state) =~ ~r/^ 1 of 1 matching categories\. Current choice: Priority.*\n pri/m
       state = press(state, ["o", "r", "i", "t", "y", :enter])
       assert screen(state) =~ ~r/Column head: +Priority/
       state = press(state, :enter)
@@ -103,9 +103,10 @@ defmodule Agendum.TUI.ColumnAddTest do
       assert screen(state) =~ ~r/Column head: +\(F3 to pick\)/
     end
 
-    test "a name several categories have asks for the picker", %{state: state} do
+    # F5 (NEWCAT) takes the name as typed; ENTER the match shown (R32)
+    test "a name several categories have, taken with F5, asks for the picker", %{state: state} do
       {:ok, db, _} = Core.add_category(state.db, cat(state.db, "Follow up"), "People")
-      state = press(%{state | db: db}, ["p", "e", "o", "p", "l", "e", :enter])
+      state = press(%{state | db: db}, ["p", "e", "o", "p", "l", "e", {:f, 5}])
       assert panel(state) =~ "Several categories are called people"
     end
   end

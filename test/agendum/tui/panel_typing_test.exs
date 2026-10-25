@@ -108,6 +108,43 @@ defmodule Agendum.TUI.PanelTypingTest do
     assert line(typing, 1) =~ ~r/^ Anna Berg/
   end
 
+  describe "automatic completion in a box's category field (checked in Agenda 2.0, 2026-10-25)" do
+    setup %{state: state} do
+      %{column: press(state, [:down, :right, {:f, 10}, "v", "c", "p"])}
+    end
+
+    test "typing a head: Agenda's completion line and AUTOC", %{column: box} do
+      typing = press(box, "pri")
+      assert line(typing, 0) =~ ~r/^ 1 of 1 matching categories\. Current choice: Priority +AUTOC/
+      # what is typed, then the rest of the match in grey
+      assert line(typing, 1) =~ ~r/^ priority/
+    end
+
+    test "ENTER takes the shown match", %{column: box} do
+      done = press(box, ["pri", :enter])
+      assert screen(done) =~ ~r/Column head: +Priority/
+    end
+
+    test "F5 (NEWCAT) takes exactly what was typed", %{column: box} do
+      done = press(box, ["Pri", {:f, 5}])
+      assert screen(done) =~ ~r/Column head: +Pri /
+    end
+
+    test "F8 and F7 go through the matches", %{state: state} do
+      box = press(state, [{:f, 10}, "v", "s", "p"])
+      typing = press(box, "M")
+      first = line(typing, 0)
+      assert first =~ ~r/^ 1 of \d+ matching categories/
+      assert line(press(typing, {:f, 8}), 0) =~ ~r/^ 2 of /
+      assert line(press(typing, [{:f, 8}, {:f, 7}]), 0) == first
+    end
+
+    test "the key bar: Help, Choices, NewCat, PrevSel, NextSel", %{column: box} do
+      assert bar(press(box, "pri")) ==
+               ["Help", "", "Choices", "", "NewCat", "", "PrevSel", "NextSel", "", ""]
+    end
+  end
+
   test "a box's category field (Section Properties' head): Category name:", %{state: state} do
     box = press(state, [{:f, 10}, "v", "s", "p"])
     typing = press(box, {:f, 2})

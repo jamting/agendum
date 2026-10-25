@@ -132,9 +132,15 @@ defmodule Agendum.TUI.Render.ControlPanel do
   # a box's field that holds a category: its head, a new section
   def entry(state) do
     case State.mode(state) do
-      %{typing: {field, line}}
+      # F2 edits the name as it is (EDIT), without completion, as Agenda's
+      %{typing: {field, line}, choice: :off}
       when field == :head or (is_tuple(field) and elem(field, 0) == :new_section) ->
         {"Category name:", line}
+
+      # typed: every category matches there (R32), as Agenda's
+      %{typing: {field, line}}
+      when field == :head or (is_tuple(field) and elem(field, 0) == :new_section) ->
+        {:completion, line}
 
       _ ->
         nil
@@ -157,7 +163,8 @@ defmodule Agendum.TUI.Render.ControlPanel do
     {text, input} =
       case label do
         :completion ->
-          {completion_text(state), Agendum.TUI.Render.View.completion_field(state, line, field)}
+          {completion_text(state, line),
+           Agendum.TUI.Render.View.completion_field(state, line, field)}
 
         label ->
           {label, Draw.input(line, field, :edit)}
@@ -166,7 +173,10 @@ defmodule Agendum.TUI.Render.ControlPanel do
     word = (indicator(state) || "EDIT") <> " "
     room = max(w - String.length(word) - 2, 1)
 
-    {Draw.line([{:prompt, " " <> Draw.truncate(text, room)}], w - String.length(word), :panel) ++
+    # a long one is cut with "..", as Agenda's ("Mail;Memo;Correspondenc..")
+    text = if String.length(text) > room, do: String.slice(text, 0, room - 2) <> "..", else: text
+
+    {Draw.line([{:prompt, " " <> text}], w - String.length(word), :panel) ++
        [{:indicator, word}], [{:panel, " "}] ++ input}
   end
 
@@ -174,12 +184,12 @@ defmodule Agendum.TUI.Render.ControlPanel do
   # Current choice: High;Hi" (the name, short name and Also match words),
   # "No matching categories.", or before anything is typed "Enter category
   # name:"
-  defp completion_text(state) do
+  defp completion_text(state, line) do
     matches = Completion.matches(state)
     shown = Completion.shown(state)
 
     cond do
-      String.trim(state.edit.line.text) == "" ->
+      String.trim(line.text) == "" ->
         "Enter category name:"
 
       matches == [] ->

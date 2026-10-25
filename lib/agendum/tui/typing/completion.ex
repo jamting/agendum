@@ -4,9 +4,13 @@ defmodule Agendum.TUI.Typing.Completion do
   categories match what has been typed, and which one is shown. Pure; the
   matching rules themselves are `Agendum.Core.completions/3`.
 
-  It applies to column cells and to the Item Properties box, where any
-  category can be typed. The edit in progress carries a `:choice` index that NEXTSEL / PREVSEL
-  move; typing resets it to the first match.
+  It applies to column cells, to the Item Properties box, where any
+  category can be typed, and to a box's field that holds a category (a
+  column's or section's head, a new section: `Boxes.FieldTyping`, every
+  category matching there, as Agenda's; checked in Agenda 2.0,
+  2026-10-25). The edit in progress carries a `:choice` index that
+  NEXTSEL / PREVSEL move (a box's mode, for its field); typing resets it
+  to the first match.
   """
 
   alias Agendum.Core
@@ -30,9 +34,29 @@ defmodule Agendum.TUI.Typing.Completion do
   def matches(%State{} = state) do
     case head(state) do
       nil -> []
-      head -> Core.completions(state.db, head, state.edit.line.text)
+      head -> Core.completions(state.db, head, text(state))
     end
   end
+
+  @doc "True while a box's field that holds a category is typed in."
+  @spec box_field?(State.t()) :: boolean
+  def box_field?(%State{edit: nil} = state), do: category_field(State.mode(state)) != nil
+  def box_field?(_state), do: false
+
+  @doc "Automatic completion's own place: a column cell, or a box's category field."
+  @spec autoc?(State.t()) :: boolean
+  def autoc?(state), do: column_entry?(state) or box_field?(state)
+
+  # a box's field typed in that holds a category, with its line; F2 (EDIT)
+  # edits the name as it is, without completion, as Agenda's (`choice: :off`)
+  defp category_field(%{choice: :off}), do: nil
+  defp category_field(%{typing: {field, line}}) when field == :head, do: line
+
+  defp category_field(%{typing: {{:new_section, _}, line}}), do: line
+  defp category_field(_mode), do: nil
+
+  defp text(%State{edit: %{line: line}}), do: line.text
+  defp text(state), do: category_field(State.mode(state)).text
 
   # The category whose subcategories are searched.
   defp head(%State{edit: %{target: {:column_entry, _item, head, _}}, db: db}) do
@@ -42,7 +66,9 @@ defmodule Agendum.TUI.Typing.Completion do
   end
 
   defp head(%State{edit: %{target: {:assign_category, _item}}, db: db}), do: db.main_id
-  defp head(_state), do: nil
+
+  defp head(%State{db: db} = state),
+    do: if(box_field?(state), do: db.main_id, else: nil)
 
   @doc "The category currently shown as the completion, if any."
   @spec shown(State.t()) :: Database.id() | nil
@@ -55,8 +81,12 @@ defmodule Agendum.TUI.Typing.Completion do
 
   @doc "Moves to the next (+1) or previous (-1) match."
   @spec cycle(State.t(), integer) :: State.t()
+  def cycle(%State{edit: nil} = state, step),
+    do: State.put_mode(state, %{State.mode(state) | choice: choice(state) + step})
+
   def cycle(%State{edit: edit} = state, step),
     do: %{state | edit: Map.put(edit, :choice, choice(state) + step)}
 
+  defp choice(%State{edit: nil} = state), do: Map.get(State.mode(state), :choice) || 0
   defp choice(%State{edit: edit}), do: Map.get(edit, :choice, 0)
 end

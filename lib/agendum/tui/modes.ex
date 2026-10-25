@@ -48,6 +48,7 @@ defmodule Agendum.TUI.Modes do
     ],
     choice_list: [:cursor, :labels, :title],
     column_add: [
+      :choice,
       :col,
       :cursor,
       :format,
@@ -62,7 +63,7 @@ defmodule Agendum.TUI.Modes do
       :width
     ],
     column_move: [:col, :from, :sidx, :to, :view_id, :what],
-    column_props: [:column, :cursor, :opened, :typing],
+    column_props: [:choice, :column, :cursor, :opened, :typing],
     column_width: [:target, :typed, :view_id, :width],
     confirm: [:action, :answer, :question],
     copy_items: [:cursor, :ids],
@@ -102,11 +103,11 @@ defmodule Agendum.TUI.Modes do
     search_box: [:cursor, :direction, :line, :scope, :search],
     searching: [:search],
     section_move: [:cursor_key, :from, :to, :view_id],
-    section_props: [:adding, :cursor, :opened, :sidx, :typing],
+    section_props: [:adding, :choice, :cursor, :opened, :sidx, :typing],
     select_file: [:cursor, :dates, :dir, :entries, :extensions, :filter, :line],
     sort: [:cursor, :opened, :remembered, :scope],
     splash: [:until],
-    view_props: [:back, :cursor, :moving, :opened, :typing, :view_id],
+    view_props: [:back, :choice, :cursor, :moving, :opened, :typing, :view_id],
     view_stats: [:view_id],
     viewmgr: [:cursor, :from, :typed]
   ]

@@ -49,9 +49,21 @@ defmodule Agendum.TUI.Boxes.BoxEdit do
     [first | rest] = String.graphemes(text)
     started = Update.box_key(state, {:char, first})
 
-    if typing?(started),
-      do: Enum.reduce(rest, started, &Update.box_key(&2, {:char, &1})),
-      else: state
+    if typing?(started) do
+      started = without_completion(started)
+      Enum.reduce(rest, started, &Update.box_key(&2, {:char, &1}))
+    else
+      state
+    end
+  end
+
+  # F2 edits a category's name as it is, without completion, as Agenda's
+  # EDIT (checked in Agenda 2.0, 2026-10-25): `Typing.Completion`
+  defp without_completion(state) do
+    case State.mode(state) do
+      %{choice: _} = mode -> State.put_mode(state, %{mode | choice: :off})
+      _ -> state
+    end
   end
 
   defp typing?(state), do: state.edit != nil or Map.get(State.mode(state) || %{}, :typing) != nil

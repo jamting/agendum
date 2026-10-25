@@ -38,7 +38,7 @@ defmodule Agendum.TUI.Render.KeyBar do
   defp slotted(state) do
     cond do
       # Agenda's AUTOC bar while a column entry offers category names
-      Completion.column_entry?(state) -> {:line, :autoc}
+      Completion.autoc?(state) -> {:line, :autoc}
       Completion.active?(state) -> nil
       typing_line?(state) -> {:line, line_kind(state)}
       state.edit == nil -> place(state, State.mode(state))
