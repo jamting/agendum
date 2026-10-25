@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.53.0 — 2026-10-26
+
+More of Lotus Agenda, built overnight (nothing that changes a habit).
+
+- **Utilities ▸ Show ▸ Circular** shows the items caught in a circular reference (conditions that keep assigning an item and taking it out again), under !Circular Reference!, as in Agenda.
+- **Importing an Agenda file** keeps its own date format (decoded from the file), and its description, Make backup on open and tab size; date columns keep all of Agenda's separators and formats.
+- The **macro manager** is drawn as Agenda's: Macro Manager, its help line, and its key bar (F2 EditMac, F4 Delete, F6 Props, F7 Learn); F4 deletes, as DEL does.
+- The **Search** and **Show Match** boxes are laid out as Agenda's, with its help lines.
+- Fixed: discarding an item listed in the Show view (Show Prereqs, Depends) left the view naming it, and the file's JSON export could not be read back.
 ## 0.52.0 — 2026-10-25
 
 Lotus Agenda's File commands.
