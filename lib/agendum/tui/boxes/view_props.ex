@@ -422,6 +422,13 @@ defmodule Agendum.TUI.Boxes.ViewProps do
 
   defp command(state, mode, :edit, :name), do: edit_name(state, mode)
 
+  # F2 on a "..." setting opens it, as SPACE, as Agenda's (2026-10-25)
+  defp command(state, mode, :edit, here) do
+    if String.trim(Agendum.TUI.Render.Boxes.selected_value(state)) == "...",
+      do: change(state, mode, here),
+      else: state
+  end
+
   defp command(state, _mode, :pick, {:section, n}),
     do: CategoryScreens.open_picker(state, {:add_section, n + 1, n}, nil)
 

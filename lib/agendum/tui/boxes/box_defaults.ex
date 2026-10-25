@@ -6,8 +6,10 @@ defmodule Agendum.TUI.Boxes.BoxDefaults do
   which fields have a default and how to put each back (`c:Agendum.TUI.
   Boxes.Box.defaults/2`); the default is what something new gets, or what
   File Properties says where it says (a date column's format). A setting
-  without one is left as it is: a name, a list. Like any change in a box it
-  shows in the box, and applies on ENTER (ADR 0030). Pure.
+  without one is left as it is: a name, a list, without a word, as Agenda
+  does (checked in Agenda 2.0, 2026-10-25; the owner's choice). Like any
+  change in a box it shows in the box, and applies on ENTER (ADR 0030).
+  Pure.
   """
 
   alias Agendum.TUI.Boxes.Box
@@ -21,8 +23,11 @@ defmodule Agendum.TUI.Boxes.BoxDefaults do
     defaults = box.defaults(state, mode)
 
     cond do
-      box.typing?(state, mode) or defaults == %{} ->
+      box.typing?(state, mode) or not Box.settings?(box, mode) ->
         :pass
+
+      defaults == %{} ->
+        state
 
       id == :default_all ->
         Enum.reduce(defaults, state, fn {_field, back}, state -> back.(state) end)
@@ -35,7 +40,7 @@ defmodule Agendum.TUI.Boxes.BoxDefaults do
   defp default(state, defaults, field) do
     case defaults do
       %{^field => back} -> back.(state)
-      _ -> State.info(state, "This setting has no default")
+      _ -> state
     end
   end
 end

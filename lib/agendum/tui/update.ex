@@ -283,6 +283,7 @@ defmodule Agendum.TUI.Update do
 
   def run_box(state, :cancel, _key), do: BoxCancel.cancel(state, :esc)
   def run_box(state, :choices, _key), do: BoxChoices.key(state, {:f, 3})
+  def run_box(state, :edit, _key), do: Agendum.TUI.Boxes.BoxEdit.key(state)
   def run_box(state, id, _key) when id in [:default, :default_all], do: BoxDefaults.key(state, id)
   def run_box(state, nil, key), do: BoxChoices.key(state, key)
 

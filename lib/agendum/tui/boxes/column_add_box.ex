@@ -160,18 +160,23 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
 
   # the settings box's keys; F3 on Head picks it, ENTER adds (R65)
   @impl Box
-  def keymap(_mode), do: Box.settings_keymap(%{{:f, 3} => :pick_head})
+  def keymap(_mode),
+    do: Box.settings_keymap(%{{:f, 3} => :pick_head, {:f, 6} => :category_props})
 
   @impl Box
   def commands(_mode) do
     Box.settings_commands([
       {:pick_head, "Pick head", "Choose the head's category"},
+      {:category_props, "Props", "The field's category's properties"},
       {:done, "Add", "Add the column (first its head)"},
       {:close, "Cancel", "Close without adding"}
     ])
   end
 
   @impl Box
+  # F6: the chosen head's Category Properties (none chosen yet: nothing)
+  def run(state, mode, :category_props), do: Box.category_props(state, mode.head)
+
   def run(state, %{head: nil}, :done), do: pick_head(state)
   def run(state, mode, :done), do: add(state, mode)
   def run(state, mode, :change), do: change(state, mode, current(mode), 1)

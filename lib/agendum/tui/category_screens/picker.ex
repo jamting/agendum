@@ -46,17 +46,45 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   end
 
   # R65: the hierarchy's moves, ENTER picks, INS a new category; typing
-  # finds one (in `handle/3`)
+  # finds one (in `handle/3`). F6 (PROPS) opens the highlighted category's
+  # properties; in a list of several, F7 (INCLCAT) switches it as SPACE
+  # does and F4 (CLRCATS) clears them all, as Agenda's (checked in Agenda
+  # 2.0, 2026-10-25)
   @impl Box
-  def keymap(_mode),
-    do:
-      Map.merge(CategoryScreens.list_keymap(), %{:enter => :pick, :insert => :new, :esc => :close})
+  def keymap(mode) do
+    several =
+      if several?(mode), do: %{{:f, 7} => :toggle, {:f, 4} => :clear_all}, else: %{}
+
+    CategoryScreens.list_keymap()
+    |> Map.merge(%{
+      :enter => :pick,
+      :insert => :new,
+      :esc => :close,
+      {:f, 6} => :category_props
+    })
+    |> Map.merge(several)
+  end
 
   @impl Box
-  def commands(_mode) do
+  def commands(mode) do
+    several =
+      if several?(mode),
+        do: [
+          {:toggle, "Switch", "Switch the category, as SPACE does"},
+          {:clear_all, "Clear all", "Take every category out of the list"}
+        ],
+        else: []
+
     [{:pick, "Pick", "Pick the highlighted category"}, {:new, "New", "Make a new category"}] ++
+      several ++
+      [{:category_props, "Props", "The highlighted category's properties"}] ++
       CategoryScreens.list_commands() ++ [{:close, "Cancel", "Close (first: what was typed)"}]
   end
+
+  defp several?(%{purpose: purpose}),
+    do: is_tuple(purpose) and elem(purpose, 0) in @esc_pickers
+
+  defp several?(_mode), do: false
 
   # the key each command is in `screen_key/4`
   @keys %{pick: :enter, new: :insert, close: :esc}
@@ -68,7 +96,45 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
     screen_key(State.put_mode(state, mode), mode, rows, Map.fetch!(@keys, id))
   end
 
+  def run(state, mode, id) when id in [:toggle, :category_props] do
+    rows = CategoryScreens.rows(state, mode)
+    mode = if rows == [], do: mode, else: CategoryScreens.clamp(mode, rows)
+    current = CategoryScreens.current_id(rows, mode)
+
+    case id do
+      :toggle -> pick(state, mode.purpose, current)
+      :category_props -> Box.category_props(state, current)
+    end
+  end
+
+  def run(state, mode, :clear_all), do: clear(state, mode.purpose)
+
   def run(state, mode, id), do: CategoryScreens.run_list(state, mode, id)
+
+  # F4 CLRCATS: every category taken out of what the list sets, one change
+  defp clear(state, {:filter, scope}),
+    do: State.run(state, {:set_filters, state.view_id, scope, []})
+
+  defp clear(state, {:schedule_filter, _}), do: Agendum.TUI.Boxes.ScheduleBox.clear_filter(state)
+
+  defp clear(state, {purpose, cat_id}) when purpose in [:condition, :also_assign, :excludes] do
+    cat = state.db.categories[cat_id]
+
+    commands =
+      case purpose do
+        :condition ->
+          for {target, _} <- cat.conditions, do: {:remove_condition, cat_id, target}
+
+        :also_assign ->
+          for(target <- cat.also_assign, do: {:toggle_also_assign, cat_id, target}) ++
+            for {target, _} <- cat.actions, do: {:remove_action, cat_id, target}
+
+        :excludes ->
+          for target <- cat.excludes, do: {:toggle_exclude, cat_id, target}
+      end
+
+    if commands == [], do: state, else: State.run(state, {:batch, commands})
+  end
 
   # several categories are set at a time in some pickers: ESC ends them
   @impl Box

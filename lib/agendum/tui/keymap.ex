@@ -336,6 +336,8 @@ defmodule Agendum.TUI.Keymap do
   # every box (`Update`'s box stage); its own keys are the box's
   @box %{
     {:f, 1} => :help,
+    # Agenda's EDIT: the highlighted setting's text (`Boxes.BoxEdit`)
+    {:f, 2} => :edit,
     {:f, 3} => :choices,
     # Agenda's DEFAULT and DFLTALL (User's Guide 2-17)
     {:f, 8} => :default,

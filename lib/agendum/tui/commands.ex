@@ -245,6 +245,7 @@ defmodule Agendum.TUI.Commands do
   # what every box shares; each box's own commands are in its module
   # (`Agendum.TUI.Boxes.Box`'s `keymap/1`, `commands/1`)
   @box [
+    {:edit, "Edit", "Edit the setting's text", :none},
     {:choices, "Choices", "List the setting's choices", :none},
     {:default, "Default", "Put the setting back to its default", :none},
     {:default_all, "Default all", "Put every setting back to its default", :none},

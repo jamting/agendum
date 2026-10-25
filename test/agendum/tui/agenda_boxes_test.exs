@@ -34,17 +34,8 @@ defmodule Agendum.TUI.AgendaBoxesTest do
   # the keys Agenda's bar names in a box but which do nothing in ours yet
   # (2026-10-25), parity work of their own (AGENDA_PARITY, The steps)
   @missing_keys [
-    {"F2", "Edit", "F2 EDIT on a box's field, as Agenda's (ours: typing over a field, SPACE)",
-     ~w(auto_assign_settings category_date_settings category_text_matching
-        category_text_matching_long column_add column_properties column_properties_date
-        customize display_format execute file_properties global_date_settings input_format
-        item_column_properties questions search section_add section_properties section_sort
-        show_schedule sort)},
-    {"F6", "Props", "F6 PROPS in a box that has no properties box of its own yet",
-     ~w(column_add column_properties column_properties_date display_format
-        item_column_properties questions section_sort show_schedule sort)},
-    {"F8", "Default", "F8 DEFAULT in a box whose settings have no defaults yet (R81c)",
-     ~w(column_add execute item_properties search section_add show_schedule)}
+    {"F2", "Edit", "F2 EDIT in the Questions box (what it edits there in Agenda is unchecked)",
+     ~w(questions)}
   ]
 
   # `for` with `into: %{}` builds the map: one entry for each box and key

@@ -54,10 +54,11 @@ defmodule Agendum.TUI.BoxDefaultsTest do
       assert view.name == "Tasks"
     end
 
-    test "F8 on the name leaves it, and says there is no default", %{state: state, view: v} do
+    # silent, as Agenda (the owner's choice, 2026-10-25)
+    test "F8 on the name leaves it, without a word", %{state: state, view: v} do
       named = state |> props() |> to_setting("View name") |> press({:f, 8})
       assert named.db.views[v].name == "Tasks"
-      assert {:message, _} = named.message
+      assert named.message == nil
     end
 
     test "ESC puts it back as it was before F8 too", %{state: state} do

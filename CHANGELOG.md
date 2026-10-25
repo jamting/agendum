@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.44.0 — 2026-10-25
+
+The keys Lotus Agenda's box bars name, in every box.
+
+- **F2 (EDIT)** in a settings box edits the highlighted setting's text, with the cursor after it: a name, a number, a category. On a "..." setting it opens it, as SPACE does; on a list of choices it does nothing, as in Agenda.
+- **F6 (PROPS)** opens the Category Properties of the category in the highlighted field: a column's head, a schedule's date category, a sort key's category, a suggested category in Questions.
+- **F8 (DEFAULT)** shows in every settings box, and says nothing on a setting without a default, as Agenda.
+- In the **assignment profile** and the category lists, **F7 (INCLCAT)** switches the highlighted category as SPACE does and **F6** opens its properties (F6 no longer closes the profile). In a list of several categories (a filter, conditions, actions, excludes) **F4 (CLRCATS)** takes them all out.
+
 ## 0.43.0 — 2026-10-25
 
 The key bar as in Lotus Agenda while a box or the menu is open.

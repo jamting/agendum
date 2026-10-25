@@ -289,14 +289,23 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
 
   # the settings box's keys; F3 on Head picks it (R65)
   @impl Box
-  def keymap(_mode), do: Box.settings_keymap(%{{:f, 3} => :pick_head})
+  def keymap(_mode),
+    do: Box.settings_keymap(%{{:f, 3} => :pick_head, {:f, 6} => :category_props})
 
   @impl Box
   def commands(_mode),
-    do: Box.settings_commands([{:pick_head, "Pick head", "Choose the head's category"}])
+    do:
+      Box.settings_commands([
+        {:pick_head, "Pick head", "Choose the head's category"},
+        {:category_props, "Props", "The field's category's properties"}
+      ])
 
   @impl Box
   def run(state, mode, :change), do: change(state, mode, field(state, mode), 1)
+
+  # F6: the head's Category Properties, whichever field is highlighted
+  def run(state, mode, :category_props),
+    do: Box.category_props(state, column(state, mode).category_id)
 
   def run(state, mode, :pick_head),
     do: if(field(state, mode) == :head, do: pick_head(state, mode), else: state)

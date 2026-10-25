@@ -63,6 +63,7 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
       :down => :down,
       {:char, " "} => :pick,
       :tab => :pick_all,
+      {:f, 6} => :category_props,
       :enter => :done,
       :esc => :close
     }
@@ -73,12 +74,16 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
     [
       {:pick, "Pick", "Pick or unpick the category"},
       {:pick_all, "Pick all", "Pick every category"},
+      {:category_props, "Props", "The highlighted category's properties"},
       {:done, "Done", "Assign the picked ones"}
     ] ++ Enum.take(Box.list_moves(), 2) ++ [{:close, "Later", "Close; ask again later"}]
   end
 
   @impl Box
   def run(state, _mode, :close), do: State.pop(state)
+
+  def run(state, mode, :category_props),
+    do: Box.category_props(state, Enum.at(suggestions(state, mode), mode.cursor))
 
   def run(state, mode, :pick) do
     cat = Enum.at(suggestions(state, mode), mode.cursor)

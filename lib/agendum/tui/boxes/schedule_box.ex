@@ -60,7 +60,8 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
   def handle(state, _mode, _key), do: state
 
   @impl Box
-  def keymap(_mode), do: Box.settings_keymap(%{{:f, 3} => :calendar})
+  def keymap(_mode),
+    do: Box.settings_keymap(%{{:f, 3} => :calendar, {:f, 6} => :category_props})
 
   # F3 opens the calendar on the date: Agenda's CHOICES there
   @impl Box
@@ -71,12 +72,23 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
     do:
       Box.settings_commands([
         {:calendar, "Calendar", "Pick the date from a calendar"},
+        {:category_props, "Props", "The field's category's properties"},
         {:done, "Show", "Show the schedule"},
         {:close, "Cancel", "Close without showing it"}
       ])
 
   @impl Box
   def run(state, mode, :done), do: show(State.pop(state), mode)
+
+  # F6 on the Date category or the Section head: its Category Properties
+  def run(state, mode, :category_props) do
+    case field(state, mode) do
+      :date_category -> Box.category_props(state, mode.date_category)
+      :section -> Box.category_props(state, mode.section)
+      _ -> state
+    end
+  end
+
   def run(state, mode, :change), do: change(state, mode, field(state, mode))
 
   def run(state, mode, :calendar) do
@@ -154,6 +166,9 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
       %{m | filter: filter}
     end)
   end
+
+  @doc "F4 CLRCATS in the filter list: no filter."
+  def clear_filter(state), do: update(state, &%{&1 | filter: []})
 
   @doc "The filter's mark for a category in the list: + or −, or a space."
   def filter_mark(state, id) do

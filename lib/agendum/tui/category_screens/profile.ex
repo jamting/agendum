@@ -85,31 +85,36 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
     """
   end
 
-  # R65: the hierarchy's moves; SPACE assigns or unassigns (F7 too for
-  # marked items); ENTER, ESC, F3 and F6 close, keeping it, as Agenda's
-  # (F4 too for one item)
+  # R65: the hierarchy's moves; SPACE and F7 (Agenda's INCLCAT) assign or
+  # unassign; F6 (PROPS) opens the highlighted category's properties, as
+  # Agenda's (checked in Agenda 2.0, 2026-10-25); ENTER, ESC and F3 close,
+  # keeping it (F4 too for one item)
   @impl Box
   def keymap(mode) do
     own =
       case mode do
-        %{type: :group_profile} -> %{{:f, 7} => :toggle}
+        %{type: :group_profile} -> %{}
         _ -> %{{:f, 4} => :close}
       end
 
     CategoryScreens.list_keymap()
     |> Map.merge(%{
       {:char, " "} => :toggle,
+      {:f, 7} => :toggle,
+      {:f, 6} => :category_props,
       :enter => :close,
       :esc => :close,
-      {:f, 3} => :close,
-      {:f, 6} => :close
+      {:f, 3} => :close
     })
     |> Map.merge(own)
   end
 
   @impl Box
   def commands(_mode) do
-    [{:toggle, "Assign", "Assign or unassign the category"}] ++
+    [
+      {:toggle, "Assign", "Assign or unassign the category"},
+      {:category_props, "Props", "The highlighted category's properties"}
+    ] ++
       CategoryScreens.list_commands() ++ [{:close, "Return", "Close the profile"}]
   end
 
@@ -119,6 +124,11 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
     mode = CategoryScreens.clamp(mode, rows)
     key = if id == :toggle, do: {:char, " "}, else: :esc
     screen_key(State.put_mode(state, mode), mode, rows, key)
+  end
+
+  def run(state, mode, :category_props) do
+    rows = CategoryScreens.rows(state, mode)
+    Box.category_props(state, CategoryScreens.current_id(rows, CategoryScreens.clamp(mode, rows)))
   end
 
   def run(state, mode, id), do: CategoryScreens.run_list(state, mode, id)
@@ -192,7 +202,7 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
     db = state.db
 
     case key do
-      k when k in [:esc, {:f, 3}, {:f, 6}] ->
+      k when k in [:esc, {:f, 3}] ->
         State.pop(state)
 
       k when k in [{:char, " "}, {:f, 7}] ->
@@ -222,7 +232,7 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
     db = state.db
 
     case key do
-      k when k in [:esc, {:f, 6}, {:f, 3}, {:f, 4}] ->
+      k when k in [:esc, {:f, 3}, {:f, 4}] ->
         State.pop(state)
 
       {:char, " "} ->

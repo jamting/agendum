@@ -40,12 +40,16 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
   def handle(state, _mode, _key), do: state
 
   @impl Box
-  def keymap(_mode), do: Box.settings_keymap()
+  # F6 is in Agenda's bar here but does nothing (checked 2026-10-25)
+  def keymap(_mode), do: Box.settings_keymap(%{{:f, 6} => :category_props})
 
   @impl Box
-  def commands(_mode), do: Box.settings_commands()
+  def commands(_mode),
+    do: Box.settings_commands([{:category_props, "Props", "Nothing here: no category"}])
 
   @impl Box
+  def run(state, _mode, :category_props), do: state
+
   def run(state, mode, :change),
     do:
       State.run(

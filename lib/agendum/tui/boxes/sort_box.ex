@@ -140,14 +140,34 @@ defmodule Agendum.TUI.Boxes.SortBox do
   # the settings box's keys; F3 changes a setting too (on Category it picks
   # one, as Agenda's), ALT-F5, which opened it, is done (R65)
   @impl Box
-  def keymap(_mode), do: Box.settings_keymap(%{{:f, 3} => :choose, {:alt_f, 5} => :done})
+  def keymap(_mode),
+    do:
+      Box.settings_keymap(%{
+        {:f, 3} => :choose,
+        {:f, 6} => :category_props,
+        {:alt_f, 5} => :done
+      })
 
   @impl Box
   def commands(_mode),
-    do: Box.settings_commands([{:choose, "Choices", "Change the setting, as SPACE does"}])
+    do:
+      Box.settings_commands([
+        {:choose, "Choices", "Change the setting, as SPACE does"},
+        {:category_props, "Props", "The field's category's properties"}
+      ])
 
   # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
   @impl Box
+  # F6 on a key's Category: that category's properties
+  def run(state, mode, :category_props) do
+    with {index, :category} <- split(field(state, mode)),
+         %SortKey{on: {_on, id}} <- Enum.at(effective(state, mode), index) do
+      Box.category_props(state, id)
+    else
+      _ -> state
+    end
+  end
+
   def run(state, mode, id) when id in [:change, :choose] do
     {index, attribute} = split(field(state, mode))
     change(state, mode, index, attribute)

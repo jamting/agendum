@@ -279,8 +279,13 @@ defmodule Agendum.TUI.Boxes.Box do
     pick: "Choices",
     pick_head: "Choices",
     properties: "Props",
+    # F6 on a field that holds a category: its Category Properties
+    category_props: "Props",
     default: "Default",
-    default_all: "DfltAll"
+    default_all: "DfltAll",
+    # Agenda's category lists (F3 from a box, the assignment profile)
+    toggle: "InclCat",
+    clear_all: "ClrCats"
   }
 
   @doc """
@@ -303,25 +308,40 @@ defmodule Agendum.TUI.Boxes.Box do
   end
 
   # a key of every box (`Agendum.TUI.Keymap`'s `:box`), where it works:
-  # Help everywhere, a setting's keys only in a box of settings (one whose
-  # SPACE changes the setting); in a list Agenda's bar has Help alone
-  defp shared(box, state, mode, keymap, key) do
+  # Help everywhere, a setting's keys (F2 Edit, F3 Choices, F8 Default)
+  # in every box of settings, as Agenda's bar has them there whether or
+  # not the highlighted setting has a choice or a default; in a list
+  # Agenda's bar has Help alone
+  defp shared(_box, _state, _mode, keymap, key) do
     id = Agendum.TUI.Keymap.lookup(:box, key)
-    settings? = Map.get(keymap, {:char, " "}) == :change
 
     cond do
       id == :help -> :help
-      not settings? -> nil
-      id == :choices -> :choices
-      id in [:default, :default_all] and box.defaults(state, mode) != %{} -> id
+      id in [:edit, :choices, :default, :default_all] and settings_keymap?(keymap) -> id
       true -> nil
     end
   end
+
+  @doc "Whether `box`, on top as `mode`, is a box of settings: one whose SPACE changes a setting."
+  @spec settings?(module, mode) :: boolean
+  def settings?(box, mode), do: settings_keymap?(box.keymap(mode))
+
+  defp settings_keymap?(keymap), do: Map.get(keymap, {:char, " "}) == :change
 
   # the command's fuller name, from the box's list, for the fuller labels
   defp command_name(box, mode, id, label) do
     Enum.find_value(box.commands(mode), label, fn {cid, name, _} -> cid == id && name end)
   end
+
+  @doc """
+  F6 (PROPS) on a field that holds a category, as Agenda's (checked in
+  Agenda 2.0, 2026-10-25: a Column head, a schedule's Date category): that
+  category's Category Properties over the box; on a field without one,
+  nothing (`id` nil).
+  """
+  @spec category_props(State.t(), pos_integer | nil) :: State.t()
+  def category_props(state, nil), do: state
+  def category_props(state, id), do: Agendum.TUI.CategoryScreens.open_props(state, id)
 
   # --- the keys of a settings box ----------------------------------------------
 
