@@ -8,7 +8,7 @@ defmodule Agendum.TUI.Boxes.ImportReportBox do
   prints a view; ENTER or ESC closes it. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :return, indicator: nil
+  use Agendum.TUI.Boxes.Box, finish: :return
 
   alias Agendum.TUI.Boxes.Box
   alias Agendum.TUI.State

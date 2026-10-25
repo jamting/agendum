@@ -72,8 +72,8 @@ defmodule Agendum.TUI.NumbersTest do
   end
 
   test "the title bar shows # on a numeric column", %{state: state} do
-    assert screen(state) =~ "# READY"
-    refute screen(press(state, :left)) =~ "# READY"
+    assert screen(state) =~ "# 2026-10-08"
+    refute screen(press(state, :left)) =~ "# 2026-10-08"
   end
 
   test "View ▸ Column ▸ Properties sets the format and the calculations",

@@ -8,7 +8,7 @@ defmodule Agendum.TUI.Boxes.AlarmList do
   Alarms! sections; ours is a box. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :none, indicator: nil
+  use Agendum.TUI.Boxes.Box, finish: :none
 
   alias Agendum.Core
   alias Agendum.Core.DateFormat

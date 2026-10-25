@@ -5,7 +5,7 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
   boxes (`:profile` and `:group_profile`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :enter_accept, indicator: "ASSIGN"
+  use Agendum.TUI.Boxes.Box, finish: :enter_accept
 
   alias Agendum.Core
   alias Agendum.Core.{Database, DateFormat}

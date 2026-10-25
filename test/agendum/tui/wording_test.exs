@@ -30,6 +30,24 @@ defmodule Agendum.TUI.WordingTest do
     assert screen(state) =~ "1 marked item done"
   end
 
+  # Agenda's mode words only (checked in Agenda 2.0, 2026-10-25; the owner's
+  # choice): none when ready, none of ours in boxes, menus and managers;
+  # EDIT while typing; the category manager has no time either
+  test "the top right shows Agenda's mode words only", %{state: state} do
+    top = fn state -> state |> screen() |> String.split("\n") |> hd() end
+    assert top.(state) =~ ~r/\s{2,}2026-10-08 09:00 *$/
+
+    for keys <- [[{:f, 10}], [{:f, 10}, "v", "v", "p"], [{:f, 8}], [{:alt_f, 6}]] do
+      refute top.(press(state, keys)) =~ ~r/READY|PROPS|MENU|VW MGR|SEARCH|CHOICES/
+    end
+
+    assert top.(press(state, [:down, {:f, 2}])) =~ ~r/EDIT +2026-10-08 09:00/
+
+    catmgr = top.(press(state, {:f, 9}))
+    refute catmgr =~ "CAT MGR"
+    refute catmgr =~ "2026-10-08"
+  end
+
   test "a long filter never runs the control panel's parts together", %{state: state} do
     view = hd(state.db.view_order)
     when_id = state.db.special.when
@@ -43,7 +61,7 @@ defmodule Agendum.TUI.WordingTest do
 
     state = %{state | db: db, path: "/home/rabbit/rabbit.agenda", dirty: true, width: 80}
     [file, view | _] = String.split(screen(state), "\n")
-    assert file =~ ~r/File: \/home\/rabbit\/rabbit\.agenda \*\s{2,}READY/
+    assert file =~ ~r/File: \/home\/rabbit\/rabbit\.agenda \*\s{2,}2026-10-08 09:00/
     assert view =~ "View: Activities [When 2026-10-08..2026-11-30]"
 
     assert state |> Agendum.TUI.Render.render() |> hd() |> Agendum.TUI.Terminal.Draw.width() ==
@@ -51,7 +69,7 @@ defmodule Agendum.TUI.WordingTest do
 
     # narrower, the path loses its beginning and the filter its end
     [file, view | _] = String.split(screen(%{state | width: 40}), "\n")
-    assert file =~ ~r/File: …\S+ \*\s{2,}READY/
+    assert file =~ ~r/File: …\S+ \*\s{2,}2026-10-08/
     assert view =~ ~r/View: Activities \[When 2026-10-08\.\.2…$/
     assert file =~ ~r/2026-10-08 09:00$/
     assert %{} = State.view(state)

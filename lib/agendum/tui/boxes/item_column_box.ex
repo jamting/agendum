@@ -20,7 +20,7 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
   (`Agendum.TUI.Boxes.BoxCancel`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+  use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.TUI.Boxes.{Box}
 

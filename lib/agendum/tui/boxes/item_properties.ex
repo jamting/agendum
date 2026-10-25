@@ -22,7 +22,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   them. Pure, like the rest of the TUI state machine.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+  use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.Core
   alias Agendum.Core.{DateFormat, NumberFormat, Recurrence}

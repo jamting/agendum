@@ -12,7 +12,7 @@ defmodule Agendum.TUI.Boxes.RunByName do
   name come first. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "RUN"
+  use Agendum.TUI.Boxes.Box, finish: :accept
 
   alias Agendum.TUI.Boxes.Box
   alias Agendum.TUI.{HelpScreen, Keymap, State}

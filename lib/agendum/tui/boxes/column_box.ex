@@ -26,7 +26,7 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
   closes it and cancels its changes (`Agendum.TUI.Boxes.BoxCancel`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+  use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.TUI.Boxes.{Box}
 

@@ -17,7 +17,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   """
 
   # ENTER shows the view, ESC goes back to the one shown, as in Agenda
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "VW MGR"
+  use Agendum.TUI.Boxes.Box, finish: :done
 
   alias Agendum.Core.Database
   alias Agendum.TUI.{Boxes.Box, Keymap, Terminal.Draw, Typing.LineEdit, State}

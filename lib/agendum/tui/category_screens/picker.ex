@@ -5,7 +5,7 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   filter, a condition, an action, a negative link, ...). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
+  use Agendum.TUI.Boxes.Box, finish: :accept
 
   alias Agendum.Core.Database
   alias Agendum.TUI.{Boxes.Box, CategoryScreens, Terminal.Draw, Typing.LineEdit, State}

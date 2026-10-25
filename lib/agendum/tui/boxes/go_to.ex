@@ -6,7 +6,7 @@ defmodule Agendum.TUI.Boxes.GoTo do
   cancels. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: nil
+  use Agendum.TUI.Boxes.Box, finish: :accept
 
   alias Agendum.TUI.Boxes.Box
   alias Agendum.TUI.{Layout, State}

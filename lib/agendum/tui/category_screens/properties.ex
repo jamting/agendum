@@ -17,7 +17,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   The box is a box module (`Agendum.TUI.Boxes.Box`).
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+  use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.TUI.Boxes.{Box}
 

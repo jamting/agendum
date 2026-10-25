@@ -31,7 +31,6 @@ defmodule Agendum.TUI.NoteSearchTest do
     assert text =~ "Direction"
     assert text =~ "Ignore case"
     refute text =~ "Replace with"
-    assert text =~ "SEARCH"
   end
 
   test "searching moves the cursor to the match; ALT-S finds the next, then beeps",

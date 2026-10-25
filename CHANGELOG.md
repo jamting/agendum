@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **Mode words as in Lotus Agenda**: the top right shows no word when you are ready, and only Agenda's words otherwise (EDIT, AUTOC, BROWSE, LEARN; INS/OVR in a note). PROPS, MENU, CHOICES, CAT MGR and the other words of ours are gone; the category manager shows no time, as Agenda's.
 ## 0.37.0 — 2026-10-25
 
 Choice lists as in Lotus Agenda; the texts now follow Agenda's.

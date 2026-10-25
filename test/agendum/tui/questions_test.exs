@@ -39,7 +39,7 @@ defmodule Agendum.TUI.QuestionsTest do
     state = state |> confirm_always() |> press(["Ring Anna about Meetings", :enter])
     new = item(state, "Ring Anna about Meetings")
     refute Database.member?(state.db, new.id, cat(state, "Meetings"))
-    assert screen(state) =~ "? READY"
+    assert screen(state) =~ "? 2026-10-08"
 
     state = press(state, [{:f, 10}, "u", "q"])
     assert %{type: :questions} = State.mode(state)
@@ -61,7 +61,7 @@ defmodule Agendum.TUI.QuestionsTest do
     assert state.modes == []
     assert Database.member?(state.db, new.id, cat(state, "Meetings"))
     refute Database.member?(state.db, new.id, cat(state, "Anna Lasky"))
-    refute screen(state) =~ "? READY"
+    refute screen(state) =~ "? 2026-10-08"
   end
 
   test "TAB picks every suggestion; questions go one item after another", %{state: state} do

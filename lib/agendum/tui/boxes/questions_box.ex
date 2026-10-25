@@ -13,7 +13,7 @@ defmodule Agendum.TUI.Boxes.QuestionsBox do
   key closes it. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :enter_accept, indicator: nil
+  use Agendum.TUI.Boxes.Box, finish: :enter_accept
 
   alias Agendum.Core
   alias Agendum.TUI.Boxes.Box

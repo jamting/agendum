@@ -18,7 +18,7 @@ defmodule Agendum.TUI.Boxes.SelectFile do
   `listed/3`); until then the box says it is reading. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
+  use Agendum.TUI.Boxes.Box, finish: :accept
 
   alias Agendum.Core.DateFormat
   alias Agendum.TUI.{Boxes.Box, Typing.LineEdit, State}

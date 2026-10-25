@@ -27,7 +27,7 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
   skip the box: they open the picker and use the file's setting. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
+  use Agendum.TUI.Boxes.Box, finish: :done, choices: true
 
   alias Agendum.TUI.Boxes.{Box}
 

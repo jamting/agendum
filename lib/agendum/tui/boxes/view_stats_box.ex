@@ -8,7 +8,7 @@ defmodule Agendum.TUI.Boxes.ViewStatsBox do
   continue". Drawn from `@layout` (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :any_key, indicator: "PROPS"
+  use Agendum.TUI.Boxes.Box, finish: :any_key
 
   alias Agendum.Core
   alias Agendum.TUI.Boxes.{Box, Template}

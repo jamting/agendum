@@ -26,7 +26,7 @@ defmodule Agendum.TUI.Typing.NoteSearch do
   Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "SEARCH"
+  use Agendum.TUI.Boxes.Box, finish: :done
 
   alias Agendum.Core.TextSearch
   alias Agendum.TUI.Boxes.{Box, Template}

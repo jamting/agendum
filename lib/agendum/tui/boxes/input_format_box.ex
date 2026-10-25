@@ -13,7 +13,7 @@ defmodule Agendum.TUI.Boxes.InputFormatBox do
   (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+  use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.TUI.Boxes.{Box, Template}
 

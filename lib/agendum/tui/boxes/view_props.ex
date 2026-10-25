@@ -38,7 +38,7 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   """
 
   # the box stays open on ENTER of a typed field; ENTER on a setting is done
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+  use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.TUI.Boxes.{
     Box,

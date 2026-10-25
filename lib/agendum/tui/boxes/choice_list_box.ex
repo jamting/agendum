@@ -8,7 +8,7 @@ defmodule Agendum.TUI.Boxes.ChoiceListBox do
   as Agenda's (checked in Agenda 2.0, 2026-10-25). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :none, indicator: "CHOICES"
+  use Agendum.TUI.Boxes.Box, finish: :none
 
   alias Agendum.TUI.Boxes.{Box, BoxChoices}
   alias Agendum.TUI.State

@@ -20,7 +20,6 @@ defmodule Agendum.TUI.SearchTest do
     assert %{type: :searching} = State.mode(state)
     assert current(state) =~ "Call Marketing"
     assert screen(state) =~ "Match 1 of 2"
-    assert screen(state) =~ "SEARCH"
   end
 
   test "ALT-N and ALT-P move between matches; the ends are reported", %{state: state} do

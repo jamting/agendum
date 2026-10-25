@@ -16,7 +16,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
   way. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS"
+  use Agendum.TUI.Boxes.Box, finish: :done
 
   alias Agendum.Core.Extras.Blog
   alias Agendum.TUI.Boxes.{Box, FieldTyping, Template}

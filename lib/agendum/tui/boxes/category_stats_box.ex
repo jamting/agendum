@@ -9,7 +9,7 @@ defmodule Agendum.TUI.Boxes.CategoryStatsBox do
   Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :any_key, indicator: "PROPS"
+  use Agendum.TUI.Boxes.Box, finish: :any_key
 
   alias Agendum.Core.Database
   alias Agendum.TUI.Boxes.{Box, Template}

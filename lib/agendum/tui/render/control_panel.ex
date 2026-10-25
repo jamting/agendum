@@ -111,7 +111,7 @@ defmodule Agendum.TUI.Render.ControlPanel do
     Draw.line(left, state.width - String.length(right), :panel) ++ [{:indicator, right}]
   end
 
-  # the marks, the mode (READY, EDIT …) and the time, at the top right;
+  # the marks, Agenda's mode word (EDIT …) and the time, at the top right;
   # in a note (on top), as Agenda: the line the cursor is on, INS and EDIT,
   # without the time (R64a)
   defp indicators(state, base) do
@@ -123,10 +123,16 @@ defmodule Agendum.TUI.Render.ControlPanel do
         typing = if edit.overwrite, do: "OVR", else: "INS"
         marks <> "Line #{String.pad_leading(Integer.to_string(edit.row + 1), 4)} #{typing} EDIT "
 
+      # the category manager shows neither a word nor the time, as Agenda's
+      %{type: :catmgr} when base.type == :catmgr ->
+        marks
+
       _ ->
+        word = if word = indicator(state), do: word <> "  ", else: ""
+
         marks <>
-          "#{numeric_marker(state)}#{indicator(state, base)}  " <>
-          DateFormat.datetime(state.now, state.db.date_format) <> " "
+          numeric_marker(state) <>
+          word <> DateFormat.datetime(state.now, state.db.date_format) <> " "
     end
   end
 
@@ -207,58 +213,15 @@ defmodule Agendum.TUI.Render.ControlPanel do
 
   defp numeric_marker(_state), do: ""
 
-  # One branch per mode indicator (READY, EDIT, MENU …).
-  # credo:disable-for-next-line Credo.Check.Refactor.CyclomaticComplexity
-  defp indicator(state, base) do
-    top = State.mode(state)
-
+  # Agenda's mode words, and only those (checked in Agenda 2.0, 2026-10-25;
+  # the owner's choice): none when ready, in boxes, menus and managers
+  defp indicator(state) do
     cond do
-      state.macro.learning ->
-        "LEARN"
-
-      Completion.matches(state) != [] ->
-        "AUTOC"
-
-      state.edit != nil ->
-        "EDIT"
-
-      top && top.type == :menu ->
-        "MENU"
-
-      # a box module's own; nil leaves the one of what is beneath
-      indicator = box_indicator(top) ->
-        indicator
-
-      top && top.type in [:move_item, :column_move, :section_move] ->
-        "MOVE"
-
-      top && top.type == :browse ->
-        "BROWSE"
-
-      top && top.type in [:searching] ->
-        "SEARCH"
-
-      base && base.type == :catmgr ->
-        "CAT MGR"
-
-      base && base.type == :note ->
-        "NOTE"
-
-      base && base.type == :help ->
-        "HELP"
-
-      base && base.type == :devtools ->
-        "DEV"
-
-      true ->
-        "READY"
-    end
-  end
-
-  defp box_indicator(mode) do
-    case Agendum.TUI.Boxes.Box.module(mode) do
-      nil -> nil
-      box -> box.indicator()
+      state.macro.learning -> "LEARN"
+      Completion.matches(state) != [] -> "AUTOC"
+      state.edit != nil -> "EDIT"
+      match?(%{type: :browse}, State.mode(state)) -> "BROWSE"
+      true -> nil
     end
   end
 

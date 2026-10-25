@@ -7,7 +7,7 @@ New to Lotus Agenda? [`docs/AGENDA_HISTORY.md`](docs/AGENDA_HISTORY.md) explains
 You type free-form items. Agendum files them into categories: the one you typed them under, and any whose names appear in the text. Views show the same items arranged in different ways, and you change the data directly in the views.
 
 ```
- File: ~/work.agendum                                   READY  2026-10-08 09:00
+ File: ~/work.agendum                                          2026-10-08 09:00
  View: Activities
  Calls                                               When       Priority Contact
  • Set up meeting at Terracotta Corp to discuss                 Medium

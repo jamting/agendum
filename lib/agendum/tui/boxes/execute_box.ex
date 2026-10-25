@@ -15,7 +15,7 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
   (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
+  use Agendum.TUI.Boxes.Box, finish: :done, choices: true
 
   alias Agendum.Core
   alias Agendum.TUI.Boxes.{Box, Template}

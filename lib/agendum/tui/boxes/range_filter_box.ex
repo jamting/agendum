@@ -17,7 +17,7 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
   (`Agendum.TUI.Boxes.Template`), one for dates and one for numbers. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
+  use Agendum.TUI.Boxes.Box, finish: :done, choices: true
 
   alias Agendum.TUI.Boxes.{Box, Template}
   alias Agendum.TUI.{Typing.LineEdit, State}

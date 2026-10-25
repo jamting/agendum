@@ -18,8 +18,6 @@ defmodule Agendum.TUI.Boxes.Box do
       done, ESC to cancel"), `:accept`, `:enter_accept` ("Press ENTER to accept", a category list where ESC keeps too), `:return`,
       `:any_key` ("Press any key to continue", a box any key closes) or `:none`;
       a box whose words depend on its mode defines `finish/1` instead
-    * `indicator:` the mode shown at the top right ("PROPS"); nil for the
-      one of what is beneath (READY in a view)
     * `cancels:` whether ESC puts back the changes made in the box
       (`Agendum.TUI.Boxes.BoxCancel`)
     * `choices:` whether a letter or F3 picks a setting's choice
@@ -373,9 +371,9 @@ defmodule Agendum.TUI.Boxes.Box do
   end
 
   @doc """
-  `use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true`
+  `use Agendum.TUI.Boxes.Box, finish: :done, cancels: true`
   declares the module a box: it must define the callbacks, and gets
-  `finish/1`, `indicator/0`, `cancels?/0` and `choices?/0` from the options.
+  `finish/1`, `cancels?/0` and `choices?/0` from the options.
   """
   # `use` runs this macro in the box module: the `quote` block is code
   # written into that module, with the options' values put in by `unquote`
@@ -387,8 +385,6 @@ defmodule Agendum.TUI.Boxes.Box do
 
       @impl true
       def finish(_mode), do: unquote(Keyword.get(opts, :finish, :done))
-      @doc false
-      def indicator, do: unquote(Keyword.get(opts, :indicator, "PROPS"))
       @doc false
       def cancels?, do: unquote(cancels)
       @doc false

@@ -22,7 +22,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   either goes back to the box beneath. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+  use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.TUI.Boxes.{AutoAssignBox, Box, DateSettingsBox, FieldTyping, FileStatsBox}
   alias Agendum.TUI.Boxes.Template

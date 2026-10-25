@@ -14,7 +14,7 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
   Drawn from a layout (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+  use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.Core.DateFormat
   alias Agendum.TUI.Boxes.{Box, DateFormatRows, Template}

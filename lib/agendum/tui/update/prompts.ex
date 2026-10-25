@@ -6,7 +6,7 @@ defmodule Agendum.TUI.Update.Prompts do
   (`Agendum.TUI.Boxes.Box`, `:confirm`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: nil
+  use Agendum.TUI.Boxes.Box, finish: :accept
 
   alias Agendum.Core
   alias Agendum.Core.DateFormat

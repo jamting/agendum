@@ -6,7 +6,7 @@ defmodule Agendum.TUI.Update.Marked do
   this module's (`Agendum.TUI.Boxes.Box`, `:scope`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
+  use Agendum.TUI.Boxes.Box, finish: :accept
 
   alias Agendum.Core
   alias Agendum.TUI.{Boxes.Box, CategoryScreens, Keymap, Terminal.Draw, Layout, State}

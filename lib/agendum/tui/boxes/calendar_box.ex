@@ -15,7 +15,7 @@ defmodule Agendum.TUI.Boxes.CalendarBox do
   The month and the moves are `Agendum.Core.MonthCalendar`. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
+  use Agendum.TUI.Boxes.Box, finish: :accept
 
   alias Agendum.Core
   alias Agendum.Core.{Database, MonthCalendar}

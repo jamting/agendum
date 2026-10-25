@@ -14,7 +14,7 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
   from `@layout` (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+  use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.Core
   alias Agendum.Core.{DateFormat, DateSettings}

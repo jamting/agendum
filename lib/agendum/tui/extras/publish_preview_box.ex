@@ -10,7 +10,7 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
   scroll the list. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :return, indicator: nil
+  use Agendum.TUI.Boxes.Box, finish: :return
 
   alias Agendum.Core.Extras.Site
   alias Agendum.TUI.Boxes.Box

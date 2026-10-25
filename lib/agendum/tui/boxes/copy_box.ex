@@ -14,7 +14,7 @@ defmodule Agendum.TUI.Boxes.CopyBox do
   sections are its dates (R47). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :accept, indicator: "CHOICES"
+  use Agendum.TUI.Boxes.Box, finish: :accept
 
   alias Agendum.TUI.Boxes.Box
   alias Agendum.TUI.{Terminal.Draw, Layout, State}

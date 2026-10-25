@@ -9,7 +9,7 @@ defmodule Agendum.TUI.Boxes.ActionBox do
   for a number. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", choices: true
+  use Agendum.TUI.Boxes.Box, finish: :done, choices: true
 
   alias Agendum.TUI.Boxes.{Box, Template}
   alias Agendum.TUI.{Typing.LineEdit, State}

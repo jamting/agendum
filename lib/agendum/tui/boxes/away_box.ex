@@ -9,7 +9,7 @@ defmodule Agendum.TUI.Boxes.AwayBox do
   alarms. Not in Agenda, which is not known to have shown them. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :return, indicator: nil
+  use Agendum.TUI.Boxes.Box, finish: :return
 
   alias Agendum.Core
   alias Agendum.Core.DateFormat

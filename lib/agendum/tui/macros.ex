@@ -17,7 +17,7 @@ defmodule Agendum.TUI.Macros do
   from runs stop eight deep. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :none, indicator: nil
+  use Agendum.TUI.Boxes.Box, finish: :none
 
   alias Agendum.Core.Database
   alias Agendum.TUI.{Boxes.Box, History, MacroKeys, State}

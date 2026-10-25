@@ -15,7 +15,7 @@ defmodule Agendum.TUI.Boxes.SearchBox do
   `@layout` (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "SEARCH", choices: true
+  use Agendum.TUI.Boxes.Box, finish: :done, choices: true
 
   alias Agendum.Core.Search
   alias Agendum.TUI.Boxes.{Box, Template}

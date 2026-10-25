@@ -84,6 +84,7 @@ The record of finished work, by milestone, moved here from [`ROADMAP.md`](ROADMA
   - [x] Macro Properties laid out as Agenda's: Name, Contents "...", Attach to key, "Macro can be run from:" with View, Note, Category manager and our Everywhere else (2026-10-25)
   - [x] Item Column Properties: Agenda's Width row, the width now; typing one sets it by hand (2026-10-25)
   - [x] The Questions box drawn as Agenda's: "Questions", 'Suggested categories for "..."', ? and * marks, Parent:Child names, "Press ENTER to accept"; a box any key closes when none wait (2026-10-25)
+  - [x] Agenda's mode words only: none when ready, none of ours (PROPS, MENU, CAT MGR …); LEARN, AUTOC, EDIT, BROWSE stay; the category manager without the time (2026-10-25; checked in Agenda 2.0)
   - [x] Choice lists (F3) as Agenda's: the box titled "Choices" with nothing in its bottom edge; Column Add's Category type in Agenda's order (Standard, Numeric, Date); Zettel id among the formats only with Extras on (2026-10-25)
   - [x] Messages in Agenda's words where Agenda had one for the same situation, adapted (2026-10-25; `Agendum.TUI.Messages`, `docs/reference/agenda_message_pairs.md`)
   - [x] A datebook view's settings in its View Properties, in the right column instead of Sections (Date category, End category, Section, Period, then Interval / Start at / End at as the period has them, Base date on), no Section sorting; the separate Datebook settings box gone (2026-10-25, R47)

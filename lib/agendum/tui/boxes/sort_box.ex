@@ -23,7 +23,7 @@ defmodule Agendum.TUI.Boxes.SortBox do
   (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "SORT", cancels: true
+  use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.Core.Database
   alias Agendum.Core.View.SortKey

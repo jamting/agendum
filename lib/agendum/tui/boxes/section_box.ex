@@ -30,7 +30,7 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   `@layout` (`Agendum.TUI.Boxes.Template`), the columns listed below it. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, indicator: "PROPS", cancels: true
+  use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.TUI.Boxes.{Box, BoxNav}
 
