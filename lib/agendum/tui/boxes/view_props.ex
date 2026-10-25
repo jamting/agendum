@@ -654,11 +654,9 @@ defmodule Agendum.TUI.Boxes.ViewProps do
 
   defp editing(state, %{typing: {:name, line}}), do: editing_at(state, :name, line)
 
-  defp editing(state, %{typing: {{:new_section, n}, line}} = mode) do
-    # the new row is below section n, in the list as it is scrolled
-    slot = Enum.at(@slots, n + 1 - top(state, mode))
-    if slot, do: editing_at(state, slot, line), else: []
-  end
+  # a new section's name is typed in the control panel, as Agenda's: its
+  # row stays blank below section n
+  defp editing(_state, %{typing: {{:new_section, _n}, _line}}), do: []
 
   defp editing(_state, _mode), do: []
 

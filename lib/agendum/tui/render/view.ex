@@ -178,7 +178,7 @@ defmodule Agendum.TUI.Render.View do
   defp row_lines(state, %{kind: :section} = row, index, selected, editing, {tw, _used}, columns) do
     style = if selected and state.col == 0, do: :cursor, else: :section
 
-    name_part = name_part(state, row, style, selected, editing, tw)
+    name_part = name_part(state, row, style, tw)
 
     heads =
       columns
@@ -261,7 +261,7 @@ defmodule Agendum.TUI.Render.View do
 
     cells =
       state
-      |> item_cells(row, selected, editing)
+      |> item_cells(row, selected)
       |> pointed(
         row,
         selected and state.col == 0 and not match?(%{target: {:edit_item, _}}, editing)
@@ -280,7 +280,7 @@ defmodule Agendum.TUI.Render.View do
     [first_line | Enum.map(rest, &(blank ++ indent ++ &1))]
   end
 
-  defp name_part(state, row, style, selected, editing, tw) do
+  defp name_part(state, row, style, tw) do
     cat = row.category
     # The name part is as wide as an item line's start ("    •♦", 6) and
     # text, so each column head starts where its entries do, as in Agenda.
@@ -288,21 +288,17 @@ defmodule Agendum.TUI.Render.View do
     # (checked in Agenda 2.0, 2026-10-25: "♪Göran", " Unassigned").
     note = if cat.note != "", do: {:symbol, "♪"}, else: {:normal, " "}
 
-    case editing do
-      %{target: {:rename_category, id}} when selected and id == cat.id ->
-        [note] ++ Draw.input(editing.line, tw + 5, :edit)
+    # a section head's new name is typed in the control panel, as Agenda's
+    if row.slot != nil do
+      slot_rule(slot_label(state, row.slot), style, tw + 6)
+    else
+      section = Enum.at(State.view(state).sections, row.sidx)
 
-      _ when row.slot != nil ->
-        slot_rule(slot_label(state, row.slot), style, tw + 6)
+      suffix =
+        if(row.collapsed, do: " §#{row.count}", else: "") <>
+          Text.filter_text(state, section.filter)
 
-      _ ->
-        section = Enum.at(State.view(state).sections, row.sidx)
-
-        suffix =
-          if(row.collapsed, do: " §#{row.count}", else: "") <>
-            Text.filter_text(state, section.filter)
-
-        [note, {style, Draw.pad(cat.name <> suffix, tw + 5)}]
+      [note, {style, Draw.pad(cat.name <> suffix, tw + 5)}]
     end
   end
 
@@ -336,31 +332,20 @@ defmodule Agendum.TUI.Render.View do
     end)
   end
 
-  defp item_cells(state, %{item: item} = row, selected, editing) do
+  defp item_cells(state, row, selected) do
     row.columns
     |> Enum.zip(row.cells)
     |> Enum.zip(row.percents)
     |> Enum.with_index(1)
     |> Enum.map(fn {{{column, cell}, percent}, i} ->
-      cell_part =
-        case editing do
-          %{target: {:column_entry, id, head, _}}
-          when selected and id == item.id and head == column.category_id and state.col == i ->
-            completion_field(state, editing.line, column.width)
+      # a column entry is typed in the control panel, as Agenda's
+      # (`Render.ControlPanel.entry/1`): the cell shows what it holds
+      text =
+        if Text.numeric?(state, column),
+          do: right(cell, column.width),
+          else: Draw.pad(cell, column.width)
 
-          # a Category note line being typed (R56)
-          %{target: {:note_line, id, head, _}}
-          when selected and id == item.id and head == column.category_id and state.col == i ->
-            Draw.input(editing.line, column.width, :edit)
-
-          _ ->
-            text =
-              if Text.numeric?(state, column),
-                do: right(cell, column.width),
-                else: Draw.pad(cell, column.width)
-
-            [{if(selected and state.col == i, do: :cursor_cell, else: :cell), text}]
-        end
+      cell_part = [{if(selected and state.col == i, do: :cursor_cell, else: :cell), text}]
 
       # Agenda's · before a filled entry (Help "View Indicators": the item
       # is assigned to the column's head; checked in Agenda 2.0,

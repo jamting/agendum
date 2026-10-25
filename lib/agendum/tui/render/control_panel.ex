@@ -25,77 +25,180 @@ defmodule Agendum.TUI.Render.ControlPanel do
   # field, a question, a message or a hint take them over while they last.
   def lines(%State{width: w} = state, base) do
     {l1, l2} =
-      case State.mode(state) do
-        %{type: :menu} = m ->
-          menu_lines(m, w)
+      case {State.mode(state), entry(state)} do
+        # a category's name or a column entry, typed on line 2 (R32)
+        {_, {_, _} = entry} when state.message == nil ->
+          entry_lines(state, entry)
 
-        %{type: :prompt, label: label, action: action} ->
-          # a file name can be picked from a list (R51), as Agenda said
-          label =
-            if Agendum.TUI.Boxes.SelectFile.file_prompt?(action),
-              do: label <> "  F3 lists files",
-              else: label
-
-          # a password shows as stars (R72)
-          line =
-            if Agendum.TUI.Update.Prompts.password_prompt?(state),
-              do: %{
-                state.edit.line
-                | text: String.duplicate("*", String.length(state.edit.line.text))
-              },
-              else: state.edit.line
-
-          {beside_indicators(state, base, [{:prompt, " " <> label}]),
-           [{:panel, " "}] ++ Draw.input(line, w - 2, :edit)}
-
-        %{type: :column_width} = m ->
-          text_lines(state, base, :panel_hint, Agendum.TUI.Moves.ColumnWidth.panel(m))
-
-        %{type: :column_move} = m ->
-          text_lines(state, base, :panel_hint, Agendum.TUI.Moves.ColumnMove.panel(state, m))
-
-        %{type: :section_move} = m ->
-          text_lines(state, base, :panel_hint, Agendum.TUI.Moves.SectionMove.panel(state, m))
-
-        %{type: :browse, date: %Date{}} ->
-          period = State.view(state).datebook.period
-          hint = "← → another #{period} · ENTER keeps · ESC back"
-          text_lines(state, base, :panel_hint, hint)
-
-        %{type: :browse} ->
-          # short, so the view's line with the dates being moved stays in sight
-          hint = "← → ↑↓ PGUP PGDN · ENTER keeps · ESC back"
-
-          text_lines(state, base, :panel_hint, hint)
-
-        mode when is_map_key(@boxes, mode.type) ->
-          box_lines(state, mode)
-
-        _ ->
-          # a message first; else the help for a box's highlighted field, or
-          # on an item's profile why it is in the highlighted category (R67)
-          help =
-            Agendum.TUI.Boxes.FieldHelp.text(state) ||
-              Agendum.TUI.CategoryScreens.Profile.reason(state) ||
-              link_under_cursor(state)
-
-          case {message_line(state), help} do
-            {[], nil} ->
-              {file_line(state, base), where_line(state, base)}
-
-            # in a note the header stays, and a hint goes under it (R64a)
-            {[], help} when base.type == :note ->
-              {file_line(state, base), [{:panel_hint, " " <> help}]}
-
-            {[], help} ->
-              text_lines(state, base, :panel_hint, help)
-
-            {[{style, text} | _], _} ->
-              text_lines(state, base, style, String.trim(text))
-          end
+        {mode, _} ->
+          mode_lines(state, base, mode)
       end
 
     Enum.map([l1, l2], &(&1 |> Draw.paint(@panel) |> Draw.line(w, :panel)))
+  end
+
+  defp mode_lines(%State{width: w} = state, base, mode) do
+    case mode do
+      %{type: :menu} = m ->
+        menu_lines(m, w)
+
+      %{type: :prompt, label: label, action: action} ->
+        # a file name can be picked from a list (R51), as Agenda said
+        label =
+          if Agendum.TUI.Boxes.SelectFile.file_prompt?(action),
+            do: label <> "  F3 lists files",
+            else: label
+
+        # a password shows as stars (R72)
+        line =
+          if Agendum.TUI.Update.Prompts.password_prompt?(state),
+            do: %{
+              state.edit.line
+              | text: String.duplicate("*", String.length(state.edit.line.text))
+            },
+            else: state.edit.line
+
+        {beside_indicators(state, base, [{:prompt, " " <> label}]),
+         [{:panel, " "}] ++ Draw.input(line, w - 2, :edit)}
+
+      %{type: :column_width} = m ->
+        text_lines(state, base, :panel_hint, Agendum.TUI.Moves.ColumnWidth.panel(m))
+
+      %{type: :column_move} = m ->
+        text_lines(state, base, :panel_hint, Agendum.TUI.Moves.ColumnMove.panel(state, m))
+
+      %{type: :section_move} = m ->
+        text_lines(state, base, :panel_hint, Agendum.TUI.Moves.SectionMove.panel(state, m))
+
+      %{type: :browse, date: %Date{}} ->
+        period = State.view(state).datebook.period
+        hint = "← → another #{period} · ENTER keeps · ESC back"
+        text_lines(state, base, :panel_hint, hint)
+
+      %{type: :browse} ->
+        # short, so the view's line with the dates being moved stays in sight
+        hint = "← → ↑↓ PGUP PGDN · ENTER keeps · ESC back"
+
+        text_lines(state, base, :panel_hint, hint)
+
+      mode when is_map_key(@boxes, mode.type) ->
+        box_lines(state, mode)
+
+      _ ->
+        # a message first; else the help for a box's highlighted field, or
+        # on an item's profile why it is in the highlighted category (R67)
+        help =
+          Agendum.TUI.Boxes.FieldHelp.text(state) ||
+            Agendum.TUI.CategoryScreens.Profile.reason(state) ||
+            link_under_cursor(state)
+
+        case {message_line(state), help} do
+          {[], nil} ->
+            {file_line(state, base), where_line(state, base)}
+
+          # in a note the header stays, and a hint goes under it (R64a)
+          {[], help} when base.type == :note ->
+            {file_line(state, base), [{:panel_hint, " " <> help}]}
+
+          {[], help} ->
+            text_lines(state, base, :panel_hint, help)
+
+          {[{style, text} | _], _} ->
+            text_lines(state, base, style, String.trim(text))
+        end
+    end
+  end
+
+  @doc """
+  What line 1 says while the line being typed is shown in the control
+  panel, as Agenda's (checked in Agenda 2.0, 2026-10-25; the owner's
+  choice): `{label, line}` for a category's name ("Category name:"), a
+  date ("Date:"), a number ("Number:"), a Category note's line; `{:completion,
+  line}` while automatic completion offers the names; nil when the line is
+  typed in place (an item's text, a box's other fields, a prompt).
+  """
+  @spec entry(State.t()) :: {String.t() | :completion, Agendum.TUI.Typing.LineEdit.t()} | nil
+  def entry(%State{edit: %{target: target, line: line}} = state) do
+    case {target, State.mode(state)} do
+      {{:column_entry, _, head, _}, _} -> {column_label(state, head), line}
+      {{:note_line, _, _, n}, _} -> {"Line #{n} of the category's note:", line}
+      {{:rename_category, _}, _} -> {"Category name:", line}
+      # every line typed in the category manager is a category's name
+      {_, %{type: :catmgr}} -> {"Category name:", line}
+      _ -> nil
+    end
+  end
+
+  # a box's field that holds a category: its head, a new section
+  def entry(state) do
+    case State.mode(state) do
+      %{typing: {field, line}}
+      when field == :head or (is_tuple(field) and elem(field, 0) == :new_section) ->
+        {"Category name:", line}
+
+      _ ->
+        nil
+    end
+  end
+
+  defp column_label(state, head) do
+    case state.db.categories[head].kind do
+      :date -> "Date:"
+      :numeric -> "Number:"
+      _ -> :completion
+    end
+  end
+
+  # line 1: what is typed, the mode word at the right; line 2: the line
+  defp entry_lines(%State{width: w} = state, {label, line}) do
+    # the line's room: the screen less a space either side
+    field = max(w - 2, 1)
+
+    {text, input} =
+      case label do
+        :completion ->
+          {completion_text(state), Agendum.TUI.Render.View.completion_field(state, line, field)}
+
+        label ->
+          {label, Draw.input(line, field, :edit)}
+      end
+
+    word = (indicator(state) || "EDIT") <> " "
+    room = max(w - String.length(word) - 2, 1)
+
+    {Draw.line([{:prompt, " " <> Draw.truncate(text, room)}], w - String.length(word), :panel) ++
+       [{:indicator, word}], [{:panel, " "}] ++ input}
+  end
+
+  # Agenda's words for automatic completion: "1 of 2 matching categories.
+  # Current choice: High;Hi" (the name, short name and Also match words),
+  # "No matching categories.", or before anything is typed "Enter category
+  # name:"
+  defp completion_text(state) do
+    matches = Completion.matches(state)
+    shown = Completion.shown(state)
+
+    cond do
+      String.trim(state.edit.line.text) == "" ->
+        "Enter category name:"
+
+      matches == [] ->
+        "No matching categories."
+
+      true ->
+        i = Enum.find_index(matches, &(&1 == shown)) + 1
+
+        "#{i} of #{length(matches)} matching categories. Current choice: " <>
+          aliases(state.db.categories[shown])
+    end
+  end
+
+  defp aliases(cat) do
+    [cat.name, cat.short_name || "", cat.also_match]
+    |> Enum.reverse()
+    |> Enum.drop_while(&(&1 in [nil, ""]))
+    |> Enum.reverse()
+    |> Enum.join(";")
   end
 
   # A box on top has the two lines to itself, as Agenda's (checked in Agenda
@@ -328,7 +431,8 @@ defmodule Agendum.TUI.Render.ControlPanel do
   defp indicator(state) do
     cond do
       state.macro.learning -> "LEARN"
-      Completion.matches(state) != [] -> "AUTOC"
+      # Agenda's AUTOC while a category is typed where completion works
+      Completion.active?(state) -> "AUTOC"
       state.edit != nil -> "EDIT"
       match?(%{type: :browse}, State.mode(state)) -> "BROWSE"
       # a calendar or feed read in the background: Agenda's WRKG
@@ -340,34 +444,10 @@ defmodule Agendum.TUI.Render.ControlPanel do
   defp message_line(%State{message: {:error, text}}), do: [{:error, " #{text} "}]
   defp message_line(%State{message: {:message, text}}), do: [{:message, " " <> text}]
 
-  defp message_line(%State{edit: %{target: {:column_entry, _, head, _}}, modes: []} = state) do
-    cond do
-      Completion.column_entry?(state) ->
-        completion_line(state)
-
-      state.db.categories[head].kind == :numeric ->
-        [{:dim, " Enter a number (e.g. 120, 1,234.50, -3); ENTER to set"}]
-
-      true ->
-        [{:dim, " Enter a date (e.g. friday, next week, 12/24); ENTER to set"}]
-    end
-  end
-
   # an item's text is typed in place, under Agenda's File and View lines
   # (checked in Agenda 2.0, 2026-10-25; the owner's choice): no hint
   defp message_line(%State{edit: %{target: {:new_item, _, _}}, modes: []}), do: []
   defp message_line(%State{edit: %{target: {:edit_item, _}}, modes: []}), do: []
-
-  defp message_line(%State{edit: %{target: target}, modes: []}) do
-    hint =
-      case target do
-        {:rename_category, _} -> "Edit the category name; ENTER to finish"
-        # a Category note column's cell (R56): the line written into
-        {:note_line, _, _, n} -> "Type line #{n} of the category's note; ENTER to set"
-      end
-
-    [{:dim, " " <> hint}]
-  end
 
   defp message_line(_), do: []
 
@@ -412,29 +492,6 @@ defmodule Agendum.TUI.Render.ControlPanel do
       left = if first > 0, do: "◄", else: " "
       right = if first + count < length(pieces), do: "►", else: " "
       [{:menu, left}] ++ shown ++ [{:menu, Draw.spaces(room - Draw.width(shown))}, {:menu, right}]
-    end
-  end
-
-  # Automatic completion (R32): the top line says how many categories match
-  # and how to choose.
-  defp completion_line(state) do
-    text = String.trim(state.edit.line.text)
-
-    case length(Completion.matches(state)) do
-      0 when text == "" ->
-        [{:dim, " Type a category name; ENTER to assign"}]
-
-      0 ->
-        [{:dim, " New category: #{text} · ENTER creates it"}]
-
-      1 ->
-        [{:dim, " 1 category begins with \"#{text}\" · ENTER accepts · INS new category"}]
-
-      n ->
-        [
-          {:dim,
-           " #{n} categories begin with \"#{text}\" · ENTER accepts · F8/ALT-N next · F7/ALT-P previous · INS new"}
-        ]
     end
   end
 

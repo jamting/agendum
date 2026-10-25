@@ -29,7 +29,8 @@ defmodule Agendum.TUI.Typing.LineClip do
     with false <- over_the_line?(State.mode(state)),
          {where, line} <- typed(state),
          id when id in @keys <- Keymap.lookup(:line, key),
-         false <- Completion.active?(state),
+         # completion's F7 and F8 (and F3, F5) are its own; F1 is the help
+         false <- Completion.active?(state) and id != :help,
          false <- id == :copy and file_prompt?(state) do
       run(state, where, line, id)
     else

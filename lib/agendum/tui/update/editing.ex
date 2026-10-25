@@ -33,6 +33,10 @@ defmodule Agendum.TUI.Update.Editing do
       k when completing and k in [:insert, {:f, 5}] ->
         commit_new_category(state)
 
+      # F3 (CHOICES): the column's list of categories, as F3 on the entry
+      {:f, 3} when completing ->
+        ViewKeys.view_key(%{state | edit: nil}, {:f, 3})
+
       k when k in [:up, :down, :tab, :shift_tab] ->
         state |> commit() |> ViewKeys.view_key(k)
 

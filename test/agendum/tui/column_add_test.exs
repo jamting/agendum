@@ -84,7 +84,8 @@ defmodule Agendum.TUI.ColumnAddTest do
   describe "typing the column head (User's Guide 3-17)" do
     test "the name of an existing category makes it the head", %{state: state, view_id: v} do
       state = press(state, ["p", "r", "i"])
-      assert screen(state) =~ ~r/Column head: +pri/
+      # typed in the control panel, as Agenda's (2026-10-25)
+      assert screen(state) =~ ~r/^ Category name: .*\n pri/m
       state = press(state, ["o", "r", "i", "t", "y", :enter])
       assert screen(state) =~ ~r/Column head: +Priority/
       state = press(state, :enter)

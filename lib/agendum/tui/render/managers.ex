@@ -31,20 +31,17 @@ defmodule Agendum.TUI.Render.Managers do
           {:symbol, bracket(db, cat)}
         ]
 
-        name =
-          case state.edit do
-            %{target: {:rename, ^id}} ->
-              lead ++ Draw.input(state.edit.line, 30, :edit)
-
-            _ ->
-              lead ++
-                [{if(selected, do: :cursor, else: :item), cat.name <> Text.ellipsis(state, cat)}]
-          end
+        # a name is typed in the control panel, as Agenda's (checked in
+        # Agenda 2.0, 2026-10-25): the list shows the name as it is, and a
+        # new category as a blank highlighted row
+        new? = match?(%{target: {:new, _, _}}, state.edit)
+        style = if selected and not new?, do: :cursor, else: :item
+        name = lead ++ [{style, cat.name <> Text.ellipsis(state, cat)}]
 
         case state.edit do
           %{target: {:new, parent, _}} when selected ->
             new_lead = Draw.spaces(2 * (Database.depth(db, parent) + 1) + 2)
-            [name, [{:normal, new_lead}] ++ Draw.input(state.edit.line, 30, :edit)]
+            [name, [{:normal, new_lead}, {:cursor, Draw.spaces(8)}]]
 
           _ ->
             [name]

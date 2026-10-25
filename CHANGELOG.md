@@ -4,6 +4,12 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.45.0 — 2026-10-25
+
+Editing as in Lotus Agenda.
+
+- A **category name**, a **column entry** or a **date** is typed on the control panel's **second line**, as in Agenda, under its words: `Category name:`, `Date:`, or automatic completion's `1 of 2 matching categories. Current choice: High`. The list, the cell or the box keeps showing what is there until you press ENTER; a new category is a blank row in the category manager.
+- While a column entry offers names, **AUTOC** shows and the key bar is Agenda's: **F3 Choices** (the column's list), **F5 NewCat**, **F7 PrevSel**, **F8 NextSel**. ALT-N, ALT-P and INS still work.
 - While you **type an item**, the top line stays the **File line**, as in Agenda, with the date and **EDIT** where the time was (no more "Type the new item; ENTER to finish").
 - While you **type a line** (an item, a category name, a column entry, a prompt, a box's field), the key bar shows Agenda's editing keys in their slots: **F7 Mark**, **F3 Copy**, **F4 Cut**, **F2 Paste**, and **ALT-F4** deletes the marked text. With nothing marked, F3 and F4 ask whether to take the word or all the text. What you copy in a note pastes into a line too.
 - **F5** while typing an item keeps the text and opens the item's note; **F1** opens the help, and ESC comes back to the typing.

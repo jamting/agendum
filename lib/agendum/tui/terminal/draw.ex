@@ -120,7 +120,16 @@ defmodule Agendum.TUI.Terminal.Draw do
   A line being typed (`Agendum.TUI.Typing.LineEdit`) as an input field `width`
   wide, scrolled so that the cursor shows.
   """
-  @spec input(%{text: String.t(), pos: non_neg_integer}, non_neg_integer, atom) :: line
+  @spec input(
+          %{
+            required(:text) => String.t(),
+            required(:pos) => non_neg_integer,
+            # a `Typing.LineEdit`'s mark, and its `__struct__`
+            optional(atom) => term
+          },
+          non_neg_integer,
+          atom
+        ) :: line
   def input(%{text: text, pos: pos} = edit, width, style) do
     width = max(width, 1)
     offset = max(pos - width + 1, 0)

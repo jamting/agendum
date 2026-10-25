@@ -37,6 +37,8 @@ defmodule Agendum.TUI.Render.KeyBar do
   # completion keeps its hints for now
   defp slotted(state) do
     cond do
+      # Agenda's AUTOC bar while a column entry offers category names
+      Completion.column_entry?(state) -> {:line, :autoc}
       Completion.active?(state) -> nil
       typing_line?(state) -> {:line, line_kind(state)}
       state.edit == nil -> place(state, State.mode(state))
@@ -100,6 +102,23 @@ defmodule Agendum.TUI.Render.KeyBar do
 
   # typing a line: the `:line` keymap's editing keys, as Agenda's bar
   # (Help Paste Copy Cut Note · Mark; checked in Agenda 2.0, 2026-10-25)
+  # automatic completion (R32): Help, Choices, NewCat, PrevSel, NextSel,
+  # as Agenda's (checked in Agenda 2.0, 2026-10-25)
+  @autoc %{
+    {:f, 1} => "Help",
+    {:f, 3} => "Choices",
+    {:f, 5} => "NewCat",
+    {:f, 7} => "PrevSel",
+    {:f, 8} => "NextSel"
+  }
+
+  defp line_slot(:autoc, key) do
+    case Map.get(@autoc, key) do
+      nil -> {"", ""}
+      label -> {label, label}
+    end
+  end
+
   defp line_slot(kind, key) do
     case {kind, Keymap.lookup(:line, key)} do
       {:file_prompt, :copy} -> {"Choices", "Choices"}

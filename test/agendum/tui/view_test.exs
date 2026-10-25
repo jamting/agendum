@@ -317,7 +317,8 @@ defmodule Agendum.TUI.ViewTest do
       state = press(state, "L")
       screen = screen(state)
       assert screen =~ "AUTOC"
-      assert screen =~ ~s(2 categories begin with "L")
+      # Agenda's words (checked in Agenda 2.0, 2026-10-25)
+      assert screen =~ "1 of 2 matching categories. Current choice:"
       assert screen =~ "Low"
     end
 
@@ -349,14 +350,14 @@ defmodule Agendum.TUI.ViewTest do
 
     test "with no match, ENTER creates the new category", %{state: state} do
       state = press(state, "Urgent")
-      assert screen(state) =~ "New category: Urgent"
+      assert screen(state) =~ "No matching categories."
       assert priority_of(press(state, :enter)) == "Urgent"
     end
 
     test "date columns do not autocomplete", %{state: state} do
       state = press(state, [:left, "fri"])
       refute screen(state) =~ "AUTOC"
-      assert screen(state) =~ "Enter a date"
+      assert screen(state) =~ ~r/^ Date: +EDIT/m
     end
   end
 

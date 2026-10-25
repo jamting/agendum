@@ -73,7 +73,12 @@ defmodule Agendum.TUI.Boxes.FieldTyping do
     end
   end
 
-  @doc "The `editing:` option for `Template.render/3` while typing."
+  @doc """
+  The `editing:` option for `Template.render/3` while typing. A head's
+  category name is typed in the control panel, as Agenda's
+  (`Render.ControlPanel.entry/1`), so the box shows the head it has.
+  """
+  def editing(%{typing: {:head, _line}}), do: []
   def editing(%{typing: {field, line}}), do: [editing: {field, line}]
   def editing(_mode), do: []
 end
