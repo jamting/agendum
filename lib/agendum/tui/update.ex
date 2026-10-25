@@ -796,6 +796,20 @@ defmodule Agendum.TUI.Update do
   def note_text_read(state, _path, {:error, _reason}),
     do: State.error(state, Agendum.TUI.Messages.text(:cannot_open))
 
+  @doc "After the shell moved a file to the Trash (`{:trash_file, path}`, R82)."
+  @spec trashed(State.t(), String.t(), :ok | {:error, term}) :: State.t()
+  def trashed(state, path, :ok), do: State.info(state, "#{Path.basename(path)} is in the Trash")
+
+  def trashed(state, path, {:error, :no_trash}),
+    do: State.error(state, "There is no Trash here; #{Path.basename(path)} was kept")
+
+  def trashed(state, path, {:error, reason}),
+    do:
+      State.error(
+        state,
+        "Could not move #{Path.basename(path)} to the Trash: #{:file.format_error(reason)}"
+      )
+
   @doc "After the shell wrote a copy or a template (`{:save_copy, path, db}`, R82)."
   @spec copied(State.t(), String.t(), {:ok, term} | {:error, term}) :: State.t()
   def copied(state, path, {:ok, _stamp}),

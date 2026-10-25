@@ -20,6 +20,7 @@ defmodule Agendum.TUI.Effect do
   #   {:sound, name}            one of Agenda's sounds (R76)
   #   {:save, …} {:load, …} {:open_or_create, …}   the file itself
   #   {:save_copy, path, db}    a copy or template of it (R82)
+  #   {:trash_file, path}       another file to the system's Trash (R82)
   #   {:write_text, …} {:import_json, …} {:read_note_text, …} {:read_opml, …}
   #   {:list_dir, dir}          a folder for the file list
   #   {:save_preferences, …}    the preferences file (R52)
@@ -32,6 +33,7 @@ defmodule Agendum.TUI.Effect do
           | {:sound, Agendum.TUI.Sound.name()}
           | {:save, String.t(), save_opts}
           | {:save_copy, String.t(), Database.t()}
+          | {:trash_file, String.t()}
           | {:load, String.t()}
           | {:open_or_create, String.t()}
           | {:write_text, String.t(), String.t()}
@@ -66,7 +68,15 @@ defmodule Agendum.TUI.Effect do
   def known?({:save_copy, path, %Database{}}) when is_binary(path), do: true
 
   def known?({tag, path})
-      when tag in [:load, :open_or_create, :import_json, :read_note_text, :read_opml, :list_dir] and
+      when tag in [
+             :load,
+             :open_or_create,
+             :import_json,
+             :read_note_text,
+             :read_opml,
+             :list_dir,
+             :trash_file
+           ] and
              is_binary(path),
       do: true
 

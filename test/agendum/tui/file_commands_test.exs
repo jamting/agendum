@@ -15,6 +15,7 @@ defmodule Agendum.TUI.FileCommandsTest do
   end
 
   defp count(state), do: length(Database.items(state.db))
+  defp line(state, n), do: state |> screen() |> String.split("\n") |> Enum.at(n)
 
   describe "File ▸ Abandon" do
     # Agenda's box: "Revert to last saved version:  No", No first
@@ -80,6 +81,29 @@ defmodule Agendum.TUI.FileCommandsTest do
 
     test "File ▸ Write has given way to it", %{state: state} do
       refute screen(press(state, [{:f, 10}, "f"])) =~ "Write"
+    end
+  end
+
+  describe "File ▸ Maintenance ▸ Erase" do
+    # Agenda's question, "Discard MK.AG?  No", No first (checked in Agenda
+    # 2.0); the file then goes to the system's Trash (the owner's choice)
+    test "asks with No first; Yes moves the file to the Trash", %{state: state} do
+      state = press(state, [{:f, 10}, "f", "m", "e", "/wood/old", :enter])
+      assert screen(state) =~ ~r/Discard old.agendum\? +No/
+      assert line(state, 0) =~ "Press Y to discard the file from your disk."
+
+      {_state, []} = Update.handle(state, :enter)
+      {_state, effects} = Update.handle(state, {:char, "y"})
+      assert effects == [{:trash_file, "/wood/old.agendum"}]
+
+      state = Update.trashed(state, "/wood/old.agendum", :ok)
+      assert panel(state) =~ "old.agendum is in the Trash"
+    end
+
+    test "the open file cannot be discarded", %{state: state} do
+      state = %{state | path: "/wood/owl.agendum"}
+      state = press(state, [{:f, 10}, "f", "m", "e", {:ctrl, "u"}, "/wood/owl", :enter])
+      assert panel(state) =~ "You can't discard a file while it is open."
     end
   end
 end

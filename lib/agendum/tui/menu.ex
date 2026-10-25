@@ -76,9 +76,10 @@ defmodule Agendum.TUI.Menu do
              :publish},
             {"Feeds", "Subscribe to RSS and Atom feeds; read them now; OPML", :feeds}
           ]},
-         {"Maintenance", "MakeCopy",
+         {"Maintenance", "MakeCopy, Erase",
           [
-            {"MakeCopy", "Make a copy of the current file with another name.", :make_copy}
+            {"MakeCopy", "Make a copy of the current file with another name.", :make_copy},
+            {"Erase", "Discard an Agendum file from disk (it goes to the Trash).", :erase_file}
           ]}
        ]},
       {"Item", "Work with the highlighted item",

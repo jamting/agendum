@@ -84,7 +84,8 @@ defmodule Agendum.TUI.Update.Prompts do
   Asks a Y/N question, whatever Confirm mode says: Y and N do different
   things. It is a box, as Agenda's (screenshots 36, 141): the question with
   its answer, Yes at first, "Press ENTER to accept, ESC to cancel".
-  `opts`: `help:`, Agenda's line for the question on the control panel in
+  `opts`: `answer:`, the answer shown first (Yes unless `false`); `help:`,
+  Agenda's line for the question on the control panel in
   place of the usual "Y or N answers …"; `note:`, a second line under the
   question, as Agenda's "(Use ALT-F4 to discard the item completely.)".
   """
@@ -93,7 +94,7 @@ defmodule Agendum.TUI.Update.Prompts do
       State.push(state, %Agendum.TUI.Modes.Confirm{
         question: question,
         action: action,
-        answer: true,
+        answer: Keyword.get(opts, :answer, true),
         help: opts[:help],
         note: opts[:note]
       })
@@ -180,6 +181,20 @@ defmodule Agendum.TUI.Update.Prompts do
         |> State.effect({:save_copy, path, state.db})
         |> State.save(state.path, then: {:copied, path})
     end
+  end
+
+  # File ▸ Maintenance ▸ Erase (R82): Agenda's question, No first, and
+  # its refusal for the open file
+  defp prompt_action(state, :erase_file, text) do
+    path = Agendum.Store.normalize_path(text)
+
+    if path == state.path,
+      do: State.error(state, "You can't discard a file while it is open."),
+      else:
+        ask(state, "Discard #{Path.basename(path)}?", {:trash_file, path},
+          answer: false,
+          help: "Press Y to discard the file from your disk."
+        )
   end
 
   defp prompt_action(state, :save_as_then_quit, text),
@@ -456,6 +471,7 @@ defmodule Agendum.TUI.Update.Prompts do
   def help, do: "Y or N answers. SPACE switches the answer; ENTER accepts the one shown."
 
   defp confirmed(state, {:make_numeric, id}, true), do: make_numeric(state, id)
+  defp confirmed(state, {:trash_file, path}, true), do: State.effect(state, {:trash_file, path})
 
   defp confirmed(state, {:replace_show_view, then}, true), do: show(state, then)
 

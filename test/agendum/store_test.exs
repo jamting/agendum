@@ -486,4 +486,39 @@ defmodule Agendum.StoreTest do
       {id, %{v | columns: columns, sections: sections}}
     end)
   end
+
+  # File ▸ Maintenance ▸ Erase (R82; the owner's choice): the file goes to
+  # the system's Trash, where it can be got back, not deleted
+  describe "moving a file to the Trash" do
+    test "on a Mac, into ~/.Trash, a number added when the name is taken", %{tmp_dir: dir} do
+      home = Path.join(dir, "home")
+      File.mkdir_p!(Path.join(home, ".Trash"))
+      File.write!(Path.join([home, ".Trash", "old.agendum"]), "an older one")
+      path = Path.join(dir, "old.agendum")
+      File.write!(path, "owl")
+
+      assert Agendum.Store.trash(path, os: :darwin, home: home) == :ok
+      refute File.exists?(path)
+      assert File.read!(Path.join([home, ".Trash", "old 2.agendum"])) == "owl"
+    end
+
+    test "on Linux, into the XDG Trash with its .trashinfo", %{tmp_dir: dir} do
+      home = Path.join(dir, "home")
+      path = Path.join(dir, "old.agendum")
+      File.write!(path, "owl")
+
+      assert Agendum.Store.trash(path, os: :linux, home: home) == :ok
+      trash = Path.join([home, ".local", "share", "Trash"])
+      assert File.read!(Path.join([trash, "files", "old.agendum"])) == "owl"
+      info = File.read!(Path.join([trash, "info", "old.agendum.trashinfo"]))
+      assert info =~ "[Trash Info]\nPath=#{path}\nDeletionDate="
+    end
+
+    test "where there is no Trash, the file stays", %{tmp_dir: dir} do
+      path = Path.join(dir, "old.agendum")
+      File.write!(path, "owl")
+      assert Agendum.Store.trash(path, os: :other, home: dir) == {:error, :no_trash}
+      assert File.exists?(path)
+    end
+  end
 end

@@ -141,6 +141,7 @@ Off the list since the tagging sitting, as no difference from Agenda: **search**
 What Agenda had that Agendum does another way, on purpose. Tagged as the enhancements above, 2026-10-22.
 
 - **work** · **Saving.** Agenda saves automatically (Quit, Retrieve). Agendum keeps changes until you save and asks before they are lost; ` *` on the File line shows unsaved changes.
+- **work** · **Erase moves the file to the Trash** (File ▸ Maintenance ▸ Erase, R82; the owner's choice, 2026-10-25): Agenda deleted it from the disk; Agendum puts it in the system's Trash, where it can be got back.
 - **machine** · **External note files** (Agenda's note editor ▸ File ▸ Attach, Detach, Erase, and ♫; left out on purpose, meeting 2026-10-25, § 5). Notes live in the Agendum file. Agenda's reasons were DOS-era limits (file size, notes over 10,000 characters, memory); a note kept in a local file could not be reached by the planned web version. Attaching files of any kind (images, a CV) is an idea for after the clone (ROADMAP, Ideas).
 - **machine** · **Sounds** (R76). Agenda's own tones, through the computer's audio player rather than the PC speaker (the terminal's bell where there is none); every error message beeps with the one error beep, where Agenda also had a shorter one; Sound in File ▸ Customize silences them all.
 - **change back** · **The key bar while typing, in moves and prompts** is one line of hints naming any key (`ENTER Done ESC Cancel ←→ Move`); Agenda's has its ten F-key slots there too (typing: Help, Paste, Copy, Cut, Note, Marker, Mark; the Save prompt: Help, Edit, Choices). Comes back with the Editing step (The steps); the view's, the note's, the managers', the boxes' and the menu's are Agenda's (R80; boxes and the menu 2026-10-25).
@@ -218,6 +219,7 @@ Done: the rest of Agenda as the reference for texts (2026-10-25: the settings bo
 - [x] (2026-10-25) Show ItemsDone (the done items under *Show*) and Show Every (every item under MAIN), as Agenda's; Show Prereqs and Depends checked: Agenda's is the same submenu (One Level, All Levels, Every Item), now with its words, and the captured menus hold it (the capture had not opened it)
 - [x] (2026-10-25) File ▸ Abandon, Agenda's Abandon File box (R82)
 - [x] (2026-10-25; the owner's choice) File ▸ Maintenance ▸ MakeCopy in Write's place: you stay in the file (checked in Agenda 2.0); ours writes the copy before saving (R71, R82)
+- [x] (2026-10-25; the owner's choice) File ▸ Maintenance ▸ Erase: Agenda's question, No first; the file to the system's Trash rather than deleted (R82)
   - Unchecked: what Agenda does with an alarm when its date category is deleted (ours: back on When)
 
 #### Commands and behaviour still missing
@@ -227,7 +229,7 @@ The order (meeting 2026-10-25, § 7): the small steps below in one or two batche
 - [ ] The `.AG` import reads the file's own global date format (header words `0x182`/`0x184`, `AGENDA_FILE_FORMAT.md`; only partly decoded): an imported file gets Agenda's default today (the owner's choice, 2026-10-25)
 - [ ] Search compared with Agenda's (ALT-F6 SEARCH in a view and a note, its Search box, the Match show view): the differences become parity work (the tagging sitting, 2026-10-22: no longer an enhancement)
 - [ ] The trash: Item ▸ Undisc, Utilities ▸ Trash, File Properties ▸ Empty trash (a habit change: DEL putting items in a trash; settle it with the owner first)
-- [ ] File Maintenance Erase (to the system Trash, the owner's choice), File Transfer Template
+- [ ] File Transfer Template
 - [ ] Show Circular (with the `o` indicator): needs circular references found first (User's Guide 20-21)
 - [ ] File Properties: Agenda's other settings (File description, Set file password, Make backup on open, Empty trash; screenshot 130) where Agendum has them (Tab size done, R64e)
 - [ ] Compare the category, view and macro managers' menus with Agenda's, and add them to the overview

@@ -454,6 +454,71 @@ defmodule Agendum.Store do
     end
   end
 
+  @doc """
+  Moves a file to the system's Trash, where it can be got back (File ▸
+  Maintenance ▸ Erase, R82; the owner's choice: Agenda deleted it): on a
+  Mac into `~/.Trash`, on Linux into the XDG Trash (`~/.local/share/Trash`,
+  with the `.trashinfo` file managers read to put it back). A name already
+  in the Trash gets a number ("old 2.agendum"). Elsewhere, or when the
+  file cannot be moved there (another disk), the file stays and the
+  reason comes back. `opts` (`os:`, `home:`) are for the tests.
+  """
+  @spec trash(Path.t(), keyword) :: :ok | {:error, term}
+  def trash(path, opts \\ []) do
+    home = Keyword.get_lazy(opts, :home, &System.user_home!/0)
+
+    case Keyword.get_lazy(opts, :os, &os/0) do
+      :darwin -> move_into(path, Path.join(home, ".Trash"))
+      :linux -> xdg_trash(path, home, opts[:home] != nil)
+      _ -> {:error, :no_trash}
+    end
+  end
+
+  # `:os.type/0` gives `{:unix, :darwin}` on a Mac, `{:unix, :linux}` on Linux
+  defp os do
+    case :os.type() do
+      {:unix, name} when name in [:darwin, :linux] -> name
+      _ -> :other
+    end
+  end
+
+  # the XDG Trash: the file under files/, and info/NAME.trashinfo saying
+  # where it came from and when, so that a file manager can put it back
+  defp xdg_trash(path, home, home_given?) do
+    default = Path.join([home, ".local", "share"])
+    base = if home_given?, do: default, else: System.get_env("XDG_DATA_HOME") || default
+    trash = Path.join(base, "Trash")
+    File.mkdir_p(Path.join(trash, "info"))
+
+    with {:ok, moved} <- move_into(path, Path.join(trash, "files"), :name) do
+      when_ = NaiveDateTime.local_now() |> NaiveDateTime.truncate(:second)
+
+      File.write(
+        Path.join([trash, "info", Path.basename(moved) <> ".trashinfo"]),
+        "[Trash Info]\nPath=#{Path.expand(path)}\nDeletionDate=#{NaiveDateTime.to_iso8601(when_)}\n"
+      )
+    end
+  end
+
+  # moves `path` into `dir` under a free name; `:name` returns that name
+  defp move_into(path, dir, return \\ :ok) do
+    File.mkdir_p(dir)
+    target = free_name(dir, Path.rootname(Path.basename(path)), Path.extname(path), 1)
+
+    case File.rename(path, target) do
+      :ok when return == :name -> {:ok, target}
+      :ok -> :ok
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  # "old.agendum", or "old 2.agendum", "old 3.agendum" … when it is taken
+  defp free_name(dir, stem, ext, n) do
+    name = if n == 1, do: stem <> ext, else: "#{stem} #{n}#{ext}"
+    target = Path.join(dir, name)
+    if File.exists?(target), do: free_name(dir, stem, ext, n + 1), else: target
+  end
+
   @doc "Adds the default extension when the path has none."
   @spec normalize_path(String.t()) :: String.t()
   def normalize_path(path) do

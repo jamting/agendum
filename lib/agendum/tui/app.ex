@@ -252,6 +252,9 @@ defmodule Agendum.TUI.App do
   defp perform(state, {:save_copy, path, db}),
     do: Update.copied(state, path, Store.save(db, path, :any))
 
+  # File ▸ Maintenance ▸ Erase (R82): to the system's Trash
+  defp perform(state, {:trash_file, path}), do: Update.trashed(state, path, Store.trash(path))
+
   defp perform(state, {:load, path}), do: Update.loaded(state, path, Store.load_with_stamp(path))
 
   defp perform(state, {:open_or_create, path}),
