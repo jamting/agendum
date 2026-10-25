@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.40.0 — 2026-10-25
+
+Symbols as in Lotus Agenda: · before column entries, ‼ for done, and the category manager drawn as Agenda's.
+
 - The **category manager** looks like Agenda's: just the names, indented by level, with **♪** (a note), **☼** (a date category) or **#** (a numeric one) before them, and **┌ ├ └** marking the children of an exclusive family. The counts, "aka" names, "date"/"exclusive" words and condition/action/Excludes tags are gone (Category Properties still shows them).
 - A **done item** shows **‼**, Agenda's mark for done, where it showed √.
 - A filled **column entry** has a small **·** before it, as in Lotus Agenda (the item is in that column's category); numbers have none.
