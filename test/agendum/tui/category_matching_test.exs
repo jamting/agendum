@@ -20,17 +20,17 @@ defmodule Agendum.TUI.CategoryMatchingTest do
 
   test "every setting starts Global, showing the file's", %{state: state} do
     text = screen(state)
-    assert text =~ "Advanced settings: Meetings"
-    assert text =~ ~r/Text matching\s+: Global \(On\)/
-    assert text =~ ~r/Match on\s+: Global \(Item text\)/
-    assert text =~ ~r/Ignore suffixes\s+: Global \(Yes\)/
+    assert text =~ "Advanced Settings for Meetings"
+    assert text =~ ~r/Text matching:\s+Global \(On\)/
+    assert text =~ ~r/Match on:\s+Global \(Item text\)/
+    assert text =~ ~r/Ignore suffixes:\s+Global \(Yes\)/
   end
 
   test "a setting of its own; T= in the category manager; the box one undo step",
        %{state: state, meetings: meetings} do
     state = press(state, [:down, " ", " "])
     assert state.db.categories[meetings].match_overrides == %{match_on: :note}
-    assert screen(state) =~ ~r/Match on\s+: Note text/
+    assert screen(state) =~ ~r/Match on:\s+Note text/
 
     state = press(state, :enter)
     assert %{type: :props} = State.mode(state)

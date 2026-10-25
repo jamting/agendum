@@ -22,9 +22,10 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
   alias Agendum.TUI.{CategoryScreens, Layout, State}
 
   @layout """
-   Apply conditions of  : [root                              ]
-   Against              : [against                           ]
-   Apply actions to     : [actions                           ]
+   Apply conditions attached to
+     category and children of: [root                          ]
+   Against:                    [against                        ]
+   Apply actions to:    [actions                               ]
   """
 
   @rows Template.fields(@layout)
@@ -125,7 +126,7 @@ defmodule Agendum.TUI.Boxes.ExecuteBox do
     do: for(%{kind: :item} = r <- Layout.rows(state), uniq: true, do: r.item.id)
 
   @impl Box
-  def title(_state, _mode), do: "Execute conditions and actions"
+  def title(_state, _mode), do: "Execute"
 
   @impl Box
   def content(state, mode, inner, _max_rows) do

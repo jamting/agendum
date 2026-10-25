@@ -47,7 +47,7 @@ defmodule Agendum.TUI.HelpScreenTest do
     test "in a settings box without one: its title, how it works, this setting's help",
          %{state: state} do
       text = screen(press(Agendum.TUI.Boxes.FileProperties.open(state), {:f, 1}))
-      assert text =~ "File properties."
+      assert text =~ "File Properties."
       assert text =~ "SPACE changes the"
       assert text =~ "This setting:"
     end

@@ -31,13 +31,48 @@ defmodule Agendum.TUI.AgendaBoxesTest do
   #   :not_built               Agenda has it, Agendum not yet: parity work
   #   :out_of_scope            left out on purpose (SPEC § 6)
   @differences %{
+    "category_text_matching_long: Agenda's Assignment conditions, not ours" =>
+      {:not_built,
+       "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},
+    "category_text_matching_long: Agenda's Assignment actions, not ours" =>
+      {:not_built,
+       "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},
+    "category_text_matching_long: Agenda's Apply conditions, not ours" =>
+      {:not_built,
+       "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},
+    "category_text_matching_long: Agenda's If an assignment conflicts with another, not ours" =>
+      {:not_built,
+       "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},
+    "category_text_matching_long: Agenda's Allow explicit assignments, not ours" =>
+      {:not_built,
+       "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},
+    "category_text_matching_long: Agenda's Relationship of text/assignment conditions, not ours" =>
+      {:not_built,
+       "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},
+    "category_text_matching_long: Agenda's Category is protected, not ours" =>
+      {:out_of_scope, "application protection (SPEC § 6)"},
+    "category_text_matching_long: Agenda's Category can have new children, not ours" =>
+      {:out_of_scope, "application protection (SPEC § 6)"},
+    "section_sort: Agenda's Sort new items, not ours" =>
+      {:not_built, "sorting new items when entered or on demand (Agenda's Sort new items)"},
+    "section_sort: Agenda's Category, not ours" =>
+      {:change_back,
+       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
+    "section_sort: ours Sequence, not Agenda's" =>
+      {:change_back,
+       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
+    "section_sort: ours Line number, not Agenda's" =>
+      {:change_back,
+       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
+    "section_sort: ours Then by, not Agenda's" =>
+      {:change_back,
+       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
+    "section_sort: ours Then order, not Agenda's" =>
+      {:change_back,
+       "the sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties (its own step; owner, 2026-10-25)"},
     "alarm: no box opens in Agendum" =>
       {:not_built,
        "Agenda's Set Alarm box (date category, minutes before); ours asks on the top line"},
-    "auto_assign_settings title: Agenda Auto-assign Global Settings, ours Auto-assign settings" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
-    "auto_assign_settings: Agenda's Ignore item text enclosed by, not ours" =>
-      {:change_back, "Agenda's words for the setting (owner, 2026-10-25)"},
     "auto_assign_settings: Agenda's Assignment conditions, not ours" =>
       {:not_built,
        "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},
@@ -53,30 +88,16 @@ defmodule Agendum.TUI.AgendaBoxesTest do
     "auto_assign_settings: Agenda's Relationship of text and assignment conditions, not ours" =>
       {:not_built,
        "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},
-    "auto_assign_settings: ours Ignore text enclosed by, not Agenda's" =>
-      {:change_back, "Agenda's words for the setting (owner, 2026-10-25)"},
     "category_add: no box opens in Agendum" =>
       {:not_built,
        "Agenda's Category Add box (the properties of the new category); ours asks for the name on the top line"},
-    "category_date_settings title: Agenda Advanced Settings for When, ours Advanced settings: When" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "category_date_settings: Agenda's If an assignment conflicts with another, not ours" =>
       {:not_built,
        "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},
-    "category_date_settings: Agenda's Set the item date from Done key, not ours" =>
-      {:change_back, "Agenda's words for the setting (owner, 2026-10-25)"},
-    "category_date_settings: Agenda's Set the item date from When key, not ours" =>
-      {:change_back, "Agenda's words for the setting (owner, 2026-10-25)"},
     "category_date_settings: Agenda's Category can use recurring dates, not ours" =>
       {:not_built, "turning recurring dates off per date category"},
     "category_date_settings: Agenda's Category is protected, not ours" =>
       {:out_of_scope, "application protection (SPEC § 6)"},
-    "category_date_settings: ours Set date from Done key, not Agenda's" =>
-      {:change_back, "Agenda's words for the setting (owner, 2026-10-25)"},
-    "category_date_settings: ours Set date from When key, not Agenda's" =>
-      {:change_back, "Agenda's words for the setting (owner, 2026-10-25)"},
-    "category_properties title: Agenda Category Properties, ours Category properties: Calls" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "category_properties: Agenda's Match short name, not ours" =>
       {:not_built, "matching a category's short name on its own switch"},
     "category_properties: Agenda's Note file, not ours" =>
@@ -84,20 +105,12 @@ defmodule Agendum.TUI.AgendaBoxesTest do
     "category_properties: ours Excludes, not Agenda's" =>
       {:quiet,
        "negative links between any two categories (R9, the patent's FIG. 6; Agenda only had exclusive siblings)"},
-    "category_properties_date title: Agenda Category Properties, ours Category properties: When" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "category_properties_date: Agenda's Note file, not ours" =>
       {:not_built, "external note files (NOTE_EDITOR.md, step 7)"},
-    "category_properties_numeric title: Agenda Category Properties, ours Category properties: Amount" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "category_properties_numeric: Agenda's Note file, not ours" =>
       {:not_built, "external note files (NOTE_EDITOR.md, step 7)"},
-    "category_statistics title: Agenda Category Statistics, ours Category statistics: Calls" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "category_statistics bottom: Agenda Press any key to continue, ours Press ENTER or ESC to return" =>
       {:change_back, "any key closes it, as Agenda's (owner, 2026-10-25)"},
-    "category_text_matching title: Agenda Advanced Settings for Calls;Phone;Telephon..., ours Advanced settings: Calls" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "category_text_matching: Agenda's Assignment conditions, not ours" =>
       {:not_built,
        "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},
@@ -132,8 +145,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
     "column_properties_date: ours Time separator, not Agenda's" =>
       {:change_back,
        "Agenda hides the time settings while a column shows the date only (checked in Agenda 2.0, 2026-10-25; owner, 2026-10-25)"},
-    "customize title: Agenda Utilities Customize, ours Customize (yours, for every file)" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "customize: Agenda's Color, not ours" =>
       {:machine,
        "Agenda chose colours for the monitor; ours, Theme, chooses the terminal's colours (R40)"},
@@ -162,13 +173,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
       {:machine, "sounds through the computer's audio player, which can be off (R76)"},
     "customize: ours Extras, not Agenda's" =>
       {:quiet, "the Extras switch (R77; tag confirmed by the owner, 2026-10-23)"},
-    "execute title: Agenda Execute, ours Execute conditions and actions" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
-    "execute: ours Apply conditions of, not Agenda's" =>
-      {:change_back,
-       "Agenda's words, over two lines: \"Apply conditions attached to / category and children of\" (owner, 2026-10-25)"},
-    "file_properties title: Agenda File Properties, ours File properties" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "file_properties: Agenda's File description, not ours" =>
       {:not_built, "File Properties' other settings (AGENDA_PARITY, Boxes and lists)"},
     "file_properties: Agenda's Set file password, not ours" =>
@@ -185,8 +189,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
       {:out_of_scope, "application protection (SPEC § 6)"},
     "file_properties: Agenda's Update defaults, not ours" =>
       {:not_built, "File Properties' other settings (AGENDA_PARITY, Boxes and lists)"},
-    "file_statistics title: Agenda File Statistics, ours File statistics" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "file_statistics bottom: Agenda Press any key to continue, ours Press ENTER or ESC to return" =>
       {:change_back, "any key closes it, as Agenda's (owner, 2026-10-25)"},
     "file_statistics: Agenda's Unused space, not ours" =>
@@ -194,21 +196,13 @@ defmodule Agendum.TUI.AgendaBoxesTest do
        "an Agendum file has no unused space to report: it is written whole on every save (no Compress)"},
     "file_statistics: Agenda's Items in trash, not ours" =>
       {:not_built, "the trash (Utilities ▸ Trash)"},
-    "global_date_settings title: Agenda Global Date Settings, ours Global date settings" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "global_date_settings: Agenda's End of year, not ours" =>
       {:not_built, "Global Date Settings' other settings"},
     "global_date_settings: Agenda's Process Done items, not ours" =>
       {:not_built, "Global Date Settings' other settings"},
     "global_protection: not in Agendum" => {:out_of_scope, "application protection (SPEC § 6)"},
-    "item_properties title: Agenda Item Properties, ours Item properties" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "item_properties: Agenda's Note file, not ours" =>
       {:not_built, "external note files (NOTE_EDITOR.md, step 7)"},
-    "item_properties: Agenda's Item statistics, not ours" =>
-      {:change_back, "Agenda's words for the setting (owner, 2026-10-25)"},
-    "item_properties: ours Statistics, not Agenda's" =>
-      {:change_back, "Agenda's words for the setting (owner, 2026-10-25)"},
     "section_add: Agenda's Item sorting, not ours" =>
       {:not_built,
        "the Section Add box's Item sorting, Section statistics and Filter (as Section Properties has)"},
@@ -218,10 +212,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
     "section_add: Agenda's Filter, not ours" =>
       {:not_built,
        "the Section Add box's Item sorting, Section statistics and Filter (as Section Properties has)"},
-    "section_properties title: Agenda Section Properties, ours Section Properties: Anna Berg" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
-    "sort title: Agenda Item Sorting in All Sections, ours Sort items in all sections" =>
-      {:change_back, "Agenda's title (owner, 2026-10-25)"},
     "sort: Agenda's Sort new items, not ours" =>
       {:not_built, "sorting new items when entered or on demand (Agenda's Sort new items)"},
     "sort: Agenda's Category, not ours" =>
@@ -285,12 +275,16 @@ defmodule Agendum.TUI.AgendaBoxesTest do
         state |> cat_props("When") |> sub("Advanced settings")
       end,
       "category_statistics" => fn state -> state |> cat_props("Calls") |> sub("Statistics") end,
+      "category_text_matching_long" => fn state ->
+        state |> cat_props("Miscellaneous Activity") |> sub("Advanced settings")
+      end,
       "category_add" => fn state -> menu(state, "ca") end,
       "view_properties" => fn state -> menu(state, "vvp") end,
       "sort" => fn state -> state |> menu("vvp") |> sub("Item sorting") end,
       "view_statistics" => fn state -> state |> menu("vvp") |> sub("View statistics") end,
       "view_add" => fn state -> menu(state, "vva") end,
       "section_properties" => fn state -> menu(state, "vvsp") end,
+      "section_sort" => fn state -> state |> menu("vvsp") |> sub("Item sorting") end,
       "section_add" => fn state -> menu(state, "vvsa") end,
       "column_properties" => fn state -> state |> press([:down, :right]) |> menu("vvcp") end,
       "column_properties_date" => fn state ->

@@ -26,10 +26,10 @@ defmodule Agendum.TUI.ExecuteTest do
     state = press(state, [{:f, 10}, "u", "e"])
     assert %{type: :execute} = State.mode(state)
     text = screen(state)
-    assert text =~ "Execute conditions and actions"
-    assert text =~ ~r/Apply conditions of\s+: MAIN \(all categories\)/
-    assert text =~ ~r/Against\s+: All items/
-    assert text =~ ~r/Apply actions to\s+: New assignments only/
+    assert text =~ "Execute"
+    assert text =~ ~r/category and children of:\s+MAIN \(all categories\)/
+    assert text =~ ~r/Against:\s+All items/
+    assert text =~ ~r/Apply actions to:\s+New assignments only/
 
     state = press(state, [:down, :down, :enter])
     assert state.modes == []

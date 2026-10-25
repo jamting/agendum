@@ -18,10 +18,10 @@ defmodule Agendum.TUI.Boxes.DateRuleBox do
   alias Agendum.TUI.State
 
   @layout """
-   Assign item date       : [assign                            ]
-   Which one              : [which                             ]
-   Set date from Done key : [done_key                          ]
-   Set date from When key : [when_key                          ]
+   Assign item date:                 [assign                    ]
+                         Which one:  [which                     ]
+   Set the item date from Done key:  [done_key                  ]
+   Set the item date from When key:  [when_key                  ]
   """
 
   @rows Template.fields(@layout)
@@ -69,7 +69,29 @@ defmodule Agendum.TUI.Boxes.DateRuleBox do
   defp fixed?(_db, _cat_id, _row), do: false
 
   @impl Box
-  def title(state, mode), do: "Advanced settings: " <> state.db.categories[mode.cat_id].name
+  def title(state, mode), do: advanced_title(state, mode.cat_id)
+
+  @doc """
+  The title of a category's Advanced settings box, as Agenda's: "Advanced
+  Settings for" its name, short name and Also match words, joined by ";"
+  and cut at 20 characters with "..." ("Advanced Settings for
+  Calls;Phone;Telephon...", checked in Agenda 2.0, 2026-10-25). Also the
+  text matching box's (`Agendum.TUI.Boxes.CategoryMatchBox`).
+  """
+  @spec advanced_title(State.t(), pos_integer) :: String.t()
+  def advanced_title(state, cat_id) do
+    cat = state.db.categories[cat_id]
+
+    names =
+      [cat.name, cat.short_name, cat.also_match]
+      |> Enum.reject(&(&1 in [nil, ""]))
+      |> Enum.join(";")
+
+    # `String.length/1` and `String.slice/3` count characters, not bytes,
+    # so "Göran" is five long
+    names = if String.length(names) > 20, do: String.slice(names, 0, 20) <> "...", else: names
+    "Advanced Settings for " <> names
+  end
 
   @impl Box
   def content(state, mode, inner, _max_rows) do

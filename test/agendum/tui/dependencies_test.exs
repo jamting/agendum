@@ -32,7 +32,7 @@ defmodule Agendum.TUI.DependenciesTest do
 
     assert screen(state) =~ "& Contact Daniel Fiske"
     assert screen(state) =~ "Depends on 2 items"
-    assert screen(press(state, {:f, 6})) =~ ~r/Depends on\s*: Set up meeting/
+    assert screen(press(state, {:f, 6})) =~ ~r/Depends on:\s*Set up meeting/
   end
 
   test "ALT-O on a dependent item, with nothing marked, offers to clear", %{state: state} do
@@ -127,26 +127,26 @@ defmodule Agendum.TUI.DependenciesTest do
 
     test "the items it depends on, under Depends on", %{state: state} do
       text = screen(press(state, {:f, 6}))
-      assert text =~ ~r/Depends on\s*: Set up meeting/
-      assert text =~ ~r/│ {15}Don't forget/
+      assert text =~ ~r/Depends on:\s*Set up meeting/
+      assert text =~ ~r/│ {19}Don't forget/
       refute text =~ "Needed by"
     end
 
     test "the items depending on it, under Needed by; done ones are ticked", %{state: state} do
       state = press(state, [:ctrl_home, :down, {:f, 4}, {:f, 6}])
       text = screen(state)
-      assert text =~ ~r/Needed by\s*: Contact Daniel Fiske/
+      assert text =~ ~r/Needed by:\s*Contact Daniel Fiske/
       refute text =~ "Depends on"
 
       state = press(state, :esc)
       state = Agendum.TUI.Boxes.ItemProperties.open(state, id_of(state, "Contact Daniel"))
-      assert screen(state) =~ ~r/Depends on\s*: √ Set up meeting/
+      assert screen(state) =~ ~r/Depends on:\s*√ Set up meeting/
     end
 
     test "SPACE opens that item's properties; ESC comes back", %{state: state} do
       state = state |> press({:f, 6}) |> to_row("Don't forget") |> press(" ")
       assert State.mode(state).item_id == id_of(state, "Don't forget")
-      assert screen(state) =~ ~r/Needed by\s*: Contact Daniel/
+      assert screen(state) =~ ~r/Needed by:\s*Contact Daniel/
 
       state = press(state, :esc)
       assert State.mode(state).item_id == id_of(state, "Contact Daniel")
@@ -156,7 +156,7 @@ defmodule Agendum.TUI.DependenciesTest do
       state = state |> press({:f, 6}) |> to_row("Set up meeting") |> press(:delete)
       daniel = id_of(state, "Contact Daniel")
       assert Core.prerequisites(state.db, daniel) == [id_of(state, "Don't forget")]
-      assert screen(state) =~ ~r/Depends on\s*: Don't forget/
+      assert screen(state) =~ ~r/Depends on:\s*Don't forget/
 
       state = Agendum.TUI.History.undo(state)
       assert length(Core.prerequisites(state.db, daniel)) == 2

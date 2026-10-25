@@ -272,12 +272,9 @@ defmodule Agendum.TUI.Boxes.SortBox do
   # --- what the rows say ---------------------------------------------------------
 
   @impl Box
-  def title(_state, %{scope: :view}), do: "Sort items in all sections"
+  def title(_state, %{scope: :view}), do: "Item Sorting in All Sections"
 
-  def title(state, %{scope: {:section, i}}) do
-    section = Enum.at(State.view(state).sections, i)
-    "Sort items in " <> state.db.categories[section.category_id].name
-  end
+  def title(_state, %{scope: {:section, _}}), do: "Item Sorting in Current Section"
 
   @impl Box
   def content(state, mode, inner, _max_rows) do

@@ -29,11 +29,11 @@ defmodule Agendum.TUI.ItemPropertiesTest do
     state: state
   } do
     screen = screen(state)
-    assert screen =~ "Item properties"
+    assert screen =~ "Item Properties"
     assert screen =~ "Don't forget to call"
-    assert screen =~ ~r/Note\s+: \(none\)/
-    assert screen =~ ~r/Statistics\s+: 4 categories · entered 2026-10-08/
-    assert screen =~ ~r/Assigned to\s+: Entry \(2026-10-08\)/
+    assert screen =~ ~r/Note:\s+\(none\)/
+    assert screen =~ ~r/Item statistics:\s+4 categories · entered 2026-10-08/
+    assert screen =~ ~r/Assigned to:\s+Entry \(2026-10-08\)/
     assert screen =~ "Calls"
     assert screen =~ "High"
     assert screen =~ "Anna Lasky"
@@ -101,6 +101,6 @@ defmodule Agendum.TUI.ItemPropertiesTest do
 
   test "F6 on a section head opens Section Properties, and F6 there the category's (R61)" do
     state = start(Agendum.Sample.build(~D[2026-10-08])) |> press([{:f, 6}, {:f, 6}])
-    assert screen(state) =~ "Category properties: Calls"
+    assert screen(state) =~ "Category Properties"
   end
 end

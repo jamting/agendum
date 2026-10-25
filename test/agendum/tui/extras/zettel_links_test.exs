@@ -67,8 +67,8 @@ defmodule Agendum.TUI.Extras.ZettelLinksTest do
 
   test "Item Properties shows the id and lists the items linking here", %{state: state} do
     state = state |> press([:down, :down, {:f, 6}])
-    assert screen(state) =~ "Statistics  : pigavono · 2 categories"
-    assert screen(state) =~ ~r/Linked from\s*: Plan: see pigavono/
+    assert screen(state) =~ ~r/Item statistics:\s+pigavono · 2 categories/
+    assert screen(state) =~ ~r/Linked from:\s*Plan: see pigavono/
   end
 
   test "in a note, the marked item's link is typed, and the panel says what it is",

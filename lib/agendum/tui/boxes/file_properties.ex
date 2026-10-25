@@ -123,7 +123,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   end
 
   @impl Box
-  def title(_state, _mode), do: "File properties"
+  def title(_state, _mode), do: "File Properties"
 
   # two columns of settings, as Agenda's (screenshot 130)
   @impl Box

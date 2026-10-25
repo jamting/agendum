@@ -26,11 +26,11 @@ defmodule Agendum.TUI.QuestionsTest do
 
   test "File Properties ▸ Auto-assign settings sets Confirm assignments", %{state: state} do
     state = to_confirm(state)
-    assert screen(state) =~ "Auto-assign settings"
-    assert screen(state) =~ ~r/Confirm assignments\s+: Never/
+    assert screen(state) =~ "Auto-assign Global Settings"
+    assert screen(state) =~ ~r/Confirm assignments:\s+Never/
     state = press(state, " ")
     assert state.db.confirm_assignments == :always
-    assert screen(state) =~ ~r/Confirm assignments\s+: Always/
+    assert screen(state) =~ ~r/Confirm assignments:\s+Always/
     state = press(state, " ")
     assert state.db.confirm_assignments == :sometimes
   end

@@ -33,9 +33,9 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   alias Agendum.TUI.Update.{Editing, Prompts}
 
   @layout """
-   Item text   : [text                                        ]
-   Note        : [note                                        ]
-   Statistics  : [stats                                       ]
+   Item text:        [text                                  ]
+   Note:             [note                                  ]
+   Item statistics:  [stats                                 ]
   """
 
   @help %{
@@ -311,7 +311,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   # --- the box -------------------------------------------------------------------
 
   @impl Box
-  def title(_state, _mode), do: "Item properties"
+  def title(_state, _mode), do: "Item Properties"
 
   @impl Box
   def content(state, mode, inner, max_rows) do
@@ -319,7 +319,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
     rows = rows(state, mode)
     cursor = min(mode.cursor, length(rows) - 1)
     row = Enum.at(rows, cursor)
-    value_width = inner - 16
+    value_width = inner - 20
     assignments = Core.item_assignments(state.db, item.id)
     entered = DateFormat.date(item.entry, state.db.date_format)
 
@@ -377,8 +377,9 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
           [{if(selected, do: :box_selected, else: :box), String.slice(value, 0, value_width)}]
       end
 
-    separator = if label == "", do: "  ", else: ": "
-    [{:box, " " <> Draw.pad(label, 12) <> separator}] ++ value_part
+    # Agenda's "Label:" with the values in a column after it
+    label = if label == "", do: "", else: label <> ":"
+    [{:box, " " <> Draw.pad(label, 18)}] ++ value_part
   end
 
   # One assignment in the Item Properties box: "When (2026-10-13)",

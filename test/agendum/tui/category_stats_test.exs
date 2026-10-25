@@ -25,7 +25,7 @@ defmodule Agendum.TUI.CategoryStatsTest do
     state = state |> to_setting("Statistics") |> press(" ")
     assert %{type: :category_stats} = State.mode(state)
     text = screen(state)
-    assert text =~ "Category statistics: Calls"
+    assert text =~ "Category Statistics"
     assert text =~ ~r/Items in category: +5/
     assert text =~ ~r/Child categories: +0/
     assert text =~ ~r/Used as section heads: +1/

@@ -27,7 +27,7 @@ defmodule Agendum.TUI.CustomizeBoxTest do
     state = open_box(state)
     assert %{type: :customize} = State.mode(state)
     text = screen(state)
-    assert text =~ "Customize (yours, for every file)"
+    assert text =~ "Utilities Customize"
     assert text =~ ~r/Theme +: Classic/
     assert text =~ ~r/Date language +: English/
     assert text =~ ~r/Fallback language +: None/

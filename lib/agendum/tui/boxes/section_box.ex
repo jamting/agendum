@@ -323,8 +323,7 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   @impl Box
   def title(_state, %{adding: %{}}), do: "Section Add"
 
-  def title(state, mode),
-    do: "Section Properties: #{state.db.categories[section(state, mode).category_id].name}"
+  def title(_state, _mode), do: "Section Properties"
 
   @impl Box
   def content(state, mode, inner, _max_rows) do

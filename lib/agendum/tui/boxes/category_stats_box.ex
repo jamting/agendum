@@ -40,7 +40,7 @@ defmodule Agendum.TUI.Boxes.CategoryStatsBox do
   def run(state, _mode, :close), do: State.pop(state)
 
   @impl Box
-  def title(state, mode), do: "Category statistics: " <> state.db.categories[mode.cat_id].name
+  def title(_state, _mode), do: "Category Statistics"
 
   # a small box, as Agenda's
   @impl Box

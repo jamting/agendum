@@ -105,7 +105,7 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
   end
 
   @impl Box
-  def title(_state, _mode), do: "Global date settings"
+  def title(_state, _mode), do: "Global Date Settings"
 
   @impl Box
   def content(state, mode, inner, _max_rows) do

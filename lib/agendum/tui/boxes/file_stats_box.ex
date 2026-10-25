@@ -43,7 +43,7 @@ defmodule Agendum.TUI.Boxes.FileStatsBox do
   def run(state, _mode, :close), do: State.pop(state)
 
   @impl Box
-  def title(_state, _mode), do: "File statistics"
+  def title(_state, _mode), do: "File Statistics"
 
   # Agenda's box is a little narrower than File Properties
   @impl Box

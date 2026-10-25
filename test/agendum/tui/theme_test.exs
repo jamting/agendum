@@ -187,7 +187,7 @@ defmodule Agendum.TUI.LookTest do
   test "a box has its title centred in its frame", %{state: state} do
     state = press(state, [:down, {:f, 6}])
     top = Enum.at(Render.render(state), 2 + 1)
-    assert {:box_title, " Item properties "} in top
+    assert {:box_title, " Item Properties "} in top
 
     [{:box_frame, left}, _, {:box_frame, right}] =
       Enum.filter(top, &(elem(&1, 0) in [:box_frame, :box_title]))
@@ -276,12 +276,12 @@ defmodule Agendum.TUI.LookTest do
     end
 
     props = press(state, [{:f, 9}, :down, :down, :down, :down, {:f, 6}])
-    assert titles.(props) == [{:box_title, "Category properties: Calls"}]
+    assert titles.(props) == [{:box_title, "Category Properties"}]
 
     nested = press(props, [:right, " "])
 
     assert titles.(nested) == [
-             {:box_title_dim, "Category properties: Calls"},
+             {:box_title_dim, "Category Properties"},
              {:box_title, "Category type: Calls"}
            ]
   end

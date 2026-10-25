@@ -33,7 +33,7 @@ flowchart LR
     View -- "ALT-F10" --> MoveItem["Moving items"]
     View -- "a key with items marked" --> Scope["Scope box"]
     Menu -- "File ▸ Properties" --> FileProps["File Properties"]
-    Menu -- "Utilities ▸ Customize" --> Customize["Customize (yours)"]
+    Menu -- "Utilities ▸ Customize" --> Customize["Utilities Customize"]
     Menu -- "Utilities ▸ Execute" --> Execute["Execute box"]
     Menu -- "Utilities ▸ Questions" --> Questions["Questions box"]
     Menu -- "View ▸ Column ▸ Properties" --> ColProps["Column Properties"]
@@ -70,7 +70,7 @@ flowchart LR
     DateSettings -- "Input format" --> InputFormat["Input format (yours)"]
     FileProps -- "Auto-assign settings" --> AutoAssign["Auto-assign settings"]
     FileProps -- "File statistics" --> FileStats["File statistics"]
-    Customize["Customize (yours)"] -- "Input format" --> InputFormat
+    Customize["Utilities Customize"] -- "Input format" --> InputFormat
     ColProps["Column Properties"]
     ColProps -- "F3 on Column head" --> ColHead["Picker: column head"]
     ColAdd["Column Add"] -- "F3 on Column head" --> ColHead

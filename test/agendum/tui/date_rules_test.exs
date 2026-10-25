@@ -19,10 +19,10 @@ defmodule Agendum.TUI.DateRulesTest do
   test "When's settings: from the item text, and the When key always", %{state: state} do
     state = date_settings(state, state.db.special.when)
     text = screen(state)
-    assert text =~ "Advanced settings: When"
-    assert text =~ ~r/Assign item date\s+: From the item text/
-    assert text =~ ~r/Which one\s+: 1/
-    assert text =~ ~r/Set date from When key\s+: Yes/
+    assert text =~ "Advanced Settings for When"
+    assert text =~ ~r/Assign item date:\s+From the item text/
+    assert text =~ ~r/Which one:\s+1/
+    assert text =~ ~r/Set the item date from When key:\s+Yes/
 
     state = press(state, [:down, :down, :down, " "])
     assert screen(state) =~ "When always takes that key"
@@ -32,7 +32,7 @@ defmodule Agendum.TUI.DateRulesTest do
     # From the item text -> From the note text
     state = date_settings(state, state.db.special.when) |> press(" ")
     assert state.db.categories[state.db.special.when].date_rule.assign == :note_text
-    assert screen(state) =~ ~r/Assign item date\s+: From the note text/
+    assert screen(state) =~ ~r/Assign item date:\s+From the note text/
 
     # back to the view; the first item, below the Calls section head
     state = press(state, [:enter, :enter, :down, {:f, 5}, "Booked for next Tuesday", {:f, 5}])
@@ -54,6 +54,6 @@ defmodule Agendum.TUI.DateRulesTest do
 
   test "a standard category's Advanced settings are its text matching (R16b)", %{state: state} do
     calls = hd(Agendum.Core.Database.find_categories(state.db, "Calls"))
-    assert screen(date_settings(state, calls)) =~ "Advanced settings: Calls"
+    assert screen(date_settings(state, calls)) =~ "Advanced Settings for Calls"
   end
 end

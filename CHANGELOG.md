@@ -4,6 +4,9 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **Box titles as in Lotus Agenda**: "File Properties", "Item Properties", "Category Properties", "Section Properties" (no name in the title), "Global Date Settings", "Auto-assign Global Settings", "Utilities Customize", "Execute", "Item Sorting in All Sections" / "in Current Section", and a category's "Advanced Settings for Calls;Phone;Telephon...".
+- Settings in Agenda's words: **Ignore item text enclosed by**, **Set the item date from Done key** / **When key**, **Item statistics**, and Execute's **Apply conditions attached to category and children of**. These boxes write their labels as Agenda's, "Label:" with the values in a column.
+
 ## 0.31.3 — 2026-10-25
 
 - **Category Properties** of a date or numeric category shows only the settings it has, as in Lotus Agenda: name, type, note, special actions, assignment actions, statistics and advanced settings. Short name, Also match, Match category name, Exclusive children, Assignment conditions and Excludes are left out, as blank rows, and the cursor skips them. What a category had there before it changed type is kept, not shown.

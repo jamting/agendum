@@ -163,6 +163,29 @@
       ],
       "bottom": "Press ENTER when done, ESC to cancel"
     },
+    "category_text_matching_long": {
+      "title": "Advanced Settings for Miscellaneous Activi...",
+      "rows": [
+        "",
+        "  Text matching:           Global (On)",
+        "    Match on:                     Global (Item text)",
+        "    Required match strength:      Global (Exact - 100%)",
+        "    Confirm assignments:          Global (Never)",
+        "    Ignore suffixes:              Global (Yes)",
+        "    Ignore accents:               Global (No)",
+        "  Assignment conditions:   Global (On)",
+        "  Assignment actions:      Global (On)",
+        "  Apply conditions:        Automatically",
+        "  If an assignment conflicts with another:    Global (Override the old)",
+        "  Allow explicit assignments:                 Yes",
+        "",
+        "  Relationship of text/assignment conditions: Global (OR)",
+        "  Category is protected:                      Global (No)",
+        "  Category can have new children:             No -",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
     "column_add": {
       "title": "Column Add",
       "rows": [
@@ -373,6 +396,27 @@
         "  Section statistics:       ...      Priority",
         "                                     When",
         "  Filter:",
+        "",
+        "",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "section_sort": {
+      "title": "Item Sorting in Current Section",
+      "rows": [
+        "",
+        "  Sort new items:   When item is entered",
+        "",
+        "  Primary sort key   (View default)",
+        "    Sort on:    Category",
+        "    Order:      Ascending       Sort n/a's: Bottom of section",
+        "    Category:   When",
+        "",
+        "",
+        "  Secondary sort key (View default)",
+        "    Sort on:    None",
+        "",
         "",
         "",
         ""

@@ -119,7 +119,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   end
 
   @impl Box
-  def title(state, mode), do: "Category properties: " <> state.db.categories[mode.cat_id].name
+  def title(_state, _mode), do: "Category Properties"
 
   # two columns of settings, as Agenda's (screenshot 74)
   @impl Box

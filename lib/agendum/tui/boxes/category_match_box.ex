@@ -26,12 +26,12 @@ defmodule Agendum.TUI.Boxes.CategoryMatchBox do
   ]
 
   @layout """
-   Text matching           : [enabled                         ]
-   Match on                : [match_on                        ]
-   Required match strength : [strength                        ]
-   Confirm assignments     : [confirm                         ]
-   Ignore suffixes         : [ignore_suffixes                 ]
-   Ignore accents          : [ignore_accents                  ]
+   Text matching:           [enabled                         ]
+     Match on:                     [match_on                  ]
+     Required match strength:      [strength                  ]
+     Confirm assignments:          [confirm                   ]
+     Ignore suffixes:              [ignore_suffixes           ]
+     Ignore accents:               [ignore_accents            ]
   """
 
   @rows Template.fields(@layout)
@@ -64,7 +64,7 @@ defmodule Agendum.TUI.Boxes.CategoryMatchBox do
   end
 
   @impl Box
-  def title(state, mode), do: "Advanced settings: " <> state.db.categories[mode.cat_id].name
+  def title(state, mode), do: Agendum.TUI.Boxes.DateRuleBox.advanced_title(state, mode.cat_id)
 
   @impl Box
   def content(state, mode, inner, _max_rows) do

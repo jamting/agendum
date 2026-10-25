@@ -17,13 +17,13 @@ defmodule Agendum.TUI.Boxes.AutoAssignBox do
   alias Agendum.TUI.State
 
   @layout """
-   Text matching           : [enabled                         ]
-   Match on                : [match_on                        ]
-   Required match strength : [strength                        ]
-   Confirm assignments     : [confirm                         ]
-   Ignore text enclosed by : [enclosed_by                     ]
-   Ignore suffixes         : [ignore_suffixes                 ]
-   Ignore accents          : [ignore_accents                  ]
+   Text matching:           [enabled                         ]
+     Match on:                     [match_on                  ]
+     Required match strength:      [strength                  ]
+     Confirm assignments:          [confirm                   ]
+     Ignore item text enclosed by: [enclosed_by               ]
+     Ignore suffixes:              [ignore_suffixes           ]
+     Ignore accents:               [ignore_accents            ]
   """
 
   @rows Template.fields(@layout)
@@ -76,7 +76,7 @@ defmodule Agendum.TUI.Boxes.AutoAssignBox do
   end
 
   @impl Box
-  def title(_state, _mode), do: "Auto-assign settings"
+  def title(_state, _mode), do: "Auto-assign Global Settings"
 
   @impl Box
   def content(state, mode, inner, _max_rows) do

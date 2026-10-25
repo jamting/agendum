@@ -63,7 +63,7 @@ defmodule Agendum.TUI.SortFilterTest do
        %{state: state} do
     state = sort_box(state, :view)
     assert %{type: :sort} = State.mode(state)
-    assert screen(state) =~ "Sort items in all sections"
+    assert screen(state) =~ "Item Sorting in All Sections"
 
     state = press(state, " ")
     assert State.view(state).sort == [%SortKey{on: :text}]
@@ -155,7 +155,7 @@ defmodule Agendum.TUI.SortFilterTest do
   test "Section Properties ▸ Item sorting: the section's Sort box can use the view's settings",
        %{state: state} do
     state = sort_box(state, :section)
-    assert screen(state) =~ "Sort items in Calls"
+    assert screen(state) =~ "Item Sorting in Current Section"
     assert screen(state) =~ "As the view (None)"
 
     state = press(state, [" ", " "])

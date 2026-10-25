@@ -41,7 +41,7 @@ defmodule Agendum.TUI.MenuKeysEntriesTest do
       assert head.kind == :section
       opened = press(state, [{:f, 10}, "c", "p"])
       assert %Agendum.TUI.Modes.Props{} = State.mode(opened)
-      assert screen(opened) =~ "Category properties: #{head.category.name}"
+      assert screen(opened) =~ "Category Properties"
     end
 
     test "Category ▸ Properties and Discard on an item say it is not a category", %{state: state} do

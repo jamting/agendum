@@ -13,12 +13,12 @@ defmodule Agendum.TUI.AutoAssignBoxTest do
 
   test "shows Agenda's settings with their defaults", %{state: state} do
     text = screen(state)
-    assert text =~ ~r/Text matching\s+: On/
-    assert text =~ ~r/Match on\s+: Item text/
-    assert text =~ ~r/Required match strength\s+: Exact match - 100%/
-    assert text =~ ~r/Ignore text enclosed by\s+: " "/
-    assert text =~ ~r/Ignore suffixes\s+: Yes/
-    assert text =~ ~r/Ignore accents\s+: No/
+    assert text =~ ~r/Text matching:\s+On/
+    assert text =~ ~r/Match on:\s+Item text/
+    assert text =~ ~r/Required match strength:\s+Exact match - 100%/
+    assert text =~ ~r/Ignore item text enclosed by:\s+" "/
+    assert text =~ ~r/Ignore suffixes:\s+Yes/
+    assert text =~ ~r/Ignore accents:\s+No/
   end
 
   test "SPACE changes a setting; each change is one undo step", %{state: state} do
@@ -27,7 +27,7 @@ defmodule Agendum.TUI.AutoAssignBoxTest do
     # Match on: Item text -> Note text -> Both item & note
     state = press(state, [:up, " ", " "])
     assert state.db.match_settings.match_on == :both
-    assert screen(state) =~ ~r/Match on\s+: Both item & note/
+    assert screen(state) =~ ~r/Match on:\s+Both item & note/
 
     # one step back: the first SPACE's Note text
     state = History.undo(state)

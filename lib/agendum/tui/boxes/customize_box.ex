@@ -171,7 +171,7 @@ defmodule Agendum.TUI.Boxes.CustomizeBox do
   end
 
   @impl Box
-  def title(_state, _mode), do: "Customize (yours, for every file)"
+  def title(_state, _mode), do: "Utilities Customize"
 
   @impl Box
   def content(state, mode, inner, _max_rows) do
