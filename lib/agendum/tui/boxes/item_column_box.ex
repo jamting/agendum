@@ -5,9 +5,12 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
   Column Properties Box"): the section's item column (R55).
 
     * Section head: F3 or SPACE picks another category for the section.
+    * Width: the item text's width now; typing one sets it by hand (Set
+      width becomes Manually), as Agenda's (checked in Agenda 2.0,
+      2026-10-25).
     * Set width: Automatically (as wide as the columns leave) or Manually.
       Manually starts at the width the item text has at that moment.
-    * Width (Manually) or Minimum width (Automatically): typed.
+    * Minimum width (Automatically only): typed.
     * Link with other sections: a linked item column changes with the
       other linked ones; No makes it change alone, Yes takes their
       settings again.
@@ -27,8 +30,8 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
 
   @layout """
    Section head:             [head              ]
-   Set width:                [set          ]
    Width:                    [width ]
+   Set width:                [set          ]
    Minimum width:            [minimum ]
    Link with other sections: [linked]
   """
@@ -36,7 +39,7 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
   @help %{
     head: "The category at the head of the section. F3 or SPACE picks another.",
     set: "Set the width of the item text automatically, or by hand. SPACE switches.",
-    width: "The width of the item text, in characters. Type it.",
+    width: "The width of the item text, in characters. Typing one sets it by hand.",
     minimum: "The narrowest the item text may become. Type it.",
     linked:
       "Whether the item column changes with the item columns of other sections. SPACE switches."
@@ -48,11 +51,11 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
 
   defp item_column(state, mode), do: Enum.at(State.view(state).sections, mode.sidx).item_column
 
-  # Width shows only when it is set by hand, Minimum width only when it is
-  # automatic, so the cursor goes through the fields shown.
+  # Minimum width shows only while the width is automatic, so the cursor
+  # goes through the fields shown
   defp fields(state, mode) do
-    hidden = if item_column(state, mode).set == :auto, do: :width, else: :minimum
-    List.delete(Template.fields(@layout), hidden)
+    fields = Template.fields(@layout)
+    if item_column(state, mode).set == :auto, do: fields, else: List.delete(fields, :minimum)
   end
 
   @impl Box
@@ -87,6 +90,8 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
     mode = State.mode(state)
 
     case FieldTyping.number(text, 1, 500) do
+      # a width typed sets it by hand, as Agenda's
+      {:ok, n} when field == :width -> set(state, mode, set: :manual, width: n)
       {:ok, n} -> set(state, mode, [{field, n}])
       :error -> State.error(state, "Type a width, a number")
     end
@@ -117,8 +122,12 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
     end
   end
 
-  defp change(state, mode, field, step) when field in [:width, :minimum],
-    do: set(state, mode, [{field, Map.fetch!(item_column(state, mode), field) + step}])
+  # SPACE on Width widens it by one, by hand
+  defp change(state, mode, :width, step),
+    do: set(state, mode, set: :manual, width: width_now(state, mode) + step)
+
+  defp change(state, mode, :minimum, step),
+    do: set(state, mode, minimum: item_column(state, mode).minimum + step)
 
   defp change(state, mode, :linked, _step) do
     linked = not item_column(state, mode).linked
@@ -127,6 +136,14 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
 
   defp set(state, mode, changes),
     do: State.run(state, {:set_item_column, state.view_id, mode.sidx, changes})
+
+  # the width the item text has: its own when set by hand
+  defp width_now(state, mode) do
+    case item_column(state, mode) do
+      %{set: :manual, width: width} -> width
+      _auto -> shown_width(state, mode)
+    end
+  end
 
   defp shown_width(state, mode) do
     view = State.view(state)
@@ -151,7 +168,7 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
       head: state.db.categories[section.category_id].name,
       set: if(items.set == :auto, do: "Automatically", else: "Manually"),
       # nil leaves the row out (`Template.render/3`)
-      width: if(items.set == :manual, do: Integer.to_string(items.width)),
+      width: Integer.to_string(width_now(state, mode)),
       minimum: if(items.set == :auto, do: Integer.to_string(items.minimum)),
       linked: if(items.linked, do: "Yes", else: "No")
     }

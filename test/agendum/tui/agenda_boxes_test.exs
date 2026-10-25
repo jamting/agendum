@@ -34,8 +34,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
     "macro_properties: ours Everywhere else, not Agenda's" =>
       {:quiet,
        "ours: a macro's key runs it in boxes and everywhere else too (R50); kept under Agenda's rows (owner, 2026-10-25)"},
-    "item_column_properties: Agenda's Width, not ours" =>
-      {:change_back, "Agenda's Width row, the column's width now (owner, 2026-10-25)"},
     "macro_properties: Agenda's Macro file, not ours" =>
       {:not_built, "a macro kept in a file of its own (Agenda's Macro file)"},
     "macro_properties: Agenda's Macro is protected, not ours" =>

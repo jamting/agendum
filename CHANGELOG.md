@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **Item Column Properties** shows **Width**, the item text's width now, as Agenda's; typing a width sets it by hand (Set width becomes Manually).
 - **Macro Properties** is laid out as Agenda's: **Contents** (SPACE opens the keystrokes) and, under **Macro can be run from:**, View, Note, Category manager and Everywhere else.
 - **Display Format** (File Properties ▸ Global date settings) is drawn as Agenda's, like a date column's Column Properties: two columns, the sample centred, and no clock settings while dates show the date only.
 - Four more box titles as Agenda's: **Display Format**, **Input Format**, **Macro Properties** and **Search**.

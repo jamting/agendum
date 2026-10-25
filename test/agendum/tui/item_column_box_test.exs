@@ -15,8 +15,8 @@ defmodule Agendum.TUI.ItemColumnBoxTest do
   alias Agendum.TUI.{History, State}
 
   # Calls and Follow up, each with When; the cursor on an item's text in
-  # Calls, the box open. Its fields: Section head, Set width, Width or
-  # Minimum width, Link with other sections.
+  # Calls, the box open. Its fields: Section head, Width, Set width,
+  # Minimum width (automatic only), Link with other sections.
   setup do
     db = Core.new_file(view_name: "Activities", section_name: "Calls")
     db = with_categories(db, ["Follow up"])
@@ -30,33 +30,41 @@ defmodule Agendum.TUI.ItemColumnBoxTest do
   defp items(state, view_id, sidx),
     do: Enum.at(state.db.views[view_id].sections, sidx).item_column
 
+  # Agenda's rows (checked in Agenda 2.0, 2026-10-25): Width, the width
+  # now, above Set width; Minimum width only while it is automatic
   test "shows the section's item column, automatic at first", %{state: state} do
     assert %{type: :item_column} = State.mode(state)
     text = screen(state)
     assert text =~ "Item Column Properties"
     assert text =~ ~r/Section head: +Calls/
-    assert text =~ ~r/Set width: +Automatically/
+    # the screen is 100 wide: 3 for the bullet and margin, 17 for When
+    assert text =~ ~r/Width: +80[^\n]*\n[^\n]*Set width: +Automatically/
     assert text =~ ~r/Minimum width: +10/
-    refute text =~ ~r/ Width: +\d/
     assert text =~ ~r/Link with other sections: +Yes/
   end
 
-  test "Manually keeps the width it has, then a typed one, in the linked sections too",
+  test "a typed width sets it by hand, in the linked sections too, as Agenda's",
        %{state: state, view_id: v} do
-    state = press(state, [:down, " "])
-    # the screen is 100 wide: 3 for the bullet and margin, 17 for When
+    state = state |> to_setting("Width") |> press(["7", "8", :enter])
+    assert items(state, v, 0).set == :manual
+    assert {items(state, v, 0).width, items(state, v, 1).width} == {78, 78}
+    text = screen(state)
+    assert text =~ ~r/Set width: +Manually/
+    refute text =~ "Minimum width"
+    assert state |> History.undo() |> items(v, 0) |> Map.fetch!(:set) == :auto
+  end
+
+  test "Manually keeps the width it has", %{state: state, view_id: v} do
+    state = state |> to_setting("Set width") |> press(" ")
     assert items(state, v, 0).set == :manual
     assert items(state, v, 0).width == 80
     assert screen(state) =~ ~r/Width: +80/
-    state = press(state, [:down, "7", "8", :enter])
-    assert {items(state, v, 0).width, items(state, v, 1).width} == {78, 78}
-    assert state |> History.undo() |> items(v, 0) |> Map.fetch!(:width) == 80
   end
 
   test "a narrow item column: the columns follow it, not the screen's edge",
        %{state: state} do
-    # Manually, then 40 wide (typed; ENTER keeps the width, ENTER again the box)
-    state = press(state, [:down, " ", :down, "4", "0", :enter, :enter])
+    # 40 wide (typed; ENTER keeps the width, ENTER again the box)
+    state = state |> to_setting("Width") |> press(["4", "0", :enter, :enter])
     # " • ", 40 for the text, a space: When starts at 44, as its entries
     # do (not at the screen's right edge, where an automatic one puts it)
     head = state |> screen() |> String.split("\n") |> Enum.find(&(&1 =~ "Calls"))
@@ -64,7 +72,8 @@ defmodule Agendum.TUI.ItemColumnBoxTest do
   end
 
   test "Minimum width, and unlinking: the section changes alone", %{state: state, view_id: v} do
-    state = press(state, [:down, :down, :down, " ", :up, "1", "2", :enter])
+    state = state |> to_setting("Link with other sections") |> press(" ")
+    state = state |> to_setting("Minimum width") |> press(["1", "2", :enter])
     assert items(state, v, 0).linked == false
     assert {items(state, v, 0).minimum, items(state, v, 1).minimum} == {12, 10}
     assert screen(state) =~ ~r/Link with other sections: +No/
