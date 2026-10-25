@@ -33,6 +33,7 @@ defmodule Agendum.Core.Database do
           date_format: DateFormat.t(),
           date_settings: DateSettings.t(),
           numbers: %{optional({id, id}) => float},
+          texts: %{optional({id, id}) => String.t()},
           dates: %{optional({id, id}) => {Date.t(), Time.t() | nil, boolean}},
           dependencies: Links.t(),
           confirm_assignments: :never | :always | :sometimes,
@@ -62,6 +63,8 @@ defmodule Agendum.Core.Database do
             date_format: %DateFormat{},
             date_settings: %DateSettings{},
             numbers: %{},
+            # an item's text in an unindexed category (R29b)
+            texts: %{},
             dates: %{},
             dependencies: Links.new(),
             confirm_assignments: :never,
@@ -156,6 +159,7 @@ defmodule Agendum.Core.Database do
         links: Links.drop_left(db.links, id),
         conditional: MapSet.reject(db.conditional, &(elem(&1, 0) == id)),
         numbers: Map.reject(db.numbers, fn {{item, _}, _} -> item == id end),
+        texts: Map.reject(db.texts, fn {{item, _}, _} -> item == id end),
         dates: Map.reject(db.dates, fn {{item, _}, _} -> item == id end),
         dependencies: db.dependencies |> Links.drop_left(id) |> Links.drop_right(id),
         suggestions: Map.delete(db.suggestions, id)
@@ -263,6 +267,7 @@ defmodule Agendum.Core.Database do
         end)
 
       numbers = Map.reject(db.numbers, fn {{_, cat}, _} -> cat in doomed_set end)
+      texts = Map.reject(db.texts, fn {{_, cat}, _} -> cat in doomed_set end)
       dates = Map.reject(db.dates, fn {{_, cat}, _} -> cat in doomed_set end)
 
       suggestions =
@@ -278,6 +283,7 @@ defmodule Agendum.Core.Database do
            categories: categories,
            views: views,
            numbers: numbers,
+           texts: texts,
            dates: dates,
            suggestions: suggestions,
            # a calendar whose category is gone is no longer read (R45)
@@ -426,7 +432,8 @@ defmodule Agendum.Core.Database do
       db
       | links: Links.unlink(db.links, item_id, cat_id),
         conditional: MapSet.delete(db.conditional, {item_id, cat_id}),
-        numbers: Map.delete(db.numbers, {item_id, cat_id})
+        numbers: Map.delete(db.numbers, {item_id, cat_id}),
+        texts: Map.delete(db.texts, {item_id, cat_id})
     }
   end
 
@@ -461,6 +468,17 @@ defmodule Agendum.Core.Database do
   def put_number(db, item_id, cat_id, value) do
     db = link(db, item_id, cat_id)
     %{db | numbers: Map.put(db.numbers, {item_id, cat_id}, value * 1.0)}
+  end
+
+  @doc "An item's text in an unindexed category (R29b), or nil."
+  @spec text(t, id, id) :: String.t() | nil
+  def text(%__MODULE__{texts: texts}, item_id, cat_id), do: Map.get(texts, {item_id, cat_id})
+
+  @doc "Assigns an item to an unindexed category with a text."
+  @spec put_text(t, id, id, String.t()) :: t
+  def put_text(db, item_id, cat_id, text) do
+    db = link(db, item_id, cat_id)
+    %{db | texts: Map.put(db.texts, {item_id, cat_id}, text)}
   end
 
   @doc """

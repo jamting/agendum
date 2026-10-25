@@ -203,6 +203,7 @@ defmodule Agendum.Core.Facade.Views do
         {same, same} -> {:ok, db}
         {:standard, :date} -> Dates.make_date(db, cat_id, clock)
         {:standard, :numeric} -> Numbers.make_numeric(db, cat_id, clock)
+        {:standard, :unindexed} -> Agendum.Core.Facade.Texts.make_unindexed(db, cat_id, clock)
         _ -> {:error, :not_standard}
       end
 
@@ -239,6 +240,7 @@ defmodule Agendum.Core.Facade.Views do
   def default_column_width(db, cat_id, kind \\ nil, format \\ :name)
   def default_column_width(_db, _cat_id, :date, _format), do: 16
   def default_column_width(_db, _cat_id, :numeric, _format), do: 12
+  def default_column_width(_db, _cat_id, :unindexed, _format), do: 12
   # a Star or Yes/No column is two wide (User's Guide 5-31, 5-33)
   def default_column_width(_db, _cat_id, :standard, format) when format in [:star, :yes_no], do: 2
   # a Zettel id is eight letters (R73a)

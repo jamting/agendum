@@ -475,6 +475,13 @@ defmodule Agendum.Core.ViewModel do
       numeric ->
         Database.number(db, item.id, head)
 
+      # an unindexed category's text, case aside (R29b)
+      db.categories[head].kind == :unindexed ->
+        case Database.text(db, item.id, head) do
+          nil -> nil
+          text -> String.downcase(text)
+        end
+
       date ->
         case Database.item_date(db, item.id, head) do
           nil ->
@@ -506,7 +513,7 @@ defmodule Agendum.Core.ViewModel do
   is in a childless head (a Star or Yes/No column, true or false), else the
   ids of the head's categories the cell shows, in its order.
   """
-  @type value :: float | nil | {Date.t(), Time.t() | nil} | boolean | [Database.id()]
+  @type value :: float | String.t() | nil | {Date.t(), Time.t() | nil} | boolean | [Database.id()]
 
   @doc """
   What `cell/6` shows for an item in the column headed by `head_id`, as
@@ -521,6 +528,9 @@ defmodule Agendum.Core.ViewModel do
     cond do
       head.kind == :numeric ->
         Database.number(db, item.id, head_id)
+
+      head.kind == :unindexed ->
+        Database.text(db, item.id, head_id)
 
       Database.date_category?(db, head_id) ->
         case shown_date(db, item, head_id, occurrence) do
@@ -541,7 +551,8 @@ defmodule Agendum.Core.ViewModel do
   (on When, the recurring item's `occurrence:` the row is there for, R14a),
   in the column's own format (`date:`) or the file's, relative dates
   counted from `today:` (R41a);
-  its number in `number`'s format for a numeric column (R29); for a
+  its number in `number`'s format for a numeric column (R29); its text for
+  an unindexed one (R29b); for a
   standard column, its assignments in the column's `format:` (Name only by
   default: the names of the head's descendants the item is assigned to, or
   `*` for a childless head the item belongs to; `View.Column`, with
@@ -572,6 +583,9 @@ defmodule Agendum.Core.ViewModel do
               [width: width] ++ Context.number_opts(opts[:today])
             )
         end
+
+      head.kind == :unindexed ->
+        Database.text(db, item.id, head_id) || ""
 
       Database.date_category?(db, head_id) ->
         DateFormat.date_time(
@@ -707,7 +721,8 @@ defmodule Agendum.Core.ViewModel do
   """
   @spec entry_category(Database.t(), Database.id(), View.Column.t()) :: Database.id() | nil
   def entry_category(db, item_id, %View.Column{category_id: head_id}) do
-    if db.categories[head_id].kind == :numeric or Database.date_category?(db, head_id) do
+    if db.categories[head_id].kind in [:numeric, :unindexed] or
+         Database.date_category?(db, head_id) do
       nil
     else
       case column_entries(db, item_id, head_id) do

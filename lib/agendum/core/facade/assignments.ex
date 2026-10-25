@@ -58,13 +58,14 @@ defmodule Agendum.Core.Facade.Assignments do
   @doc """
   Handles text typed into a column cell for an item (claims 3 and 6 of the
   patent). For a date column the text is parsed as a date, for a numeric
-  column as a number (R29). Otherwise the
+  column as a number (R29), for an unindexed column as its text (R29b).
+  Otherwise the
   text names a descendant of the column head: an exact name match is used
   first, then a unique prefix match; if nothing matches, a new child of the
   column head is created. Returns the category assigned.
   """
   @spec assign_by_name(db, id, id, String.t(), clock) ::
-          {:ok, db, id | :date | :number}
+          {:ok, db, id | :date | :number | :text}
           | {:error, :invalid_date | :not_a_number | :ambiguous | :empty}
   def assign_by_name(db, item_id, head_id, text, today) do
     text = String.trim(text)
@@ -84,6 +85,11 @@ defmodule Agendum.Core.Facade.Assignments do
         else
           _ -> {:error, :not_a_number}
         end
+
+      # the text is the item's value, not a category (R29b)
+      db.categories[head_id].kind == :unindexed ->
+        {:ok, db} = Agendum.Core.Facade.Texts.set_text(db, item_id, head_id, text, today)
+        {:ok, db, :text}
 
       Database.date_category?(db, head_id) ->
         case DateParser.parse_recurring(

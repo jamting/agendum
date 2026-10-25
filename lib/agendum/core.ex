@@ -40,6 +40,7 @@ defmodule Agendum.Core do
     Items,
     Macros,
     Numbers,
+    Texts,
     Rules,
     Views
   }
@@ -157,6 +158,11 @@ defmodule Agendum.Core do
   defdelegate clear_number(db, item_id, cat_id, clock \\ nil), to: Numbers
   defdelegate numeric_conversion(db, cat_id, clock \\ nil), to: Numbers
   defdelegate make_numeric(db, cat_id, clock \\ nil), to: Numbers
+
+  # texts in unindexed categories (R29b)
+  defdelegate set_text(db, item_id, cat_id, text, clock \\ nil), to: Texts
+  defdelegate clear_text(db, item_id, cat_id, clock \\ nil), to: Texts
+  defdelegate make_unindexed(db, cat_id, clock \\ nil), to: Texts
 
   # dependencies (R43)
   defdelegate make_dependent(db, item_id, prerequisite_ids), to: Dependencies

@@ -113,6 +113,11 @@ defmodule Agendum.Starters.Golden do
     db = ok(Core.make_numeric(db, pots, @now))
     db = ok(Core.set_number(db, item, pots, 12.5, @now))
 
+    # an unindexed category and an item's text in it (R29b)
+    {:ok, db, label} = Core.add_category(db, db.main_id, "Jar label")
+    db = ok(Core.make_unindexed(db, label, @now))
+    db = ok(Core.set_text(db, item, label, "HUNNY", @now))
+
     # asked, not assigned: a suggestion waiting under Utilities Questions
     db = Core.set_confirm_assignments(db, :always)
     {db, _} = Core.add_item(db, "Take a pot to Pooh's tree", @now)

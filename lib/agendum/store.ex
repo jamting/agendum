@@ -42,7 +42,9 @@ defmodule Agendum.Store do
   `Database.feeds`, feed subscriptions (R75); 37 adds `Database.tab_size`
   (R64e); 38 moves the extras' stored structs, `Feed`, `Blog` and
   `Calendar`, to `Agendum.Core.Extras.*` (ADR 0044), and loading maps their
-  old names to the new ones; 39 adds `View.number_items` (R79).
+  old names to the new ones; 39 adds `View.number_items` (R79); 40 adds
+  `Database.texts` and the `:unindexed` kind of `Category`, unindexed
+  categories (R29b).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
@@ -53,7 +55,7 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 39
+  @format_version 40
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"

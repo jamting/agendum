@@ -68,7 +68,7 @@ The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs` and 
 | `short_name`      | Or `null`.                                                                                                                           |
 | `parent`          | The parent's id; `null` only for MAIN.                                                                                               |
 | `children`        | The children's ids, in order. Must agree with their `parent`.                                                                        |
-| `kind`            | `"standard"`, `"date"` or `"numeric"`.                                                                                               |
+| `kind`            | `"standard"`, `"date"`, `"numeric"` or `"unindexed"` (R29b).                                                                         |
 | `exclusive`       | Its children are mutually exclusive (R7).                                                                                            |
 | `match_name`      | Its name and short name match item text (R10).                                                                                       |
 | `also_match`      | Text conditions (R15d), as typed.                                                                                                    |
@@ -100,6 +100,7 @@ A **criterion** (conditions, filters) is `{"category": id, "is": "assigned"}`, `
 | `conditional`           | Those of its assignments made by a condition or text match, which can be undone by one (R15c).   |
 | `dates`                 | Dates in the user's date categories: `{"category": id, "date": …, "time": …, "explicit": true}`. |
 | `numbers`               | `{"category": id, "value": 12.5}` in numeric categories (R29).                                   |
+| `texts`                 | `{"category": id, "value": "12 Grant Ave"}` in unindexed categories (R29b).                      |
 | `depends_on`            | The ids of the items it depends on (R43).                                                        |
 | `suggested`             | Assignments waiting for confirmation (R16).                                                      |
 

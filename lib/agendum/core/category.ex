@@ -37,7 +37,7 @@ defmodule Agendum.Core.Category do
   """
 
   @type id :: pos_integer
-  @type kind :: :standard | :date | :numeric
+  @type kind :: :standard | :date | :numeric | :unindexed
   @type t :: %__MODULE__{
           id: id,
           name: String.t(),

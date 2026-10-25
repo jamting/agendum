@@ -271,7 +271,8 @@ defmodule Agendum.Core.JSONFile do
     %{
       conditional: Enum.group_by(Enum.sort(db.conditional), &elem(&1, 0), &elem(&1, 1)),
       dates: group.(db.dates),
-      numbers: group.(db.numbers)
+      numbers: group.(db.numbers),
+      texts: group.(db.texts)
     }
   end
 
@@ -347,6 +348,8 @@ defmodule Agendum.Core.JSONFile do
         ),
       numbers:
         for({{_, cat}, n} <- Map.get(rel.numbers, i.id, []), do: obj(category: cat, value: n)),
+      # an unindexed category's text (R29b)
+      texts: for({{_, cat}, t} <- Map.get(rel.texts, i.id, []), do: obj(category: cat, value: t)),
       depends_on: db.dependencies |> Links.rights(i.id) |> Enum.sort(),
       suggested: Map.get(db.suggestions, i.id, [])
     )
@@ -569,6 +572,7 @@ defmodule Agendum.Core.JSONFile do
           dates: Enum.reduce(rel.dates, db.dates, fn {c, v}, acc -> Map.put(acc, {id, c}, v) end),
           numbers:
             Enum.reduce(rel.numbers, db.numbers, fn {c, v}, acc -> Map.put(acc, {id, c}, v) end),
+          texts: Enum.reduce(rel.texts, db.texts, fn {c, v}, acc -> Map.put(acc, {id, c}, v) end),
           suggestions:
             if(rel.suggested == [],
               do: db.suggestions,
@@ -585,7 +589,7 @@ defmodule Agendum.Core.JSONFile do
       short_name: opt(c, "short_name", {:nullable, :string}, nil, path),
       parent_id: opt(c, "parent", {:nullable, :int}, nil, path),
       children: opt(c, "children", {:list, :int}, [], path),
-      kind: opt(c, "kind", {:enum, [:standard, :date, :numeric]}, :standard, path),
+      kind: opt(c, "kind", {:enum, [:standard, :date, :numeric, :unindexed]}, :standard, path),
       exclusive: opt(c, "exclusive", :bool, false, path),
       match_name: opt(c, "match_name", :bool, true, path),
       also_match: opt(c, "also_match", :string, "", path),
@@ -674,6 +678,10 @@ defmodule Agendum.Core.JSONFile do
       numbers:
         list(i, "numbers", path <> ".numbers", fn n, p ->
           {req(n, "category", :int, p), req(n, "value", :float, p)}
+        end),
+      texts:
+        list(i, "texts", path <> ".texts", fn t, p ->
+          {req(t, "category", :int, p), req(t, "value", :string, p)}
         end)
     }
 
@@ -1083,11 +1091,13 @@ defmodule Agendum.Core.JSONFile do
   end
 
   defp relation_refs(db) do
-    keys = Map.keys(db.dates) ++ Map.keys(db.numbers) ++ MapSet.to_list(db.conditional)
+    keys =
+      Map.keys(db.dates) ++
+        Map.keys(db.numbers) ++ Map.keys(db.texts) ++ MapSet.to_list(db.conditional)
 
     [
       {Enum.all?(keys, fn {_item, cat} -> Map.has_key?(db.categories, cat) end),
-       "a date, number or conditional assignment refers to a missing category"}
+       "a date, number, text or conditional assignment refers to a missing category"}
     ]
   end
 

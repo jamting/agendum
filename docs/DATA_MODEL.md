@@ -44,6 +44,7 @@ erDiagram
         DateFormat date_format "how dates and times display (R41)"
         DateSettings date_settings "how typed dates are read (R14e)"
         map numbers "item and numeric category => number (R29)"
+        map texts "item and unindexed category => text (R29b)"
         map dates "item and user date category => date, time, set by hand (R6a)"
         Links dependencies "dependent item <-> prerequisite item (R43)"
         atom confirm_assignments "never, always or sometimes (R16)"
@@ -78,7 +79,7 @@ erDiagram
         string short_name "optional alias for matching"
         int parent_id FK "nil only for MAIN"
         list children "ordered child ids"
-        atom kind "standard, date or numeric"
+        atom kind "standard, date, numeric or unindexed"
         bool exclusive "children mutually exclusive"
         bool match_name "auto-assign by name"
         list also_assign "category ids"
@@ -196,6 +197,7 @@ classDiagram
         +date_format : DateFormat
         +date_settings : DateSettings
         +numbers : Map~item_id and cat_id, float~
+        +texts : Map~item_id and cat_id, string~
         +dates : Map~item_id and cat_id, date time explicit~
         +dependencies : Links
         +confirm_assignments : never, always or sometimes
@@ -259,7 +261,7 @@ classDiagram
         +short_name : String | nil
         +parent_id : id | nil
         +children : [id]
-        +kind : :standard | :date | :numeric
+        +kind : :standard | :date | :numeric | :unindexed
         +exclusive : boolean
         +match_name : boolean
         +also_assign : [id]
@@ -659,6 +661,7 @@ Format versions:
 | 37 | Added `Database.tab_size`, File Properties ▸ Tab size (R64e) |
 | 38 | Moved the extras' stored structs, `Feed`, `Blog` and `Calendar`, to `Agendum.Core.Extras.*` (ADR 0044); loading maps the old names |
 | 39 | Added `View.number_items`, View Properties ▸ Number items (R79) |
+| 40 | Added `Database.texts` and the `:unindexed` kind of `Category`, unindexed categories (R29b) |
 
 ## UI state around the database
 
