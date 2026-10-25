@@ -208,6 +208,16 @@ defmodule Agendum.Core.JSONFileTest do
       assert round_trip(db) == {:ok, db}
     end
 
+    # found overnight 2026-10-26: an item discarded while a Show View
+    # listed it left the view naming a missing item, which import refused
+    test "a Show View listing an item that is then discarded" do
+      db = Agendum.Sample.build(@today)
+      [first, second | _] = db.item_order
+      {db, _view} = Core.show_items(db, [first, second])
+      db = Core.discard_item(db, first)
+      assert round_trip(db) == {:ok, db}
+    end
+
     test "the Show View as the alarm list (R38)" do
       db = Agendum.Sample.build(@today)
       {db, _view} = Core.show_alarms(db)

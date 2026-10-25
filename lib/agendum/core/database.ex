@@ -170,9 +170,16 @@ defmodule Agendum.Core.Database do
         texts: Map.reject(db.texts, fn {{item, _}, _} -> item == id end),
         dates: Map.reject(db.dates, fn {{item, _}, _} -> item == id end),
         dependencies: db.dependencies |> Links.drop_left(id) |> Links.drop_right(id),
-        suggestions: Map.delete(db.suggestions, id)
+        suggestions: Map.delete(db.suggestions, id),
+        # a Show View listing items no longer lists this one
+        views: Map.new(db.views, fn {vid, v} -> {vid, without_item(v, id)} end)
     }
   end
+
+  defp without_item(%View{match: {kind, ids}} = view, id) when kind in [:items, :circular],
+    do: %{view | match: {kind, List.delete(ids, id)}}
+
+  defp without_item(view, _id), do: view
 
   @doc "Moves an item to directly after `after_id` (first with `:first`, last with nil)."
   @spec reorder_item(t, id, id | :first | nil) :: t

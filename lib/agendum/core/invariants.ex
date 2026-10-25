@@ -205,7 +205,16 @@ defmodule Agendum.Core.Invariants do
           gone.(cal.category_id),
           do: "6. calendar #{cal_id} files into category #{cal.category_id}, which is gone"
 
-    in_views ++ in_categories ++ in_calendars
+    # a Show View listing items (Show Prereqs, Show Circular …) lists live
+    # ones: a discarded item leaves it (found 2026-10-26)
+    listed =
+      for {view_id, %{match: {kind, ids}}} <- db.views,
+          kind in [:items, :circular],
+          id <- ids,
+          not Map.has_key?(db.items, id),
+          do: "6. view #{view_id} lists item #{id}, which is gone"
+
+    in_views ++ in_categories ++ in_calendars ++ listed
   end
 
   # Every category a view names, with where it names it.
