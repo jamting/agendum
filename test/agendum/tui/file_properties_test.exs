@@ -50,12 +50,15 @@ defmodule Agendum.TUI.FilePropertiesTest do
     assert text =~ ~r/Average categories\/item: +#{stats.categories_per_item}\b/
     assert stats.items > 0
 
-    # nothing to change; ENTER (or ESC) goes back to File Properties
-    db = state.db
-    state = press(state, [" ", "x"])
-    assert state.db == db
-    assert %{type: :file_props} = state |> press(:enter) |> State.mode()
-    assert %{type: :file_props} = state |> press(:esc) |> State.mode()
+    # nothing to change: any key goes back to File Properties, as Agenda's
+    # "Press any key to continue" (checked in Agenda 2.0, 2026-10-25)
+    assert text =~ "Press any key to continue"
+
+    for key <- [" ", "x", :enter, :esc, :down] do
+      after_key = press(state, key)
+      assert %{type: :file_props} = State.mode(after_key)
+      assert after_key.db == state.db
+    end
   end
 
   test "every box fits a 25-line screen, with its frame", %{state: state} do

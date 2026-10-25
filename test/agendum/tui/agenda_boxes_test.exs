@@ -109,8 +109,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
       {:not_built, "external note files (NOTE_EDITOR.md, step 7)"},
     "category_properties_numeric: Agenda's Note file, not ours" =>
       {:not_built, "external note files (NOTE_EDITOR.md, step 7)"},
-    "category_statistics bottom: Agenda Press any key to continue, ours Press ENTER or ESC to return" =>
-      {:change_back, "any key closes it, as Agenda's (owner, 2026-10-25)"},
     "category_text_matching: Agenda's Assignment conditions, not ours" =>
       {:not_built,
        "turning text matching, conditions and actions on and off, and their rules of conflict (R15, R15b: not done)"},
@@ -189,8 +187,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
       {:out_of_scope, "application protection (SPEC § 6)"},
     "file_properties: Agenda's Update defaults, not ours" =>
       {:not_built, "File Properties' other settings (AGENDA_PARITY, Boxes and lists)"},
-    "file_statistics bottom: Agenda Press any key to continue, ours Press ENTER or ESC to return" =>
-      {:change_back, "any key closes it, as Agenda's (owner, 2026-10-25)"},
     "file_statistics: Agenda's Unused space, not ours" =>
       {:machine,
        "an Agendum file has no unused space to report: it is written whole on every save (no Compress)"},
@@ -241,9 +237,7 @@ defmodule Agendum.TUI.AgendaBoxesTest do
     "view_properties: Agenda's Named print set, not ours" =>
       {:out_of_scope, "printing (SPEC § 6)"},
     "view_properties: Agenda's View protection, not ours" =>
-      {:out_of_scope, "application protection (SPEC § 6)"},
-    "view_statistics bottom: Agenda Press any key to continue, ours Press ENTER or ESC to return" =>
-      {:change_back, "any key closes it, as Agenda's (owner, 2026-10-25)"}
+      {:out_of_scope, "application protection (SPEC § 6)"}
   }
 
   # How each captured box is opened in Agendum, from the Planner's People

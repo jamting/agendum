@@ -4,12 +4,12 @@ defmodule Agendum.TUI.Boxes.CategoryStatsBox do
   Category Statistics, screenshot 74): how much of the file uses the
   category, counts only, nothing to change: its items, children, the
   sections it heads, and the view filters, conditions and actions that
-  name it (`Agendum.Core.Database.category_statistics/2`). ENTER or ESC go back
+  name it (`Agendum.Core.Database.category_statistics/2`). Any key goes back
   to Category Properties. Drawn from `@layout` (`Agendum.TUI.Boxes.Template`).
   Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :return, indicator: "PROPS"
+  use Agendum.TUI.Boxes.Box, finish: :any_key, indicator: "PROPS"
 
   alias Agendum.Core.Database
   alias Agendum.TUI.Boxes.{Box, Template}
@@ -26,8 +26,10 @@ defmodule Agendum.TUI.Boxes.CategoryStatsBox do
 
   def open(state, cat_id), do: State.push(state, %Agendum.TUI.Modes.CategoryStats{cat_id: cat_id})
 
+  # any key that is not ENTER or ESC closes it too, as Agenda's "Press any
+  # key to continue" (R65's keymap has those two)
   @impl Box
-  def handle(state, _mode, _key), do: state
+  def handle(state, _mode, _key), do: State.pop(state)
 
   # R65
   @impl Box
@@ -53,7 +55,7 @@ defmodule Agendum.TUI.Boxes.CategoryStatsBox do
   end
 
   @impl Box
-  def keys(_state, _mode), do: [{"ENTER/ESC", "Return"}]
+  def keys(_state, _mode), do: [{"any key", "Continue"}]
 
   @impl Box
   def help,

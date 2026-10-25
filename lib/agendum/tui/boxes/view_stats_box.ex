@@ -8,7 +8,7 @@ defmodule Agendum.TUI.Boxes.ViewStatsBox do
   continue". Drawn from `@layout` (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :return, indicator: "PROPS"
+  use Agendum.TUI.Boxes.Box, finish: :any_key, indicator: "PROPS"
 
   alias Agendum.Core
   alias Agendum.TUI.Boxes.{Box, Template}
@@ -55,7 +55,7 @@ defmodule Agendum.TUI.Boxes.ViewStatsBox do
   end
 
   @impl Box
-  def keys(_state, _mode), do: [{"ENTER/ESC", "Return"}]
+  def keys(_state, _mode), do: [{"any key", "Continue"}]
 
   @impl Box
   def help, do: "How many marked items, sections and items the view has."

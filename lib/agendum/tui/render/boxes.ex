@@ -118,12 +118,15 @@ defmodule Agendum.TUI.Render.Boxes do
 
   # boxes that only show something
   @return {"Press ENTER or ESC to return", "ENTER/ESC return"}
+  # Agenda's statistics boxes, which any key closes (checked 2026-10-25)
+  @any_key {"Press any key to continue", "any key continues"}
 
   @finish %{
     done: @done,
     accept: @accept,
     enter_accept: @enter_accept,
     return: @return,
+    any_key: @any_key,
     none: {"", ""}
   }
 

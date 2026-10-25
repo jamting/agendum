@@ -31,9 +31,12 @@ defmodule Agendum.TUI.CategoryStatsTest do
     assert text =~ ~r/Used as section heads: +1/
     assert text =~ ~r/Included in view filters: +0/
 
-    # nothing to change: ENTER or ESC go back to Category Properties
-    assert %{type: :props} = State.mode(press(state, :enter))
-    assert %{type: :props} = State.mode(press(state, :esc))
+    # nothing to change: any key goes back to Category Properties, as
+    # Agenda's "Press any key to continue" (checked in Agenda 2.0, 2026-10-25)
+    assert text =~ "Press any key to continue"
+
+    for key <- [:enter, :esc, " ", "x", :down],
+        do: assert(%{type: :props} = State.mode(press(state, key)))
   end
 
   test "Advanced settings and Note open theirs with SPACE", %{state: state} do

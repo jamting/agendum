@@ -191,7 +191,6 @@ Done: Category properties of a date or numeric category as Agenda's (R6a, 2026-1
 - [ ] The rest of Agenda as the reference for texts (§ 8), after the menus (done 2026-10-23, `capture_menus.py` and the menu test): the labels in settings boxes, the key bar and messages, captured and compared step by step, each difference tagged. Long help lines are Lotus's text: mind them before going public (GITHUB.md § 7)
   - [x] The settings boxes captured and compared (2026-10-25, `capture_boxes.py`, `agenda_boxes_test.exs`): 96 differences in 25 boxes, each tagged; the owner chose Agenda's way for the four groups below
   - [ ] The other boxes captured and compared: Display Format, Input Format, Datebook settings, Macro properties, the search boxes, Show Schedule, Questions, Column Add's choices (their titles are still ours, e.g. "Display format", "Macro properties: name")
-  - [ ] Statistics boxes: "Press any key to continue", and any key closes them (change back, owner 2026-10-25)
   - [ ] The date column box as Agenda's: the time settings hidden while a column shows the date only (the date settings for time only), "(Global defaults)" / "(Local settings)" as a line, no Settings field (change back, owner 2026-10-25; checked in Agenda 2.0)
   - [ ] The sort box as Agenda's: Primary and Secondary sort key, the category on its own row, section sorting in View Properties only (change back, owner 2026-10-25; a habit change, settle the details first)
   - [ ] Messages compared with Agenda's

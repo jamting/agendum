@@ -325,7 +325,7 @@ In a box the arrows move between settings as in Agenda (User's Guide 2-16, `Agen
 
 ### Category and File Statistics
 
-In Category Properties, as Agenda (screenshot 74), Note, Statistics and Advanced settings show "..." and SPACE opens each one's box; Statistics (Agenda's Category Statistics) counts the items in the category, its children, the sections it heads, and the view filters, conditions and actions that name it. File Properties has File statistics ..., Agenda's File Statistics box (screenshot 140): the items, the items with notes, the categories (MAIN too), and the average items per category and categories per item, both counting the assignments stored with the items, rounded down (as Agenda 2.0 counts them, checked on its PLANNER file); Agenda's Unused space and Items in trash are left out.
+In Category Properties, as Agenda (screenshot 74), Note, Statistics and Advanced settings show "..." and SPACE opens each one's box; the Category, File and View Statistics boxes say "Press any key to continue" in their bottom edge, and any key closes them, as Agenda's (checked in Agenda 2.0, 2026-10-25); Statistics (Agenda's Category Statistics) counts the items in the category, its children, the sections it heads, and the view filters, conditions and actions that name it. File Properties has File statistics ..., Agenda's File Statistics box (screenshot 140): the items, the items with notes, the categories (MAIN too), and the average items per category and categories per item, both counting the assignments stored with the items, rounded down (as Agenda 2.0 counts them, checked on its PLANNER file); Agenda's Unused space and Items in trash are left out.
 
 ### The key bar
 

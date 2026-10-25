@@ -15,7 +15,8 @@ defmodule Agendum.TUI.Boxes.Box do
   Options of `use`:
 
     * `finish:` the words in the bottom edge: `:done` ("Press ENTER when
-      done, ESC to cancel"), `:accept`, `:enter_accept` ("Press ENTER to accept", a category list where ESC keeps too), `:return` or `:none`;
+      done, ESC to cancel"), `:accept`, `:enter_accept` ("Press ENTER to accept", a category list where ESC keeps too), `:return`,
+      `:any_key` ("Press any key to continue", a box any key closes) or `:none`;
       a box whose words depend on its mode defines `finish/1` instead
     * `indicator:` the mode shown at the top right ("PROPS"); nil for the
       one of what is beneath (READY in a view)
@@ -64,7 +65,7 @@ defmodule Agendum.TUI.Boxes.Box do
   @callback field(State.t(), mode) :: atom | nil
 
   @doc "The words in the bottom edge (`finish:`); by default the same for every mode."
-  @callback finish(mode) :: :done | :accept | :enter_accept | :return | :none
+  @callback finish(mode) :: :done | :accept | :enter_accept | :return | :any_key | :none
 
   @doc "The width inside the frame; by default 60 columns, less on a narrow screen."
   @callback width(State.t(), mode) :: pos_integer
