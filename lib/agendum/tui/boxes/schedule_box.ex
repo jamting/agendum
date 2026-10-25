@@ -62,6 +62,10 @@ defmodule Agendum.TUI.Boxes.ScheduleBox do
   @impl Box
   def keymap(_mode), do: Box.settings_keymap(%{{:f, 3} => :calendar})
 
+  # F3 opens the calendar on the date: Agenda's CHOICES there
+  @impl Box
+  def labels(_mode), do: %{calendar: "Choices"}
+
   @impl Box
   def commands(_mode),
     do:

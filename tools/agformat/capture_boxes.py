@@ -2,7 +2,8 @@ r"""Capture Lotus Agenda 2.0's settings boxes from the real program (DOSBox).
 
 For each box in BOXES, goes from the view to the box with the keys given
 and reads it as Agenda draws it: its title, its rows (the text between the
-borders) and its bottom edge. Writes them to a JSON reference (default
+borders), its bottom edge, and the key bar under it (the ten F-key slots'
+labels, "" for an empty slot; with the box's first field highlighted). Writes them to a JSON reference (default
 docs/reference/agenda_boxes.json), which Agendum's box label test compares
 with its own boxes (AGENDA_PARITY.md, the texts step; meeting 2026-10-21,
 § 8). Run by hand, never by the tests:
@@ -139,7 +140,13 @@ def read_box(screen, title):
     (top, bottom, left, right), title = min(titled, key=lambda bt: bt[0][3] - bt[0][2])
     rows = [line[left + 1 : right].rstrip() for line in screen[top + 1 : bottom]]
     edge = screen[bottom][left : right + 1].strip("#").strip()
-    return {"title": title, "rows": rows, "bottom": edge}
+    return {"title": title, "rows": rows, "bottom": edge, "keys": key_bar(screen)}
+
+
+def key_bar(screen):
+    """the labels of the ten F-key slots on the last line ("Help", "Edit",
+    "" …); the slots are separated by # (CP437 box lines read as #)"""
+    return [slot.strip() for slot in screen[-1].split("#")][:10]
 
 
 def _title(screen, box):

@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.43.0 — 2026-10-25
+
+The key bar as in Lotus Agenda while a box or the menu is open.
+
+- In a **box**, the key bar shows Agenda's **ten F-key slots**, as in a view (`Help │ Edit │ Choices │ … │ Props │ │ Default`), instead of a line of hints. The slots follow the highlighted field: **F4 Values** shows on Item Properties' Assigned to, and View Properties' Sections list has no **Default**.
+- In the **menu**, a choice list, Go To and the statistics boxes the bar says **Help** alone, as Agenda's.
+- A key that does nothing in a box yet leaves its slot empty: some of Agenda's F2 Edit, F6 Props and F8 Default are still to be built.
+- While you type in a field, the bar keeps its hints for now (the Editing step).
+
 ## 0.42.0 — 2026-10-25
 
 The control panel as in Lotus Agenda while a box is open, and the view's hide settings in Agenda's bracket.

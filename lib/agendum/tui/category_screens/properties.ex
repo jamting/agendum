@@ -211,14 +211,24 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
 
   def handle(state, _mode, _key), do: state
 
-  # the settings box's keys; F2 and F3 change a setting too, F6 (which
-  # opened the box) is done (R65)
+  # the settings box's keys; F2 and F3 change a setting too, as SPACE
+  # does, F6 (which opened the box) is done (R65). F2 and F3 have commands
+  # of their own so the key bar can name them as Agenda's: Edit, Choices
   @impl Box
   def keymap(_mode),
-    do: Box.settings_keymap(%{{:f, 2} => :change, {:f, 3} => :change, {:f, 6} => :done})
+    do: Box.settings_keymap(%{{:f, 2} => :edit, {:f, 3} => :choose, {:f, 6} => :done})
 
   @impl Box
-  def commands(_mode), do: Box.settings_commands()
+  def commands(_mode),
+    do:
+      Box.settings_commands([
+        {:edit, "Edit", "Change the setting, as SPACE does"},
+        {:choose, "Choices", "Change the setting, as SPACE does"}
+      ])
+
+  # F6 closes the box: Agenda's PROPS, going back
+  @impl Box
+  def labels(_mode), do: %{done: "Props"}
 
   # ENTER is done (ESC cancels: `Agendum.TUI.Boxes.BoxCancel`)
   # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): what a new category has
@@ -252,7 +262,7 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
   end
 
   @impl Box
-  def run(state, mode, :change),
+  def run(state, mode, id) when id in [:change, :edit, :choose],
     do: open_prop(state, state.db.categories[mode.cat_id], field(state, mode))
 
   def run(state, mode, id) do

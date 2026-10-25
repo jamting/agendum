@@ -432,6 +432,8 @@ defmodule Agendum.TUI.Commands do
       sort: "Sort"
     },
     box: %{default: "Default", default_all: "DfltAll"},
+    # Agenda's menu bar has Help alone (checked in Agenda 2.0, 2026-10-25)
+    menu: %{help: "Help"},
     global: %{macros: "Macro"}
   }
 

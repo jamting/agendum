@@ -17,4 +17,8 @@ Agenda's key bar has ten fixed slots, one per function key (R80), and holding AL
 
 - One table answers "what does this key do here" for the bar, the F1 help, the web front end and an agent; key bindings customised later (ADR 0038) show up on the bar, and in the menu if it ever names keys, without more work.
 - The hand-written lists in `KeyBar` go; the hint lines of boxes and moves stay until the texts step compares them with Agenda (AGENDA_PARITY § The steps).
+
+## Amended 2026-10-25: boxes and the menu
+
+Boxes and the menu have Agenda's slots too (checked in Agenda 2.0, PLANNER: 35 boxes captured with `tools/agformat/capture_boxes.py`; the owner's choice). In a box **a bar is fixed per field, not per place**: Agenda's changes on a few fields (Item Properties' Assigned to adds F4 Values; View Properties' Sections drops F8 Default), and the owner chose to follow it. A slot is the command the box's keymap binds the key to, with a short label (`c:Agendum.TUI.Boxes.Box.labels/1`, or the shared ones in `Box.slot/4`), or one of the keys every box shares (F1 Help; F3 Choices and F8 Default in a box of settings); a box names the keys that do nothing on the highlighted field (`c:idle_keys/2`). The hint line stays only while a field is typed in, until the Editing step. `test/agendum/tui/agenda_boxes_test.exs` compares the slots with Agenda's; the keys Agenda names but ours lack (F2 Edit in most boxes, F6 Props, F8 Default in a few) are tagged *not built*.
 - Keys Agenda had but Agendum lacks (ALT-F1 Compose, ALT-F9 Copy) show empty slots: honest, though less like Agenda, until they are built.

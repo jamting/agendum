@@ -3,12 +3,14 @@ defmodule Agendum.TUI.Render.KeyBar do
   The function key bar on the last two lines: the keys of what is on top
   (SPEC § The key bar). Pure.
 
-  In a view, a note and the category and view managers it is Agenda's: ten
-  fixed slots, one per function key, the key above its label, `│` between
-  them; a key that does nothing there leaves its slot empty, so F8 is always
-  in the same place. Elsewhere (boxes, the menu, typing, moves) the bottom
-  line names the keys side by side, until each place is compared with
-  Agenda's; what does not fit is left out whole, never cut mid-word.
+  In a view, a note, the category and view managers, a box and the menu it
+  is Agenda's: ten fixed slots, one per function key, the key above its
+  label, `│` between them; a key that does nothing there leaves its slot
+  empty, so F8 is always in the same place. In a box the slots follow the
+  highlighted field (checked in Agenda 2.0, 2026-10-25). Elsewhere (typing,
+  moves) the bottom line names the keys side by side, until each place is
+  compared with Agenda's; what does not fit is left out whole, never cut
+  mid-word.
   """
 
   alias Agendum.TUI.{Commands, Keymap, Typing.Completion, Terminal.Draw, State}
@@ -30,31 +32,42 @@ defmodule Agendum.TUI.Render.KeyBar do
     end
   end
 
-  # The place whose bar has Agenda's slots, or nil for a bar of hints.
+  # The place whose bar has Agenda's slots, or nil for a bar of hints:
+  # typing in a box's field keeps its hints (the Editing step)
   defp slotted(state) do
-    if state.edit == nil and not Completion.active?(state), do: place(State.mode(state))
+    if state.edit == nil and not Completion.active?(state), do: place(state, State.mode(state))
   end
 
-  defp place(nil), do: :view
-  defp place(%{type: type}) when type in [:note, :catmgr, :viewmgr], do: type
-  defp place(_mode), do: nil
+  defp place(_state, nil), do: :view
+  defp place(_state, %{type: type}) when type in [:note, :catmgr, :viewmgr, :menu], do: type
+
+  defp place(_state, %{type: type} = mode) when is_map_key(@boxes, type) do
+    box = @boxes[type]
+    if Map.get(mode, :typing) != nil, do: nil, else: {:box, box, mode}
+  end
+
+  defp place(_state, _mode), do: nil
 
   @doc """
-  The ten slots of `place`'s bar (`:view`, `:note`, `:catmgr`, `:viewmgr`)
+  The ten slots of `place`'s bar (`:view`, `:note`, `:catmgr`, `:viewmgr`,
+  `:menu`, or `{:box, module, mode}`)
   with `held` (`:none`, `:alt`, `:ctrl` or `:shift`), each `{label, fuller
   label}`, `{"", ""}` when its key does nothing there. Made from the keymaps
   (ADR 0045): the command the place binds the key to (or every screen
   does), with its short label; a macro attached to the key, by its name
   (R50). An extra's command is left out while the extras are off (R77).
   """
-  @spec slots(State.t(), atom, :none | :alt | :ctrl | :shift) :: [{String.t(), String.t()}]
+  @spec slots(State.t(), atom | {:box, module, map}, :none | :alt | :ctrl | :shift) ::
+          [{String.t(), String.t()}]
   def slots(state, place, held) do
     for n <- 1..10 do
       key = slot_key(held, n)
 
-      case Agendum.TUI.Macros.attached(state, key) do
-        nil -> command_slot(state, place, key)
-        macro -> {String.slice(macro.name, 0, 7), macro.name}
+      case {place, Agendum.TUI.Macros.attached(state, key)} do
+        # a box's slot is what the key does on its highlighted field
+        {{:box, box, mode}, _} -> Agendum.TUI.Boxes.Box.slot(box, state, mode, key)
+        {_, nil} -> command_slot(state, place, key)
+        {_, macro} -> {String.slice(macro.name, 0, 7), macro.name}
       end
     end
   end

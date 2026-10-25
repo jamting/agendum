@@ -9,7 +9,19 @@
         "  Minutes before:   5",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "auto_assign_settings": {
       "title": "Auto-assign Global Settings",
@@ -29,7 +41,19 @@
         "  Relationship of text and assignment conditions:  OR (|)",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "category_add": {
       "title": "Category Add",
@@ -49,7 +73,19 @@
         "  Advanced settings:  ...",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "category_date_settings": {
       "title": "Advanced Settings for When",
@@ -64,7 +100,19 @@
         "  Category is protected:            Global (No)",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "category_properties": {
       "title": "Category Properties",
@@ -84,7 +132,19 @@
         "  Advanced settings:  ...",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "category_properties_date": {
       "title": "Category Properties",
@@ -104,7 +164,19 @@
         "  Advanced settings:  ...",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "category_properties_numeric": {
       "title": "Category Properties",
@@ -124,7 +196,19 @@
         "  Advanced settings:  ...",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "category_statistics": {
       "title": "Category Statistics",
@@ -138,7 +222,19 @@
         "  Included in actions:        0",
         ""
       ],
-      "bottom": "Press any key to continue"
+      "bottom": "Press any key to continue",
+      "keys": [
+        "Help",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
     },
     "category_text_matching": {
       "title": "Advanced Settings for Calls;Phone;Telephon...",
@@ -161,7 +257,19 @@
         "  Category can have new children:             Global (Yes)",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "category_text_matching_long": {
       "title": "Advanced Settings for Miscellaneous Activi...",
@@ -184,7 +292,19 @@
         "  Category can have new children:             No -",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "column_add": {
       "title": "Column Add",
@@ -206,7 +326,19 @@
         "",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "column_properties": {
       "title": "Column Properties",
@@ -220,7 +352,19 @@
         "",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "column_properties_date": {
       "title": "Column Properties",
@@ -241,7 +385,19 @@
         "                          10/25/26",
         "                         ###########"
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "customize": {
       "title": "Utilities Customize",
@@ -262,7 +418,19 @@
         "  Confirm mode:             Yes",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "display_format": {
       "title": "Display Format",
@@ -283,7 +451,19 @@
         "                          10/25/26 9:52am",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "execute": {
       "title": "Execute",
@@ -296,7 +476,19 @@
         "  Apply actions to:    New assignments only",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "file_properties": {
       "title": "File Properties",
@@ -318,7 +510,19 @@
         "  Update defaults:        ...",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "file_statistics": {
       "title": "File Statistics",
@@ -333,7 +537,19 @@
         "   Average categories/item:        5",
         ""
       ],
-      "bottom": "Press any key to continue"
+      "bottom": "Press any key to continue",
+      "keys": [
+        "Help",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
     },
     "global_date_settings": {
       "title": "Global Date Settings",
@@ -355,7 +571,19 @@
         "",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "global_protection": {
       "title": "Global Protection Settings",
@@ -370,7 +598,19 @@
         "  Seal the file:                           ...",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "input_format": {
       "title": "Input Format",
@@ -381,7 +621,19 @@
         "  Input clock:           12 hr",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "item_column_properties": {
       "title": "Item Column Properties",
@@ -394,7 +646,19 @@
         "  Link with other sections: Yes",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "item_properties": {
       "title": "Item Properties",
@@ -413,7 +677,19 @@
         "    Miscellaneous Project",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "macro_properties": {
       "title": "Macro Properties",
@@ -435,7 +711,19 @@
         "  Macro can override protection:  Yes ( )",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "questions": {
       "title": "Questions",
@@ -446,7 +734,19 @@
         "  ?#  People:Mattias",
         "   #"
       ],
-      "bottom": "Press ENTER to accept"
+      "bottom": "Press ENTER to accept",
+      "keys": [
+        "Help",
+        "Edit",
+        "",
+        "",
+        "",
+        "Props",
+        "",
+        "",
+        "",
+        ""
+      ]
     },
     "search": {
       "title": "Search",
@@ -458,7 +758,19 @@
         "  Ignore case:   Yes",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "section_add": {
       "title": "Section Add",
@@ -474,7 +786,19 @@
         "",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "section_properties": {
       "title": "Section Properties",
@@ -490,7 +814,19 @@
         "",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "section_sort": {
       "title": "Item Sorting in Current Section",
@@ -511,7 +847,19 @@
         "",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "show_schedule": {
       "title": "Show Schedule",
@@ -525,7 +873,19 @@
         "",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "sort": {
       "title": "Item Sorting in All Sections",
@@ -546,7 +906,19 @@
         "",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "view_add": {
       "title": "View Add",
@@ -569,7 +941,19 @@
         "  View protection:       Global (No protection)",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "view_properties": {
       "title": "View Properties",
@@ -592,7 +976,19 @@
         "  View protection:       Global (No protection)",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "view_properties_datebook": {
       "title": "View Properties",
@@ -615,7 +1011,19 @@
         "  View protection:       Global (No protection)",
         ""
       ],
-      "bottom": "Press ENTER when done, ESC to cancel"
+      "bottom": "Press ENTER when done, ESC to cancel",
+      "keys": [
+        "Help",
+        "Edit",
+        "Choices",
+        "",
+        "",
+        "Props",
+        "",
+        "Default",
+        "",
+        ""
+      ]
     },
     "view_statistics": {
       "title": "View Statistics",
@@ -625,7 +1033,19 @@
         "   Sections in view:          4",
         "   Items in view:             4"
       ],
-      "bottom": "Press any key to continue"
+      "bottom": "Press any key to continue",
+      "keys": [
+        "Help",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
     }
   }
 }

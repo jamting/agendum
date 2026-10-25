@@ -122,6 +122,16 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
     })
   end
 
+  # the key bar's slots, in Agenda's words (checked in Agenda 2.0,
+  # 2026-10-25): F3 opens the profile, Agenda's CHOICES; F6 closes the box,
+  # Agenda's PROPS going back
+  @impl Box
+  def labels(_mode), do: %{profile: "Choices", set_value: "Values", done: "Props"}
+
+  # F4 VALUES only on an assignment, as Agenda's bar has it there alone
+  @impl Box
+  def idle_keys(state, mode), do: if(field(state, mode) == :assigned, do: [], else: [{:f, 4}])
+
   @impl Box
   def commands(_mode) do
     Box.settings_commands([

@@ -742,6 +742,12 @@ defmodule Agendum.TUI.Boxes.ViewProps do
       else: State.run(state, {:toggle_view_option, id, option})
   end
 
+  # on the Sections list Agenda's bar has no F8 DEFAULT (checked in Agenda
+  # 2.0, 2026-10-25): a list has no default
+  @impl Box
+  def idle_keys(state, mode),
+    do: if(field(state, mode) == :sections, do: [{:f, 8}, {:alt_f, 8}], else: [])
+
   @impl Box
   def field(_state, %{moving: moving}) when moving != nil, do: :moving
 

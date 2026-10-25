@@ -104,6 +104,21 @@ defmodule Agendum.TUI.Boxes.Box do
   """
   @callback defaults(State.t(), mode) :: %{atom => (State.t() -> State.t())}
 
+  @doc """
+  The short labels (at most seven characters, Agenda's) of the box's own
+  commands that its keymap binds to a function key, for the key bar's
+  slots (ADR 0045): `%{set_value: "Values"}`. The labels every box shares
+  (`slot/4`) need not be given; by default none of its own.
+  """
+  @callback labels(mode) :: %{atom => String.t()}
+
+  @doc """
+  The function keys the box binds that do nothing on the highlighted
+  field, whose slots the key bar leaves empty there, as Agenda's (F4
+  Values only on Item Properties' assignments); by default none.
+  """
+  @callback idle_keys(State.t(), mode) :: [term]
+
   # The boxes, by their mode's type. A module holds a box's
   # name only (no call at compile time), so the boxes and this module can
   # refer to each other.
@@ -249,6 +264,63 @@ defmodule Agendum.TUI.Boxes.Box do
       nil -> box.handle(state, mode, key)
       id -> box.run(state, mode, id)
     end
+  end
+
+  # --- the key bar's slots --------------------------------------------------------
+
+  # Agenda's labels for the commands boxes share (checked in Agenda 2.0,
+  # 2026-10-25: "Help", "Edit", "Choices", "Props", "Default"), whichever
+  # box binds them
+  @labels %{
+    help: "Help",
+    edit: "Edit",
+    choices: "Choices",
+    choose: "Choices",
+    pick: "Choices",
+    pick_head: "Choices",
+    properties: "Props",
+    default: "Default",
+    default_all: "DfltAll"
+  }
+
+  @doc """
+  What the function key `key` shows in its slot of the key bar while
+  `box` is on top as `mode` (ADR 0045): `{label, name}` of the command the
+  box's keymap binds it to, or else of the keys every box shares (F1 Help;
+  in a box of settings F3 Choices, and F8 Default and ALT-F8 DfltAll when
+  it has defaults); `{"", ""}` when the key does nothing on the
+  highlighted field (`c:idle_keys/2`).
+  """
+  @spec slot(module, State.t(), mode, term) :: {String.t(), String.t()}
+  def slot(box, state, mode, key) do
+    keymap = box.keymap(mode)
+    id = Map.get(keymap, key) || shared(box, state, mode, keymap, key)
+    label = id && (Map.get(box.labels(mode), id) || Map.get(@labels, id))
+
+    if label == nil or key in box.idle_keys(state, mode),
+      do: {"", ""},
+      else: {label, command_name(box, mode, id, label)}
+  end
+
+  # a key of every box (`Agendum.TUI.Keymap`'s `:box`), where it works:
+  # Help everywhere, a setting's keys only in a box of settings (one whose
+  # SPACE changes the setting); in a list Agenda's bar has Help alone
+  defp shared(box, state, mode, keymap, key) do
+    id = Agendum.TUI.Keymap.lookup(:box, key)
+    settings? = Map.get(keymap, {:char, " "}) == :change
+
+    cond do
+      id == :help -> :help
+      not settings? -> nil
+      id == :choices -> :choices
+      id in [:default, :default_all] and box.defaults(state, mode) != %{} -> id
+      true -> nil
+    end
+  end
+
+  # the command's fuller name, from the box's list, for the fuller labels
+  defp command_name(box, mode, id, label) do
+    Enum.find_value(box.commands(mode), label, fn {cid, name, _} -> cid == id && name end)
   end
 
   # --- the keys of a settings box ----------------------------------------------
@@ -408,6 +480,10 @@ defmodule Agendum.TUI.Boxes.Box do
       def about(_state, _mode), do: nil
       @impl true
       def defaults(_state, _mode), do: %{}
+      @impl true
+      def labels(_mode), do: %{}
+      @impl true
+      def idle_keys(_state, _mode), do: []
 
       defoverridable width: 2,
                      field: 2,
@@ -417,7 +493,9 @@ defmodule Agendum.TUI.Boxes.Box do
                      run: 3,
                      typing?: 2,
                      about: 2,
-                     defaults: 2
+                     defaults: 2,
+                     labels: 1,
+                     idle_keys: 2
     end
   end
 end
