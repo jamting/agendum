@@ -51,7 +51,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Set or cancel an alarm (Item Alarm)                                                             | ALT-A                         | ⌥a, or menu Item ▸ Alarm                                    |
 | Macros: the macro manager; in Learn mode, stop recording / run the last macro again             | ALT-F3 / ALT-Z                | — / ⌥z                                           |
 | In the macro manager: new macro; learn its keystrokes; run it                                   | INS; F7; ENTER                | **CTRL-N** or type its name; —                             |
-| In the macro manager: edit the keystrokes; properties (attach to a key, where it runs); delete; sort; move | F2; F6; DEL; ALT-F5; ALT-↑ / ALT-↓ | —; fn-⌫; —; ⌥↑ / ⌥↓                       |
+| In the macro manager: edit the keystrokes; properties (attach to a key, where it runs); delete; sort; move | F2; F6; DEL or F4; ALT-F5; ALT-↑ / ALT-↓ | —; fn-⌫ or F4; —; ⌥↑ / ⌥↓                 |
 | Pop-up calendar: pick a date (in a date column) / look one up (anywhere in a view)              | F3 / ALT-C                    | — / ⌥c                                           |
 | In a Star column: star or unstar; in a Yes/No column: yes or no (R56)                           | SPACE; Y / N                  | —                                                                     |
 | In a Category note column: type the line; edit it; empty it (R56)                               | type; F2; DEL                 | CTRL-E for F2; fn-⌫ for DEL                                           |

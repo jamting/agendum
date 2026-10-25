@@ -265,6 +265,21 @@ defmodule Agendum.TUI.MacrosTest do
       assert names.(state) == ["Water"]
     end
 
+    # Agenda's macro manager (checked in Agenda 2.0, 2026-10-25): its help
+    # on the control panel, and its bar: F2 EditMac, F4 Delete, F6 Props,
+    # F7 Learn; F4 deletes as DEL does
+    test "Agenda's help and key bar; F4 deletes as DEL", %{state: state} do
+      state = press(state, {:alt_f, 3})
+      assert screen(state) =~ "Highlight the macro you want to run or change."
+      assert slots(state) =~ "F2 EditMac"
+      assert slots(state) =~ "F4 Delete"
+      assert slots(state) =~ "F6 Props"
+      assert slots(state) =~ "F7 Learn"
+
+      state = press(state, [{:f, 4}, "y"])
+      assert Agendum.Core.Database.macros(state.db) == []
+    end
+
     test "Properties renames", %{state: state} do
       state = press(state, [{:alt_f, 3}, {:f, 6}, {:f, 2}, {:ctrl, "u"}, "Watering", :enter])
       assert macro(state, "Watering")

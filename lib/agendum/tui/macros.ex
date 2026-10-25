@@ -162,6 +162,8 @@ defmodule Agendum.TUI.Macros do
       {:f, 2} => :edit,
       {:f, 6} => :properties,
       {:f, 7} => :learn,
+      # F4 DELETE, as Agenda's bar names it (checked in Agenda 2.0, 2026-10-25)
+      {:f, 4} => :delete,
       :delete => :delete,
       {:ctrl, "d"} => :delete,
       {:alt_f, 5} => :sort,
@@ -334,7 +336,7 @@ defmodule Agendum.TUI.Macros do
   # --- drawing -----------------------------------------------------------------------------------
 
   @impl Box
-  def title(_state, _mode), do: "Macros"
+  def title(_state, _mode), do: "Macro Manager"
 
   @impl Box
   def content(state, mode, _inner, max_rows) do
@@ -360,7 +362,16 @@ defmodule Agendum.TUI.Macros do
     ]
 
   @impl Box
-  def help, do: nil
+  # Agenda's words for the macro manager (checked in Agenda 2.0, 2026-10-25)
+  def help,
+    do:
+      "Highlight the macro you want to run or change. Press ENTER to run the macro, " <>
+        "INS to create one, F2 to edit an existing one."
+
+  # Agenda's key bar here: EditMac, Delete, Props, Learn
+  @impl Box
+  def labels(_mode),
+    do: %{edit: "EditMac", delete: "Delete", properties: "Props", learn: "Learn"}
 
   # each macro's name, and the key it is attached to
   defp lines(state, mode) do
