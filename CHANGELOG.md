@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.32.0 — 2026-10-25
+
+Settings boxes as in Lotus Agenda: their titles, words and a few habits, found by comparing every box with Agenda's own.
+
 - **Box titles as in Lotus Agenda**: "File Properties", "Item Properties", "Category Properties", "Section Properties" (no name in the title), "Global Date Settings", "Auto-assign Global Settings", "Utilities Customize", "Execute", "Item Sorting in All Sections" / "in Current Section", and a category's "Advanced Settings for Calls;Phone;Telephon...".
 - Settings in Agenda's words: **Ignore item text enclosed by**, **Set the item date from Done key** / **When key**, **Item statistics**, and Execute's **Apply conditions attached to category and children of**. These boxes write their labels as Agenda's, "Label:" with the values in a column.
 - The **Category, File and View Statistics** boxes close with any key, as Agenda's ("Press any key to continue").
