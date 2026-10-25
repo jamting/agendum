@@ -190,7 +190,12 @@ Done: Category properties of a date or numeric category as Agenda's (R6a, 2026-1
 
 - [ ] The rest of Agenda as the reference for texts (§ 8), after the menus (done 2026-10-23, `capture_menus.py` and the menu test): the labels in settings boxes, the key bar and messages, captured and compared step by step, each difference tagged. Long help lines are Lotus's text: mind them before going public (GITHUB.md § 7)
   - [x] The settings boxes captured and compared (2026-10-25, `capture_boxes.py`, `agenda_boxes_test.exs`): 96 differences in 25 boxes, each tagged; the owner chose Agenda's way for the four groups below
-  - [ ] The other boxes captured and compared: Display Format, Input Format, Datebook settings, Macro properties, the search boxes, Show Schedule, Questions, Column Add's choices (their titles are still ours, e.g. "Display format", "Macro properties: name")
+  - [x] Six more boxes captured and compared (2026-10-25): Display Format, Input Format, Item Column Properties, Search, Show Schedule (as Agenda's already), Macro Properties; 21 differences tagged, the owner choosing Agenda's way for the titles, Display Format, Macro Properties and Item Column Properties' Width
+  - [ ] Titles as Agenda's: Display Format, Input Format, Macro Properties, Search (change back, owner 2026-10-25)
+  - [ ] Display Format drawn as Agenda's, like a date column's part (change back, owner 2026-10-25)
+  - [ ] Macro Properties laid out as Agenda's: Contents ..., "Macro can be run from:" with View, Note, Category manager (change back, owner 2026-10-25)
+  - [ ] Item Column Properties: Agenda's Width row (change back, owner 2026-10-25)
+  - [ ] Still to capture: Datebook settings (a datebook view), Questions with suggestions waiting, Column Add's choices
   - [ ] Messages compared with Agenda's
 - [ ] No mode word when ready, and only Agenda's mode words elsewhere (a change back, tagged in the sitting of 2026-10-22: settle it with the owner before it is built; the owner tries it before the next is built on it)
 - [ ] View layout and symbols: no "Section:" line, a blank line between sections; ‼ done, ♪ note; exclusive families bracketed (┌ ├ └); * date categories and datebook views; the category manager without counts and tags

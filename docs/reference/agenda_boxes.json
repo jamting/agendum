@@ -264,6 +264,27 @@
       ],
       "bottom": "Press ENTER when done, ESC to cancel"
     },
+    "display_format": {
+      "title": "Display Format",
+      "rows": [
+        "",
+        "",
+        "",
+        "  #############################################################",
+        "                       Date Column Properties",
+        "",
+        "",
+        "  Display date and/or time:  Date time",
+        "  Show day of week:          No         Clock:            12 hr",
+        "  Date format:               MMDDYY     Show am/pm:       Yes",
+        "  Date separator:            /          Time separator:   :",
+        "",
+        "                          Formatted Sample",
+        "                          10/25/26 9:52am",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
     "execute": {
       "title": "Execute",
       "rows": [
@@ -351,6 +372,30 @@
       ],
       "bottom": "Press ENTER when done, ESC to cancel"
     },
+    "input_format": {
+      "title": "Input Format",
+      "rows": [
+        "",
+        "  Number order:          MDY",
+        "  Input date separator:  /",
+        "  Input clock:           12 hr",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "item_column_properties": {
+      "title": "Item Column Properties",
+      "rows": [
+        "",
+        "  Section head:   Unassigned",
+        "  Width:          56",
+        "  Set width:      Automatically",
+        "  Minimum width:  34",
+        "  Link with other sections: Yes",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
     "item_properties": {
       "title": "Item Properties",
       "rows": [
@@ -366,6 +411,40 @@
         "    No Priority Assigned",
         "    Unassigned",
         "    Miscellaneous Project",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "macro_properties": {
+      "title": "Macro Properties",
+      "rows": [
+        "",
+        "  Name:        Create/Update contact list",
+        "  Contents:    ...",
+        "  Macro file:",
+        "",
+        "  Attach to key:",
+        "",
+        "  Macro can be run from:",
+        "       View:                      Yes (V)",
+        "       Note:                      No",
+        "       Category manager:          No",
+        "",
+        "",
+        "  Macro is protected:             No",
+        "  Macro can override protection:  Yes ( )",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "search": {
+      "title": "Search",
+      "rows": [
+        "",
+        "  Search for:",
+        "  Match on:      Item text",
+        "  Direction:     Forward",
+        "  Ignore case:   Yes",
         ""
       ],
       "bottom": "Press ENTER when done, ESC to cancel"
@@ -417,6 +496,20 @@
         "  Secondary sort key (View default)",
         "    Sort on:    None",
         "",
+        "",
+        "",
+        ""
+      ],
+      "bottom": "Press ENTER when done, ESC to cancel"
+    },
+    "show_schedule": {
+      "title": "Show Schedule",
+      "rows": [
+        "",
+        "  Date category:  When",
+        "  Section head:   When",
+        "  Date:           10/25/26",
+        "  Filter:",
         "",
         "",
         ""

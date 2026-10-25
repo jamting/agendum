@@ -71,6 +71,16 @@ BOXES = {
     "customize": (["F10", "u", "c"], None),
     "execute": (["F10", "u", "e"], None),
     "alarm": (ITEM + ["F10", "i", "a"], None),
+    "display_format": (sub(FILE, "Global date settings") + [("goto", "Display format"), "F3"], None),
+    "input_format": (
+        sub(FILE, "Global date settings") + [("goto", "Display format"), "RIGHT", "F3"],
+        None,
+    ),
+    "item_column_properties": (ITEM + ["F10", "v", "v", "c", "p"], None),
+    "search": (["AF6"], None),
+    # PLANNER already has a Show view: Agenda asks to replace it first
+    "show_schedule": (["F10", "u", "s", "s", "ENTER"], None),
+    "macro_properties": (["AF3", "F6"], None),
 }
 
 BOTTOM = re.compile(r"#{2,} ?(Press [^#]*?) ?#{2,}")
