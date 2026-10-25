@@ -104,7 +104,17 @@ defmodule Agendum.TUI.Modes do
     searching: [:search],
     section_move: [:cursor_key, :from, :to, :view_id],
     section_props: [:adding, :choice, :cursor, :opened, :sidx, :typing],
-    select_file: [:cursor, :dates, :dir, :entries, :extensions, :filter, :line],
+    select_file: [
+      :cursor,
+      :dates,
+      :describe,
+      :descriptions,
+      :dir,
+      :entries,
+      :extensions,
+      :filter,
+      :line
+    ],
     sort: [:cursor, :opened, :remembered, :scope],
     splash: [:until],
     view_props: [:back, :choice, :cursor, :moving, :opened, :typing, :view_id],

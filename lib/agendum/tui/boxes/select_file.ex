@@ -11,7 +11,8 @@ defmodule Agendum.TUI.Boxes.SelectFile do
     * ↑ ↓ PGUP PGDN HOME END move; typing narrows the list to names
       containing what is typed (BACKSPACE takes a letter back)
     * ENTER opens a folder, or puts the file in the prompt
-    * F7 shows when each was last changed
+    * F7 shows when each was last changed; F8, its description (File
+      Properties ▸ File description, R82), read from the files
     * ESC goes back to the prompt as it was
 
   The shell reads folders (`{:list_dir, dir}`, answered by
@@ -68,10 +69,20 @@ defmodule Agendum.TUI.Boxes.SelectFile do
       cursor: 0,
       filter: "",
       dates: false,
+      describe: false,
+      descriptions: nil,
       line: state.edit.line
     }
 
     state |> State.push(mode) |> State.effect({:list_dir, dir})
+  end
+
+  @doc "The files' descriptions the shell read for F8, for the box showing that folder."
+  def described(state, dir, descriptions) do
+    case Enum.find_index(state.modes, &match?(%{type: :select_file, dir: ^dir}, &1)) do
+      nil -> state
+      i -> %{state | modes: List.update_at(state.modes, i, &%{&1 | descriptions: descriptions})}
+    end
   end
 
   @doc "The shell's listing of a folder, for the box showing it."
@@ -98,7 +109,8 @@ defmodule Agendum.TUI.Boxes.SelectFile do
     folder. Type to narrow the list; BACKSPACE takes a letter back.
 
     ENTER opens the highlighted folder, or takes the file; F7 shows or hides
-    the dates. ESC goes back to the prompt as it was.
+    the dates, F8 the files' descriptions. ESC goes back to the prompt as
+    it was.
     """
   end
 
@@ -122,6 +134,7 @@ defmodule Agendum.TUI.Boxes.SelectFile do
       :home => :first,
       :end => :last,
       {:f, 7} => :dates,
+      {:f, 8} => :describe,
       :enter => :open,
       :esc => :close
     }
@@ -129,7 +142,11 @@ defmodule Agendum.TUI.Boxes.SelectFile do
 
   @impl Box
   def commands(_mode) do
-    [{:open, "Open", "Open the file or folder"}, {:dates, "Dates", "Show or hide the dates"}] ++
+    [
+      {:open, "Open", "Open the file or folder"},
+      {:dates, "Dates", "Show or hide the dates"},
+      {:describe, "Descrp", "Show or hide the files' descriptions"}
+    ] ++
       Box.list_moves() ++
       [
         {:page_up, "Page up", "Ten up"},
@@ -141,6 +158,16 @@ defmodule Agendum.TUI.Boxes.SelectFile do
   @impl Box
   def run(state, mode, :close), do: back(state, mode.line)
   def run(state, mode, :dates), do: State.put_mode(state, %{mode | dates: not mode.dates})
+
+  # the descriptions are read once a folder, the first time they are shown
+  def run(state, mode, :describe) do
+    state = State.put_mode(state, %{mode | describe: not mode.describe})
+
+    if not mode.describe and mode.descriptions == nil and is_list(mode.entries),
+      do: State.effect(state, {:read_descriptions, mode.dir, file_names(mode)}),
+      else: state
+  end
+
   def run(state, mode, :open), do: choose(state, mode, Enum.at(rows(mode), mode.cursor))
 
   def run(state, mode, id) do
@@ -169,7 +196,15 @@ defmodule Agendum.TUI.Boxes.SelectFile do
 
   defp go(state, mode, dir) do
     state
-    |> State.put_mode(%{mode | dir: dir, entries: :reading, cursor: 0, filter: ""})
+    |> State.put_mode(%{
+      mode
+      | dir: dir,
+        entries: :reading,
+        cursor: 0,
+        filter: "",
+        descriptions: nil,
+        describe: false
+    })
     |> State.effect({:list_dir, dir})
   end
 
@@ -192,6 +227,10 @@ defmodule Agendum.TUI.Boxes.SelectFile do
 
   def rows(_mode), do: []
 
+  # the Agendum files listed (not folders), whose descriptions F8 reads
+  defp file_names(mode),
+    do: for(%{dir?: false, name: name} <- rows(%{mode | filter: ""}), do: name)
+
   # the folder, its start left out when long
   @impl Box
   def title(state, mode) do
@@ -211,7 +250,7 @@ defmodule Agendum.TUI.Boxes.SelectFile do
       |> lines(mode, max_rows)
       |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
 
-    rows ++ [[{:box, " ENTER opens · type to narrow · F7 dates · ESC back"}]]
+    rows ++ [[{:box, " ENTER opens · type to narrow · F7 dates · F8 descriptions · ESC back"}]]
   end
 
   @impl Box
@@ -220,6 +259,7 @@ defmodule Agendum.TUI.Boxes.SelectFile do
       {"ENTER", "Open", "Open the folder or pick the file"},
       {"type", "Narrow", "Narrow the list"},
       {"F7", "Dates", "Show the dates"},
+      {"F8", "Descrp", "Show the descriptions"},
       {"ESC", "Back", "Back to the prompt"}
     ]
 
@@ -262,10 +302,16 @@ defmodule Agendum.TUI.Boxes.SelectFile do
   defp row_text(state, mode, row) do
     name = if row.dir?, do: row.name <> "/", else: row.name
 
-    if mode.dates and row.modified,
-      do:
+    cond do
+      mode.describe and not row.dir? ->
+        Agendum.TUI.Terminal.Draw.pad(name, 36) <> Map.get(mode.descriptions || %{}, row.name, "")
+
+      mode.dates and row.modified ->
         Agendum.TUI.Terminal.Draw.pad(name, 36) <>
-          DateFormat.datetime(row.modified, state.db.date_format),
-      else: name
+          DateFormat.datetime(row.modified, state.db.date_format)
+
+      true ->
+        name
+    end
   end
 end

@@ -456,6 +456,21 @@ defmodule Agendum.Store do
   end
 
   @doc """
+  Each file's description (File Properties ▸ File description, R82), for
+  the Select File box's F8: read from the files named in `dir`; "" for one
+  without, or that is not an Agendum file.
+  """
+  @spec descriptions(Path.t(), [String.t()]) :: %{String.t() => String.t()}
+  def descriptions(dir, names) do
+    Map.new(names, fn name ->
+      case load(Path.join(dir, name)) do
+        {:ok, db} -> {name, db.description}
+        _ -> {name, ""}
+      end
+    end)
+  end
+
+  @doc """
   Copies a file to its backup beside it, `NAME.agendum.bak`, replacing the
   last one (File Properties ▸ Make backup on open, R82; Agenda's `.BG`).
   The backup is not listed among the files to open; renamed to

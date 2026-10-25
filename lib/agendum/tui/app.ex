@@ -258,6 +258,10 @@ defmodule Agendum.TUI.App do
   defp perform(state, {:save_copy, path, db}),
     do: Update.copied(state, path, Store.save(db, path, :any))
 
+  # F8 in the Select File box (R82)
+  defp perform(state, {:read_descriptions, dir, names}),
+    do: Update.descriptions_read(state, dir, Store.descriptions(dir, names))
+
   # File Properties ▸ Make backup on open (R82)
   defp perform(state, {:backup_file, path}), do: Update.backed_up(state, path, Store.backup(path))
 

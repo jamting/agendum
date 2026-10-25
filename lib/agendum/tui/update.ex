@@ -802,6 +802,11 @@ defmodule Agendum.TUI.Update do
   def note_text_read(state, _path, {:error, _reason}),
     do: State.error(state, Agendum.TUI.Messages.text(:cannot_open))
 
+  @doc "The files' descriptions read for the Select File box's F8 (R82)."
+  defdelegate descriptions_read(state, dir, descriptions),
+    to: Agendum.TUI.Boxes.SelectFile,
+    as: :described
+
   @doc "After the shell backed up the file opened (`{:backup_file, path}`, R82): silent."
   @spec backed_up(State.t(), String.t(), :ok | {:error, term}) :: State.t()
   def backed_up(state, _path, :ok), do: state

@@ -77,6 +77,24 @@ defmodule Agendum.TUI.SelectFileTest do
     assert state.edit.line.text == "half typed"
   end
 
+  # Agenda's F8 DESCRP (User's Guide 22-4): each file's description (R82)
+  test "F8 shows each file's description, read from the files", %{state: state, dir: dir} do
+    {:ok, db} = Agendum.Core.set_description(Agendum.Core.new_file(), "Rabbit's garden")
+    :ok = Store.save(db, Path.join(dir, "rabbit.agendum"))
+
+    state = press(state, [{:ctrl, "o"}, {:f, 3}]) |> serve()
+    {state, effects} = Update.handle(state, {:f, 8})
+    assert [{:read_descriptions, ^dir, names}] = effects
+    assert "rabbit.agendum" in names
+
+    state = Update.descriptions_read(state, dir, Store.descriptions(dir, names))
+    assert screen(state) =~ ~r/rabbit\.agendum +Rabbit's garden/
+    # a file that is not an Agendum file has none
+    assert Store.descriptions(dir, ["old.agenda"]) == %{"old.agenda" => ""}
+
+    refute screen(press(state, {:f, 8})) =~ "Rabbit's garden"
+  end
+
   test "each prompt lists its own kind of file", %{state: state} do
     state = press(state, [{:f, 10}, "f", "t", "i", {:f, 3}]) |> serve()
     assert rows(state) == ["..", "Garden", "export.json"]

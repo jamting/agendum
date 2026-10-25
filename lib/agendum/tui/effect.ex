@@ -22,6 +22,7 @@ defmodule Agendum.TUI.Effect do
   #   {:save_copy, path, db}    a copy or template of it (R82)
   #   {:trash_file, path}       another file to the system's Trash (R82)
   #   {:backup_file, path}      the file opened, copied to NAME.agendum.bak (R82)
+  #   {:read_descriptions, dir, names}  files' descriptions, for F8 (R82)
   #   {:write_text, …} {:import_json, …} {:read_note_text, …} {:read_opml, …}
   #   {:list_dir, dir}          a folder for the file list
   #   {:save_preferences, …}    the preferences file (R52)
@@ -36,6 +37,7 @@ defmodule Agendum.TUI.Effect do
           | {:save_copy, String.t(), Database.t()}
           | {:trash_file, String.t()}
           | {:backup_file, String.t()}
+          | {:read_descriptions, String.t(), [String.t()]}
           | {:load, String.t()}
           | {:open_or_create, String.t()}
           | {:write_text, String.t(), String.t()}
@@ -84,6 +86,7 @@ defmodule Agendum.TUI.Effect do
       do: true
 
   def known?({:write_text, path, _text}) when is_binary(path), do: true
+  def known?({:read_descriptions, dir, names}) when is_list(names), do: is_binary(dir)
   def known?({:save_preferences, path, _prefs}) when is_binary(path), do: true
 
   def known?({tag, id, url}) when tag in [:fetch_feed, :fetch_calendar] and is_binary(url),
