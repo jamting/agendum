@@ -23,6 +23,7 @@ defmodule Agendum.TUI.Modes do
   # back have `opened` (`Agendum.TUI.Boxes.BoxCancel`); boxes with fields
   # to type in have `typing` (`Agendum.TUI.Boxes.FieldTyping`).
   @modes [
+    abandon: [:cursor, :revert],
     action_box: [:clear, :cursor, :line, :owner, :target],
     ag_import: [:report, :source, :top],
     auto_assign: [:cursor, :opened],

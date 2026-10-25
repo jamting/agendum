@@ -76,6 +76,8 @@ defmodule Agendum.TUI.Update.Actions do
       else: Prompts.prompt(state, "Save file as:", :save_as)
   end
 
+  defp do_perform(state, :abandon, _), do: Agendum.TUI.Boxes.AbandonBox.open(state)
+
   defp do_perform(state, :save_as, _),
     do: Prompts.prompt(state, "Save file as:", :save_as, state.path || "")
 

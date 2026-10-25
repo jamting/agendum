@@ -63,6 +63,7 @@ defmodule Agendum.TUI.Menu do
        [
          {"Retrieve", "Open an Agendum file, or name a new one to create it (CTRL-O)", :retrieve},
          {"Save", "Save the current file (CTRL-S)", :save},
+         {"Abandon", "Discard current changes to the file.", :abandon},
          {"Write", "Write the file under a new name (Save As)", :save_as},
          {"Properties", "How the file displays dates and times", :file_props},
          {"Transfer",

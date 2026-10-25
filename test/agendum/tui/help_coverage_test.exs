@@ -17,6 +17,7 @@ defmodule Agendum.TUI.HelpCoverageTest do
   # setting's help (`Box.default_about/3`), which is enough for them so
   # far. A new box writes its own `about/2` or joins this list on purpose.
   @default_about_enough [
+    Agendum.TUI.Boxes.AbandonBox,
     Agendum.TUI.Boxes.ActionBox,
     Agendum.TUI.Boxes.AutoAssignBox,
     Agendum.TUI.Boxes.CategoryMatchBox,

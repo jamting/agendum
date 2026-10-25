@@ -39,8 +39,6 @@ defmodule Agendum.TUI.AgendaMenusTest do
       {:not_built, "Show Circular (AGENDA_PARITY § The steps)"},
     "Category manager menu ▸ Print: missing" =>
       {:out_of_scope, "printing the category hierarchy (SPEC § 6)"},
-    "View menu ▸ File ▸ Abandon: missing" =>
-      {:not_built, "back to the file as last saved (AGENDA_PARITY step 5)"},
     "View menu ▸ File ▸ Maintenance: missing" =>
       {:change_back,
        "MakeCopy in Write's place (roadmap); Erase not built; Compress and Reservation out of scope"},

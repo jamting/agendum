@@ -169,6 +169,7 @@ defmodule Agendum.TUI.Boxes.Box do
     questions: Agendum.TUI.Boxes.QuestionsBox,
     range_filter: Agendum.TUI.Boxes.RangeFilterBox,
     run_by_name: Agendum.TUI.Boxes.RunByName,
+    abandon: Agendum.TUI.Boxes.AbandonBox,
     schedule: Agendum.TUI.Boxes.ScheduleBox,
     set_alarm: Agendum.TUI.Boxes.SetAlarmBox,
     scope: Agendum.TUI.Update.Marked,
