@@ -289,7 +289,7 @@ defmodule Agendum.TUI.Render.ControlPanel do
   # in a note (on top), as Agenda: the line the cursor is on, INS and EDIT,
   # without the time (R64a)
   defp indicators(state, base) do
-    marks = "  #{if state.alarm_rang, do: "@ ", else: ""}#{questions_marker(state)}"
+    marks = "  #{questions_marker(state)}"
 
     case State.mode(state) do
       %{type: :note, edit: edit} when state.edit == nil and state.macro.learning == nil ->
@@ -357,14 +357,16 @@ defmodule Agendum.TUI.Render.ControlPanel do
     # has a note (User's Guide 12-2)
     note = if Agendum.TUI.Layout.note_here?(state), do: "♪", else: " "
 
-    # ♦ while any item is marked, four columns further on (Agenda's)
+    # @ while past alarms are listed, two columns on, and ♦ while any item
+    # is marked, two more on (Agenda's; checked 2026-10-25)
+    rang = if Agendum.Core.alarm_list(state.db).past == [], do: " ", else: "@"
     marked = if Enum.any?(Database.items(state.db), & &1.marked), do: "♦", else: " "
 
-    # (columns 73, 74 and 78 of 80, as Agenda's)
+    # (columns 73, 74, 76 and 78 of 80, as Agenda's)
     marks =
-      if value_marker(state) <> note <> marked == "   ",
+      if value_marker(state) <> note <> rang <> marked == "    ",
         do: "",
-        else: value_marker(state) <> note <> "   " <> marked <> "  "
+        else: value_marker(state) <> note <> " " <> rang <> " " <> marked <> "  "
 
     right = auto <> marks
     # at least two spaces between the view's name and filter and the rest

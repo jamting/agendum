@@ -10,6 +10,7 @@ defmodule Agendum.TUI.AlarmsTest do
   end
 
   defp current(state), do: Layout.current_row(state).item
+  defp line(state, n), do: state |> screen() |> String.split("\n") |> Enum.at(n)
 
   test "the title bar shows the date and time", %{state: state} do
     assert screen(state) =~ "10/08/26  10:00am"
@@ -77,7 +78,7 @@ defmodule Agendum.TUI.AlarmsTest do
     {state, effects} = Update.tick(state, ~N[2026-10-08 13:55:00])
     assert effects == [{:sound, :alarm}]
     assert screen(state) =~ "Alarm: Personnel meeting at 2:00"
-    assert state.alarm_rang
+    assert line(state, 1) =~ ~r/@ *$/
     assert current(state).alarm_minutes == nil
   end
 
@@ -87,7 +88,8 @@ defmodule Agendum.TUI.AlarmsTest do
     {state, _} = Update.tick(state, ~N[2026-10-08 14:00:00])
 
     state = press(state, [{:f, 10}, "u", "s", "a"])
-    refute state.alarm_rang
+    # opening the list leaves @: it goes when the past alarms are removed
+    assert line(press(state, List.duplicate(:esc, 4)), 1) =~ "@"
     screen = screen(state)
     assert screen =~ "Alarm list"
     assert screen =~ ~r/Review at 4pm.*rings 10\/08\/26 3:50pm/

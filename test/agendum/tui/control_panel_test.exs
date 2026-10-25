@@ -86,6 +86,21 @@ defmodule Agendum.TUI.ControlPanelTest do
     end
   end
 
+  # Agenda's alarm mark (checked in Agenda 2.0, 2026-10-25): @ in column
+  # 76 of the View line while the past alarms list an item, gone once
+  # they are all removed (not when the list is opened)
+  test "@ on the View line while there are past alarms", %{state: state} do
+    refute line(state, 1) =~ "@"
+    state = press(state, [:down, {:alt, "a"}, :enter])
+    item = Layout.current_row(state).item
+    {state, _} = Agendum.TUI.Update.tick(state, Core.alarm_at(state.db, item))
+    assert String.at(line(state, 1), 75) == "@"
+    refute line(state, 0) =~ "@"
+
+    state = %{state | db: Core.remove_past_alarm(state.db, item.id)}
+    refute line(state, 1) =~ "@"
+  end
+
   describe "while an item is typed" do
     # Agenda's: the File line, the date and EDIT where the time was
     # (checked in Agenda 2.0, 2026-10-25: "File: C:\\APPS\\AGENDA\\SS  10/25/26 EDIT")

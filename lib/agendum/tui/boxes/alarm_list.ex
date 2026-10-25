@@ -16,7 +16,7 @@ defmodule Agendum.TUI.Boxes.AlarmList do
   alias Agendum.TUI.State
   alias Agendum.TUI.Terminal.Draw
 
-  def open(state), do: State.push(%{state | alarm_rang: false}, %{type: :alarm_list, cursor: 0})
+  def open(state), do: State.push(state, %{type: :alarm_list, cursor: 0})
 
   @doc "The rows: `{:current, id}` and `{:past, id}`."
   def rows(state) do

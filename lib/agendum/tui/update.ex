@@ -404,11 +404,12 @@ defmodule Agendum.TUI.Update do
     end
   end
 
-  # alarms ringing: the message, the alarm's sound (unless the person
-  # turned sounds off), and `@` in the title until the alarm list is shown
+  # alarms ringing: the message and the alarm's sound (unless the person
+  # turned sounds off); `@` shows on the View line while past alarms are
+  # listed (`Render.ControlPanel`)
   defp ring(state, ids) do
     texts = Enum.map_join(ids, " · ", &state.db.items[&1].text)
-    state = %{state | alarm_rang: true} |> State.info("Alarm: " <> texts)
+    state = State.info(state, "Alarm: " <> texts)
 
     %{
       state
