@@ -82,7 +82,8 @@ defmodule Agendum.TUI.ViewManagerBoxTest do
 
     # another view shown, the marker goes with it
     state = press(state, [:enter, {:f, 8}])
-    assert screen(state) =~ ~r/►\* This Week/
+    # a space between ► and the datebook * (the owner, 2026-10-25)
+    assert screen(state) =~ ~r/► \* This Week/
   end
 
   describe "listed by recently used (F5, R68)" do
@@ -92,7 +93,7 @@ defmodule Agendum.TUI.ViewManagerBoxTest do
     # the views by name, in the order the list shows them
     defp listed(state) do
       for line <- String.split(screen(state), "\n"),
-          [_, name] <- [Regex.run(~r/│ [ ↑↓] [ ►][ *] (\S[^│]*?)\s*│/u, line)],
+          [_, name] <- [Regex.run(~r/│ [ ↑↓][ ►] [ *] (\S[^│]*?)\s*│/u, line)],
           do: name
     end
 

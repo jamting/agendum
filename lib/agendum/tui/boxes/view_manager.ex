@@ -280,7 +280,8 @@ defmodule Agendum.TUI.Boxes.ViewManager do
             _ -> [{if(i == mode.cursor, do: :box_selected, else: :box), v.name}]
           end
 
-        [{:box, " #{arrow} #{current}#{star} "}] ++ name
+        # ► a column left of *, so the two stand apart (the owner, 2026-10-25)
+        [{:box, " #{arrow}#{current} #{star} "}] ++ name
       end)
 
     lines ++ find

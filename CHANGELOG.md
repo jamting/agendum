@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.41.1 — 2026-10-25
+
+- The view manager's **►** (with Extras on) stands a column further left, apart from a datebook view's *.
+
 ## 0.41.0 — 2026-10-25
 
 The control panel's symbols as in Lotus Agenda.
