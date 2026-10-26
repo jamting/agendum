@@ -4,6 +4,14 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.57.0 — 2026-10-26
+
+The help's first batch of topics.
+
+- **Sixteen topics on items and categories**: Items, Categories, The Category Hierarchy, Category Manager, entering, editing, assigning, marking, discarding and moving them, the assignment profile, marking done and automatic completion. Each in Agenda's layout, with links.
+- **F3 Help Index** is Agenda's kind: a letter's page lists keywords, each with what is under it ("Add: Categories, Items"); boxes are also listed under Boxes and menus under Menus.
+- Boxes have Agenda's names in the help ("Category Properties Box", "Section Properties Box").
+
 ## 0.56.0 — 2026-10-26
 
 Lotus Agenda's help: the frame (the topics come in batches next).
