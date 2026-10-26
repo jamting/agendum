@@ -1,0 +1,25 @@
+Enter Dates and Times
+
+PURPOSE       Type dates as you would say them; Agendum works out
+              the day.
+
+WHERE         * In an item's text: the first date becomes its When
+                date ("Call Kanga next Tuesday").
+              * In a date column, or with ALT-F2 (WHEN) for the
+                highlighted item.
+              * In a date filter, a datebook view, a schedule.
+
+WHAT YOU      today, tomorrow, friday, next week, this month
+CAN TYPE      november 20, 11/20, 2026-11-20
+              3pm, 15:30, noon, morning, tonight, in 2 hours
+              every monday, every 2 weeks, the 15th of each month
+
+NOTE          A weekday alone is its next one (today, if today). A
+              date without a year is in the future. A time without
+              am or pm falls in the day: "3:30" is 3:30pm. Global
+              date settings (File Properties) set the week, the
+              year and the times of morning and evening.
+
+SEE ALSO      **Use the Pop-Up Calendar**  **Date Columns**
+              **Global Date Settings Box**
+INDEX         Dates > Enter; Times > Enter; Recurring dates; When > Set

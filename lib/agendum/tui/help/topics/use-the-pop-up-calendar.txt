@@ -1,0 +1,20 @@
+Use the Pop-Up Calendar
+
+PURPOSE       Pick a date from a month's calendar, or just look one
+              up.
+
+STEPS         * F3 (CHOICES) in a date column: the calendar on the
+                entry's date (or today); ENTER puts the highlighted
+                date in.
+              * ALT-C anywhere in a view: the calendar, to look.
+
+KEYS          ← → ↑ ↓          A day, a week
+              HOME / END       First / last day of the month
+              PGUP / PGDN      A month back / ahead
+              CTRL-← / CTRL-→  A year back / ahead
+              F6               Add a time
+              a date typed     Go there
+              ESC              Close, changing nothing
+
+SEE ALSO      **Calendar Box**  **Date Columns**
+INDEX         Calendar > Pop-up; Dates > Pick from a calendar

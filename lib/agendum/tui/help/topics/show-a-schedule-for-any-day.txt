@@ -1,0 +1,16 @@
+Show a Schedule for Any Day
+
+PURPOSE       List one day's items in the Show View: what is on for
+              Thursday.
+
+STEPS         1. F10 Utilities Show Sched.
+              2. Date: type it, or F3 for the calendar (today at
+                 first).
+              3. Date category (When) and Filter if you like, then
+                 ENTER.
+
+NOTE          ALT-B then browses to the days before and after.
+
+SEE ALSO      **Schedule Box**  **Create a Show View**
+              **Browse Through Dates**
+INDEX         Schedule > Show; Dates > Schedule; Show View > Schedule

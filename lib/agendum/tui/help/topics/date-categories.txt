@@ -1,0 +1,17 @@
+Date Categories
+
+PURPOSE       A date category holds a date (and perhaps a time) for
+              each item, rather than child categories.
+
+THE THREE     Entry    When the item was typed, set by itself
+EVERY FILE    When     When it is due: read from its text ("next
+HAS                    Friday at 3pm"), or set by hand
+              Done     When it was marked done (F4)
+
+NOTE          You can make your own, such as Due or Review: see
+              **Create a Date Category**. A date category has no
+              children and matches no text.
+
+SEE ALSO      **Enter Dates and Times**  **Date Columns**
+              **Create a Datebook View**
+INDEX         Dates > Categories; Categories > Date; When; Entry; Done

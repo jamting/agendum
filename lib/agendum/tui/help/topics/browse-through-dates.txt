@@ -1,0 +1,21 @@
+Browse Through Dates
+
+PURPOSE       Turn the pages of a datebook view, or move a view's
+              date filter, to earlier or later dates.
+
+STEPS         1. Press ALT-B (BROWSE). BROWSE shows at the top
+                 right.
+              2. ← / → a period earlier or later (in a datebook,
+                 its period; with a filter, a day). With a filter,
+                 ↑ / ↓ also go a week, PGUP / PGDN a month,
+                 CTRL-PGUP / CTRL-PGDN a year. ALT-F5 goes to a
+                 typed date.
+              3. ENTER keeps the new dates, ESC goes back.
+
+NOTE          In a standard view, browsing needs a date filter on
+              the section or the view. The dates kept are fixed
+              ones: "today" becomes the date it was browsed to.
+
+SEE ALSO      **Browsing Dates**  **Create a Datebook View**
+              **Attach a Date Filter**
+INDEX         Browse > Dates; Dates > Browse

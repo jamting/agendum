@@ -1,0 +1,21 @@
+Set an Alarm for an Item
+
+PURPOSE       Have Agendum ring before an item's time comes.
+
+STEPS         1. Highlight the item.
+              2. Press ALT-A (or F10 Item Alarm).
+              3. Date category: When (SPACE for another; F3 lists
+                 them). Minutes before: 0 to 60.
+              4. ENTER.
+
+WHEN IT       The alarm tune plays, a message names the item, and
+RINGS         an @ shows on the View line until you look at the
+              alarm list (F10 Utilities Show Alarm).
+
+NOTE          ALT-A on an item with an alarm cancels it. An item
+              without a date takes the alarm too, and waits until
+              it has one. Alarms ring only while Agendum is open;
+              missed ones ring when the file is opened.
+
+SEE ALSO      **Set Alarm Box**  **Create a Show View**
+INDEX         Alarms > Set; Items > Alarm; Alarms > Cancel

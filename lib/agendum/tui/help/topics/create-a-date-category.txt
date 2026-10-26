@@ -1,0 +1,17 @@
+Create a Date Category
+
+PURPOSE       Keep another date with items, such as a review date or
+              a deadline.
+
+STEPS         1. Make the category (in the **Category Manager**, or
+                 as a column head).
+              2. F6 on it: Category Properties.
+              3. Type: Date. ENTER.
+
+NOTE          Children whose names are dates ("today", "November
+              20") become their items' dates; the others are
+              dropped, after a question. It cannot change back.
+              Show it as a date column to type the dates.
+
+SEE ALSO      **Date Categories**  **Category Properties Box**
+INDEX         Dates > Create a category; Categories > Make a date category

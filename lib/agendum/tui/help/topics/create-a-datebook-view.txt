@@ -1,0 +1,23 @@
+Create a Datebook View
+
+PURPOSE       A view like a page of an appointment book: a section
+              for each hour, day or week, each showing what falls in
+              it. Pooh's would have one slot, marked "Smackerel".
+
+STEPS         1. F10 View Add, type a name, ENTER.
+              2. Choose Datebook.
+              3. Set it up, then ENTER:
+
+SETTINGS      Date category   Which date places the items (When)
+              Period          Day, Week, Month or Quarter
+              Interval        What each section covers (an hour, a
+                              day, a week …)
+              Start / End     The hours of a day, or days of a week
+              Base date on    Which period: "today", "next week" …
+
+NOTE          ALT-B browses to other periods. An End category shows
+              an item in every slot up to its end.
+
+SEE ALSO      **View Types**  **Browse Through Dates**
+              **View Properties Box**
+INDEX         Views > Datebook; Datebook views > Create; Appointments

@@ -107,7 +107,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Change Properties of a Section | ours: `change-properties-of-a-section.txt` (batch 2) |
 | Add a View | ours: `add-a-view.txt` (batch 2) |
 | Enter Categories | ours: `enter-categories.txt` (batch 1) |
-| Create a Date Category | open |
+| Create a Date Category | ours: `create-a-date-category.txt` (batch 3) |
 | Edit Categories | covered by Edit Items and Categories |
 | Select a Category | covered by Automatic Completion and Assign an Item to a Category |
 | Discard a Category | ours: `discard-a-category.txt` (batch 1) |
@@ -133,7 +133,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Views | ours: `views.txt` (tone sample) |
 | View Manager | ours: `view-manager.txt` (batch 2) |
 | Categories | ours: `categories.txt` (batch 1) |
-| Date Categories | open |
+| Date Categories | ours: `date-categories.txt` (batch 3) |
 | Unindexed Categories | ours: `unindexed-categories.txt` (batch 2) |
 | Notes | open |
 | View Types | ours: `view-types.txt` (batch 2) |
@@ -147,16 +147,16 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Actions | open |
 | Automatic Assignments | open |
 | Explicit and Conditional Assignments | open |
-| Use the Pop-Up Calendar | open |
+| Use the Pop-Up Calendar | ours: `use-the-pop-up-calendar.txt` (batch 3) |
 | Numeric Categories | ours: `numeric-categories.txt` (batch 2) |
 | Select a File | open |
-| Create a Datebook View | open |
+| Create a Datebook View | ours: `create-a-datebook-view.txt` (batch 3) |
 | Create a Show View | ours: `create-a-show-view.txt` (batch 2) |
-| Show a Schedule for Any Day | open |
+| Show a Schedule for Any Day | ours: `show-a-schedule-for-any-day.txt` (batch 3) |
 | Designate an Item as Done | ours: `designate-an-item-as-done.txt` (batch 1) |
 | Assignment Profile for an Item | ours: `assignment-profile-for-an-item.txt` (batch 1) |
-| Set an Alarm for an Item | open |
-| Enter Dates and Times | open |
+| Set an Alarm for an Item | ours: `set-an-alarm-for-an-item.txt` (batch 3) |
+| Enter Dates and Times | ours: `enter-dates-and-times.txt` (batch 3) |
 | Search for Text in Items and Notes | ours: `search-for-text-in-items-and-notes.txt` (batch 2) |
 | Change Screen Colors | open |
 | Attach an External File as a Note | left out: external note files (meeting 2026-10-25, § 5) |
@@ -167,7 +167,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Change the Value of a Condition or Action | open |
 | Attach a Date Condition | open |
 | Attach a Numeric Condition | open |
-| Browse Through Dates | open |
+| Browse Through Dates | ours: `browse-through-dates.txt` (batch 3) |
 | Alphabetize Categories | ours: `alphabetize-categories.txt` (batch 1) |
 | Reposition Names in a List | open |
 | Index | the frame: F3 Index |
