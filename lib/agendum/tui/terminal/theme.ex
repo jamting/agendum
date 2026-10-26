@@ -130,6 +130,10 @@ defmodule Agendum.TUI.Terminal.Theme do
       help_pane: {:black, :cyan},
       help_pane_title: {:blue, :cyan},
       help_frame: {:white, :blue},
+      # a topic's links, and the highlighted one, as Agenda's help (bright
+      # white on blue, white on red; checked in Agenda 2.0, 2026-10-26)
+      help_link: {:white, :blue},
+      help_link_selected: {:white, :red},
       splash_title: {:white, :cyan},
       splash_value: {:blue, :cyan}
     },
@@ -185,6 +189,8 @@ defmodule Agendum.TUI.Terminal.Theme do
       help_pane: "0;7",
       help_pane_title: "0;1;7",
       help_frame: "0",
+      help_link: "0;1",
+      help_link_selected: "0;1;7",
       splash_title: "0;1;7",
       splash_value: "0;4;7"
     }

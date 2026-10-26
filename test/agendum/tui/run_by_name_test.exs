@@ -90,7 +90,7 @@ defmodule Agendum.TUI.RunByNameTest do
   end
 
   test "F1 c narrows fuzzily too: azi finds Attach Zettel id", %{state: state} do
-    assert screen(press(state, [{:f, 1}, "c", "azi"])) =~ ~r/Attach Zettel id +CTRL-T/
+    assert screen(press(state, [{:f, 1}, {:f, 6}, :enter, "azi"])) =~ ~r/Attach Zettel id +CTRL-T/
   end
 
   # the rows of matches in the box: the lines between its input line and
@@ -119,7 +119,7 @@ defmodule Agendum.TUI.RunByNameTest do
 
   test "F1 in the box says how it works", %{state: state} do
     text = screen(press(state, [{:ctrl, "x"}, {:f, 1}]))
-    assert text =~ "HELP IN THIS BOX"
+    assert text =~ "Run By Name Box"
     assert text =~ "initials"
   end
 end

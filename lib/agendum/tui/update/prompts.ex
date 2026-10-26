@@ -228,6 +228,8 @@ defmodule Agendum.TUI.Update.Prompts do
     do: State.save(state, Agendum.Store.normalize_path(text), then: {:replace_file, command})
 
   defp prompt_action(state, :calendar_jump, text), do: CalendarBox.jump(state, text)
+  # F5 in the help (R65e)
+  defp prompt_action(state, :help_find, text), do: Agendum.TUI.HelpScreen.find(state, text)
 
   # an Agendum file's password (ADR 0046): it is opened again with it
   defp prompt_action(state, {:file_password, path}, text),

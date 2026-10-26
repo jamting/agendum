@@ -67,6 +67,9 @@ defmodule Agendum.TUI.Render.KeyBar do
 
   defp place(_state, nil), do: :view
 
+  # a help topic: Agenda's help bar (R65e)
+  defp place(_state, %{type: :help, page: :topic}), do: :help_topic
+
   defp place(_state, %{type: type}) when type in [:note, :catmgr, :viewmgr, :menu, :searching],
     do: type
 
@@ -96,6 +99,7 @@ defmodule Agendum.TUI.Render.KeyBar do
         # a box's slot is what the key does on its highlighted field
         {{:box, box, mode}, _} -> Agendum.TUI.Boxes.Box.slot(box, state, mode, key)
         {{:line, kind}, _} -> line_slot(kind, key)
+        {:help_topic, _} -> help_slot(key)
         {_, nil} -> command_slot(state, place, key)
         {_, macro} -> {String.slice(macro.name, 0, 7), macro.name}
       end
@@ -113,6 +117,23 @@ defmodule Agendum.TUI.Render.KeyBar do
     {:f, 7} => "PrevSel",
     {:f, 8} => "NextSel"
   }
+
+  # the help's bar, as Agenda's (checked in Agenda 2.0, 2026-10-26)
+  @help %{
+    {:f, 1} => "On Help",
+    {:f, 3} => "Index",
+    {:f, 5} => "Find",
+    {:f, 6} => "Keys",
+    {:f, 8} => "Review",
+    {:f, 9} => "Return"
+  }
+
+  defp help_slot(key) do
+    case Map.get(@help, key) do
+      nil -> {"", ""}
+      label -> {label, label}
+    end
+  end
 
   defp line_slot(:autoc, key) do
     case Map.get(@autoc, key) do
@@ -338,16 +359,12 @@ defmodule Agendum.TUI.Render.KeyBar do
   defp mode_keys(%{type: :help, page: :describe}),
     do: [{"any key", "Describe it"}, {"ESC", "Return"}]
 
-  defp mode_keys(%{type: :help, page: :all}),
-    do: [{"↑↓", "Scroll"}, {"any other key", "Return"}]
-
   defp mode_keys(%{type: :help}),
     do: [
-      {"↑↓", "Scroll"},
-      {"c", "Commands"},
-      {"d", "Describe key"},
-      {"a", "All keys"},
-      {"any other key", "Return"}
+      {"↑↓", "Link"},
+      {"ENTER", "Read"},
+      {"F8", "Review"},
+      {"F9", "Return"}
     ]
 
   defp mode_keys(%{type: :column_width}),

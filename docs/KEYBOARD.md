@@ -111,7 +111,9 @@ While typing text (on one line; in a note, the first two rows and CTRL-D; the ke
 | F5                                          | On an item's text: keep it and open the item's note (NOTE) |
 | F1                                          | The help; ESC comes back to the typing |
 
-The F1 help lists every key from the keymaps (F1 then `a`); a test checks that every key in them with a name (F-, ALT-, CTRL- and SHIFT-keys, ENTER, BACKSPACE, PGUP …) is in this guide.
+In the help (F1), Agenda's keys: ↑ ↓ ← → HOME END highlight a link in bold (a letter: the next link it begins), ENTER reads it, PGUP PGDN scroll, F1 How to Use Help, F3 the Help Index, F5 Find (then ALT-N / ALT-P through what it found), F6 Keys, F8 or BACKSPACE back through the topics read, F9 or ESC leave (R65e).
+
+The F1 help lists every key from the keymaps (F1 then F6 Keys); a test checks that every key in them with a name (F-, ALT-, CTRL- and SHIFT-keys, ENTER, BACKSPACE, PGUP …) is in this guide.
 
 ALT is ⌥ (Option) on a Mac: ALT-D (add section) is ⌥D, ALT-← is ⌥←. These keys need "Use Option as Meta key" (Terminal.app: Settings ▸ Profiles ▸ Keyboard) or "Esc+" for the left Option key (iTerm2: Settings ▸ Profiles ▸ Keys); the terminal then sends ESC and the key together, which Agendum reads as ALT. Without it, a few still work in Terminal.app with a US keyboard layout: Agendum recognises the characters Option produces for ⌥D, ⌥R, ⌥L, ⌥T, ⌥W, ⌥J, ⌥M, ⌥− and ⌥= (`∂`, `®`, `¬` …). Pressing ESC and then the letter by hand does not work: a lone ESC is ESC (it cancels), and the letter then counts on its own (ADR 0032).
 

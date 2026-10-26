@@ -1,7 +1,8 @@
 defmodule Agendum.TUI.HelpScreenTest do
   @moduledoc """
-  The help screen's other pages (R65, ADR 0033): F1 then `c` lists the
-  commands that can run where F1 was pressed, F1 then `d` describes a key.
+  The help screen (R65e, ADR 0047): F1 shows the topic for where you are;
+  F6 Keys leads to the commands that can run there and to describe key
+  (R65, ADR 0033).
   """
   use ExUnit.Case, async: true
 
@@ -24,11 +25,11 @@ defmodule Agendum.TUI.HelpScreenTest do
   end
 
   describe "F1, the help about where you are" do
-    test "in a view: what a view is, and how to reach the other pages", %{state: state} do
+    test "in a view: what a view is, and links to the other pages", %{state: state} do
       text = screen(press(state, {:f, 1}))
-      assert text =~ "HELP IN A VIEW"
-      assert text =~ "c commands here · d describe a key · a all keys"
+      assert text =~ "│ Views"
       assert text =~ "A view shows your items in sections"
+      assert text =~ ~r/SEE ALSO +Keys +Commands you can run here/
     end
 
     test "in a note, the managers and the menu: their own texts", %{state: state} do
@@ -40,7 +41,6 @@ defmodule Agendum.TUI.HelpScreenTest do
 
     test "in a box with a text of its own: the assignment profile", %{state: state} do
       text = screen(press(state, [:down, {:f, 3}, {:f, 1}]))
-      assert text =~ "HELP IN THIS BOX"
       assert text =~ "The item's assignment profile"
     end
 
@@ -69,14 +69,17 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert text =~ ~r/Cut +F4/
       assert text =~ ~r/Word left +CTRL-← ALT-B ALT-←/
       assert text =~ "On a Mac"
-      assert screen(press(state, [{:f, 1}, "a"])) =~ "ALL KEYS"
+      keys = screen(press(state, [{:f, 1}, {:f, 6}]))
+      assert keys =~ "│ Keys"
+      assert keys =~ "Commands you can run here"
+      assert keys =~ "Almost everywhere"
     end
   end
 
   describe "F1 c, the command list" do
     test "lists the view's commands with their keys and summaries, then the global ones",
          %{state: state} do
-      text = screen(press(state, [{:f, 1}, "c"]))
+      text = screen(press(state, [{:f, 1}, {:f, 6}, :enter]))
       assert text =~ "COMMANDS IN A VIEW"
       assert text =~ ~r/Down +↓ ENTER +Highlight the row below/
       assert text =~ ~r/Insert +INS ALT-I CTRL-N/
@@ -89,7 +92,9 @@ defmodule Agendum.TUI.HelpScreenTest do
     end
 
     test "ENTER runs the highlighted command where F1 was pressed", %{state: state} do
-      shown = state |> press([{:f, 1}, "c"]) |> to_command("Next view") |> press(:enter)
+      shown =
+        state |> press([{:f, 1}, {:f, 6}, :enter]) |> to_command("Next view") |> press(:enter)
+
       assert shown.modes == []
       assert shown.view_id == press(state, {:alt, "n"}).view_id
     end
@@ -97,57 +102,58 @@ defmodule Agendum.TUI.HelpScreenTest do
     test "a global command runs too: Undo", %{state: state} do
       changed = press(state, [:down, {:f, 7}])
       assert Core.marked_items(changed.db) != []
-      undone = changed |> press([{:f, 1}, "c"]) |> to_command("Undo") |> press(:enter)
+      undone = changed |> press([{:f, 1}, {:f, 6}, :enter]) |> to_command("Undo") |> press(:enter)
       assert Core.marked_items(undone.db) == []
     end
 
     test "typing narrows the list by name or summary; ENTER runs the first match",
          %{state: state} do
-      narrowed = press(state, [{:f, 1}, "c", "unmark"])
+      narrowed = press(state, [{:f, 1}, {:f, 6}, :enter, "unmark"])
       text = screen(narrowed)
       assert text =~ ~r/Unmark all +ALT-F7/
       refute text =~ ~r/Down +↓/
       assert text =~ ~s(Showing those with "unmark")
 
       marked = press(state, [:down, {:f, 7}])
-      ran = press(marked, [{:f, 1}, "c", "unmark", :enter])
+      ran = press(marked, [{:f, 1}, {:f, 6}, :enter, "unmark", :enter])
       assert Core.marked_items(ran.db) == []
     end
 
     test "BACKSPACE takes a letter back; ESC first forgets what was typed", %{state: state} do
-      typed = press(state, [{:f, 1}, "c", "xyz"])
+      typed = press(state, [{:f, 1}, {:f, 6}, :enter, "xyz"])
       refute screen(typed) =~ ~r/Down +↓/
       assert screen(press(typed, [:backspace, :backspace, :backspace])) =~ ~r/Down +↓/
       cleared = press(typed, :esc)
       assert State.mode(cleared).type == :help and screen(cleared) =~ ~r/Down +↓/
-      assert press(cleared, :esc).modes == []
+      # ESC goes back to the Keys topic, and ESC again leaves the help
+      assert press(cleared, [:esc, :esc]).modes == []
     end
 
     test "ESC returns without running anything", %{state: state} do
-      back = press(state, [{:f, 1}, "c", :down, :esc])
+      back = press(state, [{:f, 1}, {:f, 6}, :enter, :down, :esc, :esc])
       assert back.modes == [] and back.cursor == state.cursor
     end
 
     test "from the category manager it lists the manager's commands, then the global ones",
          %{state: state} do
-      text = screen(press(state, [{:f, 9}, {:f, 1}, "c"]))
+      text = screen(press(state, [{:f, 9}, {:f, 1}, {:f, 6}, :enter]))
       assert text =~ "COMMANDS IN THE CATEGORY MANAGER"
       assert text =~ ~r/Promote +F7 +Move the category up a level/
       refute text =~ "Next marked"
     end
 
     test "in the view manager: F1 opens the help, and c lists its commands", %{state: state} do
-      text = screen(press(state, [{:f, 8}, {:f, 1}, "c"]))
+      text = screen(press(state, [{:f, 8}, {:f, 1}, {:f, 6}, :enter]))
       assert text =~ "COMMANDS IN THE VIEW MANAGER"
       # keys that do not fit go on to the next line
       assert text =~ ~r/Discard +DEL F4 ALT-F4 CTRL-D +Discard the view.*\n.*│ +CTRL-K /u
-      back = press(state, [{:f, 8}, {:f, 1}, "c", :esc])
+      back = press(state, [{:f, 8}, {:f, 1}, {:f, 6}, :enter, :esc, {:f, 9}])
       assert Enum.map(back.modes, & &1.type) == [:viewmgr]
     end
 
     test "in a note: its commands only, since the keys of every screen edit text there",
          %{state: state} do
-      text = screen(press(state, [:down, {:f, 5}, {:f, 1}, "c"]))
+      text = screen(press(state, [:down, {:f, 5}, {:f, 1}, {:f, 6}, :enter]))
       assert text =~ "COMMANDS IN A NOTE"
       assert text =~ ~r/Cut +F4 +Cut the marked text/
       refute text =~ "Undo"
@@ -161,7 +167,7 @@ defmodule Agendum.TUI.HelpScreenTest do
           c.id == :insert_date
         end)
 
-      ran = press(in_note, [{:f, 1}, "c"] ++ List.duplicate(:down, index) ++ [:enter])
+      ran = press(in_note, [{:f, 1}, {:f, 6}, :enter] ++ List.duplicate(:down, index) ++ [:enter])
       assert Enum.map(ran.modes, & &1.type) == [:note]
       assert screen(ran) =~ "hello10/12/26"
     end
@@ -172,7 +178,9 @@ defmodule Agendum.TUI.HelpScreenTest do
       index =
         Enum.find_index(HelpScreen.commands(:catmgr, false), fn {c, _, _} -> c.id == :parent end)
 
-      ran = press(in_catmgr, [{:f, 1}, "c"] ++ List.duplicate(:down, index) ++ [:enter])
+      ran =
+        press(in_catmgr, [{:f, 1}, {:f, 6}, :enter] ++ List.duplicate(:down, index) ++ [:enter])
+
       # the same as HOME, but for the key last pressed and the command
       # remembered as run by name (R65d)
       assert ran.last.commands == [{:catmgr, "Parent"}]
@@ -184,7 +192,8 @@ defmodule Agendum.TUI.HelpScreenTest do
   end
 
   describe "F1 d, describe key" do
-    defp described(state, key), do: state |> press([{:f, 1}, "d", key]) |> screen()
+    defp described(state, key),
+      do: state |> press([{:f, 1}, {:f, 6}, :down, :enter, key]) |> screen()
 
     test "says which command a key runs in a view, and whether it takes a count",
          %{state: state} do
@@ -218,9 +227,9 @@ defmodule Agendum.TUI.HelpScreenTest do
     end
 
     test "describing does not run the key, and the next key returns", %{state: state} do
-      described = press(state, [:down, {:f, 1}, "d", "x"])
+      described = press(state, [:down, {:f, 1}, {:f, 6}, :down, :enter, "x"])
       assert described.edit == nil
-      back = press(described, :down)
+      back = press(described, [:down, :esc])
       assert back.modes == [] and back.edit == nil
       assert back.cursor == described.cursor
     end
@@ -250,7 +259,9 @@ defmodule Agendum.TUI.HelpScreenTest do
     end
 
     test "ESC before a key goes back", %{state: state} do
-      assert press(state, [{:f, 1}, "d", :esc]).modes == []
+      topic = press(state, [{:f, 1}, {:f, 6}, :down, :enter, :esc])
+      assert %{page: :topic} = State.mode(topic)
+      assert press(topic, :esc).modes == []
     end
   end
 
@@ -264,7 +275,7 @@ defmodule Agendum.TUI.HelpScreenTest do
 
     test "c lists the box's commands from its keymap, then the shared and global ones",
          %{box: box} do
-      text = screen(press(box, [{:f, 1}, "c"]))
+      text = screen(press(box, [{:f, 1}, {:f, 6}, :enter]))
       assert text =~ "COMMANDS IN THIS BOX"
       assert text =~ ~r/Edit +F2 +Edit the text, or open the note/
       assert text =~ ~r/Help +F1 +Help about where you are/
@@ -280,7 +291,7 @@ defmodule Agendum.TUI.HelpScreenTest do
           &(elem(&1, 0) == :profile)
         )
 
-      ran = press(box, [{:f, 1}, "c"] ++ List.duplicate(:down, index) ++ [:enter])
+      ran = press(box, [{:f, 1}, {:f, 6}, :enter] ++ List.duplicate(:down, index) ++ [:enter])
       assert Enum.map(ran.modes, & &1.type) == [:profile, :item_props]
     end
 
@@ -291,7 +302,7 @@ defmodule Agendum.TUI.HelpScreenTest do
 
     test "a box opened over the help does not upset its pages (found by the fuzz)",
          %{box: box} do
-      over = press(box, [{:f, 1}, "c", {:alt_f, 3}])
+      over = press(box, [{:f, 1}, {:f, 6}, :enter, {:alt_f, 3}])
       assert Enum.map(over.modes, & &1.type) == [:macros, :help, :item_props]
       # the macro manager covers the help's heading; the help is still there
       help = Enum.at(over.modes, 1)
@@ -315,10 +326,10 @@ defmodule Agendum.TUI.HelpScreenTest do
     setup %{state: state}, do: %{box: Agendum.TUI.Boxes.FileProperties.open(state)}
 
     test "c lists its commands from its keymap, and ENTER runs one", %{box: box} do
-      text = screen(press(box, [{:f, 1}, "c"]))
+      text = screen(press(box, [{:f, 1}, {:f, 6}, :enter]))
       assert text =~ ~r/Change +SPACE +Next choice of the setting/
       assert text =~ ~r/Next +TAB +The next setting/
-      ran = press(box, [{:f, 1}, "c", :down, :down, :enter])
+      ran = press(box, [{:f, 1}, {:f, 6}, :enter, :down, :down, :enter])
       assert State.mode(ran).cursor == State.mode(press(box, :down)).cursor
     end
 
@@ -332,9 +343,9 @@ defmodule Agendum.TUI.HelpScreenTest do
     setup %{state: state}, do: %{box: press(state, {:alt_f, 5})}
 
     test "c lists its commands, and ENTER runs one", %{box: box} do
-      text = screen(press(box, [{:f, 1}, "c"]))
+      text = screen(press(box, [{:f, 1}, {:f, 6}, :enter]))
       assert text =~ ~r/Go +ENTER +Highlight that section in the view/
-      ran = press(box, [{:f, 1}, "c", :enter])
+      ran = press(box, [{:f, 1}, {:f, 6}, :enter, :enter])
       assert ran.modes == []
     end
 
@@ -354,7 +365,7 @@ defmodule Agendum.TUI.HelpScreenTest do
     end
 
     test "c lists the level's entries by their letters, then the menu's keys", %{menu: menu} do
-      text = screen(press(menu, [{:f, 1}, "c"]))
+      text = screen(press(menu, [{:f, 1}, {:f, 6}, :enter]))
       assert text =~ "COMMANDS IN THE MENU"
       assert text =~ ~r/File +F +Retrieve, save or create files/
       assert text =~ ~r/Back +ESC BACKSPACE +Back up a level/
@@ -363,7 +374,7 @@ defmodule Agendum.TUI.HelpScreenTest do
     end
 
     test "ENTER on an entry chooses it, as its letter would", %{menu: menu} do
-      ran = press(menu, [{:f, 1}, "c", :enter])
+      ran = press(menu, [{:f, 1}, {:f, 6}, :enter, :enter])
       assert ran.modes == press(menu, "f").modes
     end
 
@@ -378,7 +389,7 @@ defmodule Agendum.TUI.HelpScreenTest do
     test "moving items: F1 opens the help, c lists drop and the view's moves", %{state: state} do
       moving = press(state, [:down, {:alt_f, 10}])
       assert State.mode(moving).type == :move_item
-      text = screen(press(moving, [{:f, 1}, "c"]))
+      text = screen(press(moving, [{:f, 1}, {:f, 6}, :enter]))
       assert text =~ "COMMANDS WHILE MOVING ITEMS"
       assert text =~ ~r/Drop +ENTER +Move the item\(s\) here/
       assert described(moving, :down) =~ "↓ runs Down while moving items."
@@ -389,7 +400,7 @@ defmodule Agendum.TUI.HelpScreenTest do
       datebook = Enum.find(Agendum.Core.Database.views(state.db), & &1.datebook)
       browsing = state |> State.switch_view(datebook.id) |> press({:alt, "b"})
       assert State.mode(browsing).type == :browse
-      later = press(browsing, [{:f, 1}, "c", :down, :enter])
+      later = press(browsing, [{:f, 1}, {:f, 6}, :enter, :down, :enter])
       assert State.mode(later).date == State.mode(press(browsing, :right)).date
     end
   end

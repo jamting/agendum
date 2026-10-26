@@ -1,6 +1,6 @@
 # Agenda's help, in our own words
 
-**Status:** planned (meeting 2026-10-26, §§ 5–8); the last required step of the truthful clone (`AGENDA_PARITY.md`, The steps). Nothing built yet.
+**Status:** step 1, the frame, built (v0.56.0, 2026-10-26; R65e), for the owner to try; then the tone sample. The last required step of the truthful clone (`AGENDA_PARITY.md`, The steps).
 
 Lotus Agenda's F1 help: a topic for where you are, bold links between topics, an index, a search, key charts and a way back (`docs/reference/Agenda 2.0 Help File.html`: 332 topics, about 61,000 words: 159 boxes, 132 how-to and concept topics, 28 menus, 13 key charts). Agendum's help keeps Agenda's keys and structure exactly and has texts of its own: terse, with a Hundred Acre Wood flavour in an opening line and the examples, quoting no Milne and using no Disney or Shepard pictures (meeting 2026-10-22, § 7a). How it is built: ADR 0047.
 
@@ -27,7 +27,7 @@ Habit changes (settled): any other key no longer leaves help; `c`, `d` and `a` a
 
 ## The steps (meeting 2026-10-26, § 8)
 
-1. [ ] **The frame**: the help screen with Agenda's keys and key bar, links, Index, Find, Review and F6 Keys; the generated topics; today's F1 texts as the place topics; the checks (every box, menu and place has a topic; every link leads to one; every key a topic names is bound there). The owner tries it, then it is tagged.
+1. [x] (2026-10-26, v0.56.0; the owner tries it before the tag) **The frame**: the help screen with Agenda's keys and key bar, links, Index, Find, Review and F6 Keys; the generated topics; today's F1 texts as the place topics; the checks (every box, menu and place has a topic; every link leads to one; every key a topic names is bound there). The owner tries it, then it is tagged.
 2. [ ] **Three sample topics** for the owner to approve the tone before the rest are written.
 3. [ ] **The rest, in batches by subject**, each tagged: items and categories; views, sections and columns; dates and alarms; conditions and actions; files and the trash; notes; macros.
 4. [ ] **Done** when the checklist below has nothing open: the help is done, and with it the clone (`AGENDA_PARITY.md`, Declared done).
@@ -39,7 +39,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Agenda's topic | Ours |
 | --- | --- |
 | Agenda 2.0 Help File | the frame: the help's title |
-| How to Use Help | the frame: F1 in help |
+| How to Use Help | ours: `lib/agendum/tui/help/topics/how-to-use-help.txt` |
 | Find a Help Topic | the frame: F5 Find |
 | Help Index | the frame: F3 Index |
 | AgendaTown J The Cast J AgendaTown | open |

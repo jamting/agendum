@@ -52,7 +52,7 @@ defmodule Agendum.TUI.HelpBoxTest do
 
   test "the help is inside it, with its heading", %{state: state} do
     screen = screen(press(state, {:f, 1}))
-    assert screen =~ ~r/│ HELP IN A VIEW/u
+    assert screen =~ ~r/│ Views/u
   end
 
   test "the view beneath still shows around it, faded", %{state: state} do
@@ -65,7 +65,7 @@ defmodule Agendum.TUI.HelpBoxTest do
   end
 
   test "its pages fit the box: the pane is at the box's foot", %{state: state} do
-    listed = press(state, [{:f, 1}, "c"])
+    listed = press(state, [{:f, 1}, {:f, 6}, :enter])
     {_width, height} = HelpScreen.size(listed)
     assert length(HelpScreen.lines(listed, State.mode(listed))) == height
   end
@@ -77,7 +77,7 @@ defmodule Agendum.TUI.HelpBoxTest do
 
   test "a small screen: the box takes what there is", %{state: state} do
     small = %{state | width: 30, height: 10}
-    help = press(small, [{:f, 1}, "c"])
+    help = press(small, [{:f, 1}, {:f, 6}, :enter])
     {width, height} = HelpScreen.size(help)
     assert width == 28 and height == 4
     assert Enum.all?(Render.render(help), &(String.length(text(&1)) <= 30))

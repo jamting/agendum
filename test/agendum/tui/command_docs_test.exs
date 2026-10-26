@@ -28,26 +28,29 @@ defmodule Agendum.TUI.CommandDocsTest do
 
   test "F1 c shows the highlighted command's text in the pane, and no other's",
        %{state: state} do
-    text = state |> press([{:f, 1}, "c", "remove"]) |> screen()
+    text = state |> press([{:f, 1}, {:f, 6}, :enter, "remove"]) |> screen()
     assert text =~ "Takes the item out of this section's category only."
     refute text =~ "Deletes the item from the whole file"
   end
 
   test "the text is wrapped to the screen", %{state: state} do
     narrow = %{state | width: 60}
-    lines = narrow |> press([{:f, 1}, "c", "remove"]) |> screen() |> String.split("\n")
+
+    lines =
+      narrow |> press([{:f, 1}, {:f, 6}, :enter, "remove"]) |> screen() |> String.split("\n")
+
     assert Enum.all?(lines, &(String.length(&1) <= 60))
     assert Enum.join(lines) =~ "Takes the item out of this"
   end
 
   test "F1 d shows a key's text after its summary", %{state: state} do
-    text = state |> press([{:f, 1}, "d", {:alt, "y"}]) |> screen()
+    text = state |> press([{:f, 1}, {:f, 6}, :down, :enter, {:alt, "y"}]) |> screen()
     assert text =~ "ALT-Y runs Yank in a view."
     assert text =~ "Puts back the item Remove took out last"
   end
 
   test "a global key's text too", %{state: state} do
-    text = state |> press([{:f, 1}, "d", {:ctrl, "z"}]) |> screen()
+    text = state |> press([{:f, 1}, {:f, 6}, :down, :enter, {:ctrl, "z"}]) |> screen()
     assert text =~ "Takes back the last change to the file"
   end
 
@@ -69,17 +72,17 @@ defmodule Agendum.TUI.CommandDocsTest do
     end
 
     test "F1 c in the menu shows the highlighted entry's text", %{state: state} do
-      text = state |> press([{:f, 10}, "u", {:f, 1}, "c", "execute"]) |> screen()
+      text = state |> press([{:f, 10}, "u", {:f, 1}, {:f, 6}, :enter, "execute"]) |> screen()
       assert text =~ "Chooses whose conditions and actions to apply now"
     end
 
     test "an entry that runs a view's command has that command's text", %{state: state} do
-      text = state |> press([{:f, 10}, "i", {:f, 1}, "c", "alarm"]) |> screen()
+      text = state |> press([{:f, 10}, "i", {:f, 1}, {:f, 6}, :enter, "alarm"]) |> screen()
       assert text =~ "Rings at the item's When time"
     end
 
     test "F1 d on a letter shows it too", %{state: state} do
-      text = state |> press([{:f, 10}, "f", {:f, 1}, "d", "r"]) |> screen()
+      text = state |> press([{:f, 10}, "f", {:f, 1}, {:f, 6}, :down, :enter, "r"]) |> screen()
       assert text =~ "r chooses Retrieve."
       assert text =~ "Agenda's way to start a file"
     end
@@ -101,14 +104,16 @@ defmodule Agendum.TUI.CommandDocsTest do
     end
 
     test "F1 c in a box shows its command's text", %{state: state} do
-      text = state |> press([:down, {:f, 6}, {:f, 1}, "c", "profile"]) |> screen()
+      text = state |> press([:down, {:f, 6}, {:f, 1}, {:f, 6}, :enter, "profile"]) |> screen()
       assert text =~ "Every category, those the item is in marked"
     end
 
     test "a settings box has the shared texts; the search box's Search does not",
          %{state: state} do
       file_props = Agendum.TUI.Boxes.FileProperties.open(state)
-      assert screen(press(file_props, [{:f, 1}, "c", "close, keep"])) =~ "ESC would put it back"
+
+      assert screen(press(file_props, [{:f, 1}, {:f, 6}, :enter, "close, keep"])) =~
+               "ESC would put it back"
 
       # the search box's Done is Search: not a settings box, so no shared text
       assert CommandDocs.box(Agendum.TUI.Boxes.SearchBox, :done, false) == nil

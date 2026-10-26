@@ -28,10 +28,19 @@ defmodule Agendum.TUI.HelpLayoutTest do
 
   describe "the frame of every page" do
     test "a heading, a line under it, then a rule", %{state: state} do
-      for keys <- [[{:f, 1}], [{:f, 1}, "c"], [{:f, 1}, "d"], [{:f, 1}, "a"]] do
+      for keys <- [[{:f, 1}, {:f, 6}, :enter], [{:f, 1}, {:f, 6}, :down, :enter]] do
         [heading, _sub, rule | _] = body(press(state, keys))
-        assert heading =~ ~r/^ (HELP|COMMANDS|DESCRIBE KEY|ALL KEYS)/
+        assert heading =~ ~r/^ (COMMANDS|DESCRIBE KEY)/
         assert rule =~ ~r/^ ─+$/u
+      end
+    end
+
+    # a topic is laid out as Agenda's: its title, a blank line, its text
+    test "a topic: its title, then a blank line", %{state: state} do
+      for {keys, title} <- [{[{:f, 1}], " Views"}, {[{:f, 1}, {:f, 6}], " Keys"}] do
+        [heading, blank | _] = body(press(state, keys))
+        assert heading == title
+        assert String.trim(blank) == ""
       end
     end
 
@@ -41,15 +50,15 @@ defmodule Agendum.TUI.HelpLayoutTest do
     end
 
     test "the heading stays while the page scrolls", %{state: state} do
-      scrolled = press(state, [{:f, 1}, "a", :pgdn])
-      assert hd(body(scrolled)) =~ "ALL KEYS"
-      refute Enum.at(body(scrolled), 3) == Enum.at(body(press(state, [{:f, 1}, "a"])), 3)
+      scrolled = press(state, [{:f, 1}, {:f, 6}, :pgdn])
+      assert hd(body(scrolled)) == " Keys"
+      refute Enum.at(body(scrolled), 3) == Enum.at(body(press(state, [{:f, 1}, {:f, 6}])), 3)
     end
   end
 
   describe "the command list's pane" do
     test "five lines at the foot, under a rule", %{state: state} do
-      listed = press(state, [{:f, 1}, "c"])
+      listed = press(state, [{:f, 1}, {:f, 6}, :enter])
       lines = body(listed)
       assert length(lines) == elem(HelpScreen.size(listed), 1)
       assert Enum.at(lines, -6) =~ ~r/^ ─/
@@ -58,37 +67,37 @@ defmodule Agendum.TUI.HelpLayoutTest do
 
     test "it has the highlighted command's text; the rows under it stay put",
          %{state: state} do
-      listed = press(state, [{:f, 1}, "c", "remove"])
+      listed = press(state, [{:f, 1}, {:f, 6}, :enter, "remove"])
       assert Enum.take(body(listed), -5) |> Enum.join() =~ "Takes the item out of this"
       # the row under Remove is Yank, not the text
       remove = line_with(listed, ~r/^ Remove /)
       assert Enum.at(body(listed), remove + 1) =~ ~r/^ Yank /
 
-      at_top = press(state, [{:f, 1}, "c"])
+      at_top = press(state, [{:f, 1}, {:f, 6}, :enter])
       moved = press(at_top, [:down, :down, :down])
       assert line_with(at_top, ~r/^ Edit /) == line_with(moved, ~r/^ Edit /)
     end
 
     test "a command without a longer text shows its summary there", %{state: state} do
-      pane = state |> press([{:f, 1}, "c"]) |> body() |> Enum.take(-4) |> Enum.join()
+      pane = state |> press([{:f, 1}, {:f, 6}, :enter]) |> body() |> Enum.take(-4) |> Enum.join()
       assert pane =~ "Highlight the row above"
     end
 
     test "the pane has colours of its own", %{state: state} do
-      lines = styled(press(state, [{:f, 1}, "c"]))
+      lines = styled(press(state, [{:f, 1}, {:f, 6}, :enter]))
       assert hd(Enum.at(lines, -5)) |> elem(0) == :help_pane_title
       assert hd(Enum.at(lines, -4)) |> elem(0) == :help_pane
     end
 
     test "why it cannot run now is on its first line", %{state: state} do
-      listed = press(state, [:down, {:f, 1}, "c", "yank"])
+      listed = press(state, [:down, {:f, 1}, {:f, 6}, :enter, "yank"])
       assert Enum.at(body(listed), -5) =~ ~r/Yank · ALT-Y +Not now: No removed item to yank back/
       assert Enum.any?(Enum.at(styled(listed), -5), &(elem(&1, 0) == :error))
     end
 
     test "→ and ← page through a text longer than the pane", %{state: state} do
       narrow = %{state | width: 50}
-      listed = press(narrow, [{:f, 1}, "c", "remove"])
+      listed = press(narrow, [{:f, 1}, {:f, 6}, :enter, "remove"])
       first = Enum.take(body(listed), -4)
       [_, pages] = Regex.run(~r{← → 1/(\d)}u, Enum.at(body(listed), -6))
       pages = String.to_integer(pages)
@@ -105,12 +114,12 @@ defmodule Agendum.TUI.HelpLayoutTest do
 
     test "moving the highlight starts the next text at its beginning", %{state: state} do
       narrow = %{state | width: 50}
-      moved = press(narrow, [{:f, 1}, "c", "re", :down, :down, :right, :up, :down])
+      moved = press(narrow, [{:f, 1}, {:f, 6}, :enter, "re", :down, :down, :right, :up, :down])
       assert State.mode(moved).pane == 0
     end
 
     test "the list scrolls only when the highlight reaches its edge", %{state: state} do
-      listed = press(state, [{:f, 1}, "c"])
+      listed = press(state, [{:f, 1}, {:f, 6}, :enter])
       rows = elem(HelpScreen.size(listed), 1) - 9
       down = press(listed, List.duplicate(:down, rows + 3))
       first = Enum.at(body(down), 3)
@@ -122,13 +131,13 @@ defmodule Agendum.TUI.HelpLayoutTest do
 
     test "a summary too long for the screen ends in …", %{state: state} do
       narrow = %{state | width: 60}
-      lines = body(press(narrow, [{:f, 1}, "c"]))
+      lines = body(press(narrow, [{:f, 1}, {:f, 6}, :enter]))
       assert Enum.any?(lines, &String.ends_with?(&1, "…"))
       assert Enum.all?(lines, &(String.length(&1) <= 60))
     end
 
     test "the key bar names ← →", %{state: state} do
-      assert screen(press(state, [{:f, 1}, "c"])) =~ "← → More"
+      assert screen(press(state, [{:f, 1}, {:f, 6}, :enter])) =~ "← → More"
     end
   end
 end

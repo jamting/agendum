@@ -47,7 +47,10 @@ defmodule Agendum.TUI.ExtrasSwitchTest do
 
     test "F1 c and CTRL-X do not list them", %{db: db} do
       state = start(db)
-      refute state |> press([{:f, 1}, "c" | String.graphemes("attach")]) |> screen() =~ "Attach"
+
+      refute state |> press([{:f, 1}, {:f, 6}, :enter | String.graphemes("attach")]) |> screen() =~
+               "Attach"
+
       refute state |> press([{:ctrl, "x"} | String.graphemes("attach")]) |> screen() =~ "Attach"
     end
 
@@ -91,7 +94,7 @@ defmodule Agendum.TUI.ExtrasSwitchTest do
       assert state |> press([{:f, 10}, "f", "t"]) |> screen() =~ "Feeds"
       assert state |> press([{:f, 10}, "i"]) |> screen() =~ "Zettel"
 
-      assert state |> press([{:f, 1}, "c" | String.graphemes("attach")]) |> screen() =~
+      assert state |> press([{:f, 1}, {:f, 6}, :enter | String.graphemes("attach")]) |> screen() =~
                "Attach Zettel id"
 
       assert state |> press([:down, {:ctrl, "t"}]) |> current() |> Map.get(:zettel) != nil

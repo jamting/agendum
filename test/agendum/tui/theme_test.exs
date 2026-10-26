@@ -223,8 +223,8 @@ defmodule Agendum.TUI.LookTest do
     catmgr = press(state, {:f, 9})
     assert styles_at(catmgr, row_of(catmgr, "Meetings"), "Meetings") == [:catmgr]
     help = press(state, {:f, 1})
-    heading = help |> Render.render() |> Enum.at(row_of(help, "HELP IN A VIEW"))
-    assert Enum.find(heading, &(elem(&1, 1) =~ "HELP IN A VIEW")) |> elem(0) == :help_title
+    heading = help |> Render.render() |> Enum.at(row_of(help, " Views"))
+    assert Enum.find(heading, &(elem(&1, 1) =~ " Views")) |> elem(0) == :help_title
   end
 
   test "the key bar says more when the screen is wide enough", %{state: state} do

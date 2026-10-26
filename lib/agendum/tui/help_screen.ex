@@ -1,19 +1,23 @@
 defmodule Agendum.TUI.HelpScreen do
   @moduledoc """
-  The help screen (F1) and its two other pages (R65, ADR 0033), as Emacs's
-  C-h then a letter:
+  The help screen (F1), as Agenda's (R65e, ADR 0047; meeting 2026-10-26,
+  §§ 5–8; checked in Agenda 2.0, 2026-10-26): a topic for where the person
+  is (`Agendum.TUI.Help.Topics`), with links in bold to other topics, and
+  Agenda's keys: the arrows, HOME and END highlight a link (a letter: the
+  next one it begins), ENTER reads it, PGUP PGDN scroll, F1 How to Use
+  Help, F3 the Help Index, F5 Find (ALT-N / ALT-P then step through what
+  it found), F6 Keys, F8 or BACKSPACE back through the topics read, F9 or
+  ESC leave. Two links on the Keys topic lead to pages of their own
+  (R65, ADR 0033):
 
-    * F1 shows a text about where the person is (the view, a note, the
-      box on top …: `about/2`): ↑↓ PGUP PGDN scroll, `c`, `d` and `a` go
-      to the other pages, any other key returns;
-    * `a`, all the keys, made from the keymaps (`Agendum.TUI.Render.Help`);
-    * `c`, the command list: the commands of the place where F1 was
+    * "Commands you can run here", the command list: the commands of the place where F1 was
       pressed (its own first, then those of every screen), each with its
       keys and summary; ENTER runs the highlighted one, ESC returns. Those
       that cannot run now are greyed, and the highlighted one says why
       (R65a);
-    * `d`, describe key: the next key pressed is described (which command
-      it runs there, or the macro attached to it), then any key returns.
+    * "Describe a key": the next key pressed is described (which command
+      it runs there, or the macro attached to it), then any key goes back
+      to the topic.
 
   The mode remembers where F1 was pressed (`from`): `:view`, `:catmgr`,
   `:viewmgr`, `:note`, `:menu` (its entries first, each by its letter),
@@ -24,6 +28,7 @@ defmodule Agendum.TUI.HelpScreen do
   """
 
   alias Agendum.TUI.{Command, CommandDocs, Commands, Keymap, Macros, Menu, State}
+  alias Agendum.TUI.Help.{Topic, Topics}
   alias Agendum.TUI.Boxes.{Box, ViewManager}
   alias Agendum.TUI.CategoryScreens.Manager
   alias Agendum.TUI.Render.Help
@@ -51,13 +56,19 @@ defmodule Agendum.TUI.HelpScreen do
   @spec places() :: [atom]
   def places, do: Map.keys(@places)
 
-  @doc "Opens the help screen on its keys page."
+  @doc "Opens the help screen on the topic for where the person is."
   @spec open(State.t()) :: State.t()
   def open(state) do
+    from = place(state)
+
     State.push(state, %Agendum.TUI.Modes.Help{
       top: 0,
-      page: :about,
-      from: place(state),
+      page: :topic,
+      topic: Topics.for_place(state, from),
+      history: [],
+      link: 0,
+      found: [],
+      from: from,
       cursor: 0,
       described: nil,
       filter: "",
@@ -222,18 +233,74 @@ defmodule Agendum.TUI.HelpScreen do
 
   # --- keys ---------------------------------------------------------------------
 
+  @doc """
+  The help's own keys on a topic (R65e), as Agenda's: the ones its topics
+  may name besides the keymaps' (the checks read them).
+  """
+  @spec keys() :: [term]
+  def keys,
+    do: [
+      {:f, 1},
+      {:f, 3},
+      {:f, 5},
+      {:f, 6},
+      {:f, 8},
+      {:f, 9},
+      {:alt, "n"},
+      {:alt, "p"},
+      :backspace,
+      :esc,
+      :enter,
+      :home,
+      :end,
+      :pgup,
+      :pgdn
+    ]
+
   @doc "A key on the help screen."
   @spec handle(State.t(), map, term) :: State.t()
-  def handle(state, %{page: :about} = mode, key) do
+  def handle(state, %{page: :topic} = mode, key) do
     case key do
-      {:char, "c"} -> State.put_mode(state, %{mode | page: :commands, cursor: 0, top: 0, pane: 0})
-      {:char, "d"} -> State.put_mode(state, %{mode | page: :describe, described: nil})
-      {:char, "a"} -> State.put_mode(state, %{mode | page: :all, top: 0})
-      _ -> scroll(state, mode, key)
+      {:f, 1} ->
+        go(state, mode, "How to Use Help")
+
+      {:f, 3} ->
+        go(state, mode, "Help Index")
+
+      {:f, 5} ->
+        Agendum.TUI.Update.Prompts.prompt(state, "Topic to find:", :help_find)
+
+      {:f, 6} ->
+        go(state, mode, "Keys")
+
+      k when k in [{:f, 8}, :backspace] ->
+        review(state, mode)
+
+      k when k in [{:f, 9}, :esc] ->
+        State.pop(state)
+
+      :enter ->
+        follow(state, mode)
+
+      {:alt, "n"} ->
+        step_found(state, mode, 1)
+
+      {:alt, "p"} ->
+        step_found(state, mode, -1)
+
+      k when k in [:pgup, :pgdn] ->
+        scroll(state, mode, k)
+
+      {:char, c} ->
+        to_link(state, mode, &(String.downcase(String.first(&1)) == String.downcase(c)))
+
+      k when k in [:up, :down, :left, :right, :home, :end] ->
+        move_link(state, mode, k)
+
+      _ ->
+        state
     end
   end
-
-  def handle(state, %{page: :all} = mode, key), do: scroll(state, mode, key)
 
   # typing narrows the list (by name or summary); ESC first forgets
   # what was typed, as in the category picker
@@ -245,6 +312,11 @@ defmodule Agendum.TUI.HelpScreen do
 
   def handle(state, %{page: :commands, filter: filter} = mode, :esc) when filter != "",
     do: State.put_mode(state, %{mode | filter: "", cursor: 0, top: 0, pane: 0})
+
+  # ESC or F8 (Review) on the command list goes back to the topic it was
+  # opened from
+  def handle(state, %{page: :commands} = mode, key) when key in [:esc, {:f, 8}],
+    do: back_to_topic(state, mode)
 
   # ← → page through the highlighted command's text in the pane
   def handle(state, %{page: :commands} = mode, key) when key in [:left, :right] do
@@ -269,7 +341,8 @@ defmodule Agendum.TUI.HelpScreen do
         :home -> 0
         :end -> length(list) - 1
         :enter -> :run
-        :esc -> :close
+        # F9 leaves the help from here too; ESC goes back to the topic
+        {:f, 9} -> :close
         _ -> mode.cursor
       end
 
@@ -280,13 +353,182 @@ defmodule Agendum.TUI.HelpScreen do
     end
   end
 
-  # ESC before a key is described goes back; after, any key does
-  def handle(state, %{page: :describe, described: nil}, :esc), do: State.pop(state)
+  # ESC before a key is described goes back to the topic; after, any key
+  # does
+  def handle(state, %{page: :describe, described: nil} = mode, :esc),
+    do: back_to_topic(state, mode)
 
   def handle(state, %{page: :describe, described: nil} = mode, key),
     do: State.put_mode(state, %{mode | described: describe(State.pop(state), mode.from, key)})
 
-  def handle(state, %{page: :describe}, _key), do: State.pop(state)
+  def handle(state, %{page: :describe} = mode, _key), do: back_to_topic(state, mode)
+
+  defp back_to_topic(state, mode),
+    do: State.put_mode(state, %{mode | page: :topic, described: nil, filter: ""})
+
+  # --- topics and links ---------------------------------------------------------
+
+  # the topic titled `title` read next; the one shown goes on the way back
+  # (F8)
+  defp go(state, mode, title) do
+    case Topics.get(below(state, mode), title) do
+      nil -> State.error(state, "No help topic is called #{title}")
+      topic -> show(state, mode, topic)
+    end
+  end
+
+  defp show(state, mode, topic) do
+    State.put_mode(state, %{
+      mode
+      | topic: topic,
+        history: [mode.topic | mode.history],
+        link: 0,
+        top: 0
+    })
+  end
+
+  # F8 or BACKSPACE: the topic read before this one
+  defp review(state, %{history: []}), do: state
+
+  defp review(state, %{history: [previous | rest]} = mode),
+    do: State.put_mode(state, %{mode | topic: previous, history: rest, link: 0, top: 0})
+
+  # ENTER: the highlighted link's topic, or one of the help's own pages
+  defp follow(state, mode) do
+    case Enum.at(links(state, mode), mode.link) do
+      nil ->
+        state
+
+      {_row, _label, target} ->
+        case Topics.special(target) do
+          :commands ->
+            State.put_mode(state, %{mode | page: :commands, cursor: 0, top: 0, pane: 0})
+
+          :describe ->
+            State.put_mode(state, %{mode | page: :describe, described: nil})
+
+          nil ->
+            go(state, mode, target)
+        end
+    end
+  end
+
+  # the arrows go through the links in reading order; without links they
+  # scroll
+  defp move_link(state, mode, key) do
+    case links(state, mode) do
+      [] ->
+        scroll(state, mode, key)
+
+      links ->
+        last = length(links) - 1
+
+        n =
+          case key do
+            k when k in [:up, :left] -> max(mode.link - 1, 0)
+            k when k in [:down, :right] -> min(mode.link + 1, last)
+            :home -> 0
+            :end -> last
+          end
+
+        highlight(state, mode, links, n)
+    end
+  end
+
+  # a letter: the next link (after the highlighted one, round to the
+  # first) whose label it begins; none, nothing happens, as Agenda's
+  defp to_link(state, mode, starts?) do
+    links = links(state, mode)
+    count = length(links)
+
+    next =
+      Enum.find(1..count//1, fn step ->
+        {_row, label, _target} = Enum.at(links, rem(mode.link + step, count))
+        starts?.(label)
+      end)
+
+    if next, do: highlight(state, mode, links, rem(mode.link + next, count)), else: state
+  end
+
+  # the link `n` highlighted, the topic scrolled to show it
+  defp highlight(state, mode, links, n) do
+    {row, _, _} = Enum.at(links, n)
+    page = content_height(state)
+    top = mode.top |> min(row) |> max(row - page + 1) |> max(0)
+    State.put_mode(state, %{mode | link: n, top: top})
+  end
+
+  # every link of the topic as `{row, label, target}`, in reading order
+  defp links(state, mode) do
+    for {line, row} <- Enum.with_index(topic_lines(state, mode)),
+        {:link, label, target} <- line,
+        do: {row, label, target}
+  end
+
+  defp topic_lines(state, mode), do: Topic.lines(mode.topic, width(state) - 2)
+
+  @doc """
+  F5 Find (Agenda's "Topic to find:"): the topics whose title has the
+  word, then those whose text has it, as a topic of links; ALT-N and ALT-P
+  then step through them.
+  """
+  @spec find(State.t(), String.t()) :: State.t()
+  def find(state, word) do
+    mode = State.mode(state)
+    under = below(state, mode)
+    word = String.trim(word)
+    wanted = String.downcase(word)
+
+    {in_title, rest} =
+      under |> Topics.titles() |> Enum.split_with(&String.contains?(String.downcase(&1), wanted))
+
+    in_text =
+      Enum.filter(rest, fn title ->
+        topic = Topics.get(under, title)
+
+        topic
+        |> Topic.lines(76)
+        |> List.flatten()
+        |> Enum.map_join(&Topic.label/1)
+        |> String.downcase()
+        |> String.contains?(wanted)
+      end)
+
+    case in_title ++ in_text do
+      _ when word == "" ->
+        state
+
+      [] ->
+        State.error(state, "No help topic has \"#{word}\"")
+
+      found ->
+        list = %Topic{
+          title: "Topics with \"#{word}\"",
+          body: Enum.map(found, &{:line, [{:text, "  "}, {:link, &1, &1}]})
+        }
+
+        state = show(state, mode, list)
+        State.put_mode(state, %{State.mode(state) | found: found})
+    end
+  end
+
+  # ALT-N / ALT-P: the next or previous topic Find found
+  defp step_found(state, %{found: []}, _step), do: state
+
+  defp step_found(state, mode, step) do
+    count = length(mode.found)
+
+    at =
+      case Enum.find_index(
+             mode.found,
+             &(String.downcase(&1) == String.downcase(mode.topic.title))
+           ) do
+        nil -> if step > 0, do: 0, else: count - 1
+        i -> rem(i + step + count, count)
+      end
+
+    go(state, mode, Enum.at(mode.found, at))
+  end
 
   # the highlight on command `n`; the list scrolls only when it reaches
   # an edge, and the pane starts at the text's beginning
@@ -301,21 +543,18 @@ defmodule Agendum.TUI.HelpScreen do
 
   defp scroll(state, mode, key) do
     page = content_height(state)
-    count = length(page_lines(State.pop(state), mode, width(state)))
+    count = length(topic_lines(state, mode))
     last = max(count - page, 0)
 
     top =
       case key do
-        :up -> mode.top - 1
-        :down -> mode.top + 1
+        k when k in [:up, :left, :home] -> mode.top - 1
+        k when k in [:down, :right, :end] -> mode.top + 1
         :pgup -> mode.top - page
-        k when k in [:pgdn, {:char, " "}] -> mode.top + page
-        _ -> :close
+        :pgdn -> mode.top + page
       end
 
-    if top == :close,
-      do: State.pop(state),
-      else: State.put_mode(state, %{mode | top: top |> min(last) |> max(0)})
+    State.put_mode(state, %{mode | top: top |> min(last) |> max(0)})
   end
 
   @doc """
@@ -521,28 +760,13 @@ defmodule Agendum.TUI.HelpScreen do
 
   # --- the text about where you are (F1) -----------------------------------------
 
-  # the page's lines under its heading, before scrolling, from the state
-  # under the help
-  defp page_lines(_state, %{page: :all}, width), do: Help.lines(width)
-
-  defp page_lines(state, %{page: :about, from: from}, width) do
-    text = about(state, from)
-
-    [[{:normal, ""}]] ++
-      Enum.flat_map(String.split(text, "\n\n"), fn paragraph ->
-        lines =
-          paragraph |> String.replace("\n", " ") |> Agendum.TUI.Terminal.Draw.wrap(width - 4)
-
-        Enum.map(lines, &[{:normal, "  " <> &1}]) ++ [[{:normal, ""}]]
-      end)
-  end
-
   @doc """
   F1's text about where the person is (`from`, under the help): the
   place's (`about/0` of its module), or the box's (`c:Box.about/2`, else
-  one made from its title and settings' help).
+  one made from its title and settings' help). A place's needs no state
+  (nil): the help's topics read it so (`Agendum.TUI.Help.Topics`).
   """
-  @spec about(State.t(), atom) :: String.t()
+  @spec about(State.t() | nil, atom) :: String.t()
   def about(state, :box) do
     mode = State.mode(state)
     box = Box.module!(mode)
@@ -553,7 +777,7 @@ defmodule Agendum.TUI.HelpScreen do
     do: apply(elem(@places[from], 0), elem(@places[from], 2), [])
 
   def about(_state, _from),
-    do: "Press c for the commands that work here, d to see what a key does, a for all keys."
+    do: "F6 lists the keys, the commands that work here, and what a key does."
 
   # --- drawing --------------------------------------------------------------------
 
@@ -565,14 +789,30 @@ defmodule Agendum.TUI.HelpScreen do
 
   @doc "The help screen's lines, `{style, text}` segments, from its top."
   @spec lines(State.t(), map) :: [[{atom, String.t()}]]
-  def lines(state, %{page: :about, from: from} = mode) do
-    head("HELP #{where(from)}", "", " c commands here · d describe a key · a all keys", state) ++
-      (state |> below(mode) |> page_lines(mode, width(state)) |> Enum.drop(mode.top))
-  end
+  # a topic as Agenda's: its title, a blank line, then its text, the links
+  # bright and the highlighted one marked
+  def lines(state, %{page: :topic} = mode) do
+    body =
+      state
+      |> topic_lines(mode)
+      |> Enum.reduce({[], 0}, fn line, {acc, n} ->
+        {segments, n} =
+          Enum.map_reduce(line, n, fn
+            {:link, label, _}, n ->
+              {{if(n == mode.link, do: :help_link_selected, else: :help_link), label}, n + 1}
 
-  def lines(state, %{page: :all} = mode) do
-    head("ALL KEYS", "↑↓ PGUP PGDN scroll", "   Every key, made from the keymaps.", state) ++
-      (state |> below(mode) |> page_lines(mode, width(state)) |> Enum.drop(mode.top))
+            {:text, text}, n ->
+              {{:normal, text}, n}
+          end)
+
+        {[[{:normal, " "} | segments] | acc], n}
+      end)
+      |> elem(0)
+      |> Enum.reverse()
+      |> Enum.drop(mode.top)
+      |> Enum.map(&clip_line(&1, width(state)))
+
+    [[{:help_title, Help.clip(" " <> mode.topic.title, width(state))}], [{:normal, ""}]] ++ body
   end
 
   def lines(state, %{page: :commands} = mode) do
@@ -649,7 +889,19 @@ defmodule Agendum.TUI.HelpScreen do
 
   # the rows the list has, and the rows a scrolled page shows
   defp list_height(state), do: max(height(state) - @head - 1 - @pane, 1)
-  defp content_height(state), do: max(height(state) - @head, 1)
+  # a topic's text under its title and the blank line
+  defp content_height(state), do: max(height(state) - 2, 1)
+
+  # a line of segments cut to the width, links and all
+  defp clip_line(segments, width) do
+    {kept, _} =
+      Enum.reduce(segments, {[], width}, fn {style, text}, {acc, left} ->
+        taken = String.slice(text, 0, max(left, 0))
+        {[{style, taken} | acc], left - String.length(taken)}
+      end)
+
+    Enum.reverse(kept)
+  end
 
   @doc """
   The inside of the help's box, `{width, height}` (R65c). The box leaves

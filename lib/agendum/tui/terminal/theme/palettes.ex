@@ -198,6 +198,8 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
     help_pane: {:fg, :tint},
     help_pane_title: {:accent, :tint, [:bold]},
     help_frame: {:accent, :help_bg},
+    help_link: {:accent, :help_bg, [:bold]},
+    help_link_selected: {:cursor_fg, :cursor, [:bold]},
     splash_title: {:fg, :tint, [:bold]},
     splash_value: {:accent, :tint}
   }

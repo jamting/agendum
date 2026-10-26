@@ -29,7 +29,7 @@ defmodule Agendum.TUI.Extras.ZettelLinksTest do
 
   # a command without a key, from F1 c: type its name, ENTER runs it
   defp run_by_name(state, name),
-    do: press(state, [{:f, 1}, "c"] ++ String.graphemes(name) ++ [:enter])
+    do: press(state, [{:f, 1}, {:f, 6}, :enter] ++ String.graphemes(name) ++ [:enter])
 
   test "links show in the link colour, a broken one in its own", %{state: state} do
     segments = styled(state)

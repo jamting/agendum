@@ -155,7 +155,7 @@ defmodule Agendum.TUI.AvailableTest do
   end
 
   describe "F1 c" do
-    defp list(state), do: press(state, [{:f, 1}, "c"])
+    defp list(state), do: press(state, [{:f, 1}, {:f, 6}, :enter])
 
     defp row_style(listed, name) do
       mode = State.mode(listed)
@@ -195,7 +195,9 @@ defmodule Agendum.TUI.AvailableTest do
     end
 
     test "d says so too", %{state: state} do
-      text = state |> on_item() |> press([{:f, 1}, "d", {:alt, "y"}]) |> screen()
+      text =
+        state |> on_item() |> press([{:f, 1}, {:f, 6}, :down, :enter, {:alt, "y"}]) |> screen()
+
       assert text =~ "ALT-Y runs Yank in a view."
       assert text =~ "Not now: No removed item to yank back"
     end

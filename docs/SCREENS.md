@@ -82,7 +82,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
 
 - **View** (no mode): the current view's sections, items and columns. `Agendum.TUI.Update.ViewKeys`, `Agendum.TUI.Layout`, `Agendum.TUI.Render.View`.
   - **Menu** `:menu` (F10 or `/`): File, Item, Category, View, Search, Undo, Redo, Print, Quit. `Agendum.TUI.Menu`. Its commands open most of the boxes below; the menu path is given with each.
-  - **Help** `:help` (F1, wherever the keys are not typing): a text about where you are, then `c` the command list (typing narrows it, ENTER runs the highlighted command), `d` describe key, `a` all the keys, made from the keymaps (`Agendum.TUI.Render.Help`) (R65). Drawn as a box over the faded screen (R65c). `Agendum.TUI.HelpScreen`.
+  - **Help** `:help` (F1, wherever the keys are not typing): the topic for where you are, with links, and Agenda's keys: F3 Index, F5 Find, F6 Keys, F8 Review, F9 Return (R65e; topics in `Agendum.TUI.Help.Topics`). From F6 Keys: the command list (typing narrows it, ENTER runs the highlighted command) and describe key (R65). Drawn as a box over the faded screen (R65c). `Agendum.TUI.HelpScreen`.
   - **Prompt** `:prompt`: one line of text in the control panel (a file name, a new view's name, a category name). `Agendum.TUI.Update.Prompts`.
     - **Select File** `:select_file` (F3 in a prompt for a file name): the folder's subfolders and the files that fit, to pick one (R51). `Agendum.TUI.Boxes.SelectFile`.
   - **Question** `:confirm`: a Y/N question (discard, save changes, make a date category) in a small untitled box, as Agenda's (screenshots 36, 141): the question with its answer highlighted, Yes at first. `Agendum.TUI.Update.Prompts`.
@@ -197,7 +197,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:copy_items`        | box           | `Agendum.TUI.Boxes.CopyBox`              | ALT-F9 on an item                                 | R42            |
 | `:move_item`         | control panel | `Agendum.TUI.Update.Marked`              | ALT-F10, Item ▸ Reposition                        | R26            |
 | `:searching`         | control panel | `Agendum.TUI.Boxes.SearchBox`            | the Search box                                    | R37            |
-| `:help`              | full screen   | `Agendum.TUI.HelpScreen`                 | F1 (then `c` commands, `d` describe, `a` all keys) | §5, R65, R65c  |
+| `:help`              | full screen   | `Agendum.TUI.HelpScreen`                 | F1 (F6 Keys: the commands, describe key)          | §5, R65, R65e  |
 | `:note`              | full screen   | `Agendum.TUI.Update.Notes`               | F5, Item Properties, Category Properties          | §5             |
 | `:catmgr`            | full screen   | `Agendum.TUI.CategoryScreens.Manager`    | F9                                                | R2–R8          |
 | `:viewmgr`           | box           | `Agendum.TUI.Boxes.ViewManager`          | F8                                                | §5             |

@@ -411,6 +411,10 @@ defmodule Agendum.TUI.Keymap do
   @spec bindings(atom) :: %{term => atom}
   def bindings(place), do: Map.get(@keymaps, place, %{})
 
+  @doc "The places with a keymap."
+  @spec places() :: [atom]
+  def places, do: Map.keys(@keymaps)
+
   @doc """
   The key `key` stands for, and when: `{key, :always | :not_typing |
   :view}`; nil when it stands for itself.
