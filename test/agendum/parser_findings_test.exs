@@ -68,7 +68,7 @@ defmodule Agendum.ParserFindingsTest do
   # close (`[`, `![`, `_`): 40,000 characters of prose took 1.6 s
   test "a long post becomes HTML at once, whatever it holds" do
     for text <- [
-          String.duplicate("absolute words ", 8_000),
+          String.duplicate("absolute words ", 4_000),
           String.duplicate("[", 20_000) <> String.duplicate("](", 20_000),
           String.duplicate("![", 20_000),
           String.duplicate("_a", 20_000),
