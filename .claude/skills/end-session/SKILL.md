@@ -40,7 +40,7 @@ Commit repo changes made here in one commit ("Session notes: …"), after `mix c
 Write the summary in the terminal, in this order:
 
 1. **A cheerful compliment** about the day's work, one or two sentences, specific to what was actually achieved (name the thing, the number of commits or boxes, the bug squashed). Warm and a little playful is good; a light Hundred Acre Wood touch fits the project. Never invent achievements.
-2. **What was done**: grouped by piece of work, each with its outcome and the commits (short hashes). Changes the owner will notice when using Agendum come first, then the inner work.
+2. **What was done**: grouped by piece of work, each with its outcome and the commits (short hashes). Changes the owner will notice when using Agendum come first, then the inner work. Each version released gets a line saying whether the owner tried it in the program ("v0.63.0 Update defaults: tried ✔" or "not tried yet"), so `start-session` can offer the untried ones (meeting 2026-10-26-4, § 10).
 3. **Not done or skipped**: paused work and where it stops, checks that were not run, open questions for the owner. Plainly, no hedging.
 4. **Remembered**: what was written to memory, the roadmap or plan documents in step 2, in one line each.
 5. **Learnings**: anything either of us learned this session that is worth keeping: for Claude, a mistake caught and how it is avoided now, or something about the code or the owner's way of working; for the owner, an Elixir idiom met, a design idea, something about working with Claude. Honest and specific; a learning not clearly the owner's is offered as "perhaps". Leave the section out when there is nothing.

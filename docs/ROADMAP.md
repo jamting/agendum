@@ -6,9 +6,21 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
-1. A meeting on the expert review of 2026-10-26 ([`reviews/2026-10-26.md`](reviews/2026-10-26.md), § 18): which of its ten resolutions to take, and in what order; several are meant for before the public repository (the faded feed entries, the clone's safety, private addresses in the debug log, a tidy pass and a dry run)
-2. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-3. Then the owner chooses the next work from the areas below, now that Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-25, § 7)
+1. The faded feed entries keep only their id and publish date (Fixes and polish; meeting 2026-10-26-4, § 5)
+2. A meeting on data structures the extras need that are not a natural fit for Agendum's data format: the general case (meeting 2026-10-26-4, §§ 5, 15)
+3. Erlang's logger kept off the screen (Fixes and polish; meeting 2026-10-26-4, § 6)
+4. A recovery file on a crash (The clone's safety; meeting 2026-10-26-4, § 6)
+5. No private addresses in the debug log, and ten sessions kept (Fixes and polish; meeting 2026-10-26-4, § 7)
+6. Keep the long fuzz run's output (Sharpen the saw; meeting 2026-10-26-4, § 8)
+7. Hostile-text tests (The clone's safety; meeting 2026-10-26-4, § 6)
+8. The sort box's names written out, its three suppressions gone (Sharpen the saw; meeting 2026-10-26-4, § 12)
+9. `Update`'s shell answers to `Update.Results` (Sharpen the saw; meeting 2026-10-26-4, § 11)
+10. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
+11. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
+12. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
+13. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
+14. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+15. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
@@ -18,12 +30,14 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 ### Fixes and polish
 
-- [ ] Erlang's logger can print over the screen (the owner, 2026-10-25: Agendum left running in iTerm on a closed laptop, offline, showed error text instead of the program until F10 redrew it; no session log). Likely the hourly feed fetches failing offline and OTP's network code or a crashed fetch reporting through the logger, which Agendum never steers away from the terminal (only Publish does, for ssh). Fix: while the TUI runs, send the logger to the debug log (or nowhere); make a fetch that crashes outright come back as a message
+- [ ] The faded feed entries keep only their id (meeting 2026-10-26-4, § 5; expert review 2026-10-26, § 18.1): a faded or discarded entry snapshot keeps its id and publish date (for `keep_days`), not its title, note and link (`lib/agendum/core/extras/feed.ex`), which take 12.7 MB of the owner's 17.0 MB file and make a save take ~480 ms. A format change: version, golden file, `JSON_FORMAT.md`. Measure the save before and after on a copy of the owner's file; compression level 1 (`store.ex`, 460 → 134 ms) only if it is still slow
+- [ ] No private addresses in the debug log (meeting 2026-10-26-4, § 7; expert review 2026-10-26, § 18.3): feed and calendar fetches logged by name or host, never the query string (`lib/agendum/tui/debug_log.ex`, `effect_text/2`); keep the last ten sessions (`@keep`, now 5)
+- [ ] Erlang's logger can print over the screen (before the public repository, meeting 2026-10-26-4, § 6; the owner, 2026-10-25: Agendum left running in iTerm on a closed laptop, offline, showed error text instead of the program until F10 redrew it; no session log). Likely the hourly feed fetches failing offline and OTP's network code or a crashed fetch reporting through the logger, which Agendum never steers away from the terminal (only Publish does, for ssh). Fix: while the TUI runs, send the logger to the debug log (or nowhere); make a fetch that crashes outright come back as a message
 - [ ] Hidden values of a date or numeric category (owner, 2026-10-25): a category made date or numeric keeps its short name, Also match words and conditions, as Agenda does, but its box no longer shows them (R6a). Decide what to do with them: show them somewhere (Statistics, the manager), clear them on conversion, or leave them; check first whether any still has an effect (a short name in a narrow column head, a condition)
 
 ### The clone's safety
 
-Clone work, not frozen (meeting 2026-10-22, § 5c; expert review 2026-10-21, § 8 and § 14):
+Clone work, not frozen (meeting 2026-10-22, § 5c; expert review 2026-10-21, § 8 and § 14); both before the public repository (meeting 2026-10-26-4, § 6):
 
 - [ ] A recovery file on a crash: the unsaved file written beside it, and offered when it is next opened
 - [ ] Hostile-text tests: a `.AG` file (and a feed) whose item text asks for changes imports as plain items, and only its own
@@ -32,7 +46,9 @@ Clone work, not frozen (meeting 2026-10-22, § 5c; expert review 2026-10-21, § 
 
 Tools and checks that make every later change faster and safer. Each is small; the command layer they made safer is done (R66, ADR 0036, in `ROADMAP_DONE.md`). From the expert review of 2026-10-16 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
-- [ ] Keep the long fuzz run's output in a file, so a failure can be read afterwards: one run failed on 2026-10-26 (while v0.62.1 was built) and did not fail again in 22,000 runs, its seed lost because the output was cut to its last line
+- [ ] The sort box's names written out (meeting 2026-10-26-4, § 12; expert review 2026-10-26, § 18.8): the eight setting names (`order` … `then_line`) as a literal list instead of `String.to_atom/1`, so the three Credo suppressions go (`lib/agendum/tui/boxes/sort_box.ex`); before the code review
+- [ ] `Update`'s shell answers to a module of their own (meeting 2026-10-26-4, § 11; expert review 2026-10-26, § 18.7): the answers from the shell (file loaded, saved, imported, fetched; `lib/agendum/tui/update.ex`, about lines 479–934) to `Agendum.TUI.Update.Results`, no change in behaviour; before the public repository
+- [ ] Keep the long fuzz run's output (meeting 2026-10-26-4, § 8): each local run writes a dated log file with the seed at the top (about 150 bytes when it passes, a few KB when it fails; the last 30 kept), and the nightly CI run (`.github/workflows/fuzz.yml`) uploads its output as an artifact when it fails, so a failure can be read and repeated afterwards: one run failed on 2026-10-26 (while v0.62.1 was built) and did not fail again in 22,000 runs, its seed lost because the output was cut to its last line
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key. Measured 2026-10-16, a cursor move: 300 items 6 ms in `Update` + 11 ms in `Render`; 3,000 items 61 + 45 ms; 10,000 items 205 + 231 ms. First build it once per key and share it; then keep it in the session's state between keys as a value with a key that says when it is stale (ADR 0035): the database, the view, the date and time, the screen width, collapsed families, the search. Needs an ADR. **Wait until the debug log shows `slow answer` lines (over 100 ms) in real use** (owner's decision, 2026-10-16); ingested items (`plans/ITEM_LEVELS.md`) will likely be what brings them. Update 2026-10-25 (v0.31.2): the first real-use slowness came from many sections, not many items (the owner's News view, 243 sections: ~135 ms a key); fixed without a cache (`ROADMAP_DONE.md`, Sharpen the saw), and wrapping and drawing now touch only the rows down to the highlight and on screen. Left: the view is still made about three times per key, so "build it once per key" is the next step if it is slow again. The command layer, which reshaped the state it would live in, is done; the TUI state's split into file and session (Towards many users) reshapes it again
 
 ### The note editor
@@ -58,11 +74,13 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
 
 ### Housekeeping
 
+- [ ] Before the public repository (meeting 2026-10-26-4, §§ 9, 11, 13), in this order: a general code review of the whole code base; a meeting on what information to make public in the docs; a tidy pass (`tidy-docs`: VISION's freeze paragraph, AGENDA_PARITY's "three differences" and their cousins) with a sweep of SPEC, each rule keeping a short "(checked in Agenda)" or "Our choice" and its longer story moved to `ROADMAP_DONE.md`; then a dry run: the `git filter-repo` copy built and checked by `mix check` before anything is pushed (`plans/GITHUB.md` § 7)
 - [ ] Optional (from the parity plan, 2026-10-26): Utilities ▸ Launch, a shell without quitting Agendum
 *[A page here was soaked in the creek. — Rabbit]*
 
 ### Users and direction
 
+- [ ] A meeting for brainstorming and general plans, after the public repository (meeting 2026-10-26-4, § 14, tabled): the owner, 2026-10-26: "we are entering a period of brainstorming and making general plans on ideas now", with coding too; clarity on the ideas, and whether an overarching strategy is needed. The panel's four directions for after the public repository go there: looking for users (Mitch), a read-only headless command and golden tasks (Claude), the GTD starter (David), the gentler starter (Russell)
 - [ ] Real users, when there are any: old Agenda users and people who love keyboard tools, with the debug log on (`AGENDUM_LOG`) and a short talk with each; what they stumble on goes here (expert review 2026-10-16). Not a condition for declaring the clone done, and no search for old Agenda users now: the owner knows none (meeting 2026-10-22, § 5a and § 5e)
 
 ### Towards many users
@@ -81,6 +99,7 @@ Then working together:
 
 ### Beyond Agenda
 
+- [ ] A meeting on the extras' data (meeting 2026-10-26-4, §§ 5, 15; the owner): the extras may need data structures that are not a natural fit for Agendum's data format (feed snapshots, ingested items); plan for the general case, with Carsten's separate store for ingested items (`plans/ITEM_LEVELS.md`) as one input; right after the faded feed entries are trimmed
 Open again since the clone was declared done (2026-10-26); the built ones stay hidden behind the Extras preference (ADR 0043).
 
 Each item names the group in `VISION.md` it serves, group 1 first; items for group 3 or for no group yet wait under Ideas, one line each with a pointer to their plan (meeting 2026-10-16-2, § 6).
