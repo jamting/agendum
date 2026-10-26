@@ -33,15 +33,12 @@ defmodule Agendum.TUI.AgendaMenusTest do
     "View menu ▸ System: missing" => {:out_of_scope, "exit to DOS (SPEC § 6)"},
     "View menu ▸ Utilities ▸ Launch: missing" =>
       {:out_of_scope, "running another DOS program (SPEC § 6)"},
-    "View menu ▸ Utilities ▸ Trash: missing" =>
-      {:not_built, "the trash (AGENDA_PARITY § The steps)"},
     "Category manager menu ▸ Print: missing" =>
       {:out_of_scope, "printing the category hierarchy (SPEC § 6)"},
     "View menu ▸ File ▸ Maintenance ▸ Compress: missing" =>
       {:out_of_scope, "Agendum's files need no compressing"},
     "View menu ▸ File ▸ Maintenance ▸ Reservation: missing" =>
       {:out_of_scope, "networks (SPEC § 6)"},
-    "View menu ▸ Item ▸ Undisc: missing" => {:not_built, "the trash (AGENDA_PARITY step 4)"},
     "View menu ▸ Print: a command in Agendum, a menu in Agenda" =>
       {:machine,
        "Print writes the view to a text file; printing on paper is out of scope (AGENDA_PARITY)"},

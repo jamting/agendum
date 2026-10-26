@@ -21,6 +21,7 @@ defmodule Agendum.TUI.HelpCoverageTest do
     Agendum.TUI.Boxes.ErrorBox,
     Agendum.TUI.Boxes.NewFileBox,
     Agendum.TUI.Boxes.PasswordBox,
+    Agendum.TUI.Boxes.UndiscardBox,
     Agendum.TUI.Boxes.ActionBox,
     Agendum.TUI.Boxes.AutoAssignBox,
     Agendum.TUI.Boxes.CategoryMatchBox,

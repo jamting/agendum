@@ -23,6 +23,7 @@ defmodule Agendum.TUI.Update.Actions do
     Boxes.ViewManager
   }
 
+  alias Agendum.TUI.Boxes.ErrorBox
   alias Agendum.TUI.Update.{Marked, Prompts, ViewKeys}
 
   # --- actions (shared by keys and menus) --------------------------------------
@@ -146,11 +147,14 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, action, _row) when action in [:category_props, :discard_category],
     do: State.error(state, @not_a_category)
 
+  # Agenda's question and help line (checked in Agenda 2.0, 2026-10-26);
+  # the item goes to the trash (R24a)
   defp do_perform(state, :discard, %{kind: :item, item: item}) do
     Prompts.confirm(
       state,
-      "Discard this item from the whole file?",
-      {:discard_item, item.id}
+      "Discard this item?",
+      {:discard_item, item.id},
+      help: "Press ENTER to discard this item.  Press ESC to cancel."
     )
   end
 
@@ -271,6 +275,51 @@ defmodule Agendum.TUI.Update.Actions do
   # Alarms! (R38), as Agenda's
   defp do_perform(state, :alarm_list, _),
     do: Prompts.replace_show_view(state, {__MODULE__, :show_alarms, []})
+
+  # Item ▸ Undisc and Utilities ▸ Trash (R24a), with Agenda's words when
+  # the trash is empty (checked in Agenda 2.0, 2026-10-26)
+  defp do_perform(%{db: %{trash: %{items: []}}} = state, :undiscard, _),
+    do:
+      ErrorBox.notify(
+        state,
+        "There are no discarded items in the trash, so there are no items to recover."
+      )
+
+  defp do_perform(state, :undiscard, nil), do: state
+
+  # a datebook's sections are its time slots, as for ALT-Y (R47)
+  defp do_perform(state, :undiscard, %{slot: %{}}), do: datebook_sections(state)
+
+  defp do_perform(state, :undiscard, row) do
+    target = %{
+      category: row.category.id,
+      after: if(row.kind == :item, do: row.item.id),
+      sidx: row.sidx
+    }
+
+    # one comes back at once; with several, Agenda asks which
+    case state.db.trash.items do
+      [_one] ->
+        undiscard(state, :last, target)
+
+      _several ->
+        Agendum.TUI.Boxes.UndiscardBox.open(state, target.category, target.after, row.sidx)
+    end
+  end
+
+  defp do_perform(%{db: %{trash: %{items: []}}} = state, :empty_trash, _),
+    do:
+      ErrorBox.notify(
+        state,
+        "There are no discarded items in the trash, so there is no trash to empty."
+      )
+
+  defp do_perform(state, :empty_trash, _),
+    do:
+      Prompts.confirm(state, "Empty the trash?", :empty_trash,
+        help:
+          "Press ENTER to empty the trash.  (This permanently discards the items in the trash.)"
+      )
 
   # Utilities Show ItemsDone and Every (User's Guide 13-9, 13-21)
   defp do_perform(state, :show_done, _),
@@ -485,5 +534,22 @@ defmodule Agendum.TUI.Update.Actions do
     state
     |> State.switch_view(view_id)
     |> State.info("#{what} · ALT-F8 returns to the last view")
+  end
+
+  @doc """
+  Brings the last item or all items back from the trash (R24a) into
+  `target`'s category, after its item, and highlights the newest of them,
+  the first below that item.
+  """
+  @spec undiscard(State.t(), :last | :all, %{category: integer, after: integer | nil, sidx: term}) ::
+          State.t()
+  def undiscard(state, which, target) do
+    case State.command(state, {:undiscard, which, target.category, target.after}) do
+      {:ok, state, %{result: ids}} ->
+        %{state | cursor_key: {:item, target.sidx, List.last(ids)}}
+
+      {:error, _reason} ->
+        state
+    end
   end
 end

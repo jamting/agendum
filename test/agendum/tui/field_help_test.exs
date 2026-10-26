@@ -33,13 +33,15 @@ defmodule Agendum.TUI.FieldHelpTest do
     assert panel(state) =~ "Choose to insert new columns in one or all sections"
 
     state = press(state, :down)
+    assert panel(state) =~ "remove discarded items from the trash"
+    state = press(state, :down)
     assert panel(state) =~ "characters between tab stops"
     refute panel(state) =~ "insert new columns"
     assert panel(press(state, :down)) =~ "date and time formats"
   end
 
   test "the help follows the box on top, and goes when the box closes", %{state: state} do
-    state = press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, " "])
+    state = press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, :down, " "])
     assert %{type: :date_settings} = State.mode(state)
     assert panel(state) =~ "how dates and times are displayed"
 
@@ -73,9 +75,9 @@ defmodule Agendum.TUI.FieldHelpTest do
     boxes = [
       press(state, [{:f, 10}, "u", "c"]),
       press(state, [{:f, 10}, "f", "p"]),
-      press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, " "]),
-      press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, " ", " "]),
-      press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, :right, " "]),
+      press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, :down, " "]),
+      press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, :down, " ", " "]),
+      press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, :down, :right, " "]),
       press(state, [{:f, 9}, :down, :down, {:f, 6}]),
       press(state, [:down, {:f, 6}]),
       press(state, [:down, {:f, 10}, "v", "s", "p"]),

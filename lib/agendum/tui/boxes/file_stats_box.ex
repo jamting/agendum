@@ -2,10 +2,10 @@ defmodule Agendum.TUI.Boxes.FileStatsBox do
   @moduledoc """
   The File Statistics box (File ▸ Properties ▸ File statistics; Agenda's
   File Statistics, screenshot 140): how big the file is, counts only,
-  nothing to change: its items, those with notes, its categories, and the
+  nothing to change: its items, those in the trash, those with notes, its categories, and the
   average items per category and categories per item
-  (`Agendum.Core.Database.file_statistics/1`). Agenda's Unused space and
-  Items in trash are left out: Agendum has neither. Any key goes back
+  (`Agendum.Core.Database.file_statistics/1`), and the items in the trash
+  (R24a). Agenda's Unused space is left out: Agendum has none. Any key goes back
   to File Properties. Drawn from `@layout` (`Agendum.TUI.Boxes.Template`).
   Pure.
   """
@@ -20,6 +20,7 @@ defmodule Agendum.TUI.Boxes.FileStatsBox do
   @layout """
 
      Items:                          [items     ]
+     Items in trash:                 [items_in_trash]
      Items with notes:               [items_with_notes]
      Categories:                     [categories]
      Average items/category:         [items_per_category]

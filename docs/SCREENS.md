@@ -112,7 +112,8 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
   - **What to copy** `:what_to_copy` (F3, F4 or ALT-F4 with nothing marked, in a note or a line being typed): Agenda's untitled one-field box, Word, Line or All text. `Agendum.TUI.Boxes.WhatToCopyBox`.
     - **Note search** `:note_search` (ALT-F6 in a note): search and replace, then Y/N per match (R39). `Agendum.TUI.Typing.NoteSearch`.
   - **Item Properties** `:item_props` (F6 on an item, Item ▸ Properties): text, note, statistics, dependencies, every assignment (R34, R43). `Agendum.TUI.Boxes.ItemProperties`.
-  - **Error** `:error_box`: an error in a box titled Error, "Press any key to continue", as Agenda's (a search that finds nothing, R37). `Agendum.TUI.Boxes.ErrorBox`.
+  - **Error** `:error_box`: an error in a box titled Error, "Press any key to continue", as Agenda's (a search that finds nothing, R37); without a title, Agenda's notifications (Undisc or Utilities ▸ Trash with nothing in the trash, R24a). `Agendum.TUI.Boxes.ErrorBox`.
+  - **Undiscard** `:undiscard` (Item ▸ Undisc with more than one item in the trash): Agenda's untitled box, "Undiscard: All items in trash" or "Last item in trash"; ENTER brings them back below the highlighted item (R24a). `Agendum.TUI.Boxes.UndiscardBox`.
   - **Password** `:password_box` (File Properties ▸ Set file password): Agenda's small boxes, "Enter the current password", "Enter the new password", "Please type the new password again", the password typed hidden (ADR 0046). `Agendum.TUI.Boxes.PasswordBox`.
   - **New File** `:new_file` (File ▸ Retrieve with a name that is not a file yet): Description and Password, as Agenda's; ENTER makes the file (R82, ADR 0046). `Agendum.TUI.Boxes.NewFileBox`.
   - **Abandon File** `:abandon` (File ▸ Abandon): "Revert to last saved version: No", as Agenda's; Yes puts the file back as last saved (R82). `Agendum.TUI.Boxes.AbandonBox`.
@@ -150,7 +151,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
       - **Display format** `:display_format` (Display format): how the file shows dates, with a sample (R41, R41a). `Agendum.TUI.Boxes.DisplayFormatBox`, rows from `Agendum.TUI.Boxes.DateFormatRows`.
       - **Input format** `:input_format` (Input format): the person's number order, date separator and clock, saved as preferences (R41b). `Agendum.TUI.Boxes.InputFormatBox`.
     - **Auto-assign settings** `:auto_assign` (Auto-assign settings): text matching for the file and Confirm assignments (R16, R16a). `Agendum.TUI.Boxes.AutoAssignBox`.
-    - **File statistics** `:file_stats` (File statistics ...): the items, items with notes, categories and the average assignments, as Agenda's (screenshot 140); nothing to change. `Agendum.TUI.Boxes.FileStatsBox`.
+    - **File statistics** `:file_stats` (File statistics ...): the items, items in the trash, items with notes, categories and the average assignments, as Agenda's (screenshot 140); nothing to change. `Agendum.TUI.Boxes.FileStatsBox`.
   - **Feeds** `:feeds` (File ▸ Transfer ▸ Feeds): RSS and Atom feed subscriptions; INS subscribes (two prompts), ENTER reads now, F how often, K how long entries stay, DEL unsubscribes, I and E import and export OPML (prompts for the file) (R75). `Agendum.TUI.Extras.FeedsBox`.
   - **Calendars** `:calendars` (File ▸ Transfer ▸ Calendars): calendar subscriptions; INS subscribes (two prompts), ENTER reads now, F and A change how often and how far ahead, DEL unsubscribes (R45). `Agendum.TUI.Extras.CalendarsBox`.
   - **Customize** `:customize` (Utilities ▸ Customize): the person's theme, date language and fallback language, sounds and the Extras switch, saved as preferences (R40, R14c, R76, R77). `Agendum.TUI.Boxes.CustomizeBox`.
@@ -209,6 +210,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:category_stats`    | box           | `Agendum.TUI.Boxes.CategoryStatsBox`     | Category Properties ▸ Statistics                  | §5             |
 | `:item_props`        | box           | `Agendum.TUI.Boxes.ItemProperties`       | F6 on an item, Item ▸ Properties                  | R34, R43       |
 | `:error_box`         | box           | `Agendum.TUI.Boxes.ErrorBox`             | a search that finds nothing                       | R37            |
+| `:undiscard`         | box           | `Agendum.TUI.Boxes.UndiscardBox`         | Item ▸ Undisc, several items in the trash         | R24a           |
 | `:password_box`      | box           | `Agendum.TUI.Boxes.PasswordBox`          | File Properties ▸ Set file password               | R82            |
 | `:new_file`          | box           | `Agendum.TUI.Boxes.NewFileBox`           | File ▸ Retrieve with a new name                   | R82            |
 | `:abandon`           | box           | `Agendum.TUI.Boxes.AbandonBox`           | File ▸ Abandon                                    | R82            |

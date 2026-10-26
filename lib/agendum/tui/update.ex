@@ -315,7 +315,11 @@ defmodule Agendum.TUI.Update do
     # the clock's own commands: they change the file, but are not undo steps
     # (ADR 0005), so they go straight to the core
     clock = State.context(%{state | now: now})
-    new_day = if today != state.today, do: [:clear_old_alarms, :recheck_conditions], else: []
+    # and End of day empties the trash (R24a)
+    new_day =
+      if today != state.today,
+        do: [:clear_old_alarms, :recheck_conditions, {:tidy_trash, :clock}],
+        else: []
 
     {ticked, rung} = run_clock(state, new_day ++ [:ring_alarms], clock)
     ticked = %{ticked | now: now, today: today}
@@ -407,7 +411,15 @@ defmodule Agendum.TUI.Update do
         do: State.effect(state, {:backup_file, state.path}),
         else: state
 
-    {state, rung} = run_clock(state, [:clear_old_alarms, :ring_alarms], State.context(state))
+    # the trash emptied as File Properties ▸ Empty trash says (R24a), then
+    # the alarms; the alarms' result is the last command's
+    {state, rung} =
+      run_clock(
+        state,
+        [{:tidy_trash, :open}, :clear_old_alarms, :ring_alarms],
+        State.context(state)
+      )
+
     state = %{state | dirty: state.db != state.saved.db}
 
     cond do

@@ -14,7 +14,7 @@ defmodule Agendum.TUI.BoxChoicesTest do
 
   # File ▸ Properties ▸ Global date settings ▸ Display format
   defp display_format(state),
-    do: press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, " ", " "])
+    do: press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, :down, " ", " "])
 
   # Date format, the third row
   defp date_format(state), do: press(display_format(state), [:down, :down])

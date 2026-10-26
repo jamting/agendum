@@ -88,7 +88,8 @@ defmodule Agendum.TUI.Menu do
          {"Properties", "Text, note and every assignment of the item (F6)", :item_props},
          {"MakeAssign", "Assign the item, or all marked items, to a category (ALT-M)",
           :make_assign},
-         {"Discard", "Delete the item from the file (ALT-F4)", :discard},
+         {"Discard", "Discard the item from the file, into the trash (ALT-F4)", :discard},
+         {"Undisc", "Recover item(s) from the trash", :undiscard},
          {"BrkAssign", "Remove the assignment for the current item (DEL)", :break_assign},
          {"Reposition", "Move the item to another section or position (ALT-F10)", :move_item},
          {"Alarm", "Set or cancel an alarm before the When time (ALT-A)", :alarm},
@@ -139,9 +140,8 @@ defmodule Agendum.TUI.Menu do
           ]}
        ]},
       {"Print", "Print the current view to a text file (CTRL-P)", :export},
-      # Agenda's Utilities (checked in Agenda 2.0): Trash and Show ItemsDone,
-      # Circular and Every are not built yet, Launch is out of scope
-      {"Utilities", "Customize, Execute, Show, Questions",
+      # Agenda's Utilities (checked in Agenda 2.0); Launch is out of scope
+      {"Utilities", "Customize, Execute, Show, Questions, Trash",
        [
          {"Customize", "Your theme, date languages and input format, for every file", :customize},
          {"Execute", "Apply conditions and actions to existing items (ALT-X all, ALT-E one)",
@@ -173,7 +173,8 @@ defmodule Agendum.TUI.Menu do
             {"Sched", "One date's items in the Show View", :show_schedule},
             {"Every", "Show every item in the file.", :show_every}
           ]},
-         {"Questions", "Confirm suggested assignments", :questions}
+         {"Questions", "Confirm suggested assignments", :questions},
+         {"Trash", "Clear all discarded items from the trash", :empty_trash}
        ]},
       {"Quit", "Leave Agendum (CTRL-Q)", :quit}
     ]

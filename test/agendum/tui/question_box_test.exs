@@ -23,7 +23,7 @@ defmodule Agendum.TUI.QuestionBoxTest do
   test "the question is a box with its answer, Yes, highlighted", %{asked: asked} do
     assert %{type: :confirm} = State.mode(asked)
     text = screen(asked)
-    assert text =~ "Discard this item from the whole file?"
+    assert text =~ "Discard this item?"
     refute text =~ "(Y/N)"
     assert text =~ "Press ENTER to accept, ESC to cancel"
     assert answer(asked) == ["Yes"]
@@ -47,15 +47,18 @@ defmodule Agendum.TUI.QuestionBoxTest do
     assert press(asked, :esc).modes == []
   end
 
-  test "the control panel says what to do", %{asked: asked} do
-    assert panel(asked) =~ "SPACE switches"
+  # a question without Agenda's own help line says how to answer it
+  test "the control panel says what to do", %{state: state} do
+    assert panel(press(state, {:alt_f, 4})) =~ "SPACE switches"
   end
 
   test "a long question wraps in the box", %{state: state} do
     state = %{state | width: 50}
-    asked = press(state, [:down, {:alt_f, 4}])
+    # ALT-F4 on the section head: "Discard category Calls and its children?"
+    asked = press(state, {:alt_f, 4})
     lines = asked |> screen() |> String.split("\n")
-    assert Enum.any?(lines, &(&1 =~ "Discard this item from the"))
+    assert Enum.any?(lines, &(&1 =~ "Discard category Calls"))
+    refute Enum.any?(lines, &(&1 =~ "Discard category Calls and its children?"))
     assert Enum.all?(lines, &(String.length(&1) <= 50))
   end
 end

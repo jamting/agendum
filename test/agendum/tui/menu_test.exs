@@ -43,7 +43,7 @@ defmodule Agendum.TUI.MenuTest do
 
     test "Item > Discard asks before discarding the item", %{state: state} do
       state = press(state, [{:f, 10}, "i", "d"])
-      assert screen(state) =~ "Discard this item from the whole file?"
+      assert screen(state) =~ "Discard this item?"
     end
 
     test "File > Maintenance > MakeCopy asks for the copy's name", %{state: state} do
@@ -99,7 +99,7 @@ defmodule Agendum.TUI.MenuTest do
     end
 
     test "a box opened from a box goes back to that box, then to the menu", %{state: state} do
-      state = press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, " "])
+      state = press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, :down, " "])
       assert %{type: :date_settings} = State.mode(state)
       assert %{type: :file_props} = State.mode(press(state, :esc))
       assert %{type: :menu} = State.mode(press(state, [:esc, :esc]))

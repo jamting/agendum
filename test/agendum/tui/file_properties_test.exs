@@ -14,7 +14,7 @@ defmodule Agendum.TUI.FilePropertiesTest do
 
   # File Properties ▸ Global date settings (below Insert new columns in) ▸
   # Display format, as in Agenda
-  @dates [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, " "]
+  @dates [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, :down, " "]
   @display @dates ++ [" "]
 
   test "File Properties opens Agenda's boxes, one inside the other", %{state: state} do
@@ -67,8 +67,8 @@ defmodule Agendum.TUI.FilePropertiesTest do
     # each box's last row, and the bottom of its frame below it
     for {keys, last} <- [
           {[], "Auto-assign"},
-          {[:down, :down, :down, :down, :down, " "], "Evening"},
-          {[:down, :down, :down, :down, :down, " ", " "], "Sample"}
+          {[:down, :down, :down, :down, :down, :down, " "], "Evening"},
+          {[:down, :down, :down, :down, :down, :down, " ", " "], "Sample"}
         ] do
       lines = state |> press([{:f, 10}, "f", "p"] ++ keys) |> screen() |> String.split("\n")
       row = Enum.find_index(lines, &String.contains?(&1, last))

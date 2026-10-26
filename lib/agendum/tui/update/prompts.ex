@@ -572,6 +572,10 @@ defmodule Agendum.TUI.Update.Prompts do
     State.run(state, {:discard_items, [id]}, "Item discarded")
   end
 
+  # Utilities ▸ Trash (R24a): gone for good; undo can still bring it back
+  # while Agendum is open
+  defp confirmed(state, :empty_trash, true), do: State.run(state, :empty_trash)
+
   defp confirmed(state, {:discard_category, id}, true) do
     case State.command(state, {:discard_category, id}) do
       {:ok, state, _} ->

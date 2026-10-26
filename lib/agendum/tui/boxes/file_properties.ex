@@ -4,7 +4,8 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   and the boxes it opens, nested as in Agenda 2.0, each row with "..."
   opening the next box:
 
-    * File Properties (`:file_props`): Insert new columns in (R55), Tab
+    * File Properties (`:file_props`): Insert new columns in (R55), Empty
+      trash (R24a), Tab
       size (R64e, typed as a number), Global
       date settings ..., Auto-assign settings ...
       (`Agendum.TUI.Boxes.AutoAssignBox`, R16a) and File statistics ...
@@ -36,6 +37,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
    Make backup on open:    [backup ]
 
    Insert new columns in:  [insert_columns ]
+   Empty trash:            [empty_trash          ]
 
    Tab size:               [tab_size]
 
@@ -44,6 +46,14 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   """
 
   @rows Template.fields(@layout)
+
+  # Empty trash's choices in Agenda's words
+  @empty_trash %{
+    on_demand: "On demand",
+    file_closed: "When file is closed",
+    end_of_day: "End of day",
+    discarded: "When item is discarded"
+  }
   # two settings side by side, as Agenda's
   @grid Template.grid(@layout, @rows)
 
@@ -54,6 +64,9 @@ defmodule Agendum.TUI.Boxes.FileProperties do
     insert_columns:
       "Choose to insert new columns in one or all sections in the view. " <>
         "You can override when you add individual columns.",
+    empty_trash:
+      "Choose when to remove discarded items from the trash, so that " <>
+        "they can no longer be recovered.",
     tab_size:
       "Type the number of characters between tab stops in notes (1 to 16), or SPACE for the next.",
     dates:
@@ -122,6 +135,11 @@ defmodule Agendum.TUI.Boxes.FileProperties do
           do: &1,
           else: State.run(&1, {:set_insert_columns, new.insert_columns})
         ),
+      empty_trash:
+        &if(&1.db.trash.empty == new.trash.empty,
+          do: &1,
+          else: State.run(&1, {:set_empty_trash, new.trash.empty})
+        ),
       tab_size:
         &if(&1.db.tab_size == new.tab_size,
           do: &1,
@@ -148,6 +166,13 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   defp change(state, :tab_size),
     do: State.run(state, {:set_tab_size, rem(state.db.tab_size, 16) + 1})
 
+  # SPACE: the next of Agenda's four, in its order (R24a)
+  defp change(state, :empty_trash) do
+    choices = Agendum.Core.empty_trash_choices()
+    at = Enum.find_index(choices, &(&1 == state.db.trash.empty))
+    State.run(state, {:set_empty_trash, Enum.at(choices, rem(at + 1, length(choices)))})
+  end
+
   # two choices, so SPACE flips it
   defp change(state, :insert_columns) do
     where = if state.db.insert_columns == :all, do: :section, else: :all
@@ -169,6 +194,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
       backup: if(state.db.backup_on_open, do: "Yes", else: "No"),
       insert_columns:
         if(state.db.insert_columns == :all, do: "All sections", else: "Current section"),
+      empty_trash: @empty_trash[state.db.trash.empty],
       tab_size: Integer.to_string(state.db.tab_size),
       dates: "...",
       auto: "...",

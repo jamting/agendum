@@ -174,9 +174,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
                  "file_properties: Agenda's Auto-import file, not ours" =>
                    {:not_built,
                     "File Properties' other settings (AGENDA_PARITY, Boxes and lists)"},
-                 "file_properties: Agenda's Empty trash, not ours" =>
-                   {:not_built,
-                    "File Properties' other settings (AGENDA_PARITY, Boxes and lists)"},
                  "file_properties: Agenda's Global protection, not ours" =>
                    {:out_of_scope, "application protection (SPEC § 6)"},
                  "file_properties: Agenda's Update defaults, not ours" =>
@@ -185,8 +182,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
                  "file_statistics: Agenda's Unused space, not ours" =>
                    {:machine,
                     "an Agendum file has no unused space to report: it is written whole on every save (no Compress)"},
-                 "file_statistics: Agenda's Items in trash, not ours" =>
-                   {:not_built, "the trash (Utilities ▸ Trash)"},
                  "global_date_settings: Agenda's End of year, not ours" =>
                    {:not_built, "Global Date Settings' other settings"},
                  "global_date_settings: Agenda's Process Done items, not ours" =>

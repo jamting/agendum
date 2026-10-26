@@ -28,7 +28,7 @@ defmodule Agendum.TUI.MenuShapeTest do
 
   test "Utilities and Utilities ▸ Show hold Agenda's entries that Agendum has" do
     utilities = child(Menu.shown(:main, false), "Utilities")
-    assert labels(utilities) == ["Customize", "Execute", "Show", "Questions"]
+    assert labels(utilities) == ["Customize", "Execute", "Show", "Questions", "Trash"]
 
     assert labels(child(utilities, "Show")) ==
              ["Match", "Prereqs", "Depends", "ItemsDone", "Circular", "Alarm", "Sched", "Every"]

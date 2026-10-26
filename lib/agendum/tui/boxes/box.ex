@@ -173,6 +173,7 @@ defmodule Agendum.TUI.Boxes.Box do
     error_box: Agendum.TUI.Boxes.ErrorBox,
     password_box: Agendum.TUI.Boxes.PasswordBox,
     new_file: Agendum.TUI.Boxes.NewFileBox,
+    undiscard: Agendum.TUI.Boxes.UndiscardBox,
     schedule: Agendum.TUI.Boxes.ScheduleBox,
     set_alarm: Agendum.TUI.Boxes.SetAlarmBox,
     scope: Agendum.TUI.Update.Marked,

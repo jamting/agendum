@@ -17,7 +17,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Copy the item (or the marked items) to another section of the view as well: the Copy box | ALT-F9 | — |
 | Yank back the item DEL last removed from a section: into the current section, below the highlighted item | ALT-Y | ⌥y |
 | Hop to the highlighted item's next occurrence: further down this view, else in the next view that shows it (ALT-F8 goes back) | ALT-H | ⌥h |
-| Discard                                                                                         | ALT-F4                        | **CTRL-D**                                                            |
+| Discard, into the trash (R24a); Item ▸ Undisc brings it back                                    | ALT-F4                        | **CTRL-D**                                                            |
 | Set the When date                                                                               | ALT-F2                        | —                                                    |
 | Next / previous completion while typing a column entry or a box's category field (NEXTSEL, PREVSEL); the column's or field's list of categories (CHOICES); a new category of exactly what is typed (NEWCAT) | F8 / F7; F3; F5 | ALT-N / ALT-P (⌥n / ⌥p); —; INS or CTRL-N |
 | New category instead of the completion                                                          | F5 or INS                     | **CTRL-N**                                                            |

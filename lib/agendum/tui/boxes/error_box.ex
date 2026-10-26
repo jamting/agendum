@@ -4,7 +4,10 @@ defmodule Agendum.TUI.Boxes.ErrorBox do
   key to continue" in its bottom edge, and the error beep (checked in
   Agenda 2.0, 2026-10-26: a search that finds nothing). Any key closes it.
   Most of Agendum's errors are said on the control panel; this box is for
-  those Agenda put in one. Pure.
+  those Agenda put in one. Agenda's notifications (`notify/2`) are the same
+  box without a title (checked, 2026-10-26: "There are no discarded items
+  in the trash …"); whether they beep could not be heard, so they do not.
+  Pure.
   """
 
   use Agendum.TUI.Boxes.Box, finish: :any_key
@@ -18,6 +21,10 @@ defmodule Agendum.TUI.Boxes.ErrorBox do
     |> State.push(%Agendum.TUI.Modes.ErrorBox{text: text})
     |> State.effect({:sound, :error})
   end
+
+  @doc "Opens the box with `text` as Agenda's notification: no title, no beep."
+  def notify(state, text),
+    do: State.push(state, %Agendum.TUI.Modes.ErrorBox{text: text, notice: true})
 
   # any key closes it, as Agenda's "Press any key to continue"
   @impl Box
@@ -34,6 +41,7 @@ defmodule Agendum.TUI.Boxes.ErrorBox do
   def run(state, _mode, :close), do: State.pop(state)
 
   @impl Box
+  def title(_state, %{notice: true}), do: ""
   def title(_state, _mode), do: "Error"
 
   # as wide as the text needs, as Agenda's
