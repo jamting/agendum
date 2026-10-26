@@ -83,6 +83,28 @@ defmodule Agendum.Core.Facade.Categories do
 
   defdelegate discard_category(db, id), to: Database, as: :delete_category
 
+  @doc """
+  The child of `parent` with that name (case and accents aside), or a new
+  one without name matching: where an extra keeps its categories (a feed's
+  under Feeds, a calendar's under Calendars; R75a).
+  """
+  @spec child_named(db, id, String.t()) :: {db, id}
+  def child_named(db, parent, name) do
+    wanted = Database.normalize(name)
+
+    case Enum.find(
+           db.categories[parent].children,
+           &(Database.normalize(db.categories[&1].name) == wanted)
+         ) do
+      nil ->
+        {:ok, db, id} = add_category(db, parent, name, match_name: false)
+        {db, id}
+
+      id ->
+        {db, id}
+    end
+  end
+
   # --- moving categories (SPEC R7b, R7c, R7d) ---
 
   @doc """

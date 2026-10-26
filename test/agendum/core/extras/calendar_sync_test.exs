@@ -63,14 +63,20 @@ defmodule Agendum.Core.Extras.CalendarSyncTest do
       assert Core.ingested?(db, parent)
     end
 
-    test "a new calendar joins the family the others are in" do
+    test "a family that holds only calendars is theirs once opened, and new ones join it" do
       {db, cal} = subscribed()
+      made = db.categories[db.calendars[cal].category_id].parent_id
       {:ok, db, family} = Core.add_category(db, db.main_id, "Kalender")
-      own = db.calendars[cal].category_id
-      # a file whose calendars a person moved under a family of their own
-      {:ok, db} = Agendum.Core.Database.move_category(db, own, family, nil)
+      # the owner's file: the calendars moved under a family of their own
+      {:ok, db} =
+        Agendum.Core.Database.move_category(db, db.calendars[cal].category_id, family, nil)
+
+      {:ok, db} = Agendum.Core.Database.delete_category(db, made)
+
+      db = Agendum.Store.upgrade(db)
       {:ok, db, second} = Core.subscribe_calendar(db, "Home", "https://example.com/h.ics")
       assert db.categories[db.calendars[second].category_id].parent_id == family
+      assert db.categories[family].name == "Calendars"
     end
 
     test "a name and a web address are needed" do

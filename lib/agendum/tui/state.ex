@@ -182,8 +182,8 @@ defmodule Agendum.TUI.State do
         theme: Keyword.get(opts, :theme, :classic),
         view_id: hd(db.view_order),
         saved: %{db: db, stamp: opts[:stamp], conflict: false, recovery: nil},
-        # the Feeds family starts folded in the category manager, so the
-        # feeds do not crowd it (R75a); ALT-= opens it
+        # the Feeds and Calendars families start folded in the category
+        # manager, so they do not crowd it (R75a); ALT-= opens one
         collapsed: folded_feeds(db)
       }
       |> prepare_dates()
@@ -193,15 +193,11 @@ defmodule Agendum.TUI.State do
     %__MODULE__{} = state |> Agendum.TUI.Places.restore() |> refresh_circular()
   end
 
-  # the ingested categories with children: the Feeds parent
-  defp folded_feeds(%Database{feeds: feeds}) when feeds == %{}, do: MapSet.new()
+  # the extras' families that hold a subscription: Feeds, Calendars
+  defp folded_feeds(%Database{feeds: feeds, calendars: cals}) when feeds == %{} and cals == %{},
+    do: MapSet.new()
 
-  defp folded_feeds(db) do
-    for id <- Agendum.Core.ingested_categories(db),
-        db.categories[id].children != [],
-        into: MapSet.new(),
-        do: id
-  end
+  defp folded_feeds(db), do: MapSet.new(Agendum.Core.ingested_families(db))
 
   @doc """
   Works out which items are caught in a circular reference (Agenda's o,

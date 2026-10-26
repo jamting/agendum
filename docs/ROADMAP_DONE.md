@@ -244,6 +244,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Beyond Agenda
 
+- [x] (2026-10-26, v0.68.1) The code review's findings on v0.68.0 fixed: Feeds and Calendars are fixed families under MAIN, ingested while they hold a subscription and locked only in structure, so a kept category no longer unlocks them (and discarding Feeds could no longer drop the other feeds); Calendars folded without feeds; a subscription's name is its own; new calendars only into Calendars, strays from older versions joining with the next subscription; the review's quadratic check and copied helper gone (`Categories.child_named/3`)
 - [x] (2026-10-26, v0.68.0) Calendars as feeds: each calendar its own category in a Calendars family (never one of the person's), the family ingested and folded in the category manager, an existing family of only calendars named Calendars as the file opens (the owner's Kalender) (R45, R75a)
 - [x] (2026-10-26, v0.67.1) The Feeds and Calendars boxes scroll by whole entries when there are more than fit, the highlighted one always shown (the owner: 243 feeds ran over the bottom edge); `tools/smoke/smoke.py --extras`
 - [x] (2026-10-26, v0.67.0) Ingested categories: a feed's or calendar's categories, and the Feeds parent, are the extra's; a person's change to one is refused with where to do it, the Feeds family starts folded in the category manager, F2 in the Feeds and Calendars boxes renames (R75a; meeting 2026-10-26-5, § 6; ADR 0048, amended: worked out, not stored)

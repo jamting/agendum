@@ -333,6 +333,7 @@ defmodule Agendum.Core do
   # ingested categories (R75a): the feeds' and calendars' own
   defdelegate ingested_categories(db), to: Feeds
   defdelegate ingested?(db, id), to: Feeds
+  defdelegate ingested_families(db), to: Feeds
   defdelegate feeds_due(db, now), to: Feeds
   defdelegate parse_feed(text), to: Feeds
   defdelegate export_opml(db), to: Feeds

@@ -31,31 +31,16 @@ defmodule Agendum.Core.Facade.Extras.Feeds do
     name = String.trim(name)
 
     with {:name, true} <- {:name, name != ""},
+         {:taken, false} <- {:taken, taken?(db.feeds, nil, name)},
          {:ok, url} <- Feed.normalize_url(url) do
-      {db, parent} = category(db, db.main_id, @feeds)
-      {db, category} = category(db, parent, name)
+      {db, parent} = Categories.child_named(db, db.main_id, @feeds)
+      {db, category} = Categories.child_named(db, parent, name)
       {db, id} = Database.add_feed(db, %Feed{name: name, url: url, category_id: category})
       {:ok, news(db, category), id}
     else
       {:name, false} -> {:error, :no_name}
+      {:taken, true} -> {:error, :duplicate}
       :error -> {:error, :bad_url}
-    end
-  end
-
-  # the child of that name, or a new one
-  defp category(db, parent, name) do
-    wanted = Database.normalize(name)
-
-    case Enum.find(
-           db.categories[parent].children,
-           &(Database.normalize(db.categories[&1].name) == wanted)
-         ) do
-      nil ->
-        {:ok, db, id} = Categories.add_category(db, parent, name, match_name: false)
-        {db, id}
-
-      id ->
-        {db, id}
     end
   end
 
@@ -83,9 +68,27 @@ defmodule Agendum.Core.Facade.Extras.Feeds do
     end
   end
 
-  @doc "The ingested categories: the feeds' and calendars' own, and the Feeds parent (R75a)."
+  @doc """
+  Whether another subscription than `id` (nil: any) has that name, case
+  and accents aside: a name is one subscription's, so two never share a
+  category (code review 2026-10-26).
+  """
+  @spec taken?(%{optional(id) => %{name: String.t()}}, id | nil, String.t()) :: boolean
+  def taken?(subscriptions, id, name) do
+    wanted = Database.normalize(String.trim(name))
+
+    Enum.any?(subscriptions, fn {other, sub} ->
+      other != id and Database.normalize(sub.name) == wanted
+    end)
+  end
+
+  @doc "The ingested categories: the feeds' and calendars' own, and their families (R75a)."
   @spec ingested_categories(db) :: MapSet.t(id)
   defdelegate ingested_categories(db), to: Agendum.Core.Extras.Ingested, as: :categories
+
+  @doc "The extras' families that hold a subscription now: Feeds, Calendars (R75a)."
+  @spec ingested_families(db) :: [id]
+  defdelegate ingested_families(db), to: Agendum.Core.Extras.Ingested, as: :families
 
   @doc "Whether a category is ingested (R75a)."
   @spec ingested?(db, id) :: boolean
@@ -99,18 +102,12 @@ defmodule Agendum.Core.Facade.Extras.Feeds do
   def rename_feed(db, feed_id, name) do
     name = String.trim(name)
     feed = db.feeds[feed_id]
-    wanted = Database.normalize(name)
-
-    taken =
-      Enum.any?(db.feeds, fn {id, other} ->
-        id != feed_id and Database.normalize(other.name) == wanted
-      end)
 
     cond do
       name == "" ->
         {:error, :empty_text}
 
-      taken ->
+      taken?(db.feeds, feed_id, name) ->
         {:error, :duplicate}
 
       true ->

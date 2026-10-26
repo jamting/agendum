@@ -463,6 +463,8 @@ defmodule Agendum.Core.Command do
   # arguments that must not be one: the category changed, a new parent, or
   # the category an item or an action would file into. A condition that only
   # reads one (`cycle_condition` on the person's own category) is fine.
+  # `{:own, i}`: only a feed's or a calendar's own category is refused there;
+  # a family (Feeds, Calendars) locks its structure, not filing into it.
   @locked %{
     rename_category: [0],
     discard_category: [0],
@@ -479,9 +481,9 @@ defmodule Agendum.Core.Command do
     set_short_name: [0],
     set_category_note: [0],
     toggle_exclude: [0, 1],
-    toggle_also_assign: [0, 1],
+    toggle_also_assign: [0, {:own, 1}],
     sort_children: [0],
-    set_action: [0, 1],
+    set_action: [0, {:own, 1}],
     remove_action: [0],
     set_special_action: [0],
     add_condition: [0],
@@ -494,27 +496,41 @@ defmodule Agendum.Core.Command do
     set_date_rule: [0],
     add_category: [0],
     copy_conditions_actions: [1],
-    assign: [1],
-    remove_from_category: [1],
-    toggle_assignment: [1],
+    assign: [{:own, 1}],
+    remove_from_category: [{:own, 1}],
+    toggle_assignment: [{:own, 1}],
     assign_by_name: [1],
     assign_new_by_name: [1]
   }
 
-  defp not_ingested(db, :add_item, [_text, opts]), do: free(db, [opts[:section]])
+  defp not_ingested(db, :add_item, [_text, opts]), do: free(db, [{:own, opts[:section]}])
 
-  defp not_ingested(db, name, args) when is_map_key(@locked, name),
-    do: free(db, Enum.map(@locked[name], &Enum.at(args, &1)))
+  defp not_ingested(db, name, args) when is_map_key(@locked, name) do
+    free(
+      db,
+      Enum.map(@locked[name], fn
+        {:own, i} -> {:own, Enum.at(args, i)}
+        i -> {:any, Enum.at(args, i)}
+      end)
+    )
+  end
 
   defp not_ingested(_db, _name, _args), do: :ok
 
-  defp free(db, ids) do
+  defp free(db, args) do
     # worked out once for the command, only when there are feeds or calendars
     if db.feeds == %{} and db.calendars == %{} do
       :ok
     else
-      ingested = Agendum.Core.Extras.Ingested.categories(db)
-      if Enum.any?(ids, &MapSet.member?(ingested, &1)), do: {:error, :ingested}, else: :ok
+      own = Agendum.Core.Extras.Ingested.own(db)
+      all = MapSet.union(own, MapSet.new(Agendum.Core.Extras.Ingested.families(db)))
+
+      locked? = fn
+        {:own, id} -> MapSet.member?(own, id)
+        {:any, id} -> MapSet.member?(all, id)
+      end
+
+      if Enum.any?(args, locked?), do: {:error, :ingested}, else: :ok
     end
   end
 

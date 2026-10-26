@@ -128,10 +128,10 @@ defmodule Agendum.Core.Extras.IngestedTest do
     # the Calendars family the subscription made, empty now, as the owner's
     # file has none
     {:ok, db} = Agendum.Core.Database.delete_category(db, empty)
-    assert Core.ingested?(db, family)
 
     db = Agendum.Store.upgrade(db)
     assert db.categories[family].name == "Calendars"
+    assert Core.ingested?(db, family)
   end
 
   test "a family of the person's with a calendar among other things stays the person's", ctx do

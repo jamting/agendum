@@ -322,9 +322,8 @@ defmodule Agendum.Store do
       | date_settings: struct(Agendum.Core.DateSettings, Map.from_struct(db.date_settings))
     }
 
-    # the calendars' family named Calendars (R75a), once it is theirs
-    db = Agendum.Core.Facade.Extras.Calendars.name_family(upgrade_db(db, when_assign))
-    db
+    # the calendars where this version keeps them, in Calendars (R75a)
+    db |> upgrade_db(when_assign) |> Agendum.Core.Facade.Extras.Calendars.name_family()
   end
 
   defp upgrade_db(db, when_assign) do

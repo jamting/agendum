@@ -258,6 +258,9 @@ defmodule Agendum.TUI.Update.Prompts do
 
       {:error, :no_name} ->
         State.error(state, "A calendar needs a name")
+
+      {:error, :duplicate} ->
+        State.error(state, "#{String.trim(name)} is taken: another calendar has that name")
     end
   end
 
@@ -277,6 +280,9 @@ defmodule Agendum.TUI.Update.Prompts do
 
       {:error, :no_name} ->
         State.error(state, "A feed needs a name")
+
+      {:error, :duplicate} ->
+        State.error(state, "#{String.trim(name)} is taken: another feed has that name")
     end
   end
 

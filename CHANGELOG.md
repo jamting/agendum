@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.68.1 — 2026-10-26
+
+Fixes from a code review of 0.68.0.
+
+- **Unsubscribing one feed or calendar no longer unlocks its family.** Feeds and Calendars stay the extras' own while they hold a subscription; the category you keep stays yours inside it. Before, discarding Feeds afterwards could quietly remove your other feed subscriptions too.
+- **Calendars is folded** in the category manager even in a file with no feeds.
+- **A second feed or calendar with the same name is refused**, so two never share a category.
+- **New calendars always go into Calendars**, never into a family of yours; calendars an older version put straight under MAIN join it with your next subscription.
+
 ## 0.68.0 — 2026-10-26
 
 Calendars kept as feeds are.

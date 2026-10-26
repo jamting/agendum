@@ -80,4 +80,12 @@ defmodule Agendum.TUI.Extras.IngestedTest do
     assert screen(refused) =~ "Calendars holds your calendars"
     assert screen(refused) =~ "File ▸ Transfer ▸ Calendars"
   end
+
+  test "in a file with calendars and no feeds, Calendars is folded too" do
+    db = Core.new_file()
+    {:ok, db, _} = Core.subscribe_calendar(db, "Work Calendar", "webcal://work.example/c.ics")
+    state = start(db, extras: true) |> manager()
+    assert screen(state) =~ "Calendars"
+    refute screen(state) =~ "Work Calendar"
+  end
 end
