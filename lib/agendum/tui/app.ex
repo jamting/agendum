@@ -177,13 +177,65 @@ defmodule Agendum.TUI.App do
   # `fun.()` calls a function value; the dot tells it apart from calling a
   # named function. A `def` body can have `catch` (and `rescue`, `after`)
   # without writing `try`.
+  # The unsaved changes are kept first, beside the file (R82b), and their
+  # path put in this process's dictionary for `Agendum.CLI` to name once
+  # the terminal is back (the crash itself unwinds everything else).
   defp logged(state, fun) do
     fun.()
   catch
     kind, reason ->
       DebugLog.crash(kind, reason, __STACKTRACE__, state)
+      kept = keep_unsaved(state, System.get_env())
+      if kept, do: Process.put(:agendum_recovered, kept)
       :erlang.raise(kind, reason, __STACKTRACE__)
   end
+
+  @doc """
+  On a crash: the unsaved changes written to the recovery file
+  (`Store.recovery_path/2`, R82b; `env` places an untitled file's), and its
+  path; nil when nothing was unsaved or it could not be written. Never
+  raises: a crash is already under way.
+  """
+  @spec keep_unsaved(State.t(), %{String.t() => String.t()}) :: String.t() | nil
+  def keep_unsaved(%State{dirty: true} = state, env) do
+    path = Store.recovery_path(state.path, env)
+
+    with path when path != nil <- path,
+         :ok <- File.mkdir_p(Path.dirname(path)),
+         :ok <- Store.save(state.db, path) do
+      DebugLog.write("unsaved changes kept in #{path}")
+      path
+    else
+      _ -> nil
+    end
+  catch
+    _kind, _reason -> nil
+  end
+
+  def keep_unsaved(_state, _env), do: nil
+
+  @doc """
+  After a file at `path` was opened: when a crash kept changes beside it
+  (R82b), they are read (with the file's password) and offered
+  (`Update.recovery_found/3`).
+  """
+  @spec check_recovery(State.t(), String.t() | nil) :: State.t()
+  def check_recovery(state, path) when is_binary(path) do
+    rpath = Store.recovery_path(path)
+
+    if state.path == path and File.exists?(rpath) do
+      result =
+        with {:ok, db} <- Store.load(rpath, state.db.password),
+             {:ok, stat} <- File.stat(rpath, time: :local),
+             do: {:ok, db, NaiveDateTime.from_erl!(stat.mtime)}
+
+      Update.recovery_found(state, path, result)
+    else
+      state
+    end
+  end
+
+  def check_recovery(state, _path), do: state
 
   defp apply_keys(state, []), do: {:ok, state}
 
@@ -273,13 +325,22 @@ defmodule Agendum.TUI.App do
   # File ▸ Maintenance ▸ Erase (R82): to the system's Trash
   defp perform(state, {:trash_file, path}), do: Update.trashed(state, path, Store.trash(path))
 
+  # a crash's changes beside the file are offered once it is open (R82b)
   defp perform(state, {:load_password, path, password}),
-    do: Update.loaded(state, path, Store.load_with_stamp(path, password))
+    do:
+      state |> Update.loaded(path, Store.load_with_stamp(path, password)) |> check_recovery(path)
 
-  defp perform(state, {:load, path}), do: Update.loaded(state, path, Store.load_with_stamp(path))
+  defp perform(state, {:load, path}),
+    do: state |> Update.loaded(path, Store.load_with_stamp(path)) |> check_recovery(path)
 
   defp perform(state, {:open_or_create, path}),
-    do: Update.opened(state, path, Store.load_with_stamp(path))
+    do: state |> Update.opened(path, Store.load_with_stamp(path)) |> check_recovery(path)
+
+  # a crash's changes, now saved into the file (R82b)
+  defp perform(state, {:remove_recovery, path}) do
+    File.rm(path)
+    state
+  end
 
   defp perform(state, {:write_text, path, text}),
     do: Update.written(state, path, File.write(path, text))

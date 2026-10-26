@@ -636,11 +636,13 @@ defmodule Agendum.TUI.Update do
   end
 
   def saved(state, path, {:ok, stamp}, opts) do
+    state = saved_recovery(state)
+
     %{
       state
       | path: path,
         dirty: false,
-        saved: %{db: state.db, stamp: stamp, conflict: false}
+        saved: %{db: state.db, stamp: stamp, conflict: false, recovery: nil}
     }
     |> remember(path)
     |> State.info("Saved #{Path.basename(path)}")
@@ -669,6 +671,13 @@ defmodule Agendum.TUI.Update do
     tail = if opts.then == :quit, do: " (not quitting)", else: ""
     State.error(state, "Could not save: #{inspect(reason)}#{tail}")
   end
+
+  # the changes kept from a crash are in the file now: their recovery
+  # file goes (R82b)
+  defp saved_recovery(%State{saved: %{recovery: nil}} = state), do: state
+
+  defp saved_recovery(state),
+    do: State.effect(state, {:remove_recovery, state.saved.recovery})
 
   # what waited for the save: quitting keeps the person's place in the
   # file first (R69), as `handle/2` does for a Quit without a save
@@ -737,6 +746,44 @@ defmodule Agendum.TUI.Update do
     do: State.error(state, Agendum.TUI.Messages.text(:cannot_open))
 
   @doc """
+  After a file was opened, the shell found the changes a crash kept beside
+  it (`Agendum.Store.recovery_path/2`, R82b), read here with the time they
+  were written: Agendum asks whether to open them. Yes opens them as
+  unsaved changes to the file, No moves the recovery file to the Trash, ESC
+  leaves it to be asked about next time.
+  """
+  @spec recovery_found(
+          State.t(),
+          String.t(),
+          {:ok, Agendum.Core.db(), NaiveDateTime.t()} | {:error, term}
+        ) :: State.t()
+  def recovery_found(state, path, {:ok, db, written}) do
+    rpath = Agendum.Store.recovery_path(path)
+
+    when_text =
+      Agendum.Core.DateFormat.date_time(
+        NaiveDateTime.to_date(written),
+        NaiveDateTime.to_time(written),
+        state.db.date_format
+      )
+
+    Prompts.ask(
+      state,
+      "#{Path.basename(path)}: changes not saved before a crash (#{when_text}) are in " <>
+        "#{Path.basename(rpath)}. Open them?",
+      {:recovered, rpath, db},
+      help: "Y opens the changes, to save into the file; N moves them to the Trash."
+    )
+  end
+
+  def recovery_found(state, path, {:error, _reason}),
+    do:
+      State.error(
+        state,
+        "#{Path.basename(Agendum.Store.recovery_path(path))} could not be read"
+      )
+
+  @doc """
   After the shell read a JSON file to import (R44): the file opens as a
   new, untitled file, to be saved under a name; on an error the open file
   stays.
@@ -761,7 +808,7 @@ defmodule Agendum.TUI.Update do
         %State{
           State.reopen(state, db, nil)
           | dirty: true,
-            saved: %{db: nil, stamp: nil, conflict: false},
+            saved: %{db: nil, stamp: nil, conflict: false, recovery: nil},
             message: {:message, "Imported #{Path.basename(path)} (save it to keep it)"}
         }
         |> Layout.settle()
@@ -790,7 +837,7 @@ defmodule Agendum.TUI.Update do
         %State{
           State.reopen(state, db, into)
           | dirty: true,
-            saved: %{db: nil, stamp: nil, conflict: false},
+            saved: %{db: nil, stamp: nil, conflict: false, recovery: nil},
             message: {:message, "Imported #{name} as #{Path.basename(into)} (save it to keep it)"}
         }
         |> Layout.settle()

@@ -235,6 +235,7 @@ defmodule Agendum.CLI do
         |> State.new([path: path, stamp: stamp] ++ session(options, prefs, today))
         |> Layout.settle()
         |> Update.arrive()
+        |> App.check_recovery(path)
         |> Update.start(
           options.file == nil and not (options.demo or options.rabbit or options.clinic)
         )
@@ -275,6 +276,11 @@ defmodule Agendum.CLI do
   catch
     kind, reason ->
       if log, do: IO.puts(:stderr, "Agendum crashed; the debug log is #{log}")
+
+      # the unsaved changes kept beside the file (R82b), offered next time
+      if kept = Process.get(:agendum_recovered),
+        do: IO.puts(:stderr, "Your unsaved changes were kept in #{kept}")
+
       :erlang.raise(kind, reason, __STACKTRACE__)
   end
 

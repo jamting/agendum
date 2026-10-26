@@ -79,7 +79,8 @@ defmodule Agendum.TUI.State do
           saved: %{
             db: Database.t() | nil,
             stamp: Agendum.Store.stamp() | nil,
-            conflict: boolean
+            conflict: boolean,
+            recovery: String.t() | nil
           },
           effects: [Agendum.TUI.Effect.t()]
         }
@@ -136,7 +137,9 @@ defmodule Agendum.TUI.State do
             # whether an auto-save found another writer had changed it,
             # which stops auto-saving until a save the person makes settles
             # it (R71)
-            saved: %{db: nil, stamp: nil, conflict: false},
+            # `recovery`: the crash's recovery file whose changes were opened
+            # (R82b), removed once they are saved
+            saved: %{db: nil, stamp: nil, conflict: false, recovery: nil},
             effects: []
 
   # Domain: what is shared by everyone in the file (the database, where it
@@ -178,7 +181,7 @@ defmodule Agendum.TUI.State do
         key_map: Keyword.get(opts, :prefs, %Agendum.Preferences{}).key_map && :none,
         theme: Keyword.get(opts, :theme, :classic),
         view_id: hd(db.view_order),
-        saved: %{db: db, stamp: opts[:stamp], conflict: false}
+        saved: %{db: db, stamp: opts[:stamp], conflict: false, recovery: nil}
       }
       |> prepare_dates()
 

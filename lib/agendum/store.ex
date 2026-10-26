@@ -85,6 +85,31 @@ defmodule Agendum.Store do
   """
   @type stamp :: String.t()
 
+  @doc """
+  Where a crash keeps the unsaved changes of the file at `path` (R82b):
+  beside it, with Agenda's `@` before the extension, as Agenda named a
+  damaged file's changes (`MYINFO.AG` → `MYINFO@.AG`, User's Guide 22-16).
+  An untitled file (`path` nil) has no folder: its changes go to the state
+  folder (`$XDG_STATE_HOME/agendum`, `~/.local/state/agendum`), from `env`.
+  """
+  @spec recovery_path(Path.t() | nil, %{String.t() => String.t()}) :: Path.t() | nil
+  def recovery_path(path, env \\ %{})
+
+  def recovery_path(nil, env) do
+    case env do
+      %{"XDG_STATE_HOME" => dir} when dir != "" ->
+        Path.join([dir, "agendum", "untitled@.agendum"])
+
+      %{"HOME" => home} when home != "" ->
+        Path.join(home, ".local/state/agendum/untitled@.agendum")
+
+      _ ->
+        nil
+    end
+  end
+
+  def recovery_path(path, _env), do: Path.rootname(path) <> "@" <> Path.extname(path)
+
   @doc "Saves `db` to `path`, whatever is there."
   @spec save(Database.t(), Path.t()) :: :ok | {:error, term}
   def save(%Database{} = db, path) do

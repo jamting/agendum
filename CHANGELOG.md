@@ -4,6 +4,12 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.65.0 — 2026-10-26
+
+A crash no longer loses your work.
+
+- **If Agendum crashes with unsaved changes**, it writes them beside the file first, as `notes@.agendum` (Lotus Agenda's name for a damaged file's changes), and says where. The next time you open the file, Agendum asks whether to open those changes: Yes opens them, to save into the file (the @ file then goes); No keeps the file as it was saved and moves the @ file to the Trash; ESC asks again next time.
+
 ## 0.64.1 — 2026-10-26
 
 - **The debug log keeps no private addresses**: a calendar's or feed's address is written as its host only (`https://cal.example/…`), so a log can be sent to someone. It now keeps the last ten sessions instead of five.

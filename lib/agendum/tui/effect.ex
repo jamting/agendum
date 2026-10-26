@@ -22,6 +22,7 @@ defmodule Agendum.TUI.Effect do
   #   {:load_password, path, password}  a file with a password (ADR 0046)
   #   {:save_copy, path, db}    a copy or template of it (R82)
   #   {:trash_file, path}       another file to the system's Trash (R82)
+  #   {:remove_recovery, path}  a crash's recovery file, its changes saved (R82b)
   #   {:backup_file, path}      the file opened, copied to NAME.agendum.bak (R82)
   #   {:read_descriptions, dir, names}  files' descriptions, for F8 (R82)
   #   {:write_text, …} {:import_json, …} {:read_note_text, …} {:read_opml, …}
@@ -37,6 +38,7 @@ defmodule Agendum.TUI.Effect do
           | {:save, String.t(), save_opts}
           | {:save_copy, String.t(), Database.t()}
           | {:trash_file, String.t()}
+          | {:remove_recovery, String.t()}
           | {:backup_file, String.t()}
           | {:read_descriptions, String.t(), [String.t()]}
           | {:load, String.t()}
@@ -82,6 +84,7 @@ defmodule Agendum.TUI.Effect do
              :read_opml,
              :list_dir,
              :trash_file,
+             :remove_recovery,
              :backup_file
            ] and
              is_binary(path),

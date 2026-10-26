@@ -501,6 +501,16 @@ defmodule Agendum.TUI.Update.Prompts do
   defp confirmed(state, {:make_numeric, id}, true), do: make_numeric(state, id)
   defp confirmed(state, {:trash_file, path}, true), do: State.effect(state, {:trash_file, path})
 
+  # a crash's changes (R82b): Yes opens them as unsaved changes to the file,
+  # the file on disk unchanged until saved; No moves them to the Trash
+  defp confirmed(state, {:recovered, rpath, db}, true),
+    do:
+      %{state | db: db, dirty: true, saved: %{state.saved | recovery: rpath}}
+      |> State.info("Changes from the crash opened; save to keep them")
+
+  defp confirmed(state, {:recovered, rpath, _db}, false),
+    do: State.effect(state, {:trash_file, rpath})
+
   defp confirmed(state, {:replace_show_view, then}, true), do: show(state, then)
 
   # DEL on an item in a view
@@ -662,7 +672,7 @@ defmodule Agendum.TUI.Update.Prompts do
     %{
       State.reopen(state, db, path)
       | dirty: true,
-        saved: %{db: nil, stamp: nil, conflict: false}
+        saved: %{db: nil, stamp: nil, conflict: false, recovery: nil}
     }
     |> State.info("New file #{Path.basename(path)} (not saved yet)")
   end

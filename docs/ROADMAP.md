@@ -7,15 +7,14 @@ Small, testable increments: the open work, by area. Done work is the record in [
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
 1. A meeting on data structures the extras need that are not a natural fit for Agendum's data format: the general case, and whether a feed's name could be an unindexed column instead of a category (Beyond Agenda; meeting 2026-10-26-4, §§ 5, 15)
-2. A recovery file on a crash (The clone's safety; meeting 2026-10-26-4, § 6)
-3. Hostile-text tests (The clone's safety; meeting 2026-10-26-4, § 6)
-4. `Update`'s shell answers to `Update.Results` (Sharpen the saw; meeting 2026-10-26-4, § 11)
-5. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
-6. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
-7. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
-8. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
-9. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-10. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+2. Hostile-text tests (The clone's safety; meeting 2026-10-26-4, § 6)
+3. `Update`'s shell answers to `Update.Results` (Sharpen the saw; meeting 2026-10-26-4, § 11)
+4. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
+5. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
+6. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
+7. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
+8. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+9. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
@@ -29,9 +28,8 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 ### The clone's safety
 
-Clone work, not frozen (meeting 2026-10-22, § 5c; expert review 2026-10-21, § 8 and § 14); both before the public repository (meeting 2026-10-26-4, § 6):
+Clone work, not frozen (meeting 2026-10-22, § 5c; expert review 2026-10-21, § 8 and § 14); before the public repository (meeting 2026-10-26-4, § 6):
 
-- [ ] A recovery file on a crash: the unsaved file written beside it, and offered when it is next opened
 - [ ] Hostile-text tests: a `.AG` file (and a feed) whose item text asks for changes imports as plain items, and only its own
 
 ### Sharpen the saw
