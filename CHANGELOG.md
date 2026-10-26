@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.56.0 — 2026-10-26
+
+Lotus Agenda's help: the frame (the topics come in batches next).
+
+- **F1** shows the help topic for where you are, as Agenda's: its title, its text, and **links in bold** to other topics. The arrows highlight a link (a letter: the next one it begins) and ENTER reads it.
+- Agenda's help keys: **F1** How to Use Help, **F3** the Help Index, **F5** Find (then ALT-N / ALT-P through what it found), **F6** Keys, **F8** or BACKSPACE back, **F9** or ESC to leave. Other keys no longer leave the help.
+- **F6 Keys** is the page of all keys (F1 then `a` before), and starts with **Commands you can run here** (`c` before) and **Describe a key** (`d` before).
+- Every box, menu and screen has its topic, made from the program's own texts.
+
 ## 0.55.0 — 2026-10-26
 
 The trash, as in Lotus Agenda.
