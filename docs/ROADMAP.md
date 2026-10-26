@@ -7,8 +7,9 @@ Small, testable increments: the open work, by area. Done work is the record in [
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
 1. Defaults for new files (Fixes and polish): Agenda's File Properties ▸ Update defaults, and with it the owner's own defaults, such as the date format and more settings; a meeting settles it first (the owner, 2026-10-26)
-2. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-3. Then the owner chooses the next work from the areas below, now that Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-25, § 7)
+2. A meeting on the expert review of 2026-10-26 ([`reviews/2026-10-26.md`](reviews/2026-10-26.md), § 18): which of its ten resolutions to take, and in what order; several are meant for before the public repository (the faded feed entries, the clone's safety, private addresses in the debug log, a tidy pass and a dry run)
+3. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+4. Then the owner chooses the next work from the areas below, now that Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-25, § 7)
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
