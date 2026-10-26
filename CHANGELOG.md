@@ -4,12 +4,21 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.60.0 — 2026-10-26
+
+The help's last batches: files and notes, macros and the screen.
+
+- **Files and notes** (seventeen topics): Files, creating, retrieving, selecting, saving, backing up, abandoning, copying and erasing them, templates, import and export, quitting; Notes, entering a note, the note editor and edit mode.
+- **Macros and the screen** (seventeen topics): Macros, recording them, the macro manager and editor; the indicators on the top lines and in the category manager, value ranges, screen colours, choice lists and category lists, starter files, printing, reordering names, child categories as sections, and About Agendum.
+- F1 in the view manager, the category manager, a note and the macro manager now opens their written topics.
+
 ## 0.59.0 — 2026-10-26
 
 The help's third and fourth batches: dates and alarms, conditions and actions.
 
 - **Dates and alarms** (eight topics): Date Categories, Create a Date Category, Enter Dates and Times, Use the Pop-Up Calendar, Browse Through Dates, Create a Datebook View, Show a Schedule for Any Day, Set an Alarm for an Item.
 - **Conditions and actions** (twelve topics): Conditions, Actions, Automatic Assignments, Explicit and Conditional Assignments, Confirm Assignments, Confirm Mode, attaching conditions (date and numeric too) and actions, changing and clearing them.
+- Fixed: a macro's keys read back whole after a character that joins the next one (U+0600).
 
 ## 0.58.0 — 2026-10-26
 
