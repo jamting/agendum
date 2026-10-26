@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.54.0 — 2026-10-26
+
+Search, the circular o and file passwords, as in Lotus Agenda.
+
+- **Search (ALT-F6)** works as Agenda's: ENTER on Search for takes the text and a second ENTER searches; a forward search starts after the highlighted item; while searching there is no message, the time leaves the top line and the key bar shows F1 Help; past the last match ALT-N only beeps; no match is Agenda's **Error** box.
+- **o** at the right of the View line while an item is caught in a circular reference (Utilities ▸ Show ▸ Circular lists them).
+- **File Properties ▸ Set file password**: Agenda's boxes (the current, the new, the new again). A file with a password is **encrypted** and opening it asks for the password; a forgotten one cannot be recovered. Files are saved in format 43.
+- **File ▸ Retrieve** with a new name opens Agenda's **New File** box: a description and a password, both optional.
+- Fixed: a change in a box (Macro Properties) followed by its macro editor lost its own undo step.
 ## 0.53.0 — 2026-10-26
 
 More of Lotus Agenda, built overnight (nothing that changes a habit).
