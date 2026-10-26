@@ -32,22 +32,45 @@ defmodule Agendum.Core.Extras.CalendarSyncTest do
   defp texts(db), do: db.items |> Map.values() |> Enum.map(& &1.text) |> Enum.sort()
 
   describe "subscribing" do
-    test "makes the calendar's category under MAIN and remembers the calendar" do
+    test "makes the calendar's category under Calendars and remembers the calendar" do
       {db, cal} = subscribed()
       calendar = db.calendars[cal]
       assert %Calendar{name: "Work Calendar", url: "https://example.com/work.ics"} = calendar
       category = db.categories[calendar.category_id]
       assert category.name == "Work Calendar"
-      assert category.parent_id == db.main_id
+      assert db.categories[category.parent_id].name == "Calendars"
       refute category.match_name
       assert {calendar.ahead_days, calendar.refresh_minutes} == {90, 60}
     end
 
-    test "an existing category of that name is used" do
+    # as a feed's (R75a; the owner, 2026-10-26): a calendar always gets its
+    # own category, under the Calendars family, never one of the person's
+    test "a category of the person's with the same name is left alone" do
       db = Core.new_file()
       {:ok, db, existing} = Core.add_category(db, db.main_id, "Family")
       {:ok, db, cal} = Core.subscribe_calendar(db, "family", "https://example.com/f.ics")
-      assert db.calendars[cal].category_id == existing
+      refute db.calendars[cal].category_id == existing
+      refute Core.ingested?(db, existing)
+    end
+
+    test "calendars share one family, Calendars, made when first needed" do
+      {db, cal} = subscribed()
+      {:ok, db, second} = Core.subscribe_calendar(db, "Home", "https://example.com/h.ics")
+      parent = db.categories[db.calendars[cal].category_id].parent_id
+      assert db.categories[parent].name == "Calendars"
+      assert db.categories[parent].parent_id == db.main_id
+      assert db.categories[db.calendars[second].category_id].parent_id == parent
+      assert Core.ingested?(db, parent)
+    end
+
+    test "a new calendar joins the family the others are in" do
+      {db, cal} = subscribed()
+      {:ok, db, family} = Core.add_category(db, db.main_id, "Kalender")
+      own = db.calendars[cal].category_id
+      # a file whose calendars a person moved under a family of their own
+      {:ok, db} = Agendum.Core.Database.move_category(db, own, family, nil)
+      {:ok, db, second} = Core.subscribe_calendar(db, "Home", "https://example.com/h.ics")
+      assert db.categories[db.calendars[second].category_id].parent_id == family
     end
 
     test "a name and a web address are needed" do

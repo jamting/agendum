@@ -122,9 +122,17 @@ defmodule Agendum.TUI.Messages do
       id != nil and
         Enum.any?(db.feeds, fn {_, f} -> db.categories[f.category_id].parent_id == id end)
 
+    calendars_parent =
+      id != nil and
+        Enum.any?(db.calendars, fn {_, c} -> db.categories[c.category_id].parent_id == id end)
+
     name = if id, do: db.categories[id].name <> " is", else: "That category is"
 
     cond do
+      calendars_parent ->
+        "#{db.categories[id].name} holds your calendars: rename or remove one in " <>
+          "File ▸ Transfer ▸ Calendars"
+
       parent ->
         "#{db.categories[id].name} holds your feeds: rename or remove one in File ▸ Transfer ▸ Feeds"
 

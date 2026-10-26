@@ -284,8 +284,6 @@ defmodule Agendum.Store do
   """
   @spec upgrade(map) :: Database.t()
   def upgrade(%{__struct__: Database} = db) do
-    alias Agendum.Core.{Category, View}
-
     # The upgrade is one idea used everywhere below: `struct(Module, map)`
     # builds a fresh struct from a map, taking the keys the struct has,
     # giving missing ones their defaults and dropping unknown ones. A
@@ -323,6 +321,14 @@ defmodule Agendum.Store do
       db
       | date_settings: struct(Agendum.Core.DateSettings, Map.from_struct(db.date_settings))
     }
+
+    # the calendars' family named Calendars (R75a), once it is theirs
+    db = Agendum.Core.Facade.Extras.Calendars.name_family(upgrade_db(db, when_assign))
+    db
+  end
+
+  defp upgrade_db(db, when_assign) do
+    alias Agendum.Core.{Category, View}
 
     %{
       db

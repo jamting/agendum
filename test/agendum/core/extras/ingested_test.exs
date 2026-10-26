@@ -35,9 +35,15 @@ defmodule Agendum.Core.Extras.IngestedTest do
 
   defp run(db, command), do: Core.run(db, command, @now)
 
-  test "the feeds' and calendars' categories, and the Feeds parent, are ingested", ctx do
+  test "the feeds' and calendars' categories, and their families, are ingested", ctx do
     ingested = Core.ingested_categories(ctx.db)
-    assert MapSet.equal?(ingested, MapSet.new([ctx.feed_cat, ctx.feeds_parent, ctx.cal_cat]))
+    cal_parent = ctx.db.categories[ctx.cal_cat].parent_id
+
+    assert MapSet.equal?(
+             ingested,
+             MapSet.new([ctx.feed_cat, ctx.feeds_parent, ctx.cal_cat, cal_parent])
+           )
+
     refute Core.ingested?(ctx.db, ctx.mine)
   end
 
@@ -111,5 +117,26 @@ defmodule Agendum.Core.Extras.IngestedTest do
     refute Core.ingested?(db, ctx.feeds_parent)
     assert {:ok, db, _} = run(db, {:rename_category, ctx.feed_cat, "Kept news"})
     assert db.categories[ctx.feed_cat].name == "Kept news"
+  end
+
+  # the owner's file kept its calendars in a family of its own, "Kalender":
+  # opened, the family is the calendars' and gets their English name
+  test "a family holding only calendars is theirs, named Calendars once opened", ctx do
+    {:ok, db, family} = Core.add_category(ctx.db, ctx.db.main_id, "Kalender")
+    empty = db.categories[ctx.cal_cat].parent_id
+    {:ok, db} = Agendum.Core.Database.move_category(db, ctx.cal_cat, family, nil)
+    # the Calendars family the subscription made, empty now, as the owner's
+    # file has none
+    {:ok, db} = Agendum.Core.Database.delete_category(db, empty)
+    assert Core.ingested?(db, family)
+
+    db = Agendum.Store.upgrade(db)
+    assert db.categories[family].name == "Calendars"
+  end
+
+  test "a family of the person's with a calendar among other things stays the person's", ctx do
+    {:ok, db, _} = Core.add_category(ctx.db, ctx.mine, "Own thing")
+    {:ok, db} = Agendum.Core.Database.move_category(db, ctx.cal_cat, ctx.mine, nil)
+    refute Core.ingested?(db, ctx.mine)
   end
 end

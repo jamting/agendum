@@ -244,6 +244,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Beyond Agenda
 
+- [x] (2026-10-26, v0.68.0) Calendars as feeds: each calendar its own category in a Calendars family (never one of the person's), the family ingested and folded in the category manager, an existing family of only calendars named Calendars as the file opens (the owner's Kalender) (R45, R75a)
 - [x] (2026-10-26, v0.67.1) The Feeds and Calendars boxes scroll by whole entries when there are more than fit, the highlighted one always shown (the owner: 243 feeds ran over the bottom edge); `tools/smoke/smoke.py --extras`
 - [x] (2026-10-26, v0.67.0) Ingested categories: a feed's or calendar's categories, and the Feeds parent, are the extra's; a person's change to one is refused with where to do it, the Feeds family starts folded in the category manager, F2 in the Feeds and Calendars boxes renames (R75a; meeting 2026-10-26-5, § 6; ADR 0048, amended: worked out, not stored)
 - [x] (2026-10-26, v0.66.0) Fingerprints in the feed and calendar snapshots: a live entry keeps `title_print` and `note_print`, an event `summary_print` and `description_print`, not the text (`Agendum.Core.Extras.Fingerprint`, format 46, ADR 0048; meeting 2026-10-26-5, § 5). The owner's file: 1.62 → 1.21 MB, a save 48 → 39 ms; what remains of the feeds' bulk is the 13,181 faded entries' ids and dates

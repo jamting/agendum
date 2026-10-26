@@ -30,15 +30,11 @@ defmodule Agendum.Core.Facade.Extras.Calendars do
     # step failed: a bare `false` could come from anywhere.
     with {:name, true} <- {:name, name != ""},
          {:ok, url} <- Calendar.normalize_url(url) do
-      {db, category} =
-        case Database.find_categories(db, name) do
-          [existing | _] ->
-            {db, existing}
-
-          [] ->
-            {:ok, db, id} = Categories.add_category(db, db.main_id, name, match_name: false)
-            {db, id}
-        end
+      # Domain: as a feed's (R75a): its own category, in the family the
+      # other calendars share, else in Calendars, made when first needed;
+      # never a category of the person's that has the same name
+      {db, parent} = family(db)
+      {db, category} = child(db, parent, name)
 
       {db, id} = Database.add_calendar(db, %Calendar{name: name, url: url, category_id: category})
       {:ok, db, id}
@@ -75,6 +71,70 @@ defmodule Agendum.Core.Facade.Extras.Calendars do
         db = Database.rename_category(db, cal.category_id, name)
         {:ok, %{db | calendars: Map.put(db.calendars, cal_id, %{cal | name: name})}}
     end
+  end
+
+  @calendars "Calendars"
+
+  # the family the calendars are in: the one an existing calendar's category
+  # is in (the person may have moved them), else Calendars under MAIN
+  defp family(db) do
+    existing =
+      Enum.find_value(db.calendars, fn {_, cal} ->
+        parent = db.categories[cal.category_id].parent_id
+        if parent != db.main_id, do: parent
+      end)
+
+    case existing do
+      nil -> child(db, db.main_id, @calendars)
+      parent -> {db, parent}
+    end
+  end
+
+  # the child of that name, or a new one
+  defp child(db, parent, name) do
+    wanted = Database.normalize(name)
+
+    case Enum.find(
+           db.categories[parent].children,
+           &(Database.normalize(db.categories[&1].name) == wanted)
+         ) do
+      nil ->
+        {:ok, db, id} = Categories.add_category(db, parent, name, match_name: false)
+        {db, id}
+
+      id ->
+        {db, id}
+    end
+  end
+
+  @doc """
+  The calendars' family gets its English name, Calendars, when it holds
+  only calendars and is called something else (the owner's file had
+  "Kalender"; the owner, 2026-10-26): run as a file is opened
+  (`Agendum.Store.upgrade/1`), once the family is the extra's (R75a) and
+  can no longer be renamed by hand. A sibling already called Calendars
+  leaves it as it is.
+  """
+  @spec name_family(db) :: db
+  def name_family(db) do
+    ingested = Agendum.Core.Extras.Ingested.categories(db)
+
+    families =
+      for {_, cal} <- db.calendars,
+          parent = db.categories[cal.category_id].parent_id,
+          parent != db.main_id and MapSet.member?(ingested, parent),
+          uniq: true,
+          do: parent
+
+    Enum.reduce(families, db, fn family, db ->
+      cat = db.categories[family]
+      siblings = db.categories[cat.parent_id].children -- [family]
+      taken = Enum.any?(siblings, &(Database.normalize(db.categories[&1].name) == "calendars"))
+
+      if cat.name == @calendars or taken,
+        do: db,
+        else: Database.rename_category(db, family, @calendars)
+    end)
   end
 
   @doc "Ends a subscription; with `remove_items`, its items are discarded too."

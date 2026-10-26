@@ -4,6 +4,13 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.68.0 — 2026-10-26
+
+Calendars kept as feeds are.
+
+- **Your calendars have a family of their own, Calendars**, folded in the category manager like Feeds (ALT-= opens it) and kept by the calendars: not renamed or given categories of your own while it holds them. A family that already held only your calendars is named Calendars when the file is opened.
+- **A new calendar always gets its own category**, in that family; it no longer takes over a category of yours that has the same name.
+
 ## 0.67.1 — 2026-10-26
 
 - **The Feeds box scrolls** when there are more feeds than fit, instead of running over the bottom edge: the highlighted feed is always shown, with "▲ 18 more above" and "▼ 19 more below". The Calendars box does the same. Both boxes' key lines now mention F2 rename.

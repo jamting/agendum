@@ -70,4 +70,14 @@ defmodule Agendum.TUI.Extras.IngestedTest do
     assert renamed.db.calendars[cal].name == "Office"
     assert renamed.db.categories[renamed.db.calendars[cal].category_id].name == "Office"
   end
+
+  test "the Calendars family is folded too, and says where to change it", %{state: state} do
+    state = manager(state)
+    assert screen(state) =~ "Calendars"
+    refute screen(state) =~ "Work Calendar"
+
+    refused = state |> to_row("Calendars") |> press({:f, 2})
+    assert screen(refused) =~ "Calendars holds your calendars"
+    assert screen(refused) =~ "File ▸ Transfer ▸ Calendars"
+  end
 end
