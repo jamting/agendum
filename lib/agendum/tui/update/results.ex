@@ -16,25 +16,35 @@ defmodule Agendum.TUI.Update.Results do
   alias Agendum.TUI.Update.{Notes, Prompts}
 
   @doc """
-  After the shell read a calendar: its events are mirrored into the file
-  (one undo step), or the failure is remembered (R45).
+  After the shell read the calendar `cal_id` at `url`: its events are
+  mirrored into the file (one undo step), or the failure is remembered
+  (R45).
   """
-  def calendar_read(state, cal_id, result) do
-    {kind, fetching} = Map.pop(state.fetching, cal_id)
-    state = %{state | fetching: fetching}
+  def calendar_read(state, cal_id, url, result) do
     cal = state.db.calendars[cal_id]
 
-    # Domain: only a read this file asked for: one started for another file,
-    # open before, comes back with no `fetching` entry here (code review
-    # 2026-10-26: it was filed into whatever file shared the id)
-    if cal == nil or kind == nil do
-      state
-    else
+    if asked?(state, cal, url) do
+      {kind, fetching} = Map.pop(state.fetching, cal_id)
+      state = %{state | fetching: fetching}
       next = read_into(state, cal, kind, result)
       next = %{History.record(state, next) | dirty: next.db != next.saved.db}
       if next.modes == [], do: Layout.settle(next), else: next
+    else
+      state
     end
   end
+
+  # Domain: only a read this file asked for, of the address it has now. A
+  # read started for another file, open before, comes back with no
+  # `fetching` entry here (code review 2026-10-26: it was filed into
+  # whatever file shared the id), or, when this file reads a feed or
+  # calendar of the same id too (every file counts its ids from one), with
+  # another address (the fuzz walk, 2026-10-27). It is left out, and this
+  # file's own read is still waited for.
+  defp asked?(state, subscription, url),
+    do:
+      subscription != nil and subscription.url == url and
+        Map.has_key?(state.fetching, subscription.id)
 
   defp read_into(state, cal, kind, {:ok, events}) do
     {:ok, state, %{result: counts}} = State.command(state, {:sync_calendar, cal.id, events})
@@ -56,21 +66,21 @@ defmodule Agendum.TUI.Update.Results do
     if kind == :manual, do: State.error(state, "#{cal.name}: #{message}"), else: state
   end
 
-  @doc "After the shell read a feed: its entries are filed into the file (R75), or why not."
-  def feed_read(state, feed_id, result) do
-    {kind, fetching} = Map.pop(state.fetching, feed_id)
-    state = %{state | fetching: fetching}
+  @doc """
+  After the shell read the feed `feed_id` at `url`: its entries are filed
+  into the file (R75), or why not.
+  """
+  def feed_read(state, feed_id, url, result) do
     feed = state.db.feeds[feed_id]
 
-    # Domain: only a read this file asked for: one started for another file,
-    # open before, comes back with no `fetching` entry here (code review
-    # 2026-10-26: it was filed into whatever file shared the id)
-    if feed == nil or kind == nil do
-      state
-    else
+    if asked?(state, feed, url) do
+      {kind, fetching} = Map.pop(state.fetching, feed_id)
+      state = %{state | fetching: fetching}
       next = feed_into(state, feed, kind, result)
       next = %{History.record(state, next) | dirty: next.db != next.saved.db}
       if next.modes == [], do: Layout.settle(next), else: next
+    else
+      state
     end
   end
 
@@ -478,14 +488,25 @@ defmodule Agendum.TUI.Update.Results do
     |> State.info("Published#{where}: #{preview.summary(changes)}")
   end
 
+  # Domain: the upload runs in the background, so the server's question
+  # may come while another box covers the preview (the help), or after it
+  # was closed (found by the fuzz walk, 2026-10-27). The prompt keeps the
+  # preview it asks for, to publish its site again; with none open, there
+  # is nothing to try again with.
   def published(state, _changes, {:error, :password}) do
     user = state.db.blog.user
 
-    Prompts.password(
-      state,
-      "Password of #{user}@#{state.db.blog.target} (not kept):",
-      {:sftp_password}
-    )
+    case Enum.find(state.modes, &match?(%{type: :publish_preview}, &1)) do
+      nil ->
+        State.error(state, "Not published: the server asks for a password. Publish again")
+
+      preview ->
+        Prompts.password(
+          state,
+          "Password of #{user}@#{state.db.blog.target} (not kept):",
+          {:sftp_password, preview}
+        )
+    end
   end
 
   def published(state, _changes, {:error, reason}),

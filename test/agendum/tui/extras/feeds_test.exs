@@ -44,7 +44,7 @@ defmodule Agendum.TUI.Extras.FeedsTest do
   test "the entries read come in as items, in the News view", %{state: state} do
     state = subscribed(state)
     {:fetch_feed, id, _} = effect(:fetch_feed)
-    state = Update.Results.feed_read(state, id, {:ok, @entries})
+    state = Update.Results.feed_read(state, id, "https://owl.example/rss", {:ok, @entries})
 
     assert screen(state) =~ "Owl's Gazette: 1 new"
     state = state |> press(:esc) |> press(:esc)
@@ -56,7 +56,15 @@ defmodule Agendum.TUI.Extras.FeedsTest do
   test "a failed read says why, from the box", %{state: state} do
     state = subscribed(state)
     {:fetch_feed, id, _} = effect(:fetch_feed)
-    state = Update.Results.feed_read(state, id, {:error, "the server answered 503"})
+
+    state =
+      Update.Results.feed_read(
+        state,
+        id,
+        "https://owl.example/rss",
+        {:error, "the server answered 503"}
+      )
+
     assert screen(state) =~ "Owl's Gazette: the server answered 503"
     assert screen(state) =~ "failed: the server answered 503"
   end

@@ -112,6 +112,36 @@ defmodule Agendum.TUI.Extras.PublishTest do
       assert {:publish, _, _, _, "honey"} = Enum.find(effects(), &(elem(&1, 0) == :publish))
     end
 
+    # Found by the fuzz walk (2026-10-27): the upload runs in the
+    # background, so the server's question can come while the help is open
+    # over the preview, or after the preview was closed; typing the
+    # password crashed, as it looked for the preview on top.
+    test "the password asked while the help covers the preview still publishes", %{
+      state: state
+    } do
+      changes = State.mode(state).changes
+      state = state |> press(:enter) |> press({:f, 1})
+      state = Update.Results.published(state, changes, {:error, :password})
+
+      Process.delete(:effects_seen)
+      press(state, ["p", "w", :enter])
+
+      assert {:publish, "site", _, ^changes, "pw"} =
+               Enum.find(effects(), &(elem(&1, 0) == :publish))
+    end
+
+    test "the password asked after the preview was closed says to publish again", %{
+      state: state
+    } do
+      changes = State.mode(state).changes
+      state = state |> press(:enter) |> press(:esc)
+      state = Update.Results.published(state, changes, {:error, :password})
+
+      # no prompt: nothing is left to publish with it
+      assert State.mode(state) == nil
+      assert screen(state) =~ "Publish again"
+    end
+
     test "an error is said, and the preview closes", %{state: state} do
       changes = State.mode(state).changes
       state = Update.Results.published(state, changes, {:error, "rsync is not installed"})

@@ -237,10 +237,10 @@ defmodule Agendum.TUI.Update.Prompts do
   defp prompt_action(state, {:ag_password, path, bytes}, text),
     do: Update.Results.import_ag(state, path, bytes, text)
 
-  # the SFTP server's password (R74): the publish is tried again with it;
-  # the preview box is still under the prompt
-  defp prompt_action(state, {:sftp_password}, text),
-    do: Agendum.TUI.Extras.PublishPreviewBox.publish(state, State.mode(state), text)
+  # the SFTP server's password (R74): the publish of the preview it was
+  # asked for is tried again with it
+  defp prompt_action(state, {:sftp_password, preview}, text),
+    do: Agendum.TUI.Extras.PublishPreviewBox.publish(state, preview, text)
 
   # Calendars (R45): the address, then a name for its category
   defp prompt_action(state, :calendar_url, text),
@@ -555,16 +555,17 @@ defmodule Agendum.TUI.Update.Prompts do
   # ESC in a note (R64d): both answers leave the note
   defp confirmed(state, :discard_note, yes?), do: Agendum.TUI.Update.Notes.discard(state, yes?)
 
-  # the macro's own properties box and editor, wherever they are on the
-  # stack, go with it (a manager can be opened over them). `^id` pins the
-  # pattern to this id, instead of binding a new name
+  # the macro's own properties box, editor and Learn box, wherever they are
+  # on the stack, go with it (a manager can be opened over them). `^id`
+  # pins the pattern to this id, instead of binding a new name
   defp confirmed(state, {:delete_macro, id}, true) do
     state = State.run(state, {:delete_macro, id})
 
     modes =
       Enum.reject(state.modes, fn mode ->
         match?(%{type: :macro_props, macro_id: ^id}, mode) or
-          match?(%{type: :note, target: {:macro, ^id}}, mode)
+          match?(%{type: :note, target: {:macro, ^id}}, mode) or
+          match?(%{type: :choice, kind: :learn, macro_id: ^id}, mode)
       end)
 
     %{state | modes: modes}

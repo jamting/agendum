@@ -29,6 +29,8 @@ defmodule Agendum.TUI.App do
   @escape_timeout 25
   # How often to check for terminal resizes and date changes when idle.
   @idle_timeout 500
+  # the tags of the messages a background task mails back (`background/2`)
+  @background [:feed_read, :calendar_read, :published]
 
   @doc "Runs the program until it quits, drawing with the state's `Agendum.TUI.Terminal.Theme`."
   @spec run(State.t()) :: :ok | {:error, term}
@@ -122,30 +124,62 @@ defmodule Agendum.TUI.App do
         DebugLog.write("input closed")
         :ok
 
-      # a feed read in the background (R75)
-      {:feed_read, id, result, ms} ->
-        DebugLog.write("feed #{id} read: #{DebugLog.outcome(result)} in #{ms} ms")
-        state = logged(state, fn -> Update.Results.feed_read(state, id, result) end)
-        loop(state, previous, buffer, theme)
+      # a feed or calendar read, or the blog published, in the background
+      # (R75, R45, R74): `background/2` says what came back. A guard may
+      # call only a few functions; `elem/2` on a tuple is one of them.
+      message when is_tuple(message) and elem(message, 0) in @background ->
+        state = logged(state, fn -> background(state, message) end)
 
-      # the blog written and uploaded in the background (R74)
-      {:published, changes, result} ->
-        Process.delete(:agendum_publishing)
-        DebugLog.write("published: #{DebugLog.outcome(result)}")
-        state = logged(state, fn -> Update.Results.published(state, changes, result) end)
-        loop(state, previous, buffer, theme)
-
-      # a calendar read in the background (R45)
-      {:calendar_read, id, result, ms} ->
-        DebugLog.write("calendar #{id} read: #{DebugLog.outcome(result)} in #{ms} ms")
-        state = logged(state, fn -> Update.Results.calendar_read(state, id, result) end)
-        loop(state, previous, buffer, theme)
+        # what the answer asked for next is done before drawing, as after
+        # a key (`run_effects/2`): the clock's tick that draws would
+        # otherwise drop it
+        case logged(state, fn -> run_effects(%{state | effects: []}, state.effects) end) do
+          {:quit, _state} -> :ok
+          {:ok, state} -> loop(state, previous, buffer, theme)
+        end
     after
       timeout ->
         keys = Keys.flush(buffer)
         if keys != [], do: DebugLog.input(buffer, keys, state)
         continue(state, previous, keys, "", theme, since)
     end
+  end
+
+  @typedoc """
+  A background task's result, as it is mailed back to the loop: a read
+  names the feed or calendar and the address it read, the milliseconds it
+  took last.
+  """
+  @type background ::
+          {:feed_read, pos_integer, String.t(), {:ok, list} | {:error, String.t()},
+           non_neg_integer}
+          | {:calendar_read, pos_integer, String.t(), {:ok, list} | {:error, String.t()},
+             non_neg_integer}
+          | {:published, map, :ok | {:error, :password | String.t()}}
+
+  @doc """
+  A background task's result (`t:background/0`): its line in the debug
+  log, then the pure answer in `Update.Results`, which decides what the
+  person sees. The effects that answer asks for are left in
+  `state.effects`, for the loop to run. Public for its test: v0.69.1
+  crashed here, writing the log line of a bare `:ok`.
+  """
+  @spec background(State.t(), background) :: State.t()
+  def background(state, {:feed_read, id, url, result, ms}) do
+    DebugLog.write("feed #{id} read: #{DebugLog.outcome(result)} in #{ms} ms")
+    Update.Results.feed_read(state, id, url, result)
+  end
+
+  def background(state, {:calendar_read, id, url, result, ms}) do
+    DebugLog.write("calendar #{id} read: #{DebugLog.outcome(result)} in #{ms} ms")
+    Update.Results.calendar_read(state, id, url, result)
+  end
+
+  # the next publish may start (`perform/2` lets one run at a time)
+  def background(state, {:published, changes, result}) do
+    Process.delete(:agendum_publishing)
+    DebugLog.write("published: #{DebugLog.outcome(result)}")
+    Update.Results.published(state, changes, result)
   end
 
   # The input already in the mailbox, taken without waiting (`after 0`):
@@ -373,7 +407,7 @@ defmodule Agendum.TUI.App do
     Task.start(fn ->
       started = now_ms()
       result = fetched(fn -> FeedFetch.read(url) end)
-      send(loop, {:feed_read, id, result, now_ms() - started})
+      send(loop, {:feed_read, id, url, result, now_ms() - started})
     end)
 
     state
@@ -430,7 +464,7 @@ defmodule Agendum.TUI.App do
     Task.start(fn ->
       started = now_ms()
       result = fetched(fn -> CalendarFetch.read(url) end)
-      send(loop, {:calendar_read, id, result, now_ms() - started})
+      send(loop, {:calendar_read, id, url, result, now_ms() - started})
     end)
 
     state

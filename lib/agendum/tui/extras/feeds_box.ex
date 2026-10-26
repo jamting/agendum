@@ -14,7 +14,7 @@ defmodule Agendum.TUI.Extras.FeedsBox do
     * ESC closes the box
 
   Reading happens in the shell (`{:fetch_feed, id, url}`); the result
-  comes back through `Agendum.TUI.Update.feed_read/3`. Pure.
+  comes back through `Agendum.TUI.Update.Results.feed_read/4`. Pure.
   """
 
   use Agendum.TUI.Boxes.Box, finish: :none

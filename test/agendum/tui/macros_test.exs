@@ -301,5 +301,10 @@ defmodule Agendum.TUI.MacrosTest do
     editing = press(state, [{:alt_f, 3}, {:f, 2}, {:alt_f, 3}, :delete, :enter])
     refute Enum.any?(editing.modes, &match?(%{type: :note, target: {:macro, _}}, &1))
     assert is_binary(screen(editing))
+
+    # and its Learn box (F7), found by the fuzz walk again (2026-10-27)
+    learning = press(state, [{:alt_f, 3}, {:f, 7}, {:alt_f, 3}, :delete, :enter])
+    refute Enum.any?(learning.modes, &match?(%{type: :choice, kind: :learn}, &1))
+    assert is_binary(screen(learning))
   end
 end

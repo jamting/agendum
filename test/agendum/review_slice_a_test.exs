@@ -28,7 +28,9 @@ defmodule Agendum.ReviewSliceATest do
       start: {:date, ~D[2026-10-27]}
     }
 
-    after_cal = Update.Results.calendar_read(state, cal, {:ok, [event]})
+    after_cal =
+      Update.Results.calendar_read(state, cal, "https://w.example/w.ics", {:ok, [event]})
+
     assert after_cal.db == state.db
 
     entry = %{
@@ -39,7 +41,7 @@ defmodule Agendum.ReviewSliceATest do
       published: ~N[2026-10-26 08:00:00]
     }
 
-    after_feed = Update.Results.feed_read(state, feed, {:ok, [entry]})
+    after_feed = Update.Results.feed_read(state, feed, "https://n.example/rss", {:ok, [entry]})
     assert after_feed.db == state.db
   end
 
