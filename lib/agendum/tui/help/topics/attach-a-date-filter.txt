@@ -1,0 +1,19 @@
+Attach a Date Filter
+
+PURPOSE       Show only the items with a date in a range: this
+              week's meetings, last month's calls.
+
+STEPS         1. In a filter's category list, choose a date category
+                 (When, say) with SPACE.
+              2. In the box: Show items Assigned (or Not assigned:
+                 those without a date), Start and End date, and
+                 Inside or Outside the range.
+              3. ENTER.
+
+NOTE          Words like "monday" and "friday" are read again each
+              day, so the filter is always this week. A blank end
+              is open. ALT-B browses the view to earlier or later
+              dates.
+
+SEE ALSO      **Range Filter Box**  **Filters**  **Browsing Dates**
+INDEX         Filters > Date; Dates > Filter

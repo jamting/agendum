@@ -1,0 +1,18 @@
+Sort Items
+
+PURPOSE       Keep the items of every section, or of one, in order.
+
+STEPS         1. F10 View Properties (every section), or F6 on a
+                 section head (that section).
+              2. Item sorting: press SPACE to open the Sort box.
+              3. Choose the Primary key, and a Secondary one for
+                 ties: item text, a category (its children's order,
+                 a date or a number), or a line of a category note.
+              4. For each, the order, and where items without a
+                 value go; then ENTER.
+
+NOTE          A section can use the view's sorting or its own.
+              Items that tie keep the order they were entered in.
+
+SEE ALSO      **Sort Box**  **Sorting**
+INDEX         Items > Sort; Sort > Items

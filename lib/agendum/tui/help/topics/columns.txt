@@ -1,0 +1,19 @@
+Columns
+
+PURPOSE       A column shows, beside each item, which of a
+              category's children the item is in: who it is for,
+              its priority, its date. Typing in a column assigns the
+              item.
+
+KINDS         Standard    The child categories' names (or a star,
+                          Y or N, a line of a category note)
+              Date        A date, such as When
+              Numeric     A number, with totals if you like
+              Unindexed   A text of its own: a phone number
+
+NOTE          A column added to all sections is linked: changing
+              its width or format changes it in every section.
+
+SEE ALSO      **Add a Column**  **Modify Column Properties**
+              **Numeric Columns**  **Date Columns**  **Item Columns**
+INDEX         Columns > What they are

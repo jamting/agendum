@@ -1,0 +1,14 @@
+Remove a Section
+
+PURPOSE       Take a section out of the view. The category and its
+              items stay in the file and in other views.
+
+STEPS         1. Highlight the section's head.
+              2. Press DEL (or F10 View Section Remove).
+
+NOTE          CTRL-Z puts the section back. To get rid of the
+              category itself, discard it: see **Discard a
+              Category**.
+
+SEE ALSO      **Add a Section**  **Sections**
+INDEX         Sections > Remove; Remove > Sections

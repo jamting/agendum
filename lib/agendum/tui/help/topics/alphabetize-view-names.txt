@@ -1,0 +1,12 @@
+Alphabetize View Names
+
+PURPOSE       Put the views in order by name.
+
+STEPS         1. F8 opens the **View Manager**.
+              2. Press ALT-F5 (SORT).
+
+NOTE          ALT-↑ and ALT-↓ move one view by hand instead.
+              CTRL-Z undoes the sort.
+
+SEE ALSO      **View Manager**
+INDEX         Views > Alphabetize; Sort > Views; Alphabetize > Views

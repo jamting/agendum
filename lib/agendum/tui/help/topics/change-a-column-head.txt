@@ -1,0 +1,13 @@
+Change a Column Head
+
+PURPOSE       Show another category in a column, or rename the one
+              it shows.
+
+STEPS         * F3 on the column head: choose another category.
+              * F2 on the column head: rename its category,
+                everywhere.
+              * In Column Properties (F6), Column head: type a name
+                or press F3.
+
+SEE ALSO      **Modify Column Properties**  **Columns**
+INDEX         Columns > Head; Column heads > Change

@@ -1,0 +1,16 @@
+Date Columns
+
+PURPOSE       Show an item's date in a column: When, Entry, Done, or
+              a date category of your own.
+
+STEPS         * Type a date in the column: "friday", "next tuesday
+                3pm", "11/30".
+              * F3 in the column opens the calendar to pick one.
+              * DEL takes the date away.
+
+FORMAT        A date column's properties (F6) set how it shows
+              dates: date and time, day of the week, date format,
+              clock.
+
+SEE ALSO      **Columns**  **Calendar Box**  **Display Format Box**
+INDEX         Columns > Date; Dates > Columns

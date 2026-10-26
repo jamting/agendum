@@ -1,0 +1,14 @@
+Attach a Filter
+
+PURPOSE       Show only the items in (or not in) some categories.
+
+STEPS         1. F10 View Properties (the whole view), or F6 on a
+                 section head (one section).
+              2. Filter: press SPACE to open the category list.
+              3. Highlight a category; SPACE once shows items in
+                 it (+), twice items not in it (-), three times
+                 neither.
+              4. ENTER or ESC closes the list, keeping it.
+
+SEE ALSO      **Filters**  **Change a Filter**  **View Properties Box**
+INDEX         Filters > Attach; Views > Filter; Sections > Filter

@@ -1,0 +1,14 @@
+Attach a Numeric Filter
+
+PURPOSE       Show only the items with a number in a range: costs
+              over 100, hours under 2.
+
+STEPS         1. In a filter's category list, choose a numeric
+                 category with SPACE.
+              2. In the box: Show items Assigned (or Not assigned),
+                 Minimum and Maximum, and Inside or Outside the
+                 range.
+              3. ENTER.
+
+SEE ALSO      **Range Filter Box**  **Filters**  **Numeric Columns**
+INDEX         Filters > Numeric; Numeric > Filter

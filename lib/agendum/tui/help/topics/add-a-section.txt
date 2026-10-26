@@ -1,0 +1,18 @@
+Add a Section
+
+PURPOSE       Show another category's items in this view.
+
+STEPS         1. Highlight anything in the section the new one goes
+                 next to.
+              2. Press ALT-D to add it below, ALT-U above (or F10
+                 View Section Add).
+              3. Type the category's name, or press F3 to choose it
+                 from the hierarchy, then ENTER.
+
+NOTE          A name no category has yet makes a new one under MAIN.
+              The new section takes the columns the section you
+              were in shares with the others.
+
+SEE ALSO      **Change Properties of a Section**  **Sections**
+              **Section Properties Box**
+INDEX         Sections > Add; Add > Sections

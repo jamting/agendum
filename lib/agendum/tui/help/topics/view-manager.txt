@@ -1,0 +1,17 @@
+View Manager
+
+PURPOSE       Every view of the file in a list, to choose one, add,
+              rename, sort or discard them. F8 opens it from a view;
+              F8 or ESC goes back.
+
+KEYS          ENTER           Show the highlighted view
+              INS or CTRL-N   Add a view
+              F2              Rename it
+              F6              Its properties
+              ALT-↑ / ALT-↓   Move it up or down the list
+              ALT-F5          Sort the views by name
+              DEL             Discard it (its items stay)
+              a letter        The next view starting with it
+
+SEE ALSO      **Add a View**  **Views**  **View Properties Box**
+INDEX         View Manager; Views > Manager

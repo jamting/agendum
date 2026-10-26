@@ -1,0 +1,12 @@
+Numeric Categories
+
+PURPOSE       A numeric category holds a number for each item in it,
+              rather than child categories.
+
+NOTE          Make one with Category Properties, Type (or Column
+              Add, Category type). Its children go: an item in a
+              child gets the child's name as its number when it is
+              one ("112"), else 0. It cannot change back.
+
+SEE ALSO      **Numeric Columns**  **Categories**
+INDEX         Categories > Numeric; Numeric > Categories

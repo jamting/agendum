@@ -1,0 +1,13 @@
+Add a View
+
+PURPOSE       Make a new way of looking at your file.
+
+STEPS         1. F10 View Add (or INS in the **View Manager**).
+              2. Type the view's name and press ENTER.
+              3. Choose Standard (sections by category) or Datebook
+                 (sections by date).
+              4. For a standard view, choose the first section's
+                 category; add more sections later.
+
+SEE ALSO      **View Types**  **Add a Section**  **View Properties Box**
+INDEX         Views > Add; Add > Views; New > Views

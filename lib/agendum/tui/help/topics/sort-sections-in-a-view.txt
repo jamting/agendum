@@ -1,0 +1,15 @@
+Sort Sections in a View
+
+PURPOSE       Put a view's sections in order.
+
+STEPS         1. F10 View Properties.
+              2. Section sorting: None, Category order, Alphabetic
+                 or Numeric; then the Order, Ascending or
+                 Descending.
+              3. ENTER.
+
+NOTE          With None, sections stay where you put them; ALT-F10
+              on a section head moves one.
+
+SEE ALSO      **View Properties Box**  **Sorting**
+INDEX         Sections > Sort; Sort > Sections

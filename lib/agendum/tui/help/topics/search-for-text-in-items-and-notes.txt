@@ -1,0 +1,18 @@
+Search for Text in Items and Notes
+
+PURPOSE       Find items by what they say.
+
+STEPS         1. Press ALT-F6 (SEARCH).
+              2. Type the text, ENTER; set Match on (item text,
+                 note text, or both), Direction and Ignore case.
+              3. ENTER again searches: the first match is
+                 highlighted.
+              4. ALT-N and ALT-P go to the next and previous match;
+                 F7 marks one. ENTER or ESC ends the search.
+
+NOTE          Every word must appear; "Pat*" matches any ending,
+              "(a phrase)" as written. Utilities Show Match lists
+              the matches from the whole file in the Show View.
+
+SEE ALSO      **Search Box**  **Searching a View**  **Create a Show View**
+INDEX         Search > Items; Find > Text; Text > Search

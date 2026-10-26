@@ -1,0 +1,17 @@
+Use a Category Note as a Column Head
+
+PURPOSE       Show one line of a category's note in a column: each
+              person's phone number, from their category's note.
+
+STEPS         1. In the column's properties, set Format to Category
+                 note.
+              2. Line number: which line of the note to show.
+              3. Column title: what the column head says (blank:
+                 the category's name).
+
+NOTE          A label before a colon is left out: "Phone: 555-1234"
+              shows 555-1234. Typing in the column writes that line
+              of the note.
+
+SEE ALSO      **Modify Column Properties**  **Columns**
+INDEX         Columns > Category note; Notes > In a column

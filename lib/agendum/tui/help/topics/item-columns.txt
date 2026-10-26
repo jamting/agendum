@@ -1,0 +1,15 @@
+Item Columns
+
+PURPOSE       The item text is a column too: you can set its width
+              and move it among the other columns.
+
+STEPS         1. Highlight an item, or the section head.
+              2. F10 View Column Properties: the Item Column box.
+
+SETTINGS      Width is set Automatically (as wide as the other
+              columns leave, at least the Minimum width) or
+              Manually. F10 View Column Move, with the item text
+              highlighted, moves it among the columns.
+
+SEE ALSO      **Item Column Box**  **Columns**
+INDEX         Columns > Item text; Items > Column

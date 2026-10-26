@@ -1,0 +1,21 @@
+Create a Show View
+
+PURPOSE       See a list Agendum makes for you, in the view called
+              *Show View*.
+
+STEPS         F10 Utilities Show, then one of:
+              Match       Every item with the text you type
+              Prereqs     What an item depends on
+              Depends     What depends on an item
+              ItemsDone   Every done item
+              Circular    Items caught in circular conditions
+              Alarm       Items with alarms
+              Sched       One date's items
+              Every       Every item in the file
+
+NOTE          There is one Show View: Agendum asks before it
+              replaces it. ALT-F8 (LAST VW) goes back to the view
+              you were in.
+
+SEE ALSO      **Utilities Show Menu**  **View Types**
+INDEX         Show View > Create; Views > Show View; Utilities > Show

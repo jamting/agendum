@@ -1,0 +1,14 @@
+View Types
+
+PURPOSE       What kinds of view there are.
+
+KINDS         Standard    Sections headed by categories you choose
+              Datebook    A section for each hour, day, week or
+                          month of a period, like an appointment
+                          book
+              Show View   Made by Utilities Show (matches, done
+                          items, alarms, a day's schedule …); the
+                          next Show replaces it
+
+SEE ALSO      **Add a View**  **Create a Show View**  **Views**
+INDEX         Views > Types; Datebook views; Show View

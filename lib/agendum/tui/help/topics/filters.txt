@@ -1,0 +1,18 @@
+Filters
+
+PURPOSE       A filter shows only some of the items: those in (or
+              not in) categories you choose, or with a date or a
+              number in a range.
+
+ABOUT         * A view's filter applies to every section; a section
+FILTERS         can have one of its own as well.
+              * Every condition must hold, except that children of
+                an exclusive family are alternatives (High or Low).
+              * The filter shows in brackets beside the view's name
+                or the section head.
+              * An item typed into a filtered view or section gets
+                what the filter asks for, so it stays in sight.
+
+SEE ALSO      **Attach a Filter**  **Attach a Date Filter**
+              **Attach a Numeric Filter**  **Change a Filter**
+INDEX         Filters > What they are

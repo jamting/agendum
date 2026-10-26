@@ -1,0 +1,16 @@
+Sorting
+
+PURPOSE       Agendum can put several things in order.
+
+WHAT          HOW                         WHERE
+------------  --------------------------  -----------------------
+Views         By name                     View Manager, ALT-F5
+Categories    By name                     Category Manager, ALT-F5
+Sections      Category order, by name     View Properties,
+              or by number                Section sorting
+Items         By text, category, date,    View or Section
+              number or a note's line     Properties, Item sorting
+
+SEE ALSO      **Sort Items**  **Sort Sections in a View**
+              **Alphabetize View Names**  **Alphabetize Categories**
+INDEX         Sort; Sorting

@@ -83,7 +83,7 @@ defmodule Agendum.TUI.HelpTopicsTest do
         |> Enum.map_join("\n", &Enum.map_join(&1, fn s -> Topic.label(s) end))
 
       # "Add" is a heading of its own, with what can be added under it
-      assert text =~ ~r/\n  Add\n    Categories\n    Items/
+      assert text =~ ~r/\n  Add\n    Categories\n/
       assert {:link, "Items", "Enter Items"} in List.flatten(Topic.lines(page, 76))
       # a box is listed under its name and under Boxes
       boxes = state |> Topics.get("Help Index: B") |> Topic.lines(76) |> List.flatten()

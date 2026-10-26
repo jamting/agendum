@@ -1,0 +1,18 @@
+Add a Column
+
+PURPOSE       Show another category beside the items.
+
+STEPS         1. Highlight a column (or the item text) the new one
+                 goes beside.
+              2. Press ALT-R to add it to the right, ALT-L to the
+                 left (or F10 View Column Add).
+              3. Type the column head's name, or press F3 to choose
+                 it; set its type and format, then ENTER.
+
+NOTE          File Properties says whether new columns go into all
+              sections or only the current one (Insert new columns
+              in).
+
+SEE ALSO      **Column Add Box**  **Modify Column Properties**
+              **Columns**
+INDEX         Columns > Add; Add > Columns

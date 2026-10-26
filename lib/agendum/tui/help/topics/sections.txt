@@ -1,0 +1,19 @@
+Sections
+
+PURPOSE       A section is one part of a view: a category's name as
+              its head, and under it the items in that category,
+              those in the categories below it too.
+
+ABOUT         * Each section can have its own columns, sorting and
+SECTIONS        filter.
+              * An item in two of the view's categories shows in
+                both sections. It is one item: change it in one, and
+                the other shows the change.
+              * Typing an item under a section puts it in the
+                section's category.
+              * ALT-− collapses a section to its head (twice: all of
+                them); ALT-= opens it again.
+
+SEE ALSO      **Add a Section**  **Change Properties of a Section**
+              **Remove a Section**  **Views**
+INDEX         Sections > What they are

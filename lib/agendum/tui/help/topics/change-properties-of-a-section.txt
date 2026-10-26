@@ -1,0 +1,18 @@
+Change Properties of a Section
+
+PURPOSE       Set one section's head, sorting, filter and columns.
+
+STEPS         1. Highlight the section's head.
+              2. Press F6 (PROPS), or F10 View Section Properties.
+              3. Change the settings, then ENTER (ESC puts them all
+                 back).
+
+IN THE BOX    Section head    Another category for the section (F3)
+              Item sorting    How this section sorts its items
+              Filter          Which of its items it shows
+              Columns         Its columns, in order: DEL removes
+                              one, ALT-↑ / ALT-↓ move one, INS adds
+
+SEE ALSO      **Section Properties Box**  **Sort Items**
+              **Attach a Filter**  **Sections**
+INDEX         Sections > Properties; Properties > Sections

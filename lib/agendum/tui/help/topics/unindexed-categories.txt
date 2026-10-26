@@ -1,0 +1,16 @@
+Unindexed Categories
+
+PURPOSE       An unindexed category keeps one text for each item
+              in it: a phone number, an address, a part number. The
+              text is not filed anywhere and assigns nothing.
+
+STEPS         1. Make the category unindexed: Category Properties,
+                 Type (or Column Add, Category type).
+              2. Show it as a column, and type each item's text
+                 there.
+
+NOTE          It cannot change back. Its children go: an item in a
+              child gets the child's name as its text.
+
+SEE ALSO      **Columns**  **Categories**
+INDEX         Categories > Unindexed; Unindexed > Categories

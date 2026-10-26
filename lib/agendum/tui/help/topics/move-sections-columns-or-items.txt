@@ -1,0 +1,21 @@
+Move Sections, Columns, or Items
+
+PURPOSE       Put things where you want them, with ALT-F10 (MOVE).
+
+ITEMS         ALT-F10 on an item: move the highlight to where it
+              should go, then ENTER (ESC leaves it). Moved to
+              another section, it leaves the old section's category
+              for the new one. With items marked, all of them move.
+
+SECTIONS      ALT-F10 on a section head: the sections fold up; ↑ ↓
+              move this one, ENTER keeps the new place.
+
+COLUMNS       ALT-F10 on a column head: ← → move the column within
+              its section, ENTER keeps it.
+
+NOTE          Moving a section or a column changes only this view.
+              ALT-F9 (COPY) puts an item in another section as well,
+              instead of moving it.
+
+SEE ALSO      **Moving Items**  **Moving a Section**  **Moving a Column**
+INDEX         Move > Items; Move > Sections; Move > Columns; Items > Move; Sections > Move; Columns > Move

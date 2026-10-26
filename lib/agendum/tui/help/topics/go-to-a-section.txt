@@ -1,0 +1,13 @@
+Go to a Section
+
+PURPOSE       Jump to a section in a long view.
+
+STEPS         1. Press ALT-F5 (GO TO).
+              2. Highlight the section (or type its first letter).
+              3. ENTER.
+
+NOTE          CTRL-PGUP and CTRL-PGDN go to the section head above
+              or below.
+
+SEE ALSO      **Go To Section Box**  **Sections**
+INDEX         Sections > Go to; Go to > Section

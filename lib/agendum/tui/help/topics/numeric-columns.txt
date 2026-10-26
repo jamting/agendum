@@ -1,0 +1,20 @@
+Numeric Columns
+
+PURPOSE       Keep a number with each item, such as hours or costs,
+              and let the section add them up.
+
+STEPS         1. Add a column with Category type Numeric (or make a
+                 category numeric in its properties).
+              2. Type a number in the column beside an item: signs,
+                 a currency or % symbol and thousands separators are
+                 fine.
+
+TOTALS        In the column's properties choose the format and the
+              calculations: Count, Total, Average, Minimum, Maximum.
+              They show under the section.
+
+NOTE          A category made numeric cannot change back.
+
+SEE ALSO      **Numeric Categories**  **Columns**
+              **Numeric Functions Box**
+INDEX         Columns > Numeric; Numeric > Columns; Totals

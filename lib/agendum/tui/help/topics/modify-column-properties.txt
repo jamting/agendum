@@ -1,0 +1,20 @@
+Modify Column Properties
+
+PURPOSE       Change a column's head, width, format, and whether it
+              is linked to the same column in other sections.
+
+STEPS         1. Highlight the column head (→ or TAB from the
+                 section head) or an entry in the column.
+              2. Press F6 (PROPS), or F10 View Column Properties.
+              3. Change the settings, then ENTER.
+
+SETTINGS      Column head        Another category (F3)
+              Width              How wide; → and ← by one
+              Link with other    Yes: one column in every section
+              sections
+              Format             Names, Parent:Category, Ancestor,
+                                 Star, Yes/No or a Category note
+
+SEE ALSO      **Column Properties Box**  **Adjust the Column Width**
+              **Change a Column Head**
+INDEX         Columns > Properties; Properties > Columns; Columns > Format

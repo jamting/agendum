@@ -1,0 +1,13 @@
+Remove a Column
+
+PURPOSE       Take a column out of a section. The category and the
+              items' assignments to it stay.
+
+STEPS         1. Highlight the column head (→ or TAB from the
+                 section head).
+              2. Press DEL (or F10 View Column Remove).
+              3. If the column is in other sections too, choose All
+                 sections in view or Current section only.
+
+SEE ALSO      **Add a Column**  **Columns**
+INDEX         Columns > Remove; Remove > Columns

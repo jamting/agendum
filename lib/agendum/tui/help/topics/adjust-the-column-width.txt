@@ -1,0 +1,15 @@
+Adjust the Column Width
+
+PURPOSE       Make a column wider or narrower, or the item text.
+
+STEPS         1. Highlight the column (or the item text).
+              2. F10 View Column Width.
+              3. ← → change the width by one, or type a number;
+                 SHIFT-? fits it to what it shows.
+              4. ENTER keeps it, ESC goes back.
+
+NOTE          A column too narrow for a name shows the category's
+              short name. A linked column changes in every section.
+
+SEE ALSO      **A Column's Width**  **Modify Column Properties**
+INDEX         Columns > Width; Width > Columns

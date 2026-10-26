@@ -35,7 +35,7 @@ defmodule Agendum.TUI.HelpScreenTest do
     test "in a note, the managers and the menu: their own texts", %{state: state} do
       assert screen(press(state, [:down, {:f, 5}, {:f, 1}])) =~ "You are writing a note"
       assert screen(press(state, [{:f, 9}, {:f, 1}])) =~ "The whole hierarchy on one screen"
-      assert screen(press(state, [{:f, 8}, {:f, 1}])) =~ "The view manager lists"
+      assert screen(press(state, [{:f, 8}, {:f, 1}])) =~ "Every view of the file in a list"
       assert screen(press(state, [{:f, 10}, {:f, 1}])) =~ "The menu. Its first line"
     end
 

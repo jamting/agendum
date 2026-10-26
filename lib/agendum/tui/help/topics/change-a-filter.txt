@@ -1,0 +1,14 @@
+Change a Filter
+
+PURPOSE       Change which items a view or section shows, or show
+              them all again.
+
+STEPS         1. Open the filter's list again: View Properties or
+                 Section Properties, Filter.
+              2. SPACE on a category goes round: + in it, - not in
+                 it, then off.
+              3. On a date or numeric category, DEL in its box takes
+                 that part of the filter away.
+
+SEE ALSO      **Attach a Filter**  **Filters**
+INDEX         Filters > Change; Filters > Remove
