@@ -47,6 +47,18 @@ defmodule Agendum.TUI.Boxes.SortBox do
 
   @attributes [:on, :order, :na, :category, :sequence, :line]
 
+  # the secondary key's setting names, written out rather than made from
+  # text (`String.to_atom/1`, which Credo warns of): `then_order` is the
+  # secondary key's `order`
+  @then %{
+    on: :then_on,
+    order: :then_order,
+    na: :then_na,
+    category: :then_category,
+    sequence: :then_sequence,
+    line: :then_line
+  }
+
   def open(state, scope), do: State.push(state, %Agendum.TUI.Modes.Sort{scope: scope, cursor: 0})
 
   @doc "The keys in effect for the scope: the section's own, or `nil` when it uses the view's."
@@ -263,8 +275,7 @@ defmodule Agendum.TUI.Boxes.SortBox do
       for {prefix, index} <- [{"", 0}, {"then_", 1}],
           attribute <- [:order, :na, :sequence, :line],
           into: %{} do
-        # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
-        {String.to_atom(prefix <> Atom.to_string(attribute)),
+        {named(prefix, attribute),
          &key_back(&1, mode, index, attribute, Map.fetch!(blank, attribute))}
       end
 
@@ -357,8 +368,7 @@ defmodule Agendum.TUI.Boxes.SortBox do
           }
       end
 
-    # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
-    Map.new(values, fn {k, v} -> {String.to_atom(prefix <> Atom.to_string(k)), v} end)
+    Map.new(values, fn {k, v} -> {named(prefix, k), v} end)
   end
 
   defp describe(%SortKey{on: :text}), do: "Item text"
@@ -381,10 +391,14 @@ defmodule Agendum.TUI.Boxes.SortBox do
   @impl Box
   def help do
     for {attribute, text} <- @help, prefix <- ["", "then_"], into: %{} do
-      # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
-      {String.to_atom(prefix <> Atom.to_string(attribute)), text}
+      {named(prefix, attribute), text}
     end
   end
+
+  # a setting's name: the first key's is the attribute, the second's its
+  # `then_` name
+  defp named("", attribute), do: attribute
+  defp named("then_", attribute), do: Map.fetch!(@then, attribute)
 
   # every attribute a key's setting can be: the fields' names without "then_"
   @doc false
