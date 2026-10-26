@@ -5,6 +5,13 @@ defmodule Agendum.TUI.Fuzz do
   of this file) so that ExUnit runs them side by side (`async: true` runs
   modules in parallel, never the tests inside one module); one module alone
   set the length of the whole suite.
+
+  A quarter of the walks start from the golden file with the extras on
+  (feeds, calendars, a blog), perhaps in one of the extras' boxes. Between
+  the keys, a walk also plays the shell's side (meeting 2026-10-26-6, § 7):
+  the answers of reads and uploads under way, out of order and sometimes
+  after another file was opened, through `Agendum.TUI.App.background/2`,
+  checking that nothing is filed into a file that did not ask for it.
   """
   use ExUnitProperties
   import ExUnit.Assertions
@@ -93,12 +100,37 @@ defmodule Agendum.TUI.Fuzz do
     :tick
   ]
 
+  # `frequency/1` picks a generator by weight: the keys, function keys and
+  # characters a third each as before, and now and then something from the
+  # shell's side, not a key (meeting 2026-10-26-6, § 7): a background
+  # task's answer (`{:background, pick, outcome}`, see `deliver/3`), or
+  # another file opened (`:switch_file`) while reads are under way.
   defp key do
-    one_of([
-      member_of(@keys),
-      map(integer(1..10), &{:f, &1}),
-      map(member_of(~w(a b H h y n v c d s m x 1 / ! å) ++ [" "]), &{:char, &1})
+    frequency([
+      {10, member_of(@keys)},
+      {10, map(integer(1..10), &{:f, &1})},
+      {10, map(member_of(~w(a b H h y n v c d s m x 1 / ! å) ++ [" "]), &{:char, &1})},
+      {2,
+       map({integer(0..3), member_of([:ok, :error, :crash])}, fn {pick, outcome} ->
+         {:background, pick, outcome}
+       end)},
+      {1, constant(:switch_file)}
     ])
+  end
+
+  # The golden file (`Agendum.Starters.Golden`: feeds, calendars, a blog,
+  # ingested categories), built once per test run: `:persistent_term` keeps
+  # a value for the whole VM, cheap to read from any process.
+  defp golden do
+    case :persistent_term.get({__MODULE__, :golden}, nil) do
+      nil ->
+        db = Agendum.Starters.Golden.build()
+        :persistent_term.put({__MODULE__, :golden}, db)
+        db
+
+      db ->
+        db
+    end
   end
 
   # The patent's sample, optionally with a numeric Amount column (R29) whose
@@ -199,19 +231,197 @@ defmodule Agendum.TUI.Fuzz do
     end
   end
 
+  # Each gives the new state and the effects asked for on the way, so the
+  # walk knows which reads and uploads are under way.
   defp tick(state, now) do
     {state, effects} = Update.tick(state, now)
     assert_known_effects(effects, :tick)
-    state
+    {state, effects}
   end
 
-  defp handle(state, []), do: state
+  defp handle(state, keys, seen \\ [])
+  defp handle(state, [], seen), do: {state, seen}
 
-  defp handle(state, [key | keys]) do
+  defp handle(state, [key | keys], seen) do
     {state, effects} = Update.handle(state, key)
     assert_known_effects(effects, key)
     played = for {:play, played} <- effects, k <- played ++ [:macro_done], do: k
-    handle(state, played ++ keys)
+    handle(state, played ++ keys, seen ++ effects)
+  end
+
+  # the clock ten minutes on, as the shell's loop moves it
+  defp clock(walk) do
+    {state, effects} = tick(walk.state, NaiveDateTime.add(walk.state.now, 600))
+    %{walk | state: state, pending: walk.pending ++ asked(effects, walk.file)}
+  end
+
+  # File ▸ Transfer ▸ Feeds, Calendars or Publish; `:preview` is Publish's
+  # ENTER too, which shows what publishing would change, and `:upload` the
+  # preview's ENTER after it, so the upload is under way from the start
+  defp open_extra(walk, nil), do: walk
+
+  defp open_extra(walk, box) do
+    letter = %{feeds: "f", calendars: "c"}[box] || "p"
+    walk = press_shell(walk, [{:f, 10}, {:char, "f"}, {:char, "t"}, {:char, letter}])
+    walk = if box in [:preview, :upload], do: press_shell(walk, [:enter]), else: walk
+    if box == :upload, do: press_shell(walk, [:enter]), else: walk
+  end
+
+  # keys, and the publish scan they ask for answered, as in the walk
+  defp press_shell(walk, keys) do
+    {state, effects} = handle(walk.state, keys)
+    {state, more} = scanned(state, effects)
+    %{walk | state: state, pending: walk.pending ++ asked(effects ++ more, walk.file)}
+  end
+
+  # --- the shell's side: background answers and another file -----------------
+  #
+  # The walk keeps the reads and uploads under way (`pending`), each with
+  # the file it was asked for in (`file`, a count of the files opened in
+  # the walk), as the shell would have them in flight.
+
+  defp asked(effects, file) do
+    for effect <- effects, request = request(effect), request != nil, do: {request, file}
+  end
+
+  # The publish box's ENTER asks the shell what the site's folder holds
+  # (`{:publish_scan, …}`), which `App` answers at once; the walk answers
+  # it as an empty folder would, so the preview opens and its ENTER asks
+  # for the upload (`{:publish, …}`), whose answer comes back later.
+  defp scanned(state, effects) do
+    Enum.reduce(effects, {state, []}, fn
+      {:publish_scan, folder, files}, {state, more} ->
+        state = Update.Results.publish_scanned(state, folder, files, {:ok, empty_folder()})
+        {%{state | effects: []}, more ++ state.effects}
+
+      _effect, acc ->
+        acc
+    end)
+  end
+
+  defp empty_folder, do: %{existing: %{}, published: []}
+
+  defp request({:fetch_feed, id, url}), do: {:feed_read, id, url}
+  defp request({:fetch_calendar, id, url}), do: {:calendar_read, id, url}
+  defp request({:publish, _folder, _files, changes, _password}), do: {:published, changes}
+  defp request(_effect), do: nil
+
+  # One of the answers waited for, picked out of order (`pick`), or, with
+  # none waited for, an answer for a feed or calendar the file has that
+  # nobody asked to read (as one started for a file open before). Gives the
+  # message the shell would receive, the file that asked (nil: none) and
+  # the answers still waited for.
+  defp answer(state, pending, pick, outcome) do
+    case pending do
+      [] ->
+        ids =
+          Enum.map(Map.values(state.db.feeds), &{:feed_read, &1.id, &1.url}) ++
+            Enum.map(Map.values(state.db.calendars), &{:calendar_read, &1.id, &1.url})
+
+        if ids == [],
+          do: {nil, nil, pending},
+          else: {message(Enum.at(ids, rem(pick, length(ids))), outcome), nil, pending}
+
+      _ ->
+        {request, file} = Enum.at(pending, rem(pick, length(pending)))
+        {message(request, outcome), file, List.delete(pending, {request, file})}
+    end
+  end
+
+  # a read that crashed outright, as `App.fetched/1` reports it
+  defp message({tag, id, url}, :crash) when tag in [:feed_read, :calendar_read],
+    do: {tag, id, url, Agendum.TUI.App.fetched(fn -> raise "boom" end), 1}
+
+  defp message({tag, id, url}, :error) when tag in [:feed_read, :calendar_read],
+    do: {tag, id, url, {:error, "the server answered 503"}, 1}
+
+  defp message({:feed_read, id, url}, :ok) do
+    entry = %{
+      id: "fuzz-#{System.unique_integer([:positive])}",
+      title: "Heffalump sighted",
+      link: "https://owl.example/heffalump",
+      summary: "Piglet says so.",
+      published: ~N[2026-10-07 07:00:00]
+    }
+
+    {:feed_read, id, url, {:ok, [entry]}, 1}
+  end
+
+  defp message({:calendar_read, id, url}, :ok) do
+    event = %Agendum.Core.Extras.ICal.Event{
+      uid: "fuzz-#{System.unique_integer([:positive])}",
+      summary: "Tea",
+      start: {:date, ~D[2026-10-09]}
+    }
+
+    {:calendar_read, id, url, {:ok, [event]}, 1}
+  end
+
+  defp message({:published, changes}, :ok), do: {:published, changes, :ok}
+  defp message({:published, changes}, :error), do: {:published, changes, {:error, "no rsync"}}
+  defp message({:published, changes}, :crash), do: {:published, changes, {:error, :password}}
+
+  # Delivers an answer through `App.background/2`, as the shell's loop
+  # does. One that nobody asked for, or that another file asked for, must
+  # leave this file alone (code review 2026-10-26), unless this file is
+  # reading the same address under the same id itself: files count their
+  # ids from one, and a file opened again has the same ones.
+  defp deliver(walk, pick, outcome) do
+    case answer(walk.state, walk.pending, pick, outcome) do
+      {nil, _, _} ->
+        walk
+
+      {message, asked_in, pending} ->
+        state = Agendum.TUI.App.background(walk.state, message)
+
+        if asked_in != walk.file and not reading_too?(walk.state, message),
+          do:
+            assert(
+              state.db == walk.state.db,
+              "#{inspect(message)} for another file was filed into this one"
+            )
+
+        # what the answer asked for next, as the loop runs it
+        effects = state.effects
+        assert_known_effects(effects, message)
+        state = %{state | effects: []}
+        %{walk | state: state, pending: pending ++ asked(effects, walk.file)}
+    end
+  end
+
+  defp reading_too?(state, {tag, id, url, _result, _ms}) do
+    subscriptions = if tag == :feed_read, do: state.db.feeds, else: state.db.calendars
+    Map.has_key?(state.fetching, id) and match?(%{url: ^url}, subscriptions[id])
+  end
+
+  defp reading_too?(_state, {:published, _changes, _result}), do: false
+
+  # Another file opened, as `App` hands a Retrieve's result to
+  # `Update.Results.loaded/3`, while the old file's reads may still come
+  # back: the golden file, whose ids are those of a walk started from it,
+  # every other time with other addresses under the same ids (another file
+  # altogether), else as it is (the same file opened again).
+  defp switch_file(walk) do
+    file = walk.file + 1
+    db = if rem(file, 2) == 1, do: readdressed(golden()), else: golden()
+    state = Update.Results.loaded(walk.state, "other.agendum", {:ok, db, "stamp"})
+    effects = state.effects
+
+    %{
+      walk
+      | state: %{state | effects: []},
+        file: file,
+        pending: walk.pending ++ asked(effects, file)
+    }
+  end
+
+  # `Map.new/2` makes a map from another one, each pair through the function
+  defp readdressed(db) do
+    other = fn subscriptions ->
+      Map.new(subscriptions, fn {id, s} -> {id, %{s | url: s.url <> "?other"}} end)
+    end
+
+    %{db | feeds: other.(db.feeds), calendars: other.(db.calendars)}
   end
 
   # With macros (R50): one on F4 that types and calls the other, which runs
@@ -255,29 +465,68 @@ defmodule Agendum.TUI.Fuzz do
             circular <- boolean(),
             # the Extras preference (R77), off as Agendum starts, or on
             extras <- boolean(),
+            # a quarter of the walks start from the golden file with the
+            # extras on: feeds, calendars, a blog (meeting 2026-10-26-6, § 7)
+            from_golden <- member_of([false, false, false, true]),
+            # and then perhaps with one of the extras' boxes open, which a
+            # random walk would hardly reach through the menu
+            opening <- member_of([nil, :feeds, :calendars, :publish, :preview, :upload]),
             max_runs: div(@runs + @parts - 1, @parts),
             initial_seed: ExUnit.configuration()[:seed] + part
           ) do
-      db =
-        numeric
-        |> sample()
-        |> with_filter(filtered)
-        |> with_datebook(datebook)
-        |> with_macros()
-        |> with_alarms(alarms)
-        |> with_circular(circular)
+      state =
+        if from_golden do
+          # a day after the golden file's, when its feed and calendar are
+          # due to be read again, so the first tick asks for them
+          golden()
+          |> start(
+            width: width,
+            height: height,
+            extras: true,
+            today: ~D[2026-10-17],
+            now: ~N[2026-10-17 12:00:00]
+          )
+        else
+          numeric
+          |> sample()
+          |> with_filter(filtered)
+          |> with_datebook(datebook)
+          |> with_macros()
+          |> with_alarms(alarms)
+          |> with_circular(circular)
+          |> start(width: width, height: height, extras: extras)
+        end
 
-      state = start(db, width: width, height: height, extras: extras)
+      # the walk: the state, the reads and uploads under way, and which
+      # file is open (a count of the files opened)
+      walk = %{state: state, pending: [], file: 0}
 
-      Enum.reduce(keys, state, fn key, state ->
+      # the golden file's walks begin as the shell does, with the clock's
+      # tick before the first drawing: its feed and calendar are due, so
+      # their reads are under way from the start
+      walk = if from_golden, do: walk |> clock() |> open_extra(opening), else: walk
+
+      Enum.reduce(keys, walk, fn key, walk ->
         # :tick advances the clock ten minutes, as the shell's loop would;
         # a macro run's keys are played next, as the shell plays them
-        before = state
+        before = walk.state
 
-        state =
-          if key == :tick,
-            do: tick(state, NaiveDateTime.add(state.now, 600)),
-            else: handle(state, [key])
+        walk =
+          case key do
+            :tick ->
+              clock(walk)
+
+            {:background, pick, outcome} ->
+              deliver(walk, pick, outcome)
+
+            :switch_file ->
+              switch_file(walk)
+
+            key ->
+              press_shell(walk, [key])
+          end
+
+        state = walk.state
 
         assert state.macro.playing == 0
 
@@ -294,7 +543,7 @@ defmodule Agendum.TUI.Fuzz do
         # every mode on the stack is its struct, none a bare map (Agendum.TUI.Modes)
         assert Enum.all?(state.modes, &is_struct/1), "a bare map mode after #{inspect(key)}"
 
-        if key != :tick, do: assert_undoable(before, state, key)
+        if key not in [:tick, :switch_file], do: assert_undoable(before, state, key)
 
         screen = Render.render(state)
 
@@ -303,7 +552,7 @@ defmodule Agendum.TUI.Fuzz do
         for line <- screen,
             do: assert(Draw.width(line) == width, "line width #{Draw.width(line)} != #{width}")
 
-        state
+        walk
       end)
     end
   end
