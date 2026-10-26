@@ -6,8 +6,9 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
-1. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-2. Then the owner chooses the next work from the areas below, now that Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-25, § 7)
+1. Defaults for new files (Fixes and polish): Agenda's File Properties ▸ Update defaults, and with it the owner's own defaults, such as the date format and more settings; a meeting settles it first (the owner, 2026-10-26)
+2. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+3. Then the owner chooses the next work from the areas below, now that Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-25, § 7)
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
@@ -17,7 +18,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 ### Fixes and polish
 
-- [ ] File Properties' Update defaults (Agenda's: make this file's File Properties and print settings the defaults for new files) and Auto-import file, the two settings of Agenda's box not built (found when the clone was declared done, 2026-10-26)
+- [ ] Defaults for new files (next, In order 1; a meeting first, the owner, 2026-10-26): Agenda's File Properties ▸ Update defaults ("Use the File Properties settings and the Print settings you've specified for the current Agenda file as the default settings for all new Agenda files you create"), and with it the owner's own defaults for new files, such as the date format (new files have Agenda's MM/DD/YY since v0.49.0) and more settings; where they are kept (the preferences, ADR 0008) is for the meeting
 - [ ] The key bar while browsing dates (ALT-B): Agenda 2.0 showed no browse mode to compare with (2026-10-26); check it again, and give it Agenda's bar if it has one
 - [ ] Erlang's logger can print over the screen (the owner, 2026-10-25: Agendum left running in iTerm on a closed laptop, offline, showed error text instead of the program until F10 redrew it; no session log). Likely the hourly feed fetches failing offline and OTP's network code or a crashed fetch reporting through the logger, which Agendum never steers away from the terminal (only Publish does, for ssh). Fix: while the TUI runs, send the logger to the debug log (or nowhere); make a fetch that crashes outright come back as a message
 - [ ] Hidden values of a date or numeric category (owner, 2026-10-25): a category made date or numeric keeps its short name, Also match words and conditions, as Agenda does, but its box no longer shows them (R6a). Decide what to do with them: show them somewhere (Statistics, the manager), clear them on conversion, or leave them; check first whether any still has an effect (a short name in a narrow column head, a condition)
@@ -47,6 +48,7 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
 
 - [ ] Optional (from the parity plan, 2026-10-26): Agenda structured files (`.STF`), import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), reading both 2.0 and 1.x dates into the same When, Entry and Done categories
 - [ ] Optional (from the parity plan, 2026-10-26): import of structured text files, one item per line with categories
+- [ ] Optional, with STF (2026-10-26): File Properties ▸ Auto-import file, Agenda's structured file imported each time the file is opened (to check in Agenda first)
 - [ ] Optional (from the parity plan, 2026-10-26): TXT2STF-style definition files that turn plain text into items; a first use, the session summaries in `docs/summaries/`
 - [ ] The `.AG` import (R72), still to bring over: note files (read by the shell beside the `.AG`), the global date format, a datebook's base date
   - [ ] Macros. Every macro in the files at hand is a starter's helper program in Agenda's macro command language (`{INPUTTEXT;…}`, `{DEFSTR;%var}`, `{LABEL}`, `{WINDOWSON}`), not recorded keystrokes, so R50 cannot run them; the owner's own Planner has only Planner's 10 (contact list, date settings, hide done, print, four sorts), none of the owner's. Planner, Account Manager, People Manager and Information Sifter have 10, 14, 10 and 6 (checked 2026-10-16). Options when picked up: import plain keystroke macros as R50 macros, and keep each other macro's text in a note so it can still be read; the command language itself stays out of scope (SPEC § 6)
