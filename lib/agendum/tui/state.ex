@@ -228,12 +228,25 @@ defmodule Agendum.TUI.State do
     end
   end
 
-  # the items whose text, fields or assignments differ, new ones included
+  # the items whose text, fields or assignments differ, new ones included.
+  # Domain: an assignment can also change from explicit to conditional (or
+  # back) with its link left as it was, and that changes how the item
+  # settles (found by the fuzz walk, 2026-10-27); `conditional` is a set of
+  # {item, category} pairs, so the pairs in one set and not the other name
+  # those items.
   defp changed_items(old, new) do
-    for {id, item} <- new.items,
-        Map.get(old.items, id) != item or
-          Map.get(old.links.by_left, id) != Map.get(new.links.by_left, id),
-        do: id
+    flipped =
+      for {id, _category} <- MapSet.symmetric_difference(old.conditional, new.conditional),
+          Map.has_key?(new.items, id),
+          do: id
+
+    edited =
+      for {id, item} <- new.items,
+          Map.get(old.items, id) != item or
+            Map.get(old.links.by_left, id) != Map.get(new.links.by_left, id),
+          do: id
+
+    Enum.uniq(edited ++ flipped)
   end
 
   defp live(db), do: db.items |> Map.keys() |> MapSet.new()
