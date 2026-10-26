@@ -88,6 +88,13 @@ defmodule Agendum.TUI.MacroKeysTest do
     ])
   end
 
+  # found by the property below (2026-10-26): U+0600 joins the next
+  # character into one grapheme, and swallowed the brace of a key's name
+  test "a character that joins the next one leaves a key's name whole" do
+    keys = [{:char, "\u0600"}, :ctrl_pgup]
+    assert MacroKeys.decode(MacroKeys.encode(keys)) == keys
+  end
+
   property "any keys come back from their text" do
     check all(keys <- list_of(key(), max_length: 30)) do
       # a newline typed as text is a key of its own; and a combining mark

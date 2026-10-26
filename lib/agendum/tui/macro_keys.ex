@@ -73,7 +73,20 @@ defmodule Agendum.TUI.MacroKeys do
     [first | Enum.map(rest, &String.trim_leading(&1, " "))]
     |> Enum.join()
     |> String.graphemes()
+    |> Enum.flat_map(&apart_from_braces/1)
     |> keys([])
+  end
+
+  # Domain: a few characters join the one after them into one grapheme
+  # (U+0600, the Arabic number sign, "prepends" itself), so "؀{CtlPGUP}"
+  # would read as "؀{" and the key name be lost. A brace stays a grapheme
+  # of its own: it starts or ends a key's name.
+  defp apart_from_braces(grapheme) when grapheme in ["{", "}"], do: [grapheme]
+
+  defp apart_from_braces(grapheme) do
+    if String.contains?(grapheme, ["{", "}"]),
+      do: Regex.split(~r/([{}])/u, grapheme, include_captures: true, trim: true),
+      else: [grapheme]
   end
 
   defp keys([], acc), do: Enum.reverse(acc)
