@@ -625,7 +625,7 @@ The core maintains these, and the tests check them: `Agendum.Core.Invariants.vio
 ```mermaid
 flowchart LR
     DB["%Database{}"] --> T["{:agenda, version, db}<br/>versioned envelope"]
-    T --> B[":erlang.term_to_binary(…, [:compressed])"]
+    T --> B[":erlang.term_to_binary(…, compressed: 1)"]
     B --> TMP["file.agendum.tmp"]
     TMP -- "File.rename (atomic)" --> F["file.agendum"]
 ```

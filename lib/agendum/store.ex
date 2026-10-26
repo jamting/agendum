@@ -104,9 +104,13 @@ defmodule Agendum.Store do
     # (`:erlang` is an Erlang module, called directly). The tuple is the
     # envelope: a tag, the format version, then the database itself.
     # a password is never written: the file is encrypted with it (ADR 0046)
+    # Domain: zlib's fastest level, 1: on the owner's file (2026-10-26) the
+    # default level took 117 of a save's 123 ms, level 1 42 ms for a file
+    # 15% larger (meeting 2026-10-26-4, § 5). Reading is the same for any
+    # level, so files saved either way open in every version.
     binary =
       {:agenda, @format_version, %{db | password: nil}}
-      |> :erlang.term_to_binary([:compressed])
+      |> :erlang.term_to_binary(compressed: 1)
       |> encrypt(db.password, db.description)
 
     # Domain: write to a temporary file, then rename it over the real one. A

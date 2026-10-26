@@ -9,6 +9,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 Faster saves for files with many feeds.
 
 - **A feed entry that has faded** (or that you discarded) is remembered only by its id and date, not by its title, summary and link, which went with its item. Agendum still never brings it back. A file with many feeds becomes much smaller: on a file with 243 feeds, a save went from about half a second to an eighth of one, and the file from 5.4 MB to 1.4 MB. Older files are trimmed when opened, and the saving happens at the next save.
+- **Saving compresses faster**, for a file a little larger: with the trimmed feeds, a save of that file takes about a twentieth of a second.
 
 ## 0.63.0 — 2026-10-26
 
