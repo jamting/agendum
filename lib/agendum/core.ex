@@ -125,7 +125,7 @@ defmodule Agendum.Core do
     as: :why
 
   defdelegate completions(db, head_id, text), to: Assignments
-  defdelegate assign_new_by_name(db, item_id, head_id, text), to: Assignments
+  defdelegate assign_new_by_name(db, item_id, head_id, text, clock \\ nil), to: Assignments
 
   # dates (R6, R14, R41)
   defdelegate toggle_auto_date(db), to: Dates

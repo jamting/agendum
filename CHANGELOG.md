@@ -4,6 +4,16 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.68.3 — 2026-10-26
+
+Ten fixes from a deep review of the core's rules.
+
+- **Marking an item done (F4) and clearing a date (DEL) run the conditions again**, as Lotus Agenda does: a condition on Done, or on a date, now takes effect at once instead of the next day.
+- **The circular-reference mark `o` shows only for items that really keep moving**, not for items a new condition simply has not reached yet.
+- **Discarding a category** takes it out of other categories' actions too, so your own JSON export reads back; **a recurring item's next occurrence** keeps its unindexed text (a phone number …); **typing a category's name into a column** runs its actions with today's date.
+- **File ▸ Transfer ▸ Template** of a file with a Show Circular view now opens, and its feeds and calendars start afresh.
+- A hand-made JSON file with a mismatched action no longer crashes; four more commands respect a feed's own category; a rare text match no longer leaves a stray mark.
+
 ## 0.68.2 — 2026-10-26
 
 Ten fixes from a deep review of saving, loading and the shell.

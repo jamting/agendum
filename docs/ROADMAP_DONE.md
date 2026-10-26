@@ -310,6 +310,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Sharpen the saw
 
+- [x] (2026-10-26, v0.68.3) The code review in slices, slice B (the core's rules): ten findings fixed, each with its test (`test/agendum/review_slice_b_test.exs`); the two that change when rules fire checked against Agenda's manual first
 - [x] (2026-10-26, v0.68.2) The code review in slices, slice A (the file and the shell, `docs/CODE_REVIEW_SLICES.md`): ten findings fixed, each with its test (`test/agendum/review_slice_a_test.exs`)
 - [x] (2026-10-26) `Update`'s shell answers to a module of their own, `Agendum.TUI.Update.Results` (497 lines; `Update` from 1,034 to 554), no change in behaviour (meeting 2026-10-26-4, § 11)
 - [x] (2026-10-26) The sort box's setting names written out (`@then`), its three Credo suppressions of `String.to_atom/1` gone (meeting 2026-10-26-4, § 12)

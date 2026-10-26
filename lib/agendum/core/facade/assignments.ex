@@ -24,8 +24,10 @@ defmodule Agendum.Core.Facade.Assignments do
     # `if c, do: a, else: b` is the keyword form of `if ... do ... else ...
     # end` (the block form is sugar for it). `if` is an expression: its
     # value is the function's result.
+    # clearing a date takes the item out of its date category: the
+    # conditions run again either way (User's Guide 18-6)
     if Database.date_category?(db, cat_id),
-      do: Changes.put_date(db, item_id, cat_id, nil),
+      do: db |> Changes.put_date(item_id, cat_id, nil) |> Changes.settle(db, item_id, clock),
       else:
         Assign.unassign(db, item_id, cat_id)
         |> Changes.settle(db, item_id, clock)
@@ -108,11 +110,11 @@ defmodule Agendum.Core.Facade.Assignments do
       true ->
         case resolve_name(db, head_id, text) do
           {:ok, cat_id} ->
-            {:ok, assign(db, item_id, cat_id), cat_id}
+            {:ok, assign(db, item_id, cat_id, today), cat_id}
 
           :none ->
             {db, cat_id} = Database.insert_category(db, head_id, text)
-            {:ok, assign(db, item_id, cat_id), cat_id}
+            {:ok, assign(db, item_id, cat_id, today), cat_id}
 
           :ambiguous ->
             {:error, :ambiguous}
@@ -199,11 +201,12 @@ defmodule Agendum.Core.Facade.Assignments do
   creates Low even when Lowest exists. If a child with that name already
   exists, that one is used.
   """
-  @spec assign_new_by_name(db, id, id, String.t()) :: {:ok, db, id} | {:error, :empty}
-  def assign_new_by_name(db, item_id, head_id, text) do
+  @spec assign_new_by_name(db, id, id, String.t(), clock | nil) ::
+          {:ok, db, id} | {:error, :empty}
+  def assign_new_by_name(db, item_id, head_id, text, clock \\ nil) do
     case Categories.add_category(db, head_id, text) do
       {:ok, db, cat_id} ->
-        {:ok, assign(db, item_id, cat_id), cat_id}
+        {:ok, assign(db, item_id, cat_id, clock), cat_id}
 
       {:error, :duplicate} ->
         wanted = Database.normalize(text)
@@ -214,7 +217,7 @@ defmodule Agendum.Core.Facade.Assignments do
             &(Database.normalize(db.categories[&1].name) == wanted)
           )
 
-        {:ok, assign(db, item_id, cat_id), cat_id}
+        {:ok, assign(db, item_id, cat_id, clock), cat_id}
 
       {:error, :empty} ->
         {:error, :empty}

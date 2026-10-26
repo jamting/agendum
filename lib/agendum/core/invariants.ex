@@ -224,7 +224,12 @@ defmodule Agendum.Core.Invariants do
 
     in_categories =
       for {cat_id, cat} <- db.categories,
-          {where, ids} <- [also_assign: cat.also_assign, excludes: cat.excludes],
+          {where, ids} <- [
+            also_assign: cat.also_assign,
+            excludes: cat.excludes,
+            conditions: Enum.map(cat.conditions, &elem(&1, 0)),
+            actions: Enum.map(cat.actions, &elem(&1, 0))
+          ],
           id <- ids,
           gone.(id),
           do: "6. category #{cat_id}: #{where} names category #{id}, which is gone"

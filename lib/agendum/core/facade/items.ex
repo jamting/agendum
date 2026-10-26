@@ -141,7 +141,7 @@ defmodule Agendum.Core.Facade.Items do
   @spec toggle_done(db, id, clock) :: db
   def toggle_done(db, id, today) do
     if db.items[id].done,
-      do: Database.update_item(db, id, &%{&1 | done: nil}),
+      do: db |> Database.update_item(id, &%{&1 | done: nil}) |> Changes.settle(db, id, today),
       else: mark_done(db, id, today)
   end
 
@@ -158,10 +158,14 @@ defmodule Agendum.Core.Facade.Items do
     # `%{done: nil} = item` matches any map whose `done` is nil and also
     # binds the whole map to `item`; `_` matches everything else.
     case db.items[id] do
+      # Domain: done is a date category: its conditions and actions run
+      # again, as Agenda rechecks an item whenever it joins a category
+      # (User's Guide 18-5; code review 2026-10-26)
       %{done: nil} = item ->
         db
         |> Database.update_item(id, &%{&1 | done: Changes.date_of(today)})
         |> Changes.key_dates(id, :done_key, today)
+        |> Changes.settle(db, id, today)
         |> next_occurrence(item, today)
 
       _ ->
@@ -203,9 +207,16 @@ defmodule Agendum.Core.Facade.Items do
           do: Database.mark_conditional(db, copy, cat),
           else: db
 
-      case Database.number(db, item.id, cat) do
+      db =
+        case Database.number(db, item.id, cat) do
+          nil -> db
+          number -> Database.put_number(db, copy, cat, number)
+        end
+
+      # an unindexed category's text, as the number is (R29b)
+      case Database.text(db, item.id, cat) do
         nil -> db
-        number -> Database.put_number(db, copy, cat, number)
+        text -> Database.put_text(db, copy, cat, text)
       end
     end)
   end

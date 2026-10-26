@@ -312,19 +312,33 @@ defmodule Agendum.Core.Facade.Changes do
           do: put_date(db, item_id, target, nil),
           else: Assign.unassign(db, item_id, target)
 
+      # Domain: a set action's value must fit its target, a date phrase for
+      # a date category and a number for a numeric one; a hand-made JSON
+      # file can hold one that does not, which is left alone (code review
+      # 2026-10-26: it crashed the first time an item joined)
       Database.date_category?(db, target) ->
-        # in this branch the action can only be `{:set, text}`; the match
-        # takes the text out (and would crash loudly if that ever changed)
-        {:set, text} = action
+        case action do
+          {:set, text} when is_binary(text) ->
+            case action_date(db, text, clock) do
+              {:ok, date} -> put_date(db, item_id, target, date)
+              :error -> db
+            end
 
-        case action_date(db, text, clock) do
-          {:ok, date} -> put_date(db, item_id, target, date)
-          :error -> db
+          _ ->
+            db
+        end
+
+      db.categories[target].kind == :numeric ->
+        case action do
+          {:set, number} when is_number(number) ->
+            db |> user_assign(item_id, target) |> Database.put_number(item_id, target, number)
+
+          _ ->
+            db
         end
 
       true ->
-        {:set, number} = action
-        db |> user_assign(item_id, target) |> Database.put_number(item_id, target, number)
+        db
     end
   end
 

@@ -111,9 +111,17 @@ defmodule Agendum.Core.Assign do
         []
 
       {with_conditions, conditions} ->
+        # Domain: an item whose conditions were only not applied yet (a new
+        # condition, a new day) is not circular: it is settled first, within
+        # the bounded rounds, and circular only if it still moves after that,
+        # as Agenda's items that keep being assigned and taken out (User's
+        # Guide 20-21; code review 2026-10-26)
+        rounds = length(with_conditions) + 2
+
         for id <- ids || db.item_order,
             Map.has_key?(db.items, id),
-            settle_conditions(db, id, with_conditions, 1, {conditions, clock}) != db,
+            settled = settle_conditions(db, id, with_conditions, rounds, {conditions, clock}),
+            settle_conditions(settled, id, with_conditions, 1, {conditions, clock}) != settled,
             do: id
     end
   end
@@ -518,7 +526,14 @@ defmodule Agendum.Core.Assign do
 
     # text matches are conditional: they break when the text changes (R15c)
     Enum.reduce(made, %{db | suggestions: suggestions}, fn cand, db ->
-      db |> assign(item_id, cand) |> Database.mark_conditional(item_id, cand)
+      db = assign(db, item_id, cand)
+
+      # only a link that is there is marked: a category link of the matched
+      # category can take it back (DATA_MODEL invariant 10; code review
+      # 2026-10-26)
+      if Database.explicit?(db, item_id, cand),
+        do: Database.mark_conditional(db, item_id, cand),
+        else: db
     end)
   end
 

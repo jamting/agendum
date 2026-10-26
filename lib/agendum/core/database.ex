@@ -271,7 +271,10 @@ defmodule Agendum.Core.Database do
              c
              | also_assign: Enum.reject(c.also_assign, &(&1 in doomed_set)),
                excludes: Enum.reject(c.excludes, &(&1 in doomed_set)),
-               conditions: Enum.reject(c.conditions, &(elem(&1, 0) in doomed_set))
+               conditions: Enum.reject(c.conditions, &(elem(&1, 0) in doomed_set)),
+               # an action naming a discarded category goes too (code review
+               # 2026-10-26: it made the file's own JSON export unreadable)
+               actions: Enum.reject(c.actions, &(elem(&1, 0) in doomed_set))
            }}
         end)
 

@@ -42,8 +42,12 @@ defmodule Agendum.Core.Facade.Files do
   def template(db) do
     views =
       Map.new(db.views, fn
-        {id, %{match: {:items, _}} = view} -> {id, %{view | match: nil}}
-        pair -> pair
+        # a Show View of items (Show Match, Show Circular …) lists none
+        {id, %{match: {kind, _}} = view} when kind in [:items, :circular] ->
+          {id, %{view | match: nil}}
+
+        pair ->
+          pair
       end)
 
     %{
@@ -58,7 +62,13 @@ defmodule Agendum.Core.Facade.Files do
         dependencies: Agendum.Core.Links.new(),
         suggestions: %{},
         views: views,
-        trash: %{db.trash | items: [], day: nil}
+        trash: %{db.trash | items: [], day: nil},
+        # the subscriptions start afresh: what they read named the items
+        # that are gone, which would read as discarded (code review
+        # 2026-10-26)
+        feeds: Map.new(db.feeds, fn {id, f} -> {id, %{f | entries: %{}, refreshed_at: nil}} end),
+        calendars:
+          Map.new(db.calendars, fn {id, c} -> {id, %{c | events: %{}, refreshed_at: nil}} end)
     }
   end
 

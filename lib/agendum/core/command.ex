@@ -125,7 +125,7 @@ defmodule Agendum.Core.Command do
      [:item, :category, :value], :clock},
     {:assign_new_by_name, "Assign to a new category",
      "Makes a category of that name under the head and assigns the item to it (R23)",
-     [:item, :category, :value], :core},
+     [:item, :category, :value], :clock},
     {:clear_column, "Clear column",
      "Takes an item out of a column: its entries under the head (DEL in a column, R24)",
      [:item, :category], :own},
@@ -500,7 +500,11 @@ defmodule Agendum.Core.Command do
     remove_from_category: [{:own, 1}],
     toggle_assignment: [{:own, 1}],
     assign_by_name: [1],
-    assign_new_by_name: [1]
+    assign_new_by_name: [1],
+    move_item: [{:own, 1}, {:own, 2}],
+    set_in_column: [{:own, 1}],
+    clear_column: [{:own, 1}],
+    undiscard: [{:own, 1}]
   }
 
   defp not_ingested(db, :add_item, [_text, opts]), do: free(db, [{:own, opts[:section]}])
