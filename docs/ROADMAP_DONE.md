@@ -295,6 +295,10 @@ The general look and feel of the real program, step by step; not pixel fidelity.
   - [x] The help page's look and feel (R65c, 2026-10-16): the same frame on every page, colours from the theme, a fixed pane of five lines at the foot with the longer text and the "Not now" reason (← → page through a long text), "…" for a long summary; drawn as a box over the faded screen beneath, taking more of a small screen (80×25: about nine tenths) than of a large one (four fifths). The colours tried by the owner; the help box then got a background of its own in every theme (`help_bg`, 2026-10-16)
   - Dropped (owner, 2026-10-16): the help as a panel over the right-hand side. The help box over the faded screen (R65c) keeps what it was opened from in sight, which was the panel's point
 
+### Fixes and polish (after the clone was declared done)
+
+- [x] (2026-10-26, v0.62.1) The key bar and control panel while browsing dates as Agenda's: F1 Help, F8 Default (back to the starting dates), F10 Menu; "Use the cursor keys to display schedules for other dates.", "Current filter:", BROWSE alone at the right (R48)
+
 ### Sharpen the saw
 
 - [x] (2026-10-26, v0.62.0) A check that every line `docs/HELP_WOOD.md` quotes is still in its help topic, word for word (meeting 2026-10-26-2, § 8)

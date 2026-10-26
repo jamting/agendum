@@ -76,6 +76,10 @@ defmodule Agendum.TUI.Render.KeyBar do
   defp place(_state, %{type: type}) when type in [:move_item, :section_move], do: :empty_bar
   defp place(_state, %{type: type}) when type in [:column_move, :column_width], do: :help_only
 
+  # browsing: Agenda's F1 Help, F8 Default and F10 Menu (checked in Agenda
+  # 2.0, 2026-10-26), from Browse's keymap
+  defp place(_state, %{type: :browse}), do: :browse
+
   defp place(_state, %{type: type}) when type in [:note, :catmgr, :viewmgr, :menu, :searching],
     do: type
 

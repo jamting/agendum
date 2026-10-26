@@ -28,7 +28,7 @@ defmodule Agendum.TUI.Modes do
     ag_import: [:report, :source, :top],
     auto_assign: [:cursor, :opened],
     away: [:groups],
-    browse: [:date, :scope, :shift, :view_id],
+    browse: [:date, :scope, :shift, :start, :view_id],
     calendar: [:date, :target, :time],
     calendars: [:cursor],
     category_match: [:cat_id, :cursor, :opened],

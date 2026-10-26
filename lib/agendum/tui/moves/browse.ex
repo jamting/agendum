@@ -21,10 +21,14 @@ defmodule Agendum.TUI.Moves.Browse do
     * ENTER keeps what is shown: the new dates become the view's (a
       datebook's base date, or the filter's dates, fixed); one undo step
     * ESC goes back to what the view had
+    * F8 (DEFAULT) goes back to the dates browsing started from, and F10
+      (MENU) leaves browsing for the menu, as Agenda's (checked in Agenda
+      2.0, 2026-10-26)
 
   While browsing, the view shows the browsed dates (`State.view/1` asks
   `view/2`), the file is not changed, and nothing else can be done, as in
-  Agenda. The control panel says BROWSE. Pure.
+  Agenda. The control panel says BROWSE, with Agenda's two lines, and the
+  key bar has Agenda's F1 Help, F8 Default and F10 Menu. Pure.
   """
 
   alias Agendum.Core
@@ -47,8 +51,10 @@ defmodule Agendum.TUI.Moves.Browse do
           "Browse needs a date filter (View Properties ▸ Filter) or a datebook view"
         )
 
+      # `start` keeps where browsing began, for F8 (DEFAULT)
       place ->
-        State.push(state, Map.merge(%Agendum.TUI.Modes.Browse{view_id: view.id}, place))
+        mode = Map.merge(%Agendum.TUI.Modes.Browse{view_id: view.id, start: place}, place)
+        State.push(state, mode)
     end
   end
 
@@ -77,7 +83,9 @@ defmodule Agendum.TUI.Moves.Browse do
     day (← →), a week (↑ ↓), a month (PGUP PGDN) or a year (CTRL-PGUP
     CTRL-PGDN). ALT-F5 goes to a date you type.
 
-    ENTER keeps the dates shown; ESC goes back to the ones before.
+    ENTER keeps the dates shown; ESC goes back to the ones before. F8
+    goes back to the dates you started from; F10 leaves browsing for the
+    menu.
     """
   end
 
@@ -89,6 +97,10 @@ defmodule Agendum.TUI.Moves.Browse do
   defp command(state, mode, :keep), do: keep(State.pop(state), mode)
   defp command(state, _mode, :close), do: State.pop(state)
   defp command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
+  defp command(state, mode, :default), do: State.put_mode(state, Map.merge(mode, mode.start))
+
+  # F10 leaves browsing, its dates given up, for the menu (Agenda 2.0)
+  defp command(state, _mode, :menu), do: state |> State.pop() |> Agendum.TUI.Menu.open()
 
   # the moves: a period in a datebook, a day, week, month or year in a filter
   defp command(state, mode, id),

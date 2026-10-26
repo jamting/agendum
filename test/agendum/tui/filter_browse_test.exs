@@ -92,16 +92,44 @@ defmodule Agendum.TUI.FilterBrowseTest do
     assert screen(press(state, [{:alt, "b"}, :right])) =~ "Call Marketing"
   end
 
-  test "at 80 columns the view's line, with its dates, stays in sight", %{state: state, when: w} do
+  # Agenda's two lines while browsing (checked in Agenda 2.0, 2026-10-26):
+  # the filter's browsed dates under its words, BROWSE at the right
+  test "the control panel says Agenda's words, with the browsed dates", %{state: state, when: w} do
     state = %{filter_view(state, w, "today", "today") | width: 80}
-    [_, view_line | _] = state |> press([{:alt, "b"}, :right]) |> screen() |> String.split("\n")
-    assert view_line =~ "View: Activities [When 10/13/26..10/13/26]"
+
+    [top, second | _] =
+      state |> press([{:alt, "b"}, :right]) |> screen() |> String.split("\n")
+
+    assert top =~ "Use the cursor keys to display schedules for other dates."
+    assert top =~ "BROWSE"
+    assert second =~ "Current filter:  [When 10/13/26..10/13/26]"
 
     {:ok, db, v} =
       Core.add_datebook_view(state.db, "Quarter", %Agendum.Core.Datebook{period: :quarter})
 
     datebook = %{state | db: db} |> State.switch_view(v) |> Layout.settle()
-    [_, view_line | _] = datebook |> press({:alt, "b"}) |> screen() |> String.split("\n")
-    assert view_line =~ "View: Quarter"
+    [top, second | _] = datebook |> press({:alt, "b"}) |> screen() |> String.split("\n")
+    assert top =~ "Use the cursor keys to display schedules for other periods."
+    assert second =~ "Right arrow moves forward, left arrow moves back one period."
+  end
+
+  test "F8 goes back to the dates browsing started from; F10 leaves for the menu", %{
+    state: state,
+    when: w
+  } do
+    state = filter_view(state, w, "today", "today")
+    moved = press(state, [{:alt, "b"}, :right, :right])
+    back = press(moved, {:f, 8})
+    assert %{type: :browse} = State.mode(back)
+    assert State.mode(back).shift == State.mode(press(state, {:alt, "b"})).shift
+
+    menu = press(moved, {:f, 10})
+    assert %{type: :menu} = State.mode(menu)
+    assert Enum.map(menu.modes, & &1.type) == [:menu]
+  end
+
+  test "the key bar is Agenda's: F1 Help, F8 Default, F10 Menu", %{state: state, when: w} do
+    state = filter_view(state, w, "today", "today")
+    assert slots(press(state, {:alt, "b"})) == "F1 Help F8 Default F10 Menu"
   end
 end

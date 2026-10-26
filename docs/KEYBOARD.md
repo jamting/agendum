@@ -60,7 +60,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | In the calendar: a month back / ahead; a year back / ahead                                      | PGUP / PGDN; CTRL-← / CTRL-→  | fn-↑ / fn-↓; `<` / `>`                                                |
 | In the calendar: set the date; a time (F6); go to a typed date; cancel                          | ENTER; F6; type it; ESC       | the same                                                              |
 | In a prompt for a file name: pick it from a list (Select File box: ENTER opens, typing narrows, F7 dates, F8 descriptions, ESC back) | F3                            | —                                                          |
-| Browse a datebook view: previous / next period; go to a date; keep; go back                     | ALT-B: ← →; ALT-F5; ENTER; ESC | ⌥b; `<` / `>`; —                                 |
+| Browse a datebook view: previous / next period; go to a date; keep; go back; back to the starting dates; leave for the menu | ALT-B: ← →; ALT-F5; ENTER; ESC; F8; F10 | ⌥b; `<` / `>`; —                                 |
 | Browse a date filter (standard view): a day; a week; a month; a year                            | ALT-B: ← →; CTRL-← →; PGUP/PGDN; CTRL-PGUP/PGDN | ⌥b; ↑ ↓ for a week; ⌥↑ / ⌥↓ for a year                      |
 | Column width (View ▸ Column ▸ Width): narrower / wider; a width; fit to contents; keep; go back | ← →; type it; SHIFT-?; ENTER; ESC               | `?` (no SHIFT needed); opened from menu View ▸ Column ▸ Width         |
 | Make the item depend on the marked items, or clear its dependencies                             | ALT-O                         | ⌥o                                                          |

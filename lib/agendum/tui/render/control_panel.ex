@@ -75,16 +75,8 @@ defmodule Agendum.TUI.Render.ControlPanel do
       %{type: :section_move} = m ->
         text_lines(state, base, :panel_hint, Agendum.TUI.Moves.SectionMove.panel(state, m))
 
-      %{type: :browse, date: %Date{}} ->
-        period = State.view(state).datebook.period
-        hint = "← → another #{period} · ENTER keeps · ESC back"
-        text_lines(state, base, :panel_hint, hint)
-
-      %{type: :browse} ->
-        # short, so the view's line with the dates being moved stays in sight
-        hint = "← → ↑↓ PGUP PGDN · ENTER keeps · ESC back"
-
-        text_lines(state, base, :panel_hint, hint)
+      %{type: :browse} = m ->
+        browse_lines(state, base, m)
 
       mode when is_map_key(@boxes, mode.type) ->
         box_lines(state, mode)
@@ -272,6 +264,29 @@ defmodule Agendum.TUI.Render.ControlPanel do
 
   # A question, message or hint, left of the indicators; a long one goes
   # on into the second line, like Agenda's two-line help.
+  # browsing: Agenda's two lines (checked in Agenda 2.0, 2026-10-26),
+  # BROWSE at the right; a filter's browsed dates on the second, as
+  # Agenda's "Current filter:  [When( 10/25/26)]"
+  defp browse_lines(state, base, %{date: %Date{}}) do
+    {beside_indicators(state, base, [
+       {:panel, " Use the cursor keys to display schedules for other periods."}
+     ]), [{:panel, " Right arrow moves forward, left arrow moves back one period."}]}
+  end
+
+  defp browse_lines(state, base, mode) do
+    view = State.view(state)
+
+    filter =
+      case mode.scope do
+        {:section, sidx} -> Enum.at(view.sections, sidx).filter
+        _view -> view.filter
+      end
+
+    {beside_indicators(state, base, [
+       {:panel, " Use the cursor keys to display schedules for other dates."}
+     ]), [{:panel, " Current filter:  " <> String.trim(Text.filter_text(state, filter))}]}
+  end
+
   defp text_lines(state, base, style, text) do
     room = state.width - String.length(indicators(state, base)) - 2
 
@@ -304,6 +319,11 @@ defmodule Agendum.TUI.Render.ControlPanel do
       # the category manager shows neither a word nor the time, as Agenda's
       %{type: :catmgr} when base.type == :catmgr ->
         marks
+
+      # browsing: BROWSE alone at the right, no date or time, as Agenda's
+      # (checked in Agenda 2.0, 2026-10-26)
+      %{type: :browse} ->
+        marks <> "BROWSE "
 
       # searching the view: the date, the time's place blank, as Agenda's
       # (checked in Agenda 2.0, 2026-10-26)

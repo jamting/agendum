@@ -216,6 +216,8 @@ defmodule Agendum.TUI.Commands do
     {:go_to, "Go to", "Go to a date typed", :none},
     {:keep, "Keep", "Keep the dates shown", :none},
     {:help, "Help", "Help about where you are", :none},
+    {:default, "Default", "Back to the dates it started from", :none},
+    {:menu, "Menu", "Leave browsing for the menu", :none},
     {:close, "Cancel", "Back to the dates before", :none}
   ]
 
@@ -444,6 +446,8 @@ defmodule Agendum.TUI.Commands do
     # searching a view: Agenda's bar names F1 Help alone (checked in Agenda
     # 2.0, 2026-10-26); ALT-N, ALT-P and F7 still work
     searching: %{help: "Help"},
+    # browsing: Agenda's bar (checked in Agenda 2.0, 2026-10-26)
+    browse: %{help: "Help", default: "Default", menu: "Menu"},
     box: %{default: "Default", default_all: "DfltAll"},
     # typing a line, as Agenda's bar while editing (2026-10-25)
     line: %{

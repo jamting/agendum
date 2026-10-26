@@ -245,7 +245,10 @@ defmodule Agendum.TUI.Keymap do
     {:alt_f, 5} => :go_to,
     :enter => :keep,
     :esc => :close,
-    {:f, 1} => :help
+    {:f, 1} => :help,
+    # Agenda's F8 DEFAULT and F10 MENU while browsing (2026-10-26)
+    {:f, 8} => :default,
+    {:f, 10} => :menu
   }
 
   # a column's width (View ▸ Column ▸ Width); digits type it (`ColumnWidth`)
