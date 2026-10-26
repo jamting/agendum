@@ -4,6 +4,17 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.55.0 — 2026-10-26
+
+The trash, as in Lotus Agenda.
+
+- **A discarded item goes to the trash** (ALT-F4, after Agenda's "Discard this item?"), and so does one a discarding category takes. CTRL-Z still takes a discard back.
+- **Item ▸ Undisc** brings items back from the trash, below the highlighted item and in that section alone: as in Agenda, they come back without their other categories, dates and alarm. With several in the trash, Agenda's box asks for all of them (first) or the last.
+- **Utilities ▸ Trash** empties the trash, after Agenda's question; both commands say so, in Agenda's words, when the trash is empty.
+- **File Properties ▸ Empty trash**: On demand, When file is closed, End of day (the default, for every file) or When item is discarded. **File statistics** counts the items in the trash.
+- **Importing an Agenda file** brings its trash and its Empty trash setting with it.
+- Files are saved in format 44.
+
 ## 0.54.0 — 2026-10-26
 
 Search, the circular o and file passwords, as in Lotus Agenda.
