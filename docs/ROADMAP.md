@@ -6,7 +6,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
-1. The parity steps in their order ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the rest of the clone's safety between them: the small steps in batches, then Search compared, then Agenda's help last (meeting 2026-10-25, § 7; its steps in [`plans/HELP.md`](plans/HELP.md), meeting 2026-10-26)
+1. The key bar in moves as Agenda's, the last parity step ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the check that keeps [`HELP_WOOD.md`](HELP_WOOD.md) true; the moment it is built and tagged, the clone is declared done (meeting 2026-10-26-2, §§ 6–8)
 2. The clone declared done (the definition: AGENDA_PARITY.md, end of The steps): the public repository made, the freezes below lifted, and the parity plan's *Optional* steps put back on the roadmap in their areas (meeting 2026-10-25, § 7)
 
 **Frozen until the truthful clone is declared done** (meeting 2026-10-21, § 5; `VISION.md`, ADR 0043): Beyond Agenda, Ideas and Towards many users wait (bug fixes only). Not frozen: the parity steps, the clone's safety work and tests (meeting 2026-10-22, § 5c) and Sharpen the saw (§ 5i). The view cache waits for slow answers in real use.
@@ -31,6 +31,7 @@ Clone work, not frozen (meeting 2026-10-22, § 5c; expert review 2026-10-21, § 
 
 Tools and checks that make every later change faster and safer. Each is small; the command layer they made safer is done (R66, ADR 0036, in `ROADMAP_DONE.md`). From the expert review of 2026-10-16 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
+- [ ] A check that every line `docs/HELP_WOOD.md` lists is still in its help topic (meeting 2026-10-26-2, § 8), with the key bar in moves
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key. Measured 2026-10-16, a cursor move: 300 items 6 ms in `Update` + 11 ms in `Render`; 3,000 items 61 + 45 ms; 10,000 items 205 + 231 ms. First build it once per key and share it; then keep it in the session's state between keys as a value with a key that says when it is stale (ADR 0035): the database, the view, the date and time, the screen width, collapsed families, the search. Needs an ADR. **Wait until the debug log shows `slow answer` lines (over 100 ms) in real use** (owner's decision, 2026-10-16); ingested items (`plans/ITEM_LEVELS.md`) will likely be what brings them. Update 2026-10-25 (v0.31.2): the first real-use slowness came from many sections, not many items (the owner's News view, 243 sections: ~135 ms a key); fixed without a cache (`ROADMAP_DONE.md`, Sharpen the saw), and wrapping and drawing now touch only the rows down to the highlight and on screen. Left: the view is still made about three times per key, so "build it once per key" is the next step if it is slow again. The command layer, which reshaped the state it would live in, is done; the TUI state's split into file and session (Towards many users) reshapes it again
 
 ### The note editor
