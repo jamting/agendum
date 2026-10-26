@@ -188,6 +188,35 @@ defmodule Agendum.TUI.HelpTopicsTest do
           do: assert(String.length(text) <= 68, "#{title}: #{text}")
     end
 
+    # docs/HELP_WOOD.md lists the Hundred Acre Wood in the help (meeting
+    # 2026-10-26-2, § 8): each listed line must still be in its topic
+    test "every Wood touch docs/HELP_WOOD.md lists is in its topic", %{state: state} do
+      rows =
+        for line <- File.read!("docs/HELP_WOOD.md") |> String.split("\n"),
+            [_, title, words] <- [Regex.run(~r/^\| ([^|]+?) \| (.+?) \| [^|]+ \|$/, line)],
+            title not in ["Topic", "---"],
+            do: {title, words}
+
+      assert length(rows) >= 10
+
+      for {title, words} <- rows do
+        topic = Topics.get(state, title)
+        assert topic, "#{title} is not a topic"
+
+        text =
+          topic
+          |> Topic.lines(76)
+          |> Enum.map_join(" ", &Enum.map_join(&1, fn s -> Topic.label(s) end))
+          |> String.split()
+          |> Enum.join(" ")
+
+        # each quoted part of the listed words is in the topic's text
+        for quoted <- Regex.scan(~r/"([^"]+)"/, words, capture: :all_but_first) |> List.flatten(),
+            part <- String.split(quoted, " … "),
+            do: assert(text =~ String.trim(part), "#{title}: #{part}")
+      end
+    end
+
     test "every key a written topic names is a key of the help or a keymap", %{state: state} do
       bound =
         for(

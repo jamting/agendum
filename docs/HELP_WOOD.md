@@ -1,6 +1,6 @@
 # The Hundred Acre Wood in the help
 
-Where the help's written topics (`lib/agendum/tui/help/topics/*.txt`, ADR 0047) touch the Hundred Acre Wood, one row per touch, so the balance can be seen at a glance and a touch found and changed (meeting 2026-10-26-2, § 8). A check keeps the list true: every line listed here must still be in its topic (to be built, ROADMAP).
+Where the help's written topics (`lib/agendum/tui/help/topics/*.txt`, ADR 0047) touch the Hundred Acre Wood, one row per touch, so the balance can be seen at a glance and a touch found and changed (meeting 2026-10-26-2, § 8). A check keeps the list true: every quoted line here must still be in its topic, word for word (`test/agendum/tui/help_topics_test.exs`).
 
 ## The rules
 
@@ -19,7 +19,7 @@ Where the help's written topics (`lib/agendum/tui/help/topics/*.txt`, ADR 0047) 
 | Enter Items | "Ask Owl how to spell Tuesday", "Three pots of honey by Friday" | Owl |
 | Enter Items | "Take Rabbit his umbrella" goes to Rabbit too, if you have a Rabbit. | Rabbit |
 | Undiscard an Item | "Changed your mind about something you discarded, as Piglet often does?" | Piglet |
-| Categories | "Rabbit can be under Friends, under People … in Rabbit, it is in Friends and People too." | Rabbit |
+| Categories | "Rabbit can" "be under Friends, under People." … "in Rabbit, it is in Friends and People too." | Rabbit |
 | The Category Hierarchy | "like the branches of a tree: Owl's house in the Hundred Acre Wood, as it were." | Owl, the Wood |
 | Enter Dates and Times | "Call Kanga next Tuesday" | Kanga |
 | Create a Datebook View | "Pooh's would have one slot, marked "Smackerel"." | Pooh |

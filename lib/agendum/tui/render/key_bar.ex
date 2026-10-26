@@ -70,6 +70,12 @@ defmodule Agendum.TUI.Render.KeyBar do
   # a help topic: Agenda's help bar (R65e)
   defp place(_state, %{type: :help, page: :topic}), do: :help_topic
 
+  # the moves keep Agenda's ten slots (checked in Agenda 2.0, 2026-10-26;
+  # meeting 2026-10-26-2, § 6): empty while an item or a section moves, F1
+  # Help alone while a column moves or its width changes
+  defp place(_state, %{type: type}) when type in [:move_item, :section_move], do: :empty_bar
+  defp place(_state, %{type: type}) when type in [:column_move, :column_width], do: :help_only
+
   defp place(_state, %{type: type}) when type in [:note, :catmgr, :viewmgr, :menu, :searching],
     do: type
 
@@ -100,6 +106,8 @@ defmodule Agendum.TUI.Render.KeyBar do
         {{:box, box, mode}, _} -> Agendum.TUI.Boxes.Box.slot(box, state, mode, key)
         {{:line, kind}, _} -> line_slot(kind, key)
         {:help_topic, _} -> help_slot(key)
+        {:empty_bar, _} -> {"", ""}
+        {:help_only, _} -> if key == {:f, 1}, do: {"Help", "Help"}, else: {"", ""}
         {_, nil} -> command_slot(state, place, key)
         {_, macro} -> {String.slice(macro.name, 0, 7), macro.name}
       end
