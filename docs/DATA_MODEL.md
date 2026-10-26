@@ -58,6 +58,7 @@ erDiagram
         string description "File Properties: up to 40 characters (R82)"
         bool backup_on_open "File Properties: back up when opened (R82)"
         string password "while open only; the file is encrypted with it (ADR 0046)"
+        Trash trash "discarded items, their day, and when it empties (R24a)"
         Blog blog "the micro-blog's settings (R74)"
         map feeds "id => Feed subscription (R75)"
     }
@@ -215,6 +216,7 @@ classDiagram
         +description : String
         +backup_on_open : boolean
         +password : String or nil
+        +trash : Trash
         +blog : Blog
         +feeds : Map~id, Feed~
     }
@@ -232,6 +234,11 @@ classDiagram
         +quarter_start, year_start : 1..12
         +month_alone : first, last or 2..31
         +morning, afternoon, evening : Time
+    }
+    class Trash {
+        +items : [Item] without assignments, oldest first
+        +day : Date or nil
+        +empty : on_demand, file_closed, end_of_day or discarded
     }
     class TextMatch {
         +enabled : boolean
@@ -412,6 +419,7 @@ classDiagram
     Database *-- DateFormat
     Database *-- DateSettings
     Database *-- TextMatch
+    Database *-- Trash
     Category *-- DateRule
     Database *-- Calendar
     Database *-- Feed
@@ -593,6 +601,7 @@ The core maintains these, and the tests check them: `Agendum.Core.Invariants.vio
 11. **Zettel ids are unique.** No two items have the same `zettel`, and each is below `next_zettel` (R73). `Core.attach_zettels/2` takes the next number and counts on; nothing else sets one.
 12. **The blog's categories exist.** `blog.posts` and `blog.drafts` are categories in the file, or nil; `delete_category/2` clears them when they go (R74).
 13. **Feeds file into categories that exist.** A feed's `category_id` is a category; `delete_category/2` ends the subscription with it (R75). A feed's entries name items that exist, or nil (one that faded or was discarded); a refresh clears those the person discarded.
+14. **The trash is out of the file** (R24a). An item in `trash.items` is in neither `items` nor `item_order`, is there once, has an id below `next_id`, and kept no When or Done date or alarm (`Core.discard_items/3` strips them); `trash.day` is set exactly while the trash has items. Undisc puts an item back under its own id.
 
 ## Mapping to the patent
 
@@ -672,6 +681,7 @@ Format versions:
 | 40 | Added `Database.texts` and the `:unindexed` kind of `Category`, unindexed categories (R29b) |
 | 41 | Added `Item.alarm_category`, the date category an alarm rings before (R38) |
 | 42 | Added `Database.description` and `backup_on_open`, File Properties' File description and Make backup on open (R82) |
+| 44 | Added `Database.trash`, an `Agendum.Core.Trash` (`items`, `day`, `empty`), the trash: discarded items kept without their assignments until it is emptied, and File Properties ▸ Empty trash (R24a) |
 | 43 | Added `Database.password`, never written: a file with one is saved encrypted, `AGENDUM-ENC1`, the description, salt, nonce, tag and the encrypted file (ADR 0046) |
 
 ## UI state around the database

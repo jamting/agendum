@@ -13,7 +13,7 @@ defmodule Agendum.Core do
 
   `Agendum.Core` stays the one entry point, a table of contents: each
   function delegates to an area module under `Agendum.Core.Facade`, where
-  it is written and documented: `Files`, `Items`, `Assignments`, `Dates`,
+  it is written and documented: `Files`, `Items`, `Trash`, `Assignments`, `Dates`,
   `Alarms`, `Numbers`, `Dependencies`, `Rules`, `Categories`, `Views`,
   `Macros` and `Calendars`. What every change to an item goes through
   (dates, conditions and actions after a change) is in
@@ -41,6 +41,7 @@ defmodule Agendum.Core do
     Macros,
     Numbers,
     Texts,
+    Trash,
     Rules,
     Views
   }
@@ -83,6 +84,14 @@ defmodule Agendum.Core do
   defdelegate new_file_with(description, password), to: Files
   defdelegate set_description(db, text), to: Files
   defdelegate set_backup_on_open(db, on?), to: Files
+
+  # the trash (R24a)
+  defdelegate empty_trash_choices(), to: Trash
+  defdelegate discard_items(db, ids, clock), to: Trash
+  defdelegate undiscard(db, which, category, after_id, clock), to: Trash
+  defdelegate empty_trash(db), to: Trash
+  defdelegate tidy_trash(db, event, clock), to: Trash
+  defdelegate set_empty_trash(db, choice), to: Trash
   defdelegate set_password(db, password), to: Files
   defdelegate export_json(db), to: Files
   defdelegate import_json(text), to: Files

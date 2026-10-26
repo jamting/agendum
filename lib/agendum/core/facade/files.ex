@@ -42,7 +42,8 @@ defmodule Agendum.Core.Facade.Files do
         dates: %{},
         dependencies: Agendum.Core.Links.new(),
         suggestions: %{},
-        views: views
+        views: views,
+        trash: %{db.trash | items: [], day: nil}
     }
   end
 

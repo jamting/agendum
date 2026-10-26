@@ -187,11 +187,14 @@ defmodule Agendum.Core.JSONFile do
           insert_columns: Atom.to_string(db.insert_columns),
           tab_size: db.tab_size,
           description: db.description,
-          backup_on_open: db.backup_on_open
+          backup_on_open: db.backup_on_open,
+          empty_trash: Atom.to_string(db.trash.empty)
         ),
       categories: Enum.map(category_order(db), &category(db.categories[&1])),
       items: Enum.map(db.item_order, &item(db, rel, db.items[&1])),
       views: Enum.map(db.view_order, &view(db.views[&1])),
+      # the trash (R24a): discarded items, oldest first, without assignments
+      trash: obj(day: date(db.trash.day), items: Enum.map(db.trash.items, &item(db, rel, &1))),
       calendars: db |> Database.calendars() |> Enum.map(&calendar/1),
       feeds: db |> Database.feeds() |> Enum.map(&feed/1),
       macros: db |> Database.macros() |> Enum.map(&macro/1),
@@ -532,6 +535,7 @@ defmodule Agendum.Core.JSONFile do
     macros = list(doc, "macros", "macros", &read_macro/2)
     settings = field(doc, "settings", %{}, "settings")
     special = field(doc, "special", %{}, "special")
+    trash = field(doc, "trash", %{}, "trash")
 
     %Database{
       next_id: req(doc, "next_id", :int, "next_id"),
@@ -554,6 +558,20 @@ defmodule Agendum.Core.JSONFile do
       tab_size: tab_size(opt(settings, "tab_size", :int, 5, "settings")),
       description: opt(settings, "description", :string, "", "settings"),
       backup_on_open: opt(settings, "backup_on_open", :bool, false, "settings"),
+      trash: %Agendum.Core.Trash{
+        # `elem(&1, 0)`: an item read is `{item, its relations}`; a
+        # discarded one has none
+        items: trash |> list("items", "trash.items", &read_item/2) |> Enum.map(&elem(&1, 0)),
+        day: opt(trash, "day", {:nullable, :date}, nil, "trash"),
+        empty:
+          opt(
+            settings,
+            "empty_trash",
+            {:enum, Agendum.Core.empty_trash_choices()},
+            :end_of_day,
+            "settings"
+          )
+      },
       categories: Map.new(categories, &{&1.id, &1}),
       items: Map.new(items, fn {item, _} -> {item.id, item} end),
       item_order: Enum.map(items, fn {item, _} -> item.id end),

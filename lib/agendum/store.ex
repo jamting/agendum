@@ -47,7 +47,8 @@ defmodule Agendum.Store do
   categories (R29b); 41 adds `Item.alarm_category`, an alarm's date
   category (R38); 42 adds `Database.description` and `backup_on_open`
   (File Properties, R82); 43 adds `Database.password`, never written: a
-  file with a password is encrypted with it (ADR 0046).
+  file with a password is encrypted with it (ADR 0046); 44 adds
+  `Database.trash`, the trash (R24a).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
@@ -58,7 +59,7 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 43
+  @format_version 44
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
@@ -297,6 +298,7 @@ defmodule Agendum.Store do
     %{
       db
       | items: Map.new(db.items, fn {id, i} -> {id, upgrade_item(i)} end),
+        trash: upgrade_trash(db.trash),
         categories:
           Map.new(db.categories, fn {id, c} ->
             {id, upgrade_category(db, struct(Category, Map.from_struct(c)), when_assign)}
@@ -347,6 +349,12 @@ defmodule Agendum.Store do
   # dates of user date categories: {date, time} before 18
   defp upgrade_date({key, {date, time}}), do: {key, {date, time, true}}
   defp upgrade_date(entry), do: entry
+
+  # the trash's own fields filled in, and its items brought up to date
+  defp upgrade_trash(trash) do
+    trash = struct(Agendum.Core.Trash, Map.from_struct(trash))
+    %{trash | items: Enum.map(trash.items, &upgrade_item/1)}
+  end
 
   defp upgrade_item(item) do
     item = struct(Agendum.Core.Item, Map.from_struct(item))

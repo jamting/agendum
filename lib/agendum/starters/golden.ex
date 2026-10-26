@@ -69,6 +69,7 @@ defmodule Agendum.Starters.Golden do
     {db, party} = Core.add_item(db, "Plan the party", @now)
     {db, smack} = Core.add_item(db, "Smackerel at 11am every 2 weeks", @now)
     {db, _} = Core.add_item(db, "Count the honey pots on the 15th of every month", @now)
+    {db, heffalump} = Core.add_item(db, "Look for the Heffalump", @now)
 
     db = Core.set_note(db, owl, "Rabbit brings the cake.\nPiglet brings balloons.", @now)
     db = ok(Core.set_alarm(db, owl, 15))
@@ -78,7 +79,10 @@ defmodule Agendum.Starters.Golden do
     db = Core.toggle_mark(db, party)
     # Zettel ids (R73): Owl's birthday is bonalaku, the party pigavono
     {:ok, db, _given} = Core.attach_zettels(db, [owl, party])
-    ok(Core.make_dependent(db, party, [honey]))
+    db = ok(Core.make_dependent(db, party, [honey]))
+    # one in the trash (R24a), with a note to bring back
+    db = Core.set_note(db, heffalump, "Bring a jar of honey as bait.", @now)
+    Core.discard_items(db, [heffalump], @today)
   end
 
   # Categories with every kind of setting: exclusion, links, conditions and
@@ -234,6 +238,7 @@ defmodule Agendum.Starters.Golden do
     |> Core.set_tab_size(8)
     |> then(&elem(Core.set_description(&1, "Owl's house, and all the Wood"), 1))
     |> Core.set_backup_on_open(true)
+    |> then(&elem(Core.set_empty_trash(&1, :on_demand), 1))
     |> blog()
     |> feed()
   end

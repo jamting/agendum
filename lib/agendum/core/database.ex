@@ -48,6 +48,7 @@ defmodule Agendum.Core.Database do
           description: String.t(),
           backup_on_open: boolean,
           password: String.t() | nil,
+          trash: Agendum.Core.Trash.t(),
           blog: Agendum.Core.Extras.Blog.t()
         }
 
@@ -88,6 +89,8 @@ defmodule Agendum.Core.Database do
             # the file's password while it is open (ADR 0046): never written,
             # the file is encrypted with it instead
             password: nil,
+            # the trash (R24a): discarded items, and when it empties
+            trash: %Agendum.Core.Trash{},
             # the micro-blog (R74)
             blog: %Agendum.Core.Extras.Blog{}
 
@@ -161,7 +164,17 @@ defmodule Agendum.Core.Database do
     %{db | items: Map.update!(db.items, id, fun)}
   end
 
-  @doc "Removes an item from the file entirely (Agenda's DISCARD)."
+  @doc """
+  Puts an item back in the file (Item ▸ Undisc, R24a), with the id it had,
+  after `after_id` in the item order (last when nil).
+  """
+  @spec restore_item(t, Item.t(), id | nil) :: t
+  def restore_item(%__MODULE__{} = db, %Item{id: id} = item, after_id) do
+    order = insert_after(db.item_order, id, after_id)
+    %{db | items: Map.put(db.items, id, item), item_order: order}
+  end
+
+  @doc "Removes an item from the file entirely (the trash keeps it, R24a)."
   @spec delete_item(t, id) :: t
   def delete_item(%__MODULE__{} = db, id) do
     %{
@@ -717,11 +730,11 @@ defmodule Agendum.Core.Database do
 
   @doc """
   The file's statistics (File ▸ Properties ▸ File statistics, Agenda's File
-  Statistics box): its items, those with a note, its categories (MAIN
-  too), and the average number of items per category and categories per
-  item. As Agenda, the averages count the assignments stored with the
-  items (not those through a subcategory) and are whole numbers, rounded
-  down; Agenda's other counts (unused space, items in the trash) have no
+  Statistics box): its items, those in the trash (R24a), those with a
+  note, its categories (MAIN too), and the average number of items per
+  category and categories per item. As Agenda, the averages count the
+  assignments stored with the items (not those through a subcategory) and
+  are whole numbers, rounded down; Agenda's Unused space has no
   counterpart here.
   """
   @spec file_statistics(t) :: %{atom => non_neg_integer}
@@ -732,6 +745,7 @@ defmodule Agendum.Core.Database do
 
     %{
       items: items,
+      items_in_trash: length(db.trash.items),
       items_with_notes: Enum.count(Map.values(db.items), &(&1.note != "")),
       categories: categories,
       # `max(_, 1)`: no division by zero in an empty file

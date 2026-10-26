@@ -345,7 +345,10 @@ defmodule Agendum.Core.Facade.Changes do
     do: db
 
   defp apply_special(db, item_id, :done, clock), do: Items.mark_done(db, item_id, clock)
-  defp apply_special(db, item_id, :discard, _clock), do: Database.delete_item(db, item_id)
+  # into the trash, as Agenda's (User's Guide J-14: "You can recover the
+  # item from the trash")
+  defp apply_special(db, item_id, :discard, clock),
+    do: Agendum.Core.Facade.Trash.discard_items(db, [item_id], clock)
 
   # Only standard categories have negative links (R9).
   @doc false

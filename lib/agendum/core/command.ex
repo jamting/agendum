@@ -91,7 +91,17 @@ defmodule Agendum.Core.Command do
      [:item], :clock},
     {:mark_done, "Done (several)",
      "Marks items done today, leaving those already done as they are", [:items], :own},
-    {:discard_items, "Discard items", "Deletes items from the whole file", [:items], :own},
+    {:discard_items, "Discard items",
+     "Takes items out of the file and into the trash, where Undisc can get them back (R24a)",
+     [:items], :clock},
+    {:undiscard, "Undiscard",
+     "Brings the last item (:last) or every item (:all) back from the trash into a category, after an item or nil (R24a)",
+     [:value, :category, :value], :clock},
+    {:empty_trash, "Empty trash", "Empties the trash: its items are gone for good (R24a)", [],
+     :core},
+    {:set_empty_trash, "Empty trash setting",
+     "When the trash empties by itself: :on_demand, :file_closed, :end_of_day or :discarded (R24a)",
+     [:value], :core},
     {:attach_zettels, "Attach Zettel ids",
      "Gives each item without a Zettel id the next one (bonalaku); an item that has one keeps it (R73)",
      [:items], :core},
@@ -380,6 +390,9 @@ defmodule Agendum.Core.Command do
     # alarms ringing, as the clock moves on (R38)
     {:ring_alarms, "Ring alarms", "Rings the alarms that are due; returns their items", [], :own},
     {:clear_old_alarms, "Clear old alarms", "Forgets alarms rung before today", [], :own},
+    {:tidy_trash, "Tidy trash",
+     "Empties the trash when Empty trash says it is time, on :open or as the :clock moves on (R24a)",
+     [:value], :clock},
 
     # several commands as one change (one undo step)
     {:batch, "Batch",
@@ -550,9 +563,6 @@ defmodule Agendum.Core.Command do
 
   defp apply_own(db, {:mark_done, ids}, clock),
     do: result(Enum.reduce(ids, db, &Items.mark_done(&2, &1, clock)))
-
-  defp apply_own(db, {:discard_items, ids}, _clock),
-    do: result(Enum.reduce(ids, db, &Items.discard_item(&2, &1)))
 
   # The item's entries in a column: the head itself when it has no
   # children (or is a date category), else each child the item is in

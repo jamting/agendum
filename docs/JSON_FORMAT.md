@@ -28,6 +28,7 @@ The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs` and 
   "categories": [ … ],
   "items": [ … ],
   "views": [ … ],
+  "trash": {"day": "2026-10-26", "items": [ … ]},
   "calendars": [ … ]
 }
 ```
@@ -44,6 +45,7 @@ The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs` and 
 | `categories` | Every category, in hierarchy order (MAIN first, then depth-first).       |
 | `items`      | Every item, in file order.                                               |
 | `views`      | Every view, in the view manager's order.                                 |
+| `trash`      | The trash (R24a): `day`, the date the oldest item in it was discarded (`null` when empty), and `items`, the discarded items, oldest first, written as items are but without categories, dates or alarms. Left out, an empty trash. |
 | `calendars`  | Calendar subscriptions (R45).                                            |
 | `feeds`      | Feed subscriptions (R75), below.                                         |
 | `macros`     | Macros, in the macro manager's order (R50).                              |
@@ -59,6 +61,7 @@ The code is `Agendum.Core.JSONFile`; `test/agendum/core/json_file_test.exs` and 
 | `insert_columns`      | Where a new column goes: `"all"` sections (the default) or the current `"section"` (R55).                                                                                                                                                             |
 | `description`         | File Properties ▸ File description, up to 40 characters (`""` by default, R82). |
 | `backup_on_open`      | File Properties ▸ Make backup on open: `true` copies the file to `NAME.agendum.bak` each time it is opened (`false` by default, R82). |
+| `empty_trash`         | File Properties ▸ Empty trash: `"on_demand"`, `"file_closed"`, `"end_of_day"` (the default) or `"discarded"` (R24a). |
 | (password)            | Never exported: a file's password (ADR 0046) is not in its JSON, which is plain text; an imported JSON file has none. |
 | `tab_size`            | How far apart a note's tab stops are, 1 to 16 (5 by default; File Properties ▸ Tab size, R64e).                                                                                                                                                       |
 | `confirm_assignments` | `"never"`, `"always"` or `"sometimes"` (R16).                                                                                                                                                                                                        |

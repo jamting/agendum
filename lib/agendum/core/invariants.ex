@@ -32,7 +32,7 @@ defmodule Agendum.Core.Invariants do
         protected(db) ++
         lineage(db) ++
         conditional(db) ++
-        zettels(db) ++ blog(db) ++ feeds(db)
+        zettels(db) ++ blog(db) ++ feeds(db) ++ trash(db)
     else
       tree
     end
@@ -106,6 +106,35 @@ defmodule Agendum.Core.Invariants do
       for id <- all, id >= db.next_id, do: "ids: #{id} is not below next_id #{db.next_id}"
 
     own ++ shared ++ below
+  end
+
+  # --- 14. The trash ------------------------------------------------------
+
+  # A discarded item is out of the file (R24a): its id is in neither the
+  # items nor the order, used once, below next_id, and it has no dates or
+  # alarm left to come back with.
+  defp trash(db) do
+    ids = Enum.map(db.trash.items, & &1.id)
+
+    in_file =
+      for id <- ids,
+          Map.has_key?(db.items, id),
+          do: "14. trash: item #{id} is both in the trash and in the file"
+
+    twice = if ids == Enum.uniq(ids), do: [], else: ["14. trash: an item is in it twice"]
+    below = for id <- ids, id >= db.next_id, do: "14. trash: #{id} is not below next_id"
+
+    bare =
+      for i <- db.trash.items,
+          i.when != nil or i.done != nil or i.alarm_minutes != nil,
+          do: "14. trash: item #{i.id} kept a date or an alarm"
+
+    day =
+      if db.trash.items == [] == (db.trash.day == nil),
+        do: [],
+        else: ["14. trash: its day is set exactly when it has items"]
+
+    in_file ++ twice ++ below ++ bare ++ day
   end
 
   # --- 2, 3, 4. Links ------------------------------------------------------
