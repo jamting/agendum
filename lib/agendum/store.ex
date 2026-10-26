@@ -59,7 +59,7 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 44
+  @format_version 45
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
@@ -310,7 +310,7 @@ defmodule Agendum.Store do
           end),
         feeds:
           Map.new(db.feeds, fn {id, f} ->
-            {id, struct(Agendum.Core.Extras.Feed, Map.from_struct(f))}
+            {id, upgrade_feed(struct(Agendum.Core.Extras.Feed, Map.from_struct(f)))}
           end),
         calendars:
           Map.new(db.calendars, fn {id, c} ->
@@ -323,6 +323,18 @@ defmodule Agendum.Store do
              }}
           end)
     }
+  end
+
+  # before 45 a faded entry kept its title, note and link: only its publish
+  # date is kept now (`Feed.forget/1`)
+  defp upgrade_feed(feed) do
+    entries =
+      Map.new(feed.entries, fn
+        {id, %{item: nil} = snap} -> {id, Agendum.Core.Extras.Feed.forget(snap)}
+        pair -> pair
+      end)
+
+    %{feed | entries: entries}
   end
 
   # Date categories get a date rule: Agenda's for Entry, When (with the

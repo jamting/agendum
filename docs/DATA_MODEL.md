@@ -154,7 +154,7 @@ erDiagram
         int category_id FK
         int keep_days "entries fade after this, nil = never"
         int refresh_minutes "nil = only on request"
-        map entries "entry id => item id (nil once faded) and what it last looked like"
+        map entries "entry id => item id and what it last looked like; once faded, only its publish date"
         datetime refreshed_at
         string error
     }
@@ -460,7 +460,7 @@ classDiagram
 
 Items, categories and views draw ids from **one counter**, `next_id`, just as the patent keeps all objects in one object file (`.AGA`). An id therefore says nothing about its type; look it up in the right map. Ids are never reused. Lower ids were created earlier, and the automatic-assignment tie-break relies on that ("prefer the category created first").
 
-**Feeds** (R75): `db.feeds` holds the feed subscriptions (`Agendum.Core.Extras.Feed`), each with what every entry looked like when last read and the item it made (nil once it faded), so a refresh changes only what the feed changed and never brings back what faded. The entries' items are ordinary items in Feeds ▸ the feed's name; their publish date is their Entry date.
+**Feeds** (R75): `db.feeds` holds the feed subscriptions (`Agendum.Core.Extras.Feed`), each with what every entry looked like when last read and the item it made, so a refresh changes only what the feed changed; an entry that faded or was discarded keeps only its publish date (`Feed.forget/1`, format 45), enough never to bring it back. The entries' items are ordinary items in Feeds ▸ the feed's name; their publish date is their Entry date.
 
 **The blog** (R74): `db.blog` (`Agendum.Core.Extras.Blog`) holds the micro-blog's settings: its posts and drafts categories by id, its title, description, author, language, base address and `rel="me"` links, the folder the site is written to and how it is uploaded (none, rsync, SFTP, ADR 0041). No password is ever stored. The posts themselves are the items of the posts category, computed (`Blog.posts/1`), and the site is made from them each time (`Agendum.Core.Extras.Site`); nothing of the site is stored in the file.
 
@@ -683,6 +683,7 @@ Format versions:
 | 42 | Added `Database.description` and `backup_on_open`, File Properties' File description and Make backup on open (R82) |
 | 44 | Added `Database.trash`, an `Agendum.Core.Trash` (`items`, `day`, `empty`), the trash: discarded items kept without their assignments until it is emptied, and File Properties ▸ Empty trash (R24a) |
 | 43 | Added `Database.password`, never written: a file with one is saved encrypted, `AGENDUM-ENC1`, the description, salt, nonce, tag and the encrypted file (ADR 0046) |
+| 45 | A feed entry that faded or was discarded keeps only `%{item: nil, published}`, not its title, note and link (`Feed.forget/1`); `upgrade/1` trims older files' (meeting 2026-10-26-4, § 5) |
 
 ## UI state around the database
 

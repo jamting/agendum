@@ -15,9 +15,9 @@ defmodule Agendum.Core.Extras.FeedSync do
       unless the person kept it, by giving it a Zettel id (R73), changing
       its text or note, or giving it a category by hand. Done does not
       keep: it only dismisses
-    * an entry whose item faded or that the person discarded keeps its
-      snapshot (without an item), so it is never brought back; the
-      snapshot goes once the feed no longer has the entry
+    * an entry whose item faded or that the person discarded keeps only
+      its id and publish date (`Feed.forget/1`), so it is never brought
+      back; that goes too once the feed no longer has the entry
 
   Pure.
   """
@@ -45,7 +45,7 @@ defmodule Agendum.Core.Extras.FeedSync do
     snaps =
       Map.new(feed.entries, fn {id, snap} ->
         if snap.item && not Map.has_key?(db.items, snap.item),
-          do: {id, %{snap | item: nil}},
+          do: {id, Feed.forget(snap)},
           else: {id, snap}
       end)
 
@@ -72,7 +72,7 @@ defmodule Agendum.Core.Extras.FeedSync do
       nil ->
         if cutoff && Date.compare(published, cutoff) == :lt do
           # already past its days when first seen: remembered, not added
-          {db, Map.put(snaps, entry.id, Map.put(wanted, :item, nil)), counts}
+          {db, Map.put(snaps, entry.id, Feed.forget(wanted)), counts}
         else
           {db, item} = add(db, feed, wanted, clock)
           {db, Map.put(snaps, entry.id, Map.put(wanted, :item, item)), bump(counts, :added)}
@@ -140,7 +140,7 @@ defmodule Agendum.Core.Extras.FeedSync do
     Enum.reduce(snaps, {db, snaps, counts}, fn {id, snap}, {db, snaps, counts} ->
       if snap.item != nil and Date.compare(snap.published, cutoff) == :lt and
            not kept?(db, snap, feed) do
-        {Core.discard_item(db, snap.item), Map.put(snaps, id, %{snap | item: nil}),
+        {Core.discard_item(db, snap.item), Map.put(snaps, id, Feed.forget(snap)),
          bump(counts, :faded)}
       else
         {db, snaps, counts}

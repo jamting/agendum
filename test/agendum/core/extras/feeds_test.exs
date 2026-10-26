@@ -110,6 +110,32 @@ defmodule Agendum.Core.Extras.FeedsTest do
     {db, counts} = sync(db, ctx.feed, entries, ~D[2026-11-17])
     assert counts == %{added: 0, updated: 0, faded: 0}
     assert Invariants.violations(db) == []
+
+    # what is remembered of them is only their id and publish date: their
+    # text is gone with the item (meeting 2026-10-26-4, § 5)
+    assert db.feeds[ctx.feed].entries == %{
+             "old" => %{item: nil, published: ~D[2026-09-01]},
+             "new" => %{item: nil, published: ~D[2026-10-16]}
+           }
+  end
+
+  # files saved before format 45 kept a faded entry's title, note and link
+  test "an old file's faded entries lose their text when loaded", ctx do
+    {db, _} = sync(ctx.db, ctx.feed, [entry("a", "Old news", ~N[2026-10-16 07:00:00])])
+
+    full = %{
+      item: nil,
+      title: "Old news",
+      note: "Long.",
+      link: "https://x",
+      published: ~D[2026-10-16]
+    }
+
+    kept = db.feeds[ctx.feed].entries["a"]
+    old = put_in(db.feeds[ctx.feed].entries, %{"a" => kept, "b" => full})
+
+    assert Agendum.Store.upgrade(old).feeds[ctx.feed].entries ==
+             %{"a" => kept, "b" => %{item: nil, published: ~D[2026-10-16]}}
   end
 
   describe "kept entries do not fade" do
@@ -166,6 +192,7 @@ defmodule Agendum.Core.Extras.FeedsTest do
     {db, counts} = sync(db, ctx.feed, entries)
     assert counts.added == 0
     refute item_titled(db, "Not for me")
+    assert db.feeds[ctx.feed].entries["a"] == %{item: nil, published: ~D[2026-10-16]}
   end
 
   test "keep days can be for ever", ctx do
@@ -204,6 +231,15 @@ defmodule Agendum.Core.Extras.FeedsTest do
     {db, _} = sync(ctx.db, ctx.feed, [entry("a", "Round trip", ~N[2026-10-16 07:00:00])])
     db = Core.feed_failed(db, ctx.feed, "timeout", ~N[2026-10-17 10:00:00])
     assert {:ok, ^db} = db |> JSONFile.encode() |> JSONFile.decode()
+
+    # a faded entry: only its id, no item and its date
+    {db, _} =
+      sync(db, ctx.feed, [entry("a", "Round trip", ~N[2026-10-16 07:00:00])], ~D[2026-12-01])
+
+    json = JSONFile.encode(db)
+    [feed] = JSON.decode!(json)["feeds"]
+    assert feed["entries"] == [%{"id" => "a", "item" => nil, "published" => "2026-10-16"}]
+    assert {:ok, ^db} = JSONFile.decode(json)
   end
 
   describe "OPML" do

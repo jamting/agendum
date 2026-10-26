@@ -244,11 +244,19 @@ defmodule Agendum.Starters.Golden do
   end
 
   # a feed subscription (R75), read once and then failed, every setting
-  # away from its default
+  # away from its default; one entry already past its days, remembered
+  # without its text (format 45)
   defp feed(db) do
     {:ok, db, id} = Core.subscribe_feed(db, "Owl's Gazette", "https://owl.example/feed.xml")
 
     entries = [
+      %{
+        id: "gazette-0",
+        title: "Old news",
+        link: "https://owl.example/old",
+        summary: "Long forgotten.",
+        published: ~N[2026-08-01 07:00:00]
+      },
       %{
         id: "gazette-1",
         title: "Heffalump sighted",

@@ -245,15 +245,20 @@ defmodule Agendum.Core.JSONFile do
       entries:
         f.entries
         |> Enum.sort()
-        |> Enum.map(fn {id, s} ->
-          obj(
-            id: id,
-            item: s.item,
-            title: s.title,
-            note: s.note,
-            link: s.link,
-            published: date(s.published)
-          )
+        |> Enum.map(fn
+          # a faded entry: its id and date only (`Feed.forget/1`)
+          {id, %{item: nil} = s} ->
+            obj(id: id, item: nil, published: date(s.published))
+
+          {id, s} ->
+            obj(
+              id: id,
+              item: s.item,
+              title: s.title,
+              note: s.note,
+              link: s.link,
+              published: date(s.published)
+            )
         end)
     )
   end
@@ -840,14 +845,16 @@ defmodule Agendum.Core.JSONFile do
   defp read_feed(f, path) do
     entries =
       list(f, "entries", path <> ".entries", fn e, p ->
-        {req(e, "id", :string, p),
-         %{
-           item: opt(e, "item", {:nullable, :int}, nil, p),
-           title: opt(e, "title", :string, "", p),
-           note: opt(e, "note", :string, "", p),
-           link: opt(e, "link", :string, "", p),
-           published: req(e, "published", :date, p)
-         }}
+        snap = %{
+          item: opt(e, "item", {:nullable, :int}, nil, p),
+          title: opt(e, "title", :string, "", p),
+          note: opt(e, "note", :string, "", p),
+          link: opt(e, "link", :string, "", p),
+          published: req(e, "published", :date, p)
+        }
+
+        # a faded entry keeps no text, even from an older export that had it
+        {req(e, "id", :string, p), if(snap.item, do: snap, else: Feed.forget(snap))}
       end)
 
     %Feed{

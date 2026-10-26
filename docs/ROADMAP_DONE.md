@@ -297,6 +297,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Fixes and polish (after the clone was declared done)
 
+- [x] (2026-10-26, v0.64.0) The faded feed entries keep only their id and publish date (format 45; meeting 2026-10-26-4, § 5): on a copy of the owner's file (243 feeds, 13,181 faded of 14,427 entries) a save went from 495 ms to 123 ms, the file from 5.36 MB to 1.40 MB, a load from 82 to 58 ms
 - [x] (2026-10-26, v0.63.0) Defaults for new files: Agenda's File Properties ▸ Update defaults, "Update new file properties? Yes", keeping the file's settings (File Properties, global date settings with the display format, auto-assign settings; not the description or password) for every empty file the person makes, in their preferences as the settings that differ from Agenda's; F8 Default then gives them (R82a; meeting 2026-10-26-3, §§ 5–6)
 - [x] (2026-10-26, v0.62.1) The key bar and control panel while browsing dates as Agenda's: F1 Help, F8 Default (back to the starting dates), F10 Menu; "Use the cursor keys to display schedules for other dates.", "Current filter:", BROWSE alone at the right (R48)
 

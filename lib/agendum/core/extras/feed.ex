@@ -11,21 +11,26 @@ defmodule Agendum.Core.Extras.Feed do
     * `refresh_minutes`: how often it is read while Agendum runs (60), or
       nil for only on request
     * `entries`: what each entry (by its id) looked like when last read,
-      and its item: `%{item: id | nil, title, note, link, published}`; the
-      item is nil once the entry faded or the person discarded it, so a
-      refresh does not bring it back
+      and its item: `%{item: id, title, note, link, published}`. Once the
+      entry faded or the person discarded it, only `%{item: nil, published}`
+      is kept (`forget/1`), so a refresh does not bring it back; its text
+      went with its item (format 45; meeting 2026-10-26-4, § 5)
     * `refreshed_at`, `error`: when it was last read, and why that failed
 
   Pure.
   """
 
-  @type snapshot :: %{
-          item: pos_integer | nil,
-          title: String.t(),
-          note: String.t(),
-          link: String.t(),
-          published: Date.t()
-        }
+  # Domain: `|` between two map types: a snapshot is one shape or the
+  # other, a live entry with its text, or a forgotten one without
+  @type snapshot ::
+          %{
+            item: pos_integer,
+            title: String.t(),
+            note: String.t(),
+            link: String.t(),
+            published: Date.t()
+          }
+          | %{item: nil, published: Date.t()}
   @type t :: %__MODULE__{
           id: pos_integer | nil,
           name: String.t(),
@@ -51,6 +56,16 @@ defmodule Agendum.Core.Extras.Feed do
 
   @refresh [nil, 60, 360, 1440]
   @keep [7, 30, 90, 365, nil]
+
+  @doc """
+  What is kept of an entry whose item faded or was discarded: its publish
+  date, no item, and none of its text, which only the item needed. A faded
+  entry is remembered so that a refresh does not bring it back; in a file
+  with many feeds, the text was most of the file (13,184 such entries, 12.7
+  of 17 MB as a term, in the owner's file on 2026-10-26).
+  """
+  @spec forget(map) :: snapshot
+  def forget(%{published: published}), do: %{item: nil, published: published}
 
   @doc "The choices for how often to read a feed (minutes; nil: only on request)."
   @spec refresh_choices() :: [pos_integer | nil]

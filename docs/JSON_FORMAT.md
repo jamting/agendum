@@ -146,7 +146,7 @@ A **criterion** (conditions, filters) is `{"category": id, "is": "assigned"}`, `
 | `keep_days` | How long an entry stays, from its publish date, unless kept: a number of days, or `null` for ever. |
 | `refresh_minutes` | How often it is read while Agendum runs (60, 360, 1440), or `null` for only on request. |
 | `refreshed_at`, `error` | When it was last read, and why that failed; or `null`. |
-| `entries` | For each entry read: its `id` (guid, else link), its `item` (or `null` once it faded or was discarded), and the `title`, `note`, `link` and `published` date it had, so a refresh only changes what the feed changed. |
+| `entries` | For each entry read: its `id` (guid, else link), its `item`, and the `title`, `note`, `link` and `published` date it had, so a refresh only changes what the feed changed. Once it faded or was discarded: only `id`, `item: null` and `published` (a `title`, `note` or `link` there is ignored). |
 
 ## Macros
 
