@@ -127,6 +127,7 @@ The panel advises; it never votes. I decide.
 - **Formatting needs no gate run**: a Claude Code hook (`.claude/settings.json`) runs `mix format` on every `.ex`/`.exs` file Claude writes, so a format failure no longer costs a `mix check` round (2026-10-22). The same file allows `mix test`, `mix check` and `tools/smoke/smoke.py` without a permission prompt.
 - **Questions first, then a row of builds**: three items (a bug fix release, the `feature` skill, the document import) settled in one round of four questions, then built and committed one after another while the owner went to bed (2026-10-23).
 - **A "tried it?" line per version** (meeting 2026-10-26-4, § 10): each session summary says, for every version released, whether I tried it in the program, so `/start-session` offers the untried ones. Parity work checked against Agenda in DOSBox I trust without trying each version; the pace stays.
+- **A try-it script for changes that are hard to see** (2026-10-26): for v0.64.1 (logger, debug log, fuzz output) Claude wrote a small script in the scratchpad that rebuilds the binary, runs Agendum on a copy of my file with scratch preferences and logs, tells me what to press, then checks the log; I tried it in five minutes and it worked.
 - **Smoke tests in a sandbox**: a pty test sets `XDG_CONFIG_HOME` to a scratch folder and unsets `AGENDUM_LOG`, after one test wrote into the owner's real preferences (2026-10-16; CLAUDE.md, Testing the real terminal).
 
 ## How I could work better
