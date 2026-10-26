@@ -1,0 +1,20 @@
+Break an Item's Assignment
+
+PURPOSE       Take an item out of one category, and so out of the
+              section that shows it, while it stays in the file and
+              in its other categories.
+
+STEPS         1. Highlight the item in the section.
+              2. Press DEL (or F10 Item BrkAssign).
+              3. Press ENTER at "Remove this item from the section?"
+
+              In a column, DEL on an entry takes the item out of
+              that category. In the **Item Properties Box** (F6),
+              DEL breaks the highlighted assignment.
+
+NOTE          ALT-Y puts the item DEL last took out back into the
+              section under the highlight. Use ALT-F4 to discard an
+              item from the file instead.
+
+SEE ALSO      **Assign an Item to a Category**  **Discard an Item**
+INDEX         Assignment > Break; Items > Remove from a section; Remove > Items; Break > Assignment

@@ -1,0 +1,17 @@
+Reposition a Category in the Hierarchy
+
+PURPOSE       Move a category, with its children and its items, to
+              another place in the hierarchy.
+
+STEPS         In the **Category Manager** (F9), highlight it, then:
+              F7 (PROMOTE)    Up a level, after its parent
+              F8 (DEMOTE)     Down a level, under the one above
+              ALT-↑ / ALT-↓   Up or down among its siblings
+              ALT-F10 (MOVE)  Under another parent you choose
+
+NOTE          If a move would put an item in two children of an
+              exclusive family, Agendum settles that first, so no
+              item ends up in both.
+
+SEE ALSO      **The Category Hierarchy**  **Alphabetize Categories**
+INDEX         Categories > Move; Move > Categories; Promote > Categories; Demote > Categories

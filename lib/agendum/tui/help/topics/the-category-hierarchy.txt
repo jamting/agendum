@@ -1,0 +1,18 @@
+The Category Hierarchy
+
+PURPOSE       All categories hang from MAIN, each under its parent,
+              like the branches of a tree: Owl's house in the
+              Hundred Acre Wood, as it were.
+
+HOW IT WORKS  * A category's children narrow it: Priority holds
+                High, Medium and Low.
+              * An item in a child is in the parent too, so a
+                section headed by the parent shows it.
+              * A family can be exclusive: an item may be in one of
+                its children only. The **Category Manager** brackets
+                such a family on the left.
+              * MAIN, Entry, When and Done are always there.
+
+SEE ALSO      **Reposition a Category in the Hierarchy**
+              **Categories**  **Category Properties Box**
+INDEX         Categories > Hierarchy; Hierarchy > Categories; Exclusive > Families; Children > Categories

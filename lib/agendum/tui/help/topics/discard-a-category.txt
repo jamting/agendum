@@ -1,0 +1,17 @@
+Discard a Category
+
+PURPOSE       Take a category, and its children, out of the file.
+              The items stay; only their assignments to it go.
+
+STEPS         1. Highlight it in the **Category Manager**, or its
+                 section head in a view.
+              2. Press ALT-F4 (or DEL in the Category Manager).
+              3. Press ENTER at the question.
+
+NOTE          A discarded category does not go to the trash: only
+              CTRL-Z brings it back. Sections and columns it headed
+              go from every view. MAIN, Entry, When and Done cannot
+              be discarded.
+
+SEE ALSO      **Enter Categories**  **Discard an Item**
+INDEX         Categories > Discard; Discard > Categories; Delete > Categories

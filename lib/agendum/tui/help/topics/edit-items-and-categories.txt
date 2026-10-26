@@ -1,0 +1,20 @@
+Edit Items and Categories
+
+PURPOSE       Change what an item says, or rename a category, where
+              you see it.
+
+STEPS         1. Highlight the item, the section head, or the
+                 column entry.
+              2. Press F2 (EDIT), or CTRL-E.
+              3. Change the text, then press ENTER (ESC leaves it as
+                 it was).
+
+NOTE          An edited item is filed again by what its text now
+              says: a category name or a date you add takes effect.
+              Renaming a section head or a column entry renames the
+              category everywhere.
+              In the **Category Manager** F2 renames the highlighted
+              category. MAIN, Entry, When and Done keep their names.
+
+SEE ALSO      **Enter Items**  **Item Properties Box**
+INDEX         Items > Edit; Categories > Rename; Edit > Items; Rename > Categories

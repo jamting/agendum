@@ -115,11 +115,40 @@ defmodule Agendum.TUI.Help.Topics do
   @spec place_titles() :: %{atom => String.t()}
   def place_titles, do: @places
 
-  @doc "A box's topic title, as Agenda named them: `UndiscardBox` is \"Undiscard Box\"."
+  # boxes whose module's name is not what the person sees, by Agenda's
+  # names for them where it had them ("Category Properties Box")
+  @box_titles %{
+    Agendum.TUI.CategoryScreens.Properties => "Category Properties Box",
+    Agendum.TUI.CategoryScreens.Profile => "Assignment Profile Box",
+    Agendum.TUI.CategoryScreens.Picker => "Choose a Category Box",
+    Agendum.TUI.CategoryScreens.Choices => "Assign Conflicting Items Box",
+    Agendum.TUI.Update.Prompts => "Question Box",
+    Agendum.TUI.Update.Marked => "Marked or Current Item Box",
+    Agendum.TUI.Macros => "Macro Manager",
+    Agendum.TUI.Boxes.ViewManager => "View Manager",
+    Agendum.TUI.Boxes.ColumnBox => "Column Properties Box",
+    Agendum.TUI.Boxes.SectionBox => "Section Properties Box",
+    Agendum.TUI.Boxes.ViewProps => "View Properties Box",
+    Agendum.TUI.Boxes.MacroProps => "Macro Properties Box",
+    Agendum.TUI.Boxes.FileStatsBox => "File Statistics Box",
+    Agendum.TUI.Boxes.CategoryStatsBox => "Category Statistics Box",
+    Agendum.TUI.Boxes.ViewStatsBox => "View Statistics Box",
+    Agendum.TUI.Boxes.DateSettingsBox => "Global Date Settings Box",
+    Agendum.TUI.Boxes.AutoAssignBox => "Auto-Assign Settings Box",
+    Agendum.TUI.Boxes.GoTo => "Go To Section Box"
+  }
+
+  @doc """
+  A box's topic title: Agenda's name for it where the module's is not what
+  the person sees, else made from the module: `UndiscardBox` is
+  "Undiscard Box".
+  """
   @spec box_title(module) :: String.t()
   def box_title(box) do
-    name = box |> Module.split() |> List.last() |> String.replace_suffix("Box", "")
-    Regex.replace(~r/([a-z])([A-Z])/, name, "\\1 \\2") <> " Box"
+    Map.get_lazy(@box_titles, box, fn ->
+      name = box |> Module.split() |> List.last() |> String.replace_suffix("Box", "")
+      Regex.replace(~r/([a-z])([A-Z])/, name, "\\1 \\2") <> " Box"
+    end)
   end
 
   @doc "A menu level's topic title: \"Main Menu\", \"File Maintenance Menu\", \"Note Menu\"."
@@ -127,23 +156,54 @@ defmodule Agendum.TUI.Help.Topics do
   def menu_title(:main, []), do: "Main Menu"
 
   def menu_title(which, labels),
-    do: Keyword.fetch!(@trees, which) <> Enum.join(labels, " ") <> " Menu"
+    do: String.trim(Keyword.fetch!(@trees, which) <> Enum.join(labels, " ")) <> " Menu"
 
   # --- generated topics -------------------------------------------------------
 
   # by lower-case title; made each time (they are small, and depend on
   # the extras and the width)
   defp generated(state) do
-    titles = titles(state)
-    topics = base(state) ++ [index(titles) | letters(titles)]
+    listed = listed(state)
+    topics = base(state) ++ [index(listed) | letters(listed)]
     Map.new(topics, &{String.downcase(&1.title), &1})
+  end
+
+  # every topic the index lists, written ones in place of generated ones
+  defp listed(state) do
+    written = Map.values(@hand)
+    taken = MapSet.new(written, &String.downcase(&1.title))
+    written ++ Enum.reject(base(state), &MapSet.member?(taken, String.downcase(&1.title)))
+  end
+
+  @doc """
+  A topic's entries in the Help Index (`{heading, sub}`, sub nil for the
+  heading itself): its title, and a written topic's `INDEX` lines, or a
+  generated one's kind: a box under Boxes, a menu under Menus.
+  """
+  @spec entries(Topic.t()) :: [Topic.entry()]
+  def entries(%Topic{title: title, index: index}) do
+    kind =
+      cond do
+        String.ends_with?(title, " Box") ->
+          [{"Boxes", String.replace_suffix(title, " Box", "")}]
+
+        String.ends_with?(title, " Menu") ->
+          [{"Menus", String.replace_suffix(title, " Menu", "")}]
+
+        true ->
+          []
+      end
+
+    Enum.uniq([{title, nil} | index] ++ kind)
   end
 
   # the topics the index lists (not the index's own pages)
   defp base(state) do
-    [keys()] ++
-      Enum.map(@places, fn {from, title} -> place_topic(from, title) end) ++
-      Enum.map(boxes(), &box_topic(&1, nil)) ++ menus(state.prefs.extras)
+    # a place's topic first: the view manager is a place and a box
+    ([keys()] ++
+       Enum.map(@places, fn {from, title} -> place_topic(from, title) end) ++
+       Enum.map(boxes(), &box_topic(&1, nil)) ++ menus(state.prefs.extras))
+    |> Enum.uniq_by(&String.downcase(&1.title))
   end
 
   defp override(topic), do: @hand[String.downcase(topic.title)] || topic
@@ -259,10 +319,10 @@ defmodule Agendum.TUI.Help.Topics do
     }
   end
 
-  # F3: the letters, each leading to its page of titles, as Agenda's
+  # F3: the letters, each leading to its page of entries, as Agenda's
   # index starts
-  defp index(titles) do
-    initials = titles |> Enum.map(&initial/1) |> MapSet.new()
+  defp index(listed) do
+    initials = listed |> index_entries() |> Enum.map(&initial(elem(&1, 0))) |> MapSet.new()
 
     rows =
       for row <- [?A..?M, ?N..?Z] do
@@ -288,16 +348,45 @@ defmodule Agendum.TUI.Help.Topics do
     }
   end
 
-  defp letters(titles) do
-    titles
-    |> Enum.group_by(&initial/1)
-    |> Enum.map(fn {letter, titles} ->
-      %Topic{
-        title: "Help Index: " <> letter,
-        body:
-          Enum.map(titles, &{:line, [{:text, "  "}, {:link, &1, &1}]}) ++ see_also(["Help Index"])
-      }
+  # every `{heading, sub, topic title}` of the index
+  defp index_entries(listed) do
+    for topic <- listed, {heading, sub} <- entries(topic), do: {heading, sub, topic.title}
+  end
+
+  # a letter's page, as Agenda's: each heading, a link when a topic is
+  # listed under it alone, and its sub-entries indented under it
+  defp letters(listed) do
+    listed
+    |> index_entries()
+    |> Enum.group_by(&initial(elem(&1, 0)))
+    |> Enum.map(fn {letter, entries} ->
+      headings =
+        entries
+        |> Enum.group_by(&elem(&1, 0))
+        |> Enum.sort_by(fn {heading, _} -> String.downcase(heading) end)
+        |> Enum.flat_map(&heading_lines/1)
+
+      %Topic{title: "Help Index: " <> letter, body: headings ++ see_also(["Help Index"])}
     end)
+  end
+
+  defp heading_lines({heading, entries}) do
+    own = for {_, nil, title} <- entries, do: title
+    subs = for {_, sub, title} <- entries, sub != nil, do: {sub, title}
+
+    first =
+      case own do
+        [title | _] -> [{:text, "  "}, {:link, heading, title}]
+        [] -> [{:text, "  " <> heading}]
+      end
+
+    rows =
+      subs
+      |> Enum.uniq()
+      |> Enum.sort_by(&String.downcase(elem(&1, 0)))
+      |> Enum.map(fn {sub, title} -> {:line, [{:text, "    "}, {:link, sub, title}]} end)
+
+    [{:line, first} | rows]
   end
 
   defp initial(title), do: title |> String.first() |> String.upcase()

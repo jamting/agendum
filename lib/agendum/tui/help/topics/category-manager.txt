@@ -1,0 +1,22 @@
+Category Manager
+
+PURPOSE       The whole hierarchy on one screen: every category
+              under MAIN, where you add, rename, move and discard
+              them. F9 opens it from a view; F9 or ESC goes back.
+
+KEYS          INS or CTRL-N   Add a category below (ALT-U above,
+                              ALT-R a child, ALT-L after the parent)
+              F2              Rename it
+              F5              Its note
+              F6              Its properties: type, exclusive
+                              children, conditions and actions
+              F7 / F8         Promote / demote it
+              ALT-↑ / ALT-↓   Move it among its siblings
+              ALT-F10         Move it under another parent
+              ALT-F5          Sort its family by name
+              DEL or ALT-F4   Discard it and its children
+              ALT-− / ALT-=   Collapse / expand families
+
+SEE ALSO      **Enter Categories**  **The Category Hierarchy**
+              **Category Properties Box**  **Category Manager Menu**
+INDEX         Category Manager; Categories > Manager

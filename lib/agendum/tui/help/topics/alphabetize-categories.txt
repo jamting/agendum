@@ -1,0 +1,13 @@
+Alphabetize Categories
+
+PURPOSE       Put a category's children in order by name.
+
+STEPS         1. In the **Category Manager**, highlight one of the
+                 children (or their parent).
+              2. Press ALT-F5 (SORT).
+
+NOTE          Only that family is sorted; the families below it keep
+              their order. CTRL-Z undoes the sort.
+
+SEE ALSO      **Reposition a Category in the Hierarchy**
+INDEX         Categories > Alphabetize; Sort > Categories; Alphabetize > Categories

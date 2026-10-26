@@ -1,0 +1,19 @@
+Discard an Item
+
+PURPOSE       Take an item out of the file altogether, from every
+              section and view. It goes to the trash, where you can
+              get it back for a while.
+
+STEPS         1. Highlight the item (or mark several with F7).
+              2. Press ALT-F4 (DISCARD), or CTRL-D.
+              3. With items marked, choose Marked items or Current
+                 item.
+              4. Press ENTER at "Discard this item?" (ESC keeps it).
+
+NOTE          To take an item out of one section only, and keep it
+              everywhere else, use DEL instead: see **Break an
+              Item's Assignment**. CTRL-Z undoes a discard.
+
+SEE ALSO      **Undiscard an Item**  **Mark or Unmark Items**
+              **File Properties Box**
+INDEX         Items > Discard; Discard > Items; Delete > Items; Trash > Discard items

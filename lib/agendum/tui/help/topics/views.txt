@@ -25,3 +25,4 @@ KEYS          F8 (VW MGR)     Choose another view, or add one
 
 SEE ALSO      **View Manager**  **Category Manager**  **Enter Items**
               **Keys**
+INDEX         Views > What they are

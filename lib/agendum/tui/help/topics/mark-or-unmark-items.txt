@@ -1,0 +1,19 @@
+Mark or Unmark Items
+
+PURPOSE       Mark several items so that one command acts on all of
+              them: discard, mark done, move, copy, assign.
+
+STEPS         * F7 (MARK) marks the highlighted item, or unmarks it.
+                A marked item shows a diamond.
+              * F7 on a section head marks every item in it (again:
+                unmarks them).
+              * ALT-J goes to the next marked item.
+              * ALT-F7 unmarks every item.
+
+NOTE          With items marked, a command that can act on many asks
+              first: Marked items, or Current item (the highlighted
+              one). The control panel shows a diamond while any item
+              is marked.
+
+SEE ALSO      **Discard an Item**  **Assign an Item to a Category**
+INDEX         Items > Mark; Mark > Items; Unmark > Items

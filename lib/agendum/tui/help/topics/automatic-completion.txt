@@ -1,0 +1,16 @@
+Automatic Completion
+
+PURPOSE       Type the start of a category's name and let Agendum
+              finish it, in a column or a box's category field.
+
+STEPS         1. Type the first letters. The first category that
+                 matches is shown after them.
+              2. F8 or ALT-N offers the next match, F7 or ALT-P the
+                 one before; F3 lists them all.
+              3. ENTER takes the one shown.
+
+NOTE          To make a new category of exactly what you typed,
+              press F5 or INS (CTRL-N) instead of ENTER.
+
+SEE ALSO      **Assign an Item to a Category**  **Enter Categories**
+INDEX         Completion > Category names; Categories > Complete names; Type > Category names

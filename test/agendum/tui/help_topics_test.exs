@@ -72,6 +72,24 @@ defmodule Agendum.TUI.HelpTopicsTest do
   end
 
   describe "F3, F5 and F6" do
+    test "F3's pages are Agenda's keyword index: headings and their sub-entries", %{
+      state: state
+    } do
+      page = Topics.get(state, "Help Index: A")
+
+      text =
+        page
+        |> Topic.lines(76)
+        |> Enum.map_join("\n", &Enum.map_join(&1, fn s -> Topic.label(s) end))
+
+      # "Add" is a heading of its own, with what can be added under it
+      assert text =~ ~r/\n  Add\n    Categories\n    Items/
+      assert {:link, "Items", "Enter Items"} in List.flatten(Topic.lines(page, 76))
+      # a box is listed under its name and under Boxes
+      boxes = state |> Topics.get("Help Index: B") |> Topic.lines(76) |> List.flatten()
+      assert {:link, "Undiscard", "Undiscard Box"} in boxes
+    end
+
     test "F3: the letters, each to its page of titles", %{state: state} do
       index = press(state, [{:f, 1}, {:f, 3}])
       assert title(index) == "Help Index"

@@ -1,0 +1,18 @@
+Enter Categories
+
+PURPOSE       Add a category to the hierarchy.
+
+STEPS         In the **Category Manager** (F9):
+              1. Highlight the category the new one goes beside.
+              2. Press INS (or CTRL-N) to add one below it, ALT-U
+                 above it, ALT-R as its child, or ALT-L after its
+                 parent.
+              3. Type the name and press ENTER.
+
+ELSEWHERE     * Typing a new name in a column makes it a child of
+                the column's head.
+              * ALT-D or ALT-U adds a section to a view; a new name
+                there makes the category too.
+
+SEE ALSO      **The Category Hierarchy**  **Discard a Category**
+INDEX         Categories > Enter; Add > Categories; New > Categories

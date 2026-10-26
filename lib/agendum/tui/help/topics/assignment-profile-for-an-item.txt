@@ -1,0 +1,18 @@
+Assignment Profile for an Item
+
+PURPOSE       See every category an item is in, in the hierarchy,
+              and switch them on or off in one place.
+
+STEPS         1. Highlight the item (or mark several with F7).
+              2. Press F3 (CHOICES).
+              3. Move to a category; SPACE switches it.
+              4. ENTER or ESC closes the profile, keeping what you
+                 switched.
+
+NOTE          An assignment a condition made shows with a c. ALT-−
+              and ALT-= collapse and expand families, as in the
+              **Category Manager**.
+
+SEE ALSO      **Assign an Item to a Category**
+              **Assignment Profile Box**
+INDEX         Assignment > Profile; Items > Profile; Profile > Assignments

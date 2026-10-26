@@ -1,0 +1,24 @@
+Assign an Item to a Category
+
+PURPOSE       Put an item in a category by hand, so it shows in the
+              sections and views of that category.
+
+WAYS          * Type the category in a column beside the item: as
+                you type, Agendum offers the names it knows
+                (**Automatic Completion**).
+              * ALT-M (MAKEASSIGN): choose the category from the
+                hierarchy, then ENTER. With items marked: all of
+                them.
+              * F3 on the item: its **Assignment Profile for an
+                Item**; SPACE switches a category on or off.
+              * Type a category's name in the **Item Properties Box**
+                (F6).
+              * ALT-F10 moves the item to another section (out of
+                the old section's category); ALT-F9 copies it there
+                too.
+
+NOTE          Many items need no help: a category whose name is in
+              the item's text takes it by itself when it is typed.
+
+SEE ALSO      **Break an Item's Assignment**  **Categories**
+INDEX         Assignment > Make; Items > Assign; Assign > Items; Categories > Assign items

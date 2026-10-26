@@ -1,0 +1,19 @@
+Categories
+
+PURPOSE       A category is a name you file items under: a person, a
+              project, a kind of task, a priority. Sections and
+              columns show categories, and the items in them.
+
+ABOUT         * Categories form one hierarchy under MAIN: Rabbit can
+CATEGORIES      be under Friends, under People.
+              * An item in a category is also in every category
+                above it: in Rabbit, it is in Friends and People
+                too.
+              * A category whose name appears in an item's text
+                takes the item by itself.
+              * Entry, When and Done are date categories: they hold
+                the item's dates.
+
+SEE ALSO      **The Category Hierarchy**  **Enter Categories**
+              **Category Manager**  **Category Properties Box**
+INDEX         Categories > What they are

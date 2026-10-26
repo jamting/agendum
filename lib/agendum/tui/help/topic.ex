@@ -17,7 +17,12 @@ defmodule Agendum.TUI.Help.Topic do
   A segment is `{:text, string}` or `{:link, label, target}`, a link to
   the topic titled `target` (shown as `label`, in bold, as Agenda's).
   Hand-written topics write a link `**label**` (to the topic of that
-  title) or `**label|Target**`. Pure.
+  title) or `**label|Target**`.
+
+  `index` is where the Help Index lists the topic, as Agenda's keyword
+  index (the owner's choice, 2026-10-26): `{heading, sub}` pairs, sub nil
+  for the heading itself. A written topic gives them on `INDEX` lines,
+  `INDEX  Add > Items; Items > Enter`, which are not shown. Pure.
   """
 
   alias Agendum.TUI.Terminal.Draw
@@ -29,17 +34,41 @@ defmodule Agendum.TUI.Help.Topic do
           | {:hang, [segment], pos_integer, String.t()}
           | {:lines, (pos_integer -> [[segment]])}
 
-  @type t :: %__MODULE__{title: String.t(), body: [block]}
+  @type entry :: {String.t(), String.t() | nil}
+  @type t :: %__MODULE__{title: String.t(), body: [block], index: [entry]}
 
-  defstruct title: "", body: []
+  defstruct title: "", body: [], index: []
 
   @doc "A topic from a hand-written text: its first line the title, the rest its body."
   @spec parse(String.t()) :: t
   def parse(text) do
     [title | body] = text |> String.trim_trailing() |> String.split("\n")
-    # the blank line under the title belongs to the layout, not the body
-    body = Enum.drop_while(body, &(String.trim(&1) == ""))
-    %__MODULE__{title: String.trim(title), body: Enum.map(body, &{:line, segments(&1)})}
+    # the blank line under the title belongs to the layout, not the body;
+    # INDEX lines are for the Help Index, not shown
+    {index, body} = Enum.split_with(body, &String.starts_with?(&1, "INDEX"))
+    body = body |> Enum.drop_while(&(String.trim(&1) == "")) |> drop_trailing_blanks()
+
+    %__MODULE__{
+      title: String.trim(title),
+      body: Enum.map(body, &{:line, segments(&1)}),
+      index: Enum.flat_map(index, &entries/1)
+    }
+  end
+
+  defp drop_trailing_blanks(lines),
+    do: lines |> Enum.reverse() |> Enum.drop_while(&(String.trim(&1) == "")) |> Enum.reverse()
+
+  # "INDEX  Add > Items; Items" is [{"Add", "Items"}, {"Items", nil}]
+  defp entries(line) do
+    line
+    |> String.replace_prefix("INDEX", "")
+    |> String.split(";", trim: true)
+    |> Enum.map(fn entry ->
+      case entry |> String.split(">") |> Enum.map(&String.trim/1) do
+        [heading, sub] -> {heading, sub}
+        [heading] -> {heading, nil}
+      end
+    end)
   end
 
   # `**label**` or `**label|Target**` become links; the rest stays text

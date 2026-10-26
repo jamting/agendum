@@ -1,0 +1,15 @@
+Designate an Item as Done
+
+PURPOSE       Tick something off. A done item gets today's date in
+              Done, and two exclamation marks in front of it.
+
+STEPS         1. Highlight the item (or mark several with F7).
+              2. Press F4 (DONE), or CTRL-K.
+
+NOTE          F4 again takes the done date away. An item that
+              recurs ("every Monday") is followed by its next
+              occurrence when it is done. A view can hide done items
+              (View Properties, Hide done items).
+
+SEE ALSO      **Mark or Unmark Items**  **View Properties Box**
+INDEX         Items > Done; Done > Mark items; Complete > Items

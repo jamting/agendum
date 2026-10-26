@@ -1,0 +1,19 @@
+Items
+
+PURPOSE       An item is one thing you want to keep, in your own
+              words: a task, an idea, a phone call to make, a line
+              from a book. Agendum files it in categories, and the
+              views show it wherever those categories are.
+
+ABOUT ITEMS   * Keep an item's text short, a line or two; what
+                needs more room goes in its note (F5).
+              * It can be in many categories at once, so it can turn
+                up in many sections and views. It is still one item:
+                change it anywhere, and it changes everywhere.
+              * Every item has the date it was entered (Entry), and
+                may have a When date and a Done date.
+
+SEE ALSO      **Enter Items**  **Edit Items and Categories**
+              **Assign an Item to a Category**  **Discard an Item**
+              **Mark or Unmark Items**  **Categories**
+INDEX         Items > What they are

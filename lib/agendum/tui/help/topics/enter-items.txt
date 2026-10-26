@@ -20,3 +20,4 @@ TIPS          * F5 while typing keeps the text and opens the item's
                 done.
 
 SEE ALSO      **Views**  **Category Manager**  **Keys**
+INDEX         Items > Enter; Add > Items; Type > Items

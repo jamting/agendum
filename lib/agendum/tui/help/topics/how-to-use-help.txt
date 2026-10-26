@@ -23,3 +23,4 @@ FOR INFO      -----------------  ----------------------------------
 
 SEE ALSO      **Help Index**  **Keys**  **Commands you can run here**
               **Describe a key**
+INDEX         Help > How to use; Help > Keys in help
