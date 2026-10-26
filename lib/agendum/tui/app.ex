@@ -124,20 +124,20 @@ defmodule Agendum.TUI.App do
 
       # a feed read in the background (R75)
       {:feed_read, id, result, ms} ->
-        DebugLog.write("feed #{id} read: #{elem(result, 0)} in #{ms} ms")
+        DebugLog.write("feed #{id} read: #{DebugLog.outcome(result)} in #{ms} ms")
         state = logged(state, fn -> Update.Results.feed_read(state, id, result) end)
         loop(state, previous, buffer, theme)
 
       # the blog written and uploaded in the background (R74)
       {:published, changes, result} ->
         Process.delete(:agendum_publishing)
-        DebugLog.write("published: #{elem(result, 0)}")
+        DebugLog.write("published: #{DebugLog.outcome(result)}")
         state = logged(state, fn -> Update.Results.published(state, changes, result) end)
         loop(state, previous, buffer, theme)
 
       # a calendar read in the background (R45)
       {:calendar_read, id, result, ms} ->
-        DebugLog.write("calendar #{id} read: #{elem(result, 0)} in #{ms} ms")
+        DebugLog.write("calendar #{id} read: #{DebugLog.outcome(result)} in #{ms} ms")
         state = logged(state, fn -> Update.Results.calendar_read(state, id, result) end)
         loop(state, previous, buffer, theme)
     after

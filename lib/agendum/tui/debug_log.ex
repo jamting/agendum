@@ -154,6 +154,19 @@ defmodule Agendum.TUI.DebugLog do
     write("logger " <> IO.iodata_to_binary(text))
   end
 
+  @doc """
+  How background work ended, for a log line: `ok` or `error`. A result is
+  `:ok` alone (a site published) or a tuple (`{:ok, entries}`,
+  `{:error, reason}`); `elem/2` on a bare `:ok` crashed Agendum after every
+  publish (v0.68.4, found by the owner 2026-10-26).
+  """
+  @spec outcome(term) :: String.t()
+  def outcome(result) when is_tuple(result) and tuple_size(result) > 0,
+    do: to_string(elem(result, 0))
+
+  def outcome(result) when is_atom(result), do: to_string(result)
+  def outcome(_result), do: "?"
+
   @doc "Writes a line, with the time, when a log is open."
   @spec write(String.t()) :: :ok
   def write(text) do

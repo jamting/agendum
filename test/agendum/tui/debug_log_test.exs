@@ -207,4 +207,17 @@ defmodule Agendum.TUI.DebugLogTest do
       assert String.length(text) < 200
     end
   end
+
+  # a publish ends with a bare :ok, a read with a tuple: the log line names
+  # either without crashing (v0.68.4 crashed after every publish)
+  test "the outcome of background work, whatever shape it has" do
+    assert DebugLog.outcome(:ok) == "ok"
+    assert DebugLog.outcome({:ok, []}) == "ok"
+    assert DebugLog.outcome({:error, "SFTP: timeout"}) == "error"
+    assert DebugLog.outcome("odd") == "?"
+  end
+
+  test "App's log lines for background results never take a tuple apart by hand" do
+    refute File.read!("lib/agendum/tui/app.ex") =~ "elem(result"
+  end
 end
