@@ -4,6 +4,13 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.59.0 — 2026-10-26
+
+The help's third and fourth batches: dates and alarms, conditions and actions.
+
+- **Dates and alarms** (eight topics): Date Categories, Create a Date Category, Enter Dates and Times, Use the Pop-Up Calendar, Browse Through Dates, Create a Datebook View, Show a Schedule for Any Day, Set an Alarm for an Item.
+- **Conditions and actions** (twelve topics): Conditions, Actions, Automatic Assignments, Explicit and Conditional Assignments, Confirm Assignments, Confirm Mode, attaching conditions (date and numeric too) and actions, changing and clearing them.
+
 ## 0.58.0 — 2026-10-26
 
 The help's second batch of topics: views, sections and columns.
