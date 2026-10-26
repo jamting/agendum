@@ -4,6 +4,8 @@ PURPOSE       Take a filter, a condition or an action away.
 
 STEPS         * In the list (a filter, conditions or actions), SPACE
                 on the category until it shows nothing.
+              * In the **Category Manager**, ALT-F8 (CLR C/A)
+                clears all of a category's conditions or actions.
               * In a date or numeric filter's or condition's box,
                 DEL removes it.
 

@@ -387,6 +387,13 @@ defmodule Agendum.Core.Command do
     {:import_opml, "Import OPML", "Subscribes to the feeds of an OPML feed list (R75)", [:value],
      :core},
 
+    # copy and clear a category's conditions and actions (R15f)
+    {:copy_conditions_actions, "Copy conditions/actions",
+     "Copies a category's conditions (:conditions), actions (:actions) or both (:both) to another, in place of its own (R15f)",
+     [:category, :category, :value], :core},
+    {:clear_conditions_actions, "Clear conditions/actions",
+     "Clears a category's conditions, actions or both (R15f)", [:category, :value], :core},
+
     # alarms ringing, as the clock moves on (R38)
     {:ring_alarms, "Ring alarms", "Rings the alarms that are due; returns their items", [], :own},
     {:clear_old_alarms, "Clear old alarms", "Forgets alarms rung before today", [], :own},

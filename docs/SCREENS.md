@@ -114,6 +114,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
   - **Item Properties** `:item_props` (F6 on an item, Item ▸ Properties): text, note, statistics, dependencies, every assignment (R34, R43). `Agendum.TUI.Boxes.ItemProperties`.
   - **Error** `:error_box`: an error in a box titled Error, "Press any key to continue", as Agenda's (a search that finds nothing, R37); without a title, Agenda's notifications (Undisc or Utilities ▸ Trash with nothing in the trash, R24a). `Agendum.TUI.Boxes.ErrorBox`.
   - **Find Topic** `:find_topic` (F5 in the help): Agenda's box, "Topic to find:"; ENTER opens **Select Help Screen** `:select_help_screen`, the topics found; ENTER reads one (R65e). `Agendum.TUI.Boxes.FindTopicBox`, `Agendum.TUI.Boxes.SelectHelpScreenBox`.
+  - **Copy / Clear Conditions/Actions** `:conditions_actions` (ALT-F9 and ALT-F8 in the category manager, for a category with both): Agenda's untitled box, "Copy:" or "Clear:", Condition & action, Condition or Action (R15f). `Agendum.TUI.Boxes.ConditionsActionsBox`.
   - **Undiscard** `:undiscard` (Item ▸ Undisc with more than one item in the trash): Agenda's untitled box, "Undiscard: All items in trash" or "Last item in trash"; ENTER brings them back below the highlighted item (R24a). `Agendum.TUI.Boxes.UndiscardBox`.
   - **Password** `:password_box` (File Properties ▸ Set file password): Agenda's small boxes, "Enter the current password", "Enter the new password", "Please type the new password again", the password typed hidden (ADR 0046). `Agendum.TUI.Boxes.PasswordBox`.
   - **New File** `:new_file` (File ▸ Retrieve with a name that is not a file yet): Description and Password, as Agenda's; ENTER makes the file (R82, ADR 0046). `Agendum.TUI.Boxes.NewFileBox`.
@@ -213,6 +214,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:error_box`         | box           | `Agendum.TUI.Boxes.ErrorBox`             | a search that finds nothing                       | R37            |
 | `:find_topic`        | box           | `Agendum.TUI.Boxes.FindTopicBox`         | F5 in the help                                    | R65e           |
 | `:select_help_screen` | box          | `Agendum.TUI.Boxes.SelectHelpScreenBox`  | ENTER in Find Topic                               | R65e           |
+| `:conditions_actions` | box          | `Agendum.TUI.Boxes.ConditionsActionsBox` | ALT-F9 / ALT-F8 in the category manager           | R15f           |
 | `:undiscard`         | box           | `Agendum.TUI.Boxes.UndiscardBox`         | Item ▸ Undisc, several items in the trash         | R24a           |
 | `:password_box`      | box           | `Agendum.TUI.Boxes.PasswordBox`          | File Properties ▸ Set file password               | R82            |
 | `:new_file`          | box           | `Agendum.TUI.Boxes.NewFileBox`           | File ▸ Retrieve with a new name                   | R82            |

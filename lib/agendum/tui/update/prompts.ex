@@ -576,6 +576,10 @@ defmodule Agendum.TUI.Update.Prompts do
   # while Agendum is open
   defp confirmed(state, :empty_trash, true), do: State.run(state, :empty_trash)
 
+  # ALT-F8 in the category manager (R15f)
+  defp confirmed(state, {:clear_conditions_actions, id, which}, true),
+    do: State.run(state, {:clear_conditions_actions, id, which})
+
   defp confirmed(state, {:discard_category, id}, true) do
     case State.command(state, {:discard_category, id}) do
       {:ok, state, _} ->

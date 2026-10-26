@@ -41,6 +41,25 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
   keymap binds it to (`Agendum.TUI.Keymap`, R65); an unbound character
   starts typing a new category below the highlighted one.
   """
+  # moving the highlight, as in every screen listing the hierarchy
+  @moves [:up, :down, :page_up, :page_down, :first, :last, :parent, :last_sibling] ++
+           [:previous_sibling, :next_sibling]
+
+  # choosing where to copy conditions and actions to (ALT-F9, R15f), as
+  # Agenda's: the arrows move, ENTER copies to the highlighted category,
+  # ESC gives it up
+  def handle(state, %{type: :catmgr, copying: from} = mode, key) when from != nil do
+    state = clamp(state, mode)
+    done = State.put_mode(state, %{State.mode(state) | copying: nil})
+
+    case {key, Keymap.lookup(:catmgr, key)} do
+      {:enter, _} -> copy_to(done, from, current(state))
+      {:esc, _} -> done
+      {_, move} when move in @moves -> command(state, move, nil)
+      _ -> state
+    end
+  end
+
   def handle(state, %{type: :catmgr} = mode, key) do
     state = clamp(state, mode)
 
@@ -67,10 +86,6 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
     mode = State.mode(state)
     CategoryScreens.current_id(CategoryScreens.rows(state, mode), mode)
   end
-
-  # moving the highlight, as in every screen listing the hierarchy
-  @moves [:up, :down, :page_up, :page_down, :first, :last, :parent, :last_sibling] ++
-           [:previous_sibling, :next_sibling]
 
   defp command(state, where, _id) when where in @moves do
     mode = State.mode(state)
@@ -128,8 +143,49 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
         Prompts.confirm(state, "Discard #{name} and all its children?", {:discard_category, id})
   end
 
+  # ALT-F9 (CPY C/A): with something to copy, the target is chosen next;
+  # with nothing, nothing happens, as in Agenda 2.0 (checked 2026-10-26)
+  defp command(state, :copy_conditions, id) do
+    if Core.conditions_and_actions(state.db, id),
+      do: State.put_mode(state, %{State.mode(state) | copying: id}),
+      else: state
+  end
+
+  # ALT-F8 (CLR C/A): Agenda's question for one kind, its box for both
+  defp command(state, :clear_conditions, id) do
+    case Core.conditions_and_actions(state.db, id) do
+      nil ->
+        state
+
+      :both ->
+        Agendum.TUI.Boxes.ConditionsActionsBox.open(state, :clear, id, nil)
+
+      which ->
+        word = if which == :conditions, do: "condition", else: "action"
+        Prompts.confirm(state, "Clear the #{word}?", {:clear_conditions_actions, id, which})
+    end
+  end
+
   defp command(state, :collapse, id), do: CategoryScreens.collapse_key(state, id, {:alt, "-"})
   defp command(state, :expand, id), do: CategoryScreens.collapse_key(state, id, {:alt, "="})
+
+  # the copy, once the target is chosen: at once for one kind, after
+  # Agenda's box for both
+  defp copy_to(state, from, to) do
+    case Core.conditions_and_actions(state.db, from) do
+      :both -> Agendum.TUI.Boxes.ConditionsActionsBox.open(state, :copy, from, to)
+      which -> copy(state, from, to, which)
+    end
+  end
+
+  @doc "Copies `from`'s conditions or actions (`which`) to `to` (R15f)."
+  @spec copy(State.t(), integer, integer, :both | :conditions | :actions) :: State.t()
+  def copy(state, from, to, which) do
+    case State.command(state, {:copy_conditions_actions, from, to, which}) do
+      {:ok, state, _} -> state
+      {:error, :self} -> State.error(state, "Choose another category to copy to")
+    end
+  end
 
   defp new_category(state, id, text) do
     db = state.db

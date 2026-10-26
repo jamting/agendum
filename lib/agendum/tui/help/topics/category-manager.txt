@@ -14,6 +14,8 @@ KEYS          INS or CTRL-N   Add a category below (ALT-U above,
               ALT-↑ / ALT-↓   Move it among its siblings
               ALT-F10         Move it under another parent
               ALT-F5          Sort its family by name
+              ALT-F9 / ALT-F8 Copy / clear its conditions or
+                              actions
               DEL or ALT-F4   Discard it and its children
               ALT-− / ALT-=   Collapse / expand families
 

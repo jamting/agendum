@@ -1,0 +1,24 @@
+Copy Conditions/Actions
+
+PURPOSE       Give one category the conditions or actions another
+              has: Barney takes the items Fred takes.
+
+STEPS         In the **Category Manager**:
+              1. Highlight the category to copy from.
+              2. Press ALT-F9 (CPY C/A).
+              3. Highlight the category to copy to, then ENTER (ESC
+                 gives it up).
+              4. If it has both, choose Condition & action,
+                 Condition or Action, then ENTER.
+
+RESULT        What is copied takes the place of the target's
+              conditions or actions; the rest stays. The source does
+              not change. Execute (ALT-E) to apply it to items
+              already in the file.
+
+NOTE          ALT-F8 (CLR C/A) clears the highlighted category's
+              conditions or actions, asking first.
+
+SEE ALSO      **Conditions**  **Actions**
+              **Clear a Filter, Condition, or Action**
+INDEX         Conditions > Copy; Actions > Copy; Copy > Conditions; Conditions > Clear all; Actions > Clear all

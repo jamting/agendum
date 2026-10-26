@@ -101,6 +101,8 @@ defmodule Agendum.TUI.Commands do
     {:sort, "Sort", "Sort its children by name", :none},
     {:discard, "Discard", "Discard it and its children", :none},
     {:execute, "Execute", "Run its conditions and actions", :none},
+    {:copy_conditions, "Copy C/A", "Copy conditions, actions elsewhere", :none},
+    {:clear_conditions, "Clear C/A", "Clear its conditions or actions", :none},
     {:collapse, "Collapse", "Collapse the family (twice: all)", :none},
     {:expand, "Expand", "Expand the family (twice: all)", :none},
     {:help, "Help", "Help about where you are", :none},

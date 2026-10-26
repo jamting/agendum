@@ -61,6 +61,11 @@ defmodule Agendum.TUI.Render.ControlPanel do
         {beside_indicators(state, base, [{:prompt, " " <> label}]),
          [{:panel, " "}] ++ Draw.input(line, w - 2, :edit)}
 
+      # choosing where to copy conditions and actions to (ALT-F9, R15f):
+      # Agenda's words on the top line, the second left blank
+      %{type: :catmgr, copying: from} when from != nil ->
+        {[{:panel, " Move cursor to the category you want to copy to"}], []}
+
       %{type: :column_width} = m ->
         text_lines(state, base, :panel_hint, Agendum.TUI.Moves.ColumnWidth.panel(m))
 

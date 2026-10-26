@@ -22,6 +22,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Next / previous completion while typing a column entry or a box's category field (NEXTSEL, PREVSEL); the column's or field's list of categories (CHOICES); a new category of exactly what is typed (NEWCAT) | F8 / F7; F3; F5 | ALT-N / ALT-P (⌥n / ⌥p); —; INS or CTRL-N |
 | New category instead of the completion                                                          | F5 or INS                     | **CTRL-N**                                                            |
 | Collapse / expand a family or section (twice: all)                                              | ALT-− / ALT-=                 | ⌥− / ⌥=                    |
+| In the category manager: copy the highlighted category's conditions or actions to another (then highlight it and press ENTER); clear them (R15f) | ALT-F9 / ALT-F8 | ⌥ with F9 / F8 |
 | Unmark all items                                                                                | ALT-F7                        | —                                                    |
 | Jump to the next marked item                                                                    | ALT-J                         | ⌥j                                               |
 | Assign the item or marked items to a category (MakeAssign)                                      | ALT-M                         | ⌥m, or menu Item ▸ MakeAssign                    |

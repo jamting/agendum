@@ -1,6 +1,6 @@
 # Agenda's help, in our own words
 
-**Status:** steps 1 to 3 done (v0.56.0 to v0.60.0, 2026-10-26): the frame, the tone sample and six batches of written topics, with Agenda's keyword index. Step 4 waits only for Copy Conditions/Actions, a parity step of its own (`AGENDA_PARITY.md`); its topic comes with it. The last required step of the truthful clone.
+**Status:** done (v0.56.0 to v0.61.0, 2026-10-26): the frame, the tone sample, six batches of written topics with Agenda's keyword index, and Copy Conditions/Actions with its topic; the checklist has nothing open. The last required step of the truthful clone.
 
 Lotus Agenda's F1 help: a topic for where you are, bold links between topics, an index, a search, key charts and a way back (`docs/reference/Agenda 2.0 Help File.html`: 332 topics, about 61,000 words: 159 boxes, 132 how-to and concept topics, 28 menus, 13 key charts). Agendum's help keeps Agenda's keys and structure exactly and has texts of its own: terse, with a Hundred Acre Wood flavour in an opening line and the examples, quoting no Milne and using no Disney or Shepard pictures (meeting 2026-10-22, § 7a). How it is built: ADR 0047.
 
@@ -31,7 +31,7 @@ Habit changes (settled): any other key no longer leaves help; `c`, `d` and `a` a
 1b. [x] (2026-10-26, v0.56.0) **Find as Agenda's** (the owner's choice, 2026-10-26): F5 opens Agenda's **Find Topic** box ("Topic to find:"), and ENTER its **Select Help Screen** box, a list of the matching topics: the arrows and ENTER read one, ESC goes back to the topic being read; its help line "Highlight Help screen to display. Then use ALT-N or ALT-P to display next/previous help screen from list." (checked in Agenda 2.0, 2026-10-26).
 2. [x] (2026-10-26; approved: "thats very good", a Wood touch only where natural) **Three sample topics** for the owner to approve the tone before the rest are written: Views, Undiscard an Item, Enter Items.
 3. [x] **The rest, in batches by subject**, each tagged (batches 5 and 6, files and notes, macros and the screen: v0.60.0; batch 1, items and categories, and Agenda's keyword index: v0.57.0; batch 2, views, sections and columns: v0.58.0; batches 3 and 4, dates and alarms, conditions and actions: v0.59.0; 2026-10-26): items and categories; views, sections and columns; dates and alarms; conditions and actions; files and the trash; notes; macros. **Agenda's kind of index** comes with them (the owner's choice, 2026-10-26): each written topic lists its index entries on an `INDEX` line (`INDEX  Add > Columns; Columns > Add`), generated topics get theirs from what they are (a box under its name and under Boxes), and the index pages show headings with sub-entries and "See also", as Agenda's ("Actions ▸ Attach to a category, Clear, Copy …"); until then F3 lists titles.
-4. [ ] **Done** when the checklist below has nothing open: the help is done, and with it the clone (`AGENDA_PARITY.md`, Declared done).
+4. [x] (2026-10-26, v0.61.0) **Done** when the checklist below has nothing open: the help is done, and with it the clone (`AGENDA_PARITY.md`, Declared done).
 
 ## The checklist: Agenda's how-to and concept topics
 
@@ -48,7 +48,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Print Preview Mode | left out: printing (SPEC § 6) |
 | Confirm Assignments | ours: `confirm-assignments.txt` (batch 4) |
 | Go to a Section | ours: `go-to-a-section.txt` (batch 2) |
-| Copy Conditions/Actions | open: Agenda's ALT-F9 (CPY C/A) in the category manager is not built yet; a parity step (2026-10-26) |
+| Copy Conditions/Actions | ours: `copy-conditions-actions.txt` (with R15f, v0.61.0) |
 | Reposition a Category in the Hierarchy | ours: `reposition-a-category-in-the-hierarchy.txt` (batch 1) |
 | Macro Manager | ours: `macro-manager.txt` (batch 6) |
 | Record a Macro | ours: `record-a-macro.txt` (batch 6) |

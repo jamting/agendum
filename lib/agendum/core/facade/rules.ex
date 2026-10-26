@@ -275,6 +275,79 @@ defmodule Agendum.Core.Facade.Rules do
     end
   end
 
+  @doc """
+  What a category has that Copy and Clear Conditions/Actions act on (R15f):
+  `:both`, `:conditions`, `:actions`, or nil. Its assignment conditions
+  count, and its assignment actions (links to other categories, and the
+  date or number actions); its Also match words and special action do not
+  (Agenda 2.0 copied nothing from a category with Also match alone,
+  checked 2026-10-26).
+  """
+  @spec conditions_and_actions(db, id) :: :both | :conditions | :actions | nil
+  def conditions_and_actions(db, cat_id) do
+    cat = db.categories[cat_id]
+    actions? = cat.actions != [] or cat.also_assign != []
+
+    case {cat.conditions != [], actions?} do
+      {true, true} -> :both
+      {true, false} -> :conditions
+      {false, true} -> :actions
+      {false, false} -> nil
+    end
+  end
+
+  @doc """
+  Copy Conditions/Actions (R15f; Agenda's ALT-F9 CPY C/A, Help "Copy
+  Conditions/Actions"): the source's conditions, actions or both take the
+  place of the target's; what the target keeps of the other is left alone,
+  and the source does not change. A condition or action naming the target
+  itself is not copied to it. Like a new condition, the copy reaches the
+  items already in the file when executed (R15e).
+  """
+  @spec copy_conditions_actions(db, id, id, :both | :conditions | :actions) ::
+          {:ok, db} | {:error, :self}
+  def copy_conditions_actions(_db, cat_id, cat_id, _what), do: {:error, :self}
+
+  def copy_conditions_actions(db, from, to, what) when what in [:both, :conditions, :actions] do
+    source = db.categories[from]
+
+    copy = fn target ->
+      target
+      |> then(fn t ->
+        if what in [:both, :conditions],
+          do: %{t | conditions: Enum.reject(source.conditions, &(elem(&1, 0) == to))},
+          else: t
+      end)
+      |> then(fn t ->
+        if what in [:both, :actions],
+          do: %{
+            t
+            | actions: Enum.reject(source.actions, &(elem(&1, 0) == to)),
+              also_assign: List.delete(source.also_assign, to)
+          },
+          else: t
+      end)
+    end
+
+    {:ok, Database.update_category(db, to, copy)}
+  end
+
+  @doc """
+  Clear Conditions/Actions (R15f; Agenda's ALT-F8 CLR C/A): the category's
+  conditions, actions or both go. CTRL-Z brings them back (Agenda could
+  not).
+  """
+  @spec clear_conditions_actions(db, id, :both | :conditions | :actions) :: {:ok, db}
+  def clear_conditions_actions(db, cat_id, what) when what in [:both, :conditions, :actions] do
+    clear = fn cat ->
+      cat
+      |> then(&if what in [:both, :conditions], do: %{&1 | conditions: []}, else: &1)
+      |> then(&if what in [:both, :actions], do: %{&1 | actions: [], also_assign: []}, else: &1)
+    end
+
+    {:ok, Database.update_category(db, cat_id, clear)}
+  end
+
   @spec remove_condition(db, id, id) :: db
   def remove_condition(db, cat_id, target) do
     Database.update_category(

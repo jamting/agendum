@@ -175,6 +175,7 @@ defmodule Agendum.TUI.Boxes.Box do
     new_file: Agendum.TUI.Boxes.NewFileBox,
     undiscard: Agendum.TUI.Boxes.UndiscardBox,
     find_topic: Agendum.TUI.Boxes.FindTopicBox,
+    conditions_actions: Agendum.TUI.Boxes.ConditionsActionsBox,
     select_help_screen: Agendum.TUI.Boxes.SelectHelpScreenBox,
     schedule: Agendum.TUI.Boxes.ScheduleBox,
     set_alarm: Agendum.TUI.Boxes.SetAlarmBox,

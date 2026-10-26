@@ -33,7 +33,7 @@ defmodule Agendum.TUI.Modes do
     calendars: [:cursor],
     category_match: [:cat_id, :cursor, :opened],
     category_stats: [:cat_id],
-    catmgr: [:cursor],
+    catmgr: [:copying, :cursor],
     choice: [
       :action,
       :at,
@@ -76,6 +76,7 @@ defmodule Agendum.TUI.Modes do
     new_file: [:cursor, :description, :password, :path, :typing],
     undiscard: [:after, :all, :category, :cursor, :sidx],
     find_topic: [:line],
+    conditions_actions: [:from, :to, :verb, :which],
     select_help_screen: [:cursor, :found],
     execute: [:against, :cursor, :old, :root],
     file_props: [:cursor, :opened, :typing],

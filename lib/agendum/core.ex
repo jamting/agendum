@@ -202,6 +202,9 @@ defmodule Agendum.Core do
   defdelegate answer_question(db, item_id, cat_ids, clock \\ nil), to: Rules
   defdelegate reassign_all(db, today), to: Rules
   defdelegate add_condition(db, cat_id, target, kind), to: Rules
+  defdelegate conditions_and_actions(db, cat_id), to: Rules
+  defdelegate copy_conditions_actions(db, from, to, what), to: Rules
+  defdelegate clear_conditions_actions(db, cat_id, what), to: Rules
   defdelegate remove_condition(db, cat_id, target), to: Rules
   defdelegate set_also_match(db, cat_id, text), to: Rules
   defdelegate set_range_condition(db, cat_id, target, range, clock), to: Rules

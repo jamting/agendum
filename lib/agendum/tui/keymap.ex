@@ -119,6 +119,9 @@ defmodule Agendum.TUI.Keymap do
     {:alt, :down} => :move_down,
     {:alt_f, 5} => :sort,
     {:alt_f, 10} => :move,
+    # Agenda's CPY C/A and CLR C/A (R15f)
+    {:alt_f, 9} => :copy_conditions,
+    {:alt_f, 8} => :clear_conditions,
     :delete => :discard,
     {:alt_f, 4} => :discard,
     {:ctrl, "d"} => :discard,
