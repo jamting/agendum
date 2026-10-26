@@ -4,6 +4,8 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **No more error text over the screen.** Erlang's own reports (seen once, left running offline on a closed laptop) go to the debug log, or nowhere, while Agendum runs; a feed or calendar that cannot be read because of a crash says so in the message line.
+
 ## 0.64.0 — 2026-10-26
 
 Faster saves for files with many feeds.

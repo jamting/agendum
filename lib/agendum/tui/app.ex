@@ -47,10 +47,15 @@ defmodule Agendum.TUI.App do
         # `try … after` runs `after` however `loop` ends, by returning or
         # by a crash, so the terminal is always given back in a usable
         # state (cursor shown, normal mode).
+        # Erlang's logger reports go to the debug log, never over the
+        # screen, until the terminal is given back
+        logger = DebugLog.capture_logger()
+
         try do
           loop(state, nil, "", state.theme)
         after
           Terminal.stop()
+          DebugLog.release_logger(logger)
         end
 
       error ->
@@ -293,7 +298,7 @@ defmodule Agendum.TUI.App do
 
     Task.start(fn ->
       started = now_ms()
-      result = FeedFetch.read(url)
+      result = fetched(fn -> FeedFetch.read(url) end)
       send(loop, {:feed_read, id, result, now_ms() - started})
     end)
 
@@ -334,7 +339,7 @@ defmodule Agendum.TUI.App do
 
     Task.start(fn ->
       started = now_ms()
-      result = CalendarFetch.read(url)
+      result = fetched(fn -> CalendarFetch.read(url) end)
       send(loop, {:calendar_read, id, result, now_ms() - started})
     end)
 
@@ -348,6 +353,21 @@ defmodule Agendum.TUI.App do
   defp perform(state, unknown) do
     DebugLog.write("unknown effect skipped: #{inspect(unknown)}")
     state
+  end
+
+  @doc """
+  A feed's or calendar's read (`fun`), run in its background task: a read
+  that crashes outright comes back as an error the person is shown, rather
+  than ending the task silently with a report on the screen (meeting
+  2026-10-26-4, § 6). The crash itself goes to the debug log.
+  """
+  @spec fetched((-> {:ok, term} | {:error, String.t()})) :: {:ok, term} | {:error, String.t()}
+  def fetched(fun) do
+    fun.()
+  catch
+    kind, reason ->
+      DebugLog.write("fetch crashed: " <> Exception.format(kind, reason, __STACKTRACE__))
+      {:error, "could not be read (#{Exception.format_banner(kind, reason)})"}
   end
 
   # 24-bit colour when the terminal says it takes it (Theme.depth/1)

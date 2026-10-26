@@ -13,7 +13,8 @@ defmodule Agendum.TUI.DebugLog do
   a new name) with its size, time and fingerprint on disk, answers to keys
   that took 100 ms or more (with the view on screen and the memory used),
   and a crash: the exception, its stack trace and the state as
-  the developer screen (`Agendum.TUI.DevTools`) shows it. Starting a
+  the developer screen (`Agendum.TUI.DevTools`) shows it, and
+  Erlang's logger reports (`capture_logger/0`). Starting a
   session deletes all but the newest four, so five are kept.
 
   What is typed is in the log, so it stays on this computer. Logging
@@ -112,6 +113,43 @@ defmodule Agendum.TUI.DebugLog do
     end
 
     :ok
+  end
+
+  @doc """
+  While the terminal UI runs, Erlang's logger must not print over the
+  screen (it did once, offline, on a closed laptop: meeting 2026-10-26-4,
+  § 6). This takes its default handler away and puts one in its place that
+  writes each report to the debug log, or nowhere when it is off. Returns
+  what `release_logger/1` needs to put the default back.
+  """
+  @spec capture_logger() :: map | nil
+  def capture_logger do
+    # `:logger` is Erlang's logging system; a handler is a module whose
+    # `log/2` gets each report. The default one writes to the terminal.
+    saved =
+      case :logger.get_handler_config(:default) do
+        {:ok, config} -> config
+        {:error, _} -> nil
+      end
+
+    if saved, do: :logger.remove_handler(:default)
+    :logger.add_handler(@name, __MODULE__, %{level: :all})
+    saved
+  end
+
+  @doc "Puts the logger's default handler back when the terminal UI ends."
+  @spec release_logger(map | nil) :: :ok
+  def release_logger(saved) do
+    :logger.remove_handler(@name)
+    if saved, do: :logger.add_handler(:default, saved.module, saved)
+    :ok
+  end
+
+  @doc false
+  # the logger handler's callback (`capture_logger/0`): one report, on one line
+  def log(event, _config) do
+    text = :logger_formatter.format(event, %{single_line: true, template: [:level, " ", :msg]})
+    write("logger " <> IO.iodata_to_binary(text))
   end
 
   @doc "Writes a line, with the time, when a log is open."
