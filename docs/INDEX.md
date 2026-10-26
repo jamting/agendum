@@ -23,6 +23,7 @@ What each document is for, and when to read it. `docs/` describes Agendum as it 
 | [`KEYBOARD.md`](KEYBOARD.md)                 | Every key, its Mac-friendly alternative, and ⌘ mappings for each terminal                         |
 | [`SCREENS.md`](SCREENS.md)                   | Every screen and box, how each is reached, and what it opens (checked by a test)                  |
 | [`THEMES.md`](THEMES.md)                     | The colour values of the themes taken from terminal schemes                                       |
+| [`UI_GUIDELINES.md`](UI_GUIDELINES.md)       | The conventions every screen and box follows (settings boxes, choosing values, managers, keys, messages), and the extras' gaps; a draft, not adopted (meeting 2026-10-26-6, ADR 0049) |
 | `docs/guide/index.html`       | The short user guide (Piglet); updated on request (`update-guide` skill)                          |
 | `docs/manual/index.html`     | The long manual (Owl and Rabbit), generated from `docs/manual/src/` (`update-manual` skill)           |
 
@@ -96,7 +97,7 @@ Finished or dropped plans, kept as records of how something was done or why it w
 | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | add or change a behaviour              | its rule in `SPEC.md` (and the rule index); the item in `ROADMAP.md` (the clone's own leftovers too, since it was declared done on 2026-10-26; a new difference from Agenda goes on `plans/AGENDA_PARITY.md`'s two lists, tagged by ADR 0043's test), ticked and moved to `ROADMAP_DONE.md`; the roadmap's In order list kept true |
 | add or change a key                    | `KEYBOARD.md`; the key's keymap and command (the F1 help is made from them)                     |
-| add a screen or box                    | `SCREENS.md` (a test checks); `ARCHITECTURE.md` if it is a new module                          |
+| add a screen or box                    | `SCREENS.md` (a test checks); `ARCHITECTURE.md` if it is a new module; follow `UI_GUIDELINES.md` (a new pattern goes there first, ADR 0049) |
 | add a stored field                     | `DATA_MODEL.md` (and a row in its format versions), `DATA_ACCESS.md` if queried, `JSON_FORMAT.md` and `Agendum.Core.JSONFile`; set it in `Agendum.Starters.Golden`, and with the new format version run `mix agendum.golden` and commit its two files |
 | make a lasting decision                | a new ADR in `adr/`, and a row in `ARCHITECTURE.md`'s ADR list                                 |
 | finish a major feature or change the file format | the version in `mix.exs` (minor, never 1.0.0 unless the owner says), an entry in `CHANGELOG.md`, a `vX.Y.Z` tag after the long fuzz run passes on that commit (nightly in CI, `.github/workflows/fuzz.yml`, or by hand: `mix agendum.fuzz` (its output kept in `tmp/fuzz/`)) |
