@@ -4,6 +4,8 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.64.1 — 2026-10-26
+
 - **The debug log keeps no private addresses**: a calendar's or feed's address is written as its host only (`https://cal.example/…`), so a log can be sent to someone. It now keeps the last ten sessions instead of five.
 - **No more error text over the screen.** Erlang's own reports (seen once, left running offline on a closed laptop) go to the debug log, or nowhere, while Agendum runs; a feed or calendar that cannot be read because of a crash says so in the message line.
 
