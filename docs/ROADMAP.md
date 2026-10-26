@@ -9,7 +9,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 1. Property tests for the parsers of outside input (Sharpen the saw; the slice reviews, 2026-10-26)
 2. A collection of hostile files (Sharpen the saw; 2026-10-26)
 3. Fuzz walks in a richer file and with things out of order, and `App`'s background results tested (Sharpen the saw; moved up, meeting 2026-10-26-6, § 7)
-4. UI guidelines for the extras, from the clone's own patterns (Housekeeping; meeting 2026-10-26-6, §§ 6, 8)
+4. UI guidelines for the extras, from the clone's own patterns (Housekeeping; meeting 2026-10-26-6, §§ 6, 8; ADR 0049)
 5. The extras brought up to the guidelines, one feature commit per gap (Beyond Agenda; meeting 2026-10-26-6, §§ 6, 7)
 6. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
 7. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
