@@ -4,6 +4,12 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.58.0 — 2026-10-26
+
+The help's second batch of topics: views, sections and columns.
+
+- **Thirty-two topics**: Sections, Columns, View Types, View Manager, Sorting and Filters; adding, changing, moving and removing sections, columns and views; numeric, date and item columns, numeric and unindexed categories, a category note as a column; sorting items and sections; view, date and numeric filters; Go to a Section; Search; the Show View.
+
 ## 0.57.0 — 2026-10-26
 
 The help's first batch of topics.
