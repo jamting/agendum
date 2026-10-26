@@ -1,25 +1,25 @@
- The colours Agendum draws with, in every file. SPACE   PROPS  2026-10-12 10:15
- for the next theme.
+ The colours Agendum draws with, in every file. SPACE for the next theme.
+
  Garden                                   When             Priority Friends
- • Weed t┌──────────── Customize (yours, for every file) ─────────────┐
- • Count │ Theme                   : Classic                          │ger
-   bounce│ Date language           : English                          │
-         │ Fallback language       : None                             │
- Notices │ Input format            : (SPACE)                          │ends
- • Put up│ Display key map         : Yes                              │
-   Meetin│ Confirm mode            : Yes                              │
-         │ Auto-save interval      : Off                              │
- Friends │ Decimal separator       : . (Dot)                          │ends
- • Count │ Thousands separator     : , (Comma)                        │ger
-   bounce│ Sound                   : Yes                              │
- • Ask Ow│ Beep on auto-completion : Yes                              │
- • Find S│ Extras                  : No                               │ll
- • Visit │                                                            │ga, Roo
-         │ Saved in your preferences, not in this file.               │
-         │ SPACE next choice                                          │
+    • Wee┌─────────────────── Utilities Customize ────────────────────┐
+      mor│ Theme                   : Classic                          │
+    • Cou│ Date language           : English                          │ger
+      bou│ Fallback language       : None                             │
+         │ Input format            : (SPACE)                          │
+ Notices │ Display key map         : Yes                              │ends
+    • Put│ Confirm mode            : Yes                              │
+      Org│ Auto-save interval      : Off                              │
+         │ Decimal separator       : . (Dot)                          │
+ Friends │ Thousands separator     : , (Comma)                        │ends
+    • Cou│ Sound                   : Yes                              │ger
+      bou│ Beep on auto-completion : Yes                              │
+    • Ask│ Extras                  : No                               │
+    • Fin│                                                            │ll
+    • Vis│ Saved in your preferences, not in this file.               │ga, Roo
+      3pm│ SPACE next choice                                          │
          └─────────── Press ENTER when done, ESC to cancel ───────────┘
 
 
 
-
- ↑↓←→ Setting SPACE Next ENTER Done ESC Cancel
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │Choices│       │       │       │       │Default│       │

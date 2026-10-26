@@ -1,25 +1,25 @@
- Move the highlight to a date and press ENTER.        CHOICES  2026-10-12 10:15
- PGUP/PGDN for another month; type a date to go there; F6 adds a time.
+ Move the highlight to a date and press ENTER. PGUP/PGDN for another month;
+ type a date to go there; F6 adds a time.
  Garden                                   When             Priority Friends
- • Weed the carrot bed t┌──────── October 2026 ────────┐00 High
- • Count the lettuces be│ Mon Tue Wed Thu Fri Sat Sun  │   Medium   Tigger
-   bounces on them      │                              │
-                        │               1   2   3   4  │
- Notices                │   5   6   7   8   9  10  11  │   Priority Friends
- • Put up a Notice about│  12  13  14  15  16  17  18  │   High
-   Meeting on Friday    │  19  20  21  22  23  24  25  │
-                        │  26  27  28  29  30  31      │
+    » Weed the carrot be┌──────── October 2026 ────────┐m ·High
+      morning           │ Mon Tue Wed Thu Fri Sat Sun  │
+    • Count the lettuces│                              │  ·Medium  ·Tigger
+      bounces on them   │               1   2   3   4  │
+                        │   5   6   7   8   9  10  11  │
+ Notices                │  12  13  14  15  16  17  18  │   Priority Friends
+    • Put up a Notice ab│  19  20  21  22  23  24  25  │  ·High
+      Organising Meeting│  26  27  28  29  30  31      │
+                        │                              │
  Friends and Relations  │                              │   Priority Friends
- • Count the lettuces be│                              │   Medium   Tigger
-   bounces on them      │ Time: 08:00                  │
- • Ask Owl how to spell └─ ENTER accept · ESC cancel ──┘   Low      Owl
- • Find Small, who is lost again                           High     Small
- • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+    • Count the lettuces│ Time: 08:00                  │  ·Medium  ·Tigger
+      bounces on them   └─ ENTER accept · ESC cancel ──┘
+    • Ask Owl how to spell Organising                     ·Low     ·Owl
+    • Find Small, who is lost again                       ·High    ·Small
+    • Visit Kanga and Roo on Thursday at ·10/15/26 3:00pm ·Medium  ·Kanga, Roo
+      3pm
 
 
 
 
-
-
-
- ←→↑↓ Day/week PGUP/DN Month ^←→ Year ENTER Select F6 Time type Go to ESC Cancel
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │       │       │       │       │       │       │       │       │

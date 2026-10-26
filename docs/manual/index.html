@@ -150,30 +150,43 @@ You wrote “Tigger”, and there is a category called Tigger. That was enough.<
 columns:</p>
 
 <!-- screen: 01-view -->
-<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                      READY  2026-10-12 10:15 </span>
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                            10/12/26  10:15am </span>
 <span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed the carrot bed tomorrow morning   2026-10-13 08:00 High
- • Count the lettuces before Tigger                        Medium   Tigger
-   bounces on them
+    • Weed the carrot bed tomorrow       ·10/13/26 8:00am ·High
+      morning
+    • Count the lettuces before Tigger                    ·Medium  ·Tigger
+      bounces on them
 
 <span class="h"> Notices                                  When             Priority Friends</span>
- • Put up a Notice about the Organising   2026-10-16       High
-   Meeting on Friday
+    • Put up a Notice about the          ·10/16/26        ·High
+      Organising Meeting on Friday
 
 <span class="h"> Friends and Relations                    When             Priority Friends</span>
- • Count the lettuces before Tigger                        Medium   Tigger
-   bounces on them
- • Ask Owl how to spell Organising                         Low      Owl
- • Find Small, who is lost again                           High     Small
- • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+    • Count the lettuces before Tigger                    ·Medium  ·Tigger
+      bounces on them
+    • Ask Owl how to spell Organising                     ·Low     ·Owl
+    • Find Small, who is lost again                       ·High    ·Small
+    • Visit Kanga and Roo on Thursday at ·10/15/26 3:00pm ·Medium  ·Kanga, Roo
+      3pm
 <span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
 <span class="t"> Help  │ Edit  │Choices│ Done  │ Note  │ Props │ Mark  │Vw Mgr │Cat Mgr│ Menu   </span></pre>
 
 <p>“Count the lettuces…” appears twice: under <em>Garden</em>, where Rabbit typed it, and
 under <em>Friends and Relations</em>, because its text mentions Tigger. The
 <em>When</em> column shows dates Agendum read from the text: “tomorrow morning” became
-13 October at 8:00, and “Thursday at 3pm” the 15th at 15:00.</p>
+<code>10/13/26 8:00am</code>, and “Thursday at 3pm” <code>10/15/26 3:00pm</code>. A
+new file writes dates as Agenda did, month first and on a 12-hour clock; <a
+href="#dates">chapter 7</a> says how to have them another way. The small
+<code>·</code> before a column entry says the item is in that column's category.</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> Ten, twelve, twenty-six. That is a very American way of
+writing the twelfth of October.</p>
+<p class="owl"><b>Owl.</b> It is Agenda's way, and Agendum is faithful to it. If it
+bothers you, it can be changed in a moment. It bothers me a little, so I have changed
+mine.</p>
+</div>
 </section>
 
 <!-- ===================================================================== -->
@@ -185,22 +198,46 @@ under <em>Friends and Relations</em>, because its text mentions Tigger. The
 screen:</p>
 <ul>
   <li>The <strong>control panel</strong>, the two lines at the top, white on blue. The
-      first names the file (with <code>*</code> when it has unsaved changes) and, on the
-      right, what Agendum is doing (<code>READY</code>, <code>EDIT</code>,
-      <code>MENU</code>, <code>CAT MGR</code> …) and the date and time. Small signs
-      appear beside these: <code>♦</code> when items are marked, <code>?</code> when
-      assignments wait for your answer, <code>@</code> when an alarm has rung,
-      <code>#</code> in a numeric column. The second line names the view, with its
-      filter, or the manager you are in. The menu, questions, prompts and messages take
-      the two lines over while they last.</li>
+      first names the file (with <code>*</code> when it has unsaved changes) and, at the
+      right, the date and time, as Agenda's: <code>10/12/26 10:15am</code>. When you are
+      simply looking at a view nothing else is there; Agenda's few words appear only
+      when Agendum is doing something particular: <code>EDIT</code> while you type,
+      <code>AUTOC</code> while it completes a category's name, <code>BROWSE</code>,
+      <code>LEARN</code> while a macro records, <code>WRKG</code> while it reads a
+      calendar in the background. A <code>?</code> there says that assignments wait for
+      your answer. The second line names the view, with its filter and what it hides
+      (<code>View: Rabbit's Week [Hide done]</code>), or the manager you are in.</li>
+  <li>At the right of that second line Agenda's small signs come and go:
+      <code>☼</code> when the highlight is on a date, <code>#</code> on a number,
+      <code>♪</code> when what is highlighted has a note, <code>o</code> when an item
+      is caught going round in circles (<a href="#finding">chapter 10</a>),
+      <code>@</code> when an alarm has rung, and <code>♦</code> while items are
+      marked.</li>
+  <li>The menu, questions, prompts and messages take the two lines over while they
+      last, and while a box is open they are the box's: what the highlighted setting
+      does.</li>
   <li>The <strong>body</strong>: the view, or a manager, or a box over the view. The
       highlight is white on red, and the line it is on is a shade lighter right across
-      the screen.</li>
+      the screen; <code>»</code> marks the highlighted row, just before the first
+      column, or in the bullet's place when the highlight is on a column entry.</li>
   <li>The <strong>key bar</strong>, the two lines at the bottom: what the function keys
-      do just now, each in a slot of its own with the key above its label, as Agenda's.
-      A key that does nothing here leaves its slot empty, so <kbd>F8</kbd> is always in
-      the same place.</li>
+      do just now, each in a slot of its own with the key above its label, as Agenda's,
+      in a view, a manager, a box or the menu alike. A key that does nothing here leaves
+      its slot empty, so <kbd>F8</kbd> is always in the same place. While something
+      moves (an item with <kbd>ALT-F10</kbd>, say) the slots stand empty, as they did in
+      Agenda: the arrow keys and <kbd>ENTER</kbd> are all you need.</li>
 </ul>
+
+<p>The bullet before an item tells you about it at a glance:</p>
+<table>
+  <tr><th>Sign</th><th>The item</th></tr>
+  <tr><td><code>•</code></td><td>An ordinary item</td></tr>
+  <tr><td><code>♪</code></td><td>Has a note</td></tr>
+  <tr><td><code>♦</code></td><td>Is marked (after the sign, when it has another)</td></tr>
+  <tr><td><code>‼</code></td><td>Is done</td></tr>
+  <tr><td><code>&amp;</code></td><td>Waits for other items (<a href="#waiting">chapter 12</a>)</td></tr>
+  <tr><td><code>@</code></td><td>Has an alarm set</td></tr>
+</table>
 
 <p>Agenda showed what the keys do with <kbd>ALT</kbd>, <kbd>CTRL</kbd> or
 <kbd>SHIFT</kbd> while you held it down. A terminal cannot tell that a key is being
@@ -209,12 +246,12 @@ the <kbd>CTRL</kbd> keys, the <kbd>SHIFT</kbd> keys, then no bar at all, then th
 keys again. The <kbd>ALT</kbd> bar of a view:</p>
 
 <!-- screen: 57-alt-keys -->
-<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                      READY  2026-10-12 10:15 </span>
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                            10/12/26  10:15am </span>
 <span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed the carrot bed tomorrow morning   2026-10-13 08:00 High
- • Count the lettuces before Tigger                        Medium   Tigger
-   bounces on them
+    • Weed the carrot bed tomorrow       ·10/13/26 8:00am ·High
+      morning
+    • Count the lettuces before Tigger                    ·Medium  ·Tigger
 <span class="t"> AltF1 │ AltF2 │ AltF3 │ AltF4 │ AltF5 │ AltF6 │ AltF7 │ AltF8 │ AltF9 │AltF10  </span>
 <span class="t">       │ When  │ Macro │Discard│ Go To │Search │UnmkAll│Last Vw│ Copy  │ Move   </span></pre>
 
@@ -230,8 +267,11 @@ of the one beneath dims; <kbd>ESC</kbd> closes them one at a time.</p>
       says what it does and which keys change it.</li>
   <li><kbd>SPACE</kbd> changes the setting to its next choice, or opens it: a setting
       showing <code>...</code> is a box of its own. A letter picks the next choice
-      beginning with it, and <kbd>F3</kbd> lists all the choices. <kbd>F2</kbd> edits a
-      name or a text; a number, such as a width, is simply typed.</li>
+      beginning with it, and <kbd>F3</kbd> lists all the choices. Typing replaces a
+      name, a text or a number, such as a width; <kbd>F2</kbd> edits what is there, with
+      the cursor after it.</li>
+  <li><kbd>F6</kbd> on a setting that names a category (a column's head, a sort key's
+      category) opens that category's own properties.</li>
   <li><kbd>F8</kbd> puts the highlighted setting back to its default, what something
       new would have; <kbd>ALT-F8</kbd> puts back every setting in the box.</li>
   <li>Changes show in the box at once; the view behind it stays as it was until
@@ -241,10 +281,13 @@ of the one beneath dims; <kbd>ESC</kbd> closes them one at a time.</p>
 </ul>
 
 <p>Some settings open a list of categories: a view's filter, an item's assignment
-profile, a category's conditions. There <kbd>SPACE</kbd> switches the highlighted
-category, typing the start of a name finds it, and <kbd>ENTER</kbd> (or <kbd>ESC</kbd>)
-closes the list keeping what you switched; its bottom edge says “Press ENTER to
-accept”.</p>
+profile, a category's conditions. There <kbd>SPACE</kbd> (or <kbd>F7</kbd>) switches
+the highlighted category, typing the start of a name finds it, <kbd>F4</kbd> takes
+them all out, and <kbd>ENTER</kbd> (or <kbd>ESC</kbd>) closes the list keeping what you
+switched; its bottom edge says “Press ENTER to accept”.</p>
+
+<p>A setting that holds a category's name, such as a section's head, completes it as
+you type, as a column does (<a href="#completion">chapter 6</a>).</p>
 
 <p>A question that wants yes or no comes in a small box of its own, the answer
 highlighted: <kbd>Y</kbd> or <kbd>N</kbd> answers at once, <kbd>SPACE</kbd> switches the
@@ -275,16 +318,16 @@ kept on keys alone, such as Note (<kbd>F5</kbd>), Done (<kbd>F4</kbd>) and undo
 
 <!-- screen: 06-menu -->
 <pre class="screen"><span class="t">  File   Item   Category   View   Print   Utilities   Quit                      </span>
-<span class="t"> Retrieve  Save  Write  Properties  Transfer                                    </span>
+<span class="t"> Retrieve  Save  Abandon  Properties  Transfer  Maintenance                     </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed the carrot bed tomorrow morning   2026-10-13 08:00 High
-<span class="t">                                                                                </span>
-<span class="t"> ←→ Highlight ENTER Select letter Select ESC Back                               </span></pre>
+    • Weed the carrot bed tomorrow       ·10/13/26 8:00am ·High
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │       │       │       │       │       │       │       │       │        </span></pre>
 
 <h3>Keys you will use all the time</h3>
 <table>
   <tr><th>Key</th><th>What it does</th><th>Also</th></tr>
-  <tr><td><kbd>F1</kbd></td><td>Help about where you are; then <kbd>c</kbd> the commands, <kbd>d</kbd> a key, <kbd>a</kbd> every key</td><td></td></tr>
+  <tr><td><kbd>F1</kbd></td><td>Help about where you are; in it, <kbd>F6</kbd> the keys and the commands</td><td></td></tr>
   <tr><td><kbd>ESC</kbd></td><td>Back out of whatever you are in</td><td></td></tr>
   <tr><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td><td>Undo / redo (up to 100 steps)</td><td></td></tr>
   <tr><td><kbd>CTRL-X</kbd></td><td>Run a command by its name: type part of it, or its initials</td><td></td></tr>
@@ -307,35 +350,90 @@ even takes you back to where the change happened.</p>
 </div>
 
 <h3 id="help">Help about where you are</h3>
-<p><kbd>F1</kbd> opens a help box over whatever you were doing: a few words about the
-place you are in, the view, a note, a manager, the menu or the box on top. From there,
-<kbd>c</kbd> lists the commands you can use there, with their keys and what each does;
-the ones that cannot run just now are greyed, and the line under the highlighted one
-says why. Typing narrows the list, and <kbd>ENTER</kbd> runs the highlighted command,
-as if you had pressed its key. <kbd>d</kbd> and then a key says what that key would do,
-without doing it, and <kbd>a</kbd> lists every key in Agendum. <kbd>ESC</kbd> goes
-back. <kbd>CTRL-X</kbd> is the quick way to the same list: a small box where you type
-part of a command's name, or its initials, and <kbd>ENTER</kbd> runs it.</p>
+<p><kbd>F1</kbd> opens Agenda's help over whatever you were doing, at the topic for the
+place you are in: the view, a note, a manager, the menu level you are on, or the box on
+top. A topic has a title, a few short parts (what it is for, examples, the keys) and
+<strong>links</strong> to other topics, in bold. The arrow keys highlight a link (a
+letter: the next link beginning with it), and <kbd>ENTER</kbd> reads it;
+<kbd>PGUP</kbd> and <kbd>PGDN</kbd> scroll a long topic.</p>
 
-<!-- screen: 51-help-commands -->
-<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                       HELP  2026-10-12 10:15 </span>
+<!-- screen: 51-help-topic -->
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                            10/12/26  10:15am </span>
 <span class="t"> Help                                                                           </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • ┌───────────────────────────────── Help ─────────────────────────────────┐
- • │ COMMANDS IN A VIEW                  ↑↓ move · ENTER runs · ESC returns │
+   ┌───────────────────────────────── Help ─────────────────────────────────┐
+   │ Views                                                                  │
+   │                                                                        │
+   │ PURPOSE       A view is one way of looking at your file: a page of     │
+   │               sections, each showing the items of one category. An     │
+ No│               item can turn up in many views, the way Pooh turns up    │
+   │               wherever there is honey.                                 │
+   │                                                                        │
+   │ IN A VIEW     Section head    A category, its items listed below       │
+ Fr│               Item            Anything you typed: a task, an idea,     │
+   │                               a phone number                           │
+   │               Column          More categories beside each item:        │
+   │                               its date, who it is for, how urgent      │
+   │                                                                        │
+   │ EXAMPLES      * A view called Calls: the calls to make, and in a       │o
+   │                 column whom to call.                                   │
+   │               * A view called This Week: a section for each day,       │
+   │                 with what falls on it.                                 │
+   └────────────────────────────────────────────────────────────────────────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t">On Help│       │ Index │       │ Find  │ Keys  │       │Review │Return │        </span></pre>
+
+<p>The help's own key bar, as Agenda's:</p>
+<table>
+  <tr><th>Key</th><th>Does</th></tr>
+  <tr><td><kbd>F1</kbd> On Help</td><td>How to use the help</td></tr>
+  <tr><td><kbd>F3</kbd> Index</td><td>The help index: a letter, then its page of keywords, each with what comes under it (“Add: Categories, Items”)</td></tr>
+  <tr><td><kbd>F5</kbd> Find</td><td>Asks for a word, then lists the topics with it; <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> then step through them</td></tr>
+  <tr><td><kbd>F6</kbd> Keys</td><td>Every key in Agendum, under two links: <em>Commands you can run here</em> and <em>Describe a key</em></td></tr>
+  <tr><td><kbd>F8</kbd> Review</td><td>Back to the topic read before (<kbd>BACKSPACE</kbd> too)</td></tr>
+  <tr><td><kbd>F9</kbd> Return</td><td>Leave the help (<kbd>ESC</kbd> too)</td></tr>
+</table>
+
+<!-- screen: 60-find-topic -->
+<pre class="screen"><span class="t"> Type the topic or term you want help on. Agendum displays a list of help       </span>
+<span class="t"> screens you can select.                                                        </span>
+<span class="h"> Garden                                   When             Priority Friends</span>
+   ┌─────────┌──────────────────── Find Topic ────────────────────┐─────────┐
+   │ Views   │                                                    │         │
+   │         │  Topic to find:                                    │         │
+   │ PURPOSE │                                                    │e of     │
+   │         └─────── Press ENTER when done, ESC to cancel ───────┘. An     │
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │       │       │       │       │       │       │       │       │        </span></pre>
+
+<p><em>Commands you can run here</em>, under <kbd>F6</kbd>, lists the commands of the
+place where you pressed <kbd>F1</kbd>, with their keys and what each does. Typing
+narrows the list, and <kbd>ENTER</kbd> runs the highlighted command, as if you had
+pressed its key; the ones that cannot run just now are greyed, and the line under the
+highlighted one says why. <em>Describe a key</em> says what the next key you press
+would do, without doing it. <kbd>CTRL-X</kbd> is the quick way to the same commands: a
+small box where you type part of a command's name, or its initials, and
+<kbd>ENTER</kbd> runs it.</p>
+
+<!-- screen: 59-help-commands -->
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                            10/12/26  10:15am </span>
+<span class="t"> Help                                                                           </span>
+<span class="h"> Garden                                   When             Priority Friends</span>
+   ┌───────────────────────────────── Help ─────────────────────────────────┐
+   │ COMMANDS IN A VIEW                  ↑↓ move · ENTER runs · ESC returns │
    │   Type to narrow the list.                                             │
    │ ────────────────────────────────────────────────────────────────────── │
- No│ Up                ↑                      Highlight the row above       │
- • │ Down              ↓ ENTER                Highlight the row below       │
+   │ Up                ↑                      Highlight the row above       │
+ No│ Down              ↓ ENTER                Highlight the row below       │
    │ Page up           PGUP                   Highlight the row a screen up │
    │ Page down         PGDN                   Highlight the row a screen do…│
- Fr│ Top               HOME CTRL-HOME         Highlight the first row of th…│
- • │ Bottom            END CTRL-END           Highlight the last row of the…│
+   │ Top               HOME CTRL-HOME         Highlight the first row of th…│
+ Fr│ Bottom            END CTRL-END           Highlight the last row of the…│
    │ Previous section  CTRL-PGUP ALT-↑        Highlight the section head ab…│
- • │ Next section      CTRL-PGDN ALT-↓        Highlight the section head be…│
- • │ ─────────────────────────────────────────────────────────── ↓ 51 more ─│
- • │ Up · ↑                                                                 │o
-   │ Highlight the row above                                                │
+   │ Next section      CTRL-PGDN ALT-↓        Highlight the section head be…│
+   │ ─────────────────────────────────────────────────────────── ↓ 51 more ─│
+   │ Up · ↑                                                                 │
+   │ Highlight the row above                                                │o
    │                                                                        │
    │                                                                        │
    │                                                                        │
@@ -344,8 +442,13 @@ part of a command's name, or its initials, and <kbd>ENTER</kbd> runs it.</p>
 <span class="t"> ↑↓ Move ← → More ENTER Run ESC Return                                          </span></pre>
 
 <div class="talk">
-<p class="rabbit"><b>Rabbit.</b> And if I choose one that cannot be done just now? I
-should hate to break it.</p>
+<p class="rabbit"><b>Rabbit.</b> A great many words about Views. Must I read them all
+before I start?</p>
+<p class="owl"><b>Owl.</b> Not at all. The help is there for the moment you are lost, and
+it opens where you are lost, which saves a good deal of looking. Read the part you
+need, follow a link if it looks useful, and <kbd>ESC</kbd> brings you back.</p>
+<p class="rabbit"><b>Rabbit.</b> And if I choose a command that cannot be done just now?
+I should hate to break it.</p>
 <p class="owl"><b>Owl.</b> You cannot. It is shown in grey, and the line under it says
 why: <em>Done</em> wants an item, and you are on a section head. It keeps its place in
 the list all the same, so you learn where it lives.</p>
@@ -368,39 +471,48 @@ start typing; <kbd>ENTER</kbd> finishes it. The new item goes in that section, b
 highlight. <kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) starts an empty new item the same way.</p>
 
 <!-- screen: 20-typing -->
-<pre class="screen"><span class="t"> Type the new item; ENTER to finish, ESC to cancel       EDIT  2026-10-12 10:15 </span>
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                                10/12/26 EDIT </span>
 <span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed the carrot bed tomorrow morning   2026-10-13 08:00 High
- • Count the lettuces before Tigger                        Medium   Tigger
-   bounces on them
- • Plant the lettuce seeds next Tuesday
+    • Weed the carrot bed tomorrow       ·10/13/26 8:00am ·High
+      morning
+    • Count the lettuces before Tigger   »                ·Medium  ·Tigger
+      bounces on them
+    • ant the lettuce seeds next Tuesday
 
 <span class="h"> Notices                                  When             Priority Friends</span>
- • Put up a Notice about the Organising   2026-10-16       High
-   Meeting on Friday
+    • Put up a Notice about the          ·10/16/26        ·High
+      Organising Meeting on Friday
 
 <span class="h"> Friends and Relations                    When             Priority Friends</span>
- • Count the lettuces before Tigger                        Medium   Tigger
-   bounces on them
- • Ask Owl how to spell Organising                         Low      Owl
- • Find Small, who is lost again                           High     Small
- • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
-<span class="t">                                                                                </span>
-<span class="t"> ENTER Done ESC Cancel ←→ Move ^A/^E Start/End ^U Clear                         </span></pre>
+    • Count the lettuces before Tigger                    ·Medium  ·Tigger
+      bounces on them
+    • Ask Owl how to spell Organising                     ·Low     ·Owl
+    • Find Small, who is lost again                       ·High    ·Small
+    • Visit Kanga and Roo on Thursday at ·10/15/26 3:00pm ·Medium  ·Kanga, Roo
+      3pm
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Paste │ Copy  │  Cut  │ Note  │       │ Mark  │       │       │        </span></pre>
 
-<p>While Rabbit types, the control panel says how to finish (<kbd>ENTER</kbd>) or give up
-(<kbd>ESC</kbd>). When he presses <kbd>ENTER</kbd>, Agendum reads the text, finds a date
-and files the item, and the control panel says which date it found:</p>
+<p>While Rabbit types, <code>EDIT</code> stands where the time was, as in Agenda;
+<kbd>ENTER</kbd> finishes and <kbd>ESC</kbd> gives up. A line too long for its place
+scrolls as he types. The key bar shows Agenda's editing keys: <kbd>F7</kbd> marks text,
+<kbd>F3</kbd> copies it, <kbd>F4</kbd> cuts it and <kbd>F2</kbd> pastes (with nothing
+marked, a small <em>What to copy</em> box asks whether he means the word, the line or
+all the text), and <kbd>F5</kbd> keeps the item and opens its note. When he presses
+<kbd>ENTER</kbd>, Agendum reads the text, finds a date and files the item, and the
+control panel says which date it found:</p>
 
 <!-- screen: 21-typed -->
-<pre class="screen"><span class="t"> When: 2026-10-20                                       READY  2026-10-12 10:15 </span>
+<pre class="screen"><span class="t"> When: 10/20/26                                               10/12/26  10:15am </span>
 <span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed the carrot bed tomorrow morning   2026-10-13 08:00 High
- • Count the lettuces before Tigger                        Medium   Tigger
-   bounces on them
- • Plant the lettuce seeds next Tuesday   2026-10-20
+    • Weed the carrot bed tomorrow       ·10/13/26 8:00am ·High
+      morning
+    • Count the lettuces before Tigger                    ·Medium  ·Tigger
+      bounces on them
+    • Plant the lettuce seeds next       »10/20/26
+      Tuesday
 <span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
 <span class="t"> Help  │ Edit  │Choices│ Done  │ Note  │ Props │ Mark  │Vw Mgr │Cat Mgr│ Menu   </span></pre>
 
@@ -419,9 +531,10 @@ meant tomorrow, say “Tuesday”.</p>
 <table>
   <tr><th>To</th><th>Press</th></tr>
   <tr><td>Change the text</td><td><kbd>F2</kbd> (or <kbd>CTRL-E</kbd>); <kbd>ENTER</kbd> keeps the change, <kbd>ESC</kbd> drops it</td></tr>
-  <tr><td>Mark it done (shown <code>√</code>); again to undo that</td><td><kbd>F4</kbd> (or <kbd>CTRL-K</kbd>)</td></tr>
-  <tr><td>Take it out of <em>this section</em> only</td><td><kbd>DEL</kbd> (<strong>Item ▸ BrkAssign</strong>)</td></tr>
-  <tr><td>Throw it away from the whole file (after a Y/N question)</td><td><kbd>ALT-F4</kbd> (or <kbd>CTRL-D</kbd>)</td></tr>
+  <tr><td>Mark it done (shown <code>‼</code>); again to undo that</td><td><kbd>F4</kbd> (or <kbd>CTRL-K</kbd>)</td></tr>
+  <tr><td>Take it out of <em>this section</em> only (after a question)</td><td><kbd>DEL</kbd> (<strong>Item ▸ BrkAssign</strong>)</td></tr>
+  <tr><td>Discard it from the whole file, into the trash (after a question)</td><td><kbd>ALT-F4</kbd> (or <kbd>CTRL-D</kbd>; <strong>Item ▸ Discard</strong>)</td></tr>
+  <tr><td>Bring discarded items back from the trash</td><td><strong>Item ▸ Undisc</strong></td></tr>
   <tr><td>Move it to another section</td><td><kbd>ALT-F10</kbd>, then the arrow keys and <kbd>ENTER</kbd></td></tr>
   <tr><td>Put it in another section <em>as well</em></td><td><kbd>ALT-F9</kbd>, then pick the section and <kbd>ENTER</kbd></td></tr>
   <tr><td>Bring back the item <kbd>DEL</kbd> last took out, into this section, below the highlight</td><td><kbd>ALT-Y</kbd></td></tr>
@@ -430,7 +543,56 @@ meant tomorrow, say “Tuesday”.</p>
 
 <p>The difference between <kbd>DEL</kbd> and <kbd>ALT-F4</kbd> matters. <kbd>DEL</kbd>
 only removes the item from the section's category; the item stays in the file and in
-its other categories. <kbd>ALT-F4</kbd> discards it altogether.</p>
+its other categories. Agendum asks first, in Agenda's words, and reminds you of the
+other key:</p>
+
+<!-- screen: 61-remove -->
+<pre class="screen"><span class="t"> Press ENTER to remove this item from the section. Press ESC to cancel.         </span>
+<span class="t">                                                                                </span>
+    • Weed the ┌────────────────────────────────────────────────┐
+      morning  │ Remove this item from the section?  Yes        │
+    • Count the│   (Use ALT-F4 to discard the item completely.) │  ·Tigger
+      bounces o└───── Press ENTER to accept, ESC to cancel ─────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │       │       │       │       │       │       │       │       │        </span></pre>
+
+<p><kbd>ENTER</kbd> removes it and <kbd>ESC</kbd> keeps it. <kbd>ALT-F4</kbd> discards the
+item altogether, after asking “Discard this item?”.</p>
+
+<h3 id="trash">The trash</h3>
+<p>A discarded item is not gone at once: it goes to the file's <strong>trash</strong>,
+as in Agenda. It leaves its categories, dates and alarm behind; its text, its note and
+the day it was entered go with it. <strong>Item ▸ Undisc</strong> brings it back,
+into the section the highlight is in, just below the highlighted item, filed under
+that section's head and nothing else. With one item in the trash it comes back at once; with several, a small box
+asks whether you want all of them or only the last one you discarded:</p>
+
+<!-- screen: 63-undiscard -->
+<pre class="screen"><span class="t"> Retrieve all discarded items in the Trash or only the last item you discarded. </span>
+<span class="t">                                                                                </span>
+<span class="h"> Garden                                   When             Priority Friends</span>
+                  ┌──────────────────────────────────────────┐
+<span class="h"> Notices          │                                          │ority Friends</span>
+    • Put up a Not│   Undiscard:     All items in trash      │h
+      Organising M└── Press ENTER to accept, ESC to cancel ──┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │       │       │Default│       │        </span></pre>
+
+<p><strong>Utilities ▸ Trash</strong> empties the trash, after asking; what was in it
+is then gone for good. The trash also empties by itself, at the end of the day on which
+its oldest item was discarded, unless <strong>File ▸ Properties ▸ Empty trash</strong>
+says otherwise: <em>On demand</em>, <em>When file is closed</em>, <em>End of day</em>
+or <em>When item is discarded</em> (no trash at all). <kbd>CTRL-Z</kbd> takes back a
+discard, and an Undisc, like any other change.</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> I threw away “Weed the carrot bed” this morning. It was
+raining. Now it has stopped.</p>
+<p class="owl"><b>Owl.</b> Then go to your Garden section and choose <strong>Item ▸
+Undisc</strong>. Back it comes, with its note. Its date stayed behind, I am afraid, so
+you must give it one again with <kbd>ALT-F2</kbd>.</p>
+<p class="rabbit"><b>Rabbit.</b> It shall have it. And this time it shall be done.</p>
+</div>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> Copy? But then I shall have two of them, and do one,
@@ -474,7 +636,10 @@ the note's own menu: <strong>Import</strong> puts a text file in at the cursor,
   <li><kbd>TAB</kbd> types spaces to the next tab stop, every five columns unless
       <strong>File ▸ Properties ▸ Tab size</strong> says otherwise;</li>
   <li><kbd>ALT-F9</kbd> moves text from the note onto the end of the item's own text,
-      and <kbd>ALT-F8</kbd> types the marked items into the note, each with its note;</li>
+      and <kbd>ALT-F8</kbd> types the marked items into the note, each with its note,
+      after Agenda's question “Discard items after copy?”: <em>Yes</em> then discards
+      them (to the trash), <em>No</em> leaves them marked, <kbd>ESC</kbd> copies
+      nothing;</li>
   <li><kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> save it and go on to the next or previous
       item's note;</li>
   <li><kbd>ALT-F6</kbd> searches and replaces, and <kbd>ALT-S</kbd> finds the next
@@ -493,8 +658,9 @@ the cursor; move the cursor and the marked text stretches with it, over several 
 if you like, and <kbd>F7</kbd> again stops. Then <kbd>F3</kbd> copies it, <kbd>F4</kbd>
 cuts it, <kbd>ALT-F4</kbd> deletes it without keeping it, and <kbd>F2</kbd> pastes what
 was last copied or cut, at the cursor, in this note or another, as often as you like.
-With nothing marked, Agendum asks whether you mean the <em>word</em>, the <em>line</em>
-or <em>all</em> the text.</p>
+With nothing marked, Agenda's <em>What to copy</em> box asks whether you mean the
+<em>Word</em>, the <em>Line</em> or <em>All text</em>. The same keys work while you type
+a line anywhere else, and what you copy in one place pastes in another.</p>
 
 <p>A note that has grown a list can give it away. <kbd>ALT-F7</kbd> makes the marked
 text (or the word, the line or all of it) a new item, below the note's item in the same
@@ -515,23 +681,23 @@ entered, the items it waits for, and every category it is assigned to, with date
 parentheses.</p>
 
 <!-- screen: 03-itemprops -->
-<pre class="screen"><span class="t"> The item's text. F2 edits it.                          PROPS  2026-10-12 10:15 </span>
-<span class="t"> View: Rabbit's Week                                                            </span>
-<span class="h"> Garden                                   When             Priority Friends</span>
- • Weed t┌───────────────────── Item properties ──────────────────────┐
- • Count │ Item text   : Weed the carrot bed tomorrow morning         │ger
-   bounce│ Note        : (none)                                       │
-         │ Statistics  : 4 categories · entered 2026-10-12            │
- Notices │ Assigned to : Entry (2026-10-12)                           │ends
- • Put up│               When (2026-10-13 08:00)                      │
-   Meetin│               Garden                                       │
-         │               High                                         │
- Friends │               (type a category name to add)                │ends
- • Count │                                                            │ger
-   bounce│ F2 edit · DEL remove · type to assign · F4 date            │
- • Ask Ow└─────────── Press ENTER when done, ESC to cancel ───────────┘
+<pre class="screen"><span class="t"> The item's text. F2 edits it.                                                  </span>
 <span class="t">                                                                                </span>
-<span class="t"> F2 Edit DEL Remove type To assign F4 Date F3 Profile ENTER Done ESC Cancel     </span></pre>
+<span class="h"> Garden                                   When             Priority Friends</span>
+    • Wee┌───────────────────── Item Properties ──────────────────────┐
+      mor│ Item text:        Weed the carrot bed tomorrow morning     │
+    • Cou│ Note:             (none)                                   │ger
+      bou│ Item statistics:  4 categories · entered 10/12/26          │
+         │ Assigned to:      Entry (10/12/26)                         │
+ Notices │                   When (10/13/26 8:00am)                   │ends
+    • Put│                   Garden                                   │
+      Org│                   High                                     │
+         │                   (type a category name to add)            │
+ Friends │                                                            │ends
+    • Cou│ F2 edit · DEL remove · type to assign · F4 date            │ger
+      bou└─────────── Press ENTER when done, ESC to cancel ───────────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │ Props │       │Default│       │        </span></pre>
 
 <p>In this box <kbd>F2</kbd> on the text edits it, <kbd>SPACE</kbd> on the note opens it,
 <kbd>DEL</kbd> on an assignment breaks it, and typing a category name assigns the item
@@ -540,8 +706,9 @@ changes it. <kbd>ENTER</kbd> closes the box. An assignment marked <code>(c)</cod
 about that in <a href="#filing">chapter 5</a>.</p>
 
 <h3>Marking several items</h3>
-<p><kbd>F7</kbd> marks an item (<code>♦</code>); on a section head it marks every item in
-the section. <kbd>ALT-F7</kbd> unmarks everything and <kbd>ALT-J</kbd> jumps to the next
+<p><kbd>F7</kbd> marks an item: <code>♦</code> takes its bullet's place, and another
+<code>♦</code> stands at the right of the View line while anything in the file is
+marked. On a section head <kbd>F7</kbd> marks every item in the section. <kbd>ALT-F7</kbd> unmarks everything and <kbd>ALT-J</kbd> jumps to the next
 marked item. With items marked, <kbd>F4</kbd>, <kbd>DEL</kbd>, <kbd>ALT-F2</kbd>,
 <kbd>ALT-F4</kbd>, <kbd>ALT-F9</kbd>, <kbd>ALT-F10</kbd>, <kbd>ALT-M</kbd> and <kbd>F3</kbd> first ask
 whether you mean the <em>marked items</em> or just the current one.</p>
@@ -559,33 +726,35 @@ three garden jobs, press <kbd>F4</kbd>, answer <kbd>M</kbd>, and all three are d
 <p class="in-which">In Which Every One of Rabbit's Jobs Is High Priority, and So None of Them Is</p>
 
 <p>All categories form one tree under <code>MAIN</code>. You see and change it in the
-<strong>category manager</strong>, <kbd>F9</kbd>. Each line shows how many items are in
-the category; <code>aka</code> gives the short name, and <code>exclusive</code> marks
-a family whose children exclude each other.</p>
+<strong>category manager</strong>, <kbd>F9</kbd>, drawn as Agenda's: just the names,
+indented under their parents, with a sign before some of them: <code>☼</code> a date
+category, <code>#</code> a numeric one, <code>♪</code> one with a note. The children of a
+family that excludes each other are joined by <code>┌ ├ └</code>, as Priority's are.
+Everything else about a category is in its properties (<kbd>F6</kbd>).</p>
 
 <!-- screen: 02-catmgr -->
-<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                    CAT MGR  2026-10-12 10:15 </span>
-<span class="t"> Category Manager                                                 20 categories </span>
- MAIN   6
-    Entry   date
-    When   date
-    Done   date
-    Garden   2
-    Notices   1
-    Friends and Relations   aka Friends · 4
-       Pooh   0
-       Piglet   0
-       Owl   1
-       Eeyore   0
-       Kanga   1
-       Roo   1
-       Tigger   1
-       Christopher Robin   aka CR · 0
-       Small   1
-    Priority   exclusive · 6
-       High   3
-       Medium   2
-       Low   1
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                                              </span>
+<span class="t"> Category Manager                                                               </span>
+  MAIN
+  ☼ Entry
+  ☼ When
+  ☼ Done
+    Garden
+    Notices
+    Friends and Relations
+      Pooh
+      Piglet
+      Owl
+      Eeyore
+      Kanga
+      Roo
+      Tigger
+      Christopher Robin
+      Small
+    Priority
+     ┌High
+     ├Medium
+     └Low
 <span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
 <span class="t"> Help  │ Edit  │       │       │ Note  │ Props │Promote│Demote │To View│ Menu   </span></pre>
 
@@ -607,6 +776,7 @@ done. They, and <code>MAIN</code>, cannot be renamed or discarded.</p>
   <tr><td>Fold a family away / open it</td><td><kbd>ALT-−</kbd> / <kbd>ALT-=</kbd> (twice: all)</td></tr>
   <tr><td>Discard it, with its children</td><td><kbd>ALT-F4</kbd> or <kbd>DEL</kbd></td></tr>
   <tr><td>Its note / its properties</td><td><kbd>F5</kbd> / <kbd>F6</kbd></td></tr>
+  <tr><td>Copy its conditions or actions to another category (move there, <kbd>ENTER</kbd>) / clear them</td><td><kbd>ALT-F9</kbd> / <kbd>ALT-F8</kbd> (<a href="#rules">chapter 9</a>)</td></tr>
   <tr><td>The category manager's own menu: Category (Properties, Add, Discard), Return, Quit</td><td><kbd>F10</kbd></td></tr>
   <tr><td>Back to the view</td><td><kbd>ESC</kbd> or <kbd>F9</kbd></td></tr>
 </table>
@@ -648,12 +818,12 @@ Agenda. <kbd>SPACE</kbd> changes the highlighted setting, or opens it: <em>Note<
 their own.</p>
 
 <!-- screen: 05-catprops -->
-<pre class="screen"><span class="t"> The category's name. F2 (or SPACE) edits it.           PROPS  2026-10-12 10:15 </span>
-<span class="t"> Category Manager                                                 20 categories </span>
- MAIN   6
-   ┌────────────── Category properties: Friends and Relations ──────────────┐
-   │ Category name:      Friends and Rel…  Type:                Standard    │
-   │ Parent is MAIN                        Match category name: No          │
+<pre class="screen"><span class="t"> The category's name. F2 (or SPACE) edits it.                                   </span>
+<span class="t">                                                                                </span>
+  MAIN
+  ☼┌───────────────────────── Category Properties ──────────────────────────┐
+  ☼│ Category name:      Friends and Rel…  Type:                Standard    │
+  ☼│ Parent is MAIN                        Match category name: No          │
    │ Short name:         Friends                                            │
    │ Also match:         (none)                                             │
    │ Note:               ...                                                │
@@ -664,15 +834,16 @@ their own.</p>
    │ Advanced settings:  ...               Excludes:                        │
    │                                       (none)                           │
    └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
-<span class="t">                                                                                </span>
-<span class="t"> SPACE Change F2 Edit ENTER Done ESC Cancel                                     </span></pre>
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │ Props │       │Default│       │        </span></pre>
 
 <table>
   <tr><th>Property</th><th>What it does</th></tr>
   <tr><td>Short name</td><td>A nickname, shown in narrow columns, which also matches text
       (<em>Christopher Robin</em>, <em>CR</em>).</td></tr>
-  <tr><td>Type</td><td>Make a standard category <a href="#numbers">numeric</a> or a
-      <a href="#datecats">date category</a>. This cannot be undone except with
+  <tr><td>Type</td><td>Make a standard category <em>unindexed</em> (one text per item,
+      such as a telephone number, typed in its column), <a href="#numbers">numeric</a>
+      or a <a href="#datecats">date category</a>. This cannot be undone except with
       <kbd>CTRL-Z</kbd>.</td></tr>
   <tr><td>Exclusive children</td><td>See above.</td></tr>
   <tr><td>Match category name</td><td>Whether its name files items automatically
@@ -749,39 +920,40 @@ spelt enough for one week.</p>
   <li><kbd>F3</kbd> on an item opens its <strong>assignment profile</strong>, the whole
       tree with the item's categories marked: <code>*</code> assigned, <code>c</code> by
       a condition, <code>+</code> through a subcategory, <code>◊</code> a date.
-      <kbd>SPACE</kbd> assigns or unassigns. The control panel says why the item is in
-      the highlighted category: typed there by hand, its name in the text, a condition, a
-      date, or through a child.</li>
+      <kbd>SPACE</kbd> (or <kbd>F7</kbd>) assigns or unassigns, <kbd>F2</kbd> renames the
+      highlighted category and <kbd>F6</kbd> opens its properties. The control panel says
+      why the item is in the highlighted category: typed there by hand, its name in the
+      text, a condition, a date, or through a child.</li>
   <li><kbd>ALT-M</kbd> picks one category for the item, or for all marked items.</li>
 </ul>
 
 <!-- screen: 04-profile -->
-<pre class="screen"><span class="t"> In Entry: dated 2026-10-12                            ASSIGN  2026-10-12 10:15 </span>
-<span class="t"> View: Rabbit's Week                                                            </span>
-<span class="h"> Garden                                   When             Priority Friends</span>
- • Weed t┌──── Assignments: Weed the carrot bed tomorrow morning ─────┐
- • Count │ ◊   Entry                                                  │ger
-   bounce│ ◊   When                                                   │
-         │     Done                                                   │
- Notices │ *   Garden                                                 │ends
- • Put up│     Notices                                                │
-   Meetin│     Friends and Relations                                  │
-         │       Pooh                                                 │
- Friends │       Piglet                                               │ends
- • Count │       Owl                                                  │ger
-   bounce│       Eeyore                                               │
- • Ask Ow│       Kanga                                                │
- • Find S│       Roo                                                  │ll
- • Visit │       Tigger                                               │ga, Roo
-         │                                                            │
-         │ * assigned  c by a condition  + via subcategory  SPACE     │
-         └────────────────── Press ENTER to accept ───────────────────┘
+<pre class="screen"><span class="t"> In Entry: dated 10/12/26                                                       </span>
 <span class="t">                                                                                </span>
-<span class="t"> SPACE Assign/Unassign ESC Return                                               </span></pre>
+<span class="h"> Garden                                   When             Priority Friends</span>
+    • Wee┌──── Assignments: Weed the carrot bed tomorrow morning ─────┐
+      mor│ ◊   Entry                                                  │
+    • Cou│ ◊   When                                                   │ger
+      bou│     Done                                                   │
+         │ *   Garden                                                 │
+ Notices │     Notices                                                │ends
+    • Put│     Friends and Relations                                  │
+      Org│       Pooh                                                 │
+         │       Piglet                                               │
+ Friends │       Owl                                                  │ends
+    • Cou│       Eeyore                                               │ger
+      bou│       Kanga                                                │
+    • Ask│       Roo                                                  │
+    • Fin│       Tigger                                               │ll
+    • Vis│                                                            │ga, Roo
+      3pm│ * assigned  c by a condition  + via subcategory  SPACE     │
+         └────────────────── Press ENTER to accept ───────────────────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │       │       │       │ Props │InclCat│       │       │        </span></pre>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> I never put the carrot bed in <em>Entry</em>.</p>
-<p class="owl"><b>Owl.</b> The top line says who did: “dated 2026-10-12”, the day you
+<p class="owl"><b>Owl.</b> The top line says who did: “dated 10/12/26”, the day you
 wrote it. Move down the list and it tells you, for each category the item is in, why it
 is there. Nothing is filed behind your back without a reason you can read.</p>
 </div>
@@ -791,12 +963,12 @@ is there. Nothing is filed behind your back without a reason you can read.</p>
 <strong>Also match</strong> takes a list:</p>
 
 <!-- screen: 24-alsomatch -->
-<pre class="screen"><span class="t"> Other words and phrases, separated by semicolons,      PROPS  2026-10-12 10:15 </span>
-<span class="t"> that assign items too. F2 edits.                                               </span>
- MAIN   6
-   ┌───────────────────── Category properties: Garden ──────────────────────┐
-   │ Category name:      Garden            Type:                Standard    │
-   │ Parent is MAIN                        Match category name: Yes         │
+<pre class="screen"><span class="t"> Other words and phrases, separated by semicolons, that assign items too. F2    </span>
+<span class="t"> edits.                                                                         </span>
+  MAIN
+  ☼┌───────────────────────── Category Properties ──────────────────────────┐
+  ☼│ Category name:      Garden            Type:                Standard    │
+  ☼│ Parent is MAIN                        Match category name: Yes         │
    │ Short name:         (none)                                             │
    │ Also match:         carrot*;lettuce…                                   │
    │ Note:               ...                                                │
@@ -807,8 +979,8 @@ is there. Nothing is filed behind your back without a reason you can read.</p>
    │ Advanced settings:  ...               Excludes:                        │
    │                                       (none)                           │
    └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
-<span class="t">                                                                                </span>
-<span class="t"> SPACE Change F2 Edit ENTER Done ESC Cancel                                     </span></pre>
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │ Props │       │Default│       │        </span></pre>
 
 <table>
   <tr><th>Write</th><th>Means</th><th>Example</th></tr>
@@ -823,8 +995,8 @@ is there. Nothing is filed behind your back without a reason you can read.</p>
 </table>
 
 <p>Also match works even when <strong>Match category name</strong> is off. New
-words only affect items you write or change from now on; <strong>Category ▸
-Recalc</strong> applies them to the whole file.</p>
+words only affect items you write or change from now on; <strong>Recalc</strong>
+(<kbd>CTRL-X</kbd>, then its name) applies them to the whole file.</p>
 
 <h3 id="matchsettings">Matching settings</h3>
 <p><strong>File ▸ Properties ▸ Auto-assign settings</strong> sets how the whole file
@@ -832,21 +1004,23 @@ matches. <kbd>SPACE</kbd> shows the next choice, a letter picks one, and <kbd>F3
 lists them.</p>
 
 <!-- screen: 08-autoassign -->
-<pre class="screen"><span class="t"> Assign items to categories whose names or Also match   PROPS  2026-10-12 10:15 </span>
-<span class="t"> words are in their text. SPACE switches.                                       </span>
+<pre class="screen"><span class="t"> Assign items to categories whose names or Also match words are in their text.  </span>
+<span class="t"> SPACE switches.                                                                </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • ┌─────────────────────────── File properties ────────────────────────────┐
- • │ ┌─────────────────── Auto-assign settings ───────────────────┐         │
-   │ │ Text matching           : On                               │         │
-   │ │ Match on                : Item text                        │         │
- No│ │ Required match strength : Exact match - 100%               │         │
- • │ │ Confirm assignments     : Never                            │         │
-   │ │ Ignore text enclosed by : " "                              │         │
-   │ │ Ignore suffixes         : Yes                              │         │
- Fr│ │ Ignore accents          : No                               │         │
- • └─│                                                            │  ───────┘
-<span class="t">                                                                                </span>
-<span class="t"> ↑↓←→ Setting SPACE Next ENTER Done ESC Cancel                                  </span></pre>
+   ┌─────────────────────────── File Properties ────────────────────────────┐
+   │ ┌─────────────── Auto-assign Global Settings ────────────────┐         │
+   │ │ Text matching:           On                                │         │
+   │ │   Match on:                     Item text                  │         │
+   │ │   Required match strength:      Exact match - 100%         │         │
+ No│ │   Confirm assignments:          Never                      │         │
+   │ │   Ignore item text enclosed by: " "                        │         │
+   │ │   Ignore suffixes:              Yes                        │         │
+   │ │   Ignore accents:               No                         │         │
+ Fr│ │                                                            │         │
+   │ │ SPACE next choice                                          │         │
+   │ └─────────── Press ENTER when done, ESC to cancel ───────────┘         │
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │       │       │Default│       │        </span></pre>
 
 <table>
   <tr><th>Setting</th><th>Choices</th></tr>
@@ -865,31 +1039,30 @@ lists them.</p>
 
 <p>One category can differ from the file: its <strong>Advanced settings</strong> set any
 of these for it alone (each says <em>Global</em> until you change it). Rabbit's
-<em>Notices</em> could match the note instead of the item text; the category manager
-then shows <code>T= Note</code> beside it.</p>
+<em>Notices</em> could match the note instead of the item text, while everything else
+goes on matching the item text.</p>
 
 <h3>Asking first</h3>
 <p>With <strong>Confirm assignments</strong> set to <em>Always</em>, Agendum suggests
 instead of filing. A <code>?</code> appears at the top right, and
-<strong>Utilities ▸ Questions</strong> goes through the items one at a time:
-<kbd>SPACE</kbd> picks a category, <kbd>TAB</kbd> picks them all, <kbd>ENTER</kbd>
-assigns the picked ones and moves on, <kbd>ESC</kbd> stops.</p>
+<strong>Utilities ▸ Questions</strong> goes through the items one at a time, each
+suggested category written with its parent and a <code>?</code> before it:
+<kbd>SPACE</kbd> picks a category (its <code>?</code> becomes <code>*</code>),
+<kbd>TAB</kbd> picks them all, <kbd>ENTER</kbd> assigns the picked ones and moves on,
+<kbd>ESC</kbd> stops.</p>
 
 <!-- screen: 36-questions -->
-<pre class="screen"><span class="t"> Pick the categories to assign the item to: SPACE     ? READY  2026-10-12 10:15 </span>
-<span class="t"> one, TAB all. ENTER assigns them and shows the next item.                      </span>
+<pre class="screen"><span class="t"> Pick the categories to assign the item to: SPACE one, TAB all. ENTER assigns   </span>
+<span class="t"> them and shows the next item.                                                  </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed t┌────────────────── Suggested assignments ───────────────────┐
- • Count │ Ask Piglet and Pooh to help dig                            │ger
-   bounce│                                                            │
- • Ask Pi│ Assign to:                                                 │
-         │   Pooh                                                     │
- Notices │   Piglet                                                   │ends
- • Put up│                                                            │
-   Meetin│ SPACE pick · TAB all · ENTER assign · ESC stop             │
-         └────────────────────────────────────────────────────────────┘
-<span class="t">                                                                                </span>
-<span class="t"> SPACE Pick TAB All ENTER Assign ESC Stop                                       </span></pre>
+    • Wee┌──────────────────────── Questions ─────────────────────────┐
+      mor│Suggested categories for "Ask Piglet and Pooh to help dig"  │
+    • Cou│  ?│  Friends and Relations:Pooh                            │ger
+      bou│  ?│  Friends and Relations:Piglet                          │
+    • Ask│   │                                                        │
+         └────────────────── Press ENTER to accept ───────────────────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │       │       │       │       │ Props │       │       │       │        </span></pre>
 
 <div class="talk">
 <p class="owl"><b>Owl.</b> Some animals like to be asked. I find it tiring, but then I
@@ -915,19 +1088,19 @@ Add</strong> does the same in Agenda's <em>Section Add</em> box, where you type 
 section up as in its properties, all at once:</p>
 
 <!-- screen: 56-section-add -->
-<pre class="screen"><span class="t"> Type a new or existing category name, or press F3 to   PROPS  2026-10-12 10:15 </span>
-<span class="t"> pick one. F6 shows the category's properties.                                  </span>
+<pre class="screen"><span class="t"> Type a new or existing category name, or press F3 to pick one. F6 shows the    </span>
+<span class="t"> category's properties.                                                         </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed t┌─────────────────────── Section Add ────────────────────────┐
- • Count │ Section head             :                                 │ger
-   bounce│ Insert                   : Below current section           │
-         │                                                            │
- Notices │ Columns:                                                   │ends
- • Put up│                                                            │
-   Meetin│ SPACE open · DEL remove · ALT-↑↓ move · INS add            │
-         └─────────── Press ENTER when done, ESC to cancel ───────────┘
-<span class="t">                                                                                </span>
-<span class="t"> ↑↓←→ Setting SPACE Open DEL Remove ALT-↑↓ Move INS Add F3 Choices F6 Props     </span></pre>
+    • Wee┌─────────────────────── Section Add ────────────────────────┐
+      mor│ Section head             :                                 │
+    • Cou│ Insert                   : Below current section           │ger
+      bou│                                                            │
+         │ Columns:                                                   │
+ Notices │                                                            │ends
+    • Put│ SPACE open · DEL remove · ALT-↑↓ move · INS add            │
+      Org└─────────── Press ENTER when done, ESC to cancel ───────────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │ Props │       │Default│       │        </span></pre>
 
 <p> <kbd>F2</kbd> on a section head
 renames the category, <kbd>F6</kbd> opens the section's properties (below), <kbd>DEL</kbd>
@@ -960,28 +1133,28 @@ the rest for all its numeric columns at once (<a href="#numbers">chapter 11</a>)
 gathers a whole view's settings in one box, laid out as Agenda's:</p>
 
 <!-- screen: 54-viewprops -->
-<pre class="screen"><span class="t"> Type a name for the view. F2 edits the name it has.    PROPS  2026-10-12 10:15 </span>
-<span class="t"> View: Rabbit's Week                                                            </span>
+<pre class="screen"><span class="t"> Type a name for the view. F2 edits the name it has.                            </span>
+<span class="t">                                                                                </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • We┌───────────────────────── View Properties ──────────────────────────┐
- • Co│ View name:  Rabbit's Week                                          │
-   bo│ Item sorting:    ...              Sections:                        │
+    •┌───────────────────────── View Properties ──────────────────────────┐
+     │ View name:  Rabbit's Week                                          │
+    •│ Item sorting:    ...              Sections:                        │
      │ Section sorting: None               Garden                         │
- Noti│                                     Notices                        │
- • Pu│ Hide empty sections:   No           Friends and Relations          │
-   Me│ Hide done items:       No                                          │
+     │                                     Notices                        │
+ Noti│ Hide empty sections:   No           Friends and Relations          │
+    •│ Hide done items:       No                                          │
      │ Hide dependent items:  No                                          │
- Frie│ Hide inherited items:  No                                          │
- • Co│ Hide column heads:     No                                          │
-   bo│ Section separators:    No                                          │
- • As│ Number items:          No           Filter: (none)                 │
- • Fi│                                                                    │
- • Vi│ View statistics:       ...                                         │Roo
-     │                                                                    │
+     │ Hide inherited items:  No                                          │
+ Frie│ Hide column heads:     No                                          │
+    •│ Section separators:    No                                          │
+     │ Number items:          No           Filter: (none)                 │
+    •│                                                                    │
+    •│ View statistics:       ...                                         │
+    •│                                                                    │Roo
      │ SPACE change · F2 edit · F3 choices · F6 props · INS add           │
      └─────────────── Press ENTER when done, ESC to cancel ───────────────┘
-<span class="t">                                                                                </span>
-<span class="t"> SPACE Change F2 Edit F3 Choices F6 Props INS Add DEL Remove A-F10 Move         </span></pre>
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │ Props │       │Default│       │        </span></pre>
 
 <ul>
   <li><strong>View name</strong>: type a new one, or <kbd>F2</kbd> to edit it.</li>
@@ -1000,7 +1173,11 @@ gathers a whole view's settings in one box, laid out as Agenda's:</p>
   <li><strong>Sections</strong>, on the right, lists the view's sections: type a name (or
       <kbd>INS</kbd>) to add one below the highlighted one, <kbd>DEL</kbd> removes one,
       <kbd>ALT-F10</kbd> picks one up to move with <kbd>↑</kbd> <kbd>↓</kbd>, and
-      <kbd>F6</kbd> opens its Section Properties. <strong>Filter</strong>, under them, is
+      <kbd>F6</kbd> opens its Section Properties. <kbd>F3</kbd> there opens Agenda's
+      <em>Section Select</em>: the whole tree, with <code>*</code> on the view's
+      sections; <kbd>SPACE</kbd> makes a category a section or takes it away,
+      <kbd>F5</kbd> takes a parent's children instead of the parent, and <kbd>F4</kbd>
+      takes them all away (a view must keep one). <strong>Filter</strong>, under them, is
       the view's filter.</li>
 </ul>
 
@@ -1018,26 +1195,26 @@ in Notices too. A column added to the current section only changes on its own.
 <strong>View ▸ Column ▸ Add</strong> asks for all of it at once:</p>
 
 <!-- screen: 49-column-add -->
-<pre class="screen"><span class="t"> Type the name of a new or existing category, or        PROPS  2026-10-12 10:15 </span>
-<span class="t"> press F3 to pick one.                                                          </span>
+<pre class="screen"><span class="t"> Type the name of a new or existing category, or press F3 to pick one.          </span>
+<span class="t">                                                                                </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • ┌────────────────────────────── Column Add ──────────────────────────────┐
- • │ Column head:  (F3 to pick)      Category type: Standard                │
+   ┌────────────────────────────── Column Add ──────────────────────────────┐
+   │ Column head:  (F3 to pick)      Category type: Standard                │
    │ Width:        12                                                       │
    │ Format:       Name only                                                │
- No│ Position:     Right of current column                                  │
- • │ Insert in:    All sections                                             │
+   │ Position:     Right of current column                                  │
+ No│ Insert in:    All sections                                             │
    │                                                                        │
    │ SPACE next choice · type a number · F3 pick the head · ENTER add       │
- Fr└───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
-<span class="t">                                                                                </span>
-<span class="t"> ↑↓←→ Setting SPACE Next type Number F3 Choices ENTER Add ESC Cancel            </span></pre>
+   └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │ Props │       │Default│       │        </span></pre>
 
 <ul>
   <li><strong>Column head</strong>: type a category's name (a new name makes a new
       category), or <kbd>F3</kbd> to pick one.</li>
-  <li><strong>Category type</strong>: a new or standard head can be made a date or
-      numeric category as the column is added.</li>
+  <li><strong>Category type</strong>: a new or standard head can be made a numeric, date
+      or unindexed category as the column is added.</li>
   <li><strong>Position</strong>: right or left of the current column.
       <strong>Insert in</strong>: all sections or the current one. Which of these
       <kbd>ALT-R</kbd> and <kbd>ALT-L</kbd> use is set in <strong>File ▸
@@ -1064,18 +1241,18 @@ in Notices too. A column added to the current section only changes on its own.
 </ul>
 
 <!-- screen: 50-column-props -->
-<pre class="screen"><span class="t"> Press F3 to pick a category or type a new one.         PROPS  2026-10-12 10:15 </span>
-<span class="t"> View: Rabbit's Week                                                            </span>
+<pre class="screen"><span class="t"> Press F3 to pick a category or type a new one.                                 </span>
+<span class="t">                                                                                </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • ┌────────────────────────── Column Properties ───────────────────────────┐
- • │ Column head:  Friends and Re…  Category type:            Standard      │
+   ┌────────────────────────── Column Properties ───────────────────────────┐
+   │ Column head:  Friends and Re…  Category type:            Standard      │
    │ Width:        12               Link with other sections: Yes           │
    │ Format:       Name only                                                │
- No│                                                                        │
- • │ SPACE next choice · type a number · F3 pick the head                   │
+   │                                                                        │
+ No│ SPACE next choice · type a number · F3 pick the head                   │
    └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
-<span class="t">                                                                                </span>
-<span class="t"> ↑↓←→ Setting SPACE Next type Number F3 Choices ENTER Done ESC Cancel           </span></pre>
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │ Props │       │Default│       │        </span></pre>
 
 <p>An empty section has no items to put the highlight on, so press <kbd>→</kbd> on its
 head to reach its columns.</p>
@@ -1108,27 +1285,31 @@ left out, you see. And if she moves, type the new place in the column.</p>
 </div>
 
 <h3 id="completion">Typing in a column</h3>
-<p>Typing in a column assigns the item. Agendum completes the name as you type, among
-that column's categories only:</p>
+<p>Typing in a column assigns the item. What you type goes on the control panel's
+second line, as in Agenda, and the cell keeps showing what is there until you press
+<kbd>ENTER</kbd>. Agendum completes the name as you type, among that column's
+categories only, with <code>AUTOC</code> at the top right and the matches counted:</p>
 
 <!-- screen: 22-complete -->
-<pre class="screen"><span class="t"> 1 category begins with "Lo" · ENTER accepts · INS      AUTOC  2026-10-12 10:15 </span>
-<span class="t"> new category                                                                   </span>
+<pre class="screen"><span class="t"> 1 of 1 matching categories. Current choice: Low                          AUTOC </span>
+<span class="t"> Low                                                                            </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed the carrot bed tomorrow morning   2026-10-13 08:00 Low
- • Count the lettuces before Tigger                        Medium   Tigger
-<span class="t">                                                                                </span>
-<span class="t"> ENTER Accept F8/A-N Next F7/A-P Previous INS/^N New category ESC Cancel        </span></pre>
+    » Weed the carrot bed tomorrow       ·10/13/26 8:00am ·High
+      morning
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │       │Choices│       │NewCat │       │PrevSel│NextSel│       │        </span></pre>
 
 <ul>
-  <li><kbd>ENTER</kbd> accepts what is shown; <kbd>F8</kbd> / <kbd>F7</kbd> (or
-      <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd>) show the other matches.</li>
+  <li><kbd>ENTER</kbd> accepts what is shown; <kbd>F8</kbd> NextSel / <kbd>F7</kbd>
+      PrevSel (or <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd>) show the other matches, and
+      <kbd>F3</kbd> Choices lists the column's categories.</li>
   <li>A name that doesn't exist yet becomes a new category under the column's head;
-      <kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) makes exactly what you typed even when it
+      <kbd>F5</kbd> NewCat (or <kbd>INS</kbd>) makes exactly what you typed even when it
       begins an existing name.</li>
   <li><kbd>INS</kbd> on an entry adds another one (Kanga, Roo); <kbd>DEL</kbd> removes
       one; <kbd>F2</kbd> changes it.</li>
-  <li><kbd>F3</kbd> in a column lists its categories to choose from.</li>
+  <li>In an unindexed column, what you type is simply the item's text there, a
+      telephone number say, and <code>⌂</code> shows at the right of the View line.</li>
 </ul>
 
 <div class="talk">
@@ -1150,12 +1331,12 @@ narrow it down. From a view, <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> go to the next 
 <kbd>ALT-F8</kbd> back to the last one.</p>
 
 <!-- screen: 52-viewmgr -->
-<pre class="screen"><span class="t"> To display a view, highlight the view name and        VW MGR  2026-10-12 10:15 </span>
-<span class="t"> press ENTER. Press INS to create a new view.                                   </span>
+<pre class="screen"><span class="t"> To display a view, highlight the view name and press ENTER. Press INS to       </span>
+<span class="t"> create a new view.                                                             </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed the ca┌────────────────── View Manager ──────────────────┐
- • Count the l│      Rabbit's Week                               │  Tigger
-   bounces on └────── Press ENTER when done, ESC to cancel ──────┘
+    • Weed the┌────────────────── View Manager ──────────────────┐
+      morning │      Rabbit's Week                               │
+    • Count th└────── Press ENTER when done, ESC to cancel ──────┘ ·Tigger
 <span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
 <span class="t"> Help  │ Edit  │       │Delete │       │ Props │       │       │       │        </span></pre>
 
@@ -1211,7 +1392,7 @@ ways of saying it:</p>
       before.</li>
   <li>A date without a year is in the future: in December, “March 3” is next year's.</li>
   <li>A time without am or pm falls between 8:00 in the morning and 7:59 in the
-      evening, so “at 3” is 15:00; hours over 12 read as a 24-hour clock.</li>
+      evening, so “at 3” is 3:00pm; hours over 12 read as a 24-hour clock.</li>
   <li>Words that are also ordinary words (“sat”, “wed”, “May”) count as dates only after
       “on”, “by”, “until” or “till”, or with a day number (“May 5”).</li>
   <li>A date is read once: change other words of the item and the date stays; change or
@@ -1236,23 +1417,23 @@ time, <kbd>ENTER</kbd> puts the date in the entry as if you had typed it, and
 something up.</p>
 
 <!-- screen: 39-popup-calendar -->
-<pre class="screen"><span class="t"> Move the highlight to a date and press ENTER.        CHOICES  2026-10-12 10:15 </span>
-<span class="t"> PGUP/PGDN for another month; type a date to go there; F6 adds a time.          </span>
+<pre class="screen"><span class="t"> Move the highlight to a date and press ENTER. PGUP/PGDN for another month;     </span>
+<span class="t"> type a date to go there; F6 adds a time.                                       </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed the carrot bed t┌──────── October 2026 ────────┐00 High
- • Count the lettuces be│ Mon Tue Wed Thu Fri Sat Sun  │   Medium   Tigger
-   bounces on them      │                              │
-                        │               1   2   3   4  │
-<span class="h"> Notices                │   5   6   7   8   9  10  11  │   Priority Friends</span>
- • Put up a Notice about│  12  13  14  15  16  17  18  │   High
-   Meeting on Friday    │  19  20  21  22  23  24  25  │
-                        │  26  27  28  29  30  31      │
+    » Weed the carrot be┌──────── October 2026 ────────┐m ·High
+      morning           │ Mon Tue Wed Thu Fri Sat Sun  │
+    • Count the lettuces│                              │  ·Medium  ·Tigger
+      bounces on them   │               1   2   3   4  │
+                        │   5   6   7   8   9  10  11  │
+<span class="h"> Notices                │  12  13  14  15  16  17  18  │   Priority Friends</span>
+    • Put up a Notice ab│  19  20  21  22  23  24  25  │  ·High
+      Organising Meeting│  26  27  28  29  30  31      │
+                        │                              │
 <span class="h"> Friends and Relations  │                              │   Priority Friends</span>
- • Count the lettuces be│                              │   Medium   Tigger
-   bounces on them      │ Time: 08:00                  │
- • Ask Owl how to spell └─ ENTER accept · ESC cancel ──┘   Low      Owl
-<span class="t">                                                                                </span>
-<span class="t"> ←→↑↓ Day/week PGUP/DN Month ^←→ Year ENTER Select F6 Time type Go to ESC Cancel</span></pre>
+    • Count the lettuces│ Time: 08:00                  │  ·Medium  ·Tigger
+      bounces on them   └─ ENTER accept · ESC cancel ──┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │       │       │       │       │       │       │       │       │        </span></pre>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> Which day <em>is</em> the second Friday of November? I
@@ -1283,20 +1464,45 @@ weeding is already waiting.</p>
 </div>
 
 <h3>Alarms</h3>
-<p><kbd>ALT-A</kbd> on an item with a When time sets an alarm, 5 minutes before unless you
-type another number (0 to 60); the item shows <code>@</code>. When the time comes Agendum
-plays Agenda's little alarm tune, names the item, and shows <code>@</code> at the top
-right until you look at <strong>Utilities ▸ Show ▸ Alarm</strong>, which lists the day's
-alarms. <kbd>ALT-A</kbd> again
-cancels an alarm.</p>
+<p><kbd>ALT-A</kbd> (<strong>Item ▸ Alarm</strong>) opens Agenda's <strong>Set
+Alarm</strong> box: which date the alarm rings before (<em>When</em>, unless you choose
+another date category with <kbd>SPACE</kbd> or <kbd>F3</kbd>) and how many minutes before
+(5, or any number from 0 to 60). <kbd>ENTER</kbd> sets it.</p>
+
+<!-- screen: 37-set-alarm -->
+<pre class="screen"><span class="t"> Press F3 to pick the date category whose value is compared to the system date  </span>
+<span class="t"> and time for the alarm.                                                        </span>
+<span class="h"> Garden                                   When             Priority Friends</span>
+    • Weed the ca┌──────────────── Set Alarm ─────────────────┐
+      morning    │                                            │
+    • Count the l│   Date category:    When                   │um  ·Tigger
+      bounces on │   Minutes before:   5                      │
+                 │ SPACE next date category · ENTER set       │
+<span class="h"> Notices         └─── Press ENTER when done, ESC to cancel ───┘rity Friends</span>
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │       │       │Default│       │        </span></pre>
+
+<p>The item then shows <code>@</code> in its bullet's place. An item without a date can
+have an alarm too; it waits until the item gets one. <kbd>ALT-A</kbd> on an item that
+has an alarm cancels it at once.</p>
 
 <!-- screen: 38-alarm -->
-<pre class="screen"><span class="t"> Alarm set for 2026-10-15 14:55                         READY  2026-10-12 10:15 </span>
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum *                          10/12/26  10:15am </span>
 <span class="t"> View: Rabbit's Week                                                            </span>
- • Find Small, who is lost again                           High     Small
- @ Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
+<span class="h"> Friends and Relations                    When             Priority Friends</span>
+    @ Visit Kanga and Roo on Thursday at »10/15/26 3:00pm ·Medium  ·Kanga, Roo
+      3pm
 <span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
 <span class="t"> Help  │ Edit  │Choices│ Done  │ Note  │ Props │ Mark  │Vw Mgr │Cat Mgr│ Menu   </span></pre>
+
+<p>When the time comes Agendum plays Agenda's little alarm tune and names the item, and
+<code>@</code> appears at the right of the View line. <strong>Utilities ▸ Show ▸
+Alarm</strong> shows the alarms in the Show view, in two sections:
+<em>!Current Alarms!</em>, those still to ring, and <em>!Past Alarms!</em>, those that
+have rung, the latest first. There <kbd>DEL</kbd> asks, as it always does, and then
+cancels a current alarm or takes a past one off the list; the item itself stays.
+The View line's <code>@</code> stays until the last past alarm is gone, or the day
+is over.</p>
 
 <p>Alarms that came due while the file was closed are not lost. The next time you open
 it they ring, as in Agenda, their items show <code>@</code>, and they wait in
@@ -1307,17 +1513,17 @@ with the same text share a line, with a count, and <kbd>ENTER</kbd> or <kbd>ESC<
 closes it:</p>
 
 <!-- screen: 53-away -->
-<pre class="screen"><span class="t"> Alarms that came due while the file was closed.        READY  2026-10-12 10:15 </span>
-<span class="t"> Utilities ▸ Show ▸ Alarm lists them all.                                       </span>
+<pre class="screen"><span class="t"> Alarms that came due while the file was closed. Utilities ▸ Show ▸ Alarm lists </span>
+<span class="t"> them all.                                                                      </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed┌───────────────────── While you were away ──────────────────────┐
- • Coun│ 2 alarms came due:                                             │r
-   boun│                                                                │
-       │ 2026-10-12 09:25  Ask Piglet to bring a basket at 9:30am       │
- Notice│ 2026-10-12 08:55  Remind Tigger about the lettuces at 9am      │ds
- • Put └───────────────── Press ENTER or ESC to return ─────────────────┘
-<span class="t">                                                                                </span>
-<span class="t"> ENTER/ESC Return                                                               </span></pre>
+    • W┌───────────────────── While you were away ──────────────────────┐
+      m│ 2 alarms came due:                                             │
+    • C│                                                                │r
+      b│ 10/12/26 9:25am  Ask Piglet to bring a basket at 9:30am        │
+       │ 10/12/26 8:55am  Remind Tigger about the lettuces at 9am       │
+ Notice└───────────────── Press ENTER or ESC to return ─────────────────┘ds
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │       │       │       │       │       │       │       │       │        </span></pre>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> I was out looking for Small. Piglet's basket!</p>
@@ -1332,39 +1538,40 @@ but you know it, which is the next best thing to being on time.</p>
 its column (“next friday 3pm”) or in Item Properties.</p>
 
 <!-- screen: 30-type-choice -->
-<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum *                    PROPS  2026-10-12 10:15 </span>
-<span class="t"> Category Manager                                                 21 categories </span>
- MAIN   6
-   ┌───────────────────── Category properties: Harvest ─────────────────────┐
-   │ ┌────────────────── Category type: Harvest ──────────────────┐ndard    │
-   │ │ Standard categories can become numeric or date categories. │         │
+<pre class="screen"><span class="t">                                                                                </span>
+<span class="t">                                                                                </span>
+  MAIN
+  ☼┌───────────────────────── Category Properties ──────────────────────────┐
+  ☼│ ┌────────────────── Category type: Harvest ──────────────────┐ndard    │
+  ☼│ │ Standard categories can become numeric or date categories. │         │
    │ │                                                            │         │
    │ │ Change the type to:                                        │         │
+   │ │    Unindexed                                               │         │
    │ │    Numeric                                                 │         │
    │ │    Date                                                    │         │
    │ │                                                            │         │
-   │ │ A number for each item: totals and averages; children becom│         │
+   │ │ A text for each item, such as a phone number; children beco│         │
    │ └─────────── Press ENTER to accept, ESC to cancel ───────────┘         │
-<span class="t">                                                                                </span>
-<span class="t"> ↑↓ Highlight ENTER Select ESC Cancel                                           </span></pre>
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │       │       │       │       │       │       │       │       │        </span></pre>
 
 <p>Its <strong>Advanced settings</strong> say where its dates come from:</p>
 
 <!-- screen: 32-daterule -->
-<pre class="screen"><span class="t"> When the category gets a date: never, from the clock   PROPS  2026-10-12 10:15 </span>
-<span class="t"> as the item is entered or edited, or from its text. SPACE changes it.          </span>
- MAIN   6
-   ┌───────────────────── Category properties: Harvest ─────────────────────┐
-   │ ┌──────────────── Advanced settings: Harvest ────────────────┐e        │
-   │ │ Assign item date       : Never                             │         │
-   │ │ Which one              : (dates from text only)            │         │
-   │ │ Set date from Done key : No                                │         │
-   │ │ Set date from When key : No                                │         │
+<pre class="screen"><span class="t"> When the category gets a date: never, from the clock as the item is entered or </span>
+<span class="t"> edited, or from its text. SPACE changes it.                                    </span>
+  MAIN
+  ☼┌───────────────────────── Category Properties ──────────────────────────┐
+  ☼│ ┌────────────── Advanced Settings for Harvest ───────────────┐e        │
+  ☼│ │ Assign item date:                 Never                    │         │
+   │ │                       Which one:  (dates from text only)   │         │
+   │ │ Set the item date from Done key:  No                       │         │
+   │ │ Set the item date from When key:  No                       │         │
    │ │                                                            │         │
    │ │ SPACE next choice                                          │         │
    │ └─────────── Press ENTER when done, ESC to cancel ───────────┘         │
-<span class="t">                                                                                </span>
-<span class="t"> ↑↓←→ Setting SPACE Next ENTER Done ESC Cancel                                  </span></pre>
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │       │       │Default│       │        </span></pre>
 
 <table>
   <tr><th>Setting</th><th>Choices</th></tr>
@@ -1389,11 +1596,14 @@ rabbit.</p>
 
 <div class="brief"><h4>In brief</h4>
 <ul>
-  <li><strong>How dates look</strong>: <strong>File ▸ Properties</strong>, then
+  <li><strong>How dates look</strong>: a new file shows them as Agenda did,
+      <code>10/12/26 10:15am</code>. <strong>File ▸ Properties</strong>, then
       <em>Global date settings …</em> and <em>Display format …</em> (SPACE opens each),
       sets the order
       (from MMDDYY to DDMMMYYYY), separator, 12 or 24-hour clock, am/pm, day of the week,
-      and whether to show the date, the time or both, with a sample. A date column can
+      and whether to show the date, the time or both, with a sample. For
+      <code>2026-10-12 10:15</code>, choose Date format YYYYMMDD, separator
+      <code>-</code> and a 24-hour clock; <kbd>F8</kbd> there gives Agenda's back. A date column can
       differ (<strong>View ▸ Column ▸ Properties</strong>), and can also show
       <em>Relative</em> dates (“Tomorrow”, “nxt Sun”), week numbers or days of the
       year.</li>
@@ -1430,57 +1640,60 @@ a quarter. Every dated item sits in its place. Make one with <strong>View ▸ Ad
 Friday:</p>
 
 <!-- screen: 46-datebook-week -->
-<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum *                    READY  2026-10-12 10:15 </span>
-<span class="t"> View: Rabbit's Calendar                                    Datebook for: When  </span>
- ── Mon 2026-10-12 ─────────────────────────────────────────────────────────────
- ── Tue 2026-10-13 ─────────────────────────────────────────────────────────────
- • Weed the carrot bed tomorrow morning
- ── Wed 2026-10-14 ─────────────────────────────────────────────────────────────
- ── Thu 2026-10-15 ─────────────────────────────────────────────────────────────
- • Visit Kanga and Roo on Thursday at 3pm
- ── Fri 2026-10-16 ─────────────────────────────────────────────────────────────
- • Put up a Notice about the Organising Meeting on Friday
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum *                          10/12/26  10:15am </span>
+<span class="t"> View: Rabbit's Calendar                Datebook For: When                      </span>
+ ── Mon 10/12/26 ───────────────────────────────────────────────────────────────
+ ── Tue 10/13/26 ───────────────────────────────────────────────────────────────
+    • Weed the carrot bed tomorrow morning
+ ── Wed 10/14/26 ───────────────────────────────────────────────────────────────
+ ── Thu 10/15/26 ───────────────────────────────────────────────────────────────
+    • Visit Kanga and Roo on Thursday at 3pm
+ ── Fri 10/16/26 ───────────────────────────────────────────────────────────────
+    • Put up a Notice about the Organising Meeting on Friday
 <span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
 <span class="t"> Help  │ Edit  │Choices│ Done  │ Note  │ Props │ Mark  │Vw Mgr │Cat Mgr│ Menu   </span></pre>
 
-<p>The control panel says what the datebook is for (“Datebook for: When”), and the view
+<p>The control panel says what the datebook is for (“Datebook For: When”), and the view
 manager marks datebook views with <code>*</code>. Type an item under a day and it gets
 that day; in a day view, under an hour, it gets the hour too. Rabbit types “Dig the
 potato bed” under Wednesday, and it is dated Wednesday at once. An item that recurs,
 such as weeding every Monday, shows on every day it comes round on.</p>
 
 <h3>Its settings</h3>
-<p>A new datebook opens its settings, and <strong>View ▸ Properties</strong> shows them
-again:</p>
+<p>A new datebook opens its <strong>View Properties</strong>, as Agenda's did: the same
+box as any view's, with the datebook's own settings in the right-hand column where
+the sections would be. <strong>View ▸ Properties</strong> shows it again:</p>
 
 <!-- screen: 47-datebook-props -->
-<pre class="screen"><span class="t"> The date category whose dates place items in the       PROPS  2026-10-12 10:15 </span>
-<span class="t"> slots. SPACE picks one.                                                        </span>
- ── Mon 2026-10-12 ─────────────────────────────────────────────────────────────
- ── Tue 2┌─────────── Datebook settings: Rabbit's Calendar ───────────┐─────────
- • Weed t│ Date category      : When                                  │
- ── Wed 2│ End category       : (none)                                │─────────
- ── Thu 2│ Section            : When                                  │─────────
- • Visit │ Period             : Week                                  │
- ── Fri 2│ Interval           : — (a day each)                        │─────────
- • Put up│ Start at           : Mon                                   │
-         │ End at             : Fri                                   │
-         │ Base date on       : today (2026-10-12)                    │
-         │                                                            │
-         │ Hide column heads  : No                                    │
-         │ Section separators : No                                    │
-         │ Number items       : No                                    │
-         │                                                            │
-         │ SPACE change · DEL clear                                   │
-         └─────────── Press ENTER when done, ESC to cancel ───────────┘
+<pre class="screen"><span class="t"> Type a name for the view. F2 edits the name it has.                            </span>
 <span class="t">                                                                                </span>
-<span class="t"> ↑↓←→ Setting SPACE Change DEL Clear ENTER Done ESC Cancel                      </span></pre>
+ ── Mon 10/12/26 ───────────────────────────────────────────────────────────────
+ ── T┌───────────────────────── View Properties ──────────────────────────┐─────
+    •│ View name:  Rabbit's Calendar                                      │
+ ── W│ Item sorting:    ...              Date category: When              │─────
+ ── T│                                   End category:                    │─────
+    •│                                   Section:       When              │
+ ── F│ Hide empty sections:   No         Period:        Week              │─────
+    •│ Hide done items:       No         Start at:      Mon               │
+     │ Hide dependent items:  No         End at:        Fri               │
+     │ Hide inherited items:  No                                          │
+     │ Hide column heads:     No         Base date on:  today             │
+     │ Section separators:    No                                          │
+     │ Number items:          No           Filter: (none)                 │
+     │                                                                    │
+     │ View statistics:       ...                                         │
+     │                                                                    │
+     │ SPACE change · F2 edit · F3 choices · F6 props · INS add           │
+     └─────────────── Press ENTER when done, ESC to cancel ───────────────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │ Props │       │Default│       │        </span></pre>
 
 <ul>
   <li><strong>Period</strong>: a day, a week, a month or a quarter.</li>
   <li><strong>Interval</strong>: what each section covers: 15 or 30 minutes or an hour of
       a day; a day or a week of a month; a day, a week or a month of a quarter. A week
-      has a section per day.</li>
+      has a section per day, so it has no Interval; only the settings its period needs
+      are shown.</li>
   <li><strong>Start at</strong> and <strong>End at</strong>: the hours of a day (8:00 to
       17:00 unless you say otherwise) or the days of a week (Monday to Friday). A day
       view also has a section for items with that date but no time.</li>
@@ -1493,8 +1706,8 @@ again:</p>
   <li><strong>End category</strong>: a date category saying when an item ends; the item
       then shows in every hour or day it lasts. Events from calendars on the web keep
       their end in a category called <em>Ends</em>, ready for this.</li>
-  <li><strong>Hide column heads</strong> and <strong>Section separators</strong>: as in
-      any view (<a href="#views">chapter 6</a>).</li>
+  <li>On the left, the name, the item sorting and the Hide settings, the filter and
+      statistics, as in any view (<a href="#views">chapter 6</a>).</li>
 </ul>
 
 <p><kbd>SPACE</kbd> picks a category, types a value or goes to the next choice;
@@ -1505,9 +1718,12 @@ instead.</p>
 <h3>Turning the pages</h3>
 <p><kbd>ALT-B</kbd> (<strong>View ▸ Browse</strong>) turns the datebook's pages:
 <kbd>←</kbd> <kbd>→</kbd> show the previous or next day, week, month or quarter, and
-<kbd>ALT-F5</kbd> jumps to a typed date. <code>BROWSE</code> shows at the top right
-meanwhile. <kbd>ENTER</kbd> stays on the page you have turned to (the datebook is then
-based on that date until you change Base date on); <kbd>ESC</kbd> goes back.</p>
+<kbd>ALT-F5</kbd> jumps to a typed date. Meanwhile the top line says Agenda's “Use the
+cursor keys to display schedules for other periods.”, with <code>BROWSE</code> at the
+right, and the key bar has three keys: <kbd>F1</kbd> Help, <kbd>F8</kbd> Default (back to
+the page you started from, still browsing) and <kbd>F10</kbd> Menu (stop browsing and
+open the menu). <kbd>ENTER</kbd> stays on the page you have turned to (the datebook is
+then based on that date until you change Base date on); <kbd>ESC</kbd> goes back.</p>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> And if I only want to peek at next month?</p>
@@ -1520,12 +1736,13 @@ by looking. Even you can look without changing anything, Rabbit.</p>
 the same way: <kbd>ALT-B</kbd> moves the filter's dates, <kbd>←</kbd> <kbd>→</kbd> a day,
 <kbd>↑</kbd> <kbd>↓</kbd> a week, <kbd>PGUP</kbd> / <kbd>PGDN</kbd> a month and
 <kbd>CTRL-PGUP</kbd> / <kbd>CTRL-PGDN</kbd> a year; the highlighted section's own date
-filter moves if it has one.</p>
+filter moves if it has one. The second line shows the dates you have reached
+(“Current filter: [When 10/13/26..10/13/26]”).</p>
 
 <h3>One day's schedule</h3>
 <p><strong>Utilities ▸ Show ▸ Sched</strong> shows everything on one day without making a
 view: choose the date (typed, or <kbd>F3</kbd> for the calendar), and if you like a
-category to narrow it to, and <kbd>ENTER</kbd> lists that day's items in the Show View.
+category to narrow it to, and <kbd>ENTER</kbd> lists that day's items in the <a href="#showview">Show view</a>.
 <kbd>ALT-B</kbd> then steps to the next day, and the next.</p>
 </section>
 
@@ -1572,6 +1789,22 @@ tomorrow, without another keystroke.</p>
 heard.</p>
 </div>
 
+<h3>Copying and clearing rules</h3>
+<p>In the category manager, <kbd>ALT-F9</kbd> copies the highlighted category's
+conditions or actions to another: the top line says “Move cursor to the category you
+want to copy to”, and <kbd>ENTER</kbd> there copies them (<kbd>ESC</kbd> gives it up).
+When the category has both, a small box asks which: <em>Condition &amp; action</em>,
+<em>Condition</em> or <em>Action</em>. What is copied takes the place of what the other
+category had. <kbd>ALT-F8</kbd> clears a category's conditions or actions, after asking;
+<kbd>CTRL-Z</kbd> brings them back.</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> Kanga's category has just the rules I want for Roo's.
+Must I set them all again?</p>
+<p class="owl"><b>Owl.</b> Highlight Kanga, <kbd>ALT-F9</kbd>, move down to Roo and press
+<kbd>ENTER</kbd>. Roo has Kanga's rules, which is, I believe, how Kanga prefers it.</p>
+</div>
+
 <h3>Rules for items you already have</h3>
 <p>New conditions and actions only touch items as they change. <strong>Utilities ▸
 Execute</strong> applies them to existing items: the conditions of one category (or all,
@@ -1580,18 +1813,19 @@ and actions to new assignments only or to old ones as well. <kbd>ALT-X</kbd> exe
 everything on all items, <kbd>ALT-E</kbd> just the highlighted section's category.</p>
 
 <!-- screen: 14-execute -->
-<pre class="screen"><span class="t"> Apply the conditions of this category and its          PROPS  2026-10-12 10:15 </span>
-<span class="t"> children. SPACE picks a category.                                              </span>
+<pre class="screen"><span class="t"> Apply the conditions of this category and its children. SPACE picks a          </span>
+<span class="t"> category.                                                                      </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed t┌────────────── Execute conditions and actions ──────────────┐
- • Count │ Apply conditions of  : MAIN (all categories)               │ger
-   bounce│ Against              : All items                           │
-         │ Apply actions to     : New assignments only                │
+    • Wee┌───────────────────────── Execute ──────────────────────────┐
+      mor│ Apply conditions attached to                               │
+    • Cou│   category and children of: MAIN (all categories)          │ger
+      bou│ Against:                    All items                      │
+         │ Apply actions to:    New assignments only                  │
  Notices │                                                            │ends
- • Put up│ SPACE change the setting · ENTER run                       │
-   Meetin└─────────── Press ENTER when done, ESC to cancel ───────────┘
-<span class="t">                                                                                </span>
-<span class="t"> ↑↓←→ Setting SPACE Change ENTER Run ESC Cancel                                 </span></pre>
+    • Put│ SPACE change the setting · ENTER run                       │
+      Org└─────────── Press ENTER when done, ESC to cancel ───────────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │       │       │Default│       │        </span></pre>
 </section>
 
 <!-- ===================================================================== -->
@@ -1600,13 +1834,60 @@ everything on all items, <kbd>ALT-E</kbd> just the highlighted section's categor
 <p class="in-which">In Which lett* Finds Every Lettuce and Everything Is Put in Order</p>
 
 <h3>Searching</h3>
-<p><kbd>ALT-F6</kbd> opens the search box: what to look for, in the item text, notes or
-both, which direction, and whether capitals matter. <kbd>ENTER</kbd> goes to the first
-match; then <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> go to the next and previous,
-<kbd>F7</kbd> marks one, <kbd>ESC</kbd> stops. Words match whole; <code>lett*</code>
-matches any ending; <code>(a phrase)</code> must appear as written.
-<strong>Utilities ▸ Show ▸ Match</strong> collects every match in the whole file into a
-<em>Show View</em>; <kbd>ALT-F8</kbd> goes back to the view you were in.</p>
+<p><kbd>ALT-F6</kbd> opens Agenda's <strong>Search</strong> box: what to look for, in
+the item text, the notes or both, which direction, and whether capitals matter.</p>
+
+<!-- screen: 64-search -->
+<pre class="screen"><span class="t"> Enter the text to search for.                                                  </span>
+<span class="t">                                                                                </span>
+<span class="h"> Garden                                   When             Priority Friends</span>
+    • Wee┌────────────────────────── Search ──────────────────────────┐
+      mor│                                                            │
+    • Cou│   Search for:                                              │ger
+      bou│   Match on:      Item text                                 │
+         │   Direction:     Forward                                   │
+ Notices │   Ignore case:   Yes                                       │ends
+    • Put└─────────── Press ENTER when done, ESC to cancel ───────────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │       │       │Default│       │        </span></pre>
+
+<p>Type the words in <em>Search for</em> and press <kbd>ENTER</kbd>: that keeps them and
+leaves you in the box, to change the rest if you like. A second <kbd>ENTER</kbd>
+searches, starting after the highlighted item. Searching is quiet, as in Agenda: no
+message, the time leaves the top line, and the key bar shows only <kbd>F1</kbd> Help.
+<kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> go to the next and previous match (past the last
+one, <kbd>ALT-N</kbd> only beeps), <kbd>F7</kbd> marks the highlighted item, and
+<kbd>ENTER</kbd> or <kbd>ESC</kbd> stops. When nothing matches, Agenda's Error box says
+so, and any key closes it. Words match whole; <code>lett*</code> matches any ending;
+<code>(a phrase)</code> must appear as written.</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> I pressed <kbd>ENTER</kbd> and nothing happened.</p>
+<p class="owl"><b>Owl.</b> Something did: Agendum took your word and waited, in case you
+wished to search the notes as well. Press it again, and off it goes.</p>
+</div>
+
+<h3 id="showview">The Show view</h3>
+<p><strong>Utilities ▸ Show</strong> collects items from the whole file into a view of
+their own, called <em>*Show View*</em>; <kbd>ALT-F8</kbd> goes back to the view you
+were in. A file has one Show view, so making another asks “Delete the existing Show
+view?” first (<kbd>ESC</kbd> keeps it).</p>
+<ul>
+  <li><strong>Match</strong>: every item matching a search, in the whole file.</li>
+  <li><strong>Prereqs</strong> and <strong>Depends</strong>: what an item waits for, or
+      what waits for it (<a href="#waiting">chapter 12</a>).</li>
+  <li><strong>ItemsDone</strong>: every done item. <strong>Every</strong>: every item in
+      the file.</li>
+  <li><strong>Circular</strong>: items caught going round in circles, under
+      <em>!Circular Reference!</em>. That happens when conditions keep putting an item in
+      a category and taking it out again: give <em>Tigger</em> the condition <em>not
+      Friends and Relations</em>, and an item that joins Tigger is in Friends and
+      Relations at once, so it must leave, and then it may join again. While any item is
+      caught, <code>o</code> stands at the right of the View line.</li>
+  <li><strong>Alarm</strong> and <strong>Sched</strong>: the alarms
+      (<a href="#dates">chapter 7</a>) and one day's schedule
+      (<a href="#datebook">chapter 8</a>).</li>
+</ul>
 
 <h3>Filters</h3>
 <p><strong>View Properties ▸ Filter</strong> narrows the whole view, <strong>Section
@@ -1615,28 +1896,28 @@ Properties ▸ Filter</strong> one section. <kbd>SPACE</kbd> on a category cycle
 <kbd>ENTER</kbd> accepts. A date or numeric category asks for a range instead:</p>
 
 <!-- screen: 33-datefilter -->
-<pre class="screen"><span class="t"> Type the end of the range: a date or a number. Leave   PROPS  2026-10-12 10:15 </span>
-<span class="t"> it blank for no end.                                                           </span>
- • We┌───────────────────────── View Properties ──────────────────────────┐
- • Co│ ┌───────────────────── Filter the view ──────────────────────┐     │
-   bo│ │ ┌──────────────────── Date filter: When ─────────────────────┐   │
+<pre class="screen"><span class="t"> Type the end of the range: a date or a number. Leave it blank for no end.      </span>
+<span class="t">                                                                                </span>
+    •┌───────────────────────── View Properties ──────────────────────────┐
+     │ ┌───────────────────── Filter the view ──────────────────────┐     │
+    •│ │ ┌──────────────────── Date filter: When ─────────────────────┐   │
      │ │ │ Show items       : Assigned                                │   │
- Noti│ │ │ Start date       : today                                   │   │
- • Pu│ │ │ End date         : end of this week                        │   │
-   Me│ │ │ Items should be  : Inside range                            │   │
+     │ │ │ Start date       : today                                   │   │
+ Noti│ │ │ End date         : end of this week                        │   │
+    •│ │ │ Items should be  : Inside range                            │   │
      │ │ │                                                            │   │
- Frie│ │ │ SPACE change the setting · ENTER apply · DEL remove        │   │
- • Co│ │ └─────────── Press ENTER when done, ESC to cancel ───────────┘   │
-   bo│ │       Owl                                                        │
- • As│ │       Eeyore                                               │     │
- • Fi│ │       Kanga                                                │     │
- • Vi│ │       Roo                                                  │     │Roo
-     │ │       Tigger                                               │     │
+     │ │ │ SPACE change the setting · ENTER apply · DEL remove        │   │
+ Frie│ │ └─────────── Press ENTER when done, ESC to cancel ───────────┘   │
+    •│ │       Owl                                                        │
+     │ │       Eeyore                                               │     │
+    •│ │       Kanga                                                │     │
+    •│ │       Roo                                                  │     │
+    •│ │       Tigger                                               │     │Roo
      │ │                                                            │     │
      └─│ SPACE switches: + assigned · - not assigned · none         │  ───┘
        └────────────────── Press ENTER to accept ───────────────────┘
-<span class="t">                                                                                </span>
-<span class="t"> ↑↓←→ Setting SPACE Change ENTER Apply DEL Remove ESC Cancel                    </span></pre>
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │       │       │Default│       │        </span></pre>
 
 <p>Relative dates in a range are read again each day: “today” to “end of this week”
 always shows the rest of this week. Put <code>$</code> before one to fix it the day you
@@ -1649,30 +1930,36 @@ typed into a filtered view gets what the filter needs, so it doesn't vanish.
 <p><strong>View Properties ▸ Item sorting</strong> sorts the items of every section;
 <strong>Section Properties ▸ Item sorting</strong> one section. Sort on the item text, on a category (its children
 in order or alphabetically, its date, or its number), or on a line of a category's
-note; then by a second key for ties. Each key can go up or down and put items without a
-value first or last. <em>Section sorting</em>, under it in View Properties, sorts the
-sections themselves.</p>
+note; then by a <em>Secondary sort key</em> for ties. The box shows only the settings
+each key needs: each can go up or down and put items without a value first or last.
+A section's sort box says <em>(View default)</em> while it sorts as the view does; any
+change makes the sorting its own, and <kbd>ALT-F8</kbd> gives the view's back.
+<em>Section sorting</em>, under Item sorting in View Properties, sorts the sections
+themselves.</p>
 
 <!-- screen: 10-sort -->
-<pre class="screen"><span class="t"> What to sort the items on: item text, a category, or    SORT  2026-10-12 10:15 </span>
-<span class="t"> a category note. SPACE.                                                        </span>
+<pre class="screen"><span class="t"> What to sort the items on: none, the item text, a category or a category note. </span>
+<span class="t"> SPACE for the next.                                                            </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • We┌───────────────────────── View Properties ──────────────────────────┐
- • Co│ ┌──────────────── Sort items in all sections ────────────────┐     │
-   bo│ │ Sort on         : None                                     │     │
-     │ │ Order           : -                                        │     │
- Noti│ │ Sort n/a's      : -                                        │     │
- • Pu│ │ Sequence        : -                                        │     │
-   Me│ │ Line number     : -                                        │     │
-     │ │ Then by         : None                                     │     │
- Frie│ │ Then order      : -                                        │     │
- • Co│ │ Section sorting : None                                     │     │
-   bo│ │ Section order   : -                                        │     │
- • As│ │                                                            │     │
- • Fi│ │ SPACE change the setting                                   │     │
- • Vi│ └─────────── Press ENTER when done, ESC to cancel ───────────┘     │Roo
-<span class="t">                                                                                </span>
-<span class="t"> ↑↓←→ Setting SPACE Change ENTER Done ESC Cancel                                </span></pre>
+    •┌───────────────────────── View Properties ──────────────────────────┐
+     │ ┌────────────────── Item Sorting in All Sections ──────────────────┐
+    •│ │ Sort new items:   When item is entered                           │
+     │ │                                                                  │
+     │ │ Primary sort key                                                 │
+ Noti│ │   Sort on:    None                                               │
+    •│ │                                                                  │
+     │ │                                                                  │
+     │ │                                                                  │
+ Frie│ │ Secondary sort key                                               │
+    •│ │   Sort on:    None                                               │
+     │ │                                                                  │
+    •│ │                                                                  │
+    •│ │                                                                  │
+    •│ │                                                                  │Roo
+     │ │ SPACE change the setting                                         │
+     └─└────────────── Press ENTER when done, ESC to cancel ──────────────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │ Props │       │Default│       │        </span></pre>
 </section>
 
 <!-- ===================================================================== -->
@@ -1686,21 +1973,22 @@ many lettuces. Make one with Category Properties ▸ <strong>Type</strong> ▸
 bottom of every section.</p>
 
 <!-- screen: 42-numeric -->
-<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                      READY  2026-10-12 10:15 </span>
+<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum                            10/12/26  10:15am </span>
 <span class="t"> View: Rabbit's Week                                                            </span>
 <span class="h"> Garden                                      When             Priority Cost</span>
- • Weed the carrot bed tomorrow morning      2026-10-13 08:00 High          0.50
- • Count the lettuces before Tigger bounces                   Medium
-   on them
- • Buy carrot seeds                                                         2.40
+    • Weed the carrot bed tomorrow morning  ·10/13/26 8:00am ·High          0.50
+    • Count the lettuces before Tigger                       ·Medium
+      bounces on them
+    • Buy carrot seeds                                                      2.40
                                       TOTAL                                 2.90
 <span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
 <span class="t"> Help  │ Edit  │Choices│ Done  │ Note  │ Props │ Mark  │Vw Mgr │Cat Mgr│ Menu   </span></pre>
 
 <ul>
   <li>Numbers may have a sign, a currency symbol, thousands separators or parentheses
-      for negatives; <kbd>F2</kbd> edits a number, <kbd>DEL</kbd> removes it, and the
-      control panel shows <code>#</code> in a numeric column.</li>
+      for negatives; <kbd>F2</kbd> edits a number, <kbd>DEL</kbd> removes it, and
+      <code>#</code> shows at the right of the View line while the highlight is on
+      one.</li>
   <li><strong>View ▸ Column ▸ Properties</strong> on a numeric column sets the symbol,
       decimals, thousands separator and negative style, and which results to show:
       count, total, average, minimum, maximum. <strong>Section Properties ▸ Select
@@ -1725,16 +2013,16 @@ highlight the later one and press <kbd>ALT-O</kbd>: it now <em>depends</em> on t
 shows <code>&amp;</code> until they are all done.</p>
 
 <!-- screen: 41-depend -->
-<pre class="screen"><span class="t"> Depends on 1 item                                    ♦ READY  2026-10-12 10:15 </span>
-<span class="t"> View: Rabbit's Week                                                            </span>
+<pre class="screen"><span class="t"> Depends on 1 item                                            10/12/26  10:15am </span>
+<span class="t"> View: Rabbit's Week                                                         ♦  </span>
 <span class="h"> Notices                                  When             Priority Friends</span>
- &amp; Put up a Notice about the Organising   2026-10-16       High
-   Meeting on Friday
+    &amp; Put up a Notice about the          »10/16/26        ·High
+      Organising Meeting on Friday
 
 <span class="h"> Friends and Relations                    When             Priority Friends</span>
- • Count the lettuces before Tigger                        Medium   Tigger
-   bounces on them
- ♦ Ask Owl how to spell Organising                         Low      Owl
+    • Count the lettuces before Tigger                    ·Medium  ·Tigger
+      bounces on them
+    ♦ Ask Owl how to spell Organising                     ·Low     ·Owl
 <span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
 <span class="t"> Help  │ Edit  │Choices│ Done  │ Note  │ Props │ Mark  │Vw Mgr │Cat Mgr│ Menu   </span></pre>
 
@@ -1750,8 +2038,9 @@ shows <code>&amp;</code> until they are all done.</p>
   <li>Item Properties lists what an item <em>depends on</em> and what it is <em>needed
       by</em>; <kbd>SPACE</kbd> opens one, <kbd>DEL</kbd> breaks that one link.</li>
   <li><strong>Utilities ▸ Show ▸ Prereqs</strong> and <strong>Depends</strong> list, in a
-      Show View, what an item waits for or what waits for it: one level, all levels, or
-      every such item in the file.</li>
+      <a href="#showview">Show view</a>, what an item waits for or what waits for it:
+      <em>One Level</em>, <em>All Levels</em>, or <em>Every Item</em> that waits or is
+      waited for in the file.</li>
   <li><kbd>ALT-O</kbd> with nothing marked clears an item's dependencies.</li>
 </ul>
 </section>
@@ -1763,9 +2052,12 @@ shows <code>&amp;</code> until they are all done.</p>
 
 <table>
   <tr><th>To</th><th>Press or choose</th></tr>
-  <tr><td>Save</td><td><kbd>CTRL-S</kbd> (or <kbd>ALT-W</kbd>); <strong>File ▸ Write</strong> saves under a new name</td></tr>
+  <tr><td>Save</td><td><kbd>CTRL-S</kbd> (or <kbd>ALT-W</kbd>)</td></tr>
   <tr><td>Open another file</td><td><kbd>CTRL-O</kbd> (or <kbd>ALT-G</kbd>), or <strong>File ▸ Retrieve</strong>; <kbd>F3</kbd> picks it from a list</td></tr>
-  <tr><td>Start a new, empty file</td><td><strong>File ▸ Retrieve</strong> with a name that is not a file yet; Agendum asks “Create the new file …?”</td></tr>
+  <tr><td>Start a new, empty file</td><td><strong>File ▸ Retrieve</strong> with a name that is not a file yet: the <em>New File</em> box asks for a description and a password, both optional</td></tr>
+  <tr><td>Go back to the file as you last saved it</td><td><strong>File ▸ Abandon</strong></td></tr>
+  <tr><td>Write a copy under another name / throw a file away</td><td><strong>File ▸ Maintenance ▸ MakeCopy</strong> / <strong>Erase</strong></td></tr>
+  <tr><td>Start another file with this one's categories and views, but no items</td><td><strong>File ▸ Transfer ▸ Template</strong></td></tr>
   <tr><td>Print the view to a text file</td><td><kbd>CTRL-P</kbd>, or <strong>Print</strong></td></tr>
   <tr><td>Export the whole file as JSON / open a JSON or Lotus Agenda file</td><td><strong>File ▸ Transfer ▸ Export</strong> / <strong>Import</strong></td></tr>
   <tr><td>Subscribe to a calendar on the web (an <a href="#extras">extra</a>)</td><td><strong>File ▸ Transfer ▸ Calendars</strong></td></tr>
@@ -1777,8 +2069,8 @@ printing to a file), <kbd>F3</kbd> shows the <strong>Select File</strong> box in
 the folders and the files that fit, in the folder of what you had typed. <kbd>↑</kbd>
 <kbd>↓</kbd> move, typing narrows the list to names containing what you type,
 <kbd>ENTER</kbd> opens a folder or puts the file in the prompt, <code>../</code> goes up,
-<kbd>F7</kbd> shows when each file was last changed, and <kbd>ESC</kbd> goes back to the
-prompt as it was.</p>
+<kbd>F7</kbd> shows when each file was last changed, <kbd>F8</kbd> each file's
+description, and <kbd>ESC</kbd> goes back to the prompt as it was.</p>
 
 <p>Quitting, opening another file, starting a new one and importing all replace what is
 on the screen, so when the file has unsaved changes Agendum first asks “Save changes
@@ -1788,7 +2080,78 @@ first?”: <kbd>Y</kbd> saves (asking for a name if the file has none) and goes 
 <p>If something else has changed the file since Agendum read it, another Agendum
 perhaps, or a program that copies your files between computers, Agendum asks before
 saving over it. <em>No</em> leaves the other version alone, and <strong>File ▸
-Write</strong> saves yours under another name, so both are kept.</p>
+Maintenance ▸ MakeCopy</strong> keeps yours in a copy under another name, so both are
+kept.</p>
+
+<h3 id="looking-after">Looking after a file</h3>
+<p><strong>File ▸ Properties</strong> holds the settings that belong to the file, among
+them a few for keeping it safe:</p>
+
+<!-- screen: 65-file-props -->
+<pre class="screen"><span class="t"> Enter a short description of the file. Press F2 to edit.                       </span>
+<span class="t">                                                                                </span>
+<span class="h"> Garden                                   When             Priority Friends</span>
+   ┌─────────────────────────── File Properties ────────────────────────────┐
+   │ File description:                                                      │
+   │ Set file password:      ...                                            │
+   │ Make backup on open:    No                                             │
+   │                                                                        │
+ No│ Insert new columns in:  All sections                                   │
+   │ Empty trash:            End of day                                     │
+   │                                                                        │
+   │ Tab size:               5                                              │
+ Fr│                                                                        │
+   │ Global date settings:   ...       Auto-assign settings:  ...           │
+   │                                   File statistics:       ...           │
+   │                                                                        │
+   │ SPACE next choice or open ...                                          │
+   └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘o
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │       │       │Default│       │        </span></pre>
+
+<ul>
+  <li><strong>File description</strong>: a few words about the file (up to 40
+      characters), which the Select File box shows beside its name when you press
+      <kbd>F8</kbd>.</li>
+  <li><strong>Set file password</strong>: Agenda's small boxes ask for the current
+      password (when there is one), the new one, and the new one again; the letters
+      show as stars. A file with a password is saved <em>encrypted</em>, and opening it
+      asks for the password. An empty new password takes it away. A forgotten password
+      cannot be recovered, by Owl or anyone.</li>
+  <li><strong>Make backup on open</strong>: with <em>Yes</em>, opening the file first
+      copies it to <code>rabbit.agendum.bak</code> beside it, in place of the last
+      backup.</li>
+  <li><strong>Empty trash</strong>: when the <a href="#trash">trash</a> empties by
+      itself.</li>
+  <li><strong>File statistics</strong>: how many items there are (and how many in the
+      trash), how many have notes, the categories, and the averages of items per category
+      and categories per item.</li>
+</ul>
+
+<p>The <strong>File</strong> menu has the rest, with Agenda's names:</p>
+<ul>
+  <li><strong>Abandon</strong> asks “Revert to last saved version:” (<em>No</em> first);
+      <em>Yes</em> puts the file back as you last saved it. That is one change like any
+      other, so <kbd>CTRL-Z</kbd> brings your work back if you abandoned it by
+      mistake.</li>
+  <li><strong>Maintenance ▸ MakeCopy</strong> asks for a name (<kbd>F3</kbd> picks one),
+      writes a copy of the file there and saves the file too; you go on in the file, and
+      open the copy with Retrieve if you want to work in it.</li>
+  <li><strong>Maintenance ▸ Erase</strong> asks for a file and then “Discard
+      old.agendum?” (<em>No</em> first). <em>Yes</em> moves it to your computer's Trash,
+      where you can still get it back; Agenda simply deleted it. The file you have open
+      cannot be erased.</li>
+  <li><strong>Transfer ▸ Template</strong> writes the file's categories, views, macros,
+      rules and settings to another file, without a single item: a fresh start with
+      the setting-up already done.</li>
+</ul>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> A password! Then Tigger cannot read my list of things
+to keep Tigger away from.</p>
+<p class="owl"><b>Owl.</b> Quite so. Choose one you will remember, and do not write it
+on your paws. Agendum cannot open the file without it, and neither can I.</p>
+</div>
 
 <p>A file opens where you left it: the same view, with the highlight on the same item.
 If the item has gone, the highlight waits on its section's head instead. Where you
@@ -1804,7 +2167,7 @@ opens such a file as a new, untitled file to save under a name.</p>
 <code>.AG</code> file, and so does starting Agendum with one
 (<code>./agendum OLD.AG</code>). It becomes an Agendum file of the same name beside it,
 not yet saved, with its categories and their rules, its items with their notes, dates
-and numbers, and its views. A file with a password asks for it. A box then reports what
+and numbers, its views, and the items in its trash. A file with a password asks for it. A box then reports what
 came over, what was left out (macros and separate note files, so far), and every item
 Agendum files differently from Agenda; <kbd>CTRL-P</kbd> writes that report to a text
 file beside the old one.</p>
@@ -1846,19 +2209,19 @@ on.
 events go in, and reads the calendar at once:</p>
 
 <!-- screen: 45-calendars -->
-<pre class="screen"><span class="t"> Expotitions: 2 new                                     PROPS  2026-10-12 10:15 </span>
-<span class="t"> View: Rabbit's Week                                                            </span>
-<span class="h"> Garden                                   When             Priority Friends</span>
- • Weed t┌──────────────────────── Calendars ─────────────────────────┐
- • Count │ Expotitions              read 2026-10-12 10:15             │ger
-   bounce│    https://example.org/expotitions.ics                     │
-         │    every hour · 90 days ahead                              │
- Notices │                                                            │ends
- • Put up│ INS subscribe · ENTER read now · DEL unsubscribe           │
-   Meetin│ F how often · A how far ahead                              │
-         └────────────────────────────────────────────────────────────┘
+<pre class="screen"><span class="t"> Expotitions: 2 new                                                             </span>
 <span class="t">                                                                                </span>
-<span class="t"> INS Subscribe ENTER Read now F How often A Ahead DEL Unsubscribe ESC Close     </span></pre>
+<span class="h"> Garden                                   When             Priority Friends</span>
+    • Wee┌──────────────────────── Calendars ─────────────────────────┐
+      mor│ Expotitions              read 10/12/26 10:15am             │
+    • Cou│    https://example.org/expotitions.ics                     │ger
+      bou│    every hour · 90 days ahead                              │
+         │                                                            │
+ Notices │ INS subscribe · ENTER read now · DEL unsubscribe           │ends
+    • Put│ F how often · A how far ahead                              │
+      Org└────────────────────────────────────────────────────────────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │       │       │       │       │       │       │       │       │        </span></pre>
 
 <ul>
   <li>Every event from today up to 90 days ahead becomes an item: its title the item
@@ -1922,28 +2285,28 @@ them, and saves them in your preferences file
 (<code>~/.config/agendum/preferences</code>):</p>
 
 <!-- screen: 15-customize -->
-<pre class="screen"><span class="t"> The colours Agendum draws with, in every file. SPACE   PROPS  2026-10-12 10:15 </span>
-<span class="t"> for the next theme.                                                            </span>
-<span class="h"> Garden                                   When             Priority Friends</span>
- • Weed t┌──────────── Customize (yours, for every file) ─────────────┐
- • Count │ Theme                   : Classic                          │ger
-   bounce│ Date language           : English                          │
-         │ Fallback language       : None                             │
- Notices │ Input format            : (SPACE)                          │ends
- • Put up│ Display key map         : Yes                              │
-   Meetin│ Confirm mode            : Yes                              │
-         │ Auto-save interval      : Off                              │
- Friends │ Decimal separator       : . (Dot)                          │ends
- • Count │ Thousands separator     : , (Comma)                        │ger
-   bounce│ Sound                   : Yes                              │
- • Ask Ow│ Beep on auto-completion : Yes                              │
- • Find S│ Extras                  : No                               │ll
- • Visit │                                                            │ga, Roo
-         │ Saved in your preferences, not in this file.               │
-         │ SPACE next choice                                          │
-         └─────────── Press ENTER when done, ESC to cancel ───────────┘
+<pre class="screen"><span class="t"> The colours Agendum draws with, in every file. SPACE for the next theme.       </span>
 <span class="t">                                                                                </span>
-<span class="t"> ↑↓←→ Setting SPACE Next ENTER Done ESC Cancel                                  </span></pre>
+<span class="h"> Garden                                   When             Priority Friends</span>
+    • Wee┌─────────────────── Utilities Customize ────────────────────┐
+      mor│ Theme                   : Classic                          │
+    • Cou│ Date language           : English                          │ger
+      bou│ Fallback language       : None                             │
+         │ Input format            : (SPACE)                          │
+ Notices │ Display key map         : Yes                              │ends
+    • Put│ Confirm mode            : Yes                              │
+      Org│ Auto-save interval      : Off                              │
+         │ Decimal separator       : . (Dot)                          │
+ Friends │ Thousands separator     : , (Comma)                        │ends
+    • Cou│ Sound                   : Yes                              │ger
+      bou│ Beep on auto-completion : Yes                              │
+    • Ask│ Extras                  : No                               │
+    • Fin│                                                            │ll
+    • Vis│ Saved in your preferences, not in this file.               │ga, Roo
+      3pm│ SPACE next choice                                          │
+         └─────────── Press ENTER when done, ESC to cancel ───────────┘
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│       │       │       │       │Default│       │        </span></pre>
 
 <ul>
   <li><strong>Theme</strong>: <em>Classic</em>, the grey, blue and cyan of Agenda 2.0
@@ -2007,26 +2370,28 @@ does its usual work and is recorded too. <kbd>ALT-F3</kbd> stops recording. Here
 Rabbit's <em>Water</em>, and behind the box the item it typed while he taught it:</p>
 
 <!-- screen: 48-macros -->
-<pre class="screen"><span class="t"> File: /home/rabbit/rabbit.agendum *                    READY  2026-10-12 10:15 </span>
-<span class="t"> View: Rabbit's Week                                                            </span>
+<pre class="screen"><span class="t"> Highlight the macro you want to run or change. Press ENTER to run the macro,   </span>
+<span class="t"> INS to create one, F2 to edit an existing one.                                 </span>
 <span class="h"> Garden                                   When             Priority Friends</span>
- • Weed t┌────────────────────────── Macros ──────────────────────────┐
- • Water │ Water                                                      │
- • Count │                                                            │ger
-   bounce│ INS new · F7 learn · ENTER run · F2 edit · F6 props · DEL  │
-         └────────────────────────────────────────────────────────────┘
+    • Wee┌────────────────────── Macro Manager ───────────────────────┐
+      mor│ Water                                                      │
+    • Wat│                                                            │
+    • Cou│ INS new · F7 learn · ENTER run · F2 edit · F6 props · DEL  │ger
+      bou└────────────────────────────────────────────────────────────┘
+
 <span class="h"> Notices                                  When             Priority Friends</span>
- • Put up a Notice about the Organising   2026-10-16       High
-   Meeting on Friday
+    • Put up a Notice about the          ·10/16/26        ·High
+      Organising Meeting on Friday
 
 <span class="h"> Friends and Relations                    When             Priority Friends</span>
- • Count the lettuces before Tigger                        Medium   Tigger
-   bounces on them
- • Ask Owl how to spell Organising                         Low      Owl
- • Find Small, who is lost again                           High     Small
- • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
-<span class="t">                                                                                </span>
-<span class="t"> INS/^N New F7 Learn F2 Edit F6 Props DEL Delete A-F5 Sort A-↑↓ Move            </span></pre>
+    • Count the lettuces before Tigger                    ·Medium  ·Tigger
+      bounces on them
+    • Ask Owl how to spell Organising                     ·Low     ·Owl
+    • Find Small, who is lost again                       ·High    ·Small
+    • Visit Kanga and Roo on Thursday at ·10/15/26 3:00pm ·Medium  ·Kanga, Roo
+      3pm
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │EditMac│       │Delete │       │ Props │ Learn │       │       │        </span></pre>
 
 <ul>
   <li><kbd>ENTER</kbd> in the manager runs the highlighted macro; <kbd>ALT-Z</kbd>, anywhere,
@@ -2079,15 +2444,17 @@ until the day you need one, and then you will remember there was something.</p>
       manager.</li>
   <li><strong>Discarding a view</strong> keeps its items and categories; only the way of
       looking goes.</li>
-  <li><strong>The Show View</strong> is where searches and dependency lists appear;
-      <kbd>ALT-F8</kbd> goes back to the view you came from.</li>
+  <li><strong>The Show view</strong> is where searches, alarms and dependency lists
+      appear (<a href="#showview">chapter 10</a>); <kbd>ALT-F8</kbd> goes back to the
+      view you came from.</li>
   <li><strong>Search and replace in a note</strong>: <kbd>ALT-F6</kbd> in the note,
       with Replace text <em>Yes</em>; replace all at once or confirm each one, in a
       Yes/No box that keeps clear of the highlighted occurrence. Each replacement is an
       undo step of its own.</li>
   <li><strong>How big is the file?</strong> <strong>File ▸ Properties ▸ File
-      statistics</strong> counts the items, those with notes and the categories, and
-      gives the average number of items per category and categories per item.</li>
+      statistics</strong> counts the items, those in the trash, those with notes and the
+      categories, and gives the average number of items per category and categories per
+      item. Like the other statistics boxes, any key closes it.</li>
   <li><strong>The key bar</strong>: <kbd>ALT-K</kbd> goes round the ALT, CTRL and
       SHIFT bars and then hides it, for a little more room; Agendum remembers whether it
       was shown.</li>
@@ -2118,7 +2485,7 @@ and the letter, with your terminal set to use Option as Meta.</p>
   <tr><th>Key</th><th>Does</th><th>Mac-friendly</th></tr>
   <tr><td>type</td><td>New item, or an entry in the highlighted column</td><td></td></tr>
   <tr><td><kbd>INS</kbd></td><td>New item / another column entry</td><td><kbd>CTRL-N</kbd>, <kbd>ALT-I</kbd></td></tr>
-  <tr><td><kbd>F1</kbd></td><td>Help about where you are; then <kbd>c</kbd> commands, <kbd>d</kbd> describe a key, <kbd>a</kbd> all keys</td><td></td></tr>
+  <tr><td><kbd>F1</kbd></td><td>Help about where you are (see <em>In the help</em> below)</td><td></td></tr>
   <tr><td><kbd>F2</kbd></td><td>Edit the item, section head or entry</td><td><kbd>CTRL-E</kbd></td></tr>
   <tr><td><kbd>F3</kbd></td><td>Assignment profile; in a column, its categories; in a date column, the calendar</td><td></td></tr>
   <tr><td><kbd>F4</kbd></td><td>Done / not done</td><td><kbd>CTRL-K</kbd></td></tr>
@@ -2127,17 +2494,17 @@ and the letter, with your terminal set to use Option as Meta.</p>
   <tr><td><kbd>F7</kbd> / <kbd>ALT-F7</kbd></td><td>Mark / unmark all</td><td></td></tr>
   <tr><td><kbd>F8</kbd> / <kbd>F9</kbd></td><td>View manager / category manager</td><td></td></tr>
   <tr><td><kbd>F10</kbd></td><td>Menu</td><td><kbd>/</kbd></td></tr>
-  <tr><td><kbd>DEL</kbd></td><td>Remove from the section or column</td><td><kbd>fn-⌫</kbd></td></tr>
+  <tr><td><kbd>DEL</kbd></td><td>Remove from the section (after asking) or column</td><td><kbd>fn-⌫</kbd></td></tr>
   <tr><td><kbd>ALT-F2</kbd></td><td>When date</td><td></td></tr>
   <tr><td><kbd>ALT-F3</kbd></td><td>Macro manager; in Learn mode, stop recording</td><td></td></tr>
-  <tr><td><kbd>ALT-F4</kbd></td><td>Discard</td><td><kbd>CTRL-D</kbd></td></tr>
+  <tr><td><kbd>ALT-F4</kbd></td><td>Discard, into the trash (after asking)</td><td><kbd>CTRL-D</kbd></td></tr>
   <tr><td><kbd>ALT-F5</kbd></td><td>Go to a section</td><td></td></tr>
-  <tr><td><kbd>ALT-F6</kbd></td><td>Search; then <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd></td><td></td></tr>
+  <tr><td><kbd>ALT-F6</kbd></td><td>Search (<kbd>ENTER</kbd> twice); then <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd>, <kbd>F7</kbd> mark, <kbd>ENTER</kbd> or <kbd>ESC</kbd> stop</td><td></td></tr>
   <tr><td><kbd>ALT-F8</kbd></td><td>Back to the last view</td><td></td></tr>
   <tr><td><kbd>ALT-F9</kbd></td><td>Copy the item (or the marked ones) to another section as well</td><td></td></tr>
   <tr><td><kbd>ALT-F10</kbd></td><td>Move the item; on a section or column head, the section or column</td><td>On a head: <strong>View ▸ Section ▸ Move</strong>, <strong>View ▸ Column ▸ Move</strong></td></tr>
-  <tr><td><kbd>ALT-A</kbd></td><td>Alarm</td><td></td></tr>
-  <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter</td><td><kbd>⌥b</kbd></td></tr>
+  <tr><td><kbd>ALT-A</kbd></td><td>Set Alarm box; on an item with an alarm, cancel it</td><td></td></tr>
+  <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter; then <kbd>F8</kbd> back to the start, <kbd>F10</kbd> the menu</td><td><kbd>⌥b</kbd></td></tr>
   <tr><td><kbd>ALT-C</kbd></td><td>The calendar</td><td><kbd>⌥c</kbd></td></tr>
   <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-U</kbd></td><td>Section below / above</td><td></td></tr>
   <tr><td><kbd>ALT-H</kbd></td><td>Hop to the item's next occurrence</td><td><kbd>⌥h</kbd></td></tr>
@@ -2174,9 +2541,10 @@ and the letter, with your terminal set to use Option as Meta.</p>
   <tr><td><kbd>SPACE</kbd></td><td>Next choice, or open the setting</td><td></td></tr>
   <tr><td>a letter</td><td>The next choice beginning with it</td><td></td></tr>
   <tr><td><kbd>F2</kbd> / <kbd>F3</kbd></td><td>Edit a text / list the choices</td><td><kbd>CTRL-E</kbd> / —</td></tr>
+  <tr><td><kbd>F6</kbd></td><td>On a setting that names a category: its Category Properties</td><td></td></tr>
   <tr><td><kbd>F8</kbd> / <kbd>ALT-F8</kbd></td><td>Put the setting / every setting back to its default</td><td></td></tr>
   <tr><td><kbd>ENTER</kbd> / <kbd>ESC</kbd></td><td>Done, keeping the changes / cancel them</td><td></td></tr>
-  <tr><td><kbd>SPACE</kbd>; <kbd>ENTER</kbd></td><td>In a list of categories: switch one; accept the list</td><td></td></tr>
+  <tr><td><kbd>SPACE</kbd> or <kbd>F7</kbd>; <kbd>F4</kbd>; <kbd>ENTER</kbd></td><td>In a list of categories: switch one; take them all out; accept the list</td><td></td></tr>
   <tr><td><kbd>Y</kbd> / <kbd>N</kbd></td><td>In a yes-or-no question: answer at once</td><td></td></tr>
 </table>
 
@@ -2189,7 +2557,7 @@ and the letter, with your terminal set to use Option as Meta.</p>
   <tr><td><kbd>F2</kbd></td><td>Paste</td><td></td></tr>
   <tr><td><kbd>ALT-F7</kbd> / <kbd>ALT-F2</kbd></td><td>Make a new item / category of the text</td><td></td></tr>
   <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-T</kbd> / <kbd>ALT-C</kbd></td><td>Type today's date / the time / a date from the calendar</td><td></td></tr>
-  <tr><td><kbd>ALT-F9</kbd> / <kbd>ALT-F8</kbd></td><td>Move text onto the item's text / type the marked items in</td><td></td></tr>
+  <tr><td><kbd>ALT-F9</kbd> / <kbd>ALT-F8</kbd></td><td>Move text onto the item's text / type the marked items in (asking “Discard items after copy?”)</td><td></td></tr>
   <tr><td><kbd>CTRL-←</kbd> / <kbd>CTRL-→</kbd></td><td>A word left / right</td><td><kbd>⌥←</kbd> / <kbd>⌥→</kbd></td></tr>
   <tr><td><kbd>PGUP</kbd> / <kbd>PGDN</kbd>; <kbd>CTRL-HOME</kbd> / <kbd>CTRL-END</kbd></td><td>A screenful up / down; the start / end of the note</td><td><kbd>⌥&lt;</kbd> / <kbd>⌥&gt;</kbd></td></tr>
   <tr><td><kbd>CTRL-BACKSPACE</kbd> / <kbd>ALT-W</kbd>; <kbd>CTRL-K</kbd></td><td>Delete the word before / after; to the end of the line</td><td><kbd>⌥⌫</kbd> or <kbd>CTRL-W</kbd> / <kbd>⌥w</kbd></td></tr>
@@ -2201,20 +2569,35 @@ and the letter, with your terminal set to use Option as Meta.</p>
   <tr><td><kbd>F5</kbd>; <kbd>ESC</kbd></td><td>Save it and go back; go back, asking “Discard changes?” if it changed</td><td></td></tr>
 </table>
 
+<h3>In the help</h3>
+<table>
+  <tr><th>Key</th><th>Does</th></tr>
+  <tr><td><kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd>, a letter; <kbd>ENTER</kbd></td><td>Highlight a link (a letter: the next one beginning with it); read it</td></tr>
+  <tr><td><kbd>PGUP</kbd> / <kbd>PGDN</kbd></td><td>Scroll</td></tr>
+  <tr><td><kbd>F1</kbd></td><td>How to use the help</td></tr>
+  <tr><td><kbd>F3</kbd></td><td>The help index</td></tr>
+  <tr><td><kbd>F5</kbd>; then <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd></td><td>Find a topic by a word; the next / previous topic found</td></tr>
+  <tr><td><kbd>F6</kbd></td><td>Every key, with <em>Commands you can run here</em> and <em>Describe a key</em></td></tr>
+  <tr><td><kbd>F8</kbd> or <kbd>BACKSPACE</kbd></td><td>Back to the topic read before</td></tr>
+  <tr><td><kbd>F9</kbd> or <kbd>ESC</kbd></td><td>Leave the help</td></tr>
+</table>
+
 <h3>The menu</h3>
 <table>
   <tr><th>Menu</th><th>Commands</th></tr>
-  <tr><td>File</td><td>Retrieve, Save, Write, Properties, Transfer (Import, Export; with the extras, Calendars, Publish, Feeds)</td></tr>
-  <tr><td>Item</td><td>Properties, MakeAssign, Discard, BrkAssign, Reposition, Alarm (with the extras, Open link, Zettel)</td></tr>
+  <tr><td>File</td><td>Retrieve, Save, Abandon, Properties, Transfer (Import, Export, Template; with the extras, Calendars, Publish, Feeds), Maintenance (MakeCopy, Erase)</td></tr>
+  <tr><td>Item</td><td>Properties, MakeAssign, Discard, Undisc, BrkAssign, Reposition, Alarm (with the extras, Open link, Zettel)</td></tr>
   <tr><td>Category</td><td>Properties, Add, Discard</td></tr>
   <tr><td>View</td><td>Properties, Add, Browse, Discard, Column (Properties, Add, Remove, Move, Width), Section (Properties, Add, Remove, Move)</td></tr>
   <tr><td>Print</td><td>The view to a text file</td></tr>
-  <tr><td>Utilities</td><td>Customize, Execute, Show (Match, Prereqs, Depends, Alarm, Sched), Questions</td></tr>
+  <tr><td>Utilities</td><td>Customize, Execute, Show (Match, Prereqs, Depends, ItemsDone, Circular, Alarm, Sched, Every), Questions, Trash</td></tr>
   <tr><td>Quit</td><td></td></tr>
 </table>
 
 <p>In the category manager <kbd>F10</kbd> opens its own menu: Category (Properties, Add,
-Discard), Return, Quit. In a note: Import, Export, Clear, Return, Quit.</p>
+Discard), Return, Quit; there <kbd>ALT-F9</kbd> copies a category's conditions or
+actions to another and <kbd>ALT-F8</kbd> clears them. In a note the menu is Import,
+Export, Clear, Return, Quit.</p>
 </section>
 
 <!-- ===================================================================== -->

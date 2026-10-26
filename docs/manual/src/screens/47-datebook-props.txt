@@ -1,25 +1,25 @@
- The date category whose dates place items in the       PROPS  2026-10-12 10:15
- slots. SPACE picks one.
- ── Mon 2026-10-12 ─────────────────────────────────────────────────────────────
- ── Tue 2┌─────────── Datebook settings: Rabbit's Calendar ───────────┐─────────
- • Weed t│ Date category      : When                                  │
- ── Wed 2│ End category       : (none)                                │─────────
- ── Thu 2│ Section            : When                                  │─────────
- • Visit │ Period             : Week                                  │
- ── Fri 2│ Interval           : — (a day each)                        │─────────
- • Put up│ Start at           : Mon                                   │
-         │ End at             : Fri                                   │
-         │ Base date on       : today (2026-10-12)                    │
-         │                                                            │
-         │ Hide column heads  : No                                    │
-         │ Section separators : No                                    │
-         │ Number items       : No                                    │
-         │                                                            │
-         │ SPACE change · DEL clear                                   │
-         └─────────── Press ENTER when done, ESC to cancel ───────────┘
+ Type a name for the view. F2 edits the name it has.
+
+ ── Mon 10/12/26 ───────────────────────────────────────────────────────────────
+ ── T┌───────────────────────── View Properties ──────────────────────────┐─────
+    •│ View name:  Rabbit's Calendar                                      │
+ ── W│ Item sorting:    ...              Date category: When              │─────
+ ── T│                                   End category:                    │─────
+    •│                                   Section:       When              │
+ ── F│ Hide empty sections:   No         Period:        Week              │─────
+    •│ Hide done items:       No         Start at:      Mon               │
+     │ Hide dependent items:  No         End at:        Fri               │
+     │ Hide inherited items:  No                                          │
+     │ Hide column heads:     No         Base date on:  today             │
+     │ Section separators:    No                                          │
+     │ Number items:          No           Filter: (none)                 │
+     │                                                                    │
+     │ View statistics:       ...                                         │
+     │                                                                    │
+     │ SPACE change · F2 edit · F3 choices · F6 props · INS add           │
+     └─────────────── Press ENTER when done, ESC to cancel ───────────────┘
 
 
 
-
-
- ↑↓←→ Setting SPACE Change DEL Clear ENTER Done ESC Cancel
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │Choices│       │       │ Props │       │Default│       │

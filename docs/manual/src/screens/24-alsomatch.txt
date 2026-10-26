@@ -1,9 +1,9 @@
- Other words and phrases, separated by semicolons,      PROPS  2026-10-12 10:15
- that assign items too. F2 edits.
- MAIN   6
-   ┌───────────────────── Category properties: Garden ──────────────────────┐
-   │ Category name:      Garden            Type:                Standard    │
-   │ Parent is MAIN                        Match category name: Yes         │
+ Other words and phrases, separated by semicolons, that assign items too. F2
+ edits.
+  MAIN
+  ☼┌───────────────────────── Category Properties ──────────────────────────┐
+  ☼│ Category name:      Garden            Type:                Standard    │
+  ☼│ Parent is MAIN                        Match category name: Yes         │
    │ Short name:         (none)                                             │
    │ Also match:         carrot*;lettuce…                                   │
    │ Note:               ...                                                │
@@ -14,12 +14,12 @@
    │ Advanced settings:  ...               Excludes:                        │
    │                                       (none)                           │
    └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
-       Christopher Robin   aka CR · 0
-       Small   1
-    Priority   exclusive · 6
-       High   3
-       Medium   2
-       Low   1
+      Christopher Robin
+      Small
+    Priority
+     ┌High
+     ├Medium
+     └Low
 
-
- SPACE Change F2 Edit ENTER Done ESC Cancel
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │Choices│       │       │ Props │       │Default│       │

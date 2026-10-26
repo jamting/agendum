@@ -1,9 +1,9 @@
- The category's name. F2 (or SPACE) edits it.           PROPS  2026-10-12 10:15
- Category Manager                                                 20 categories
- MAIN   6
-   ┌────────────── Category properties: Friends and Relations ──────────────┐
-   │ Category name:      Friends and Rel…  Type:                Standard    │
-   │ Parent is MAIN                        Match category name: No          │
+ The category's name. F2 (or SPACE) edits it.
+
+  MAIN
+  ☼┌───────────────────────── Category Properties ──────────────────────────┐
+  ☼│ Category name:      Friends and Rel…  Type:                Standard    │
+  ☼│ Parent is MAIN                        Match category name: No          │
    │ Short name:         Friends                                            │
    │ Also match:         (none)                                             │
    │ Note:               ...                                                │
@@ -14,12 +14,12 @@
    │ Advanced settings:  ...               Excludes:                        │
    │                                       (none)                           │
    └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
-       Christopher Robin   aka CR · 0
-       Small   1
-    Priority   exclusive · 6
-       High   3
-       Medium   2
-       Low   1
+      Christopher Robin
+      Small
+    Priority
+     ┌High
+     ├Medium
+     └Low
 
-
- SPACE Change F2 Edit ENTER Done ESC Cancel
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │Choices│       │       │ Props │       │Default│       │

@@ -1,25 +1,25 @@
- When the category gets a date: never, from the clock   PROPS  2026-10-12 10:15
- as the item is entered or edited, or from its text. SPACE changes it.
- MAIN   6
-   ┌───────────────────── Category properties: Harvest ─────────────────────┐
-   │ ┌──────────────── Advanced settings: Harvest ────────────────┐e        │
-   │ │ Assign item date       : Never                             │         │
-   │ │ Which one              : (dates from text only)            │         │
-   │ │ Set date from Done key : No                                │         │
-   │ │ Set date from When key : No                                │         │
+ When the category gets a date: never, from the clock as the item is entered or
+ edited, or from its text. SPACE changes it.
+  MAIN
+  ☼┌───────────────────────── Category Properties ──────────────────────────┐
+  ☼│ ┌────────────── Advanced Settings for Harvest ───────────────┐e        │
+  ☼│ │ Assign item date:                 Never                    │         │
+   │ │                       Which one:  (dates from text only)   │         │
+   │ │ Set the item date from Done key:  No                       │         │
+   │ │ Set the item date from When key:  No                       │         │
    │ │                                                            │         │
    │ │ SPACE next choice                                          │         │
    │ └─────────── Press ENTER when done, ESC to cancel ───────────┘         │
    │ Statistics:         ...               (none)                           │
-   │ Advanced settings:  ...               Excludes:                        │
-   │                                       (none)                           │
+   │ Advanced settings:  ...                                                │
+   │                                                                        │
    └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
-       Christopher Robin   aka CR · 0
-       Small   1
-    Priority   exclusive · 6
-       High   3
-       Medium   2
-       Low   1
-    Harvest   0
-
- ↑↓←→ Setting SPACE Next ENTER Done ESC Cancel
+      Christopher Robin
+      Small
+    Priority
+     ┌High
+     ├Medium
+     └Low
+    Harvest
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │Choices│       │       │       │       │Default│       │

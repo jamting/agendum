@@ -1,25 +1,25 @@
- What to sort the items on: item text, a category, or    SORT  2026-10-12 10:15
- a category note. SPACE.
+ What to sort the items on: none, the item text, a category or a category note.
+ SPACE for the next.
  Garden                                   When             Priority Friends
- • We┌───────────────────────── View Properties ──────────────────────────┐
- • Co│ ┌──────────────── Sort items in all sections ────────────────┐     │
-   bo│ │ Sort on         : None                                     │     │
-     │ │ Order           : -                                        │     │
- Noti│ │ Sort n/a's      : -                                        │     │
- • Pu│ │ Sequence        : -                                        │     │
-   Me│ │ Line number     : -                                        │     │
-     │ │ Then by         : None                                     │     │
- Frie│ │ Then order      : -                                        │     │
- • Co│ │ Section sorting : None                                     │     │
-   bo│ │ Section order   : -                                        │     │
- • As│ │                                                            │     │
- • Fi│ │ SPACE change the setting                                   │     │
- • Vi│ └─────────── Press ENTER when done, ESC to cancel ───────────┘     │Roo
-     │                                                                    │
-     │ SPACE change · F2 edit · F3 choices · F6 props · INS add           │
-     └─────────────── Press ENTER when done, ESC to cancel ───────────────┘
+    •┌───────────────────────── View Properties ──────────────────────────┐
+     │ ┌────────────────── Item Sorting in All Sections ──────────────────┐
+    •│ │ Sort new items:   When item is entered                           │
+     │ │                                                                  │
+     │ │ Primary sort key                                                 │
+ Noti│ │   Sort on:    None                                               │
+    •│ │                                                                  │
+     │ │                                                                  │
+     │ │                                                                  │
+ Frie│ │ Secondary sort key                                               │
+    •│ │   Sort on:    None                                               │
+     │ │                                                                  │
+    •│ │                                                                  │
+    •│ │                                                                  │
+    •│ │                                                                  │Roo
+     │ │ SPACE change the setting                                         │
+     └─└────────────── Press ENTER when done, ESC to cancel ──────────────┘
 
 
 
-
- ↑↓←→ Setting SPACE Change ENTER Done ESC Cancel
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │Choices│       │       │ Props │       │Default│       │

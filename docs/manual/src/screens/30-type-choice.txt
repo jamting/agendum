@@ -1,25 +1,25 @@
- File: /home/rabbit/rabbit.agendum *                    PROPS  2026-10-12 10:15
- Category Manager                                                 21 categories
- MAIN   6
-   ┌───────────────────── Category properties: Harvest ─────────────────────┐
-   │ ┌────────────────── Category type: Harvest ──────────────────┐ndard    │
-   │ │ Standard categories can become numeric or date categories. │         │
+
+
+  MAIN
+  ☼┌───────────────────────── Category Properties ──────────────────────────┐
+  ☼│ ┌────────────────── Category type: Harvest ──────────────────┐ndard    │
+  ☼│ │ Standard categories can become numeric or date categories. │         │
    │ │                                                            │         │
    │ │ Change the type to:                                        │         │
+   │ │    Unindexed                                               │         │
    │ │    Numeric                                                 │         │
    │ │    Date                                                    │         │
    │ │                                                            │         │
-   │ │ A number for each item: totals and averages; children becom│         │
+   │ │ A text for each item, such as a phone number; children beco│         │
    │ └─────────── Press ENTER to accept, ESC to cancel ───────────┘         │
-   │ Advanced settings:  ...               Excludes:                        │
    │                                       (none)                           │
    └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
-       Christopher Robin   aka CR · 0
-       Small   1
-    Priority   exclusive · 6
-       High   3
-       Medium   2
-       Low   1
-    Harvest   0
-
- ↑↓ Highlight ENTER Select ESC Cancel
+      Christopher Robin
+      Small
+    Priority
+     ┌High
+     ├Medium
+     └Low
+    Harvest
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │       │       │       │       │       │       │       │       │

@@ -1,23 +1,23 @@
- File: /home/rabbit/rabbit.agendum                      READY  2026-10-12 10:15
+ File: /home/rabbit/rabbit.agendum                            10/12/26  10:15am
  View: Rabbit's Week
  Garden                                      When             Priority Cost
- • Weed the carrot bed tomorrow morning      2026-10-13 08:00 High          0.50
- • Count the lettuces before Tigger bounces                   Medium
-   on them
- • Buy carrot seeds                                                         2.40
+    • Weed the carrot bed tomorrow morning  ·10/13/26 8:00am ·High          0.50
+    • Count the lettuces before Tigger                       ·Medium
+      bounces on them
+    • Buy carrot seeds                                                      2.40
                                       TOTAL                                 2.90
 
  Notices                                     When             Priority Cost
- • Put up a Notice about the Organising      2026-10-16       High
-   Meeting on Friday
+    • Put up a Notice about the Organising  ·10/16/26        ·High
+      Meeting on Friday
                                       TOTAL
 
  Friends and Relations                       When             Priority Cost
- • Count the lettuces before Tigger bounces                   Medium
-   on them
- • Ask Owl how to spell Organising                            Low
- • Find Small, who is lost again                              High
- • Visit Kanga and Roo on Thursday at 3pm    2026-10-15 15:00 Medium
+    • Count the lettuces before Tigger                       ·Medium
+      bounces on them
+    • Ask Owl how to spell Organising                        ·Low
+    • Find Small, who is lost again                          ·High
+    • Visit Kanga and Roo on Thursday at 3pm·10/15/26 3:00pm ·Medium
                                       TOTAL
 
 

@@ -1,22 +1,22 @@
- To display a view, highlight the view name and        VW MGR  2026-10-12 10:15
- press ENTER. Press INS to create a new view.
+ To display a view, highlight the view name and press ENTER. Press INS to
+ create a new view.
  Garden                                   When             Priority Friends
- • Weed the ca┌────────────────── View Manager ──────────────────┐
- • Count the l│      Rabbit's Week                               │  Tigger
-   bounces on └────── Press ENTER when done, ESC to cancel ──────┘
+    • Weed the┌────────────────── View Manager ──────────────────┐
+      morning │      Rabbit's Week                               │
+    • Count th└────── Press ENTER when done, ESC to cancel ──────┘ ·Tigger
+      bounces on them
 
  Notices                                  When             Priority Friends
- • Put up a Notice about the Organising   2026-10-16       High
-   Meeting on Friday
+    • Put up a Notice about the          ·10/16/26        ·High
+      Organising Meeting on Friday
 
  Friends and Relations                    When             Priority Friends
- • Count the lettuces before Tigger                        Medium   Tigger
-   bounces on them
- • Ask Owl how to spell Organising                         Low      Owl
- • Find Small, who is lost again                           High     Small
- • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
-
-
+    • Count the lettuces before Tigger                    ·Medium  ·Tigger
+      bounces on them
+    • Ask Owl how to spell Organising                     ·Low     ·Owl
+    • Find Small, who is lost again                       ·High    ·Small
+    • Visit Kanga and Roo on Thursday at ·10/15/26 3:00pm ·Medium  ·Kanga, Roo
+      3pm
 
 
 

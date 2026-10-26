@@ -1,25 +1,25 @@
- Type the end of the range: a date or a number. Leave   PROPS  2026-10-12 10:15
- it blank for no end.
+ Type the end of the range: a date or a number. Leave it blank for no end.
+
  Garden                                   When             Priority Friends
- • We┌───────────────────────── View Properties ──────────────────────────┐
- • Co│ ┌───────────────────── Filter the view ──────────────────────┐     │
-   bo│ │ ┌──────────────────── Date filter: When ─────────────────────┐   │
+    •┌───────────────────────── View Properties ──────────────────────────┐
+     │ ┌───────────────────── Filter the view ──────────────────────┐     │
+    •│ │ ┌──────────────────── Date filter: When ─────────────────────┐   │
      │ │ │ Show items       : Assigned                                │   │
- Noti│ │ │ Start date       : today                                   │   │
- • Pu│ │ │ End date         : end of this week                        │   │
-   Me│ │ │ Items should be  : Inside range                            │   │
+     │ │ │ Start date       : today                                   │   │
+ Noti│ │ │ End date         : end of this week                        │   │
+    •│ │ │ Items should be  : Inside range                            │   │
      │ │ │                                                            │   │
- Frie│ │ │ SPACE change the setting · ENTER apply · DEL remove        │   │
- • Co│ │ └─────────── Press ENTER when done, ESC to cancel ───────────┘   │
-   bo│ │       Owl                                                        │
- • As│ │       Eeyore                                               │     │
- • Fi│ │       Kanga                                                │     │
- • Vi│ │       Roo                                                  │     │Roo
-     │ │       Tigger                                               │     │
+     │ │ │ SPACE change the setting · ENTER apply · DEL remove        │   │
+ Frie│ │ └─────────── Press ENTER when done, ESC to cancel ───────────┘   │
+    •│ │       Owl                                                        │
+     │ │       Eeyore                                               │     │
+    •│ │       Kanga                                                │     │
+    •│ │       Roo                                                  │     │
+    •│ │       Tigger                                               │     │Roo
      │ │                                                            │     │
      └─│ SPACE switches: + assigned · - not assigned · none         │  ───┘
        └────────────────── Press ENTER to accept ───────────────────┘
 
 
-
- ↑↓←→ Setting SPACE Change ENTER Apply DEL Remove ESC Cancel
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │Choices│       │       │       │       │Default│       │

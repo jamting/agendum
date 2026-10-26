@@ -1,13 +1,13 @@
- File: /home/rabbit/rabbit.agendum *                    READY  2026-10-12 10:15
- View: Rabbit's Calendar                                    Datebook for: When
- ── Mon 2026-10-12 ─────────────────────────────────────────────────────────────
- ── Tue 2026-10-13 ─────────────────────────────────────────────────────────────
- • Weed the carrot bed tomorrow morning
- ── Wed 2026-10-14 ─────────────────────────────────────────────────────────────
- ── Thu 2026-10-15 ─────────────────────────────────────────────────────────────
- • Visit Kanga and Roo on Thursday at 3pm
- ── Fri 2026-10-16 ─────────────────────────────────────────────────────────────
- • Put up a Notice about the Organising Meeting on Friday
+ File: /home/rabbit/rabbit.agendum *                          10/12/26  10:15am
+ View: Rabbit's Calendar                Datebook For: When
+ ── Mon 10/12/26 ───────────────────────────────────────────────────────────────
+ ── Tue 10/13/26 ───────────────────────────────────────────────────────────────
+    • Weed the carrot bed tomorrow morning
+ ── Wed 10/14/26 ───────────────────────────────────────────────────────────────
+ ── Thu 10/15/26 ───────────────────────────────────────────────────────────────
+    • Visit Kanga and Roo on Thursday at 3pm
+ ── Fri 10/16/26 ───────────────────────────────────────────────────────────────
+    • Put up a Notice about the Organising Meeting on Friday
 
 
 

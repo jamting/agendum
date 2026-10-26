@@ -1,0 +1,25 @@
+ File: /home/rabbit/rabbit.agendum                            10/12/26  10:15am
+ Help
+ Garden                                   When             Priority Friends
+   ┌───────────────────────────────── Help ─────────────────────────────────┐
+   │ Views                                                                  │
+   │                                                                        │
+   │ PURPOSE       A view is one way of looking at your file: a page of     │
+   │               sections, each showing the items of one category. An     │
+ No│               item can turn up in many views, the way Pooh turns up    │
+   │               wherever there is honey.                                 │
+   │                                                                        │
+   │ IN A VIEW     Section head    A category, its items listed below       │
+ Fr│               Item            Anything you typed: a task, an idea,     │
+   │                               a phone number                           │
+   │               Column          More categories beside each item:        │
+   │                               its date, who it is for, how urgent      │
+   │                                                                        │
+   │ EXAMPLES      * A view called Calls: the calls to make, and in a       │o
+   │                 column whom to call.                                   │
+   │               * A view called This Week: a section for each day,       │
+   │                 with what falls on it.                                 │
+   └────────────────────────────────────────────────────────────────────────┘
+
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+On Help│       │ Index │       │ Find  │ Keys  │       │Review │Return │

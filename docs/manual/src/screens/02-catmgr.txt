@@ -1,25 +1,25 @@
- File: /home/rabbit/rabbit.agendum                    CAT MGR  2026-10-12 10:15
- Category Manager                                                 20 categories
- MAIN   6
-    Entry   date
-    When   date
-    Done   date
-    Garden   2
-    Notices   1
-    Friends and Relations   aka Friends · 4
-       Pooh   0
-       Piglet   0
-       Owl   1
-       Eeyore   0
-       Kanga   1
-       Roo   1
-       Tigger   1
-       Christopher Robin   aka CR · 0
-       Small   1
-    Priority   exclusive · 6
-       High   3
-       Medium   2
-       Low   1
+ File: /home/rabbit/rabbit.agendum
+ Category Manager
+  MAIN
+  ☼ Entry
+  ☼ When
+  ☼ Done
+    Garden
+    Notices
+    Friends and Relations
+      Pooh
+      Piglet
+      Owl
+      Eeyore
+      Kanga
+      Roo
+      Tigger
+      Christopher Robin
+      Small
+    Priority
+     ┌High
+     ├Medium
+     └Low
 
   F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
  Help  │ Edit  │       │       │ Note  │ Props │Promote│Demote │To View│ Menu

@@ -1,25 +1,25 @@
- In Entry: dated 2026-10-12                            ASSIGN  2026-10-12 10:15
- View: Rabbit's Week
+ In Entry: dated 10/12/26
+
  Garden                                   When             Priority Friends
- • Weed t┌──── Assignments: Weed the carrot bed tomorrow morning ─────┐
- • Count │ ◊   Entry                                                  │ger
-   bounce│ ◊   When                                                   │
-         │     Done                                                   │
- Notices │ *   Garden                                                 │ends
- • Put up│     Notices                                                │
-   Meetin│     Friends and Relations                                  │
-         │       Pooh                                                 │
- Friends │       Piglet                                               │ends
- • Count │       Owl                                                  │ger
-   bounce│       Eeyore                                               │
- • Ask Ow│       Kanga                                                │
- • Find S│       Roo                                                  │ll
- • Visit │       Tigger                                               │ga, Roo
-         │                                                            │
-         │ * assigned  c by a condition  + via subcategory  SPACE     │
+    • Wee┌──── Assignments: Weed the carrot bed tomorrow morning ─────┐
+      mor│ ◊   Entry                                                  │
+    • Cou│ ◊   When                                                   │ger
+      bou│     Done                                                   │
+         │ *   Garden                                                 │
+ Notices │     Notices                                                │ends
+    • Put│     Friends and Relations                                  │
+      Org│       Pooh                                                 │
+         │       Piglet                                               │
+ Friends │       Owl                                                  │ends
+    • Cou│       Eeyore                                               │ger
+      bou│       Kanga                                                │
+    • Ask│       Roo                                                  │
+    • Fin│       Tigger                                               │ll
+    • Vis│                                                            │ga, Roo
+      3pm│ * assigned  c by a condition  + via subcategory  SPACE     │
          └────────────────── Press ENTER to accept ───────────────────┘
 
 
 
-
- SPACE Assign/Unassign ESC Return
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │       │       │       │ Props │InclCat│       │       │

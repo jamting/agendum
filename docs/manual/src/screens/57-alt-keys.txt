@@ -1,22 +1,22 @@
- File: /home/rabbit/rabbit.agendum                      READY  2026-10-12 10:15
+ File: /home/rabbit/rabbit.agendum                            10/12/26  10:15am
  View: Rabbit's Week
  Garden                                   When             Priority Friends
- • Weed the carrot bed tomorrow morning   2026-10-13 08:00 High
- • Count the lettuces before Tigger                        Medium   Tigger
-   bounces on them
+    • Weed the carrot bed tomorrow       ·10/13/26 8:00am ·High
+      morning
+    • Count the lettuces before Tigger                    ·Medium  ·Tigger
+      bounces on them
 
  Notices                                  When             Priority Friends
- • Put up a Notice about the Organising   2026-10-16       High
-   Meeting on Friday
+    • Put up a Notice about the          ·10/16/26        ·High
+      Organising Meeting on Friday
 
  Friends and Relations                    When             Priority Friends
- • Count the lettuces before Tigger                        Medium   Tigger
-   bounces on them
- • Ask Owl how to spell Organising                         Low      Owl
- • Find Small, who is lost again                           High     Small
- • Visit Kanga and Roo on Thursday at 3pm 2026-10-15 15:00 Medium   Kanga, Roo
-
-
+    • Count the lettuces before Tigger                    ·Medium  ·Tigger
+      bounces on them
+    • Ask Owl how to spell Organising                     ·Low     ·Owl
+    • Find Small, who is lost again                       ·High    ·Small
+    • Visit Kanga and Roo on Thursday at ·10/15/26 3:00pm ·Medium  ·Kanga, Roo
+      3pm
 
 
 

@@ -43,6 +43,7 @@ defmodule ManualScreens do
     macros(state)
     columns(state)
     help_and_views(state)
+    trash_and_search(state)
     away(state)
   end
 
@@ -85,7 +86,7 @@ defmodule ManualScreens do
     index = Enum.find_index(CategoryScreens.rows(s, State.mode(s)), &(name(s, &1) == "Harvest"))
     s = s |> press(List.duplicate(:down, index) ++ [{:f, 6}]) |> to_setting("Type") |> press(" ")
     shot("30-type-choice", s, :choice)
-    s = s |> press([:down, :enter]) |> to_setting("Advanced settings") |> press(" ")
+    s = s |> press([:down, :down, :enter]) |> to_setting("Advanced settings") |> press(" ")
     shot("32-daterule", s, :date_rule)
   end
 
@@ -108,6 +109,8 @@ defmodule ManualScreens do
       |> press([" ", :enter, :enter])
 
     shot("36-questions", press(confirm, item ++ [{:f, 10}, "u", "q"]), :questions)
+    # ALT-A on the visit to Kanga and Roo: Agenda's Set Alarm box, then ENTER
+    shot("37-set-alarm", press(state, [:ctrl_end, {:alt, "a"}]), :set_alarm)
     shot("38-alarm", press(state, [:ctrl_end, {:alt, "a"}, :enter]), nil)
   end
 
@@ -171,7 +174,7 @@ defmodule ManualScreens do
     shot("39-popup-calendar", press(state, [:down, :right, {:f, 3}]), :calendar)
 
     add = [{:f, 10}, "v", "a"] ++ String.graphemes("Rabbit's Calendar") ++ [:enter, "d"]
-    shot("47-datebook-props", press(state, add), :datebook_props)
+    shot("47-datebook-props", press(state, add), :view_props)
     shot("46-datebook-week", press(state, add ++ [:enter]), nil)
   end
 
@@ -192,18 +195,33 @@ defmodule ManualScreens do
     shot("50-column-props", press(state, friends), :column_props)
   end
 
-  # F1 then c: the commands of a view; the view manager; the Section Add
-  # box; the ALT key bar (ALT-K once); a note in the note editor.
+  # F1: the help topic for a view, then F6 Keys and its first link, the
+  # commands of a view, and F5's Find Topic box; the view manager; the
+  # Section Add box; the ALT key bar (ALT-K once); a note in the note editor.
   defp help_and_views(state) do
-    shot("51-help-commands", press(state, [{:f, 1}, "c"]), :help)
+    shot("51-help-topic", press(state, {:f, 1}), :help)
+    shot("59-help-commands", press(state, [{:f, 1}, {:f, 6}, :enter]), :help)
+    shot("60-find-topic", press(state, [{:f, 1}, {:f, 5}]), :find_topic)
     shot("52-viewmgr", press(state, {:f, 8}), :viewmgr)
     shot("56-section-add", press(state, [{:f, 10}, "v", "s", "a"]), :section_props)
     shot("57-alt-keys", press(state, {:alt, "k"}), nil)
+
     note =
       String.graphemes("Carrots in the first row, lettuces in the second.") ++
         [:enter] ++ String.graphemes("Keep Tigger out of both.")
 
     shot("58-note", press(state, [:down, {:f, 5}] ++ note), :note)
+  end
+
+  # DEL's question on the carrot bed, and Item ▸ Undisc with two
+  # items in the trash (the carrot bed and the lettuces, which empties
+  # Garden); the Search box (ALT-F6); File Properties.
+  defp trash_and_search(state) do
+    shot("61-remove", press(state, [:down, :delete]), :confirm)
+    two = [:down, {:alt_f, 4}, :enter, {:alt_f, 4}, :enter]
+    shot("63-undiscard", press(state, two ++ [{:f, 10}, "i", "u"]), :undiscard)
+    shot("64-search", press(state, {:alt_f, 6}), :search_box)
+    shot("65-file-props", press(state, [{:f, 10}, "f", "p"]), :file_props)
   end
 
   # "While you were away": Rabbit set two alarms at 8 o'clock, left the
