@@ -1,0 +1,3 @@
+# The hostile files are kept byte for byte: their CRLF line ends, Latin-1
+# bytes and NULs are what they test (test/fixtures/hostile/make.exs).
+test/fixtures/hostile/** -text

@@ -1,0 +1,5522 @@
+﻿{
+  "format": "agendum-json",
+  "version": 1,
+  "next_id": 145,
+  "next_zettel": 3,
+  "main": 1,
+  "special": {
+    "entry": 2,
+    "when": 3,
+    "done": 4
+  },
+  "settings": {
+    "date_format": {
+      "order": "ddmmmyy",
+      "separator": ".",
+      "clock": 12,
+      "day_of_week": true,
+      "show": "time_date",
+      "am_pm": false,
+      "time_separator": "hm"
+    },
+    "date_settings": {
+      "week_start": 7,
+      "week_end": 6,
+      "quarter_start": 2,
+      "year_start": 7,
+      "month_alone": "last",
+      "morning": "07:30:00",
+      "afternoon": "13:30:00",
+      "evening": "19:00:00"
+    },
+    "match_settings": {
+      "enabled": false,
+      "match_on": "both",
+      "strength": "partial",
+      "enclosed_by": "brackets",
+      "ignore_suffixes": false,
+      "ignore_accents": true
+    },
+    "confirm_assignments": "sometimes",
+    "insert_columns": "section",
+    "tab_size": 8,
+    "description": "Owl's house, and all the Wood",
+    "backup_on_open": true,
+    "empty_trash": "on_demand"
+  },
+  "categories": [
+    {
+      "id": 1,
+      "name": "MAIN",
+      "short_name": null,
+      "parent": null,
+      "children": [2, 3, 4, 7, 9, 10, 12, 5, 13, 21, 22, 23, 27, 28, 29, 38, 39, 41, 42, 123, 126, 127, 128, 129, 133, 137, 138, 139, 140],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 2,
+      "name": "Entry",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "date",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": {
+        "assign": "entered",
+        "which": 1,
+        "done_key": false,
+        "when_key": false
+      },
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 3,
+      "name": "When",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "date",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": {
+        "assign": "item_text",
+        "which": 1,
+        "done_key": false,
+        "when_key": true
+      },
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 4,
+      "name": "Done",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "date",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": {
+        "assign": "never",
+        "which": 1,
+        "done_key": true,
+        "when_key": false
+      },
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 7,
+      "name": "People",
+      "short_name": null,
+      "parent": 1,
+      "children": [8, 62, 63, 64, 65, 66],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 8,
+      "name": "Sample Person",
+      "short_name": null,
+      "parent": 7,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": "Phone: 555-0100\nCompany: Sample Company"
+    },
+    {
+      "id": 62,
+      "name": "Anna Berg",
+      "short_name": null,
+      "parent": 7,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": "Phone: 555-0101\nCompany: Nordvik Consulting"
+    },
+    {
+      "id": 63,
+      "name": "Johan Lind",
+      "short_name": null,
+      "parent": 7,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": "Phone: 555-0102\nCompany: Lind Removals"
+    },
+    {
+      "id": 64,
+      "name": "Maria Svensson",
+      "short_name": null,
+      "parent": 7,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": "Phone: 555-0103\nCompany: Svensson & Co Accounting"
+    },
+    {
+      "id": 65,
+      "name": "David Chen",
+      "short_name": null,
+      "parent": 7,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": "Phone: 555-0104\nCompany: Pixelworks Design"
+    },
+    {
+      "id": 66,
+      "name": "Sarah Miller",
+      "short_name": null,
+      "parent": 7,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": "Phone: 555-0105\nCompany: Miller Legal"
+    },
+    {
+      "id": 9,
+      "name": "Unassigned",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [
+        {
+          "category": 7,
+          "is": "not_assigned"
+        },
+        {
+          "category": 5,
+          "is": "assigned"
+        }
+      ],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 10,
+      "name": "Project",
+      "short_name": null,
+      "parent": 1,
+      "children": [11, 67, 68, 69],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 11,
+      "name": "Sample Project",
+      "short_name": null,
+      "parent": 10,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 67,
+      "name": "Website redesign",
+      "short_name": null,
+      "parent": 10,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 68,
+      "name": "Annual report",
+      "short_name": null,
+      "parent": 10,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 69,
+      "name": "Office move",
+      "short_name": null,
+      "parent": 10,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 12,
+      "name": "Miscellaneous Project",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 5,
+      "name": "Tasks",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 13,
+      "name": "Activity",
+      "short_name": null,
+      "parent": 1,
+      "children": [14, 15, 16, 17, 18, 19, 20],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 14,
+      "name": "Calls",
+      "short_name": "Phone",
+      "parent": 13,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "Telephone",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 15,
+      "name": "Meetings",
+      "short_name": null,
+      "parent": 13,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 16,
+      "name": "Mail",
+      "short_name": null,
+      "parent": 13,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 17,
+      "name": "Reading",
+      "short_name": null,
+      "parent": 13,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 18,
+      "name": "Follow up",
+      "short_name": null,
+      "parent": 13,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 19,
+      "name": "Issues",
+      "short_name": null,
+      "parent": 13,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 20,
+      "name": "Ideas",
+      "short_name": null,
+      "parent": 13,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 21,
+      "name": "Miscellaneous Activity",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 22,
+      "name": "Expenses",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 23,
+      "name": "Priority",
+      "short_name": null,
+      "parent": 1,
+      "children": [24, 25, 26],
+      "kind": "standard",
+      "exclusive": true,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 24,
+      "name": "High",
+      "short_name": "Hi",
+      "parent": 23,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 25,
+      "name": "Medium",
+      "short_name": null,
+      "parent": 23,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 26,
+      "name": "Low",
+      "short_name": null,
+      "parent": 23,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 27,
+      "name": "No Priority Assigned",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [
+        {
+          "category": 23,
+          "is": "not_assigned"
+        },
+        {
+          "category": 5,
+          "is": "assigned"
+        }
+      ],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 28,
+      "name": "Contact List",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 29,
+      "name": "Type",
+      "short_name": null,
+      "parent": 1,
+      "children": [30, 31, 32, 33, 34, 35, 36, 37],
+      "kind": "standard",
+      "exclusive": true,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 30,
+      "name": "Lodging",
+      "short_name": "Hotel",
+      "parent": 29,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "Motel;Inn",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 31,
+      "name": "Breakfast",
+      "short_name": null,
+      "parent": 29,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 32,
+      "name": "Lunch",
+      "short_name": null,
+      "parent": 29,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 33,
+      "name": "Dinner",
+      "short_name": null,
+      "parent": 29,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 34,
+      "name": "Entertainment",
+      "short_name": null,
+      "parent": 29,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 35,
+      "name": "Air",
+      "short_name": null,
+      "parent": 29,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 36,
+      "name": "Transportation",
+      "short_name": null,
+      "parent": 29,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 37,
+      "name": "Miscellaneous",
+      "short_name": null,
+      "parent": 29,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 38,
+      "name": "No Type",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "\"Expenses with No Type\"",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [
+        {
+          "category": 22,
+          "is": "assigned"
+        },
+        {
+          "category": 29,
+          "is": "not_assigned"
+        }
+      ],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 39,
+      "name": "Report ID",
+      "short_name": null,
+      "parent": 1,
+      "children": [40, 70],
+      "kind": "standard",
+      "exclusive": true,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 40,
+      "name": "Sample Trip",
+      "short_name": null,
+      "parent": 39,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 70,
+      "name": "Berlin conference",
+      "short_name": null,
+      "parent": 39,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 41,
+      "name": "No Purpose",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 42,
+      "name": "Amount",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "numeric",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [22],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 123,
+      "name": "Hundred Acre Wood",
+      "short_name": null,
+      "parent": 1,
+      "children": [124, 125],
+      "kind": "standard",
+      "exclusive": true,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": "Where everyone lives."
+    },
+    {
+      "id": 124,
+      "name": "Owl's house",
+      "short_name": "Owl",
+      "parent": 123,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [127],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {
+        "strength": "exact"
+      },
+      "note": ""
+    },
+    {
+      "id": 125,
+      "name": "Pooh's tree",
+      "short_name": null,
+      "parent": 123,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "honey;hunny",
+      "also_assign": [126],
+      "excludes": [],
+      "conditions": [],
+      "actions": [
+        {
+          "category": 127,
+          "action": "remove"
+        }
+      ],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 126,
+      "name": "Visit",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "date",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [
+        {
+          "category": 124,
+          "is": "assigned"
+        }
+      ],
+      "actions": [],
+      "special": null,
+      "date_rule": {
+        "assign": "item_or_note_text",
+        "which": 2,
+        "done_key": true,
+        "when_key": true
+      },
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 127,
+      "name": "Archive",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [124],
+      "conditions": [],
+      "actions": [],
+      "special": "done",
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 128,
+      "name": "Honey pots",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "numeric",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 129,
+      "name": "Jar label",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "unindexed",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 133,
+      "name": "Calendars",
+      "short_name": null,
+      "parent": 1,
+      "children": [134],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 134,
+      "name": "Wood events",
+      "short_name": null,
+      "parent": 133,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 137,
+      "name": "Ends",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "date",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": {
+        "assign": "never",
+        "which": 1,
+        "done_key": false,
+        "when_key": false
+      },
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 138,
+      "name": "Posts",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 139,
+      "name": "Drafts",
+      "short_name": null,
+      "parent": 1,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": true,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 140,
+      "name": "Feeds",
+      "short_name": null,
+      "parent": 1,
+      "children": [141],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    },
+    {
+      "id": 141,
+      "name": "Owl's Gazette",
+      "short_name": null,
+      "parent": 140,
+      "children": [],
+      "kind": "standard",
+      "exclusive": false,
+      "match_name": false,
+      "also_match": "",
+      "also_assign": [],
+      "excludes": [],
+      "conditions": [],
+      "actions": [],
+      "special": null,
+      "date_rule": null,
+      "match_overrides": {},
+      "note": ""
+    }
+  ],
+  "items": [
+    {
+      "id": 71,
+      "text": "Draft the plan for the website redesign",
+      "note": "Scope, milestones and budget.\nAsk Anna about the hosting costs.",
+      "entry": "2026-10-15",
+      "when": "2026-10-18",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": 30,
+      "alarm_category": 126,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 24, 62, 67, 128, 129],
+      "conditional": [],
+      "dates": [
+        {
+          "category": 126,
+          "date": "2026-11-01",
+          "time": null,
+          "explicit": true
+        }
+      ],
+      "numbers": [
+        {
+          "category": 128,
+          "value": 12.5
+        }
+      ],
+      "texts": [
+        {
+          "category": 129,
+          "value": "HUNNY"
+        }
+      ],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 72,
+      "text": "Review the wireframes from the agency",
+      "note": "",
+      "entry": "2026-10-14",
+      "when": "2026-10-21",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 25, 65, 67],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 73,
+      "text": "Collect the figures for the annual report",
+      "note": "",
+      "entry": "2026-10-10",
+      "when": "2026-10-13",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 24, 64, 68],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 74,
+      "text": "Write the chairman's letter",
+      "note": "",
+      "entry": "2026-10-12",
+      "when": "2026-10-28",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 25, 68],
+      "conditional": [9],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 75,
+      "text": "Proofread the annual report",
+      "note": "",
+      "entry": "2026-10-11",
+      "when": "2026-11-05",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 26, 68],
+      "conditional": [9],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 76,
+      "text": "Order moving boxes",
+      "note": "",
+      "entry": "2026-10-15",
+      "when": "2026-10-17",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 26, 69],
+      "conditional": [9],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 77,
+      "text": "Book the movers",
+      "note": "",
+      "entry": "2026-10-13",
+      "when": "2026-10-15",
+      "when_time": null,
+      "when_explicit": true,
+      "done": "2026-10-16",
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 24, 63, 69],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 78,
+      "text": "Update the staff contact list",
+      "note": "",
+      "entry": "2026-10-11",
+      "when": "2026-10-14",
+      "when_time": null,
+      "when_explicit": true,
+      "done": "2026-10-15",
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 12, 26],
+      "conditional": [9],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 79,
+      "text": "Renew the software licences",
+      "note": "",
+      "entry": "2026-10-12",
+      "when": "2026-10-16",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 24],
+      "conditional": [9],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 80,
+      "text": "Clean up the shared drive",
+      "note": "",
+      "entry": "2026-10-11",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 27],
+      "conditional": [9, 27],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 81,
+      "text": "Plan the team offsite",
+      "note": "",
+      "entry": "2026-10-15",
+      "when": "2026-11-15",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 20, 25],
+      "conditional": [9],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 82,
+      "text": "Prepare the slides for the Berlin talk",
+      "note": "",
+      "entry": "2026-10-02",
+      "when": "2026-10-04",
+      "when_time": null,
+      "when_explicit": true,
+      "done": "2026-10-05",
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 11, 24],
+      "conditional": [9],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 83,
+      "text": "Call Anna Berg about the hosting contract",
+      "note": "",
+      "entry": "2026-10-13",
+      "when": "2026-10-16",
+      "when_time": "10:00:00",
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 14, 24, 62],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 84,
+      "text": "Phone the bank about the new account",
+      "note": "",
+      "entry": "2026-10-12",
+      "when": "2026-10-17",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 14, 25],
+      "conditional": [9],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 85,
+      "text": "Return Sarah Miller's call",
+      "note": "",
+      "entry": "2026-10-11",
+      "when": "2026-10-16",
+      "when_time": "14:30:00",
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 14, 27, 66],
+      "conditional": [27],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 86,
+      "text": "Call Johan Lind to confirm the moving date",
+      "note": "",
+      "entry": "2026-10-11",
+      "when": "2026-10-12",
+      "when_time": null,
+      "when_explicit": true,
+      "done": "2026-10-12",
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 14, 25, 63, 69],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 87,
+      "text": "Ring Maria Svensson about the audit",
+      "note": "",
+      "entry": "2026-10-13",
+      "when": "2026-10-15",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 14, 24, 64, 68],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 88,
+      "text": "Design review with David Chen",
+      "note": "",
+      "entry": "2026-10-13",
+      "when": "2026-10-17",
+      "when_time": "09:00:00",
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 15, 24, 65, 67],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 89,
+      "text": "Weekly status meeting",
+      "note": "",
+      "entry": "2026-10-12",
+      "when": "2026-10-23",
+      "when_time": "13:00:00",
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 15, 25, 62, 64],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 90,
+      "text": "Coffee with Sarah Miller",
+      "note": "",
+      "entry": "2026-10-11",
+      "when": "2026-10-19",
+      "when_time": "15:00:00",
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 15, 26, 66],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 91,
+      "text": "Kick-off for the office move",
+      "note": "",
+      "entry": "2026-10-09",
+      "when": "2026-10-10",
+      "when_time": "11:00:00",
+      "when_explicit": true,
+      "done": "2026-10-10",
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 15, 27, 63, 69],
+      "conditional": [27],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 92,
+      "text": "Mail the signed contract to Nordvik Consulting",
+      "note": "",
+      "entry": "2026-10-14",
+      "when": "2026-10-17",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 16, 24, 62],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 93,
+      "text": "Send the board the draft accounts",
+      "note": "",
+      "entry": "2026-10-13",
+      "when": "2026-10-24",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 16, 25, 68],
+      "conditional": [9],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 94,
+      "text": "Read the market report",
+      "note": "",
+      "entry": "2026-10-12",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 17, 26],
+      "conditional": [9],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 95,
+      "text": "Read the new data protection guidelines",
+      "note": "",
+      "entry": "2026-10-11",
+      "when": "2026-10-30",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 17, 25, 66],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 96,
+      "text": "Follow up on the unpaid invoice from Pixelworks",
+      "note": "",
+      "entry": "2026-10-13",
+      "when": "2026-10-14",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 18, 24, 65],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 97,
+      "text": "Follow up the quote from Lind Removals",
+      "note": "",
+      "entry": "2026-10-14",
+      "when": "2026-10-20",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 18, 27, 63, 69],
+      "conditional": [27],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 98,
+      "text": "The printer on the second floor keeps jamming",
+      "note": "",
+      "entry": "2026-10-13",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 19, 25],
+      "conditional": [9],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 99,
+      "text": "The meeting room projector has no HDMI cable",
+      "note": "",
+      "entry": "2026-10-07",
+      "when": "2026-10-11",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 15, 19, 27],
+      "conditional": [9, 15, 27],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 100,
+      "text": "A shared calendar for the meeting rooms",
+      "note": "",
+      "entry": "2026-10-11",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 9, 15, 20, 27],
+      "conditional": [9, 15, 27],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 101,
+      "text": "Newsletter for our clients",
+      "note": "",
+      "entry": "2026-10-15",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [5, 20, 26, 62],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 102,
+      "text": "Flight to Berlin",
+      "note": "Booking ref. QX7H2L, seat 14C.",
+      "entry": "2026-10-01",
+      "when": "2026-10-03",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [22, 35, 42, 70],
+      "conditional": [],
+      "dates": [],
+      "numbers": [
+        {
+          "category": 42,
+          "value": 245.0
+        }
+      ],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 103,
+      "text": "Hotel in Berlin, three nights",
+      "note": "",
+      "entry": "2026-09-30",
+      "when": "2026-10-03",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [22, 30, 42, 70],
+      "conditional": [],
+      "dates": [],
+      "numbers": [
+        {
+          "category": 42,
+          "value": 389.5
+        }
+      ],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 104,
+      "text": "Taxi from the airport",
+      "note": "",
+      "entry": "2026-09-29",
+      "when": "2026-10-03",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [22, 36, 42, 70],
+      "conditional": [],
+      "dates": [],
+      "numbers": [
+        {
+          "category": 42,
+          "value": 32.4
+        }
+      ],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 105,
+      "text": "Breakfast at the station",
+      "note": "",
+      "entry": "2026-09-29",
+      "when": "2026-10-04",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [22, 31, 42, 70],
+      "conditional": [],
+      "dates": [],
+      "numbers": [
+        {
+          "category": 42,
+          "value": 9.8
+        }
+      ],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 106,
+      "text": "Dinner with the conference speakers",
+      "note": "",
+      "entry": "2026-10-03",
+      "when": "2026-10-04",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [22, 34, 42, 70],
+      "conditional": [],
+      "dates": [],
+      "numbers": [
+        {
+          "category": 42,
+          "value": 86.0
+        }
+      ],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 107,
+      "text": "Conference fee",
+      "note": "",
+      "entry": "2026-09-14",
+      "when": "2026-09-16",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [22, 38, 42, 70],
+      "conditional": [38],
+      "dates": [],
+      "numbers": [
+        {
+          "category": 42,
+          "value": 450.0
+        }
+      ],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 108,
+      "text": "Flight home from Berlin",
+      "note": "",
+      "entry": "2026-10-03",
+      "when": "2026-10-06",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [22, 35, 42, 70],
+      "conditional": [],
+      "dates": [],
+      "numbers": [
+        {
+          "category": 42,
+          "value": 212.0
+        }
+      ],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 109,
+      "text": "Train tickets to the client in Uppsala",
+      "note": "",
+      "entry": "2026-10-05",
+      "when": "2026-10-09",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [22, 36, 41, 42],
+      "conditional": [],
+      "dates": [],
+      "numbers": [
+        {
+          "category": 42,
+          "value": 54.0
+        }
+      ],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 110,
+      "text": "Lunch with Anna Berg",
+      "note": "",
+      "entry": "2026-10-07",
+      "when": "2026-10-12",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [22, 32, 41, 42, 62],
+      "conditional": [],
+      "dates": [],
+      "numbers": [
+        {
+          "category": 42,
+          "value": 38.5
+        }
+      ],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 111,
+      "text": "Printer paper and toner",
+      "note": "",
+      "entry": "2026-10-06",
+      "when": "2026-10-07",
+      "when_time": null,
+      "when_explicit": true,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [22, 37, 42],
+      "conditional": [],
+      "dates": [],
+      "numbers": [
+        {
+          "category": 42,
+          "value": 64.9
+        }
+      ],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 112,
+      "text": "",
+      "note": "",
+      "entry": "2026-09-26",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [28, 62],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 113,
+      "text": "",
+      "note": "",
+      "entry": "2026-09-26",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [28, 63],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 114,
+      "text": "",
+      "note": "",
+      "entry": "2026-09-26",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [28, 64],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 115,
+      "text": "",
+      "note": "",
+      "entry": "2026-09-26",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [28, 65],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 116,
+      "text": "",
+      "note": "",
+      "entry": "2026-09-26",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [28, 66],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 117,
+      "text": "Owl's birthday every Friday at 3pm",
+      "note": "Rabbit brings the cake.\nPiglet brings balloons.",
+      "entry": "2026-10-16",
+      "when": "2026-10-16",
+      "when_time": "15:00:00",
+      "when_explicit": false,
+      "done": null,
+      "recurrence": {
+        "every": 1,
+        "unit": "week",
+        "weekday": 5,
+        "day": null
+      },
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": "2026-10-16T14:45:00",
+      "zettel": "bonalaku",
+      "marked": false,
+      "categories": [],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 118,
+      "text": "Buy honey for Pooh",
+      "note": "",
+      "entry": "2026-10-16",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": "2026-10-16",
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 119,
+      "text": "Plan the party",
+      "note": "",
+      "entry": "2026-10-16",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": "pigavono",
+      "marked": true,
+      "categories": [],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [118],
+      "suggested": []
+    },
+    {
+      "id": 120,
+      "text": "Smackerel at 11am every 2 weeks",
+      "note": "",
+      "entry": "2026-10-16",
+      "when": "2026-10-16",
+      "when_time": "11:00:00",
+      "when_explicit": false,
+      "done": null,
+      "recurrence": {
+        "every": 2,
+        "unit": "week",
+        "weekday": null,
+        "day": null
+      },
+      "alarm_minutes": 5,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 121,
+      "text": "Count the honey pots on the 15th of every month",
+      "note": "",
+      "entry": "2026-10-16",
+      "when": "2026-11-15",
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": {
+        "every": 1,
+        "unit": "month",
+        "weekday": null,
+        "day": 15
+      },
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 130,
+      "text": "Take a pot to Pooh's tree",
+      "note": "",
+      "entry": "2026-10-16",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": [125]
+    },
+    {
+      "id": 136,
+      "text": "Owl's reading circle",
+      "note": "Bring a book with long words",
+      "entry": "2026-10-16",
+      "when": "2026-10-20",
+      "when_time": "13:00:00",
+      "when_explicit": true,
+      "done": null,
+      "recurrence": {
+        "every": 1,
+        "unit": "week",
+        "weekday": 2,
+        "day": null
+      },
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [17, 124, 134],
+      "conditional": [17, 124],
+      "dates": [
+        {
+          "category": 137,
+          "date": "2026-10-20",
+          "time": "14:00:00",
+          "explicit": true
+        }
+      ],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    },
+    {
+      "id": 144,
+      "text": "Heffalump sighted",
+      "note": "Piglet says so.\n\nhttps://owl.example/heffalump",
+      "entry": "2026-10-15",
+      "when": null,
+      "when_time": null,
+      "when_explicit": false,
+      "done": null,
+      "recurrence": null,
+      "alarm_minutes": null,
+      "alarm_category": null,
+      "alarm_rung_at": null,
+      "zettel": null,
+      "marked": false,
+      "categories": [141],
+      "conditional": [],
+      "dates": [],
+      "numbers": [],
+      "texts": [],
+      "depends_on": [],
+      "suggested": []
+    }
+  ],
+  "views": [
+    {
+      "id": 6,
+      "name": "Tasks",
+      "sections": [
+        {
+          "category": 5,
+          "collapsed": true,
+          "filter": [
+            {
+              "category": 4,
+              "is": "assigned"
+            }
+          ],
+          "sort": [
+            {
+              "on": "text",
+              "order": "desc",
+              "na": "top",
+              "sequence": "alpha",
+              "line": 2
+            }
+          ],
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 5,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": {
+                "order": "mmddyy",
+                "separator": "/",
+                "clock": 24,
+                "day_of_week": false,
+                "show": "date_time",
+                "am_pm": true,
+                "time_separator": ":"
+              },
+              "format": "name",
+              "note_line": 3,
+              "title": "Due"
+            },
+            {
+              "category": 128,
+              "width": 12,
+              "link": 6,
+              "number": {
+                "symbol": "$",
+                "decimals": 0,
+                "thousands": true,
+                "negative": "parens",
+                "calcs": ["count", "average"],
+                "percent": true
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 13,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 7,
+              "width": 12,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 10,
+              "width": 12,
+              "link": 4,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "manual",
+            "width": 30,
+            "minimum": 12,
+            "linked": false,
+            "position": 1
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": true,
+      "hide_inherited": true,
+      "hide_dependent": true,
+      "hide_column_heads": false,
+      "section_separators": false,
+      "number_items": true,
+      "filter": [],
+      "sort": [],
+      "match": null,
+      "section_sort": "alpha",
+      "section_order": "desc",
+      "datebook": null
+    },
+    {
+      "id": 43,
+      "name": "Activities",
+      "sections": [
+        {
+          "category": 14,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 7,
+              "width": 12,
+              "link": null,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 7,
+              "width": 14,
+              "link": null,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "note",
+              "note_line": 1,
+              "title": "Phone #"
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 18,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 20,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 19,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 16,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 15,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 21,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 17,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": false,
+      "number_items": false,
+      "filter": [],
+      "sort": [],
+      "match": null,
+      "section_sort": "alpha",
+      "section_order": "asc",
+      "datebook": null
+    },
+    {
+      "id": 44,
+      "name": "Calls",
+      "sections": [
+        {
+          "category": 14,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 7,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 7,
+              "width": 14,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "note",
+              "note_line": 1,
+              "title": "Phone #"
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": false,
+      "number_items": false,
+      "filter": [],
+      "sort": [],
+      "match": null,
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": null
+    },
+    {
+      "id": 45,
+      "name": "Completed This Week",
+      "sections": [
+        {
+          "category": 5,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 4,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": false,
+      "number_items": false,
+      "filter": [
+        {
+          "category": 4,
+          "from": "beginning of this week",
+          "to": "end of this week",
+          "outside": false
+        }
+      ],
+      "sort": [],
+      "match": null,
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": null
+    },
+    {
+      "id": 46,
+      "name": "Contacts",
+      "sections": [
+        {
+          "category": 28,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 7,
+              "width": 20,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 7,
+              "width": 14,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "note",
+              "note_line": 1,
+              "title": "Phone #"
+            },
+            {
+              "category": 7,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "note",
+              "note_line": 2,
+              "title": "Company"
+            }
+          ],
+          "item_column": {
+            "set": "manual",
+            "width": 5,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": true,
+      "number_items": false,
+      "filter": [],
+      "sort": [
+        {
+          "on": {
+            "category": 7
+          },
+          "order": "asc",
+          "na": "bottom",
+          "sequence": "alpha",
+          "line": 1
+        }
+      ],
+      "match": null,
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": null
+    },
+    {
+      "id": 47,
+      "name": "Expense Analysis - Type",
+      "sections": [
+        {
+          "category": 35,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 39,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 31,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 39,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 33,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 39,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 34,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 39,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 30,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 39,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 32,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 39,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 37,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 39,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 38,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 39,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 36,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 39,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": true,
+      "number_items": false,
+      "filter": [
+        {
+          "category": 22,
+          "is": "assigned"
+        }
+      ],
+      "sort": [],
+      "match": null,
+      "section_sort": "alpha",
+      "section_order": "asc",
+      "datebook": null
+    },
+    {
+      "id": 48,
+      "name": "Expense Entry",
+      "sections": [
+        {
+          "category": 22,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 39,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 29,
+              "width": 12,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 4,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": true,
+      "number_items": false,
+      "filter": [],
+      "sort": [],
+      "match": null,
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": null
+    },
+    {
+      "id": 49,
+      "name": "Expense Reports",
+      "sections": [
+        {
+          "category": 41,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 29,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 40,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 29,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 70,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 42,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 29,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": true,
+      "number_items": false,
+      "filter": [
+        {
+          "category": 22,
+          "is": "assigned"
+        }
+      ],
+      "sort": [],
+      "match": null,
+      "section_sort": "alpha",
+      "section_order": "asc",
+      "datebook": null
+    },
+    {
+      "id": 54,
+      "name": "Next Week",
+      "sections": [],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": true,
+      "section_separators": true,
+      "number_items": false,
+      "filter": [],
+      "sort": [],
+      "match": null,
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": {
+        "date_category": 3,
+        "end_category": null,
+        "section_category": 5,
+        "period": "week",
+        "interval": null,
+        "start_time": null,
+        "end_time": null,
+        "start_day": null,
+        "end_day": null,
+        "base": "beginning of next week"
+      }
+    },
+    {
+      "id": 50,
+      "name": "Overdue",
+      "sections": [
+        {
+          "category": 5,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 7,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 10,
+              "width": 12,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 3,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": true,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": false,
+      "number_items": false,
+      "filter": [
+        {
+          "category": 3,
+          "from": null,
+          "to": "yesterday",
+          "outside": false
+        }
+      ],
+      "sort": [],
+      "match": null,
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": null
+    },
+    {
+      "id": 51,
+      "name": "People",
+      "sections": [
+        {
+          "category": 8,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 23,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 9,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 23,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 62,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 23,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 63,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 23,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 64,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 23,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 65,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 23,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 66,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 23,
+              "width": 12,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": false,
+      "number_items": false,
+      "filter": [
+        {
+          "category": 28,
+          "is": "not_assigned"
+        }
+      ],
+      "sort": [],
+      "match": null,
+      "section_sort": "alpha",
+      "section_order": "asc",
+      "datebook": null
+    },
+    {
+      "id": 52,
+      "name": "Priorities",
+      "sections": [
+        {
+          "category": 24,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 25,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 26,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 27,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 23,
+              "width": 12,
+              "link": null,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": false,
+      "number_items": false,
+      "filter": [],
+      "sort": [],
+      "match": null,
+      "section_sort": "category",
+      "section_order": "asc",
+      "datebook": null
+    },
+    {
+      "id": 53,
+      "name": "Projects",
+      "sections": [
+        {
+          "category": 12,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 4,
+              "width": 16,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        },
+        {
+          "category": 11,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 3,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            },
+            {
+              "category": 4,
+              "width": 16,
+              "link": 2,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": false,
+      "number_items": false,
+      "filter": [],
+      "sort": [],
+      "match": null,
+      "section_sort": "alpha",
+      "section_order": "asc",
+      "datebook": null
+    },
+    {
+      "id": 55,
+      "name": "This Month",
+      "sections": [],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": true,
+      "section_separators": true,
+      "number_items": false,
+      "filter": [],
+      "sort": [],
+      "match": null,
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": {
+        "date_category": 3,
+        "end_category": null,
+        "section_category": 5,
+        "period": "month",
+        "interval": "week",
+        "start_time": null,
+        "end_time": null,
+        "start_day": null,
+        "end_day": null,
+        "base": "beginning of this month"
+      }
+    },
+    {
+      "id": 56,
+      "name": "This Week",
+      "sections": [],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": true,
+      "section_separators": true,
+      "number_items": false,
+      "filter": [],
+      "sort": [],
+      "match": null,
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": {
+        "date_category": 3,
+        "end_category": null,
+        "section_category": 5,
+        "period": "week",
+        "interval": null,
+        "start_time": null,
+        "end_time": null,
+        "start_day": null,
+        "end_day": null,
+        "base": "beginning of this week"
+      }
+    },
+    {
+      "id": 57,
+      "name": "Today",
+      "sections": [],
+      "columns": [
+        {
+          "category": 3,
+          "width": 16,
+          "link": null,
+          "number": {
+            "symbol": null,
+            "decimals": 2,
+            "thousands": false,
+            "negative": "minus",
+            "calcs": ["total"],
+            "percent": false
+          },
+          "date": null,
+          "format": "name",
+          "note_line": 1,
+          "title": null
+        }
+      ],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": true,
+      "section_separators": true,
+      "number_items": false,
+      "filter": [],
+      "sort": [],
+      "match": null,
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": {
+        "date_category": 3,
+        "end_category": null,
+        "section_category": 5,
+        "period": "day",
+        "interval": 60,
+        "start_time": "08:00:00",
+        "end_time": "18:00:00",
+        "start_day": null,
+        "end_day": null,
+        "base": "today"
+      }
+    },
+    {
+      "id": 58,
+      "name": "Tomorrow",
+      "sections": [],
+      "columns": [
+        {
+          "category": 3,
+          "width": 16,
+          "link": null,
+          "number": {
+            "symbol": null,
+            "decimals": 2,
+            "thousands": false,
+            "negative": "minus",
+            "calcs": ["total"],
+            "percent": false
+          },
+          "date": null,
+          "format": "name",
+          "note_line": 1,
+          "title": null
+        }
+      ],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": true,
+      "section_separators": true,
+      "number_items": false,
+      "filter": [],
+      "sort": [],
+      "match": null,
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": {
+        "date_category": 3,
+        "end_category": null,
+        "section_category": 5,
+        "period": "day",
+        "interval": 60,
+        "start_time": "08:00:00",
+        "end_time": "18:00:00",
+        "start_day": null,
+        "end_day": null,
+        "base": "tomorrow"
+      }
+    },
+    {
+      "id": 131,
+      "name": "Golden week",
+      "sections": [],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": false,
+      "number_items": false,
+      "filter": [],
+      "sort": [],
+      "match": null,
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": {
+        "date_category": 3,
+        "end_category": 126,
+        "section_category": 3,
+        "period": "week",
+        "interval": 60,
+        "start_time": "08:00:00",
+        "end_time": "18:00:00",
+        "start_day": 1,
+        "end_day": 5,
+        "base": "next monday"
+      }
+    },
+    {
+      "id": 132,
+      "name": "*Show View*",
+      "sections": [
+        {
+          "category": 1,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": false,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": false,
+      "number_items": false,
+      "filter": [],
+      "sort": [],
+      "match": {
+        "search": {
+          "text": "honey",
+          "on": "both",
+          "ignore_case": false
+        }
+      },
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": null
+    },
+    {
+      "id": 143,
+      "name": "News",
+      "sections": [
+        {
+          "category": 141,
+          "collapsed": false,
+          "filter": [],
+          "sort": null,
+          "columns": [
+            {
+              "category": 2,
+              "width": 16,
+              "link": 1,
+              "number": {
+                "symbol": null,
+                "decimals": 2,
+                "thousands": false,
+                "negative": "minus",
+                "calcs": ["total"],
+                "percent": false
+              },
+              "date": null,
+              "format": "name",
+              "note_line": 1,
+              "title": null
+            }
+          ],
+          "item_column": {
+            "set": "auto",
+            "width": 40,
+            "minimum": 10,
+            "linked": true,
+            "position": 0
+          }
+        }
+      ],
+      "columns": [],
+      "hide_done": true,
+      "hide_empty": false,
+      "hide_inherited": false,
+      "hide_dependent": false,
+      "hide_column_heads": false,
+      "section_separators": false,
+      "number_items": false,
+      "filter": [],
+      "sort": [
+        {
+          "on": {
+            "category": 2
+          },
+          "order": "desc",
+          "na": "bottom",
+          "sequence": "hierarchy",
+          "line": 1
+        }
+      ],
+      "match": null,
+      "section_sort": "none",
+      "section_order": "asc",
+      "datebook": null
+    }
+  ],
+  "trash": {
+    "day": "2026-10-16",
+    "items": [
+      {
+        "id": 122,
+        "text": "Look for the Heffalump",
+        "note": "Bring a jar of honey as bait.",
+        "entry": "2026-10-16",
+        "when": null,
+        "when_time": null,
+        "when_explicit": false,
+        "done": null,
+        "recurrence": null,
+        "alarm_minutes": null,
+        "alarm_category": null,
+        "alarm_rung_at": null,
+        "zettel": null,
+        "marked": false,
+        "categories": [],
+        "conditional": [],
+        "dates": [],
+        "numbers": [],
+        "texts": [],
+        "depends_on": [],
+        "suggested": []
+      }
+    ]
+  },
+  "calendars": [
+    {
+      "id": 135,
+      "name": "Wood events",
+      "url": "https://example.org/wood.ics",
+      "category": 134,
+      "ahead_days": 180,
+      "refresh_minutes": 360,
+      "refreshed_at": "2026-10-16T10:00:00",
+      "error": "The wood's network is down",
+      "events": [
+        {
+          "uid": "golden-1@agendum",
+          "item": 136,
+          "summary_print": 3649835109,
+          "description_print": 3460524816,
+          "date": "2026-10-20",
+          "time": "13:00:00",
+          "recurrence": {
+            "every": 1,
+            "unit": "week",
+            "weekday": 2,
+            "day": null
+          },
+          "end_date": "2026-10-20",
+          "end_time": "14:00:00"
+        }
+      ]
+    }
+  ],
+  "feeds": [
+    {
+      "id": 142,
+      "name": "Owl's Gazette",
+      "url": "https://owl.example/feed.xml",
+      "category": 141,
+      "keep_days": 90,
+      "refresh_minutes": 1440,
+      "refreshed_at": "2026-10-16T09:00:00",
+      "error": "the server answered 503",
+      "entries": [
+        {
+          "id": "gazette-0",
+          "item": null,
+          "published": "2026-08-01"
+        },
+        {
+          "id": "gazette-1",
+          "item": 144,
+          "published": "2026-10-15",
+          "title_print": 2129233701,
+          "note_print": 3742982432
+        }
+      ]
+    }
+  ],
+  "macros": [
+    {
+      "id": 59,
+      "name": "Customize date settings",
+      "keys": "{F10}fp",
+      "key": "{ShfF4}",
+      "run_from": {
+        "view": true,
+        "note": false,
+        "catmgr": false,
+        "elsewhere": false
+      }
+    },
+    {
+      "id": 60,
+      "name": "Hide/Display done items",
+      "keys": "{F10}vp{END}{UP}{UP}{UP}{UP}{UP}{UP} {ENTER}",
+      "key": null,
+      "run_from": {
+        "view": true,
+        "note": false,
+        "catmgr": false,
+        "elsewhere": false
+      }
+    },
+    {
+      "id": 61,
+      "name": "Print current view",
+      "keys": "{F10}p",
+      "key": null,
+      "run_from": {
+        "view": true,
+        "note": false,
+        "catmgr": false,
+        "elsewhere": false
+      }
+    }
+  ],
+  "blog": {
+    "posts": 138,
+    "drafts": 139,
+    "title": "Owl's Notes",
+    "description": "Long words, spelled with care",
+    "author": "Owl",
+    "language": "sv",
+    "base_url": "https://owl.example/",
+    "me": "https://mastodon.example/@owl",
+    "folder": "site",
+    "upload": "sftp",
+    "target": "owl.example:2222",
+    "user": "owl",
+    "remote_dir": "public_html"
+  }
+}
