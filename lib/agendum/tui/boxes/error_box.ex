@@ -44,8 +44,10 @@ defmodule Agendum.TUI.Boxes.ErrorBox do
   def title(_state, %{notice: true}), do: ""
   def title(_state, _mode), do: "Error"
 
-  # as wide as the text needs, as Agenda's
+  # as wide as the text needs, as Agenda's; a notification at most 62
+  # wide, wrapping as Agenda's does
   @impl Box
+  def width(state, %{notice: true}), do: min(62, state.width - 8)
   def width(state, mode), do: (String.length(mode.text) + 4) |> max(40) |> min(state.width - 8)
 
   @impl Box

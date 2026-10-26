@@ -60,6 +60,7 @@ defmodule Agendum.TUI.TrashTest do
 
     asked = undisc(state)
     assert screen(asked) =~ ~r/Undiscard: +All items in trash/
+    assert screen(asked) =~ "Press ENTER to accept, ESC to cancel"
     assert panel(asked) =~ "Retrieve all discarded items in the Trash or only the last"
 
     last = press(asked, [" ", :enter])
@@ -74,8 +75,9 @@ defmodule Agendum.TUI.TrashTest do
   test "Undisc with nothing in the trash says so, in Agenda's words", %{state: state} do
     state = undisc(state)
 
-    assert screen(state) =~
-             "There are no discarded items in the trash, so there are no items to recover."
+    # wrapped as Agenda's, in a box 62 wide
+    assert screen(state) =~ "There are no discarded items in the trash, so there are no"
+    assert screen(state) =~ ~r/│ items to recover\. +│/
 
     refute screen(state) =~ "Error"
     assert press(state, "x").modes == []
@@ -84,8 +86,8 @@ defmodule Agendum.TUI.TrashTest do
   test "Utilities Trash asks, then empties it; with none, says so", %{state: state} do
     none = press(state, [{:f, 10}, "u", "t"])
 
-    assert screen(none) =~
-             "There are no discarded items in the trash, so there is no trash to empty."
+    assert screen(none) =~ "There are no discarded items in the trash, so there is no"
+    assert screen(none) =~ ~r/│ trash to empty\. +│/
 
     state = discard(state)
     asked = press(state, [{:f, 10}, "u", "t"])

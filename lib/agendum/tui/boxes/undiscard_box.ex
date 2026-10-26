@@ -8,7 +8,8 @@ defmodule Agendum.TUI.Boxes.UndiscardBox do
   trash. Drawn from `@layout` (`Agendum.TUI.Boxes.Template`). Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, choices: true
+  # Agenda's bottom edge: "Press ENTER to accept, ESC to cancel"
+  use Agendum.TUI.Boxes.Box, finish: :accept, choices: true
 
   alias Agendum.TUI.Boxes.{Box, Template}
   alias Agendum.TUI.State
