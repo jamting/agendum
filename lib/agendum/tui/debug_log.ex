@@ -15,12 +15,14 @@ defmodule Agendum.TUI.DebugLog do
   and a crash: the exception, its stack trace and the state as
   the developer screen (`Agendum.TUI.DevTools`) shows it, and
   Erlang's logger reports (`capture_logger/0`). Starting a
-  session deletes all but the newest four, so five are kept.
+  session deletes all but the newest nine, so ten are kept (meeting
+  2026-10-26-4, § 7). A web address is written by its host only
+  (`redact/1`): a calendar's or feed's address can hold a private token.
 
   What is typed is in the log, so it stays on this computer. Logging
   never stops the program: a log that cannot be written is left off.
   `dir/1`, `file_name/1`, `old_sessions/1`, `build_text/0`, `file_text/2`,
-  `view_text/1`, `slow_text/1` and `effect_text/2` are pure; the rest writes
+  `view_text/1`, `slow_text/1`, `effect_text/2` and `redact/1` are pure; the rest writes
   (imperative shell, called by `Agendum.CLI` and `Agendum.TUI.App`).
   """
 
@@ -29,7 +31,7 @@ defmodule Agendum.TUI.DebugLog do
   # the open log file is a process (an Erlang IO device) registered under
   # this name, so the main loop does not have to carry it around
   @name :agendum_debug_log
-  @keep 5
+  @keep 10
   @version Mix.Project.config()[:version]
   # dev, test or prod: an escript is built for prod (CLAUDE.md)
   @build_env Mix.env()
@@ -160,9 +162,23 @@ defmodule Agendum.TUI.DebugLog do
         :ok
 
       pid ->
-        IO.write(pid, "#{now() |> NaiveDateTime.to_time() |> Time.to_iso8601()} #{text}\n")
+        IO.write(
+          pid,
+          "#{now() |> NaiveDateTime.to_time() |> Time.to_iso8601()} #{redact(text)}\n"
+        )
     end
   end
+
+  @doc """
+  A line with every web address cut to its host (`https://cal.example/…`):
+  the path and query of a calendar's or feed's address can hold a private
+  token, and a log may be sent to someone (meeting 2026-10-26-4, § 7).
+  """
+  @spec redact(String.t()) :: String.t()
+  def redact(text),
+    # the scheme and host are kept (groups 1 and 2); anything after the host,
+    # up to a space or a quote, becomes "/…"
+    do: Regex.replace(~r{\b(https?|webcal|feed)://([^/\s"?#]+)[/?#][^\s"]*}i, text, "\\1://\\2/…")
 
   # local time to the millisecond (`NaiveDateTime.local_now/0` gives whole
   # seconds), so keys a moment apart can be told apart

@@ -8,17 +8,16 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 1. A meeting on data structures the extras need that are not a natural fit for Agendum's data format: the general case, and whether a feed's name could be an unindexed column instead of a category (Beyond Agenda; meeting 2026-10-26-4, §§ 5, 15)
 2. A recovery file on a crash (The clone's safety; meeting 2026-10-26-4, § 6)
-3. No private addresses in the debug log, and ten sessions kept (Fixes and polish; meeting 2026-10-26-4, § 7)
-4. Keep the long fuzz run's output (Sharpen the saw; meeting 2026-10-26-4, § 8)
-5. Hostile-text tests (The clone's safety; meeting 2026-10-26-4, § 6)
-6. The sort box's names written out, its three suppressions gone (Sharpen the saw; meeting 2026-10-26-4, § 12)
-7. `Update`'s shell answers to `Update.Results` (Sharpen the saw; meeting 2026-10-26-4, § 11)
-8. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
-9. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
-10. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
-11. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
-12. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-13. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+3. Keep the long fuzz run's output (Sharpen the saw; meeting 2026-10-26-4, § 8)
+4. Hostile-text tests (The clone's safety; meeting 2026-10-26-4, § 6)
+5. The sort box's names written out, its three suppressions gone (Sharpen the saw; meeting 2026-10-26-4, § 12)
+6. `Update`'s shell answers to `Update.Results` (Sharpen the saw; meeting 2026-10-26-4, § 11)
+7. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
+8. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
+9. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
+10. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
+11. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+12. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
@@ -28,7 +27,6 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 ### Fixes and polish
 
-- [ ] No private addresses in the debug log (meeting 2026-10-26-4, § 7; expert review 2026-10-26, § 18.3): feed and calendar fetches logged by name or host, never the query string (`lib/agendum/tui/debug_log.ex`, `effect_text/2`); keep the last ten sessions (`@keep`, now 5)
 - [ ] Hidden values of a date or numeric category (owner, 2026-10-25): a category made date or numeric keeps its short name, Also match words and conditions, as Agenda does, but its box no longer shows them (R6a). Decide what to do with them: show them somewhere (Statistics, the manager), clear them on conversion, or leave them; check first whether any still has an effect (a short name in a narrow column head, a condition)
 
 ### The clone's safety

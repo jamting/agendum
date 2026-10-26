@@ -196,7 +196,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Speaker`                          | ✘     | Plays a sound with `afplay`, `paplay` or `aplay`, or rings the terminal's bell (R76, ADR 0042).                                  |
 | `Agendum.TUI.Terminal`                         | ✘     | Raw mode, alternate screen, size, input reader process.                                                                          |
 | `Agendum.TUI.App`                              | ✘     | Main loop: read → decode → update → run effects (an unknown one logged and skipped) → render.                                    |
-| `Agendum.TUI.DebugLog`                         | ✘     | The debug log when `AGENDUM_LOG` is set: build, input, timed effects, file fingerprints, slow answers with view and memory, crashes with the state, Erlang's logger reports (never on the screen); five kept (ADR 0027). |
+| `Agendum.TUI.DebugLog`                         | ✘     | The debug log when `AGENDUM_LOG` is set: build, input, timed effects, file fingerprints, slow answers with view and memory, crashes with the state, Erlang's logger reports (never on the screen); web addresses by host only; ten kept (ADR 0027). |
 | `Agendum.Store`                                | ✘     | Save/load (`term_to_binary` in a versioned envelope, atomic write); folder listings for the Select File box.                     |
 | `Agendum.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format (with the number separators), key map, confirm mode, auto-save, sound, name, company, last file, where each file was left (`Agendum.Preferences.Place`, R69), the defaults for new files (R82a) (`key = value`, ADR 0008).               |
 | `Agendum.Extras.CalendarFetch`                        | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
@@ -218,7 +218,7 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 ## Developer tools
 
 - `ESC ?` in the program: debugging info and a key tester (`Agendum.TUI.DevTools`).
-- `AGENDUM_LOG=1`: a debug log of each session in `~/.local/state/agendum/logs` (or `AGENDUM_LOG=FOLDER`), the last five kept; a crash writes its stack trace and the state (`Agendum.TUI.DebugLog`, ADR 0027).
+- `AGENDUM_LOG=1`: a debug log of each session in `~/.local/state/agendum/logs` (or `AGENDUM_LOG=FOLDER`), the last ten kept, web addresses written by their host only; a crash writes its stack trace and the state (`Agendum.TUI.DebugLog`, ADR 0027).
 - `tools/smoke/smoke.py`: runs the real program in a pseudo-terminal, sends keys by name and prints the screen as text, sandboxed from the person's preferences (CLAUDE.md, "Testing the real terminal").
 - `tools/agformat/`: drives the real Lotus Agenda 2.0 headless in DOSBox Staging, and dumps and compares `.AG` files (`tools/agformat/DRIVING_AGENDA.md`, `AGENDA_FILE_FORMAT.md`).
 - `tools/screenshots/`: draws screens of the TUI as PNGs (macOS), to compare its look with Agenda 2.0 (ADR 0018): `MIX_ENV=test mix run tools/screenshots/screenshots.exs [--theme NAME]` writes them to `tmp/screenshots/`. `screenshots.exs` drives the TUI with keys like the tests; `render.swift` draws each screen.

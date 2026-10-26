@@ -34,20 +34,35 @@ defmodule Agendum.TUI.DebugLogTest do
              "session-2026-10-13T09-05-03.042.log"
   end
 
-  test "old sessions: all but the newest four go, so the new one makes five" do
+  test "old sessions: all but the newest nine go, so the new one makes ten" do
     names =
-      for d <- 1..7,
+      for d <- 1..12,
           do: DebugLog.file_name(NaiveDateTime.new!(Date.new!(2026, 10, d), ~T[12:00:00.000]))
 
     old = DebugLog.old_sessions(Enum.shuffle(["notes.txt" | names]))
     assert old == Enum.take(names, 3)
-    assert DebugLog.old_sessions(Enum.take(names, 4)) == []
+    assert DebugLog.old_sessions(Enum.take(names, 9)) == []
+  end
+
+  # meeting 2026-10-26-4, § 7: a calendar's address can hold a private
+  # token, so the log keeps only where it is
+  test "web addresses are written by their host, never their path or query" do
+    assert DebugLog.redact(
+             ~s(effect {:fetch_calendar, 4, "https://cal.example/private/abc123/basic.ics?token=s3cret"} in 9 ms)
+           ) ==
+             ~s(effect {:fetch_calendar, 4, "https://cal.example/…"} in 9 ms)
+
+    assert DebugLog.redact("webcal://cal.example/x.ics and feed://owl.example/rss") ==
+             "webcal://cal.example/… and feed://owl.example/…"
+
+    assert DebugLog.redact("https://owl.example and no address") ==
+             "https://owl.example and no address"
   end
 
   @tag :tmp_dir
-  test "a session: header, keys, messages, a crash with the state, five files kept",
+  test "a session: header, keys, messages, a crash with the state, ten files kept",
        %{tmp_dir: dir} do
-    for d <- 1..6,
+    for d <- 1..11,
         do: File.write!(Path.join(dir, "session-2026-10-0#{d}T00-00-00.000.log"), "")
 
     env = %{"AGENDUM_LOG" => dir}
@@ -58,6 +73,7 @@ defmodule Agendum.TUI.DebugLogTest do
         state = Core.new_file() |> start()
         DebugLog.input("\e[A", [:up], state)
         DebugLog.message(nil, state |> Agendum.TUI.State.error("No such thing"))
+        DebugLog.write("effect {:fetch_feed, 1, \"https://owl.example/feed?key=s3cret\"}")
 
         try do
           raise ArgumentError, "boom"
@@ -78,7 +94,8 @@ defmodule Agendum.TUI.DebugLogTest do
     assert text =~ "CRASH"
     assert text =~ "** (ArgumentError) boom"
     assert text =~ "Modes"
-    assert dir |> File.ls!() |> length() == 5
+    refute text =~ "s3cret"
+    assert dir |> File.ls!() |> length() == 10
   end
 
   test "without a log every call does nothing" do
