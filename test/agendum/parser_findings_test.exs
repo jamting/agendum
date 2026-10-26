@@ -48,4 +48,17 @@ defmodule Agendum.ParserFindingsTest do
     {:ok, db, feed} = Core.subscribe_feed(db, "News", "https://n.example/feed")
     assert {:ok, _db, _counts} = Core.sync_feed(db, feed, [entry], @now)
   end
+
+  # 3. the XML reader took quadratic time on many tags (a Unicode regular
+  # expression checked all the text after each tag) and on many stray
+  # closing tags (each looked down the whole stack): 40,000 of each took
+  # 22 seconds; now a fraction of one
+  test "a feed of many open elements and stray closing tags is read at once" do
+    text =
+      "<rss><channel><title>x</title>" <>
+        String.duplicate("<item>", 40_000) <>
+        String.duplicate("</x>", 40_000) <> "</channel></rss>"
+
+    assert {:value, {:ok, _feed}} = Agendum.Bounded.run(fn -> FeedParser.parse(text) end, 3_000)
+  end
 end

@@ -21,13 +21,13 @@ defmodule Agendum.Core.Extras.Xml do
   @doc "The document's top-level nodes."
   @spec parse(String.t()) :: [node_]
   def parse(text) do
-    # the tokenizer's regular expressions are Unicode ones, which raise on
-    # bytes that are no UTF-8
+    # bytes that are no UTF-8 would reach the items, where text matching's
+    # Unicode regular expressions raise on them
     text
     |> strip_bom()
     |> Agendum.Core.Extras.Utf8.repair()
     |> tokens([])
-    |> build([{nil, %{}, []}])
+    |> build([{nil, %{}, []}], %{})
   end
 
   defp strip_bom(<<0xEF, 0xBB, 0xBF, rest::binary>>), do: rest
@@ -88,9 +88,15 @@ defmodule Agendum.Core.Extras.Xml do
   defp after_doctype(<<_::utf8, rest::binary>>, depth), do: after_doctype(rest, depth)
   defp after_doctype(<<_, rest::binary>>, depth), do: after_doctype(rest, depth)
 
-  # A start tag: its name, its attributes, whether it closes itself
-  @tag ~r/\A([^\s\/>]+)((?:\s+[^\s=\/>]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?)*)\s*(\/?)>/su
-  @attr ~r/([^\s=\/>]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/su
+  # A start tag: its name, its attributes, whether it closes itself.
+  # Not Unicode expressions (no `u`): one checks that the whole text after
+  # the tag is valid UTF-8 before matching, on every tag, which made a feed
+  # of many tags take quadratic time (20,000 tags: 1.6 s; the hostile files,
+  # 2026-10-26). The text is valid UTF-8 already (`Utf8.repair/1`), XML's
+  # spaces are ASCII ones, and the classes below match any other byte, so
+  # the names and values come out the same.
+  @tag ~r/\A([^\s\/>]+)((?:\s+[^\s=\/>]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?)*)\s*(\/?)>/s
+  @attr ~r/([^\s=\/>]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/s
 
   defp tag(text) do
     case Regex.run(@tag, text) do
@@ -115,34 +121,43 @@ defmodule Agendum.Core.Extras.Xml do
   # --- the tree ----------------------------------------------------------------
 
   # A stack of open elements, innermost first, each `{name, attrs,
-  # children reversed}`; the bottom one (name nil) is the document.
-  defp build([], [{nil, _, children}]), do: Enum.reverse(children)
-  defp build([], stack), do: build([{:close, nil}], stack)
+  # children reversed}`; the bottom one (name nil) is the document. `open`
+  # counts the open elements by name, so a closing tag knows at once
+  # whether it closes anything: looking down the stack for it each time
+  # made a feed of many open elements and stray closing tags take
+  # quadratic time (10,000 of each: 1.7 s; the hostile files, 2026-10-26).
+  defp build([], [{nil, _, children}], _open), do: Enum.reverse(children)
+  defp build([], stack, open), do: build([{:close, nil}], stack, open)
 
-  defp build([{:text, text} | rest], [{name, attrs, children} | up]),
-    do: build(rest, [{name, attrs, [text | children]} | up])
+  defp build([{:text, text} | rest], [{name, attrs, children} | up], open),
+    do: build(rest, [{name, attrs, [text | children]} | up], open)
 
-  defp build([{:open, name, attrs, true} | rest], [{n, a, children} | up]),
-    do: build(rest, [{n, a, [{name, attrs, []} | children]} | up])
+  defp build([{:open, name, attrs, true} | rest], [{n, a, children} | up], open),
+    do: build(rest, [{n, a, [{name, attrs, []} | children]} | up], open)
 
-  defp build([{:open, name, attrs, false} | rest], stack),
-    do: build(rest, [{name, attrs, []} | stack])
+  # Map.update/4: the count plus one, or 1 when the name is not there yet
+  defp build([{:open, name, attrs, false} | rest], stack, open),
+    do: build(rest, [{name, attrs, []} | stack], Map.update(open, name, 1, &(&1 + 1)))
 
-  defp build([{:close, name} | rest], stack) do
-    if name == nil or Enum.any?(stack, &(elem(&1, 0) == name)),
-      do: build(rest, close_until(stack, name)),
-      else: build(rest, stack)
+  defp build([{:close, name} | rest], stack, open) do
+    if name == nil or Map.get(open, name, 0) > 0 do
+      {stack, open} = close_until(stack, name, open)
+      build(rest, stack, open)
+    else
+      build(rest, stack, open)
+    end
   end
 
   # closes elements until (and with) the one named; nil closes all but the document
-  defp close_until([{nil, _, _}] = stack, nil), do: stack
+  defp close_until([{nil, _, _}] = stack, nil, open), do: {stack, open}
 
-  defp close_until([{name, attrs, children}, {pn, pa, pc} | up], target) do
+  defp close_until([{name, attrs, children}, {pn, pa, pc} | up], target, open) do
     stack = [{pn, pa, [{name, attrs, Enum.reverse(children)} | pc]} | up]
-    if name == target, do: stack, else: close_until(stack, target)
+    open = Map.update!(open, name, &(&1 - 1))
+    if name == target, do: {stack, open}, else: close_until(stack, target, open)
   end
 
-  defp close_until(stack, _target), do: stack
+  defp close_until(stack, _target, open), do: {stack, open}
 
   # --- entities ---------------------------------------------------------------------
 
