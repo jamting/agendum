@@ -6,16 +6,15 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
-2. Property tests for the parsers of outside input (Sharpen the saw; the slice reviews, 2026-10-26)
-3. A collection of hostile files (Sharpen the saw; 2026-10-26)
-4. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
-5. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
-6. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
-7. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-8. Fuzz walks in a richer file and with things out of order (Sharpen the saw; 2026-10-26)
-9. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
-10. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+1. Property tests for the parsers of outside input (Sharpen the saw; the slice reviews, 2026-10-26)
+2. A collection of hostile files (Sharpen the saw; 2026-10-26)
+3. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
+4. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
+5. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
+6. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+7. Fuzz walks in a richer file and with things out of order (Sharpen the saw; 2026-10-26)
+8. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
+9. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
@@ -68,7 +67,7 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
 
 ### Housekeeping
 
-- [ ] Before the public repository (meeting 2026-10-26-4, §§ 9, 11, 13), in this order: a general code review of the whole code base; a meeting on what information to make public in the docs; a tidy pass (`tidy-docs`: VISION's freeze paragraph, AGENDA_PARITY's "three differences" and their cousins) with a sweep of SPEC, each rule keeping a short "(checked in Agenda)" or "Our choice" and its longer story moved to `ROADMAP_DONE.md`; then a dry run: the `git filter-repo` copy built and checked by `mix check` before anything is pushed (`plans/GITHUB.md` § 7)
+- [ ] Before the public repository (meeting 2026-10-26-4, §§ 9, 11, 13), in this order: a general code review of the whole code base (done 2026-10-26: three cloud slices, `docs/CODE_REVIEW_SLICES.md`; the rest locally after the public repository); a meeting on what information to make public in the docs; a tidy pass (`tidy-docs`: VISION's freeze paragraph, AGENDA_PARITY's "three differences" and their cousins) with a sweep of SPEC, each rule keeping a short "(checked in Agenda)" or "Our choice" and its longer story moved to `ROADMAP_DONE.md`; then a dry run: the `git filter-repo` copy built and checked by `mix check` before anything is pushed (`plans/GITHUB.md` § 7)
 - [ ] Optional (from the parity plan, 2026-10-26): Utilities ▸ Launch, a shell without quitting Agendum
 *[A page here was soaked in the creek. — Rabbit]*
 
