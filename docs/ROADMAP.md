@@ -6,7 +6,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
-1. The parity steps in their order ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the rest of the clone's safety between them: the small steps in batches, then Search compared, then Agenda's help last (meeting 2026-10-25, § 7)
+1. The parity steps in their order ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the rest of the clone's safety between them: the small steps in batches, then Search compared, then Agenda's help last (meeting 2026-10-25, § 7; its steps in [`plans/HELP.md`](plans/HELP.md), meeting 2026-10-26)
 2. The clone declared done (the definition: AGENDA_PARITY.md, end of The steps): the public repository made, the freezes below lifted, and the parity plan's *Optional* steps put back on the roadmap in their areas (meeting 2026-10-25, § 7)
 
 **Frozen until the truthful clone is declared done** (meeting 2026-10-21, § 5; `VISION.md`, ADR 0043): Beyond Agenda, Ideas and Towards many users wait (bug fixes only). Not frozen: the parity steps, the clone's safety work and tests (meeting 2026-10-22, § 5c) and Sharpen the saw (§ 5i). The view cache waits for slow answers in real use.

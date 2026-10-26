@@ -260,3 +260,4 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 | [0044](adr/0044-one-repository-extras-on-their-own-shelf.md) | One repository and one program; the extras on a shelf of their own |
 | [0045](adr/0045-key-bars-made-from-the-keymaps.md) | Every key bar is made from the keymaps |
 | [0046](adr/0046-file-password-encryption.md) | A file password encrypts the file |
+| [0047](adr/0047-help-topics.md)              | Help topics: text files compiled in, and pages made from the program|

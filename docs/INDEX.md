@@ -59,6 +59,7 @@ Each plan starts with its status.
 | Plan                                                                   | About                                                                          |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | [`plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md)                     | How close Agendum is to Agenda; accepted enhancements and modifications; The steps, the ordered checklist of all parity work |
+| [`plans/HELP.md`](plans/HELP.md)                                       | Agenda's help in our own words: what it covers, its keys, the steps, the checklist of Agenda's topics |
 | [`plans/NOTE_EDITOR.md`](plans/NOTE_EDITOR.md)                         | The note editor as Agenda's: evidence, habit changes to settle, steps          |
 | [`plans/MULTIUSER.md`](plans/MULTIUSER.md)                             | A web application with accounts and shared files, on the same core (ADR 0020)  |
 | [`plans/GITHUB.md`](plans/GITHUB.md)                                   | Putting the repository on GitHub; public or paid later                         |
