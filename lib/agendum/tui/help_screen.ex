@@ -268,7 +268,7 @@ defmodule Agendum.TUI.HelpScreen do
         go(state, mode, "Help Index")
 
       {:f, 5} ->
-        Agendum.TUI.Update.Prompts.prompt(state, "Topic to find:", :help_find)
+        Agendum.TUI.Boxes.FindTopicBox.open(state)
 
       {:f, 6} ->
         go(state, mode, "Keys")
@@ -468,9 +468,9 @@ defmodule Agendum.TUI.HelpScreen do
   defp topic_lines(state, mode), do: Topic.lines(mode.topic, width(state) - 2)
 
   @doc """
-  F5 Find (Agenda's "Topic to find:"): the topics whose title has the
-  word, then those whose text has it, as a topic of links; ALT-N and ALT-P
-  then step through them.
+  F5 Find, from Agenda's Find Topic box (`state` with the help on top):
+  the topics whose title has the word, then those whose text has it, in
+  Agenda's Select Help Screen box (`Agendum.TUI.Boxes.SelectHelpScreenBox`).
   """
   @spec find(State.t(), String.t()) :: State.t()
   def find(state, word) do
@@ -482,34 +482,33 @@ defmodule Agendum.TUI.HelpScreen do
     {in_title, rest} =
       under |> Topics.titles() |> Enum.split_with(&String.contains?(String.downcase(&1), wanted))
 
-    in_text =
-      Enum.filter(rest, fn title ->
-        topic = Topics.get(under, title)
-
-        topic
-        |> Topic.lines(76)
-        |> List.flatten()
-        |> Enum.map_join(&Topic.label/1)
-        |> String.downcase()
-        |> String.contains?(wanted)
-      end)
+    in_text = Enum.filter(rest, &(under |> Topics.get(&1) |> text() |> String.contains?(wanted)))
 
     case in_title ++ in_text do
-      _ when word == "" ->
-        state
-
-      [] ->
-        State.error(state, "No help topic has \"#{word}\"")
-
-      found ->
-        list = %Topic{
-          title: "Topics with \"#{word}\"",
-          body: Enum.map(found, &{:line, [{:text, "  "}, {:link, &1, &1}]})
-        }
-
-        state = show(state, mode, list)
-        State.put_mode(state, %{State.mode(state) | found: found})
+      _ when word == "" -> state
+      [] -> State.error(state, "No help topic has \"#{word}\"")
+      found -> Agendum.TUI.Boxes.SelectHelpScreenBox.open(state, found)
     end
+  end
+
+  # a topic's words, in lower case, for Find
+  defp text(topic),
+    do:
+      topic
+      |> Topic.lines(76)
+      |> List.flatten()
+      |> Enum.map_join(&Topic.label/1)
+      |> String.downcase()
+
+  @doc """
+  The topic `index` of what Find found, read from the Select Help Screen
+  box (`state` with the help on top again); ALT-N and ALT-P then step
+  through the rest.
+  """
+  @spec read_found(State.t(), [String.t()], non_neg_integer) :: State.t()
+  def read_found(state, found, index) do
+    mode = %{State.mode(state) | found: found}
+    go(State.put_mode(state, mode), mode, Enum.at(found, index))
   end
 
   # ALT-N / ALT-P: the next or previous topic Find found

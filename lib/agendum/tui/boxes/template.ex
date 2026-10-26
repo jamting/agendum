@@ -47,6 +47,43 @@ defmodule Agendum.TUI.Boxes.Template do
   def fields(layout), do: for(row <- rows(layout), {:field, name, _} <- row, do: name)
 
   @doc """
+  Each field with the label written before it on its row, in reading
+  order, without its colon: `[{:empty_trash, "Empty trash"}, …]`. A field
+  with no text before it takes its name ("tab size"). The help's box
+  topics read them (`Agendum.TUI.Help.Topics`).
+  """
+  @spec labels(String.t()) :: [{atom, String.t()}]
+  def labels(layout) do
+    for row <- rows(layout),
+        {{:field, name, _}, before} <- with_text_before(row),
+        do: {name, label(before, name)}
+  end
+
+  # each field of a row with the text just before it
+  defp with_text_before(parts) do
+    parts
+    |> Enum.chunk_every(2, 1, [nil])
+    |> Enum.flat_map(fn
+      [{:text, text}, {:field, _, _} = field] -> [{field, text}]
+      _ -> []
+    end)
+    |> then(fn found ->
+      case parts do
+        # a field at the very start of a row has no text before it
+        [{:field, _, _} = field | _] -> [{field, ""} | found]
+        _ -> found
+      end
+    end)
+  end
+
+  defp label(text, name) do
+    case text |> String.trim() |> String.trim_trailing(":") |> String.trim() do
+      "" -> name |> Atom.to_string() |> String.replace("_", " ")
+      label -> label
+    end
+  end
+
+  @doc """
   The layout's rows that have fields, each a keyword list of its fields and
   the column each starts at, for moving between them (`Agendum.TUI.Boxes.BoxNav`).
   Only the fields in `shown` count: those the box hides are left out, and

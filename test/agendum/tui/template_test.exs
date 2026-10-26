@@ -33,6 +33,15 @@ defmodule Agendum.TUI.TemplateTest do
     assert hd(text([line])) =~ " Name: Miscellaneous…   Type:"
   end
 
+  test "each field's label, the text before it without its colon, in reading order" do
+    layout = """
+     Head:   [head    ]   Width: [width]
+    [count ]
+    """
+
+    assert Template.labels(layout) == [head: "Head", width: "Width", count: "count"]
+  end
+
   test "the fields in reading order, for the cursor" do
     assert Template.fields(@layout) == [:name, :type, :note]
   end

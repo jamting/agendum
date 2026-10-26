@@ -9,7 +9,8 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 Lotus Agenda's help: the frame (the topics come in batches next).
 
 - **F1** shows the help topic for where you are, as Agenda's: its title, its text, and **links in bold** to other topics. The arrows highlight a link (a letter: the next one it begins) and ENTER reads it.
-- Agenda's help keys: **F1** How to Use Help, **F3** the Help Index, **F5** Find (then ALT-N / ALT-P through what it found), **F6** Keys, **F8** or BACKSPACE back, **F9** or ESC to leave. Other keys no longer leave the help.
+- Agenda's help keys: **F1** How to Use Help, **F3** the Help Index, **F5** Find, **F6** Keys, **F8** or BACKSPACE back, **F9** or ESC to leave. Other keys no longer leave the help.
+- **F5 Find** is Agenda's: the **Find Topic** box asks for a word, and the **Select Help Screen** box lists the topics with it; ENTER reads one, and ALT-N / ALT-P then step through the rest.
 - **F6 Keys** is the page of all keys (F1 then `a` before), and starts with **Commands you can run here** (`c` before) and **Describe a key** (`d` before).
 - Every box, menu and screen has its topic, made from the program's own texts.
 

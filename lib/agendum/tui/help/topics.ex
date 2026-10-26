@@ -178,20 +178,32 @@ defmodule Agendum.TUI.Help.Topics do
 
     settings =
       case box.help() do
-        texts when is_map(texts) and map_size(texts) > 0 ->
-          [{:line, [{:text, "SETTING             DESCRIPTION"}]}] ++
-            Enum.map(Enum.sort(texts), fn {field, help} ->
-              {:hang, [{:text, "  " <> setting_name(field)}], 20, help}
-            end)
-
-        text when is_binary(text) and intro == [] ->
-          [{:wrap, "  ", text}]
-
-        _ ->
-          []
+        texts when is_map(texts) and map_size(texts) > 0 -> settings(box, texts)
+        text when is_binary(text) and intro == [] -> [{:wrap, "  ", text}]
+        _ -> []
       end
 
     %Topic{title: box_title(box), body: intro ++ settings ++ see_also(["Keys"])}
+  end
+
+  # the settings as the box shows them: its labels, in its order (from its
+  # layout); a setting the layout does not name comes last, by its name
+  defp settings(box, texts) do
+    labelled =
+      for {field, label} <- box.layout_labels(), Map.has_key?(texts, field), do: {field, label}
+
+    named = Enum.map(labelled, &elem(&1, 0))
+
+    rest =
+      for {field, _} <- Enum.sort(texts), field not in named, do: {field, setting_name(field)}
+
+    rows = labelled ++ rest
+    column = rows |> Enum.map(&String.length(elem(&1, 1))) |> Enum.max() |> Kernel.+(4) |> min(28)
+
+    [{:line, [{:text, String.pad_trailing("SETTING", column) <> "DESCRIPTION"}]}] ++
+      Enum.map(rows, fn {field, label} ->
+        {:hang, [{:text, "  " <> label}], column, texts[field]}
+      end)
   end
 
   # `:empty_trash` is "Empty trash"

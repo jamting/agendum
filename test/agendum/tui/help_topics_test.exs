@@ -78,15 +78,32 @@ defmodule Agendum.TUI.HelpTopicsTest do
       assert title(page) =~ "Help Index: "
     end
 
-    test "F5: the topics with a word, and ALT-N steps through them", %{state: state} do
-      found = press(state, [{:f, 1}, {:f, 5}, "trash", :enter])
-      assert title(found) == ~s(Topics with "trash")
-      assert screen(found) =~ "Undiscard Box"
+    test "F5: Agenda's Find Topic box, typed at once", %{state: state} do
+      asked = press(state, [{:f, 1}, {:f, 5}])
+      assert screen(asked) =~ "Find Topic"
+      assert panel(asked) =~ "Type the topic or term you want help on."
+      assert screen(press(asked, ["t", "r"])) =~ ~r/Topic to find: +tr/
+      # ESC goes back to the topic being read
+      assert title(press(asked, :esc)) == "Views"
+    end
 
-      first = press(found, {:alt, "n"})
+    test "ENTER: Agenda's Select Help Screen box; ENTER reads one, ALT-N the next", %{
+      state: state
+    } do
+      found = press(state, [{:f, 1}, {:f, 5}, "trash", :enter])
+      assert screen(found) =~ "Select Help Screen"
+      assert screen(found) =~ "Undiscard Box"
+      assert panel(found) =~ "Highlight Help screen to display."
+      assert title(press(found, :esc)) == "Views"
+
+      %{found: [first_title, second_title | _]} = State.mode(found)
+      first = press(found, :enter)
+      assert title(first) == first_title
+      assert title(press(found, [:down, :enter])) == second_title
+
       second = press(first, {:alt, "n"})
-      assert title(first) != title(second)
-      assert title(press(second, {:alt, "p"})) == title(first)
+      assert title(second) == second_title
+      assert title(press(second, {:alt, "p"})) == first_title
     end
 
     test "F5 with a word no topic has says so", %{state: state} do
@@ -102,6 +119,22 @@ defmodule Agendum.TUI.HelpTopicsTest do
       assert %{page: :topic} = State.mode(press(keys, [:enter, {:f, 8}]))
       assert %{page: :describe} = State.mode(press(keys, [:down, :enter]))
     end
+  end
+
+  test "a box's topic lists its settings by the box's labels, in its order", %{state: state} do
+    topic = Topics.get(state, "File Properties Box")
+
+    text =
+      topic
+      |> Topic.lines(76)
+      |> Enum.map_join("\n", &Enum.map_join(&1, fn s -> Topic.label(s) end))
+
+    assert text =~ ~r/SETTING +DESCRIPTION/
+    assert text =~ ~r/File description +Enter a short description/
+    {description, _} = :binary.match(text, "File description")
+    {trash, _} = :binary.match(text, "Empty trash")
+    {stats, _} = :binary.match(text, "File statistics")
+    assert description < trash and trash < stats
   end
 
   describe "the checks (ADR 0047)" do

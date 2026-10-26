@@ -75,6 +75,8 @@ defmodule Agendum.TUI.Modes do
     password_box: [:first, :line, :step],
     new_file: [:cursor, :description, :password, :path, :typing],
     undiscard: [:after, :all, :category, :cursor, :sidx],
+    find_topic: [:line],
+    select_help_screen: [:cursor, :found],
     execute: [:against, :cursor, :old, :root],
     file_props: [:cursor, :opened, :typing],
     feeds: [:cursor],

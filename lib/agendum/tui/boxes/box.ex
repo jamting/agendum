@@ -174,6 +174,8 @@ defmodule Agendum.TUI.Boxes.Box do
     password_box: Agendum.TUI.Boxes.PasswordBox,
     new_file: Agendum.TUI.Boxes.NewFileBox,
     undiscard: Agendum.TUI.Boxes.UndiscardBox,
+    find_topic: Agendum.TUI.Boxes.FindTopicBox,
+    select_help_screen: Agendum.TUI.Boxes.SelectHelpScreenBox,
     schedule: Agendum.TUI.Boxes.ScheduleBox,
     set_alarm: Agendum.TUI.Boxes.SetAlarmBox,
     scope: Agendum.TUI.Update.Marked,
@@ -481,6 +483,38 @@ defmodule Agendum.TUI.Boxes.Box do
   end
 
   @doc """
+  Writes `layout_labels/0` into a box when it is compiled: its fields and
+  their labels from its `@layout` (or every layout of its `@layouts`), in
+  reading order, for its help topic (R65e); `[]` without one.
+  """
+  # Domain: `__before_compile__` runs after the module's body is read, so
+  # the attributes it defined (`@layout`) can be looked at here
+  defmacro __before_compile__(env) do
+    layout = Module.get_attribute(env.module, :layout)
+    layouts = Module.get_attribute(env.module, :layouts)
+
+    labels =
+      cond do
+        is_binary(layout) ->
+          Agendum.TUI.Boxes.Template.labels(layout)
+
+        is_map(layouts) ->
+          layouts
+          |> Map.values()
+          |> Enum.flat_map(&Agendum.TUI.Boxes.Template.labels/1)
+          |> Enum.uniq_by(&elem(&1, 0))
+
+        true ->
+          []
+      end
+
+    quote do
+      @doc false
+      def layout_labels, do: unquote(Macro.escape(labels))
+    end
+  end
+
+  @doc """
   `use Agendum.TUI.Boxes.Box, finish: :done, cancels: true`
   declares the module a box: it must define the callbacks, and gets
   `finish/1`, `cancels?/0` and `choices?/0` from the options.
@@ -492,6 +526,8 @@ defmodule Agendum.TUI.Boxes.Box do
 
     quote do
       @behaviour Agendum.TUI.Boxes.Box
+      # `layout_labels/0` is written once the module's `@layout` is known
+      @before_compile Agendum.TUI.Boxes.Box
 
       @impl true
       def finish(_mode), do: unquote(Keyword.get(opts, :finish, :done))
