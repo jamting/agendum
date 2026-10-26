@@ -4,6 +4,14 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.69.2 — 2026-10-27
+
+Four fixes found by new tests that feed the parsers random and broken input.
+
+- **A calendar or feed in Latin-1, or with a stray byte, is read** (its odd bytes taken as Latin-1) instead of crashing the calendar's sync or the feed reader; an OPML list too.
+- **Reading a feed takes time in proportion to its size**: a hostile feed with many tags can no longer stall Agendum.
+- **A long post becomes HTML in time proportional to its length** when published. A link text, code span or emphasis longer than 500 characters is now left as plain text.
+
 ## 0.69.1 — 2026-10-26
 
 - **Publishing no longer crashes Agendum** when it finishes: the site was written, then the debug log's line about it took Agendum down (since 0.68.4).

@@ -6,19 +6,17 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. Property tests for the parsers of outside input (Sharpen the saw; the slice reviews, 2026-10-26)
-2. A collection of hostile files (Sharpen the saw; 2026-10-26)
-3. Fuzz walks in a richer file and with things out of order, and `App`'s background results tested (Sharpen the saw; moved up, meeting 2026-10-26-6, § 7)
-4. UI guidelines for the extras, from the clone's own patterns (Housekeeping; meeting 2026-10-26-6, §§ 6, 8; ADR 0049)
-5. The extras brought up to the guidelines, one feature commit per gap (Beyond Agenda; meeting 2026-10-26-6, §§ 6, 7)
-6. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
-7. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
-8. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
-9. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-10. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
-11. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+1. Fuzz walks in a richer file and with things out of order, and `App`'s background results tested (Sharpen the saw; moved up, meeting 2026-10-26-6, § 7)
+2. UI guidelines for the extras, from the clone's own patterns (Housekeeping; meeting 2026-10-26-6, §§ 6, 8; ADR 0049)
+3. The extras brought up to the guidelines, one feature commit per gap (Beyond Agenda; meeting 2026-10-26-6, §§ 6, 7)
+4. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
+5. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
+6. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
+7. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+8. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
+9. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
 
-**No new extras** until step 5 is done; Wol stays on its shelf (meeting 2026-10-26-6, § 7). Why: the extras were built before the clone's bar was raised and missed its catch-up, in robustness at the shell's edge and in the boxes' conventions (§ 5).
+**No new extras** until step 3 is done; Wol stays on its shelf (meeting 2026-10-26-6, § 7). Why: the extras were built before the clone's bar was raised and missed its catch-up, in robustness at the shell's edge and in the boxes' conventions (§ 5).
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
@@ -28,6 +26,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 ### Fixes and polish
 
+- [ ] Found by the parser property tests (2026-10-27, v0.69.2), not urgent: Markdown with thousands of nested `>` quotes is still quadratic (20,000 levels about 1 s); a calendar's sync costs about 1 ms an event (a 2,000-event calendar about 2 s, linear) — check whether it runs in the TUI's process and would freeze the screen
 - [ ] Hidden values of a date or numeric category (owner, 2026-10-25): a category made date or numeric keeps its short name, Also match words and conditions, as Agenda does, but its box no longer shows them (R6a). Decide what to do with them: show them somewhere (Statistics, the manager), clear them on conversion, or leave them; check first whether any still has an effect (a short name in a narrow column head, a condition)
 
 ### The clone's safety
@@ -39,8 +38,6 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 Tools and checks that make every later change faster and safer. Each is small; the command layer they made safer is done (R66, ADR 0036, in `ROADMAP_DONE.md`). From the expert review of 2026-10-16 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
-- [ ] Property tests for the parsers of outside input (the slice reviews, 2026-10-26): Markdown, iCal, the feed parser (XML), the `.AG` reader, the JSON import and the date parser get random and broken input (StreamData, as the fuzz walks use), and each must answer `{:ok, _}` or `{:error, _}` within a time budget, never raise or loop. Of the 30 findings of the three cloud reviews, the Markdown loop, `INTERVAL=0`, the Latin-1 calendar and the `.AG` reader's blow-up are the kind these would have found by themselves
-- [ ] A collection of hostile files (2026-10-26): `test/fixtures/hostile/`, broken and nasty feeds, calendars, `.AG`, JSON and Markdown (each review finding's input first); one test reads every file through its parser and checks for `{:ok, _}` or `{:error, _}` within a time budget, never a crash or a hang. Every later bug of this kind adds its file
 - [ ] Fuzz walks in a richer file (2026-10-26): some of the random key walks start from the golden file (`Agendum.Starters.Golden`: feeds, calendars, a blog, ingested categories) with the Extras on, not only the demo file
 - [ ] Fuzz walks with things out of order (2026-10-26): between random keys, a walk also delivers background results (a feed or calendar read, a finished upload), sometimes after another file was opened, and checks the invariants and that nothing is filed into the wrong file
 - [ ] `App`'s background results tested (meeting 2026-10-26-6, § 7): each kind of result a background task can send (`:ok`, `{:ok, _}`, `{:error, _}`, a crash) goes through `App`'s handling, its debug-log line and its message in a test; v0.69.1's crash (a bare `:ok` taken apart with `elem/2`) was there, out of reach of the pure tests and the fuzz walks
