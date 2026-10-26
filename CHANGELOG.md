@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.65.1 — 2026-10-26
+
+- **Text from a feed or an imported file can no longer control your terminal.** Escape codes hidden in an item's text (to clear the screen, change the window title or write the clipboard) now show as characters, the way Lotus Agenda showed such bytes: ESC as ←, BEL as •. Found by new tests that feed Agendum hostile text from feeds, Agenda files and JSON files.
+
 ## 0.65.0 — 2026-10-26
 
 A crash no longer loses your work.

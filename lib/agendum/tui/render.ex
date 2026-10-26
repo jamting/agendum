@@ -30,10 +30,16 @@ defmodule Agendum.TUI.Render do
   # Styles are names; colours come only when `Terminal.Screen` turns the
   # lines into terminal output with the theme. So a test can compare text,
   # and `Render` knows nothing of colours or the terminal.
+  #
+  # Every screen is cleaned last (`Draw.clean/1`, R82c): text from outside
+  # (a feed, a Lotus Agenda file, a JSON file) can hold terminal control
+  # codes, which must show as characters, never reach the terminal.
   @spec render(State.t()) :: [Draw.line()]
-  def render(%State{modes: [%{type: :splash} | _]} = state), do: Agendum.TUI.Splash.render(state)
+  def render(state), do: state |> screen() |> Draw.clean()
 
-  def render(%State{width: w} = state) do
+  defp screen(%State{modes: [%{type: :splash} | _]} = state), do: Agendum.TUI.Splash.render(state)
+
+  defp screen(%State{width: w} = state) do
     {base, _overlays} = split_modes(state.modes)
 
     ControlPanel.lines(state, base) ++

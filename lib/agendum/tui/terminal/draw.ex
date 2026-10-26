@@ -303,6 +303,36 @@ defmodule Agendum.TUI.Terminal.Draw do
     end)
   end
 
+  # Domain: the glyphs DOS showed for bytes 0x00 to 0x1F, as Agenda's
+  # screen did (text mode drew every byte as a character: ESC was ←); a
+  # space for 0x00
+  @low ~c" ☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼"
+
+  @doc """
+  A screen with every control character shown as a character instead
+  (R82c): C0 controls as the glyphs DOS showed for those bytes (ESC as ←),
+  DEL as ⌂, the C1 controls (U+0080–U+009F, which DOS never had) as "?".
+  Text from outside can hold terminal codes (clear the screen, write the
+  clipboard); here they lose their power, one character for one, so
+  widths stay as they were. Lines with none are left as they are.
+  """
+  @spec clean([line]) :: [line]
+  def clean(screen), do: Enum.map(screen, &clean_line/1)
+
+  defp clean_line(line) do
+    Enum.map(line, fn {style, text} = segment ->
+      # `=~` with a regex is the quick test; most text has nothing to clean
+      if text =~ ~r/[\x{00}-\x{1F}\x{7F}-\x{9F}]/u,
+        do: {style, for(<<c::utf8 <- text>>, into: "", do: glyph(c))},
+        else: segment
+    end)
+  end
+
+  defp glyph(c) when c < 0x20, do: <<Enum.at(@low, c)::utf8>>
+  defp glyph(0x7F), do: "⌂"
+  defp glyph(c) when c in 0x80..0x9F, do: "?"
+  defp glyph(c), do: <<c::utf8>>
+
   @doc "Plain text of a screen; used by tests and snapshots."
   @spec to_text([line]) :: String.t()
   def to_text(screen) do
