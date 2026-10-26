@@ -177,7 +177,7 @@ The item's id is its block number. Item text = bytes 50–61 as a C string, then
 
 An item's **entry date, when date, done date** are not fields of the item: they are assignments to the date categories Entry, When and Done, with the date as the assignment's value (below). Its **alarm** is an assignment too (below). Marks and the cursor are not stored.
 
-**Discarded items** stay in the file: ALT-F4 removes all their assignments and assigns them to `!Trash!` (block 1) instead ✔. An importer skips items whose only category is block 1.
+**Discarded items** stay in the file: ALT-F4 removes all their assignments and assigns them to `!Trash!` (block 1) instead ✔. An importer skips items whose only category is block 1 as items; Agendum's puts them in its own trash (R24a).
 
 ### Note (type 7) ✔
 

@@ -40,7 +40,7 @@ defmodule Agendum.TUI.Boxes.ImportReportBox do
 
     trashed =
       if report.trashed > 0,
-        do: ["#{Draw.count(report.trashed, "discarded item")} in Agenda's trash left out"],
+        do: ["#{Draw.count(report.trashed, "discarded item")} in the trash, as in Agenda"],
         else: []
 
     notes =

@@ -55,7 +55,7 @@ defmodule Agendum.Core.AgFile do
          :ok <- password(file.password, opts[:password]),
          converted = Convert.convert(file),
          {:ok, db} <- JSONFile.decode_document(converted.document) do
-      db = db |> assign(converted.assign) |> recompute(opts[:clock])
+      db = db |> assign(converted.assign) |> recompute(opts[:clock]) |> trash_day(opts[:clock])
       {:ok, db, report(db, converted)}
     end
   end
@@ -76,6 +76,13 @@ defmodule Agendum.Core.AgFile do
   end
 
   defp recompute(db, clock), do: Agendum.Core.execute(db, db.item_order, clock: clock)
+
+  # Agenda's file does not say when its trash was filled: it counts from
+  # the day of the import (R24a), so End of day empties it tomorrow
+  defp trash_day(%{trash: %{items: [_ | _]} = trash} = db, clock) when clock != nil,
+    do: %{db | trash: %{trash | day: Agendum.Core.Context.today(clock)}}
+
+  defp trash_day(db, _clock), do: db
 
   defp report(db, converted) do
     %{

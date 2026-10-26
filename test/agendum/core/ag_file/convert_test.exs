@@ -86,10 +86,14 @@ defmodule Agendum.Core.AgFile.ConvertTest do
     assert by_name["Unassigned"].conditions != []
   end
 
-  test "items keep their text, note, dates, alarm; the discarded one stays out" do
+  test "items keep their text, note, dates, alarm; the discarded one is in the trash" do
     {db, report} = import!("RICH")
     assert report.items == 5 and report.trashed == 1
     refute item(db, "Read the quarterly report")
+    # Agenda's trash is ours (R24a), counted from the day of the import
+    assert [%{text: "Read the quarterly report"}] = db.trash.items
+    assert db.trash.day == @today
+    assert db.trash.empty == :end_of_day
 
     bob = item(db, "Call Bob about the budget tomorrow")
     assert bob.when == ~D[2026-10-17] and bob.when_time == nil

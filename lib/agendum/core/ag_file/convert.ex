@@ -14,7 +14,8 @@ defmodule Agendum.Core.AgFile.Convert do
       exclusive children, notes, conditions, actions (assign becomes a
       category link, `also_assign`), Done and Discard special actions,
       text matching settings of their own, and date rules
-    * items (not those in the trash): text, note (Agenda ended lines with
+    * items (those in Agenda's trash go to ours, text and note, R24a):
+      text, note (Agenda ended lines with
       CR), Entry, When (with its time and a recurring rule) and Done
       dates, dates in other date categories, numbers, unindexed
       categories' texts (R29b), alarms; only the
@@ -76,8 +77,15 @@ defmodule Agendum.Core.AgFile.Convert do
     {special, ctx} = special(ctx)
     ctx = Map.put(ctx, :special, special)
 
-    # unindexed categories stay unindexed, their values texts (R29b)
+    # unindexed categories stay unindexed, their values texts (R29b); the
+    # items in Agenda's trash go to ours, text and note (R24a)
     live = Enum.reject(file.items, & &1.trashed)
+
+    trash =
+      for item <- file.items,
+          item.trashed,
+          do: %{"id" => item.id, "text" => item.text, "note" => note_text(item.note)}
+
     {items, assign, agenda, ctx} = items(live, ctx)
     {views, ctx} = views(file.views, ctx)
     {views, ctx} = if views == [], do: fallback_view(ctx), else: {views, ctx}
@@ -96,7 +104,8 @@ defmodule Agendum.Core.AgFile.Convert do
         "settings" => settings(file.settings, file.description),
         "categories" => categories,
         "items" => items,
-        "views" => views
+        "views" => views,
+        "trash" => %{"items" => trash}
       },
       assign: assign,
       agenda: agenda,
@@ -639,6 +648,14 @@ defmodule Agendum.Core.AgFile.Convert do
 
   # --- settings ----------------------------------------------------------------
 
+  # File Properties ▸ Empty trash, from the reader's words to ours (R24a)
+  @empty_trash %{
+    "on demand" => "on_demand",
+    "when file closed" => "file_closed",
+    "end of day" => "end_of_day",
+    "when discarded" => "discarded"
+  }
+
   # The file's settings that Agendum has: its global date format (R41),
   # File Properties' description, backup on open and tab size (R82, R64e),
   # text matching and the date settings
@@ -650,6 +667,7 @@ defmodule Agendum.Core.AgFile.Convert do
       "date_format" => date_format(s.date_format),
       "description" => String.slice(String.trim(description || ""), 0, 40),
       "backup_on_open" => s.backup_on_open,
+      "empty_trash" => @empty_trash[s.empty_trash] || "end_of_day",
       "tab_size" => min(max(s.tab_size, 1), 16),
       "date_settings" => %{
         "week_start" => @weekday_numbers[first] || 7,
