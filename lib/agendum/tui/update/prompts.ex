@@ -638,6 +638,11 @@ defmodule Agendum.TUI.Update.Prompts do
 
   defp confirmed(state, :quit, true), do: Actions.perform(state, :save_and_quit)
   defp confirmed(state, :quit, false), do: State.effect(state, :quit)
+
+  # ALT-F8 GETITMS in a note (R64f): both answers copy; Yes discards too
+  defp confirmed(state, {:get_items, ids}, discard?),
+    do: Agendum.TUI.Update.Notes.copy_items(state, ids, discard?)
+
   defp confirmed(state, _action, false), do: state
 
   # ESC in a question: most questions just close; a note's replacements

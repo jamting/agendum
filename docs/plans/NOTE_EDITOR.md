@@ -1,6 +1,6 @@
 # Plan: the note editor as Agenda's (2026-10-15)
 
-**Status:** done as Agenda's (2026-10-26, with the truthful clone): researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 to 6 done (R64a–R64f, 2026-10-17; v0.15.0 tagged); step 7 (external note files) left out on purpose (meeting 2026-10-25, § 5); ALT-F1 COMPOSE stays optional (ROADMAP, The note editor). GETITMS's discard question is still open (AGENDA_PARITY.md, The note editor).
+**Status:** done as Agenda's (2026-10-26, with the truthful clone): researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 to 6 done (R64a–R64f, 2026-10-17; v0.15.0 tagged); step 7 (external note files) left out on purpose (meeting 2026-10-25, § 5); ALT-F1 COMPOSE stays optional (ROADMAP, The note editor). GETITMS asks Agenda's discard question since 2026-10-26 (v0.62.2).
 
 Agenda's note editor (F5) is a screen of its own: its own control panel, its own key bar and its own F10 menu. Agendum's note editor has the text editing, marking and Search/Replace, but keeps the view's control panel and has no menu. This plan maps what Agenda's editor does, sets printing and typesetting out of scope, and lists the steps for the rest: some new, some only a connection to a feature Agendum already has.
 
@@ -64,7 +64,7 @@ Checked in the real Agenda 2.0 (headless, on a copy of PLANNER, 2026-10-15), and
 | PGUP/PGDN, CTRL-←/→, CTRL-HOME/END | ✅ R64e (⌥←/→, ⌥< ⌥> beside them) | 5 |
 | F7 F3 F4 F2 ALT-F4 | ✅ R63 | – |
 | ALT-F2, ALT-F7 | ✅ R42 | – |
-| ALT-F8 GETITMS | ✅ R64f (copies only; no discard question) | 6 |
+| ALT-F8 GETITMS | ✅ R64f (with Agenda's "Discard items after copy?", 2026-10-26) | 6 |
 | ALT-F9 APPEND | ✅ R64f | 6 |
 | ALT-F6, ALT-S | ✅ R39 | – |
 | ALT-F1 COMPOSE | – (a modern terminal types any character) | 8 |

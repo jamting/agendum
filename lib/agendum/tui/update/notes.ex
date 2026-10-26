@@ -378,28 +378,44 @@ defmodule Agendum.TUI.Update.Notes do
   defp appended_to(db, {:item, id}), do: {db.items[id].text, @item_room}
   defp appended_to(db, {:category, id}), do: {db.categories[id].name, @name_room}
 
-  # ALT-F8: the marked items' text, each with its note, typed in at the
-  # cursor between blank lines; the items stay, marked
-  defp get_items(state, mode) do
+  # ALT-F8: Agenda's question first, "Discard items after copy?  Yes"
+  # (checked in Agenda 2.0, 2026-10-26; User's Guide 12-7); its two answers
+  # do different things, so it is asked whatever Confirm mode says, and ESC
+  # copies nothing
+  defp get_items(state, _mode) do
     case Agendum.Core.marked_items(state.db) do
-      [] ->
-        State.error(state, "There are no marked items in the file.")
-
-      ids ->
-        blocks =
-          Enum.map_join(ids, "\n\n", fn id ->
-            item = state.db.items[id]
-            if item.note == "", do: item.text, else: item.text <> "\n" <> item.note
-          end)
-
-        state
-        |> State.put_mode(%{
-          mode
-          | edit: TextEdit.insert(mode.edit, "\n" <> blocks <> "\n\n"),
-            match: nil
-        })
-        |> State.info("Copied #{length(ids)} marked item(s) into the note")
+      [] -> State.error(state, "There are no marked items in the file.")
+      ids -> Agendum.TUI.Update.Prompts.ask(state, "Discard items after copy?", {:get_items, ids})
     end
+  end
+
+  @doc """
+  GETITMS's answer (R64f): the marked items' text, each with its note,
+  typed in at the cursor between blank lines; with `discard?` they then
+  go to the trash (R24a), else they stay, marked, as in Agenda.
+  """
+  @spec copy_items(State.t(), [integer], boolean) :: State.t()
+  def copy_items(state, ids, discard?) do
+    blocks =
+      Enum.map_join(ids, "\n\n", fn id ->
+        item = state.db.items[id]
+        if item.note == "", do: item.text, else: item.text <> "\n" <> item.note
+      end)
+
+    state =
+      update_note(
+        state,
+        &%{&1 | edit: TextEdit.insert(&1.edit, "\n" <> blocks <> "\n\n"), match: nil}
+      )
+
+    if discard?,
+      do:
+        State.run(
+          state,
+          {:discard_items, ids},
+          "Copied #{length(ids)} item(s) and discarded them"
+        ),
+      else: State.info(state, "Copied #{length(ids)} marked item(s) into the note")
   end
 
   @doc "Types `text` at the cursor of the note being edited (ALT-C's date, R64f)."

@@ -75,16 +75,40 @@ defmodule Agendum.TUI.NoteConnectionsTest do
   end
 
   describe "ALT-F8 GETITMS" do
-    test "copies the marked items, each with its note, in at the cursor", %{state: state} do
+    # Agenda 2.0 asks "Discard items after copy?  Yes" (checked 2026-10-26,
+    # as the User's Guide 12-7 says): Yes copies them and discards them, to
+    # the trash; No copies them and they stay, marked; ESC copies nothing
+    test "asks Agenda's question; No copies them, and they stay marked", %{state: state} do
       marked = press(state, [:down, :down, {:f, 7}])
       [id] = Agendum.Core.marked_items(marked.db)
       text = marked.db.items[id].text
 
-      note = press(marked, [:up, {:f, 5}, :ctrl_end, {:alt_f, 8}])
+      asked = press(marked, [:up, {:f, 5}, :ctrl_end, {:alt_f, 8}])
+      assert screen(asked) =~ "Discard items after copy?"
+
+      note = press(asked, [" ", :enter])
       joined = Enum.join(edit(note).lines, "\n")
       assert joined =~ "costs.\n" <> text
-      # the items stay, marked
       assert Agendum.Core.marked_items(note.db) == [id]
+    end
+
+    test "Yes copies them and discards them, to the trash", %{state: state} do
+      marked = press(state, [:down, :down, {:f, 7}])
+      [id] = Agendum.Core.marked_items(marked.db)
+      text = marked.db.items[id].text
+
+      note = press(marked, [:up, {:f, 5}, :ctrl_end, {:alt_f, 8}, :enter])
+      assert Enum.join(edit(note).lines, "\n") =~ text
+      refute Map.has_key?(note.db.items, id)
+      assert [%{id: ^id}] = note.db.trash.items
+    end
+
+    test "ESC on the question copies nothing", %{state: state} do
+      marked = press(state, [:down, :down, {:f, 7}])
+      opened = press(marked, [:up, {:f, 5}, :ctrl_end])
+      back = press(opened, [{:alt_f, 8}, :esc])
+      assert edit(back) == edit(opened)
+      assert back.db == opened.db
     end
 
     test "with nothing marked it says so", %{note: note} do
