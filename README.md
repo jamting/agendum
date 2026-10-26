@@ -53,7 +53,7 @@ The [user guide](docs/guide/index.html) is the short version, with a worked exam
 - **ALT-D / ALT-R** add sections and columns. **F8** manages views (F6 there: a view's properties, as View ▸ Properties). **F10** or **/** opens the menu.
 - **CTRL-Z / CTRL-Y** undo and redo. **CTRL-S** saves, **CTRL-Q** quits.
 - Function keys are required, as in Agenda: on a Mac, hold **fn** with them or make them standard function keys (System Settings ▸ Keyboard). **CTRL-N** replaces INS (new item/category), **CTRL-E** = F2 edit, and ALT is ⌥ (Option) with "Use Option as Meta key" on. To use ⌘N, ⌘Z, ⌘S and so on, map them in your terminal; see [`docs/KEYBOARD.md`](docs/KEYBOARD.md).
-- **F1** is help about where you are; in it, **c** lists the commands there (greyed when they cannot run, with the reason), **d** describes a key and **a** lists every key.
+- **F1** is help about where you are, as Agenda's: links in bold (arrows and ENTER), **F3** the index, **F5** Find, **F8** back; **F6** Keys lists every key and leads to the commands you can run there (greyed when they cannot, with the reason) and to describing a key.
 
 ## Development
 

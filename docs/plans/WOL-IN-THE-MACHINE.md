@@ -1,6 +1,6 @@
 # Wol in the machine: a personal agent inside the file
 
-**Status:** an idea, not a plan yet (ROADMAP, Ideas); frozen with the extras until the truthful clone is declared done (ADR 0043). Principles, objections, the local-first route and the answer on learning added at the meeting of 2026-10-24-2; to be turned into a plan and an ADR when its time comes.
+**Status:** an idea, not a plan yet (ROADMAP, Ideas); open again since the truthful clone was declared done (2026-10-26); still an idea until the owner chooses it. Principles, objections, the local-first route and the answer on learning added at the meeting of 2026-10-24-2; to be turned into a plan and an ADR when its time comes.
 
 (Name of file is a reference to Ghost in the Machine)
 

@@ -1,6 +1,6 @@
 # Roadmap
 
-Small, testable increments: the open work, by area. Done work is the record in [`ROADMAP_DONE.md`](ROADMAP_DONE.md), by milestone: tick a box when its tests pass under `mix check`, and move it there. Rule numbers refer to `SPEC.md`; larger items have a plan in `docs/plans/` (see `docs/INDEX.md`). Open starts with "In order", the next few things across every area; then the areas in the order they are worked on, the frozen ones last. The parity work lives in [`plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps, in its order. "Sharpen the saw" is the standing home for work on the tools, checks and ways of working that make later changes faster and safer.
+Small, testable increments: the open work, by area. Done work is the record in [`ROADMAP_DONE.md`](ROADMAP_DONE.md), by milestone: tick a box when its tests pass under `mix check`, and move it there. Rule numbers refer to `SPEC.md`; larger items have a plan in `docs/plans/` (see `docs/INDEX.md`). Open starts with "In order", the next few things across every area; then the areas in the order they are worked on (the freeze on Beyond Agenda, Ideas and Towards many users ended when the clone was declared done, 2026-10-26). The parity work lives in [`plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps, in its order. "Sharpen the saw" is the standing home for work on the tools, checks and ways of working that make later changes faster and safer.
 
 ## Open
 
@@ -68,7 +68,7 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
 
 ### Towards many users
 
-**Waits until the truthful clone is declared done** (meeting 2026-10-21, § 5; meeting 2026-10-22, § 5i).
+Open again since the truthful clone was declared done (2026-10-26; meeting 2026-10-21, § 5; meeting 2026-10-22, § 5i).
 
 *[A page here was soaked in the creek. — Rabbit]*
 

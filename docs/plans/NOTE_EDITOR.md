@@ -1,6 +1,6 @@
 # Plan: the note editor as Agenda's (2026-10-15)
 
-**Status:** researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 to 6 done (R64a–R64f, 2026-10-17); v0.15.0 approved by the owner (2026-10-19) and tagged; step 7 (external note files) left out on purpose (meeting 2026-10-25, § 5; attachments of any kind became an idea for after the clone); open: GETITMS's discard question (AGENDA_PARITY.md, The steps: The note editor).
+**Status:** done as Agenda's (2026-10-26, with the truthful clone): researched in Agenda 2.0 (2026-10-15); the six habit changes settled by the owner (2026-10-17); steps 1 to 6 done (R64a–R64f, 2026-10-17; v0.15.0 tagged); step 7 (external note files) left out on purpose (meeting 2026-10-25, § 5); ALT-F1 COMPOSE stays optional (ROADMAP, The note editor). GETITMS's discard question is still open (AGENDA_PARITY.md, The note editor).
 
 Agenda's note editor (F5) is a screen of its own: its own control panel, its own key bar and its own F10 menu. Agendum's note editor has the text editing, marking and Search/Replace, but keeps the view's control panel and has no menu. This plan maps what Agenda's editor does, sets printing and typesetting out of scope, and lists the steps for the rest: some new, some only a connection to a feature Agendum already has.
 

@@ -19,7 +19,7 @@ Lotus Agenda's F1 help: a topic for where you are, bold links between topics, an
 | PGUP PGDN | scroll the topic |
 | F3 | Index: every topic |
 | F5 | Find: type a word, a list of the topics with it; ALT-N / ALT-P step through them |
-| F6 | Keys: the key charts. Its first links are **Commands you can run here** (today's F1 `c`, ENTER still runs one) and **Describe a key** (today's `d`); the charts are today's `a` |
+| F6 | Keys: the key charts. Its first links are **Commands you can run here** (formerly F1 `c`, ENTER still runs one) and **Describe a key** (formerly `d`); the charts were `a` |
 | F8, BACKSPACE | Review: back through the topics seen |
 | F9, ESC | leave help |
 

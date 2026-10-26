@@ -132,7 +132,7 @@ What Agendum has that Agenda did not. The entries tagged **extra** are hidden wh
 - **extra** · Feeds: a plain RSS and Atom reader, the News view, OPML, CTRL-V to open a link (R75).
 - **quiet** · The Extras row in File ▸ Customize (R77): the switch that hides every entry tagged *extra* above, off by default (the owner chose the Customize box and confirmed the tag, 2026-10-23). A row Agenda's Customize box did not have, met only by someone who opens Customize and looks for it.
 - **quiet** · ALT-↑ and ALT-↓ in View Properties' Sections (R78) move the highlighted section a place at once, as they move a column in Section Properties; Agenda's ALT-F10 (pick it up, ↑ ↓, ENTER) works as well (the owner chose both and the tag, 2026-10-23). Keys Agenda's box did not use, met only by someone who presses them.
-- **quiet** · CTRL-X runs a command by name, found by part of it or its initials, in a small box (R65d, ADR 0040), a key Agenda left unused; F1 `c` narrows the same way.
+- **quiet** · CTRL-X runs a command by name, found by part of it or its initials, in a small box (R65d, ADR 0040), a key Agenda left unused; the command list narrows the same way.
 
 Off the list since the tagging sitting, as no difference from Agenda: **search** (ALT-F6, ALT-N / ALT-P and the Show View for results) is Agenda's own ALT-F6 SEARCH in views and notes, with its Match show view (Agenda's F1 help); comparing it with Agenda's Search box is parity work (ROADMAP). **Hide column heads** (R57) is a setting of Agenda's own View Properties box (checked in Agenda 2.0, 2026-10-22).
 
