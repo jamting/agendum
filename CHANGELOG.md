@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.68.2 — 2026-10-26
+
+Ten fixes from a deep review of saving, loading and the shell.
+
+- **A feed or calendar read started for one file is no longer filed into another** you opened meanwhile (it could discard that file's calendar items).
+- **The debug log never stops Agendum**: a log that cannot be written (a full disk, a lost drive) is turned off; before, it could crash past the recovery file. It also never holds a password: not in a crash dump, not when several keys come at once (a paste: their characters are counted, not written), not in an address's `user:password@`.
+- **A damaged Lotus Agenda file can no longer make the import run for ever**, and an item repeating every N working days says in the import report that it now repeats every N days.
+- **A JSON file whose trash ids clash with its items is refused**; a very long description no longer makes an encrypted file unopenable; a new file with Make backup on open no longer reports a backup error.
+
 ## 0.68.1 — 2026-10-26
 
 Fixes from a code review of 0.68.0.

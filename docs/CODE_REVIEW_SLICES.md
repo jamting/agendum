@@ -59,6 +59,6 @@ tools/review/slice.sh --clean     # delete the review/* branches and the worktre
 
 | Slice | Run | Findings | Fixed in |
 | --- | --- | --- | --- |
-| a | | | |
+| a | 2026-10-26, free run 1 of 3 | 10: a read for one file filed into another; a failing log write crashing past the recovery file; a damaged `.AG` file reading without bound; JSON trash ids not checked; a long description breaking an encrypted header; passwords in the crash dump and in batched input; userinfo past the address redaction; working-day repeats not noted; a backup asked for a new file | v0.68.2 (`test/agendum/review_slice_a_test.exs`) |
 | b | | | |
 | c | | | |

@@ -219,7 +219,12 @@ defmodule Agendum.Store do
     key = :crypto.pbkdf2_hmac(:sha256, password, salt, @rounds, 32)
     {cipher, tag} = :crypto.crypto_one_time_aead(:aes_256_gcm, key, nonce, binary, @magic, true)
 
-    <<@magic, byte_size(description)::16, description::binary, salt::binary-16, nonce::binary-12,
+    # the readable description in the header, for the Select File box, is
+    # at most 40 characters (set_description's limit), so its two-byte length
+    # always fits; the whole one is inside, encrypted (code review 2026-10-26)
+    shown = String.slice(description, 0, 40)
+
+    <<@magic, byte_size(shown)::16, shown::binary, salt::binary-16, nonce::binary-12,
       tag::binary-16, cipher::binary>>
   end
 

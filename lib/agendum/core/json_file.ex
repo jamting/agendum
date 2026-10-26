@@ -1169,7 +1169,11 @@ defmodule Agendum.Core.JSONFile do
     do:
       Map.keys(db.categories) ++
         Map.keys(db.items) ++
-        Map.keys(db.views) ++ Map.keys(db.calendars) ++ Map.keys(db.feeds) ++ Map.keys(db.macros)
+        Map.keys(db.views) ++
+        Map.keys(db.calendars) ++
+        Map.keys(db.feeds) ++
+        Map.keys(db.macros) ++
+        Enum.map(db.trash.items, & &1.id)
 
   defp category_refs(c, cats, _items) do
     ref = &Map.has_key?(cats, &1)

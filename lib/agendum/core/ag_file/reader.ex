@@ -442,18 +442,50 @@ defmodule Agendum.Core.AgFile.Reader do
     end
   end
 
-  # A category and, depth first, its children (word 17 the first child,
-  # word 15 the next sibling). Its name text is "name;short name;also
-  # match…". Empty values are left out, as agdump.py leaves them out.
-  defp category(f, c, seen \\ %{}) do
+  # The categories, depth first from the root (word 17 a category's first
+  # child, word 15 the next sibling). Each block is read once, however many
+  # parents a damaged file points at it from (code review 2026-10-26: a
+  # crafted file made the reading grow without bound).
+  defp category(f, root),
+    do:
+      root
+      |> depth_first(
+        fn c -> walk(f, elem(bw(f, c), 17), 15, &bw/2) end,
+        &category_node(f, &1, &2)
+      )
+      |> elem(0)
+
+  @doc """
+  A tree read depth first from `node`: `children` gives a node's children,
+  `build` makes a node from it and its children built. Each node is visited
+  once, by one set shared by the whole walk, so a node reachable along
+  several paths, or a cycle, costs nothing more. Returns the tree and the
+  nodes visited.
+  """
+  @spec depth_first(term, (term -> [term]), (term, [term] -> term), MapSet.t()) ::
+          {term, MapSet.t()}
+  def depth_first(node, children, build, seen \\ MapSet.new()) do
+    seen = MapSet.put(seen, node)
+
+    {kids, seen} =
+      Enum.reduce(children.(node), {[], seen}, fn child, {kids, seen} ->
+        if MapSet.member?(seen, child) do
+          {kids, seen}
+        else
+          {kid, seen} = depth_first(child, children, build, seen)
+          {[kid | kids], seen}
+        end
+      end)
+
+    {build.(node, Enum.reverse(kids)), seen}
+  end
+
+  # A category with its children built. Its name text is "name;short
+  # name;also match…". Empty values are left out, as agdump.py leaves them
+  # out.
+  defp category_node(f, c, children) do
     w = bw(f, c)
     parts = String.split(category_name(f, c), ";")
-    seen = Map.put(seen, c, true)
-
-    children =
-      for child <- walk(f, elem(w, 17), 15, &bw/2),
-          not Map.has_key?(seen, child),
-          do: category(f, child, seen)
 
     [
       id: c,

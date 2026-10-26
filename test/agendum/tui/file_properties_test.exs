@@ -260,7 +260,9 @@ defmodule Agendum.TUI.FilePropertiesTest do
   describe "Make backup on open (R82)" do
     test "a file with it on is backed up as it is opened", %{state: state} do
       db = Agendum.Core.set_backup_on_open(state.db, true)
-      state = Agendum.TUI.Update.arrive(%{state | db: db, path: "/wood/owl.agendum"})
+      # a file read from disk has a stamp (a new one has none: no backup)
+      on_disk = %{state | db: db, path: "/wood/owl.agendum", saved: %{state.saved | stamp: "s"}}
+      state = Agendum.TUI.Update.arrive(on_disk)
       assert {:backup_file, "/wood/owl.agendum"} in state.effects
 
       # without it, or untitled, nothing

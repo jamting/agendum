@@ -366,7 +366,10 @@ defmodule Agendum.Core.AgFile.Convert do
   defp time_of(%{given_as: %{time: time}}), do: time <> ":00"
   defp time_of(_assignment), do: nil
 
-  defp recurrence(%{given_as: %{kind: "recurring"} = g} = a, item, ctx) do
+  @doc false
+  # an item's recurring date as Agendum's rule, and the context with a note
+  # for what could not be kept exactly (public for its test)
+  def recurrence(%{given_as: %{kind: "recurring"} = g} = a, item, ctx) do
     every = max(Map.get(g, :interval, 1), 1)
     day = a.value |> String.slice(8, 2) |> String.to_integer()
 
@@ -404,13 +407,24 @@ defmodule Agendum.Core.AgFile.Convert do
           nil
       end
 
-    if rule,
-      do: {rule, ctx},
-      else:
+    cond do
+      rule == nil ->
         {nil, note(ctx, "\"#{item.text}\": its recurring date (#{g.unit}) is kept as one date")}
+
+      # Agendum has no working days in a rule: every day it is, and said so
+      g.unit == "working days" ->
+        {rule,
+         note(
+           ctx,
+           "\"#{item.text}\": repeats every #{every} working days, imported as every #{every} days"
+         )}
+
+      true ->
+        {rule, ctx}
+    end
   end
 
-  defp recurrence(_when, _item, ctx), do: {nil, ctx}
+  def recurrence(_when, _item, ctx), do: {nil, ctx}
 
   # An alarm rings before its date category's date, When by default (R38):
   # the minutes, and the category when it is another than When.

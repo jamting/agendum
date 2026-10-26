@@ -162,10 +162,18 @@ defmodule Agendum.TUI.DebugLog do
         :ok
 
       pid ->
-        IO.write(
-          pid,
-          "#{now() |> NaiveDateTime.to_time() |> Time.to_iso8601()} #{redact(text)}\n"
-        )
+        line = "#{now() |> NaiveDateTime.to_time() |> Time.to_iso8601()} #{redact(text)}\n"
+
+        # Domain: logging never stops the program (code review 2026-10-26: a
+        # full disk raised here, outside the crash guard, and lost the
+        # unsaved changes); a log that cannot be written is left off
+        try do
+          IO.write(pid, line)
+        catch
+          _kind, _reason ->
+            Process.unregister(@name)
+            :ok
+        end
     end
   end
 
@@ -175,10 +183,17 @@ defmodule Agendum.TUI.DebugLog do
   token, and a log may be sent to someone (meeting 2026-10-26-4, § 7).
   """
   @spec redact(String.t()) :: String.t()
-  def redact(text),
-    # the scheme and host are kept (groups 1 and 2); anything after the host,
-    # up to a space or a quote, becomes "/…"
-    do: Regex.replace(~r{\b(https?|webcal|feed)://([^/\s"?#]+)[/?#][^\s"]*}i, text, "\\1://\\2/…")
+  def redact(text) do
+    # the scheme (1), any `user:password@` (2, always dropped), the host (3)
+    # and what follows it (4, a path, query or fragment: "/…")
+    Regex.replace(
+      ~r{\b(https?|webcal|feed)://([^/\s"?#@]*@)?([^/\s"?#@]+)([/?#][^\s"]*)?}i,
+      text,
+      fn _all, scheme, _userinfo, host, rest ->
+        scheme <> "://" <> host <> if(rest == "", do: "", else: "/…")
+      end
+    )
+  end
 
   # local time to the millisecond (`NaiveDateTime.local_now/0` gives whole
   # seconds), so keys a moment apart can be told apart
@@ -189,12 +204,31 @@ defmodule Agendum.TUI.DebugLog do
 
   @doc "Input from the terminal: its bytes, the keys read from them, the boxes open."
   @spec input(binary, [term], State.t()) :: :ok
-  def input(bytes, keys, state) do
-    # an Agenda file's password (R72) stays out of the log: only how many
-    # keys came
-    if Agendum.TUI.Update.Prompts.password_prompt?(state),
-      do: write("input (#{length(keys)} keys hidden: a password)#{modes(state)}"),
-      else: write("input #{inspect(bytes)} → #{inspect(keys)}#{modes(state)}")
+  def input(bytes, keys, state), do: write(input_text(bytes, keys, state))
+
+  @doc """
+  The log line for input: the bytes and keys of a single key, as typed; a
+  password's keys only counted. A batch of several keys (a paste, keys typed
+  while Agendum was busy) never shows its characters, only how many, its
+  other keys by name: the key that opens a password prompt can come in the
+  same batch as the password typed after it (code review 2026-10-26), and
+  the state the batch arrived in cannot tell. Pure.
+  """
+  @spec input_text(binary, [term], State.t()) :: String.t()
+  def input_text(bytes, keys, state) do
+    cond do
+      Agendum.TUI.Update.Prompts.password_prompt?(state) ->
+        "input (#{length(keys)} keys hidden: a password)#{modes(state)}"
+
+      match?([_], keys) ->
+        "input #{inspect(bytes)} → #{inspect(keys)}#{modes(state)}"
+
+      true ->
+        {chars, others} = Enum.split_with(keys, &match?({:char, _}, &1))
+
+        "input #{length(keys)} keys: #{length(chars)} characters (not shown) and " <>
+          "#{inspect(others)}#{modes(state)}"
+    end
   end
 
   @doc "Keys a macro plays."
@@ -396,9 +430,37 @@ defmodule Agendum.TUI.DebugLog do
     #{Exception.format(kind, reason, stacktrace)}
     State before it:
     #{context}
-    Mode stack: #{inspect(state.modes, limit: 50, printable_limit: 200)}\
+    Mode stack: #{modes_text(state)}\
     """)
   end
+
+  # the fields of a box that can hold a password (ADR 0046): the New File
+  # box's, and the Set file password boxes' typed ones
+  @secret_fields [:password, :first, :line]
+
+  @doc """
+  The mode stack as the crash dump writes it, with every password a box
+  still holds hidden (code review 2026-10-26: a crash in the New File box
+  wrote it in plain text). Pure.
+  """
+  @spec modes_text(State.t()) :: String.t()
+  def modes_text(state) do
+    state.modes
+    |> Enum.map(fn
+      %{type: type} = mode when type in [:new_file, :password_box] ->
+        Enum.reduce(@secret_fields, mode, fn field, mode ->
+          if Map.get(mode, field) in [nil, ""], do: mode, else: Map.put(mode, field, "(hidden)")
+        end)
+        |> hide_typing()
+
+      mode ->
+        mode
+    end)
+    |> inspect(limit: 50, printable_limit: 200)
+  end
+
+  defp hide_typing(%{typing: {field, _text}} = mode), do: %{mode | typing: {field, "(hidden)"}}
+  defp hide_typing(mode), do: mode
 
   defp header(env, args) do
     {family, name} = :os.type()

@@ -413,8 +413,9 @@ defmodule Agendum.TUI.Update do
   @spec arrive(State.t()) :: State.t()
   def arrive(%State{} = state) do
     # File Properties ▸ Make backup on open (R82): the file as it is on disk
+    # only a file read from disk (a stamp): a new one has nothing to copy
     state =
-      if state.path && state.db.backup_on_open,
+      if state.path && state.saved.stamp && state.db.backup_on_open,
         do: State.effect(state, {:backup_file, state.path}),
         else: state
 

@@ -24,7 +24,10 @@ defmodule Agendum.TUI.Update.Results do
     state = %{state | fetching: fetching}
     cal = state.db.calendars[cal_id]
 
-    if cal == nil do
+    # Domain: only a read this file asked for: one started for another file,
+    # open before, comes back with no `fetching` entry here (code review
+    # 2026-10-26: it was filed into whatever file shared the id)
+    if cal == nil or kind == nil do
       state
     else
       next = read_into(state, cal, kind, result)
@@ -59,7 +62,10 @@ defmodule Agendum.TUI.Update.Results do
     state = %{state | fetching: fetching}
     feed = state.db.feeds[feed_id]
 
-    if feed == nil do
+    # Domain: only a read this file asked for: one started for another file,
+    # open before, comes back with no `fetching` entry here (code review
+    # 2026-10-26: it was filed into whatever file shared the id)
+    if feed == nil or kind == nil do
       state
     else
       next = feed_into(state, feed, kind, result)
