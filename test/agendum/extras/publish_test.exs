@@ -69,8 +69,12 @@ defmodule Agendum.Extras.PublishTest do
   end
 
   test "rsync's arguments include only Agendum's paths" do
+    ssh =
+      "ssh -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3"
+
     assert Publish.rsync_args("me@host:www", "site", ["index.html"]) ==
-             ~w(-rtzc --delete --include=/posts/ --include=/index.html --exclude=* site/ me@host:www)
+             ["-rtzc", "--delete", "-e", ssh] ++
+               ~w(--include=/posts/ --include=/index.html --exclude=* site/ me@host:www)
   end
 
   describe "SFTP" do

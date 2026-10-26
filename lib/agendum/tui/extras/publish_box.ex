@@ -151,7 +151,10 @@ defmodule Agendum.TUI.Extras.PublishBox do
     changes =
       mode.settings
       |> Map.take([:upload | @text_fields -- [:posts, :drafts]])
-      |> Map.merge(%{posts: {:name, mode.settings.posts}, drafts: {:name, mode.settings.drafts}})
+      |> Map.merge(%{
+        posts: category_setting(state, :posts, mode.settings.posts),
+        drafts: category_setting(state, :drafts, mode.settings.drafts)
+      })
 
     case State.command(state, {:prepare_publish, changes}) do
       {:ok, state, _changes} ->
@@ -166,12 +169,29 @@ defmodule Agendum.TUI.Extras.PublishBox do
       {:error, :no_posts_category} ->
         State.error(state, "Name the category whose items are the posts")
 
+      {:error, :ambiguous} ->
+        State.error(
+          state,
+          "Two categories have that name: give the posts or drafts a name of their own"
+        )
+
       {:error, :zettels_full} ->
         State.error(state, "Every Zettel id is in use; the posts cannot all have one")
 
       {:error, _} ->
         State.error(state, "The posts and drafts categories must differ, and be categories")
     end
+  end
+
+  # the category the box opened with, by its id, unless the person typed
+  # another name: a name another category also has must not swap it
+  # (code review 2026-10-26: the drafts became a namesake's, and published)
+  defp category_setting(state, field, typed) do
+    id = Map.fetch!(state.db.blog, field)
+
+    if id && state.db.categories[id] && state.db.categories[id].name == typed,
+      do: id,
+      else: {:name, typed}
   end
 
   @doc """

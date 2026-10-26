@@ -92,6 +92,11 @@ defmodule Agendum.Core.Extras.ICal do
   defp split_unquoted(<<c::utf8, rest::binary>>, char, quoted, acc),
     do: split_unquoted(rest, char, quoted, acc <> <<c::utf8>>)
 
+  # a byte that is no UTF-8 (a Latin-1 export's "ü") is kept as it is, so
+  # one odd line does not make the whole calendar unreadable
+  defp split_unquoted(<<c, rest::binary>>, char, quoted, acc),
+    do: split_unquoted(rest, char, quoted, acc <> <<c>>)
+
   # Walks the lines: `event` is the VEVENT being read (its properties, first
   # of each kind), `depth` how deep inside it a nested component is;
   # `zones` the calendar's time zones, by TZID.
@@ -258,7 +263,8 @@ defmodule Agendum.Core.Extras.ICal do
 
     %{
       freq: @freqs[String.upcase(parts["FREQ"] || "")],
-      interval: int(parts["INTERVAL"]) || 1,
+      # a broken calendar's 0 or below would divide by nothing: every time
+      interval: positive(int(parts["INTERVAL"])),
       byday: list(parts["BYDAY"]),
       bymonthday: parts["BYMONTHDAY"] |> list() |> Enum.map(&int/1) |> Enum.reject(&is_nil/1),
       count: int(parts["COUNT"]),
@@ -266,6 +272,9 @@ defmodule Agendum.Core.Extras.ICal do
       other: parts |> Map.keys() |> Enum.reject(&(&1 in @known)) |> Enum.sort()
     }
   end
+
+  defp positive(n) when is_integer(n) and n > 0, do: n
+  defp positive(_n), do: 1
 
   defp list(nil), do: []
   defp list(v), do: v |> String.upcase() |> String.split(",", trim: true)

@@ -65,7 +65,15 @@ defmodule Agendum.Core.Extras.FeedSync do
   end
 
   defp apply_entry({db, snaps, counts}, feed, entry, today, cutoff, clock) do
-    published = if entry.published, do: NaiveDateTime.to_date(entry.published), else: today
+    # an entry with no date of its own keeps the day it was first seen, so
+    # it fades in time (code review 2026-10-26: it was today at every read)
+    published =
+      cond do
+        entry.published -> NaiveDateTime.to_date(entry.published)
+        snaps[entry.id] -> snaps[entry.id].published
+        true -> today
+      end
+
     wanted = %{title: entry.title, note: note(entry), link: entry.link, published: published}
 
     case snaps[entry.id] do
@@ -161,13 +169,39 @@ defmodule Agendum.Core.Extras.FeedSync do
   def kept?(db, snap, feed) do
     item = db.items[snap.item]
 
-    by_hand =
-      db
-      |> Database.explicit_categories(item.id)
-      |> Enum.reject(&(&1 == feed.category_id or MapSet.member?(db.conditional, {item.id, &1})))
+    # Domain: what the filing itself made is the feed's: its category, the
+    # matches and conditions (conditional links), and what their category
+    # links and number actions add in turn; anything else was given by hand
+    # (code review 2026-10-26: a link through Elixir to Programming kept an
+    # entry for ever)
+    filed = Database.explicit_categories(db, item.id)
+
+    automatic =
+      automatic(db, [
+        feed.category_id | Enum.filter(filed, &MapSet.member?(db.conditional, {item.id, &1}))
+      ])
+
+    by_hand = Enum.reject(filed, &Map.has_key?(automatic, &1))
 
     item.zettel != nil or Fingerprint.of(item.text) != snap.title_print or
       Fingerprint.of(item.note) != snap.note_print or by_hand != []
+  end
+
+  # the categories filing into `from` adds by itself: their category links
+  # (also_assign) and the targets of their number actions, in turn; a map
+  # of the ids seen (`%{id => true}`)
+  defp automatic(db, from), do: automatic(db, from, %{})
+
+  defp automatic(_db, [], seen), do: seen
+
+  defp automatic(db, [id | rest], seen) do
+    if Map.has_key?(seen, id) or not Map.has_key?(db.categories, id) do
+      automatic(db, rest, seen)
+    else
+      cat = db.categories[id]
+      targets = cat.also_assign ++ for({target, {:set, _}} <- cat.actions, do: target)
+      automatic(db, targets ++ rest, Map.put(seen, id, true))
+    end
   end
 
   @doc "An entry's note: its summary, at most about 2,000 characters, then its link."

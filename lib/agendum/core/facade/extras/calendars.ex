@@ -89,13 +89,44 @@ defmodule Agendum.Core.Facade.Extras.Calendars do
   def name_family(db),
     do: name_family(db, MapSet.new(for {_, cal} <- db.calendars, do: cal.category_id))
 
-  # the calendars' categories straight under MAIN, moved into the family
+  # The calendars' categories straight under MAIN join the family. One made
+  # for the calendar (only its events' items in it, no children) moves; one
+  # that was the person's before (versions before 0.68 filed a calendar into
+  # any category of its name) stays theirs, where it is, and the calendar
+  # gets a category of its own in the family, its events' items with it
+  # (code review 2026-10-26).
   defp move_stray(db, family) do
     for({_, cal} <- db.calendars, db.categories[cal.category_id].parent_id == db.main_id, do: cal)
     |> Enum.reduce(db, fn cal, db ->
-      {:ok, db} = Database.move_category(db, cal.category_id, family, nil)
-      db
+      if made_for?(db, cal), do: move_into(db, cal, family), else: own_category(db, cal, family)
     end)
+  end
+
+  defp made_for?(db, cal) do
+    events = MapSet.new(for {_, %{item: id}} <- cal.events, do: id)
+    cat = db.categories[cal.category_id]
+
+    cat.children == [] and
+      Enum.all?(Database.items_in(db, cat.id), &MapSet.member?(events, &1))
+  end
+
+  defp move_into(db, cal, family) do
+    case Database.move_category(db, cal.category_id, family, nil) do
+      {:ok, db} -> db
+      {:error, _} -> own_category(db, cal, family)
+    end
+  end
+
+  defp own_category(db, cal, family) do
+    {db, own} = Categories.child_named(db, family, cal.name)
+
+    db =
+      for({_, %{item: id}} <- cal.events, Map.has_key?(db.items, id), do: id)
+      |> Enum.reduce(db, fn id, db ->
+        db |> Database.unlink(id, cal.category_id) |> Database.link(id, own)
+      end)
+
+    %{db | calendars: Map.put(db.calendars, cal.id, %{cal | category_id: own})}
   end
 
   defp name_family(db, own) do

@@ -4,6 +4,16 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.68.4 — 2026-10-26
+
+Ten fixes from a deep review of the extras.
+
+- **Publishing runs in the background**: Agendum goes on while the blog is written and uploaded, and an upload that stalls (a dropped connection, a server that stops answering) no longer freezes it. rsync's ssh never stops to ask for a password.
+- **A post with a line like `#elixir` no longer freezes Agendum** when published; a post that links to its own address keeps the link.
+- **Publish keeps your posts and drafts categories**, even when another category has the same name; a name two categories share is refused. A failed SFTP upload is made good by the next one.
+- **Calendars**: one with a broken repeat rule (INTERVAL=0) no longer crashes Agendum at every start, and one in an old 8-bit encoding is read. A category of yours that an old version gave to a calendar is left yours.
+- **Feeds**: entries filed through a category link, and entries without a date, now fade as the others do.
+
 ## 0.68.3 — 2026-10-26
 
 Ten fixes from a deep review of the core's rules.

@@ -15,6 +15,10 @@ defmodule Agendum.Extras.Publish do
   alias Agendum.Core.Extras.{Blog, Site}
 
   @manifest ".agendum-site"
+  # what a failed SFTP upload left to remove on the server
+  @unsent ".agendum-unsent"
+  # an SFTP call's longest wait, in milliseconds
+  @timeout 60_000
 
   @typedoc "What a folder holds of the site: contents by path, and the last publish's paths."
   @type scan :: %{existing: %{optional(String.t()) => String.t()}, published: [String.t()]}
@@ -104,8 +108,8 @@ defmodule Agendum.Extras.Publish do
   def upload(%Blog{upload: :rsync} = blog, folder, files, changes, _password, _opts),
     do: rsync(blog.target, folder, Enum.map(files, &elem(&1, 0)) ++ changes.removed)
 
-  def upload(%Blog{upload: :sftp} = blog, folder, _files, changes, password, opts),
-    do: sftp(blog, folder, changes, password, opts)
+  def upload(%Blog{upload: :sftp} = blog, folder, files, changes, password, opts),
+    do: sftp(blog, folder, files, changes, password, opts)
 
   @doc """
   The arguments for rsync: only Agendum's own paths are sent, and of
@@ -120,7 +124,12 @@ defmodule Agendum.Extras.Publish do
     includes = Enum.map(Enum.uniq(["posts/" | paths]), &"--include=/#{&1}")
     # the folder ends in "/": its contents are sent, not the folder itself
     source = String.trim_trailing(folder, "/") <> "/"
-    ["-rtzc", "--delete"] ++ includes ++ ["--exclude=*", source, target]
+    # ssh never asks (a password or a new host key would wait on the screen)
+    # and gives up on a dead connection (code review 2026-10-26)
+    ssh =
+      "ssh -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3"
+
+    ["-rtzc", "--delete", "-e", ssh] ++ includes ++ ["--exclude=*", source, target]
   end
 
   defp rsync("", _folder, _paths), do: {:error, "say where to upload to (Upload to)"}
@@ -145,10 +154,10 @@ defmodule Agendum.Extras.Publish do
   # SFTP (OTP's ssh): the files added and changed are sent, the
   # stylesheet as the folder has it, and the removed ones deleted. The
   # server's key must be in ~/.ssh/known_hosts, as for ssh itself.
-  defp sftp(%Blog{target: ""}, _folder, _changes, _password, _opts),
+  defp sftp(%Blog{target: ""}, _folder, _files, _changes, _password, _opts),
     do: {:error, "say which server to upload to (Upload to)"}
 
-  defp sftp(blog, folder, changes, password, opts) do
+  defp sftp(blog, folder, files, changes, password, opts) do
     {:ok, _} = Application.ensure_all_started(:ssh)
     {host, port} = host_port(blog.target)
     password = password || netrc_password(host, blog.user)
@@ -158,7 +167,9 @@ defmodule Agendum.Extras.Publish do
       user_interaction: false,
       silently_accept_hosts: false,
       quiet_mode: true,
-      connect_timeout: 20_000
+      connect_timeout: 20_000,
+      # the channel's setup, too, never waits for ever
+      timeout: 30_000
     ]
 
     # the keys first; a password only when there is one (never typed at
@@ -171,7 +182,7 @@ defmodule Agendum.Extras.Publish do
     # the tests' options replace the person's (`Keyword.merge/2`)
     ssh_opts = base |> Keyword.merge(with_password) |> Keyword.merge(opts)
 
-    quietly(fn -> connect(host, port, ssh_opts, blog, folder, changes, password) end)
+    quietly(fn -> connect(host, port, ssh_opts, blog, folder, files, changes, password) end)
   rescue
     error -> {:error, "SFTP failed (#{Exception.message(error)})"}
   end
@@ -190,11 +201,11 @@ defmodule Agendum.Extras.Publish do
     end
   end
 
-  defp connect(host, port, ssh_opts, blog, folder, changes, password) do
+  defp connect(host, port, ssh_opts, blog, folder, files, changes, password) do
     case :ssh_sftp.start_channel(String.to_charlist(host), port, ssh_opts) do
       {:ok, channel, connection} ->
         try do
-          send_all(channel, blog.remote_dir, folder, changes)
+          send_all(channel, blog.remote_dir, folder, files, changes)
         after
           :ssh.close(connection)
         end
@@ -204,20 +215,60 @@ defmodule Agendum.Extras.Publish do
     end
   end
 
-  defp send_all(channel, dir, folder, changes) do
+  defp send_all(channel, dir, folder, files, changes) do
     remote = fn path -> if dir == "", do: path, else: Path.join(dir, path) end
-    _ = :ssh_sftp.make_dir(channel, String.to_charlist(remote.("posts")))
-    sent = Enum.uniq(changes.added ++ changes.changed ++ [Site.stylesheet()])
+    _ = :ssh_sftp.make_dir(channel, String.to_charlist(remote.("posts")), @timeout)
+    {sent, removed} = sftp_plan(folder, files, changes)
 
-    with :ok <- each(sent, &sftp_put(channel, folder, &1, remote.(&1))) do
-      each(changes.removed, &sftp_delete(channel, remote.(&1)))
+    # Domain: the removals wait in the folder until an upload has made
+    # them; a failed one leaves them for the next (code review 2026-10-26)
+    :ok = keep_unsent(folder, removed)
+
+    result =
+      with :ok <- each(sent, &sftp_put(channel, folder, &1, remote.(&1))) do
+        each(removed, &sftp_delete(channel, remote.(&1)))
+      end
+
+    if result == :ok, do: keep_unsent(folder, [])
+    result
+  end
+
+  @doc """
+  What an SFTP upload sends and removes: every file of the site, as the
+  folder has it, not only the changes since the folder was last written
+  (an upload that failed, or a site first published with Upload None,
+  would leave the server behind for good; code review 2026-10-26); and the
+  files taken away now, with those a failed upload did not remove.
+  """
+  @spec sftp_plan(String.t(), [Site.file()], Site.changes()) :: {[String.t()], [String.t()]}
+  def sftp_plan(folder, files, changes) do
+    sent = Enum.uniq(Enum.map(files, &elem(&1, 0)) ++ [Site.stylesheet()])
+    {sent, Enum.uniq(unsent(folder) ++ changes.removed)}
+  end
+
+  @doc "Keeps the removals an upload has still to make, in the folder (none: the file goes)."
+  @spec keep_unsent(String.t(), [String.t()]) :: :ok
+  def keep_unsent(folder, []) do
+    _ = File.rm(Path.join(folder, @unsent))
+    :ok
+  end
+
+  def keep_unsent(folder, paths) do
+    _ = File.write(Path.join(folder, @unsent), Enum.join(paths, "\n") <> "\n")
+    :ok
+  end
+
+  defp unsent(folder) do
+    case File.read(Path.join(folder, @unsent)) do
+      {:ok, text} -> String.split(text, "\n", trim: true)
+      {:error, _} -> []
     end
   end
 
   defp sftp_put(channel, folder, path, remote) do
     case File.read(Path.join(folder, path)) do
       {:ok, content} ->
-        case :ssh_sftp.write_file(channel, String.to_charlist(remote), content) do
+        case :ssh_sftp.write_file(channel, String.to_charlist(remote), content, @timeout) do
           :ok -> :ok
           {:error, reason} -> {:error, "SFTP could not write #{remote} (#{inspect(reason)})"}
         end
@@ -228,7 +279,7 @@ defmodule Agendum.Extras.Publish do
   end
 
   defp sftp_delete(channel, remote) do
-    case :ssh_sftp.delete(channel, String.to_charlist(remote)) do
+    case :ssh_sftp.delete(channel, String.to_charlist(remote), @timeout) do
       result when result in [:ok, {:error, :no_such_file}] -> :ok
       {:error, reason} -> {:error, "SFTP could not remove #{remote} (#{inspect(reason)})"}
     end

@@ -25,7 +25,8 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   @text_fields ~w(title description author language base_url me folder target user remote_dir)a
 
   @doc "Changes the blog's settings (see `t:changes/0`)."
-  @spec set_blog(db, changes) :: {:ok, db} | {:error, :bad_setting | :no_posts_category}
+  @spec set_blog(db, changes) ::
+          {:ok, db} | {:error, :bad_setting | :no_posts_category | :ambiguous}
   def set_blog(db, changes) do
     # `with` runs each step while it matches; an `{:error, _}` stops it
     with {:ok, db, posts} <- category(db, Map.get(changes, :posts, db.blog.posts)),
@@ -55,8 +56,12 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
 
   defp named(db, name) do
     case Enum.reject(Database.find_categories(db, name), &Database.protected?(db, &1)) do
-      [id | _] ->
+      [id] ->
         {:ok, db, id}
+
+      # two of that name: which is meant cannot be told
+      [_, _ | _] ->
+        {:error, :ambiguous}
 
       [] ->
         case Categories.add_category(db, db.main_id, name) do
@@ -89,7 +94,7 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   """
   @spec prepare_publish(db, changes) ::
           {:ok, db, [{id, String.t()}]}
-          | {:error, :bad_setting | :no_posts_category | :zettels_full}
+          | {:error, :bad_setting | :no_posts_category | :zettels_full | :ambiguous}
   def prepare_publish(db, changes) do
     with {:ok, db} <- set_blog(db, changes) do
       ids = for item <- Blog.posts(db), item.zettel == nil, do: item.id

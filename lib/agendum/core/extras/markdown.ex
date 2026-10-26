@@ -82,9 +82,13 @@ defmodule Agendum.Core.Extras.Markdown do
         {items, rest} = list_items([line | rest], kind, [])
         blocks(rest, [{{:list, kind}, items} | acc])
 
+      # Domain: the paragraph always takes this line, then the lines that
+      # go on with it: a line like "#elixir" is no heading and no other
+      # block, and took nothing before, so the same line came back for
+      # ever (code review 2026-10-26)
       true ->
-        {para, rest} = Enum.split_while([line | rest], &paragraph_line?/1)
-        blocks(rest, [{:paragraph, para} | acc])
+        {more, rest} = Enum.split_while(rest, &paragraph_line?/1)
+        blocks(rest, [{:paragraph, [line | more]} | acc])
     end
   end
 
@@ -196,7 +200,10 @@ defmodule Agendum.Core.Extras.Markdown do
   def inline(text, used, link) do
     # Zettel links first, over the whole text, so that their positions
     # are the text's own; the parts between them get the other markup
-    links = ZettelLinks.scan(text, used)
+    # none inside an address, a [text](link) or a `code` span: those keep
+    # their text as it is (code review 2026-10-26: a post's own address
+    # lost its link)
+    links = text |> ZettelLinks.scan(used) |> Enum.reject(&inside?(&1, protected(text)))
 
     {html, rest_at} =
       Enum.reduce(links, {[], 0}, fn l, {acc, from} ->
@@ -206,6 +213,18 @@ defmodule Agendum.Core.Extras.Markdown do
 
     IO.iodata_to_binary([html, markup(String.slice(text, rest_at..-1//1))])
   end
+
+  # the character ranges of addresses, Markdown links and code spans
+  defp protected(text) do
+    ~r{`[^`]*`|\[[^\]]*\]\([^)]*\)|https?://[^\s<>"]+}
+    |> Regex.scan(text, return: :index)
+    |> Enum.map(fn [{start, len} | _] ->
+      from = String.length(binary_part(text, 0, start))
+      {from, from + String.length(binary_part(text, start, len))}
+    end)
+  end
+
+  defp inside?(link, ranges), do: Enum.any?(ranges, fn {a, b} -> link.at >= a and link.at < b end)
 
   defp markup(""), do: ""
 

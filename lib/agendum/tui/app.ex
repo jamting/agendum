@@ -128,6 +128,13 @@ defmodule Agendum.TUI.App do
         state = logged(state, fn -> Update.Results.feed_read(state, id, result) end)
         loop(state, previous, buffer, theme)
 
+      # the blog written and uploaded in the background (R74)
+      {:published, changes, result} ->
+        Process.delete(:agendum_publishing)
+        DebugLog.write("published: #{elem(result, 0)}")
+        state = logged(state, fn -> Update.Results.published(state, changes, result) end)
+        loop(state, previous, buffer, theme)
+
       # a calendar read in the background (R45)
       {:calendar_read, id, result, ms} ->
         DebugLog.write("calendar #{id} read: #{elem(result, 0)} in #{ms} ms")
@@ -390,14 +397,24 @@ defmodule Agendum.TUI.App do
         Publish.scan(Path.expand(folder), files)
       )
 
+  # in the background, as a feed is read: an upload that stalls must not
+  # stop the program (code review 2026-10-26); one at a time
   defp perform(state, {:publish, folder, files, changes, password}) do
-    dir = Path.expand(folder)
+    if Process.get(:agendum_publishing) do
+      state
+    else
+      Process.put(:agendum_publishing, true)
+      loop = self()
+      dir = Path.expand(folder)
+      blog = state.db.blog
 
-    result =
-      with :ok <- Publish.write(dir, files, changes),
-           do: Publish.upload(state.db.blog, dir, files, changes, password)
+      Task.start(fn ->
+        result = fetched(fn -> publish_site(blog, dir, files, changes, password) end)
+        send(loop, {:published, changes, result})
+      end)
 
-    Update.Results.published(state, changes, result)
+      State.info(state, "Publishing …")
+    end
   end
 
   defp perform(state, {:save_preferences, path, prefs}),
@@ -426,6 +443,12 @@ defmodule Agendum.TUI.App do
   defp perform(state, unknown) do
     DebugLog.write("unknown effect skipped: #{inspect(unknown)}")
     state
+  end
+
+  # the site written into its folder, then uploaded, in the background task
+  defp publish_site(blog, dir, files, changes, password) do
+    with :ok <- Publish.write(dir, files, changes),
+         do: Publish.upload(blog, dir, files, changes, password)
   end
 
   @doc """
