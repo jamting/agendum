@@ -84,6 +84,7 @@ Then working together:
 ### Beyond Agenda
 
 - [ ] Ingested categories (meeting 2026-10-26-5, § 6; ADR 0048; details first in `plans/RSS_READER.md` § Ingested categories): a feed's category gets a source, `{:feed, id}`; named and filled by the feed, not editable or assignable by hand, hidden in the category manager by default (a key shows them), still sections, filters and conditions; calendars likewise. A format change; an enhancement for AGENDA_PARITY's list, behind the Extras switch
+- [ ] Later (the owner, 2026-10-26, after v0.66.0): shrink the faded feed entries further: a hashed entry id instead of the full guid or link (often a web address), and the publish date as a day number instead of a `Date` struct; the 13,181 faded entries are most of the feeds' 2.7 MB as a term in the owner's file (the file 1.21 MB on disk). A format change; not urgent, the save is 39 ms
 Open again since the clone was declared done (2026-10-26); the built ones stay hidden behind the Extras preference (ADR 0043).
 
 Each item names the group in `VISION.md` it serves, group 1 first; items for group 3 or for no group yet wait under Ideas, one line each with a pointer to their plan (meeting 2026-10-16-2, § 6).
