@@ -6,17 +6,19 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
-1. The key bar in moves as Agenda's, the last parity step ([`AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps), with the check that keeps [`HELP_WOOD.md`](HELP_WOOD.md) true; the moment it is built and tagged, the clone is declared done (meeting 2026-10-26-2, §§ 6–8)
-2. The clone declared done (the definition: AGENDA_PARITY.md, end of The steps): the public repository made, the freezes below lifted, and the parity plan's *Optional* steps put back on the roadmap in their areas (meeting 2026-10-25, § 7)
+1. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+2. Then the owner chooses the next work from the areas below, now that Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-25, § 7)
 
-**Frozen until the truthful clone is declared done** (meeting 2026-10-21, § 5; `VISION.md`, ADR 0043): Beyond Agenda, Ideas and Towards many users wait (bug fixes only). Not frozen: the parity steps, the clone's safety work and tests (meeting 2026-10-22, § 5c) and Sharpen the saw (§ 5i). The view cache waits for slow answers in real use.
+**No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
 ### Towards parity with Agenda (Milestone 2)
 
-**The ambition:** Agendum as close to Agenda 2.0 as makes sense: the same screen, keys, menus and behaviour, apart from accepted enhancements and modifications. The parity work, its order and its details are in one place: [`docs/plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps (with how close Agendum is, and the two lists).
+**Done:** the truthful clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7); its leftovers and optional steps are in the areas below. **The ambition was:** Agendum as close to Agenda 2.0 as makes sense: the same screen, keys, menus and behaviour, apart from accepted enhancements and modifications. The parity work, its order and its details are in one place: [`docs/plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps (with how close Agendum is, and the two lists).
 
 ### Fixes and polish
 
+- [ ] File Properties' Update defaults (Agenda's: make this file's File Properties and print settings the defaults for new files) and Auto-import file, the two settings of Agenda's box not built (found when the clone was declared done, 2026-10-26)
+- [ ] The key bar while browsing dates (ALT-B): Agenda 2.0 showed no browse mode to compare with (2026-10-26); check it again, and give it Agenda's bar if it has one
 - [ ] Erlang's logger can print over the screen (the owner, 2026-10-25: Agendum left running in iTerm on a closed laptop, offline, showed error text instead of the program until F10 redrew it; no session log). Likely the hourly feed fetches failing offline and OTP's network code or a crashed fetch reporting through the logger, which Agendum never steers away from the terminal (only Publish does, for ssh). Fix: while the TUI runs, send the logger to the debug log (or nowhere); make a fetch that crashes outright come back as a message
 - [ ] Hidden values of a date or numeric category (owner, 2026-10-25): a category made date or numeric keeps its short name, Also match words and conditions, as Agenda does, but its box no longer shows them (R6a). Decide what to do with them: show them somewhere (Statistics, the manager), clear them on conversion, or leave them; check first whether any still has an effect (a short name in a narrow column head, a condition)
 
@@ -35,12 +37,17 @@ Tools and checks that make every later change faster and safer. Each is small; t
 
 ### The note editor
 
-Agenda's note editor is parity work (AGENDA_PARITY.md § The steps); this one is ours:
+Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
+
+- [ ] Optional (from the parity plan, 2026-10-26): ALT-F1 COMPOSE, Agenda's way of typing accented and special characters by two keys
 
 - [ ] Undo in the note editor: CTRL-Z / CTRL-Y while editing a note, for typing (in sensible chunks: a word or a line, not every key) and for Search/Replace's replacements, with the note's text and cursor restored in the editor; the steps join the file's history when the note closes (today undo works only after closing the note, ADR 0005)
 
 ### Data interchange (Milestone 4)
 
+- [ ] Optional (from the parity plan, 2026-10-26): Agenda structured files (`.STF`), import and export as Agenda 2.0's File Transfer does (Working with Definition Files, Appendix B; User's Guide chapters 23–24), reading both 2.0 and 1.x dates into the same When, Entry and Done categories
+- [ ] Optional (from the parity plan, 2026-10-26): import of structured text files, one item per line with categories
+- [ ] Optional (from the parity plan, 2026-10-26): TXT2STF-style definition files that turn plain text into items; a first use, the session summaries in `docs/summaries/`
 - [ ] The `.AG` import (R72), still to bring over: note files (read by the shell beside the `.AG`), the global date format, a datebook's base date
   - [ ] Macros. Every macro in the files at hand is a starter's helper program in Agenda's macro command language (`{INPUTTEXT;…}`, `{DEFSTR;%var}`, `{LABEL}`, `{WINDOWSON}`), not recorded keystrokes, so R50 cannot run them; the owner's own Planner has only Planner's 10 (contact list, date settings, hide done, print, four sorts), none of the owner's. Planner, Account Manager, People Manager and Information Sifter have 10, 14, 10 and 6 (checked 2026-10-16). Options when picked up: import plain keystroke macros as R50 macros, and keep each other macro's text in a note so it can still be read; the command language itself stays out of scope (SPEC § 6)
 
@@ -50,6 +57,7 @@ Agenda's note editor is parity work (AGENDA_PARITY.md § The steps); this one is
 
 ### Housekeeping
 
+- [ ] Optional (from the parity plan, 2026-10-26): Utilities ▸ Launch, a shell without quitting Agendum
 *[A page here was soaked in the creek. — Rabbit]*
 
 ### Users and direction
@@ -72,7 +80,7 @@ Then working together:
 
 ### Beyond Agenda
 
-**Frozen to bug fixes until the truthful clone is declared done** (meeting 2026-10-21, § 5); the items below wait, and the built ones are hidden behind the Extras preference (ADR 0043).
+Open again since the clone was declared done (2026-10-26); the built ones stay hidden behind the Extras preference (ADR 0043).
 
 Each item names the group in `VISION.md` it serves, group 1 first; items for group 3 or for no group yet wait under Ideas, one line each with a pointer to their plan (meeting 2026-10-16-2, § 6).
 
@@ -96,7 +104,7 @@ Each item names the group in `VISION.md` it serves, group 1 first; items for gro
 
 ### Ideas
 
-**Frozen until the truthful clone is declared done** (meeting 2026-10-21, § 5; meeting 2026-10-22, § 5i): ideas wait here; none moves up before then.
+Open again since the clone was declared done (2026-10-26); an idea moves up when the owner chooses it.
 
 Each names the group in `VISION.md` it serves; an idea moves up to "Beyond Agenda" when it serves group 1 or 2 now (meeting 2026-10-16-2, § 6).
 
