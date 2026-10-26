@@ -32,7 +32,7 @@ The full steps are the `feature` skill (`.claude/skills/feature/SKILL.md`, meeti
 1. **Habits first.** Before any code, Claude lists every key or behaviour the change would alter for someone already using Agendum. I settle them. A habit change found halfway is the most expensive kind.
 2. **As Agenda did.** The behaviour is checked in the manuals (`docs/reference/*_djvu.txt`), the Lotus Q&A, the F1 help, the `.AG` file format, and by running the real Agenda 2.0 headless in DOSBox (`tools/agformat/agenda_driver.py`). Results come as an evidence table: question, Agenda's answer, source.
 3. **Test first**, core first, then the TUI.
-4. **The gate.** `mix check` (format, warnings, Credo, Dialyzer, tests). After a large TUI change, the long fuzz run: `mix agendum.fuzz` (its output kept in `tmp/fuzz/`). A gate fixed after one green run may be flaky: run it several times.
+4. **The gate.** `mix check` (format, warnings, Credo, Dialyzer, tests; every test run's seed and failures kept in `tmp/check/`, so a failure seen once can be repeated with `mix test --seed N`; it warns when git would not run the pre-push hook). After a large TUI change, the long fuzz run: `mix agendum.fuzz` (its output kept in `tmp/fuzz/`). A gate fixed after one green run may be flaky: run it several times.
 5. **Docs with the change:** the rule in `docs/SPEC.md`, the roadmap ticked, `KEYBOARD.md` and `SCREENS.md` when keys or screens change; the guide and the manual only when I ask.
 6. **Commit without asking** once the checks pass, one feature per commit (my standing rule since 2026-10-14). I review the commits afterwards and ask to amend or revert.
 7. **Version.** A major feature or a change to the file format bumps the minor version in `mix.exs`, gets a `CHANGELOG.md` entry and a `vX.Y.Z` tag once the long fuzz run passes. Never 1.0.0 unless I say so.
@@ -92,7 +92,7 @@ The panel advises; it never votes. I decide.
 | Command                                                | For                                                                     |
 | ------------------------------------------------------ | ----------------------------------------------------------------------- |
 | `mix setup`                                            | a fresh checkout: dependencies, and the pre-push hook (runs `mix check`) |
-| `mix check`                                            | the quality gate                                                        |
+| `mix check`                                            | the quality gate; each test run's seed and failures land in `tmp/check/` (the last 30; a failed run's name ends in `-failed`), and it warns when the pre-push hook is off (`mix agendum.hooks`) |
 | `gh run list` (or the Actions tab on GitHub)           | CI: the same gate on GitHub after every push (`.github/workflows/check.yml`), and the long fuzz run every night (`fuzz.yml`; `gh workflow run fuzz.yml` starts it by hand) |
 | `mix run -e 'Agendum.CLI.main(["--demo"])'`            | the program with sample data (`--rabbit`: Rabbit's file; `--clinic`: the Easter egg) |
 | `mix escript.build && ./agendum FILE`                  | the real program                                                        |

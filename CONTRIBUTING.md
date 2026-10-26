@@ -25,7 +25,7 @@ Then, in the project folder:
 
 ```sh
 mix setup            # the dependencies, and git hooks: a push runs mix check first
-mix check            # the quality gate: format, warnings, Credo, Dialyzer, tests
+mix check            # the quality gate: format, warnings, Credo, Dialyzer, tests (each run's seed and failures kept in tmp/check/)
 ```
 
 The first `mix check` builds Dialyzer's tables and takes a few minutes; after that it takes about a minute. If it passes, you are set up.

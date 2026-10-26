@@ -14,7 +14,8 @@ defmodule Agendum.MixProject do
       name: "Wol's Agendum",
       docs: docs(),
       # mix tasks in lib/mix/tasks (`mix agendum.starters`) use Mix itself
-      dialyzer: [plt_add_apps: [:mix]],
+      # :ex_unit for the test log's formatter (test/support/test_log.ex)
+      dialyzer: [plt_add_apps: [:mix, :ex_unit]],
       # the golden files' facts (`test/fixtures/formats/*.facts.exs`) are
       # data read by a test, not tests: ExUnit warns about them otherwise
       test_ignore_filters: [&String.starts_with?(&1, "test/fixtures/")]
@@ -135,6 +136,8 @@ defmodule Agendum.MixProject do
       check: [
         "format --check-formatted",
         "compile --warnings-as-errors --force",
+        # warns when the pre-push hook is off (git's core.hooksPath)
+        "agendum.hooks",
         "credo",
         "dialyzer",
         "test --warnings-as-errors"

@@ -5,5 +5,6 @@
 # `mix check` on some runs with every test passing.
 Mix.ensure_application!(:tools)
 
-# the 2^24 bijection test takes a while: `mix test --include exhaustive`
-ExUnit.start(exclude: [:exhaustive])
+# the 2^24 bijection test takes a while: `mix test --include exhaustive`;
+# every run's seed and failures are also kept in tmp/check/ (Agendum.TestLog)
+ExUnit.start(exclude: [:exhaustive], formatters: [ExUnit.CLIFormatter, Agendum.TestLog])
