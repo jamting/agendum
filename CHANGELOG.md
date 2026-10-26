@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.62.1 — 2026-10-26
+
+- **Browsing dates** (ALT-B, View ▸ Browse) as in Lotus Agenda: the key bar shows F1 Help, F8 Default and F10 Menu; **F8** goes back to the dates you started from, **F10** leaves browsing for the menu. The top lines say Agenda's "Use the cursor keys to display schedules for other dates." with BROWSE at the right, and the filter's browsed dates under it.
+
 ## 0.62.0 — 2026-10-26
 
 The last step of the truthful clone: the key bar in moves, as in Lotus Agenda. **With this version the truthful clone of Lotus Agenda 2.0 is declared done** (meeting 2026-10-26-2).
