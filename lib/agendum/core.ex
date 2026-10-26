@@ -319,6 +319,7 @@ defmodule Agendum.Core do
   defdelegate sync_calendar(db, cal_id, events, clock), to: Calendars
   defdelegate calendar_failed(db, cal_id, message, clock), to: Calendars
   defdelegate cycle_calendar_setting(db, cal_id, setting, step), to: Calendars
+  defdelegate rename_calendar(db, cal_id, name), to: Calendars
   defdelegate calendars_due(db, now), to: Calendars
 
   # feed subscriptions (R75)
@@ -327,6 +328,11 @@ defmodule Agendum.Core do
   defdelegate sync_feed(db, feed_id, entries, clock), to: Feeds
   defdelegate feed_failed(db, feed_id, message, clock), to: Feeds
   defdelegate cycle_feed_setting(db, feed_id, setting, step), to: Feeds
+  defdelegate rename_feed(db, feed_id, name), to: Feeds
+
+  # ingested categories (R75a): the feeds' and calendars' own
+  defdelegate ingested_categories(db), to: Feeds
+  defdelegate ingested?(db, id), to: Feeds
   defdelegate feeds_due(db, now), to: Feeds
   defdelegate parse_feed(text), to: Feeds
   defdelegate export_opml(db), to: Feeds

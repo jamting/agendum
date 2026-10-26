@@ -48,6 +48,35 @@ defmodule Agendum.Core.Facade.Extras.Calendars do
     end
   end
 
+  @doc """
+  Renames a calendar and its category (R75a): the one way to rename an
+  ingested category, from the Calendars box. Two calendars cannot share a
+  name.
+  """
+  @spec rename_calendar(db, id, String.t()) :: {:ok, db} | {:error, :empty_text | :duplicate}
+  def rename_calendar(db, cal_id, name) do
+    name = String.trim(name)
+    cal = db.calendars[cal_id]
+    wanted = Database.normalize(name)
+
+    taken =
+      Enum.any?(db.calendars, fn {id, other} ->
+        id != cal_id and Database.normalize(other.name) == wanted
+      end)
+
+    cond do
+      name == "" ->
+        {:error, :empty_text}
+
+      taken ->
+        {:error, :duplicate}
+
+      true ->
+        db = Database.rename_category(db, cal.category_id, name)
+        {:ok, %{db | calendars: Map.put(db.calendars, cal_id, %{cal | name: name})}}
+    end
+  end
+
   @doc "Ends a subscription; with `remove_items`, its items are discarded too."
   @spec unsubscribe_calendar(db, id, boolean) :: db
   def unsubscribe_calendar(db, cal_id, remove_items) do

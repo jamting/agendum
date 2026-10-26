@@ -38,7 +38,8 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
 
     INS subscribes to one, by its address. ENTER (or R) reads the
     highlighted one now; F changes how often it is read, A how far ahead.
-    DEL unsubscribes. ESC goes back.
+    F2 renames it, and its category (only here: the category manager leaves
+    a calendar's category alone). DEL unsubscribes. ESC goes back.
     """
   end
 
@@ -57,6 +58,7 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
       {:char, "F"} => :how_often,
       {:char, "a"} => :ahead,
       {:char, "A"} => :ahead,
+      {:f, 2} => :rename,
       :delete => :unsubscribe,
       {:ctrl, "d"} => :unsubscribe,
       :esc => :close
@@ -70,6 +72,7 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
       {:subscribe, "Subscribe", "Add a calendar by its address"},
       {:how_often, "How often", "Change how often it is read"},
       {:ahead, "How far ahead", "Change how far ahead it reads"},
+      {:rename, "Rename", "Rename the calendar and its category"},
       {:unsubscribe, "Unsubscribe", "Unsubscribe from the calendar"}
     ] ++ Enum.take(Box.list_moves(), 2) ++ [{:close, "Return", "Back to the view"}]
   end
@@ -94,6 +97,11 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
   defp calendar(state, _mode, :read, cal, _), do: Update.fetch_calendar(state, cal.id, :manual)
   defp calendar(state, _mode, :how_often, cal, _), do: setting(state, cal, :refresh_minutes)
   defp calendar(state, _mode, :ahead, cal, _), do: setting(state, cal, :ahead_days)
+
+  # the one place to rename a calendar's category (R75a)
+  defp calendar(state, _mode, :rename, cal, _),
+    do: Prompts.prompt(state, "New name of the calendar:", {:rename_calendar, cal.id}, cal.name)
+
   defp calendar(state, _mode, :unsubscribe, cal, _), do: unsubscribe(state, cal)
 
   defp setting(state, cal, setting),

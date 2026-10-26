@@ -54,13 +54,19 @@ defmodule Agendum.TUI.Update do
     # of a line being typed, the keys every box shares, then the screen on
     # top.
     next =
-      with :pass <- splash_key(state, key),
-           :pass <- Agendum.TUI.Macros.key(state, key),
-           :pass <- global_key(state, key),
-           :pass <- extras_key(state, key),
-           :pass <- Agendum.TUI.Typing.LineClip.key(state, key),
-           :pass <- box_command(state, key),
-           do: dispatch(state, State.mode(state), key)
+      try do
+        with :pass <- splash_key(state, key),
+             :pass <- Agendum.TUI.Macros.key(state, key),
+             :pass <- global_key(state, key),
+             :pass <- extras_key(state, key),
+             :pass <- Agendum.TUI.Typing.LineClip.key(state, key),
+             :pass <- box_command(state, key),
+             do: dispatch(state, State.mode(state), key)
+      catch
+        # a command refused because a feed or a calendar fills the category
+        # (R75a, `State.command/2`): the key stops there, with its message
+        {:refused, refused} -> refused
+      end
 
     # a count (ALT-digits, R65) lasts until the next key has used it
     next = if count_key?(key), do: next, else: %{next | count: nil}

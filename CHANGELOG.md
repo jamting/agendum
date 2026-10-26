@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.67.0 — 2026-10-26
+
+The feeds no longer crowd your categories.
+
+- **A feed's and a calendar's categories are theirs now** ("ingested"): the feed or calendar names and fills them, and you read them as before (sections, filters, conditions). Changing one by hand, renaming, a note, conditions, moving, discarding, filing an item into it, is refused with a message saying where to do it instead.
+- **The Feeds family starts folded** in the category manager (F9): one line instead of all your feeds. ALT-= opens it, ALT-− folds it again.
+- **F2 in the Feeds box** (File ▸ Transfer ▸ Feeds) renames a feed, and its category with it; the same in the Calendars box.
+- Unsubscribing hands the category back to you, an ordinary category again.
+
 ## 0.66.0 — 2026-10-26
 
 A smaller file for feeds and calendars.

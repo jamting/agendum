@@ -130,6 +130,7 @@ What Agendum has that Agenda did not. The entries tagged **extra** are hidden wh
 - **extra** · Zettel ids (Quadsyl-24, R73, ADR 0039), a Zettel id column (R73a) and links between items (R73b).
 - **extra** · A micro-blog published from the file (File ▸ Transfer ▸ Publish, R74).
 - **extra** · Feeds: a plain RSS and Atom reader, the News view, OPML, CTRL-V to open a link (R75).
+- **extra** · Ingested categories: a feed's or calendar's categories are the extra's, not changed by hand, the Feeds family folded in the category manager; F2 in the Feeds and Calendars boxes renames (R75a, 2026-10-26).
 - **quiet** · The Extras row in File ▸ Customize (R77): the switch that hides every entry tagged *extra* above, off by default (the owner chose the Customize box and confirmed the tag, 2026-10-23). A row Agenda's Customize box did not have, met only by someone who opens Customize and looks for it.
 - **quiet** · ALT-↑ and ALT-↓ in View Properties' Sections (R78) move the highlighted section a place at once, as they move a column in Section Properties; Agenda's ALT-F10 (pick it up, ↑ ↓, ENTER) works as well (the owner chose both and the tag, 2026-10-23). Keys Agenda's box did not use, met only by someone who presses them.
 - **quiet** · CTRL-X runs a command by name, found by part of it or its initials, in a small box (R65d, ADR 0040), a key Agenda left unused; the command list narrows the same way.

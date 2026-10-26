@@ -181,13 +181,26 @@ defmodule Agendum.TUI.State do
         key_map: Keyword.get(opts, :prefs, %Agendum.Preferences{}).key_map && :none,
         theme: Keyword.get(opts, :theme, :classic),
         view_id: hd(db.view_order),
-        saved: %{db: db, stamp: opts[:stamp], conflict: false, recovery: nil}
+        saved: %{db: db, stamp: opts[:stamp], conflict: false, recovery: nil},
+        # the Feeds family starts folded in the category manager, so the
+        # feeds do not crowd it (R75a); ALT-= opens it
+        collapsed: folded_feeds(db)
       }
       |> prepare_dates()
 
     # back where the person left this file, if they have been in it (R69);
     # the match tells the compiler's type checker it is still a `State`
     %__MODULE__{} = state |> Agendum.TUI.Places.restore() |> refresh_circular()
+  end
+
+  # the ingested categories with children: the Feeds parent
+  defp folded_feeds(%Database{feeds: feeds}) when feeds == %{}, do: MapSet.new()
+
+  defp folded_feeds(db) do
+    for id <- Agendum.Core.ingested_categories(db),
+        db.categories[id].children != [],
+        into: MapSet.new(),
+        do: id
   end
 
   @doc """
@@ -450,6 +463,13 @@ defmodule Agendum.TUI.State do
       # a mistake in the TUI, not something to tell the person: let it crash
       {:error, reason} when reason in [:bad_arguments, :unknown_command] ->
         raise ArgumentError, "the core refused #{inspect(command)}: #{reason}"
+
+      # Domain: a command that would change a category a feed or a calendar
+      # fills (R75a) stops the whole key, with a message: `throw` leaves this
+      # function and every caller at once, up to `Update.handle/2`, which
+      # catches it, so no caller has to know this reason
+      {:error, :ingested} ->
+        throw({:refused, error(state, Agendum.TUI.Messages.ingested(state.db, nil))})
 
       {:error, _reason} = error ->
         error

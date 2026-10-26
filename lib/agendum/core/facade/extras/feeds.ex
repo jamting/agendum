@@ -83,6 +83,42 @@ defmodule Agendum.Core.Facade.Extras.Feeds do
     end
   end
 
+  @doc "The ingested categories: the feeds' and calendars' own, and the Feeds parent (R75a)."
+  @spec ingested_categories(db) :: MapSet.t(id)
+  defdelegate ingested_categories(db), to: Agendum.Core.Extras.Ingested, as: :categories
+
+  @doc "Whether a category is ingested (R75a)."
+  @spec ingested?(db, id) :: boolean
+  defdelegate ingested?(db, id), to: Agendum.Core.Extras.Ingested
+
+  @doc """
+  Renames a feed and its category (R75a): the one way to rename an ingested
+  category, from the Feeds box. Two feeds cannot share a name.
+  """
+  @spec rename_feed(db, id, String.t()) :: {:ok, db} | {:error, :empty_text | :duplicate}
+  def rename_feed(db, feed_id, name) do
+    name = String.trim(name)
+    feed = db.feeds[feed_id]
+    wanted = Database.normalize(name)
+
+    taken =
+      Enum.any?(db.feeds, fn {id, other} ->
+        id != feed_id and Database.normalize(other.name) == wanted
+      end)
+
+    cond do
+      name == "" ->
+        {:error, :empty_text}
+
+      taken ->
+        {:error, :duplicate}
+
+      true ->
+        db = Database.rename_category(db, feed.category_id, name)
+        {:ok, %{db | feeds: Map.put(db.feeds, feed_id, %{feed | name: name})}}
+    end
+  end
+
   @doc "Ends a subscription; with `remove_items`, its items are discarded too."
   @spec unsubscribe_feed(db, id, boolean) :: db
   def unsubscribe_feed(db, feed_id, remove_items) do

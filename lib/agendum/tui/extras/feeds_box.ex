@@ -42,8 +42,9 @@ defmodule Agendum.TUI.Extras.FeedsBox do
 
     INS subscribes to a feed, by its address. ENTER (or R) reads the
     highlighted one now; F changes how often it is read, K how long its
-    entries stay. DEL unsubscribes. I imports an OPML feed list, E exports
-    one. ESC goes back.
+    entries stay. F2 renames it, and its category under Feeds (only here:
+    the category manager leaves a feed's categories alone). DEL
+    unsubscribes. I imports an OPML feed list, E exports one. ESC goes back.
     """
   end
 
@@ -66,6 +67,7 @@ defmodule Agendum.TUI.Extras.FeedsBox do
       {:char, "I"} => :import_opml,
       {:char, "e"} => :export_opml,
       {:char, "E"} => :export_opml,
+      {:f, 2} => :rename,
       :delete => :unsubscribe,
       {:ctrl, "d"} => :unsubscribe,
       :esc => :close
@@ -79,6 +81,7 @@ defmodule Agendum.TUI.Extras.FeedsBox do
       {:subscribe, "Subscribe", "Add a feed by its address"},
       {:how_often, "How often", "Change how often it is read"},
       {:keep, "Keep", "Change how long entries stay"},
+      {:rename, "Rename", "Rename the feed and its category"},
       {:import_opml, "Import OPML", "Subscribe to a feed list's feeds"},
       {:export_opml, "Export OPML", "Write the feeds as a feed list"},
       {:unsubscribe, "Unsubscribe", "Unsubscribe from the feed"}
@@ -111,6 +114,11 @@ defmodule Agendum.TUI.Extras.FeedsBox do
   defp feed(state, _mode, :read, feed, _), do: Update.fetch_feed(state, feed.id, :manual)
   defp feed(state, _mode, :how_often, feed, _), do: setting(state, feed, :refresh_minutes)
   defp feed(state, _mode, :keep, feed, _), do: setting(state, feed, :keep_days)
+
+  # the one place to rename a feed's category (R75a)
+  defp feed(state, _mode, :rename, feed, _),
+    do: Prompts.prompt(state, "New name of the feed:", {:rename_feed, feed.id}, feed.name)
+
   defp feed(state, _mode, :unsubscribe, feed, _), do: unsubscribe(state, feed)
 
   defp setting(state, feed, setting),

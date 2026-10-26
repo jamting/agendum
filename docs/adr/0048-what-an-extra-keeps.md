@@ -19,3 +19,5 @@ The extras (ADR 0043, 0044) need data of their own, beside the person's items: a
 - A new extra starts from this rule, not from the last extra's habits; a review can check an extra's struct against it.
 - An agent (`plans/WOL-IN-THE-MACHINE.md`) can tell the person's data from an extra's bookkeeping by where it is and by a category's source, and leave the bookkeeping alone.
 - Fingerprints and ingested categories are format changes: a version, a golden file, the JSON schema, and an upgrade of older files in `Store.upgrade/1`.
+
+**Amended 2026-10-26 (when built, R75a):** an ingested category is not marked with a stored `source` field: which categories are ingested is worked out from the subscriptions (`Agendum.Core.Extras.Ingested`), as subsumption is computed (CLAUDE.md rule 4). It needs no format change, cannot go out of step, and unsubscribing hands a category back by itself, as the owner chose. A person's command that would change one is refused in `Agendum.Core.Command` (`{:error, :ingested}`); the feed and the calendar file into them below the commands.

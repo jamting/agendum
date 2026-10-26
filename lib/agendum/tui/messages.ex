@@ -109,4 +109,30 @@ defmodule Agendum.TUI.Messages do
   """
   def cannot_discard(db, id),
     do: if(id == db.main_id, do: text(:discard_main), else: text(:discard_date_category))
+
+  @doc """
+  Why an ingested category (R75a) cannot be changed here, and where it can:
+  its feed's or calendar's box; `id` nil when it is not known which.
+  """
+  @spec ingested(Agendum.Core.Database.t(), integer | nil) :: String.t()
+  def ingested(db, id) do
+    by_calendar = id != nil and Enum.any?(db.calendars, fn {_, c} -> c.category_id == id end)
+
+    parent =
+      id != nil and
+        Enum.any?(db.feeds, fn {_, f} -> db.categories[f.category_id].parent_id == id end)
+
+    name = if id, do: db.categories[id].name <> " is", else: "That category is"
+
+    cond do
+      parent ->
+        "#{db.categories[id].name} holds your feeds: rename or remove one in File ▸ Transfer ▸ Feeds"
+
+      by_calendar ->
+        "#{name} filled by its calendar: rename or remove it in File ▸ Transfer ▸ Calendars"
+
+      true ->
+        "#{name} filled by a feed: rename or remove it in File ▸ Transfer ▸ Feeds"
+    end
+  end
 end

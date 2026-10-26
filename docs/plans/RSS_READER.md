@@ -1,6 +1,6 @@
 # A plain RSS reader
 
-**Status:** built 2026-10-17 (R75, v0.13.0); ingested categories and fingerprints decided 2026-10-26 (§ Ingested categories, ADR 0048), details to settle before building, approved by the owner the same day (tagged). Not finished (meeting 2026-10-22-3, § 6–7): F3 at the OPML prompts was a bug, fixed in v0.16.2 (2026-10-23); OPML through File ▸ Transfer ▸ Import waits until the extras thaw; whether entries are read-only was referred to `ITEM_LEVELS.md` (ROADMAP, Beyond Agenda). Step 1 of "An RSS reader, with Wol later" (ROADMAP, Beyond Agenda; meeting 2026-10-16-2, § 7). Wol's part (summaries, sifting, suggestions) is step 2, after principle 6 of `WOL-IN-THE-MACHINE.md`.
+**Status:** built 2026-10-17 (R75, v0.13.0); fingerprints built 2026-10-26 (v0.66.0) and ingested categories built 2026-10-26 (R75a, v0.67.0; § Ingested categories, ADR 0048), approved by the owner the same day (tagged). Not finished (meeting 2026-10-22-3, § 6–7): F3 at the OPML prompts was a bug, fixed in v0.16.2 (2026-10-23); OPML through File ▸ Transfer ▸ Import waits until the extras thaw; whether entries are read-only was referred to `ITEM_LEVELS.md` (ROADMAP, Beyond Agenda). Step 1 of "An RSS reader, with Wol later" (ROADMAP, Beyond Agenda; meeting 2026-10-16-2, § 7). Wol's part (summaries, sifting, suggestions) is step 2, after principle 6 of `WOL-IN-THE-MACHINE.md`.
 
 ## The idea
 
@@ -54,3 +54,5 @@ The entries are what `ITEM_LEVELS.md` calls *ingested items* (level 2). This fir
 - Whether a condition may assign items to an ingested category, or only read it.
 - The fingerprint: which hash (`:erlang.phash2/1` is enough to compare, not to trust), and the upgrade of today's snapshots in `Store.upgrade/1`.
 - Measure the owner's file before and after, on a copy.
+
+**Settled with the owner (2026-10-26, one round) and built (R75a, v0.67.0):** the Feeds family starts folded in the category manager, ALT-= opens it (no new key); everything is locked (rename, note, Also match, conditions and actions, exclusive, moving, discarding, filing into it); F2 in the Feeds and Calendars boxes renames a feed or a calendar and its category (the owner's addition); the Feeds parent and the calendars' categories are ingested too; unsubscribing makes the category the person's. Built without a stored field: ingested categories are worked out from the subscriptions (ADR 0048, amended).

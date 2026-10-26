@@ -280,6 +280,20 @@ defmodule Agendum.TUI.Update.Prompts do
     end
   end
 
+  # F2 in the Feeds and Calendars boxes (R75a): the name, and its category's
+  defp prompt_action(state, {rename, id}, text) when rename in [:rename_feed, :rename_calendar] do
+    case State.command(state, {rename, id, text}) do
+      {:ok, state, _} ->
+        State.info(state, "Renamed #{String.trim(text)}")
+
+      {:error, :empty_text} ->
+        State.error(state, "A name cannot be empty")
+
+      {:error, :duplicate} ->
+        State.error(state, "#{String.trim(text)} is taken: choose another name")
+    end
+  end
+
   defp prompt_action(state, :import_opml, text),
     do: State.effect(state, {:read_opml, String.trim(text)})
 

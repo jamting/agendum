@@ -372,6 +372,8 @@ defmodule Agendum.Core.Command do
      [:calendar, :value], :clock},
     {:cycle_calendar_setting, "Calendar setting", "Steps a calendar's setting up or down",
      [:calendar, :value, :value], :core},
+    {:rename_calendar, "Rename calendar", "Renames a calendar and its category (R75a)",
+     [:calendar, :text], :core},
 
     # feeds (R75)
     {:subscribe_feed, "Subscribe to feed",
@@ -384,6 +386,8 @@ defmodule Agendum.Core.Command do
     {:feed_failed, "Feed failed", "Notes that reading a feed failed", [:feed, :value], :clock},
     {:cycle_feed_setting, "Feed setting", "Steps a feed's setting up or down",
      [:feed, :value, :value], :core},
+    {:rename_feed, "Rename feed", "Renames a feed and its category (R75a)", [:feed, :text],
+     :core},
     {:import_opml, "Import OPML", "Subscribes to the feeds of an OPML feed list (R75)", [:value],
      :core},
 
@@ -448,8 +452,69 @@ defmodule Agendum.Core.Command do
   # batch does that once, for all its steps).
   defp step(db, command, clock) do
     with {:ok, name, args, kinds, how} <- known(command),
-         :ok <- check(db, Enum.zip(kinds, args)) do
+         :ok <- check(db, Enum.zip(kinds, args)),
+         :ok <- not_ingested(db, name, args) do
       apply_command(db, how, name, args, clock)
+    end
+  end
+
+  # Domain: the commands that would change an ingested category, or file
+  # an item into one by hand (R75a, ADR 0048), with the positions of the
+  # arguments that must not be one: the category changed, a new parent, or
+  # the category an item or an action would file into. A condition that only
+  # reads one (`cycle_condition` on the person's own category) is fine.
+  @locked %{
+    rename_category: [0],
+    discard_category: [0],
+    relocate: [0],
+    promote: [0],
+    demote: [0],
+    move_category: [0, 1],
+    make_exclusive: [0],
+    make_unexclusive: [0],
+    make_date: [0],
+    make_numeric: [0],
+    make_unindexed: [0],
+    toggle_match_name: [0],
+    set_short_name: [0],
+    set_category_note: [0],
+    toggle_exclude: [0, 1],
+    toggle_also_assign: [0, 1],
+    sort_children: [0],
+    set_action: [0, 1],
+    remove_action: [0],
+    set_special_action: [0],
+    add_condition: [0],
+    set_condition: [0],
+    remove_condition: [0],
+    cycle_condition: [0],
+    set_range_condition: [0],
+    set_also_match: [0],
+    set_match_override: [0],
+    set_date_rule: [0],
+    add_category: [0],
+    copy_conditions_actions: [1],
+    assign: [1],
+    remove_from_category: [1],
+    toggle_assignment: [1],
+    assign_by_name: [1],
+    assign_new_by_name: [1]
+  }
+
+  defp not_ingested(db, :add_item, [_text, opts]), do: free(db, [opts[:section]])
+
+  defp not_ingested(db, name, args) when is_map_key(@locked, name),
+    do: free(db, Enum.map(@locked[name], &Enum.at(args, &1)))
+
+  defp not_ingested(_db, _name, _args), do: :ok
+
+  defp free(db, ids) do
+    # worked out once for the command, only when there are feeds or calendars
+    if db.feeds == %{} and db.calendars == %{} do
+      :ok
+    else
+      ingested = Agendum.Core.Extras.Ingested.categories(db)
+      if Enum.any?(ids, &MapSet.member?(ingested, &1)), do: {:error, :ingested}, else: :ok
     end
   end
 

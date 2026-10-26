@@ -70,11 +70,33 @@ defmodule Agendum.TUI.CategoryScreens.Manager do
     end
   end
 
+  # the commands that change the highlighted category (or add a child to it)
+  @changing [
+    :rename,
+    :promote,
+    :demote,
+    :move_up,
+    :move_down,
+    :note,
+    :properties,
+    :sort,
+    :move,
+    :discard,
+    :clear_conditions,
+    :add_child
+  ]
+
   @doc "Runs a category manager command (`Agendum.TUI.Commands`) on the highlighted category."
   @spec run(State.t(), atom) :: State.t()
   def run(state, command) do
     state = clamp(state, State.mode(state))
-    command(state, command, current(state))
+    id = current(state)
+
+    # a category a feed or a calendar fills (R75a) is not changed here: the
+    # message says where, before anything is typed
+    if command in @changing and id != nil and Core.ingested?(state.db, id),
+      do: State.error(state, Agendum.TUI.Messages.ingested(state.db, id)),
+      else: command(state, command, id)
   end
 
   defp clamp(state, mode) do
