@@ -196,7 +196,7 @@ defmodule Agendum.TUI.HelpTopicsTest do
           key <- Keymap.keys_for(place, id),
           do: Keymap.name(key)
         ) ++
-          Enum.map(HelpScreen.keys(), &Keymap.name/1)
+          Enum.map(HelpScreen.keys() ++ Agendum.TUI.Macros.keys(), &Keymap.name/1)
 
       for title <- Topics.hand_written(),
           line <- Topic.lines(Topics.get(state, title), 76),

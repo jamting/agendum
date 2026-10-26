@@ -1,0 +1,13 @@
+Use Child Categories as Section Heads
+
+PURPOSE       Give each child of a category a section of its own:
+              a section each for Piglet, Rabbit and Kanga, under
+              Friends.
+
+STEPS         1. F10 View Properties.
+              2. On Sections, press F3: the Section Select list.
+              3. Highlight the parent and press F5 (CHLDRN).
+              4. ENTER, and ENTER again.
+
+SEE ALSO      **Add a Section**  **View Properties Box**
+INDEX         Sections > Child categories; Children > Sections

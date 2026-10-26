@@ -1,0 +1,19 @@
+Record a Macro
+
+PURPOSE       Teach Agendum a series of keys by pressing them once.
+
+STEPS         1. ALT-F3 opens the **Macro Manager**.
+              2. INS (or CTRL-N, or just type) names a new macro.
+              3. F7 (LEARN): LEARN shows at the top right. Do the
+                 work: every key does its usual job and is recorded.
+              4. ALT-F3 stops recording.
+
+PLAY IT       ENTER on the macro in the manager runs it where you
+              were; ALT-Z runs the last one again; a key attached in
+              its properties (F6) runs it at once.
+
+NOTE          F7 on a macro that has keys asks whether to replace
+              them or add to them.
+
+SEE ALSO      **Macros**  **Macro Properties Box**
+INDEX         Macros > Record; Learn mode; Macros > Run

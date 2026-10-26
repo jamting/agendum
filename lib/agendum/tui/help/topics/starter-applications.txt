@@ -1,0 +1,13 @@
+Starter Applications
+
+PURPOSE       A ready-made file to start from, instead of an empty
+              one.
+
+THE PLANNER   The Activities Planner (planner.agendum, in Agendum's
+              starters folder) has categories for people, projects,
+              tasks, activities, priorities and expenses, with views
+              to match, and no items. Copy it, retrieve the copy,
+              and type your own.
+
+SEE ALSO      **Create a File**  **Retrieve an Existing File**
+INDEX         Starter files; Planner; Files > Starters

@@ -1,0 +1,16 @@
+Macro Editor
+
+PURPOSE       Read and change a macro's keys as text.
+
+STEPS         1. In the **Macro Manager**, highlight the macro.
+              2. F2: the keys open in the note editor, a line after
+                 each {ENTER}.
+              3. Change them; leaving saves them.
+
+NOTATION      Text is typed as it is. Other keys are names in
+              braces: {ENTER} {ESC} {TAB} {DEL} {UP} {DOWN} {F10}
+              {AltF4} {CtlN} {AltD}. {LBRACE} and {RBRACE} type
+              braces.
+
+SEE ALSO      **Macros**  **Note Editor**
+INDEX         Macros > Edit; Macros > Notation

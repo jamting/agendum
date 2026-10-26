@@ -1,0 +1,17 @@
+Macro Manager
+
+PURPOSE       The file's macros in a list. ALT-F3 opens it.
+
+KEYS          ENTER            Run the highlighted macro
+              INS or CTRL-N    A new macro (or just type its name)
+              F7 (LEARN)       Record its keys
+              F2               Edit its keys as text
+              F6               Its properties: name, the key it is
+                               attached to, where it runs
+              DEL or F4        Delete it
+              ALT-↑ / ALT-↓    Move it in the list
+              ALT-F5           Sort the list by name
+              ESC              Back
+
+SEE ALSO      **Macros**  **Record a Macro**  **Macro Editor**
+INDEX         Macros > Manager; Macro Manager

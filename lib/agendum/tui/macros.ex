@@ -25,6 +25,13 @@ defmodule Agendum.TUI.Macros do
 
   @max_depth 8
 
+  # ALT-F3 (MACRO) and ALT-Z: read here, before any keymap
+  @keys [{:alt_f, 3}, {:alt, "z"}]
+
+  @doc "The keys this module reads before any keymap (the help's checks name them)."
+  @spec keys() :: [term]
+  def keys, do: @keys
+
   @doc """
   The macro keys, before anything else sees a key: ALT-F3, ALT-Z and the
   end of a run. `:pass` for every other key.
@@ -33,16 +40,16 @@ defmodule Agendum.TUI.Macros do
   # the developer tools' key tester sees every key
   def key(%State{modes: [%{type: :devtools} | _]}, _key), do: :pass
 
-  def key(%State{macro: %{learning: %{}}} = state, k) when k in [{:alt_f, 3}, {:alt, "z"}],
+  def key(%State{macro: %{learning: %{}}} = state, k) when k in @keys,
     do: stop(state)
 
   # not over a line being typed, a prompt, a question or the menu: they would
   # lose what is being typed
-  def key(%State{} = state, k) when k in [{:alt_f, 3}, {:alt, "z"}] and state.edit != nil,
+  def key(%State{} = state, k) when k in @keys and state.edit != nil,
     do: :pass
 
   def key(%State{modes: [%{type: t} | _]}, k)
-      when k in [{:alt_f, 3}, {:alt, "z"}] and t in [:prompt, :confirm, :menu],
+      when k in @keys and t in [:prompt, :confirm, :menu],
       do: :pass
 
   def key(state, {:alt_f, 3}), do: open(state)

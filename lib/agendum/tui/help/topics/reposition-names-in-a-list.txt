@@ -1,0 +1,13 @@
+Reposition Names in a List
+
+PURPOSE       Put the views, categories or macros in the order you
+              want.
+
+STEPS         Highlight the name, then ALT-↑ or ALT-↓ moves it up
+              or down: in the **View Manager**, the **Macro
+              Manager**, and among a category's siblings in the
+              **Category Manager**. ALT-F5 sorts a list by name
+              instead.
+
+SEE ALSO      **Alphabetize View Names**  **Alphabetize Categories**
+INDEX         Lists > Reorder; Move > Names

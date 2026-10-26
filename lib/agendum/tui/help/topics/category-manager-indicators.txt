@@ -1,0 +1,12 @@
+Category Manager Indicators
+
+PURPOSE       The marks beside categories in the **Category
+              Manager**.
+
+MARKS         ☼          A date category
+              ┌ ├ └      The children of an exclusive family
+              ♪          The category has a note
+              ...        A collapsed family (ALT-= opens it)
+
+SEE ALSO      **Category Manager**  **The Category Hierarchy**
+INDEX         Indicators > Category Manager; Symbols > Category Manager

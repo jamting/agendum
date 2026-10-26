@@ -1,0 +1,15 @@
+Change Screen Colors
+
+PURPOSE       Choose how Agendum looks.
+
+STEPS         1. F10 Utilities Customize.
+              2. Theme: SPACE goes through them (F3 lists them):
+                 Agenda's classic colours first, then light and dark
+                 ones, and mono for plain terminals.
+              3. ENTER.
+
+NOTE          The theme is yours, not the file's: it is kept in
+              your preferences for every file.
+
+SEE ALSO      **Customize Box**
+INDEX         Colors; Screen > Colors; Theme

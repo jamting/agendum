@@ -1,0 +1,16 @@
+Value Range Symbols
+
+PURPOSE       How a date or numeric range shows in a filter or a
+              condition.
+
+EXAMPLES      [When 2026-11-02..2026-11-06]    Dates from one to
+                                               the other
+              [Amount 100..]                   100 or more
+              [not When ..2026-11-02]          Not up to that date
+              if When 2026-11-02..2026-11-06   A condition's range
+
+NOTE          An end left blank is open. "not" means items outside
+              the range. Dates show in the file's date format.
+
+SEE ALSO      **Attach a Date Filter**  **Attach a Date Condition**
+INDEX         Ranges; Symbols > Ranges; Filters > Ranges

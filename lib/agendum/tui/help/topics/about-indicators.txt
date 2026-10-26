@@ -1,0 +1,15 @@
+About Indicators
+
+PURPOSE       The two lines at the top of the screen tell you what
+              is going on.
+
+THE LINES     File line   The file's name (* when it has unsaved
+                          changes), a ? while suggested
+                          assignments wait (Utilities Questions),
+                          a mode word, then the date and time
+              View line   The view's name, its filter, and symbols
+                          at the right
+
+SEE ALSO      **Mode & Message Indicators**  **View Indicators**
+              **Category Manager Indicators**
+INDEX         Indicators; Control panel; Symbols

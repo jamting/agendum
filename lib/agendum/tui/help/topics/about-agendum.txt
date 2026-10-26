@@ -1,0 +1,16 @@
+About Agendum
+
+PURPOSE       Wol's Agendum is a free-form information manager in
+              the manner of Lotus Agenda (1988): you type things as
+              they come, and categories, views and conditions put
+              them in order.
+
+THE IDEA      * Type first, organise later: an item finds its own
+                categories from its words and dates.
+              * One item, many places: it shows in every section of
+                every view whose category it is in.
+              * Views are ways of looking, not folders: make as many
+                as you like.
+
+SEE ALSO      **Items**  **Categories**  **Views**  **How to Use Help**
+INDEX         Agendum > About; Lotus Agenda

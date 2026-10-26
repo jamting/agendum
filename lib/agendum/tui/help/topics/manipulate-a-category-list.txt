@@ -1,0 +1,15 @@
+Manipulate a Category List
+
+PURPOSE       Work with the hierarchy lists that boxes open: a
+              filter, conditions, actions, the assignment profile.
+
+KEYS          ↑ ↓ PGUP PGDN    Move through the categories
+              SPACE            Switch the highlighted one (in a
+                               filter: +, then -, then off)
+              ALT-− / ALT-=    Collapse / expand families
+              ENTER or ESC     Close the list, keeping what you
+                               switched
+
+SEE ALSO      **Attach a Filter**
+              **Attach an Assignment Condition to a Category**
+INDEX         Categories > Lists; Lists > Categories

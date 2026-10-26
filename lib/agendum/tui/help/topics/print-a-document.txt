@@ -1,0 +1,13 @@
+Print a Document
+
+PURPOSE       Put the view on paper, by way of a text file.
+
+STEPS         1. CTRL-P (or F10 Print).
+              2. Type the file's name (F3 lists files), ENTER.
+              3. Print the text file from any program.
+
+NOTE          Every section and item of the view is written, with
+              its columns labelled.
+
+SEE ALSO      **Import/Export Information**
+INDEX         Print; Views > Print

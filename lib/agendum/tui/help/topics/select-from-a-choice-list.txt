@@ -1,0 +1,15 @@
+Select from a Choice List
+
+PURPOSE       Pick a setting's value from a list instead of going
+              through them with SPACE.
+
+STEPS         1. In a box, highlight the setting.
+              2. Press F3 (CHOICES).
+              3. Highlight a choice (or type its first letter) and
+                 press ENTER. ESC leaves it as it was.
+
+NOTE          SPACE alone goes to the next choice. F8 (DEFAULT) puts
+              the setting back to what something new gets.
+
+SEE ALSO      **Choice List Box**  **Manipulate a Category List**
+INDEX         Choices > List; Boxes > Choices; F3

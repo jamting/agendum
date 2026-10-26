@@ -1,0 +1,17 @@
+View Indicators
+
+PURPOSE       The symbols at the right of the View line.
+
+SYMBOLS       #    The highlight is on a number or numeric category
+              ☼    … on a date or date category
+              ⌂    … on an unindexed category's text
+              ♪    What is highlighted has a note
+              o    An item is caught in circular conditions
+              @    An alarm has rung (Utilities Show Alarm)
+              ♦    Items are marked
+
+NOTE          The filter, and what the view hides, show in
+              brackets after the view's name.
+
+SEE ALSO      **About Indicators**  **Mode & Message Indicators**
+INDEX         Indicators > View; Symbols > View line

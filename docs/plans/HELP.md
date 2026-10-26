@@ -1,6 +1,6 @@
 # Agenda's help, in our own words
 
-**Status:** steps 1 and 2 done (v0.56.0); step 3 under way: batch 1, items and categories, with Agenda's keyword index (v0.57.0), batch 2, views, sections and columns (v0.58.0), batches 3 and 4, dates and alarms, conditions and actions (v0.59.0), 2026-10-26; next: files and the trash, notes, macros, the screen. The last required step of the truthful clone (`AGENDA_PARITY.md`, The steps).
+**Status:** steps 1 to 3 done (v0.56.0 to v0.60.0, 2026-10-26): the frame, the tone sample and six batches of written topics, with Agenda's keyword index. Step 4 waits only for Copy Conditions/Actions, a parity step of its own (`AGENDA_PARITY.md`); its topic comes with it. The last required step of the truthful clone.
 
 Lotus Agenda's F1 help: a topic for where you are, bold links between topics, an index, a search, key charts and a way back (`docs/reference/Agenda 2.0 Help File.html`: 332 topics, about 61,000 words: 159 boxes, 132 how-to and concept topics, 28 menus, 13 key charts). Agendum's help keeps Agenda's keys and structure exactly and has texts of its own: terse, with a Hundred Acre Wood flavour in an opening line and the examples, quoting no Milne and using no Disney or Shepard pictures (meeting 2026-10-22, § 7a). How it is built: ADR 0047.
 
@@ -30,7 +30,7 @@ Habit changes (settled): any other key no longer leaves help; `c`, `d` and `a` a
 1. [x] (2026-10-26, v0.56.0; the owner tries it before the tag) **The frame**: the help screen with Agenda's keys and key bar, links, Index, Find, Review and F6 Keys; the generated topics; today's F1 texts as the place topics; the checks (every box, menu and place has a topic; every link leads to one; every key a topic names is bound there). The owner tries it, then it is tagged.
 1b. [x] (2026-10-26, v0.56.0) **Find as Agenda's** (the owner's choice, 2026-10-26): F5 opens Agenda's **Find Topic** box ("Topic to find:"), and ENTER its **Select Help Screen** box, a list of the matching topics: the arrows and ENTER read one, ESC goes back to the topic being read; its help line "Highlight Help screen to display. Then use ALT-N or ALT-P to display next/previous help screen from list." (checked in Agenda 2.0, 2026-10-26).
 2. [x] (2026-10-26; approved: "thats very good", a Wood touch only where natural) **Three sample topics** for the owner to approve the tone before the rest are written: Views, Undiscard an Item, Enter Items.
-3. [ ] **The rest, in batches by subject**, each tagged (batch 1, items and categories, and Agenda's keyword index: v0.57.0; batch 2, views, sections and columns: v0.58.0; batches 3 and 4, dates and alarms, conditions and actions: v0.59.0; 2026-10-26): items and categories; views, sections and columns; dates and alarms; conditions and actions; files and the trash; notes; macros. **Agenda's kind of index** comes with them (the owner's choice, 2026-10-26): each written topic lists its index entries on an `INDEX` line (`INDEX  Add > Columns; Columns > Add`), generated topics get theirs from what they are (a box under its name and under Boxes), and the index pages show headings with sub-entries and "See also", as Agenda's ("Actions ▸ Attach to a category, Clear, Copy …"); until then F3 lists titles.
+3. [x] **The rest, in batches by subject**, each tagged (batches 5 and 6, files and notes, macros and the screen: v0.60.0; batch 1, items and categories, and Agenda's keyword index: v0.57.0; batch 2, views, sections and columns: v0.58.0; batches 3 and 4, dates and alarms, conditions and actions: v0.59.0; 2026-10-26): items and categories; views, sections and columns; dates and alarms; conditions and actions; files and the trash; notes; macros. **Agenda's kind of index** comes with them (the owner's choice, 2026-10-26): each written topic lists its index entries on an `INDEX` line (`INDEX  Add > Columns; Columns > Add`), generated topics get theirs from what they are (a box under its name and under Boxes), and the index pages show headings with sub-entries and "See also", as Agenda's ("Actions ▸ Attach to a category, Clear, Copy …"); until then F3 lists titles.
 4. [ ] **Done** when the checklist below has nothing open: the help is done, and with it the clone (`AGENDA_PARITY.md`, Declared done).
 
 ## The checklist: Agenda's how-to and concept topics
@@ -43,40 +43,40 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | How to Use Help | ours: `lib/agendum/tui/help/topics/how-to-use-help.txt` |
 | Find a Help Topic | the frame: F5 Find |
 | Help Index | the frame: F3 Index |
-| AgendaTown J The Cast J AgendaTown | open |
+| AgendaTown J The Cast J AgendaTown | left out: Agenda's credits page |
 | Portrait/Landscape Font List | left out: printing (SPEC § 6) |
 | Print Preview Mode | left out: printing (SPEC § 6) |
 | Confirm Assignments | ours: `confirm-assignments.txt` (batch 4) |
 | Go to a Section | ours: `go-to-a-section.txt` (batch 2) |
-| Copy Conditions/Actions | open: Agendum has no such command yet (to check against Agenda) |
+| Copy Conditions/Actions | open: Agenda's ALT-F9 (CPY C/A) in the category manager is not built yet; a parity step (2026-10-26) |
 | Reposition a Category in the Hierarchy | ours: `reposition-a-category-in-the-hierarchy.txt` (batch 1) |
-| Macro Manager | open |
-| Record a Macro | open |
-| Macro Manager Indicators | open |
-| Macros | open |
-| Variables in a Macro | open |
-| About Macro Commands | open |
-| Macro Command Syntax | open |
-| Special Variables in Macros | open |
-| Macro Editor | open |
+| Macro Manager | ours: `macro-manager.txt` (batch 6) |
+| Record a Macro | ours: `record-a-macro.txt` (batch 6) |
+| Macro Manager Indicators | covered by Macro Manager (Agendum's manager has no indicators of its own) |
+| Macros | ours: `macros.txt` (batch 6) |
+| Variables in a Macro | left out: the macro language is out of scope (SPEC § 6) |
+| About Macro Commands | left out: the macro language is out of scope (SPEC § 6) |
+| Macro Command Syntax | left out: the macro language is out of scope (SPEC § 6) |
+| Special Variables in Macros | left out: the macro language is out of scope (SPEC § 6) |
+| Macro Editor | ours: `macro-editor.txt` (batch 6) |
 | Attach an External Macro File | left out: external files (meeting 2026-10-25, § 5) |
 | Note Editor | ours: `note-editor.txt` (batch 5) |
 | Edit Mode | ours: `edit-mode.txt` (batch 5) |
-| Select from a Choice List | open |
+| Select from a Choice List | ours: `select-from-a-choice-list.txt` (batch 6) |
 | About Printing | left out: printing (SPEC § 6); Print a Document covers ours |
 | Set Up Printers | left out: printing (SPEC § 6) |
 | Lay Out a Printed Document | left out: printing (SPEC § 6) |
 | Preview a Printed Document | left out: printing (SPEC § 6) |
-| Print a Document | open |
+| Print a Document | ours: `print-a-document.txt` (batch 6) |
 | Use a Print Settings File | left out: printing (SPEC § 6) |
-| Manipulate a Category List | open |
-| About Agenda | open |
-| Starter Applications | open |
-| About Indicators | open |
-| Mode & Message Indicators | open |
-| View Indicators | open |
-| Value Range Symbols | open |
-| Category Manager Indicators | open |
+| Manipulate a Category List | ours: `manipulate-a-category-list.txt` (batch 6) |
+| About Agenda | ours: `about-agendum.txt`, as About Agendum (batch 6) |
+| Starter Applications | ours: `starter-applications.txt` (batch 6) |
+| About Indicators | ours: `about-indicators.txt` (batch 6) |
+| Mode & Message Indicators | ours: `mode-message-indicators.txt` (batch 6) |
+| View Indicators | ours: `view-indicators.txt` (batch 6) |
+| Value Range Symbols | ours: `value-range-symbols.txt` (batch 6) |
+| Category Manager Indicators | ours: `category-manager-indicators.txt` (batch 6) |
 | Quit Agenda | ours: `quit-agendum.txt`, as Quit Agendum (batch 5) |
 | Suspend a Session | left out while Launch is optional (AGENDA_PARITY) |
 | Access a Network | left out: networks (SPEC § 6) |
@@ -122,7 +122,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Change a Filter | ours: `change-a-filter.txt` (batch 2) |
 | Clear a Filter, Condition, or Action | ours: `clear-a-filter-condition-or-action.txt` (batch 4) |
 | Remove a Section | ours: `remove-a-section.txt` (batch 2) |
-| Use Child Categories as Section Heads | open |
+| Use Child Categories as Section Heads | ours: `use-child-categories-as-section-heads.txt` (batch 6) |
 | Columns | ours: `columns.txt` (batch 2) |
 | Numeric Columns | ours: `numeric-columns.txt` (batch 2) |
 | Date Columns | ours: `date-columns.txt` (batch 2) |
@@ -158,7 +158,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Set an Alarm for an Item | ours: `set-an-alarm-for-an-item.txt` (batch 3) |
 | Enter Dates and Times | ours: `enter-dates-and-times.txt` (batch 3) |
 | Search for Text in Items and Notes | ours: `search-for-text-in-items-and-notes.txt` (batch 2) |
-| Change Screen Colors | open |
+| Change Screen Colors | ours: `change-screen-colors.txt` (batch 6) |
 | Attach an External File as a Note | left out: external note files (meeting 2026-10-25, § 5) |
 | Change a Column Head | ours: `change-a-column-head.txt` (batch 2) |
 | Alphabetize View Names | ours: `alphabetize-view-names.txt` (batch 2) |
@@ -169,5 +169,5 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Attach a Numeric Condition | ours: `attach-a-numeric-condition.txt` (batch 4) |
 | Browse Through Dates | ours: `browse-through-dates.txt` (batch 3) |
 | Alphabetize Categories | ours: `alphabetize-categories.txt` (batch 1) |
-| Reposition Names in a List | open |
+| Reposition Names in a List | ours: `reposition-names-in-a-list.txt` (batch 6) |
 | Index | the frame: F3 Index |

@@ -1,0 +1,18 @@
+Mode & Message Indicators
+
+PURPOSE       The word at the right of the top line says what
+              Agendum is doing. Nothing shows when it is ready.
+
+WORDS         EDIT      You are typing an item or a name
+              AUTOC     A category's name is being completed
+              BROWSE    Browsing a view's dates (ALT-B)
+              LEARN     Recording a macro
+              INS, OVR  Inserting or typing over, in a note
+              WRKG      Reading a calendar or feed in the
+                        background
+
+NOTE          Messages ("Item discarded") show on the same line
+              until the next key.
+
+SEE ALSO      **About Indicators**  **View Indicators**
+INDEX         Indicators > Mode; Mode > Indicators; Messages

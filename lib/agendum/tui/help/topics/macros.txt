@@ -1,0 +1,15 @@
+Macros
+
+PURPOSE       A macro remembers keys you press and plays them back
+              for you: a report you make every Monday, a long way
+              through the menus, a line you type often.
+
+ABOUT MACROS  * You record one by doing the work once (Learn mode).
+              * Run it from the **Macro Manager**, or attach it to a
+                key: a CTRL or SHIFT function key, say.
+              * It is kept in the file. Its keys can be edited as
+                text, in Agenda's notation: {ENTER}, {F10}, {AltD}.
+              * A run is one undo step.
+
+SEE ALSO      **Record a Macro**  **Macro Manager**  **Macro Editor**
+INDEX         Macros > What they are

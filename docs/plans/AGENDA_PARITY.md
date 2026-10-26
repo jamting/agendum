@@ -41,13 +41,13 @@ Out of scope, as SPEC §6 says: printing on paper and print preview (F10 Print a
 | --------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------- |
 | ▸ (t)                                                                 | the view has marked items                    | ✅ ♦ (2026-10-25: Agenda's screen draws CP437 0x04, ♦; its help ▸), in column 78 of the View line|
 | ♪ (j)                                                                 | the highlighted item or category has a note  | ✅                                           |
-| ♫ (jj)                                                                | … has an external note file                  | ⬜ (note editor plan, step 7)                |
+| ♫ (jj)                                                                | … has an external note file                  | – left out with external note files (meeting 2026-10-25, § 5) |
 | @                                                                     | an alarm has sounded                         | ✅                                           |
 | *                                                                     | the highlight is on a date category or value | ✅ as ☼, which Agenda 2.0's screen shows (2026-10-25), at the right of the View line beside ♪ |
 | #                                                                     | … on a numeric category or value             | ✅ (numeric columns), at the right of the View line as Agenda's (2026-10-25) |
 | D (the screen draws ⌂)                                                | … on an unindexed category or value          | ✅ ⌂, as the screen (R29b, 2026-10-25)       |
 | ?                                                                     | unconfirmed text assignments                 | ✅                                           |
-| o                                                                     | circular conditions or actions               | ⬜ (with Show Circular)                      |
+| o                                                                     | circular conditions or actions               | ✅ (R37, 2026-10-26)                         |
 | `[category]`, `[-category]`, value ranges                             | the view's filter                            | ✅                                           |
 | `[Hide empty, done, inherited, dependent]` | hide settings, one bracket                                | ✅                                           |
 
@@ -257,6 +257,7 @@ The order (meeting 2026-10-25, § 7): the small steps below in one or two batche
 
 #### Help
 
+- [ ] Copy Conditions/Actions (Agenda's ALT-F9, CPY C/A, in the category manager; Help "Copy Conditions/Actions"): copies a category's conditions or actions (or both, after asking) to another category, replacing the target's; found missing while writing the help (2026-10-26)
 - [ ] Agenda's help, in our own words (meeting 2026-10-22, § 7; scope, keys, build and order decided at the meeting of 2026-10-26, §§ 5–8: [`HELP.md`](HELP.md), ADR 0047): Agenda's F1 keys and structure exactly (the topic for where you are, bold links, F3 Index, F5 Find, F6 Keys, F8 or BACKSPACE Review; PURPOSE, STEPS, PRESS / TO DO THIS), the texts new since Agenda's are Lotus's: terse, a Hundred Acre Wood flavour in an opening line and the examples, no Milne quoted, no Disney or Shepard pictures. Today's F1 texts and command descriptions become its topics; F1's `c`, `d`, `a` (R65) stay reachable from it
 - [ ] Optional: Utilities Launch (a shell without quitting)
 
