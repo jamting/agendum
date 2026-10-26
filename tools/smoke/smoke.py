@@ -35,6 +35,7 @@ Examples:
     tools/smoke/smoke.py --size 100x30 --highlight DOWN DOWN F2
     tools/smoke/smoke.py --file my.agendum text:Call Bob ENTER snap ALT-Z
     tools/smoke/smoke.py --args "--rabbit --theme mono" F1
+    tools/smoke/smoke.py --extras --file feeds.agendum F10 text:f text:t text:f
 
 Without --file or --args the demo file opens (--demo); with --args alone,
 only those flags are passed (no flags at all: a new, untitled file).
@@ -324,10 +325,18 @@ def main():
     parser.add_argument("--key-wait", type=float, default=1.5, help="seconds to wait for a key to change the screen")
     parser.add_argument("--highlight", action="store_true", help="list highlighted text")
     parser.add_argument("--each", action="store_true", help="print the screen after every key")
+    parser.add_argument("--extras", action="store_true", help="turn the Extras on (feeds, calendars, blog) in the scratch preferences")
     opts = parser.parse_args()
 
     cols, rows = (int(x) for x in opts.size.lower().split("x"))
     scratch = tempfile.mkdtemp(prefix="agendum-smoke-")
+    if opts.extras:
+        # the Extras are a preference (R77), off by default: written into the
+        # scratch preferences, never the person's
+        prefs = os.path.join(scratch, "config", "agendum")
+        os.makedirs(prefs, exist_ok=True)
+        with open(os.path.join(prefs, "preferences"), "w") as f:
+            f.write("extras = yes\n")
     app_args = shlex.split(opts.args) if opts.args else []
     if opts.file:
         copy = os.path.join(scratch, os.path.basename(opts.file))

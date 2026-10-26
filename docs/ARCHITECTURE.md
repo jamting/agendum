@@ -183,6 +183,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Typing.LineEdit`, `Agendum.TUI.Typing.TextEdit`  | ✔     | Single-line and multi-line edit buffers.                                                                                         |
 | `Agendum.TUI.Boxes.WhatToCopyBox`                    | ✔     | Agenda's What to copy box: F3, F4 or ALT-F4 with nothing marked asks Word, Line or All text, in a note or a line.                  |
 | `Agendum.TUI.Boxes.AbandonBox`                       | ✔     | Agenda's Abandon File box: "Revert to last saved version: No" (R82).                                                               |
+| `Agendum.TUI.Boxes.Scroll`                          | ✔     | A list box of entries several lines each (feeds, calendars) scrolled by whole entries, with "▲ … more above" and "▼ … more below". |
 | `Agendum.TUI.Boxes.UpdateDefaultsBox`                | ✔     | Agenda's Update defaults question: "Update new file properties? Yes" (R82a).                                                       |
 | `Agendum.TUI.Boxes.NewFileBox`                       | ✔     | Agenda's New File box: Description and Password for a file that does not exist yet (R82, ADR 0046).                                |
 | `Agendum.TUI.Boxes.PasswordBox`                      | ✔     | Agenda's small password boxes for Set file password: the current, the new, the new again (R82, ADR 0046).                          |

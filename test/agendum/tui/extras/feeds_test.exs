@@ -112,4 +112,28 @@ defmodule Agendum.TUI.Extras.FeedsTest do
     state = state |> press(["H", "i", :enter]) |> press({:ctrl, "v"})
     assert screen(state) =~ "The item has no web address"
   end
+
+  # many feeds (the owner's file has 243): the box scrolls by whole feeds,
+  # the highlighted one always shown, and says how many are out of sight
+  test "a long list scrolls, keeping the highlighted feed in the box", %{state: state} do
+    db =
+      Enum.reduce(1..40, state.db, fn n, db ->
+        {:ok, db, _} = Core.subscribe_feed(db, "Feed #{n}", "https://f#{n}.example/rss")
+        db
+      end)
+
+    box = open(%{state | db: db})
+    lines = box |> screen() |> String.split("\n")
+    assert length(lines) == box.height
+    assert screen(box) =~ "Feed 1 "
+    assert screen(box) =~ ~r/▼ \d+ more below/
+    refute screen(box) =~ "Feed 40"
+    assert screen(box) =~ "INS subscribe"
+
+    down = press(box, List.duplicate(:down, 39))
+    assert screen(down) =~ "Feed 40"
+    assert screen(down) =~ ~r/▲ \d+ more above/
+    refute screen(down) =~ "more below"
+    assert screen(down) =~ "INS subscribe"
+  end
 end

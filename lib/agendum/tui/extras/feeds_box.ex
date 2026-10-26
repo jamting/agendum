@@ -20,7 +20,7 @@ defmodule Agendum.TUI.Extras.FeedsBox do
   use Agendum.TUI.Boxes.Box, finish: :none
 
   alias Agendum.Core.{Database, DateFormat}
-  alias Agendum.TUI.{Boxes.Box, Extras.CalendarsBox, Terminal.Draw, State, Update}
+  alias Agendum.TUI.{Boxes.Box, Boxes.Scroll, Extras.CalendarsBox, Terminal.Draw, State, Update}
   alias Agendum.TUI.Update.Prompts
 
   def open(state), do: State.push(state, %Agendum.TUI.Modes.Feeds{cursor: 0})
@@ -139,19 +139,20 @@ defmodule Agendum.TUI.Extras.FeedsBox do
   def title(_state, _mode), do: "Feeds"
 
   @impl Box
-  def content(state, mode, _inner, _max_rows) do
+  # the list scrolls by whole feeds within the room the screen leaves, its
+  # three lines of keys kept below it (`Agendum.TUI.Boxes.Scroll`)
+  def content(state, mode, _inner, max_rows) do
     rows =
       state
-      |> lines(mode)
-      |> Enum.map(fn {style, text} ->
-        [{if(style == :selected, do: :box_selected, else: :box), " " <> text}]
-      end)
+      |> groups(mode)
+      |> Enum.map(fn group -> Enum.map(group, &row/1) end)
+      |> Scroll.window(mode.cursor, max(max_rows - 3, 4), &row({:normal, &1}))
 
     rows ++
       [
         [],
         [{:box, " INS subscribe · ENTER read now · DEL unsubscribe"}],
-        [{:box, " F how often · K how long kept · I/E import/export OPML"}]
+        [{:box, " F how often · K how long kept · F2 rename · I/E OPML"}]
       ]
   end
 
@@ -162,6 +163,7 @@ defmodule Agendum.TUI.Extras.FeedsBox do
       {"ENTER", "Read now"},
       {"F", "How often", "How often to read it"},
       {"K", "Keep", "How long entries stay"},
+      {"F2", "Rename", "Rename the feed and its category"},
       {"I/E", "OPML", "Import or export a feed list"},
       {"DEL", "Unsubscribe"},
       {"ESC", "Close"}
@@ -172,15 +174,19 @@ defmodule Agendum.TUI.Extras.FeedsBox do
     do:
       "Your feeds. ENTER reads now, F how often, K how long kept; INS adds, DEL removes, I/E OPML."
 
-  defp lines(state, mode) do
+  defp row({style, text}),
+    do: [{if(style == :selected, do: :box_selected, else: :box), " " <> text}]
+
+  # each feed's lines, a group a feed
+  defp groups(state, mode) do
     case Database.feeds(state.db) do
       [] ->
-        [{:normal, "No feeds yet · INS subscribes to one, I imports a list"}]
+        [[{:normal, "No feeds yet · INS subscribes to one, I imports a list"}]]
 
       feeds ->
         feeds
         |> Enum.with_index()
-        |> Enum.flat_map(fn {feed, i} ->
+        |> Enum.map(fn {feed, i} ->
           head = Draw.pad(feed.name, 24) <> " " <> status(state, feed)
           style = if i == mode.cursor, do: :selected, else: :normal
 

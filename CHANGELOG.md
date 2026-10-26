@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.67.1 — 2026-10-26
+
+- **The Feeds box scrolls** when there are more feeds than fit, instead of running over the bottom edge: the highlighted feed is always shown, with "▲ 18 more above" and "▼ 19 more below". The Calendars box does the same. Both boxes' key lines now mention F2 rename.
+
 ## 0.67.0 — 2026-10-26
 
 The feeds no longer crowd your categories.

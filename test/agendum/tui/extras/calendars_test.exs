@@ -133,4 +133,18 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
     {cancelled, _} = keys(asked, :esc)
     assert Map.has_key?(cancelled.db.calendars, id)
   end
+
+  test "a long list of calendars scrolls too", %{state: state} do
+    db =
+      Enum.reduce(1..30, state.db, fn n, db ->
+        {:ok, db, _} =
+          Agendum.Core.subscribe_calendar(db, "Cal #{n}", "https://c#{n}.example/c.ics")
+
+        db
+      end)
+
+    box = press(%{state | db: db}, [{:f, 10}, "f", "t", "c"])
+    assert screen(box) =~ ~r/▼ \d+ more below/
+    assert press(box, List.duplicate(:down, 29)) |> screen() =~ "Cal 30"
+  end
 end

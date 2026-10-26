@@ -19,7 +19,7 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
 
   alias Agendum.Core.{Database, DateFormat}
   alias Agendum.Core.Extras.Calendar
-  alias Agendum.TUI.{Boxes.Box, Terminal.Draw, State, Update}
+  alias Agendum.TUI.{Boxes.Box, Boxes.Scroll, Terminal.Draw, State, Update}
   alias Agendum.TUI.Update.Prompts
 
   def open(state), do: State.push(state, %Agendum.TUI.Modes.Calendars{cursor: 0})
@@ -121,19 +121,20 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
   def title(_state, _mode), do: "Calendars"
 
   @impl Box
-  def content(state, mode, _inner, _max_rows) do
+  # the list scrolls by whole calendars, as the Feeds box's
+  # (`Agendum.TUI.Boxes.Scroll`)
+  def content(state, mode, _inner, max_rows) do
     rows =
       state
-      |> lines(mode)
-      |> Enum.map(fn {style, text} ->
-        [{if(style == :selected, do: :box_selected, else: :box), " " <> text}]
-      end)
+      |> groups(mode)
+      |> Enum.map(fn group -> Enum.map(group, &row/1) end)
+      |> Scroll.window(mode.cursor, max(max_rows - 3, 4), &row({:normal, &1}))
 
     rows ++
       [
         [],
         [{:box, " INS subscribe · ENTER read now · DEL unsubscribe"}],
-        [{:box, " F how often · A how far ahead"}]
+        [{:box, " F how often · A how far ahead · F2 rename"}]
       ]
   end
 
@@ -144,6 +145,7 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
       {"ENTER", "Read now"},
       {"F", "How often", "How often to read it"},
       {"A", "Ahead", "How far ahead"},
+      {"F2", "Rename", "Rename the calendar and its category"},
       {"DEL", "Unsubscribe"},
       {"ESC", "Close"}
     ]
@@ -154,16 +156,19 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
       "Your calendar subscriptions. ENTER reads one now, F sets how often, " <>
         "A how far ahead; INS adds one, DEL removes it."
 
-  # for each calendar its name and state, address, and settings
-  defp lines(state, mode) do
+  defp row({style, text}),
+    do: [{if(style == :selected, do: :box_selected, else: :box), " " <> text}]
+
+  # for each calendar its name and state, address, and settings: a group
+  defp groups(state, mode) do
     case Database.calendars(state.db) do
       [] ->
-        [{:normal, "No calendars yet · INS subscribes to one"}]
+        [[{:normal, "No calendars yet · INS subscribes to one"}]]
 
       calendars ->
         calendars
         |> Enum.with_index()
-        |> Enum.flat_map(fn {cal, i} ->
+        |> Enum.map(fn {cal, i} ->
           head = Draw.pad(cal.name, 24) <> " " <> status(state, cal)
           style = if i == mode.cursor, do: :selected, else: :normal
 
