@@ -6,17 +6,16 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. Fuzz walks in a richer file and with things out of order, and `App`'s background results tested (Sharpen the saw; moved up, meeting 2026-10-26-6, § 7)
-2. UI guidelines for the extras, from the clone's own patterns (Housekeeping; meeting 2026-10-26-6, §§ 6, 8; ADR 0049)
-3. The extras brought up to the guidelines, one feature commit per gap (Beyond Agenda; meeting 2026-10-26-6, §§ 6, 7)
-4. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
-5. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
-6. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
-7. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-8. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
-9. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+1. UI guidelines for the extras, from the clone's own patterns (Housekeeping; meeting 2026-10-26-6, §§ 6, 8; ADR 0049)
+2. The extras brought up to the guidelines, one feature commit per gap (Beyond Agenda; meeting 2026-10-26-6, §§ 6, 7)
+3. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
+4. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
+5. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
+6. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+7. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
+8. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
 
-**No new extras** until step 3 is done; Wol stays on its shelf (meeting 2026-10-26-6, § 7). Why: the extras were built before the clone's bar was raised and missed its catch-up, in robustness at the shell's edge and in the boxes' conventions (§ 5).
+**No new extras** until step 2 is done; Wol stays on its shelf (meeting 2026-10-26-6, § 7). Why: the extras were built before the clone's bar was raised and missed its catch-up, in robustness at the shell's edge and in the boxes' conventions (§ 5).
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
@@ -26,6 +25,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 ### Fixes and polish
 
+- [ ] Found by the richer fuzz walks (2026-10-27, v0.69.3): ESC on the Publish preview while an upload runs says "Nothing was published", which is untrue; and a feed or calendar whose address changed while a read was under way would wait for ever, as a stale answer no longer clears it (nothing changes an address in place today)
 - [ ] Found by the parser property tests (2026-10-27, v0.69.2), not urgent: Markdown with thousands of nested `>` quotes is still quadratic (20,000 levels about 1 s); a calendar's sync costs about 1 ms an event (a 2,000-event calendar about 2 s, linear) — check whether it runs in the TUI's process and would freeze the screen
 - [ ] Hidden values of a date or numeric category (owner, 2026-10-25): a category made date or numeric keeps its short name, Also match words and conditions, as Agenda does, but its box no longer shows them (R6a). Decide what to do with them: show them somewhere (Statistics, the manager), clear them on conversion, or leave them; check first whether any still has an effect (a short name in a narrow column head, a condition)
 
@@ -38,9 +38,6 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 Tools and checks that make every later change faster and safer. Each is small; the command layer they made safer is done (R66, ADR 0036, in `ROADMAP_DONE.md`). From the expert review of 2026-10-16 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
-- [ ] Fuzz walks in a richer file (2026-10-26): some of the random key walks start from the golden file (`Agendum.Starters.Golden`: feeds, calendars, a blog, ingested categories) with the Extras on, not only the demo file
-- [ ] Fuzz walks with things out of order (2026-10-26): between random keys, a walk also delivers background results (a feed or calendar read, a finished upload), sometimes after another file was opened, and checks the invariants and that nothing is filed into the wrong file
-- [ ] `App`'s background results tested (meeting 2026-10-26-6, § 7): each kind of result a background task can send (`:ok`, `{:ok, _}`, `{:error, _}`, a crash) goes through `App`'s handling, its debug-log line and its message in a test; v0.69.1's crash (a bare `:ok` taken apart with `elem/2`) was there, out of reach of the pure tests and the fuzz walks
 - [ ] Kept fast (the owner, 2026-10-26: "I don't want it to take up very much time"): the four items above add at most about 5 seconds to `mix check` (a few dozen inputs per parser, the hostile files, short richer and out-of-order walks); the long runs go to `mix agendum.fuzz` and the nightly CI. Measure `mix check` before and after
 - [ ] Review the rest of the code locally (`docs/CODE_REVIEW_SLICES.md` § The rest): about 35,000 lines in five groups, each with `/code-review high <paths>`, its findings fixed as a release of its own, as the cloud slices were
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key. Measured 2026-10-16, a cursor move: 300 items 6 ms in `Update` + 11 ms in `Render`; 3,000 items 61 + 45 ms; 10,000 items 205 + 231 ms. First build it once per key and share it; then keep it in the session's state between keys as a value with a key that says when it is stale (ADR 0035): the database, the view, the date and time, the screen width, collapsed families, the search. Needs an ADR. **Wait until the debug log shows `slow answer` lines (over 100 ms) in real use** (owner's decision, 2026-10-16); ingested items (`plans/ITEM_LEVELS.md`) will likely be what brings them. Update 2026-10-25 (v0.31.2): the first real-use slowness came from many sections, not many items (the owner's News view, 243 sections: ~135 ms a key); fixed without a cache (`ROADMAP_DONE.md`, Sharpen the saw), and wrapping and drawing now touch only the rows down to the highlight and on screen. Left: the view is still made about three times per key, so "build it once per key" is the next step if it is slow again. The command layer, which reshaped the state it would live in, is done; the TUI state's split into file and session (Towards many users) reshapes it again

@@ -4,6 +4,15 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.69.3 — 2026-10-27
+
+Four fixes found by richer fuzz walks: they now start from a file with feeds, calendars and a blog, and deliver background answers out of order.
+
+- **Agenda's o is right** after an assignment is made conditional again (SPACE in an item's profile).
+- **A feed or calendar read is filed only into the file that asked for it**, even when another file opened meanwhile has a feed or calendar with the same id.
+- **Typing the SFTP password no longer crashes** when Help covers the Publish preview or the preview was closed.
+- **Deleting a macro from a second Macros manager no longer crashes** when its Learn box is open.
+
 ## 0.69.2 — 2026-10-27
 
 Four fixes found by new tests that feed the parsers random and broken input.
