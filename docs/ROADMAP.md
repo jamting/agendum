@@ -4,15 +4,17 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 ## Open
 
-**In order:** what comes next, across every area (the owner reorders it; details where each line points):
+**In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
 1. `Update`'s shell answers to `Update.Results` (Sharpen the saw; meeting 2026-10-26-4, § 11)
-2. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
-3. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
-4. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
-5. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
-6. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-7. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+2. Fingerprints in the feed and calendar snapshots (Beyond Agenda; meeting 2026-10-26-5, § 5; ADR 0048)
+3. Ingested categories: the open details settled with the owner in one round (`plans/RSS_READER.md`), then built (Beyond Agenda; meeting 2026-10-26-5, § 6; ADR 0048)
+4. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
+5. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
+6. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
+7. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
+8. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+9. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
