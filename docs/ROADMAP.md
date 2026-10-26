@@ -7,7 +7,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 **In order:** what comes next, across every area (the owner reorders it; details where each line points):
 
 1. The faded feed entries keep only their id and publish date (Fixes and polish; meeting 2026-10-26-4, § 5)
-2. A meeting on data structures the extras need that are not a natural fit for Agendum's data format: the general case (meeting 2026-10-26-4, §§ 5, 15)
+2. A meeting on data structures the extras need that are not a natural fit for Agendum's data format: the general case, and whether a feed's name could be an unindexed column instead of a category (Beyond Agenda; meeting 2026-10-26-4, §§ 5, 15)
 3. Erlang's logger kept off the screen (Fixes and polish; meeting 2026-10-26-4, § 6)
 4. A recovery file on a crash (The clone's safety; meeting 2026-10-26-4, § 6)
 5. No private addresses in the debug log, and ten sessions kept (Fixes and polish; meeting 2026-10-26-4, § 7)
@@ -99,7 +99,7 @@ Then working together:
 
 ### Beyond Agenda
 
-- [ ] A meeting on the extras' data (meeting 2026-10-26-4, §§ 5, 15; the owner): the extras may need data structures that are not a natural fit for Agendum's data format (feed snapshots, ingested items); plan for the general case, with Carsten's separate store for ingested items (`plans/ITEM_LEVELS.md`) as one input; right after the faded feed entries are trimmed
+- [ ] A meeting on the extras' data (meeting 2026-10-26-4, §§ 5, 15; the owner): the extras may need data structures that are not a natural fit for Agendum's data format (feed snapshots, ingested items); plan for the general case, with Carsten's separate store for ingested items (`plans/ITEM_LEVELS.md`) as one input; right after the faded feed entries are trimmed. Also to discuss (the owner, 2026-10-26): whether a feed's name could be an unindexed column (R29b) instead of a category under Feeds ▸, so the feeds do not crowd the category list
 Open again since the clone was declared done (2026-10-26); the built ones stay hidden behind the Extras preference (ADR 0043).
 
 Each item names the group in `VISION.md` it serves, group 1 first; items for group 3 or for no group yet wait under Ideas, one line each with a pointer to their plan (meeting 2026-10-16-2, § 6).
