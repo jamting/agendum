@@ -4,6 +4,13 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.62.0 — 2026-10-26
+
+The last step of the truthful clone: the key bar in moves, as in Lotus Agenda.
+
+- While an item or a section moves (ALT-F10), the key bar keeps Agenda's ten slots, empty; while a column moves or its width changes, F1 Help alone. The line of hints is gone; F1 still explains the keys.
+- The help's Hundred Acre Wood touches are listed in `docs/HELP_WOOD.md`, kept true by a check.
+
 ## 0.61.0 — 2026-10-26
 
 Copy and clear a category's conditions and actions, as in Lotus Agenda; the help is complete.
