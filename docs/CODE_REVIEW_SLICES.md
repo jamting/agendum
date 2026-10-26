@@ -55,6 +55,20 @@ When all slices are done:
 tools/review/slice.sh --clean     # delete the review/* branches and the worktree
 ```
 
+## The rest, reviewed locally
+
+The three free runs covered about 20,000 of 55,000 lines. The rest is reviewed with the local review, which costs no ultra run: `/code-review high <paths>` in this checkout, run in the background, its findings checked against the code and fixed as one release a group, each with its test (`test/agendum/review_<group>_test.exs`), as the cloud slices were. The local review sees the paths as they are, not a diff, so no branches are needed. Each group is about 7,000 lines, a size a review reads well.
+
+| Group | What | About | Order, and why |
+| --- | --- | --- | --- |
+| d | **Dates and views in the core**: `DateParser`, the date languages, `DateFormat`, `DateRule`, `Recurrence`, `Datebook`, `Browse`, `Context`, `InputFormat`, `View`, `ViewModel`, `ViewColumns`, `NumberFormat`, and the core's other modules outside slice b | 10,000 lines | first: rules the person relies on every day (when an item is due, what a view shows) |
+| e | **The keys**: `tui/update/` (but `results.ex`, in slice a), `Keymap`, `Commands`, `Menu`, `Macros`, `Layout`, `Places`, `tui/typing/`, `tui/moves/` | 8,000 lines | second: every key goes through it; undo and one-change-a-key live here |
+| f | **The boxes, A to M**: `tui/boxes/` from `abandon_box` to `macro_props` | 5,500 lines | third |
+| g | **The boxes, N to Z**: `tui/boxes/` from `new_file_box` to `what_to_copy_box` | 5,400 lines | fourth |
+| h | **Drawing and the rest**: `tui/render/`, `tui/category_screens/`, `tui/terminal/`, `tui/help/`, the splash, the developer screen, `starters/`, `mix/` | 7,000 lines | last: a drawing bug shows at once, and is seen in use |
+
+Before group d, the group lists go into `tools/review/slice.sh` (as `--list` groups d to h), so the paths are kept in one place and their sizes can be checked.
+
 ## Record
 
 | Slice | Run | Findings | Fixed in |

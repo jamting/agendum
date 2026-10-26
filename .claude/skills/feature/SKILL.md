@@ -31,6 +31,11 @@ Find or add the behaviour in `docs/SPEC.md` (rules are numbered, e.g. `R7`); whe
 - Core rules → `test/agendum/core/*_test.exs` (use `Agendum.Fixtures`).
 - UI behaviour → `test/agendum/tui/*_test.exs`: drive keys with `Agendum.TUIHelpers.press/2` and assert on `screen/1` text.
 - In a box, reach a setting by its label, not by counting ↓ presses: `Agendum.TUIHelpers.to_setting(state, "Also match")`; layouts and keys change, labels rarely do.
+- **Four questions** (the code reviews of 2026-10-26: almost all 30 findings were one of these). For each "yes", a test of that case too:
+  1. Does it read **input from outside** (a feed, a calendar, an `.AG` or JSON file, Markdown, a typed address)? Then a broken, hostile and huge one, which must give an error, never a crash or a hang; add the file to the hostile collection.
+  2. Does it **wait on the network or run in the background**? Then a result that never comes, or comes late, and the program going on meanwhile.
+  3. Can the text have an **odd encoding** (Latin-1, control characters, invalid UTF-8)?
+  4. Can things happen **in another order** (a result after another file was opened, two at once, a key in between)?
 
 Run it and see it fail for the right reason before writing the code.
 
@@ -63,6 +68,7 @@ Not the user guide (`docs/guide/index.html`) or the manual (`docs/manual/`): the
 ## 7. The gate
 
 - `mix check` until it passes, with no warnings; fix what Credo and Dialyzer report rather than silencing it. A gate fixed after one failing run may be flaky: run it again.
+- A change of more than about 300 lines, or one that touches outside input: a local review of the diff (`/code-review high`) in the background while the documents are written, its findings fixed before the commit (it found the ingested families' bugs within minutes, after they were committed, 2026-10-26).
 - After a large TUI change, or for a release: the long fuzz run, in the background while the documents are written: `mix agendum.fuzz` (its output kept in `tmp/fuzz/`). Never beside `mix check` or another compile: both use `_build/test`, and a recompile under a running fuzz fails it with modules "not available" (2026-10-23).
 - A box or screen with an Agenda screenshot: draw ours as a PNG (`tools/screenshots/`) and compare it side by side, for spacing the text tests cannot see.
 - Keys, ESC or drawing changed: smoke-test the real terminal with `tools/smoke/smoke.py` (sandboxed; it waits for the splash screen to go and for each key's effect to settle) and say in the summary what was seen.
