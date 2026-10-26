@@ -32,7 +32,7 @@ The full steps are the `feature` skill (`.claude/skills/feature/SKILL.md`, meeti
 1. **Habits first.** Before any code, Claude lists every key or behaviour the change would alter for someone already using Agendum. I settle them. A habit change found halfway is the most expensive kind.
 2. **As Agenda did.** The behaviour is checked in the manuals (`docs/reference/*_djvu.txt`), the Lotus Q&A, the F1 help, the `.AG` file format, and by running the real Agenda 2.0 headless in DOSBox (`tools/agformat/agenda_driver.py`). Results come as an evidence table: question, Agenda's answer, source.
 3. **Test first**, core first, then the TUI.
-4. **The gate.** `mix check` (format, warnings, Credo, Dialyzer, tests). After a large TUI change, the long fuzz run: `FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs`. A gate fixed after one green run may be flaky: run it several times.
+4. **The gate.** `mix check` (format, warnings, Credo, Dialyzer, tests). After a large TUI change, the long fuzz run: `mix agendum.fuzz` (its output kept in `tmp/fuzz/`). A gate fixed after one green run may be flaky: run it several times.
 5. **Docs with the change:** the rule in `docs/SPEC.md`, the roadmap ticked, `KEYBOARD.md` and `SCREENS.md` when keys or screens change; the guide and the manual only when I ask.
 6. **Commit without asking** once the checks pass, one feature per commit (my standing rule since 2026-10-14). I review the commits afterwards and ask to amend or revert.
 7. **Version.** A major feature or a change to the file format bumps the minor version in `mix.exs`, gets a `CHANGELOG.md` entry and a `vX.Y.Z` tag once the long fuzz run passes. Never 1.0.0 unless I say so.
@@ -99,7 +99,7 @@ The panel advises; it never votes. I decide.
 | `AGENDUM_LOG=1 ./agendum FILE`                         | with a debug log (`~/.local/state/agendum/logs`); give it to Claude on a crash or lag |
 | `mix docs --open`                                      | API docs, design documents, guide and manual in the browser             |
 | `mix agendum.starters`, `mix agendum.golden`           | rebuild the Planner starter; write the golden file of a new format version |
-| `FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs` | the long fuzz run                                                     |
+| `mix agendum.fuzz` | the long fuzz run (3000 runs), its output kept in a dated file in `tmp/fuzz/`, the last 30                                                     |
 | `mix agendum.thoughts` (`--next-meeting`; `--init PATH` once; `--import-docs`) | my open thoughts from the project file in `$AGENDUM_PROJECT_FILE`, as Markdown; `--init` makes the file; `--import-docs` puts the meetings, ADRs, roadmap and session summaries into it as Disposable items (Agendum closed first; the old file kept as `.bak`) |
 | `tools/agformat/agenda_driver.py`, `agdump.py`, `agdiff.py` | drive the real Agenda headless (also record its sounds: SDL's disk audio driver); read and compare `.AG` files (`tools/agformat/DRIVING_AGENDA.md`) |
 | `tools/agformat/capture_menus.py` | walks Agenda's F10 menus (view, note, category manager) in DOSBox into `docs/reference/agenda_menus.json` and AGENDA_MENUS.md; the menu test compares Agendum's menus with it, every difference tagged (meeting 2026-10-21, § 8) |

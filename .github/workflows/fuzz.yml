@@ -42,7 +42,19 @@ jobs:
       - id: seed
         run: echo "seed=$(( $(date +%s) % 1000000 ))" >> "$GITHUB_OUTPUT"
 
-      - run: mix test test/agendum/tui/fuzz_test.exs --seed ${{ steps.seed.outputs.seed }}
+      # the whole output kept in a file as well (meeting 2026-10-26-4, § 8);
+      # `pipefail` keeps the test's failure as the step's, through `tee`
+      - run: |
+          set -o pipefail
+          mix test test/agendum/tui/fuzz_test.exs --seed ${{ steps.seed.outputs.seed }} 2>&1 | tee fuzz.log
+
+      # on a failure, the output is kept with the run, to download
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-log-${{ steps.seed.outputs.seed }}
+          path: fuzz.log
+          retention-days: 90
 
       - if: failure()
         run: |

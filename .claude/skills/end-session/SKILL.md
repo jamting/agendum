@@ -21,7 +21,7 @@ Go through the conversation as well: what the owner asked for, what was decided 
 
 If there are uncommitted changes, say so; do not commit them unasked unless they are finished and `mix check` passes (the owner's standing rule: commit on your own once the checks pass).
 
-Check what `CLAUDE.md` asks after a change and whether it happened: `mix check`, the long fuzz run after a large TUI change (`FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs`), a smoke test of the real terminal after key or drawing changes, ROADMAP ticks, `SCREENS.md` and the F1 help. List anything skipped; do not hide it.
+Check what `CLAUDE.md` asks after a change and whether it happened: `mix check`, the long fuzz run after a large TUI change (`mix agendum.fuzz` (its output kept in `tmp/fuzz/`)), a smoke test of the real terminal after key or drawing changes, ROADMAP ticks, `SCREENS.md` and the F1 help. List anything skipped; do not hide it.
 
 ## 2. Record what to remember
 

@@ -305,6 +305,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Sharpen the saw
 
+- [x] (2026-10-26) The long fuzz run's output kept: `mix agendum.fuzz` writes each run's whole output, the seed first, to a dated file in `tmp/fuzz/` (the last 30 kept), and the nightly CI run keeps its output as an artifact when it fails (meeting 2026-10-26-4, § 8)
 - [x] (2026-10-26, v0.62.0) A check that every line `docs/HELP_WOOD.md` quotes is still in its help topic, word for word (meeting 2026-10-26-2, § 8)
 - [x] The owner's thoughts in Agendum (2026-10-22; meeting 2026-10-22, § 7b): the owner's own project file, outside git, its path in `$AGENDUM_PROJECT_FILE`; a Thoughts category with a child Next meeting, and a Thoughts view (Next meeting first, inherited and done items hidden). `mix agendum.thoughts --init PATH` makes the file (`Agendum.Thoughts.new_file/0`), `mix agendum.thoughts` prints the open thoughts as Markdown, `--next-meeting` only those for the meeting; the `meeting` skill reads them as agenda items, and the owner marks a handled one done (F4). The dagordning's tail retires when the owner has moved its thoughts over
 - [x] The long fuzz run in CI, nightly (2026-10-22): `.github/workflows/fuzz.yml` runs `FUZZ_RUNS=3000` every night on `main` (and by hand, `gh workflow run fuzz.yml`), with a seed of its own; a failure names the command that repeats it. A version is tagged when the long run has passed on its commit, at night or by hand
