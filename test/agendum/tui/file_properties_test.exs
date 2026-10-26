@@ -335,7 +335,10 @@ defmodule Agendum.TUI.FilePropertiesTest do
 
     test "a new file starts with them", %{state: state} do
       state = %{state | prefs: %{state.prefs | defaults: %{"tab_size" => 8}}}
-      asked = Agendum.TUI.Update.loaded(state, "/tmp/nowhere/notes.agendum", {:error, :enoent})
+
+      asked =
+        Agendum.TUI.Update.Results.loaded(state, "/tmp/nowhere/notes.agendum", {:error, :enoent})
+
       assert press(asked, :enter).db.tab_size == 8
     end
   end

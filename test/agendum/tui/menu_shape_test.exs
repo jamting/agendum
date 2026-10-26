@@ -52,7 +52,7 @@ defmodule Agendum.TUI.MenuShapeTest do
   # keeps the one that is open (ADR 0046 for the password)
   describe "File ▸ Retrieve with a name that is not a file yet" do
     test "the New File box; ENTER makes the file, not saved yet", %{state: state} do
-      asked = Update.loaded(state, "/tmp/nowhere/notes.agendum", {:error, :enoent})
+      asked = Update.Results.loaded(state, "/tmp/nowhere/notes.agendum", {:error, :enoent})
       screen = screen(asked)
       assert screen =~ "New File"
       assert screen =~ ~r/Description:/
@@ -67,7 +67,7 @@ defmodule Agendum.TUI.MenuShapeTest do
     end
 
     test "its description and password go with the new file", %{state: state} do
-      asked = Update.loaded(state, "/tmp/nowhere/notes.agendum", {:error, :enoent})
+      asked = Update.Results.loaded(state, "/tmp/nowhere/notes.agendum", {:error, :enoent})
       typed = press(asked, ["Notes", :enter, :down, "H", "o", "o", "t", :enter])
       refute screen(typed) =~ "Hoot"
 
@@ -76,7 +76,7 @@ defmodule Agendum.TUI.MenuShapeTest do
     end
 
     test "ESC keeps the file that is open", %{state: state} do
-      asked = Update.loaded(state, "/tmp/nowhere/notes.agendum", {:error, :enoent})
+      asked = Update.Results.loaded(state, "/tmp/nowhere/notes.agendum", {:error, :enoent})
       kept = press(asked, :esc)
       assert kept.db == state.db
       assert kept.path == state.path

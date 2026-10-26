@@ -24,7 +24,7 @@ defmodule Agendum.TUI.SelectFileTest do
   defp serve(state) do
     case State.mode(state) do
       %{type: :select_file, entries: :reading, dir: dir} ->
-        Update.dir_listed(state, dir, Store.list_dir(dir))
+        Update.Results.dir_listed(state, dir, Store.list_dir(dir))
 
       _ ->
         state
@@ -87,7 +87,7 @@ defmodule Agendum.TUI.SelectFileTest do
     assert [{:read_descriptions, ^dir, names}] = effects
     assert "rabbit.agendum" in names
 
-    state = Update.descriptions_read(state, dir, Store.descriptions(dir, names))
+    state = Update.Results.descriptions_read(state, dir, Store.descriptions(dir, names))
     assert screen(state) =~ ~r/rabbit\.agendum +Rabbit's garden/
     # a file that is not an Agendum file has none
     assert Store.descriptions(dir, ["old.agenda"]) == %{"old.agenda" => ""}

@@ -235,7 +235,7 @@ defmodule Agendum.TUI.Update.Prompts do
 
   # an Agenda file's password (R72): the import is tried again with it
   defp prompt_action(state, {:ag_password, path, bytes}, text),
-    do: Update.import_ag(state, path, bytes, text)
+    do: Update.Results.import_ag(state, path, bytes, text)
 
   # the SFTP server's password (R74): the publish is tried again with it;
   # the preview box is still under the prompt

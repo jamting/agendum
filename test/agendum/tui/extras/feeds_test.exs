@@ -44,7 +44,7 @@ defmodule Agendum.TUI.Extras.FeedsTest do
   test "the entries read come in as items, in the News view", %{state: state} do
     state = subscribed(state)
     {:fetch_feed, id, _} = effect(:fetch_feed)
-    state = Update.feed_read(state, id, {:ok, @entries})
+    state = Update.Results.feed_read(state, id, {:ok, @entries})
 
     assert screen(state) =~ "Owl's Gazette: 1 new"
     state = state |> press(:esc) |> press(:esc)
@@ -56,7 +56,7 @@ defmodule Agendum.TUI.Extras.FeedsTest do
   test "a failed read says why, from the box", %{state: state} do
     state = subscribed(state)
     {:fetch_feed, id, _} = effect(:fetch_feed)
-    state = Update.feed_read(state, id, {:error, "the server answered 503"})
+    state = Update.Results.feed_read(state, id, {:error, "the server answered 503"})
     assert screen(state) =~ "Owl's Gazette: the server answered 503"
     assert screen(state) =~ "failed: the server answered 503"
   end
@@ -87,7 +87,7 @@ defmodule Agendum.TUI.Extras.FeedsTest do
     list =
       ~s(<opml><body><outline text="Rabbit" xmlUrl="https://rabbit.example/feed"/></body></opml>)
 
-    state = Update.opml_read(state, "/tmp/list.opml", {:ok, list})
+    state = Update.Results.opml_read(state, "/tmp/list.opml", {:ok, list})
     assert screen(state) =~ "Subscribed to 1 feed from list.opml"
     assert length(Core.Database.feeds(state.db)) == 2
   end
@@ -103,7 +103,9 @@ defmodule Agendum.TUI.Extras.FeedsTest do
       |> press([:down, {:ctrl, "v"}])
 
     assert {:open_url, "https://owl.example/heffalump"} = effect(:open_url)
-    assert screen(Update.url_opened(state, "https://owl.example/heffalump", :ok)) =~ "Opened"
+
+    assert screen(Update.Results.url_opened(state, "https://owl.example/heffalump", :ok)) =~
+             "Opened"
   end
 
   test "CTRL-V on an item without a link says so", %{state: state} do

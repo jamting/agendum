@@ -49,7 +49,7 @@ defmodule Agendum.TUI.DateLanguageTest do
 
   test "the languages stay when another file is retrieved" do
     state = start_in([Swedish])
-    state = Update.loaded(state, "/tmp/x.agenda", {:ok, Agendum.Core.new_file(), "stamp"})
+    state = Update.Results.loaded(state, "/tmp/x.agenda", {:ok, Agendum.Core.new_file(), "stamp"})
     assert Agendum.TUI.State.languages(state) == [Swedish]
   end
 

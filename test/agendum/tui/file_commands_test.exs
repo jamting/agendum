@@ -60,15 +60,17 @@ defmodule Agendum.TUI.FileCommandsTest do
       assert db == state.db
       assert state.path == "/wood/owl.agendum"
 
-      state = Update.copied(%{state | effects: []}, "/wood/owl-copy.agendum", {:ok, "stamp"})
+      state =
+        Update.Results.copied(%{state | effects: []}, "/wood/owl-copy.agendum", {:ok, "stamp"})
+
       assert panel(state) =~ "Copied to owl-copy.agendum"
     end
 
     test "a copy that could not be written still says so after the save", %{state: state} do
       state = %{state | path: "/wood/owl.agendum"}
-      state = Update.copied(state, "/locked/copy.agendum", {:error, :eacces})
+      state = Update.Results.copied(state, "/locked/copy.agendum", {:error, :eacces})
       opts = %{expect: :any, then: {:copied, "/locked/copy.agendum"}, auto: false}
-      state = Update.saved(state, "/wood/owl.agendum", {:ok, "stamp"}, opts)
+      state = Update.Results.saved(state, "/wood/owl.agendum", {:ok, "stamp"}, opts)
       assert panel(state) =~ "Could not write the copy"
       refute state.dirty
     end
@@ -96,7 +98,7 @@ defmodule Agendum.TUI.FileCommandsTest do
       {_state, effects} = Update.handle(state, {:char, "y"})
       assert effects == [{:trash_file, "/wood/old.agendum"}]
 
-      state = Update.trashed(state, "/wood/old.agendum", :ok)
+      state = Update.Results.trashed(state, "/wood/old.agendum", :ok)
       assert panel(state) =~ "old.agendum is in the Trash"
     end
 

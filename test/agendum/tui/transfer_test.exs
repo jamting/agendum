@@ -41,7 +41,7 @@ defmodule Agendum.TUI.TransferTest do
     assert effects == [{:import_json, "/tmp/in.json"}]
 
     db = Agendum.Core.new_file()
-    state = Update.imported(state, "/tmp/in.json", {:ok, JSONFile.encode(db)})
+    state = Update.Results.imported(state, "/tmp/in.json", {:ok, JSONFile.encode(db)})
     assert state.db == db
     assert state.path == nil
     assert state.dirty
@@ -52,12 +52,16 @@ defmodule Agendum.TUI.TransferTest do
     db = state.db
 
     state =
-      Update.imported(state, "/tmp/x.json", {:ok, ~s({"format": "agenda-json", "version": 7})})
+      Update.Results.imported(
+        state,
+        "/tmp/x.json",
+        {:ok, ~s({"format": "agenda-json", "version": 7})}
+      )
 
     assert state.db == db
     assert panel(state) =~ message(:cannot_import)
 
-    state = Update.imported(state, "/tmp/x.json", {:error, :enoent})
+    state = Update.Results.imported(state, "/tmp/x.json", {:error, :enoent})
     assert panel(state) =~ message(:file_not_found)
   end
 
@@ -69,8 +73,8 @@ defmodule Agendum.TUI.TransferTest do
     }
 
     for next <- [
-          Update.imported(state, "/x.json", {:ok, JSONFile.encode(state.db)}),
-          Update.loaded(state, "/x.agenda", {:ok, state.db, "stamp"})
+          Update.Results.imported(state, "/x.json", {:ok, JSONFile.encode(state.db)}),
+          Update.Results.loaded(state, "/x.agenda", {:ok, state.db, "stamp"})
         ] do
       # only the last file used changes (R52)
       assert {next.theme, Agendum.TUI.State.input(next), %{next.prefs | last_file: nil}} ==

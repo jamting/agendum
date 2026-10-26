@@ -23,9 +23,14 @@ defmodule Agendum.TUI.FilePasswordTest do
   # the shell's part of opening: load, with the password when given
   defp serve(state, effects) do
     Enum.reduce(effects, state, fn
-      {:load, path}, s -> Update.loaded(s, path, Store.load_with_stamp(path))
-      {:load_password, path, pw}, s -> Update.loaded(s, path, Store.load_with_stamp(path, pw))
-      _, s -> s
+      {:load, path}, s ->
+        Update.Results.loaded(s, path, Store.load_with_stamp(path))
+
+      {:load_password, path, pw}, s ->
+        Update.Results.loaded(s, path, Store.load_with_stamp(path, pw))
+
+      _, s ->
+        s
     end)
   end
 
@@ -36,7 +41,7 @@ defmodule Agendum.TUI.FilePasswordTest do
     state: state,
     path: path
   } do
-    state = Update.loaded(state, path, Store.load_with_stamp(path))
+    state = Update.Results.loaded(state, path, Store.load_with_stamp(path))
     assert screen(state) =~ "Password of owl.agendum:"
     # the keys typed are not shown
     refute screen(type(state, "owl")) =~ "owl:"
@@ -99,7 +104,7 @@ defmodule Agendum.TUI.FilePasswordTest do
 
   test "an export of a file with a password says it is plain text", %{state: state} do
     {:ok, db} = Agendum.Core.set_password(state.db, "Hoot")
-    state = Update.written(%{state | db: db}, "/wood/owl.json", :ok)
+    state = Update.Results.written(%{state | db: db}, "/wood/owl.json", :ok)
     assert panel(state) =~ "plain text"
   end
 end

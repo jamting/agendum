@@ -16,7 +16,7 @@ defmodule Agendum.TUI.AgImportTest do
   defp started,
     do: start(Agendum.Core.new_file(), now: ~N[2026-10-16 10:00:00], width: 100, height: 30)
 
-  defp import(state, path, bytes), do: Update.imported(state, path, {:ok, bytes})
+  defp import(state, path, bytes), do: Update.Results.imported(state, path, {:ok, bytes})
 
   test "Import asks for a JSON or an Agenda file" do
     assert screen(press(started(), [{:f, 10}, "f", "t", "i"])) =~

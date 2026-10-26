@@ -125,13 +125,13 @@ defmodule Agendum.TUI.App do
       # a feed read in the background (R75)
       {:feed_read, id, result, ms} ->
         DebugLog.write("feed #{id} read: #{elem(result, 0)} in #{ms} ms")
-        state = logged(state, fn -> Update.feed_read(state, id, result) end)
+        state = logged(state, fn -> Update.Results.feed_read(state, id, result) end)
         loop(state, previous, buffer, theme)
 
       # a calendar read in the background (R45)
       {:calendar_read, id, result, ms} ->
         DebugLog.write("calendar #{id} read: #{elem(result, 0)} in #{ms} ms")
-        state = logged(state, fn -> Update.calendar_read(state, id, result) end)
+        state = logged(state, fn -> Update.Results.calendar_read(state, id, result) end)
         loop(state, previous, buffer, theme)
     after
       timeout ->
@@ -229,7 +229,7 @@ defmodule Agendum.TUI.App do
              {:ok, stat} <- File.stat(rpath, time: :local),
              do: {:ok, db, NaiveDateTime.from_erl!(stat.mtime)}
 
-      Update.recovery_found(state, path, result)
+      Update.Results.recovery_found(state, path, result)
     else
       state
     end
@@ -265,7 +265,7 @@ defmodule Agendum.TUI.App do
   end
 
   # Each effect is done, and its result handed back to a pure function of
-  # `Update` (`saved/3`, `loaded/3` …), which decides what the person sees:
+  # `Update.Results` (`saved/4`, `loaded/3` …), which decides what the person sees:
   # `Update` never touches a file, and `App` never decides anything.
   # `perform/2`'s clauses, one per shape of effect, are the dispatch; the
   # shapes are listed in `Agendum.TUI.Effect`. Public only for its test
@@ -308,33 +308,37 @@ defmodule Agendum.TUI.App do
   end
 
   defp perform(state, {:save, path, opts}),
-    do: Update.saved(state, path, Store.save(state.db, path, opts.expect), opts)
+    do: Update.Results.saved(state, path, Store.save(state.db, path, opts.expect), opts)
 
   # File ▸ Maintenance ▸ MakeCopy and Transfer ▸ Template (R82): another
   # file written, whatever is there (Agenda's caution), this one unchanged
   defp perform(state, {:save_copy, path, db}),
-    do: Update.copied(state, path, Store.save(db, path, :any))
+    do: Update.Results.copied(state, path, Store.save(db, path, :any))
 
   # F8 in the Select File box (R82)
   defp perform(state, {:read_descriptions, dir, names}),
-    do: Update.descriptions_read(state, dir, Store.descriptions(dir, names))
+    do: Update.Results.descriptions_read(state, dir, Store.descriptions(dir, names))
 
   # File Properties ▸ Make backup on open (R82)
-  defp perform(state, {:backup_file, path}), do: Update.backed_up(state, path, Store.backup(path))
+  defp perform(state, {:backup_file, path}),
+    do: Update.Results.backed_up(state, path, Store.backup(path))
 
   # File ▸ Maintenance ▸ Erase (R82): to the system's Trash
-  defp perform(state, {:trash_file, path}), do: Update.trashed(state, path, Store.trash(path))
+  defp perform(state, {:trash_file, path}),
+    do: Update.Results.trashed(state, path, Store.trash(path))
 
   # a crash's changes beside the file are offered once it is open (R82b)
   defp perform(state, {:load_password, path, password}),
     do:
-      state |> Update.loaded(path, Store.load_with_stamp(path, password)) |> check_recovery(path)
+      state
+      |> Update.Results.loaded(path, Store.load_with_stamp(path, password))
+      |> check_recovery(path)
 
   defp perform(state, {:load, path}),
-    do: state |> Update.loaded(path, Store.load_with_stamp(path)) |> check_recovery(path)
+    do: state |> Update.Results.loaded(path, Store.load_with_stamp(path)) |> check_recovery(path)
 
   defp perform(state, {:open_or_create, path}),
-    do: state |> Update.opened(path, Store.load_with_stamp(path)) |> check_recovery(path)
+    do: state |> Update.Results.opened(path, Store.load_with_stamp(path)) |> check_recovery(path)
 
   # a crash's changes, now saved into the file (R82b)
   defp perform(state, {:remove_recovery, path}) do
@@ -343,15 +347,17 @@ defmodule Agendum.TUI.App do
   end
 
   defp perform(state, {:write_text, path, text}),
-    do: Update.written(state, path, File.write(path, text))
+    do: Update.Results.written(state, path, File.write(path, text))
 
-  defp perform(state, {:import_json, path}), do: Update.imported(state, path, File.read(path))
+  defp perform(state, {:import_json, path}),
+    do: Update.Results.imported(state, path, File.read(path))
 
   # a note's Import (R64c)
   defp perform(state, {:read_note_text, path}),
-    do: Update.note_text_read(state, path, File.read(path))
+    do: Update.Results.note_text_read(state, path, File.read(path))
 
-  defp perform(state, {:list_dir, dir}), do: Update.dir_listed(state, dir, Store.list_dir(dir))
+  defp perform(state, {:list_dir, dir}),
+    do: Update.Results.dir_listed(state, dir, Store.list_dir(dir))
 
   # a feed read in the background, as a calendar is (R75)
   defp perform(state, {:fetch_feed, id, url}) do
@@ -368,15 +374,21 @@ defmodule Agendum.TUI.App do
 
   # an entry's link in the browser (R75), and a feed list (OPML)
   defp perform(state, {:open_url, url}),
-    do: Update.url_opened(state, url, FeedFetch.open_url(url))
+    do: Update.Results.url_opened(state, url, FeedFetch.open_url(url))
 
   defp perform(state, {:read_opml, path}),
-    do: Update.opml_read(state, path, File.read(Path.expand(path)))
+    do: Update.Results.opml_read(state, path, File.read(Path.expand(path)))
 
   # the micro-blog (R74): what the folder holds, then writing and
   # uploading it
   defp perform(state, {:publish_scan, folder, files}),
-    do: Update.publish_scanned(state, folder, files, Publish.scan(Path.expand(folder), files))
+    do:
+      Update.Results.publish_scanned(
+        state,
+        folder,
+        files,
+        Publish.scan(Path.expand(folder), files)
+      )
 
   defp perform(state, {:publish, folder, files, changes, password}) do
     dir = Path.expand(folder)
@@ -385,11 +397,11 @@ defmodule Agendum.TUI.App do
       with :ok <- Publish.write(dir, files, changes),
            do: Publish.upload(state.db.blog, dir, files, changes, password)
 
-    Update.published(state, changes, result)
+    Update.Results.published(state, changes, result)
   end
 
   defp perform(state, {:save_preferences, path, prefs}),
-    do: Update.preferences_saved(state, Preferences.save(prefs, path))
+    do: Update.Results.preferences_saved(state, Preferences.save(prefs, path))
 
   defp perform(state, {:fetch_calendar, id, url}) do
     # `self()` is read here, in the loop's process: inside the `fn`

@@ -64,7 +64,7 @@ defmodule Agendum.TUI.PlacesTest do
     # the quit waits for the save (R71); the shell saves the preferences
     # when a result changed them, before the quit that result asked for
     assert [{:save, @path, %{then: :quit} = opts}] = effects
-    state = Update.saved(state, @path, {:ok, "stamp"}, opts)
+    state = Update.Results.saved(state, @path, {:ok, "stamp"}, opts)
     assert state.effects == [:quit]
     assert Preferences.place(state.prefs, @path).item == elem(place, 2)
   end
@@ -100,7 +100,7 @@ defmodule Agendum.TUI.PlacesTest do
     state = press(%{state | prefs: prefs}, :down)
     first_key = state.cursor_key
 
-    state = Update.loaded(state, other, {:ok, state.db, "stamp"})
+    state = Update.Results.loaded(state, other, {:ok, state.db, "stamp"})
     assert state.path == other
     assert state.view_id == everything
     assert Preferences.place(state.prefs, @path).item == elem(first_key, 2)

@@ -32,7 +32,7 @@ defmodule Agendum.TUI.DiskGuardTest do
   # what the shell does after a save: hands the result to `Update.saved/4`,
   # then carries out the effects that asked for
   defp saved(state, {:save, path, opts}, result) do
-    state = Update.saved(state, path, result, opts)
+    state = Update.Results.saved(state, path, result, opts)
     {%{state | effects: []}, state.effects}
   end
 

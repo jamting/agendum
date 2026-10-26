@@ -305,6 +305,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Sharpen the saw
 
+- [x] (2026-10-26) `Update`'s shell answers to a module of their own, `Agendum.TUI.Update.Results` (497 lines; `Update` from 1,034 to 554), no change in behaviour (meeting 2026-10-26-4, § 11)
 - [x] (2026-10-26) The sort box's setting names written out (`@then`), its three Credo suppressions of `String.to_atom/1` gone (meeting 2026-10-26-4, § 12)
 - [x] (2026-10-26) The long fuzz run's output kept: `mix agendum.fuzz` writes each run's whole output, the seed first, to a dated file in `tmp/fuzz/` (the last 30 kept), and the nightly CI run keeps its output as an artifact when it fails (meeting 2026-10-26-4, § 8)
 - [x] (2026-10-26, v0.62.0) A check that every line `docs/HELP_WOOD.md` quotes is still in its help topic, word for word (meeting 2026-10-26-2, § 8)

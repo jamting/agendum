@@ -46,8 +46,11 @@ defmodule Agendum.TUI.RecoveryTest do
     setup %{tmp_dir: dir} do
       path = Path.join(dir, "notes.agendum")
       {recovered, _} = Core.add_item(Core.new_file(), "Kept from the crash", ~D[2026-10-26])
-      state = Update.loaded(start(Core.new_file()), path, {:ok, Core.new_file(), "stamp"})
-      asked = Update.recovery_found(state, path, {:ok, recovered, ~N[2026-10-26 15:40:00]})
+      state = Update.Results.loaded(start(Core.new_file()), path, {:ok, Core.new_file(), "stamp"})
+
+      asked =
+        Update.Results.recovery_found(state, path, {:ok, recovered, ~N[2026-10-26 15:40:00]})
+
       %{asked: asked, path: path, rpath: Path.join(dir, "notes@.agendum"), recovered: recovered}
     end
 
@@ -63,7 +66,7 @@ defmodule Agendum.TUI.RecoveryTest do
       assert opened.dirty
       assert opened.path == ctx.path
 
-      saved = Update.saved(%{opened | effects: []}, ctx.path, {:ok, "new"}, %{then: nil})
+      saved = Update.Results.saved(%{opened | effects: []}, ctx.path, {:ok, "new"}, %{then: nil})
       assert {:remove_recovery, ctx.rpath} in saved.effects
     end
 
@@ -74,7 +77,7 @@ defmodule Agendum.TUI.RecoveryTest do
       assert {:trash_file, ctx.rpath} in effects()
 
       # and a later save removes nothing
-      saved = Update.saved(%{kept | effects: []}, ctx.path, {:ok, "new"}, %{then: nil})
+      saved = Update.Results.saved(%{kept | effects: []}, ctx.path, {:ok, "new"}, %{then: nil})
       refute Enum.any?(saved.effects, &match?({:remove_recovery, _}, &1))
     end
 
@@ -89,7 +92,7 @@ defmodule Agendum.TUI.RecoveryTest do
 
   test "a recovery file that cannot be read says so", %{tmp_dir: dir} do
     path = Path.join(dir, "notes.agendum")
-    state = Update.recovery_found(start(Core.new_file()), path, {:error, :bad_format})
+    state = Update.Results.recovery_found(start(Core.new_file()), path, {:error, :bad_format})
     assert screen(state) =~ "notes@.agendum could not be read"
   end
 end

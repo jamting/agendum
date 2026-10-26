@@ -278,7 +278,7 @@ defmodule Agendum.ArchitectureTest do
     # or a calendar, opening a link, writing and uploading the blog
     {Agendum.TUI.App, :perform, 2},
     # the blog's folder, read for the Publish box, shown in its preview
-    {Agendum.TUI.Update, :publish_scanned, 4},
+    {Agendum.TUI.Update.Results, :publish_scanned, 4},
     # the SFTP password, asked for by the preview, sent back to it
     {Agendum.TUI.Update.Prompts, :prompt_action, 3}
   ]

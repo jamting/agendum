@@ -71,7 +71,7 @@ defmodule Agendum.TUI.StartupTest do
 
   test "a file that is not there starts a new file by that name" do
     state = started(true) |> press(:esc)
-    state = Update.opened(state, "/tmp/carrots.agendum", {:error, :enoent})
+    state = Update.Results.opened(state, "/tmp/carrots.agendum", {:error, :enoent})
     assert state.path == "/tmp/carrots.agendum"
     assert panel(state) =~ "New file carrots.agendum"
     assert state.prefs.last_file == "/tmp/carrots.agendum"
@@ -79,11 +79,11 @@ defmodule Agendum.TUI.StartupTest do
 
   test "a file that is there opens; opening and saving remember it" do
     db = Agendum.Sample.build(~D[2026-10-08])
-    state = Update.opened(started(false), "/tmp/garden.agendum", {:ok, db, "stamp"})
+    state = Update.Results.opened(started(false), "/tmp/garden.agendum", {:ok, db, "stamp"})
     assert state.db == db
     assert state.prefs.last_file == "/tmp/garden.agendum"
 
-    state = Update.saved(state, "/tmp/other.agendum", {:ok, "stamp"}, %{then: nil})
+    state = Update.Results.saved(state, "/tmp/other.agendum", {:ok, "stamp"}, %{then: nil})
     assert state.prefs.last_file == "/tmp/other.agendum"
   end
 end

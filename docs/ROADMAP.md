@@ -6,15 +6,14 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. `Update`'s shell answers to `Update.Results` (Sharpen the saw; meeting 2026-10-26-4, § 11)
-2. Fingerprints in the feed and calendar snapshots (Beyond Agenda; meeting 2026-10-26-5, § 5; ADR 0048)
-3. Ingested categories: the open details settled with the owner in one round (`plans/RSS_READER.md`), then built (Beyond Agenda; meeting 2026-10-26-5, § 6; ADR 0048)
-4. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
-5. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
-6. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
-7. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
-8. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-9. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+1. Fingerprints in the feed and calendar snapshots (Beyond Agenda; meeting 2026-10-26-5, § 5; ADR 0048)
+2. Ingested categories: the open details settled with the owner in one round (`plans/RSS_READER.md`), then built (Beyond Agenda; meeting 2026-10-26-5, § 6; ADR 0048)
+3. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
+4. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
+5. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
+6. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
+7. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+8. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
@@ -35,7 +34,6 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 Tools and checks that make every later change faster and safer. Each is small; the command layer they made safer is done (R66, ADR 0036, in `ROADMAP_DONE.md`). From the expert review of 2026-10-16 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
-- [ ] `Update`'s shell answers to a module of their own (meeting 2026-10-26-4, § 11; expert review 2026-10-26, § 18.7): the answers from the shell (file loaded, saved, imported, fetched; `lib/agendum/tui/update.ex`, about lines 479–934) to `Agendum.TUI.Update.Results`, no change in behaviour; before the public repository
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key. Measured 2026-10-16, a cursor move: 300 items 6 ms in `Update` + 11 ms in `Render`; 3,000 items 61 + 45 ms; 10,000 items 205 + 231 ms. First build it once per key and share it; then keep it in the session's state between keys as a value with a key that says when it is stale (ADR 0035): the database, the view, the date and time, the screen width, collapsed families, the search. Needs an ADR. **Wait until the debug log shows `slow answer` lines (over 100 ms) in real use** (owner's decision, 2026-10-16); ingested items (`plans/ITEM_LEVELS.md`) will likely be what brings them. Update 2026-10-25 (v0.31.2): the first real-use slowness came from many sections, not many items (the owner's News view, 243 sections: ~135 ms a key); fixed without a cache (`ROADMAP_DONE.md`, Sharpen the saw), and wrapping and drawing now touch only the rows down to the highlight and on screen. Left: the view is still made about three times per key, so "build it once per key" is the next step if it is slow again. The command layer, which reshaped the state it would live in, is done; the TUI state's split into file and session (Towards many users) reshapes it again
 
 ### The note editor

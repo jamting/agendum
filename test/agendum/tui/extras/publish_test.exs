@@ -69,7 +69,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
       state = state |> open() |> press(:enter)
       {:publish_scan, folder, files} = scan_effect()
       empty = %{existing: %{}, published: []}
-      %{state: Update.publish_scanned(state, folder, files, {:ok, empty}), files: files}
+      %{state: Update.Results.publish_scanned(state, folder, files, {:ok, empty}), files: files}
     end
 
     test "shows what will be added before anything is written", %{state: state} do
@@ -86,7 +86,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
       assert {:publish, "site", _files, changes, nil} =
                Enum.find(effects(), &(elem(&1, 0) == :publish))
 
-      state = Update.published(state, changes, :ok)
+      state = Update.Results.published(state, changes, :ok)
       assert State.mode(state) == nil
       assert screen(state) =~ "Published: 6 added, 0 changed, 0 removed"
     end
@@ -100,7 +100,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
 
     test "an SFTP server that wants a password asks, in stars, and tries again", %{state: state} do
       changes = State.mode(state).changes
-      state = Update.published(state, changes, {:error, :password})
+      state = Update.Results.published(state, changes, {:error, :password})
       assert screen(state) =~ "(not kept)"
 
       Process.delete(:effects_seen)
@@ -114,7 +114,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
 
     test "an error is said, and the preview closes", %{state: state} do
       changes = State.mode(state).changes
-      state = Update.published(state, changes, {:error, "rsync is not installed"})
+      state = Update.Results.published(state, changes, {:error, "rsync is not installed"})
       assert screen(state) =~ "Not published: rsync is not installed"
       assert State.mode(state) == nil
     end

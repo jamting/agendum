@@ -87,7 +87,9 @@ defmodule Agendum.TUI.NoteMenuTest do
       read = press(asked, ["/tmp/in.txt", :enter])
       assert {:read_note_text, "/tmp/in.txt"} in effects()
 
-      done = Agendum.TUI.Update.note_text_read(read, "/tmp/in.txt", {:ok, "one\r\ntwo\r\n"})
+      done =
+        Agendum.TUI.Update.Results.note_text_read(read, "/tmp/in.txt", {:ok, "one\r\ntwo\r\n"})
+
       assert Enum.map(done.modes, & &1.type) == [:note]
       edit = State.mode(done).edit
       # CR LF read as LF; the cursor after what came in
@@ -98,12 +100,12 @@ defmodule Agendum.TUI.NoteMenuTest do
 
     test "a file that cannot be read says why, and the note is unchanged", %{note: note} do
       read = press(note, [{:f, 10}, "i", "/tmp/nope.txt", :enter])
-      done = Agendum.TUI.Update.note_text_read(read, "/tmp/nope.txt", {:error, :enoent})
+      done = Agendum.TUI.Update.Results.note_text_read(read, "/tmp/nope.txt", {:error, :enoent})
       assert {:error, message} = done.message
       assert message == Agendum.TUI.Messages.text(:file_not_found)
       assert State.mode(done).edit == State.mode(note).edit
 
-      binary = Agendum.TUI.Update.note_text_read(read, "/tmp/x.bin", {:ok, <<255, 0, 1>>})
+      binary = Agendum.TUI.Update.Results.note_text_read(read, "/tmp/x.bin", {:ok, <<255, 0, 1>>})
       assert {:error, Agendum.TUI.Messages.text(:cannot_import)} == binary.message
     end
 

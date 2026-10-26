@@ -212,7 +212,7 @@ defmodule Agendum.CLI do
         Core.new_file()
         |> State.new(session(options, prefs, today))
         |> Layout.settle()
-        |> Update.imported(path, {:ok, bytes})
+        |> Update.Results.imported(path, {:ok, bytes})
         |> Update.start(false)
         |> run_session(log)
 
@@ -222,7 +222,7 @@ defmodule Agendum.CLI do
         Core.new_file()
         |> State.new(session(options, prefs, today))
         |> Layout.settle()
-        |> Update.loaded(path, {:error, :password_required})
+        |> Update.Results.loaded(path, {:error, :password_required})
         |> Update.start(false)
         |> run_session(log)
 

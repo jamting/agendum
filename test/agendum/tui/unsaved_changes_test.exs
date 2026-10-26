@@ -43,7 +43,8 @@ defmodule Agendum.TUI.UnsavedChangesTest do
   end
 
   # the shell's report of a good save (R71: what follows waits for it)
-  defp saved(state, {:save, path, opts}), do: Update.saved(state, path, {:ok, "stamp"}, opts)
+  defp saved(state, {:save, path, opts}),
+    do: Update.Results.saved(state, path, {:ok, "stamp"}, opts)
 
   test "Y saves, then goes on", %{changed: changed} do
     for {name, open, prompt} <- @commands do
