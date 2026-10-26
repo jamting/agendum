@@ -47,17 +47,18 @@ defmodule Agendum.Core.Extras.ZettelLinks do
     # pairs, the whole match first, then each group (unmatched: {-1, 0})
     @pattern
     |> Regex.scan(text, return: :index)
-    |> Enum.flat_map(fn [{start, len} | _groups] ->
+    |> at_characters(text)
+    |> Enum.flat_map(fn {start, len, at} ->
       whole = binary_part(text, start, len)
       bracketed = String.starts_with?(whole, "[[")
       word = if bracketed, do: binary_part(whole, 2, len - 4), else: whole
 
       case {ZettelId.decode(word), bracketed} do
         {{:ok, n}, true} ->
-          [link(text, start, len, word, Map.get(used, n), true)]
+          [link(text, start, len, at, word, Map.get(used, n), true)]
 
         {{:ok, n}, false} when is_map_key(used, n) ->
-          [link(text, start, len, word, used[n], false)]
+          [link(text, start, len, at, word, used[n], false)]
 
         _ ->
           []
@@ -65,10 +66,22 @@ defmodule Agendum.Core.Extras.ZettelLinks do
     end)
   end
 
-  # positions in characters, as the screen counts them
-  defp link(text, start, len, word, target, bracketed) do
+  # Each match's position in characters, as the screen counts them,
+  # counted on from the match before (the matches are in order): counting
+  # from the text's start each time made a long text of many eight-letter
+  # words take quadratic time (the parser property tests, 2026-10-26).
+  defp at_characters(matches, text) do
+    matches
+    |> Enum.map_reduce({0, 0}, fn [{start, len} | _groups], {byte_at, char_at} ->
+      at = char_at + String.length(binary_part(text, byte_at, start - byte_at))
+      {{start, len, at}, {start, at}}
+    end)
+    |> elem(0)
+  end
+
+  defp link(text, start, len, at, word, target, bracketed) do
     %{
-      at: String.length(binary_part(text, 0, start)),
+      at: at,
       length: String.length(binary_part(text, start, len)),
       word: word,
       target: target,
