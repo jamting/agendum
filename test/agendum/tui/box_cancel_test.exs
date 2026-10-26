@@ -150,4 +150,23 @@ defmodule Agendum.TUI.BoxCancelTest do
     assert length(state.history.undo) == length(changed.history.undo) + 1
     assert Agendum.TUI.History.undo(state).db == changed.db
   end
+
+  # Found by the long fuzz run (seed 5914, 2026-10-26): the macro whose
+  # properties box is open is removed from a second Macros box opened on
+  # top. Its box closes, and the rename made in it and the removal are one
+  # step, replacing the rename's: one undo gives the file back as it was
+  # when the box opened.
+  test "a box closed by removing its macro is one undo step with what it changed" do
+    db = Agendum.Sample.build(~D[2026-10-08])
+    {:ok, db, _} = Agendum.Core.add_macro(db, "Water")
+    state = start(db, width: 117, height: 18)
+
+    renamed = press(state, [{:alt_f, 3}, {:f, 6}, {:f, 2}, "h", :enter])
+    assert length(renamed.history.undo) == 1
+
+    removed = press(renamed, [{:alt_f, 3}, {:f, 4}, "y"])
+    assert removed.db.macros == %{}
+    assert length(removed.history.undo) == 1
+    assert Agendum.TUI.History.undo(removed).db == db
+  end
 end

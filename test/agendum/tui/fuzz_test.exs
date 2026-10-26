@@ -175,10 +175,27 @@ defmodule Agendum.TUI.Fuzz do
     new_file = state.saved.db != before.saved.db
     full = length(state.history.undo) >= 100
 
-    if state.db != before.db and steps >= 0 and not new_file and not full do
+    if state.db != before.db and steps >= 0 and not new_file and not full and
+         not settled?(before, state) do
       assert steps >= 1, "#{inspect(key)} changed the file but recorded no undo step"
       undone = Enum.reduce(1..steps, state, fn _, s -> History.undo(s) end)
       assert undone.db == before.db, "undoing #{inspect(key)} did not give the file back"
+    end
+  end
+
+  # The key closed the outermost settings box, which folded the steps made
+  # in it into one (ADR 0030, `BoxCancel.settle/2`), perhaps in place of
+  # the one it had (found by the long fuzz run, seed 5914, 2026-10-26):
+  # the steps of when it opened and one more, which gives the file back as
+  # it was then.
+  defp settled?(before, state) do
+    case before.modes |> Enum.filter(&Map.get(&1, :opened)) |> List.last() do
+      %{opened: opened} ->
+        length(state.history.undo) == length(opened.undo) + 1 and
+          History.undo(state).db == opened.db
+
+      nil ->
+        false
     end
   end
 

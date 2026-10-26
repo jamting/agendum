@@ -312,6 +312,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Sharpen the saw
 
+- [x] (2026-10-26) The fuzz walk's undo check knows a settings box closed by a key (ADR 0030): its steps are folded into one, perhaps in place of the one it had, so the stack need not grow; the check now asks that one undo gives the file back as the box opened. Found by the long fuzz run (seed 5914: a macro renamed in Macro Properties, then removed from a second Macros box on top), with a test in `BoxCancelTest`; probably the part-1 failure whose seed was lost while v0.68.1 was built
 - [x] (2026-10-26, v0.68.4) The code review in slices, slice C (the extras): ten findings fixed, each with its test (`test/agendum/review_slice_c_test.exs`); publishing now runs in the background. The three free ultra runs used: about 20,000 of 55,000 lines reviewed, the rest left for local reviews per folder (`docs/CODE_REVIEW_SLICES.md`)
 - [x] (2026-10-26, v0.68.3) The code review in slices, slice B (the core's rules): ten findings fixed, each with its test (`test/agendum/review_slice_b_test.exs`); the two that change when rules fire checked against Agenda's manual first
 - [x] (2026-10-26, v0.68.2) The code review in slices, slice A (the file and the shell, `docs/CODE_REVIEW_SLICES.md`): ten findings fixed, each with its test (`test/agendum/review_slice_a_test.exs`)
