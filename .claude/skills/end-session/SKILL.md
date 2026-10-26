@@ -27,7 +27,7 @@ Check what `CLAUDE.md` asks after a change and whether it happened: `mix check`,
 
 Write things down where the next session will find them. Prefer the repo for anything about the project, and memory for how the owner works:
 
-- **docs/ROADMAP.md** and **docs/plans/AGENDA_PARITY.md** (§ The steps, the only list of the parity work): tick what was finished and move it to `docs/ROADMAP_DONE.md`, under its milestone; add bugs or ideas found on the way under Open, or a parity gap under The steps (with enough detail to act on later); a better tool, check or way of working goes under "Sharpen the saw". Keep the **In order** list at the top of Open true.
+- **docs/ROADMAP.md** (since the clone was declared done, 2026-10-26, parity leftovers too; **docs/plans/AGENDA_PARITY.md** keeps the two lists of differences, tagged by ADR 0043's test): tick what was finished and move it to `docs/ROADMAP_DONE.md`, under its milestone; add bugs or ideas found on the way under Open, or a parity gap under The steps (with enough detail to act on later); a better tool, check or way of working goes under "Sharpen the saw". Keep the **In order** list at the top of Open true.
 - **Plan documents** (e.g. `docs/plans/NOTE_EDITOR.md`): update the **Status:** line at the top, and a "Progress" section for work that is paused: what is done, what is left, how to continue.
 - **ADRs** (`docs/adr/`): a lasting decision made this session that has none yet.
 - **docs/HOW_I_WORK.md**: a new skill, ritual, tool or standing way of working from this session gets its line there, so it is not forgotten; a suggestion the owner adopted moves from "How I could work better" into the sections above it.

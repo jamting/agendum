@@ -93,7 +93,7 @@ Finished or dropped plans, kept as records of how something was done or why it w
 
 | When you…                              | Update                                                                                         |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| add or change a behaviour              | its rule in `SPEC.md` (and the rule index); the item in `ROADMAP.md` (or, for parity work, in `plans/AGENDA_PARITY.md` § The steps), ticked and moved to `ROADMAP_DONE.md`; the roadmap's In order list kept true |
+| add or change a behaviour              | its rule in `SPEC.md` (and the rule index); the item in `ROADMAP.md` (the clone's own leftovers too, since it was declared done on 2026-10-26; a new difference from Agenda goes on `plans/AGENDA_PARITY.md`'s two lists, tagged by ADR 0043's test), ticked and moved to `ROADMAP_DONE.md`; the roadmap's In order list kept true |
 | add or change a key                    | `KEYBOARD.md`; the key's keymap and command (the F1 help is made from them)                     |
 | add a screen or box                    | `SCREENS.md` (a test checks); `ARCHITECTURE.md` if it is a new module                          |
 | add a stored field                     | `DATA_MODEL.md` (and a row in its format versions), `DATA_ACCESS.md` if queried, `JSON_FORMAT.md` and `Agendum.Core.JSONFile`; set it in `Agendum.Starters.Golden`, and with the new format version run `mix agendum.golden` and commit its two files |
