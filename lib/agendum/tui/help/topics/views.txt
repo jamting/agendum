@@ -1,0 +1,27 @@
+Views
+
+PURPOSE       A view is one way of looking at your file: a page of
+              sections, each showing the items of one category. An
+              item can turn up in many views, the way Pooh turns up
+              wherever there is honey.
+
+IN A VIEW     Section head    A category, its items listed below
+              Item            Anything you typed: a task, an idea,
+                              a phone number
+              Column          More categories beside each item:
+                              its date, who it is for, how urgent
+
+EXAMPLES      * A view called Calls: the calls to make, and in a
+                column whom to call.
+              * A view called This Week: a section for each day,
+                with what falls on it.
+              * A view called Friends: a section each for Piglet,
+                Rabbit and Eeyore, with what you promised them.
+
+KEYS          F8 (VW MGR)     Choose another view, or add one
+              F6 (PROPS)      Change the highlighted section or
+                              item
+              F10 (MENU)      The **View Menu**: the view's commands
+
+SEE ALSO      **View Manager**  **Category Manager**  **Enter Items**
+              **Keys**

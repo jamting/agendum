@@ -1,0 +1,25 @@
+Undiscard an Item
+
+PURPOSE       Changed your mind about something you discarded, as
+              Piglet often does? Bring it back, as long as it is
+              still in the trash.
+
+STEPS         1. Highlight the item it should follow, or the head
+                 of its section.
+              2. F10 Item Undisc
+              With more than one item in the trash, choose All
+              items in trash or Last item in trash in the
+              **Undiscard Box**, then press ENTER.
+
+RESULT        The items come back below the highlight, in that
+              section's category alone. Their other categories,
+              dates and alarms went when they were discarded:
+              assign them again where they belong. Conditions still
+              run, so some come back by themselves.
+
+NOTE          The trash empties at the end of the day, unless File
+              Properties says otherwise (Empty trash). After that
+              the items are gone for good. While Agendum is open,
+              CTRL-Z undoes a discard too.
+
+SEE ALSO      **Item Menu**  **Utilities Menu**  **File Properties Box**

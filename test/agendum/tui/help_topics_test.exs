@@ -29,19 +29,22 @@ defmodule Agendum.TUI.HelpTopicsTest do
   describe "a topic and its links" do
     test "F1 shows the place's topic, its first link highlighted", %{state: state} do
       state = press(state, {:f, 1})
+      # the written Views topic takes the place of the view's F1 text
       assert title(state) == "Views"
-      assert highlighted(state) == ["Keys"]
+      assert highlighted(state) == ["View Menu"]
+      # F9 leaves the help, F9 opens the category manager: its generated topic
+      assert title(press(state, [{:f, 9}, {:f, 9}, {:f, 1}])) == "Category Manager"
     end
 
     test "↓ and ↑ go through the links; ENTER reads one; F8 goes back", %{state: state} do
       state = press(state, [{:f, 1}, :down])
-      assert highlighted(state) == ["Commands you can run here"]
-      assert highlighted(press(state, :up)) == ["Keys"]
+      assert highlighted(state) == ["View Manager"]
+      assert highlighted(press(state, :up)) == ["View Menu"]
 
-      keys = press(state, [:up, :enter])
-      assert title(keys) == "Keys"
-      assert title(press(keys, {:f, 8})) == "Views"
-      assert title(press(keys, :backspace)) == "Views"
+      menu = press(state, [:up, :enter])
+      assert title(menu) == "View Menu"
+      assert title(press(menu, {:f, 8})) == "Views"
+      assert title(press(menu, :backspace)) == "Views"
     end
 
     test "a letter highlights the next link it begins; one none begins does nothing", %{
@@ -159,9 +162,22 @@ defmodule Agendum.TUI.HelpTopicsTest do
           do: assert(Topics.get(state, target) || Topics.special(target), "#{title} → #{target}")
     end
 
+    # 68 columns and the help's margin fit an 80-column screen
+    test "every written line fits the help on an 80-column screen", %{state: state} do
+      for title <- Topics.hand_written(),
+          line <- Topic.lines(Topics.get(state, title), 76),
+          text = Enum.map_join(line, &Topic.label/1),
+          do: assert(String.length(text) <= 68, "#{title}: #{text}")
+    end
+
     test "every key a written topic names is a key of the help or a keymap", %{state: state} do
       bound =
-        for(place <- Keymap.places(), {key, _} <- Keymap.bindings(place), do: Keymap.name(key)) ++
+        for(
+          place <- Keymap.places(),
+          {_key, id} <- Keymap.bindings(place),
+          key <- Keymap.keys_for(place, id),
+          do: Keymap.name(key)
+        ) ++
           Enum.map(HelpScreen.keys(), &Keymap.name/1)
 
       for title <- Topics.hand_written(),

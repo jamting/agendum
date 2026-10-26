@@ -1,0 +1,22 @@
+Enter Items
+
+PURPOSE       An item is anything you want to keep: "Ask Owl how to
+              spell Tuesday", "Three pots of honey by Friday". Type
+              it as it comes to you; Agendum files it.
+
+STEPS         1. Highlight the section the item belongs in.
+              2. Start typing (or press INS or CTRL-N first).
+              3. Press ENTER to keep it, or ESC to let it go.
+
+WHAT          The item goes in the section's category, and in every
+HAPPENS       category whose name its text holds: "Take Rabbit his
+              umbrella" goes to Rabbit too, if you have a Rabbit.
+              The first date in the text ("by Friday", "next
+              Tuesday at 3pm") becomes its When date.
+
+TIPS          * F5 while typing keeps the text and opens the item's
+                note, for what does not fit on one line.
+              * F2 edits the highlighted item later; F4 marks it
+                done.
+
+SEE ALSO      **Views**  **Category Manager**  **Keys**

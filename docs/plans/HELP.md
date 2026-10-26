@@ -29,7 +29,7 @@ Habit changes (settled): any other key no longer leaves help; `c`, `d` and `a` a
 
 1. [x] (2026-10-26, v0.56.0; the owner tries it before the tag) **The frame**: the help screen with Agenda's keys and key bar, links, Index, Find, Review and F6 Keys; the generated topics; today's F1 texts as the place topics; the checks (every box, menu and place has a topic; every link leads to one; every key a topic names is bound there). The owner tries it, then it is tagged.
 1b. [x] (2026-10-26, v0.56.0) **Find as Agenda's** (the owner's choice, 2026-10-26): F5 opens Agenda's **Find Topic** box ("Topic to find:"), and ENTER its **Select Help Screen** box, a list of the matching topics: the arrows and ENTER read one, ESC goes back to the topic being read; its help line "Highlight Help screen to display. Then use ALT-N or ALT-P to display next/previous help screen from list." (checked in Agenda 2.0, 2026-10-26).
-2. [ ] **Three sample topics** for the owner to approve the tone before the rest are written.
+2. [ ] **Three sample topics** for the owner to approve the tone before the rest are written: Views, Undiscard an Item, Enter Items (written 2026-10-26, waiting for the owner).
 3. [ ] **The rest, in batches by subject**, each tagged: items and categories; views, sections and columns; dates and alarms; conditions and actions; files and the trash; notes; macros. **Agenda's kind of index** comes with them (the owner's choice, 2026-10-26): each written topic lists its index entries on an `INDEX` line (`INDEX  Add > Columns; Columns > Add`), generated topics get theirs from what they are (a box under its name and under Boxes), and the index pages show headings with sub-entries and "See also", as Agenda's ("Actions ▸ Attach to a category, Clear, Copy …"); until then F3 lists titles.
 4. [ ] **Done** when the checklist below has nothing open: the help is done, and with it the clone (`AGENDA_PARITY.md`, Declared done).
 
@@ -96,10 +96,10 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Back Up a File | open |
 | Abandon a File | open |
 | Copy a File | open |
-| Enter Items | open |
+| Enter Items | ours: `enter-items.txt` (tone sample) |
 | Edit Items and Categories | open |
 | Discard an Item | open |
-| Undiscard an Item | open |
+| Undiscard an Item | ours: `undiscard-an-item.txt` (tone sample) |
 | Break an Item's Assignment | open |
 | Mark or Unmark Items | open |
 | Move Sections, Columns, or Items | open |
@@ -130,7 +130,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Files | open |
 | Items | open |
 | Sections | open |
-| Views | open |
+| Views | ours: `views.txt` (tone sample) |
 | View Manager | open |
 | Categories | open |
 | Date Categories | open |

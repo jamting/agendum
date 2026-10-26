@@ -7,18 +7,19 @@ STEPS         1. Press F1 for help on what you are doing now.
               2. Use the keys below to look further while in help.
               3. Press F9 or ESC to leave help and go back to work.
 
-LOOK          PRESS               TO DO THIS
-FOR INFO      ------------------  ---------------------------------------
-              Arrows, HOME, END   Highlight a topic shown in bold, then
-              then ENTER          ENTER to read it (or type its first
-                                  letter to highlight it)
-              PGUP, PGDN          Scroll a long topic
-              F3 (INDEX)          Choose from an **index|Help Index** of every topic
-              F5 (FIND)           Type a word to find the topics with it;
-                                  ALT-N and ALT-P then step through them
-              F6 (KEYS)           The **keys** and the commands where you are
-              F8 or BACKSPACE     Go back through the topics you have read
-              F9 or ESC           Leave help
+LOOK          PRESS              TO DO THIS
+FOR INFO      -----------------  ----------------------------------
+              Arrows, HOME, END  Highlight a topic shown in bold;
+              then ENTER         ENTER reads it (or type its first
+                                 letter to highlight it)
+              PGUP, PGDN         Scroll a long topic
+              F3 (INDEX)         Choose from an **index|Help Index** of topics
+              F5 (FIND)          Type a word to find the topics
+                                 with it; ALT-N and ALT-P then
+                                 step through them
+              F6 (KEYS)          The **keys** and the commands here
+              F8 or BACKSPACE    Back through the topics you read
+              F9 or ESC          Leave help
 
 SEE ALSO      **Help Index**  **Keys**  **Commands you can run here**
               **Describe a key**

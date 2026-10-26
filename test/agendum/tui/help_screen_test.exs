@@ -28,8 +28,8 @@ defmodule Agendum.TUI.HelpScreenTest do
     test "in a view: what a view is, and links to the other pages", %{state: state} do
       text = screen(press(state, {:f, 1}))
       assert text =~ "│ Views"
-      assert text =~ "A view shows your items in sections"
-      assert text =~ ~r/SEE ALSO +Keys +Commands you can run here/
+      assert text =~ "A view is one way of looking at your file"
+      assert text =~ ~r/SEE ALSO +View Manager +Category Manager/
     end
 
     test "in a note, the managers and the menu: their own texts", %{state: state} do
