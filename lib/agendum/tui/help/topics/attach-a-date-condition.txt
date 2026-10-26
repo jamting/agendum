@@ -1,0 +1,17 @@
+Attach a Date Condition
+
+PURPOSE       Make a category take the items whose date is in a
+              range: This Week takes everything due this week.
+
+STEPS         1. In a category's Assignment conditions, choose a
+                 date category (When, say) with SPACE.
+              2. Show items Assigned (or Not assigned: without a
+                 date), Start and End date, Inside or Outside.
+              3. ENTER.
+
+NOTE          Words like "beginning of this week" are read again
+              every day, so items come and go as the days pass.
+
+SEE ALSO      **Attach an Assignment Condition to a Category**
+              **Range Filter Box**
+INDEX         Conditions > Date; Dates > Conditions

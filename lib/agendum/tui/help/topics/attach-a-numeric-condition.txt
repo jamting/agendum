@@ -1,0 +1,14 @@
+Attach a Numeric Condition
+
+PURPOSE       Make a category take the items whose number is in a
+              range: Big Spend takes every cost over 100.
+
+STEPS         1. In a category's Assignment conditions, choose a
+                 numeric category with SPACE.
+              2. Show items Assigned (or Not assigned), Minimum and
+                 Maximum, Inside or Outside.
+              3. ENTER.
+
+SEE ALSO      **Attach an Assignment Condition to a Category**
+              **Numeric Columns**
+INDEX         Conditions > Numeric; Numeric > Conditions

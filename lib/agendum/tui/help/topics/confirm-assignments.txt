@@ -1,0 +1,20 @@
+Confirm Assignments
+
+PURPOSE       Let Agendum suggest the categories an item's text
+              matches, and choose yourself which it gets.
+
+STEPS         1. File Properties, Auto-assign settings, Confirm
+                 assignments: Always, or Sometimes (only partial
+                 matches are asked about).
+              2. A ? shows at the top while suggestions wait.
+              3. F10 Utilities Questions: for each item, SPACE picks
+                 a category, TAB all of them, ENTER assigns them and
+                 goes on; ESC stops.
+
+NOTE          Never (the default) assigns every match at once. A
+              category can set its own Confirm assignments in its
+              Advanced settings.
+
+SEE ALSO      **Questions Box**  **Automatic Assignments**
+              **Auto-Assign Settings Box**
+INDEX         Assignment > Confirm; Questions; Suggestions

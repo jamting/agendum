@@ -1,0 +1,19 @@
+Conditions
+
+PURPOSE       A condition lets a category take items by itself:
+              Urgent takes every item in both Taxes and Accountant;
+              Me takes every item in no person's category.
+
+HOW THEY      * A condition names another category: items in it, or
+WORK            not in it, or with a date or number in a range.
+              * Every condition must hold, except that children of
+                an exclusive family are alternatives (High or Low).
+              * Items are checked when they are typed, edited or
+                assigned; an item that stops meeting the conditions
+                leaves the category again.
+              * New conditions reach items already in the file only
+                when executed: F10 Utilities Execute, or ALT-X.
+
+SEE ALSO      **Attach an Assignment Condition to a Category**
+              **Actions**  **Automatic Assignments**
+INDEX         Conditions > What they are; Assignment > Conditions

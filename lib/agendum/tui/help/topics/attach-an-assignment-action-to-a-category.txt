@@ -1,0 +1,20 @@
+Attach an Assignment Action to a Category
+
+PURPOSE       Make something happen to every item that joins a
+              category.
+
+STEPS         1. F6 on the category in the **Category Manager** (or
+                 F10 Category Properties on a section head).
+              2. Assignment actions: SPACE opens the category list.
+              3. SPACE on a category goes round: assign it, remove
+                 it, then off. A date or numeric category opens a
+                 box: give items a date ("tomorrow") or a number, or
+                 take it away.
+              4. Special actions: Mark items done, or Discard items.
+              5. ENTER.
+
+NOTE          Category Properties shows the actions: "Sales,
+              -Receivables, When=tomorrow".
+
+SEE ALSO      **Actions**  **Category Properties Box**
+INDEX         Actions > Attach; Categories > Actions; Special actions

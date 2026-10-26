@@ -1,0 +1,15 @@
+Change the Value of a Condition or Action
+
+PURPOSE       Change the range of a date or numeric condition, or
+              the date or number an action gives.
+
+STEPS         1. F6 on the category in the **Category Manager** (or
+                 F10 Category Properties on a section head).
+              2. Assignment conditions (or actions): SPACE.
+              3. Highlight the date or numeric category and press
+                 SPACE: its box opens with the values it has.
+              4. Change them, ENTER, and ENTER again.
+
+SEE ALSO      **Attach a Date Condition**
+              **Attach an Assignment Action to a Category**
+INDEX         Conditions > Change; Actions > Change

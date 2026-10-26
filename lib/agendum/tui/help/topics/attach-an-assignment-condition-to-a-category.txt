@@ -1,0 +1,22 @@
+Attach an Assignment Condition to a Category
+
+PURPOSE       Make a category take the items that are in (or not in)
+              other categories.
+
+STEPS         1. F6 on the category in the **Category Manager** (or
+                 F10 Category Properties on a section head).
+              2. Assignment conditions: SPACE opens the category
+                 list.
+              3. SPACE on a category goes round: + items in it, -
+                 items not in it, then off. A date or numeric
+                 category opens its range box.
+              4. ENTER or ESC closes the list; ENTER the box.
+              5. ALT-E (or F10 Utilities Execute) to apply it to the
+                 items already in the file.
+
+NOTE          Category Properties shows the conditions: "if Taxes,
+              not People".
+
+SEE ALSO      **Conditions**  **Attach a Date Condition**
+              **Category Properties Box**
+INDEX         Conditions > Attach; Categories > Conditions

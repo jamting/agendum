@@ -1,0 +1,15 @@
+Clear a Filter, Condition, or Action
+
+PURPOSE       Take a filter, a condition or an action away.
+
+STEPS         * In the list (a filter, conditions or actions), SPACE
+                on the category until it shows nothing.
+              * In a date or numeric filter's or condition's box,
+                DEL removes it.
+
+NOTE          A condition taken away lets go of the items it had
+              assigned when they are next checked; execute (ALT-E)
+              to do it now.
+
+SEE ALSO      **Change a Filter**  **Conditions**  **Actions**
+INDEX         Filters > Clear; Conditions > Clear; Actions > Clear

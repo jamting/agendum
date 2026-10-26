@@ -1,0 +1,18 @@
+Explicit and Conditional Assignments
+
+PURPOSE       An item is in a category either because you put it
+              there, or because something matched.
+
+KINDS         Explicit      You assigned it (typed, picked, moved),
+                            or an action did. It stays until you
+                            take it away.
+              Conditional   Its text matched, or a condition held.
+                            It goes when that is no longer so:
+                            "Meet with Pooh" in Meetings, edited to
+                            "Telephone Pooh", leaves.
+
+NOTE          The **Item Properties Box** and the assignment profile
+              mark conditional assignments with a c.
+
+SEE ALSO      **Automatic Assignments**  **Assign an Item to a Category**
+INDEX         Assignment > Explicit; Assignment > Conditional

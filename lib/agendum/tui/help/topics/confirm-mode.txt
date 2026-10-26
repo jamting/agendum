@@ -1,0 +1,15 @@
+Confirm Mode
+
+PURPOSE       Whether Agendum asks "are you sure?" before doing
+              something that is hard to take back.
+
+STEPS         F10 Utilities Customize, Confirm mode: Yes (the
+              default) or No.
+
+NOTE          With No, discarding items, categories and views,
+              deleting macros, sorting a family and the like happen
+              at once. CTRL-Z still undoes them. Questions whose
+              answers do different things are always asked.
+
+SEE ALSO      **Customize Box**
+INDEX         Confirm mode; Questions > Turn off

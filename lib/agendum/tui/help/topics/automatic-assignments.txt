@@ -1,0 +1,25 @@
+Automatic Assignments
+
+PURPOSE       Agendum files items for you, in three ways.
+
+WAYS          Text          A category whose name (or short name,
+                            or Also match words) is in an item's
+                            text takes it
+              Conditions    A category takes items that meet its
+                            conditions
+              Actions       Joining one category puts an item in
+                            others too
+
+EXECUTE       New conditions and actions reach items already in the
+              file only when executed: F10 Utilities Execute (a
+              family, some items, old assignments too) or ALT-X for
+              everything; ALT-E for the highlighted category's
+              family (in a view, the section's).
+
+NOTE          File Properties, Auto-assign settings, turn text
+              matching on or off and set how closely words must
+              match.
+
+SEE ALSO      **Conditions**  **Actions**  **Confirm Assignments**
+              **Explicit and Conditional Assignments**
+INDEX         Assignment > Automatic; Text matching; Execute; Automatic assignments

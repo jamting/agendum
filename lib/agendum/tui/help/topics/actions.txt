@@ -1,0 +1,17 @@
+Actions
+
+PURPOSE       An action happens when an item joins a category: the
+              item is also put in another category, taken out of
+              one, given a date or a number, marked done or
+              discarded.
+
+HOW THEY      * They run once, when the item joins: by your hand, a
+WORK            condition or another action.
+              * A parent's actions run for items that join its
+                children as well.
+              * What an action assigns stays, even when the item
+                leaves the category again.
+
+SEE ALSO      **Attach an Assignment Action to a Category**
+              **Conditions**  **Automatic Assignments**
+INDEX         Actions > What they are; Assignment > Actions
