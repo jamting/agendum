@@ -31,11 +31,19 @@ defmodule Agendum.Core.Extras.ICal do
   end
 
   alias Agendum.Core.Extras.ICal.TimeZone
+  alias Agendum.Core.Extras.Utf8
 
   @doc "The calendar's events, in file order; `{:error, :not_ical}` for anything else."
   @spec parse(String.t()) :: {:ok, [Event.t()]} | {:error, :not_ical}
   def parse(text) do
-    lines = text |> String.replace("\r\n", "\n") |> String.replace("\r", "\n") |> unfold()
+    # a calendar in an 8-bit encoding becomes valid text first (`Utf8`):
+    # its bytes would otherwise reach the items and break text matching
+    lines =
+      text
+      |> Utf8.repair()
+      |> String.replace("\r\n", "\n")
+      |> String.replace("\r", "\n")
+      |> unfold()
 
     if Enum.any?(lines, &(String.upcase(&1) == "BEGIN:VCALENDAR")) do
       lines = Enum.map(lines, &content_line/1)
@@ -92,8 +100,9 @@ defmodule Agendum.Core.Extras.ICal do
   defp split_unquoted(<<c::utf8, rest::binary>>, char, quoted, acc),
     do: split_unquoted(rest, char, quoted, acc <> <<c::utf8>>)
 
-  # a byte that is no UTF-8 (a Latin-1 export's "ü") is kept as it is, so
-  # one odd line does not make the whole calendar unreadable
+  # a byte that is no UTF-8 is kept as it is, so one odd line does not make
+  # the whole calendar unreadable (`parse/1` has made the text valid UTF-8
+  # already, `Utf8.repair/1`; this keeps the function whole)
   defp split_unquoted(<<c, rest::binary>>, char, quoted, acc),
     do: split_unquoted(rest, char, quoted, acc <> <<c>>)
 
