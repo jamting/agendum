@@ -219,8 +219,9 @@ defmodule Agendum.Core.JSONFile do
           obj(
             uid: uid,
             item: s.item,
-            summary: s.summary,
-            description: s.description,
+            # fingerprints, not the text (ADR 0048)
+            summary_print: s.summary_print,
+            description_print: s.description_print,
             date: date(s.date),
             time: time(s.time),
             recurrence: s.recurrence && struct_obj(s.recurrence),
@@ -250,14 +251,14 @@ defmodule Agendum.Core.JSONFile do
           {id, %{item: nil} = s} ->
             obj(id: id, item: nil, published: date(s.published))
 
+          # a live one: its fingerprints, not its text (ADR 0048)
           {id, s} ->
             obj(
               id: id,
               item: s.item,
-              title: s.title,
-              note: s.note,
-              link: s.link,
-              published: date(s.published)
+              published: date(s.published),
+              title_print: s.title_print,
+              note_print: s.note_print
             )
         end)
     )
@@ -806,14 +807,22 @@ defmodule Agendum.Core.JSONFile do
     }
   end
 
+  # an event's fingerprint, or one made from the text an export before
+  # format 46 has
+  defp event_print(e, key, path) do
+    if Map.has_key?(e, key <> "_print"),
+      do: req(e, key <> "_print", :int, path),
+      else: Agendum.Core.Extras.Fingerprint.of(opt(e, key, :string, "", path))
+  end
+
   defp read_calendar(c, path) do
     events =
       list(c, "events", path <> ".events", fn e, p ->
         {req(e, "uid", :string, p),
          %{
            item: req(e, "item", :int, p),
-           summary: opt(e, "summary", :string, "", p),
-           description: opt(e, "description", :string, "", p),
+           summary_print: event_print(e, "summary", p),
+           description_print: event_print(e, "description", p),
            date: opt(e, "date", {:nullable, :date}, nil, p),
            time: opt(e, "time", {:nullable, :time}, nil, p),
            recurrence:
@@ -845,16 +854,33 @@ defmodule Agendum.Core.JSONFile do
   defp read_feed(f, path) do
     entries =
       list(f, "entries", path <> ".entries", fn e, p ->
-        snap = %{
-          item: opt(e, "item", {:nullable, :int}, nil, p),
-          title: opt(e, "title", :string, "", p),
-          note: opt(e, "note", :string, "", p),
-          link: opt(e, "link", :string, "", p),
-          published: req(e, "published", :date, p)
-        }
+        item = opt(e, "item", {:nullable, :int}, nil, p)
+        published = req(e, "published", :date, p)
 
-        # a faded entry keeps no text, even from an older export that had it
-        {req(e, "id", :string, p), if(snap.item, do: snap, else: Feed.forget(snap))}
+        # a faded entry keeps no text; a live one its fingerprints, made from
+        # the text an export before format 46 has
+        snap =
+          cond do
+            item == nil ->
+              Feed.forget(%{published: published})
+
+            Map.has_key?(e, "title_print") ->
+              %{
+                item: item,
+                published: published,
+                title_print: req(e, "title_print", :int, p),
+                note_print: req(e, "note_print", :int, p)
+              }
+
+            true ->
+              Feed.snapshot(item, %{
+                title: opt(e, "title", :string, "", p),
+                note: opt(e, "note", :string, "", p),
+                published: published
+              })
+          end
+
+        {req(e, "id", :string, p), snap}
       end)
 
     %Feed{

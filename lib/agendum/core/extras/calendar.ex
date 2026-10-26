@@ -9,8 +9,10 @@ defmodule Agendum.Core.Extras.Calendar do
     * `refresh_minutes`: how often it is read again while Agendum runs (60),
       or `nil` for only on request
     * `events`: what each event (by its UID) looked like when last read,
-      and its item: `%{item: id, summary, description, date, time,
-      recurrence, ends}`; a refresh changes only what the calendar changed
+      and its item: `%{item: id, summary_print, description_print, date,
+      time, recurrence, ends}`, the title and description kept as
+      fingerprints, not text (`prints/1`; ADR 0048, format 46); a refresh
+      changes only what the calendar changed
     * `refreshed_at`, `error`: when it was last read, and why that failed
 
   The helpers here are pure: when a calendar is due, its settings, and the
@@ -18,13 +20,14 @@ defmodule Agendum.Core.Extras.Calendar do
   refresh to the file.
   """
 
+  alias Agendum.Core.Extras.Fingerprint
   alias Agendum.Core.Extras.ICal.Event
   alias Agendum.Core.Recurrence
 
   @type snapshot :: %{
           item: pos_integer,
-          summary: String.t(),
-          description: String.t(),
+          summary_print: Fingerprint.t(),
+          description_print: Fingerprint.t(),
           date: Date.t() | nil,
           time: Time.t() | nil,
           recurrence: Recurrence.t() | nil,
@@ -56,6 +59,24 @@ defmodule Agendum.Core.Extras.Calendar do
   @refresh [nil, 60, 360, 1440]
   @ahead [30, 90, 180, 365]
   @weekdays %{"MO" => 1, "TU" => 2, "WE" => 3, "TH" => 4, "FR" => 5, "SA" => 6, "SU" => 7}
+
+  @doc """
+  What a snapshot keeps of an event's title and description (`summary`,
+  `description`): their fingerprints, not the text, which the item holds.
+  """
+  @spec prints(%{
+          :summary => String.t(),
+          :description => String.t(),
+          optional(atom) => term
+        }) :: %{
+          summary_print: Fingerprint.t(),
+          description_print: Fingerprint.t()
+        }
+  def prints(wanted),
+    do: %{
+      summary_print: Fingerprint.of(wanted.summary),
+      description_print: Fingerprint.of(wanted.description)
+    }
 
   @doc "The choices for how often to refresh (minutes; nil: only on request)."
   def refresh_choices, do: @refresh

@@ -59,7 +59,7 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 45
+  @format_version 46
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
@@ -345,26 +345,38 @@ defmodule Agendum.Store do
           Map.new(db.calendars, fn {id, c} ->
             c = struct(Agendum.Core.Extras.Calendar, Map.from_struct(c))
             # events read before ends were (format 23 and earlier) have none
-            {id,
-             %{
-               c
-               | events: Map.new(c.events, fn {uid, s} -> {uid, Map.put_new(s, :ends, nil)} end)
-             }}
+            {id, %{c | events: Map.new(c.events, fn {uid, s} -> {uid, upgrade_event(s)} end)}}
           end)
     }
   end
 
   # before 45 a faded entry kept its title, note and link: only its publish
   # date is kept now (`Feed.forget/1`)
+  # before 46 a live one kept its title, note and link: fingerprints now
+  # (`Feed.snapshot/2`, ADR 0048)
   defp upgrade_feed(feed) do
+    alias Agendum.Core.Extras.Feed
+
     entries =
       Map.new(feed.entries, fn
-        {id, %{item: nil} = snap} -> {id, Agendum.Core.Extras.Feed.forget(snap)}
+        {id, %{item: nil} = snap} -> {id, Feed.forget(snap)}
+        {id, %{item: item, title: _, note: _} = snap} -> {id, Feed.snapshot(item, snap)}
         pair -> pair
       end)
 
     %{feed | entries: entries}
   end
+
+  # before 46 an event kept its title and description: fingerprints now
+  # (`Calendar.prints/1`, ADR 0048)
+  defp upgrade_event(%{summary: _, description: _} = s),
+    do:
+      s
+      |> Map.drop([:summary, :description])
+      |> Map.merge(Agendum.Core.Extras.Calendar.prints(s))
+      |> Map.put_new(:ends, nil)
+
+  defp upgrade_event(s), do: Map.put_new(s, :ends, nil)
 
   # Date categories get a date rule: Agenda's for Entry, When (with the
   # file's old setting) and Done, Never for the user's (R6b).

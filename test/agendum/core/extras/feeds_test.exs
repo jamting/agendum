@@ -119,6 +119,36 @@ defmodule Agendum.Core.Extras.FeedsTest do
            }
   end
 
+  # a live entry is remembered by fingerprints of what the feed wrote, not
+  # by a copy: the item holds the text (ADR 0048, format 46)
+  test "a live entry keeps fingerprints of its title and note, not the text", ctx do
+    {db, _} = sync(ctx.db, ctx.feed, [entry("a", "Fresh news", ~N[2026-10-16 07:00:00])])
+    item = item_titled(db, "Fresh news")
+
+    assert db.feeds[ctx.feed].entries["a"] == %{
+             item: item.id,
+             published: ~D[2026-10-16],
+             title_print: Agendum.Core.Extras.Fingerprint.of("Fresh news"),
+             note_print: Agendum.Core.Extras.Fingerprint.of(item.note)
+           }
+  end
+
+  test "an old file's live entries keep fingerprints once loaded", ctx do
+    {db, _} = sync(ctx.db, ctx.feed, [entry("a", "Fresh news", ~N[2026-10-16 07:00:00])])
+    item = item_titled(db, "Fresh news")
+
+    full = %{
+      item: item.id,
+      title: item.text,
+      note: item.note,
+      link: "https://owl.example/a",
+      published: ~D[2026-10-16]
+    }
+
+    old = put_in(db.feeds[ctx.feed].entries["a"], full)
+    assert Agendum.Store.upgrade(old).feeds[ctx.feed].entries == db.feeds[ctx.feed].entries
+  end
+
   # files saved before format 45 kept a faded entry's title, note and link
   test "an old file's faded entries lose their text when loaded", ctx do
     {db, _} = sync(ctx.db, ctx.feed, [entry("a", "Old news", ~N[2026-10-16 07:00:00])])

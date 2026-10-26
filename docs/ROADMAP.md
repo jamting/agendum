@@ -6,14 +6,13 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. Fingerprints in the feed and calendar snapshots (Beyond Agenda; meeting 2026-10-26-5, § 5; ADR 0048)
-2. Ingested categories: the open details settled with the owner in one round (`plans/RSS_READER.md`), then built (Beyond Agenda; meeting 2026-10-26-5, § 6; ADR 0048)
-3. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
-4. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
-5. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
-6. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
-7. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-8. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+1. Ingested categories: the open details settled with the owner in one round (`plans/RSS_READER.md`), then built (Beyond Agenda; meeting 2026-10-26-5, § 6; ADR 0048)
+2. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
+3. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
+4. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
+5. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
+6. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+7. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
@@ -85,7 +84,6 @@ Then working together:
 ### Beyond Agenda
 
 - [ ] Ingested categories (meeting 2026-10-26-5, § 6; ADR 0048; details first in `plans/RSS_READER.md` § Ingested categories): a feed's category gets a source, `{:feed, id}`; named and filled by the feed, not editable or assignable by hand, hidden in the category manager by default (a key shows them), still sections, filters and conditions; calendars likewise. A format change; an enhancement for AGENDA_PARITY's list, behind the Extras switch
-- [ ] Fingerprints in the feed and calendar snapshots (meeting 2026-10-26-5, § 5; ADR 0048): a live entry's or event's snapshot keeps a fingerprint of the title and note it filed, not a copy (the feeds' data was 3.6 MB as a term against 2.0 MB for all items, the owner's file, 2026-10-26); a format change, measured before and after on a copy
 Open again since the clone was declared done (2026-10-26); the built ones stay hidden behind the Extras preference (ADR 0043).
 
 Each item names the group in `VISION.md` it serves, group 1 first; items for group 3 or for no group yet wait under Ideas, one line each with a pointer to their plan (meeting 2026-10-16-2, § 6).

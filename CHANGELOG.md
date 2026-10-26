@@ -4,6 +4,12 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.66.0 — 2026-10-26
+
+A smaller file for feeds and calendars.
+
+- **Feeds and calendars no longer keep a second copy** of each entry's or event's title and note: only a short fingerprint, enough to tell your edits from the feed's. On a file with 243 feeds the file went from 1.62 MB to 1.21 MB, and a save from 48 to 39 ms. Older files are converted when opened, and written smaller at the next save.
+
 ## 0.65.1 — 2026-10-26
 
 - **Text from a feed or an imported file can no longer control your terminal.** Escape codes hidden in an item's text (to clear the screen, change the window title or write the clipboard) now show as characters, the way Lotus Agenda showed such bytes: ESC as ←, BEL as •. Found by new tests that feed Agendum hostile text from feeds, Agenda files and JSON files.

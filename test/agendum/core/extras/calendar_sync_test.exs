@@ -372,6 +372,30 @@ defmodule Agendum.Core.Extras.CalendarSyncTest do
       assert meeting.text == "Organising Meeting (moved)"
       assert {meeting.when, meeting.when_time} == {~D[2026-10-17], ~T[09:00:00]}
       assert meeting.note == "Room 2"
+
+      # what the calendar wrote is remembered by its fingerprint, not its
+      # text: the item holds the text (ADR 0048)
+      snap = db.calendars[cal].events["a"]
+      refute Map.has_key?(snap, :summary) or Map.has_key?(snap, :description)
+
+      assert snap.summary_print ==
+               Agendum.Core.Extras.Fingerprint.of("Organising Meeting (moved)")
+
+      assert snap.description_print == Agendum.Core.Extras.Fingerprint.of("Room 2")
+    end
+
+    # files saved before format 46 kept the text itself
+    test "an old file's events keep fingerprints once loaded", %{db: db, cal: cal} do
+      old =
+        update_in(
+          db.calendars[cal].events["b"],
+          &(&1
+            |> Map.drop([:summary_print, :description_print])
+            |> Map.merge(%{summary: "Tea", description: ""}))
+        )
+
+      snap = Agendum.Store.upgrade(old).calendars[cal].events["b"]
+      assert snap == db.calendars[cal].events["b"]
     end
 
     test "what the calendar did not change keeps the person's edits", %{db: db, cal: cal} do

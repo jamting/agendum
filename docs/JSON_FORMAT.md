@@ -134,7 +134,7 @@ A **criterion** (conditions, filters) is `{"category": id, "is": "assigned"}`, `
 | `ahead_days`            | How far ahead events are imported: 30, 90, 180 or 365.                                                                                                                 |
 | `refresh_minutes`       | How often it is read again while Agendum runs (60, 360, 1440), or `null` for only on request.                                                                          |
 | `refreshed_at`, `error` | When it was last read, and why that failed; or `null`.                                                                                                                 |
-| `events`                | For each event read: `uid`, its `item`, and the `summary`, `description`, `date`, `time`, `recurrence`, `end_date` and `end_time` it had, so a refresh only changes what the calendar changed. |
+| `events`                | For each event read: `uid`, its `item`, `summary_print` and `description_print` (fingerprints of the title and description it filed, integers; an older export's `summary` and `description` are read as their fingerprints), and the `date`, `time`, `recurrence`, `end_date` and `end_time` it had, so a refresh only changes what the calendar changed. |
 
 ## Feeds
 
@@ -146,7 +146,7 @@ A **criterion** (conditions, filters) is `{"category": id, "is": "assigned"}`, `
 | `keep_days` | How long an entry stays, from its publish date, unless kept: a number of days, or `null` for ever. |
 | `refresh_minutes` | How often it is read while Agendum runs (60, 360, 1440), or `null` for only on request. |
 | `refreshed_at`, `error` | When it was last read, and why that failed; or `null`. |
-| `entries` | For each entry read: its `id` (guid, else link), its `item`, and the `title`, `note`, `link` and `published` date it had, so a refresh only changes what the feed changed. Once it faded or was discarded: only `id`, `item: null` and `published` (a `title`, `note` or `link` there is ignored). |
+| `entries` | For each entry read: its `id` (guid, else link), its `item`, its `published` date, and `title_print` and `note_print`, fingerprints (integers) of the title and note it filed, so a refresh only changes what the feed changed (an older export's `title` and `note` are read as their fingerprints). Once it faded or was discarded: only `id`, `item: null` and `published` (a `title`, `note` or `link` there is ignored). |
 
 ## Macros
 

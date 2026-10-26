@@ -24,7 +24,7 @@ defmodule Agendum.Core.Extras.FeedSync do
 
   alias Agendum.Core
   alias Agendum.Core.{Assign, Context, Database}
-  alias Agendum.Core.Extras.{Feed, FeedParser}
+  alias Agendum.Core.Extras.{Feed, FeedParser, Fingerprint}
   alias Agendum.Core.Facade.Changes
 
   @type counts :: %{added: non_neg_integer, updated: non_neg_integer, faded: non_neg_integer}
@@ -75,7 +75,7 @@ defmodule Agendum.Core.Extras.FeedSync do
           {db, Map.put(snaps, entry.id, Feed.forget(wanted)), counts}
         else
           {db, item} = add(db, feed, wanted, clock)
-          {db, Map.put(snaps, entry.id, Map.put(wanted, :item, item)), bump(counts, :added)}
+          {db, Map.put(snaps, entry.id, Feed.snapshot(item, wanted)), bump(counts, :added)}
         end
 
       %{item: nil} ->
@@ -83,7 +83,7 @@ defmodule Agendum.Core.Extras.FeedSync do
 
       snap ->
         {db, changed?} = update(db, snap, wanted, clock)
-        snap = Map.merge(snap, wanted)
+        snap = Feed.snapshot(snap.item, wanted)
 
         {db, Map.put(snaps, entry.id, snap),
          if(changed?, do: bump(counts, :updated), else: counts)}
@@ -107,19 +107,23 @@ defmodule Agendum.Core.Extras.FeedSync do
   end
 
   # Only what the feed changed, and only where the item still says what the
-  # feed said before: the person's edits stay
+  # feed said before: the person's edits stay. Both are told by fingerprints
+  # (ADR 0048): the feed's new text against what it wrote last time, and the
+  # item's text against that too
   defp update(db, snap, wanted, clock) do
     item = db.items[snap.item]
 
     {db, title?} =
-      if wanted.title != snap.title and item.text == snap.title,
-        do: {retitle(db, snap.item, wanted.title, clock), true},
-        else: {db, false}
+      if Fingerprint.of(wanted.title) != snap.title_print and
+           Fingerprint.of(item.text) == snap.title_print,
+         do: {retitle(db, snap.item, wanted.title, clock), true},
+         else: {db, false}
 
     {db, note?} =
-      if wanted.note != snap.note and db.items[snap.item].note == snap.note,
-        do: {Database.update_item(db, snap.item, &%{&1 | note: wanted.note}), true},
-        else: {db, false}
+      if Fingerprint.of(wanted.note) != snap.note_print and
+           Fingerprint.of(db.items[snap.item].note) == snap.note_print,
+         do: {Database.update_item(db, snap.item, &%{&1 | note: wanted.note}), true},
+         else: {db, false}
 
     {db, title? or note?}
   end
@@ -162,7 +166,8 @@ defmodule Agendum.Core.Extras.FeedSync do
       |> Database.explicit_categories(item.id)
       |> Enum.reject(&(&1 == feed.category_id or MapSet.member?(db.conditional, {item.id, &1})))
 
-    item.zettel != nil or item.text != snap.title or item.note != snap.note or by_hand != []
+    item.zettel != nil or Fingerprint.of(item.text) != snap.title_print or
+      Fingerprint.of(item.note) != snap.note_print or by_hand != []
   end
 
   @doc "An entry's note: its summary, at most about 2,000 characters, then its link."

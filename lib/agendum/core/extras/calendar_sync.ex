@@ -84,7 +84,13 @@ defmodule Agendum.Core.Extras.CalendarSync do
           db = set_ends(db, id, ends, clock)
 
           snap =
-            Map.merge(wanted, %{item: id, date: date, time: time, recurrence: rec, ends: ends})
+            Map.merge(Calendar.prints(wanted), %{
+              item: id,
+              date: date,
+              time: time,
+              recurrence: rec,
+              ends: ends
+            })
 
           {db, Map.put(snaps, event.uid, snap), bump(counts, :added)}
         end
@@ -108,13 +114,17 @@ defmodule Agendum.Core.Extras.CalendarSync do
       end
 
     when_before = %{date: snap.date, time: snap.time, recurrence: snap.recurrence}
+    prints = Calendar.prints(wanted)
 
     id = snap.item
 
     if Map.has_key?(db.items, id) do
       changes = [
-        {wanted.summary != snap.summary, &Core.edit_item(&1, id, wanted.summary, clock)},
-        {wanted.description != snap.description,
+        # the calendar's text against the fingerprints of what it wrote
+        # last time (ADR 0048)
+        {prints.summary_print != snap.summary_print,
+         &Core.edit_item(&1, id, wanted.summary, clock)},
+        {prints.description_print != snap.description_print,
          &Core.set_note(&1, id, wanted.description, clock)},
         {Map.delete(when_now, :ends) != when_before,
          &set_when(&1, id, when_now.date, when_now.time, when_now.recurrence, clock)},
@@ -125,10 +135,10 @@ defmodule Agendum.Core.Extras.CalendarSync do
       changed = for {true, change} <- changes, do: change
       db = Enum.reduce(changed, db, fn change, db -> change.(db) end)
       counts = if changed == [], do: counts, else: bump(counts, :updated)
-      {db, Map.put(snaps, uid, Map.merge(snap, Map.merge(wanted, when_now))), counts}
+      {db, Map.put(snaps, uid, Map.merge(snap, Map.merge(prints, when_now))), counts}
     else
       # discarded by the person: remembered, never brought back
-      {db, Map.put(snaps, uid, Map.merge(snap, Map.merge(wanted, when_now))), counts}
+      {db, Map.put(snaps, uid, Map.merge(snap, Map.merge(prints, when_now))), counts}
     end
   end
 
