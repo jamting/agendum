@@ -1,11 +1,11 @@
 defmodule Agendum.TUI.Render.Help do
   @moduledoc """
-  F1 then `a` in the help (R65): every key, made from the keymaps
+  F6 Keys in the help (R65, R65e): every key, made from the keymaps
   (`Agendum.TUI.Keymap`, `Agendum.TUI.Commands`), so it says what the keys
   do and cannot drift from them. First the keys that work almost
   everywhere, then the view's, the note editor's and typing's, then the
   rest; a few words for Mac keyboards at the end. Also the rows the
-  command list (F1 then `c`) draws. Pure.
+  command list (F6 Keys ▸ Commands you can run here) draws. Pure.
   """
 
   alias Agendum.TUI.{Command, Commands, Keymap}
@@ -32,7 +32,7 @@ defmodule Agendum.TUI.Render.Help do
   # what a part adds below its keys
   @notes %{
     "Almost everywhere (not while typing)" => [
-      "F1 is help wherever you are (then c: the commands there, d: what a key does).",
+      "F1 is help wherever you are; in it F6 lists the keys, the commands there and what a key does.",
       "ESC cancels or goes back."
     ],
     "In a view" => [
@@ -40,7 +40,7 @@ defmodule Agendum.TUI.Render.Help do
       "ALT-1 … ALT-9 before a move give a count: ALT-1 ALT-0 ↓ goes ten rows down."
     ],
     "In the menu (F10 or /)" => ["A letter chooses the entry it begins."],
-    "In every box" => ["Each box has keys of its own: F1 then c in the box lists them."]
+    "In every box" => ["Each box has keys of its own: F1 in the box, then F6, lists them."]
   }
 
   @mac [
