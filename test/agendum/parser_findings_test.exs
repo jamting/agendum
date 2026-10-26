@@ -7,7 +7,7 @@ defmodule Agendum.ParserFindingsTest do
   doctest Agendum.Core.Extras.Utf8
 
   alias Agendum.Core
-  alias Agendum.Core.Extras.ICal
+  alias Agendum.Core.Extras.{FeedParser, ICal}
 
   @now ~N[2026-10-26 23:30:00]
 
@@ -29,5 +29,23 @@ defmodule Agendum.ParserFindingsTest do
     {:ok, db, _cat} = Core.add_category(db, db.main_id, "Lunch")
     assert {:ok, db, _counts} = Core.sync_calendar(db, cal, [event], @now)
     assert Enum.any?(Map.values(db.items), &(&1.text == "Lunch at Café"))
+  end
+
+  # 2. a feed with a byte that is no UTF-8 made the XML reader's regular
+  # expressions raise, before a single entry was read
+  test "a feed in Latin-1 is read, its text read as Latin-1" do
+    text =
+      ~s(<?xml version="1.0" encoding="ISO-8859-1"?><rss version="2.0"><channel>) <>
+        "<title>Nyheter</title><item><guid>1</guid><title>Caf" <>
+        <<0xE9>> <>
+        "</title>" <>
+        "</item></channel></rss>"
+
+    assert {:ok, %{entries: [entry]}} = FeedParser.parse(text)
+    assert entry.title == "Café"
+
+    db = Core.new_file()
+    {:ok, db, feed} = Core.subscribe_feed(db, "News", "https://n.example/feed")
+    assert {:ok, _db, _counts} = Core.sync_feed(db, feed, [entry], @now)
   end
 end

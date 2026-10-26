@@ -8,7 +8,8 @@ defmodule Agendum.Core.Extras.Xml do
   instructions and a DOCTYPE (skipped), and the five named entities and
   numeric ones. A feed that is broken is read as far as it goes: a closing
   tag with no opening one is ignored, and elements left open at the end
-  are closed.
+  are closed. Text that is not valid UTF-8 (a feed in Latin-1, or with a
+  stray byte) is made so first (`Agendum.Core.Extras.Utf8`).
 
   A document is a list of nodes: `{name, attributes, children}` for an
   element (attributes a map of strings, names as written, `"dc:date"`), or
@@ -20,8 +21,11 @@ defmodule Agendum.Core.Extras.Xml do
   @doc "The document's top-level nodes."
   @spec parse(String.t()) :: [node_]
   def parse(text) do
+    # the tokenizer's regular expressions are Unicode ones, which raise on
+    # bytes that are no UTF-8
     text
     |> strip_bom()
+    |> Agendum.Core.Extras.Utf8.repair()
     |> tokens([])
     |> build([{nil, %{}, []}])
   end
