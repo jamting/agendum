@@ -22,3 +22,5 @@ Several settings could live either in the Agenda file or with the person running
 - Opening someone else's file never changes how your screen looks or how your typing is read.
 - A date filter saved with relative words in one language ("fredag") is read with the languages of whoever opens the file. A fallback language covers the common mixed case.
 - New settings must be placed in one of the two groups, using the rule above.
+
+**Amended 2026-10-26 (meeting 2026-10-26-3, §§ 5–6):** the defaults for new files are the person's too. Agenda's File Properties ▸ Update defaults wrote them to its program settings file (`AGENDA.ENV`), not the data file; Agendum writes them to the preferences, as `default.…` lines, only for the settings that differ from Agenda's built-in values. The shell reads them and passes them to the core when an empty file is made (`Core.new_file/1`); a starter, sample, import or copy keeps its own settings. Agenda's built-in values stay the starting point.
