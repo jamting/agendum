@@ -59,7 +59,6 @@ Each plan starts with its status.
 | Plan                                                                   | About                                                                          |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | [`plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md)                     | How close Agendum is to Agenda; accepted enhancements and modifications; The steps, the ordered checklist of all parity work |
-| [`plans/HELP.md`](plans/HELP.md)                                       | Agenda's help in our own words: what it covers, its keys, the steps, the checklist of Agenda's topics |
 | [`HELP_WOOD.md`](HELP_WOOD.md)                                         | The Hundred Acre Wood touches in the help's written topics, one row each, and their tone rules |
 | [`plans/NOTE_EDITOR.md`](plans/NOTE_EDITOR.md)                         | The note editor as Agenda's: evidence, habit changes to settle, steps          |
 | [`plans/MULTIUSER.md`](plans/MULTIUSER.md)                             | A web application with accounts and shared files, on the same core (ADR 0020)  |
@@ -74,6 +73,7 @@ Finished or dropped plans, kept as records of how something was done or why it w
 
 | Plan                                                                   | About                                                                          |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [`plans/archive/HELP.md`](plans/archive/HELP.md)                       | Agenda's help in our own words: what it covers, its keys, the steps, the checklist of Agenda's topics (done 2026-10-26) |
 | [`plans/archive/REFACTORING.md`](plans/archive/REFACTORING.md)         | Where organic growth left complexity, and what was done about it (done)        |
 | [`plans/archive/DOSBOX_STAGING.md`](plans/archive/DOSBOX_STAGING.md)   | Running the real Agenda for Claude (done differently)                          |
 | [`plans/archive/KITTY.md`](plans/archive/KITTY.md)                     | The ALT and CTRL key bars while the key is held (dropped: the F1 help does better) |

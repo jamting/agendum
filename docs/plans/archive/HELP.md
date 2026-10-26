@@ -1,6 +1,6 @@
 # Agenda's help, in our own words
 
-**Status:** done (v0.56.0 to v0.61.0, 2026-10-26): the frame, the tone sample, six batches of written topics with Agenda's keyword index, and Copy Conditions/Actions with its topic; the checklist has nothing open. The last required step of the truthful clone.
+**Status:** done, archived 2026-10-26 (the owner's choice) (v0.56.0 to v0.61.0, 2026-10-26): the frame, the tone sample, six batches of written topics with Agenda's keyword index, and Copy Conditions/Actions with its topic; the checklist has nothing open. The last required step of the truthful clone.
 
 Lotus Agenda's F1 help: a topic for where you are, bold links between topics, an index, a search, key charts and a way back (`docs/reference/Agenda 2.0 Help File.html`: 332 topics, about 61,000 words: 159 boxes, 132 how-to and concept topics, 28 menus, 13 key charts). Agendum's help keeps Agenda's keys and structure exactly and has texts of its own: terse, with a Hundred Acre Wood flavour in an opening line and the examples, quoting no Milne and using no Disney or Shepard pictures (meeting 2026-10-22, § 7a). How it is built: ADR 0047.
 

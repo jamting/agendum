@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.Help.Topics do
   @moduledoc """
-  Every help topic, by title (ADR 0047; `docs/plans/HELP.md`):
+  Every help topic, by title (ADR 0047; `docs/plans/archive/HELP.md`):
 
     * **hand-written** ones, a text file each in `lib/agendum/tui/help/topics/`,
       compiled in (`@external_resource`), in Agenda's layout;

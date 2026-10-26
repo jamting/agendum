@@ -4,7 +4,7 @@
 
 ## Context
 
-Agendum's help is to be Lotus Agenda's: a topic for where you are, bold links, an index, a search, key charts and a way back (meeting 2026-10-26, §§ 5–6; `docs/plans/HELP.md`). Its texts are our own (meeting 2026-10-22, § 7a). Much of it is already in the program: each box's help line per field, each menu entry's description, each command's summary and longer text (`Agendum.TUI.CommandDocs`), each place's F1 text and the keymaps. The rest, 40 to 60 how-to and concept topics, has to be written. The program is one file with nothing beside it (ADR 0021).
+Agendum's help is to be Lotus Agenda's: a topic for where you are, bold links, an index, a search, key charts and a way back (meeting 2026-10-26, §§ 5–6; `docs/plans/archive/HELP.md`). Its texts are our own (meeting 2026-10-22, § 7a). Much of it is already in the program: each box's help line per field, each menu entry's description, each command's summary and longer text (`Agendum.TUI.CommandDocs`), each place's F1 text and the keymaps. The rest, 40 to 60 how-to and concept topics, has to be written. The program is one file with nothing beside it (ADR 0021).
 
 ## Decision
 
@@ -16,5 +16,5 @@ Agendum's help is to be Lotus Agenda's: a topic for where you are, bold links, a
 ## Consequences
 
 - One help: today's F1 pages become its topics (`c`, `d` and `a` are reached through F6 Keys).
-- A new box or menu entry has its topic at once; a new feature with a task to explain needs its hand-written topic, which the checklist in `docs/plans/HELP.md` tracks.
+- A new box or menu entry has its topic at once; a new feature with a task to explain needs its hand-written topic, which the checklist in `docs/plans/archive/HELP.md` tracks.
 - The texts are English; another language would need translated files and a choice of language, not decided here.

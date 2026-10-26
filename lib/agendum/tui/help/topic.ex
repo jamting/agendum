@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.Help.Topic do
   @moduledoc """
-  One help topic (ADR 0047; `docs/plans/HELP.md`): a title and its body,
+  One help topic (ADR 0047; `docs/plans/archive/HELP.md`): a title and its body,
   as Agenda's help pages are. The body is a list of blocks, laid out to
   the help's width when it is drawn (`lines/2`):
 
