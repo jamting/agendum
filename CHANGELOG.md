@@ -4,6 +4,14 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.61.0 — 2026-10-26
+
+Copy and clear a category's conditions and actions, as in Lotus Agenda; the help is complete.
+
+- **ALT-F9 (CPY C/A)** in the category manager copies the highlighted category's conditions or actions to another: move to it and press ENTER (ESC gives it up). With both, Agenda's box asks which: Condition & action, Condition or Action. What is copied takes the place of the target's.
+- **ALT-F8 (CLR C/A)** clears them, after Agenda's "Clear the condition?" (or its box, with both). CTRL-Z brings them back.
+- The help's last topic, Copy Conditions/Actions: every topic on the checklist is written.
+
 ## 0.60.0 — 2026-10-26
 
 The help's last batches: files and notes, macros and the screen.
