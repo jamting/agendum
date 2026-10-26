@@ -44,7 +44,7 @@ All in `.claude/skills/`, each started with `/name` or by asking for it in words
 
 | Skill               | What it is for                                                                                                                                                                                                 | Writes                                                  |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `end-session`       | Close a session: what was done, what must not be lost (roadmap, plans, memory), a cheerful summary with learnings and next steps                                                                                | `docs/summaries/YYYY-MM-DD-HHMM.md` (not committed)     |
+| `end-session`       | Close a session: what was done, what must not be lost (roadmap, plans, memory), a cheerful summary with learnings and next steps                                                                                | `docs/summaries/YYYY-MM-DD-HHMM.md` (committed)         |
 | `start-session`     | Open a session: reads the last summary, the roadmap's Next, the study plan and anything uncommitted; lists what to try in the program, offers three things to do, and waits for a choice | nothing                                                 |
 | `expert-review`     | A dated review written as the minutes of a panel meeting in Owl's house: architecture, code, tests, docs, users, business, vision, methods, tidiness, agent readiness; scores, evidence, ranked recommendations | `docs/reviews/YYYY-MM-DD.md` (`-2`, `-3` the same day)  |
 | `feature`           | Build one feature or fix the agreed way: habits first, Agenda's evidence, the rule, a failing test, core then TUI, the documents, the gate and fuzz, the commit, a version, the owner trying it (meeting 2026-10-22-3, § 5) | the code, its tests and documents; a commit |
@@ -126,11 +126,11 @@ The panel advises; it never votes. I decide.
 - **An intermittent test failure is hunted, not waved away**: a `mix check` that fails once and passes on rerun gets the suite run over many seeds (`mix test --seed N` in a bash loop); on 2026-10-24 that found a real bug (a macro closing a settings box lost its undo step, fuzz seed 112)
 - **Formatting needs no gate run**: a Claude Code hook (`.claude/settings.json`) runs `mix format` on every `.ex`/`.exs` file Claude writes, so a format failure no longer costs a `mix check` round (2026-10-22). The same file allows `mix test`, `mix check` and `tools/smoke/smoke.py` without a permission prompt.
 - **Questions first, then a row of builds**: three items (a bug fix release, the `feature` skill, the document import) settled in one round of four questions, then built and committed one after another while the owner went to bed (2026-10-23).
+- **A "tried it?" line per version** (meeting 2026-10-26-4, § 10): each session summary says, for every version released, whether I tried it in the program, so `/start-session` offers the untried ones. Parity work checked against Agenda in DOSBox I trust without trying each version; the pace stays.
 - **Smoke tests in a sandbox**: a pty test sets `XDG_CONFIG_HOME` to a scratch folder and unsets `AGENDUM_LOG`, after one test wrote into the owner's real preferences (2026-10-16; CLAUDE.md, Testing the real terminal).
 
 ## How I could work better
 
 Suggestions, most valuable first. None is decided; take what helps, and move what you adopt into the sections above.
 
-1. **Try each change before the next one.** The review counted 85 commits in one day. The end-session summary lists "what you'll notice"; spending five minutes in the real program on that list before starting new work keeps your understanding level with the code, and catches habit changes early (CLAUDE.md asks for it).
-2. **A rhythm for reviews.** Three reviews in one day is a lot of advice to act on. One per version (or after each meeting's decisions ship) gives each review a real change to measure (the review's resolution 11).
+1. **A rhythm for reviews.** Three reviews in one day is a lot of advice to act on. One per version (or after each meeting's decisions ship) gives each review a real change to measure (the review's resolution 11).
