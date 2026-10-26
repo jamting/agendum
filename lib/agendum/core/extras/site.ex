@@ -12,8 +12,11 @@ defmodule Agendum.Core.Extras.Site do
     * `posts/<zettel id>.html`: a page per post, its address its Zettel
       id, which never changes (R73)
     * `rss.xml` (RSS 2.0) and `feed.json` (JSON Feed 1.1)
-    * `style.css`: "old-school-cool", monospace and a few colours; written
-      only when the folder has none, so the person's own stays
+    * `style.css`: The Proportional Web by Oskar Wickström (MIT), dark
+      when the reader's system is; written when the folder has none, or
+      still Agendum's old one, so the person's own stays
+    * `fonts/`: its fonts, Alegreya, Alegreya SC and Courier Prime, with
+      their licence (`OFL.txt`), so no reader's browser asks Google for them
 
   For the fediverse without a server, the pages carry microformats
   (`h-feed`, `h-entry`, `h-card`) and `rel="me"` links, which micro.blog
@@ -28,6 +31,23 @@ defmodule Agendum.Core.Extras.Site do
   @type file :: {String.t(), String.t()}
 
   @stylesheet "style.css"
+
+  # Domain: the stylesheet and the fonts are read when this module is
+  # compiled, so the escript carries them (ADR 0021: no runtime files), as
+  # the help topics are (ADR 0047); `@external_resource` recompiles it when
+  # one of them changes. The core stays pure: `File.read!/1` runs in the
+  # compiler, never when the program does.
+  @assets Path.join(__DIR__, "site_assets")
+  @fonts ~w(alegreya-latin-wght-normal.woff2 alegreya-latin-wght-italic.woff2
+            alegreya-sc-latin-400-normal.woff2 alegreya-sc-latin-500-normal.woff2
+            courier-prime-latin-400-normal.woff2 OFL.txt)
+  for file <- ["style.css", "legacy-style.css" | @fonts],
+      do: @external_resource(Path.join(@assets, file))
+
+  @default_stylesheet File.read!(Path.join(@assets, "style.css"))
+  # the stylesheet Agendum wrote before 0.69: replaced while still exactly it
+  @legacy_stylesheet File.read!(Path.join(@assets, "legacy-style.css"))
+  @font_files for file <- @fonts, do: {"fonts/" <> file, File.read!(Path.join(@assets, file))}
 
   @doc "The stylesheet's path: written only when the folder has none."
   @spec stylesheet() :: String.t()
@@ -49,7 +69,7 @@ defmodule Agendum.Core.Extras.Site do
       {"rss.xml", rss(site)},
       {"feed.json", json_feed(site)},
       {@stylesheet, default_stylesheet()}
-    ] ++ Enum.map(posts, &{post_path(&1), post_page(site, &1)})
+    ] ++ Enum.map(posts, &{post_path(&1), post_page(site, &1)}) ++ @font_files
   end
 
   @doc "Where a post's page is: `posts/bonalaku.html`."
@@ -64,7 +84,8 @@ defmodule Agendum.Core.Extras.Site do
   (path to content, for the paths Agendum wrote or would write) and was
   last published with the paths in `published`: files that are new, that
   differ, and that Agendum wrote before but would not now (a post taken
-  away). The stylesheet is never changed, only added when missing.
+  away). The stylesheet is changed only while it is still the one
+  Agendum wrote before (`legacy_stylesheet/0`), so the person's own stays.
   """
   @spec changes([file], %{optional(String.t()) => String.t()}, [String.t()]) :: changes
   def changes(files, existing, published) do
@@ -75,7 +96,7 @@ defmodule Agendum.Core.Extras.Site do
       changed:
         for(
           {path, content} <- files,
-          path != @stylesheet,
+          path != @stylesheet or existing[path] == @legacy_stylesheet,
           Map.has_key?(existing, path),
           existing[path] != content,
           do: path
@@ -387,64 +408,17 @@ defmodule Agendum.Core.Extras.Site do
 
   # --- the stylesheet ------------------------------------------------------------------
 
-  @doc "The stylesheet Agendum writes when the folder has none: old-school-cool."
+  @doc """
+  The stylesheet Agendum writes when the folder has none: The Proportional
+  Web (`site_assets/style.css`).
+  """
   @spec default_stylesheet() :: String.t()
-  def default_stylesheet do
-    """
-    /* The blog's stylesheet, from Wol's Agendum. Change it, or put your own
-       here: Agendum writes it only when the folder has none. */
+  def default_stylesheet, do: @default_stylesheet
 
-    :root {
-      --bg: #fbfaf3; --fg: #1c1c1c; --accent: #0000aa; --visited: #6a1b9a;
-      --muted: #6b6b60; --rule: #c9c7b4; --code: #efede2;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0f1218; --fg: #d8d6c8; --accent: #7fb2ff; --visited: #c49cff;
-        --muted: #8b8a7e; --rule: #2d3241; --code: #1a1f2a;
-      }
-    }
-
-    html { background: var(--bg); color: var(--fg); }
-    body {
-      font-family: ui-monospace, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
-      font-size: 16px; line-height: 1.6;
-      max-width: 72ch; margin: 2rem auto; padding: 0 1rem;
-    }
-    a { color: var(--accent); }
-    a:visited { color: var(--visited); }
-
-    header .site { margin: 0 0 2rem; font-size: 1.3rem; font-weight: bold; }
-    header .site::before { content: "> "; color: var(--muted); }
-    header .site a { color: inherit; text-decoration: none; }
-    .p-summary { color: var(--muted); }
-
-    h1, h2, h3 { line-height: 1.3; }
-    h1 { font-size: 1.3rem; }
-    h2 { font-size: 1.15rem; }
-    h3, h4, h5, h6 { font-size: 1rem; }
-    h2 a, h1 a { text-decoration: none; }
-
-    article { border-top: 1px dashed var(--rule); margin-top: 2rem; padding-top: 1rem; }
-    .meta { color: var(--muted); font-size: 0.9rem; margin-top: -0.5rem; }
-    .meta a { color: inherit; }
-
-    pre, code { background: var(--code); }
-    pre { padding: 0.75rem 1rem; overflow-x: auto; }
-    code { padding: 0 0.2em; }
-    pre code { padding: 0; }
-    blockquote { margin: 1rem 0; padding-left: 1rem; border-left: 3px solid var(--rule); color: var(--muted); }
-    img { max-width: 100%; height: auto; }
-    hr { border: 0; border-top: 1px dashed var(--rule); }
-
-    ul.tasks { list-style: none; padding-left: 0; }
-    .box { color: var(--muted); white-space: pre; }
-    li.cancelled del { color: var(--muted); }
-    .zettel { color: var(--muted); }
-
-    .back { margin-top: 2rem; }
-    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: 0.9rem; }
-    footer a { color: inherit; }
-    """
-  end
+  @doc """
+  The monospace stylesheet Agendum wrote before 0.69, word for word: a
+  folder that still has it gets the new one.
+  """
+  @spec legacy_stylesheet() :: String.t()
+  def legacy_stylesheet, do: @legacy_stylesheet
 end

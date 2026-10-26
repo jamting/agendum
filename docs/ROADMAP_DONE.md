@@ -303,6 +303,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Fixes and polish (after the clone was declared done)
 
+- [x] (2026-10-26, v0.69.0) The blog in The Proportional Web's design (R74; the owner asked 2026-10-26): Oskar Wickström's stylesheet (MIT) with its fonts self-hosted in `fonts/` (Alegreya, Alegreya SC, Courier Prime, OFL; the Google Fonts import removed), dark by `prefers-color-scheme`, the old monospace look dropped; an old `style.css` is replaced only while it is still word for word Agendum's (`Site.legacy_stylesheet/0`). The assets live in `lib/agendum/core/extras/site_assets/`, compiled in. Checked in headless Chrome, light and dark
 - [x] (2026-10-26, v0.64.1) No private addresses in the debug log: every web address is written by its host only (`DebugLog.redact/1`), and the last ten sessions are kept (meeting 2026-10-26-4, § 7)
 - [x] (2026-10-26, v0.64.1) Erlang's logger never prints over the screen: while the terminal UI runs, its reports go to the debug log, or nowhere when it is off, and a feed or calendar read that crashes comes back as an error to show (meeting 2026-10-26-4, § 6)
 - [x] (2026-10-26, v0.64.0) The faded feed entries keep only their id and publish date (format 45; meeting 2026-10-26-4, § 5): on a copy of the owner's file (243 feeds, 13,181 faded of 14,427 entries) a save went from 495 ms to 123 ms, the file from 5.36 MB to 1.40 MB, a load from 82 to 58 ms; then zlib's fastest level (`compressed: 1`, ADR 0003 amended), as the save was still over 100 ms: about 50 ms, for a file 15% larger

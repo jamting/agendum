@@ -7,7 +7,7 @@ defmodule Agendum.ReviewSliceATest do
 
   import Agendum.TUIHelpers
   alias Agendum.{Core, Store}
-  alias Agendum.Core.{AgFile, Database, JSONFile}
+  alias Agendum.Core.{AgFile, JSONFile}
   alias Agendum.TUI.{DebugLog, Update}
 
   @moduletag :tmp_dir

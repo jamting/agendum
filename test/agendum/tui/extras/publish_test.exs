@@ -74,7 +74,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
 
     test "shows what will be added before anything is written", %{state: state} do
       assert screen(state) =~ "Publish: what will change"
-      assert screen(state) =~ "2 posts · 6 added, 0 changed, 0 removed"
+      assert screen(state) =~ "2 posts · 12 added, 0 changed, 0 removed"
       assert screen(state) =~ "+ posts/bonalaku.html"
       assert screen(state) =~ "Written to site; not uploaded."
     end
@@ -88,7 +88,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
 
       state = Update.Results.published(state, changes, :ok)
       assert State.mode(state) == nil
-      assert screen(state) =~ "Published: 6 added, 0 changed, 0 removed"
+      assert screen(state) =~ "Published: 12 added, 0 changed, 0 removed"
     end
 
     test "ESC writes nothing", %{state: state} do

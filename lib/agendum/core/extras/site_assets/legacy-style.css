@@ -1,0 +1,54 @@
+/* The blog's stylesheet, from Wol's Agendum. Change it, or put your own
+   here: Agendum writes it only when the folder has none. */
+
+:root {
+  --bg: #fbfaf3; --fg: #1c1c1c; --accent: #0000aa; --visited: #6a1b9a;
+  --muted: #6b6b60; --rule: #c9c7b4; --code: #efede2;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1218; --fg: #d8d6c8; --accent: #7fb2ff; --visited: #c49cff;
+    --muted: #8b8a7e; --rule: #2d3241; --code: #1a1f2a;
+  }
+}
+
+html { background: var(--bg); color: var(--fg); }
+body {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  font-size: 16px; line-height: 1.6;
+  max-width: 72ch; margin: 2rem auto; padding: 0 1rem;
+}
+a { color: var(--accent); }
+a:visited { color: var(--visited); }
+
+header .site { margin: 0 0 2rem; font-size: 1.3rem; font-weight: bold; }
+header .site::before { content: "> "; color: var(--muted); }
+header .site a { color: inherit; text-decoration: none; }
+.p-summary { color: var(--muted); }
+
+h1, h2, h3 { line-height: 1.3; }
+h1 { font-size: 1.3rem; }
+h2 { font-size: 1.15rem; }
+h3, h4, h5, h6 { font-size: 1rem; }
+h2 a, h1 a { text-decoration: none; }
+
+article { border-top: 1px dashed var(--rule); margin-top: 2rem; padding-top: 1rem; }
+.meta { color: var(--muted); font-size: 0.9rem; margin-top: -0.5rem; }
+.meta a { color: inherit; }
+
+pre, code { background: var(--code); }
+pre { padding: 0.75rem 1rem; overflow-x: auto; }
+code { padding: 0 0.2em; }
+pre code { padding: 0; }
+blockquote { margin: 1rem 0; padding-left: 1rem; border-left: 3px solid var(--rule); color: var(--muted); }
+img { max-width: 100%; height: auto; }
+hr { border: 0; border-top: 1px dashed var(--rule); }
+
+ul.tasks { list-style: none; padding-left: 0; }
+.box { color: var(--muted); white-space: pre; }
+li.cancelled del { color: var(--muted); }
+.zettel { color: var(--muted); }
+
+.back { margin-top: 2rem; }
+footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: 0.9rem; }
+footer a { color: inherit; }

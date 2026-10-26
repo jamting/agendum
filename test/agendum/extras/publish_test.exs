@@ -74,7 +74,7 @@ defmodule Agendum.Extras.PublishTest do
 
     assert Publish.rsync_args("me@host:www", "site", ["index.html"]) ==
              ["-rtzc", "--delete", "-e", ssh] ++
-               ~w(--include=/posts/ --include=/index.html --exclude=* site/ me@host:www)
+               ~w(--include=/posts/ --include=/fonts/ --include=/index.html --exclude=* site/ me@host:www)
   end
 
   describe "SFTP" do

@@ -48,13 +48,14 @@ defmodule Agendum.Extras.Publish do
 
   @doc """
   Writes the site into `folder`: the files added and changed (the
-  stylesheet only when there is none), and removes those taken away.
+  stylesheet only when there is none or it is still Agendum's old one), and removes those taken away.
   """
   @spec write(String.t(), [Site.file()], Site.changes()) :: :ok | {:error, String.t()}
   def write(folder, files, changes) do
     contents = Map.new(files)
 
     with :ok <- mkdir(Path.join(folder, "posts")),
+         :ok <- mkdir(Path.join(folder, "fonts")),
          :ok <- each(changes.added ++ changes.changed, &put(folder, &1, contents[&1])),
          :ok <- each(changes.removed, &remove(folder, &1)) do
       manifest = Enum.map_join(files, "\n", &elem(&1, 0))
@@ -121,7 +122,7 @@ defmodule Agendum.Extras.Publish do
   """
   @spec rsync_args(String.t(), String.t(), [String.t()]) :: [String.t()]
   def rsync_args(target, folder, paths) do
-    includes = Enum.map(Enum.uniq(["posts/" | paths]), &"--include=/#{&1}")
+    includes = Enum.map(Enum.uniq(["posts/", "fonts/" | paths]), &"--include=/#{&1}")
     # the folder ends in "/": its contents are sent, not the folder itself
     source = String.trim_trailing(folder, "/") <> "/"
     # ssh never asks (a password or a new host key would wait on the screen)
@@ -218,6 +219,7 @@ defmodule Agendum.Extras.Publish do
   defp send_all(channel, dir, folder, files, changes) do
     remote = fn path -> if dir == "", do: path, else: Path.join(dir, path) end
     _ = :ssh_sftp.make_dir(channel, String.to_charlist(remote.("posts")), @timeout)
+    _ = :ssh_sftp.make_dir(channel, String.to_charlist(remote.("fonts")), @timeout)
     {sent, removed} = sftp_plan(folder, files, changes)
 
     # Domain: the removals wait in the folder until an upload has made

@@ -66,9 +66,15 @@ defmodule Agendum.Core.Extras.SiteTest do
       %{db: db, files: Core.site(db)}
     end
 
-    test "its files: index, feeds, stylesheet and a page per post", %{files: files} do
+    test "its files: index, feeds, stylesheet, fonts and a page per post", %{files: files} do
+      fonts =
+        ~w(fonts/alegreya-latin-wght-normal.woff2 fonts/alegreya-latin-wght-italic.woff2
+           fonts/alegreya-sc-latin-400-normal.woff2 fonts/alegreya-sc-latin-500-normal.woff2
+           fonts/courier-prime-latin-400-normal.woff2 fonts/OFL.txt)
+
       assert Enum.map(files, &elem(&1, 0)) ==
-               ~w(index.html rss.xml feed.json style.css posts/bonalaku.html posts/pigavono.html)
+               ~w(index.html rss.xml feed.json style.css posts/bonalaku.html posts/pigavono.html) ++
+                 fonts
     end
 
     test "the index shows the posts, newest first, as h-entries", %{files: files} do
@@ -122,7 +128,7 @@ defmodule Agendum.Core.Extras.SiteTest do
     end
   end
 
-  test "changes: added, changed and removed, the stylesheet never changed", ctx do
+  test "changes: added, changed and removed, the person's stylesheet never changed", ctx do
     files = [{"index.html", "new"}, {"style.css", "ours"}, {"posts/a.html", "a"}]
     existing = %{"index.html" => "old", "style.css" => "theirs", "posts/b.html" => "b"}
 

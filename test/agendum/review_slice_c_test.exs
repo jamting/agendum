@@ -6,7 +6,6 @@ defmodule Agendum.ReviewSliceCTest do
   use ExUnit.Case, async: true
 
   alias Agendum.Core
-  alias Agendum.Core.Database
   alias Agendum.Core.Extras.{ICal, Markdown}
   alias Agendum.Extras.Publish
 

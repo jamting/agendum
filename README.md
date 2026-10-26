@@ -72,3 +72,5 @@ mix agendum.starters --samples   # a copy full of sample data, for testing: tmp/
 ## Licence
 
 *[A page here was soaked in the creek. — Rabbit]*
+
+The blog's design and fonts, which Agendum writes into a published site, are other people's work under their own licences: [The Proportional Web](https://owickstrom.github.io/the-proportional-web/) by Oskar Wickström (MIT, `lib/agendum/core/extras/site_assets/the-proportional-web-LICENSE.md`) and the fonts Alegreya, Alegreya SC and Courier Prime (SIL Open Font License, `site_assets/OFL.txt`).

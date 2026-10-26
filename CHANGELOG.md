@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.69.0 — 2026-10-26
+
+- **A new look for the blog**: File ▸ Transfer ▸ Publish now writes the site in [The Proportional Web](https://owickstrom.github.io/the-proportional-web/) design by Oskar Wickström: Alegreya and its small capitals, Courier Prime for code, and dark when the reader's system is. The fonts go along with the site (`fonts/`), so no reader's browser asks Google for them. A `style.css` still exactly as an earlier Agendum wrote it is replaced; one you changed is left alone.
+
 ## 0.68.4 — 2026-10-26
 
 Ten fixes from a deep review of the extras.
