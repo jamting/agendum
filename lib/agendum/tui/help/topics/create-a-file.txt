@@ -9,8 +9,9 @@ STEPS         1. F10 File Retrieve (or CTRL-O).
               4. Save it (CTRL-S) when you are ready.
 
 NOTE          A new file has MAIN, Entry, When and Done, and an
-              Initial View with one section to start typing in.
+              Initial View with one section to start typing in. Its
+              settings are Agenda's, or the defaults you set.
 
 SEE ALSO      **Description and Password for a New File**
-              **New File Box**  **Files**
+              **New File Box**  **Set Defaults for New Files**  **Files**
 INDEX         Files > Create; New > Files; Create > Files

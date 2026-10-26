@@ -148,8 +148,8 @@ defmodule Agendum.TUI.Boxes.DateSettingsBox do
   # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): a new file's date
   # settings; Display and Input format are boxes of their own
   @impl Box
-  def defaults(_state, _mode) do
-    new = Core.new_file().date_settings
+  def defaults(state, _mode) do
+    new = State.new_file(state).date_settings
 
     Map.new(Template.fields(@layout) -- [:display_format, :input_format], fn row ->
       {row, &setting_back(&1, row, Map.fetch!(new, row))}

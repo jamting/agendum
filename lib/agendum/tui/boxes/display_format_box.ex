@@ -68,6 +68,15 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
   @impl Box
   def title(_state, _mode), do: "Display Format"
 
+  # F1 (R65): the settings box's usual text, and how new files get this
+  # format too (R82a; meeting 2026-10-26-3, § 6)
+  @impl Box
+  def about(state, mode) do
+    Box.default_about(__MODULE__, state, mode) <>
+      "\n\nNew files start with Agenda's format (MMDDYY). To start them with this " <>
+      "one, go back to File Properties and use Update defaults."
+  end
+
   @impl Box
   def content(state, mode, inner, _max_rows) do
     format = state.db.date_format
@@ -91,8 +100,8 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
   # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): a new file's display
   # format
   @impl Box
-  def defaults(_state, _mode) do
-    new = Agendum.Core.new_file().date_format
+  def defaults(state, _mode) do
+    new = State.new_file(state).date_format
 
     Map.new(DateFormatRows.rows() ++ [:time_sep], fn row ->
       {row,

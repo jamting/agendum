@@ -268,4 +268,75 @@ defmodule Agendum.TUI.FilePropertiesTest do
       refute Enum.any?(untitled.effects, &match?({:backup_file, _}, &1))
     end
   end
+
+  # Agenda's Update defaults (checked in Agenda 2.0, 2026-10-26): SPACE asks
+  # "Update new file properties? Yes"; a Yes keeps these settings at once
+  # for new files, and the box's changes stay even if ESC follows
+  describe "Update defaults (R82a)" do
+    setup %{state: state} do
+      %{state: %{state | prefs: %Agendum.Preferences{path: "/prefs"}}}
+    end
+
+    defp ask(state) do
+      state
+      |> press([{:f, 10}, "f", "p"])
+      |> to_setting("Tab size")
+      |> press(["8", :enter])
+      |> to_setting("Update defaults")
+    end
+
+    test "a row of its own, with Agenda's help line", %{state: state} do
+      state = ask(state)
+      assert screen(state) =~ ~r/Update defaults: +\.\.\./
+      assert screen(state) =~ "Use these File Properties as defaults when creating a new file."
+    end
+
+    test "SPACE asks; ENTER on Yes keeps the settings for new files", %{state: state} do
+      asked = state |> ask() |> press(" ")
+      assert screen(asked) =~ ~r/Update new file properties\? +Yes/
+      assert screen(asked) =~ "Press ENTER to accept, ESC to cancel"
+
+      kept = press(asked, :enter)
+      assert %{type: :file_props} = State.mode(kept)
+      assert kept.prefs.defaults == %{"tab_size" => 8}
+      assert {:save_preferences, "/prefs", %{defaults: %{"tab_size" => 8}}} = List.last(effects())
+
+      # the box's changes stay, even after ESC, as one undo step
+      closed = press(kept, :esc)
+      assert closed.db.tab_size == 8
+      assert closed.prefs.defaults == %{"tab_size" => 8}
+      view = press(closed, [:esc, :esc])
+      assert view.modes == []
+      assert press(view, {:ctrl, "z"}).db.tab_size == state.db.tab_size
+    end
+
+    test "N, or ESC, keeps nothing", %{state: state} do
+      asked = state |> ask() |> press(" ")
+      assert screen(press(asked, "n")) =~ ~r/Update new file properties\? +No/
+
+      for keys <- [["n", :enter], [:esc]] do
+        back = press(asked, keys)
+        assert %{type: :file_props} = State.mode(back)
+        assert back.prefs.defaults == %{}
+        assert press(back, :esc).db.tab_size == state.db.tab_size
+      end
+    end
+
+    test "F8 then gives the person's defaults, not Agenda's", %{state: state} do
+      state = %{state | prefs: %{state.prefs | defaults: %{"tab_size" => 8}}}
+      box = state |> press([{:f, 10}, "f", "p"]) |> to_setting("Tab size")
+      assert press(box, ["3", :enter, {:f, 8}]).db.tab_size == 8
+    end
+
+    test "F1 in Display format says how new files get it", %{state: state} do
+      help = state |> press(@display) |> press({:f, 1})
+      assert screen(help) =~ "use Update defaults"
+    end
+
+    test "a new file starts with them", %{state: state} do
+      state = %{state | prefs: %{state.prefs | defaults: %{"tab_size" => 8}}}
+      asked = Agendum.TUI.Update.loaded(state, "/tmp/nowhere/notes.agendum", {:error, :enoent})
+      assert press(asked, :enter).db.tab_size == 8
+    end
+  end
 end

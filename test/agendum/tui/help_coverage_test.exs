@@ -35,7 +35,6 @@ defmodule Agendum.TUI.HelpCoverageTest do
     Agendum.TUI.Boxes.CustomizeBox,
     Agendum.TUI.Boxes.DateRuleBox,
     Agendum.TUI.Boxes.DateSettingsBox,
-    Agendum.TUI.Boxes.DisplayFormatBox,
     Agendum.TUI.Boxes.ExecuteBox,
     Agendum.TUI.Boxes.FileProperties,
     Agendum.TUI.Boxes.FileStatsBox,

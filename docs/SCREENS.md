@@ -119,6 +119,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
   - **Password** `:password_box` (File Properties ▸ Set file password): Agenda's small boxes, "Enter the current password", "Enter the new password", "Please type the new password again", the password typed hidden (ADR 0046). `Agendum.TUI.Boxes.PasswordBox`.
   - **New File** `:new_file` (File ▸ Retrieve with a name that is not a file yet): Description and Password, as Agenda's; ENTER makes the file (R82, ADR 0046). `Agendum.TUI.Boxes.NewFileBox`.
   - **Abandon File** `:abandon` (File ▸ Abandon): "Revert to last saved version: No", as Agenda's; Yes puts the file back as last saved (R82). `Agendum.TUI.Boxes.AbandonBox`.
+  - **Update defaults** `:update_defaults` (File Properties ▸ Update defaults): Agenda's untitled box, "Update new file properties? Yes", "Press ENTER to accept, ESC to cancel"; Yes keeps the file's settings as the defaults for new files (R82a). `Agendum.TUI.Boxes.UpdateDefaultsBox`.
   - **Set Alarm** `:set_alarm` (ALT-A, Item ▸ Alarm): Date category and Minutes before, as Agenda's; ENTER sets the alarm (R38). `Agendum.TUI.Boxes.SetAlarmBox`.
     - **Assignment profile** `:profile` (F3).
     - **Item Properties** of a dependency (ENTER on one), on top.
@@ -219,6 +220,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:password_box`      | box           | `Agendum.TUI.Boxes.PasswordBox`          | File Properties ▸ Set file password               | R82            |
 | `:new_file`          | box           | `Agendum.TUI.Boxes.NewFileBox`           | File ▸ Retrieve with a new name                   | R82            |
 | `:abandon`           | box           | `Agendum.TUI.Boxes.AbandonBox`           | File ▸ Abandon                                    | R82            |
+| `:update_defaults`   | box           | `Agendum.TUI.Boxes.UpdateDefaultsBox`    | File Properties ▸ Update defaults                 | R82a           |
 | `:set_alarm`         | box           | `Agendum.TUI.Boxes.SetAlarmBox`          | ALT-A, Item ▸ Alarm                               | R38            |
 | `:goto`              | box           | `Agendum.TUI.Boxes.GoTo`                 | ALT-F5                                            | R42            |
 | `:search_box`        | box           | `Agendum.TUI.Boxes.SearchBox`            | ALT-F6, Utilities ▸ Show ▸ Match                  | R37            |

@@ -170,6 +170,7 @@ defmodule Agendum.TUI.Boxes.Box do
     range_filter: Agendum.TUI.Boxes.RangeFilterBox,
     run_by_name: Agendum.TUI.Boxes.RunByName,
     abandon: Agendum.TUI.Boxes.AbandonBox,
+    update_defaults: Agendum.TUI.Boxes.UpdateDefaultsBox,
     error_box: Agendum.TUI.Boxes.ErrorBox,
     password_box: Agendum.TUI.Boxes.PasswordBox,
     new_file: Agendum.TUI.Boxes.NewFileBox,

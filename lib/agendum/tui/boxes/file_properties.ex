@@ -8,8 +8,9 @@ defmodule Agendum.TUI.Boxes.FileProperties do
       trash (R24a), Tab
       size (R64e, typed as a number), Global
       date settings ..., Auto-assign settings ...
-      (`Agendum.TUI.Boxes.AutoAssignBox`, R16a) and File statistics ...
-      (`Agendum.TUI.Boxes.FileStatsBox`). Drawn from `@layout`
+      (`Agendum.TUI.Boxes.AutoAssignBox`, R16a), File statistics ...
+      (`Agendum.TUI.Boxes.FileStatsBox`) and Update defaults ...
+      (`Agendum.TUI.Boxes.UpdateDefaultsBox`, R82a). Drawn from `@layout`
       (`Agendum.TUI.Boxes.Template`), Agenda's box (screenshot 130) with only the
       settings Agendum has
     * Global Date Settings (`Agendum.TUI.Boxes.DateSettingsBox`, R14e)
@@ -26,6 +27,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.TUI.Boxes.{AutoAssignBox, Box, DateSettingsBox, FieldTyping, FileStatsBox}
+  alias Agendum.TUI.Boxes.UpdateDefaultsBox
   alias Agendum.TUI.Boxes.Template
   alias Agendum.TUI.State
 
@@ -43,6 +45,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
 
    Global date settings:   [dates]   Auto-assign settings:  [auto ]
                                      File statistics:       [stats]
+   Update defaults:        [update]
   """
 
   @rows Template.fields(@layout)
@@ -72,7 +75,8 @@ defmodule Agendum.TUI.Boxes.FileProperties do
     dates:
       "Press SPACE BAR to choose date and time formats to use as defaults throughout the file.",
     auto: "Press SPACE BAR to choose how items are assigned to categories by their text.",
-    stats: "Press SPACE BAR to display current statistics for the file."
+    stats: "Press SPACE BAR to display current statistics for the file.",
+    update: "Use these File Properties as defaults when creating a new file."
   }
 
   def open(state), do: State.push(state, %Agendum.TUI.Modes.FileProps{cursor: 0})
@@ -123,11 +127,12 @@ defmodule Agendum.TUI.Boxes.FileProperties do
   def run(state, mode, :change), do: change(state, field(state, mode))
   def run(state, mode, id), do: Box.run_settings(state, mode, @grid, id)
 
-  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): what a new file has;
-  # the "..." boxes have their own settings
+  # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): what a new file has,
+  # with the person's own defaults (R82a: Agenda's F8 gave those too,
+  # checked 2026-10-26); the "..." boxes have their own settings
   @impl Box
-  def defaults(_state, _mode) do
-    new = Agendum.Core.new_file()
+  def defaults(state, _mode) do
+    new = State.new_file(state)
 
     %{
       insert_columns:
@@ -161,6 +166,7 @@ defmodule Agendum.TUI.Boxes.FileProperties do
 
   defp change(state, :auto), do: AutoAssignBox.open(state)
   defp change(state, :stats), do: FileStatsBox.open(state)
+  defp change(state, :update), do: UpdateDefaultsBox.open(state)
 
   # SPACE: the next size, after 16 back to 1 (F3 lists them, `BoxChoices`)
   defp change(state, :tab_size),
@@ -198,7 +204,8 @@ defmodule Agendum.TUI.Boxes.FileProperties do
       tab_size: Integer.to_string(state.db.tab_size),
       dates: "...",
       auto: "...",
-      stats: "..."
+      stats: "...",
+      update: "..."
     }
 
     Template.render(@layout, values, [selected: field(state, mode)] ++ FieldTyping.editing(mode)) ++

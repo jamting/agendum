@@ -62,6 +62,20 @@ defmodule Agendum.TUI.Boxes.BoxCancel do
   def cancel(_state, _key), do: :pass
 
   @doc """
+  The settings box on top keeps its changes as ENTER would, and stays open:
+  they become one undo step now, and ESC from here on cancels only what is
+  changed after. File Properties ▸ Update defaults does this (R82a): Agenda
+  kept the box's changes once they were taken as the defaults, even if ESC
+  followed (checked in Agenda 2.0, 2026-10-26).
+  """
+  @spec keep(State.t()) :: State.t()
+  def keep(state) do
+    %{opened: opened} = box = State.mode(state)
+    state = Agendum.TUI.History.squash(state, opened, state.macro.playing > 0)
+    State.put_mode(state, %{box | opened: opened(state)})
+  end
+
+  @doc """
   After a key: a settings box that has just appeared on top keeps how
   things were before the key (`before`); one shown again after a full
   screen keeps how they are now.

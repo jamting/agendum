@@ -178,18 +178,7 @@ defmodule Agendum.Core.JSONFile do
       next_zettel: db.next_zettel,
       main: db.main_id,
       special: obj(entry: db.special.entry, when: db.special.when, done: db.special.done),
-      settings:
-        obj(
-          date_format: struct_obj(db.date_format),
-          date_settings: struct_obj(db.date_settings),
-          match_settings: struct_obj(db.match_settings),
-          confirm_assignments: Atom.to_string(db.confirm_assignments),
-          insert_columns: Atom.to_string(db.insert_columns),
-          tab_size: db.tab_size,
-          description: db.description,
-          backup_on_open: db.backup_on_open,
-          empty_trash: Atom.to_string(db.trash.empty)
-        ),
+      settings: settings_obj(db),
       categories: Enum.map(category_order(db), &category(db.categories[&1])),
       items: Enum.map(db.item_order, &item(db, rel, db.items[&1])),
       views: Enum.map(db.view_order, &view(db.views[&1])),
@@ -431,6 +420,27 @@ defmodule Agendum.Core.JSONFile do
   defp match({:circular, ids}), do: obj(circular: ids)
   defp match(%Search{} = s), do: obj(search: struct_obj(s))
 
+  # File Properties and the settings below it (`settings/1` too)
+  defp settings_obj(db),
+    do:
+      obj(
+        date_format: struct_obj(db.date_format),
+        date_settings: struct_obj(db.date_settings),
+        match_settings: struct_obj(db.match_settings),
+        confirm_assignments: Atom.to_string(db.confirm_assignments),
+        insert_columns: Atom.to_string(db.insert_columns),
+        tab_size: db.tab_size,
+        description: db.description,
+        backup_on_open: db.backup_on_open,
+        empty_trash: Atom.to_string(db.trash.empty)
+      )
+
+  # Domain: an object as `JSON.decode/1` would give it back: maps with
+  # string keys, so `settings/1` can be read as decoded JSON is
+  defp plain({:obj, pairs}), do: Map.new(pairs, fn {k, v} -> {k, plain(v)} end)
+  defp plain(list) when is_list(list), do: Enum.map(list, &plain/1)
+  defp plain(value), do: value
+
   defp struct_obj(%module{} = s),
     do:
       {:obj,
@@ -501,6 +511,27 @@ defmodule Agendum.Core.JSONFile do
   end
 
   @doc """
+  The file's settings, File Properties and the global settings below it, as
+  the JSON format writes them under `settings`, decoded into maps with
+  string keys (`"date_format" => %{"clock" => 12, ...}`): what
+  `Agendum.Core.FileDefaults` keeps for new files (R82a).
+  """
+  @spec settings(Database.t()) :: map
+  def settings(db), do: db |> settings_obj() |> plain()
+
+  @doc """
+  The file with these settings (the shape `settings/1` gives), read as a
+  JSON file's are; a setting left out is the struct's own default, and one
+  that cannot be read is an error saying where.
+  """
+  @spec put_settings(Database.t(), map) :: {:ok, Database.t()} | {:error, String.t()}
+  def put_settings(db, settings) do
+    {:ok, read_settings(db, settings)}
+  catch
+    {:bad, path, message} -> {:error, "#{path}: #{message}"}
+  end
+
+  @doc """
   Builds a file from a JSON document already decoded into maps (string
   keys), as `decode/1` does from its text; the `.AG` import writes one
   (R72).
@@ -546,31 +577,11 @@ defmodule Agendum.Core.JSONFile do
         when: req(special, "when", :int, "special.when"),
         done: req(special, "done", :int, "special.done")
       },
-      date_format: read_struct(settings, "date_format", DateFormat, "settings.date_format"),
-      date_settings:
-        read_struct(settings, "date_settings", DateSettings, "settings.date_settings"),
-      match_settings:
-        read_struct(settings, "match_settings", TextMatch, "settings.match_settings"),
-      confirm_assignments:
-        opt(settings, "confirm_assignments", {:enum, @confirm}, :never, "settings"),
-      insert_columns:
-        opt(settings, "insert_columns", {:enum, [:all, :section]}, :all, "settings"),
-      tab_size: tab_size(opt(settings, "tab_size", :int, 5, "settings")),
-      description: opt(settings, "description", :string, "", "settings"),
-      backup_on_open: opt(settings, "backup_on_open", :bool, false, "settings"),
       trash: %Agendum.Core.Trash{
         # `elem(&1, 0)`: an item read is `{item, its relations}`; a
         # discarded one has none
         items: trash |> list("items", "trash.items", &read_item/2) |> Enum.map(&elem(&1, 0)),
-        day: opt(trash, "day", {:nullable, :date}, nil, "trash"),
-        empty:
-          opt(
-            settings,
-            "empty_trash",
-            {:enum, Agendum.Core.empty_trash_choices()},
-            :end_of_day,
-            "settings"
-          )
+        day: opt(trash, "day", {:nullable, :date}, nil, "trash")
       },
       categories: Map.new(categories, &{&1.id, &1}),
       items: Map.new(items, fn {item, _} -> {item.id, item} end),
@@ -584,6 +595,38 @@ defmodule Agendum.Core.JSONFile do
       blog: read_struct(doc, "blog", Blog, "blog")
     }
     |> put_item_relations(items)
+    |> read_settings(settings)
+  end
+
+  # File Properties and the settings below it, read into the file; a setting
+  # left out is the struct's own default
+  defp read_settings(db, settings) do
+    %{
+      db
+      | date_format: read_struct(settings, "date_format", DateFormat, "settings.date_format"),
+        date_settings:
+          read_struct(settings, "date_settings", DateSettings, "settings.date_settings"),
+        match_settings:
+          read_struct(settings, "match_settings", TextMatch, "settings.match_settings"),
+        confirm_assignments:
+          opt(settings, "confirm_assignments", {:enum, @confirm}, :never, "settings"),
+        insert_columns:
+          opt(settings, "insert_columns", {:enum, [:all, :section]}, :all, "settings"),
+        tab_size: tab_size(opt(settings, "tab_size", :int, 5, "settings")),
+        description: opt(settings, "description", :string, "", "settings"),
+        backup_on_open: opt(settings, "backup_on_open", :bool, false, "settings"),
+        trash: %{
+          db.trash
+          | empty:
+              opt(
+                settings,
+                "empty_trash",
+                {:enum, Agendum.Core.empty_trash_choices()},
+                :end_of_day,
+                "settings"
+              )
+        }
+    }
   end
 
   defp put_item_relations(db, items) do

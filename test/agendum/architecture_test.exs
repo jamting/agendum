@@ -148,7 +148,7 @@ defmodule Agendum.ArchitectureTest do
   @reads ~w(
     agenda_file? alarm_at alarm_list circular_items assignment_reasons auto_dating? browse_keep browse_move browse_start browse_to browsed_view calendars_due completions confirm_mode date_conversion
     date_filters? default_column_width demote_conflicts empty_trash_choices conditions_and_actions dependents entry_categories group_alarms
-    entry_values exclusive_conflicts export_json import_ag import_json item_assignments
+    entry_values exclusive_conflicts export_json file_defaults import_ag import_json item_assignments
     item_column_fit marked_items match_settings move_conflicts new_file
     new_file_with numeric_conversion prerequisites promote_conflicts questions read_when
     related_items relocation_conflicts section_calcs shift_filters show_view template view_statistics waiting?

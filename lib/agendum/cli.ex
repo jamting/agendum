@@ -198,8 +198,10 @@ defmodule Agendum.CLI do
         options.demo -> {:ok, Sample.build(today), nil, nil}
         options.rabbit -> {:ok, Sample.rabbit(today), nil, nil}
         options.clinic -> {:ok, Agendum.Starters.Clinic.build(today), nil, nil}
-        options.file -> open(Store.normalize_path(options.file))
-        true -> {:ok, Core.new_file(), nil, nil}
+        options.file -> open(Store.normalize_path(options.file), prefs)
+        # Domain: an empty file the person makes starts with their defaults
+        # (File Properties ▸ Update defaults, R82a)
+        true -> {:ok, Core.new_file(defaults: prefs.defaults), nil, nil}
       end
 
     case result do
@@ -280,11 +282,11 @@ defmodule Agendum.CLI do
   # new file with that name, written there on the first save.
   # A file that exists but cannot be read stops the program with a message.
   # A Lotus Agenda file (`.AG`, any case) is imported instead (R72).
-  defp open(path) do
+  defp open(path, prefs) do
     cond do
       String.downcase(Path.extname(path)) == ".ag" -> read_agenda(path)
       File.exists?(path) -> open_existing(path)
-      true -> {:ok, Core.new_file(), path, nil}
+      true -> {:ok, Core.new_file(defaults: prefs.defaults), path, nil}
     end
   end
 

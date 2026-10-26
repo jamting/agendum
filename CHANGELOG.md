@@ -4,6 +4,14 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.63.0 — 2026-10-26
+
+Your own defaults for new files, as in Lotus Agenda.
+
+- **File Properties ▸ Update defaults** asks Agenda's "Update new file properties? Yes". Yes keeps the file's settings as the defaults for every empty file you make from then on: Make backup on open, Insert new columns in, Empty trash, Tab size, the global date settings with the display format, and the auto-assign settings (not the description or password). Set ISO dates once, for example, and every new file has them. Files you already have are unchanged; the defaults are kept in your preferences.
+- **F8 Default** in File Properties and its boxes gives your defaults back, as Agenda's did.
+- The help has a new topic, Set Defaults for New Files, and the Display Format box's F1 says how.
+
 ## 0.62.2 — 2026-10-26
 
 - **ALT-F8 (GETITMS) in a note** asks Agenda's "Discard items after copy?" first: Yes copies the marked items into the note and discards them (to the trash, so Undisc brings them back), No copies them and leaves them marked, ESC copies nothing.

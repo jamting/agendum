@@ -68,7 +68,7 @@ defmodule Agendum.TUI.Boxes.NewFileBox do
   # the new file, with what was typed; refused as the core refuses it
   @impl Box
   def run(state, mode, :done) do
-    case Core.new_file_with(mode.description, mode.password) do
+    case Core.new_file_with(mode.description, mode.password, state.prefs.defaults) do
       {:ok, db} ->
         Prompts.new_file(State.pop(state), mode.path, db)
 

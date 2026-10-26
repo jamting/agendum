@@ -115,8 +115,8 @@ defmodule Agendum.TUI.Boxes.AutoAssignBox do
   # F8 and ALT-F8 (`Agendum.TUI.Boxes.BoxDefaults`): a new file's text
   # matching
   @impl Box
-  def defaults(_state, _mode) do
-    new = Agendum.Core.new_file()
+  def defaults(state, _mode) do
+    new = State.new_file(state)
 
     matching =
       Map.new(@rows -- [:confirm], fn row ->

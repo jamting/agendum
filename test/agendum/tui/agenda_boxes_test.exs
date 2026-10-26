@@ -176,9 +176,6 @@ defmodule Agendum.TUI.AgendaBoxesTest do
                     "File Properties' other settings (AGENDA_PARITY, Boxes and lists)"},
                  "file_properties: Agenda's Global protection, not ours" =>
                    {:out_of_scope, "application protection (SPEC § 6)"},
-                 "file_properties: Agenda's Update defaults, not ours" =>
-                   {:not_built,
-                    "File Properties' other settings (AGENDA_PARITY, Boxes and lists)"},
                  "file_statistics: Agenda's Unused space, not ours" =>
                    {:machine,
                     "an Agendum file has no unused space to report: it is written whole on every save (no Compress)"},

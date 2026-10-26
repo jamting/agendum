@@ -37,4 +37,4 @@ Where the help's written topics (`lib/agendum/tui/help/topics/*.txt`, ADR 0047) 
 | Kanga | Enter Dates and Times, Use Child Categories as Section Heads |
 | Eeyore | Views |
 
-Twelve touches in ten of the 107 written topics; the other topics are plain.
+Twelve touches in ten of the 108 written topics; the other topics are plain.

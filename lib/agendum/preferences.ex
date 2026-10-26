@@ -3,7 +3,8 @@ defmodule Agendum.Preferences do
   The person's preferences, for every file they open (ADR 0008): the
   colour theme (`theme`, R40), the date languages (`lang` and `fallback`,
   R14c) and the Input format (`Agendum.Core.InputFormat`, R41b), and where
-  they left each file (`Agendum.Preferences.Place`, R69). Kept in a plain
+  they left each file (`Agendum.Preferences.Place`, R69), and the defaults
+  for new files (File Properties ▸ Update defaults, R82a). Kept in a plain
   text file, one `key = value` per line, in the config directory
   (`$XDG_CONFIG_HOME/agendum/preferences` or
   `~/.config/agendum/preferences`; ADR 0019). A setting left out is the date
@@ -28,7 +29,9 @@ defmodule Agendum.Preferences do
   completion beeps (Agenda's Beep on auto-completion; both R76). `extras`:
   whether the extras show, Agendum's own features that Agenda did not have
   (R77, ADR 0043; off unless the person turns it on). `places`: where the person
-  left each file, by its path, the file left last first (R69). `path` is where they are
+  left each file, by its path, the file left last first (R69). `defaults`: the
+  settings new files start with (R82a, `Agendum.Core.FileDefaults`), one
+  `default.` line each. `path` is where they are
   kept (nil: not saved) and `user` the login name (the splash's name when
   none is set); neither is written in them.
   """
@@ -46,6 +49,7 @@ defmodule Agendum.Preferences do
           beep_completion: boolean,
           extras: boolean,
           places: [{String.t(), Place.t()}],
+          defaults: Agendum.Core.FileDefaults.t(),
           path: String.t() | nil,
           user: String.t() | nil
         }
@@ -62,6 +66,7 @@ defmodule Agendum.Preferences do
             beep_completion: true,
             extras: false,
             places: [],
+            defaults: %{},
             path: nil,
             user: nil
 
@@ -146,9 +151,32 @@ defmodule Agendum.Preferences do
       beep_completion: pick.("beep_on_completion", &yes_no/1) != :no,
       # off unless the file says yes, where the others are on unless it says no
       extras: pick.("extras", &yes_no/1) == :yes,
-      places: places(pairs)
+      places: places(pairs),
+      defaults: defaults(pairs)
     }
   end
+
+  # every `default.` line (R82a): the setting's name after the prefix, its
+  # value read as JSON (`8`, `true`, `"-"`) or else taken as plain text
+  # (`-`, `09:00:00`); which names and values count is the core's to say
+  defp defaults(pairs) do
+    for {"default." <> key, value} <- pairs, key != "", into: %{} do
+      case JSON.decode(value) do
+        {:ok, decoded} -> {key, decoded}
+        {:error, _} -> {key, value}
+      end
+    end
+  end
+
+  # a default's value as written: text plain where it reads back the same,
+  # anything else as JSON (a number, true, or text such as " " or "8")
+  defp default_text(value) when is_binary(value) do
+    if String.trim(value) == value and value != "" and match?({:error, _}, JSON.decode(value)),
+      do: value,
+      else: JSON.encode!(value)
+  end
+
+  defp default_text(value), do: JSON.encode!(value)
 
   # every `place` line, in the order written (the file left last first);
   # a second line for the same file is ignored
@@ -254,7 +282,11 @@ defmodule Agendum.Preferences do
          {"sound", if(prefs.sound, do: nil, else: "no")},
          {"beep_on_completion", if(prefs.beep_completion, do: nil, else: "no")},
          {"extras", if(prefs.extras, do: "yes")}
-       ] ++ Enum.map(prefs.places, fn {path, place} -> {"place", Place.format(path, place)} end))
+       ] ++
+         Enum.map(Enum.sort(prefs.defaults), fn {key, value} ->
+           {"default." <> key, default_text(value)}
+         end) ++
+         Enum.map(prefs.places, fn {path, place} -> {"place", Place.format(path, place)} end))
       |> Enum.reject(&(elem(&1, 1) == nil))
       |> Enum.map(fn {key, value} -> "#{key} = #{value}\n" end)
 

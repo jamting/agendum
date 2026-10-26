@@ -137,6 +137,7 @@ defmodule Agendum.TUI.Modes do
     ],
     sort: [:cursor, :opened, :remembered, :scope],
     splash: [:until],
+    update_defaults: [:cursor, :yes],
     view_props: [:back, :choice, :cursor, :moving, :opened, :typing, :view_id],
     view_stats: [:view_id],
     what_to_copy: [:action, :choice, :cursor, :edit, :on],

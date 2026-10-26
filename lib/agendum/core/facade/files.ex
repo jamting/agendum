@@ -6,15 +6,30 @@ defmodule Agendum.Core.Facade.Files do
   Called through `Agendum.Core`.
   """
 
-  alias Agendum.Core.Database
+  alias Agendum.Core.{Database, FileDefaults}
 
   # `@typep` is a private type: a local short name for `Agendum.Core.db()`,
   # so the `@spec`s below read the same as they did in `Agendum.Core`.
   @typep db :: Agendum.Core.db()
 
-  # `as:` delegates to a function with another name: `new_file/1` here
-  # calls `Database.new/1`.
-  defdelegate new_file(opts \\ []), to: Database, as: :new
+  @doc """
+  A new, empty file (`Database.new/1`; `view_name:` and `section_name:`
+  name its first view and section). With `defaults:`, the person's defaults
+  for new files (R82a, `Agendum.Core.FileDefaults`) replace Agenda's
+  settings.
+  """
+  @spec new_file(keyword) :: db
+  def new_file(opts \\ []) do
+    {defaults, opts} = Keyword.pop(opts, :defaults, %{})
+    opts |> Database.new() |> FileDefaults.apply(defaults)
+  end
+
+  @doc """
+  File Properties ▸ Update defaults (R82a): the file's settings that the
+  person's new files start with, those that differ from Agenda's.
+  """
+  @spec file_defaults(db) :: FileDefaults.t()
+  defdelegate file_defaults(db), to: FileDefaults, as: :take
 
   @doc """
   The file's structure without its items (File ▸ Transfer ▸ Template, R82;
@@ -49,12 +64,12 @@ defmodule Agendum.Core.Facade.Files do
 
   @doc """
   A new file with Agenda's New File box's description and password (R82,
-  ADR 0046), both optional; refused as `set_description/2` and
+  ADR 0046), both optional, and the person's defaults (R82a); refused as `set_description/2` and
   `set_password/2` refuse them.
   """
-  @spec new_file_with(String.t(), String.t()) :: {:ok, db} | {:error, :too_long}
-  def new_file_with(description, password) do
-    with {:ok, db} <- set_description(Database.new(), description),
+  @spec new_file_with(String.t(), String.t(), FileDefaults.t()) :: {:ok, db} | {:error, :too_long}
+  def new_file_with(description, password, defaults \\ %{}) do
+    with {:ok, db} <- set_description(new_file(defaults: defaults), description),
          do: set_password(db, password)
   end
 

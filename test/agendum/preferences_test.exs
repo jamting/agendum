@@ -182,4 +182,23 @@ defmodule Agendum.PreferencesTest do
              {"/x", %Place{recent: [4, 2]}}
            ]
   end
+
+  # File Properties ▸ Update defaults (R82a): the defaults for new files,
+  # one `default.` line each, the value as JSON writes it (text plain)
+  test "the defaults for new files, one line each" do
+    defaults = %{
+      "tab_size" => 8,
+      "date_format.separator" => "-",
+      "backup_on_open" => true,
+      "date_settings.morning" => "09:00:00"
+    }
+
+    text = Preferences.format(%Preferences{defaults: defaults})
+    assert text =~ "default.tab_size = 8\n"
+    assert text =~ "default.date_format.separator = -\n"
+    assert text =~ "default.backup_on_open = true\n"
+    assert text =~ "default.date_settings.morning = 09:00:00\n"
+    assert Preferences.parse(text).defaults == defaults
+    assert Preferences.parse("").defaults == %{}
+  end
 end

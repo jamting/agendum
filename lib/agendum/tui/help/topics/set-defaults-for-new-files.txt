@@ -1,0 +1,21 @@
+Set Defaults for New Files
+
+PURPOSE       Start every new file with your own settings, such as
+              the date format, instead of Agenda's.
+
+STEPS         1. In a file set up as you like, F10 File Properties.
+              2. Change what you want: Global date settings, Display
+                 format (ISO 8601 is YYYYMMDD with "-" and 24 hr),
+                 Auto-assign settings, Tab size …
+              3. Highlight Update defaults and press SPACE BAR.
+              4. Update new file properties? Yes, and ENTER.
+
+NOTE          Every empty file you make from then on starts with
+              these settings; files you have already are unchanged.
+              The description and password are not copied. F8 in
+              File Properties gives your defaults back. The defaults
+              are kept in your preferences, not in the file.
+
+SEE ALSO      **Update Defaults Box**  **File Properties Box**
+              **Create a File**
+INDEX         Files > Defaults; Defaults > New files; Date format > Default

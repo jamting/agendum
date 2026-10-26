@@ -694,7 +694,7 @@ defmodule Agendum.TUI.Update do
   """
   def opened(state, path, {:error, :enoent}) do
     state
-    |> State.reopen(Core.new_file(), path)
+    |> State.reopen(State.new_file(state), path)
     |> remember(path)
     |> State.info("New file #{Path.basename(path)} (saved there on the first save)")
     |> Layout.settle()

@@ -277,6 +277,15 @@ defmodule Agendum.TUI.State do
       else: state
   end
 
+  @doc """
+  A new, empty file as this person's new files start: with the defaults
+  they kept with File Properties ▸ Update defaults (R82a), or Agenda's
+  settings when they kept none. Also what F8 Default gives in File
+  Properties and its boxes, as Agenda's did.
+  """
+  @spec new_file(t) :: Database.t()
+  def new_file(state), do: Agendum.Core.new_file(defaults: state.prefs.defaults)
+
   @doc "Shows or hides the key bar (Utilities ▸ Customize; R54), and keeps it so."
   @spec toggle_key_map(t) :: t
   def toggle_key_map(state) do

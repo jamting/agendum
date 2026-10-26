@@ -657,8 +657,8 @@ defmodule Agendum.TUI.Update.Prompts do
   is not a file yet, after asking (Agenda's way to make a file, User's
   Guide 22-3).
   """
-  @spec new_file(State.t(), String.t()) :: State.t()
-  def new_file(state, path, db \\ Core.new_file()) do
+  @spec new_file(State.t(), String.t(), Agendum.Core.db()) :: State.t()
+  def new_file(state, path, db) do
     %{
       State.reopen(state, db, path)
       | dirty: true,
