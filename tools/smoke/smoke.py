@@ -44,6 +44,7 @@ screen and output are printed.
 """
 
 import argparse
+import codecs
 import fcntl
 import os
 import pty
@@ -123,16 +124,20 @@ class Screen:
         self.cur_bg = None
         self.reverse = False
         self.bells = 0
-        self.pending = b""
+        self.pending = ""
+        # a read can end inside a character (│ is three bytes): the
+        # incremental decoder keeps those bytes for the next read, where
+        # decoding each read alone would drop the character
+        self.decoder = codecs.getincrementaldecoder("utf-8")(errors="replace")
 
     def feed(self, data):
-        text = (self.pending + data).decode("utf-8", errors="ignore")
+        text = self.pending + self.decoder.decode(data)
         # keep an unfinished escape sequence for the next read
         cut = text.rfind("\x1b")
         if cut != -1 and not re.match(r"\x1b(\[[0-9;?]*[A-Za-z~]|[^\[])", text[cut:]):
-            self.pending, text = text[cut:].encode(), text[:cut]
+            self.pending, text = text[cut:], text[:cut]
         else:
-            self.pending = b""
+            self.pending = ""
         i = 0
         while i < len(text):
             ch = text[i]
