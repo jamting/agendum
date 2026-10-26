@@ -1,0 +1,17 @@
+Import/Export Information
+
+PURPOSE       Move a file's contents in and out of Agendum.
+
+EXPORT        F10 File Transfer Export writes the whole file as
+              JSON, readable by people and other programs.
+
+IMPORT        F10 File Transfer Import reads a JSON file, or a Lotus
+              Agenda .AG file, as a new file to save under a name.
+              An Agenda file keeps its items, categories, views,
+              dates, settings and trash; a report says what came
+              over and what did not.
+
+PRINT         CTRL-P (F10 Print) writes the view to a text file.
+
+SEE ALSO      **File Transfer Menu**  **Import Report Box**
+INDEX         Import; Export; JSON; Lotus Agenda files; Print > View

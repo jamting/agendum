@@ -1,0 +1,16 @@
+Enter a Note
+
+PURPOSE       Write a note for an item or a category.
+
+STEPS         1. Highlight the item, or a section head or column
+                 entry for its category.
+              2. Press F5 (NOTE).
+              3. Type. F5 saves the note and goes back; ESC asks
+                 first whether to keep the changes.
+
+NOTE          While typing an item, F5 keeps the item's text and
+              opens its note. In the **Category Manager**, F5 opens
+              the highlighted category's note.
+
+SEE ALSO      **Note Editor**  **Notes**
+INDEX         Notes > Enter; Notes > Edit

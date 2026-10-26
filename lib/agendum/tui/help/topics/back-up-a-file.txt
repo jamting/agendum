@@ -1,0 +1,16 @@
+Back Up a File
+
+PURPOSE       Keep a copy of the file as it was before you started
+              changing it.
+
+STEPS         File Properties, Make backup on open: Yes. From then
+              on, opening the file first copies it to the same name
+              with .bak after it (owl.agendum.bak), replacing the
+              last backup.
+
+NOTE          To use a backup, rename it to end in .agendum and
+              retrieve it. For a copy at any moment, use **Copy a
+              File**.
+
+SEE ALSO      **File Properties Box**  **Copy a File**
+INDEX         Files > Back up; Backup

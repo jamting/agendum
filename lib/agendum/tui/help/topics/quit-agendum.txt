@@ -1,0 +1,13 @@
+Quit Agendum
+
+PURPOSE       Leave Agendum.
+
+STEPS         ALT-Q, CTRL-Q, or F10 Quit. With unsaved changes,
+              Agendum asks to save them first: Y saves, N leaves
+              them, ESC stays.
+
+NOTE          Next time, Agendum opens the same file at the view and
+              item where you left.
+
+SEE ALSO      **Save a File**
+INDEX         Quit; Exit

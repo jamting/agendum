@@ -1,0 +1,14 @@
+Save a File
+
+PURPOSE       Keep your changes on disk.
+
+STEPS         CTRL-S, ALT-W in a view, or F10 File Save. A new file
+              asks for a name first.
+
+NOTE          Utilities Customize can save by itself after some
+              minutes without a key (Auto-save). If another program
+              changed the file on disk since Agendum read it,
+              Agendum asks before saving over it.
+
+SEE ALSO      **Back Up a File**  **Copy a File**  **Files**
+INDEX         Files > Save; Save > Files; Auto-save

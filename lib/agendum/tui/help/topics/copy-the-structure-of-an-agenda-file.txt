@@ -1,0 +1,11 @@
+Copy the Structure of an Agenda File
+
+PURPOSE       Start another file with the same categories, views,
+              macros, conditions and settings, but no items: next
+              year's plan from this year's.
+
+STEPS         1. F10 File Transfer Template.
+              2. Type the new file's name (F3 lists files), ENTER.
+
+SEE ALSO      **File Transfer Menu**  **Create a File**
+INDEX         Files > Template; Template; Structure > Copy

@@ -1,0 +1,13 @@
+Copy a File
+
+PURPOSE       Write a copy of the open file under another name.
+
+STEPS         1. F10 File Maintenance MakeCopy.
+              2. Type the copy's name (F3 lists files), ENTER.
+
+NOTE          The file is saved too, and you go on working in it,
+              not in the copy: retrieve the copy to work there. A
+              file of that name is written over.
+
+SEE ALSO      **File Maintenance Menu**  **Back Up a File**
+INDEX         Files > Copy; Copy > Files; Save as

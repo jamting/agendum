@@ -60,8 +60,8 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Special Variables in Macros | open |
 | Macro Editor | open |
 | Attach an External Macro File | left out: external files (meeting 2026-10-25, § 5) |
-| Note Editor | open |
-| Edit Mode | open |
+| Note Editor | ours: `note-editor.txt` (batch 5) |
+| Edit Mode | ours: `edit-mode.txt` (batch 5) |
 | Select from a Choice List | open |
 | About Printing | left out: printing (SPEC § 6); Print a Document covers ours |
 | Set Up Printers | left out: printing (SPEC § 6) |
@@ -77,25 +77,25 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | View Indicators | open |
 | Value Range Symbols | open |
 | Category Manager Indicators | open |
-| Quit Agenda | open |
+| Quit Agenda | ours: `quit-agendum.txt`, as Quit Agendum (batch 5) |
 | Suspend a Session | left out while Launch is optional (AGENDA_PARITY) |
 | Access a Network | left out: networks (SPEC § 6) |
-| Erase a File | open |
-| File Size Limits | open |
-| Import/Export Information | open |
-| Copy the Structure of an Agenda File | open |
-| Import/Export STF Files | open |
+| Erase a File | ours: `erase-a-file.txt` (batch 5) |
+| File Size Limits | left out: Agendum's files have no fixed limits |
+| Import/Export Information | ours: `import-export-information.txt` (batch 5) |
+| Copy the Structure of an Agenda File | ours: `copy-the-structure-of-an-agenda-file.txt` (batch 5) |
+| Import/Export STF Files | left out: STF transfer is an optional step (AGENDA_PARITY) |
 | Add a Column | ours: `add-a-column.txt` (batch 2) |
 | Modify Column Properties | ours: `modify-column-properties.txt` (batch 2) |
 | Adjust the Column Width | ours: `adjust-the-column-width.txt` (batch 2) |
 | Remove a Column | ours: `remove-a-column.txt` (batch 2) |
-| Create a File | open |
-| Description and Password for a New File | open |
-| Retrieve an Existing File | open |
-| Save a File | open |
-| Back Up a File | open |
-| Abandon a File | open |
-| Copy a File | open |
+| Create a File | ours: `create-a-file.txt` (batch 5) |
+| Description and Password for a New File | ours: `description-and-password-for-a-new-file.txt` (batch 5) |
+| Retrieve an Existing File | ours: `retrieve-an-existing-file.txt` (batch 5) |
+| Save a File | ours: `save-a-file.txt` (batch 5) |
+| Back Up a File | ours: `back-up-a-file.txt` (batch 5) |
+| Abandon a File | ours: `abandon-a-file.txt` (batch 5) |
+| Copy a File | ours: `copy-a-file.txt` (batch 5) |
 | Enter Items | ours: `enter-items.txt` (tone sample) |
 | Edit Items and Categories | ours: `edit-items-and-categories.txt` (batch 1) |
 | Discard an Item | ours: `discard-an-item.txt` (batch 1) |
@@ -112,7 +112,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Select a Category | covered by Automatic Completion and Assign an Item to a Category |
 | Discard a Category | ours: `discard-a-category.txt` (batch 1) |
 | Assign an Item to a Category | ours: `assign-an-item-to-a-category.txt` (batch 1) |
-| Enter a Note | open |
+| Enter a Note | ours: `enter-a-note.txt` (batch 5) |
 | Use a Category Note as a Column Head | ours: `use-a-category-note-as-a-column-head.txt` (batch 2) |
 | Sort Sections in a View | ours: `sort-sections-in-a-view.txt` (batch 2) |
 | Sort Items | ours: `sort-items.txt` (batch 2) |
@@ -127,7 +127,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Numeric Columns | ours: `numeric-columns.txt` (batch 2) |
 | Date Columns | ours: `date-columns.txt` (batch 2) |
 | Item Columns | ours: `item-columns.txt` (batch 2) |
-| Files | open |
+| Files | ours: `files.txt` (batch 5) |
 | Items | ours: `items.txt` (batch 1) |
 | Sections | ours: `sections.txt` (batch 2) |
 | Views | ours: `views.txt` (tone sample) |
@@ -135,7 +135,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Categories | ours: `categories.txt` (batch 1) |
 | Date Categories | ours: `date-categories.txt` (batch 3) |
 | Unindexed Categories | ours: `unindexed-categories.txt` (batch 2) |
-| Notes | open |
+| Notes | ours: `notes.txt` (batch 5) |
 | View Types | ours: `view-types.txt` (batch 2) |
 | The Category Hierarchy | ours: `the-category-hierarchy.txt` (batch 1) |
 | Sorting | ours: `sorting.txt` (batch 2) |
@@ -149,7 +149,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Explicit and Conditional Assignments | ours: `explicit-and-conditional-assignments.txt` (batch 4) |
 | Use the Pop-Up Calendar | ours: `use-the-pop-up-calendar.txt` (batch 3) |
 | Numeric Categories | ours: `numeric-categories.txt` (batch 2) |
-| Select a File | open |
+| Select a File | ours: `select-a-file.txt` (batch 5) |
 | Create a Datebook View | ours: `create-a-datebook-view.txt` (batch 3) |
 | Create a Show View | ours: `create-a-show-view.txt` (batch 2) |
 | Show a Schedule for Any Day | ours: `show-a-schedule-for-any-day.txt` (batch 3) |

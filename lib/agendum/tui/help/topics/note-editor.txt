@@ -1,0 +1,18 @@
+Note Editor
+
+PURPOSE       Where you write a note, a page of its own.
+
+KEYS          F5               Save and go back
+              ESC              Go back, asking to keep changes
+              F7               Mark text (F3 copy, F4 cut, F2 paste,
+                               ALT-F4 delete)
+              ALT-F6           Search and replace
+              ALT-N / ALT-P    The next / previous item's note
+              ALT-D / ALT-T    Type today's date / the time
+              ALT-F7           Make the marked text a new item
+              ALT-F2           Make a word a new category
+              F10              The note's menu: Clear, Import,
+                               Export, Return, Quit
+
+SEE ALSO      **Enter a Note**  **Notes**  **Note Menu**  **Keys**
+INDEX         Notes > Editor; Note Editor

@@ -1,0 +1,13 @@
+Notes
+
+PURPOSE       A note is longer text kept with an item or a category:
+              the details of a task, a person's address, minutes of
+              a meeting.
+
+ABOUT NOTES   * An item or category with a note shows a ♪ in the
+                control panel when it is highlighted.
+              * F5 (NOTE) opens the note of what is highlighted.
+              * Search (ALT-F6) can look in notes as well as items.
+
+SEE ALSO      **Enter a Note**  **Note Editor**
+INDEX         Notes > What they are

@@ -1,0 +1,16 @@
+Retrieve an Existing File
+
+PURPOSE       Open another file.
+
+STEPS         1. F10 File Retrieve, CTRL-O, or ALT-G in a view.
+              2. Type the file's name, or press F3 to choose it
+                 (**Select a File**).
+              3. ENTER.
+
+NOTE          With unsaved changes in the open file, Agendum asks to
+              save them first. A file with a password asks for it.
+              Agendum opens the last file at startup, where you left
+              it.
+
+SEE ALSO      **Select a File**  **Create a File**  **Files**
+INDEX         Files > Retrieve; Files > Open; Open > Files

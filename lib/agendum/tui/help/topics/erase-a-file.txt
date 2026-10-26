@@ -1,0 +1,13 @@
+Erase a File
+
+PURPOSE       Get rid of a file you no longer need.
+
+STEPS         1. F10 File Maintenance Erase.
+              2. Type its name (F3 lists files), ENTER.
+              3. Discard it? Yes (SPACE or Y), ENTER.
+
+NOTE          The file goes to your computer's Trash, where you can
+              still get it back. The open file cannot be erased.
+
+SEE ALSO      **File Maintenance Menu**  **Files**
+INDEX         Files > Erase; Delete > Files; Erase > Files

@@ -1,0 +1,13 @@
+Abandon a File
+
+PURPOSE       Throw away the changes since you last saved.
+
+STEPS         1. F10 File Abandon.
+              2. Revert to last saved version: Yes (SPACE or Y).
+              3. ENTER.
+
+NOTE          It is one change like any other: CTRL-Z brings the
+              abandoned changes back.
+
+SEE ALSO      **Abandon Box**  **Save a File**
+INDEX         Files > Abandon; Changes > Throw away; Revert

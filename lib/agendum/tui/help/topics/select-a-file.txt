@@ -1,0 +1,15 @@
+Select a File
+
+PURPOSE       Choose a file from a list instead of typing its name.
+
+STEPS         1. Where Agendum asks for a file name, press F3.
+              2. Highlight the file (../ goes up a folder; ENTER
+                 opens a folder). Typing narrows the list.
+              3. ENTER puts its name in; ENTER again uses it.
+
+KEYS          F7    When each file was last changed
+              F8    Each file's description
+              ESC   Back to typing the name
+
+SEE ALSO      **Select File Box**  **Retrieve an Existing File**
+INDEX         Files > Select; Files > List

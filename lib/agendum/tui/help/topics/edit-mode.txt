@@ -1,0 +1,19 @@
+Edit Mode
+
+PURPOSE       Typing on one line: an item, a name, a box's field, a
+              prompt.
+
+KEYS          ← → HOME END     Move
+              CTRL-← / CTRL-→  A word left / right
+              BACKSPACE, DEL   Delete a character
+              CTRL-W           Delete the word before
+              F7               Mark text (F3 copy, F4 cut, F2
+                               paste, ALT-F4 delete)
+              ENTER            Keep what is typed
+              ESC              Leave it as it was
+
+NOTE          F2 starts editing what is there; typing at once
+              replaces it.
+
+SEE ALSO      **Edit Items and Categories**  **Keys**
+INDEX         Edit mode; Typing > Keys; Keys > Editing

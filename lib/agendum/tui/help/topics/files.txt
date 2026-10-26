@@ -1,0 +1,17 @@
+Files
+
+PURPOSE       An Agendum file holds one collection of items with its
+              categories, views, macros and settings: your tasks, a
+              project, a reading list. It ends in .agendum.
+
+ABOUT FILES   * One file is open at a time; File Retrieve opens
+                another.
+              * Changes are kept until you save (CTRL-S); a * on the
+                File line says there are some. Agendum asks before
+                they are lost.
+              * A file can have a description and a password (File
+                Properties).
+
+SEE ALSO      **Create a File**  **Retrieve an Existing File**
+              **Save a File**  **File Menu**
+INDEX         Files > What they are
