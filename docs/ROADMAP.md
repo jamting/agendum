@@ -7,11 +7,15 @@ Small, testable increments: the open work, by area. Done work is the record in [
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
 1. A general code review (Housekeeping; meeting 2026-10-26-4, § 11)
-2. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
-3. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
-4. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
-5. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-6. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+2. Property tests for the parsers of outside input (Sharpen the saw; the slice reviews, 2026-10-26)
+3. A collection of hostile files (Sharpen the saw; 2026-10-26)
+4. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
+5. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
+6. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
+7. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+8. Fuzz walks in a richer file and with things out of order (Sharpen the saw; 2026-10-26)
+9. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
+10. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
