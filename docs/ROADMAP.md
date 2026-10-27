@@ -6,7 +6,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. The extras brought up to the guidelines, one feature commit per gap (Beyond Agenda; meeting 2026-10-26-6, §§ 6, 7)
+1. The extras brought up to the guidelines, one feature commit per gap (Beyond Agenda; meeting 2026-10-26-6, §§ 6, 7): the small gaps done (v0.71.0); left, the Feeds and Calendars managers
 2. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
 3. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
 4. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)

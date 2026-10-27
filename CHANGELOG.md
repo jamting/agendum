@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.71.0 — 2026-10-27
+
+The Publish box works like the other settings boxes (the UI guidelines' small gaps).
+
 - **The debug log never crashes Agendum when its drive goes away** while a line is written (a rare race, found by the test suite).
 - **F8 and ALT-F8 in the Publish box**, as in the other settings boxes: back to Posts, no Drafts, the file's name as the title, the folder `site` and no upload.
 - **Publish's Folder can be chosen from a list**: F3 on it lists the folders, `./ (this folder)` first; ENTER on that row picks the folder shown, ENTER on another goes into it.
