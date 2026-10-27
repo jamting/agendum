@@ -244,45 +244,48 @@ defmodule Agendum.TUI.Update.Prompts do
 
   # Calendars (R45): the address, then a name for its category
   defp prompt_action(state, :calendar_url, text),
-    do: prompt(state, "Name of its category (its events go there):", {:calendar_name, text})
+    do: prompt(state, Agendum.TUI.Extras.Calendars.Messages.text(:name), {:calendar_name, text})
 
   defp prompt_action(state, {:calendar_name, url}, name) do
     case State.command(state, {:subscribe_calendar, name, url}) do
       {:ok, state, %{new: id}} ->
         state
-        |> State.info("Subscribed to #{name}")
+        |> State.info(Agendum.TUI.Extras.Calendars.Messages.text(:subscribed, name))
         |> Update.fetch_calendar(id, :manual)
 
       {:error, :bad_url} ->
-        State.error(state, "A calendar needs an https:// or webcal:// address")
+        State.error(state, Agendum.TUI.Extras.Calendars.Messages.text(:bad_url))
 
       {:error, :no_name} ->
-        State.error(state, "A calendar needs a name")
+        State.error(state, Agendum.TUI.Extras.Calendars.Messages.text(:no_name))
 
       {:error, :duplicate} ->
-        State.error(state, "#{String.trim(name)} is taken: another calendar has that name")
+        State.error(
+          state,
+          Agendum.TUI.Extras.Calendars.Messages.text(:duplicate, String.trim(name))
+        )
     end
   end
 
   # Feeds (R75): the address, then its name (its category under Feeds)
   defp prompt_action(state, :feed_url, text),
-    do: prompt(state, "Name of the feed (its category under Feeds):", {:feed_name, text})
+    do: prompt(state, Agendum.TUI.Extras.Feeds.Messages.text(:name), {:feed_name, text})
 
   defp prompt_action(state, {:feed_name, url}, name) do
     case State.command(state, {:subscribe_feed, name, url}) do
       {:ok, state, %{new: id}} ->
         state
-        |> State.info("Subscribed to #{String.trim(name)}")
+        |> State.info(Agendum.TUI.Extras.Feeds.Messages.text(:subscribed, String.trim(name)))
         |> Update.fetch_feed(id, :manual)
 
       {:error, :bad_url} ->
-        State.error(state, "A feed needs an https:// or feed:// address")
+        State.error(state, Agendum.TUI.Extras.Feeds.Messages.text(:bad_url))
 
       {:error, :no_name} ->
-        State.error(state, "A feed needs a name")
+        State.error(state, Agendum.TUI.Extras.Feeds.Messages.text(:no_name))
 
       {:error, :duplicate} ->
-        State.error(state, "#{String.trim(name)} is taken: another feed has that name")
+        State.error(state, Agendum.TUI.Extras.Feeds.Messages.text(:duplicate, String.trim(name)))
     end
   end
 
@@ -634,13 +637,22 @@ defmodule Agendum.TUI.Update.Prompts do
 
   defp confirmed(state, {:unsubscribe_feed, id}, discard) do
     name = state.db.feeds[id].name
-    State.run(state, {:unsubscribe_feed, id, discard}, "Unsubscribed from #{name}")
+
+    State.run(
+      state,
+      {:unsubscribe_feed, id, discard},
+      Agendum.TUI.Extras.Feeds.Messages.text(:unsubscribed, name)
+    )
   end
 
   defp confirmed(state, {:unsubscribe_calendar, id}, discard) do
     name = state.db.calendars[id].name
 
-    State.run(state, {:unsubscribe_calendar, id, discard}, "Unsubscribed from #{name}")
+    State.run(
+      state,
+      {:unsubscribe_calendar, id, discard},
+      Agendum.TUI.Extras.Calendars.Messages.text(:unsubscribed, name)
+    )
   end
 
   # Domain: the answers to "Save changes first?" (Retrieve, New, Import)

@@ -162,6 +162,9 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Extras.CalendarsBox`                     | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
 | `Agendum.TUI.Extras.FeedsBox`                         | ✔     | File ▸ Transfer ▸ Feeds: subscribe to a feed, how often it is read, how long its entries stay (R75). |
 | `Agendum.TUI.Extras.PublishBox`                       | ✔     | File ▸ Transfer ▸ Publish: the micro-blog's settings, kept in the file (R74). |
+| `Agendum.TUI.Extras.Feeds.Messages`                   | ✔     | What the feeds say: prompts, questions, messages, kept beside the extra (UI guidelines rule 7.5). |
+| `Agendum.TUI.Extras.Calendars.Messages`               | ✔     | What the calendars say, kept beside the extra (rule 7.5). |
+| `Agendum.TUI.Extras.Publish.Messages`                 | ✔     | What publishing says, one text per error and step, kept beside the extra (rule 7.5). |
 | `Agendum.TUI.Extras.PublishPreviewBox`                | ✔     | What publishing would write, change and remove, before anything is written (R74). |
 | `Agendum.TUI.Boxes.ImportReportBox`                  | ✔     | The report after a Lotus Agenda file was imported: what came over, what was left out, items filed differently (R72). |
 | `Agendum.TUI.Boxes.RunByName`                        | ✔     | CTRL-X: run a command by its name, the matches best first (R65d, ADR 0040). |

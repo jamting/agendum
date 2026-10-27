@@ -22,6 +22,7 @@ defmodule Agendum.TUI.Extras.FeedsBox do
   alias Agendum.Core.{Database, DateFormat}
   alias Agendum.TUI.{Boxes.Box, Boxes.Scroll, Extras.CalendarsBox, Terminal.Draw, State, Update}
   alias Agendum.TUI.Update.Prompts
+  alias Agendum.TUI.Extras.Feeds.Messages
 
   def open(state), do: State.push(state, %Agendum.TUI.Modes.Feeds{cursor: 0})
 
@@ -92,13 +93,13 @@ defmodule Agendum.TUI.Extras.FeedsBox do
   def run(state, _mode, :close), do: State.pop(state)
 
   def run(state, _mode, :subscribe),
-    do: Prompts.prompt(state, "Feed's web address (https:// or feed://):", :feed_url)
+    do: Prompts.prompt(state, Messages.text(:address), :feed_url)
 
   def run(state, _mode, :import_opml),
-    do: Prompts.prompt(state, "OPML file to import:", :import_opml)
+    do: Prompts.prompt(state, Messages.text(:import_opml), :import_opml)
 
   def run(state, _mode, :export_opml),
-    do: Prompts.prompt(state, "Write the feed list (OPML) to:", :export_opml, "feeds.opml")
+    do: Prompts.prompt(state, Messages.text(:export_opml), :export_opml, "feeds.opml")
 
   def run(state, mode, id) do
     count = length(Database.feeds(state.db))
@@ -117,7 +118,7 @@ defmodule Agendum.TUI.Extras.FeedsBox do
 
   # the one place to rename a feed's category (R75a)
   defp feed(state, _mode, :rename, feed, _),
-    do: Prompts.prompt(state, "New name of the feed:", {:rename_feed, feed.id}, feed.name)
+    do: Prompts.prompt(state, Messages.text(:rename), {:rename_feed, feed.id}, feed.name)
 
   defp feed(state, _mode, :unsubscribe, feed, _), do: unsubscribe(state, feed)
 
@@ -130,7 +131,7 @@ defmodule Agendum.TUI.Extras.FeedsBox do
 
     Prompts.ask(
       state,
-      "Unsubscribe from #{feed.name}. Discard its #{Draw.count(items, "item")} too?",
+      Messages.text(:unsubscribe, feed.name, items),
       {:unsubscribe_feed, feed.id}
     )
   end

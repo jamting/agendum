@@ -24,6 +24,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 ### Fixes and polish
 
+- [ ] The extras' answers handled beside them (2026-10-27, found moving their messages): `Update.Results` (a feed's and calendar's read, an OPML list, an upload) and `Update.Prompts` (subscribing, unsubscribing, the SFTP password) still hold the extras' logic, listed as doors in `architecture_test.exs`; move each into a module beside its extra, so the shared modules only dispatch (the owner's modularity, 2026-10-27)
 - [ ] Key hints made from the keys in three of the clone's boxes (UI guidelines rule 6.2; found by `box_guidelines_test.exs`, 2026-10-27): the macro manager, the category picker and the file list (`select_file.ex`) write their hint lines by hand; make them with `Box.hint/2` from their keys, as the clone's other boxes, and take each off the test's list
 - [ ] Optional (the owner, 2026-10-27): try v0.69.3's main fix by hand: open a second file while a feed is being read, and see its entries land only in the file that asked (the richer fuzz walks already check it)
 - [ ] Found by the richer fuzz walks (2026-10-27, v0.69.3): ESC on the Publish preview while an upload runs says "Nothing was published", which is untrue; and a feed or calendar whose address changed while a read was under way would wait for ever, as a stale answer no longer clears it (nothing changes an address in place today)

@@ -21,6 +21,7 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
   alias Agendum.Core.Extras.Calendar
   alias Agendum.TUI.{Boxes.Box, Boxes.Scroll, Terminal.Draw, State, Update}
   alias Agendum.TUI.Update.Prompts
+  alias Agendum.TUI.Extras.Calendars.Messages
 
   def open(state), do: State.push(state, %Agendum.TUI.Modes.Calendars{cursor: 0})
 
@@ -81,7 +82,7 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
   def run(state, _mode, :close), do: State.pop(state)
 
   def run(state, _mode, :subscribe),
-    do: Prompts.prompt(state, "Calendar's web address (https:// or webcal://):", :calendar_url)
+    do: Prompts.prompt(state, Messages.text(:address), :calendar_url)
 
   def run(state, mode, id) do
     count = length(Database.calendars(state.db))
@@ -100,7 +101,7 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
 
   # the one place to rename a calendar's category (R75a)
   defp calendar(state, _mode, :rename, cal, _),
-    do: Prompts.prompt(state, "New name of the calendar:", {:rename_calendar, cal.id}, cal.name)
+    do: Prompts.prompt(state, Messages.text(:rename), {:rename_calendar, cal.id}, cal.name)
 
   defp calendar(state, _mode, :unsubscribe, cal, _), do: unsubscribe(state, cal)
 
@@ -112,7 +113,7 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
 
     Prompts.ask(
       state,
-      "Unsubscribe from #{cal.name}. Discard its #{Draw.count(items, "item")} too?",
+      Messages.text(:unsubscribe, cal.name, items),
       {:unsubscribe_calendar, cal.id}
     )
   end

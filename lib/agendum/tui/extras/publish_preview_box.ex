@@ -14,6 +14,7 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
 
   alias Agendum.Core.Extras.Site
   alias Agendum.TUI.Boxes.Box
+  alias Agendum.TUI.Extras.Publish.Messages
   alias Agendum.TUI.State
   alias Agendum.TUI.Terminal.Draw
 
@@ -83,7 +84,8 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
   end
 
   @impl Box
-  def run(state, _mode, :close), do: State.pop(state) |> State.info("Nothing was published")
+  def run(state, _mode, :close),
+    do: State.pop(state) |> State.info(Messages.text(:nothing_published))
 
   def run(state, mode, :publish), do: publish(state, mode, nil)
 
@@ -91,7 +93,7 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
   @spec publish(State.t(), map, String.t() | nil) :: State.t()
   def publish(state, mode, password) do
     state
-    |> State.info("Publishing …")
+    |> State.info(Messages.text(:publishing))
     |> State.effect({:publish, mode.folder, mode.files, mode.changes, password})
   end
 

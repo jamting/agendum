@@ -286,7 +286,15 @@ defmodule Agendum.ArchitectureTest do
     # the blog's folder, read for the Publish box, shown in its preview
     {Agendum.TUI.Update.Results, :publish_scanned, 4},
     # the SFTP password, asked for by the preview, sent back to it
-    {Agendum.TUI.Update.Prompts, :prompt_action, 3}
+    {Agendum.TUI.Update.Prompts, :prompt_action, 3},
+    # the answers to what only the extras ask for (a feed's or calendar's
+    # read, an OPML list, an upload, an unsubscribe), told in the extra's
+    # own words, kept beside it (UI guidelines rule 7.5, 2026-10-27)
+    {Agendum.TUI.Update.Results, :feed_into, 4},
+    {Agendum.TUI.Update.Results, :read_into, 4},
+    {Agendum.TUI.Update.Results, :opml_read, 3},
+    {Agendum.TUI.Update.Results, :published, 3},
+    {Agendum.TUI.Update.Prompts, :confirmed, 3}
   ]
 
   test "faithful code reaches the extras' boxes only through their doors (R77)", %{

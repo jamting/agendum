@@ -55,15 +55,24 @@ defmodule Agendum.TUI.Update.Results do
       |> Enum.map_join(", ", fn {key, word} -> "#{counts[key]} #{word}" end)
 
     cond do
-      parts != "" -> State.info(state, "#{cal.name}: #{parts}")
-      kind == :manual -> State.info(state, "#{cal.name}: no changes")
-      true -> state
+      parts != "" ->
+        State.info(state, Agendum.TUI.Extras.Calendars.Messages.text(:read, cal.name, parts))
+
+      kind == :manual ->
+        State.info(state, Agendum.TUI.Extras.Calendars.Messages.text(:no_changes, cal.name))
+
+      true ->
+        state
     end
   end
 
   defp read_into(state, cal, kind, {:error, message}) do
     state = State.run(state, {:calendar_failed, cal.id, message})
-    if kind == :manual, do: State.error(state, "#{cal.name}: #{message}"), else: state
+
+    if kind == :manual,
+      do:
+        State.error(state, Agendum.TUI.Extras.Calendars.Messages.text(:failed, cal.name, message)),
+      else: state
   end
 
   @doc """
@@ -93,15 +102,23 @@ defmodule Agendum.TUI.Update.Results do
       |> Enum.map_join(", ", fn {key, word} -> "#{counts[key]} #{word}" end)
 
     cond do
-      parts != "" -> State.info(state, "#{feed.name}: #{parts}")
-      kind == :manual -> State.info(state, "#{feed.name}: nothing new")
-      true -> state
+      parts != "" ->
+        State.info(state, Agendum.TUI.Extras.Feeds.Messages.text(:read, feed.name, parts))
+
+      kind == :manual ->
+        State.info(state, Agendum.TUI.Extras.Feeds.Messages.text(:nothing_new, feed.name))
+
+      true ->
+        state
     end
   end
 
   defp feed_into(state, feed, kind, {:error, message}) do
     state = State.run(state, {:feed_failed, feed.id, message})
-    if kind == :manual, do: State.error(state, "#{feed.name}: #{message}"), else: state
+
+    if kind == :manual,
+      do: State.error(state, Agendum.TUI.Extras.Feeds.Messages.text(:failed, feed.name, message)),
+      else: state
   end
 
   @doc "After the browser was asked to open a link (R75)."
@@ -114,18 +131,25 @@ defmodule Agendum.TUI.Update.Results do
   def opml_read(state, path, {:ok, text}) do
     case State.command(state, {:import_opml, text}) do
       {:ok, state, %{result: []}} ->
-        State.info(state, "#{Path.basename(path)}: no feeds the file does not have already")
+        State.info(
+          state,
+          Agendum.TUI.Extras.Feeds.Messages.text(:no_new_feeds, Path.basename(path))
+        )
 
       {:ok, state, %{result: ids}} ->
         state = Enum.reduce(ids, state, &Update.fetch_feed(&2, &1, :auto))
 
         State.info(
           state,
-          "Subscribed to #{Agendum.TUI.Terminal.Draw.count(length(ids), "feed")} from #{Path.basename(path)}"
+          Agendum.TUI.Extras.Feeds.Messages.text(
+            :opml_subscribed,
+            Path.basename(path),
+            length(ids)
+          )
         )
 
       {:error, :not_opml} ->
-        State.error(state, "#{Path.basename(path)} is not an OPML feed list")
+        State.error(state, Agendum.TUI.Extras.Feeds.Messages.text(:not_opml, Path.basename(path)))
     end
   end
 
@@ -468,12 +492,12 @@ defmodule Agendum.TUI.Update.Results do
     changes = Core.site_changes(files, scan.existing, scan.published)
 
     if Agendum.TUI.Extras.PublishPreviewBox.nothing?(changes) and state.db.blog.upload == :none,
-      do: State.info(state, "The folder already holds this site: nothing to publish"),
+      do: State.info(state, Agendum.TUI.Extras.Publish.Messages.text(:up_to_date)),
       else: Agendum.TUI.Extras.PublishPreviewBox.open(state, folder, files, changes)
   end
 
   def publish_scanned(state, _folder, _files, {:error, reason}),
-    do: State.error(state, "Could not read the site's folder: #{reason}")
+    do: State.error(state, Agendum.TUI.Extras.Publish.Messages.text(:cannot_read_folder, reason))
 
   @doc """
   The site written and uploaded (R74), or why not; an SFTP server that
@@ -481,11 +505,13 @@ defmodule Agendum.TUI.Update.Results do
   """
   def published(state, changes, :ok) do
     preview = Agendum.TUI.Extras.PublishPreviewBox
-    where = if state.db.blog.upload == :none, do: "", else: " and uploaded"
+    uploaded? = state.db.blog.upload != :none
 
     state
     |> pop_publish_preview()
-    |> State.info("Published#{where}: #{preview.summary(changes)}")
+    |> State.info(
+      Agendum.TUI.Extras.Publish.Messages.text(:published, uploaded?, preview.summary(changes))
+    )
   end
 
   # Domain: the upload runs in the background, so the server's question
@@ -498,19 +524,22 @@ defmodule Agendum.TUI.Update.Results do
 
     case Enum.find(state.modes, &match?(%{type: :publish_preview}, &1)) do
       nil ->
-        State.error(state, "Not published: the server asks for a password. Publish again")
+        State.error(state, Agendum.TUI.Extras.Publish.Messages.text(:password_later))
 
       preview ->
         Prompts.password(
           state,
-          "Password of #{user}@#{state.db.blog.target} (not kept):",
+          Agendum.TUI.Extras.Publish.Messages.text(:password, user, state.db.blog.target),
           {:sftp_password, preview}
         )
     end
   end
 
   def published(state, _changes, {:error, reason}),
-    do: state |> pop_publish_preview() |> State.error("Not published: #{reason}")
+    do:
+      state
+      |> pop_publish_preview()
+      |> State.error(Agendum.TUI.Extras.Publish.Messages.text(:not_published, reason))
 
   defp pop_publish_preview(state) do
     case State.mode(state) do

@@ -65,7 +65,7 @@ When a rule here and a box disagree, the box is the bug, unless the rule is wron
 - **7.2** A core error is an atom; the TUI turns it into the message, in one place per situation. Our choice (CLAUDE.md, Conventions); `Agendum.TUI.Messages.text/1`.
 - **7.3** Messages, prompts and help are written plainly, terse, in Agenda's tone; a Hundred Acre Wood touch only where it is natural. Our choice (help topic tone, 2026-10-26).
 - **7.4** A long action in the shell says it is under way in the control panel ("Reading …") and its outcome when done; it never stops the keys. Our choice (v0.68.4: publishing in the background) `Update.Results`.
-- **7.5** An extra's messages live in a module beside it (`Agendum.TUI.Extras.<Extra>.Messages`), one per error atom, never written in the box; removing an extra takes its messages with it. Our choice (the owner, 2026-10-27: separation for modularity).
+- **7.5** An extra's messages live in a module beside it (`Agendum.TUI.Extras.<Extra>.Messages`), one per error atom, never written in the box; removing an extra takes its messages with it. Our choice (the owner, 2026-10-27: separation for modularity). **Test:** `box_guidelines_test.exs` (no message written out in an extra's box).
 
 ## The extras against the guidelines
 
@@ -73,15 +73,15 @@ Each gap in `lib/agendum/tui/extras/`, the rule it breaks, and the existing part
 
 | # | Box | Gap | Rule | Existing part that would mend it |
 | --- | --- | --- | --- | --- |
-| 1 | Publish | Posts and Drafts can only be typed, without completion; no F3 list, so a typo makes a new category under MAIN | 2.4 | `FieldTyping` with `Completion` on the field, and F3 to `CategoryScreens.open_picker/3`, as Column Add's head |
+| 1 | Publish | Posts and Drafts can only be typed, without completion; no F3 list, so a typo makes a new category under MAIN | 2.4 | Done 2026-10-27: completion, F3 or SPACE the list, DEL leaves Drafts empty (`Box.category_fields/1`, `Box.picked/4`) |
 | 2 | Feeds, Calendars | A feed's settings are changed by letter keys in the list (F how often, K days kept, A how far ahead), each press going one step round, with no way back and no list | 4.3, 4.4, 2.1–2.3 | A properties box per feed and calendar on F6 (`Template` layout: Name, Address, Read every, Keep / Read ahead, Last read), whose choices get SPACE, a letter and F3 from `BoxChoices` |
 | 3 | Feeds, Calendars | Commands on plain letters (R, F, K, A, I, E) are not on the key bar, which shows function keys only, so the bar does not show them | 5.4, 6.1 | Once 2 is done, F6 Props carries the settings; Read now stays on ENTER; OPML import and export go to the menu (File ▸ Transfer, as now) |
 | 4 | Feeds, Calendars | The hint lines at the bottom are written by hand, apart from the key list (`feeds_box.ex`, `calendars_box.ex`, `content/4`) | 6.2 | `Box.hint/2` from `keys/2`, or no hint line, as the clone's managers |
-| 5 | Publish | Folder is a typed path, with no list to choose from; the meeting's note that OPML import and export are typed paths was wrong: their prompts offer F3 already (`select_file.ex`, `import_opml`, `export_opml`) | 2.7 | `SelectFile`, taught to accept a folder (the owner, 2026-10-27) |
+| 5 | Publish | Folder is a typed path, with no list to choose from; the meeting's note that OPML import and export are typed paths was wrong: their prompts offer F3 already (`select_file.ex`, `import_opml`, `export_opml`) | 2.7 | Done 2026-10-27: F3 lists the folders, `./  (this folder)` first (`SelectFile.open_folder/3`) |
 | 6 | Publish | SPACE on a text field starts editing it; in the clone's boxes SPACE goes round a setting's choices, and F2 edits | 2.1, 3.2 | Drop SPACE's editing (F2 already does it); SPACE only on Upload |
 | 7 | Publish | Upload's choices (None, rsync, SFTP) go round with SPACE, but no letter picks one and F3 lists nothing, as the box is not `choices: true` | 2.2, 2.3 | `use Box, finish: :done, choices: true`, as the clone's settings boxes |
-| 8 | Publish | No F8 (DEFAULT): Folder's default ("site") and Title's (the file's name) cannot be put back | 1.7 | `c:Box.defaults/2`, read by `BoxDefaults` |
-| 9 | Publish | Error messages are written in the box (`publish_box.ex`, `publish/2`), not in `Messages` | 7.2 | `Agendum.TUI.Extras.Publish.Messages`, one per error atom (rule 7.5) |
+| 8 | Publish | No F8 (DEFAULT): Folder's default ("site") and Title's (the file's name) cannot be put back | 1.7 | Done 2026-10-27: F8 and ALT-F8 back to a new blog's settings |
+| 9 | Publish | Error messages are written in the box (`publish_box.ex`, `publish/2`), not in `Messages` | 7.2 | Done 2026-10-27: `Agendum.TUI.Extras.Publish.Messages`, and the feeds' and calendars' too |
 | 10 | Feeds, Calendars | Subscribing asks two prompts in a row (the address, then the name), where the clone adds a thing with one prompt for its name, its settings after in its box | 4.2 | Two prompts kept (the owner, 2026-10-27), the name's prompt filled in with the feed's own title |
 | 11 | Feeds, Calendars | The bottom edge says nothing (`finish: :none`); the clone's managers say how the box ends | 1.5, 4.5 | `finish: :return` (the Publish preview's) or `:done`, as the view manager |
 | 12 | All four | Not in `agenda_boxes_test.exs` (they have no Agenda box) and not in the field-help walk, so no test holds them to the rules above | 1.9, 6.1 | Done 2026-10-27: `box_guidelines_test.exs` checks 1.1, 1.9 and 6.2 over the box registry; Feeds, Calendars and the Publish preview are its listed 6.2 exceptions until reworked |

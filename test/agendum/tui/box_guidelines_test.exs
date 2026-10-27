@@ -82,6 +82,36 @@ defmodule Agendum.TUI.BoxGuidelinesTest do
              "fixed, so off the list: #{inspect(Map.keys(@hand_hints) -- found)}"
   end
 
+  test "7.5: an extra's boxes write no message of their own; it is in the extra's Messages" do
+    # a call to State.error/info or a prompt or question whose text is
+    # written out ("…" or "…#{x}…") in the box's code
+    says? = fn
+      {{:., _, [{:__aliases__, _, alias}, fun]}, _, [_state, text | _]} ->
+        {alias, fun} in [
+          {[:State], :error},
+          {[:State], :info},
+          {[:Prompts], :prompt},
+          {[:Prompts], :ask}
+        ] and
+          (is_binary(text) or match?({:<<>>, _, _}, text))
+
+      _ ->
+        false
+    end
+
+    found =
+      for path <- Path.wildcard("lib/agendum/tui/extras/*_box.ex"),
+          {:ok, ast} = path |> File.read!() |> Code.string_to_quoted(),
+          {_, hits} =
+            Macro.prewalk(ast, [], fn node, acc ->
+              {node, if(says?.(node), do: [node | acc], else: acc)}
+            end),
+          hits != [],
+          do: Path.basename(path)
+
+    assert found == [], "messages written in the box: #{inspect(found)}"
+  end
+
   describe "1.9: every field of every settings box has help" do
     setup do
       db =

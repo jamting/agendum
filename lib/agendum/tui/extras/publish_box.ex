@@ -22,6 +22,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
 
   alias Agendum.Core.Extras.Blog
   alias Agendum.TUI.Boxes.{Box, FieldTyping, Template}
+  alias Agendum.TUI.Extras.Publish.Messages
   alias Agendum.TUI.{State, Typing.LineEdit}
 
   # the rows for uploading show only for the way chosen; a row whose
@@ -257,23 +258,20 @@ defmodule Agendum.TUI.Extras.PublishBox do
 
         state
         |> State.pop()
-        |> State.info("Reading #{state.db.blog.folder} …")
+        |> State.info(Messages.text(:reading, state.db.blog.folder))
         |> State.effect({:publish_scan, folder, files})
 
       {:error, :no_posts_category} ->
-        State.error(state, "Name the category whose items are the posts")
+        State.error(state, Messages.text(:no_posts_category))
 
       {:error, :ambiguous} ->
-        State.error(
-          state,
-          "Two categories have that name: give the posts or drafts a name of their own"
-        )
+        State.error(state, Messages.text(:ambiguous))
 
       {:error, :zettels_full} ->
-        State.error(state, "Every Zettel id is in use; the posts cannot all have one")
+        State.error(state, Messages.text(:zettels_full))
 
       {:error, _} ->
-        State.error(state, "The posts and drafts categories must differ, and be categories")
+        State.error(state, Messages.text(:bad_categories))
     end
   end
 
