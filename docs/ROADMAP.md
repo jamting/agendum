@@ -24,6 +24,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 ### Fixes and polish
 
+- [ ] Optional (the owner, 2026-10-27): try v0.69.3's main fix by hand: open a second file while a feed is being read, and see its entries land only in the file that asked (the richer fuzz walks already check it)
 - [ ] Found by the richer fuzz walks (2026-10-27, v0.69.3): ESC on the Publish preview while an upload runs says "Nothing was published", which is untrue; and a feed or calendar whose address changed while a read was under way would wait for ever, as a stale answer no longer clears it (nothing changes an address in place today)
 - [ ] Found by the parser property tests (2026-10-27, v0.69.2), not urgent: Markdown with thousands of nested `>` quotes is still quadratic (20,000 levels about 1 s); a calendar's sync costs about 1 ms an event (a 2,000-event calendar about 2 s, linear) — check whether it runs in the TUI's process and would freeze the screen
 - [ ] Hidden values of a date or numeric category (owner, 2026-10-25): a category made date or numeric keeps its short name, Also match words and conditions, as Agenda does, but its box no longer shows them (R6a). Decide what to do with them: show them somewhere (Statistics, the manager), clear them on conversion, or leave them; check first whether any still has an effect (a short name in a narrow column head, a condition)
