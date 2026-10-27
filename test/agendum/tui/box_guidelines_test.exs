@@ -27,8 +27,6 @@ defmodule Agendum.TUI.BoxGuidelinesTest do
   # 6.2's exceptions: boxes with a key hint written by hand, not made from
   # their keys with `Box.hint/2` (the UI guidelines' gap 4)
   @hand_hints %{
-    feeds: "the extras' rework (gap 4)",
-    calendars: "the extras' rework (gap 4)",
     macros: "the clone's macro manager: to make from its keys (ROADMAP, Fixes and polish)",
     picker: "the clone's category picker: to make from its keys (ROADMAP, Fixes and polish)",
     select_file: "the clone's file list: to make from its keys (ROADMAP, Fixes and polish)",
@@ -177,8 +175,17 @@ defmodule Agendum.TUI.BoxGuidelinesTest do
       action_box: &Agendum.TUI.Boxes.ActionBox.open(&1, cat(&1, "Calls"), cat(&1, "When")),
       range_filter: &Agendum.TUI.Boxes.RangeFilterBox.open(&1, :view, cat(&1, "When")),
       what_to_copy: &Agendum.TUI.Boxes.WhatToCopyBox.open(&1, :copy, :line),
-      publish: &Agendum.TUI.Extras.PublishBox.open/1
+      publish: &Agendum.TUI.Extras.PublishBox.open/1,
+      subscription_props: &subscription_props/1
     }
+  end
+
+  # a feed's properties, for a feed subscribed to first
+  defp subscription_props(state) do
+    {:ok, db, id} =
+      Agendum.Core.subscribe_feed(state.db, "Owl's Gazette", "https://o.example/rss")
+
+    Agendum.TUI.Extras.SubscriptionPropsBox.open(%{state | db: db}, :feed, id)
   end
 
   defp menu(state, letters), do: press(state, [{:f, 10} | String.graphemes(letters)])

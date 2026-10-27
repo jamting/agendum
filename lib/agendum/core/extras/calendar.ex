@@ -132,7 +132,7 @@ defmodule Agendum.Core.Extras.Calendar do
     do: NaiveDateTime.diff(now, at, :second) >= minutes * 60
 
   @doc "The next (1) or previous (-1) choice for a setting."
-  @spec cycle(t, :refresh_minutes | :ahead_days, 1 | -1) :: t
+  @spec cycle(t, :refresh_minutes | :ahead_days, integer) :: t
   def cycle(cal, :refresh_minutes, step),
     do: %{cal | refresh_minutes: next(@refresh, cal.refresh_minutes, step)}
 

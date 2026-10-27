@@ -4,11 +4,15 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
   calendar subscriptions, each with its address, how often it is read, how
   far ahead, and when it was last read (or why that failed).
 
+  A manager, as the Feeds box and the Macros manager are:
+
     * INS (or CTRL-N) subscribes: the calendar's address, then a name for
       the category its events go in; it is read at once
-    * ENTER (or R) reads the highlighted calendar now
-    * F changes how often it is read, A how far ahead it imports
-    * DEL unsubscribes, asking whether to discard its items too
+    * ENTER reads the highlighted calendar now, ALT-ENTER every calendar
+    * F6 its properties: how often it is read, how far ahead
+      (`Agendum.TUI.Extras.SubscriptionPropsBox`)
+    * F2 renames it; DEL (F4, CTRL-D) unsubscribes, asking whether to
+      discard its items too
     * ESC closes the box
 
   Reading happens in the shell (`{:fetch_calendar, id, url}`); the result
@@ -37,10 +41,11 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
     Calendars on the web (iCal) that the file subscribes to: their events
     become items.
 
-    INS subscribes to one, by its address. ENTER (or R) reads the
-    highlighted one now; F changes how often it is read, A how far ahead.
-    F2 renames it, and its category (only here: the category manager leaves
-    a calendar's category alone). DEL unsubscribes. ESC goes back.
+    INS subscribes to one, by its address. ENTER reads the highlighted
+    one now, ALT-ENTER every calendar. F6 shows its properties: how often
+    it is read, how far ahead. F2 renames it, and its category
+    (only here: the category manager leaves a calendar's category alone).
+    DEL unsubscribes. ESC goes back.
     """
   end
 
@@ -53,13 +58,10 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
       :insert => :subscribe,
       {:ctrl, "n"} => :subscribe,
       :enter => :read,
-      {:char, "r"} => :read,
-      {:char, "R"} => :read,
-      {:char, "f"} => :how_often,
-      {:char, "F"} => :how_often,
-      {:char, "a"} => :ahead,
-      {:char, "A"} => :ahead,
+      {:alt, :enter} => :read_all,
       {:f, 2} => :rename,
+      {:f, 6} => :properties,
+      {:f, 4} => :unsubscribe,
       :delete => :unsubscribe,
       {:ctrl, "d"} => :unsubscribe,
       :esc => :close
@@ -70,10 +72,10 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
   def commands(_mode) do
     [
       {:read, "Read now", "Read the calendar now"},
+      {:read_all, "Read all", "Read every calendar now"},
       {:subscribe, "Subscribe", "Add a calendar by its address"},
-      {:how_often, "How often", "Change how often it is read"},
-      {:ahead, "How far ahead", "Change how far ahead it reads"},
       {:rename, "Rename", "Rename the calendar and its category"},
+      {:properties, "Properties", "How often it is read, and more"},
       {:unsubscribe, "Unsubscribe", "Unsubscribe from the calendar"}
     ] ++ Enum.take(Box.list_moves(), 2) ++ [{:close, "Return", "Back to the view"}]
   end
@@ -83,6 +85,8 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
 
   def run(state, _mode, :subscribe),
     do: Prompts.prompt(state, Messages.text(:address), :calendar_url)
+
+  def run(state, _mode, :read_all), do: read_all(state)
 
   def run(state, mode, id) do
     count = length(Database.calendars(state.db))
@@ -96,8 +100,6 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
 
   defp calendar(state, _mode, _id, nil, _count), do: state
   defp calendar(state, _mode, :read, cal, _), do: Update.fetch_calendar(state, cal.id, :manual)
-  defp calendar(state, _mode, :how_often, cal, _), do: setting(state, cal, :refresh_minutes)
-  defp calendar(state, _mode, :ahead, cal, _), do: setting(state, cal, :ahead_days)
 
   # the one place to rename a calendar's category (R75a)
   defp calendar(state, _mode, :rename, cal, _),
@@ -105,8 +107,20 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
 
   defp calendar(state, _mode, :unsubscribe, cal, _), do: unsubscribe(state, cal)
 
-  defp setting(state, cal, setting),
-    do: State.run(state, {:cycle_calendar_setting, cal.id, setting, 1})
+  defp calendar(state, _mode, :properties, cal, _),
+    do: Agendum.TUI.Extras.SubscriptionPropsBox.open(state, :calendar, cal.id)
+
+  # ALT-ENTER: every calendar read, quietly unless it brings something
+  # (only those not being read already count)
+  defp read_all(state) do
+    next =
+      Enum.reduce(Database.calendars(state.db), state, &Update.fetch_calendar(&2, &1.id, :auto))
+
+    case map_size(next.fetching) - map_size(state.fetching) do
+      0 -> State.info(next, Messages.text(:nothing_to_read))
+      started -> State.info(next, Messages.text(:reading_all, started))
+    end
+  end
 
   defp unsubscribe(state, cal) do
     items = Enum.count(cal.events, fn {_, %{item: id}} -> Map.has_key?(state.db.items, id) end)
@@ -124,38 +138,39 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
   @impl Box
   # the list scrolls by whole calendars, as the Feeds box's
   # (`Agendum.TUI.Boxes.Scroll`)
-  def content(state, mode, _inner, max_rows) do
+  def content(state, mode, inner, max_rows) do
     rows =
       state
       |> groups(mode)
       |> Enum.map(fn group -> Enum.map(group, &row/1) end)
-      |> Scroll.window(mode.cursor, max(max_rows - 3, 4), &row({:normal, &1}))
+      |> Scroll.window(mode.cursor, max(max_rows - 2, 4), &row({:normal, &1}))
 
-    rows ++
-      [
-        [],
-        [{:box, " INS subscribe · ENTER read now · DEL unsubscribe"}],
-        [{:box, " F how often · A how far ahead · F2 rename"}]
-      ]
+    # the hint is made from the keys, as the key bar is (rule 6.2)
+    rows ++ [[], Box.hint(keys(state, mode), inner)]
   end
 
   @impl Box
   def keys(_state, _mode),
     do: [
-      {"INS", "Subscribe", "Subscribe to a calendar"},
-      {"ENTER", "Read now"},
-      {"F", "How often", "How often to read it"},
-      {"A", "Ahead", "How far ahead"},
-      {"F2", "Rename", "Rename the calendar and its category"},
-      {"DEL", "Unsubscribe"},
+      {"ENTER", "Read now", "read now"},
+      {"A-ENTER", "Read all", "ALT-ENTER", "read all"},
+      {"INS", "Subscribe", "subscribe"},
+      {"F2", "Rename", "rename"},
+      {"F6", "Props", "properties"},
+      {"DEL", "Unsubscribe", "unsubscribe"},
       {"ESC", "Close"}
     ]
+
+  # the key bar's words (R65b): F2 renames, F4 unsubscribes
+  @impl Box
+  def labels(_mode),
+    do: %{rename: "Rename", unsubscribe: "Unsubs", properties: "Props"}
 
   @impl Box
   def help,
     do:
-      "Your calendar subscriptions. ENTER reads one now, F sets how often, " <>
-        "A how far ahead; INS adds one, DEL removes it."
+      "Your calendar subscriptions. ENTER reads one now, ALT-ENTER all; " <>
+        "INS adds one, DEL removes it."
 
   defp row({style, text}),
     do: [{if(style == :selected, do: :box_selected, else: :box), " " <> text}]

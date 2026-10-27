@@ -137,6 +137,7 @@ defmodule Agendum.TUI.Modes do
       :line
     ],
     sort: [:cursor, :opened, :remembered, :scope],
+    subscription_props: [:cursor, :id, :kind, :opened, :typing],
     splash: [:until],
     update_defaults: [:cursor, :yes],
     view_props: [:back, :choice, :cursor, :moving, :opened, :typing, :view_id],

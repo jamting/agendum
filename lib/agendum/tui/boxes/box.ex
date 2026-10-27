@@ -161,6 +161,7 @@ defmodule Agendum.TUI.Boxes.Box do
     category_match: Agendum.TUI.Boxes.CategoryMatchBox,
     category_stats: Agendum.TUI.Boxes.CategoryStatsBox,
     feeds: Agendum.TUI.Extras.FeedsBox,
+    subscription_props: Agendum.TUI.Extras.SubscriptionPropsBox,
     file_stats: Agendum.TUI.Boxes.FileStatsBox,
     choice: Agendum.TUI.CategoryScreens.Choices,
     choice_list: Agendum.TUI.Boxes.ChoiceListBox,

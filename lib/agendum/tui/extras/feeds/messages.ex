@@ -17,9 +17,12 @@ defmodule Agendum.TUI.Extras.Feeds.Messages do
   def text(:export_opml), do: "Write the feed list (OPML) to:"
   def text(:bad_url), do: "A feed needs an https:// or feed:// address"
   def text(:no_name), do: "A feed needs a name"
+  def text(:nothing_to_read), do: "No feeds to read now"
 
-  @doc "A text naming a feed or a file."
-  @spec text(atom, String.t()) :: String.t()
+  @doc "A text naming a feed or a file, or how many ALT-ENTER reads."
+  @spec text(atom, String.t() | non_neg_integer) :: String.t()
+  # how many feeds ALT-ENTER reads
+  def text(:reading_all, count), do: "Reading #{Draw.count(count, "feed")} …"
   def text(:duplicate, name), do: "#{name} is taken: another feed has that name"
   def text(:subscribed, name), do: "Subscribed to #{name}"
   def text(:unsubscribed, name), do: "Unsubscribed from #{name}"

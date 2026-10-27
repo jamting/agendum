@@ -114,8 +114,8 @@ defmodule Agendum.TUI.SelectFileTest do
     File.write!(Path.join(dir, "feeds.opml"), "")
     File.write!(Path.join(dir, "subscriptions.xml"), "")
 
-    # I imports a feed list, E exports one: both prompts list the same kinds
-    for key <- ["i", "e"] do
+    # F7 imports a feed list, F8 exports one: both prompts list the same kinds
+    for key <- [{:f, 7}, {:f, 8}] do
       state = press(state, [{:f, 10}, "f", "t", "f", key])
       assert panel(state) =~ "F3 lists files"
 

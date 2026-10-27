@@ -4,6 +4,8 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **Feeds and Calendars work like the Macros manager**: ENTER reads the highlighted one, **ALT-ENTER reads them all**, F2 renames, **F6 opens its properties** (how often it is read, and how long a feed's entries stay or how far ahead a calendar reads: SPACE, a letter or F3 to choose, ESC to put back, F8 for a new one's), DEL or F4 unsubscribes. In Feeds, **F7 imports an OPML list and F8 exports one**. The letter keys F, K, A, R, I and E are gone.
+
 ## 0.71.1 — 2026-10-27
 
 - **The blog's Posts and Drafts are always your own categories**: a feed's or a calendar's is neither completed nor listed there, and is refused if it comes another way.

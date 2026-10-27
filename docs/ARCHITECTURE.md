@@ -162,6 +162,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Extras.CalendarsBox`                     | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
 | `Agendum.TUI.Extras.FeedsBox`                         | ✔     | File ▸ Transfer ▸ Feeds: subscribe to a feed, how often it is read, how long its entries stay (R75). |
 | `Agendum.TUI.Extras.PublishBox`                       | ✔     | File ▸ Transfer ▸ Publish: the micro-blog's settings, kept in the file (R74). |
+| `Agendum.TUI.Extras.SubscriptionPropsBox`             | ✔     | F6 in the Feeds or Calendars manager: a feed's or a calendar's name and settings (R75, R45). |
 | `Agendum.TUI.Extras.Feeds.Messages`                   | ✔     | What the feeds say: prompts, questions, messages, kept beside the extra (UI guidelines rule 7.5). |
 | `Agendum.TUI.Extras.Calendars.Messages`               | ✔     | What the calendars say, kept beside the extra (rule 7.5). |
 | `Agendum.TUI.Extras.Publish.Messages`                 | ✔     | What publishing says, one text per error and step, kept beside the extra (rule 7.5). |

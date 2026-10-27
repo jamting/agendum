@@ -160,7 +160,7 @@ defmodule Agendum.Core.Facade.Extras.Feeds do
   end
 
   @doc "The next or previous choice for how often a feed is read, or how long entries stay."
-  @spec cycle_feed_setting(db, id, :refresh_minutes | :keep_days, 1 | -1) :: db
+  @spec cycle_feed_setting(db, id, :refresh_minutes | :keep_days, integer) :: db
   def cycle_feed_setting(db, feed_id, setting, step),
     do: Database.update_feed(db, feed_id, &Feed.cycle(&1, setting, step))
 

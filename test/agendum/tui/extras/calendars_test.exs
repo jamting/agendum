@@ -103,13 +103,13 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
     refute screen(state) =~ "Work:"
   end
 
-  test "ENTER reads it now; F and A change how often and how far ahead", %{state: state} do
+  test "ENTER reads it now; F6 changes how often and how far ahead", %{state: state} do
     {state, id} = subscribe(state)
     state = Update.Results.calendar_read(state, id, @url, {:ok, events()})
     {state, effects} = keys(state, :enter)
     assert effects == [{:fetch_calendar, id, @url}]
     state = Update.Results.calendar_read(state, id, @url, {:ok, events()})
-    {state, _} = keys(state, ["f", "a"])
+    {state, _} = keys(state, [{:f, 6}, :down, " ", :down, " ", :enter])
     assert state.db.calendars[id].refresh_minutes == 360
     assert state.db.calendars[id].ahead_days == 180
     assert screen(state) =~ "every 6 hours"

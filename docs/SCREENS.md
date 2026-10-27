@@ -155,8 +155,9 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
       - **Input format** `:input_format` (Input format): the person's number order, date separator and clock, saved as preferences (R41b). `Agendum.TUI.Boxes.InputFormatBox`.
     - **Auto-assign settings** `:auto_assign` (Auto-assign settings): text matching for the file and Confirm assignments (R16, R16a). `Agendum.TUI.Boxes.AutoAssignBox`.
     - **File statistics** `:file_stats` (File statistics ...): the items, items in the trash, items with notes, categories and the average assignments, as Agenda's (screenshot 140); nothing to change. `Agendum.TUI.Boxes.FileStatsBox`.
-  - **Feeds** `:feeds` (File ▸ Transfer ▸ Feeds): RSS and Atom feed subscriptions; INS subscribes (two prompts), ENTER reads now, F how often, K how long entries stay, DEL unsubscribes, I and E import and export OPML (prompts for the file) (R75). `Agendum.TUI.Extras.FeedsBox`.
-  - **Calendars** `:calendars` (File ▸ Transfer ▸ Calendars): calendar subscriptions; INS subscribes (two prompts), ENTER reads now, F and A change how often and how far ahead, DEL unsubscribes (R45). `Agendum.TUI.Extras.CalendarsBox`.
+  - **Feeds** `:feeds` (File ▸ Transfer ▸ Feeds): RSS and Atom feed subscriptions, a manager as the Macros one; INS subscribes (two prompts), ENTER reads now, ALT-ENTER all, F2 renames, F6 its properties, DEL unsubscribes, F7 and F8 import and export OPML (prompts for the file) (R75). `Agendum.TUI.Extras.FeedsBox`.
+    - **Feed Properties** `:subscription_props` (F6): name, address and last read shown, how often it is read, how long entries stay (R75). `Agendum.TUI.Extras.SubscriptionPropsBox`.
+  - **Calendars** `:calendars` (File ▸ Transfer ▸ Calendars): calendar subscriptions, a manager as Feeds; INS subscribes (two prompts), ENTER reads now, ALT-ENTER all, F2 renames, F6 its properties (Calendar Properties: how often, how far ahead), DEL unsubscribes (R45). `Agendum.TUI.Extras.CalendarsBox`.
   - **Customize** `:customize` (Utilities ▸ Customize): the person's theme, date language and fallback language, sounds and the Extras switch, saved as preferences (R40, R14c, R76, R77). `Agendum.TUI.Boxes.CustomizeBox`.
     - **Input format** `:input_format` (Input format).
   - **Column Properties** (View ▸ Column ▸ Properties, on a column entry): `:column_props`, one box for every column as in Agenda (screenshot 142): head, category type, width and Link with other sections (R55); a standard column's Format, with Line number and Column title for Category note (R56, screenshot 127); below them a numeric column's number format and calculations (R29) or a date column's own date format or the global defaults (R41a). `Agendum.TUI.Boxes.ColumnBox`.
@@ -239,6 +240,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:customize`         | box           | `Agendum.TUI.Boxes.CustomizeBox`         | Utilities ▸ Customize                                  | R40, R14c      |
 | `:calendars`         | box           | `Agendum.TUI.Extras.CalendarsBox`         | File ▸ Transfer ▸ Calendars                       | R45            |
 | `:feeds`             | box           | `Agendum.TUI.Extras.FeedsBox`             | File ▸ Transfer ▸ Feeds                           | R75            |
+| `:subscription_props` | box          | `Agendum.TUI.Extras.SubscriptionPropsBox` | F6 in the Feeds or Calendars manager              | R75, R45       |
 | `:auto_assign`       | box           | `Agendum.TUI.Boxes.AutoAssignBox`        | File Properties ▸ Auto-assign settings            | R16a           |
 | `:column_props`      | box           | `Agendum.TUI.Boxes.ColumnBox`            | View ▸ Column ▸ Properties                        | R55, R29, R41a |
 | `:column_add`        | box           | `Agendum.TUI.Boxes.ColumnAddBox`         | View ▸ Column ▸ Add                               | R55            |

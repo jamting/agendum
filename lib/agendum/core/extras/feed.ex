@@ -125,7 +125,7 @@ defmodule Agendum.Core.Extras.Feed do
     do: NaiveDateTime.diff(now, at, :second) >= minutes * 60
 
   @doc "The next (1) or previous (-1) choice for a setting."
-  @spec cycle(t, :refresh_minutes | :keep_days, 1 | -1) :: t
+  @spec cycle(t, :refresh_minutes | :keep_days, integer) :: t
   def cycle(feed, :refresh_minutes, step),
     do: %{feed | refresh_minutes: next(@refresh, feed.refresh_minutes, step)}
 

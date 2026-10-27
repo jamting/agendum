@@ -5,12 +5,19 @@ defmodule Agendum.TUI.Extras.FeedsBox do
   its entries stay, and when it was last read (or why that failed). Like
   the Calendars box (R45).
 
+  A manager, as the Macros manager is (UI guidelines, the owner's answers
+  2026-10-27):
+
     * INS (or CTRL-N) subscribes: the feed's address, then its name (its
       category under Feeds); it is read at once
-    * ENTER (or R) reads the highlighted feed now
-    * F changes how often it is read, K how long its entries stay
-    * DEL unsubscribes, asking whether to discard its items too
-    * I imports an OPML feed list, E exports one
+    * ENTER reads the highlighted feed now, ALT-ENTER every feed
+    * F6 its properties: how often it is read, how long entries stay
+      (`Agendum.TUI.Extras.SubscriptionPropsBox`)
+    * F2 renames it; DEL (F4, CTRL-D) unsubscribes, asking whether to
+      discard its items too
+    * F7 imports an OPML feed list, F8 exports one: the extra keeps its
+      files in and out to itself, so the menus have no hole with the
+      Extras off (the owner's choice)
     * ESC closes the box
 
   Reading happens in the shell (`{:fetch_feed, id, url}`); the result
@@ -41,11 +48,12 @@ defmodule Agendum.TUI.Extras.FeedsBox do
     it (a Zettel id, a note of your own, or a category you gave it). F4
     Done dismisses one; CTRL-V opens its link in the browser.
 
-    INS subscribes to a feed, by its address. ENTER (or R) reads the
-    highlighted one now; F changes how often it is read, K how long its
-    entries stay. F2 renames it, and its category under Feeds (only here:
-    the category manager leaves a feed's categories alone). DEL
-    unsubscribes. I imports an OPML feed list, E exports one. ESC goes back.
+    INS subscribes to a feed, by its address. ENTER reads the highlighted
+    one now, ALT-ENTER every feed. F6 shows its properties: how often it
+    is read, how long its entries stay. F2 renames it, and its category under
+    Feeds (only here: the category manager leaves a feed's categories
+    alone). DEL unsubscribes. F7 imports an OPML feed list, F8 exports
+    one. ESC goes back.
     """
   end
 
@@ -58,17 +66,13 @@ defmodule Agendum.TUI.Extras.FeedsBox do
       :insert => :subscribe,
       {:ctrl, "n"} => :subscribe,
       :enter => :read,
-      {:char, "r"} => :read,
-      {:char, "R"} => :read,
-      {:char, "f"} => :how_often,
-      {:char, "F"} => :how_often,
-      {:char, "k"} => :keep,
-      {:char, "K"} => :keep,
-      {:char, "i"} => :import_opml,
-      {:char, "I"} => :import_opml,
-      {:char, "e"} => :export_opml,
-      {:char, "E"} => :export_opml,
+      {:alt, :enter} => :read_all,
+      {:f, 7} => :import_opml,
+      {:f, 8} => :export_opml,
       {:f, 2} => :rename,
+      {:f, 6} => :properties,
+      # F4 DELETE, as the Macros manager has it
+      {:f, 4} => :unsubscribe,
       :delete => :unsubscribe,
       {:ctrl, "d"} => :unsubscribe,
       :esc => :close
@@ -79,10 +83,10 @@ defmodule Agendum.TUI.Extras.FeedsBox do
   def commands(_mode) do
     [
       {:read, "Read now", "Read the feed now"},
+      {:read_all, "Read all", "Read every feed now"},
       {:subscribe, "Subscribe", "Add a feed by its address"},
-      {:how_often, "How often", "Change how often it is read"},
-      {:keep, "Keep", "Change how long entries stay"},
       {:rename, "Rename", "Rename the feed and its category"},
+      {:properties, "Properties", "How often it is read, and more"},
       {:import_opml, "Import OPML", "Subscribe to a feed list's feeds"},
       {:export_opml, "Export OPML", "Write the feeds as a feed list"},
       {:unsubscribe, "Unsubscribe", "Unsubscribe from the feed"}
@@ -94,6 +98,8 @@ defmodule Agendum.TUI.Extras.FeedsBox do
 
   def run(state, _mode, :subscribe),
     do: Prompts.prompt(state, Messages.text(:address), :feed_url)
+
+  def run(state, _mode, :read_all), do: read_all(state)
 
   def run(state, _mode, :import_opml),
     do: Prompts.prompt(state, Messages.text(:import_opml), :import_opml)
@@ -113,8 +119,6 @@ defmodule Agendum.TUI.Extras.FeedsBox do
 
   defp feed(state, _mode, _id, nil, _count), do: state
   defp feed(state, _mode, :read, feed, _), do: Update.fetch_feed(state, feed.id, :manual)
-  defp feed(state, _mode, :how_often, feed, _), do: setting(state, feed, :refresh_minutes)
-  defp feed(state, _mode, :keep, feed, _), do: setting(state, feed, :keep_days)
 
   # the one place to rename a feed's category (R75a)
   defp feed(state, _mode, :rename, feed, _),
@@ -122,8 +126,20 @@ defmodule Agendum.TUI.Extras.FeedsBox do
 
   defp feed(state, _mode, :unsubscribe, feed, _), do: unsubscribe(state, feed)
 
-  defp setting(state, feed, setting),
-    do: State.run(state, {:cycle_feed_setting, feed.id, setting, 1})
+  defp feed(state, _mode, :properties, feed, _),
+    do: Agendum.TUI.Extras.SubscriptionPropsBox.open(state, :feed, feed.id)
+
+  # ALT-ENTER: every feed read, quietly unless it brings something, as a
+  # scheduled read is
+  # (only those not being read already count)
+  defp read_all(state) do
+    next = Enum.reduce(Database.feeds(state.db), state, &Update.fetch_feed(&2, &1.id, :auto))
+
+    case map_size(next.fetching) - map_size(state.fetching) do
+      0 -> State.info(next, Messages.text(:nothing_to_read))
+      started -> State.info(next, Messages.text(:reading_all, started))
+    end
+  end
 
   defp unsubscribe(state, feed) do
     items =
@@ -142,38 +158,45 @@ defmodule Agendum.TUI.Extras.FeedsBox do
   @impl Box
   # the list scrolls by whole feeds within the room the screen leaves, its
   # three lines of keys kept below it (`Agendum.TUI.Boxes.Scroll`)
-  def content(state, mode, _inner, max_rows) do
+  def content(state, mode, inner, max_rows) do
     rows =
       state
       |> groups(mode)
       |> Enum.map(fn group -> Enum.map(group, &row/1) end)
-      |> Scroll.window(mode.cursor, max(max_rows - 3, 4), &row({:normal, &1}))
+      |> Scroll.window(mode.cursor, max(max_rows - 2, 4), &row({:normal, &1}))
 
-    rows ++
-      [
-        [],
-        [{:box, " INS subscribe · ENTER read now · DEL unsubscribe"}],
-        [{:box, " F how often · K how long kept · F2 rename · I/E OPML"}]
-      ]
+    # the hint is made from the keys, as the key bar is (rule 6.2)
+    rows ++ [[], Box.hint(keys(state, mode), inner)]
   end
 
   @impl Box
   def keys(_state, _mode),
     do: [
-      {"INS", "Subscribe", "Subscribe to a feed"},
-      {"ENTER", "Read now"},
-      {"F", "How often", "How often to read it"},
-      {"K", "Keep", "How long entries stay"},
-      {"F2", "Rename", "Rename the feed and its category"},
-      {"I/E", "OPML", "Import or export a feed list"},
-      {"DEL", "Unsubscribe"},
+      {"ENTER", "Read now", "read now"},
+      {"A-ENTER", "Read all", "ALT-ENTER", "read all"},
+      {"INS", "Subscribe", "subscribe"},
+      {"F2", "Rename", "rename"},
+      {"F6", "Props", "properties"},
+      {"F7", "Import", "import OPML"},
+      {"F8", "Export", "export OPML"},
+      {"DEL", "Unsubscribe", "unsubscribe"},
       {"ESC", "Close"}
     ]
 
+  # the key bar's words (R65b): F2 renames, F4 unsubscribes
+  @impl Box
+  def labels(_mode),
+    do: %{
+      rename: "Rename",
+      unsubscribe: "Unsubs",
+      properties: "Props",
+      import_opml: "Import",
+      export_opml: "Export"
+    }
+
   @impl Box
   def help,
-    do:
-      "Your feeds. ENTER reads now, F how often, K how long kept; INS adds, DEL removes, I/E OPML."
+    do: "Your feeds. ENTER reads one now, ALT-ENTER all; INS adds, DEL removes; F7/F8 OPML."
 
   defp row({style, text}),
     do: [{if(style == :selected, do: :box_selected, else: :box), " " <> text}]
@@ -182,7 +205,7 @@ defmodule Agendum.TUI.Extras.FeedsBox do
   defp groups(state, mode) do
     case Database.feeds(state.db) do
       [] ->
-        [[{:normal, "No feeds yet · INS subscribes to one, I imports a list"}]]
+        [[{:normal, "No feeds yet · INS subscribes to one, F7 imports a list"}]]
 
       feeds ->
         feeds

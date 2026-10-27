@@ -333,10 +333,9 @@ defmodule Agendum.TUI.CommandDocs do
       subscribe:
         "Give the calendar's iCal address (Google, Fastmail and Outlook all have one): its " <>
           "events come in as items with When dates, beside the rest of the file.",
-      how_often:
-        "Read again this often while Agendum is running, so that changes made elsewhere " <>
-          "show up.",
-      ahead: "How far ahead its events are brought in: a short reach keeps the file small.",
+      properties:
+        "How often it is read while Agendum is running, so that changes made elsewhere " <>
+          "show up, and how far ahead its events are brought in.",
       unsubscribe: "Stops reading it, and asks whether to discard the items it brought in."
     }
   }

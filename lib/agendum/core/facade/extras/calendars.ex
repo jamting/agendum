@@ -189,7 +189,7 @@ defmodule Agendum.Core.Facade.Extras.Calendars do
   end
 
   @doc "The next or previous choice for how often a calendar is read, or how far ahead."
-  @spec cycle_calendar_setting(db, id, :refresh_minutes | :ahead_days, 1 | -1) :: db
+  @spec cycle_calendar_setting(db, id, :refresh_minutes | :ahead_days, integer) :: db
   def cycle_calendar_setting(db, cal_id, setting, step),
     do: Database.update_calendar(db, cal_id, &Calendar.cycle(&1, setting, step))
 

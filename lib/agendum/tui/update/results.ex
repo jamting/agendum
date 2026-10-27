@@ -27,6 +27,7 @@ defmodule Agendum.TUI.Update.Results do
       {kind, fetching} = Map.pop(state.fetching, cal_id)
       state = %{state | fetching: fetching}
       next = read_into(state, cal, kind, result)
+      next = into_snapshots(next, read_command(:calendar, cal_id, result))
       next = %{History.record(state, next) | dirty: next.db != next.saved.db}
       if next.modes == [], do: Layout.settle(next), else: next
     else
@@ -86,12 +87,40 @@ defmodule Agendum.TUI.Update.Results do
       {kind, fetching} = Map.pop(state.fetching, feed_id)
       state = %{state | fetching: fetching}
       next = feed_into(state, feed, kind, result)
+      next = into_snapshots(next, read_command(:feed, feed_id, result))
       next = %{History.record(state, next) | dirty: next.db != next.saved.db}
       if next.modes == [], do: Layout.settle(next), else: next
     else
       state
     end
   end
+
+  # Domain: a read is not a change made in a settings box that happens to
+  # be open (the Properties box, F6, opened while it was under way): it
+  # goes into the box's snapshot too, so ESC, putting the file back as it
+  # was when the box opened, keeps it (the review of 2026-10-27)
+  defp into_snapshots(state, command) do
+    clock = State.context(state)
+
+    modes =
+      Enum.map(state.modes, fn
+        %{opened: %{db: db} = opened} = mode ->
+          case Agendum.Core.run(db, command, clock) do
+            {:ok, db, _} -> %{mode | opened: %{opened | db: db}}
+            {:error, _} -> mode
+          end
+
+        mode ->
+          mode
+      end)
+
+    %{state | modes: modes}
+  end
+
+  defp read_command(:feed, id, {:ok, entries}), do: {:sync_feed, id, entries}
+  defp read_command(:feed, id, {:error, message}), do: {:feed_failed, id, message}
+  defp read_command(:calendar, id, {:ok, events}), do: {:sync_calendar, id, events}
+  defp read_command(:calendar, id, {:error, message}), do: {:calendar_failed, id, message}
 
   defp feed_into(state, feed, kind, {:ok, entries}) do
     {:ok, state, %{result: counts}} = State.command(state, {:sync_feed, feed.id, entries})

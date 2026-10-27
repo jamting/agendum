@@ -69,10 +69,19 @@ defmodule Agendum.TUI.Extras.FeedsTest do
     assert screen(state) =~ "failed: the server answered 503"
   end
 
-  test "F and K change how often and how long", %{state: state} do
+  test "F6's properties change how often and how long", %{state: state} do
     state = subscribed(state)
     assert screen(state) =~ "every hour · entries kept 30 days"
-    state = press(state, ["f", "k"])
+
+    state =
+      state
+      |> press({:f, 6})
+      |> to_setting("Read every")
+      |> press(" ")
+      |> to_setting("Keep")
+      |> press(" ")
+      |> press(:enter)
+
     assert screen(state) =~ "every 6 hours · entries kept 90 days"
   end
 
@@ -83,13 +92,13 @@ defmodule Agendum.TUI.Extras.FeedsTest do
     assert state.db.feeds == %{}
   end
 
-  test "E writes the feeds as OPML; I reads a list", %{state: state} do
-    state = subscribed(state) |> press("e") |> press(:enter)
+  test "F8 writes the feeds as OPML; F7 reads a list", %{state: state} do
+    state = subscribed(state) |> press({:f, 8}) |> press(:enter)
     assert {:write_text, path, opml} = effect(:write_text)
     assert String.ends_with?(path, "feeds.opml")
     assert opml =~ ~s(xmlUrl="https://owl.example/rss")
 
-    state = state |> press("i") |> type("/tmp/list.opml")
+    state = state |> press({:f, 7}) |> type("/tmp/list.opml")
     assert {:read_opml, "/tmp/list.opml"} = effect(:read_opml)
 
     list =

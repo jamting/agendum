@@ -14,9 +14,12 @@ defmodule Agendum.TUI.Extras.Calendars.Messages do
   def text(:rename), do: "New name of the calendar:"
   def text(:bad_url), do: "A calendar needs an https:// or webcal:// address"
   def text(:no_name), do: "A calendar needs a name"
+  def text(:nothing_to_read), do: "No calendars to read now"
 
-  @doc "A text naming a calendar."
-  @spec text(atom, String.t()) :: String.t()
+  @doc "A text naming a calendar, or how many ALT-ENTER reads."
+  @spec text(atom, String.t() | non_neg_integer) :: String.t()
+  # how many calendars ALT-ENTER reads
+  def text(:reading_all, count), do: "Reading #{Draw.count(count, "calendar")} …"
   def text(:duplicate, name), do: "#{name} is taken: another calendar has that name"
   def text(:subscribed, name), do: "Subscribed to #{name}"
   def text(:unsubscribed, name), do: "Unsubscribed from #{name}"
