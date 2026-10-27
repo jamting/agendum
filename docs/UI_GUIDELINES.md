@@ -8,7 +8,7 @@ When a rule here and a box disagree, the box is the bug, unless the rule is wron
 
 ## 1. Settings boxes
 
-- **1.1** A box of settings is drawn from a layout written as it looks on screen, its fields `[name   ]` placeholders, which are also the cursor's order. Our choice (CLAUDE.md, Conventions); `Agendum.TUI.Boxes.Template`, `customize_box.ex`. **Could test:** every box whose mode has a `cursor` over fields uses `Template.grid/2`.
+- **1.1** A box of settings is drawn from a layout written as it looks on screen, its fields `[name   ]` placeholders, which are also the cursor's order. Our choice (CLAUDE.md, Conventions); `Agendum.TUI.Boxes.Template`, `customize_box.ex`. **Test:** `box_guidelines_test.exs` (every settings box in the registry calls `Template`).
 - **1.2** The box's layout follows Agenda's box of the same name where there is one: labels, order, rows. (as Agenda: `docs/reference/agenda_boxes.json`, captured in DOSBox) **Test:** `test/agendum/tui/agenda_boxes_test.exs`.
 - **1.3** ↑ ↓ → ← TAB SHIFT-TAB HOME END move between settings, by the grid of the layout. (as Agenda: User's Guide 2-16) `Agendum.TUI.Boxes.BoxNav`, `Box.settings_keymap/1`.
 - **1.4** ENTER leaves the box keeping the changes; ESC leaves it putting them back, and the whole box is one undo step. (as Agenda: User's Guide 2-18) `Agendum.TUI.Boxes.BoxCancel`, ADR 0030. **Test:** `box_cancel_test.exs`.
@@ -16,7 +16,7 @@ When a rule here and a box disagree, the box is the bug, unless the rule is wron
 - **1.6** A setting with "..." opens a second box of settings, with SPACE (or F2). (as Agenda: User's Guide 2-17) `Agendum.TUI.Boxes.BoxEdit`. **Test:** `box_keys_test.exs` ("on a ... field opens it").
 - **1.7** F8 (DEFAULT) puts the highlighted setting back to its default, ALT-F8 (DFLTALL) all of them; a setting without a default is left alone, without a word. (as Agenda: User's Guide 2-17) `Agendum.TUI.Boxes.BoxDefaults`. **Test:** `box_keys_test.exs` ("F8 on a setting without a default").
 - **1.8** A box's settings live in the box until ENTER, or are applied inside and put back by ESC; either way the screen behind is drawn as it was until the box closes. (as Agenda, checked 2026-10-22; ADR 0030) `BoxCancel.behind/2`.
-- **1.9** Every setting has a help text, shown in the control panel while it is highlighted: what it does, then the keys that change it, in two lines at 80 columns. (as Agenda: screenshots 130–143, its F1 SETTING/DESCRIPTION tables) `Agendum.TUI.Boxes.FieldHelp`. **Test:** `field_help_test.exs` ("every field of the settings boxes has help", "fits the control panel's two lines"). **Could test:** walk every registered settings box, not a hand-made list.
+- **1.9** Every setting has a help text, shown in the control panel while it is highlighted: what it does, then the keys that change it, in two lines at 80 columns. (as Agenda: screenshots 130–143, its F1 SETTING/DESCRIPTION tables) `Agendum.TUI.Boxes.FieldHelp`. **Test:** `field_help_test.exs` ("fits the control panel's two lines"); `box_guidelines_test.exs` walks every settings box in the registry (2026-10-27).
 
 ## 2. Choosing values
 
@@ -56,7 +56,7 @@ When a rule here and a box disagree, the box is the bug, unless the rule is wron
 ## 6. Key bar and help
 
 - **6.1** The key bar has Agenda's ten slots, made from the place's keymap; a box's bar is fixed per field. (as Agenda; ADR 0045 and its amendment) `Agendum.TUI.Render.KeyBar`. **Test:** `box_key_bar_test.exs`, `agenda_boxes_test.exs`.
-- **6.2** A box's hint line, where it has one, is made from the same key list as its bar (`Box.hint/2`), never written by hand, so the two cannot disagree. Our choice; `box.ex:232-238`. **Could test:** no box's `content/4` holds a literal "·"-separated key list.
+- **6.2** A box's hint line, where it has one, is made from the same key list as its bar (`Box.hint/2`), never written by hand, so the two cannot disagree. Our choice; `box.ex:232-238`. **Test:** `box_guidelines_test.exs` (no literal key list in a box's code; the boxes that still have one listed with why).
 - **6.3** F1 in a box shows its help topic: what the box is for and how it is worked, in Agenda's terse layout. (as Agenda's help; approved 2026-10-26) `c:Box.about/2`, `Box.default_about/3`.
 
 ## 7. Messages
@@ -84,7 +84,7 @@ Each gap in `lib/agendum/tui/extras/`, the rule it breaks, and the existing part
 | 9 | Publish | Error messages are written in the box (`publish_box.ex`, `publish/2`), not in `Messages` | 7.2 | `Agendum.TUI.Extras.Publish.Messages`, one per error atom (rule 7.5) |
 | 10 | Feeds, Calendars | Subscribing asks two prompts in a row (the address, then the name), where the clone adds a thing with one prompt for its name, its settings after in its box | 4.2 | Two prompts kept (the owner, 2026-10-27), the name's prompt filled in with the feed's own title |
 | 11 | Feeds, Calendars | The bottom edge says nothing (`finish: :none`); the clone's managers say how the box ends | 1.5, 4.5 | `finish: :return` (the Publish preview's) or `:done`, as the view manager |
-| 12 | All four | Not in `agenda_boxes_test.exs` (they have no Agenda box) and not in the field-help walk, so no test holds them to the rules above | 1.9, 6.1 | The "Could test" items above, written over the box registry, so they cover the extras by themselves |
+| 12 | All four | Not in `agenda_boxes_test.exs` (they have no Agenda box) and not in the field-help walk, so no test holds them to the rules above | 1.9, 6.1 | Done 2026-10-27: `box_guidelines_test.exs` checks 1.1, 1.9 and 6.2 over the box registry; Feeds, Calendars and the Publish preview are its listed 6.2 exceptions until reworked |
 | 13 | Feeds, Calendars, Publish | No rule in SPEC for how the boxes look; R45, R74 and R75 say what they do | 1.2 | SPEC rules for the reworked boxes, each "Our choice" pointing here |
 
 ## The owner's answers (2026-10-27)
@@ -93,4 +93,4 @@ Each gap in `lib/agendum/tui/extras/`, the rule it breaks, and the existing part
 - **Subscribing: two prompts**, the address, then the name, the second filled in with the feed's own title.
 - **Publish's Folder is chosen from the file list** (`SelectFile`, taught to accept a folder).
 - **Each extra keeps its own messages, beside it** (`Agendum.TUI.Extras.Feeds.Messages`, `…Calendars.Messages`, `…Publish.Messages` in `tui/extras/`); `Agendum.TUI.Messages` stays Agenda's words. The owner: keep the extras separate as much as possible, for modularity (rule 7.5).
-- **All three "Could test" items are built** with the rework (1.1, 1.9, 6.2), over the box registry, so they cover the extras by themselves.
+- **All three "Could test" items are built** with the rework (1.1, 1.9, 6.2), over the box registry, so they cover the extras by themselves. Built 2026-10-27 (`test/agendum/tui/box_guidelines_test.exs`), before the rework.

@@ -12,17 +12,6 @@ defmodule Agendum.TUI.FieldHelpTest do
   # the control panel's two lines as drawn
   defp panel_lines(state), do: state |> screen() |> String.split("\n") |> Enum.take(2)
 
-  # the help of every field of the box on top, moving down until the
-  # cursor stops
-  defp walk(state, seen \\ []) do
-    help = FieldHelp.text(state)
-    next = press(state, :down)
-
-    if State.mode(next).cursor == State.mode(state).cursor,
-      do: Enum.reverse([help | seen]),
-      else: walk(next, [help | seen])
-  end
-
   test "File Properties says what its highlighted setting does", %{state: state} do
     state = press(state, [{:f, 10}, "f", "p"])
     assert panel(state) =~ "Enter a short description of the file."
@@ -71,30 +60,8 @@ defmodule Agendum.TUI.FieldHelpTest do
     assert panel(state) =~ "Highlight the section to go to"
   end
 
-  test "every field of the settings boxes has help", %{state: state} do
-    boxes = [
-      press(state, [{:f, 10}, "u", "c"]),
-      press(state, [{:f, 10}, "f", "p"]),
-      press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, :down, " "]),
-      press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, :down, " ", " "]),
-      press(state, [{:f, 10}, "f", "p", :down, :down, :down, :down, :down, :down, :right, " "]),
-      press(state, [{:f, 9}, :down, :down, {:f, 6}]),
-      press(state, [:down, {:f, 6}]),
-      press(state, [:down, {:f, 10}, "v", "s", "p"]),
-      press(state, [:down, :right, {:f, 10}, "v", "c", "p"]),
-      press(state, [:down, :right, {:f, 10}, "v", "c", "a"]),
-      state |> press(:down) |> sort_box(:section),
-      press(state, [{:f, 10}, "u", "s", "s"]),
-      press(state, {:alt_f, 6}),
-      press(state, [{:f, 10}, "u", "e"])
-    ]
-
-    for box <- boxes do
-      %{type: type} = State.mode(box)
-      assert Map.has_key?(FieldHelp.boxes(), type), "#{type} is not a settings box"
-      refute nil in walk(box), "#{type}: a field without help"
-    end
-  end
+  # every field of every settings box in the registry: the 1.9 test in
+  # box_guidelines_test.exs, which walks them all
 
   test "every module named for a box tells its field" do
     for {_type, module} <- FieldHelp.boxes() do
