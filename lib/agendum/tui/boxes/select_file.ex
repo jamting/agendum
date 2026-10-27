@@ -61,8 +61,7 @@ defmodule Agendum.TUI.Boxes.SelectFile do
       end
       |> Path.expand()
 
-    mode = %{
-      type: :select_file,
+    mode = %Agendum.TUI.Modes.SelectFile{
       dir: dir,
       entries: :reading,
       extensions: extensions(prompt.action),
@@ -72,6 +71,32 @@ defmodule Agendum.TUI.Boxes.SelectFile do
       describe: false,
       descriptions: nil,
       line: state.edit.line
+    }
+
+    state |> State.push(mode) |> State.effect({:list_dir, dir})
+  end
+
+  @doc """
+  Opens the box to choose a folder for a box's field (Publish's Folder, F3;
+  the owner, 2026-10-27): only folders are listed, with `./  (this
+  folder)` first, whose ENTER picks the folder shown; ENTER on another goes
+  into it. The box of `type` takes the path (`c:Box.picked/4`); ESC goes
+  back to it unchanged.
+  """
+  @spec open_folder(State.t(), String.t(), {:box_field, atom, atom}) :: State.t()
+  def open_folder(state, dir, for) do
+    dir = Path.expand(dir)
+
+    mode = %Agendum.TUI.Modes.SelectFile{
+      dir: dir,
+      entries: :reading,
+      extensions: [],
+      cursor: 0,
+      filter: "",
+      dates: false,
+      describe: false,
+      descriptions: nil,
+      for: for
     }
 
     state |> State.push(mode) |> State.effect({:list_dir, dir})
@@ -156,6 +181,7 @@ defmodule Agendum.TUI.Boxes.SelectFile do
   end
 
   @impl Box
+  def run(state, %{for: {:box_field, _, _}}, :close), do: State.pop(state)
   def run(state, mode, :close), do: back(state, mode.line)
   def run(state, mode, :dates), do: State.put_mode(state, %{mode | dates: not mode.dates})
 
@@ -183,6 +209,16 @@ defmodule Agendum.TUI.Boxes.SelectFile do
   defp narrow(state, mode, filter), do: State.put_mode(state, %{mode | filter: filter, cursor: 0})
 
   defp choose(state, _mode, nil), do: state
+
+  # this folder's row, choosing a folder: the box takes it
+  defp choose(state, %{for: {:box_field, type, field}} = mode, %{this: true}) do
+    state = State.pop(state)
+
+    case Enum.find(state.modes, &(&1.type == type)) do
+      nil -> state
+      box -> Box.registry()[type].picked(state, box, field, mode.dir)
+    end
+  end
 
   defp choose(state, mode, %{name: "..", dir?: true}), do: go(state, mode, Path.dirname(mode.dir))
 
@@ -222,7 +258,9 @@ defmodule Agendum.TUI.Boxes.SelectFile do
           String.contains?(String.downcase(e.name), filter)
       end)
 
-    if filter == "", do: up ++ shown, else: shown
+    # choosing a folder, this one comes first
+    this = if mode.for, do: [%{name: ".", dir?: true, modified: nil, this: true}], else: []
+    if filter == "", do: this ++ up ++ shown, else: shown
   end
 
   def rows(_mode), do: []
@@ -240,7 +278,7 @@ defmodule Agendum.TUI.Boxes.SelectFile do
     dir =
       if String.length(dir) > room, do: "…" <> String.slice(dir, -(room - 1)..-1//1), else: dir
 
-    "Select file: " <> dir
+    if(mode.for, do: "Select folder: ", else: "Select file: ") <> dir
   end
 
   @impl Box
@@ -298,6 +336,8 @@ defmodule Agendum.TUI.Boxes.SelectFile do
     narrowed = if mode.filter == "", do: [], else: [{:box, "Narrowed to: " <> mode.filter}]
     body ++ [{:box, ""}] ++ narrowed
   end
+
+  defp row_text(_state, _mode, %{this: true}), do: "./  (this folder)"
 
   defp row_text(state, mode, row) do
     name = if row.dir?, do: row.name <> "/", else: row.name

@@ -133,6 +133,7 @@ defmodule Agendum.TUI.Modes do
       :entries,
       :extensions,
       :filter,
+      :for,
       :line
     ],
     sort: [:cursor, :opened, :remembered, :scope],

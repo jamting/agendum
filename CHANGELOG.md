@@ -4,6 +4,7 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **Publish's Folder can be chosen from a list**: F3 on it lists the folders, `./ (this folder)` first; ENTER on that row picks the folder shown, ENTER on another goes into it.
 - **Publish's Posts and Drafts are chosen like any category field**: typing completes a category's name (ENTER takes it, F5 exactly what you typed), SPACE or F3 lists the categories, DEL leaves Drafts empty. A typo no longer makes a new, empty category.
 
 ## 0.70.0 — 2026-10-27

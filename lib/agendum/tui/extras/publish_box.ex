@@ -50,7 +50,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
     me:
       "Addresses of your other profiles (a Mastodon account), for rel=\"me\" links; " <>
         "spaces between. Type them.",
-    folder: "Where the site is written: a folder beside this file, or any path. Type it.",
+    folder: "Where the site is written: a folder beside this file, or any path. Type it, or F3.",
     upload: "After writing: upload by rsync over ssh, by SFTP, or not at all. SPACE switches.",
     target: "rsync: where to (me@host:www/blog). SFTP: the server (host or host:port). Type it.",
     user: "The user name on the SFTP server. Type it.",
@@ -125,13 +125,28 @@ defmodule Agendum.TUI.Extras.PublishBox do
   def category_fields(_mode), do: [:posts, :drafts]
 
   @impl Box
+  def picked(state, _mode, :folder, path),
+    do: set_setting(state, :folder, beside_file(state, path))
+
   def picked(state, _mode, field, id), do: set_category(state, field, id)
+
+  # a folder inside the file's (or, unsaved, the working one) is kept
+  # relative to it, as the default `site` is, so the file can move
+  defp beside_file(state, path) do
+    base = Path.expand(if state.path, do: Path.dirname(state.path), else: ".")
+
+    case Path.relative_to(path, base) do
+      ^path -> path
+      relative -> relative
+    end
+  end
 
   # Posts or Drafts set to a category picked (F3, SPACE) or completed: its
   # name, as the box keeps the settings until ENTER; the box is found by
   # its type, as it may not be on top
-  defp set_category(state, field, id) do
-    name = state.db.categories[id].name
+  defp set_category(state, field, id), do: set_setting(state, field, state.db.categories[id].name)
+
+  defp set_setting(state, field, name) do
     i = Enum.find_index(state.modes, &(&1.type == :publish))
 
     %{
@@ -149,7 +164,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
   def commands(_mode) do
     Box.settings_commands([
       {:edit, "Edit", "Edit the setting's text"},
-      {:pick_category, "Choices", "The categories to choose from"},
+      {:pick_category, "Choices", "The categories or folders to pick from"},
       {:clear, "Clear", "No drafts category"},
       {:done, "Publish", "Keep settings, show what will change"},
       {:close, "Cancel", "Close without publishing"}
@@ -162,7 +177,11 @@ defmodule Agendum.TUI.Extras.PublishBox do
   def run(state, mode, :done), do: publish(state, mode)
 
   def run(state, mode, :pick_category) do
-    if current(mode) in [:posts, :drafts], do: pick(state, current(mode)), else: state
+    case current(mode) do
+      field when field in [:posts, :drafts] -> pick(state, field)
+      :folder -> pick_folder(state, mode)
+      _ -> state
+    end
   end
 
   def run(state, mode, :clear) do
@@ -197,6 +216,12 @@ defmodule Agendum.TUI.Extras.PublishBox do
   end
 
   defp edit(state, _mode, _field), do: state
+
+  # F3 on Folder: the folders, from the one the setting names
+  defp pick_folder(state, mode) do
+    dir = folder(state, mode.settings.folder)
+    Agendum.TUI.Boxes.SelectFile.open_folder(state, dir, {:box_field, :publish, :folder})
+  end
 
   defp pick(state, field),
     do: Agendum.TUI.CategoryScreens.open_picker(state, {:box_field, :publish, field}, nil)

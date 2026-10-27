@@ -73,4 +73,54 @@ defmodule Agendum.TUI.Extras.PublishBoxFieldsTest do
       assert screen(state) =~ "(none)"
     end
   end
+
+  describe "Folder" do
+    # the shell's answer to the folder list asked for, as App gives it
+    defp listed(state, entries) do
+      [{:list_dir, dir} | _] = for {:list_dir, _} = e <- Enum.reverse(effects()), do: e
+      Agendum.TUI.Boxes.SelectFile.listed(state, dir, {:ok, entries})
+    end
+
+    defp folder(name), do: %{name: name, dir?: true, modified: nil}
+
+    setup ctx do
+      Process.delete(:effects_seen)
+      state = ctx.state |> to_setting("Folder") |> press({:f, 3})
+
+      %{
+        state:
+          listed(state, [
+            folder("site"),
+            folder("drafts"),
+            %{name: "a.txt", dir?: false, modified: nil}
+          ])
+      }
+    end
+
+    test "F3 lists the folders, this folder first, and no files", %{state: state} do
+      assert %{type: :select_file} = State.mode(state)
+      text = screen(state)
+      assert text =~ "./  (this folder)"
+      assert text =~ "drafts/"
+      refute text =~ "a.txt"
+    end
+
+    test "ENTER on a folder goes into it; on this folder's row picks it", %{state: state} do
+      state = press(state, [:down, :down, :down, :enter])
+      assert %{type: :select_file, dir: dir} = State.mode(state)
+      assert Path.basename(dir) == "drafts"
+
+      state = state |> listed([]) |> press(:enter)
+      assert %{type: :publish} = State.mode(state)
+      # the list opened in the folder the setting names (site); the one
+      # picked is kept beside the file (here: where Agendum was started)
+      assert settings(state).folder == "site/drafts"
+    end
+
+    test "ESC goes back to the box with the folder as it was", %{state: state} do
+      state = press(state, :esc)
+      assert %{type: :publish} = State.mode(state)
+      assert settings(state).folder == "site"
+    end
+  end
 end
