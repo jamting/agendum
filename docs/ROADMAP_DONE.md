@@ -346,6 +346,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Fuzz walks in a richer file (2026-10-27, v0.69.3): a quarter of the walks start from the golden file with the Extras on, on a day its feed and calendar are due, some inside Feeds, Calendars, Publish, its preview or an upload under way
 - [x] Fuzz walks with things out of order (2026-10-27, v0.69.3): between keys a walk delivers its pending reads and uploads in random order with every outcome, answers nobody asked for, and sometimes opens another file first; nothing may be filed into a file that did not ask. They found four bugs: a stale o after an assignment made conditional again, a read filed into another file with the same feed id (reads now carry their address), a crash typing the SFTP password over Help, a crash deleting a macro whose Learn box was open
 - [x] `App`'s background results tested (2026-10-27, v0.69.3): `App.background/2` writes the debug-log line and files the answer; `test/agendum/tui/app_background_test.exs` sends every result shape and crash through it; `App` now also runs the effects an answer asks for
+- [x] The Agenda driver's scan codes (2026-10-27): `agenda_driver.py`'s `SC` table added its codes up as it went, so ALT-letters hit the wrong key (`SC['r']` was U's); each key is now its row's first code plus its place, ALT with a digit, - or = has the BIOS's own codes (0x78-0x83); checked in Agenda 2.0 (ALT-R on MAIN opens a new child)
 
 ### The clone's safety
 

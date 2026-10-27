@@ -37,7 +37,12 @@ def screen():
     d=rd(0xB8000,4000)
     return [''.join(chr(d[(r*80+c)*2]) if 32<=d[(r*80+c)*2]<127 else ('#' if d[(r*80+c)*2]>=128 else ' ') for c in range(80)).rstrip() for r in range(25)]
 def show(): print('\n'.join(f"{i:2d}|{l}" for i,l in enumerate(screen())))
-SC={c:s for s,row in [(0x02,"1234567890-="),(0x10,"qwertyuiop[]"),(0x1E,"asdfghjkl;'`"),(0x2B,"\\zxcvbnm,./")] for s2,c in enumerate(row) for s in [s+s2]}
+# each key's scan code: a keyboard row's first code plus the key's place in
+# it (an earlier version rebound the row's code as it went, so the codes added
+# up: SC['r'] was U's, and every ALT-letter built from it the wrong key)
+SC={c:start+i for start,row in [(0x02,"1234567890-="),(0x10,"qwertyuiop[]"),(0x1E,"asdfghjkl;'`"),(0x2B,"\\zxcvbnm,./")] for i,c in enumerate(row)}
+# ALT with a digit, - or = has codes of its own in the BIOS (0x78-0x83)
+ALT_SC={c:0x78+i for i,c in enumerate("1234567890-=")}
 SH={'!':'1','@':'2','#':'3','$':'4','%':'5','^':'6','&':'7','*':'8','(':'9',')':'0','_':'-','+':'=','{':'[','}':']',':':';','"':"'",'~':'`','|':'\\','<':',','>':'.','?':'/'}
 NAMED={'ENTER':0x1C0D,'ESC':0x011B,'TAB':0x0F09,'BS':0x0E08,'UP':0x4800,'DOWN':0x5000,'LEFT':0x4B00,'RIGHT':0x4D00,
  'INS':0x5200,'DEL':0x5300,'HOME':0x4700,'END':0x4F00,'PGUP':0x4900,'PGDN':0x5100,'SPACE':0x3920,'STAB':0x0F00,'CEND':0x7500,'CHOME':0x7700}
@@ -75,7 +80,7 @@ def keys(*ks,delay=0.03):
     """each arg: a named key like 'F10', 'ALT-x', 'CTRL-x' or a literal string ('t:text')"""
     for k in ks:
         if k in NAMED: push(NAMED[k]); idle()
-        elif k.startswith('ALT-'): push(SC[k[4:].lower()]<<8); idle()
+        elif k.startswith('ALT-'): c=k[4:].lower(); push(ALT_SC.get(c, SC[c])<<8); idle()
         elif k.startswith('CTRL-'): c=k[5:].lower(); push(SC[c]<<8|(ord(c)-96))
         else:
             for ch in k: push(code(ch)); time.sleep(delay)
