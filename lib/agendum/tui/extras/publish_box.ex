@@ -2,8 +2,10 @@ defmodule Agendum.TUI.Extras.PublishBox do
   @moduledoc """
   The Publish box (File ▸ Transfer ▸ Publish, R74): the micro-blog's
   settings, kept in the file (`Agendum.Core.Extras.Blog`). The posts are the
-  items of the Posts category not in the Drafts one; typing a name that
-  no category has makes it under MAIN when the box is done.
+  items of the Posts category not in the Drafts one. Posts and Drafts
+  complete a category's name as it is typed (R32; F5 takes exactly what
+  was typed, made under MAIN when the box is done), and F3 or SPACE lists
+  the categories; DEL leaves Drafts empty.
 
   ENTER keeps the settings, gives each post without a Zettel id one (its
   page's address, R73), and makes the site; Agendum then reads the folder
@@ -12,7 +14,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
 
   The box is drawn from `@layout` (`Agendum.TUI.Boxes.Template`); its
   fields are the cursor's order. A letter on a text field starts typing
-  it (SPACE or F2 edits what is there); SPACE on Upload shows the next
+  it (F2 edits what is there, SPACE too but on Posts and Drafts); SPACE on Upload shows the next
   way. Pure.
   """
 
@@ -38,8 +40,8 @@ defmodule Agendum.TUI.Extras.PublishBox do
   """
 
   @help %{
-    posts: "The category whose items are the posts. Type its name; a new one is made.",
-    drafts: "A post also in this category is left out until it is ready. Type a name, or none.",
+    posts: "The category whose items are the posts. Type a name (F5 a new one) or F3 to pick.",
+    drafts: "A post also in it waits until it is ready. Type a name or F3 to pick; DEL for none.",
     title: "The blog's name, on every page and in the feeds. Type it.",
     description: "A line about the blog, under its name and in the feeds. Type it.",
     author: "Your name, as the posts' author (an h-card for the fediverse). Type it.",
@@ -109,17 +111,46 @@ defmodule Agendum.TUI.Extras.PublishBox do
 
   defp start_typing(state, _mode, _key), do: state
 
+  # Posts and Drafts complete a category's name (R32): ENTER gives the
+  # match shown as `{:category, id}`, F5 exactly what was typed (a new
+  # category, made when the box is done)
+  defp typed(state, field, {:category, id}), do: set_category(state, field, id)
+
   defp typed(state, field, text) do
     mode = State.mode(state)
     State.put_mode(state, %{mode | settings: Map.put(mode.settings, field, String.trim(text))})
   end
 
   @impl Box
-  def keymap(_mode), do: Box.settings_keymap(%{{:f, 2} => :change})
+  def category_fields(_mode), do: [:posts, :drafts]
+
+  @impl Box
+  def picked(state, _mode, field, id), do: set_category(state, field, id)
+
+  # Posts or Drafts set to a category picked (F3, SPACE) or completed: its
+  # name, as the box keeps the settings until ENTER; the box is found by
+  # its type, as it may not be on top
+  defp set_category(state, field, id) do
+    name = state.db.categories[id].name
+    i = Enum.find_index(state.modes, &(&1.type == :publish))
+
+    %{
+      state
+      | modes:
+          List.update_at(state.modes, i, &%{&1 | settings: Map.put(&1.settings, field, name)})
+    }
+  end
+
+  @impl Box
+  def keymap(_mode),
+    do: Box.settings_keymap(%{{:f, 2} => :edit, {:f, 3} => :pick_category, :delete => :clear})
 
   @impl Box
   def commands(_mode) do
     Box.settings_commands([
+      {:edit, "Edit", "Edit the setting's text"},
+      {:pick_category, "Choices", "The categories to choose from"},
+      {:clear, "Clear", "No drafts category"},
       {:done, "Publish", "Keep settings, show what will change"},
       {:close, "Cancel", "Close without publishing"}
     ])
@@ -127,16 +158,26 @@ defmodule Agendum.TUI.Extras.PublishBox do
 
   @impl Box
   def run(state, mode, :change), do: change(state, mode, current(mode))
+  def run(state, mode, :edit), do: edit(state, mode, current(mode))
   def run(state, mode, :done), do: publish(state, mode)
+
+  def run(state, mode, :pick_category) do
+    if current(mode) in [:posts, :drafts], do: pick(state, current(mode)), else: state
+  end
+
+  def run(state, mode, :clear) do
+    if current(mode) == :drafts,
+      do: State.put_mode(state, %{mode | settings: %{mode.settings | drafts: ""}}),
+      else: state
+  end
 
   def run(state, mode, id),
     do: Box.run_settings(state, mode, Template.grid(@layout, fields(mode)), id)
 
-  # SPACE (or F2) on a text field edits what is there
-  defp change(state, mode, field) when field in @text_fields do
-    line = LineEdit.new(Map.fetch!(mode.settings, field))
-    State.put_mode(state, %{mode | typing: {field, line}})
-  end
+  # SPACE on Posts or Drafts opens the category list, as a category field
+  # does in the clone's boxes; on another text field it edits what is there
+  defp change(state, _mode, field) when field in [:posts, :drafts], do: pick(state, field)
+  defp change(state, mode, field) when field in @text_fields, do: edit(state, mode, field)
 
   defp change(state, mode, :upload) do
     uploads = Blog.uploads()
@@ -144,6 +185,21 @@ defmodule Agendum.TUI.Extras.PublishBox do
     next = Enum.at(uploads, rem(index + 1, length(uploads)))
     State.put_mode(state, %{mode | settings: %{mode.settings | upload: next}})
   end
+
+  defp change(state, _mode, _field), do: state
+
+  # F2: edit the text as it is (on Posts and Drafts too, without
+  # completion, as Agenda's EDIT: `choice: :off`)
+  defp edit(state, mode, field) when field in @text_fields do
+    line = LineEdit.new(Map.fetch!(mode.settings, field))
+    choice = if field in [:posts, :drafts], do: :off, else: nil
+    State.put_mode(state, %{mode | typing: {field, line}, choice: choice})
+  end
+
+  defp edit(state, _mode, _field), do: state
+
+  defp pick(state, field),
+    do: Agendum.TUI.CategoryScreens.open_picker(state, {:box_field, :publish, field}, nil)
 
   # ENTER: the settings are kept and the posts get their ids, in one
   # change (one undo step); then the site is made and the folder read
@@ -262,8 +318,11 @@ defmodule Agendum.TUI.Extras.PublishBox do
     (posts/bonalaku.html), an RSS feed and a JSON Feed, and a stylesheet
     you can change (Agendum writes it only when there is none).
 
-    Type in a field to change it; SPACE edits it, or on Upload chooses
-    rsync, SFTP or none. ENTER shows what publishing would add, change
+    Type in a field to change it, F2 edits it. Posts and Drafts complete
+    a category's name as you type (F5 takes exactly what you typed, a
+    new category); SPACE or F3 lists the categories, DEL leaves Drafts
+    empty. SPACE edits the other texts, and on Upload chooses rsync,
+    SFTP or none. ENTER shows what publishing would add, change
     and remove before anything is written; ESC closes the box.
     """
   end

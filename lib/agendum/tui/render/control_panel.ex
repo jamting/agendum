@@ -130,16 +130,17 @@ defmodule Agendum.TUI.Render.ControlPanel do
 
   # a box's field that holds a category: its head, a new section
   def entry(state) do
-    case State.mode(state) do
-      # F2 edits the name as it is (EDIT), without completion, as Agenda's
-      %{typing: {field, line}, choice: :off}
-      when field == :head or (is_tuple(field) and elem(field, 0) == :new_section) ->
-        {"Category name:", line}
+    mode = State.mode(state)
 
-      # typed: every category matches there (R32), as Agenda's
-      %{typing: {field, line}}
-      when field == :head or (is_tuple(field) and elem(field, 0) == :new_section) ->
-        {:completion, line}
+    case mode do
+      %{typing: {field, line}} = mode ->
+        cond do
+          not Agendum.TUI.Boxes.Box.category_field?(mode, field) -> nil
+          # F2 edits the name as it is (EDIT), without completion, as Agenda's
+          Map.get(mode, :choice) == :off -> {"Category name:", line}
+          # typed: every category matches there (R32), as Agenda's
+          true -> {:completion, line}
+        end
 
       _ ->
         nil

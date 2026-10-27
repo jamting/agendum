@@ -126,6 +126,21 @@ defmodule Agendum.TUI.Boxes.Box do
   """
   @callback choices_frame(State.t(), mode) :: String.t() | nil
 
+  @doc """
+  The box's fields that hold a category's name, besides a `:head`: typing
+  in one completes the name as a column cell does (R32,
+  `Agendum.TUI.Typing.Completion`); by default none.
+  """
+  @callback category_fields(mode) :: [atom]
+
+  @doc """
+  A category picked from the list for one of the box's category fields
+  (`c:category_fields/1`; the picker opened with the purpose
+  `{:box_field, type, field}`): `mode` is the box as it is in the stack,
+  perhaps not on top; by default nothing.
+  """
+  @callback picked(State.t(), mode, field :: atom, Agendum.Core.Database.id()) :: State.t()
+
   # The boxes, by their mode's type. A module holds a box's
   # name only (no call at compile time), so the boxes and this module can
   # refer to each other.
@@ -199,6 +214,22 @@ defmodule Agendum.TUI.Boxes.Box do
   @spec module(mode | nil) :: module | nil
   def module(%{type: type}), do: Map.get(@registry, type)
   def module(_mode), do: nil
+
+  @doc """
+  Whether `field` of the box `mode` holds a category's name, typed with
+  automatic completion (R32): a `:head`, a new section's head, or one the
+  box names (`c:category_fields/1`).
+  """
+  @spec category_field?(mode, term) :: boolean
+  def category_field?(_mode, :head), do: true
+  def category_field?(_mode, {:new_section, _}), do: true
+
+  def category_field?(mode, field) when is_atom(field) do
+    box = module(mode)
+    box != nil and field in box.category_fields(mode)
+  end
+
+  def category_field?(_mode, _field), do: false
 
   @doc "The module of the box `mode` is, where only a box can be on top."
   @spec module!(mode) :: module
@@ -562,6 +593,10 @@ defmodule Agendum.TUI.Boxes.Box do
       def idle_keys(_state, _mode), do: []
       @impl true
       def choices_frame(_state, _mode), do: nil
+      @impl true
+      def category_fields(_mode), do: []
+      @impl true
+      def picked(state, _mode, _field, _id), do: state
 
       defoverridable width: 2,
                      field: 2,
@@ -574,7 +609,9 @@ defmodule Agendum.TUI.Boxes.Box do
                      defaults: 2,
                      labels: 1,
                      idle_keys: 2,
-                     choices_frame: 2
+                     choices_frame: 2,
+                     category_fields: 1,
+                     picked: 4
     end
   end
 end

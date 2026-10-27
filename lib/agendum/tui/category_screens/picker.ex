@@ -260,6 +260,14 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   defp title_for(_state, :execute_root),
     do: "Apply the conditions of this category and its children"
 
+  # a box's category field: the box's label for it ("Posts category")
+  defp title_for(_state, {:box_field, type, field}) do
+    # the labels written from the box's layout: a list of {field, label}
+    labels = Agendum.TUI.Boxes.Box.registry()[type].layout_labels()
+    label = labels |> List.keyfind(field, 0, {field, "Category"}) |> elem(1)
+    "#{label}: select a category"
+  end
+
   defp section_name(state, index) do
     section = Enum.at(State.view(state).sections, index)
     state.db.categories[section.category_id].name
@@ -477,6 +485,17 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
 
   # Column Add ▸ Column head: back in the box, which adds it on ENTER
   def pick(state, :column_add, id), do: Agendum.TUI.Boxes.ColumnAddBox.set_head(state, id)
+
+  # a box's category field (F3 or SPACE on it): the box of that type
+  # takes the category (`c:Agendum.TUI.Boxes.Box.picked/4`), found in the
+  # stack, as a key in between (a macro's) may have put something over it
+  # (the fuzz walk, 2026-10-27); gone, nothing happens
+  def pick(state, {:box_field, type, field}, id) do
+    case Enum.find(state.modes, &(&1.type == type)) do
+      nil -> state
+      mode -> Agendum.TUI.Boxes.Box.registry()[type].picked(state, mode, field, id)
+    end
+  end
 
   # Column Properties ▸ Column head (R55): back in the box, which shows the
   # column's new head (and its kind's settings)

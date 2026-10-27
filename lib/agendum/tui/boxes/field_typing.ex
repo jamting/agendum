@@ -113,7 +113,15 @@ defmodule Agendum.TUI.Boxes.FieldTyping do
   category name is typed in the control panel, as Agenda's
   (`Render.ControlPanel.entry/1`), so the box shows the head it has.
   """
-  def editing(%{typing: {:head, _line}}), do: []
-  def editing(%{typing: {field, line}}), do: [editing: {field, line}]
+  # (a new section's name in View Properties stays typed in its row)
+  def editing(%{typing: {{:new_section, _}, _} = typing}), do: [editing: typing]
+
+  def editing(%{typing: {field, line}} = mode) do
+    # a category's field is typed on the control panel's second line
+    if Agendum.TUI.Boxes.Box.category_field?(mode, field),
+      do: [],
+      else: [editing: {field, line}]
+  end
+
   def editing(_mode), do: []
 end

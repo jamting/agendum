@@ -4,6 +4,8 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **Publish's Posts and Drafts are chosen like any category field**: typing completes a category's name (ENTER takes it, F5 exactly what you typed), SPACE or F3 lists the categories, DEL leaves Drafts empty. A typo no longer makes a new, empty category.
+
 ## 0.70.0 — 2026-10-27
 
 - **A new category in a family joins the views that show the family**, as in Lotus Agenda: when every other child of its parent is a section of a view, inserting a category in the category manager (INS, ALT-D, ALT-U, ALT-R), or typing a new name in a column, adds its section there too, right after its previous sibling's (a first child at the top), with the columns every section has. One undo takes back both. Category ▸ Add and moving a category into the family do not, as in Agenda.

@@ -50,9 +50,11 @@ defmodule Agendum.TUI.Typing.Completion do
   # a box's field typed in that holds a category, with its line; F2 (EDIT)
   # edits the name as it is, without completion, as Agenda's (`choice: :off`)
   defp category_field(%{choice: :off}), do: nil
-  defp category_field(%{typing: {field, line}}) when field == :head, do: line
 
-  defp category_field(%{typing: {{:new_section, _}, line}}), do: line
+  defp category_field(%{typing: {field, line}} = mode) do
+    if Agendum.TUI.Boxes.Box.category_field?(mode, field), do: line
+  end
+
   defp category_field(_mode), do: nil
 
   defp text(%State{edit: %{line: line}}), do: line.text
