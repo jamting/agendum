@@ -117,6 +117,14 @@ defmodule Agendum.TUI.Extras.PublishBoxFieldsTest do
       assert settings(state).folder == "site/drafts"
     end
 
+    test "a folder not made yet can still be picked, or left by ..", ctx do
+      # the list is open (setup); its folder turns out not to be there
+      dir = State.mode(ctx.state).dir
+      state = Agendum.TUI.Boxes.SelectFile.listed(ctx.state, dir, {:error, :enoent})
+      assert screen(state) =~ "./  (this folder)"
+      assert settings(press(state, :enter)).folder == "site"
+    end
+
     test "ESC goes back to the box with the folder as it was", %{state: state} do
       state = press(state, :esc)
       assert %{type: :publish} = State.mode(state)

@@ -263,6 +263,11 @@ defmodule Agendum.TUI.Boxes.SelectFile do
     if filter == "", do: this ++ up ++ shown, else: shown
   end
 
+  # choosing a folder, one that cannot be read (not made yet: the blog's
+  # `site` before it is first written) can still be picked, or left by ..
+  def rows(%{entries: {:error, _}, for: {:box_field, _, _}} = mode),
+    do: rows(%{mode | entries: []})
+
   def rows(_mode), do: []
 
   # the Agendum files listed (not folders), whose descriptions F8 reads
@@ -311,30 +316,36 @@ defmodule Agendum.TUI.Boxes.SelectFile do
         :reading ->
           [{:box, "Reading the folder…"}]
 
+        {:error, reason} when mode.for != nil ->
+          [{:box, "This folder cannot be read (#{reason}); it is made when needed"}] ++
+            row_lines(state, mode, max_rows - 1)
+
         {:error, reason} ->
           [{:box, "This folder cannot be read: #{reason}"}]
 
         _ ->
-          rows = rows(mode)
-          top = max(mode.cursor - (max_rows - 4), 0)
-
-          case rows do
-            [] ->
-              [{:box, "No files here that fit (#{Enum.join(mode.extensions, " ")})"}]
-
-            _ ->
-              rows
-              |> Enum.with_index()
-              |> Enum.drop(top)
-              |> Enum.take(max(max_rows - 3, 1))
-              |> Enum.map(fn {row, i} ->
-                {if(i == mode.cursor, do: :box_selected, else: :box), row_text(state, mode, row)}
-              end)
+          case rows(mode) do
+            [] -> [{:box, "No files here that fit (#{Enum.join(mode.extensions, " ")})"}]
+            _ -> row_lines(state, mode, max_rows)
           end
       end
 
     narrowed = if mode.filter == "", do: [], else: [{:box, "Narrowed to: " <> mode.filter}]
     body ++ [{:box, ""}] ++ narrowed
+  end
+
+  # the rows that fit, the highlighted one selected
+  defp row_lines(state, mode, max_rows) do
+    top = max(mode.cursor - (max_rows - 4), 0)
+
+    mode
+    |> rows()
+    |> Enum.with_index()
+    |> Enum.drop(top)
+    |> Enum.take(max(max_rows - 3, 1))
+    |> Enum.map(fn {row, i} ->
+      {if(i == mode.cursor, do: :box_selected, else: :box), row_text(state, mode, row)}
+    end)
   end
 
   defp row_text(_state, _mode, %{this: true}), do: "./  (this folder)"
