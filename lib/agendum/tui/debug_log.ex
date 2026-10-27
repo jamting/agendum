@@ -184,10 +184,20 @@ defmodule Agendum.TUI.DebugLog do
           IO.write(pid, line)
         catch
           _kind, _reason ->
-            Process.unregister(@name)
-            :ok
+            forget_log()
         end
     end
+  end
+
+  # the log's name dropped; a device that died (a lost drive) took its
+  # name with it already, and unregistering it again would raise (the
+  # full suite, 2026-10-27: a flaky crash of the very write meant never
+  # to crash)
+  defp forget_log do
+    Process.unregister(@name)
+    :ok
+  rescue
+    ArgumentError -> :ok
   end
 
   @doc """

@@ -3,7 +3,9 @@ defmodule Agendum.TUI.DebugLogTest do
   The debug log (AGENDUM_LOG): where it goes, which old sessions are
   deleted, and what a session writes, crashes included.
   """
-  use ExUnit.Case, async: true
+  # not async: its tests register the log under its one global name,
+  # which another async module's would clash with (2026-10-27)
+  use ExUnit.Case, async: false
 
   import Agendum.TUIHelpers
 
@@ -219,5 +221,26 @@ defmodule Agendum.TUI.DebugLogTest do
 
   test "App's log lines for background results never take a tuple apart by hand" do
     refute File.read!("lib/agendum/tui/app.ex") =~ "elem(result"
+  end
+
+  test "a log whose device dies as a line is written is left off, never a crash" do
+    # the device takes its name with it as it dies, between the lookup and
+    # the write: the race the full suite hit once (2026-10-27)
+    task =
+      Task.async(fn ->
+        device =
+          spawn(fn ->
+            receive do
+              {:io_request, _, _, _} ->
+                Process.unregister(:agendum_debug_log)
+                exit(:gone)
+            end
+          end)
+
+        Process.register(device, :agendum_debug_log)
+        DebugLog.write("still running")
+      end)
+
+    assert Task.await(task) == :ok
   end
 end
