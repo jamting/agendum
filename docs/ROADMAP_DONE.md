@@ -242,6 +242,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] The two fuzz failures seen once (2026-10-14 and -15) closed: seven `FUZZ_RUNS=3000` sweeps (seeds 21–27, 21,000 runs) with the whole output kept had no failure and no stack trace, as nine earlier sweeps. The fuzz now runs ~30% faster (date filters read once). Keys split across reads got a property of their own (`Agendum.TUI.KeysPropertyTest`), which the fuzz never reached: it found ESC ESC [ then A (ALT-↑, Option as Meta) read as ESC and ↑, fixed
 - [x] Debug log for lag hunts (2026-10-15, 0.2.1): the build commit in the header, the file's fingerprint on disk, the view and memory with each slow answer, effects timed
 - [x] Bug: a save that failed still went on: Quit with Yes to "Save changes before quitting?" quit, and "Save changes first?" opened the next file, whatever the save gave. Now what follows a save waits for it to succeed (R71, found in study unit 2, 2026-10-16)
+- [x] UI guidelines for the extras (meeting 2026-10-26-6, §§ 5, 6, 8; ADR 0049): `docs/UI_GUIDELINES.md`, drafted 2026-10-26 night (39 rules, 13 gaps in the extras' boxes), adopted 2026-10-27 with the owner's answers to its questions
 
 ### Beyond Agenda
 

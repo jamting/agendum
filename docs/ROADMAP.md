@@ -6,16 +6,15 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. UI guidelines for the extras, from the clone's own patterns (Housekeeping; meeting 2026-10-26-6, §§ 6, 8; ADR 0049)
-2. The extras brought up to the guidelines, one feature commit per gap (Beyond Agenda; meeting 2026-10-26-6, §§ 6, 7)
-3. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
-4. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
-5. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
-6. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-7. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
-8. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+1. The extras brought up to the guidelines, one feature commit per gap (Beyond Agenda; meeting 2026-10-26-6, §§ 6, 7)
+2. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
+3. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
+4. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
+5. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+6. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
+7. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
 
-**No new extras** until step 2 is done; Wol stays on its shelf (meeting 2026-10-26-6, § 7). Why: the extras were built before the clone's bar was raised and missed its catch-up, in robustness at the shell's edge and in the boxes' conventions (§ 5).
+**No new extras** until step 1 is done; Wol stays on its shelf (meeting 2026-10-26-6, § 7). Why: the extras were built before the clone's bar was raised and missed its catch-up, in robustness at the shell's edge and in the boxes' conventions (§ 5).
 
 **No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
@@ -65,7 +64,6 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
 
 ### Housekeeping
 
-- [ ] UI guidelines for the extras (meeting 2026-10-26-6, §§ 5, 6, 8): `docs/UI_GUIDELINES.md`, the conventions the clone's boxes follow written down, drawn from the clone's existing patterns and Agenda's manual (User's Guide 2-17 on choosing settings, Appendix A on command names), each rule marked "(as Agenda)" or "Our choice"; the rules a test can check get one (every category field offers the category list, every settings box is a `Template` layout, as the menu test checks first letters). Only existing patterns, so old users are not confused (the chair, § 8). A draft is written (2026-10-26 night, 39 rules, 13 gaps, not adopted): the owner reads it. With it, the gaps found at the meeting: Publish's Posts and Drafts typed, not picked (a typo makes a new category); Feeds' and Calendars' settings changed by letter keys and one-line prompts, not a properties box per feed; Publish's Folder a typed path, not the file list (`select_file.ex`; the OPML prompts already offer F3 Select File, found by the draft); no rule in SPEC on how the extras' boxes look. A row in `docs/INDEX.md`
 - [ ] Before the public repository (meeting 2026-10-26-4, §§ 9, 11, 13), in this order: a general code review of the whole code base (done 2026-10-26: three cloud slices, `docs/CODE_REVIEW_SLICES.md`; the rest locally after the public repository); a meeting on what information to make public in the docs; a tidy pass (`tidy-docs`: VISION's freeze paragraph, AGENDA_PARITY's "three differences" and their cousins) with a sweep of SPEC, each rule keeping a short "(checked in Agenda)" or "Our choice" and its longer story moved to `ROADMAP_DONE.md`; then a dry run: the `git filter-repo` copy built and checked by `mix check` before anything is pushed (`plans/GITHUB.md` § 7)
 - [ ] Optional (from the parity plan, 2026-10-26): Utilities ▸ Launch, a shell without quitting Agendum
 *[A page here was soaked in the creek. — Rabbit]*
@@ -96,7 +94,7 @@ Open again since the clone was declared done (2026-10-26); the built ones stay h
 
 Each item names the group in `VISION.md` it serves, group 1 first; items for group 3 or for no group yet wait under Ideas, one line each with a pointer to their plan (meeting 2026-10-16-2, § 6).
 
-- [ ] _Group 1._ The extras brought up to the UI guidelines (meeting 2026-10-26-6, §§ 6, 7), after they are written (Housekeeping): one feature commit per gap, using only parts that exist (the category list, the file list, `Template`, a properties box per thing as View Properties), no new features; the boxes join the box tests and the fuzz walks the clone's boxes have. Before the public repository
+- [ ] _Group 1._ The extras brought up to the UI guidelines (meeting 2026-10-26-6, §§ 6, 7; `docs/UI_GUIDELINES.md`, its gap table and the owner's answers of 2026-10-27: Feeds and Calendars as managers like Macros, F6 properties box, ALT-ENTER reads all, two prompts to subscribe with the title filled in, Publish's Folder from the file list, each extra's messages beside it, the three registry tests): one feature commit per gap, using only parts that exist (the category list, the file list, `Template`, a properties box per thing as View Properties), no new features; the boxes join the box tests and the fuzz walks the clone's boxes have. Before the public repository
 - [ ] Later, Beyond Agenda (the chair, meeting 2026-10-26-6, §§ 6, 8): settings as views, e.g. the feeds and calendars as a view of their own, one row per subscription with columns for address, how often, days kept, last read; a window onto the typed structs, never a second copy (ADR 0048). Not while the work is the truthful clone with robust extras: then only existing patterns
 - [ ] _Group 1._ The extras' commands that fetch or publish move from File ▸ Transfer to **Utilities** (the owner, 2026-10-24, after Utilities came back in Agenda's shape, R81a): Calendars, Feeds and Publish are things to do with the file, not ways to bring a file in or out, so they fit beside Customize, Execute and Show better than beside Import and Export. With the Extras preference off nothing changes (they are hidden, R77); with it on, Agenda's Utilities gains them after its own entries, so its first letters (C, E, S, Q) stay as Agenda's and the new ones need letters of their own (Calendars clashes with Customize: to settle). The menu test compares the menus with the extras off, so it stays as it is; the help texts (`Agendum.TUI.CommandDocs`, `~w(File Transfer Calendars)` …) and SPEC R45, R74, R75 move with them. File ▸ Transfer keeps Import and Export, and the OPML Import when the extras thaw (meeting 2026-10-22-3, § 7)
 - [ ] _Group 1._ An RSS reader, with Wol later (meeting 2026-10-16-2, § 7), fetched by the shell like calendars (`Agendum.Extras.CalendarFetch`; OTP's `:httpc` and `:xmerl`, no new dependency). In two steps:

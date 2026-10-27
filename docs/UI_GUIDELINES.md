@@ -1,6 +1,6 @@
 # UI guidelines
 
-**Status:** Draft for the owner, 2026-10-26 night; not adopted. Written for meeting 2026-10-26-6 (§§ 5–8) and ADR 0049.
+**Status:** adopted 2026-10-27, the owner having answered its questions (below); drafted 2026-10-26 night. Written for meeting 2026-10-26-6 (§§ 5–8) and ADR 0049.
 
 The conventions the clone's screens and boxes follow, written down so that the extras, which have no Agenda to copy, follow them too. Only patterns the clone already has are here (ADR 0049; the chair, meeting 2026-10-26-6, § 8: "not to confuse old users"). Each rule is one line: what is true, then "(as Agenda)" with where Agenda says or shows it, or "Our choice"; then where it is seen in our code. **Test:** names the test that checks it today; **Could test:** is a suggestion, not built.
 
@@ -65,10 +65,11 @@ When a rule here and a box disagree, the box is the bug, unless the rule is wron
 - **7.2** A core error is an atom; the TUI turns it into the message, in one place per situation. Our choice (CLAUDE.md, Conventions); `Agendum.TUI.Messages.text/1`.
 - **7.3** Messages, prompts and help are written plainly, terse, in Agenda's tone; a Hundred Acre Wood touch only where it is natural. Our choice (help topic tone, 2026-10-26).
 - **7.4** A long action in the shell says it is under way in the control panel ("Reading …") and its outcome when done; it never stops the keys. Our choice (v0.68.4: publishing in the background) `Update.Results`.
+- **7.5** An extra's messages live in a module beside it (`Agendum.TUI.Extras.<Extra>.Messages`), one per error atom, never written in the box; removing an extra takes its messages with it. Our choice (the owner, 2026-10-27: separation for modularity).
 
 ## The extras against the guidelines
 
-Each gap in `lib/agendum/tui/extras/`, the rule it breaks, and the existing part that would mend it. The first five were found at meeting 2026-10-26-6, § 6; the rest by reading the boxes for this draft. "Mend" is a suggestion for the rework (ROADMAP, Beyond Agenda), not a decision.
+Each gap in `lib/agendum/tui/extras/`, the rule it breaks, and the existing part that would mend it. The first five were found at meeting 2026-10-26-6, § 6; the rest by reading the boxes for this draft. "Mend" is what the rework does (ROADMAP, Beyond Agenda), as the owner settled it on 2026-10-27 (below).
 
 | # | Box | Gap | Rule | Existing part that would mend it |
 | --- | --- | --- | --- | --- |
@@ -76,20 +77,20 @@ Each gap in `lib/agendum/tui/extras/`, the rule it breaks, and the existing part
 | 2 | Feeds, Calendars | A feed's settings are changed by letter keys in the list (F how often, K days kept, A how far ahead), each press going one step round, with no way back and no list | 4.3, 4.4, 2.1–2.3 | A properties box per feed and calendar on F6 (`Template` layout: Name, Address, Read every, Keep / Read ahead, Last read), whose choices get SPACE, a letter and F3 from `BoxChoices` |
 | 3 | Feeds, Calendars | Commands on plain letters (R, F, K, A, I, E) are not on the key bar, which shows function keys only, so the bar does not show them | 5.4, 6.1 | Once 2 is done, F6 Props carries the settings; Read now stays on ENTER; OPML import and export go to the menu (File ▸ Transfer, as now) |
 | 4 | Feeds, Calendars | The hint lines at the bottom are written by hand, apart from the key list (`feeds_box.ex`, `calendars_box.ex`, `content/4`) | 6.2 | `Box.hint/2` from `keys/2`, or no hint line, as the clone's managers |
-| 5 | Publish | Folder is a typed path, with no list to choose from; the meeting's note that OPML import and export are typed paths was wrong: their prompts offer F3 already (`select_file.ex`, `import_opml`, `export_opml`) | 2.7 | `SelectFile` for folders (it lists them already; it would need to accept a folder), or leave Folder typed, as Agenda's own path settings are (to check) |
+| 5 | Publish | Folder is a typed path, with no list to choose from; the meeting's note that OPML import and export are typed paths was wrong: their prompts offer F3 already (`select_file.ex`, `import_opml`, `export_opml`) | 2.7 | `SelectFile`, taught to accept a folder (the owner, 2026-10-27) |
 | 6 | Publish | SPACE on a text field starts editing it; in the clone's boxes SPACE goes round a setting's choices, and F2 edits | 2.1, 3.2 | Drop SPACE's editing (F2 already does it); SPACE only on Upload |
 | 7 | Publish | Upload's choices (None, rsync, SFTP) go round with SPACE, but no letter picks one and F3 lists nothing, as the box is not `choices: true` | 2.2, 2.3 | `use Box, finish: :done, choices: true`, as the clone's settings boxes |
 | 8 | Publish | No F8 (DEFAULT): Folder's default ("site") and Title's (the file's name) cannot be put back | 1.7 | `c:Box.defaults/2`, read by `BoxDefaults` |
-| 9 | Publish | Error messages are written in the box (`publish_box.ex`, `publish/2`), not in `Messages` | 7.2 | Entries in `Agendum.TUI.Messages`, one per error atom (the module holds Agenda's words today; see the questions) |
-| 10 | Feeds, Calendars | Subscribing asks two prompts in a row (the address, then the name), where the clone adds a thing with one prompt for its name, its settings after in its box | 4.2 | Ask the address only; name it from the feed's title, changed later in the properties box (2) |
+| 9 | Publish | Error messages are written in the box (`publish_box.ex`, `publish/2`), not in `Messages` | 7.2 | `Agendum.TUI.Extras.Publish.Messages`, one per error atom (rule 7.5) |
+| 10 | Feeds, Calendars | Subscribing asks two prompts in a row (the address, then the name), where the clone adds a thing with one prompt for its name, its settings after in its box | 4.2 | Two prompts kept (the owner, 2026-10-27), the name's prompt filled in with the feed's own title |
 | 11 | Feeds, Calendars | The bottom edge says nothing (`finish: :none`); the clone's managers say how the box ends | 1.5, 4.5 | `finish: :return` (the Publish preview's) or `:done`, as the view manager |
 | 12 | All four | Not in `agenda_boxes_test.exs` (they have no Agenda box) and not in the field-help walk, so no test holds them to the rules above | 1.9, 6.1 | The "Could test" items above, written over the box registry, so they cover the extras by themselves |
 | 13 | Feeds, Calendars, Publish | No rule in SPEC for how the boxes look; R45, R74 and R75 say what they do | 1.2 | SPEC rules for the reworked boxes, each "Our choice" pointing here |
 
-## Open questions for the owner
+## The owner's answers (2026-10-27)
 
-- **Feeds and Calendars as managers.** Is the macro manager the model (INS, F2, F6 Props, DEL, ENTER runs), with a feed's settings in its properties box? That is the rework's largest change, and a habit change for the letter keys F, K, A, R, I and E.
-- **Subscribing.** One prompt (the address), the name taken from the feed's title, or two prompts as now?
-- **Folder in Publish.** Typed, as now, or chosen from the file list? Agenda's own path settings (File Properties) would settle it; not checked yet.
-- **Messages of our own.** `Agendum.TUI.Messages` holds Agenda's words; should the extras' messages join it as our own, or stay in their boxes?
-- **The "Could test" items.** Which are worth building with the rework: the field-help walk over the registry (gap 12) is the one that keeps the extras honest.
+- **Feeds and Calendars as managers**, the Macros manager the model: INS subscribes, F2 renames, F6 opens a feed's or calendar's properties box (its settings, with SPACE, a letter and F3), DEL unsubscribes, ENTER reads the highlighted one now. **ALT-ENTER reads them all** (the owner asked for Shift-ENTER, which no terminal tells from ENTER; ALT-ENTER reaches Agendum as its own key, `keys.ex`, and was unused). The letter keys F, K, A and R go: a habit change, accepted. OPML import and export stay on the menu (File ▸ Transfer).
+- **Subscribing: two prompts**, the address, then the name, the second filled in with the feed's own title.
+- **Publish's Folder is chosen from the file list** (`SelectFile`, taught to accept a folder).
+- **Each extra keeps its own messages, beside it** (`Agendum.TUI.Extras.Feeds.Messages`, `…Calendars.Messages`, `…Publish.Messages` in `tui/extras/`); `Agendum.TUI.Messages` stays Agenda's words. The owner: keep the extras separate as much as possible, for modularity (rule 7.5).
+- **All three "Could test" items are built** with the rework (1.1, 1.9, 6.2), over the box registry, so they cover the extras by themselves.
