@@ -138,6 +138,11 @@ defmodule Agendum.TUI.Extras.PublishBox do
     }
   end
 
+  # a feed's or a calendar's category is never the blog's (R75a): the
+  # core refuses it, so it is not offered
+  @impl Box
+  def category_choice?(state, _mode, _field, id), do: not Agendum.Core.ingested?(state.db, id)
+
   @impl Box
   def picked(state, _mode, :folder, path),
     do: set_setting(state, :folder, beside_file(state, path))
@@ -266,6 +271,9 @@ defmodule Agendum.TUI.Extras.PublishBox do
 
       {:error, :ambiguous} ->
         State.error(state, Messages.text(:ambiguous))
+
+      {:error, :ingested} ->
+        State.error(state, Messages.text(:ingested))
 
       {:error, :zettels_full} ->
         State.error(state, Messages.text(:zettels_full))

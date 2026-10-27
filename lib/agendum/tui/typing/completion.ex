@@ -34,9 +34,22 @@ defmodule Agendum.TUI.Typing.Completion do
   def matches(%State{} = state) do
     case head(state) do
       nil -> []
-      head -> Core.completions(state.db, head, text(state))
+      head -> state.db |> Core.completions(head, text(state)) |> Enum.filter(&offered?(state, &1))
     end
   end
+
+  # a box's category field may offer only some (`c:Box.category_choice?/4`)
+  defp offered?(%State{edit: nil} = state, id) do
+    case State.mode(state) do
+      %{typing: {field, _}} = mode when is_atom(field) ->
+        Agendum.TUI.Boxes.Box.module!(mode).category_choice?(state, mode, field, id)
+
+      _ ->
+        true
+    end
+  end
+
+  defp offered?(_state, _id), do: true
 
   @doc "True while a box's field that holds a category is typed in."
   @spec box_field?(State.t()) :: boolean

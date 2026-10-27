@@ -8,7 +8,7 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   """
 
   alias Agendum.Core.Database
-  alias Agendum.Core.Extras.{Blog, Site}
+  alias Agendum.Core.Extras.{Blog, Ingested, Site}
   alias Agendum.Core.Facade.Categories
   alias Agendum.Core.Facade.Extras.Zettels
 
@@ -26,7 +26,7 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
 
   @doc "Changes the blog's settings (see `t:changes/0`)."
   @spec set_blog(db, changes) ::
-          {:ok, db} | {:error, :bad_setting | :no_posts_category | :ambiguous}
+          {:ok, db} | {:error, :bad_setting | :no_posts_category | :ambiguous | :ingested}
   def set_blog(db, changes) do
     # `with` runs each step while it matches; an `{:error, _}` stops it
     with {:ok, db, posts} <- category(db, Map.get(changes, :posts, db.blog.posts)),
@@ -35,6 +35,12 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
       cond do
         posts == nil ->
           {:error, :no_posts_category}
+
+        # a feed's or a calendar's category (R75a) is never the blog's:
+        # drafts are filed by hand, which it refuses, and its items are
+        # other people's writing (the owner, 2026-10-27)
+        Enum.any?([posts, drafts], &(&1 && Ingested.ingested?(db, &1))) ->
+          {:error, :ingested}
 
         drafts == posts ->
           {:error, :bad_setting}
@@ -55,7 +61,11 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   defp named(db, ""), do: {:ok, db, nil}
 
   defp named(db, name) do
-    case Enum.reject(Database.find_categories(db, name), &Database.protected?(db, &1)) do
+    # the person's categories only: not MAIN or a date category, nor a
+    # feed's or a calendar's (R75a)
+    mine = &(not Database.protected?(db, &1) and not Ingested.ingested?(db, &1))
+
+    case Enum.filter(Database.find_categories(db, name), mine) do
       [id] ->
         {:ok, db, id}
 
@@ -94,7 +104,7 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   """
   @spec prepare_publish(db, changes) ::
           {:ok, db, [{id, String.t()}]}
-          | {:error, :bad_setting | :no_posts_category | :zettels_full | :ambiguous}
+          | {:error, :bad_setting | :no_posts_category | :zettels_full | :ambiguous | :ingested}
   def prepare_publish(db, changes) do
     with {:ok, db} <- set_blog(db, changes) do
       ids = for item <- Blog.posts(db), item.zettel == nil, do: item.id

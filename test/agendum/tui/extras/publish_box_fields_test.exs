@@ -62,6 +62,19 @@ defmodule Agendum.TUI.Extras.PublishBoxFieldsTest do
       assert publish.settings.drafts == "Drafts"
     end
 
+    test "a feed's category is neither completed nor listed", %{state: state} do
+      {:ok, db, _} = Core.subscribe_feed(state.db, "Postal Feed", "https://p.example/rss")
+
+      state =
+        %{state | db: db} |> to_setting("Posts category") |> press(["P", "o", "s", "t", "a"])
+
+      assert panel(state) =~ "No matching categories."
+
+      state = state |> press(:esc) |> press({:f, 3})
+      refute screen(state) =~ "Postal Feed"
+      refute screen(state) =~ "Feeds"
+    end
+
     test "SPACE opens the list too", %{state: state} do
       assert %{type: :picker} =
                state |> to_setting("Posts category") |> press(" ") |> State.mode()

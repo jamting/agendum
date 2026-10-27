@@ -12,6 +12,9 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   def text(:ambiguous),
     do: "Two categories have that name: give the posts or drafts a name of their own"
 
+  def text(:ingested),
+    do: "The posts and drafts are your own categories, not a feed's or a calendar's"
+
   def text(:zettels_full), do: "Every Zettel id is in use; the posts cannot all have one"
   def text(:bad_categories), do: "The posts and drafts categories must differ, and be categories"
   def text(:nothing_published), do: "Nothing was published"

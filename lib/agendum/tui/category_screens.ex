@@ -73,6 +73,19 @@ defmodule Agendum.TUI.CategoryScreens do
 
   defp all_rows(state, %{type: :catmgr}), do: Database.hierarchy(state.db)
 
+  # a box's category field: what the box offers there (`c:Box.category_choice?/4`)
+  defp all_rows(state, %{type: :picker, purpose: {:box_field, type, field}}) do
+    box = Enum.find(state.modes, &(&1.type == type))
+    module = Agendum.TUI.Boxes.Box.registry()[type]
+
+    state.db
+    |> Database.hierarchy()
+    |> tl()
+    |> Enum.filter(fn {id, _depth} ->
+      box == nil or module.category_choice?(state, box, field, id)
+    end)
+  end
+
   defp all_rows(state, %{type: type}) when type in [:profile, :group_profile],
     do: state.db |> Database.hierarchy() |> tl()
 

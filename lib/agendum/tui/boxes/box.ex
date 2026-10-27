@@ -141,6 +141,13 @@ defmodule Agendum.TUI.Boxes.Box do
   """
   @callback picked(State.t(), mode, field :: atom, Agendum.Core.Database.id()) :: State.t()
 
+  @doc """
+  Whether a category may be offered for one of the box's category fields,
+  by completion and in the picker's list; by default every one is.
+  """
+  @callback category_choice?(State.t(), mode, field :: atom, Agendum.Core.Database.id()) ::
+              boolean
+
   # The boxes, by their mode's type. A module holds a box's
   # name only (no call at compile time), so the boxes and this module can
   # refer to each other.
@@ -597,6 +604,8 @@ defmodule Agendum.TUI.Boxes.Box do
       def category_fields(_mode), do: []
       @impl true
       def picked(state, _mode, _field, _id), do: state
+      @impl true
+      def category_choice?(_state, _mode, _field, _id), do: true
 
       defoverridable width: 2,
                      field: 2,
@@ -611,7 +620,8 @@ defmodule Agendum.TUI.Boxes.Box do
                      idle_keys: 2,
                      choices_frame: 2,
                      category_fields: 1,
-                     picked: 4
+                     picked: 4,
+                     category_choice?: 4
     end
   end
 end
