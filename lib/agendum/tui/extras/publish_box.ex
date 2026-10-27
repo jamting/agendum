@@ -124,6 +124,19 @@ defmodule Agendum.TUI.Extras.PublishBox do
   @impl Box
   def category_fields(_mode), do: [:posts, :drafts]
 
+  # F8 and ALT-F8 (R81c): what a new blog has, as the box opens with it
+  # (the owner, 2026-10-27); Author, Description and the others have none
+  @impl Box
+  def defaults(state, _mode) do
+    %{
+      posts: &set_setting(&1, :posts, "Posts"),
+      drafts: &set_setting(&1, :drafts, ""),
+      title: &set_setting(&1, :title, default_title(state)),
+      folder: &set_setting(&1, :folder, "site"),
+      upload: &set_setting(&1, :upload, :none)
+    }
+  end
+
   @impl Box
   def picked(state, _mode, :folder, path),
     do: set_setting(state, :folder, beside_file(state, path))

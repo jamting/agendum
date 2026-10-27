@@ -123,4 +123,35 @@ defmodule Agendum.TUI.Extras.PublishBoxFieldsTest do
       assert settings(state).folder == "site"
     end
   end
+
+  describe "F8 and ALT-F8" do
+    test "F8 puts the highlighted setting back to its default", %{state: state} do
+      state = state |> to_setting("Folder") |> press(["w", "w", "w", :enter])
+      assert settings(state).folder == "www"
+      assert settings(press(state, {:f, 8})).folder == "site"
+
+      state = state |> to_setting("Upload") |> press(" ")
+      assert settings(press(state, {:f, 8})).upload == :none
+    end
+
+    test "ALT-F8 puts every setting with a default back; the others stay", %{state: state} do
+      state =
+        state
+        |> to_setting("Site title")
+        |> press(["O", "w", "l", :enter])
+        |> to_setting("Author")
+        |> press(["O", "w", "l", :enter])
+        |> to_setting("Drafts")
+        |> press({:f, 3})
+        |> press(["D", "r", "a", :enter])
+        |> press({:alt_f, 8})
+
+      s = settings(state)
+
+      assert {s.posts, s.drafts, s.title, s.folder, s.upload} ==
+               {"Posts", "", "My blog", "site", :none}
+
+      assert s.author == "Owl"
+    end
+  end
 end
