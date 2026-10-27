@@ -121,6 +121,45 @@ defmodule Agendum.Core.Facade.Views do
     end)
   end
 
+  @doc """
+  Agenda's rule for a category just inserted in a family (User's Guide
+  16-11, R42; checked in Agenda 2.0, 2026-10-27): a view whose sections
+  hold every other child of its parent (at least one) gets a section for
+  it too, right after the section of its previous sibling, or at the top
+  of the view when it is the first child, with the linked columns, those
+  every section has (R55). Other sections in the view, or another order,
+  do not matter. Not a datebook view, whose sections are its dates (R47).
+  """
+  @spec add_family_sections(db, id) :: db
+  def add_family_sections(db, cat_id) do
+    siblings = db.categories[db.categories[cat_id].parent_id].children
+    others = List.delete(siblings, cat_id)
+    # the sibling just before it in the hierarchy, nil for a first child
+    previous = siblings |> Enum.take_while(&(&1 != cat_id)) |> List.last()
+
+    Enum.reduce(Database.views(db), db, fn view, db ->
+      if family_view?(view, cat_id, others),
+        do: add_family_section(db, view, cat_id, previous),
+        else: db
+    end)
+  end
+
+  defp family_view?(view, cat_id, others) do
+    heads = Enum.map(view.sections, & &1.category_id)
+
+    view.datebook == nil and others != [] and cat_id not in heads and
+      Enum.all?(others, &(&1 in heads))
+  end
+
+  # the first child goes to the top, the columns from the section it is
+  # put above; any other right after its previous sibling's section
+  defp add_family_section(db, view, cat_id, nil), do: add_section(db, view.id, cat_id, 0, 0)
+
+  defp add_family_section(db, view, cat_id, previous) do
+    at = Enum.find_index(view.sections, &(&1.category_id == previous))
+    add_section(db, view.id, cat_id, at + 1, at)
+  end
+
   @spec remove_section(db, id, non_neg_integer) :: db
   def remove_section(db, view_id, index) do
     Database.update_view(db, view_id, &%{&1 | sections: List.delete_at(&1.sections, index)})

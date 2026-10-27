@@ -409,7 +409,7 @@ defmodule Agendum.TUI.CategoryScreens do
   end
 
   def commit(state, _mode, {:new, parent, after_id}, text) do
-    case State.command(state, {:add_category, parent, text, after: after_id}) do
+    case State.command(state, {:insert_category, parent, text, after: after_id}) do
       {:ok, state, %{new: id}} ->
         move_cursor_to(state, id)
 

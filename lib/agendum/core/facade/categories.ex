@@ -61,6 +61,24 @@ defmodule Agendum.Core.Facade.Categories do
     end
   end
 
+  @doc """
+  Adds a category as the person inserts one: in the category manager, or
+  as a new name typed in a column (User's Guide 16-11, R42). It is
+  `add_category/4`, and each view whose sections hold all the other
+  children of `parent_id` gets a section for it as well
+  (`Agendum.Core.Facade.Views.add_family_sections/2`). As in Agenda, the
+  Category Add box and moving a category into the family do not (they
+  use `add_category/4` and `relocate`).
+  """
+  @spec insert_category(db, id, String.t(), keyword) ::
+          {:ok, db, id} | {:error, :duplicate | :empty}
+  def insert_category(db, parent_id, name, opts \\ []) do
+    # `with` runs the step and goes on only when it matches; an
+    # `{:error, _}` from `add_category/4` falls through as it is
+    with {:ok, db, id} <- add_category(db, parent_id, name, opts),
+         do: {:ok, Agendum.Core.Facade.Views.add_family_sections(db, id), id}
+  end
+
   @doc "Finds a category anywhere by name, or creates it under MAIN."
   @spec find_or_create_category(db, String.t()) :: {db, id}
   def find_or_create_category(db, name) do

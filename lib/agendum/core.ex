@@ -214,6 +214,7 @@ defmodule Agendum.Core do
 
   # categories: hierarchy (R2), moving and exclusive children (R7), links (R8, R9)
   defdelegate add_category(db, parent_id, name, opts \\ []), to: Categories
+  defdelegate insert_category(db, parent_id, name, opts \\ []), to: Categories
   defdelegate find_or_add_category(db, name), to: Categories
   defdelegate find_or_create_category(db, name), to: Categories
   defdelegate rename_category(db, id, name), to: Categories

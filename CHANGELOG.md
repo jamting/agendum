@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.70.0 — 2026-10-27
+
+- **A new category in a family joins the views that show the family**, as in Lotus Agenda: when every other child of its parent is a section of a view, inserting a category in the category manager (INS, ALT-D, ALT-U, ALT-R), or typing a new name in a column, adds its section there too, right after its previous sibling's (a first child at the top), with the columns every section has. One undo takes back both. Category ▸ Add and moving a category into the family do not, as in Agenda.
+
 ## 0.69.3 — 2026-10-27
 
 Four fixes found by richer fuzz walks: they now start from a file with feeds, calendars and a blog, and deliver background answers out of order.

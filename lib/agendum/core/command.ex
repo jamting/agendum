@@ -171,6 +171,9 @@ defmodule Agendum.Core.Command do
     # categories (R2, R7, R8, R25)
     {:add_category, "Add category", "Adds a category under a parent", [:category, :value, :value],
      :core},
+    {:insert_category, "Insert category",
+     "Adds a category under a parent, and a section for it in each view that holds all its siblings (R42)",
+     [:category, :value, :value], :core},
     {:find_or_create_category, "Find or create category",
      "The category of that name anywhere, made under MAIN when there is none", [:text], :core},
     {:find_or_add_category, "Find or add category",
@@ -495,6 +498,7 @@ defmodule Agendum.Core.Command do
     set_match_override: [0],
     set_date_rule: [0],
     add_category: [0],
+    insert_category: [0],
     copy_conditions_actions: [1],
     assign: [{:own, 1}],
     remove_from_category: [{:own, 1}],

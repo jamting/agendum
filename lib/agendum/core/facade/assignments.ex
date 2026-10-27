@@ -113,7 +113,10 @@ defmodule Agendum.Core.Facade.Assignments do
             {:ok, assign(db, item_id, cat_id, today), cat_id}
 
           :none ->
+            # a new name typed in a column: inserted as the category
+            # manager inserts one, with its sections (R42)
             {db, cat_id} = Database.insert_category(db, head_id, text)
+            db = Agendum.Core.Facade.Views.add_family_sections(db, cat_id)
             {:ok, assign(db, item_id, cat_id, today), cat_id}
 
           :ambiguous ->
@@ -204,7 +207,7 @@ defmodule Agendum.Core.Facade.Assignments do
   @spec assign_new_by_name(db, id, id, String.t(), clock | nil) ::
           {:ok, db, id} | {:error, :empty}
   def assign_new_by_name(db, item_id, head_id, text, clock \\ nil) do
-    case Categories.add_category(db, head_id, text) do
+    case Categories.insert_category(db, head_id, text) do
       {:ok, db, cat_id} ->
         {:ok, assign(db, item_id, cat_id, clock), cat_id}
 
