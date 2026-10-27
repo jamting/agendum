@@ -26,6 +26,8 @@ defmodule Agendum.TUI.Extras.Feeds.Messages do
   def text(:duplicate, name), do: "#{name} is taken: another feed has that name"
   def text(:subscribed, name), do: "Subscribed to #{name}"
   def text(:unsubscribed, name), do: "Unsubscribed from #{name}"
+  def text(:probing, url), do: "Reading #{url} …"
+  def text(:unreadable, reason), do: "Not subscribed: #{reason}"
   def text(:nothing_new, name), do: "#{name}: nothing new"
   def text(:no_new_feeds, file), do: "#{file}: no feeds the file does not have already"
   def text(:not_opml, file), do: "#{file} is not an OPML feed list"

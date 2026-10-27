@@ -15,8 +15,12 @@ defmodule Agendum.TUI.Extras.FeedsTest do
   defp type(state, text), do: press(state, String.graphemes(text) ++ [:enter])
   defp effect(kind), do: Enum.find(effects(), &(elem(&1, 0) == kind))
 
-  defp subscribed(state) do
-    state |> open() |> press(:insert) |> type("https://owl.example/rss") |> type("Owl's Gazette")
+  # INS, the address; the shell's read answered with the feed's title and
+  # `entries`; ENTER takes the name offered
+  defp subscribed(state, entries \\ []) do
+    state = state |> open() |> press(:insert) |> type("https://owl.example/rss")
+    read = {:ok, %{title: "Owl's Gazette", entries: entries}}
+    state |> Update.Results.feed_probed("https://owl.example/rss", read) |> press(:enter)
   end
 
   @entries [
@@ -33,20 +37,43 @@ defmodule Agendum.TUI.Extras.FeedsTest do
     assert screen(open(state)) =~ "No feeds yet"
   end
 
-  test "INS subscribes: the address, a name, and it is read at once", %{state: state} do
-    state = subscribed(state)
-    assert screen(state) =~ "Owl's Gazette"
-    assert screen(state) =~ "reading…"
-    assert {:fetch_feed, id, "https://owl.example/rss"} = effect(:fetch_feed)
-    assert state.db.feeds[id].name == "Owl's Gazette"
+  test "INS: the address, a read, then the name offered from the feed's title", %{state: state} do
+    state = state |> open() |> press(:insert) |> type("https://owl.example/rss")
+    assert {:probe_feed, "https://owl.example/rss"} = effect(:probe_feed)
+    assert state.db.feeds == %{}
+
+    read = {:ok, %{title: "Owl's Gazette", entries: @entries}}
+    asked = Update.Results.feed_probed(state, "https://owl.example/rss", read)
+    assert panel(asked) =~ "Name of the feed"
+    assert panel(asked) =~ "Owl's Gazette"
+
+    # one ENTER subscribes and files what was read, one undo step, not
+    # read a second time
+    Process.delete(:effects_seen)
+    state = press(asked, :enter)
+    assert [%{name: "Owl's Gazette"}] = Core.Database.feeds(state.db)
+    assert screen(state) =~ "Subscribed to Owl's Gazette"
+    assert effect(:fetch_feed) == nil
+    assert "Heffalump sighted" in (state.db.items |> Map.values() |> Enum.map(& &1.text))
+    assert Agendum.TUI.History.undo(state).db.feeds == %{}
+  end
+
+  test "a feed that cannot be read is not subscribed", %{state: state} do
+    state = state |> open() |> press(:insert) |> type("https://owl.example/rss")
+    state = Update.Results.feed_probed(state, "https://owl.example/rss", {:error, "no answer"})
+    assert screen(state) =~ "Not subscribed: no answer"
+    assert state.db.feeds == %{}
+  end
+
+  test "a read for an address no longer waited for is dropped", %{state: state} do
+    state = state |> open() |> press(:insert) |> type("https://owl.example/rss") |> press(:esc)
+    read = {:ok, %{title: "Owl's Gazette", entries: []}}
+    after_ = Update.Results.feed_probed(state, "https://owl.example/rss", read)
+    assert after_.modes == state.modes
   end
 
   test "the entries read come in as items, in the News view", %{state: state} do
-    state = subscribed(state)
-    {:fetch_feed, id, _} = effect(:fetch_feed)
-    state = Update.Results.feed_read(state, id, "https://owl.example/rss", {:ok, @entries})
-
-    assert screen(state) =~ "Owl's Gazette: 1 new"
+    state = subscribed(state, @entries)
     state = state |> press(:esc) |> press(:esc)
     news = Enum.find(Core.Database.views(state.db), &(&1.name == "News"))
     state = State.switch_view(state, news.id)
@@ -54,7 +81,7 @@ defmodule Agendum.TUI.Extras.FeedsTest do
   end
 
   test "a failed read says why, from the box", %{state: state} do
-    state = subscribed(state)
+    state = subscribed(state) |> press(:enter)
     {:fetch_feed, id, _} = effect(:fetch_feed)
 
     state =

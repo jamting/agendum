@@ -27,12 +27,16 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
 
   defp typed(text), do: String.graphemes(text) ++ [:enter]
 
-  # subscribes to Work, returning the state and the calendar's id
+  # subscribes to Work (INS, the address, the shell's read answered with
+  # no events, ENTER on the name offered), then ENTER reads it now:
+  # the state and the calendar's id
   defp subscribe(state) do
-    {state, effects} =
-      keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed(@url) ++ typed("Work"))
+    {state, [{:probe_calendar, @url}]} =
+      keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed(@url))
 
-    [{:fetch_calendar, id, @url}] = effects
+    state = Update.Results.calendar_probed(state, @url, {:ok, %{title: "Work", events: []}})
+    {state, []} = keys(state, :enter)
+    {state, [{:fetch_calendar, id, @url}]} = keys(state, :enter)
     {state, id}
   end
 
@@ -48,16 +52,31 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
     assert screen(state) =~ "No calendars yet · INS subscribes to one"
   end
 
-  test "INS asks for the address and a name, then reads the calendar at once", %{state: state} do
-    {state, id} = subscribe(state)
-    assert state.db.calendars[id].name == "Work"
+  test "INS: the address, a read, then the name offered from the calendar's own", %{
+    state: state
+  } do
+    {state, [{:probe_calendar, @url}]} =
+      keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed(@url))
+
+    asked = Update.Results.calendar_probed(state, @url, {:ok, %{title: "Work", events: events()}})
+    assert panel(asked) =~ "Work"
+    {state, []} = keys(asked, :enter)
+    assert [%{name: "Work"} = cal] = Agendum.Core.Database.calendars(state.db)
     assert %{type: :calendars} = State.mode(state)
-    assert screen(state) =~ ~r/Work +reading…/
+    assert "Tea" in (state.db.items |> Map.values() |> Enum.map(& &1.text))
+    assert cal.refreshed_at != nil
+  end
+
+  test "a calendar that cannot be read is not subscribed", %{state: state} do
+    {state, _} = keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed(@url))
+    state = Update.Results.calendar_probed(state, @url, {:error, "not a calendar"})
+    assert screen(state) =~ "Not subscribed: not a calendar"
+    assert state.db.calendars == %{}
   end
 
   test "a bad address is refused", %{state: state} do
     {state, effects} =
-      keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed("ftp://nope") ++ typed("Work"))
+      keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed("ftp://nope"))
 
     assert effects == [{:sound, :error}]
     assert screen(state) =~ "needs an https:// or webcal:// address"

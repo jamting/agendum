@@ -132,6 +132,83 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
     )
   end
 
+  # --- subscribing (INS): the address, a read, then the name -------------
+
+  @doc """
+  The address typed after INS: the calendar is read once before it is
+  subscribed to (`{:probe_calendar, url}`), so its name can be offered (its own
+  title) and one that cannot be read is refused (the owner, 2026-10-27).
+  The box remembers the address it waits for (`probing`).
+  """
+  @spec address_typed(State.t(), String.t()) :: State.t()
+  def address_typed(state, text) do
+    case Agendum.Core.calendar_url(String.trim(text)) do
+      {:ok, url} -> probe(state, url)
+      {:error, :bad_url} -> State.error(state, Messages.text(:bad_url))
+    end
+  end
+
+  defp probe(state, url) do
+    case Enum.find_index(state.modes, &(&1.type == :calendars)) do
+      nil ->
+        state
+
+      i ->
+        %{state | modes: List.update_at(state.modes, i, &%{&1 | probing: url})}
+        |> State.info(Messages.text(:probing, url))
+        |> State.effect({:probe_calendar, url})
+    end
+  end
+
+  @doc """
+  The calendar read before subscribing: the name asked, its own title filled
+  in (`Agendum.Core.subscription_name/2`), or why it was not subscribed.
+  Dropped unless the box is still open and waiting for that address: the
+  person may have closed it, or typed another (a key in between, another
+  file opened meanwhile).
+  """
+  @spec probed(State.t(), String.t(), {:ok, map} | {:error, String.t()}) :: State.t()
+  def probed(state, url, result) do
+    case Enum.find_index(state.modes, &match?(%{type: :calendars, probing: ^url}, &1)) do
+      nil ->
+        state
+
+      i ->
+        state = %{state | modes: List.update_at(state.modes, i, &%{&1 | probing: nil})}
+        asked(state, url, result)
+    end
+  end
+
+  defp asked(state, url, {:ok, read}) do
+    name = Agendum.Core.subscription_name(read.title, url)
+    Prompts.prompt(state, Messages.text(:name), {:calendar_name, url, read.events}, name)
+  end
+
+  defp asked(state, _url, {:error, reason}),
+    do: State.error(state, Messages.text(:unreadable, reason))
+
+  @doc """
+  The name given: the calendar subscribed to and what was read filed at once,
+  one change (one undo step), not read a second time.
+  """
+  @spec name_typed(State.t(), String.t(), list, String.t()) :: State.t()
+  def name_typed(state, url, events, name) do
+    case State.command(state, {:subscribe_calendar, name, url}) do
+      {:ok, state, %{new: id}} ->
+        {:ok, state, _} = State.command(state, {:sync_calendar, id, events})
+        State.info(state, Messages.text(:subscribed, String.trim(name)))
+
+      {:error, :bad_url} ->
+        State.error(state, Messages.text(:bad_url))
+
+      {:error, :no_name} ->
+        State.error(state, Messages.text(:no_name))
+
+      {:error, :duplicate} ->
+        State.error(state, Messages.text(:duplicate, String.trim(name)))
+    end
+  end
+
   @impl Box
   def title(_state, _mode), do: "Calendars"
 

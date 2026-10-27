@@ -303,6 +303,8 @@ defmodule Agendum.TUI.Fuzz do
 
   defp request({:fetch_feed, id, url}), do: {:feed_read, id, url}
   defp request({:fetch_calendar, id, url}), do: {:calendar_read, id, url}
+  defp request({:probe_feed, url}), do: {:feed_probed, url}
+  defp request({:probe_calendar, url}), do: {:calendar_probed, url}
   defp request({:publish, _folder, _files, changes, _password}), do: {:published, changes}
   defp request(_effect), do: nil
 
@@ -357,6 +359,24 @@ defmodule Agendum.TUI.Fuzz do
     {:calendar_read, id, url, {:ok, [event]}, 1}
   end
 
+  # a read before subscribing (R75, R45): its title and what it holds,
+  # why it failed, or a crash
+  defp message({tag, url}, :crash) when tag in [:feed_probed, :calendar_probed],
+    do: {tag, url, Agendum.TUI.App.fetched(fn -> raise "boom" end), 1}
+
+  defp message({tag, url}, :error) when tag in [:feed_probed, :calendar_probed],
+    do: {tag, url, {:error, "no answer"}, 1}
+
+  defp message({:feed_probed, url}, :ok) do
+    {:feed_read, _, _, {:ok, entries}, _} = message({:feed_read, 0, url}, :ok)
+    {:feed_probed, url, {:ok, %{title: "Owl's \e[2J Gazette", entries: entries}}, 1}
+  end
+
+  defp message({:calendar_probed, url}, :ok) do
+    {:calendar_read, _, _, {:ok, events}, _} = message({:calendar_read, 0, url}, :ok)
+    {:calendar_probed, url, {:ok, %{title: nil, events: events}}, 1}
+  end
+
   defp message({:published, changes}, :ok), do: {:published, changes, :ok}
   defp message({:published, changes}, :error), do: {:published, changes, {:error, "no rsync"}}
   defp message({:published, changes}, :crash), do: {:published, changes, {:error, :password}}
@@ -395,6 +415,8 @@ defmodule Agendum.TUI.Fuzz do
   end
 
   defp reading_too?(_state, {:published, _changes, _result}), do: false
+  # a read before subscribing changes no file: it only asks for a name
+  defp reading_too?(_state, {_probed, _url, _result, _ms}), do: false
 
   # Another file opened, as `App` hands a Retrieve's result to
   # `Update.Results.loaded/3`, while the old file's reads may still come

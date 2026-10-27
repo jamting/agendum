@@ -164,6 +164,34 @@ defmodule Agendum.Core.Facade.Extras.Feeds do
   def cycle_feed_setting(db, feed_id, setting, step),
     do: Database.update_feed(db, feed_id, &Feed.cycle(&1, setting, step))
 
+  @doc "A feed's address as it is read (`feed://` as `https://`), or `{:error, :bad_url}`."
+  @spec feed_url(String.t()) :: {:ok, String.t()} | {:error, :bad_url}
+  def feed_url(url) do
+    case Feed.normalize_url(url) do
+      {:ok, url} -> {:ok, url}
+      :error -> {:error, :bad_url}
+    end
+  end
+
+  @doc """
+  The name offered when subscribing to a feed or a calendar (R75, R45):
+  its own title on one line, without control characters (a title is
+  outside input), at most 60 characters; without one, the address's host.
+  """
+  @spec subscription_name(String.t() | nil, String.t()) :: String.t()
+  def subscription_name(title, url) do
+    # `~r/…/u` reads the text as Unicode; [[:cntrl:]] is every control
+    # character, a newline or an escape among them
+    cleaned =
+      (title || "")
+      |> String.replace(~r/[[:cntrl:]]/u, " ")
+      |> String.split()
+      |> Enum.join(" ")
+      |> String.slice(0, 60)
+
+    if cleaned != "", do: cleaned, else: URI.parse(url).host || url
+  end
+
   @doc "The feeds due to be read again at `now`."
   @spec feeds_due(db, NaiveDateTime.t()) :: [Feed.t()]
   def feeds_due(db, now), do: db |> Database.feeds() |> Enum.filter(&Feed.due?(&1, now))

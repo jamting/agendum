@@ -156,6 +156,14 @@ defmodule Agendum.TUI.Update.Results do
   def url_opened(state, _url, {:error, reason}),
     do: State.error(state, "Could not open it: #{reason}")
 
+  @doc "A feed read once before subscribing (R75): its name asked, with its title."
+  def feed_probed(state, url, result),
+    do: Agendum.TUI.Extras.FeedsBox.probed(state, url, result)
+
+  @doc "A calendar read once before subscribing (R45): its name asked, with its own."
+  def calendar_probed(state, url, result),
+    do: Agendum.TUI.Extras.CalendarsBox.probed(state, url, result)
+
   @doc "A feed list read for OPML import (R75): each feed not in the file yet is subscribed."
   def opml_read(state, path, {:ok, text}) do
     case State.command(state, {:import_opml, text}) do

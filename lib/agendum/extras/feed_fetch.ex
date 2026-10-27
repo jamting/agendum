@@ -23,6 +23,21 @@ defmodule Agendum.Extras.FeedFetch do
   end
 
   @doc """
+  The feed read once before it is subscribed to (R75): its own title, for
+  the name offered, and its entries, filed as it is subscribed.
+  """
+  @spec probe(String.t()) ::
+          {:ok, %{title: String.t(), entries: [FeedParser.entry()]}} | {:error, String.t()}
+  def probe(url) do
+    with {:ok, body} <- Agendum.Extras.CalendarFetch.download(url, "feed") do
+      case Agendum.Core.parse_feed(body) do
+        {:ok, feed} -> {:ok, %{title: feed.title, entries: feed.entries}}
+        {:error, :not_a_feed} -> {:error, "that address is not an RSS or Atom feed"}
+      end
+    end
+  end
+
+  @doc """
   Opens a web address in the browser: `open` on a Mac, `xdg-open`
   elsewhere. Only `http` and `https` addresses: a feed's link is data, and
   never runs a program or opens a file.

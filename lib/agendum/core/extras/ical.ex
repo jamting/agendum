@@ -36,14 +36,7 @@ defmodule Agendum.Core.Extras.ICal do
   @doc "The calendar's events, in file order; `{:error, :not_ical}` for anything else."
   @spec parse(String.t()) :: {:ok, [Event.t()]} | {:error, :not_ical}
   def parse(text) do
-    # a calendar in an 8-bit encoding becomes valid text first (`Utf8`):
-    # its bytes would otherwise reach the items and break text matching
-    lines =
-      text
-      |> Utf8.repair()
-      |> String.replace("\r\n", "\n")
-      |> String.replace("\r", "\n")
-      |> unfold()
+    lines = lines(text)
 
     if Enum.any?(lines, &(String.upcase(&1) == "BEGIN:VCALENDAR")) do
       lines = Enum.map(lines, &content_line/1)
@@ -52,6 +45,36 @@ defmodule Agendum.Core.Extras.ICal do
     else
       {:error, :not_ical}
     end
+  end
+
+  @doc """
+  The calendar's own name (`X-WR-CALNAME`, as Google, Apple and Fastmail
+  write it), offered when subscribing (R45); nil without one.
+  """
+  @spec name(String.t()) :: String.t() | nil
+  def name(text) do
+    lines = lines(text)
+
+    if Enum.any?(lines, &(String.upcase(&1) == "BEGIN:VCALENDAR")) do
+      # the calendar's own lines come before its first event
+      lines
+      |> Enum.take_while(&(String.upcase(&1) != "BEGIN:VEVENT"))
+      |> Enum.map(&content_line/1)
+      |> Enum.find_value(fn
+        {"X-WR-CALNAME", params, value} -> text({params, value})
+        _ -> nil
+      end)
+    end
+  end
+
+  # a calendar in an 8-bit encoding becomes valid text first (`Utf8`):
+  # its bytes would otherwise reach the items and break text matching
+  defp lines(text) do
+    text
+    |> Utf8.repair()
+    |> String.replace("\r\n", "\n")
+    |> String.replace("\r", "\n")
+    |> unfold()
   end
 
   # A line starting with a space or tab continues the one before (RFC 5545 3.1).

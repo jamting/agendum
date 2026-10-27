@@ -20,6 +20,15 @@ defmodule Agendum.Core.Facade.Extras.Calendars do
   # the calendars' family under MAIN (R75a)
   @calendars "Calendars"
 
+  @doc "A calendar's address as it is read (`webcal://` as `https://`), or `{:error, :bad_url}`."
+  @spec calendar_url(String.t()) :: {:ok, String.t()} | {:error, :bad_url}
+  def calendar_url(url) do
+    case Calendar.normalize_url(url) do
+      {:ok, url} -> {:ok, url}
+      :error -> {:error, :bad_url}
+    end
+  end
+
   @doc """
   Subscribes to a calendar on the web: its events will become items in its
   own category `name`, in the Calendars family under MAIN (both made when

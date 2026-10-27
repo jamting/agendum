@@ -24,6 +24,19 @@ defmodule Agendum.Extras.CalendarFetch do
   end
 
   @doc """
+  The calendar read once before it is subscribed to (R45): its own name
+  (`X-WR-CALNAME`), for the name offered, and its events.
+  """
+  @spec probe(String.t()) ::
+          {:ok, %{title: String.t() | nil, events: [ICal.Event.t()]}} | {:error, String.t()}
+  def probe(url) do
+    with {:ok, body} <- download(url),
+         {:ok, events} <- parse(body) do
+      {:ok, %{title: ICal.name(body), events: Enum.map(events, &localize/1)}}
+    end
+  end
+
+  @doc """
   Downloads `url` over HTTPS with the system's certificates, as a
   calendar or a feed (`what`, for the messages and the user agent): the
   body, or why not as a short sentence. Also used by `Agendum.Extras.FeedFetch`.

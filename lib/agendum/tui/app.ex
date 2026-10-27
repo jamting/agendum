@@ -30,7 +30,7 @@ defmodule Agendum.TUI.App do
   # How often to check for terminal resizes and date changes when idle.
   @idle_timeout 500
   # the tags of the messages a background task mails back (`background/2`)
-  @background [:feed_read, :calendar_read, :published]
+  @background [:feed_read, :calendar_read, :feed_probed, :calendar_probed, :published]
 
   @doc "Runs the program until it quits, drawing with the state's `Agendum.TUI.Terminal.Theme`."
   @spec run(State.t()) :: :ok | {:error, term}
@@ -155,6 +155,8 @@ defmodule Agendum.TUI.App do
            non_neg_integer}
           | {:calendar_read, pos_integer, String.t(), {:ok, list} | {:error, String.t()},
              non_neg_integer}
+          | {:feed_probed | :calendar_probed, String.t(), {:ok, map} | {:error, String.t()},
+             non_neg_integer}
           | {:published, map, :ok | {:error, :password | String.t()}}
 
   @doc """
@@ -173,6 +175,16 @@ defmodule Agendum.TUI.App do
   def background(state, {:calendar_read, id, url, result, ms}) do
     DebugLog.write("calendar #{id} read: #{DebugLog.outcome(result)} in #{ms} ms")
     Update.Results.calendar_read(state, id, url, result)
+  end
+
+  # read once before subscribing: the name prompt, with its title (R75, R45)
+  def background(state, {probed, url, result, ms})
+      when probed in [:feed_probed, :calendar_probed] do
+    DebugLog.write("#{probed} #{url}: #{DebugLog.outcome(result)} in #{ms} ms")
+
+    if probed == :feed_probed,
+      do: Update.Results.feed_probed(state, url, result),
+      else: Update.Results.calendar_probed(state, url, result)
   end
 
   # the next publish may start (`perform/2` lets one run at a time)
@@ -454,6 +466,12 @@ defmodule Agendum.TUI.App do
   defp perform(state, {:save_preferences, path, prefs}),
     do: Update.Results.preferences_saved(state, Preferences.save(prefs, path))
 
+  # a feed or calendar read once, before it is subscribed to (R75, R45)
+  defp perform(state, {:probe_feed, url}), do: probe(state, :feed_probed, url, &FeedFetch.probe/1)
+
+  defp perform(state, {:probe_calendar, url}),
+    do: probe(state, :calendar_probed, url, &CalendarFetch.probe/1)
+
   defp perform(state, {:fetch_calendar, id, url}) do
     # `self()` is read here, in the loop's process: inside the `fn`
     # below it would be the task's own pid. The task reads the
@@ -476,6 +494,17 @@ defmodule Agendum.TUI.App do
   # on 2026-10-17).
   defp perform(state, unknown) do
     DebugLog.write("unknown effect skipped: #{inspect(unknown)}")
+    state
+  end
+
+  defp probe(state, tag, url, read) do
+    loop = self()
+
+    Task.start(fn ->
+      started = now_ms()
+      send(loop, {tag, url, fetched(fn -> read.(url) end), now_ms() - started})
+    end)
+
     state
   end
 

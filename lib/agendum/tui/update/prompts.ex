@@ -244,50 +244,18 @@ defmodule Agendum.TUI.Update.Prompts do
 
   # Calendars (R45): the address, then a name for its category
   defp prompt_action(state, :calendar_url, text),
-    do: prompt(state, Agendum.TUI.Extras.Calendars.Messages.text(:name), {:calendar_name, text})
+    do: Agendum.TUI.Extras.CalendarsBox.address_typed(state, text)
 
-  defp prompt_action(state, {:calendar_name, url}, name) do
-    case State.command(state, {:subscribe_calendar, name, url}) do
-      {:ok, state, %{new: id}} ->
-        state
-        |> State.info(Agendum.TUI.Extras.Calendars.Messages.text(:subscribed, name))
-        |> Update.fetch_calendar(id, :manual)
+  defp prompt_action(state, {:calendar_name, url, events}, name),
+    do: Agendum.TUI.Extras.CalendarsBox.name_typed(state, url, events, name)
 
-      {:error, :bad_url} ->
-        State.error(state, Agendum.TUI.Extras.Calendars.Messages.text(:bad_url))
-
-      {:error, :no_name} ->
-        State.error(state, Agendum.TUI.Extras.Calendars.Messages.text(:no_name))
-
-      {:error, :duplicate} ->
-        State.error(
-          state,
-          Agendum.TUI.Extras.Calendars.Messages.text(:duplicate, String.trim(name))
-        )
-    end
-  end
-
-  # Feeds (R75): the address, then its name (its category under Feeds)
+  # Feeds (R75): the address, then, once it is read, its name (its
+  # category under Feeds): the logic beside the extra, in its box
   defp prompt_action(state, :feed_url, text),
-    do: prompt(state, Agendum.TUI.Extras.Feeds.Messages.text(:name), {:feed_name, text})
+    do: Agendum.TUI.Extras.FeedsBox.address_typed(state, text)
 
-  defp prompt_action(state, {:feed_name, url}, name) do
-    case State.command(state, {:subscribe_feed, name, url}) do
-      {:ok, state, %{new: id}} ->
-        state
-        |> State.info(Agendum.TUI.Extras.Feeds.Messages.text(:subscribed, String.trim(name)))
-        |> Update.fetch_feed(id, :manual)
-
-      {:error, :bad_url} ->
-        State.error(state, Agendum.TUI.Extras.Feeds.Messages.text(:bad_url))
-
-      {:error, :no_name} ->
-        State.error(state, Agendum.TUI.Extras.Feeds.Messages.text(:no_name))
-
-      {:error, :duplicate} ->
-        State.error(state, Agendum.TUI.Extras.Feeds.Messages.text(:duplicate, String.trim(name)))
-    end
-  end
+  defp prompt_action(state, {:feed_name, url, entries}, name),
+    do: Agendum.TUI.Extras.FeedsBox.name_typed(state, url, entries, name)
 
   # F2 in the Feeds and Calendars boxes (R75a): the name, and its category's
   defp prompt_action(state, {rename, id}, text) when rename in [:rename_feed, :rename_calendar] do

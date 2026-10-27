@@ -265,6 +265,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] General negative links between any two categories, from the patent: Category Properties ▸ Excludes (R9)
 - [x] Fit column to contents (R22a): a command (View ▸ Column) that sets the highlighted column's width to fit its head and the entries of the items shown at that moment; a one-time adjustment, not kept in step as items change
 - [x] F3 lists `.opml` and `.xml` files at the Feeds box's OPML import and export prompts (meeting 2026-10-22-3, § 7; a bug fix, v0.16.2, 2026-10-23)
+- [x] The extras brought up to the UI guidelines (meeting 2026-10-26-6, §§ 6, 7; ADR 0049; `docs/UI_GUIDELINES.md`): the registry tests (2026-10-27); the Publish box's small gaps (v0.71.0, v0.71.1); Feeds and Calendars as managers like Macros, F6 properties, ALT-ENTER reads all, F7/F8 OPML in the manager, a read before subscribing with the title offered and an unreadable one refused (v0.72.0, 2026-10-28)
 
 ### Towards many users
 

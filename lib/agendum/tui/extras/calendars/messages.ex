@@ -23,6 +23,8 @@ defmodule Agendum.TUI.Extras.Calendars.Messages do
   def text(:duplicate, name), do: "#{name} is taken: another calendar has that name"
   def text(:subscribed, name), do: "Subscribed to #{name}"
   def text(:unsubscribed, name), do: "Unsubscribed from #{name}"
+  def text(:probing, url), do: "Reading #{url} …"
+  def text(:unreadable, reason), do: "Not subscribed: #{reason}"
   def text(:no_changes, name), do: "#{name}: no changes"
 
   @doc """
