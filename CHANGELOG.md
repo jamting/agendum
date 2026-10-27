@@ -4,6 +4,8 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.71.1 — 2026-10-27
+
 - **The blog's Posts and Drafts are always your own categories**: a feed's or a calendar's is neither completed nor listed there, and is refused if it comes another way.
 
 ## 0.71.0 — 2026-10-27
