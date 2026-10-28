@@ -3,10 +3,13 @@
 # tests do, and draws each screen as a PNG with the theme's colours. macOS
 # only (the drawing is done by render.swift, with AppKit).
 #
-#     MIX_ENV=test mix run tools/screenshots/screenshots.exs [--theme NAME] [--out DIR]
+#     MIX_ENV=test mix run tools/screenshots/screenshots.exs [--theme NAME] [--out DIR] [--only NAME,...]
 #
 # The pictures go to tmp/screenshots (by default), 720x400 for 80x25 like a
-# VGA text screen. Add a screen by adding a line to `shots/1`.
+# VGA text screen. Add a screen by adding a line to `shots/1`. The README's
+# picture is one of them, made again with
+#
+#     MIX_ENV=test mix run tools/screenshots/screenshots.exs --only 01-view --out docs/images
 
 Code.require_file("test/support/tui_helpers.ex")
 
@@ -19,7 +22,7 @@ defmodule Screenshots do
   @today ~D[2026-10-12]
 
   def run(args) do
-    {opts, _, _} = OptionParser.parse(args, strict: [theme: :string, out: :string])
+    {opts, _, _} = OptionParser.parse(args, strict: [theme: :string, out: :string, only: :string])
     {:ok, theme} = Theme.parse(opts[:theme] || "classic")
     out = opts[:out] || "tmp/screenshots"
     File.mkdir_p!(out)
@@ -28,14 +31,18 @@ defmodule Screenshots do
     state = start(Agendum.Sample.build(@today), width: 80, height: 25)
     state = %{state | now: ~N[2026-10-12 20:52:00], today: @today, path: "/home/me/planner.agendum"}
 
-    for {name, screen} <- shots(state) do
+    # --only "a,b" keeps the shots of those names; without it, all of them
+    only = if opts[:only], do: String.split(opts[:only], ","), else: nil
+    shots = for {name, _} = shot <- shots(state), only == nil or name in only, do: shot
+
+    for {name, screen} <- shots do
       cells = Path.join(out, name <> ".cells")
       File.write!(cells, cells(Render.render(screen), theme))
       {_, 0} = System.cmd(Path.expand(@renderer), [cells, Path.join(out, name <> ".png")])
       File.rm!(cells)
     end
 
-    IO.puts("Wrote #{length(shots(state))} screens to #{out}")
+    IO.puts("Wrote #{length(shots)} screens to #{out}")
   end
 
   defp shots(s) do

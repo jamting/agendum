@@ -6,17 +6,19 @@ New to Lotus Agenda? [`docs/AGENDA_HISTORY.md`](docs/AGENDA_HISTORY.md) explains
 
 You type free-form items. Agendum files them into categories: the one you typed them under, and any whose names appear in the text. Views show the same items arranged in different ways, and you change the data directly in the views.
 
-```
- File: ~/work.agendum                                          2026-10-08 09:00
- View: Activities
- Calls                                               When       Priority Contact
- • Set up meeting at Terracotta Corp to discuss                 Medium
-   CopyCat before the end of the month.
- • Don't forget to call Anna Lasky with the info…               High     Anna Lasky
- • Check with Abigail Scheer on meeting times.                  Medium   Abigail Scheer
-  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
- Help  │ Edit  │Choices│ Done  │ Note  │ Props │ Mark  │Vw Mgr │Cat Mgr│ Menu
-```
+![Agendum's Activities view in Agenda's colours: five calls to make, each with columns for When, Priority and Contact, and the function-key bar along the bottom](docs/images/01-view.png)
+
+## Find your way
+
+- [The user guide](docs/guide/index.html): the short version, with a worked example (open it in a browser).
+- [The manual](docs/manual/index.html): the long one, as Owl teaches Rabbit to use Agendum.
+- [`docs/INDEX.md`](docs/INDEX.md): every document, what it is for and when to read it.
+- [`docs/SPEC.md`](docs/SPEC.md): what Agendum does, rule by rule, each one checked against Agenda or marked as our choice.
+- [`docs/ROADMAP.md`](docs/ROADMAP.md): what comes next; the done list is in [`docs/ROADMAP_DONE.md`](docs/ROADMAP_DONE.md).
+- [`docs/adr/`](docs/adr/): the architecture decision records, why the code is the way it is.
+- [`docs/meetings/`](docs/meetings/): the minutes of the project's panel meetings in Owl's house, where a panel of imagined experts discusses the owner's agenda and the owner decides. The voices are lenses, not the real people's words.
+- [`docs/reviews/`](docs/reviews/): the same panel's dated reviews of the whole project, with scores, evidence and the trend since the last one.
+
 
 ## Running
 
@@ -44,7 +46,7 @@ cp starters/planner.agendum ~/planner.agendum && ./agendum ~/planner.agendum
 
 ## Quick tour
 
-The [user guide](docs/guide/index.html) is the short version, with a worked example; the [manual](docs/manual/index.html) is the long one, as Owl explains it to Rabbit. Open them in a browser; `mix docs` also puts them beside the API documentation.
+The guide and the manual (Find your way, above) say it all at more leisure; `mix docs` also puts them beside the API documentation. In short:
 
 - **Type** under a section to add an item. It is assigned to that section's category, and automatically to any category it mentions.
 - Dates in the text count: "Call Bob next Friday" gets a When date. **ALT-F2** sets one explicitly.
@@ -67,7 +69,9 @@ mix agendum.starters --samples   # a copy full of sample data, for testing: tmp/
 
 ## Contributing
 
-[`CONTRIBUTING.md`](CONTRIBUTING.md) takes you from a fresh machine to a first change: installing Erlang and Elixir, running the checks, finding your way in the code and the documents, and the workflow for a change. The code is in a private GitHub repository, with the checks run on every push and the long fuzz run every night; the documentation on GitHub Pages is still to come ([`docs/plans/GITHUB.md`](docs/plans/GITHUB.md)).
+[`CONTRIBUTING.md`](CONTRIBUTING.md) takes you from a fresh machine to a first change: installing Erlang and Elixir, running the checks, finding your way in the code and the documents, and the workflow for a change.
+
+The checks run on every push and the long fuzz run every night. Contributions from others open later, once a lawyer has checked the contributor licence agreement (`CLA.md`).
 
 ## Licence
 
