@@ -70,6 +70,8 @@ The same eight lenses serve the review, the meetings and the study plan; who att
 | Little Marie-Who-Folds       | Tidiness and scope; advises, never discards  |
 | Claude            | An owl from Anthropic, Owl's cousin: readiness for agents |
 
+Since meeting 2026-10-28-2 (§ 10) the panel goes by Wood pseudonyms in new texts (Joe the Polar Bear, Marie the Wren …; the table, private, in the `expert-review` skill), first names after the first mention, and I am Mattias; older texts keep the real names here and are mapped when the public copy is made.
+
 The panel advises; it never votes. I decide.
 
 ## Where things live
