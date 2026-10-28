@@ -7,7 +7,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
 1. The dry run of the public copy, as a script (Housekeeping; meeting 2026-10-28-2, § 11): built 2026-10-28 (`ROADMAP_DONE.md`); its report goes to the practical meeting
-2. A practical meeting on the dry run's results: go or no-go; its findings settled (the many-users mentions, the old commit messages, the Lotus starter files among the test fixtures); and the licence, which the owner put into the copy without a lawyer's check for now (2026-10-28): whether a lawyer checks it before publishing (`plans/GITHUB.md` § 7, step 7; ADR 0051) (Housekeeping; meeting 2026-10-28-2, § 11)
+2. A practical meeting on the dry run's results: go or no-go; its findings settled (the many-users mentions, the old commit messages, the Lotus starter files among the test fixtures); and the licence, which the owner put into the copy without a lawyer's check for now (2026-10-28): whether a lawyer checks it before publishing (`plans/GITHUB.md` § 7, step 7; ADR 0051); and the workshop's new name on GitHub, so the public repository can be `jamting/agendum` (step 8) (Housekeeping; meeting 2026-10-28-2, § 11)
 3. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
 4. The public site, with four doors (Housekeeping; meeting 2026-10-28-2, § 9)
 5. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
