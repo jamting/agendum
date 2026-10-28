@@ -19,7 +19,12 @@ defmodule Agendum.Core.AgFile.ConvertTest do
   alias Agendum.Core.AgFile.{Convert, Reader}
 
   @dir "test/fixtures/ag"
-  @files ~w(ACCOUNT DATES INFOSIFT PEOPLE PLANNER RICH UX)
+  # Lotus's starters, then the files made in Agenda for these tests; the
+  # starters' tests run only where they are (test_helper.exs)
+  @lotus ~w(ACCOUNT INFOSIFT PEOPLE PLANNER)
+  @own ~w(DATES RICH UX)
+  # the fixtures on this machine, for the tests that go through them all
+  @files @own ++ Enum.filter(@lotus, &File.exists?("test/fixtures/ag/#{&1}.AG"))
   @today ~D[2026-10-16]
 
   defp bytes(name), do: File.read!(Path.join(@dir, name <> ".AG"))
@@ -38,13 +43,21 @@ defmodule Agendum.Core.AgFile.ConvertTest do
   end
 
   test "every fixture imports as a whole file that keeps Agendum's rules" do
-    for name <- @files do
-      {db, report} = import!(name)
-      assert Invariants.violations(db) == [], name
-      assert report.views == map_size(db.views) and report.views > 0, name
-    end
+    Enum.each(@own, &imports_whole/1)
   end
 
+  @tag :lotus_starters
+  test "every starter imports as a whole file that keeps Agendum's rules" do
+    Enum.each(@lotus, &imports_whole/1)
+  end
+
+  defp imports_whole(name) do
+    {db, report} = import!(name)
+    assert Invariants.violations(db) == [], name
+    assert report.views == map_size(db.views) and report.views > 0, name
+  end
+
+  @tag :lotus_starters
   test "an imported file shows dates in Agenda's default format (R41)" do
     {db, _} = import!("PLANNER")
     assert db.date_format == Agendum.Core.DateFormat.agenda()
@@ -71,6 +84,7 @@ defmodule Agendum.Core.AgFile.ConvertTest do
            }
   end
 
+  @tag :lotus_starters
   test "the categories come over with their tree and settings" do
     {db, _} = import!("PLANNER")
     by_name = Map.new(db.categories, fn {_id, c} -> {c.name, c} end)
@@ -217,6 +231,6 @@ defmodule Agendum.Core.AgFile.ConvertTest do
   test "anything that is not an Agenda file is refused" do
     assert AgFile.import("hello") == {:error, :not_an_agenda_file}
     refute AgFile.agenda_file?("{\"format\": \"agendum-json\"}")
-    assert AgFile.agenda_file?(bytes("PEOPLE"))
+    assert AgFile.agenda_file?(bytes("RICH"))
   end
 end

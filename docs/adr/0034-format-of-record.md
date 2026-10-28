@@ -19,7 +19,7 @@ The owner decided (2026-10-16), with the reasons below. Agendum is also heading 
 
 - **The Erlang-term file stays the format of record** for the single-user program, for its speed and compactness at large volumes. ADR 0003 stands.
 - **Backward compatibility is not a promise yet.** The owner is the only user, so a change may leave old files behind when upgrading them would cost more than it is worth. `Store.upgrade/1` and the golden files (`test/fixtures/formats/`) stay: they show what a change breaks, and the promise can be made the day other people keep data in Agendum.
-- **Many users get a database**, most likely PostgreSQL, rather than files or snapshots with a command log as `docs/plans/MULTIUSER.md` first sketched. That is decided with the web plan; the pure core does not change for it (rule 1: storage is the shell's business).
+- **Many users get a database**, most likely PostgreSQL, rather than files or snapshots with a command log, as first sketched. That is decided with the web plan; the pure core does not change for it (rule 1: storage is the shell's business).
 - **JSON is for people:** exchange between humans and programs, and looking at a file. It is Agendum's counterpart of Agenda's structured files (STF, User's Guide chapters 23–24, Working with Definition Files Appendix B): a tagged text file of items, categories, notes, dates, numbers, conditions and actions, written by File ▸ Transfer ▸ Export. Agenda's export chooses what goes in (which items: none, the current one, the marked ones, a section's, the view's or all; explicit or also conditional assignments; categories without items or not). Agendum's export will likewise ask which item levels to include (`docs/plans/ITEM_LEVELS.md`). It is not the working format.
 
 ## Consequences
@@ -27,4 +27,4 @@ The owner decided (2026-10-16), with the reasons below. Agendum is also heading 
 - Nothing changes in the code now. Each new stored field still bumps the format version (with a golden file, `mix agendum.golden`) and a line in the JSON schema.
 - The JSON round trip stays exact for everything included in an export; an export of chosen levels is a partial file by design, and importing one must say so.
 - Performance work (the Sharpen the saw items on reading dates and caching views) gets more weight: volumes, not typing, will set the limits.
-- The storage plan in `docs/plans/MULTIUSER.md` (§3) is to be rewritten around a database when the web work starts.
+- The storage plan for many users is to be rewritten around a database when the web work starts.

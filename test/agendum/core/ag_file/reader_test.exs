@@ -9,11 +9,17 @@ defmodule Agendum.Core.AgFile.ReaderTest do
   alias Agendum.Core.AgFile.Reader
 
   @dir "test/fixtures/ag"
-  @files ~w(ACCOUNT DATES INFOSIFT PEOPLE PLANNER RICH UX)
+  # Lotus's starters, then the files made in Agenda for these tests (on a
+  # starter); the starters' tests run only where they are (test_helper.exs)
+  @lotus ~w(ACCOUNT INFOSIFT PEOPLE PLANNER)
+  @files @lotus ++ ~w(DATES RICH UX)
   # the owner's own Planner, used for years: on this machine only
   @owners Path.expand("~/Dosbox/APPS/AGENDA/PLANNER.AG")
 
   for name <- @files do
+    # a module attribute set inside `for` tags only the test after it
+    if name in @lotus, do: @tag(:lotus_starters)
+
     test "#{name}.AG reads as agdump.py reads it" do
       {:ok, read} = Reader.read(File.read!(Path.join(@dir, unquote(name) <> ".AG")))
       expected = JSON.decode!(File.read!(Path.join(@dir, unquote(name) <> ".json")))
@@ -42,10 +48,10 @@ defmodule Agendum.Core.AgFile.ReaderTest do
   end
 
   test "a file cut short is read as far as it goes, or refused, never a crash" do
-    planner = File.read!(Path.join(@dir, "PLANNER.AG"))
+    rich = File.read!(Path.join(@dir, "RICH.AG"))
 
     for size <- [1024, 1500, 4096, 20_000, 40_000] do
-      result = Reader.read(binary_part(planner, 0, size))
+      result = Reader.read(binary_part(rich, 0, size))
       assert match?({:ok, _}, result) or result == {:error, :not_an_agenda_file}
     end
   end

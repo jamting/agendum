@@ -51,7 +51,7 @@ Read before judging; every finding in the report needs a pointer (`path:line`, a
 
 **Architecture**: `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md`, `docs/DATA_ACCESS.md`, `test/agendum/architecture_test.exs`. Then read code, not only documents: `lib/agendum/core.ex`, `core/database.ex`, `core/assign.ex`, a facade area, `tui/update.ex`, `tui/state.ex`, `tui/app.ex`, `store.ex`, and whatever the largest or most changed modules are this time.
 
-**Agents** (for Claude's lens): `docs/plans/WOL-IN-THE-MACHINE.md`, `docs/plans/MULTIUSER.md`, ADR 0033 (commands and keymaps), ADR 0034 (format of record), `docs/JSON_FORMAT.md`, `lib/agendum/cli.ex` (what can be done without the TUI), `Agendum.TUI.Commands` and the command layer as far as it has come. Ask: could an agent today do one ordinary user action (add an item, assign it, read a view) without driving keystrokes, and explain what it did?
+**Agents** (for Claude's lens): `docs/plans/WOL-IN-THE-MACHINE.md`, ADR 0033 (commands and keymaps), ADR 0034 (format of record), `docs/JSON_FORMAT.md`, `lib/agendum/cli.ex` (what can be done without the TUI), `Agendum.TUI.Commands` and the command layer as far as it has come. Ask: could an agent today do one ordinary user action (add an item, assign it, read a view) without driving keystrokes, and explain what it did?
 
 **Tidiness** (for Marie's lens): `docs/INDEX.md` against what is in `docs/` (orphans, duplicates), plans' status lines (finished or abandoned plans still open), the roadmap's open list (how long, how old, how much of it serves the vision), the growing folders (`docs/summaries/`, `docs/reviews/`, `docs/meetings/`), public functions no one calls (`mix xref callers`, or a grep), stored fields that nothing reads (`docs/DATA_MODEL.md` against the code).
 

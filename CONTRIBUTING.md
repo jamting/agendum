@@ -52,7 +52,7 @@ The code in brief:
 
 - `lib/agendum/core/` is a **pure functional core**: no I/O, no clock, no processes. Everything a front end needs goes through the facade, `Agendum.Core`.
 - `lib/agendum/tui/` is the **terminal UI**, Elm style: `Agendum.TUI.Update.handle(state, key)` returns the new state and effects, `Agendum.TUI.Render.render(state)` returns the screen. Only a few modules touch the outside world (the terminal, files, preferences).
-- A web front end on the same core is planned ([`docs/plans/MULTIUSER.md`](docs/plans/MULTIUSER.md)), so the logic of a user action belongs in the core, not in the UI.
+- A second front end (a web one, say) may come on the same core (ADR 0036), so the logic of a user action belongs in the core, not in the UI.
 
 `test/agendum/architecture_test.exs` checks the most important of these rules; [`CLAUDE.md`](CLAUDE.md) lists them all.
 

@@ -20,9 +20,9 @@ defmodule Agendum.TUI.State do
   when it was not on disk) and whether an auto-save found another writer
   had changed it (`saved.conflict`, R71).
 
-  Two kinds of field (ROADMAP, Towards many users; `docs/plans/MULTIUSER.md`
-  §7, step 5): the **file** (`file_fields/0`), what everyone working in the
-  same file shares, which a web server would hold once for them all; and
+  Two kinds of field, for a second front end (CLAUDE.md, rule 6): the
+  **file** (`file_fields/0`), what everyone working in the same file
+  shares, which a web server would hold once for them all; and
   the **session** (`session_fields/0`), one person's: what they see, where
   they are, what they are typing, their undo, their settings. Here both are
   in one struct; a web version keeps the first in the file's process and
@@ -146,7 +146,7 @@ defmodule Agendum.TUI.State do
   # Domain: what is shared by everyone in the file (the database, where it
   # is kept and whether it is saved, the calendars being read for it);
   # everything else is one person's session. Undo is the session's: each
-  # person undoes their own changes (MULTIUSER §4).
+  # person undoes their own changes.
   @file_fields [:db, :path, :saved, :dirty, :fetching]
 
   @doc "The fields that belong to the file, shared by everyone working in it."

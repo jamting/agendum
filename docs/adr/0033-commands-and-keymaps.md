@@ -4,7 +4,7 @@
 
 ## Context
 
-Until now each screen read its keys in one long `case`: a key ran code directly. Nothing knew which commands exist, what a key does in a given place, or which keys are free. The F1 help and `docs/KEYBOARD.md` were written by hand and could drift from the code. `docs/plans/MULTIUSER.md` §6 plans commands that describe themselves (as Emacs's do), a command list, "describe key", and later key bindings of the person's own.
+Until now each screen read its keys in one long `case`: a key ran code directly. Nothing knew which commands exist, what a key does in a given place, or which keys are free. The F1 help and `docs/KEYBOARD.md` were written by hand and could drift from the code. A second front end needs commands that describe themselves (as Emacs's do), a command list, "describe key", and later key bindings of the person's own.
 
 The owner settled these choices before any code (2026-10-15):
 

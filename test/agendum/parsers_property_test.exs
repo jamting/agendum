@@ -339,8 +339,12 @@ defmodule Agendum.ParsersPropertyTest do
   # --- .AG files -----------------------------------------------------------------
 
   # The smallest real Agenda file; damage done to it reaches deeper into the
-  # reader than random bytes would.
-  @ag File.read!("test/fixtures/ag/INFOSIFT.AG")
+  # reader than random bytes would. Lotus's starter is not in the public
+  # copy (meeting 2026-10-28-5, § 7), where RICH.AG, made in Agenda for
+  # the tests, takes its place.
+  @ag if File.exists?("test/fixtures/ag/INFOSIFT.AG"),
+        do: File.read!("test/fixtures/ag/INFOSIFT.AG"),
+        else: File.read!("test/fixtures/ag/RICH.AG")
 
   # A damage: some bytes set to random values, or the file cut short.
   defp damaged_ag do

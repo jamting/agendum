@@ -4,7 +4,7 @@
 
 ## Context
 
-The roadmap had customizable key bindings for the terminal program: the person's own bindings, kept in the preferences, set in File ▸ Customize ▸ Keys (`docs/plans/MULTIUSER.md` §6, ADR 0033 prepared the lookup order for it). A web version is planned with a modern interface (ADR 0020), for people who never used Agenda (`docs/VISION.md`), and the core's commands (R66, ADR 0036) serve both.
+The roadmap had customizable key bindings for the terminal program: the person's own bindings, kept in the preferences, set in File ▸ Customize ▸ Keys (ADR 0033 prepared the lookup order for it). A web version is planned with a modern interface (ADR 0020), for people who never used Agenda (`docs/VISION.md`), and the core's commands (R66, ADR 0036) serve both.
 
 ## Decision
 

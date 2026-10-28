@@ -8,7 +8,7 @@ defmodule Agendum.TUI.Keymap do
 
   A printable character is not bound in a view: it starts typing an item
   or a column entry (what Emacs calls self-insert). Later the person's own
-  bindings will be looked up first (MULTIUSER.md §6).
+  bindings will be looked up first (ADR 0033).
 
   Pure.
   """

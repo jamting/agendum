@@ -1,7 +1,7 @@
 defmodule Agendum.TUI.StateSplitTest do
   @moduledoc """
-  The TUI state's fields are the file's or the session's (MULTIUSER §7,
-  step 5): a new field must be put in one of them.
+  The TUI state's fields are the file's or the session's (see
+  `Agendum.TUI.State`): a new field must be put in one of them.
   """
   use ExUnit.Case, async: true
 

@@ -40,7 +40,11 @@ defmodule Hostile do
     do: set_word(bytes, 0x400 + 64 * block + 2 * word, value)
 end
 
-ag = File.read!("test/fixtures/ag/INFOSIFT.AG")
+# Lotus's starter, damaged below; not in the public copy (meeting
+# 2026-10-28-5, § 7), where the files made from it are left out too
+ag =
+  if File.exists?("test/fixtures/ag/INFOSIFT.AG"), do: File.read!("test/fixtures/ag/INFOSIFT.AG")
+
 golden = Agendum.Starters.Golden.build() |> Agendum.Core.JSONFile.encode()
 
 # --- Markdown -----------------------------------------------------------------
@@ -259,33 +263,41 @@ Hostile.write("feed/bom-only.xml", <<0xEF, 0xBB, 0xBF>>)
 # --- .AG files ----------------------------------------------------------------
 
 Hostile.write("ag/header-only.AG", "T" <> :binary.copy(<<0>>, 1023))
-Hostile.write("ag/cut-after-header.AG", binary_part(ag, 0, 1024))
-Hostile.write("ag/last-block-huge.AG", Hostile.set_word(ag, 0x3A, 0xFFFF))
 
-# The slice A review: a category reachable from many parents was read once
-# for each path to it. MAIN (block 9) gets a chain of blocks, each the first
-# child and the next sibling of the one before: 2^25 paths, 26 blocks.
-many =
-  Enum.reduce(250..274, Hostile.set_block_word(ag, 9, 17, 250), fn n, bytes ->
-    bytes
-    |> Hostile.set_block_word(n, 0, n)
-    |> Hostile.set_block_word(n, 17, n + 1)
-    |> Hostile.set_block_word(n, 15, n + 1)
-  end)
+# `if` with no `else` gives nil, and does nothing, when the starter is missing
+if ag do
+  Hostile.write("ag/cut-after-header.AG", binary_part(ag, 0, 1024))
+  Hostile.write("ag/last-block-huge.AG", Hostile.set_word(ag, 0x3A, 0xFFFF))
 
-Hostile.write("ag/many-parents.AG", many)
+  # The slice A review: a category reachable from many parents was read once
+  # for each path to it. MAIN (block 9) gets a chain of blocks, each the first
+  # child and the next sibling of the one before: 2^25 paths, 26 blocks.
+  many =
+    Enum.reduce(250..274, Hostile.set_block_word(ag, 9, 17, 250), fn n, bytes ->
+      bytes
+      |> Hostile.set_block_word(n, 0, n)
+      |> Hostile.set_block_word(n, 17, n + 1)
+      |> Hostile.set_block_word(n, 15, n + 1)
+    end)
 
-# MAIN its own first child and next sibling
-Hostile.write(
-  "ag/cycle.AG",
-  ag |> Hostile.set_block_word(9, 17, 9) |> Hostile.set_block_word(9, 15, 9)
-)
+  Hostile.write("ag/many-parents.AG", many)
 
-# every text chain pointing at itself, the root at a block past the end
-Hostile.write(
-  "ag/self-chains.AG",
-  Enum.reduce(1..294, Hostile.set_word(ag, 0x40, 0xFFF0), &Hostile.set_block_word(&2, &1, 2, &1))
-)
+  # MAIN its own first child and next sibling
+  Hostile.write(
+    "ag/cycle.AG",
+    ag |> Hostile.set_block_word(9, 17, 9) |> Hostile.set_block_word(9, 15, 9)
+  )
+
+  # every text chain pointing at itself, the root at a block past the end
+  Hostile.write(
+    "ag/self-chains.AG",
+    Enum.reduce(
+      1..294,
+      Hostile.set_word(ag, 0x40, 0xFFF0),
+      &Hostile.set_block_word(&2, &1, 2, &1)
+    )
+  )
+end
 
 # --- JSON ---------------------------------------------------------------------
 

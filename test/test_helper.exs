@@ -7,4 +7,13 @@ Mix.ensure_application!(:tools)
 
 # the 2^24 bijection test takes a while: `mix test --include exhaustive`;
 # every run's seed and failures are also kept in tmp/check/ (Agendum.TestLog)
-ExUnit.start(exclude: [:exhaustive], formatters: [ExUnit.CLIFormatter, Agendum.TestLog])
+#
+# Lotus's starter applications (Planner, Information Sifter …) are Lotus's
+# files: the public copy leaves them out (meeting 2026-10-28-5, § 7), and
+# the tests tagged :lotus_starters run only where they are.
+lotus_starters = if File.exists?("test/fixtures/ag/PLANNER.AG"), do: [], else: [:lotus_starters]
+
+ExUnit.start(
+  exclude: [:exhaustive | lotus_starters],
+  formatters: [ExUnit.CLIFormatter, Agendum.TestLog]
+)
