@@ -32,3 +32,10 @@ The code now matches: the Mix app is `:agendum`, the modules `Agendum.*`, in `li
 
 The repository folder (`Lotus Agenda`) is renamed by the owner, and the small TUI modules are still to be grouped in subfolders (Roadmap).
 
+
+## Update, 2026-10-28: the name kept, and how it is said
+
+Weighed against **Owl's Agendum** at the meeting of 2026-10-28-4 (§ 5) and kept: "Wol" is distinctive and found exactly in a search, where "Owl" is crowded; it is Milne's own spelling; and the planned agent is called Wol, inside the program named after him (`docs/plans/WOL-IN-THE-MACHINE.md`). The long name is never stored in a person's file, only in text the program writes.
+
+- **How it is said:** "wolz a-JEN-dum". *Wol* rhymes with "doll" (British /wɒl/; American close to "wall", /wɑːl/); *Agendum* has a soft g and the stress on the middle syllable, as in "agenda" (/əˈdʒɛndəm/).
+- **The story told once** where the name first meets a reader (the About help, the README, later the site): "Wol is how Owl spells his name", so it is not taken for a typo.
