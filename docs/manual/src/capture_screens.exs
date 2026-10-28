@@ -1,7 +1,10 @@
 # Captures the screens shown in the Agenda manual (docs/manual/index.html)
 # from the program itself: it opens Rabbit's file (`Agendum.Sample.rabbit/1`,
 # also `agendum --rabbit`), drives the real TUI with key presses, and writes
-# each screen as text to docs/manual/src/screens/.
+# each screen twice: as text to docs/manual/src/screens/ (committed, so a
+# changed screen shows in a diff) and as the picture the manual shows, a PNG
+# in Agenda's colours in docs/manual/screens/ (drawn at twice 720x400, for
+# sharp text on a high-density display; macOS only, tools/screenshots/png.ex).
 #
 #     MIX_ENV=test mix run docs/manual/src/capture_screens.exs
 #     python3 docs/manual/src/build.py
@@ -10,19 +13,22 @@
 # should, the script stops with the name of the capture.
 
 Code.require_file("test/support/tui_helpers.ex")
+Code.require_file("tools/screenshots/png.ex")
 
 defmodule ManualScreens do
   @moduledoc false
   alias Agendum.Core
   alias Agendum.Core.Database
-  alias Agendum.TUI.{CategoryScreens, Layout, State}
+  alias Agendum.TUI.{CategoryScreens, Layout, Render, State, Terminal.Theme}
   import Agendum.TUIHelpers
 
   @out "docs/manual/src/screens"
+  @pictures "docs/manual/screens"
   @today ~D[2026-10-12]
 
   def run do
     File.mkdir_p!(@out)
+    File.mkdir_p!(@pictures)
     state = start(Agendum.Sample.rabbit(@today), width: 80, height: 25)
 
     state = %{
@@ -137,7 +143,18 @@ defmodule ManualScreens do
     state = put_in(state.prefs.extras, true)
     address = String.graphemes("webcal://example.org/expotitions.ics")
     s = press(state, [{:f, 10}, "f", "t", "c", :insert] ++ address ++ [:enter])
-    s = press(s, String.graphemes("Expotitions") ++ [:enter])
+    # the shell reads the address first (webcal:// is read as https://); its
+    # answer offers the calendar's own name
+    url = "https://example.org/expotitions.ics"
+
+    s =
+      Agendum.TUI.Update.Results.calendar_probed(
+        s,
+        url,
+        {:ok, %{title: "Expotitions", events: []}}
+      )
+
+    s = press(s, :enter)
     [id] = Map.keys(s.db.calendars)
 
     weekly = %{
@@ -164,7 +181,7 @@ defmodule ManualScreens do
       }
     ]
 
-    s = Agendum.TUI.Update.calendar_read(s, id, {:ok, events})
+    s = Agendum.TUI.Update.Results.calendar_read(s, id, url, {:ok, events})
     shot("45-calendars", s, :calendars)
   end
 
@@ -259,6 +276,8 @@ defmodule ManualScreens do
     top = State.mode(state) && State.mode(state).type
     if top != type, do: raise("#{name}: expected #{inspect(type)} on top, got #{inspect(top)}")
     File.write!(Path.join(@out, name <> ".txt"), screen(state))
+    {:ok, classic} = Theme.parse("classic")
+    ScreenPNG.write(Render.render(state), classic, Path.join(@pictures, name <> ".png"), 2)
   end
 end
 

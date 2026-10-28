@@ -92,11 +92,16 @@ defmodule Agendum.MixProject do
     ]
   end
 
+  # the pages with their stylesheets, script, screen pictures and fonts (not
+  # the sources they are made from)
   defp copy_user_docs(_args) do
-    for file <- ~w(guide/index.html guide/guide.css manual/index.html manual/manual.css) do
-      target = Path.join([@docs_output, "docs", file])
+    files =
+      ~w(guide/index.html guide/guide.css guide/place.js manual/index.html manual/manual.css)
+
+    for path <- files ++ ~w(guide/screens manual/screens fonts) do
+      target = Path.join([@docs_output, "docs", path])
       File.mkdir_p!(Path.dirname(target))
-      File.cp!(Path.join("docs", file), target)
+      File.cp_r!(Path.join("docs", path), target)
     end
   end
 

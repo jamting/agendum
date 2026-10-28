@@ -1,273 +1,312 @@
-/* The Agenda user guide: plain HTML, one stylesheet, works offline. */
+/* The look of the user guide and the manual (meeting 2026-10-28-6, § 5):
+   The Proportional Web's typography (Alegreya, Alegreya SC and Courier
+   Prime, in ../fonts/ under the SIL Open Font License; one baseline grid,
+   every space a whole or half line) on the guide's own layout: a contents
+   sidebar that shows where you are, margin notes (asides), and the program's
+   screens as pictures. The manual adds its dialogue in manual.css.
+
+   The typography follows "The Proportional Web" by Oskar Wickström
+   (https://owickstrom.github.io/the-proportional-web/, MIT licence; the
+   blog's copy of it is lib/agendum/core/extras/site_assets/style.css).
+
+   To play with the look, change the knobs below and reload the page. */
+
+/* ======================================================================
+   Knobs
+   ====================================================================== */
 
 :root {
+  /* --- type --------------------------------------------------------- */
+  --font-text: "Alegreya", Georgia, serif;          /* running text */
+  --font-heading: "Alegreya SC", Georgia, serif;    /* small-capital headings */
+  --font-code: "Courier Prime", ui-monospace, monospace; /* keys, commands */
+  --font-size: 17px;          /* everything else is sized from this */
+  --font-weight: 450;         /* Alegreya is variable: 400 (light) to 900 */
+  --heading-spacing: 0.125em; /* letter spacing of the small capitals */
+
+  /* --- rhythm: the height of one line; every space is a multiple ----- */
+  --lh: 1.6rem;
+
+  /* --- widths ------------------------------------------------------- */
+  --text: 36rem;      /* the reading column (about 70 characters) */
+  --margin: 15rem;    /* the margin notes' column, on a wide window */
+  --toc: 15rem;       /* the contents sidebar */
+  --gap: 3rem;        /* between the columns */
+  --screen: 720px;    /* every screen picture (an 80x25 screen) */
+
+  /* --- lines -------------------------------------------------------- */
+  --rule: 1.5px;      /* the rules under headings and the title */
+
+  /* --- colours, light --------------------------------------------- */
   --paper: #fbf7ee;
   --ink: #2b2a27;
-  --muted: #6b665c;
-  --accent: #b5652b; /* honey */
-  --accent-soft: #f3e2c7;
-  --rule: #e4dccb;
-  /* Agenda 2.0 on a colour VGA screen: the program's classic theme */
-  --screen-bg: #aaaaaa;
-  --screen-ink: #000000;
-  --screen-title: #0000aa;
-  --screen-hi: #0000aa;
-  --screen-cursor: #aa0000;
-  --kbd-bg: #fffdf8;
-  --tip-bg: #eef5ea;
-  --tip-rule: #9cbf8e;
+  --muted: #6b665c;   /* subtitles, margin notes, chapters not in view */
+  --accent: #9a4f1c;  /* links, the story's line: honey */
+  --soft: #f3e9d6;    /* the story, commands */
+  --here: #f0dcc0;    /* the chapter you are in, in the contents */
+  --owl: #7a5230;     /* the manual's dialogue: bark */
+  --owl-bg: #f4ece0;
+  --rabbit: #4f6b3a;  /* and lettuce */
+  --rabbit-bg: #edf3e6;
 }
 
+/* --- colours, dark (when the reader's system is) -------------------- */
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #1d1b18;
-    --ink: #ece6d8;
-    --muted: #b1a993;
+    --paper: #1b1a17;
+    --ink: #e8e2d4;
+    --muted: #aaa293;
     --accent: #e3a35f;
-    --accent-soft: #3a2e20;
-    --rule: #3a352d;
-    --kbd-bg: #2a2722;
-    --tip-bg: #22301f;
-    --tip-rule: #5d7d50;
+    --soft: #2c261e;
+    --here: #3a2e20;
+    --owl: #d9a877;
+    --owl-bg: #2a231b;
+    --rabbit: #a9c98d;
+    --rabbit-bg: #1f2819;
   }
 }
 
-* {
-  box-sizing: border-box;
-}
+/* --- where the layout changes ------------------------------------------
+   CSS cannot use variables in these, so they are numbers here:
+   below 78rem the margin column goes and the notes move into the text;
+   below 52rem the contents move to the top. */
+
+/* ======================================================================
+   Fonts
+   ====================================================================== */
+
+@font-face { font-family: "Alegreya"; src: url("../fonts/alegreya-latin-wght-normal.woff2") format("woff2"); font-weight: 400 900; font-style: normal; font-display: swap; }
+@font-face { font-family: "Alegreya"; src: url("../fonts/alegreya-latin-wght-italic.woff2") format("woff2"); font-weight: 400 900; font-style: italic; font-display: swap; }
+@font-face { font-family: "Alegreya SC"; src: url("../fonts/alegreya-sc-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Alegreya SC"; src: url("../fonts/alegreya-sc-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Courier Prime"; src: url("../fonts/courier-prime-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+
+/* ======================================================================
+   The page
+   ====================================================================== */
+
+* { box-sizing: border-box; }
+
+html { font-size: var(--font-size); }
 
 body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font:
-    17px/1.6 Georgia,
-    "Iowan Old Style",
-    "Palatino Linotype",
-    serif;
+  font-family: var(--font-text);
+  font-weight: var(--font-weight);
+  font-optical-sizing: auto;
+  font-variant-numeric: oldstyle-nums;
+  line-height: var(--lh);
 }
 
+/* contents | text | margin notes: the text keeps a readable measure, and
+   the width left over goes to the sidebar and the margin */
 .page {
   display: grid;
-  grid-template-columns: 15rem minmax(0, 46rem);
-  gap: 3rem;
-  max-width: 66rem;
-  margin: 0 auto;
-  padding: 2.5rem 1.5rem 5rem;
+  grid-template-columns: var(--toc) minmax(0, var(--text)) var(--margin);
+  justify-content: center;
+  column-gap: var(--gap);
+  padding: calc(var(--lh) * 2) 2rem calc(var(--lh) * 4);
 }
+main { grid-column: 2; }
 
+/* --- the contents ---------------------------------------------------- */
 nav.toc {
+  grid-column: 1;
   position: sticky;
-  top: 1.5rem;
+  top: var(--lh);
   align-self: start;
-  max-height: calc(100vh - 3rem);
+  max-height: calc(100vh - var(--lh) * 2);
   overflow: auto;
-  font:
-    15px/1.5 system-ui,
-    -apple-system,
-    "Segoe UI",
-    sans-serif;
+  font-size: 0.95rem;
 }
-
 nav.toc h2 {
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin: 0 0 0.5rem;
+  margin: 0 0 calc(var(--lh) / 2);
+  padding: 0 0 calc(var(--lh) / 2 - var(--rule));
+  border-top: 0;
+  border-bottom: var(--rule) solid var(--ink);
 }
-
-nav.toc ol {
-  padding-left: 2rem;
-  margin: 0;
-}
-nav.toc li {
-  margin: 0.15rem 0;
-}
+nav.toc ol { margin: 0; padding-left: 1.6rem; }
+nav.toc ol ol { font-size: 0.9em; color: var(--muted); }
+nav.toc li { margin: 0; }
+nav.toc li::marker { color: var(--muted); }
 nav.toc a {
+  display: block;
+  padding: 0 0.4rem;
+  margin-left: -0.4rem;
   color: var(--ink);
   text-decoration: none;
+  border-radius: 3px;
 }
-nav.toc a:hover {
-  color: var(--accent);
-  text-decoration: underline;
-}
+nav.toc a:hover { color: var(--accent); }
+/* where you are: the chapter on screen now (place.js) */
+nav.toc a[aria-current="true"] { background: var(--here); font-weight: 600; }
 
-header.title {
-  margin-bottom: 2rem;
-  border-bottom: 1px solid var(--rule);
-}
+/* ======================================================================
+   Headings, in the blog's small capitals
+   ====================================================================== */
+
+h1, h2, h3, h4 { font-weight: var(--font-weight); line-height: var(--lh); }
+
+header.title { position: relative; margin-bottom: calc(var(--lh) * 2); }
 header.title h1 {
-  font-size: 2.4rem;
-  margin: 0 0 0.25rem;
-  line-height: 1.15;
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  line-height: calc(var(--lh) * 1.5);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin: 0 0 var(--lh);
+  padding: 0 130px calc(var(--lh) / 2 - var(--rule)) 0;
+  border-bottom: var(--rule) solid var(--ink);
 }
-header.title p {
-  color: var(--muted);
-  margin: 0 0 1.5rem;
-}
+header.title p { color: var(--muted); font-style: italic; margin: 0; }
 header.title svg {
-  float: right;
-  margin: -0.5rem 0 0 1rem;
+  position: absolute;
+  right: 0;
+  top: calc(var(--lh) * -1.5);
+  width: 110px;
+  height: auto;
+  max-height: 100px;
 }
 
 h2 {
-  font-size: 1.55rem;
-  margin: 3rem 0 0.75rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--rule);
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-variant: all-small-caps;
+  letter-spacing: var(--heading-spacing);
+  margin: calc(var(--lh) * 3) 0 0;
+  padding-top: calc(var(--lh) - var(--rule));
+  border-top: var(--rule) solid var(--ink);
 }
-/* Under each chapter heading, a subtitle in the books' style ("In Which …"). */
-h2 + p.in-which {
-  margin: -0.35rem 0 1.4rem;
-  font-style: italic;
-  font-size: 1.05rem;
-  color: var(--muted);
-}
-h3 {
-  font-size: 1.15rem;
-  margin: 1.8rem 0 0.4rem;
-}
+/* the first chapter: the title's rule is enough */
+header.title + section > h2 { margin-top: 0; padding-top: 0; border-top: 0; }
+/* "In Which …", the books' chapter subtitles */
+h2 + p.in-which { margin: 0 0 var(--lh); font-style: italic; color: var(--muted); }
+h3 { font-style: italic; font-size: 1.05rem; margin: calc(var(--lh) * 1.5) 0 calc(var(--lh) / 2); }
 
-a {
-  color: var(--accent);
-}
-p,
-ul,
-ol {
-  margin: 0.6rem 0;
-}
+/* ======================================================================
+   Text
+   ====================================================================== */
 
+p, ul, ol, table, pre { margin: 0 0 var(--lh); }
+ul, ol { padding-left: 1.6rem; }
+li + li { margin-top: calc(var(--lh) / 4); }
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+strong, b { font-weight: 700; }
+
+code, kbd, pre.shell { font-family: var(--font-code); }
+code { font-size: 0.95em; }
 kbd {
-  display: inline-block;
-  padding: 0 0.35em;
-  font:
-    0.82em/1.6 ui-monospace,
-    "SF Mono",
-    Menlo,
-    Consolas,
-    monospace;
-  background: var(--kbd-bg);
-  border: 1px solid var(--rule);
+  font-size: 0.85em;
+  padding: 0 0.3em;
+  border: 1px solid var(--muted);
   border-bottom-width: 2px;
-  border-radius: 4px;
+  border-radius: 3px;
   white-space: nowrap;
 }
 
-code {
-  font:
-    0.9em ui-monospace,
-    "SF Mono",
-    Menlo,
-    Consolas,
-    monospace;
-}
-
+/* commands to type: allowed into the margin when they are long */
 pre.shell {
-  background: var(--accent-soft);
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
+  width: max-content;
+  max-width: calc(100% + var(--margin));
   overflow-x: auto;
+  background: var(--soft);
+  padding: calc(var(--lh) / 2) 1rem;
   font-size: 0.85rem;
+  line-height: var(--lh);
 }
 
-/* A screen as Agenda draws it: grey, with the control panel and key bar in
-   white on blue, section heads blue, the highlight white on red. */
-pre.screen {
-  background: var(--screen-bg);
-  color: var(--screen-ink);
-  font:
-    13px/1.35 ui-monospace,
-    "SF Mono",
-    Menlo,
-    Consolas,
-    monospace;
-  padding: 0.8rem 1rem;
-  border-radius: 6px;
-  overflow-x: auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
-}
-pre.screen .t {
-  background: var(--screen-title);
-  color: #ffffff;
-}
-pre.screen .h {
-  color: var(--screen-hi);
-}
-pre.screen .c {
-  background: var(--screen-cursor);
-  color: #ffffff;
-}
-
+/* the story, in italics with a honey line */
 .story {
-  border-left: 4px solid var(--accent);
-  background: var(--accent-soft);
-  padding: 0.7rem 1rem;
-  margin: 1rem 0;
-  border-radius: 0 6px 6px 0;
+  margin: 0 0 var(--lh);
+  padding: calc(var(--lh) / 2) 1rem;
+  border-left: 3px solid var(--accent);
+  background: var(--soft);
   font-style: italic;
 }
-.story strong {
-  font-style: normal;
-}
+.story strong { font-style: normal; }
 
-.tip {
-  border-left: 4px solid var(--tip-rule);
-  background: var(--tip-bg);
-  padding: 0.6rem 1rem;
-  margin: 1rem 0;
-  border-radius: 0 6px 6px 0;
-  font-size: 0.95rem;
-}
-.tip::before {
-  content: "Tip — ";
-  font-weight: bold;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 0.8rem 0;
-  font-size: 0.93rem;
-}
-th,
-td {
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+th, td {
   text-align: left;
-  padding: 0.35rem 0.6rem;
-  border-bottom: 1px solid var(--rule);
   vertical-align: top;
+  padding: calc(var(--lh) / 8) 0.5rem calc(var(--lh) / 8) 0;
+  border-bottom: 1px solid var(--soft);
 }
 th {
-  color: var(--muted);
-  font-weight: normal;
-  font-family: system-ui, sans-serif;
-  font-size: 0.85rem;
+  font-variant: all-small-caps;
+  letter-spacing: 0.075em;
+  font-weight: 500;
+  font-size: 1.1em;
+  border-bottom: var(--rule) solid var(--ink);
 }
 
-.soon {
-  color: var(--muted);
-  font-style: italic;
-}
+.soon { color: var(--muted); font-style: italic; }
 
 footer {
-  margin-top: 4rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--rule);
+  margin-top: calc(var(--lh) * 3);
+  padding-top: calc(var(--lh) - var(--rule));
+  border-top: var(--rule) solid var(--ink);
   color: var(--muted);
   font-size: 0.85rem;
 }
 
+/* ======================================================================
+   Screens: the program's own pictures, every one the same size, into the
+   margin on a wide window, narrower only when the window is
+   ====================================================================== */
+
+img.screen {
+  display: block;
+  width: var(--screen);
+  max-width: calc(100% + var(--margin));
+  height: auto;
+  margin: var(--lh) 0;
+  border-radius: 3px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+}
+
+/* ======================================================================
+   Margin notes (The Proportional Web's asides): on a wide window a note
+   floats into the margin beside the paragraph after it; on a narrower one
+   it sits in the text, marked with a fleuron
+   ====================================================================== */
+
+aside {
+  float: right;
+  clear: right;
+  width: var(--margin);
+  margin: 0 calc(-1 * var(--margin) - var(--gap)) var(--lh) 0;
+  font-size: 0.85rem;
+  line-height: calc(var(--lh) * 0.875);
+  color: var(--muted);
+}
+aside.tip::before {
+  content: "Tip. ";
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* ======================================================================
+   Narrower windows
+   ====================================================================== */
+
+/* no margin column: the notes go into the text */
+@media (max-width: 78rem) {
+  .page { grid-template-columns: var(--toc) minmax(0, var(--text)); }
+  aside { float: none; width: auto; margin: 0 0 var(--lh) 2rem; }
+  aside::before { content: "\2767"; margin-right: 0.5ch; color: var(--accent); }
+  aside.tip::before { content: "\2767\00a0 Tip. "; }
+  pre.shell, img.screen { max-width: 100%; }
+}
+
+/* the contents on top, the text full width */
 @media (max-width: 52rem) {
-  .page {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 1.5rem 1rem 4rem;
-  }
-  nav.toc {
-    position: static;
-    max-height: none;
-  }
-  header.title svg {
-    display: none;
-  }
+  .page { display: block; padding: var(--lh) 1rem calc(var(--lh) * 3); }
+  nav.toc { position: static; max-height: none; margin-bottom: calc(var(--lh) * 2); }
+  header.title h1 { padding-right: 0; }
+  header.title svg { display: none; }
 }

@@ -1,78 +1,45 @@
-/* The Agenda manual: the guide's look, plus conversations between Owl and Rabbit. */
+/* The manual: the guide's look (../guide/guide.css, where the knobs are),
+   plus the conversations between Owl and Rabbit and the "In brief" boxes. */
 
 @import url("../guide/guide.css");
 
-:root {
-  --owl: #7a5230; /* bark */
-  --owl-bg: #f4ece0;
-  --rabbit: #4f6b3a; /* lettuce */
-  --rabbit-bg: #edf3e6;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --owl: #d9a877;
-    --owl-bg: #2c241b;
-    --rabbit: #a9c98d;
-    --rabbit-bg: #1f2a19;
-  }
-}
-
-/* A conversation: one paragraph per speaker, the name in small capitals. */
-.talk {
-  padding: 0.5rem;
-  margin: 2.5rem 0;
-}
+/* A conversation: one bubble per speaker, the name in small capitals. */
+.talk { margin: calc(var(--lh) * 1.5) 0; }
 .talk p {
-  margin: 0.45rem 0;
-  padding: 0.45rem 0.9rem;
-  border-radius: 10px;
-  max-width: 40rem;
+  margin: 0 0 calc(var(--lh) / 2);
+  padding: calc(var(--lh) / 4) 0.9rem;
+  border-radius: 4px;
+  max-width: 33rem;
 }
 .talk p b {
-  font-variant: small-caps;
-  letter-spacing: 0.04em;
-  margin-right: 0.35em;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  margin-right: 0.4em;
 }
-.talk p.owl {
-  background: var(--owl-bg);
-}
-.talk p.owl b {
-  color: var(--owl);
-}
-.talk p.rabbit {
-  background: var(--rabbit-bg);
-
-  margin-left: 2.5rem;
-}
-.talk p.rabbit b {
-  color: var(--rabbit);
-}
-.talk p.aside {
-  font-style: italic;
-  color: var(--muted);
-  background: none;
-  padding-left: 0;
-}
+.talk p.owl { background: var(--owl-bg); }
+.talk p.owl b { color: var(--owl); }
+.talk p.rabbit { background: var(--rabbit-bg); margin-left: 3rem; }
+.talk p.rabbit b { color: var(--rabbit); }
+.talk p.aside { background: none; font-style: italic; color: var(--muted); }
 
 /* "In brief" lists for the features the manual only touches on. */
 .brief {
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  padding: 0.6rem 1rem;
-  margin: 1rem 0;
+  margin: var(--lh) 0;
+  padding: calc(var(--lh) / 2) 1rem;
+  border-top: var(--rule) solid var(--ink);
+  border-bottom: var(--rule) solid var(--ink);
 }
 .brief h4 {
-  margin: 0 0 0.3rem;
-  font:
-    0.8rem system-ui,
-    sans-serif;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  margin: 0 0 calc(var(--lh) / 2);
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-variant: all-small-caps;
+  letter-spacing: var(--heading-spacing);
   color: var(--muted);
 }
+.brief ul { margin-bottom: 0; }
 
-nav.toc ol ol {
-  font-size: 0.9em;
-  color: var(--muted);
+@media (max-width: 52rem) {
+  .talk p.rabbit { margin-left: 1.5rem; }
 }

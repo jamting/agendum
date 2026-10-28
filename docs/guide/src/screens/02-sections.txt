@@ -1,0 +1,10 @@
+<span class="t"> File: party.agendum                                          10/08/26   9:00am </span>
+<span class="t"> View: Party                                                                  ♦ </span>
+ <span class="h">To do</span>                              When             People
+    ♦ Ask Owl to write on the cake  ·10/08/26        ·Owl
+    ♪ Tell Pooh about the party     ·10/09/26        ·Pooh
+    ‼ Look up how to spell Birthday ·10/07/26        ·Owl
+ <span class="h">Food</span>                               When             People
+    • A pot of honey, nearly full                    ·Pooh
+<span class="t">  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10   </span>
+<span class="t"> Help  │ Edit  │Choices│ Done  │ Note  │ Props │ Mark  │Vw Mgr │Cat Mgr│ Menu   </span>

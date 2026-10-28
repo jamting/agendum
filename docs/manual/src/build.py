@@ -1,15 +1,12 @@
 """Builds docs/manual/index.html from template.html and the captured screens.
 
-    MIX_ENV=test mix run docs/manual/src/capture_screens.exs   # screens/*.txt
+    MIX_ENV=test mix run docs/manual/src/capture_screens.exs   # screens/*.txt, ../screens/*.png
     python3 docs/manual/src/build.py                           # ../index.html
 
-In the template, {{name}} is replaced by screens/name*.txt as a
-<pre class="screen">: the control panel (the two top lines) and the key bar
-styled, section heads highlighted, runs of blank lines shortened. {{name|box}}
-keeps the screen down to the bottom of its box; {{name|rows:3-6,17-19}} keeps
-those lines of the body (counted from the control panel's first line as line 1,
-so the body starts at line 3); the control panel and the key bar (the last
-two lines) always show.
+In the template, {{name}} is replaced by the picture ../screens/name.png,
+the whole 80x25 screen in Agenda's colours, every screen the same size
+(meeting 2026-10-28-6, § 5). Its alternative text is the control panel's two
+lines from screens/name.txt, which say what the screen shows.
 """
 
 import html
@@ -19,67 +16,34 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SCREENS = os.path.join(HERE, "screens")
-HEADS = ["Garden", "Notices", "Friends and Relations"]
+PICTURES = os.path.join(HERE, "..", "screens")
 
 
 def lines_of(name):
-    files = [f for f in os.listdir(SCREENS) if f.startswith(name) and f.endswith(".txt")]
-    if len(files) != 1:
-        sys.exit(f"screen {name!r}: found {files}")
-    return open(os.path.join(SCREENS, files[0])).read().split("\n")
+    path = os.path.join(SCREENS, name + ".txt")
+    if not os.path.exists(path) or not os.path.exists(os.path.join(PICTURES, name + ".png")):
+        sys.exit(f"screen {name!r}: no screens/{name}.txt or ../screens/{name}.png")
+    return open(path).read().split("\n")
 
 
-def screen(name, rows=None):
-    lines = lines_of(name)
-    # the key bar is the last two lines, as Agenda's (its slots and labels)
-    panel, body, keys = lines[0:2], lines[2:-2], lines[-2:]
-    if rows:
-        body = [body[i - 3] for a, b in rows for i in range(a, b + 1) if 0 <= i - 3 < len(body)]
-    out = []
-    for line in body:
-        if line.strip() == "" and out and out[-1].strip() == "":
-            continue
-        out.append(line)
-    while out and out[-1].strip() == "":
-        out.pop()
-
-    def fmt(line):
-        text = html.escape(line.rstrip(), quote=False)
-        if any(re.match(r"^ " + re.escape(h) + r"\s{2,}", line) for h in HEADS):
-            return '<span class="h">' + text + "</span>"
-        return text
-
-    bar = lambda s: '<span class="t">' + html.escape(s.ljust(80)[:80], quote=False) + "</span>"
-    body = "\n".join([bar(l) for l in panel] + [fmt(l) for l in out] + [bar(l) for l in keys])
-    return f'<!-- screen: {name} -->\n<pre class="screen">{body}</pre>'
-
-
-def box_rows(name):
-    lines = lines_of(name)
-    end = next((i for i, l in enumerate(lines) if "└" in l), len(lines) - 2)
-    return [(3, end + 1)]
-
-
-def expand(match):
-    name, option = match.group(1), match.group(2)
-    if option == "box":
-        return screen(name, box_rows(name))
-    if option and option.startswith("rows:"):
-        ranges = [tuple(int(x) for x in r.split("-")) for r in option[5:].split(",")]
-        return screen(name, ranges)
-    return screen(name)
+def screen(match):
+    name = match.group(1)
+    panel = " · ".join(" ".join(line.split()) for line in lines_of(name)[0:2] if line.strip())
+    alt = html.escape("Agendum's screen: " + panel)
+    return (f'<!-- screen: {name} -->\n<img class="screen" src="screens/{name}.png" '
+            f'width="720" height="400" alt="{alt}">')
 
 
 def main():
     template = open(os.path.join(HERE, "template.html")).read()
-    page = re.sub(r"\{\{([\w-]+)(?:\|([\w:,-]+))?\}\}", expand, template)
+    page = re.sub(r"\{\{([\w-]+)\}\}", screen, template)
     links = set(re.findall(r'href="#([\w-]+)"', page))
     anchors = set(re.findall(r'id="([\w-]+)"', page))
     if links - anchors:
         sys.exit(f"links without anchors: {sorted(links - anchors)}")
     target = os.path.join(HERE, "..", "index.html")
     open(target, "w").write(page)
-    print(f"wrote {os.path.normpath(target)}: {page.count('<pre class=\"screen\">')} screens")
+    print(f"wrote {os.path.normpath(target)}: {page.count('<img class=\"screen\"')} screens")
 
 
 if __name__ == "__main__":

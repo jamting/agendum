@@ -13,10 +13,10 @@
  Fr│                                                                        │
    │ Global date settings:   ...       Auto-assign settings:  ...           │
    │                                   File statistics:       ...           │
+   │ Update defaults:        ...                                            │
    │                                                                        │
-   │ SPACE next choice or open ...                                          │
-   └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘o
-      3pm
+   │ SPACE next choice or open ...                                          │o
+   └───────────────── Press ENTER when done, ESC to cancel ─────────────────┘
 
 
 

@@ -151,13 +151,14 @@ columns:</p>
 
 {{01-view}}
 
+<aside>A new file writes dates as Agenda did, month first and on a 12-hour clock; <a
+href="#dates">chapter 7</a> says how to have them another way.</aside>
+<aside>The small <code>·</code> before a column entry says the item is in that column's
+category.</aside>
 <p>“Count the lettuces…” appears twice: under <em>Garden</em>, where Rabbit typed it, and
 under <em>Friends and Relations</em>, because its text mentions Tigger. The
 <em>When</em> column shows dates Agendum read from the text: “tomorrow morning” became
-<code>10/13/26 8:00am</code>, and “Thursday at 3pm” <code>10/15/26 3:00pm</code>. A
-new file writes dates as Agenda did, month first and on a 12-hour clock; <a
-href="#dates">chapter 7</a> says how to have them another way. The small
-<code>·</code> before a column entry says the item is in that column's category.</p>
+<code>10/13/26 8:00am</code>, and “Thursday at 3pm” <code>10/15/26 3:00pm</code>.</p>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> Ten, twelve, twenty-six. That is a very American way of
@@ -224,7 +225,7 @@ held, so in Agendum <kbd>ALT-K</kbd> shows those bars in turn: the <kbd>ALT</kbd
 the <kbd>CTRL</kbd> keys, the <kbd>SHIFT</kbd> keys, then no bar at all, then the plain
 keys again. The <kbd>ALT</kbd> bar of a view:</p>
 
-{{57-alt-keys|rows:3-6}}
+{{57-alt-keys}}
 
 <p>Settings open in cyan <strong>boxes</strong> over the view, which fades to grey
 behind them. A box opened from a box sits a step lower and to the right, and the title
@@ -287,7 +288,7 @@ This manual writes menu paths like <strong>File ▸ Properties</strong>. Command
 kept on keys alone, such as Note (<kbd>F5</kbd>), Done (<kbd>F4</kbd>) and undo
 (<kbd>CTRL-Z</kbd>), are not in the menu.</p>
 
-{{06-menu|rows:3-4}}
+{{06-menu}}
 
 <h3>Keys you will use all the time</h3>
 <table>
@@ -335,7 +336,7 @@ letter: the next link beginning with it), and <kbd>ENTER</kbd> reads it;
   <tr><td><kbd>F9</kbd> Return</td><td>Leave the help (<kbd>ESC</kbd> too)</td></tr>
 </table>
 
-{{60-find-topic|box}}
+{{60-find-topic}}
 
 <p><em>Commands you can run here</em>, under <kbd>F6</kbd>, lists the commands of the
 place where you pressed <kbd>F1</kbd>, with their keys and what each does. Typing
@@ -346,7 +347,7 @@ would do, without doing it. <kbd>CTRL-X</kbd> is the quick way to the same comma
 small box where you type part of a command's name, or its initials, and
 <kbd>ENTER</kbd> runs it.</p>
 
-{{59-help-commands|box}}
+{{59-help-commands}}
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> A great many words about Views. Must I read them all
@@ -361,10 +362,10 @@ why: <em>Done</em> wants an item, and you are on a section head. It keeps its pl
 the list all the same, so you learn where it lives.</p>
 </div>
 
-<div class="tip">The <a href="#reference">reference</a> at the end lists every key with
+<aside class="tip">The <a href="#reference">reference</a> at the end lists every key with
 its Mac-friendly alternative. On a Mac, set your terminal to use Option as Meta for the
 <kbd>ALT</kbd> keys (pressing <kbd>ESC</kbd> and then the letter is two keys, not one); <kbd>ALT-F</kbd>
-keys are <kbd>⌥</kbd> with the function key.</div>
+keys are <kbd>⌥</kbd> with the function key.</aside>
 </section>
 
 <!-- ===================================================================== -->
@@ -388,7 +389,7 @@ all the text), and <kbd>F5</kbd> keeps the item and opens its note. When he pres
 <kbd>ENTER</kbd>, Agendum reads the text, finds a date and files the item, and the
 control panel says which date it found:</p>
 
-{{21-typed|rows:3-9}}
+{{21-typed}}
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> Next Tuesday is tomorrow. Today is Monday! But it says
@@ -420,7 +421,7 @@ only removes the item from the section's category; the item stays in the file an
 its other categories. Agendum asks first, in Agenda's words, and reminds you of the
 other key:</p>
 
-{{61-remove|rows:4-7}}
+{{61-remove}}
 
 <p><kbd>ENTER</kbd> removes it and <kbd>ESC</kbd> keeps it. <kbd>ALT-F4</kbd> discards the
 item altogether, after asking “Discard this item?”.</p>
@@ -433,7 +434,7 @@ into the section the highlight is in, just below the highlighted item, filed und
 that section's head and nothing else. With one item in the trash it comes back at once; with several, a small box
 asks whether you want all of them or only the last one you discarded:</p>
 
-{{63-undiscard|box}}
+{{63-undiscard}}
 
 <p><strong>Utilities ▸ Trash</strong> empties the trash, after asking; what was in it
 is then gone for good. The trash also empties by itself, at the end of the day on which
@@ -468,7 +469,7 @@ The top line says whose note it is, and on the right the line the cursor is on a
 <code>INS</code> while you insert (<kbd>INS</kbd> or <kbd>CTRL-N</kbd> switches to typing
 over, <code>OVR</code>). The key bar is the note's own:</p>
 
-{{58-note|rows:3-5}}
+{{58-note}}
 
 <p><kbd>F5</kbd> saves the note and goes back to the view. <kbd>ESC</kbd> goes back too,
 but if the note changed it first asks “Discard changes?”: <em>No</em>, shown first, keeps
@@ -531,7 +532,7 @@ dated. Eight more times, and the note is tidy and so are you.</p>
 entered, the items it waits for, and every category it is assigned to, with dates in
 parentheses.</p>
 
-{{03-itemprops|box}}
+{{03-itemprops}}
 
 <p>In this box <kbd>F2</kbd> on the text edits it, <kbd>SPACE</kbd> on the note opens it,
 <kbd>DEL</kbd> on an assignment breaks it, and typing a category name assigns the item
@@ -627,7 +628,7 @@ Agenda. <kbd>SPACE</kbd> changes the highlighted setting, or opens it: <em>Note<
 <em>Statistics</em> and <em>Advanced settings</em> show <code>...</code> and open boxes of
 their own.</p>
 
-{{05-catprops|box}}
+{{05-catprops}}
 
 <table>
   <tr><th>Property</th><th>What it does</th></tr>
@@ -719,7 +720,7 @@ spelt enough for one week.</p>
   <li><kbd>ALT-M</kbd> picks one category for the item, or for all marked items.</li>
 </ul>
 
-{{04-profile|box}}
+{{04-profile}}
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> I never put the carrot bed in <em>Entry</em>.</p>
@@ -732,7 +733,7 @@ is there. Nothing is filed behind your back without a reason you can read.</p>
 <p>A category can be filed into by other words than its name. In its properties,
 <strong>Also match</strong> takes a list:</p>
 
-{{24-alsomatch|box}}
+{{24-alsomatch}}
 
 <table>
   <tr><th>Write</th><th>Means</th><th>Example</th></tr>
@@ -755,7 +756,7 @@ words only affect items you write or change from now on; <strong>Recalc</strong>
 matches. <kbd>SPACE</kbd> shows the next choice, a letter picks one, and <kbd>F3</kbd>
 lists them.</p>
 
-{{08-autoassign|box}}
+{{08-autoassign}}
 
 <table>
   <tr><th>Setting</th><th>Choices</th></tr>
@@ -786,7 +787,7 @@ suggested category written with its parent and a <code>?</code> before it:
 <kbd>TAB</kbd> picks them all, <kbd>ENTER</kbd> assigns the picked ones and moves on,
 <kbd>ESC</kbd> stops.</p>
 
-{{36-questions|box}}
+{{36-questions}}
 
 <div class="talk">
 <p class="owl"><b>Owl.</b> Some animals like to be asked. I find it tiring, but then I
@@ -811,7 +812,7 @@ Add</strong> does the same in Agenda's <em>Section Add</em> box, where you type 
 (or <kbd>F3</kbd>), choose <em>Below</em> or <em>Above current section</em>, and set the
 section up as in its properties, all at once:</p>
 
-{{56-section-add|box}}
+{{56-section-add}}
 
 <p> <kbd>F2</kbd> on a section head
 renames the category, <kbd>F6</kbd> opens the section's properties (below), <kbd>DEL</kbd>
@@ -843,7 +844,7 @@ the rest for all its numeric columns at once (<a href="#numbers">chapter 11</a>)
 <p><strong>View ▸ Properties</strong> (or <kbd>F6</kbd> on a view in the view manager)
 gathers a whole view's settings in one box, laid out as Agenda's:</p>
 
-{{54-viewprops|box}}
+{{54-viewprops}}
 
 <ul>
   <li><strong>View name</strong>: type a new one, or <kbd>F2</kbd> to edit it.</li>
@@ -883,7 +884,7 @@ the item and its columns.</p>
 in Notices too. A column added to the current section only changes on its own.
 <strong>View ▸ Column ▸ Add</strong> asks for all of it at once:</p>
 
-{{49-column-add|box}}
+{{49-column-add}}
 
 <ul>
   <li><strong>Column head</strong>: type a category's name (a new name makes a new
@@ -915,7 +916,7 @@ in Notices too. A column added to the current section only changes on its own.
       date or numeric column, how it shows them too.</li>
 </ul>
 
-{{50-column-props|box}}
+{{50-column-props}}
 
 <p>An empty section has no items to put the highlight on, so press <kbd>→</kbd> on its
 head to reach its columns.</p>
@@ -953,7 +954,7 @@ second line, as in Agenda, and the cell keeps showing what is there until you pr
 <kbd>ENTER</kbd>. Agendum completes the name as you type, among that column's
 categories only, with <code>AUTOC</code> at the top right and the matches counted:</p>
 
-{{22-complete|rows:3-5}}
+{{22-complete}}
 
 <ul>
   <li><kbd>ENTER</kbd> accepts what is shown; <kbd>F8</kbd> NextSel / <kbd>F7</kbd>
@@ -986,7 +987,7 @@ it: with many views, <kbd>c</kbd> goes to the next one beginning with C, and mor
 narrow it down. From a view, <kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> go to the next or previous view and
 <kbd>ALT-F8</kbd> back to the last one.</p>
 
-{{52-viewmgr|box}}
+{{52-viewmgr}}
 
 <h3>Hiding things</h3>
 <p>The <em>Hide</em> settings in <strong>View Properties</strong> turn on or off, for
@@ -1064,7 +1065,7 @@ time, <kbd>ENTER</kbd> puts the date in the entry as if you had typed it, and
 <kbd>ESC</kbd> leaves it alone. <kbd>ALT-C</kbd> shows the calendar anywhere, just to look
 something up.</p>
 
-{{39-popup-calendar|box}}
+{{39-popup-calendar}}
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> Which day <em>is</em> the second Friday of November? I
@@ -1100,13 +1101,13 @@ Alarm</strong> box: which date the alarm rings before (<em>When</em>, unless you
 another date category with <kbd>SPACE</kbd> or <kbd>F3</kbd>) and how many minutes before
 (5, or any number from 0 to 60). <kbd>ENTER</kbd> sets it.</p>
 
-{{37-set-alarm|box}}
+{{37-set-alarm}}
 
 <p>The item then shows <code>@</code> in its bullet's place. An item without a date can
 have an alarm too; it waits until the item gets one. <kbd>ALT-A</kbd> on an item that
 has an alarm cancels it at once.</p>
 
-{{38-alarm|rows:13-13,18-19}}
+{{38-alarm}}
 
 <p>When the time comes Agendum plays Agenda's little alarm tune and names the item, and
 <code>@</code> appears at the right of the View line. <strong>Utilities ▸ Show ▸
@@ -1125,7 +1126,7 @@ on, a <strong>While you were away</strong> box also lists them, the latest first
 with the same text share a line, with a count, and <kbd>ENTER</kbd> or <kbd>ESC</kbd>
 closes it:</p>
 
-{{53-away|box}}
+{{53-away}}
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> I was out looking for Small. Piglet's basket!</p>
@@ -1139,11 +1140,11 @@ but you know it, which is the next best thing to being on time.</p>
 <strong>Type</strong> ▸ <em>Date</em>. Each item can then have one date in it, typed in
 its column (“next friday 3pm”) or in Item Properties.</p>
 
-{{30-type-choice|box}}
+{{30-type-choice}}
 
 <p>Its <strong>Advanced settings</strong> say where its dates come from:</p>
 
-{{32-daterule|box}}
+{{32-daterule}}
 
 <table>
   <tr><th>Setting</th><th>Choices</th></tr>
@@ -1224,7 +1225,7 @@ such as weeding every Monday, shows on every day it comes round on.</p>
 box as any view's, with the datebook's own settings in the right-hand column where
 the sections would be. <strong>View ▸ Properties</strong> shows it again:</p>
 
-{{47-datebook-props|box}}
+{{47-datebook-props}}
 
 <ul>
   <li><strong>Period</strong>: a day, a week, a month or a quarter.</li>
@@ -1350,7 +1351,7 @@ from MAIN), against all items, the current one, the marked ones, a section or th
 and actions to new assignments only or to old ones as well. <kbd>ALT-X</kbd> executes
 everything on all items, <kbd>ALT-E</kbd> just the highlighted section's category.</p>
 
-{{14-execute|box}}
+{{14-execute}}
 </section>
 
 <!-- ===================================================================== -->
@@ -1362,7 +1363,7 @@ everything on all items, <kbd>ALT-E</kbd> just the highlighted section's categor
 <p><kbd>ALT-F6</kbd> opens Agenda's <strong>Search</strong> box: what to look for, in
 the item text, the notes or both, which direction, and whether capitals matter.</p>
 
-{{64-search|box}}
+{{64-search}}
 
 <p>Type the words in <em>Search for</em> and press <kbd>ENTER</kbd>: that keeps them and
 leaves you in the box, to change the rest if you like. A second <kbd>ENTER</kbd>
@@ -1408,7 +1409,7 @@ Properties ▸ Filter</strong> one section. <kbd>SPACE</kbd> on a category cycle
 <code>+</code> (items must be in it), <code>-</code> (must not), none, and
 <kbd>ENTER</kbd> accepts. A date or numeric category asks for a range instead:</p>
 
-{{33-datefilter|rows:4-22}}
+{{33-datefilter}}
 
 <p>Relative dates in a range are read again each day: “today” to “end of this week”
 always shows the rest of this week. Put <code>$</code> before one to fix it the day you
@@ -1428,7 +1429,7 @@ change makes the sorting its own, and <kbd>ALT-F8</kbd> gives the view's back.
 <em>Section sorting</em>, under Item sorting in View Properties, sorts the sections
 themselves.</p>
 
-{{10-sort|box}}
+{{10-sort}}
 </section>
 
 <!-- ===================================================================== -->
@@ -1441,7 +1442,7 @@ many lettuces. Make one with Category Properties ▸ <strong>Type</strong> ▸
 <em>Numeric</em>, add it as a column, and type numbers in it. Totals appear at the
 bottom of every section.</p>
 
-{{42-numeric|rows:3-8}}
+{{42-numeric}}
 
 <ul>
   <li>Numbers may have a sign, a currency symbol, thousands separators or parentheses
@@ -1471,7 +1472,7 @@ bottom of every section.</p>
 highlight the later one and press <kbd>ALT-O</kbd>: it now <em>depends</em> on them and
 shows <code>&amp;</code> until they are all done.</p>
 
-{{41-depend|rows:9-16}}
+{{41-depend}}
 
 <div class="talk">
 <p class="owl"><b>Owl.</b> Your Notice depends on asking me how to spell
@@ -1534,7 +1535,7 @@ kept.</p>
 <p><strong>File ▸ Properties</strong> holds the settings that belong to the file, among
 them a few for keeping it safe:</p>
 
-{{65-file-props|box}}
+{{65-file-props}}
 
 <ul>
   <li><strong>File description</strong>: a few words about the file (up to 40
@@ -1635,7 +1636,7 @@ on.
 <kbd>INS</kbd> asks for the address, then for a name, which becomes the category the
 events go in, and reads the calendar at once:</p>
 
-{{45-calendars|box}}
+{{45-calendars}}
 
 <ul>
   <li>Every event from today up to 90 days ahead becomes an item: its title the item
@@ -1655,10 +1656,11 @@ events go in, and reads the calendar at once:</p>
       only what the calendar changed; Rabbit's own notes, categories and done marks
       stay, an event that is cancelled or removed takes its item with it, and an item
       Rabbit threw away does not come back.</li>
-  <li>In the box, <kbd>ENTER</kbd> reads the highlighted calendar now, <kbd>F</kbd>
-      changes how often it is read (every hour, every 6 hours, every day, only on
-      request), <kbd>A</kbd> how far ahead (30 to 365 days), and <kbd>DEL</kbd>
-      unsubscribes, asking whether to throw its items away too.</li>
+  <li>In the box, <kbd>ENTER</kbd> reads the highlighted calendar now and
+      <kbd>ALT-ENTER</kbd> all of them; <kbd>F2</kbd> renames it; <kbd>F6</kbd> shows
+      its properties, how often it is read (every hour, every 6 hours, every day, only
+      on request) and how far ahead (30 to 365 days); and <kbd>DEL</kbd> (or
+      <kbd>F4</kbd>) unsubscribes, asking whether to throw its items away too.</li>
 </ul>
 
 <p>Each reading is one step for <kbd>CTRL-Z</kbd>, and a scheduled one that changes
@@ -1698,7 +1700,7 @@ someone else opening your file keeps their own. <strong>Utilities ▸ Customize<
 them, and saves them in your preferences file
 (<code>~/.config/agendum/preferences</code>):</p>
 
-{{15-customize|box}}
+{{15-customize}}
 
 <ul>
   <li><strong>Theme</strong>: <em>Classic</em>, the grey, blue and cyan of Agenda 2.0
@@ -2009,5 +2011,6 @@ reasonable week, and had an early night.</div>
 
 </main>
 </div>
+<script src="../guide/place.js"></script>
 </body>
 </html>

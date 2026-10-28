@@ -12,10 +12,11 @@ The manual (`docs/manual/index.html`) is the long companion of the user guide (`
 | File                    | What it is                                                                    |
 | ----------------------- | ----------------------------------------------------------------------------- |
 | `template.html`         | The text, with `{{screen}}` placeholders                                      |
-| `capture_screens.exs`   | Opens Rabbit's file (`Agendum.Sample.rabbit/1`) and drives the real TUI to capture each screen |
-| `screens/*.txt`         | The captured screens (committed, so screen changes show in diffs)             |
+| `capture_screens.exs`   | Opens Rabbit's file (`Agendum.Sample.rabbit/1`) and drives the real TUI to capture each screen, as text and as a picture (macOS) |
+| `screens/*.txt`         | The captured screens as text (committed, so screen changes show in diffs)     |
+| `../screens/*.png`      | The same screens as the pictures the manual shows, all the same size (committed) |
 | `build.py`              | Fills the placeholders and writes `../index.html`; fails on broken links      |
-| `../manual.css`         | Dialogue styles; imports `../guide/guide.css` for everything else              |
+| `../manual.css`         | Dialogue styles; imports `../guide/guide.css` (the knobs, fonts, margin notes) for everything else |
 
 ## 1. Find what changed since the last update
 
@@ -34,7 +35,7 @@ MIX_ENV=test mix run docs/manual/src/capture_screens.exs
 git diff --stat docs/manual/src/screens
 ```
 
-The script checks that each key sequence reaches the box it should and stops with the capture's name if not; fix the sequence (the program changed). Look at every changed screen: the text around it may now be wrong. For a new screen, add a capture to `capture_screens.exs` (with the box type it must show) and a `{{name}}`, `{{name|box}}` or `{{name|rows:2-6,9-12}}` placeholder in the template. Keep screens 80 columns wide, captured on Monday 2026-10-12 at 10:15 in Rabbit's file, so dates in the text stay true.
+The script checks that each key sequence reaches the box it should and stops with the capture's name if not; fix the sequence (the program changed). Look at every changed screen: the text around it may now be wrong. For a new screen, add a capture to `capture_screens.exs` (with the box type it must show) and a `{{name}}` placeholder in the template: every screen is shown whole, at the same size (meeting 2026-10-28-6, § 5). Keep screens 80 columns wide, captured on Monday 2026-10-12 at 10:15 in Rabbit's file, so dates in the text stay true.
 
 ## 3. Edit the template
 
@@ -43,6 +44,7 @@ The script checks that each key sequence reaches the box it should and stops wit
 - **The story.** Owl is skilled and a little grand; Rabbit is busy, anxious, proud of being Organised, and learns quickly. Their dialogue (`<div class="talk">` with `<p class="owl"><b>Owl.</b> …</p>` and `<p class="rabbit"><b>Rabbit.</b> …</p>`) should teach: Rabbit asks or stumbles, Owl explains why, and the example uses Rabbit's file (garden, Notices, friends-and-relations, Small, Tigger). Use dialogue where it clarifies, not on every point. Narration goes in `<div class="story">`.
 - **Every chapter has a subtitle** under its `<h2>`, in the books' style: `<p class="in-which">In Which Rabbit Teaches Agendum to Water the Carrots</p>`, title case, naming something that happens in the chapter, preferably from its Owl and Rabbit dialogue. A new chapter gets one; a chapter whose story changes may need a new one. Subtitles are not in the contents list.
 - **Pooh lore stays light and tasteful**: names and small allusions from A. A. Milne's books, no quotations, no Disney or E. H. Shepard images, only our own simple SVG drawings.
+- **Margin notes** add variety: a side remark, a cross-reference or a tip as `<aside>…</aside>` (or `<aside class="tip">`) just before the paragraph it belongs to; in the margin on a wide window, in the text on a narrow one. Never for anything the reader must not miss.
 - Keep the reference chapter (keys, menu map) complete and in step with the F1 help.
 
 ## 4. Build and check

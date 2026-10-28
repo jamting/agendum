@@ -2,21 +2,23 @@
 // character like a VGA text screen (80x25 = 720x400). macOS only (AppKit).
 //
 //     swiftc -O tools/screenshots/render.swift -o tmp/render-screen
-//     tmp/render-screen screen.cells screen.png
+//     tmp/render-screen screen.cells screen.png [SCALE]
 //
 // A .cells file has one line per screen row; a row is segments separated by
 // U+001F, each segment "FOREGROUND<TAB>BACKGROUND<TAB>TEXT" with the colours
-// as six hex digits; a "_" after the foreground underlines the text.
+// as six hex digits; a "_" after the foreground underlines the text. SCALE
+// (1 by default) multiplies every size, for sharp text on a high-density screen.
 import AppKit
 
 let args = CommandLine.arguments
-guard args.count == 3, let data = try? String(contentsOfFile: args[1], encoding: .utf8) else {
-  FileHandle.standardError.write("usage: render-screen in.cells out.png\n".data(using: .utf8)!)
+guard args.count == 3 || args.count == 4, let data = try? String(contentsOfFile: args[1], encoding: .utf8) else {
+  FileHandle.standardError.write("usage: render-screen in.cells out.png [scale]\n".data(using: .utf8)!)
   exit(1)
 }
 
 let rows = data.components(separatedBy: "\n")
-let cellWidth: CGFloat = 9, cellHeight: CGFloat = 16
+let scale = CGFloat(args.count == 4 ? Double(args[3]) ?? 1 : 1)
+let cellWidth: CGFloat = 9 * scale, cellHeight: CGFloat = 16 * scale
 func segments(_ row: String) -> [(Substring, Substring, Substring)] {
   row.components(separatedBy: "\u{1F}").compactMap { segment in
     let parts = segment.split(separator: "\t", maxSplits: 2, omittingEmptySubsequences: false)
@@ -29,8 +31,8 @@ let width = Int(cellWidth) * columns, height = Int(cellHeight) * rows.count
 
 let bitmap = NSBitmapImageRep(
   bitmapDataPlanes: nil, pixelsWide: width, pixelsHigh: height, bitsPerSample: 8,
-  samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB,
-  bytesPerRow: 0, bitsPerPixel: 0)!
+  samplesPerPixel: 3, hasAlpha: false, isPlanar: false, colorSpaceName: .deviceRGB,
+  bytesPerRow: 0, bitsPerPixel: 32)!
 NSGraphicsContext.saveGraphicsState()
 NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: bitmap)
 
@@ -41,7 +43,7 @@ func colour(_ hex: Substring) -> NSColor {
     blue: CGFloat(v & 255) / 255, alpha: 1)
 }
 
-let font = NSFont(name: "Menlo", size: 14.5)!
+let font = NSFont(name: "Menlo", size: 14.5 * scale)!
 NSColor.black.setFill()
 NSRect(x: 0, y: 0, width: width, height: height).fill()
 
@@ -59,7 +61,7 @@ for (r, row) in rows.enumerated() {
         .draw(at: cell.origin)
       if underline {
         fg.setFill()
-        NSRect(x: cell.minX, y: cell.minY + 1, width: cellWidth, height: 1).fill()
+        NSRect(x: cell.minX, y: cell.minY + scale, width: cellWidth, height: scale).fill()
       }
       x += 1
     }

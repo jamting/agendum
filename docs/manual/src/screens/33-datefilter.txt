@@ -17,9 +17,9 @@
     •│ │       Roo                                                  │     │
     •│ │       Tigger                                               │     │Roo
      │ │                                                            │     │
-     └─│ SPACE switches: + assigned · - not assigned · none         │  ───┘
+     └─│ + assigned · - not assigned · none                         │  ───┘
+       │ SPACE switch · F4 clear · INS new category · type search   │
        └────────────────── Press ENTER to accept ───────────────────┘
-
 
   F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
  Help  │ Edit  │Choices│       │       │       │       │Default│       │

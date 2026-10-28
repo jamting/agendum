@@ -1,4 +1,4 @@
- Expotitions: 2 new
+ Subscribed to Expotitions
 
  Garden                                   When             Priority Friends
     • Wee┌──────────────────────── Calendars ─────────────────────────┐
@@ -6,9 +6,9 @@
     • Cou│    https://example.org/expotitions.ics                     │ger
       bou│    every hour · 90 days ahead                              │
          │                                                            │
- Notices │ INS subscribe · ENTER read now · DEL unsubscribe           │ends
-    • Put│ F how often · A how far ahead                              │
-      Org└────────────────────────────────────────────────────────────┘
+ Notices │ ENTER read now · A-ENTER read all · INS subscribe          │ends
+    • Put└────────────────────────────────────────────────────────────┘
+      Organising Meeting on Friday
 
  Friends and Relations                    When             Priority Friends
     • Count the lettuces before Tigger                    ·Medium  ·Tigger
@@ -22,4 +22,4 @@
 
 
   F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
- Help  │       │       │       │       │       │       │       │       │
+ Help  │Rename │       │Unsubs │       │ Props │       │       │       │

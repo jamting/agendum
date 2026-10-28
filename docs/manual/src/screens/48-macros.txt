@@ -4,7 +4,7 @@
     • Wee┌────────────────────── Macro Manager ───────────────────────┐
       mor│ Water                                                      │
     • Wat│                                                            │
-    • Cou│ INS new · F7 learn · ENTER run · F2 edit · F6 props · DEL  │ger
+    • Cou│ ENTER run · INS/^N new · F7 learn · F2 edit · F6 props     │ger
       bou└────────────────────────────────────────────────────────────┘
 
  Notices                                  When             Priority Friends
