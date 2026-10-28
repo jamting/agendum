@@ -346,12 +346,12 @@ defmodule Agendum.TUI.Macros do
   def title(_state, _mode), do: "Macro Manager"
 
   @impl Box
-  def content(state, mode, _inner, max_rows) do
+  def content(state, mode, inner, max_rows) do
     rows = state |> lines(mode) |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
     top = max(mode.cursor - (max_rows - 3), 0)
 
-    Enum.drop(rows, top) ++
-      [[], [{:box, " INS new · F7 learn · ENTER run · F2 edit · F6 props · DEL"}]]
+    # the hint made from `keys/2`, as many as fit (UI guidelines rule 6.2)
+    Enum.drop(rows, top) ++ [[], Box.hint(keys(state, mode), inner)]
   end
 
   @impl Box

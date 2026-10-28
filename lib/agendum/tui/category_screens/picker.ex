@@ -281,32 +281,43 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
       CategoryScreens.list_lines(state, mode, inner, max_rows - 1, &marker/3)
   end
 
-  def content(state, mode, inner, max_rows),
-    do:
-      CategoryScreens.list_lines(state, mode, inner, max_rows, &marker/3) ++
-        [[], footer(state, mode, inner)]
+  def content(state, mode, inner, max_rows) do
+    footer = footer(state, mode, inner)
 
+    CategoryScreens.list_lines(state, mode, inner, max_rows - length(footer) + 1, &marker/3) ++
+      [[] | footer]
+  end
+
+  # Under the list: what the marks mean, in the lists that take several
+  # categories (the owner, 2026-10-28: a line of its own, so it is never
+  # cut short), then the keys (`Box.hint/2`, made from `keys/2`), or what
+  # is being typed
   defp footer(state, mode, inner) do
-    case state.edit do
-      %{target: :new_pick} ->
-        [{:box, " New category: "}] ++ Draw.input(state.edit.line, inner - 16, :edit)
+    last =
+      case state.edit do
+        %{target: :new_pick} ->
+          [{:box, " New category: "}] ++ Draw.input(state.edit.line, inner - 16, :edit)
 
-      _ when mode.search != "" ->
-        [{:box, " Search: " <> mode.search}]
+        _ when mode.search != "" ->
+          [{:box, " Search: " <> mode.search}]
 
-      _ when elem(mode.purpose, 0) == :also_assign ->
-        [{:box, " SPACE switches: + assign · - remove · none (dates, numbers: a box)"}]
+        _ ->
+          Box.hint(keys(state, mode), inner)
+      end
 
-      _ when elem(mode.purpose, 0) == :excludes ->
-        [{:box, " SPACE switches: x may not share items"}]
-
-      _ when elem(mode.purpose, 0) in [:condition, :filter, :schedule_filter] ->
-        [{:box, " SPACE switches: + assigned · - not assigned · none"}]
-
-      _ ->
-        [{:box, " ENTER selects · INS creates · type to search"}]
+    case legend(mode.purpose) do
+      nil -> [last]
+      text -> [[{:box, " " <> text}], last]
     end
   end
+
+  defp legend({:also_assign, _}), do: "+ assign · - remove · none (dates, numbers: a box)"
+  defp legend({:excludes, _}), do: "x may not share items"
+
+  defp legend({purpose, _}) when purpose in [:condition, :filter, :schedule_filter],
+    do: "+ assigned · - not assigned · none"
+
+  defp legend(_purpose), do: nil
 
   # the mark left of a category: what choosing it again would undo
   defp marker(state, %{purpose: {:filter, scope}}, id) do
@@ -354,13 +365,21 @@ defmodule Agendum.TUI.CategoryScreens.Picker do
   defp marker(_state, _mode, _id), do: " "
 
   @impl Box
-  def keys(_state, _mode),
-    do: [
-      {"ENTER", "Select"},
-      {"INS", "New category"},
-      {"type", "Search", "Search by name"},
-      {"ESC", "Cancel"}
-    ]
+  def keys(_state, mode) do
+    # Elixir: `if` without `else` gives nil; `List.wrap/1` makes nil an
+    # empty list and a single entry a list of one
+    switch = if several?(mode), do: {"SPACE", "Switch", "Switch the category"}
+    clear = if several?(mode), do: {"F4", "Clear", "Clear all"}
+
+    children =
+      if match?(%{purpose: {:sections, _}}, mode), do: {"F5", "Children", "The parent's children"}
+
+    List.wrap(switch) ++
+      [{"ENTER", "Select"}] ++
+      List.wrap(clear) ++
+      List.wrap(children) ++
+      [{"INS", "New category"}, {"type", "Search", "Search by name"}, {"ESC", "Cancel"}]
+  end
 
   @impl Box
   # Agenda's words for Section Select (checked in Agenda 2.0, 2026-10-25);

@@ -56,7 +56,7 @@ When a rule here and a box disagree, the box is the bug, unless the rule is wron
 ## 6. Key bar and help
 
 - **6.1** The key bar has Agenda's ten slots, made from the place's keymap; a box's bar is fixed per field. (as Agenda; ADR 0045 and its amendment) `Agendum.TUI.Render.KeyBar`. **Test:** `box_key_bar_test.exs`, `agenda_boxes_test.exs`.
-- **6.2** A box's hint line, where it has one, is made from the same key list as its bar (`Box.hint/2`), never written by hand, so the two cannot disagree. Our choice; `box.ex:232-238`. **Test:** `box_guidelines_test.exs` (no literal key list in a box's code; the boxes that still have one listed with why).
+- **6.2** A box's hint line, where it has one, is made from the same key list as its bar (`Box.hint/2`), never written by hand, so the two cannot disagree. What a list's marks mean (the category picker's "+ assign · - remove · none") is a legend, not a hint: a line of its own above the hint, so it is never cut short (the owner, 2026-10-28). Our choice; `Box.hint/2` in `box.ex`. **Test:** `box_guidelines_test.exs` (no literal key list in a box's code; the boxes that still have one listed with why).
 - **6.3** F1 in a box shows its help topic: what the box is for and how it is worked, in Agenda's terse layout. (as Agenda's help; approved 2026-10-26) `c:Box.about/2`, `Box.default_about/3`.
 
 ## 7. Messages

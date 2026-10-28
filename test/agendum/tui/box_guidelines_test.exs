@@ -27,9 +27,6 @@ defmodule Agendum.TUI.BoxGuidelinesTest do
   # 6.2's exceptions: boxes with a key hint written by hand, not made from
   # their keys with `Box.hint/2` (the UI guidelines' gap 4)
   @hand_hints %{
-    macros: "the clone's macro manager: to make from its keys (ROADMAP, Fixes and polish)",
-    picker: "the clone's category picker: to make from its keys (ROADMAP, Fixes and polish)",
-    select_file: "the clone's file list: to make from its keys (ROADMAP, Fixes and polish)",
     publish_preview: "the extras' rework (gap 4)"
   }
 

@@ -287,13 +287,14 @@ defmodule Agendum.TUI.Boxes.SelectFile do
   end
 
   @impl Box
-  def content(state, mode, _inner, max_rows) do
+  def content(state, mode, inner, max_rows) do
     rows =
       state
       |> lines(mode, max_rows)
       |> Enum.map(fn {style, text} -> [{style, " " <> text}] end)
 
-    rows ++ [[{:box, " ENTER opens · type to narrow · F7 dates · F8 descriptions · ESC back"}]]
+    # the hint made from `keys/2`, as many as fit (UI guidelines rule 6.2)
+    rows ++ [Box.hint(keys(state, mode), inner)]
   end
 
   @impl Box

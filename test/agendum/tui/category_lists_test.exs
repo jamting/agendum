@@ -23,6 +23,36 @@ defmodule Agendum.TUI.CategoryListsTest do
   defp cat(state, name), do: hd(Database.find_categories(state.db, name))
   defp filter(state), do: State.view(state).filter
 
+  # UI guidelines rule 6.2: the keys under a list are made from its keys;
+  # what the marks mean is a line of its own above them, never cut short
+  # (the owner, 2026-10-28)
+  describe "the lines under a list" do
+    test "the marks' meaning, then the keys", %{state: state} do
+      calls = cat(state, "Calls")
+      lists = Agendum.TUI.CategoryScreens
+
+      for {purpose, legend} <- [
+            also_assign: "+ assign · - remove · none (dates, numbers: a box)",
+            excludes: "x may not share items",
+            condition: "+ assigned · - not assigned · none"
+          ] do
+        text = screen(lists.open_picker(state, {purpose, calls}, state.db.main_id))
+        assert text =~ legend
+        assert text =~ "SPACE switch · F4 clear · INS new category"
+      end
+    end
+
+    test "a list to pick one category from names its keys", %{state: state} do
+      text =
+        screen(
+          Agendum.TUI.CategoryScreens.open_picker(state, {:column_head, 1}, state.db.main_id)
+        )
+
+      assert text =~ "INS new category · type search by name"
+      refute text =~ "SPACE switch"
+    end
+  end
+
   describe "a filter list" do
     test "says Press ENTER to accept", %{state: state} do
       assert screen(filter_picker(state, :view)) =~ "Press ENTER to accept"
