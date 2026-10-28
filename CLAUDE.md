@@ -34,6 +34,7 @@ The steps, in order, are the `feature` skill (`.claude/skills/feature/SKILL.md`,
 
 - Names: in text the user sees, our program is **Wol's Agendum** (titles, headings, the splash screen) or **Agendum** (menus, help, running text); **Agenda** means the original Lotus Agenda ("as Agenda does"). The code is `Agendum` too: the Mix app `:agendum`, the `Agendum.*` modules in `lib/agendum` (ADR 0019); a file's format tag stays `:agenda`, and files saved with the old `Agenda.*` struct names still load. Files are `.agendum`, the preferences `~/.config/agendum/`, the JSON format `agendum-json`; the old names are still read.
 - Markdown is not hard-wrapped: one line per paragraph, list item or quote, and the editor soft-wraps it. Code comments and `@moduledoc`s stay wrapped at about 80 columns, as Elixir code usually is.
+- Write airy (meeting 2026-10-28-6, § 6): short paragraphs of one idea, a list for conditions or several parts, a bold lead-in where a reader scans; a long unbroken paragraph is a wall. This holds for documents and for replies to the owner alike.
 - Match the surrounding style: small pure functions, pattern matching, `@spec` on public core functions, `@moduledoc` on every module.
 - Core functions that can fail return `{:ok, ...} | {:error, atom}`; the UI turns error atoms into messages.
 - Ids are positive integers from one shared counter (`db.next_id`).
