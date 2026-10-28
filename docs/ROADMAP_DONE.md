@@ -243,6 +243,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 - [x] Debug log for lag hunts (2026-10-15, 0.2.1): the build commit in the header, the file's fingerprint on disk, the view and memory with each slow answer, effects timed
 - [x] Bug: a save that failed still went on: Quit with Yes to "Save changes before quitting?" quit, and "Save changes first?" opened the next file, whatever the save gave. Now what follows a save waits for it to succeed (R71, found in study unit 2, 2026-10-16)
 - [x] UI guidelines for the extras (meeting 2026-10-26-6, §§ 5, 6, 8; ADR 0049): `docs/UI_GUIDELINES.md`, drafted 2026-10-26 night (39 rules, 13 gaps in the extras' boxes), adopted 2026-10-27 with the owner's answers to its questions
+- [x] The meeting on what information to make public (meeting 2026-10-26-4, § 11; held as meeting 2026-10-28-2, §§ 5–12): what is private and public, the creek redactions, where public stops (ADR 0050), the site with four doors, Wood pseudonyms mapped at the rewrite, the dry run as a script; no sync after the first publish (the owner's preferred way); the licence tabled, its comparison written the same day (`plans/GITHUB.md` § 7)
 
 ### Beyond Agenda
 
