@@ -23,7 +23,8 @@ A change is done when `mix check` passes. Do not leave warnings. Credo (`.credo.
 3. The TUI calls the core through `Agendum.Core` (the facade) and reads the database through `Agendum.Core.Database` queries. It never calls `Database` write functions (any whose `@spec` returns a database, so every public `Database` function needs a spec); `test/agendum/architecture_test.exs` fails if it does, reading the calls from the compiled code (`:xref`). Add a facade function instead (written in an area module under `lib/agendum/core/facade/`, delegated from `Agendum.Core`). Assignment rules live only in `Agendum.Core.Assign`; never re-implement them in the UI.
 4. Subsumption (membership in ancestors) is **computed, never stored**. Only explicit links are stored (`Agendum.Core.Links`).
 5. No runtime dependencies in the core and the TUI unless a package meets the criteria of `docs/adr/0021-runtime-dependencies.md` (pure Elixir/Erlang, no runtime files, keeps the single-file escript); none so far. The terminal layer uses OTP 28+ raw mode, not a TUI library (ADR 0002).
-6. Keep everything a second front end (e.g. web) would need in `Agendum.Core`; the TUI only handles keys and drawing. A multi-user web app on the same core is planned (`docs/plans/MULTIUSER.md`, ADR 0020): keep the logic of a user action in the core, not in `Agendum.TUI.Update`.
+6. Keep everything a second front end (e.g. web) would need in `Agendum.Core`; the TUI only handles keys and drawing. Keep the logic of a user action in the core, not in `Agendum.TUI.Update`.
+*[A page here was soaked in the creek. — Rabbit]*
 
 ## Workflow for a feature
 

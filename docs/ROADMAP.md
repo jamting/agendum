@@ -6,15 +6,14 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. A tidy pass with the SPEC sweep and the private markers (Housekeeping; meeting 2026-10-26-4, §§ 9, 13; meeting 2026-10-28-2, §§ 6–7)
-2. The dry run of the public copy, as a script (Housekeeping; meeting 2026-10-28-2, § 11)
-3. A practical meeting on the dry run's results: go or no-go, with the licence confirmed after a lawyer's check (`plans/GITHUB.md` § 7, step 7; ADR 0051) (Housekeeping; meeting 2026-10-28-2, § 11)
-4. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-5. The public site, with four doors (Housekeeping; meeting 2026-10-28-2, § 9)
-6. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
-7. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+1. The dry run of the public copy, as a script (Housekeeping; meeting 2026-10-28-2, § 11)
+2. A practical meeting on the dry run's results: go or no-go, with the licence confirmed after a lawyer's check (`plans/GITHUB.md` § 7, step 7; ADR 0051) (Housekeeping; meeting 2026-10-28-2, § 11)
+3. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+4. The public site, with four doors (Housekeeping; meeting 2026-10-28-2, § 9)
+5. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
+6. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
 
-The order of 1–5 is Marie the Wren's (the licence meeting, first in it, held as meeting 2026-10-28-3), at the chair's request (meeting 2026-10-28-2, § 13; the pseudonyms folded into the dry run by the chair's addendum): the licence before the dry run, as the licence and the contributors' terms go into the copy; the tidy pass and the markers in one sweep over the same documents; the dry run after the markers, so its leak test has something to check; the site after the repository, as Pages needs it public.
+The order of 1–4 is Marie the Wren's (the licence meeting and the tidy pass, first in it, done 2026-10-28), at the chair's request (meeting 2026-10-28-2, § 13; the pseudonyms folded into the dry run by the chair's addendum): the licence before the dry run, as the licence and the contributors' terms go into the copy; the tidy pass and the markers in one sweep over the same documents; the dry run after the markers, so its leak test has something to check; the site after the repository, as Pages needs it public.
 
 **The extras meet the guidelines** since v0.72.0 (2026-10-28): new extras and Wol may come again (meeting 2026-10-26-6, § 7; ADR 0049). Why: the extras were built before the clone's bar was raised and missed its catch-up, in robustness at the shell's edge and in the boxes' conventions (§ 5).
 
@@ -70,12 +69,12 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
 
 ### Housekeeping
 
-- [ ] The licence confirmed before publishing (meeting 2026-10-28-3, §§ 6–8; ADR 0051; `plans/GITHUB.md` § 7, step 7): a lawyer where the owner lives checks AGPL-3.0-only for the code, CC BY 4.0 for the documents and the CLA's model text (and whether it allows a commercial licence beside the AGPL); then the owner confirms it, and `LICENSE`, the SPDX lines, the documents' licence and `CONTRIBUTING.md` with the CLA go into the public copy
-- [ ] Before the public repository (meeting 2026-10-26-4, §§ 9, 11, 13; meeting 2026-10-28-2, §§ 6–7, 11), in this order: a general code review (done 2026-10-26: three cloud slices, `docs/CODE_REVIEW_SLICES.md`; the rest locally after the public repository); the meeting on what to make public (done, `ROADMAP_DONE.md`); a tidy pass (`tidy-docs`: VISION's freeze paragraph, AGENDA_PARITY's "three differences" and their cousins) with a sweep of SPEC, each rule keeping a short "(checked in Agenda)" or "Our choice" and its longer story moved to `ROADMAP_DONE.md`, and in the same sweep the private passages of public documents marked `<!-- private -->` … `<!-- /private -->` or moved into private files (`plans/GITHUB.md` § 7, the list); then the dry run as a re-runnable script in `tools/public/` (the owner's preferred way, 2026-10-28, confirmed at the practical meeting: run once for real, as after the first publish the public repository is the main one and the private documents move to a private repository that imports the core, so nothing is synced; alternatives in `plans/GITHUB.md` § 7): the `git filter-repo` copy built, the markers replaced by the creek note, the panel's real names mapped to their pseudonyms in every file and commit message (`--replace-text`, `--replace-message`) from a private name list in `tools/public/` (meeting 2026-10-28-2, § 10 and its addendum), checked by `mix check`, a leak test (no private file, marker, business word, real name or surname left; a few converted minutes read to see the sentences still work) and a check that every cited commit hash exists in the copy; then a practical meeting on its results
+- [ ] The licence confirmed before publishing (meeting 2026-10-28-3, §§ 6–8; ADR 0051; `plans/GITHUB.md` § 7, step 7): a lawyer where the owner lives checks AGPL-3.0-only for the code, CC BY 4.0 for the documents and the CLA's model text; then the owner confirms it, and `LICENSE`, the SPDX lines, the documents' licence and `CONTRIBUTING.md` with the CLA go into the public copy
+- [ ] Before the public repository (meeting 2026-10-26-4, §§ 9, 11, 13; meeting 2026-10-28-2, §§ 6–7, 11), in this order: a general code review (done 2026-10-26: three cloud slices, `docs/CODE_REVIEW_SLICES.md`; the rest locally after the public repository); the meeting on what to make public (done, `ROADMAP_DONE.md`); a tidy pass (done 2026-10-28, `ROADMAP_DONE.md`) (`tidy-docs`: VISION's freeze paragraph, AGENDA_PARITY's "three differences" and their cousins) with a sweep of SPEC, each rule keeping a short "(checked in Agenda)" or "Our choice" and its longer story moved to `ROADMAP_DONE.md`, and in the same sweep the private passages of public documents marked `<!-- private -->` … `<!-- /private -->` or moved into private files (`plans/GITHUB.md` § 7, the list); then the dry run as a re-runnable script in `tools/public/` (the owner's preferred way, 2026-10-28, confirmed at the practical meeting: run once for real, as after the first publish the public repository is the main one and the private documents move to a private repository that imports the core, so nothing is synced; alternatives in `plans/GITHUB.md` § 7): the `git filter-repo` copy built, the markers replaced by the creek note, the panel's real names mapped to their pseudonyms in every file and commit message (`--replace-text`, `--replace-message`) from a private name list in `tools/public/` (meeting 2026-10-28-2, § 10 and its addendum), checked by `mix check`, a leak test (no private file, marker, business word, real name or surname left; a few converted minutes read to see the sentences still work) and a check that every cited commit hash exists in the copy; then a practical meeting on its results
 - [ ] The name's story and how it is said (meeting 2026-10-28-4, § 5; ADR 0019, update 2026-10-28): one line, "Wol is how Owl spells his name", and "said wolz a-JEN-dum", where the name first meets a reader: the About help topic (`lib/agendum/tui/help/topics/about-agendum.txt`, built with the `feature` skill) and the site; the README has both (the tidy pass, 2026-10-28)
 - [ ] The public site, after the public repository (meeting 2026-10-28-2, § 9): one static page with four doors, Try it (install), Learn it (the guide, the manual), Look inside (the API and design docs, the ADRs), Follow it (the owner's devlog), and a short recording of typing an item and seeing it filed; the docs on GitHub Pages; an `llms.txt` made from `docs/INDEX.md`; downloads from GitHub Releases and a Homebrew tap first, bundled binaries (Burrito-style) later if people ask. The devlog is the owner's own words, published with Agendum's blog extra, backfilled as milestone posts (the summaries only jog the memory; they stay private)
 - [ ] Optional (from the parity plan, 2026-10-26): Utilities ▸ Launch, a shell without quitting Agendum
-*[A page here was soaked in the creek. — Rabbit]*
+- [ ] A public repository of the clone, when it is declared done (meeting 2026-10-21, § 10; ADR 0050): this repository stays the private workshop; the public one is made from a copy with `git filter-repo`, keeping every commit, tag and co-author line, with the third-party reference material and the business files out of the history, the minutes, reviews, `VISION.md` and `GITHUB.md` added back once without their business passages, and the cited commit hashes brought up to date in one commit. The licence: AGPL-3.0-only, CC BY 4.0 for the documents, a CLA (meeting 2026-10-28-3; ADR 0051), confirmed after a lawyer's check before publishing. The steps and the list of what stays private: [`docs/plans/GITHUB.md`](plans/GITHUB.md) § 7
 
 ### Users and direction
 
@@ -85,14 +84,6 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
 ### Towards many users
 
 Open again since the truthful clone was declared done (2026-10-26; meeting 2026-10-21, § 5; meeting 2026-10-22, § 5i).
-
-*[A page here was soaked in the creek. — Rabbit]*
-
-Then a web version for one person:
-
-*[A page here was soaked in the creek. — Rabbit]*
-
-Then working together:
 
 *[A page here was soaked in the creek. — Rabbit]*
 

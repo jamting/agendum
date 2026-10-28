@@ -63,7 +63,7 @@ Each plan starts with its status.
 | [`HELP_WOOD.md`](HELP_WOOD.md)                                         | The Hundred Acre Wood touches in the help's written topics, one row each, and their tone rules |
 | [`plans/NOTE_EDITOR.md`](plans/NOTE_EDITOR.md)                         | The note editor as Agenda's: evidence, habit changes to settle, steps          |
 | [`plans/MULTIUSER.md`](plans/MULTIUSER.md)                             | A web application with accounts and shared files, on the same core (ADR 0020)  |
-| [`plans/GITHUB.md`](plans/GITHUB.md)                                   | Putting the repository on GitHub; public or paid later                         |
+| [`plans/GITHUB.md`](plans/GITHUB.md)                                   | Putting the repository on GitHub, and going public                         |
 | [`plans/ITEM_LEVELS.md`](plans/ITEM_LEVELS.md)                         | Three levels of items: zettels, ingested items, the model's context items (vision) |
 | [`plans/RSS_READER.md`](plans/RSS_READER.md)                           | A plain RSS reader, like calendar subscriptions: the owner's decisions and the steps (R75) |
 | [`plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)           | An idea: a personal agent inside the file                                      |

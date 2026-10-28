@@ -4,6 +4,8 @@ Thank you for helping. This guide gets you from a fresh machine to a first chang
 
 *[A page here was soaked in the creek. — Rabbit]*
 
+The rules for the code itself are in [`CLAUDE.md`](CLAUDE.md): it is written for Claude, the AI assistant that has written much of the code with the owner, and it applies to people just the same.
+
 ## 1. Set up
 
 You need **Erlang/OTP 28 or later** (the terminal layer uses OTP 28's raw mode, ADR 0002) and **Elixir 1.20**.
