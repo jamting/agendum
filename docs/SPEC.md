@@ -1142,46 +1142,418 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 
 ## 5a. Data interchange
 
-- **R44 ✅ JSON export and import** (not in Agenda; ADR 0010). File ▸ Transfer ▸ Export writes the whole file as readable JSON (the name offered is the file's, with `.json`); File ▸ Transfer ▸ Import reads one and opens it as a new, untitled file, to be saved under a name (the open file is replaced, as with Retrieve; nothing is merged). Like Retrieve and New, and as Quit already did, it first asks "Save changes first? (Y/N, ESC to cancel)" when the open file has unsaved changes: Y saves (asking for a name if it has none) and goes on, N goes on, ESC cancels. Everything in the file survives a round trip: categories and their properties, items with their assignments, dates, numbers, dependencies and suggestions, views, and the file's settings; the person's own settings (theme, languages, input format) are not in it. Import checks types and references and says what is wrong and where; a file that fails opens nothing. The schema is `docs/JSON_FORMAT.md`. Agenda's own transfer format (STF) and its `.AG` files are optional roadmap items (Data interchange).
-- **R72 ✅ Importing a Lotus Agenda file** (ours, as old Agenda users need it). File ▸ Transfer ▸ Import takes a Lotus Agenda 2.0 data file (`.AG`) as well as JSON, told apart by their contents ("JSON or Agenda (.AG) file to import"), and `agendum OLD.AG` imports one from the command line. The file opens as a new file of the same name with Agendum's extension beside it (`OLD.agendum`), not saved yet; at the first save, a file already there is asked about (R71). A file with a password asks for it ("Password of OLD.AG:", the text shown as stars and kept out of the debug log); as in Agenda, case does not matter, and a wrong one says "The password you typed is incorrect. Retype the password of OLD.AG:" (checked in Agenda). What comes over: the category tree with names, short names, Also match, exclusive children, notes, conditions, actions (assign as a category link, R8; remove), the Done and Discard special actions, text matching settings of their own and the date categories' rules; items with text, note, Entry, When (its time, and a recurring rule as Agendum's, R14a) and Done dates, the dates of the user's date categories, numbers, and alarms on When; views with sections, columns (width, number format), sorting, filters (relative dates become phrases Agendum reads, "yesterday", "end of this week"; others stay as dates), the hide options and section order; datebook views from their period and hours, starting from today. Items in Agenda's trash go to ours, text and note, counted from the day of the import, and File Properties ▸ Empty trash comes over (R24a). Assignments made by hand in Agenda are kept; the others (text matching, conditions, actions) Agendum works out again by its own rules (as Utilities Execute, R15e). An unindexed category stays unindexed, each item's value its text (R29b). Afterwards the **Imported from Agenda** box reports the counts, what was left out or simplified (macros, note files, other alarms, datebook start dates) and the items Agendum files differently from Agenda (+ a category added, − one not kept); ↑ ↓ PGUP PGDN scroll it, CTRL-P writes it to `OLD-import.txt` beside the Agenda file, ENTER or ESC closes it. The reading follows `docs/AGENDA_FILE_FORMAT.md` (`Agendum.Core.AgFile`, pure, through `Core.import_ag/2`). Not yet: macros, note files, the global date format, Agenda's own print settings.
-- **R45 ✅ Calendar subscriptions** (not in Agenda). File ▸ Transfer ▸ Calendars lists the file's subscriptions to calendars on the web (iCalendar `.ics`, `https://` or `webcal://`). INS asks for the address; the calendar is read once ("Reading …"), then its name is asked, its own name filled in (`X-WR-CALNAME`, on one line, control characters left out, at most 60 characters; without one, the address's host), and a calendar that cannot be read is not subscribed ("Not subscribed: …"); an answer that comes once the box is closed, or for an address no longer waited for, is dropped. The name is the category the events go in, its own (without name matching, never a category of the person's with that name), in the family the other calendars share, else in **Calendars** under MAIN, made when first needed (R75a), and what was read is filed as it is subscribed, one undo step, without a second read. The box is a manager, as the Macros manager is (UI guidelines): ENTER reads the highlighted one now, ALT-ENTER every calendar (quietly, as a scheduled read); F6 opens its **Calendar Properties**: its name (typed, F2 to edit; it renames its category too), its address and when it was last read shown, **Read every** (every hour, the default; every 6 hours; every day; only on request) and **Read ahead** (30, 90 by default, 180 or 365 days), SPACE, a letter or F3 choosing, each change applied at once and one undo step, ESC putting back what changed in the box, F8 and ALT-F8 a new calendar's; the address is not changed there (a new address is a new subscription); DEL (F4, CTRL-D) unsubscribes, Y also discarding its items, N keeping them. Each calendar shows when it was last read, or why that failed. A read mirrors the calendar: an event from today up to the window ahead becomes an item in the category, its title the item text (read like typed text, so text matching files it too), its description the note, and its start the When date and time, set as by hand; its end (DTEND, or DURATION) goes in the date category Ends, made under MAIN the first time an event has one (a category of that name that is not a date category is left alone): a timed event's end date and time, an all-day event's last day when it lasts more than one, a repeating event's end keeping its length on the next date; a repeating event becomes one item on its next date, with Agenda's recurrence (R14a) when it repeats the same way (daily, weekly on one day, monthly on one day, yearly, every n of them), else only that next date; a series that has ended is not imported. A later read changes only what the calendar changed (the person's edits to text and note, their categories and done marks stay), and an event gone from the calendar or cancelled removes its item; an item the person discarded is not brought back, and past events keep their items. A read is one undo step; a scheduled read is quiet unless something changed. Reading happens in the background (the screen does not wait), with the system's certificates checked; a calendar or feed unsubscribed (or its subscription undone) while it is being read, or whose address changed, is not waited for any longer: the answer is dropped, and the next read asks for the address it has now (our choice). Our choices: there is no time-zone database; a time in a named zone is converted by the calendar's own definition of that zone (VTIMEZONE: its offsets and yearly daylight-saving rules, as calendars from Google, Apple and Microsoft include them) to UTC, and UTC times to local time by the system's rules; a zone the calendar does not define is taken as local time. A repeating event keeps the local time of its first occurrence, so where the calendar's zone and yours change to summer time on different days, a few weeks of a year may be an hour off; alarms, attendees and exceptions to repeating events are not read. Subscriptions are saved in the file and in its JSON.
+- **R44 ✅ JSON export and import** (not in Agenda; ADR 0010). File ▸ Transfer ▸ Export writes the whole file as readable JSON (the name offered is the file's, with `.json`). File ▸ Transfer ▸ Import reads one and opens it as a new, untitled file, to be saved under a name (the open file is replaced, as with Retrieve; nothing is merged).
+
+  Like Retrieve and New, and as Quit already did, it first asks "Save changes first? (Y/N, ESC to cancel)" when the open file has unsaved changes:
+
+  - Y saves (asking for a name if it has none) and goes on.
+  - N goes on.
+  - ESC cancels.
+
+  Everything in the file survives a round trip: categories and their properties, items with their assignments, dates, numbers, dependencies and suggestions, views, and the file's settings. The person's own settings (theme, languages, input format) are not in it.
+
+  Import checks types and references and says what is wrong and where; a file that fails opens nothing. The schema is `docs/JSON_FORMAT.md`. Agenda's own transfer format (STF) and its `.AG` files are optional roadmap items (Data interchange).
+- **R72 ✅ Importing a Lotus Agenda file** (ours, as old Agenda users need it). File ▸ Transfer ▸ Import takes a Lotus Agenda 2.0 data file (`.AG`) as well as JSON, told apart by their contents ("JSON or Agenda (.AG) file to import"), and `agendum OLD.AG` imports one from the command line.
+
+  The file opens as a new file of the same name with Agendum's extension beside it (`OLD.agendum`), not saved yet; at the first save, a file already there is asked about (R71).
+
+  A file with a password asks for it ("Password of OLD.AG:", the text shown as stars and kept out of the debug log). As in Agenda, case does not matter, and a wrong one says "The password you typed is incorrect. Retype the password of OLD.AG:" (checked in Agenda).
+
+  What comes over:
+
+  - **The category tree** with names, short names, Also match, exclusive children, notes, conditions, actions (assign as a category link, R8; remove), the Done and Discard special actions, text matching settings of their own and the date categories' rules.
+  - **Items** with text, note, Entry, When (its time, and a recurring rule as Agendum's, R14a) and Done dates, the dates of the user's date categories, numbers, and alarms on When.
+  - **Views** with sections, columns (width, number format), sorting, filters (relative dates become phrases Agendum reads, "yesterday", "end of this week"; others stay as dates), the hide options and section order.
+  - **Datebook views** from their period and hours, starting from today.
+
+  Items in Agenda's trash go to ours, text and note, counted from the day of the import, and File Properties ▸ Empty trash comes over (R24a).
+
+  Assignments made by hand in Agenda are kept; the others (text matching, conditions, actions) Agendum works out again by its own rules (as Utilities Execute, R15e). An unindexed category stays unindexed, each item's value its text (R29b).
+
+  Afterwards the **Imported from Agenda** box reports the counts, what was left out or simplified (macros, note files, other alarms, datebook start dates) and the items Agendum files differently from Agenda (+ a category added, − one not kept):
+
+  - ↑ ↓ PGUP PGDN scroll it.
+  - CTRL-P writes it to `OLD-import.txt` beside the Agenda file.
+  - ENTER or ESC closes it.
+
+  The reading follows `docs/AGENDA_FILE_FORMAT.md` (`Agendum.Core.AgFile`, pure, through `Core.import_ag/2`). Not yet: macros, note files, the global date format, Agenda's own print settings.
+- **R45 ✅ Calendar subscriptions** (not in Agenda). File ▸ Transfer ▸ Calendars lists the file's subscriptions to calendars on the web (iCalendar `.ics`, `https://` or `webcal://`).
+
+  INS asks for the address. The calendar is read once ("Reading …"), then its name is asked, its own name filled in (`X-WR-CALNAME`, on one line, control characters left out, at most 60 characters; without one, the address's host), and a calendar that cannot be read is not subscribed ("Not subscribed: …"). An answer that comes once the box is closed, or for an address no longer waited for, is dropped.
+
+  The name is the category the events go in, its own (without name matching, never a category of the person's with that name), in the family the other calendars share, else in **Calendars** under MAIN, made when first needed (R75a), and what was read is filed as it is subscribed, one undo step, without a second read.
+
+  The box is a manager, as the Macros manager is (UI guidelines):
+
+  - ENTER reads the highlighted one now, ALT-ENTER every calendar (quietly, as a scheduled read).
+  - F6 opens its **Calendar Properties**: its name (typed, F2 to edit; it renames its category too), its address and when it was last read shown, **Read every** (every hour, the default; every 6 hours; every day; only on request) and **Read ahead** (30, 90 by default, 180 or 365 days), SPACE, a letter or F3 choosing, each change applied at once and one undo step, ESC putting back what changed in the box, F8 and ALT-F8 a new calendar's. The address is not changed there (a new address is a new subscription).
+  - DEL (F4, CTRL-D) unsubscribes, Y also discarding its items, N keeping them.
+
+  Each calendar shows when it was last read, or why that failed.
+
+  A read mirrors the calendar:
+
+  - **An event** from today up to the window ahead becomes an item in the category, its title the item text (read like typed text, so text matching files it too), its description the note, and its start the When date and time, set as by hand.
+  - **Its end** (DTEND, or DURATION) goes in the date category Ends, made under MAIN the first time an event has one (a category of that name that is not a date category is left alone): a timed event's end date and time, an all-day event's last day when it lasts more than one, a repeating event's end keeping its length on the next date.
+  - **A repeating event** becomes one item on its next date, with Agenda's recurrence (R14a) when it repeats the same way (daily, weekly on one day, monthly on one day, yearly, every n of them), else only that next date. A series that has ended is not imported.
+
+  A later read changes only what the calendar changed (the person's edits to text and note, their categories and done marks stay), and an event gone from the calendar or cancelled removes its item. An item the person discarded is not brought back, and past events keep their items. A read is one undo step; a scheduled read is quiet unless something changed.
+
+  Reading happens in the background (the screen does not wait), with the system's certificates checked. A calendar or feed unsubscribed (or its subscription undone) while it is being read, or whose address changed, is not waited for any longer: the answer is dropped, and the next read asks for the address it has now (our choice).
+
+  Our choices:
+
+  - There is no time-zone database.
+  - A time in a named zone is converted by the calendar's own definition of that zone (VTIMEZONE: its offsets and yearly daylight-saving rules, as calendars from Google, Apple and Microsoft include them) to UTC, and UTC times to local time by the system's rules.
+  - A zone the calendar does not define is taken as local time.
+
+  A repeating event keeps the local time of its first occurrence, so where the calendar's zone and yours change to summer time on different days, a few weeks of a year may be an hour off; alarms, attendees and exceptions to repeating events are not read. Subscriptions are saved in the file and in its JSON.
 
 ## 5b. Calendar, datebooks and schedules
 
-- **R46 ✅ Pop-up calendar** (User's Guide 6-14 to 6-17; Help "Use the Pop-Up Calendar"). F3 (CHOICES) on a column entry in a date column opens a month calendar on the entry's date, or on today when it has none; ALT-C opens it anywhere in a view, on today, for reference. ← → move a day, ↑ ↓ a week, HOME / END to the first / last day of the month, PGUP / PGDN the same day a month back / ahead, CTRL-← / CTRL-→ a year (Mac: `<` / `>`); a month or year move keeps the day where the month has it. Typing a date ("next friday", "2027-03-15") jumps there (Agenda shows what is typed at the top: here the control panel's prompt); F6 (SETTIME) asks for a time to go with the date (empty: none). ENTER sets the date, and the time, in the entry as if typed there (so When is set by hand, R14, date rules and conditions follow, one undo step); for reference it closes. ESC changes nothing. Dates run from 1 AD to 5000, as in Agenda. Our choices: the week starts on the file's Beginning of week (R14e; Agenda's screen started on Sunday), the calendar keeps the entry's time unless F6 changes it, and Agenda's Set Time box (SPACE between hours and minutes, GREY + / −) is a typed time.
-- **R47 ✅ Datebook views** (User's Guide chapter 10, 10-1 to 10-14; Help "View Add box", "Browse Through Dates"). A datebook view is like a page of an appointment book: its sections are time slots, all headed by one category. Settings: Date category (When by default) places items by their date; End category (optional, a date category) shows an item in every slot up to its end ("Status meeting" 14:00 to 17:00 shows at 14, 15 and 16); Section, the head of every section (the date category by default; Meetings shows only meetings); Period, Day, Week (default), Month or Quarter; Interval, what a slot covers: 15 min, 30 min or Hourly (default) for a day, Daily or Weekly (default) for a month, Daily, Weekly (default) or Monthly for a quarter, a week having a slot per day; Start at / End at, the hours of a day (default the file's Morning and Evening, 8:00 and 17:00) or the days of a week (default the file's beginning and end of week, Mon and Fri); Base date on, a relative or absolute date ("today", "tomorrow", "next week", "2026-11-05") read each time the view is shown, the period being the one it falls in (a month's and quarter's weeks run from the file's beginning to end of week and may reach into the next month; quarters start in the file's first quarter month). An item shows in a slot when its date (and time) in the date category falls in it; an item typed into a slot is filed under the Section category and dated at the slot's start, with its time in a day view, as if typed in the date column (so "Status meeting" typed under 16:00 today is When today 16:00). Restrictions as in Agenda: a datebook view cannot become a standard view, its sections cannot be added, removed or filtered one by one (view filters apply to all). Deleting a category it uses falls back to When. Our choice: in a day view, items with that date but no time are in a first slot named after the day, above the hours; items timed outside Start at to End at are not shown. In the TUI: View ▸ Add (or INS in the view manager) asks for the name, then the Type, Standard or Datebook; a datebook view starts with Agenda's defaults and opens its View Properties, which holds the datebook's settings in its right column instead of Sections, as Agenda's (checked in Agenda): Date category, End category, Section, Period, then Interval, Start at and End at as the period has them (a day all three, a week Start at and End at, a month or quarter Interval), Base date on; it has no Section sorting (SPACE picks a category or types a time or base date, SPACE/→ ← cycle Period, Interval and a week's days, DEL clears the End category; a time without am/pm is read as everywhere, R14b). Each slot's head is a line across with its name, in the file's date format ("── Mon 2026-10-12 ──", "10:00", "Mon 2026-09-28 → Fri 2026-10-02", "October 2026"), without a blank line above; the control panel says "Datebook For: When" (the Section) from column 40 of its second line, as Agenda's, and the view manager marks datebook views with *. Typing into a slot dates the item; ALT-D/U, DEL or F3 on a slot, collapsing, section filter and sort, and ALT-F10 say why not. Browsing (View ▸ Browse or ALT-B, BROWSE at the top right): ← → (or < >) show the previous / next period, ALT-F5 asks for a date and shows its period, ENTER keeps the period shown (the base date becomes its date, one undo step; a view based on "today" then stays there until Base date on is set again, as in Agenda) and ESC goes back; while browsing nothing else can be done. Standard views with date filters are browsed too (R48), and Show Schedule shows one date (R49).
-- **R48 ✅ Browsing date filters** (Help "Browse Through Dates"). In a standard view, View ▸ Browse or ALT-B moves the date filter of the highlighted section, when it has one, else the view's: ← / → a day, CTRL-← / CTRL-→ (or ↑ / ↓) a week, PGUP / PGDN a month, CTRL-PGUP / CTRL-PGDN (⌥↑ / ⌥↓ on a Mac) a year; ALT-F5 moves the range to start on a typed date. Each end of a date range is read against today, moved, and shown as a fixed date (the view's line shows them; open ends stay open; numeric ranges and category criteria do not move); items come and go as the dates move. ENTER keeps the moved dates in the filter, one undo step ("today".."end of this week" becomes, a week on, "2026-10-19".."2026-10-23": fixed, no longer following today, as in Agenda); ESC puts the filter back. F8 (DEFAULT) goes back to the dates browsing started from, and F10 (MENU) leaves browsing, its dates given up, for the menu (checked in Agenda). Without a date filter, ALT-B says so. The control panel says Agenda's words, "Use the cursor keys to display schedules for other dates." with BROWSE alone at the right, and "Current filter:" with the browsed dates under it (a datebook: "…other periods." and "Right arrow moves forward, left arrow moves back one period."); nothing else can be done meanwhile.
-- **R49 ✅ Show Schedule** (User's Guide 10-14 to 10-16; Help "Show Schedule Box"; Agenda's Utilities Show Sched). Utilities ▸ Show ▸ Sched opens the Show Schedule box: Date category (When by default; must be a date category), Section head (the date category by default), Date (today; typed, or F3 for the pop-up calendar, R46) and Filter (categories whose items to show, + assigned or − not assigned, as in a view filter). SPACE changes the highlighted setting, ENTER shows the items of that date in the Show View under the section head, ESC cancels. The date is a date filter on the Show View ("[When 2026-12-14..2026-12-14]"), so ALT-B browses it to other days (R48). The Show View starts afresh each time it is used, by a schedule, a search (R37) or a dependency list (R43): its section and filter are those of the last use.
+- **R46 ✅ Pop-up calendar** (User's Guide 6-14 to 6-17; Help "Use the Pop-Up Calendar"). F3 (CHOICES) on a column entry in a date column opens a month calendar on the entry's date, or on today when it has none; ALT-C opens it anywhere in a view, on today, for reference.
 
-- **R75 ✅ Feeds: a plain RSS reader** (ours; `plans/RSS_READER.md`). File ▸ Transfer ▸ Feeds lists the file's feed subscriptions, as the Calendars box does calendars (R45): a manager, as the Macros manager is (UI guidelines): INS subscribes (the feed's address, `https://` or `feed://`; the feed read once, then its name asked with the feed's own title filled in, as R45's calendars: an unreadable feed is not subscribed, and what was read is filed as it is subscribed), ENTER reads the highlighted one now, ALT-ENTER every feed (quietly, as a scheduled read), F6 opens its **Feed Properties** (as Calendar Properties, R45): **Read every** (every hour by default, 6 hours, a day, or only on request; also when Agendum starts) and **Keep** (how long its entries stay: 30 days by default, 7, 90, 365, or for ever), F2 renames it, DEL (F4, CTRL-D) unsubscribes, asking whether to discard its items too, F7 imports an OPML feed list (the feeds the file does not have yet; folders read through) and F8 exports one (`feeds.opml`): the feeds keep their files in and out to themselves, so the menus have no hole with the Extras off. RSS 2.0, RSS 1.0 and Atom are read; a feed that is broken is read as far as it goes. Each entry becomes an item in **Feeds ▸ the feed's name** (both made when first needed, without name matching): its title the item text, its summary as plain text (HTML read as text, at most about 2,000 characters) and its link the note, its publish date the **Entry** date. Text matching, conditions and actions file it as a typed item, but dates in a title are not read: When stays empty, so feeds stay out of date views and the calendar. The first feed makes the **News** view: a section per feed, newest first by Entry date (a column shows it), done items hidden. A later read adds new entries and changes an entry's item where the feed changed it and the person did not; the message line says "Owl's Gazette: 3 new, 1 changed, 2 faded" (from the box, also "nothing new" or why the read failed). Nothing asks to be read: there are no unread counts, and F4 Done dismisses an entry. An entry older than the feed's days **fades** (its item is discarded) unless it was **kept**: given a Zettel id (R73), its text or note changed by the person, or a category given by hand (not by text matching or a condition); Done does not keep it. An entry that faded or that the person discarded is never brought back: the file remembers only its id and publish date, not its text (format 45). **CTRL-V** (or Item ▸ Open link) opens the first web address in the highlighted item's note, else its text, in the browser (`open` on a Mac, `xdg-open` elsewhere); only `http(s)` addresses. Feed text is data, never instructions: it is stored as text, never shown as markup, and nothing in it runs.
-- **R75a ✅ Ingested categories** (ours, an extra; ADR 0048). The categories a feed or a calendar files into, each feed's category under Feeds and each calendar's under Calendars, and the extras' families themselves, **Feeds** and **Calendars** under MAIN while each holds at least one subscription, are **ingested**: the extra names and fills them; the person reads them but does not change or fill them. They head sections, filter views and are read by conditions (a condition on the person's own category may test one). Refused, with "Heffalump News is filled by a feed: rename or remove it in File ▸ Transfer ▸ Feeds" (or "… by its calendar … Calendars", "Feeds holds your feeds …"): renaming, a note, Also match, conditions and actions, exclusive children, moving, sorting, discarding, a new child, and, for a feed's or a calendar's own category, filing an item into it by hand, from a column, by typing in its section, or by another category's action. A family locks only its structure: a category the person kept when unsubscribing stays theirs inside it, and the family stays the extra's (with its other subscriptions) while it holds one. A name is one subscription's: a second feed or calendar of the same name is refused ("… is taken"). In the category manager the message comes at once, before anything is typed; elsewhere the key stops with it. The **Feeds and Calendars families start folded** in the category manager, one line each, and ALT-= opens one (ALT-− folds it again). A family of the person's under MAIN that holds only calendars' categories is named **Calendars** as a file is opened, unless one is already there; nothing moves as a file opens, but calendars that versions before 0.68.0 made straight under MAIN join Calendars when the next calendar is subscribed. A calendar in a family of the person's among their own categories stays where they put it, and new ones go to Calendars. Both boxes scroll by whole feeds or calendars when there are more than fit, the highlighted one always shown, with "▲ 3 more above" and "▼ 230 more below". **F2 in the Feeds and Calendars boxes** renames a feed or a calendar, and its category with it ("New name of the feed:"); two feeds, or two calendars, cannot share a name. Which categories are ingested is worked out from the subscriptions, never stored: unsubscribing hands the category back, an ordinary category of the person's again, and so does the Feeds parent once no feed is left. 
+  - ← → move a day, ↑ ↓ a week.
+  - HOME / END to the first / last day of the month.
+  - PGUP / PGDN the same day a month back / ahead.
+  - CTRL-← / CTRL-→ a year (Mac: `<` / `>`).
+
+  A month or year move keeps the day where the month has it.
+
+  Typing a date ("next friday", "2027-03-15") jumps there (Agenda shows what is typed at the top: here the control panel's prompt). F6 (SETTIME) asks for a time to go with the date (empty: none).
+
+  ENTER sets the date, and the time, in the entry as if typed there (so When is set by hand, R14, date rules and conditions follow, one undo step); for reference it closes. ESC changes nothing. Dates run from 1 AD to 5000, as in Agenda.
+
+  Our choices:
+
+  - The week starts on the file's Beginning of week (R14e; Agenda's screen started on Sunday).
+  - The calendar keeps the entry's time unless F6 changes it.
+  - Agenda's Set Time box (SPACE between hours and minutes, GREY + / −) is a typed time.
+- **R47 ✅ Datebook views** (User's Guide chapter 10, 10-1 to 10-14; Help "View Add box", "Browse Through Dates"). A datebook view is like a page of an appointment book: its sections are time slots, all headed by one category.
+
+  Settings:
+
+  - **Date category** (When by default) places items by their date.
+  - **End category** (optional, a date category) shows an item in every slot up to its end ("Status meeting" 14:00 to 17:00 shows at 14, 15 and 16).
+  - **Section**, the head of every section (the date category by default; Meetings shows only meetings).
+  - **Period**, Day, Week (default), Month or Quarter.
+  - **Interval**, what a slot covers: 15 min, 30 min or Hourly (default) for a day, Daily or Weekly (default) for a month, Daily, Weekly (default) or Monthly for a quarter, a week having a slot per day.
+  - **Start at / End at**, the hours of a day (default the file's Morning and Evening, 8:00 and 17:00) or the days of a week (default the file's beginning and end of week, Mon and Fri).
+  - **Base date on**, a relative or absolute date ("today", "tomorrow", "next week", "2026-11-05") read each time the view is shown, the period being the one it falls in (a month's and quarter's weeks run from the file's beginning to end of week and may reach into the next month; quarters start in the file's first quarter month).
+
+  An item shows in a slot when its date (and time) in the date category falls in it. An item typed into a slot is filed under the Section category and dated at the slot's start, with its time in a day view, as if typed in the date column (so "Status meeting" typed under 16:00 today is When today 16:00).
+
+  Restrictions as in Agenda: a datebook view cannot become a standard view, its sections cannot be added, removed or filtered one by one (view filters apply to all). Deleting a category it uses falls back to When.
+
+  Our choice: in a day view, items with that date but no time are in a first slot named after the day, above the hours; items timed outside Start at to End at are not shown.
+
+  In the TUI: View ▸ Add (or INS in the view manager) asks for the name, then the Type, Standard or Datebook. A datebook view starts with Agenda's defaults and opens its View Properties, which holds the datebook's settings in its right column instead of Sections, as Agenda's (checked in Agenda): Date category, End category, Section, Period, then Interval, Start at and End at as the period has them (a day all three, a week Start at and End at, a month or quarter Interval), Base date on. It has no Section sorting (SPACE picks a category or types a time or base date, SPACE/→ ← cycle Period, Interval and a week's days, DEL clears the End category; a time without am/pm is read as everywhere, R14b).
+
+  Each slot's head is a line across with its name, in the file's date format ("── Mon 2026-10-12 ──", "10:00", "Mon 2026-09-28 → Fri 2026-10-02", "October 2026"), without a blank line above. The control panel says "Datebook For: When" (the Section) from column 40 of its second line, as Agenda's, and the view manager marks datebook views with *.
+
+  Typing into a slot dates the item; ALT-D/U, DEL or F3 on a slot, collapsing, section filter and sort, and ALT-F10 say why not.
+
+  Browsing (View ▸ Browse or ALT-B, BROWSE at the top right):
+
+  - ← → (or < >) show the previous / next period.
+  - ALT-F5 asks for a date and shows its period.
+  - ENTER keeps the period shown (the base date becomes its date, one undo step; a view based on "today" then stays there until Base date on is set again, as in Agenda).
+  - ESC goes back.
+
+  While browsing nothing else can be done. Standard views with date filters are browsed too (R48), and Show Schedule shows one date (R49).
+- **R48 ✅ Browsing date filters** (Help "Browse Through Dates"). In a standard view, View ▸ Browse or ALT-B moves the date filter of the highlighted section, when it has one, else the view's:
+
+  - ← / → a day.
+  - CTRL-← / CTRL-→ (or ↑ / ↓) a week.
+  - PGUP / PGDN a month.
+  - CTRL-PGUP / CTRL-PGDN (⌥↑ / ⌥↓ on a Mac) a year.
+
+  ALT-F5 moves the range to start on a typed date.
+
+  Each end of a date range is read against today, moved, and shown as a fixed date (the view's line shows them; open ends stay open; numeric ranges and category criteria do not move). Items come and go as the dates move.
+
+  - ENTER keeps the moved dates in the filter, one undo step ("today".."end of this week" becomes, a week on, "2026-10-19".."2026-10-23": fixed, no longer following today, as in Agenda).
+  - ESC puts the filter back.
+  - F8 (DEFAULT) goes back to the dates browsing started from, and F10 (MENU) leaves browsing, its dates given up, for the menu (checked in Agenda).
+
+  Without a date filter, ALT-B says so.
+
+  The control panel says Agenda's words, "Use the cursor keys to display schedules for other dates." with BROWSE alone at the right, and "Current filter:" with the browsed dates under it (a datebook: "…other periods." and "Right arrow moves forward, left arrow moves back one period."). Nothing else can be done meanwhile.
+- **R49 ✅ Show Schedule** (User's Guide 10-14 to 10-16; Help "Show Schedule Box"; Agenda's Utilities Show Sched). Utilities ▸ Show ▸ Sched opens the Show Schedule box:
+
+  - Date category (When by default; must be a date category).
+  - Section head (the date category by default).
+  - Date (today; typed, or F3 for the pop-up calendar, R46).
+  - Filter (categories whose items to show, + assigned or − not assigned, as in a view filter).
+
+  SPACE changes the highlighted setting, ENTER shows the items of that date in the Show View under the section head, ESC cancels. The date is a date filter on the Show View ("[When 2026-12-14..2026-12-14]"), so ALT-B browses it to other days (R48).
+
+  The Show View starts afresh each time it is used, by a schedule, a search (R37) or a dependency list (R43): its section and filter are those of the last use.
+- **R75 ✅ Feeds: a plain RSS reader** (ours; `plans/RSS_READER.md`). File ▸ Transfer ▸ Feeds lists the file's feed subscriptions, as the Calendars box does calendars (R45): a manager, as the Macros manager is (UI guidelines):
+
+  - INS subscribes (the feed's address, `https://` or `feed://`; the feed read once, then its name asked with the feed's own title filled in, as R45's calendars: an unreadable feed is not subscribed, and what was read is filed as it is subscribed).
+  - ENTER reads the highlighted one now, ALT-ENTER every feed (quietly, as a scheduled read).
+  - F6 opens its **Feed Properties** (as Calendar Properties, R45): **Read every** (every hour by default, 6 hours, a day, or only on request; also when Agendum starts) and **Keep** (how long its entries stay: 30 days by default, 7, 90, 365, or for ever).
+  - F2 renames it.
+  - DEL (F4, CTRL-D) unsubscribes, asking whether to discard its items too.
+  - F7 imports an OPML feed list (the feeds the file does not have yet; folders read through) and F8 exports one (`feeds.opml`): the feeds keep their files in and out to themselves, so the menus have no hole with the Extras off.
+
+  RSS 2.0, RSS 1.0 and Atom are read; a feed that is broken is read as far as it goes.
+
+  Each entry becomes an item in **Feeds ▸ the feed's name** (both made when first needed, without name matching): its title the item text, its summary as plain text (HTML read as text, at most about 2,000 characters) and its link the note, its publish date the **Entry** date.
+
+  Text matching, conditions and actions file it as a typed item, but dates in a title are not read: When stays empty, so feeds stay out of date views and the calendar.
+
+  The first feed makes the **News** view: a section per feed, newest first by Entry date (a column shows it), done items hidden.
+
+  A later read adds new entries and changes an entry's item where the feed changed it and the person did not. The message line says "Owl's Gazette: 3 new, 1 changed, 2 faded" (from the box, also "nothing new" or why the read failed).
+
+  Nothing asks to be read: there are no unread counts, and F4 Done dismisses an entry.
+
+  An entry older than the feed's days **fades** (its item is discarded) unless it was **kept**:
+
+  - Given a Zettel id (R73).
+  - Its text or note changed by the person.
+  - A category given by hand (not by text matching or a condition).
+
+  Done does not keep it. An entry that faded or that the person discarded is never brought back: the file remembers only its id and publish date, not its text (format 45).
+
+  **CTRL-V** (or Item ▸ Open link) opens the first web address in the highlighted item's note, else its text, in the browser (`open` on a Mac, `xdg-open` elsewhere); only `http(s)` addresses.
+
+  Feed text is data, never instructions: it is stored as text, never shown as markup, and nothing in it runs.
+- **R75a ✅ Ingested categories** (ours, an extra; ADR 0048). The categories a feed or a calendar files into, each feed's category under Feeds and each calendar's under Calendars, and the extras' families themselves, **Feeds** and **Calendars** under MAIN while each holds at least one subscription, are **ingested**: the extra names and fills them; the person reads them but does not change or fill them.
+
+  They head sections, filter views and are read by conditions (a condition on the person's own category may test one).
+
+  Refused, with "Heffalump News is filled by a feed: rename or remove it in File ▸ Transfer ▸ Feeds" (or "… by its calendar … Calendars", "Feeds holds your feeds …"):
+
+  - Renaming, a note, Also match, conditions and actions, exclusive children, moving, sorting, discarding, a new child.
+  - For a feed's or a calendar's own category, filing an item into it by hand, from a column, by typing in its section, or by another category's action.
+
+  A family locks only its structure: a category the person kept when unsubscribing stays theirs inside it, and the family stays the extra's (with its other subscriptions) while it holds one. A name is one subscription's: a second feed or calendar of the same name is refused ("… is taken").
+
+  In the category manager the message comes at once, before anything is typed; elsewhere the key stops with it.
+
+  The **Feeds and Calendars families start folded** in the category manager, one line each, and ALT-= opens one (ALT-− folds it again).
+
+  A family of the person's under MAIN that holds only calendars' categories is named **Calendars** as a file is opened, unless one is already there. Nothing moves as a file opens, but calendars that versions before 0.68.0 made straight under MAIN join Calendars when the next calendar is subscribed. A calendar in a family of the person's among their own categories stays where they put it, and new ones go to Calendars.
+
+  Both boxes scroll by whole feeds or calendars when there are more than fit, the highlighted one always shown, with "▲ 3 more above" and "▼ 230 more below".
+
+  **F2 in the Feeds and Calendars boxes** renames a feed or a calendar, and its category with it ("New name of the feed:"); two feeds, or two calendars, cannot share a name.
+
+  Which categories are ingested is worked out from the subscriptions, never stored: unsubscribing hands the category back, an ordinary category of the person's again, and so does the Feeds parent once no feed is left.
 
 ## 5c. Macros
 
-- **R50 ✅ Learn-mode macros** (Working with Macros, chapter 1). A file keeps macros (Agenda allowed 100): each has a name of up to 35 characters, unique case aside, its keystrokes, the key it is attached to (a key belongs to one macro at a time) and where it can be run from: views, notes and the category manager (Yes by default) and, for an attached key, everywhere else (No). They are listed in the macro manager's order, which can be changed or sorted by name. Keystrokes are kept as text in Agenda's notation (1-12 to 1-14): text as typed, other keys as names in braces, read in any case: `{ENTER}`, `{TAB}`, `{ShfTAB}`, `{BS}`, `{DEL}`, `{INS}`, `{ESC}`, `{UP}` `{DOWN}` `{LEFT}` `{RIGHT}`, `{HOME}` `{END}`, `{PGUP}` `{PGDN}`, `{CtlLeft}` and the other CTRL arrows, `{F1}`..`{F12}`, `{AltF1}`.., `{CtlF1}`.., `{ShfF1}`.., `{AltD}` (ALT and a letter), `{CtlN}` (CTRL and a letter). As in Agenda, a misspelt name is typed as written, line breaks are not keys and the spaces that start a continuation line are left out (a line's end keeps them). Ours: `{LBRACE}` and `{RBRACE}` type braces; keys Agenda had no name for get one in its style (`{AltBS}`, `{AltShfD}`). Saved in the file (format 24) and its JSON. ALT-F3 (MACRO) opens the macro manager: INS (or CTRL-N, or typing) names a new macro; F7 (LEARN) closes the manager and records: LEARN shows at the top right, every key does its usual work and is recorded, in views, notes, the category manager and boxes alike (keys, not their meanings: F7 recorded in the category manager marks when played in a view); ALT-F3 (or ALT-Z) stops ("Learn mode is off: Weed has 19 new keys"). F7 on a macro with keystrokes asks whether to replace or append them. ENTER on a macro runs it where you were; ALT-Z runs the macro run last again. A run plays the keys one by one as if typed, saving, opening files or asking questions on the way (the shell runs each key's effects before the next), and is one undo step; a run that changed nothing is none. Our choices: ALT-F3 and ALT-Z do nothing over a line being typed, a prompt, a question or the menu (in Learn mode they still stop); within a run ALT-Z does nothing (Agenda could not record it); runs started from runs stop 8 deep ("Macros started 8 deep; stopped"); each recorded key clicks, as in Agenda (R76). In the manager F2 opens the macro edit screen, the note editor with the keystrokes as text (a line after each {ENTER}; saved on leaving), F6 the Macro Properties box, laid out as Agenda's (checked in Agenda 2.0; its Macro file and protection left out): Name (F2 or SPACE renames), Contents ("...": SPACE or F2 edits the keystrokes), Attach to key (SPACE asks for one key in the notation, `{F4}`, `{ShfF4}`, `{CtlE}`; DEL detaches; ALT-F1, ALT-F3 and ALT-Z cannot be attached) and, under "Macro can be run from:", View, Note, Category manager and, ours, for an attached key only, Everywhere else (SPACE switches Yes / No). An attached key runs its macro where the macro may run, instead of its own command; a function key attached to a macro shows the macro's name in the key bar. Within a run an attached key does its own work, as in Agenda; `{CALL Name}` runs another macro (Agenda's {CALL}), and Learn mode records a key attached to a macro as such a call, not the keys that macro plays. DEL deletes a macro after asking, ALT-F5 sorts the list by name. Ours: ALT-↑ / ALT-↓ move a macro in the list, as in the view manager (Agenda: ALT-F10 then ENTER). Not done: the macro command language (Working with Macros, chapters 2–3), external macro files, protection and hidden macros. The macro manager is drawn as Agenda's (checked in Agenda): titled Macro Manager, Agenda's help on the control panel ("Highlight the macro you want to run or change. Press ENTER to run the macro, INS to create one, F2 to edit an existing one."), and its key bar, F2 EditMac, F4 Delete (as DEL), F6 Props, F7 Learn; like Agenda's view manager, it has no F10 menu.
+- **R50 ✅ Learn-mode macros** (Working with Macros, chapter 1). A file keeps macros (Agenda allowed 100): each has a name of up to 35 characters, unique case aside, its keystrokes, the key it is attached to (a key belongs to one macro at a time) and where it can be run from: views, notes and the category manager (Yes by default) and, for an attached key, everywhere else (No).
+
+  They are listed in the macro manager's order, which can be changed or sorted by name.
+
+  Keystrokes are kept as text in Agenda's notation (1-12 to 1-14): text as typed, other keys as names in braces, read in any case: `{ENTER}`, `{TAB}`, `{ShfTAB}`, `{BS}`, `{DEL}`, `{INS}`, `{ESC}`, `{UP}` `{DOWN}` `{LEFT}` `{RIGHT}`, `{HOME}` `{END}`, `{PGUP}` `{PGDN}`, `{CtlLeft}` and the other CTRL arrows, `{F1}`..`{F12}`, `{AltF1}`.., `{CtlF1}`.., `{ShfF1}`.., `{AltD}` (ALT and a letter), `{CtlN}` (CTRL and a letter).
+
+  As in Agenda, a misspelt name is typed as written, line breaks are not keys and the spaces that start a continuation line are left out (a line's end keeps them). Ours: `{LBRACE}` and `{RBRACE}` type braces; keys Agenda had no name for get one in its style (`{AltBS}`, `{AltShfD}`). Saved in the file (format 24) and its JSON.
+
+  ALT-F3 (MACRO) opens the macro manager:
+
+  - INS (or CTRL-N, or typing) names a new macro.
+  - F7 (LEARN) closes the manager and records: LEARN shows at the top right, every key does its usual work and is recorded, in views, notes, the category manager and boxes alike (keys, not their meanings: F7 recorded in the category manager marks when played in a view).
+  - ALT-F3 (or ALT-Z) stops ("Learn mode is off: Weed has 19 new keys").
+
+  F7 on a macro with keystrokes asks whether to replace or append them.
+
+  ENTER on a macro runs it where you were; ALT-Z runs the macro run last again. A run plays the keys one by one as if typed, saving, opening files or asking questions on the way (the shell runs each key's effects before the next), and is one undo step; a run that changed nothing is none.
+
+  Our choices:
+
+  - ALT-F3 and ALT-Z do nothing over a line being typed, a prompt, a question or the menu (in Learn mode they still stop).
+  - Within a run ALT-Z does nothing (Agenda could not record it).
+  - Runs started from runs stop 8 deep ("Macros started 8 deep; stopped").
+  - Each recorded key clicks, as in Agenda (R76).
+
+  In the manager F2 opens the macro edit screen, the note editor with the keystrokes as text (a line after each {ENTER}; saved on leaving), F6 the Macro Properties box, laid out as Agenda's (checked in Agenda 2.0; its Macro file and protection left out):
+
+  - Name (F2 or SPACE renames).
+  - Contents ("...": SPACE or F2 edits the keystrokes).
+  - Attach to key (SPACE asks for one key in the notation, `{F4}`, `{ShfF4}`, `{CtlE}`; DEL detaches; ALT-F1, ALT-F3 and ALT-Z cannot be attached).
+  - Under "Macro can be run from:", View, Note, Category manager and, ours, for an attached key only, Everywhere else (SPACE switches Yes / No).
+
+  An attached key runs its macro where the macro may run, instead of its own command; a function key attached to a macro shows the macro's name in the key bar.
+
+  Within a run an attached key does its own work, as in Agenda; `{CALL Name}` runs another macro (Agenda's {CALL}), and Learn mode records a key attached to a macro as such a call, not the keys that macro plays.
+
+  DEL deletes a macro after asking, ALT-F5 sorts the list by name. Ours: ALT-↑ / ALT-↓ move a macro in the list, as in the view manager (Agenda: ALT-F10 then ENTER).
+
+  Not done: the macro command language (Working with Macros, chapters 2–3), external macro files, protection and hidden macros.
+
+  The macro manager is drawn as Agenda's (checked in Agenda): titled Macro Manager, Agenda's help on the control panel ("Highlight the macro you want to run or change. Press ENTER to run the macro, INS to create one, F2 to edit an existing one."), and its key bar, F2 EditMac, F4 Delete (as DEL), F6 Props, F7 Learn; like Agenda's view manager, it has no F10 menu.
 
 ## 5d. Files, startup and preferences
 
-- **R51 ✅ Select File box** (User's Guide 22-4 to 22-5; Help "Select a File"). A prompt for a file name (File ▸ Retrieve or CTRL-O, saving under a name, File ▸ Transfer ▸ Import and Export, printing to a file, a note's Import and Export, the Feeds box's OPML import and export) says "F3 lists files"; F3 shows the Select File box for the folder of what is typed (or of the open file): `../` to go up, the subfolders (ending in `/`, Agenda's `<DIR>`) and the files the prompt can use (`.agendum` and `.agenda`, `.json`, `.txt`, `.txt` and `.md` for a note, or `.opml` and `.xml` for a feed list), hidden ones left out. ↑ ↓ PGUP PGDN HOME END move; typing narrows the list to names that contain what is typed; ENTER opens a folder, or puts the file's whole path in the prompt, where ENTER then uses it as if typed; F7 shows when each was last changed (Agenda's DATES); ESC goes back to the prompt as it was. Ours: file names keep their extensions (Agenda left them out); Agenda's F4 (delete), F6 (EXPAND), F8 (descriptions), F9 (rename) and INS are not offered.
-- **R52 ✅ Startup** (screenshot `docs/reference/screens/image0001-raw.png`). Agendum starts with a splash screen laid out as Agenda's: a box over an empty screen with the owl and "W O L" drawn on the box itself (no block of their own colour, our choice), the title "W O L ' S   A G E N D U M", the tagline "Hoo's in control? You are.", the release, "Copyright 2026 WOL and JW&D - All rights reversed", Name and Company, and a word on sharing; drawn from a layout (`Agendum.TUI.Boxes.Template`). Name is `name` in the preferences, else the login name; Company is `company` (shown only when set). Any key, which does nothing else, or five seconds take it away. When no file was named (and not `--demo` or `--rabbit`), the prompt "File to open or create:" waits under it, offering the last file used (F3 lists files, R51); a file that exists opens, one that does not starts a new file there, saved on the first save; ESC leaves an untitled file. The last file opened or saved is kept as `last_file` in the preferences. Ours: Agenda asked for the file in its File Retrieve box and kept Name/Company from installation.
-- **R53 ✅ Typing in the view manager** (User's Guide 9-5; Starter Applications 1-10). Typing in the view manager highlights the next view, round the list, whose name starts with the letters typed (any case); more letters narrow it down, BACKSPACE takes one back, and "Find:" beside the title shows them. A letter that fits no view starts again from that letter, so typing the same letter again goes on to the next view with it; a letter no view starts with is ignored. Any other key forgets what was typed. ENTER shows the highlighted view.
+- **R51 ✅ Select File box** (User's Guide 22-4 to 22-5; Help "Select a File"). A prompt for a file name (File ▸ Retrieve or CTRL-O, saving under a name, File ▸ Transfer ▸ Import and Export, printing to a file, a note's Import and Export, the Feeds box's OPML import and export) says "F3 lists files".
+
+  F3 shows the Select File box for the folder of what is typed (or of the open file): `../` to go up, the subfolders (ending in `/`, Agenda's `<DIR>`) and the files the prompt can use (`.agendum` and `.agenda`, `.json`, `.txt`, `.txt` and `.md` for a note, or `.opml` and `.xml` for a feed list), hidden ones left out.
+
+  - ↑ ↓ PGUP PGDN HOME END move.
+  - Typing narrows the list to names that contain what is typed.
+  - ENTER opens a folder, or puts the file's whole path in the prompt, where ENTER then uses it as if typed.
+  - F7 shows when each was last changed (Agenda's DATES).
+  - ESC goes back to the prompt as it was.
+
+  Ours: file names keep their extensions (Agenda left them out); Agenda's F4 (delete), F6 (EXPAND), F8 (descriptions), F9 (rename) and INS are not offered.
+- **R52 ✅ Startup** (screenshot `docs/reference/screens/image0001-raw.png`). Agendum starts with a splash screen laid out as Agenda's:
+
+  - A box over an empty screen with the owl and "W O L" drawn on the box itself (no block of their own colour, our choice).
+  - The title "W O L ' S   A G E N D U M".
+  - The tagline "Hoo's in control? You are."
+  - The release.
+  - "Copyright 2026 WOL and JW&D - All rights reversed".
+  - Name and Company.
+  - A word on sharing.
+
+  Drawn from a layout (`Agendum.TUI.Boxes.Template`). Name is `name` in the preferences, else the login name; Company is `company` (shown only when set). Any key, which does nothing else, or five seconds take it away.
+
+  When no file was named (and not `--demo` or `--rabbit`), the prompt "File to open or create:" waits under it, offering the last file used (F3 lists files, R51):
+
+  - A file that exists opens.
+  - One that does not starts a new file there, saved on the first save.
+  - ESC leaves an untitled file.
+
+  The last file opened or saved is kept as `last_file` in the preferences. Ours: Agenda asked for the file in its File Retrieve box and kept Name/Company from installation.
+- **R53 ✅ Typing in the view manager** (User's Guide 9-5; Starter Applications 1-10). Typing in the view manager highlights the next view, round the list, whose name starts with the letters typed (any case); more letters narrow it down, BACKSPACE takes one back, and "Find:" beside the title shows them.
+
+  A letter that fits no view starts again from that letter, so typing the same letter again goes on to the next view with it; a letter no view starts with is ignored. Any other key forgets what was typed. ENTER shows the highlighted view.
 - **R54 ✅ More preferences** (Setting Up Agenda 1-25 to 1-28; User's Guide 2-22 to 2-23). More of Agenda's Utilities Customize settings, in Utilities ▸ Customize, kept in the person's preferences file like the rest (ADR 0008):
   - ✅ **Display key map** (Yes, the default, or No): whether the key bar shows at the bottom of the screen. ALT-K cycles the bar through the ALT, CTRL and SHIFT keys, then hides it (R80); hidden or shown is kept for next time (`key_map = no` in the file), which keys it shows is not.
   - ✅ **Confirm mode** (Yes, the default, or No): with No, Agendum does what was asked without "are you sure?" questions: discarding items, categories and views, deleting macros, clearing dependencies, sorting a family, changing a category's type, making an item depend on others. Questions whose Y and N do different things are still asked: "Save changes first?" and, when unsubscribing, whether to discard the calendar's items too. Undo (R30) still reverses what was done.
   - ✅ **Auto-save interval** (User's Guide 22-8): a file with a name and unsaved changes is saved once no key has been pressed for that many minutes (not while a settings box is open: its changes reach the file on ENTER), with the usual "Saved" message. Off (the default) or 1 to 60 minutes; Utilities ▸ Customize steps through 1, 2, 5, 10, 15, 20, 30, 45 and 60, and `auto_save = N` in the file takes any of them. An untitled file is never saved by itself. A save that fails is tried again an interval later.
   - ✅ **Decimal separator** ("." the default, or ",") and **Thousands separator** ("," the default, ".", or a space; Setting Up Agenda 1-25, 1-28): how numbers are shown and read everywhere: column entries and calculations, typed numbers, range filters and conditions, actions, Item Properties, and category names read as numbers. The two are never the same: with a decimal comma the thousands separator is a dot unless a space is chosen. They belong to the person's input format, so they reach the core with the clock (`Agendum.Core.Context`), as dates do (`decimal_separator` and `thousands_separator = space` in the file).
-- **R68 ✅ The current view and recently used views in the view manager** (ours). The view manager shows ► before the name of the view shown, in a column of its own beside the datebook `*`, wherever the highlight goes, so "where am I?" is answered at a glance. Agenda's view manager marked nothing once the highlight moved. F5 lists the views by when they were last shown, the view shown first, then those never shown in the file's order, with "View Manager: recently used" as the title; F5 again goes back to the person's order, the highlight staying on its view each time. Only the list changes: the file's order, which ALT-N, ALT-P and hop follow (R42), stays, and ALT-↑, ALT-↓ and ALT-F5 (which change it) say "Listed by recently used: F5 shows your order" instead. The setting starts off and stays as set; it and the views used (the last 50) are the person's, kept with where they left the file (R69, `recent:… order:recent`) and saved as F5 is pressed. Agenda had only the one-off sort by name (ALT-F5, User's Guide 9-16).
-- **R69 ✅ Where you left a file**. A file opens on the view and the item that were highlighted when it was last left (by Quit, or by Retrieve, New or Import opening another file); an item no longer there leaves the highlight on its section's head, a section no longer there on the top of the view, and a view no longer there opens the file on its first view, as before. The views used lately and how the view manager lists them go with the place (R68). Agenda stored the current view and item in the file (`AGENDA_FILE_FORMAT.md`, header `0x044` and `0x1E8`). Ours: the place is kept in the person's preferences, by the file's path (`place = view:3 section:2 item:17 file:/path`, the 50 files left last), never in the file, so moving around never makes the file changed or causes a "Save changes?" question, and each person has their own place in a shared file. A copied or renamed file opens at the top.
-- **R71 ✅ A file changed on disk** (ours). Agendum does not save over a file that another writer (another Agendum, a sync tool, an agent, later capture from outside) changed since Agendum read it or last saved it, without asking. It keeps a stamp of the file's bytes (an MD5 sum) from when it read or wrote them; a save that finds other bytes there asks "garden.agendum has changed on disk since Agendum read it. Save over it?" (Yes, as the other questions, R54). Yes saves over it; No saves nothing and says that File ▸ Maintenance ▸ MakeCopy writes the changes to another file, keeping both (R82). A file not on disk when it was opened or made with New, that is there at its first save, asks the same with "already exists"; a file removed since is written again without asking. Auto-save (R54) never asks while the person may be away: it says "Not auto-saved: … changed on disk" and stops auto-saving until a save the person makes settles it. What follows a save waits for it to succeed: Quit after Yes to "Save changes before quitting?" quits only once the file is saved, and a save that fails or is refused leaves Agendum open with the changes ("Could not save: … (not quitting)"); after Yes to "Save changes first?" the Retrieve, New or Import prompt comes only then; Save As takes the new name only once saved there. The check is in the shell (`Agendum.Store.save/3`), so the core stays pure; another writer changing the file in the instant between the look and the write is not caught. Save As over another existing file still writes without asking, as before.
-- **R77 ✅ The Extras preference** (ours; ADR 0043). Agendum's extras, the features Agenda did not have that fail ADR 0043's test of a truthful clone (`plans/AGENDA_PARITY.md`, tag *extra*), are hidden behind one preference, **Extras** in Utilities ▸ Customize (No, the default, or Yes; `extras = yes` in the preferences file, R54). With it off: the extras' commands are tagged in `Agendum.TUI.Commands` and left out of F1's command list, CTRL-X and describe key, and their keys do nothing, as unbound keys (CTRL-T, CTRL-G, CTRL-R and CTRL-V in a view, CTRL-L in a note, F5 in the view manager); the menu leaves out File ▸ Transfer ▸ Calendars, Publish and Feeds, Item ▸ Open link and Item ▸ Zettel; the view manager shows no ► (R68) and lists the views in the file's order; the key bar keeps Agenda's short labels on a wide screen; feeds and calendars are not read on schedule (R45, R75), so nothing goes to the network unasked; and alarms that came due while the file was closed ring as Agenda's do, a message and the alarm's sound, the items showing `@`, with no "While you were away" box (R70). The file's data stay and show as they are: Zettel ids, a Zettel id column, feed entries, the News view, the blog's settings; a file saved with Extras off keeps the extras' fields unchanged. Switched on, everything comes back at once. Faithful code reaches the extras' boxes only through doors listed, with their reasons, in the architecture test (ADR 0044).
+- **R68 ✅ The current view and recently used views in the view manager** (ours). The view manager shows ► before the name of the view shown, in a column of its own beside the datebook `*`, wherever the highlight goes, so "where am I?" is answered at a glance. Agenda's view manager marked nothing once the highlight moved.
+
+  F5 lists the views by when they were last shown, the view shown first, then those never shown in the file's order, with "View Manager: recently used" as the title; F5 again goes back to the person's order, the highlight staying on its view each time.
+
+  Only the list changes: the file's order, which ALT-N, ALT-P and hop follow (R42), stays, and ALT-↑, ALT-↓ and ALT-F5 (which change it) say "Listed by recently used: F5 shows your order" instead.
+
+  The setting starts off and stays as set; it and the views used (the last 50) are the person's, kept with where they left the file (R69, `recent:… order:recent`) and saved as F5 is pressed. Agenda had only the one-off sort by name (ALT-F5, User's Guide 9-16).
+- **R69 ✅ Where you left a file**. A file opens on the view and the item that were highlighted when it was last left (by Quit, or by Retrieve, New or Import opening another file).
+
+  - An item no longer there leaves the highlight on its section's head.
+  - A section no longer there leaves the highlight on the top of the view.
+  - A view no longer there opens the file on its first view, as before.
+
+  The views used lately and how the view manager lists them go with the place (R68). Agenda stored the current view and item in the file (`AGENDA_FILE_FORMAT.md`, header `0x044` and `0x1E8`).
+
+  Ours: the place is kept in the person's preferences, by the file's path (`place = view:3 section:2 item:17 file:/path`, the 50 files left last), never in the file, so moving around never makes the file changed or causes a "Save changes?" question, and each person has their own place in a shared file. A copied or renamed file opens at the top.
+- **R71 ✅ A file changed on disk** (ours). Agendum does not save over a file that another writer (another Agendum, a sync tool, an agent, later capture from outside) changed since Agendum read it or last saved it, without asking.
+
+  It keeps a stamp of the file's bytes (an MD5 sum) from when it read or wrote them; a save that finds other bytes there asks "garden.agendum has changed on disk since Agendum read it. Save over it?" (Yes, as the other questions, R54).
+
+  - Yes saves over it.
+  - No saves nothing and says that File ▸ Maintenance ▸ MakeCopy writes the changes to another file, keeping both (R82).
+
+  A file not on disk when it was opened or made with New, that is there at its first save, asks the same with "already exists"; a file removed since is written again without asking.
+
+  Auto-save (R54) never asks while the person may be away: it says "Not auto-saved: … changed on disk" and stops auto-saving until a save the person makes settles it.
+
+  What follows a save waits for it to succeed:
+
+  - Quit after Yes to "Save changes before quitting?" quits only once the file is saved, and a save that fails or is refused leaves Agendum open with the changes ("Could not save: … (not quitting)").
+  - After Yes to "Save changes first?" the Retrieve, New or Import prompt comes only then.
+  - Save As takes the new name only once saved there.
+
+  The check is in the shell (`Agendum.Store.save/3`), so the core stays pure; another writer changing the file in the instant between the look and the write is not caught. Save As over another existing file still writes without asking, as before.
+- **R77 ✅ The Extras preference** (ours; ADR 0043). Agendum's extras, the features Agenda did not have that fail ADR 0043's test of a truthful clone (`plans/AGENDA_PARITY.md`, tag *extra*), are hidden behind one preference, **Extras** in Utilities ▸ Customize (No, the default, or Yes; `extras = yes` in the preferences file, R54).
+
+  With it off:
+
+  - The extras' commands are tagged in `Agendum.TUI.Commands` and left out of F1's command list, CTRL-X and describe key, and their keys do nothing, as unbound keys (CTRL-T, CTRL-G, CTRL-R and CTRL-V in a view, CTRL-L in a note, F5 in the view manager).
+  - The menu leaves out File ▸ Transfer ▸ Calendars, Publish and Feeds, Item ▸ Open link and Item ▸ Zettel.
+  - The view manager shows no ► (R68) and lists the views in the file's order.
+  - The key bar keeps Agenda's short labels on a wide screen.
+  - Feeds and calendars are not read on schedule (R45, R75), so nothing goes to the network unasked.
+  - Alarms that came due while the file was closed ring as Agenda's do, a message and the alarm's sound, the items showing `@`, with no "While you were away" box (R70).
+
+  The file's data stay and show as they are: Zettel ids, a Zettel id column, feed entries, the News view, the blog's settings; a file saved with Extras off keeps the extras' fields unchanged. Switched on, everything comes back at once.
+
+  Faithful code reaches the extras' boxes only through doors listed, with their reasons, in the architecture test (ADR 0044).
 
 ## 5e. Zettels
 
-- **R73 ✅ Zettel ids** (ours; ADR 0039). An item can have a Zettel id: eight pronounceable letters in four syllables, such as `bonalaku`, the Quadsyl-24 spelling of a number (`docs/QUADSYL.md`, `Agendum.Core.Extras.ZettelId`). An item with an id is a zettel. Item ▸ Zettel ▸ Attach gives the highlighted item the next id; with items marked it asks, as other commands do, "Give a Zettel id to:" the marked items or the current one. The message line says which id was given ("bonalaku given"; "2 Zettel ids given: bonalaku, pigavono"); an item that has one keeps it ("The item already has its Zettel id, bonalaku"). Ids are given in order from the file's own counter, from 1, skipping the 267 real words, which are reserved for special notes (not given out yet); an id is never given twice, not even after its item is discarded, and never changes. One undo takes the ids back. CTRL-T (our choice), the menu, or the command list.
-- **R73a ✅ A Zettel id column.** A standard column's Format (Column Add and Column Properties, R56) can be **Zettel id**: the column shows each item's id, whatever the column's head, under the head "Zettel id"; nine wide by default. Typing in it, or DEL, changes nothing and says "A Zettel id is given by Item ▸ Zettel ▸ Attach; it cannot be typed".
-- **R73b ✅ Links between zettels** (ours). In an item's text or note, `[[bonalaku]]` is a link to the item with that Zettel id, and so is the id written on its own (`bonalaku`) when an item has it; case does not matter, and an eight-letter word no item has stays plain text. Links show in the link colour of the theme, in the view and in the note editor; a bracketed link no item has is *broken* and shows in a colour of its own. With the cursor on a link, in a note or an item being edited, the control panel shows what it points at ("→ bonalaku: Owl's birthday", or "[[kitolido]]: no item has this Zettel id"). Item ▸ Zettel ▸ Follow shows the items the highlighted item links to (its text first, then its note, each once) in the Show View, and Item ▸ Zettel ▸ Linked shows the items that link to it, the way ALT-O lists dependencies; ALT-F8 goes back. Item Properties shows the item's id before its statistics and lists the items linking to it under **Linked from** (SPACE shows one). In a note, **Insert link** types `[[…]]` for each marked item at the cursor (they need ids). Text matching ignores bracketed links, so `[[bonalaku]]` never files an item under a category of that name. Keys (our choice): CTRL-G follows, CTRL-R shows Linked from, CTRL-L inserts a link in a note.
-- **R74 ✅ The micro-blog** (ours; the owner's own use, VISION group 1; ADR 0041). File ▸ Transfer ▸ Publish writes a blog from the file as a static website. The **Publish the blog** box holds its settings, kept in the file: the **Posts category** (Posts by default) whose items are the posts, the **Drafts** category whose posts are left out until ready (none by default); both complete a category's name as it is typed, as the clone's category fields (R32: ENTER takes the match shown, F5 or INS exactly what was typed, made under MAIN when the box is done, F2 edits the name as it is), SPACE or F3 lists the categories, DEL leaves Drafts empty (UI guidelines); both are the person's own categories, never a feed's or a calendar's (R75a: refused, "The posts and drafts are your own categories …", and neither completed nor listed there; a typed name is looked up among the person's categories only); the site's title, description, author, language, **base address** (for the feeds' whole links), `rel="me"` links to the person's other profiles, the **folder** it is written to (`site` beside the file by default; any path, a mounted one too; typed, or F3 lists the folders from the one it names, `./  (this folder)` first, whose ENTER picks the folder shown, kept relative to the file's folder when inside it), and **Upload**: None, rsync over ssh (to a target such as `me@host:www/blog`) or SFTP (to a host, `host:port`, as a user, into a folder there). A letter on a text field types it, F2 edits it (SPACE too, but on Posts and Drafts); ESC closes the box and changes nothing. A post is the item's text as its title and its note, in Agendum's **Markdown** (paragraphs, `#` headings, `**strong**`, `*emphasis*`, `` `code` ``, code blocks, quotes, lists, `[links](https://…)`, `![images](https://…)`, bare addresses, a rule `---`, and the task boxes `- [ ]` to do, `- [x]` done and `- [-]` cancelled, struck through), its date the When date, else the Entry date; posts come newest first. Anything else is text: HTML in a note is escaped, never markup. A link's text, a code span or an emphasis is at most 500 characters long; a longer one is text (our choice: so that a post of any size becomes HTML in time proportional to its length). **ENTER** keeps the settings and gives each post without a Zettel id one (R73), in one change (one undo step), and makes the site: `index.html` with every post in full, a page per post at `posts/<zettel id>.html` (an address that never changes), `rss.xml` (RSS 2.0) and `feed.json` (JSON Feed 1.1), and `style.css` with its fonts in `fonts/`. The design is [The Proportional Web](https://owickstrom.github.io/the-proportional-web/) by Oskar Wickström (MIT, credited in the stylesheet): Alegreya for text, Alegreya SC for headings, Courier Prime for code, all written into the site with their licence (`fonts/OFL.txt`), so no reader's browser asks Google or anyone else for them; dark when the reader's system is (`prefers-color-scheme`). `style.css` is written when the folder has none, or when it is still word for word the monospace stylesheet Agendum wrote before 0.69; one the person changed stays. The pages are plain HTML without JavaScript, readable without the stylesheet, with microformats (`h-feed`, `h-entry`, `h-card`) and `rel="me"` links, so micro.blog or a bridge such as Bridgy Fed can follow the blog from the fediverse. A Zettel link in a post (R73b) is a link to the target's page when it is a post, else the target's text; a broken one stays as written. Agendum then reads the folder and the **Publish: what will change** box lists the files it would add (+), change (~) and remove (−, a post that is no longer one), and where they then go; ENTER writes them and uploads, ESC writes nothing ("Nothing was published"). The box stays open while that runs, its last line "Publishing … · ESC closes this box; publishing goes on": ENTER then does nothing more, and ESC only closes it ("Publishing goes on; the message line says when it is done"), as a publish under way cannot be called back (our choice). When the result comes, the box closes, even under another box such as the help. Only Agendum's own files are written, removed or uploaded (it keeps their list in `.agendum-site` in the folder); nothing else in the folder or on the server is touched. rsync sends only those paths (`--delete` limited to them by filters, `-c` comparing contents). SFTP uses the person's ssh keys and `~/.ssh/known_hosts`; a server that refuses them makes Agendum ask "Password of user@host (not kept):", the typing shown as stars, kept out of the debug log, never stored; a `~/.netrc` password is used too. Afterwards the message line says "Published and uploaded: 2 added, 1 changed, 0 removed", or why not ("Not published: …"). Not yet: comments, tag pages, images uploaded from the file, publishing on a schedule. Publishing runs in the background: Agendum goes on while the site is written and uploaded ("Publishing …"), one at a time; an upload never waits for ever (SFTP calls time out, rsync's ssh never asks for a password or a host key). An SFTP upload sends the whole site each time, and removals a failed upload did not make wait in the folder (`.agendum-unsent`) for the next one. The posts and drafts categories stay the ones they are unless another name is typed, and a name two categories have is refused.
+- **R73 ✅ Zettel ids** (ours; ADR 0039). An item can have a Zettel id: eight pronounceable letters in four syllables, such as `bonalaku`, the Quadsyl-24 spelling of a number (`docs/QUADSYL.md`, `Agendum.Core.Extras.ZettelId`). An item with an id is a zettel.
 
+  Item ▸ Zettel ▸ Attach gives the highlighted item the next id; with items marked it asks, as other commands do, "Give a Zettel id to:" the marked items or the current one.
+
+  The message line says which id was given ("bonalaku given"; "2 Zettel ids given: bonalaku, pigavono"); an item that has one keeps it ("The item already has its Zettel id, bonalaku").
+
+  Ids are given in order from the file's own counter, from 1, skipping the 267 real words, which are reserved for special notes (not given out yet); an id is never given twice, not even after its item is discarded, and never changes. One undo takes the ids back.
+
+  CTRL-T (our choice), the menu, or the command list.
+- **R73a ✅ A Zettel id column.** A standard column's Format (Column Add and Column Properties, R56) can be **Zettel id**: the column shows each item's id, whatever the column's head, under the head "Zettel id"; nine wide by default. Typing in it, or DEL, changes nothing and says "A Zettel id is given by Item ▸ Zettel ▸ Attach; it cannot be typed".
+- **R73b ✅ Links between zettels** (ours). In an item's text or note, `[[bonalaku]]` is a link to the item with that Zettel id, and so is the id written on its own (`bonalaku`) when an item has it; case does not matter, and an eight-letter word no item has stays plain text.
+
+  Links show in the link colour of the theme, in the view and in the note editor; a bracketed link no item has is *broken* and shows in a colour of its own.
+
+  With the cursor on a link, in a note or an item being edited, the control panel shows what it points at ("→ bonalaku: Owl's birthday", or "[[kitolido]]: no item has this Zettel id").
+
+  Item ▸ Zettel ▸ Follow shows the items the highlighted item links to (its text first, then its note, each once) in the Show View, and Item ▸ Zettel ▸ Linked shows the items that link to it, the way ALT-O lists dependencies; ALT-F8 goes back.
+
+  Item Properties shows the item's id before its statistics and lists the items linking to it under **Linked from** (SPACE shows one).
+
+  In a note, **Insert link** types `[[…]]` for each marked item at the cursor (they need ids).
+
+  Text matching ignores bracketed links, so `[[bonalaku]]` never files an item under a category of that name.
+
+  Keys (our choice):
+
+  - CTRL-G follows.
+  - CTRL-R shows Linked from.
+  - CTRL-L inserts a link in a note.
+- **R74 ✅ The micro-blog** (ours; the owner's own use, VISION group 1; ADR 0041). File ▸ Transfer ▸ Publish writes a blog from the file as a static website.
+
+  The **Publish the blog** box holds its settings, kept in the file:
+
+  - The **Posts category** (Posts by default) whose items are the posts.
+  - The **Drafts** category whose posts are left out until ready (none by default).
+  - Both complete a category's name as it is typed, as the clone's category fields (R32: ENTER takes the match shown, F5 or INS exactly what was typed, made under MAIN when the box is done, F2 edits the name as it is), SPACE or F3 lists the categories, DEL leaves Drafts empty (UI guidelines).
+  - Both are the person's own categories, never a feed's or a calendar's (R75a: refused, "The posts and drafts are your own categories …", and neither completed nor listed there; a typed name is looked up among the person's categories only).
+  - The site's title, description, author, language, **base address** (for the feeds' whole links), `rel="me"` links to the person's other profiles.
+  - The **folder** it is written to (`site` beside the file by default; any path, a mounted one too; typed, or F3 lists the folders from the one it names, `./  (this folder)` first, whose ENTER picks the folder shown, kept relative to the file's folder when inside it).
+  - **Upload**: None, rsync over ssh (to a target such as `me@host:www/blog`) or SFTP (to a host, `host:port`, as a user, into a folder there).
+
+  A letter on a text field types it, F2 edits it (SPACE too, but on Posts and Drafts); ESC closes the box and changes nothing.
+
+  A post is the item's text as its title and its note, in Agendum's **Markdown** (paragraphs, `#` headings, `**strong**`, `*emphasis*`, `` `code` ``, code blocks, quotes, lists, `[links](https://…)`, `![images](https://…)`, bare addresses, a rule `---`, and the task boxes `- [ ]` to do, `- [x]` done and `- [-]` cancelled, struck through), its date the When date, else the Entry date. Posts come newest first.
+
+  Anything else is text: HTML in a note is escaped, never markup. A link's text, a code span or an emphasis is at most 500 characters long; a longer one is text (our choice: so that a post of any size becomes HTML in time proportional to its length).
+
+  **ENTER** keeps the settings and gives each post without a Zettel id one (R73), in one change (one undo step), and makes the site:
+
+  - `index.html` with every post in full.
+  - A page per post at `posts/<zettel id>.html` (an address that never changes).
+  - `rss.xml` (RSS 2.0) and `feed.json` (JSON Feed 1.1).
+  - `style.css` with its fonts in `fonts/`.
+
+  The design is [The Proportional Web](https://owickstrom.github.io/the-proportional-web/) by Oskar Wickström (MIT, credited in the stylesheet): Alegreya for text, Alegreya SC for headings, Courier Prime for code, all written into the site with their licence (`fonts/OFL.txt`), so no reader's browser asks Google or anyone else for them; dark when the reader's system is (`prefers-color-scheme`).
+
+  `style.css` is written when the folder has none, or when it is still word for word the monospace stylesheet Agendum wrote before 0.69; one the person changed stays.
+
+  The pages are plain HTML without JavaScript, readable without the stylesheet, with microformats (`h-feed`, `h-entry`, `h-card`) and `rel="me"` links, so micro.blog or a bridge such as Bridgy Fed can follow the blog from the fediverse.
+
+  A Zettel link in a post (R73b) is a link to the target's page when it is a post, else the target's text; a broken one stays as written.
+
+  Agendum then reads the folder and the **Publish: what will change** box lists the files it would add (+), change (~) and remove (−, a post that is no longer one), and where they then go. ENTER writes them and uploads, ESC writes nothing ("Nothing was published").
+
+  The box stays open while that runs, its last line "Publishing … · ESC closes this box; publishing goes on": ENTER then does nothing more, and ESC only closes it ("Publishing goes on; the message line says when it is done"), as a publish under way cannot be called back (our choice). When the result comes, the box closes, even under another box such as the help.
+
+  Only Agendum's own files are written, removed or uploaded (it keeps their list in `.agendum-site` in the folder); nothing else in the folder or on the server is touched. rsync sends only those paths (`--delete` limited to them by filters, `-c` comparing contents).
+
+  SFTP uses the person's ssh keys and `~/.ssh/known_hosts`; a server that refuses them makes Agendum ask "Password of user@host (not kept):", the typing shown as stars, kept out of the debug log, never stored; a `~/.netrc` password is used too.
+
+  Afterwards the message line says "Published and uploaded: 2 added, 1 changed, 0 removed", or why not ("Not published: …"). Not yet: comments, tag pages, images uploaded from the file, publishing on a schedule.
+
+  Publishing runs in the background: Agendum goes on while the site is written and uploaded ("Publishing …"), one at a time; an upload never waits for ever (SFTP calls time out, rsync's ssh never asks for a password or a host key). An SFTP upload sends the whole site each time, and removals a failed upload did not make wait in the folder (`.agendum-unsent`) for the next one.
+
+  The posts and drafts categories stay the ones they are unless another name is typed, and a name two categories have is refused.
 ## 6. Out of scope for now
 
 The macro command language (Working with Macros, chapters 2–3; Learn-mode keystroke macros are built, R50), printing to a printer and print preview, TXT2STF definition files, networking/file reservations, application protection, the Metro accessories.
