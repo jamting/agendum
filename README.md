@@ -1,6 +1,6 @@
 # Wol's Agendum
 
-**Wol's Agendum** (Agendum for short) is a clone of **Lotus Agenda**, the 1988 DOS personal information manager, written in Elixir with a terminal UI that looks and feels like the original. Wol is how Owl spells his name in A. A. Milne's books about the Hundred Acre Wood, and the program's manual is Owl teaching Rabbit to use it; an *agendum* is one thing to be done.
+**Wol's Agendum** (Agendum for short) is a clone of **Lotus Agenda**, the 1988 DOS personal information manager, written in Elixir with a terminal UI that looks and feels like the original. Wol is how Owl spells his name in A. A. Milne's books about the Hundred Acre Wood, and the program's manual is Owl teaching Rabbit to use it; an *agendum* is one thing to be done. It is said "wolz a-JEN-dum": *Wol* rhymes with "doll", and *Agendum* is said like "agenda" (ADR 0019).
 
 New to Lotus Agenda? [`docs/AGENDA_HISTORY.md`](docs/AGENDA_HISTORY.md) explains why people loved the original and what made it unique; where Agendum is going is in [`docs/VISION.md`](docs/VISION.md).
 
