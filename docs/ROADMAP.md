@@ -6,12 +6,17 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. A meeting on what information to make public in the docs (Housekeeping; meeting 2026-10-26-4, § 11)
-2. A tidy pass with the SPEC sweep (Housekeeping; meeting 2026-10-26-4, §§ 9, 13)
-3. A dry run of the public copy (Housekeeping; meeting 2026-10-26-4, § 9)
-4. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-5. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
-6. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+1. The panel's pseudonyms in the workshop (Housekeeping; meeting 2026-10-28-2, § 10)
+2. The licence comparison in `plans/GITHUB.md` § 7, then a short licence meeting (Housekeeping; meeting 2026-10-28-2, § 12)
+3. A tidy pass with the SPEC sweep and the private markers (Housekeeping; meeting 2026-10-26-4, §§ 9, 13; meeting 2026-10-28-2, §§ 6–7)
+4. The dry run of the public copy, as a script (Housekeeping; meeting 2026-10-28-2, § 11)
+5. A practical meeting on the dry run's results: go or no-go (Housekeeping; meeting 2026-10-28-2, § 11)
+6. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+7. The public site, with four doors (Housekeeping; meeting 2026-10-28-2, § 9)
+8. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
+9. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+
+The order of 1–7 is Marie the Wren's, at the chair's request (meeting 2026-10-28-2, § 13): the names first, as every later document is touched by them; the licence before the dry run, as the licence and the contributors' terms go into the copy; the tidy pass and the markers in one sweep over the same documents; the dry run after the markers, so its leak test has something to check; the site after the repository, as Pages needs it public.
 
 **The extras meet the guidelines** since v0.72.0 (2026-10-28): new extras and Wol may come again (meeting 2026-10-26-6, § 7; ADR 0049). Why: the extras were built before the clone's bar was raised and missed its catch-up, in robustness at the shell's edge and in the boxes' conventions (§ 5).
 
@@ -67,7 +72,10 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
 
 ### Housekeeping
 
-- [ ] Before the public repository (meeting 2026-10-26-4, §§ 9, 11, 13), in this order: a general code review of the whole code base (done 2026-10-26: three cloud slices, `docs/CODE_REVIEW_SLICES.md`; the rest locally after the public repository); a meeting on what information to make public in the docs; a tidy pass (`tidy-docs`: VISION's freeze paragraph, AGENDA_PARITY's "three differences" and their cousins) with a sweep of SPEC, each rule keeping a short "(checked in Agenda)" or "Our choice" and its longer story moved to `ROADMAP_DONE.md`; then a dry run: the `git filter-repo` copy built and checked by `mix check` before anything is pushed (`plans/GITHUB.md` § 7)
+- [ ] The panel's pseudonyms (meeting 2026-10-28-2, § 10): the name table is in `.claude/skills/expert-review/SKILL.md` § The panel; convert the existing documents and skills (reviews, minutes, summaries, plans, the meeting, study-plan and expert-review skills, CLAUDE.md, `docs/HOW_I_WORK.md`) in one commit, the lens in brackets on first mention, first names after; keep the list of name pairs for `filter-repo` (`--replace-text`, `--replace-message`; six commit messages hold real names)
+- [ ] The licence comparison (meeting 2026-10-28-2, § 12, tabled): one page in `plans/GITHUB.md` § 7 on Apache-2.0, GPL-3.0, AGPL-3.0, the Functional Source License, BSL and PolyForm Noncommercial, each on "hinders a competing service" and "your data and program stay yours", plus the contributors' terms (CLA); then a short licence meeting, and a legal check before anything is chosen
+- [ ] Before the public repository (meeting 2026-10-26-4, §§ 9, 11, 13; meeting 2026-10-28-2, §§ 6–7, 11), in this order: a general code review (done 2026-10-26: three cloud slices, `docs/CODE_REVIEW_SLICES.md`; the rest locally after the public repository); the meeting on what to make public (done, 2026-10-28-2); a tidy pass (`tidy-docs`: VISION's freeze paragraph, AGENDA_PARITY's "three differences" and their cousins) with a sweep of SPEC, each rule keeping a short "(checked in Agenda)" or "Our choice" and its longer story moved to `ROADMAP_DONE.md`, and in the same sweep the private passages of public documents marked `<!-- private -->` … `<!-- /private -->` or moved into private files (`plans/GITHUB.md` § 7, the list); then the dry run as a re-runnable script in `tools/public/`: the `git filter-repo` copy built, the markers replaced by the creek note, checked by `mix check`, a leak test (no private file, marker or business word left) and a check that every cited commit hash exists in the copy; then a practical meeting on its results
+- [ ] The public site, after the public repository (meeting 2026-10-28-2, § 9): one static page with four doors, Try it (install), Learn it (the guide, the manual), Look inside (the API and design docs, the ADRs), Follow it (the owner's devlog), and a short recording of typing an item and seeing it filed; the docs on GitHub Pages; an `llms.txt` made from `docs/INDEX.md`; downloads from GitHub Releases and a Homebrew tap first, bundled binaries (Burrito-style) later if people ask. The devlog is the owner's own words, published with Agendum's blog extra, backfilled as milestone posts (the summaries only jog the memory; they stay private)
 - [ ] Optional (from the parity plan, 2026-10-26): Utilities ▸ Launch, a shell without quitting Agendum
 *[A page here was soaked in the creek. — Rabbit]*
 
