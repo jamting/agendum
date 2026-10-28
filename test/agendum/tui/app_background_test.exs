@@ -158,6 +158,53 @@ defmodule Agendum.TUI.AppBackgroundTest do
     refute Map.has_key?(after_own.fetching, feed)
   end
 
+  # Found by the richer fuzz walks (2026-10-27): the wait was cleared only
+  # by an answer for the address the feed or calendar has now, so one
+  # unsubscribed (or undone) while being read, or whose address changed,
+  # was waited for ever: "reading…" in its box, WRKG on the control panel,
+  # and never read again.
+  test "a feed or calendar unsubscribed while being read is no longer waited for" do
+    {state, feed, cal} = reading()
+
+    state =
+      state
+      |> State.run({:unsubscribe_feed, feed, false})
+      |> State.run({:unsubscribe_calendar, cal, false})
+
+    after_state =
+      state
+      |> App.background({:feed_read, feed, @feed_url, {:ok, [@entry]}, 1})
+      |> App.background({:calendar_read, cal, @cal_url, {:ok, [@event]}, 1})
+
+    assert after_state.db == state.db
+    assert after_state.fetching == %{}
+  end
+
+  test "an answer for an address since changed is dropped, and the new one is read" do
+    {state, feed, cal} = reading()
+
+    db = %{
+      state.db
+      | feeds: Map.update!(state.db.feeds, feed, &%{&1 | url: "https://owl.example/new"}),
+        calendars: Map.update!(state.db.calendars, cal, &%{&1 | url: "https://w.example/new"})
+    }
+
+    state = %{state | db: db}
+
+    after_state =
+      state
+      |> App.background({:feed_read, feed, @feed_url, {:ok, [@entry]}, 1})
+      |> App.background({:calendar_read, cal, @cal_url, {:ok, [@event]}, 1})
+
+    # the old address's entries are not filed under the new one
+    assert after_state.db == state.db
+    assert after_state.fetching == %{}
+
+    again = after_state |> Update.fetch_feed(feed, :manual) |> Update.fetch_calendar(cal, :manual)
+    assert {:fetch_feed, feed, "https://owl.example/new"} in again.effects
+    assert {:fetch_calendar, cal, "https://w.example/new"} in again.effects
+  end
+
   test "a result nobody in this file asked for changes nothing" do
     {state, feed, cal} = reading()
     state = %{state | fetching: %{}}

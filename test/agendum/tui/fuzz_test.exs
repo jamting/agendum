@@ -411,7 +411,7 @@ defmodule Agendum.TUI.Fuzz do
 
   defp reading_too?(state, {tag, id, url, _result, _ms}) do
     subscriptions = if tag == :feed_read, do: state.db.feeds, else: state.db.calendars
-    Map.has_key?(state.fetching, id) and match?(%{url: ^url}, subscriptions[id])
+    match?(%{^id => {_kind, ^url}}, state.fetching) and match?(%{url: ^url}, subscriptions[id])
   end
 
   defp reading_too?(_state, {:published, _changes, _result}), do: false

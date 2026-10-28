@@ -490,7 +490,7 @@ defmodule Agendum.TUI.Update do
     if cal == nil or Map.has_key?(state.fetching, cal_id),
       do: state,
       else:
-        %{state | fetching: Map.put(state.fetching, cal_id, kind)}
+        %{state | fetching: Map.put(state.fetching, cal_id, {kind, cal.url})}
         |> State.effect({:fetch_calendar, cal_id, cal.url})
   end
 
@@ -504,7 +504,7 @@ defmodule Agendum.TUI.Update do
     if feed == nil or Map.has_key?(state.fetching, feed_id),
       do: state,
       else:
-        %{state | fetching: Map.put(state.fetching, feed_id, kind)}
+        %{state | fetching: Map.put(state.fetching, feed_id, {kind, feed.url})}
         |> State.effect({:fetch_feed, feed_id, feed.url})
   end
 

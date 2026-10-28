@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.72.2 — 2026-10-28
+
+- **A feed or calendar unsubscribed while it is being read no longer leaves Agendum waiting for ever**: WRKG on the control panel now goes out when the read comes back, and the same goes for a subscription undone during its read.
+
 ## 0.72.1 — 2026-10-28
 
 - **ESC on the Publish preview while publishing no longer says "Nothing was published"**: the site is still written and uploaded, and the message now says so; the box's last line says it is publishing, and ENTER does not start it twice.

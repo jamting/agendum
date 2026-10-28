@@ -309,6 +309,8 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Fixes and polish (after the clone was declared done)
 
+- [x] (2026-10-28, v0.72.2) A feed or calendar unsubscribed or undone while it is being read, or whose address changed, is no longer waited for ever ("reading…" and WRKG that never went, and no more reads): a read under way keeps the address it asked for, its answer always ends the wait, and is filed only into the same subscription at the same address (R45, R75; found by the richer fuzz walks, 2026-10-27, for a changed address; unsubscribing and undo found while fixing it)
+
 - [x] (2026-10-28, v0.72.1) ESC on the Publish preview while the site is written and uploaded no longer says "Nothing was published": it says publishing goes on, the box's last line says it is publishing, a second ENTER does not ask for it again, and the result closes the preview even under the help (R74; found by the richer fuzz walks, 2026-10-27)
 
 - [x] (2026-10-26, v0.69.1) Publishing no longer crashes Agendum as it finishes: the debug log's line took a bare `:ok` apart as a tuple (since v0.68.4, found by the owner publishing the meetings); `DebugLog.outcome/1` names any result, and a test keeps `elem(result` out of `App`

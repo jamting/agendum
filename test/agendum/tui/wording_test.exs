@@ -60,7 +60,9 @@ defmodule Agendum.TUI.WordingTest do
 
     top = fn state -> state |> screen() |> String.split("\n") |> hd() end
     refute top.(state) =~ "WRKG"
-    assert top.(%{state | fetching: %{1 => :auto}}) =~ ~r/WRKG +10\/08\/26   9:00am/
+
+    assert top.(%{state | fetching: %{1 => {:auto, "https://owl.example/rss"}}}) =~
+             ~r/WRKG +10\/08\/26   9:00am/
   end
 
   test "a long filter never runs the control panel's parts together", %{state: state} do

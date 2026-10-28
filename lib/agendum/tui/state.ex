@@ -70,7 +70,8 @@ defmodule Agendum.TUI.State do
           key_map: false | :none | :alt | :ctrl | :shift,
           reader: Agendum.Core.Context.t(),
           prefs: Agendum.Preferences.t(),
-          fetching: %{optional(pos_integer) => :manual | :auto},
+          # a read under way: its kind, and the address it was asked for
+          fetching: %{optional(pos_integer) => {:manual | :auto, String.t()}},
           theme: Agendum.TUI.Terminal.Theme.name(),
           last_key: %{key: term, at: NaiveDateTime.t() | nil},
           count: pos_integer | nil,

@@ -23,29 +23,44 @@ defmodule Agendum.TUI.Update.Results do
   def calendar_read(state, cal_id, url, result) do
     cal = state.db.calendars[cal_id]
 
-    if asked?(state, cal, url) do
-      {kind, fetching} = Map.pop(state.fetching, cal_id)
-      state = %{state | fetching: fetching}
-      next = read_into(state, cal, kind, result)
-      next = into_snapshots(next, read_command(:calendar, cal_id, result))
-      next = %{History.record(state, next) | dirty: next.db != next.saved.db}
-      if next.modes == [], do: Layout.settle(next), else: next
-    else
-      state
+    # Elixir: the clause's `state` is a new binding, the state without the
+    # wait; it is the one returned when the answer is dropped too
+    case answered(state, cal_id, url) do
+      {:ok, kind, state} ->
+        if current?(cal, url) do
+          next = read_into(state, cal, kind, result)
+          next = into_snapshots(next, read_command(:calendar, cal_id, result))
+          next = %{History.record(state, next) | dirty: next.db != next.saved.db}
+          if next.modes == [], do: Layout.settle(next), else: next
+        else
+          state
+        end
+
+      :not_asked ->
+        state
     end
   end
 
-  # Domain: only a read this file asked for, of the address it has now. A
-  # read started for another file, open before, comes back with no
+  # Domain: only a read this file asked for, of the address it asked for.
+  # A read started for another file, open before, comes back with no
   # `fetching` entry here (code review 2026-10-26: it was filed into
   # whatever file shared the id), or, when this file reads a feed or
   # calendar of the same id too (every file counts its ids from one), with
   # another address (the fuzz walk, 2026-10-27). It is left out, and this
-  # file's own read is still waited for.
-  defp asked?(state, subscription, url),
-    do:
-      subscription != nil and subscription.url == url and
-        Map.has_key?(state.fetching, subscription.id)
+  # file's own read is still waited for. An answer this file asked for
+  # always ends the wait, filed or not (`current?/2`).
+  defp answered(state, id, url) do
+    case state.fetching do
+      %{^id => {kind, ^url}} -> {:ok, kind, %{state | fetching: Map.delete(state.fetching, id)}}
+      _ -> :not_asked
+    end
+  end
+
+  # Domain: the feed or calendar may have gone while it was read (DEL, an
+  # undo) or have another address now; the answer is then dropped, and
+  # the next read asks for the address it has (the richer fuzz walks,
+  # 2026-10-27: it was waited for ever, "reading…" and WRKG).
+  defp current?(subscription, url), do: subscription != nil and subscription.url == url
 
   defp read_into(state, cal, kind, {:ok, events}) do
     {:ok, state, %{result: counts}} = State.command(state, {:sync_calendar, cal.id, events})
@@ -83,15 +98,21 @@ defmodule Agendum.TUI.Update.Results do
   def feed_read(state, feed_id, url, result) do
     feed = state.db.feeds[feed_id]
 
-    if asked?(state, feed, url) do
-      {kind, fetching} = Map.pop(state.fetching, feed_id)
-      state = %{state | fetching: fetching}
-      next = feed_into(state, feed, kind, result)
-      next = into_snapshots(next, read_command(:feed, feed_id, result))
-      next = %{History.record(state, next) | dirty: next.db != next.saved.db}
-      if next.modes == [], do: Layout.settle(next), else: next
-    else
-      state
+    # Elixir: the clause's `state` is a new binding, the state without the
+    # wait; it is the one returned when the answer is dropped too
+    case answered(state, feed_id, url) do
+      {:ok, kind, state} ->
+        if current?(feed, url) do
+          next = feed_into(state, feed, kind, result)
+          next = into_snapshots(next, read_command(:feed, feed_id, result))
+          next = %{History.record(state, next) | dirty: next.db != next.saved.db}
+          if next.modes == [], do: Layout.settle(next), else: next
+        else
+          state
+        end
+
+      :not_asked ->
+        state
     end
   end
 
