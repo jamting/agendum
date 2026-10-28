@@ -238,32 +238,250 @@ Every rule, in number order, with the section it is in (rules were added where t
 
 ### Dates read from text
 
-- **R14 ✅ When dates from item text.** The first date in an item's text becomes its When date ("Call Toni on August 7", "Cheryl arrives tomorrow"); items with no date get none (User's Guide 6-6 to 6-7). Editing the date words changes the When date; relative dates are read once, so editing other words keeps it, and removing the date words clears it. A When date set explicitly (When column, ALT-F2) overrides the text, and later edits leave it alone; clearing it (DEL in the When column) hands it back to the text. Setting the When category's Assign item date to Never (R6b) turns automatic dating off for a file, shown as `[No Auto Dates]`. Recalc dates items that have a date in their text but no When date. Dates follow the manual's rules (chapter 7): weeks run Monday to Friday; a bare weekday is its next occurrence (today if today); this/next/last put a weekday in the current, following or previous week; this/next/last week/month/year is the start of that period; a date without a year is in the future. Supported phrases: today, tomorrow, yesterday (and Agenda's "tmorrow", "ystday"), the day after tomorrow / before yesterday, weekdays, beginning/end of a week or month, in N days/weeks/months (digits or words), N … from today, N … ago, a fortnight, month-day dates ("August 7", "November 23rd, 1991", "the first of November", "7 Aug"), and numeric dates (11/20/90, 11/20, 2026-11-20). Times ("at 3:00") are accepted and ignored. Our safeguard: bare abbreviations that are common words ("sat", "sun", "wed", "may" alone) count as dates in item text only after "on", "by", "until" or "till", or with a day number ("May 5").
-- **R14b ✅ Times of day** (User's Guide 6-12 to 6-13). When dates can carry a time, read from item text or typed into a When column / ALT-F2: "3:30 pm", "@ 3pm", "15:30", "noon", "morning" (8:00), "afternoon" (14:00), "evening" and "tonight" (17:00), "now", "in 2 hours", "45 mins from now". A time alone means today; a time without am/pm falls between 8:00 am and 7:59 pm ("3:30" is 15:30); hours over 12 and a leading zero read as a 24-hour clock. When columns show "2026-10-13 15:00" and sort by date and time. A time never reuses a date's words ("at 12/24").
-- **R14c ✅ Date languages** (not in Agenda). Dates and times can be typed in another language than English, chosen in Utilities ▸ Customize (Date language, Fallback language; saved in the person's preferences, R41b) or for one session with `--lang=swedish`, with an optional second language, `--fallback=english`, whose phrases are read as well (where both match the same words, the main language wins; without a fallback only the main language and ISO dates are read). It applies to every date typed: item text, date columns, the When prompt and date filters. Nothing else changes: menus, messages and how dates are shown stay as they are, and the file does not record the language. Phrases kept in the file and read again each time (a date filter's ends, a datebook's base date, a date action's date) are read in the person's languages and then in English, so a file made in English, such as a starter file, works in every language (ADR 0029). Each language is a pack (`Agendum.Core.DateLanguage`): its words, phrase patterns, day/month order and clock. Swedish reads weekdays ("fredag", "på fre", "nästa fredag", "förra måndagen", "i fredags" = the latest past Friday), days ("idag", "i morgon", "i övermorgon", "i går", "i förrgår"), "den 5 november", "5:e nov", "den femte november", "5/11" as day/month, "om två dagar", "för 3 veckor sedan", "nästa vecka", "i slutet av månaden", times on a 24-hour clock ("kl 15", "kl. 9.30", "15:30"), "förmiddag", "eftermiddag", "i kväll", "om 2 timmar", and recurring dates ("varje måndag", R14a). Bare abbreviations ("fre", "sön") count in item text only after "på", "till" or "senast" ("tor" not at all, being a name); "nu" and a lone "morgon" are not read.
-- **R14a ✅ Recurring dates** (User's Guide 6-10, 7-11 to 7-12). A date with "each", "every" or "evry" recurs: "every Monday", "every other Monday", "every day", "every 2 weeks", "every month", "every quarter", "every three months", "every year", "the 30th of every month", "the fifteenth of each month" (Swedish: "varje måndag", "varannan fredag", "var tredje månad", "varje kvartal", "den 15:e varje månad"). The first date is the base date: the next such weekday (today if it is today), the day of the month this month or next, or today for the others. The item keeps the rule (`Item.recurrence`, language-neutral), read from its text or typed into the When column / ALT-F2; an explicit plain When date, or an edit that removes the phrase, ends it. Marking a recurring item done (F4, the profile's Done, or bulk done) dates it done and adds a copy right after it: same text, note, time, alarm and assignments, with the next date counted from the base date; months keep their day (the 30th falls on the 28th in February and on the 30th again in March), so the cases Agenda 2.0 got wrong in Lotus's support Q&A (the 30th drifting, "every quarter" as every six months, "every three months" as two) come out right. Item Properties shows the rule ("When (2026-10-12) · every Monday"), and F4 says when the next one is. A recurring item shows on every date it recurs, counted from its base date and never before it, as Agenda's (checked in Agenda): in each datebook slot that holds an occurrence (once per slot, ordered by that occurrence and in the slot of its time; an End category's span moves with it), and in a view or section whose When range filter holds one (outside the range means none does). It stays one item: F4, discard or a move on any of its rows acts on it, and F4 on a later occurrence marks it done and adds the next after its base date, as on the base date (Agenda the same). Its When column shows the occurrence it is listed for: the slot's, or the first from the start of the When range; elsewhere its base date. Our choice: a done item keeps its rule stored (marking it not done again brings it back) but counts only on its own date, where Agenda's F4 leaves it a plain date. Editing the date (ALT-F2, F2 in the When column) offers the rule with its base date and time in the reader's language, `every Monday (starting 2026-10-19) at 9:00am` (Swedish `varje måndag (från 2026-10-19) kl 09:00`), as Agenda's ALT-F2 offers `every Mon (strtng 10/19/2026) at 9:00am` (checked in Agenda), so ENTER keeps it; reading it back takes the bracket's date as the base, moved on to the rule's next day when it is not one ("every Monday (starting 2026-10-20)" is the 26th), and Agenda's own "(strtng …)" is read too. Our choices: the words written out and the date as ISO 8601, as every date offered for editing; a rule the reader's language has no words for ("var tredje måndag" in English) is offered as its date alone. Not done: the "Can use recurring dates" property of date categories (only When recurs).
-- **R14d ✅ More date phrases** (User's Guide 6-7, 6-10 to 6-11, 7-16). Working days ("in five working days", "3 working days ago") skip Saturday and Sunday. Quarters ("this/next/last quarter", "end of the quarter", "first quarter"; the first to fourth quarter is this year's unless it has ended) and years ("end of the year"). The nth or last weekday of a month ("first Wednesday in November", put in the future like other dates without a year; "the last Friday of the month", "second Monday of next month") and a day of a month ("the 15th of next month"). A month alone means its first day: on its own ("April") it is this year's unless the month is over, "this April" this year's, "next April" the first after this month, "last April" the last before it; "end of next March" is its last day. In item text a month alone counts only after "next", "last", "this", "in", "by", "until" or "during" ("May" only after "next" or "last"; in Swedish only full names, so "i jul" stays Christmas). Calendar notation can use a month abbreviation ("Nov/12/90"). Swedish has the same phrases ("om fem arbetsdagar", "första onsdagen i november", "i slutet av nästa mars").
-- **R14e ✅ Global date settings** (User's Guide 7-13 to 7-17). File Properties ▸ Global date settings opens Agenda's Global Date Settings box (boxes nest as in Agenda: File Properties holds Global date settings ... and Auto-assign settings ...; Global Date Settings holds Display format ..., Input format ... and the settings below; SPACE or → opens a "..." row, ESC goes back one box), saved in the file: Beginning and End of week (Mon and Fri: "this week" and "next week" start on the first day, "end of week" is the last, "this Monday" is in that week, and working days are the days from the first to the last); First quarter (the month quarters start in, Jan); Beginning of year (the month "this year" starts in, Jan; the year ends the day before the next one starts); Month alone means (First day, Last day or Day 2–31, a short month's last day if it has fewer); and the times of Morning (8:00), Afternoon (14:00) and Evening (17:00, also "tonight"). Morning also starts the twelve hours that times without am/pm fall in (with 9:00, "at 8:00" is 8 pm). Settled differently from Agenda: number order stays with the reader's date language (R14c, ADR 0009), not the file; quarters and years start on the 1st of a month; Agenda's separate End of year is the day before the next Beginning of year. The settings apply to dates read from then on, and to relative dates in filters and conditions, which are read anew.
-- **R14f ✅ Fixed relative dates and dates from notes** (User's Guide 6-7, 7-6 to 7-7, 7-11). A "$" before a relative date in a date range of a filter or condition ("$Monday", "$ end of next week") reads it once, when the range is set, and keeps that date (shown as a date from then on); without "$" the words are read again each day. When's Assign item date (R6b) says where When dates are read from: From the item text (default), the note text, the item or note text (the item's first, else the note's) or Never (what Utilities ▸ Dating toggles). A note's date is read when the note is saved, by the same rules as item text (read once; removing it clears the date; a date set by hand stays).
+- **R14 ✅ When dates from item text.** The first date in an item's text becomes its When date ("Call Toni on August 7", "Cheryl arrives tomorrow"); items with no date get none (User's Guide 6-6 to 6-7).
+
+  Editing the date words changes the When date; relative dates are read once, so editing other words keeps it, and removing the date words clears it.
+
+  A When date set explicitly (When column, ALT-F2) overrides the text, and later edits leave it alone; clearing it (DEL in the When column) hands it back to the text.
+
+  Setting the When category's Assign item date to Never (R6b) turns automatic dating off for a file, shown as `[No Auto Dates]`. Recalc dates items that have a date in their text but no When date.
+
+  Dates follow the manual's rules (chapter 7):
+
+  - Weeks run Monday to Friday.
+  - A bare weekday is its next occurrence (today if today).
+  - This/next/last put a weekday in the current, following or previous week.
+  - This/next/last week/month/year is the start of that period.
+  - A date without a year is in the future.
+
+  Supported phrases:
+
+  - Today, tomorrow, yesterday (and Agenda's "tmorrow", "ystday").
+  - The day after tomorrow / before yesterday.
+  - Weekdays.
+  - Beginning/end of a week or month.
+  - In N days/weeks/months (digits or words).
+  - N … from today, N … ago, a fortnight.
+  - Month-day dates ("August 7", "November 23rd, 1991", "the first of November", "7 Aug").
+  - Numeric dates (11/20/90, 11/20, 2026-11-20).
+
+  Times ("at 3:00") are accepted and ignored. Our safeguard: bare abbreviations that are common words ("sat", "sun", "wed", "may" alone) count as dates in item text only after "on", "by", "until" or "till", or with a day number ("May 5").
+- **R14b ✅ Times of day** (User's Guide 6-12 to 6-13). When dates can carry a time, read from item text or typed into a When column / ALT-F2: "3:30 pm", "@ 3pm", "15:30", "noon", "morning" (8:00), "afternoon" (14:00), "evening" and "tonight" (17:00), "now", "in 2 hours", "45 mins from now".
+
+  - A time alone means today.
+  - A time without am/pm falls between 8:00 am and 7:59 pm ("3:30" is 15:30).
+  - Hours over 12 and a leading zero read as a 24-hour clock.
+
+  When columns show "2026-10-13 15:00" and sort by date and time. A time never reuses a date's words ("at 12/24").
+- **R14c ✅ Date languages** (not in Agenda). Dates and times can be typed in another language than English, chosen in Utilities ▸ Customize (Date language, Fallback language; saved in the person's preferences, R41b) or for one session with `--lang=swedish`, with an optional second language, `--fallback=english`, whose phrases are read as well (where both match the same words, the main language wins; without a fallback only the main language and ISO dates are read).
+
+  It applies to every date typed: item text, date columns, the When prompt and date filters. Nothing else changes: menus, messages and how dates are shown stay as they are, and the file does not record the language.
+
+  Phrases kept in the file and read again each time (a date filter's ends, a datebook's base date, a date action's date) are read in the person's languages and then in English, so a file made in English, such as a starter file, works in every language (ADR 0029).
+
+  Each language is a pack (`Agendum.Core.DateLanguage`): its words, phrase patterns, day/month order and clock. Swedish reads:
+
+  - Weekdays ("fredag", "på fre", "nästa fredag", "förra måndagen", "i fredags" = the latest past Friday).
+  - Days ("idag", "i morgon", "i övermorgon", "i går", "i förrgår").
+  - "den 5 november", "5:e nov", "den femte november", "5/11" as day/month.
+  - "om två dagar", "för 3 veckor sedan", "nästa vecka", "i slutet av månaden".
+  - Times on a 24-hour clock ("kl 15", "kl. 9.30", "15:30").
+  - "förmiddag", "eftermiddag", "i kväll", "om 2 timmar".
+  - Recurring dates ("varje måndag", R14a).
+
+  Bare abbreviations ("fre", "sön") count in item text only after "på", "till" or "senast" ("tor" not at all, being a name). "nu" and a lone "morgon" are not read.
+- **R14a ✅ Recurring dates** (User's Guide 6-10, 7-11 to 7-12). A date with "each", "every" or "evry" recurs: "every Monday", "every other Monday", "every day", "every 2 weeks", "every month", "every quarter", "every three months", "every year", "the 30th of every month", "the fifteenth of each month" (Swedish: "varje måndag", "varannan fredag", "var tredje månad", "varje kvartal", "den 15:e varje månad").
+
+  The first date is the base date: the next such weekday (today if it is today), the day of the month this month or next, or today for the others.
+
+  The item keeps the rule (`Item.recurrence`, language-neutral), read from its text or typed into the When column / ALT-F2; an explicit plain When date, or an edit that removes the phrase, ends it.
+
+  Marking a recurring item done (F4, the profile's Done, or bulk done) dates it done and adds a copy right after it: same text, note, time, alarm and assignments, with the next date counted from the base date. Months keep their day (the 30th falls on the 28th in February and on the 30th again in March), so the cases Agenda 2.0 got wrong in Lotus's support Q&A (the 30th drifting, "every quarter" as every six months, "every three months" as two) come out right.
+
+  Item Properties shows the rule ("When (2026-10-12) · every Monday"), and F4 says when the next one is.
+
+  A recurring item shows on every date it recurs, counted from its base date and never before it, as Agenda's (checked in Agenda):
+
+  - In each datebook slot that holds an occurrence (once per slot, ordered by that occurrence and in the slot of its time; an End category's span moves with it).
+  - In a view or section whose When range filter holds one (outside the range means none does).
+
+  It stays one item: F4, discard or a move on any of its rows acts on it, and F4 on a later occurrence marks it done and adds the next after its base date, as on the base date (Agenda the same). Its When column shows the occurrence it is listed for: the slot's, or the first from the start of the When range; elsewhere its base date.
+
+  Our choice: a done item keeps its rule stored (marking it not done again brings it back) but counts only on its own date, where Agenda's F4 leaves it a plain date.
+
+  Editing the date (ALT-F2, F2 in the When column) offers the rule with its base date and time in the reader's language, `every Monday (starting 2026-10-19) at 9:00am` (Swedish `varje måndag (från 2026-10-19) kl 09:00`), as Agenda's ALT-F2 offers `every Mon (strtng 10/19/2026) at 9:00am` (checked in Agenda), so ENTER keeps it. Reading it back takes the bracket's date as the base, moved on to the rule's next day when it is not one ("every Monday (starting 2026-10-20)" is the 26th), and Agenda's own "(strtng …)" is read too.
+
+  Our choices: the words written out and the date as ISO 8601, as every date offered for editing; a rule the reader's language has no words for ("var tredje måndag" in English) is offered as its date alone.
+
+  Not done: the "Can use recurring dates" property of date categories (only When recurs).
+- **R14d ✅ More date phrases** (User's Guide 6-7, 6-10 to 6-11, 7-16). Working days ("in five working days", "3 working days ago") skip Saturday and Sunday.
+
+  - Quarters ("this/next/last quarter", "end of the quarter", "first quarter"; the first to fourth quarter is this year's unless it has ended) and years ("end of the year").
+  - The nth or last weekday of a month ("first Wednesday in November", put in the future like other dates without a year; "the last Friday of the month", "second Monday of next month") and a day of a month ("the 15th of next month").
+  - A month alone means its first day: on its own ("April") it is this year's unless the month is over, "this April" this year's, "next April" the first after this month, "last April" the last before it; "end of next March" is its last day.
+  - In item text a month alone counts only after "next", "last", "this", "in", "by", "until" or "during" ("May" only after "next" or "last"; in Swedish only full names, so "i jul" stays Christmas).
+  - Calendar notation can use a month abbreviation ("Nov/12/90").
+
+  Swedish has the same phrases ("om fem arbetsdagar", "första onsdagen i november", "i slutet av nästa mars").
+- **R14e ✅ Global date settings** (User's Guide 7-13 to 7-17). File Properties ▸ Global date settings opens Agenda's Global Date Settings box (boxes nest as in Agenda: File Properties holds Global date settings ... and Auto-assign settings ...; Global Date Settings holds Display format ..., Input format ... and the settings below; SPACE or → opens a "..." row, ESC goes back one box), saved in the file:
+
+  - Beginning and End of week (Mon and Fri: "this week" and "next week" start on the first day, "end of week" is the last, "this Monday" is in that week, and working days are the days from the first to the last).
+  - First quarter (the month quarters start in, Jan).
+  - Beginning of year (the month "this year" starts in, Jan; the year ends the day before the next one starts).
+  - Month alone means (First day, Last day or Day 2–31, a short month's last day if it has fewer).
+  - The times of Morning (8:00), Afternoon (14:00) and Evening (17:00, also "tonight").
+
+  Morning also starts the twelve hours that times without am/pm fall in (with 9:00, "at 8:00" is 8 pm).
+
+  Settled differently from Agenda:
+
+  - Number order stays with the reader's date language (R14c, ADR 0009), not the file.
+  - Quarters and years start on the 1st of a month.
+  - Agenda's separate End of year is the day before the next Beginning of year.
+
+  The settings apply to dates read from then on, and to relative dates in filters and conditions, which are read anew.
+- **R14f ✅ Fixed relative dates and dates from notes** (User's Guide 6-7, 7-6 to 7-7, 7-11). A "$" before a relative date in a date range of a filter or condition ("$Monday", "$ end of next week") reads it once, when the range is set, and keeps that date (shown as a date from then on); without "$" the words are read again each day.
+
+  When's Assign item date (R6b) says where When dates are read from:
+
+  - From the item text (default).
+  - The note text.
+  - The item or note text (the item's first, else the note's).
+  - Never (what Utilities ▸ Dating toggles).
+
+  A note's date is read when the note is saved, by the same rules as item text (read once; removing it clears the date; a date set by hand stays).
 
 ### Conditions and actions
 
-- **R15 ✅ Assignment conditions** (User's Guide, chapters 18 and 20). A category can have conditions on other categories: items *assigned* to them (Urgent if Taxes and Accountant) or *not assigned* to them (Me if not People). All conditions must hold, except "assigned" conditions on mutually exclusive categories, which are alternatives (High or Low). Agenda checks an item against all conditions when it is added, edited, assigned or unassigned: a category whose conditions it meets assigns it, and an assignment a condition made is broken once the condition no longer holds. Assignments the user makes are never broken by conditions. Like Agenda, a new condition applies to existing items only after Recalc (Agenda's Utilities Execute). Conditions are set in category properties (ENTER on a category cycles none → assigned → not assigned); Category Properties shows them ("if Taxes, not People"; the category manager would with Agenda's Customize ▸ Display cond/act info, not built) and the assignment profile marks conditional assignments with "c". Contradictory conditions settle after a bounded number of rounds. Only a standard category's conditions assign: a category made a date or numeric category keeps its conditions in the file, but they assign nothing, not even on Execute (checked in Agenda: its box offers Assignment conditions "Only if Type is Standard", and the stored ones have no effect).
-- **R15a ✅ Date and numeric conditions** (User's Guide 20-5 to 20-7). A category's conditions can name a date or numeric category: choosing one in the conditions box opens the Date Condition or Numeric Condition box (the filter box of R28a): Show items (Assigned, Not assigned = without a date or number), Start and End date (or Minimum and Maximum; blank ends are open, both blank means any), Inside or Outside range. Items in the range are assigned conditionally and let go when they leave it, when their date or number changes, and, for relative dates ("beginning of this week" to "end of this week"), when the date changes: the clock tick re-checks every item on a new day. Dates are read in the reader's date languages (R14c). A category cannot have a condition on itself. The condition shows like a filter ("if When 2026-10-05..2026-10-09").
-- **R15d ✅ Text conditions** (User's Guide 19-2 to 19-5). Category Properties ▸ Also match holds words and phrases that pull items into the category as its name does: `;` separates alternatives (any), `,` conditions that must all hold; a word or phrase matches when its words are there, in any order, by the file's matching settings (R16a), and in parentheses only in that order (`(meet with)`); `^` matches its words as they are, ignoring no suffixes (`^eats`); `!` before one means the item must not contain it (`Cost,!Deduction`), `~` that case must match (`~LOTS`); `?` is one character and `*` any characters within a word (`Budget??`, `sl*`); `\` makes the next character plain text. Text conditions work even when the category does not match its own name. New ones reach existing items with Recalc. Not done: Agenda's `"` (exclude words).
-- **R15b ✅ Actions** (User's Guide chapter 21). When an item joins a category, by the user, a condition or another action, the category's actions run once: Category Properties ▸ Assignment actions lists them ("Sales, -Receivables, When=tomorrow, Amount=150"); in its box ENTER on a category cycles assign (a category link, R8) → remove (break the item's assignment there) → none, and a date or numeric category opens the Date / Numeric Action box: give items a date (an expression read when the action runs, in the reader's languages) or a number, or remove it. Special action: None ("No action" in the box, as Agenda), Mark items done (today, recurring items get their next one) or Discard items. A parent's actions also run for items that join its children, children's first; special actions run last. Actions make explicit assignments, which stay when the triggering one is broken, and do not run again when an item changes while it stays in the category. Not done: the Export special action (with structured files, Milestone 4) and turning actions off per category or file.
-- **R15e ✅ Utilities Execute** (User's Guide 20-19 to 20-21, 21-17). New conditions, text conditions and actions do not reach items already in the file until executed. Utilities ▸ Execute opens the Execute box: Apply conditions attached to category and children of (a category and its children; MAIN for all; two lines, as Agenda's), Against (all items, the current item, the marked items, the items in the section or the view) and Apply actions to (new assignments only, or old & new: the actions also run for assignments the items already had). ALT-X executes everything on all items; ALT-E the highlighted category's family (in a view: the section's category). Recalc (CTRL-X) still re-runs automatic assignment and dating for every item.
-- **R15f ✅ Copy and clear conditions and actions** (Agenda's ALT-F9 CPY C/A and ALT-F8 CLR C/A in the category manager; Help "Copy Conditions/Actions", "Copy Conditions/Actions Box", "Clear Conditions/Actions Box"; checked in Agenda). ALT-F9 on a category with conditions or actions asks on the top line, as Agenda's, "Move cursor to the category you want to copy to" (the second line blank): the arrows move, ENTER copies to the highlighted category, ESC gives it up. A source with only conditions (or only actions) copies them at once, without a word; one with both asks first in Agenda's untitled box, "Copy:" Condition & action (first), Condition or Action. What is copied takes the place of the target's conditions or actions; the other kind and the source stay as they were. ALT-F8 asks "Clear the condition?" (or "the action?") when the category has one kind, and with both Agenda's box, "Clear:" Condition & action, Condition or Action. With nothing to copy or clear nothing happens, as in Agenda. Conditions are the category's assignment conditions; actions its assignment actions (links to other categories, and dates or numbers); Also match words do not count (Agenda copied nothing from a category with Also match alone). Each copy or clear is one undo step, where Agenda's could not be taken back. Like a new condition, a copy reaches the items already in the file when executed (R15e). Our choices: a condition or action naming the target itself is left out of the copy (a category cannot have one on itself); copying to the source says "Choose another category to copy to". Unchecked: whether Agenda copies the special action too (ours does not).
+- **R15 ✅ Assignment conditions** (User's Guide, chapters 18 and 20). A category can have conditions on other categories: items *assigned* to them (Urgent if Taxes and Accountant) or *not assigned* to them (Me if not People).
+
+  All conditions must hold, except "assigned" conditions on mutually exclusive categories, which are alternatives (High or Low).
+
+  Agenda checks an item against all conditions when it is added, edited, assigned or unassigned: a category whose conditions it meets assigns it, and an assignment a condition made is broken once the condition no longer holds. Assignments the user makes are never broken by conditions.
+
+  Like Agenda, a new condition applies to existing items only after Recalc (Agenda's Utilities Execute).
+
+  - Conditions are set in category properties (ENTER on a category cycles none → assigned → not assigned).
+  - Category Properties shows them ("if Taxes, not People"; the category manager would with Agenda's Customize ▸ Display cond/act info, not built).
+  - The assignment profile marks conditional assignments with "c".
+
+  Contradictory conditions settle after a bounded number of rounds.
+
+  Only a standard category's conditions assign: a category made a date or numeric category keeps its conditions in the file, but they assign nothing, not even on Execute (checked in Agenda: its box offers Assignment conditions "Only if Type is Standard", and the stored ones have no effect).
+- **R15a ✅ Date and numeric conditions** (User's Guide 20-5 to 20-7). A category's conditions can name a date or numeric category: choosing one in the conditions box opens the Date Condition or Numeric Condition box (the filter box of R28a):
+
+  - Show items (Assigned, Not assigned = without a date or number).
+  - Start and End date (or Minimum and Maximum; blank ends are open, both blank means any).
+  - Inside or Outside range.
+
+  Items in the range are assigned conditionally and let go when they leave it, when their date or number changes, and, for relative dates ("beginning of this week" to "end of this week"), when the date changes: the clock tick re-checks every item on a new day.
+
+  Dates are read in the reader's date languages (R14c). A category cannot have a condition on itself. The condition shows like a filter ("if When 2026-10-05..2026-10-09").
+- **R15d ✅ Text conditions** (User's Guide 19-2 to 19-5). Category Properties ▸ Also match holds words and phrases that pull items into the category as its name does:
+
+  - `;` separates alternatives (any), `,` conditions that must all hold.
+  - A word or phrase matches when its words are there, in any order, by the file's matching settings (R16a), and in parentheses only in that order (`(meet with)`).
+  - `^` matches its words as they are, ignoring no suffixes (`^eats`).
+  - `!` before one means the item must not contain it (`Cost,!Deduction`), `~` that case must match (`~LOTS`).
+  - `?` is one character and `*` any characters within a word (`Budget??`, `sl*`).
+  - `\` makes the next character plain text.
+
+  Text conditions work even when the category does not match its own name. New ones reach existing items with Recalc. Not done: Agenda's `"` (exclude words).
+- **R15b ✅ Actions** (User's Guide chapter 21). When an item joins a category, by the user, a condition or another action, the category's actions run once: Category Properties ▸ Assignment actions lists them ("Sales, -Receivables, When=tomorrow, Amount=150").
+
+  In its box ENTER on a category cycles assign (a category link, R8) → remove (break the item's assignment there) → none, and a date or numeric category opens the Date / Numeric Action box: give items a date (an expression read when the action runs, in the reader's languages) or a number, or remove it.
+
+  Special action:
+
+  - None ("No action" in the box, as Agenda).
+  - Mark items done (today, recurring items get their next one).
+  - Discard items.
+
+  A parent's actions also run for items that join its children, children's first. Special actions run last.
+
+  Actions make explicit assignments, which stay when the triggering one is broken, and do not run again when an item changes while it stays in the category.
+
+  Not done: the Export special action (with structured files, Milestone 4) and turning actions off per category or file.
+- **R15e ✅ Utilities Execute** (User's Guide 20-19 to 20-21, 21-17). New conditions, text conditions and actions do not reach items already in the file until executed. Utilities ▸ Execute opens the Execute box:
+
+  - Apply conditions attached to category and children of (a category and its children; MAIN for all; two lines, as Agenda's).
+  - Against (all items, the current item, the marked items, the items in the section or the view).
+  - Apply actions to (new assignments only, or old & new: the actions also run for assignments the items already had).
+
+  ALT-X executes everything on all items; ALT-E the highlighted category's family (in a view: the section's category). Recalc (CTRL-X) still re-runs automatic assignment and dating for every item.
+- **R15f ✅ Copy and clear conditions and actions** (Agenda's ALT-F9 CPY C/A and ALT-F8 CLR C/A in the category manager; Help "Copy Conditions/Actions", "Copy Conditions/Actions Box", "Clear Conditions/Actions Box"; checked in Agenda). ALT-F9 on a category with conditions or actions asks on the top line, as Agenda's, "Move cursor to the category you want to copy to" (the second line blank): the arrows move, ENTER copies to the highlighted category, ESC gives it up.
+
+  A source with only conditions (or only actions) copies them at once, without a word; one with both asks first in Agenda's untitled box, "Copy:" Condition & action (first), Condition or Action.
+
+  What is copied takes the place of the target's conditions or actions; the other kind and the source stay as they were.
+
+  ALT-F8 asks "Clear the condition?" (or "the action?") when the category has one kind, and with both Agenda's box, "Clear:" Condition & action, Condition or Action. With nothing to copy or clear nothing happens, as in Agenda.
+
+  Conditions are the category's assignment conditions; actions its assignment actions (links to other categories, and dates or numbers); Also match words do not count (Agenda copied nothing from a category with Also match alone).
+
+  Each copy or clear is one undo step, where Agenda's could not be taken back. Like a new condition, a copy reaches the items already in the file when executed (R15e).
+
+  Our choices: a condition or action naming the target itself is left out of the copy (a category cannot have one on itself); copying to the source says "Choose another category to copy to".
+
+  Unchecked: whether Agenda copies the special action too (ours does not).
 
 ### Suggestions, text matching settings and reasons
 
-- **R16 ✅ Suggested assignments** (User's Guide 19-9, 19-12). File Properties ▸ Auto-assign settings ▸ Confirm assignments: Never (the default; text matches are assigned at once), Always, or Sometimes (only partial matches, R16a, are suggested; full ones are made). Suggested: an item's text matches become suggestions instead, "?" shows in the title while any wait, and Utilities ▸ Questions (Agenda's) shows each such item in turn with its suggested categories: SPACE picks one, TAB all, ENTER assigns the picked ones (explicitly, so an edit does not take them away) and goes to the next item, ESC stops. The box is drawn as Agenda's Questions box (checked in Agenda): 'Suggested categories for "the item"', each category as Parent:Child (one right under MAIN by its name) with ? before it, * once picked, and "Press ENTER to accept"; with none waiting, a box says "There are no assignments to be confirmed." and any key closes it. Editing an item asks again about what its new text matches; discarding the item or the category drops the question.
-- **R16a ✅ Text matching settings** (User's Guide 19-7 to 19-12, 19-15 to 19-16). File Properties ▸ Auto-assign settings opens Agenda's Auto-assign Global Settings box (SPACE/→ next choice, ← previous; each change one undo step): Text matching On/Off (Off: no names or text conditions match); Match on Item text (default), Note text or Both item & note (a note is matched when saved, and a match from it breaks when it stops matching, R15c); Required match strength: Exact match - 100% (default; every word of a name, short name or text condition, in any order), Partial match - 50% (at least half) or Minimal match (one word), as in the manual's "Suggestions for design"; Confirm assignments (R16); Ignore item text enclosed by: " " (default, also “ ”), < >, ' ', { }, [ ], # #, ( ), / /: that text is left out ('set a "margin" command' does not go to Margin); Ignore suffixes Yes (default): -able, -al, -ly, -ally, -d, -ed, -er, -est, -ible, -ing, -ment, -s, -es, -wise, and for words ending in y -ied, -ier, -ies, -iful, -ily, so Show matches shows, showing and showed; words of three letters or fewer match exactly ("buy" is not "buying"); Ignore accents No (default; Yes: résumé matches resume). Words are read as Agenda does: a word starts with a letter or digit and may hold ' - _ ("can't", "high-capacity"); a possessive 's is dropped. A text condition in parentheses must have its words in that order ("(meet with)"), and "^" before one matches its words as they are, ignoring no suffixes ("^eats"). A name with other characters ("C++") matches as written. Proper names and titles: R16c.
-- **R16b ✅ Text matching for one category** (User's Guide 19-8, 19-14 to 19-15). Category Properties ▸ Advanced settings of a standard category (for a date category it holds R6b's date settings) sets Text matching, Match on, Required match strength, Confirm assignments, Ignore suffixes and Ignore accents for that category only; each is Global (the file's, shown in brackets: "Global (Item text)") until set, and cycles back to Global. Ignore text enclosed by is the file's only. A category matches with its own settings (Budget on the note while others match the item text), suggests or assigns by its own Confirm assignments, and its Advanced settings row sums it up ("Match on: Note text"); Agenda's "T= Note" in the category manager shows only with Customize ▸ Display cond/act info, not built. The row sums up what the category sets ("Match on: Note text") or says Global.
-- **R16c ✅ Proper names and titles** (User's Guide 19-17). A category name or short name with two or more consecutive capitalized words holds a proper name ("Nancy Wohl"; hence the manual's advice to write "Status report", not "Status Report"). The name matches when the text has its last name, exactly (no suffixes ignored), alone ("Send it to Wohl"), after a title ("Mrs. Wohl") or after one of its own first names, but not after another capitalized word ("John Wohl" is someone else) and not on the first name alone; a capitalized word starting the text or a sentence does not count ("Call Wohl"). Required match strength does not apply to the name; other words of the category name match as usual ("visit Nancy Wohl" matches "Visiting Mrs. Wohl"). Titles, with or without a period: Mr, Ms, Miss, Mrs, Messrs, Dr, M, MM, Monsieur, Madame, Mme, Mmes, Mademoiselle, Mlle, Mlles, Herr, Hr, Frau, Fr, Fräulein, Fri, Fru, Fröken, Frk. "Michael Schaeffer" in an item matches Michael, Schaeffer and Michael Schaeffer, not Michael Rowles.
-- **R67 ✅ Why an item is in a category** (not in Agenda; for the Questions box, help on an assignment and an agent's report). The core says why an item is in a category (`Agendum.Core.assignment_reasons/4`), from the file as it is and the same rules that assign: MAIN (R5), a date in a date category (R6), through a child it is in (R3), the category's conditions (R15, read with the clock), its text matching the category's name or Also match words (R10), an action of another category it is in (R15b), or else by hand (or kept from before). The file does not keep who made a link, so a text match is given whenever the text matches, whether the match or the person assigned it first. The assignment profile (F3 on an item) says it in the control panel for the highlighted category, as "In Urgent: its condition holds (Calls)"; a message comes first, and a category the item is not in adds nothing.
-- **R15c ✅ Text matches as conditional assignments** (User's Guide 18-3). An assignment made because the item's text matched a category (its name, short name or text conditions) is conditional, marked "(c)" in Item Properties, and is broken when the text no longer matches and no other condition holds ("Meet with John" in Meetings; edited to "Telephone John", it leaves). An assignment the user makes is explicit and stays.
+- **R16 ✅ Suggested assignments** (User's Guide 19-9, 19-12). File Properties ▸ Auto-assign settings ▸ Confirm assignments: Never (the default; text matches are assigned at once), Always, or Sometimes (only partial matches, R16a, are suggested; full ones are made).
 
+  Suggested: an item's text matches become suggestions instead, "?" shows in the title while any wait, and Utilities ▸ Questions (Agenda's) shows each such item in turn with its suggested categories:
+
+  - SPACE picks one.
+  - TAB all.
+  - ENTER assigns the picked ones (explicitly, so an edit does not take them away) and goes to the next item.
+  - ESC stops.
+
+  The box is drawn as Agenda's Questions box (checked in Agenda): 'Suggested categories for "the item"', each category as Parent:Child (one right under MAIN by its name) with ? before it, * once picked, and "Press ENTER to accept". With none waiting, a box says "There are no assignments to be confirmed." and any key closes it.
+
+  Editing an item asks again about what its new text matches; discarding the item or the category drops the question.
+- **R16a ✅ Text matching settings** (User's Guide 19-7 to 19-12, 19-15 to 19-16). File Properties ▸ Auto-assign settings opens Agenda's Auto-assign Global Settings box (SPACE/→ next choice, ← previous; each change one undo step):
+
+  - Text matching On/Off (Off: no names or text conditions match).
+  - Match on Item text (default), Note text or Both item & note (a note is matched when saved, and a match from it breaks when it stops matching, R15c).
+  - Required match strength: Exact match - 100% (default; every word of a name, short name or text condition, in any order), Partial match - 50% (at least half) or Minimal match (one word), as in the manual's "Suggestions for design".
+  - Confirm assignments (R16).
+  - Ignore item text enclosed by: " " (default, also “ ”), < >, ' ', { }, [ ], # #, ( ), / /: that text is left out ('set a "margin" command' does not go to Margin).
+  - Ignore suffixes Yes (default): -able, -al, -ly, -ally, -d, -ed, -er, -est, -ible, -ing, -ment, -s, -es, -wise, and for words ending in y -ied, -ier, -ies, -iful, -ily, so Show matches shows, showing and showed; words of three letters or fewer match exactly ("buy" is not "buying").
+  - Ignore accents No (default; Yes: résumé matches resume).
+
+  Words are read as Agenda does: a word starts with a letter or digit and may hold ' - _ ("can't", "high-capacity"); a possessive 's is dropped.
+
+  A text condition in parentheses must have its words in that order ("(meet with)"), and "^" before one matches its words as they are, ignoring no suffixes ("^eats"). A name with other characters ("C++") matches as written. Proper names and titles: R16c.
+- **R16b ✅ Text matching for one category** (User's Guide 19-8, 19-14 to 19-15). Category Properties ▸ Advanced settings of a standard category (for a date category it holds R6b's date settings) sets Text matching, Match on, Required match strength, Confirm assignments, Ignore suffixes and Ignore accents for that category only; each is Global (the file's, shown in brackets: "Global (Item text)") until set, and cycles back to Global.
+
+  Ignore text enclosed by is the file's only.
+
+  A category matches with its own settings (Budget on the note while others match the item text), suggests or assigns by its own Confirm assignments, and its Advanced settings row sums it up ("Match on: Note text"). Agenda's "T= Note" in the category manager shows only with Customize ▸ Display cond/act info, not built.
+
+  The row sums up what the category sets ("Match on: Note text") or says Global.
+- **R16c ✅ Proper names and titles** (User's Guide 19-17). A category name or short name with two or more consecutive capitalized words holds a proper name ("Nancy Wohl"; hence the manual's advice to write "Status report", not "Status Report").
+
+  The name matches when the text has its last name, exactly (no suffixes ignored), alone ("Send it to Wohl"), after a title ("Mrs. Wohl") or after one of its own first names, but not after another capitalized word ("John Wohl" is someone else) and not on the first name alone; a capitalized word starting the text or a sentence does not count ("Call Wohl").
+
+  Required match strength does not apply to the name; other words of the category name match as usual ("visit Nancy Wohl" matches "Visiting Mrs. Wohl").
+
+  Titles, with or without a period: Mr, Ms, Miss, Mrs, Messrs, Dr, M, MM, Monsieur, Madame, Mme, Mmes, Mademoiselle, Mlle, Mlles, Herr, Hr, Frau, Fr, Fräulein, Fri, Fru, Fröken, Frk.
+
+  "Michael Schaeffer" in an item matches Michael, Schaeffer and Michael Schaeffer, not Michael Rowles.
+- **R67 ✅ Why an item is in a category** (not in Agenda; for the Questions box, help on an assignment and an agent's report). The core says why an item is in a category (`Agendum.Core.assignment_reasons/4`), from the file as it is and the same rules that assign:
+
+  - MAIN (R5).
+  - A date in a date category (R6).
+  - Through a child it is in (R3).
+  - The category's conditions (R15, read with the clock).
+  - Its text matching the category's name or Also match words (R10).
+  - An action of another category it is in (R15b).
+  - Or else by hand (or kept from before).
+
+  The file does not keep who made a link, so a text match is given whenever the text matches, whether the match or the person assigned it first.
+
+  The assignment profile (F3 on an item) says it in the control panel for the highlighted category, as "In Urgent: its condition holds (Calls)"; a message comes first, and a category the item is not in adds nothing.
+- **R15c ✅ Text matches as conditional assignments** (User's Guide 18-3). An assignment made because the item's text matched a category (its name, short name or text conditions) is conditional, marked "(c)" in Item Properties, and is broken when the text no longer matches and no other condition holds ("Meet with John" in Meetings; edited to "Telephone John", it leaves). An assignment the user makes is explicit and stays.
 ## 4. Working through views
 
 All modification happens in the context of a view (patent claims 1, 3, 4, 6).
