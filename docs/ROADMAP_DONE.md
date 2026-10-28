@@ -362,3 +362,78 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 - [x] Who Agendum is for, at the top of `VISION.md` (2026-10-16): curious people, in order: the owner first, then Agenda's old users and people who love keyboard tools, later people who are not nerds, on the web (a guess, to be tested with real people) (expert review 2026-10-16, second meeting)
 - [x] The "Beyond Agenda" items weighed against who Agendum is for (meeting 2026-10-16-2, § 5 and § 6): every item there and in Ideas names its group in `VISION.md`; groups 1 and 2 stay in "Beyond Agenda", group 1 first, the rest wait in Ideas. `VISION.md` names the owner's own uses (group 1) and candidate users to test
+
+### Where SPEC's rules came from
+
+The stories taken out of `SPEC.md`'s rules in the sweep before the public repository (meeting 2026-10-26-4, § 13; done 2026-10-28): when and how each was checked in Agenda or chosen by the owner, what was tried and dropped. The rule itself keeps a short "(checked in Agenda)" or "Our choice"; from now on a rule's story goes here when the rule is touched.
+
+**§§ 1–3, the data model and automatic assignment**
+
+- **R6a** Date categories the user makes, the Category Properties box of a date category: checked in Agenda 2.0, 2026-10-25: PLANNER's When and Amount, and Calls converted.
+- **R14a** Recurring dates: a recurring item shows on every date it recurs, checked in Agenda 2.0, 2026-10-15 and 2026-10-23; Agenda's ALT-F2 offering `every Mon (strtng 10/19/2026) at 9:00am` checked 2026-10-23; a rule the reader's language has no words for is offered as its date alone, as before (as it was before the rule was offered for editing).
+- **R15** Only a standard category's conditions assign: checked in Agenda 2.0, 2026-10-16.
+- **R15f** Copy and clear conditions and actions: checked in Agenda 2.0, 2026-10-26; found missing while writing the help.
+- **R16** The Questions box drawn as Agenda's: checked in Agenda 2.0, 2026-10-25.
+- **R67** The assignment profile's wording "In Urgent: its condition holds (Calls)": the owner, 2026-10-16.
+
+**§ 4, working through views**
+
+- **R24** Agenda's DEL question: checked in Agenda 2.0, 2026-10-25; the owner's choice.
+- **R24a** The trash: checked in Agenda 2.0, 2026-10-26; the owner's choices, all as Agenda's. No "Item has no other assignments. Discard the item?" question in Agenda 2.0: checked, 2026-10-26.
+- **R59** NOTE (F5) in a column used to open the item's note. Notes shown in the rows, as Agenda's: checked in Agenda 2.0, 2026-10-25.
+- **R61** F6 on a section head used to open the head category's properties (F6 on the box's Section head does that now). Section Add: Agenda's, checked in Agenda 2.0, 2026-10-24; the owner's choice.
+- **R78** View Properties: checked in Agenda 2.0, 2026-10-23. Section Select (F3 in Sections): checked in Agenda 2.0, 2026-10-25; the owner's choice.
+- **R79** Number items: checked in Agenda 2.0, 2026-10-23.
+- **R55** Each column added a column of its own (When twice in a section): checked in DOSBox. Item Column Properties ▸ Width, typing one sets it by hand as Agenda's: checked 2026-10-25.
+- **R29b** Unindexed categories: checked in Agenda 2.0, 2026-10-25. The TUI's unindexed entry (Text value:, F2, F3, ⌂): checked in Agenda 2.0, 2026-10-25.
+- **R36** The Sort box laid out as Agenda's Item Sorting box: checked in Agenda 2.0, 2026-10-25.
+- **R37** The Search box drawn as Agenda's: checked in Agenda 2.0, 2026-10-26. Search for typed as any field, a second ENTER searches: checked in Agenda 2.0, 2026-10-26; the owner's choice. One Show view per file: checked in Agenda 2.0, 2026-10-25. ItemsDone and Every: checked in Agenda 2.0, 2026-10-25. Circular: checked in Agenda 2.0, 2026-10-26. Circular references worked out only for the items a key changed: the owner's choice, 2026-10-26.
+- **R63** The What to copy box: checked in Agenda 2.0, 2026-10-25; the owner's choice. In a note F4 used to close the note.
+- **R64a** The note editor's control panel and key bar: the owner, 2026-10-17.
+- **R64d** ESC in a note, Discard changes?: the owner's choice, 2026-10-17. ALT-N / ALT-P, Return and Quit keep saving without asking: the owner's choice, 2026-10-17.
+- **R64e** The note editor's editing keys: the owner, 2026-10-17. CTRL-K for Agenda's CTRL-ENTER: the owner's choice. TAB types spaces rather than tab characters: the owner's choice, 2026-10-17.
+- **R64f** GETITMS's question "Discard items after copy?": checked in Agenda 2.0, 2026-10-26; an earlier try had lost the key.
+- **R38** The title bar's date and time: checked in Agenda 2.0, 2026-10-25. The Set Alarm box: checked in Agenda 2.0, 2026-10-25. "@" in column 76 while past alarms list an item: checked in Agenda 2.0, 2026-10-25. Utilities ▸ Show ▸ Alarm's alarm list: checked in Agenda 2.0, 2026-10-25.
+- **R70** While you were away: decided at the meeting of 2026-10-16, § 6. Agenda shows no box, rings such alarms when the file is opened: checked in Agenda 2.0, 2026-10-22.
+- **R41** A new file's default date format, Agenda's: checked in Agenda 2.0, 2026-10-25. The imported global date format, header word `0x182`: decoded 2026-10-26.
+- **R41a** Date Column Properties shows only the settings for what the column displays: checked in Agenda 2.0, 2026-10-25.
+
+**§ 5, the user interface**
+
+- **§ The screen and the control panel** the mode words (none when ready, in boxes, menus and managers) checked 2026-10-25; the hide settings in one bracket checked in Agenda 2.0, 2026-10-25; the File and View lines while an item's text is typed: checked in Agenda 2.0, 2026-10-25; the owner's choice; the two lines the box's alone while a box is open: checked in Agenda 2.0, 2026-10-25.
+- **§ Finishing a box: ENTER and ESC** Agenda's messages, adapted: the owner's choice, 2026-10-25; box titles and labels checked in Agenda 2.0, 2026-10-25; ENTER done and ESC cancels, the screen behind unchanged until ENTER: checked in Agenda 2.0, 2026-10-22; the owner's choices, 2026-10-24.
+- **§ Moving and changing settings in a box** the Choices box (F3) checked 2026-10-25.
+- **§ Category and File Statistics** "Press any key to continue" on the statistics boxes checked in Agenda 2.0, 2026-10-25; the File Statistics counts checked on Agenda 2.0's PLANNER file.
+- **R80** The key bar on two lines: checked in Agenda 2.0, PLANNER, 2026-10-24; a change back, settled with the owner 2026-10-24; the ALT-K cycle decided at the meeting of 2026-10-24, § 5; the key names (`AltF4`) say which bar it is: the owner dropped a letter for it after trying it, 2026-10-24; the bar in a box checked in Agenda 2.0, 2026-10-25; F2 EDIT, F6 PROPS and F8 DEFAULT in a settings box checked in Agenda 2.0, 2026-10-25; the editing bar while a line is typed checked in Agenda 2.0, 2026-10-25; the bar in the moves checked in Agenda 2.0, 2026-10-26; meeting 2026-10-26-2, § 6; the bar while browsing dates checked in Agenda 2.0, 2026-10-26, from View ▸ Browse.
+- **R81** Menu entries for the keys, and the category manager's menu: found by the menu test; checked in Agenda 2.0, 2026-10-24; settled with the owner 2026-10-24.
+- **R81a** The menus in Agenda's shape: settled with the owner 2026-10-24.
+- **R81b** Category lists from a box: checked in Agenda 2.0, 2026-10-22 and 2026-10-24; settled with the owner 2026-10-24.
+- **R81c** F8 DEFAULT and ALT-F8 DFLTALL: checked in Agenda 2.0, 2026-10-24; settled with the owner 2026-10-24; a setting without a default left as it is, without a word: the owner's choice, 2026-10-25; the Publish box's defaults: the owner, 2026-10-27.
+- **R82** Agenda's File commands: checked in Agenda 2.0, 2026-10-25; MakeCopy came in place of our former File ▸ Write, a change back settled with the owner; Erase moving the file to the Trash: the owner's choice; Set file password checked in Agenda 2.0, 2026-10-26; the New File box: our former question "Create the new file …?" gives way to it.
+- **R82a** Update defaults: checked in Agenda 2.0, 2026-10-26; meeting 2026-10-26-3, §§ 5–6.
+- **R82b** A recovery file on a crash: meeting 2026-10-26-4, § 6; the owner's choices, 2026-10-26.
+- **R82c** Text from outside is data: meeting 2026-10-26-4, § 6; expert review 2026-10-21, § 14.
+- **R42** ALT-F5 used to open the Sort box (R36), before it became GO TO; a category inserted in a family of sections becoming a section: checked in Agenda 2.0, 2026-10-27; ALT-Y doing nothing after a discard checked in Agenda 2.0, 2026-10-26.
+- **R65c** The help screen's frame and pane: the owner, 2026-10-16.
+- **R65d** Run a command by name (CTRL-X): meeting 2026-10-16-3, § 7.
+- **R65e** Agenda's help: checked in Agenda 2.0, 2026-10-26; meeting 2026-10-26, §§ 5–8; the Help Index of Agenda's kind: the owner's choice, 2026-10-26.
+- **R32** typing a category name on the control panel's second line: checked in Agenda 2.0, 2026-10-25; the owner's choice; "Date:" and "Number:" checked in Agenda 2.0, 2026-10-25; completion in a box's category field: checked in Agenda 2.0, 2026-10-25; the owner's choice.
+- **R35** ♦ in column 78 of the control panel checked in Agenda 2.0, 2026-10-25.
+
+**§§ 5a–5e, interchange, calendar, macros, files and zettels**
+
+- **R72** Importing a Lotus Agenda file: expert reviews 2026-10-16, meeting 2026-10-16-2; decisions 2026-10-16.
+- **R45** Calendar subscriptions: a calendar that cannot be read is not subscribed ("Not subscribed: …"), the owner, 2026-10-27; the category in the family the other calendars share, else in Calendars under MAIN (R75a), the owner, 2026-10-26; the box is a manager, as the Macros manager is (UI guidelines), the owner, 2026-10-27.
+- **R47** Datebook views: the datebook's View Properties, holding its settings in the right column instead of Sections, checked in Agenda 2.0 on 2026-10-25.
+- **R48** Browsing date filters: F8 (DEFAULT) and F10 (MENU) while browsing checked in Agenda 2.0 on 2026-10-26.
+- **R75** Feeds: meeting 2026-10-16-2, § 7; the owner's decisions, 2026-10-17; the Feeds box a manager, as the Macros manager is (UI guidelines), the owner, 2026-10-27; the feeds keeping their files in and out (OPML F7/F8) to themselves, so the menus have no hole with the Extras off, the owner, 2026-10-27; the file remembering only a faded or discarded entry's id and publish date, not its text (format 45), meeting 2026-10-26-4, § 5.
+- **R75a** Ingested categories: meeting 2026-10-26-5, § 6; a family of the person's under MAIN holding only calendars' categories is named Calendars as a file is opened: the owner's "Kalender" became Calendars.
+- **R50** Learn-mode macros: the Macro Properties box laid out as Agenda's, checked in Agenda 2.0, 2026-10-25; the macro manager drawn as Agenda's, checked in Agenda 2.0, 2026-10-25.
+- **R52** Startup: the owl and "W O L" drawn on the box itself, no block of their own colour, the owner's choice 2026-10-25.
+- **R68** The current view and recently used views in the view manager: meeting 2026-10-16, § 7 and § 8.
+- **R69** Where you left a file: meeting 2026-10-16, § 5.
+- **R71** A file changed on disk: meeting 2026-10-16-2, § 8.
+- **R77** The Extras preference: meeting 2026-10-21, § 7; settled with the owner 2026-10-23.
+- **R73** Zettel ids: meeting 2026-10-16-3, § 5 and § 6; CTRL-T the owner's choice, 2026-10-17.
+- **R73b** Links between zettels: ROADMAP, meeting 2026-10-16-3; the owner, 2026-10-16; the keys (CTRL-G follows, CTRL-R shows Linked from, CTRL-L inserts a link) the owner's choice, 2026-10-17.
+- **R74** The micro-blog: meeting 2026-10-16-2, § 8; the owner's answers 2026-10-16; DEL leaving Drafts empty (and the Posts/Drafts fields' completion), the owner, 2026-10-27; the folder field (F3 listing folders, `./  (this folder)` first, kept relative to the file's folder), the owner, 2026-10-27; `style.css` replaced only when still the pre-0.69 monospace one, one the person changed stays: owner's answers 2026-10-26; a name two categories have is refused for Posts and Drafts: code review 2026-10-26.
