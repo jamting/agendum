@@ -8,7 +8,7 @@ Small, testable increments: the open work, by area. Done work is the record in [
 
 1. Before the public repository, the practical meeting's conditions (Housekeeping; meeting 2026-10-28-5, §§ 5–8, 12–14): the five fixes to the copy (done 2026-10-28, `ROADMAP_DONE.md`); the README's look (a screenshot, Find your way, the name's story) and the guide and manual in the blog's stylesheet; then a fresh dry run, clean, and the owner reads and approves its report (the captured Agenda texts and the lines naming removed files among it)
 2. The workshop renamed to `jamting/agendum-wolery` on GitHub (Housekeeping; meeting 2026-10-28-5, § 10; `plans/GITHUB.md` § 7, step 8), right before the public repository
-3. The public repository of the clone (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md)): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
+3. The public repository of the clone, by the moving-day checklist (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md) § 7, Moving day): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
 4. The public site, with four doors (Housekeeping; meeting 2026-10-28-2, § 9)
 5. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
 6. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
