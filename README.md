@@ -6,7 +6,7 @@ New to Lotus Agenda? [`docs/AGENDA_HISTORY.md`](docs/AGENDA_HISTORY.md) explains
 
 You type free-form items. Agendum files them into categories: the one you typed them under, and any whose names appear in the text. Views show the same items arranged in different ways, and you change the data directly in the views.
 
-![Agendum's Activities view in Agenda's colours: five calls to make, each with columns for When, Priority and Contact, and the function-key bar along the bottom](docs/images/01-view.png)
+<img src="docs/manual/screens/01-view.png" width="720" alt="Rabbit's Week in Agendum, in Agenda's colours: Garden, Notices and Friends and Relations sections with When, Priority and Friends columns; Count the lettuces before Tigger bounces on them is under both Garden and Friends and Relations">
 
 ## Find your way
 

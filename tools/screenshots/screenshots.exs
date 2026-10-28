@@ -6,10 +6,9 @@
 #     MIX_ENV=test mix run tools/screenshots/screenshots.exs [--theme NAME] [--out DIR] [--only NAME,...]
 #
 # The pictures go to tmp/screenshots (by default), 720x400 for 80x25 like a
-# VGA text screen. Add a screen by adding a line to `shots/1`. The README's
-# picture is one of them, made again with
-#
-#     MIX_ENV=test mix run tools/screenshots/screenshots.exs --only 01-view --out docs/images
+# VGA text screen. Add a screen by adding a line to `shots/1`; --only NAME,...
+# draws only those. (The README's picture is the manual's first screen,
+# captured by docs/manual/src/capture_screens.exs.)
 
 Code.require_file("test/support/tui_helpers.ex")
 Code.require_file("tools/screenshots/png.ex")
