@@ -490,20 +490,132 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 
 - **R20 ✅ Sections.** A section lists every item that is a member of its head category (including via subcategories), in item order. Items that are members only through a subcategory are "inherited" and can be hidden.
 - **R21 ✅ Entering an item.** Typing under a section creates an item assigned to the section's category (unless it is MAIN), placed after the highlighted item. Automatic assignment (R10–R12) then runs, using the neighbouring items in the section for R12.
-- **R24 ✅ DEL** on an item removes it from the section's category (and its subtree), after Agenda's question (checked in Agenda; our choice): "Remove this item from the section?  Yes", with "(Use ALT-F4 to discard the item completely.)" under it; ENTER removes, ESC keeps, and with Confirm off (R54) it removes at once. The item stays in the file. On a column entry DEL unassigns it, and on a section head DEL removes the section from the view. **DISCARD** (ALT-F4) deletes the item from the file, into the trash (R24a).
-- **R24a ✅ The trash** (User's Guide 3-4 to 3-5, 13-18 to 13-19; checked in Agenda; our choices, all as Agenda's). A discarded item (ALT-F4, Item ▸ Discard, a category whose special action discards, R15b) leaves the file for the trash, without its assignments: its categories, values, When and Done dates and alarm go; its text, note, Entry date and Zettel id stay. **Item ▸ Undisc** brings items back into the highlighted section, below the highlighted item (on a section head, in their usual place), assigned to the section's head alone, and their conditions and actions run, as in Agenda: an item undiscarded there came back without its date. With one item in the trash it comes back at once; with several, Agenda's box asks "Undiscard:" All items in trash (first) or Last item in trash, and they come back newest first; with none, Agenda's "There are no discarded items in the trash, so there are no items to recover." **Utilities ▸ Trash** asks "Empty the trash?" (with none, "There are no discarded items in the trash, so there is no trash to empty."); its items are then gone for good. **File Properties ▸ Empty trash** says when it also empties by itself: On demand, When file is closed (the next time the file is opened, here), End of day (the default, for every file: once the day the oldest item was discarded is over, while Agendum runs or when the file is next opened) or When item is discarded (no trash at all; our choice: the items already in it stay until it is next emptied, where Agenda emptied it when the box was accepted). File statistics counts the items in the trash. The trash is saved with the file. Emptying is not an undo step; a discard and an Undisc are. Agenda 2.0 does not ask DEL's other question, "Item has no other assignments. Discard the item?": every item keeps its Entry date (checked in Agenda). ALT-Y stays DEL's yank (R42): after a discard it did nothing in Agenda 2.0, though its help says it recovers the latest one.
+- **R24 ✅ DEL** on an item removes it from the section's category (and its subtree), after Agenda's question (checked in Agenda; our choice): "Remove this item from the section?  Yes", with "(Use ALT-F4 to discard the item completely.)" under it.
+
+  ENTER removes, ESC keeps, and with Confirm off (R54) it removes at once. The item stays in the file.
+
+  - **On a column entry** DEL unassigns it.
+  - **On a section head** DEL removes the section from the view.
+
+  **DISCARD** (ALT-F4) deletes the item from the file, into the trash (R24a).
+- **R24a ✅ The trash** (User's Guide 3-4 to 3-5, 13-18 to 13-19; checked in Agenda; our choices, all as Agenda's). A discarded item (ALT-F4, Item ▸ Discard, a category whose special action discards, R15b) leaves the file for the trash, without its assignments: its categories, values, When and Done dates and alarm go; its text, note, Entry date and Zettel id stay.
+
+  - **Item ▸ Undisc** brings items back into the highlighted section, below the highlighted item (on a section head, in their usual place), assigned to the section's head alone, and their conditions and actions run, as in Agenda: an item undiscarded there came back without its date. With one item in the trash it comes back at once. With several, Agenda's box asks "Undiscard:" All items in trash (first) or Last item in trash, and they come back newest first. With none, Agenda's "There are no discarded items in the trash, so there are no items to recover."
+  - **Utilities ▸ Trash** asks "Empty the trash?" (with none, "There are no discarded items in the trash, so there is no trash to empty."). Its items are then gone for good.
+  - **File Properties ▸ Empty trash** says when it also empties by itself: On demand, When file is closed (the next time the file is opened, here), End of day (the default, for every file: once the day the oldest item was discarded is over, while Agendum runs or when the file is next opened) or When item is discarded (no trash at all; our choice: the items already in it stay until it is next emptied, where Agenda emptied it when the box was accepted).
+
+  File statistics counts the items in the trash. The trash is saved with the file. Emptying is not an undo step. A discard and an Undisc are.
+
+  Agenda 2.0 does not ask DEL's other question, "Item has no other assignments. Discard the item?": every item keeps its Entry date (checked in Agenda).
+
+  ALT-Y stays DEL's yank (R42): after a discard it did nothing in Agenda 2.0, though its help says it recovers the latest one.
 - **R25 ✅ Editing the structure from a view.** Rename a category by editing a section head or column entry (F2). Add sections (ALT-D/ALT-U) and columns (ALT-R/ALT-L) with existing or new categories.
 - **R26 ✅ Move (ALT-F10).** Moving an item to another section reassigns it from the old section's category to the new one and reorders it.
 - **R27 ✅ View options.** Hide done items, empty sections, inherited items: set in View Properties (R78), as Agenda's; the menus have no shortcut entries for them (nor for the view's filter and sort, a section's filter, sort, collapse and lines, or the view and category managers, which are F8 and F9), as Agenda's had none.
-- **R58 ✅ Section separators** (User's Guide 5-12, 15-21; screenshots 48, 54, 143). A view setting, No by default: with Yes, each section head is a line across the screen, the section's name and its column heads on it, in place of the blank line before the section, so more fits on the screen. The highlight on a section head covers its name only. Set with View Properties ▸ Section separators (R78; in a datebook view its settings box), one undo step. With Hide column heads (R57), the other section heads are their names on a plain line. Our choices: a datebook view's slots are lines either way (R47); File ▸ Print to a file has no lines, as Agenda printed none ("The lines between sections do not appear when you print").
-- **R59 ✅ The note symbol and NOTE for what is highlighted** (User's Guide 12-2 to 12-4; screenshot 126). In a view, ♪ at the right of the control panel's second line shows that what the highlight is on has a note: the item, the section head's category, a column head's category, or the category a column entry stands for, the first the entry shows (a Star or Yes/No entry: the head, when the item is in it). A date or a number is no category, so it has no note. NOTE (F5) opens that note: in a column, the column head's or the entry's category's (Agenda: "Highlight the item or category"); on a date, number or empty entry it says Agenda's "The highlight isn't on a category.  Highlight the category you want and repeat the command." The rows show notes too, as Agenda's (checked in Agenda): a section head's first column holds ♪ when its category has a note (a space otherwise), and an item's row is four spaces, its tag (♪ in the bullet's place for an item with a note; ‼ done, & waiting, @ alarm before it; ‼ is Agenda's, Help "View Indicators"), its mark (♦ when marked, a space otherwise; a marked item without another tag has ♦ in the bullet's place, `    ♦ Call Bob`, as Agenda's) and its text from the seventh column, wrapped lines too. The highlighted row shows », as Agenda's: on the item text the highlight covers the text (as wide as its longest line) and » stands in the space before the first column right of it; on a column entry » takes the bullet's place (an item with another tag keeps it; seen for ♪). A filled column entry has · before it, as Agenda's (Help "View Indicators": the item is assigned to, or inherits, the column's head), dates and note lines too but not numbers; the highlighted row's first one is », the item text being highlighted.
-- **R61 ✅ Section Properties** (Help "Section Properties/Add Box"; User's Guide 5-5 to 5-10). One section's settings in one box, opened with View ▸ Section ▸ Properties or F6 (PROPS) on a section head, as in Agenda (F6 on the box's Section head opens the head category's properties). Section head: a typed name (a new category if no category has it) or F3 picks one; Item sorting opens the section's sort (R36); Section statistics says how many items the section shows; Select numeric functions (only in a section with a numeric column; User's Guide 8-10) opens a box of Count, Total, Average, Minimum and Maximum, Yes or No, for every numeric column of the section at once: they are the columns' own calculations (R29), so a linked column changes in its other sections too, and a function shows Yes when every numeric column has it; Filter opens the section's filter (R28); Columns lists the section's columns in their order with the item column as `<Items>`: DEL removes a column from this section only (the item column stays), ALT-↑ ↓ move a column or the item column (Agenda: ALT-F10), INS adds a column right of the highlighted one (Column Add, R55). Each change is one undo step. Not in a datebook view, whose sections are its dates (R47). **Section Add** (View ▸ Section ▸ Add; Agenda's, checked in Agenda; our choice) is the same box, titled Section Add, opened blank with Insert under the head: Below current section (the default) or Above current section, SPACE switches it. Once the head is typed (a new category under MAIN when no category has the name) or picked with F3, the section is added there, with the linked columns of the current section (R55), and the box goes on as its settings; switching Insert then moves it to the other side of the current section. ENTER before a head adds nothing and says what is needed, as Agenda's box does not close; ESC takes everything back, the new section included. ALT-D and ALT-U still add a section below or above at once, with the category picker.
-- **R62 ✅ Moving a section** (User's Guide 5-8 to 5-9). ALT-F10 (MOVE) on a section head, or View ▸ Section ▸ Move from anywhere in a section, moves it within its view: every section is shown collapsed (§ and its item count), ↑ ↓ (or < >) move it, ENTER keeps the new place (one undo step; the sections open again) and ESC puts it back. Only this view changes, not the category hierarchy. The file is not changed while it moves (ADR 0026). Our choices: a view that sorts its sections (View Properties ▸ Section sorting) says so instead, as the sort would put the section back; a datebook view's sections are its dates (R47).
-- **R78 ✅ View Properties** (User's Guide 9-9 to 9-11; Help "View Properties/Add/Copy Box"; screenshot 143; checked in Agenda). A standard view's settings in one box, opened with View ▸ Properties or F6 (PROPS) on a view in the view manager, as Agenda's; F6 in a view still opens the properties of the item, section or column highlighted. A datebook view's View ▸ Properties and F6 open its datebook settings (R47). Laid out as Agenda's: on the left View name (typing replaces it, F2 edits it), Item sorting (the view's sort, R36), Section sorting (None, Category order, Alphabetic, Numeric) with Order (Ascending, Descending) under it while it is not None, Hide empty sections, Hide done items, Hide dependent items, Hide inherited items (R27), Hide column heads (R57), Section separators (R58), Number items (R79, on the row of Filter), and View statistics (a box of the marked items the view shows, its sections, empty ones too, and the items its sections show, an item in two sections counted twice; any key closes it, as Agenda's); on the right Sections, the view's sections in their order, and Filter under them (R28). In Sections ↓ and ↑ walk the sections, ↓ from the last goes on to Filter and ↑ from Filter to the first (as Agenda's); typing a name or INS adds a section below the highlighted one with its linked columns (R55; a new category under MAIN when no category has the name); F3 opens Agenda's Section Select (User's Guide 9-8, 9-11; checked in Agenda; our choice): "Current View:" and the hierarchy, * on the view's section heads, SPACE (F7 INCLCAT) making a category a section (at the end, with the last section's linked columns) or no longer one, F5 (CHLDRN) a parent's children instead of the parent, F4 (CLRCATS) none, ENTER or ESC going back keeping it (R81b), the top line saying Agenda's "Highlight each category for the section head(s) and press SPACE BAR. Press F5 to use the child categories instead of the parent."; View Properties then refuses ENTER while the view has no section, with Agenda's "Every view must have at least one section.  Type a category name or press F3 to pick an existing category for the section head."; DEL removes the highlighted section, at once, not the last one; F6 opens its Section Properties (R61); ALT-F10 picks it up, ↑ ↓ carry it and ENTER or ESC put it down where it is, as Agenda's ("Use Up and Down arrow keys to reposition the section"), the file changing once when it is put down (ADR 0026). Each change applies at once and is one undo step; ENTER closes the box, ESC puts back everything changed in it (ADR 0030). Opened from the view manager, ENTER goes back to the view manager with the view shown as it was; the view whose properties are open shows beneath the box meanwhile. Our choices: ALT-↑ ↓ also move a section a place at once, as in Section Properties (quiet); a view that sorts its sections says so instead of moving one, as R62; Named print set and View protection are left out (printing and protection, § 6).
-- **R79 ✅ Number items** (User's Guide 5-13, 9-11; Help "View Properties/Add/Copy Box"; checked in Agenda). A view setting, No by default, set with View Properties ▸ Number items (R78; in a datebook view its settings box, as Agenda's), one undo step; its control-panel line is Agenda's, "Display a number next to the item tag in front of every item." With Yes, each item a section shows has its number, 1, 2, 3 …, counted again from 1 in every section (a datebook slot too) and counting only the items shown, so a hidden done item leaves no gap. The number is drawn left-aligned in four columns between the item's marks and its text ("1   ", "10  "), the text giving up those columns and its wrapped lines staying under it, as Agenda's; File ▸ Print puts it before each item's text, as Agenda printed the numbers. The numbers are computed, never stored (`ViewModel.Row.number`). Our choice: past 999 the number takes as many columns as it needs (Agenda's behaviour there is unchecked).
+- **R58 ✅ Section separators** (User's Guide 5-12, 15-21; screenshots 48, 54, 143). A view setting, No by default: with Yes, each section head is a line across the screen, the section's name and its column heads on it, in place of the blank line before the section, so more fits on the screen.
+
+  The highlight on a section head covers its name only. Set with View Properties ▸ Section separators (R78; in a datebook view its settings box), one undo step. With Hide column heads (R57), the other section heads are their names on a plain line.
+
+  Our choices:
+
+  - A datebook view's slots are lines either way (R47).
+  - File ▸ Print to a file has no lines, as Agenda printed none ("The lines between sections do not appear when you print").
+- **R59 ✅ The note symbol and NOTE for what is highlighted** (User's Guide 12-2 to 12-4; screenshot 126). In a view, ♪ at the right of the control panel's second line shows that what the highlight is on has a note:
+
+  - The item.
+  - The section head's category.
+  - A column head's category.
+  - The category a column entry stands for, the first the entry shows (a Star or Yes/No entry: the head, when the item is in it).
+
+  A date or a number is no category, so it has no note.
+
+  NOTE (F5) opens that note: in a column, the column head's or the entry's category's (Agenda: "Highlight the item or category"). On a date, number or empty entry it says Agenda's "The highlight isn't on a category.  Highlight the category you want and repeat the command."
+
+  The rows show notes too, as Agenda's (checked in Agenda):
+
+  - **A section head's first column** holds ♪ when its category has a note (a space otherwise).
+  - **An item's row** is four spaces, its tag (♪ in the bullet's place for an item with a note; ‼ done, & waiting, @ alarm before it; ‼ is Agenda's, Help "View Indicators"), its mark (♦ when marked, a space otherwise; a marked item without another tag has ♦ in the bullet's place, `    ♦ Call Bob`, as Agenda's) and its text from the seventh column, wrapped lines too.
+
+  The highlighted row shows », as Agenda's:
+
+  - **On the item text** the highlight covers the text (as wide as its longest line) and » stands in the space before the first column right of it.
+  - **On a column entry** » takes the bullet's place (an item with another tag keeps it; seen for ♪).
+
+  A filled column entry has · before it, as Agenda's (Help "View Indicators": the item is assigned to, or inherits, the column's head), dates and note lines too but not numbers. The highlighted row's first one is », the item text being highlighted.
+- **R61 ✅ Section Properties** (Help "Section Properties/Add Box"; User's Guide 5-5 to 5-10). One section's settings in one box, opened with View ▸ Section ▸ Properties or F6 (PROPS) on a section head, as in Agenda (F6 on the box's Section head opens the head category's properties).
+
+  - **Section head:** a typed name (a new category if no category has it) or F3 picks one.
+  - **Item sorting** opens the section's sort (R36).
+  - **Section statistics** says how many items the section shows.
+  - **Select numeric functions** (only in a section with a numeric column; User's Guide 8-10) opens a box of Count, Total, Average, Minimum and Maximum, Yes or No, for every numeric column of the section at once: they are the columns' own calculations (R29), so a linked column changes in its other sections too, and a function shows Yes when every numeric column has it.
+  - **Filter** opens the section's filter (R28).
+  - **Columns** lists the section's columns in their order with the item column as `<Items>`: DEL removes a column from this section only (the item column stays), ALT-↑ ↓ move a column or the item column (Agenda: ALT-F10), INS adds a column right of the highlighted one (Column Add, R55).
+
+  Each change is one undo step. Not in a datebook view, whose sections are its dates (R47).
+
+  **Section Add** (View ▸ Section ▸ Add; Agenda's, checked in Agenda; our choice) is the same box, titled Section Add, opened blank with Insert under the head: Below current section (the default) or Above current section, SPACE switches it.
+
+  Once the head is typed (a new category under MAIN when no category has the name) or picked with F3, the section is added there, with the linked columns of the current section (R55), and the box goes on as its settings. Switching Insert then moves it to the other side of the current section.
+
+  ENTER before a head adds nothing and says what is needed, as Agenda's box does not close. ESC takes everything back, the new section included.
+
+  ALT-D and ALT-U still add a section below or above at once, with the category picker.
+- **R62 ✅ Moving a section** (User's Guide 5-8 to 5-9). ALT-F10 (MOVE) on a section head, or View ▸ Section ▸ Move from anywhere in a section, moves it within its view:
+
+  - Every section is shown collapsed (§ and its item count).
+  - ↑ ↓ (or < >) move it.
+  - ENTER keeps the new place (one undo step; the sections open again).
+  - ESC puts it back.
+
+  Only this view changes, not the category hierarchy. The file is not changed while it moves (ADR 0026).
+
+  Our choices:
+
+  - A view that sorts its sections (View Properties ▸ Section sorting) says so instead, as the sort would put the section back.
+  - A datebook view's sections are its dates (R47).
+- **R78 ✅ View Properties** (User's Guide 9-9 to 9-11; Help "View Properties/Add/Copy Box"; screenshot 143; checked in Agenda). A standard view's settings in one box, opened with View ▸ Properties or F6 (PROPS) on a view in the view manager, as Agenda's; F6 in a view still opens the properties of the item, section or column highlighted.
+
+  A datebook view's View ▸ Properties and F6 open its datebook settings (R47).
+
+  Laid out as Agenda's:
+
+  - **On the left** View name (typing replaces it, F2 edits it), Item sorting (the view's sort, R36), Section sorting (None, Category order, Alphabetic, Numeric) with Order (Ascending, Descending) under it while it is not None, Hide empty sections, Hide done items, Hide dependent items, Hide inherited items (R27), Hide column heads (R57), Section separators (R58), Number items (R79, on the row of Filter), and View statistics (a box of the marked items the view shows, its sections, empty ones too, and the items its sections show, an item in two sections counted twice; any key closes it, as Agenda's).
+  - **On the right** Sections, the view's sections in their order, and Filter under them (R28).
+
+  In Sections:
+
+  - ↓ and ↑ walk the sections, ↓ from the last goes on to Filter and ↑ from Filter to the first (as Agenda's).
+  - **Typing a name or INS** adds a section below the highlighted one with its linked columns (R55; a new category under MAIN when no category has the name).
+  - **F3** opens Agenda's Section Select (User's Guide 9-8, 9-11; checked in Agenda; our choice): "Current View:" and the hierarchy, * on the view's section heads, SPACE (F7 INCLCAT) making a category a section (at the end, with the last section's linked columns) or no longer one, F5 (CHLDRN) a parent's children instead of the parent, F4 (CLRCATS) none, ENTER or ESC going back keeping it (R81b), the top line saying Agenda's "Highlight each category for the section head(s) and press SPACE BAR. Press F5 to use the child categories instead of the parent." View Properties then refuses ENTER while the view has no section, with Agenda's "Every view must have at least one section.  Type a category name or press F3 to pick an existing category for the section head."
+  - **DEL** removes the highlighted section, at once, not the last one.
+  - **F6** opens its Section Properties (R61).
+  - **ALT-F10** picks it up, ↑ ↓ carry it and ENTER or ESC put it down where it is, as Agenda's ("Use Up and Down arrow keys to reposition the section"), the file changing once when it is put down (ADR 0026).
+
+  Each change applies at once and is one undo step. ENTER closes the box, ESC puts back everything changed in it (ADR 0030).
+
+  Opened from the view manager, ENTER goes back to the view manager with the view shown as it was. The view whose properties are open shows beneath the box meanwhile.
+
+  Our choices:
+
+  - ALT-↑ ↓ also move a section a place at once, as in Section Properties (quiet).
+  - A view that sorts its sections says so instead of moving one, as R62.
+  - Named print set and View protection are left out (printing and protection, § 6).
+- **R79 ✅ Number items** (User's Guide 5-13, 9-11; Help "View Properties/Add/Copy Box"; checked in Agenda). A view setting, No by default, set with View Properties ▸ Number items (R78; in a datebook view its settings box, as Agenda's), one undo step.
+
+  Its control-panel line is Agenda's, "Display a number next to the item tag in front of every item."
+
+  With Yes, each item a section shows has its number, 1, 2, 3 …, counted again from 1 in every section (a datebook slot too) and counting only the items shown, so a hidden done item leaves no gap.
+
+  The number is drawn left-aligned in four columns between the item's marks and its text ("1   ", "10  "), the text giving up those columns and its wrapped lines staying under it, as Agenda's. File ▸ Print puts it before each item's text, as Agenda printed the numbers.
+
+  The numbers are computed, never stored (`ViewModel.Row.number`). Our choice: past 999 the number takes as many columns as it needs (Agenda's behaviour there is unchecked).
 
 ### Columns
 
+- **R22 ✅ Columns (claim 2).** A column headed by category _C_ shows, for each item, the descendants of _C_ the item is assigned to. A childless head shows `*` when the item is a member. A date column shows the date. When a column is too narrow for a category's full name, the category's short name is shown instead, for column entries and column heads alike (User's Guide 19-2). Each section has its own columns (R55).
+- **R22a ✅ Fit column to contents** (Agenda's SHIFT-? in View ▸ Column ▸ Width, User's Guide 5-21). SHIFT-? while choosing a width sets the highlighted column's width to the widest of its head and the entries of the items the view shows at that moment (collapsed sections left out), with full names rather than short ones and its calculation lines; at least 3, at most 80.
+
+  It is done once: the width does not follow later changes. One undo step. A linked column (R55) fits the entries of every section it is in.
 - **R22 ✅ Columns (claim 2).** A column headed by category _C_ shows, for each item, the descendants of _C_ the item is assigned to. A childless head shows `*` when the item is a member. A date column shows the date. When a column is too narrow for a category's full name, the category's short name is shown instead, for column entries and column heads alike (User's Guide 19-2). Each section has its own columns (R55).
 - **R22a ✅ Fit column to contents** (Agenda's SHIFT-? in View ▸ Column ▸ Width, User's Guide 5-21). SHIFT-? while choosing a width sets the highlighted column's width to the widest of its head and the entries of the items the view shows at that moment (collapsed sections left out), with full names rather than short ones and its calculation lines; at least 3, at most 80. It is done once: the width does not follow later changes. One undo step. A linked column (R55) fits the entries of every section it is in.
 - **R23 ✅ Typing in a column (claims 3, 6).** Text typed in a column cell is matched against the column head's descendants with automatic completion (R32); if nothing matches, a new child is created. Typing replaces the current entry; INS adds another one. Date columns parse dates.
@@ -535,49 +647,413 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   - Too narrow, Name only, Parent:Category and Ancestor use short names.
   - Typing (User's Guide 5-31 to 5-37): in a Star column SPACE stars an item (assigning it to the head itself, unless it is in it already) or unstars it (out of the head and every category under it); in a Yes/No column Y and N do the same. Other letters type a name, as in Name only. DEL unstars too. In a Category note column the text typed, or edited with F2, becomes that line of the note of the item's category there (the first, if several), after the label the line had; DEL empties it; an item with no category there is told so. One undo step each.
   - The Column Add box has Format too, for a standard column, with Line number and Column title for Category note; a Star or Yes/No column starts 2 wide (User's Guide 5-31, 5-33), so a column can be 1 wide (Agenda's 1 to 76; ours up to 80).
-- **R57 ✅ Hide column heads** (User's Guide 5-14 to 5-15, 15-21; screenshots 55, 67, 69, 71, 143). A view setting, No by default: with Yes, column heads show only on the first section head on the screen (after scrolling, the first one shown), so heads that every section repeats are not drawn again; the other section heads keep their names. Set with View Properties ▸ Hide column heads (R78; in a datebook view its settings box, as Agenda's), one undo step. Our choices: a section head whose column head is highlighted shows its heads, so the highlight can be seen; File ▸ Print to a file still names each column, as it labels every entry with it. In a datebook view the first slot on the screen shows them.
-- **R29 ✅ Numeric columns** (User's Guide chapter 8). A numeric category holds a number for each item assigned to it; the number is a value of the assignment, not a category. A standard category becomes numeric with Category Properties ▸ Type or Column Add ▸ Category type (R55; a numeric category cannot change back, and its Category Properties box shows a date category's shorter set of settings, R6a); its children, if any, are removed and their items get the child's name as their number ("112" → 112, other names → 0), items assigned to the category itself get 0, and Agenda asks first when items or children are affected. A category with grandchildren cannot be converted. Typing in a numeric column enters a number (signs, parentheses for negatives, a currency or % symbol, thousands separators and "3.22e+12" are accepted; anything else is refused); F2 edits it in full, DEL removes it, and the control panel shows "#" at the right of its second line while the highlight is in a numeric column, as Agenda's (beside ♪'s place; a date column shows ☼ there, R59). Numbers are right-aligned and shown in the column's format (View ▸ Column ▸ Properties): label or currency symbol (None, $, %, ¢, £, ¥), decimal places (2; numbers are rounded for display only), thousands separator, negative style (-1 or (1)), Display % of total (a "% tot" column beside the numbers, 5 wide, with each number's share of its section's total, rounded, as "12%"; nothing typed there, and printing to a file adds it after the number; User's Guide 8-7), and the calculations shown at the bottom of every section: count, total (the default), average, minimum, maximum (per column, or for all the numeric columns of a section at once with Section Properties ▸ Select numeric functions, R61). A number too wide for its column is shown in scientific notation. Items sort by their number (R36), Item Properties shows and edits it, the assignment profile asks for it, and printing to a file includes the calculations. Our choices: numbers are binary floating point, as in Agenda; the decimal and thousands characters are the person's (R54), "." and "," by default; calculation lines are not shown under collapsed sections. Section-wide calculation settings are in Section Properties ▸ Select numeric functions (R61); numeric ranges in filters and conditions are R28a and R15a.
-- **R29b ✅ Unindexed categories** (User's Guide 3-10 to 3-11, 3-23 to 3-26; checked in Agenda). An unindexed category gives each item assigned to it one text value (a phone number, an address, a part number); the text is a value of the assignment, not a category: it is not matched against item text, nothing is assigned from it, and it is in no hierarchy. A standard category becomes unindexed with Category Properties ▸ Type or Column Add ▸ Category type (Agenda's types in that order: Standard, Numeric, Date, Unindexed), and cannot change back; its children are removed, an item in a child getting the child's name as its text, an item in the category itself an empty one (as a numeric conversion gives numbers; what Agenda does with the children is unchecked). A category with grandchildren cannot be converted. Typing in an unindexed column sets the item's text, an empty one taking it out; DEL removes it. Items sort by their text, case aside. Saved in the file (format 40) and its JSON. In the TUI, as Agenda's (checked in Agenda): the text is typed on the control panel's second line under "Text value:" (no completion), F2 edits the text it has, F3 does nothing (a text has no choices), and ⌂ shows at the right of the View line while the highlight is in the column (Agenda's screen, CP437 0x7F; its help writes D); a filled entry has · before it. Column Add's Category type goes Standard, Numeric, Date, Unindexed, and an unindexed column has no Format; Category Properties ▸ Type lists Unindexed first, then Numeric and Date, and asks Agenda's "Convert to unindexed category (can't be changed back)?". Item Properties lists the text after the name ("Address (12 Grant Ave)"), F4 changing it, as the help's box says (Agenda's screen did not list it there: unchecked); in the assignment profile SPACE on it asks for the text (User's Guide 4-16). The category manager marks it ⌂ (unchecked in Agenda).
+- **R57 ✅ Hide column heads** (User's Guide 5-14 to 5-15, 15-21; screenshots 55, 67, 69, 71, 143). A view setting, No by default: with Yes, column heads show only on the first section head on the screen (after scrolling, the first one shown), so heads that every section repeats are not drawn again; the other section heads keep their names.
+
+  Set with View Properties ▸ Hide column heads (R78; in a datebook view its settings box, as Agenda's), one undo step.
+
+  Our choices:
+
+  - A section head whose column head is highlighted shows its heads, so the highlight can be seen.
+  - File ▸ Print to a file still names each column, as it labels every entry with it.
+
+  In a datebook view the first slot on the screen shows them.
+- **R29 ✅ Numeric columns** (User's Guide chapter 8). A numeric category holds a number for each item assigned to it; the number is a value of the assignment, not a category.
+
+  A standard category becomes numeric with Category Properties ▸ Type or Column Add ▸ Category type (R55; a numeric category cannot change back, and its Category Properties box shows a date category's shorter set of settings, R6a).
+
+  - **Its children**, if any, are removed and their items get the child's name as their number ("112" → 112, other names → 0).
+  - **Items assigned to the category itself** get 0.
+  - **Agenda asks first** when items or children are affected.
+  - **A category with grandchildren** cannot be converted.
+
+  Typing in a numeric column enters a number (signs, parentheses for negatives, a currency or % symbol, thousands separators and "3.22e+12" are accepted; anything else is refused). F2 edits it in full, DEL removes it, and the control panel shows "#" at the right of its second line while the highlight is in a numeric column, as Agenda's (beside ♪'s place; a date column shows ☼ there, R59).
+
+  Numbers are right-aligned and shown in the column's format (View ▸ Column ▸ Properties):
+
+  - Label or currency symbol (None, $, %, ¢, £, ¥).
+  - Decimal places (2; numbers are rounded for display only).
+  - Thousands separator.
+  - Negative style (-1 or (1)).
+  - Display % of total (a "% tot" column beside the numbers, 5 wide, with each number's share of its section's total, rounded, as "12%"; nothing typed there, and printing to a file adds it after the number; User's Guide 8-7).
+  - The calculations shown at the bottom of every section: count, total (the default), average, minimum, maximum (per column, or for all the numeric columns of a section at once with Section Properties ▸ Select numeric functions, R61).
+
+  A number too wide for its column is shown in scientific notation. Items sort by their number (R36), Item Properties shows and edits it, the assignment profile asks for it, and printing to a file includes the calculations.
+
+  Our choices:
+
+  - Numbers are binary floating point, as in Agenda.
+  - The decimal and thousands characters are the person's (R54), "." and "," by default.
+  - Calculation lines are not shown under collapsed sections.
+
+  Section-wide calculation settings are in Section Properties ▸ Select numeric functions (R61). Numeric ranges in filters and conditions are R28a and R15a.
+- **R29b ✅ Unindexed categories** (User's Guide 3-10 to 3-11, 3-23 to 3-26; checked in Agenda). An unindexed category gives each item assigned to it one text value (a phone number, an address, a part number); the text is a value of the assignment, not a category: it is not matched against item text, nothing is assigned from it, and it is in no hierarchy.
+
+  A standard category becomes unindexed with Category Properties ▸ Type or Column Add ▸ Category type (Agenda's types in that order: Standard, Numeric, Date, Unindexed), and cannot change back. Its children are removed, an item in a child getting the child's name as its text, an item in the category itself an empty one (as a numeric conversion gives numbers; what Agenda does with the children is unchecked). A category with grandchildren cannot be converted.
+
+  Typing in an unindexed column sets the item's text, an empty one taking it out. DEL removes it. Items sort by their text, case aside. Saved in the file (format 40) and its JSON.
+
+  In the TUI, as Agenda's (checked in Agenda):
+
+  - The text is typed on the control panel's second line under "Text value:" (no completion).
+  - F2 edits the text it has.
+  - F3 does nothing (a text has no choices).
+  - ⌂ shows at the right of the View line while the highlight is in the column (Agenda's screen, CP437 0x7F; its help writes D).
+  - A filled entry has · before it.
+
+  Column Add's Category type goes Standard, Numeric, Date, Unindexed, and an unindexed column has no Format. Category Properties ▸ Type lists Unindexed first, then Numeric and Date, and asks Agenda's "Convert to unindexed category (can't be changed back)?".
+
+  Item Properties lists the text after the name ("Address (12 Grant Ave)"), F4 changing it, as the help's box says (Agenda's screen did not list it there: unchecked). In the assignment profile SPACE on it asks for the text (User's Guide 4-16). The category manager marks it ⌂ (unchecked in Agenda).
 
 ### Filters, sorting and search
 
-- **R28 ✅ Filters** (User's Guide chapter 11). A view, and each of its sections, can be filtered by categories: items assigned (or not assigned) to them. All criteria must hold, except that categories that are mutually exclusive are alternatives (same rule as R15). The view's filter shows in brackets beside its name, a section's after its head. Typing an item into a filtered view or section assigns it to the categories the filter requires (of exclusive alternatives, the first), so it stays in sight. Set with View Properties ▸ Filter and Section Properties ▸ Filter (R78, R61; SPACE cycles + assigned · - not assigned · none, as Agenda's "once to show items assigned to the filter, twice to show items not assigned"; ENTER or ESC closes the list, keeping it, R81b).
-- **R28a ✅ Date and numeric filters** (User's Guide 11-5 to 11-12). Choosing a date or numeric category in the filter box opens the Date Filter or Numeric Filter box: Show items (Assigned, the default, or Not assigned: items without a date or number), Start and End date (or Minimum and Maximum value; blank leaves that end open, both blank means any date or number) and Items should be (Inside or Outside range). Relative dates ("monday", "today") are kept as typed and read again every day, so "monday" to "friday" is always this week. The filter shows in brackets ("[When 2026-11-05..2026-11-09]", "not" for outside). An item typed into the view or section gets the start date or minimum (with only an end: the end; outside the range: the day or number just before the start, or just after the end). ENTER applies, DEL removes the filter, ESC cancels. Browsing a date filter to other dates (View ▸ Browse, ALT-B) is R48.
-- **R36 ✅ Sorting items** (User's Guide chapter 15). A view has sort settings for all its sections; a section can override them or use the view's. Up to two keys (primary, then a secondary for ties): item text; a category — its children in hierarchy order or alphabetically, the date for a date category, the number for a numeric one; or a category note — a chosen line (Line number, default 1) of the note on the child the item is in, compared as text ignoring case (User's Guide 15-18: a town on line 2 of each person's note). Each key has an order (ascending, descending) and puts items without a value at the bottom or top. Ties keep entry order. Set in the Sort box (View Properties or Section Properties ▸ Item sorting), laid out as Agenda's Item Sorting in All Sections / in Current Section (checked in Agenda): Sort new items (shown: When item is entered), then a Primary and a Secondary sort key, each with only the settings that apply: Order and Sort n/a's for Item text; also Category, and Sequence for a standard category, for Category; also Line number (beside Sort on) and Sequence for Category note. SPACE on Sort on goes None → Item text → Category → Category note → None, keeping the category it had (with none yet, the category box opens; Agenda left Category blank until one was picked); SPACE or F3 on Category picks another. A section's box says "(View default)" beside the headings while the section uses the view's settings; any change makes them its own, and ALT-F8 goes back. Our choice: sorting is applied whenever the view is shown, like Agenda's "When item is entered" setting, so "On leaving a section" and ALT-S re-sorting are not needed. ALT-F5 in the category manager sorts the highlighted category's children alphabetically (after Y/N); in the view manager it sorts the views. View Properties sorts the section heads (User's Guide 15-20): Section sorting None (the order they were added in), Category order (as in the hierarchy), Alphabetic or Numeric (names that are not numbers last), and Section order ascending or descending; the sections are shown sorted, and GO TO lists them as shown. Not done: Agenda's Numeric and Date sequences for a category's children.
-- **R37 ✅ Search** (User's Guide 15-1 to 15-5). ALT-F6 opens the Search box, drawn as Agenda's with its help lines (checked in Agenda): Search for, Match on (item text, note text, both), Direction (forward, backward, from the beginning) and Ignore case (yes by default); Utilities ▸ Show ▸ Match's box is titled Show Match and has no Direction. Search for is typed as any field in Agenda's boxes: a character starts typing over the text, F2 edits it, and ENTER takes it and stays in the box; a second ENTER searches (checked in Agenda; our choice). A forward search starts after the highlighted item, a backward one before it, so the item highlighted is not itself a match. Search mode is quiet, as Agenda's: no message, the File line shows the date with the time's place blank, and the key bar names F1 Help alone; ALT-N / ALT-P (and F8) go to the next / previous match, and past the last one ALT-N only beeps; F7 marks the highlighted item; ENTER or ESC ends. A search that finds nothing opens Agenda's Error box, "… couldn't find any matches for the text you entered." (any key closes it). Utilities ▸ Show ▸ Match (Agenda's) lists every matching item in the file in the Show view, named **\*Show View\*** as Agenda's and created the first time; ALT-F8 (LAST VW) returns to the previous view. A file has one Show view, as in Agenda (checked in Agenda): Show Match, Sched, Alarm, Prereqs and Depends (and the extras' links) ask "Delete the existing Show view?" when there is one, and ESC leaves it as it is; the control panel says Agenda's "You can have only one Show view. Press ENTER to create the new Show view and delete the existing one." A Show view saved by an older Agendum as "Show View" is the same view, and takes the new name when it is next filled. Utilities ▸ Show ▸ **ItemsDone** shows every done item in it, under a section called **\*Show\***, and **Every** shows every item, under MAIN (User's Guide 13-9, 13-21; checked in Agenda). **Circular** shows the items caught in a circular reference, under a section called **!Circular Reference!** (User's Guide 20-21 to 20-22; checked in Agenda): conditions that keep assigning an item to a category and taking it out again, as "Ed: not in People" with Ed under People; an item is caught when one more round of its conditions would still change it (R15 stops them after a bounded number of rounds). While an item is caught, **o** stands at the right of the control panel's second line, as Agenda's (Help, View Indicators; its column unchecked: column 75, before @). It is worked out when a file is opened and after a key that changed it, for the items that key changed (every item when categories or their conditions changed), not on every key (our choice; a key on a file of 2,000 items with conditions takes about 20 ms). Text rules: every word must appear as a whole word, "Pat*" matches any ending, "(a phrase)" must appear as written. Not done: Agenda's other text-condition symbols (? ; , ~ !), and items in collapsed sections are skipped. Searching inside a note is R39.
+- **R28 ✅ Filters** (User's Guide chapter 11). A view, and each of its sections, can be filtered by categories: items assigned (or not assigned) to them. All criteria must hold, except that categories that are mutually exclusive are alternatives (same rule as R15).
+
+  The view's filter shows in brackets beside its name, a section's after its head. Typing an item into a filtered view or section assigns it to the categories the filter requires (of exclusive alternatives, the first), so it stays in sight.
+
+  Set with View Properties ▸ Filter and Section Properties ▸ Filter (R78, R61; SPACE cycles + assigned · - not assigned · none, as Agenda's "once to show items assigned to the filter, twice to show items not assigned"; ENTER or ESC closes the list, keeping it, R81b).
+- **R28a ✅ Date and numeric filters** (User's Guide 11-5 to 11-12). Choosing a date or numeric category in the filter box opens the Date Filter or Numeric Filter box:
+
+  - **Show items** (Assigned, the default, or Not assigned: items without a date or number).
+  - **Start and End date** (or Minimum and Maximum value; blank leaves that end open, both blank means any date or number).
+  - **Items should be** (Inside or Outside range).
+
+  Relative dates ("monday", "today") are kept as typed and read again every day, so "monday" to "friday" is always this week. The filter shows in brackets ("[When 2026-11-05..2026-11-09]", "not" for outside).
+
+  An item typed into the view or section gets the start date or minimum (with only an end: the end; outside the range: the day or number just before the start, or just after the end).
+
+  ENTER applies, DEL removes the filter, ESC cancels. Browsing a date filter to other dates (View ▸ Browse, ALT-B) is R48.
+- **R36 ✅ Sorting items** (User's Guide chapter 15). A view has sort settings for all its sections; a section can override them or use the view's.
+
+  Up to two keys (primary, then a secondary for ties):
+
+  - Item text.
+  - A category — its children in hierarchy order or alphabetically, the date for a date category, the number for a numeric one.
+  - A category note — a chosen line (Line number, default 1) of the note on the child the item is in, compared as text ignoring case (User's Guide 15-18: a town on line 2 of each person's note).
+
+  Each key has an order (ascending, descending) and puts items without a value at the bottom or top. Ties keep entry order.
+
+  Set in the Sort box (View Properties or Section Properties ▸ Item sorting), laid out as Agenda's Item Sorting in All Sections / in Current Section (checked in Agenda): Sort new items (shown: When item is entered), then a Primary and a Secondary sort key, each with only the settings that apply:
+
+  - Order and Sort n/a's for Item text.
+  - Also Category, and Sequence for a standard category, for Category.
+  - Also Line number (beside Sort on) and Sequence for Category note.
+
+  SPACE on Sort on goes None → Item text → Category → Category note → None, keeping the category it had (with none yet, the category box opens; Agenda left Category blank until one was picked). SPACE or F3 on Category picks another.
+
+  A section's box says "(View default)" beside the headings while the section uses the view's settings; any change makes them its own, and ALT-F8 goes back.
+
+  Our choice: sorting is applied whenever the view is shown, like Agenda's "When item is entered" setting, so "On leaving a section" and ALT-S re-sorting are not needed.
+
+  ALT-F5 in the category manager sorts the highlighted category's children alphabetically (after Y/N); in the view manager it sorts the views.
+
+  View Properties sorts the section heads (User's Guide 15-20):
+
+  - **Section sorting** None (the order they were added in), Category order (as in the hierarchy), Alphabetic or Numeric (names that are not numbers last).
+  - **Section order** ascending or descending.
+
+  The sections are shown sorted, and GO TO lists them as shown.
+
+  Not done: Agenda's Numeric and Date sequences for a category's children.
+- **R37 ✅ Search** (User's Guide 15-1 to 15-5). ALT-F6 opens the Search box, drawn as Agenda's with its help lines (checked in Agenda):
+
+  - Search for.
+  - Match on (item text, note text, both).
+  - Direction (forward, backward, from the beginning).
+  - Ignore case (yes by default).
+
+  Utilities ▸ Show ▸ Match's box is titled Show Match and has no Direction.
+
+  Search for is typed as any field in Agenda's boxes: a character starts typing over the text, F2 edits it, and ENTER takes it and stays in the box. A second ENTER searches (checked in Agenda; our choice). A forward search starts after the highlighted item, a backward one before it, so the item highlighted is not itself a match.
+
+  Search mode is quiet, as Agenda's: no message, the File line shows the date with the time's place blank, and the key bar names F1 Help alone.
+
+  - ALT-N / ALT-P (and F8) go to the next / previous match, and past the last one ALT-N only beeps.
+  - F7 marks the highlighted item.
+  - ENTER or ESC ends.
+
+  A search that finds nothing opens Agenda's Error box, "… couldn't find any matches for the text you entered." (any key closes it).
+
+  Utilities ▸ Show ▸ Match (Agenda's) lists every matching item in the file in the Show view, named **\*Show View\*** as Agenda's and created the first time. ALT-F8 (LAST VW) returns to the previous view.
+
+  A file has one Show view, as in Agenda (checked in Agenda): Show Match, Sched, Alarm, Prereqs and Depends (and the extras' links) ask "Delete the existing Show view?" when there is one, and ESC leaves it as it is. The control panel says Agenda's "You can have only one Show view. Press ENTER to create the new Show view and delete the existing one." A Show view saved by an older Agendum as "Show View" is the same view, and takes the new name when it is next filled.
+
+  Utilities ▸ Show ▸ **ItemsDone** shows every done item in it, under a section called **\*Show\***, and **Every** shows every item, under MAIN (User's Guide 13-9, 13-21; checked in Agenda).
+
+  **Circular** shows the items caught in a circular reference, under a section called **!Circular Reference!** (User's Guide 20-21 to 20-22; checked in Agenda): conditions that keep assigning an item to a category and taking it out again, as "Ed: not in People" with Ed under People. An item is caught when one more round of its conditions would still change it (R15 stops them after a bounded number of rounds).
+
+  While an item is caught, **o** stands at the right of the control panel's second line, as Agenda's (Help, View Indicators; its column unchecked: column 75, before @). It is worked out when a file is opened and after a key that changed it, for the items that key changed (every item when categories or their conditions changed), not on every key (our choice; a key on a file of 2,000 items with conditions takes about 20 ms).
+
+  Text rules:
+
+  - Every word must appear as a whole word.
+  - "Pat*" matches any ending.
+  - "(a phrase)" must appear as written.
+
+  Not done: Agenda's other text-condition symbols (? ; , ~ !), and items in collapsed sections are skipped. Searching inside a note is R39.
 
 ### Notes
 
-- **R39 ✅ Search and replace in a note** (User's Guide 15-6 to 15-8). ALT-F6 in a note opens the Search/Replace box: Search for, Replace text (No by default; Yes adds Replace with, Global replacement (No) and Confirm replacement (Yes)), Direction (Forward or Backward) and Ignore case (Yes). The text is matched as written, anywhere in a line. A search moves the cursor to the next occurrence and highlights it; ALT-S finds the next one and beeps when there are no more. A replacement replaces the next occurrence, or every occurrence when global; when confirming, each occurrence is highlighted and a Yes/No box asks "Replace this occurrence?" (as the other questions; asked even with Confirm mode off, R54): Yes replaces it, No skips it, ESC stops. The box moves below the occurrence when it would cover it. Our choices: the search starts at the cursor and, when nothing is found after it, continues from the top (backward: the bottom), since a note opens with the cursor at its end; a global replacement covers the whole note; the box remembers its last settings; no length limit (Agenda allowed 25 characters); text never matches across lines. Each replacement is an undo step of its own (the note is saved as it is made; a global replacement without confirming is one step), and typing in the note before the first one is a step before it; the occurrence asked about stays highlighted behind the question box. After a single (not global) replacement, ALT-S replaces the next occurrence (confirming first if asked to), as the Help's "Search & Replace in Note/Macro Box" describes.
-- **R63 ✅ Marking, copying, cutting and pasting in a note** (User's Guide 14-4 to 14-8). F7 MARK anchors a region at the cursor; moving the cursor stretches it, either way and over lines, and it shows marked; F7 again drops it, and typing drops it first. F3 COPY keeps the marked text, F4 CUT keeps it and takes it out, ALT-F4 DELETE takes it out without keeping it; with nothing marked each asks, in Agenda's What to copy box (checked in Agenda; our choice; `Agendum.TUI.Boxes.WhatToCopyBox`): one untitled field, "What to copy: Word" ("What to cut:", "What to delete:"), SPACE or a first letter going Word (at the cursor, or just before it), Line, All text, F3 listing them, ENTER taking it, ESC going back with nothing taken; the top line says "Choose how much text to copy. Press ESC to cancel." F2 PASTE puts the text kept at the cursor and keeps it, so it can be pasted again; one piece is kept, for the session, across notes. In a note F4 is CUT, as in Agenda (ESC and F5 close the note). Not done: the same keys in item text and category names, and the system clipboard.
-- **R64 ✅ Word wrap in the note editor** (ours). A line wider than the screen is shown on as many rows as it needs, so the whole line always shows: a row ends after the rightmost space that fits, and a word wider than the screen is broken at its edge. It is for the screen only: no line break goes into the text. ↑ ↓ move through the rows on the screen, keeping the column in the row: on a shorter row the cursor is at its end, and the next ↑ or ↓ goes on from the column kept (any other key forgets it); HOME and END (CTRL-A, CTRL-E) go to the start and end of the row, and pressed there, to the start and end of the whole line. The note scrolls by rows.
-- **R64a ✅ The note editor's control panel and key bar** (Agenda's; NOTE_EDITOR.md step 1). In a note, line 1 of the control panel is `Note for:   ` and what the note is of (an item's text, a category's name), cut with "…" when it does not fit; in the macro editor `Edit macro:  ` and the macro's name. On its right, instead of the mode and the time: the marks (♦ @ ?), then `Line` and the line of the text the cursor is on (a line, not a wrapped row; `Line    1`, `Line  146`), `INS`, and `EDIT`. A message or a question shows over line 1 until the next key, then the header comes back; a hint (the Zettel link under the cursor, R73b) goes on line 2, which is otherwise empty (Agenda showed its font there). A box over the note has the two lines to itself, as anywhere. The key bar is Agenda's, in its slots (R80): F1 Help, F2 Paste, F3 Copy, F4 Cut, F5 Return, F7 Mark, F10 Menu; Agenda's F6 Marker (fonts) is out of scope. ESC asks first when the note changed (R64d).
-- **R64b ✅ The note editor's menu** (Agenda's; NOTE_EDITOR.md step 2). F10 in a note (and in the macro editor) opens the note's own menu, not the view's, with Agenda's help lines: **Clear** ("Delete all text in the current note") asks "Clear all text from the note?" (Yes first; at once with Confirm mode off, R54) and empties the note, which stays open; one undo after the note is closed brings the text back, and what was typed before Clear is a step of its own, so it stays. ESC on the question goes back to the menu. **Return** saves and goes back, as F5; **Quit** saves the note and quits, as ALT-Q. **Import** and **Export** are R64c. Agenda's File (external note files) comes with a later step; Print is out of scope. The key bar names F10 Menu.
-- **R64c ✅ Importing and exporting a note's text** (Agenda's; NOTE_EDITOR.md step 3). The note's menu (R64b): **Import** asks "Text file to import into the note:" (F3 lists the folder's `.txt` and `.md` files, R51) and puts the file's text in at the cursor, which ends after it; CR LF and CR are read as LF (Agenda asked whether to strip carriage returns; Agendum always does). The message line says "Imported <path>"; a missing file says "File not found", and a file that is not text (not UTF-8) "Not a text file: <path>", the note unchanged. **Export** asks "Export the note to text file:" (F3 lists the same) and writes the note's text there, LF line ends and a final newline, replacing a file that is there ("Wrote <path>"). What Import put in is like typing: it is saved with the note when it closes. The shell reads and writes the files (`{:read_note_text, path}`, `{:write_text, path, text}`).
-- **R64d ✅ ESC in a note: Discard changes?** (Agenda's; NOTE_EDITOR.md step 4; our choice). F5 saves the note and goes back, without asking. ESC goes back at once when the text is as it was when the note was opened; when it changed, a box asks "Discard changes?" with **No** shown first (SPACE switches, Y and N answer): No (ENTER) saves the note and goes back, as F5; Yes puts the note's text back as it was opened and goes back, what Search/Replace (R39) and Clear (R64b) saved on the way included, so the file is as before the note was opened (Yes after such a saved step is itself one undo step); ESC on the question goes back to the note, as it was. The question is asked whatever Confirm mode says (R54): its answers do different things. The same in the macro editor. ALT-N / ALT-P (to the next or previous note), Return and Quit keep saving without asking (our choice; Agenda "optionally" saved there).
-- **R64e ✅ The note editor's editing keys** (Agenda's; NOTE_EDITOR.md step 5). In a note and the macro editor: CTRL-← / CTRL-→ (⌥← / ⌥→) move a word left or right, a word as one-line fields have it (spaces skipped, then the word); from the start of a line the move goes on to the start of the last word above, from the end to the end of the first word below. CTRL-BACKSPACE where the terminal sends it, ⌥⌫ or CTRL-W delete the word before the cursor (at a line's start they join it to the line above, as BACKSPACE); ALT-W deletes the word after it (at a line's end, the line break). CTRL-K deletes from the cursor to the end of the line (Agenda's CTRL-ENTER, which terminals send as ENTER; our choice); at the end it does nothing. ALT-M breaks the line, as ENTER. PGUP / PGDN move as many rows as the screen shows, as ↑ ↓ do (through wrapped rows, R64). CTRL-HOME / CTRL-END (⌥< / ⌥>, as Emacs, for keyboards without them) go to the start and the end of the note. A key that changes the text drops the mark (R63); a move keeps it, stretching the region. **INS** (or CTRL-N, which stands for INS everywhere) switches between inserting and typing over, shown as `INS` or `OVR` in the header (R64a); typed over, what is typed replaces as many characters after the cursor, as far as the line goes (pasting and TAB insert). It is the note's own: a note opens inserting. **TAB** types spaces to the next tab stop, **File Properties ▸ Tab size** apart (Agenda's, stored in the file: 5 in a new file, 1 to 16; typed as a number in the box, as Agenda, or SPACE for the next, F3 for the list; one undo step). Agenda kept tab characters and showed them at the tab stops; Agendum types spaces (our choice), so a note reads the same anywhere.
-- **R64f ✅ A note's connections: APPEND, GETITMS, the calendar** (Agenda's; NOTE_EDITOR.md step 6; User's Guide 12-7, 12-10). **ALT-F9 APPEND** moves text from the note to the end of the item's text (in a category's note, of the category's name), after a space: the marked text, or else what a box asks for, Word (first), Line or All text, as F3 COPY does (R63); line breaks become spaces. What does not fit (350 characters for an item, 69 for a category name) stays in the note, at the cursor; with no room at all, nothing moves. The shorter note and the longer text are one change (one undo step); the item's text is edited as typing it would (its dates and text matching again); the header shows the new text. In the macro editor it says it appends only to an item or a category. **ALT-F8 GETITMS** asks Agenda's "Discard items after copy?  Yes" (checked in Agenda, as User's Guide 12-7 says), asked whatever Confirm mode says as its answers do different things; either answer types the marked items in at the cursor, each item's text with its note under it, the items separated by blank lines, a blank line before and after; Yes then discards them, to the trash (R24a), No leaves them marked; ESC copies nothing ("There are no marked items in the file." when none). **ALT-C** opens the calendar (R46) on today: ENTER types the highlighted date at the cursor in the file's date format (R41), with the time F6 gave; ESC types nothing.
+- **R39 ✅ Search and replace in a note** (User's Guide 15-6 to 15-8). ALT-F6 in a note opens the Search/Replace box:
+
+  - Search for.
+  - Replace text (No by default; Yes adds Replace with, Global replacement (No) and Confirm replacement (Yes)).
+  - Direction (Forward or Backward).
+  - Ignore case (Yes).
+
+  The text is matched as written, anywhere in a line. A search moves the cursor to the next occurrence and highlights it. ALT-S finds the next one and beeps when there are no more.
+
+  A replacement replaces the next occurrence, or every occurrence when global. When confirming, each occurrence is highlighted and a Yes/No box asks "Replace this occurrence?" (as the other questions; asked even with Confirm mode off, R54):
+
+  - Yes replaces it.
+  - No skips it.
+  - ESC stops.
+
+  The box moves below the occurrence when it would cover it.
+
+  Our choices:
+
+  - The search starts at the cursor and, when nothing is found after it, continues from the top (backward: the bottom), since a note opens with the cursor at its end.
+  - A global replacement covers the whole note.
+  - The box remembers its last settings.
+  - No length limit (Agenda allowed 25 characters).
+  - Text never matches across lines.
+
+  Each replacement is an undo step of its own (the note is saved as it is made; a global replacement without confirming is one step), and typing in the note before the first one is a step before it. The occurrence asked about stays highlighted behind the question box.
+
+  After a single (not global) replacement, ALT-S replaces the next occurrence (confirming first if asked to), as the Help's "Search & Replace in Note/Macro Box" describes.
+- **R63 ✅ Marking, copying, cutting and pasting in a note** (User's Guide 14-4 to 14-8). F7 MARK anchors a region at the cursor; moving the cursor stretches it, either way and over lines, and it shows marked; F7 again drops it, and typing drops it first.
+
+  - **F3 COPY** keeps the marked text.
+  - **F4 CUT** keeps it and takes it out.
+  - **ALT-F4 DELETE** takes it out without keeping it.
+
+  With nothing marked each asks, in Agenda's What to copy box (checked in Agenda; our choice; `Agendum.TUI.Boxes.WhatToCopyBox`):
+
+  - One untitled field, "What to copy: Word" ("What to cut:", "What to delete:").
+  - SPACE or a first letter going Word (at the cursor, or just before it), Line, All text.
+  - F3 listing them.
+  - ENTER taking it.
+  - ESC going back with nothing taken.
+
+  The top line says "Choose how much text to copy. Press ESC to cancel."
+
+  F2 PASTE puts the text kept at the cursor and keeps it, so it can be pasted again. One piece is kept, for the session, across notes. In a note F4 is CUT, as in Agenda (ESC and F5 close the note).
+
+  Not done: the same keys in item text and category names, and the system clipboard.
+- **R64 ✅ Word wrap in the note editor** (ours). A line wider than the screen is shown on as many rows as it needs, so the whole line always shows: a row ends after the rightmost space that fits, and a word wider than the screen is broken at its edge. It is for the screen only: no line break goes into the text.
+
+  - **↑ ↓** move through the rows on the screen, keeping the column in the row: on a shorter row the cursor is at its end, and the next ↑ or ↓ goes on from the column kept (any other key forgets it).
+  - **HOME and END** (CTRL-A, CTRL-E) go to the start and end of the row, and pressed there, to the start and end of the whole line.
+
+  The note scrolls by rows.
+- **R64a ✅ The note editor's control panel and key bar** (Agenda's; NOTE_EDITOR.md step 1). In a note, line 1 of the control panel is `Note for:   ` and what the note is of (an item's text, a category's name), cut with "…" when it does not fit; in the macro editor `Edit macro:  ` and the macro's name.
+
+  On its right, instead of the mode and the time: the marks (♦ @ ?), then `Line` and the line of the text the cursor is on (a line, not a wrapped row; `Line    1`, `Line  146`), `INS`, and `EDIT`.
+
+  A message or a question shows over line 1 until the next key, then the header comes back. A hint (the Zettel link under the cursor, R73b) goes on line 2, which is otherwise empty (Agenda showed its font there). A box over the note has the two lines to itself, as anywhere.
+
+  The key bar is Agenda's, in its slots (R80): F1 Help, F2 Paste, F3 Copy, F4 Cut, F5 Return, F7 Mark, F10 Menu. Agenda's F6 Marker (fonts) is out of scope.
+
+  ESC asks first when the note changed (R64d).
+- **R64b ✅ The note editor's menu** (Agenda's; NOTE_EDITOR.md step 2). F10 in a note (and in the macro editor) opens the note's own menu, not the view's, with Agenda's help lines:
+
+  - **Clear** ("Delete all text in the current note") asks "Clear all text from the note?" (Yes first; at once with Confirm mode off, R54) and empties the note, which stays open. One undo after the note is closed brings the text back, and what was typed before Clear is a step of its own, so it stays. ESC on the question goes back to the menu.
+  - **Return** saves and goes back, as F5.
+  - **Quit** saves the note and quits, as ALT-Q.
+  - **Import** and **Export** are R64c.
+
+  Agenda's File (external note files) comes with a later step. Print is out of scope. The key bar names F10 Menu.
+- **R64c ✅ Importing and exporting a note's text** (Agenda's; NOTE_EDITOR.md step 3). The note's menu (R64b):
+
+  - **Import** asks "Text file to import into the note:" (F3 lists the folder's `.txt` and `.md` files, R51) and puts the file's text in at the cursor, which ends after it. CR LF and CR are read as LF (Agenda asked whether to strip carriage returns; Agendum always does). The message line says "Imported <path>"; a missing file says "File not found", and a file that is not text (not UTF-8) "Not a text file: <path>", the note unchanged.
+  - **Export** asks "Export the note to text file:" (F3 lists the same) and writes the note's text there, LF line ends and a final newline, replacing a file that is there ("Wrote <path>").
+
+  What Import put in is like typing: it is saved with the note when it closes. The shell reads and writes the files (`{:read_note_text, path}`, `{:write_text, path, text}`).
+- **R64d ✅ ESC in a note: Discard changes?** (Agenda's; NOTE_EDITOR.md step 4; our choice). F5 saves the note and goes back, without asking.
+
+  ESC goes back at once when the text is as it was when the note was opened. When it changed, a box asks "Discard changes?" with **No** shown first (SPACE switches, Y and N answer):
+
+  - **No** (ENTER) saves the note and goes back, as F5.
+  - **Yes** puts the note's text back as it was opened and goes back, what Search/Replace (R39) and Clear (R64b) saved on the way included, so the file is as before the note was opened (Yes after such a saved step is itself one undo step).
+  - **ESC** on the question goes back to the note, as it was.
+
+  The question is asked whatever Confirm mode says (R54): its answers do different things. The same in the macro editor.
+
+  ALT-N / ALT-P (to the next or previous note), Return and Quit keep saving without asking (our choice; Agenda "optionally" saved there).
+- **R64e ✅ The note editor's editing keys** (Agenda's; NOTE_EDITOR.md step 5). In a note and the macro editor:
+
+  - **CTRL-← / CTRL-→** (⌥← / ⌥→) move a word left or right, a word as one-line fields have it (spaces skipped, then the word). From the start of a line the move goes on to the start of the last word above, from the end to the end of the first word below.
+  - **CTRL-BACKSPACE** where the terminal sends it, ⌥⌫ or CTRL-W delete the word before the cursor (at a line's start they join it to the line above, as BACKSPACE).
+  - **ALT-W** deletes the word after it (at a line's end, the line break).
+  - **CTRL-K** deletes from the cursor to the end of the line (Agenda's CTRL-ENTER, which terminals send as ENTER; our choice). At the end it does nothing.
+  - **ALT-M** breaks the line, as ENTER.
+  - **PGUP / PGDN** move as many rows as the screen shows, as ↑ ↓ do (through wrapped rows, R64).
+  - **CTRL-HOME / CTRL-END** (⌥< / ⌥>, as Emacs, for keyboards without them) go to the start and the end of the note.
+
+  A key that changes the text drops the mark (R63). A move keeps it, stretching the region.
+
+  **INS** (or CTRL-N, which stands for INS everywhere) switches between inserting and typing over, shown as `INS` or `OVR` in the header (R64a). Typed over, what is typed replaces as many characters after the cursor, as far as the line goes (pasting and TAB insert). It is the note's own: a note opens inserting.
+
+  **TAB** types spaces to the next tab stop, **File Properties ▸ Tab size** apart (Agenda's, stored in the file: 5 in a new file, 1 to 16; typed as a number in the box, as Agenda, or SPACE for the next, F3 for the list; one undo step). Agenda kept tab characters and showed them at the tab stops. Agendum types spaces (our choice), so a note reads the same anywhere.
+- **R64f ✅ A note's connections: APPEND, GETITMS, the calendar** (Agenda's; NOTE_EDITOR.md step 6; User's Guide 12-7, 12-10). **ALT-F9 APPEND** moves text from the note to the end of the item's text (in a category's note, of the category's name), after a space: the marked text, or else what a box asks for, Word (first), Line or All text, as F3 COPY does (R63). Line breaks become spaces.
+
+  What does not fit (350 characters for an item, 69 for a category name) stays in the note, at the cursor. With no room at all, nothing moves.
+
+  The shorter note and the longer text are one change (one undo step). The item's text is edited as typing it would (its dates and text matching again). The header shows the new text. In the macro editor it says it appends only to an item or a category.
+
+  **ALT-F8 GETITMS** asks Agenda's "Discard items after copy?  Yes" (checked in Agenda, as User's Guide 12-7 says), asked whatever Confirm mode says as its answers do different things. Either answer types the marked items in at the cursor, each item's text with its note under it, the items separated by blank lines, a blank line before and after:
+
+  - Yes then discards them, to the trash (R24a).
+  - No leaves them marked.
+  - ESC copies nothing ("There are no marked items in the file." when none).
+
+  **ALT-C** opens the calendar (R46) on today: ENTER types the highlighted date at the cursor in the file's date format (R41), with the time F6 gave; ESC types nothing.
 
 ### Clock and alarms
 
-- **R38 ✅ Clock and alarms** (User's Guide 10-16 to 10-20). The title bar shows the date and time, as Agenda's (checked in Agenda): the date, two spaces and the time right-aligned in seven columns, at the end of the line (`10/25/26   9:18pm`, `10/25/26  10:30am`; `2026-10-25    09:05` on a 24-hour clock). ALT-A (Item ▸ Alarm) opens Agenda's Set Alarm box (checked in Agenda): Date category (When; SPACE goes to the next date category, F3 lists them under Agenda's "Select Date Category") and Minutes before (5, typed, 0 through 60); ENTER sets the alarm, saying nothing, to ring that many minutes before the item's date and time in that category (midnight without a time). An item without a date there takes the alarm too, as in Agenda: it shows "@" and waits among the current alarms until it has a date. The item shows "@"; ALT-A on it cancels the alarm at once, without the box. A date category that is deleted leaves its alarms on When. When the time comes the alarm rings: Agenda's alarm tune (R76), a message naming the item, and "@" in column 76 of the control panel's second line while the past alarms list an item, as Agenda's (checked in Agenda: opening the list leaves it; it goes when the last past alarm is removed or forgotten). Utilities ▸ Show ▸ Alarm shows the alarm list as Agenda's (checked in Agenda): the Show View with two sections, **!Current Alarms!** (the items with an alarm set, in the order they ring, those without a date last; each shows "@") and **!Past Alarms!** (the alarms that have rung, the latest first). It is a view like any other; DEL on an item asks Agenda's "Remove this item from the section?" and then cancels a current alarm or takes a past one off the list, the item staying; the question has Agenda's second line, "(Use ALT-F4 to discard the item completely.)", and its help on the control panel. The two sections are stored as two MAIN sections, so each can have columns; the view model fills them. Past alarms are forgotten when the date changes, and when the file is opened on a later day. Our choices: ringing is not an undo step, nor an edit (R70).
-- **R70 ✅ While you were away** (ours). When a file is opened (at startup, Retrieve, or Import) and alarms came due while it was closed, they ring quietly (no bell) and a "While you were away" box lists them, after the splash screen, which is unchanged: "3 alarms came due:", then one line a group, the latest first, with when it was due and the text; alarms with the same text are one line with a count ("×2"); past the room there is, a last line says how many more and that Utilities ▸ Show ▸ Alarm lists them all. ENTER or ESC closes it; the alarms then sit in Utilities ▸ Show ▸ Alarm with the other past alarms. No box when nothing came due. A rung alarm records the time it was due, not the time it rang. Ringing is not an edit: the clock's changes (alarms rung, old ones forgotten, conditions rechecked on a new day) are made to the file as last saved as well, so they never cause a "Save changes?" question by themselves; quitting without saving rings the same alarms again next time. The grouping is the core's (`Agendum.Core.group_alarms/2`), for a web page too. Agenda itself shows no box: it rings such alarms when the file is opened and shows `@`, and the items are in Utilities ▸ Show Alarm's Past Alarms (checked in Agenda; `plans/AGENDA_PARITY.md`, where this box is an extra; the change to Agenda's way is open in ROADMAP, "Alarms as Agenda's").
+- **R38 ✅ Clock and alarms** (User's Guide 10-16 to 10-20). The title bar shows the date and time, as Agenda's (checked in Agenda): the date, two spaces and the time right-aligned in seven columns, at the end of the line (`10/25/26   9:18pm`, `10/25/26  10:30am`; `2026-10-25    09:05` on a 24-hour clock).
+
+  ALT-A (Item ▸ Alarm) opens Agenda's Set Alarm box (checked in Agenda):
+
+  - Date category (When; SPACE goes to the next date category, F3 lists them under Agenda's "Select Date Category").
+  - Minutes before (5, typed, 0 through 60).
+
+  ENTER sets the alarm, saying nothing, to ring that many minutes before the item's date and time in that category (midnight without a time).
+
+  An item without a date there takes the alarm too, as in Agenda: it shows "@" and waits among the current alarms until it has a date. The item shows "@". ALT-A on it cancels the alarm at once, without the box. A date category that is deleted leaves its alarms on When.
+
+  When the time comes the alarm rings:
+
+  - Agenda's alarm tune (R76).
+  - A message naming the item.
+  - "@" in column 76 of the control panel's second line while the past alarms list an item, as Agenda's (checked in Agenda: opening the list leaves it; it goes when the last past alarm is removed or forgotten).
+
+  Utilities ▸ Show ▸ Alarm shows the alarm list as Agenda's (checked in Agenda): the Show View with two sections:
+
+  - **!Current Alarms!** (the items with an alarm set, in the order they ring, those without a date last; each shows "@").
+  - **!Past Alarms!** (the alarms that have rung, the latest first).
+
+  It is a view like any other. DEL on an item asks Agenda's "Remove this item from the section?" and then cancels a current alarm or takes a past one off the list, the item staying. The question has Agenda's second line, "(Use ALT-F4 to discard the item completely.)", and its help on the control panel.
+
+  The two sections are stored as two MAIN sections, so each can have columns. The view model fills them.
+
+  Past alarms are forgotten when the date changes, and when the file is opened on a later day. Our choices: ringing is not an undo step, nor an edit (R70).
+- **R70 ✅ While you were away** (ours). When a file is opened (at startup, Retrieve, or Import) and alarms came due while it was closed, they ring quietly (no bell) and a "While you were away" box lists them, after the splash screen, which is unchanged:
+
+  - "3 alarms came due:", then one line a group, the latest first, with when it was due and the text.
+  - Alarms with the same text are one line with a count ("×2").
+  - Past the room there is, a last line says how many more and that Utilities ▸ Show ▸ Alarm lists them all.
+
+  ENTER or ESC closes it. The alarms then sit in Utilities ▸ Show ▸ Alarm with the other past alarms. No box when nothing came due. A rung alarm records the time it was due, not the time it rang.
+
+  Ringing is not an edit: the clock's changes (alarms rung, old ones forgotten, conditions rechecked on a new day) are made to the file as last saved as well, so they never cause a "Save changes?" question by themselves. Quitting without saving rings the same alarms again next time.
+
+  The grouping is the core's (`Agendum.Core.group_alarms/2`), for a web page too.
+
+  Agenda itself shows no box: it rings such alarms when the file is opened and shows `@`, and the items are in Utilities ▸ Show Alarm's Past Alarms (checked in Agenda; `plans/AGENDA_PARITY.md`, where this box is an extra; the change to Agenda's way is open in ROADMAP, "Alarms as Agenda's").
 
 ### Colours and dates on the screen
 
-- **R40 ✅ Colour themes** (Setting Up Agenda 1-25 to 1-31). The screen is drawn with a theme chosen at start: `classic` (the default: Agenda 2.0's colours, from screenshots of the real program, ADR 0018), `mono` (bold, dim, underline and reverse only), or one of six terminal colour schemes (`docs/THEMES.md`): `modus_operandi`, `modus_vivendi`, `alabaster`, `zenburn`, `ayu` and `borland`. Utilities ▸ Customize (Agenda's) changes it at once and saves it in the person's preferences file (R41b); `--theme NAME` or `--mono` choose it for one session; the NO_COLOR environment variable selects mono unless `--theme` or the preferences name a theme. The theme is a personal preference, not part of the file, as in Agenda, where Utilities Customize set Color (Mono, Color, Plasma or Custom, with a colour for each screen element) for all files. Custom colours are not planned: a new look is a new theme (ADR 0022).
+- **R40 ✅ Colour themes** (Setting Up Agenda 1-25 to 1-31). The screen is drawn with a theme chosen at start: `classic` (the default: Agenda 2.0's colours, from screenshots of the real program, ADR 0018), `mono` (bold, dim, underline and reverse only), or one of six terminal colour schemes (`docs/THEMES.md`): `modus_operandi`, `modus_vivendi`, `alabaster`, `zenburn`, `ayu` and `borland`.
+
+  Utilities ▸ Customize (Agenda's) changes it at once and saves it in the person's preferences file (R41b). `--theme NAME` or `--mono` choose it for one session. The NO_COLOR environment variable selects mono unless `--theme` or the preferences name a theme.
+
+  The theme is a personal preference, not part of the file, as in Agenda, where Utilities Customize set Color (Mono, Color, Plasma or Custom, with a colour for each screen element) for all files. Custom colours are not planned: a new look is a new theme (ADR 0022).
+
   - `classic`: black text on a grey screen; section heads, column heads and column entries in blue; the highlight white on red; title bar and control panel white (hints yellow) on blue; boxes cyan in a solid blue frame, the title centred in the frame, with a black shadow below and to the right, and the screen behind them greyed out; the category manager on cyan; help yellow on blue. The VGA colours are exact on terminals that take 24-bit colour (`COLORTERM=truecolor`), the nearest ANSI colours elsewhere.
   - A box opened from another box sits one line lower and two columns further right, so the one beneath still shows, and the titles of the boxes beneath are dimmed (our choice).
   - `mono` has the same parts in bold, dim and reverse video: the control panel in reverse video, the highlighted line in bold, box titles and dimmed titles, the faded screen behind a box.
   - The terminal schemes share one layout in their own colours (`Agendum.TUI.Terminal.Theme.Palettes`): the screen in the scheme's background and foreground; the control panel, menus and the line being edited in its selection colours; the highlight in its cursor colours; the highlighted line, boxes and the key bar on a tint of the background; heads, entries and box frames in its blue; the help box on a background of its own, apart from the screen and from its pane. Exact on 24-bit terminals; elsewhere they use the terminal's default colours and its ANSI colours, so a terminal set to the same scheme still shows it. Typed as `modus-operandi` or `Modus Operandi` too.
   - Our choices: the highlighted line is drawn in a lighter shade across the whole screen, so it shows when the highlight is in a column; Agenda put a » in front of it instead.
-- **R41 ✅ Date display format** (User's Guide 6-20 to 6-22, 7-13 to 7-15). File ▸ Properties ▸ Global date settings ▸ Display format sets how the file displays dates and times, as Agenda's global Display Format (drawn as Agenda's, like a date column's Date Column Properties, R41a: only the settings for what the dates display): Date format (Agenda's 14 orders, from MMDDYY to DDMMMYYYY), Date separator (- . , space : /), Clock (24 or 12 hr; 12 shows am/pm) and Show day of week, with a formatted sample. It is stored in the file and used everywhere a date is shown: date columns, the title bar clock, Item Properties, the alarm list, messages and printing. A new file starts with Agenda's default (checked in Agenda): Date time, MMDDYY with "/", a 12-hour clock with am/pm, ":" ("10/25/26 9:10pm"); F8 Default in the box gives it back, and a file keeps the format it has. A file imported from Agenda (R72) keeps its own global format (header word `0x182`). ISO 8601 is one of Agenda's choices (YYYYMMDD with "-" and 24 hr); files from before format 7, which had no format, show it. Our choices: dates with a month name always use spaces; dates offered for editing stay ISO 8601. More options and date columns of their own: R41a. The Input format settings: R41b.
-- **R41b ✅ Input format** (User's Guide 7-14, 7-17). How a person types dates and times: Number order (MDY, MYD, DMY, DYM, YDM, YMD; "12/11/90" in DMY is 12 November 1990, and a month and day alone keep the order's sequence, "12/11" in DMY), Input date separator (/ - . , :; it replaces the slash, also after a month name: "nov.12") and Input clock (12 hr: "3:00" is 3 pm, between Morning and 12 hours later; 24 hr: as written). Each is "Language (…)" until set: the date language's numeric order, "/" and clock. Our choice (ADR 0008, 0013): these belong to the person, not the file, unlike Agenda; Global date settings ▸ Input format opens the box ("yours, for every file"), and a change applies at once, is not undone with the file, and is saved in the person's preferences file (`~/.config/agendum/preferences`, or under `$XDG_CONFIG_HOME`), plain `key = value` lines, which Utilities ▸ Customize also writes (theme, date languages; it opens this box too). Only the setting changed is saved, never one a flag gave for the session. `--number-order`, `--date-separator` and `--clock` set them for one session. ISO dates (2026-10-20) are always read; with ":" as separator, "3:30" is a date, as in Agenda.
-- **R41a ✅ More date display options** (User's Guide 6-19 to 6-22, 7-14 to 7-15). The Display format box has all of Agenda's Display Format box, in its order: Display date and/or time (Date time, Date only, Time date, Time only; a date column with only a date shows the date, and with Time only nothing), Show day of week, Date format, Date separator, Clock, Show am/pm (Yes: "3:25pm", No: "3:25") and Time separator (":" or hm: "3h30m"). Date format adds Agenda's counts: <Day> # ("317"), Day # ("Day 317"), <Week> # ("46"), Week # ("Week 46"), Relative and Relative # ("1 day", "-2 days"). Relative shows Today, Tomorrow, Yesterday, and "nxt Sun" or "lst Fri" within six days, as Agenda 2.0 does (Lotus Q&A "Relative Date Format is Displayed for only Seven Days"); other dates are shown in the global format. Our choices: weeks are ISO 8601 weeks (the manual's sample says Week 45 for 13 Nov 1990, a US count; ISO says 46); the title bar clock and alarms always show date and time, and relative formats are used only in date columns (elsewhere, ISO 8601 or the global format). View ▸ Column ▸ Properties on a date column opens the Date Column Properties box: A line under the part's title says "(Global defaults)" until a setting is changed, then "(Local settings)", and the column keeps its own format while the file's changes; ALT-F8 goes back to the global defaults. Only the settings for what the column displays are shown, as Agenda's: no Clock, Show am/pm or Time separator for Date only, no Date format or Date separator for Time only (checked in Agenda). Relative dates are counted from today when the view is drawn.
+- **R41 ✅ Date display format** (User's Guide 6-20 to 6-22, 7-13 to 7-15). File ▸ Properties ▸ Global date settings ▸ Display format sets how the file displays dates and times, as Agenda's global Display Format (drawn as Agenda's, like a date column's Date Column Properties, R41a: only the settings for what the dates display):
+
+  - Date format (Agenda's 14 orders, from MMDDYY to DDMMMYYYY).
+  - Date separator (- . , space : /).
+  - Clock (24 or 12 hr; 12 shows am/pm).
+  - Show day of week, with a formatted sample.
+
+  It is stored in the file and used everywhere a date is shown: date columns, the title bar clock, Item Properties, the alarm list, messages and printing.
+
+  A new file starts with Agenda's default (checked in Agenda): Date time, MMDDYY with "/", a 12-hour clock with am/pm, ":" ("10/25/26 9:10pm"). F8 Default in the box gives it back, and a file keeps the format it has. A file imported from Agenda (R72) keeps its own global format (header word `0x182`).
+
+  ISO 8601 is one of Agenda's choices (YYYYMMDD with "-" and 24 hr); files from before format 7, which had no format, show it.
+
+  Our choices: dates with a month name always use spaces; dates offered for editing stay ISO 8601.
+
+  More options and date columns of their own: R41a. The Input format settings: R41b.
+- **R41b ✅ Input format** (User's Guide 7-14, 7-17). How a person types dates and times:
+
+  - **Number order** (MDY, MYD, DMY, DYM, YDM, YMD; "12/11/90" in DMY is 12 November 1990, and a month and day alone keep the order's sequence, "12/11" in DMY).
+  - **Input date separator** (/ - . , :; it replaces the slash, also after a month name: "nov.12").
+  - **Input clock** (12 hr: "3:00" is 3 pm, between Morning and 12 hours later; 24 hr: as written).
+
+  Each is "Language (…)" until set: the date language's numeric order, "/" and clock.
+
+  Our choice (ADR 0008, 0013): these belong to the person, not the file, unlike Agenda. Global date settings ▸ Input format opens the box ("yours, for every file"), and a change applies at once, is not undone with the file, and is saved in the person's preferences file (`~/.config/agendum/preferences`, or under `$XDG_CONFIG_HOME`), plain `key = value` lines, which Utilities ▸ Customize also writes (theme, date languages; it opens this box too).
+
+  Only the setting changed is saved, never one a flag gave for the session. `--number-order`, `--date-separator` and `--clock` set them for one session.
+
+  ISO dates (2026-10-20) are always read; with ":" as separator, "3:30" is a date, as in Agenda.
+- **R41a ✅ More date display options** (User's Guide 6-19 to 6-22, 7-14 to 7-15). The Display format box has all of Agenda's Display Format box, in its order:
+
+  - Display date and/or time (Date time, Date only, Time date, Time only; a date column with only a date shows the date, and with Time only nothing).
+  - Show day of week.
+  - Date format.
+  - Date separator.
+  - Clock.
+  - Show am/pm (Yes: "3:25pm", No: "3:25").
+  - Time separator (":" or hm: "3h30m").
+
+  Date format adds Agenda's counts: <Day> # ("317"), Day # ("Day 317"), <Week> # ("46"), Week # ("Week 46"), Relative and Relative # ("1 day", "-2 days").
+
+  Relative shows Today, Tomorrow, Yesterday, and "nxt Sun" or "lst Fri" within six days, as Agenda 2.0 does (Lotus Q&A "Relative Date Format is Displayed for only Seven Days"). Other dates are shown in the global format.
+
+  Our choices:
+
+  - Weeks are ISO 8601 weeks (the manual's sample says Week 45 for 13 Nov 1990, a US count; ISO says 46).
+  - The title bar clock and alarms always show date and time, and relative formats are used only in date columns (elsewhere, ISO 8601 or the global format).
+
+  View ▸ Column ▸ Properties on a date column opens the Date Column Properties box: A line under the part's title says "(Global defaults)" until a setting is changed, then "(Local settings)", and the column keeps its own format while the file's changes. ALT-F8 goes back to the global defaults.
+
+  Only the settings for what the column displays are shown, as Agenda's:
+
+  - No Clock, Show am/pm or Time separator for Date only.
+  - No Date format or Date separator for Time only (checked in Agenda).
+
+  Relative dates are counted from today when the view is drawn.
 
 ### The starter file
 
-- **R60 ✅ The Activities Planner starter file** (ADR 0028; Starter Applications; screenshots 37-144). A file shipped with Agendum, `starters/planner.agendum`, which a person copies and fills in, as Agenda's `apps\planner` was. No items. Its categories: People (Sample Person), Project (Sample Project), Tasks, Activity (Calls, Meetings, Mail, Reading, Follow up, Issues, Ideas), Expenses, Priority (High, Medium, Low), Contact List, Type (Lodging, Breakfast, Lunch, Dinner, Entertainment, Air, Transportation, Miscellaneous), Report ID (Sample Trip) and the numeric Amount; Priority, Type and Report ID have exclusive children. Short names and Also match find them in an item's text (Calls: Phone, Telephone; Lodging: Hotel, Motel, Inn). Catch-alls take what the others miss, by conditions: Unassigned (−People, Tasks), No Priority Assigned (−Priority, Tasks), No Type (Expenses, −Type); Miscellaneous Activity, Miscellaneous Project and No Purpose are there to assign by hand. An amount makes an item an expense (Amount's action Expenses). Its views: Tasks (where it opens), Activities and Priorities (with columns that differ per section), Calls (with Phone #, line 1 of the person's note), Completed This Week and Overdue (date filters), three expense views (Expenses only, totals, lines between sections), People, Projects, and the datebooks Today, Tomorrow, This Week, Next Week and This Month. Its macros, run from views: Customize date settings (File ▸ Properties), Hide/Display done items (View Properties ▸ Hide done items) and Print current view (Print). Our choices: the file's date settings are Agendum's defaults (Agenda's are American: weeks from Sunday, dates MDY, amounts in $); the Contacts view, which Agenda's "Create/Update contact list" macro made, is in the file, and Sample Person's note has the phone number and company it shows. The macros that need the command language (Sort items in view, Create/Update contact list) are left out.
+- **R60 ✅ The Activities Planner starter file** (ADR 0028; Starter Applications; screenshots 37-144). A file shipped with Agendum, `starters/planner.agendum`, which a person copies and fills in, as Agenda's `apps\planner` was. No items.
+
+  Its categories: People (Sample Person), Project (Sample Project), Tasks, Activity (Calls, Meetings, Mail, Reading, Follow up, Issues, Ideas), Expenses, Priority (High, Medium, Low), Contact List, Type (Lodging, Breakfast, Lunch, Dinner, Entertainment, Air, Transportation, Miscellaneous), Report ID (Sample Trip) and the numeric Amount. Priority, Type and Report ID have exclusive children.
+
+  Short names and Also match find them in an item's text (Calls: Phone, Telephone; Lodging: Hotel, Motel, Inn).
+
+  Catch-alls take what the others miss, by conditions: Unassigned (−People, Tasks), No Priority Assigned (−Priority, Tasks), No Type (Expenses, −Type). Miscellaneous Activity, Miscellaneous Project and No Purpose are there to assign by hand. An amount makes an item an expense (Amount's action Expenses).
+
+  Its views:
+
+  - Tasks (where it opens).
+  - Activities and Priorities (with columns that differ per section).
+  - Calls (with Phone #, line 1 of the person's note).
+  - Completed This Week and Overdue (date filters).
+  - Three expense views (Expenses only, totals, lines between sections).
+  - People and Projects.
+  - The datebooks Today, Tomorrow, This Week, Next Week and This Month.
+
+  Its macros, run from views:
+
+  - Customize date settings (File ▸ Properties).
+  - Hide/Display done items (View Properties ▸ Hide done items).
+  - Print current view (Print).
+
+  Our choices:
+
+  - The file's date settings are Agendum's defaults (Agenda's are American: weeks from Sunday, dates MDY, amounts in $).
+  - The Contacts view, which Agenda's "Create/Update contact list" macro made, is in the file, and Sample Person's note has the phone number and company it shows.
+
+  The macros that need the command language (Sort items in view, Create/Update contact list) are left out.
 
 ## 5. User interface (Agenda 2.0 conventions)
 
