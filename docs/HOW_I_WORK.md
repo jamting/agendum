@@ -113,6 +113,7 @@ The panel advises; it never votes. I decide.
 | `tools/agformat/extract_messages.py` | reads Agenda's messages, questions, prompts and help lines (the strings of `AGENDA.RI`; no DOSBox) into `docs/reference/agenda_messages.json`, for comparing Agendum's messages with Agenda's (AGENDA_PARITY, the texts step) |
 | `tools/smoke/smoke.py KEYS…` | the real program in a pseudo-terminal: send keys, see the screen as text (sandboxed; each key waits for its effect, the splash goes by itself; `--extras` turns the Extras on in the scratch preferences; `--help`) |
 | `tools/screenshots/`                                   | draw a screen as a PNG, to compare with Agenda's                        |
+*[A page here was soaked in the creek. — Rabbit]*
 
 ## Ways of working that proved themselves
 

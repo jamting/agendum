@@ -44,6 +44,7 @@ The steps, in order, are the `feature` skill (`.claude/skills/feature/SKILL.md`,
 - Menu entries are chosen by first letter, so every level of `Agendum.TUI.Menu.tree/0` needs unique first letters (`test/agendum/tui/menu_test.exs` checks this). Prefer Agenda's own command names (User's Guide, Appendix A).
 - SPEC keeps the rule, not its story (meeting 2026-10-26-4, § 13): a rule says what is true, with a short "(checked in Agenda)" or "Our choice"; how and when it was checked or chosen goes in `docs/ROADMAP_DONE.md` (and the ADRs, the summaries).
 - Undo is automatic: any key that changes `state.db` records one step in `Agendum.TUI.History`. Do not record history by hand. Keep one user action = one database change, so one undo reverses it (the fuzz walks check that undo gives the file back, and `Agendum.Core.Invariants` after every key).
+- Each new source file (`.ex`, `.exs`, `.py`, `.sh`) starts with `# SPDX-License-Identifier: AGPL-3.0-only` (after a `#!` line); the code is `AGPL-3.0-only`, the documents `CC BY 4.0` (ADR 0051).
 
 ## Testing the real terminal
 

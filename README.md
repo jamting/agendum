@@ -71,6 +71,6 @@ mix agendum.starters --samples   # a copy full of sample data, for testing: tmp/
 
 ## Licence
 
-*[A page here was soaked in the creek. — Rabbit]*
+Wol's Agendum is open source. The code is licensed under the GNU Affero General Public License, version 3 only (`AGPL-3.0-only`, in `LICENSE`): you may use, change and share it, and if you run a changed version for others over a network, you offer them its source. The documents (the guide, the manual and `docs/`) are licensed under Creative Commons Attribution 4.0 (`CC BY 4.0`, in `LICENSES/CC-BY-4.0.txt`): copy and adapt them, with credit. Why these: ADR 0051.
 
 The blog's design and fonts, which Agendum writes into a published site, are other people's work under their own licences: [The Proportional Web](https://owickstrom.github.io/the-proportional-web/) by Oskar Wickström (MIT, `lib/agendum/core/extras/site_assets/the-proportional-web-LICENSE.md`) and the fonts Alegreya, Alegreya SC and Courier Prime (SIL Open Font License, `site_assets/OFL.txt`).

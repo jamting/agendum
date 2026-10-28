@@ -92,6 +92,8 @@ Finished or dropped plans, kept as records of how something was done or why it w
 | [`CODE_REVIEW_SLICES.md`](CODE_REVIEW_SLICES.md) | Reviewing the whole code base with `/code-review ultra` in slices of under 8,000 lines: the strategy, the slices (`tools/review/slice.sh`), how to run one, the record |
 | `docs/study/STUDY_PLAN.md` | The owner's study of the code: units the panel picks, with questions ticked off when understood (`study-plan` skill) |
 
+Where a minute, a review or a plan says *[A page here was soaked in the creek. — Rabbit]*, a passage about the owner's own plans was left out of the public copy. Tigger, it is told, bounced Rabbit into the creek with his papers under his arm; most of the pages dried, and the ones that did not are marked so. The panel's members go by Wood names in these texts; they are lenses written by Claude, not the words of real people.
+
 ## Where a change is written down
 
 | When you…                              | Update                                                                                         |

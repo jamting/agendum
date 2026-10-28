@@ -2,7 +2,7 @@
 
 Thank you for helping. This guide gets you from a fresh machine to a first change.
 
-*[A page here was soaked in the creek. — Rabbit]*
+Agendum is open source: the code under `AGPL-3.0-only`, the documents under `CC BY 4.0` (the README's Licence section). Before your first pull request is merged, you sign the contributor licence agreement (`CLA.md`) once, by a comment the CLA bot asks for: you keep the copyright to your contribution, and give the owner a broad licence to it, including the right to license it under other terms as well (ADR 0051). Each new source file starts with the line `# SPDX-License-Identifier: AGPL-3.0-only`.
 
 The rules for the code itself are in [`CLAUDE.md`](CLAUDE.md): it is written for Claude, the AI assistant that has written much of the code with the owner, and it applies to people just the same.
 
