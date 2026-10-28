@@ -287,3 +287,4 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 | [0047](adr/0047-help-topics.md)              | Help topics: text files compiled in, and pages made from the program|
 | [0048](adr/0048-what-an-extra-keeps.md)      | What an extra keeps for itself: a typed struct, ids and fingerprints, ingested categories |
 | [0049](adr/0049-extras-use-the-clones-patterns.md) | The extras use the clone's patterns: written down as UI guidelines; no new extras until they meet them; new patterns wait for Beyond Agenda |
+| [0050](adr/0050-where-public-stops.md)       | Where public stops: the core, formats, protocol, terminal programs, extras and local agent public; a service adds, never takes away |
