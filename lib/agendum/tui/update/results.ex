@@ -558,6 +558,7 @@ defmodule Agendum.TUI.Update.Results do
   # is nothing to try again with.
   def published(state, _changes, {:error, :password}) do
     user = state.db.blog.user
+    state = Agendum.TUI.Extras.PublishPreviewBox.done(state)
 
     case Enum.find(state.modes, &match?(%{type: :publish_preview}, &1)) do
       nil ->
@@ -578,10 +579,16 @@ defmodule Agendum.TUI.Update.Results do
       |> pop_publish_preview()
       |> State.error(Agendum.TUI.Extras.Publish.Messages.text(:not_published, reason))
 
+  # Domain: the result may come while another box (the help) covers the
+  # preview; the preview goes then too, or ESC on it would offer to
+  # publish again what is already published.
   defp pop_publish_preview(state) do
     case State.mode(state) do
-      %{type: :publish_preview} -> State.pop(state)
-      _ -> state
+      %{type: :publish_preview} ->
+        State.pop(state)
+
+      _ ->
+        %{state | modes: Enum.reject(state.modes, &match?(%{type: :publish_preview}, &1))}
     end
   end
 

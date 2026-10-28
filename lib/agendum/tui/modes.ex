@@ -111,7 +111,7 @@ defmodule Agendum.TUI.Modes do
     picker: [:cursor, :purpose, :root, :search],
     profile: [:cursor, :item_id],
     publish: [:choice, :cursor, :settings, :typing],
-    publish_preview: [:changes, :files, :folder, :top],
+    publish_preview: [:changes, :files, :folder, :publishing, :top],
     prompt: [:action, :label],
     props: [:cat_id, :cursor, :opened],
     questions: [:cursor, :item, :picked],

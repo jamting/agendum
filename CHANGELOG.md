@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.72.1 — 2026-10-28
+
+- **ESC on the Publish preview while publishing no longer says "Nothing was published"**: the site is still written and uploaded, and the message now says so; the box's last line says it is publishing, and ENTER does not start it twice.
+
 ## 0.72.0 — 2026-10-28
 
 Feeds and Calendars work like the clone's managers (the last of the UI guidelines' gaps).

@@ -142,6 +142,48 @@ defmodule Agendum.TUI.Extras.PublishTest do
       assert screen(state) =~ "Publish again"
     end
 
+    # Found by the richer fuzz walks (2026-10-27): the preview stays open
+    # while the site is written and uploaded in the background, and ESC
+    # then said "Nothing was published", though the upload went on.
+    test "ESC while publishing says it goes on, not that nothing was published", %{
+      state: state
+    } do
+      state = state |> press(:enter) |> press(:esc)
+      assert State.mode(state) == nil
+      refute screen(state) =~ "Nothing was published"
+      assert screen(state) =~ "Publishing goes on"
+    end
+
+    test "while publishing, the preview says so, and ENTER does not publish twice", %{
+      state: state
+    } do
+      state = press(state, :enter)
+      assert screen(state) =~ "ESC closes this box; publishing goes on"
+
+      Process.delete(:effects_seen)
+      press(state, :enter)
+      refute Enum.any?(effects(), &(elem(&1, 0) == :publish))
+    end
+
+    test "a password asked and not given leaves nothing published", %{state: state} do
+      changes = State.mode(state).changes
+      state = press(state, :enter)
+      state = Update.Results.published(state, changes, {:error, :password})
+      # ESC leaves the password prompt, then the preview
+      state = state |> press(:esc) |> press(:esc)
+      assert screen(state) =~ "Nothing was published"
+    end
+
+    test "published while the help covers the preview: the preview goes too", %{state: state} do
+      changes = State.mode(state).changes
+      state = state |> press(:enter) |> press({:f, 1})
+      state = Update.Results.published(state, changes, :ok)
+
+      refute Enum.any?(state.modes, &match?(%{type: :publish_preview}, &1))
+      assert screen(state) =~ "Published: 12 added"
+      assert State.mode(press(state, :esc)) == nil
+    end
+
     test "an error is said, and the preview closes", %{state: state} do
       changes = State.mode(state).changes
       state = Update.Results.published(state, changes, {:error, "rsync is not installed"})

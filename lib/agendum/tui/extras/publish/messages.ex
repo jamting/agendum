@@ -19,6 +19,10 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   def text(:bad_categories), do: "The posts and drafts categories must differ, and be categories"
   def text(:nothing_published), do: "Nothing was published"
   def text(:publishing), do: "Publishing …"
+
+  def text(:publishing_goes_on),
+    do: "Publishing goes on; the message line says when it is done"
+
   def text(:up_to_date), do: "The folder already holds this site: nothing to publish"
   def text(:password_later), do: "Not published: the server asks for a password. Publish again"
 

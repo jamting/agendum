@@ -6,8 +6,9 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
   post is public once uploaded, so this is the last look.
 
   ENTER writes the folder and uploads it; ESC changes nothing on disk
-  (the posts keep the Zettel ids Publish gave them). ↑ ↓ PGUP PGDN
-  scroll the list. Pure.
+  (the posts keep the Zettel ids Publish gave them). The box stays open
+  while that runs in the background (`publishing`); ESC then only closes
+  it, as the upload goes on. ↑ ↓ PGUP PGDN scroll the list. Pure.
   """
 
   use Agendum.TUI.Boxes.Box, finish: :return
@@ -25,6 +26,7 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
       folder: folder,
       files: files,
       changes: changes,
+      publishing: false,
       top: 0
     })
   end
@@ -47,8 +49,9 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
     Nothing else in the folder is touched.
 
     ENTER writes them, and uploads the site when the Publish box says so;
-    once uploaded, the posts are public. ESC changes nothing. ↑ ↓ PGUP
-    PGDN scroll.
+    once uploaded, the posts are public. ESC changes nothing. While it is
+    publishing, the box stays open; ESC then only closes it, and
+    publishing goes on. ↑ ↓ PGUP PGDN scroll.
     """
   end
 
@@ -83,18 +86,49 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
     ]
   end
 
+  # Domain: a publish runs in the background, and cannot be called back;
+  # once ENTER started it, ESC only closes the box, and says so.
   @impl Box
+  def run(state, %{publishing: true}, :close),
+    do: State.pop(state) |> State.info(Messages.text(:publishing_goes_on))
+
   def run(state, _mode, :close),
     do: State.pop(state) |> State.info(Messages.text(:nothing_published))
 
+  # ENTER again while publishing would only ask for the same site twice
+  def run(state, %{publishing: true}, :publish), do: state
   def run(state, mode, :publish), do: publish(state, mode, nil)
 
-  @doc "Writes and uploads, with the SFTP password when one was asked for."
+  @doc """
+  Writes and uploads, with the SFTP password when one was asked for; the
+  preview, wherever it is on the stack, says it is publishing until the
+  result comes (`done/1`).
+  """
   @spec publish(State.t(), map, String.t() | nil) :: State.t()
   def publish(state, mode, password) do
     state
+    |> mark_publishing(true)
     |> State.info(Messages.text(:publishing))
     |> State.effect({:publish, mode.folder, mode.files, mode.changes, password})
+  end
+
+  @doc """
+  The publish's result came: the preview is no longer publishing. It may
+  be under another box (the help, a prompt) when the result comes.
+  """
+  @spec done(State.t()) :: State.t()
+  def done(state), do: mark_publishing(state, false)
+
+  # `%{m | publishing: on?}` updates a field of a map or struct that
+  # must already have it; only the preview's mode is changed.
+  defp mark_publishing(state, on?) do
+    modes =
+      Enum.map(state.modes, fn
+        %{type: :publish_preview} = m -> %{m | publishing: on?}
+        m -> m
+      end)
+
+    %{state | modes: modes}
   end
 
   @impl Box
@@ -154,7 +188,12 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
         do: Enum.drop(rows, -1) ++ [[{:dim, " … #{below} more: ↓ PGDN"}]],
         else: rows
 
-    rows ++ [[], [{:box, " ENTER publishes · ESC changes nothing"}]]
+    foot =
+      if mode.publishing,
+        do: " Publishing … · ESC closes this box; publishing goes on",
+        else: " ENTER publishes · ESC changes nothing"
+
+    rows ++ [[], [{:box, foot}]]
   end
 
   @impl Box
