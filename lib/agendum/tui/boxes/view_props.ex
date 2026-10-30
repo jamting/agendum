@@ -261,11 +261,21 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   # (or put back by undo) moves it to the nearest one left
   defp current(state, mode) do
     case mode.cursor do
-      {:section, n} -> {:section, min(n, length(sections(state, mode)) - 1)}
-      :order -> if sorted?(state, mode), do: :order, else: :section_sort
+      # a datebook has no sections: its Filter, the setting nearest them
+      {:section, n} ->
+        if datebook(state, mode),
+          do: :filter,
+          else: {:section, min(n, length(sections(state, mode)) - 1)}
+
+      :order ->
+        if sorted?(state, mode), do: :order, else: :section_sort
+
       # a datebook's setting its period no longer has: Period, above it
-      field when is_map_key(@aliases, field) -> datebook_field(state, mode, field)
-      field -> field
+      field when is_map_key(@aliases, field) ->
+        datebook_field(state, mode, field)
+
+      field ->
+        field
     end
   end
 
@@ -277,7 +287,9 @@ defmodule Agendum.TUI.Boxes.ViewProps do
 
   # ↓ ↑ in the same column, without wrapping; ← → to the other column, onto
   # the setting on the nearest row. Into the Sections list from Filter
-  # comes the first section, as Agenda's ↑ does.
+  # comes the first section, as Agenda's ↑ does; a datebook has no
+  # sections, so its Filter goes up to the setting above it (a crash the
+  # owner found, 2026-10-30).
   defp step(state, mode, key) do
     here = current(state, mode)
     {column, other} = columns(state, mode, here)
@@ -285,7 +297,7 @@ defmodule Agendum.TUI.Boxes.ViewProps do
 
     case key do
       :down -> Enum.at(column, min(index + 1, length(column) - 1))
-      :up when here == :filter -> {:section, 0}
+      :up when here == :filter and hd(column) == {:section, 0} -> {:section, 0}
       :up -> Enum.at(column, max(index - 1, 0))
       side when side in [:left, :right] -> nearest(state, mode, other, row(state, mode, here))
       :tab -> next(all(state, mode), here, 1)

@@ -249,4 +249,17 @@ defmodule Agendum.TUI.ViewPropsTest do
     refute text =~ "Section sorting"
     refute text =~ "Sections:"
   end
+
+  # found by the owner, 2026-10-30 (a crash): ↑ from Filter went to the
+  # first section even on a datebook, which has none, and the next ↑
+  # crashed; a datebook's Filter goes up to the setting above it
+  test "↑ from a datebook's Filter goes to the setting above it", %{state: state} do
+    today = Enum.find(Database.views(state.db), &(&1.name == "Today"))
+    state = state |> State.switch_view(today.id) |> props() |> to_setting("Filter")
+    state = press(state, :up)
+    refute match?({:section, _}, State.mode(state).cursor)
+    assert State.mode(state).cursor != :filter
+    state = press(state, [:up, :up, :up, :down, :down])
+    assert %{type: :view_props} = State.mode(state)
+  end
 end
