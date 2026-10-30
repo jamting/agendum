@@ -55,3 +55,6 @@ docs/reference/screens/
 __pycache__/
 /site
 /docs/.obsidian
+
+# Claude Code instructions that are personal (where the owner's private files are)
+CLAUDE.local.md
