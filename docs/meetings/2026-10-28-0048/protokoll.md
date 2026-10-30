@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); Old Mitch Lilypad, Old Stephen of the Seven (FranklinCovey), David the Squirrel, J.D. the Beaver, Ryder the Magpie, Master Werner (Cultured Code, Things), Dr. Russell, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** Old Mitch Lilypad, Little Marie-Who-Folds
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `876c1e9`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `adaf104`
 
 *A cold, clear morning, and the fullest room Owl's house has ever held. David and Stephen share the window seat with a planner each on their knees, Ryder the Magpie has a dotted notebook open on the stairs, Master Werner sits on the umbrella stand, and Russell has taken the chair by the door, in case anyone needs a break. Marie has quietly thanked a stack of Owl's old minutes and laid them in a basket. The panel's voices are lenses in the spirit of the named people, written by Claude, not their words; the meeting was held with the `meeting` skill.*
 

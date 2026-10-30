@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); José Who Brews, Great-Uncle Joe, Carsten Stargazer, Old Mitch Lilypad, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** Old Mitch Lilypad and Little Marie-Who-Folds
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `951d17c`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `2e1106c`
 
 *The fifth meeting of the day. Owl had stopped pretending not to count and chalked the number on the door. Mitch, by now an expert, took the stairs before anyone asked; Little Marie-Who-Folds arrived with a printout of the category list, long enough that she had folded it into a neat accordion. The panel's voices are lenses in the spirit of the people named, written by Claude, not their words. The minutes were made with the `meeting` skill.*
 
@@ -23,14 +23,14 @@ One thought was waiting under Next meeting, "The extras' data meeting", with its
 
 | Decision (2026-10-26-4) | Status | Evidence |
 | --- | --- | --- |
-| § 5 Faded feed entries trimmed; compression only if still slow | Done | `93598a9`, `524a3b6` (v0.64.0) |
-| § 6 Logger, recovery file, hostile-text tests | Done | `fdbc3ad`, `3e05033`, `951d17c` (v0.64.1–v0.65.1) |
-| § 7 Debug log by host, ten sessions | Done | `835bb41` |
-| § 8 Fuzz output kept | Done | `caae55f` |
+| § 5 Faded feed entries trimmed; compression only if still slow | Done | `c0ee72f`, `a684d9f` (v0.64.0) |
+| § 6 Logger, recovery file, hostile-text tests | Done | `984a035`, `779e0f2`, `2e1106c` (v0.64.1–v0.65.1) |
+| § 7 Debug log by host, ten sessions | Done | `e73ad76` |
+| § 8 Fuzz output kept | Done | `41ed893` |
 | § 9 Tidy pass and dry run | Not yet | ROADMAP, In order 4–5 |
-| § 10 The "tried it?" line | Done | `c08fd01` (end-session skill) |
+| § 10 The "tried it?" line | Done | `d652ddd` (end-session skill) |
 | § 11 `Update.Results`, code review, docs meeting | Not yet | ROADMAP, In order 1–3 |
-| § 12 Sort box | Done | `bc5ed5b` |
+| § 12 Sort box | Done | `d859bd0` |
 | § 13 The SPEC sweep | Not yet | ROADMAP, In order 4 |
 | § 14 After the public repository | Tabled | ROADMAP, In order 7 |
 | § 15 The order | Kept | the safety items came before this meeting, the chair's choice |

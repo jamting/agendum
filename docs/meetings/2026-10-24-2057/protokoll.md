@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); Old Mitch Lilypad, Carsten Stargazer, Dr. Russell, Great-Uncle Joe, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** Old Mitch Lilypad and Dr. Russell
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `89c2fe7`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `c8e0e8d`
 
 *The meeting was called in the middle of a working session, an hour after the key bar had become Agenda's two lines, so the new bar was still warm on the screen Owl had propped against the umbrella stand. Owl rang the bell-pull twice by mistake, and Old Mitch Lilypad's papers slid down the stairs. The panel's voices are lenses in the spirit of the people named, written by Claude, not their words; the minutes were made with the `meeting` skill.*
 
@@ -23,7 +23,7 @@ The agenda was adopted with one item, raised by the owner during the session (§
 
 | Decision | Status | Evidence |
 | --- | --- | --- |
-| § 5 (2026-10-23) The import makes a datebook of the imported documents | Done by the owner, by hand in the project file; the import does not make it | `31ffc14` |
+| § 5 (2026-10-23) The import makes a datebook of the imported documents | Done by the owner, by hand in the project file; the import does not make it | `eaf3220` |
 
 ## § 5 Showing the ALT and CTRL keys, for exploring
 

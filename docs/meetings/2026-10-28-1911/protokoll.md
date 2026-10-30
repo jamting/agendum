@@ -4,7 +4,7 @@
 **Present:** Mattias (chair); Old Mitch Lilypad (Lotus Agenda), José Who Brews (Elixir), Little Marie-Who-Folds (tidiness); Joel and Jeff, the Chipmunk Brothers (guests: launching an online business); Claude (Owl's cousin); Owl, host
 **Apologies:** Great-Uncle Joe, Carsten Stargazer, David the Squirrel, Dr. Russell
 **Secretary:** Claude · **Approvers:** Little Marie-Who-Folds, Old Mitch Lilypad
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `857f53c`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `9c88fec`
 
 *The fifth meeting of the day, held late, by lamplight. The dry run's report lay on the table, folded open at "Verdict: clean", and the Chipmunk Brothers shared a saucer. The panel's voices are lenses in the spirit of the people behind the pseudonyms (`.claude/skills/expert-review/SKILL.md`), written by Claude, not their words; the meeting was held with the `meeting` skill.*
 
@@ -95,7 +95,7 @@ The agenda was adopted, with one item added by the chair: the last names spotted
 
 ## § 13 Go or no-go
 
-**Background.** The dry run at `f99bbff` was clean and `mix check` passed in the copy (2,670 tests); the copy is six commits behind, and §§ 5–8 and 12 add fixes.
+**Background.** The dry run at `8faf444` was clean and `mix check` passed in the copy (2,670 tests); the copy is six commits behind, and §§ 5–8 and 12 add fixes.
 
 **Discussion.** **José** said the gate is the evidence: a fresh run reporting clean. **Marie** said the owner reads the report and a few of the reviews in the copy before anything is pushed. **Joel** said a go keeps the momentum, while the last look before the one step that cannot be undone stays the owner's. **Mitch** wanted the name's story in the README before strangers read it. The chair added conditions: the README looked at again, with a real screenshot instead of the text dump of the screen; the guide and the manual in the blog extra's stylesheet; everything made to look nice, all before the public repository.
 

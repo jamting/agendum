@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); Old Mitch Lilypad, Carsten Stargazer, Great-Uncle Joe, David the Squirrel, Dr. Russell, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** Old Mitch Lilypad and Little Marie-Who-Folds
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `113af44`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `a388a78`
 
 *A late, still evening after a long day of tagging. Owl had lit the lamp and put out the good biscuit tin, which turned out to hold one biscuit and a ball of string; Little Marie-Who-Folds thanked the string and put it in the drawer. Great-Uncle Joe took the stairs, and Old Mitch Lilypad's papers went on the floor, as they always do. The panel's voices are lenses in the spirit of the people named, written by Claude, not their words. The minutes were made with the `meeting` skill.*
 

@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); Old Mitch Lilypad, Carsten Stargazer, José Who Brews, Dr. Russell, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** Old Mitch Lilypad and Carsten Stargazer
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `923acbc`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `474bc00`
 
 *A grey morning, the trash freshly tagged. Owl had laid his own copy of "How to Use Help" on the table and tapped it now and then; Little Marie-Who-Folds had already stacked the reference printouts into three neat piles. The panel's voices are lenses in the spirit of the people named, written by Claude, not their words. The minutes were made with the `meeting` skill.*
 

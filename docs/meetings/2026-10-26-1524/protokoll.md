@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); José Who Brews, Great-Uncle Joe, Carsten Stargazer, Old Mitch Lilypad, David the Squirrel, Dr. Russell, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** Old Mitch Lilypad and Little Marie-Who-Folds
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `3c5b530`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `a35d05f`
 
 *Owl had lit the lamp although it was early afternoon. All nine fitted only because Mitch gave up his chair for the stairs, his papers on his knees; Little Marie-Who-Folds noted with quiet pleasure the empty place where the umbrella stand used to be. Pooh put his head round the door to ask whether "the feeds" were anything to eat, and was told they were not. The panel's voices are lenses in the spirit of the people named, written by Claude, not their words. The minutes were made with the `meeting` skill.*
 
@@ -23,8 +23,8 @@ No thoughts were waiting under Next meeting. The agenda was the roadmap's first 
 
 | Decision (2026-10-26-3) | Status | Evidence |
 | --- | --- | --- |
-| § 5 Update defaults as Agenda's, kept in the preferences, only what differs; F8 Default checked first | Done | `3c5b530` (v0.63.0, R82a); F8 gives the person's defaults (checked in Agenda 2.0) |
-| § 6 Update defaults the only way; only for empty files the person makes; the help says where | Done | `3c5b530`; help topic Set Defaults for New Files, Display Format's F1 |
+| § 5 Update defaults as Agenda's, kept in the preferences, only what differs; F8 Default checked first | Done | `a35d05f` (v0.63.0, R82a); F8 gives the person's defaults (checked in Agenda 2.0) |
+| § 6 Update defaults the only way; only for empty files the person makes; the help says where | Done | `a35d05f`; help topic Set Defaults for New Files, Display Format's F1 |
 
 ## § 5 The faded feed entries keep only their ids
 

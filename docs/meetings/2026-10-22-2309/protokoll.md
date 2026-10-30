@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); Old Mitch Lilypad, David the Squirrel, Great-Uncle Joe, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** Old Mitch Lilypad and Little Marie-Who-Folds
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `f2b8fb5`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `3711b78`
 
 *The second meeting of the day, in the evening. Owl had dusted the bell-pull and laid a single card on the table; it had come out of Agendum rather than out of a file, which he found both modern and a little unsettling. Only five guests came, so for once nobody sat on the stairs. The panel's voices are lenses in the spirit of the people named, written by Claude, not their words; the minutes were made with the `meeting` skill.*
 
@@ -26,21 +26,21 @@ The secretary noted that `docs/meetings/dagordning.md`, the Markdown agenda the 
 | Decision (meeting 2026-10-22-2130) | Status | Evidence |
 | --- | --- | --- |
 | § 5a Recurring items a parity step; what "declared done" means | Recorded | ROADMAP, Towards parity |
-| § 5b The tagging in one sitting | Done: all 32 entries tagged, the owner confirming each | `38dcc28` |
+| § 5b The tagging in one sitting | Done: all 32 entries tagged, the owner confirming each | `8b44a3f` |
 | § 5c Effect type, recovery file, hostile-text tests | Not yet | ROADMAP, the clone's safety |
 | § 5d ADR 0044's tests first | Not yet; it was the roadmap's next action | ROADMAP |
 | § 5e No search for old Agenda users | Recorded | ROADMAP, Users and direction |
 | § 5f View Properties first, recurring items second | Not yet; the order is recorded | ROADMAP |
 | § 5g An `extra` field on commands | Not yet | ROADMAP |
 | § 5h The session summaries into git | Not yet: 46 summaries, none tracked | ROADMAP, Housekeeping |
-| § 5i Freeze lines; the research log archived | Done at the meeting | `88ef1a5` |
+| § 5i Freeze lines; the research log archived | Done at the meeting | `56c7506` |
 | § 5j The study plan's pace never raised | Recorded | memory; skills |
 | § 5k A gentler Overdue | In Ideas | ROADMAP |
 | § 6 Modern keys in the terminal later, as an extra | Recorded | ADR 0038 |
 | § 7a Agenda's help in our own words | Not yet | AGENDA_PARITY.md, step 10 |
-| § 7b Thoughts in Agendum; the project as a rebuilt copy | The thoughts done (this meeting's agenda came from them); the copy is the subject of § 5 | `f2b8fb5` |
+| § 7b Thoughts in Agendum; the project as a rebuilt copy | The thoughts done (this meeting's agenda came from them); the copy is the subject of § 5 | `3711b78` |
 
-Nothing was stuck. Since the morning the nightly long fuzz run in CI was also built (`d815653`).
+Nothing was stuck. Since the morning the nightly long fuzz run in CI was also built (`bdc6942`).
 
 ## § 5 The project's documents in the owner's own file, as disposable items
 

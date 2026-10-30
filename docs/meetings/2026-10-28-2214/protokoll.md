@@ -4,7 +4,7 @@
 **Present:** Mattias (chair); Little Marie-Who-Folds (tidiness), Old Mitch Lilypad (Lotus Agenda), Dr. Russell (ADHD); Claude (Owl's cousin); Owl, host
 **Apologies:** José Who Brews, Great-Uncle Joe, Carsten Stargazer, David the Squirrel
 **Secretary:** Claude · **Approvers:** Little Marie-Who-Folds, Dr. Russell
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `5861f26`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `7796fba`
 
 *The sixth meeting of the day. The new README lay on the table with its first real picture, and Owl had printed the guide, the manual and a blog post side by side and pinned them to the portrait of Uncle Robert, who did not seem to mind. The panel's voices are lenses in the spirit of the people behind the pseudonyms (`.claude/skills/expert-review/SKILL.md`), written by Claude, not their words; the meeting was held with the `meeting` skill.*
 
@@ -24,13 +24,13 @@ The agenda was adopted as shown. The owner's project file had no thoughts under 
 
 | Decision (meeting 2026-10-28-1911) | Status | Evidence |
 | --- | --- | --- |
-| §§ 5–8, 12: the five fixes to the copy | Done | `338423a` |
-| § 8: the captured texts kept | Done; the chair kept all 1,558 messages, the question goes to the lawyer | `5235537` |
+| §§ 5–8, 12: the five fixes to the copy | Done | `ee9d3b1` |
+| § 8: the captured texts kept | Done; the chair kept all 1,558 messages, the question goes to the lawyer | `9280a1e` |
 | § 9: the lawyer before the first outside pull request | Not yet | `docs/ROADMAP.md`, Housekeeping |
 | §§ 10–11: the rename, no sync | Waiting for moving day | `plans/GITHUB.md` § 7 |
-| § 13: the README's screenshot | Done | `5861f26` |
+| § 13: the README's screenshot | Done | `7796fba` |
 | § 13: the guide and manual in the blog's stylesheet | Refined at this meeting (§ 5) | — |
-| § 14: Find your way | Done | `5861f26` |
+| § 14: Find your way | Done | `7796fba` |
 
 ## § 5 How the guide and the manual should look
 

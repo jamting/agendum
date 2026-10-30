@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); Old Mitch Lilypad, Carsten Stargazer, José Who Brews, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** Old Mitch Lilypad and Little Marie-Who-Folds
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `3e84071`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `9c1b3a0`
 
 *The third meeting of the day. Owl had been at the window since breakfast and opened the door before anyone could knock. Mitch's papers went straight onto the stairs; Little Marie-Who-Folds took the last chair and did not look at the place where the umbrella stand used to be. The panel's voices are lenses in the spirit of the people named, written by Claude, not their words. The minutes were made with the `meeting` skill.*
 
@@ -36,8 +36,8 @@ The User's Guide (22-14, 17-50, H-9) says Update defaults also saves the Print L
 | Decision (2026-10-26-2) | Status | Evidence |
 | --- | --- | --- |
 | The accepted enhancements' tags confirmed | Done | `docs/plans/AGENDA_PARITY.md` |
-| The accepted modifications' tags confirmed; the key bar in moves changed back | Done | `1075e71` (R80) |
-| Declared done when the key bar in moves is built and tagged | Done | `9e8e848` (v0.62.0), `0315342` |
+| The accepted modifications' tags confirmed; the key bar in moves changed back | Done | `b28bb59` (R80) |
+| Declared done when the key bar in moves is built and tagged | Done | `1bd08b6` (v0.62.0), `a1ec3d1` |
 | `docs/HELP_WOOD.md` with its tone rules, and a check | Done | `docs/HELP_WOOD.md` |
 
 ## § 5 Update defaults, as Agenda does it

@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); José Who Brews, Great-Uncle Joe, Carsten Stargazer, Old Mitch Lilypad, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host. David the Squirrel and Dr. Russell were excused, as nothing on the agenda concerned working as a trusted system or the easily overwhelmed.
 **Secretary:** Claude · **Approvers:** Old Mitch Lilypad, Little Marie-Who-Folds
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `7fdebdb`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `6cdf033`
 
 *A crisp autumn afternoon. The owner arrived with coffee and a bag of kanelbullar, and the room in the beech tree smelled of cardamom before anyone had sat down. The bell still lives on the windowsill beside the teacups, as agreed at the last meeting. The panel's voices are lenses in the spirit of the named people, written by Claude, not their words; the minutes were made with the `meeting` skill.*
 
@@ -23,9 +23,9 @@ The owner's notes were worded as five items (§ 5–7, § 9–10). The chair add
 
 | Decision (meeting 2026-10-16-1905, third) | Status | Evidence |
 | --- | --- | --- |
-| § 5 Quadsyl-24 is the Zettel id, brought into the core | Done, approved by the owner, v0.11.0 | `7267b61`, ADR 0039 |
-| § 6 A stored id with its own counter; "Attach Zettel id" | Done, v0.11.0 | `b48d270`, R73 |
-| § 7 CTRL-X runs a command by name, fuzzy matching shared with F1 `c` | Done, approved by the owner, v0.14.0 | `8aedf27`, R65d, ADR 0040 |
+| § 5 Quadsyl-24 is the Zettel id, brought into the core | Done, approved by the owner, v0.11.0 | `770f525`, ADR 0039 |
+| § 6 A stored id with its own counter; "Attach Zettel id" | Done, v0.11.0 | `10cd608`, R73 |
+| § 7 CTRL-X runs a command by name, fuzzy matching shared with F1 `c` | Done, approved by the owner, v0.14.0 | `8768e43`, R65d, ADR 0040 |
 
 Nothing was stuck.
 

@@ -4,7 +4,7 @@
 **Present:** Mattias (chair); Old Mitch Lilypad (Lotus Agenda), Little Marie-Who-Folds (tidiness), Carsten Stargazer (Org-mode), José Who Brews (Elixir); Joel and Jeff, the Chipmunk Brothers (guests: launching an online business); Claude (Owl's cousin); Owl, host
 **Apologies:** Great-Uncle Joe, David the Squirrel, Dr. Russell
 **Secretary:** Claude · **Approvers:** Little Marie-Who-Folds, Old Mitch Lilypad
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `63200e9`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `977ac4e`
 
 *The second meeting of the day. Two chipmunks came up the beech tree carrying a laptop between them and settled on the bookshelf, where the laptop's fan made the portrait of Uncle Robert sway gently. The basket of thanked minutes from the morning still stands by the door; Owl says he is keeping it for sentimental reasons. The panel's voices are lenses in the spirit of the people behind the pseudonyms (`.claude/skills/expert-review/SKILL.md`), written by Claude, not their words; the meeting was held with the `meeting` skill.*
 
@@ -24,7 +24,7 @@ The agenda was adopted as worded.
 
 | Decision (2026-10-28) | Status | Evidence |
 | --- | --- | --- |
-| Seven systems and nine ideas written up | Done | `docs/plans/STARTERS.md`, `3006ab2` |
+| Seven systems and nine ideas written up | Done | `docs/plans/STARTERS.md`, `8b86f86` |
 | Start dates and Cancelled made from existing parts | Done (written up) | `docs/plans/STARTERS.md` |
 | The date filter's "or not assigned" | Not yet | `docs/ROADMAP.md`, Beyond Agenda |
 

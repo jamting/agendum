@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); Great-Uncle Joe, José Who Brews, Old Mitch Lilypad, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** Great-Uncle Joe, Little Marie-Who-Folds
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `2784853`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `b59a3a3`
 
 *A wet evening. Owl has lit the fire and set out more chairs than usual; Joe and José sit by the window, Mitch at the table with a Feeds box drawn on a napkin, and Marie has already straightened the honey jars. The panel's voices are lenses in the spirit of the named people, written by Claude, not their words; the meeting was held with the `meeting` skill.*
 
@@ -23,8 +23,8 @@ The agenda was adopted as proposed.
 
 | Decision (2026-10-26-5) | Status | Evidence |
 | --- | --- | --- |
-| § 5 What an extra keeps for itself; fingerprints in the snapshots | Done | ADR 0048, `26faa2e` (v0.66.0) |
-| § 6 Ingested categories | Done | `3b8052c`, `af2ccb8`, `dcfaab2` (v0.67.0–v0.68.1) |
+| § 5 What an extra keeps for itself; fingerprints in the snapshots | Done | ADR 0048, `a663ef2` (v0.66.0) |
+| § 6 Ingested categories | Done | `f53f316`, `222e1d6`, `22778dd` (v0.67.0–v0.68.1) |
 
 Nothing is stuck.
 
@@ -32,7 +32,7 @@ Nothing is stuck.
 
 **Background.** The owner sees a pattern: the code review's findings, the recent publish crash (v0.69.1), and the settings boxes for feeds and publishing not living up to the standard of the rest of the program. Could the freeze during the Agenda parity work have left the extras fragile, compared with the core functionality and the TUI?
 
-**Discussion.** **Claude** presented the evidence. The extras were built in two days (2026-10-16/17, `feed_sync.ex`, `publish.ex`, the boxes in `lib/agendum/tui/extras/`), before the `feature` checklist (meeting 2026-10-22-2337, § 5); during the freeze (10-21 to 10-26) they had two commits, then eight on 10-26 alone. Each review slice was capped at ten findings, so the counts say nothing, but slice C's were the ones a user meets at once: Markdown looping for ever, `INTERVAL=0` crashing at every start, an upload stalling the program (`docs/CODE_REVIEW_SLICES.md`, Record); slice B found real errors in the core's rules too. The v0.69.1 crash was in `App`, introduced by a review fix (`dd2f47b`), where no pure test and no fuzz walk reaches; the fuzz walks start from the demo file with the extras off (ROADMAP, Sharpen the saw).
+**Discussion.** **Claude** presented the evidence. The extras were built in two days (2026-10-16/17, `feed_sync.ex`, `publish.ex`, the boxes in `lib/agendum/tui/extras/`), before the `feature` checklist (meeting 2026-10-22-2337, § 5); during the freeze (10-21 to 10-26) they had two commits, then eight on 10-26 alone. Each review slice was capped at ten findings, so the counts say nothing, but slice C's were the ones a user meets at once: Markdown looping for ever, `INTERVAL=0` crashing at every start, an upload stalling the program (`docs/CODE_REVIEW_SLICES.md`, Record); slice B found real errors in the core's rules too. The v0.69.1 crash was in `App`, introduced by a review fix (`abf02ef`), where no pure test and no fuzz walk reaches; the fuzz walks start from the demo file with the extras off (ROADMAP, Sharpen the saw).
 
 **Joe** observed that the extras are the only part that talks to the world, and that the Elm-style net (pure `Update`, fuzz walks, invariants after every key) stops at `App`: the bugs gathered where the net does not reach, a missing net more than a frozen one. **José** said the clone's boxes were built or converted under the checklist, with `Template` layouts, DOSBox checks and the fuzz walks crossing them, while `tui/extras/` predates it and the walks never open it. **Mitch** said the clone had a model to copy in Agenda and the extras had none, so nobody set their bar: a design gap more than a code gap. **Marie** said one part of the house was tidied room by room while another was closed off; the closed rooms did not decay but were never tidied, then were rearranged in a hurry. **Claude**, as a panel member, said the freeze explains the timing, not the cause.
 

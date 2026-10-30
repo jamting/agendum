@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); José Who Brews, Little Marie-Who-Folds, David the Squirrel, Carsten Stargazer, Old Mitch Lilypad, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** David the Squirrel and Carsten Stargazer
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `066365d`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `b6c9e36`
 
 *The third meeting of the day, late in the evening; it ran past midnight. Owl, a little surprised to see the same faces again so soon, had laid out three cards. A portrait of Uncle Robert, moved into the hall at Marie's gentle suggestion, now watched over the coats; Owl said he looked happier there, and nobody argued. The panel's voices are lenses in the spirit of the people named, written by Claude, not their words; the minutes were made with the `meeting` skill.*
 
@@ -27,7 +27,7 @@ The agenda was adopted with one item from the owner's Agendum project file (§ 5
 | § 5 The project's documents imported into the owner's file as Disposable items | Not yet: still the roadmap's next action | ROADMAP, Sharpen the saw |
 | § 6 The import before the extras shelf | Recorded | ROADMAP, Next action |
 
-Nothing was stuck. Since then a smoke-test script for the real terminal (`b116578`), a format-on-edit hook (`4af2737`), a permission allowlist (`2cc1db4`) and a tidy of the documents (`13b0163`, `97d89e5`; the roadmap's finished work now in `ROADMAP_DONE.md`) were made.
+Nothing was stuck. Since then a smoke-test script for the real terminal (`87747f3`), a format-on-edit hook (`bdf1249`), a permission allowlist (`c2a402c`) and a tidy of the documents (`0f41522`, `652fdfe`; the roadmap's finished work now in `ROADMAP_DONE.md`) were made.
 
 ## § 5 Should building a feature become a skill of its own, `/feature`?
 

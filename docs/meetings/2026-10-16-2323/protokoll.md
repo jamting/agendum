@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); José Who Brews, Great-Uncle Joe, Carsten Stargazer, Old Mitch Lilypad, Dr. Russell, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host. David the Squirrel sent apologies.
 **Secretary:** Claude · **Approvers:** José Who Brews, Carsten Stargazer
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `c8de87a`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `b5bc95e`
 
 *Late in the evening, the third meeting of the day. The room in the beech tree was warm from the two before it, and the teacups Little Marie-Who-Folds had thanked at the last meeting were still on the windowsill, as agreed. The panel's voices are lenses in the spirit of the named people, written by Claude, not their words; the minutes were made with the `meeting` skill.*
 
@@ -23,10 +23,10 @@ The owner's note on Zettel ids was worded as three items (§ 5–7). The agenda 
 
 | Decision | Status | Evidence |
 | --- | --- | --- |
-| § 5 The owner's own uses and candidate users in `VISION.md` | Done | `8ae2dd6`, `docs/VISION.md:15` |
-| § 6 "Beyond Agenda" sorted by group | Done | `8ae2dd6`, `docs/ROADMAP.md` |
+| § 5 The owner's own uses and candidate users in `VISION.md` | Done | `c5361d4`, `docs/VISION.md:15` |
+| § 6 "Beyond Agenda" sorted by group | Done | `c5361d4`, `docs/ROADMAP.md` |
 | § 7 An RSS reader in two steps | On the roadmap, not built | `docs/ROADMAP.md`, Beyond Agenda |
-| § 8 The micro-blog, next after the disk guard | Not built; the owner chose to build the `.AG` import first that evening, released as v0.10.0 (`c8de87a`) | `docs/ROADMAP.md`, Beyond Agenda |
+| § 8 The micro-blog, next after the disk guard | Not built; the owner chose to build the `.AG` import first that evening, released as v0.10.0 (`b5bc95e`) | `docs/ROADMAP.md`, Beyond Agenda |
 
 Claude noted that the roadmap's **Next:** line still asked the owner to try the import; it was brought up to date after the meeting.
 

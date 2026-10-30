@@ -4,7 +4,7 @@
 **Present:** Mattias (chair); Old Mitch Lilypad (Lotus Agenda), José Who Brews (Elixir), Carsten Stargazer (Org-mode), Little Marie-Who-Folds (tidiness); Joel and Jeff, the Chipmunk Brothers (guests: launching an online business); Claude (Owl's cousin); Owl, host
 **Apologies:** Great-Uncle Joe, David the Squirrel, Dr. Russell
 **Secretary:** Claude · **Approvers:** Little Marie-Who-Folds, Old Mitch Lilypad
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `e88bd67`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `ce7e3d6`
 
 *The third meeting of the day, held in the afternoon. The Chipmunk Brothers had kept their places on the bookshelf since the morning and had, by their own account, read six licences over lunch. Owl had put out a fresh pot of honey and a dictionary, in case of Latin. The panel's voices are lenses in the spirit of the people behind the pseudonyms (`.claude/skills/expert-review/SKILL.md`), written by Claude, not their words; the meeting was held with the `meeting` skill.*
 
@@ -26,9 +26,9 @@ The agenda was adopted as worded.
 | --- | --- | --- |
 | § 5 A series of meetings | Under way: this is the second | `docs/ROADMAP.md` (In order) |
 | §§ 6–9 Private and public, the creek, where public stops, the site | Recorded; markers and site not built yet | `docs/plans/GITHUB.md` § 7, ADR 0050 |
-| § 10 Pseudonyms | Done | `.claude/skills/expert-review/SKILL.md`, `0ceff1c` |
+| § 10 Pseudonyms | Done | `.claude/skills/expert-review/SKILL.md`, `239f883` |
 | § 11 The dry run as a script | Not yet | `docs/ROADMAP.md` (In order) |
-| § 12 A comparison including GPL and AGPL | Done | `6591706` |
+| § 12 A comparison including GPL and AGPL | Done | `d074529` |
 | § 13 Marie's order of work | Done | `docs/ROADMAP.md` (In order) |
 
 ## § 5 The online check of the FSL and BSL

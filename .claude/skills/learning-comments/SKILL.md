@@ -10,7 +10,7 @@ The owner is an experienced programmer who is new to Elixir and uses this projec
 1. **Elixir idioms.** Explain the Elixir-specific *why*, not general programming.
 2. **Domain logic.** Explain the complicated places in Agenda's terms: what the code does for the user and why it is done this way.
 
-The model is commit `47dd1cf` (the core facade, `lib/agendum/core/facade/`). Read a couple of its files first (`items.ex`, `changes.ex`) to match the voice and density.
+The model is commit `6f47cb1` (the core facade, `lib/agendum/core/facade/`). Read a couple of its files first (`items.ex`, `changes.ex`) to match the voice and density.
 
 ## 1. Scope
 

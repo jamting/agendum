@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); Old Mitch Lilypad, Little Marie-Who-Folds, David the Squirrel, Dr. Russell, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** Old Mitch Lilypad and Little Marie-Who-Folds
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `bf4eed0`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `47a9a94`
 
 *The same day, later. The lamp was lit again, and Owl had put out a celebratory jar of honey, already half eaten, he said, by a visitor. The panel's voices are lenses in the spirit of the people named, written by Claude, not their words. The minutes were made with the `meeting` skill.*
 

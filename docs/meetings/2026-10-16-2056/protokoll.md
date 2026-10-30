@@ -4,7 +4,7 @@
 **Present:** the owner (chair); Old Mitch Lilypad, Carsten Stargazer, David the Squirrel, Dr. Russell, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host
 **Excused:** José Who Brews, Great-Uncle Joe (no code or architecture on the agenda)
 **Secretary:** Claude · **Approvers:** Little Marie-Who-Folds, Dr. Russell
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `0170929`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `8de3685`
 
 *The second meeting in Owl's house that day. The teacups from the first had been washed but not yet put away, and Marie, without being asked, arranged them by size on the windowsill. Uncle Robert's portrait still hung slightly crooked. The panel's voices are lenses in the spirit of the named people, written by Claude, not their words; these minutes were made with the `meeting` skill.*
 
@@ -22,14 +22,14 @@ The agenda was adopted as proposed. The owner's single note was worded as four i
 
 ## § 4 The previous minutes
 
-All four decisions of the meeting earlier that day (`docs/meetings/2026-10-16-1905/protokoll.md`) were built the same evening and released in v0.8.0 (`f328b4a`).
+All four decisions of the meeting earlier that day (`docs/meetings/2026-10-16-1905/protokoll.md`) were built the same evening and released in v0.8.0 (`9ea26fe`).
 
 | Decision | Status | Evidence |
 | --- | --- | --- |
-| § 5 Reopen a file where you left it | Done | `8884242`, R69 |
-| § 6 "While you were away" box | Done | `8f8b9fd`, R70 |
-| § 7 ► on the current view in the view manager | Done | `549eae9`, R68 |
-| § 8 Views sorted by recently used (F5) | Done | `7756862`, R68 |
+| § 5 Reopen a file where you left it | Done | `5670ddf`, R69 |
+| § 6 "While you were away" box | Done | `bc3b00a`, R70 |
+| § 7 ► on the current view in the view manager | Done | `8a1459a`, R68 |
+| § 8 Views sorted by recently used (F5) | Done | `b2b3494`, R68 |
 
 ## § 5 Who might use Agendum: a brainstorm
 

@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); Old Mitch Lilypad, Carsten Stargazer, David the Squirrel, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** David the Squirrel and Little Marie-Who-Folds
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `fab275c`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `411497c`
 
 *A short meeting with one card on the table. Owl, who had now hosted four meetings in two days, had begun keeping a datebook of them himself, and left it open on the sideboard as if by accident. The panel's voices are lenses in the spirit of the people named, written by Claude, not their words; the minutes were made with the `meeting` skill.*
 
@@ -23,9 +23,9 @@ The agenda was adopted as proposed, with one item from the owner's Agendum proje
 
 | Decision (meeting 2026-10-22-2130, third) | Status | Evidence |
 | --- | --- | --- |
-| § 5 A `/feature` skill; tests for F1 texts and KEYBOARD.md | Done | `bc39775` |
+| § 5 A `/feature` skill; tests for F1 texts and KEYBOARD.md | Done | `c7d196f` |
 | § 6 Read-only feed entries referred to the item levels | Recorded | `docs/plans/ITEM_LEVELS.md` |
-| § 7 F3 at the OPML prompts now; OPML through File ▸ Transfer ▸ Import when the extras thaw | Done; the second part waits | `57e9a17` (v0.16.2) |
+| § 7 F3 at the OPML prompts now; OPML through File ▸ Transfer ▸ Import when the extras thaw | Done; the second part waits | `0081780` (v0.16.2) |
 
 Nothing was stuck.
 

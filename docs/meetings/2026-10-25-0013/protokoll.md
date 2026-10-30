@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); Old Mitch Lilypad, David the Squirrel, Dr. Russell, Little Marie-Who-Folds, Claude (Owl's cousin); Eeyore, guest; Owl, host
 **Secretary:** Claude · **Approvers:** David the Squirrel and Eeyore
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `786c13a`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `3916057`
 
 *A windy night, the second meeting of the day, called at short notice and running past midnight. Owl had hung a new portrait over the umbrella stand for the occasion, of himself, rather large. Eeyore arrived last, sat on the stairs where Mitch's papers usually go, and said that he supposed nobody had asked him to come because they wanted to hear what he thought. The panel's voices are lenses in the spirit of the people named, written by Claude, not their words; Eeyore is the Hundred Acre Wood's own. The minutes were made with the `meeting` skill.*
 
@@ -23,9 +23,9 @@ The agenda was adopted as it stood, with one item raised by the owner during the
 
 | Decision (2026-10-24) | Status | Evidence |
 | --- | --- | --- |
-| § 5.1 ALT-K cycles the ALT, CTRL and SHIFT bars | Done; the letter in the last column dropped after the owner tried it | v0.25.0, `d846527`, `28dbb72` |
-| § 5.2 CTRL-F keys decoded; the Mac's checked | Done: CTRL-F4, F9 and F10 get through on the owner's Mac | v0.24.1, `d8b32c3` |
-| § 5.3 Every key bar made from the keymaps (ADR 0045) | Done, tested against Agenda's 16 bars | v0.24.2, `02c3249` |
+| § 5.1 ALT-K cycles the ALT, CTRL and SHIFT bars | Done; the letter in the last column dropped after the owner tried it | v0.25.0, `415fe6e`, `8267b30` |
+| § 5.2 CTRL-F keys decoded; the Mac's checked | Done: CTRL-F4, F9 and F10 get through on the owner's Mac | v0.24.1, `019b287` |
+| § 5.3 Every key bar made from the keymaps (ADR 0045) | Done, tested against Agenda's 16 bars | v0.24.2, `3253cf7` |
 
 ## § 5 Wol in the machine: where the plan stands, and what to add to it
 

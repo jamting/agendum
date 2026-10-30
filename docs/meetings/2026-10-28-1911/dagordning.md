@@ -9,7 +9,7 @@
 
 ## Items to discuss
 
-There were no thoughts under Next meeting; the items come from the roadmap's In order 2 and the dry run's report of 2026-10-28 (run at `f99bbff`, verdict clean). § 12 was added by the chair at the adoption.
+There were no thoughts under Next meeting; the items come from the roadmap's In order 2 and the dry run's report of 2026-10-28 (run at `8faf444`, verdict clean). § 12 was added by the chair at the adoption.
 
 ### § 5 What the copy still says about many users
 

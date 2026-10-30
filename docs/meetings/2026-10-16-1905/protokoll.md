@@ -4,7 +4,7 @@
 **Present:** the owner (chair); Old Mitch Lilypad, Carsten Stargazer, David the Squirrel, Dr. Russell, Great-Uncle Joe, Claude (Owl's cousin); Owl, host
 **Excused:** José Who Brews, Little Marie-Who-Folds (the agenda did not call for them)
 **Secretary:** Claude · **Approvers:** Old Mitch Lilypad, David the Squirrel
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `39db8fa`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `2085ef4`
 
 *The first meeting called on the owner's own agenda. Owl had made room by moving Uncle Robert's portrait onto the stairs, where Joe sat beside it. Russell, newest on the panel, was given the chair nearest the door. The panel's voices are lenses in the spirit of the named people, written by Claude, not their words; these minutes were made with the `meeting` skill.*
 

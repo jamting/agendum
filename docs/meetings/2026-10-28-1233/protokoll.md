@@ -4,7 +4,7 @@
 **Present:** Mattias (chair); Old Mitch Lilypad (Lotus Agenda), Little Marie-Who-Folds (tidiness), Dr. Russell (ADHD and overwhelm); Joel and Jeff, the Chipmunk Brothers (guests: launching an online business); Claude (Owl's cousin); Owl, host
 **Apologies:** José Who Brews, Great-Uncle Joe, Carsten Stargazer, David the Squirrel
 **Secretary:** Claude · **Approvers:** Little Marie-Who-Folds, Old Mitch Lilypad
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `4413101`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `a162fd5`
 
 *The fourth meeting of the day, and the shortest. Owl, whose name was the subject, had promised to stay neutral, and sat very straight on his perch with his eyes closed so as not to influence anyone; he opened one of them only twice. The panel's voices are lenses in the spirit of the people behind the pseudonyms (`.claude/skills/expert-review/SKILL.md`), written by Claude, not their words; the meeting was held with the `meeting` skill.*
 
@@ -25,7 +25,7 @@ The agenda was adopted as worded.
 | Decision (2026-10-28-3) | Status | Evidence |
 | --- | --- | --- |
 | § 5 The FSL and BSL facts corrected | Done | `docs/plans/GITHUB.md` § 7 |
-| §§ 6–8 AGPL-3.0-only, CC BY 4.0, a CLA | Recorded | ADR 0051, `4413101` |
+| §§ 6–8 AGPL-3.0-only, CC BY 4.0, a CLA | Recorded | ADR 0051, `a162fd5` |
 | § 9 Confirmed after a lawyer's check | Not yet (before the practical meeting) | `docs/plans/GITHUB.md` § 7, step 7; `docs/ROADMAP.md` |
 
 ## § 5 The long name: Wol's Agendum or Owl's Agendum?

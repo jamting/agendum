@@ -3,7 +3,7 @@
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); José Who Brews, Great-Uncle Joe, Carsten Stargazer, Old Mitch Lilypad, David the Squirrel, Dr. Russell, Little Marie-Who-Folds, Claude (Owl's cousin); Owl, host
 **Secretary:** Claude · **Approvers:** Old Mitch Lilypad, Little Marie-Who-Folds
-**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `a6d5f8f`
+**Agenda:** [dagordning.md](dagordning.md) · **At commit:** `7e0ce68`
 
 *An October afternoon in the beech tree. Owl had put the bell back on the windowsill, and the eleven recommendations of yesterday's review were laid out on the table like a hand of cards. As the review touched every lens, the whole panel was invited. The panel's voices are lenses in the spirit of the named people, written by Claude, not their words; the minutes were made with the `meeting` skill.*
 
@@ -23,7 +23,7 @@ The owner's notes were worded as § 5 (with eleven sub-items), § 6 and, under a
 
 | Decision (meeting 2026-10-21-2324) | Status | Evidence |
 | --- | --- | --- |
-| § 5 A truthful clone first; Beyond Agenda frozen | Recorded; in force | `6a0ddd9`, `docs/VISION.md` |
+| § 5 A truthful clone first; Beyond Agenda frozen | Recorded; in force | `f1a2bf0`, `docs/VISION.md` |
 | § 6 ADR 0043's test; the 31 entries to be tagged | Not yet; the tagging is today's § 5b | `docs/adr/0043-what-may-differ-from-agenda.md` |
 | § 7 Extras hidden behind one preference | Not yet; a roadmap item | ROADMAP, Towards parity |
 | § 8 Agenda's menus captured in DOSBox and compared | Not yet; a roadmap item | ROADMAP, Towards parity |
@@ -31,7 +31,7 @@ The owner's notes were worded as § 5 (with eleven sub-items), § 6 and, under a
 | § 9 The "next-level TUI" | Tabled to this meeting | today's § 6 |
 | § 10 A public repository from a copy, when the clone is done | Waits for the clone | `docs/plans/GITHUB.md` § 7 |
 
-Nothing was stuck: the only work since was the expert review (`f676c10`), and the roadmap's next action was this meeting.
+Nothing was stuck: the only work since was the expert review (`abc31f4`), and the roadmap's next action was this meeting.
 
 ## § 5 The expert review of 2026-10-21: its eleven recommendations
 
@@ -55,7 +55,7 @@ Nothing was stuck: the only work since was the expert review (`f676c10`), and th
 
 ### § 5c The clone's safety is clone work
 
-**Background.** `App.run_effects/2` has no clause for an unknown effect (`lib/agendum/tui/app.ex:209-309`), the shape that crashed the program on 2026-10-17 (`a0612f9`). The review also asks for a recovery file on a crash and a hostile-text test for the `.AG` importer, and feeds.
+**Background.** `App.run_effects/2` has no clause for an unknown effect (`lib/agendum/tui/app.ex:209-309`), the shape that crashed the program on 2026-10-17 (`80ab019`). The review also asks for a recovery file on a crash and a hostile-text test for the `.AG` importer, and feeds.
 
 **Discussion.** **Joe** said old users will judge the clone on their real files, and a crash costs more than any missing command. **Claude** said the hostile-text test protects the importer, which the clone has, and that feeds come at no extra cost. **José** said Dialyzer will check a closed effect type. **Marie** asked that the freeze line say so.
 
