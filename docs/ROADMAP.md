@@ -36,7 +36,6 @@ The order of the earlier steps was Marie's (the licence meeting and the tidy pas
 
 ### Fixes and polish
 
-- [ ] `mix agendum.thoughts` reads `docs/summaries/*.md`, which are no longer in this repository since moving day (2026-10-30): they now drop out of what it reads, silently. Read them from the owner's private documents (`docs/private/`, once linked; Sharpen the saw) or leave them out on purpose and say so (found 2026-10-30).
 - [ ] Idea, when it is felt (the owner, 2026-10-27): the person's own categories before a feed's or a calendar's in completion's matches (R32) in the other category fields (column and section heads, a column cell), where ingested ones are rightly offered (R75a: they head sections and filter views).
 
   Agenda's rule is every match in hierarchy order, an exact name first, and the Feeds family usually comes after the person's categories already, so wait until a feed's name is seen crowding one's own in real use

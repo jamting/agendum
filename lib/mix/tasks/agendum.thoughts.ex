@@ -11,6 +11,7 @@ defmodule Mix.Tasks.Agendum.Thoughts do
       mix agendum.thoughts --next-meeting   # only those for the next meeting
       mix agendum.thoughts --init PATH      # make a new file for thoughts
       mix agendum.thoughts --import-docs    # the project's documents into it
+      mix agendum.thoughts --import-docs --private DIR   # and the summaries
 
   The file is the owner's own and stays outside git: its place is set in
   the shell, `export AGENDUM_PROJECT_FILE=~/Documents/agendum-project.agendum`.
@@ -24,6 +25,14 @@ defmodule Mix.Tasks.Agendum.Thoughts do
   (`--yes` skips the question). It keeps the file as it was beside it,
   `FILE.bak`, and saves the new one in one go. `--docs DIR` reads the
   documents from another checkout than the current folder.
+
+  The session summaries are private since moving day (2026-10-30): they
+  live in the owner's own repository, not in this one. `--private DIR`
+  names its `docs/` folder, and the summaries are read from
+  `DIR/summaries/`; without it, the folder in `$AGENDUM_PRIVATE_DOCS`.
+  With neither, the summaries are left out, and the task says so (the
+  import replaces the last one, so they would vanish from the file
+  unannounced).
   """
   use Mix.Task
 
@@ -31,6 +40,7 @@ defmodule Mix.Tasks.Agendum.Thoughts do
   alias Agendum.Thoughts
 
   @env "AGENDUM_PROJECT_FILE"
+  @private_env "AGENDUM_PRIVATE_DOCS"
 
   @impl Mix.Task
   def run(args) do
@@ -41,7 +51,8 @@ defmodule Mix.Tasks.Agendum.Thoughts do
           next_meeting: :boolean,
           import_docs: :boolean,
           yes: :boolean,
-          docs: :string
+          docs: :string,
+          private: :string
         ]
       )
 
@@ -86,7 +97,15 @@ defmodule Mix.Tasks.Agendum.Thoughts do
 
     # `yes?/2` asks on the terminal; `default: :no` makes ENTER alone a no
     if opts[:yes] || shell.yes?("Import anyway?", default: :no) do
-      docs = read_docs(opts[:docs] || File.cwd!())
+      private = opts[:private] || System.get_env(@private_env)
+      docs = read_docs(opts[:docs] || File.cwd!()) ++ read_summaries(private)
+
+      if private == nil do
+        shell.info(
+          "The session summaries are left out: name the private documents with " <>
+            "--private DIR or #{@private_env}"
+        )
+      end
 
       # `with` runs each step while its pattern matches; the first that
       # does not falls through to `else`
@@ -108,9 +127,26 @@ defmodule Mix.Tasks.Agendum.Thoughts do
   # TEMPLATE.md sits beside the meeting folders, not in one, so the
   # pattern leaves it out.
   defp read_docs(root) do
-    ["docs/meetings/*/*.md", "docs/adr/*.md", "docs/ROADMAP.md", "docs/summaries/*.md"]
+    ["docs/meetings/*/*.md", "docs/adr/*.md", "docs/ROADMAP.md"]
     |> Enum.flat_map(&Path.wildcard(Path.join(root, &1)))
     |> Enum.map(&%{path: Path.relative_to(&1, root), text: File.read!(&1)})
+  end
+
+  # The summaries from the private `docs/` folder, given the path they had
+  # in this repository before moving day, `docs/summaries/NAME.md`: the
+  # path tells `Thoughts.import_docs/3` what kind of document it is
+  defp read_summaries(nil), do: []
+
+  defp read_summaries(private) do
+    folder = Path.join(Path.expand(private), "summaries")
+
+    # a mistyped folder would drop the summaries as silently as before
+    if !File.dir?(folder), do: Mix.raise("No summaries folder in #{private}: nothing imported")
+
+    folder
+    |> Path.join("*.md")
+    |> Path.wildcard()
+    |> Enum.map(&%{path: "docs/summaries/" <> Path.basename(&1), text: File.read!(&1)})
   end
 
   # the path given, else the environment's; `~` is the home folder

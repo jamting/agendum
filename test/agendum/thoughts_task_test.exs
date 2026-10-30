@@ -43,18 +43,35 @@ defmodule Agendum.ThoughtsTaskTest do
   end
 
   describe "--import-docs (meeting 2026-10-22-2309, § 5)" do
-    # a small repository: one meeting, one ADR, the roadmap, one summary,
-    # and the meetings' template, which is not a document to import
-    defp repo(dir) do
-      root = Path.join(dir, "repo")
+    # The owner's environment may name their private documents; each test
+    # here starts without it, and gets it back afterwards
+    setup do
+      saved = System.get_env("AGENDUM_PRIVATE_DOCS")
+      System.delete_env("AGENDUM_PRIVATE_DOCS")
+      on_exit(fn -> if saved, do: System.put_env("AGENDUM_PRIVATE_DOCS", saved) end)
+    end
 
-      for {path, text} <- [
-            {"docs/meetings/2026-10-21-2324/protokoll.md", "# Minutes, 2026-10-21\n"},
-            {"docs/meetings/TEMPLATE.md", "# Agenda (dagordning) form\n"},
-            {"docs/adr/0001-core.md", "# ADR 0001\n\n**Status:** accepted · 2026-10-08\n"},
-            {"docs/ROADMAP.md", "# Roadmap\n"},
-            {"docs/summaries/2026-10-22-2311.md", "# Session summary\n"}
-          ] do
+    # a small repository: one meeting, one ADR, the roadmap, and the
+    # meetings' template, which is not a document to import
+    defp repo(dir) do
+      write_files(Path.join(dir, "repo"), [
+        {"docs/meetings/2026-10-21-2324/protokoll.md", "# Minutes, 2026-10-21\n"},
+        {"docs/meetings/TEMPLATE.md", "# Agenda (dagordning) form\n"},
+        {"docs/adr/0001-core.md", "# ADR 0001\n\n**Status:** accepted · 2026-10-08\n"},
+        {"docs/ROADMAP.md", "# Roadmap\n"}
+      ])
+    end
+
+    # the owner's private documents (the folder `--private` names): one
+    # session summary
+    defp private_docs(dir) do
+      write_files(Path.join(dir, "private"), [
+        {"summaries/2026-10-22-2311.md", "# Session summary, 2026-10-22 23:11\n"}
+      ])
+    end
+
+    defp write_files(root, files) do
+      for {path, text} <- files do
         File.mkdir_p!(Path.dirname(Path.join(root, path)))
         File.write!(Path.join(root, path), text)
       end
@@ -62,18 +79,60 @@ defmodule Agendum.ThoughtsTaskTest do
       root
     end
 
+    defp imported(path, kind) do
+      {:ok, db} = Store.load(path)
+      [id] = Database.find_categories(db, kind)
+      db |> Database.items_in(id) |> Enum.map(& &1.text)
+    end
+
     test "imports the documents, keeping a copy of the file as it was", %{tmp_dir: dir} do
       path = Path.join(dir, "project.agendum")
       :ok = Store.save(Thoughts.new_file(), path)
 
-      out = run(["--import-docs", "--yes", "--docs", repo(dir), path])
+      out =
+        run(["--import-docs", "--yes", "--docs", repo(dir), "--private", private_docs(dir), path])
+
       assert out =~ "Agendum must be closed"
       assert out =~ "Imported 4 documents"
 
       assert {:ok, db} = Store.load(path)
       [home] = Database.find_categories(db, "Disposable")
       assert length(Database.items_in(db, home)) == 4
+      assert imported(path, "Summaries") == ["Session summary, 2026-10-22 23:11"]
       assert {:ok, Thoughts.new_file()} == Store.load(path <> ".bak")
+    end
+
+    test "reads the summaries from AGENDUM_PRIVATE_DOCS", %{tmp_dir: dir} do
+      path = Path.join(dir, "project.agendum")
+      :ok = Store.save(Thoughts.new_file(), path)
+      System.put_env("AGENDUM_PRIVATE_DOCS", private_docs(dir))
+      on_exit(fn -> System.delete_env("AGENDUM_PRIVATE_DOCS") end)
+
+      assert run(["--import-docs", "--yes", "--docs", repo(dir), path]) =~ "Imported 4 documents"
+      assert imported(path, "Summaries") == ["Session summary, 2026-10-22 23:11"]
+    end
+
+    test "a private folder without summaries stops the import", %{tmp_dir: dir} do
+      path = Path.join(dir, "project.agendum")
+      :ok = Store.save(Thoughts.new_file(), path)
+      before = File.read!(path)
+
+      assert_raise Mix.Error, ~r/No summaries folder/, fn ->
+        run(["--import-docs", "--yes", "--docs", repo(dir), "--private", repo(dir), path])
+      end
+
+      assert File.read!(path) == before
+    end
+
+    test "without the private documents, says the summaries are left out", %{tmp_dir: dir} do
+      path = Path.join(dir, "project.agendum")
+      :ok = Store.save(Thoughts.new_file(), path)
+
+      out = run(["--import-docs", "--yes", "--docs", repo(dir), path])
+      assert out =~ "Imported 3 documents"
+      assert out =~ "summaries are left out"
+      assert out =~ "AGENDUM_PRIVATE_DOCS"
+      assert imported(path, "Summaries") == []
     end
 
     test "asks first, and changes nothing when the answer is no", %{tmp_dir: dir} do
