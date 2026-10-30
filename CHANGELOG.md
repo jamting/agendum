@@ -4,6 +4,8 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.72.5 — 2026-10-30
+
 - **Completion offers your own categories before a feed's or a calendar's**: typing "New" in a column head now shows your Newsletter before the feed News. An exact name still comes first.
 - **A blog published without a Base address** no longer links your name to nowhere, and a post's permalink now points at the post itself. The message after publishing says the feeds need a Base address (File ▸ Transfer ▸ Publish): without one, feed readers cannot follow their links.
 
