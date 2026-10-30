@@ -4,6 +4,11 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.72.6 — 2026-10-30
+
+- **View Properties on a datebook view no longer crashes** when ↑ is pressed twice from Filter.
+- **Fixes from a review of the dates and views:** "every 0 days" is no longer taken as a repeat (it could freeze a datebook); a long s (ſ) in an item's text no longer crashes Agendum; "in 50000000 working days" no longer freezes it; a numeric column with more than 15 decimals (from an imported file) shows 15 instead of crashing; a £ or ¥ column no longer turns into scientific notation one character early.
+
 ## 0.72.5 — 2026-10-30
 
 - **Completion offers your own categories before a feed's or a calendar's**: typing "New" in a column head now shows your Newsletter before the feed News. An exact name still comes first.
