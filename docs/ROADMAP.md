@@ -112,7 +112,7 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
   1. ✅ *Done 2026-10-30* (v0.72.3 released, the tap installs on a fresh Mac; `--version` added, v0.72.4). **Releases and the tap** (§ 7): a workflow builds the escript on every tag push into a GitHub Release, notes from `CHANGELOG.md`; a tap, `jamting/homebrew-agendum`, whose formula depends on `erlang`, so installing is one line (`brew install jamting/agendum/agendum`), on Mac and Linux. After each release a job on a fresh `macos-latest` runner installs from the tap and runs `agendum --version` (free for a public repository; check Settings ▸ Billing first). Bundled binaries (Burrito-style) later, if people ask.
   2. ✅ *Done 2026-10-30* (`3113d71`, `3d0b85b`). **The guide and the manual brought up to date** (§ 6) with `update-guide` and `update-manual` (last on 2026-10-26; the extras changed since, and R42), each with a "Written for Agendum X.Y" line that the two skills set on every run.
   3. ✅ *Done 2026-10-30* (`pages/filing.webp`, 221 KB, about 10 s; made by `MIX_ENV=test mix run tools/screenshots/recording.exs`). **The recording** (§ 5): typing an item and seeing it filed, under 20 seconds, looping, as an animated WebP or GIF made with our own renderer (`tools/screenshots`) from a key script, so it can be made again.
-  4. **The front page and the Pages workflow** (§§ 5, 8, 10): a hand-written `pages/index.html` (`site/` is the blog's git-ignored Publish folder) sharing `guide.css`, on one screen: one sentence on what Agendum is, the recording, four one-line doors.
+  4. ✅ *Done 2026-10-30, but for the devlog* (`pages/index.html`, `mix agendum.pages`, `.github/workflows/pages.yml`, started by hand until step 6; the build refuses to finish until `pages/devlog/` has its first post). **The front page and the Pages workflow** (§§ 5, 8, 10): a hand-written `pages/index.html` (`site/` is the blog's git-ignored Publish folder) sharing `guide.css`, on one screen: one sentence on what Agendum is, the recording, four one-line doors.
 
      - **Try it:** the install line, `agendum --demo`, the uninstall line, "Mac and Linux".
      - **Learn it:** in order, each with its length: the guide ("start here"), the manual ("the whole afternoon"), F1 inside the program.
@@ -121,7 +121,7 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
 
      The site is under `/agendum/`, so every link is relative, which the workflow checks; a domain of the owner's own can come later, as GitHub redirects the old address.
   5. **The first devlog post** (§ 8; the owner, written alongside): at least one real post at launch; milestones backfilled after, without a promised pace.
-  6. **Pages switched on** (the owner): Settings ▸ Pages ▸ Source: GitHub Actions.
+  6. **Pages switched on** (the owner): Settings ▸ Pages ▸ Source: GitHub Actions; then `push: branches: [main]` added to `pages.yml`, and `gh workflow run pages.yml` once.
 - [ ] Optional (from the parity plan, 2026-10-26): Utilities ▸ Launch, a shell without quitting Agendum
 - [ ] A public repository of the clone, when it is declared done (meeting 2026-10-21-2324, § 10; ADR 0050): this repository stays the private workshop.
 

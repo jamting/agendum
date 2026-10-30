@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!-- The front page of the site (meeting 2026-10-30-2020, § 5): one sentence,
+     the recording, four doors, on one screen. Written by hand; it shares the
+     guide's look (guide/guide.css). `mix agendum.pages` puts the guide, the
+     manual and the docs beside it, and GitHub Pages publishes the lot
+     (.github/workflows/pages.yml). Every link is relative: the site lives
+     under /agendum/. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wol's Agendum</title>
+<meta name="description" content="Lotus Agenda (1988), rebuilt: type a thought, and it files itself. A personal information manager for the terminal, on Mac and Linux.">
+<link rel="stylesheet" href="guide/guide.css">
+<link rel="alternate" type="application/rss+xml" title="Wol's Agendum: the devlog" href="devlog/rss.xml">
+<style>
+  /* the front page's own layout; the type, colours and fonts are the guide's */
+  .front {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: var(--lh) 1rem calc(var(--lh) * 2);
+  }
+  .front header.title { margin-bottom: var(--lh); }
+  .front header.title h1 { padding-right: 0; margin-bottom: calc(var(--lh) / 2); }
+  .front .pitch { font-size: 1.25rem; font-style: normal; color: var(--ink); }
+  .front .said { margin-top: calc(var(--lh) / 4); }
+  .recording { margin: 0 0 var(--lh); }
+  .recording img {
+    display: block;
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+    margin: 0 auto;
+    box-shadow: 0 0.2rem 1rem rgb(0 0 0 / 0.15);
+  }
+  .recording figcaption {
+    max-width: 640px;
+    margin: calc(var(--lh) / 4) auto 0;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--muted);
+  }
+  /* four doors in a row on a wide window, two by two, then one by one */
+  .doors {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+  @media (max-width: 60rem) { .doors { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 34rem) { .doors { grid-template-columns: 1fr; } }
+  .door { line-height: 1.4rem; }
+  .door h2 {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: var(--heading-spacing);
+    line-height: var(--lh);
+    margin: 0;
+  }
+  .door .who { margin: 0 0 calc(var(--lh) / 2); font-style: italic; color: var(--muted); font-size: 0.95rem; }
+  .door ul { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+  .door li + li { margin-top: calc(var(--lh) / 4); }
+  .door li code { white-space: nowrap; }
+  .door pre.shell { width: auto; max-width: 100%; margin: 0 0 calc(var(--lh) / 2); padding: 0.4rem 0.6rem; font-size: 0.8rem; line-height: 1.3rem; }
+  .front footer { margin-top: calc(var(--lh) * 2); font-size: 0.85rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="front">
+
+<header class="title">
+  <h1>Wol's Agendum</h1>
+  <p class="pitch">Lotus Agenda (1988), rebuilt: type a thought, and it files itself.</p>
+  <p class="said">Wol is how Owl spells his name; said <em>wolz a-JEN-dum</em>.</p>
+</header>
+
+<figure class="recording">
+  <img src="filing.webp" width="720" height="400"
+       alt="Agendum's screen: Rabbit types 'Take Kanga some lettuces on Friday' under Garden; after ENTER it also stands under Friends and Relations, with Kanga and Friday's date filled in.">
+  <figcaption>Rabbit types one sentence under Garden. Agendum files it under Kanga and under Friday by itself.</figcaption>
+</figure>
+
+<main class="doors">
+
+  <section class="door" id="try">
+    <h2>Try it</h2>
+    <p class="who">Five minutes, on a Mac or Linux.</p>
+    <pre class="shell">brew install \
+  jamting/agendum/agendum
+agendum --demo</pre>
+    <ul>
+      <li>Your own file: <code>agendum my.agendum</code></li>
+      <li>Gone again: <code>brew uninstall agendum</code></li>
+      <li>Or download it from the <a href="https://github.com/jamting/agendum/releases">releases</a> (needs Erlang 28)</li>
+    </ul>
+  </section>
+
+  <section class="door" id="learn">
+    <h2>Learn it</h2>
+    <p class="who">For anyone with too many small things to remember.</p>
+    <ul>
+      <li><strong>Start here:</strong> <a href="guide/index.html">Piglet's guide</a>, fifteen minutes</li>
+      <li><strong>The whole afternoon:</strong> <a href="manual/index.html">Owl's manual</a></li>
+      <li><strong>Inside the program:</strong> press <kbd>F1</kbd></li>
+    </ul>
+  </section>
+
+  <section class="door" id="inside">
+    <h2>Look inside</h2>
+    <p class="who">For the curious, in Elixir, under the AGPL.</p>
+    <ul>
+      <li><strong>How it is built:</strong> <a href="docs/architecture.html">the architecture</a></li>
+      <li><strong>What Agenda does:</strong> <a href="docs/spec.html">the specification</a></li>
+      <li><strong>Why:</strong> <a href="docs/architecture.html#architecture-decision-records">the decisions</a></li>
+      <li>The code on <a href="https://github.com/jamting/agendum">GitHub</a>; for a model, <a href="llms.txt">llms.txt</a></li>
+    </ul>
+  </section>
+
+  <section class="door" id="follow">
+    <h2>Follow it</h2>
+    <p class="who">How it is made, a milestone at a time.</p>
+    <ul>
+      <li><a href="devlog/index.html">The devlog</a>, written with Agendum's own blog</li>
+      <li>By <a href="devlog/rss.xml">RSS</a> or <a href="devlog/feed.json">JSON Feed</a></li>
+      <li>The panel's <a href="https://github.com/jamting/agendum/tree/main/docs/meetings">meetings</a> in Owl's house</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  The code is <a href="https://github.com/jamting/agendum/blob/main/LICENSE">AGPL-3.0-only</a>, the documents <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Lotus Agenda was made by Lotus Development in 1988; this is an unofficial rebuild, written with Claude.
+</footer>
+
+</div>
+</body>
+</html>
