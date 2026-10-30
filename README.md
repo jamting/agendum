@@ -81,6 +81,10 @@ mix agendum.starters             # rebuild starters/planner.agendum (a test chec
 mix agendum.starters --samples   # a copy full of sample data, for testing: tmp/planner-samples.agendum
 ```
 
+## Who made it
+
+Wol's Agendum is made by Mattias Jämting, who directs the work and decides, with Claude, Anthropic's AI, which writes most of the code; each commit Claude helped with says so in its `Co-Authored-By` line. It is an unofficial rebuild: Lotus Agenda was made by Lotus Development in 1988, and this project has no connection with Lotus or IBM.
+
 ## Contributing
 
 [`CONTRIBUTING.md`](CONTRIBUTING.md) takes you from a fresh machine to a first change: installing Erlang and Elixir, running the checks, finding your way in the code and the documents, and the workflow for a change.
