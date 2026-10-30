@@ -57,7 +57,7 @@ Done (2026-10-16): every change to a file is a core command (`Agendum.Core.Comma
 ## 5. Documents
 
 - Keys are described in five places: `docs/KEYBOARD.md`, the F1 help (`Agendum.TUI.Render.Help`), `docs/SCREENS.md`, the guide and the manual. No test ties them together. The lasting fix is to generate the key tables from self-describing commands (ROADMAP, after the command layer); until then the `update-guide` and `update-manual` skills catch the drift. Since R65 (2026-10-16) the F1 help is made from the keymaps and commands; `docs/KEYBOARD.md`, `docs/SCREENS.md`, the guide and the manual are still written by hand.
-- Plans sat among the reference documents: `GITHUB.md`, `DOSBOX_STAGING.md`, `KITTY.md`, `RENAME_REPO.md`, `WOL-IN-THE-MACHINE.md`, `MULTIUSER.md` and this one. ✅ Moved to `docs/plans/` (2026-10-14), a group of their own (Plans) in `mix docs`, so `docs/` is what Agendum is. `RENAME_REPO.md` goes once the folder is renamed.
+- Plans sat among the reference documents: `GITHUB.md`, `DOSBOX_STAGING.md`, `KITTY.md`, `RENAME_REPO.md`, `WOL-IN-THE-MACHINE.md` and this one. ✅ Moved to `docs/plans/` (2026-10-14), a group of their own (Plans) in `mix docs`, so `docs/` is what Agendum is. `RENAME_REPO.md` goes once the folder is renamed.
 
 ## 6. Mix commands, skills, tools: no change
 
