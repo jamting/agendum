@@ -162,6 +162,8 @@ header.title h1 {
   border-bottom: var(--rule) solid var(--ink);
 }
 header.title p { color: var(--muted); font-style: italic; margin: 0; }
+/* "Written for Agendum X.Y": a quiet line under the introduction */
+header.title p.written-for { font-style: normal; font-variant: small-caps; letter-spacing: 0.04em; margin-top: calc(var(--lh) * 0.5); }
 header.title svg {
   position: absolute;
   right: 0;

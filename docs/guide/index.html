@@ -43,6 +43,7 @@
   <p>The user guide. Wol's Agendum (Agendum for short) is a personal information
      manager in the spirit of Lotus Agenda (1988), for people with a great many small
      things to remember. Follow a Very Small Animal as he plans a birthday party.</p>
+  <p class="written-for">Written for Agendum 0.72</p>
 </header>
 
 <!-- ===================================================================== -->
@@ -78,13 +79,17 @@ We will follow him through this guide.</div>
 <h2>2. Getting started</h2>
 <p class="in-which">In Which Piglet Opens Wol's Agendum and Finds the Screen Has Three Parts</p>
 
-<pre class="shell">./agendum party.agendum      # open (or start) a file
-./agendum                    # ask which file, offering the last one used
-./agendum --rabbit           # try it with Rabbit's file from the manual
-cp starters/planner.agendum my.agendum   # or begin from the ready-made planner
-./agendum --demo             # or with the sample from Agenda's patent
-./agendum OLD.AG             # bring in a file from Lotus Agenda itself
-./agendum --help             # every option</pre>
+<p>On a Mac or on Linux, <a href="https://brew.sh">Homebrew</a> installs it, and Erlang,
+which it runs on, with it:</p>
+<pre class="shell">brew install jamting/agendum/agendum</pre>
+
+<pre class="shell">agendum party.agendum      # open (or start) a file
+agendum                    # ask which file, offering the last one used
+agendum --rabbit           # try it with Rabbit's file from the manual
+agendum --demo             # or with the sample from Agenda's patent
+agendum OLD.AG             # bring in a file from Lotus Agenda itself
+agendum --help             # every option
+agendum --version          # which version you have, for a question or a bug report</pre>
 
 <p>Agendum greets you with a title screen for a moment (any key skips it). Started
 without a file, it then asks <em>File to open or create</em>, offering the file you
@@ -284,6 +289,14 @@ Pooh, Owl, Rabbit, Kanga, Roo and Eeyore beneath it, then <em>Presents</em>,
 ♪ before a category with a note, ☼ before a date category and <code>#</code> before a
 numeric one, and <code>┌ ├ └</code> joining the children of an exclusive family. A new
 name is typed on the control panel's second line.</p>
+
+<p>When every other child of a family is a section of a view, a new child added in the
+category manager (or typed as a new name in a column) becomes a section of that view
+too, next to its brothers and sisters, as in Agenda. <strong>Category ▸ Add</strong> and
+moving a category into the family leave the views alone.</p>
+
+<aside class="tip">If a view of Piglet's has a section for each of People's children,
+adding <em>Tigger</em> under People gives him a section there at once.</aside>
 
 <p>From a view, <strong>Category ▸ Properties</strong> and <strong>Category ▸ Discard</strong>
 act on the category of the section head the highlight is on.</p>
@@ -498,7 +511,7 @@ growing some near his front door. And, so as not to be late:
 <h3>In another language, or your own way</h3>
 <p>Dates can be typed in Swedish too, with English as a fallback. Choose the languages
 in <strong>Utilities ▸ Customize</strong>, or for one session:</p>
-<pre class="shell">./agendum --lang=swedish --fallback=english party.agendum</pre>
+<pre class="shell">agendum --lang=swedish --fallback=english party.agendum</pre>
 <p>Then “på fredag kl 15”, “i morgon”, “varje måndag” and “den 5 november” work as
 well. Only the reading of dates changes; menus and messages stay in English.</p>
 
@@ -725,7 +738,10 @@ the file: it is saved encrypted, and opening it asks for the password. Keep it s
 for a forgotten password cannot be recovered. <em>Empty trash</em> says when discarded
 items go for good, and <em>File statistics</em> counts the file: the items, how many
 have notes, how many are in the trash, the categories, and on average how many items
-each category has and how many categories each item is in.</p>
+each category has and how many categories each item is in. Its last row, <em>Update
+defaults</em>, keeps this file's settings (backups, trash, the date format and the
+other date settings, automatic assignment) as your own for every new file you start
+from then on; files you already have keep theirs.</p>
 
 <div class="story">The party is meant to be a surprise, so Piglet gives his file a
 password. Pooh, who sometimes borrows things, would not know what to type.</div>
@@ -743,6 +759,11 @@ a change to save.</p>
 “Save changes first?” if there are any: <kbd>Y</kbd> saves, <kbd>N</kbd> doesn't,
 <kbd>ESC</kbd> stays where you are.</p>
 
+<p>Should Agendum ever crash with changes not yet saved, it keeps them beside the file,
+in <code>party@.agendum</code>, and the next time you open the file it asks whether to
+open them. <em>Yes</em> brings them back, to save as usual; <em>No</em> moves them to the
+Trash.</p>
+
 <p>If something else changed the file since Agendum read it (another Agendum, or a
 program that syncs your files), Agendum asks before saving over it; <em>No</em> leaves it
 alone, and <strong>File ▸ Maintenance ▸ MakeCopy</strong> saves yours under another
@@ -755,7 +776,7 @@ opens such a file again, as a new file to save under a name. Nothing is lost on 
 way: categories, items, notes, dates, views and settings all come back.</p>
 
 <p>Import also opens a file from Lotus Agenda itself (<code>.AG</code>), or start Agendum
-with one: <code>./agendum OLD.AG</code>. It becomes an Agendum file beside it, with its
+with one: <code>agendum OLD.AG</code>. It becomes an Agendum file beside it, with its
 categories, items, notes, dates, views and rules (asking for its password, if it has
 one). A box then reports what came over, what was left out (macros and separate note
 files, so far), and any item Agendum files differently from Agenda.</p>
@@ -776,11 +797,24 @@ nothing in the file is lost.</p>
 <p>If a calendar you use is published on the web (an address ending in
 <code>.ics</code>, or starting with <code>webcal://</code>), Agendum can bring its events
 in as items, once the <a href="#extras">extras</a> are on.
-<strong>File ▸ Transfer ▸ Calendars</strong> lists your subscriptions;
-<kbd>INS</kbd> adds one, asking for the address and a name, which becomes the category
-its events go in. Agendum reads it at once and then every hour while it runs
-(<kbd>F</kbd> changes how often, <kbd>A</kbd> how far ahead, <kbd>ENTER</kbd> reads it now,
-<kbd>DEL</kbd> unsubscribes). Each event becomes an item with its date and time; a
+<strong>File ▸ Transfer ▸ Calendars</strong> lists your subscriptions. <kbd>INS</kbd> (or
+<kbd>CTRL-N</kbd>) asks for the address and reads the calendar at once, then offers the
+calendar's own name for its category, which you may change; one that cannot be read is
+not subscribed, and you are told why. The calendars' categories sit together in a
+family called <em>Calendars</em>, folded away in the category manager
+(<kbd>ALT-=</kbd> opens it). They are the calendar's to fill: to rename one, use
+<kbd>F2</kbd> here.</p>
+
+<table>
+  <tr><th>In the Calendars box</th><th>Press</th></tr>
+  <tr><td>Read the highlighted calendar now; read them all</td><td><kbd>ENTER</kbd>; <kbd>ALT-ENTER</kbd></td></tr>
+  <tr><td>Subscribe to another</td><td><kbd>INS</kbd> or <kbd>CTRL-N</kbd></td></tr>
+  <tr><td>Rename it, and its category</td><td><kbd>F2</kbd></td></tr>
+  <tr><td>How often it is read (every hour at first), how far ahead (90 days)</td><td><kbd>F6</kbd></td></tr>
+  <tr><td>Unsubscribe (asks whether to throw its items away too)</td><td><kbd>DEL</kbd> or <kbd>F4</kbd></td></tr>
+</table>
+
+<p>Each event becomes an item with its date and time; a
 repeating one becomes a repeating item. When an event ends is kept too, in a date
 category called <em>Ends</em>, which a <a href="#datebook">datebook</a> can use to show
 the event in every hour it lasts. An event set in another time zone is moved to your
@@ -791,6 +825,28 @@ own notes, categories and done marks stay.</p>
 Piglet subscribes to it as <em>Roo's swimming</em>, so the party won't clash with
 Thursday's lesson.</div>
 
+<h3>News from the web</h3>
+<p><strong>File ▸ Transfer ▸ Feeds</strong> is a quiet news reader for RSS and Atom
+feeds. It works as the Calendars box does (<kbd>INS</kbd>, <kbd>ENTER</kbd>,
+<kbd>ALT-ENTER</kbd>, <kbd>F2</kbd>, <kbd>F6</kbd>, <kbd>DEL</kbd>), and <kbd>F7</kbd> /
+<kbd>F8</kbd> bring in or write out a list of feeds as OPML, the file other news readers
+use. Each entry becomes an item under <em>Feeds</em> and the feed's name, and the first
+feed makes a <em>News</em> view, newest first.</p>
+
+<p>Nothing asks to be read: there are no unread counts. An entry fades away after 30
+days (<kbd>F6</kbd> changes how long), unless you kept it by giving it a note, a
+category of your own or a Zettel id. <kbd>F4</kbd> dismisses one, and <kbd>CTRL-V</kbd>
+(<strong>Item ▸ Open link</strong>) opens its page in your browser.</p>
+
+<h3>A small blog</h3>
+<p><strong>File ▸ Transfer ▸ Publish</strong> makes a website from the items in a
+category (<em>Posts</em> at first): the item's text is the title, its note the post,
+written in Markdown. The box holds the blog's settings, which folder it goes to and how
+it is uploaded (rsync or SFTP, or not at all); <kbd>F8</kbd> and <kbd>ALT-F8</kbd> put a
+setting, or all of them, back as a new blog has them. <kbd>ENTER</kbd> first shows what
+would change, and <kbd>ENTER</kbd> again writes it. The pages are plain, quick and
+typeset in the same fonts as this guide, with RSS and JSON feeds for readers.</p>
+
 <h3>Looks</h3>
 <p>Agendum looks as Agenda 2.0 did on a colour screen: grey, with blue and cyan. Other
 themes are in <strong>Utilities ▸ Customize</strong>: <em>Mono</em>, for plain terminals,
@@ -798,20 +854,21 @@ which uses only bold, dim, underline and reverse; <em>Borland</em>, yellow on bl
 the old DOS programming tools were; and the colours of some well-liked terminal schemes,
 <em>Modus Operandi</em> (light), <em>Modus Vivendi</em> (dark), <em>Alabaster</em>,
 <em>Zenburn</em> and <em>Ayu</em>. For one session:</p>
-<pre class="shell">./agendum --theme zenburn party.agendum
-./agendum --mono party.agendum      # the same as --theme mono
-NO_COLOR=1 ./agendum party.agendum  # mono, unless you chose a theme</pre>
+<pre class="shell">agendum --theme zenburn party.agendum
+agendum --mono party.agendum      # the same as --theme mono
+NO_COLOR=1 agendum party.agendum  # mono, unless you chose a theme</pre>
 <p>In a terminal that shows 24-bit colour, the colours are exact.</p>
 
 <h3 id="planner">A ready-made planner</h3>
 <p>Agenda came with ready-made files to start from, and Agendum with one of them: the
-<em>Activities Planner</em>, in <code>starters/planner.agendum</code>. Copy it and open
-the copy. It has no items yet, but categories for people, projects, tasks, activities
+<em>Activities Planner</em>, <code>starters/planner.agendum</code> in Agendum's
+<a href="https://github.com/jamting/agendum/tree/main/starters">source</a>. Download it
+and open the copy. It has no items yet, but categories for people, projects, tasks, activities
 (calls, meetings, mail …), priorities and expenses, which file what you type, and views
 to go with them: Tasks, Calls, Overdue, expense reports, datebooks for today, tomorrow,
 this week and this month. Three macros come with it: change the date settings, hide or
 show done items, and print the view.</p>
-<pre class="shell">cp starters/planner.agendum ~/planner.agendum && ./agendum ~/planner.agendum</pre>
+<pre class="shell">agendum ~/Downloads/planner.agendum</pre>
 
 <div class="story">Rabbit, of course, starts from the planner, and has his
 friends-and-relations filed under <em>People</em> by lunchtime.</div>
@@ -902,6 +959,7 @@ letters, with Option set to work as the Meta key in your terminal. <kbd>F1</kbd>
   <tr><td><kbd>CTRL-PGUP</kbd> / <kbd>CTRL-PGDN</kbd></td><td>Previous / next section</td><td><kbd>⌥↑</kbd> / <kbd>⌥↓</kbd></td></tr>
   <tr><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td><td>Undo / redo</td><td></td></tr>
   <tr><td><kbd>CTRL-X</kbd></td><td>Run a command by its name (part of it, or its initials)</td><td></td></tr>
+  <tr><td><kbd>CTRL-V</kbd></td><td>Open the item's web link in the browser (with the extras on)</td><td></td></tr>
   <tr><td><kbd>CTRL-S</kbd> / <kbd>CTRL-O</kbd></td><td>Save / open</td><td><kbd>ALT-W</kbd> / <kbd>ALT-G</kbd></td></tr>
   <tr><td><kbd>CTRL-P</kbd> / <kbd>CTRL-Q</kbd></td><td>Print to file / quit</td><td><kbd>ALT-Q</kbd></td></tr>
 </table>
@@ -936,6 +994,13 @@ letters, with Option set to work as the Meta key in your terminal. <kbd>F1</kbd>
 </table>
 
 <table>
+  <tr><th>Key</th><th>In the Feeds and Calendars boxes (with the extras on)</th></tr>
+  <tr><td><kbd>ENTER</kbd>; <kbd>ALT-ENTER</kbd></td><td>Read the highlighted one now; read them all</td></tr>
+  <tr><td><kbd>INS</kbd>; <kbd>F2</kbd>; <kbd>F6</kbd>; <kbd>DEL</kbd></td><td>Subscribe; rename; properties; unsubscribe (Mac: <kbd>CTRL-N</kbd>, <kbd>F4</kbd>)</td></tr>
+  <tr><td><kbd>F7</kbd> / <kbd>F8</kbd></td><td>In Feeds: import / export a list of feeds (OPML)</td></tr>
+</table>
+
+<table>
   <tr><th>Key</th><th>In a box</th></tr>
   <tr><td><kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd>, <kbd>TAB</kbd>; <kbd>HOME</kbd> / <kbd>END</kbd></td><td>Move between settings; the first / last (fn-← / fn-→ on a Mac)</td></tr>
   <tr><td><kbd>SPACE</kbd>; a letter</td><td>Change or open a setting; pick the choice starting with it</td></tr>
@@ -950,9 +1015,8 @@ letters, with Option set to work as the Meta key in your terminal. <kbd>F1</kbd>
 <h2>15. Still to come</h2>
 <p class="in-which">In Which Eeyore Gets a Balloon, and a Pot to Put It In</p>
 <p class="soon">Agendum now does what Lotus Agenda 2.0 did, and looks as it looked.
-This guide will grow with what comes after. Planned next: defaults of your own for new
-files, such as the date format; and, further off, Agendum in a web browser, with keys
-you choose yourself, where friends can share a file.</p>
+This guide will grow with what comes after: further off, Agendum in a web browser,
+with keys you choose yourself, where friends can share a file.</p>
 
 <div class="story">And the party? Eeyore got a balloon, though it didn't stay round for
 long, and a pot to put it in, which turned out to be exactly what he needed. Piglet
