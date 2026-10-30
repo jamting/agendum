@@ -99,17 +99,24 @@ defmodule Agendum.Core.NumberFormat do
     text = fixed(value, f, opts)
 
     case opts[:width] do
-      width when is_integer(width) and byte_size(text) > width -> scientific(value)
-      _ -> text
+      # characters, not bytes: £ and ¥ are two bytes but one column
+      width when is_integer(width) ->
+        if String.length(text) > width, do: scientific(value), else: text
+
+      _ ->
+        text
     end
   end
 
   defp fixed(value, f, opts) do
     decimal = Keyword.get(opts, :decimal, ".")
     thousands = Keyword.get(opts, :thousands, ",")
-    rounded = Float.round(value * 1.0, f.decimals)
+    # a float holds at most 15 decimals (`Float.round/2` refuses more), and
+    # a file can ask for up to 31 (review group d)
+    decimals = min(f.decimals, 15)
+    rounded = Float.round(value * 1.0, decimals)
     negative = rounded < 0
-    digits = :erlang.float_to_binary(abs(rounded), decimals: f.decimals)
+    digits = :erlang.float_to_binary(abs(rounded), decimals: decimals)
 
     {whole, fraction} =
       case String.split(digits, ".") do

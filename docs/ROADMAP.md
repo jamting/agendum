@@ -34,6 +34,11 @@ The order of the earlier steps was Marie's (the licence meeting and the tidy pas
 
 ### Fixes and polish
 
+- [ ] From the review of group d (2026-10-30), to check before fixing:
+
+  - **"nth quarter" with a fiscal year** (`DateParser`, R14e): with Quarter start April and today 2026-02-15, "fourth quarter" gives 2027-01-01, though the current fourth quarter is January to March 2026 ("this quarter" gives 2026-01-01). Check what Agenda says in DOSBox first.
+  - **Link with other sections** (`ViewColumns.same_settings?`, R23 / Column Properties): two columns are linked when head, type and width agree, though the format (Name only, Parent:Category …), the note line and the title differ; SPEC asks for the same format too. Check in Agenda which settings must agree.
+- [ ] Speed, from the review of group d (2026-10-30), with the view cache (Sharpen the saw) when the evidence asks: a view's search compiles its patterns again for every item (`Search.matches?/2`), and sorting works out each item's sort key at every comparison (`ViewModel.sort/3`), instead of once
 - [ ] The extras' answers handled beside them (2026-10-27, found moving their messages): `Update.Results` (a feed's and calendar's read, an OPML list, an upload) and `Update.Prompts` (subscribing, unsubscribing, the SFTP password) still hold the extras' logic, listed as doors in `architecture_test.exs`; move each into a module beside its extra, so the shared modules only dispatch (the owner's modularity, 2026-10-27)
 - [ ] Optional (the owner, 2026-10-27): try v0.69.3's main fix by hand: open a second file while a feed is being read, and see its entries land only in the file that asked (the richer fuzz walks already check it)
 - [ ] Found by the parser property tests (2026-10-27, v0.69.2), not urgent: Markdown with thousands of nested `>` quotes is still quadratic (20,000 levels about 1 s); a calendar's sync costs about 1 ms an event (a 2,000-event calendar about 2 s, linear) — check whether it runs in the TUI's process and would freeze the screen

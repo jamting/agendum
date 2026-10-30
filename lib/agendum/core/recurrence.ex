@@ -47,6 +47,8 @@ defmodule Agendum.Core.Recurrence do
   """
   @spec occurrences(t, Date.t(), Date.t(), Date.t()) :: [Date.t()]
   def occurrences(%__MODULE__{} = rule, base, from, to) do
+    rule = sane(rule)
+
     # `Stream.iterate/2` counts 0, 1, 2 … lazily; `take_while` stops at the
     # first occurrence past `to`, so only the dates needed are worked out
     rule
@@ -70,12 +72,19 @@ defmodule Agendum.Core.Recurrence do
   @doc "The first occurrence on or after `date` (the base date when `date` is before it)."
   @spec first(t, Date.t(), Date.t()) :: Date.t()
   def first(%__MODULE__{} = rule, base, date) do
+    rule = sane(rule)
+
     rule
     |> first_index(base, date)
     |> Stream.iterate(&(&1 + 1))
     |> Stream.map(&nth(rule, base, &1))
     |> Enum.find(&(Date.compare(&1, date) != :lt))
   end
+
+  # A rule read from a file with `every` below 1 would never move on (and
+  # divide by zero): it counts as every 1 (review group d)
+  defp sane(%__MODULE__{every: n} = rule) when is_integer(n) and n >= 1, do: rule
+  defp sane(rule), do: %{rule | every: 1}
 
   # The `k`th occurrence, the base date the 0th, counted from the base date
   defp nth(%__MODULE__{unit: :day, every: n}, base, k), do: Date.add(base, k * n)

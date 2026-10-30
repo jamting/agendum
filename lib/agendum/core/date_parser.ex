@@ -464,7 +464,16 @@ defmodule Agendum.Core.DateParser do
 
         captures = Enum.map(groups, &capture(text, &1))
 
-        case interpreter.(meaning, captures, pack) do
+        # `catch` takes what `word/3` throws (a `throw` is Elixir's
+        # non-local return, not an error)
+        result =
+          try do
+            interpreter.(meaning, captures, pack)
+          catch
+            :unknown_word -> :error
+          end
+
+        case result do
           {:ok, value} -> [{start, -len, position, value}]
           :error -> []
         end
@@ -691,6 +700,8 @@ defmodule Agendum.Core.DateParser do
 
   # Every `n` units, starting today.
   defp recurring(_n, :working_day, _today), do: :error
+  # "every 0 days" never moves on (review group d)
+  defp recurring(n, _unit, _today) when n < 1, do: :error
   defp recurring(n, :quarter, today), do: recurring(3 * n, :month, today)
 
   defp recurring(n, unit, today) do
@@ -703,7 +714,16 @@ defmodule Agendum.Core.DateParser do
     {:ok, {:recurring, today, rule}}
   end
 
-  defp word(pack, kind, word), do: pack.words() |> Map.fetch!(kind) |> Map.fetch!(word)
+  # A word the rule's regex matched but the language pack does not list:
+  # the regex ignores case the Unicode way, so "Tueſday" (a long s) matches
+  # "tuesday" though `String.downcase/1` leaves the ſ (review group d). It
+  # is no date then; `matches/3` catches the throw.
+  defp word(pack, kind, word) do
+    case pack.words() |> Map.fetch!(kind) |> Map.fetch(word) do
+      {:ok, value} -> value
+      :error -> throw(:unknown_word)
+    end
+  end
 
   defp relative(_pack, nil), do: 0
   defp relative(pack, which), do: word(pack, :relative, which)
@@ -785,7 +805,18 @@ defmodule Agendum.Core.DateParser do
   defp shift(today, n, :working_day, s), do: {:ok, working_days(today, n, s)}
 
   # `n` working days on (or back, when negative): days inside the week.
+  # Whole weeks are jumped at once (each holds the same number of working
+  # days, at least one), and only the rest is stepped day by day, so "in
+  # 50000000 working days" does not freeze the screen (review group d).
   defp working_days(date, 0, _s), do: date
+
+  defp working_days(date, n, s) when abs(n) > 14 do
+    per_week = Enum.count(1..7, &DateSettings.working_day?(s, &1))
+    # one week fewer than fit, so the steps left always end on a working day
+    weeks = div(abs(n), per_week) - 1
+    step = if n > 0, do: 1, else: -1
+    working_days(Date.add(date, 7 * weeks * step), n - weeks * per_week * step, s)
+  end
 
   defp working_days(date, n, s) do
     step = if n > 0, do: 1, else: -1

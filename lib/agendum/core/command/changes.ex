@@ -57,7 +57,10 @@ defmodule Agendum.Core.Command.Changes do
     touched = Enum.flat_map(@about_items, &touched_items(&1, before, after_))
     items = objects.items
     new_or_gone = items.added ++ items.removed
-    changed = Enum.sort(Enum.uniq(items.changed ++ (touched -- new_or_gone)))
+    # `--` takes away one copy of each id only, and an added item can be
+    # touched several times (a number and a suggestion), so reject them all
+    changed =
+      Enum.sort(Enum.uniq(items.changed ++ Enum.reject(touched, &(&1 in new_or_gone))))
 
     Map.merge(objects, %{
       items: %{items | changed: changed},
