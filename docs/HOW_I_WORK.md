@@ -82,7 +82,7 @@ The panel advises; it never votes. I decide.
 | What is done                           | [`ROADMAP_DONE.md`](ROADMAP_DONE.md), by milestone                                             |
 | Every document and what it is for      | [`INDEX.md`](INDEX.md)                                                                         |
 | Thoughts waiting for a meeting         | Thoughts ▸ Next meeting in my project file (`$AGENDUM_PROJECT_FILE`), read by `mix agendum.thoughts` |
-| Reviews, meetings, study               | `docs/reviews/`, `docs/meetings/YYYY-MM-DD-HHMM/`, the Wolery's `docs/study/STUDY_PLAN.md` (private); a private passage of a review or minutes goes into the Wolery beside it, the creek line here |
+| Reviews, meetings, study               | `docs/reviews/`, `docs/meetings/YYYY-MM-DD-HHMM/`, the Wolery's `docs/study/STUDY_PLAN.md` (private); a private passage of a review or minutes goes into the Wolery beside it, the creek line here (a review's business value is left out of the public minutes altogether, from 2026-10-30) |
 | A record of every session              | the Wolery's `docs/summaries/` (committed since 2026-10-23, private, my private repository since moving day 2026-10-30; kept complete, alike in shape, to import into Agendum one day with STF) |
 | What changed per version               | [`../CHANGELOG.md`](../CHANGELOG.md), and the `vX.Y.Z` tags                                    |
 | Why things are as they are             | `docs/adr/`, listed in [`ARCHITECTURE.md`](ARCHITECTURE.md)                                    |

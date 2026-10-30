@@ -46,7 +46,7 @@ Not every expert attends every meeting; it depends on the subject. **Owl** (host
 This repository is public (moving day, 2026-10-30; ADR 0050). What is private never goes into it: the owner's own plans beyond the open program (what the creek lines stand for; the list is in `CLAUDE.local.md`'s Rules and the Wolery's ADR 0050), and the real names behind the pseudonyms.
 
 - **Where it goes**: into the Wolery (the owner's private repository; its path is in `CLAUDE.local.md`), in a file beside the public one: `docs/reviews/YYYY-MM-DD-private.md` for a review, `docs/meetings/YYYY-MM-DD-HHMM/private.md` for a meeting. It is written under the same § number and heading, so the two read together.
-- **What the public text shows** in its place: the creek line, *[A page here was soaked in the creek. — Rabbit]* (its story is in `docs/INDEX.md`).
+- **What the public text shows** in its place: the creek line, *[A page here was soaked in the creek. — Rabbit]* (its story is in `docs/INDEX.md`). The one exception is a review's business value, which the public minutes leave out altogether (Judge, below).
 - **The commit**: the private file is committed and pushed in the Wolery (`git -C <the Wolery>`), the public text here.
 - **Without a `CLAUDE.local.md`** (a contributor's checkout): leave such passages out altogether.
 
@@ -101,6 +101,8 @@ Architecture · Code quality · Tests and verification · Documentation · Helpf
 
 **Business value is private** (Private passages, above): its score, its trend and its why go only into the Wolery's file, under § 7 Scorecard, and the public scorecard leaves its row out.
 
+**The public minutes do not mention business value at all** (the owner, 2026-10-30: a creek line in every review would soon grow old). § 12 is written only in the Wolery's file; the public minutes have no § 12 heading and no creek line, and go from § 11 to § 13, so the other sections keep the numbers earlier reviews use. Nor does business value come up anywhere else in the public text (the agenda, the verdict, § 19). Reviews before 2026-10-30 keep their creek line unchanged.
+
 (Agent readiness was added after the first review, Tidiness and scope when Little Marie-Who-Folds joined: each one's trend is "first" the first time it is scored.)
 
 ## 3. Write the minutes
@@ -133,7 +135,7 @@ named people, written by Claude, not their words; made with the
 ## § 9 Code quality                (José)
 ## § 10 Tests and verification     (José, Joe)
 ## § 11 Helpfulness to users       (David, Carsten, Mitch, Russell)
-## § 12 Business value             (Mitch, Carsten; private: the creek line here, the section in the Wolery)
+                                   (§ 12 Business value: Mitch, Carsten; only in the Wolery's file, left out here)
 ## § 13 Vision                     (Mitch, David; Marie on scope)
 ## § 14 Agent readiness            (Claude, with whoever joins in)
 ## § 15 Tidiness and scope        (Marie, with whoever joins in: what to put in its place, what to let go, scope creep)

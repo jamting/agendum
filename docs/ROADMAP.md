@@ -13,7 +13,7 @@ Small, testable increments: the open work, by area.
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
 1. Review the rest of the code locally, groups e to h (group d done 2026-10-30, v0.72.6; Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
-2. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-1524, § 14, tabled)
+2. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-1524, § 14, tabled); hold it before the next feature, now that the program is public, and leave the roadmap shorter than it was (expert review 2026-10-30, § 18.3)
 
 Go for the public repository was given at the practical meeting (meeting 2026-10-28-1911, § 13), on conditions, all met on 2026-10-30 (`ROADMAP_DONE.md`).
 
@@ -34,12 +34,24 @@ The order of the earlier steps was Marie's (the licence meeting and the tidy pas
 
 ### Fixes and polish
 
+- [ ] From the local review of group e, the keys (2026-10-30; read, not yet reproduced): reproduce each with a test before fixing, as v0.72.7.
+
+  - **An empty prompt answer is dropped too early** (`Update.Prompts.prompt_submitted/3`): clearing a number in Item Properties (F4 on "150", delete, ENTER) keeps it, and an unindexed text cannot be taken out. Check in Agenda what an empty answer does first.
+  - **ALT-F9 APPEND in the note of MAIN or a special category** (`Update.Notes.append_fitting/6`): the rename is refused, but the word still leaves the note, and F5 saves it shortened.
+  - **A When date that discards its item** (ALT-F2 with a discard action, R15b; `Update.Prompts`, `{:when, item_id}`): the next line reads the discarded item and crashes.
+  - **ALT-F8 GETITMS with discard** may discard the item whose note is open, losing what was pasted and typed there.
+  - **A refused command still moves the screen on** (`State.run/2` drops the refusal): removing a column moves the highlight, ALT-Y says "Yanked back" over the error.
+  - **"Item text cannot be empty (use ALT-F4 …)"** shows after the edit line has already closed (check Agenda's message first).
+  - **OVR is lost** after Search/Replace or File ▸ Clear in a note (R64e).
+  - **A search match stays highlighted** on old columns after ALT-D, ALT-T or TAB in a note.
+  - **Later:** a key in a column builds the view model up to four times (`Layout.current_column`); APPEND and MAKEITM keep their rules (the 350 and 69 characters' room) in the TUI, which CLAUDE.md rule 6 puts in the core.
+- [ ] Measure publishing once on the owner's devlog (expert review 2026-10-30, § 18.6): on 2026-10-26 publishing the meeting blog took 6.5 s in the update step (session log 2026-10-26 21:35), before the parser fixes of 2026-10-27; if it is still slow, it is the next slow answer to fix
 - [ ] From the review of group d (2026-10-30), to check before fixing:
 
   - **"nth quarter" with a fiscal year** (`DateParser`, R14e): with Quarter start April and today 2026-02-15, "fourth quarter" gives 2027-01-01, though the current fourth quarter is January to March 2026 ("this quarter" gives 2026-01-01). Check what Agenda says in DOSBox first.
   - **Link with other sections** (`ViewColumns.same_settings?`, R23 / Column Properties): two columns are linked when head, type and width agree, though the format (Name only, Parent:Category …), the note line and the title differ; SPEC asks for the same format too. Check in Agenda which settings must agree.
 - [ ] Speed, from the review of group d (2026-10-30), with the view cache (Sharpen the saw) when the evidence asks: a view's search compiles its patterns again for every item (`Search.matches?/2`), and sorting works out each item's sort key at every comparison (`ViewModel.sort/3`), instead of once
-- [ ] The extras' answers handled beside them (2026-10-27, found moving their messages): `Update.Results` (a feed's and calendar's read, an OPML list, an upload) and `Update.Prompts` (subscribing, unsubscribing, the SFTP password) still hold the extras' logic, listed as doors in `architecture_test.exs`; move each into a module beside its extra, so the shared modules only dispatch (the owner's modularity, 2026-10-27)
+- [ ] The extras' answers handled beside them (2026-10-27, found moving their messages): `Update.Results` (a feed's and calendar's read, an OPML list, an upload) and `Update.Prompts` (subscribing, unsubscribing, the SFTP password) still hold the extras' logic, listed as doors in `architecture_test.exs`; move each into a module beside its extra, so the shared modules only dispatch (the owner's modularity, 2026-10-27) (carried by expert review 2026-10-30, § 18.8)
 - [ ] Optional (the owner, 2026-10-27): try v0.69.3's main fix by hand: open a second file while a feed is being read, and see its entries land only in the file that asked (the richer fuzz walks already check it)
 - [ ] Found by the parser property tests (2026-10-27, v0.69.2), not urgent: Markdown with thousands of nested `>` quotes is still quadratic (20,000 levels about 1 s); a calendar's sync costs about 1 ms an event (a 2,000-event calendar about 2 s, linear) — check whether it runs in the TUI's process and would freeze the screen
 - [ ] Hidden values of a date or numeric category (owner, 2026-10-25): a category made date or numeric keeps its short name, Also match words and conditions, as Agenda does, but its box no longer shows them (R6a). Decide what to do with them: show them somewhere (Statistics, the manager), clear them on conversion, or leave them; check first whether any still has an effect (a short name in a narrow column head, a condition)
@@ -53,13 +65,15 @@ The order of the earlier steps was Marie's (the licence meeting and the tidy pas
 
 Tools and checks that make every later change faster and safer. Each is small; the command layer they made safer is done (R66, ADR 0036, in `ROADMAP_DONE.md`). From the expert review of 2026-10-16 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
+- [ ] Fuzz walks that start inside every box (expert review 2026-10-30, § 18.1): as the Extras' boxes already are (`fuzz_test.exs`, `press_shell`), a share of the walks opens each box in the registry, on a standard view and on a datebook view of each period, then presses random keys. The owner's crash of 2026-10-30 (View Properties on a datebook, ↑ from Filter) would have been found this way; its likely cousins are the dozen places in the TUI that count with an index `Enum.find_index/2` may not find. Within the fast-test budget; the long runs in `mix agendum.fuzz`
+- [ ] Check the nightly fuzz in the public repository (expert review 2026-10-30, § 18.4): its first run is the night of 2026-10-30; see that it ran, and that a failure uploads its log
 - [ ] Kept fast (the owner, 2026-10-26: "I don't want it to take up very much time"): the four robustness items (property tests, hostile files, richer and out-of-order walks; done 2026-10-27, in `ROADMAP_DONE.md`) add at most about 5 seconds to `mix check` (a few dozen inputs per parser, the hostile files, short richer and out-of-order walks); the long runs go to `mix agendum.fuzz` and the nightly CI. Measure `mix check` before and after
 - [ ] The smoke tool's ALT-F3 (found 2026-10-28, v0.72.3): `tools/smoke/smoke.py ALT-F3` does not open the Macro Manager; the key bar shows its ALT labels instead, as if ALT were held, though `ESC [ 13 ; 3 ~` decodes as ALT-F3 in `Terminal.Keys` and the unit tests open the manager. Find whether the tool or the decoder splits the sequence, so modified F-keys can be smoke-tested
 - [ ] Optional (the owner, 2026-10-30): one git-ignored link, `docs/private/`, to the owner's private documents (the Wolery's `docs/`), so they show beside the public ones in the editor (an Obsidian vault on `docs/`) and the tasks find them. Git never follows a link, so a mistaken `git add` cannot carry their text here.
 
   - **First check** that a linked folder breaks nothing: `mix docs`, the docs-index test, Obsidian, and a fresh clone without the link.
   - **Then** the skills, `mix agendum.thoughts` and the owner's local notes use `docs/private/…` instead of the Wolery's path.
-- [ ] Review the rest of the code locally (`docs/CODE_REVIEW_SLICES.md` § The rest): about 35,000 lines in five groups, each with `/code-review high <paths>`, its findings fixed as a release of its own, as the cloud slices were; group d done (2026-10-30, v0.72.6: 10 findings, 6 fixed, in about 6 minutes of review), e to h left (`tools/review/slice.sh --files e`)
+- [ ] Review the rest of the code locally (`docs/CODE_REVIEW_SLICES.md` § The rest): about 35,000 lines in five groups, each with `/code-review high <paths>`, its findings fixed as a release of its own, as the cloud slices were; group d done (2026-10-30, v0.72.6: 10 findings, 6 fixed, in about 6 minutes of review); group e reviewed (2026-10-30, its findings in Fixes and polish, to fix next); f, g and h left, one a session, h split in two if it stays at 10,700 lines (expert review 2026-10-30, § 18.2)
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key.
 
   - **Measured** 2026-10-16, a cursor move: 300 items 6 ms in `Update` + 11 ms in `Render`; 3,000 items 61 + 45 ms; 10,000 items 205 + 231 ms.
@@ -97,6 +111,7 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
 
 ### Housekeeping
 
+- [ ] One line per meeting with what it decided (expert review 2026-10-30, § 18.7): in `docs/INDEX.md` or a short list in `docs/meetings/`, so a decision can be found by person or model without reading the 388 KB of minutes
 - [ ] The licence and the CLA checked by a lawyer before the first outside pull request is merged (meeting 2026-10-28-1911, § 9; ADR 0051; `plans/GITHUB.md` § 7, step 7; a Swedish business lawyer, *affärsjurist*).
 
   - **Publishing does not wait for it;** the CLA bot blocks merging without a signature, and the public README says contributions open later.
@@ -105,6 +120,7 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
 - [ ] Our own `.AG` test files without a starter underneath (meeting 2026-10-28-1911, § 7, found doing it): RICH.AG and DATES.AG were made in Agenda on Lotus's Planner starter (54 of their 55 categories are Planner's) and UX.AG on Information Sifter; they stay in the public copy, but could be made again from a blank Agenda file in DOSBox (`tools/agformat/agenda_driver.py`), with the tests' expectations moved to the new files; not before publishing
 - [ ] The name's story and how it is said (meeting 2026-10-28-1233, § 5; ADR 0019, update 2026-10-28): one line, "Wol is how Owl spells his name", and "said wolz a-JEN-dum", where the name first meets a reader: the About help topic (`lib/agendum/tui/help/topics/about-agendum.txt`, built with the `feature` skill); the README (the tidy pass, 2026-10-28) and the site's front page (2026-10-30) have both
 - [ ] Optional (from the parity plan, 2026-10-26): Utilities ▸ Launch, a shell without quitting Agendum
+
 ### Users and direction
 
 - [ ] A meeting for brainstorming and general plans, after the public repository (meeting 2026-10-26-1524, § 14, tabled): the owner, 2026-10-26: "we are entering a period of brainstorming and making general plans on ideas now", with coding too; clarity on the ideas, and whether an overarching strategy is needed.
@@ -181,7 +197,7 @@ Each names the group in `VISION.md` it serves; an idea moves up to "Beyond Agend
 - _Groups 1 and 2._ Multiple files open; a launcher listing recent files
 - _Groups 2 and 3._ In-line help in boxes: the hint inside a box (made from its keys, `Box.hint/2`) as the start of a fuller help, with longer texts in a help box of their own (the owner's idea, 2026-10-14)
 - _Group 1._ Wol in the machine (its memory: the context items of `plans/ITEM_LEVELS.md`): a personal agent (a language model) inside the file, using its items, categories, views and rules as the person's own meaning; it files, finds and plans by proposing, never silently changing; the core stays pure and privacy comes first. Builds on the command layer (Towards many users). Thoughts in [`docs/plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)
-- _Group 1._ Before Wol, without a model: golden tasks (a few small files, a request each, and the commands a good answer proposes), which also test the command layer's design (expert review 2026-10-16, second meeting, `docs/reviews/2026-10-16-2.md`). The sixth principle it asked for, item text is data and never instructions, is in the Wol plan
+- _Group 1._ Before Wol, without a model: golden tasks (a few small files, a request each, and the commands a good answer proposes), which also test the command layer's design (expert review 2026-10-16, second meeting, `docs/reviews/2026-10-16-2.md`). Built as one item with a read-only headless command, `agendum --json view NAME FILE` in the escript, sharing `mix agendum.thoughts`'s code, if the brainstorm meeting chooses agent work (expert review 2026-10-30, § 18.5). The sixth principle it asked for, item text is data and never instructions, is in the Wol plan
 - _Group 3._ Modern by default: today's names and standard keys out of the box (Open not Retrieve, Delete not Discard, CTRL-O/S/Z/F/N…), with Agenda's names and keys one setting away ("Agenda mode").
 
   Agenda's steep learning curve limited its audience (AGENDA_HISTORY.md); the power should stay, the strangeness should not be the first thing people meet. Builds on the keymaps, self-describing commands and own key bindings (Towards many users); departs from ADR 0006 and 0007, so it needs an ADR of its own.
