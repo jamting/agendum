@@ -13,6 +13,7 @@
 #   tools/review/slice.sh a               # build slice a from main
 #   tools/review/slice.sh a v0.68.1       # from a tag or commit
 #   tools/review/slice.sh --list          # the slices and their sizes
+#   tools/review/slice.sh --files d       # a slice's files, one a line
 #   tools/review/slice.sh --clean         # remove every review/* branch and the worktree
 set -euo pipefail
 
@@ -39,7 +40,36 @@ slice_files() {
     c) # the extras: feeds, calendars, blog, Zettels, their boxes and fetching
       echo lib/agendum/core/extras lib/agendum/core/facade/extras lib/agendum/tui/extras \
         lib/agendum/extras ;;
-    *) echo "unknown slice: $1 (a, b or c)" >&2; exit 1 ;;
+    # groups d to h are reviewed locally (`/code-review high <paths>`,
+    # docs/CODE_REVIEW_SLICES.md § The rest): `--files GROUP` prints the paths
+    d) # dates and views in the core, and its other modules outside slice b
+      echo lib/agendum/core/browse.ex lib/agendum/core/category.ex \
+        lib/agendum/core/command/changes.ex lib/agendum/core/context.ex \
+        lib/agendum/core/date_format.ex lib/agendum/core/date_language.ex \
+        lib/agendum/core/date_language lib/agendum/core/date_parser.ex \
+        lib/agendum/core/date_rule.ex lib/agendum/core/date_settings.ex \
+        lib/agendum/core/datebook.ex lib/agendum/core/input_format.ex lib/agendum/core/item.ex \
+        lib/agendum/core/macro.ex lib/agendum/core/month_calendar.ex \
+        lib/agendum/core/number_format.ex lib/agendum/core/recurrence.ex \
+        lib/agendum/core/search.ex lib/agendum/core/text_search.ex lib/agendum/core/trash.ex \
+        lib/agendum/core/view.ex lib/agendum/core/view_columns.ex lib/agendum/core/view_model.ex ;;
+    e) # the keys: every key goes through them (update.ex and results.ex are slice a's)
+      find lib/agendum/tui/update -name '*.ex' ! -name results.ex | sort | tr '\n' ' '
+      echo lib/agendum/tui/keymap.ex lib/agendum/tui/commands.ex lib/agendum/tui/command.ex \
+        lib/agendum/tui/menu.ex lib/agendum/tui/macros.ex lib/agendum/tui/macro_keys.ex \
+        lib/agendum/tui/layout.ex lib/agendum/tui/places.ex lib/agendum/tui/modes.ex \
+        lib/agendum/tui/typing lib/agendum/tui/moves ;;
+    f) # the boxes, A to M
+      find lib/agendum/tui/boxes -maxdepth 1 -name '[a-m]*.ex' | sort | tr '\n' ' '; echo ;;
+    g) # the boxes, N to Z
+      find lib/agendum/tui/boxes -maxdepth 1 -name '[n-z]*.ex' | sort | tr '\n' ' '; echo ;;
+    h) # drawing and the rest
+      echo lib/agendum/tui/render.ex lib/agendum/tui/render lib/agendum/tui/category_screens.ex \
+        lib/agendum/tui/category_screens lib/agendum/tui/terminal.ex lib/agendum/tui/terminal \
+        lib/agendum/tui/help lib/agendum/tui/help_screen.ex lib/agendum/tui/command_docs.ex \
+        lib/agendum/tui/splash.ex lib/agendum/tui/dev_tools.ex lib/agendum/starters \
+        lib/mix ;;
+    *) echo "unknown slice: $1 (a to h)" >&2; exit 1 ;;
   esac
 }
 
@@ -51,13 +81,18 @@ size() {
 case "${1:-}" in
   --list)
     cd "$ROOT"
-    for s in a b c; do
+    for s in a b c d e f g h; do
       # shellcheck disable=SC2046
       files=$(find $(slice_files "$s") -name '*.ex' | wc -l | tr -d ' ')
       # shellcheck disable=SC2046
       lines=$(find $(slice_files "$s") -name '*.ex' | xargs cat | wc -l | tr -d ' ')
       echo "slice $s: $lines lines, $files files"
     done
+    exit 0 ;;
+  --files)
+    cd "$ROOT"
+    # shellcheck disable=SC2046
+    find $(slice_files "${2:?which group}") -name '*.ex' | sort
     exit 0 ;;
   --clean)
     cd "$ROOT"
