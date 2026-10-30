@@ -1,0 +1,60 @@
+# A GitHub Release for every version tag (meeting 2026-10-30-2020, § 7):
+# the escript built for prod, attached as `agendum`, with the version's
+# section of CHANGELOG.md as its notes. The Homebrew tap,
+# jamting/homebrew-agendum, picks the new release up by itself and checks
+# that it installs on a fresh Mac. A tag already pushed gets its release
+# by hand: `gh workflow run release.yml -f tag=v0.72.3`.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "An existing tag, e.g. v0.72.3"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    env:
+      MIX_ENV: prod
+      TAG: ${{ inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.TAG }}
+
+      # built on the oldest OTP Agendum runs on (28, for the raw mode,
+      # ADR 0002): its compiled code also loads on 29, not the other way
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "28"
+          elixir-version: "1.20.4"
+
+      - run: mix deps.get --only prod
+      - run: mix escript.build
+
+      # the binary must at least start and print its help
+      - run: ./agendum --help | grep -q "agendum --demo"
+
+      # the notes: the lines under "## X.Y.Z — date" up to the next heading
+      - name: Notes from CHANGELOG.md
+        run: |
+          version="${TAG#v}"
+          awk -v v="$version" '
+            /^## / { inside = index($0, "## " v " ") == 1; next }
+            inside' CHANGELOG.md > notes.md
+          test -s notes.md || { echo "No CHANGELOG.md section for $version"; exit 1; }
+          cat >> notes.md <<'EOF'
+
+          **Install** on a Mac or Linux with Homebrew: `brew install jamting/agendum/agendum`, then `agendum --demo`.
+          Or download `agendum` below: it needs Erlang/OTP 28 or later (`brew install erlang`), then `chmod +x agendum && ./agendum --demo`.
+          EOF
+
+      - run: gh release create "$TAG" agendum --title "Wol's Agendum ${TAG#v}" --notes-file notes.md --verify-tag

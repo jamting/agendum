@@ -42,7 +42,7 @@ A second workflow, `.github/workflows/fuzz.yml`, runs the long fuzz run (`FUZZ_R
 
 Private repositories get a monthly allowance of Actions minutes (2,000 on the Free plan, at the time of writing); `mix check` takes about a minute with warm caches.
 
-Later: build the escript (`mix escript.build`) on a version tag and attach it to a GitHub Release. The escript needs Erlang installed on the machine that runs it (it is not a self-contained binary), which the release notes should say.
+**Releases** (meeting 2026-10-30-2020, § 7): every version tag builds the escript (on OTP 28, so it also runs on 29) and attaches it to a GitHub Release, with the version's `CHANGELOG.md` section as notes (`.github/workflows/release.yml`; an older tag by hand, `gh workflow run release.yml -f tag=vX.Y.Z`). The escript needs Erlang/OTP 28 or later on the machine that runs it, which the notes say; the Homebrew tap, `jamting/homebrew-agendum`, brings Erlang along and picks each release up by itself.
 
 ## 4. Documentation and a product page: GitHub Pages
 
