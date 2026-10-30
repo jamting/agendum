@@ -21,7 +21,7 @@ Small, testable increments: the open work, by area.
 
 Go for the public repository was given at the practical meeting (meeting 2026-10-28-5, § 13), on the conditions in 1.
 
-The order of the earlier steps was Marie the Wren's (the licence meeting and the tidy pass, first in it, done 2026-10-28), at the chair's request (meeting 2026-10-28-2, § 13; the pseudonyms folded into the dry run by the chair's addendum):
+The order of the earlier steps was Marie's (the licence meeting and the tidy pass, first in it, done 2026-10-28), at the chair's request (meeting 2026-10-28-2, § 13; the pseudonyms folded into the dry run by the chair's addendum):
 
 - the licence before the dry run, as the licence and the contributors' terms go into the copy;
 - the tidy pass and the markers in one sweep over the same documents;
