@@ -55,6 +55,10 @@ Tools and checks that make every later change faster and safer. Each is small; t
 
 - [ ] Kept fast (the owner, 2026-10-26: "I don't want it to take up very much time"): the four items above add at most about 5 seconds to `mix check` (a few dozen inputs per parser, the hostile files, short richer and out-of-order walks); the long runs go to `mix agendum.fuzz` and the nightly CI. Measure `mix check` before and after
 - [ ] The smoke tool's ALT-F3 (found 2026-10-28, v0.72.3): `tools/smoke/smoke.py ALT-F3` does not open the Macro Manager; the key bar shows its ALT labels instead, as if ALT were held, though `ESC [ 13 ; 3 ~` decodes as ALT-F3 in `Terminal.Keys` and the unit tests open the manager. Find whether the tool or the decoder splits the sequence, so modified F-keys can be smoke-tested
+- [ ] Optional (the owner, 2026-10-30): one git-ignored link, `docs/private/`, to the owner's private documents (the Wolery's `docs/`), so they show beside the public ones in the editor (an Obsidian vault on `docs/`) and the tasks find them. Git never follows a link, so a mistaken `git add` cannot carry their text here.
+
+  - **First check** that a linked folder breaks nothing: `mix docs`, the docs-index test, Obsidian, and a fresh clone without the link.
+  - **Then** the skills, `mix agendum.thoughts` and the owner's local notes use `docs/private/…` instead of the Wolery's path.
 - [ ] Review the rest of the code locally (`docs/CODE_REVIEW_SLICES.md` § The rest): about 35,000 lines in five groups, each with `/code-review high <paths>`, its findings fixed as a release of its own, as the cloud slices were
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key.
 
