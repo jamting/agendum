@@ -60,6 +60,7 @@
   <p>Everything worth knowing about Wol's Agendum, the important things in depth and the
      rest in brief, as Owl explained it to Rabbit one afternoon. For the short
      version, see the <a href="../guide/index.html">User Guide</a>.</p>
+  <p class="written-for">Written for Agendum 0.72</p>
 </header>
 
 <!-- ===================================================================== -->
@@ -821,6 +822,12 @@ removes the section from the view (the category and its items stay), and
 <kbd>↑</kbd> <kbd>↓</kbd> move it, <kbd>ENTER</kbd> leaves it there and <kbd>ESC</kbd> puts
 it back.</p>
 
+<p>When every member of a family is a section of a view, the family stays whole: a new
+member inserted in the category manager (<kbd>INS</kbd>, <kbd>ALT-D</kbd>,
+<kbd>ALT-U</kbd>, <kbd>ALT-R</kbd>) or typed as a new name in a column becomes a
+section of that view too, right after its elder sibling's, with the columns every
+section has. One <kbd>CTRL-Z</kbd> takes back both, as in Agenda.</p>
+
 <table>
   <tr><th>To</th><th>Press</th></tr>
   <tr><td>Next / previous section</td><td><kbd>CTRL-PGDN</kbd> / <kbd>CTRL-PGUP</kbd> (or <kbd>⌥↓</kbd> / <kbd>⌥↑</kbd>)</td></tr>
@@ -1509,6 +1516,7 @@ shows <code>&amp;</code> until they are all done.</p>
   <tr><td>Print the view to a text file</td><td><kbd>CTRL-P</kbd>, or <strong>Print</strong></td></tr>
   <tr><td>Export the whole file as JSON / open a JSON or Lotus Agenda file</td><td><strong>File ▸ Transfer ▸ Export</strong> / <strong>Import</strong></td></tr>
   <tr><td>Subscribe to a calendar on the web (an <a href="#extras">extra</a>)</td><td><strong>File ▸ Transfer ▸ Calendars</strong></td></tr>
+  <tr><td>Subscribe to news feeds / publish the blog (extras)</td><td><strong>File ▸ Transfer ▸ Feeds</strong> / <strong>Publish</strong></td></tr>
   <tr><td>Quit</td><td><kbd>CTRL-Q</kbd> (or <kbd>ALT-Q</kbd>)</td></tr>
 </table>
 
@@ -1615,11 +1623,10 @@ Agenda finds it as they left it. With the extras on you get calendars from the w
 (below), the <em>While you were away</em> box for alarms (<a href="#dates">chapter
 7</a>), <code>►</code> before the view you are in and <kbd>F5</kbd> to list the views by
 when you last used them in the view manager, the commands' longer names on the key bar
-of a wide screen, and three that are still young: Zettel ids and links between items
-(<strong>Item ▸ Zettel</strong>), a small blog published from the file
-(<strong>File ▸ Transfer ▸ Publish</strong>) and a reader for news feeds
-(<strong>File ▸ Transfer ▸ Feeds</strong>). Turning them off hides them again; nothing in
-the file is lost.</p>
+of a wide screen, a reader for news feeds (below), Zettel ids and links between items
+(<strong>Item ▸ Zettel</strong>) and a small blog published from the file
+(<strong>File ▸ Transfer ▸ Publish</strong>, below). Turning them off hides them again;
+nothing in the file is lost.</p>
 
 <h3 id="calendars">Calendars from the web</h3>
 
@@ -1633,8 +1640,10 @@ On the web, he says. I never know when the next one is, and then everyone has go
 starting with <code>webcal://</code>, can be brought in as items, once the extras are
 on.
 <strong>File ▸ Transfer ▸ Calendars</strong> lists the file's subscriptions.
-<kbd>INS</kbd> asks for the address, then for a name, which becomes the category the
-events go in, and reads the calendar at once:</p>
+<kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) asks for the address and reads the calendar at
+once; then it asks for a name, with the calendar's own name filled in. The name becomes
+the category the events go in, under a family called <em>Calendars</em>. A calendar
+that cannot be read is not subscribed, and Agendum says why:</p>
 
 {{45-calendars}}
 
@@ -1659,12 +1668,55 @@ events go in, and reads the calendar at once:</p>
   <li>In the box, <kbd>ENTER</kbd> reads the highlighted calendar now and
       <kbd>ALT-ENTER</kbd> all of them; <kbd>F2</kbd> renames it; <kbd>F6</kbd> shows
       its properties, how often it is read (every hour, every 6 hours, every day, only
-      on request) and how far ahead (30 to 365 days); and <kbd>DEL</kbd> (or
-      <kbd>F4</kbd>) unsubscribes, asking whether to throw its items away too.</li>
+      on request) and how far ahead (30 to 365 days), with <kbd>F8</kbd> putting one
+      setting back to a new calendar's and <kbd>ALT-F8</kbd> all of them; and
+      <kbd>DEL</kbd> (or <kbd>F4</kbd>) unsubscribes, asking whether to throw its items
+      away too.</li>
+  <li>The <em>Calendars</em> family and its categories belong to the calendars:
+      Rabbit can make sections and filters of them, but not rename them or file
+      items in them by hand. In the category manager the family starts folded to one
+      line; <kbd>ALT-=</kbd> opens it.</li>
 </ul>
 
 <p>Each reading is one step for <kbd>CTRL-Z</kbd>, and a scheduled one that changes
 nothing passes without a word.</p>
+
+<h3 id="feeds">News from the web</h3>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> Owl, you read the <em>Gazette</em> every morning. Where
+do you find the time?</p>
+<p class="owl"><b>Owl.</b> Agendum fetches it. I only read what is new, and nothing
+nags me about the rest.</p>
+</div>
+
+<p><strong>File ▸ Transfer ▸ Feeds</strong> is a manager for news feeds (RSS and Atom),
+with the same keys as Calendars: <kbd>INS</kbd> subscribes (the address, then the
+name, the feed's own title filled in), <kbd>ENTER</kbd> reads the highlighted feed now
+and <kbd>ALT-ENTER</kbd> all of them, <kbd>F2</kbd> renames, <kbd>F6</kbd> sets how
+often it is read and how long its entries stay (7 days to for ever; 30 by default),
+<kbd>DEL</kbd> unsubscribes. <kbd>F7</kbd> imports a list of feeds from another reader
+(OPML) and <kbd>F8</kbd> writes one.</p>
+<ul>
+  <li>Each entry becomes an item under <em>Feeds ▸</em> the feed's name: its title the
+      text, its summary and link the note, its publish date the <em>Entry</em> date.
+      The first feed makes a <em>News</em> view, a section per feed, newest first.</li>
+  <li>Nothing asks to be read: there are no unread counts. <kbd>F4</kbd> (done)
+      dismisses an entry, and <kbd>CTRL-V</kbd> (or <strong>Item ▸ Open link</strong>)
+      opens its link in the browser.</li>
+  <li>Old entries fade away by themselves, unless Rabbit kept them: gave one a
+      category by hand, changed its text or note, or gave it a Zettel id.</li>
+</ul>
+
+<div class="brief">
+<p><strong>A small blog.</strong> <strong>File ▸ Transfer ▸ Publish</strong> writes the
+items in a <em>Posts</em> category as a website: a page per post, the whole blog on its
+front page, and feeds for readers to follow. The note is the post, in a little
+Markdown (headings, <code>**strong**</code>, lists, links). The site is plain HTML in
+<em>The Proportional Web</em>'s typography, with its fonts included, dark when the
+reader's computer is, and can be uploaded by rsync or SFTP. Posts in a
+<em>Drafts</em> category wait until they are ready.</p>
+</div>
 
 <h3 id="planner">A ready-made planner</h3>
 <p>Agenda came with ready-made files to begin from, and Agendum comes with one: the
@@ -1743,6 +1795,8 @@ think, or to chase Tigger, Agendum saves for you.</p>
 <pre class="shell">./agendum --theme mono rabbit.agendum
 ./agendum --lang=swedish --fallback=english rabbit.agendum
 ./agendum --number-order=dmy --date-separator=. --clock=24 rabbit.agendum</pre>
+<p><code>agendum --version</code> says which version you have, for a letter to whoever
+looks after it; <code>agendum --help</code> lists all of these.</p>
 </section>
 
 <!-- ===================================================================== -->
@@ -1878,6 +1932,7 @@ and the letter, with your terminal set to use Option as Meta.</p>
   <tr><td><kbd>ALT-A</kbd></td><td>Set Alarm box; on an item with an alarm, cancel it</td><td></td></tr>
   <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter; then <kbd>F8</kbd> back to the start, <kbd>F10</kbd> the menu</td><td><kbd>⌥b</kbd></td></tr>
   <tr><td><kbd>ALT-C</kbd></td><td>The calendar</td><td><kbd>⌥c</kbd></td></tr>
+  <tr><td><kbd>CTRL-V</kbd></td><td>Open the item's web link in the browser (an extra)</td><td></td></tr>
   <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-U</kbd></td><td>Section below / above</td><td></td></tr>
   <tr><td><kbd>ALT-H</kbd></td><td>Hop to the item's next occurrence</td><td><kbd>⌥h</kbd></td></tr>
   <tr><td><kbd>ALT-R</kbd> / <kbd>ALT-L</kbd></td><td>Column right / left</td><td></td></tr>
@@ -1918,6 +1973,7 @@ and the letter, with your terminal set to use Option as Meta.</p>
   <tr><td><kbd>ENTER</kbd> / <kbd>ESC</kbd></td><td>Done, keeping the changes / cancel them</td><td></td></tr>
   <tr><td><kbd>SPACE</kbd> or <kbd>F7</kbd>; <kbd>F4</kbd>; <kbd>ENTER</kbd></td><td>In a list of categories: switch one; take them all out; accept the list</td><td></td></tr>
   <tr><td><kbd>Y</kbd> / <kbd>N</kbd></td><td>In a yes-or-no question: answer at once</td><td></td></tr>
+  <tr><td><kbd>ENTER</kbd> / <kbd>ALT-ENTER</kbd>; <kbd>F7</kbd> / <kbd>F8</kbd></td><td>In the Feeds or Calendars manager: read this one / all now; in Feeds, import / export OPML</td><td>— / <kbd>⌥-Return</kbd></td></tr>
 </table>
 
 <h3>In a note</h3>
