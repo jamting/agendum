@@ -2,13 +2,12 @@
 # §§ 5, 8, 10): the front page (pages/), the guide, the manual, the API and
 # design docs and llms.txt, put together by `mix agendum.pages`, which also
 # fails on a broken link. Settings ▸ Pages ▸ Source must be "GitHub Actions".
-#
-# Started by hand for now (`gh workflow run pages.yml`): the site goes up
-# once the devlog has its first post (the roadmap's step 6, which then adds
-# `push: branches: [main]` here so every push to main publishes it).
+# Every push to main publishes it; `gh workflow run pages.yml` does it by hand.
 name: pages
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 # one deployment at a time; a newer one waits rather than cancelling
