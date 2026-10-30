@@ -41,7 +41,7 @@ defmodule Hostile do
 end
 
 # Lotus's starter, damaged below; not in the public copy (meeting
-# 2026-10-28-5, § 7), where the files made from it are left out too
+# 2026-10-28-1911, § 7), where the files made from it are left out too
 ag =
   if File.exists?("test/fixtures/ag/INFOSIFT.AG"), do: File.read!("test/fixtures/ag/INFOSIFT.AG")
 

@@ -1,6 +1,6 @@
 # ADR 0040 — The terminal program runs a command by name (CTRL-X)
 
-**Status:** accepted · 2026-10-16 (meeting 2026-10-16-3, § 7). Amends ADR 0038.
+**Status:** accepted · 2026-10-16 (meeting 2026-10-16-2323, § 7). Amends ADR 0038.
 
 ## Context
 

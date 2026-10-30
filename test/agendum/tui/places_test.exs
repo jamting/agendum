@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.PlacesTest do
   @moduledoc """
-  A file opens where the person left it (R69; meeting 2026-10-16, § 5):
+  A file opens where the person left it (R69; meeting 2026-10-16-1905, § 5):
   the view and the highlighted item, else its section, else the top of the
   view. The place is kept in the preferences by the file's path, never in
   the file, so moving around never asks to save.

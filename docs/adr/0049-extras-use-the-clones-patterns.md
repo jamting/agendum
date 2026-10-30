@@ -1,6 +1,6 @@
 # ADR 0049 — The extras use the clone's patterns
 
-**Status:** accepted · 2026-10-26 (meeting 2026-10-26-6, §§ 5–8)
+**Status:** accepted · 2026-10-26 (meeting 2026-10-26-2234, §§ 5–8)
 
 ## Context
 

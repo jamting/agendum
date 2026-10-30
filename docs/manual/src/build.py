@@ -5,7 +5,7 @@
 
 In the template, {{name}} is replaced by the picture ../screens/name.png,
 the whole 80x25 screen in Agenda's colours, every screen the same size
-(meeting 2026-10-28-6, § 5). Its alternative text is the control panel's two
+(meeting 2026-10-28-2214, § 5). Its alternative text is the control panel's two
 lines from screens/name.txt, which say what the screen shows.
 """
 

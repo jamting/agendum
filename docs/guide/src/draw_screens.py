@@ -1,4 +1,4 @@
-"""Draws the user guide's screens as pictures (meeting 2026-10-28-6, § 5).
+"""Draws the user guide's screens as pictures (meeting 2026-10-28-2214, § 5).
 
     python3 docs/guide/src/draw_screens.py     # src/screens/*.txt -> ../screens/*.png
 

@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.Update.Results do
   @moduledoc """
-  The shell's answers (meeting 2026-10-26-4, § 11): after `Agendum.TUI.App`
+  The shell's answers (meeting 2026-10-26-1524, § 11): after `Agendum.TUI.App`
   has carried out an effect, it hands the result to a function here, which
   returns the new state: a calendar or feed read (R45, R75), a file saved,
   loaded or imported, a copy written, a file moved to the Trash, the blog

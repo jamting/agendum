@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Agendum.Fuzz do
   The long fuzz run (the TUI fuzz property with 3000 runs instead of the
   suite's 300), with its whole output kept in `tmp/fuzz/`, one dated file
   a run, the last 30 kept, so a failure can always be read and repeated
-  afterwards (meeting 2026-10-26-4, § 8; one failure on 2026-10-26 was lost
+  afterwards (meeting 2026-10-26-1524, § 8; one failure on 2026-10-26 was lost
   with its seed):
 
       mix agendum.fuzz              # 3000 runs

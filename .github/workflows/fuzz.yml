@@ -42,7 +42,7 @@ jobs:
       - id: seed
         run: echo "seed=$(( $(date +%s) % 1000000 ))" >> "$GITHUB_OUTPUT"
 
-      # the whole output kept in a file as well (meeting 2026-10-26-4, § 8);
+      # the whole output kept in a file as well (meeting 2026-10-26-1524, § 8);
       # `pipefail` keeps the test's failure as the step's, through `tee`
       - run: |
           set -o pipefail

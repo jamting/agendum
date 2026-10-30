@@ -46,7 +46,7 @@ defmodule Agendum.TUI.DebugLogTest do
     assert DebugLog.old_sessions(Enum.take(names, 9)) == []
   end
 
-  # meeting 2026-10-26-4, § 7: a calendar's address can hold a private
+  # meeting 2026-10-26-1524, § 7: a calendar's address can hold a private
   # token, so the log keeps only where it is
   test "web addresses are written by their host, never their path or query" do
     assert DebugLog.redact(

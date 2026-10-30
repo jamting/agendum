@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.HelpScreen do
   @moduledoc """
-  The help screen (F1), as Agenda's (R65e, ADR 0047; meeting 2026-10-26,
+  The help screen (F1), as Agenda's (R65e, ADR 0047; meeting 2026-10-26-0829,
   §§ 5–8; checked in Agenda 2.0, 2026-10-26): a topic for where the person
   is (`Agendum.TUI.Help.Topics`), with links in bold to other topics, and
   Agenda's keys: the arrows, HOME and END highlight a link (a letter: the

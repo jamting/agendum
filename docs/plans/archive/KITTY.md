@@ -1,6 +1,6 @@
 # Plan: the ALT and CTRL key bars while the key is held
 
-**Status:** dropped, not built (the owner, 2026-10-16): the F1 help Agendum has now (R65: `c` lists the commands where you are, greyed with the reason when they cannot run, `d` describes a key, `a` lists every key) is better than Agenda's ALT and CTRL key bars. Kept as a record of the research (AGENDA_PARITY.md, accepted modifications). Superseded on 2026-10-24 (meeting 2026-10-24, § 5): the bars come after all, reached with ALT-K rather than by holding the key (AGENDA_PARITY § The steps, ADR 0045); its step 1, the CTRL-F keys, is part of that work.
+**Status:** dropped, not built (the owner, 2026-10-16): the F1 help Agendum has now (R65: `c` lists the commands where you are, greyed with the reason when they cannot run, `d` describes a key, `a` lists every key) is better than Agenda's ALT and CTRL key bars. Kept as a record of the research (AGENDA_PARITY.md, accepted modifications). Superseded on 2026-10-24 (meeting 2026-10-24-2057, § 5): the bars come after all, reached with ALT-K rather than by holding the key (AGENDA_PARITY § The steps, ADR 0045); its step 1, the CTRL-F keys, is part of that work.
 
 A plan for the Roadmap item "The ALT and CTRL key bars while the key is held (kitty keyboard protocol), and after ESC as a prefix".
 

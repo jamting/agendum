@@ -340,7 +340,7 @@ defmodule Agendum.ParsersPropertyTest do
 
   # The smallest real Agenda file; damage done to it reaches deeper into the
   # reader than random bytes would. Lotus's starter is not in the public
-  # copy (meeting 2026-10-28-5, § 7), where RICH.AG, made in Agenda for
+  # copy (meeting 2026-10-28-1911, § 7), where RICH.AG, made in Agenda for
   # the tests, takes its place.
   @ag if File.exists?("test/fixtures/ag/INFOSIFT.AG"),
         do: File.read!("test/fixtures/ag/INFOSIFT.AG"),

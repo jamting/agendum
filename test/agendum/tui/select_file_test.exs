@@ -105,7 +105,7 @@ defmodule Agendum.TUI.SelectFileTest do
     assert rows(state) == ["..", "Garden", "notes.txt"]
   end
 
-  test "the Feeds box's OPML prompts list feed lists (meeting 2026-10-22-3, § 7)", %{
+  test "the Feeds box's OPML prompts list feed lists (meeting 2026-10-22-2337, § 7)", %{
     state: state,
     dir: dir
   } do

@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.RecoveryTest do
   @moduledoc """
-  A recovery file on a crash (R82b; meeting 2026-10-26-4, § 6; the owner's
+  A recovery file on a crash (R82b; meeting 2026-10-26-1524, § 6; the owner's
   choices, 2026-10-26): the unsaved changes written beside the file as
   `notes@.agendum` (Agenda's name for a damaged file's changes,
   `MYINFO@.AG`), and offered when the file is next opened.

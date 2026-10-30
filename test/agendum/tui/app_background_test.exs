@@ -5,7 +5,7 @@ defmodule Agendum.TUI.AppBackgroundTest do
   its debug-log line, then `Update.Results`. Every shape a task can send
   is tried here, with the log open, as v0.69.1 crashed on a bare `:ok` in
   the log line, out of reach of the pure tests and the fuzz walks
-  (meeting 2026-10-26-6, § 7).
+  (meeting 2026-10-26-2234, § 7).
 
   `async: false`: the debug log is one registered process for the whole
   test run.

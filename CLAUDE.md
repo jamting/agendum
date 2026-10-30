@@ -28,13 +28,13 @@ A change is done when `mix check` passes. Do not leave warnings. Credo (`.credo.
 
 ## Workflow for a feature
 
-The steps, in order, are the `feature` skill (`.claude/skills/feature/SKILL.md`, `/feature`; meeting 2026-10-22-3, § 5): habits settled with the owner first, how Agenda did it, the SPEC rule, a failing test, core then TUI, the documents the change touches, `mix check` and the long fuzz run, a smoke test, the commit and a version, the owner trying it. Follow it for every feature or fix in the program. One feature per commit; small and focused.
+The steps, in order, are the `feature` skill (`.claude/skills/feature/SKILL.md`, `/feature`; meeting 2026-10-22-2337, § 5): habits settled with the owner first, how Agenda did it, the SPEC rule, a failing test, core then TUI, the documents the change touches, `mix check` and the long fuzz run, a smoke test, the commit and a version, the owner trying it. Follow it for every feature or fix in the program. One feature per commit; small and focused.
 
 ## Conventions
 
 - Names: in text the user sees, our program is **Wol's Agendum** (titles, headings, the splash screen) or **Agendum** (menus, help, running text); **Agenda** means the original Lotus Agenda ("as Agenda does"). The code is `Agendum` too: the Mix app `:agendum`, the `Agendum.*` modules in `lib/agendum` (ADR 0019); a file's format tag stays `:agenda`, and files saved with the old `Agenda.*` struct names still load. Files are `.agendum`, the preferences `~/.config/agendum/`, the JSON format `agendum-json`; the old names are still read.
 - Markdown is not hard-wrapped: one line per paragraph, list item or quote, and the editor soft-wraps it. Code comments and `@moduledoc`s stay wrapped at about 80 columns, as Elixir code usually is.
-- Write airy (meeting 2026-10-28-6, § 6): short paragraphs of one idea, a list for conditions or several parts, a bold lead-in where a reader scans; a long unbroken paragraph is a wall. This holds for documents and for replies to the owner alike.
+- Write airy (meeting 2026-10-28-2214, § 6): short paragraphs of one idea, a list for conditions or several parts, a bold lead-in where a reader scans; a long unbroken paragraph is a wall. This holds for documents and for replies to the owner alike.
 - Match the surrounding style: small pure functions, pattern matching, `@spec` on public core functions, `@moduledoc` on every module.
 - Core functions that can fail return `{:ok, ...} | {:error, atom}`; the UI turns error atoms into messages.
 - Ids are positive integers from one shared counter (`db.next_id`).
@@ -43,7 +43,7 @@ The steps, in order, are the `feature` skill (`.claude/skills/feature/SKILL.md`,
 - Keys are decoded in `Agendum.TUI.Terminal.Keys`. Function keys are required, as in Agenda: there is no ESC + digit stand-in for them (ADR 0032). Mac keyboards lack INS/HOME/END and terminals never pass ⌘, so a command on INS, HOME or END needs a CTRL key, and so does a common command (CTRL-N, CTRL-E …). ALT-letters are ⌥-letters with Option as Meta (the terminal sends ESC + letter together; typed by hand, ESC then a letter is two keys, ADR 0032). Document keys in `docs/KEYBOARD.md` and the F1 help. CTRL-I/M/H/[ are unusable (they are TAB/ENTER/BACKSPACE/ESC).
 - A settings box is drawn from a layout written as it looks on screen, with `[field    ]` placeholders (`Agendum.TUI.Boxes.Template`; `CustomizeBox` is the example): its fields are also the cursor's order. Look at the DOSBox screenshots (`docs/reference/screens/notes.md`) for how Agenda laid out the box.
 - Menu entries are chosen by first letter, so every level of `Agendum.TUI.Menu.tree/0` needs unique first letters (`test/agendum/tui/menu_test.exs` checks this). Prefer Agenda's own command names (User's Guide, Appendix A).
-- SPEC keeps the rule, not its story (meeting 2026-10-26-4, § 13): a rule says what is true, with a short "(checked in Agenda)" or "Our choice"; how and when it was checked or chosen goes in `docs/ROADMAP_DONE.md` (and the ADRs, the summaries).
+- SPEC keeps the rule, not its story (meeting 2026-10-26-1524, § 13): a rule says what is true, with a short "(checked in Agenda)" or "Our choice"; how and when it was checked or chosen goes in `docs/ROADMAP_DONE.md` (and the ADRs, the summaries).
 - Undo is automatic: any key that changes `state.db` records one step in `Agendum.TUI.History`. Do not record history by hand. Keep one user action = one database change, so one undo reverses it (the fuzz walks check that undo gives the file back, and `Agendum.Core.Invariants` after every key).
 - Each new source file (`.ex`, `.exs`, `.py`, `.sh`) starts with `# SPDX-License-Identifier: AGPL-3.0-only` (after a `#!` line); the code is `AGPL-3.0-only`, the documents `CC BY 4.0` (ADR 0051).
 

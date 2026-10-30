@@ -27,7 +27,7 @@ The owner's way of working on Wol's Agendum with Claude: the habits, the rituals
 
 ## The loop for a feature
 
-The full steps are the `feature` skill (`.claude/skills/feature/SKILL.md`, meeting 2026-10-22-3, § 5); in short:
+The full steps are the `feature` skill (`.claude/skills/feature/SKILL.md`, meeting 2026-10-22-2337, § 5); in short:
 
 1. **Habits first.** Before any code, Claude lists every key or behaviour the change would alter for someone already using Agendum. I settle them. A habit change found halfway is the most expensive kind.
 2. **As Agenda did.** The behaviour is checked in the manuals (`docs/reference/*_djvu.txt`), the Lotus Q&A, the F1 help, the `.AG` file format, and by running the real Agenda 2.0 headless in DOSBox (`tools/agformat/agenda_driver.py`). Results come as an evidence table: question, Agenda's answer, source.
@@ -47,8 +47,8 @@ All in `.claude/skills/`, each started with `/name` or by asking for it in words
 | `end-session`       | Close a session: what was done, what must not be lost (roadmap, plans, memory), a cheerful summary with learnings and next steps                                                                                | `docs/summaries/YYYY-MM-DD-HHMM.md` (committed)         |
 | `start-session`     | Open a session: reads the last summary, the roadmap's Next, the study plan and anything uncommitted; lists what to try in the program, offers three things to do, and waits for a choice | nothing                                                 |
 | `expert-review`     | A dated review written as the minutes of a panel meeting in Owl's house: architecture, code, tests, docs, users, business, vision, methods, tidiness, agent readiness; scores, evidence, ranked recommendations | `docs/reviews/YYYY-MM-DD.md` (`-2`, `-3` the same day)  |
-| `feature`           | Build one feature or fix the agreed way: habits first, Agenda's evidence, the rule, a failing test, core then TUI, the documents, the gate and fuzz, the commit, a version, the owner trying it (meeting 2026-10-22-3, § 5) | the code, its tests and documents; a commit |
-| `meeting`           | A panel meeting on my own agenda (the thoughts under Next meeting in my project file): the experts the items call for discuss them, I decide, decisions go into the roadmap, plans and ADRs                                                          | `docs/meetings/YYYY-MM-DD/` (agenda and minutes)        |
+| `feature`           | Build one feature or fix the agreed way: habits first, Agenda's evidence, the rule, a failing test, core then TUI, the documents, the gate and fuzz, the commit, a version, the owner trying it (meeting 2026-10-22-2337, § 5) | the code, its tests and documents; a commit |
+| `meeting`           | A panel meeting on my own agenda (the thoughts under Next meeting in my project file): the experts the items call for discuss them, I decide, decisions go into the roadmap, plans and ADRs                                                          | `docs/meetings/YYYY-MM-DD-HHMM/` (agenda and minutes)        |
 | `study-plan`        | The panel picks the next part of the code for me to study, gives it learning comments, and writes a unit of questions and exercises; also helps with a question                                                 | `docs/study/STUDY_PLAN.md`                              |
 | `learning-comments` | Comments in the code on Elixir idioms (for an experienced programmer new to Elixir) and on the domain logic; comments only                                                                                     | the files I name                                        |
 | `tidy-docs`         | The documents brought up to date with the code, then streamlined: one home per fact, indexes complete, open work first, a status on every plan                                                                 | two commits                                             |
@@ -70,7 +70,7 @@ The same eight lenses serve the review, the meetings and the study plan; who att
 | Little Marie-Who-Folds       | Tidiness and scope; advises, never discards  |
 | Claude            | An owl from Anthropic, Owl's cousin: readiness for agents |
 
-Since meeting 2026-10-28-2 (§ 10) the panel goes by Wood pseudonyms in new texts (Great-Uncle Joe, Dr. Russell …; the table, private, in the `expert-review` skill), first names after the first mention, and I am Mattias; older texts keep the real names here and are mapped when the public copy is made.
+Since meeting 2026-10-28-0908 (§ 10) the panel goes by Wood pseudonyms in new texts (Great-Uncle Joe, Dr. Russell …; the table, private, in the `expert-review` skill), first names after the first mention, and I am Mattias; older texts keep the real names here and are mapped when the public copy is made.
 
 The panel advises; it never votes. I decide.
 
@@ -82,7 +82,7 @@ The panel advises; it never votes. I decide.
 | What is done                           | [`ROADMAP_DONE.md`](ROADMAP_DONE.md), by milestone                                             |
 | Every document and what it is for      | [`INDEX.md`](INDEX.md)                                                                         |
 | Thoughts waiting for a meeting         | Thoughts ▸ Next meeting in my project file (`$AGENDUM_PROJECT_FILE`), read by `mix agendum.thoughts` |
-| Reviews, meetings, study               | `docs/reviews/`, `docs/meetings/YYYY-MM-DD/`, `docs/study/STUDY_PLAN.md` (private: left out of the public copy) |
+| Reviews, meetings, study               | `docs/reviews/`, `docs/meetings/YYYY-MM-DD-HHMM/`, `docs/study/STUDY_PLAN.md` (private: left out of the public copy) |
 | A record of every session              | `docs/summaries/` (committed since 2026-10-23, private: left out of the public copy; kept complete, alike in shape, to import into Agendum one day with STF) |
 | What changed per version               | [`../CHANGELOG.md`](../CHANGELOG.md), and the `vX.Y.Z` tags                                    |
 | Why things are as they are             | `docs/adr/`, listed in [`ARCHITECTURE.md`](ARCHITECTURE.md)                                    |
@@ -107,7 +107,7 @@ The panel advises; it never votes. I decide.
 | `mix run test/fixtures/hostile/make.exs` | makes the hostile files again (`test/fixtures/hostile/`: nasty calendars, feeds, `.AG`, JSON, Markdown and dates, read by `hostile_files_test.exs`); a new bug of the kind adds its file there |
 | `mix agendum.thoughts` (`--next-meeting`; `--init PATH` once; `--import-docs`) | my open thoughts from the project file in `$AGENDUM_PROJECT_FILE`, as Markdown; `--init` makes the file; `--import-docs` puts the meetings, ADRs, roadmap and session summaries into it as Disposable items (Agendum closed first; the old file kept as `.bak`) |
 | `tools/agformat/agenda_driver.py`, `agdump.py`, `agdiff.py` | drive the real Agenda headless (also record its sounds: SDL's disk audio driver); read and compare `.AG` files (`tools/agformat/DRIVING_AGENDA.md`) |
-| `tools/agformat/capture_menus.py` | walks Agenda's F10 menus (view, note, category manager) in DOSBox into `docs/reference/agenda_menus.json` and AGENDA_MENUS.md; the menu test compares Agendum's menus with it, every difference tagged (meeting 2026-10-21, § 8) |
+| `tools/agformat/capture_menus.py` | walks Agenda's F10 menus (view, note, category manager) in DOSBox into `docs/reference/agenda_menus.json` and AGENDA_MENUS.md; the menu test compares Agendum's menus with it, every difference tagged (meeting 2026-10-21-2324, § 8) |
 | `tools/agformat/capture_key_bars.py` | reads Agenda's key bars in DOSBox (view, note, both managers; nothing, ALT, CTRL or SHIFT held through the BIOS shift flags) into `docs/reference/agenda_key_bars.json`; `agenda_key_bars_test.exs` compares Agendum's bars with it, each difference tagged |
 | `tools/agformat/capture_boxes.py` | reads Agenda's settings boxes in DOSBox (title, rows, bottom edge; 25 boxes reached from PLANNER's People view, sub-boxes with F3) into `docs/reference/agenda_boxes.json`; `agenda_boxes_test.exs` compares Agendum's boxes' titles, bottom edges and labels with it, every difference tagged |
 | `tools/agformat/extract_messages.py` | reads Agenda's messages, questions, prompts and help lines (the strings of `AGENDA.RI`; no DOSBox) into `docs/reference/agenda_messages.json`, for comparing Agendum's messages with Agenda's (AGENDA_PARITY, the texts step) |
@@ -127,12 +127,12 @@ The panel advises; it never votes. I decide.
 - **Writing study questions finds bugs**: asking "what happens if this fails?" found a lost-save bug (2026-10-16).
 - **All the questions up front, then a break**: the owner answered seven questions on the `.AG` import in two rounds and rested while it was built in three tested commits; nothing had to wait for them (2026-10-16).
 - **A meeting sorts a review's advice**: the eleven recommendations of 2026-10-21 decided one by one in one sitting, each into its home or dropped, so the roadmap's **Next action** says one thing again (2026-10-22).
-- **Use Agendum for Agendum** (adopted 2026-10-22, meeting § 7b): my thoughts live in a Thoughts view in my own file, and the dagordning file is retired (meeting 2026-10-22-2); the project's documents are to be imported into the same file as Disposable items, deleted and read afresh on each import (ROADMAP, Sharpen the saw).
+- **Use Agendum for Agendum** (adopted 2026-10-22, meeting § 7b): my thoughts live in a Thoughts view in my own file, and the dagordning file is retired (meeting 2026-10-22-2309); the project's documents are to be imported into the same file as Disposable items, deleted and read afresh on each import (ROADMAP, Sharpen the saw).
 - **Off this Mac** (adopted 2026-10-22, meeting § 5h): the code is on GitHub since 2026-10-17; the session summaries are committed too, since 2026-10-23.
 - **An intermittent test failure is hunted, not waved away**: a `mix check` that fails once and passes on rerun gets the suite run over many seeds (`mix test --seed N` in a bash loop); on 2026-10-24 that found a real bug (a macro closing a settings box lost its undo step, fuzz seed 112)
 - **Formatting needs no gate run**: a Claude Code hook (`.claude/settings.json`) runs `mix format` on every `.ex`/`.exs` file Claude writes, so a format failure no longer costs a `mix check` round (2026-10-22). The same file allows `mix test`, `mix check` and `tools/smoke/smoke.py` without a permission prompt.
 - **Questions first, then a row of builds**: three items (a bug fix release, the `feature` skill, the document import) settled in one round of four questions, then built and committed one after another while the owner went to bed (2026-10-23).
-- **A "tried it?" line per version** (meeting 2026-10-26-4, § 10): each session summary says, for every version released, whether I tried it in the program, so `/start-session` offers the untried ones. Parity work checked against Agenda in DOSBox I trust without trying each version; the pace stays.
+- **A "tried it?" line per version** (meeting 2026-10-26-1524, § 10): each session summary says, for every version released, whether I tried it in the program, so `/start-session` offers the untried ones. Parity work checked against Agenda in DOSBox I trust without trying each version; the pace stays.
 - **A try-it script for changes that are hard to see** (2026-10-26): for v0.64.1 (logger, debug log, fuzz output) Claude wrote a small script in the scratchpad that rebuilds the binary, runs Agendum on a copy of my file with scratch preferences and logs, tells me what to press, then checks the log; I tried it in five minutes and it worked.
 - **Four questions before the code** (2026-10-26, after the slice reviews): outside input, background or network, odd encodings, another order of events; a "yes" gets its test (feature skill, step 4), and a larger diff a local `/code-review` before the commit (step 7). Tests are kept fast: the heavy runs belong to `mix agendum.fuzz` and the nightly CI.
 - **Smoke tests in a sandbox**: a pty test sets `XDG_CONFIG_HOME` to a scratch folder and unsets `AGENDUM_LOG`, after one test wrote into the owner's real preferences (2026-10-16; CLAUDE.md, Testing the real terminal).

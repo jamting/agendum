@@ -4,7 +4,7 @@ For a view, a note, the category manager and the view manager, reads the
 bar's ten slots as Agenda draws them with no key held and with ALT, CTRL or
 SHIFT held, and writes the labels to a JSON reference (default
 docs/reference/agenda_key_bars.json), which Agendum's key bar test compares
-with the bars it makes from its keymaps (ADR 0045; meeting 2026-10-24, § 5).
+with the bars it makes from its keymaps (ADR 0045; meeting 2026-10-24-2057, § 5).
 Run by hand, never by the tests:
 
     AGENDA_DOS_ROOT=<scratch copy holding APPS/AGENDA> \

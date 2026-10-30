@@ -1,6 +1,6 @@
 defmodule Agendum.HostileTextTest do
   @moduledoc """
-  Text from outside is data, never instructions (meeting 2026-10-26-4,
+  Text from outside is data, never instructions (meeting 2026-10-26-1524,
   § 6; expert review 2026-10-21, § 14): a feed, a Lotus Agenda file or a
   JSON file whose text asks for changes, holds terminal escape codes or
   looks like Agenda's macro commands imports as plain items, and only its

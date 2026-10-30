@@ -1,11 +1,11 @@
 ---
 name: meeting
-description: Hold a panel meeting in Owl's house on the owner's own agenda (the thoughts they put under Next meeting in their Agendum project file, read with mix agendum.thoughts; a classic Swedish dagordning). The experts the agenda calls for (from the panel of expert-review: José, Joe, Carsten, Mitch, David, Russell, Marie and Claude) discuss each item with the owner, who decides; decisions go into the roadmap, plans and ADRs, and the worded agenda and the minutes (protokoll) are published in docs/meetings/YYYY-MM-DD/. Use when the owner calls a meeting, asks to go through their thoughts with the panel, or types /meeting.
+description: Hold a panel meeting in Owl's house on the owner's own agenda (the thoughts they put under Next meeting in their Agendum project file, read with mix agendum.thoughts; a classic Swedish dagordning). The experts the agenda calls for (from the panel of expert-review: José, Joe, Carsten, Mitch, David, Russell, Marie and Claude) discuss each item with the owner, who decides; decisions go into the roadmap, plans and ADRs, and the worded agenda and the minutes (protokoll) are published in docs/meetings/YYYY-MM-DD-HHMM/. Use when the owner calls a meeting, asks to go through their thoughts with the panel, or types /meeting.
 ---
 
 # Panel meeting
 
-The owner collects thoughts in their own Agendum project file whenever they come, as roughly as they like (meeting 2026-10-22, § 7b): a Thoughts category whose child Next meeting holds what they want brought up, read with `mix agendum.thoughts` (the file's path is in `$AGENDUM_PROJECT_FILE`). The Markdown file `docs/meetings/dagordning.md` they used before is retired (meeting 2026-10-22-2, § 3). Calling a meeting turns them into decisions: the panel discusses each item, the **owner decides**, the decisions are written into the documents they belong in, and the meeting leaves two files behind: the agenda, worded properly, and the minutes.
+The owner collects thoughts in their own Agendum project file whenever they come, as roughly as they like (meeting 2026-10-22-2130, § 7b): a Thoughts category whose child Next meeting holds what they want brought up, read with `mix agendum.thoughts` (the file's path is in `$AGENDUM_PROJECT_FILE`). The Markdown file `docs/meetings/dagordning.md` they used before is retired (meeting 2026-10-22-2309, § 3). Calling a meeting turns them into decisions: the panel discusses each item, the **owner decides**, the decisions are written into the documents they belong in, and the meeting leaves two files behind: the agenda, worded properly, and the minutes.
 
 This is not a review: nothing is scored, and the panel speaks only to the items on the agenda. It is also not a work session: **no code changes** during the meeting. A decision to build something becomes a roadmap item, built later in the usual way (the `feature` skill).
 
@@ -21,12 +21,12 @@ This is not a review: nothing is scored, and the panel speaks only to the items 
 ```
 docs/meetings/
   TEMPLATE.md              the form for a meeting's worded agenda (copy it, do not fill it in)
-  YYYY-MM-DD/
+  YYYY-MM-DD-HHMM/
     dagordning.md          the agenda as adopted, worded properly
     protokoll.md           the minutes
 ```
 
-A second meeting on the same day gets `YYYY-MM-DD-2/`.
+The folder is named by the date and time the meeting opens, from `date '+%Y-%m-%d-%H%M'` (like the session summaries): `docs/meetings/2026-10-28-0908/`. A meeting is referred to by that name, "meeting 2026-10-28-0908, § 5".
 
 ## 1. Prepare
 
@@ -72,12 +72,12 @@ After the closing, before the minutes, put every decision in its home, each citi
 
 ## 4. Write the agenda and the minutes
 
-`docs/meetings/YYYY-MM-DD/dagordning.md`, made from `docs/meetings/TEMPLATE.md`: the agenda as adopted (after § 3), with the worded backgrounds; the owner's own notes are no longer needed beside it, since nothing of their meaning was dropped.
+`docs/meetings/YYYY-MM-DD-HHMM/dagordning.md`, made from `docs/meetings/TEMPLATE.md`: the agenda as adopted (after § 3), with the worded backgrounds; the owner's own notes are no longer needed beside it, since nothing of their meaning was dropped.
 
-`docs/meetings/YYYY-MM-DD/protokoll.md`:
+`docs/meetings/YYYY-MM-DD-HHMM/protokoll.md`:
 
 ```markdown
-# Minutes of the panel meeting, YYYY-MM-DD
+# Minutes of the panel meeting, YYYY-MM-DD-HHMM
 
 **Place:** Owl's house, the Hundred Acre Wood
 **Present:** the owner (chair); <the experts invited, e.g. Old Mitch Lilypad,
@@ -119,5 +119,5 @@ The task only reads the project file, so the owner changes it in Agendum: a thou
 ## 6. Commit and report
 
 - `mix test test/agendum/docs_index_test.exs` if a document was added under `docs/` or `docs/plans/`; nothing under `lib/` or `test/` changed, so `mix check` is not needed.
-- One commit, with explicit paths (never `git add docs`): the meeting's folder and every document a decision was written into. "Panel meeting YYYY-MM-DD", the decisions listed in the body.
+- One commit, with explicit paths (never `git add docs`): the meeting's folder and every document a decision was written into. "Panel meeting YYYY-MM-DD-HHMM", the decisions listed in the body.
 - In the terminal: the thoughts the meeting handled, for the owner to mark done (F4) in Agendum, and those tabled, to leave under Next meeting; the decisions, each with where it was recorded; what was tabled or referred; the path to the minutes.

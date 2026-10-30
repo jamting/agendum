@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.Extras.IngestedTest do
   @moduledoc """
-  Ingested categories in the TUI (R75a; meeting 2026-10-26-5, § 6; the
+  Ingested categories in the TUI (R75a; meeting 2026-10-26-1732, § 6; the
   owner's choices, 2026-10-26): the Feeds family starts folded in the
   category manager, ALT-= opens it; changing a feed's category there is
   refused with a message saying where to do it; F2 in the Feeds and

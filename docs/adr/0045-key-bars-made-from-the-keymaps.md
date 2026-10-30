@@ -1,10 +1,10 @@
 # ADR 0045 — Every key bar is made from the keymaps
 
-**Status:** accepted · 2026-10-24 (meeting 2026-10-24, § 5)
+**Status:** accepted · 2026-10-24 (meeting 2026-10-24-2057, § 5)
 
 ## Context
 
-Agenda's key bar has ten fixed slots, one per function key (R80), and holding ALT, CTRL or SHIFT shows the ALT-F, CTRL-F and SHIFT-F keys of the place in the same slots (checked in Agenda 2.0, PLANNER, 2026-10-24, by setting the BIOS shift flags). Agendum is to show those bars too, reached with ALT-K (meeting 2026-10-24, § 5). That is five bars in each of five places. Until now each bar was a hand-written list in `Agendum.TUI.Render.KeyBar`, apart from the keymaps (`Agendum.TUI.Keymap`) that decide what a key does, so a bar could say one thing while the key did another. The F1 help is already made from the keymaps and the commands (R65).
+Agenda's key bar has ten fixed slots, one per function key (R80), and holding ALT, CTRL or SHIFT shows the ALT-F, CTRL-F and SHIFT-F keys of the place in the same slots (checked in Agenda 2.0, PLANNER, 2026-10-24, by setting the BIOS shift flags). Agendum is to show those bars too, reached with ALT-K (meeting 2026-10-24-2057, § 5). That is five bars in each of five places. Until now each bar was a hand-written list in `Agendum.TUI.Render.KeyBar`, apart from the keymaps (`Agendum.TUI.Keymap`) that decide what a key does, so a bar could say one thing while the key did another. The F1 help is already made from the keymaps and the commands (R65).
 
 ## Decision
 

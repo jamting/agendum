@@ -1,4 +1,4 @@
-// The guide's and the manual's sense of place (meeting 2026-10-28-6, § 5):
+// The guide's and the manual's sense of place (meeting 2026-10-28-2214, § 5):
 // the contents show the chapter on screen, and the reader's place is kept
 // in the browser's own storage, one per page, so the page opens where they
 // left off. When storage is blocked (a private window, a strict browser),

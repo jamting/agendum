@@ -12,27 +12,27 @@ Small, testable increments: the open work, by area.
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. The public repository of the clone, by the moving-day checklist (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md) § 7, Moving day): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7)
-2. The public site, with four doors (Housekeeping; meeting 2026-10-28-2, § 9)
+1. The public repository of the clone, by the moving-day checklist (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md) § 7, Moving day): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-1108, § 7)
+2. The public site, with four doors (Housekeeping; meeting 2026-10-28-0908, § 9)
 3. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
-4. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-4, § 14, tabled)
+4. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-1524, § 14, tabled)
 
-Go for the public repository was given at the practical meeting (meeting 2026-10-28-5, § 13), on conditions, all met on 2026-10-30 (`ROADMAP_DONE.md`).
+Go for the public repository was given at the practical meeting (meeting 2026-10-28-1911, § 13), on conditions, all met on 2026-10-30 (`ROADMAP_DONE.md`).
 
-The order of the earlier steps was Marie's (the licence meeting and the tidy pass, first in it, done 2026-10-28), at the chair's request (meeting 2026-10-28-2, § 13; the pseudonyms folded into the dry run by the chair's addendum):
+The order of the earlier steps was Marie's (the licence meeting and the tidy pass, first in it, done 2026-10-28), at the chair's request (meeting 2026-10-28-0908, § 13; the pseudonyms folded into the dry run by the chair's addendum):
 
 - the licence before the dry run, as the licence and the contributors' terms go into the copy;
 - the tidy pass and the markers in one sweep over the same documents;
 - the dry run after the markers, so its leak test has something to check;
 - the site after the repository, as Pages needs it public.
 
-**The extras meet the guidelines** since v0.72.0 (2026-10-28): new extras and Wol may come again (meeting 2026-10-26-6, § 7; ADR 0049). Why: the extras were built before the clone's bar was raised and missed its catch-up, in robustness at the shell's edge and in the boxes' conventions (§ 5).
+**The extras meet the guidelines** since v0.72.0 (2026-10-28): new extras and Wol may come again (meeting 2026-10-26-2234, § 7; ADR 0049). Why: the extras were built before the clone's bar was raised and missed its catch-up, in robustness at the shell's edge and in the boxes' conventions (§ 5).
 
-**No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21, § 5; meeting 2026-10-25, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
+**No longer frozen** since the truthful clone was declared done (2026-10-26, v0.62.0): Beyond Agenda, Ideas and Towards many users are open again (meeting 2026-10-21-2324, § 5; meeting 2026-10-25-2252, § 7). The clone stays truthful: a new difference from Agenda passes ADR 0043's test or is an extra behind the Extras switch. The view cache still waits for slow answers in real use.
 
 ### Towards parity with Agenda (Milestone 2)
 
-**Done:** the truthful clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-2, § 7); its leftovers and optional steps are in the areas below. **The ambition was:** Agendum as close to Agenda 2.0 as makes sense: the same screen, keys, menus and behaviour, apart from accepted enhancements and modifications. The parity work, its order and its details are in one place: [`docs/plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps (with how close Agendum is, and the two lists).
+**Done:** the truthful clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-1108, § 7); its leftovers and optional steps are in the areas below. **The ambition was:** Agendum as close to Agenda 2.0 as makes sense: the same screen, keys, menus and behaviour, apart from accepted enhancements and modifications. The parity work, its order and its details are in one place: [`docs/plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps (with how close Agendum is, and the two lists).
 
 ### Fixes and polish
 
@@ -93,40 +93,40 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
 
 ### Housekeeping
 
-- [ ] The licence and the CLA checked by a lawyer before the first outside pull request is merged (meeting 2026-10-28-5, § 9; ADR 0051; `plans/GITHUB.md` § 7, step 7; a Swedish business lawyer, *affärsjurist*).
+- [ ] The licence and the CLA checked by a lawyer before the first outside pull request is merged (meeting 2026-10-28-1911, § 9; ADR 0051; `plans/GITHUB.md` § 7, step 7; a Swedish business lawyer, *affärsjurist*).
 
   - **Publishing does not wait for it;** the CLA bot blocks merging without a signature, and the public README says contributions open later.
   - **The lawyer reads** `CLA.md` and the dual-licensing question.
   - **The lawyer is asked** whether Agenda's captured texts may stay published (`docs/reference/agenda_*.json`, the 1,558 messages among them; the owner, 2026-10-28: once public, trimming them later leaves them in the history and in forks)
-- [ ] The owner reads two lists in the dry run's report before publishing (meeting 2026-10-28-5, §§ 8, 13; `plans/GITHUB.md` § 7, step 6):
+- [ ] The owner reads two lists in the dry run's report before publishing (meeting 2026-10-28-1911, §§ 8, 13; `plans/GITHUB.md` § 7, step 6):
 
   - **The 20 longest captured Agenda texts** (*decided by the owner, 2026-10-28:* `agenda_messages.json` goes into the copy whole, all 1,558 messages, as they can serve later messages, contributors without Agenda and finding Agenda's rules; the question goes to the lawyer);
   - **the lines still naming a removed file** (the done list, old minutes and reviews, the skills that read the summaries and the study plan), each a link to fix or a fact to keep
-- [ ] Our own `.AG` test files without a starter underneath (meeting 2026-10-28-5, § 7, found doing it): RICH.AG and DATES.AG were made in Agenda on Lotus's Planner starter (54 of their 55 categories are Planner's) and UX.AG on Information Sifter; they stay in the public copy, but could be made again from a blank Agenda file in DOSBox (`tools/agformat/agenda_driver.py`), with the tests' expectations moved to the new files; not before publishing
-- [ ] The name's story and how it is said (meeting 2026-10-28-4, § 5; ADR 0019, update 2026-10-28): one line, "Wol is how Owl spells his name", and "said wolz a-JEN-dum", where the name first meets a reader: the About help topic (`lib/agendum/tui/help/topics/about-agendum.txt`, built with the `feature` skill) and the site; the README has both (the tidy pass, 2026-10-28)
-- [ ] The public site, after the public repository (meeting 2026-10-28-2, § 9):
+- [ ] Our own `.AG` test files without a starter underneath (meeting 2026-10-28-1911, § 7, found doing it): RICH.AG and DATES.AG were made in Agenda on Lotus's Planner starter (54 of their 55 categories are Planner's) and UX.AG on Information Sifter; they stay in the public copy, but could be made again from a blank Agenda file in DOSBox (`tools/agformat/agenda_driver.py`), with the tests' expectations moved to the new files; not before publishing
+- [ ] The name's story and how it is said (meeting 2026-10-28-1233, § 5; ADR 0019, update 2026-10-28): one line, "Wol is how Owl spells his name", and "said wolz a-JEN-dum", where the name first meets a reader: the About help topic (`lib/agendum/tui/help/topics/about-agendum.txt`, built with the `feature` skill) and the site; the README has both (the tidy pass, 2026-10-28)
+- [ ] The public site, after the public repository (meeting 2026-10-28-0908, § 9):
 
   - **One static page with four doors:** Try it (install), Learn it (the guide, the manual), Look inside (the API and design docs, the ADRs), Follow it (the owner's devlog), and a short recording of typing an item and seeing it filed.
   - **The docs on GitHub Pages;** an `llms.txt` made from `docs/INDEX.md`.
   - **Downloads** from GitHub Releases and a Homebrew tap first, bundled binaries (Burrito-style) later if people ask.
   - **The devlog** is the owner's own words, published with Agendum's blog extra, backfilled as milestone posts (the summaries only jog the memory; they stay private)
 - [ ] Optional (from the parity plan, 2026-10-26): Utilities ▸ Launch, a shell without quitting Agendum
-- [ ] A public repository of the clone, when it is declared done (meeting 2026-10-21, § 10; ADR 0050): this repository stays the private workshop.
+- [ ] A public repository of the clone, when it is declared done (meeting 2026-10-21-2324, § 10; ADR 0050): this repository stays the private workshop.
 
   - **The public one** is made from a copy with `git filter-repo`, keeping every commit, tag and co-author line, with the third-party reference material and the business files out of the history, the minutes, reviews, `VISION.md` and `GITHUB.md` added back once without their business passages, and the cited commit hashes brought up to date in one commit.
-  - **The licence:** AGPL-3.0-only, CC BY 4.0 for the documents, a CLA (meeting 2026-10-28-3; ADR 0051), confirmed after a lawyer's check before publishing.
+  - **The licence:** AGPL-3.0-only, CC BY 4.0 for the documents, a CLA (meeting 2026-10-28-1224; ADR 0051), confirmed after a lawyer's check before publishing.
   - **The steps and the list of what stays private:** [`docs/plans/GITHUB.md`](plans/GITHUB.md) § 7
 
 ### Users and direction
 
-- [ ] A meeting for brainstorming and general plans, after the public repository (meeting 2026-10-26-4, § 14, tabled): the owner, 2026-10-26: "we are entering a period of brainstorming and making general plans on ideas now", with coding too; clarity on the ideas, and whether an overarching strategy is needed.
+- [ ] A meeting for brainstorming and general plans, after the public repository (meeting 2026-10-26-1524, § 14, tabled): the owner, 2026-10-26: "we are entering a period of brainstorming and making general plans on ideas now", with coding too; clarity on the ideas, and whether an overarching strategy is needed.
 
   The panel's four directions for after the public repository go there: looking for users (Mitch), a read-only headless command and golden tasks (Claude), the GTD starter (David), the gentler starter (Russell)
-- [ ] Real users, when there are any: old Agenda users and people who love keyboard tools, with the debug log on (`AGENDUM_LOG`) and a short talk with each; what they stumble on goes here (expert review 2026-10-16). Not a condition for declaring the clone done, and no search for old Agenda users now: the owner knows none (meeting 2026-10-22, § 5a and § 5e)
+- [ ] Real users, when there are any: old Agenda users and people who love keyboard tools, with the debug log on (`AGENDUM_LOG`) and a short talk with each; what they stumble on goes here (expert review 2026-10-16). Not a condition for declaring the clone done, and no search for old Agenda users now: the owner knows none (meeting 2026-10-22-2130, § 5a and § 5e)
 
 ### Towards many users
 
-Open again since the truthful clone was declared done (2026-10-26; meeting 2026-10-21, § 5; meeting 2026-10-22, § 5i).
+Open again since the truthful clone was declared done (2026-10-26; meeting 2026-10-21-2324, § 5; meeting 2026-10-22-2130, § 5i).
 
 *[A page here was soaked in the creek. — Rabbit]*
 
@@ -135,22 +135,22 @@ Open again since the truthful clone was declared done (2026-10-26; meeting 2026-
 - [ ] Later (the owner, 2026-10-26, after v0.66.0): shrink the faded feed entries further: a hashed entry id instead of the full guid or link (often a web address), and the publish date as a day number instead of a `Date` struct; the 13,181 faded entries are most of the feeds' 2.7 MB as a term in the owner's file (the file 1.21 MB on disk). A format change; not urgent, the save is 39 ms
 Open again since the clone was declared done (2026-10-26); the built ones stay hidden behind the Extras preference (ADR 0043).
 
-Each item names the group in `VISION.md` it serves, group 1 first; items for group 3 or for no group yet wait under Ideas, one line each with a pointer to their plan (meeting 2026-10-16-2, § 6).
+Each item names the group in `VISION.md` it serves, group 1 first; items for group 3 or for no group yet wait under Ideas, one line each with a pointer to their plan (meeting 2026-10-16-2056, § 6).
 
-- [ ] _Group 1._ The date filter's "or not assigned" (meeting 2026-10-28, § 6; [`plans/STARTERS.md`](plans/STARTERS.md)): a Date Filter can show the items without a date as well as those in its range, so a view filtered on Start up to today also shows items with no Start ("not active until", Things' start date, GTD's tickler).
+- [ ] _Group 1._ The date filter's "or not assigned" (meeting 2026-10-28-0048, § 6; [`plans/STARTERS.md`](plans/STARTERS.md)): a Date Filter can show the items without a date as well as those in its range, so a view filtered on Start up to today also shows items with no Start ("not active until", Things' start date, GTD's tickler).
 
   Agenda's filter has Assigned and Not assigned apart (User's Guide 11-6), so it is an extra behind the Extras switch (ADR 0043), in the clone's Date Filter box's patterns (ADR 0049)
-- [ ] Later, Beyond Agenda (the chair, meeting 2026-10-26-6, §§ 6, 8): settings as views, e.g. the feeds and calendars as a view of their own, one row per subscription with columns for address, how often, days kept, last read; a window onto the typed structs, never a second copy (ADR 0048). Not while the work is the truthful clone with robust extras: then only existing patterns
+- [ ] Later, Beyond Agenda (the chair, meeting 2026-10-26-2234, §§ 6, 8): settings as views, e.g. the feeds and calendars as a view of their own, one row per subscription with columns for address, how often, days kept, last read; a window onto the typed structs, never a second copy (ADR 0048). Not while the work is the truthful clone with robust extras: then only existing patterns
 - [ ] _Group 1._ The extras' commands that fetch or publish move from File ▸ Transfer to **Utilities** (the owner, 2026-10-24, after Utilities came back in Agenda's shape, R81a): Calendars, Feeds and Publish are things to do with the file, not ways to bring a file in or out, so they fit beside Customize, Execute and Show better than beside Import and Export.
 
   - **With the Extras preference off** nothing changes (they are hidden, R77).
   - **With it on,** Agenda's Utilities gains them after its own entries, so its first letters (C, E, S, Q) stay as Agenda's and the new ones need letters of their own (Calendars clashes with Customize: to settle).
   - **The menu test** compares the menus with the extras off, so it stays as it is; the help texts (`Agendum.TUI.CommandDocs`, `~w(File Transfer Calendars)` …) and SPEC R45, R74, R75 move with them.
-  - **File ▸ Transfer** keeps Import and Export, and the OPML Import when the extras thaw (meeting 2026-10-22-3, § 7)
-- [ ] _Group 1._ An RSS reader, with Wol later (meeting 2026-10-16-2, § 7), fetched by the shell like calendars (`Agendum.Extras.CalendarFetch`; OTP's `:httpc` and `:xmerl`, no new dependency). In two steps:
+  - **File ▸ Transfer** keeps Import and Export, and the OPML Import when the extras thaw (meeting 2026-10-22-2337, § 7)
+- [ ] _Group 1._ An RSS reader, with Wol later (meeting 2026-10-16-2056, § 7), fetched by the shell like calendars (`Agendum.Extras.CalendarFetch`; OTP's `:httpc` and `:xmerl`, no new dependency). In two steps:
   - [x] Built 2026-10-17 (R75, v0.13.0), approved by the owner 2026-10-17 after trying it (v0.13.0 tagged): a plain reader (plan: [`plans/RSS_READER.md`](plans/RSS_READER.md), settled with the owner 2026-10-17): feed entries become ingested items (level 2, `plans/ITEM_LEVELS.md`), filed by Agenda's own conditions as typed items are; the feed list imports and exports OPML; no unread counts: an entry never asks to be dealt with, keeping one is a choice, letting it go costs nothing
   - Dropped (the owner, 2026-10-27): OPML through File ▸ Transfer ▸ Import; the Feeds manager keeps it (F7 and F8), so the menus have no hole with the Extras off
-  - Whether feed entries should be read-only was referred to `plans/ITEM_LEVELS.md` (meeting 2026-10-22-3, § 6), as part of what an ingested item is
+  - Whether feed entries should be read-only was referred to `plans/ITEM_LEVELS.md` (meeting 2026-10-22-2337, § 6), as part of what an ingested item is
   - [ ] Wol's part (summaries, sifting, suggestions; `plans/WOL-IN-THE-MACHINE.md`), only after its principle 6 (feed text is data, never instructions) and the golden tasks with hostile feed text. Which model is for the Wol plan. The owner's notes on the design are on the next agenda, below its line
 - [ ] _Group 1._ Calendar subscriptions (R45, an extra): repeating events in a calendar from another time zone: each occurrence converted in its own zone, so the weeks between the two zones' summer-time changes are not an hour off (SPEC R45)
 - [ ] _Group 1._ Three levels of items (vision, the owner's, 2026-10-16; plan with open questions: [`plans/ITEM_LEVELS.md`](plans/ITEM_LEVELS.md)): zettels (the person's items, with Zettelkasten IDs), ingested items (calendar events, RSS entries …: promoted to zettels or discarded by rules) and context items (made by the language model to understand the information; inspected, not edited). The JSON export asks which levels to include, as Agenda's STF export chooses what goes in (ADR 0034). Volumes can be large
@@ -175,15 +175,15 @@ Each item names the group in `VISION.md` it serves, group 1 first; items for gro
 - [ ] _Groups 1 and 2._ Capture from outside (paused, owner 2026-10-16): the owner would rather capture through a URL scheme (such as `agendum://add?text=…`, which a phone, a browser or another program can open) than a shell command, `agendum add "text" FILE`; to be designed when picked up.
 
   Filed by the core as if typed in the view (the command `{:add_item, …}`), saying where it was filed; later a mail or phone path (expert review 2026-10-16). The first door without a keyboard, and an agent's first tool (second meeting); the guard it needs first is the first item above
-- [ ] _Group 2._ A GTD starter, like the Planner (R60, ADR 0028): Inbox, Next Actions by context, Projects, Waiting For, Someday/Maybe, and views for a weekly review (items untouched for a while, projects without a next action), so the rules show what they can do in a method many people know (expert review 2026-10-16) Its sketch, and six other systems', are in [`plans/STARTERS.md`](plans/STARTERS.md) (meeting 2026-10-28)
+- [ ] _Group 2._ A GTD starter, like the Planner (R60, ADR 0028): Inbox, Next Actions by context, Projects, Waiting For, Someday/Maybe, and views for a weekly review (items untouched for a while, projects without a next action), so the rules show what they can do in a method many people know (expert review 2026-10-16) Its sketch, and six other systems', are in [`plans/STARTERS.md`](plans/STARTERS.md) (meeting 2026-10-28-0048)
 
 ### Ideas
 
 Open again since the clone was declared done (2026-10-26); an idea moves up when the owner chooses it.
 
-Each names the group in `VISION.md` it serves; an idea moves up to "Beyond Agenda" when it serves group 1 or 2 now (meeting 2026-10-16-2, § 6).
+Each names the group in `VISION.md` it serves; an idea moves up to "Beyond Agenda" when it serves group 1 or 2 now (meeting 2026-10-16-2056, § 6).
 
-- _Groups 1 and 2._ Attachments (meeting 2026-10-25, § 5): files of any kind on an item or a category (an image that belongs to a note, the CV a note is about).
+- _Groups 1 and 2._ Attachments (meeting 2026-10-25-2252, § 5): files of any kind on an item or a category (an image that belongs to a note, the CV a note is about).
 
   - **Copied** into a folder beside the Agendum file as org-mode's attachments are, listed in the note, opened with the system's viewer (an effect, as CTRL-V opens a link).
   - **On the web,** uploads kept by the server.
@@ -198,8 +198,8 @@ Each names the group in `VISION.md` it serves; an idea moves up to "Beyond Agend
 
   Agenda's steep learning curve limited its audience (AGENDA_HISTORY.md); the power should stay, the strangeness should not be the first thing people meet. Builds on the keymaps, self-describing commands and own key bindings (Towards many users); departs from ADR 0006 and 0007, so it needs an ADR of its own.
 
-  Since ADR 0038 (2026-10-16) this is for the web's modern interface: the terminal program keeps Agenda's names and keys. In the terminal, later and as an extra: a modern key set as a setting in the same program, File ▸ Customize ▸ Keys: Agenda (default) or Modern, not a second program (meeting 2026-10-22, § 6; ADR 0038)
-- _Group 3._ A starter for the easily overwhelmed, with a gentler "Overdue" (fewer at a time, kinder words) than the Planner's (`lib/agendum/starters/planner/views.ex:73`), which stays as Agenda's PLANNER (expert review 2026-10-21, § 17; meeting 2026-10-22, § 5k) See [`plans/STARTERS.md`](plans/STARTERS.md) (the three-days-away test, the mood tracker)
+  Since ADR 0038 (2026-10-16) this is for the web's modern interface: the terminal program keeps Agenda's names and keys. In the terminal, later and as an extra: a modern key set as a setting in the same program, File ▸ Customize ▸ Keys: Agenda (default) or Modern, not a second program (meeting 2026-10-22-2130, § 6; ADR 0038)
+- _Group 3._ A starter for the easily overwhelmed, with a gentler "Overdue" (fewer at a time, kinder words) than the Planner's (`lib/agendum/starters/planner/views.ex:73`), which stays as Agenda's PLANNER (expert review 2026-10-21, § 17; meeting 2026-10-22-2130, § 5k) See [`plans/STARTERS.md`](plans/STARTERS.md) (the three-days-away test, the mood tracker)
 - _Group 3._ More date languages (one `Agendum.Core.DateLanguage` pack each); English and Swedish exist (R14c)
 - _No group yet._ Flashcards with active recall and spaced repetition: an item is the question, its note the answer; a deck is any category.
 

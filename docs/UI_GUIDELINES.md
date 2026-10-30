@@ -1,8 +1,8 @@
 # UI guidelines
 
-**Status:** adopted 2026-10-27, the owner having answered its questions (below); drafted 2026-10-26 night. Written for meeting 2026-10-26-6 (§§ 5–8) and ADR 0049.
+**Status:** adopted 2026-10-27, the owner having answered its questions (below); drafted 2026-10-26 night. Written for meeting 2026-10-26-2234 (§§ 5–8) and ADR 0049.
 
-The conventions the clone's screens and boxes follow, written down so that the extras, which have no Agenda to copy, follow them too. Only patterns the clone already has are here (ADR 0049; the chair, meeting 2026-10-26-6, § 8: "not to confuse old users"). Each rule is one line: what is true, then "(as Agenda)" with where Agenda says or shows it, or "Our choice"; then where it is seen in our code. **Test:** names the test that checks it today; **Could test:** is a suggestion, not built.
+The conventions the clone's screens and boxes follow, written down so that the extras, which have no Agenda to copy, follow them too. Only patterns the clone already has are here (ADR 0049; the chair, meeting 2026-10-26-2234, § 8: "not to confuse old users"). Each rule is one line: what is true, then "(as Agenda)" with where Agenda says or shows it, or "Our choice"; then where it is seen in our code. **Test:** names the test that checks it today; **Could test:** is a suggestion, not built.
 
 When a rule here and a box disagree, the box is the bug, unless the rule is wrong; then the rule is changed first, at a meeting or in an ADR, and the box after.
 
@@ -69,7 +69,7 @@ When a rule here and a box disagree, the box is the bug, unless the rule is wron
 
 ## The extras against the guidelines
 
-Each gap in `lib/agendum/tui/extras/`, the rule it breaks, and the existing part that would mend it. The first five were found at meeting 2026-10-26-6, § 6; the rest by reading the boxes for this draft. "Mend" is what the rework does (ROADMAP, Beyond Agenda), as the owner settled it on 2026-10-27 (below).
+Each gap in `lib/agendum/tui/extras/`, the rule it breaks, and the existing part that would mend it. The first five were found at meeting 2026-10-26-2234, § 6; the rest by reading the boxes for this draft. "Mend" is what the rework does (ROADMAP, Beyond Agenda), as the owner settled it on 2026-10-27 (below).
 
 | # | Box | Gap | Rule | Existing part that would mend it |
 | --- | --- | --- | --- | --- |

@@ -69,7 +69,7 @@ defmodule Agendum.TUI.Boxes.DisplayFormatBox do
   def title(_state, _mode), do: "Display Format"
 
   # F1 (R65): the settings box's usual text, and how new files get this
-  # format too (R82a; meeting 2026-10-26-3, § 6)
+  # format too (R82a; meeting 2026-10-26-1358, § 6)
   @impl Box
   def about(state, mode) do
     Box.default_about(__MODULE__, state, mode) <>

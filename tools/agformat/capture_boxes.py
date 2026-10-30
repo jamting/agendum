@@ -5,7 +5,7 @@ and reads it as Agenda draws it: its title, its rows (the text between the
 borders), its bottom edge, and the key bar under it (the ten F-key slots'
 labels, "" for an empty slot; with the box's first field highlighted). Writes them to a JSON reference (default
 docs/reference/agenda_boxes.json), which Agendum's box label test compares
-with its own boxes (AGENDA_PARITY.md, the texts step; meeting 2026-10-21,
+with its own boxes (AGENDA_PARITY.md, the texts step; meeting 2026-10-21-2324,
 § 8). Run by hand, never by the tests:
 
     AGENDA_DOS_ROOT=<scratch copy holding APPS/AGENDA> \

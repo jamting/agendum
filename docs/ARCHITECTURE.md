@@ -2,24 +2,26 @@
 
 **Functional core, imperative shell.** All of Agendum's logic and the whole UI state machine are pure functions over immutable values. A thin shell does terminal I/O and file I/O.
 
-```
-               ┌────────────────────── imperative shell ──────────────────────┐
-  keyboard ──► │ Terminal (raw mode) ─► App loop ─► Keys.decode ─┐            │
-               │                                                 ▼            │
-               │                      ┌──────────── pure ──────────────────┐  │
-               │                      │ TUI.Update.handle(state, key)      │  │
-               │                      │   → {state, effects}               │  │
-               │                      │        │ calls                      │  │
-               │                      │        ▼                            │  │
-               │                      │ Agendum.Core (facade)                │  │
-               │                      │   Database · Assign · Links ·       │  │
-               │                      │   ViewModel · DateParser            │  │
-               │                      │                                     │  │
-               │                      │ TUI.Render.render(state) → lines    │  │
-               │                      └──────────────┬──────────────────────┘  │
-               │ effects: Store.save/load, File.write │ Screen.frame (diff)    │
-  screen ◄──── │ ◄────────────────────────────────────┘                        │
-               └───────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    Keyboard(["keyboard"])
+    Screen(["screen"])
+    subgraph shell ["Imperative shell"]
+        Terminal["Terminal<br/><i>raw mode</i>"]
+        App["App loop"]
+        Keys["Keys.decode"]
+        Effects["effects<br/><i>Store.save / load, File.write</i>"]
+        Frame["Screen.frame<br/><i>draws only what changed</i>"]
+        subgraph pure ["Pure"]
+            Update["TUI.Update.handle(state, key)<br/><i>→ {state, effects}</i>"]
+            Core["Agendum.Core (facade)<br/><i>Database · Assign · Links ·<br/>ViewModel · DateParser</i>"]
+            Render["TUI.Render.render(state)<br/><i>→ lines</i>"]
+        end
+    end
+    Keyboard --> Terminal --> App --> Keys --> Update
+    Update -- calls --> Core
+    Update -- effects --> Effects
+    Update -- state --> Render --> Frame --> Screen
 ```
 
 ## The extras' shelf

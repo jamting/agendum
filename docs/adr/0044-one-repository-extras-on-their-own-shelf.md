@@ -1,10 +1,10 @@
 # ADR 0044 — One repository and one program; the extras on a shelf of their own
 
-**Status:** accepted · 2026-10-21 (meeting 2026-10-21, § 9) · amended 2026-10-22 (meeting 2026-10-22, § 5d: the allowed callers, and the round-trip test first)
+**Status:** accepted · 2026-10-21 (meeting 2026-10-21-2324, § 9) · amended 2026-10-22 (meeting 2026-10-22-2130, § 5d: the allowed callers, and the round-trip test first)
 
 ## Context
 
-With a truthful clone first (meeting 2026-10-21, § 5) and the extras hidden behind one switch (ADR 0043), the owner asked how the clone and the rest are split: a git branch, a new project, or separate "things" sharing the core (the core and the terminal program as the clone; a "next-level TUI" and the web version importing the core). Agendum is one Mix application, one repository, one single-file escript (ADR 0021); the core is already a layer of its own, used through the facade and guarded by `test/agendum/architecture_test.exs`. The extras' pure modules (the blog, the site, Markdown, feeds, Zettel ids, about 3,500 of 45,500 lines) sit among Agenda's own in `lib/agendum/core/`.
+With a truthful clone first (meeting 2026-10-21-2324, § 5) and the extras hidden behind one switch (ADR 0043), the owner asked how the clone and the rest are split: a git branch, a new project, or separate "things" sharing the core (the core and the terminal program as the clone; a "next-level TUI" and the web version importing the core). Agendum is one Mix application, one repository, one single-file escript (ADR 0021); the core is already a layer of its own, used through the facade and guarded by `test/agendum/architecture_test.exs`. The extras' pure modules (the blog, the site, Markdown, feeds, Zettel ids, about 3,500 of 45,500 lines) sit among Agenda's own in `lib/agendum/core/`.
 
 ## Decision
 
@@ -17,11 +17,11 @@ With a truthful clone first (meeting 2026-10-21, § 5) and the extras hidden beh
 
 - Moving the extras' modules is a refactoring with no change in behaviour, done before the Extras switch so the switch has one place to look.
 - The owner's "next-level TUI", a second terminal program with modern keys, would change ADR 0038 (modern keys belong to the web); it was tabled to the next meeting.
-- A public repository (meeting 2026-10-21, § 10, `docs/plans/GITHUB.md` § 7) is made from this one later, by rewriting a copy; this repository stays the private workshop.
+- A public repository (meeting 2026-10-21-2324, § 10, `docs/plans/GITHUB.md` § 7) is made from this one later, by rewriting a copy; this repository stays the private workshop.
 
 ## Amendment: who may name the extras, and the test first (2026-10-22)
 
-The extras are not only modules: their data are stored fields of the file (`next_zettel`, `feeds`, `blog`), so some faithful modules must name them. Only these may, and the `:xref` rule lists them as its exceptions from its first day, strict everywhere else (meeting 2026-10-22, § 5d; expert review 2026-10-21, § 8):
+The extras are not only modules: their data are stored fields of the file (`next_zettel`, `feeds`, `blog`), so some faithful modules must name them. Only these may, and the `:xref` rule lists them as its exceptions from its first day, strict everywhere else (meeting 2026-10-22-2130, § 5d; expert review 2026-10-21, § 8):
 
 - the file and its format: `Agendum.Core.Database`, `Agendum.Core.JSONFile`, `Agendum.Store` and its golden files, and `Agendum.Core.Invariants`;
 - the facade's extras area (an area module under `lib/agendum/core/facade/`, delegated from `Agendum.Core`), which the TUI's extras commands call.

@@ -1,7 +1,7 @@
 defmodule Agendum.Thoughts do
   @moduledoc """
   The owner's thoughts about Agendum, kept in Agendum itself (meeting
-  2026-10-22, § 7b): an inbox of ideas, and the ones to bring up at the
+  2026-10-22-2130, § 7b): an inbox of ideas, and the ones to bring up at the
   next panel meeting. Workshop tooling, not part of the program.
 
   The file is the owner's own, outside git: a category Thoughts with a
@@ -12,7 +12,7 @@ defmodule Agendum.Thoughts do
   `new_file/0` makes such a file, `read/1` takes the open thoughts out of
   one, and `to_markdown/2` writes them for a session or the `meeting`
   skill to read. `import_docs/3` puts the project's documents into the
-  file as Disposable items (meeting 2026-10-22-2, § 5). `mix
+  file as Disposable items (meeting 2026-10-22-2309, § 5). `mix
   agendum.thoughts` is the shell around them. Pure.
   """
 
@@ -119,7 +119,7 @@ defmodule Agendum.Thoughts do
 
   @doc """
   Puts the project's documents into `db` as Disposable items (meeting
-  2026-10-22-2, § 5): first every item under Disposable is deleted, then
+  2026-10-22-2309, § 5): first every item under Disposable is deleted, then
   each document becomes one item, its title (the first `#` heading) the
   item's text and the whole document its note, in Disposable ▸ its kind
   (Meetings, ADRs, Roadmap, Summaries, made when missing). The item's
@@ -202,7 +202,7 @@ defmodule Agendum.Thoughts do
   end
 
   # Where each kind keeps its date: the meeting's folder
-  # (`docs/meetings/2026-10-21-2/`), the summary's file name
+  # (`docs/meetings/2026-10-21-2324/`), the summary's file name
   # (`2026-10-22-2311.md`), the first date on the ADR's status line
   defp doc_date(kind, doc, today) when kind in [:meeting, :summary],
     do: first_date(doc.path) || today

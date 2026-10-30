@@ -1,10 +1,10 @@
 # The Hundred Acre Wood in the help
 
-Where the help's written topics (`lib/agendum/tui/help/topics/*.txt`, ADR 0047) touch the Hundred Acre Wood, one row per touch, so the balance can be seen at a glance and a touch found and changed (meeting 2026-10-26-2, § 8). A check keeps the list true: every quoted line here must still be in its topic, word for word (`test/agendum/tui/help_topics_test.exs`).
+Where the help's written topics (`lib/agendum/tui/help/topics/*.txt`, ADR 0047) touch the Hundred Acre Wood, one row per touch, so the balance can be seen at a glance and a touch found and changed (meeting 2026-10-26-1108, § 8). A check keeps the list true: every quoted line here must still be in its topic, word for word (`test/agendum/tui/help_topics_test.exs`).
 
 ## The rules
 
-- **Answers first.** The Wood is flavour, not a rule per topic: a touch in an opening line or an example where it comes naturally, left out where it would be forced (the owner, 2026-10-26; meeting 2026-10-22, § 7a).
+- **Answers first.** The Wood is flavour, not a rule per topic: a touch in an opening line or an example where it comes naturally, left out where it would be forced (the owner, 2026-10-26; meeting 2026-10-22-2130, § 7a).
 - **Our own words.** No sentence of Milne's is quoted; characters and places are named, nothing more. No Disney or Shepard pictures.
 - **Kindly.** Owl is fond of explaining, never self-centred; no innuendo (the clinic's tone rules).
 - **Spread out.** No topic carries more than one or two touches, and no character turns up so often that it grates.

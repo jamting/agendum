@@ -116,7 +116,7 @@ defmodule Agendum.TUI.State do
             macro: %{learning: nil, last: nil, playing: 0},
             # the key bar: hidden (false), or which keys it shows, the plain
             # function keys (:none) or those with ALT, CTRL or SHIFT (ALT-K,
-            # meeting 2026-10-24, § 5); only hidden or shown is kept
+            # meeting 2026-10-24-2057, § 5); only hidden or shown is kept
             key_map: :none,
             # the person who reads and types dates: their date languages
             # (R14c), input format (R41b) and the date rules compiled for

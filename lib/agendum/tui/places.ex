@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.Places do
   @moduledoc """
-  Where the person left a file (R69; meeting 2026-10-16, § 5): the view
+  Where the person left a file (R69; meeting 2026-10-16-1905, § 5): the view
   shown and the highlighted item, and the views used lately with how the
   view manager lists them (R68, § 8), kept in their preferences by the file's
   path (`Agendum.Preferences.Place`), never in the file, so moving around

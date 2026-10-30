@@ -1,12 +1,12 @@
 # Starter files: ideas
 
-**Status:** ideas, not a plan yet (meeting 2026-10-28, §§ 5–8). Nothing here is decided for building except the date filter's "or not assigned" (ROADMAP, Beyond Agenda). The order of work and the open questions at the end are for a later meeting.
+**Status:** ideas, not a plan yet (meeting 2026-10-28-0048, §§ 5–8). Nothing here is decided for building except the date filter's "or not assigned" (ROADMAP, Beyond Agenda). The order of work and the open questions at the end are for a later meeting.
 
-Agenda shipped starter applications, ready-made files a person copied and filled in (Starter Applications manual); Agendum ships the Activities Planner (R60), built from code (ADR 0028). This document collects ideas for more, from a brainstorm with lenses in the spirit of Old Mitch Lilypad, Old Stephen of the Seven (FranklinCovey), David the Squirrel, J.D. the Beaver, Ryder the Magpie, Little Marie-Who-Folds, Master Werner (Cultured Code, Things) and Dr. Russell (minutes: `docs/meetings/2026-10-28/protokoll.md`).
+Agenda shipped starter applications, ready-made files a person copied and filled in (Starter Applications manual); Agendum ships the Activities Planner (R60), built from code (ADR 0028). This document collects ideas for more, from a brainstorm with lenses in the spirit of Old Mitch Lilypad, Old Stephen of the Seven (FranklinCovey), David the Squirrel, J.D. the Beaver, Ryder the Magpie, Little Marie-Who-Folds, Master Werner (Cultured Code, Things) and Dr. Russell (minutes: `docs/meetings/2026-10-28-0048/protokoll.md`).
 
 ## Principles
 
-Every starter is judged by these (meeting 2026-10-28, § 8):
+Every starter is judged by these (meeting 2026-10-28-0048, § 8):
 
 - **It keeps only what its method uses**: a GTD file with five families, not twenty (Marie). Three small, good starters beat eight crowded ones.
 - **Its first screen says what it is for**, and who it is for in one line (Marie, David).

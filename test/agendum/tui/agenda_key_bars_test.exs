@@ -1,7 +1,7 @@
 defmodule Agendum.TUI.AgendaKeyBarsTest do
   @moduledoc """
   Agendum's key bars compared with Lotus Agenda 2.0's own (ADR 0045;
-  meeting 2026-10-24, § 5), as `tools/agformat/capture_key_bars.py`
+  meeting 2026-10-24-2057, § 5), as `tools/agformat/capture_key_bars.py`
   captured them from the real program into
   `docs/reference/agenda_key_bars.json`: in a view, a note, the category
   manager and the view manager, with no key held and with ALT, CTRL or

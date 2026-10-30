@@ -2,7 +2,7 @@ defmodule Agendum.TUI.LoggerCaptureTest do
   @moduledoc """
   Erlang's logger never prints over the screen while Agendum runs: its
   reports go to the debug log, or nowhere when it is off; a fetch that
-  crashes comes back as an error to show (meeting 2026-10-26-4, § 6).
+  crashes comes back as an error to show (meeting 2026-10-26-1524, § 6).
   """
   # the logger's handlers are global: not beside other tests
   use ExUnit.Case, async: false

@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.AwayTest do
   @moduledoc """
-  "While you were away" (R70; meeting 2026-10-16, § 6): alarms that came
+  "While you were away" (R70; meeting 2026-10-16-1905, § 6): alarms that came
   due while the file was closed are listed in a box after the splash
   screen, grouped by text; ringing is not an edit, so it never asks to
   save by itself.

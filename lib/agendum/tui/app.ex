@@ -518,7 +518,7 @@ defmodule Agendum.TUI.App do
   A feed's or calendar's read (`fun`), run in its background task: a read
   that crashes outright comes back as an error the person is shown, rather
   than ending the task silently with a report on the screen (meeting
-  2026-10-26-4, § 6). The crash itself goes to the debug log.
+  2026-10-26-1524, § 6). The crash itself goes to the debug log.
   """
   @spec fetched((-> {:ok, term} | {:error, String.t()})) :: {:ok, term} | {:error, String.t()}
   def fetched(fun) do

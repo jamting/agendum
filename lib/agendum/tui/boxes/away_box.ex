@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.Boxes.AwayBox do
   @moduledoc """
-  "While you were away" (R70; meeting 2026-10-16, § 6): when a file is
+  "While you were away" (R70; meeting 2026-10-16-1905, § 6): when a file is
   opened, the alarms that came due while it was closed, so that none is
   lost silently. Shown after the splash screen, only when there are any:
   the latest first, alarms with the same text in one line with a count

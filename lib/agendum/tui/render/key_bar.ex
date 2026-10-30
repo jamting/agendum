@@ -71,7 +71,7 @@ defmodule Agendum.TUI.Render.KeyBar do
   defp place(_state, %{type: :help, page: :topic}), do: :help_topic
 
   # the moves keep Agenda's ten slots (checked in Agenda 2.0, 2026-10-26;
-  # meeting 2026-10-26-2, § 6): empty while an item or a section moves, F1
+  # meeting 2026-10-26-1108, § 6): empty while an item or a section moves, F1
   # Help alone while a column moves or its width changes
   defp place(_state, %{type: type}) when type in [:move_item, :section_move], do: :empty_bar
   defp place(_state, %{type: type}) when type in [:column_move, :column_width], do: :help_only

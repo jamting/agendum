@@ -25,7 +25,7 @@ Our settings boxes apply each change at once, so the screen behind a box shows i
 
 ## Amendment, 2026-10-22: two points changed back to Agenda's
 
-The tagging sitting of 2026-10-22 (ADR 0043; meeting 2026-10-22, § 5b) checked boxes in Agenda 2.0 run headless, on a copy of PLANNER:
+The tagging sitting of 2026-10-22 (ADR 0043; meeting 2026-10-22-2130, § 5b) checked boxes in Agenda 2.0 run headless, on a copy of PLANNER:
 
 - With Hide empty sections set to Yes in View Properties, the empty section stayed behind the box until ENTER; then it went and `[Hide empty]` appeared on the view line. **Agenda applies a box's changes on ENTER.**
 - A category list opened from a box (a view's Filter, an item's Assignment Profile) says "Press ENTER to accept"; SPACE switches a category; ESC closes it **keeping** the change, as ENTER does.

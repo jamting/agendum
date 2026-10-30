@@ -9,7 +9,7 @@ Mix.ensure_application!(:tools)
 # every run's seed and failures are also kept in tmp/check/ (Agendum.TestLog)
 #
 # Lotus's starter applications (Planner, Information Sifter …) are Lotus's
-# files: the public copy leaves them out (meeting 2026-10-28-5, § 7), and
+# files: the public copy leaves them out (meeting 2026-10-28-1911, § 7), and
 # the tests tagged :lotus_starters run only where they are.
 lotus_starters = if File.exists?("test/fixtures/ag/PLANNER.AG"), do: [], else: [:lotus_starters]
 

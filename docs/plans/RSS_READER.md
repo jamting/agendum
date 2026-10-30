@@ -1,6 +1,6 @@
 # A plain RSS reader
 
-**Status:** built 2026-10-17 (R75, v0.13.0); fingerprints built 2026-10-26 (v0.66.0) and ingested categories built 2026-10-26 (R75a, v0.67.0; § Ingested categories, ADR 0048), approved by the owner the same day (tagged). Not finished (meeting 2026-10-22-3, § 6–7): F3 at the OPML prompts was a bug, fixed in v0.16.2 (2026-10-23); OPML stays in the Feeds manager (F7, F8), not File ▸ Transfer ▸ Import (the owner, 2026-10-27: the extras keep to themselves); the manager reworked as the Macros one, v0.72.0; whether entries are read-only was referred to `ITEM_LEVELS.md` (ROADMAP, Beyond Agenda). Step 1 of "An RSS reader, with Wol later" (ROADMAP, Beyond Agenda; meeting 2026-10-16-2, § 7). Wol's part (summaries, sifting, suggestions) is step 2, after principle 6 of `WOL-IN-THE-MACHINE.md`.
+**Status:** built 2026-10-17 (R75, v0.13.0); fingerprints built 2026-10-26 (v0.66.0) and ingested categories built 2026-10-26 (R75a, v0.67.0; § Ingested categories, ADR 0048), approved by the owner the same day (tagged). Not finished (meeting 2026-10-22-2337, § 6–7): F3 at the OPML prompts was a bug, fixed in v0.16.2 (2026-10-23); OPML stays in the Feeds manager (F7, F8), not File ▸ Transfer ▸ Import (the owner, 2026-10-27: the extras keep to themselves); the manager reworked as the Macros one, v0.72.0; whether entries are read-only was referred to `ITEM_LEVELS.md` (ROADMAP, Beyond Agenda). Step 1 of "An RSS reader, with Wol later" (ROADMAP, Beyond Agenda; meeting 2026-10-16-2056, § 7). Wol's part (summaries, sifting, suggestions) is step 2, after principle 6 of `WOL-IN-THE-MACHINE.md`.
 
 ## The idea
 
@@ -41,7 +41,7 @@ The entries are what `ITEM_LEVELS.md` calls *ingested items* (level 2). This fir
 3. OPML in and out.
 4. SPEC R75, the documents, a version (0.13.0), the long fuzz run.
 
-## Ingested categories and fingerprints (meeting 2026-10-26-5, §§ 5–6; ADR 0048)
+## Ingested categories and fingerprints (meeting 2026-10-26-1732, §§ 5–6; ADR 0048)
 
 **Decided.** A feed's category becomes an **ingested category**, the owner's idea: `Category` gets a `source` field, `{:feed, id}` (later `{:calendar, id}`), nil for the person's own. It is named and filled by the feed, not editable or assignable by hand, and hidden in the category manager by default; it still heads the News view's sections, filters views and is read by conditions. The feed and calendar snapshots keep a fingerprint of the title and note they filed instead of the text (ADR 0048). Both are format changes. Why: 243 of the owner's 268 categories were feeds, and the snapshots' copies were 3.6 MB as a term against 2.0 MB for all items (2026-10-26). An unindexed Feed column with one river was weighed and set aside: it cannot be undone, and loses sections, filters and conditions by feed.
 

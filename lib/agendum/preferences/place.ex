@@ -5,7 +5,7 @@ defmodule Agendum.Preferences.Place do
   last first, with whether the view manager lists them so (R68). Kept in
   the preferences, keyed by the file's path, never in the file: moving
   around does not change the file, and each person has their own place in
-  it (meeting 2026-10-16, § 5 and § 8). Agenda kept the view and item in
+  it (meeting 2026-10-16-1905, § 5 and § 8). Agenda kept the view and item in
   the file itself (`docs/AGENDA_FILE_FORMAT.md`, header `0x044` and
   `0x1E8`).
 

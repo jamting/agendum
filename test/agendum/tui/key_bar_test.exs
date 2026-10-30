@@ -99,7 +99,7 @@ defmodule Agendum.TUI.KeyBarTest do
     assert state |> screen() |> String.split("\n") |> length() == 25
   end
 
-  describe "ALT-K shows the ALT, CTRL and SHIFT keys in turn (meeting 2026-10-24, § 5)" do
+  describe "ALT-K shows the ALT, CTRL and SHIFT keys in turn (meeting 2026-10-24-2057, § 5)" do
     test "normal, ALT, CTRL, SHIFT, hidden, normal: Agenda's bars" do
       state = planner(80)
       alt = press(state, {:alt, "k"})

@@ -1,10 +1,10 @@
 # ADR 0041 — The blog uploads by rsync or SFTP, not FTP
 
-**Status:** accepted · 2026-10-17 (built overnight; confirmed by the owner 2026-10-17 after uploading by SFTP). Changes part of meeting 2026-10-16-2, § 8.
+**Status:** accepted · 2026-10-17 (built overnight; confirmed by the owner 2026-10-17 after uploading by SFTP). Changes part of meeting 2026-10-16-2056, § 8.
 
 ## Context
 
-The meeting of 2026-10-16-2 (§ 8) planned the micro-blog's upload "by FTP or FTPS (OTP's own `ftp` application, no new dependency)", beside rsync and a mounted folder (sshfs). When it was built (R74), OTP 29, the version Agendum runs on, turned out to deprecate the whole `ftp` application: every call warns "It will be removed in OTP 30. Legacy protocol support will be dropped in OTP-30, use more modern approach for file transfer as for instance SFTP". `mix check` treats warnings as errors, and the warning cannot be silenced honestly (a dynamic call would only hide it), and in OTP 30 the code would stop working.
+The meeting of 2026-10-16-2056 (§ 8) planned the micro-blog's upload "by FTP or FTPS (OTP's own `ftp` application, no new dependency)", beside rsync and a mounted folder (sshfs). When it was built (R74), OTP 29, the version Agendum runs on, turned out to deprecate the whole `ftp` application: every call warns "It will be removed in OTP 30. Legacy protocol support will be dropped in OTP-30, use more modern approach for file transfer as for instance SFTP". `mix check` treats warnings as errors, and the warning cannot be silenced honestly (a dynamic call would only hide it), and in OTP 30 the code would stop working.
 
 ## Decision
 

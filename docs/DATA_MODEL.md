@@ -683,8 +683,8 @@ Format versions:
 | 42 | Added `Database.description` and `backup_on_open`, File Properties' File description and Make backup on open (R82) |
 | 44 | Added `Database.trash`, an `Agendum.Core.Trash` (`items`, `day`, `empty`), the trash: discarded items kept without their assignments until it is emptied, and File Properties ▸ Empty trash (R24a) |
 | 43 | Added `Database.password`, never written: a file with one is saved encrypted, `AGENDUM-ENC1`, the description, salt, nonce, tag and the encrypted file (ADR 0046) |
-| 45 | A feed entry that faded or was discarded keeps only `%{item: nil, published}`, not its title, note and link (`Feed.forget/1`); `upgrade/1` trims older files' (meeting 2026-10-26-4, § 5) |
-| 46 | A live feed entry keeps `title_print` and `note_print`, fingerprints of what it filed, instead of `title`, `note` and `link`; a calendar event `summary_print` and `description_print` instead of `summary` and `description` (`Agendum.Core.Extras.Fingerprint`); `upgrade/1` converts older files (ADR 0048; meeting 2026-10-26-5, § 5) |
+| 45 | A feed entry that faded or was discarded keeps only `%{item: nil, published}`, not its title, note and link (`Feed.forget/1`); `upgrade/1` trims older files' (meeting 2026-10-26-1524, § 5) |
+| 46 | A live feed entry keeps `title_print` and `note_print`, fingerprints of what it filed, instead of `title`, `note` and `link`; a calendar event `summary_print` and `description_print` instead of `summary` and `description` (`Agendum.Core.Extras.Fingerprint`); `upgrade/1` converts older files (ADR 0048; meeting 2026-10-26-1732, § 5) |
 
 ## UI state around the database
 

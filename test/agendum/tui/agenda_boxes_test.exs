@@ -1,7 +1,7 @@
 defmodule Agendum.TUI.AgendaBoxesTest do
   @moduledoc """
   Agendum's settings boxes compared with Lotus Agenda 2.0's own
-  (AGENDA_PARITY.md, the texts step; meeting 2026-10-21, § 8), as
+  (AGENDA_PARITY.md, the texts step; meeting 2026-10-21-2324, § 8), as
   `tools/agformat/capture_boxes.py` captured them from the real program
   into `docs/reference/agenda_boxes.json`, on Agenda's Activities Planner.
   No DOSBox here: the test reads the capture.

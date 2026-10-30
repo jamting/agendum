@@ -5,7 +5,7 @@ description: Build one feature or fix of Agendum the agreed way, as a checklist 
 
 # Build a feature
 
-The steps for building a feature, fix or behaviour change in Agendum, in order (meeting 2026-10-22-3, § 5). CLAUDE.md keeps the architecture rules and conventions; this is the order of work. A step that does not apply is skipped on purpose, not forgotten: say which in the summary. One feature per commit; small and focused.
+The steps for building a feature, fix or behaviour change in Agendum, in order (meeting 2026-10-22-2337, § 5). CLAUDE.md keeps the architecture rules and conventions; this is the order of work. A step that does not apply is skipped on purpose, not forgotten: say which in the summary. One feature per commit; small and focused.
 
 Several features in one sitting ("do these in a row"): ask every question for all of them first, in one round, then build them one after another, each through the whole list, so the owner can rest while it is built.
 

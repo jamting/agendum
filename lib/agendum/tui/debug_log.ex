@@ -16,7 +16,7 @@ defmodule Agendum.TUI.DebugLog do
   the developer screen (`Agendum.TUI.DevTools`) shows it, and
   Erlang's logger reports (`capture_logger/0`). Starting a
   session deletes all but the newest nine, so ten are kept (meeting
-  2026-10-26-4, § 7). A web address is written by its host only
+  2026-10-26-1524, § 7). A web address is written by its host only
   (`redact/1`): a calendar's or feed's address can hold a private token.
 
   What is typed is in the log, so it stays on this computer. Logging
@@ -119,7 +119,7 @@ defmodule Agendum.TUI.DebugLog do
 
   @doc """
   While the terminal UI runs, Erlang's logger must not print over the
-  screen (it did once, offline, on a closed laptop: meeting 2026-10-26-4,
+  screen (it did once, offline, on a closed laptop: meeting 2026-10-26-1524,
   § 6). This takes its default handler away and puts one in its place that
   writes each report to the debug log, or nowhere when it is off. Returns
   what `release_logger/1` needs to put the default back.
@@ -203,7 +203,7 @@ defmodule Agendum.TUI.DebugLog do
   @doc """
   A line with every web address cut to its host (`https://cal.example/…`):
   the path and query of a calendar's or feed's address can hold a private
-  token, and a log may be sent to someone (meeting 2026-10-26-4, § 7).
+  token, and a log may be sent to someone (meeting 2026-10-26-1524, § 7).
   """
   @spec redact(String.t()) :: String.t()
   def redact(text) do

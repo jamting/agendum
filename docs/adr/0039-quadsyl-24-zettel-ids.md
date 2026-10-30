@@ -1,6 +1,6 @@
 # ADR 0039 — Zettel ids are Quadsyl-24, a frozen part of the file format
 
-**Status:** accepted · 2026-10-16 (meeting 2026-10-16-3, § 5 and § 6)
+**Status:** accepted · 2026-10-16 (meeting 2026-10-16-2323, § 5 and § 6)
 
 ## Context
 

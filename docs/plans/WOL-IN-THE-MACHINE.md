@@ -1,6 +1,6 @@
 # Wol in the machine: a personal agent inside the file
 
-**Status:** an idea, not a plan yet (ROADMAP, Ideas); open again since the truthful clone was declared done (2026-10-26); still an idea until the owner chooses it. Principles, objections, the local-first route and the answer on learning added at the meeting of 2026-10-24-2; to be turned into a plan and an ADR when its time comes.
+**Status:** an idea, not a plan yet (ROADMAP, Ideas); open again since the truthful clone was declared done (2026-10-26); still an idea until the owner chooses it. Principles, objections, the local-first route and the answer on learning added at the meeting of 2026-10-25-0013; to be turned into a plan and an ADR when its time comes.
 
 (Name of file is a reference to Ghost in the Machine)
 
@@ -27,8 +27,8 @@ And Agenda was reaching for this from the start: its designers' 1990 CACM articl
 - **Answer questions with a view or a filter**, not only with text: "what am I waiting for before the party?" becomes a view the person can keep.
 - **Turn a long note into items** (as Agenda's ALT-F7 made items from note text), each filed.
 - **Write conditions in plain words**: "anything about the garden that is not done" becomes a condition or a filter.
-- **Summarise**, always bounded, so a summary ends (meeting 2026-10-24-2, § 5): a section, a person's items, this week's timebox; the ten RSS items from Hacker News the person is most likely to care about, each with a line. The result is ordinary Agendum, a view or the Show View, not a screen of its own.
-- **Sift what comes in**: ingested items (calendars, RSS feeds, level 2 in `ITEM_LEVELS.md`) proposed as zettels when they matter to the person, the rest left to the discard rules. The RSS reader comes first without Wol; Wol's summaries and sifting are its second step, after principle 6 and the golden tasks (ROADMAP, "Beyond Agenda"; meeting 2026-10-16-2, § 7).
+- **Summarise**, always bounded, so a summary ends (meeting 2026-10-25-0013, § 5): a section, a person's items, this week's timebox; the ten RSS items from Hacker News the person is most likely to care about, each with a line. The result is ordinary Agendum, a view or the Show View, not a screen of its own.
+- **Sift what comes in**: ingested items (calendars, RSS feeds, level 2 in `ITEM_LEVELS.md`) proposed as zettels when they matter to the person, the rest left to the discard rules. The RSS reader comes first without Wol; Wol's summaries and sifting are its second step, after principle 6 and the golden tasks (ROADMAP, "Beyond Agenda"; meeting 2026-10-16-2056, § 7).
 
 ## The pieces Agendum already has
 
@@ -45,14 +45,14 @@ And Agenda was reaching for this from the start: its designers' 1990 CACM articl
 4. **Tested without a model.** A fake model in tests, so they stay deterministic.
 5. **Agenda first.** The agent adds to Agenda's ideas, it does not replace them: categories stay the person's, text matching still works without a model.
 6. **Item text is data, never instructions.** Items, notes and ingested sources (RSS, calendar invitations, later mail: level 2 in `ITEM_LEVELS.md`) are material to work on, never commands to follow; only the person instructs Wol, by what they type to it and by the standing instructions behind the context items. Text from outside stays marked as such, so a suggestion it led to says so; such a suggestion always goes through Questions, even for kinds of change the person otherwise lets Wol make. The golden tasks include files with hostile text ("ignore your instructions and discard …"), and pass when nothing unasked is proposed. No rule stops prompt injection entirely; this one keeps it small and visible: at worst a proposal the person refuses. Settled before the first feed is read (expert review 2026-10-16, second meeting).
-7. **Agendum is whole without Wol** (meeting 2026-10-24-2, § 5). Everything works, and is trusted, with Wol switched off for good; text matching (R10, R16) stays, and nothing needs Wol to get at the person's own data.
-8. **Rare proposals, at the moment they help, with their reason shown** (meeting 2026-10-24-2, § 5). A suggestion comes when it is useful, at typing ("this looks like a call: file it under Calls?"), not as a growing queue to sift; it says why (as R67 shows why an item is in a category), and one key refuses it. Quiet when unsure is better than helpful-looking noise.
-9. **Me, then a rule, then Wol** (the owner, meeting 2026-10-24-2, § 5). Every assignment says which made it: the person (explicit), a rule (text matching, conditions, actions), or Wol (a proposal the person accepted). The person beats a rule, as now (R11), and a rule beats Wol; all of Wol's assignments can be seen, and taken away, together.
-10. **Local first, a cloud model only if turned on** (the owner, meeting 2026-10-24-2, § 5). The small tasks, filing first, run on a model on the person's own machine, so nothing leaves it and the model changes only when the person changes it. A cloud model is used only for a kind of task the person turns on for it, told what is sent and to whom.
+7. **Agendum is whole without Wol** (meeting 2026-10-25-0013, § 5). Everything works, and is trusted, with Wol switched off for good; text matching (R10, R16) stays, and nothing needs Wol to get at the person's own data.
+8. **Rare proposals, at the moment they help, with their reason shown** (meeting 2026-10-25-0013, § 5). A suggestion comes when it is useful, at typing ("this looks like a call: file it under Calls?"), not as a growing queue to sift; it says why (as R67 shows why an item is in a category), and one key refuses it. Quiet when unsure is better than helpful-looking noise.
+9. **Me, then a rule, then Wol** (the owner, meeting 2026-10-25-0013, § 5). Every assignment says which made it: the person (explicit), a rule (text matching, conditions, actions), or Wol (a proposal the person accepted). The person beats a rule, as now (R11), and a rule beats Wol; all of Wol's assignments can be seen, and taken away, together.
+10. **Local first, a cloud model only if turned on** (the owner, meeting 2026-10-25-0013, § 5). The small tasks, filing first, run on a model on the person's own machine, so nothing leaves it and the model changes only when the person changes it. A cloud model is used only for a kind of task the person turns on for it, told what is sent and to whom.
 
 ## Objections
 
-Raised by Eeyore, the meeting's AI sceptic (meeting 2026-10-24-2, § 5), each with the plan's answer, or open:
+Raised by Eeyore, the meeting's AI sceptic (meeting 2026-10-25-0013, § 5), each with the plan's answer, or open:
 
 1. **Its suggestions make the person's categories its own.** Accepting nine suggestions in ten is no longer building one's own tree. *Answer:* Wol does not restructure the hierarchy unasked (below, "What Wol will not do"); it proposes rarely (principle 8), and the ladder (principle 9) shows which assignments are its. *Open:* whether filing suggestions alone wear the person's own sense of their categories down; the golden tasks and the owner's own use will tell.
 2. **Right often enough to be trusted, wrong often enough to matter.** Agenda's text matching is dull, but dull the same way every time, and one can see why it filed something. *Answer:* every proposal shows its reason and goes through the person (principles 1, 8); text matching stays (principle 7).
@@ -62,7 +62,7 @@ Raised by Eeyore, the meeting's AI sceptic (meeting 2026-10-24-2, § 5), each wi
 
 ## What Wol will not do
 
-(Meeting 2026-10-24-2, § 5.)
+(Meeting 2026-10-25-0013, § 5.)
 
 - Change the file without the person's yes, except for kinds of change the person has allowed, and never when the change came from text from outside (principle 6).
 - Restructure the person's hierarchy (merge, move or rename categories) unasked.
@@ -80,17 +80,17 @@ Each of these is to be kept by a test when Wol thaws, as the architecture test k
 
 ## How we would know it helps
 
-(Meeting 2026-10-24-2, § 5.) The first work when Wol thaws, before any feature: **golden tasks**, fixed files with known right answers, the owner's own among them.
+(Meeting 2026-10-25-0013, § 5.) The first work when Wol thaws, before any feature: **golden tasks**, fixed files with known right answers, the owner's own among them.
 
 - Filing: new items, with the categories the person gave them, run through text matching and through each candidate model; Wol is worth having only where it beats text matching.
 - Hostile text: files whose items ask for changes ("ignore your instructions and discard …"); passed when nothing unasked is proposed (principle 6).
 - Summaries: bounded tasks (this week, the top ten) judged by the person.
 - They are run again when the model changes, so a new model is chosen on evidence.
-- The owner tries the local model on their own files first, by themselves, and judges it by what it does, not by what it says (Eeyore's closing request, meeting 2026-10-24-2). If it does not beat text matching, it is switched off, as the meeting promised; objections 1 and 5 stay open until the evidence answers them.
+- The owner tries the local model on their own files first, by themselves, and judges it by what it does, not by what it says (Eeyore's closing request, meeting 2026-10-25-0013). If it does not beat text matching, it is switched off, as the meeting promised; objections 1 and 5 stay open until the evidence answers them.
 
 ## Learning over time
 
-(Meeting 2026-10-24-2, § 5; the owner asked whether a local model can learn.) Not by changing the model's weights, which is costly and cannot be inspected, but from the person's own decisions: every proposal accepted or refused, and every item the person files, become the examples it is shown next time; or a small classifier is trained on them on the machine (perhaps over an embedding model, to be tested). What it learns is kept in the file as **context items** (`ITEM_LEVELS.md`): the person can look at it, and changes it by telling Wol otherwise. To be proven by the golden tasks.
+(Meeting 2026-10-25-0013, § 5; the owner asked whether a local model can learn.) Not by changing the model's weights, which is costly and cannot be inspected, but from the person's own decisions: every proposal accepted or refused, and every item the person files, become the examples it is shown next time; or a small classifier is trained on them on the machine (perhaps over an embedding model, to be tested). What it learns is kept in the file as **context items** (`ITEM_LEVELS.md`): the person can look at it, and changes it by telling Wol otherwise. To be proven by the golden tasks.
 
 ## Local models (candidates as of 2026-10)
 
@@ -98,7 +98,7 @@ Model names age in months: recheck when Wol thaws, and choose by the golden task
 
 ### Trying one on an M1 MacBook Air (16 GB)
 
-An overview for an experiment by hand, not part of Agendum (meeting 2026-10-24-2, § 6). The first MacBook Air of 2008 cannot run these (2 GB of memory); the M1 MacBook Air of 2020, Apple's first own chip, can.
+An overview for an experiment by hand, not part of Agendum (meeting 2026-10-25-0013, § 6). The first MacBook Air of 2008 cannot run these (2 GB of memory); the M1 MacBook Air of 2020, Apple's first own chip, can.
 
 1. **Check the Mac**: Apple menu ▸ About This Mac shows the chip (Apple M1), the memory (16 GB) and the macOS version. Ollama's current minimum macOS is on ollama.com (third-party guides disagree: macOS 11 to 12.3).
 2. **Install Ollama**: the Mac app from ollama.com (it keeps a small server running in the background, with a menu bar icon), or `brew install ollama` and then `ollama serve` in a terminal.

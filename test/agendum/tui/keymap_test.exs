@@ -139,7 +139,7 @@ defmodule Agendum.TUI.KeymapTest do
   # Every key with a name of more than one character: F-, ALT-, CTRL- and
   # SHIFT-keys, and the named ones (ENTER, BACKSPACE, PGUP …); a letter or
   # an arrow is one character, which any text contains (meeting
-  # 2026-10-22-3, § 5: what a test can check is not left to a checklist).
+  # 2026-10-22-2337, § 5: what a test can check is not left to a checklist).
   test "docs/KEYBOARD.md names every named key in the keymaps" do
     doc = File.read!("docs/KEYBOARD.md")
 

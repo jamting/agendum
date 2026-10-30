@@ -1,6 +1,6 @@
 # ADR 0048 — What an extra keeps for itself
 
-**Status:** accepted · 2026-10-26 (meeting 2026-10-26-5, §§ 5–6)
+**Status:** accepted · 2026-10-26 (meeting 2026-10-26-1732, §§ 5–6)
 
 ## Context
 

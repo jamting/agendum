@@ -8,7 +8,7 @@ defmodule Agendum.TUI.Fuzz do
 
   A quarter of the walks start from the golden file with the extras on
   (feeds, calendars, a blog), perhaps in one of the extras' boxes. Between
-  the keys, a walk also plays the shell's side (meeting 2026-10-26-6, § 7):
+  the keys, a walk also plays the shell's side (meeting 2026-10-26-2234, § 7):
   the answers of reads and uploads under way, out of order and sometimes
   after another file was opened, through `Agendum.TUI.App.background/2`,
   checking that nothing is filed into a file that did not ask for it.
@@ -102,7 +102,7 @@ defmodule Agendum.TUI.Fuzz do
 
   # `frequency/1` picks a generator by weight: the keys, function keys and
   # characters a third each as before, and now and then something from the
-  # shell's side, not a key (meeting 2026-10-26-6, § 7): a background
+  # shell's side, not a key (meeting 2026-10-26-2234, § 7): a background
   # task's answer (`{:background, pick, outcome}`, see `deliver/3`), or
   # another file opened (`:switch_file`) while reads are under way.
   defp key do
@@ -488,7 +488,7 @@ defmodule Agendum.TUI.Fuzz do
             # the Extras preference (R77), off as Agendum starts, or on
             extras <- boolean(),
             # a quarter of the walks start from the golden file with the
-            # extras on: feeds, calendars, a blog (meeting 2026-10-26-6, § 7)
+            # extras on: feeds, calendars, a blog (meeting 2026-10-26-2234, § 7)
             from_golden <- member_of([false, false, false, true]),
             # and then perhaps with one of the extras' boxes open, which a
             # random walk would hardly reach through the menu

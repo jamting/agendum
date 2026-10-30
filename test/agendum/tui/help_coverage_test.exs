@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.HelpCoverageTest do
   @moduledoc """
-  Every place and box has its F1 text (R65; meeting 2026-10-22-3, § 5):
+  Every place and box has its F1 text (R65; meeting 2026-10-22-2337, § 5):
   a new kind of mode cannot arrive without saying what F1 shows there.
   """
   use ExUnit.Case, async: true

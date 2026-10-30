@@ -112,7 +112,7 @@ defmodule Agendum.Core.Extras.FeedsTest do
     assert Invariants.violations(db) == []
 
     # what is remembered of them is only their id and publish date: their
-    # text is gone with the item (meeting 2026-10-26-4, § 5)
+    # text is gone with the item (meeting 2026-10-26-1524, § 5)
     assert db.feeds[ctx.feed].entries == %{
              "old" => %{item: nil, published: ~D[2026-09-01]},
              "new" => %{item: nil, published: ~D[2026-10-16]}

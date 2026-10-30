@@ -11,7 +11,7 @@ defmodule Agendum.TUI.Boxes.ViewManager do
   commands through the view manager's keymap (R65).
 
   F5 lists the views by when they were last shown instead, the view shown
-  first, and back (R68; meeting 2026-10-16, § 8): only the list changes,
+  first, and back (R68; meeting 2026-10-16-1905, § 8): only the list changes,
   not the file's order, which ALT-N, ALT-P and hop keep to. Moving and
   sorting the views wait for the person's own order.
   """

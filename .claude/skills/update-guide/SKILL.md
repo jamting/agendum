@@ -5,7 +5,7 @@ description: Bring the end-user guide (docs/guide/index.html, the short guide wi
 
 # Update the user guide
 
-The guide (`docs/guide/index.html`) is a single static page for end users. Its look is `docs/guide/guide.css`, shared with the manual, with its knobs at the top (fonts in `docs/fonts/`; meeting 2026-10-28-6, § 5); `docs/guide/place.js` shows the reader's chapter in the contents and remembers their place. It is updated on request only, never as part of a feature.
+The guide (`docs/guide/index.html`) is a single static page for end users. Its look is `docs/guide/guide.css`, shared with the manual, with its knobs at the top (fonts in `docs/fonts/`; meeting 2026-10-28-2214, § 5); `docs/guide/place.js` shows the reader's chapter in the contents and remembers their place. It is updated on request only, never as part of a feature.
 
 ## 1. Find what changed since the last update
 

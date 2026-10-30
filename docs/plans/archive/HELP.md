@@ -2,14 +2,14 @@
 
 **Status:** done, archived 2026-10-26 (the owner's choice) (v0.56.0 to v0.61.0, 2026-10-26): the frame, the tone sample, six batches of written topics with Agenda's keyword index, and Copy Conditions/Actions with its topic; the checklist has nothing open. The last required step of the truthful clone.
 
-Lotus Agenda's F1 help: a topic for where you are, bold links between topics, an index, a search, key charts and a way back (`docs/reference/Agenda 2.0 Help File.html`: 332 topics, about 61,000 words: 159 boxes, 132 how-to and concept topics, 28 menus, 13 key charts). Agendum's help keeps Agenda's keys and structure exactly and has texts of its own: terse, with a Hundred Acre Wood flavour in an opening line and the examples, quoting no Milne and using no Disney or Shepard pictures (meeting 2026-10-22, § 7a). How it is built: ADR 0047.
+Lotus Agenda's F1 help: a topic for where you are, bold links between topics, an index, a search, key charts and a way back (`docs/reference/Agenda 2.0 Help File.html`: 332 topics, about 61,000 words: 159 boxes, 132 how-to and concept topics, 28 menus, 13 key charts). Agendum's help keeps Agenda's keys and structure exactly and has texts of its own: terse, with a Hundred Acre Wood flavour in an opening line and the examples, quoting no Milne and using no Disney or Shepard pictures (meeting 2026-10-22-2130, § 7a). How it is built: ADR 0047.
 
-## What it covers (meeting 2026-10-26, § 5)
+## What it covers (meeting 2026-10-26-0829, § 5)
 
 - **Generated topics**, made from what the program already knows, so they never fall out of date: one for every box (its fields and their help lines), every menu (its entries and their descriptions), every place (today's F1 texts) and the key charts (the keymaps).
 - **Hand-written how-to and concept topics** for every task Agendum supports, Agenda's list below as the checklist; what Agendum does not have is left out, not written up.
 
-## The keys (meeting 2026-10-26, § 6; the owner's choice: Agenda's exactly)
+## The keys (meeting 2026-10-26-0829, § 6; the owner's choice: Agenda's exactly)
 
 | Key | In help |
 | --- | --- |
@@ -25,7 +25,7 @@ Lotus Agenda's F1 help: a topic for where you are, bold links between topics, an
 
 Habit changes (settled): any other key no longer leaves help; `c`, `d` and `a` are reached through F6; ↑ ↓ move between links.
 
-## The steps (meeting 2026-10-26, § 8)
+## The steps (meeting 2026-10-26-0829, § 8)
 
 1. [x] (2026-10-26, v0.56.0; the owner tries it before the tag) **The frame**: the help screen with Agenda's keys and key bar, links, Index, Find, Review and F6 Keys; the generated topics; today's F1 texts as the place topics; the checks (every box, menu and place has a topic; every link leads to one; every key a topic names is bound there). The owner tries it, then it is tagged.
 1b. [x] (2026-10-26, v0.56.0) **Find as Agenda's** (the owner's choice, 2026-10-26): F5 opens Agenda's **Find Topic** box ("Topic to find:"), and ENTER its **Select Help Screen** box, a list of the matching topics: the arrows and ENTER read one, ESC goes back to the topic being read; its help line "Highlight Help screen to display. Then use ALT-N or ALT-P to display next/previous help screen from list." (checked in Agenda 2.0, 2026-10-26).
@@ -59,7 +59,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Macro Command Syntax | left out: the macro language is out of scope (SPEC § 6) |
 | Special Variables in Macros | left out: the macro language is out of scope (SPEC § 6) |
 | Macro Editor | ours: `macro-editor.txt` (batch 6) |
-| Attach an External Macro File | left out: external files (meeting 2026-10-25, § 5) |
+| Attach an External Macro File | left out: external files (meeting 2026-10-25-2252, § 5) |
 | Note Editor | ours: `note-editor.txt` (batch 5) |
 | Edit Mode | ours: `edit-mode.txt` (batch 5) |
 | Select from a Choice List | ours: `select-from-a-choice-list.txt` (batch 6) |
@@ -159,7 +159,7 @@ Each is `open`, `ours` (with the topic's file), `covered by` another topic, or `
 | Enter Dates and Times | ours: `enter-dates-and-times.txt` (batch 3) |
 | Search for Text in Items and Notes | ours: `search-for-text-in-items-and-notes.txt` (batch 2) |
 | Change Screen Colors | ours: `change-screen-colors.txt` (batch 6) |
-| Attach an External File as a Note | left out: external note files (meeting 2026-10-25, § 5) |
+| Attach an External File as a Note | left out: external note files (meeting 2026-10-25-2252, § 5) |
 | Change a Column Head | ours: `change-a-column-head.txt` (batch 2) |
 | Alphabetize View Names | ours: `alphabetize-view-names.txt` (batch 2) |
 | Attach an Assignment Condition to a Category | ours: `attach-an-assignment-condition-to-a-category.txt` (batch 4) |

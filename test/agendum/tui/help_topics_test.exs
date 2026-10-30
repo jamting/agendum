@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.HelpTopicsTest do
   @moduledoc """
-  The help as Agenda's (R65e, ADR 0047; meeting 2026-10-26; checked in
+  The help as Agenda's (R65e, ADR 0047; meeting 2026-10-26-0829; checked in
   Agenda 2.0, 2026-10-26): F1 shows the topic for where you are, with
   links; Agenda's keys move between topics; and the checks that keep the
   help whole: every box, menu and place has a topic, every link leads to
@@ -189,7 +189,7 @@ defmodule Agendum.TUI.HelpTopicsTest do
     end
 
     # docs/HELP_WOOD.md lists the Hundred Acre Wood in the help (meeting
-    # 2026-10-26-2, § 8): each listed line must still be in its topic
+    # 2026-10-26-1108, § 8): each listed line must still be in its topic
     test "every Wood touch docs/HELP_WOOD.md lists is in its topic", %{state: state} do
       rows =
         for line <- File.read!("docs/HELP_WOOD.md") |> String.split("\n"),

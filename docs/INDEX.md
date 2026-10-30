@@ -23,7 +23,7 @@ What each document is for, and when to read it. `docs/` describes Agendum as it 
 | [`KEYBOARD.md`](KEYBOARD.md)                 | Every key, its Mac-friendly alternative, and ⌘ mappings for each terminal                         |
 | [`SCREENS.md`](SCREENS.md)                   | Every screen and box, how each is reached, and what it opens (checked by a test)                  |
 | [`THEMES.md`](THEMES.md)                     | The colour values of the themes taken from terminal schemes                                       |
-| [`UI_GUIDELINES.md`](UI_GUIDELINES.md)       | The conventions every screen and box follows (settings boxes, choosing values, managers, keys, messages), and the extras' gaps; a draft, not adopted (meeting 2026-10-26-6, ADR 0049) |
+| [`UI_GUIDELINES.md`](UI_GUIDELINES.md)       | The conventions every screen and box follows (settings boxes, choosing values, managers, keys, messages), and the extras' gaps; a draft, not adopted (meeting 2026-10-26-2234, ADR 0049) |
 | `docs/guide/index.html`       | The short user guide (Piglet); updated on request (`update-guide` skill)                          |
 | `docs/manual/index.html`     | The long manual (Owl and Rabbit), generated from `docs/manual/src/` (`update-manual` skill)           |
 
@@ -67,7 +67,7 @@ Each plan starts with its status.
 | [`plans/ITEM_LEVELS.md`](plans/ITEM_LEVELS.md)                         | Three levels of items: zettels, ingested items, the model's context items (vision) |
 | [`plans/RSS_READER.md`](plans/RSS_READER.md)                           | A plain RSS reader, like calendar subscriptions: the owner's decisions and the steps (R75) |
 | [`plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)           | An idea: a personal agent inside the file                                      |
-| [`plans/STARTERS.md`](plans/STARTERS.md)                               | Ideas for new starter files: principles, systems (GTD, Things …), sketches, open questions (meeting 2026-10-28) |
+| [`plans/STARTERS.md`](plans/STARTERS.md)                               | Ideas for new starter files: principles, systems (GTD, Things …), sketches, open questions (meeting 2026-10-28-0048) |
 
 ## Archive
 
@@ -88,7 +88,7 @@ Finished or dropped plans, kept as records of how something was done or why it w
 | Document                       | About                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
 | `docs/reviews/` (one per date) | Dated expert panel reviews, written as meeting minutes (architecture, code, users, business, vision, methods, tidiness and scope, agent readiness), each following up the last (`expert-review` skill) |
-| `docs/meetings/` | Each panel meeting's agenda and minutes in `docs/meetings/YYYY-MM-DD/`, the agenda made from `docs/meetings/TEMPLATE.md`; the items come from the owner's Agendum project file (Thoughts ▸ Next meeting, `mix agendum.thoughts`; `meeting` skill) |
+| `docs/meetings/` | Each panel meeting's agenda and minutes in `docs/meetings/YYYY-MM-DD-HHMM/`, the agenda made from `docs/meetings/TEMPLATE.md`; the items come from the owner's Agendum project file (Thoughts ▸ Next meeting, `mix agendum.thoughts`; `meeting` skill) |
 | [`CODE_REVIEW_SLICES.md`](CODE_REVIEW_SLICES.md) | Reviewing the whole code base with `/code-review ultra` in slices of under 8,000 lines: the strategy, the slices (`tools/review/slice.sh`), how to run one, the record |
 | `docs/study/STUDY_PLAN.md` | The owner's study of the code: units the panel picks, with questions ticked off when understood (`study-plan` skill) |
 

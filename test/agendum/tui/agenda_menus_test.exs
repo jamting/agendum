@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.AgendaMenusTest do
   @moduledoc """
-  Agendum's menus compared with Lotus Agenda 2.0's own (meeting 2026-10-21,
+  Agendum's menus compared with Lotus Agenda 2.0's own (meeting 2026-10-21-2324,
   § 8), as `tools/agformat/capture_menus.py` captured them from the real
   program into `docs/reference/agenda_menus.json`. No DOSBox here: the test
   reads the capture.

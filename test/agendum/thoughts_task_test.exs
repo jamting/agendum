@@ -41,14 +41,14 @@ defmodule Agendum.ThoughtsTaskTest do
     assert_raise Mix.Error, ~r/no Thoughts category/, fn -> run([path]) end
   end
 
-  describe "--import-docs (meeting 2026-10-22-2, § 5)" do
+  describe "--import-docs (meeting 2026-10-22-2309, § 5)" do
     # a small repository: one meeting, one ADR, the roadmap, one summary,
     # and the meetings' template, which is not a document to import
     defp repo(dir) do
       root = Path.join(dir, "repo")
 
       for {path, text} <- [
-            {"docs/meetings/2026-10-21/protokoll.md", "# Minutes, 2026-10-21\n"},
+            {"docs/meetings/2026-10-21-2324/protokoll.md", "# Minutes, 2026-10-21\n"},
             {"docs/meetings/TEMPLATE.md", "# Agenda (dagordning) form\n"},
             {"docs/adr/0001-core.md", "# ADR 0001\n\n**Status:** accepted · 2026-10-08\n"},
             {"docs/ROADMAP.md", "# Roadmap\n"},

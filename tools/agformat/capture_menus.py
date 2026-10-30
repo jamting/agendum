@@ -4,7 +4,7 @@ Walks the menus of a view, a note and the category manager, level by level,
 and writes every entry's label and the help line Agenda shows when it is
 highlighted to a JSON reference (default docs/reference/agenda_menus.json),
 which Agendum's menu test compares with Agendum.TUI.Menu.tree/0 (meeting
-2026-10-21, § 8). Run by hand, never by the tests:
+2026-10-21-2324, § 8). Run by hand, never by the tests:
 
     AGENDA_DOS_ROOT=<scratch copy holding APPS/AGENDA> \
         python3 -u tools/agformat/capture_menus.py [FILE.AG] [out.json]

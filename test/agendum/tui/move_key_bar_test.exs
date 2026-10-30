@@ -1,6 +1,6 @@
 defmodule Agendum.TUI.MoveKeyBarTest do
   @moduledoc """
-  The key bar in moves, as Agenda's (meeting 2026-10-26-2, § 6; checked in
+  The key bar in moves, as Agenda's (meeting 2026-10-26-1108, § 6; checked in
   Agenda 2.0, 2026-10-26): its ten slots stay, empty while an item or a
   section moves, F1 Help alone while a column moves or its width changes;
   no line of hints.

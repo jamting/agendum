@@ -1,6 +1,6 @@
 defmodule Agendum.Core.Extras.Ingested do
   @moduledoc """
-  Ingested categories (R75a; meeting 2026-10-26-5, § 6; ADR 0048): the
+  Ingested categories (R75a; meeting 2026-10-26-1732, § 6; ADR 0048): the
   categories an extra fills, which the person reads but does not change or
   fill by hand. They are each feed's and each calendar's category (`own/1`),
   and the extras' families (`families/1`): Feeds and Calendars under MAIN,

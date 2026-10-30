@@ -11,7 +11,7 @@ defmodule Agendum.Core.FileDefaults do
   Properties, the global date settings with the display format, the
   auto-assign settings) without the description, flattened to dotted keys
   (`"date_format.clock" => 24`), and only those that differ from Agenda's
-  own, which `Agendum.Core.Database.new/1` gives (meeting 2026-10-26-3,
+  own, which `Agendum.Core.Database.new/1` gives (meeting 2026-10-26-1358,
   § 5). The password was never a setting here, as in Agenda. Pure.
   """
 

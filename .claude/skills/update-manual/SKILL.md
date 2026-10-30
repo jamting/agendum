@@ -35,7 +35,7 @@ MIX_ENV=test mix run docs/manual/src/capture_screens.exs
 git diff --stat docs/manual/src/screens
 ```
 
-The script checks that each key sequence reaches the box it should and stops with the capture's name if not; fix the sequence (the program changed). Look at every changed screen: the text around it may now be wrong. For a new screen, add a capture to `capture_screens.exs` (with the box type it must show) and a `{{name}}` placeholder in the template: every screen is shown whole, at the same size (meeting 2026-10-28-6, § 5). Keep screens 80 columns wide, captured on Monday 2026-10-12 at 10:15 in Rabbit's file, so dates in the text stay true.
+The script checks that each key sequence reaches the box it should and stops with the capture's name if not; fix the sequence (the program changed). Look at every changed screen: the text around it may now be wrong. For a new screen, add a capture to `capture_screens.exs` (with the box type it must show) and a `{{name}}` placeholder in the template: every screen is shown whole, at the same size (meeting 2026-10-28-2214, § 5). Keep screens 80 columns wide, captured on Monday 2026-10-12 at 10:15 in Rabbit's file, so dates in the text stay true.
 
 ## 3. Edit the template
 

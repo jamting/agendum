@@ -15,7 +15,7 @@ defmodule Mix.Tasks.Agendum.Thoughts do
   the shell, `export AGENDUM_PROJECT_FILE=~/Documents/agendum-project.agendum`.
   `--init` never overwrites a file.
 
-  `--import-docs` (meeting 2026-10-22-2, § 5) puts the meeting agendas and
+  `--import-docs` (meeting 2026-10-22-2309, § 5) puts the meeting agendas and
   minutes, the ADRs, the roadmap and the session summaries into the file
   as Disposable items (`Agendum.Thoughts.import_docs/3`), replacing those
   of the last import. Agendum must be closed and the file saved first: the

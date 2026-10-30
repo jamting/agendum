@@ -99,11 +99,11 @@ defmodule Agendum.ThoughtsTest do
     end
   end
 
-  describe "import_docs/3 (meeting 2026-10-22-2, § 5)" do
+  describe "import_docs/3 (meeting 2026-10-22-2309, § 5)" do
     @docs [
       %{
-        path: "docs/meetings/2026-10-21/protokoll.md",
-        text: "# Minutes of the panel meeting, 2026-10-21\n\nOwl opened the meeting."
+        path: "docs/meetings/2026-10-21-2324/protokoll.md",
+        text: "# Minutes of the panel meeting, 2026-10-21-2324\n\nOwl opened the meeting."
       },
       %{
         path: "docs/adr/0044-one-repository.md",
@@ -124,7 +124,7 @@ defmodule Agendum.ThoughtsTest do
     test "one item per document under Disposable ▸ its kind, the title as text" do
       {:ok, db, 4} = Thoughts.import_docs(Thoughts.new_file(), @docs, @today)
 
-      assert items_under(db, "Meetings") == ["Minutes of the panel meeting, 2026-10-21"]
+      assert items_under(db, "Meetings") == ["Minutes of the panel meeting, 2026-10-21-2324"]
       assert items_under(db, "ADRs") == ["ADR 0044 — One repository"]
       assert items_under(db, "Roadmap") == ["Roadmap"]
       assert items_under(db, "Summaries") == ["Session summary, 2026-10-22 23:11"]
@@ -141,7 +141,7 @@ defmodule Agendum.ThoughtsTest do
       adr = by_text["ADR 0044 — One repository"]
       assert adr.note =~ "The extras on a shelf."
       assert adr.entry == ~D[2026-10-21]
-      assert by_text["Minutes of the panel meeting, 2026-10-21"].entry == ~D[2026-10-21]
+      assert by_text["Minutes of the panel meeting, 2026-10-21-2324"].entry == ~D[2026-10-21]
       assert by_text["Session summary, 2026-10-22 23:11"].entry == ~D[2026-10-22]
       assert by_text["Roadmap"].entry == @today
 
@@ -166,7 +166,7 @@ defmodule Agendum.ThoughtsTest do
       {:ok, again, 3} = Thoughts.import_docs(db, Enum.drop(@docs, 1), @today)
 
       assert length(items_under(again, "Disposable")) == 3
-      refute "Minutes of the panel meeting, 2026-10-21" in items_under(again, "Disposable")
+      refute "Minutes of the panel meeting, 2026-10-21-2324" in items_under(again, "Disposable")
       assert again.items[thought] == db.items[thought]
       assert length(Database.views(again)) == length(Database.views(db))
       assert items_under(again, "Next meeting") == ["Ask Owl about the roadmap"]

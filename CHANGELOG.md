@@ -170,7 +170,7 @@ Your own defaults for new files, as in Lotus Agenda.
 
 ## 0.62.0 — 2026-10-26
 
-The last step of the truthful clone: the key bar in moves, as in Lotus Agenda. **With this version the truthful clone of Lotus Agenda 2.0 is declared done** (meeting 2026-10-26-2).
+The last step of the truthful clone: the key bar in moves, as in Lotus Agenda. **With this version the truthful clone of Lotus Agenda 2.0 is declared done** (meeting 2026-10-26-1108).
 
 - While an item or a section moves (ALT-F10), the key bar keeps Agenda's ten slots, empty; while a column moves or its width changes, F1 Help alone. The line of hints is gone; F1 still explains the keys.
 - The help's Hundred Acre Wood touches are listed in `docs/HELP_WOOD.md`, kept true by a check.
@@ -640,7 +640,7 @@ A blog from your file (the owner's own use).
 
 ## 0.11.0 — 2026-10-17
 
-Zettel ids: items get names you can say, and link to each other (meeting 2026-10-16-3).
+Zettel ids: items get names you can say, and link to each other (meeting 2026-10-16-2323).
 
 - Zettel ids: Item ▸ Zettel ▸ Attach gives an item (or the marked items) a Zettel id, eight letters you can say, such as `bonalaku` (Quadsyl-24, `docs/QUADSYL.md`). An item with an id is a zettel; the id never changes and is never given twice. The JSON export writes it as its word. Files are saved in a new format (34); older files open as before.
 - A column can show the Zettel ids: choose the Format Zettel id in Column Add or Column Properties.
@@ -662,7 +662,7 @@ Agendum guards your file against other writers, and a failed save no longer lose
 
 ## 0.8.0 — 2026-10-16
 
-Agendum remembers where you were: a file opens where you left it, alarms missed while it was closed are shown when you come back, and the view manager shows where you are and what you used last (the panel meeting of 2026-10-16).
+Agendum remembers where you were: a file opens where you left it, alarms missed while it was closed are shown when you come back, and the view manager shows where you are and what you used last (the panel meeting of 2026-10-16-1905).
 
 - Alarms that came due while a file was closed are no longer just a message line: after the splash screen, a "While you were away" box lists them, the latest first, alarms with the same text counted on one line. ENTER or ESC closes it; Search ▸ Alarms still lists them.
 - An alarm going off no longer counts as a change to the file, so it never makes Agendum ask "Save changes?" by itself. A past alarm shows the time it was due.
