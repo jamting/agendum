@@ -117,6 +117,14 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   @spec blog_posts(db) :: [Agendum.Core.Item.t()]
   def blog_posts(db), do: Blog.posts(db)
 
+  @doc """
+  Whether the blog has no Base address (R74): the site is still written,
+  but the feeds' links are not whole addresses, which feed readers need.
+  False for a file without a blog (no posts category set).
+  """
+  @spec blog_needs_base_url?(db) :: boolean
+  def blog_needs_base_url?(db), do: db.blog.posts != nil and db.blog.base_url == ""
+
   @doc "Every file of the site, `{path, content}` (`Agendum.Core.Extras.Site.build/1`)."
   @spec site(db) :: [Site.file()]
   def site(db), do: Site.build(db)

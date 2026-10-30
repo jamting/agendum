@@ -127,6 +127,23 @@ defmodule Agendum.Core.Extras.SiteTest do
     test "building twice gives the same files", %{db: db, files: files} do
       assert Core.site(db) == files
     end
+
+    # without a Base address there is nowhere to link the author to, and a
+    # post's own page links to itself by its file name
+    test "without a Base address: the author unlinked, the permalink relative", %{db: db} do
+      {:ok, db} = Core.set_blog(db, %{base_url: ""})
+      files = Core.site(db)
+      index = file(files, "index.html")
+      party = file(files, "posts/bonalaku.html")
+
+      refute index =~ ~s(href="")
+      refute party =~ ~s(href="")
+      assert index =~ ~s(<span class="p-name">Owl</span>)
+      assert party =~ ~s(<span class="p-author h-card">Owl</span>)
+      assert party =~ ~s(<a class="u-url" href="bonalaku.html">permalink</a>)
+      assert Core.blog_needs_base_url?(db)
+      refute Core.blog_needs_base_url?(Core.new_file())
+    end
   end
 
   test "changes: added, changed and removed, the person's stylesheet never changed", ctx do

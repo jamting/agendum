@@ -4,6 +4,8 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+- **A blog published without a Base address** no longer links your name to nowhere, and a post's permalink now points at the post itself. The message after publishing says the feeds need a Base address (File ▸ Transfer ▸ Publish): without one, feed readers cannot follow their links.
+
 ## 0.72.4 — 2026-10-30
 
 - **`agendum --version`** (or `-v`) prints the version and the build it came from, then quits: for a bug report, or to see which version Homebrew installed. Agendum can now be installed with `brew install jamting/agendum/agendum`, and every version is a GitHub Release.

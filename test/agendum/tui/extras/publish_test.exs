@@ -90,6 +90,8 @@ defmodule Agendum.TUI.Extras.PublishTest do
       state = Update.Results.published(state, changes, :ok)
       assert State.mode(state) == nil
       assert screen(state) =~ "Published: 12 added, 0 changed, 0 removed"
+      # the file has no Base address, so the feeds' links are not whole
+      assert screen(state) =~ "The feeds need a Base address"
     end
 
     test "ESC writes nothing", %{state: state} do

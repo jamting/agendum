@@ -157,6 +157,7 @@ defmodule Agendum.Core do
   defdelegate prepare_publish(db, changes), to: Publishing
   defdelegate blog_posts(db), to: Publishing
   defdelegate site(db), to: Publishing
+  defdelegate blog_needs_base_url?(db), to: Publishing
   defdelegate site_changes(files, existing, published), to: Publishing
 
   # times and alarms (R14b, R38)

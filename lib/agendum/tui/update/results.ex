@@ -563,14 +563,20 @@ defmodule Agendum.TUI.Update.Results do
   refused the keys asks for a password, with the preview still open.
   """
   def published(state, changes, :ok) do
-    preview = Agendum.TUI.Extras.PublishPreviewBox
+    messages = Agendum.TUI.Extras.Publish.Messages
     uploaded? = state.db.blog.upload != :none
+    summary = Agendum.TUI.Extras.PublishPreviewBox.summary(changes)
+
+    # the feeds are written all the same, but a reader cannot follow their
+    # links without a Base address, so the message says so
+    text =
+      if Core.blog_needs_base_url?(state.db),
+        do: messages.text(:published, uploaded?, summary, :needs_base_url),
+        else: messages.text(:published, uploaded?, summary)
 
     state
     |> pop_publish_preview()
-    |> State.info(
-      Agendum.TUI.Extras.Publish.Messages.text(:published, uploaded?, preview.summary(changes))
-    )
+    |> State.info(text)
   end
 
   # Domain: the upload runs in the background, so the server's question

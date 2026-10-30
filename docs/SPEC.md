@@ -1908,6 +1908,8 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 
   The pages are plain HTML without JavaScript, readable without the stylesheet, with microformats (`h-feed`, `h-entry`, `h-card`) and `rel="me"` links, so micro.blog or a bridge such as Bridgy Fed can follow the blog from the fediverse.
 
+  **Without a base address** the site is still written, feeds included (our choice): the author's name is text, not a link (there is no home page to link it to); a post's permalink is its file name; and the message after publishing ends "The feeds need a Base address", as a feed reader cannot follow the feeds' relative links.
+
   A Zettel link in a post (R73b) is a link to the target's page when it is a post, else the target's text; a broken one stays as written.
 
   Agendum then reads the folder and the **Publish: what will change** box lists the files it would add (+), change (~) and remove (−, a post that is no longer one), and where they then go. ENTER writes them and uploads, ESC writes nothing ("Nothing was published").

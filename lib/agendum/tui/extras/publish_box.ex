@@ -48,7 +48,8 @@ defmodule Agendum.TUI.Extras.PublishBox do
     description: "A line about the blog, under its name and in the feeds. Type it.",
     author: "Your name, as the posts' author (an h-card for the fediverse). Type it.",
     language: "The language of the posts: en, sv … Type it.",
-    base_url: "Where the site is on the web (https://example.com/blog/), for the feeds. Type it.",
+    base_url:
+      "Where the site is on the web (https://example.com/blog/): the feeds and your name's link need it. Type it.",
     me:
       "Addresses of your other profiles (a Mastodon account), for rel=\"me\" links; " <>
         "spaces between. Type them.",

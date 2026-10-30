@@ -176,11 +176,20 @@ defmodule Agendum.Core.Extras.Site do
 
   defp author_tag(%{blog: %{author: ""}}), do: ""
 
+  # without a Base address there is no home page to link the author to,
+  # and an empty href="" would be a link to the page itself
+  defp author_tag(%{blog: %{base_url: ""}} = site),
+    do: ~s( · <span class="p-author h-card">#{esc(site.blog.author)}</span>)
+
   defp author_tag(site),
     do: ~s( · <a class="p-author h-card" href="#{attr(home(site))}">#{esc(site.blog.author)}</a>)
 
-  # on its own page the post says where it is, for the u-url microformat
+  # on its own page the post says where it is, for the u-url microformat;
+  # without a Base address, by its file name, as the page is in posts/
   defp permalink(_site, _item, :index), do: ""
+
+  defp permalink(%{blog: %{base_url: ""}}, item, :page),
+    do: ~s( · <a class="u-url" href="#{attr(Path.basename(post_path(item)))}">permalink</a>)
 
   defp permalink(site, item, :page),
     do: ~s( · <a class="u-url" href="#{attr(absolute(site, post_path(item)))}">permalink</a>)
@@ -269,6 +278,9 @@ defmodule Agendum.Core.Extras.Site do
   end
 
   defp footer_card(%{blog: %{author: ""}}), do: ""
+
+  defp footer_card(%{blog: %{base_url: ""}} = site),
+    do: ~s(<span class="h-card"><span class="p-name">#{esc(site.blog.author)}</span></span> · )
 
   defp footer_card(site) do
     ~s(<span class="h-card"><a class="p-name u-url" rel="me" href="#{attr(home(site))}">) <>

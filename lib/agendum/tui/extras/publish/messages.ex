@@ -42,4 +42,9 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
     do: "Published#{if uploaded?, do: " and uploaded", else: ""}: #{summary}"
 
   def text(:password, user, host), do: "Password of #{user}@#{host} (not kept):"
+
+  @doc "The site published without a Base address: the feeds' links are not whole."
+  @spec text(atom, boolean, String.t(), :needs_base_url) :: String.t()
+  def text(:published, uploaded?, summary, :needs_base_url),
+    do: text(:published, uploaded?, summary) <> ". The feeds need a Base address"
 end
