@@ -46,6 +46,7 @@ The script checks that each key sequence reaches the box it should and stops wit
 - **Pooh lore stays light and tasteful**: names and small allusions from A. A. Milne's books, no quotations, no Disney or E. H. Shepard images, only our own simple SVG drawings.
 - **Margin notes** add variety: a side remark, a cross-reference or a tip as `<aside>…</aside>` (or `<aside class="tip">`) just before the paragraph it belongs to; in the margin on a wide window, in the text on a narrow one. Never for anything the reader must not miss.
 - Keep the reference chapter (keys, menu map) complete and in step with the F1 help.
+- **The version line** (meeting 2026-10-30-2020, § 6): the title header in `template.html` ends with `<p class="written-for">Written for Agendum X.Y</p>`, the major and minor numbers of `version` in `mix.exs` at the time of this update (`0.72` for 0.72.4), so a reader sees how fresh the manual is. Set it on every run, even when little else changed.
 
 ## 4. Build and check
 
