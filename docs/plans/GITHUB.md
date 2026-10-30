@@ -54,6 +54,8 @@ What there is to publish, all generated or static HTML:
 
 A workflow, `.github/workflows/pages.yml`, on pushes to `main`: run `mix docs`, put the product page at the root and the docs under it (`/docs/`, `/guide/`, `/manual/`), and publish with `actions/upload-pages-artifact` and `actions/deploy-pages`. Settings ▸ Pages ▸ Source: GitHub Actions.
 
+**Decided at the meeting of 2026-10-30-2020** (the repository is public, so the paid-plan and visibility notes below no longer apply): the site lives at `jamting.github.io/agendum/`; a hand-written `site/index.html` with four doors; the docs, guide, manual, devlog and `llms.txt` under it; Releases and a Homebrew tap. The pieces and their order are the roadmap's Housekeeping item.
+
 **Two things to know:**
 
 - **GitHub Pages for a private repository needs a paid plan** (GitHub Pro, Team or Enterprise; on the Free plan Pages works for public repositories only).

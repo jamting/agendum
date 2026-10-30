@@ -12,7 +12,7 @@ Small, testable increments: the open work, by area.
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. The public site, with four doors (Housekeeping; meeting 2026-10-28-0908, § 9)
+1. The public site, with four doors, built back to front (Housekeeping; meeting 2026-10-28-0908, § 9; meeting 2026-10-30-2020)
 2. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
 3. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-1524, § 14, tabled)
 
@@ -107,12 +107,21 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
   - **the lines still naming a removed file** (the done list, old minutes and reviews, the skills that read the summaries and the study plan), each a link to fix or a fact to keep
 - [ ] Our own `.AG` test files without a starter underneath (meeting 2026-10-28-1911, § 7, found doing it): RICH.AG and DATES.AG were made in Agenda on Lotus's Planner starter (54 of their 55 categories are Planner's) and UX.AG on Information Sifter; they stay in the public copy, but could be made again from a blank Agenda file in DOSBox (`tools/agformat/agenda_driver.py`), with the tests' expectations moved to the new files; not before publishing
 - [ ] The name's story and how it is said (meeting 2026-10-28-1233, § 5; ADR 0019, update 2026-10-28): one line, "Wol is how Owl spells his name", and "said wolz a-JEN-dum", where the name first meets a reader: the About help topic (`lib/agendum/tui/help/topics/about-agendum.txt`, built with the `feature` skill) and the site; the README has both (the tidy pass, 2026-10-28)
-- [ ] The public site, after the public repository (meeting 2026-10-28-0908, § 9):
+- [ ] The public site at `jamting.github.io/agendum/` (meeting 2026-10-28-0908, § 9; refined at meeting 2026-10-30-2020). Built back to front, so no door opens onto an empty room (§ 9), each piece its own commit:
 
-  - **One static page with four doors:** Try it (install), Learn it (the guide, the manual), Look inside (the API and design docs, the ADRs), Follow it (the owner's devlog), and a short recording of typing an item and seeing it filed.
-  - **The docs on GitHub Pages;** an `llms.txt` made from `docs/INDEX.md`.
-  - **Downloads** from GitHub Releases and a Homebrew tap first, bundled binaries (Burrito-style) later if people ask.
-  - **The devlog** is the owner's own words, published with Agendum's blog extra, backfilled as milestone posts (the summaries only jog the memory; they stay private)
+  1. **Releases and the tap** (§ 7): a workflow builds the escript on every tag push into a GitHub Release, notes from `CHANGELOG.md`; a tap, `jamting/homebrew-agendum`, whose formula depends on `erlang`, so installing is one line (`brew install jamting/agendum/agendum`), on Mac and Linux. After each release a job on a fresh `macos-latest` runner installs from the tap and runs `agendum --version` (free for a public repository; check Settings ▸ Billing first). Bundled binaries (Burrito-style) later, if people ask.
+  2. **The guide and the manual brought up to date** (§ 6) with `update-guide` and `update-manual` (last on 2026-10-26; the extras changed since, and R42), each with a "Written for Agendum X.Y" line that the two skills set on every run.
+  3. **The recording** (§ 5): typing an item and seeing it filed, under 20 seconds, looping, as an animated WebP or GIF made with our own renderer (`tools/screenshots`) from a key script, so it can be made again.
+  4. **The front page and the Pages workflow** (§§ 5, 8, 10): a hand-written `site/index.html` sharing `guide.css`, on one screen: one sentence on what Agendum is, the recording, four one-line doors.
+
+     - **Try it:** the install line, `agendum --demo`, the uninstall line, "Mac and Linux".
+     - **Learn it:** in order, each with its length: the guide ("start here"), the manual ("the whole afternoon"), F1 inside the program.
+     - **Look inside:** the `mix docs` start page with three begin-here lines (`ARCHITECTURE.md`, `SPEC.md`, the ADRs); the minutes and reviews linked on GitHub, not in the docs build; an `llms.txt` generated from `docs/INDEX.md` in the build.
+     - **Follow it:** the devlog at `/devlog/`, published by the blog extra into a folder in the repository and deployed with the site.
+
+     The site is under `/agendum/`, so every link is relative, which the workflow checks; a domain of the owner's own can come later, as GitHub redirects the old address.
+  5. **The first devlog post** (§ 8; the owner, written alongside): at least one real post at launch; milestones backfilled after, without a promised pace.
+  6. **Pages switched on** (the owner): Settings ▸ Pages ▸ Source: GitHub Actions.
 - [ ] Optional (from the parity plan, 2026-10-26): Utilities ▸ Launch, a shell without quitting Agendum
 - [ ] A public repository of the clone, when it is declared done (meeting 2026-10-21-2324, § 10; ADR 0050): this repository stays the private workshop.
 
