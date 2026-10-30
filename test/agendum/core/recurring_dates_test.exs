@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.RecurringDatesTest do
   @moduledoc """
   Recurring dates (R14a; User's Guide 6-10, 7-11 to 7-12): "every Monday"

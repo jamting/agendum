@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Render.Help do
   @moduledoc """
   F6 Keys in the help (R65, R65e): every key, made from the keymaps

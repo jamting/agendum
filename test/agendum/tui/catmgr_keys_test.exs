@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CatmgrKeysTest do
   @moduledoc """
   Inserting categories with Agenda's accelerator keys in the category

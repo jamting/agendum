@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.PanelTypingTest do
   @moduledoc """
   Category names and column entries are typed in the control panel, as

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Starters.PlannerViewsTest do
   @moduledoc """
   The Activities Planner's views (R60; screenshots 37-73, 110, 127, 143

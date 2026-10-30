@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.DateColumnsTest do
   @moduledoc """
   A date column's own display format: View ▸ Column ▸ Properties on a date

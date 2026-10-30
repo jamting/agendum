@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Render.Boxes do
   @moduledoc """
   The boxes drawn over the screen: their place, their frame and the words

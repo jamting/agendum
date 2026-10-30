@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Mix.Tasks.Agendum.Thoughts do
   @shortdoc "Prints the owner's thoughts from their project file"
   @moduledoc """

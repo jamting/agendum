@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.LoggerCaptureTest do
   @moduledoc """
   Erlang's logger never prints over the screen while Agendum runs: its

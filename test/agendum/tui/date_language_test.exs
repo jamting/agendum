@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.DateLanguageTest do
   @moduledoc "Dates typed in Swedish with --lang=swedish (R14c)."
   use ExUnit.Case, async: true

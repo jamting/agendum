@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CommandDocsTest do
   @moduledoc """
   The commands' longer texts (R65b): each belongs to a command, and F1 `c`

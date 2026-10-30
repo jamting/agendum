@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.IngestedTest do
   @moduledoc """
   Ingested categories (R75a; meeting 2026-10-26-1732, § 6; ADR 0048): the

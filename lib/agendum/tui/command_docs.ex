@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CommandDocs do
   @moduledoc """
   The longer texts of the commands (R65b): by place and command id, the

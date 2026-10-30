@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.MoveKeyBarTest do
   @moduledoc """
   The key bar in moves, as Agenda's (meeting 2026-10-26-1108, § 6; checked in

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ScreensDocTest do
   @moduledoc "docs/SCREENS.md lists every mode the TUI can push."
   use ExUnit.Case, async: true

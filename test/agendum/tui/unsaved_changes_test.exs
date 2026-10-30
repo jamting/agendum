@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.UnsavedChangesTest do
   @moduledoc """
   Retrieve, New and Import ask before replacing a file with unsaved changes,

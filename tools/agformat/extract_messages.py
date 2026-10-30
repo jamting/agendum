@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 r"""Extract Lotus Agenda 2.0's messages, prompts and help lines from AGENDA.RI.
 
 Agenda keeps the texts it shows (messages, questions, prompts, the help

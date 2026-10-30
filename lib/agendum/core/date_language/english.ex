@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DateLanguage.English do
   @moduledoc """
   English dates and times, as Agenda 2.0 reads them (SPEC R14, R14a, R14b;

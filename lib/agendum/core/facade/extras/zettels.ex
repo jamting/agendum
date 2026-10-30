@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Extras.Zettels do
   @moduledoc """
   Zettel ids (R73, ADR 0039): giving items their Quadsyl-24 ids

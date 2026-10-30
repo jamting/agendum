@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CategoryMatchingTest do
   @moduledoc "Category Properties ▸ Advanced settings for a standard category (R16b)."
   use ExUnit.Case, async: true

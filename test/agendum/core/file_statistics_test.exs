@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.FileStatisticsTest do
   @moduledoc """
   File ▸ Properties ▸ File statistics (Agenda's File Statistics box): how

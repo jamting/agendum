@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Update.Sounds do
   @moduledoc """
   Which keys make which of Agenda's sounds (R76; the tones are

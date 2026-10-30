@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.InputFormatBoxTest do
   @moduledoc """
   File Properties ▸ Input format: the person's number order, input date

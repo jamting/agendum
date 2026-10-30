@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Assign do
   @moduledoc """
   Assignment rules: how items get linked to categories.

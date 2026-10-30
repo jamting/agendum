@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NoteMakeTest do
   @moduledoc """
   In a note (R42; User's Guide 12-8 to 12-9): ALT-F7 MAKEITM makes the

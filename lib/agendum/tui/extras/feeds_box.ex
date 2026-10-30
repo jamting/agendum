@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.FeedsBox do
   @moduledoc """
   The Feeds box (File ▸ Transfer ▸ Feeds, R75): the file's feed

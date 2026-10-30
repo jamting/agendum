@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ColumnBoxTest do
   @moduledoc """
   Column Properties of a standard column (View ▸ Column ▸ Properties;

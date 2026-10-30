@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DateSettings do
   @moduledoc """
   How a file reads dates (SPEC R14e; Agenda's Global Date Settings, User's

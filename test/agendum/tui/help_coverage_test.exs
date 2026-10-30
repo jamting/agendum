@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.HelpCoverageTest do
   @moduledoc """
   Every place and box has its F1 text (R65; meeting 2026-10-22-2337, § 5):

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.RangeFiltersTest do
   @moduledoc "The Date Filter and Numeric Filter boxes (R28a; User's Guide 11-5 to 11-12)."
   use ExUnit.Case, async: true

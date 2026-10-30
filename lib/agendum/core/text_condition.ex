@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.TextCondition do
   @moduledoc """
   A category's text conditions, its "Also match" setting (SPEC R15d; User's

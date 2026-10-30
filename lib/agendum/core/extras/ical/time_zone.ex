@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.ICal.TimeZone do
   @moduledoc """
   A calendar's own time zones (VTIMEZONE, RFC 5545 3.6.5), so that a time

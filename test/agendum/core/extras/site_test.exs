@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.SiteTest do
   @moduledoc "The micro-blog: its settings, its posts and the site (R74)."
   use ExUnit.Case, async: true

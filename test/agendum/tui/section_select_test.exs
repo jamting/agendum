@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.SectionSelectTest do
   @moduledoc """
   View Properties ▸ Sections ▸ F3: Agenda's Section Select (User's Guide

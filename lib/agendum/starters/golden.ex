@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Starters.Golden do
   @moduledoc """
   The golden files of the file format: a file that uses every stored field,

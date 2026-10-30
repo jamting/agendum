@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.BoxKeyBarTest do
   @moduledoc """
   The key bar while a box or the menu is on top, as Agenda's (checked in

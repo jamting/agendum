@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: AGPL-3.0-only
 # Runs the quality gate before a push, so nothing reaches the shared
 # repository without passing it. CI runs the same gate on GitHub after the
 # push (.github/workflows/check.yml); this hook catches it before.

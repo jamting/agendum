@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.DateRulesTest do
   @moduledoc "Category Properties ▸ Date settings: a date category's Advanced settings (R6b)."
   use ExUnit.Case, async: true

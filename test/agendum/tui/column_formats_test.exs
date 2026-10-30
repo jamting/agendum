@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ColumnFormatsTest do
   @moduledoc """
   Typing in Star, Yes/No and Category note columns (R56; User's Guide

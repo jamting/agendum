@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 # Draws a rendered TUI screen (`Agendum.TUI.Render.render/1`) as a PNG with a
 # theme's colours, by way of render.swift (macOS only, AppKit). Shared by
 # screenshots.exs and the manual's capture_screens.exs, so every picture of

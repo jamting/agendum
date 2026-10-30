@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Messages do
   @moduledoc """
   Lotus Agenda's own messages, for the situations where Agendum meets the

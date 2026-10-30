@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.ConditionsActionsBox do
   @moduledoc """
   Agenda's Copy Conditions/Actions and Clear Conditions/Actions boxes

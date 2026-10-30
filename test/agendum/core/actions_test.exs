@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ActionsTest do
   @moduledoc """
   Actions (R15b; User's Guide chapter 21): when an item is assigned to a

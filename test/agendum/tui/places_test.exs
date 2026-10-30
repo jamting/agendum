@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.PlacesTest do
   @moduledoc """
   A file opens where the person left it (R69; meeting 2026-10-16-1905, § 5):

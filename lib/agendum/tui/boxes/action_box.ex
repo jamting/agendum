@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.ActionBox do
   @moduledoc """
   The Date Action and Numeric Action boxes (SPEC R15b; User's Guide 21-4 to

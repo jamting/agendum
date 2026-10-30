@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DateParser do
   @moduledoc """
   Reads dates the way Agenda does, relative to a given `today` (the core

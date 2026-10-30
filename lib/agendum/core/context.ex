@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Context do
   @moduledoc """
   The outside facts the core needs to read what the user types: the current

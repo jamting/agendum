@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.HelpScreenTest do
   @moduledoc """
   The help screen (R65e, ADR 0047): F1 shows the topic for where you are;

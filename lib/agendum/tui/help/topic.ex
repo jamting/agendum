@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Help.Topic do
   @moduledoc """
   One help topic (ADR 0047; `docs/plans/archive/HELP.md`): a title and its body,

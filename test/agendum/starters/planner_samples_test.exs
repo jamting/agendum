@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Starters.PlannerSamplesTest do
   @moduledoc """
   Sample data for the Planner (`mix agendum.starters --samples`), for

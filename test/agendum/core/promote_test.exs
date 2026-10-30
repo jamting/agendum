@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.PromoteTest do
   @moduledoc """
   Outline-style promote (SPEC R7d; Agenda 2.0 User's Guide, "Promoting and

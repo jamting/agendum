@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.DependenciesTest do
   @moduledoc "ALT-O, the & symbol and hiding dependent items (R43; User's Guide 13-12 to 13-15)."
   use ExUnit.Case, async: true

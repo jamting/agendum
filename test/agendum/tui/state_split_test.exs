@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.StateSplitTest do
   @moduledoc """
   The TUI state's fields are the file's or the session's (see

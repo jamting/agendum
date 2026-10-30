@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Terminal.Theme do
   @moduledoc """
   Maps symbolic styles to ANSI SGR codes (SPEC R40). `Render` only names

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.YankTest do
   @moduledoc """
   ALT-Y, yank back the last removed item (R42; User's Guide 4-10): the

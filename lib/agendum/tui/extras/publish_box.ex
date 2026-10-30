@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.PublishBox do
   @moduledoc """
   The Publish box (File ▸ Transfer ▸ Publish, R74): the micro-blog's

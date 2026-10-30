@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.CopyBox do
   @moduledoc """
   ALT-F9 COPY (R42; User's Guide 13-8 to 13-9): the Copy box lists the

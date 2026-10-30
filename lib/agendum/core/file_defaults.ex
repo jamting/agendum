@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.FileDefaults do
   @moduledoc """
   The defaults for new files (File Properties ▸ Update defaults, R82a;

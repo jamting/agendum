@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CopyConditionsTest do
   @moduledoc """
   ALT-F9 (CPY C/A) and ALT-F8 (CLR C/A) in the category manager, as

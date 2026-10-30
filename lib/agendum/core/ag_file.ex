@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.AgFile do
   @moduledoc """
   Imports a Lotus Agenda 2.0 data file (`.AG`) as a new Agendum file

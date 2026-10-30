@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DateRulesTest do
   @moduledoc """
   How date categories get dates (R6b; User's Guide 7-5 to 7-8): Assign

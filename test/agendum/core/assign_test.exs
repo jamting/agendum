@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.AssignTest do
   use ExUnit.Case, async: true
 

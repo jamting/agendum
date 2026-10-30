@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NoteKeysTest do
   @moduledoc "Agenda's accelerator keys in a note (R42; Help: \"Notes: Accelerator Keys\")."
   use ExUnit.Case, async: true

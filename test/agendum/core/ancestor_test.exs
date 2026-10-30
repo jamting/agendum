@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.AncestorTest do
   @moduledoc """
   An item cannot be directly assigned to both a category and one of its

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CategoryScreens do
   @moduledoc """
   Screens that list the category hierarchy:

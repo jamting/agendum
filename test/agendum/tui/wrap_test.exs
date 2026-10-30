@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.WrapTest do
   @moduledoc "Word wrap in the note editor: rows of a line, on the screen only."
   use ExUnit.Case, async: true

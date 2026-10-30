@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CountTest do
   @moduledoc """
   A count typed with ALT-digits before a command in a view (R65, ADR 0033;

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.FileCommandsTest do
   @moduledoc """
   Agenda's File commands (User's Guide 22-8 to 22-11, 23-26; checked in

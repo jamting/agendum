@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Render.Export do
   @moduledoc """
   The current view as plain text (File Print). Pure.

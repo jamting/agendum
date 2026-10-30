@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 # Pictures of the TUI, for comparing its look with Agenda 2.0 (e.g. with
 # screenshots from DOSBox): drives the real TUI with key presses, as the
 # tests do, and draws each screen as a PNG with the theme's colours. macOS

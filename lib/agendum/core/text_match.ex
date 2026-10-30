@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.TextMatch do
   @moduledoc """
   How a file matches item text to categories (SPEC R16a; Agenda's

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NoteMenuTest do
   @moduledoc """
   The note editor's own F10 menu (R64b, NOTE_EDITOR.md step 2), as

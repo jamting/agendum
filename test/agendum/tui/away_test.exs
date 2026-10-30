@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AwayTest do
   @moduledoc """
   "While you were away" (R70; meeting 2026-10-16-1905, § 6): alarms that came

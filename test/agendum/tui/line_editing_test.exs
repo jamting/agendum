@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.LineEditingTest do
   @moduledoc """
   Typing a line (an item's text, a box's field, a prompt) as Agenda's

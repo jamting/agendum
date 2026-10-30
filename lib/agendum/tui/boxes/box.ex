@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.Box do
   @moduledoc """
   Everything about one box, in the box's own module (docs/plans/archive/REFACTORING.md,

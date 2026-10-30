@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.SelectFile do
   @moduledoc """
   The Select File box (F3 in a prompt for a file name; SPEC R51; User's

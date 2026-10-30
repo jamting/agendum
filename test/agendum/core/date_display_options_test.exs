@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DateDisplayOptionsTest do
   @moduledoc """
   More date display options (R41a; User's Guide 6-19 to 6-22, 7-14 to

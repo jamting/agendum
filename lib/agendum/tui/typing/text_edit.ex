@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Typing.TextEdit do
   @moduledoc """
   A pure multi-line text buffer, used for notes. `mark` is where F7 MARK

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.ExecuteBox do
   @moduledoc """
   Utilities Execute (SPEC R15e; User's Guide 20-19 to 20-21, 21-17):

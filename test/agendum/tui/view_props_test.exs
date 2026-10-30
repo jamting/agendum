@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ViewPropsTest do
   @moduledoc """
   The View Properties box of a standard view (View ▸ Properties, or F6 in

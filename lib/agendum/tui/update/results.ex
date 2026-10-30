@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Update.Results do
   @moduledoc """
   The shell's answers (meeting 2026-10-26-1524, § 11): after `Agendum.TUI.App`

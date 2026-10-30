@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.CalendarsBox do
   @moduledoc """
   The Calendars box (File ▸ Transfer ▸ Calendars; SPEC R45): the file's

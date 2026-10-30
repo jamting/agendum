@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.SectionBox do
   @moduledoc """
   The Section Properties box (View ▸ Section ▸ Properties, or F6 on a

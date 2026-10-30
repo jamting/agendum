@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.FileStatsBox do
   @moduledoc """
   The File Statistics box (File ▸ Properties ▸ File statistics; Agenda's

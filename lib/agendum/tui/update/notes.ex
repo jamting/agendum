@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Update.Notes do
   @moduledoc """
   Keys in the full-screen note of an item, a category or a macro: editing,

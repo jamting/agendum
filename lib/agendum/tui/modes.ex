@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Modes do
   @moduledoc """
   The UI modes as structs (ROADMAP, Towards many users): one per kind of

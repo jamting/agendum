@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.RecurringEditTest do
   @moduledoc """
   Editing a recurring item's When date (R14a; checked in Agenda 2.0,

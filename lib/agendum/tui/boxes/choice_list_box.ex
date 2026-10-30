@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.ChoiceListBox do
   @moduledoc """
   F3 (CHOICES) on a setting of a box (User's Guide 2-17,

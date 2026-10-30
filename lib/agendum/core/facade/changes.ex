@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Changes do
   @moduledoc """
   What every change to an item goes through, shared by the area

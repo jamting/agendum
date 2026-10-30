@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Render.Managers do
   @moduledoc """
   The full-screen category manager (F9), drawn as Agenda's: the names,

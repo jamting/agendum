@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.StoreDiskGuardTest do
   @moduledoc """
   The file changed on disk (R71): a save says what it expects to find on

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.RangeFilterBox do
   @moduledoc """
   The Date Filter and Numeric Filter boxes (SPEC R28a; User's Guide 11-6

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.DevTools do
   @moduledoc """
   The hidden developer screen (ESC ? or ALT-?, from anywhere but while

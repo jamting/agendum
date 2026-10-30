@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NoteClipboardTest do
   @moduledoc """
   Marking, copying, cutting, deleting and pasting text in a note (R63;

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Command.Changes do
   @moduledoc """
   What a command changed (R66, ADR 0036): the ids of the items,

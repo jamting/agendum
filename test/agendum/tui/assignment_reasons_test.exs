@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AssignmentReasonsTest do
   @moduledoc """
   The assignment profile (F3 on an item) says why the item is in the

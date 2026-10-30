@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.Calendars.Messages do
   @moduledoc """
   What the calendars (R45) say: their prompts, questions and messages,

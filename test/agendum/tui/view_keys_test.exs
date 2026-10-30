@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ViewKeysTest do
   @moduledoc "Agenda's own accelerator keys in a view (R42; Help: \"Views: Accelerator Keys\")."
   use ExUnit.Case, async: true

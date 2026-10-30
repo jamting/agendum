@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.BoxNav do
   @moduledoc """
   Moving between the settings of a box, as Agenda (User's Guide 2-16,

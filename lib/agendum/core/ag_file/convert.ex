@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.AgFile.Convert do
   @moduledoc """
   Turns what `Agendum.Core.AgFile.Reader` read from a Lotus Agenda file

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.CalendarSync do
   @moduledoc """
   Applies a calendar's events to the file (SPEC R45), mirroring the

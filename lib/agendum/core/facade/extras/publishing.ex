@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Extras.Publishing do
   @moduledoc """
   The micro-blog (R74): its settings, its posts, and the site made from

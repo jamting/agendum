@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ShortNamesTest do
   @moduledoc "Short names in columns too narrow for full names (User's Guide 19-2)."
   use ExUnit.Case, async: true

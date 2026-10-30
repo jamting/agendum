@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.BlogIngestedTest do
   @moduledoc """
   The blog's Posts and Drafts are the person's categories, never a feed's

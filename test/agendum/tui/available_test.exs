@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AvailableTest do
   @moduledoc """
   Whether a command can run now (R65a): F1 `c` greys the commands that

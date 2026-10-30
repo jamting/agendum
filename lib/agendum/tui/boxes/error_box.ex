@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.ErrorBox do
   @moduledoc """
   Agenda's Error box: an error said in a box titled Error, with "Press any

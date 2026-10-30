@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Browse do
   @moduledoc """
   Browsing dates (R47, R48; User's Guide 10-12 to 10-14): the date

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.CLI do
   @moduledoc """
   Command-line entry point of Wol's Agendum.

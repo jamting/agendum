@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.FilterBrowseTest do
   @moduledoc """
   Browsing a standard view's date filter, or a section's (R48; Help "Browse

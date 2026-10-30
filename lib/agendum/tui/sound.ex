@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Sound do
   @moduledoc """
   Agenda's sounds (R76), as Agenda made them: square waves on the PC

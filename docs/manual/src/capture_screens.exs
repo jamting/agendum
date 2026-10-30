@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 # Captures the screens shown in the Agenda manual (docs/manual/index.html)
 # from the program itself: it opens Rabbit's file (`Agendum.Sample.rabbit/1`,
 # also `agendum --rabbit`), drives the real TUI with key presses, and writes

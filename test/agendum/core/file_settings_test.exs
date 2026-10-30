@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.FileSettingsTest do
   @moduledoc """
   File Properties' File description and Make backup on open (R82; User's

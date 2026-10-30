@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.FeedsTest do
   @moduledoc "Feed subscriptions: subscribing, syncing, fading, OPML (R75)."
   use ExUnit.Case, async: true

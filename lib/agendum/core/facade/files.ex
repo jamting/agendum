@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Files do
   @moduledoc """
   Whole files: a new, empty file, a setting of the whole file (Tab size),

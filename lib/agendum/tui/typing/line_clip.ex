@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Typing.LineClip do
   @moduledoc """
   Agenda's editing keys while a line is typed (User's Guide 3-4; checked

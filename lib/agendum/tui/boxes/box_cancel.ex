@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.BoxCancel do
   @moduledoc """
   ESC cancels a settings box, as in Agenda, whose boxes said "Press ENTER

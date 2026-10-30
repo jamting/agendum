@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.RunByNameTest do
   @moduledoc """
   CTRL-X runs a command by its name (R65d, ADR 0040): a small box with an

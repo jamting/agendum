@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 # OTP's tools application (`:xref`, read by the architecture test) is left
 # off the code path by Mix, because the program does not use it. It is put
 # there before any test file is compiled: added later, in the test itself,

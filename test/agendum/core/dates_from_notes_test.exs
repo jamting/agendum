@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DatesFromNotesTest do
   @moduledoc """
   Fixed relative dates and When dates from notes (R14f; User's Guide 6-7,

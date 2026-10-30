@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TestLogTest do
   @moduledoc "The test runs' logs in tmp/check/ (Agendum.TestLog), and `mix agendum.hooks`."
   use ExUnit.Case, async: true

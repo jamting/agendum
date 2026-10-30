@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Starters.Planner.Macros do
   @moduledoc """
   The Activities Planner's keystroke macros (R60; screenshots 78-109 in

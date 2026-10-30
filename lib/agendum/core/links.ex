@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Links do
   @moduledoc """
   A bidirectional many-to-many relation between two kinds of ids.

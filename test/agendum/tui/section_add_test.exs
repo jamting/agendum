@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.SectionAddTest do
   @moduledoc """
   The Section Add box (View ▸ Section ▸ Add; Agenda's, checked in Agenda

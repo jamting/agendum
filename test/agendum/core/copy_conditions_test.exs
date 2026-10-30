@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.CopyConditionsTest do
   @moduledoc """
   Copy and clear a category's conditions and actions (R15f; Agenda's

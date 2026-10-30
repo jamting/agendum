@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ItemColumnTest do
   @moduledoc """
   The item column of each section (R55; User's Guide 3-18 to 3-19, Help

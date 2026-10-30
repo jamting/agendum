@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NoteInsertTabTest do
   @moduledoc """
   INS / OVR and TAB in a note (R64e, NOTE_EDITOR.md step 5; the owner's

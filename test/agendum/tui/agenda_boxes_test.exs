@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AgendaBoxesTest do
   @moduledoc """
   Agendum's settings boxes compared with Lotus Agenda 2.0's own

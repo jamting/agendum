@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.PasswordBox do
   @moduledoc """
   Agenda's small password boxes (File Properties ▸ Set file password; R82,

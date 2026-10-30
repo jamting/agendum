@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.BrowseTest do
   @moduledoc """
   Browsing dates in the core (R47, R48): where browsing starts, a move,

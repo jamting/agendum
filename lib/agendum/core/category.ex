@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Category do
   @moduledoc """
   A node in the category hierarchy.

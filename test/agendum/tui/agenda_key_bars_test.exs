@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AgendaKeyBarsTest do
   @moduledoc """
   Agendum's key bars compared with Lotus Agenda 2.0's own (ADR 0045;

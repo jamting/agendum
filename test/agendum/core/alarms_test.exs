@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.AlarmsTest do
   @moduledoc """
   Times of day on When dates (SPEC R14b) and alarms (SPEC R38; User's

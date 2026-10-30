@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.HostileTextTest do
   @moduledoc """
   Text from outside is data, never instructions (meeting 2026-10-26-1524,

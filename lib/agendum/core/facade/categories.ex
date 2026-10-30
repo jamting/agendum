@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Categories do
   @moduledoc """
   Categories (R2, R7–R9): adding, finding and renaming categories, moving

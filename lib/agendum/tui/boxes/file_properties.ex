@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.FileProperties do
   @moduledoc """
   The File Properties box (File ▸ Properties; User's Guide 7-13 to 7-17)

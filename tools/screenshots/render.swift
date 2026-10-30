@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 // Draws a screen captured by screenshots.exs as a PNG, a 9x16 cell per
 // character like a VGA text screen (80x25 = 720x400). macOS only (AppKit).
 //

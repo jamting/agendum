@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ProperNamesTest do
   @moduledoc """
   Proper names and titles in text matching (R16c; User's Guide 19-17):

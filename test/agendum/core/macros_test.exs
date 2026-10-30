@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.MacrosTest do
   @moduledoc "Macros kept in the file (R50; Working with Macros, chapter 1)."
   use ExUnit.Case, async: true

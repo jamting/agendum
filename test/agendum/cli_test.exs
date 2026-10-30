@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.CLITest do
   @moduledoc "Command-line arguments (R40)."
   use ExUnit.Case, async: true

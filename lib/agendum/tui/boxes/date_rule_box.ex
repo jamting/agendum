@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.DateRuleBox do
   @moduledoc """
   A date category's Advanced settings (Category Properties ▸ Date

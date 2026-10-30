@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 """Builds docs/manual/index.html from template.html and the captured screens.
 
     MIX_ENV=test mix run docs/manual/src/capture_screens.exs   # screens/*.txt, ../screens/*.png

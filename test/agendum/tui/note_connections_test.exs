@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NoteConnectionsTest do
   @moduledoc """
   A note's connections to the rest of the file (R64f, NOTE_EDITOR.md step

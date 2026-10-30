@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Items do
   @moduledoc """
   Items: adding and editing items (R21) and their notes, moving them

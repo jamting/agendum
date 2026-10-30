@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.ArchitectureTest do
   @moduledoc """
   Guards the layering described in docs/DATA_ACCESS.md and CLAUDE.md's

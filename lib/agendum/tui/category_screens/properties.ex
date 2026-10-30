@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CategoryScreens.Properties do
   @moduledoc """
   Category Properties (F6): its fields, its keys, and changing a

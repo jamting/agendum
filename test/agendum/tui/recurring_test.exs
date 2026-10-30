@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.RecurringTest do
   @moduledoc "Recurring items in the TUI (R14a)."
   use ExUnit.Case, async: true

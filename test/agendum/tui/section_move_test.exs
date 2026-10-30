@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.SectionMoveTest do
   @moduledoc """
   Moving a section within its view (R62; User's Guide 5-8 to 5-9): ALT-F10

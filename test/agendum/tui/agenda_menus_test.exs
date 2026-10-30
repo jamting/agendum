@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AgendaMenusTest do
   @moduledoc """
   Agendum's menus compared with Lotus Agenda 2.0's own (meeting 2026-10-21-2324,

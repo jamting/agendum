@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.SortBox do
   @moduledoc """
   The Sort box, Agenda's Item Sorting in All Sections (View Properties ▸

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Update.Marked do
   @moduledoc """
   Marked items (User's Guide 13-1 to 13-4): F7 and ALT-J, the box asking

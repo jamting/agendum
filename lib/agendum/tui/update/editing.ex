@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Update.Editing do
   @moduledoc """
   Inline editing in the view: typing a new item, editing an item's text,

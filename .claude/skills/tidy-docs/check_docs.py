@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 """Find documents that have drifted from the code (tidy-docs skill, step 2).
 
 Run from the repository root:  python3 .claude/skills/tidy-docs/check_docs.py

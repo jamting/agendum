@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.Feeds.Messages do
   @moduledoc """
   What the feeds (R75) say: their prompts, questions and messages, kept

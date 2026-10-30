@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.QuestionsTest do
   @moduledoc """
   Confirming suggested assignments (R16; User's Guide 19-9, 19-12): with

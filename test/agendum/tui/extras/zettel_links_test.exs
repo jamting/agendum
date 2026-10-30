@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.ZettelLinksTest do
   @moduledoc "Links between zettels in the TUI (R73b)."
   use ExUnit.Case, async: true

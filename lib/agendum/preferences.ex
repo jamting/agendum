@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Preferences do
   @moduledoc """
   The person's preferences, for every file they open (ADR 0008): the

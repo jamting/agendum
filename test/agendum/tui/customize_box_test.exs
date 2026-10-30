@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CustomizeBoxTest do
   @moduledoc """
   File ▸ Customize: the person's theme and date languages (R40, R14c) and

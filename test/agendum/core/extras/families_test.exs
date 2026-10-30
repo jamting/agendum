@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.FamiliesTest do
   @moduledoc """
   The extras' families (R75a; code review 2026-10-26): Feeds and Calendars

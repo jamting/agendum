@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.SearchTest do
   @moduledoc "Searching item and note text (SPEC R37; User's Guide 15-1 to 15-6)."
   use ExUnit.Case, async: true

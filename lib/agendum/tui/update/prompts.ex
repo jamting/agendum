@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Update.Prompts do
   @moduledoc """
   Prompts and confirmations in the control panel: a line of text

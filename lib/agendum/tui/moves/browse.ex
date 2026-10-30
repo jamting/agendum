@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Moves.Browse do
   @moduledoc """
   Browsing (View ▸ Browse or ALT-B; User's Guide 10-12 to 10-14, Help

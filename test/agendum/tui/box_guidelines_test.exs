@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.BoxGuidelinesTest do
   @moduledoc """
   The rules of `docs/UI_GUIDELINES.md` a test can hold, over every box in

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DependenciesTest do
   @moduledoc "Items that depend on other items (R43; User's Guide 13-12 to 13-16)."
   use ExUnit.Case, async: true

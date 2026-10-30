@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.HostileFilesTest do
   @moduledoc """
   Every file in `test/fixtures/hostile/` (made by its `make.exs`) read

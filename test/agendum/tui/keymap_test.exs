@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.KeymapTest do
   @moduledoc """
   Keys run named commands through keymaps (R65, ADR 0033): the keymap and

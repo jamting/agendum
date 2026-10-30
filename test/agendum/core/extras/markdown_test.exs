@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.MarkdownTest do
   @moduledoc "The micro-blog's Markdown (R74)."
   use ExUnit.Case, async: true

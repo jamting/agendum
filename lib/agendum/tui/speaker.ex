@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Speaker do
   @moduledoc """
   Plays Agenda's sounds (R76, ADR 0042): the shell's side of a

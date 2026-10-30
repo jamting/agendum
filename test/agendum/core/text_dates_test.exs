@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.TextDatesTest do
   @moduledoc """
   When dates read from item text (SPEC R14; Agenda 2.0 User's Guide,

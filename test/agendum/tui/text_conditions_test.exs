@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.TextConditionsTest do
   @moduledoc "Also match in Category Properties (R15d) and text matches that break (R15c)."
   use ExUnit.Case, async: true

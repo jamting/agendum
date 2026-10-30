@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Store do
   @moduledoc """
   Saving and loading Agendum files (imperative shell). A file is

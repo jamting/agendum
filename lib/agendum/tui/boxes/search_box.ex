@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.SearchBox do
   @moduledoc """
   Searching (SPEC R37; User's Guide 15-1 to 15-5).

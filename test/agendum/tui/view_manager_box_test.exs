@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ViewManagerBoxTest do
   @moduledoc """
   The view manager as a box over the view, as Agenda's (screenshot 40): the

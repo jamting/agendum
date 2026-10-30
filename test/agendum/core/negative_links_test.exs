@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.NegativeLinksTest do
   @moduledoc """
   General negative links (R9; not in Agenda 2.0, from the patent's FIG. 6):

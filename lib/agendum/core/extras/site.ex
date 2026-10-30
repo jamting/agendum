@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.Site do
   @moduledoc """
   The micro-blog as a static site (R74): `build/1` makes every file from

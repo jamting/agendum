@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.MacroKeys do
   @moduledoc """
   Keystrokes as macro text, in Agenda's notation, and back (SPEC R50;

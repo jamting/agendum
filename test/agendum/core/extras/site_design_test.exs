@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.SiteDesignTest do
   @moduledoc """
   The blog's design (R74; the owner, 2026-10-26): The Proportional Web by

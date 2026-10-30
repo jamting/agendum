@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.SampleTest do
   @moduledoc "The built-in files: the patent's sample (`--demo`) and Rabbit's (`--rabbit`)."
   use ExUnit.Case, async: true

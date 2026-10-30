@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.DateSettingsBox do
   @moduledoc """
   The Global Date Settings box (File ▸ Properties ▸ Global date settings;

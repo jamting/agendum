@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.FilePropertiesTest do
   @moduledoc """
   File ▸ Properties: where new columns go (R55), the date display format

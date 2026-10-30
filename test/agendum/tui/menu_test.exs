@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.MenuTest do
   use ExUnit.Case, async: true
 

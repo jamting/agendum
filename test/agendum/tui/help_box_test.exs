@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.HelpBoxTest do
   @moduledoc """
   The help is drawn as a box over the screen it was opened from (R65c):

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.PublishBoxFieldsTest do
   @moduledoc """
   The Publish box's fields as the clone's settings boxes have them (UI

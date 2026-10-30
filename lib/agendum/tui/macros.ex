@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Macros do
   @moduledoc """
   Learn-mode macros in the TUI (SPEC R50; Working with Macros, chapter 1).

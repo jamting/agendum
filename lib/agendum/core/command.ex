@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Command do
   @moduledoc """
   The command layer (R66, ADR 0036): one named command per user action,

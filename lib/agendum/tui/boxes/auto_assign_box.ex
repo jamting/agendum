@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.AutoAssignBox do
   @moduledoc """
   File Properties ▸ Auto-assign settings (User's Guide 19-7 to 19-12, SPEC

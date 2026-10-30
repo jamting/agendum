@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.SelectHelpScreenBox do
   @moduledoc """
   Agenda's Select Help Screen box (after Find Topic in the help, R65e;

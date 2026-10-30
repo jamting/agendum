@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.FieldHelp do
   @moduledoc """
   Help for the highlighted field of a box, shown in the control panel

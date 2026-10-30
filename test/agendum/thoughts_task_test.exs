@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.ThoughtsTaskTest do
   # not async: one test sets an environment variable, which is global
   use ExUnit.Case, async: false

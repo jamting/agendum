@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ExclusiveTest do
   @moduledoc """
   Making a category's children mutually exclusive when items are already

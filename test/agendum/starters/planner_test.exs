@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Starters.PlannerTest do
   @moduledoc """
   The Activities Planner starter file (R60), as Agenda 2.0 shipped it in

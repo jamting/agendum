@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Invariants do
   @moduledoc """
   The data model's invariants as one pure check (docs/DATA_MODEL.md,

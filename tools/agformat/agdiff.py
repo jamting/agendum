@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-only
 """Word-level diff of two Lotus Agenda .AG files (research tool, not part of Agendum).
 
 The other half of an experiment with agenda_driver.py: change one thing in

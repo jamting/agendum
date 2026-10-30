@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Mix.Tasks.Agendum.Fuzz do
   @shortdoc "The long fuzz run, its output kept in a dated log file"
   @moduledoc """

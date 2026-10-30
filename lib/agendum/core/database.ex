@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Database do
   @moduledoc """
   The complete state of one Agendum file, as an immutable value.

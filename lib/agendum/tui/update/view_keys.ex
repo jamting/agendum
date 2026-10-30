@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Update.ViewKeys do
   @moduledoc """
   Keys in the view itself (no box open): a key runs the command the

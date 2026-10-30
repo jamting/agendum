@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.DateFormatRows do
   @moduledoc """
   The Date Column Properties settings (User's Guide 6-19 to 6-22) as rows

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.CalendarSyncTest do
   @moduledoc """
   Calendar subscriptions (R45): a calendar's events become items in its

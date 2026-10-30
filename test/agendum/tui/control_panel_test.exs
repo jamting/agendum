@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ControlPanelTest do
   @moduledoc """
   The control panel's two lines as Agenda's (checked in Agenda 2.0,

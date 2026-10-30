@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.HelpScreen do
   @moduledoc """
   The help screen (F1), as Agenda's (R65e, ADR 0047; meeting 2026-10-26-0829,

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.DatebookViewTest do
   @moduledoc "A datebook view in the TUI (R47): its slots, typing into one, and its restrictions."
   use ExUnit.Case, async: true

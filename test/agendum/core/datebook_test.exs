@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DatebookTest do
   @moduledoc "Datebook views (R47; User's Guide chapter 10): their slots, and which items each shows."
   use ExUnit.Case, async: true

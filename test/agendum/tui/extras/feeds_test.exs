@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.FeedsTest do
   @moduledoc "File ▸ Transfer ▸ Feeds, the News view and CTRL-V (R75)."
   use ExUnit.Case, async: true

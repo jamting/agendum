@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.ReviewSliceBTest do
   @moduledoc """
   The findings of the cloud review of slice B, the core's rules

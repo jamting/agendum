@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.ParserFindingsTest do
   @moduledoc """
   The bugs the parser property tests and the hostile files found

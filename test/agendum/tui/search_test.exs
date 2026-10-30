@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.SearchTest do
   @moduledoc """
   Searching a view (ALT-F6) and the file (Show View), and ALT-F8 (R37), as

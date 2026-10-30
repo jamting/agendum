@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Fuzz do
   @moduledoc """
   Random key sequences must never crash the UI, and every frame must fill the

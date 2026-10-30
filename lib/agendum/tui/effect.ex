@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Effect do
   @moduledoc """
   Every side effect the pure TUI can ask the shell for: the closed list.

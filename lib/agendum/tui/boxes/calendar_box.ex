@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.CalendarBox do
   @moduledoc """
   The pop-up calendar (SPEC R46; User's Guide 6-14 to 6-17): a month with

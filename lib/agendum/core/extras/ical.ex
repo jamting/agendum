@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.ICal do
   @moduledoc """
   Reads the events of an iCalendar file (RFC 5545, `.ics`), for calendar

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Rules do
   @moduledoc """
   The rules that assign items without the user (R13, R15, R16): actions run

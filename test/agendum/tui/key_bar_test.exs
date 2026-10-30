@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.KeyBarTest do
   @moduledoc """
   The key bar (SPEC § The key bar): in a view, a note, the category and

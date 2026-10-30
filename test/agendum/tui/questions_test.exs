@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.QuestionsTest do
   @moduledoc "Confirm assignments and Utilities Questions (R16; User's Guide 19-9, 19-12)."
   use ExUnit.Case, async: true

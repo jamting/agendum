@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ExecuteTest do
   @moduledoc """
   Utilities Execute (R15e; User's Guide 20-19 to 20-21, 21-17): apply

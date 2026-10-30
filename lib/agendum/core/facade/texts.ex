@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Texts do
   @moduledoc """
   Unindexed categories (R29b; User's Guide 3-10 to 3-11, 3-23 to 3-26): a

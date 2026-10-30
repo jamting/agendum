@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.NumberItemsTest do
   @moduledoc """
   Number items (R79; User's Guide 5-13, 9-11; Help "View Properties/Add/Copy

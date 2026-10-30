@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ViewManagerTest do
   @moduledoc """
   Typing in the view manager highlights a view (R53; User's Guide 9-5,

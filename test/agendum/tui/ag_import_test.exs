@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AgImportTest do
   @moduledoc """
   Importing a Lotus Agenda file in the TUI (R72): File ▸ Transfer ▸ Import

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Extras.Calendars do
   @moduledoc """
   Calendar subscriptions (R45): subscribing to a calendar on the web,

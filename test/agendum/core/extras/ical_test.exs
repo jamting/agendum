@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.ICalTest do
   @moduledoc "Reading iCalendar (RFC 5545) text: the events a calendar holds (R45)."
   use ExUnit.Case, async: true

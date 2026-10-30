@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CategoryScreens.Choices do
   @moduledoc """
   Choice boxes and the hierarchy changes behind them: making children

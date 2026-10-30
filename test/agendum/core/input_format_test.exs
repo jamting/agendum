@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.InputFormatTest do
   @moduledoc """
   The reader's Input format (R41b; User's Guide 7-17): number order,

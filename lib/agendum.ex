@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum do
   @moduledoc """
   Wol's Agendum, a personal information manager in the spirit of Lotus

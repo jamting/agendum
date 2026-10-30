@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.HopTest do
   @moduledoc """
   ALT-H, hop to the next occurrence of the highlighted item (R42; User's

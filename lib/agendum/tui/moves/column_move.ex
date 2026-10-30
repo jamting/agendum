@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Moves.ColumnMove do
   @moduledoc """
   View ▸ Column ▸ Move, or ALT-F10 on a column head (User's Guide 5-20):

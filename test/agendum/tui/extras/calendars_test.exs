@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.CalendarsTest do
   @moduledoc """
   File ▸ Transfer ▸ Calendars (R45): subscribing to a calendar on the web,

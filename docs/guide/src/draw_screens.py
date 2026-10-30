@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 """Draws the user guide's screens as pictures (meeting 2026-10-28-2214, § 5).
 
     python3 docs/guide/src/draw_screens.py     # src/screens/*.txt -> ../screens/*.png

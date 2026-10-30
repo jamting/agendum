@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.GoTo do
   @moduledoc """
   ALT-F5 (GO TO) in a view (SPEC R42; User's Guide 5-9): a box listing the

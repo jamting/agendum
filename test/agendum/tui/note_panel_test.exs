@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NotePanelTest do
   @moduledoc """
   The note editor's control panel and key bar, as Agenda's (R64a,

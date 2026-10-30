@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.MoveCategoryTest do
   @moduledoc """
   Moving a category (promote, demote, move under a new parent) must not put

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Datebook do
   @moduledoc """
   The settings of a datebook view (SPEC R47; User's Guide chapter 10): a

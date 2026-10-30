@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.HelpLayoutTest do
   @moduledoc """
   The help screen's frame (R65c): every page has the same heading, a line

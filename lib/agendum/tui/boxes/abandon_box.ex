@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.AbandonBox do
   @moduledoc """
   Agenda's Abandon File box (File ▸ Abandon; User's Guide 22-8; checked in

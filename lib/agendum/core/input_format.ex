@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.InputFormat do
   @moduledoc """
   How one person writes dates, times and numbers (SPEC R41b, R54; Agenda's

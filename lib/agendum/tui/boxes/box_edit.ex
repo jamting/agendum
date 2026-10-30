@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.BoxEdit do
   @moduledoc """
   F2 (EDIT) in a settings box, as in Agenda (User's Guide 2-17: "Press F2

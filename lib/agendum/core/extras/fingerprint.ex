@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.Fingerprint do
   @moduledoc """
   A short fingerprint of a text (ADR 0048): what an extra keeps of the text

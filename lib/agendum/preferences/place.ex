@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Preferences.Place do
   @moduledoc """
   Where the person left one file (R69): the view shown, the section the

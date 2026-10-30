@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.UnindexedTest do
   @moduledoc """
   Unindexed categories in the TUI (R29b; checked in Agenda 2.0,

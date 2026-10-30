@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DateLanguage do
   @moduledoc """
   A language pack for reading dates and times in item text (SPEC R14c).

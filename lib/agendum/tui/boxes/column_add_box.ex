@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.ColumnAddBox do
   @moduledoc """
   The Column Add box (View ▸ Column ▸ Add; User's Guide 3-15 to 3-18):

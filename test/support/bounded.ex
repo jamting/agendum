@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Bounded do
   @moduledoc """
   Runs a function with a time budget, for the tests that feed parsers

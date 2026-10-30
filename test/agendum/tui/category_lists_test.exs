@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CategoryListsTest do
   @moduledoc """
   Category lists opened from a box, as Agenda's (checked in Agenda 2.0,

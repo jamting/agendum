@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Mix.Tasks.Agendum.Golden do
   @shortdoc "Writes the golden file of the current format version"
   @moduledoc """

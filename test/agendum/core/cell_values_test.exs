@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.CellValuesTest do
   @moduledoc """
   Raw values beside the formatted cells (ROADMAP, Towards many users):

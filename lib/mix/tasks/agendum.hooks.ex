@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Mix.Tasks.Agendum.Hooks do
   @shortdoc "Warns when git would not run the pre-push hook"
   @moduledoc """

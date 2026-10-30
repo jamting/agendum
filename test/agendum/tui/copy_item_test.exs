@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CopyItemTest do
   @moduledoc """
   ALT-F9 COPY (R42, R35; User's Guide 13-8 to 13-9): the same item in one

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Alarms do
   @moduledoc """
   Times and alarms (R14b, R38): an item's When moment, setting and

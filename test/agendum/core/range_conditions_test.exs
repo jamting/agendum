@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.RangeConditionsTest do
   @moduledoc """
   Date and numeric conditions (R15a; User's Guide 20-5 to 20-7): a category

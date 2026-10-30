@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.MoreDatePhrasesTest do
   @moduledoc """
   More date phrases (R14d; User's Guide 6-10 to 6-11, 7-15 to 7-16):

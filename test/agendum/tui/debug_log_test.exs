@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.DebugLogTest do
   @moduledoc """
   The debug log (AGENDUM_LOG): where it goes, which old sessions are

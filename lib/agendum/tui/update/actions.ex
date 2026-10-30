@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Update.Actions do
   @moduledoc """
   Named actions shared by keys and the menu (`perform/2`): the place a

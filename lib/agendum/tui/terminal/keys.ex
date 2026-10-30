@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Terminal.Keys do
   @moduledoc """
   Decodes raw terminal input into key events. Pure.

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Extras.Publish do
   @moduledoc """
   The micro-blog's shell (imperative, R74): reads what a folder holds of

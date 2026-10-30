@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.ICal.TimeZoneTest do
   @moduledoc "Times in a calendar's own time zones (VTIMEZONE, RFC 5545 3.6.5), for R45."
   use ExUnit.Case, async: true

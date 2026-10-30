@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.ManagersTest do
   @moduledoc """
   The Feeds and Calendars boxes as managers, as the Macros manager is (UI

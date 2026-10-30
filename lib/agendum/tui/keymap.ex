@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Keymap do
   @moduledoc """
   Which command a key runs, by place (ADR 0033): a key event (as

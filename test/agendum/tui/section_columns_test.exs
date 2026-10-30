@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.SectionColumnsTest do
   @moduledoc """
   Columns per section in the view (R55): each section shows its own

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.AgFile.Reader do
   @moduledoc """
   Reads a Lotus Agenda 2.0 data file (`.AG`) into plain maps (R72): its

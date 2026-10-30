@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.NumericFunctionsBox do
   @moduledoc """
   The Select Numeric Functions box (Section Properties ▸ Select numeric

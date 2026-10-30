@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.FindTopicBox do
   @moduledoc """
   Agenda's Find Topic box (F5 in the help, R65e; checked in Agenda 2.0,

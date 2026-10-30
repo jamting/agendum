@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.ImportReportBox do
   @moduledoc """
   The report after a Lotus Agenda file was imported (R72): what came over

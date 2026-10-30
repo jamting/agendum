@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Places do
   @moduledoc """
   Where the person left a file (R69; meeting 2026-10-16-1905, § 5): the view

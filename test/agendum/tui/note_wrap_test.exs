@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NoteWrapTest do
   @moduledoc """
   Word wrap in the note editor: a long line is shown on as many rows as it

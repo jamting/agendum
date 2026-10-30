@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Trash do
   @moduledoc """
   The trash (R24a; User's Guide 3-4 to 3-5 and 13-18 to 13-19; checked in

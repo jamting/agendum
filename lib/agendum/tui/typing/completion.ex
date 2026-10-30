@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Typing.Completion do
   @moduledoc """
   Automatic completion while typing a column entry (SPEC R32): which

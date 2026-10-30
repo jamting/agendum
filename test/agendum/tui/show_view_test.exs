@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ShowViewTest do
   @moduledoc """
   Utilities ▸ Show ▸ ItemsDone and Every (User's Guide 13-9, 13-21; checked

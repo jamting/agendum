@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.AgFile.CP437 do
   @moduledoc """
   The DOS code page 437, in which Agenda wrote text (R72): bytes below 128

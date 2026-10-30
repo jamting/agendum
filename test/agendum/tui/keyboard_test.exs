@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.KeyboardTest do
   @moduledoc "CTRL alternatives for keyboards without INS and for mapped ⌘ shortcuts."
   use ExUnit.Case, async: true

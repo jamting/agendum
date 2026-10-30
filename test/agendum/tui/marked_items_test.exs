@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.MarkedItemsTest do
   @moduledoc "Marking items and bulk commands on them (User's Guide 13-1 to 13-4, 4-5, 4-17)."
   use ExUnit.Case, async: true

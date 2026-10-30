@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.Blog do
   @moduledoc """
   The file's micro-blog (R74): which items are its posts and how the site

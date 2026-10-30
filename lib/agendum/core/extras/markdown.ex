@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.Markdown do
   @moduledoc """
   A small Markdown of our own, for the micro-blog's posts (R74): a note

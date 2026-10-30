@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.FitColumnTest do
   @moduledoc """
   Fit column to contents (R22a): a column's width set once to fit its head

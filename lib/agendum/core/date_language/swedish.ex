@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DateLanguage.Swedish do
   @moduledoc """
   Swedish dates and times (SPEC R14c): "fredag", "på fre", "nästa vecka",

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Starters.Clinic.Items do
   @moduledoc """
   The clinic's items (`Agendum.Starters.Clinic`): treatment plans, the

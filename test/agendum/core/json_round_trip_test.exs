@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.JSONRoundTripTest do
   @moduledoc """
   Whatever a person does to a file, writing it as JSON and reading it back

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Extras.CalendarFetch do
   @moduledoc """
   Reads a subscribed calendar from the web (imperative shell, SPEC R45):

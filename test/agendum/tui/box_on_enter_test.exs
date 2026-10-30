@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.BoxOnEnterTest do
   @moduledoc """
   A settings box applies its changes on ENTER, as Agenda's does (checked in

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.ZettelsTest do
   @moduledoc "Zettel ids on items (R73, ADR 0039)."
   use ExUnit.Case, async: true

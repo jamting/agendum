@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Views do
   @moduledoc """
   Views (R20–R28, R36, R37, R47–R49): adding and changing views,

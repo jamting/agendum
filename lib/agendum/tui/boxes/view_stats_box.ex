@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.ViewStatsBox do
   @moduledoc """
   The View Statistics box (View Properties ▸ View statistics; R78; Help

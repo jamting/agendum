@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ConditionsTest do
   @moduledoc """
   Assignment conditions (SPEC R15; Agenda 2.0 User's Guide, chapters 18

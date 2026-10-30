@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.BoxDefaultsTest do
   @moduledoc """
   F8 (DEFAULT) and ALT-F8 (DFLTALL) in settings boxes (User's Guide 2-17;

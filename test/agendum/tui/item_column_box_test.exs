@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ItemColumnBoxTest do
   @moduledoc """
   Item Column Properties (View ▸ Column ▸ Properties on the item text;

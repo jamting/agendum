@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NumbersTest do
   @moduledoc "Numeric columns in the TUI (R29; User's Guide chapter 8)."
   use ExUnit.Case, async: true

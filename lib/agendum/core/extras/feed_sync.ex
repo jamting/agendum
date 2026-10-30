@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.FeedSync do
   @moduledoc """
   Applies a feed's entries to the file (R75), as `Agendum.Core.Extras.CalendarSync`

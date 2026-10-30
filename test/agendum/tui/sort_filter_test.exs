@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.SortFilterTest do
   @moduledoc """
   Filters (R28) and sorting (R36) from View and Section Properties, ALT-F5

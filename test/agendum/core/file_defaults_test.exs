@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.FileDefaultsTest do
   @moduledoc """
   File Properties ▸ Update defaults (R82a; User's Guide 22-14, 17-50, H-9;

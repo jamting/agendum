@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Item do
   @moduledoc """
   A free-form piece of text, the basic unit of information in Agenda.

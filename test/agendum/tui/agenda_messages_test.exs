@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AgendaMessagesTest do
   @moduledoc """
   Agendum's messages in Agenda's words (`Agendum.TUI.Messages`), checked

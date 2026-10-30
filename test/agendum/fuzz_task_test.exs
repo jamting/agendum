@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.FuzzTaskTest do
   @moduledoc "`mix agendum.fuzz`: the long fuzz run's logs, named by time, the last 30 kept."
   use ExUnit.Case, async: true

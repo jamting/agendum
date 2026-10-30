@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Render.Note do
   @moduledoc """
   The full-screen note editor (F5). A line wider than the screen is

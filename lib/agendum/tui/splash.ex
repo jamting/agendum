@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Splash do
   @moduledoc """
   The splash screen (SPEC R52), laid out as Agenda 2.0's: a box over an

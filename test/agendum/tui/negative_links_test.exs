@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NegativeLinksTest do
   @moduledoc "Excludes in Category Properties: negative links (R9, not in Agenda 2.0)."
   use ExUnit.Case, async: true

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Search do
   @moduledoc """
   Text search over items (SPEC R37; User's Guide 15-1 to 15-6).

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.FieldHelpTest do
   @moduledoc "Help for a box's highlighted field in the control panel (SPEC §5)."
   use ExUnit.Case, async: true

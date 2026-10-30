@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.SectionCalcsTest do
   @moduledoc """
   Select numeric functions (R61, R29; User's Guide 8-10): the calculations

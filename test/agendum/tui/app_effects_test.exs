@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AppEffectsTest do
   @moduledoc """
   Every effect the pure TUI asks for with `State.effect/2` must have a case

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.QuestionBoxTest do
   @moduledoc """
   Yes/No questions in a box, as Agenda (screenshots 36, 141): the question

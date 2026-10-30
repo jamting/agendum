@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.Utf8 do
   @moduledoc """
   Text from outside made valid UTF-8, before a parser reads it: a calendar

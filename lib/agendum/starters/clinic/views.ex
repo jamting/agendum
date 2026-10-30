@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Starters.Clinic.Views do
   @moduledoc """
   The clinic's views (`Agendum.Starters.Clinic`): To Do first, then the

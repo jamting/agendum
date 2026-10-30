@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.FamilySectionsTest do
   @moduledoc """
   A category inserted in a family whose other members are all sections of

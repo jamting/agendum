@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CategoryScreens.Profile do
   @moduledoc """
   The assignment profile (F3): an item's assignments, or the marked

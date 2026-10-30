@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Layout do
   @moduledoc """
   Flattens a view into cursor rows and screen lines.

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.SubscriptionNameTest do
   @moduledoc """
   The name offered when subscribing (R75, R45; the owner, 2026-10-27): the

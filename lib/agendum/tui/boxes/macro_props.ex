@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.MacroProps do
   @moduledoc """
   The Macro Properties box (F6 in the macro manager; SPEC R50; Working with

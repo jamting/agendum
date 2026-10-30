@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.TemplateTest do
   @moduledoc "Box layouts drawn as text, with named fields in brackets."
   use ExUnit.Case, async: true

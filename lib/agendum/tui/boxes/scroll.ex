@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.Scroll do
   @moduledoc """
   A list box whose entries take several lines each (a feed, a calendar)

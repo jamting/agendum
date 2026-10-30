@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ScheduleBoxTest do
   @moduledoc "Search ▸ Schedule (R49): the Show Schedule box and the Show View it fills."
   use ExUnit.Case, async: true

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.UserDateCategoriesTest do
   @moduledoc """
   Date categories the user creates (R6a; User's Guide 6-3, 7-2 to 7-4):

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CategoryScreens.Picker do
   @moduledoc """
   The category picker: its keys and search, and what choosing a category

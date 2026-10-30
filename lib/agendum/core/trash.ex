@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Trash do
   @moduledoc """
   A file's trash (R24a): the discarded items, oldest first, kept without

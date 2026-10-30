@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ContextTest do
   @moduledoc """
   A context can carry the date rules compiled for its languages and input

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.WordingTest do
   @moduledoc "Small things the manual's screens showed: counts in messages, and the title bar."
   use ExUnit.Case, async: true

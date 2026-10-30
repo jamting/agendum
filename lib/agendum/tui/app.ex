@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.App do
   @moduledoc """
   The main loop (imperative shell): reads keys, feeds them to the pure

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Commands do
   @moduledoc """
   The commands keys can run, by place (ADR 0033): `Agendum.TUI.Keymap`

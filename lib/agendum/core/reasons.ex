@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Reasons do
   @moduledoc """
   Why an item is in a category (R67): the reasons, worked out from the

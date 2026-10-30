@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Terminal.Theme.Palettes do
   @moduledoc """
   Themes made from terminal colour schemes (`docs/THEMES.md`, copied from

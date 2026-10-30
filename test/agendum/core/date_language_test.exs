@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DateLanguageTest do
   @moduledoc "Language packs for reading dates (R14c)."
   use ExUnit.Case, async: true

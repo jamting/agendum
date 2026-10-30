@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.IngestedTest do
   @moduledoc """
   Ingested categories in the TUI (R75a; meeting 2026-10-26-1732, § 6; the

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.TemplateTest do
   @moduledoc """
   File ▸ Transfer ▸ Template (R82; User's Guide 23-26): the file's

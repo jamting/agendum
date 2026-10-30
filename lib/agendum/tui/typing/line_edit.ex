@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Typing.LineEdit do
   @moduledoc """
   A pure single-line text editing buffer (EDIT mode). `mark` is where F7

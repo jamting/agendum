@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.BoxKeysTest do
   @moduledoc """
   The function keys Agenda's boxes name in their key bar, as Agenda's

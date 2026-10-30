@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.AgFile.ConvertTest do
   @moduledoc """
   The `.AG` import (R72) on the fixtures: Lotus's starter files and RICH.AG,

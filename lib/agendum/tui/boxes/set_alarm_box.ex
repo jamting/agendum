@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.SetAlarmBox do
   @moduledoc """
   The Set Alarm box (Item ▸ Alarm, ALT-A; SPEC R38; User's Guide 10-17,

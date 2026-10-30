@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Menu do
   @moduledoc """
   The Lotus-style two-line menu (F10 or `/`).

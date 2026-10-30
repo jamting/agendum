@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.RunByName do
   @moduledoc """
   CTRL-X, run a command by its name (R65d, ADR 0040): a small box shaped

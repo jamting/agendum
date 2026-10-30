@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.ZettelId do
   @moduledoc """
   Short, pronounceable, deterministic IDs for Zettelkasten notes.

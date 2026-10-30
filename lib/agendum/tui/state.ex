@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.State do
   @moduledoc """
   The complete UI state, as a plain value. `Agendum.TUI.Update` transforms

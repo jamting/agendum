@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.CategoryMatchingTest do
   @moduledoc """
   Text matching settings for one category (R16b; User's Guide 19-14 to

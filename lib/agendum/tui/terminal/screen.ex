@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Terminal.Screen do
   @moduledoc """
   Converts rendered screens to terminal output. Pure: `frame/4` compares

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.SubscriptionPropsBox do
   @moduledoc """
   A feed's or a calendar's properties (F6 in the Feeds or Calendars

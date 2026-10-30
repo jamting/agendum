@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Assignments do
   @moduledoc """
   Assigning items to categories by hand: assign, unassign (R24) and

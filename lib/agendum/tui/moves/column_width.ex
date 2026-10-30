@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Moves.ColumnWidth do
   @moduledoc """
   View ▸ Column ▸ Width (User's Guide 5-21 to 5-22): choosing the

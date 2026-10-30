@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DateSettingsTest do
   @moduledoc """
   Global date settings (R14e; User's Guide 7-15 to 7-16): the beginning

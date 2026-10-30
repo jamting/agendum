@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.FeedParser do
   @moduledoc """
   Reads a feed (R75): RSS 2.0, RSS 1.0 (RDF) and Atom, through

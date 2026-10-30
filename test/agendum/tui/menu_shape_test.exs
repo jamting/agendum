@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.MenuShapeTest do
   @moduledoc """
   The view's menu in Agenda's shape (AGENDA_PARITY § The steps; the owner,

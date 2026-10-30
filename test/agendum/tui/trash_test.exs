@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.TrashTest do
   @moduledoc """
   The trash on screen (R24a; checked in Agenda 2.0, 2026-10-26): ALT-F4

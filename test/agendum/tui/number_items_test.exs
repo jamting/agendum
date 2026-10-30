@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NumberItemsTest do
   @moduledoc """
   Number items on the screen (R79; checked in Agenda 2.0, 2026-10-23): the

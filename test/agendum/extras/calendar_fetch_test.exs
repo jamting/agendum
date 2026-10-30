@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Extras.CalendarFetchTest do
   @moduledoc "What the shell does to events it reads (R45): UTC times become local time."
   use ExUnit.Case, async: true

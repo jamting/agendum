@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-only
 # Builds a code-review slice (docs/CODE_REVIEW_SLICES.md): two local
 # branches from a commit, so that `/code-review ultra review/NAME-base`, run
 # on review/NAME, sees exactly the slice's files as new code.

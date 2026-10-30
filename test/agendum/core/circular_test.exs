@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.CircularTest do
   @moduledoc """
   Circular references (User's Guide 20-21 to 20-22): conditions that keep

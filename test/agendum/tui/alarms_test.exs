@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AlarmsTest do
   @moduledoc "Times of day, the clock and alarms in the TUI (R14b, R38)."
   use ExUnit.Case, async: true

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Command do
   @moduledoc """
   A command a key can run (ADR 0033): data about it, not the code that

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.FamilySectionsTest do
   @moduledoc """
   Inserting a category in the category manager, in a family whose other

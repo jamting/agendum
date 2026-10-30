@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.StartupTest do
   @moduledoc """
   How Agendum starts (R52): the splash screen, then, when no file was

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.InputFormatBox do
   @moduledoc """
   The Input Format box (Global date settings ▸ Input format; User's Guide 7-17,

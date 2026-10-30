@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Recurrence do
   @moduledoc """
   The rule of a recurring When date (SPEC R14a; User's Guide 7-11 to 7-12):

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.BoxChoices do
   @moduledoc """
   Choosing a setting's value in a box as Agenda (User's Guide 2-17): the

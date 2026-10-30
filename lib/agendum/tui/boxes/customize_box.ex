@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.CustomizeBox do
   @moduledoc """
   The Customize box (Utilities ▸ Customize; Agenda's Utilities Customize,

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.JSONFile do
   @moduledoc """
   A whole Agendum file as JSON (SPEC R44, ADR 0010): readable, diff-friendly

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.Xml do
   @moduledoc """
   A small, forgiving XML reader, for feeds (R75). Pure, and with no atoms

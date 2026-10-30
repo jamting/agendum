@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Dates do
   @moduledoc """
   Dates (R6, R14, R41): how date categories get dates and how the file

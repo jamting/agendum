@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Extras.FeedFetch do
   @moduledoc """
   Reads a subscribed feed from the web (imperative shell, R75): downloads

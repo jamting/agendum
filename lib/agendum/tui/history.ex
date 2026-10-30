@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.History do
   @moduledoc """
   Undo and redo. Pure.

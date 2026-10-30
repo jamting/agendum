@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.UndiscardBox do
   @moduledoc """
   Agenda's Item Undiscard box (Item ▸ Undisc with more than one item in

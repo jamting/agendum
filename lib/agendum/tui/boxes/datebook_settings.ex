@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.DatebookSettings do
   @moduledoc """
   A datebook view's own settings (SPEC R47; User's Guide 10-6 to 10-10,

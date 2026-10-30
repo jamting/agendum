@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NoteSymbolTest do
   @moduledoc """
   The note symbol in the control panel (User's Guide 12-2; screenshot

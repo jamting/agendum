@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 r"""Capture Lotus Agenda 2.0's F10 menus from the real program (DOSBox).
 
 Walks the menus of a view, a note and the category manager, level by level,

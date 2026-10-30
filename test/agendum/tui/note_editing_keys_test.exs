@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NoteEditingKeysTest do
   @moduledoc """
   The note editor's editing keys, as Agenda's (R64e, NOTE_EDITOR.md step

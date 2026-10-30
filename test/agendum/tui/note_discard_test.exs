@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NoteDiscardTest do
   @moduledoc """
   ESC in a note asks "Discard changes?" as Agenda (R64d, NOTE_EDITOR.md

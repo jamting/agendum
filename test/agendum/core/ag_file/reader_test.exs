@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.AgFile.ReaderTest do
   @moduledoc """
   The `.AG` reader (R72) reads every file as the reference reader

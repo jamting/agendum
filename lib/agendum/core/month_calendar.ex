@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.MonthCalendar do
   @moduledoc """
   The month shown by the pop-up calendar (SPEC R46; User's Guide 6-14 to

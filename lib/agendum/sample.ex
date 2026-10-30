@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Sample do
   @moduledoc """
   The built-in files. `build/1` (`--demo`, and the tests): a small file

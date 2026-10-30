@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.TextMatchingSettingsTest do
   @moduledoc """
   Text matching settings (R16a; User's Guide 19-7 to 19-12): on or off,

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.Feed do
   @moduledoc """
   A feed subscription (R75): an RSS or Atom feed on the web whose entries

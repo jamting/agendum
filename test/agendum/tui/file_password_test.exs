@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.FilePasswordTest do
   @moduledoc """
   A file's password (R82, ADR 0046), as Agenda's: opening a file with one

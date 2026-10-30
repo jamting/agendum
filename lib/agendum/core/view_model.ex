@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ViewModel do
   @moduledoc """
   Projects a view onto the database: which items appear in which section,

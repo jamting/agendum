@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 r"""Drive Lotus Agenda headlessly in DOSBox Staging (research tool, not part of Agendum).
 
 DOSBox Staging 0.83+ runs without a window (SDL_VIDEODRIVER=dummy) and has a

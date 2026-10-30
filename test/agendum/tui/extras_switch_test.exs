@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ExtrasSwitchTest do
   @moduledoc """
   The Extras preference (R77, ADR 0043): off by default, it hides every

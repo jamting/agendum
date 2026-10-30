@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Update do
   @moduledoc """
   The UI state machine: `handle/2` maps a key to a new state plus a list of

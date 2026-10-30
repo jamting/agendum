@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ActionsTest do
   @moduledoc "Assignment, date, numeric and special actions in Category Properties (R15b)."
   use ExUnit.Case, async: true

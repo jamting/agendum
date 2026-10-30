@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Macro do
   @moduledoc """
   A macro kept in the file (SPEC R50; Working with Macros, chapter 1): a

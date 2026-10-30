@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-only
 """Smoke-test Agendum in a real pseudo-terminal: send keys, print the screen.
 
 The unit tests drive `Agendum.TUI.Update` directly; this drives the whole

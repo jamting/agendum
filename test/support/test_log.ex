@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TestLog do
   @moduledoc """
   An ExUnit formatter that keeps every test run's seed and failures in

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ViewColumns do
   @moduledoc """
   Columns per section (R55; User's Guide 3-16, 3-27, 5-22 to 5-25): adding,

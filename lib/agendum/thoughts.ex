@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Thoughts do
   @moduledoc """
   The owner's thoughts about Agendum, kept in Agendum itself (meeting

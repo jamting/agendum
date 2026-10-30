@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CircularRefreshTest do
   @moduledoc """
   Agenda's o (R37): the items caught in a circular reference are worked

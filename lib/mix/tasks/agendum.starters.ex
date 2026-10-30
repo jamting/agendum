@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Mix.Tasks.Agendum.Starters do
   @shortdoc "Writes the starter files (starters/planner.agendum)"
   @moduledoc """

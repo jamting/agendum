@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.DiskGuardTest do
   @moduledoc """
   The file changed on disk (R71): Agendum does not save over a file that

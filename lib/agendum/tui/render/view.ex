@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Render.View do
   @moduledoc """
   The body of a view: section heads, items with their columns, datebook

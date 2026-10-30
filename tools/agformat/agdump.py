@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-only
 """Reference reader for Lotus Agenda 2.0 .AG files (research tool, not part of Agendum).
 
 Dumps a file's items, categories, views, macros and file settings as JSON,

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.TextSearch do
   @moduledoc """
   Finding and replacing literal text in a note (SPEC R39; User's Guide

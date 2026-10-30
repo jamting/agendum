@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ExecuteTest do
   @moduledoc "Utilities Execute, ALT-X and ALT-E (R15e)."
   use ExUnit.Case, async: true

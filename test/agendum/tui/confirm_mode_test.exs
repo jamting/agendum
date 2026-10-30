@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.ConfirmModeTest do
   @moduledoc """
   Confirm mode (R54; User's Guide 2-23): with No, Agendum does what was

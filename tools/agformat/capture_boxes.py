@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 r"""Capture Lotus Agenda 2.0's settings boxes from the real program (DOSBox).
 
 For each box in BOXES, goes from the view to the box with the keys given

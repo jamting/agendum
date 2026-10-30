@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Terminal do
   @moduledoc """
   The only module that talks to the real terminal (imperative shell).

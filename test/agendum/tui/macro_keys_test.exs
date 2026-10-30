@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.MacroKeysTest do
   @moduledoc "Keystrokes as macro text in Agenda's notation, and back (R50; Working with Macros 1-12 to 1-14)."
   use ExUnit.Case, async: true

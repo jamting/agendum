@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ShowScheduleTest do
   @moduledoc "Show Schedule (R49; User's Guide 10-14 to 10-16): one date's items in the Show View."
   use ExUnit.Case, async: true

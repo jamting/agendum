@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.SelectFileTest do
   @moduledoc "The Select File box (R51): picking a file from a list instead of typing its name."
   use ExUnit.Case, async: true

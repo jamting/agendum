@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Starters.ClinicTest do
   @moduledoc """
   The Hundred Acre clinic (`agendum --clinic`): Christopher Robin's file,

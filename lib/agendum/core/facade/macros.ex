@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Macros do
   @moduledoc """
   Macros (R50): adding, naming and attaching macros to keys, and their

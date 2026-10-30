@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ColumnFormatsTest do
   @moduledoc """
   The Format of a standard column (User's Guide 5-26 to 5-37, Help

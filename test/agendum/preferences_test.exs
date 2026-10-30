@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.PreferencesTest do
   @moduledoc "The person's preferences file (ADR 0008): theme, date languages (R40, R14c) and Input format (R41b)."
   use ExUnit.Case, async: true

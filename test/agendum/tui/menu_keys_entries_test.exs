@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.MenuKeysEntriesTest do
   @moduledoc """
   Menu entries Agenda had for commands Agendum had only on keys (found by

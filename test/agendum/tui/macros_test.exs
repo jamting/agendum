@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.MacrosTest do
   @moduledoc """
   The macro manager, Learn mode and running macros (R50; Working with

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.NumbersTest do
   @moduledoc "Numeric categories, number formats and calculations (R29; User's Guide chapter 8)."
   use ExUnit.Case, async: true

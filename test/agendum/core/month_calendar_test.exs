@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.MonthCalendarTest do
   @moduledoc "The pop-up calendar's month and its moves (R46)."
   use ExUnit.Case, async: true

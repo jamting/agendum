@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.JSONFileTest do
   @moduledoc "A whole file as JSON (R44; ADR 0010): complete, readable, and checked when read."
   use ExUnit.Case, async: true

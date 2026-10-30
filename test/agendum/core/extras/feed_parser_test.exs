@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.FeedParserTest do
   @moduledoc "Reading feeds: RSS 2.0, RSS 1.0, Atom, dates and HTML (R75)."
   use ExUnit.Case, async: true

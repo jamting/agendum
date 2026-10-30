@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.ZettelLinks do
   @moduledoc """
   Links between zettels (R73b): where they are in a text, what they point

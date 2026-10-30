@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.GoldenFilesTest do
   @moduledoc """
   The golden files of the file format (`test/fixtures/formats/`, one saved

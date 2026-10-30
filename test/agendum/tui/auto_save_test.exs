@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AutoSaveTest do
   @moduledoc """
   Auto-save (R54; User's Guide 22-8): with an interval of N minutes, a

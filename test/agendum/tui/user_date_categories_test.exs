@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.UserDateCategoriesTest do
   @moduledoc "Date categories the user makes, in the TUI (R6a; User's Guide 7-2 to 7-4)."
   use ExUnit.Case, async: true

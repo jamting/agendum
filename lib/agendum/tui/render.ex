@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Render do
   @moduledoc """
   Turns a `State` into a screen (a list of styled lines). Pure.

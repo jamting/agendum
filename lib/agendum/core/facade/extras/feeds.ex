@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Extras.Feeds do
   @moduledoc """
   Feed subscriptions (R75): subscribing to an RSS or Atom feed, applying

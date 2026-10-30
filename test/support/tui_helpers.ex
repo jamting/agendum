@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUIHelpers do
   @moduledoc "Drive the pure TUI with keys and inspect the rendered text."
 

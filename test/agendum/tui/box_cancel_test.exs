@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.BoxCancelTest do
   @moduledoc """
   A settings box as in Agenda (SPEC §5): its frame says "Press ENTER when

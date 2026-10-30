@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.CompletionTest do
   @moduledoc """
   Automatic completion of category names (SPEC R32; Agenda 2.0 User's

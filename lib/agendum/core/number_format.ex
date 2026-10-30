@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.NumberFormat do
   @moduledoc """
   How a numeric column shows its numbers, and which calculations it shows

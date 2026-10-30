@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Render.ControlPanel do
   @moduledoc """
   The control panel: Agenda's two top lines. Normally the file, with the

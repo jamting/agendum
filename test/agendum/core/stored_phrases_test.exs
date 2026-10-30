@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.StoredPhrasesTest do
   @moduledoc """
   Date phrases kept in a file (a date filter's ends, a datebook's base

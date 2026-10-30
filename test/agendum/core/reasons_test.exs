@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ReasonsTest do
   @moduledoc "Why an item is in a category (R67): the reasons that hold now."
   use ExUnit.Case, async: true

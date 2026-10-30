@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.RangeFilter do
   @moduledoc """
   Date and numeric filters (SPEC R28a; User's Guide 11-5 to 11-12): a

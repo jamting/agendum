@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.RecoveryTest do
   @moduledoc """
   A recovery file on a crash (R82b; meeting 2026-10-26-1524, § 6; the owner's

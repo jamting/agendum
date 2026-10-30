@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.RunCommandTest do
   @moduledoc "The TUI sends core commands (R66): `State.run/2,3`."
   use ExUnit.Case, async: true

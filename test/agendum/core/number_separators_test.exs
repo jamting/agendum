@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.NumberSeparatorsTest do
   @moduledoc """
   The person's decimal and thousands separators (R54; Setting Up Agenda

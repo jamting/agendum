@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.ViewStatisticsTest do
   @moduledoc """
   View Properties ▸ View statistics (R78; Help "View Statistics Box"): the

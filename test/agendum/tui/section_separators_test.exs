@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.SectionSeparatorsTest do
   @moduledoc """
   Section separators (R58; User's Guide 5-12, 15-21; screenshots 48, 54,

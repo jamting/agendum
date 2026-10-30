@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.UpdateDefaultsBox do
   @moduledoc """
   Agenda's question for File Properties ▸ Update defaults (R82a; User's

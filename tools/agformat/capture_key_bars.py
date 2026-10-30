@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 r"""Capture Lotus Agenda 2.0's key bars from the real program (DOSBox).
 
 For a view, a note, the category manager and the view manager, reads the

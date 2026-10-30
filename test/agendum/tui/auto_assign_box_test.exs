@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AutoAssignBoxTest do
   @moduledoc "File Properties ▸ Auto-assign settings (R16a)."
   use ExUnit.Case, async: true

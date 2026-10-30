@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.FieldTyping do
   @moduledoc """
   Typing text into a field of a settings box: a column head's name in

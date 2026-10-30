@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.Template do
   @moduledoc """
   Box layouts written as they look on the screen. A layout is text in

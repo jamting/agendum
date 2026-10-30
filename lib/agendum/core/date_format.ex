@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DateFormat do
   @moduledoc """
   How a file displays dates and times (SPEC R41; Agenda's global Display

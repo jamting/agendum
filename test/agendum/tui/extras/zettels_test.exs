@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.ZettelsTest do
   @moduledoc "Zettel ids in the view: Item ▸ Zettel ▸ Attach (R73)."
   use ExUnit.Case, async: true

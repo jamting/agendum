@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.ViewManager do
   @moduledoc """
   The view manager (F8): switch between, add, rename and discard views. A

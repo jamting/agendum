@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.ItemProperties do
   @moduledoc """
   The Item Properties box (F6 on an item; User's Guide 4-13 to 4-15): the

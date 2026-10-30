@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.TextConditionsTest do
   @moduledoc """
   Text conditions ("Also match", R15d; User's Guide 19-2 to 19-5) and text

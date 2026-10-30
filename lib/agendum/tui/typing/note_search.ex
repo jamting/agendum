@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Typing.NoteSearch do
   @moduledoc """
   Searching and replacing text in a note (SPEC R39; User's Guide 15-6 to

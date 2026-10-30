@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.SoundTest do
   @moduledoc """
   Agenda's sounds (R76): which keys ask for which tone, the two settings

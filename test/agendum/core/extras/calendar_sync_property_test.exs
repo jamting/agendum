@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.CalendarSyncPropertyTest do
   @moduledoc "Any calendar can be read, and reading the same one twice changes nothing more (R45)."
   use ExUnit.Case, async: true

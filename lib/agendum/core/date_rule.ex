@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DateRule do
   @moduledoc """
   How a date category gets dates (SPEC R6b; Agenda's Advanced settings,

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.DateFormatTest do
   @moduledoc "How dates and times are displayed (R41; User's Guide 6-20 to 6-22, 7-13 to 7-15)."
   use ExUnit.Case, async: true

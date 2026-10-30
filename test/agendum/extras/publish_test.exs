@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Extras.PublishTest do
   @moduledoc """
   The micro-blog's shell (R74): reading and writing the site's folder,

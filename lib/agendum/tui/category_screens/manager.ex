@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.CategoryScreens.Manager do
   @moduledoc """
   The category manager (F9, User's Guide 16-1 to 16-12): its commands

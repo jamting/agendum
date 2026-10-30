@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core do
   @moduledoc """
   The functional core: user-level operations on an Agendum database.

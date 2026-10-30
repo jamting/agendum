@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Render.KeyBar do
   @moduledoc """
   The function key bar on the last two lines: the keys of what is on top

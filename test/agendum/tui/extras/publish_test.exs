@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.PublishTest do
   @moduledoc "File ▸ Transfer ▸ Publish: the micro-blog's boxes (R74)."
   use ExUnit.Case, async: true

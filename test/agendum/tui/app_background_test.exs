@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.AppBackgroundTest do
   @moduledoc """
   What a background task mails back to the shell's loop (a feed or calendar

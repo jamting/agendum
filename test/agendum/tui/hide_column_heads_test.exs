@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.HideColumnHeadsTest do
   @moduledoc """
   Hide column heads (R57; User's Guide 5-14 to 5-15, 15-21; screenshots

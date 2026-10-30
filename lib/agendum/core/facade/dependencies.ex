@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Facade.Dependencies do
   @moduledoc """
   Dependencies between items (R43): prerequisites, dependents and the

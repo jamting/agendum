@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.ParsersPropertyTest do
   @moduledoc """
   The parsers of outside input get random and broken input (ROADMAP,

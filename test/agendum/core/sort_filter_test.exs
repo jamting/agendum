@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.SortFilterTest do
   @moduledoc """
   Filtering views and sections by category (SPEC R28; User's Guide ch. 11)

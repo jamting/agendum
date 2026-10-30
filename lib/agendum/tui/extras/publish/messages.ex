@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.Publish.Messages do
   @moduledoc """
   What publishing the blog (R74) says: one text per error the core gives

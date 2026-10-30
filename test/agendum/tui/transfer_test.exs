@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.TransferTest do
   @moduledoc """
   File ▸ Transfer: writing the whole file as JSON and opening a JSON file

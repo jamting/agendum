@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.WhatToCopyBox do
   @moduledoc """
   Agenda's "What to copy" box (checked in Agenda 2.0, 2026-10-25; the

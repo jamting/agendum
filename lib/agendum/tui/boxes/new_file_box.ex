@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Boxes.NewFileBox do
   @moduledoc """
   Agenda's New File box (File ▸ Retrieve with a name that is not a file

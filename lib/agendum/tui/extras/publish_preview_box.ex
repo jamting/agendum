@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.PublishPreviewBox do
   @moduledoc """
   What publishing would do (R74), before anything is written: the files

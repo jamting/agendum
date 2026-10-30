@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.SwedishDatesTest do
   @moduledoc "Reading Swedish dates and times (R14c)."
   use ExUnit.Case, async: true

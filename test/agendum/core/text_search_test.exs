@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.TextSearchTest do
   @moduledoc "Finding and replacing text in a note (R39)."
   use ExUnit.Case, async: true

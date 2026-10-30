@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.View do
   @moduledoc """
   A view is a saved arrangement of the database: a list of sections, each
