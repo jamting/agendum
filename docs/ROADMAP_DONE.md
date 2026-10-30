@@ -210,6 +210,7 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Housekeeping
 
+- [x] (2026-10-30) The public repository of the clone, by the moving-day checklist (`plans/GITHUB.md` § 7, Moving day; the clone declared done 2026-10-26, v0.62.0): the repository public as `jamting/agendum`, the folders swapped, Claude pointed at both checkouts, the skills writing private things into the owner's private repository, that repository trimmed, and a first session in the public checkout (`start-session` reading, one small change, `end-session` writing)
 - [x] (2026-10-26) A general code review before the public repository (meeting 2026-10-26-1524, § 11): the code reviewed in slices with the cloud review (`docs/CODE_REVIEW_SLICES.md`), 30 findings fixed in v0.68.2 to v0.68.4; the rest of the code reviewed locally later (ROADMAP, Sharpen the saw)
 - [x] The repository folder moved from `~/Code/Lotus Agenda` to `~/ailab/agendum` (2026-10-23), with Claude Code's memory, sessions and trust settings (`~/ailab/mv-to-ailab --name agendum`); `_build/` and `tmp/` rebuilt, `mix check` green in the new folder ([`plans/archive/RENAME_REPO.md`](plans/archive/RENAME_REPO.md))
 - [x] On GitHub (2026-10-17): a private repository (`jamting/agendum`), the README and a guide for setting up and contributing (`CONTRIBUTING.md`), CI running `mix check` on every push. GitHub Pages (a product page, the user guide) moved to the public repository item, as Pages needs a paid plan for a private one (owner, 2026-10-23)

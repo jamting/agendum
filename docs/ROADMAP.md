@@ -12,10 +12,9 @@ Small, testable increments: the open work, by area.
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. The public repository of the clone, by the moving-day checklist (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md) § 7, Moving day): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-1108, § 7). Steps 1 to 7 done on 2026-10-30 (the repository public, the folders swapped, the skills and the owner's private repository set up); left: step 8, the first session in the public checkout
-2. The public site, with four doors (Housekeeping; meeting 2026-10-28-0908, § 9)
-3. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
-4. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-1524, § 14, tabled)
+1. The public site, with four doors (Housekeeping; meeting 2026-10-28-0908, § 9)
+2. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
+3. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-1524, § 14, tabled)
 
 Go for the public repository was given at the practical meeting (meeting 2026-10-28-1911, § 13), on conditions, all met on 2026-10-30 (`ROADMAP_DONE.md`).
 
