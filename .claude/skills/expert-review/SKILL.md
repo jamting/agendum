@@ -24,9 +24,7 @@ Eight lenses, each with its own concerns. The seven people are *perspectives in 
 | **Little Marie-Who-Folds** (tidiness) | Is everything in its place, and does each thing still serve the project: code and documents with one clear home each, duplicates, stale plans, dead code and unused functions, folders that grow without being read (reviews, summaries, logs); scope creep (roadmap items that pile up without serving `docs/VISION.md`); and keeping less: stored fields, data and files the program or the project will never need, in Agendum's own files as much as in the repo |
 | **Claude** (an owl from Anthropic) | Readiness for agents: user actions as named commands an agent can call (tools), headless entry points (CLI, JSON in and out), stable schemas, explainable results ("filed under Kanga because …"), proposals before changes and one-step undo of an agent's batch, permissions and scope, a human and an agent editing the same file, how much of a file fits in a model's context (ADR 0034, the item levels), item text as data and never as instructions (prompt injection), documents an LLM can read (CLAUDE.md, `docs/INDEX.md`), and whether agent behaviour can be tested (golden tasks, evals) |
 
-**Pseudonyms** (meeting 2026-10-28-0908, § 10): in every new text the people behind the lenses go by Wood names, so a keen reader can tell who is meant from the background but the names are not searchable. On first mention in a document the full pseudonym with the lens in brackets ("Carsten Stargazer (Org-mode)"); after that the first name ("Carsten noted …"). The names vary in form as in the Wood (a title, a habit, a "Who" name), and the short form is still the first name ("Great-Uncle Joe" is Joe, "Little Marie-Who-Folds" is Marie); the names were chosen anew by the owner on 2026-10-30, and two quotes of the first proposal ("Joe the Polar Bear") stay in the minutes of 2026-10-28-0908. The owner is called Mattias. Guests get a pseudonym here before their first meeting. Older texts keep the real names in the private workshop; the public copy maps them (ADR 0050, `docs/plans/GITHUB.md` § 7). The table below pairs them, so it is private.
-
-*[A page here was soaked in the creek. — Rabbit]*
+**Pseudonyms** (meeting 2026-10-28-0908, § 10): in every new text the people behind the lenses go by Wood names, so a keen reader can tell who is meant from the background but the names are not searchable. On first mention in a document the full pseudonym with the lens in brackets ("Carsten Stargazer (Org-mode)"); after that the first name ("Carsten noted …"). The names vary in form as in the Wood (a title, a habit, a "Who" name), and the short form is still the first name ("Great-Uncle Joe" is Joe, "Little Marie-Who-Folds" is Marie); the names were chosen anew by the owner on 2026-10-30, and two quotes of the first proposal ("Joe the Polar Bear") stay in the minutes of 2026-10-28-0908. The owner is called Mattias. Guests get a pseudonym before their first meeting. Every text in this public repository uses the pseudonyms only (ADR 0050): the table pairing them with the real people is private, in the Wolery (the owner's private repository; its path is in `CLAUDE.local.md`): its copy of this skill and its `tools/public/names.py`. A new guest's pair is added there, never here.
 
 **Claude** is the model writing the report, so it is the one lens that may speak for itself, in the first person where it fits. In the story it is an owl: a cousin of Owl's (Wol, whose name the program carries), from a branch of the family that went into language. Owl is proud of the relation and not entirely sure how it works. Claude's lens is not a mascot: it judges, with evidence, how far the project is from the agent in `docs/plans/WOL-IN-THE-MACHINE.md` and the web plan, and it may disagree with the others.
 
@@ -43,6 +41,17 @@ Not every expert attends every meeting; it depends on the subject. **Owl** (host
 - **How much spice.** Stage notes in italics, one or two per section at most, never inside a finding's evidence, a score, a number or a recommendation. The opening, the any-other-business item and the closing may carry more. Find new incidents each time; read the last minutes so the running gags develop rather than repeat. Funny, warm, no innuendo, no mocking the real people.
 - **Spelling.** Owl is famous for spelling badly; these minutes are not. Every word is spelled correctly, including in jokes about Owl's spelling, which describe it rather than reproduce it. Names: José Who Brews, Great-Uncle Joe, Carsten Stargazer, Old Mitch Lilypad, David the Squirrel, Dr. Russell, Little Marie-Who-Folds, Wol, Hundred Acre Wood, Agendum, Lotus Agenda.
 
+## Private passages
+
+This repository is public (moving day, 2026-10-30; ADR 0050). What is private never goes into it: the owner's own plans beyond the open program (what the creek lines stand for; the list is in `CLAUDE.local.md`'s Rules and the Wolery's ADR 0050), and the real names behind the pseudonyms.
+
+- **Where it goes**: into the Wolery (the owner's private repository; its path is in `CLAUDE.local.md`), in a file beside the public one: `docs/reviews/YYYY-MM-DD-private.md` for a review, `docs/meetings/YYYY-MM-DD-HHMM/private.md` for a meeting. It is written under the same § number and heading, so the two read together.
+- **What the public text shows** in its place: the creek line, *[A page here was soaked in the creek. — Rabbit]* (its story is in `docs/INDEX.md`).
+- **The commit**: the private file is committed and pushed in the Wolery (`git -C <the Wolery>`), the public text here.
+- **Without a `CLAUDE.local.md`** (a contributor's checkout): leave such passages out altogether.
+
+The `meeting` skill follows the same rule.
+
 ## 1. Gather the evidence
 
 Read before judging; every finding in the report needs a pointer (`path:line`, a document, a command's output). Collect into the scratchpad, not the repo.
@@ -53,7 +62,7 @@ Read before judging; every finding in the report needs a pointer (`path:line`, a
 
 **Agents** (for Claude's lens): `docs/plans/WOL-IN-THE-MACHINE.md`, ADR 0033 (commands and keymaps), ADR 0034 (format of record), `docs/JSON_FORMAT.md`, `lib/agendum/cli.ex` (what can be done without the TUI), `Agendum.TUI.Commands` and the command layer as far as it has come. Ask: could an agent today do one ordinary user action (add an item, assign it, read a view) without driving keystrokes, and explain what it did?
 
-**Tidiness** (for Marie's lens): `docs/INDEX.md` against what is in `docs/` (orphans, duplicates), plans' status lines (finished or abandoned plans still open), the roadmap's open list (how long, how old, how much of it serves the vision), the growing folders (`docs/summaries/`, `docs/reviews/`, `docs/meetings/`), public functions no one calls (`mix xref callers`, or a grep), stored fields that nothing reads (`docs/DATA_MODEL.md` against the code).
+**Tidiness** (for Marie's lens): `docs/INDEX.md` against what is in `docs/` (orphans, duplicates), plans' status lines (finished or abandoned plans still open), the roadmap's open list (how long, how old, how much of it serves the vision), the growing folders (`docs/reviews/`, `docs/meetings/`, and the Wolery's `docs/summaries/`), public functions no one calls (`mix xref callers`, or a grep), stored fields that nothing reads (`docs/DATA_MODEL.md` against the code).
 
 **Numbers** (put them in the report's table, so the next review can show the trend):
 
@@ -71,14 +80,14 @@ grep -rho "Core\.[a-z_]\+(" lib/agendum/tui/update* | wc -l   # core calls left 
 grep -o "R[0-9]\+[a-z]\?" docs/SPEC.md | sort -u | wc -l    # rules in the spec
 ls docs/adr | wc -l                                         # ADRs
 grep -n "@format_version" lib/agendum/store.ex              # file format version
-ls docs docs/plans | wc -l; ls docs/summaries | wc -l       # documents, summaries
+ls docs docs/plans | wc -l; ls <the Wolery>/docs/summaries | wc -l   # documents, summaries
 grep -c '^- \[ \]' docs/ROADMAP.md                          # open roadmap items
 (time mix check) 2>&1 | tail -5                             # the gate: result and time
 ```
 
 Run `mix check` for real (in the background) and report what it said; do not assume it passes. Optionally time a large file (the roadmap's "Sharpen the saw" items) if performance is a finding.
 
-**The owner's study** (Methods): the table at the top of `docs/study/STUDY_PLAN.md`, if it exists (`study-plan` skill): units done and what is next. Never judge its pace or count it as a lack of progress: the owner learns Elixir outside the project too (meeting 2026-10-22-2130, § 5j).
+**The owner's study** (Methods): the table at the top of the Wolery's `docs/study/STUDY_PLAN.md`, if it exists (`study-plan` skill): units done and what is next. Never judge its pace or count it as a lack of progress: the owner learns Elixir outside the project too (meeting 2026-10-22-2130, § 5j).
 
 **The previous review**: read the newest file in `docs/reviews/`. Each of its recommendations is followed up: done, partly, not yet, or dropped (with the commit or the reason).
 
@@ -89,6 +98,8 @@ For each area, find strengths *and* risks; a review with only praise or only fau
 Score each area 1–5 (5 = exemplary for a project of this size and age), with one line of why:
 
 Architecture · Code quality · Tests and verification · Documentation · Helpfulness to users · Vision · Methods · Business value · Agent readiness · Tidiness and scope
+
+**Business value is private** (Private passages, above): its score, its trend and its why go only into the Wolery's file, under § 7 Scorecard, and the public scorecard leaves its row out.
 
 (Agent readiness was added after the first review, Tidiness and scope when Little Marie-Who-Folds joined: each one's trend is "first" the first time it is scored.)
 
@@ -122,7 +133,7 @@ named people, written by Claude, not their words; made with the
 ## § 9 Code quality                (José)
 ## § 10 Tests and verification     (José, Joe)
 ## § 11 Helpfulness to users       (David, Carsten, Mitch, Russell)
-## § 12 Business value             (Mitch, Carsten)
+## § 12 Business value             (Mitch, Carsten; private: the creek line here, the section in the Wolery)
 ## § 13 Vision                     (Mitch, David; Marie on scope)
 ## § 14 Agent readiness            (Claude, with whoever joins in)
 ## § 15 Tidiness and scope        (Marie, with whoever joins in: what to put in its place, what to let go, scope creep)
@@ -144,5 +155,5 @@ Before committing, read the whole file once for spelling alone (no spell checker
 ## 4. Record and report
 
 - Add a row for the review to the "Reviews" table in `docs/INDEX.md` if it is not there already (one row for the folder is enough).
-- Commit the report alone (`git add docs/reviews/<file> docs/INDEX.md`; never `git add docs`): "Expert panel review, YYYY-MM-DD". Nothing under `lib/` or `test/` changes, so `mix check` is not needed for the commit.
+- Commit the report alone (`git add docs/reviews/<file> docs/INDEX.md`; never `git add docs`): "Expert panel review, YYYY-MM-DD". Commit and push its private file in the Wolery (`git -C <the Wolery> add docs/reviews/<file>-private.md`), with the same message. Nothing under `lib/` or `test/` changes, so `mix check` is not needed for the commit.
 - In the terminal, give the summary, the scorecard and the top three recommendations, with the path to the report. Offer, in one line, to turn recommendations into roadmap items; do not add them unasked. When the owner says yes: tools, checks and ways of working go under "Sharpen the saw", the rest in their areas, each citing the review's date; keep the **Next:** line at the top of Open true.

@@ -22,7 +22,7 @@ The owner's way of working on Wol's Agendum with Claude: the habits, the rituals
 | make the docs true and tidy again              | `/tidy-docs`                             | two commits: up to date, then streamlined                               |
 | update the user guide or the manual            | `/update-guide`, `/update-manual`        | the guide (Piglet) or the manual (Owl and Rabbit) caught up             |
 | several of these at once                       | "do X, Y and Z in parallel"              | one agent per job, each in its own git worktree, merged afterwards      |
-| stop for the day                               | `/end-session`                           | records written, a summary with next steps, saved in `docs/summaries/`  |
+| stop for the day                               | `/end-session`                           | records written, a summary with next steps, saved in the Wolery's `docs/summaries/` |
 | hand over a list and go to bed                 | "do these overnight"                     | Claude works until done or blocked, then versions and ends the session  |
 
 ## The loop for a feature
@@ -82,8 +82,8 @@ The panel advises; it never votes. I decide.
 | What is done                           | [`ROADMAP_DONE.md`](ROADMAP_DONE.md), by milestone                                             |
 | Every document and what it is for      | [`INDEX.md`](INDEX.md)                                                                         |
 | Thoughts waiting for a meeting         | Thoughts ▸ Next meeting in my project file (`$AGENDUM_PROJECT_FILE`), read by `mix agendum.thoughts` |
-| Reviews, meetings, study               | `docs/reviews/`, `docs/meetings/YYYY-MM-DD-HHMM/`, `docs/study/STUDY_PLAN.md` (private: left out of the public copy) |
-| A record of every session              | `docs/summaries/` (committed since 2026-10-23, private: left out of the public copy; kept complete, alike in shape, to import into Agendum one day with STF) |
+| Reviews, meetings, study               | `docs/reviews/`, `docs/meetings/YYYY-MM-DD-HHMM/`, the Wolery's `docs/study/STUDY_PLAN.md` (private); a private passage of a review or minutes goes into the Wolery beside it, the creek line here |
+| A record of every session              | the Wolery's `docs/summaries/` (committed since 2026-10-23, private, my private repository since moving day 2026-10-30; kept complete, alike in shape, to import into Agendum one day with STF) |
 | What changed per version               | [`../CHANGELOG.md`](../CHANGELOG.md), and the `vX.Y.Z` tags                                    |
 | Why things are as they are             | `docs/adr/`, listed in [`ARCHITECTURE.md`](ARCHITECTURE.md)                                    |
 | Finished or dropped plans              | `docs/plans/archive/`                                                                          |

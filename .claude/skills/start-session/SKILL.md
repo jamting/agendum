@@ -1,6 +1,6 @@
 ---
 name: start-session
-description: Open a working session on Agendum - read where the last session stopped (the newest summary in docs/summaries/, its next steps and "what you'll notice"), the roadmap's Next line, the study plan's progress, paused work in memory and anything uncommitted, then offer the owner a short list of the most useful things to do now and wait for a choice. Use when the owner says they are starting a session, asks "where were we" or "what should I do now", or types /start-session.
+description: Open a working session on Agendum - read where the last session stopped (the newest summary in the Wolery's docs/summaries/, its next steps and "what you'll notice"), the roadmap's Next line, the study plan's progress, paused work in memory and anything uncommitted, then offer the owner a short list of the most useful things to do now and wait for a choice. Use when the owner says they are starting a session, asks "where were we" or "what should I do now", or types /start-session.
 ---
 
 # Start the session
@@ -9,19 +9,19 @@ The owner runs this at the start of a working session. Sessions end with a ritua
 
 ## 1. Read where things stand
 
-Quietly, without narrating each step:
+Quietly, without narrating each step. The summaries and the study plan are private, in the Wolery (the owner's private repository; its path is in `CLAUDE.local.md`); without a `CLAUDE.local.md` (a contributor's checkout), skip them.
 
 ```sh
-ls docs/summaries | tail -1                      # the newest summary
+ls <the Wolery>/docs/summaries | tail -1         # the newest summary
 git status --short                               # anything not committed?
 git log --oneline -5                             # the last commits
 git log -1 --format=%cr                          # how long since the last commit
 git remote -v                                    # is there a backup off this Mac?
 ```
 
-- **The newest summary** in `docs/summaries/`: its "Recommended next steps", its "Not done or skipped", and its "What you'll notice when using Agendum" (things the owner has not tried yet).
+- **The newest summary** in the Wolery's `docs/summaries/`: its "Recommended next steps", its "Not done or skipped", and its "What you'll notice when using Agendum" (things the owner has not tried yet).
 - **`docs/ROADMAP.md`**: the **In order** list at the top, and any open bug (the clone was declared done on 2026-10-26; its leftovers are on the roadmap too).
-- **`docs/study/STUDY_PLAN.md`**: the current unit and the first unticked question, to offer a study dose only if it helps. Never report its pace or a lack of progress (the owner learns Elixir outside the project too; meeting 2026-10-22-2130, § 5j).
+- **The Wolery's `docs/study/STUDY_PLAN.md`**: the current unit and the first unticked question, to offer a study dose only if it helps. Never report its pace or a lack of progress (the owner learns Elixir outside the project too; meeting 2026-10-22-2130, § 5j).
 - **Memory**: paused work ("resume from …") and decisions waiting for the owner.
 - **The newest review** (`docs/reviews/`) only for resolutions the newest summary says are still waiting for a decision.
 - **Uncommitted changes**: say what they are.

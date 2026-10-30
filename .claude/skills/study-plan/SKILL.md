@@ -1,13 +1,13 @@
 ---
 name: study-plan
-description: Let the expert panel (José, Joe, Carsten, Mitch, David, Russell, Marie and Claude, as in expert-review; those the subject calls for) pick the next part of Agendum's code for the owner to study, give it learning comments first (the learning-comments skill), then write it as a unit in docs/study/STUDY_PLAN.md - a reading order with questions and exercises the owner checks off when fully understood. Also reports progress and helps with unticked questions. Use when the owner asks for a study plan, the next thing to study, help understanding the code, or types /study-plan.
+description: Let the expert panel (José, Joe, Carsten, Mitch, David, Russell, Marie and Claude, as in expert-review; those the subject calls for) pick the next part of Agendum's code for the owner to study, give it learning comments first (the learning-comments skill), then write it as a unit in the owner's private study plan (the Wolery's docs/study/STUDY_PLAN.md) - a reading order with questions and exercises the owner checks off when fully understood. Also reports progress and helps with unticked questions. Use when the owner asks for a study plan, the next thing to study, help understanding the code, or types /study-plan.
 ---
 
 # Study plan
 
 The first expert review (`docs/reviews/2026-10-16.md`, Methods) named a risk: the code grows faster than the owner's understanding of it. This skill answers it. The panel picks one part of the code worth knowing by heart, the code gets learning comments, and the owner works through it with questions and checks them off **only when fully understood**.
 
-The plan lives in one file, `docs/study/STUDY_PLAN.md`, one unit after the other. It is the owner's record: **never tick a box for the owner**. Tick one only when the owner says so in the conversation ("tick 3.2").
+The plan lives in one file, `docs/study/STUDY_PLAN.md` in the Wolery (the owner's private repository; its path is in `CLAUDE.local.md`; private since 2026-10-28), one unit after the other; every `docs/study/` below is there. The learning comments, being code, are made and committed here, in the public repository. It is the owner's record: **never tick a box for the owner**. Tick one only when the owner says so in the conversation ("tick 3.2").
 
 The owner is an experienced programmer, new to Elixir (see the `learning-comments` skill and its memory). Pitch everything at that: the Elixir *why* and the domain *why*, not programming basics.
 
@@ -15,7 +15,7 @@ The owner is an experienced programmer, new to Elixir (see the `learning-comment
 
 - **"Next unit", or no plan yet** → steps 1 to 5.
 - **Progress, or "help with …"** → read the plan; report ticked / total per unit; for the question the owner names (or the first unticked one), explain in the chat, pointing to `path:line`, and let the owner tick it. Don't start a new unit while the current one has unticked boxes unless the owner asks: then mark it "paused" in its header.
-- **The studied code changed since** → each unit records the commit it was written at. `git diff <commit> -- <files>` shows what moved; add a short "Since you studied it" note under the unit, and reword any question the change made wrong (keep its tick, say so in the note).
+- **The studied code changed since** → each unit records the commit it was written at. `git diff <commit> -- <files>` shows what moved (a unit written before moving day, 2026-10-30, cites a Wolery commit, whose hash the public history does not have: find the public one by its message, `git log --grep`); add a short "Since you studied it" note under the unit, and reword any question the change made wrong (keep its tick, say so in the note).
 
 ## 1. The panel picks the part
 
@@ -107,9 +107,8 @@ Writing the questions:
 
 ## 4. Record
 
-- `docs/INDEX.md`: the "Reviews, meetings and study" section names `docs/study/STUDY_PLAN.md` with a link; add it if missing.
 - Update the table at the top of the plan (the new unit, started today).
-- Commit the plan alone, after the learning comments' own commit: `git add docs/study/STUDY_PLAN.md docs/INDEX.md` (never `git add docs`): "Study plan: unit N, <topic>".
+- Commit the plan in the Wolery, after the learning comments' own commit here: `git -C <the Wolery> add docs/study/STUDY_PLAN.md` (never `git add docs`), commit "Study plan: unit N, <topic>", and push there. The public `docs/INDEX.md` does not name the plan.
 
 ## 5. Report
 

@@ -1,6 +1,6 @@
 ---
 name: end-session
-description: Close a working session on Agendum - review what was done (commits, uncommitted changes, open threads), record what is worth remembering (memory, docs/ROADMAP.md, plan documents), and give the owner a summary of the session's work with a cheerful compliment, learnings and recommended next steps, also saved in docs/summaries/. Use when the owner says they are ending the session, asks for a session summary or wrap-up, or types /end-session.
+description: Close a working session on Agendum - review what was done (commits, uncommitted changes, open threads), record what is worth remembering (memory, docs/ROADMAP.md, plan documents), and give the owner a summary of the session's work with a cheerful compliment, learnings and recommended next steps, also saved in the owner's private repository (the Wolery's docs/summaries/). Use when the owner says they are ending the session, asks for a session summary or wrap-up, or types /end-session.
 ---
 
 # End the session
@@ -50,4 +50,9 @@ Keep it short enough to read in a minute: headings and bullets, no paragraphs of
 
 ## 4. Save the summary
 
-Save the same summary as Markdown in `docs/summaries/`, named by the session's end date and time: `docs/summaries/2026-10-14-1955.md` (from `date '+%Y-%m-%d-%H%M'`), with a first line `# Session summary, 2026-10-14 19:55`. The folder is the owner's own record of the work, committed to this private repository so it is not on one disk only (meeting 2026-10-22-2130, § 5h), and left out of the public copy (`docs/plans/GITHUB.md` § 7). Commit it with the session's other notes ("Session notes: …", explicit paths), or alone when there are none; never overwrite an earlier summary.
+Save the same summary as Markdown in the Wolery (the owner's private repository; its path is in `CLAUDE.local.md`), under `docs/summaries/`, named by the session's end date and time: `docs/summaries/2026-10-14-1955.md` (from `date '+%Y-%m-%d-%H%M'`), with a first line `# Session summary, 2026-10-14 19:55`. The folder is the owner's own record of the work, kept private and committed so it is not on one disk only (meeting 2026-10-22-2130, § 5h; moving day, 2026-10-30). Never overwrite an earlier summary. Without a `CLAUDE.local.md` (a contributor's checkout), the summary stays in the terminal.
+
+Two commits, each with explicit paths:
+
+- **Here**, in the public repository: the session's notes (roadmap, plans), "Session notes: …", if there are any. Never the summary, nor anything else private (`CLAUDE.local.md`, Rules).
+- **In the Wolery**: the summary, with `git -C <the Wolery> add docs/summaries/<file>`, then `commit` ("Session summary YYYY-MM-DD-HHMM") and `push` there.

@@ -15,6 +15,7 @@ This is not a review: nothing is scored, and the panel speaks only to the items 
 - **Who attends depends on the agenda** ("Who attends" in `expert-review`): only the lenses whose subjects are on it, chosen in step 1. Owl and Claude are always there. A meeting on documents, scope or what to keep calls Little Marie-Who-Folds; one on keys and screens may need only Mitch, Carsten and David.
 - **The owner chairs the meeting** and makes every decision. The panel advises and may disagree; it never votes. Owl hosts (it is his house) and keeps order, kindly; he does not decide.
 - **Claude is the secretary**, and also sits on the panel with its own lens; it keeps the two roles apart in the minutes.
+- **Private passages** follow `expert-review`'s rule of that name: this repository is public, so an item or a part of one that is private is written into the Wolery's `docs/meetings/YYYY-MM-DD-HHMM/private.md` (the Wolery's path is in `CLAUDE.local.md`), and the public agenda and minutes show the creek line in its place.
 
 ## The files
 
@@ -66,6 +67,7 @@ After the closing, before the minutes, put every decision in its home, each citi
 - **A plan's question answered, or a new plan**: the plan document in `docs/plans/` (its status line too); a new plan gets a row in `docs/INDEX.md`.
 - **A lasting decision** (how something is built, a principle): an ADR in `docs/adr/` with the next number, if the owner agrees it is one; listed where ADRs are listed (`docs/ARCHITECTURE.md`).
 - **Direction**: `docs/VISION.md`.
+- **A private decision**: the Wolery's private plans, never a public document; the public table of decisions shows the creek line in its row.
 - **How Claude should work**: a memory.
 
 `docs/INDEX.md`, "Where a change is written down", says what else a kind of change touches. Nothing under `lib/` or `test/`.
@@ -119,5 +121,6 @@ The task only reads the project file, so the owner changes it in Agendum: a thou
 ## 6. Commit and report
 
 - `mix test test/agendum/docs_index_test.exs` if a document was added under `docs/` or `docs/plans/`; nothing under `lib/` or `test/` changed, so `mix check` is not needed.
-- One commit, with explicit paths (never `git add docs`): the meeting's folder and every document a decision was written into. "Panel meeting YYYY-MM-DD-HHMM", the decisions listed in the body.
+- One commit, with explicit paths (never `git add docs`): the meeting's folder and every document a decision was written into. "Panel meeting YYYY-MM-DD-HHMM", the decisions listed in the body (the private ones only as "one private item").
+- If there were private passages: one commit in the Wolery (`git -C <the Wolery>`) with its `private.md` and the private plans changed, the same message with the private decisions listed, then a push there.
 - In the terminal: the thoughts the meeting handled, for the owner to mark done (F4) in Agendum, and those tabled, to leave under Next meeting; the decisions, each with where it was recorded; what was tabled or referred; the path to the minutes.
