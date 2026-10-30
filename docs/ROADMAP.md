@@ -12,7 +12,7 @@ Small, testable increments: the open work, by area.
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
+1. Review the rest of the code locally, groups e to h (group d done 2026-10-30, v0.72.6; Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
 2. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-1524, § 14, tabled)
 
 Go for the public repository was given at the practical meeting (meeting 2026-10-28-1911, § 13), on conditions, all met on 2026-10-30 (`ROADMAP_DONE.md`).
@@ -59,7 +59,7 @@ Tools and checks that make every later change faster and safer. Each is small; t
 
   - **First check** that a linked folder breaks nothing: `mix docs`, the docs-index test, Obsidian, and a fresh clone without the link.
   - **Then** the skills, `mix agendum.thoughts` and the owner's local notes use `docs/private/…` instead of the Wolery's path.
-- [ ] Review the rest of the code locally (`docs/CODE_REVIEW_SLICES.md` § The rest): about 35,000 lines in five groups, each with `/code-review high <paths>`, its findings fixed as a release of its own, as the cloud slices were
+- [ ] Review the rest of the code locally (`docs/CODE_REVIEW_SLICES.md` § The rest): about 35,000 lines in five groups, each with `/code-review high <paths>`, its findings fixed as a release of its own, as the cloud slices were; group d done (2026-10-30, v0.72.6: 10 findings, 6 fixed, in about 6 minutes of review), e to h left (`tools/review/slice.sh --files e`)
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key.
 
   - **Measured** 2026-10-16, a cursor move: 300 items 6 ms in `Update` + 11 ms in `Render`; 3,000 items 61 + 45 ms; 10,000 items 205 + 231 ms.
