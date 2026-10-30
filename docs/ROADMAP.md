@@ -35,6 +35,7 @@ The order of the earlier steps was Marie's (the licence meeting and the tidy pas
 
 ### Fixes and polish
 
+- [ ] The blog's links without a Base address (found 2026-10-30, publishing the first devlog post): with the Publish box's Base address empty, the author's name in a post and in the footer is a `rel="me"` link to `href=""`, and the feeds' links are relative (an empty RSS `<link>`, `"home_page_url": ""`), which feed readers cannot follow (`Agendum.Core.Extras.Site`, R74). Leave the name unlinked when there is no address, and perhaps say in the Publish box, or before publishing, that the feeds need one
 - [ ] Idea, when it is felt (the owner, 2026-10-27): the person's own categories before a feed's or a calendar's in completion's matches (R32) in the other category fields (column and section heads, a column cell), where ingested ones are rightly offered (R75a: they head sections and filter views).
 
   Agenda's rule is every match in hierarchy order, an exact name first, and the Feeds family usually comes after the person's categories already, so wait until a feed's name is seen crowding one's own in real use
