@@ -15,9 +15,9 @@ You type free-form items. Agendum files them into categories: the one you typed 
 - [`docs/INDEX.md`](docs/INDEX.md): every document, what it is for and when to read it.
 - [`docs/SPEC.md`](docs/SPEC.md): what Agendum does, rule by rule, each one checked against Agenda or marked as our choice.
 - [`docs/ROADMAP.md`](docs/ROADMAP.md): what comes next; the done list is in [`docs/ROADMAP_DONE.md`](docs/ROADMAP_DONE.md).
-- [`docs/adr/`](docs/adr/): the architecture decision records, why the code is the way it is.
-- [`docs/meetings/`](docs/meetings/): the minutes of the project's panel meetings in Owl's house, where a panel of imagined experts discusses the owner's agenda and the owner decides. The voices are lenses, not the real people's words.
-- [`docs/reviews/`](docs/reviews/): the same panel's dated reviews of the whole project, with scores, evidence and the trend since the last one.
+- [`docs/adr/`](https://github.com/jamting/agendum/tree/main/docs/adr): the architecture decision records, why the code is the way it is.
+- [`docs/meetings/`](https://github.com/jamting/agendum/tree/main/docs/meetings): the minutes of the project's panel meetings in Owl's house, where a panel of imagined experts discusses the owner's agenda and the owner decides. The voices are lenses, not the real people's words.
+- [`docs/reviews/`](https://github.com/jamting/agendum/tree/main/docs/reviews): the same panel's dated reviews of the whole project, with scores, evidence and the trend since the last one.
 
 
 ## Installing

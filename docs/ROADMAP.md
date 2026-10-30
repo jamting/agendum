@@ -48,7 +48,7 @@ The order of the earlier steps was Marie's (the licence meeting and the tidy pas
 
 Tools and checks that make every later change faster and safer. Each is small; the command layer they made safer is done (R66, ADR 0036, in `ROADMAP_DONE.md`). From the expert review of 2026-10-16 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
-- [ ] Kept fast (the owner, 2026-10-26: "I don't want it to take up very much time"): the four items above add at most about 5 seconds to `mix check` (a few dozen inputs per parser, the hostile files, short richer and out-of-order walks); the long runs go to `mix agendum.fuzz` and the nightly CI. Measure `mix check` before and after
+- [ ] Kept fast (the owner, 2026-10-26: "I don't want it to take up very much time"): the four robustness items (property tests, hostile files, richer and out-of-order walks; done 2026-10-27, in `ROADMAP_DONE.md`) add at most about 5 seconds to `mix check` (a few dozen inputs per parser, the hostile files, short richer and out-of-order walks); the long runs go to `mix agendum.fuzz` and the nightly CI. Measure `mix check` before and after
 - [ ] The smoke tool's ALT-F3 (found 2026-10-28, v0.72.3): `tools/smoke/smoke.py ALT-F3` does not open the Macro Manager; the key bar shows its ALT labels instead, as if ALT were held, though `ESC [ 13 ; 3 ~` decodes as ALT-F3 in `Terminal.Keys` and the unit tests open the manager. Find whether the tool or the decoder splits the sequence, so modified F-keys can be smoke-tested
 - [ ] Optional (the owner, 2026-10-30): one git-ignored link, `docs/private/`, to the owner's private documents (the Wolery's `docs/`), so they show beside the public ones in the editor (an Obsidian vault on `docs/`) and the tasks find them. Git never follows a link, so a mistaken `git add` cannot carry their text here.
 
@@ -97,19 +97,9 @@ Agenda's note editor is done (AGENDA_PARITY.md); these are ours, or optional:
   - **Publishing does not wait for it;** the CLA bot blocks merging without a signature, and the public README says contributions open later.
   - **The lawyer reads** `CLA.md` and the dual-licensing question.
   - **The lawyer is asked** whether Agenda's captured texts may stay published (`docs/reference/agenda_*.json`, the 1,558 messages among them; the owner, 2026-10-28: once public, trimming them later leaves them in the history and in forks)
-- [ ] The owner reads two lists in the dry run's report before publishing (meeting 2026-10-28-1911, §§ 8, 13; `plans/GITHUB.md` § 7, step 6):
-
-  - **The 20 longest captured Agenda texts** (*decided by the owner, 2026-10-28:* `agenda_messages.json` goes into the copy whole, all 1,558 messages, as they can serve later messages, contributors without Agenda and finding Agenda's rules; the question goes to the lawyer);
-  - **the lines still naming a removed file** (the done list, old minutes and reviews, the skills that read the summaries and the study plan), each a link to fix or a fact to keep
 - [ ] Our own `.AG` test files without a starter underneath (meeting 2026-10-28-1911, § 7, found doing it): RICH.AG and DATES.AG were made in Agenda on Lotus's Planner starter (54 of their 55 categories are Planner's) and UX.AG on Information Sifter; they stay in the public copy, but could be made again from a blank Agenda file in DOSBox (`tools/agformat/agenda_driver.py`), with the tests' expectations moved to the new files; not before publishing
-- [ ] The name's story and how it is said (meeting 2026-10-28-1233, § 5; ADR 0019, update 2026-10-28): one line, "Wol is how Owl spells his name", and "said wolz a-JEN-dum", where the name first meets a reader: the About help topic (`lib/agendum/tui/help/topics/about-agendum.txt`, built with the `feature` skill) and the site; the README has both (the tidy pass, 2026-10-28)
+- [ ] The name's story and how it is said (meeting 2026-10-28-1233, § 5; ADR 0019, update 2026-10-28): one line, "Wol is how Owl spells his name", and "said wolz a-JEN-dum", where the name first meets a reader: the About help topic (`lib/agendum/tui/help/topics/about-agendum.txt`, built with the `feature` skill); the README (the tidy pass, 2026-10-28) and the site's front page (2026-10-30) have both
 - [ ] Optional (from the parity plan, 2026-10-26): Utilities ▸ Launch, a shell without quitting Agendum
-- [ ] A public repository of the clone, when it is declared done (meeting 2026-10-21-2324, § 10; ADR 0050): this repository stays the private workshop.
-
-  - **The public one** is made from a copy with `git filter-repo`, keeping every commit, tag and co-author line, with the third-party reference material and the business files out of the history, the minutes, reviews, `VISION.md` and `GITHUB.md` added back once without their business passages, and the cited commit hashes brought up to date in one commit.
-  - **The licence:** AGPL-3.0-only, CC BY 4.0 for the documents, a CLA (meeting 2026-10-28-1224; ADR 0051), confirmed after a lawyer's check before publishing.
-  - **The steps and the list of what stays private:** [`docs/plans/GITHUB.md`](plans/GITHUB.md) § 7
-
 ### Users and direction
 
 - [ ] A meeting for brainstorming and general plans, after the public repository (meeting 2026-10-26-1524, § 14, tabled): the owner, 2026-10-26: "we are entering a period of brainstorming and making general plans on ideas now", with coding too; clarity on the ideas, and whether an overarching strategy is needed.

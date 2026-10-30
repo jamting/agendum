@@ -67,7 +67,7 @@ The three free runs covered about 20,000 of 55,000 lines. The rest is reviewed w
 | g | **The boxes, N to Z**: `tui/boxes/` from `new_file_box` to `what_to_copy_box` | 5,400 lines | fourth |
 | h | **Drawing and the rest**: `tui/render/`, `tui/category_screens/`, `tui/terminal/`, `tui/help/`, the splash, the developer screen, `starters/`, `mix/` | 7,000 lines | last: a drawing bug shows at once, and is seen in use |
 
-Before group d, the group lists go into `tools/review/slice.sh` (as `--list` groups d to h), so the paths are kept in one place and their sizes can be checked.
+The group lists are in `tools/review/slice.sh` too (2026-10-30): `--list` prints every group's size, `--files d` a group's paths for the review. The sizes above were the plan's estimates; measured on 2026-10-30 they were d 5,000, e 7,800, f 6,500, g 4,600 and h 10,700 lines (h may be split in two).
 
 ## Record
 

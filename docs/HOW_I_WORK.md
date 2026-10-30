@@ -101,7 +101,7 @@ The panel advises; it never votes. I decide.
 | `AGENDUM_LOG=1 ./agendum FILE`                         | with a debug log (`~/.local/state/agendum/logs`); give it to Claude on a crash or lag |
 | `mix docs --open`                                      | API docs, design documents, guide and manual in the browser             |
 | `mix agendum.starters`, `mix agendum.golden`           | rebuild the Planner starter; write the golden file of a new format version |
-| `tools/review/slice.sh a` (`--list`, `--clean`) | a slice of the code for `/code-review ultra review/a-base`: two local branches in the worktree `../agendum-review` (`docs/CODE_REVIEW_SLICES.md`) |
+| `tools/review/slice.sh a` (`--list`, `--files d`, `--clean`) | a slice of the code for `/code-review ultra review/a-base`: two local branches in the worktree `../agendum-review` (`docs/CODE_REVIEW_SLICES.md`) |
 | `mix agendum.fuzz` | the long fuzz run (3000 runs), its output kept in a dated file in `tmp/fuzz/`, the last 30                                                     |
 | `PARSER_RUNS=3000 mix test test/agendum/parsers_property_test.exs` | a longer search of the parsers of outside input (Markdown, iCal, feeds, `.AG`, JSON, dates) with random and broken input; 40 runs each in `mix test` |
 | `mix run test/fixtures/hostile/make.exs` | makes the hostile files again (`test/fixtures/hostile/`: nasty calendars, feeds, `.AG`, JSON, Markdown and dates, read by `hostile_files_test.exs`); a new bug of the kind adds its file there |
