@@ -243,7 +243,10 @@ defmodule Agendum.ArchitectureTest do
     {Agendum.Core.ViewModel, :standard_cell, 6},
     # a person's command is refused when it would change a category a feed
     # or a calendar fills (R75a, ADR 0048)
-    {Agendum.Core.Command, :free, 2}
+    {Agendum.Core.Command, :free, 2},
+    # completion offers the person's categories before a feed's or a
+    # calendar's (R32, R75a; owner, 2026-10-30)
+    {Agendum.Core.Facade.Assignments, :completions, 3}
   ]
 
   defp on_shelf?(module), do: Enum.any?(@shelf, &in?(module, &1))

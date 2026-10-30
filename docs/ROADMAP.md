@@ -34,9 +34,6 @@ The order of the earlier steps was Marie's (the licence meeting and the tidy pas
 
 ### Fixes and polish
 
-- [ ] Idea, when it is felt (the owner, 2026-10-27): the person's own categories before a feed's or a calendar's in completion's matches (R32) in the other category fields (column and section heads, a column cell), where ingested ones are rightly offered (R75a: they head sections and filter views).
-
-  Agenda's rule is every match in hierarchy order, an exact name first, and the Feeds family usually comes after the person's categories already, so wait until a feed's name is seen crowding one's own in real use
 - [ ] The extras' answers handled beside them (2026-10-27, found moving their messages): `Update.Results` (a feed's and calendar's read, an OPML list, an upload) and `Update.Prompts` (subscribing, unsubscribing, the SFTP password) still hold the extras' logic, listed as doors in `architecture_test.exs`; move each into a module beside its extra, so the shared modules only dispatch (the owner's modularity, 2026-10-27)
 - [ ] Optional (the owner, 2026-10-27): try v0.69.3's main fix by hand: open a second file while a feed is being read, and see its entries land only in the file that asked (the richer fuzz walks already check it)
 - [ ] Found by the parser property tests (2026-10-27, v0.69.2), not urgent: Markdown with thousands of nested `>` quotes is still quadratic (20,000 levels about 1 s); a calendar's sync costs about 1 ms an event (a 2,000-event calendar about 2 s, linear) — check whether it runs in the TUI's process and would freeze the screen

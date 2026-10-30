@@ -1440,6 +1440,8 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 
   Matching is on the start of names, ignoring case and accents ("éc" matches écrit and economy), among the column head's subcategories only, with an exact name first and then hierarchy order.
 
+  Within each of those, the person's own categories come before the ingested ones, a feed's or a calendar's and the Feeds and Calendars families (R75a; our choice, an extra): typing "New" offers Newsletter before the feed News, and "News" still offers News first. A file without feeds or calendars is ordered as Agenda's.
+
   - ENTER accepts the shown match.
   - F8 / ALT-N and F7 / ALT-P cycle through the matches (wrapping).
   - Typing more starts again at the first.

@@ -11,6 +11,7 @@ defmodule Agendum.Core.Facade.Assignments do
 
   alias Agendum.Core.{Assign, Context, Database, DateParser, NumberFormat}
   alias Agendum.Core.Facade.{Categories, Changes, Numbers}
+  alias Agendum.Core.Extras.Ingested
 
   @typep db :: Agendum.Core.db()
   @typep id :: Agendum.Core.id()
@@ -180,7 +181,10 @@ defmodule Agendum.Core.Facade.Assignments do
   Automatic completion (R32): the subcategories of `head_id` whose names
   begin with `text`, ignoring case and accents, in hierarchy order with an
   exact name first. The first one is what Agenda shows as you type; the
-  others are reached with NEXTSEL / PREVSEL.
+  others are reached with NEXTSEL / PREVSEL. Within each, the person's own
+  categories come before the ingested ones, a feed's or a calendar's and
+  their families (R75a; our choice, an extra: a file without them is
+  ordered as Agenda's).
   """
   @spec completions(db, id, String.t()) :: [id]
   def completions(db, head_id, text) do
@@ -195,7 +199,8 @@ defmodule Agendum.Core.Facade.Assignments do
           |> Enum.filter(&String.starts_with?(fold(db.categories[&1].name), wanted))
 
         {exact, prefix} = Enum.split_with(matches, &(fold(db.categories[&1].name) == wanted))
-        exact ++ prefix
+        ingested = Ingested.categories(db)
+        mine_first(exact, ingested) ++ mine_first(prefix, ingested)
     end
   end
 
@@ -226,6 +231,13 @@ defmodule Agendum.Core.Facade.Assignments do
       {:error, :empty} ->
         {:error, :empty}
     end
+  end
+
+  # The person's categories, then the ingested ones; `Enum.split_with/2`
+  # keeps each part in the order it had, so hierarchy order holds in both.
+  defp mine_first(ids, ingested) do
+    {ingested_ids, mine} = Enum.split_with(ids, &MapSet.member?(ingested, &1))
+    mine ++ ingested_ids
   end
 
   # Case- and accent-insensitive form used for completion ("éc" ~ "ec").

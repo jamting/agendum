@@ -43,6 +43,23 @@ defmodule Agendum.Core.CompletionTest do
     assert names(db, Core.completions(db, t, "ec")) == ["écrit", "economy"]
   end
 
+  # Our choice (an extra): a feed's or a calendar's category, and the
+  # Feeds and Calendars families, come after the person's own matches,
+  # though they come first in hierarchy order; an exact name still leads
+  test "the person's categories before a feed's or a calendar's", %{db: db} do
+    {:ok, db, _} = Core.subscribe_feed(db, "News", "https://news.example/rss")
+    {:ok, db, _} = Core.subscribe_calendar(db, "Nap times", "https://naps.example/n.ics")
+    {:ok, db, _} = Core.add_category(db, db.main_id, "Newsletter")
+    {:ok, db, _} = Core.add_category(db, db.main_id, "Friday")
+    {:ok, db, _} = Core.add_category(db, db.main_id, "Calls")
+    main = db.main_id
+
+    assert names(db, Core.completions(db, main, "n")) == ["Newsletter", "News", "Nap times"]
+    assert names(db, Core.completions(db, main, "news")) == ["News", "Newsletter"]
+    assert names(db, Core.completions(db, main, "f")) == ["Friday", "Feeds"]
+    assert names(db, Core.completions(db, main, "ca")) == ["Calls", "Calendars"]
+  end
+
   test "nothing typed, or no match, gives no completions", %{db: db, priority: p} do
     assert Core.completions(db, p, "") == []
     assert Core.completions(db, p, "urgent") == []
