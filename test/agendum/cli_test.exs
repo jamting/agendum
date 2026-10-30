@@ -17,6 +17,15 @@ defmodule Agendum.CLITest do
     assert :help = CLI.parse_args(["-h"], %{})
   end
 
+  test "--version names the version and the build, for a bug report or a package manager" do
+    assert :version = CLI.parse_args(["--version"], %{})
+    assert :version = CLI.parse_args(["-v", "my.agendum"], %{})
+
+    :ok = Application.ensure_loaded(:agendum)
+    version = Application.spec(:agendum, :vsn) |> to_string()
+    assert CLI.version_text() =~ ~r/^Wol's Agendum #{Regex.escape(version)} \(commit /
+  end
+
   test "the theme comes from --theme or --mono" do
     assert {:ok, %{theme: :mono}} = CLI.parse_args(["--theme", "mono", "f"], %{})
     assert {:ok, %{theme: :mono, file: "f"}} = CLI.parse_args(["f", "--mono"], %{})

@@ -20,7 +20,20 @@ You type free-form items. Agendum files them into categories: the one you typed 
 - [`docs/reviews/`](docs/reviews/): the same panel's dated reviews of the whole project, with scores, evidence and the trend since the last one.
 
 
-## Running
+## Installing
+
+On a Mac or on Linux, with [Homebrew](https://brew.sh) (it brings Erlang along):
+
+```sh
+brew install jamting/agendum/agendum
+agendum --demo            # sample data from the Agenda patent
+agendum ~/work.agendum    # your own file
+brew uninstall agendum    # to remove it again
+```
+
+Or download `agendum` from the [releases](https://github.com/jamting/agendum/releases): it needs Erlang/OTP 28 or later.
+
+## Running from source
 
 Requires Elixir ≥ 1.20 on OTP ≥ 28 (for the built-in raw terminal mode).
 
@@ -35,6 +48,7 @@ mix docs --open                                 # API and design docs, guide and
                                                 #   modus-operandi, modus-vivendi, alabaster, zenburn, ayu, borland
 ./agendum --lang=swedish --fallback=english f   # read dates typed in Swedish (and English)
 ./agendum --number-order=dmy --date-separator=. f  # type dates as 12.11.26 for this session
+./agendum --version                             # the version and the build, for a bug report
 # Utilities ▸ Customize saves your theme, date languages and input format in ~/.config/agendum/preferences
 ```
 

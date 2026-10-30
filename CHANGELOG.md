@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.72.4 — 2026-10-30
+
+- **`agendum --version`** (or `-v`) prints the version and the build it came from, then quits: for a bug report, or to see which version Homebrew installed. Agendum can now be installed with `brew install jamting/agendum/agendum`, and every version is a GitHub Release.
+
 ## 0.72.3 — 2026-10-28
 
 - **The key lines at the bottom of the Macro Manager, the category lists and the file list are made from their keys**, as in Agendum's other boxes: they no longer run off the edge of a narrow box. In a list that takes several categories (Also assign, Excludes, a condition or filter), what the marks mean has a line of its own above the keys, which now name SPACE and F4.

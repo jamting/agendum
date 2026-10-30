@@ -20,6 +20,7 @@ defmodule Agendum.CLI do
                                 ydm or ymd (default: the language's)
       agendum --date-separator S  / - . , or : between a date's numbers
       agendum --clock 12|24     how you type times (default: the language's)
+      agendum --version         print the version and the build, then quit
 
   Your preferences (Utilities ▸ Customize, saved in
   ~/.config/agendum/preferences) give the theme, languages and input
@@ -59,10 +60,18 @@ defmodule Agendum.CLI do
 
     case parse_args(args, env, prefs) do
       :help -> IO.puts(@moduledoc)
+      :version -> IO.puts(version_text())
       {:ok, options} -> start(options, prefs, DebugLog.start(env, args))
       {:error, message} -> exit_with(message)
     end
   end
+
+  @doc """
+  What `--version` prints: the version, the commit and the kind of build,
+  as the debug log's first line says it (Homebrew's test runs it too).
+  """
+  @spec version_text() :: String.t()
+  def version_text, do: DebugLog.build_text()
 
   @doc """
   The options in `args`, given the environment variables `env` and the
@@ -70,7 +79,7 @@ defmodule Agendum.CLI do
   then the default. Pure.
   """
   @spec parse_args([String.t()], %{String.t() => String.t()}, Preferences.t()) ::
-          {:ok, options} | :help | {:error, String.t()}
+          {:ok, options} | :help | :version | {:error, String.t()}
   def parse_args(args, env, prefs \\ %Preferences{}) do
     {opts, files, invalid} =
       OptionParser.parse(args,
@@ -80,6 +89,7 @@ defmodule Agendum.CLI do
           # an Easter egg, not in --help: Christopher Robin's clinic
           clinic: :boolean,
           help: :boolean,
+          version: :boolean,
           mono: :boolean,
           theme: :string,
           lang: :string,
@@ -88,12 +98,15 @@ defmodule Agendum.CLI do
           date_separator: :string,
           clock: :string
         ],
-        aliases: [h: :help]
+        aliases: [h: :help, v: :version]
       )
 
     cond do
       opts[:help] ->
         :help
+
+      opts[:version] ->
+        :version
 
       invalid != [] ->
         {:error, "Unknown option: #{invalid |> hd() |> elem(0)} (try --help)"}
