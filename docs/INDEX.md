@@ -62,7 +62,6 @@ Each plan starts with its status.
 | [`plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md)                     | How close Agendum is to Agenda; accepted enhancements and modifications; The steps, the ordered checklist of all parity work |
 | [`HELP_WOOD.md`](HELP_WOOD.md)                                         | The Hundred Acre Wood touches in the help's written topics, one row each, and their tone rules |
 | [`plans/NOTE_EDITOR.md`](plans/NOTE_EDITOR.md)                         | The note editor as Agenda's: evidence, habit changes to settle, steps          |
-| [`plans/MULTIUSER.md`](plans/MULTIUSER.md)                             | A web application with accounts and shared files, on the same core (ADR 0020)  |
 | [`plans/GITHUB.md`](plans/GITHUB.md)                                   | Putting the repository on GitHub, and going public                         |
 | [`plans/ITEM_LEVELS.md`](plans/ITEM_LEVELS.md)                         | Three levels of items: zettels, ingested items, the model's context items (vision) |
 | [`plans/RSS_READER.md`](plans/RSS_READER.md)                           | A plain RSS reader, like calendar subscriptions: the owner's decisions and the steps (R75) |
@@ -90,7 +89,6 @@ Finished or dropped plans, kept as records of how something was done or why it w
 | `docs/reviews/` (one per date) | Dated expert panel reviews, written as meeting minutes (architecture, code, users, business, vision, methods, tidiness and scope, agent readiness), each following up the last (`expert-review` skill) |
 | `docs/meetings/` | Each panel meeting's agenda and minutes in `docs/meetings/YYYY-MM-DD-HHMM/`, the agenda made from `docs/meetings/TEMPLATE.md`; the items come from the owner's Agendum project file (Thoughts ▸ Next meeting, `mix agendum.thoughts`; `meeting` skill) |
 | [`CODE_REVIEW_SLICES.md`](CODE_REVIEW_SLICES.md) | Reviewing the whole code base with `/code-review ultra` in slices of under 8,000 lines: the strategy, the slices (`tools/review/slice.sh`), how to run one, the record |
-| `docs/study/STUDY_PLAN.md` | The owner's study of the code: units the panel picks, with questions ticked off when understood (`study-plan` skill) |
 
 Where a minute, a review or a plan says *[A page here was soaked in the creek. — Rabbit]*, a passage about the owner's own plans was left out of the public copy. Tigger, it is told, bounced Rabbit into the creek with his papers under his arm; most of the pages dried, and the ones that did not are marked so. The panel's members go by Wood names in these texts; they are lenses written by Claude, not the words of real people.
 

@@ -260,7 +260,6 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 | [0017](adr/0017-text-matching-agenda-rules.md)          | Text matching follows Agenda's word rules                        |
 | [0018](adr/0018-agenda-look-from-screenshots.md)        | The look follows screenshots of the real Agenda                  |
 | [0019](adr/0019-the-name-wols-agendum.md)               | The name: Wol's Agendum                                          |
-| [0020](adr/0020-towards-many-users.md)                  | Towards many users: a web application on the same core           |
 | [0021](adr/0021-runtime-dependencies.md)                | Runtime dependencies: only when they keep what the rule protects |
 | [0022](adr/0022-themes-not-custom-colours.md)           | Themes, not custom colours                                       |
 | [0023](adr/0023-core-facade-over-area-modules.md)       | The core facade: one entry point over area modules               |
