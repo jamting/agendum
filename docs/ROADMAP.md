@@ -12,7 +12,7 @@ Small, testable increments: the open work, by area.
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. The public repository of the clone, by the moving-day checklist (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md) § 7, Moving day): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-1108, § 7)
+1. The public repository of the clone, by the moving-day checklist (Housekeeping; [`plans/GITHUB.md`](plans/GITHUB.md) § 7, Moving day): the clone was declared done on 2026-10-26 with v0.62.0 (meeting 2026-10-26-1108, § 7). Steps 1 to 7 done on 2026-10-30 (the repository public, the folders swapped, the skills and the owner's private repository set up); left: step 8, the first session in the public checkout
 2. The public site, with four doors (Housekeeping; meeting 2026-10-28-0908, § 9)
 3. Review the rest of the code locally, groups d to h (Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
 4. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-1524, § 14, tabled)
@@ -36,6 +36,7 @@ The order of the earlier steps was Marie's (the licence meeting and the tidy pas
 
 ### Fixes and polish
 
+- [ ] `mix agendum.thoughts` reads `docs/summaries/*.md`, which are no longer in this repository since moving day (2026-10-30): they now drop out of what it reads, silently. Read them from the owner's private documents (`docs/private/`, once linked; Sharpen the saw) or leave them out on purpose and say so (found 2026-10-30).
 - [ ] Idea, when it is felt (the owner, 2026-10-27): the person's own categories before a feed's or a calendar's in completion's matches (R32) in the other category fields (column and section heads, a column cell), where ingested ones are rightly offered (R75a: they head sections and filter views).
 
   Agenda's rule is every match in hierarchy order, an exact name first, and the Feeds family usually comes after the person's categories already, so wait until a feed's name is seen crowding one's own in real use
