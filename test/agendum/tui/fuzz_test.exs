@@ -8,7 +8,9 @@ defmodule Agendum.TUI.Fuzz do
   set the length of the whole suite.
 
   A quarter of the walks start from the golden file with the extras on
-  (feeds, calendars, a blog), perhaps in one of the extras' boxes. Between
+  (feeds, calendars, a blog), perhaps in one of the extras' boxes; about
+  half the others start inside one of the clone's boxes (`@boxes`), on a
+  standard view or a datebook of any period. Between
   the keys, a walk also plays the shell's side (meeting 2026-10-26-2234, § 7):
   the answers of reads and uploads under way, out of order and sometimes
   after another file was opened, through `Agendum.TUI.App.background/2`,
@@ -259,6 +261,70 @@ defmodule Agendum.TUI.Fuzz do
   # File ▸ Transfer ▸ Feeds, Calendars or Publish; `:preview` is Publish's
   # ENTER too, which shows what publishing would change, and `:upload` the
   # preview's ENTER after it, so the upload is under way from the start
+  # The boxes a walk may start in (expert review 2026-10-30, § 18.1): the
+  # keys that open each from the view, and for a box opened from a box,
+  # the setting's label to go to first and the keys there. A random walk
+  # from the view hardly reaches the boxes inside boxes, where the
+  # crash of 2026-10-30 was (View Properties on a datebook, ↑ from Filter).
+  @f10 {:f, 10}
+  @boxes [
+    [@f10, {:char, "v"}, {:char, "p"}],
+    [@f10, {:char, "v"}, {:char, "s"}, {:char, "p"}],
+    [@f10, {:char, "v"}, {:char, "s"}, {:char, "a"}],
+    [@f10, {:char, "f"}, {:char, "p"}],
+    [@f10, {:char, "f"}, {:char, "a"}],
+    [@f10, {:char, "u"}, {:char, "c"}],
+    [@f10, {:char, "u"}, {:char, "q"}],
+    [@f10, {:char, "u"}, {:char, "e"}],
+    [@f10, {:char, "u"}, {:char, "s"}, {:char, "m"}],
+    [@f10, {:char, "u"}, {:char, "s"}, {:char, "s"}],
+    [:down, @f10, {:char, "v"}, {:char, "c"}, {:char, "a"}],
+    [:down, :right, @f10, {:char, "v"}, {:char, "c"}, {:char, "p"}],
+    [:down, @f10, {:char, "i"}, {:char, "a"}],
+    [:down, {:f, 6}],
+    [:down, {:f, 3}],
+    [:down, {:alt_f, 9}],
+    [:down, {:f, 5}, {:alt_f, 6}],
+    [{:f, 8}],
+    [{:f, 9}, {:f, 6}],
+    [{:alt_f, 5}],
+    [{:alt_f, 3}, {:f, 3}],
+    [{:alt_f, 3}, :down, {:f, 6}],
+    [{:alt, "c"}],
+    [@f10, {:char, "f"}, {:char, "r"}, {:f, 3}],
+    {[@f10, {:char, "v"}, {:char, "p"}], "Item sorting"},
+    {[@f10, {:char, "v"}, {:char, "p"}], "Filter"},
+    {[@f10, {:char, "v"}, {:char, "p"}], "View statistics"},
+    {[@f10, {:char, "v"}, {:char, "s"}, {:char, "p"}], "Filter"},
+    {[@f10, {:char, "f"}, {:char, "p"}], "Global date settings"},
+    {[@f10, {:char, "f"}, {:char, "p"}], "Auto-assign settings"},
+    {[@f10, {:char, "f"}, {:char, "p"}], "File statistics"},
+    {[@f10, {:char, "f"}, {:char, "p"}], "Update defaults"},
+    {[@f10, {:char, "u"}, {:char, "c"}], "Input format"},
+    {[{:f, 9}, {:f, 6}], "Statistics"},
+    {[{:f, 9}, {:f, 6}], "Advanced settings"},
+    {[{:f, 9}, {:f, 6}], "Assignment conditions"},
+    {[{:f, 9}, {:f, 6}], "Assignment actions"}
+  ]
+
+  defp open_box(walk, nil), do: walk
+  defp open_box(walk, keys) when is_list(keys), do: press_shell(walk, keys)
+
+  # a box inside a box: SPACE on its setting, when the outer box (on this
+  # view, at this size) can reach it; when it cannot, the walk starts in
+  # the outer box
+  defp open_box(walk, {keys, label}) do
+    walk = press_shell(walk, keys)
+
+    try do
+      %{walk | state: Agendum.TUIHelpers.to_setting(walk.state, label)}
+      |> press_shell([{:char, " "}])
+    rescue
+      e in RuntimeError ->
+        if e.message =~ "no setting labelled", do: walk, else: reraise(e, __STACKTRACE__)
+    end
+  end
+
   defp open_extra(walk, nil), do: walk
 
   defp open_extra(walk, box) do
@@ -494,6 +560,8 @@ defmodule Agendum.TUI.Fuzz do
             # and then perhaps with one of the extras' boxes open, which a
             # random walk would hardly reach through the menu
             opening <- member_of([nil, :feeds, :calendars, :publish, :preview, :upload]),
+            # about half the other walks start inside one of the boxes
+            box <- member_of(List.duplicate(nil, length(@boxes)) ++ @boxes),
             max_runs: div(@runs + @parts - 1, @parts),
             initial_seed: ExUnit.configuration()[:seed] + part
           ) do
@@ -527,7 +595,10 @@ defmodule Agendum.TUI.Fuzz do
       # the golden file's walks begin as the shell does, with the clock's
       # tick before the first drawing: its feed and calendar are due, so
       # their reads are under way from the start
-      walk = if from_golden, do: walk |> clock() |> open_extra(opening), else: walk
+      walk =
+        if from_golden,
+          do: walk |> clock() |> open_extra(opening),
+          else: open_box(walk, box)
 
       Enum.reduce(keys, walk, fn key, walk ->
         # :tick advances the clock ten minutes, as the shell's loop would;
