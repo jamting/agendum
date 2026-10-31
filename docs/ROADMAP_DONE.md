@@ -210,6 +210,17 @@ The general look and feel of the real program, step by step; not pixel fidelity.
 
 ### Housekeeping
 
+How the public repository's steps were ordered (moved from the roadmap's In order, 2026-10-31):
+
+Go for the public repository was given at the practical meeting (meeting 2026-10-28-1911, § 13), on conditions, all met on 2026-10-30 (`ROADMAP_DONE.md`).
+
+The order of the earlier steps was Marie's (the licence meeting and the tidy pass, first in it, done 2026-10-28), at the chair's request (meeting 2026-10-28-0908, § 13; the pseudonyms folded into the dry run by the chair's addendum):
+
+- the licence before the dry run, as the licence and the contributors' terms go into the copy;
+- the tidy pass and the markers in one sweep over the same documents;
+- the dry run after the markers, so its leak test has something to check;
+- the site after the repository, as Pages needs it public.
+
 - [x] (2026-10-30, v0.72.4) The public site at `jamting.github.io/agendum/` (meeting 2026-10-28-0908, § 9; meeting 2026-10-30-2020), built back to front: a GitHub Release for every tag (`release.yml`) and the Homebrew tap `jamting/homebrew-agendum`, which follows the releases and installs on a fresh Mac each time, with `agendum --version` for its check; the guide and the manual brought up to date, each saying which version it was written for; the recording made by our own renderer (`tools/screenshots/recording.exs`, `pages/filing.webp`); the front page with four doors (`pages/index.html`), put together with the guide, the manual, the API docs and an `llms.txt` by `mix agendum.pages`, which fails on a broken link, and published on every push to main (`pages.yml`); the owner's first devlog post, published by the blog extra into `pages/devlog/`
 - [x] (2026-10-30) The public repository of the clone, by the moving-day checklist (`plans/GITHUB.md` § 7, Moving day; the clone declared done 2026-10-26, v0.62.0): the repository public as `jamting/agendum` (made from a copy with `git filter-repo`, every commit, tag and co-author line kept, the third-party reference material and the business files out of the history, the minutes, reviews, `VISION.md` and `GITHUB.md` added back once without their business passages, the cited hashes brought up to date in one commit; ADR 0050), the folders swapped, Claude pointed at both checkouts, the skills writing private things into the owner's private repository, that repository trimmed, and a first session in the public checkout (`start-session` reading, one small change, `end-session` writing)
 - [x] (2026-10-26) A general code review before the public repository (meeting 2026-10-26-1524, § 11): the code reviewed in slices with the cloud review (`docs/CODE_REVIEW_SLICES.md`), 30 findings fixed in v0.68.2 to v0.68.4; the rest of the code reviewed locally later (ROADMAP, Sharpen the saw)

@@ -2,7 +2,7 @@
 
 Small, testable increments: the open work, by area.
 
-- **Done work** is the record in [`ROADMAP_DONE.md`](ROADMAP_DONE.md), by milestone: tick a box when its tests pass under `mix check`, and move it there.
+- **Done work** is the record in [`ROADMAP_DONE.md`](ROADMAP_DONE.md), by milestone: tick a box when its tests pass under `mix check`, and move it there. Areas with nothing open are there only: the clone's safety (done 2026-10-26: the closed effect type, the recovery file on a crash, R82b, and the hostile-text tests, R82c).
 - **Rule numbers** refer to `SPEC.md`; larger items have a plan in `docs/plans/` (see `docs/INDEX.md`).
 - **Open** starts with "In order", the next few things across every area; then the areas in the order they are worked on (the freeze on Beyond Agenda, Ideas and Towards many users ended when the clone was declared done, 2026-10-26).
 - **The parity work** lives in [`plans/AGENDA_PARITY.md`](plans/AGENDA_PARITY.md) § The steps, in its order.
@@ -13,15 +13,6 @@ Small, testable increments: the open work, by area.
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
 1. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-1524, § 14, tabled); hold it before the next feature, now that the program is public, and leave the roadmap shorter than it was (expert review 2026-10-30, § 18.3)
-
-Go for the public repository was given at the practical meeting (meeting 2026-10-28-1911, § 13), on conditions, all met on 2026-10-30 (`ROADMAP_DONE.md`).
-
-The order of the earlier steps was Marie's (the licence meeting and the tidy pass, first in it, done 2026-10-28), at the chair's request (meeting 2026-10-28-0908, § 13; the pseudonyms folded into the dry run by the chair's addendum):
-
-- the licence before the dry run, as the licence and the contributors' terms go into the copy;
-- the tidy pass and the markers in one sweep over the same documents;
-- the dry run after the markers, so its leak test has something to check;
-- the site after the repository, as Pages needs it public.
 
 **The extras meet the guidelines** since v0.72.0 (2026-10-28): new extras and Wol may come again (meeting 2026-10-26-2234, § 7; ADR 0049). Why: the extras were built before the clone's bar was raised and missed its catch-up, in robustness at the shell's edge and in the boxes' conventions (§ 5).
 
@@ -44,11 +35,6 @@ The order of the earlier steps was Marie's (the licence meeting and the tidy pas
 - [ ] Optional (the owner, 2026-10-27): try v0.69.3's main fix by hand: open a second file while a feed is being read, and see its entries land only in the file that asked (the richer fuzz walks already check it)
 - [ ] Found by the parser property tests (2026-10-27, v0.69.2), not urgent: Markdown with thousands of nested `>` quotes is still quadratic (20,000 levels about 1 s); a calendar's sync costs about 1 ms an event (a 2,000-event calendar about 2 s, linear) — check whether it runs in the TUI's process and would freeze the screen
 - [ ] Hidden values of a date or numeric category (owner, 2026-10-25): a category made date or numeric keeps its short name, Also match words and conditions, as Agenda does, but its box no longer shows them (R6a). Decide what to do with them: show them somewhere (Statistics, the manager), clear them on conversion, or leave them; check first whether any still has an effect (a short name in a narrow column head, a condition)
-
-### The clone's safety
-
-**Done** (2026-10-26): the closed effect type, the recovery file on a crash (R82b) and the hostile-text tests (R82c), in `ROADMAP_DONE.md`; nothing open
-
 
 ### Sharpen the saw
 
