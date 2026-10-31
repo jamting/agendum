@@ -309,14 +309,18 @@ defmodule Agendum.ParsersPropertyTest do
 
     damage = list_of(tuple({float(min: 0.0, max: 1.0), member_of(@feed)}), max_length: 3)
 
+    # damage and the cut go by bytes, not characters: once a damaged piece
+    # has put invalid UTF-8 in, `String.length/1` can raise on what follows
+    # (a stray byte before an emoji), and a cut inside a character is one
+    # more hostile case for the parser
     map(tuple({tree, damage, float(min: 0.0, max: 1.2)}), fn {text, damage, cut} ->
       text =
         Enum.reduce(damage, text, fn {at, piece}, text ->
-          {before, rest} = String.split_at(text, round(at * String.length(text)))
-          before <> piece <> rest
+          at = round(at * byte_size(text))
+          binary_part(text, 0, at) <> piece <> binary_part(text, at, byte_size(text) - at)
         end)
 
-      if cut < 1.0, do: String.slice(text, 0, round(cut * String.length(text))), else: text
+      if cut < 1.0, do: binary_part(text, 0, round(cut * byte_size(text))), else: text
     end)
   end
 
