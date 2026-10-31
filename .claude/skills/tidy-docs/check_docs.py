@@ -105,6 +105,82 @@ def planned_claims():
                 print(f"{f}:{n}: {line.strip()[:160]}")
 
 
+def private_side():
+    """The owner's private repository, the Wolery, beside this public one
+    (only where `CLAUDE.local.md` or $AGENDUM_PRIVATE_DOCS says where it is;
+    a contributor's checkout skips this). Its rule: the public file is the
+    only full text, the Wolery keeps only the private passages."""
+    print("\n## The private side (the Wolery)")
+    docs = os.environ.get("AGENDUM_PRIVATE_DOCS")
+    if not docs and os.path.exists("CLAUDE.local.md"):
+        m = re.search(r"`(~/[^`]*wolery[^`]*)`", open("CLAUDE.local.md").read())
+        docs = m and os.path.join(m.group(1), "docs")
+    docs = docs and os.path.expanduser(docs)
+    if not docs or not os.path.isdir(docs):
+        print("(no private repository here: skipped)")
+        return
+    wolery = os.path.dirname(docs.rstrip("/"))
+    creek = "soaked in the creek"
+
+    # 1. a whole public document copied into the Wolery: two texts that drift.
+    # The old minutes and reviews are kept whole on purpose (the real names).
+    for f in sorted(glob.glob(os.path.join(docs, "**", "*.md"), recursive=True)):
+        rel = os.path.relpath(f, wolery)
+        if re.match(r"docs/(meetings|reviews|summaries|study|reference)/", rel):
+            continue
+        if os.path.exists(rel):
+            print(f"full copy: {rel} is in both repositories (keep only its passages, {rel[:-3]}.private.md)")
+
+    # 2. each passage file: its public twin, a creek line per passage, and
+    # the public line each passage follows still there
+    for f in sorted(glob.glob(os.path.join(docs, "**", "*.private.md"), recursive=True)):
+        rel = os.path.relpath(f, wolery)
+        twin = rel.replace(".private.md", ".md")
+        if not os.path.exists(twin):
+            print(f"{rel}: no public {twin}")
+            continue
+        text, public = open(f).read(), open(twin).read()
+        passages = len(re.findall(r"^## \d+\.", text, re.M))
+        creeks = public.count(creek)
+        if creeks < passages:
+            print(f"{rel}: {passages} passages, but {twin} has {creeks} creek lines")
+        lines = [l.strip() for l in public.split("\n")]
+        for anchor in re.findall(r"^After: «(.*?)…?»$", text, re.M):
+            if not any(l.startswith(anchor) for l in lines):
+                print(f"{rel}: the public line it follows has changed: «{anchor[:70]}»")
+
+    # 3. a meeting's private passages without its public minutes (a secret
+    # meeting keeps its agenda and minutes in the Wolery, so it is not one)
+    for f in sorted(glob.glob(os.path.join(docs, "meetings", "*", "private.md"))):
+        folder = os.path.relpath(os.path.dirname(f), wolery)
+        if not os.path.isdir(folder):
+            print(f"{folder}/private.md: no public {folder}/")
+
+    # 4. markers left in a public text: a private passage not moved out
+    for f in glob.glob("docs/**/*.md", recursive=True) + ["README.md", "CLAUDE.md"]:
+        for n, line in enumerate(open(f).read().split("\n"), 1):
+            if line.strip() == "<!-- private -->":
+                print(f"{f}:{n}: a private marker in a public text")
+
+    # 5. a real name behind a pseudonym in a public text (the names are read
+    # from the Wolery's list, never written here)
+    names = os.path.join(wolery, "tools", "public", "names.py")
+    if os.path.exists(names):
+        ns = {}
+        exec(open(names).read(), ns)
+        real = [r for r, _ in ns.get("FULL", [])]
+        files = (glob.glob("docs/**/*.md", recursive=True) + glob.glob(".claude/**/*.md", recursive=True)
+                 + ["README.md", "CLAUDE.md", "CONTRIBUTING.md"])
+        for f in files:
+            if f.startswith("docs/reference/"):
+                continue
+            text = open(f).read()
+            keep = ns.get("KEEP_REAL", {}).get(f, set())  # Agenda's designers, by name
+            for r in real:
+                if r in text and not any(k in r for k in keep):
+                    print(f"{f}: a real name ({len(r)} letters) behind a pseudonym")
+
+
 if __name__ == "__main__":
     mods, funs = modules_and_functions()
     broken_references(mods)
@@ -113,3 +189,4 @@ if __name__ == "__main__":
     struct_fields_missing()
     format_version()
     planned_claims()
+    private_side()
