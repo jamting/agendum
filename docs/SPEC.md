@@ -1797,7 +1797,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - Name and Company.
   - A word on sharing.
 
-  Drawn from a layout (`Agendum.TUI.Boxes.Template`). Name is `name` in the preferences, else the login name; Company is `company` (shown only when set). Any key, which does nothing else, or five seconds take it away.
+  Drawn from a layout (`Agendum.TUI.Boxes.Template`). Name is `name` in the preferences, else the login name; Company is `company` (shown only when set). Any key or five seconds take it away. The key then does what it does on the screen under it, as Agenda's (checked in Agenda 2.0, 2026-10-31: a letter typed during its splash landed in the File name): a letter starts an item in the view, or is typed into the file prompt. Our choice: when the While you were away box (R70) waits under the splash, the key only shows it, so its alarms are read rather than answered unseen.
 
   When no file was named (and not `--demo` or `--rabbit`), the prompt "File to open or create:" waits under it, offering the last file used (F3 lists files, R51):
 

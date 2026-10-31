@@ -45,18 +45,19 @@ defmodule Agendum.TUI.Update do
     state = %{state | message: message, effects: []}
     before = state
     key = normalize(state, key)
+    state = splash_closed(state, key)
 
     # `with` used as a chain of "not mine, pass it on": each step returns
     # `:pass` when the key is not for it, and `with` goes to the next. The
     # first step that returns anything else (a new state) stops the chain,
     # and with no `else`, that value is the result. The order is the
-    # priority: the splash screen, a macro key, the keys that work
+    # priority: a macro key, the keys that work
     # everywhere, an extra's key while the extras are off, the editing keys
     # of a line being typed, the keys every box shares, then the screen on
     # top.
     next =
       try do
-        with :pass <- splash_key(state, key),
+        with :pass <- away_uncovered(before, state),
              :pass <- Agendum.TUI.Macros.key(state, key),
              :pass <- global_key(state, key),
              :pass <- extras_key(state, key),
@@ -139,14 +140,28 @@ defmodule Agendum.TUI.Update do
   defp count_key?({:alt, d}), do: d in ~w(0 1 2 3 4 5 6 7 8 9)
   defp count_key?(_key), do: false
 
-  # the splash screen goes at any key, which does nothing else (R52)
+  # The splash screen goes at any key, and the key then does what it does
+  # on the screen under it, as Agenda's (R52; checked in Agenda 2.0,
+  # 2026-10-31: a letter typed during its splash landed in the File name).
   # The pattern reaches into the struct: it matches only when the first
   # mode on the stack is a map whose `:type` is `:splash`. A map pattern
   # matches when those keys are present, whatever other keys there are.
-  defp splash_key(%State{modes: [%{type: :splash} | _]} = state, key) when key != :macro_done,
-    do: Agendum.TUI.Splash.close(state)
+  defp splash_closed(%State{modes: [%{type: :splash} | _]} = state, key)
+       when key != :macro_done,
+       do: Agendum.TUI.Splash.close(state)
 
-  defp splash_key(_state, _key), do: :pass
+  defp splash_closed(state, _key), do: state
+
+  # Our choice: the While you were away box (R70) waits under the splash;
+  # the key that takes the splash away only shows it, so its alarms are
+  # seen rather than answered unread.
+  defp away_uncovered(
+         %State{modes: [%{type: :splash} | _]},
+         %State{modes: [%{type: :away} | _]} = state
+       ),
+       do: state
+
+  defp away_uncovered(_before, _state), do: :pass
 
   @doc """
   How the program starts (R52): the splash screen, and when no file was

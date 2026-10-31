@@ -16,8 +16,8 @@ smoke test never touches the original.
 Each key waits for its effect: the screen to change (up to --key-wait
 seconds; a key that changes nothing costs that wait), then to stay the same
 for --settle seconds, so keys sent back to back read the same every run. At
-the start it waits for the splash screen to go by itself, so the first key
-is not spent on it.
+the start it waits for the splash screen to go by itself, so every run
+starts from the same screen.
 
 Usage:
     tools/smoke/smoke.py [options] [KEY ...]
@@ -318,8 +318,9 @@ def settle(fd, screen, quiet, limit):
     return True
 
 
-# The splash screen (R52) takes the first key to go away, and goes by
-# itself after five seconds; keys sent while it shows would be lost.
+# The splash screen (R52) goes at the first key, which then acts as usual,
+# or by itself after five seconds; waiting for it keeps each run's first
+# screen the same.
 SPLASH = "W O L ' S   A G E N D U M"
 
 

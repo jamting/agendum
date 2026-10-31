@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.73.6 — 2026-10-31
+
+- **The key that takes the splash screen away is no longer lost**, as in Agenda: a letter typed during the splash starts your item (or goes into the file prompt). A While you were away box under the splash is only shown by it, so you see your alarms.
+
 ## 0.73.5 — 2026-10-31
 
 - **Chinese, Japanese, Korean and emoji** take their two columns on the screen: columns stay under their heads and a box's corners stay in place when a name or item holds them.

@@ -47,10 +47,18 @@ defmodule Agendum.TUI.StartupTest do
     refute screen(started(false, %Preferences{user: "rabbit"})) =~ "Company:"
   end
 
-  test "any key ends the splash and does nothing else" do
+  # Agenda passes the key on (checked in Agenda 2.0, 2026-10-31: an x
+  # typed during its splash landed in the File Retrieve box)
+  test "a key ends the splash and then does what it does under it" do
     state = press(started(false), "x")
-    assert state.modes == []
-    assert state.db.items == Core.new_file().items
+    refute Enum.any?(state.modes, &(&1.type == :splash))
+    assert screen(state) =~ "x"
+    assert state.edit != nil
+
+    # with the file prompt under it, the key goes to the prompt
+    state = press(started(true), "/tmp/garden.agendum")
+    assert %{type: :prompt, action: :startup_open} = State.mode(state)
+    assert screen(state) =~ "/tmp/garden.agendum"
   end
 
   test "five seconds end it" do
@@ -62,7 +70,7 @@ defmodule Agendum.TUI.StartupTest do
 
   test "without a file, the prompt waits under it, with the last file" do
     state = started(true, %Preferences{last_file: "/home/rabbit/garden.agendum"})
-    state = press(state, :enter)
+    {state, []} = Update.tick(state, NaiveDateTime.add(@now, 5))
     assert %{type: :prompt, action: :startup_open} = State.mode(state)
     assert screen(state) =~ ~r"File to open or create:.*\n /home/rabbit/garden.agendum"
 
