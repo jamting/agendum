@@ -64,7 +64,8 @@ defmodule Agendum.Core.Command do
   # The kinds are checked before a command runs: `:item`, `:category`,
   # `:view`, `:macro` and `:calendar` must be ids of that kind in the file,
   # `:items` and `:categories` lists of them, `:text` a string that is not
-  # blank, and `:value` anything (the facade function checks it).
+  # blank, `:item_text` any string (an item may have no text, as Agenda's,
+  # R21), and `:value` anything (the facade function checks it).
   #
   # How it runs: `:core` calls the `Agendum.Core` function of the same name
   # with the database and the arguments; `:clock` does the same with the
@@ -74,10 +75,10 @@ defmodule Agendum.Core.Command do
     # items (R21, R35, R14a)
     {:add_item, "Add item",
      "Adds an item, filed under a category and by what its text says, as if typed under that section (R21)",
-     [:text, :add_opts], :own},
+     [:item_text, :add_opts], :own},
     {:edit_item, "Edit item",
      "Changes an item's text; it is filed again by what the text now says (R10, R14)",
-     [:item, :text], :own},
+     [:item, :item_text], :own},
     {:set_note, "Set note", "Replaces an item's note (R14f reads dates from it)", [:item, :value],
      :clock},
     {:move_item, "Move item",
@@ -589,6 +590,8 @@ defmodule Agendum.Core.Command do
 
   defp valid(_db, :text, text),
     do: if(is_binary(text) and String.trim(text) != "", do: :ok, else: {:error, :empty_text})
+
+  defp valid(_db, :item_text, text) when is_binary(text), do: :ok
 
   defp valid(_db, :commands, commands) when is_list(commands), do: :ok
   defp valid(db, :view_section, view_section), do: view_section(db, view_section)

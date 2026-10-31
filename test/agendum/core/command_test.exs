@@ -129,9 +129,15 @@ defmodule Agendum.Core.CommandTest do
       assert changes.items.changed == [a]
     end
 
-    test "empty text is refused; ids that do not exist are refused", %{db: db, a: a, work: work} do
-      assert Core.run(db, {:add_item, "  ", []}, today()) == {:error, :empty_text}
-      assert Core.run(db, {:edit_item, a, ""}, today()) == {:error, :empty_text}
+    test "an item may have no text, as Agenda's (R21)", %{db: db, a: a} do
+      assert {:ok, added, %{new: id}} = Core.run(db, {:add_item, "  ", []}, today())
+      assert added.items[id].text == ""
+
+      assert {:ok, edited, _} = Core.run(db, {:edit_item, a, ""}, today())
+      assert edited.items[a].text == ""
+    end
+
+    test "ids that do not exist are refused", %{db: db, a: a, work: work} do
       assert Core.run(db, {:edit_item, 999, "x"}, today()) == {:error, :no_such_item}
       assert Core.run(db, {:add_item, "x", section: 999}, today()) == {:error, :no_such_category}
       assert Core.run(db, {:add_item, "x", after: 999}, today()) == {:error, :no_such_item}

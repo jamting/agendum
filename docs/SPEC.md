@@ -490,6 +490,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 
 - **R20 ✅ Sections.** A section lists every item that is a member of its head category (including via subcategories), in item order. Items that are members only through a subcategory are "inherited" and can be hidden.
 - **R21 ✅ Entering an item.** Typing under a section creates an item assigned to the section's category (unless it is MAIN), placed after the highlighted item. Automatic assignment (R10–R12) then runs, using the neighbouring items in the section for R12.
+
+  **An item may have no text**, as Agenda's (checked in Agenda): ENTER or TAB on a new item's line with nothing typed (after INS, or with the typing erased) makes a blank item in the section, and a text emptied with F2 or in Item Properties leaves the item blank, with its categories. ESC makes nothing, nor do ↑ and ↓ on an empty new line (Agenda's ↓ makes none). Sorting by item text puts a blank item with the n/a's (R36), as the User's Guide says (15-16).
+
 - **R24 ✅ DEL** on an item removes it from the section's category (and its subtree), after Agenda's question (checked in Agenda; our choice): "Remove this item from the section?  Yes", with "(Use ALT-F4 to discard the item completely.)" under it.
 
   ENTER removes, ESC keeps, and with Confirm off (R54) it removes at once. The item stays in the file.

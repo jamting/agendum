@@ -38,6 +38,11 @@ defmodule Agendum.TUI.Update.Editing do
       {:f, 3} when completing ->
         ViewKeys.view_key(%{state | edit: nil}, {:f, 3})
 
+      # ↑/↓ on an empty new line move on without making an item: Agenda's ↓
+      # makes none there (checked in Agenda, 2026-10-31), where TAB does
+      k when k in [:up, :down] and edit.line.text == "" and elem(edit.target, 0) == :new_item ->
+        ViewKeys.view_key(%{state | edit: nil}, k)
+
       # a refused text keeps the line open (below), and the highlight with it
       k when k in [:up, :down, :tab, :shift_tab] ->
         case commit(state) do
@@ -74,13 +79,9 @@ defmodule Agendum.TUI.Update.Editing do
     end
   end
 
-  # an item's text emptied is refused while the line is still open, so it
-  # can be typed again (Agenda takes an empty text; ours keeps one)
-  defp commit(%State{edit: %{target: target, line: line}} = state) do
-    if match?({:edit_item, _}, target) and String.trim(line.text) == "",
-      do: State.error(state, "Item text cannot be empty (use ALT-F4 to discard)"),
-      else: commit(%{state | edit: nil}, target, line.text)
-  end
+  # an item's text may be emptied: the item stays, blank, as Agenda's (R21)
+  defp commit(%State{edit: %{target: target, line: line}} = state),
+    do: commit(%{state | edit: nil}, target, line.text)
 
   # INS / F5 (NEWCAT): exactly the typed name, even if it begins an existing one.
   defp commit_new_category(
@@ -99,13 +100,12 @@ defmodule Agendum.TUI.Update.Editing do
     end
   end
 
+  # ENTER on an empty new line makes a blank item, as Agenda's (R21); ESC
+  # is the way out without one
   defp commit(state, {:new_item, sidx, key}, text) do
-    datebook = State.view(state).datebook
-
-    cond do
-      String.trim(text) == "" -> state
+    case State.view(state).datebook do
+      nil -> new_item(state, sidx, key, text)
       datebook -> new_datebook_item(state, datebook, sidx, text)
-      true -> new_item(state, sidx, key, text)
     end
   end
 

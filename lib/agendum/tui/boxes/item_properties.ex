@@ -293,11 +293,9 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
     end
   end
 
-  defp commit(state, _mode, %{target: {:item_text, item_id}, line: line}, _shown) do
-    if String.trim(line.text) == "",
-      do: State.error(state, "Item text cannot be empty"),
-      else: State.run(state, {:edit_item, item_id, line.text})
-  end
+  # an emptied text is taken, the item staying blank, as Agenda's (R21)
+  defp commit(state, _mode, %{target: {:item_text, item_id}, line: line}, _shown),
+    do: State.run(state, {:edit_item, item_id, line.text})
 
   defp commit(state, mode, %{target: {:assign_category, item_id}, line: line}, shown) do
     cond do

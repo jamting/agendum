@@ -144,6 +144,21 @@ defmodule Agendum.Core.SortFilterTest do
       assert texts(db, v) == ["draft memo", "call bob", "buy milk", "Ask Bea"]
     end
 
+    # User's Guide 15-16: a blank item has no value, so it goes where Sort
+    # n/a's says, whichever the order (R21)
+    test "by item text, a blank item with the n/a's", %{db: db, view: v} do
+      {db, _blank} = Core.add_item(db, "", today(), section: cat(db, "Tasks"))
+
+      db = Core.set_sort(db, v, :view, [%SortKey{on: :text}])
+      assert List.last(texts(db, v)) == ""
+
+      db = Core.set_sort(db, v, :view, [%SortKey{on: :text, order: :desc}])
+      assert List.last(texts(db, v)) == ""
+
+      db = Core.set_sort(db, v, :view, [%SortKey{on: :text, na: :top}])
+      assert hd(texts(db, v)) == ""
+    end
+
     test "by a category in hierarchy order, items without one at the bottom", %{db: db, view: v} do
       db = Core.set_sort(db, v, :view, [%SortKey{on: {:category, cat(db, "Priority")}}])
       assert texts(db, v) == ["Ask Bea", "draft memo", "call bob", "buy milk"]

@@ -128,29 +128,8 @@ defmodule Agendum.ReviewSliceETest do
     end
   end
 
-  describe "6. an item's text emptied" do
-    # Agenda takes an empty text (checked in Agenda, 2026-10-31); ours
-    # refuses it, and the refusal now shows over the line still open
-    test "ENTER says it cannot be empty, and the line stays open to retype" do
-      %{state: state, heat: heat} = columns()
-      done = press(state, [{:f, 2}, {:ctrl, "u"}, :enter])
-
-      assert done.edit != nil
-      assert panel(done) =~ "Item text cannot be empty"
-      assert done.db.items[heat].text == "heat"
-
-      typed = press(done, ["coal", :enter])
-      assert typed.db.items[heat].text == "coal"
-    end
-
-    test "↓ on an emptied text stays in the line too" do
-      %{state: state, heat: heat} = columns()
-      done = press(state, [{:f, 2}, {:ctrl, "u"}, :down])
-
-      assert done.edit != nil
-      assert done.db.items[heat].text == "heat"
-    end
-  end
+  # 6. an item's text emptied: Agenda takes it, and so does ours since
+  # 2026-10-31 (test/agendum/tui/empty_item_text_test.exs)
 
   # an item of the sample file, its note "Ask the Personnel Division" open
   defp note_open do
