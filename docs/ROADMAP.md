@@ -12,7 +12,7 @@ Small, testable increments: the open work, by area.
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-1524, § 14, tabled); hold it before the next feature, now that the program is public, and leave the roadmap shorter than it was (expert review 2026-10-30, § 18.3)
+1. A meeting for brainstorming and general plans (its agenda written 2026-10-31; held privately, the first of a series of strategy meetings): clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-1524, § 14, tabled); hold it before the next feature, now that the program is public, and leave the roadmap shorter than it was (expert review 2026-10-30, § 18.3)
 
 **The extras meet the guidelines** since v0.72.0 (2026-10-28): new extras and Wol may come again (meeting 2026-10-26-2234, § 7; ADR 0049). Why: the extras were built before the clone's bar was raised and missed its catch-up, in robustness at the shell's edge and in the boxes' conventions (§ 5).
 
@@ -35,7 +35,7 @@ Small, testable increments: the open work, by area.
 
 Tools and checks that make every later change faster and safer. Each is small; the command layer they made safer is done (R66, ADR 0036, in `ROADMAP_DONE.md`). From the expert review of 2026-10-16 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
-- [ ] Check the nightly fuzz in the public repository (expert review 2026-10-30, § 18.4): its first scheduled run came six hours late (08:23 UTC for the 02:17 slot, 2026-10-31) and passed in 2 min 13 s, on `main` before v0.72.7–v0.72.9 were pushed, so the walks inside the boxes have not yet run there. Left: see a night's run with them, and that a failure uploads its log
+- [ ] See a nightly fuzz failure upload its log (expert review 2026-10-30, § 18.4): the rest is checked (2026-10-31, `ROADMAP_DONE.md`); this can only be seen when a run fails
 - [ ] Kept fast, but not at any price (the owner, 2026-10-26, and 2026-10-31: longer tests are welcome when they pay): measure `mix test` before and after a new test that adds more than a few seconds (about 37–40 s on 2026-10-31, with 1,000 fuzz walks in 8 parts); the long runs go to `mix agendum.fuzz` and the nightly CI (10,000 walks, the parsers at 2,000 inputs)
 - [ ] Optional (the owner, 2026-10-30): one git-ignored link, `docs/private/`, to the owner's private documents (the Wolery's `docs/`), so they show beside the public ones in the editor (an Obsidian vault on `docs/`) and the tasks find them. Git never follows a link, so a mistaken `git add` cannot carry their text here.
 
