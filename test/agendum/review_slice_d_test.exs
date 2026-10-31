@@ -78,4 +78,37 @@ defmodule Agendum.ReviewSliceDTest do
     assert NumberFormat.format(12.5, %NumberFormat{symbol: "£"}, width: 6) == "£12.50"
     assert NumberFormat.format(12.5, %NumberFormat{symbol: "$"}, width: 6) == "$12.50"
   end
+
+  # left open on 2026-10-30, checked in Agenda on 2026-10-31
+  describe "the leftovers, checked in Agenda" do
+    alias Agendum.Core.{View, ViewColumns}
+
+    # Agenda links "the same column head, category type, format, and width"
+    # (Help, Column Properties): a Parent:Category column is not linked to
+    # a Name only one of the same head
+    test "Link with other sections needs the same format too" do
+      name = %View.Column{category_id: 7, width: 12, format: :name}
+      parent = %{name | format: :parent}
+      same = %View{sections: [%View.Section{columns: [name]}, %View.Section{columns: [parent]}]}
+
+      linked = ViewColumns.set_linked(same, {0, 0}, true)
+      assert [[%{link: link}], [%{link: nil}]] = Enum.map(linked.sections, & &1.columns)
+      assert link != nil
+
+      alike = %{same | sections: [hd(same.sections), %View.Section{columns: [name]}]}
+      both = ViewColumns.set_linked(alike, {0, 0}, true)
+      assert [[%{link: l}], [%{link: l}]] = Enum.map(both.sections, & &1.columns)
+    end
+
+    # with Quarter start November and today 2026-10-31, the fourth
+    # quarter (August to October 2026) is under way; Agenda's "fourth
+    # quarter" is still 08/01/27, the next one to start, as ours
+    test "nth quarter with a fiscal year is the next one to start, as Agenda's" do
+      settings = %Agendum.Core.DateSettings{quarter_start: 11}
+      now = ~N[2026-10-31 12:00:00]
+      opts = Agendum.Core.Context.parser_opts(now, settings)
+
+      assert {:ok, ~D[2027-08-01], _, _} = DateParser.parse_recurring("fourth quarter", now, opts)
+    end
+  end
 end

@@ -373,6 +373,10 @@ defmodule Agendum.Core.ViewColumns do
       Enum.find_index(slots, &match?(%Column{category_id: ^head}, &1))
   end
 
-  defp same_settings?(a, b),
-    do: {a.category_id, a.width, a.number, a.date} == {b.category_id, b.width, b.number, b.date}
+  # Agenda's "the same column head, category type, format, and width"
+  # (Help, Column Properties): a standard column's format with its
+  # Category note settings, a numeric or date column's formats
+  defp same_settings?(a, b), do: settings(a) == settings(b)
+
+  defp settings(c), do: {c.category_id, c.width, c.number, c.date, c.format, c.note_line, c.title}
 end
