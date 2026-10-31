@@ -159,7 +159,7 @@ defmodule Agendum.TUI.LookTest do
   use ExUnit.Case, async: true
 
   import Agendum.TUIHelpers
-  alias Agendum.TUI.Render
+  alias Agendum.TUI.{Render, Terminal.Theme}
 
   setup do
     %{state: start(Agendum.Sample.build(~D[2026-10-08]), width: 80, height: 25)}
@@ -226,6 +226,15 @@ defmodule Agendum.TUI.LookTest do
     help = press(state, {:f, 1})
     heading = help |> Render.render() |> Enum.at(row_of(help, " Views"))
     assert Enum.find(heading, &(elem(&1, 1) =~ " Views")) |> elem(0) == :help_title
+  end
+
+  test "a category's whole row is on the manager's colour, in white text", %{state: state} do
+    # the indent and the marks before a name too (checked in Agenda 2.0,
+    # 2026-10-31: one cyan background, every name white)
+    catmgr = press(state, {:f, 9})
+    line = catmgr |> Render.render() |> Enum.at(row_of(catmgr, "Meetings"))
+    assert line |> Enum.map(&elem(&1, 0)) |> Enum.uniq() == [:catmgr]
+    assert Theme.styles(:classic).catmgr == {:white, :cyan}
   end
 
   test "the key bar says more when the screen is wide enough", %{state: state} do

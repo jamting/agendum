@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.73.2 — 2026-10-31
+
+- **The category manager looks as Agenda's** in the classic theme: one cyan background across each row, the space and marks before a name too, and every name in white.
+
 ## 0.73.1 — 2026-10-31
 
 - **Fixes from a review of the drawing, the category screens, the help, the starters and the Mix tasks:**

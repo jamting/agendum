@@ -116,12 +116,19 @@ defmodule Agendum.TUI.Render do
     end)
   end
 
-  # The colours of a full screen: the category manager is cyan, help
+  # The colours of a full screen: the category manager is white on cyan,
+  # its indent and marks too (checked in Agenda 2.0, 2026-10-31), help
   # yellow on blue (Agenda 2.0); the rest is the view's grey.
   defp surface(%{type: :catmgr}),
     do:
-      {%{normal: :catmgr, item: :catmgr, dim: :catmgr_note, section: :catmgr_head, edit: :row},
-       :catmgr}
+      {%{
+         normal: :catmgr,
+         item: :catmgr,
+         symbol: :catmgr,
+         dim: :catmgr_note,
+         section: :catmgr_head,
+         edit: :row
+       }, :catmgr}
 
   defp surface(%{type: :help}), do: {%{normal: :help, dim: :help_dim}, :help}
   defp surface(_base), do: {%{}, :normal}

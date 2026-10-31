@@ -7,7 +7,7 @@ defmodule Agendum.TUI.Terminal.Theme do
     * `:classic` imitates Agenda 2.0 on a colour VGA screen (the default):
       black text on a grey screen, blue section heads and column entries,
       white-on-red highlights, cyan boxes in a solid blue frame with a
-      shadow, a cyan category manager and yellow-on-blue help
+      shadow, a white-on-cyan category manager and yellow-on-blue help
     * `:mono` uses only bold, dim, underline and reverse video, for
       monochrome terminals, screen readers and NO_COLOR: the control panel
       in reverse video like the title bar, the highlighted line in bold
@@ -119,7 +119,7 @@ defmodule Agendum.TUI.Terminal.Theme do
       backdrop: {:dark_grey, :grey},
       dim: {:dark_grey, :grey},
       calc: {:blue, :grey},
-      catmgr: {:black, :cyan},
+      catmgr: {:white, :cyan},
       catmgr_head: {:blue, :cyan},
       catmgr_note: {:blue, :cyan},
       help: {:yellow, :blue},
