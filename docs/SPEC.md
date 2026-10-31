@@ -1290,7 +1290,7 @@ File Properties has File statistics ..., Agenda's File Statistics box (screensho
 
   **A file with invalid UTF-8** (written by another tool, edited by hand, damaged) opens: on load each byte that does not begin a UTF-8 character becomes the Latin-1 character of its number, as a feed's text does ("Caf" and byte E9 read "Café"). The screen still draws a string that slipped through, with "�" for the bad bytes. Our choice; a file that held such a byte crashed the screen on opening.
 
-  **Characters two columns wide** (CJK, emoji) are counted as one, so a line holding them is wider than it is measured; the terminal's autowrap is turned off while Agendum runs, so such a line is cut at the right edge rather than spilling onto the next row (display widths: ROADMAP).
+  **Characters two columns wide** (CJK, kana, Hangul, fullwidth forms, most emoji: Unicode's East Asian Width) take two columns in every line, field and box title, so columns and box corners stay in place; a wide character that an edge would cut in half is left out, its column blank. Our choice: Agenda knew only the PC's one-column characters. The terminal's autowrap is turned off while Agendum runs, so a line a terminal measures differently (a few emoji) is cut at the right edge rather than spilling onto the next row. Typed text still places the cursor by characters, not columns.
 
 ### Keys in views and the category manager
 

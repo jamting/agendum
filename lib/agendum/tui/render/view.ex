@@ -7,7 +7,7 @@ defmodule Agendum.TUI.Render.View do
 
   alias Agendum.Core.{DateFormat, ViewModel}
   alias Agendum.Core.View.Column
-  alias Agendum.TUI.{Typing.Completion, Typing.Wrap, Terminal.Draw, Layout, State}
+  alias Agendum.TUI.{Typing.Completion, Typing.Wrap, Terminal.Draw, Terminal.Width, Layout, State}
   alias Agendum.TUI.Render.Text
 
   @doc "The view's lines, scrolled: at most a screenful (the body's height)."
@@ -134,7 +134,7 @@ defmodule Agendum.TUI.Render.View do
 
   # A datebook slot's head: its name in a line across, as Agenda drew it
   defp slot_rule(label, style, width) do
-    rest = max(width - 3 - String.length(label) - 2, 0)
+    rest = max(width - 3 - Width.of(label) - 2, 0)
 
     Draw.line(
       [{:section, " ──"}, {style, " " <> label <> " "}, {:section, String.duplicate("─", rest)}],
@@ -287,7 +287,7 @@ defmodule Agendum.TUI.Render.View do
         _ ->
           wrapped = Draw.wrap(item.text, tw)
           # the highlight is as wide as the text's longest line, as Agenda's
-          lit = wrapped |> Enum.map(&String.length/1) |> Enum.max(fn -> 0 end) |> max(1)
+          lit = wrapped |> Enum.map(&Width.of/1) |> Enum.max(fn -> 0 end) |> max(1)
 
           Enum.map(wrapped, fn line ->
             if selected and state.col == 0,
@@ -348,11 +348,11 @@ defmodule Agendum.TUI.Render.View do
     parts =
       Enum.flat_map(line, fn {style, text} ->
         core = String.trim(text)
-        before = String.length(text) - String.length(String.trim_leading(text))
-        after_core = String.length(text) - String.length(core) - before
+        before = Width.of(text) - Width.of(String.trim_leading(text))
+        after_core = Width.of(text) - Width.of(core) - before
 
         if core == "",
-          do: [rule(String.length(text))],
+          do: [rule(Width.of(text))],
           else: [rule(before), {style, core}, rule(after_core)]
       end)
 

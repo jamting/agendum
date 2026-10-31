@@ -7,7 +7,12 @@ defmodule Agendum.TUI.Terminal.Draw do
   segments. `line/2` pads or truncates a line to an exact width so that
   every frame is a full rectangle. Styles are symbolic and mapped to colors
   by `Agendum.TUI.Terminal.Theme`.
+
+  Widths are terminal columns (`Agendum.TUI.Terminal.Width`): a CJK
+  character or an emoji takes two.
   """
+
+  alias Agendum.TUI.Terminal.Width
 
   @type segment :: {atom, String.t()}
   @type line :: [segment]
@@ -22,8 +27,15 @@ defmodule Agendum.TUI.Terminal.Draw do
         if room <= 0 do
           {acc, used}
         else
-          text = String.slice(text, 0, room)
-          {[{style, text} | acc], used + String.length(text)}
+          case Width.take(text, room) do
+            {^text, taken} ->
+              {[{style, text} | acc], used + taken}
+
+            # cut, perhaps a column short of a wide character: the line
+            # ends here, its last column blank, so nothing slides into it
+            {cut, taken} ->
+              {[{style, cut <> spaces(room - taken)} | acc], width}
+          end
         end
       end)
 
@@ -31,25 +43,25 @@ defmodule Agendum.TUI.Terminal.Draw do
     if used < width, do: segments ++ [{fill_style, spaces(width - used)}], else: segments
   end
 
-  @doc "Left-aligns text in a field of `width` characters, truncating if needed."
+  @doc "Left-aligns text in a field of `width` columns, truncating if needed."
   @spec pad(String.t(), non_neg_integer) :: String.t()
   def pad(text, width) do
-    text = String.slice(text, 0, width)
-    text <> spaces(width - String.length(text))
+    {text, taken} = Width.take(text, width)
+    text <> spaces(width - taken)
   end
 
   @doc "Right-aligns text in a field."
   @spec rpad(String.t(), non_neg_integer) :: String.t()
   def rpad(text, width) do
-    text = String.slice(text, 0, width)
-    spaces(width - String.length(text)) <> text
+    {text, taken} = Width.take(text, width)
+    spaces(width - taken) <> text
   end
 
   @doc "Centers text in a field."
   @spec center(String.t(), non_neg_integer) :: String.t()
   def center(text, width) do
-    text = String.slice(text, 0, width)
-    left = div(width - String.length(text), 2)
+    {text, taken} = Width.take(text, width)
+    left = div(width - taken, 2)
     pad(spaces(left) <> text, width)
   end
 
@@ -58,13 +70,13 @@ defmodule Agendum.TUI.Terminal.Draw do
   def count(n, singular, plural \\ nil),
     do: "#{n} " <> if(n == 1, do: singular, else: plural || singular <> "s")
 
-  @doc "Text cut to `width` characters, ending in … when it was longer."
+  @doc "Text cut to `width` columns, ending in … when it was longer."
   @spec truncate(String.t(), non_neg_integer) :: String.t()
   def truncate(text, width) do
     cond do
-      String.length(text) <= width -> text
-      width <= 1 -> String.slice(text, 0, width)
-      true -> String.slice(text, 0, width - 1) <> "…"
+      Width.of(text) <= width -> text
+      width <= 1 -> text |> Width.take(width) |> elem(0)
+      true -> (text |> Width.take(width - 1) |> elem(0)) <> "…"
     end
   end
 
@@ -72,7 +84,7 @@ defmodule Agendum.TUI.Terminal.Draw do
   def spaces(n) when n > 0, do: String.duplicate(" ", n)
   def spaces(_), do: ""
 
-  @doc "Word-wraps text into lines of at most `width` characters (always at least one line)."
+  @doc "Word-wraps text into lines of at most `width` columns (always at least one line)."
   @spec wrap(String.t(), pos_integer) :: [String.t()]
   def wrap(text, width) when width > 0 do
     text
@@ -81,7 +93,7 @@ defmodule Agendum.TUI.Terminal.Draw do
     # the accumulator carries the current line's length, so each word is
     # measured once rather than the growing line at every word
     |> Enum.reduce({[], 0}, fn word, {lines, used} ->
-      size = String.length(word)
+      size = Width.of(word)
 
       case lines do
         [] ->
@@ -103,9 +115,24 @@ defmodule Agendum.TUI.Terminal.Draw do
   end
 
   defp chunk_word(word, width) do
-    if String.length(word) <= width,
-      do: [word],
-      else: word |> String.graphemes() |> Enum.chunk_every(width) |> Enum.map(&Enum.join/1)
+    if Width.of(word) <= width, do: [word], else: chunks(word, width)
+  end
+
+  # a word too long for a line, cut into pieces that fit (a wide character
+  # never cut in half: a piece is a column short instead)
+  defp chunks("", _width), do: []
+
+  defp chunks(word, width) do
+    case Width.take(word, width) do
+      # not even one character fits (a wide one in a 1-column line): it
+      # goes alone, rather than looping forever
+      {"", _} ->
+        {first, rest} = String.split_at(word, 1)
+        [first | chunks(rest, width)]
+
+      {piece, _} ->
+        [piece | chunks(String.replace_prefix(word, piece, ""), width)]
+    end
   end
 
   @doc "Draws a text field with a visible cursor at grapheme position `pos`."
@@ -171,34 +198,45 @@ defmodule Agendum.TUI.Terminal.Draw do
   end
 
   @spec width(line) :: non_neg_integer
-  def width(line), do: line |> Enum.map(fn {_, t} -> String.length(t) end) |> Enum.sum()
+  def width(line), do: line |> Enum.map(fn {_, t} -> Width.of(t) end) |> Enum.sum()
 
-  @doc "The first `n` characters of a styled line."
+  @doc """
+  The first `n` columns of a styled line (a wide character cut in half by
+  the edge left as a space, so a box drawn over it starts where it should).
+  """
   @spec take(line, non_neg_integer) :: line
   def take(line, n) do
     {acc, _} =
       Enum.reduce(line, {[], n}, fn {s, t}, {acc, left} ->
+        len = Width.of(t)
+
         cond do
-          left <= 0 -> {acc, 0}
-          String.length(t) <= left -> {[{s, t} | acc], left - String.length(t)}
-          true -> {[{s, String.slice(t, 0, left)} | acc], 0}
+          left <= 0 ->
+            {acc, 0}
+
+          len <= left ->
+            {[{s, t} | acc], left - len}
+
+          true ->
+            {taken, used} = Width.take(t, left)
+            {[{s, taken <> spaces(left - used)} | acc], 0}
         end
       end)
 
     Enum.reverse(acc)
   end
 
-  @doc "A styled line without its first `n` characters."
+  @doc "A styled line without its first `n` columns."
   @spec drop(line, non_neg_integer) :: line
   def drop(line, n) do
     {acc, _} =
       Enum.reduce(line, {[], n}, fn {s, t}, {acc, skip} ->
-        len = String.length(t)
+        len = Width.of(t)
 
         cond do
           skip <= 0 -> {[{s, t} | acc], 0}
           len <= skip -> {acc, skip - len}
-          true -> {[{s, String.slice(t, skip..-1//1)} | acc], 0}
+          true -> {[{s, Width.drop(t, skip)} | acc], 0}
         end
       end)
 
@@ -216,9 +254,9 @@ defmodule Agendum.TUI.Terminal.Draw do
   @spec box(String.t(), [line], pos_integer, String.t()) :: [line]
   def box(title, content, inner_width, footer \\ "") do
     # an untitled box (the splash screen) has an unbroken top
-    title = if title == "", do: "", else: String.slice(" #{title} ", 0, inner_width)
-    left = div(inner_width - String.length(title), 2)
-    right = inner_width - left - String.length(title)
+    {title, taken} = if title == "", do: {"", 0}, else: Width.take(" #{title} ", inner_width)
+    left = div(inner_width - taken, 2)
+    right = inner_width - left - taken
 
     top = [
       {:box_frame, "┌" <> String.duplicate("─", left)},
@@ -240,11 +278,13 @@ defmodule Agendum.TUI.Terminal.Draw do
   defp edge(left, text, inner_width, right) do
     text = if text == "", do: "", else: " #{text} "
 
-    if text == "" or String.length(text) > inner_width - 2 do
+    size = Width.of(text)
+
+    if text == "" or size > inner_width - 2 do
       [{:box_frame, left <> String.duplicate("─", inner_width) <> right}]
     else
-      before = div(inner_width - String.length(text), 2)
-      after_ = inner_width - before - String.length(text)
+      before = div(inner_width - size, 2)
+      after_ = inner_width - before - size
 
       [
         {:box_frame, left <> String.duplicate("─", before)},
@@ -271,7 +311,7 @@ defmodule Agendum.TUI.Terminal.Draw do
       |> take(from + len)
       |> drop(from)
       |> Enum.map(fn
-        {:box_frame, text} -> {:shadow, spaces(String.length(text))}
+        {:box_frame, text} -> {:shadow, spaces(Width.of(text))}
         {_, text} -> {:shadow, text}
       end)
 

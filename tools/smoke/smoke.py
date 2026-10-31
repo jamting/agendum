@@ -60,6 +60,7 @@ import sys
 import tempfile
 import termios
 import time
+import unicodedata
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -127,6 +128,7 @@ class Screen:
         self.reverse = False
         self.bells = 0
         self.pending = ""
+        self.after_zwj = False
         # a read can end inside a character (│ is three bytes): the
         # incremental decoder keeps those bytes for the next read, where
         # decoding each read alone would drop the character
@@ -160,10 +162,19 @@ class Screen:
             elif ch == "\a":
                 self.bells += 1
             elif ch >= " ":
-                if self.r < self.rows and self.c < self.cols:
-                    self.cells[self.r][self.c] = ch
-                    self.bg[self.r][self.c] = ("rev", self.cur_bg) if self.reverse else self.cur_bg
-                self.c += 1
+                # a wide character (CJK, emoji) fills two cells, as a
+                # terminal draws it; the second is left empty in the text
+                # a skin tone, ZWJ or emoji selector joins the emoji
+                # before it (one grapheme to Agendum), and so does the
+                # character after a ZWJ: no cell of their own
+                joined = self.after_zwj or ch in "\u200d\ufe0f" or "\U0001F3FB" <= ch <= "\U0001F3FF"
+                self.after_zwj = ch == "\u200d"
+                wide = unicodedata.east_asian_width(ch) in ("W", "F")
+                for k in range(0 if joined else 2 if wide else 1):
+                    if self.r < self.rows and self.c < self.cols:
+                        self.cells[self.r][self.c] = ch if k == 0 else ""
+                        self.bg[self.r][self.c] = ("rev", self.cur_bg) if self.reverse else self.cur_bg
+                    self.c += 1
             i += 1
 
     def csi(self, params, final):

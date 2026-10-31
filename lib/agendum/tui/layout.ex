@@ -13,7 +13,7 @@ defmodule Agendum.TUI.Layout do
 
   alias Agendum.Core.View.ItemColumn
   alias Agendum.Core.ViewModel
-  alias Agendum.TUI.{Terminal.Draw, State, Typing.Wrap}
+  alias Agendum.TUI.{Terminal.Draw, Terminal.Width, State, Typing.Wrap}
 
   @type row :: %{
           required(:kind) => :section | :item,
@@ -186,9 +186,10 @@ defmodule Agendum.TUI.Layout do
   # The lines `Draw.wrap/2` makes of a text, without wrapping one that fits:
   # wrapping only joins words with single spaces, so a text no longer than
   # the width stays one line. `byte_size/1` is instant and never less than
-  # the length in characters, so most texts need no counting at all.
+  # the columns a text takes (a wide character is 3 or 4 bytes for its 2
+  # columns), so most texts need no counting at all.
   defp line_count(text, width) do
-    if byte_size(text) <= width or String.length(text) <= width,
+    if byte_size(text) <= width or Width.of(text) <= width,
       do: 1,
       else: length(Draw.wrap(text, width))
   end

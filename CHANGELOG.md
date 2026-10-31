@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.73.5 — 2026-10-31
+
+- **Chinese, Japanese, Korean and emoji** take their two columns on the screen: columns stay under their heads and a box's corners stay in place when a name or item holds them.
+
 ## 0.73.4 — 2026-10-31
 
 - **Faster views** on big files: a view that searches text, or sorts its items, does that work once per view instead of again for every item or comparison.
