@@ -96,6 +96,24 @@ defmodule Agendum.Core.Extras.Markdown do
   defp unquote_line(line),
     do: line |> String.trim() |> String.replace_prefix(">", "") |> String.trim()
 
+  # How many > a line starts with, spaces between them allowed. Each step
+  # looks at what is left of the same binary (a sub-binary), so a long run
+  # is read once, not copied at every level.
+  defp levels(line, n \\ 0) do
+    case String.trim_leading(line) do
+      ">" <> rest -> levels(rest, n + 1)
+      _rest -> {n, line}
+    end
+  end
+
+  # The line without its first `n` levels, as `unquote_line/1` n times
+  defp strip_levels(line, 0), do: line
+
+  defp strip_levels(line, n) do
+    ">" <> rest = String.trim_leading(line)
+    strip_levels(String.trim(rest), n - 1)
+  end
+
   # A paragraph goes on until a blank line or the start of another block.
   defp paragraph_line?(line) do
     trimmed = String.trim(line)
@@ -148,8 +166,17 @@ defmodule Agendum.Core.Extras.Markdown do
 
   defp block_html({:rule, []}, _used, _link), do: "<hr>"
 
-  defp block_html({:quote, lines}, used, link),
-    do: "<blockquote>" <> to_html(Enum.join(lines, "\n"), used, link) <> "</blockquote>"
+  # A quote inside a quote is read again as Markdown; the levels every line
+  # shares (">>> deep") are taken at once, so thousands of them cost one
+  # reading, not one for each level (found by the property tests).
+  defp block_html({:quote, lines}, used, link) do
+    shared = lines |> Enum.map(&(&1 |> levels() |> elem(0))) |> Enum.min()
+    inner = Enum.map_join(lines, "\n", &strip_levels(&1, shared))
+    depth = shared + 1
+
+    String.duplicate("<blockquote>", depth) <>
+      to_html(inner, used, link) <> String.duplicate("</blockquote>", depth)
+  end
 
   defp block_html({{:list, :numbers}, items}, used, link),
     do: "<ol>" <> Enum.map_join(items, &item_html(&1, used, link)) <> "</ol>"

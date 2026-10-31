@@ -82,6 +82,22 @@ defmodule Agendum.ParserFindingsTest do
     end
   end
 
+  # 5. Thousands of nested quotes (">>>…") were read again for each level:
+  # 20,000 levels took about 1 s (2026-10-27); the levels every line shares
+  # are now taken at once
+  test "deeply nested quotes become HTML at once, nested as before" do
+    deep = String.duplicate(">", 20_000) <> " deep"
+    {us, html} = :timer.tc(fn -> Markdown.to_html(deep) end)
+    assert us < 200_000
+    assert html =~ String.duplicate("<blockquote>", 20_000) <> "<p>deep</p>"
+
+    assert Markdown.to_html("> a\n>> b\n> > c\n>\n> d") ==
+             "<blockquote><p>a</p>\n<blockquote><p>b c</p></blockquote>\n<p>d</p></blockquote>"
+
+    assert Markdown.to_html(">> x\n>> y") ==
+             "<blockquote><blockquote><p>x y</p></blockquote></blockquote>"
+  end
+
   test "a link's text, a code span or an emphasis of up to 500 characters is still markup" do
     long = String.duplicate("x", 500)
     assert Markdown.to_html("[#{long}](https://x.example/)") =~ ~s(<a href="https://x.example/">)
