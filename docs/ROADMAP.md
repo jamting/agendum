@@ -32,7 +32,6 @@ Small, testable increments: the open work, by area.
 - [ ] Typed text with wide characters (CJK, emoji), left from v0.73.5: the typing cursor and the visible part of a long line are placed by characters (`Draw.input`, `Typing.LineEdit`, `TextEdit`), so on a line holding wide characters the cursor shows left of where it is
 - [ ] Optional (the owner, 2026-10-27): try v0.69.3's main fix by hand: open a second file while a feed is being read, and see its entries land only in the file that asked (the richer fuzz walks already check it)
 - [ ] Found by the parser property tests (2026-10-27, v0.69.2), not urgent: Markdown with thousands of nested `>` quotes is still quadratic (20,000 levels about 1 s); a calendar's sync costs about 1 ms an event (a 2,000-event calendar about 2 s, linear) — check whether it runs in the TUI's process and would freeze the screen
-- [ ] Hidden values of a date or numeric category (owner, 2026-10-25): a category made date or numeric keeps its short name, Also match words and conditions, as Agenda does, but its box no longer shows them (R6a). Decide what to do with them: show them somewhere (Statistics, the manager), clear them on conversion, or leave them; check first whether any still has an effect (a short name in a narrow column head, a condition)
 
 ### Sharpen the saw
 
