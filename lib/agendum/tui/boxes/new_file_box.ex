@@ -54,6 +54,11 @@ defmodule Agendum.TUI.Boxes.NewFileBox do
   def handle(state, mode, {:char, c}), do: FieldTyping.start(state, mode, field(state, mode), c)
   def handle(state, _mode, _key), do: state
 
+  # a password is kept as typed, spaces too, as the other password boxes
+  # keep it: opening the file then takes the same text
+  defp typed(state, :password, text),
+    do: State.put_mode(state, Map.put(State.mode(state), :password, text))
+
   defp typed(state, field, text),
     do: State.put_mode(state, Map.put(State.mode(state), field, String.trim(text)))
 

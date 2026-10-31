@@ -1095,7 +1095,7 @@ In a box the arrows move between settings as in Agenda (User's Guide 2-16, `Agen
 
 A setting is changed with SPACE (the next choice), edited with F2, picked from with F3; a number (a width, decimal places, a line number) is typed, and so are Morning, Afternoon and Evening (SPACE asks).
 
-On a setting with a list of choices, as in Agenda, a letter picks the next choice starting with it ("r": Relative; one undo step), and F3 (CHOICES) lists them in a box, the current one first, titled "Choices" with nothing in its bottom edge, as Agenda's (checked in Agenda). The choices are what SPACE goes through (`Agendum.TUI.Boxes.BoxChoices`); on a setting that is typed, letters are typed as before.
+On a setting with a list of choices, as in Agenda, a letter picks the next choice starting with it ("r": Relative; one undo step), the current one's own letter keeping it without a message (N on No; checked in Agenda), and F3 (CHOICES) lists them in a box, the current one first, titled "Choices" with nothing in its bottom edge, as Agenda's (checked in Agenda). The choices are what SPACE goes through (`Agendum.TUI.Boxes.BoxChoices`); on a setting that is typed, letters are typed as before.
 
 ### Category and File Statistics
 

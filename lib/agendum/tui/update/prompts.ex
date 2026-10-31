@@ -40,9 +40,13 @@ defmodule Agendum.TUI.Update.Prompts do
       %{type: :password_box} ->
         true
 
-      # the New File box's password, while it is typed (ADR 0046)
+      # the New File box's password, while it is typed (ADR 0046), and
+      # the key that starts typing it, on its row
       %{type: :new_file, typing: {:password, _}} ->
         true
+
+      %{type: :new_file, typing: nil} = mode ->
+        Agendum.TUI.Boxes.NewFileBox.field(state, mode) == :password
 
       # an action is an atom or a tuple; a password prompt's is a tuple
       %{type: :prompt, action: action} when is_tuple(action) ->

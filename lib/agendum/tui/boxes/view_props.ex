@@ -262,10 +262,14 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   defp current(state, mode) do
     case mode.cursor do
       # a datebook has no sections: its Filter, the setting nearest them
+      # so has a view whose sections were all removed (Section Select's
+      # F4 Clear all, until ENTER refuses it)
       {:section, n} ->
-        if datebook(state, mode),
+        count = length(sections(state, mode))
+
+        if datebook(state, mode) || count == 0,
           do: :filter,
-          else: {:section, min(n, length(sections(state, mode)) - 1)}
+          else: {:section, min(n, count - 1)}
 
       :order ->
         if sorted?(state, mode), do: :order, else: :section_sort
@@ -320,9 +324,20 @@ defmodule Agendum.TUI.Boxes.ViewProps do
   end
 
   # the setting of `fields` on the screen row nearest `row` (on a tie the
-  # upper one, which comes first)
-  defp nearest(state, mode, fields, row),
-    do: Enum.min_by(fields, &abs(row(state, mode, &1) - row))
+  # upper one, which comes first), among those shown: a section scrolled
+  # out of the list is not on the screen
+  defp nearest(state, mode, fields, row) do
+    fields
+    |> Enum.filter(&shown?(state, mode, &1))
+    |> Enum.min_by(&abs(row(state, mode, &1) - row))
+  end
+
+  defp shown?(state, mode, {:section, _} = field) do
+    slot = row(state, mode, field) - @first_slot
+    slot >= 0 and slot < length(@slots)
+  end
+
+  defp shown?(_state, _mode, _field), do: true
 
   # the layout row a setting is on; a section's is its row in the list as
   # it is scrolled now

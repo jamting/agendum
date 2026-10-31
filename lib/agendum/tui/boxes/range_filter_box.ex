@@ -100,12 +100,16 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
   def handle(state, mode, key) when key in [:up, :down, :tab, :shift_tab, :enter, :esc],
     do: run(state, mode, Map.fetch!(keymap(mode), key))
 
+  # only the date and number rows are typed in; on a choice row (Show
+  # items, Items should be) another key does nothing
   def handle(state, mode, key) do
     row = Enum.at(@rows, mode.cursor)
 
-    case LineEdit.handle(Map.fetch!(mode, row), key) do
-      {:ok, line} -> State.put_mode(state, Map.put(mode, row, line))
-      :unhandled -> state
+    with true <- row in [:from, :to],
+         {:ok, line} <- LineEdit.handle(Map.fetch!(mode, row), key) do
+      State.put_mode(state, Map.put(mode, row, line))
+    else
+      _ -> state
     end
   end
 

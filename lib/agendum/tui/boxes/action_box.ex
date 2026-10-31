@@ -32,7 +32,7 @@ defmodule Agendum.TUI.Boxes.ActionBox do
     what: "Choose whether the action gives items a date or a number, or removes it. SPACE.",
     value:
       "Type the date (\"tomorrow\", read when the action runs) or the number. " <>
-        "ENTER applies, DEL removes the action."
+        "ENTER applies; DEL, on the row above, removes the action."
   }
 
   def open(state, owner, target) do

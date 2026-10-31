@@ -251,6 +251,7 @@ defmodule Agendum.Core do
   defdelegate move_section(db, view_id, from, to), to: Views
   defdelegate remove_section(db, view_id, index), to: Views
   defdelegate view_statistics(db, view_id, clock), to: Views
+  defdelegate section_item_count(db, view_id, sidx, clock), to: Views
   defdelegate set_section_collapsed(db, view_id, index, collapsed), to: Views
   defdelegate set_all_sections_collapsed(db, view_id, collapsed), to: Views
   defdelegate toggle_section_collapsed(db, view_id, index), to: Views

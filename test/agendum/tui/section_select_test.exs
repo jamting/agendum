@@ -76,7 +76,11 @@ defmodule Agendum.TUI.SectionSelectTest do
     assert %{type: :view_props} = State.mode(back)
     refused = press(back, :enter)
     assert screen(refused) =~ "Every view must have at least one section."
-    assert %{type: :view_props} = refused |> press(" ") |> State.mode()
+    assert %{type: :view_props} = State.mode(refused)
+    # with no sections left, the highlight is on Filter, the setting
+    # nearest the empty list (the review of group g, 2026-10-31: the keys
+    # on a section that was gone crashed)
+    assert %{type: :picker, purpose: {:filter, :view}} = refused |> press(" ") |> State.mode()
   end
 
   test "ESC keeps what was chosen, as every category list", %{list: list, view: v} do

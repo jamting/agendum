@@ -59,8 +59,13 @@ defmodule Agendum.TUI.Boxes.ItemColumnBox do
     if item_column(state, mode).set == :auto, do: fields, else: List.delete(fields, :minimum)
   end
 
+  # kept to the fields shown: Link with other sections can take on another
+  # section's Manually, and Minimum width goes from under the cursor
   @impl Box
-  def field(state, mode), do: Enum.at(fields(state, mode), mode.cursor)
+  def field(state, mode) do
+    fields = fields(state, mode)
+    Enum.at(fields, min(mode.cursor, length(fields) - 1))
+  end
 
   @impl Box
   def handle(state, mode, key) do

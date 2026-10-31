@@ -61,15 +61,19 @@ defmodule Agendum.TUI.Boxes.BoxChoices do
   # a letter, in any alphabet (a digit is typed into a number instead)
   defp letter?(c), do: String.match?(c, ~r/^\p{L}$/u)
 
-  # the next choice after the current one whose label starts with the letter
-  defp pick(state, choices, c) do
+  # the next choice after the current one whose label starts with the
+  # letter; the current one's own letter, with no other, keeps it (Y on
+  # Yes), rather than saying there is none
+  defp pick(state, [{current, _} | others], c) do
     wanted = String.downcase(c)
 
-    case Enum.find(tl(choices), fn {label, _} -> initial(label) == wanted end) do
+    case Enum.find(others, fn {label, _} -> initial(label) == wanted end) do
       {_label, steps} -> choose(state, steps)
-      nil -> State.error(state, "No choice starts with #{String.upcase(c)}")
+      nil -> if initial(current) == wanted, do: state, else: none(state, c)
     end
   end
+
+  defp none(state, c), do: State.error(state, "No choice starts with #{String.upcase(c)}")
 
   # the label's first letter: "<Day> #" is under D, "(none)" under N
   defp initial(label) do

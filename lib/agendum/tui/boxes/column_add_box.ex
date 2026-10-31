@@ -23,12 +23,13 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
     * Insert in: All sections or Current section, starting at the file's
       Insert new columns in, which it overrides for this column (R55).
 
-  The settings live in the box's mode until ENTER adds the column, so the
-  whole box is one database change and one undo step. ALT-R and ALT-L
+  The settings live in the box's mode until ENTER adds the column; a new
+  head typed is made at once, so the box puts the file back on ESC and
+  makes the whole of it one undo step on ENTER (`BoxCancel`). ALT-R and ALT-L
   skip the box: they open the picker and use the file's setting. Pure.
   """
 
-  use Agendum.TUI.Boxes.Box, finish: :done, choices: true
+  use Agendum.TUI.Boxes.Box, finish: :done, cancels: true
 
   alias Agendum.TUI.Boxes.{Box}
 

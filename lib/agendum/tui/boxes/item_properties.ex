@@ -369,8 +369,15 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
         list_row(state, item, rows, assignments, row, i == cursor, value_width)
       end)
 
-    top = max(cursor - max_rows + 1, 0)
-    Enum.drop(head ++ list, top) ++ [[], hint(state, mode, inner)]
+    # the rows that fit above the hint and the blank line before it, the
+    # highlighted one among them (each row is one line)
+    room = max(max_rows - 2, 1)
+    top = max(cursor - room + 1, 0)
+
+    (head ++ list)
+    |> Enum.drop(top)
+    |> Enum.take(room)
+    |> Kernel.++([[], hint(state, mode, inner)])
   end
 
   defp list_row(state, item, rows, assignments, row, selected, value_width) do

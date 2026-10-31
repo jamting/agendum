@@ -56,6 +56,7 @@ defmodule Agendum.TUI.Modes do
       :insert_in,
       :kind,
       :note_line,
+      :opened,
       :position,
       :sidx,
       :title,

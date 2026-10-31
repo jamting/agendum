@@ -152,7 +152,7 @@ defmodule Agendum.ArchitectureTest do
     entry_values exclusive_conflicts export_json feed_url file_defaults import_ag ingested_categories ingested? ingested_families import_json item_assignments
     item_column_fit marked_items match_settings move_conflicts new_file
     new_file_with numeric_conversion prerequisites promote_conflicts questions read_when
-    related_items relocation_conflicts section_calcs shift_filters show_view subscription_name template view_statistics waiting?
+    related_items relocation_conflicts section_calcs section_item_count shift_filters show_view subscription_name template view_statistics waiting?
     when_at when_text
     zettel zettels item_by_zettel zettel_links link_targets linked_from
     blog_posts blog_needs_base_url? site site_changes feeds_due parse_feed export_opml

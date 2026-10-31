@@ -400,7 +400,26 @@ defmodule Agendum.TUI.Update do
         saved
       end
 
-    {%{state | db: db, saved: %{state.saved | db: saved}}, result}
+    modes =
+      if db == state.db, do: state.modes, else: clock_into_boxes(state.modes, commands, clock)
+
+    {%{state | db: db, saved: %{state.saved | db: saved}, modes: modes}, result}
+  end
+
+  # Domain: what the clock did (an alarm rung, a new day's tidying) is not
+  # a change made in a settings box open meanwhile: it goes into the box's
+  # snapshot too, so ESC, putting the file back as the box found it, does
+  # not ring the alarm again (the review of group f, 2026-10-31), as a
+  # feed's read does (`Update.Results`)
+  defp clock_into_boxes(modes, commands, clock) do
+    Enum.map(modes, fn
+      %{opened: %{db: db} = opened} = mode ->
+        {:ok, db, _} = Core.run(db, {:batch, commands}, clock)
+        %{mode | opened: %{opened | db: db}}
+
+      mode ->
+        mode
+    end)
   end
 
   @doc """

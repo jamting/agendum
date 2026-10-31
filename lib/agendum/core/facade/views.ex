@@ -537,6 +537,23 @@ defmodule Agendum.Core.Facade.Views do
   end
 
   @doc """
+  Section Properties ▸ Section statistics: how many items section `sidx`
+  shows as the view draws it now; 0 when the view hides it (Hide empty
+  sections). The view's sections are found by their index, not their
+  place: a view's section sorting reorders them.
+  """
+  @spec section_item_count(db, id, non_neg_integer, clock) :: non_neg_integer
+  def section_item_count(db, view_id, sidx, clock) do
+    db
+    |> ViewModel.build(db.views[view_id], clock)
+    |> Enum.find(&(&1.index == sidx))
+    |> case do
+      nil -> 0
+      section -> length(section.rows)
+    end
+  end
+
+  @doc """
   The calculations section `sidx` shows for all its numeric columns: those
   every one of them has; nil when it has no numeric column.
   """

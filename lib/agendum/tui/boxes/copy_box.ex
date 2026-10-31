@@ -92,14 +92,20 @@ defmodule Agendum.TUI.Boxes.CopyBox do
       "Highlight the section to copy the item to and press ENTER; " <>
         "it stays in its other sections."
 
-  # the question, then the sections, the chosen one selected
+  # the question, then the sections, the chosen one selected; a long list
+  # scrolls to keep it in the box, as GoTo's does
   @impl Box
-  def content(state, mode, _inner, _max_rows) do
+  def content(state, mode, _inner, max_rows) do
+    room = max(max_rows - 2, 1)
+    top = max(mode.cursor - room + 1, 0)
+
     sections =
       state
       |> State.view()
       |> Map.fetch!(:sections)
       |> Enum.with_index()
+      |> Enum.drop(top)
+      |> Enum.take(room)
       |> Enum.map(fn {section, i} ->
         style = if i == mode.cursor, do: :box_selected, else: :box
         [{:box, "   "}, {style, state.db.categories[section.category_id].name}]

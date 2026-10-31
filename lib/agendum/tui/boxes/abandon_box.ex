@@ -45,10 +45,24 @@ defmodule Agendum.TUI.Boxes.AbandonBox do
   @impl Box
   def run(state, mode, :change), do: State.put_mode(state, %{mode | revert: not mode.revert})
 
-  # the database as last saved, the place in it kept where it still is
+  # the database as last saved, the place in it kept where it still is; a
+  # view made since (View ▸ Add, a Show View) is gone, and the file's first
+  # view is shown instead, from its top
   def run(state, %{revert: true}, :done) do
     state = State.pop(state)
-    %{state | db: state.saved.db, dirty: false}
+    saved = state.saved.db
+    state = %{state | db: saved, dirty: false}
+
+    if is_map_key(saved.views, state.view_id),
+      do: state,
+      else: %{
+        state
+        | view_id: hd(saved.view_order),
+          cursor: 0,
+          cursor_key: nil,
+          col: 0,
+          scroll: 0
+      }
   end
 
   def run(state, _mode, :done), do: State.pop(state)

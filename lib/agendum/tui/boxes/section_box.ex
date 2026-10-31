@@ -36,7 +36,7 @@ defmodule Agendum.TUI.Boxes.SectionBox do
   alias Agendum.TUI.Boxes.{Box, BoxNav}
 
   alias Agendum.Core
-  alias Agendum.Core.{View, ViewColumns, ViewModel}
+  alias Agendum.Core.{View, ViewColumns}
 
   alias Agendum.TUI.{
     CategoryScreens,
@@ -270,13 +270,8 @@ defmodule Agendum.TUI.Boxes.SectionBox do
     do: CategoryScreens.open_picker(state, {:filter, {:section, mode.sidx}}, nil)
 
   # the items the section shows now, as the view draws it
-  defp item_count(state, mode) do
-    state.db
-    |> ViewModel.build(State.view(state), State.context(state))
-    |> Enum.at(mode.sidx)
-    |> Map.fetch!(:rows)
-    |> length()
-  end
+  defp item_count(state, mode),
+    do: Agendum.Core.section_item_count(state.db, state.view_id, mode.sidx, State.context(state))
 
   defp remove(state, mode, {:slot, n}) do
     case Enum.at(slots(state, mode), n) do
