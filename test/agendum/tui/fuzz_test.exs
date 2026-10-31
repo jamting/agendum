@@ -267,6 +267,9 @@ defmodule Agendum.TUI.Fuzz do
   # from the view hardly reaches the boxes inside boxes, where the
   # crash of 2026-10-30 was (View Properties on a datebook, ↑ from Filter).
   @f10 {:f, 10}
+  # "When" typed into a category list, to find it
+  @when_typed for c <- ~w(W h e n), do: {:char, c}
+
   @boxes [
     [@f10, {:char, "v"}, {:char, "p"}],
     [@f10, {:char, "v"}, {:char, "s"}, {:char, "p"}],
@@ -304,21 +307,45 @@ defmodule Agendum.TUI.Fuzz do
     {[{:f, 9}, {:f, 6}], "Statistics"},
     {[{:f, 9}, {:f, 6}], "Advanced settings"},
     {[{:f, 9}, {:f, 6}], "Assignment conditions"},
-    {[{:f, 9}, {:f, 6}], "Assignment actions"}
+    {[{:f, 9}, {:f, 6}], "Assignment actions"},
+    # boxes deeper inside, or needing the file in a certain state
+    # (ROADMAP, Sharpen the saw): Advanced settings of a date category
+    # (Entry) is its date rule box; a date category picked in a filter or
+    # an action opens its range or action box
+    {[{:f, 9}, :down, {:f, 6}], "Advanced settings"},
+    {[@f10, {:char, "f"}, {:char, "p"}], ["Global date settings", "Display format"]},
+    {[@f10, {:char, "f"}, {:char, "p"}], "Set file password"},
+    {[@f10, {:char, "v"}, {:char, "s"}, {:char, "p"}], "Select numeric functions"},
+    {[@f10, {:char, "v"}, {:char, "p"}], "Filter", @when_typed ++ [:enter, {:char, " "}]},
+    {[{:f, 9}, :ctrl_end, {:f, 6}], "Assignment actions", @when_typed ++ [:enter, {:char, " "}]},
+    # the item column's box: Column Properties on the item text
+    [:down, @f10, {:char, "v"}, {:char, "c"}, {:char, "p"}],
+    # Undisc with two items in the trash asks which
+    [:down, {:alt_f, 4}, :enter, {:alt_f, 4}, :enter, @f10, {:char, "i"}, {:char, "u"}],
+    # F3 in a note with nothing marked asks what to copy
+    [:down, {:f, 5}, {:f, 3}]
   ]
 
   defp open_box(walk, nil), do: walk
   defp open_box(walk, keys) when is_list(keys), do: press_shell(walk, keys)
 
-  # a box inside a box: SPACE on its setting, when the outer box (on this
-  # view, at this size) can reach it; when it cannot, the walk starts in
-  # the outer box
-  defp open_box(walk, {keys, label}) do
+  # a box inside a box: SPACE on its setting (on each in turn, for a list
+  # of labels), then the keys after, when the outer box (on this view, at
+  # this size) can reach it; when it cannot, the walk starts in the outer
+  # box
+  defp open_box(walk, {keys, labels}), do: open_box(walk, {keys, labels, []})
+
+  defp open_box(walk, {keys, labels, after_}) do
     walk = press_shell(walk, keys)
 
     try do
-      %{walk | state: Agendum.TUIHelpers.to_setting(walk.state, label)}
-      |> press_shell([{:char, " "}])
+      labels
+      |> List.wrap()
+      |> Enum.reduce(walk, fn label, walk ->
+        %{walk | state: Agendum.TUIHelpers.to_setting(walk.state, label)}
+        |> press_shell([{:char, " "}])
+      end)
+      |> press_shell(after_)
     rescue
       e in RuntimeError ->
         if e.message =~ "no setting labelled", do: walk, else: reraise(e, __STACKTRACE__)
