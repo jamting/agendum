@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.73.9 — 2026-10-31
+
+- **A file named when starting opens at once**, without the splash screen, as in Agenda (`agendum my.agendum`). The splash still greets you when Agendum starts without a file, and with `--demo`.
+
 ## 0.73.8 — 2026-10-31
 
 - **Typing Chinese, Japanese, Korean or emoji:** a long item or a note's line wraps where the screen ends, and the cursor stays in view in every field. Fixed: since 0.73.5 such a typed line lost a character where it wrapped.

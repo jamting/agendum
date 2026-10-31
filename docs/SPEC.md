@@ -1787,7 +1787,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - ESC goes back to the prompt as it was.
 
   Ours: file names keep their extensions (Agenda left them out); Agenda's F4 (delete), F6 (EXPAND), F8 (descriptions), F9 (rename) and INS are not offered.
-- **R52 ✅ Startup** (screenshot `docs/reference/screens/image0001-raw.png`). Agendum starts with a splash screen laid out as Agenda's:
+- **R52 ✅ Startup** (screenshot `docs/reference/screens/image0001-raw.png`). Started without a file named (a bare `agendum`, or `--demo`, `--rabbit`, `--clinic`), Agendum shows a splash screen laid out as Agenda's; a file named when starting (an Agendum file, an Agenda `.AG` file to import, one with a password) opens at once, without it, as Agenda's did (checked in Agenda 2.0, 2026-10-31). The splash screen:
 
   - A box over an empty screen with the owl and "W O L" drawn on the box itself (no block of their own colour, our choice).
   - The title "W O L ' S   A G E N D U M".

@@ -61,6 +61,15 @@ defmodule Agendum.TUI.StartupTest do
     assert screen(state) =~ "/tmp/garden.agendum"
   end
 
+  # Agenda opened a file named on its command line without a splash, and
+  # showed its splash only when started without one (checked in Agenda
+  # 2.0, 2026-10-31; the owner chose Agenda's way)
+  test "a file named when starting opens without the splash" do
+    state = Core.new_file() |> start(now: @now) |> Update.start(false, false)
+    assert state.modes == []
+    refute screen(state) =~ "W O L ' S"
+  end
+
   test "five seconds end it" do
     state = started(false)
     tick = fn seconds -> elem(Update.tick(state, NaiveDateTime.add(@now, seconds)), 0) end

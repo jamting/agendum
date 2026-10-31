@@ -221,37 +221,40 @@ defmodule Agendum.CLI do
     case result do
       # Domain: an Agenda file (R72) is imported as File ▸ Transfer ▸
       # Import does, into an untitled file first; the import gives it its
-      # name and shows its report under the splash screen
+      # name and shows its report (no splash: a file was named, R52)
       {:import, path, bytes} ->
         Core.new_file()
         |> State.new(session(options, prefs, today))
         |> Layout.settle()
         |> Update.Results.imported(path, {:ok, bytes})
-        |> Update.start(false)
+        |> Update.start(false, false)
         |> run_session(log)
 
       # Domain: a file with a password (ADR 0046) opens as Retrieve opens
-      # one: an untitled file first, the password asked under the splash
+      # one: an untitled file first, the password asked (no splash: a file
+      # was named, R52)
       {:password, path} ->
         Core.new_file()
         |> State.new(session(options, prefs, today))
         |> Layout.settle()
         |> Update.Results.loaded(path, {:error, :password_required})
-        |> Update.start(false)
+        |> Update.start(false, false)
         |> run_session(log)
 
       {:ok, db, path, stamp} ->
         # Domain: `State.new/2` sets `saved.db` to the database just read, so
         # the file starts clean; `Update.arrive/1` then rings alarms due while
-        # it was closed (R70) without making it dirty; `Update.start/2` puts
-        # the splash screen (and, with no file named, the file prompt) on top.
+        # it was closed (R70) without making it dirty; `Update.start/3` puts
+        # the splash screen and the file prompt on top when no file was
+        # named (R52: a named file opens without the splash, as Agenda's).
         db
         |> State.new([path: path, stamp: stamp] ++ session(options, prefs, today))
         |> Layout.settle()
         |> Update.arrive()
         |> App.check_recovery(path)
         |> Update.start(
-          options.file == nil and not (options.demo or options.rabbit or options.clinic)
+          options.file == nil and not (options.demo or options.rabbit or options.clinic),
+          options.file == nil
         )
         |> run_session(log)
 

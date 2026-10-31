@@ -164,11 +164,12 @@ defmodule Agendum.TUI.Update do
   defp away_uncovered(_before, _state), do: :pass
 
   @doc """
-  How the program starts (R52): the splash screen, and when no file was
-  named (`ask_file`), under it the prompt for a file to open or create,
-  with the last file used.
+  How the program starts (R52): the splash screen (`splash`), and when no
+  file was named (`ask_file`), under it the prompt for a file to open or
+  create, with the last file used. A file named when starting opens
+  without the splash, as Agenda's did.
   """
-  def start(state, ask_file) do
+  def start(state, ask_file, splash \\ true) do
     state =
       if ask_file,
         do:
@@ -180,7 +181,7 @@ defmodule Agendum.TUI.Update do
           ),
         else: state
 
-    Agendum.TUI.Splash.open(state)
+    if splash, do: Agendum.TUI.Splash.open(state), else: state
   end
 
   # --- keyboard aliases -------------------------------------------------------
