@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.72.9 — 2026-10-31
+
+- **Column Properties ▸ Link with other sections** links only columns with the same format too (Name only, Parent:Category …), as Agenda does: a Parent:Category column no longer takes on the changes of a Name only column of the same head.
+
 ## 0.72.8 — 2026-10-31
 
 - **Fixes from a review of the settings boxes:**
