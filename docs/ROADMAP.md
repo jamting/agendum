@@ -62,7 +62,6 @@ Tools and checks that make every later change faster and safer. Each is small; t
 
   - **First check** that a linked folder breaks nothing: `mix docs`, the docs-index test, Obsidian, and a fresh clone without the link.
   - **Then** the skills, `mix agendum.thoughts` and the owner's local notes use `docs/private/…` instead of the Wolery's path.
-- [ ] Review the rest of the code locally (`docs/CODE_REVIEW_SLICES.md` § The rest): about 35,000 lines in five groups, each with `/code-review high <paths>`, its findings fixed as a release of its own, as the cloud slices were; group d done (2026-10-30, v0.72.6: 10 findings, 6 fixed, in about 6 minutes of review); group e (2026-10-31, v0.72.7: 10 findings, 7 fixed); f and g (2026-10-31, v0.72.8: 15 findings, one found by both, all fixed; three smaller risks in Fixes and polish); h left, h split in two if it stays at 10,700 lines (expert review 2026-10-30, § 18.2)
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key.
 
   - **Measured** 2026-10-16, a cursor move: 300 items 6 ms in `Update` + 11 ms in `Render`; 3,000 items 61 + 45 ms; 10,000 items 205 + 231 ms.
