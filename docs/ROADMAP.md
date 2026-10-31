@@ -28,6 +28,7 @@ Small, testable increments: the open work, by area.
 
   - **A refused command still moves the screen on** (`State.run/2` drops the refusal): removing a column moves the highlight, ALT-Y says "Yanked back" over the error. Not reproduced (2026-10-31): after the TUI's own checks the core cannot refuse either command, so nothing was changed; fix it when a refusal becomes possible.
   - **Later, with the view cache** (Sharpen the saw, when the evidence asks): a key in a column builds the view model up to four times (`Layout.current_column`, each `current_row` builds it again).
+- [ ] An item cannot be moved to the very top of its section (the owner, 2026-10-26, a thought; confirmed 2026-10-31): find how Agenda moves an item to the top (ALT-F10 Reposition, the move keys, DOSBox) and what stops ours, then fix it Agenda's way
 - [ ] Optional (the owner, 2026-10-27): try v0.69.3's main fix by hand: open a second file while a feed is being read, and see its entries land only in the file that asked (the richer fuzz walks already check it)
 
 ### Sharpen the saw
