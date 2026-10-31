@@ -163,6 +163,11 @@ defmodule Agendum.TUI.Boxes.RangeFilterBox do
 
       {:error, :self} ->
         State.error(state, "A category cannot depend on itself")
+
+      # Agenda never turns a date or numeric category back, so only a
+      # change from outside the box can bring this; it stays open
+      {:error, :not_a_range_category} ->
+        State.error(state, "The category must be a date or numeric category")
     end
   end
 

@@ -83,8 +83,15 @@ defmodule Agendum.TUI.Boxes.SetAlarmBox do
     command = {:set_alarm, mode.item_id, mode.minutes, category(state, mode)}
 
     case State.command(State.pop(state), command) do
-      {:ok, state, _} -> state
-      {:error, :minutes} -> State.error(state, Agendum.TUI.Messages.text(:bad_number))
+      {:ok, state, _} ->
+        state
+
+      {:error, :minutes} ->
+        State.error(state, Agendum.TUI.Messages.text(:bad_number))
+
+      # the chosen category is no longer a date one: the box stays open
+      {:error, :not_a_date_category} ->
+        State.error(state, Agendum.TUI.Messages.text(:select_date_category))
     end
   end
 

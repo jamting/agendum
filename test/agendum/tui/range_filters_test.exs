@@ -134,4 +134,17 @@ defmodule Agendum.TUI.RangeFiltersTest do
 
     assert panel(state) =~ message(:bad_number)
   end
+
+  # The review of group f (2026-10-31): ENTER crashed if the box's category
+  # was no longer a date or numeric one (Agenda never turns one back, so
+  # only a change from outside the box could do it)
+  test "ENTER on a category no longer date or numeric says so instead of crashing",
+       %{state: state} do
+    state = state |> filter_picker(:view) |> press(["When", :enter, " "])
+    plain = Enum.find(Map.values(state.db.categories), &(&1.name == "Calls"))
+    state = State.put_mode(state, %{State.mode(state) | cat_id: plain.id})
+    state = press(state, :enter)
+    assert %{type: :range_filter} = State.mode(state)
+    assert screen(state) =~ "must be a date or numeric category"
+  end
 end

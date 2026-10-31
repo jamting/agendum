@@ -4,7 +4,7 @@ defmodule Agendum.TUI.AlarmsTest do
   use ExUnit.Case, async: true
 
   import Agendum.TUIHelpers
-  alias Agendum.TUI.{Layout, Update}
+  alias Agendum.TUI.{Layout, State, Update}
 
   setup do
     %{state: start(Agendum.Sample.build(~D[2026-10-08]), now: ~N[2026-10-08 10:00:00])}
@@ -145,5 +145,18 @@ defmodule Agendum.TUI.AlarmsTest do
     replaced = press(state, :enter)
     refute screen(replaced) =~ "!Current Alarms!"
     assert replaced.db.views[replaced.view_id].name == "*Show View*"
+  end
+
+  # The review of group f (2026-10-31): ENTER crashed if the chosen date
+  # category was no longer a date category
+  test "Set Alarm on a category no longer a date one says so instead of crashing",
+       %{state: state} do
+    state = press(state, ["Personnel meeting at 2:00", :enter, {:alt, "a"}])
+    plain = Enum.find(Map.values(state.db.categories), &(&1.name == "Calls"))
+    state = State.put_mode(state, %{State.mode(state) | date_category: plain.id})
+    state = press(state, :enter)
+    assert %{type: :set_alarm} = State.mode(state)
+    assert screen(state) =~ "You must select a date category."
+    assert current(state).alarm_minutes == nil
   end
 end

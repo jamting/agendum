@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.73.3 — 2026-10-31
+
+- **No longer crashes:** ENTER in Date Filter, Numeric Filter or Set Alarm when the category is no longer a date or numeric one; the box stays open and says so.
+
 ## 0.73.2 — 2026-10-31
 
 - **The category manager looks as Agenda's** in the classic theme: one cyan background across each row, the space and marks before a name too, and every name in white.
