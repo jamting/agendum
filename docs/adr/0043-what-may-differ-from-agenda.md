@@ -30,3 +30,13 @@ Anything else is hidden in the clone (below), or changed back to Agenda's way.
 ## Amendment: the switch as built (2026-10-23)
 
 Settled with the owner before it was built (R77, v0.18.0): the switch is a row of its own, **Extras**, in File ▸ Customize, beside Sound. With it off, the file's data show as they are (a Zettel id column still shows its ids; only the commands are hidden); feeds and calendars are not read on schedule, so nothing reaches the network unasked; and alarms that came due while the file was closed ring as Agenda's do, without the "While you were away" box, although Utilities ▸ Show Alarm is not built yet. The commands carry the tag (`extra` on `Agendum.TUI.Command`), the menu's extras entries are named by their actions, and one gate in `Agendum.TUI.Update` leaves an extra's key unbound.
+
+## Amendment: an Extra, or Beyond Agenda (2026-10-31)
+
+The owner, 2026-10-31, settling where new work beyond the clone goes:
+
+- **An extra** adds to Agenda's way and can be switched off without leaving a hole: with the switch off, the clone's screens, menus and keys are Agenda's (the note preview column on the right is the example).
+- **Beyond Agenda** is a change to how the program works at its heart, which cannot be a switch (doing what the person means, fewer commands, commands that depend on the context).
+- **The switch stays** one quiet setting in Utilities ▸ Customize, and nothing of the extras shows while it is off; a test that renders every menu, key bar, F1 topic and box with it off checks this (`docs/ROADMAP.md`, The extras).
+- **The extras get a menu of their own**, F10 E, there only while they are on, so the clone's menus stay Agenda's either way (`docs/ROADMAP.md`, The extras).
+- **A starter file** is content of the clone, made of its features; one that needs features outside the clone may be an extra.

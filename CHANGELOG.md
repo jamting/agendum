@@ -2,6 +2,8 @@
 
 What changed in each version of Wol's Agendum, for the person using it. Versions follow [semantic versioning](https://semver.org): before 1.0.0, the minor number (0.**3**.0) goes up with every major feature or change to the file format, the patch number (0.3.**1**) with fixes. Each version is tagged in git (`v0.2.0`). The roadmap's record of finished work ([`docs/ROADMAP_DONE.md`](docs/ROADMAP_DONE.md)) lists every finished item; git log has the detail.
 
+Changes to `Agendum.Core`'s public functions (the facade), which any code built on the core relies on, are listed under a **Facade** heading of their own in the version that makes them (the owner, 2026-10-31).
+
 ## Unreleased
 
 ## 0.73.9 — 2026-10-31
