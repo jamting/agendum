@@ -24,7 +24,7 @@ defmodule Agendum.TUI.Render.Note do
     |> Enum.flat_map(fn {text, row} ->
       # the whole line styled, then cut into its rows
       styled = line(text, row, edit, region, Map.get(mode, :match), used)
-      text |> Wrap.rows(width) |> cut(styled)
+      Wrap.in_columns(text, Wrap.rows(text, width)) |> cut(styled)
     end)
     |> Enum.drop(top(state, mode))
   end

@@ -160,7 +160,7 @@ defmodule Agendum.TUI.Terminal.Draw do
         ) :: line
   def input(%{text: text, pos: pos} = edit, width, style) do
     width = max(width, 1)
-    offset = max(pos - width + 1, 0)
+    offset = input_offset(text, pos, width)
     visible = String.slice(text, offset, width)
 
     case Map.get(edit, :mark) do
@@ -175,6 +175,30 @@ defmodule Agendum.TUI.Terminal.Draw do
         {before, rest} = String.split_at(visible, from)
         {marked, after_} = String.split_at(rest, to - from)
         line([{style, before}, {:edit_cursor, marked}, {style, after_}], width, style)
+    end
+  end
+
+  # Where the visible part of a typed line starts: as far left as lets the
+  # text up to the cursor, and the cursor's own cell, fit in `width`
+  # columns (a wide character takes two). Positions are in graphemes.
+  defp input_offset(text, pos, width) do
+    if Width.of(text) == String.length(text) do
+      max(pos - width + 1, 0)
+    else
+      graphemes = String.graphemes(text)
+      cursor = graphemes |> Enum.at(pos, " ") |> Width.of()
+
+      taken =
+        graphemes
+        |> Enum.take(pos)
+        |> Enum.reverse()
+        |> Enum.reduce_while({0, cursor}, fn g, {n, used} ->
+          w = Width.of(g)
+          if used + w <= width, do: {:cont, {n + 1, used + w}}, else: {:halt, {n, used}}
+        end)
+        |> elem(0)
+
+      pos - taken
     end
   end
 

@@ -9,10 +9,13 @@ defmodule Agendum.TUI.Typing.Wrap do
   the screen is broken at its edge.
 
   A row is `{start, length}`: where it starts in the line and how many
-  characters it shows. The cursor's column `col` in the line is on the
+  characters it shows. Rows are as wide as the screen in columns, so a
+  wide character (CJK, emoji) takes two (`Agendum.TUI.Terminal.Width`). The cursor's column `col` in the line is on the
   row it starts, so a column where one row ends and the next begins is
   shown at the start of the next. Pure.
   """
+
+  alias Agendum.TUI.Terminal.Width
 
   @type row :: {non_neg_integer, non_neg_integer}
 
@@ -37,19 +40,61 @@ defmodule Agendum.TUI.Typing.Wrap do
   cursor goes on the last row). Always at least one row.
   """
   @spec rows(String.t(), pos_integer) :: [row]
-  def rows(line, width), do: line |> String.graphemes() |> rows(0, max(width, 1), [])
+  def rows(line, width) do
+    line
+    |> String.graphemes()
+    |> Enum.map(&{&1, Width.of(&1)})
+    |> rows(0, max(width, 1), [])
+  end
 
+  # `chars` are the graphemes left, each with its width in columns
   defp rows(chars, start, width, acc) do
     count = length(chars)
+    fit = fitting(chars, width, 0)
 
-    if count <= width do
+    if fit == count do
       Enum.reverse([{start, count} | acc])
     else
-      # the rightmost space among the first width + 1 characters, if any
-      window = Enum.take(chars, width + 1)
-      space = window |> Enum.reverse() |> Enum.find_index(&(&1 == " "))
-      len = if space, do: width + 1 - space, else: width
-      rows(Enum.drop(chars, len), start + len, width, [{start, len} | acc])
+      # the rightmost space among the characters that fit and the one
+      # after them (a space there may hang over the edge), if any
+      window = Enum.take(chars, fit + 1)
+      space = window |> Enum.reverse() |> Enum.find_index(&(elem(&1, 0) == " "))
+      # with no space, the row breaks at the edge: at least one character,
+      # so a wide one on a one-column screen still moves on
+      len = if space, do: fit + 1 - space, else: max(fit, 1)
+
+      case {Enum.drop(chars, len), space} do
+        # a wide character forced onto a row too narrow for it was the
+        # last: no empty row after it (after a hanging space there is one,
+        # for the cursor at the line's end)
+        {[], nil} -> Enum.reverse([{start, len} | acc])
+        {rest, _} -> rows(rest, start + len, width, [{start, len} | acc])
+      end
+    end
+  end
+
+  # how many of the first characters fit in `room` columns
+  defp fitting([{_, w} | rest], room, n) when w <= room, do: fitting(rest, room - w, n + 1)
+  defp fitting(_chars, _room, n), do: n
+
+  @doc """
+  The rows of `line` in screen columns, for cutting its drawing: where
+  each row starts and how wide it is, a wide character counting two. The
+  same as `rows` when every character is one column wide.
+  """
+  @spec in_columns(String.t(), [row]) :: [row]
+  def in_columns(line, rows) do
+    if Width.of(line) == String.length(line) do
+      rows
+    else
+      # `Enum.scan` gives the running sums: the column each character
+      # ends at, so the column before character `i` is the sum before it
+      ends = line |> String.graphemes() |> Enum.map(&Width.of/1) |> Enum.scan(&+/2)
+      at = List.to_tuple([0 | ends])
+
+      Enum.map(rows, fn {start, len} ->
+        {elem(at, start), elem(at, start + len) - elem(at, start)}
+      end)
     end
   end
 

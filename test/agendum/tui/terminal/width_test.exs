@@ -64,6 +64,16 @@ defmodule Agendum.TUI.Terminal.WidthTest do
     assert String.replace(text, ~r/[^日本語]/u, "") =~ long
   end
 
+  test "a long item of wide text is typed wrapped, nothing lost between its rows" do
+    state = start(Agendum.Sample.build(~D[2026-10-08]), width: 80, height: 25)
+    text = "会議の準備をする前に資料を読んで日本語の文章を確認する"
+    typed = press(state, [text])
+    rows = typed |> screen() |> String.split("\n") |> Enum.filter(&(&1 =~ ~r/[会議資料確認]/u))
+
+    assert rows |> Enum.map_join(&String.trim/1) |> String.replace("•", "") |> String.trim() ==
+             text
+  end
+
   test "every line of a screen holding wide text is exactly the screen's width" do
     state = start(Agendum.Sample.build(~D[2026-10-08]), width: 80, height: 25)
     state = press(state, ["会議の準備をする 🎉 Kaigi no junbi", :enter])
@@ -77,5 +87,28 @@ defmodule Agendum.TUI.Terminal.WidthTest do
       widths = screen |> Render.render() |> Enum.map(columns) |> Enum.uniq()
       assert widths == [80]
     end
+  end
+
+  # typed text (left from v0.73.5): rows and the cursor's window by columns
+  test "typed text wraps and scrolls by columns, the cursor kept in view" do
+    alias Agendum.TUI.Typing.Wrap
+    assert Wrap.rows("日本語の文", 4) == [{0, 2}, {2, 2}, {4, 1}]
+    # a space after a full row still hangs there
+    assert Wrap.rows("日本 語", 4) == [{0, 3}, {3, 1}]
+    assert Wrap.in_columns("日本語の文", Wrap.rows("日本語の文", 4)) == [{0, 4}, {4, 4}, {8, 2}]
+    assert Wrap.in_columns("abc", [{0, 2}, {2, 1}]) == [{0, 2}, {2, 1}]
+    # one column: a wide character still makes its own row
+    assert Wrap.rows("日本", 1) == [{0, 1}, {1, 1}]
+
+    # a field 5 wide, the cursor after six wide characters: the end shows,
+    # with the cursor's cell, and the field stays 5 columns
+    field = Draw.input(%{text: "日本語日本語", pos: 6}, 5, :edit)
+    assert Draw.width(field) == 5
+    assert Draw.to_text([field]) =~ "本語"
+    assert {:edit_cursor, " "} in field
+    # the cursor on a wide character in the middle shows it highlighted
+    field = Draw.input(%{text: "日本語日本語", pos: 3}, 5, :edit)
+    assert {:edit_cursor, "日"} in field
+    assert Draw.width(field) == 5
   end
 end

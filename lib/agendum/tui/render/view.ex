@@ -71,7 +71,7 @@ defmodule Agendum.TUI.Render.View do
           [{:edit, before}, {:edit_cursor, marked}, {:edit, after_}]
       end
 
-    rows = Wrap.rows(line.text, Wrap.item_width(tw))
+    rows = Wrap.in_columns(line.text, Wrap.rows(line.text, Wrap.item_width(tw)))
     last = length(rows) - 1
 
     for {{start, len}, i} <- Enum.with_index(rows) do
