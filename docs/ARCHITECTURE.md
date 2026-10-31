@@ -28,6 +28,16 @@ flowchart TB
 
 The extras (ADR 0043: features that fail its test for the truthful clone, the micro-blog and its site, Markdown, feeds, Zettel ids and links, calendar subscriptions) live in namespaces of their own (ADR 0044): `Agendum.Core.Extras.*` (`lib/agendum/core/extras/`), the facade's extras area `Agendum.Core.Facade.Extras.*`, their boxes in `Agendum.TUI.Extras.*` and their shell modules in `Agendum.Extras.*`. Faithful code does not call the core's extras: `test/agendum/architecture_test.exs` reads the calls (`:xref`) and allows only the file's modules (`Database`, `JSONFile`, `Store`, `Starters.Golden`, `Invariants`), `Agendum.Core`'s delegations to the extras' facade area, the extras' own homes, and two named exceptions (Assign's link blanking, ViewModel's Zettel id column). Their stored structs (`Feed`, `Blog`, `Calendar`) moved in format 38; `Store` maps the old names on load.
 
+## What a front end may use
+
+Code built on the core (the TUI today, a second front end later, CLAUDE.md rule 6) uses three things, and only these (the owner, 2026-10-31):
+
+- **The facade**, `Agendum.Core`: every change to a file goes through it.
+- **`Agendum.Core.Database`'s read functions**: those whose `@spec` does not return a database. Its write functions are the facade's to call (`test/agendum/architecture_test.exs`).
+- **The stored structs**, read only: their fields are the file's format (`docs/DATA_MODEL.md`, `docs/JSON_FORMAT.md`), versioned and guarded by the golden files.
+
+A function of the first two is removed or changed only after it has been marked `@deprecated` for at least one minor version, and both steps are listed under the CHANGELOG's **Facade** heading. Everything else under `lib/agendum/core/` may change without notice.
+
 ## Modules
 
 ### Core (`lib/agendum/core*`) — pure

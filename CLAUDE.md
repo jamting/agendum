@@ -36,6 +36,7 @@ The steps, in order, are the `feature` skill (`.claude/skills/feature/SKILL.md`,
 - Markdown is not hard-wrapped: one line per paragraph, list item or quote, and the editor soft-wraps it. Code comments and `@moduledoc`s stay wrapped at about 80 columns, as Elixir code usually is.
 - Write airy (meeting 2026-10-28-2214, § 6): short paragraphs of one idea, a list for conditions or several parts, a bold lead-in where a reader scans; a long unbroken paragraph is a wall. This holds for documents and for replies to the owner alike.
 - Match the surrounding style: small pure functions, pattern matching, `@spec` on public core functions, `@moduledoc` on every module.
+- What code built on the core may use is listed in `docs/ARCHITECTURE.md` (What a front end may use): a function of `Agendum.Core`, or a `Database` read function, is removed or changed only after one minor version marked `@deprecated`, both steps under the CHANGELOG's Facade heading.
 - Core functions that can fail return `{:ok, ...} | {:error, atom}`; the UI turns error atoms into messages.
 - Ids are positive integers from one shared counter (`db.next_id`).
 - Date words and phrases live in language packs (`Core.DateLanguage.*`), never in `DateParser`, which only does date arithmetic. Core functions that read typed dates take a clock: a `Date`, `NaiveDateTime` or `Agendum.Core.Context` (which also carries the date languages); the TUI passes `State.context(state)`.

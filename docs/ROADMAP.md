@@ -12,10 +12,9 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. The second planning meeting of the series, held privately (the owner calls it)
-2. Security: the threat model, and an encrypted file's text kept out of the session log (Security, below)
-3. The extras: the screen test with the extras off, then the F10 E Extras menu (The extras, below)
-4. The GTD starter (Towards parity with Agenda, below)
+1. Security: the threat model, and an encrypted file's text kept out of the session log (Security, below)
+2. The extras: the screen test with the extras off, then the F10 E Extras menu (The extras, below)
+3. The GTD starter (Towards parity with Agenda, below)
 
 ### 1 Fixes and polish (performance and bugs)
 
@@ -110,6 +109,7 @@ Security for the person in both senses: protection from others, and the program 
 
 Tools and checks that make every later change faster and safer. Each is small; the command layer they made safer is done (R66, ADR 0036, in `ROADMAP_DONE.md`). From the expert review of 2026-10-16 (`docs/reviews/2026-10-16.md`) and the performance items found earlier.
 
+- [ ] A snapshot test of what a front end may use (the owner, 2026-10-31; `ARCHITECTURE.md`, What a front end may use): the names and arities of `Agendum.Core`'s functions and `Database`'s read functions kept in a committed file; the test fails when one disappears or changes arity until the file is updated, the moment to write the CHANGELOG's Facade line (or to mark the function `@deprecated` first)
 - [ ] See a nightly fuzz failure upload its log (expert review 2026-10-30, § 18.4; the owner, 2026-10-31: once, on purpose): make a run fail deliberately (a branch or a manual run with a failing seed) and check that its log arrives as an artifact; the rest is checked (2026-10-31, `ROADMAP_DONE.md`)
 - [ ] Kept fast, but not at any price (the owner, 2026-10-26, and 2026-10-31: longer tests are welcome when they pay): measure `mix test` before and after a new test that adds more than a few seconds (about 37–40 s on 2026-10-31, with 1,000 fuzz walks in 8 parts); the long runs go to `mix agendum.fuzz` and the nightly CI (10,000 walks, the parsers at 2,000 inputs)
 - [ ] Optional (the owner, 2026-10-30): one git-ignored link, `docs/private/`, to the owner's private documents (the Wolery's `docs/`), so they show beside the public ones in the editor (an Obsidian vault on `docs/`) and the tasks find them. Git never follows a link, so a mistaken `git add` cannot carry their text here.

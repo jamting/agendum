@@ -1,6 +1,6 @@
 # ADR 0044 — One repository and one program; the extras on a shelf of their own
 
-**Status:** accepted · 2026-10-21 (meeting 2026-10-21-2324, § 9) · amended 2026-10-22 (meeting 2026-10-22-2130, § 5d: the allowed callers, and the round-trip test first)
+**Status:** accepted · 2026-10-21 (meeting 2026-10-21-2324, § 9) · amended 2026-10-22 (meeting 2026-10-22-2130, § 5d: the allowed callers, and the round-trip test first) · amended 2026-10-31 (the split waits for a reason)
 
 ## Context
 
@@ -36,3 +36,7 @@ Settled with the owner before the tests were written (2026-10-23):
 - **Two named exceptions**, listed by function in the architecture test with their reasons, and no others: `Assign` blanks out a Zettel link (`[[abcdefgh]]`) before an item's text is matched to categories, so a link never assigns an item (`Assign.levels/2`, `Assign.text_matches?/3`); `ViewModel` draws the Zettel id column, a column format stored in a faithful view (`ViewModel.standard_cell/6`). `Agendum.Starters.Golden`, which sets every stored field, is one of the file's modules.
 - **The stored structs move too** (`Feed`, `Blog`, `Calendar`). Loading maps their old names to the new ones, as ADR 0019 did for `Agenda.*`, so every file ever saved still opens; a new format version makes older programs refuse a file saved since, rather than misread it.
 - Until the Extras preference tags the commands, the test guards the core's shelf: the extras' boxes and shell modules may use it, and faithful TUI code may still open them. The commands tagged as extras close that side.
+
+## Amendment: the split waits for a reason (2026-10-31)
+
+The owner, 2026-10-31: other code built on the core depends on the whole `:agendum` application, pinned to a git tag. That works today: the application starts nothing when loaded (no `mod:` in `mix.exs`) and has no runtime dependencies (ADR 0021). The core becomes a Mix project of its own when the web version starts, or when depending on the whole application actually hurts (compile times, a server that must not carry the terminal code), not merely because a second user exists. What such code may call is listed in `docs/ARCHITECTURE.md`, What a front end may use.
