@@ -68,4 +68,13 @@ defmodule Agendum.Core.SearchTest do
     assert same_id == view_id
     assert length(db2.view_order) == length(db.view_order)
   end
+
+  test "a matcher answers as matches? does, its patterns compiled once" do
+    items = [item("Call the Budget office"), item("Patty", "(human resources)"), item("")]
+
+    for search <- [q("budget"), q("Pat*", on: :both), q(""), q("(human resources)", on: :note)] do
+      matcher = Search.matcher(search)
+      assert Enum.map(items, matcher) == Enum.map(items, &Search.matches?(&1, search))
+    end
+  end
 end

@@ -16,15 +16,26 @@ defmodule Agendum.Core.Search do
 
   @doc "Whether an item matches the search."
   @spec matches?(Agendum.Core.Item.t(), t) :: boolean
-  def matches?(item, %__MODULE__{} = search) do
+  def matches?(item, %__MODULE__{} = search), do: matcher(search).(item)
+
+  @doc """
+  The search as a function of an item, its patterns compiled once: for
+  checking many items, where `matches?/2` would compile them for each.
+  """
+  @spec matcher(t) :: (Agendum.Core.Item.t() -> boolean)
+  def matcher(%__MODULE__{} = search) do
+    # The function returned "closes over" `patterns`: it keeps the compiled
+    # regexes with it, so every call reuses them.
     case patterns(search) do
       [] ->
-        false
+        fn _item -> false end
 
       patterns ->
-        Enum.any?(texts(item, search.on), fn text ->
-          Enum.all?(patterns, &Regex.match?(&1, text))
-        end)
+        fn item ->
+          Enum.any?(texts(item, search.on), fn text ->
+            Enum.all?(patterns, &Regex.match?(&1, text))
+          end)
+        end
     end
   end
 

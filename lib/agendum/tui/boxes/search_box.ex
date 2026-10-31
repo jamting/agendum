@@ -229,10 +229,12 @@ defmodule Agendum.TUI.Boxes.SearchBox do
 
   # Row indices of the view's items that match.
   defp matches(state, search) do
+    matching? = Search.matcher(search)
+
     state
     |> Layout.rows()
     |> Enum.with_index()
-    |> Enum.filter(fn {row, _} -> row.kind == :item and Search.matches?(row.item, search) end)
+    |> Enum.filter(fn {row, _} -> row.kind == :item and matching?.(row.item) end)
     |> Enum.map(&elem(&1, 1))
   end
 

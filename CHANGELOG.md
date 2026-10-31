@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.73.4 — 2026-10-31
+
+- **Faster views** on big files: a view that searches text, or sorts its items, does that work once per view instead of again for every item or comparison.
+
 ## 0.73.3 — 2026-10-31
 
 - **No longer crashes:** ENTER in Date Filter, Numeric Filter or Set Alarm when the category is no longer a date or numeric one; the box stays open and says so.

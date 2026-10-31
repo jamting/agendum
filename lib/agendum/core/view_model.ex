@@ -90,12 +90,13 @@ defmodule Agendum.Core.ViewModel do
 
     # date words in the filter ("yesterday") are read once, not per item
     filter = Assign.resolve_ranges(db, view.filter, today)
+    shown? = shown(view.match)
 
     items =
       db
       |> Database.items_in(category.id)
       |> Enum.reject(&(view.hide_done and &1.done != nil))
-      |> Enum.filter(&(Assign.criteria_met?(db, &1.id, filter, today) and shown?(&1, view.match)))
+      |> Enum.filter(&(Assign.criteria_met?(db, &1.id, filter, today) and shown?.(&1)))
       |> Enum.reject(&(view.hide_dependent and Database.waiting?(db, &1.id)))
       |> Enum.map(&{&1, dated(db, &1.id, d.date_category), dated(db, &1.id, d.end_category)})
       |> Enum.reject(&(elem(&1, 1) == nil))
@@ -184,6 +185,7 @@ defmodule Agendum.Core.ViewModel do
   def build(%Database{} = db, %View{} = view, today) do
     # read once for all sections, not once per section (a section per feed)
     positions = Database.item_positions(db)
+    shown? = shown(view.match)
 
     view.sections
     # each section with its index, kept through the sorting
@@ -198,9 +200,7 @@ defmodule Agendum.Core.ViewModel do
         db
         |> Database.items_in(category.id, positions)
         |> Enum.reject(&(view.hide_done and &1.done != nil))
-        |> Enum.filter(
-          &(Assign.criteria_met?(db, &1.id, filter, today) and shown?(&1, view.match))
-        )
+        |> Enum.filter(&(Assign.criteria_met?(db, &1.id, filter, today) and shown?.(&1)))
         |> Enum.reject(&(view.hide_dependent and Database.waiting?(db, &1.id)))
         |> sort(db, section.sort || view.sort)
         |> Enum.map(fn item ->
@@ -410,13 +410,15 @@ defmodule Agendum.Core.ViewModel do
   defp show_section(category, {:circular, _}), do: %{category | name: "!Circular Reference!"}
   defp show_section(category, _match), do: category
 
-  defp shown?(_item, nil), do: true
+  # The view's match as a test of an item, made once per view or section
+  # (a search's patterns compiled once, not for every item)
+  defp shown(nil), do: fn _item -> true end
   # the alarm list made a datebook: every item, as without a match
-  defp shown?(_item, :alarms), do: true
-  defp shown?(item, :done), do: item.done != nil
-  defp shown?(item, {:circular, ids}), do: item.id in ids
-  defp shown?(item, {:items, ids}), do: item.id in ids
-  defp shown?(item, search), do: Agendum.Core.Search.matches?(item, search)
+  defp shown(:alarms), do: fn _item -> true end
+  defp shown(:done), do: &(&1.done != nil)
+  defp shown({:circular, ids}), do: &(&1.id in ids)
+  defp shown({:items, ids}), do: &(&1.id in ids)
+  defp shown(search), do: Agendum.Core.Search.matcher(search)
 
   # Section heads in category order, by name, or by name as a number with
   # the other names last (User's Guide 15-20). The sort is stable.
@@ -460,14 +462,21 @@ defmodule Agendum.Core.ViewModel do
   def sort(items, _db, []), do: items
 
   def sort(items, db, keys) do
-    Enum.sort(items, fn a, b -> compare(db, keys, a, b) != :gt end)
+    # Each item's values are worked out once, not at every comparison: the
+    # items are paired with them, sorted by the pairs, and unpaired. Enum.sort
+    # with a `<=`-like function is stable, so ties keep their order.
+    items
+    |> Enum.map(fn item -> {item, Enum.map(keys, &sort_value(db, &1, item))} end)
+    |> Enum.sort(fn {_, a}, {_, b} -> compare(keys, a, b) != :gt end)
+    |> Enum.map(&elem(&1, 0))
   end
 
-  defp compare(_db, [], _a, _b), do: :eq
+  # `a` and `b` are two items' values, one for each key
+  defp compare([], [], []), do: :eq
 
-  defp compare(db, [key | rest], a, b) do
-    case compare_key(key, sort_value(db, key, a), sort_value(db, key, b)) do
-      :eq -> compare(db, rest, a, b)
+  defp compare([key | rest], [x | xs], [y | ys]) do
+    case compare_key(key, x, y) do
+      :eq -> compare(rest, xs, ys)
       other -> other
     end
   end
