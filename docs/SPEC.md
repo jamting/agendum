@@ -493,7 +493,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 
   **An item may have no text**, as Agenda's (checked in Agenda): ENTER or TAB on a new item's line with nothing typed (after INS, or with the typing erased) makes a blank item in the section, and a text emptied with F2 or in Item Properties leaves the item blank, with its categories. ESC makes nothing. Sorting by item text puts a blank item with the n/a's (R36), as the User's Guide says (15-16).
 
-  **↑ and ↓ stay in an item's line** while it is typed, new or with F2, as Agenda's (checked in Agenda): only ENTER or TAB take the text, ESC throws it away. Agenda's move the cursor between the lines of a long, wrapped text, keeping the column, and do nothing on the first or last line; ours edits on one line, so they do nothing (wrapped editing is on the roadmap).
+  **F2 on an item's text** starts with the cursor at its beginning, as Agenda's (checked in Agenda). **↑ and ↓ stay in an item's line** while it is typed, new or with F2, as Agenda's (checked in Agenda): only ENTER or TAB take the text, ESC throws it away. Agenda's move the cursor between the lines of a long, wrapped text, keeping the column, and do nothing on the first or last line; ours edits on one line, so they do nothing (wrapped editing is on the roadmap).
 
 - **R24 ✅ DEL** on an item removes it from the section's category (and its subtree), after Agenda's question (checked in Agenda; our choice): "Remove this item from the section?  Yes", with "(Use ALT-F4 to discard the item completely.)" under it.
 

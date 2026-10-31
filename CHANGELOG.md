@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.72.12 — 2026-10-31
+
+- **F2 on an item starts at the beginning of its text**, as in Agenda; it started at the end. END (fn-→ on a Mac) or CTRL-E goes to the end.
+
 ## 0.72.11 — 2026-10-31
 
 - **↑ and ↓ no longer leave an item you are typing**, as in Agenda: they used to take the text and move to the next row. Finish with ENTER or TAB; ESC throws the typing away. (In Agenda, ↑ and ↓ move between the lines of a long item; Agendum's edit line does not wrap yet, so they do nothing.)

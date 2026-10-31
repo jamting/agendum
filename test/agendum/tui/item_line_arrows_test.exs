@@ -28,7 +28,7 @@ defmodule Agendum.TUI.ItemLineArrowsTest do
   for key <- [:up, :down] do
     test "#{key} while F2 edits an item keeps the line open, the text untaken" do
       %{state: state, call: call} = errands()
-      done = press(state, [{:f, 2}, " soon", unquote(key)])
+      done = press(state, [{:f, 2}, :end, " soon", unquote(key)])
 
       assert %{target: {:edit_item, ^call}} = done.edit
       assert done.db.items[call].text == "Call Anna"
@@ -48,9 +48,20 @@ defmodule Agendum.TUI.ItemLineArrowsTest do
     end
   end
 
+  # Agenda's F2 starts at the beginning of the text (checked in Agenda,
+  # 2026-10-31); END goes to its end
+  test "F2 puts the cursor at the start of the item's text" do
+    %{state: state, call: call} = errands()
+    done = press(state, [{:f, 2}, "Do: ", :enter])
+    assert done.db.items[call].text == "Do: Call Anna"
+
+    ended = press(state, [{:f, 2}, :end, " soon", :enter])
+    assert ended.db.items[call].text == "Call Anna soon"
+  end
+
   test "TAB still takes the text and moves on" do
     %{state: state, call: call} = errands()
-    done = press(state, [{:f, 2}, " soon", :tab])
+    done = press(state, [{:f, 2}, :end, " soon", :tab])
 
     assert done.edit == nil
     assert done.db.items[call].text == "Call Anna soon"

@@ -114,7 +114,7 @@ While typing text (on one line; in a note, the first two rows and CTRL-D; the ke
 | F5                                          | On an item's text: keep it and open the item's note (NOTE) |
 | F1                                          | The help; ESC comes back to the typing |
 
-Typing an item in a view (a new one, or F2 on its text): ENTER or TAB take the text, ESC throws it away, and ↑ ↓ stay in the line, as Agenda's (R21; Agenda's move between the lines of a long, wrapped text, ours is one line).
+Typing an item in a view (a new one, or F2 on its text, which starts at its beginning, as Agenda's): ENTER or TAB take the text, ESC throws it away, and ↑ ↓ stay in the line, as Agenda's (R21; Agenda's move between the lines of a long, wrapped text, ours is one line).
 
 In the help (F1), Agenda's keys: ↑ ↓ ← → HOME END highlight a link in bold (a letter: the next link it begins), ENTER reads it, PGUP PGDN scroll, F1 How to Use Help, F3 the Help Index, F5 Find (then ALT-N / ALT-P through what it found), F6 Keys, F8 or BACKSPACE back through the topics read, F9 or ESC leave (R65e).
 

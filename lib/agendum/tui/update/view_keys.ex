@@ -462,8 +462,12 @@ defmodule Agendum.TUI.Update.ViewKeys do
 
   defp edit(state, %{kind: :section, category: cat}), do: rename(state, cat)
 
+  # F2 on an item's text starts at its beginning, as Agenda's (checked in
+  # Agenda, 2026-10-31); `%{struct | pos: 0}` is the new line with the
+  # cursor moved there
   defp edit(state, %{kind: :item, item: item}) when state.col == 0 do
-    %{state | edit: %{target: {:edit_item, item.id}, line: LineEdit.new(item.text)}}
+    line = %{LineEdit.new(item.text) | pos: 0}
+    %{state | edit: %{target: {:edit_item, item.id}, line: line}}
   end
 
   # F2 in a Category note column: what its line says now (R56)
