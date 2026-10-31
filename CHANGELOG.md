@@ -4,6 +4,16 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.72.7 — 2026-10-31
+
+- **An empty answer in Item Properties' F4** is no longer ignored. An empty number is refused with Agenda's "The number you entered isn't valid", as in a numeric column, and the number stays. An emptied unindexed text is taken out, in the column too, as Agenda does.
+- **ALT-F9 APPEND in the note of MAIN** (or another category whose name cannot change) no longer takes the word out of the note.
+- **A When date whose category discards the item** (a special action) no longer crashes Agendum: the item goes to the trash, with Agenda's message.
+- **ALT-F8 GETITMS with "Discard items after copy? Yes"**, when the open note's own item is marked, no longer loses what was pasted and typed. As in Agenda, that item is discarded too, its note saved with it into the trash; the note then closes.
+- **An item's text emptied with F2** now says "Item text cannot be empty" while the line is still open, so the text can be typed again; ↓ and TAB no longer leave it either.
+- **OVR in a note** stays on after a Search/Replace replacement and after File ▸ Clear.
+- **A search match in a note** is no longer left highlighted after ALT-D, ALT-T or TAB move the text.
+
 ## 0.72.6 — 2026-10-30
 
 - **View Properties on a datebook view no longer crashes** when ↑ is pressed twice from Filter.
