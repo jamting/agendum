@@ -248,49 +248,18 @@ defmodule Agendum.TUI.Update.Prompts do
   defp prompt_action(state, {:ag_password, path, bytes}, text),
     do: Update.Results.import_ag(state, path, bytes, text)
 
-  # the SFTP server's password (R74): the publish of the preview it was
-  # asked for is tried again with it
-  defp prompt_action(state, {:sftp_password, preview}, text),
-    do: Agendum.TUI.Extras.PublishPreviewBox.publish(state, preview, text)
-
-  # Calendars (R45): the address, then a name for its category
-  defp prompt_action(state, :calendar_url, text),
-    do: Agendum.TUI.Extras.CalendarsBox.address_typed(state, text)
-
-  defp prompt_action(state, {:calendar_name, url, events}, name),
-    do: Agendum.TUI.Extras.CalendarsBox.name_typed(state, url, events, name)
-
-  # Feeds (R75): the address, then, once it is read, its name (its
-  # category under Feeds): the logic beside the extra, in its box
-  defp prompt_action(state, :feed_url, text),
-    do: Agendum.TUI.Extras.FeedsBox.address_typed(state, text)
-
-  defp prompt_action(state, {:feed_name, url, entries}, name),
-    do: Agendum.TUI.Extras.FeedsBox.name_typed(state, url, entries, name)
-
-  # F2 in the Feeds and Calendars boxes (R75a): the name, and its category's
-  defp prompt_action(state, {rename, id}, text) when rename in [:rename_feed, :rename_calendar] do
-    case State.command(state, {rename, id, text}) do
-      {:ok, state, _} ->
-        State.info(state, "Renamed #{String.trim(text)}")
-
-      {:error, :empty_text} ->
-        State.error(state, "A name cannot be empty")
-
-      {:error, :duplicate} ->
-        State.error(state, "#{String.trim(text)} is taken: choose another name")
-    end
-  end
-
-  defp prompt_action(state, :import_opml, text),
-    do: State.effect(state, {:read_opml, String.trim(text)})
-
-  defp prompt_action(state, :export_opml, text),
-    do:
-      State.effect(
-        state,
-        {:write_text, Path.expand(String.trim(text)), Agendum.Core.export_opml(state.db)}
-      )
+  # the extras' prompts (R45, R74, R75), answered beside the extras
+  defp prompt_action(state, action, text)
+       when action in [:calendar_url, :feed_url, :import_opml, :export_opml] or
+              (is_tuple(action) and
+                 elem(action, 0) in [
+                   :sftp_password,
+                   :calendar_name,
+                   :feed_name,
+                   :rename_feed,
+                   :rename_calendar
+                 ]),
+       do: Agendum.TUI.Extras.Prompts.answered(state, action, text)
 
   defp prompt_action(state, :startup_open, text),
     do: State.effect(state, {:open_or_create, Agendum.Store.normalize_path(text)})
@@ -615,25 +584,10 @@ defmodule Agendum.TUI.Update.Prompts do
     end
   end
 
-  defp confirmed(state, {:unsubscribe_feed, id}, discard) do
-    name = state.db.feeds[id].name
-
-    State.run(
-      state,
-      {:unsubscribe_feed, id, discard},
-      Agendum.TUI.Extras.Feeds.Messages.text(:unsubscribed, name)
-    )
-  end
-
-  defp confirmed(state, {:unsubscribe_calendar, id}, discard) do
-    name = state.db.calendars[id].name
-
-    State.run(
-      state,
-      {:unsubscribe_calendar, id, discard},
-      Agendum.TUI.Extras.Calendars.Messages.text(:unsubscribed, name)
-    )
-  end
+  # unsubscribing from a feed or a calendar (R75, R45), beside the extras
+  defp confirmed(state, {unsubscribe, _id} = action, discard)
+       when unsubscribe in [:unsubscribe_feed, :unsubscribe_calendar],
+       do: Agendum.TUI.Extras.Prompts.confirmed(state, action, discard)
 
   # Domain: the answers to "Save changes first?" (Retrieve, New, Import)
   # and "Save changes before quitting?". Yes saves (asking for a name when

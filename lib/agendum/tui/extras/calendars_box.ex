@@ -17,7 +17,7 @@ defmodule Agendum.TUI.Extras.CalendarsBox do
     * ESC closes the box
 
   Reading happens in the shell (`{:fetch_calendar, id, url}`); the result
-  comes back through `Agendum.TUI.Update.Results.calendar_read/4`. Pure.
+  comes back through `Agendum.TUI.Extras.Calendars.Results.calendar_read/4`. Pure.
   """
 
   use Agendum.TUI.Boxes.Box, finish: :none

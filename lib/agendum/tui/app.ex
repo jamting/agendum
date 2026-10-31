@@ -170,12 +170,12 @@ defmodule Agendum.TUI.App do
   @spec background(State.t(), background) :: State.t()
   def background(state, {:feed_read, id, url, result, ms}) do
     DebugLog.write("feed #{id} read: #{DebugLog.outcome(result)} in #{ms} ms")
-    Update.Results.feed_read(state, id, url, result)
+    Agendum.TUI.Extras.Feeds.Results.feed_read(state, id, url, result)
   end
 
   def background(state, {:calendar_read, id, url, result, ms}) do
     DebugLog.write("calendar #{id} read: #{DebugLog.outcome(result)} in #{ms} ms")
-    Update.Results.calendar_read(state, id, url, result)
+    Agendum.TUI.Extras.Calendars.Results.calendar_read(state, id, url, result)
   end
 
   # read once before subscribing: the name prompt, with its title (R75, R45)
@@ -184,15 +184,15 @@ defmodule Agendum.TUI.App do
     DebugLog.write("#{probed} #{url}: #{DebugLog.outcome(result)} in #{ms} ms")
 
     if probed == :feed_probed,
-      do: Update.Results.feed_probed(state, url, result),
-      else: Update.Results.calendar_probed(state, url, result)
+      do: Agendum.TUI.Extras.Feeds.Results.feed_probed(state, url, result),
+      else: Agendum.TUI.Extras.Calendars.Results.calendar_probed(state, url, result)
   end
 
   # the next publish may start (`perform/2` lets one run at a time)
   def background(state, {:published, changes, result}) do
     Process.delete(:agendum_publishing)
     DebugLog.write("published: #{DebugLog.outcome(result)}")
-    Update.Results.published(state, changes, result)
+    Agendum.TUI.Extras.Publish.Results.published(state, changes, result)
   end
 
   # The input already in the mailbox, taken without waiting (`after 0`):
@@ -428,16 +428,16 @@ defmodule Agendum.TUI.App do
 
   # an entry's link in the browser (R75), and a feed list (OPML)
   defp perform(state, {:open_url, url}),
-    do: Update.Results.url_opened(state, url, FeedFetch.open_url(url))
+    do: Agendum.TUI.Extras.Feeds.Results.url_opened(state, url, FeedFetch.open_url(url))
 
   defp perform(state, {:read_opml, path}),
-    do: Update.Results.opml_read(state, path, File.read(Path.expand(path)))
+    do: Agendum.TUI.Extras.Feeds.Results.opml_read(state, path, File.read(Path.expand(path)))
 
   # the micro-blog (R74): what the folder holds, then writing and
   # uploading it
   defp perform(state, {:publish_scan, folder, files}),
     do:
-      Update.Results.publish_scanned(
+      Agendum.TUI.Extras.Publish.Results.publish_scanned(
         state,
         folder,
         files,

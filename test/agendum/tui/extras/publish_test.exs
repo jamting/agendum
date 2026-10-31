@@ -6,7 +6,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
   import Agendum.TUIHelpers
   alias Agendum.Core
   alias Agendum.Core.Database
-  alias Agendum.TUI.{State, Update}
+  alias Agendum.TUI.State
 
   # a file with a Posts category holding two items, one with a note
   setup do
@@ -70,7 +70,12 @@ defmodule Agendum.TUI.Extras.PublishTest do
       state = state |> open() |> press(:enter)
       {:publish_scan, folder, files} = scan_effect()
       empty = %{existing: %{}, published: []}
-      %{state: Update.Results.publish_scanned(state, folder, files, {:ok, empty}), files: files}
+
+      %{
+        state:
+          Agendum.TUI.Extras.Publish.Results.publish_scanned(state, folder, files, {:ok, empty}),
+        files: files
+      }
     end
 
     test "shows what will be added before anything is written", %{state: state} do
@@ -87,7 +92,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
       assert {:publish, "site", _files, changes, nil} =
                Enum.find(effects(), &(elem(&1, 0) == :publish))
 
-      state = Update.Results.published(state, changes, :ok)
+      state = Agendum.TUI.Extras.Publish.Results.published(state, changes, :ok)
       assert State.mode(state) == nil
       assert screen(state) =~ "Published: 12 added, 0 changed, 0 removed"
       # the file has no Base address, so the feeds' links are not whole
@@ -103,7 +108,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
 
     test "an SFTP server that wants a password asks, in stars, and tries again", %{state: state} do
       changes = State.mode(state).changes
-      state = Update.Results.published(state, changes, {:error, :password})
+      state = Agendum.TUI.Extras.Publish.Results.published(state, changes, {:error, :password})
       assert screen(state) =~ "(not kept)"
 
       Process.delete(:effects_seen)
@@ -124,7 +129,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
     } do
       changes = State.mode(state).changes
       state = state |> press(:enter) |> press({:f, 1})
-      state = Update.Results.published(state, changes, {:error, :password})
+      state = Agendum.TUI.Extras.Publish.Results.published(state, changes, {:error, :password})
 
       Process.delete(:effects_seen)
       press(state, ["p", "w", :enter])
@@ -138,7 +143,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
     } do
       changes = State.mode(state).changes
       state = state |> press(:enter) |> press(:esc)
-      state = Update.Results.published(state, changes, {:error, :password})
+      state = Agendum.TUI.Extras.Publish.Results.published(state, changes, {:error, :password})
 
       # no prompt: nothing is left to publish with it
       assert State.mode(state) == nil
@@ -171,7 +176,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
     test "a password asked and not given leaves nothing published", %{state: state} do
       changes = State.mode(state).changes
       state = press(state, :enter)
-      state = Update.Results.published(state, changes, {:error, :password})
+      state = Agendum.TUI.Extras.Publish.Results.published(state, changes, {:error, :password})
       # ESC leaves the password prompt, then the preview
       state = state |> press(:esc) |> press(:esc)
       assert screen(state) =~ "Nothing was published"
@@ -180,7 +185,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
     test "published while the help covers the preview: the preview goes too", %{state: state} do
       changes = State.mode(state).changes
       state = state |> press(:enter) |> press({:f, 1})
-      state = Update.Results.published(state, changes, :ok)
+      state = Agendum.TUI.Extras.Publish.Results.published(state, changes, :ok)
 
       refute Enum.any?(state.modes, &match?(%{type: :publish_preview}, &1))
       assert screen(state) =~ "Published: 12 added"
@@ -189,7 +194,14 @@ defmodule Agendum.TUI.Extras.PublishTest do
 
     test "an error is said, and the preview closes", %{state: state} do
       changes = State.mode(state).changes
-      state = Update.Results.published(state, changes, {:error, "rsync is not installed"})
+
+      state =
+        Agendum.TUI.Extras.Publish.Results.published(
+          state,
+          changes,
+          {:error, "rsync is not installed"}
+        )
+
       assert screen(state) =~ "Not published: rsync is not installed"
       assert State.mode(state) == nil
     end

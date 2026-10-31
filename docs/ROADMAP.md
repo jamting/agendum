@@ -28,7 +28,6 @@ Small, testable increments: the open work, by area.
 
   - **A refused command still moves the screen on** (`State.run/2` drops the refusal): removing a column moves the highlight, ALT-Y says "Yanked back" over the error. Not reproduced (2026-10-31): after the TUI's own checks the core cannot refuse either command, so nothing was changed; fix it when a refusal becomes possible.
   - **Later, with the view cache** (Sharpen the saw, when the evidence asks): a key in a column builds the view model up to four times (`Layout.current_column`, each `current_row` builds it again).
-- [ ] The extras' answers handled beside them (2026-10-27, found moving their messages): `Update.Results` (a feed's and calendar's read, an OPML list, an upload) and `Update.Prompts` (subscribing, unsubscribing, the SFTP password) still hold the extras' logic, listed as doors in `architecture_test.exs`; move each into a module beside its extra, so the shared modules only dispatch (the owner's modularity, 2026-10-27) (carried by expert review 2026-10-30, § 18.8)
 - [ ] Optional (the owner, 2026-10-27): try v0.69.3's main fix by hand: open a second file while a feed is being read, and see its entries land only in the file that asked (the richer fuzz walks already check it)
 
 ### Sharpen the saw

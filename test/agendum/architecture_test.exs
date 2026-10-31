@@ -287,20 +287,13 @@ defmodule Agendum.ArchitectureTest do
     # … and writes and uploads the blog in its background task (code review
     # 2026-10-26: an upload must not stop the program)
     {Agendum.TUI.App, :publish_site, 5},
-    # the blog's folder, read for the Publish box, shown in its preview
-    {Agendum.TUI.Update.Results, :publish_scanned, 4},
-    # the SFTP password, asked for by the preview, sent back to it
+    # the shell's answers to what only the extras ask for (a feed's or
+    # calendar's read, one read before subscribing, an OPML list, an
+    # upload), handed to the extras' own Results modules
+    {Agendum.TUI.App, :background, 2},
+    # the extras' prompts and questions (subscribing, renaming, OPML, the
+    # SFTP password, unsubscribing), handed to `Extras.Prompts`
     {Agendum.TUI.Update.Prompts, :prompt_action, 3},
-    # the answers to what only the extras ask for (a feed's or calendar's
-    # read, an OPML list, an upload, an unsubscribe), told in the extra's
-    # own words, kept beside it (UI guidelines rule 7.5, 2026-10-27)
-    {Agendum.TUI.Update.Results, :feed_into, 4},
-    {Agendum.TUI.Update.Results, :read_into, 4},
-    {Agendum.TUI.Update.Results, :opml_read, 3},
-    {Agendum.TUI.Update.Results, :published, 3},
-    # a feed or calendar read once before it is subscribed to (R75, R45)
-    {Agendum.TUI.Update.Results, :feed_probed, 3},
-    {Agendum.TUI.Update.Results, :calendar_probed, 3},
     {Agendum.TUI.Update.Prompts, :confirmed, 3}
   ]
 

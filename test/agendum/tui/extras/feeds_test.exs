@@ -5,7 +5,7 @@ defmodule Agendum.TUI.Extras.FeedsTest do
 
   import Agendum.TUIHelpers
   alias Agendum.Core
-  alias Agendum.TUI.{Layout, State, Update}
+  alias Agendum.TUI.{Layout, State}
 
   setup do
     Process.delete(:effects_seen)
@@ -21,7 +21,10 @@ defmodule Agendum.TUI.Extras.FeedsTest do
   defp subscribed(state, entries \\ []) do
     state = state |> open() |> press(:insert) |> type("https://owl.example/rss")
     read = {:ok, %{title: "Owl's Gazette", entries: entries}}
-    state |> Update.Results.feed_probed("https://owl.example/rss", read) |> press(:enter)
+
+    state
+    |> Agendum.TUI.Extras.Feeds.Results.feed_probed("https://owl.example/rss", read)
+    |> press(:enter)
   end
 
   @entries [
@@ -44,7 +47,7 @@ defmodule Agendum.TUI.Extras.FeedsTest do
     assert state.db.feeds == %{}
 
     read = {:ok, %{title: "Owl's Gazette", entries: @entries}}
-    asked = Update.Results.feed_probed(state, "https://owl.example/rss", read)
+    asked = Agendum.TUI.Extras.Feeds.Results.feed_probed(state, "https://owl.example/rss", read)
     assert panel(asked) =~ "Name of the feed"
     assert panel(asked) =~ "Owl's Gazette"
 
@@ -61,7 +64,14 @@ defmodule Agendum.TUI.Extras.FeedsTest do
 
   test "a feed that cannot be read is not subscribed", %{state: state} do
     state = state |> open() |> press(:insert) |> type("https://owl.example/rss")
-    state = Update.Results.feed_probed(state, "https://owl.example/rss", {:error, "no answer"})
+
+    state =
+      Agendum.TUI.Extras.Feeds.Results.feed_probed(
+        state,
+        "https://owl.example/rss",
+        {:error, "no answer"}
+      )
+
     assert screen(state) =~ "Not subscribed: no answer"
     assert state.db.feeds == %{}
   end
@@ -69,7 +79,7 @@ defmodule Agendum.TUI.Extras.FeedsTest do
   test "a read for an address no longer waited for is dropped", %{state: state} do
     state = state |> open() |> press(:insert) |> type("https://owl.example/rss") |> press(:esc)
     read = {:ok, %{title: "Owl's Gazette", entries: []}}
-    after_ = Update.Results.feed_probed(state, "https://owl.example/rss", read)
+    after_ = Agendum.TUI.Extras.Feeds.Results.feed_probed(state, "https://owl.example/rss", read)
     assert after_.modes == state.modes
   end
 
@@ -86,7 +96,7 @@ defmodule Agendum.TUI.Extras.FeedsTest do
     {:fetch_feed, id, _} = effect(:fetch_feed)
 
     state =
-      Update.Results.feed_read(
+      Agendum.TUI.Extras.Feeds.Results.feed_read(
         state,
         id,
         "https://owl.example/rss",
@@ -132,7 +142,7 @@ defmodule Agendum.TUI.Extras.FeedsTest do
     list =
       ~s(<opml><body><outline text="Rabbit" xmlUrl="https://rabbit.example/feed"/></body></opml>)
 
-    state = Update.Results.opml_read(state, "/tmp/list.opml", {:ok, list})
+    state = Agendum.TUI.Extras.Feeds.Results.opml_read(state, "/tmp/list.opml", {:ok, list})
     assert screen(state) =~ "Subscribed to 1 feed from list.opml"
     assert length(Core.Database.feeds(state.db)) == 2
   end
@@ -149,7 +159,13 @@ defmodule Agendum.TUI.Extras.FeedsTest do
 
     assert {:open_url, "https://owl.example/heffalump"} = effect(:open_url)
 
-    assert screen(Update.Results.url_opened(state, "https://owl.example/heffalump", :ok)) =~
+    assert screen(
+             Agendum.TUI.Extras.Feeds.Results.url_opened(
+               state,
+               "https://owl.example/heffalump",
+               :ok
+             )
+           ) =~
              "Opened"
   end
 

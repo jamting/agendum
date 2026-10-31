@@ -35,7 +35,13 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
     {state, [{:probe_calendar, @url}]} =
       keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed(@url))
 
-    state = Update.Results.calendar_probed(state, @url, {:ok, %{title: "Work", events: []}})
+    state =
+      Agendum.TUI.Extras.Calendars.Results.calendar_probed(
+        state,
+        @url,
+        {:ok, %{title: "Work", events: []}}
+      )
+
     {state, []} = keys(state, :enter)
     {state, [{:fetch_calendar, id, @url}]} = keys(state, :enter)
     {state, id}
@@ -59,7 +65,13 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
     {state, [{:probe_calendar, @url}]} =
       keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed(@url))
 
-    asked = Update.Results.calendar_probed(state, @url, {:ok, %{title: "Work", events: events()}})
+    asked =
+      Agendum.TUI.Extras.Calendars.Results.calendar_probed(
+        state,
+        @url,
+        {:ok, %{title: "Work", events: events()}}
+      )
+
     assert panel(asked) =~ "Work"
     {state, []} = keys(asked, :enter)
     assert [%{name: "Work"} = cal] = Agendum.Core.Database.calendars(state.db)
@@ -70,7 +82,14 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
 
   test "a calendar that cannot be read is not subscribed", %{state: state} do
     {state, _} = keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed(@url))
-    state = Update.Results.calendar_probed(state, @url, {:error, "not a calendar"})
+
+    state =
+      Agendum.TUI.Extras.Calendars.Results.calendar_probed(
+        state,
+        @url,
+        {:error, "not a calendar"}
+      )
+
     assert screen(state) =~ "Not subscribed: not a calendar"
     assert state.db.calendars == %{}
   end
@@ -86,7 +105,7 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
 
   test "what is read becomes items; one undo step takes it back", %{state: state} do
     {state, id} = subscribe(state)
-    state = Update.Results.calendar_read(state, id, @url, {:ok, events()})
+    state = Agendum.TUI.Extras.Calendars.Results.calendar_read(state, id, @url, {:ok, events()})
     texts = state.db.items |> Map.values() |> Enum.map(& &1.text)
     assert "Organising Meeting" in texts
     assert screen(state) =~ "Work: 2 new"
@@ -98,14 +117,22 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
 
   test "a failed read shows in the box", %{state: state} do
     {state, id} = subscribe(state)
-    state = Update.Results.calendar_read(state, id, @url, {:error, "could not connect"})
+
+    state =
+      Agendum.TUI.Extras.Calendars.Results.calendar_read(
+        state,
+        id,
+        @url,
+        {:error, "could not connect"}
+      )
+
     assert screen(state) =~ "could not connect"
     assert state.db.calendars[id].error == "could not connect"
   end
 
   test "calendars due are read on the clock's tick, one read at a time", %{state: state} do
     {state, id} = subscribe(state)
-    state = Update.Results.calendar_read(state, id, @url, {:ok, events()})
+    state = Agendum.TUI.Extras.Calendars.Results.calendar_read(state, id, @url, {:ok, events()})
     {state, effects} = Update.tick(state, ~N[2026-10-12 10:30:00])
     assert effects == []
     {state, effects} = Update.tick(state, ~N[2026-10-12 11:00:00])
@@ -116,19 +143,19 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
 
   test "a scheduled read changes the view quietly when nothing changed", %{state: state} do
     {state, id} = subscribe(state)
-    state = Update.Results.calendar_read(state, id, @url, {:ok, events()})
+    state = Agendum.TUI.Extras.Calendars.Results.calendar_read(state, id, @url, {:ok, events()})
     state = press(state, :esc) |> press(:esc)
     {state, _} = Update.tick(state, ~N[2026-10-12 11:00:00])
-    state = Update.Results.calendar_read(state, id, @url, {:ok, events()})
+    state = Agendum.TUI.Extras.Calendars.Results.calendar_read(state, id, @url, {:ok, events()})
     refute screen(state) =~ "Work:"
   end
 
   test "ENTER reads it now; F6 changes how often and how far ahead", %{state: state} do
     {state, id} = subscribe(state)
-    state = Update.Results.calendar_read(state, id, @url, {:ok, events()})
+    state = Agendum.TUI.Extras.Calendars.Results.calendar_read(state, id, @url, {:ok, events()})
     {state, effects} = keys(state, :enter)
     assert effects == [{:fetch_calendar, id, @url}]
-    state = Update.Results.calendar_read(state, id, @url, {:ok, events()})
+    state = Agendum.TUI.Extras.Calendars.Results.calendar_read(state, id, @url, {:ok, events()})
     {state, _} = keys(state, [{:f, 6}, :down, " ", :down, " ", :enter])
     assert state.db.calendars[id].refresh_minutes == 360
     assert state.db.calendars[id].ahead_days == 180
@@ -138,7 +165,7 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
 
   test "DEL unsubscribes: Y also discards its items, N keeps them", %{state: state} do
     {state, id} = subscribe(state)
-    state = Update.Results.calendar_read(state, id, @url, {:ok, events()})
+    state = Agendum.TUI.Extras.Calendars.Results.calendar_read(state, id, @url, {:ok, events()})
 
     {asked, _} = keys(state, :delete)
     assert screen(asked) =~ "Unsubscribe from Work. Discard its 2 items too?"

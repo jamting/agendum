@@ -102,7 +102,12 @@ defmodule Agendum.TUI.Extras.ManagersTest do
       id = feed(state).id
 
       state =
-        Agendum.TUI.Update.Results.feed_read(state, id, feed(state).url, {:error, "no answer"})
+        Agendum.TUI.Extras.Feeds.Results.feed_read(
+          state,
+          id,
+          feed(state).url,
+          {:error, "no answer"}
+        )
 
       assert feed(state).error == "no answer"
       assert feed(press(state, :esc)).error == "no answer"

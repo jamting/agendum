@@ -385,7 +385,14 @@ defmodule Agendum.TUI.Fuzz do
   defp scanned(state, effects) do
     Enum.reduce(effects, {state, []}, fn
       {:publish_scan, folder, files}, {state, more} ->
-        state = Update.Results.publish_scanned(state, folder, files, {:ok, empty_folder()})
+        state =
+          Agendum.TUI.Extras.Publish.Results.publish_scanned(
+            state,
+            folder,
+            files,
+            {:ok, empty_folder()}
+          )
+
         {%{state | effects: []}, more ++ state.effects}
 
       _effect, acc ->
