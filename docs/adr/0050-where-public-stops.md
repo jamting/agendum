@@ -23,3 +23,5 @@ Agendum is to get a public repository, made from a copy of this private workshop
 - The protocol, when it is designed, is designed in public and documented as the file formats are.
 - A feature that would only work through a service needs a decision of its own, held against "a service adds, never takes away".
 - Private passages in public documents are marked `<!-- private -->` … `<!-- /private -->`, as in this ADR, and the public copy shows each as one creek line (meeting 2026-10-28-0908, § 7). Since moving day (2026-10-30) the markers are no longer used: this is the public repository, and a private passage is written into the owner's private repository instead, with the creek line here in its place (the `expert-review` skill, Private passages).
+
+*[A page here was soaked in the creek. — Rabbit]*

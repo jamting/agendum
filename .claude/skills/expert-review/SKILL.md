@@ -43,9 +43,9 @@ Not every expert attends every meeting; it depends on the subject. **Owl** (host
 
 ## Private passages
 
-This repository is public (moving day, 2026-10-30; ADR 0050). What is private never goes into it: the owner's own plans beyond the open program (what the creek lines stand for; the list is in `CLAUDE.local.md`'s Rules and the Wolery's ADR 0050), and the real names behind the pseudonyms.
+This repository is public (moving day, 2026-10-30; ADR 0050). What is private never goes into it: the owner's own plans beyond the open program (what the creek lines stand for; the list is in `CLAUDE.local.md`'s Rules and the Wolery's `docs/adr/0050-where-public-stops.private.md`), and the real names behind the pseudonyms.
 
-- **Where it goes**: into the Wolery (the owner's private repository; its path is in `CLAUDE.local.md`), in a file beside the public one: `docs/reviews/YYYY-MM-DD-private.md` for a review, `docs/meetings/YYYY-MM-DD-HHMM/private.md` for a meeting. It is written under the same § number and heading, so the two read together.
+- **Where it goes**: into the Wolery (the owner's private repository; its path is in `CLAUDE.local.md`), in a file beside the public one: `docs/reviews/YYYY-MM-DD-private.md` for a review, `docs/meetings/YYYY-MM-DD-HHMM/private.md` for a meeting, and for another public document the same path ending in `.private.md` (`docs/plans/GITHUB.private.md`). It is written under the same § number and heading, so the two read together; the public file stays the only full text, never copied whole into the Wolery.
 - **What the public text shows** in its place: the creek line, *[A page here was soaked in the creek. — Rabbit]* (its story is in `docs/INDEX.md`). The one exception is a review's business value, which the public minutes leave out altogether (Judge, below).
 - **The commit**: the private file is committed and pushed in the Wolery (`git -C <the Wolery>`), the public text here.
 - **Without a `CLAUDE.local.md`** (a contributor's checkout): leave such passages out altogether.
