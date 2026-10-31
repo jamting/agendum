@@ -328,10 +328,27 @@ defmodule Agendum.TUI.Fuzz do
     # Undisc with two items in the trash asks which
     [:down, {:alt_f, 4}, :enter, {:alt_f, 4}, :enter, @f10, {:char, "i"}, {:char, "u"}],
     # F3 in a note with nothing marked asks what to copy
-    [:down, {:f, 5}, {:f, 3}]
+    [:down, {:f, 5}, {:f, 3}],
+    # the two boxes only the shell's answer opens: a file that is not
+    # there (New File), and an Agenda file imported (its report)
+    {:answer, :new_file},
+    {:answer, :import_report}
   ]
 
+  # an Agenda file for the import report's walks, read once as the tests load
+  @rich_ag File.read!("test/fixtures/ag/RICH.AG")
+
   defp open_box(walk, nil), do: walk
+
+  defp open_box(walk, {:answer, :new_file}),
+    do: %{
+      walk
+      | state: Update.Results.loaded(walk.state, "/tmp/fuzz-new.agendum", {:error, :enoent})
+    }
+
+  defp open_box(walk, {:answer, :import_report}),
+    do: %{walk | state: Update.Results.import_ag(walk.state, "/tmp/RICH.AG", @rich_ag, nil)}
+
   defp open_box(walk, keys) when is_list(keys), do: press_shell(walk, keys)
 
   # a box inside a box: SPACE on its setting (on each in turn, for a list
