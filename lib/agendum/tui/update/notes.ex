@@ -207,11 +207,6 @@ defmodule Agendum.TUI.Update.Notes do
 
   # --- ALT-F7 MAKEITM and ALT-F2 MAKECAT (User's Guide 12-8 to 12-9) ---
 
-  # the longest item text and category name Agenda allowed; the rest of
-  # the text goes into the new item's or category's note
-  @item_room 350
-  @name_room 69
-
   # The new item goes into the view's section, so the note must have been
   # opened from a view (nothing under it on the mode stack). Marked text
   # is taken as it is; else Agenda asks Word, Line or All text.
@@ -292,9 +287,8 @@ defmodule Agendum.TUI.Update.Notes do
 
       {text, edit} ->
         row = Layout.current_row(state)
-        # an item is one line: line breaks become spaces
-        {text, rest} =
-          String.split_at(text |> String.replace("\n", " ") |> String.trim(), @item_room)
+        # an item is one line, of at most 350 characters (the core's rule)
+        {text, rest} = Agendum.Core.fit_item_text(text)
 
         after_id = if row.kind == :item, do: row.item.id
 
@@ -348,8 +342,8 @@ defmodule Agendum.TUI.Update.Notes do
          {text, edit} <- TextEdit.take(mode.edit, what),
          text = text |> String.replace("\n", " ") |> String.trim(),
          true <- text != "" do
-      {current, room} = appended_to(state.db, mode.target)
-      {fits, rest} = String.split_at(text, max(room - String.length(current) - 1, 0))
+      current = appended_to(state.db, mode.target)
+      {fits, rest} = Agendum.Core.fit_appended(state.db, mode.target, text)
       append_fitting(state, mode, edit, current, fits, rest)
     else
       {:macro, _} -> State.error(state, "ALT-F9 appends to an item or a category")
@@ -386,8 +380,8 @@ defmodule Agendum.TUI.Update.Notes do
     end
   end
 
-  defp appended_to(db, {:item, id}), do: {db.items[id].text, @item_room}
-  defp appended_to(db, {:category, id}), do: {db.categories[id].name, @name_room}
+  defp appended_to(db, {:item, id}), do: db.items[id].text
+  defp appended_to(db, {:category, id}), do: db.categories[id].name
 
   # ALT-F8: Agenda's question first, "Discard items after copy?  Yes"
   # (checked in Agenda 2.0, 2026-10-26; User's Guide 12-7); its two answers
@@ -495,7 +489,7 @@ defmodule Agendum.TUI.Update.Notes do
 
   @doc "ALT-F2's parent was picked: the category is added under it."
   def add_category(state, name, parent) do
-    {name, rest} = String.split_at(name, @name_room)
+    {name, rest} = Agendum.Core.fit_category_name(name)
 
     case State.command(state, {:add_category, parent, name, []}) do
       {:ok, state, %{new: id}} ->

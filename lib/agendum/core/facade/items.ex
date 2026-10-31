@@ -15,6 +15,36 @@ defmodule Agendum.Core.Facade.Items do
   @typep id :: Agendum.Core.id()
   @typep clock :: Agendum.Core.clock()
 
+  # the longest item text Agenda allowed (User's Guide 12-8); the rest of
+  # a text made into an item goes into its note
+  @item_room 350
+
+  @doc """
+  A text made into an item from a note (ALT-F7 MAKEITM, R64f): as one line
+  (line breaks become spaces), cut to the 350 characters an item text may
+  have. Gives the part that fits and the rest, for the new item's note.
+  """
+  @spec fit_item_text(String.t()) :: {String.t(), String.t()}
+  def fit_item_text(text),
+    do: text |> String.replace("\n", " ") |> String.trim() |> String.split_at(@item_room)
+
+  @doc """
+  Text appended to an item's text or a category's name from its note
+  (ALT-F9 APPEND, R64f), after a space: the part that still fits (350
+  characters for an item, 69 for a category name) and the rest, which
+  stays in the note. The part is "" when there is no room left.
+  """
+  @spec fit_appended(db, {:item | :category, id}, String.t()) :: {String.t(), String.t()}
+  def fit_appended(db, target, text) do
+    {current, room} =
+      case target do
+        {:item, id} -> {db.items[id].text, @item_room}
+        {:category, id} -> {db.categories[id].name, Agendum.Core.Facade.Categories.name_room()}
+      end
+
+    String.split_at(text, max(room - String.length(current) - 1, 0))
+  end
+
   @doc """
   Adds an item, assigns it to `:section` (a category id) and runs automatic
   assignment.

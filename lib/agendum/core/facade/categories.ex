@@ -39,6 +39,21 @@ defmodule Agendum.Core.Facade.Categories do
     end
   end
 
+  # the longest category name Agenda allowed (User's Guide 12-9)
+  @name_room 69
+
+  @doc "The longest a category name may be, in characters: Agenda's 69."
+  @spec name_room() :: pos_integer
+  def name_room, do: @name_room
+
+  @doc """
+  A name for a new category made from a note's text (ALT-F2 MAKECAT,
+  R64f), cut to the 69 characters a name may have. Gives the part that
+  fits and the rest, for the category's note.
+  """
+  @spec fit_category_name(String.t()) :: {String.t(), String.t()}
+  def fit_category_name(name), do: String.split_at(name, @name_room)
+
   @doc """
   Adds a category under `parent_id`. Names must be unique among siblings.
   Accepts the same options as `Database.insert_category/4`.

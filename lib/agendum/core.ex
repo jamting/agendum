@@ -103,6 +103,8 @@ defmodule Agendum.Core do
 
   # items: adding and editing (R21), moving (R26), done, marking (R35), discarding
   defdelegate add_item(db, text, today, opts \\ []), to: Items
+  defdelegate fit_item_text(text), to: Items
+  defdelegate fit_appended(db, target, text), to: Items
   defdelegate edit_item(db, id, text, today, adjacent \\ []), to: Items
   defdelegate set_note(db, id, note, clock), to: Items
   defdelegate move_item(db, item_id, from, to, opts \\ []), to: Items
@@ -216,6 +218,7 @@ defmodule Agendum.Core do
 
   # categories: hierarchy (R2), moving and exclusive children (R7), links (R8, R9)
   defdelegate add_category(db, parent_id, name, opts \\ []), to: Categories
+  defdelegate fit_category_name(name), to: Categories
   defdelegate insert_category(db, parent_id, name, opts \\ []), to: Categories
   defdelegate find_or_add_category(db, name), to: Categories
   defdelegate find_or_create_category(db, name), to: Categories

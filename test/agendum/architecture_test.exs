@@ -149,7 +149,7 @@ defmodule Agendum.ArchitectureTest do
   @reads ~w(
     agenda_file? alarm_at alarm_list calendar_url circular_items assignment_reasons auto_dating? browse_keep browse_move browse_start browse_to browsed_view calendars_due completions confirm_mode date_conversion
     date_filters? default_column_width demote_conflicts empty_trash_choices conditions_and_actions dependents entry_categories group_alarms
-    entry_values exclusive_conflicts export_json feed_url file_defaults import_ag ingested_categories ingested? ingested_families import_json item_assignments
+    entry_values exclusive_conflicts export_json feed_url file_defaults fit_appended fit_category_name fit_item_text import_ag ingested_categories ingested? ingested_families import_json item_assignments
     item_column_fit marked_items match_settings move_conflicts new_file
     new_file_with numeric_conversion prerequisites promote_conflicts questions read_when
     related_items relocation_conflicts section_calcs section_item_count shift_filters show_view subscription_name template view_statistics waiting?
