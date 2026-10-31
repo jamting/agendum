@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Typing.Wrap do
   @moduledoc """
-  Word wrap in the note editor, for the screen only: a line of a note that
-  is wider than the screen is shown on as many rows as it needs, and no
-  line break goes into the text. A row ends after the rightmost space
+  Word wrap in the note editor and in an item's text being typed in a view
+  (R21), for the screen only: a line of a note, or an item, that is wider
+  than its room is shown on as many rows as it needs, and no line break
+  goes into the text. A row ends after the rightmost space
   that fits (the space stays at the end of the row); a word wider than
   the screen is broken at its edge.
 
@@ -21,6 +22,13 @@ defmodule Agendum.TUI.Typing.Wrap do
   """
   @spec width(Agendum.TUI.State.t()) :: pos_integer
   def width(state), do: max(state.width - 2, 1)
+
+  @doc """
+  How wide an item's text being typed is wrapped, in an item text `width`
+  wide: a column less, for the cursor at the end of a full last row.
+  """
+  @spec item_width(pos_integer) :: pos_integer
+  def item_width(width), do: max(width - 1, 1)
 
   @doc """
   The rows of `line` on a screen `width` characters wide. A row holds up

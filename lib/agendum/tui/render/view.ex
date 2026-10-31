@@ -7,7 +7,7 @@ defmodule Agendum.TUI.Render.View do
 
   alias Agendum.Core.{DateFormat, ViewModel}
   alias Agendum.Core.View.Column
-  alias Agendum.TUI.{Typing.Completion, Terminal.Draw, Layout, State}
+  alias Agendum.TUI.{Typing.Completion, Typing.Wrap, Terminal.Draw, Layout, State}
   alias Agendum.TUI.Render.Text
 
   @doc "The view's lines, scrolled: at most a screenful (the body's height)."
@@ -37,13 +37,12 @@ defmodule Agendum.TUI.Render.View do
         case editing do
           %{target: {:new_item, _, key}} when selected and key == row.key ->
             {left, right} = Enum.split(columns, Layout.items_at(row))
+            [first | rest] = wrapped_input(editing.line, tw)
 
+            # a new item's wrapped lines go under its text, as an item's do
             lines ++
-              [
-                blank_cells(left) ++
-                  [{:symbol, "    • "}] ++
-                  Draw.input(editing.line, tw, :edit) ++ blank_cells(right)
-              ]
+              [blank_cells(left) ++ [{:symbol, "    • "}] ++ first ++ blank_cells(right)] ++
+              Enum.map(rest, &(blank_cells(left) ++ [{:normal, Draw.spaces(6)}] ++ &1))
 
           _ ->
             lines
@@ -54,6 +53,32 @@ defmodule Agendum.TUI.Render.View do
     |> Stream.drop(state.scroll - skipped_lines)
     |> Enum.take(State.body_height(state))
     |> first_heads_only()
+  end
+
+  # An item's text being typed, wrapped on as many lines as it takes, as
+  # Agenda's (R21; `Typing.Wrap`, as a note's): the whole text styled with
+  # the cursor (or the F7 mark) first, then cut into its rows, each `tw`
+  # wide. The last row takes the rest, the cursor after the text's end too.
+  defp wrapped_input(line, tw) do
+    styled =
+      case line.mark do
+        mark when mark in [nil, line.pos] ->
+          Draw.field(line.text, line.pos, :edit)
+
+        mark ->
+          {before, rest} = String.split_at(line.text, min(mark, line.pos))
+          {marked, after_} = String.split_at(rest, abs(mark - line.pos))
+          [{:edit, before}, {:edit_cursor, marked}, {:edit, after_}]
+      end
+
+    rows = Wrap.rows(line.text, Wrap.item_width(tw))
+    last = length(rows) - 1
+
+    for {{start, len}, i} <- Enum.with_index(rows) do
+      part = Draw.drop(styled, start)
+      part = if i == last, do: part, else: Draw.take(part, len)
+      Draw.line(part, tw, :edit)
+    end
   end
 
   # How many rows lie wholly above the screen, and their lines: their
@@ -253,7 +278,7 @@ defmodule Agendum.TUI.Render.View do
     text_lines =
       case editing do
         %{target: {:edit_item, id}} when id == item.id ->
-          [Draw.input(editing.line, tw, :edit)]
+          wrapped_input(editing.line, tw)
 
         _ ->
           wrapped = Draw.wrap(item.text, tw)

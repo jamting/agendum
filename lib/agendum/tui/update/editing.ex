@@ -8,10 +8,26 @@ defmodule Agendum.TUI.Update.Editing do
 
   alias Agendum.Core
   alias Agendum.Core.{Database, DateFormat}
-  alias Agendum.TUI.{Typing.Completion, Layout, Typing.LineEdit, State}
+  alias Agendum.TUI.{Typing.Completion, Layout, Typing.LineEdit, Typing.Wrap, State}
   alias Agendum.TUI.Update.ViewKeys
 
   # --- inline editing in the view ---------------------------------------------
+
+  # the keys that move by the rows of an item's wrapped text, and where to;
+  # CTRL-A and CTRL-E are HOME and END on a Mac, as everywhere in a line
+  # (the `:line` keymap). `elem/2` reads a tuple's field by index (0 is the
+  # first): the target's kind, `{:edit_item, id}` or `{:new_item, …}`.
+  @wrapped_moves %{
+    :up => :up,
+    :down => :down,
+    :home => :line_start,
+    {:ctrl, "a"} => :line_start,
+    :end => :line_end,
+    {:ctrl, "e"} => :line_end,
+    :ctrl_home => :text_start,
+    :ctrl_end => :text_end
+  }
+  @item_lines [:new_item, :edit_item]
 
   @doc "A key while an item, a category name or a column entry is edited in the view."
   def view_edit_key(%State{edit: edit} = state, key) do
@@ -38,12 +54,12 @@ defmodule Agendum.TUI.Update.Editing do
       {:f, 3} when completing ->
         ViewKeys.view_key(%{state | edit: nil}, {:f, 3})
 
-      # ↑/↓ stay in an item's line, as Agenda's (checked in Agenda,
-      # 2026-10-31): only ENTER or TAB take the text. Agenda's move between
-      # the lines of a long, wrapped text; ours is one line, so they do
-      # nothing. `elem/2` reads a tuple's field by index (0 is the first).
-      k when k in [:up, :down] and elem(edit.target, 0) in [:new_item, :edit_item] ->
-        state
+      # an item's text is typed wrapped, as Agenda's (checked in Agenda,
+      # 2026-10-31): ↑ ↓ move between its rows and never leave it (only
+      # ENTER or TAB take the text), HOME and END go to a row's start and
+      # end, CTRL-HOME and CTRL-END to the text's
+      k when is_map_key(@wrapped_moves, k) and elem(edit.target, 0) in @item_lines ->
+        wrapped_move(state, @wrapped_moves[k])
 
       # a refused text keeps the line open (below), and the highlight with it
       k when k in [:up, :down, :tab, :shift_tab] ->
@@ -59,6 +75,12 @@ defmodule Agendum.TUI.Update.Editing do
           :unhandled -> state
         end
     end
+  end
+
+  # the item's text wraps on the rows its line is drawn on (`Render.View`)
+  defp wrapped_move(%State{edit: edit} = state, id) do
+    width = Wrap.item_width(Layout.text_width(state, Layout.current_row(state)))
+    %{state | edit: %{edit | line: LineEdit.wrapped_move(edit.line, id, width)}}
   end
 
   # ENTER on a column entry takes the completion shown (R32); with no match

@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.73.0 — 2026-10-31
+
+- **A long item is typed wrapped**, as in Agenda: F2 on it, or a new item, shows the whole text on the lines it takes instead of one line scrolling sideways, and the rows below move down as it grows. ↑ and ↓ move between its lines, HOME and END (CTRL-A, CTRL-E) go to a line's start and end, CTRL-HOME and CTRL-END (⌘↑, ⌘↓) to the text's.
+
 ## 0.72.12 — 2026-10-31
 
 - **F2 on an item starts at the beginning of its text**, as in Agenda; it started at the end. END (fn-→ on a Mac) or CTRL-E goes to the end.

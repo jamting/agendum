@@ -13,7 +13,7 @@ defmodule Agendum.TUI.Layout do
 
   alias Agendum.Core.View.ItemColumn
   alias Agendum.Core.ViewModel
-  alias Agendum.TUI.{Terminal.Draw, State}
+  alias Agendum.TUI.{Terminal.Draw, State, Typing.Wrap}
 
   @type row :: %{
           required(:kind) => :section | :item,
@@ -157,9 +157,31 @@ defmodule Agendum.TUI.Layout do
             line_count(item.text, text_width(state, row))
         end
 
-      own + length(Map.get(row, :calcs, []))
+      own + typed_lines(state, row) + length(Map.get(row, :calcs, []))
     end)
   end
+
+  # The lines an item's text being typed adds to its row (R21): when the
+  # item is edited they replace its own (so its own are taken back out);
+  # when a new item is typed they come under the highlighted row
+  # (`Render.View`).
+  defp typed_lines(%State{edit: %{target: target, line: line}} = state, %{key: key} = row)
+       when key == state.cursor_key do
+    typed = length(Wrap.rows(line.text, Wrap.item_width(text_width(state, row))))
+
+    case {target, row} do
+      {{:edit_item, id}, %{kind: :item, item: %{id: id} = item}} ->
+        typed - line_count(item.text, text_width(state, row))
+
+      {{:new_item, _, ^key}, _} ->
+        typed
+
+      _ ->
+        0
+    end
+  end
+
+  defp typed_lines(_state, _row), do: 0
 
   # The lines `Draw.wrap/2` makes of a text, without wrapping one that fits:
   # wrapping only joins words with single spaces, so a text no longer than
@@ -211,8 +233,37 @@ defmodule Agendum.TUI.Layout do
         true -> state.scroll
       end
 
+    # an item typed taller than the screen: its cursor's line stays in sight
+    scroll =
+      case typed_cursor_line(state, Enum.at(rows, state.cursor), height) do
+        nil -> scroll
+        line -> scroll |> min(start + line) |> max(start + line - body + 1)
+      end
+
     %{state | scroll: max(scroll, 0)}
   end
+
+  # The line of the cursor's row the cursor of an item's text being typed is
+  # on: among the item's own lines when it is edited, below them when a new
+  # item is typed (the row's `height` less those lines and its calculation
+  # lines, drawn last); nil when nothing is typed there.
+  defp typed_cursor_line(
+         %State{edit: %{target: target, line: line}} = state,
+         %{key: key} = row,
+         height
+       )
+       when key == state.cursor_key do
+    rows = Wrap.rows(line.text, Wrap.item_width(text_width(state, row)))
+    at = Wrap.locate(rows, line.pos)
+
+    case target do
+      {:edit_item, _} -> at
+      {:new_item, _, ^key} -> height - length(Map.get(row, :calcs, [])) - length(rows) + at
+      _ -> nil
+    end
+  end
+
+  defp typed_cursor_line(_state, _row, _height), do: nil
 
   @doc "Moves the cursor to row `index` (clamped)."
   @spec move_to(State.t(), integer) :: State.t()

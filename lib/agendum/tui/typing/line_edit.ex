@@ -6,7 +6,7 @@ defmodule Agendum.TUI.Typing.LineEdit do
   cursor, as in a note (R63); a move keeps it, a change drops it.
   """
 
-  alias Agendum.TUI.Keymap
+  alias Agendum.TUI.{Keymap, Typing.Wrap}
 
   @type t :: %__MODULE__{text: String.t(), pos: non_neg_integer, mark: non_neg_integer | nil}
   defstruct text: "", pos: 0, mark: nil
@@ -35,6 +35,39 @@ defmodule Agendum.TUI.Typing.LineEdit do
       id when id in @clipboard -> :unhandled
       id -> {:ok, run(e, id)}
     end
+  end
+
+  @doc """
+  A move in a line shown wrapped on rows `width` wide (`Typing.Wrap`), as an
+  item's text being typed is (R21, as Agenda's): `:up` and `:down` a row,
+  keeping the column (nothing on the first or last row), `:line_start` and
+  `:line_end` the row's start and end, `:text_start` and `:text_end` the
+  whole text's. The mark stays, as with every move.
+  """
+  @spec wrapped_move(
+          t,
+          :up | :down | :line_start | :line_end | :text_start | :text_end,
+          pos_integer
+        ) :: t
+  def wrapped_move(e, :text_start, _width), do: %{e | pos: 0}
+  def wrapped_move(e, :text_end, _width), do: %{e | pos: String.length(e.text)}
+
+  def wrapped_move(e, id, width) do
+    rows = Wrap.rows(e.text, width)
+    i = Wrap.locate(rows, e.pos)
+    {start, _len} = Enum.at(rows, i)
+
+    # `cond` takes the first branch whose condition is true
+    pos =
+      cond do
+        id == :up and i > 0 -> Wrap.column(rows, i - 1, e.pos - start)
+        id == :down and i < length(rows) - 1 -> Wrap.column(rows, i + 1, e.pos - start)
+        id == :line_start -> start
+        id == :line_end -> Wrap.row_end(rows, i)
+        true -> e.pos
+      end
+
+    %{e | pos: pos}
   end
 
   @doc "Runs a line-editing command (`Agendum.TUI.Commands`, `:line`)."
