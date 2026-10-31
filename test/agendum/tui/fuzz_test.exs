@@ -113,6 +113,11 @@ defmodule Agendum.TUI.Fuzz do
       {10, member_of(@keys)},
       {10, map(integer(1..10), &{:f, &1})},
       {10, map(member_of(~w(a b H h y n v c d s m x 1 / ! å) ++ [" "]), &{:char, &1})},
+      # characters two columns wide, an accent that combines with the letter
+      # before and a flag (two code points, one character): every screen is
+      # checked for lines exactly as wide as the screen with them in it
+      # (R40; the width bugs of v0.73.5 were of that kind)
+      {3, map(member_of(["日", "語", "한", "🎉", "e\u0301", "🇸🇪"]), &{:char, &1})},
       {2,
        map({integer(0..3), member_of([:ok, :error, :crash])}, fn {pick, outcome} ->
          {:background, pick, outcome}
@@ -557,10 +562,12 @@ defmodule Agendum.TUI.Fuzz do
     Agendum.Core.set_macro_keys(db, again, "{AltF3}{ENTER}x{AltZ}")
   end
 
-  # 300 runs in the suite; FUZZ_RUNS sets more for a longer search after a
-  # large TUI change: FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs
-  @runs String.to_integer(System.get_env("FUZZ_RUNS", "300"))
-  @parts 4
+  # 1,000 runs in the suite (300 until 2026-10-31, when the owner gave
+  # mix check about 8 seconds more for a net three times wider); FUZZ_RUNS
+  # sets more for a longer search after a large TUI change:
+  # FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs
+  @runs String.to_integer(System.get_env("FUZZ_RUNS", "1000"))
+  @parts 8
 
   @doc "How many test modules share the runs."
   def parts, do: @parts
