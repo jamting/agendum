@@ -38,10 +38,12 @@ defmodule Agendum.TUI.Update.Editing do
       {:f, 3} when completing ->
         ViewKeys.view_key(%{state | edit: nil}, {:f, 3})
 
-      # ↑/↓ on an empty new line move on without making an item: Agenda's ↓
-      # makes none there (checked in Agenda, 2026-10-31), where TAB does
-      k when k in [:up, :down] and edit.line.text == "" and elem(edit.target, 0) == :new_item ->
-        ViewKeys.view_key(%{state | edit: nil}, k)
+      # ↑/↓ stay in an item's line, as Agenda's (checked in Agenda,
+      # 2026-10-31): only ENTER or TAB take the text. Agenda's move between
+      # the lines of a long, wrapped text; ours is one line, so they do
+      # nothing. `elem/2` reads a tuple's field by index (0 is the first).
+      k when k in [:up, :down] and elem(edit.target, 0) in [:new_item, :edit_item] ->
+        state
 
       # a refused text keeps the line open (below), and the highlight with it
       k when k in [:up, :down, :tab, :shift_tab] ->

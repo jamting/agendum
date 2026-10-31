@@ -36,9 +36,9 @@ defmodule Agendum.TUI.EmptyItemTextTest do
       assert Layout.current_row(done).item.id == call
     end
 
-    test "↓ on an emptied text takes it and moves on" do
+    test "TAB on an emptied text takes it too" do
       %{state: state, call: call} = errands()
-      done = press(state, [{:f, 2}, {:ctrl, "u"}, :down])
+      done = press(state, [{:f, 2}, {:ctrl, "u"}, :tab])
 
       assert done.edit == nil
       assert done.db.items[call].text == ""
@@ -90,12 +90,9 @@ defmodule Agendum.TUI.EmptyItemTextTest do
       assert done.db.items[id].text == ""
     end
 
-    test "ESC, ↑ or ↓ make nothing (Agenda's ↓ makes none)" do
+    test "ESC makes nothing" do
       %{state: state} = errands()
-
-      for key <- [:esc, :up, :down] do
-        assert new_ids(state, press(state, [:insert, key])) == []
-      end
+      assert new_ids(state, press(state, [:insert, :esc])) == []
     end
   end
 end

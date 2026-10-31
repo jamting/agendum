@@ -4,6 +4,10 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.72.11 — 2026-10-31
+
+- **↑ and ↓ no longer leave an item you are typing**, as in Agenda: they used to take the text and move to the next row. Finish with ENTER or TAB; ESC throws the typing away. (In Agenda, ↑ and ↓ move between the lines of a long item; Agendum's edit line does not wrap yet, so they do nothing.)
+
 ## 0.72.10 — 2026-10-31
 
 - **An item may have no text**, as in Agenda. Emptying an item's text with F2 or in Item Properties keeps the item, blank, with its categories, where Agendum said "Item text cannot be empty". ENTER or TAB on an empty new line (after INS, or with the typing erased) makes a blank item; ESC, ↑ or ↓ still make none. Sorted by item text, a blank item goes with the items that have no value (the bottom, unless Sort n/a's says Top).
