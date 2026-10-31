@@ -1,7 +1,8 @@
-# The long fuzz run, nightly: the TUI fuzz property with 3000 runs instead
-# of the suite's 300, which finds crashes the short run misses (CLAUDE.md,
-# workflow step 4). It used to be run by hand before every tag. A failure
-# prints the command that repeats it locally, with its seed.
+# The long fuzz run, nightly: the TUI fuzz property with 10,000 runs instead
+# of the suite's 1,000, which finds crashes the short run misses (CLAUDE.md,
+# workflow step 4), and the parsers' property tests with 2,000 inputs each
+# instead of 40 (2026-10-31: CI minutes are free, the owner's time is not).
+# A failure prints the command that repeats it locally, with its seed.
 name: fuzz
 
 on:
@@ -14,7 +15,8 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       MIX_ENV: test
-      FUZZ_RUNS: "3000"
+      FUZZ_RUNS: "10000"
+      PARSER_RUNS: "2000"
     steps:
       - uses: actions/checkout@v7
 
@@ -46,7 +48,8 @@ jobs:
       # `pipefail` keeps the test's failure as the step's, through `tee`
       - run: |
           set -o pipefail
-          mix test test/agendum/tui/fuzz_test.exs --seed ${{ steps.seed.outputs.seed }} 2>&1 | tee fuzz.log
+          mix test test/agendum/tui/fuzz_test.exs test/agendum/parsers_property_test.exs \
+            --seed ${{ steps.seed.outputs.seed }} 2>&1 | tee fuzz.log
 
       # on a failure, the output is kept with the run, to download
       - if: failure()
@@ -60,5 +63,5 @@ jobs:
         run: |
           echo "Repeat it locally:" >> "$GITHUB_STEP_SUMMARY"
           echo '```sh' >> "$GITHUB_STEP_SUMMARY"
-          echo "FUZZ_RUNS=3000 mix test test/agendum/tui/fuzz_test.exs --seed ${{ steps.seed.outputs.seed }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "FUZZ_RUNS=10000 PARSER_RUNS=2000 mix test test/agendum/tui/fuzz_test.exs test/agendum/parsers_property_test.exs --seed ${{ steps.seed.outputs.seed }}" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
