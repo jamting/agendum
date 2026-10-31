@@ -229,6 +229,9 @@ defmodule Agendum.TUI.Layout do
     scroll =
       cond do
         start < state.scroll -> start
+        # a row taller than the screen shows its first line, with its
+        # marks and column entries, rather than its last
+        height > body -> start
         start + height > state.scroll + body -> start + height - body
         true -> state.scroll
       end

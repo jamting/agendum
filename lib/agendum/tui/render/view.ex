@@ -179,6 +179,10 @@ defmodule Agendum.TUI.Render.View do
   # A section's calculations (R29): the label under the item text, each
   # result under its column.
   defp calc_lines(calcs, tw, row) do
+    # as wide as an item line's text and its number (Number items, R79),
+    # which `tw` leaves out
+    width = tw + String.length(Layout.number_label(row))
+
     Enum.map(calcs, fn {calc, cells} ->
       label = Agendum.Core.NumberFormat.label(calc)
 
@@ -187,7 +191,7 @@ defmodule Agendum.TUI.Render.View do
       |> Enum.map(fn {column, cell} ->
         [{:normal, " "}, {:calc, right(cell, column.width)}] ++ percent_part(column, {:calc, ""})
       end)
-      |> around_items(row, [{:normal, "      "}, {:calc, String.pad_leading(label <> " ", tw)}])
+      |> around_items(row, [{:normal, "      "}, {:calc, String.pad_leading(label <> " ", width)}])
     end)
   end
 

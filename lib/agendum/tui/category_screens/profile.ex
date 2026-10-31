@@ -161,8 +161,14 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
   def title(_state, %{type: :group_profile, item_ids: ids}),
     do: "Assignments: #{Draw.count(length(ids), "marked item")}"
 
-  def title(state, %{type: :profile, item_id: id}),
-    do: "Assignments: " <> String.slice(state.db.items[id].text, 0, 40)
+  # an item gone (a special action discarded it) is closed after the key;
+  # until then the title does without its text
+  def title(state, %{type: :profile, item_id: id}) do
+    case state.db.items[id] do
+      nil -> "Assignments"
+      item -> "Assignments: " <> String.slice(item.text, 0, 40)
+    end
+  end
 
   @impl Box
   def content(state, mode, inner, max_rows),
@@ -218,10 +224,41 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
 
   # --- assignment profile -----------------------------------------------------------------
 
-  @doc "Keys of the assignment profile and the marked items' profile."
+  @doc """
+  Keys of the assignment profile and the marked items' profile. A profile
+  whose item a category's special action discarded (R15b) closes, with
+  Agenda's message; the marked items' profile goes on with those left.
+  """
+  def screen_key(state, mode, rows, key),
+    do: state |> profile_key(mode, rows, key) |> drop_discarded()
+
+  # every profile in the stack, as a prompt (a number asked) may sit on one
+  defp drop_discarded(%State{} = state) do
+    items = state.db.items
+
+    modes =
+      Enum.flat_map(state.modes, fn
+        %{type: :profile, item_id: id} = mode ->
+          if is_map_key(items, id), do: [mode], else: []
+
+        %{type: :group_profile, item_ids: ids} = mode ->
+          case Enum.filter(ids, &is_map_key(items, &1)) do
+            [] -> []
+            left -> [%{mode | item_ids: left}]
+          end
+
+        mode ->
+          [mode]
+      end)
+
+    if length(modes) == length(state.modes),
+      do: %{state | modes: modes},
+      else: State.info(%{state | modes: modes}, Agendum.TUI.Messages.text(:discarded_by_action))
+  end
+
   # SPACE on a category no marked item is assigned to assigns them all;
   # on one that some are assigned to (a number shows), it unassigns them all.
-  def screen_key(state, %{type: :group_profile} = mode, rows, key) do
+  defp profile_key(state, %{type: :group_profile} = mode, rows, key) do
     id = CategoryScreens.current_id(rows, mode)
     db = state.db
 
@@ -250,7 +287,7 @@ defmodule Agendum.TUI.CategoryScreens.Profile do
     end
   end
 
-  def screen_key(state, %{type: :profile} = mode, rows, key) do
+  defp profile_key(state, %{type: :profile} = mode, rows, key) do
     id = CategoryScreens.current_id(rows, mode)
     item_id = mode.item_id
     db = state.db

@@ -317,6 +317,9 @@ defmodule Agendum.TUI.CategoryScreens.Properties do
       :date -> Agendum.TUI.Boxes.DateRuleBox.open(state, cat.id)
       :standard -> Agendum.TUI.Boxes.CategoryMatchBox.open(state, cat.id)
       :numeric -> State.error(state, "Numeric categories have no advanced settings")
+      # Agenda's box holds only "Category is protected" here (checked in
+      # Agenda, 2026-10-31), which Agendum does not have
+      :unindexed -> State.error(state, "Unindexed categories have no advanced settings")
     end
   end
 

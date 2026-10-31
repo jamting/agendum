@@ -108,7 +108,7 @@ defmodule Agendum.Starters.Planner.Samples do
     {"Taxi from the airport", "Expenses", in: ["Transportation", @trip], when: -13, amount: 32.4},
     {"Breakfast at the station", "Expenses", in: ["Breakfast", @trip], when: -12, amount: 9.8},
     {"Dinner with the conference speakers", "Expenses",
-     in: ["Dinner", "Entertainment", @trip], when: -12, amount: 86.0},
+     in: ["Dinner", @trip], when: -12, amount: 86.0},
     {"Conference fee", "Expenses", in: [@trip], when: -30, amount: 450.0},
     {"Flight home from Berlin", "Expenses", in: ["Air", @trip], when: -10, amount: 212.0},
 

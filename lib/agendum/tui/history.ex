@@ -82,13 +82,21 @@ defmodule Agendum.TUI.History do
 
   def squash(state, opened, false) do
     if state.db == opened.db do
-      put_stacks(state, opened.undo, state.history.redo)
+      put_stacks(state, drop_unchanged(opened.undo, state.db), state.history.redo)
     else
       # the snapshot of how things were when the box opened
       then = Map.merge(state, Map.take(opened, [:db, :view_id, :cursor_key]))
       put_stacks(state, push(snapshot(then), opened.undo), [])
     end
   end
+
+  # Steps on top that would give back the file as it is now are no steps:
+  # a macro run begun while the box was open under a full screen (F1, the
+  # macro manager) left one, which the box's new snapshot kept and ESC then
+  # matched (found by the fuzz walks, seed 682380, 2026-10-31). `db` twice
+  # in the head matches only when the step's file is this one.
+  defp drop_unchanged([%{db: db} | rest], db), do: drop_unchanged(rest, db)
+  defp drop_unchanged(undo, _db), do: undo
 
   @spec undo(State.t()) :: State.t()
   def undo(%State{history: %{undo: []}} = state), do: State.error(state, "Nothing to undo")

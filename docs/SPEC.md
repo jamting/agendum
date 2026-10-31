@@ -205,6 +205,7 @@ Every rule, in number order, with the section it is in (rules were added where t
 
   - **Promote** moves a category up one level, right after its old parent, and its following siblings become its children, after its own children (Figure 16-13: promoting Sam adopts John and Anna, and Sam's child Ted comes along).
   - **Demote** makes a category the last child of its previous sibling and is refused for a first child, which would skip a level.
+  - **No children under a date, numeric or unindexed category** (R6a, R29, R29b): a demote or a move (ALT-F10) that would put a category there is refused, with Agenda's words for the demote, "You can't demote this category because the category above it (which would become its parent) is a type that can't have child categories." (checked in Agenda), worded for the move too. Agenda's move only places a category beside another, so it never reaches there.
   - **Conflicts** caused by adopted siblings (Figure 16-15: promoting Anna makes Tim its child) are resolved with the R7b/R7c choices; when several links clash, the one closest to the top of the outline wins.
 
   Our reading: the promoted category keeps its own subtree, which matches the manual's example.
@@ -455,6 +456,8 @@ Every rule, in number order, with the section it is in (rules were added where t
 - **R16b ✅ Text matching for one category** (User's Guide 19-8, 19-14 to 19-15). Category Properties ▸ Advanced settings of a standard category (for a date category it holds R6b's date settings) sets Text matching, Match on, Required match strength, Confirm assignments, Ignore suffixes and Ignore accents for that category only; each is Global (the file's, shown in brackets: "Global (Item text)") until set, and cycles back to Global.
 
   Ignore text enclosed by is the file's only.
+
+  A numeric or unindexed category's Advanced settings say it has none: Agenda's box holds only Category is protected there (checked in Agenda), which Agendum does not have.
 
   A category matches with its own settings (Budget on the note while others match the item text), suggests or assigns by its own Confirm assignments, and its Advanced settings row sums it up ("Match on: Note text"). Agenda's "T= Note" in the category manager shows only with Customize ▸ Display cond/act info, not built.
 
@@ -1281,8 +1284,13 @@ File Properties has File statistics ..., Agenda's File Statistics box (screensho
   - Bytes 0x00 to 0x1F as the glyphs DOS showed for them, as Agenda's screen did (ESC as ←, BEL as •).
   - DEL as ⌂.
   - The C1 controls (U+0080 to U+009F, which DOS never had) as "?".
+  - CR LF (a line break from another system) as one glyph, so the line keeps its width.
 
   The text itself is kept as it came, so an export gives it back unchanged.
+
+  **A file with invalid UTF-8** (written by another tool, edited by hand, damaged) opens: on load each byte that does not begin a UTF-8 character becomes the Latin-1 character of its number, as a feed's text does ("Caf" and byte E9 read "Café"). The screen still draws a string that slipped through, with "�" for the bad bytes. Our choice; a file that held such a byte crashed the screen on opening.
+
+  **Characters two columns wide** (CJK, emoji) are counted as one, so a line holding them is wider than it is measured; the terminal's autowrap is turned off while Agendum runs, so such a line is cut at the right edge rather than spilling onto the next row (display widths: ROADMAP).
 
 ### Keys in views and the category manager
 
@@ -1330,7 +1338,7 @@ Category manager navigation (from the manual): ↑/BACKSPACE, ↓/ENTER, HOME = 
 Extras that are not in the original (details in `KEYBOARD.md`):
 
 - **R30 ✅ Undo/redo** (CTRL-Z / CTRL-Y, menu Undo/Redo). Every action that changes the database is one undo step. Undo returns to the view and item where the change happened. It is available in views and in the category and view managers, but not while typing. Undoing back to the last save clears the "modified" marker. History holds 100 steps.
-- **R31 ✅ Keyboard alternatives.** Function keys are required, as in Agenda: ESC+digit is not an F-key (ADR 0032). ALT-letters are ⌥-letters on a Mac with Option as Meta (the terminal sends ESC and the letter together; ESC then a letter typed by hand is ESC, then the letter). CTRL-N = INS, CTRL-E = F2, CTRL-K = F4, CTRL-D = discard, CTRL-S/O/P/Q = save/open/print/quit. ⌥↑/⌥↓ jump between sections. Text fields use Mac/emacs editing keys. ⌘ shortcuts are mapped onto these CTRL keys by the terminal.
+- **R31 ✅ Keyboard alternatives.** Function keys are required, as in Agenda: ESC+digit is not an F-key (ADR 0032). The Linux console's F1 to F5 (ESC [ [ A to E) are read as F-keys too; a key sequence Agendum does not know is ignored whole, never read as ESC and typed text. ALT-letters are ⌥-letters on a Mac with Option as Meta (the terminal sends ESC and the letter together; ESC then a letter typed by hand is ESC, then the letter). CTRL-N = INS, CTRL-E = F2, CTRL-K = F4, CTRL-D = discard, CTRL-S/O/P/Q = save/open/print/quit. ⌥↑/⌥↓ jump between sections. Text fields use Mac/emacs editing keys. ⌘ shortcuts are mapped onto these CTRL keys by the terminal.
 - **R65 ✅ Commands, keymaps and a count** (ours, after Emacs; ADR 0033). Since R65e the help's pages are reached as Agenda's: F1's text is the topic for where you are, and `a`, `c` and `d` below are F6 Keys and its two links, Commands you can run here and Describe a key.
 
   - ✅ In a view, a note and the category and view managers, every key runs a named command (`Agendum.TUI.Commands`) through that place's keymap (`Agendum.TUI.Keymap`), ALT-letters included; a printable character that is not bound starts typing.
@@ -1467,7 +1475,9 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - F3 drops the typing and opens the field's list.
   - F2 there edits the name as it is, under "Category name:" with EDIT, without completion, as Agenda's EDIT.
 
-  In the assignment profile F2 (EDIT) renames the highlighted category the same way, under "Category name:" (Entry, When and Done cannot be renamed), as Agenda's.
+  In the assignment profile F2 (EDIT) renames the highlighted category the same way, under "Category name:" (Entry, When and Done cannot be renamed), as Agenda's. A rename may give a category its sibling's name, as Agenda's does (checked in Agenda, 2026-10-31: Medium renamed High under Priority leaves two Highs, without a word), where adding one refuses it.
+
+  An item a category's special action discards (R15b) while its assignment profile is open closes the profile, with Agenda's message for it; the marked items' profile goes on with the items left, and closes when none are.
 - **R76 ✅ Agenda's sounds** (User's Guide 2-19 to 2-21, 15-6; Setting Up Agenda 1-25; Working with Macros 1-5; ADR 0042). Agendum makes Agenda's own PC-speaker sounds, square waves with Agenda's frequencies and lengths (read from its program and checked against recordings of it in DOSBox; a timer tick is about 3.43 ms):
 
   - Typing a category name where automatic completion applies (R32: a column cell, the Item Properties box) gives a **high beep** (1200 Hz, 6 ticks) when the typing comes down to exactly one matching category and a **low beep** (140 Hz, 6 ticks) when no category matches, once on getting there and not again for each key while it stays so, as Agenda. F2 on a filled cell is not typing and does not beep.

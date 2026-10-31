@@ -165,10 +165,21 @@ defmodule Agendum.Core.Facade.Categories do
     end
   end
 
-  # A move may not put a category under one it excludes (R9).
+  # A move may not put a category under one it excludes (R9), nor under a
+  # date, numeric or unindexed category, which has no children (R6a, R29,
+  # R29b; Agenda refuses to demote there, checked in Agenda, 2026-10-31).
   defp do_relocate(db, id, relocation) do
     with {:ok, moved} <- move(db, id, relocation) do
-      if Assign.excluded_lineage?(moved), do: {:error, :excluded_lineage}, else: {:ok, moved}
+      cond do
+        moved.categories[moved.categories[id].parent_id].kind != :standard ->
+          {:error, :parent_has_no_children}
+
+        Assign.excluded_lineage?(moved) ->
+          {:error, :excluded_lineage}
+
+        true ->
+          {:ok, moved}
+      end
     end
   end
 

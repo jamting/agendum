@@ -102,7 +102,7 @@ defmodule Agendum.TUI.Boxes.PasswordBox do
   def title(_state, mode), do: @titles[mode.step]
 
   @impl Box
-  def width(_state, _mode), do: 42
+  def width(state, _mode), do: min(state.width - 8, 42)
 
   @impl Box
   def content(_state, mode, _inner, _max_rows) do

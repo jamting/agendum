@@ -21,11 +21,27 @@ defmodule Mix.Tasks.Agendum.Hooks do
     # a worktree's `.git` is a file, a checkout's a folder
     inside? = File.exists?(".git")
     path = hooks_path()
-    # a relative path is read from the top of the checkout, as git does
-    hook? = path not in [nil, ""] and File.regular?(Path.join(path, "pre-push"))
+    # a relative path is read from the top of the checkout, as git does;
+    # unset, git looks in .git/hooks
+    hook? =
+      case path do
+        nil -> false
+        "" -> runnable?(".git/hooks/pre-push")
+        dir -> runnable?(Path.join(dir, "pre-push"))
+      end
 
     if message = warning(path, hook?, inside?, System.get_env("CI")),
       do: Mix.shell().info([:yellow, message, :reset])
+  end
+
+  # git runs a hook only when it is an executable file: one that lost its
+  # x bit is skipped without a word. `Bitwise.band/2` picks the three x
+  # bits (owner, group, others) out of the file's mode.
+  defp runnable?(file) do
+    case File.stat(file) do
+      {:ok, %{type: :regular, mode: mode}} -> Bitwise.band(mode, 0o111) != 0
+      _ -> false
+    end
   end
 
   # what `git config core.hooksPath` prints: "" when it is not set (git
@@ -54,7 +70,10 @@ defmodule Mix.Tasks.Agendum.Hooks do
   def warning(_path, true, _inside?, _ci), do: nil
 
   def warning(path, false, _inside?, _ci) do
-    now = if path == "", do: "not set", else: "#{path}, which has no pre-push hook"
+    now =
+      if path == "",
+        do: "not set (and .git/hooks has no runnable pre-push)",
+        else: "#{path}, which has no runnable pre-push hook"
 
     "warning: git's core.hooksPath is #{now}: a push will not run mix check " <>
       "first. Fix: mix setup (or git config core.hooksPath .githooks)"

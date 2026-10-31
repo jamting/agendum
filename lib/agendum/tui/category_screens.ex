@@ -348,6 +348,14 @@ defmodule Agendum.TUI.CategoryScreens do
   def hierarchy_message(:excluded_lineage),
     do: "Not moved: a category would be under one it excludes"
 
+  # Agenda's words for F8 (checked in Agenda, 2026-10-31: "You can't
+  # demote this category because the category above it (which would
+  # become its parent) is a type that can't have child categories."),
+  # worded for ALT-F10's move too
+  def hierarchy_message(:parent_has_no_children),
+    do:
+      "You can't move this category there because the category that would become its parent is a type that can't have child categories."
+
   def hierarchy_message(:empty), do: "A category needs a name"
   def hierarchy_message(:duplicate), do: "That category already exists there"
 

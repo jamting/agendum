@@ -17,8 +17,12 @@ defmodule Agendum.TUI.Terminal do
         # let CTRL-S / CTRL-Q / CTRL-C / CTRL-O / CTRL-V reach us as keys
         # instead of acting as XOFF / XON / SIGINT / discard / literal-next
         stty("-ixon -isig -iexten")
-        # alternate screen, hide cursor, clear
-        IO.write("\e[?1049h\e[?25l\e[2J")
+        # alternate screen, hide cursor, no autowrap, clear. Without
+        # autowrap a line wider than the screen (wide characters such as
+        # CJK or emoji take two columns each) is cut at the right edge
+        # instead of spilling onto the next row, or scrolling the screen
+        # when it is the last
+        IO.write("\e[?1049h\e[?25l\e[?7l\e[2J")
         :ok
 
       {:error, reason} ->
@@ -28,7 +32,7 @@ defmodule Agendum.TUI.Terminal do
 
   @spec stop() :: :ok
   def stop do
-    IO.write("\e[0m\e[2J\e[?25h\e[?1049l")
+    IO.write("\e[0m\e[2J\e[?25h\e[?7h\e[?1049l")
     stty("ixon isig iexten")
     :ok
   end

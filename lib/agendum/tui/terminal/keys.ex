@@ -197,17 +197,35 @@ defmodule Agendum.TUI.Terminal.Keys do
     end
   end
 
+  # the Linux console's F1 to F5: ESC [ [ A to ESC [ [ E
+  defp csi("[" <> <<c, rest::binary>>) when c in ?A..?E, do: {:ok, {:f, c - ?A + 1}, rest}
+  defp csi("["), do: :incomplete
+
   defp csi(rest) do
     case Regex.run(~r/^([0-9;]*)([A-Za-z~])/, rest) do
       [match, params, final] ->
-        rest = binary_part(rest, byte_size(match), byte_size(rest) - byte_size(match))
-        {:ok, csi_key(String.split(params, ";", trim: true), final), rest}
+        {:ok, csi_key(String.split(params, ";", trim: true), final), after_match(rest, match)}
 
       nil ->
-        # Incomplete if it could still become a valid sequence
-        if Regex.match?(~r/^[0-9;]*$/, rest), do: :incomplete, else: {:ok, :esc, "[" <> rest}
+        cond do
+          # it could still become a sequence: wait for the rest
+          Regex.match?(~r/^[\x30-\x3F]*[\x20-\x2F]*$/, rest) ->
+            :incomplete
+
+          # any other whole sequence (parameter bytes, intermediate bytes,
+          # a final byte, ECMA-48): a key we do not know, swallowed whole,
+          # rather than ESC and its bytes typed as text (rxvt's ESC [ 1 1 ^)
+          match = Regex.run(~r/^[\x30-\x3F]*[\x20-\x2F]*[\x40-\x7E]/, rest) ->
+            {:ok, :unknown, after_match(rest, hd(match))}
+
+          true ->
+            {:ok, :esc, "[" <> rest}
+        end
     end
   end
+
+  defp after_match(rest, match),
+    do: binary_part(rest, byte_size(match), byte_size(rest) - byte_size(match))
 
   defp csi_key([code | mods], "~"), do: modify(Map.get(@csi_tilde, code, :unknown), mods)
 

@@ -269,7 +269,7 @@ defmodule Agendum.Store do
         # `in` with a range is allowed in a guard. Domain: a file from a newer
         # Agendum (a version above ours) is refused, not misread.
         {:agenda, version, %{__struct__: Database} = db} when version in 1..@format_version ->
-          {:ok, upgrade(db)}
+          {:ok, db |> upgrade() |> repair_text()}
 
         {:agenda, version, _} ->
           {:error, {:unsupported_version, version}}
@@ -281,6 +281,30 @@ defmodule Agendum.Store do
       ArgumentError -> {:error, :not_an_agenda_file}
     end
   end
+
+  # Every string in the file made valid UTF-8 (R82c): a file written by
+  # another tool, edited by hand or damaged can hold Latin-1 bytes, which
+  # Agendum's text functions and the screen would crash on. A bad byte
+  # becomes the Latin-1 character of its number, as a feed's text does
+  # (`Agendum.Core.Extras.Utf8`). The walk goes into maps (structs too,
+  # whose `__struct__` atom stays), lists and tuples; a valid string comes
+  # back as it was.
+  defp repair_text(text) when is_binary(text), do: Agendum.Core.Extras.Utf8.repair(text)
+
+  # a struct's keys are atoms, and `Map.new/2` takes no struct: `:maps.map/2`
+  # (Erlang's) maps over the values of any map, a struct too
+  defp repair_text(%{__struct__: _} = struct),
+    do: :maps.map(fn _key, value -> repair_text(value) end, struct)
+
+  defp repair_text(map) when is_map(map),
+    do: Map.new(map, fn {k, v} -> {repair_text(k), repair_text(v)} end)
+
+  defp repair_text(list) when is_list(list), do: Enum.map(list, &repair_text/1)
+
+  defp repair_text(tuple) when is_tuple(tuple),
+    do: tuple |> Tuple.to_list() |> Enum.map(&repair_text/1) |> List.to_tuple()
+
+  defp repair_text(other), do: other
 
   @doc """
   Brings a database from any older format version up to date: every struct

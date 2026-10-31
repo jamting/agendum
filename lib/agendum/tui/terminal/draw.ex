@@ -321,13 +321,20 @@ defmodule Agendum.TUI.Terminal.Draw do
   def clean(screen), do: Enum.map(screen, &clean_line/1)
 
   defp clean_line(line) do
-    Enum.map(line, fn {style, text} = segment ->
-      # `=~` with a regex is the quick test; most text has nothing to clean
+    Enum.map(line, fn {style, text} ->
+      # invalid UTF-8 (text a file load did not repair) shown as "�",
+      # rather than crashing the regex below and with it the screen
+      text = if String.valid?(text), do: text, else: String.replace_invalid(text)
+
+      # `=~` with a regex is the quick test; most text has nothing to clean.
+      # CR LF is one character to `line/3` (one grapheme), so one glyph here.
       if text =~ ~r/[\x{00}-\x{1F}\x{7F}-\x{9F}]/u,
-        do: {style, for(<<c::utf8 <- text>>, into: "", do: glyph(c))},
-        else: segment
+        do: {style, text |> String.replace("\r\n", "\n") |> glyphs()},
+        else: {style, text}
     end)
   end
+
+  defp glyphs(text), do: for(<<c::utf8 <- text>>, into: "", do: glyph(c))
 
   defp glyph(c) when c < 0x20, do: <<Enum.at(@low, c)::utf8>>
   defp glyph(0x7F), do: "⌂"

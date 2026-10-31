@@ -33,7 +33,7 @@ defmodule Agendum.TestLogTest do
     assert Hooks.warning("/here/agendum/.githooks", true, true, nil) == nil
 
     assert Hooks.warning("/old/place/.githooks", false, true, nil) =~
-             "/old/place/.githooks, which has no pre-push hook"
+             "/old/place/.githooks, which has no runnable pre-push hook"
 
     assert Hooks.warning("", false, true, nil) =~ "not set"
     assert Hooks.warning("/old", false, true, "true") == nil

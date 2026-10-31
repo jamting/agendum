@@ -4,6 +4,17 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.73.1 — 2026-10-31
+
+- **Fixes from a review of the drawing, the category screens, the help, the starters and the Mix tasks:**
+  - **No longer crashes:** a file holding text that is not valid UTF-8 (written by another tool, edited by hand), which now opens with such bytes read as Latin-1; the assignment profile after a category's special action discarded its item (it closes, with Agenda's message); Advanced settings of an unindexed category.
+  - **A category can no longer be moved or demoted under a date, numeric or unindexed category**, which has no children; the demote is refused with Agenda's message.
+  - **The Linux console's F1 to F5** work, and a key sequence Agendum does not know is ignored instead of typed as text.
+  - **Drawing:** a line break inside a name no longer makes its line a column too wide; with Number items, calculations stay under their columns; an item taller than the screen shows its first line, with its columns; the password box fits a 40-column window; a line with wide characters (CJK, emoji) is cut at the edge instead of spilling onto the next row.
+  - **ESC on a settings box** after a macro run from the macro manager over F1 no longer leaves an undo step that changes nothing.
+  - **The Activities Planner's sample data:** the conference dinner keeps its Dinner category.
+  - **For contributors:** `mix agendum.thoughts --import-docs` refuses a folder without documents instead of emptying the last import; `mix agendum.hooks` warns about a hook git would skip for lack of its x bit.
+
 ## 0.73.0 — 2026-10-31
 
 - **A long item is typed wrapped**, as in Agenda: F2 on it, or a new item, shows the whole text on the lines it takes instead of one line scrolling sideways, and the rows below move down as it grows. ↑ and ↓ move between its lines, HOME and END (CTRL-A, CTRL-E) go to a line's start and end, CTRL-HOME and CTRL-END (⌘↑, ⌘↓) to the text's.

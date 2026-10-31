@@ -110,7 +110,8 @@ defmodule Mix.Tasks.Agendum.Thoughts do
       # `with` runs each step while its pattern matches; the first that
       # does not falls through to `else`
       with {:ok, db} <- Store.load(path),
-           {:ok, db, count} <- Thoughts.import_docs(db, docs, Date.utc_today()),
+           {:ok, db, count} <-
+             Thoughts.import_docs(db, docs, Agendum.TUI.App.local_today()),
            {:ok, _} <- File.copy(path, path <> ".bak"),
            :ok <- Store.save(db, path) do
         shell.info("Imported #{count} documents into #{path} (the file as it was: #{path}.bak)")
@@ -126,10 +127,18 @@ defmodule Mix.Tasks.Agendum.Thoughts do
   # `Thoughts.import_docs/3` sorts by) and their text. The meetings'
   # TEMPLATE.md sits beside the meeting folders, not in one, so the
   # pattern leaves it out.
+  # A root with none of them (a mistyped --docs, the task run from another
+  # folder) is refused: the import first takes the last one's items out, so
+  # going on would empty them all, as read_summaries refuses a missing folder
   defp read_docs(root) do
-    ["docs/meetings/*/*.md", "docs/adr/*.md", "docs/ROADMAP.md"]
-    |> Enum.flat_map(&Path.wildcard(Path.join(root, &1)))
-    |> Enum.map(&%{path: Path.relative_to(&1, root), text: File.read!(&1)})
+    case ["docs/meetings/*/*.md", "docs/adr/*.md", "docs/ROADMAP.md"]
+         |> Enum.flat_map(&Path.wildcard(Path.join(root, &1))) do
+      [] ->
+        Mix.raise("No documents in #{root}: give the checkout with --docs DIR")
+
+      paths ->
+        Enum.map(paths, &%{path: Path.relative_to(&1, root), text: File.read!(&1)})
+    end
   end
 
   # The summaries from the private `docs/` folder, given the path they had
