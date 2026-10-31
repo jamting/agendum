@@ -51,6 +51,17 @@ jobs:
           mix test test/agendum/tui/fuzz_test.exs test/agendum/parsers_property_test.exs \
             --seed ${{ steps.seed.outputs.seed }} 2>&1 | tee fuzz.log
 
+      # the real-terminal scenarios (tools/smoke/scenarios.py): the program
+      # in a pseudo-terminal, keys sent, the screen checked; compiled for
+      # dev first, so the scenarios do not compile while they run
+      - name: real-terminal scenarios
+        env:
+          LANG: C.UTF-8
+        run: |
+          set -o pipefail
+          MIX_ENV=dev mix compile
+          MIX_ENV=dev mix agendum.smoke 2>&1 | tee -a fuzz.log
+
       # on a failure, the output is kept with the run, to download
       - if: failure()
         uses: actions/upload-artifact@v4

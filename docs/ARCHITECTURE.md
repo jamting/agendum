@@ -183,6 +183,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.Starters.Golden`                      | ✔     | The golden file of the format: the Planner with samples plus everything it leaves unused, so every stored field is set; `facts/1` (DATA_MODEL.md, "On disk"). |
 | `Mix.Tasks.Agendum.Golden`                    | ✘     | `mix agendum.golden`: writes the current format version's golden file and its facts to `test/fixtures/formats/`, never over an existing one. |
 | `Mix.Tasks.Agendum.Fuzz`                      | ✘     | `mix agendum.fuzz [RUNS] [--seed N]`: the long fuzz run, its output kept in a dated file in `tmp/fuzz/`, the last 30. |
+| `Mix.Tasks.Agendum.Smoke`                     | ✘     | `mix agendum.smoke [WORDS]`: the real-terminal scenarios (`tools/smoke/scenarios.py`), each tried twice before it fails. |
 | `Mix.Tasks.Agendum.Hooks`                     | ✘     | `mix agendum.hooks`, a step of `mix check`: warns, without failing, when git's `core.hooksPath` leads to no `pre-push` hook. |
 | `Mix.Tasks.Agendum.Pages`                     | ✘     | `mix agendum.pages`, after `mix docs`: puts the public site together in `_build/pages` (the front page from `pages/`, the guide, the manual, the API docs, an `llms.txt` made from `docs/INDEX.md`) and fails on a link that starts with `/` or leads nowhere; run by `.github/workflows/pages.yml`. |
 | `Agendum.TestLog` (`test/support/`)           | ✘     | An ExUnit formatter: every test run's seed and failures in a dated file in `tmp/check/`, the last 30 (`test/test_helper.exs`). |
@@ -238,7 +239,8 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 
 - `ESC ?` in the program: debugging info and a key tester (`Agendum.TUI.DevTools`).
 - `AGENDUM_LOG=1`: a debug log of each session in `~/.local/state/agendum/logs` (or `AGENDUM_LOG=FOLDER`), the last ten kept, web addresses written by their host only; a crash writes its stack trace and the state (`Agendum.TUI.DebugLog`, ADR 0027).
-- `tools/smoke/smoke.py`: runs the real program in a pseudo-terminal, sends keys by name and prints the screen as text, sandboxed from the person's preferences (CLAUDE.md, "Testing the real terminal").
+- `tools/smoke/smoke.py`: runs the real program in a pseudo-terminal, sends keys by name and prints the screen as text, sandboxed from the person's preferences (CLAUDE.md, "Testing the real terminal"). Wide characters take two cells, as in a terminal.
+- `tools/smoke/scenarios.py` (`mix agendum.smoke`): smoke runs with what their last screen must and must not show; nightly in CI after the fuzz walks.
 - `tools/agformat/`: drives the real Lotus Agenda 2.0 headless in DOSBox Staging, and dumps and compares `.AG` files (`tools/agformat/DRIVING_AGENDA.md`, `AGENDA_FILE_FORMAT.md`).
 - `tools/screenshots/`: draws screens of the TUI as PNGs (macOS), to compare its look with Agenda 2.0 (ADR 0018): `MIX_ENV=test mix run tools/screenshots/screenshots.exs [--theme NAME]` writes them to `tmp/screenshots/`. `screenshots.exs` drives the TUI with keys like the tests; `render.swift` draws each screen.
 
