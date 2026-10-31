@@ -63,7 +63,8 @@ defmodule Agendum.Core.Facade.Assignments do
   Handles text typed into a column cell for an item (claims 3 and 6 of the
   patent). For a date column the text is parsed as a date, for a numeric
   column as a number (R29), for an unindexed column as its text (R29b).
-  Otherwise the
+  An empty text is no number (`:not_a_number`) and takes an unindexed
+  text out; elsewhere it is `:empty`. Otherwise the
   text names a descendant of the column head: an exact name match is used
   first, then a unique prefix match; if nothing matches, a new child of the
   column head is created. Returns the category assigned.
@@ -75,11 +76,19 @@ defmodule Agendum.Core.Facade.Assignments do
     text = String.trim(text)
     before = db
 
+    kind = db.categories[head_id].kind
+
     cond do
-      text == "" ->
+      # an empty number is no number, as Agenda's "The number you entered
+      # isn't valid" (checked in Agenda, 2026-10-31); an empty text takes
+      # the unindexed text out (below)
+      text == "" and kind == :numeric ->
+        {:error, :not_a_number}
+
+      text == "" and kind != :unindexed ->
         {:error, :empty}
 
-      db.categories[head_id].kind == :numeric ->
+      kind == :numeric ->
         # `with` chains steps that may fail: each `pattern <- expr` must
         # match to go on; the first that doesn't falls to `else` (here any
         # error becomes `:not_a_number`). It replaces nested `case`s.
@@ -90,8 +99,9 @@ defmodule Agendum.Core.Facade.Assignments do
           _ -> {:error, :not_a_number}
         end
 
-      # the text is the item's value, not a category (R29b)
-      db.categories[head_id].kind == :unindexed ->
+      # the text is the item's value, not a category; empty, it is taken
+      # out (R29b)
+      kind == :unindexed ->
         {:ok, db} = Agendum.Core.Facade.Texts.set_text(db, item_id, head_id, text, today)
         {:ok, db, :text}
 

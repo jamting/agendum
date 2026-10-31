@@ -160,7 +160,11 @@ defmodule Agendum.Core.Facade.Changes do
   # F4 (DONE) and ALT-F2 (WHEN) also set the date of every other date
   # category whose rule says so (R6b): the current date and time for the
   # Done key, the When date for the When key. Set by the user, by hand.
+  # An item its own date's action discarded (R15b) has no other dates to
+  # set.
   @doc false
+  def key_dates(db, id, _key, _clock) when not is_map_key(db.items, id), do: db
+
   def key_dates(db, id, key, clock) do
     own = if key == :done_key, do: db.special.done, else: db.special.when
 

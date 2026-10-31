@@ -38,8 +38,12 @@ defmodule Agendum.TUI.Update.Editing do
       {:f, 3} when completing ->
         ViewKeys.view_key(%{state | edit: nil}, {:f, 3})
 
+      # a refused text keeps the line open (below), and the highlight with it
       k when k in [:up, :down, :tab, :shift_tab] ->
-        state |> commit() |> ViewKeys.view_key(k)
+        case commit(state) do
+          %State{edit: nil} = committed -> ViewKeys.view_key(committed, k)
+          refused -> refused
+        end
 
       _ ->
         case LineEdit.handle(edit.line, key) do
@@ -70,8 +74,12 @@ defmodule Agendum.TUI.Update.Editing do
     end
   end
 
+  # an item's text emptied is refused while the line is still open, so it
+  # can be typed again (Agenda takes an empty text; ours keeps one)
   defp commit(%State{edit: %{target: target, line: line}} = state) do
-    commit(%{state | edit: nil}, target, line.text)
+    if match?({:edit_item, _}, target) and String.trim(line.text) == "",
+      do: State.error(state, "Item text cannot be empty (use ALT-F4 to discard)"),
+      else: commit(%{state | edit: nil}, target, line.text)
   end
 
   # INS / F5 (NEWCAT): exactly the typed name, even if it begins an existing one.
@@ -102,16 +110,12 @@ defmodule Agendum.TUI.Update.Editing do
   end
 
   defp commit(state, {:edit_item, id}, text) do
-    if String.trim(text) == "" do
-      State.error(state, "Item text cannot be empty (use ALT-F4 to discard)")
-    else
-      before = Database.explicit_categories(state.db, id)
-      old_when = Core.when_at(state.db.items[id])
+    before = Database.explicit_categories(state.db, id)
+    old_when = Core.when_at(state.db.items[id])
 
-      state
-      |> State.run({:edit_item, id, text})
-      |> report_auto_assignments(id, MapSet.to_list(before), old_when)
-    end
+    state
+    |> State.run({:edit_item, id, text})
+    |> report_auto_assignments(id, MapSet.to_list(before), old_when)
   end
 
   defp commit(state, {:rename_category, id}, text) do

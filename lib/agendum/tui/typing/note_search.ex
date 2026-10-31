@@ -376,7 +376,9 @@ defmodule Agendum.TUI.Typing.NoteSearch do
       |> put_note(fn note ->
         row = min(row, length(lines) - 1)
         col = min(col, String.length(Enum.at(lines, row)))
-        %{note | edit: %TextEdit{lines: lines, row: row, col: col}} |> Map.put(:match, nil)
+        # INS's typing over stays as it was (R64e)
+        edit = %TextEdit{lines: lines, row: row, col: col, overwrite: note.edit.overwrite}
+        %{note | edit: edit} |> Map.put(:match, nil)
       end)
 
     Notes.save(state, State.mode(state))

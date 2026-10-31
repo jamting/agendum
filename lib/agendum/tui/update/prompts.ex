@@ -165,6 +165,12 @@ defmodule Agendum.TUI.Update.Prompts do
   defp prompt_submitted(state, :calendar_time, text),
     do: CalendarBox.set_time(state, String.trim(text))
 
+  # an empty answer is an answer where it means something: a number is
+  # refused, as Agenda's, and an unindexed text taken out (R29, R29b)
+  defp prompt_submitted(state, {kind, _, _} = action, text)
+       when kind in [:item_number, :item_text],
+       do: prompt_action(state, action, String.trim(text))
+
   defp prompt_submitted(state, action, text) do
     text = String.trim(text)
 
@@ -332,8 +338,12 @@ defmodule Agendum.TUI.Update.Prompts do
 
   defp prompt_action(state, {:when, item_id}, text) do
     case State.command(state, {:when_key, item_id, text}) do
-      {:ok, %{db: db} = state, _} ->
-        State.info(state, "When: " <> DateFormat.date(db.items[item_id].when, db.date_format))
+      # the When category's action may have discarded the item (R15b)
+      {:ok, %{db: %{items: %{^item_id => item}} = db} = state, _} ->
+        State.info(state, "When: " <> DateFormat.date(item.when, db.date_format))
+
+      {:ok, state, _} ->
+        State.info(state, Agendum.TUI.Messages.text(:discarded_by_action))
 
       {:error, :invalid_date} ->
         State.error(state, Agendum.TUI.Messages.text(:bad_date))
@@ -358,9 +368,6 @@ defmodule Agendum.TUI.Update.Prompts do
     case State.command(state, {:assign_by_name, item_id, cat_id, text}) do
       {:ok, state, %{result: :number}} ->
         state
-
-      {:error, :empty} ->
-        State.run(state, {:clear_number, item_id, cat_id})
 
       {:error, :not_a_number} ->
         State.error(state, Agendum.TUI.Messages.text(:bad_number))

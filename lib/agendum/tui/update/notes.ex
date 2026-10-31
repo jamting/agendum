@@ -370,10 +370,20 @@ defmodule Agendum.TUI.Update.Notes do
         {:category, id} -> {:rename_category, id, longer}
       end
 
-    state
-    |> State.run({:batch, [save_command(mode.target, TextEdit.text(edit)), change]})
-    |> State.put_mode(Map.merge(mode, %{edit: edit, match: nil, title: longer}))
-    |> State.info("Appended: #{fits}")
+    # a refused rename (MAIN, a special category) leaves the note as it
+    # was: the word stays where it was typed
+    case State.run_with_changes(
+           state,
+           {:batch, [save_command(mode.target, TextEdit.text(edit)), change]}
+         ) do
+      {refused, nil} ->
+        refused
+
+      {state, _changes} ->
+        state
+        |> State.put_mode(Map.merge(mode, %{edit: edit, match: nil, title: longer}))
+        |> State.info("Appended: #{fits}")
+    end
   end
 
   defp appended_to(db, {:item, id}), do: {db.items[id].text, @item_room}
@@ -409,14 +419,46 @@ defmodule Agendum.TUI.Update.Notes do
         &%{&1 | edit: TextEdit.insert(&1.edit, "\n" <> blocks <> "\n\n"), match: nil}
       )
 
-    if discard?,
-      do:
+    cond do
+      not discard? ->
+        State.info(state, "Copied #{length(ids)} marked item(s) into the note")
+
+      own_item?(state, ids) ->
+        discard_with_own(state, ids)
+
+      true ->
         State.run(
           state,
           {:discard_items, ids},
           "Copied #{length(ids)} item(s) and discarded them"
-        ),
-      else: State.info(state, "Copied #{length(ids)} marked item(s) into the note")
+        )
+    end
+  end
+
+  # whether the note open is that of one of the items
+  defp own_item?(state, ids) do
+    case Enum.find(state.modes, &(&1.type == :note)) do
+      %{target: {:item, id}} -> id in ids
+      _ -> false
+    end
+  end
+
+  # The note's own item is discarded too, as Agenda's, its note saved with
+  # it first, the pasted text and what was typed included (checked in
+  # Agenda, 2026-10-31): one change, and the note closes, its item gone
+  # (Agenda's stayed open until left)
+  defp discard_with_own(state, ids) do
+    note = Enum.find(state.modes, &(&1.type == :note))
+    save = save_command(note.target, TextEdit.text(note.edit))
+
+    case State.run_with_changes(state, {:batch, [save, {:discard_items, ids}]}) do
+      {refused, nil} ->
+        refused
+
+      {state, _changes} ->
+        %{state | modes: Enum.reject(state.modes, &(&1.type == :note))}
+        |> State.info("Copied #{length(ids)} item(s) and discarded them, this note's item too")
+    end
   end
 
   @doc "Types `text` at the cursor of the note being edited (ALT-C's date, R64f)."
@@ -559,7 +601,8 @@ defmodule Agendum.TUI.Update.Notes do
         state
 
       note ->
-        cleared = %{note | edit: %TextEdit{lines: [""], row: 0, col: 0}}
+        # INS's typing over stays as it was (R64e)
+        cleared = %{note | edit: %TextEdit{lines: [""], overwrite: note.edit.overwrite}}
 
         state
         |> save(note)
@@ -578,9 +621,10 @@ defmodule Agendum.TUI.Update.Notes do
     State.run(state, save_command(mode.target, TextEdit.text(mode.edit)))
   end
 
+  # typed text moves what a search found: its highlight goes, as on typing
   defp type_in_note(state, mode, text) do
     {:ok, edit} = TextEdit.handle(mode.edit, {:char, text})
-    State.put_mode(state, %{mode | edit: edit})
+    State.put_mode(state, %{mode | edit: edit, match: nil})
   end
 
   # ALT-N / ALT-P: save this note and show the note of the next / previous

@@ -12,7 +12,7 @@ Small, testable increments: the open work, by area.
 
 **In order:** what comes next, across every area (the owner reorders it; details where each line points; every extra usable before the public repository, the owner, 2026-10-26):
 
-1. Review the rest of the code locally, groups e to h (group d done 2026-10-30, v0.72.6; Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
+1. Review the rest of the code locally, groups f to h (group d done 2026-10-30, v0.72.6; group e 2026-10-31, v0.72.7; Sharpen the saw; `docs/CODE_REVIEW_SLICES.md` § The rest)
 2. A meeting for brainstorming and general plans: clarity on the ideas, and whether an overarching strategy is needed; what comes after the public repository (users, a headless reader and golden tasks, the GTD starter, the gentler starter) is chosen there (meeting 2026-10-26-1524, § 14, tabled); hold it before the next feature, now that the program is public, and leave the roadmap shorter than it was (expert review 2026-10-30, § 18.3)
 
 Go for the public repository was given at the practical meeting (meeting 2026-10-28-1911, § 13), on conditions, all met on 2026-10-30 (`ROADMAP_DONE.md`).
@@ -34,16 +34,10 @@ The order of the earlier steps was Marie's (the licence meeting and the tidy pas
 
 ### Fixes and polish
 
-- [ ] From the local review of group e, the keys (2026-10-30; read, not yet reproduced): reproduce each with a test before fixing, as v0.72.7.
+- [ ] Left from the local review of group e, the keys (2026-10-30; the rest fixed in v0.72.7):
 
-  - **An empty prompt answer is dropped too early** (`Update.Prompts.prompt_submitted/3`): clearing a number in Item Properties (F4 on "150", delete, ENTER) keeps it, and an unindexed text cannot be taken out. Check in Agenda what an empty answer does first.
-  - **ALT-F9 APPEND in the note of MAIN or a special category** (`Update.Notes.append_fitting/6`): the rename is refused, but the word still leaves the note, and F5 saves it shortened.
-  - **A When date that discards its item** (ALT-F2 with a discard action, R15b; `Update.Prompts`, `{:when, item_id}`): the next line reads the discarded item and crashes.
-  - **ALT-F8 GETITMS with discard** may discard the item whose note is open, losing what was pasted and typed there.
-  - **A refused command still moves the screen on** (`State.run/2` drops the refusal): removing a column moves the highlight, ALT-Y says "Yanked back" over the error.
-  - **"Item text cannot be empty (use ALT-F4 …)"** shows after the edit line has already closed (check Agenda's message first).
-  - **OVR is lost** after Search/Replace or File ▸ Clear in a note (R64e).
-  - **A search match stays highlighted** on old columns after ALT-D, ALT-T or TAB in a note.
+  - **A refused command still moves the screen on** (`State.run/2` drops the refusal): removing a column moves the highlight, ALT-Y says "Yanked back" over the error. Not reproduced (2026-10-31): after the TUI's own checks the core cannot refuse either command, so nothing was changed; fix it when a refusal becomes possible.
+  - **An empty item text** (the owner decides): Agenda takes it, the item staying with no text (checked in Agenda, 2026-10-31); ours refuses it, "Item text cannot be empty (use ALT-F4 to discard)", now while the line is still open. Taking it as Agenda does touches the core's checks and the file format; an ADR 0043 difference until then.
   - **Later:** a key in a column builds the view model up to four times (`Layout.current_column`); APPEND and MAKEITM keep their rules (the 350 and 69 characters' room) in the TUI, which CLAUDE.md rule 6 puts in the core.
 - [ ] Measure publishing once on the owner's devlog (expert review 2026-10-30, § 18.6): on 2026-10-26 publishing the meeting blog took 6.5 s in the update step (session log 2026-10-26 21:35), before the parser fixes of 2026-10-27; if it is still slow, it is the next slow answer to fix
 - [ ] From the review of group d (2026-10-30), to check before fixing:
@@ -73,7 +67,7 @@ Tools and checks that make every later change faster and safer. Each is small; t
 
   - **First check** that a linked folder breaks nothing: `mix docs`, the docs-index test, Obsidian, and a fresh clone without the link.
   - **Then** the skills, `mix agendum.thoughts` and the owner's local notes use `docs/private/…` instead of the Wolery's path.
-- [ ] Review the rest of the code locally (`docs/CODE_REVIEW_SLICES.md` § The rest): about 35,000 lines in five groups, each with `/code-review high <paths>`, its findings fixed as a release of its own, as the cloud slices were; group d done (2026-10-30, v0.72.6: 10 findings, 6 fixed, in about 6 minutes of review); group e reviewed (2026-10-30, its findings in Fixes and polish, to fix next); f, g and h left, one a session, h split in two if it stays at 10,700 lines (expert review 2026-10-30, § 18.2)
+- [ ] Review the rest of the code locally (`docs/CODE_REVIEW_SLICES.md` § The rest): about 35,000 lines in five groups, each with `/code-review high <paths>`, its findings fixed as a release of its own, as the cloud slices were; group d done (2026-10-30, v0.72.6: 10 findings, 6 fixed, in about 6 minutes of review); group e (2026-10-31, v0.72.7: 10 findings, 7 fixed); f, g and h left, one a session, h split in two if it stays at 10,700 lines (expert review 2026-10-30, § 18.2)
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key.
 
   - **Measured** 2026-10-16, a cursor move: 300 items 6 ms in `Update` + 11 ms in `Render`; 3,000 items 61 + 45 ms; 10,000 items 205 + 231 ms.

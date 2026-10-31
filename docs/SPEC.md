@@ -664,7 +664,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   - **Agenda asks first** when items or children are affected.
   - **A category with grandchildren** cannot be converted.
 
-  Typing in a numeric column enters a number (signs, parentheses for negatives, a currency or % symbol, thousands separators and "3.22e+12" are accepted; anything else is refused). F2 edits it in full, DEL removes it, and the control panel shows "#" at the right of its second line while the highlight is in a numeric column, as Agenda's (beside ♪'s place; a date column shows ☼ there, R59).
+  Typing in a numeric column enters a number (signs, parentheses for negatives, a currency or % symbol, thousands separators and "3.22e+12" are accepted; anything else is refused). An empty number is refused too, in the column and in Item Properties' F4, with Agenda's "The number you entered isn't valid" (checked in Agenda). F2 edits it in full, DEL removes it, and the control panel shows "#" at the right of its second line while the highlight is in a numeric column, as Agenda's (beside ♪'s place; a date column shows ☼ there, R59).
 
   Numbers are right-aligned and shown in the column's format (View ▸ Column ▸ Properties):
 
@@ -688,7 +688,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 
   A standard category becomes unindexed with Category Properties ▸ Type or Column Add ▸ Category type (Agenda's types in that order: Standard, Numeric, Date, Unindexed), and cannot change back. Its children are removed, an item in a child getting the child's name as its text, an item in the category itself an empty one (as a numeric conversion gives numbers; what Agenda does with the children is unchecked). A category with grandchildren cannot be converted.
 
-  Typing in an unindexed column sets the item's text, an empty one taking it out. DEL removes it. Items sort by their text, case aside. Saved in the file (format 40) and its JSON.
+  Typing in an unindexed column sets the item's text, an empty one taking it out, there and in Item Properties' F4 (checked in Agenda). DEL removes it. Items sort by their text, case aside. Saved in the file (format 40) and its JSON.
 
   In the TUI, as Agenda's (checked in Agenda):
 
@@ -901,7 +901,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 
   **ALT-F8 GETITMS** asks Agenda's "Discard items after copy?  Yes" (checked in Agenda, as User's Guide 12-7 says), asked whatever Confirm mode says as its answers do different things. Either answer types the marked items in at the cursor, each item's text with its note under it, the items separated by blank lines, a blank line before and after:
 
-  - Yes then discards them, to the trash (R24a).
+  - Yes then discards them, to the trash (R24a). When the open note's own item is among them, it is discarded too, its note saved with it first, the copied text included (checked in Agenda); ours then closes the note, as its item is gone (Agenda's stayed open until left).
   - No leaves them marked.
   - ESC copies nothing ("There are no marked items in the file." when none).
 
