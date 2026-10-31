@@ -4,6 +4,18 @@ What changed in each version of Wol's Agendum, for the person using it. Versions
 
 ## Unreleased
 
+## 0.72.8 — 2026-10-31
+
+- **Fixes from a review of the settings boxes:**
+  - **No longer crashes:** a digit or BACKSPACE on Show items in a Date or Numeric Filter box; ↓, ↑ or TAB in View Properties after Section Select's F4 took every section away; File ▸ Abandon while a Show View or a view added since the last save is shown (the file's first view is shown instead); Item Column Properties when Link with other sections turns its width to Manually.
+  - **Section statistics** counts the section asked, also with Hide empty sections or section sorting on.
+  - **ESC in Column Add** takes back a category its Column head made; ENTER adds the column as one undo step.
+  - **An alarm that rings while a settings box is open** stays rung when the box is cancelled with ESC, and the file is not marked changed by it.
+  - **Typing the letter of the choice already shown** (Y on Yes) keeps it, instead of saying "No choice starts with Y".
+  - **The New File box's password** is kept as typed, spaces too, as opening the file reads it; its first character is no longer written to the session log.
+  - **→ in View Properties** with nine or more sections no longer jumps to a section out of sight.
+  - **The Copy box (ALT-F9)** scrolls when the view has more sections than fit, and **Item Properties** keeps its key line in sight with many assignments.
+
 ## 0.72.7 — 2026-10-31
 
 - **An empty answer in Item Properties' F4** is no longer ignored. An empty number is refused with Agenda's "The number you entered isn't valid", as in a numeric column, and the number stays. An emptied unindexed text is taken out, in the column too, as Agenda does.
