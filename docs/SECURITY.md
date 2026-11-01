@@ -33,8 +33,8 @@ Each door: what could go wrong, how badly (**high**: the file's text leaks or th
 ### 3. Feeds and calendars from the network
 
 - **Risk:** a hostile or broken feed or calendar hangs Agendum, eats its memory, or smuggles commands into items; a network attacker reads or changes what is fetched. **Medium.**
-- **Guarded:** HTTPS with the system's certificates and the host name checked; a 20-second timeout for the whole answer; a 20 MB limit, counted as the answer comes in and stopped there (an announced larger size is refused at once; v0.73.13); Agendum's own XML reader, which makes no atoms and expands no custom entities (no "billion laughs"); feed text is plain text, HTML stripped; CTRL-V opens only `http` and `https` links, never a program or a file. Fetches run in the background, so the screen goes on. A calendar's private address is written in the log by its host only.
-- **Open:** redirects are followed, perhaps from `https` to plain `http`. A `http://` address is accepted as typed.
+- **Guarded:** HTTPS with the system's certificates and the host name checked; a 20-second timeout for the whole answer; a 20 MB limit, counted as the answer comes in and stopped there (an announced larger size is refused at once; v0.73.13); redirects followed by Agendum itself, up to five, never from `https` to plain `http` nor off the web (v0.73.14); Agendum's own XML reader, which makes no atoms and expands no custom entities (no "billion laughs"); feed text is plain text, HTML stripped; CTRL-V opens only `http` and `https` links, never a program or a file. Fetches run in the background, so the screen goes on. A calendar's private address is written in the log by its host only.
+- **Known and accepted:** an `http://` address the person types is read over plain http, unencrypted, as typed: some old feeds have no other (the owner, 2026-11-01).
 
 ### 4. Publishing the blog (SFTP, rsync)
 

@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.73.14 — 2026-11-01
+
+- **A feed or calendar can no longer be moved to an unencrypted address.** A redirect from `https://` to plain `http://` is refused ("the feed moved to an unencrypted address"), and so is one off the web; redirects stop after five. An `http://` address you type yourself still works, as typed.
+
 ## 0.73.13 — 2026-11-01
 
 - **A huge or endless feed or calendar no longer fills memory.** Reading stops at 20 MB as the answer comes in, and an answer that says it is larger is refused at once ("the feed is too large"). Before, the whole answer was read first, for up to 20 seconds.

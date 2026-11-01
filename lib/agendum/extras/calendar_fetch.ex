@@ -14,6 +14,9 @@ defmodule Agendum.Extras.CalendarFetch do
 
   @timeout 20_000
   @max_bytes 20_000_000
+  @max_redirects 5
+  # the answers that say the address has moved
+  @redirects [301, 302, 303, 307, 308]
 
   @doc "The calendar's events, or why they could not be read."
   @spec read(String.t()) :: {:ok, [ICal.Event.t()]} | {:error, String.t()}
@@ -41,11 +44,66 @@ defmodule Agendum.Extras.CalendarFetch do
   Downloads `url` over HTTPS with the system's certificates, as a
   calendar or a feed (`what`, for the messages and the user agent): the
   body, or why not as a short sentence. Also used by `Agendum.Extras.FeedFetch`.
+  Redirects are followed, up to #{@max_redirects}, but never from `https` to
+  plain `http` (`redirect_target/2`).
   """
   @spec download(String.t(), String.t(), pos_integer) :: {:ok, binary} | {:error, String.t()}
   def download(url, what \\ "calendar", max_bytes \\ @max_bytes) do
     {:ok, _} = Application.ensure_all_started([:inets, :ssl])
+    follow(url, what, max_bytes, now_ms() + @timeout, @max_redirects)
+  rescue
+    error -> {:error, "could not read it (#{Exception.message(error)})"}
+  end
 
+  # One request, and the redirects after it, within one deadline: `left`
+  # is how many more redirects may be followed.
+  defp follow(url, what, max_bytes, deadline, left) do
+    case get(url, what, max_bytes, deadline) do
+      {:redirect, _location} when left == 0 ->
+        {:error, "the #{what} is redirected too many times"}
+
+      {:redirect, location} ->
+        case redirect_target(url, location) do
+          {:ok, next} -> follow(next, what, max_bytes, deadline, left - 1)
+          {:error, :unencrypted} -> {:error, "the #{what} moved to an unencrypted address"}
+          {:error, :not_web} -> {:error, "the #{what} moved to an address not on the web"}
+        end
+
+      result ->
+        result
+    end
+  end
+
+  @doc """
+  Where a redirect leads (`location`, perhaps relative) from `from`, or why
+  it is not followed: `:unencrypted` from `https` to plain `http` (anyone on
+  the way could then read or change what comes; an `http` address the
+  person typed is their own choice, the owner, 2026-11-01), `:not_web` to
+  anything but `http` and `https`. Pure.
+  """
+  @spec redirect_target(String.t(), String.t()) ::
+          {:ok, String.t()} | {:error, :unencrypted | :not_web}
+  def redirect_target(from, location) do
+    # `URI.merge/2` resolves a relative address against the one it came from
+    next = URI.merge(from, String.trim(location))
+    scheme = next.scheme && String.downcase(next.scheme)
+
+    cond do
+      scheme not in ["http", "https"] ->
+        {:error, :not_web}
+
+      scheme == "http" and String.downcase(URI.parse(from).scheme || "") == "https" ->
+        {:error, :unencrypted}
+
+      true ->
+        {:ok, URI.to_string(%{next | scheme: scheme})}
+    end
+  rescue
+    # a location that is no address at all
+    ArgumentError -> {:error, :not_web}
+  end
+
+  defp get(url, what, max_bytes, deadline) do
     request =
       {String.to_charlist(url),
        [{~c"user-agent", String.to_charlist("Wol's Agendum (#{what} subscription)")}]}
@@ -53,7 +111,8 @@ defmodule Agendum.Extras.CalendarFetch do
     http = [
       timeout: @timeout,
       connect_timeout: @timeout,
-      autoredirect: true,
+      # followed here instead, to refuse a step down to plain http
+      autoredirect: false,
       # log_level: TLS alerts must not be printed over the screen
       ssl:
         [verify: :verify_peer, cacerts: :public_key.cacerts_get(), depth: 4, log_level: :none] ++
@@ -65,11 +124,9 @@ defmodule Agendum.Extras.CalendarFetch do
     # whole first, an endless answer filled the memory until the timeout
     # (docs/SECURITY.md, door 3)
     case :httpc.request(:get, request, http, sync: false, stream: :self, body_format: :binary) do
-      {:ok, ref} -> receive_body(ref, what, max_bytes, [], 0, now_ms() + @timeout)
+      {:ok, ref} -> receive_body(ref, what, max_bytes, [], 0, deadline)
       {:error, reason} -> {:error, "could not connect (#{short(reason)})"}
     end
-  rescue
-    error -> {:error, "could not read it (#{Exception.message(error)})"}
   end
 
   # The answer's messages, in order: `stream_start` with the headers, the
@@ -98,6 +155,12 @@ defmodule Agendum.Extras.CalendarFetch do
 
       {:http, {^ref, {{_, 200, _}, _headers, _body}}} ->
         {:error, "the #{what} is too large"}
+
+      {:http, {^ref, {{_, status, _}, headers, _body}}} when status in @redirects ->
+        case List.keyfind(headers, ~c"location", 0) do
+          {_, location} -> {:redirect, to_string(location)}
+          nil -> {:error, status_text(status, what)}
+        end
 
       {:http, {^ref, {{_, status, _}, _headers, _body}}} ->
         {:error, status_text(status, what)}
