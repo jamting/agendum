@@ -165,6 +165,80 @@ defmodule Agendum.TUI.DebugLogTest do
     assert text =~ "Modes"
   end
 
+  # the log's gaps (SECURITY.md, door 5): a password set during the session
+  # takes back what was typed before; Erlang's reports are hidden too
+  @tag :tmp_dir
+  test "a password set during a session takes earlier lines out of the log", %{tmp_dir: dir} do
+    plain = start(Core.new_file())
+    {:ok, locked_db} = Core.set_password(plain.db, "Hoot")
+    # an undoable change of the open file, as File Properties makes it
+    locked = Agendum.TUI.History.record(plain, %{plain | db: locked_db})
+
+    task =
+      Task.async(fn ->
+        path = DebugLog.start(%{"AGENDUM_LOG" => dir}, ["owl.agendum"])
+        DebugLog.input("W", [{:char, "W"}], plain)
+        DebugLog.message(nil, Agendum.TUI.State.info(plain, "Woozle filed"))
+        DebugLog.follow(plain, locked)
+        DebugLog.input("\e[B", [:down], locked)
+        DebugLog.stop()
+        path
+      end)
+
+    text = File.read!(Task.await(task))
+    refute text =~ "Woozle"
+    refute text =~ ~s("W")
+    # the header stays, and what comes after the password is logged as usual
+    assert text =~ "Wol's Agendum"
+    assert text =~ ~s(args ["owl.agendum"])
+    assert text =~ "2 earlier lines taken out: the file got a password"
+    assert text =~ ~s(input "\\e[B" → [:down])
+    assert text =~ "session ends"
+  end
+
+  @tag :tmp_dir
+  test "opening a file with a password takes nothing out", %{tmp_dir: dir} do
+    plain = start(Core.new_file())
+    {:ok, locked_db} = Core.set_password(Core.new_file(), "Hoot")
+    opened = start(locked_db)
+
+    task =
+      Task.async(fn ->
+        path = DebugLog.start(%{"AGENDUM_LOG" => dir}, [])
+        DebugLog.message(nil, Agendum.TUI.State.info(plain, "Retrieved plain.agendum"))
+        DebugLog.follow(plain, opened)
+        DebugLog.stop()
+        path
+      end)
+
+    assert File.read!(Task.await(task)) =~ "Retrieved plain.agendum"
+  end
+
+  @tag :tmp_dir
+  test "Erlang's reports are hidden while the file has a password", %{tmp_dir: dir} do
+    plain = start(Core.new_file())
+    {:ok, locked_db} = Core.set_password(plain.db, "Hoot")
+    locked = start(locked_db)
+
+    task =
+      Task.async(fn ->
+        path = DebugLog.start(%{"AGENDUM_LOG" => dir}, [])
+        saved = DebugLog.capture_logger(locked)
+        # as a crashed background task's report would carry the blog's posts
+        :logger.error("publish crashed with Heffalump post")
+        DebugLog.follow(locked, plain)
+        :logger.error("feed crashed with Woozle entry")
+        DebugLog.release_logger(saved)
+        DebugLog.stop()
+        path
+      end)
+
+    text = File.read!(Task.await(task))
+    refute text =~ "Heffalump"
+    assert text =~ "logger error (report hidden: a file with a password)"
+    assert text =~ "Woozle"
+  end
+
   defp only_ok(:ok), do: :ok
 
   test "without a log every call does nothing" do

@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.73.16 — 2026-11-01
+
+- **Setting a password also cleans this session's debug log.** With `AGENDUM_LOG` on, what the log held from before you gave the file a password is taken out ("12 earlier lines taken out: the file got a password"), and Erlang's own crash reports from background work show only their level while the file has a password. Logs of earlier sessions are left alone.
+
 ## 0.73.15 — 2026-11-01
 
 - **A damaged file is refused, as Agenda refused one.** A file whose values are of the wrong kind, or whose parts do not agree, is no longer opened to crash Agendum later: "owl.agendum is damaged and cannot be opened: …" says the first thing wrong, and the file you had open stays. Agendum never writes such a file; it guards against a damaged disk and files made to harm. Opening a large file takes a little longer (about a tenth of a second for 2,000 items).

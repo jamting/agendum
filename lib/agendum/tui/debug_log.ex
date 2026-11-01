@@ -104,6 +104,9 @@ defmodule Agendum.TUI.DebugLog do
          # a crash cannot lose it
          {:ok, file} <- File.open(path, [:append, :utf8]) do
       Process.register(file, @name)
+      # where the log is, for `follow/2` to rewrite it; `persistent_term`
+      # is the runtime's store for values set once and read often
+      :persistent_term.put({__MODULE__, :path}, path)
       header(env, args)
       path
     else
@@ -129,8 +132,8 @@ defmodule Agendum.TUI.DebugLog do
   writes each report to the debug log, or nowhere when it is off. Returns
   what `release_logger/1` needs to put the default back.
   """
-  @spec capture_logger() :: map | nil
-  def capture_logger do
+  @spec capture_logger(State.t() | nil) :: map | nil
+  def capture_logger(state \\ nil) do
     # `:logger` is Erlang's logging system; a handler is a module whose
     # `log/2` gets each report. The default one writes to the terminal.
     saved =
@@ -140,7 +143,10 @@ defmodule Agendum.TUI.DebugLog do
       end
 
     if saved, do: :logger.remove_handler(:default)
-    :logger.add_handler(@name, __MODULE__, %{level: :all})
+    # `config` is the handler's own data, given to `log/2` with each report:
+    # whether the file has a password, kept up to date by `follow/2`
+    hidden = state != nil and encrypted?(state)
+    :logger.add_handler(@name, __MODULE__, %{level: :all, config: %{hidden: hidden}})
     saved
   end
 
@@ -153,7 +159,14 @@ defmodule Agendum.TUI.DebugLog do
   end
 
   @doc false
-  # the logger handler's callback (`capture_logger/0`): one report, on one line
+  # the logger handler's callback (`capture_logger/1`): one report, on one
+  # line; only its level while the file has a password, as a crashed
+  # background task's report can carry the file's text (a publish's posts).
+  # It runs in the process that reported, which cannot see the main loop's
+  # state: hence the handler's own `hidden`.
+  def log(%{level: level}, %{config: %{hidden: true}}),
+    do: write("logger #{level} (report hidden: a file with a password)")
+
   def log(event, _config) do
     text = :logger_formatter.format(event, %{single_line: true, template: [:level, " ", :msg]})
     write("logger " <> IO.iodata_to_binary(text))
@@ -264,6 +277,40 @@ defmodule Agendum.TUI.DebugLog do
   """
   @spec encrypted?(State.t()) :: boolean
   def encrypted?(%State{db: db}), do: db.password != nil
+
+  @doc """
+  Follows the file in use after a key (`before`, then `now`): Erlang's
+  reports are hidden while it has a password, and when the open file gets
+  one (File Properties ▸ Set file password, an undoable change, not a file
+  opened), what this session's log holds after its header is taken out:
+  it was written before the file was protected (SECURITY.md, door 5).
+  Older sessions' logs are left as they are.
+  """
+  @spec follow(State.t(), State.t()) :: :ok
+  def follow(before, now) do
+    was = encrypted?(before)
+    is = encrypted?(now)
+    if was != is, do: :logger.update_handler_config(@name, :config, %{hidden: is})
+    # a file just opened starts its history afresh; a password set in it
+    # is a step of that history
+    if is and not was and now.history.undo != [], do: take_out_earlier()
+    :ok
+  end
+
+  # the header (three lines: the program, the terminal, the arguments)
+  # kept, the rest replaced by one line saying how much went; the log is
+  # open for appending, so later lines follow the rewritten file
+  defp take_out_earlier do
+    with pid when pid != nil <- Process.whereis(@name),
+         path when path != nil <- :persistent_term.get({__MODULE__, :path}, nil),
+         {:ok, text} <- File.read(path) do
+      {header, rest} = text |> String.split("\n", trim: true) |> Enum.split(3)
+      File.write(path, Enum.join(header, "\n") <> "\n")
+      write("#{count(length(rest), "earlier line")} taken out: the file got a password")
+    end
+
+    :ok
+  end
 
   # keys whose characters must not be written: any typed text, while the
   # file has a password

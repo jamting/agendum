@@ -52,7 +52,7 @@ defmodule Agendum.TUI.App do
         # state (cursor shown, normal mode).
         # Erlang's logger reports go to the debug log, never over the
         # screen, until the terminal is given back
-        logger = DebugLog.capture_logger()
+        logger = DebugLog.capture_logger(state)
 
         try do
           loop(state, nil, "", state.theme)
@@ -314,6 +314,7 @@ defmodule Agendum.TUI.App do
 
       {:ok, state} ->
         DebugLog.message(before, state)
+        DebugLog.follow(before, state)
         apply_keys(state, keys)
     end
   end

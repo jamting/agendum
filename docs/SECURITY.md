@@ -44,9 +44,8 @@ Each door: what could go wrong, how badly (**high**: the file's text leaks or th
 ### 5. The session log (`AGENDUM_LOG`)
 
 - **Risk:** the log holds what was typed, and is shared with a bug report or read from the disk. **High** for an encrypted file, **medium** otherwise.
-- **Guarded:** off by default; ten sessions kept; web addresses cut to their host; passwords counted, never written; while the file has a password, its text stays out entirely (typed keys counted, messages by kind, names and a crash's details hidden; v0.73.10).
-- **Known and accepted:** for a file without a password, what is typed is in the log (ADR 0027): it is a debugging tool, on only when asked for.
-- **Open:** text typed before a password is set stays in that session's log; Erlang's own reports of a crash in background work are written without knowing the file.
+- **Guarded:** off by default; ten sessions kept; web addresses cut to their host; passwords counted, never written; while the file has a password, its text stays out entirely (typed keys counted, messages by kind, names and a crash's details hidden; v0.73.10); Erlang's reports of a crash in background work show only their level then, and setting a password takes out what the session's log already held (v0.73.16).
+- **Known and accepted:** for a file without a password, what is typed is in the log (ADR 0027): it is a debugging tool, on only when asked for. Logs of earlier sessions, from before the file got its password, are left as they are: delete them by hand (the last ten are kept in `~/.local/state/agendum/logs`).
 
 ### 6. The program and its making
 
