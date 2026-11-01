@@ -56,6 +56,20 @@ defmodule Agendum.Core.Extras.Blog do
             user: "",
             remote_dir: ""
 
+  @doc """
+  Whether an rsync target (`me@host:www/blog`, or a folder) is safe to hand
+  to rsync: neither it nor its user or host starts with `-`. rsync passes
+  the host on to ssh, where `-oProxyCommand=…` would run a command, and a
+  shared file carries its blog settings (docs/SECURITY.md, door 4).
+  """
+  @spec rsync_target_safe?(String.t()) :: boolean
+  def rsync_target_safe?(target) do
+    # `user@host:path`: what comes before the first ":" is the user and the
+    # host (a local folder has no ":", and is checked whole)
+    [remote | _] = String.split(target, ":", parts: 2)
+    not Enum.any?([target | String.split(remote, "@")], &String.starts_with?(&1, "-"))
+  end
+
   @doc "The ways of uploading, in the order the Publish box offers them."
   @spec uploads() :: [upload]
   def uploads, do: [:none, :rsync, :sftp]

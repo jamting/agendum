@@ -419,6 +419,7 @@ The order of the earlier steps was Marie's (the licence meeting and the tidy pas
 
 ### The clone's safety
 
+- [x] (2026-11-01, v0.73.12) rsync never takes the blog's folder or **Upload to** as an option (`SECURITY.md`, door 4): both come after `--`, and a target that starts with `-`, or whose host or user does, is refused, as rsync hands the host to ssh (`-oProxyCommand=` would run a command); a shared file carries its blog settings (R74)
 - [x] (2026-11-01) The threat model, [`SECURITY.md`](SECURITY.md): eight doors (the file at rest, a file from someone else, feeds and calendars, publishing, the session log, the program and its making, capture from outside, an agent), each with its risk, how badly, what guards it and what is open; the roadmap's Security list chosen from it (six new items)
 - [x] (2026-11-01, v0.73.10) An encrypted file's text never in the session log (found 2026-10-31, preparing the threat model): while the file has a password (ADR 0046), `Agendum.TUI.DebugLog` counts typed and macro characters instead of writing them, logs a message by its kind, and hides the view's name, a crash's message, its stack trace's arguments and the open boxes' contents (R82, ADR 0027)
 - [x] (2026-10-26, v0.65.1) Hostile-text tests: a feed, a Lotus Agenda file and a JSON file whose text holds orders, Agenda's macro commands and terminal escape codes import as plain items, only their own; the tests found escape codes reaching the terminal, now shown as DOS's glyphs (ESC as ←) on every screen (`Draw.clean/1`, R82c; meeting 2026-10-26-1524, § 6)

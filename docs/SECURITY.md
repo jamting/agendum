@@ -28,7 +28,7 @@ Each door: what could go wrong, how badly (**high**: the file's text leaks or th
 
 - **Risk:** a crafted file runs code, hangs Agendum, or crashes it and loses unsaved work. **Medium.**
 - **Guarded:** an `.agendum` file is read with Erlang's safe decoding (no new atoms), must be a `Database` of a known version, and its text is made valid UTF-8. JSON import checks types and references (R44). The `.AG` reader is tested with a collection of hostile files (R72). Text from a file is data: nothing in it runs (R82c), terminal escape codes are shown, not obeyed, and a macro runs only when the person plays it. A crash writes the unsaved changes to a recovery file (R82b).
-- **Open:** an `.agendum` file is not checked beyond its outer shape, so a crafted one can crash Agendum later (no known way to run code). A shared file's blog settings are used as written (see 4).
+- **Open:** an `.agendum` file is not checked beyond its outer shape, so a crafted one can crash Agendum later (no known way to run code). A shared file's blog settings are used as written, within door 4's guards.
 
 ### 3. Feeds and calendars from the network
 
@@ -39,8 +39,7 @@ Each door: what could go wrong, how badly (**high**: the file's text leaks or th
 ### 4. Publishing the blog (SFTP, rsync)
 
 - **Risk:** the upload goes to the wrong server, a password leaks, or the upload command is turned into another. **Medium.**
-- **Guarded:** the server's key must already be in `~/.ssh/known_hosts` (never accepted silently); ssh never asks on the screen (`BatchMode`); a password typed for SFTP is shown as stars, kept out of the log and never stored; the preview shows every change before anything is written.
-- **Open:** the **Upload to** address is handed to rsync as written: one starting with `-` would be read as an option. Only the person's own settings set it, but a shared file carries them.
+- **Guarded:** the server's key must already be in `~/.ssh/known_hosts` (never accepted silently); ssh never asks on the screen (`BatchMode`); a password typed for SFTP is shown as stars, kept out of the log and never stored; the preview shows every change before anything is written. rsync gets the folder and **Upload to** after `--`, so never as options, and a target whose host or user starts with `-` is refused, so ssh never reads it as one (v0.73.12). SFTP goes through OTP's own ssh, with no command line.
 
 ### 5. The session log (`AGENDUM_LOG`)
 

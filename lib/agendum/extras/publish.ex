@@ -131,12 +131,20 @@ defmodule Agendum.Extras.Publish do
     ssh =
       "ssh -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3"
 
-    ["-rtzc", "--delete", "-e", ssh] ++ includes ++ ["--exclude=*", source, target]
+    # "--" ends the options: a folder or target starting with "-" is then
+    # only a path, never an option (`-e` would run a command)
+    ["-rtzc", "--delete", "-e", ssh] ++ includes ++ ["--exclude=*", "--", source, target]
   end
 
   defp rsync("", _folder, _paths), do: {:error, "say where to upload to (Upload to)"}
 
   defp rsync(target, folder, paths) do
+    if Blog.rsync_target_safe?(target),
+      do: run_rsync(target, folder, paths),
+      else: {:error, "Upload to must not start with - (nor its host or user)"}
+  end
+
+  defp run_rsync(target, folder, paths) do
     case System.find_executable("rsync") do
       nil ->
         {:error, "rsync is not installed"}

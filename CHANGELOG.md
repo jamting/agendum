@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.73.12 — 2026-11-01
+
+- **Publishing by rsync is safe from odd addresses.** A blog folder or **Upload to** address starting with `-` could be read by rsync, or the ssh it starts, as an option, and run a command; a file shared with you carries its blog settings. Such an address is now refused ("Upload to must not start with -"), and the folder is always only a folder.
+
 ## 0.73.11 — 2026-11-01
 
 - **Typing is never taken over from the background.** When an upload's server asked for its password, or a new feed or calendar had been read, while you were typing in another prompt, the new question took your typing over, and closing it could crash Agendum. Now your typing stays: the upload says "Publish again", the feed or calendar "INS adds it". Found by the nightly fuzz run.

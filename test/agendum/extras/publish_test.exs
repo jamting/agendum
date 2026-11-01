@@ -75,7 +75,36 @@ defmodule Agendum.Extras.PublishTest do
 
     assert Publish.rsync_args("me@host:www", "site", ["index.html"]) ==
              ["-rtzc", "--delete", "-e", ssh] ++
-               ~w(--include=/posts/ --include=/fonts/ --include=/index.html --exclude=* site/ me@host:www)
+               ~w(--include=/posts/ --include=/fonts/ --include=/index.html --exclude=* -- site/ me@host:www)
+  end
+
+  # Found writing the threat model (docs/SECURITY.md, door 4; 2026-11-01): a
+  # shared file carries its blog settings, and rsync read a target or a
+  # folder starting with "-" as an option (`-e` runs a command); rsync also
+  # hands the host to ssh, where `-oProxyCommand=` runs one
+  test "rsync takes no target or folder as an option, nor a host or user starting with -",
+       %{tmp_dir: dir} do
+    marker = Path.join(dir, "ran")
+
+    # after "--" the folder and the target are only paths
+    assert ["--", "-esh/", "-x"] = Enum.take(Publish.rsync_args("-x", "-esh", []), -3)
+
+    for target <- [
+          "-e touch #{marker}",
+          "-oProxyCommand=touch #{marker}:www",
+          "me@-oProxyCommand=touch #{marker}:www",
+          "-oProxyCommand=touch #{marker}@host:www"
+        ] do
+      blog = %Blog{upload: :rsync, target: target}
+      changes = %{added: [], changed: [], removed: []}
+      assert {:error, message} = Publish.upload(blog, dir, [], changes, nil)
+      assert message =~ "must not start with -"
+    end
+
+    refute File.exists?(marker)
+    # an ordinary target is no problem
+    assert Agendum.Core.Extras.Blog.rsync_target_safe?("me@host:www/blog-2026")
+    assert Agendum.Core.Extras.Blog.rsync_target_safe?("/Users/owl/site")
   end
 
   describe "SFTP" do
