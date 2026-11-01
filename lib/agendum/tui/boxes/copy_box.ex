@@ -12,7 +12,8 @@ defmodule Agendum.TUI.Boxes.CopyBox do
   Our choice: Agenda put the copy at the bottom of the section; the items
   of a file have one order (an item's place is the same in every
   section), so it shows in its usual place. Not in a datebook view, whose
-  sections are its dates (R47). Pure.
+  sections are its dates (R47), nor in a view with one section, in Agenda's
+  words (checked in Agenda 2.0, 2026-11-02). Pure.
   """
 
   use Agendum.TUI.Boxes.Box, finish: :accept
@@ -22,11 +23,19 @@ defmodule Agendum.TUI.Boxes.CopyBox do
 
   @doc "Opens the box for the items `ids`."
   def open(state, ids) do
-    if State.view(state).datebook do
-      State.error(state, Agendum.TUI.Messages.text(:datebook_change))
-    else
-      current = (Layout.current_row(state) || %{sidx: 0}).sidx
-      State.push(state, %Agendum.TUI.Modes.CopyItems{ids: ids, cursor: current})
+    view = State.view(state)
+
+    cond do
+      view.datebook ->
+        State.error(state, Agendum.TUI.Messages.text(:datebook_change))
+
+      # Agenda's refusal, as ALT-F10's (checked in Agenda 2.0, 2026-11-02)
+      length(view.sections) < 2 ->
+        State.error(state, Agendum.TUI.Messages.text(:move_one_section))
+
+      true ->
+        current = (Layout.current_row(state) || %{sidx: 0}).sidx
+        State.push(state, %Agendum.TUI.Modes.CopyItems{ids: ids, cursor: current})
     end
   end
 

@@ -53,6 +53,13 @@ defmodule Agendum.TUI.CopyItemTest do
     assert in?(state, @count, "Friends and Relations")
   end
 
+  # checked in Agenda 2.0, 2026-11-02: the same Error box as ALT-F10's
+  test "a view with one section refuses, in Agenda's words" do
+    state = Agendum.Sample.build(~D[2026-10-08]) |> start() |> press([:down, {:alt_f, 9}])
+    assert State.mode(state) == nil
+    assert panel(state) =~ "You can copy or move items only to another section"
+  end
+
   test "on a section head there is no item to copy", %{state: state} do
     assert state |> press([:up, {:alt_f, 9}]) |> panel() =~ message(:not_on_item)
   end

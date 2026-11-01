@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.74.2 — 2026-11-02
+
+- **ALT-F9 Copy in a view with only one section says so**, as Agenda did, instead of opening a Copy box with nowhere else to copy to.
+
 ## 0.74.1 — 2026-11-02
 
 - **With the Extras off, the F1 help no longer mentions them.** The topics of the extras' boxes (Feeds, Calendars, Publish …) and their keys in the Keys chart show only while the Extras are on, and the Column, Column Add and Item Properties help no longer name Zettel ids. A new test draws every screen with the Extras off and fails on any word of theirs.
