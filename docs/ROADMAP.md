@@ -12,9 +12,8 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. Security: the list chosen from the threat model, next a checksum with each release and the CI's actions pinned (Security, below)
-2. The extras: the screen test with the extras off, then the F10 E Extras menu (The extras, below)
-3. The GTD starter (Towards parity with Agenda, below)
+1. The extras: the screen test with the extras off, then the F10 E Extras menu (The extras, below)
+2. The GTD starter (Towards parity with Agenda, below)
 
 ### 1 Fixes and polish (performance and bugs)
 
@@ -45,9 +44,7 @@ Security for the person in both senses: protection from others, and the program 
 
 The list is chosen from the threat model, [`SECURITY.md`](SECURITY.md) (each item names its door there).
 
-- [ ] A checksum with each release (door 6): the escript's SHA-256 in the release notes, so a download can be compared
-- [ ] The CI's actions pinned by commit hash, not only by tag (`.github/workflows/`), so a moved tag cannot change what runs (door 6)
-- [ ] Standing, about once a quarter (next by 2027-01-31): look over the CI pipeline (workflows, permissions, secrets) and the dependencies (four, all dev/test only, ADR 0021)
+- [ ] Standing, about once a quarter (next by 2027-01-31): look over the CI pipeline (workflows, permissions, secrets), move the actions' pinned commits to their newest versions (each pin names its version in a comment), and the dependencies (four, all dev/test only, ADR 0021)
 
 ### 3 Towards parity with Agenda (Milestone 2)
 

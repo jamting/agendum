@@ -18,17 +18,16 @@ jobs:
       FUZZ_RUNS: "10000"
       PARSER_RUNS: "2000"
     steps:
-      - uses: actions/checkout@v7
-
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       # the same versions as check.yml
-      - uses: erlef/setup-beam@v1
+      - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1.24.1
         id: beam
         with:
           otp-version: "29"
           elixir-version: "1.20.4"
 
       # check.yml's cache, only read: that workflow keeps it up to date
-      - uses: actions/cache/restore@v6
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             deps
@@ -64,7 +63,7 @@ jobs:
 
       # on a failure, the output is kept with the run, to download
       - if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: fuzz-log-${{ steps.seed.outputs.seed }}
           path: fuzz.log

@@ -26,13 +26,13 @@ jobs:
       TAG: ${{ inputs.tag || github.ref_name }}
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ env.TAG }}
 
       # built on the oldest OTP Agendum runs on (28, for the raw mode,
       # ADR 0002): its compiled code also loads on 29, not the other way
-      - uses: erlef/setup-beam@v1
+      - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1.24.1
         with:
           otp-version: "28"
           elixir-version: "1.20.4"
@@ -42,6 +42,11 @@ jobs:
 
       # the binary must at least start and print its help
       - run: ./agendum --help | grep -q "agendum --demo"
+
+      # the binary's SHA-256, beside it and in the notes, so a download can
+      # be compared (docs/SECURITY.md, door 6); sha256sum writes the line
+      # `shasum -a 256 -c agendum.sha256` checks on a Mac
+      - run: sha256sum agendum > agendum.sha256
 
       # the notes: the lines under "## X.Y.Z — date" up to the next heading
       - name: Notes from CHANGELOG.md
@@ -56,5 +61,7 @@ jobs:
           **Install** on a Mac or Linux with Homebrew: `brew install jamting/agendum/agendum`, then `agendum --demo`.
           Or download `agendum` below: it needs Erlang/OTP 28 or later (`brew install erlang`), then `chmod +x agendum && ./agendum --demo`.
           EOF
+          echo "" >> notes.md
+          echo "**SHA-256** of \`agendum\`: \`$(cut -d' ' -f1 agendum.sha256)\` (check a download with \`shasum -a 256 -c agendum.sha256\`, both files in one folder)." >> notes.md
 
-      - run: gh release create "$TAG" agendum --title "Wol's Agendum ${TAG#v}" --notes-file notes.md --verify-tag
+      - run: gh release create "$TAG" agendum agendum.sha256 --title "Wol's Agendum ${TAG#v}" --notes-file notes.md --verify-tag

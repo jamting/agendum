@@ -51,7 +51,8 @@ Each door: what could go wrong, how badly (**high**: the file's text leaks or th
 
 - **Risk:** a changed release or a changed CI step ships someone else's code to the person. **High**, but unlikely.
 - **Guarded:** no runtime dependencies (ADR 0021); four dev and test tools only; the release escript is built by CI from a tag, without them (`MIX_ENV=prod`).
-- **Open:** the CI's actions are pinned by tag, not by commit hash; a release carries no checksum to compare a download with. A look over the pipeline about once a quarter (next by 2027-01-31).
+- **Guarded too:** every action the CI runs is pinned by its commit, not a tag that could be moved (its version in a comment), and each release carries the escript's SHA-256, beside it as `agendum.sha256` and in the notes (2026-11-01).
+- **Standing:** a look over the pipeline about once a quarter (next by 2027-01-31), the pins moved to newer versions then.
 
 ### 7. Capture from outside (when it comes)
 
