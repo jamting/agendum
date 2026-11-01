@@ -53,12 +53,12 @@ defmodule Agendum.TUI.Render.Help do
 
   @doc "The lines of the all-keys page, `width` wide, as `{style, text}` segments."
   @spec lines(pos_integer) :: [[{atom, String.t()}]]
-  def lines(width) do
+  def lines(width, extras? \\ true) do
     parts =
       Enum.flat_map(@parts, fn {heading, places} ->
         rows =
           for place <- places,
-              {command, keys} <- commands(place),
+              {command, keys} <- commands(place, extras?),
               text <- row(command, keys),
               do: [{:normal, fit(text, width)}]
 
@@ -73,15 +73,18 @@ defmodule Agendum.TUI.Render.Help do
 
   # a place's commands with their keys; a box of settings has the keys
   # `Box.settings_keymap/1` gives every settings box
-  defp commands(:settings) do
+  defp commands(:settings, _extras?) do
     keymap = Box.settings_keymap()
 
     for {id, name, summary} <- Box.settings_commands(),
         do: {%Command{id: id, name: name, summary: summary}, keys(keymap, id)}
   end
 
-  defp commands(place) do
-    for command <- Commands.all(place), do: {command, Keymap.keys_for(place, command.id)}
+  # the extras' commands only while the Extras are on (R77)
+  defp commands(place, extras?) do
+    for command <- Commands.all(place),
+        extras? or not Commands.extra?(place, command.id),
+        do: {command, Keymap.keys_for(place, command.id)}
   end
 
   defp keys(keymap, id), do: Keymap.sort(for {key, ^id} <- keymap, do: key)

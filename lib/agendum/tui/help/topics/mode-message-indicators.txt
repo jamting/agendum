@@ -8,8 +8,7 @@ WORDS         EDIT      You are typing an item or a name
               BROWSE    Browsing a view's dates (ALT-B)
               LEARN     Recording a macro
               INS, OVR  Inserting or typing over, in a note
-              WRKG      Reading a calendar or feed in the
-                        background
+              WRKG      Working in the background
 
 NOTE          Messages ("Item discarded") show on the same line
               until the next key.

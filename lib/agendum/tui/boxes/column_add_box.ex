@@ -57,8 +57,8 @@ defmodule Agendum.TUI.Boxes.ColumnAddBox do
         "SPACE changes it for a new head.",
     width: "The width of the column, in characters. Type it.",
     format:
-      "How the column shows: name, parent:category, ancestor, star, yes/no, " <>
-        "note line or Zettel id. SPACE changes it.",
+      "How the column shows: name, parent:category, ancestor, star, yes/no or " <>
+        "note line. SPACE changes it.",
     note_line: "Which line of the category note the column shows. Type it.",
     title: "Type the column's title.",
     position: "Add the column right or left of the highlighted one. SPACE switches.",

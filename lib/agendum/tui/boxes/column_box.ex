@@ -453,8 +453,8 @@ defmodule Agendum.TUI.Boxes.ColumnBox do
       linked:
         "Whether the column changes with the same column in other sections. SPACE switches.",
       format:
-        "How the column shows: name, parent:category, ancestor, star, yes/no, " <>
-          "note line or Zettel id. SPACE changes it.",
+        "How the column shows: name, parent:category, ancestor, star, yes/no or " <>
+          "note line. SPACE changes it.",
       note_line: "Which line of the category note the column shows. Type it.",
       title: "Type the column's title.",
       symbol: "The label or currency symbol shown with numbers. SPACE for the next one.",

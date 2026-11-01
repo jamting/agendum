@@ -1869,6 +1869,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - The menu leaves out File ▸ Transfer ▸ Calendars, Publish and Feeds, Item ▸ Open link and Item ▸ Zettel.
   - The view manager shows no ► (R68) and lists the views in the file's order.
   - The key bar keeps Agenda's short labels on a wide screen.
+  - The F1 help lists none of the extras' topics (their boxes), its Keys chart none of their keys, and the clone's own topics do not name them; only Utilities ▸ Customize's Extras setting names what it turns on. `test/agendum/tui/extras_screen_test.exs` draws every menu level, place, box, F1 page and topic with Extras off and fails on any word of the extras.
   - Feeds and calendars are not read on schedule (R45, R75), so nothing goes to the network unasked.
   - Alarms that came due while the file was closed ring as Agenda's do, a message and the alarm's sound, the items showing `@`, with no "While you were away" box (R70).
 

@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.74.1 — 2026-11-02
+
+- **With the Extras off, the F1 help no longer mentions them.** The topics of the extras' boxes (Feeds, Calendars, Publish …) and their keys in the Keys chart show only while the Extras are on, and the Column, Column Add and Item Properties help no longer name Zettel ids. A new test draws every screen with the Extras off and fails on any word of theirs.
+
 ## 0.74.0 — 2026-11-01
 
 - **ALT-F10 on an item works as Agenda's: a small Move box of the view's sections.** Choose a section with ↑ ↓ and press ENTER: the item, or the marked items, move there and go last in it, and the highlight stays where it was. Moving an item into its own section leaves it in place (Item ▸ Reposition orders a section), and a view with only one section says so, as Agenda did. Before, ALT-F10 let you highlight a place and dropped the item below it.

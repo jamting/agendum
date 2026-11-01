@@ -42,7 +42,7 @@ defmodule Agendum.TUI.Boxes.ItemProperties do
   @help %{
     text: "The item's text. F2 edits it.",
     note: "The item's note. SPACE (or F2) opens it.",
-    stats: "Its Zettel id, if it has one (R73), its categories and when it was entered.",
+    stats: "How many categories it has and when it was entered.",
     prerequisite: "An item this one depends on. SPACE shows it, DEL removes the dependency.",
     dependent: "An item that depends on this one. SPACE shows it, DEL removes the dependency.",
     linked_from: "An item whose text or note links to this one (R73b). SPACE shows it.",

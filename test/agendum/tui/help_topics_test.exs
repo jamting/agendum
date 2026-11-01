@@ -161,8 +161,12 @@ defmodule Agendum.TUI.HelpTopicsTest do
 
   describe "the checks (ADR 0047)" do
     test "every box, place and menu has a topic", %{state: state} do
+      # the extras' boxes have their topics while the Extras are on (R77;
+      # off, no screen names them: `ExtrasScreenTest`)
+      on = start(Agendum.Sample.build(~D[2026-10-26]), extras: true)
+
       for box <- Box.registry() |> Map.values() |> Enum.uniq(),
-          do: assert(Topics.get(state, Topics.box_title(box)), inspect(box))
+          do: assert(Topics.get(on, Topics.box_title(box)), inspect(box))
 
       for {_place, title} <- Topics.place_titles(), do: assert(Topics.get(state, title), title)
 

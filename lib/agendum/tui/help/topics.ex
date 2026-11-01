@@ -201,9 +201,11 @@ defmodule Agendum.TUI.Help.Topics do
   # the topics the index lists (not the index's own pages)
   defp base(state) do
     # a place's topic first: the view manager is a place and a box
-    ([keys()] ++
+    extras? = state.prefs.extras
+
+    ([keys(extras?)] ++
        Enum.map(@places, fn {from, title} -> place_topic(from, title) end) ++
-       Enum.map(boxes(), &box_topic(&1, nil)) ++ menus(state.prefs.extras))
+       Enum.map(boxes(extras?), &box_topic(&1, nil)) ++ menus(extras?))
     |> Enum.uniq_by(&String.downcase(&1.title))
   end
 
@@ -230,7 +232,14 @@ defmodule Agendum.TUI.Help.Topics do
     }
   end
 
-  defp boxes, do: Box.registry() |> Map.values() |> Enum.uniq()
+  # the extras' boxes only while the Extras are on (R77): each extra keeps
+  # its modules under `Agendum.TUI.Extras`
+  defp boxes(extras?) do
+    Box.registry()
+    |> Map.values()
+    |> Enum.uniq()
+    |> Enum.filter(&(extras? or not String.starts_with?(inspect(&1), "Agendum.TUI.Extras.")))
+  end
 
   # a box: what F1 in it says (when pressed there), then each setting and
   # its help, as Agenda's "SETTING / DESCRIPTION"
@@ -303,9 +312,10 @@ defmodule Agendum.TUI.Help.Topics do
 
   # F6: the commands here and describe key first (today's F1 c and d),
   # then every key, from the keymaps (today's F1 a)
-  defp keys do
+  defp keys(extras?) do
     charts = fn width ->
-      for line <- KeyCharts.lines(width), do: [{:text, Enum.map_join(line, "", &elem(&1, 1))}]
+      for line <- KeyCharts.lines(width, extras?),
+          do: [{:text, Enum.map_join(line, "", &elem(&1, 1))}]
     end
 
     %Topic{

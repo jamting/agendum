@@ -12,7 +12,7 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. The extras: the screen test with the extras off, then the F10 E Extras menu (The extras, below)
+1. The extras: the F10 E Extras menu (The extras, below)
 2. The GTD starter (Towards parity with Agenda, below)
 
 ### 1 Fixes and polish (performance and bugs)
@@ -78,7 +78,6 @@ The list is chosen from the threat model, [`SECURITY.md`](SECURITY.md) (each ite
 
 **An Extra or Beyond Agenda** (ADR 0043, amended 2026-10-31): an extra adds to Agenda's way and can be switched off without leaving a hole (the note preview column); a change to how the program works at its heart, which cannot be a switch, is Beyond Agenda.
 
-- [ ] The extras off, checked on screen: a test that renders every menu level, every mode's key bar, every F1 topic and every box with the Extras switch off and fails on any word of the extras. Today's tests check the code paths (`extras_switch_test.exs`, the doors in `architecture_test.exs`), not what is drawn
 - [ ] F10 E opens an **Extras** menu, there only while the extras are on, so the clone's menus stay Agenda's whether the extras are on or off (E is free among File, Item, Category, View, Print, Utilities, Quit). A habit change: the extras' commands (Calendars, Feeds, Publish, the Zettel commands …) leave File ▸ Transfer, Utilities and Item for it; the help texts (`Agendum.TUI.CommandDocs`) and SPEC R45, R73, R74, R75 move with them. It replaces the move of the fetch and publish commands to Utilities (the owner, 2026-10-24), dropped
 
 **In this order** (the owner, 2026-10-31); the rest after, unranked:
