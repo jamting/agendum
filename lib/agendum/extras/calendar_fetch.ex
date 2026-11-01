@@ -42,8 +42,8 @@ defmodule Agendum.Extras.CalendarFetch do
   calendar or a feed (`what`, for the messages and the user agent): the
   body, or why not as a short sentence. Also used by `Agendum.Extras.FeedFetch`.
   """
-  @spec download(String.t(), String.t()) :: {:ok, binary} | {:error, String.t()}
-  def download(url, what \\ "calendar") do
+  @spec download(String.t(), String.t(), pos_integer) :: {:ok, binary} | {:error, String.t()}
+  def download(url, what \\ "calendar", max_bytes \\ @max_bytes) do
     {:ok, _} = Application.ensure_all_started([:inets, :ssl])
 
     request =
@@ -60,18 +60,80 @@ defmodule Agendum.Extras.CalendarFetch do
           hostname_check()
     ]
 
-    case :httpc.request(:get, request, http, body_format: :binary) do
-      {:ok, {{_, 200, _}, _headers, body}} when byte_size(body) <= @max_bytes -> {:ok, body}
-      {:ok, {{_, 200, _}, _, _}} -> {:error, "the #{what} is too large"}
-      {:ok, {{_, 401, _}, _, _}} -> {:error, "the address needs a password"}
-      {:ok, {{_, 403, _}, _, _}} -> {:error, "the address is not shared"}
-      {:ok, {{_, 404, _}, _, _}} -> {:error, "no #{what} at that address"}
-      {:ok, {{_, status, _}, _, _}} -> {:error, "the server answered #{status}"}
+    # `sync: false, stream: :self`: the answer comes as messages, a part at
+    # a time, so it is counted as it arrives and stopped at the limit; read
+    # whole first, an endless answer filled the memory until the timeout
+    # (docs/SECURITY.md, door 3)
+    case :httpc.request(:get, request, http, sync: false, stream: :self, body_format: :binary) do
+      {:ok, ref} -> receive_body(ref, what, max_bytes, [], 0, now_ms() + @timeout)
       {:error, reason} -> {:error, "could not connect (#{short(reason)})"}
     end
   rescue
     error -> {:error, "could not read it (#{Exception.message(error)})"}
   end
+
+  # The answer's messages, in order: `stream_start` with the headers, the
+  # body's parts, `stream_end`. An answer other than 200 is not streamed:
+  # it comes whole, as one message. `acc` holds the parts so far, newest
+  # first, and `size` their bytes.
+  defp receive_body(ref, what, max_bytes, acc, size, deadline) do
+    receive do
+      {:http, {^ref, :stream_start, headers}} ->
+        if said_length(headers) > max_bytes,
+          do: too_large(ref, what),
+          else: receive_body(ref, what, max_bytes, acc, size, deadline)
+
+      {:http, {^ref, :stream, part}} ->
+        size = size + byte_size(part)
+
+        if size > max_bytes,
+          do: too_large(ref, what),
+          else: receive_body(ref, what, max_bytes, [part | acc], size, deadline)
+
+      {:http, {^ref, :stream_end, _headers}} ->
+        {:ok, acc |> Enum.reverse() |> IO.iodata_to_binary()}
+
+      {:http, {^ref, {{_, 200, _}, _headers, body}}} when byte_size(body) <= max_bytes ->
+        {:ok, body}
+
+      {:http, {^ref, {{_, 200, _}, _headers, _body}}} ->
+        {:error, "the #{what} is too large"}
+
+      {:http, {^ref, {{_, status, _}, _headers, _body}}} ->
+        {:error, status_text(status, what)}
+
+      {:http, {^ref, {:error, reason}}} ->
+        {:error, "could not connect (#{short(reason)})"}
+    after
+      # the whole answer within the timeout, however slowly it trickles in
+      max(deadline - now_ms(), 0) ->
+        :httpc.cancel_request(ref)
+        {:error, "could not connect (timed out)"}
+    end
+  end
+
+  defp too_large(ref, what) do
+    :httpc.cancel_request(ref)
+    {:error, "the #{what} is too large"}
+  end
+
+  # the length the server says the body has (`Content-Length`), 0 if none;
+  # header names come as lower-case charlists
+  defp said_length(headers) do
+    with {_, value} <- List.keyfind(headers, ~c"content-length", 0),
+         {length, _} <- Integer.parse(to_string(value)) do
+      length
+    else
+      _ -> 0
+    end
+  end
+
+  defp status_text(401, _what), do: "the address needs a password"
+  defp status_text(403, _what), do: "the address is not shared"
+  defp status_text(404, what), do: "no #{what} at that address"
+  defp status_text(status, _what), do: "the server answered #{status}"
+
+  defp now_ms, do: System.monotonic_time(:millisecond)
 
   defp hostname_check,
     do: [

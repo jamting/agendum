@@ -12,7 +12,7 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. Security: the list chosen from the threat model, first the feed size limit (Security, below)
+1. Security: the list chosen from the threat model, next redirects and plain `http` (Security, below)
 2. The extras: the screen test with the extras off, then the F10 E Extras menu (The extras, below)
 3. The GTD starter (Towards parity with Agenda, below)
 
@@ -45,7 +45,6 @@ Security for the person in both senses: protection from others, and the program 
 
 The list is chosen from the threat model, [`SECURITY.md`](SECURITY.md) (each item names its door there).
 
-- [ ] A feed's or calendar's answer read whole before its 20 MB limit is checked (door 3): an endless answer can fill memory within the timeout. Stop reading at the limit (`:httpc`'s streaming, or a byte count)
 - [ ] Redirects and plain `http` (door 3): `autoredirect` may follow an `https` address to `http`; decide whether `http://` addresses are accepted at all, and refuse a downgrade
 - [ ] A shared `.agendum` file checked on opening (door 2): today only its outer shape is checked, so a crafted one can crash Agendum later; run `Agendum.Core.Invariants` (and the fields' types) on load and refuse a file that fails
 - [ ] The session log's two gaps (door 5): text typed before File Properties ▸ Set file password stays in that session's log; Erlang's reports of a crash in background work are written without knowing the file

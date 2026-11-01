@@ -1585,7 +1585,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 
   A later read changes only what the calendar changed (the person's edits to text and note, their categories and done marks stay), and an event gone from the calendar or cancelled removes its item. An item the person discarded is not brought back, and past events keep their items. A read is one undo step; a scheduled read is quiet unless something changed.
 
-  Reading happens in the background (the screen does not wait), with the system's certificates checked. A calendar or feed unsubscribed (or its subscription undone) while it is being read, or whose address changed, is not waited for any longer: the answer is dropped, and the next read asks for the address it has now (our choice).
+  Reading happens in the background (the screen does not wait), with the system's certificates checked. A read stops at 20 MB, as the answer comes in, and when the server says beforehand that it is larger ("the feed is too large", "the calendar is too large"); the whole answer must come within 20 seconds (our choice; `SECURITY.md`, door 3). A calendar or feed unsubscribed (or its subscription undone) while it is being read, or whose address changed, is not waited for any longer: the answer is dropped, and the next read asks for the address it has now (our choice).
 
   Our choices:
 

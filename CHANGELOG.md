@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.73.13 — 2026-11-01
+
+- **A huge or endless feed or calendar no longer fills memory.** Reading stops at 20 MB as the answer comes in, and an answer that says it is larger is refused at once ("the feed is too large"). Before, the whole answer was read first, for up to 20 seconds.
+
 ## 0.73.12 — 2026-11-01
 
 - **Publishing by rsync is safe from odd addresses.** A blog folder or **Upload to** address starting with `-` could be read by rsync, or the ssh it starts, as an option, and run a command; a file shared with you carries its blog settings. Such an address is now refused ("Upload to must not start with -"), and the folder is always only a folder.
