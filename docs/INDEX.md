@@ -35,6 +35,7 @@ What each document is for, and when to read it. `docs/` describes Agendum as it 
 | [`DATA_MODEL.md`](DATA_MODEL.md)             | The structs of a file, their invariants, the format versions on disk                              |
 | [`DATA_ACCESS.md`](DATA_ACCESS.md)           | How the database is queried and changed: the API by concern, the key algorithms, sequences        |
 | [`JSON_FORMAT.md`](JSON_FORMAT.md)           | The JSON export and import schema (a new stored field needs a place here)                         |
+| [`SECURITY.md`](SECURITY.md)                 | The threat model: each door (files, feeds, publishing, the log, the build …), its risk, what guards it, what is open; how to report a problem |
 | [`QUADSYL.md`](QUADSYL.md)                   | Quadsyl-24, the pronounceable Zettel ids (`bonalaku`): format, encoding, reserved words, rules for the future |
 | `docs/adr/`                               | Why: one record per lasting decision, listed in `ARCHITECTURE.md`                                 |
 
@@ -97,6 +98,7 @@ Where a minute, a review or a plan says *[A page here was soaked in the creek. �
 | When you…                              | Update                                                                                         |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | add or change a behaviour              | its rule in `SPEC.md` (and the rule index); the item in `ROADMAP.md` (the clone's own leftovers too, since it was declared done on 2026-10-26; a new difference from Agenda goes on `plans/AGENDA_PARITY.md`'s two lists, tagged by ADR 0043's test), ticked and moved to `ROADMAP_DONE.md`; the roadmap's In order list kept true |
+| add a new kind of outside input, a new place data leaves the computer, or a new secret | its door in `SECURITY.md`, before it is built; an open item fixed moves to that door's "Guarded" |
 | add or change a key                    | `KEYBOARD.md`; the key's keymap and command (the F1 help is made from them)                     |
 | add a screen or box                    | `SCREENS.md` (a test checks); `ARCHITECTURE.md` if it is a new module; follow `UI_GUIDELINES.md` (a new pattern goes there first, ADR 0049) |
 | add a stored field                     | `DATA_MODEL.md` (and a row in its format versions), `DATA_ACCESS.md` if queried, `JSON_FORMAT.md` and `Agendum.Core.JSONFile`; set it in `Agendum.Starters.Golden`, and with the new format version run `mix agendum.golden` and commit its two files |

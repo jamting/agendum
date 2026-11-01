@@ -1,0 +1,70 @@
+# Security: the threat model
+
+What could go wrong, for whom, and how badly, one door at a time. The Security list on the roadmap is chosen from here, not collected (ROADMAP, 2 Security).
+
+**Whom it protects:** the person using Agendum, in both senses: from others, and from the program itself betraying them in what it reads, sends and logs.
+
+**What it guards:** the person's file (items, notes, names: often private), the secrets they give Agendum (a file's password, an SFTP password, a calendar's private address), and their computer.
+
+**Who might attack:** someone with the laptop or a copy of the file; the author of a feed, calendar, `.AG` file or `.agendum` file the person opens; a network between them and a server; later, text written to steer an agent.
+
+**Out of scope:** a computer already taken over (malware reading the screen or memory), and the safety of the servers the person chooses to use.
+
+## Reporting a problem
+
+Please do not open a public issue for a security problem. Use GitHub's private vulnerability reporting (the repository's Security tab, "Report a vulnerability").
+
+## The doors
+
+Each door: what could go wrong, how badly (**high**: the file's text leaks or the computer runs someone else's commands; **medium**: data lost or a secret weakened; **low**: a crash or a nuisance), what guards it today, and what is still open (on the roadmap's Security list).
+
+### 1. The file at rest
+
+- **Risk:** the laptop or a backup is lost, and the file is read. **High** for a private file.
+- **Guarded:** a file with a password is encrypted (AES-256-GCM, a key from PBKDF2-HMAC-SHA256 at 600,000 rounds, a fresh salt and nonce each save; ADR 0046). The `.bak` copy made on opening is the file's own bytes, so it is encrypted too, and so is a crash's recovery file (R82b).
+- **Known and accepted:** the description stays readable (as in Agenda, for the file list). A lost password is lost. A file without a password is plain Erlang terms anyone can read. Exports (JSON, text, print to a file) are plain text by request; the JSON export says so.
+
+### 2. A file from someone else (`.agendum`, `.AG`, JSON)
+
+- **Risk:** a crafted file runs code, hangs Agendum, or crashes it and loses unsaved work. **Medium.**
+- **Guarded:** an `.agendum` file is read with Erlang's safe decoding (no new atoms), must be a `Database` of a known version, and its text is made valid UTF-8. JSON import checks types and references (R44). The `.AG` reader is tested with a collection of hostile files (R72). Text from a file is data: nothing in it runs (R82c), terminal escape codes are shown, not obeyed, and a macro runs only when the person plays it. A crash writes the unsaved changes to a recovery file (R82b).
+- **Open:** an `.agendum` file is not checked beyond its outer shape, so a crafted one can crash Agendum later (no known way to run code). A shared file's blog settings are used as written (see 4).
+
+### 3. Feeds and calendars from the network
+
+- **Risk:** a hostile or broken feed or calendar hangs Agendum, eats its memory, or smuggles commands into items; a network attacker reads or changes what is fetched. **Medium.**
+- **Guarded:** HTTPS with the system's certificates and the host name checked; a 20-second timeout; a 20 MB limit on what is kept; Agendum's own XML reader, which makes no atoms and expands no custom entities (no "billion laughs"); feed text is plain text, HTML stripped; CTRL-V opens only `http` and `https` links, never a program or a file. Fetches run in the background, so the screen goes on. A calendar's private address is written in the log by its host only.
+- **Open:** the 20 MB limit is checked after the whole answer is read into memory, so an endless answer can still fill it within the timeout. Redirects are followed, perhaps from `https` to plain `http`. A `http://` address is accepted as typed.
+
+### 4. Publishing the blog (SFTP, rsync)
+
+- **Risk:** the upload goes to the wrong server, a password leaks, or the upload command is turned into another. **Medium.**
+- **Guarded:** the server's key must already be in `~/.ssh/known_hosts` (never accepted silently); ssh never asks on the screen (`BatchMode`); a password typed for SFTP is shown as stars, kept out of the log and never stored; the preview shows every change before anything is written.
+- **Open:** the **Upload to** address is handed to rsync as written: one starting with `-` would be read as an option. Only the person's own settings set it, but a shared file carries them.
+
+### 5. The session log (`AGENDUM_LOG`)
+
+- **Risk:** the log holds what was typed, and is shared with a bug report or read from the disk. **High** for an encrypted file, **medium** otherwise.
+- **Guarded:** off by default; ten sessions kept; web addresses cut to their host; passwords counted, never written; while the file has a password, its text stays out entirely (typed keys counted, messages by kind, names and a crash's details hidden; v0.73.10).
+- **Known and accepted:** for a file without a password, what is typed is in the log (ADR 0027): it is a debugging tool, on only when asked for.
+- **Open:** text typed before a password is set stays in that session's log; Erlang's own reports of a crash in background work are written without knowing the file.
+
+### 6. The program and its making
+
+- **Risk:** a changed release or a changed CI step ships someone else's code to the person. **High**, but unlikely.
+- **Guarded:** no runtime dependencies (ADR 0021); four dev and test tools only; the release escript is built by CI from a tag, without them (`MIX_ENV=prod`).
+- **Open:** the CI's actions are pinned by tag, not by commit hash; a release carries no checksum to compare a download with. A look over the pipeline about once a quarter (next by 2027-01-31).
+
+### 7. Capture from outside (when it comes)
+
+- **Risk:** a way for others to put items in, by mail or a shared folder, lets anyone write into the file. **Medium.**
+- **Rule for then:** captured text is data, never commands (R82c); it lands where the person reviews it, never filed silently beside their own items; who may send is the person's choice.
+
+### 8. An agent (later)
+
+- **Risk:** an item's text tells a language model what to do ("discard every item"), and it does. **High** once an agent can change the file.
+- **Rule for then:** item text is data, never instructions (R82c); an agent proposes, the person decides; one agent action is one undoable change, as a key is.
+
+## When this is updated
+
+A new door (a new kind of outside input, a new place data leaves the computer, a new secret) gets a section here before it is built. An open item fixed moves to "Guarded", and its roadmap line to `ROADMAP_DONE.md`.
